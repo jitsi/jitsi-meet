@@ -323,6 +323,9 @@
         "userIdentifier": "User identifier",
         "userPassword": "User password",
         "videoLink": "Video link",
+        "viewUpgradeOptions": "View upgrade options",
+        "viewUpgradeOptionsContent": "To get unlimited access to premium features like recording, transcriptions, RTMP Streaming & more, you'll need to upgrade your plan.",
+        "viewUpgradeOptionsTitle": "You discovered a premium feature!",
         "WaitForHostMsg": "The conference <b>{{room}}</b> has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
         "WaitForHostMsgWOk": "The conference <b>{{room}}</b> has not yet started. If you are the host then please press Ok to authenticate. Otherwise, please wait for the host to arrive.",
         "WaitingForHostTitle": "Waiting for the host ...",
@@ -410,6 +413,7 @@
         "noRoom": "No room was specified to dial-in into.",
         "numbers": "Dial-in Numbers",
         "password": "$t(lockRoomPasswordUppercase):",
+        "sip": "SIP address",
         "title": "Share",
         "tooltip": "Share link and dial-in info for this meeting",
         "label": "Dial-in info"
@@ -520,6 +524,7 @@
         "focus": "Conference focus",
         "focusFail": "{{component}} not available - retry in {{ms}} sec",
         "grantedTo": "Moderator rights granted to {{to}}!",
+        "hostAskedUnmute": "The host would like you to unmute",
         "invitedOneMember": "{{name}} has been invited",
         "invitedThreePlusMembers": "{{name}} and {{count}} others have been invited",
         "invitedTwoMembers": "{{first}} and {{second}} have been invited",
@@ -550,6 +555,18 @@
         "oldElectronClientDescription1": "You appear to be using an old version of the Jitsi Meet client which has known security vulnerabilities. Please make sure you update to our ",
         "oldElectronClientDescription2": "latest build",
         "oldElectronClientDescription3": " now!",
+        "moderationInEffectDescription": "Please raise hand if you want to speak",
+        "moderationInEffectCSDescription": "Please raise hand if you want to share your video",
+        "moderationInEffectVideoDescription": "Please raise your hand if you want your video to be visible",
+        "moderationInEffectTitle": "The microphone is muted by the moderator",
+        "moderationInEffectCSTitle": "Content sharing is disabled by moderator",
+        "moderationInEffectVideoTitle": "The video is muted by the moderator",
+        "moderationRequestFromModerator": "The host would like you to unmute",
+        "moderationRequestFromParticipant": "Wants to speak",
+        "moderationStartedTitle": "Moderation started",
+        "moderationStoppedTitle": "Moderation stopped",
+        "moderationToggleDescription": "by {{participantDisplayName}}",
+        "raiseHandAction": "Raise hand",
         "groupTitle": "Notifications"
     },
     "participantsPane": {
@@ -559,8 +576,12 @@
             "participantsList": "Meeting participants ({{count}})"
         },
         "actions": {
+            "allow": "Allow attendees to:",
             "invite": "Invite Someone",
+            "askUnmute": "Ask to unmute",
             "muteAll": "Mute all",
+            "startModeration": "Unmute themselves or start video",
+            "stopEveryonesVideo": "Stop everyone's video",
             "stopVideo": "Stop video"
         }
     },
@@ -655,12 +676,15 @@
         "beta": "BETA",
         "busy": "We're working on freeing recording resources. Please try again in a few minutes.",
         "busyTitle": "All recorders are currently busy",
+        "copyLink": "Copy Link",
         "error": "Recording failed. Please try again.",
+        "errorFetchingLink": "Error fetching recording link.",
         "expandedOff": "Recording has stopped",
         "expandedOn": "The meeting is currently being recorded.",
         "expandedPending": "Recording is being started...",
         "failedToStart": "Recording failed to start",
         "fileSharingdescription": "Share recording with meeting participants",
+        "linkGenerated": "We have generated a link to your recording.",
         "live": "LIVE",
         "loggedIn": "Logged in as {{userName}}",
         "off": "Recording stopped",
@@ -675,7 +699,8 @@
         "signIn": "Sign in",
         "signOut": "Sign out",
         "unavailable": "Oops! The {{serviceName}} is currently unavailable. We're working on resolving the issue. Please try again later.",
-        "unavailableTitle": "Recording unavailable"
+        "unavailableTitle": "Recording unavailable",
+        "uploadToCloud": "Upload to the cloud"
     },
     "sectionList": {
         "pullToRefresh": "Pull to refresh"
@@ -694,8 +719,12 @@
             "signedIn": "Currently accessing calendar events for {{email}}. Click the Disconnect button below to stop accessing calendar events.",
             "title": "Calendar"
         },
+        "desktopShareFramerate": "Desktop sharing frame rate",
+        "desktopShareWarning": "You need to restart the screen share for the new settings to take effect.",
+        "desktopShareHighFpsWarning": "A higher frame rate for desktop sharing might affect your bandwidth. You need to restart the screen share for the new settings to take effect.",
         "devices": "Devices",
         "followMe": "Everyone follows me",
+        "framesPerSecond": "frames-per-second",
         "language": "Language",
         "loggedIn": "Logged in as {{name}}",
         "microphones": "Microphones",

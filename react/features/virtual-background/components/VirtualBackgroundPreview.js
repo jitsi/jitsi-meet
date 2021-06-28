@@ -13,7 +13,7 @@ import { toggleBackgroundEffect } from '../actions';
 import { VIRTUAL_BACKGROUND_TYPE } from '../constants';
 import { localTrackStopped } from '../functions';
 
-const videoClassName = 'video-preview-video';
+const videoClassName = 'video-preview-video flipVideoX';
 
 /**
  * The type of the React {@code PureComponent} props of {@link VirtualBackgroundPreview}.
@@ -115,6 +115,10 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
         this.setState({
             jitsiTrack
         });
+
+        if (this.props.options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
+            this._applyBackgroundEffect();
+        }
     }
 
     /**

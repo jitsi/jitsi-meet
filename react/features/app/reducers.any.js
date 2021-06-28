@@ -36,6 +36,7 @@ import '../filmstrip/reducer';
 import '../follow-me/reducer';
 import '../google-api/reducer';
 import '../invite/reducer';
+import '../jaas/reducer';
 import '../large-video/reducer';
 import '../lobby/reducer';
 import '../notifications/reducer';

@@ -3,9 +3,11 @@
 import _ from 'lodash';
 import React, { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
+import { openDialog } from '../../base/dialog';
 import { getParticipants } from '../../base/participants';
+import MuteRemoteParticipantDialog from '../../video-menu/components/web/MuteRemoteParticipantDialog';
 import { findStyledAncestor, shouldRenderInviteButton } from '../functions';
 
 import { InviteButton } from './InviteButton';
@@ -34,6 +36,7 @@ type RaiseContext = NullProto | {
 const initialState = Object.freeze(Object.create(null));
 
 export const MeetingParticipantList = () => {
+    const dispatch = useDispatch();
     const isMouseOverMenu = useRef(false);
     const participants = useSelector(getParticipants, _.isEqual);
     const showInviteButton = useSelector(shouldRenderInviteButton);
@@ -84,6 +87,10 @@ export const MeetingParticipantList = () => {
         lowerMenu();
     }, [ lowerMenu ]);
 
+    const muteAudio = useCallback(id => () => {
+        dispatch(openDialog(MuteRemoteParticipantDialog, { participantID: id }));
+    });
+
     return (
     <>
         <Heading>{t('participantsPane.headings.participantsList', { count: participants.length })}</Heading>
@@ -93,12 +100,14 @@ export const MeetingParticipantList = () => {
                 <MeetingParticipantItem
                     isHighlighted = { raiseContext.participant === p }
                     key = { p.id }
+                    muteAudio = { muteAudio }
                     onContextMenu = { toggleMenu(p) }
                     onLeave = { lowerMenu }
                     participant = { p } />
             ))}
         </div>
         <MeetingParticipantContextMenu
+            muteAudio = { muteAudio }
             onEnter = { menuEnter }
             onLeave = { menuLeave }
             onSelect = { lowerMenu }
@@ -106,4 +115,3 @@ export const MeetingParticipantList = () => {
     </>
     );
 };
-

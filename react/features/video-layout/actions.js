@@ -4,27 +4,9 @@ import type { Dispatch } from 'redux';
 
 import {
     SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
-    SELECT_ENDPOINTS,
     SET_TILE_VIEW
 } from './actionTypes';
 import { shouldDisplayTileView } from './functions';
-
-/**
- * Creates a (redux) action which signals that a new set of remote endpoints need to be selected.
- *
- * @param {Array<string>} participantIds - The remote participants that are currently selected
- * for video forwarding from the bridge.
- * @returns {{
- *      type: SELECT_ENDPOINTS,
- *      particpantsIds: Array<string>
- * }}
- */
-export function selectEndpoints(participantIds: Array<string>) {
-    return {
-        type: SELECT_ENDPOINTS,
-        participantIds
-    };
-}
 
 /**
  * Creates a (redux) action which signals that the list of known remote participants

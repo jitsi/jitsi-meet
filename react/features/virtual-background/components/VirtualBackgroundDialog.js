@@ -6,12 +6,14 @@ import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import uuid from 'uuid';
 
-import { Dialog, hideDialog } from '../../base/dialog';
+import { Dialog, hideDialog, openDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { Icon, IconCloseSmall, IconPlusCircle, IconShareDesktop } from '../../base/icons';
+import { browser, JitsiTrackErrors } from '../../base/lib-jitsi-meet';
 import { createLocalTrack } from '../../base/lib-jitsi-meet/functions';
 import { VIDEO_TYPE } from '../../base/media';
 import { connect } from '../../base/redux';
+import { updateSettings } from '../../base/settings';
 import { Tooltip } from '../../base/tooltip';
 import { getLocalVideoTrack } from '../../base/tracks';
 import { showErrorNotification } from '../../notifications';
@@ -73,6 +75,11 @@ const images: Array<Image> = [
 type Props = {
 
     /**
+     * The current local flip x status.
+     */
+    _localFlipX: boolean,
+
+    /**
      * Returns the jitsi track that will have backgraund effect applied.
      */
     _jitsiTrack: Object,
@@ -83,14 +90,22 @@ type Props = {
     _selectedThumbnail: string,
 
     /**
-     * Returns the selected virtual source object.
+     * Returns the selected virtual background object.
      */
-    _virtualSource: Object,
+    _virtualBackground: Object,
 
     /**
      * The redux {@code dispatch} function.
      */
     dispatch: Function,
+
+    /**
+     * The initial options copied in the state for the {@code VirtualBackground} component.
+     *
+     * NOTE: currently used only for electron in order to open the dialog in the correct state after desktop sharing
+     * selection.
+     */
+    initialOptions: Object,
 
     /**
      * Invoked to obtain translated strings.
@@ -102,19 +117,51 @@ const onError = event => {
     event.target.style.display = 'none';
 };
 
+
+/**
+ * Maps (parts of) the redux state to the associated props for the
+ * {@code VirtualBackground} component.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {{Props}}
+ */
+function _mapStateToProps(state): Object {
+    const { localFlipX } = state['features/base/settings'];
+
+    return {
+        _localFlipX: Boolean(localFlipX),
+        _virtualBackground: state['features/virtual-background'],
+        _selectedThumbnail: state['features/virtual-background'].selectedThumbnail,
+        _jitsiTrack: getLocalVideoTrack(state['features/base/tracks'])?.jitsiTrack
+    };
+}
+
+const VirtualBackgroundDialog = translate(connect(_mapStateToProps)(VirtualBackground));
+
 /**
  * Renders virtual background dialog.
  *
  * @returns {ReactElement}
  */
-function VirtualBackground({ _jitsiTrack, _selectedThumbnail, _virtualSource, dispatch, t }: Props) {
-    const [ options, setOptions ] = useState({});
+function VirtualBackground({
+    _localFlipX,
+    _jitsiTrack,
+    _selectedThumbnail,
+    _virtualBackground,
+    dispatch,
+    initialOptions,
+    t
+}: Props) {
+    const [ options, setOptions ] = useState({ ...initialOptions });
     const localImages = jitsiLocalStorage.getItem('virtualBackgrounds');
     const [ storedImages, setStoredImages ] = useState<Array<Image>>((localImages && Bourne.parse(localImages)) || []);
     const [ loading, setLoading ] = useState(false);
     const uploadImageButton: Object = useRef(null);
-    const [ activeDesktopVideo ] = useState(_virtualSource?.videoType === VIDEO_TYPE.DESKTOP ? _virtualSource : null);
-
+    const [ activeDesktopVideo ] = useState(_virtualBackground?.virtualSource?.videoType === VIDEO_TYPE.DESKTOP
+        ? _virtualBackground.virtualSource
+        : null);
+    const [ initialVirtualBackground ] = useState(_virtualBackground);
     const deleteStoredImage = useCallback(e => {
         const imageId = e.currentTarget.getAttribute('data-imageid');
 
@@ -141,7 +188,12 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, _virtualSource, di
         if (storedImages.length === backgroundsLimit) {
             setStoredImages(storedImages.slice(1));
         }
-    }, [ storedImages ]);
+        if (!_localFlipX) {
+            dispatch(updateSettings({
+                localFlipX: !_localFlipX
+            }));
+        }
+    }, [ storedImages, _localFlipX ]);
 
 
     const enableBlur = useCallback(async () => {
@@ -178,23 +230,56 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, _virtualSource, di
 
 
     const shareDesktop = useCallback(async () => {
-        const url = await createLocalTrack('desktop', '');
+        let isCancelled = false, url;
+
+        try {
+            url = await createLocalTrack('desktop', '');
+        } catch (e) {
+            if (e.name === JitsiTrackErrors.SCREENSHARING_USER_CANCELED) {
+                isCancelled = true;
+            } else {
+                logger.error(e);
+            }
+        }
 
         if (!url) {
-            dispatch(showErrorNotification({
-                titleKey: 'virtualBackground.desktopShareError'
-            }));
-            logger.error('Could not create desktop share as a virtual background!');
+            if (!isCancelled) {
+                dispatch(showErrorNotification({
+                    titleKey: 'virtualBackground.desktopShareError'
+                }));
+                logger.error('Could not create desktop share as a virtual background!');
+            }
+
+            /**
+             * For electron createLocalTrack will open the {@code DesktopPicker} dialog and hide the
+             * {@code VirtualBackgroundDialog}. That's why we need to reopen the {@code VirtualBackgroundDialog}
+             * and restore the current state through {@code initialOptions} prop.
+             */
+            if (browser.isElectron()) {
+                dispatch(openDialog(VirtualBackgroundDialog, { initialOptions: options }));
+            }
 
             return;
         }
-        setOptions({
+
+        const newOptions = {
             backgroundType: VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE,
             enabled: true,
             selectedThumbnail: 'desktop-share',
             url
-        });
-    }, []);
+        };
+
+        /**
+         * For electron createLocalTrack will open the {@code DesktopPicker} dialog and hide the
+         * {@code VirtualBackgroundDialog}. That's why we need to reopen the {@code VirtualBackgroundDialog}
+         * and force it to show desktop share virtual background through {@code initialOptions} prop.
+         */
+        if (browser.isElectron()) {
+            dispatch(openDialog(VirtualBackgroundDialog, { initialOptions: newOptions }));
+        } else {
+            setOptions(newOptions);
+        }
+    }, [ dispatch, options ]);
 
     const shareDesktopKeyPress = useCallback(e => {
         if (e.key === ' ' || e.key === 'Enter') {
@@ -308,10 +393,23 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, _virtualSource, di
         dispatch(hideDialog());
     }, [ dispatch, options ]);
 
+    // Prevent the selection of a new virtual background if it has not been applied by default
+    const cancelVirtualBackground = useCallback(async () => {
+        await setOptions({
+            backgroundType: initialVirtualBackground.backgroundType,
+            enabled: initialVirtualBackground.backgroundEffectEnabled,
+            url: initialVirtualBackground.virtualSource,
+            selectedThumbnail: initialVirtualBackground.selectedThumbnail,
+            blurValue: initialVirtualBackground.blurValue
+        });
+        dispatch(hideDialog());
+    });
+
     return (
         <Dialog
             hideCancelButton = { false }
             okKey = { 'virtualBackground.apply' }
+            onCancel = { cancelVirtualBackground }
             onSubmit = { applyVirtualBackground }
             submitDisabled = { !options || loading }
             titleKey = { 'virtualBackground.title' } >
@@ -468,20 +566,4 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, _virtualSource, di
     );
 }
 
-/**
- * Maps (parts of) the redux state to the associated props for the
- * {@code VirtualBackground} component.
- *
- * @param {Object} state - The Redux state.
- * @private
- * @returns {{Props}}
- */
-function _mapStateToProps(state): Object {
-    return {
-        _virtualSource: state['features/virtual-background'].virtualSource,
-        _selectedThumbnail: state['features/virtual-background'].selectedThumbnail,
-        _jitsiTrack: getLocalVideoTrack(state['features/base/tracks'])?.jitsiTrack
-    };
-}
-
-export default translate(connect(_mapStateToProps)(VirtualBackground));
+export default VirtualBackgroundDialog;

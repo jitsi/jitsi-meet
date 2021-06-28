@@ -2186,6 +2186,10 @@ export default {
                     id: localParticipant.id,
                     isReplaced
                 }));
+
+                // we send readyToClose when kicked participant is replace so that
+                // embedding app can choose to dispose the iframe API on the handler.
+                APP.API.notifyReadyToClose();
             }
             APP.store.dispatch(kickedOut(room, participant));
         });

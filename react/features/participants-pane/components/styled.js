@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { Icon, IconHorizontalPoints } from '../../base/icons';
-import { ActionTrigger } from '../constants';
+import { ACTION_TRIGGER } from '../constants';
 
 export const ignoredChildClassName = 'ignore-child';
 
@@ -21,6 +21,7 @@ export const Button = styled.button`
   display: flex;
   font-weight: unset;
   justify-content: center;
+  min-height: 32px;
 
   &:hover {
     background-color: ${
@@ -28,6 +29,10 @@ export const Button = styled.button`
     props => props.primary ? '#246FE5' : '#525252'
 };
   }
+`;
+
+export const QuickActionButton = styled(Button)`
+  padding: 0 12px;
 `;
 
 export const Container = styled.div`
@@ -93,7 +98,7 @@ export const ContextMenuItem = styled.div`
   box-sizing: border-box;
   cursor: pointer;
   display: flex;
-  height: 40px;
+  min-height: 40px;
   padding: 8px 16px;
 
   & > *:not(:last-child) {
@@ -185,6 +190,12 @@ export const Heading = styled.div`
   margin: 8px 0 ${props => props.theme.panePadding}px;
 `;
 
+export const ColoredIcon = styled.div`
+  & > div > svg {
+    fill: ${props => props.color || '#fff'};
+  }
+`;
+
 export const ParticipantActionButton = styled(Button)`
   height: ${props => props.theme.participantActionButtonHeight}px;
   padding: 6px 10px;
@@ -256,7 +267,7 @@ export const ParticipantContainer = styled.div`
     background-color: #292929;
 
     & ${ParticipantActions} {
-      ${props => props.trigger === ActionTrigger.Hover && `
+      ${props => props.trigger === ACTION_TRIGGER.HOVER && `
         display: flex;
       `}
     }
