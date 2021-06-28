@@ -1,30 +1,33 @@
 // @flow
 /* eslint-disable react/no-multi-comp */
+import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import React from 'react';
 import {
     Image,
     SafeAreaView,
     View
 } from 'react-native';
+import Video from 'react-native-video';
+import type { Dispatch } from 'redux';
+
+import { Platform } from '../../../base/react';
 import { JaneButton, FixedScaleText } from '../../../base/react/components/native';
-import tutorialStyles from './styles';
+import { connect } from '../../../base/redux';
 import {
     ColorPalette,
     sizeHelper
 } from '../../../base/styles';
-import { Indicator } from '../Indicator';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
-import Video from 'react-native-video';
-import { connect } from '../../../base/redux';
 import { setScreen } from '../../actions';
-import { Platform } from '../../../base/react';
-import type { Dispatch } from 'redux';
+import { Indicator } from '../Indicator';
 import VideoChatUrlDetector from '../VideoChatUrlDetector';
+
+import tutorialStyles from './styles';
 
 const WHITE_COLOR = ColorPalette.white;
 const JANE_COLOR = ColorPalette.jane;
 
+// $FlowFixMe[object literal]
 const isPad = Platform.isPad;
 
 const ENVELOPE_ICON_SIZE = sizeHelper.getActualSizeW(isPad ? 161 : 130);
@@ -256,7 +259,7 @@ const Done = (props: Props) => {
             style = { tutorialStyles.done.mainContainer }>
             <Image
                 source = { require('../../../../../images/jane-video-logo.png') }
-                style = { [ tutorialStyles.logo, tutorialStyles.done.logo ] } />
+                style = { tutorialStyles.logo } />
             <FixedScaleText
                 style = { tutorialStyles.done.header }>
                 Great. You’re all set.
@@ -384,7 +387,7 @@ const DefaultScreen = () => (<View
         style = { tutorialStyles.default.mainContainer }>
         <Image
             source = { require('../../../../../images/jane-video-logo.png') }
-            style = { [ tutorialStyles.logo, tutorialStyles.done.logo ] } />
+            style = { tutorialStyles.logo } />
     </View>
 </View>);
 
@@ -413,7 +416,7 @@ const TutorialLayout = (props: TutorialLayoutProps) => (<SafeAreaView style = { 
     {
         getStepScreen(props.screenName)
     }
-    <VideoChatUrlDetector/>
+    <VideoChatUrlDetector />
 </SafeAreaView>);
 
 export default TutorialLayout;

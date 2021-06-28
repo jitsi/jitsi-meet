@@ -360,12 +360,11 @@ function safeStartCase(s = '') {
 /**
  * Check if the call is the test call.
  *
- *
  * @param {Function|Object} state - The redux store, state, or
  * {@code getState} function.
  * @returns {boolean}
  */
-export function isJaneTestCall(state) {
+export function isJaneTestCall(state: Function | Object) {
     const { jwt } = state['features/base/jwt'];
     const jwtPayload = jwt && jwtDecode(jwt) ?? null;
     const context = jwtPayload && jwtPayload.context ?? null;

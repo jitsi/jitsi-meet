@@ -2,15 +2,17 @@
 
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
-import { FixedScaleText } from './index';
+
 import { sizeHelper, JaneWeb } from '../../../styles';
+
+import { FixedScaleText } from './index';
 
 type Props = {
     content: React$Node,
     borderColor: string,
     textColor: string,
-    marginBottom: number,
-    size: number,
+    marginBottom?: number,
+    size?: number,
     onPress: Function
 };
 

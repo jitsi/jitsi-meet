@@ -2,22 +2,21 @@
 
 import React from 'react';
 
+import { isMobileBrowser } from '../../base/environment/utils';
 import { translate } from '../../base/i18n';
 import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
-import { isMobileBrowser } from '../../base/environment/utils';
 import { CalendarList } from '../../calendar-sync';
 import { RecentList } from '../../recent-list';
-import { SettingsButton, SETTINGS_TABS } from '../../settings';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import Tabs from './Tabs';
 
-/**
- * The pattern used to validate room name.
- * @type {string}
- */
-export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[^?&:\u0022\u0027%#]+$';
+// /**
+//  * The pattern used to validate room name.
+//  * @type {string}
+//  */
+// export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[^?&:\u0022\u0027%#]+$';
 
 /**
  * Maximum number of pixels corresponding to a mobile layout.
@@ -47,7 +46,7 @@ class WelcomePage extends AbstractWelcomePage {
      * instance is to be initialized.
      */
     constructor(props) {
-        console.log()
+        console.log();
         super(props);
 
         this.state = {
@@ -158,11 +157,7 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement|null}
      */
     render() {
-        const { t } = this.props;
-        const { APP_NAME } = interfaceConfig;
         const showAdditionalContent = this._shouldShowAdditionalContent();
-        const showAdditionalToolbarContent = this._shouldShowAdditionalToolbarContent();
-        const showResponsiveText = this._shouldShowResponsiveText();
 
         return (
             <div
@@ -350,10 +345,12 @@ class WelcomePage extends AbstractWelcomePage {
      */
     _shouldShowAdditionalContent() {
         return false;
-        return interfaceConfig.DISPLAY_WELCOME_PAGE_CONTENT
-            && this._additionalContentTemplate
-            && this._additionalContentTemplate.content
-            && this._additionalContentTemplate.innerHTML.trim();
+
+        //
+        // return interfaceConfig.DISPLAY_WELCOME_PAGE_CONTENT
+        //     && this._additionalContentTemplate
+        //     && this._additionalContentTemplate.content
+        //     && this._additionalContentTemplate.innerHTML.trim();
     }
 
     /**

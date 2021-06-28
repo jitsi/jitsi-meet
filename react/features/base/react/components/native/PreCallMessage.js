@@ -1,27 +1,27 @@
 // @flow
 /* eslint-disable require-jsdoc*/
-
-import React, { Component } from 'react/index';
+import jwtDecode from 'jwt-decode';
 import _ from 'lodash';
-
+import React, { Component } from 'react';
 import {
     Animated,
     Text,
     Image,
     TouchableOpacity, Easing
 } from 'react-native';
-import styles, { WAITING_MESSAGE_CONTIANER_BACKGROUND_COLOR } from './styles';
-import { getLocalizedDateFormatter, translate, getTimeStamp } from '../../../i18n';
-import { connect } from '../../../redux';
-import { getParticipantCount } from '../../../participants';
-import { getRemoteTracks } from '../../../tracks';
-import jwtDecode from 'jwt-decode';
-import { isJaneTestCall } from '../../../conference';
+
 import { Icon, IconClose } from '../../../../base/icons';
-import { isIPhoneX } from '../../../../base/styles/functions.native';
 import { getLocalParticipantType } from '../../../../base/participants/functions';
-import { isJaneWaitingAreaEnabled } from '../../../../jane-waiting-area-native';
+import { isIPhoneX } from '../../../../base/styles/functions.native';
+import { isJaneWaitingAreaEnabled } from '../../../../jane-waiting-area';
+import { isJaneTestCall } from '../../../conference';
+import { getLocalizedDateFormatter, translate, getTimeStamp } from '../../../i18n';
+import { getParticipantCount } from '../../../participants';
+import { connect } from '../../../redux';
+import { getRemoteTracks } from '../../../tracks';
 import { shouldShowPreCallMessage } from '../functions';
+
+import styles, { WAITING_MESSAGE_CONTIANER_BACKGROUND_COLOR } from './styles';
 
 const watermarkImg = require('../../../../../../images/watermark.png');
 
@@ -45,6 +45,8 @@ type State = {
 class PreCallMessage extends Component<Props, State> {
 
     _interval;
+    animatedValue;
+    _onClose;
 
     constructor(props: Props) {
         super(props);
@@ -68,7 +70,8 @@ class PreCallMessage extends Component<Props, State> {
             {
                 toValue: 1,
                 duration: 2000,
-                easing: Easing.linear
+                easing: Easing.linear,
+                useNativeDriver: true
             }
         )
             .start(() => this._animate());

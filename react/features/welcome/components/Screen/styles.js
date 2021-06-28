@@ -1,11 +1,13 @@
 // @flow
+import { StyleSheet, Platform } from 'react-native';
+
 import {
     ColorPalette, isIPhoneX,
     JaneWeb,
     sizeHelper
 } from '../../../base/styles';
-import { StyleSheet, Platform } from 'react-native';
 
+// $FlowFixMe[object literal]
 const isPad = Platform.isPad;
 const WHITE_COLOR = ColorPalette.white;
 const JANE_COLOR = ColorPalette.jane;

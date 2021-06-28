@@ -13,15 +13,10 @@ import { translate } from '../../../base/i18n';
 import {
     IconChat,
     IconExitFullScreen,
-    IconFeedback,
     IconFullScreen,
-    IconInvite,
-    IconOpenInNew,
-    IconPresentation,
+    IconInviteMore,
     IconRaisedHand,
-    IconRec,
-    IconShareDesktop,
-    IconShareVideo
+    IconShareDesktop
 } from '../../../base/icons';
 import {
     getLocalParticipant,
@@ -29,15 +24,12 @@ import {
     participantUpdated
 } from '../../../base/participants';
 import { connect, equals } from '../../../base/redux';
-import { OverflowMenuItem } from '../../../base/toolbox';
+import OverflowMenuItem from '../../../base/toolbox/components/OverflowMenuItem.web';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
-import { VideoBlurButton } from '../../../blur';
 import { ChatCounter, toggleChat } from '../../../chat';
-import { SharedDocumentButton } from '../../../etherpad';
 import { openFeedbackDialog } from '../../../feedback';
 import {
     beginAddPeople,
-    InfoDialogButton,
     isAddPeopleEnabled,
     isDialOutEnabled
 } from '../../../invite';
@@ -47,16 +39,15 @@ import {
     LocalRecordingInfoDialog
 } from '../../../local-recording';
 import {
-    LiveStreamButton,
-    RecordButton
-} from '../../../recording';
-import {
     SETTINGS_TABS,
     SettingsButton,
     openSettingsDialog
 } from '../../../settings';
 import { toggleSharedVideo } from '../../../shared-video';
 import { SpeakerStats } from '../../../speaker-stats';
+import {
+    ClosedCaptionButton
+} from '../../../subtitles';
 import {
     TileViewButton,
     toggleTileView
@@ -65,25 +56,21 @@ import {
     OverflowMenuVideoQualityItem,
     VideoQualityDialog
 } from '../../../video-quality';
-
 import {
     setFullScreen,
     setOverflowMenuVisible,
     setToolbarHovered
 } from '../../actions';
-import AudioMuteButton from '../AudioMuteButton';
-import DownloadButton from '../DownloadButton';
 import { isToolboxVisible } from '../../functions';
+import AudioMuteButton from '../AudioMuteButton';
 import HangupButton from '../HangupButton';
-import HelpButton from '../HelpButton';
+import VideoMuteButton from '../VideoMuteButton';
+
+import MuteEveryoneButton from './MuteEveryoneButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
-import MuteEveryoneButton from './MuteEveryoneButton';
 import ToolbarButton from './ToolbarButton';
-import VideoMuteButton from '../VideoMuteButton';
-import {
-    ClosedCaptionButton
-} from '../../../subtitles';
+
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
@@ -953,10 +940,7 @@ class Toolbox extends Component<Props, State> {
      */
     _renderOverflowMenuContent() {
         const {
-            _feedbackConfigured,
             _fullScreen,
-            _screensharing,
-            _sharingVideo,
             t
         } = this.props;
 
@@ -1017,7 +1001,8 @@ class Toolbox extends Component<Props, State> {
             <MuteEveryoneButton
                 key = 'mute-everyone'
                 showLabel = { true }
-                visible = { this._shouldShowButton('mute-everyone') } />,
+                visible = { this._shouldShowButton('mute-everyone') } />
+
             // this._shouldShowButton('stats')
             //     && <OverflowMenuItem
             //         accessibilityLabel =
@@ -1104,13 +1089,14 @@ class Toolbox extends Component<Props, State> {
             //         <OverflowMenuItem
             //             accessibilityLabel =
             //                 { t('toolbar.accessibilityLabel.invite') }
-            //             icon = { IconInvite }
+            //             icon = { IconInviteMore }
             //             key = 'invite'
             //             onClick = { this._onToolbarOpenInvite }
             //             text = { t('toolbar.invite') } />
             //     );
             case 'tileview':
                 return <TileViewButton showLabel = { true } />;
+
             // case 'localrecording':
             //     return (
             //         <OverflowMenuItem
@@ -1269,7 +1255,7 @@ class Toolbox extends Component<Props, State> {
                         && <ToolbarButton
                             accessibilityLabel =
                                 { t('toolbar.accessibilityLabel.invite') }
-                            icon = { IconInvite }
+                            icon = { IconInviteMore }
                             onClick = { this._onToolbarOpenInvite }
                             tooltip = { t('toolbar.invite') } /> }
                     {/* {*/}

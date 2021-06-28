@@ -9,10 +9,8 @@ import { BottomSheet, hideDialog, isDialogOpen } from '../../../base/dialog';
 import { IconDragHandle } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
-import { SharedDocumentButton } from '../../../etherpad';
 import { InviteButton } from '../../../invite';
 import { AudioRouteButton } from '../../../mobile/audio-mode';
-import { ClosedCaptionButton } from '../../../subtitles';
 import { TileViewButton } from '../../../video-layout';
 import HelpButton from '../HelpButton';
 
@@ -20,6 +18,8 @@ import AudioOnlyButton from './AudioOnlyButton';
 import MoreOptionsButton from './MoreOptionsButton';
 import styles from './styles';
 
+// import { SharedDocumentButton } from '../../../etherpad';
+// import { ClosedCaptionButton } from '../../../subtitles';
 // import { LobbyModeButton } from '../../../lobby/components/native';
 // import { LiveStreamButton, RecordButton } from '../../../recording';
 // import { RoomLockButton } from '../../../room-lock';

@@ -78,6 +78,8 @@ const TILE_ASPECT_RATIO = 1;
  * @extends Component
  */
 class TileView extends Component<Props> {
+    _onDimensionsChanged: (width: number, height: number) => void;
+
     /**
      * Implements React's {@link Component#componentDidMount}.
      *

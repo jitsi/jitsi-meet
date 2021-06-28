@@ -22,7 +22,7 @@ export const DEFAULT_STATE = [
     'videochat-ca.janeapp.com',
     'videochat-ca2.janeapp.com',
     'videochat.janeapp.com.au',
-    'videochat.janeapp.co.uk',
+    'videochat.janeapp.co.uk'
 ];
 
 const STORE_NAME = 'features/base/known-domains';

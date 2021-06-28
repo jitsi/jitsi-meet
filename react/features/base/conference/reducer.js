@@ -305,7 +305,7 @@ function _conferenceWillJoin(state, { conference }) {
     return assign(state, {
         error: undefined,
         joining: conference,
-        start: new Date().toISOString(),
+        start: new Date().toISOString()
     });
 }
 

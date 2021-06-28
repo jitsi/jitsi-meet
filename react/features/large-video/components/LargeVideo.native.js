@@ -79,6 +79,8 @@ class LargeVideo extends PureComponent<Props, State> {
         ...DEFAULT_STATE
     };
 
+    _onDimensionsChanged: (width: number, height: number) => void;
+
     /**
      * Handles dimension changes. In case we deem it's too
      * small, the connectivity indicator won't be rendered and the avatar
