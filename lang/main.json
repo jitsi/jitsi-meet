@@ -582,6 +582,10 @@
         "audioTrackError": "Could not create audio track.",
         "configuringDevices": "Configuring devices...",
         "begin": "Begin",
+        "admitClient": "Admit Client",
+        "returnToSchedule": "Return to my Schedule",
+        "returnToAccount": "Return to my account",
+        "clientIsWaiting": "Client is waiting",
         "lookGood": "It sounds like your microphone is working properly",
         "videoOnlyError": "Video error:",
         "videoTrackError": "Could not create video track.",
@@ -592,6 +596,14 @@
         "waitPractitioner": "Your practitioner will let you into the session when ready...",
         "testYourDevice": "Please keep your app or browser window open to stay on the call. You may test your audio and video while you wait.",
         "authenticationExpired": "Your appointment booking has expired"
+    },
+    "preCallMessage": {
+        "sitBack": "Sit back, relax and take a moment for yourself.",
+        "WaitingforOthers": "Waiting for the other participant to join...",
+        "willBeginAt": "Your appointment will begin at.",
+        "testing": "Testing your audio and video...",
+        "waitingForPractitioner": "Waiting for the practitioner...",
+        "hangUpToClose": "When you are done testing your audio and video, hang up to close this screen. Begin your online appointment from your upcoming appointments page."
     },
     "raisedHand": "Would like to speak",
     "recording": {
@@ -805,7 +817,8 @@
         "toggleCamera": "Toggle camera",
         "videomute": "Start / Stop camera",
         "startvideoblur": "Blur my background",
-        "stopvideoblur": "Disable background blur"
+        "stopvideoblur": "Disable background blur",
+        "finishedTesting": "Finished testing? Click here."
     },
     "transcribing": {
         "ccButtonTooltip": "Start / Stop subtitles",
@@ -902,7 +915,8 @@
         "roomnameHint": "Enter the name or URL of the room you want to join. You may make a name up, just let the people you are meeting know it so that they enter the same name.",
         "sendFeedback": "Send feedback",
         "terms": "Terms",
-        "title": "Secure, fully featured, and completely free video conferencing"
+        "title": "Secure, fully featured, and completely free video conferencing",
+        "welcomeToJaneVideoChat": "Welcome to Jane Video Chat"
     },
     "lonelyMeetingExperience": {
         "button": "Invite others",

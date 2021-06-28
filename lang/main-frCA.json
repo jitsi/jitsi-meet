@@ -467,6 +467,35 @@
         "setEmailLabel": "Définir votre courriel Gravatar",
         "title": "Profil"
     },
+    "janeWaitingArea": {
+        "audioAndVideoError" : "Erreur audio et vidéo :",
+        "audioOnlyError" : "Erreur audio :",
+        "audioTrackError" : "Impossible de créer une piste audio.",
+        "configuringDevices" : "Configuration des périphériques...",
+        "begin" : "Commencer",
+        "admitClient": "Admettre le client",
+        "returnToSchedule" : "Retourner à mon planning",
+        "returnToAccount" : "Retourner à mon compte",
+        "clientIsWaiting": "le client attend",
+        "lookGood" : "Il semble que votre microphone fonctionne correctement",
+        "videoOnlyError" : "Erreur vidéo :",
+        "videoTrackError" : "Impossible de créer une piste vidéo.",
+        "whenYouAreReady" : "Lorsque vous êtes prêt à commencer, cliquez sur le bouton ci-dessous pour admettre votre client dans la session vidéo",
+        "practitionerIsReady" : "Votre praticien est prêt à commencer la session.",
+        "waitClient" : "En attente de votre client...",
+        "patientIsReady" : "Votre client est prêt à commencer la session.",
+        "waitPractitioner" : "Votre praticien vous laissera entrer dans la session lorsqu'il sera prêt...",
+        "testYourDevice" : "Veuillez garder votre application ou la fenêtre de votre navigateur ouverte pour rester sur l'appel. Vous pouvez tester votre audio et vidéo pendant que vous attendez.",
+        "authenticationExpired" : "Votre prise de rendez-vous a expiré"
+    },
+    "preCallMessage" : {
+        "sitBack" : "Asseyez-vous, détendez-vous et prenez un moment pour vous.",
+        "WaitingforOthers" : "En attendant que l'autre participant se joigne à nous...",
+        "willBeginAt" : "Votre rendez-vous commencera à...",
+        "testing" : "Test de votre audio et vidéo...",
+        "waitingForPractitioner" : "En attendant le praticien...",
+        "hangUpToClose" : "Quand vous aurez fini de tester votre audio et votre vidéo, Raccrochez pour fermer cet écran. Commencez votre rendez-vous en ligne à partir de votre page de rendez-vous à venir."
+    },
     "raisedHand": "Aimerait prendre la parole",
     "recording": {
         "authDropboxText": "Téléverser à Dropbox",
@@ -648,7 +677,9 @@
         "toggleCamera": "Basculement de la caméra",
         "videomute": "Démarrer / Arrêter la caméra",
         "startvideoblur": "Brouiller mon arrière plan",
-        "stopvideoblur": "Désactiver le brouillage d'arrière-plan"
+        "stopvideoblur": "Désactiver le brouillage d'arrière-plan",
+        "noAudioSignalDialInLinkDesc": "Numéros d'appel",
+        "finishedTesting": "Les tests sont terminés ? Cliquez ici."
     },
     "transcribing": {
         "ccButtonTooltip": "Activer / Désactiver les sous-titres",
@@ -741,6 +772,8 @@
         "roomnameHint": "Entrez le nom ou l'URL de la salle que vous voulez rejoindre. Vous pouvez inventer un nom, mais assurez-vous de le partager avec les participants de la réunion pour qu'ils utilisent le même nom.",
         "sendFeedback": "Envoyer un commentaire",
         "terms": "Termes",
-        "title": "Conférence vidéo sécurisée, pleinement fonctionnelle et entièrement gratuite"
+        "title": "Conférence vidéo sécurisée, pleinement fonctionnelle et entièrement gratuite",
+        "getHelp": "Obtenir de l'aide",
+        "welcomeToJaneVideoChat": "Bienvenue à Jane Video Chat"
     }
 }

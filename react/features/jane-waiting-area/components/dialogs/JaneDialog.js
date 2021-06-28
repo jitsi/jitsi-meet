@@ -153,13 +153,14 @@ class JaneDialog extends Component<Props> {
     }
 
     _getBtnText() {
-        const { participantType, authState } = this.props;
+        const { participantType, authState, t } = this.props;
 
         if (authState === 'failed') {
-            return participantType === 'StaffMember' ? 'Return to my Schedule' : 'Return to my account';
+            return participantType === 'StaffMember'
+                ? t('janeWaitingArea.returnToSchedule') : t('janeWaitingArea.returnToAccount');
         }
 
-        return participantType === 'StaffMember' ? 'Admit Client' : 'Begin';
+        return participantType === 'StaffMember' ? t('janeWaitingArea.admitClient') : t('janeWaitingArea.begin');
     }
 
     _onFailed() {
@@ -175,7 +176,8 @@ class JaneDialog extends Component<Props> {
             participantType,
             jwtPayload,
             localParticipantCanJoin,
-            authState
+            authState,
+            t
         } = this.props;
         const { _joinConference } = this;
 
@@ -185,8 +187,8 @@ class JaneDialog extends Component<Props> {
                     <div className = 'jane-waiting-area-info-logo-wrapper'>
                         <div className = 'jane-waiting-area-info-logo' />
                         {participantType === 'StaffMember' && localParticipantCanJoin
-                            && <p className = 'jane-waiting-area-info-patient-waiting'>Client
-                                is waiting</p>}
+                            && <p className = 'jane-waiting-area-info-patient-waiting'>
+                                {t('janeWaitingArea.clientIsWaiting')}</p>}
                     </div>
                     <div className = 'jane-waiting-area-info-text-wrapper'>
                         <DialogTitle
