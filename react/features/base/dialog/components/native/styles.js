@@ -33,7 +33,7 @@ export const bottomSheetStyles = {
     },
 
     scrollView: {
-        paddingHorizontal: MD_ITEM_MARGIN_PADDING
+        paddingHorizontal: 0
     },
 
     /**
@@ -117,7 +117,7 @@ const brandedDialogText = {
 };
 
 const brandedDialogLabelStyle = {
-    color: schemeColor('text'),
+    color: ColorPalette.white,
     flexShrink: 1,
     fontSize: MD_FONT_SIZE,
     opacity: 0.90
@@ -130,7 +130,7 @@ const brandedDialogItemContainerStyle = {
 };
 
 const brandedDialogIconStyle = {
-    color: schemeColor('icon'),
+    color: ColorPalette.white,
     fontSize: 24
 };
 
@@ -178,20 +178,24 @@ ColorSchemeRegistry.register('BottomSheet', {
          * Container style for a generic item rendered in the menu.
          */
         style: {
-            ...brandedDialogItemContainerStyle
+            ...brandedDialogItemContainerStyle,
+            backgroundColor: ColorPalette.darkBackground,
+            paddingHorizontal: MD_ITEM_MARGIN_PADDING
         },
 
         /**
          * Additional style that is not directly used as a style object.
          */
-        underlayColor: ColorPalette.overflowMenuItemUnderlay
+        underlayColor: ColorPalette.toggled
     },
 
     /**
      * Bottom sheet's base style.
      */
     sheet: {
-        backgroundColor: schemeColor('background')
+        backgroundColor: ColorPalette.black,
+        borderTopLeftRadius: 16,
+        borderTopRightRadius: 16
     }
 });
 
