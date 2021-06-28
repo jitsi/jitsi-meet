@@ -33,7 +33,7 @@ const PollCreate = (props: AbstractProps) => {
         if (r === null) {
             return;
         }
-        answerInputs.current[i] = r.input;
+        answerInputs.current[i] = r;
     }, [ answerInputs ]);
 
     useEffect(() => {
