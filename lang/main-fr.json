@@ -69,12 +69,16 @@
       "title": "Entrez un pseudonyme pour utiliser le chat"
     },
     "privateNotice": "Message privé à {{recipient}}",
-    "title": "Chat",
-    "you": "vous",
     "message": "Message",
     "messageAccessibleTitle": "{{user}} dit: ",
     "messageAccessibleTitleMe": "Je dis: ",
-    "smileysPanel": "Panneaux des Émojis"
+    "smileysPanel": "Panneaux des Émojis",
+    "tabs": {
+            "chat": "Chat",
+            "polls": "Sondages"
+        },
+        "title": "Chat et Sondages",
+        "you": "vous"
   },
   "chromeExtensionBanner": {
     "installExtensionText": "Installer l'extension pour l'intégration de Google Calendar et Office 365",
@@ -568,6 +572,34 @@
   },
   "passwordSetRemotely": "défini par un autre participant",
   "passwordDigitsOnly": "Jusqu'à {{number}} chiffres",
+  "polls": {
+    "create": {
+      "addOption": "Ajouter une option",
+      "answerPlaceholder": "Option {{index}}",
+      "create": "Créer un sondage",
+      "cancel": "Annuler",
+      "pollOption" : "Option {{index}}",
+      "pollQuestion" : "Question du sondage",
+      "questionPlaceholder": "Poser une question",
+      "removeOption": "Supprimer l'option",
+      "send": "Envoyer"
+    },
+    "answer": {
+      "skip": "Passer",
+      "submit": "Envoyer"
+    },
+    "results": {
+      "vote": "Voter",
+      "changeVote": "Changer le vote",
+      "empty": "Il n'y a pas encore de sondages dans cette réunion. Démarrez un sondage ici !",
+      "hideDetailedResults": "Cacher les détails",
+      "showDetailedResults": "Montrer les détails"
+    },
+    "notification": {
+      "title": "Un nouveau sondage a été ajouté à la réunion",
+      "description": "Ouvrez l'onget des sondages pour voter"
+    }
+  },
   "poweredby": "produit par",
   "prejoin": {
     "audioAndVideoError": "Erreur audio et video:",
