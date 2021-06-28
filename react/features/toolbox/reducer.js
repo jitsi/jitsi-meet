@@ -266,6 +266,5 @@ ReducerRegistry.register(
         }
         }
 
-
         return state;
     });

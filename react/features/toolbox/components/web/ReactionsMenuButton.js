@@ -28,7 +28,7 @@ type Props = {
     raisedHand: boolean,
 
     /**
-     * Click handler for the reaction button. Opens reactions menu.
+     * Click handler for the reaction button. Toggles the reactions menu.
      */
     onReactionsClick: Function,
 
@@ -52,7 +52,7 @@ type Props = {
 declare var APP: Object;
 
 /**
- * Button used for reaction menu.
+ * Button used for the reactions menu.
  *
  * @returns {ReactElement}
  */
@@ -95,7 +95,7 @@ class ReactionsMenuButton extends Component<Props> {
     componentWillUnmount() {
         Object.keys(REACTIONS).map(key => REACTIONS[key].message.slice(1, 2).toUpperCase())
             .forEach(letter =>
-                APP.keyboardshortcut.unregisterShortcut(letter));
+                APP.keyboardshortcut.unregisterShortcut(letter, true));
     }
 
     /**
@@ -107,7 +107,7 @@ class ReactionsMenuButton extends Component<Props> {
         const { raisedHand, t, onReactionsClick, isOpen, reactionsQueue } = this.props;
 
         return (
-            <div className = 'react-menu-popup-container'>
+            <div className = 'reactions-menu-popup-container'>
                 <ReactionsMenuPopup>
                     <ToolbarButton
                         accessibilityLabel = { t('toolbar.accessibilityLabel.reactionsMenu') }

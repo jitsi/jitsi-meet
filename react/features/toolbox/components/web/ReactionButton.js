@@ -29,7 +29,7 @@ type Props = AbstractToolbarButtonProps & {
 };
 
 /**
- * Represents a button in the toolbar.
+ * Represents a button in the reactions menu.
  *
  * @extends AbstractToolbarButton
  */

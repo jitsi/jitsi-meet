@@ -13,7 +13,7 @@ import ReactionsMenu from './ReactionsMenu';
 type Props = {
 
     /**
-    * Component's children (the raise hand button).
+    * Component's children (the reactions menu button).
     */
     children: React$Node,
 

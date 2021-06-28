@@ -1,7 +1,7 @@
 // @flow
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Dimensions } from 'react-native';
+import { Animated } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { connect } from '../../../base/redux';
@@ -24,8 +24,14 @@ type Props = ReactionEmojiProps & {
 
     /**
      * Index of reaction on the queue.
+     * Used to differentiate between first and other animations.
      */
-    index: number
+    index: number,
+
+    /**
+    * The height of the screen.
+    */
+    _height: number
 };
 
 
@@ -34,10 +40,10 @@ type Props = ReactionEmojiProps & {
  *
  * @returns {ReactElement}
  */
-function ReactionEmoji({ reaction, uid, removeReaction: _removeReaction, _styles, index }: Props) {
+function ReactionEmoji({ reaction, uid, removeReaction: _removeReaction, _styles, index, _height }: Props) {
     const animationVal = useRef(new Animated.Value(0)).current;
 
-    const vh = useState(Dimensions.get('window').height / 100)[0];
+    const vh = useState(_height / 100)[0];
 
     const randomInt = (min, max) => Math.floor((Math.random() * (max - min + 1)) + min);
 
@@ -106,7 +112,8 @@ function ReactionEmoji({ reaction, uid, removeReaction: _removeReaction, _styles
  */
 function _mapStateToProps(state) {
     return {
-        _styles: ColorSchemeRegistry.get(state, 'Toolbox')
+        _styles: ColorSchemeRegistry.get(state, 'Toolbox'),
+        _height: state['features/base/responsive-ui'].clientHeight
     };
 }
 

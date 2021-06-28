@@ -22,11 +22,6 @@ type Props = {
     _styles: StyleType,
 
     /**
-     * Used for hiding the dialog when the selection was completed.
-     */
-    dispatch: Function,
-
-    /**
      * Used to close the overflow menu after raise hand is clicked.
      */
     onCancel: Function,

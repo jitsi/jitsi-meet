@@ -21,7 +21,7 @@ type Props = {
     _styles: StyleType,
 
     /**
-     * True if the overflow menu is currently visible, false otherwise.
+     * True if the dialog is currently visible, false otherwise.
      */
     _isOpen: boolean,
 

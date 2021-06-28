@@ -288,7 +288,6 @@ function _addChatMsgListener(conference, store) {
                         });
                         delete reactions[_id];
                     }, 500);
-
                 }
             }
         });

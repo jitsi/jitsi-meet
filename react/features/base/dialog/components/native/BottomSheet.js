@@ -1,7 +1,7 @@
 // @flow
 
 import React, { PureComponent, type Node } from 'react';
-import { Dimensions, PanResponder, SafeAreaView, ScrollView, View } from 'react-native';
+import { PanResponder, SafeAreaView, ScrollView, View } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../../color-scheme';
 import { SlidingView } from '../../../react';
@@ -54,7 +54,12 @@ type Props = {
     /**
      * Function to render a bottom sheet footer element, if necessary.
      */
-    renderFooter: ?Function
+    renderFooter: ?Function,
+
+    /**
+    * The height of the screen.
+    */
+    _height: number
 };
 
 /**
@@ -85,7 +90,7 @@ class BottomSheet extends PureComponent<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _styles, renderHeader, renderFooter } = this.props;
+        const { _styles, renderHeader, renderFooter, _height } = this.props;
 
         return (
             <SlidingView
@@ -106,7 +111,7 @@ class BottomSheet extends PureComponent<Props> {
                             styles.sheetItemContainer,
                             _styles.sheet,
                             {
-                                maxHeight: Dimensions.get('window').height - 100
+                                maxHeight: _height - 100
                             }
                         ] }
                         { ...this.panResponder.panHandlers }>
@@ -176,7 +181,8 @@ class BottomSheet extends PureComponent<Props> {
  */
 function _mapStateToProps(state) {
     return {
-        _styles: ColorSchemeRegistry.get(state, 'BottomSheet')
+        _styles: ColorSchemeRegistry.get(state, 'BottomSheet'),
+        _height: state['features/base/responsive-ui'].clientHeight
     };
 }
 

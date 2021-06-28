@@ -47,7 +47,7 @@ import {
     close as closeParticipantsPane,
     open as openParticipantsPane
 } from '../../../participants-pane/actions';
-import { getParticipantsPaneOpen, shouldRenderInviteButton } from '../../../participants-pane/functions';
+import { getParticipantsPaneOpen } from '../../../participants-pane/functions';
 import {
     LiveStreamButton,
     RecordButton
@@ -244,12 +244,7 @@ type Props = {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function,
-
-    /**
-     * Whether or not to display the invite button in the toolbar menu.
-     */
-    _shouldRenderInviteButton: boolean
+    t: Function
 };
 
 declare var APP: Object;
@@ -1438,7 +1433,6 @@ function _mapStateToProps(state) {
         _participantsPaneOpen: getParticipantsPaneOpen(state),
         _raisedHand: localParticipant.raisedHand,
         _screensharing: (localVideo && localVideo.videoType === 'desktop') || isScreenAudioShared(state),
-        _shouldRenderInviteButton: shouldRenderInviteButton(state),
         _shouldShowButton: buttonName => isToolbarButtonEnabled(buttonName)(state),
         _visible: isToolboxVisible(state),
         _visibleButtons: getToolbarButtons(state)

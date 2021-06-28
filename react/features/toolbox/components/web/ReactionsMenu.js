@@ -57,7 +57,7 @@ type Props = {
 declare var APP: Object;
 
 /**
- * Button used for audio & audio settings.
+ * Implements the reactions menu.
  *
  * @returns {ReactElement}
  */
@@ -107,8 +107,8 @@ class ReactionsMenu extends Component<Props> {
         sendAnalytics(createToolbarEvent(
             'raise.hand',
             { enable: !this.props._raisedHand }));
-        this.props.closeReactionsMenu();
         this._doToggleRaiseHand();
+        this.props.closeReactionsMenu();
     }
 
     /**

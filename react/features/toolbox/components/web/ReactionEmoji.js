@@ -24,7 +24,7 @@ type Props = {
     removeReaction: Function,
 
     /**
-     * Index of the reaction on the queue.
+     * Index of the reaction in the queue.
      */
     index: number
 };
@@ -32,7 +32,7 @@ type Props = {
 type State = {
 
     /**
-     * Number between 0-20. Used for animation order.
+     * Index of CSS animation. Number between 0-20.
      */
     index: number
 }
@@ -54,7 +54,7 @@ class ReactionEmoji extends Component<Props, State> {
         super(props);
 
         this.state = {
-            index: props.index % 21 // index of the CSS animation to use
+            index: props.index % 21
         };
     }
 
