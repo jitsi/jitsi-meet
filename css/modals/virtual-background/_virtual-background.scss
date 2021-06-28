@@ -87,6 +87,11 @@
         font-size: 1.5vw;
     }
     @media (max-width: 432px){
+        grid-template-columns: auto auto auto;
+        font-size: 1.5vw;
+    }
+    @media (max-width: 320px){
+        grid-template-columns: auto auto auto;
         font-size: 1.5vw;
     }
 }

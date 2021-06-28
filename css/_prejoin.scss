@@ -113,6 +113,8 @@
     &-dropdown-btns {
         width: 320px;
         padding: 8px 0;
+
+        @include adjust-for-max-width(320px, 8px);
     }
 
     &-dropdown-btn {
@@ -140,6 +142,8 @@
     }
 
     &-dropdown-container {
+        margin-top: 16px;
+
         & > div:nth-child(2) {
             background: #fff;
             padding: 0;
