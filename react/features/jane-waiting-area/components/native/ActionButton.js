@@ -1,12 +1,13 @@
 // @flow
 import React from 'react';
 import { Text, TouchableOpacity } from 'react-native';
+
 import styles from './styles';
 
 type Props = {
     onPress: Function,
     title: string,
-    disabled: boolean,
+    disabled?: boolean,
 };
 
 export const ActionButton = (props: Props): React$Node => {

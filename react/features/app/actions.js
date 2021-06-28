@@ -25,7 +25,7 @@ import {
     toURLString
 } from '../base/util';
 import { isVpaasMeeting } from '../billing-counter/functions';
-import { enableJaneWaitingArea, isJaneWaitingAreaEnabled } from '../jane-waiting-area-native';
+import { enableJaneWaitingArea, isJaneWaitingAreaEnabled } from '../jane-waiting-area';
 import { clearNotifications, showNotification } from '../notifications';
 import { setFatalError } from '../overlay';
 

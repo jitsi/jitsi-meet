@@ -1,4 +1,4 @@
-import { JaneWeb, ColorPalette, BoxModel } from '../../base/styles';
+import { JaneWeb, ColorPalette, BoxModel } from '../../../base/styles';
 
 export default {
     janeWaitingAreaContainer: {

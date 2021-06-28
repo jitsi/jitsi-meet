@@ -13,7 +13,7 @@ const DEFAULT_STATE = {
 };
 
 ReducerRegistry.register(
-    'features/jane-waiting-area-native', (state = DEFAULT_STATE, action) => {
+    'features/jane-waiting-area', (state = DEFAULT_STATE, action) => {
         switch (action.type) {
         case ENABLE_JANE_WAITING_AREA_PAGE:
             return {

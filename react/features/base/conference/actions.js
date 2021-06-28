@@ -1,7 +1,6 @@
 // @flow
 
 import jwtDecode from 'jwt-decode';
-import { Linking } from 'react-native';
 import type { Dispatch } from 'redux';
 
 import {
@@ -28,7 +27,8 @@ import { getLocalTracks, trackAdded, trackRemoved } from '../tracks';
 import {
     getBackendSafePath,
     getBackendSafeRoomName,
-    getJitsiMeetGlobalNS, sendBeaconToJaneRN
+    getJitsiMeetGlobalNS,
+    sendBeaconToJane
 } from '../util';
 
 import {
@@ -400,30 +400,21 @@ export function conferenceWillLeave(conference: Object) {
     return (dispatch: Function, getState: Function) => {
         const state = getState();
         const { jwt } = state['features/base/jwt'];
-        const startedAt = state['features/base/conference'].start;
+        const { conferenceStartedTime } = getState()['features/base/conference'];
 
-        if (jwt) {
+        if (jwt && conferenceStartedTime) {
             const jwtPayload = jwtDecode(jwt);
-            const url = jwtPayload.context.leave_url || null;
+            const leaveUrl = jwtPayload.context.leave_url || null;
             const surveyUrl = jwtPayload.context.survey_url || null;
             const obj = {
                 jwt,
                 // eslint-disable-next-line camelcase
-                started_at: startedAt
+                started_at: conferenceStartedTime.toISOString()
             };
             const data = new Blob([ JSON.stringify(obj, null, 2) ], { type: 'text/plain; charset=UTF-8' });
 
-            // eslint-disable-next-line no-mixed-operators
-            if (url && surveyUrl) {
-
-                Linking.openURL(surveyUrl).then(() => {
-                    sendBeaconToJaneRN(url, data).then(r => {
-                        console.log(r, 'response');
-                    })
-                     .catch(e => {
-                         console.log(e, 'error');
-                     });
-                });
+            if (leaveUrl && surveyUrl) {
+                sendBeaconToJane(leaveUrl, surveyUrl, data);
             }
         }
 

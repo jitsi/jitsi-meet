@@ -139,7 +139,7 @@ class Toolbox extends PureComponent<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state: Object): Object {
-    const { janeWaitingAreaEnabled } = state['features/jane-waiting-area-native'];
+    const { janeWaitingAreaEnabled } = state['features/jane-waiting-area'];
 
     return {
         _styles: ColorSchemeRegistry.get(state, 'Toolbox'),

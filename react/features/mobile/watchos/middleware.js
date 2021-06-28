@@ -1,6 +1,5 @@
 // @flow
 
-import { Platform } from 'react-native';
 import * as watch from 'react-native-watch-connectivity';
 
 import { appNavigate } from '../../app/actions';

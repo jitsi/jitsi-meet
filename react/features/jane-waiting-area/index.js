@@ -1,6 +1,6 @@
 export * from './actions';
 export * from './functions';
 
-export { default as JaneWaitingArea } from './components/JaneWaitingArea';
+export * from './components';
 
 import './reducer';

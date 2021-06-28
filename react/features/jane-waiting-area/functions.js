@@ -51,7 +51,7 @@ export function updateParticipantReadyStatus(jwt: string, status: string): void 
     });
 }
 
-export function checkLocalParticipantCanJoin(remoteParticipantsStatuses, participantType) {
+export function checkLocalParticipantCanJoin(remoteParticipantsStatuses: any, participantType: string) {
     return remoteParticipantsStatuses && remoteParticipantsStatuses.length > 0 && remoteParticipantsStatuses.some(v => {
         if (participantType === 'StaffMember') {
             return v.info && (v.info.status === 'joined' || v.info.status === 'waiting');
