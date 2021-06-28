@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
-import { IconChatUnread } from '../../../base/icons';
+import { Icon, IconChatUnread } from '../../../base/icons';
 
 import { PollItem } from '.';
 
@@ -30,7 +30,9 @@ const PollsList = () => {
     <>
         {listPolls.length === 0
             ? <div className = 'pane-content'>
-                <IconChatUnread className = 'empty-pane-icon' />
+                <Icon
+                    className = 'empty-pane-icon'
+                    src = { IconChatUnread } />
                 <span className = 'empty-pane-message'>{t('polls.results.empty')}</span>
             </div>
             : listPolls.map((id, index) => (
