@@ -12,9 +12,9 @@ import type { Props as AbstractToolbarButtonProps } from '../AbstractToolbarButt
 type Props = AbstractToolbarButtonProps & {
 
     /**
-     * The text to display in the tooltip.
+     * Optional text to display in the tooltip.
      */
-    tooltip: string,
+    tooltip?: string,
 
     /**
      * From which direction the tooltip should appear, relative to the
@@ -25,7 +25,7 @@ type Props = AbstractToolbarButtonProps & {
     /**
      * Optional label for the button
      */
-    label: string
+    label?: string
 };
 
 /**

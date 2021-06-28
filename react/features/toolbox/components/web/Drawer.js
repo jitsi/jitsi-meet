@@ -18,12 +18,7 @@ type Props = {
     /**
      * Function that hides the drawer.
      */
-    onClose: Function,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
+    onClose: Function
 };
 
 /**

@@ -53,7 +53,7 @@ export function toggleChat() {
  * @param {string} reaction - The reaction to send.
  * @returns {Function}
  */
-export function sendReactionMessage(reaction) {
+export function sendReactionMessage(reaction: string) {
     return (dispatch: Dispatch<any>) => {
         dispatch(sendReaction(reaction));
     };

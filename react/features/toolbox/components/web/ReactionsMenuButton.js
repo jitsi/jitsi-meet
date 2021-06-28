@@ -8,7 +8,7 @@ import { connect } from '../../../base/redux';
 import { sendReactionMessage } from '../../../chat/actions.web';
 import { toggleReactionsMenu } from '../../actions.web';
 import { REACTIONS } from '../../constants';
-import { getReactionsQueue } from '../../functions.any';
+import { getReactionsQueue, type ReactionEmojiProps } from '../../functions.any';
 import { getReactionsMenuVisibility } from '../../functions.web';
 
 import ReactionEmoji from './ReactionEmoji';
@@ -40,7 +40,7 @@ type Props = {
     /**
      * The array of reactions to be displayed.
      */
-    reactionsQueue: Array,
+    reactionsQueue: Array<ReactionEmojiProps>,
 
     /**
      * Sends a reaction message
@@ -65,9 +65,9 @@ class ReactionsMenuButton extends Component<Props> {
      * @returns {void}
      */
     componentDidMount() {
-        const KEYBOARD_SHORTCUTS = Object.entries(REACTIONS).map(([ key, { message } ]) => {
+        const KEYBOARD_SHORTCUTS = Object.keys(REACTIONS).map(key => {
             return {
-                character: message.slice(1, 2).toUpperCase(),
+                character: REACTIONS[key].message.slice(1, 2).toUpperCase(),
                 exec: () => this.props.sendReactionMessage(key),
                 helpDescription: this.props.t(`toolbar.reaction${key.charAt(0).toUpperCase()}${key.slice(1)}`),
                 altKey: true

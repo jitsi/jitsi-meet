@@ -7,7 +7,7 @@ import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
 import { IconHorizontalPoints } from '../../../base/icons';
 import { connect } from '../../../base/redux';
-import { getReactionsQueue } from '../../functions.any';
+import { getReactionsQueue, type ReactionEmojiProps } from '../../functions.any';
 
 import Drawer from './Drawer';
 import DrawerPortal from './DrawerPortal';
@@ -53,7 +53,7 @@ type Props = {
     /**
      * The array of reactions to be displayed.
      */
-    reactionsQueue: Array,
+    reactionsQueue: Array<ReactionEmojiProps>,
 
     /**
      * Whether or not to display the reactions in the mobile menu.

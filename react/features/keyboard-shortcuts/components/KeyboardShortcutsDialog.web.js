@@ -67,7 +67,13 @@ class KeyboardShortcutsDialog extends Component<Props> {
      * @returns {ReactElement}
      */
     _renderShortcutsListItem(keyboardKey, translationKey) {
-        const modifierKey = (window.navigator?.platform?.indexOf('Mac') ?? -1) === -1 ? 'Alt' : '⌥';
+        let modifierKey = 'Alt';
+
+        if (window.navigator?.platform) {
+            if (window.navigator.platform.indexOf('Mac') !== -1) {
+                modifierKey = '⌥';
+            }
+        }
 
         return (
             <li

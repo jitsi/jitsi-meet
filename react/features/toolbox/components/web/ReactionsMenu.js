@@ -75,6 +75,10 @@ class ReactionsMenu extends Component<Props> {
         this._getReactionButtons = this._getReactionButtons.bind(this);
     }
 
+    _onToolbarToggleRaiseHand: () => void;
+
+    _getReactionButtons: () => Array<React$Element<*>>;
+
     /**
      * Implements React Component's componentDidMount.
      *
@@ -97,7 +101,6 @@ class ReactionsMenu extends Component<Props> {
      * Creates an analytics toolbar event and dispatches an action for toggling
      * raise hand.
      *
-     * @private
      * @returns {void}
      */
     _onToolbarToggleRaiseHand() {
@@ -141,7 +144,7 @@ class ReactionsMenu extends Component<Props> {
     _getReactionButtons() {
         const { t, dispatch } = this.props;
 
-        return Object.entries(REACTIONS).map(([ key, { emoji } ]) => {
+        return Object.keys(REACTIONS).map(key => {
             /**
              * Sends reaction message.
              *
@@ -153,7 +156,7 @@ class ReactionsMenu extends Component<Props> {
 
             return (<ReactionButton
                 accessibilityLabel = { t(`toolbar.accessibilityLabel.${key}`) }
-                icon = { emoji }
+                icon = { REACTIONS[key].emoji }
                 key = { key }
                 onClick = { sendMessage }
                 toggled = { false }

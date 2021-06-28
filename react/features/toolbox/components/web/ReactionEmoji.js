@@ -29,13 +29,21 @@ type Props = {
     index: number
 };
 
+type State = {
+
+    /**
+     * Number between 0-20. Used for animation order.
+     */
+    index: number
+}
+
 
 /**
  * Used to display animated reactions.
  *
  * @returns {ReactElement}
  */
-class ReactionEmoji extends Component<Props> {
+class ReactionEmoji extends Component<Props, State> {
     /**
      * Initializes a new {@code ReactionEmoji} instance.
      *

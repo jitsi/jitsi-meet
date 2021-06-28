@@ -176,7 +176,8 @@ MiddlewareRegistry.register(store => next => action => {
         _handleReceivedMessage(store, {
             id: localParticipant.id,
             message: action.message,
-            privateMessage: false
+            privateMessage: false,
+            timestamp: Date.now()
         });
     }
     }

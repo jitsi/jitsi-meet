@@ -1,6 +1,7 @@
 // @flow
 
 import { CLEAR_REACTIONS_MESSAGE, SET_REACTIONS_MESSAGE, SET_REACTION_QUEUE } from './actionTypes';
+import { type ReactionEmojiProps } from './functions.any';
 
 /**
  * Sets the reaction queue.
@@ -8,7 +9,7 @@ import { CLEAR_REACTIONS_MESSAGE, SET_REACTIONS_MESSAGE, SET_REACTION_QUEUE } fr
  * @param {Array} value - The new queue.
  * @returns {Function}
  */
-function setReactionQueue(value: Array) {
+function setReactionQueue(value: Array<ReactionEmojiProps>) {
     return {
         type: SET_REACTION_QUEUE,
         value
@@ -61,7 +62,7 @@ export function pushReaction(store: Object, reaction: string) {
  * @param {number} uid - Id of the reaction to be removed.
  * @returns {void}
  */
-export function removeReaction(uid) {
+export function removeReaction(uid: number) {
     return (dispatch: Function, getState: Function) => {
         const queue = getState()['features/toolbox'].reactions.queue;
 
