@@ -48,6 +48,7 @@ class ShareAudioDialog extends Component<Props> {
         super(props);
 
         this._onContinue = this._onContinue.bind(this);
+        this._onSelectHideShareAudioHelper = this._onSelectHideShareAudioHelper.bind(this);
     }
 
     _onContinue: () => boolean;
@@ -62,6 +63,19 @@ class ShareAudioDialog extends Component<Props> {
         this.props.dispatch(toggleScreensharing(undefined, true));
 
         return true;
+    }
+
+    _onSelectHideShareAudioHelper: (Object) => void;
+
+    /**
+     * Callback invoked when the hide audio helper checkbox has been selected. This setting will be persisted in
+     * the local storage, thus the dialog won't be displayed again.
+     *
+     * @param {Object} e - The key event to handle.
+     * @returns {void}
+     */
+    _onSelectHideShareAudioHelper({ target: { checked } }) {
+        this.props.dispatch(updateSettings({ hideShareAudioHelper: checked }));
     }
 
     /**
@@ -89,10 +103,7 @@ class ShareAudioDialog extends Component<Props> {
                         label = { t('dialog.hideShareAudioHelper') }
                         name = 'hide-share-audio-helper'
                         // eslint-disable-next-line react/jsx-no-bind
-                        onChange = {
-                            ({ target: { checked } }) =>
-                                this.props.dispatch(updateSettings({ hideShareAudioHelper: checked }))
-                        } />
+                        onChange = { this._onSelectHideShareAudioHelper } />
                 </div>
             </Dialog>
         );
