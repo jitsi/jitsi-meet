@@ -216,10 +216,15 @@ a.poll-detail-link, a.poll-change-vote-link {
     height: 100%;
 }
 
-.empty-pane-icon{
-    fill: #3D3D3D;
+.empty-pane-icon {
     width: 50%;
     padding: 24px;
+}
+
+.empty-pane-icon svg {
+    fill: #3D3D3D;
+    width: 100%;
+    height: auto;
 }
 
 .empty-pane-message {
