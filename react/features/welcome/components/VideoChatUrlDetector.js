@@ -1,9 +1,10 @@
 // @flow
 import { Clipboard } from 'react-native';
+import type { Dispatch } from 'redux';
+
+import { appNavigate } from '../../app/actions';
 import { connect } from '../../base/redux';
-import { appNavigate } from '../../app';
 import { toURLString, isJaneVideoChatLink } from '../../base/util';
-import { Dispatch } from 'redux';
 
 /**
  * VideoChatUrlDetector's React {@code Component} prop types.

@@ -9,7 +9,7 @@ import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
 import { AbstractHangupButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
-import { isJaneWaitingAreaEnabled, updateParticipantReadyStatus } from '../../jane-waiting-area-native/functions';
+import { isJaneWaitingAreaEnabled, updateParticipantReadyStatus } from '../../jane-waiting-area/functions';
 
 /**
  * The type of the React {@code Component} props of {@link HangupButton}.
@@ -20,7 +20,7 @@ type Props = AbstractButtonProps & {
      * The redux {@code dispatch} function.
      */
     dispatch: Function,
-    isJaneWaitingAreaEnabled,
+    isJaneWaitingAreaEnabled: boolean,
     appstate: string,
     jwt: string
 };
@@ -84,10 +84,11 @@ class HangupButton extends AbstractHangupButton<Props, *> {
  */
 function mapStateToProps(state): Object {
     const appstate = state['features/background'];
+    const { jwt } = state['features/base/jwt'];
 
     return {
         appstate,
-        jwt: state['features/base/jwt'],
+        jwt,
         isJaneWaitingAreaEnabled: isJaneWaitingAreaEnabled(state)
     };
 }

@@ -1,15 +1,14 @@
 // @flow
 
 import React, { Component } from 'react';
-import { SafeAreaView, Text, View } from 'react-native';
+import { SafeAreaView, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 import { getConferenceName } from '../../../base/conference';
 import { connect } from '../../../base/redux';
 import { PictureInPictureButton } from '../../../mobile/picture-in-picture';
-import { isToolboxVisible } from '../../../toolbox';
+import { isToolboxVisible } from '../../../toolbox/functions.native';
 
-import ConferenceTimer from '../ConferenceTimer';
 import styles, { NAVBAR_GRADIENT_COLORS } from './styles';
 
 type Props = {

@@ -5,6 +5,7 @@ import { Clipboard, NativeModules, SafeAreaView, StatusBar } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient';
 
 import { appNavigate } from '../../../app/actions';
+import { isJaneTestCall } from '../../../base/conference/functions';
 import { PIP_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { getLocalParticipantFromJwt, getLocalParticipantType } from '../../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../../base/react';
@@ -22,9 +23,8 @@ import {
     TileView
 } from '../../../filmstrip';
 import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
-import JaneWaitingArea from '../../../jane-waiting-area-native/components/JaneWaitingArea.native';
+import JaneWaitingArea from '../../../jane-waiting-area/components/native/JaneWaitingArea';
 import { LargeVideo } from '../../../large-video';
-import { KnockingParticipantList } from '../../../lobby';
 import { BackButtonRegistry } from '../../../mobile/back-button';
 import { Captions } from '../../../subtitles';
 import { setToolboxVisible } from '../../../toolbox/actions';
@@ -96,7 +96,8 @@ type Props = AbstractProps & {
      * The redux {@code dispatch} function.
      */
     dispatch: Function,
-    janeWaitingAreaEnabled: boolean
+    _janeWaitingAreaEnabled: boolean,
+    _isJaneTestCall: boolean
 };
 
 /**
@@ -256,7 +257,8 @@ class Conference extends AbstractConference<Props, *> {
             _reducedUI,
             _shouldDisplayTileView,
             _toolboxVisible,
-            _janeWaitingAreaEnabled
+            _janeWaitingAreaEnabled,
+            _isJaneTestCall
         } = this.props;
         const showGradient = _toolboxVisible;
         const applyGradientStretching
@@ -322,8 +324,7 @@ class Conference extends AbstractConference<Props, *> {
 
                     {/* <LonelyMeetingExperience />*/}
 
-                    {_janeWaitingAreaEnabled && <JaneWaitingArea />}
-
+                    {!_isJaneTestCall && _janeWaitingAreaEnabled && <JaneWaitingArea />}
                     {/*
                       * The Toolbox is in a stacking layer below the Filmstrip.
                       */}
@@ -346,12 +347,11 @@ class Conference extends AbstractConference<Props, *> {
                     style = { styles.navBarSafeView }>
                     <NavigationBar />
                     { this._renderNotificationsContainer() }
-                    <KnockingParticipantList />
+                    {/* <KnockingParticipantList />*/}
                 </SafeAreaView>
 
                 <TestConnectionInfo />
                 { this._renderConferenceNotification() }
-
                 { this._renderConferenceModals() }
             </>
         );
@@ -446,7 +446,7 @@ function _mapStateToProps(state) {
     const { aspectRatio, reducedUI } = state['features/base/responsive-ui'];
     const {
         janeWaitingAreaEnabled
-    } = state['features/jane-waiting-area-native'];
+    } = state['features/jane-waiting-area'];
 
     // XXX There is a window of time between the successful establishment of the
     // XMPP connection and the subsequent commencement of joining the MUC during
@@ -481,7 +481,8 @@ function _mapStateToProps(state) {
         _janeWaitingAreaEnabled: janeWaitingAreaEnabled,
         _jwt: jwt,
         _participantType: getLocalParticipantType(state),
-        _participant: getLocalParticipantFromJwt(state)
+        _participant: getLocalParticipantFromJwt(state),
+        _isJaneTestCall: isJaneTestCall(state)
     };
 }
 
