@@ -9,9 +9,9 @@ import {
     getAvailableDevices,
     getDeviceIdByLabel,
     groupDevicesByKind,
-    setAudioInputDevice,
+    setAudioInputDeviceAndUpdateSettings,
     setAudioOutputDeviceId,
-    setVideoInputDevice
+    setVideoInputDeviceAndUpdateSettings
 } from '../base/devices';
 import { isIosMobileBrowser } from '../base/environment/utils';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
@@ -190,14 +190,14 @@ export function processExternalDeviceRequest( // eslint-disable-line max-params
         if (deviceId) {
             switch (device.kind) {
             case 'audioinput': {
-                dispatch(setAudioInputDevice(deviceId));
+                dispatch(setAudioInputDeviceAndUpdateSettings(deviceId));
                 break;
             }
             case 'audiooutput':
                 setAudioOutputDeviceId(deviceId, dispatch);
                 break;
             case 'videoinput':
-                dispatch(setVideoInputDevice(deviceId));
+                dispatch(setVideoInputDeviceAndUpdateSettings(deviceId));
                 break;
             default:
                 result = false;
