@@ -69,21 +69,16 @@
             "title": "Enter a nickname to use chat"
         },
         "privateNotice": "Private message to {{recipient}}",
-<<<<<<< HEAD
-        "title": "Chat",
-        "you": "you",
         "message": "Message",
         "messageAccessibleTitle": "{{user}} says:",
         "messageAccessibleTitleMe": "me says:",
-        "smileysPanel": "Emoji panel"
-=======
+        "smileysPanel": "Emoji panel",
         "tabs": {
             "chat": "Chat",
             "polls": "Polls"
         },
         "title": "Chat and Polls",
         "you": "you"
->>>>>>> 890b78b24 (Move polls to tab (#23))
     },
     "chromeExtensionBanner": {
         "installExtensionText": "Install the extension for Google Calendar and Office 365 integration",
