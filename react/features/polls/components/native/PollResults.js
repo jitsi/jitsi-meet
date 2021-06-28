@@ -19,6 +19,7 @@ const PollResults = (props: AbstractProps) => {
     const {
         answers,
         changeVote,
+        haveVoted,
         showDetails,
         question,
         t,
@@ -102,7 +103,7 @@ const PollResults = (props: AbstractProps) => {
                 <TouchableOpacity onPress = { changeVote }>
                     <Text
                         style = { chatStyles.toggleText }>
-                        {showDetails ? t('polls.results.changeVote') : t('polls.results.vote')}
+                        {haveVoted ? t('polls.results.changeVote') : t('polls.results.vote')}
                     </Text>
                 </TouchableOpacity>
             </View>
