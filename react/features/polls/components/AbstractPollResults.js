@@ -32,7 +32,7 @@ export type AnswerInfo = {
  */
 export type AbstractProps = {
     answers: Array<AnswerInfo>,
-    changeVote: void => void,
+    changeVote: Function,
     showDetails: boolean,
     question: string,
     t: Function,

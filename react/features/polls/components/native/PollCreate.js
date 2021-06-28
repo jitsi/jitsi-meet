@@ -69,19 +69,12 @@ const PollCreate = (props: AbstractProps) => {
         answerInputs.current[0].focus();
     });
 
-    const onAnswerSubmit = useCallback((index: number) => {
-        addAnswer(index + 1);
-        requestFocus(index + 1);
-    }, [ answers ]);
-
     // Called on keypress in answer fields
     const onAnswerKeyDown = useCallback((index: number, ev) => {
         const { key } = ev.nativeEvent;
         const currentText = answers[index];
 
-        if (key === 'Enter') {
-            onAnswerSubmit(index);
-        } else if (key === 'Backspace' && currentText === '' && answers.length > 1) {
+        if (key === 'Backspace' && currentText === '' && answers.length > 1) {
             removeAnswer(index);
             requestFocus(index > 0 ? index - 1 : 0);
         }
@@ -110,17 +103,16 @@ const PollCreate = (props: AbstractProps) => {
                 style = { dialogStyles.optionContainer }>
                 <TextInput
                     blurOnSubmit = { false }
+                    multiline = { true }
                     onChangeText = { text => setAnswer(index, text) }
                     onKeyPress = { ev => onAnswerKeyDown(index, ev) }
-                    onSubmitEditing = { () => onAnswerSubmit(index) }
                     placeholder = { t('polls.create.answerPlaceholder', { index: index + 1 }) }
                     ref = { input => registerFieldRef(index, input) }
                     style = { dialogStyles.field }
                     value = { answers[index] } />
 
-                {answers.length > 1
-                    ? createIconButton(IconClose, () => removeAnswer(index))
-                    : null
+                {answers.length > 2
+                    && createIconButton(IconClose, () => removeAnswer(index))
                 }
             </View>
         );
@@ -131,6 +123,7 @@ const PollCreate = (props: AbstractProps) => {
                 <TextInput
                     autoFocus = { true }
                     blurOnSubmit = { false }
+                    multiline = { true }
                     onChangeText = { setQuestion }
                     onSubmitEditing = { onQuestionKeyDown }
                     placeholder = { t('polls.create.questionPlaceholder') }

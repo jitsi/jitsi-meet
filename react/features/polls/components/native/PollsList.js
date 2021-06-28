@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from '@atlaskit/checkbox';
 import { useTranslation } from 'react-i18next';
 import { FlatList } from 'react-native';
 import { Text } from 'react-native-paper';
@@ -36,17 +36,16 @@ const PollsList = () => {
     return (
     <>
         {listPolls.length === 0
-            ? <Text style = { chatStyles.noPollText } >
+            && <Text style = { chatStyles.noPollText } >
                 {t('polls.results.empty')}
-            </Text>
-            : <FlatList
-                data = { listPolls }
-                extraData = { listPolls }
-                // eslint-disable-next-line react/jsx-no-bind
-                keyExtractor = { (item, index) => index.toString() }
-                ref = { flatlistRef }
-                renderItem = { renderItem } />
-        }
+            </Text>}
+        <FlatList
+            data = { listPolls }
+            extraData = { listPolls }
+            // eslint-disable-next-line react/jsx-no-bind
+            keyExtractor = { (item, index) => index.toString() }
+            ref = { flatlistRef }
+            renderItem = { renderItem } />
     </>
     );
 };

@@ -4,8 +4,8 @@ import React from 'react';
 
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-import { toggleChat } from '../../actions.web';
 import { PollsPane } from '../../../polls/components';
+import { toggleChat } from '../../actions.web';
 import AbstractChat, {
     _mapStateToProps,
     type Props
@@ -273,6 +273,7 @@ class Chat extends AbstractChat<Props> {
         this.props.dispatch(toggleChat());
     }
     _onTogglePollsTab: () => void;
+    _onToggleChatTab: () => void;
 
 }
 
