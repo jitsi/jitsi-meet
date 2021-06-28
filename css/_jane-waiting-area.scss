@@ -5,98 +5,89 @@
         position: absolute;
         width: 100%;
         height: 100%;
-        z-index: 1;
 
         .watermark {
             position: absolute;
         }
     }
 
-    &-info-area-container {
-        position: absolute;
-        bottom: 48px;
-        width: 100%;
-        z-index: 2;
-    }
-
-    &-info-area {
+    &-modal {
         margin: 0 auto;
         text-align: center;
-        width: 480px;
+        width: 305px;
         border: solid 1px $waitingAreaInfoBoxBorder;
         border-radius: 2px;
         background: $waitingAreaInfoBoxBackground;
-        @media all and (max-width: 480px) {
-            width: 300px;
-        }
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        z-index: 1;
     }
 
-    &-info {
+    &-modal-dialog {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
     }
 
-    &-info-logo-wrapper {
-        padding: 20px 10px;
+    &-modal-logo-wrapper {
+        padding: 40px 14px;
+        text-align: left;
     }
 
-    &-info-logo {
+    &-modal-logo {
         background-image: url($defaultWatermarkLink);
         background-position: center;
-        width: 90px;
-        height: 60px;
+        width: 88px;
+        height: 70px;
         background-size: contain;
         background-repeat: no-repeat;
         z-index: $zindex2;
     }
 
-    &-info-patient-waiting {
+    &-modal-patient-waiting-badge {
         background: #5cb85c;
         border-radius: 10px;
-        font-size: 10px;
+        font-size: 12px;
         color: $defaultColor;
-        max-width: 83px;
-        margin-top: 10px;
-        width: 85px;
+        margin-top: 20px;
+        margin-bottom: -20px;
+        line-height: 20px;
+        width: 103px;
         display: inline-block;
+        text-align: center;
     }
 
-    &-info-text-wrapper {
+    &-modal-text-wrapper {
         display: flex;
         flex-direction: column;
-        padding: 22px 20px 25px 0px;
+        padding: 0px 14px;
     }
 
-    &-info-title {
-        font-size: 18px;
+    &-modal-title {
+        font-size: 25px;
         text-align: left;
         color: $waitingAreaInfoTitleColor;
-        @media all and (max-width: 480px) {
-            font-size: 14px;
-        }
+        font-weight: 600;
+        line-height: 25px;
     }
 
-    &-info-title-msg {
-        font-size: 14px;
+    &-modal-title-msg {
+        font-size: 20px;
         text-align: left;
         color: $waitingAreaInfoMsgColor;
-        margin-top: 15px;
-        @media all and (max-width: 480px) {
-            font-size: 10px;
-        }
+        margin-top: 40px;
+        line-height: 25px;
+        font-family: ProximaNovaLtReg !important;
     }
 
-    &-info-detail {
-        font-size: 14px;
+    &-modal-detail {
+        font-size: 20px;
         text-align: left;
-        margin-top: 15px;
+        margin-top: 40px;
+        line-height: 22px;
         color: $waitingAreaInfoDetailColor;
-        font-family: ProximaNovaLtBold !important;
-        @media all and (max-width: 480px) {
-            font-size: 10px;
-            margin-top: 10px;
-
-        }
+        font-weight: 600;
     }
 
     &-btn {
@@ -104,14 +95,13 @@
         color: $defaultColor;
         cursor: pointer;
         display: inline-block;
-        font-size: 12px;
-        line-height: 22px;
-        padding: 5px 9px;
+        line-height: 34px;
+        font-size: 14px;
+        padding: 0px 24px;
         position: relative;
         text-align: center;
         min-width: 100px;
-        margin-top: 16px;
-
+        margin-top: 28px;
         &--primary {
             background: $janeBlue;
         }
@@ -175,32 +165,66 @@
         justify-content: space-between;
     }
 
-    &-input-label {
-        color: #A4B8D1;
-        font-size: 13px;
-        line-height: 20px;
-        margin-top: 32px 0 8px 0;
-        text-align: center;
-        width: 100%;
-    }
+    @media all and (max-width: 768px) {
+        &-modal {
+            width: 300px;
+            position: absolute;
+            height: auto;
+            bottom: 120px;
+            left: 0;
+            right: 0;
+            top: unset;
+        }
 
-    &-checkbox {
-        border: 0;
-        height: 16px;
-        margin-right: 8px;
-        padding: 0;
-        width: 16px;
-    }
+        &-modal-dialog {
+            flex-direction: row;
+        }
 
-    &-checkbox-container {
-        align-items: center;
-        color: #fff;
-        display: none;
-        font-size: 13px;
-        justify-content: center;
-        line-height: 20px;
-        margin-top: 16px;
-        width: 100%;
+        &-modal-logo-wrapper {
+            padding: 20px 10px;
+        }
+
+        &-modal-logo {
+            width: 90px;
+            height: 60px;
+        }
+
+        &-modal-patient-waiting-badge {
+            font-size: 10px;
+            margin-top: 10px;
+            line-height: 15px;
+            margin-bottom: 0px;
+            width: 85px;
+        }
+
+        &-modal-text-wrapper {
+            padding: 22px 20px 25px 0;
+        }
+
+        &-modal-title {
+            font-size: 14px;
+            line-height: 20px;
+        }
+
+        &-modal-title-msg {
+            font-size: 10px;
+            line-height: 12px;
+            margin-top: 15px;
+        }
+
+        &-modal-detail {
+            font-size: 10px;
+            line-height: 12px;
+            margin-top: 15px;
+        }
+
+        &-btn {
+            padding: 0px 9px;
+            margin-top: 16px;
+            min-width: 100px;
+            font-size: 12px;
+            line-height: 24px;
+        }
     }
 }
 
@@ -274,7 +298,9 @@
         justify-content: center;
         margin-top: 32px;
         width: 100%;
-
+        position: absolute;
+        bottom: 48px;
+        z-index: 2;
         & > div {
             margin: 0 12px;
         }
@@ -345,98 +371,14 @@
         margin: 0 8px;
     }
 
-    &-dropdown-btns {
-        width: 320px;
-        padding: 8px 0;
-    }
-
-    &-dropdown-btn {
-        align-items: center;
-        color: #1C2025;
-        cursor: pointer;
-        display: flex;
-        height: 40px;
-        font-size: 15px;
-        line-height: 24px;
-        padding: 0 16px;
-
-        &:hover {
-            background-color: #DAEBFA;
-        }
-    }
-
-    &-dropdown-icon {
-        display: inline-block;
-        margin-right: 16px;
-
-        & > svg {
-            fill: #1C2025;
-        }
-    }
-
     &-join-btn-container {
-        min-height: 64px;
-        border-top: solid 1px #ccc;
-    }
-
-}
-
-.jane-waiting-area-copy {
-    &-meeting {
-        cursor: pointer;
-        color: #fff;
-        font-size: 15px;
-        font-weight: 300;
-        line-height: 24px;
-        position: relative;
-    }
-
-    &-url {
-        max-width: 278px;
-        padding: 8px 10px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    &-badge {
-        border-radius: 4px;
-        height: 100%;
-        line-height: 38px;
-        position: absolute;
-        padding-left: 10px;
         text-align: left;
-        top: 0;
-        width: 100%;
-
-        &--hover {
-            background: #1C2025;
+        padding-left: 14px;
+        @media all and (max-width: 768px) {
+            min-height: 64px;
+            border-top: solid 1px #ccc;
+            text-align: center;
+            padding-left: 0;
         }
-
-        &--done {
-            background: #31B76A;
-        }
-    }
-
-    &-icon {
-        position: absolute;
-        right: 8px;
-        top: 8px;
-
-        &--white {
-            & > svg > path {
-                fill: #fff
-            }
-        }
-
-        &--light {
-            & > svg > path {
-                fill: #D1DBE8;
-            }
-        }
-    }
-
-    &-textarea {
-        position: absolute;
-        left: -9999px;
     }
 }
