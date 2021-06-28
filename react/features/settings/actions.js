@@ -5,6 +5,7 @@ import { openDialog } from '../base/dialog';
 import { i18next } from '../base/i18n';
 import { updateSettings } from '../base/settings';
 import { setPrejoinPageVisibility } from '../prejoin/actions';
+import { setScreenshareFramerate } from '../screen-share/actions';
 
 import {
     SET_AUDIO_SETTINGS_VISIBILITY,
@@ -98,6 +99,12 @@ export function submitMoreTab(newState: Object): Function {
 
         if (newState.currentLanguage !== currentState.currentLanguage) {
             i18next.changeLanguage(newState.currentLanguage);
+        }
+
+        if (newState.currentFramerate !== currentState.currentFramerate) {
+            const frameRate = parseInt(newState.currentFramerate, 10);
+
+            dispatch(setScreenshareFramerate(frameRate));
         }
     };
 }

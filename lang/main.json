@@ -719,8 +719,12 @@
             "signedIn": "Currently accessing calendar events for {{email}}. Click the Disconnect button below to stop accessing calendar events.",
             "title": "Calendar"
         },
+        "desktopShareFramerate": "Desktop sharing frame rate",
+        "desktopShareWarning": "You need to restart the screen share for the new settings to take effect.",
+        "desktopShareHighFpsWarning": "A higher frame rate for desktop sharing might affect your bandwidth. You need to restart the screen share for the new settings to take effect.",
         "devices": "Devices",
         "followMe": "Everyone follows me",
+        "framesPerSecond": "frames-per-second",
         "language": "Language",
         "loggedIn": "Logged in as {{name}}",
         "microphones": "Microphones",
