@@ -15,7 +15,7 @@ import HangupButton from '../HangupButton';
 import VideoMuteButton from '../VideoMuteButton';
 
 import OverflowMenuButton from './OverflowMenuButton';
-import RaiseHandButton from './RaiseHandButton';
+import ReactionsMenuButton from './ReactionsMenuButton';
 import ToggleCameraButton from './ToggleCameraButton';
 import styles from './styles';
 
@@ -87,9 +87,9 @@ function Toolbox(props: Props) {
                           toggledStyles = { backgroundToggledStyle } />}
 
                 { additionalButtons.has('raisehand')
-                      && <RaiseHandButton
-                          styles = { buttonStylesBorderless }
-                          toggledStyles = { backgroundToggledStyle } />}
+                    && <ReactionsMenuButton
+                        styles = { buttonStylesBorderless }
+                        toggledStyles = { backgroundToggledStyle } />}
                 {additionalButtons.has('tileview') && <TileViewButton styles = { buttonStylesBorderless } />}
                 {additionalButtons.has('invite') && <InviteButton styles = { buttonStylesBorderless } />}
                 {additionalButtons.has('togglecamera')
