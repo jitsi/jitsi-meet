@@ -5,9 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { Button } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 
-import { setKnockingParticipantApproval } from '../../../lobby/actions.native';
+import { approveKnockingParticipant } from '../../../lobby/actions.native';
 import { showContextMenuReject } from '../../actions.native';
-import { MediaState } from '../../constants';
+import { MEDIA_STATE } from '../../constants';
 
 import ParticipantItem from './ParticipantItem';
 import styles from './styles';
@@ -22,18 +22,18 @@ type Props = {
 
 export const LobbyParticipantItem = ({ participant: p }: Props) => {
     const dispatch = useDispatch();
-    const admit = useCallback(() => dispatch(setKnockingParticipantApproval(p.id, true), [ dispatch ]));
+    const admit = useCallback(() => dispatch(approveKnockingParticipant(p.id), [ dispatch ]));
     const openContextMenuReject = useCallback(() => dispatch(showContextMenuReject(p), [ dispatch ]));
     const { t } = useTranslation();
 
     return (
         <ParticipantItem
-            audioMuteState = { MediaState.Muted }
+            audioMediaState = { MEDIA_STATE.NONE }
             isKnockingParticipant = { true }
             name = { p.name }
             onPress = { openContextMenuReject }
             participant = { p }
-            videoMuteState = { MediaState.ForceMuted }>
+            videoMediaState = { MEDIA_STATE.NONE }>
             <Button
                 children = { t('lobby.admit') }
                 contentStyle = { styles.participantActionsButtonContent }

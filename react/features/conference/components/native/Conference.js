@@ -75,7 +75,7 @@ type Props = AbstractProps & {
     /**
      * The indicator which determines if the participants pane is open.
      */
-    _isOpen: boolean,
+    _isParticipantsPaneOpen: boolean,
 
     /**
      * The ID of the participant currently on stage (if any)
@@ -243,7 +243,7 @@ class Conference extends AbstractConference<Props, *> {
     _renderContent() {
         const {
             _connecting,
-            _isOpen,
+            _isParticipantsPaneOpen,
             _largeVideoParticipantId,
             _reducedUI,
             _shouldDisplayTileView
@@ -309,7 +309,7 @@ class Conference extends AbstractConference<Props, *> {
 
                 {_shouldDisplayTileView && <Toolbox />}
 
-                { _isOpen && <ParticipantsPane /> }
+                { _isParticipantsPaneOpen && <ParticipantsPane /> }
 
             </>
         );
@@ -423,7 +423,7 @@ function _mapStateToProps(state) {
         _connecting: Boolean(connecting_),
         _filmstripVisible: isFilmstripVisible(state),
         _fullscreenEnabled: getFeatureFlag(state, FULLSCREEN_ENABLED, true),
-        _isOpen: isOpen,
+        _isParticipantsPaneOpen: isOpen,
         _largeVideoParticipantId: state['features/large-video'].participantId,
         _pictureInPictureEnabled: getFeatureFlag(state, PIP_ENABLED),
         _reducedUI: reducedUI,

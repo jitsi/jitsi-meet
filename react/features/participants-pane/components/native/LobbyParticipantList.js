@@ -6,8 +6,8 @@ import { Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { admitMultiple } from '../../../lobby/actions.native';
 import { getLobbyState } from '../../../lobby/functions';
-import { admitAllKnockingParticipants } from '../../../video-menu/actions.any';
 
 import { LobbyParticipantItem } from './LobbyParticipantItem';
 import styles from './styles';
@@ -20,7 +20,7 @@ export const LobbyParticipantList = () => {
 
     const dispatch = useDispatch();
     const admitAll = useCallback(() =>
-        dispatch(admitAllKnockingParticipants(participants, lobbyEnabled)),
+        dispatch(admitMultiple(participants)),
         [ dispatch ]);
     const { t } = useTranslation();
 

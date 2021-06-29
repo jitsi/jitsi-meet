@@ -4,7 +4,7 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TouchableOpacity } from 'react-native';
 import { Text } from 'react-native-paper';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { openDialog, hideDialog } from '../../../base/dialog/actions';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
@@ -12,26 +12,22 @@ import {
     Icon, IconMicDisabledHollow,
     IconVideoOff
 } from '../../../base/icons';
-import { MEDIA_TYPE } from '../../../base/media';
+import { getLocalParticipant } from '../../../base/participants';
 import { BlockAudioVideoDialog } from '../../../video-menu';
-import {
-    muteAllParticipants
-} from '../../../video-menu/actions.any';
+import MuteEveryonesVideoDialog
+    from '../../../video-menu/components/native/MuteEveryonesVideoDialog';
 
 import styles from './styles';
-type Props = {
 
-    /**
-     * Array of participant IDs to not mute
-     */
-    exclude: Array<string>
-};
-
-export const ContextMenuMore = ({ exclude }: Props) => {
+export const ContextMenuMore = () => {
     const dispatch = useDispatch();
     const blockAudioVideo = useCallback(() => dispatch(openDialog(BlockAudioVideoDialog)), [ dispatch ]);
     const cancel = useCallback(() => dispatch(hideDialog()), [ dispatch ]);
-    const muteEveryoneVideo = useCallback(() => dispatch(muteAllParticipants(exclude, MEDIA_TYPE.VIDEO)), [ dispatch ]);
+    const { id } = useSelector(getLocalParticipant);
+    const muteAllVideo = useCallback(() =>
+        dispatch(openDialog(MuteEveryonesVideoDialog,
+            { exclude: [ id ] })),
+        [ dispatch ]);
     const { t } = useTranslation();
 
     return (
@@ -39,7 +35,7 @@ export const ContextMenuMore = ({ exclude }: Props) => {
             onCancel = { cancel }
             style = { styles.contextMenuMore }>
             <TouchableOpacity
-                onPress = { muteEveryoneVideo }
+                onPress = { muteAllVideo }
                 style = { styles.contextMenuItem }>
                 <Icon
                     size = { 20 }

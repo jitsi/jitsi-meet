@@ -24,7 +24,6 @@ import {
     muteRemoteParticipant
 } from '../base/participants';
 import { getIsParticipantAudioMuted } from '../base/tracks';
-import { setKnockingParticipantApproval } from '../lobby/actions';
 
 declare var APP: Object;
 
@@ -106,24 +105,6 @@ export function muteAllParticipants(exclude: Array<string>, mediaType: MEDIA_TYP
 
             dispatch(muteRemote(id, mediaType));
         });
-    };
-}
-
-/**
- * Admit all knocking participants.
- *
- * @param {Array<Object>} knockingParticipants - Array of participants waiting in lobby.
- * @param {boolean} lobbyEnabled - Is lobby mode enabled.
- *
- * @returns {Function}
- */
-export function admitAllKnockingParticipants(knockingParticipants: Array<Object>, lobbyEnabled: boolean) {
-    return (dispatch: Dispatch<any>) => {
-        const knockingParticipantsIds = knockingParticipants.map(participant => participant.id);
-
-        knockingParticipantsIds
-            .map(id => lobbyEnabled && setKnockingParticipantApproval(id, true))
-            .map(dispatch);
     };
 }
 
