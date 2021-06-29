@@ -166,12 +166,12 @@ class Filmstrip extends Component<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
-    const participants = state['features/base/participants'];
+    const { remote } = state['features/base/participants'];
     const { enabled } = state['features/filmstrip'];
 
     return {
         _aspectRatio: state['features/base/responsive-ui'].aspectRatio,
-        _participants: participants.filter(p => !p.local),
+        _participants: [ ...remote.values() ],
         _visible: enabled && isFilmstripVisible(state)
     };
 }

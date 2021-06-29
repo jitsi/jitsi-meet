@@ -82,7 +82,7 @@ function ConferenceInfo(props: Props) {
                         </div>
                 }
                 { _showParticipantCount && <ParticipantsCount /> }
-                <E2EELabel />
+                {/* <E2EELabel /> */}
                 <RecordingLabel mode = { JitsiRecordingConstants.mode.FILE } />
                 <RecordingLabel mode = { JitsiRecordingConstants.mode.STREAM } />
                 <LocalRecordingLabel />

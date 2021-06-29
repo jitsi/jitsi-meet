@@ -1,5 +1,6 @@
 // @flow
 
+import { getParticipantCountWithFake } from '../base/participants';
 import { StateListenerRegistry, equals } from '../base/redux';
 import { clientResized } from '../base/responsive-ui';
 import { setFilmstripVisible } from '../filmstrip/actions';
@@ -19,7 +20,7 @@ import {
  * Listens for changes in the number of participants to calculate the dimensions of the tile view grid and the tiles.
  */
 StateListenerRegistry.register(
-    /* selector */ state => state['features/base/participants'].length,
+    /* selector */ state => getParticipantCountWithFake(state),
     /* listener */ (numberOfParticipants, store) => {
         const state = store.getState();
 
