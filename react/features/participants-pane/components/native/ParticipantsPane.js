@@ -10,6 +10,7 @@ import { openDialog } from '../../../base/dialog';
 import { Icon, IconClose, IconHorizontalPoints } from '../../../base/icons';
 import { JitsiModal } from '../../../base/modal';
 import {
+    getParticipantCount, isEveryoneModerator,
     isLocalParticipantModerator
 } from '../../../base/participants';
 import MuteEveryoneDialog
@@ -19,7 +20,7 @@ import { close } from '../../actions.native';
 import { ContextMenuMore } from './ContextMenuMore';
 import { LobbyParticipantList } from './LobbyParticipantList';
 import { MeetingParticipantList } from './MeetingParticipantList';
-import styles from './styles';
+import styles, { button } from './styles';
 
 /**
  * Participant pane.
@@ -31,6 +32,9 @@ const ParticipantsPane = () => {
     const openMoreMenu = useCallback(() => dispatch(openDialog(ContextMenuMore)), [ dispatch ]);
     const closePane = useCallback(() => dispatch(close()), [ dispatch ]);
     const isLocalModerator = useSelector(isLocalParticipantModerator);
+    const participantsCount = useSelector(getParticipantCount);
+    const everyoneModerator = useSelector(isEveryoneModerator);
+    const showContextMenu = !everyoneModerator && participantsCount > 2;
     const muteAll = useCallback(() => dispatch(openDialog(MuteEveryoneDialog)),
         [ dispatch ]);
     const { t } = useTranslation();
@@ -65,18 +69,21 @@ const ParticipantsPane = () => {
                         labelStyle = { styles.muteAllLabel }
                         mode = 'contained'
                         onPress = { muteAll }
-                        style = { styles.muteAllButton } />
-                    <Button
-                        contentStyle = { styles.moreIcon }
-                        /* eslint-disable-next-line react/jsx-no-bind */
-                        icon = { () =>
-                            (<Icon
-                                size = { 24 }
-                                src = { IconHorizontalPoints } />)
-                        }
-                        mode = 'contained'
-                        onPress = { openMoreMenu }
-                        style = { styles.moreButton } />
+                        style = { showContextMenu ? styles.muteAllButton : button } />
+                    {
+                        showContextMenu
+                        && <Button
+                            contentStyle = { styles.moreIcon }
+                            /* eslint-disable-next-line react/jsx-no-bind */
+                            icon = { () =>
+                                (<Icon
+                                    size = { 24 }
+                                    src = { IconHorizontalPoints } />)
+                            }
+                            mode = 'contained'
+                            onPress = { openMoreMenu }
+                            style = { styles.moreButton } />
+                    }
                 </View>
             }
         </JitsiModal>

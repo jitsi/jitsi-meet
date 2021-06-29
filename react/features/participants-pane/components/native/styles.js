@@ -25,7 +25,7 @@ const flexContent = {
 /**
  * The style of the participants pane buttons.
  */
-const button = {
+export const button = {
     alignItems: 'center',
     backgroundColor: BaseTheme.palette.action02,
     borderRadius: BaseTheme.shape.borderRadius,

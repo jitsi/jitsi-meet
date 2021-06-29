@@ -4,9 +4,10 @@ import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TouchableOpacity, View } from 'react-native';
 import { Divider, Text } from 'react-native-paper';
-import { useDispatch, useSelector, useStore } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Avatar } from '../../../base/avatar';
+import { getIsStartingSilent } from '../../../base/config';
 import { hideDialog, openDialog } from '../../../base/dialog/actions';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import {
@@ -37,14 +38,14 @@ type Props = {
 
 export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) => {
     const [ volume, setVolume ] = useState(undefined);
-    const store = useStore();
-    const startSilent = store.getState['features/base/config'];
     const dispatch = useDispatch();
     const cancel = useCallback(() => dispatch(hideDialog()), [ dispatch ]);
-    const changeVolume = useCallback(() => setVolume(volume), [ volume ]);
+    const changeVolume = useCallback(() => setVolume(volume), [ setVolume, volume ]);
     const displayName = p.name;
     const isLocalModerator = useSelector(isLocalParticipantModerator);
     const isParticipantVideoMuted = useSelector(getIsParticipantVideoMuted(p));
+    const isStartingSilent = useSelector(getIsStartingSilent);
+
     const kickRemoteParticipant = useCallback(() => {
         dispatch(openDialog(KickRemoteParticipantDialog, {
             participantID: p.id
@@ -65,7 +66,7 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
             participantID: p.id
         }));
     }, [ dispatch, p ]);
-    const onVolumeChange = startSilent ? undefined : changeVolume;
+    const onVolumeChange = isStartingSilent ? undefined : changeVolume;
     const sendPrivateMessage = useCallback(() => {
         dispatch(hideDialog());
         dispatch(openChat(p));

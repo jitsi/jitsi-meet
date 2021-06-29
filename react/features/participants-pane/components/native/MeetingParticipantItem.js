@@ -9,6 +9,7 @@ import {
 } from '../../../base/tracks';
 import { showContextMenuDetails } from '../../actions.native';
 import { MEDIA_STATE } from '../../constants';
+import { getParticipantAudioMediaState } from '../../functions';
 
 import ParticipantItem from './ParticipantItem';
 
@@ -25,15 +26,17 @@ export const MeetingParticipantItem = ({ participant: p }: Props) => {
     const dispatch = useDispatch();
     const isAudioMuted = useSelector(getIsParticipantAudioMuted(p));
     const isVideoMuted = useSelector(getIsParticipantVideoMuted(p));
+    const audioMediaState = useSelector(getParticipantAudioMediaState(p, isAudioMuted));
     const openContextMenuDetails = useCallback(() => !p.local && dispatch(showContextMenuDetails(p), [ dispatch ]));
 
     return (
         <ParticipantItem
-            audioMuteState = { isAudioMuted ? MEDIA_STATE.MUTED : MEDIA_STATE.UNMUTED }
+            audioMediaState = { audioMediaState }
             isKnockingParticipant = { false }
             name = { p.name }
             onPress = { openContextMenuDetails }
             participant = { p }
-            videoMuteState = { isVideoMuted ? MEDIA_STATE.Muted : MEDIA_STATE.Unmuted } />
+            videoMediaState = { isVideoMuted ? MEDIA_STATE.MUTED : MEDIA_STATE.UNMUTED } />
     );
 };
+

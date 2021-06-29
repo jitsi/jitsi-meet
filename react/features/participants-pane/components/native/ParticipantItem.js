@@ -9,11 +9,7 @@ import { useSelector } from 'react-redux';
 
 import { Avatar } from '../../../base/avatar';
 import { getParticipantDisplayNameWithId } from '../../../base/participants';
-import {
-    AudioStateIcons,
-    MediaState,
-    VideoStateIcons
-} from '../../constants';
+import { MEDIA_STATE, type MediaState, AudioStateIcons, VideoStateIcons } from '../../constants';
 
 import { RaisedHandIndicator } from './RaisedHandIndicator';
 import styles from './styles';
@@ -39,11 +35,6 @@ type Props = {
      * The name of the participant. Used for showing lobby names.
      */
     name?: string,
-
-    /**
-     * Callback for when the mouse leaves this component
-     */
-    onLeave?: Function,
 
     /**
      * Callback to be invoked on pressing the participant item.
@@ -72,8 +63,8 @@ function ParticipantItem({
     name,
     onPress,
     participant: p,
-    audioMediaState = MediaState.None,
-    videoMediaState = MediaState.None
+    audioMediaState = MEDIA_STATE.NONE,
+    videoMediaState = MEDIA_STATE.NONE
 }: Props) {
 
     const displayName = name || useSelector(getParticipantDisplayNameWithId(p.id));
@@ -82,7 +73,6 @@ function ParticipantItem({
     return (
         <View style = { styles.participantContainer } >
             <TouchableOpacity
-                /* eslint-disable-next-line react/jsx-no-bind */
                 onPress = { onPress }
                 style = { styles.participantContent }>
                 <Avatar

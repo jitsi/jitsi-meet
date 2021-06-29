@@ -56,9 +56,7 @@ class HeaderWithNavigation extends Component<Props> {
         const { hideHeaderWithNavigation, onPressBack, onPressForward } = this.props;
 
         return (
-            <>
-                {
-                    !hideHeaderWithNavigation
+            !{ hideHeaderWithNavigation }
                     && <Header>
                         { onPressBack && <BackButton onPress = { onPressBack } /> }
                         <HeaderLabel labelKey = { this.props.headerLabelKey } />
@@ -67,8 +65,6 @@ class HeaderWithNavigation extends Component<Props> {
                             labelKey = { this.props.forwardLabelKey }
                             onPress = { onPressForward } /> }
                     </Header>
-                }
-            </>
         );
     }
 }

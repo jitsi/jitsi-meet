@@ -4,7 +4,7 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
-import { useDispatch, useSelector, useStore } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Icon, IconInviteMore } from '../../../base/icons';
 import { getParticipants } from '../../../base/participants';
@@ -18,9 +18,7 @@ export const MeetingParticipantList = () => {
     const dispatch = useDispatch();
     const onInvite = useCallback(() => dispatch(doInvitePeople()), [ dispatch ]);
     const showInviteButton = useSelector(shouldRenderInviteButton);
-    const store = useStore();
-    const state = store.getState();
-    const participants = getParticipants(state);
+    const participants = useSelector(getParticipants);
     const { t } = useTranslation();
 
     return (
