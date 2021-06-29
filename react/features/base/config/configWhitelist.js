@@ -112,6 +112,7 @@ export default [
     'enableLipSync',
     'enableOpusRed',
     'enableRemb',
+    'enableSaveLogs',
     'enableScreenshotCapture',
     'enableTalkWhileMuted',
     'enableNoAudioDetection',
