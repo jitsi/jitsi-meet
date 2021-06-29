@@ -5,7 +5,6 @@ import type { Dispatch } from 'redux';
 
 import { createE2EEEvent, sendAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
-import { getParticipants } from '../../base/participants';
 import { Switch } from '../../base/react';
 import { connect } from '../../base/redux';
 import { toggleE2EE } from '../actions';
@@ -195,12 +194,11 @@ class E2EESection extends Component<Props, State> {
  * @returns {Props}
  */
 function mapStateToProps(state) {
-    const { enabled } = state['features/e2ee'];
-    const participants = getParticipants(state).filter(p => !p.local);
+    const { enabled, everyoneSupportsE2EE } = state['features/e2ee'];
 
     return {
         _enabled: enabled,
-        _everyoneSupportsE2EE: participants.every(p => Boolean(p.e2eeSupported))
+        _everyoneSupportsE2EE: everyoneSupportsE2EE
     };
 }
 
