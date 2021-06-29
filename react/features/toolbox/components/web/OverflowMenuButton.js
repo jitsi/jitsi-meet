@@ -7,6 +7,7 @@ import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
 import { IconHorizontalPoints } from '../../../base/icons';
 import { connect } from '../../../base/redux';
+import { showOverflowDrawer } from '../../functions';
 
 import Drawer from './Drawer';
 import DrawerPortal from './DrawerPortal';
@@ -185,10 +186,8 @@ class OverflowMenuButton extends Component<Props> {
  * @returns {Props}
  */
 function mapStateToProps(state) {
-    const { overflowDrawer } = state['features/toolbox'];
-
     return {
-        overflowDrawer
+        overflowDrawer: showOverflowDrawer(state)
     };
 }
 

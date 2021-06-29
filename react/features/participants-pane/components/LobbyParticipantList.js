@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { withPixelLineHeight } from '../../base/styles/functions.web';
 import { admitMultiple } from '../../lobby/actions.web';
 import { getLobbyState } from '../../lobby/functions';
+import { showOverflowDrawer } from '../../toolbox/functions';
 
 import { LobbyParticipantItem } from './LobbyParticipantItem';
 
@@ -16,7 +17,8 @@ const useStyles = makeStyles(theme => {
         headingContainer: {
             alignItems: 'center',
             display: 'flex',
-            justifyContent: 'space-between'
+            justifyContent: 'space-between',
+            marginBottom: 16
         },
         heading: {
             ...withPixelLineHeight(theme.typography.heading7),
@@ -26,6 +28,9 @@ const useStyles = makeStyles(theme => {
             ...withPixelLineHeight(theme.typography.labelBold),
             color: theme.palette.link01,
             cursor: 'pointer'
+        },
+        participantsContainer: {
+            marginBottom: 32
         }
     };
 });
@@ -37,6 +42,7 @@ export const LobbyParticipantList = () => {
         knockingParticipants: participants
     } = useSelector(getLobbyState);
     const { t } = useTranslation();
+    const overflowDrawer = useSelector(showOverflowDrawer);
     const classes = useStyles();
     const dispatch = useDispatch();
     const admitAll = useCallback(() => {
@@ -57,10 +63,11 @@ export const LobbyParticipantList = () => {
                 className = { classes.link }
                 onClick = { admitAll }>{t('lobby.admitAll')}</div>
         </div>
-        <div>
+        <div className = { classes.participantsContainer }>
             {participants.map(p => (
                 <LobbyParticipantItem
                     key = { p.id }
+                    overflowDrawer = { overflowDrawer }
                     participant = { p } />)
             )}
         </div>

@@ -1,12 +1,13 @@
 // @flow
 
+import clsx from 'clsx';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import { approveParticipant } from '../../av-moderation/actions';
 
-import { QuickActionButton } from './styled';
+import { useButtonStyles } from './styled';
 
 type Props = {
 
@@ -25,19 +26,17 @@ type Props = {
 export default function({ id }: Props) {
     const dispatch = useDispatch();
     const { t } = useTranslation();
+    const buttonClasses = useButtonStyles();
 
     const askToUnmute = useCallback(() => {
         dispatch(approveParticipant(id));
     }, [ dispatch, id ]);
 
     return (
-        <QuickActionButton
-            onClick = { askToUnmute }
-            primary = { true }
-            theme = {{
-                panePadding: 16
-            }}>
+        <button
+            className = { clsx(buttonClasses.button, buttonClasses.quickActionButton) }
+            onClick = { askToUnmute }>
             {t('participantsPane.actions.askUnmute')}
-        </QuickActionButton>
+        </button>
     );
 }

@@ -1,24 +1,30 @@
 // @flow
-
+import { makeStyles } from '@material-ui/core/styles';
 import _ from 'lodash';
 import React, { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 
+
 import { openDialog } from '../../base/dialog';
 import { getParticipants } from '../../base/participants';
+import { withPixelLineHeight } from '../../base/styles/functions.web';
+import { Drawer, DrawerPortal } from '../../toolbox/components/web';
+import { showOverflowDrawer } from '../../toolbox/functions';
 import MuteRemoteParticipantDialog from '../../video-menu/components/web/MuteRemoteParticipantDialog';
-import { findStyledAncestor, shouldRenderInviteButton } from '../functions';
+import { findAncestorWithClass, shouldRenderInviteButton, useDrawer } from '../functions';
 
+import ContextMenuActions from './ContextMenuActions';
 import { InviteButton } from './InviteButton';
 import { MeetingParticipantContextMenu } from './MeetingParticipantContextMenu';
 import { MeetingParticipantItem } from './MeetingParticipantItem';
-import { Heading, ParticipantContainer } from './styled';
 
 type NullProto = {
   [key: string]: any,
   __proto__: null
 };
+
+const participantClassName = 'ptp-item';
 
 type RaiseContext = NullProto | {
 
@@ -35,13 +41,31 @@ type RaiseContext = NullProto | {
 
 const initialState = Object.freeze(Object.create(null));
 
+const useStyles = makeStyles(theme => {
+    return {
+        heading: {
+            color: theme.palette.text02,
+            margin: '8px 0 16px',
+            ...withPixelLineHeight(theme.typography.heading7)
+        }
+    };
+});
+
 export const MeetingParticipantList = () => {
     const dispatch = useDispatch();
     const isMouseOverMenu = useRef(false);
     const participants = useSelector(getParticipants, _.isEqual);
     const showInviteButton = useSelector(shouldRenderInviteButton);
     const [ raiseContext, setRaiseContext ] = useState<RaiseContext>(initialState);
+    const [ clickedParticipant, setClickedParticipant ] = useState({});
+    const overflowDrawer = useSelector(showOverflowDrawer);
+    const [ drawerIsOpen, openDrawer, closeDrawer ] = useDrawer(false);
+    const openDrawerForParticipant = useCallback(p => {
+        setClickedParticipant(p);
+        openDrawer();
+    }, [ openDrawer, setClickedParticipant ]);
     const { t } = useTranslation();
+    const classes = useStyles();
 
     const lowerMenu = useCallback(() => {
         /**
@@ -64,7 +88,7 @@ export const MeetingParticipantList = () => {
     const raiseMenu = useCallback((participant, target) => {
         setRaiseContext({
             participant,
-            offsetTarget: findStyledAncestor(target, ParticipantContainer)
+            offsetTarget: findAncestorWithClass(target, participantClassName)
         });
     }, [ raiseContext ]);
 
@@ -93,25 +117,43 @@ export const MeetingParticipantList = () => {
 
     return (
     <>
-        <Heading>{t('participantsPane.headings.participantsList', { count: participants.length })}</Heading>
+        <div className = { classes.heading }>
+            {t('participantsPane.headings.participantsList', { count: participants.length })}
+        </div>
         {showInviteButton && <InviteButton />}
         <div>
             {participants.map(p => (
                 <MeetingParticipantItem
+                    className = { participantClassName }
                     isHighlighted = { raiseContext.participant === p }
                     key = { p.id }
                     muteAudio = { muteAudio }
                     onContextMenu = { toggleMenu(p) }
                     onLeave = { lowerMenu }
+                    openDrawer = { openDrawerForParticipant }
+                    overflowDrawer = { overflowDrawer }
                     participant = { p } />
             ))}
         </div>
-        <MeetingParticipantContextMenu
-            muteAudio = { muteAudio }
-            onEnter = { menuEnter }
-            onLeave = { menuLeave }
-            onSelect = { lowerMenu }
-            { ...raiseContext } />
+
+        {!overflowDrawer
+         && <MeetingParticipantContextMenu
+             muteAudio = { muteAudio }
+             onClick = { lowerMenu }
+             onMouseEnter = { menuEnter }
+             onMouseLeave = { menuLeave }
+             { ...raiseContext } />
+        }
+        <DrawerPortal>
+            <Drawer
+                isOpen = { drawerIsOpen }
+                onClose = { closeDrawer }>
+                <ContextMenuActions
+                    muteAudio = { muteAudio }
+                    overflowDrawer = { true }
+                    participant = { clickedParticipant } />
+            </Drawer>
+        </DrawerPortal>
     </>
     );
 };

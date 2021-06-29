@@ -1,33 +1,36 @@
 // @flow
 
-import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 
-import { isToolbarButtonEnabled } from '../../base/config/functions.web';
-import { openDialog } from '../../base/dialog';
-import {
-    IconCloseCircle,
-    IconCrown,
-    IconMessage,
-    IconMicDisabled,
-    IconMuteEveryoneElse,
-    IconVideoOff
-} from '../../base/icons';
-import { isLocalParticipantModerator, isParticipantModerator } from '../../base/participants';
-import { getIsParticipantAudioMuted, getIsParticipantVideoMuted } from '../../base/tracks';
-import { openChat } from '../../chat/actions';
-import { GrantModeratorDialog, KickRemoteParticipantDialog, MuteEveryoneDialog } from '../../video-menu';
-import MuteRemoteParticipantsVideoDialog from '../../video-menu/components/web/MuteRemoteParticipantsVideoDialog';
+import { withPixelLineHeight } from '../../base/styles/functions.web';
 import { getComputedOuterHeight } from '../functions';
 
-import {
-    ContextMenu,
-    ContextMenuIcon,
-    ContextMenuItem,
-    ContextMenuItemGroup,
-    ignoredChildClassName
-} from './styled';
+import ContextMenuActions from './ContextMenuActions';
+
+const ignoredChildClassName = 'ignore-child';
+
+const useStyles = makeStyles(theme => {
+    return {
+        container: {
+            backgroundColor: theme.palette.ui02,
+            borderRadius: theme.shape.borderRadius / 2,
+            boxShadow: '0px 3px 16px rgba(0, 0, 0, 0.6), 0px 0px 4px 1px rgba(0, 0, 0, 0.25)',
+            color: theme.palette.text01,
+            marginTop: 44,
+            position: 'absolute',
+            right: 16,
+            top: 0,
+            zIndex: 2,
+            ...withPixelLineHeight(theme.typography.bodyShortRegular)
+        },
+        hidden: {
+            pointerEvents: 'none',
+            visibility: 'hidden'
+        }
+    };
+});
 
 type Props = {
 
@@ -44,17 +47,17 @@ type Props = {
     /**
      * Callback for the mouse entering the component
      */
-    onEnter: Function,
+    onMouseEnter: Function,
 
     /**
      * Callback for the mouse leaving the component
      */
-    onLeave: Function,
+    onMouseLeave: Function,
 
     /**
      * Callback for making a selection in the menu
      */
-    onSelect: Function,
+    onClick: Function,
 
     /**
      * Participant reference
@@ -64,20 +67,15 @@ type Props = {
 
 export const MeetingParticipantContextMenu = ({
     offsetTarget,
-    onEnter,
-    onLeave,
-    onSelect,
+    onMouseEnter,
+    onMouseLeave,
+    onClick,
     muteAudio,
     participant
 }: Props) => {
-    const dispatch = useDispatch();
-    const containerRef = useRef(null);
-    const isLocalModerator = useSelector(isLocalParticipantModerator);
-    const isChatButtonEnabled = useSelector(isToolbarButtonEnabled('chat'));
-    const isParticipantVideoMuted = useSelector(getIsParticipantVideoMuted(participant));
-    const isParticipantAudioMuted = useSelector(getIsParticipantAudioMuted(participant));
+    const containerRef = useRef<null | HTMLElement>(null);
     const [ isHidden, setIsHidden ] = useState(true);
-    const { t } = useTranslation();
+    const classes = useStyles();
 
     useLayoutEffect(() => {
         if (participant
@@ -89,9 +87,9 @@ export const MeetingParticipantContextMenu = ({
             const { offsetTop, offsetParent: { offsetHeight, scrollTop } } = offsetTarget;
             const outerHeight = getComputedOuterHeight(container);
 
-            container.style.top = offsetTop + outerHeight > offsetHeight + scrollTop
+            container.style.top = String(offsetTop + outerHeight > offsetHeight + scrollTop
                 ? offsetTop - outerHeight
-                : offsetTop;
+                : offsetTop);
 
             setIsHidden(false);
         } else {
@@ -99,91 +97,20 @@ export const MeetingParticipantContextMenu = ({
         }
     }, [ participant, offsetTarget ]);
 
-    const grantModerator = useCallback(() => {
-        dispatch(openDialog(GrantModeratorDialog, {
-            participantID: participant.id
-        }));
-    }, [ dispatch, participant ]);
-
-    const kick = useCallback(() => {
-        dispatch(openDialog(KickRemoteParticipantDialog, {
-            participantID: participant.id
-        }));
-    }, [ dispatch, participant ]);
-
-    const muteEveryoneElse = useCallback(() => {
-        dispatch(openDialog(MuteEveryoneDialog, {
-            exclude: [ participant.id ]
-        }));
-    }, [ dispatch, participant ]);
-
-    const muteVideo = useCallback(() => {
-        dispatch(openDialog(MuteRemoteParticipantsVideoDialog, {
-            participantID: participant.id
-        }));
-    }, [ dispatch, participant ]);
-
-    const sendPrivateMessage = useCallback(() => {
-        dispatch(openChat(participant));
-    }, [ dispatch, participant ]);
-
     if (!participant) {
         return null;
     }
 
     return (
-        <ContextMenu
-            className = { ignoredChildClassName }
-            innerRef = { containerRef }
-            isHidden = { isHidden }
-            onClick = { onSelect }
-            onMouseEnter = { onEnter }
-            onMouseLeave = { onLeave }>
-            <ContextMenuItemGroup>
-                {isLocalModerator && (
-                    <>
-                        {!isParticipantAudioMuted
-                         && <ContextMenuItem onClick = { muteAudio(participant) }>
-                             <ContextMenuIcon src = { IconMicDisabled } />
-                             <span>{t('dialog.muteParticipantButton')}</span>
-                         </ContextMenuItem>}
-
-                        <ContextMenuItem onClick = { muteEveryoneElse }>
-                            <ContextMenuIcon src = { IconMuteEveryoneElse } />
-                            <span>{t('toolbar.accessibilityLabel.muteEveryoneElse')}</span>
-                        </ContextMenuItem>
-                    </>
-                )}
-
-                {isLocalModerator && (isParticipantVideoMuted || (
-                    <ContextMenuItem onClick = { muteVideo }>
-                        <ContextMenuIcon src = { IconVideoOff } />
-                        <span>{t('participantsPane.actions.stopVideo')}</span>
-                    </ContextMenuItem>
-                ))}
-            </ContextMenuItemGroup>
-
-            <ContextMenuItemGroup>
-                {isLocalModerator && (
-                    <>
-                        {!isParticipantModerator(participant)
-                        && <ContextMenuItem onClick = { grantModerator }>
-                            <ContextMenuIcon src = { IconCrown } />
-                            <span>{t('toolbar.accessibilityLabel.grantModerator')}</span>
-                        </ContextMenuItem>}
-                        <ContextMenuItem onClick = { kick }>
-                            <ContextMenuIcon src = { IconCloseCircle } />
-                            <span>{t('videothumbnail.kick')}</span>
-                        </ContextMenuItem>
-                    </>
-                )}
-                {isChatButtonEnabled && (
-                    <ContextMenuItem onClick = { sendPrivateMessage }>
-                        <ContextMenuIcon src = { IconMessage } />
-                        <span>{t('toolbar.accessibilityLabel.privateMessage')}</span>
-                    </ContextMenuItem>
-                )}
-            </ContextMenuItemGroup>
-        </ContextMenu>
+        <div
+            className = { clsx(ignoredChildClassName, classes.container, isHidden && classes.hidden) }
+            onClick = { onClick }
+            onMouseEnter = { onMouseEnter }
+            onMouseLeave = { onMouseLeave }
+            ref = { containerRef }>
+            <ContextMenuActions
+                muteAudio = { muteAudio }
+                participant = { participant } />
+        </div>
     );
 };

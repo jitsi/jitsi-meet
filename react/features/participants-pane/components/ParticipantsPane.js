@@ -1,34 +1,104 @@
 // @flow
 
-import React, { useCallback, useEffect, useState } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
+import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { ThemeProvider } from 'styled-components';
 
 import { openDialog } from '../../base/dialog';
+import { Icon, IconClose, IconHorizontalPoints } from '../../base/icons';
 import {
     getParticipantCount,
     isEveryoneModerator,
     isLocalParticipantModerator
 } from '../../base/participants';
+import { withPixelLineHeight } from '../../base/styles/functions.web';
+import { Drawer, DrawerPortal } from '../../toolbox/components/web';
+import { showOverflowDrawer } from '../../toolbox/functions';
 import { MuteEveryoneDialog } from '../../video-menu/components/';
 import { close } from '../actions';
-import { classList, findStyledAncestor, getParticipantsPaneOpen } from '../functions';
-import theme from '../theme.json';
+import { getParticipantsPaneOpen } from '../functions';
 
 import { FooterContextMenu } from './FooterContextMenu';
 import { LobbyParticipantList } from './LobbyParticipantList';
 import { MeetingParticipantList } from './MeetingParticipantList';
-import {
-    AntiCollapse,
-    Close,
-    Container,
-    Footer,
-    FooterButton,
-    FooterEllipsisButton,
-    FooterEllipsisContainer,
-    Header
-} from './styled';
+
+const useStyles = makeStyles(t => {
+    return {
+        root: {
+            backgroundColor: t.palette.uiBackground,
+            position: 'relative',
+            zIndex: 0,
+
+            '@media (max-width: 580px)': {
+                height: '100%',
+                position: 'fixed',
+                width: '100%'
+            }
+        },
+        closed: {
+            display: 'none'
+        },
+        content: {
+            display: 'flex',
+            flexDirection: 'column',
+            fontWeight: 600,
+            height: '100%',
+            width: 315,
+
+            '@media (max-width: 580px)': {
+                width: '100%'
+            }
+        },
+        close: {
+            cursor: 'pointer'
+        },
+        button: {
+            alignItems: 'center',
+            backgroundColor: t.palette.action02,
+            border: 0,
+            borderRadius: t.shape.borderRadius,
+            display: 'flex',
+            justifyContent: 'center',
+            padding: '8px 16px',
+            ...withPixelLineHeight(t.typography.labelButton),
+
+            '&:hover': {
+                backgroundColor: t.palette.action02Hover
+            }
+        },
+        header: {
+            alignItems: 'center',
+            boxSizing: 'border-box',
+            display: 'flex',
+            height: '60px',
+            justifyContent: 'flex-end',
+            padding: '0 20px'
+        },
+        iconButton: {
+            height: 40,
+            marginLeft: t.spacing(3),
+            width: 40
+        },
+        listContainer: {
+            boxSizing: 'border-box',
+            flex: '1 1 0%',
+            overflowY: 'auto',
+            position: 'relative',
+            padding: '0px 16px'
+        },
+        ellipsisContainer: {
+            position: 'relative'
+        },
+        footer: {
+            backgroundColor: t.palette.uiBackground,
+            display: 'flex',
+            justifyContent: 'flex-end',
+            padding: '24px 16px'
+        }
+    };
+});
 
 export const ParticipantsPane = () => {
     const dispatch = useDispatch();
@@ -37,8 +107,15 @@ export const ParticipantsPane = () => {
     const participantsCount = useSelector(getParticipantCount);
     const everyoneModerator = useSelector(isEveryoneModerator);
     const showContextMenu = !everyoneModerator && participantsCount > 2;
+    const overflowDrawer = useSelector(showOverflowDrawer);
+    const classes = useStyles();
 
     const [ contextOpen, setContextOpen ] = useState(false);
+    const [ drawerIsOpen, setDrawerOpen ] = useState(false);
+    const closeDrawer = useCallback(() => {
+        setDrawerOpen(false);
+        setContextOpen(false);
+    }, [ setDrawerOpen ]);
     const { t } = useTranslation();
 
     const closePane = useCallback(() => dispatch(close(), [ dispatch ]));
@@ -49,55 +126,67 @@ export const ParticipantsPane = () => {
         }
     }, [ closePane ]);
     const muteAll = useCallback(() => dispatch(openDialog(MuteEveryoneDialog)), [ dispatch ]);
-
-    useEffect(() => {
-        const handler = [ 'click', e => {
-            if (!findStyledAncestor(e.target, FooterEllipsisContainer)) {
-                setContextOpen(false);
-            }
-        } ];
-
-        window.addEventListener(...handler);
-
-        return () => window.removeEventListener(...handler);
-    }, [ contextOpen ]);
-
-    const toggleContext = useCallback(() => setContextOpen(!contextOpen), [ contextOpen, setContextOpen ]);
+    const toggleContext = useCallback(() => {
+        setContextOpen(!contextOpen);
+        overflowDrawer && setDrawerOpen(true);
+    }, [ contextOpen, setContextOpen, overflowDrawer ]);
 
     return (
-        <ThemeProvider theme = { theme }>
-            <div className = { classList('participants_pane', !paneOpen && 'participants_pane--closed') }>
-                <div className = 'participants_pane-content'>
-                    <Header>
-                        <Close
+        <>
+            <div className = { clsx(classes.root, !paneOpen && classes.closed) }>
+                <div className = { classes.content }>
+                    <div className = { classes.header }>
+                        <Icon
                             aria-label = { t('participantsPane.close', 'Close') }
+                            className = { classes.close }
                             onClick = { closePane }
                             onKeyPress = { closePaneKeyPress }
                             role = 'button'
+                            src = { IconClose }
                             tabIndex = { 0 } />
-                    </Header>
-                    <Container>
+                    </div>
+                    <div className = { classes.listContainer }>
                         <LobbyParticipantList />
-                        <AntiCollapse />
                         <MeetingParticipantList />
-                    </Container>
+                    </div>
+
                     {isLocalModerator && (
-                        <Footer>
-                            <FooterButton onClick = { muteAll }>
+                        <div className = { classes.footer }>
+                            <button
+                                className = { classes.button }
+                                onClick = { muteAll }>
                                 {t('participantsPane.actions.muteAll')}
-                            </FooterButton>
+                            </button>
+
                             {showContextMenu && (
-                                <FooterEllipsisContainer>
-                                    <FooterEllipsisButton
+                                <div className = { classes.ellipsisContainer }>
+                                    <button
+                                        aria-label = 'Toggle more menu'
+                                        className = { clsx(classes.button, classes.iconButton) }
                                         id = 'participants-pane-context-menu'
-                                        onClick = { toggleContext } />
-                                    {contextOpen && <FooterContextMenu onMouseLeave = { toggleContext } />}
-                                </FooterEllipsisContainer>
+                                        onClick = { toggleContext }>
+                                        <Icon src = { IconHorizontalPoints } />
+                                    </button>
+                                    { contextOpen
+                                      && !overflowDrawer
+                                      && <FooterContextMenu onMouseLeave = { toggleContext } /> }
+                                </div>
                             )}
-                        </Footer>
+                        </div>
                     )}
                 </div>
             </div>
-        </ThemeProvider>
+
+            <DrawerPortal>
+                <Drawer
+                    isOpen = { drawerIsOpen }
+                    onClose = { closeDrawer }>
+                    { showContextMenu
+                      && contextOpen
+                      && overflowDrawer
+                      && <FooterContextMenu /> }
+                </Drawer>
+            </DrawerPortal>
+        </>
     );
 };

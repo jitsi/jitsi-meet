@@ -35,6 +35,11 @@ export const MEDIA_STATE: {
 export type QuickActionButtonType = 'Mute' | 'AskToUnmute' | 'None';
 
 /**
+ * The width of the participants pane.
+ */
+export const PARTICIPANTS_PANE_WIDTH = 315;
+
+/**
  * Enum of possible participant mute button states.
  */
 export const QUICK_ACTION_BUTTON: {

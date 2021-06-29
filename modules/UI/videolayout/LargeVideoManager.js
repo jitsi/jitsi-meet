@@ -19,8 +19,8 @@ import { CHAT_SIZE } from '../../../react/features/chat';
 import {
     updateKnownLargeVideoResolution
 } from '../../../react/features/large-video/actions';
+import { PARTICIPANTS_PANE_WIDTH } from '../../../react/features/participants-pane/constants';
 import { getParticipantsPaneOpen } from '../../../react/features/participants-pane/functions';
-import theme from '../../../react/features/participants-pane/theme.json';
 import { PresenceLabel } from '../../../react/features/presence-status';
 import { shouldDisplayTileView } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
@@ -373,7 +373,7 @@ export default class LargeVideoManager {
         const isParticipantsPaneOpen = getParticipantsPaneOpen(state);
 
         if (isParticipantsPaneOpen) {
-            widthToUse -= theme.participantsPaneWidth;
+            widthToUse -= PARTICIPANTS_PANE_WIDTH;
         }
 
         if (isOpen && window.innerWidth > 580) {

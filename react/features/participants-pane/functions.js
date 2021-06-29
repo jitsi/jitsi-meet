@@ -1,10 +1,14 @@
 // @flow
 
+import { useCallback, useState } from 'react';
+import { useDispatch } from 'react-redux';
+
 import {
     isParticipantApproved,
     isEnabledFromState,
     isLocalParticipantApprovedFromState
 } from '../av-moderation/functions';
+import { openDialog } from '../base/dialog';
 import { getFeatureFlag, INVITE_ENABLED } from '../base/flags';
 import { MEDIA_TYPE, type MediaType } from '../base/media/constants';
 import {
@@ -13,31 +17,26 @@ import {
     isParticipantModerator
 } from '../base/participants/functions';
 import { toState } from '../base/redux';
+import { openChat } from '../chat/actions';
+import { approveKnockingParticipant, rejectKnockingParticipant } from '../lobby/actions';
+import { GrantModeratorDialog, KickRemoteParticipantDialog, MuteEveryoneDialog } from '../video-menu';
+import MuteRemoteParticipantsVideoDialog from '../video-menu/components/web/MuteRemoteParticipantsVideoDialog';
 
 import { QUICK_ACTION_BUTTON, REDUCER_KEY, MEDIA_STATE } from './constants';
-
-/**
- * Generates a class attribute value.
- *
- * @param {Iterable<string>} args - String iterable.
- * @returns {string} Class attribute value.
- */
-export const classList = (...args: Array<string | boolean>) => args.filter(Boolean).join(' ');
-
 
 /**
  * Find the first styled ancestor component of an element.
  *
  * @param {Element} target - Element to look up.
- * @param {StyledComponentClass} component - Styled component reference.
+ * @param {string} className  - The CSS class name.
  * @returns {Element|null} Ancestor.
  */
-export const findStyledAncestor = (target: Object, component: any) => {
-    if (!target || target.matches(`.${component.styledComponentId}`)) {
+export const findAncestorWithClass = (target: Object, className: string) => {
+    if (!target || target.matches(`.${className}`)) {
         return target;
     }
 
-    return findStyledAncestor(target.parentElement, component);
+    return findAncestorWithClass(target.parentElement, className);
 };
 
 /**
@@ -157,4 +156,76 @@ export const shouldRenderInviteButton = (state: Object) => {
     const flagEnabled = getFeatureFlag(state, INVITE_ENABLED, true);
 
     return flagEnabled && !disableInviteFunctions;
+};
+
+
+/**
+ * Hook used to create the main context menu action.
+ *
+ * @param {Object} participant - The participant for which the actions are created.
+ * @returns {Object}
+ */
+export const useContextMenuActions = (participant: Object) => {
+    const dispatch = useDispatch();
+
+    const grantModerator = useCallback(() => {
+        dispatch(openDialog(GrantModeratorDialog, { participantID:
+        participant.id }));
+    }, [ dispatch, participant ]);
+
+    const kick = useCallback(() => {
+        dispatch(openDialog(KickRemoteParticipantDialog, { participantID:
+        participant.id }));
+    }, [ dispatch, participant ]);
+
+    const muteEveryoneElse = useCallback(() => {
+        dispatch(openDialog(MuteEveryoneDialog, { exclude: [ participant.id ]
+        }));
+    }, [ dispatch, participant ]);
+
+    const muteVideo = useCallback(() => {
+        dispatch(openDialog(MuteRemoteParticipantsVideoDialog, { participantID:
+        participant.id }));
+    }, [ dispatch, participant ]);
+
+    const sendPrivateMessage = useCallback(() => {
+        dispatch(openChat(participant));
+    }, [ dispatch, participant ]);
+
+    return {
+        grantModerator,
+        kick,
+        muteEveryoneElse,
+        muteVideo,
+        sendPrivateMessage
+    };
+};
+
+/**
+ * Hook used to get approve/reject actions for lobby.
+ *
+ * @param {Object} participant - The participant for which the actions are created.
+ * @returns {Object}
+ */
+export const useLobbyActions = (participant: Object) => {
+    const dispatch = useDispatch();
+
+    return [
+        () => dispatch(approveKnockingParticipant(participant.id), [ dispatch, participant ]),
+        () => dispatch(rejectKnockingParticipant(participant.id), [ dispatch, participant ])
+    ];
+};
+
+/**
+ * Hook used to control the drawer state.
+ *
+ * @param {Object} initialState - Whether to initially show or not the drawer.
+ * @returns {Array<any>}
+ */
+export const useDrawer = (initialState: boolean) => {
+    const [ drawerIsOpen, setDrawerOpen ] = useState(initialState);
+    const closeDrawer = () => setDrawerOpen(false);
+    const openDrawer = () => setDrawerOpen(true);
+
+    return [ drawerIsOpen, openDrawer, closeDrawer ];
 };

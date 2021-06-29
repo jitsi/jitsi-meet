@@ -3,8 +3,8 @@
 import type { Dispatch } from 'redux';
 
 import { CHAT_SIZE } from '../../chat/constants';
+import { PARTICIPANTS_PANE_WIDTH } from '../../participants-pane/constants';
 import { getParticipantsPaneOpen } from '../../participants-pane/functions';
-import theme from '../../participants-pane/theme.json';
 
 import { CLIENT_RESIZED, SET_ASPECT_RATIO, SET_REDUCED_UI } from './actionTypes';
 import { ASPECT_RATIO_NARROW, ASPECT_RATIO_WIDE } from './constants';
@@ -40,7 +40,7 @@ export function clientResized(clientWidth: number, clientHeight: number) {
             }
 
             if (isParticipantsPaneOpen) {
-                availableWidth -= theme.participantsPaneWidth;
+                availableWidth -= PARTICIPANTS_PANE_WIDTH;
             }
         }
 

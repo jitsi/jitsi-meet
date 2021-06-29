@@ -7,6 +7,7 @@ import { Icon, IconMenuThumb } from '../../../base/icons';
 import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
 import { getLocalVideoTrack } from '../../../base/tracks';
+import { showOverflowDrawer } from '../../../toolbox/functions';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
 
 import FlipLocalVideoButton from './FlipLocalVideoButton';
@@ -85,7 +86,6 @@ function _mapStateToProps(state) {
     const currentLayout = getCurrentLayout(state);
     const { disableLocalVideoFlip } = state['features/base/config'];
     const videoTrack = getLocalVideoTrack(state['features/base/tracks']);
-    const { overflowDrawer } = state['features/toolbox'];
     let _menuPosition;
 
     switch (currentLayout) {
@@ -102,7 +102,7 @@ function _mapStateToProps(state) {
     return {
         _menuPosition,
         _showLocalVideoFlipButton: !disableLocalVideoFlip && videoTrack?.videoType !== 'desktop',
-        _overflowDrawer: overflowDrawer
+        _overflowDrawer: showOverflowDrawer(state)
     };
 }
 

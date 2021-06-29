@@ -1,5 +1,6 @@
 // @flow
 
+import clsx from 'clsx';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -8,7 +9,7 @@ import { QUICK_ACTION_BUTTON } from '../constants';
 import { getQuickActionButtonType } from '../functions';
 
 import AskToUnmuteButton from './AskToUnmuteButton';
-import { QuickActionButton } from './styled';
+import { useButtonStyles } from './styled';
 
 type Props = {
 
@@ -38,15 +39,16 @@ export default function({ isAudioMuted, muteAudio, participant }: Props) {
     const buttonType = useSelector(getQuickActionButtonType(participant, isAudioMuted));
     const { id } = participant;
     const { t } = useTranslation();
+    const buttonClasses = useButtonStyles();
 
     switch (buttonType) {
     case QUICK_ACTION_BUTTON.MUTE: {
         return (
-            <QuickActionButton
-                onClick = { muteAudio(id) }
-                primary = { true }>
+            <button
+                className = { clsx(buttonClasses.button, buttonClasses.quickActionButton) }
+                onClick = { muteAudio(id) }>
                 {t('dialog.muteParticipantButton')}
-            </QuickActionButton>
+            </button>
         );
     }
     case QUICK_ACTION_BUTTON.ASK_TO_UNMUTE: {

@@ -8,6 +8,7 @@ import { getLocalParticipant, getParticipantById, PARTICIPANT_ROLE } from '../..
 import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
 import { requestRemoteControl, stopController } from '../../../remote-control';
+import { showOverflowDrawer } from '../../../toolbox/functions';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
 
 import MuteEveryoneElseButton from './MuteEveryoneElseButton';
@@ -275,7 +276,6 @@ function _mapStateToProps(state, ownProps) {
     const { active, controller } = state['features/remote-control'];
     const { requestedParticipant, controlled } = controller;
     const activeParticipant = requestedParticipant || controlled;
-    const { overflowDrawer } = state['features/toolbox'];
 
     if (_supportsRemoteControl
             && ((!active && !_isRemoteControlSessionActive) || activeParticipant === participantID)) {
@@ -308,7 +308,7 @@ function _mapStateToProps(state, ownProps) {
         _disableRemoteMute: Boolean(disableRemoteMute),
         _remoteControlState,
         _menuPosition,
-        _overflowDrawer: overflowDrawer,
+        _overflowDrawer: showOverflowDrawer(state),
         _participantDisplayName,
         _disableGrantModerator: Boolean(disableGrantModerator)
     };
