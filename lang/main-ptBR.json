@@ -304,6 +304,7 @@
         "transcribing": "Transcrevendo",
         "unlockRoom": "Remove a reunião $t(lockRoomPassword)",
         "userPassword": "senha do usuário",
+        "videoLink": "Link do vídeo",
         "WaitForHostMsg": "A conferência <b>{{room}}</b> ainda não começou. Se você é o anfitrião, faça a autenticação. Do contrário, aguarde a chegada do anfitrião.",
         "WaitForHostMsgWOk": "A conferência <b>{{room}}</b> ainda não começou. Se você é o anfitrião, pressione Ok para autenticar. Do contrário, aguarde a chegada do anfitrião.",
         "WaitingForHost": "Esperando o anfitrião...",
@@ -321,6 +322,28 @@
     },
     "embedMeeting": {
         "title": "Reunião em formato compacto"
+    },
+        "virtualBackground": {
+            "apply": "Aplicar",
+            "title": "Fundos virtuais",
+            "blur": "Desfoque",
+            "slightBlur": "Desfoque suave",
+            "removeBackground": "Remover fundo",
+            "addBackground": "Adicionar novo fundo",
+            "pleaseWait": "Aguarde...",
+            "none": "Nenhum",
+            "uploadedImage": "Imagem enviada {{index}}",
+            "deleteImage": "Excluir imagem",
+            "image1" : "Praia",
+            "image2" : "Parede branca neutra",
+            "image3" : "Quarto branco vazio",
+            "image4" : "Luminária preta",
+            "image5" : "Montanha",
+            "image6" : "Floresta",
+            "image7" : "Alvorada",
+            "desktopShareError": "Não foi possível compartilhar o desktop",
+            "desktopShare":"Compartilhar desktop",
+            "webAssemblyWarning": "Não há suporte para WebAssembly"
     },
     "feedback": {
         "average": "Média",
@@ -499,6 +522,18 @@
         "oldElectronClientDescription1": "Você está usando um versão antiga do cliente Jitsi Meet que possui uma conhecida vulnerabilidade de segurança. Por favor tenha certeza de atulizar para a nossa ",
         "oldElectronClientDescription2": "última versão",
         "oldElectronClientDescription3": " agora!"
+    },
+        "participantsPane": {
+            "close": "Fechar",
+            "headings": {
+                "lobby": "Sala de espera ({{count}})",
+                "participantsList": "Participantes da reunião ({{count}})"
+            },
+            "actions": {
+                "invite": "Convidar alguém",
+                "muteAll": "Silenciar todos",
+                "stopVideo": "Parar vídeo"
+        }
     },
     "passwordSetRemotely": "Definido por outro participante",
     "passwordDigitsOnly": "Até {{number}} dígitos",
@@ -714,6 +749,7 @@
             "mute": "Alternar mudo do áudio",
             "muteEveryone": "Silenciar todos",
             "muteEveryonesVideo": "Desativar a câmera de todos",
+            "participants": "Participantes",
             "pip": "Alternar modo Picture-in-Picture",
             "privateMessage": "Enviar mensagem privada",
             "profile": "Editar seu perfil",
