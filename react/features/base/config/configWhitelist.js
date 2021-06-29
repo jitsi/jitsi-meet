@@ -114,6 +114,7 @@ export default [
     'enableRemb',
     'enableSaveLogs',
     'enableScreenshotCapture',
+    'enableShowMoreStats',
     'enableTalkWhileMuted',
     'enableNoAudioDetection',
     'enableNoisyMicDetection',

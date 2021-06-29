@@ -91,6 +91,12 @@ type Props = AbstractProps & {
     enableSaveLogs: boolean,
 
     /**
+     * Whether or not should display the "Show More" link in the local video
+     * stats table.
+     */
+    enableShowMoreStats: boolean,
+
+    /**
      * Whether or not clicking the indicator should display a popover for more
      * details.
      */
@@ -393,6 +399,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
                 connectionSummary = { this._getConnectionStatusTip() }
                 e2eRtt = { e2eRtt }
                 enableSaveLogs = { this.props.enableSaveLogs }
+                enableShowMoreStats = { this.props.enableShowMoreStats }
                 framerate = { framerate }
                 isLocalVideo = { this.props.isLocalVideo }
                 maxEnabledResolution = { maxEnabledResolution }
@@ -448,7 +455,8 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
         = typeof participantId === 'undefined' ? getLocalParticipant(state) : getParticipantById(state, participantId);
     const props = {
         _connectionStatus: participant?.connectionStatus,
-        enableSaveLogs: state['features/base/config'].enableSaveLogs
+        enableSaveLogs: state['features/base/config'].enableSaveLogs,
+        enableShowMoreStats: state['features/base/config'].enableShowMoreStats
     };
 
     if (conference) {
