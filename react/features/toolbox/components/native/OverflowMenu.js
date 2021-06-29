@@ -9,15 +9,16 @@ import { BottomSheet, hideDialog, isDialogOpen } from '../../../base/dialog';
 import { IconDragHandle } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
-import { InviteButton } from '../../../invite';
 import { AudioRouteButton } from '../../../mobile/audio-mode';
 import { TileViewButton } from '../../../video-layout';
 import HelpButton from '../HelpButton';
 
 import AudioOnlyButton from './AudioOnlyButton';
 import MoreOptionsButton from './MoreOptionsButton';
+import ToggleCameraButton from './ToggleCameraButton';
 import styles from './styles';
 
+// import { InviteButton } from '../../../invite';
 // import { SharedDocumentButton } from '../../../etherpad';
 // import { ClosedCaptionButton } from '../../../subtitles';
 // import { LobbyModeButton } from '../../../lobby/components/native';
@@ -25,7 +26,6 @@ import styles from './styles';
 // import { RoomLockButton } from '../../../room-lock';
 // import { VideoShareButton } from '../../../youtube-player/components';
 // import RaiseHandButton from './RaiseHandButton';
-// import ToggleCameraButton from './ToggleCameraButton';
 
 /**
  * The type of the React {@code Component} props of {@link OverflowMenu}.
@@ -128,10 +128,8 @@ class OverflowMenu extends PureComponent<Props, State> {
                 onSwipe = { this._onSwipe }
                 renderHeader = { this._renderMenuExpandToggle }>
                 <AudioRouteButton { ...buttonProps } />
-                <InviteButton { ...buttonProps } />
+                <ToggleCameraButton { ...buttonProps } />
                 <AudioOnlyButton { ...buttonProps } />
-                {/* <RaiseHandButton { ...buttonProps } />*/}
-                {/* <LobbyModeButton { ...buttonProps } />*/}
                 <MoreOptionsButton
                     { ...moreOptionsButtonProps }
                     visible = { false } />
