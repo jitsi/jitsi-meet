@@ -60,6 +60,11 @@ type Props = {
     enableSaveLogs: boolean,
 
     /**
+     * Whether or not should display the "Show More" link.
+     */
+    disableShowMoreStats: boolean,
+
+    /**
      * The endpoint id of this client.
      */
     participantId: string,
@@ -170,7 +175,7 @@ class ConnectionStatsTable extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { isLocalVideo, enableSaveLogs } = this.props;
+        const { isLocalVideo, enableSaveLogs, disableShowMoreStats } = this.props;
 
         return (
             <div
@@ -179,7 +184,7 @@ class ConnectionStatsTable extends Component<Props> {
                 { this._renderStatistics() }
                 <div className = 'connection-actions'>
                     { isLocalVideo && enableSaveLogs ? this._renderSaveLogs() : null}
-                    { this._renderShowMoreLink() }
+                    { !disableShowMoreStats && this._renderShowMoreLink() }
                 </div>
                 { this.props.shouldShowMore ? this._renderAdditionalStats() : null }
             </div>
