@@ -247,7 +247,7 @@ class Conference extends AbstractConference<Props, *> {
                     { _showPrejoin && <Prejoin />}
 
                 </div>
-                <ParticipantsPane />
+                {/* <ParticipantsPane /> */}
             </div>
         );
     }

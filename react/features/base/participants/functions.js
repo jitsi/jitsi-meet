@@ -86,9 +86,9 @@ export function getFirstLoadableAvatarUrl(participant: Object, store: Store<any,
  * @returns {(Participant|undefined)}
  */
 export function getLocalParticipant(stateful: Object | Function) {
-    const participants = _getAllParticipants(stateful);
+    const state = toState(stateful)['features/base/participants'];
 
-    return participants.find(p => p.local);
+    return state.local;
 }
 
 /**
@@ -119,9 +119,10 @@ export function getNormalizedDisplayName(name: string) {
  */
 export function getParticipantById(
         stateful: Object | Function, id: string): ?Object {
-    const participants = _getAllParticipants(stateful);
+    const state = toState(stateful)['features/base/participants'];
+    const { local, remote } = state;
 
-    return participants.find(p => p.id === id);
+    return remote.get(id) || (local?.id === id ? local : undefined);
 }
 
 /**
@@ -135,7 +136,10 @@ export function getParticipantById(
  * @returns {number}
  */
 export function getParticipantCount(stateful: Object | Function) {
-    return getParticipants(stateful).length;
+    const state = toState(stateful)['features/base/participants'];
+    const { remote, fakeParticipants } = state;
+
+    return remote.size - fakeParticipants.size + 1;
 }
 
 /**
@@ -149,7 +153,10 @@ export function getParticipantCount(stateful: Object | Function) {
  * @returns {number}
  */
 export function getParticipantCountWithFake(stateful: Object | Function) {
-    return _getAllParticipants(stateful).length;
+    const state = toState(stateful)['features/base/participants'];
+    const { remote } = state;
+
+    return remote.size + 1;
 }
 
 /**
@@ -242,7 +249,14 @@ export function getParticipants(stateful: Object | Function) {
  * @returns {(Participant|undefined)}
  */
 export function getPinnedParticipant(stateful: Object | Function) {
-    return _getAllParticipants(stateful).find(p => p.pinned);
+    const state = toState(stateful)['features/base/participants'];
+    const { pinnedParticipant } = state;
+
+    if (!pinnedParticipant) {
+        return undefined;
+    }
+
+    return getParticipantById(stateful, pinnedParticipant);
 }
 
 /**
@@ -256,27 +270,17 @@ export function getPinnedParticipant(stateful: Object | Function) {
  * @returns {Participant[]}
  */
 function _getAllParticipants(stateful) {
-    return (
-        Array.isArray(stateful)
-            ? stateful
-            : toState(stateful)['features/base/participants'] || []);
-}
+    if (Array.isArray(stateful)) {
+        return stateful;
+    }
 
-/**
- * Returns the youtube fake participant.
- * At the moment it is considered the youtube participant the only fake participant in the list.
- *
- * @param {(Function|Object|Participant[])} stateful - The redux state
- * features/base/participants, the (whole) redux state, or redux's
- * {@code getState} function to be used to retrieve the state
- * features/base/participants.
- * @private
- * @returns {Participant}
- */
-export function getYoutubeParticipant(stateful: Object | Function) {
-    const participants = _getAllParticipants(stateful);
+    const state = toState(stateful)['features/base/participants'];
 
-    return participants.filter(p => p.isFakeParticipant)[0];
+    if (!state.remote?.values()) {
+        return [];
+    }
+
+    return [ state.local, ...Array.from(state.remote.values()) ];
 }
 
 /**
@@ -287,6 +291,24 @@ export function getYoutubeParticipant(stateful: Object | Function) {
  */
 export function isParticipantModerator(participant: Object) {
     return participant?.role === PARTICIPANT_ROLE.MODERATOR;
+}
+
+/**
+ * Returns the dominant speaker participant.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state or redux's
+ * {@code getState} function to be used to retrieve the state features/base/participants.
+ * @returns {Participant} - The participant from the redux store.
+ */
+export function getDominantSpeakerParticipant(stateful: Object | Function) {
+    const state = toState(stateful)['features/base/participants'];
+    const { dominantSpeaker } = state;
+
+    if (!dominantSpeaker) {
+        return undefined;
+    }
+
+    return getParticipantById(stateful, dominantSpeaker);
 }
 
 /**
@@ -321,14 +343,15 @@ export function isIconUrl(icon: ?string | ?Object) {
  * @returns {boolean}
  */
 export function isLocalParticipantModerator(stateful: Object | Function) {
-    const state = toState(stateful);
-    const localParticipant = getLocalParticipant(state);
+    const state = toState(stateful)['features/base/participants'];
 
-    if (!localParticipant) {
+    const { local } = state;
+
+    if (!local) {
         return false;
     }
 
-    return isParticipantModerator(localParticipant);
+    return isParticipantModerator(local);
 }
 
 /**
@@ -342,7 +365,7 @@ export function isLocalParticipantModerator(stateful: Object | Function) {
  */
 export function shouldRenderParticipantVideo(stateful: Object | Function, id: string) {
     const state = toState(stateful);
-    const participant = getParticipantById(state, id);
+    const participant = getParticipantById(stateful, id);
 
     if (!participant) {
         return false;
