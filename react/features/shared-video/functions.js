@@ -46,21 +46,3 @@ export function isVideoPlaying(stateful: Object | Function): boolean {
     );
 }
 
-/**
- * Returns true if the link is from youtube.
- *
- * @param {string} urlToParse - The link to be checked if it is from youtube.
- * @returns {boolean}
- */
-export function validateYouTubeUrl(urlToParse: string) {
-    if (urlToParse) {
-        const regExp = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;// eslint-disable-line max-len
-
-        if (urlToParse.match(regExp)) {
-
-            return true;
-        }
-    }
-
-    return false;
-}
