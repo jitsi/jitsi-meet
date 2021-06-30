@@ -12,6 +12,7 @@ import {
     SET_LOADABLE_AVATAR_URL
 } from './actionTypes';
 import { LOCAL_PARTICIPANT_DEFAULT_ID, PARTICIPANT_ROLE } from './constants';
+import { getParticipantCount, isParticipantModerator } from './functions';
 
 /**
  * Participant object.
@@ -146,6 +147,16 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
             state.local = _participant(state.local, action);
         }
 
+        const isModerator = isParticipantModerator(participant);
+
+        if (state.everyoneIsModerator && !isModerator) {
+            state.everyoneIsModerator = false;
+        } else if (!state.everyoneIsModerator && isModerator) {
+            state.everyoneIsModerator
+                = state.remote.values().every(isParticipantModerator)
+                    && isParticipantModerator(state.local);
+        }
+
         return state;
     }
     case PARTICIPANT_JOINED: {
@@ -165,6 +176,14 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
                 _updateParticipantProperty(state, dominantSpeaker, 'dominantSpeaker', false);
             }
             state.dominantSpeaker = participant.id;
+        }
+
+        const isModerator = isParticipantModerator(participant);
+
+        if (state.everyoneIsModerator && !isModerator) {
+            state.everyoneIsModerator = false;
+        } else if (getParticipantCount(state) === 1 && isModerator) {
+            state.everyoneIsModerator = true;
         }
 
         if (participant.local) {
@@ -201,6 +220,12 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
         } else {
             // no participant found
             return state;
+        }
+
+        if (!state.everyoneIsModerator && !isParticipantModerator(remoteParticipant)) {
+            state.everyoneIsModerator
+                = state.remote.values().every(isParticipantModerator)
+                    && isParticipantModerator(state.local);
         }
 
         if (dominantSpeaker === id) {
