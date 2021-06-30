@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TouchableOpacity, View } from 'react-native';
 import { Divider, Text } from 'react-native-paper';
@@ -20,7 +20,6 @@ import {
 } from '../../../base/participants';
 import { getIsParticipantVideoMuted } from '../../../base/tracks';
 import { openChat } from '../../../chat/actions.native';
-import { getParticipantsVolume } from '../../../filmstrip';
 import {
     KickRemoteParticipantDialog,
     MuteEveryoneDialog,
@@ -40,17 +39,14 @@ type Props = {
 };
 
 export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) => {
-    const [ volume, setVolume ] = useState(0);
     const dispatch = useDispatch();
     const cancel = useCallback(() => dispatch(hideDialog()), [ dispatch ]);
-    const participantsVolume = useSelector(getParticipantsVolume)[p.id];
-    const changeVolume = useCallback(() => {
-        setVolume(volume + 1);
-    }, [ volume ]);
+    const isStartingSilent = useSelector(getIsStartingSilent);
+    const participantsVolume = 1;
+    const initialParticipantsVolume = isStartingSilent ? undefined : participantsVolume;
     const displayName = p.name;
     const isLocalModerator = useSelector(isLocalParticipantModerator);
     const isParticipantVideoMuted = useSelector(getIsParticipantVideoMuted(p));
-    const isStartingSilent = useSelector(getIsStartingSilent);
 
     const kickRemoteParticipant = useCallback(() => {
         dispatch(openDialog(KickRemoteParticipantDialog, {
@@ -72,7 +68,7 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
             participantID: p.id
         }));
     }, [ dispatch, p ]);
-    const onVolumeChange = isStartingSilent ? undefined : changeVolume;
+
     const sendPrivateMessage = useCallback(() => {
         dispatch(hideDialog());
         dispatch(openChat(p));
@@ -177,8 +173,7 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
             {/* </TouchableOpacity>*/}
             <Divider style = { styles.divider } />
             <VolumeSlider
-                initialValue = { participantsVolume }
-                onChange = { onVolumeChange } />
+                initialValue = { initialParticipantsVolume } />
         </BottomSheet>
     );
 };
