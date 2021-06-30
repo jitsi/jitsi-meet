@@ -1,5 +1,7 @@
 // @flow
 
+import { batch } from 'react-redux';
+
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import { getCurrentConference } from '../base/conference';
 import {
@@ -58,7 +60,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             let newEveryoneSupportsE2EE = true;
             let newEveryoneEnabledE2EE = true;
 
-            participantsState.remote.values().forEach(p => {
+            // eslint-disable-next-line no-unused-vars
+            for (const [ key, p ] of participantsState.remote) {
                 if (!p.e2eeEnabled) {
                     newEveryoneEnabledE2EE = false;
                 }
@@ -66,19 +69,25 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 if (!p.e2eeSupported) {
                     newEveryoneSupportsE2EE = false;
                 }
-            });
+
+                if (!newEveryoneEnabledE2EE && !newEveryoneSupportsE2EE) {
+                    break;
+                }
+            }
 
             if (!participantsState.local.e2eeEnabled) {
                 newEveryoneEnabledE2EE = false;
             }
 
-            dispatch({
-                type: SET_EVERYONE_ENABLED,
-                everyoneEnabledE2EE: newEveryoneEnabledE2EE
-            });
-            dispatch({
-                type: SET_EVERYONE_SUPPORTS,
-                everyoneSupportsE2EE: newEveryoneSupportsE2EE
+            batch(() => {
+                dispatch({
+                    type: SET_EVERYONE_ENABLED,
+                    everyoneEnabledE2EE: newEveryoneEnabledE2EE
+                });
+                dispatch({
+                    type: SET_EVERYONE_SUPPORTS,
+                    everyoneSupportsE2EE: newEveryoneSupportsE2EE
+                });
             });
         }
 
@@ -92,13 +101,15 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
         // the initial values
         if (participantCount === 1) {
-            dispatch({
-                type: SET_EVERYONE_ENABLED,
-                everyoneEnabledE2EE: e2eeEnabled
-            });
-            dispatch({
-                type: SET_EVERYONE_SUPPORTS,
-                everyoneSupportsE2EE: e2eeSupported
+            batch(() => {
+                dispatch({
+                    type: SET_EVERYONE_ENABLED,
+                    everyoneEnabledE2EE: e2eeEnabled
+                });
+                dispatch({
+                    type: SET_EVERYONE_SUPPORTS,
+                    everyoneSupportsE2EE: e2eeSupported
+                });
             });
         }
 
@@ -130,12 +141,15 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     }
 
     case PARTICIPANT_LEFT: {
+        const previosState = getState();
+        const participant = getParticipantById(previosState, action.participant?.id) || {};
         const result = next(action);
-        const { e2eeEnabled, e2eeSupported } = action.participant;
+        const newState = getState();
+        const { e2eeEnabled = false, e2eeSupported = false } = participant;
 
-        const { everyoneEnabledE2EE } = getState()['features/e2ee'];
+        const { everyoneEnabledE2EE } = newState['features/e2ee'];
 
-        const participantsState = getState()['features/base/participants'];
+        const participantsState = newState['features/base/participants'];
         let latestEveryoneSupportsE2EE;
 
         // if it was not enabled by everyone, and the participant leaving had it disabled
@@ -144,7 +158,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             let latestEveryoneEnabledE2EE = true;
 
             latestEveryoneSupportsE2EE = true;
-            participantsState.remote.values().forEach(p => {
+            // eslint-disable-next-line no-unused-vars
+            for (const [ key, p ] of participantsState.remote) {
                 if (!p.e2eeEnabled) {
                     latestEveryoneEnabledE2EE = false;
                 }
@@ -152,7 +167,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 if (!p.e2eeSupported) {
                     latestEveryoneSupportsE2EE = false;
                 }
-            });
+
+                if (!latestEveryoneEnabledE2EE && !latestEveryoneSupportsE2EE) {
+                    break;
+                }
+            }
 
             if (!participantsState.local.e2eeEnabled) {
                 latestEveryoneEnabledE2EE = false;
@@ -173,11 +192,13 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             // we haven't checked the participants, let'/'s do it now
             if (latestEveryoneSupportsE2EE === undefined) {
                 latestEveryoneSupportsE2EE = true;
-                participantsState.remote.values().forEach(p => {
+                // eslint-disable-next-line no-unused-vars
+                for (const [ key, p ] of participantsState.remote) {
                     if (!p.e2eeSupported) {
                         latestEveryoneSupportsE2EE = false;
+                        break;
                     }
-                });
+                };
             }
 
             if (latestEveryoneSupportsE2EE) {
