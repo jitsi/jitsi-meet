@@ -53,6 +53,7 @@ const PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE = [
 ];
 
 const DEFAULT_STATE = {
+    haveParticipantWithScreenSharingFeature: false,
     dominantSpeaker: undefined,
     everyoneIsModerator: false,
     pinnedParticipant: undefined,
@@ -142,18 +143,33 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
             id = LOCAL_PARTICIPANT_DEFAULT_ID;
         }
 
+        let newParticipant;
+
         if (state.remote.has(id)) {
-            state.remote.set(id, _participant(state.remote.get(id), action));
+            newParticipant = _participant(state.remote.get(id), action);
+            state.remote.set(id, newParticipant);
         } else if (id === state.local?.id) {
-            state.local = _participant(state.local, action);
+            newParticipant = state.local = _participant(state.local, action);
         }
 
-        const isModerator = isParticipantModerator(participant);
+        if (newParticipant) {
 
-        if (state.everyoneIsModerator && !isModerator) {
-            state.everyoneIsModerator = false;
-        } else if (!state.everyoneIsModerator && isModerator) {
-            state.everyoneIsModerator = _isEveryoneModerator(state);
+            // everyoneIsModerator calculation:
+            const isModerator = isParticipantModerator(newParticipant);
+
+            if (state.everyoneIsModerator && !isModerator) {
+                state.everyoneIsModerator = false;
+            } else if (!state.everyoneIsModerator && isModerator) {
+                state.everyoneIsModerator = _isEveryoneModerator(state);
+            }
+
+            // haveParticipantWithScreenSharingFeature calculation:
+            const { features = {} } = participant;
+
+            // Currently we use only PARTICIPANT_UPDATED to set a feature to enabled and we never disable it.
+            if (String(features['screen-sharing']) === 'true') {
+                state.haveParticipantWithScreenSharingFeature = true;
+            }
         }
 
         return state;
