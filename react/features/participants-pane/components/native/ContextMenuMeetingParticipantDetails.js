@@ -15,9 +15,12 @@ import {
     IconMicrophoneEmptySlash,
     IconMuteEveryoneElse, IconVideoOff
 } from '../../../base/icons';
-import { isLocalParticipantModerator } from '../../../base/participants';
+import {
+    isLocalParticipantModerator
+} from '../../../base/participants';
 import { getIsParticipantVideoMuted } from '../../../base/tracks';
 import { openChat } from '../../../chat/actions.native';
+import { getParticipantsVolume } from '../../../filmstrip';
 import {
     KickRemoteParticipantDialog,
     MuteEveryoneDialog,
@@ -37,10 +40,13 @@ type Props = {
 };
 
 export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) => {
-    const [ volume, setVolume ] = useState(undefined);
+    const [ volume, setVolume ] = useState(0);
     const dispatch = useDispatch();
     const cancel = useCallback(() => dispatch(hideDialog()), [ dispatch ]);
-    const changeVolume = useCallback(() => setVolume(volume), [ setVolume, volume ]);
+    const participantsVolume = useSelector(getParticipantsVolume)[p.id];
+    const changeVolume = useCallback(() => {
+        setVolume(volume + 1);
+    }, [ volume ]);
     const displayName = p.name;
     const isLocalModerator = useSelector(isLocalParticipantModerator);
     const isParticipantVideoMuted = useSelector(getIsParticipantVideoMuted(p));
@@ -171,7 +177,7 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
             {/* </TouchableOpacity>*/}
             <Divider style = { styles.divider } />
             <VolumeSlider
-                initialValue = { volume }
+                initialValue = { participantsVolume }
                 onChange = { onVolumeChange } />
         </BottomSheet>
     );
