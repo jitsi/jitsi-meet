@@ -1,6 +1,7 @@
 // @flow
 
 import Slider from '@react-native-community/slider';
+import _ from 'lodash';
 import React, { Component } from 'react';
 import { View } from 'react-native';
 import { withTheme } from 'react-native-paper';
@@ -19,11 +20,6 @@ type Props = {
      * between 0 and 1.
      */
     initialValue: number,
-
-    /**
-     * The callback to invoke when the audio slider value changes.
-     */
-    onChange: Function,
 
     /**
      * Theme used for styles.
@@ -49,6 +45,8 @@ type State = {
  * @returns {React$Element<any>}
  */
 class VolumeSlider extends Component<Props, State> {
+    _onVolumeChange: Function;
+    _originalVolumeChange: Function;
 
     /**
      * Initializes a new {@code VolumeSlider} instance.
@@ -63,8 +61,11 @@ class VolumeSlider extends Component<Props, State> {
             volumeLevel: (props.initialValue || 0) * VOLUME_SLIDER_SCALE
         };
 
-        // Bind event handlers so they are only bound once for every instance.
-        this._onVolumeChange = this._onVolumeChange.bind(this);
+        this._originalVolumeChange = this._onVolumeChange;
+
+        this._onVolumeChange = _.throttle(
+            volumeLevel => this._originalVolumeChange(volumeLevel), 500
+        );
     }
 
     /**
@@ -96,8 +97,6 @@ class VolumeSlider extends Component<Props, State> {
         );
     }
 
-    _onVolumeChange: (Object) => void;
-
     /**
      * Sets the internal state of the volume level for the volume slider.
      * Invokes the prop onVolumeChange to notify of volume changes.
@@ -107,9 +106,6 @@ class VolumeSlider extends Component<Props, State> {
      * @returns {void}
      */
     _onVolumeChange(volumeLevel) {
-        const { onChange } = this.props;
-
-        onChange(volumeLevel / VOLUME_SLIDER_SCALE);
         this.setState({ volumeLevel });
     }
 }

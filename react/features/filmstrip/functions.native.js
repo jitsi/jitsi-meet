@@ -26,12 +26,3 @@ export function isFilmstripVisible(stateful: Object | Function) {
     return getParticipantCountWithFake(state) > 1;
 }
 
-/**
- * Selector used to get participants volume
- *
- * @param {Object} state - The global state.
- * @returns {string}
- */
-export function getParticipantsVolume(state: Object) {
-    return state['features/filmstrip'].participantsVolume;
-}
