@@ -1,12 +1,14 @@
 // @flow
 
-import _ from 'lodash';
 import React, { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { openDialog } from '../../base/dialog';
-import { getParticipants } from '../../base/participants';
+import {
+    getRemoteParticipantCount,
+    getRemoteParticipants
+} from '../../base/participants';
 import MuteRemoteParticipantDialog from '../../video-menu/components/web/MuteRemoteParticipantDialog';
 import { findStyledAncestor, shouldRenderInviteButton } from '../functions';
 
@@ -38,7 +40,12 @@ const initialState = Object.freeze(Object.create(null));
 export const MeetingParticipantList = () => {
     const dispatch = useDispatch();
     const isMouseOverMenu = useRef(false);
-    const participants = useSelector(getParticipants, _.isEqual);
+    const participants = useSelector(getRemoteParticipants);
+
+    // This is very important as getRemoteParticipants is not changing its reference object
+    // and we will not re-render on change, but if count changes we will do
+    const participantsCount = useSelector(getRemoteParticipantCount);
+
     const showInviteButton = useSelector(shouldRenderInviteButton);
     const [ raiseContext, setRaiseContext ] = useState<RaiseContext>(initialState);
     const { t } = useTranslation();
@@ -93,10 +100,10 @@ export const MeetingParticipantList = () => {
 
     return (
     <>
-        <Heading>{t('participantsPane.headings.participantsList', { count: participants.length })}</Heading>
+        <Heading>{t('participantsPane.headings.participantsList', { count: participantsCount })}</Heading>
         {showInviteButton && <InviteButton />}
         <div>
-            {participants.map(p => (
+            {participants.values().map(p => (
                 <MeetingParticipantItem
                     isHighlighted = { raiseContext.participant === p }
                     key = { p.id }
