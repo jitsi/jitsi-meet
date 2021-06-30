@@ -54,6 +54,7 @@ const PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE = [
 
 const DEFAULT_STATE = {
     dominantSpeaker: undefined,
+    everyoneIsModerator: false,
     pinnedParticipant: undefined,
     local: undefined,
     remote: new Map(),
@@ -152,9 +153,7 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
         if (state.everyoneIsModerator && !isModerator) {
             state.everyoneIsModerator = false;
         } else if (!state.everyoneIsModerator && isModerator) {
-            state.everyoneIsModerator
-                = state.remote.values().every(isParticipantModerator)
-                    && isParticipantModerator(state.local);
+            state.everyoneIsModerator = _isEveryoneModerator(state);
         }
 
         return state;
@@ -223,9 +222,7 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
         }
 
         if (!state.everyoneIsModerator && !isParticipantModerator(remoteParticipant)) {
-            state.everyoneIsModerator
-                = state.remote.values().every(isParticipantModerator)
-                    && isParticipantModerator(state.local);
+            state.everyoneIsModerator = _isEveryoneModerator(state);
         }
 
         if (dominantSpeaker === id) {
@@ -246,6 +243,27 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
 
     return state;
 });
+
+/**
+ * Loops trough the participants in the state in order to check if all participants are moderators.
+ *
+ * @param {Object} state - The local participant redux state.
+ * @returns {boolean}
+ */
+function _isEveryoneModerator(state) {
+    if (isParticipantModerator(state.local)) {
+        // eslint-disable-next-line no-unused-vars
+        for (const [ k, p ] of state.remote) {
+            if (!isParticipantModerator(p)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    return false;
+}
 
 
 /**
