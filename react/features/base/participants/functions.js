@@ -143,6 +143,22 @@ export function getParticipantCount(stateful: Object | Function) {
 }
 
 /**
+ * Returns a count of the known remote participants in the passed in redux state.
+ *
+ * @param {(Function|Object|Participant[])} stateful - The redux state
+ * features/base/participants, the (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @returns {number}
+ */
+export function getRemoteParticipantCount(stateful: Object | Function) {
+    const state = toState(stateful)['features/base/participants'];
+    const { remote } = state;
+
+    return remote.size;
+}
+
+/**
  * Returns a count of the known participants in the passed in redux state,
  * including fake participants.
  *
@@ -237,6 +253,19 @@ export function getParticipantPresenceStatus(
  */
 export function getParticipants(stateful: Object | Function) {
     return _getAllParticipants(stateful).filter(p => !p.isFakeParticipant);
+}
+
+/**
+ * Selectors for getting all remote participants.
+ *
+ * @param {(Function|Object|Participant[])} stateful - The redux state
+ * features/base/participants, the (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @returns {Map<string, Object>}
+ */
+export function getRemoteParticipants(stateful: Object | Function) {
+    return toState(stateful)['features/base/participants'].remote;
 }
 
 /**
