@@ -143,6 +143,19 @@ export function getParticipantCount(stateful: Object | Function) {
 }
 
 /**
+ * Returns the Map with fake participants.
+ *
+ * @param {(Function|Object)} stateful - The redux state
+ * features/base/participants, the (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @returns {Map<string, Participant>} - The Map with fake participants.
+ */
+export function getFakeParticipants(stateful: Object | Function) {
+    return toState(stateful)['features/base/participants'].fakeParticipants;
+}
+
+/**
  * Returns a count of the known remote participants in the passed in redux state.
  *
  * @param {(Function|Object|Participant[])} stateful - The redux state
