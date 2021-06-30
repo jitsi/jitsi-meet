@@ -206,3 +206,13 @@
     bottom: 0;
     width: 35%;
 }
+
+/**
+ * Resizes elements width to fill the whole screen width with some margin
+ */
+@mixin adjust-for-max-width($width, $margin) {
+    @media (max-width: $width) {
+        margin: 0 $margin;
+        width: $width - 2 * $margin;
+    }
+}

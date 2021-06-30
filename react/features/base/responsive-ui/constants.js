@@ -13,3 +13,8 @@ export const ASPECT_RATIO_NARROW = Symbol('ASPECT_RATIO_NARROW');
  * @type {Symbol}
  */
 export const ASPECT_RATIO_WIDE = Symbol('ASPECT_RATIO_WIDE');
+
+/**
+ * Smallest supported mobile width.
+ */
+export const SMALL_MOBILE_WIDTH = '320';
