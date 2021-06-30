@@ -319,9 +319,9 @@ export function getDominantSpeakerParticipant(stateful: Object | Function) {
  * @returns {boolean}
  */
 export function isEveryoneModerator(stateful: Object | Function) {
-    const participants = _getAllParticipants(stateful);
+    const state = toState(stateful)['features/base/participants'];
 
-    return participants.every(isParticipantModerator);
+    return state.everyoneIsModerator === true;
 }
 
 /**
