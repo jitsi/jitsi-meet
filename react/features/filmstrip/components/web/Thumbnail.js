@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 
+import { isMobileBrowser } from '../../../../../react/features/base/environment/utils';
 import { createScreenSharingIssueEvent, sendAnalytics } from '../../../analytics';
 import { AudioLevelIndicator } from '../../../audio-level-indicator';
 import { Avatar } from '../../../base/avatar';
@@ -33,7 +34,8 @@ import {
     DISPLAY_MODE_TO_STRING,
     DISPLAY_VIDEO,
     DISPLAY_VIDEO_WITH_NAME,
-    VIDEO_TEST_EVENTS
+    VIDEO_TEST_EVENTS,
+    SHOW_TOOLBAR_CONTEXT_MENU_AFTER
 } from '../../constants';
 import { isVideoPlayable, computeDisplayMode } from '../../functions';
 import logger from '../../logger';
@@ -238,6 +240,16 @@ function onClick(event) {
  */
 class Thumbnail extends Component<Props, State> {
     /**
+     * The long touch setTimeout handler.
+     */
+    timeoutHandle: Object;
+
+    /**
+     * Reference to local or remote Video Menu trigger button instance.
+     */
+    videoMenuTriggerRef: Object;
+
+    /**
      * Initializes a new Thumbnail instance.
      *
      * @param {Object} props - The read-only React Component props with which
@@ -257,7 +269,10 @@ class Thumbnail extends Component<Props, State> {
             ...state,
             displayMode: computeDisplayMode(Thumbnail.getDisplayModeInput(props, state))
         };
+        this.timeoutHandle = null;
+        this.videoMenuTriggerRef = null;
 
+        this._setInstance = this._setInstance.bind(this);
         this._updateAudioLevel = this._updateAudioLevel.bind(this);
         this._onCanPlay = this._onCanPlay.bind(this);
         this._onClick = this._onClick.bind(this);
@@ -265,6 +280,10 @@ class Thumbnail extends Component<Props, State> {
         this._onMouseEnter = this._onMouseEnter.bind(this);
         this._onMouseLeave = this._onMouseLeave.bind(this);
         this._onTestingEvent = this._onTestingEvent.bind(this);
+        this._onTouchStart = this._onTouchStart.bind(this);
+        this._onTouchEnd = this._onTouchEnd.bind(this);
+        this._onTouchMove = this._onTouchMove.bind(this);
+        this._showPopupMenu = this._showPopupMenu.bind(this);
     }
 
     /**
@@ -539,6 +558,54 @@ class Thumbnail extends Component<Props, State> {
         this.setState({ isHovered: false });
     }
 
+    _showPopupMenu: () => void;
+
+    /**
+     * Triggers showing the popover context menu.
+     *
+     * @returns {void}
+     */
+    _showPopupMenu() {
+        if (this.videoMenuTriggerRef) {
+            this.videoMenuTriggerRef.showContextMenu();
+        }
+    }
+
+    _onTouchStart: () => void;
+
+    /**
+     * Set showing popover context menu after x miliseconds.
+     *
+     * @returns {void}
+     */
+    _onTouchStart() {
+        this.timeoutHandle = setTimeout(this._showPopupMenu, SHOW_TOOLBAR_CONTEXT_MENU_AFTER);
+    }
+
+    _onTouchEnd: () => void;
+
+    /**
+     * Cancel showing popover context menu after x miliseconds if the no. Of miliseconds is not reached yet,
+     * or just clears the timeout.
+     *
+     * @returns {void}
+     */
+    _onTouchEnd() {
+        clearTimeout(this.timeoutHandle);
+    }
+
+    _onTouchMove: () => void;
+
+    /**
+     * Cancel showing Context menu after x miliseconds if the number of miliseconds is not reached
+     * before a touch move(drag), or just clears the timeout.
+     *
+     * @returns {void}
+     */
+    _onTouchMove() {
+        clearTimeout(this.timeoutHandle);
+    }
+
     /**
      * Renders a fake participant (youtube video) thumbnail.
      *
@@ -709,6 +776,11 @@ class Thumbnail extends Component<Props, State> {
                 onClick = { this._onClick }
                 onMouseEnter = { this._onMouseEnter }
                 onMouseLeave = { this._onMouseLeave }
+                { ...(isMobileBrowser() ? {
+                    onTouchEnd: this._onTouchEnd,
+                    onTouchMove: this._onTouchMove,
+                    onTouchStart: this._onTouchStart
+                } : {}) }
                 style = { styles.thumbnail }>
                 <div className = 'videocontainer__background' />
                 <span id = 'localVideoWrapper'>
@@ -738,8 +810,10 @@ class Thumbnail extends Component<Props, State> {
                     <AudioLevelIndicator audioLevel = { audioLevel } />
                 </span>
                 <span className = 'localvideomenu'>
-                    <LocalVideoMenuTriggerButton />
+                    <LocalVideoMenuTriggerButton
+                        getRef = { this._setInstance } />
                 </span>
+
             </span>
         );
     }
@@ -781,6 +855,19 @@ class Thumbnail extends Component<Props, State> {
         const jitsiVideoTrack = _videoTrack?.jitsiTrack;
 
         dispatch(updateLastTrackVideoMediaEvent(jitsiVideoTrack, event.type));
+    }
+
+    _setInstance: Object => void;
+
+    /**
+     * Stores the local or remote video menu button instance in a variable.
+     *
+     * @param {Object} instance - The local or remote video menu trigger instance.
+     *
+     * @returns {void}
+     */
+    _setInstance(instance) {
+        this.videoMenuTriggerRef = instance;
     }
 
     /**
@@ -826,6 +913,11 @@ class Thumbnail extends Component<Props, State> {
                 onClick = { this._onClick }
                 onMouseEnter = { this._onMouseEnter }
                 onMouseLeave = { this._onMouseLeave }
+                { ...(isMobileBrowser() ? {
+                    onTouchEnd: this._onTouchEnd,
+                    onTouchMove: this._onTouchMove,
+                    onTouchStart: this._onTouchStart
+                } : {}) }
                 style = { styles.thumbnail }>
                 {
                     _videoTrack && <VideoTrack
@@ -859,6 +951,7 @@ class Thumbnail extends Component<Props, State> {
                 </span>
                 <span className = 'remotevideomenu'>
                     <RemoteVideoMenuTriggerButton
+                        getRef = { this._setInstance }
                         initialVolumeValue = { _volume }
                         onVolumeChange = { onVolumeChange }
                         participantID = { id } />
@@ -982,7 +1075,7 @@ function _mapStateToProps(state, ownProps): Object {
     return {
         _audioTrack,
         _connectionIndicatorAutoHideEnabled: interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_ENABLED,
-        _connectionIndicatorDisabled: interfaceConfig.CONNECTION_INDICATOR_DISABLED,
+        _connectionIndicatorDisabled: isMobileBrowser() || interfaceConfig.CONNECTION_INDICATOR_DISABLED,
         _currentLayout,
         _defaultLocalDisplayName: interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME,
         _disableLocalVideoFlip: Boolean(disableLocalVideoFlip),

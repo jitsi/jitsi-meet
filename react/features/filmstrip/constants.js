@@ -208,3 +208,10 @@ export const VERTICAL_FILMSTRIP_MIN_HORIZONTAL_MARGIN = 10;
  * @type {number}
  */
 export const HORIZONTAL_FILMSTRIP_MARGIN = 39;
+
+/**
+ * Sets after how many ms to show the thumbnail context menu on long touch on mobile.
+ *
+ * @type {number}
+ */
+export const SHOW_TOOLBAR_CONTEXT_MENU_AFTER = 600;

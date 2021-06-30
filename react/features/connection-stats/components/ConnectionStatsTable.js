@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 
+import { isMobileBrowser } from '../../../features/base/environment/utils';
 import { translate } from '../../base/i18n';
 
 /**
@@ -176,10 +177,11 @@ class ConnectionStatsTable extends Component<Props> {
      */
     render() {
         const { isLocalVideo, enableSaveLogs, disableShowMoreStats } = this.props;
+        const className = isMobileBrowser() ? 'connection-info connection-info__mobile' : 'connection-info';
 
         return (
             <div
-                className = 'connection-info'
+                className = { className }
                 onClick = { onClick }>
                 { this._renderStatistics() }
                 <div className = 'connection-actions'>
