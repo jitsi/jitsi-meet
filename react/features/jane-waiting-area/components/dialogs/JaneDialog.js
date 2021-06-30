@@ -136,7 +136,7 @@ class JaneDialog extends Component<Props> {
     }
 
     _getDuration() {
-        const { jwtPayload } = this.props;
+        const { jwtPayload, t } = this.props;
         const startAt = _.get(jwtPayload, 'context.start_at') ?? '';
         const endAt = _.get(jwtPayload, 'context.end_at') ?? '';
 
@@ -147,7 +147,7 @@ class JaneDialog extends Component<Props> {
 
         return (<p>
             {
-                `${moment.duration(duration).asMinutes()} Minutes`
+                t('janeWaitingArea.minutes', { duration: moment.duration(duration).asMinutes() })
             }
         </p>);
     }

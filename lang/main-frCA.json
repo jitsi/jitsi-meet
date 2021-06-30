@@ -486,7 +486,8 @@
         "patientIsReady" : "Votre client est prêt à commencer la session.",
         "waitPractitioner" : "Votre praticien vous laissera entrer dans la session lorsqu'il sera prêt...",
         "testYourDevice" : "Veuillez garder votre application ou la fenêtre de votre navigateur ouverte pour rester sur l'appel. Vous pouvez tester votre audio et vidéo pendant que vous attendez.",
-        "authenticationExpired" : "Votre prise de rendez-vous a expiré"
+        "authenticationExpired" : "Votre prise de rendez-vous a expiré",
+        "minutes": "{{duration}} Minutes"
     },
     "preCallMessage" : {
         "sitBack" : "Asseyez-vous, détendez-vous et prenez un moment pour vous.",
