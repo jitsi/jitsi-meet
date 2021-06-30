@@ -10,12 +10,13 @@ import { admitMultiple } from '../../../lobby/actions.native';
 import { getLobbyState } from '../../../lobby/functions';
 
 import { LobbyParticipantItem } from './LobbyParticipantItem';
+import { participants } from './participants';
 import styles from './styles';
 
 export const LobbyParticipantList = () => {
     const {
         lobbyEnabled,
-        knockingParticipants: participants
+        knockingParticipants
     } = useSelector(getLobbyState);
 
     const dispatch = useDispatch();
@@ -24,9 +25,9 @@ export const LobbyParticipantList = () => {
         [ dispatch ]);
     const { t } = useTranslation();
 
-    if (!lobbyEnabled || !participants.length) {
-        return null;
-    }
+    // if (!lobbyEnabled || !participants.length) {
+    //     return null;
+    // }
 
     return (
         <View style = { styles.lobbyList }>

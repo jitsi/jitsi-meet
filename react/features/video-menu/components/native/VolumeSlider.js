@@ -8,8 +8,6 @@ import { withTheme } from 'react-native-paper';
 import { Icon, IconVolumeEmpty } from '../../../base/icons';
 import { VOLUME_SLIDER_SCALE } from '../../constants';
 
-import styles from './styles';
-
 /**
  * The type of the React {@code Component} props of {@link VolumeSlider}.
  */
@@ -81,18 +79,16 @@ class VolumeSlider extends Component<Props, State> {
         const { palette } = theme;
 
         return (
-            <View style = { styles.volumeSliderContainer }>
+            <View>
                 <Icon
                     size = { 24 }
-                    src = { IconVolumeEmpty }
-                    style = { styles.volumeIcon } />
+                    src = { IconVolumeEmpty } />
                 <Slider
                     maximumTrackTintColor = { palette.field02 }
                     maximumValue = { VOLUME_SLIDER_SCALE }
                     minimumTrackTintColor = { palette.action01 }
                     minimumValue = { 0 }
                     onValueChange = { this._onVolumeChange }
-                    style = { styles.sliderContainer }
                     thumbTintColor = { palette.field02 }
                     value = { volumeLevel } />
             </View>
