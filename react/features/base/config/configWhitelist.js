@@ -150,6 +150,7 @@ export default [
     'p2p',
     'pcStatsInterval',
     'preferH264',
+    'preferredCodec',
     'prejoinPageEnabled',
     'requireDisplayName',
     'remoteVideoMenu',
