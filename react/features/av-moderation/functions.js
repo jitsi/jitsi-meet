@@ -22,8 +22,8 @@ const getState = state => state['features/av-moderation'];
  */
 export const isEnabledFromState = (mediaType: MediaType, state: Object) =>
     (mediaType === MEDIA_TYPE.AUDIO
-        ? getState(state).audioModerationEnabled
-        : getState(state).videoModerationEnabled) === true;
+        ? getState(state)?.audioModerationEnabled
+        : getState(state)?.videoModerationEnabled) === true;
 
 /**
  * Returns whether moderation is enabled per media type.
