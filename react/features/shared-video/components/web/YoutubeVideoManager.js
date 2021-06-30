@@ -73,17 +73,6 @@ class YoutubeVideoManager extends AbstractVideoManager<Props> {
     }
 
     /**
-     * Sets player volume.
-     *
-     * @param {number} value - The volume.
-     *
-     * @returns {void}
-     */
-    setVolume(value) {
-        return this.player?.setVolume(value);
-    }
-
-    /**
      * Retrieves current time.
      *
      * @returns {number}

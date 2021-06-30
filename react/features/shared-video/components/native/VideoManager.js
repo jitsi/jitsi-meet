@@ -1,4 +1,6 @@
+import Logger from 'jitsi-meet-logger';
 import React from 'react';
+import Video from 'react-native-video';
 
 import { connect } from '../../../base/redux';
 
@@ -9,6 +11,7 @@ import AbstractVideoManager, {
     Props
 } from './AbstractVideoManager';
 
+const logger = Logger.getLogger(__filename);
 
 /**
  * Manager of shared video.
@@ -24,7 +27,14 @@ class VideoManager extends AbstractVideoManager<Props> {
     constructor(props) {
         super(props);
 
+        this.state = {
+            currentTime: 0,
+            paused: false
+        };
+
         this.playerRef = React.createRef();
+        this.onPlaybackRateChange = this.onPlaybackRateChange.bind(this);
+        this.onProgress = this.onProgress.bind(this);
     }
 
     /**
@@ -42,11 +52,7 @@ class VideoManager extends AbstractVideoManager<Props> {
     getPlaybackState() {
         let state;
 
-        if (!this.player) {
-            return;
-        }
-
-        if (this.player.paused) {
+        if (this.state.paused) {
             state = PLAYBACK_STATES.PAUSED;
         } else {
             state = PLAYBACK_STATES.PLAYING;
@@ -56,30 +62,12 @@ class VideoManager extends AbstractVideoManager<Props> {
     }
 
     /**
-     * Indicates whether the video is muted.
-     *
-     * @returns {boolean}
-     */
-    isMuted() {
-        return this.player?.muted;
-    }
-
-    /**
-     * Retrieves current volume.
-     *
-     * @returns {number}
-     */
-    getVolume() {
-        return this.player?.volume;
-    }
-
-    /**
      * Retrieves current time.
      *
      * @returns {number}
      */
     getTime() {
-        return this.player?.currentTime;
+        return this.state.currentTime;
     }
 
     /**
@@ -91,7 +79,7 @@ class VideoManager extends AbstractVideoManager<Props> {
      */
     seek(time) {
         if (this.player) {
-            this.player.currentTime = time;
+            this.player.seek(time);
         }
     }
 
@@ -101,7 +89,9 @@ class VideoManager extends AbstractVideoManager<Props> {
      * @returns {void}
      */
     play() {
-        return this.player?.play();
+        this.setState({
+            paused: false
+        });
     }
 
     /**
@@ -110,29 +100,44 @@ class VideoManager extends AbstractVideoManager<Props> {
      * @returns {void}
      */
     pause() {
-        return this.player?.pause();
+        this.setState({
+            paused: true
+        });
     }
 
     /**
-     * Mutes video.
+     * Handles playback rate changed event.
      *
+     * @param {Object} options.playbackRate - Playback rate: 1 - playing, 0 - paused, other - slowed down / sped up.
      * @returns {void}
      */
-    mute() {
-        if (this.player) {
-            this.player.muted = true;
+    onPlaybackRateChange({ playbackRate }) {
+        if (playbackRate === 0) {
+            this.setState({
+                paused: true
+            }, () => {
+                this.onPause();
+            });
+        }
+
+        if (playbackRate === 1) {
+            this.setState({
+                paused: false
+            }, () => {
+                this.onPlay();
+            });
         }
     }
 
     /**
-     * Unmutes video.
+     * Handles progress updarte event.
      *
+     * @param {Object} options - Progress event options.
      * @returns {void}
      */
-    unMute() {
-        if (this.player) {
-            this.player.muted = false;
-        }
+    onProgress(options) {
+        this.setState({ currentTime: options.currentTime });
+        this.throttledFireUpdateSharedVideoEvent();
     }
 
     /**
@@ -141,24 +146,28 @@ class VideoManager extends AbstractVideoManager<Props> {
      * @returns {void}
      */
     getPlayerOptions() {
-        const { _isOwner, videoId } = this.props;
+        const { _isOwner, videoId, width, height } = this.props;
+        const { paused } = this.state;
 
-        let options = {
-            autoPlay: true,
-            src: videoId,
+        const options = {
+            paused,
+            progressUpdateInterval: 5000,
+            resizeMode: 'cover',
+            style: {
+                height,
+                width
+            },
+            source: { uri: videoId },
             controls: _isOwner,
-            onError: () => this.onError(),
-            onPlay: () => this.onPlay(),
-            onVolumeChange: () => this.onVolumeChange()
+            pictureInPicture: false,
+            onProgress: this.onProgress,
+            onError: event => {
+                logger.error('Error in the player:', event);
+            }
         };
 
         if (_isOwner) {
-            options = {
-                ...options,
-                onPause: () => this.onPause(),
-                onTimeUpdate: this.throttledFireUpdateSharedVideoEvent
-            };
-
+            options.onPlaybackRateChange = this.onPlaybackRateChange;
         }
 
         return options;
@@ -170,8 +179,7 @@ class VideoManager extends AbstractVideoManager<Props> {
      * @inheritdoc
      */
     render() {
-        return (<video
-            id = 'sharedVideoPlayer'
+        return (<Video
             ref = { this.playerRef }
             { ...this.getPlayerOptions() } />);
     }
