@@ -98,20 +98,24 @@ export const MeetingParticipantList = () => {
         dispatch(openDialog(MuteRemoteParticipantDialog, { participantID: id }));
     });
 
+    const items = [];
+
+    participants.forEach(p => {
+        items.push(<MeetingParticipantItem
+            isHighlighted = { raiseContext.participant === p }
+            key = { p.id }
+            muteAudio = { muteAudio }
+            onContextMenu = { toggleMenu(p) }
+            onLeave = { lowerMenu }
+            participant = { p } />);
+    });
+
     return (
     <>
         <Heading>{t('participantsPane.headings.participantsList', { count: participantsCount })}</Heading>
         {showInviteButton && <InviteButton />}
         <div>
-            {participants.values().map(p => (
-                <MeetingParticipantItem
-                    isHighlighted = { raiseContext.participant === p }
-                    key = { p.id }
-                    muteAudio = { muteAudio }
-                    onContextMenu = { toggleMenu(p) }
-                    onLeave = { lowerMenu }
-                    participant = { p } />
-            ))}
+            { items }
         </div>
         <MeetingParticipantContextMenu
             muteAudio = { muteAudio }
