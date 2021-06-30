@@ -45,6 +45,10 @@
         @extend .connection-info__icon;
     }
 
+    &__mobile {
+      margin: 15px;
+    }
+
     .connection-actions {
         margin: 10px auto;
         text-align: center;

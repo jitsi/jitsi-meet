@@ -4,6 +4,7 @@ import InlineDialog from '@atlaskit/inline-dialog';
 import React, { Component } from 'react';
 
 import { Drawer, DrawerPortal } from '../../../toolbox/components/web';
+import { isMobileBrowser } from '../../environment/utils';
 
 /**
  * A map of dialog positions, relative to trigger, to css classes used to
@@ -62,6 +63,11 @@ type Props = {
      * component.
      */
     id: string,
+
+    /**
+    * Callback to invoke when the popover has closed.
+    */
+    onPopoverClose: Function,
 
     /**
      * Callback to invoke when the popover has opened.
@@ -135,6 +141,16 @@ class Popover extends Component<Props, State> {
     }
 
     /**
+     * Public method for triggering showing the context menu dialog.
+     *
+     * @returns {void}
+     * @public
+     */
+    showDialog() {
+        this.setState({ showDialog: true });
+    }
+
+    /**
      * Sets up an event listener to open a drawer when clicking, rather than entering the
      * overflow area.
      *
@@ -145,7 +161,7 @@ class Popover extends Component<Props, State> {
      * @returns {void}
      */
     componentDidMount() {
-        if (this._drawerContainerRef && this._drawerContainerRef.current) {
+        if (this._drawerContainerRef && this._drawerContainerRef.current && !isMobileBrowser()) {
             this._drawerContainerRef.current.addEventListener('click', this._onShowDialog);
         }
     }
@@ -232,6 +248,10 @@ class Popover extends Component<Props, State> {
      */
     _onHideDialog() {
         this.setState({ showDialog: false });
+
+        if (this.props.onPopoverClose) {
+            this.props.onPopoverClose();
+        }
     }
 
     _onShowDialog: (Object) => void;
