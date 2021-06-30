@@ -137,9 +137,9 @@ export function getParticipantById(
  */
 export function getParticipantCount(stateful: Object | Function) {
     const state = toState(stateful)['features/base/participants'];
-    const { remote, fakeParticipants } = state;
+    const { local, remote, fakeParticipants } = state;
 
-    return remote.size - fakeParticipants.size + 1;
+    return remote.size - fakeParticipants.size + (local ? 1 : 0);
 }
 
 /**
@@ -183,9 +183,9 @@ export function getRemoteParticipantCount(stateful: Object | Function) {
  */
 export function getParticipantCountWithFake(stateful: Object | Function) {
     const state = toState(stateful)['features/base/participants'];
-    const { remote } = state;
+    const { local, remote } = state;
 
-    return remote.size + 1;
+    return remote.size + (local ? 1 : 0);
 }
 
 /**

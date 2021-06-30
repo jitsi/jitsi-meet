@@ -12,7 +12,7 @@ import {
     SET_LOADABLE_AVATAR_URL
 } from './actionTypes';
 import { LOCAL_PARTICIPANT_DEFAULT_ID, PARTICIPANT_ROLE } from './constants';
-import { getParticipantCount, isParticipantModerator } from './functions';
+import { isParticipantModerator } from './functions';
 
 /**
  * Participant object.
@@ -178,10 +178,11 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
         }
 
         const isModerator = isParticipantModerator(participant);
+        const { local, remote } = state;
 
         if (state.everyoneIsModerator && !isModerator) {
             state.everyoneIsModerator = false;
-        } else if (getParticipantCount(state) === 1 && isModerator) {
+        } else if (!local && remote.size === 0 && isModerator) {
             state.everyoneIsModerator = true;
         }
 
