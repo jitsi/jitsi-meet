@@ -79,8 +79,7 @@ export function getFirstLoadableAvatarUrl(participant: Object, store: Store<any,
 /**
  * Returns local participant from Redux state.
  *
- * @param {(Function|Object|Participant[])} stateful - The redux state
- * features/base/participants, the (whole) redux state, or redux's
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state
  * features/base/participants.
  * @returns {(Participant|undefined)}
@@ -109,8 +108,7 @@ export function getNormalizedDisplayName(name: string) {
 /**
  * Returns participant by ID from Redux state.
  *
- * @param {(Function|Object|Participant[])} stateful - The redux state
- * features/base/participants, the (whole) redux state, or redux's
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state
  * features/base/participants.
  * @param {string} id - The ID of the participant to retrieve.
@@ -129,8 +127,7 @@ export function getParticipantById(
  * Returns a count of the known participants in the passed in redux state,
  * excluding any fake participants.
  *
- * @param {(Function|Object|Participant[])} stateful - The redux state
- * features/base/participants, the (whole) redux state, or redux's
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state
  * features/base/participants.
  * @returns {number}
@@ -145,8 +142,7 @@ export function getParticipantCount(stateful: Object | Function) {
 /**
  * Returns the Map with fake participants.
  *
- * @param {(Function|Object)} stateful - The redux state
- * features/base/participants, the (whole) redux state, or redux's
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state
  * features/base/participants.
  * @returns {Map<string, Participant>} - The Map with fake participants.
@@ -158,8 +154,7 @@ export function getFakeParticipants(stateful: Object | Function) {
 /**
  * Returns a count of the known remote participants in the passed in redux state.
  *
- * @param {(Function|Object|Participant[])} stateful - The redux state
- * features/base/participants, the (whole) redux state, or redux's
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state
  * features/base/participants.
  * @returns {number}
@@ -175,8 +170,7 @@ export function getRemoteParticipantCount(stateful: Object | Function) {
  * Returns a count of the known participants in the passed in redux state,
  * including fake participants.
  *
- * @param {(Function|Object|Participant[])} stateful - The redux state
- * features/base/participants, the (whole) redux state, or redux's
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state
  * features/base/participants.
  * @returns {number}
@@ -255,24 +249,20 @@ export function getParticipantPresenceStatus(
 }
 
 /**
- * Selectors for getting all known participants with fake participants filtered
- * out.
+ * Returns true if there is at least 1 participant with screen sharing feature and false otherwise.
  *
- * @param {(Function|Object|Participant[])} stateful - The redux state
- * features/base/participants, the (whole) redux state, or redux's
- * {@code getState} function to be used to retrieve the state
- * features/base/participants.
- * @returns {Participant[]}
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {boolean}
  */
-export function getParticipants(stateful: Object | Function) {
-    return _getAllParticipants(stateful).filter(p => !p.isFakeParticipant);
+export function haveParticipantWithScreenSharingFeature(stateful: Object | Function) {
+    return toState(stateful)['features/base/participants'].haveParticipantWithScreenSharingFeature;
 }
 
 /**
  * Selectors for getting all remote participants.
  *
- * @param {(Function|Object|Participant[])} stateful - The redux state
- * features/base/participants, the (whole) redux state, or redux's
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state
  * features/base/participants.
  * @returns {Map<string, Object>}
@@ -284,8 +274,7 @@ export function getRemoteParticipants(stateful: Object | Function) {
 /**
  * Returns the participant which has its pinned state set to truthy.
  *
- * @param {(Function|Object|Participant[])} stateful - The redux state
- * features/base/participants, the (whole) redux state, or redux's
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state
  * features/base/participants.
  * @returns {(Participant|undefined)}
@@ -299,30 +288,6 @@ export function getPinnedParticipant(stateful: Object | Function) {
     }
 
     return getParticipantById(stateful, pinnedParticipant);
-}
-
-/**
- * Returns array of participants from Redux state.
- *
- * @param {(Function|Object|Participant[])} stateful - The redux state
- * features/base/participants, the (whole) redux state, or redux's
- * {@code getState} function to be used to retrieve the state
- * features/base/participants.
- * @private
- * @returns {Participant[]}
- */
-function _getAllParticipants(stateful) {
-    if (Array.isArray(stateful)) {
-        return stateful;
-    }
-
-    const state = toState(stateful)['features/base/participants'];
-
-    if (!state.remote?.values()) {
-        return [];
-    }
-
-    return [ state.local, ...Array.from(state.remote.values()) ];
 }
 
 /**

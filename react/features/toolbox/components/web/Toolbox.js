@@ -31,7 +31,7 @@ import {
 import JitsiMeetJS from '../../../base/lib-jitsi-meet';
 import {
     getLocalParticipant,
-    getParticipants,
+    haveParticipantWithScreenSharingFeature,
     raiseHand
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
@@ -1412,12 +1412,12 @@ function _mapStateToProps(state) {
     let desktopSharingDisabledTooltipKey;
 
     if (enableFeaturesBasedOnToken) {
-        // we enable desktop sharing if any participant already have this
-        // feature enabled
-        desktopSharingEnabled = getParticipants(state)
-            .find(({ features = {} }) =>
-                String(features['screen-sharing']) === 'true') !== undefined;
-        desktopSharingDisabledTooltipKey = 'dialog.shareYourScreenDisabled';
+        if (desktopSharingEnabled) {
+            // we enable desktop sharing if any participant already have this
+            // feature enabled and if the user supports it.
+            desktopSharingEnabled = haveParticipantWithScreenSharingFeature(state);
+            desktopSharingDisabledTooltipKey = 'dialog.shareYourScreenDisabled';
+        }
     }
 
     return {
