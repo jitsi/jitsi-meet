@@ -2185,6 +2185,8 @@ export default {
         room.addCommandListener(this.commands.defaults.ETHERPAD,
             ({ value }) => {
                 APP.UI.initEtherpad(value);
+                // TODO: Remove as soon as the one below works
+                APP.UI.initGenericIFrame();
             }
         );
 
