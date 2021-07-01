@@ -78,7 +78,7 @@ class VolumeSlider extends PureComponent<Props, State> {
         super(props);
 
         this.state = {
-            volumeLevel: (props._volume || 0) * VOLUME_SLIDER_SCALE
+            volumeLevel: props._volume || 0
         };
 
         this._originalVolumeChange = this._onVolumeChange;
