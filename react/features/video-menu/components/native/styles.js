@@ -63,7 +63,7 @@ export default createStyleSheet({
     },
 
     sliderContainer: {
-        marginLeft: BaseTheme.spacing[3],
-        minWidth: '88%'
+        marginLeft: BaseTheme.spacing[2],
+        minWidth: '92%'
     }
 });
