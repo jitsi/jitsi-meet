@@ -2188,7 +2188,12 @@ export default {
             }
         );
 
-        APP.UI.initGenericIFrame();
+        room.addCommandListener(this.commands.defaults.GENERICIFRAME,
+            () => {
+                APP.UI.initGenericIFrame();
+            }
+        );
+
 
         APP.UI.addListener(UIEvents.EMAIL_CHANGED,
             this.changeLocalEmail.bind(this));

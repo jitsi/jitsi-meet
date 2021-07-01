@@ -211,7 +211,7 @@ var interfaceConfig = {
     // TOOLBAR_BUTTONS: [
     //     'microphone', 'camera', 'closedcaptions', 'desktop', 'embedmeeting', 'fullscreen',
     //     'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
-    //     'livestreaming', 'etherpad', 'genericIFrame', 'sharedvideo', 'settings', 'raisehand',
+    //     'livestreaming', 'etherpad', 'genericiframe', 'sharedvideo', 'settings', 'raisehand',
     //     'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
     //     'tileview', 'select-background', 'download', 'help', 'mute-everyone', 'mute-video-everyone', 'security'
     // ],
