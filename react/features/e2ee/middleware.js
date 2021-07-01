@@ -10,7 +10,8 @@ import {
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
-    participantUpdated
+    participantUpdated,
+    getRemoteParticipants
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
@@ -55,13 +56,12 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
         if (e2eeEnabled !== oldParticipant.e2eeEnabled
             || e2eeSupported !== oldParticipant.e2eeSupported) {
-
-            const participantsState = getState()['features/base/participants'];
+            const state = getState();
             let newEveryoneSupportsE2EE = true;
             let newEveryoneEnabledE2EE = true;
 
             // eslint-disable-next-line no-unused-vars
-            for (const [ key, p ] of participantsState.remote) {
+            for (const [ key, p ] of getRemoteParticipants(state)) {
                 if (!p.e2eeEnabled) {
                     newEveryoneEnabledE2EE = false;
                 }
@@ -75,7 +75,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 }
             }
 
-            if (!participantsState.local.e2eeEnabled) {
+            if (!getLocalParticipant(state).e2eeEnabled) {
                 newEveryoneEnabledE2EE = false;
             }
 
@@ -147,19 +147,17 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         const newState = getState();
         const { e2eeEnabled = false, e2eeSupported = false } = participant;
 
-        const { everyoneEnabledE2EE } = newState['features/e2ee'];
+        const { everyoneEnabledE2EE, everyoneSupportsE2EE } = newState['features/e2ee'];
 
-        const participantsState = newState['features/base/participants'];
-        let latestEveryoneSupportsE2EE;
 
-        // if it was not enabled by everyone, and the participant leaving had it disabled
-        // let's check is it enabled for all that stay
-        if (!everyoneEnabledE2EE && !e2eeEnabled) {
+        // if it was not enabled by everyone, and the participant leaving had it disabled, or if it was not supported
+        // by everyone, and the participant leaving had it not supported let's check is it enabled for all that stay
+        if ((!everyoneEnabledE2EE && !e2eeEnabled) || (!everyoneSupportsE2EE && !e2eeSupported)) {
             let latestEveryoneEnabledE2EE = true;
+            let latestEveryoneSupportsE2EE = true;
 
-            latestEveryoneSupportsE2EE = true;
             // eslint-disable-next-line no-unused-vars
-            for (const [ key, p ] of participantsState.remote) {
+            for (const [ key, p ] of getRemoteParticipants(newState)) {
                 if (!p.e2eeEnabled) {
                     latestEveryoneEnabledE2EE = false;
                 }
@@ -173,40 +171,25 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 }
             }
 
-            if (!participantsState.local.e2eeEnabled) {
+            if (!getLocalParticipant(newState).e2eeEnabled) {
                 latestEveryoneEnabledE2EE = false;
             }
 
-            if (latestEveryoneEnabledE2EE) {
-                dispatch({
-                    type: SET_EVERYONE_ENABLED,
-                    everyoneEnabledE2EE: true
-                });
-            }
-        }
-        const { everyoneSupportsE2EE } = getState()['features/e2ee'];
+            batch(() => {
+                if (!everyoneEnabledE2EE && latestEveryoneEnabledE2EE) {
+                    dispatch({
+                        type: SET_EVERYONE_ENABLED,
+                        everyoneEnabledE2EE: true
+                    });
+                }
 
-        // if it was not supported by everyone, and the participant leaving had it not supported
-        // let's check is it supported by all that stay behind
-        if (!everyoneSupportsE2EE && !e2eeSupported) {
-            // we haven't checked the participants, let'/'s do it now
-            if (latestEveryoneSupportsE2EE === undefined) {
-                latestEveryoneSupportsE2EE = true;
-                // eslint-disable-next-line no-unused-vars
-                for (const [ key, p ] of participantsState.remote) {
-                    if (!p.e2eeSupported) {
-                        latestEveryoneSupportsE2EE = false;
-                        break;
-                    }
-                };
-            }
-
-            if (latestEveryoneSupportsE2EE) {
-                dispatch({
-                    type: SET_EVERYONE_SUPPORTS,
-                    everyoneSupportsE2EE: true
-                });
-            }
+                if (!everyoneSupportsE2EE && latestEveryoneSupportsE2EE) {
+                    dispatch({
+                        type: SET_EVERYONE_SUPPORTS,
+                        everyoneSupportsE2EE: true
+                    });
+                }
+            });
         }
 
         return result;
