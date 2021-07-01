@@ -598,12 +598,14 @@
         },
         "actions": {
             "allow": "Allow attendees to:",
+            "blockEveryoneMicCamera": "Block everyone's mic and camera",
             "invite": "Invite Someone",
             "askUnmute": "Ask to unmute",
             "muteAll": "Mute all",
             "startModeration": "Unmute themselves or start video",
             "stopEveryonesVideo": "Stop everyone's video",
-            "stopVideo": "Stop video"
+            "stopVideo": "Stop video",
+            "unblockEveryoneMicCamera": "Unblock everyone's mic and camera"
         }
     },
     "passwordSetRemotely": "Set by another participant",

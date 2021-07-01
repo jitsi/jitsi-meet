@@ -42,9 +42,6 @@ export default class AbstractBlockAudioVideoDialog
      * @returns {boolean} - True (to note that the modal should be closed).
      */
     _onSubmit() {
-        const { dispatch } = this.props;
-
-        dispatch(blockParticipantsAudioVideo());
 
         return true;
     }

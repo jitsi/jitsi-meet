@@ -2,7 +2,7 @@
 
 import Slider from '@react-native-community/slider';
 import _ from 'lodash';
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { View } from 'react-native';
 import { withTheme } from 'react-native-paper';
 
@@ -44,7 +44,7 @@ type State = {
  *
  * @returns {React$Element<any>}
  */
-class VolumeSlider extends Component<Props, State> {
+class VolumeSlider extends PureComponent<Props, State> {
     _onVolumeChange: Function;
     _originalVolumeChange: Function;
 

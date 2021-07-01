@@ -49,7 +49,9 @@ export const ContextMenuMore = () => {
                     size = { 20 }
                     src = { IconMicDisabledHollow }
                     style = { styles.contextMenuIcon } />
-                <Text style = { styles.contextMenuItemText }>{t('participantsPane.actions.blockAudioVideo')}</Text>
+                <Text style = { styles.contextMenuItemText }>
+                    {t('participantsPane.actions.blockEveryoneMicCamera')}
+                </Text>
             </TouchableOpacity>
         </BottomSheet>
     );
