@@ -3,7 +3,12 @@
 import type { Dispatch } from 'redux';
 
 import { MEDIA_TYPE } from '../base/media';
-import { getDominantSpeakerParticipant, getPinnedParticipant } from '../base/participants';
+import {
+    getDominantSpeakerParticipant,
+    getLocalParticipant,
+    getPinnedParticipant,
+    getRemoteParticipants
+} from '../base/participants';
 
 import {
     SELECT_LARGE_VIDEO_PARTICIPANT,
@@ -123,8 +128,7 @@ function _electParticipantInLargeVideo(state) {
     // 5. As a last resort, select the participant that joined last (other than poltergist or other bot type
     // participants).
 
-    const { local, remote } = state['features/base/participants'];
-    const participants = [ ...remote.values() ];
+    const participants = [ ...getRemoteParticipants(state).values() ];
 
     for (let i = participants.length; i > 0 && !participant; i--) {
         const p = participants[i - 1];
@@ -135,5 +139,5 @@ function _electParticipantInLargeVideo(state) {
         return participant.id;
     }
 
-    return local?.id;
+    return getLocalParticipant(state)?.id;
 }

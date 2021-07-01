@@ -372,7 +372,7 @@ export function isLocalParticipantModerator(stateful: Object | Function) {
  */
 export function shouldRenderParticipantVideo(stateful: Object | Function, id: string) {
     const state = toState(stateful);
-    const participant = getParticipantById(stateful, id);
+    const participant = getParticipantById(state, id);
 
     if (!participant) {
         return false;

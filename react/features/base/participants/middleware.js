@@ -45,7 +45,8 @@ import {
     getLocalParticipant,
     getParticipantById,
     getParticipantCount,
-    getParticipantDisplayName
+    getParticipantDisplayName,
+    getRemoteParticipants
 } from './functions';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
 
@@ -185,7 +186,7 @@ StateListenerRegistry.register(
     /* selector */ state => getCurrentConference(state),
     /* listener */ (conference, { dispatch, getState }) => {
         batch(() => {
-            for (const [ id, p ] of getState()['features/base/participants'].remote) {
+            for (const [ id, p ] of getRemoteParticipants(getState()).remote) {
                 (!conference || p.conference !== conference)
                     && dispatch(participantLeft(id, p.conference, p.isReplaced));
             }

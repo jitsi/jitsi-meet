@@ -12,7 +12,9 @@ import {
     ParticipantView,
     getParticipantCount,
     isEveryoneModerator,
-    pinParticipant
+    pinParticipant,
+    getParticipantById,
+    getLocalParticipant
 } from '../../../base/participants';
 import { Container } from '../../../base/react';
 import { connect } from '../../../base/redux';
@@ -58,6 +60,11 @@ type Props = {
     _onThumbnailLongPress: ?Function,
 
     /**
+     * The Redux representation of the participant to display.
+     */
+     _participant: Object,
+
+    /**
      * Whether to show the dominant speaker indicator or not.
      */
     _renderDominantSpeakerIndicator: boolean,
@@ -90,9 +97,9 @@ type Props = {
     dispatch: Dispatch<any>,
 
     /**
-     * The Redux representation of the participant to display.
+     * The ID of the participant related to the thumbnail.
      */
-    participant: Object,
+    participantID: ?string,
 
     /**
      * Whether to display or hide the display name of the participant in the thumbnail.
@@ -124,10 +131,10 @@ function Thumbnail(props: Props) {
         _onThumbnailLongPress,
         _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,
         _renderModeratorIndicator: renderModeratorIndicator,
+        _participant: participant,
         _styles,
         _videoTrack: videoTrack,
         disableTint,
-        participant,
         renderDisplayName,
         tileView
     } = props;
@@ -260,7 +267,8 @@ function _mapStateToProps(state, ownProps) {
     // the stage i.e. as a large video.
     const largeVideo = state['features/large-video'];
     const tracks = state['features/base/tracks'];
-    const { participant } = ownProps;
+    const { participantID } = ownProps;
+    const participant = participantID ? getParticipantById(state, participantID) : getLocalParticipant(state);
     const id = participant.id;
     const audioTrack
         = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, id);
@@ -274,6 +282,7 @@ function _mapStateToProps(state, ownProps) {
     return {
         _audioMuted: audioTrack?.muted ?? true,
         _largeVideo: largeVideo,
+        _participant: participant,
         _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,
         _renderModeratorIndicator: renderModeratorIndicator,
         _styles: ColorSchemeRegistry.get(state, 'Thumbnail'),
