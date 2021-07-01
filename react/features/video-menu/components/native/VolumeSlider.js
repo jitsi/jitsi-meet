@@ -1,9 +1,8 @@
 // @flow
 
-import Slider from '@react-native-community/slider';
 import _ from 'lodash';
 import React, { PureComponent } from 'react';
-import { View } from 'react-native';
+import { View, Slider } from 'react-native';
 import { withTheme } from 'react-native-paper';
 
 import { translate } from '../../../base/i18n';
@@ -15,6 +14,9 @@ import {
 import { connect } from '../../../base/redux';
 import { setVolume } from '../../../participants-pane/actions.native';
 import { VOLUME_SLIDER_SCALE } from '../../constants';
+
+import styles from './styles';
+
 
 /**
  * The type of the React {@code Component} props of {@link VolumeSlider}.
@@ -101,16 +103,18 @@ class VolumeSlider extends PureComponent<Props, State> {
         const onVolumeChange = _startSilent ? undefined : this._onVolumeChange;
 
         return (
-            <View>
+            <View style = { styles.volumeSliderContainer } >
                 <Icon
-                    size = { 24 }
-                    src = { IconVolumeEmpty } />
+                    size = { 20 }
+                    src = { IconVolumeEmpty }
+                    style = { styles.volumeIcon } />
                 <Slider
                     maximumTrackTintColor = { palette.field02 }
                     maximumValue = { VOLUME_SLIDER_SCALE }
                     minimumTrackTintColor = { palette.action01 }
                     minimumValue = { 0 }
                     onValueChange = { onVolumeChange }
+                    style = { styles.sliderContainer }
                     thumbTintColor = { palette.field02 }
                     value = { volumeLevel } />
             </View>
