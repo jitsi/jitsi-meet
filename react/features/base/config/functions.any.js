@@ -61,16 +61,6 @@ export function getRecordingSharingUrl(state: Object) {
 }
 
 /**
- * Selector used to get if the new participant is starting silent.
- *
- * @param {Object} state - The global state.
- * @returns {string}
- */
-export function getIsStartingSilent(state: Object) {
-    return Boolean(state['features/base/config'].startSilent);
-}
-
-/**
  * Overrides JSON properties in {@code config} and
  * {@code interfaceConfig} Objects with the values from {@code newConfig}.
  * Overrides only the whitelisted keys.
