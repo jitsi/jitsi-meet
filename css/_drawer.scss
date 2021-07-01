@@ -6,11 +6,18 @@
     z-index: $drawerZ;
 }
 
+.drawer-menu-container {
+    height: 100vh;
+    display: flex;
+    align-items: flex-end;
+}
+
 .drawer-menu {
     max-height: 50vh;
     background: #242528;
     border-radius: 16px 16px 0 0;
     overflow-y: auto;
+    width: 100%;
 
     &.expanded {
         max-height: 80vh;
