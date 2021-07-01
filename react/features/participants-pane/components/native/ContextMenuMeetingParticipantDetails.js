@@ -7,7 +7,6 @@ import { Divider, Text } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Avatar } from '../../../base/avatar';
-import { getIsStartingSilent } from '../../../base/config';
 import { hideDialog, openDialog } from '../../../base/dialog/actions';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import {
@@ -41,9 +40,6 @@ type Props = {
 export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) => {
     const dispatch = useDispatch();
     const cancel = useCallback(() => dispatch(hideDialog()), [ dispatch ]);
-    const isStartingSilent = useSelector(getIsStartingSilent);
-    const participantsVolume = 1;
-    const initialParticipantsVolume = isStartingSilent ? undefined : participantsVolume;
     const displayName = p.name;
     const isLocalModerator = useSelector(isLocalParticipantModerator);
     const isParticipantVideoMuted = useSelector(getIsParticipantVideoMuted(p));
@@ -172,8 +168,7 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
             {/*    <Text style = { styles.contextMenuItemText }>{ t('participantsPane.actions.networkStats') }</Text>*/}
             {/* </TouchableOpacity>*/}
             <Divider style = { styles.divider } />
-            <VolumeSlider
-                initialValue = { initialParticipantsVolume } />
+            <VolumeSlider participant = { p } />
         </BottomSheet>
     );
 };

@@ -2,8 +2,6 @@
 
 import { Component } from 'react';
 
-import { blockParticipantsAudioVideo } from '../actions.any';
-
 type Props = {
 
     /**

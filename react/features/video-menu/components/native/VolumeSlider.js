@@ -6,7 +6,14 @@ import React, { PureComponent } from 'react';
 import { View } from 'react-native';
 import { withTheme } from 'react-native-paper';
 
+import { translate } from '../../../base/i18n';
 import { Icon, IconVolumeEmpty } from '../../../base/icons';
+import {
+    getLocalParticipant,
+    getParticipantById
+} from '../../../base/participants';
+import { connect } from '../../../base/redux';
+import { setVolume } from '../../../participants-pane/actions.native';
 import { VOLUME_SLIDER_SCALE } from '../../constants';
 
 /**
@@ -15,11 +22,24 @@ import { VOLUME_SLIDER_SCALE } from '../../constants';
 type Props = {
 
     /**
-     * The value of the audio slider should display at when the component first
-     * mounts. Changes will be stored in state. The value should be a number
-     * between 0 and 1.
+     * Whether the participant enters the conference silent.
      */
-    initialValue: number,
+    _startSilent: boolean,
+
+    /**
+     * The volume level for the participant.
+     */
+    _volume: number,
+
+    /**
+     * The redux dispatch function.
+     */
+    dispatch: Function,
+
+    /**
+     * Participant reference
+     */
+    participant: Object,
 
     /**
      * Theme used for styles.
@@ -58,7 +78,7 @@ class VolumeSlider extends PureComponent<Props, State> {
         super(props);
 
         this.state = {
-            volumeLevel: (props.initialValue || 0) * VOLUME_SLIDER_SCALE
+            volumeLevel: (props._volume || 0) * VOLUME_SLIDER_SCALE
         };
 
         this._originalVolumeChange = this._onVolumeChange;
@@ -75,9 +95,10 @@ class VolumeSlider extends PureComponent<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { theme } = this.props;
+        const { _startSilent, theme } = this.props;
         const { volumeLevel } = this.state;
         const { palette } = theme;
+        const onVolumeChange = _startSilent ? undefined : this._onVolumeChange;
 
         return (
             <View>
@@ -89,7 +110,7 @@ class VolumeSlider extends PureComponent<Props, State> {
                     maximumValue = { VOLUME_SLIDER_SCALE }
                     minimumTrackTintColor = { palette.action01 }
                     minimumValue = { 0 }
-                    onValueChange = { this._onVolumeChange }
+                    onValueChange = { onVolumeChange }
                     thumbTintColor = { palette.field02 }
                     value = { volumeLevel } />
             </View>
@@ -106,9 +127,34 @@ class VolumeSlider extends PureComponent<Props, State> {
      * @returns {void}
      */
     _onVolumeChange(volumeLevel) {
-        this.setState({ volumeLevel });
+        const { dispatch, participant } = this.props;
+        const { id } = participant;
+
+        dispatch(setVolume(id, volumeLevel));
     }
 }
 
-export default withTheme(VolumeSlider);
+/**
+ * Maps (parts of) the Redux state to the associated props for the
+ * {@code VolumeSlider} component.
+ *
+ * @param {Object} state - The Redux state.
+ * @param {Object} ownProps - The own props of the component.
+ * @returns {Props}
+ */
+function mapStateToProps(state, ownProps): Object {
+    const { participant } = ownProps;
+    const { startSilent } = state['features/base/config'];
+    const { participantsVolume } = state['features/participants-pane'];
+    const getParticipant = participant.id
+        ? getParticipantById(state, participant.id) : getLocalParticipant(state);
+    const { id } = getParticipant;
+
+    return {
+        _startSilent: Boolean(startSilent),
+        _volume: participant.local ? undefined : participantsVolume[id]
+    };
+}
+
+export default translate(connect(mapStateToProps)(withTheme(VolumeSlider)));
 

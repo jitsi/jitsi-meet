@@ -2,6 +2,7 @@
 
 import { openDialog } from '../base/dialog';
 
+import { SET_VOLUME } from './actionTypes';
 import { ContextMenuLobbyParticipantReject, ContextMenuMeetingParticipantDetails } from './components/native';
 export * from './actions.any';
 
@@ -24,4 +25,23 @@ export function showContextMenuReject(participant: Object) {
  */
 export function showContextMenuDetails(participant: Object) {
     return openDialog(ContextMenuMeetingParticipantDetails, { participant });
+}
+
+/**
+ * Sets the volume.
+ *
+ * @param {string} participantId - The participant ID associated with the audio.
+ * @param {string} volume - The volume level.
+ * @returns {{
+ *     type: SET_VOLUME,
+ *     participantId: string,
+ *     volume: number
+ * }}
+ */
+export function setVolume(participantId: string, volume: number) {
+    return {
+        type: SET_VOLUME,
+        participantId,
+        volume
+    };
 }
