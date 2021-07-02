@@ -98,6 +98,7 @@ const events = {
     'proxy-connection-event': 'proxyConnectionEvent',
     'raise-hand-updated': 'raiseHandUpdated',
     'recording-status-changed': 'recordingStatusChanged',
+    'show-participant-list': 'showParticipantList',
     'video-ready-to-close': 'readyToClose',
     'video-conference-joined': 'videoConferenceJoined',
     'video-conference-left': 'videoConferenceLeft',
@@ -167,37 +168,37 @@ function parseArguments(args) {
     const firstArg = args[0];
 
     switch (typeof firstArg) {
-    case 'string': // old arguments format
-    case undefined: {
-        // Not sure which format but we are trying to parse the old
-        // format because if the new format is used everything will be undefined
-        // anyway.
-        const [
-            roomName,
-            width,
-            height,
-            parentNode,
-            configOverwrite,
-            interfaceConfigOverwrite,
-            jwt,
-            onload
-        ] = args;
+        case 'string': // old arguments format
+        case undefined: {
+            // Not sure which format but we are trying to parse the old
+            // format because if the new format is used everything will be undefined
+            // anyway.
+            const [
+                roomName,
+                width,
+                height,
+                parentNode,
+                configOverwrite,
+                interfaceConfigOverwrite,
+                jwt,
+                onload
+            ] = args;
 
-        return {
-            roomName,
-            width,
-            height,
-            parentNode,
-            configOverwrite,
-            interfaceConfigOverwrite,
-            jwt,
-            onload
-        };
-    }
-    case 'object': // new arguments format
-        return args[0];
-    default:
-        throw new Error('Can\'t parse the arguments!');
+            return {
+                roomName,
+                width,
+                height,
+                parentNode,
+                configOverwrite,
+                interfaceConfigOverwrite,
+                jwt,
+                onload
+            };
+        }
+        case 'object': // new arguments format
+            return args[0];
+        default:
+            throw new Error('Can\'t parse the arguments!');
     }
 }
 
@@ -406,9 +407,9 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         const iframe = this.getIFrame();
 
         if (!this._isLargeVideoVisible
-                || !iframe
-                || !iframe.contentWindow
-                || !iframe.contentWindow.document) {
+            || !iframe
+            || !iframe.contentWindow
+            || !iframe.contentWindow.document) {
             return;
         }
 
@@ -427,8 +428,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         const iframe = this.getIFrame();
 
         if (!iframe
-                || !iframe.contentWindow
-                || !iframe.contentWindow.document) {
+            || !iframe.contentWindow
+            || !iframe.contentWindow.document) {
             return;
         }
 
@@ -475,76 +476,76 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             const userID = data.id;
 
             switch (name) {
-            case 'video-conference-joined': {
-                if (typeof this._tmpE2EEKey !== 'undefined') {
-                    this.executeCommand(commands.e2eeKey, this._tmpE2EEKey);
-                    this._tmpE2EEKey = undefined;
+                case 'video-conference-joined': {
+                    if (typeof this._tmpE2EEKey !== 'undefined') {
+                        this.executeCommand(commands.e2eeKey, this._tmpE2EEKey);
+                        this._tmpE2EEKey = undefined;
+                    }
+
+                    this._myUserID = userID;
+                    this._participants[userID] = {
+                        avatarURL: data.avatarURL
+                    };
                 }
 
-                this._myUserID = userID;
-                this._participants[userID] = {
-                    avatarURL: data.avatarURL
-                };
-            }
-
-            // eslint-disable-next-line no-fallthrough
-            case 'participant-joined': {
-                this._participants[userID] = this._participants[userID] || {};
-                this._participants[userID].displayName = data.displayName;
-                this._participants[userID].formattedDisplayName
-                    = data.formattedDisplayName;
-                changeParticipantNumber(this, 1);
-                break;
-            }
-            case 'participant-left':
-                changeParticipantNumber(this, -1);
-                delete this._participants[userID];
-                break;
-            case 'display-name-change': {
-                const user = this._participants[userID];
-
-                if (user) {
-                    user.displayName = data.displayname;
-                    user.formattedDisplayName = data.formattedDisplayName;
+                // eslint-disable-next-line no-fallthrough
+                case 'participant-joined': {
+                    this._participants[userID] = this._participants[userID] || {};
+                    this._participants[userID].displayName = data.displayName;
+                    this._participants[userID].formattedDisplayName
+                        = data.formattedDisplayName;
+                    changeParticipantNumber(this, 1);
+                    break;
                 }
-                break;
-            }
-            case 'email-change': {
-                const user = this._participants[userID];
+                case 'participant-left':
+                    changeParticipantNumber(this, -1);
+                    delete this._participants[userID];
+                    break;
+                case 'display-name-change': {
+                    const user = this._participants[userID];
 
-                if (user) {
-                    user.email = data.email;
+                    if (user) {
+                        user.displayName = data.displayname;
+                        user.formattedDisplayName = data.formattedDisplayName;
+                    }
+                    break;
                 }
-                break;
-            }
-            case 'avatar-changed': {
-                const user = this._participants[userID];
+                case 'email-change': {
+                    const user = this._participants[userID];
 
-                if (user) {
-                    user.avatarURL = data.avatarURL;
+                    if (user) {
+                        user.email = data.email;
+                    }
+                    break;
                 }
-                break;
-            }
-            case 'on-stage-participant-changed':
-                this._onStageParticipant = userID;
-                this.emit('largeVideoChanged');
-                break;
-            case 'large-video-visibility-changed':
-                this._isLargeVideoVisible = data.isVisible;
-                this.emit('largeVideoChanged');
-                break;
-            case 'video-conference-left':
-                changeParticipantNumber(this, -1);
-                delete this._participants[this._myUserID];
-                break;
-            case 'video-quality-changed':
-                this._videoQuality = data.videoQuality;
-                break;
-            case 'local-storage-changed':
-                jitsiLocalStorage.setItem('jitsiLocalStorage', data.localStorageContent);
+                case 'avatar-changed': {
+                    const user = this._participants[userID];
 
-                // Since this is internal event we don't need to emit it to the consumer of the API.
-                return true;
+                    if (user) {
+                        user.avatarURL = data.avatarURL;
+                    }
+                    break;
+                }
+                case 'on-stage-participant-changed':
+                    this._onStageParticipant = userID;
+                    this.emit('largeVideoChanged');
+                    break;
+                case 'large-video-visibility-changed':
+                    this._isLargeVideoVisible = data.isVisible;
+                    this.emit('largeVideoChanged');
+                    break;
+                case 'video-conference-left':
+                    changeParticipantNumber(this, -1);
+                    delete this._participants[this._myUserID];
+                    break;
+                case 'video-quality-changed':
+                    this._videoQuality = data.videoQuality;
+                    break;
+                case 'local-storage-changed':
+                    jitsiLocalStorage.setItem('jitsiLocalStorage', data.localStorageContent);
+
+                    // Since this is internal event we don't need to emit it to the consumer of the API.
+                    return true;
             }
 
             const eventName = events[name];
@@ -1032,7 +1033,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      */
     sendProxyConnectionEvent(event) {
         this._transport.sendEvent({
-            data: [ event ],
+            data: [event],
             name: 'proxy-connection-event'
         });
     }
