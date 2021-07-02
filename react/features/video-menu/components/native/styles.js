@@ -59,11 +59,12 @@ export default createStyleSheet({
     },
 
     volumeIcon: {
-        marginLeft: BaseTheme.spacing[1]
+        marginLeft: BaseTheme.spacing[1],
+        minWidth: '5%'
     },
 
     sliderContainer: {
-        marginLeft: BaseTheme.spacing[2],
-        minWidth: '92%'
+        marginLeft: BaseTheme.spacing[3],
+        minWidth: '90%'
     }
 });

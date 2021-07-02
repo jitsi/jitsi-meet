@@ -74,14 +74,14 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
     return (
         <BottomSheet
             onCancel = { cancel }
-            style = { styles.contextMenuMore }>
+            style = { styles.contextMenuMeetingParticipantDetails }>
             <View
-                style = { styles.contextMenuItemSection }>
+                style = { styles.contextMenuItemSectionAvatar }>
                 <Avatar
                     className = 'participant-avatar'
                     participantId = { p.id }
-                    size = { 20 } />
-                <View style = { styles.contextMenuItemText }>
+                    size = { 30 } />
+                <View style = { styles.contextMenuItemAvatarText }>
                     <Text style = { styles.contextMenuItemName }>
                         { displayName }
                     </Text>
@@ -94,7 +94,7 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
                     onPress = { muteAudio }
                     style = { styles.contextMenuItem }>
                     <Icon
-                        size = { 20 }
+                        size = { 24 }
                         src = { IconMicrophoneEmptySlash }
                         style = { styles.contextMenuItemIcon } />
                     <Text style = { styles.contextMenuItemText }>
@@ -108,7 +108,7 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
                     onPress = { muteEveryoneElse }
                     style = { styles.contextMenuItem }>
                     <Icon
-                        size = { 20 }
+                        size = { 24 }
                         src = { IconMuteEveryoneElse }
                         style = { styles.contextMenuItemIcon } />
                     <Text style = { styles.contextMenuItemText }>
@@ -124,7 +124,7 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
                         onPress = { muteVideo }
                         style = { styles.contextMenuItemSection }>
                         <Icon
-                            size = { 20 }
+                            size = { 24 }
                             src = { IconVideoOff }
                             style = { styles.contextMenuItemIcon } />
                         <Text style = { styles.contextMenuItemText }>
@@ -139,7 +139,7 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
                     onPress = { kickRemoteParticipant }
                     style = { styles.contextMenuItem }>
                     <Icon
-                        size = { 20 }
+                        size = { 24 }
                         src = { IconCloseCircle }
                         style = { styles.contextMenuItemIcon } />
                     <Text style = { styles.contextMenuItemText }>
@@ -151,7 +151,7 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
                 onPress = { sendPrivateMessage }
                 style = { styles.contextMenuItem }>
                 <Icon
-                    size = { 20 }
+                    size = { 24 }
                     src = { IconMessage }
                     style = { styles.contextMenuItemIcon } />
                 <Text style = { styles.contextMenuItemText }>

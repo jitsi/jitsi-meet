@@ -38,7 +38,7 @@ export const ContextMenuMore = () => {
                 onPress = { muteAllVideo }
                 style = { styles.contextMenuItem }>
                 <Icon
-                    size = { 20 }
+                    size = { 24 }
                     src = { IconVideoOff } />
                 <Text style = { styles.contextMenuItemText }>{t('participantsPane.actions.stopEveryonesVideo')}</Text>
             </TouchableOpacity>
@@ -46,7 +46,7 @@ export const ContextMenuMore = () => {
                 onPress = { blockAudioVideo }
                 style = { styles.contextMenuItem }>
                 <Icon
-                    size = { 20 }
+                    size = { 24 }
                     src = { IconMicDisabledHollow }
                     style = { styles.contextMenuIcon } />
                 <Text style = { styles.contextMenuItemText }>

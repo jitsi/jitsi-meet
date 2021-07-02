@@ -23,22 +23,38 @@ const flexContent = {
 };
 
 /**
+ * The style for the context menu items text.
+ */
+const contextMenuItemText = {
+    ...BaseTheme.typography.bodyShortRegularLarge,
+    color: BaseTheme.palette.text01
+};
+
+/**
  * The style of the participants pane buttons.
  */
 export const button = {
-    alignItems: 'center',
     backgroundColor: BaseTheme.palette.action02,
     borderRadius: BaseTheme.shape.borderRadius,
     display: 'flex',
-    justifyContent: 'center',
-    marginLeft: 'auto'
+    minWidth: 0
 };
 
 /**
  * Small buttons.
  */
 const smallButton = {
-    ...button
+    ...button,
+    height: BaseTheme.spacing[7],
+    width: BaseTheme.spacing[7]
+};
+
+/**
+ * Mute all button.
+ */
+const muteAllButton = {
+    ...button,
+    marginLeft: 'auto'
 };
 
 /**
@@ -46,6 +62,7 @@ const smallButton = {
  */
 const buttonContent = {
     ...BaseTheme.typography.labelButton,
+    alignSelf: 'center',
     color: BaseTheme.palette.text01,
     justifyContent: 'center'
 };
@@ -213,6 +230,7 @@ export default {
         display: 'flex',
         flexDirection: 'row',
         height: BaseTheme.spacing[10],
+        justifyContent: 'space-between',
         paddingRight: BaseTheme.spacing[3],
         position: 'relative',
         right: BaseTheme.spacing[0],
@@ -221,13 +239,17 @@ export default {
 
     closeButton: {
         ...smallButton,
-        width: BaseTheme.spacing[8]
+        marginLeft: 'auto'
     },
 
     closeIcon: {
         ...buttonContent,
-        height: BaseTheme.spacing[8],
-        left: BaseTheme.spacing[2]
+        height: BaseTheme.spacing[5],
+        marginLeft: 'auto',
+        paddingTop: 12,
+        paddingBottom: 12,
+        paddingRight: BaseTheme.spacing[3],
+        paddingLeft: BaseTheme.spacing[3]
     },
 
     inviteButton: {
@@ -243,14 +265,17 @@ export default {
     },
 
     moreButton: {
-        ...smallButton,
-        width: BaseTheme.spacing[8]
+        ...smallButton
     },
 
     moreIcon: {
         ...buttonContent,
-        height: BaseTheme.spacing[8],
-        left: BaseTheme.spacing[2]
+        height: BaseTheme.spacing[5],
+        marginLeft: 'auto',
+        paddingTop: 12,
+        paddingBottom: 12,
+        paddingRight: BaseTheme.spacing[3],
+        paddingLeft: BaseTheme.spacing[3]
     },
 
     contextMenuMore: {
@@ -258,20 +283,33 @@ export default {
         borderRadius: BaseTheme.shape.borderRadius
     },
 
-    muteAllButton: {
-        ...button,
-        left: BaseTheme.spacing[10] + BaseTheme.spacing[2]
+    contextMenuMeetingParticipantDetails: {
+        backgroundColor: BaseTheme.palette.action02,
+        borderRadius: BaseTheme.shape.borderRadius
     },
 
-    muteAllContent: {
-        ...buttonContent,
-        height: BaseTheme.spacing[8]
+    muteAllButton: {
+        ...muteAllButton
+    },
+
+    muteAllMoreButton: {
+        ...muteAllButton,
+        right: BaseTheme.spacing[3]
     },
 
     muteAllLabel: {
         ...BaseTheme.typography.labelButtonLarge,
         color: BaseTheme.palette.text01,
-        textTransform: 'capitalize'
+        flexDirection: 'column',
+        height: BaseTheme.spacing[7],
+        marginVertical: BaseTheme.spacing[0],
+        marginHorizontal: BaseTheme.spacing[0],
+        paddingTop: 12,
+        paddingBottom: 12,
+        paddingRight: BaseTheme.spacing[3],
+        paddingLeft: BaseTheme.spacing[3],
+        textTransform: 'capitalize',
+        width: 94
     },
 
     contextMenuItem: {
@@ -282,9 +320,18 @@ export default {
         ...contextMenuItem
     },
 
+    contextMenuItemSectionAvatar: {
+        ...contextMenuItem,
+        marginLeft: BaseTheme.spacing[1]
+    },
+
+    contextMenuItemAvatarText: {
+        ...contextMenuItemText,
+        marginLeft: BaseTheme.spacing[2]
+    },
+
     contextMenuItemText: {
-        ...BaseTheme.typography.bodyShortRegularLarge,
-        color: BaseTheme.palette.text01,
+        ...contextMenuItemText,
         marginLeft: BaseTheme.spacing[3]
     },
 
