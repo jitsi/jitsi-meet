@@ -75,8 +75,10 @@ const SCREEN_SHARE_TOGGLED = 'SCREEN_SHARE_TOGGLED';
  */
 const PARTICIPANTS_INFO_RETRIEVED = 'PARTICIPANTS_INFO_RETRIEVED';
 
-const { ExternalAPI } = NativeModules;
+const { ExternalAPI, WebRTCModule } = NativeModules;
 const eventEmitter = new NativeEventEmitter(ExternalAPI);
+const anotherEmitter = new NativeEventEmitter(WebRTCModule);
+
 
 /**
  * Middleware that captures Redux actions and uses the ExternalAPI module to
@@ -291,6 +293,10 @@ function _registerForNativeEvents(store) {
 
     eventEmitter.addListener(ExternalAPI.TOGGLE_CAMERA_FACING_MODE, () => {
         dispatch(toggleCameraFacingMode());
+    });
+    eventEmitter.addListener(ExternalAPI.CAPTURE_SCREENSHOT, () => {
+        anotherEmitter.emit("TakeSnapshot")
+        dispatch();//something to be done here 
     });
 
     eventEmitter.addListener(ExternalAPI.SEND_ENDPOINT_TEXT_MESSAGE, ({ to, message }) => {

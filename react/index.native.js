@@ -73,4 +73,4 @@ if (!__DEV__) {
 AppRegistry.registerComponent('App', () => Root);
 
 // Register the main/root Component of IncomingCallView.
-AppRegistry.registerComponent('IncomingCallApp', () => IncomingCallApp);
+// AppRegistry.registerComponent('IncomingCallApp', () => IncomingCallApp);

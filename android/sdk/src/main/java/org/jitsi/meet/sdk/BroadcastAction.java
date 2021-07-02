@@ -70,6 +70,7 @@ public class BroadcastAction {
     enum Type {
         SET_AUDIO_MUTED("org.jitsi.meet.SET_AUDIO_MUTED"),
         TOGGLE_CAMERA_FACING_MODE("org.jitsi.meet.TOGGLE_CAMERA_FACING_MODE"),
+        CAPTURE_SCREENSHOT("org.jitsi.meet.CAPTURE_SCREENSHOT"),
         HANG_UP("org.jitsi.meet.HANG_UP"),
         SEND_ENDPOINT_TEXT_MESSAGE("org.jitsi.meet.SEND_ENDPOINT_TEXT_MESSAGE"),
         TOGGLE_SCREEN_SHARE("org.jitsi.meet.TOGGLE_SCREEN_SHARE"),

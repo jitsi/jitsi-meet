@@ -9,7 +9,8 @@ import {
     SET_VIDEO_AVAILABLE,
     SET_VIDEO_MUTED,
     STORE_VIDEO_TRANSFORM,
-    TOGGLE_CAMERA_FACING_MODE
+    TOGGLE_CAMERA_FACING_MODE,
+    CAPTURE_SCREENSHOT
 } from './actionTypes';
 import {
     CAMERA_FACING_MODE,
@@ -155,5 +156,10 @@ export function storeVideoTransform(streamId: string, transform: Object) {
 export function toggleCameraFacingMode() {
     return {
         type: TOGGLE_CAMERA_FACING_MODE
+    };
+}
+export function captureScreenShot() {
+    return {
+        type: CAPTURE_SCREENSHOT
     };
 }

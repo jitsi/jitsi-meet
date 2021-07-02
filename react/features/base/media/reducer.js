@@ -5,6 +5,7 @@ import { ReducerRegistry } from '../redux';
 import { TRACK_REMOVED } from '../tracks/actionTypes';
 
 import {
+    CAPTURE_SCREENSHOT,
     SET_AUDIO_AVAILABLE,
     SET_AUDIO_MUTED,
     SET_CAMERA_FACING_MODE,
@@ -142,6 +143,10 @@ function _video(state = _VIDEO_INITIAL_MEDIA_STATE, action) {
             facingMode: cameraFacingMode
         };
     }
+    case CAPTURE_SCREENSHOT:{
+
+
+    }
 
     case TRACK_REMOVED:
         return _trackRemoved(state, action);
@@ -149,6 +154,12 @@ function _video(state = _VIDEO_INITIAL_MEDIA_STATE, action) {
     default:
         return state;
     }
+}
+function _takeScreenshot(state) {
+    return {
+        ...state,
+        transforms: _VIDEO_INITIAL_MEDIA_STATE.transforms
+    };
 }
 
 /**

@@ -13,6 +13,10 @@ public class BroadcastIntentHelper {
         return new Intent(BroadcastAction.Type.TOGGLE_CAMERA_FACING_MODE.getAction());
     }
 
+    public static Intent buildCaptureScreenshotIntent() {
+        return new Intent(BroadcastAction.Type.CAPTURE_SCREENSHOT.getAction());
+    }
+
     public static Intent buildHangUpIntent() {
         return new Intent(BroadcastAction.Type.HANG_UP.getAction());
     }

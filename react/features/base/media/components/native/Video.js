@@ -8,6 +8,8 @@ import { NativeEventEmitter, NativeModules } from 'react-native';
 import EventEmitter from './EventEmitter';
 import VideoTransform from './VideoTransform';
 import styles from './styles';
+import { connect } from 'react-redux';
+import { storeVideoTransform } from '../../actions';
 
 /**
  * The type of the React {@code Component} props of {@link Video}.
@@ -94,8 +96,10 @@ export default class Video extends Component<Props> {
         if (data.error) {
             // --- failed
             console.log("got the data back"+data.error);
+            
         }
         if (data.file) {
+            storeVideoTransform.
             // --- saved file path
             console.log("got the data back"+data.file);
         }
