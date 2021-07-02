@@ -10,7 +10,8 @@ import { openDialog } from '../../../base/dialog';
 import { Icon, IconClose, IconHorizontalPoints } from '../../../base/icons';
 import { JitsiModal } from '../../../base/modal';
 import {
-    getParticipantCount, isEveryoneModerator,
+    getParticipantCount,
+    isEveryoneModerator,
     isLocalParticipantModerator
 } from '../../../base/participants';
 import MuteEveryoneDialog
@@ -20,7 +21,7 @@ import { close } from '../../actions.native';
 import { ContextMenuMore } from './ContextMenuMore';
 import { LobbyParticipantList } from './LobbyParticipantList';
 import { MeetingParticipantList } from './MeetingParticipantList';
-import styles, { button } from './styles';
+import styles from './styles';
 
 /**
  * Participant pane.
@@ -34,7 +35,7 @@ const ParticipantsPane = () => {
     const isLocalModerator = useSelector(isLocalParticipantModerator);
     const participantsCount = useSelector(getParticipantCount);
     const everyoneModerator = useSelector(isEveryoneModerator);
-    const showContextMenu = !everyoneModerator && participantsCount > 2;
+    const showContextMenu = true;
     const muteAll = useCallback(() => dispatch(openDialog(MuteEveryoneDialog)),
         [ dispatch ]);
     const { t } = useTranslation();
@@ -45,13 +46,13 @@ const ParticipantsPane = () => {
             style = { styles.participantsPane }>
             <View style = { styles.header }>
                 <Button
-                    contentStyle = { styles.closeIcon }
                     /* eslint-disable-next-line react/jsx-no-bind */
                     icon = { () =>
                         (<Icon
                             size = { 24 }
                             src = { IconClose } />)
                     }
+                    labelStyle = { styles.closeIcon }
                     mode = 'contained'
                     onPress = { closePane }
                     style = { styles.closeButton } />
@@ -65,21 +66,20 @@ const ParticipantsPane = () => {
                 && <View style = { styles.footer }>
                     <Button
                         children = { t('participantsPane.actions.muteAll') }
-                        contentStyle = { styles.muteAllContent }
                         labelStyle = { styles.muteAllLabel }
                         mode = 'contained'
                         onPress = { muteAll }
-                        style = { showContextMenu ? styles.muteAllButton : button } />
+                        style = { showContextMenu ? styles.muteAllMoreButton : styles.muteAllButton } />
                     {
                         showContextMenu
                         && <Button
-                            contentStyle = { styles.moreIcon }
                             /* eslint-disable-next-line react/jsx-no-bind */
                             icon = { () =>
                                 (<Icon
                                     size = { 24 }
                                     src = { IconHorizontalPoints } />)
                             }
+                            labelStyle = { styles.moreIcon }
                             mode = 'contained'
                             onPress = { openMoreMenu }
                             style = { styles.moreButton } />

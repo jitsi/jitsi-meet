@@ -3,7 +3,9 @@
 import React from 'react';
 
 import {
-    Icon, IconCameraEmpty, IconCameraEmptyDisabled,
+    Icon,
+    IconCameraEmpty,
+    IconCameraEmptyDisabled,
     IconMicrophoneEmpty,
     IconMicrophoneEmptySlash
 } from '../base/icons';

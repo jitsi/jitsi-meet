@@ -2,15 +2,11 @@
 
 import _ from 'lodash';
 import React, { PureComponent } from 'react';
-import { View, Slider } from 'react-native';
+import { Slider, View } from 'react-native';
 import { withTheme } from 'react-native-paper';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconVolumeEmpty } from '../../../base/icons';
-import {
-    getLocalParticipant,
-    getParticipantById
-} from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { setVolume } from '../../../participants-pane/actions.native';
 import { VOLUME_SLIDER_SCALE } from '../../constants';
@@ -105,7 +101,7 @@ class VolumeSlider extends PureComponent<Props, State> {
         return (
             <View style = { styles.volumeSliderContainer } >
                 <Icon
-                    size = { 20 }
+                    size = { 24 }
                     src = { IconVolumeEmpty }
                     style = { styles.volumeIcon } />
                 <Slider
@@ -148,15 +144,13 @@ class VolumeSlider extends PureComponent<Props, State> {
  */
 function mapStateToProps(state, ownProps): Object {
     const { participant } = ownProps;
-    const { startSilent } = state['features/base/config'];
+    const { id, local } = participant;
     const { participantsVolume } = state['features/participants-pane'];
-    const getParticipant = participant.id
-        ? getParticipantById(state, participant.id) : getLocalParticipant(state);
-    const { id } = getParticipant;
+    const { startSilent } = state['features/base/config'];
 
     return {
         _startSilent: Boolean(startSilent),
-        _volume: participant.local ? undefined : participantsVolume[id]
+        _volume: local ? undefined : participantsVolume[id]
     };
 }
 
