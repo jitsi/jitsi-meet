@@ -35,7 +35,7 @@ const ParticipantsPane = () => {
     const isLocalModerator = useSelector(isLocalParticipantModerator);
     const participantsCount = useSelector(getParticipantCount);
     const everyoneModerator = useSelector(isEveryoneModerator);
-    const showContextMenu = true;
+    const showContextMenu = !everyoneModerator && participantsCount > 2;
     const muteAll = useCallback(() => dispatch(openDialog(MuteEveryoneDialog)),
         [ dispatch ]);
     const { t } = useTranslation();
