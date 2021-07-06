@@ -9,6 +9,7 @@ import {
 import {
     getCurrentConference,
     sendTones,
+    setFollowMe,
     setPassword,
     setSubject
 } from '../../react/features/base/conference';
@@ -152,6 +153,17 @@ function initCommands() {
             const { duration, tones, pause } = options;
 
             APP.store.dispatch(sendTones(tones, duration, pause));
+        },
+        'set-follow-me': value => {
+            logger.debug('Set follow me command received');
+
+            if (value) {
+                sendAnalytics(createApiEvent('follow.me.set'));
+            } else {
+                sendAnalytics(createApiEvent('follow.me.unset'));
+            }
+
+            APP.store.dispatch(setFollowMe(value));
         },
         'set-large-video-participant': participantId => {
             logger.debug('Set large video participant command received');

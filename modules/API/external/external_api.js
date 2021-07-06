@@ -44,6 +44,7 @@ const commands = {
     sendChatMessage: 'send-chat-message',
     sendEndpointTextMessage: 'send-endpoint-text-message',
     sendTones: 'send-tones',
+    setFollowMe: 'set-follow-me',
     setLargeVideoParticipant: 'set-large-video-participant',
     setTileView: 'set-tile-view',
     setVideoQuality: 'set-video-quality',
