@@ -3,7 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 import NotificationWithParticipants from '../../notifications/components/web/NotificationWithParticipants';
-import { approveAudio, dismissPendingAudioParticipant } from '../actions';
+import {
+    approveParticipant,
+    dismissPendingAudioParticipant
+} from '../actions';
 import { getParticipantsAskingToAudioUnmute } from '../functions';
 
 
@@ -25,7 +28,7 @@ export default function() {
                 </div>
                 <NotificationWithParticipants
                     approveButtonText = { t('notify.unmute') }
-                    onApprove = { approveAudio }
+                    onApprove = { approveParticipant }
                     onReject = { dismissPendingAudioParticipant }
                     participants = { participants }
                     rejectButtonText = { t('dialog.dismiss') }
