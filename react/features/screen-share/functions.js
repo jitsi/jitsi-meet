@@ -2,6 +2,7 @@
 
 import { isWindows } from '../base/environment';
 import { browser } from '../base/lib-jitsi-meet';
+import { VIDEO_TYPE } from '../base/media';
 import { getLocalVideoTrack } from '../base/tracks';
 
 /**
@@ -53,5 +54,6 @@ export function isScreenMediaShared(state: Object) {
 export function isScreenVideoShared(state: Object) {
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
 
-    return localVideo && localVideo.videoType === 'desktop';
+    // $FlowFixMe - No support for optional chain method calls in flow atm.
+    return localVideo?.jitsiTrack?.getVideoType() === VIDEO_TYPE.DESKTOP;
 }
