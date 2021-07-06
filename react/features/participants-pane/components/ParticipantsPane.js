@@ -108,6 +108,12 @@ class ParticipantsPane extends Component<Props, State> {
             t
         } = this.props;
 
+        // when the pane is not open optimize to not
+        // execute the MeetingParticipantList render for large list of participants
+        if (!_paneOpen) {
+            return null;
+        }
+
         return (
             <ThemeProvider theme = { theme }>
                 <div className = { classList('participants_pane', !_paneOpen && 'participants_pane--closed') }>
