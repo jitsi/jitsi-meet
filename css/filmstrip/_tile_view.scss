@@ -46,6 +46,7 @@
         position: absolute;
         top: 0;
         width: 100%;
+        transition: height .3s ease-in;
 
         @media (min-width: 581px) {
             &.shift-right {
@@ -56,6 +57,11 @@
                     width: calc(100vw - #{$sidebarWidth});
                 }
             }
+        }
+
+        &.collapse {
+            height: calc(100% - #{$newToolbarSize});
+            margin-bottom: $newToolbarSize;
         }
     }
 
