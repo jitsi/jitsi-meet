@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { openDialog } from '../../base/dialog';
 import {
+    getLocalParticipant,
     getRemoteParticipantCount,
     getRemoteParticipants
 } from '../../base/participants';
@@ -41,10 +42,11 @@ export const MeetingParticipantList = () => {
     const dispatch = useDispatch();
     const isMouseOverMenu = useRef(false);
     const participants = useSelector(getRemoteParticipants);
+    const localParticipant = useSelector(getLocalParticipant);
 
     // This is very important as getRemoteParticipants is not changing its reference object
     // and we will not re-render on change, but if count changes we will do
-    const participantsCount = useSelector(getRemoteParticipantCount);
+    const participantsCount = useSelector(getRemoteParticipantCount) + localParticipant ? 1 : 0;
 
     const showInviteButton = useSelector(shouldRenderInviteButton);
     const [ raiseContext, setRaiseContext ] = useState<RaiseContext>(initialState);
@@ -98,16 +100,21 @@ export const MeetingParticipantList = () => {
         dispatch(openDialog(MuteRemoteParticipantDialog, { participantID: id }));
     });
 
+    const renderParticipant = participant => (
+        <MeetingParticipantItem
+            isHighlighted = { raiseContext.participant === participant }
+            key = { participant.id }
+            muteAudio = { muteAudio }
+            onContextMenu = { toggleMenu(participant) }
+            onLeave = { lowerMenu }
+            participant = { participant } />
+    );
+
     const items = [];
 
+    localParticipant && items.push(renderParticipant(localParticipant));
     participants.forEach(p => {
-        items.push(<MeetingParticipantItem
-            isHighlighted = { raiseContext.participant === p }
-            key = { p.id }
-            muteAudio = { muteAudio }
-            onContextMenu = { toggleMenu(p) }
-            onLeave = { lowerMenu }
-            participant = { p } />);
+        items.push(renderParticipant(p));
     });
 
     return (
