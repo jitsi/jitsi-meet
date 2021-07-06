@@ -1,6 +1,7 @@
 /* @flow */
 
 import { MEDIA_TYPE } from '../base/media/constants';
+import { PARTICIPANT_LEFT } from '../base/participants';
 import { ReducerRegistry } from '../base/redux';
 
 import {
@@ -65,13 +66,13 @@ ReducerRegistry.register('features/av-moderation', (state = initialState, action
     }
 
     case PARTICIPANT_PENDING_AUDIO: {
-        const { id } = action;
+        const { participant } = action;
 
-        // Add participant to pendigAudio array only if it's not already added
-        if (!state.pendingAudio.find(pending => pending === id)) {
+        // Add participant to pendingAudio array only if it's not already added
+        if (!state.pendingAudio.find(pending => pending.id === participant.id)) {
             const updated = [ ...state.pendingAudio ];
 
-            updated.push(id);
+            updated.push(participant);
 
             return {
                 ...state,
@@ -82,20 +83,40 @@ ReducerRegistry.register('features/av-moderation', (state = initialState, action
         return state;
     }
 
+    case PARTICIPANT_LEFT: {
+        const participant = action.participant;
+
+        // skips changing the reference of pendingAudio or pendingVideo,
+        // if there is no change in the elements
+        const newPendingAudio = state.pendingAudio.filter(pending => pending.id !== participant.id);
+
+        if (state.pendingAudio.length !== newPendingAudio) {
+            state.pendingAudio = newPendingAudio;
+        }
+
+        const newPendingVideo = state.pendingVideo.filter(pending => pending.id !== participant.id);
+
+        if (state.pendingVideo.length !== newPendingVideo) {
+            state.pendingVideo = newPendingVideo;
+        }
+
+        return state;
+    }
+
     case DISMISS_PENDING_PARTICIPANT: {
-        const { id, mediaType } = action;
+        const { participant, mediaType } = action;
 
         if (mediaType === MEDIA_TYPE.AUDIO) {
             return {
                 ...state,
-                pendingAudio: state.pendingAudio.filter(pending => pending !== id)
+                pendingAudio: state.pendingAudio.filter(pending => pending.id !== participant.id)
             };
         }
 
         if (mediaType === MEDIA_TYPE.VIDEO) {
             return {
                 ...state,
-                pendingAudio: state.pendingVideo.filter(pending => pending !== id)
+                pendingVideo: state.pendingVideo.filter(pending => pending.id !== participant.id)
             };
         }
 

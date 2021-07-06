@@ -14,6 +14,14 @@ import { MEDIA_TYPE_TO_WHITELIST_STORE_KEY, MEDIA_TYPE_TO_PENDING_STORE_KEY } fr
 const getState = state => state['features/av-moderation'];
 
 /**
+ * We use to construct once the empty array so we can keep the same instance between calls
+ * of getParticipantsAskingToAudioUnmute.
+ *
+ * @type {*[]}
+ */
+const EMPTY_ARRAY = [];
+
+/**
  * Returns whether moderation is enabled per media type.
  *
  * @param {MEDIA_TYPE} mediaType - The media type to check.
@@ -74,15 +82,15 @@ export const isParticipantApproved = (id: string, mediaType: MediaType) => (stat
 /**
  * Returns a selector creator which determines if the participant is pending or not for a media type.
  *
- * @param {string} id - The participant id.
+ * @param {Participant} participant - The participant.
  * @param {MEDIA_TYPE} mediaType - The media type to check.
  * @returns {boolean}
  */
-export const isParticipantPending = (id: string, mediaType: MediaType) => (state: Object) => {
+export const isParticipantPending = (participant: Object, mediaType: MediaType) => (state: Object) => {
     const storeKey = MEDIA_TYPE_TO_PENDING_STORE_KEY[mediaType];
     const arr = getState(state)[storeKey];
 
-    return Boolean(arr.find(pending => pending === id));
+    return Boolean(arr.find(pending => pending.id === participant.id));
 };
 
 /**
@@ -94,12 +102,10 @@ export const isParticipantPending = (id: string, mediaType: MediaType) => (state
  */
 export const getParticipantsAskingToAudioUnmute = (state: Object) => {
     if (isLocalParticipantModerator(state)) {
-        const ids = getState(state).pendingAudio;
-
-        return ids.map(id => getParticipantById(state, id)).filter(Boolean);
+        return getState(state).pendingAudio;
     }
 
-    return [];
+    return EMPTY_ARRAY;
 };
 
 /**
