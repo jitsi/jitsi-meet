@@ -4,7 +4,7 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TouchableOpacity, View } from 'react-native';
 import { Divider, Text } from 'react-native-paper';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Avatar } from '../../../base/avatar';
 import { hideDialog } from '../../../base/dialog';
@@ -13,6 +13,7 @@ import {
     Icon, IconClose
 } from '../../../base/icons';
 import { setKnockingParticipantApproval } from '../../../lobby/actions.native';
+import { getKnockingParticipantsById } from '../../../lobby/functions';
 
 import styles from './styles';
 type Props = {
@@ -25,6 +26,8 @@ type Props = {
 
 export const ContextMenuLobbyParticipantReject = ({ participant: p }: Props) => {
     const dispatch = useDispatch();
+    const knockParticipantsIDArr = useSelector(getKnockingParticipantsById);
+    const knockParticipantIsAvailable = knockParticipantsIDArr.find(knockPartId => knockPartId === p.id);
     const cancel = useCallback(() => dispatch(hideDialog()), [ dispatch ]);
     const displayName = p.name;
     const reject = useCallback(() => dispatch(setKnockingParticipantApproval(p.id, false), [ dispatch ]));
@@ -32,14 +35,16 @@ export const ContextMenuLobbyParticipantReject = ({ participant: p }: Props) => 
 
     return (
         <BottomSheet
+            addScrollViewPadding = { false }
             onCancel = { cancel }
+            showSlidingView = { Boolean(knockParticipantIsAvailable) }
             style = { styles.contextMenuMore }>
             <View
                 style = { styles.contextMenuItemSectionAvatar }>
                 <Avatar
                     className = 'participant-avatar'
                     participantId = { p.id }
-                    size = { 30 } />
+                    size = { 20 } />
                 <View style = { styles.contextMenuItemAvatarText }>
                     <Text style = { styles.contextMenuItemName }>
                         { displayName }
@@ -51,9 +56,8 @@ export const ContextMenuLobbyParticipantReject = ({ participant: p }: Props) => 
                 onPress = { reject }
                 style = { styles.contextMenuItem }>
                 <Icon
-                    size = { 24 }
-                    src = { IconClose }
-                    style = { styles.contextMenuItemIcon } />
+                    size = { 20 }
+                    src = { IconClose } />
                 <Text style = { styles.contextMenuItemText }>{ t('lobby.reject') }</Text>
             </TouchableOpacity>
         </BottomSheet>

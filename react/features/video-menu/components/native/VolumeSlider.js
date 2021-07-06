@@ -101,9 +101,8 @@ class VolumeSlider extends PureComponent<Props, State> {
         return (
             <View style = { styles.volumeSliderContainer } >
                 <Icon
-                    size = { 24 }
-                    src = { IconVolumeEmpty }
-                    style = { styles.volumeIcon } />
+                    size = { 20 }
+                    src = { IconVolumeEmpty } />
                 <Slider
                     maximumTrackTintColor = { palette.field02 }
                     maximumValue = { VOLUME_SLIDER_SCALE }

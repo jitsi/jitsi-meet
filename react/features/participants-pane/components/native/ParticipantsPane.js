@@ -49,7 +49,7 @@ const ParticipantsPane = () => {
                     /* eslint-disable-next-line react/jsx-no-bind */
                     icon = { () =>
                         (<Icon
-                            size = { 24 }
+                            size = { 20 }
                             src = { IconClose } />)
                     }
                     labelStyle = { styles.closeIcon }
@@ -76,7 +76,7 @@ const ParticipantsPane = () => {
                             /* eslint-disable-next-line react/jsx-no-bind */
                             icon = { () =>
                                 (<Icon
-                                    size = { 24 }
+                                    size = { 20 }
                                     src = { IconHorizontalPoints } />)
                             }
                             labelStyle = { styles.moreIcon }
