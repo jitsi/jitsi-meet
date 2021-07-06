@@ -1,6 +1,7 @@
 // @flow
 
 import { isWindows } from '../base/environment';
+import { isMobileBrowser } from '../base/environment/utils';
 import { browser } from '../base/lib-jitsi-meet';
 import { VIDEO_TYPE } from '../base/media';
 import { getLocalVideoTrack } from '../base/tracks';
@@ -32,7 +33,7 @@ export function isScreenAudioShared(state: Object) {
  * @returns {boolean}
  */
 export function isScreenAudioSupported() {
-    return browser.isChrome() || (browser.isElectron() && isWindows());
+    return (!isMobileBrowser() && browser.isChrome()) || (browser.isElectron() && isWindows());
 }
 
 /**
