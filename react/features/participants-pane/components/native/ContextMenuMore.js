@@ -12,7 +12,10 @@ import {
     Icon, IconMicDisabledHollow,
     IconVideoOff
 } from '../../../base/icons';
-import { getLocalParticipant } from '../../../base/participants';
+import {
+    getLocalParticipant,
+    getParticipantCount, isEveryoneModerator
+} from '../../../base/participants';
 import { BlockAudioVideoDialog } from '../../../video-menu';
 import MuteEveryonesVideoDialog
     from '../../../video-menu/components/native/MuteEveryonesVideoDialog';
@@ -24,6 +27,9 @@ export const ContextMenuMore = () => {
     const blockAudioVideo = useCallback(() => dispatch(openDialog(BlockAudioVideoDialog)), [ dispatch ]);
     const cancel = useCallback(() => dispatch(hideDialog()), [ dispatch ]);
     const { id } = useSelector(getLocalParticipant);
+    const everyoneModerator = useSelector(isEveryoneModerator);
+    const participantsCount = useSelector(getParticipantCount);
+    const showSlidingView = !everyoneModerator && participantsCount > 2;
     const muteAllVideo = useCallback(() =>
         dispatch(openDialog(MuteEveryonesVideoDialog,
             { exclude: [ id ] })),
@@ -32,13 +38,15 @@ export const ContextMenuMore = () => {
 
     return (
         <BottomSheet
+            addScrollViewPadding = { false }
             onCancel = { cancel }
+            showSlidingView = { showSlidingView }
             style = { styles.contextMenuMore }>
             <TouchableOpacity
                 onPress = { muteAllVideo }
                 style = { styles.contextMenuItem }>
                 <Icon
-                    size = { 24 }
+                    size = { 20 }
                     src = { IconVideoOff } />
                 <Text style = { styles.contextMenuItemText }>{t('participantsPane.actions.stopEveryonesVideo')}</Text>
             </TouchableOpacity>
@@ -46,7 +54,7 @@ export const ContextMenuMore = () => {
                 onPress = { blockAudioVideo }
                 style = { styles.contextMenuItem }>
                 <Icon
-                    size = { 24 }
+                    size = { 20 }
                     src = { IconMicDisabledHollow }
                     style = { styles.contextMenuIcon } />
                 <Text style = { styles.contextMenuItemText }>

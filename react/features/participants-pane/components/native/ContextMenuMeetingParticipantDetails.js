@@ -15,6 +15,7 @@ import {
     IconMuteEveryoneElse, IconVideoOff
 } from '../../../base/icons';
 import {
+    getParticipantsById,
     isLocalParticipantModerator
 } from '../../../base/participants';
 import { getIsParticipantVideoMuted } from '../../../base/tracks';
@@ -39,11 +40,12 @@ type Props = {
 
 export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) => {
     const dispatch = useDispatch();
+    const participantsIDArr = useSelector(getParticipantsById);
+    const participantIsAvailable = participantsIDArr.find(partId => partId === p.id);
     const cancel = useCallback(() => dispatch(hideDialog()), [ dispatch ]);
     const displayName = p.name;
     const isLocalModerator = useSelector(isLocalParticipantModerator);
     const isParticipantVideoMuted = useSelector(getIsParticipantVideoMuted(p));
-
     const kickRemoteParticipant = useCallback(() => {
         dispatch(openDialog(KickRemoteParticipantDialog, {
             participantID: p.id
@@ -73,14 +75,16 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
 
     return (
         <BottomSheet
+            addScrollViewPadding = { false }
             onCancel = { cancel }
+            showSlidingView = { Boolean(participantIsAvailable) }
             style = { styles.contextMenuMeetingParticipantDetails }>
             <View
                 style = { styles.contextMenuItemSectionAvatar }>
                 <Avatar
                     className = 'participant-avatar'
                     participantId = { p.id }
-                    size = { 30 } />
+                    size = { 20 } />
                 <View style = { styles.contextMenuItemAvatarText }>
                     <Text style = { styles.contextMenuItemName }>
                         { displayName }
@@ -94,9 +98,8 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
                     onPress = { muteAudio }
                     style = { styles.contextMenuItem }>
                     <Icon
-                        size = { 24 }
-                        src = { IconMicrophoneEmptySlash }
-                        style = { styles.contextMenuItemIcon } />
+                        size = { 20 }
+                        src = { IconMicrophoneEmptySlash } />
                     <Text style = { styles.contextMenuItemText }>
                         { t('participantsPane.actions.mute') }
                     </Text>
@@ -108,9 +111,8 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
                     onPress = { muteEveryoneElse }
                     style = { styles.contextMenuItem }>
                     <Icon
-                        size = { 24 }
-                        src = { IconMuteEveryoneElse }
-                        style = { styles.contextMenuItemIcon } />
+                        size = { 20 }
+                        src = { IconMuteEveryoneElse } />
                     <Text style = { styles.contextMenuItemText }>
                         { t('participantsPane.actions.muteEveryoneElse') }
                     </Text>
@@ -124,9 +126,8 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
                         onPress = { muteVideo }
                         style = { styles.contextMenuItemSection }>
                         <Icon
-                            size = { 24 }
-                            src = { IconVideoOff }
-                            style = { styles.contextMenuItemIcon } />
+                            size = { 20 }
+                            src = { IconVideoOff } />
                         <Text style = { styles.contextMenuItemText }>
                             { t('participantsPane.actions.stopVideo') }
                         </Text>
@@ -139,9 +140,8 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
                     onPress = { kickRemoteParticipant }
                     style = { styles.contextMenuItem }>
                     <Icon
-                        size = { 24 }
-                        src = { IconCloseCircle }
-                        style = { styles.contextMenuItemIcon } />
+                        size = { 20 }
+                        src = { IconCloseCircle } />
                     <Text style = { styles.contextMenuItemText }>
                         { t('videothumbnail.kick') }
                     </Text>
@@ -151,9 +151,8 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
                 onPress = { sendPrivateMessage }
                 style = { styles.contextMenuItem }>
                 <Icon
-                    size = { 24 }
-                    src = { IconMessage }
-                    style = { styles.contextMenuItemIcon } />
+                    size = { 20 }
+                    src = { IconMessage } />
                 <Text style = { styles.contextMenuItemText }>
                     { t('toolbar.accessibilityLabel.privateMessage') }
                 </Text>

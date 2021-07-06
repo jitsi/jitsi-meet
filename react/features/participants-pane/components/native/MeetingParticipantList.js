@@ -34,7 +34,7 @@ export const MeetingParticipantList = () => {
                     /* eslint-disable-next-line react/jsx-no-bind */
                     icon = { () =>
                         (<Icon
-                            size = { 24 }
+                            size = { 20 }
                             src = { IconInviteMore } />)
                     }
                     labelStyle = { styles.inviteLabel }

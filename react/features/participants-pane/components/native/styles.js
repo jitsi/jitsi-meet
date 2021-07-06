@@ -37,6 +37,8 @@ export const button = {
     backgroundColor: BaseTheme.palette.action02,
     borderRadius: BaseTheme.shape.borderRadius,
     display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
     minWidth: 0
 };
 
@@ -62,8 +64,9 @@ const muteAllButton = {
  */
 const buttonContent = {
     ...BaseTheme.typography.labelButton,
-    alignSelf: 'center',
+    alignContent: 'center',
     color: BaseTheme.palette.text01,
+    display: 'flex',
     justifyContent: 'center'
 };
 
@@ -71,9 +74,12 @@ const buttonContent = {
  * The style of the context menu pane items.
  */
 const contextMenuItem = {
+    alignItems: 'center',
+    display: 'flex',
     flexDirection: 'row',
-    paddingBottom: 16,
-    paddingTop: 16
+    height: BaseTheme.spacing[7],
+    marginLeft: BaseTheme.spacing[3],
+    marginTop: BaseTheme.spacing[2]
 };
 
 /**
@@ -173,7 +179,7 @@ export default {
         backgroundColor: BaseTheme.palette.warning02,
         borderRadius: BaseTheme.shape.borderRadius / 2,
         height: BaseTheme.spacing[4],
-        marginLeft: BaseTheme.spacing[1],
+        marginLeft: BaseTheme.spacing[2],
         width: BaseTheme.spacing[4]
     },
 
@@ -245,11 +251,7 @@ export default {
     closeIcon: {
         ...buttonContent,
         height: BaseTheme.spacing[5],
-        marginLeft: 'auto',
-        paddingTop: 12,
-        paddingBottom: 12,
-        paddingRight: BaseTheme.spacing[3],
-        paddingLeft: BaseTheme.spacing[3]
+        marginLeft: 'auto'
     },
 
     inviteButton: {
@@ -271,11 +273,7 @@ export default {
     moreIcon: {
         ...buttonContent,
         height: BaseTheme.spacing[5],
-        marginLeft: 'auto',
-        paddingTop: 12,
-        paddingBottom: 12,
-        paddingRight: BaseTheme.spacing[3],
-        paddingLeft: BaseTheme.spacing[3]
+        marginLeft: 'auto'
     },
 
     contextMenuMore: {
@@ -300,7 +298,6 @@ export default {
     muteAllLabel: {
         ...BaseTheme.typography.labelButtonLarge,
         color: BaseTheme.palette.text01,
-        flexDirection: 'column',
         height: BaseTheme.spacing[7],
         marginVertical: BaseTheme.spacing[0],
         marginHorizontal: BaseTheme.spacing[0],
@@ -322,21 +319,17 @@ export default {
 
     contextMenuItemSectionAvatar: {
         ...contextMenuItem,
-        marginLeft: BaseTheme.spacing[1]
+        marginLeft: BaseTheme.spacing[3]
     },
 
     contextMenuItemAvatarText: {
         ...contextMenuItemText,
-        marginLeft: BaseTheme.spacing[2]
+        marginLeft: BaseTheme.spacing[3]
     },
 
     contextMenuItemText: {
         ...contextMenuItemText,
         marginLeft: BaseTheme.spacing[3]
-    },
-
-    contextMenuItemIcon: {
-        marginLeft: BaseTheme.spacing[1]
     },
 
     contextMenuItemName: {
