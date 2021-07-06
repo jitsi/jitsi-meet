@@ -127,14 +127,16 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
         // this is handled only by moderators
         if (audioModerationEnabled && isLocalParticipantModerator(state)) {
-            const { participant: { id, raisedHand } } = action;
+            const participant = action.participant;
 
-            if (raisedHand) {
+            if (participant.raisedHand) {
                 // if participant raises hand show notification
-                !isParticipantApproved(id, MEDIA_TYPE.AUDIO)(state) && dispatch(participantPendingAudio(id));
+                !isParticipantApproved(participant.id, MEDIA_TYPE.AUDIO)(state)
+                    && dispatch(participantPendingAudio(participant));
             } else {
                 // if participant lowers hand hide notification
-                isParticipantPending(id, MEDIA_TYPE.AUDIO)(state) && dispatch(dismissPendingAudioParticipant(id));
+                isParticipantPending(participant, MEDIA_TYPE.AUDIO)(state)
+                    && dispatch(dismissPendingAudioParticipant(participant));
             }
         }
 
