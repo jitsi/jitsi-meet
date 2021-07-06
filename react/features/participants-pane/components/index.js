@@ -5,5 +5,5 @@ export * from './MeetingParticipantContextMenu';
 export * from './MeetingParticipantItem';
 export * from './MeetingParticipantList';
 export * from './ParticipantItem';
-export * from './ParticipantsPane';
+export { default as ParticipantsPane } from './ParticipantsPane';
 export * from './RaisedHandIndicator';
