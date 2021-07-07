@@ -115,7 +115,8 @@ class ProfileButton extends AbstractButton<Props, *> {
 const mapStateToProps = state => {
     return {
         _localParticipant: getLocalParticipant(state),
-        _unclickable: !interfaceConfig.SETTINGS_SECTIONS.includes('profile')
+        _unclickable: !interfaceConfig.SETTINGS_SECTIONS.includes('profile'),
+        customClass: 'profile-button-avatar'
     };
 };
 
