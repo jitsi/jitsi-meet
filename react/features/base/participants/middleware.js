@@ -186,7 +186,7 @@ StateListenerRegistry.register(
     /* selector */ state => getCurrentConference(state),
     /* listener */ (conference, { dispatch, getState }) => {
         batch(() => {
-            for (const [ id, p ] of getRemoteParticipants(getState()).remote) {
+            for (const [ id, p ] of getRemoteParticipants(getState())) {
                 (!conference || p.conference !== conference)
                     && dispatch(participantLeft(id, p.conference, p.isReplaced));
             }
