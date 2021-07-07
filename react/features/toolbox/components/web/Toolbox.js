@@ -25,7 +25,6 @@ import {
     IconPresentation,
     IconRaisedHand,
     IconRec,
-    IconShareAudio,
     IconShareDesktop
 } from '../../../base/icons';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet';
@@ -36,7 +35,7 @@ import {
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { OverflowMenuItem } from '../../../base/toolbox/components';
-import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
+import { getLocalVideoTrack } from '../../../base/tracks';
 import { isVpaasMeeting } from '../../../billing-counter/functions';
 import { ChatCounter, toggleChat } from '../../../chat';
 import { EmbedMeetingDialog } from '../../../embed-meeting';
@@ -53,7 +52,12 @@ import {
     LiveStreamButton,
     RecordButton
 } from '../../../recording';
-import { isScreenAudioShared, isScreenAudioSupported } from '../../../screen-share/';
+import {
+    isScreenAudioSupported,
+    isScreenVideoShared,
+    ShareAudioButton,
+    startScreenShareFlow
+} from '../../../screen-share/';
 import SecurityDialogButton from '../../../security/components/security-dialog/SecurityDialogButton';
 import {
     SETTINGS_TABS,
@@ -287,7 +291,6 @@ class Toolbox extends Component<Props> {
         this._onToolbarToggleProfile = this._onToolbarToggleProfile.bind(this);
         this._onToolbarToggleRaiseHand = this._onToolbarToggleRaiseHand.bind(this);
         this._onToolbarToggleScreenshare = this._onToolbarToggleScreenshare.bind(this);
-        this._onToolbarToggleShareAudio = this._onToolbarToggleShareAudio.bind(this);
         this._onToolbarOpenLocalRecordingInfoDialog = this._onToolbarOpenLocalRecordingInfoDialog.bind(this);
         this._onShortcutToggleTileView = this._onShortcutToggleTileView.bind(this);
         this._onEscKey = this._onEscKey.bind(this);
@@ -535,9 +538,9 @@ class Toolbox extends Component<Props> {
      * @param {boolean} audioOnly - Only share system audio.
      * @returns {void}
      */
-    _doToggleScreenshare(enabled, audioOnly = false) {
+    _doToggleScreenshare() {
         if (this.props._desktopSharingEnabled) {
-            this.props.dispatch(toggleScreensharing(enabled, audioOnly));
+            this.props.dispatch(startScreenShareFlow());
         }
     }
 
@@ -725,15 +728,13 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     _onShortcutToggleScreenshare() {
-        const enable = !this.props._screensharing;
-
         sendAnalytics(createToolbarEvent(
             'screen.sharing',
             {
-                enable
+                enable: !this.props._screensharing
             }));
 
-        this._doToggleScreenshare(enable);
+        this._doToggleScreenshare();
     }
 
     _onTabIn: () => void;
@@ -940,29 +941,13 @@ class Toolbox extends Component<Props> {
             return;
         }
 
-        const enable = !this.props._screensharing;
-
         sendAnalytics(createShortcutEvent(
             'toggle.screen.sharing',
             ACTION_SHORTCUT_TRIGGERED,
-            { enable }));
+            { enable: !this.props._screensharing }));
 
         this._closeOverflowMenuIfOpen();
-        this._doToggleScreenshare(enable);
-    }
-
-    _onToolbarToggleShareAudio: () => void;
-
-    /**
-     * Handles toggle share audio action.
-     *
-     * @returns {void}
-     */
-    _onToolbarToggleShareAudio() {
-        const enable = !this.props._screensharing;
-
-        this._closeOverflowMenuIfOpen();
-        this._doToggleScreenshare(enable, true);
+        this._doToggleScreenshare();
     }
 
     _onToolbarOpenLocalRecordingInfoDialog: () => void;
@@ -1095,12 +1080,9 @@ class Toolbox extends Component<Props> {
             this.props._shouldShowButton('shareaudio')
                 && _desktopSharingEnabled
                 && isScreenAudioSupported()
-                && <OverflowMenuItem
-                    accessibilityLabel = { t('toolbar.accessibilityLabel.shareaudio') }
-                    icon = { IconShareAudio }
+                && <ShareAudioButton
                     key = 'shareaudio'
-                    onClick = { this._onToolbarToggleShareAudio }
-                    text = { t('toolbar.shareaudio') } />,
+                    showLabel = { true } />,
             this.props._shouldShowButton('etherpad')
                 && <SharedDocumentButton
                     key = 'etherpad'
@@ -1442,7 +1424,7 @@ function _mapStateToProps(state) {
         _overflowMenuVisible: overflowMenuVisible,
         _participantsPaneOpen: getParticipantsPaneOpen(state),
         _raisedHand: localParticipant.raisedHand,
-        _screensharing: (localVideo && localVideo.videoType === 'desktop') || isScreenAudioShared(state),
+        _screensharing: isScreenVideoShared(state),
         _shouldShowButton: buttonName => isToolbarButtonEnabled(buttonName)(state),
         _visible: isToolboxVisible(state),
         _visibleButtons: getToolbarButtons(state)
