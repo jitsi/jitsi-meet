@@ -13,6 +13,7 @@ import { browser, JitsiTrackErrors } from '../../base/lib-jitsi-meet';
 import { createLocalTrack } from '../../base/lib-jitsi-meet/functions';
 import { VIDEO_TYPE } from '../../base/media';
 import { connect } from '../../base/redux';
+import { updateSettings } from '../../base/settings';
 import { Tooltip } from '../../base/tooltip';
 import { getLocalVideoTrack } from '../../base/tracks';
 import { showErrorNotification } from '../../notifications';
@@ -74,6 +75,11 @@ const images: Array<Image> = [
 type Props = {
 
     /**
+     * The current local flip x status.
+     */
+    _localFlipX: boolean,
+
+    /**
      * Returns the jitsi track that will have backgraund effect applied.
      */
     _jitsiTrack: Object,
@@ -121,8 +127,10 @@ const onError = event => {
  * @returns {{Props}}
  */
 function _mapStateToProps(state): Object {
+    const { localFlipX } = state['features/base/settings'];
 
     return {
+        _localFlipX: Boolean(localFlipX),
         _virtualBackground: state['features/virtual-background'],
         _selectedThumbnail: state['features/virtual-background'].selectedThumbnail,
         _jitsiTrack: getLocalVideoTrack(state['features/base/tracks'])?.jitsiTrack
@@ -137,6 +145,7 @@ const VirtualBackgroundDialog = translate(connect(_mapStateToProps)(VirtualBackg
  * @returns {ReactElement}
  */
 function VirtualBackground({
+    _localFlipX,
     _jitsiTrack,
     _selectedThumbnail,
     _virtualBackground,
@@ -376,8 +385,13 @@ function VirtualBackground({
         setLoading(true);
         await dispatch(toggleBackgroundEffect(options, _jitsiTrack));
         await setLoading(false);
+        if (_localFlipX && options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
+            dispatch(updateSettings({
+                localFlipX: !_localFlipX
+            }));
+        }
         dispatch(hideDialog());
-    }, [ dispatch, options ]);
+    }, [ dispatch, options, _localFlipX ]);
 
     // Prevent the selection of a new virtual background if it has not been applied by default
     const cancelVirtualBackground = useCallback(async () => {
