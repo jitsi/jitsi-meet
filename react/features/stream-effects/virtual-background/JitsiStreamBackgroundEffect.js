@@ -103,10 +103,10 @@ export default class JitsiStreamBackgroundEffect {
             this._outputCanvasCtx.filter = 'blur(8px)';
         }
         if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
-            // save current context before applying transformations
+            // Save current context before applying transformations.
             this._outputCanvasCtx.save();
 
-            // flip the canvas and prevent mirror behaviour
+            // Flip the canvas and prevent mirror behaviour.
             this._outputCanvasCtx.scale(-1, 1);
             this._outputCanvasCtx.translate(-this._outputCanvasElement.width, 0);
         }
@@ -130,10 +130,10 @@ export default class JitsiStreamBackgroundEffect {
         // Draw the foreground video.
         //
         if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
-            // save current context before applying transformations
+            // Save current context before applying transformations.
             this._outputCanvasCtx.save();
 
-            // flip the canvas and prevent mirror behaviour
+            // Flip the canvas and prevent mirror behaviour.
             this._outputCanvasCtx.scale(-1, 1);
             this._outputCanvasCtx.translate(-this._outputCanvasElement.width, 0);
         }
@@ -146,18 +146,11 @@ export default class JitsiStreamBackgroundEffect {
         //
 
         this._outputCanvasCtx.globalCompositeOperation = 'destination-over';
-        if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE) {
+        if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE
+            || this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
             this._outputCanvasCtx.drawImage(
-                this._virtualImage,
-                0,
-                0,
-                this._inputVideoElement.width,
-                this._inputVideoElement.height
-            );
-        }
-        if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
-            this._outputCanvasCtx.drawImage(
-                this._virtualVideo,
+                this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE
+                    ? this._virtualImage : this._virtualVideo,
                 0,
                 0,
                 this._outputCanvasElement.width,
