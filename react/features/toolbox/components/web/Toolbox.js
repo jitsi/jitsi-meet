@@ -740,13 +740,15 @@ class Toolbox extends Component<Props> {
 
         const buttons = this._getAllButtons();
         const isHangupVisible = _shouldShowButton('hangup');
-        const { count, order } = THRESHOLDS.find(({ width }) => _clientWidth > width)
+        const { order } = THRESHOLDS.find(({ width }) => _clientWidth > width)
             || THRESHOLDS[THRESHOLDS.length - 1];
-        let sliceIndex = count;
+        let sliceIndex = order.length + 2;
+
+        const keys = Object.keys(buttons);
 
         const filtered = [
             ...order.map(key => buttons[key]),
-            ...Object.values(buttons).filter((button, index) => !order.includes(Object.keys(buttons)[index]))
+            ...Object.values(buttons).filter((button, index) => !order.includes(keys[index]))
         ].filter(Boolean).filter(({ key }) => _shouldShowButton(key));
 
         if (isHangupVisible) {
@@ -1149,18 +1151,14 @@ class Toolbox extends Component<Props> {
                                     role = 'menu'>
                                     {overflowMenuButtons.map(({ group, key, Content, ...rest }, index, arr) => {
                                         const showSeparator = index > 0 && arr[index - 1].group !== group;
-                                        const content = (
-                                            <Content
-                                                { ...rest }
-                                                inOverflow = { true }
-                                                key = { key }
-                                                showLabel = { true } />
-                                        );
 
                                         return (
                                             <>
                                                 {showSeparator && <Separator key = { `hr${group}` } />}
-                                                {content}
+                                                <Content
+                                                    { ...rest }
+                                                    key = { key }
+                                                    showLabel = { true } />
                                             </>
                                         );
                                     })}
