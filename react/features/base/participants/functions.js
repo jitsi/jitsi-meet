@@ -216,17 +216,6 @@ export function getParticipantDisplayName(
 }
 
 /**
- * Curried version of getParticipantDisplayName.
- *
- * @see {@link getParticipantDisplayName}
- * @param {string} id - The ID of the participant's display name to retrieve.
- * @returns {Function}
- */
-export const getParticipantDisplayNameWithId = (id: string) =>
-    (state: Object | Function) =>
-        getParticipantDisplayName(state, id);
-
-/**
  * Returns the presence status of a participant associated with the passed id.
  *
  * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
@@ -420,7 +409,7 @@ async function _getFirstLoadableAvatarUrl(participant, store) {
     for (let i = 0; i < AVATAR_CHECKER_FUNCTIONS.length; i++) {
         const url = AVATAR_CHECKER_FUNCTIONS[i](participant, store);
 
-        if (url) {
+        if (url !== null) {
             if (AVATAR_CHECKED_URLS.has(url)) {
                 if (AVATAR_CHECKED_URLS.get(url)) {
                     return url;

@@ -7,15 +7,15 @@ import { useSelector, useDispatch } from 'react-redux';
 import { openDialog } from '../../base/dialog';
 import {
     getLocalParticipant,
-    getRemoteParticipantCount,
+    getParticipantCountWithFake,
     getRemoteParticipants
 } from '../../base/participants';
 import MuteRemoteParticipantDialog from '../../video-menu/components/web/MuteRemoteParticipantDialog';
 import { findStyledAncestor, shouldRenderInviteButton } from '../functions';
 
 import { InviteButton } from './InviteButton';
-import { MeetingParticipantContextMenu } from './MeetingParticipantContextMenu';
-import { MeetingParticipantItem } from './MeetingParticipantItem';
+import MeetingParticipantContextMenu from './MeetingParticipantContextMenu';
+import MeetingParticipantItem from './MeetingParticipantItem';
 import { Heading, ParticipantContainer } from './styled';
 
 type NullProto = {
@@ -23,7 +23,7 @@ type NullProto = {
   __proto__: null
 };
 
-type RaiseContext = NullProto | {
+type RaiseContext = NullProto | {|
 
   /**
    * Target elements against which positioning calculations are made
@@ -31,14 +31,19 @@ type RaiseContext = NullProto | {
   offsetTarget?: HTMLElement,
 
   /**
-   * Participant reference
+   * The ID of the participant.
    */
-  participant?: Object,
-};
+  participantID?: String,
+|};
 
 const initialState = Object.freeze(Object.create(null));
 
-export const MeetingParticipantList = () => {
+/**
+ * Renders the MeetingParticipantList component.
+ *
+ * @returns {ReactNode} - The component.
+ */
+export function MeetingParticipantList() {
     const dispatch = useDispatch();
     const isMouseOverMenu = useRef(false);
     const participants = useSelector(getRemoteParticipants);
@@ -46,7 +51,7 @@ export const MeetingParticipantList = () => {
 
     // This is very important as getRemoteParticipants is not changing its reference object
     // and we will not re-render on change, but if count changes we will do
-    const participantsCount = useSelector(getRemoteParticipantCount) + localParticipant ? 1 : 0;
+    const participantsCount = useSelector(getParticipantCountWithFake);
 
     const showInviteButton = useSelector(shouldRenderInviteButton);
     const [ raiseContext, setRaiseContext ] = useState<RaiseContext>(initialState);
@@ -70,20 +75,20 @@ export const MeetingParticipantList = () => {
         });
     }, [ raiseContext ]);
 
-    const raiseMenu = useCallback((participant, target) => {
+    const raiseMenu = useCallback((participantID, target) => {
         setRaiseContext({
-            participant,
+            participantID,
             offsetTarget: findStyledAncestor(target, ParticipantContainer)
         });
     }, [ raiseContext ]);
 
-    const toggleMenu = useCallback(participant => e => {
-        const { participant: raisedParticipant } = raiseContext;
+    const toggleMenu = useCallback(participantID => e => {
+        const { participantID: raisedParticipant } = raiseContext;
 
-        if (raisedParticipant && raisedParticipant === participant) {
+        if (raisedParticipant && raisedParticipant === participantID) {
             lowerMenu();
         } else {
-            raiseMenu(participant, e.target);
+            raiseMenu(participantID, e.target);
         }
     }, [ raiseContext ]);
 
@@ -100,21 +105,21 @@ export const MeetingParticipantList = () => {
         dispatch(openDialog(MuteRemoteParticipantDialog, { participantID: id }));
     });
 
-    const renderParticipant = participant => (
+    const renderParticipant = id => (
         <MeetingParticipantItem
-            isHighlighted = { raiseContext.participant === participant }
-            key = { participant.id }
+            isHighlighted = { raiseContext.participantID === id }
+            key = { id }
             muteAudio = { muteAudio }
-            onContextMenu = { toggleMenu(participant) }
+            onContextMenu = { toggleMenu(id) }
             onLeave = { lowerMenu }
-            participant = { participant } />
+            participantID = { id } />
     );
 
     const items = [];
 
-    localParticipant && items.push(renderParticipant(localParticipant));
+    localParticipant && items.push(renderParticipant(localParticipant?.id));
     participants.forEach(p => {
-        items.push(renderParticipant(p));
+        items.push(renderParticipant(p?.id));
     });
 
     return (
@@ -132,4 +137,4 @@ export const MeetingParticipantList = () => {
             { ...raiseContext } />
     </>
     );
-};
+}

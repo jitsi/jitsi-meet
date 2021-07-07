@@ -193,6 +193,11 @@ type Props = {
     _sharingVideo: boolean,
 
     /**
+     * The enabled buttons.
+     */
+    _toolbarButtons: Array<string>,
+
+    /**
      * Flag showing whether toolbar is visible.
      */
     _visible: boolean,
@@ -201,11 +206,6 @@ type Props = {
      * Array with the buttons which this Toolbox should display.
      */
     _visibleButtons: Array<string>,
-
-    /**
-     * Handler to check if a button is enabled.
-     */
-     _shouldShowButton: Function,
 
     /**
      * Returns the selected virtual source object.
@@ -269,38 +269,39 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     componentDidMount() {
+        const { _toolbarButtons } = this.props;
         const KEYBOARD_SHORTCUTS = [
-            this.props._shouldShowButton('videoquality') && {
+            isToolbarButtonEnabled('videoquality', _toolbarButtons) && {
                 character: 'A',
                 exec: this._onShortcutToggleVideoQuality,
                 helpDescription: 'toolbar.callQuality'
             },
-            this.props._shouldShowButton('chat') && {
+            isToolbarButtonEnabled('chat', _toolbarButtons) && {
                 character: 'C',
                 exec: this._onShortcutToggleChat,
                 helpDescription: 'keyboardShortcuts.toggleChat'
             },
-            this.props._shouldShowButton('desktop') && {
+            isToolbarButtonEnabled('desktop', _toolbarButtons) && {
                 character: 'D',
                 exec: this._onShortcutToggleScreenshare,
                 helpDescription: 'keyboardShortcuts.toggleScreensharing'
             },
-            this.props._shouldShowButton('participants-pane') && {
+            isToolbarButtonEnabled('participants-pane', _toolbarButtons) && {
                 character: 'P',
                 exec: this._onShortcutToggleParticipantsPane,
                 helpDescription: 'keyboardShortcuts.toggleParticipantsPane'
             },
-            this.props._shouldShowButton('raisehand') && {
+            isToolbarButtonEnabled('raisehand', _toolbarButtons) && {
                 character: 'R',
                 exec: this._onShortcutToggleRaiseHand,
                 helpDescription: 'keyboardShortcuts.raiseHand'
             },
-            this.props._shouldShowButton('fullscreen') && {
+            isToolbarButtonEnabled('fullscreen', _toolbarButtons) && {
                 character: 'S',
                 exec: this._onShortcutToggleFullScreen,
                 helpDescription: 'keyboardShortcuts.fullScreen'
             },
-            this.props._shouldShowButton('tileview') && {
+            isToolbarButtonEnabled('tileview', _toolbarButtons) && {
                 character: 'W',
                 exec: this._onShortcutToggleTileView,
                 helpDescription: 'toolbar.tileViewToggle'
@@ -734,12 +735,12 @@ class Toolbox extends Component<Props> {
     _getVisibleButtons() {
         const {
             _clientWidth,
-            _shouldShowButton
+            _toolbarButtons
         } = this.props;
 
 
         const buttons = this._getAllButtons();
-        const isHangupVisible = _shouldShowButton('hangup');
+        const isHangupVisible = isToolbarButtonEnabled('hangup', _toolbarButtons);
         const { order } = THRESHOLDS.find(({ width }) => _clientWidth > width)
             || THRESHOLDS[THRESHOLDS.length - 1];
         let sliceIndex = order.length + 2;
@@ -749,7 +750,7 @@ class Toolbox extends Component<Props> {
         const filtered = [
             ...order.map(key => buttons[key]),
             ...Object.values(buttons).filter((button, index) => !order.includes(keys[index]))
-        ].filter(Boolean).filter(({ key }) => _shouldShowButton(key));
+        ].filter(Boolean).filter(({ key }) => isToolbarButtonEnabled(key, _toolbarButtons));
 
         if (isHangupVisible) {
             sliceIndex -= 1;
@@ -1116,6 +1117,7 @@ class Toolbox extends Component<Props> {
         const {
             _isMobile,
             _overflowMenuVisible,
+            _toolbarButtons,
             t
         } = this.props;
 
@@ -1169,7 +1171,7 @@ class Toolbox extends Component<Props> {
                         <HangupButton
                             customClass = 'hangup-button'
                             key = 'hangup-button'
-                            visible = { this.props._shouldShowButton('hangup') } />
+                            visible = { isToolbarButtonEnabled('hangup', _toolbarButtons) } />
                     </div>
                 </div>
             </div>
@@ -1232,7 +1234,7 @@ function _mapStateToProps(state) {
         _participantsPaneOpen: getParticipantsPaneOpen(state),
         _raisedHand: localParticipant.raisedHand,
         _screensharing: isScreenVideoShared(state),
-        _shouldShowButton: buttonName => isToolbarButtonEnabled(buttonName)(state),
+        _toolbarButtons: getToolbarButtons(state),
         _visible: isToolboxVisible(state),
         _visibleButtons: getToolbarButtons(state)
     };

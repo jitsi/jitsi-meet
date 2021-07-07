@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import { approveKnockingParticipant, rejectKnockingParticipant } from '../../lobby/actions';
 import { ACTION_TRIGGER, MEDIA_STATE } from '../constants';
 
-import { ParticipantItem } from './ParticipantItem';
+import ParticipantItem from './ParticipantItem';
 import { ParticipantActionButton } from './styled';
 
 type Props = {
@@ -28,8 +28,10 @@ export const LobbyParticipantItem = ({ participant: p }: Props) => {
         <ParticipantItem
             actionsTrigger = { ACTION_TRIGGER.PERMANENT }
             audioMediaState = { MEDIA_STATE.NONE }
-            name = { p.name }
-            participant = { p }
+            displayName = { p.name }
+            local = { p.local }
+            participantID = { p.id }
+            raisedHand = { p.raisedHand }
             videoMuteState = { MEDIA_STATE.NONE }>
             <ParticipantActionButton
                 onClick = { reject }>
