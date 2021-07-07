@@ -145,7 +145,10 @@ MiddlewareRegistry.register(store => next => action => {
                 return;
             }
 
-            APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING, action.audioOnly);
+            const { enabled, audioOnly } = action;
+
+            APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING, { enabled,
+                audioOnly });
         }
         break;
 

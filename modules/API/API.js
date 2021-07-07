@@ -49,6 +49,8 @@ import {
 import { toggleLobbyMode } from '../../react/features/lobby/actions';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession } from '../../react/features/recording/functions';
+import { isScreenAudioSupported } from '../../react/features/screen-share';
+import { startScreenShareFlow, startAudioScreenShareFlow } from '../../react/features/screen-share/actions';
 import { playSharedVideo, stopSharedVideo } from '../../react/features/shared-video/actions.any';
 import { toggleTileView, setTileView } from '../../react/features/video-layout';
 import { muteAllParticipants } from '../../react/features/video-menu/actions';
@@ -219,6 +221,16 @@ function initCommands() {
 
             sendAnalytics(createApiEvent('raise-hand.toggled'));
             APP.store.dispatch(raiseHand(!raisedHand));
+        },
+        'toggle-share-audio': () => {
+            sendAnalytics(createApiEvent('audio.screen.sharing.toggled'));
+            if (isScreenAudioSupported()) {
+                APP.store.dispatch(startAudioScreenShareFlow());
+
+                return;
+            }
+
+            logger.error('Audio screen sharing is not supported by the current platform!');
         },
 
         /**
@@ -596,9 +608,7 @@ function shouldBeEnabled() {
  */
 function toggleScreenSharing(enable) {
     if (JitsiMeetJS.isDesktopSharingEnabled()) {
-        APP.conference.toggleScreenSharing(enable).catch(() => {
-            logger.warn('Failed to toggle screen-sharing');
-        });
+        APP.store.dispatch(startScreenShareFlow(enable));
     }
 }
 

@@ -60,6 +60,7 @@ const commands = {
     toggleChat: 'toggle-chat',
     toggleFilmStrip: 'toggle-film-strip',
     toggleRaiseHand: 'toggle-raise-hand',
+    toggleShareAudio: 'toggle-share-audio',
     toggleShareScreen: 'toggle-share-screen',
     toggleTileView: 'toggle-tile-view',
     toggleVirtualBackgroundDialog: 'toggle-virtual-background',
