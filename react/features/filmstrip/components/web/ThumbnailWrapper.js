@@ -114,7 +114,8 @@ function _mapStateToProps(state, ownProps) {
 
         if (rowIndex === rows - 1) { // center the last row
             const { width: thumbnailWidth } = thumbnailSize;
-            const partialLastRowParticipantsNumber = (remoteParticipantsLength + 1) % columns;
+            const { iAmRecorder } = state['features/base/config'];
+            const partialLastRowParticipantsNumber = (remoteParticipantsLength + (iAmRecorder ? 0 : 1)) % columns;
 
             if (partialLastRowParticipantsNumber > 0) {
                 horizontalOffset = Math.floor((columns - partialLastRowParticipantsNumber) * (thumbnailWidth + 4) / 2);
