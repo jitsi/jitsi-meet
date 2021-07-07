@@ -223,9 +223,11 @@ class FeedbackDialog extends Component<Props, State> {
                         key = { index }
                         onClick = { config._onClick }
                         onKeyPress = { config._onKeyPres }
-                        onMouseOver = { isMobileBrowser() ? null : config._onMouseOver }
                         role = 'button'
-                        tabIndex = { 0 }>
+                        tabIndex = { 0 }
+                        { ...(isMobileBrowser() ? {} : {
+                            onMouseOver: config._onMouseOver
+                        }) }>
                         { isFilled
                             ? <StarFilledIcon
                                 label = 'star-filled'
