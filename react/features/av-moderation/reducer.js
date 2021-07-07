@@ -89,23 +89,28 @@ ReducerRegistry.register('features/av-moderation', (state = initialState, action
     case PARTICIPANT_UPDATED:
     case PARTICIPANT_LEFT: {
         const participant = action.participant;
+        const { audioModerationEnabled, videoModerationEnabled } = state;
 
-        // skips changing the reference of pendingAudio or pendingVideo,
-        // if there is no change in the elements
-        const newPendingAudio = state.pendingAudio.filter(pending => pending.id !== participant.id);
+        if (audioModerationEnabled) {
+            // skips changing the reference of pendingAudio or pendingVideo,
+            // if there is no change in the elements
+            const newPendingAudio = state.pendingAudio.filter(pending => pending.id !== participant.id);
 
-        if (state.pendingAudio.length !== newPendingAudio) {
-            state.pendingAudio = action.type === PARTICIPANT_UPDATED
-                ? [ ...newPendingAudio, participant ]
-                : newPendingAudio;
+            if (state.pendingAudio.length !== newPendingAudio.length) {
+                state.pendingAudio = action.type === PARTICIPANT_UPDATED
+                    ? [ ...newPendingAudio, participant ]
+                    : newPendingAudio;
+            }
         }
 
-        const newPendingVideo = state.pendingVideo.filter(pending => pending.id !== participant.id);
+        if (videoModerationEnabled) {
+            const newPendingVideo = state.pendingVideo.filter(pending => pending.id !== participant.id);
 
-        if (state.pendingVideo.length !== newPendingVideo) {
-            state.pendingVideo = action.type === PARTICIPANT_UPDATED
-                ? [ ...newPendingVideo, participant ]
-                : newPendingVideo;
+            if (state.pendingVideo.length !== newPendingVideo.length) {
+                state.pendingVideo = action.type === PARTICIPANT_UPDATED
+                    ? [ ...newPendingVideo, participant ]
+                    : newPendingVideo;
+            }
         }
 
         return state;
