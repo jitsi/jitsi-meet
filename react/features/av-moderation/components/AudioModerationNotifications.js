@@ -8,6 +8,7 @@ import {
     dismissPendingAudioParticipant
 } from '../actions';
 import { getParticipantsAskingToAudioUnmute } from '../functions';
+import { getParticipantById } from '../../base/participants';
 
 
 /**
@@ -17,10 +18,10 @@ import { getParticipantsAskingToAudioUnmute } from '../functions';
  * @returns {React$Element<'ul'> | null}
  */
 export default function() {
-    const participants = useSelector(getParticipantsAskingToAudioUnmute);
+    const participantIDs = useSelector(getParticipantsAskingToAudioUnmute);
     const { t } = useTranslation();
 
-    return participants.length
+    return participantIDs.length
         ? (
             <>
                 <div className = 'title'>
@@ -30,7 +31,8 @@ export default function() {
                     approveButtonText = { t('notify.unmute') }
                     onApprove = { approveParticipant }
                     onReject = { dismissPendingAudioParticipant }
-                    participants = { participants }
+                    participantSelector = { getParticipantById }
+                    participants = { participantIDs }
                     rejectButtonText = { t('dialog.dismiss') }
                     testIdPrefix = 'avModeration' />
             </>

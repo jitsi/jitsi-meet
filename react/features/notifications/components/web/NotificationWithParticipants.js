@@ -2,10 +2,7 @@
 
 import React from 'react';
 
-import { Avatar } from '../../../base/avatar';
-import { HIDDEN_EMAILS } from '../../../lobby/constants';
-
-import NotificationButton from './NotificationButton';
+import NotificationWithParticipantItem from './NotificationWithParticipantItem';
 
 type Props = {
 
@@ -25,9 +22,14 @@ type Props = {
     onReject: Function,
 
     /**
-     * Array of participants to be displayed.
+     * Array of participant IDs to be displayed.
      */
-    participants: Array<Object>,
+    participants: Array<string>,
+
+    /**
+     * The function to select participants by ID.
+     */
+    participantSelector: Function,
 
     /**
      * Text for button which triggeres the `reject` action.
@@ -52,46 +54,22 @@ export default function({
     onApprove,
     onReject,
     participants,
+    participantSelector,
     testIdPrefix,
     rejectButtonText
 }: Props): React$Element<'ul'> {
     return (
         <ul className = 'knocking-participants-container'>
-            { participants.map(p => (
-                <li
-                    className = 'knocking-participant'
-                    key = { p.id }>
-                    <Avatar
-                        displayName = { p.name }
-                        size = { 48 }
-                        testId = { `${testIdPrefix}.avatar` }
-                        url = { p.loadableAvatarUrl } />
-
-                    <div className = 'details'>
-                        <span data-testid = { `${testIdPrefix}.name` }>
-                            { p.name }
-                        </span>
-                        { p.email && !HIDDEN_EMAILS.includes(p.email) && (
-                            <span data-testid = { `${testIdPrefix}.email` }>
-                                { p.email }
-                            </span>
-                        ) }
-                    </div>
-                    { <NotificationButton
-                        action = { onApprove }
-                        className = 'primary'
-                        participant = { p }
-                        testId = { `${testIdPrefix}.allow` }>
-                        { approveButtonText }
-                    </NotificationButton> }
-                    { <NotificationButton
-                        action = { onReject }
-                        className = 'borderLess'
-                        participant = { p }
-                        testId = { `${testIdPrefix}.reject` }>
-                        { rejectButtonText }
-                    </NotificationButton>}
-                </li>
+            { participants.map(id => (
+                <NotificationWithParticipantItem
+                    approveButtonText = { approveButtonText }
+                    key = { id }
+                    onApprove = { onApprove }
+                    onReject = { onReject }
+                    participantID = { id }
+                    participantSelector = { participantSelector }
+                    rejectButtonText = { rejectButtonText }
+                    testIdPrefix = { testIdPrefix } />
             )) }
         </ul>);
 }

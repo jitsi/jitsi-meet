@@ -78,7 +78,7 @@ export const PARTICIPANT_APPROVED = 'PARTICIPANT_APPROVED';
 
 
 /**
- * The type of (redux) action which signals that a participant asked to have its audio umuted.
+ * The type of (redux) action which signals that a participant asked to have its audio unmuted.
  *
  * {
  *     type: PARTICIPANT_PENDING_AUDIO

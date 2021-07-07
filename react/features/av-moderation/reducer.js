@@ -88,13 +88,13 @@ ReducerRegistry.register('features/av-moderation', (state = initialState, action
 
         // skips changing the reference of pendingAudio or pendingVideo,
         // if there is no change in the elements
-        const newPendingAudio = state.pendingAudio.filter(pending => pending.id !== participant.id);
+        const newPendingAudio = state.pendingAudio.filter(pending => pending !== participant.id);
 
         if (state.pendingAudio.length !== newPendingAudio) {
             state.pendingAudio = newPendingAudio;
         }
 
-        const newPendingVideo = state.pendingVideo.filter(pending => pending.id !== participant.id);
+        const newPendingVideo = state.pendingVideo.filter(pending => pending !== participant.id);
 
         if (state.pendingVideo.length !== newPendingVideo) {
             state.pendingVideo = newPendingVideo;
@@ -109,14 +109,14 @@ ReducerRegistry.register('features/av-moderation', (state = initialState, action
         if (mediaType === MEDIA_TYPE.AUDIO) {
             return {
                 ...state,
-                pendingAudio: state.pendingAudio.filter(pending => pending.id !== participant.id)
+                pendingAudio: state.pendingAudio.filter(pending => pending !== participant.id)
             };
         }
 
         if (mediaType === MEDIA_TYPE.VIDEO) {
             return {
                 ...state,
-                pendingVideo: state.pendingVideo.filter(pending => pending.id !== participant.id)
+                pendingVideo: state.pendingVideo.filter(pending => pending !== participant.id)
             };
         }
 

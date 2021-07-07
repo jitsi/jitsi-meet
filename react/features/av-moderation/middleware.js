@@ -132,11 +132,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             if (participant.raisedHand) {
                 // if participant raises hand show notification
                 !isParticipantApproved(participant.id, MEDIA_TYPE.AUDIO)(state)
-                    && dispatch(participantPendingAudio(participant));
+                    && dispatch(participantPendingAudio(participant.id));
             } else {
                 // if participant lowers hand hide notification
-                isParticipantPending(participant, MEDIA_TYPE.AUDIO)(state)
-                    && dispatch(dismissPendingAudioParticipant(participant));
+                isParticipantPending(participant.id, MEDIA_TYPE.AUDIO)(state)
+                    && dispatch(dismissPendingAudioParticipant(participant.id));
             }
         }
 

@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
@@ -35,6 +35,8 @@ class KnockingParticipantList extends AbstractKnockingParticipantList<Props> {
             return null;
         }
 
+        const selector = useCallback(id => _participants.find(p => p.id === id), [ _participants ]);
+
         return (
             <div id = 'knocking-participant-list'>
                 <div className = 'title'>
@@ -44,7 +46,8 @@ class KnockingParticipantList extends AbstractKnockingParticipantList<Props> {
                     approveButtonText = { t('lobby.allow') }
                     onApprove = { approveKnockingParticipant }
                     onReject = { rejectKnockingParticipant }
-                    participants = { _participants }
+                    participantSelector = { selector }
+                    participants = { _participants.map(p => p.id) }
                     rejectButtonText = { t('lobby.reject') }
                     testIdPrefix = 'lobby' />
             </div>
