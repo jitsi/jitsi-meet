@@ -10,6 +10,7 @@ import VideoTransform from './VideoTransform';
 import styles from './styles';
 import { connect } from 'react-redux';
 import { storeVideoTransform } from '../../actions';
+import { APP_LINK_SCHEME } from '../../../util';
 
 /**
  * The type of the React {@code Component} props of {@link Video}.
@@ -99,7 +100,8 @@ export default class Video extends Component<Props> {
             
         }
         if (data.file) {
-            storeVideoTransform.
+            // save to store
+            this.props.dispatch("CAPTURE_SCREENSHOT")
             // --- saved file path
             console.log("got the data back"+data.file);
         }

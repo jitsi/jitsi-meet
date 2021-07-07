@@ -144,8 +144,7 @@ function _video(state = _VIDEO_INITIAL_MEDIA_STATE, action) {
         };
     }
     case CAPTURE_SCREENSHOT:{
-
-
+        return _takeScreenshot(state, action)
     }
 
     case TRACK_REMOVED:
@@ -155,7 +154,7 @@ function _video(state = _VIDEO_INITIAL_MEDIA_STATE, action) {
         return state;
     }
 }
-function _takeScreenshot(state) {
+function _takeScreenshot(state, action) {
     return {
         ...state,
         transforms: _VIDEO_INITIAL_MEDIA_STATE.transforms

@@ -124,6 +124,10 @@ static void initializeViewsMap() {
     ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
     [externalAPI sendSetAudioMuted:muted];
 }
+- (void)toggleCamera {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI sendtoggleCameraAction];
+}
 
 - (void)sendEndpointTextMessage:(NSString * _Nonnull)message :(NSString * _Nullable)to {
     ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];

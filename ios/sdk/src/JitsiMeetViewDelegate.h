@@ -90,6 +90,9 @@
  */
 - (void)screenShareToggled:(NSDictionary *)data;
 
+- (void)toggleCameraAction:(NSDictionary *)data;
+
+
 /**
  * Called when a chat message is received.
  *
