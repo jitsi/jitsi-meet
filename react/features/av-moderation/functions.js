@@ -1,7 +1,7 @@
 // @flow
 
 import { MEDIA_TYPE, type MediaType } from '../base/media/constants';
-import { getParticipantById, isLocalParticipantModerator } from '../base/participants/functions';
+import { isLocalParticipantModerator } from '../base/participants/functions';
 
 import { MEDIA_TYPE_TO_WHITELIST_STORE_KEY, MEDIA_TYPE_TO_PENDING_STORE_KEY } from './constants';
 
