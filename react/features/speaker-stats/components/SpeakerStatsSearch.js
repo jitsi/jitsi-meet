@@ -93,6 +93,7 @@ class SpeakerStatsSearch extends PureComponent<Props, State> {
         return (
             <div className = 'speaker-stats-search'>
                 <TextField
+                    autoComplete = 'off'
                     autoFocus = { false }
                     compact = { true }
                     name = 'speakerStatsSearch'
