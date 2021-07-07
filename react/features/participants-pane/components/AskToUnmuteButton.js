@@ -1,7 +1,6 @@
 // @flow
 
 import React, { useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import { approveParticipant } from '../../av-moderation/actions';
@@ -9,6 +8,11 @@ import { approveParticipant } from '../../av-moderation/actions';
 import { QuickActionButton } from './styled';
 
 type Props = {
+
+    /**
+     * The translated ask unmute text.
+     */
+    askUnmuteText: string,
 
     /**
      * Participant id.
@@ -22,10 +26,8 @@ type Props = {
  * @param {Object} participant - Participant reference.
  * @returns {React$Element<'button'>}
  */
-export default function({ id }: Props) {
+export default function AskToUnmuteButton({ id, askUnmuteText }: Props) {
     const dispatch = useDispatch();
-    const { t } = useTranslation();
-
     const askToUnmute = useCallback(() => {
         dispatch(approveParticipant(id));
     }, [ dispatch, id ]);
@@ -37,7 +39,7 @@ export default function({ id }: Props) {
             theme = {{
                 panePadding: 16
             }}>
-            {t('participantsPane.actions.askUnmute')}
+            { askUnmuteText }
         </QuickActionButton>
     );
 }

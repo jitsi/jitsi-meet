@@ -105,14 +105,28 @@ export function MeetingParticipantList() {
         dispatch(openDialog(MuteRemoteParticipantDialog, { participantID: id }));
     });
 
+    // FIXME:
+    // It seems that useTranslation is not very scallable. Unmount 500 components that have the useTranslation hook is
+    // taking more than 10s. To workaround the issue we need to pass the texts as props. This is temporary and dirty
+    // solution!!!
+    // One potential proper fix would be to use
+    const participantActionEllipsisLabel = t('MeetingParticipantItem.ParticipantActionEllipsis.options');
+    const youText = t('chat.you');
+    const askUnmuteText = t('participantsPane.actions.askUnmute');
+    const muteParticipantButtonText = t('dialog.muteParticipantButton');
+
     const renderParticipant = id => (
         <MeetingParticipantItem
+            askUnmuteText = { askUnmuteText }
             isHighlighted = { raiseContext.participantID === id }
             key = { id }
             muteAudio = { muteAudio }
+            muteParticipantButtonText = { muteParticipantButtonText }
             onContextMenu = { toggleMenu(id) }
             onLeave = { lowerMenu }
-            participantID = { id } />
+            participantActionEllipsisLabel = { participantActionEllipsisLabel }
+            participantID = { id }
+            youText = { youText } />
     );
 
     const items = [];

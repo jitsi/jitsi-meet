@@ -32,7 +32,8 @@ export const LobbyParticipantItem = ({ participant: p }: Props) => {
             local = { p.local }
             participantID = { p.id }
             raisedHand = { p.raisedHand }
-            videoMuteState = { MEDIA_STATE.NONE }>
+            videoMuteState = { MEDIA_STATE.NONE }
+            youText = { t('chat.you') }>
             <ParticipantActionButton
                 onClick = { reject }>
                 {t('lobby.reject')}

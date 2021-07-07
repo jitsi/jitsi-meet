@@ -1,7 +1,6 @@
 // @flow
 
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { QUICK_ACTION_BUTTON } from '../constants';
 
@@ -9,6 +8,11 @@ import AskToUnmuteButton from './AskToUnmuteButton';
 import { QuickActionButton } from './styled';
 
 type Props = {
+
+    /**
+     * The translated "ask unmute" text.
+     */
+    askUnmuteText: string,
 
     /**
      * The type of button to be displayed.
@@ -19,6 +23,8 @@ type Props = {
      * Callback used to open a confirmation dialog for audio muting.
      */
     muteAudio: Function,
+
+    muteParticipantButtonText: string,
 
     /**
      * The ID of the participant.
@@ -32,21 +38,29 @@ type Props = {
  * @param {Props} props - The props of the component.
  * @returns {React$Element<'button'>}
  */
-export default function ParticipantQuickAction({ buttonType, muteAudio, participantID }: Props) {
-    const { t } = useTranslation();
-
+export default function ParticipantQuickAction({
+    askUnmuteText,
+    buttonType,
+    muteAudio,
+    muteParticipantButtonText,
+    participantID
+}: Props) {
     switch (buttonType) {
     case QUICK_ACTION_BUTTON.MUTE: {
         return (
             <QuickActionButton
                 onClick = { muteAudio(participantID) }
                 primary = { true }>
-                {t('dialog.muteParticipantButton')}
+                { muteParticipantButtonText }
             </QuickActionButton>
         );
     }
     case QUICK_ACTION_BUTTON.ASK_TO_UNMUTE: {
-        return <AskToUnmuteButton id = { participantID } />;
+        return (
+            <AskToUnmuteButton
+                askUnmuteText = { askUnmuteText }
+                id = { participantID } />
+        );
     }
     default: {
         return null;

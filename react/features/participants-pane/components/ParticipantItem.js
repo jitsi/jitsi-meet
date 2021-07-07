@@ -3,7 +3,6 @@
 import React, { type Node } from 'react';
 
 import { Avatar } from '../../base/avatar';
-import { translate } from '../../base/i18n';
 import {
     Icon,
     IconCameraEmpty,
@@ -129,14 +128,14 @@ type Props = {
     raisedHand: boolean,
 
     /**
-     * The translate function.
-     */
-    t: Function,
-
-    /**
      * Media state for video
      */
-    videoMuteState: MediaState
+    videoMuteState: MediaState,
+
+    /**
+     * The translated "you" text.
+     */
+    youText: string
 }
 
 /**
@@ -145,7 +144,7 @@ type Props = {
  * @param {Props} props - The props of the component.
  * @returns {ReactNode}
  */
-function ParticipantItem({
+export default function ParticipantItem({
     children,
     isHighlighted,
     onLeave,
@@ -156,7 +155,7 @@ function ParticipantItem({
     participantID,
     local,
     raisedHand,
-    t
+    youText
 }: Props) {
     const ParticipantActions = Actions[actionsTrigger];
 
@@ -174,7 +173,7 @@ function ParticipantItem({
                     <ParticipantName>
                         { displayName }
                     </ParticipantName>
-                    { local ? <span>&nbsp;({t('chat.you')})</span> : null }
+                    { local ? <span>&nbsp;({ youText })</span> : null }
                 </ParticipantNameContainer>
                 { !local && <ParticipantActions children = { children } /> }
                 <ParticipantStates>
@@ -186,5 +185,3 @@ function ParticipantItem({
         </ParticipantContainer>
     );
 }
-
-export default translate(ParticipantItem);

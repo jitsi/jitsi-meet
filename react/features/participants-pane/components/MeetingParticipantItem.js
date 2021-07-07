@@ -2,7 +2,6 @@
 
 import React from 'react';
 
-import { translate } from '../../base/i18n';
 import { getLocalParticipant, getParticipantById, getParticipantDisplayName } from '../../base/participants';
 import { connect } from '../../base/redux';
 import { isParticipantAudioMuted, isParticipantVideoMuted } from '../../base/tracks';
@@ -54,6 +53,11 @@ type Props = {
     _raisedHand: boolean,
 
     /**
+     * The translated ask unmute text for the qiuck action buttons.
+     */
+    askUnmuteText: string,
+
+    /**
      * Is this item highlighted
      */
     isHighlighted: boolean,
@@ -62,6 +66,11 @@ type Props = {
      * Callback used to open a confirmation dialog for audio muting.
      */
     muteAudio: Function,
+
+    /**
+     * The translated text for the mute participant button.
+     */
+    muteParticipantButtonText: string,
 
     /**
      * Callback for the activation of this item's context menu
@@ -74,14 +83,19 @@ type Props = {
     onLeave: Function,
 
     /**
+     * The aria-label for the ellipsis action.
+     */
+    participantActionEllipsisLabel: string,
+
+    /**
      * The ID of the participant.
      */
     participantID: ?string,
 
     /**
-     * The translate function.
+     * The translated "you" text.
      */
-    t: Function
+    youText: string
 };
 
 /**
@@ -98,11 +112,14 @@ function MeetingParticipantItem({
     _participantID,
     _quickActionButtonType,
     _raisedHand,
+    askUnmuteText,
     isHighlighted,
     onContextMenu,
     onLeave,
     muteAudio,
-    t
+    muteParticipantButtonText,
+    participantActionEllipsisLabel,
+    youText
 }: Props) {
     return (
         <ParticipantItem
@@ -114,13 +131,16 @@ function MeetingParticipantItem({
             onLeave = { onLeave }
             participantID = { _participantID }
             raisedHand = { _raisedHand }
-            videoMuteState = { _isVideoMuted ? MEDIA_STATE.MUTED : MEDIA_STATE.UNMUTED }>
+            videoMuteState = { _isVideoMuted ? MEDIA_STATE.MUTED : MEDIA_STATE.UNMUTED }
+            youText = { youText }>
             <ParticipantQuickAction
+                askUnmuteText = { askUnmuteText }
                 buttonType = { _quickActionButtonType }
                 muteAudio = { muteAudio }
+                muteParticipantButtonText = { muteParticipantButtonText }
                 participantID = { _participantID } />
             <ParticipantActionEllipsis
-                aria-label = { t('MeetingParticipantItem.ParticipantActionEllipsis.options') }
+                aria-label = { participantActionEllipsisLabel }
                 onClick = { onContextMenu } />
         </ParticipantItem>
     );
@@ -157,4 +177,4 @@ function _mapStateToProps(state, ownProps): Object {
     };
 }
 
-export default translate(connect(_mapStateToProps)(MeetingParticipantItem));
+export default connect(_mapStateToProps)(MeetingParticipantItem);
