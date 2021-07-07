@@ -59,7 +59,7 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
      * @returns {boolean}
      */
     _onSubmitValue() {
-        return this._onSetVideoLink(this.state.value);
+        return super._onSetVideoLink(this.state.value);
     }
 
     /**

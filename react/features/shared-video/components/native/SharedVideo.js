@@ -78,7 +78,7 @@ class SharedVideo extends Component<Props> {
     componentDidUpdate(prevProps: Props) {
         const { isWideScreen } = this.props;
 
-        if (isWideScreen !== prevProps._isWideScreen) {
+        if (isWideScreen !== prevProps.isWideScreen) {
             this.setWideScreenMode(isWideScreen);
         }
     }

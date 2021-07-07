@@ -21,7 +21,7 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
         return (
             <InputDialog
                 contentKey = 'dialog.shareVideoTitle'
-                onSubmit = { this._onSetVideoLink }
+                onSubmit = { super._onSetVideoLink }
                 textInputProps = {{
                     placeholder: defaultMobileSharedVideoLink
                 }} />
