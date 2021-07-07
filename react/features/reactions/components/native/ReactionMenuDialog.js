@@ -5,6 +5,7 @@ import { SafeAreaView, TouchableWithoutFeedback, View } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { hideDialog, isDialogOpen } from '../../../base/dialog';
+import { getParticipantCount } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import type { StyleType } from '../../../base/styles';
 
@@ -34,6 +35,11 @@ type Props = {
     * The height of the screen.
     */
     _height: number,
+
+    /**
+     * Number of conference participants.
+     */
+    _participantCount: number,
 
     /**
      * Used for hiding the dialog when the selection was completed.
@@ -74,7 +80,7 @@ class ReactionMenuDialog extends PureComponent<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _styles, _width, _height } = this.props;
+        const { _styles, _width, _height, _participantCount } = this.props;
 
         return (
             <SafeAreaView style = { _styles }>
@@ -84,7 +90,7 @@ class ReactionMenuDialog extends PureComponent<Props> {
                         <View
                             style = {{
                                 left: (_width - 360) / 2,
-                                top: _height - 144 - 80
+                                top: _height - (_participantCount > 1 ? 144 : 80) - 80
                             }}>
                             <ReactionMenu
                                 onCancel = { this._onCancel }
@@ -127,7 +133,8 @@ function _mapStateToProps(state) {
         _isOpen: isDialogOpen(state, ReactionMenu_),
         _styles: ColorSchemeRegistry.get(state, 'Toolbox').reactionDialog,
         _width: state['features/base/responsive-ui'].clientWidth,
-        _height: state['features/base/responsive-ui'].clientHeight
+        _height: state['features/base/responsive-ui'].clientHeight,
+        _participantCount: getParticipantCount(state)
     };
 }
 

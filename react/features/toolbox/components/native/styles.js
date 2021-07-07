@@ -152,7 +152,6 @@ ColorSchemeRegistry.register('Toolbox', {
     reactionMenu: {
         ...reactionMenu,
         borderRadius: 3,
-        height: 144,
         width: 360
     },
 
