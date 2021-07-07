@@ -41,7 +41,7 @@ class JaneWaitingArea extends Component<Props> {
                     isMobile && <Watermarks />
                 }
                 <Preview name = { name } />
-                <Modal />
+                <Modal isMobile = { isMobile } />
                 <div className = 'jane-waiting-area-preview-btn-container settings-button-container'>
                     <AudioSettingsButton visible = { true } />
                     <JaneHangupButton visible = { true } />
