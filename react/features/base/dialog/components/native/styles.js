@@ -117,7 +117,7 @@ const brandedDialogText = {
 };
 
 const brandedDialogLabelStyle = {
-    color: schemeColor('surface11'),
+    color: ColorPalette.white,
     flexShrink: 1,
     fontSize: MD_FONT_SIZE,
     opacity: 0.90
