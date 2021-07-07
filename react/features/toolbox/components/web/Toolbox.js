@@ -48,6 +48,7 @@ import {
     open as openParticipantsPane
 } from '../../../participants-pane/actions';
 import { getParticipantsPaneOpen } from '../../../participants-pane/functions';
+import { ReactionsMenuButton } from '../../../reactions/components';
 import {
     LiveStreamButton,
     RecordButton
@@ -93,7 +94,6 @@ import MuteEveryonesVideoButton from '../MuteEveryonesVideoButton';
 import AudioSettingsButton from './AudioSettingsButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
-import ReactionsMenuButton from './ReactionsMenuButton';
 import ToggleCameraButton from './ToggleCameraButton';
 import ToolbarButton from './ToolbarButton';
 import VideoSettingsButton from './VideoSettingsButton';
@@ -291,6 +291,7 @@ class Toolbox extends Component<Props> {
         this._onToolbarOpenLocalRecordingInfoDialog = this._onToolbarOpenLocalRecordingInfoDialog.bind(this);
         this._onShortcutToggleTileView = this._onShortcutToggleTileView.bind(this);
         this._onEscKey = this._onEscKey.bind(this);
+        this._shouldShowReactionsButton = this._shouldShowReactionsButton.bind(this);
     }
 
     /**
@@ -1241,10 +1242,11 @@ class Toolbox extends Component<Props> {
                     text = { t(`toolbar.${_chatOpen ? 'closeChat' : 'openChat'}`) } />);
         }
 
-        if (this.props._shouldShowButton('raisehand') && buttons.has('raisehand')) {
+        if (this._shouldShowReactionsButton(buttons)) {
             const raisedHand = this.props._raisedHand || false;
 
             mainMenuAdditionalButtons.push(<ReactionsMenuButton
+                key = 'reactions-menu'
                 raisedHand = { raisedHand } />);
         }
 
@@ -1286,6 +1288,19 @@ class Toolbox extends Component<Props> {
         };
     }
 
+    _shouldShowReactionsButton: (buttons: Set<string>) => boolean;
+
+    /**
+     * Whether or not the reactions button should be displayed in the toolbar.
+     *
+     * @param {Set} buttons - A set containing the buttons to be displayed
+     * in the toolbar beside the main audio/video & hanugup.
+     * @returns {boolean}
+     */
+    _shouldShowReactionsButton(buttons) {
+        return this.props._shouldShowButton('raisehand') && buttons.has('raisehand');
+    }
+
     /**
      * Renders the Audio controlling button.
      *
@@ -1322,7 +1337,6 @@ class Toolbox extends Component<Props> {
             _clientWidth,
             _isMobile,
             _overflowMenuVisible,
-            _shouldShowButton,
             t
         } = this.props;
 
@@ -1354,7 +1368,7 @@ class Toolbox extends Component<Props> {
                             isOpen = { _overflowMenuVisible }
                             key = 'overflow-menu'
                             onVisibilityChange = { this._onSetOverflowVisible }
-                            showMobileReactions = { !(_shouldShowButton('raisehand') && buttonSet.has('raisehand')) }>
+                            showMobileReactions = { !this._shouldShowReactionsButton(buttonSet) }>
                             <ul
                                 aria-label = { t(toolbarAccLabel) }
                                 className = 'overflow-menu'

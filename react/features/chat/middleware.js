@@ -1,5 +1,7 @@
 // @flow
 
+import { batch } from 'react-redux';
+
 import { ENDPOINT_REACTION_NAME } from '../../../modules/API/constants';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import {
@@ -20,20 +22,20 @@ import {
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { openDisplayNamePrompt } from '../display-name';
+import { ADD_REACTIONS_MESSAGE } from '../reactions/actionTypes';
+import {
+    pushReaction
+} from '../reactions/actions.any';
+import { REACTIONS } from '../reactions/constants';
 import { endpointMessageReceived } from '../subtitles';
 import { showToolbox } from '../toolbox/actions';
-import {
-    addReactionsMessage,
-    pushReaction
-} from '../toolbox/actions.any';
 import {
     hideToolbox,
     setToolboxTimeout,
     setToolboxVisible
 } from '../toolbox/actions.web';
-import { REACTIONS } from '../toolbox/constants';
 
-import { ADD_MESSAGE, SEND_MESSAGE, OPEN_CHAT, CLOSE_CHAT, SEND_REACTION, ADD_REACTIONS_MESSAGE } from './actionTypes';
+import { ADD_MESSAGE, SEND_MESSAGE, OPEN_CHAT, CLOSE_CHAT } from './actionTypes';
 import { addMessage, clearMessages } from './actions';
 import { closeChat } from './actions.any';
 import { ChatPrivacyDialog } from './components';
@@ -156,22 +158,6 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case SEND_REACTION: {
-        const state = store.getState();
-        const { conference } = state['features/base/conference'];
-
-        if (conference) {
-            conference.sendEndpointMessage('', {
-                name: ENDPOINT_REACTION_NAME,
-                reaction: action.reaction,
-                timestamp: Date.now()
-            });
-            dispatch(addReactionsMessage(REACTIONS[action.reaction].message));
-            pushReaction(store, action.reaction);
-        }
-        break;
-    }
-
     case ADD_REACTIONS_MESSAGE: {
         _handleReceivedMessage(store, {
             id: localParticipant.id,
@@ -266,16 +252,18 @@ function _addChatMsgListener(conference, store) {
                 const [ { _id }, eventData ] = args;
 
                 if (eventData.name === ENDPOINT_REACTION_NAME) {
-                    pushReaction(store, eventData.reaction);
+                    store.dispatch(pushReaction(eventData.reaction));
                     reactions[_id] = reactions[_id] ?? {
                         timeout: null,
                         message: ''
                     };
-                    store.dispatch(setToolboxVisible(true));
-                    store.dispatch(setToolboxTimeout(
-                            () => store.dispatch(hideToolbox()),
-                            5000)
-                    );
+                    batch(() => {
+                        store.dispatch(setToolboxVisible(true));
+                        store.dispatch(setToolboxTimeout(
+                                () => store.dispatch(hideToolbox()),
+                                5000)
+                        );
+                    });
 
                     clearTimeout(reactions[_id].timeout);
                     reactions[_id].message = `${reactions[_id].message}${REACTIONS[eventData.reaction].message}`;

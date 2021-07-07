@@ -7,12 +7,12 @@ import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
 import { IconHorizontalPoints } from '../../../base/icons';
 import { connect } from '../../../base/redux';
-import { getReactionsQueue, type ReactionEmojiProps } from '../../functions.any';
+import { ReactionEmoji, ReactionsMenu } from '../../../reactions/components';
+import { type ReactionEmojiProps } from '../../../reactions/constants';
+import { getReactionsQueue } from '../../../reactions/functions.any';
 
 import Drawer from './Drawer';
 import DrawerPortal from './DrawerPortal';
-import ReactionEmoji from './ReactionEmoji';
-import ReactionsMenu from './ReactionsMenu';
 import ToolbarButton from './ToolbarButton';
 
 /**

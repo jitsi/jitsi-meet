@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import { type ReactionEmojiProps } from '../../../toolbox/functions.any';
+import { type ReactionEmojiProps } from '../../../reactions/constants';
 
 /**
  * The type of the React {@code Component} props of {@link DialogContainer}.

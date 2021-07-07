@@ -1,3 +1,5 @@
+// @flow
+
 export const REACTIONS = {
     clap: {
         message: ':clap:',
@@ -24,3 +26,16 @@ export const REACTIONS = {
         emoji: '🎉'
     }
 };
+
+export type ReactionEmojiProps = {
+
+    /**
+     * Reaction to be displayed.
+     */
+    reaction: string,
+
+    /**
+     * Id of the reaction.
+     */
+    uid: number
+}

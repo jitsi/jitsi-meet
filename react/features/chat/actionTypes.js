@@ -64,13 +64,3 @@ export const SEND_MESSAGE = 'SEND_MESSAGE';
  * }
  */
 export const SET_PRIVATE_MESSAGE_RECIPIENT = 'SET_PRIVATE_MESSAGE_RECIPIENT';
-
-/**
- * The type of the action which signals a send reaction to everyone in the conference.
- */
-export const SEND_REACTION = 'SEND_REACTION';
-
-/**
- * The type of the action to add a reaction message to the chat.
- */
-export const ADD_REACTIONS_MESSAGE = 'ADD_REACTIONS_MESSAGE';

@@ -10,8 +10,9 @@ import {
 import { translate } from '../../../base/i18n';
 import { getLocalParticipant, participantUpdated } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { sendReaction } from '../../../chat/actions.any';
-import { dockToolbox, toggleReactionsMenu } from '../../actions.web';
+import { dockToolbox } from '../../../toolbox/actions.web';
+import { sendReaction } from '../../actions.any';
+import { toggleReactionsMenuVisibility } from '../../actions.web';
 import { REACTIONS } from '../../constants';
 
 import ReactionButton from './ReactionButton';
@@ -27,11 +28,6 @@ type Props = {
      * Whether or not the local participant's hand is raised.
      */
     _raisedHand: boolean,
-
-    /**
-     * Handler to close the reactions menu on hand raised
-     */
-    closeReactionsMenu: Function,
 
     /**
      * The ID of the local participant.
@@ -108,7 +104,7 @@ class ReactionsMenu extends Component<Props> {
             'raise.hand',
             { enable: !this.props._raisedHand }));
         this._doToggleRaiseHand();
-        this.props.closeReactionsMenu();
+        this.props.dispatch(toggleReactionsMenuVisibility());
     }
 
     /**
@@ -220,7 +216,6 @@ function mapDispatchToProps(dispatch) {
         dispatch,
         ...bindActionCreators(
         {
-            closeReactionsMenu: toggleReactionsMenu,
             _dockToolbox: dockToolbox
         }, dispatch)
     };
