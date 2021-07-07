@@ -1,7 +1,10 @@
 /* @flow */
 
 import { MEDIA_TYPE } from '../base/media/constants';
-import { PARTICIPANT_LEFT } from '../base/participants';
+import {
+    PARTICIPANT_LEFT,
+    PARTICIPANT_UPDATED
+} from '../base/participants';
 import { ReducerRegistry } from '../base/redux';
 
 import {
@@ -83,6 +86,7 @@ ReducerRegistry.register('features/av-moderation', (state = initialState, action
         return state;
     }
 
+    case PARTICIPANT_UPDATED:
     case PARTICIPANT_LEFT: {
         const participant = action.participant;
 
@@ -91,13 +95,17 @@ ReducerRegistry.register('features/av-moderation', (state = initialState, action
         const newPendingAudio = state.pendingAudio.filter(pending => pending.id !== participant.id);
 
         if (state.pendingAudio.length !== newPendingAudio) {
-            state.pendingAudio = newPendingAudio;
+            state.pendingAudio = action.type === PARTICIPANT_UPDATED
+                ? [ ...newPendingAudio, participant ]
+                : newPendingAudio;
         }
 
         const newPendingVideo = state.pendingVideo.filter(pending => pending.id !== participant.id);
 
         if (state.pendingVideo.length !== newPendingVideo) {
-            state.pendingVideo = newPendingVideo;
+            state.pendingVideo = action.type === PARTICIPANT_UPDATED
+                ? [ ...newPendingVideo, participant ]
+                : newPendingVideo;
         }
 
         return state;
