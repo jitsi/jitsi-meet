@@ -97,7 +97,7 @@ class SpeakerStatsSearch extends PureComponent<Props, State> {
                     compact = { true }
                     name = 'speakerStatsSearch'
                     onChange = { this._onChange }
-                    placeholder = { this.props.t('addPeople.searchPeople') }
+                    placeholder = { this.props.t('speakerStats.search') }
                     shouldFitContainer = { false }
                     type = 'text'
                     value = { this.state.value } />

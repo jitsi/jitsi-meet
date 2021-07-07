@@ -784,6 +784,7 @@
     },
     "speaker": "Speaker",
     "speakerStats": {
+        "search": "Search",
         "hours": "{{count}}h",
         "minutes": "{{count}}m",
         "name": "Name",
