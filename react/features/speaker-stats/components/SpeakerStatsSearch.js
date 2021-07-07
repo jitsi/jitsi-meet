@@ -15,7 +15,7 @@ type Props = {
     /**
      * The speakerStatsSearch config setting.
      */
-    _speakerStatsSearch: Boolean | undefined,
+    _speakerStatsSearch: Boolean,
 
     /**
      * The function to initiate the change in the speaker stats table.
@@ -58,6 +58,8 @@ class SpeakerStatsSearch extends PureComponent<Props, State> {
 
         this._onChange = this._onChange.bind(this);
     }
+
+    _onChange: Object => void;
 
     /**
      * Callback for the onChange event of the field.

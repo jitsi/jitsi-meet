@@ -43,7 +43,12 @@ type State = {
     /**
      * The stats summary provided by the JitsiConference.
      */
-    stats: Object
+    stats: Object,
+
+    /**
+     * The search input criteria.
+     */
+    criteria: string,
 };
 
 /**
@@ -133,7 +138,7 @@ class SpeakerStats extends Component<Props, State> {
                 if (Object.prototype.hasOwnProperty.call(stats[id], '_isLocalStats')) {
                     const name = stats[id].isLocalStats() ? this.props._localDisplayName : stats[id].getDisplayName();
 
-                    if (!name?.match(searchRegex)) {
+                    if (!name || !name.match(searchRegex)) {
                         delete stats[id];
                     }
                 }
