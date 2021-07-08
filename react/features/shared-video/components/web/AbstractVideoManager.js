@@ -12,7 +12,7 @@ import { isLocalTrackMuted } from '../../../base/tracks';
 import { showWarningNotification } from '../../../notifications/actions';
 import { dockToolbox } from '../../../toolbox/actions.web';
 import { muteLocal } from '../../../video-menu/actions.any';
-import { setSharedVideoStatus, toggleSharedVideo } from '../../actions.any';
+import { setSharedVideoStatus, stopSharedVideo } from '../../actions.any';
 export const PLAYBACK_STATES = {
     PLAYING: 'playing',
     PAUSED: 'pause',
@@ -52,9 +52,9 @@ export type Props = {
     _dockToolbox: Function,
 
     /**
-     * Action to toggle video sharing
+     * Action to stop video sharing
     */
-    _doToggleSharedVideo: Function,
+    _stopSharedVideo: Function,
 
     /**
      * Indicates whether the local audio is muted
@@ -213,7 +213,7 @@ class AbstractVideoManager extends Component<Props> {
      * @returns {void}
      */
     onError() {
-        this.props._doToggleSharedVideo();
+        this.props._stopSharedVideo();
         this.props._displayWarning();
     }
 
@@ -434,8 +434,8 @@ export function _mapDispatchToProps(dispatch: Function): $Shape<Props> {
         _dockToolbox: value => {
             dispatch(dockToolbox(value));
         },
-        _doToggleSharedVideo: () => {
-            dispatch(toggleSharedVideo());
+        _stopSharedVideo: () => {
+            dispatch(stopSharedVideo());
         },
         _muteLocal: value => {
             dispatch(muteLocal(value, MEDIA_TYPE.AUDIO));
