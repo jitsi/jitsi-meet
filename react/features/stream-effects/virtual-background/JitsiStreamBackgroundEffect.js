@@ -142,7 +142,6 @@ export default class JitsiStreamBackgroundEffect {
         }
 
         // Draw the background.
-        //
 
         this._outputCanvasCtx.globalCompositeOperation = 'destination-over';
         if (backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE
