@@ -68,7 +68,6 @@ export function pushReaction(value: string) {
  */
 export function removeReaction(uid: number) {
     return (dispatch: Function, getState: Function) => {
-        console.log('\n\n\n removed \n\n\n');
         const queue = getState()['features/reactions'].queue;
 
         dispatch(setReactionQueue(queue.filter(reaction => reaction.uid !== uid)));
