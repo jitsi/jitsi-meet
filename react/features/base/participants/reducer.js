@@ -83,6 +83,10 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
                 ...local,
                 id: action.newValue
             };
+
+            return {
+                ...state
+            };
         }
 
         return state;
@@ -172,7 +176,9 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
             }
         }
 
-        return state;
+        return {
+            ...state
+        };
     }
     case PARTICIPANT_JOINED: {
         const participant = _participantJoined(action);
@@ -226,20 +232,42 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
         // the app and "leaves" at the end of the app).
         const { conference, id } = action.participant;
         const { fakeParticipants, remote, local, dominantSpeaker, pinnedParticipant } = state;
+        let oldParticipant = remote.get(id);
 
-        const remoteParticipant = remote.get(id);
-
-        if (remoteParticipant && remoteParticipant.conference === conference) {
+        if (oldParticipant && oldParticipant.conference === conference) {
             remote.delete(id);
         } else if (local?.id === id) {
+            oldParticipant = state.local;
             delete state.local;
         } else {
             // no participant found
             return state;
         }
 
-        if (!state.everyoneIsModerator && !isParticipantModerator(remoteParticipant)) {
+        if (!state.everyoneIsModerator && !isParticipantModerator(oldParticipant)) {
             state.everyoneIsModerator = _isEveryoneModerator(state);
+        }
+
+        const { features = {} } = oldParticipant || {};
+
+        if (state.haveParticipantWithScreenSharingFeature && String(features['screen-sharing']) === 'true') {
+            const { features: localFeatures = {} } = state.local || {};
+
+            if (String(localFeatures['screen-sharing']) !== 'true') {
+                state.haveParticipantWithScreenSharingFeature = false;
+
+                // eslint-disable-next-line no-unused-vars
+                for (const [ key, participant ] of state.remote) {
+                    const { features: f = {} } = participant;
+
+                    if (String(f['screen-sharing']) === 'true') {
+                        state.haveParticipantWithScreenSharingFeature = true;
+                        break;
+                    }
+                }
+            }
+
+
         }
 
         if (dominantSpeaker === id) {

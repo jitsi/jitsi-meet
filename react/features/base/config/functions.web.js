@@ -63,7 +63,7 @@ export function getToolbarButtons(state: Object): Array<string> {
  * @param {Object|Array<string>} state - The redux state or the array with the enabled buttons.
  * @returns {boolean} - True if the button is enabled and false otherwise.
  */
-export function isToolbarButtonEnabled(buttonName: string, state: Object) {
+export function isToolbarButtonEnabled(buttonName: string, state: Object | Array<string>) {
     const buttons = Array.isArray(state) ? state : getToolbarButtons(state);
 
     return buttons.includes(buttonName);

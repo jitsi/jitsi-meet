@@ -117,6 +117,9 @@ function _electParticipantInLargeVideo(state) {
         return participant.id;
     }
 
+    // In case this is the local participant.
+    participant = undefined;
+
     // 4. Next, pick the most recent participant with video.
     const tracks = state['features/base/tracks'];
     const videoTrack = _electLastVisibleRemoteVideo(tracks);

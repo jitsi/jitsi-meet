@@ -90,6 +90,7 @@ ReducerRegistry.register('features/av-moderation', (state = initialState, action
     case PARTICIPANT_LEFT: {
         const participant = action.participant;
         const { audioModerationEnabled, videoModerationEnabled } = state;
+        let hasStateChanged = false;
 
         if (audioModerationEnabled) {
             // skips changing the reference of pendingAudio or pendingVideo,
@@ -100,6 +101,8 @@ ReducerRegistry.register('features/av-moderation', (state = initialState, action
                 state.pendingAudio = action.type === PARTICIPANT_UPDATED
                     ? [ ...newPendingAudio, participant ]
                     : newPendingAudio;
+
+                hasStateChanged = true;
             }
         }
 
@@ -111,6 +114,15 @@ ReducerRegistry.register('features/av-moderation', (state = initialState, action
                     ? [ ...newPendingVideo, participant ]
                     : newPendingVideo;
             }
+
+            hasStateChanged = true;
+        }
+
+        // If the state has changed we need to return a new object reference in order to trigger subscriber updates.
+        if (hasStateChanged) {
+            return {
+                ...state
+            };
         }
 
         return state;
