@@ -23,7 +23,8 @@ import {
     getParticipantById,
     pinParticipant,
     kickParticipant,
-    raiseHand
+    raiseHand,
+    isParticipantModerator
 } from '../../react/features/base/participants';
 import { updateSettings } from '../../react/features/base/settings';
 import { isToggleCameraEnabled, toggleCamera } from '../../react/features/base/tracks';
@@ -105,24 +106,12 @@ function initCommands() {
             const muteMediaType = mediaType ? mediaType : MEDIA_TYPE.AUDIO;
 
             sendAnalytics(createApiEvent('muted-everyone'));
-            const participantsState = APP.store.getState()['features/base/participants'];
-
-            if (!participantsState) {
-                return;
-            }
-
-            const { local, remote } = participantsState;
+            const localParticipant = getLocalParticipant(APP.store.getState());
             const exclude = [];
 
-            if (local) {
-                exclude.push(local.id);
+            if (localParticipant && isParticipantModerator(localParticipant)) {
+                exclude.push(localParticipant.id);
             }
-
-            remote.forEach((participant, id) => {
-                if (participant.role === 'moderator') {
-                    exclude.push(id);
-                }
-            });
 
             APP.store.dispatch(muteAllParticipants(exclude, muteMediaType));
         },
