@@ -3,27 +3,33 @@
 export const REACTIONS = {
     clap: {
         message: ':clap:',
-        emoji: '👏'
+        emoji: '👏',
+        shortcutChar: 'C'
     },
     like: {
         message: ':thumbs_up:',
-        emoji: '👍'
+        emoji: '👍',
+        shortcutChar: 'T'
     },
     smile: {
         message: ':smile:',
-        emoji: '😀'
+        emoji: '😀',
+        shortcutChar: 'S'
     },
     joy: {
         message: ':joy:',
-        emoji: '😂'
+        emoji: '😂',
+        shortcutChar: 'L'
     },
     surprised: {
         message: ':face_with_open_mouth:',
-        emoji: '😮'
+        emoji: '😮',
+        shortcutChar: 'O'
     },
     party: {
         message: ':party_popper:',
-        emoji: '🎉'
+        emoji: '🎉',
+        shortcutChar: 'P'
     }
 };
 

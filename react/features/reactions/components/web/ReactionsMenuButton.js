@@ -67,7 +67,7 @@ function ReactionsMenuButton({
     useEffect(() => {
         const KEYBOARD_SHORTCUTS = Object.keys(REACTIONS).map(key => {
             return {
-                character: REACTIONS[key].message.slice(1, 2).toUpperCase(),
+                character: REACTIONS[key].shortcutChar,
                 exec: () => dispatch(sendReaction(key)),
                 helpDescription: t(`toolbar.reaction${key.charAt(0).toUpperCase()}${key.slice(1)}`),
                 altKey: true
@@ -84,7 +84,7 @@ function ReactionsMenuButton({
         });
 
         return () => {
-            Object.keys(REACTIONS).map(key => REACTIONS[key].message.slice(1, 2).toUpperCase())
+            Object.keys(REACTIONS).map(key => REACTIONS[key].shortcutChar)
                 .forEach(letter =>
                     APP.keyboardshortcut.unregisterShortcut(letter, true));
         };

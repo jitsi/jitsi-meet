@@ -252,12 +252,12 @@ function _addChatMsgListener(conference, store) {
                 const [ { _id }, eventData ] = args;
 
                 if (eventData.name === ENDPOINT_REACTION_NAME) {
-                    store.dispatch(pushReaction(eventData.reaction));
                     reactions[_id] = reactions[_id] ?? {
                         timeout: null,
                         message: ''
                     };
                     batch(() => {
+                        store.dispatch(pushReaction(eventData.reaction));
                         store.dispatch(setToolboxVisible(true));
                         store.dispatch(setToolboxTimeout(
                                 () => store.dispatch(hideToolbox()),
