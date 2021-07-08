@@ -13,7 +13,7 @@ import { toggleBackgroundEffect } from '../actions';
 import { VIRTUAL_BACKGROUND_TYPE } from '../constants';
 import { localTrackStopped } from '../functions';
 
-const videoClassName = 'video-preview-video flipVideoX';
+const videoClassName = 'video-preview-video';
 
 /**
  * The type of the React {@code PureComponent} props of {@link VirtualBackgroundPreview}.
