@@ -9,10 +9,10 @@ import { getCurrentConference } from '../../../base/conference';
 import { MEDIA_TYPE } from '../../../base/media';
 import { getLocalParticipant } from '../../../base/participants';
 import { isLocalTrackMuted } from '../../../base/tracks';
+import { showWarningNotification } from '../../../notifications/actions';
 import { dockToolbox } from '../../../toolbox/actions.web';
 import { muteLocal } from '../../../video-menu/actions.any';
-import { setSharedVideoStatus } from '../../actions.any';
-
+import { setSharedVideoStatus, toggleSharedVideo } from '../../actions.any';
 export const PLAYBACK_STATES = {
     PLAYING: 'playing',
     PAUSED: 'pause',
@@ -42,9 +42,19 @@ export type Props = {
     _conference: Object,
 
     /**
+     * Warning that indicates an incorect video url
+     */
+    _displayWarning: Function,
+
+    /**
      * Docks the toolbox
      */
     _dockToolbox: Function,
+
+    /**
+     * Action to toggle video sharing
+    */
+    _doToggleSharedVideo: Function,
 
     /**
      * Indicates whether the local audio is muted
@@ -195,6 +205,16 @@ class AbstractVideoManager extends Component<Props> {
                 this.unMute();
             }
         }
+    }
+
+    /**
+     * Handle video error.
+     *
+     * @returns {void}
+     */
+    onError() {
+        this.props._doToggleSharedVideo();
+        this.props._displayWarning();
     }
 
     /**
@@ -406,8 +426,16 @@ export function _mapStateToProps(state: Object): $Shape<Props> {
  */
 export function _mapDispatchToProps(dispatch: Function): $Shape<Props> {
     return {
+        _displayWarning: () => {
+            dispatch(showWarningNotification({
+                titleKey: 'dialog.shareVideoLinkError'
+            }));
+        },
         _dockToolbox: value => {
             dispatch(dockToolbox(value));
+        },
+        _doToggleSharedVideo: () => {
+            dispatch(toggleSharedVideo());
         },
         _muteLocal: value => {
             dispatch(muteLocal(value, MEDIA_TYPE.AUDIO));
