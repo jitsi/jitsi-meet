@@ -124,6 +124,20 @@ export function getParticipantById(
 }
 
 /**
+ * Returns the participant with the ID matching the passed ID or the local participant if the ID is
+ * undefined.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @param {string|undefined} [participantID] - An optional partipantID argument.
+ * @returns {Participant|undefined}
+ */
+export function getParticipantByIdOrUndefined(stateful: Object | Function, participantID: ?string) {
+    return participantID ? getParticipantById(stateful, participantID) : getLocalParticipant(stateful);
+}
+
+/**
  * Returns a count of the known participants in the passed in redux state,
  * excluding any fake participants.
  *
@@ -161,9 +175,8 @@ export function getFakeParticipants(stateful: Object | Function) {
  */
 export function getRemoteParticipantCount(stateful: Object | Function) {
     const state = toState(stateful)['features/base/participants'];
-    const { remote } = state;
 
-    return remote.size;
+    return state.remote.size;
 }
 
 /**

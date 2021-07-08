@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { getLocalParticipant, getParticipantById, getParticipantDisplayName } from '../../base/participants';
+import { getParticipantByIdOrUndefined, getParticipantDisplayName } from '../../base/participants';
 import { connect } from '../../base/redux';
 import { isParticipantAudioMuted, isParticipantVideoMuted } from '../../base/tracks';
 import { ACTION_TRIGGER, MEDIA_STATE, type MediaState } from '../constants';
@@ -157,7 +157,7 @@ function MeetingParticipantItem({
 function _mapStateToProps(state, ownProps): Object {
     const { participantID } = ownProps;
 
-    const participant = participantID ? getParticipantById(state, participantID) : getLocalParticipant(state);
+    const participant = getParticipantByIdOrUndefined(state, participantID);
     const { id, local, raisedHand } = participant;
 
     const _isAudioMuted = isParticipantAudioMuted(participant, state);

@@ -13,8 +13,7 @@ import {
     getParticipantCount,
     isEveryoneModerator,
     pinParticipant,
-    getParticipantById,
-    getLocalParticipant
+    getParticipantByIdOrUndefined
 } from '../../../base/participants';
 import { Container } from '../../../base/react';
 import { connect } from '../../../base/redux';
@@ -268,7 +267,7 @@ function _mapStateToProps(state, ownProps) {
     const largeVideo = state['features/large-video'];
     const tracks = state['features/base/tracks'];
     const { participantID } = ownProps;
-    const participant = participantID ? getParticipantById(state, participantID) : getLocalParticipant(state);
+    const participant = getParticipantByIdOrUndefined(state, participantID);
     const id = participant.id;
     const audioTrack
         = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, id);

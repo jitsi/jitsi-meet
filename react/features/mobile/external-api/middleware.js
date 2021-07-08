@@ -275,6 +275,24 @@ StateListenerRegistry.register(
     }, 100));
 
 /**
+ * Returns a participant info object based on the passed participant object from redux.
+ *
+ * @param {Participant} participant - The participant object from the redux store.
+ * @returns {Object} - The participant info object.
+ */
+function _participantToParticipantInfo(participant) {
+    return {
+        isLocal: participant.local,
+        email: participant.email,
+        name: participant.name,
+        participantId: participant.id,
+        displayName: participant.displayName,
+        avatarUrl: participant.avatarURL,
+        role: participant.role
+    };
+}
+
+/**
  * Registers for events sent from the native side via NativeEventEmitter.
  *
  * @param {Store} store - The redux store.
@@ -319,26 +337,10 @@ function _registerForNativeEvents(store) {
         const remoteParticipants = getRemoteParticipants(store);
         const localParticipant = getLocalParticipant(store);
 
-        participantsInfo.push({
-            isLocal: localParticipant.local,
-            email: localParticipant.email,
-            name: localParticipant.name,
-            participantId: localParticipant.id,
-            displayName: localParticipant.displayName,
-            avatarUrl: localParticipant.avatarURL,
-            role: localParticipant.role
-        });
+        participantsInfo.push(_participantToParticipantInfo(localParticipant));
         remoteParticipants.forEach(participant => {
             if (!participant.isFakeParticipant) {
-                participantsInfo.push({
-                    isLocal: participant.local,
-                    email: participant.email,
-                    name: participant.name,
-                    participantId: participant.id,
-                    displayName: participant.displayName,
-                    avatarUrl: participant.avatarURL,
-                    role: participant.role
-                });
+                participantsInfo.push(_participantToParticipantInfo(participant));
             }
         });
 

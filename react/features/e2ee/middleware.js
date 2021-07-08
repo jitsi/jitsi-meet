@@ -5,7 +5,8 @@ import { batch } from 'react-redux';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import { getCurrentConference } from '../base/conference';
 import {
-    getLocalParticipant, getParticipantById,
+    getLocalParticipant,
+    getParticipantById,
     getParticipantCount,
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
@@ -16,12 +17,8 @@ import {
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
 
-import {
-    SET_EVERYONE_ENABLED,
-    SET_EVERYONE_SUPPORTS,
-    TOGGLE_E2EE
-} from './actionTypes';
-import { toggleE2EE } from './actions';
+import { TOGGLE_E2EE } from './actionTypes';
+import { setEveryoneEnabledE2EE, setEveryoneSupportE2EE, toggleE2EE } from './actions';
 import { E2EE_OFF_SOUND_ID, E2EE_ON_SOUND_ID } from './constants';
 import logger from './logger';
 import { E2EE_OFF_SOUND_FILE, E2EE_ON_SOUND_FILE } from './sounds';
@@ -57,7 +54,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         if (e2eeEnabled !== oldParticipant.e2eeEnabled
             || e2eeSupported !== oldParticipant.e2eeSupported) {
             const state = getState();
-            let newEveryoneSupportsE2EE = true;
+            let newEveryoneSupportE2EE = true;
             let newEveryoneEnabledE2EE = true;
 
             // eslint-disable-next-line no-unused-vars
@@ -67,10 +64,10 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 }
 
                 if (!p.e2eeSupported) {
-                    newEveryoneSupportsE2EE = false;
+                    newEveryoneSupportE2EE = false;
                 }
 
-                if (!newEveryoneEnabledE2EE && !newEveryoneSupportsE2EE) {
+                if (!newEveryoneEnabledE2EE && !newEveryoneSupportE2EE) {
                     break;
                 }
             }
@@ -80,14 +77,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             }
 
             batch(() => {
-                dispatch({
-                    type: SET_EVERYONE_ENABLED,
-                    everyoneEnabledE2EE: newEveryoneEnabledE2EE
-                });
-                dispatch({
-                    type: SET_EVERYONE_SUPPORTS,
-                    everyoneSupportsE2EE: newEveryoneSupportsE2EE
-                });
+                dispatch(setEveryoneEnabledE2EE(newEveryoneEnabledE2EE));
+                dispatch(setEveryoneSupportE2EE(newEveryoneSupportE2EE));
             });
         }
 
@@ -102,39 +93,27 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         // the initial values
         if (participantCount === 1) {
             batch(() => {
-                dispatch({
-                    type: SET_EVERYONE_ENABLED,
-                    everyoneEnabledE2EE: e2eeEnabled
-                });
-                dispatch({
-                    type: SET_EVERYONE_SUPPORTS,
-                    everyoneSupportsE2EE: e2eeSupported
-                });
+                dispatch(setEveryoneEnabledE2EE(e2eeEnabled));
+                dispatch(setEveryoneSupportE2EE(e2eeSupported));
             });
         }
 
         // if all had it enabled and this one disabled it, change value in store
         // otherwise there is no change in the value we store
         if (everyoneEnabledE2EE && !e2eeEnabled) {
-            dispatch({
-                type: SET_EVERYONE_ENABLED,
-                everyoneEnabledE2EE: false
-            });
+            dispatch(setEveryoneEnabledE2EE(false));
         }
 
         if (local) {
             return result;
         }
 
-        const { everyoneSupportsE2EE } = getState()['features/e2ee'];
+        const { everyoneSupportE2EE } = getState()['features/e2ee'];
 
         // if all supported it and this one does not, change value in store
         // otherwise there is no change in the value we store
-        if (everyoneSupportsE2EE && !e2eeSupported) {
-            dispatch({
-                type: SET_EVERYONE_SUPPORTS,
-                everyoneSupportsE2EE: false
-            });
+        if (everyoneSupportE2EE && !e2eeSupported) {
+            dispatch(setEveryoneSupportE2EE(false));
         }
 
         return result;
@@ -147,14 +126,14 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         const newState = getState();
         const { e2eeEnabled = false, e2eeSupported = false } = participant;
 
-        const { everyoneEnabledE2EE, everyoneSupportsE2EE } = newState['features/e2ee'];
+        const { everyoneEnabledE2EE, everyoneSupportE2EE } = newState['features/e2ee'];
 
 
         // if it was not enabled by everyone, and the participant leaving had it disabled, or if it was not supported
         // by everyone, and the participant leaving had it not supported let's check is it enabled for all that stay
-        if ((!everyoneEnabledE2EE && !e2eeEnabled) || (!everyoneSupportsE2EE && !e2eeSupported)) {
+        if ((!everyoneEnabledE2EE && !e2eeEnabled) || (!everyoneSupportE2EE && !e2eeSupported)) {
             let latestEveryoneEnabledE2EE = true;
-            let latestEveryoneSupportsE2EE = true;
+            let latestEveryoneSupportE2EE = true;
 
             // eslint-disable-next-line no-unused-vars
             for (const [ key, p ] of getRemoteParticipants(newState)) {
@@ -163,10 +142,10 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 }
 
                 if (!p.e2eeSupported) {
-                    latestEveryoneSupportsE2EE = false;
+                    latestEveryoneSupportE2EE = false;
                 }
 
-                if (!latestEveryoneEnabledE2EE && !latestEveryoneSupportsE2EE) {
+                if (!latestEveryoneEnabledE2EE && !latestEveryoneSupportE2EE) {
                     break;
                 }
             }
@@ -177,17 +156,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
             batch(() => {
                 if (!everyoneEnabledE2EE && latestEveryoneEnabledE2EE) {
-                    dispatch({
-                        type: SET_EVERYONE_ENABLED,
-                        everyoneEnabledE2EE: true
-                    });
+                    dispatch(setEveryoneEnabledE2EE(true));
                 }
 
-                if (!everyoneSupportsE2EE && latestEveryoneSupportsE2EE) {
-                    dispatch({
-                        type: SET_EVERYONE_SUPPORTS,
-                        everyoneSupportsE2EE: true
-                    });
+                if (!everyoneSupportE2EE && latestEveryoneSupportE2EE) {
+                    dispatch(setEveryoneSupportE2EE(true));
                 }
             });
         }

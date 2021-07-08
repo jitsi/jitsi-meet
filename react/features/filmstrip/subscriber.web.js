@@ -20,7 +20,7 @@ import {
  * Listens for changes in the number of participants to calculate the dimensions of the tile view grid and the tiles.
  */
 StateListenerRegistry.register(
-    /* selector */ state => getParticipantCountWithFake(state),
+    /* selector */ getParticipantCountWithFake,
     /* listener */ (numberOfParticipants, store) => {
         const state = store.getState();
 

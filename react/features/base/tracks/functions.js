@@ -30,7 +30,7 @@ export const getTrackState = state => state['features/base/tracks'];
  */
 export function isParticipantMediaMuted(participant, mediaType, state) {
     if (!participant) {
-        return;
+        return false;
     }
 
     const tracks = getTrackState(state);

@@ -9,8 +9,7 @@ import { Avatar } from '../../../base/avatar';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
 import { MEDIA_TYPE, VideoTrack } from '../../../base/media';
 import {
-    getLocalParticipant,
-    getParticipantById,
+    getParticipantByIdOrUndefined,
     getParticipantCount,
     pinParticipant
 } from '../../../base/participants';
@@ -1013,8 +1012,7 @@ class Thumbnail extends Component<Props, State> {
 function _mapStateToProps(state, ownProps): Object {
     const { participantID } = ownProps;
 
-    // Only the local participant won't have id for the time when the conference is not yet joined.
-    const participant = participantID ? getParticipantById(state, participantID) : getLocalParticipant(state);
+    const participant = getParticipantByIdOrUndefined(state, participantID);
     const { id } = participant;
     const isLocal = participant?.local ?? true;
     const tracks = state['features/base/tracks'];

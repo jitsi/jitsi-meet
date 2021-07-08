@@ -14,8 +14,7 @@ import {
     IconVideoOff
 } from '../../base/icons';
 import {
-    getLocalParticipant,
-    getParticipantById,
+    getParticipantByIdOrUndefined,
     isLocalParticipantModerator,
     isParticipantModerator
 } from '../../base/participants';
@@ -379,7 +378,7 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
 function _mapStateToProps(state, ownProps): Object {
     const { participantID } = ownProps;
 
-    const participant = participantID ? getParticipantById(state, participantID) : getLocalParticipant(state);
+    const participant = getParticipantByIdOrUndefined(state, participantID);
 
     const _isLocalModerator = isLocalParticipantModerator(state);
     const _isChatButtonEnabled = isToolbarButtonEnabled('chat', state);

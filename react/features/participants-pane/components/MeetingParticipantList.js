@@ -109,7 +109,8 @@ export function MeetingParticipantList() {
     // It seems that useTranslation is not very scallable. Unmount 500 components that have the useTranslation hook is
     // taking more than 10s. To workaround the issue we need to pass the texts as props. This is temporary and dirty
     // solution!!!
-    // One potential proper fix would be to use
+    // One potential proper fix would be to use react-window component in order to lower the number of components
+    // mounted.
     const participantActionEllipsisLabel = t('MeetingParticipantItem.ParticipantActionEllipsis.options');
     const youText = t('chat.you');
     const askUnmuteText = t('participantsPane.actions.askUnmute');

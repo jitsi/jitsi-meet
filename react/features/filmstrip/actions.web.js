@@ -128,7 +128,7 @@ export function setHorizontalViewDimensions() {
 export function clickOnVideo(n: number) {
     return (dispatch: Function, getState: Function) => {
         const state = getState();
-        const { participants } = [ getLocalParticipant(state), ...getRemoteParticipants(state).values() ];
+        const participants = [ getLocalParticipant(state), ...getRemoteParticipants(state).values() ];
         const nThParticipant = participants[n];
         const { id, pinned } = nThParticipant;
 
