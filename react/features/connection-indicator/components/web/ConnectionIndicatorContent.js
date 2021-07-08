@@ -59,15 +59,42 @@ const QUALITY_TO_WIDTH: Array<Object> = [
 type Props = AbstractProps & {
 
     /**
+     * The audio SSRC of this client.
+     */
+     _audioSsrc: number,
+
+    /**
      * The current condition of the user's connection, matching one of the
      * enumerated values in the library.
      */
     _connectionStatus: string,
 
     /**
-     * The audio SSRC of this client.
+     * Whether or not should display the "Show More" link in the local video
+     * stats table.
      */
-    audioSsrc: number,
+    _disableShowMoreStats: boolean,
+
+    /**
+     * Whether or not should display the "Save Logs" link in the local video
+     * stats table.
+     */
+    _enableSaveLogs: boolean,
+
+    /**
+     * Whether or not the displays stats are for local video.
+     */
+    _isLocalVideo: boolean,
+
+    /**
+     * Invoked to save the conference logs.
+     */
+    _onSaveLogs: Function,
+
+    /**
+     * The video SSRC of this client.
+     */
+    _videoSsrc: number,
 
     /**
      * Css class to apply on container
@@ -80,36 +107,14 @@ type Props = AbstractProps & {
     dispatch: Dispatch<any>,
 
     /**
-     * Whether or not should display the "Show More" link in the local video
-     * stats table.
+     * Optional param for passing existing connection stats on component instantiation
      */
-    disableShowMoreStats: boolean,
-
-    /**
-     * Whether or not should display the "Save Logs" link in the local video
-     * stats table.
-     */
-    enableSaveLogs: boolean,
-
-    /**
-     * Whether or not the displays stats are for local video.
-     */
-    isLocalVideo: boolean,
+    inheritedStats: Object,
 
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function,
-
-    /**
-     * The video SSRC of this client.
-     */
-    videoSsrc: number,
-
-    /**
-     * Invoked to save the conference logs.
-     */
-    _onSaveLogs: Function
+    t: Function
 };
 
 /**
@@ -143,7 +148,7 @@ class ConnectionIndicatorContent extends AbstractConnectionIndicator<Props, Stat
             autoHideTimeout: undefined,
             showIndicator: false,
             showMoreStats: false,
-            stats: {}
+            stats: props.inheritedStats || {}
         };
 
         // Bind event handlers so they are only bound once for every instance.
@@ -174,17 +179,17 @@ class ConnectionIndicatorContent extends AbstractConnectionIndicator<Props, Stat
 
         return (
             <ConnectionStatsTable
-                audioSsrc = { this.props.audioSsrc }
+                audioSsrc = { this.props._audioSsrc }
                 bandwidth = { bandwidth }
                 bitrate = { bitrate }
                 bridgeCount = { bridgeCount }
                 codec = { codec }
                 connectionSummary = { this._getConnectionStatusTip() }
-                disableShowMoreStats = { this.props.disableShowMoreStats }
+                disableShowMoreStats = { this.props._disableShowMoreStats }
                 e2eRtt = { e2eRtt }
-                enableSaveLogs = { this.props.enableSaveLogs }
+                enableSaveLogs = { this.props._enableSaveLogs }
                 framerate = { framerate }
-                isLocalVideo = { this.props.isLocalVideo }
+                isLocalVideo = { this.props._isLocalVideo }
                 maxEnabledResolution = { maxEnabledResolution }
                 onSaveLogs = { this.props._onSaveLogs }
                 onShowMore = { this._onToggleShowMore }
@@ -195,7 +200,7 @@ class ConnectionIndicatorContent extends AbstractConnectionIndicator<Props, Stat
                 serverRegion = { serverRegion }
                 shouldShowMore = { this.state.showMoreStats }
                 transport = { transport }
-                videoSsrc = { this.props.videoSsrc } />
+                videoSsrc = { this.props._videoSsrc } />
         );
     }
 
@@ -303,8 +308,9 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
         = participantId ? getParticipantById(state, participantId) : getLocalParticipant(state);
     const props = {
         _connectionStatus: participant?.connectionStatus,
-        enableSaveLogs: state['features/base/config'].enableSaveLogs,
-        disableShowMoreStats: state['features/base/config'].disableShowMoreStats
+        _enableSaveLogs: state['features/base/config'].enableSaveLogs,
+        _disableShowMoreStats: state['features/base/config'].disableShowMoreStats,
+        _isLocalVideo: participant?.local
     };
 
     if (conference) {
@@ -315,8 +321,8 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
 
         return {
             ...props,
-            audioSsrc: firstAudioTrack ? conference.getSsrcByTrack(firstAudioTrack.jitsiTrack) : undefined,
-            videoSsrc: firstVideoTrack ? conference.getSsrcByTrack(firstVideoTrack.jitsiTrack) : undefined
+            _audioSsrc: firstAudioTrack ? conference.getSsrcByTrack(firstAudioTrack.jitsiTrack) : undefined,
+            _videoSsrc: firstVideoTrack ? conference.getSsrcByTrack(firstVideoTrack.jitsiTrack) : undefined
         };
     }
 

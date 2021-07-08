@@ -652,7 +652,7 @@ class Thumbnail extends Component<Props, State> {
         } = this.props;
         const { isHovered } = this.state;
         const showConnectionIndicator = isHovered || !_connectionIndicatorAutoHideEnabled;
-        const { id, local = false, dominantSpeaker = false } = _participant;
+        const { id, dominantSpeaker = false } = _participant;
         const showDominantSpeaker = !_isDominantSpeakerDisabled && dominantSpeaker;
         let statsPopoverPosition, tooltipPosition;
 
@@ -677,7 +677,6 @@ class Thumbnail extends Component<Props, State> {
                         alwaysVisible = { showConnectionIndicator }
                         enableStatsDisplay = { true }
                         iconSize = { iconSize }
-                        isLocalVideo = { local }
                         participantId = { id }
                         statsPopoverPosition = { statsPopoverPosition } />
                 }

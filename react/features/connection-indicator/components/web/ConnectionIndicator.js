@@ -93,11 +93,6 @@ type Props = AbstractProps & {
     iconSize: number,
 
     /**
-     * Whether or not the displays stats are for local video.
-     */
-    isLocalVideo: boolean,
-
-    /**
      * Relative to the icon from where the popover for more connection details
      * should display.
      */
@@ -149,7 +144,9 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, AbstractSta
         return (
             <Popover
                 className = { rootClassNames }
-                content = { <ConnectionIndicatorContent participantId = { this.props.participantId } /> }
+                content = { <ConnectionIndicatorContent
+                    inheritedStats = { this.state.stats }
+                    participantId = { this.props.participantId } /> }
                 disablePopover = { !this.props.enableStatsDisplay }
                 position = { this.props.statsPopoverPosition }>
                 <div className = 'popover-trigger'>
