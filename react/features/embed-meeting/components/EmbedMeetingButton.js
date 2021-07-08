@@ -3,14 +3,14 @@
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { openDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
-import { IconRec } from '../../base/icons';
+import { IconCodeBlock } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 
-import LocalRecordingInfoDialog from './LocalRecordingInfoDialog';
+import EmbedMeetingDialog from './EmbedMeetingDialog';
 
 /**
- * The type of the React {@code Component} props of {@link LocalRecording}.
+ * The type of the React {@code Component} props of {@link EmbedMeetingButton}.
  */
 type Props = AbstractButtonProps & {
 
@@ -21,13 +21,13 @@ type Props = AbstractButtonProps & {
 };
 
 /**
- * Implementation of a button for opening local recording dialog.
+ * Implementation of a button for opening embed meeting dialog.
  */
-class LocalRecording extends AbstractButton<Props, *> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.localRecording';
-    icon = IconRec;
-    label = 'localRecording.dialogTitle';
-    tooltip = 'localRecording.dialogTitle';
+class EmbedMeetingButton extends AbstractButton<Props, *> {
+    accessibilityLabel = 'toolbar.accessibilityLabel.embedMeeting';
+    icon = IconCodeBlock;
+    label = 'toolbar.embedMeeting';
+    tooltip = 'toolbar.embedMeeting';
 
     /**
      * Handles clicking / pressing the button, and opens the appropriate dialog.
@@ -38,9 +38,9 @@ class LocalRecording extends AbstractButton<Props, *> {
     _handleClick() {
         const { dispatch } = this.props;
 
-        sendAnalytics(createToolbarEvent('local.recording'));
-        dispatch(openDialog(LocalRecordingInfoDialog));
+        sendAnalytics(createToolbarEvent('embed.meeting'));
+        dispatch(openDialog(EmbedMeetingDialog));
     }
 }
 
-export default translate(connect()(LocalRecording));
+export default translate(connect()(EmbedMeetingButton));
