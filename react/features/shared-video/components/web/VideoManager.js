@@ -1,4 +1,3 @@
-import Logger from 'jitsi-meet-logger';
 import React from 'react';
 
 import { connect } from '../../../base/redux';
@@ -10,7 +9,6 @@ import AbstractVideoManager, {
     Props
 } from './AbstractVideoManager';
 
-const logger = Logger.getLogger(__filename);
 
 /**
  * Manager of shared video.
@@ -162,9 +160,7 @@ class VideoManager extends AbstractVideoManager<Props> {
             autoPlay: true,
             src: videoId,
             controls: _isOwner,
-            onError: event => {
-                logger.error('Error in the player:', event);
-            },
+            onError: () => this.onError(),
             onPlay: () => this.onPlay(),
             onVolumeChange: () => this.onVolumeChange()
         };

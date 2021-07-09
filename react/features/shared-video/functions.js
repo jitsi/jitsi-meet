@@ -53,3 +53,4 @@ export function isVideoPlaying(stateful: Object | Function): boolean {
 
     return videoPlaying;
 }
+

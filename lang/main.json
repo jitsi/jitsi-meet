@@ -311,7 +311,7 @@
         "shareAudioWarningD1": "you need to stop screen sharing before sharing your audio.",
         "shareAudioWarningD2": "you need to restart your screen sharing and check the \"share audio\" option.",
         "shareMediaWarningGenericH2": "If you want to share your screen and audio",
-        "shareVideoLinkError": "Please provide a correct youtube link.",
+        "shareVideoLinkError": "Please provide a correct video link.",
         "shareVideoTitle": "Share video",
         "shareYourScreen": "Share your screen",
         "shareYourScreenDisabled": "Screen sharing disabled.",
