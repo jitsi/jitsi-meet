@@ -1,6 +1,7 @@
 /* @flow */
 
 import { MEDIA_TYPE } from '../base/media/constants';
+import type { MediaType } from '../base/media/constants';
 import {
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED
@@ -15,6 +16,7 @@ import {
     PARTICIPANT_APPROVED,
     PARTICIPANT_PENDING_AUDIO
 } from './actionTypes';
+import { MEDIA_TYPE_TO_PENDING_STORE_KEY } from './constants';
 
 const initialState = {
     audioModerationEnabled: false,
@@ -24,6 +26,41 @@ const initialState = {
     pendingAudio: [],
     pendingVideo: []
 };
+
+/**
+ Updates a participant in the state for the specified media type.
+ *
+ * @param {MediaType} mediaType - The media type.
+ * @param {Object} participant - Information about participant to be modified.
+ * @param {Object} state - The current state.
+ * @private
+ * @returns {boolean} - Whether state instance was modified.
+ */
+function _updatePendingParticipant(mediaType: MediaType, participant, state: Object = {}) {
+    let arrayItemChanged = false;
+    const storeKey = MEDIA_TYPE_TO_PENDING_STORE_KEY[mediaType];
+    const arr = state[storeKey];
+    const newArr = arr.map(pending => {
+        if (pending.id === participant.id) {
+            arrayItemChanged = true;
+
+            return {
+                ...pending,
+                ...participant
+            };
+        }
+
+        return pending;
+    });
+
+    if (arrayItemChanged) {
+        state[storeKey] = newArr;
+
+        return true;
+    }
+
+    return false;
+}
 
 ReducerRegistry.register('features/av-moderation', (state = initialState, action) => {
 
@@ -86,22 +123,42 @@ ReducerRegistry.register('features/av-moderation', (state = initialState, action
         return state;
     }
 
-    case PARTICIPANT_UPDATED:
+    case PARTICIPANT_UPDATED: {
+        const participant = action.participant;
+        const { audioModerationEnabled, videoModerationEnabled } = state;
+        let hasStateChanged = false;
+
+        // skips changing the reference of pendingAudio or pendingVideo,
+        // if there is no change in the elements
+        if (audioModerationEnabled) {
+            hasStateChanged = _updatePendingParticipant(MEDIA_TYPE.AUDIO, participant, state);
+        }
+
+        if (videoModerationEnabled) {
+            hasStateChanged = _updatePendingParticipant(MEDIA_TYPE.VIDEO, participant, state);
+        }
+
+        // If the state has changed we need to return a new object reference in order to trigger subscriber updates.
+        if (hasStateChanged) {
+            return {
+                ...state
+            };
+        }
+
+        return state;
+    }
     case PARTICIPANT_LEFT: {
         const participant = action.participant;
         const { audioModerationEnabled, videoModerationEnabled } = state;
         let hasStateChanged = false;
 
+        // skips changing the reference of pendingAudio or pendingVideo,
+        // if there is no change in the elements
         if (audioModerationEnabled) {
-            // skips changing the reference of pendingAudio or pendingVideo,
-            // if there is no change in the elements
             const newPendingAudio = state.pendingAudio.filter(pending => pending.id !== participant.id);
 
             if (state.pendingAudio.length !== newPendingAudio.length) {
-                state.pendingAudio = action.type === PARTICIPANT_UPDATED
-                    ? [ ...newPendingAudio, participant ]
-                    : newPendingAudio;
-
+                state.pendingAudio = newPendingAudio;
                 hasStateChanged = true;
             }
         }
@@ -110,12 +167,9 @@ ReducerRegistry.register('features/av-moderation', (state = initialState, action
             const newPendingVideo = state.pendingVideo.filter(pending => pending.id !== participant.id);
 
             if (state.pendingVideo.length !== newPendingVideo.length) {
-                state.pendingVideo = action.type === PARTICIPANT_UPDATED
-                    ? [ ...newPendingVideo, participant ]
-                    : newPendingVideo;
+                state.pendingVideo = newPendingVideo;
+                hasStateChanged = true;
             }
-
-            hasStateChanged = true;
         }
 
         // If the state has changed we need to return a new object reference in order to trigger subscriber updates.
