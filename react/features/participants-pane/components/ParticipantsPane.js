@@ -7,7 +7,6 @@ import { openDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import {
     getParticipantCount,
-    isEveryoneModerator,
     isLocalParticipantModerator
 } from '../../base/participants';
 import { connect } from '../../base/redux';
@@ -259,7 +258,7 @@ function _mapStateToProps(state: Object) {
 
     return {
         _paneOpen: isPaneOpen,
-        _showContextMenu: isPaneOpen && !isEveryoneModerator(state) && getParticipantCount(state) > 2,
+        _showContextMenu: isPaneOpen && getParticipantCount(state) > 2,
         _showFooter: isPaneOpen && isLocalParticipantModerator(state)
     };
 }
