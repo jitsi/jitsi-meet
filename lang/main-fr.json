@@ -556,9 +556,12 @@
         "whenYouAreReady" : "Lorsque vous êtes prêt à commencer, cliquez sur le bouton ci-dessous pour admettre votre client dans la session vidéo",
         "practitionerIsReady" : "Votre praticien est prêt à commencer la session.",
         "waitClient" : "En attente de votre client...",
-        "patientIsReady" : "Votre client est prêt à commencer la session.",
+        "patientIsReady" : "Toc toc, votre client est prêt à commencer.",
         "waitPractitioner" : "Votre praticien vous laissera entrer dans la session lorsqu'il sera prêt...",
         "testYourDevice" : "Veuillez garder votre application ou la fenêtre de votre navigateur ouverte pour rester sur l'appel. Vous pouvez tester votre audio et vidéo pendant que vous attendez.",
+        "keepOpen" : "Veuillez garder votre fenêtre d'application ou de navigateur ouverte pour rester sur l'appel.",
+        "youMayTest" : "Vous pouvez tester votre audio et votre vidéo pendant que vous attendez",
+        "callWillBegin" : "Votre appel commencera automatiquement dans un instant.",
         "authenticationExpired" : "Votre prise de rendez-vous a expiré",
         "minutes": "{{duration}} Minutes"
     },
