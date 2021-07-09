@@ -5,9 +5,9 @@ import React, { Component } from 'react';
 import { Avatar } from '../../../base/avatar';
 import { MEDIA_TYPE } from '../../../base/media';
 import {
-    getParticipants,
     getParticipantDisplayName,
-    getParticipantPresenceStatus
+    getParticipantPresenceStatus,
+    getRemoteParticipants
 } from '../../../base/participants';
 import { Container, Text } from '../../../base/react';
 import { connect } from '../../../base/redux';
@@ -135,20 +135,20 @@ class CalleeInfo extends Component<Props> {
 function _mapStateToProps(state) {
     const _isVideoMuted
         = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.VIDEO);
-    const poltergeist
-        = getParticipants(state).find(p => p.botType === 'poltergeist');
 
-    if (poltergeist) {
-        const { id } = poltergeist;
-
-        return {
-            _callee: {
-                id,
-                name: getParticipantDisplayName(state, id),
-                status: getParticipantPresenceStatus(state, id)
-            },
-            _isVideoMuted
-        };
+    // This would be expensive for big calls but the component will be mounted only when there are up
+    // to 3 participants in the call.
+    for (const [ id, p ] of getRemoteParticipants(state)) {
+        if (p.botType === 'poltergeist') {
+            return {
+                _callee: {
+                    id,
+                    name: getParticipantDisplayName(state, id),
+                    status: getParticipantPresenceStatus(state, id)
+                },
+                _isVideoMuted
+            };
+        }
     }
 
     return {

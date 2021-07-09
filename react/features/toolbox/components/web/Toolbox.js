@@ -17,7 +17,7 @@ import { translate } from '../../../base/i18n';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet';
 import {
     getLocalParticipant,
-    getParticipants,
+    haveParticipantWithScreenSharingFeature,
     raiseHand
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
@@ -183,14 +183,19 @@ type Props = {
     _raisedHand: boolean,
 
     /**
-     * Whether or not the local participant is screensharing.
+     * Whether or not the local participant is screenSharing.
      */
-    _screensharing: boolean,
+    _screenSharing: boolean,
 
     /**
      * Whether or not the local participant is sharing a YouTube video.
      */
     _sharingVideo: boolean,
+
+    /**
+     * The enabled buttons.
+     */
+    _toolbarButtons: Array<string>,
 
     /**
      * Flag showing whether toolbar is visible.
@@ -201,11 +206,6 @@ type Props = {
      * Array with the buttons which this Toolbox should display.
      */
     _visibleButtons: Array<string>,
-
-    /**
-     * Handler to check if a button is enabled.
-     */
-     _shouldShowButton: Function,
 
     /**
      * Returns the selected virtual source object.
@@ -269,38 +269,39 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     componentDidMount() {
+        const { _toolbarButtons } = this.props;
         const KEYBOARD_SHORTCUTS = [
-            this.props._shouldShowButton('videoquality') && {
+            isToolbarButtonEnabled('videoquality', _toolbarButtons) && {
                 character: 'A',
                 exec: this._onShortcutToggleVideoQuality,
                 helpDescription: 'toolbar.callQuality'
             },
-            this.props._shouldShowButton('chat') && {
+            isToolbarButtonEnabled('chat', _toolbarButtons) && {
                 character: 'C',
                 exec: this._onShortcutToggleChat,
                 helpDescription: 'keyboardShortcuts.toggleChat'
             },
-            this.props._shouldShowButton('desktop') && {
+            isToolbarButtonEnabled('desktop', _toolbarButtons) && {
                 character: 'D',
                 exec: this._onShortcutToggleScreenshare,
                 helpDescription: 'keyboardShortcuts.toggleScreensharing'
             },
-            this.props._shouldShowButton('participants-pane') && {
+            isToolbarButtonEnabled('participants-pane', _toolbarButtons) && {
                 character: 'P',
                 exec: this._onShortcutToggleParticipantsPane,
                 helpDescription: 'keyboardShortcuts.toggleParticipantsPane'
             },
-            this.props._shouldShowButton('raisehand') && {
+            isToolbarButtonEnabled('raisehand', _toolbarButtons) && {
                 character: 'R',
                 exec: this._onShortcutToggleRaiseHand,
                 helpDescription: 'keyboardShortcuts.raiseHand'
             },
-            this.props._shouldShowButton('fullscreen') && {
+            isToolbarButtonEnabled('fullscreen', _toolbarButtons) && {
                 character: 'S',
                 exec: this._onShortcutToggleFullScreen,
                 helpDescription: 'keyboardShortcuts.fullScreen'
             },
-            this.props._shouldShowButton('tileview') && {
+            isToolbarButtonEnabled('tileview', _toolbarButtons) && {
                 character: 'W',
                 exec: this._onShortcutToggleTileView,
                 helpDescription: 'toolbar.tileViewToggle'
@@ -509,7 +510,7 @@ class Toolbox extends Component<Props> {
         const {
             _feedbackConfigured,
             _isMobile,
-            _screensharing
+            _screenSharing
         } = this.props;
 
         const microphone = {
@@ -644,7 +645,7 @@ class Toolbox extends Component<Props> {
             group: 3
         };
 
-        const virtualBackground = !_screensharing && checkBlurSupport() && {
+        const virtualBackground = !_screenSharing && checkBlurSupport() && {
             key: 'select-background',
             Content: VideoBackgroundButton,
             group: 3
@@ -734,12 +735,12 @@ class Toolbox extends Component<Props> {
     _getVisibleButtons() {
         const {
             _clientWidth,
-            _shouldShowButton
+            _toolbarButtons
         } = this.props;
 
 
         const buttons = this._getAllButtons();
-        const isHangupVisible = _shouldShowButton('hangup');
+        const isHangupVisible = isToolbarButtonEnabled('hangup', _toolbarButtons);
         const { order } = THRESHOLDS.find(({ width }) => _clientWidth > width)
             || THRESHOLDS[THRESHOLDS.length - 1];
         let sliceIndex = order.length + 2;
@@ -749,7 +750,7 @@ class Toolbox extends Component<Props> {
         const filtered = [
             ...order.map(key => buttons[key]),
             ...Object.values(buttons).filter((button, index) => !order.includes(keys[index]))
-        ].filter(Boolean).filter(({ key }) => _shouldShowButton(key));
+        ].filter(Boolean).filter(({ key }) => isToolbarButtonEnabled(key, _toolbarButtons));
 
         if (isHangupVisible) {
             sliceIndex -= 1;
@@ -934,7 +935,7 @@ class Toolbox extends Component<Props> {
                 'toggle.screen.sharing',
                 ACTION_SHORTCUT_TRIGGERED,
                 {
-                    enable: !this.props._screensharing
+                    enable: !this.props._screenSharing
                 }));
 
         this._doToggleScreenshare();
@@ -1053,7 +1054,7 @@ class Toolbox extends Component<Props> {
         sendAnalytics(createToolbarEvent(
             'toggle.screen.sharing',
             ACTION_SHORTCUT_TRIGGERED,
-            { enable: !this.props._screensharing }));
+            { enable: !this.props._screenSharing }));
 
         this._closeOverflowMenuIfOpen();
         this._doToggleScreenshare();
@@ -1116,6 +1117,7 @@ class Toolbox extends Component<Props> {
         const {
             _isMobile,
             _overflowMenuVisible,
+            _toolbarButtons,
             t
         } = this.props;
 
@@ -1169,7 +1171,7 @@ class Toolbox extends Component<Props> {
                         <HangupButton
                             customClass = 'hangup-button'
                             key = 'hangup-button'
-                            visible = { this.props._shouldShowButton('hangup') } />
+                            visible = { isToolbarButtonEnabled('hangup', _toolbarButtons) } />
                     </div>
                 </div>
             </div>
@@ -1203,12 +1205,12 @@ function _mapStateToProps(state) {
     let desktopSharingDisabledTooltipKey;
 
     if (enableFeaturesBasedOnToken) {
-        // we enable desktop sharing if any participant already have this
-        // feature enabled
-        desktopSharingEnabled = getParticipants(state)
-            .find(({ features = {} }) =>
-                String(features['screen-sharing']) === 'true') !== undefined;
-        desktopSharingDisabledTooltipKey = 'dialog.shareYourScreenDisabled';
+        if (desktopSharingEnabled) {
+            // we enable desktop sharing if any participant already have this
+            // feature enabled and if the user supports it.
+            desktopSharingEnabled = haveParticipantWithScreenSharingFeature(state);
+            desktopSharingDisabledTooltipKey = 'dialog.shareYourScreenDisabled';
+        }
     }
 
     return {
@@ -1226,13 +1228,13 @@ function _mapStateToProps(state) {
         _isVpaasMeeting: isVpaasMeeting(state),
         _fullScreen: fullScreen,
         _tileViewEnabled: shouldDisplayTileView(state),
-        _localParticipantID: localParticipant.id,
+        _localParticipantID: localParticipant?.id,
         _localVideo: localVideo,
         _overflowMenuVisible: overflowMenuVisible,
         _participantsPaneOpen: getParticipantsPaneOpen(state),
-        _raisedHand: localParticipant.raisedHand,
-        _screensharing: isScreenVideoShared(state),
-        _shouldShowButton: buttonName => isToolbarButtonEnabled(buttonName)(state),
+        _raisedHand: localParticipant?.raisedHand,
+        _screenSharing: isScreenVideoShared(state),
+        _toolbarButtons: getToolbarButtons(state),
         _visible: isToolboxVisible(state),
         _visibleButtons: getToolbarButtons(state)
     };

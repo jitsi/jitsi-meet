@@ -9,8 +9,7 @@ import { Avatar } from '../../../base/avatar';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
 import { MEDIA_TYPE, VideoTrack } from '../../../base/media';
 import {
-    getLocalParticipant,
-    getParticipantById,
+    getParticipantByIdOrUndefined,
     getParticipantCount,
     pinParticipant
 } from '../../../base/participants';
@@ -1012,9 +1011,8 @@ class Thumbnail extends Component<Props, State> {
 function _mapStateToProps(state, ownProps): Object {
     const { participantID } = ownProps;
 
-    // Only the local participant won't have id for the time when the conference is not yet joined.
-    const participant = participantID ? getParticipantById(state, participantID) : getLocalParticipant(state);
-    const { id } = participant;
+    const participant = getParticipantByIdOrUndefined(state, participantID);
+    const id = participant?.id;
     const isLocal = participant?.local ?? true;
     const tracks = state['features/base/tracks'];
     const { participantsVolume } = state['features/filmstrip'];
@@ -1085,14 +1083,14 @@ function _mapStateToProps(state, ownProps): Object {
         _isDominantSpeakerDisabled: interfaceConfig.DISABLE_DOMINANT_SPEAKER_INDICATOR,
         _isScreenSharing: _videoTrack?.videoType === 'desktop',
         _isTestModeEnabled: isTestModeEnabled(state),
-        _isVideoPlayable: isVideoPlayable(state, id),
+        _isVideoPlayable: id && isVideoPlayable(state, id),
         _indicatorIconSize: NORMAL,
         _localFlipX: Boolean(localFlipX),
         _participant: participant,
         _participantCountMoreThan2: getParticipantCount(state) > 2,
         _startSilent: Boolean(startSilent),
         _videoTrack,
-        _volume: isLocal ? undefined : participantsVolume[id],
+        _volume: isLocal ? undefined : id ? participantsVolume[id] : undefined,
         ...size
     };
 }

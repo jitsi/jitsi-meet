@@ -144,7 +144,7 @@ function _mapStateToProps(state) {
         clientHeight,
         clientWidth,
         filmstripVisible: visible,
-        isOwner: ownerId === localParticipant.id,
+        isOwner: ownerId === localParticipant?.id,
         videoUrl
     };
 }

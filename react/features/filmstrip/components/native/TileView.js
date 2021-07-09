@@ -8,12 +8,14 @@ import {
 } from 'react-native';
 import type { Dispatch } from 'redux';
 
+import { getLocalParticipant, getParticipantCountWithFake } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { setTileViewDimensions } from '../../actions.native';
 
 import Thumbnail from './Thumbnail';
 import styles from './styles';
+
 
 /**
  * The type of the React {@link Component} props of {@link TileView}.
@@ -31,9 +33,19 @@ type Props = {
     _height: number,
 
     /**
-     * The participants in the conference.
+     * The local participant.
      */
-    _participants: Array<Object>,
+    _localParticipant: Object,
+
+    /**
+     * The number of participants in the conference.
+     */
+    _participantCount: number,
+
+    /**
+     * An array with the IDs of the remote participants in the conference.
+     */
+    _remoteParticipants: Array<string>,
 
     /**
      * Application's viewport height.
@@ -131,7 +143,7 @@ class TileView extends Component<Props> {
      * @private
      */
     _getColumnCount() {
-        const participantCount = this.props._participants.length;
+        const participantCount = this.props._participantCount;
 
         // For narrow view, tiles should stack on top of each other for a lonely
         // call and a 1:1 call. Otherwise tiles should be grouped into rows of
@@ -155,18 +167,10 @@ class TileView extends Component<Props> {
      * @returns {Participant[]}
      */
     _getSortedParticipants() {
-        const participants = [];
-        let localParticipant;
+        const { _localParticipant, _remoteParticipants } = this.props;
+        const participants = [ ..._remoteParticipants ];
 
-        for (const participant of this.props._participants) {
-            if (participant.local) {
-                localParticipant = participant;
-            } else {
-                participants.push(participant);
-            }
-        }
-
-        localParticipant && participants.push(localParticipant);
+        _localParticipant && participants.push(_localParticipant.id);
 
         return participants;
     }
@@ -178,16 +182,15 @@ class TileView extends Component<Props> {
      * @returns {Object}
      */
     _getTileDimensions() {
-        const { _height, _participants, _width } = this.props;
+        const { _height, _participantCount, _width } = this.props;
         const columns = this._getColumnCount();
-        const participantCount = _participants.length;
         const heightToUse = _height - (MARGIN * 2);
         const widthToUse = _width - (MARGIN * 2);
         let tileWidth;
 
         // If there is going to be at least two rows, ensure that at least two
         // rows display fully on screen.
-        if (participantCount / columns > 1) {
+        if (_participantCount / columns > 1) {
             tileWidth = Math.min(widthToUse / columns, heightToUse / 2);
         } else {
             tileWidth = Math.min(widthToUse / columns, heightToUse);
@@ -247,11 +250,11 @@ class TileView extends Component<Props> {
         };
 
         return this._getSortedParticipants()
-            .map(participant => (
+            .map(id => (
                 <Thumbnail
                     disableTint = { true }
-                    key = { participant.id }
-                    participant = { participant }
+                    key = { id }
+                    participantID = { id }
                     renderDisplayName = { true }
                     styleOverrides = { styleOverrides }
                     tileView = { true } />));
@@ -285,11 +288,14 @@ class TileView extends Component<Props> {
  */
 function _mapStateToProps(state) {
     const responsiveUi = state['features/base/responsive-ui'];
+    const { remoteParticipants } = state['features/filmstrip'];
 
     return {
         _aspectRatio: responsiveUi.aspectRatio,
         _height: responsiveUi.clientHeight,
-        _participants: state['features/base/participants'],
+        _localParticipant: getLocalParticipant(state),
+        _participantCount: getParticipantCountWithFake(state),
+        _remoteParticipants: remoteParticipants,
         _width: responsiveUi.clientWidth
     };
 }

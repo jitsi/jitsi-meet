@@ -6,11 +6,17 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { requestDisableModeration, requestEnableModeration } from '../../av-moderation/actions';
-import { isEnabled as isAvModerationEnabled } from '../../av-moderation/functions';
+import {
+    isEnabled as isAvModerationEnabled,
+    isSupported as isAvModerationSupported
+} from '../../av-moderation/functions';
 import { openDialog } from '../../base/dialog';
 import { Icon, IconCheck, IconVideoOff } from '../../base/icons';
 import { MEDIA_TYPE } from '../../base/media';
-import { getLocalParticipant } from '../../base/participants';
+import {
+    getLocalParticipant,
+    isEveryoneModerator
+} from '../../base/participants';
 import { MuteEveryonesVideoDialog } from '../../video-menu/components';
 
 import {
@@ -49,6 +55,8 @@ type Props = {
 
 export const FooterContextMenu = ({ onMouseLeave }: Props) => {
     const dispatch = useDispatch();
+    const isModerationSupported = useSelector(isAvModerationSupported());
+    const allModerators = useSelector(isEveryoneModerator);
     const isModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.AUDIO));
     const { id } = useSelector(getLocalParticipant);
     const { t } = useTranslation();
@@ -75,27 +83,32 @@ export const FooterContextMenu = ({ onMouseLeave }: Props) => {
                 <span>{ t('participantsPane.actions.stopEveryonesVideo') }</span>
             </ContextMenuItem>
 
-            <div className = { classes.text }>
-                {t('participantsPane.actions.allow')}
-            </div>
-            { isModerationEnabled ? (
-                <ContextMenuItem
-                    id = 'participants-pane-context-menu-start-moderation'
-                    onClick = { disable }>
-                    <span className = { classes.paddedAction }>
-                        { t('participantsPane.actions.startModeration') }
-                    </span>
-                </ContextMenuItem>
-            ) : (
-                <ContextMenuItem
-                    id = 'participants-pane-context-menu-stop-moderation'
-                    onClick = { enable }>
-                    <Icon
-                        size = { 20 }
-                        src = { IconCheck } />
-                    <span>{ t('participantsPane.actions.startModeration') }</span>
-                </ContextMenuItem>
-            )}
+            { isModerationSupported && !allModerators ? (
+                <>
+                    <div className = { classes.text }>
+                        {t('participantsPane.actions.allow')}
+                    </div>
+                    { isModerationEnabled ? (
+                        <ContextMenuItem
+                            id = 'participants-pane-context-menu-start-moderation'
+                            onClick = { disable }>
+                            <span className = { classes.paddedAction }>
+                                { t('participantsPane.actions.startModeration') }
+                            </span>
+                        </ContextMenuItem>
+                    ) : (
+                        <ContextMenuItem
+                            id = 'participants-pane-context-menu-stop-moderation'
+                            onClick = { enable }>
+                            <Icon
+                                size = { 20 }
+                                src = { IconCheck } />
+                            <span>{ t('participantsPane.actions.startModeration') }</span>
+                        </ContextMenuItem>
+                    )}
+                </>
+            ) : undefined
+            }
         </ContextMenu>
     );
 };
