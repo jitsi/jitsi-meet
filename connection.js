@@ -87,10 +87,11 @@ function checkForAttachParametersAndConnect(id, password, connection) {
  */
 export async function connect(id, password, roomName) {
     const connectionConfig = Object.assign({}, config);
-    let { jwt } = APP.store.getState()['features/base/jwt'];
+    const state = APP.store.getState();
+    let { jwt } = state['features/base/jwt'];
 
-    if (!jwt && isVpaasMeeting(APP.store.getState())) {
-        jwt = await getJaasJWT(APP.store.getState);
+    if (!jwt && isVpaasMeeting(state)) {
+        jwt = await getJaasJWT(state);
         APP.store.dispatch(setJWT(jwt));
     }
 

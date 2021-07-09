@@ -84,11 +84,10 @@ export async function sendGetJWTRequest({ appId, baseUrl }: {
 /**
  * Gets a jaas JWT.
  *
- * @param {Function} getState - Redux get state function.
+ * @param {Object} state - Redux state.
  * @returns {string} The JWT.
  */
-export async function getJaasJWT(getState: Function) {
-    const state = getState();
+export async function getJaasJWT(state: Object) {
     const baseUrl = state['features/base/config'].jaasTokenUrl;
     const appId = getVpaasTenant(state);
 
