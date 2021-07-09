@@ -45,3 +45,4 @@ export function isVideoPlaying(stateful: Object | Function): boolean {
         && (p.name === VIDEO_PLAYER_PARTICIPANT_NAME || p.name === YOUTUBE_PLAYER_PARTICIPANT_NAME))
     );
 }
+
