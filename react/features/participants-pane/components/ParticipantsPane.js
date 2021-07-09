@@ -13,7 +13,7 @@ import {
 import { connect } from '../../base/redux';
 import { MuteEveryoneDialog } from '../../video-menu/components/';
 import { close } from '../actions';
-import { classList, getParticipantsPaneOpen } from '../functions';
+import { classList, findStyledAncestor, getParticipantsPaneOpen } from '../functions';
 import theme from '../theme.json';
 
 import { FooterContextMenu } from './FooterContextMenu';
@@ -93,6 +93,26 @@ class ParticipantsPane extends Component<Props, State> {
         this._onKeyPress = this._onKeyPress.bind(this);
         this._onMuteAll = this._onMuteAll.bind(this);
         this._onToggleContext = this._onToggleContext.bind(this);
+        this._onWindowClickListener = this._onWindowClickListener.bind(this);
+    }
+
+
+    /**
+     * Implements React's {@link Component#componentDidMount()}.
+     *
+     * @inheritdoc
+     */
+    componentDidMount() {
+        window.addEventListener('click', this._onWindowClickListener);
+    }
+
+    /**
+     * Implements React's {@link Component#componentWillUnmount()}.
+     *
+     * @inheritdoc
+     */
+    componentWillUnmount() {
+        window.removeEventListener('click', this._onWindowClickListener);
     }
 
     /**
@@ -203,6 +223,22 @@ class ParticipantsPane extends Component<Props, State> {
         this.setState({
             contextOpen: !this.state.contextOpen
         });
+    }
+
+    _onWindowClickListener: (event: Object) => void;
+
+    /**
+     * Window click event listener.
+     *
+     * @param {Event} e - The click event.
+     * @returns {void}
+     */
+    _onWindowClickListener(e) {
+        if (this.state.contextOpen && !findStyledAncestor(e.target, FooterEllipsisContainer)) {
+            this.setState({
+                contextOpen: false
+            });
+        }
     }
 }
 
