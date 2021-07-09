@@ -158,7 +158,6 @@ function _mapStateToProps(state, ownProps): Object {
     const { participantID } = ownProps;
 
     const participant = getParticipantByIdOrUndefined(state, participantID);
-    const { id, local, raisedHand } = participant;
 
     const _isAudioMuted = isParticipantAudioMuted(participant, state);
     const _isVideoMuted = isParticipantVideoMuted(participant, state);
@@ -167,13 +166,13 @@ function _mapStateToProps(state, ownProps): Object {
 
     return {
         _audioMediaState,
-        _displayName: getParticipantDisplayName(state, id),
+        _displayName: getParticipantDisplayName(state, participant?.id),
         _isAudioMuted,
         _isVideoMuted,
-        _local: Boolean(local),
-        _participantID: id,
+        _local: Boolean(participant?.local),
+        _participantID: participant?.id,
         _quickActionButtonType,
-        _raisedHand: Boolean(raisedHand)
+        _raisedHand: Boolean(participant?.raisedHand)
     };
 }
 

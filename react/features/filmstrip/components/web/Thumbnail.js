@@ -1013,7 +1013,7 @@ function _mapStateToProps(state, ownProps): Object {
     const { participantID } = ownProps;
 
     const participant = getParticipantByIdOrUndefined(state, participantID);
-    const { id } = participant;
+    const id = participant?.id;
     const isLocal = participant?.local ?? true;
     const tracks = state['features/base/tracks'];
     const { participantsVolume } = state['features/filmstrip'];
@@ -1084,14 +1084,14 @@ function _mapStateToProps(state, ownProps): Object {
         _isDominantSpeakerDisabled: interfaceConfig.DISABLE_DOMINANT_SPEAKER_INDICATOR,
         _isScreenSharing: _videoTrack?.videoType === 'desktop',
         _isTestModeEnabled: isTestModeEnabled(state),
-        _isVideoPlayable: isVideoPlayable(state, id),
+        _isVideoPlayable: id && isVideoPlayable(state, id),
         _indicatorIconSize: NORMAL,
         _localFlipX: Boolean(localFlipX),
         _participant: participant,
         _participantCountMoreThan2: getParticipantCount(state) > 2,
         _startSilent: Boolean(startSilent),
         _videoTrack,
-        _volume: isLocal ? undefined : participantsVolume[id],
+        _volume: isLocal ? undefined : id ? participantsVolume[id] : undefined,
         ...size
     };
 }

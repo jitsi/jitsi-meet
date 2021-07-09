@@ -183,9 +183,9 @@ type Props = {
     _raisedHand: boolean,
 
     /**
-     * Whether or not the local participant is screensharing.
+     * Whether or not the local participant is screenSharing.
      */
-    _screensharing: boolean,
+    _screenSharing: boolean,
 
     /**
      * Whether or not the local participant is sharing a YouTube video.
@@ -510,7 +510,7 @@ class Toolbox extends Component<Props> {
         const {
             _feedbackConfigured,
             _isMobile,
-            _screensharing
+            _screenSharing
         } = this.props;
 
         const microphone = {
@@ -645,7 +645,7 @@ class Toolbox extends Component<Props> {
             group: 3
         };
 
-        const virtualBackground = !_screensharing && checkBlurSupport() && {
+        const virtualBackground = !_screenSharing && checkBlurSupport() && {
             key: 'select-background',
             Content: VideoBackgroundButton,
             group: 3
@@ -935,7 +935,7 @@ class Toolbox extends Component<Props> {
                 'toggle.screen.sharing',
                 ACTION_SHORTCUT_TRIGGERED,
                 {
-                    enable: !this.props._screensharing
+                    enable: !this.props._screenSharing
                 }));
 
         this._doToggleScreenshare();
@@ -1054,7 +1054,7 @@ class Toolbox extends Component<Props> {
         sendAnalytics(createToolbarEvent(
             'toggle.screen.sharing',
             ACTION_SHORTCUT_TRIGGERED,
-            { enable: !this.props._screensharing }));
+            { enable: !this.props._screenSharing }));
 
         this._closeOverflowMenuIfOpen();
         this._doToggleScreenshare();
@@ -1228,12 +1228,12 @@ function _mapStateToProps(state) {
         _isVpaasMeeting: isVpaasMeeting(state),
         _fullScreen: fullScreen,
         _tileViewEnabled: shouldDisplayTileView(state),
-        _localParticipantID: localParticipant.id,
+        _localParticipantID: localParticipant?.id,
         _localVideo: localVideo,
         _overflowMenuVisible: overflowMenuVisible,
         _participantsPaneOpen: getParticipantsPaneOpen(state),
-        _raisedHand: localParticipant.raisedHand,
-        _screensharing: isScreenVideoShared(state),
+        _raisedHand: localParticipant?.raisedHand,
+        _screenSharing: isScreenVideoShared(state),
         _toolbarButtons: getToolbarButtons(state),
         _visible: isToolboxVisible(state),
         _visibleButtons: getToolbarButtons(state)

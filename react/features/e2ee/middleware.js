@@ -51,8 +51,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         const oldParticipant = getParticipantById(getState(), id);
         const result = next(action);
 
-        if (e2eeEnabled !== oldParticipant.e2eeEnabled
-            || e2eeSupported !== oldParticipant.e2eeSupported) {
+        if (e2eeEnabled !== oldParticipant?.e2eeEnabled
+            || e2eeSupported !== oldParticipant?.e2eeSupported) {
             const state = getState();
             let newEveryoneSupportE2EE = true;
             let newEveryoneEnabledE2EE = true;
@@ -72,7 +72,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 }
             }
 
-            if (!getLocalParticipant(state).e2eeEnabled) {
+            if (!getLocalParticipant(state)?.e2eeEnabled) {
                 newEveryoneEnabledE2EE = false;
             }
 
@@ -150,7 +150,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 }
             }
 
-            if (!getLocalParticipant(newState).e2eeEnabled) {
+            if (!getLocalParticipant(newState)?.e2eeEnabled) {
                 latestEveryoneEnabledE2EE = false;
             }
 

@@ -226,15 +226,16 @@ function _mapStateToProps(state, ownProps) {
     const tracks = state['features/base/tracks'];
     const { participantID } = ownProps;
     const participant = getParticipantByIdOrUndefined(state, participantID);
-    const id = participant.id;
+    const id = participant?.id;
     const audioTrack
         = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, id);
     const videoTrack
         = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
     const participantCount = getParticipantCount(state);
-    const renderDominantSpeakerIndicator = participant.dominantSpeaker && participantCount > 2;
+    const renderDominantSpeakerIndicator = participant && participant.dominantSpeaker && participantCount > 2;
     const _isEveryoneModerator = isEveryoneModerator(state);
-    const renderModeratorIndicator = !_isEveryoneModerator && participant.role === PARTICIPANT_ROLE.MODERATOR;
+    const renderModeratorIndicator = !_isEveryoneModerator
+        && participant && participant.role === PARTICIPANT_ROLE.MODERATOR;
 
     return {
         _audioMuted: audioTrack?.muted ?? true,
