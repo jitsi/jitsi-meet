@@ -42,6 +42,17 @@ export const isEnabledFromState = (mediaType: MediaType, state: Object) =>
 export const isEnabled = (mediaType: MediaType) => (state: Object) => isEnabledFromState(mediaType, state);
 
 /**
+ * Returns whether moderation is supported by the backend.
+ *
+ * @returns {null|boolean}
+ */
+export const isSupported = () => (state: Object) => {
+    const { conference } = state['features/base/conference'];
+
+    return conference ? conference.isAVModerationSupported() : false;
+};
+
+/**
  * Returns whether local participant is approved to unmute a media type.
  *
  * @param {MEDIA_TYPE} mediaType - The media type to check.
