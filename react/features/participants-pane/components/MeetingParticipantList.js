@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 
 import { getParticipants } from '../../base/participants';
 import { getCurrentRoomId, getRooms, isInBreakoutRoom } from '../../breakout-rooms/functions';
-import { findStyledAncestor } from '../functions';
+import { findStyledAncestor, shouldRenderInviteButton } from '../functions';
 
 import { InviteButton } from './InviteButton';
 import { MeetingParticipantContextMenu } from './MeetingParticipantContextMenu';
@@ -40,6 +40,7 @@ export const MeetingParticipantList = () => {
     const participants = useSelector(getParticipants, _.isEqual);
     const currentRoomId = useSelector(getCurrentRoomId);
     const { [currentRoomId]: currentRoom } = useSelector(getRooms);
+    const showInviteButton = useSelector(shouldRenderInviteButton);
     const [ raiseContext, setRaiseContext ] = useState<RaiseContext>(initialState);
     const inBreakoutRoom = useSelector(isInBreakoutRoom);
     const { t } = useTranslation();
@@ -96,7 +97,7 @@ export const MeetingParticipantList = () => {
                 : t('participantsPane.headings.mainRoom', { count: participants.length })
         }
         </Heading>
-        {!inBreakoutRoom && <InviteButton />}
+        {!inBreakoutRoom && showInviteButton && <InviteButton />}
         <div>
             {participants.map(p => (
                 <MeetingParticipantItem

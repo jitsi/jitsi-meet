@@ -5,7 +5,7 @@ import { NativeEventEmitter, NativeModules } from 'react-native';
 
 import { ENDPOINT_TEXT_MESSAGE_NAME } from '../../../../modules/API/constants';
 import { appNavigate } from '../../app/actions';
-import { APP_WILL_MOUNT } from '../../base/app/actionTypes';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app/actionTypes';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
@@ -92,6 +92,9 @@ MiddlewareRegistry.register(store => next => action => {
     switch (type) {
     case APP_WILL_MOUNT:
         _registerForNativeEvents(store);
+        break;
+    case APP_WILL_UNMOUNT:
+        _unregisterForNativeEvents();
         break;
     case CONFERENCE_FAILED: {
         const { error, ...data } = action;
@@ -347,6 +350,24 @@ function _registerForNativeEvents(store) {
         dispatch(sendMessage(message));
     });
 
+}
+
+/**
+ * Unregister for events sent from the native side via NativeEventEmitter.
+ *
+ * @private
+ * @returns {void}
+ */
+function _unregisterForNativeEvents() {
+    eventEmitter.removeAllListeners(ExternalAPI.HANG_UP);
+    eventEmitter.removeAllListeners(ExternalAPI.SET_AUDIO_MUTED);
+    eventEmitter.removeAllListeners(ExternalAPI.SET_VIDEO_MUTED);
+    eventEmitter.removeAllListeners(ExternalAPI.SEND_ENDPOINT_TEXT_MESSAGE);
+    eventEmitter.removeAllListeners(ExternalAPI.TOGGLE_SCREEN_SHARE);
+    eventEmitter.removeAllListeners(ExternalAPI.RETRIEVE_PARTICIPANTS_INFO);
+    eventEmitter.removeAllListeners(ExternalAPI.OPEN_CHAT);
+    eventEmitter.removeAllListeners(ExternalAPI.CLOSE_CHAT);
+    eventEmitter.removeAllListeners(ExternalAPI.SEND_CHAT_MESSAGE);
 }
 
 /**
