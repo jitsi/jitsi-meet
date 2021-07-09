@@ -109,10 +109,10 @@ class Filmstrip extends Component<Props> {
                     {
 
                         this._sort(_participants, isNarrowAspectRatio)
-                            .map(p => (
+                            .map(id => (
                                 <Thumbnail
-                                    key = { p.id }
-                                    participant = { p } />))
+                                    key = { id }
+                                    participantID = { id } />))
 
                     }
                     {

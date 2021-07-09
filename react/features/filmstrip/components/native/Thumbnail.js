@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { View } from 'react-native';
 import type { Dispatch } from 'redux';
 
@@ -47,16 +47,6 @@ type Props = {
      * The Redux representation of the state "features/large-video".
      */
     _largeVideo: Object,
-
-    /**
-     * Handles click/tap event on the thumbnail.
-     */
-    _onClick: ?Function,
-
-    /**
-     * Handles long press on the thumbnail.
-     */
-    _onThumbnailLongPress: ?Function,
 
     /**
      * The Redux representation of the participant to display.
@@ -126,13 +116,12 @@ function Thumbnail(props: Props) {
     const {
         _audioMuted: audioMuted,
         _largeVideo: largeVideo,
-        _onClick,
-        _onThumbnailLongPress,
         _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,
         _renderModeratorIndicator: renderModeratorIndicator,
         _participant: participant,
         _styles,
         _videoTrack: videoTrack,
+        dispatch,
         disableTint,
         renderDisplayName,
         tileView
@@ -143,11 +132,29 @@ function Thumbnail(props: Props) {
         = participantId === largeVideo.participantId;
     const videoMuted = !videoTrack || videoTrack.muted;
     const isScreenShare = videoTrack && videoTrack.videoType === VIDEO_TYPE.DESKTOP;
+    const onClick = useCallback(() => {
+        if (tileView) {
+            dispatch(toggleToolboxVisible());
+        } else {
+            dispatch(pinParticipant(participant.pinned ? null : participant.id));
+        }
+    }, [ participant, tileView, dispatch ]);
+    const onThumbnailLongPress = useCallback(() => {
+        if (participant.local) {
+            dispatch(openDialog(ConnectionStatusComponent, {
+                participantID: participant.id
+            }));
+        } else {
+            dispatch(openDialog(RemoteVideoMenu, {
+                participant
+            }));
+        }
+    }, [ participant, dispatch ]);
 
     return (
         <Container
-            onClick = { _onClick }
-            onLongPress = { _onThumbnailLongPress }
+            onClick = { onClick }
+            onLongPress = { onThumbnailLongPress }
             style = { [
                 styles.thumbnail,
                 participant.pinned && !tileView
@@ -205,55 +212,6 @@ function Thumbnail(props: Props) {
 }
 
 /**
- * Maps part of redux actions to component's props.
- *
- * @param {Function} dispatch - Redux's {@code dispatch} function.
- * @param {Props} ownProps - The own props of the component.
- * @returns {{
- *     _onClick: Function,
- *     _onShowRemoteVideoMenu: Function
- * }}
- */
-function _mapDispatchToProps(dispatch: Function, ownProps): Object {
-    return {
-        /**
-         * Handles click/tap event on the thumbnail.
-         *
-         * @protected
-         * @returns {void}
-         */
-        _onClick() {
-            const { participant, tileView } = ownProps;
-
-            if (tileView) {
-                dispatch(toggleToolboxVisible());
-            } else {
-                dispatch(pinParticipant(participant.pinned ? null : participant.id));
-            }
-        },
-
-        /**
-         * Handles long press on the thumbnail.
-         *
-         * @returns {void}
-         */
-        _onThumbnailLongPress() {
-            const { participant } = ownProps;
-
-            if (participant.local) {
-                dispatch(openDialog(ConnectionStatusComponent, {
-                    participantID: participant.id
-                }));
-            } else {
-                dispatch(openDialog(RemoteVideoMenu, {
-                    participant
-                }));
-            }
-        }
-    };
-}
-
-/**
  * Function that maps parts of Redux state tree into component props.
  *
  * @param {Object} state - Redux state.
@@ -289,4 +247,4 @@ function _mapStateToProps(state, ownProps) {
     };
 }
 
-export default connect(_mapStateToProps, _mapDispatchToProps)(Thumbnail);
+export default connect(_mapStateToProps)(Thumbnail);
