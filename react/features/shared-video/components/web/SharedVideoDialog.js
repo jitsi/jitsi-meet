@@ -110,8 +110,6 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
         }
 
         const youtubeId = getYoutubeId(link);
-
-
         const { onPostSubmit } = this.props;
 
         onPostSubmit(youtubeId || link);

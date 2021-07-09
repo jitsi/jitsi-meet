@@ -1,6 +1,6 @@
 /* @flow */
 /* eslint-disable no-invalid-this */
-
+import Logger from 'jitsi-meet-logger';
 import throttle from 'lodash/throttle';
 import { Component } from 'react';
 
@@ -18,6 +18,8 @@ export const PLAYBACK_STATES = {
     PAUSED: 'pause',
     STOPPED: 'stop'
 };
+
+const logger = Logger.getLogger(__filename);
 
 /**
  * Return true if the diffenrece between the two timees is larger than 5.
@@ -213,6 +215,7 @@ class AbstractVideoManager extends Component<Props> {
      * @returns {void}
      */
     onError() {
+        logger.error('Error in the video player');
         this.props._stopSharedVideo();
         this.props._displayWarning();
     }
