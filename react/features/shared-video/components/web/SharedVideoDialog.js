@@ -8,6 +8,7 @@ import { translate } from '../../../base/i18n';
 import { getFieldValue } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { defaultSharedVideoLink } from '../../constants';
+import { getYoutubeId } from '../../functions';
 import AbstractSharedVideoDialog from '../AbstractSharedVideoDialog';
 
 /**
@@ -108,9 +109,10 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
             return false;
         }
 
+        const youtubeId = getYoutubeId(link);
         const { onPostSubmit } = this.props;
 
-        onPostSubmit(link);
+        onPostSubmit(youtubeId || link);
 
         return true;
     }

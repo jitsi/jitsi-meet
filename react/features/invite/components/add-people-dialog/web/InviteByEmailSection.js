@@ -53,12 +53,40 @@ function InviteByEmailSection({ inviteSubject, inviteText, t }: Props) {
     }
 
     /**
+     * Copies the conference invitation to the clipboard.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    function _onCopyTextKeyPress(e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            copyText(inviteText);
+        }
+    }
+
+    /**
      * Toggles the email invite drawer.
      *
      * @returns {void}
      */
     function _onToggleActiveState() {
         setIsActive(!isActive);
+    }
+
+    /**
+     * Toggles the email invite drawer.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    function _onToggleActiveStateKeyPress(e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            setIsActive(!isActive);
+        }
     }
 
     /**
@@ -101,6 +129,7 @@ function InviteByEmailSection({ inviteSubject, inviteText, t }: Props) {
                             key = { idx }
                             position = 'top'>
                             <a
+                                aria-label = { t(tooltipKey) }
                                 className = 'provider-icon'
                                 href = { url }
                                 rel = 'noopener noreferrer'
@@ -119,8 +148,13 @@ function InviteByEmailSection({ inviteSubject, inviteText, t }: Props) {
         <>
             <div>
                 <div
+                    aria-expanded = { isActive }
+                    aria-label = { t('addPeople.shareInvite') }
                     className = { `invite-more-dialog email-container${isActive ? ' active' : ''}` }
-                    onClick = { _onToggleActiveState }>
+                    onClick = { _onToggleActiveState }
+                    onKeyPress = { _onToggleActiveStateKeyPress }
+                    role = 'button'
+                    tabIndex = { 0 }>
                     <span>{t('addPeople.shareInvite')}</span>
                     <Icon src = { IconArrowDownSmall } />
                 </div>
@@ -129,8 +163,12 @@ function InviteByEmailSection({ inviteSubject, inviteText, t }: Props) {
                         content = { t('addPeople.copyInvite') }
                         position = 'top'>
                         <div
+                            aria-label = { t('addPeople.copyInvite') }
                             className = 'copy-invite-icon'
-                            onClick = { _onCopyText }>
+                            onClick = { _onCopyText }
+                            onKeyPress = { _onCopyTextKeyPress }
+                            role = 'button'
+                            tabIndex = { 0 }>
                             <Icon src = { IconCopy } />
                         </div>
                     </Tooltip>

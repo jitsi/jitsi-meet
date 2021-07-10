@@ -86,6 +86,11 @@ type Props = AbstractProps & {
     _layoutClassName: string,
 
     /**
+     * The config specified interval for triggering mouseMoved iframe api events
+     */
+    _mouseMoveCallbackInterval: number,
+
+    /**
      * Name for this conference room.
      */
     _roomName: string,
@@ -104,7 +109,11 @@ type Props = AbstractProps & {
  */
 class Conference extends AbstractConference<Props, *> {
     _onFullScreenChange: Function;
+    _onMouseEnter: Function;
+    _onMouseLeave: Function;
+    _onMouseMove: Function;
     _onShowToolbar: Function;
+    _originalOnMouseMove: Function;
     _originalOnShowToolbar: Function;
     _setBackground: Function;
 
@@ -117,12 +126,24 @@ class Conference extends AbstractConference<Props, *> {
     constructor(props) {
         super(props);
 
+        const { _mouseMoveCallbackInterval } = props;
+
         // Throttle and bind this component's mousemove handler to prevent it
         // from firing too often.
         this._originalOnShowToolbar = this._onShowToolbar;
+        this._originalOnMouseMove = this._onMouseMove;
+
         this._onShowToolbar = _.throttle(
             () => this._originalOnShowToolbar(),
             100,
+            {
+                leading: true,
+                trailing: false
+            });
+
+        this._onMouseMove = _.throttle(
+            event => this._originalOnMouseMove(event),
+            _mouseMoveCallbackInterval,
             {
                 leading: true,
                 trailing: false
@@ -192,7 +213,11 @@ class Conference extends AbstractConference<Props, *> {
         } = this.props;
 
         return (
-            <div id = 'layout_wrapper'>
+            <div
+                id = 'layout_wrapper'
+                onMouseEnter = { this._onMouseEnter }
+                onMouseLeave = { this._onMouseLeave }
+                onMouseMove = { this._onMouseMove } >
                 <div
                     className = { _layoutClassName }
                     id = 'videoconference_page'
@@ -263,6 +288,39 @@ class Conference extends AbstractConference<Props, *> {
     }
 
     /**
+     * Triggers iframe API mouseEnter event.
+     *
+     * @param {MouseEvent} event - The mouse event.
+     * @private
+     * @returns {void}
+     */
+    _onMouseEnter(event) {
+        APP.API.notifyMouseEnter(event);
+    }
+
+    /**
+     * Triggers iframe API mouseLeave event.
+     *
+     * @param {MouseEvent} event - The mouse event.
+     * @private
+     * @returns {void}
+     */
+    _onMouseLeave(event) {
+        APP.API.notifyMouseLeave(event);
+    }
+
+    /**
+     * Triggers iframe API mouseMove event.
+     *
+     * @param {MouseEvent} event - The mouse event.
+     * @private
+     * @returns {void}
+     */
+    _onMouseMove(event) {
+        APP.API.notifyMouseMove(event);
+    }
+
+    /**
      * Displays the toolbar.
      *
      * @private
@@ -305,12 +363,15 @@ class Conference extends AbstractConference<Props, *> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
+    const { backgroundAlpha, mouseMoveCallbackInterval } = state['features/base/config'];
+
     return {
         ...abstractMapStateToProps(state),
-        _backgroundAlpha: state['features/base/config'].backgroundAlpha,
+        _backgroundAlpha: backgroundAlpha,
         _isLobbyScreenVisible: state['features/base/dialog']?.component === LobbyScreen,
         _isParticipantsPaneVisible: getParticipantsPaneOpen(state),
         _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state)],
+        _mouseMoveCallbackInterval: mouseMoveCallbackInterval,
         _roomName: getConferenceNameForTitle(state),
         _showPrejoin: isPrejoinPageVisible(state)
     };

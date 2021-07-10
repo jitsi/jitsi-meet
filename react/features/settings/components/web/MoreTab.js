@@ -1,5 +1,4 @@
 // @flow
-
 import { Checkbox } from '@atlaskit/checkbox';
 import DropdownMenu, {
     DropdownItem,
@@ -7,6 +6,7 @@ import DropdownMenu, {
 } from '@atlaskit/dropdown-menu';
 import React from 'react';
 
+import keyboardShortcut from '../../../../../modules/keyboardshortcut/keyboardshortcut';
 import { AbstractDialogTab } from '../../../base/dialog';
 import type { Props as AbstractDialogTabProps } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
@@ -59,6 +59,7 @@ export type Props = {
      */
     showPrejoinPage: boolean,
 
+
     /**
      * Whether or not the user has selected the Start Audio Muted feature to be
      * enabled.
@@ -110,6 +111,12 @@ class MoreTab extends AbstractDialogTab<Props, State> {
         // Bind event handler so it is only bound once for every instance.
         this._onLanguageDropdownOpenChange
             = this._onLanguageDropdownOpenChange.bind(this);
+        this._onLanguageItemSelect = this._onLanguageItemSelect.bind(this);
+        this._onStartAudioMutedChanged = this._onStartAudioMutedChanged.bind(this);
+        this._onStartVideoMutedChanged = this._onStartVideoMutedChanged.bind(this);
+        this._onFollowMeEnabledChanged = this._onFollowMeEnabledChanged.bind(this);
+        this._onShowPrejoinPageChanged = this._onShowPrejoinPageChanged.bind(this);
+        this._onKeyboardShortcutEnableChanged = this._onKeyboardShortcutEnableChanged.bind(this);
     }
 
     /**
@@ -125,6 +132,9 @@ class MoreTab extends AbstractDialogTab<Props, State> {
         if (showPrejoinSettings) {
             content.push(this._renderPrejoinScreenSettings());
         }
+
+        content.push(this._renderKeyboardShortcutCheckbox());
+
 
         if (showModeratorSettings) {
             content.push(this._renderModeratorSettings());
@@ -150,6 +160,92 @@ class MoreTab extends AbstractDialogTab<Props, State> {
         this.setState({ isLanguageSelectOpen: isOpen });
     }
 
+    _onLanguageItemSelect: (Object) => void;
+
+    /**
+     * Callback invoked to select a language from select dropdown.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onLanguageItemSelect(e) {
+        const language = e.currentTarget.getAttribute('data-language');
+
+        super._onChange({ currentLanguage: language });
+    }
+
+    _onStartAudioMutedChanged: (Object) => void;
+
+    /**
+     * Callback invoked to select if conferences should start
+     * with audio muted.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onStartAudioMutedChanged({ target: { checked } }) {
+        super._onChange({ startAudioMuted: checked });
+    }
+
+    _onStartVideoMutedChanged: (Object) => void;
+
+    /**
+     * Callback invoked to select if conferences should start
+     * with video disabled.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onStartVideoMutedChanged({ target: { checked } }) {
+        super._onChange({ startVideoMuted: checked });
+    }
+
+    _onFollowMeEnabledChanged: (Object) => void;
+
+    /**
+     * Callback invoked to select if follow-me mode
+     * should be activated.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onFollowMeEnabledChanged({ target: { checked } }) {
+        super._onChange({ followMeEnabled: checked });
+    }
+
+    _onShowPrejoinPageChanged: (Object) => void;
+
+    /**
+     * Callback invoked to select if the lobby
+     * should be shown.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onShowPrejoinPageChanged({ target: { checked } }) {
+        super._onChange({ showPrejoinPage: checked });
+    }
+
+    _onKeyboardShortcutEnableChanged: (Object) => void;
+
+    /**
+     * Callback invoked to select if global keyboard shortcuts
+     * should be enabled.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onKeyboardShortcutEnableChanged({ target: { checked } }) {
+        keyboardShortcut.enable(checked);
+        super._onChange({ keyboardShortcutEnable: checked });
+    }
+
     /**
      * Returns the menu item for changing displayed language.
      *
@@ -166,15 +262,9 @@ class MoreTab extends AbstractDialogTab<Props, State> {
         const languageItems
             = languages.map(language => (
                 <DropdownItem
+                    data-language = { language }
                     key = { language }
-
-                    // eslint-disable-next-line react/jsx-no-bind
-                    onClick = {
-                        e => {
-                            e.stopPropagation();
-                            super._onChange({ currentLanguage: language });
-                        }
-                    }>
+                    onClick = { this._onLanguageItemSelect }>
                     { t(`languages:${language}`) }
                 </DropdownItem>));
 
@@ -182,9 +272,9 @@ class MoreTab extends AbstractDialogTab<Props, State> {
             <div
                 className = 'settings-sub-pane language-settings'
                 key = 'language'>
-                <div className = 'mock-atlaskit-label'>
+                <h2 className = 'mock-atlaskit-label'>
                     { t('settings.language') }
-                </div>
+                </h2>
                 <div className = 'dropdown-menu'>
                     <TouchmoveHack isModal = { true }>
                         <DropdownMenu
@@ -227,37 +317,25 @@ class MoreTab extends AbstractDialogTab<Props, State> {
             <div
                 className = 'settings-sub-pane'
                 key = 'moderator'>
-                <div className = 'mock-atlaskit-label'>
+                <h2 className = 'mock-atlaskit-label'>
                     { t('settings.moderator') }
-                </div>
+                </h2>
                 <Checkbox
                     isChecked = { startAudioMuted }
                     label = { t('settings.startAudioMuted') }
                     name = 'start-audio-muted'
-                    // eslint-disable-next-line react/jsx-no-bind
-                    onChange = {
-                        ({ target: { checked } }) =>
-                            super._onChange({ startAudioMuted: checked })
-                    } />
+                    onChange = { this._onStartAudioMutedChanged } />
                 <Checkbox
                     isChecked = { startVideoMuted }
                     label = { t('settings.startVideoMuted') }
                     name = 'start-video-muted'
-                    // eslint-disable-next-line react/jsx-no-bind
-                    onChange = {
-                        ({ target: { checked } }) =>
-                            super._onChange({ startVideoMuted: checked })
-                    } />
+                    onChange = { this._onStartVideoMutedChanged } />
                 <Checkbox
                     isChecked = { followMeEnabled && !followMeActive }
                     isDisabled = { followMeActive }
                     label = { t('settings.followMe') }
                     name = 'follow-me'
-                    // eslint-disable-next-line react/jsx-no-bind
-                    onChange = {
-                        ({ target: { checked } }) =>
-                            super._onChange({ followMeEnabled: checked })
-                    } />
+                    onChange = { this._onFollowMeEnabledChanged } />
             </div>
         );
     }
@@ -275,18 +353,39 @@ class MoreTab extends AbstractDialogTab<Props, State> {
             <div
                 className = 'settings-sub-pane'
                 key = 'prejoin-screen'>
-                <div className = 'mock-atlaskit-label'>
+                <h2 className = 'mock-atlaskit-label'>
                     { t('prejoin.premeeting') }
-                </div>
+                </h2>
                 <Checkbox
                     isChecked = { showPrejoinPage }
                     label = { t('prejoin.showScreen') }
                     name = 'show-prejoin-page'
-                    // eslint-disable-next-line react/jsx-no-bind
-                    onChange = {
-                        ({ target: { checked } }) =>
-                            super._onChange({ showPrejoinPage: checked })
-                    } />
+                    onChange = { this._onShowPrejoinPageChanged } />
+            </div>
+        );
+    }
+
+    /**
+     * Returns the React Element for keyboardShortcut settings.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderKeyboardShortcutCheckbox() {
+        const { t } = this.props;
+
+        return (
+            <div
+                className = 'settings-sub-pane'
+                key = 'keyboard-shortcut'>
+                <h2 className = 'mock-atlaskit-label'>
+                    { t('keyboardShortcuts.keyboardShortcuts') }
+                </h2>
+                <Checkbox
+                    isChecked = { keyboardShortcut.getEnabled() }
+                    label = { t('prejoin.keyboardShortcuts') }
+                    name = 'enable-keyboard-shortcuts'
+                    onChange = { this._onKeyboardShortcutEnableChanged } />
             </div>
         );
     }

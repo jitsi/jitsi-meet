@@ -36,10 +36,28 @@ function EmbedMeetingTrigger({ t, openEmbedDialog }: Props) {
         openEmbedDialog(EmbedMeetingDialog);
     }
 
+    /**
+     * KeyPress handler for accessibility.
+     *
+     * @param {React.KeyboardEventHandler<HTMLDivElement>} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    function onKeyPress(e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            onClick();
+        }
+    }
+
     return (
         <div
+            aria-label = { t('embedMeeting.title') }
             className = 'embed-meeting-trigger'
-            onClick = { onClick }>
+            onClick = { onClick }
+            onKeyPress = { onKeyPress }
+            role = 'button'
+            tabIndex = { 0 }>
             {t('embedMeeting.title')}
         </div>
     );

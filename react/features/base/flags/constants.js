@@ -155,6 +155,12 @@ export const RAISE_HAND_ENABLED = 'raise-hand.enabled';
 export const RECORDING_ENABLED = 'recording.enabled';
 
 /**
+ * Flag indicating if the user should join the conference with the replaceParticipant functionality.
+ * Default: (false).
+ */
+export const REPLACE_PARTICIPANT = 'replace.participant';
+
+/**
  * Flag indicating the local and (maximum) remote video resolution. Overrides
  * the server configuration.
  * Default: (unset).

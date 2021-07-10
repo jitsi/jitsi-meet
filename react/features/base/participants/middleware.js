@@ -161,7 +161,7 @@ StateListenerRegistry.register(
         for (const p of getState()['features/base/participants']) {
             !p.local
                 && (!conference || p.conference !== conference)
-                && dispatch(participantLeft(p.id, p.conference));
+                && dispatch(participantLeft(p.id, p.conference, p.isReplaced));
         }
     });
 
@@ -356,14 +356,16 @@ function _maybePlaySounds({ getState, dispatch }, action) {
     if (!action.participant.local
             && (!startAudioMuted
                 || getParticipantCount(state) < startAudioMuted)) {
+        const { isReplacing, isReplaced } = action.participant;
+
         if (action.type === PARTICIPANT_JOINED) {
             const { presence } = action.participant;
 
             // The sounds for the poltergeist are handled by features/invite.
-            if (presence !== INVITED && presence !== CALLING) {
+            if (presence !== INVITED && presence !== CALLING && !isReplacing) {
                 dispatch(playSound(PARTICIPANT_JOINED_SOUND_ID));
             }
-        } else if (action.type === PARTICIPANT_LEFT) {
+        } else if (action.type === PARTICIPANT_LEFT && !isReplaced) {
             dispatch(playSound(PARTICIPANT_LEFT_SOUND_ID));
         }
     }

@@ -14,7 +14,7 @@ import {
     IconMuteEveryoneElse,
     IconVideoOff
 } from '../../base/icons';
-import { isLocalParticipantModerator } from '../../base/participants';
+import { isLocalParticipantModerator, isParticipantModerator } from '../../base/participants';
 import { getIsParticipantVideoMuted } from '../../base/tracks';
 import { sendParticipantToRoom } from '../../breakout-rooms/actions';
 import { getCurrentRoomId, getRooms } from '../../breakout-rooms/functions';
@@ -156,7 +156,7 @@ export const MeetingParticipantContextMenu = ({
                 ))}
             </ContextMenuItemGroup>
             <ContextMenuItemGroup>
-                {isLocalModerator && (
+                {isLocalModerator && !isParticipantModerator(participant) && (
                     <ContextMenuItem onClick = { grantModerator }>
                         <ContextMenuIcon src = { IconCrown } />
                         <span>{t('toolbar.accessibilityLabel.grantModerator')}</span>
