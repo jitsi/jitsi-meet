@@ -110,7 +110,6 @@ import {
     trackRemoved
 } from './react/features/base/tracks';
 import { downloadJSON } from './react/features/base/util/downloadJSON';
-import { hangupAllProxyModeratorConferences } from './react/features/breakout-rooms/actions';
 import { getConferenceOptions } from './react/features/conference/functions';
 import { showDesktopPicker } from './react/features/desktop-picker';
 import { appendSuffix } from './react/features/display-name';
@@ -1308,11 +1307,45 @@ export default {
         }
     },
 
+    async joinRoom(roomName) {
+        this.roomName = roomName;
+
+        const initialOptions = {
+            startAudioOnly: this.isAudioOnly(),
+            startScreenSharing: false,
+
+            // createInitialLocalTracks ignores this, must filter out later
+            startWithAudioMuted: this.isLocalAudioMuted(),
+            startWithVideoMuted: this.isLocalVideoMuted()
+        };
+
+        const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(initialOptions);
+        let localTracks = await tryCreateLocalTracks;
+
+        this._displayErrorsForCreateInitialLocalTracks(errors);
+
+        if (this.isLocalAudioMuted()) {
+            localTracks = localTracks.filter(track => track.getType() !== MEDIA_TYPE.AUDIO);
+        }
+
+        this._createRoom(localTracks);
+
+        return new Promise((resolve, reject) => {
+            (new ConferenceConnector(resolve, reject)).connect();
+        });
+    },
+
     _createRoom(localTracks) {
+        const conferenceOptions = this._getConferenceOptions();
+        const customDomain = /_[-\da-f]{36}$/.test(APP.conference.roomName)
+            ? `breakout.${conferenceOptions.hosts.domain}`
+            : null;
+
         room
             = connection.initJitsiConference(
                 APP.conference.roomName,
-                this._getConferenceOptions());
+                { ...conferenceOptions,
+                    customDomain });
 
         APP.store.dispatch(conferenceWillJoin(room));
 
@@ -2768,7 +2801,6 @@ export default {
      * requested
      */
     async hangup(requestFeedback = false) {
-        await APP.store.dispatch(hangupAllProxyModeratorConferences());
         APP.store.dispatch(disableReceiver());
 
         this._stopProxyConnection();
@@ -2817,6 +2849,17 @@ export default {
             }
             APP.store.dispatch(maybeRedirectToWelcomePage(values[0]));
         });
+    },
+
+    /**
+     * Leaves the room.
+     *
+     * @returns {Promise}
+     */
+    leaveRoom() {
+        if (room && room.isJoined()) {
+            return room.leave();
+        }
     },
 
     /**

@@ -1,5 +1,6 @@
 // @flow
 
+import _ from 'lodash';
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,7 +10,7 @@ import {
     IconMeetingUnlocked
 } from '../../../base/icons';
 import { isLocalParticipantModerator } from '../../../base/participants';
-import { removeRoom, moveToRoom } from '../../actions';
+import { removeBreakoutRoom, moveToRoom, closeRoom } from '../../actions';
 
 import { getComputedOuterHeight } from './functions';
 import {
@@ -89,7 +90,12 @@ export const RoomContextMenu = ({
     }, [ dispatch, room ]);
 
     const onRemoveBreakoutRoom = useCallback(() => {
-        dispatch(removeRoom(room.id));
+        dispatch(removeBreakoutRoom(room.jid));
+        setIsHidden(true);
+    }, [ dispatch, room ]);
+
+    const onCloseBreakoutRoom = useCallback(() => {
+        dispatch(closeRoom(room.id));
         setIsHidden(true);
     }, [ dispatch, room ]);
 
@@ -106,11 +112,17 @@ export const RoomContextMenu = ({
                     <ContextMenuIcon src = { IconMeetingUnlocked } />
                     <span>{t('breakoutRooms.actions.join')}</span>
                 </ContextMenuItem>
-                {isLocalModerator
-                    && <ContextMenuItem onClick = { onRemoveBreakoutRoom }>
-                        <ContextMenuIcon src = { IconClose } />
-                        <span>{t('breakoutRooms.actions.remove')}</span>
-                    </ContextMenuItem>
+                {_.isEmpty(room?.participants)
+                    ? isLocalModerator
+                        && <ContextMenuItem onClick = { onRemoveBreakoutRoom }>
+                            <ContextMenuIcon src = { IconClose } />
+                            <span>{t('breakoutRooms.actions.remove')}</span>
+                        </ContextMenuItem>
+                    : isLocalModerator
+                        && <ContextMenuItem onClick = { onCloseBreakoutRoom }>
+                            <ContextMenuIcon src = { IconClose } />
+                            <span>{t('breakoutRooms.actions.close')}</span>
+                        </ContextMenuItem>
                 }
             </ContextMenuItemGroup>
         </ContextMenu>

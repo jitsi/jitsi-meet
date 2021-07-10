@@ -12,7 +12,7 @@ export const Button = styled.button`
   align-items: center;
   background-color: ${
     // eslint-disable-next-line no-confusing-arrow
-    props => props.primary ? '#0056E0' : '#3D3D3D'
+    props => props.primary ? '#0056E0' : props.attention ? '#dd3849' : '#3D3D3D'
 };
   border: 0;
   border-radius: 6px;
@@ -23,7 +23,7 @@ export const Button = styled.button`
   &:hover {
     background-color: ${
     // eslint-disable-next-line no-confusing-arrow
-    props => props.primary ? '#246FE5' : '#525252'
+    props => props.primary ? '#246FE5' : props.attention ? '#dd3849' : '#525252'
 };
   }
 `;

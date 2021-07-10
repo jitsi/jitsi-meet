@@ -96,7 +96,7 @@ class BreakoutRoomButton extends AbstractButton<Props, *> {
  */
 function _mapStateToProps(state): Object {
     const inBreakoutRoom = isInBreakoutRoom(state);
-    const rooms = Object.values(getRooms(state));
+    const rooms = Object.keys(getRooms(state));
 
     return {
         inBreakoutRoom,

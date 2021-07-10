@@ -40,11 +40,12 @@
         "audioOnly": "Low bandwidth"
     },
     "breakoutRooms": {
-        "name": "Breakout room #{{index}}",
+        "defaultName": "Breakout room #{{index}}",
         "mainRoom": "Main room",
         "actions": {
             "addRoom": "Add room",
             "autoAssign": "Auto assign to breakout rooms",
+            "close": "Close",
             "join": "Join",
             "remove": "Remove",
             "leaveBreakoutRoom": "Leave breakout room",

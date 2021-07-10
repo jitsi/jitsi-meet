@@ -29,6 +29,7 @@ export const ParticipantsPane = () => {
     const dispatch = useDispatch();
     const paneOpen = useSelector(getParticipantsPaneOpen);
     const isLocalModerator = useSelector(isLocalParticipantModerator);
+    const hideAddRoomButton = useSelector(state => state['features/base/config'].hideAddRoomButton);
     const { t } = useTranslation();
 
     const closePane = useCallback(() => dispatch(close(), [ dispatch ]));
@@ -54,9 +55,9 @@ export const ParticipantsPane = () => {
                     </Container>
                     {isLocalModerator && (
                         <Footer>
-                            <FooterButton onClick = { addRoom }>
+                            {!hideAddRoomButton && <FooterButton onClick = { addRoom }>
                                 {t('breakoutRooms.actions.addRoom')}
-                            </FooterButton>
+                            </FooterButton>}
                             <FooterButton onClick = { muteAll }>
                                 {t('participantsPane.actions.muteAll')}
                             </FooterButton>

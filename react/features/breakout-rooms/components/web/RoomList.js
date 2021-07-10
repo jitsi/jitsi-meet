@@ -1,5 +1,6 @@
 // @flow
 
+import _ from 'lodash';
 import React, { useCallback, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
@@ -40,8 +41,7 @@ const initialState = Object.freeze(Object.create(null));
 export const RoomList = () => {
     const isMouseOverMenu = useRef(false);
     const currentRoomId = useSelector(getCurrentRoomId);
-    // eslint-disable-next-line no-unused-vars
-    const { [currentRoomId]: _currentRoom, ...rooms } = useSelector(getRooms, equals);
+    const rooms = Object.values(useSelector(getRooms, equals)).filter((room: Object) => room.id !== currentRoomId);
     const [ raiseContext, setRaiseContext ] = useState<RaiseContext>(initialState);
     const inBreakoutRoom = useSelector(isInBreakoutRoom);
     const isLocalModerator = useSelector(isLocalParticipantModerator);
@@ -98,20 +98,20 @@ export const RoomList = () => {
             {!inBreakoutRoom
                 && isLocalModerator
                 && participantsCount > 2
-                && Object.keys(rooms).length > 1
+                && rooms.length > 1
                 && <AutoAssignButton />}
             <div>
-                {Object.values(rooms).map((room: Object) => (
+                {rooms.map((room: Object) => (
                     <div key = { room.id }>
                         <RoomItem
                             isHighlighted = { raiseContext.room === room }
                             onContextMenu = { toggleMenu(room) }
                             onLeave = { lowerMenu }
                             room = { room } />
-                        {(room.participants || []).map(p => (
+                        {_.map(room.participants || {}, p => (
                             <ParticipantItem
                                 children = { null }
-                                key = { p.id }
+                                key = { p.jid }
                                 name = { p.displayName }
                                 participant = { p } />
                         ))}

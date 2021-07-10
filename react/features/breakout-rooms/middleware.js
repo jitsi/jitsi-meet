@@ -1,77 +1,26 @@
 // @flow
 
-import { CONFERENCE_FAILED, DATA_CHANNEL_OPENED } from '../base/conference';
-import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
-import {
-    getParticipantById,
-    isParticipantModerator,
-    PARTICIPANT_JOINED
-} from '../base/participants';
-import { equals, MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
-import { KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED } from '../lobby/actionTypes';
+import { MiddlewareRegistry } from '../base/redux';
 import { ENDPOINT_MESSAGE_RECEIVED } from '../subtitles';
 
+import { UPDATE_BREAKOUT_ROOMS } from './actionTypes';
+import { moveToRoom } from './actions';
 import {
-    admitLocalProxyModerator,
-    grantOwnerToLocalProxyModerator,
-    moveToRoom,
-    sendRoomsRequest,
-    sendRoomsToAll,
-    updateRooms
-} from './actions';
-import {
-    JSON_TYPE_ROOMS,
-    JSON_TYPE_MOVE_TO_ROOM_REQUEST
+    JSON_TYPE_MOVE_TO_ROOM_REQUEST,
+    JSON_TYPE_UPDATE_BREAKOUT_ROOMS
 } from './constants';
-import {
-    getBreakoutRooms,
-    isInBreakoutRoom
-} from './functions';
+
 
 /**
- * Middleware that catches updates of the rooms list and sends them to the other participants.
- */
-StateListenerRegistry.register(
-    /* selector */ getBreakoutRooms,
-    /* listener */ (state, store, previousState) => {
-
-        if (!equals(state?.rooms, previousState?.rooms)
-            || !equals(state?.roomsRemoval, previousState?.roomsRemoval)) {
-            store.dispatch(sendRoomsToAll());
-        }
-    }
-);
-
-/**
- * Middleware that catches actions related to the current room of the participant
+ * Middleware that catches actions related to the breakout-rooms feature.
  *
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case CONFERENCE_FAILED: {
-        const { conference, error } = action;
-        const { knockingSharedKey } = getBreakoutRooms(store);
-
-        if (knockingSharedKey && error.name === JitsiConferenceErrors.MEMBERS_ONLY_ERROR) {
-            conference.joinLobby(knockingSharedKey);
-        }
-        break;
-    }
-    case DATA_CHANNEL_OPENED:
-        if (!isInBreakoutRoom(store)) {
-            store.dispatch(sendRoomsRequest());
-        }
-        break;
     case ENDPOINT_MESSAGE_RECEIVED:
         _handleEndpointMessage(store, action);
-        break;
-    case KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED:
-        store.dispatch(admitLocalProxyModerator(action.participant));
-        break;
-    case PARTICIPANT_JOINED:
-        store.dispatch(grantOwnerToLocalProxyModerator(action.participant));
         break;
     }
 
@@ -79,8 +28,7 @@ MiddlewareRegistry.register(store => next => action => {
 });
 
 /**
- * Notifies the feature breakout rooms that the action {@code ENDPOINT_MESSAGE_RECEIVED}
- * is being dispatched within a specific redux store.
+ * Handles {@code ENDPOINT_MESSAGE_RECEIVED} actions for the breakout-rooms feature.
  *
  * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
@@ -90,19 +38,21 @@ MiddlewareRegistry.register(store => next => action => {
  */
 function _handleEndpointMessage(store, action) {
     const { json, participant } = action;
-    const sender = getParticipantById(store, participant?._id);
 
-    if (json) {
+    if (json && participant?._id === 'focus') {
         switch (json.type) {
-        case JSON_TYPE_ROOMS:
-            if (isParticipantModerator(sender)) {
-                store.dispatch(updateRooms(json));
-            }
+        case JSON_TYPE_UPDATE_BREAKOUT_ROOMS: {
+            const { nextIndex, rooms } = json;
+
+            store.dispatch({
+                type: UPDATE_BREAKOUT_ROOMS,
+                nextIndex: parseInt(nextIndex, 10) || 1,
+                rooms
+            });
             break;
+        }
         case JSON_TYPE_MOVE_TO_ROOM_REQUEST:
-            if (isParticipantModerator(sender)) {
-                store.dispatch(moveToRoom(json.roomId));
-            }
+            store.dispatch(moveToRoom(json.roomId));
             break;
         }
     }

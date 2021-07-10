@@ -373,6 +373,9 @@ var config = {
     // Hides lobby button
     // hideLobbyButton: false,
 
+    // Hides add breakout room button
+    // hideAddRoomButton: false,
+
     // Require users to always specify a display name.
     // requireDisplayName: true,
 
