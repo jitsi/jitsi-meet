@@ -389,6 +389,12 @@ function VirtualBackground({
             dispatch(updateSettings({
                 localFlipX: !_localFlipX
             }));
+        } else {
+
+            // Set x scale to default value.
+            dispatch(updateSettings({
+                localFlipX: true
+            }));
         }
         dispatch(hideDialog());
     }, [ dispatch, options, _localFlipX ]);
