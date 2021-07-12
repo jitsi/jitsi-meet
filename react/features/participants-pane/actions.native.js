@@ -20,11 +20,11 @@ export function showContextMenuReject(participant: Object) {
 /**
  * Displays the context menu for the selected meeting participant.
  *
- * @param {Object} participant - The selected meeting participant.
+ * @param {string} participantID - The selected meeting participant id.
  * @returns {Function}
  */
-export function showContextMenuDetails(participant: Object) {
-    return openDialog(ContextMenuMeetingParticipantDetails, { participant });
+export function showContextMenuDetails(participantID: String) {
+    return openDialog(ContextMenuMeetingParticipantDetails, { participantID });
 }
 
 /**
