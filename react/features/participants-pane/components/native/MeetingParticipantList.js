@@ -7,25 +7,49 @@ import { Button } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Icon, IconInviteMore } from '../../../base/icons';
-import { getParticipants } from '../../../base/participants';
+import {
+    getLocalParticipant,
+    getParticipantCountWithFake,
+    getRemoteParticipants
+} from '../../../base/participants';
 import { doInvitePeople } from '../../../invite/actions.native';
+import { showContextMenuDetails } from '../../actions.native';
 import { shouldRenderInviteButton } from '../../functions';
 
-import { MeetingParticipantItem } from './MeetingParticipantItem';
+import MeetingParticipantItem from './MeetingParticipantItem';
 import styles from './styles';
 
 export const MeetingParticipantList = () => {
     const dispatch = useDispatch();
+    const items = [];
+    const localParticipant = useSelector(getLocalParticipant);
     const onInvite = useCallback(() => dispatch(doInvitePeople()), [ dispatch ]);
+    const participants = useSelector(getRemoteParticipants);
+    const participantsCount = useSelector(getParticipantCountWithFake);
     const showInviteButton = useSelector(shouldRenderInviteButton);
-    const participants = useSelector(getParticipants);
+
     const { t } = useTranslation();
+
+    // eslint-disable-next-line react/no-multi-comp
+    const renderParticipant = id => (
+        <MeetingParticipantItem
+            key = { id }
+            /* eslint-disable-next-line react/jsx-no-bind */
+            onPress = { () => dispatch(showContextMenuDetails(id)) }
+            participantID = { id } />
+    );
+
+    localParticipant && items.push(renderParticipant(localParticipant?.id));
+
+    participants.forEach(p => {
+        items.push(renderParticipant(p?.id));
+    });
 
     return (
         <View style = { styles.meetingList }>
             <Text style = { styles.meetingListDescription }>
                 {t('participantsPane.headings.participantsList',
-                    { count: participants.length })}
+                    { count: participantsCount })}
             </Text>
             {
                 showInviteButton
@@ -42,13 +66,8 @@ export const MeetingParticipantList = () => {
                     onPress = { onInvite }
                     style = { styles.inviteButton } />
             }
-            {
-                participants.map(p => (
-                    <MeetingParticipantItem
-                        key = { p.id }
-                        participant = { p } />)
-                )
-            }
+            { items }
         </View>
     );
 };
+

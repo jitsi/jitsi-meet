@@ -29,10 +29,13 @@ export const LobbyParticipantItem = ({ participant: p }: Props) => {
     return (
         <ParticipantItem
             audioMediaState = { MEDIA_STATE.NONE }
+            displayName = { p.name }
             isKnockingParticipant = { true }
-            name = { p.name }
+            local = { p.local }
             onPress = { openContextMenuReject }
             participant = { p }
+            participantID = { p.id }
+            raisedHand = { p.raisedHand }
             videoMediaState = { MEDIA_STATE.NONE }>
             <Button
                 children = { t('lobby.admit') }

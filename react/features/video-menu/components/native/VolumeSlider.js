@@ -5,8 +5,8 @@ import React, { PureComponent } from 'react';
 import { Slider, View } from 'react-native';
 import { withTheme } from 'react-native-paper';
 
-import { translate } from '../../../base/i18n';
 import { Icon, IconVolumeEmpty } from '../../../base/icons';
+import { getParticipantByIdOrUndefined } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { setVolume } from '../../../participants-pane/actions.native';
 import { VOLUME_SLIDER_SCALE } from '../../constants';
@@ -18,6 +18,11 @@ import styles from './styles';
  * The type of the React {@code Component} props of {@link VolumeSlider}.
  */
 type Props = {
+
+    /**
+     * Participant reference
+     */
+    _participant: Object,
 
     /**
      * Whether the participant enters the conference silent.
@@ -35,9 +40,9 @@ type Props = {
     dispatch: Function,
 
     /**
-     * Participant reference
+     * The ID of the participant.
      */
-    participant: Object,
+    participantID: string,
 
     /**
      * Theme used for styles.
@@ -126,8 +131,8 @@ class VolumeSlider extends PureComponent<Props, State> {
      * @returns {void}
      */
     _onVolumeChange(volumeLevel) {
-        const { dispatch, participant } = this.props;
-        const { id } = participant;
+        const { dispatch, _participant } = this.props;
+        const { id } = _participant;
 
         dispatch(setVolume(id, volumeLevel));
     }
@@ -142,16 +147,18 @@ class VolumeSlider extends PureComponent<Props, State> {
  * @returns {Props}
  */
 function mapStateToProps(state, ownProps): Object {
-    const { participant } = ownProps;
+    const { participantID } = ownProps;
+    const participant = getParticipantByIdOrUndefined(state, participantID);
     const { id, local } = participant;
     const { participantsVolume } = state['features/participants-pane'];
     const { startSilent } = state['features/base/config'];
 
     return {
+        _participant: participant,
         _startSilent: Boolean(startSilent),
         _volume: local ? undefined : participantsVolume[id]
     };
 }
 
-export default translate(connect(mapStateToProps)(withTheme(VolumeSlider)));
+export default connect(mapStateToProps)(withTheme(VolumeSlider));
 

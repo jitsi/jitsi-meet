@@ -4,9 +4,10 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TouchableOpacity, View } from 'react-native';
 import { Divider, Text } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import { Avatar } from '../../../base/avatar';
+import { isToolbarButtonEnabled } from '../../../base/config';
 import { hideDialog, openDialog } from '../../../base/dialog/actions';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import {
@@ -15,10 +16,14 @@ import {
     IconMuteEveryoneElse, IconVideoOff
 } from '../../../base/icons';
 import {
-    getParticipantsById,
+    getParticipantByIdOrUndefined, getParticipantDisplayName,
     isLocalParticipantModerator
-} from '../../../base/participants';
-import { getIsParticipantVideoMuted } from '../../../base/tracks';
+} from '../../../base/participants/functions';
+import { connect } from '../../../base/redux';
+import {
+    isParticipantAudioMuted,
+    isParticipantVideoMuted
+} from '../../../base/tracks/functions';
 import { openChat } from '../../../chat/actions.native';
 import {
     KickRemoteParticipantDialog,
@@ -33,130 +38,178 @@ import styles from './styles';
 type Props = {
 
     /**
+     * The display name of the participant.
+     */
+    _displayName: string,
+
+    /**
+     * True if the local participant is moderator and false otherwise.
+     */
+    _isLocalModerator: boolean,
+
+    /**
+     * True if the chat button is enabled and false otherwise.
+     */
+    _isChatButtonEnabled: boolean,
+
+    /**
+     * True if the participant is moderator and false otherwise.
+     */
+    _isParticipantModerator: boolean,
+
+    /**
+     * True if the participant is video muted and false otherwise.
+     */
+    _isParticipantVideoMuted: boolean,
+
+    /**
+     * True if the participant is audio muted and false otherwise.
+     */
+    _isParticipantAudioMuted: boolean,
+
+    /**
      * Participant reference
      */
-    participant: Object
+    _participant: Object,
+
+    /**
+     * The ID of the participant.
+     */
+    participantID: string,
 };
 
-export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) => {
+export const ContextMenuMeetingParticipantDetails = (
+        {
+            _displayName,
+            _isLocalModerator,
+            _isChatButtonEnabled,
+            _isParticipantVideoMuted,
+            _isParticipantAudioMuted,
+            _participant,
+            participantID
+        }: Props) => {
     const dispatch = useDispatch();
-    const participantsIDArr = useSelector(getParticipantsById);
-    const participantIsAvailable = participantsIDArr.find(partId => partId === p.id);
     const cancel = useCallback(() => dispatch(hideDialog()), [ dispatch ]);
-    const displayName = p.name;
-    const isLocalModerator = useSelector(isLocalParticipantModerator);
-    const isParticipantVideoMuted = useSelector(getIsParticipantVideoMuted(p));
     const kickRemoteParticipant = useCallback(() => {
         dispatch(openDialog(KickRemoteParticipantDialog, {
-            participantID: p.id
+            participantID
         }));
-    }, [ dispatch, p ]);
+    }, [ dispatch, participantID ]);
     const muteAudio = useCallback(() => {
         dispatch(openDialog(MuteRemoteParticipantDialog, {
-            participantID: p.id
+            participantID
         }));
-    }, [ dispatch, p ]);
+    }, [ dispatch, participantID ]);
     const muteEveryoneElse = useCallback(() => {
         dispatch(openDialog(MuteEveryoneDialog, {
-            exclude: [ p.id ]
+            exclude: [ participantID ]
         }));
-    }, [ dispatch, p ]);
+    }, [ dispatch, participantID ]);
     const muteVideo = useCallback(() => {
         dispatch(openDialog(MuteRemoteParticipantsVideoDialog, {
-            participantID: p.id
+            participantID
         }));
-    }, [ dispatch, p ]);
+    }, [ dispatch, participantID ]);
 
     const sendPrivateMessage = useCallback(() => {
         dispatch(hideDialog());
-        dispatch(openChat(p));
-    }, [ dispatch, p ]);
+        dispatch(openChat(_participant));
+    }, [ dispatch, _participant ]);
     const { t } = useTranslation();
 
     return (
         <BottomSheet
             addScrollViewPadding = { false }
             onCancel = { cancel }
-            showSlidingView = { Boolean(participantIsAvailable) }
             style = { styles.contextMenuMeetingParticipantDetails }>
             <View
                 style = { styles.contextMenuItemSectionAvatar }>
                 <Avatar
                     className = 'participant-avatar'
-                    participantId = { p.id }
+                    participantId = { participantID }
                     size = { 20 } />
                 <View style = { styles.contextMenuItemAvatarText }>
                     <Text style = { styles.contextMenuItemName }>
-                        { displayName }
+                        { _displayName }
                     </Text>
                 </View>
             </View>
             <Divider style = { styles.divider } />
             {
-                isLocalModerator
-                && <TouchableOpacity
-                    onPress = { muteAudio }
-                    style = { styles.contextMenuItem }>
-                    <Icon
-                        size = { 20 }
-                        src = { IconMicrophoneEmptySlash } />
-                    <Text style = { styles.contextMenuItemText }>
-                        { t('participantsPane.actions.mute') }
-                    </Text>
-                </TouchableOpacity>
-            }
-            {
-                isLocalModerator
-                && <TouchableOpacity
-                    onPress = { muteEveryoneElse }
-                    style = { styles.contextMenuItem }>
-                    <Icon
-                        size = { 20 }
-                        src = { IconMuteEveryoneElse } />
-                    <Text style = { styles.contextMenuItemText }>
-                        { t('participantsPane.actions.muteEveryoneElse') }
-                    </Text>
-                </TouchableOpacity>
+                _isLocalModerator && (
+                    <>
+                        {
+                            !_isParticipantAudioMuted
+                            && <TouchableOpacity
+                                onPress = { muteAudio }
+                                style = { styles.contextMenuItem }>
+                                <Icon
+                                    size = { 20 }
+                                    src = { IconMicrophoneEmptySlash } />
+                                <Text style = { styles.contextMenuItemText }>
+                                    { t('participantsPane.actions.mute') }
+                                </Text>
+                            </TouchableOpacity>
+                        }
+
+                        <TouchableOpacity
+                            onPress = { muteEveryoneElse }
+                            style = { styles.contextMenuItem }>
+                            <Icon
+                                size = { 20 }
+                                src = { IconMuteEveryoneElse } />
+                            <Text style = { styles.contextMenuItemText }>
+                                { t('participantsPane.actions.muteEveryoneElse') }
+                            </Text>
+                        </TouchableOpacity>
+                    </>
+                )
             }
             <Divider style = { styles.divider } />
             {
-                isLocalModerator && (
-                    isParticipantVideoMuted
-                    || <TouchableOpacity
-                        onPress = { muteVideo }
-                        style = { styles.contextMenuItemSection }>
+                _isLocalModerator && (
+                    <>
+                        {
+                            _isParticipantVideoMuted
+                            || <TouchableOpacity
+                                onPress = { muteVideo }
+                                style = { styles.contextMenuItemSection }>
+                                <Icon
+                                    size = { 20 }
+                                    src = { IconVideoOff } />
+                                <Text style = { styles.contextMenuItemText }>
+                                    { t('participantsPane.actions.stopVideo') }
+                                </Text>
+                            </TouchableOpacity>
+                        }
+
+                        <TouchableOpacity
+                            onPress = { kickRemoteParticipant }
+                            style = { styles.contextMenuItem }>
+                            <Icon
+                                size = { 20 }
+                                src = { IconCloseCircle } />
+                            <Text style = { styles.contextMenuItemText }>
+                                { t('videothumbnail.kick') }
+                            </Text>
+                        </TouchableOpacity>
+                    </>
+                )
+            }
+            {
+                _isChatButtonEnabled && (
+                    <TouchableOpacity
+                        onPress = { sendPrivateMessage }
+                        style = { styles.contextMenuItem }>
                         <Icon
                             size = { 20 }
-                            src = { IconVideoOff } />
+                            src = { IconMessage } />
                         <Text style = { styles.contextMenuItemText }>
-                            { t('participantsPane.actions.stopVideo') }
+                            { t('toolbar.accessibilityLabel.privateMessage') }
                         </Text>
                     </TouchableOpacity>
                 )
             }
-            {
-                isLocalModerator
-                && <TouchableOpacity
-                    onPress = { kickRemoteParticipant }
-                    style = { styles.contextMenuItem }>
-                    <Icon
-                        size = { 20 }
-                        src = { IconCloseCircle } />
-                    <Text style = { styles.contextMenuItemText }>
-                        { t('videothumbnail.kick') }
-                    </Text>
-                </TouchableOpacity>
-            }
-            <TouchableOpacity
-                onPress = { sendPrivateMessage }
-                style = { styles.contextMenuItem }>
-                <Icon
-                    size = { 20 }
-                    src = { IconMessage } />
-                <Text style = { styles.contextMenuItemText }>
-                    { t('toolbar.accessibilityLabel.privateMessage') }
-                </Text>
-            </TouchableOpacity>
             {/* We need design specs for this*/}
             {/* <TouchableOpacity*/}
             {/*    style = { styles.contextMenuItemSection }>*/}
@@ -167,7 +220,36 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
             {/*    <Text style = { styles.contextMenuItemText }>{ t('participantsPane.actions.networkStats') }</Text>*/}
             {/* </TouchableOpacity>*/}
             <Divider style = { styles.divider } />
-            <VolumeSlider participant = { p } />
+            <VolumeSlider participant = { _participant } />
         </BottomSheet>
     );
 };
+
+
+/**
+ * Maps (parts of) the redux state to the associated props for this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @param {Object} ownProps - The own props of the component.
+ * @private
+ * @returns {Props}
+ */
+function _mapStateToProps(state, ownProps): Object {
+    const { participantID } = ownProps;
+    const participant = getParticipantByIdOrUndefined(state, participantID);
+    const _isLocalModerator = isLocalParticipantModerator(state);
+    const _isChatButtonEnabled = isToolbarButtonEnabled('chat', state);
+    const _isParticipantVideoMuted = isParticipantVideoMuted(participant, state);
+    const _isParticipantAudioMuted = isParticipantAudioMuted(participant, state);
+
+    return {
+        _displayName: getParticipantDisplayName(state, participantID),
+        _isLocalModerator,
+        _isChatButtonEnabled,
+        _isParticipantAudioMuted,
+        _isParticipantVideoMuted,
+        _participant: participant
+    };
+}
+
+export default connect(_mapStateToProps)(ContextMenuMeetingParticipantDetails);

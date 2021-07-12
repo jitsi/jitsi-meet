@@ -5,10 +5,8 @@ import type { Node } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TouchableOpacity, View } from 'react-native';
 import { Text } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
 import { Avatar } from '../../../base/avatar';
-import { getParticipantDisplayNameWithId } from '../../../base/participants';
 import { MEDIA_STATE, type MediaState, AudioStateIcons, VideoStateIcons } from '../../constants';
 
 import { RaisedHandIndicator } from './RaisedHandIndicator';
@@ -27,14 +25,19 @@ type Props = {
     children?: Node,
 
     /**
+     * The name of the participant. Used for showing lobby names.
+     */
+    displayName: string,
+
+    /**
      * Is the participant waiting?
      */
     isKnockingParticipant: boolean,
 
     /**
-     * The name of the participant. Used for showing lobby names.
+     * True if the participant is local.
      */
-    name?: string,
+    local: boolean,
 
     /**
      * Callback to be invoked on pressing the participant item.
@@ -42,9 +45,14 @@ type Props = {
     onPress?: Function,
 
     /**
-     * Participant reference
+     * The ID of the participant.
      */
-    participant: Object,
+    participantID: string,
+
+    /**
+     * True if the participant have raised hand.
+     */
+    raisedHand: boolean,
 
     /**
      * Media state for video
@@ -59,15 +67,16 @@ type Props = {
  */
 function ParticipantItem({
     children,
+    displayName,
     isKnockingParticipant,
-    name,
+    local,
     onPress,
-    participant: p,
+    participantID,
+    raisedHand,
     audioMediaState = MEDIA_STATE.NONE,
     videoMediaState = MEDIA_STATE.NONE
 }: Props) {
 
-    const displayName = name || useSelector(getParticipantDisplayNameWithId(p.id));
     const { t } = useTranslation();
 
     return (
@@ -77,19 +86,19 @@ function ParticipantItem({
                 style = { styles.participantContent }>
                 <Avatar
                     className = 'participant-avatar'
-                    participantId = { p.id }
+                    participantId = { participantID }
                     size = { 32 } />
                 <View style = { styles.participantNameContainer }>
                     <Text style = { styles.participantName }>
                         { displayName }
                     </Text>
-                    { p.local ? <Text style = { styles.isLocal }>({t('chat.you')})</Text> : null }
+                    { local ? <Text style = { styles.isLocal }>({t('chat.you')})</Text> : null }
                 </View>
                 {
                     !isKnockingParticipant
                     && <>
                         {
-                            p.raisedHand && <RaisedHandIndicator />
+                            raisedHand && <RaisedHandIndicator />
                         }
                         <View style = { styles.participantStatesContainer }>
                             <View style = { styles.participantStateVideo }>{VideoStateIcons[videoMediaState]}</View>
@@ -98,7 +107,7 @@ function ParticipantItem({
                     </>
                 }
             </TouchableOpacity>
-            { !p.local && children }
+            { !local && children }
         </View>
     );
 }

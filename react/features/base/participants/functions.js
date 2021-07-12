@@ -262,6 +262,23 @@ export function haveParticipantWithScreenSharingFeature(stateful: Object | Funct
 }
 
 /**
+ * Selectors for getting all known participant ids, with fake participants filtered
+ * out.
+ *
+ * @param {(Function|Object|Participant[])} stateful - The redux state
+ * features/base/participants, the (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @returns {Participant[]}
+ */
+export function getParticipantsById(stateful: Object | Function) {
+    const state = toState(stateful)['features/base/participants'];
+    const noFakeParticipants = state.filter(p => !p.fakeParticipants);
+
+    return noFakeParticipants.map(p => p.id);
+}
+
+/**
  * Selectors for getting all remote participants.
  *
  * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
