@@ -11,6 +11,8 @@
         line-height: 13px;
         margin: 0 auto;
         width: 320px;
+
+        @include adjust-for-max-width(320px, 8px);
     }
 
     &-header {

@@ -41,13 +41,14 @@ export const findStyledAncestor = (target: Object, component: any) => {
 };
 
 /**
- * Returns a selector used to determine if a participant is force muted.
+ * Checks if a participant is force muted.
  *
- * @param {Object} participant - The participant id.
+ * @param {Object} participant - The participant.
  * @param {MediaType} mediaType - The media type.
- * @returns {MediaState}.
+ * @param {Object} state - The redux state.
+ * @returns {MediaState}
  */
-export const isForceMuted = (participant: Object, mediaType: MediaType) => (state: Object) => {
+export function isForceMuted(participant: Object, mediaType: MediaType, state: Object) {
     if (getParticipantCount(state) > 2 && isEnabledFromState(mediaType, state)) {
         if (participant.local) {
             return !isLocalParticipantApprovedFromState(mediaType, state);
@@ -62,18 +63,19 @@ export const isForceMuted = (participant: Object, mediaType: MediaType) => (stat
     }
 
     return false;
-};
+}
 
 /**
- * Returns a selector used to determine the audio media state (the mic icon) for a participant.
+ * Determines the audio media state (the mic icon) for a participant.
  *
  * @param {Object} participant - The participant.
  * @param {boolean} muted - The mute state of the participant.
- * @returns {MediaState}.
+ * @param {Object} state - The redux state.
+ * @returns {MediaState}
  */
-export const getParticipantAudioMediaState = (participant: Object, muted: Boolean) => (state: Object) => {
+export function getParticipantAudioMediaState(participant: Object, muted: Boolean, state: Object) {
     if (muted) {
-        if (isForceMuted(participant, MEDIA_TYPE.AUDIO)(state)) {
+        if (isForceMuted(participant, MEDIA_TYPE.AUDIO, state)) {
             return MEDIA_STATE.FORCE_MUTED;
         }
 
@@ -81,7 +83,7 @@ export const getParticipantAudioMediaState = (participant: Object, muted: Boolea
     }
 
     return MEDIA_STATE.UNMUTED;
-};
+}
 
 
 /**
@@ -125,17 +127,18 @@ const getState = (state: Object) => state[REDUCER_KEY];
 export const getParticipantsPaneOpen = (state: Object) => Boolean(getState(state)?.isOpen);
 
 /**
- * Returns a selector used to determine the type of quick action button to be displayed for a participant.
+ * Returns the type of quick action button to be displayed for a participant.
  * The button is displayed when hovering a participant from the participant list.
  *
  * @param {Object} participant - The participant.
  * @param {boolean} isAudioMuted - If audio is muted for the participant.
- * @returns {Function}
+ * @param {Object} state - The redux state.
+ * @returns {string} - The type of the quick action button.
  */
-export const getQuickActionButtonType = (participant: Object, isAudioMuted: Boolean) => (state: Object) => {
+export function getQuickActionButtonType(participant: Object, isAudioMuted: Boolean, state: Object) {
     // handled only by moderators
     if (isLocalParticipantModerator(state)) {
-        if (isForceMuted(participant, MEDIA_TYPE.AUDIO)(state)) {
+        if (isForceMuted(participant, MEDIA_TYPE.AUDIO, state)) {
             return QUICK_ACTION_BUTTON.ASK_TO_UNMUTE;
         }
         if (!isAudioMuted) {
@@ -144,7 +147,7 @@ export const getQuickActionButtonType = (participant: Object, isAudioMuted: Bool
     }
 
     return QUICK_ACTION_BUTTON.NONE;
-};
+}
 
 /**
  * Returns true if the invite button should be rendered.

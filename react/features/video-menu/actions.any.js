@@ -20,6 +20,7 @@ import {
 } from '../base/media';
 import {
     getLocalParticipant,
+    getRemoteParticipants,
     muteRemoteParticipant
 } from '../base/participants';
 
@@ -91,14 +92,17 @@ export function muteAllParticipants(exclude: Array<string>, mediaType: MEDIA_TYP
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
         const localId = getLocalParticipant(state).id;
-        const participantIds = state['features/base/participants']
-            .map(p => p.id);
 
-        /* eslint-disable no-confusing-arrow */
-        participantIds
-            .filter(id => !exclude.includes(id))
-            .map(id => id === localId ? muteLocal(true, mediaType) : muteRemote(id, mediaType))
-            .map(dispatch);
-        /* eslint-enable no-confusing-arrow */
+        if (!exclude.includes(localId)) {
+            dispatch(muteLocal(true, mediaType));
+        }
+
+        getRemoteParticipants(state).forEach((p, id) => {
+            if (exclude.includes(id)) {
+                return;
+            }
+
+            dispatch(muteRemote(id, mediaType));
+        });
     };
 }

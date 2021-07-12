@@ -1,6 +1,6 @@
 // @flow
 
-import { getParticipants } from '../base/participants';
+import { getFakeParticipants } from '../base/participants';
 
 import { VIDEO_PLAYER_PARTICIPANT_NAME, YOUTUBE_PLAYER_PARTICIPANT_NAME } from './constants';
 
@@ -41,7 +41,16 @@ export function isSharingStatus(status: string) {
  * @returns {boolean}
  */
 export function isVideoPlaying(stateful: Object | Function): boolean {
-    return Boolean(getParticipants(stateful).find(p => p.isFakeParticipant
-        && (p.name === VIDEO_PLAYER_PARTICIPANT_NAME || p.name === YOUTUBE_PLAYER_PARTICIPANT_NAME))
-    );
+    let videoPlaying = false;
+
+    // eslint-disable-next-line no-unused-vars
+    for (const [ id, p ] of getFakeParticipants(stateful)) {
+        if (p.name === VIDEO_PLAYER_PARTICIPANT_NAME || p.name === YOUTUBE_PLAYER_PARTICIPANT_NAME) {
+            videoPlaying = true;
+            break;
+        }
+    }
+
+    return videoPlaying;
 }
+

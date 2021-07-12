@@ -1867,7 +1867,6 @@ export default {
                     await this.useVideoStream(desktopVideoStream);
                 }
 
-
                 if (this._desktopAudioStream) {
                     // If there is a localAudio stream, mix in the desktop audio stream captured by the screen sharing
                     // api.
@@ -2463,8 +2462,8 @@ export default {
         });
 
         APP.UI.addListener(
-            UIEvents.TOGGLE_SCREENSHARING, audioOnly => {
-                this.toggleScreenSharing(undefined, { audioOnly });
+            UIEvents.TOGGLE_SCREENSHARING, ({ enabled, audioOnly }) => {
+                this.toggleScreenSharing(enabled, { audioOnly });
             }
         );
     },

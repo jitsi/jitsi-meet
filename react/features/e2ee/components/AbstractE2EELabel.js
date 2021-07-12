@@ -22,9 +22,7 @@ export type Props = {
  * @returns {Props}
  */
 export function _mapStateToProps(state: Object) {
-    const participants = state['features/base/participants'];
-
     return {
-        _showLabel: participants.every(p => p.e2eeEnabled)
+        _showLabel: state['features/e2ee'].everyoneEnabledE2EE
     };
 }

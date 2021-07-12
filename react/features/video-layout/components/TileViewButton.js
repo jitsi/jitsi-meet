@@ -52,13 +52,13 @@ class TileViewButton<P: Props> extends AbstractButton<P, *> {
      */
     _handleClick() {
         const { _tileViewEnabled, dispatch } = this.props;
+        const value = !_tileViewEnabled;
 
         sendAnalytics(createToolbarEvent(
             'tileview.button',
             {
-                'is_enabled': _tileViewEnabled
+                'is_enabled': value
             }));
-        const value = !_tileViewEnabled;
 
         logger.debug(`Tile view ${value ? 'enable' : 'disable'}`);
         dispatch(setTileView(value));

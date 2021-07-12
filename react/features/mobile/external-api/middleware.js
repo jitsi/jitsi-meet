@@ -28,7 +28,13 @@ import {
 import { JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../base/media';
 import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
-import { PARTICIPANT_JOINED, PARTICIPANT_LEFT, getParticipants, getParticipantById } from '../../base/participants';
+import {
+    PARTICIPANT_JOINED,
+    PARTICIPANT_LEFT,
+    getParticipantById,
+    getRemoteParticipants,
+    getLocalParticipant
+} from '../../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';
 import { toggleScreensharing } from '../../base/tracks';
 import { OPEN_CHAT, CLOSE_CHAT } from '../../chat';
@@ -269,6 +275,24 @@ StateListenerRegistry.register(
     }, 100));
 
 /**
+ * Returns a participant info object based on the passed participant object from redux.
+ *
+ * @param {Participant} participant - The participant object from the redux store.
+ * @returns {Object} - The participant info object.
+ */
+function _participantToParticipantInfo(participant) {
+    return {
+        isLocal: participant.local,
+        email: participant.email,
+        name: participant.name,
+        participantId: participant.id,
+        displayName: participant.displayName,
+        avatarUrl: participant.avatarURL,
+        role: participant.role
+    };
+}
+
+/**
  * Registers for events sent from the native side via NativeEventEmitter.
  *
  * @param {Store} store - The redux store.
@@ -309,16 +333,15 @@ function _registerForNativeEvents(store) {
 
     eventEmitter.addListener(ExternalAPI.RETRIEVE_PARTICIPANTS_INFO, ({ requestId }) => {
 
-        const participantsInfo = getParticipants(store).map(participant => {
-            return {
-                isLocal: participant.local,
-                email: participant.email,
-                name: participant.name,
-                participantId: participant.id,
-                displayName: participant.displayName,
-                avatarUrl: participant.avatarURL,
-                role: participant.role
-            };
+        const participantsInfo = [];
+        const remoteParticipants = getRemoteParticipants(store);
+        const localParticipant = getLocalParticipant(store);
+
+        participantsInfo.push(_participantToParticipantInfo(localParticipant));
+        remoteParticipants.forEach(participant => {
+            if (!participant.isFakeParticipant) {
+                participantsInfo.push(_participantToParticipantInfo(participant));
+            }
         });
 
         sendEvent(

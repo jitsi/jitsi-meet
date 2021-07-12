@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 
 import { translate } from '../../../base/i18n';
 import { IconRaisedHand } from '../../../base/icons';
+import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import ToolbarButton from '../../../toolbox/components/web/ToolbarButton';
 import { sendReaction } from '../../actions.any';
@@ -126,9 +127,12 @@ function ReactionsMenuButton({
  * @returns {Object}
  */
 function mapStateToProps(state) {
+    const localParticipant = getLocalParticipant(state);
+
     return {
         isOpen: getReactionsMenuVisibility(state),
-        reactionsQueue: getReactionsQueue(state)
+        reactionsQueue: getReactionsQueue(state),
+        raisedHand: localParticipant?.raisedHand
     };
 }
 

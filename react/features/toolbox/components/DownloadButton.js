@@ -23,6 +23,7 @@ class DownloadButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.download';
     icon = IconDownload;
     label = 'toolbar.download';
+    tooltip = 'toolbar.download';
 
     /**
      * Handles clicking / pressing the button, and opens a new window with the user documentation.

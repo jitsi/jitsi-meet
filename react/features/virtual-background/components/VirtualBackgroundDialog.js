@@ -188,12 +188,7 @@ function VirtualBackground({
         if (storedImages.length === backgroundsLimit) {
             setStoredImages(storedImages.slice(1));
         }
-        if (!_localFlipX) {
-            dispatch(updateSettings({
-                localFlipX: !_localFlipX
-            }));
-        }
-    }, [ storedImages, _localFlipX ]);
+    }, [ storedImages ]);
 
 
     const enableBlur = useCallback(async () => {
@@ -390,8 +385,13 @@ function VirtualBackground({
         setLoading(true);
         await dispatch(toggleBackgroundEffect(options, _jitsiTrack));
         await setLoading(false);
+        if (_localFlipX && options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
+            dispatch(updateSettings({
+                localFlipX: !_localFlipX
+            }));
+        }
         dispatch(hideDialog());
-    }, [ dispatch, options ]);
+    }, [ dispatch, options, _localFlipX ]);
 
     // Prevent the selection of a new virtual background if it has not been applied by default
     const cancelVirtualBackground = useCallback(async () => {

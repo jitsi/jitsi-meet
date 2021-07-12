@@ -109,10 +109,10 @@ class Filmstrip extends Component<Props> {
                     {
 
                         this._sort(_participants, isNarrowAspectRatio)
-                            .map(p => (
+                            .map(id => (
                                 <Thumbnail
-                                    key = { p.id }
-                                    participant = { p } />))
+                                    key = { id }
+                                    participantID = { id } />))
 
                     }
                     {
@@ -166,12 +166,11 @@ class Filmstrip extends Component<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
-    const participants = state['features/base/participants'];
-    const { enabled } = state['features/filmstrip'];
+    const { enabled, remoteParticipants } = state['features/filmstrip'];
 
     return {
         _aspectRatio: state['features/base/responsive-ui'].aspectRatio,
-        _participants: participants.filter(p => !p.local),
+        _participants: remoteParticipants,
         _visible: enabled && isFilmstripVisible(state)
     };
 }

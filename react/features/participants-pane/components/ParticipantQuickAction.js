@@ -1,11 +1,8 @@
 // @flow
 
 import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 
 import { QUICK_ACTION_BUTTON } from '../constants';
-import { getQuickActionButtonType } from '../functions';
 
 import AskToUnmuteButton from './AskToUnmuteButton';
 import { QuickActionButton } from './styled';
@@ -13,19 +10,26 @@ import { QuickActionButton } from './styled';
 type Props = {
 
     /**
-     * If audio is muted for the current participant.
+     * The translated "ask unmute" text.
      */
-    isAudioMuted: Boolean,
+    askUnmuteText: string,
+
+    /**
+     * The type of button to be displayed.
+     */
+    buttonType: string,
 
     /**
      * Callback used to open a confirmation dialog for audio muting.
      */
     muteAudio: Function,
 
+    muteParticipantButtonText: string,
+
     /**
-     * Participant.
+     * The ID of the participant.
      */
-    participant: Object,
+    participantID: string,
 }
 
 /**
@@ -34,23 +38,29 @@ type Props = {
  * @param {Props} props - The props of the component.
  * @returns {React$Element<'button'>}
  */
-export default function({ isAudioMuted, muteAudio, participant }: Props) {
-    const buttonType = useSelector(getQuickActionButtonType(participant, isAudioMuted));
-    const { id } = participant;
-    const { t } = useTranslation();
-
+export default function ParticipantQuickAction({
+    askUnmuteText,
+    buttonType,
+    muteAudio,
+    muteParticipantButtonText,
+    participantID
+}: Props) {
     switch (buttonType) {
     case QUICK_ACTION_BUTTON.MUTE: {
         return (
             <QuickActionButton
-                onClick = { muteAudio(id) }
+                onClick = { muteAudio(participantID) }
                 primary = { true }>
-                {t('dialog.muteParticipantButton')}
+                { muteParticipantButtonText }
             </QuickActionButton>
         );
     }
     case QUICK_ACTION_BUTTON.ASK_TO_UNMUTE: {
-        return <AskToUnmuteButton id = { id } />;
+        return (
+            <AskToUnmuteButton
+                askUnmuteText = { askUnmuteText }
+                id = { participantID } />
+        );
     }
     default: {
         return null;
