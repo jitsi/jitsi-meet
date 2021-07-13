@@ -1,5 +1,8 @@
 // @flow
 
+import { batch } from 'react-redux';
+
+import { ENDPOINT_REACTION_NAME } from '../../../modules/API/constants';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import {
     CONFERENCE_JOINED,
@@ -19,7 +22,18 @@ import {
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { openDisplayNamePrompt } from '../display-name';
+import { ADD_REACTIONS_MESSAGE } from '../reactions/actionTypes';
+import {
+    pushReaction
+} from '../reactions/actions.any';
+import { REACTIONS } from '../reactions/constants';
+import { endpointMessageReceived } from '../subtitles';
 import { showToolbox } from '../toolbox/actions';
+import {
+    hideToolbox,
+    setToolboxTimeout,
+    setToolboxVisible
+} from '../toolbox/actions.web';
 
 import { ADD_MESSAGE, SEND_MESSAGE, OPEN_CHAT, CLOSE_CHAT } from './actionTypes';
 import { addMessage, clearMessages } from './actions';
@@ -143,6 +157,15 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
     }
+
+    case ADD_REACTIONS_MESSAGE: {
+        _handleReceivedMessage(store, {
+            id: localParticipant.id,
+            message: action.message,
+            privateMessage: false,
+            timestamp: Date.now()
+        });
+    }
     }
 
     return next(action);
@@ -189,6 +212,7 @@ StateListenerRegistry.register(
  * @returns {void}
  */
 function _addChatMsgListener(conference, store) {
+    const reactions = {};
 
     if (store.getState()['features/base/config'].iAmRecorder) {
         // We don't register anything on web if we are in iAmRecorder mode
@@ -218,6 +242,43 @@ function _addChatMsgListener(conference, store) {
             });
         }
     );
+
+    conference.on(
+        JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
+        (...args) => {
+            store.dispatch(endpointMessageReceived(...args));
+
+            if (args && args.length >= 2) {
+                const [ { _id }, eventData ] = args;
+
+                if (eventData.name === ENDPOINT_REACTION_NAME) {
+                    reactions[_id] = reactions[_id] ?? {
+                        timeout: null,
+                        message: ''
+                    };
+                    batch(() => {
+                        store.dispatch(pushReaction(eventData.reaction));
+                        store.dispatch(setToolboxVisible(true));
+                        store.dispatch(setToolboxTimeout(
+                                () => store.dispatch(hideToolbox()),
+                                5000)
+                        );
+                    });
+
+                    clearTimeout(reactions[_id].timeout);
+                    reactions[_id].message = `${reactions[_id].message}${REACTIONS[eventData.reaction].message}`;
+                    reactions[_id].timeout = setTimeout(() => {
+                        _handleReceivedMessage(store, {
+                            id: _id,
+                            message: reactions[_id].message,
+                            privateMessage: false,
+                            timestamp: eventData.timestamp
+                        });
+                        delete reactions[_id];
+                    }, 500);
+                }
+            }
+        });
 
     conference.on(
         JitsiConferenceEvents.CONFERENCE_ERROR, (errorType, error) => {
