@@ -24,7 +24,7 @@ type Props = {
     participant: Object
 };
 
-export const ContextMenuLobbyParticipantReject = ({ participant: p }: Props) => {
+const ContextMenuLobbyParticipantReject = ({ participant: p }: Props) => {
     const dispatch = useDispatch();
     const knockParticipantsIDArr = useSelector(getKnockingParticipantsById);
     const knockParticipantIsAvailable = knockParticipantsIDArr.find(knockPartId => knockPartId === p.id);
@@ -63,3 +63,5 @@ export const ContextMenuLobbyParticipantReject = ({ participant: p }: Props) => 
         </BottomSheet>
     );
 };
+
+export default ContextMenuLobbyParticipantReject;

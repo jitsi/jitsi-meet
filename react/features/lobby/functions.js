@@ -12,7 +12,7 @@ export function getLobbyState(state: any) {
 
 
 /**
- * Selector to return lobby state.
+ * Selector to return array with knocking participant ids.
  *
  * @param {any} state - State object.
  * @returns {Array}

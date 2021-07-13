@@ -62,30 +62,33 @@ type Props = {
     participantID: ?string
 };
 
-const MeetingParticipantItem = (
-        {
-            _audioMediaState,
-            _displayName,
-            _isVideoMuted,
-            _local,
-            _participantID,
-            _raisedHand,
-            onPress
-        }: Props) => {
-    const showParticipantDetails = !_local && onPress;
-
+/**
+ * Implements the MeetingParticipantItem component.
+ *
+ * @param {Props} props - The props of the component.
+ * @returns {ReactElement}
+ */
+function MeetingParticipantItem({
+    _audioMediaState,
+    _displayName,
+    _isVideoMuted,
+    _local,
+    _participantID,
+    _raisedHand,
+    onPress
+}: Props) {
     return (
         <ParticipantItem
             audioMediaState = { _audioMediaState }
             displayName = { _displayName }
             isKnockingParticipant = { false }
             local = { _local }
-            onPress = { showParticipantDetails }
+            onPress = { onPress }
             participantID = { _participantID }
             raisedHand = { _raisedHand }
             videoMediaState = { _isVideoMuted ? MEDIA_STATE.MUTED : MEDIA_STATE.UNMUTED } />
     );
-};
+}
 
 /**
  * Maps (parts of) the redux state to the associated props for this component.
