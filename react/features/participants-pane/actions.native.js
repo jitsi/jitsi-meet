@@ -3,7 +3,10 @@
 import { openDialog } from '../base/dialog';
 
 import { SET_VOLUME } from './actionTypes';
-import { ContextMenuLobbyParticipantReject, ContextMenuMeetingParticipantDetails } from './components/native';
+import {
+    ContextMenuMeetingParticipantDetails,
+    ContextMenuLobbyParticipantReject
+} from './components/native';
 export * from './actions.any';
 
 /**

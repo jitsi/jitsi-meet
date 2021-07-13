@@ -6,7 +6,7 @@ import { Slider, View } from 'react-native';
 import { withTheme } from 'react-native-paper';
 
 import { Icon, IconVolumeEmpty } from '../../../base/icons';
-import { getParticipantByIdOrUndefined } from '../../../base/participants';
+import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { setVolume } from '../../../participants-pane/actions.native';
 import { VOLUME_SLIDER_SCALE } from '../../constants';
@@ -18,11 +18,6 @@ import styles from './styles';
  * The type of the React {@code Component} props of {@link VolumeSlider}.
  */
 type Props = {
-
-    /**
-     * Participant reference
-     */
-    _participant: Object,
 
     /**
      * Whether the participant enters the conference silent.
@@ -131,10 +126,9 @@ class VolumeSlider extends PureComponent<Props, State> {
      * @returns {void}
      */
     _onVolumeChange(volumeLevel) {
-        const { dispatch, _participant } = this.props;
-        const { id } = _participant;
+        const { dispatch, participantID } = this.props;
 
-        dispatch(setVolume(id, volumeLevel));
+        dispatch(setVolume(participantID, volumeLevel));
     }
 }
 
@@ -148,15 +142,13 @@ class VolumeSlider extends PureComponent<Props, State> {
  */
 function mapStateToProps(state, ownProps): Object {
     const { participantID } = ownProps;
-    const participant = getParticipantByIdOrUndefined(state, participantID);
-    const { id, local } = participant;
     const { participantsVolume } = state['features/participants-pane'];
     const { startSilent } = state['features/base/config'];
+    const localParticipant = getLocalParticipant(state);
 
     return {
-        _participant: participant,
         _startSilent: Boolean(startSilent),
-        _volume: local ? undefined : participantsVolume[id]
+        _volume: localParticipant ? undefined : participantsVolume[participantID]
     };
 }
 
