@@ -36,6 +36,7 @@ import {
 } from '../../../participants-pane/actions';
 import ParticipantsPaneButton from '../../../participants-pane/components/ParticipantsPaneButton';
 import { getParticipantsPaneOpen } from '../../../participants-pane/functions';
+import { ReactionsMenuButton } from '../../../reactions/components';
 import {
     LiveStreamButton,
     RecordButton
@@ -81,7 +82,6 @@ import AudioSettingsButton from './AudioSettingsButton';
 import FullscreenButton from './FullscreenButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import ProfileButton from './ProfileButton';
-import RaiseHandButton from './RaiseHandButton';
 import Separator from './Separator';
 import ShareDesktopButton from './ShareDesktopButton';
 import VideoSettingsButton from './VideoSettingsButton';
@@ -256,7 +256,6 @@ class Toolbox extends Component<Props> {
         this._onToolbarOpenVideoQuality = this._onToolbarOpenVideoQuality.bind(this);
         this._onToolbarToggleChat = this._onToolbarToggleChat.bind(this);
         this._onToolbarToggleFullScreen = this._onToolbarToggleFullScreen.bind(this);
-        this._onToolbarToggleRaiseHand = this._onToolbarToggleRaiseHand.bind(this);
         this._onToolbarToggleScreenshare = this._onToolbarToggleScreenshare.bind(this);
         this._onShortcutToggleTileView = this._onShortcutToggleTileView.bind(this);
         this._onEscKey = this._onEscKey.bind(this);
@@ -547,8 +546,7 @@ class Toolbox extends Component<Props> {
 
         const raisehand = {
             key: 'raisehand',
-            Content: RaiseHandButton,
-            handleClick: this._onToolbarToggleRaiseHand,
+            Content: ReactionsMenuButton,
             group: 2
         };
 
@@ -1024,23 +1022,6 @@ class Toolbox extends Component<Props> {
         this._doToggleFullScreen();
     }
 
-    _onToolbarToggleRaiseHand: () => void;
-
-    /**
-     * Creates an analytics toolbar event and dispatches an action for toggling
-     * raise hand.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onToolbarToggleRaiseHand() {
-        sendAnalytics(createToolbarEvent(
-            'raise.hand',
-            { enable: !this.props._raisedHand }));
-
-        this._doToggleRaiseHand();
-    }
-
     _onToolbarToggleScreenshare: () => void;
 
     /**
@@ -1144,7 +1125,10 @@ class Toolbox extends Component<Props> {
                                 ariaControls = 'overflow-menu'
                                 isOpen = { _overflowMenuVisible }
                                 key = 'overflow-menu'
-                                onVisibilityChange = { this._onSetOverflowVisible }>
+                                onVisibilityChange = { this._onSetOverflowVisible }
+                                showMobileReactions = {
+                                    overflowMenuButtons.find(({ key }) => key === 'raisehand')
+                                }>
                                 <ul
                                     aria-label = { t(toolbarAccLabel) }
                                     className = 'overflow-menu'
@@ -1154,15 +1138,15 @@ class Toolbox extends Component<Props> {
                                     {overflowMenuButtons.map(({ group, key, Content, ...rest }, index, arr) => {
                                         const showSeparator = index > 0 && arr[index - 1].group !== group;
 
-                                        return (
-                                            <>
+                                        return key !== 'raisehand'
+                                            && <>
                                                 {showSeparator && <Separator key = { `hr${group}` } />}
                                                 <Content
                                                     { ...rest }
                                                     key = { key }
                                                     showLabel = { true } />
                                             </>
-                                        );
+                                        ;
                                     })}
                                 </ul>
                             </OverflowMenuButton>

@@ -49,7 +49,17 @@ type Props = {
     /**
      * Function to render a bottom sheet header element, if necessary.
      */
-    renderHeader: ?Function
+    renderHeader: ?Function,
+
+    /**
+     * Function to render a bottom sheet footer element, if necessary.
+     */
+    renderFooter: ?Function,
+
+    /**
+    * The height of the screen.
+    */
+    _height: number
 };
 
 /**
@@ -80,7 +90,7 @@ class BottomSheet extends PureComponent<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _styles, renderHeader } = this.props;
+        const { _styles, renderHeader, renderFooter, _height } = this.props;
 
         return (
             <SlidingView
@@ -99,7 +109,10 @@ class BottomSheet extends PureComponent<Props> {
                     <SafeAreaView
                         style = { [
                             styles.sheetItemContainer,
-                            _styles.sheet
+                            _styles.sheet,
+                            {
+                                maxHeight: _height - 100
+                            }
                         ] }
                         { ...this.panResponder.panHandlers }>
                         <ScrollView
@@ -108,6 +121,7 @@ class BottomSheet extends PureComponent<Props> {
                             style = { styles.scrollView } >
                             { this.props.children }
                         </ScrollView>
+                        { renderFooter && renderFooter() }
                     </SafeAreaView>
                 </View>
             </SlidingView>
@@ -167,7 +181,8 @@ class BottomSheet extends PureComponent<Props> {
  */
 function _mapStateToProps(state) {
     return {
-        _styles: ColorSchemeRegistry.get(state, 'BottomSheet')
+        _styles: ColorSchemeRegistry.get(state, 'BottomSheet'),
+        _height: state['features/base/responsive-ui'].clientHeight
     };
 }
 
