@@ -4,7 +4,6 @@ import { jitsiLocalStorage } from '@jitsi/js-utils';
 import uuid from 'uuid';
 
 import { BILLING_ID, VPAAS_TENANT_PREFIX } from './constants';
-import logger from './logger';
 
 /**
  * Returns the full vpaas tenant if available, given a path.
@@ -53,41 +52,6 @@ export function isVpaasMeeting(state: Object, requiredJwt: boolean = true) {
             state['features/base/connection'].locationURL.pathname)
         && isAllowed
     );
-}
-
-/**
- * Sends a billing counter request.
- *
- * @param {Object} reqData - The request info.
- * @param {string} reqData.baseUrl - The base url for the request.
- * @param {string} billingId - The unique id of the client.
- * @param {string} jwt - The JWT token.
- * @param {string} tenat - The client tenant.
- * @returns {void}
- */
-export async function sendCountRequest({ baseUrl, billingId, jwt, tenant }: {
-    baseUrl: string,
-    billingId: string,
-    jwt: string,
-    tenant: string
-}) {
-    const fullUrl = `${baseUrl}/${encodeURIComponent(tenant)}/${billingId}`;
-    const headers = {
-        'Authorization': `Bearer ${jwt}`
-    };
-
-    try {
-        const res = await fetch(fullUrl, {
-            method: 'GET',
-            headers
-        });
-
-        if (!res.ok) {
-            logger.error('Status error:', res.status);
-        }
-    } catch (err) {
-        logger.error('Could not send request', err);
-    }
 }
 
 /**
