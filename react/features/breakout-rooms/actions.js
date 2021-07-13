@@ -4,9 +4,8 @@ import i18next from 'i18next';
 import _ from 'lodash';
 import type { Dispatch } from 'redux';
 
-import { connect } from '../../../connection';
 import { getCurrentConference, setRoom } from '../base/conference';
-import { disconnect } from '../base/connection';
+import { connect, disconnect } from '../base/connection';
 import { getRemoteParticipants } from '../base/participants';
 import { createDesiredLocalTracks } from '../base/tracks';
 import { getConferenceOptions } from '../conference/functions';

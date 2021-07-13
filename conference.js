@@ -2816,7 +2816,7 @@ export default {
      * @param {boolean} [requestFeedback=false] if user feedback should be
      * requested
      */
-    async hangup(requestFeedback = false) {
+    hangup(requestFeedback = false) {
         APP.store.dispatch(disableReceiver());
 
         this._stopProxyConnection();
