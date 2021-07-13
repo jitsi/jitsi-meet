@@ -90,7 +90,7 @@ export async function connect(id, password, roomName) {
     const state = APP.store.getState();
     let { jwt } = state['features/base/jwt'];
 
-    if (!jwt && isVpaasMeeting(state)) {
+    if (!jwt && isVpaasMeeting(state, false)) {
         jwt = await getJaasJWT(state);
         APP.store.dispatch(setJWT(jwt));
     }
