@@ -43,7 +43,7 @@ export const RoomList = () => {
     const currentRoomId = useSelector(getCurrentRoomId);
     const rooms = Object.values(useSelector(getRooms, equals))
                     .filter((room: Object) => room.id !== currentRoomId)
-                    .sort((p1, p2) => (p1?.name || '').localeCompare(p2?.name || ''));
+                    .sort((p1: Object, p2: Object) => (p1?.name || '').localeCompare(p2?.name || ''));
     const [ raiseContext, setRaiseContext ] = useState<RaiseContext>(initialState);
     const inBreakoutRoom = useSelector(isInBreakoutRoom);
     const isLocalModerator = useSelector(isLocalParticipantModerator);
