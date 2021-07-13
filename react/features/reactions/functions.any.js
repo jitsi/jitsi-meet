@@ -49,7 +49,7 @@ export function messageToKeyArray(message: string) {
  * @returns {void}
  */
 export async function sendReactionsWebhook(state: Object, reactions: Array<string>) {
-    const url = state['features/base/config'].reactionsWebhookUrl;
+    const url = state['features/base/config'].webhookProxyUrl;
     const conference = state['features/base/conference'].conference;
     const jwt = state['features/base/jwt'].jwt;
     const locationURL = state['features/base/connection'].locationURL;
@@ -72,7 +72,7 @@ export async function sendReactionsWebhook(state: Object, reactions: Array<strin
 
     if (url) {
         try {
-            const res = await fetch(url, {
+            const res = await fetch(`${url}/reactions`, {
                 method: 'POST',
                 headers,
                 body: JSON.stringify(reqBody)
