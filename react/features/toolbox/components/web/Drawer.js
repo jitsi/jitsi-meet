@@ -48,22 +48,24 @@ function Drawer({
     const drawerRef: Object = useRef(null);
 
     /**
-     * Closes the drawer when clicking outside of it.
+     * Closes the drawer when clicking or touching outside of it.
      *
-     * @param {Event} event - Mouse down event object.
+     * @param {Event} event - Mouse down/start touch event object.
      * @returns {void}
      */
-    function handleOutsideClick(event: MouseEvent) {
+    function handleOutsideClickOrTouch(event: Event) {
         if (drawerRef.current && !drawerRef.current.contains(event.target)) {
             onClose();
         }
     }
 
     useEffect(() => {
-        window.addEventListener('mousedown', handleOutsideClick);
+        window.addEventListener('mousedown', handleOutsideClickOrTouch);
+        window.addEventListener('touchstart', handleOutsideClickOrTouch);
 
         return () => {
-            window.removeEventListener('mousedown', handleOutsideClick);
+            window.removeEventListener('mousedown', handleOutsideClickOrTouch);
+            window.removeEventListener('touchstart', handleOutsideClickOrTouch);
         };
     }, [ drawerRef ]);
 

@@ -1,6 +1,8 @@
 // @flow
 
 import UIEvents from '../../../../service/UI/UIEvents';
+import { showModeratedNotification } from '../../av-moderation/actions';
+import { shouldShowModeratedNotification } from '../../av-moderation/functions';
 import { hideNotification } from '../../notifications';
 import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { getAvailableDevices } from '../devices/actions';
@@ -135,7 +137,18 @@ MiddlewareRegistry.register(store => next => action => {
 
     case TOGGLE_SCREENSHARING:
         if (typeof APP === 'object') {
-            APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING, action.audioOnly);
+
+            // check for A/V Moderation when trying to start screen sharing
+            if (action.enabled && shouldShowModeratedNotification(MEDIA_TYPE.VIDEO, store.getState())) {
+                store.dispatch(showModeratedNotification(MEDIA_TYPE.PRESENTER));
+
+                return;
+            }
+
+            const { enabled, audioOnly } = action;
+
+            APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING, { enabled,
+                audioOnly });
         }
         break;
 

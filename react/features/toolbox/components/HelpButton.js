@@ -24,6 +24,7 @@ class HelpButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.help';
     icon = IconHelp;
     label = 'toolbar.help';
+    tooltip = 'toolbar.help';
 
     /**
      * Handles clicking / pressing the button, and opens a new window with the user documentation.

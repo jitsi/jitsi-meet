@@ -5,7 +5,6 @@ import type { Dispatch } from 'redux';
 
 import { createE2EEEvent, sendAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
-import { getParticipants } from '../../base/participants';
 import { Switch } from '../../base/react';
 import { connect } from '../../base/redux';
 import { toggleE2EE } from '../actions';
@@ -21,7 +20,7 @@ type Props = {
     /**
      * Indicates whether all participants in the conference currently support E2EE.
      */
-    _everyoneSupportsE2EE: boolean,
+    _everyoneSupportE2EE: boolean,
 
     /**
      * The redux {@code dispatch} function.
@@ -96,7 +95,7 @@ class E2EESection extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { _everyoneSupportsE2EE, t } = this.props;
+        const { _everyoneSupportE2EE, t } = this.props;
         const { enabled, expand } = this.state;
         const description = t('dialog.e2eeDescription');
 
@@ -120,7 +119,7 @@ class E2EESection extends Component<Props, State> {
                     </span> }
                 </p>
                 {
-                    !_everyoneSupportsE2EE
+                    !_everyoneSupportE2EE
                         && <span className = 'warning'>
                             { t('dialog.e2eeWarning') }
                         </span>
@@ -195,12 +194,11 @@ class E2EESection extends Component<Props, State> {
  * @returns {Props}
  */
 function mapStateToProps(state) {
-    const { enabled } = state['features/e2ee'];
-    const participants = getParticipants(state).filter(p => !p.local);
+    const { enabled, everyoneSupportE2EE } = state['features/e2ee'];
 
     return {
         _enabled: enabled,
-        _everyoneSupportsE2EE: participants.every(p => Boolean(p.e2eeSupported))
+        _everyoneSupportE2EE: everyoneSupportE2EE
     };
 }
 

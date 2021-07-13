@@ -3,8 +3,6 @@
 
 -- It is recommended to set muc_mapper_domain_base to the main domain being served (example.com)
 
-local jid = require "util.jid";
-
 local filters = require "util.filters";
 
 local muc_domain_base = module:get_option_string("muc_mapper_domain_base");

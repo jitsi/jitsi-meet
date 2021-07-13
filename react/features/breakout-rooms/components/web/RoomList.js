@@ -5,9 +5,9 @@ import React, { useCallback, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
 
-import { getParticipants, isLocalParticipantModerator } from '../../../base/participants';
+import { getParticipantCount, isLocalParticipantModerator } from '../../../base/participants';
 import { equals } from '../../../base/redux';
-import { ParticipantItem } from '../../../participants-pane/components/ParticipantItem';
+import ParticipantItem from '../../../participants-pane/components/ParticipantItem';
 import { getRooms, isInBreakoutRoom, getCurrentRoomId } from '../../functions';
 
 import { AutoAssignButton } from './AutoAssignButton';
@@ -41,11 +41,13 @@ const initialState = Object.freeze(Object.create(null));
 export const RoomList = () => {
     const isMouseOverMenu = useRef(false);
     const currentRoomId = useSelector(getCurrentRoomId);
-    const rooms = Object.values(useSelector(getRooms, equals)).filter((room: Object) => room.id !== currentRoomId);
+    const rooms = Object.values(useSelector(getRooms, equals))
+                    .filter((room: Object) => room.id !== currentRoomId)
+                    .sort((p1, p2) => (p1?.name || '').localeCompare(p2?.name || ''));
     const [ raiseContext, setRaiseContext ] = useState<RaiseContext>(initialState);
     const inBreakoutRoom = useSelector(isInBreakoutRoom);
     const isLocalModerator = useSelector(isLocalParticipantModerator);
-    const participantsCount = useSelector(getParticipants).length;
+    const participantsCount = useSelector(getParticipantCount);
 
     const lowerMenu = useCallback(() => {
         /**
@@ -110,10 +112,9 @@ export const RoomList = () => {
                             room = { room } />
                         {_.map(room.participants || {}, p => (
                             <ParticipantItem
-                                children = { null }
+                                displayName = { p.displayName }
                                 key = { p.jid }
-                                name = { p.displayName }
-                                participant = { p } />
+                                local = { false } />
                         ))}
                     </div>
                 ))}

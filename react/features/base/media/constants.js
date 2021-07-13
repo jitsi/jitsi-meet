@@ -1,3 +1,5 @@
+// @flow
+
 /**
  * The set of facing modes for camera.
  *
@@ -8,16 +10,19 @@ export const CAMERA_FACING_MODE = {
     USER: 'user'
 };
 
+export type MediaType = 'audio' | 'video' | 'presenter';
+
 /**
  * The set of media types.
  *
  * @enum {string}
  */
-export const MEDIA_TYPE = {
+export const MEDIA_TYPE: { AUDIO: MediaType, PRESENTER: MediaType, VIDEO: MediaType} = {
     AUDIO: 'audio',
     PRESENTER: 'presenter',
     VIDEO: 'video'
 };
+
 
 /* eslint-disable no-bitwise */
 

@@ -36,6 +36,12 @@
 
     .calendar-tab,
     .more-tab,
+    .box {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+
     .profile-edit {
         display: flex;
         width: 100%;
@@ -45,16 +51,22 @@
         flex: 1;
     }
     .settings-sub-pane {
-        flex-grow: 1;
+        flex: 1;
     }
 
+    .settings-sub-pane .right {
+        flex: 1;
+    }
+    .settings-sub-pane .left {
+        flex: 1;
+    }
+
+    .settings-sub-pane-element {
+        text-align: left;
+        flex: 1;
+    }
     .profile-edit-field {
         margin-right: 20px;
-    }
-
-    .language-settings {
-        max-width: 50%;
-        width: 35%;
     }
 
     .calendar-tab {

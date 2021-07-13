@@ -62,7 +62,6 @@ const _focusedElementsSelector = `:focus:is(${_elementsBlacklist.join(',')})`;
  * Maps keycode to character, id of popover for given function and function.
  */
 const KeyboardShortcut = {
-    isPushToTalkActive: false,
 
     init() {
         this._initGlobalShortcuts();
@@ -97,7 +96,6 @@ const KeyboardShortcut = {
                             PRESSED));
                         logger.log('Talk shortcut pressed');
                         APP.conference.muteAudio(false);
-                        this.isPushToTalkActive = true;
                     }
                 }
             } else if (this._getKeyboardKey(e).toUpperCase() === 'ESCAPE') {
@@ -232,12 +230,9 @@ const KeyboardShortcut = {
         // register SPACE shortcut in two steps to insure visibility of help
         // message
         this.registerShortcut(' ', null, () => {
-            if (this.isPushToTalkActive) {
-                sendAnalytics(createShortcutEvent('push.to.talk', RELEASED));
-                logger.log('Talk shortcut released');
-                APP.conference.muteAudio(true);
-                this.isPushToTalkActive = false;
-            }
+            sendAnalytics(createShortcutEvent('push.to.talk', RELEASED));
+            logger.log('Talk shortcut released');
+            APP.conference.muteAudio(true);
         });
         this._addShortcutToHelp('SPACE', 'keyboardShortcuts.pushToTalk');
 

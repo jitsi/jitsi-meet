@@ -1316,24 +1316,18 @@ export default {
     async joinRoom(roomName) {
         this.roomName = roomName;
 
-        const initialOptions = {
-            startAudioOnly: this.isAudioOnly(),
-            startScreenSharing: false,
-
-            // createInitialLocalTracks ignores this, must filter out later
-            startWithAudioMuted: this.isLocalAudioMuted(),
-            startWithVideoMuted: this.isLocalVideoMuted()
-        };
+        const initialOptions = { startScreenSharing: false };
 
         const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(initialOptions);
-        let localTracks = await tryCreateLocalTracks;
+        const localTracks = await tryCreateLocalTracks;
 
         this._displayErrorsForCreateInitialLocalTracks(errors);
-
-        if (this.isLocalAudioMuted()) {
-            localTracks = localTracks.filter(track => track.getType() !== MEDIA_TYPE.AUDIO);
-        }
-
+        localTracks.forEach(track => {
+            if ((track.isAudioTrack() && this.isLocalAudioMuted())
+                || (track.isVideoTrack() && this.isLocalVideoMuted())) {
+                track.mute();
+            }
+        });
         this._createRoom(localTracks);
 
         return new Promise((resolve, reject) => {
@@ -1901,7 +1895,6 @@ export default {
                     await this.useVideoStream(desktopVideoStream);
                 }
 
-
                 if (this._desktopAudioStream) {
                     // If there is a localAudio stream, mix in the desktop audio stream captured by the screen sharing
                     // api.
@@ -2220,6 +2213,10 @@ export default {
                     id: localParticipant.id,
                     isReplaced
                 }));
+
+                // we send readyToClose when kicked participant is replace so that
+                // embedding app can choose to dispose the iframe API on the handler.
+                APP.API.notifyReadyToClose();
             }
             APP.store.dispatch(kickedOut(room, participant));
         });
@@ -2493,8 +2490,8 @@ export default {
         });
 
         APP.UI.addListener(
-            UIEvents.TOGGLE_SCREENSHARING, audioOnly => {
-                this.toggleScreenSharing(undefined, { audioOnly });
+            UIEvents.TOGGLE_SCREENSHARING, ({ enabled, audioOnly }) => {
+                this.toggleScreenSharing(enabled, { audioOnly });
             }
         );
     },

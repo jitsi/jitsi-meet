@@ -7,11 +7,12 @@ import type { Dispatch } from 'redux';
 import { connect } from '../../../connection';
 import { getCurrentConference, setRoom } from '../base/conference';
 import { disconnect } from '../base/connection';
-import { getParticipants } from '../base/participants';
+import { getRemoteParticipants } from '../base/participants';
 import { createDesiredLocalTracks } from '../base/tracks';
 import { getConferenceOptions } from '../conference/functions';
 import { clearNotifications } from '../notifications';
 
+import { UPDATE_BREAKOUT_ROOMS } from './actionTypes';
 import {
     JSON_TYPE_ADD_BREAKOUT_ROOM,
     JSON_TYPE_MOVE_TO_ROOM_REQUEST,
@@ -33,13 +34,18 @@ declare var APP: Object;
  */
 export function createBreakoutRoom() {
     return (dispatch: Dispatch<any>, getState: Function) => {
-        const { nextIndex: index = 1 } = getBreakoutRooms(getState);
+        const { nextIndex: index = 1, rooms } = getBreakoutRooms(getState);
         const message = {
             type: JSON_TYPE_ADD_BREAKOUT_ROOM,
             subject: i18next.t('breakoutRooms.defaultName', { index }),
             nextIndex: index + 1
         };
 
+        dispatch({
+            type: UPDATE_BREAKOUT_ROOMS,
+            nextIndex: index + 1,
+            rooms
+        });
         getCurrentConference(getState).sendMessage(message, 'focus');
     };
 }
@@ -93,12 +99,12 @@ export function autoAssignToBreakoutRooms() {
         const breakoutRooms = _.filter(rooms, (room: Object) => !room.isMainRoom);
 
         if (breakoutRooms) {
-            const participants = getParticipants(getState).filter(p => !p.local);
-            const length = Math.ceil(participants.length / breakoutRooms.length);
+            const participantIds = Array.from(getRemoteParticipants(getState).keys());
+            const length = Math.ceil(participantIds.length / breakoutRooms.length);
 
-            _.chunk(_.shuffle([ ...participants ]), length).forEach((group, index) =>
-                group.forEach(participant =>
-                    dispatch(sendParticipantToRoom(participant.id, breakoutRooms[index].id))
+            _.chunk(_.shuffle(participantIds), length).forEach((group, index) =>
+                group.forEach(participantId =>
+                    dispatch(sendParticipantToRoom(participantId, breakoutRooms[index].id))
                 )
             );
         }

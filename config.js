@@ -101,6 +101,10 @@ var config = {
     // about the call.
     // enableSaveLogs: false,
 
+    // Enabling this will hide the "Show More" link in the GSM popover that can be
+    // used to display more statistics about the connection (IP, Port, protocol, etc).
+    // disableShowMoreStats: true,
+
     // Enabling this will run the lib-jitsi-meet noise detection module which will
     // notify the user if there is noise, other than voice, coming from the current
     // selected microphone. The purpose it to let the user know that the input could
@@ -513,6 +517,9 @@ var config = {
         // connection.
         enabled: true,
 
+        // Enable unified plan implementation support on Chromium for p2p connection.
+        // enableUnifiedOnChrome: false,
+
         // Sets the ICE transport policy for the p2p connection. At the time
         // of this writing the list of possible values are 'all' and 'relay',
         // but that is subject to change in the future. The enum is defined in
@@ -742,6 +749,18 @@ var config = {
     // is not persisting the local storage inside the iframe.
     // useHostPageLocalStorage: true,
 
+    // etherpad ("shared document") integration.
+    //
+
+    // If set, add a "Open shared document" link to the bottom right menu that
+    // will open an etherpad document.
+    // etherpad_base: 'https://your-etherpad-installati.on/p/',
+
+    // If etherpad_base is set, and useRoomAsSharedDocumentName is set to true,
+    // open a pad with the name of the room (lowercased) instead of a pad with a
+    // random UUID.
+    // useRoomAsSharedDocumentName: true,
+
     // List of undocumented settings used in jitsi-meet
     /**
      _immediateReloadThreshold
@@ -754,7 +773,6 @@ var config = {
      dialOutCodesUrl
      disableRemoteControl
      displayJids
-     etherpad_base
      externalConnectUrl
      firefox_fake_device
      googleApiApplicationClientID

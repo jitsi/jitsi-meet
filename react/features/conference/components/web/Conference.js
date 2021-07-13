@@ -4,6 +4,7 @@ import _ from 'lodash';
 import React from 'react';
 
 import VideoLayout from '../../../../../modules/UI/videolayout/VideoLayout';
+import AudioModerationNotifications from '../../../av-moderation/components/AudioModerationNotifications';
 import { getConferenceNameForTitle } from '../../../base/conference';
 import { connect, disconnect } from '../../../base/connection';
 import { translate } from '../../../base/i18n';
@@ -228,7 +229,11 @@ class Conference extends AbstractConference<Props, *> {
                     <Notice />
                     <div id = 'videospace'>
                         <LargeVideo />
-                        {!_isParticipantsPaneVisible && <KnockingParticipantList />}
+                        {!_isParticipantsPaneVisible
+                         && <div id = 'notification-participant-list'>
+                             <KnockingParticipantList />
+                             <AudioModerationNotifications />
+                         </div>}
                         <Filmstrip />
                     </div>
 

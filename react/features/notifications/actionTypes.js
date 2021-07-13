@@ -16,7 +16,7 @@ export const CLEAR_NOTIFICATIONS = 'CLEAR_NOTIFICATIONS';
  *
  * {
  *     type: HIDE_NOTIFICATION,
- *     uid: number
+ *     uid: string
  * }
  */
 export const HIDE_NOTIFICATION = 'HIDE_NOTIFICATION';
@@ -30,7 +30,7 @@ export const HIDE_NOTIFICATION = 'HIDE_NOTIFICATION';
  *     component: ReactComponent,
  *     props: Object,
  *     timeout: number,
- *     uid: number
+ *     uid: string
  * }
  */
 export const SHOW_NOTIFICATION = 'SHOW_NOTIFICATION';

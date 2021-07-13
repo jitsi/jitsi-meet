@@ -9,7 +9,8 @@ import {
     CONNECTION_ESTABLISHED,
     CONNECTION_FAILED,
     CONNECTION_WILL_CONNECT,
-    SET_LOCATION_URL
+    SET_LOCATION_URL,
+    SHOW_CONNECTION_INFO
 } from './actionTypes';
 import type { ConnectionFailedError } from './actions.native';
 
@@ -37,6 +38,9 @@ ReducerRegistry.register(
 
         case SET_ROOM:
             return _setRoom(state);
+
+        case SHOW_CONNECTION_INFO:
+            return _setShowConnectionInfo(state, action);
         }
 
         return state;
@@ -194,4 +198,20 @@ function _setRoom(state: Object) {
         error: undefined,
         passwordRequired: undefined
     });
+}
+
+/**
+ * Reduces a specific redux action {@link SHOW_CONNECTION_INFO} of the feature
+ * base/connection.
+ *
+ * @param {Object} state - The redux state of the feature base/connection.
+ * @param {Action} action - The redux action {@code SHOW_CONNECTION_INFO} to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/connection after the
+ * reduction of the specified action.
+ */
+function _setShowConnectionInfo(
+        state: Object,
+        { showConnectionInfo }: { showConnectionInfo: boolean }) {
+    return set(state, 'showConnectionInfo', showConnectionInfo);
 }

@@ -200,8 +200,8 @@
         "dismiss": "Dispensar",
         "displayNameRequired": "Oi! Qual o seu nome?",
         "done": "Feito",
-	"e2eeDescription": "Encriptação ponto-a-ponto é, no momento, EXPERIMENTAL. Por favor tenha em mente que habilitar a encriptação ponto-a-ponto irá desativar os serviços disponíveis no servidor como: gravação, transmissão ao vivo e telefonar participantes. Além disso a reunião só irá funcionar para os participantes entrando em browsers com suporte a funcionalidade.",
-	"e2eeLabel": "Enable End-to-End Encryption",
+        "e2eeDescription": "Encriptação ponto-a-ponto é, no momento, EXPERIMENTAL. Por favor tenha em mente que habilitar a encriptação ponto-a-ponto irá desativar os serviços disponíveis no servidor como: gravação, transmissão ao vivo e telefonar participantes. Além disso a reunião só irá funcionar para os participantes entrando em browsers com suporte a funcionalidade.",
+        "e2eeLabel": "Enable End-to-End Encryption",
         "e2eeWarning": "WARNING: Not all participants in this meeting seem to have support for End-to-End encryption. If you enable it they won't be able to see nor hear you.",
         "enterDisplayName": "Digite seu nome aqui",
         "error": "Erro",
@@ -304,12 +304,13 @@
         "transcribing": "Transcrevendo",
         "unlockRoom": "Remove a reunião $t(lockRoomPassword)",
         "userPassword": "senha do usuário",
+        "videoLink": "Link do vídeo",
         "WaitForHostMsg": "A conferência <b>{{room}}</b> ainda não começou. Se você é o anfitrião, faça a autenticação. Do contrário, aguarde a chegada do anfitrião.",
         "WaitForHostMsgWOk": "A conferência <b>{{room}}</b> ainda não começou. Se você é o anfitrião, pressione Ok para autenticar. Do contrário, aguarde a chegada do anfitrião.",
         "WaitingForHost": "Esperando o anfitrião...",
         "Yes": "Sim",
         "yourEntireScreen": "Toda sua tela"
-         },
+    },
     "dialOut": {
         "statusMessage": "está agora {{status}}"
     },
@@ -321,6 +322,28 @@
     },
     "embedMeeting": {
         "title": "Reunião em formato compacto"
+    },
+        "virtualBackground": {
+            "apply": "Aplicar",
+            "title": "Fundos virtuais",
+            "blur": "Desfoque",
+            "slightBlur": "Desfoque suave",
+            "removeBackground": "Remover fundo",
+            "addBackground": "Adicionar novo fundo",
+            "pleaseWait": "Aguarde...",
+            "none": "Nenhum",
+            "uploadedImage": "Imagem enviada {{index}}",
+            "deleteImage": "Excluir imagem",
+            "image1" : "Praia",
+            "image2" : "Parede branca neutra",
+            "image3" : "Quarto branco vazio",
+            "image4" : "Luminária preta",
+            "image5" : "Montanha",
+            "image6" : "Floresta",
+            "image7" : "Alvorada",
+            "desktopShareError": "Não foi possível compartilhar o desktop",
+            "desktopShare":"Compartilhar desktop",
+            "webAssemblyWarning": "Não há suporte para WebAssembly"
     },
     "feedback": {
         "average": "Média",
@@ -500,6 +523,18 @@
         "oldElectronClientDescription2": "última versão",
         "oldElectronClientDescription3": " agora!"
     },
+        "participantsPane": {
+            "close": "Fechar",
+            "headings": {
+                "lobby": "Sala de espera ({{count}})",
+                "participantsList": "Participantes da reunião ({{count}})"
+            },
+            "actions": {
+                "invite": "Convidar alguém",
+                "muteAll": "Silenciar todos",
+                "stopVideo": "Parar vídeo"
+        }
+    },
     "passwordSetRemotely": "Definido por outro participante",
     "passwordDigitsOnly": "Até {{number}} dígitos",
     "poweredby": "distribuído por",
@@ -514,23 +549,23 @@
         "configuringDevices": "Configurando dispositivos...",
         "connectedWithAudioQ": "Você está conectado com áudio?",
         "connection": {
-           "good": "Sua conexão com a internet parece boa!",
-           "nonOptimal": "Sua conexão com a internet não é boa",
-           "poor": "Você tem uma conexão a internet ruim"
+            "good": "Sua conexão com a internet parece boa!",
+            "nonOptimal": "Sua conexão com a internet não é boa",
+            "poor": "Você tem uma conexão a internet ruim"
         },
         "connectionDetails": {
-          "audioClipping": "Espera-se um áudio que pique.",
-          "audioHighQuality": "Espera-se um áudio de excelente qualidade.",
-          "audioLowNoVideo": "Espera-se uma qualidade baixa de áudio e sem vídeo.",
-          "goodQuality": "Muito bom! Qualidade da mídia será muito boa.",
-          "noMediaConnectivity": "Não conseguimos estabelcer conexão com as mídias para o teste. Normalmente é um problema de firewall ou NAT.",
-          "noVideo": "Espera-se um vídeo de qualidade ruim.",
-          "undetectable": "Se você continuar fazendo a chamada no browser, recomenda-se que o alto-falante, microfones e câmera estejam corretamente configurados, que você permitiu que o browser acesse seu microfone e câmera, e o browser esteja atualizado. Se ainda assim tenha problemas na chamada, contacte o desenvolvedor da aplicação.",
-          "veryPoorConnection": "Espera-se que a qualidade da chamada seja ruim.",
-          "videoFreezing": "Espera-se um vídeo congelado, preto ou pixelado.",
-          "videoHighQuality": "Espera-se um vídeo de boa qualidade.",
-          "videoLowQuality": "Espera-se um vídeo de baixa qualidade em termos de taxa de frame e resolução.",
-          "videoTearing": "Espera-se um vídeo pixelado ou com artefatos visuais."
+            "audioClipping": "Espera-se um áudio que pique.",
+            "audioHighQuality": "Espera-se um áudio de excelente qualidade.",
+            "audioLowNoVideo": "Espera-se uma qualidade baixa de áudio e sem vídeo.",
+            "goodQuality": "Muito bom! Qualidade da mídia será muito boa.",
+            "noMediaConnectivity": "Não conseguimos estabelcer conexão com as mídias para o teste. Normalmente é um problema de firewall ou NAT.",
+            "noVideo": "Espera-se um vídeo de qualidade ruim.",
+            "undetectable": "Se você continuar fazendo a chamada no browser, recomenda-se que o alto-falante, microfones e câmera estejam corretamente configurados, que você permitiu que o browser acesse seu microfone e câmera, e o browser esteja atualizado. Se ainda assim tenha problemas na chamada, contacte o desenvolvedor da aplicação.",
+            "veryPoorConnection": "Espera-se que a qualidade da chamada seja ruim.",
+            "videoFreezing": "Espera-se um vídeo congelado, preto ou pixelado.",
+            "videoHighQuality": "Espera-se um vídeo de boa qualidade.",
+            "videoLowQuality": "Espera-se um vídeo de baixa qualidade em termos de taxa de frame e resolução.",
+            "videoTearing": "Espera-se um vídeo pixelado ou com artefatos visuais."
         },
         "copyAndShare": "Copiar e compartilhar o link da reunião",
         "dialInMeeting": "Discar para a reunião",
@@ -582,7 +617,7 @@
     },
     "raisedHand": "Gostaria de falar",
     "recording": {
-	"limitNotificationDescriptionWeb": "Devido a demanda, sua gravação ficará limitada a {{limit}} minutos. Para gravação ilimitada tente <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
+        "limitNotificationDescriptionWeb": "Devido a demanda, sua gravação ficará limitada a {{limit}} minutos. Para gravação ilimitada tente <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "limitNotificationDescriptionNative": "Devido a demanda, sua gravação ficará limitada a {{limit}} minutos. Para gravação ilimitada tente <3>{{app}}</3>.",
         "authDropboxText": "Enviar para o Dropbox",
         "availableSpace": "Espaço disponível: {{spaceLeft}} MB (aproximadamente {{duration}} minutos de gravação)",
@@ -713,6 +748,8 @@
             "moreOptions": "Mostrar mais opções",
             "mute": "Alternar mudo do áudio",
             "muteEveryone": "Silenciar todos",
+            "muteEveryonesVideo": "Desativar a câmera de todos",
+            "participants": "Participantes",
             "pip": "Alternar modo Picture-in-Picture",
             "privateMessage": "Enviar mensagem privada",
             "profile": "Editar seu perfil",
@@ -792,7 +829,8 @@
         "toggleCamera": "Alternar câmera",
         "videomute": "Iniciar ou parar a câmera",
         "startvideoblur": "Desfocar meu plano de fundo",
-        "stopvideoblur": "Desativar desfoque de fundo"
+        "stopvideoblur": "Desativar desfoque de fundo",
+        "selectBackground": "Selecionar fundo"
     },
     "transcribing": {
         "ccButtonTooltip": "Iniciar/parar legendas",
@@ -889,7 +927,7 @@
         "roomnameHint": "Digite o nome ou a URL da sala que você deseja entrar. Você pode digitar um nome, e apenas deixe para as pessoas que você quer se reunir digitem o mesmo nome.",
         "sendFeedback": "Enviar comentários",
         "terms": "Termos",
-    	"title": "Videoconferências mais seguras, flexíveis e totalmente gratuitas"
+        "title": "Videoconferências mais seguras, flexíveis e totalmente gratuitas"
     },
     "lonelyMeetingExperience": {
         "youAreAlone": "Você é o único na reunião",

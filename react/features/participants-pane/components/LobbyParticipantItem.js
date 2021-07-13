@@ -4,10 +4,10 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
-import { setKnockingParticipantApproval } from '../../lobby/actions';
-import { ActionTrigger, MediaState } from '../constants';
+import { approveKnockingParticipant, rejectKnockingParticipant } from '../../lobby/actions';
+import { ACTION_TRIGGER, MEDIA_STATE } from '../constants';
 
-import { ParticipantItem } from './ParticipantItem';
+import ParticipantItem from './ParticipantItem';
 import { ParticipantActionButton } from './styled';
 
 type Props = {
@@ -20,17 +20,20 @@ type Props = {
 
 export const LobbyParticipantItem = ({ participant: p }: Props) => {
     const dispatch = useDispatch();
-    const admit = useCallback(() => dispatch(setKnockingParticipantApproval(p.id, true), [ dispatch ]));
-    const reject = useCallback(() => dispatch(setKnockingParticipantApproval(p.id, false), [ dispatch ]));
+    const admit = useCallback(() => dispatch(approveKnockingParticipant(p.id), [ dispatch ]));
+    const reject = useCallback(() => dispatch(rejectKnockingParticipant(p.id), [ dispatch ]));
     const { t } = useTranslation();
 
     return (
         <ParticipantItem
-            actionsTrigger = { ActionTrigger.Permanent }
-            audioMuteState = { MediaState.None }
-            name = { p.name }
-            participant = { p }
-            videoMuteState = { MediaState.None }>
+            actionsTrigger = { ACTION_TRIGGER.PERMANENT }
+            audioMediaState = { MEDIA_STATE.NONE }
+            displayName = { p.name }
+            local = { p.local }
+            participantID = { p.id }
+            raisedHand = { p.raisedHand }
+            videoMuteState = { MEDIA_STATE.NONE }
+            youText = { t('chat.you') }>
             <ParticipantActionButton
                 onClick = { reject }>
                 {t('lobby.reject')}

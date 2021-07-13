@@ -11,6 +11,7 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { Dialog } from '../../base/dialog';
+import { isMobileBrowser } from '../../base/environment/utils';
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
 import { cancelFeedback, submitFeedback } from '../actions';
@@ -222,9 +223,11 @@ class FeedbackDialog extends Component<Props, State> {
                         key = { index }
                         onClick = { config._onClick }
                         onKeyPress = { config._onKeyPres }
-                        onMouseOver = { config._onMouseOver }
                         role = 'button'
-                        tabIndex = { 0 }>
+                        tabIndex = { 0 }
+                        { ...(isMobileBrowser() ? {} : {
+                            onMouseOver: config._onMouseOver
+                        }) }>
                         { isFilled
                             ? <StarFilledIcon
                                 label = 'star-filled'

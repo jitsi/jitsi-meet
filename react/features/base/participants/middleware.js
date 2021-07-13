@@ -1,5 +1,7 @@
 // @flow
 
+import { batch } from 'react-redux';
+
 import UIEvents from '../../../../service/UI/UIEvents';
 import { toggleE2EE } from '../../e2ee/actions';
 import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
@@ -18,6 +20,7 @@ import {
     DOMINANT_SPEAKER_CHANGED,
     GRANT_MODERATOR,
     KICK_PARTICIPANT,
+    LOCAL_PARTICIPANT_RAISE_HAND,
     MUTE_REMOTE_PARTICIPANT,
     PARTICIPANT_DISPLAY_NAME_CHANGED,
     PARTICIPANT_JOINED,
@@ -42,7 +45,8 @@ import {
     getLocalParticipant,
     getParticipantById,
     getParticipantCount,
-    getParticipantDisplayName
+    getParticipantDisplayName,
+    getRemoteParticipants
 } from './functions';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
 
@@ -110,6 +114,29 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
+    case LOCAL_PARTICIPANT_RAISE_HAND: {
+        const { enabled } = action;
+        const localId = getLocalParticipant(store.getState())?.id;
+
+        store.dispatch(participantUpdated({
+            // XXX Only the local participant is allowed to update without
+            // stating the JitsiConference instance (i.e. participant property
+            // `conference` for a remote participant) because the local
+            // participant is uniquely identified by the very fact that there is
+            // only one local participant.
+
+            id: localId,
+            local: true,
+            raisedHand: enabled
+        }));
+
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyRaiseHandUpdated(localId, enabled);
+        }
+
+        break;
+    }
+
     case MUTE_REMOTE_PARTICIPANT: {
         const { conference } = store.getState()['features/base/conference'];
 
@@ -158,11 +185,12 @@ MiddlewareRegistry.register(store => next => action => {
 StateListenerRegistry.register(
     /* selector */ state => getCurrentConference(state),
     /* listener */ (conference, { dispatch, getState }) => {
-        for (const p of getState()['features/base/participants']) {
-            !p.local
-                && (!conference || p.conference !== conference)
-                && dispatch(participantLeft(p.id, p.conference, p.isReplaced));
-        }
+        batch(() => {
+            for (const [ id, p ] of getRemoteParticipants(getState())) {
+                (!conference || p.conference !== conference)
+                    && dispatch(participantLeft(id, p.conference, p.isReplaced));
+            }
+        });
     });
 
 /**

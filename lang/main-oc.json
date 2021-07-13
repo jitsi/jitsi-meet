@@ -1,6 +1,11 @@
 {
     "addPeople": {
         "add": "Convidar",
+        "addContacts": "Convidatz vòstres contactes",
+        "copyInvite": "Copiar l’invitacion de la conferéncia",
+        "copyLink": "Copiar lo ligam de la reünion",
+        "copyStream": "Copiar lo ligam del dirècte",
+        "contacts": "contactes",        
         "countryNotSupported": "Sèm pas encara compatibles amb aquesta destinacion.",
         "countryReminder": "Sonatz defòra los US ? Mercés de vos assegurar de començar amb lo còdi país.",
         "disabled": "Podètz pas convidar de monde.",
@@ -72,7 +77,11 @@
         },
         "privateNotice": "Messatge privat per {{recipient}}",
         "title": "Messatjariá",
-        "you": "vos"
+        "you": "vos",
+        "message": "Messatge",
+        "messageAccessibleTitle": "{{user}} ditz :",
+        "messageAccessibleTitleMe": "disi :",
+        "smileysPanel": "Panèl d’Emoji"        
     },
     "connectingOverlay": {
         "joiningRoom": "Connexion a vòstra reünion…"
