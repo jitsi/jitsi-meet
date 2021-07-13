@@ -38,7 +38,7 @@ export function messageToKeyArray(message: string) {
     formattedMessage = formattedMessage.replace(/:/g, '');
     const messageArray = formattedMessage.split('-');
 
-    return messageArray.map(reactionMessage => getReactionKeyByMessage(reactionMessage));
+    return messageArray.map<string>(reactionMessage => getReactionKeyByMessage(reactionMessage));
 }
 
 /**
