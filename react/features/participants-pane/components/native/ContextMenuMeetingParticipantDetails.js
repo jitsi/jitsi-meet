@@ -172,8 +172,8 @@ const ContextMenuMeetingParticipantDetails = (
                 _isLocalModerator && (
                     <>
                         {
-                            _isParticipantVideoMuted
-                            || <TouchableOpacity
+                            !_isParticipantVideoMuted
+                            && <TouchableOpacity
                                 onPress = { muteVideo }
                                 style = { styles.contextMenuItemSection }>
                                 <Icon

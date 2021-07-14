@@ -14,7 +14,7 @@ import {
 } from '../../../base/icons';
 import {
     getLocalParticipant,
-    getParticipantCount, isEveryoneModerator
+    getParticipantCount
 } from '../../../base/participants';
 import { BlockAudioVideoDialog } from '../../../video-menu';
 import MuteEveryonesVideoDialog
@@ -27,9 +27,8 @@ export const ContextMenuMore = () => {
     const blockAudioVideo = useCallback(() => dispatch(openDialog(BlockAudioVideoDialog)), [ dispatch ]);
     const cancel = useCallback(() => dispatch(hideDialog()), [ dispatch ]);
     const { id } = useSelector(getLocalParticipant);
-    const everyoneModerator = useSelector(isEveryoneModerator);
     const participantsCount = useSelector(getParticipantCount);
-    const showSlidingView = !everyoneModerator && participantsCount > 2;
+    const showSlidingView = participantsCount > 2;
     const muteAllVideo = useCallback(() =>
         dispatch(openDialog(MuteEveryonesVideoDialog,
             { exclude: [ id ] })),
