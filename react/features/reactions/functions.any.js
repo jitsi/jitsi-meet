@@ -23,7 +23,7 @@ export function getReactionsQueue(state: Object) {
  * @returns {string}
  */
 export function getReactionKeyByMessage(message: string) {
-    return Object.keys(REACTIONS).filter(key => REACTIONS[key].message === `:${message}:`)[0];
+    return Object.keys(REACTIONS).find(key => REACTIONS[key].message === `:${message}:`);
 }
 
 /**
@@ -38,7 +38,7 @@ export function messageToKeyArray(message: string) {
     formattedMessage = formattedMessage.replace(/:/g, '');
     const messageArray = formattedMessage.split('-');
 
-    return messageArray.map<string>(reactionMessage => getReactionKeyByMessage(reactionMessage));
+    return messageArray.map<string>(getReactionKeyByMessage);
 }
 
 /**
@@ -49,10 +49,10 @@ export function messageToKeyArray(message: string) {
  * @returns {void}
  */
 export async function sendReactionsWebhook(state: Object, reactions: Array<string>) {
-    const url = state['features/base/config'].webhookProxyUrl;
-    const conference = state['features/base/conference'].conference;
-    const jwt = state['features/base/jwt'].jwt;
-    const locationURL = state['features/base/connection'].locationURL;
+    const { webhookProxyUrl: url } = state['features/base/config'];
+    const { conference } = state['features/base/conference'];
+    const { jwt } = state['features/base/jwt'];
+    const { locationURL } = state['features/base/connection'];
     const localParticipant = getLocalParticipant(state);
 
     const headers = {
