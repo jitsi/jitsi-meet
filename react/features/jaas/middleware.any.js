@@ -2,7 +2,7 @@ import { sendAnalytics, createVpaasConferenceJoinedEvent } from '../analytics';
 import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
 import { MiddlewareRegistry } from '../base/redux';
 
-import { isVpaasMeeting, extractVpaasTenantFromPath } from './functions';
+import { isVpaasMeeting, getVpaasTenant } from './functions';
 
 /**
  * The redux middleware for billing counter.
@@ -32,7 +32,6 @@ MiddlewareRegistry.register(store => next => async action => {
 function _maybeTrackVpaasConferenceJoin(state) {
     if (isVpaasMeeting(state)) {
         sendAnalytics(createVpaasConferenceJoinedEvent(
-            extractVpaasTenantFromPath(
-                state['features/base/connection'].locationURL.pathname)));
+            getVpaasTenant(state)));
     }
 }

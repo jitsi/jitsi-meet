@@ -12,7 +12,7 @@ import logger from './logger';
  * @param {string} path - The meeting url path.
  * @returns {string}
  */
-export function extractVpaasTenantFromPath(path: string) {
+function extractVpaasTenantFromPath(path: string) {
     const [ , tenant ] = path.split('/');
 
     if (tenant.startsWith(VPAAS_TENANT_PREFIX)) {
