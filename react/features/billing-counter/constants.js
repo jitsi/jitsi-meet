@@ -6,4 +6,4 @@ export const BILLING_ID = 'jitsiMeetId';
 /**
  * The prefix for the vpaas tenant.
  */
-export const VPAAS_TENANT_PREFIX = 'vpaas-magic-cookie';
+export const VPAAS_TENANT_PREFIX = 'vpaas-magic-cookie-';
