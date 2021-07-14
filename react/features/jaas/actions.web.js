@@ -1,11 +1,11 @@
 // @flow
 
 import { openDialog } from '../base/dialog';
-import { VPAAS_TENANT_PREFIX } from '../jaas/constants';
-import { getVpaasTenant, isFeatureDisabled, sendGetDetailsRequest } from '../jaas/functions';
 
 import { SET_DETAILS } from './actionTypes';
 import { PremiumFeatureDialog } from './components';
+import { VPAAS_TENANT_PREFIX } from './constants';
+import { getVpaasTenant, isFeatureDisabled, sendGetDetailsRequest } from './functions';
 import logger from './logger';
 
 /**
