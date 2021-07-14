@@ -6,7 +6,10 @@ import { Button } from 'react-native-paper';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconInviteMore } from '../../../base/icons';
-import { getLocalParticipant, getParticipantCountWithFake } from '../../../base/participants';
+import {
+    getParticipantCountWithFake,
+    getSortedParticipantIds
+} from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { doInvitePeople } from '../../../invite/actions.native';
 import { shouldRenderInviteButton } from '../../functions';
@@ -15,11 +18,6 @@ import MeetingParticipantItem from './MeetingParticipantItem';
 import styles from './styles';
 
 type Props = {
-
-    /**
-     * The ID of the local participant.
-     */
-    _localParticipantId: string,
 
     /**
      * The number of participants in the conference.
@@ -34,7 +32,7 @@ type Props = {
     /**
      * The remote participants.
      */
-    _sortedRemoteParticipants: Map<string, string>,
+    _sortedParticipants: Map<string, string>,
 
     /**
      * The redux dispatch function.
@@ -126,10 +124,9 @@ class MeetingParticipantList extends PureComponent<Props> {
      */
     render() {
         const {
-            _localParticipantId,
             _participantsCount,
             _showInviteButton,
-            _sortedRemoteParticipants,
+            _sortedParticipants,
             t
         } = this.props;
 
@@ -151,7 +148,7 @@ class MeetingParticipantList extends PureComponent<Props> {
                 }
                 <FlatList
                     bounces = { false }
-                    data = { [ _localParticipantId, ..._sortedRemoteParticipants ] }
+                    data = { _sortedParticipants }
                     horizontal = { false }
                     keyExtractor = { this._keyExtractor }
                     renderItem = { this._renderParticipant }
@@ -171,14 +168,12 @@ class MeetingParticipantList extends PureComponent<Props> {
  */
 function _mapStateToProps(state): Object {
     const _participantsCount = getParticipantCountWithFake(state);
-    const { remoteParticipants } = state['features/filmstrip'];
     const _showInviteButton = shouldRenderInviteButton(state);
 
     return {
         _participantsCount,
         _showInviteButton,
-        _sortedRemoteParticipants: remoteParticipants,
-        _localParticipantId: getLocalParticipant(state)?.id
+        _sortedParticipants: getSortedParticipantIds(state)
     };
 }
 

@@ -35,6 +35,11 @@ type Props = {
     isKnockingParticipant: boolean,
 
     /**
+     * Whether or not the user is a moderator.
+     */
+    isModerator?: boolean,
+
+    /**
      * True if the participant is local.
      */
     local: boolean,
@@ -69,6 +74,7 @@ function ParticipantItem({
     children,
     displayName,
     isKnockingParticipant,
+    isModerator,
     local,
     onPress,
     participantID,
@@ -88,11 +94,14 @@ function ParticipantItem({
                     className = 'participant-avatar'
                     participantId = { participantID }
                     size = { 32 } />
-                <View style = { styles.participantNameContainer }>
-                    <Text style = { styles.participantName }>
-                        { displayName }
-                    </Text>
-                    { local ? <Text style = { styles.isLocal }>({t('chat.you')})</Text> : null }
+                <View style = { styles.participantDetailsContainer }>
+                    <View style = { styles.participantNameContainer }>
+                        <Text style = { styles.participantName }>
+                            { displayName }
+                        </Text>
+                        { local ? <Text style = { styles.isLocal }>({t('chat.you')})</Text> : null }
+                    </View>
+                    {isModerator && <Text style = { styles.moderatorLabel }>{t('videothumbnail.moderator')}</Text>}
                 </View>
                 {
                     !isKnockingParticipant

@@ -71,7 +71,6 @@ export function isForceMuted(participant: Object, mediaType: MediaType, state: O
  * @param {Object} participant - The participant.
  * @param {boolean} muted - The mute state of the participant.
  * @param {Object} state - The redux state.
- * @param {boolean} ignoreDominantSpeaker - Whether to ignore the dominant speaker state.
  * @returns {MediaState}
  */
 export function getParticipantAudioMediaState(participant: Object, muted: Boolean, state: Object) {
@@ -98,7 +97,6 @@ export function getParticipantAudioMediaState(participant: Object, muted: Boolea
  * @param {Object} participant - The participant.
  * @param {boolean} muted - The mute state of the participant.
  * @param {Object} state - The redux state.
- * @param {boolean} ignoreDominantSpeaker - Whether to ignore the dominant speaker state.
  * @returns {MediaState}
  */
 export function getParticipantVideoMediaState(participant: Object, muted: Boolean, state: Object) {

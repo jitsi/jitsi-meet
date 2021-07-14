@@ -66,12 +66,17 @@ class Notification extends AbstractNotification<Props> {
      * @private
      */
     _renderContent() {
-        const { maxLines = DEFAULT_MAX_LINES, t, title, titleArguments, titleKey } = this.props;
+        const { maxLines = DEFAULT_MAX_LINES, t, title, titleArguments, titleKey, concatText } = this.props;
         const titleText = title || (titleKey && t(titleKey, titleArguments));
         const description = this._getDescription();
+        const titleConcat = [];
+
+        if (concatText) {
+            titleConcat.push(titleText);
+        }
 
         if (description && description.length) {
-            return description.map((line, index) => (
+            return [ ...titleConcat, ...description ].map((line, index) => (
                 <Text
                     key = { index }
                     numberOfLines = { maxLines }

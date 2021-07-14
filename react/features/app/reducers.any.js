@@ -2,6 +2,7 @@
 
 import '../analytics/reducer';
 import '../authentication/reducer';
+import '../av-moderation/reducer';
 import '../base/app/reducer';
 import '../base/audio-only/reducer';
 import '../base/color-scheme/reducer';

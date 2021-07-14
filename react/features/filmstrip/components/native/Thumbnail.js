@@ -217,7 +217,9 @@ class Thumbnail extends PureComponent<Props> {
         const indicators = [];
 
         if (renderModeratorIndicator) {
-            indicators.push(<View style = { styles.moderatorIndicatorContainer }>
+            indicators.push(<View
+                key = 'moderator-indicator'
+                style = { styles.moderatorIndicatorContainer }>
                 <ModeratorIndicator />
             </View>);
         }
