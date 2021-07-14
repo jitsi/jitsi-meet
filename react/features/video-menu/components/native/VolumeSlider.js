@@ -148,7 +148,8 @@ function mapStateToProps(state, ownProps): Object {
 
     return {
         _startSilent: Boolean(startSilent),
-        _volume: localParticipant ? undefined : participantsVolume[participantID]
+        _volume: localParticipant ? undefined : participantID
+            ? participantsVolume[participantID] : undefined
     };
 }
 
