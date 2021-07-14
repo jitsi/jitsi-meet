@@ -7,7 +7,6 @@ import { translate } from '../../base/i18n';
 
 import SpeakerStatsSearch from './SpeakerStatsSearch';
 
-
 type Props = {
 
     /**
@@ -18,7 +17,7 @@ type Props = {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function,
 };
 
 /**
@@ -28,18 +27,13 @@ type Props = {
  */
 function SpeakerStatsHeader({ onSearch, t }: Props) {
     return (
-        <div
-            className = 'speaker-stats-header'>
-            <div
-                className = 'speaker-stats-heading' >
+        <div className = 'speaker-stats-header'>
+            <div className = 'speaker-stats-heading'>
                 <ModalHeader>
-                    <ModalTitle>
-                        { t('speakerStats.speakerStats') }
-                    </ModalTitle>
+                    <ModalTitle>{t('speakerStats.speakerStats')}</ModalTitle>
                 </ModalHeader>
             </div>
-            <SpeakerStatsSearch
-                onSearch = { onSearch } />
+            <SpeakerStatsSearch onSearch = { onSearch } />
         </div>
     );
 }
