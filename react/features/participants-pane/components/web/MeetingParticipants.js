@@ -9,12 +9,14 @@ import {
     getParticipantCountWithFake,
     getSortedParticipantIds
 } from '../../../base/participants';
+import { showOverflowDrawer } from '../../../toolbox/functions';
 import MuteRemoteParticipantDialog from '../../../video-menu/components/web/MuteRemoteParticipantDialog';
 import { findStyledAncestor, shouldRenderInviteButton } from '../../functions';
+import { useParticipantDrawer } from '../../hooks';
 
 import { InviteButton } from './InviteButton';
 import MeetingParticipantContextMenu from './MeetingParticipantContextMenu';
-import MeetingParticipantItem from './MeetingParticipantItem';
+import MeetingParticipantItems from './MeetingParticipantItems';
 import { Heading, ParticipantContainer } from './styled';
 
 type NullProto = {
@@ -32,7 +34,7 @@ type RaiseContext = NullProto | {|
   /**
    * The ID of the participant.
    */
-  participantID?: String,
+  participantID?: string,
 |};
 
 const initialState = Object.freeze(Object.create(null));
@@ -42,10 +44,11 @@ const initialState = Object.freeze(Object.create(null));
  *
  * @returns {ReactNode} - The component.
  */
-export function MeetingParticipantList() {
+export default function MeetingParticipants() {
     const dispatch = useDispatch();
     const isMouseOverMenu = useRef(false);
-    const sortedParticipantIds = useSelector(getSortedParticipantIds);
+    const participantIds = useSelector(getSortedParticipantIds);
+    const overflowDrawer = useSelector(showOverflowDrawer);
 
     // This is very important as getRemoteParticipants is not changing its reference object
     // and we will not re-render on change, but if count changes we will do
@@ -101,7 +104,8 @@ export function MeetingParticipantList() {
 
     const muteAudio = useCallback(id => () => {
         dispatch(openDialog(MuteRemoteParticipantDialog, { participantID: id }));
-    });
+    }, [ dispatch ]);
+    const [ drawerParticipant, closeDrawer, openDrawerForParticipant ] = useParticipantDrawer();
 
     // FIXME:
     // It seems that useTranslation is not very scallable. Unmount 500 components that have the useTranslation hook is
@@ -114,32 +118,33 @@ export function MeetingParticipantList() {
     const askUnmuteText = t('participantsPane.actions.askUnmute');
     const muteParticipantButtonText = t('dialog.muteParticipantButton');
 
-    const renderParticipant = id => (
-        <MeetingParticipantItem
-            askUnmuteText = { askUnmuteText }
-            isHighlighted = { raiseContext.participantID === id }
-            key = { id }
-            muteAudio = { muteAudio }
-            muteParticipantButtonText = { muteParticipantButtonText }
-            onContextMenu = { toggleMenu(id) }
-            onLeave = { lowerMenu }
-            participantActionEllipsisLabel = { participantActionEllipsisLabel }
-            participantID = { id }
-            youText = { youText } />
-    );
-
     return (
     <>
         <Heading>{t('participantsPane.headings.participantsList', { count: participantsCount })}</Heading>
         {showInviteButton && <InviteButton />}
         <div>
-            {sortedParticipantIds.map(renderParticipant)}
+            <MeetingParticipantItems
+                askUnmuteText = { askUnmuteText }
+                lowerMenu = { lowerMenu }
+                muteAudio = { muteAudio }
+                muteParticipantButtonText = { muteParticipantButtonText }
+                openDrawerForParticipant = { openDrawerForParticipant }
+                overflowDrawer = { overflowDrawer }
+                participantActionEllipsisLabel = { participantActionEllipsisLabel }
+                participantIds = { participantIds }
+                participantsCount = { participantsCount }
+                raiseContextId = { raiseContext.participantID }
+                toggleMenu = { toggleMenu }
+                youText = { youText } />
         </div>
         <MeetingParticipantContextMenu
+            closeDrawer = { closeDrawer }
+            drawerParticipant = { drawerParticipant }
             muteAudio = { muteAudio }
             onEnter = { menuEnter }
             onLeave = { menuLeave }
             onSelect = { lowerMenu }
+            overflowDrawer = { overflowDrawer }
             { ...raiseContext } />
     </>
     );

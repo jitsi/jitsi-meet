@@ -36,7 +36,7 @@ type Props = {
     /**
      * True if the participant is the local participant.
      */
-    _local: boolean,
+    _local: Boolean,
 
     /**
      * Shared video local participant owner.
@@ -97,6 +97,17 @@ type Props = {
     onLeave: Function,
 
     /**
+     * Callback used to open an actions drawer for a participant.
+     */
+    openDrawerForParticipant: Function,
+
+    /**
+     * True if an overflow drawer should be displayed.
+     */
+    overflowDrawer: boolean,
+
+
+    /**
      * The aria-label for the ellipsis action.
      */
     participantActionEllipsisLabel: string,
@@ -122,18 +133,20 @@ function MeetingParticipantItem({
     _audioMediaState,
     _displayName,
     _isVideoMuted,
-    _localVideoOwner,
     _local,
+    _localVideoOwner,
     _participant,
     _participantID,
     _quickActionButtonType,
     _raisedHand,
     askUnmuteText,
     isHighlighted,
-    onContextMenu,
-    onLeave,
     muteAudio,
     muteParticipantButtonText,
+    onContextMenu,
+    onLeave,
+    openDrawerForParticipant,
+    overflowDrawer,
     participantActionEllipsisLabel,
     youText
 }: Props) {
@@ -145,32 +158,32 @@ function MeetingParticipantItem({
             isHighlighted = { isHighlighted }
             local = { _local }
             onLeave = { onLeave }
+            openDrawerForParticipant = { openDrawerForParticipant }
+            overflowDrawer = { overflowDrawer }
             participantID = { _participantID }
             raisedHand = { _raisedHand }
             videoMuteState = { _isVideoMuted ? MEDIA_STATE.MUTED : MEDIA_STATE.UNMUTED }
             youText = { youText }>
-            {
-                !_participant.isFakeParticipant && (
-                    <>
-                        <ParticipantQuickAction
-                            askUnmuteText = { askUnmuteText }
-                            buttonType = { _quickActionButtonType }
-                            muteAudio = { muteAudio }
-                            muteParticipantButtonText = { muteParticipantButtonText }
-                            participantID = { _participantID } />
-                        <ParticipantActionEllipsis
-                            aria-label = { participantActionEllipsisLabel }
-                            onClick = { onContextMenu } />
-                    </>
-                )
-            }
-            {
-                _participant.isFakeParticipant && _localVideoOwner && (
+
+            {!overflowDrawer && !_participant.isFakeParticipant
+                && <>
+                    <ParticipantQuickAction
+                        askUnmuteText = { askUnmuteText }
+                        buttonType = { _quickActionButtonType }
+                        muteAudio = { muteAudio }
+                        muteParticipantButtonText = { muteParticipantButtonText }
+                        participantID = { _participantID } />
                     <ParticipantActionEllipsis
                         aria-label = { participantActionEllipsisLabel }
                         onClick = { onContextMenu } />
-                )
+                 </>
             }
+
+            {!overflowDrawer && _localVideoOwner && _participant.isFakeParticipant && (
+                <ParticipantActionEllipsis
+                    aria-label = { participantActionEllipsisLabel }
+                    onClick = { onContextMenu } />
+            )}
         </ParticipantItem>
     );
 }
