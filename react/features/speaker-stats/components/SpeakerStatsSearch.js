@@ -13,9 +13,9 @@ import { connect } from '../../base/redux';
 type Props = {
 
     /**
-     * The speakerStatsSearch config setting.
+     * The disableSpeakerStatsSearch config setting.
      */
-    _speakerStatsSearch: Boolean,
+    _disableSpeakerStatsSearch: Boolean,
 
     /**
      * The function to initiate the change in the speaker stats table.
@@ -86,10 +86,10 @@ class SpeakerStatsSearch extends PureComponent<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { _speakerStatsSearch } = this.props;
+        const { _disableSpeakerStatsSearch } = this.props;
 
-        if (!_speakerStatsSearch) {
-            return null;
+        if (_disableSpeakerStatsSearch) {
+            return <></>;
         }
 
         return (
@@ -115,7 +115,7 @@ class SpeakerStatsSearch extends PureComponent<Props, State> {
  * @param {Object} state - The redux state.
  * @private
  * @returns {{
- *     _speakerStatsSearch: ?string
+ *     _disableSpeakerStatsSearch: ?string
  * }}
  */
 function _mapStateToProps(state) {
@@ -123,12 +123,12 @@ function _mapStateToProps(state) {
 
     return {
         /**
-         * The speakerStatsSearch config setting.
+         * The disableSpeakerStatsSearch config setting.
          *
          * @private
          * @type {boolean|undefined}
          */
-        _speakerStatsSearch: config.speakerStatsSearch
+        _disableSpeakerStatsSearch: config.disableSpeakerStatsSearch
     };
 }
 
