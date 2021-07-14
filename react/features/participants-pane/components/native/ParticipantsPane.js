@@ -11,7 +11,6 @@ import { Icon, IconClose, IconHorizontalPoints } from '../../../base/icons';
 import { JitsiModal } from '../../../base/modal';
 import {
     getParticipantCount,
-    isEveryoneModerator,
     isLocalParticipantModerator
 } from '../../../base/participants';
 import MuteEveryoneDialog
@@ -34,8 +33,7 @@ const ParticipantsPane = () => {
     const closePane = useCallback(() => dispatch(close()), [ dispatch ]);
     const isLocalModerator = useSelector(isLocalParticipantModerator);
     const participantsCount = useSelector(getParticipantCount);
-    const everyoneModerator = useSelector(isEveryoneModerator);
-    const showContextMenu = !everyoneModerator && participantsCount > 2;
+    const showContextMenu = participantsCount > 2;
     const muteAll = useCallback(() => dispatch(openDialog(MuteEveryoneDialog)),
         [ dispatch ]);
     const { t } = useTranslation();

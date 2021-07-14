@@ -27,7 +27,6 @@ export const MeetingParticipantList = () => {
     const participants = useSelector(getRemoteParticipants);
     const participantsCount = useSelector(getParticipantCountWithFake);
     const showInviteButton = useSelector(shouldRenderInviteButton);
-
     const { t } = useTranslation();
 
     // eslint-disable-next-line react/no-multi-comp
@@ -35,7 +34,7 @@ export const MeetingParticipantList = () => {
         <MeetingParticipantItem
             key = { id }
             /* eslint-disable-next-line react/jsx-no-bind */
-            onPress = { () => !localParticipant && dispatch(showContextMenuDetails(id)) }
+            onPress = { () => dispatch(showContextMenuDetails(id)) }
             participantID = { id } />
     );
 
