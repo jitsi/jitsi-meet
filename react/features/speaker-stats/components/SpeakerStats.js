@@ -135,7 +135,7 @@ class SpeakerStats extends Component<Props, State> {
             const searchRegex = new RegExp(this.state.criteria, 'gi');
 
             for (const id in stats) {
-                if (Object.prototype.hasOwnProperty.call(stats[id], '_isLocalStats')) {
+                if (stats[id].hasOwnProperty('_isLocalStats')) {
                     const name = stats[id].isLocalStats() ? this.props._localDisplayName : stats[id].getDisplayName();
 
                     if (!name || !name.match(searchRegex)) {
