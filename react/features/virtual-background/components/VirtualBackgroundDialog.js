@@ -198,6 +198,8 @@ function VirtualBackground({
             blurValue: 25,
             selectedThumbnail: 'blur'
         });
+        logger.info('"Blur" option setted for virtual background preview!');
+
     }, []);
 
     const enableBlurKeyPress = useCallback(e => {
@@ -214,6 +216,8 @@ function VirtualBackground({
             blurValue: 8,
             selectedThumbnail: 'slight-blur'
         });
+        logger.info('"Slight-blur" option setted for virtual background preview!');
+
     }, []);
 
     const enableSlideBlurKeyPress = useCallback(e => {
@@ -273,6 +277,7 @@ function VirtualBackground({
             dispatch(openDialog(VirtualBackgroundDialog, { initialOptions: newOptions }));
         } else {
             setOptions(newOptions);
+            logger.info('"Desktop-share" option setted for virtual background preview!');
         }
     }, [ dispatch, options ]);
 
@@ -288,6 +293,8 @@ function VirtualBackground({
             enabled: false,
             selectedThumbnail: 'none'
         });
+        logger.info('"None" option setted for virtual background preview!');
+
     }, []);
 
     const removeBackgroundKeyPress = useCallback(e => {
@@ -308,6 +315,7 @@ function VirtualBackground({
                 url: image.src,
                 selectedThumbnail: image.id
             });
+            logger.info('Uploaded image setted for virtual background preview!');
         }
     }, [ storedImages ]);
 
@@ -324,6 +332,8 @@ function VirtualBackground({
                 url,
                 selectedThumbnail: image.id
             });
+            logger.info('Image setted for virtual background preview!');
+
             setLoading(false);
         }
     }, []);
@@ -351,6 +361,8 @@ function VirtualBackground({
                 selectedThumbnail: uuId
             });
         };
+        logger.info('New virtual background image uploaded!');
+
         reader.onerror = () => {
             setLoading(false);
             logger.error('Failed to upload virtual image!');
@@ -397,6 +409,8 @@ function VirtualBackground({
             }));
         }
         dispatch(hideDialog());
+        logger.info(`Virtual background type: '${typeof options.backgroundType === 'undefined'
+            ? 'none' : options.backgroundType}' applied!`);
     }, [ dispatch, options, _localFlipX ]);
 
     // Prevent the selection of a new virtual background if it has not been applied by default
