@@ -22,7 +22,7 @@ export function getReactionsQueue(state: Object) {
  * @param {string} message - The reaction message.
  * @returns {string}
  */
-export function getReactionKeyByMessage(message: string) {
+export function getReactionKeyByMessage(message: string): ?string {
     return Object.keys(REACTIONS).find(key => REACTIONS[key].message === `:${message}:`);
 }
 
@@ -38,7 +38,7 @@ export function messageToKeyArray(message: string) {
     formattedMessage = formattedMessage.replace(/:/g, '');
     const messageArray = formattedMessage.split('-');
 
-    return messageArray.map<string>(getReactionKeyByMessage);
+    return messageArray.map<?string>(getReactionKeyByMessage);
 }
 
 /**
@@ -48,7 +48,7 @@ export function messageToKeyArray(message: string) {
  * @param {Array} reactions - Reactions array to be sent.
  * @returns {void}
  */
-export async function sendReactionsWebhook(state: Object, reactions: Array<string>) {
+export async function sendReactionsWebhook(state: Object, reactions: Array<?string>) {
     const { webhookProxyUrl: url } = state['features/base/config'];
     const { conference } = state['features/base/conference'];
     const { jwt } = state['features/base/jwt'];
