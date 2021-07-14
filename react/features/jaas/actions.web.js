@@ -1,6 +1,7 @@
 // @flow
 
 import { openDialog } from '../base/dialog';
+import { VPAAS_TENANT_PREFIX } from '../billing-counter/constants';
 import { getVpaasTenant } from '../billing-counter/functions';
 
 import { SET_DETAILS } from './actionTypes';
@@ -31,7 +32,7 @@ export function getCustomerDetails() {
         const state = getState();
         const baseUrl = state['features/base/config'].jaasActuatorUrl;
         const jwt = state['features/base/jwt'].jwt;
-        const appId = getVpaasTenant(state);
+        const appId = getVpaasTenant(state).replace(VPAAS_TENANT_PREFIX, '');
 
         const shouldSendRequest = Boolean(baseUrl && jwt && appId);
 

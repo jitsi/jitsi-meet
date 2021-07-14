@@ -344,6 +344,7 @@
         "title": "Diese Konferenz einbetten"
     },
     "virtualBackground": {
+        "apply": "Anwenden",
         "title": "Hintergründe",
         "blur": "Hintergrund unscharf",
         "slightBlur": "Hintergrund leicht unscharf",
