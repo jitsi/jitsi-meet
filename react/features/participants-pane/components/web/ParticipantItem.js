@@ -1,6 +1,6 @@
 // @flow
 
-import React, { type Node } from 'react';
+import React, { type Node, useCallback } from 'react';
 
 import { Avatar } from '../../../base/avatar';
 import {
@@ -61,12 +61,22 @@ type Props = {
     /**
      * True if the participant is local.
      */
-    local: boolean,
+    local: Boolean,
+
+    /**
+     * Opens a drawer with participant actions.
+     */
+    openDrawerForParticipant: Function,
 
     /**
      * Callback for when the mouse leaves this component
      */
     onLeave?: Function,
+
+    /**
+     * If an overflow drawer can be opened.
+     */
+    overflowDrawer?: boolean,
 
     /**
      * The ID of the participant.
@@ -105,16 +115,24 @@ export default function ParticipantItem({
     displayName,
     participantID,
     local,
+    openDrawerForParticipant,
+    overflowDrawer,
     raisedHand,
     youText
 }: Props) {
     const ParticipantActions = Actions[actionsTrigger];
+    const onClick = useCallback(
+        () => openDrawerForParticipant({
+            participantID,
+            displayName
+        }));
 
     return (
         <ParticipantContainer
             id = { `participant-item-${participantID}` }
             isHighlighted = { isHighlighted }
             local = { local }
+            onClick = { !local && overflowDrawer ? onClick : undefined }
             onMouseLeave = { onLeave }
             trigger = { actionsTrigger }>
             <Avatar
