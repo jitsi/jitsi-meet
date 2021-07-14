@@ -22,12 +22,12 @@ import {
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { getLocalVideoTrack } from '../../../base/tracks';
-import { isVpaasMeeting } from '../../../billing-counter/functions';
 import { toggleChat } from '../../../chat';
 import { ChatButton } from '../../../chat/components';
 import { EmbedMeetingButton } from '../../../embed-meeting';
 import { SharedDocumentButton } from '../../../etherpad';
 import { FeedbackButton } from '../../../feedback';
+import { isVpaasMeeting } from '../../../jaas/functions';
 import { KeyboardShortcutsButton } from '../../../keyboard-shortcuts';
 import { LocalRecordingButton } from '../../../local-recording';
 import {
