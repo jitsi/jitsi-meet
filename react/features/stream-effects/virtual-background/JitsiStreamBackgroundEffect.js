@@ -97,11 +97,7 @@ export default class JitsiStreamBackgroundEffect {
         // Draw segmentation mask.
 
         // Smooth out the edges.
-        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE) {
-            this._outputCanvasCtx.filter = 'blur(4px)';
-        } else {
-            this._outputCanvasCtx.filter = 'blur(8px)';
-        }
+        this._outputCanvasCtx.filter = backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE ? 'blur(4px)' : 'blur(8px)';
         if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
             // Save current context before applying transformations.
             this._outputCanvasCtx.save();
