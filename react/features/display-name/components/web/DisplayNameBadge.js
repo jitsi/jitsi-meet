@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => {
  *
  * @returns {ReactElement}
  */
-const DisplayNameBadge = ({ name }: Props) => {
+function DisplayNameBadge({ name }: Props) {
     const classes = useStyles();
 
     return (
@@ -39,6 +39,6 @@ const DisplayNameBadge = ({ name }: Props) => {
             {name}
         </div>
     );
-};
+}
 
 export default DisplayNameBadge;

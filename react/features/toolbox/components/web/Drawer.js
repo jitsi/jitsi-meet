@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import React, { useCallback } from 'react';
 
 
 type Props = {
@@ -37,9 +37,9 @@ function Drawer({
      * @param {Object} event - The click event.
      * @returns {void}
      */
-    function handleInsideClick(event) {
+    const handleInsideClick = useCallback(event => {
         event.stopPropagation();
-    }
+    }, []);
 
     /**
      * Handles clicks outside of the menu, closing it, and also stopping further propagation.
@@ -47,10 +47,10 @@ function Drawer({
      * @param {Object} event - The click event.
      * @returns {void}
      */
-    function handleOutsideClick(event) {
+    const handleOutsideClick = useCallback(event => {
         event.stopPropagation();
         onClose();
-    }
+    }, [ onClose ]);
 
     return (
         isOpen ? (

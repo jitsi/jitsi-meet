@@ -40,6 +40,7 @@ const useStyles = makeStyles(theme => {
 /**
  * Component that renders a badge with the participant name on each thumbnail in tile view.
  *
+ * @param {Props} props - The props of the component.
  * @returns {ReactElement}
  */
 const ParticipantName = ({ participantId, participantSuffix }: Props) => {

@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import { getDominantSpeakerParticipant, getLocalParticipant, getPinnedParticipant } from '../../../base/participants';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { isToolboxVisible } from '../../../toolbox/functions.web';
-import { isLayoutTileView } from '../../functions';
+import { isLayoutTileView } from '../../../video-layout';
 
 import DisplayNameBadge from './DisplayNameBadge';
 
@@ -27,24 +27,27 @@ const useStyles = makeStyles(theme => {
     };
 });
 
+/**
+ * Component that renders the dominant speaker's name as a badge above the toolbar in stage view.
+ *
+ * @returns {ReactElement|null}
+ */
 const DominantSpeakerName = () => {
     const classes = useStyles();
 
     const pinnedParticipant = useSelector(getPinnedParticipant);
-    const pinnedName = pinnedParticipant?.name;
-
     const dominantSpeaker = useSelector(getDominantSpeakerParticipant);
-    const dominantName = dominantSpeaker?.name;
+    const selectedParticipant = pinnedParticipant ?? dominantSpeaker;
+    const nameToDisplay = selectedParticipant?.name;
+    const selectedId = selectedParticipant?.id;
 
     const localParticipant = useSelector(getLocalParticipant);
-    const localName = localParticipant?.name;
-
-    const nameToDisplay = pinnedName ?? dominantName;
+    const localId = localParticipant?.id;
 
     const isTileView = useSelector(isLayoutTileView);
     const toolboxVisible = useSelector(isToolboxVisible);
 
-    if (nameToDisplay && nameToDisplay !== localName && !isTileView) {
+    if (nameToDisplay && selectedId !== localId && !isTileView) {
         return (
             <div
                 className = { `${classes.badgeContainer}${toolboxVisible ? '' : ` ${classes.containerElevated}`}` }>
