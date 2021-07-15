@@ -166,21 +166,19 @@ function occupant_joined(event)
                 end
             end
 
-            if next(users_json) == nil then
-                return;
+            if next(users_json) ~= nil then
+                local body_json = {};
+                body_json.type = 'speakerstats';
+                body_json.users = users_json;
+
+                local stanza = st.message({
+                    from = module.host;
+                    to = occupant.jid; })
+                :tag("json-message", {xmlns='http://jitsi.org/jitmeet'})
+                :text(json.encode(body_json)):up();
+
+                room:route_stanza(stanza);
             end
-
-            local body_json = {};
-            body_json.type = 'speakerstats';
-            body_json.users = users_json;
-
-            local stanza = st.message({
-                from = module.host;
-                to = occupant.jid; })
-            :tag("json-message", {xmlns='http://jitsi.org/jitmeet'})
-            :text(json.encode(body_json)):up();
-
-            room:route_stanza(stanza);
         end
 
         local context_user = event.origin and event.origin.jitsi_meet_context_user or nil;
