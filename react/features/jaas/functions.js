@@ -1,9 +1,7 @@
 // @flow
 
-import { jitsiLocalStorage } from '@jitsi/js-utils';
-import uuid from 'uuid';
 
-import { BILLING_ID, VPAAS_TENANT_PREFIX } from './constants';
+import { VPAAS_TENANT_PREFIX } from './constants';
 import logger from './logger';
 
 /**
@@ -52,34 +50,6 @@ export function isVpaasMeeting(state: Object, requiredJwt: boolean = true) {
             state['features/base/connection'].locationURL.pathname)
         && isAllowed
     );
-}
-
-/**
- * Returns the stored billing id (or generates a new one if none is present).
- *
- * @returns {string}
- */
-export function getBillingId() {
-    let billingId = jitsiLocalStorage.getItem(BILLING_ID);
-
-    if (!billingId) {
-        billingId = uuid.v4();
-        jitsiLocalStorage.setItem(BILLING_ID, billingId);
-    }
-
-    return billingId;
-}
-
-/**
- * Returns the billing id for vpaas meetings.
- *
- * @param {Object} state - The state of the app.
- * @returns {string | undefined}
- */
-export function getVpaasBillingId(state: Object) {
-    if (isVpaasMeeting(state)) {
-        return getBillingId();
-    }
 }
 
 /**
