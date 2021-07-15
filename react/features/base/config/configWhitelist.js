@@ -133,6 +133,7 @@ export default [
     'hideParticipantsStats',
     'hideConferenceTimer',
     'hiddenDomain',
+    'hideAddRoomButton',
     'hideLobbyButton',
     'hosts',
     'iAmRecorder',

@@ -1313,11 +1313,39 @@ export default {
         }
     },
 
+    async joinRoom(roomName) {
+        this.roomName = roomName;
+
+        const initialOptions = { startScreenSharing: false };
+
+        const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(initialOptions);
+        const localTracks = await tryCreateLocalTracks;
+
+        this._displayErrorsForCreateInitialLocalTracks(errors);
+        localTracks.forEach(track => {
+            if ((track.isAudioTrack() && this.isLocalAudioMuted())
+                || (track.isVideoTrack() && this.isLocalVideoMuted())) {
+                track.mute();
+            }
+        });
+        this._createRoom(localTracks);
+
+        return new Promise((resolve, reject) => {
+            (new ConferenceConnector(resolve, reject)).connect();
+        });
+    },
+
     _createRoom(localTracks) {
+        const conferenceOptions = this._getConferenceOptions();
+        const customDomain = /_[-\da-f]{36}$/.test(APP.conference.roomName)
+            ? `breakout.${conferenceOptions.hosts.domain}`
+            : null;
+
         room
             = connection.initJitsiConference(
                 APP.conference.roomName,
-                this._getConferenceOptions());
+                { ...conferenceOptions,
+                    customDomain });
 
         APP.store.dispatch(conferenceWillJoin(room));
 
@@ -2837,6 +2865,17 @@ export default {
             }
             APP.store.dispatch(maybeRedirectToWelcomePage(values[0]));
         });
+    },
+
+    /**
+     * Leaves the room.
+     *
+     * @returns {Promise}
+     */
+    leaveRoom() {
+        if (room && room.isJoined()) {
+            return room.leave();
+        }
     },
 
     /**

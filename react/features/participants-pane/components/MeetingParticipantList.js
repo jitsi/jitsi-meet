@@ -10,6 +10,7 @@ import {
     getParticipantCountWithFake,
     getRemoteParticipants
 } from '../../base/participants';
+import { getCurrentRoomId, getRooms, isInBreakoutRoom } from '../../breakout-rooms/functions';
 import MuteRemoteParticipantDialog from '../../video-menu/components/web/MuteRemoteParticipantDialog';
 import { findStyledAncestor, shouldRenderInviteButton } from '../functions';
 
@@ -52,9 +53,12 @@ export function MeetingParticipantList() {
     // This is very important as getRemoteParticipants is not changing its reference object
     // and we will not re-render on change, but if count changes we will do
     const participantsCount = useSelector(getParticipantCountWithFake);
+    const currentRoomId = useSelector(getCurrentRoomId);
+    const { [currentRoomId]: currentRoom } = useSelector(getRooms);
 
     const showInviteButton = useSelector(shouldRenderInviteButton);
     const [ raiseContext, setRaiseContext ] = useState<RaiseContext>(initialState);
+    const inBreakoutRoom = useSelector(isInBreakoutRoom);
     const { t } = useTranslation();
 
     const lowerMenu = useCallback(() => {
@@ -139,8 +143,13 @@ export function MeetingParticipantList() {
 
     return (
     <>
-        <Heading>{t('participantsPane.headings.participantsList', { count: participantsCount })}</Heading>
-        {showInviteButton && <InviteButton />}
+        <Heading> {
+            currentRoom?.name
+                ? `${currentRoom.name} (${participantsCount})`
+                : t('participantsPane.headings.mainRoom', { count: participantsCount })
+        }
+        </Heading>
+        {!inBreakoutRoom && showInviteButton && <InviteButton />}
         <div>
             { items }
         </div>

@@ -8,6 +8,7 @@ import { translate } from '../../base/i18n';
 import {
     IconCloseCircle,
     IconCrown,
+    IconMeetingUnlocked,
     IconMessage,
     IconMicDisabled,
     IconMuteEveryoneElse,
@@ -20,6 +21,8 @@ import {
 } from '../../base/participants';
 import { connect } from '../../base/redux';
 import { isParticipantAudioMuted, isParticipantVideoMuted } from '../../base/tracks';
+import { sendParticipantToRoom } from '../../breakout-rooms/actions';
+import { getCurrentRoomId, getRooms } from '../../breakout-rooms/functions';
 import { openChat } from '../../chat/actions';
 import { GrantModeratorDialog, KickRemoteParticipantDialog, MuteEveryoneDialog } from '../../video-menu';
 import MuteRemoteParticipantsVideoDialog from '../../video-menu/components/web/MuteRemoteParticipantsVideoDialog';
@@ -36,6 +39,11 @@ import {
 type Props = {
 
     /**
+     * The id of the current room.
+     */
+     _currentRoomId: String,
+
+     /**
      * True if the local participant is moderator and false otherwise.
      */
     _isLocalModerator: boolean,
@@ -64,6 +72,11 @@ type Props = {
      * Participant reference
      */
     _participant: Object,
+
+    /**
+     * Rooms reference
+     */
+    _rooms: Array<Object>,
 
     /**
      * The dispatch function from redux.
@@ -143,6 +156,7 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
         this._onMuteEveryoneElse = this._onMuteEveryoneElse.bind(this);
         this._onMuteVideo = this._onMuteVideo.bind(this);
         this._onSendPrivateMessage = this._onSendPrivateMessage.bind(this);
+        this._onSendToRoom = this._onSendToRoom.bind(this);
         this._position = this._position.bind(this);
     }
 
@@ -219,6 +233,22 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
         dispatch(openChat(_participant));
     }
 
+    _onSendToRoom: (room: Object) => void;
+
+    /**
+     * Sends a participant to a room.
+     *
+     * @param {Object} room - The room that the participant should be moved to.
+     * @returns {void}
+     */
+    _onSendToRoom(room: Object) {
+        return () => {
+            const { _participant, dispatch } = this.props;
+
+            dispatch(sendParticipantToRoom(_participant.id, room.id));
+        };
+    }
+
     _position: () => void;
 
     /**
@@ -277,12 +307,14 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
      */
     render() {
         const {
+            _currentRoomId,
             _isLocalModerator,
             _isChatButtonEnabled,
             _isParticipantModerator,
             _isParticipantVideoMuted,
             _isParticipantAudioMuted,
             _participant,
+            _rooms,
             onEnter,
             onLeave,
             onSelect,
@@ -362,6 +394,21 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
                         )
                     }
                 </ContextMenuItemGroup>
+                {_rooms?.length > 0 && _isLocalModerator && (
+                    <ContextMenuItemGroup>
+                        {_rooms.map((room: Object) =>
+                            room.id !== _currentRoomId && <ContextMenuItem
+                                key = { room.id }
+                                onClick = { this._onSendToRoom(room) }>
+                                <ContextMenuIcon src = { IconMeetingUnlocked } />
+                                <span>{
+                                    t('breakoutRooms.actions.sendToBreakoutRoom',
+                                { name: room.name || t('breakoutRooms.mainRoom') })
+                                }</span>
+                            </ContextMenuItem>
+                        )}
+                    </ContextMenuItemGroup>
+                )}
             </ContextMenu>
         );
     }
@@ -380,19 +427,23 @@ function _mapStateToProps(state, ownProps): Object {
 
     const participant = getParticipantByIdOrUndefined(state, participantID);
 
+    const _currentRoomId = getCurrentRoomId(state);
     const _isLocalModerator = isLocalParticipantModerator(state);
     const _isChatButtonEnabled = isToolbarButtonEnabled('chat', state);
     const _isParticipantVideoMuted = isParticipantVideoMuted(participant, state);
     const _isParticipantAudioMuted = isParticipantAudioMuted(participant, state);
     const _isParticipantModerator = isParticipantModerator(participant);
+    const _rooms = Object.values(getRooms(state));
 
     return {
+        _currentRoomId,
         _isLocalModerator,
         _isChatButtonEnabled,
         _isParticipantModerator,
         _isParticipantVideoMuted,
         _isParticipantAudioMuted,
-        _participant: participant
+        _participant: participant,
+        _rooms
     };
 }
 

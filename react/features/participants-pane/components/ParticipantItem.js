@@ -85,17 +85,17 @@ type Props = {
     /**
      * Type of trigger for the participant actions
      */
-    actionsTrigger: ActionTrigger,
+    actionsTrigger?: ActionTrigger,
 
     /**
      * Media state for audio
      */
-    audioMediaState: MediaState,
+    audioMediaState?: MediaState,
 
     /**
      * React children
      */
-    children: Node,
+    children?: Node,
 
     /**
      * The name of the participant. Used for showing lobby names.
@@ -120,22 +120,22 @@ type Props = {
     /**
      * The ID of the participant.
      */
-    participantID: string,
+    participantID?: string,
 
     /**
      * True if the participant have raised hand.
      */
-    raisedHand: boolean,
+    raisedHand?: boolean,
 
     /**
      * Media state for video
      */
-    videoMuteState: MediaState,
+    videoMuteState?: MediaState,
 
     /**
      * The translated "you" text.
      */
-    youText: string
+    youText?: string
 }
 
 /**

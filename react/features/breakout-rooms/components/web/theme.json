@@ -1,0 +1,9 @@
+{
+  "contextFontSize": 14,
+  "contextFontWeight": 400,
+  "headerSize": 60,
+  "panePadding": 16,
+  "roomActionButtonHeight": 32,
+  "roomItemHeight": 40,
+  "rangeInputThumbSize": 14
+}

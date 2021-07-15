@@ -10,6 +10,8 @@ import {
     isLocalParticipantModerator
 } from '../../base/participants';
 import { connect } from '../../base/redux';
+import { AddBreakoutRoomButton } from '../../breakout-rooms/components/web/AddBreakoutRoomButton';
+import { RoomList } from '../../breakout-rooms/components/web/RoomList';
 import { MuteEveryoneDialog } from '../../video-menu/components/';
 import { close } from '../actions';
 import { classList, findStyledAncestor, getParticipantsPaneOpen } from '../functions';
@@ -33,6 +35,11 @@ import {
  * The type of the React {@code Component} props of {@link ParticipantsPane}.
  */
 type Props = {
+
+    /**
+     * Should the add breakout room button be displayed?
+     */
+     _showAddRoomButton: boolean,
 
     /**
      * Is the participants pane open.
@@ -121,6 +128,7 @@ class ParticipantsPane extends Component<Props, State> {
      */
     render() {
         const {
+            _showAddRoomButton,
             _paneOpen,
             _showContextMenu,
             _showFooter,
@@ -149,6 +157,8 @@ class ParticipantsPane extends Component<Props, State> {
                             <LobbyParticipantList />
                             <AntiCollapse />
                             <MeetingParticipantList />
+                            <RoomList />
+                            {_showAddRoomButton && <AddBreakoutRoomButton />}
                         </Container>
                         {_showFooter && (
                             <Footer>
@@ -255,11 +265,14 @@ class ParticipantsPane extends Component<Props, State> {
  */
 function _mapStateToProps(state: Object) {
     const isPaneOpen = getParticipantsPaneOpen(state);
+    const { hideAddRoomButton } = state['features/base/config'];
+    const _isLocalParticipantModerator = isLocalParticipantModerator(state);
 
     return {
+        _showAddRoomButton: !hideAddRoomButton && _isLocalParticipantModerator,
         _paneOpen: isPaneOpen,
         _showContextMenu: isPaneOpen && getParticipantCount(state) > 2,
-        _showFooter: isPaneOpen && isLocalParticipantModerator(state)
+        _showFooter: isPaneOpen && _isLocalParticipantModerator
     };
 }
 
