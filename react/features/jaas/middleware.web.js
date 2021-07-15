@@ -3,15 +3,11 @@ import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
 import { CONNECTION_FAILED } from '../base/connection';
 import { JitsiConnectionErrors } from '../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../base/redux';
+import { isVpaasMeeting } from '../billing-counter/functions';
 
 import { SET_DETAILS } from './actionTypes';
 import { getCustomerDetails } from './actions';
 import { STATUSES } from './constants';
-
-const redirectErrors = [
-    JitsiConnectionErrors.CONNECTION_DROPPED_ERROR,
-    JitsiConnectionErrors.PASSWORD_REQUIRED
-];
 
 /**
  * The redux middleware for jaas.
@@ -29,7 +25,15 @@ MiddlewareRegistry.register(store => next => async action => {
     case CONNECTION_FAILED: {
         const { error } = action;
 
-        if (error && redirectErrors.includes(error.name)) {
+        if (!isVpaasMeeting(store.getState()) || !error) {
+            break;
+        }
+
+        if (error.name === JitsiConnectionErrors.PASSWORD_REQUIRED) {
+            if (error.message !== 'could not obtain public key') {
+                break;
+            }
+
             store.dispatch(redirectToStaticPage('/static/planLimit.html'));
         }
         break;
