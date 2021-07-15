@@ -9,7 +9,8 @@ import { setScreenshareFramerate } from '../screen-share/actions';
 
 import {
     SET_AUDIO_SETTINGS_VISIBILITY,
-    SET_VIDEO_SETTINGS_VISIBILITY
+    SET_VIDEO_SETTINGS_VISIBILITY,
+    SET_DESKTOP_SHARE_SETTINGS_VISIBILITY
 } from './actionTypes';
 import { LogoutDialog, SettingsDialog } from './components';
 import { getMoreTabProps, getProfileTabProps, getSoundsTabProps } from './functions';
@@ -60,6 +61,19 @@ function setAudioSettingsVisibility(value: boolean) {
 function setVideoSettingsVisibility(value: boolean) {
     return {
         type: SET_VIDEO_SETTINGS_VISIBILITY,
+        value
+    };
+}
+
+/**
+ * Sets the visibility of the desktop share settings.
+ *
+ * @param {boolean} value - The new value.
+ * @returns {Function}
+ */
+function setDesktopShareSettingsVisibility(value: boolean) {
+    return {
+        type: SET_DESKTOP_SHARE_SETTINGS_VISIBILITY,
         value
     };
 }
@@ -177,5 +191,18 @@ export function toggleVideoSettings() {
         const value = getState()['features/settings'].videoSettingsVisible;
 
         dispatch(setVideoSettingsVisibility(!value));
+    };
+}
+
+/**
+ * Toggles the visibility of the share screen settings.
+ *
+ * @returns {void}
+ */
+export function toggleShareScreenSettings() {
+    return (dispatch: Function, getState: Function) => {
+        const value = getState()['features/settings'].desktopShareSettingsVisible;
+
+        dispatch(setDesktopShareSettingsVisibility(!value));
     };
 }

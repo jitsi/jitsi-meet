@@ -1,136 +1,154 @@
 // @flow
 
+import React, { Component } from 'react';
+
+import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
-import { IconShareDesktop } from '../../../base/icons';
-import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
+import { IconArrowUp } from '../../../base/icons';
 import { connect } from '../../../base/redux';
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-import { getLocalVideoTrack } from '../../../base/tracks';
-import { isScreenAudioShared } from '../../../screen-share';
+import { ToolboxButtonWithIcon } from '../../../base/toolbox/components';
+import { getLocalJitsiVideoTrack } from '../../../base/tracks';
+import { toggleShareScreenSettings, ScreenShareSettingsPopup } from '../../../settings';
+import { getDesktopShareSettingsVisibility } from '../../../settings/functions';
+import { isVideoSettingsButtonDisabled } from '../../functions';
+import MainShareDesktopButton from '../MainShareDesktopButton';
 
-type Props = AbstractButtonProps & {
 
-     /**
-     * Whether or not screensharing is initialized.
-     */
-      _desktopSharingEnabled: boolean,
-
-    /**
-     * The tooltip key to use when screensharing is disabled. Or undefined
-     * if non to be shown and the button to be hidden.
-     */
-    _desktopSharingDisabledTooltipKey: string,
+type Props = {
 
     /**
-     * Whether or not the local participant is screensharing.
+     * Click handler for the small icon. Opens video options.
      */
-     _screensharing: boolean,
+    onDesktopShareOptionsClick: Function,
 
     /**
-     * The redux {@code dispatch} function.
+     * Indicates whether video permissions have been granted or denied.
      */
-     dispatch: Function,
+    hasPermissions: boolean,
 
-     /**
-      * External handler for click action.
-      */
-      handleClick: Function
+    /**
+     * Whether there is a video track or not.
+     */
+    hasVideoTrack: boolean,
+
+    /**
+     * If the button should be disabled
+     */
+    isDisabled: boolean,
+
+    /**
+     * Flag controlling the visibility of the button.
+     * VideoSettings popup is currently disabled on mobile browsers
+     * as mobile devices do not support capture of more than one
+     * camera at a time.
+     */
+    visible: boolean,
+
+    /**
+     * Used for translation
+     */
+    t: Function,
+
+    /**
+     * Defines is popup is open
+     */
+    isOpen: boolean
 };
 
 /**
- * Implementation of a button for sharing desktop / windows.
+ * Button used for video & video settings.
+ *
+ * @returns {ReactElement}
  */
-class ShareDesktopButton extends AbstractButton<Props, *> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.shareYourScreen';
-    label = 'toolbar.startScreenSharing';
-    icon = IconShareDesktop;
-    toggledLabel = 'toolbar.stopScreenSharing'
-    tooltip = 'toolbar.accessibilityLabel.shareYourScreen';
-
+class ShareDesktopButton extends Component<Props> {
     /**
-     * Retrieves tooltip dynamically.
+     * Initializes a new {@code AudioSettingsButton} instance.
+     *
+     * @inheritdoc
      */
-    get tooltip() {
-        const { _desktopSharingDisabledTooltipKey, _desktopSharingEnabled, _screensharing } = this.props;
+    constructor(props: Props) {
+        super(props);
 
-        if (_desktopSharingEnabled) {
-            if (_screensharing) {
-                return 'toolbar.stopScreenSharing';
-            }
-
-            return 'toolbar.startScreenSharing';
-        }
-
-        return _desktopSharingDisabledTooltipKey;
+        this._onEscClick = this._onEscClick.bind(this);
     }
 
     /**
-     * Required by linter due to AbstractButton overwritten prop being writable.
+     * Returns true if the settings icon is disabled.
      *
-     * @param {string} value - The icon value.
+     * @returns {boolean}
      */
-    set tooltip(value) {
-        return value;
+    _isIconDisabled() {
+        const { hasPermissions, hasVideoTrack, isDisabled } = this.props;
+
+        return (!hasPermissions || isDisabled) && !hasVideoTrack;
     }
+    _onEscClick: (KeyboardEvent) => void;
 
     /**
-     * Handles clicking / pressing the button, and opens the appropriate dialog.
+     * Click handler for the more actions entries.
      *
-     * @protected
+     * @param {KeyboardEvent} event - Esc key click to close the popup.
      * @returns {void}
      */
-    _handleClick() {
-        this.props.handleClick();
+    _onEscClick(event) {
+        if (event.key === 'Escape' && this.props.isOpen) {
+            event.preventDefault();
+            event.stopPropagation();
+            this.props.onDesktopShareOptionsClick();
+        }
     }
 
     /**
-     * Indicates whether this button is in toggled state or not.
+     * Implements React's {@link Component#render}.
      *
-     * @override
-     * @protected
-     * @returns {boolean}
+     * @inheritdoc
      */
-    _isToggled() {
-        return this.props._screensharing;
-    }
+    render() {
+        const { onDesktopShareOptionsClick, t, visible, isOpen } = this.props;
 
-    /**
-     * Indicates whether this button is in disabled state or not.
-     *
-     * @override
-     * @protected
-     * @returns {boolean}
-     */
-    _isDisabled() {
-        return !this.props._desktopSharingEnabled;
+        return visible ? (
+            <ScreenShareSettingsPopup>
+                <ToolboxButtonWithIcon
+                    ariaControls = 'video-settings-dialog'
+                    ariaExpanded = { isOpen }
+                    ariaHasPopup = { true }
+                    ariaLabel = { this.props.t('toolbar.accessibilityLabel.shareYourScreen') }
+                    icon = { IconArrowUp }
+                    iconDisabled = { this._isIconDisabled() }
+                    iconId = 'video-settings-button'
+                    iconTooltip = { t('toolbar.otherScreenShareOptions') }
+                    onIconClick = { onDesktopShareOptionsClick }
+                    onIconKeyDown = { this._onEscClick }>
+                    <MainShareDesktopButton />
+                </ToolboxButtonWithIcon>
+            </ScreenShareSettingsPopup>
+        ) : <MainShareDesktopButton />;
     }
 }
 
 /**
  * Function that maps parts of Redux state tree into component props.
-*
+ *
  * @param {Object} state - Redux state.
  * @returns {Object}
  */
-const mapStateToProps = state => {
-    const localVideo = getLocalVideoTrack(state['features/base/tracks']);
-    let desktopSharingEnabled = JitsiMeetJS.isDesktopSharingEnabled();
-    const { enableFeaturesBasedOnToken } = state['features/base/config'];
-
-    let desktopSharingDisabledTooltipKey;
-
-    if (enableFeaturesBasedOnToken) {
-        // we enable desktop sharing if any participant already have this
-        // feature enabled
-        desktopSharingEnabled = state['features/base/participants'].haveParticipantWithScreenSharingFeature;
-        desktopSharingDisabledTooltipKey = 'dialog.shareYourScreenDisabled';
-    }
+function mapStateToProps(state) {
+    const { permissions = {} } = state['features/base/devices'];
 
     return {
-        _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,
-        _desktopSharingEnabled: desktopSharingEnabled,
-        _screensharing: (localVideo && localVideo.videoType === 'desktop') || isScreenAudioShared(state)
+        hasPermissions: permissions.video,
+        hasVideoTrack: Boolean(getLocalJitsiVideoTrack(state)),
+        isDisabled: isVideoSettingsButtonDisabled(state),
+        isOpen: getDesktopShareSettingsVisibility(state),
+        visible: !isMobileBrowser()
     };
+}
+
+const mapDispatchToProps = {
+    onDesktopShareOptionsClick: toggleShareScreenSettings
 };
 
-export default translate(connect(mapStateToProps)(ShareDesktopButton));
+export default translate(connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(ShareDesktopButton));

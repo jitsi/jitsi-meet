@@ -262,3 +262,13 @@ export function getAudioSettingsVisibility(state: Object) {
 export function getVideoSettingsVisibility(state: Object) {
     return state['features/settings'].videoSettingsVisible;
 }
+
+/**
+ * Returns the visibility state of the desktop share settings.
+ *
+ * @param {Object} state - The state of the application.
+ * @returns {boolean}
+ */
+export function getDesktopShareSettingsVisibility(state: Object) {
+    return state['features/settings'].desktopShareSettingsVisible;
+}

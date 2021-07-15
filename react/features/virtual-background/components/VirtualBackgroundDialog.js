@@ -108,6 +108,11 @@ type Props = {
     initialOptions: Object,
 
     /**
+     * Flag that indicates if virtual background dialog was opened from share screen toolbox menu.
+     */
+    share: boolean,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -151,6 +156,7 @@ function VirtualBackground({
     _virtualBackground,
     dispatch,
     initialOptions,
+    share,
     t
 }: Props) {
     const [ options, setOptions ] = useState({ ...initialOptions });
@@ -162,6 +168,7 @@ function VirtualBackground({
         ? _virtualBackground.virtualSource
         : null);
     const [ initialVirtualBackground ] = useState(_virtualBackground);
+    const [ isOpenFromToolbox ] = useState(share ? share : false);
     const deleteStoredImage = useCallback(e => {
         const imageId = e.currentTarget.getAttribute('data-imageid');
 
@@ -516,9 +523,10 @@ function VirtualBackground({
                             <div
                                 aria-checked = { _selectedThumbnail === 'desktop-share' }
                                 aria-label = { t('virtualBackground.desktopShare') }
-                                className = { _selectedThumbnail === 'desktop-share'
+                                className = { `${_selectedThumbnail === 'desktop-share'
                                     ? 'background-option desktop-share-selected'
-                                    : 'background-option desktop-share' }
+                                    : 'background-option desktop-share'}
+                                    ${isOpenFromToolbox ? 'focus-desktop-share' : ''}` }
                                 onClick = { shareDesktop }
                                 onKeyPress = { shareDesktopKeyPress }
                                 role = 'radio'

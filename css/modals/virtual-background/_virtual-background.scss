@@ -201,3 +201,17 @@
     top: 40%;
     left: 45%;
 }
+
+.focus-desktop-share {
+    animation: highlight 3000ms;
+}
+
+@keyframes highlight {
+    to {
+        box-shadow: 0 0 0 99999px rgba(0, 0, 0, 0.8);
+        position: relative;
+        z-index: 9;
+        pointer-events: auto;
+        transition: all 0, 5s ease-in;
+    }
+}
