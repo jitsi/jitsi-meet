@@ -164,7 +164,7 @@ MiddlewareRegistry.register(store => next => action => {
             message: action.message,
             privateMessage: false,
             timestamp: Date.now()
-        });
+        }, false);
     }
     }
 
@@ -273,7 +273,7 @@ function _addChatMsgListener(conference, store) {
                             message: reactions[_id].message,
                             privateMessage: false,
                             timestamp: eventData.timestamp
-                        });
+                        }, false);
                         delete reactions[_id];
                     }, 500);
                 }
@@ -308,14 +308,18 @@ function _handleChatError({ dispatch }, error) {
  *
  * @param {Store} store - The Redux store.
  * @param {Object} message - The message object.
+ * @param {boolean} shouldPlaySound - Whether or not to play the incoming message sound.
  * @returns {void}
  */
-function _handleReceivedMessage({ dispatch, getState }, { id, message, privateMessage, timestamp }) {
+function _handleReceivedMessage({ dispatch, getState },
+        { id, message, privateMessage, timestamp },
+        shouldPlaySound = true
+) {
     // Logic for all platforms:
     const state = getState();
     const { isOpen: isChatOpen } = state['features/chat'];
 
-    if (!isChatOpen) {
+    if (shouldPlaySound && !isChatOpen) {
         dispatch(playSound(INCOMING_MSG_SOUND_ID));
     }
 
