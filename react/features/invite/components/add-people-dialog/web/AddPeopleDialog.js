@@ -16,6 +16,7 @@ import { updateDialInNumbers } from '../../../actions';
 import {
     _getDefaultPhoneNumber,
     getInviteText,
+    getInviteTextiOS,
     isAddPeopleEnabled,
     isDialOutEnabled,
     sharingFeatures,
@@ -61,6 +62,12 @@ type Props = {
      * The meeting invitation text.
      */
     _invitationText: string,
+
+    /**
+     * The custom no new-lines meeting invitation text for iOS default email.
+     * Needed because of this mailto: iOS issue: https://developer.apple.com/forums/thread/681023
+     */
+    _invitationTextiOS: string,
 
     /**
      * An alternate app name to be displayed in the email subject.
@@ -110,6 +117,7 @@ function AddPeopleDialog({
     _urlSharingVisible,
     _emailSharingVisible,
     _invitationText,
+    _invitationTextiOS,
     _inviteAppName,
     _inviteContactsVisible,
     _inviteUrl,
@@ -160,7 +168,8 @@ function AddPeopleDialog({
                     _emailSharingVisible
                         ? <InviteByEmailSection
                             inviteSubject = { inviteSubject }
-                            inviteText = { _invitationText } />
+                            inviteText = { _invitationText }
+                            inviteTextiOS = { _invitationTextiOS } />
                         : null
                 }
                 { _embedMeetingVisible && <EmbedMeetingTrigger /> }
@@ -205,6 +214,9 @@ function mapStateToProps(state, ownProps) {
         _urlSharingVisible: isDynamicBrandingDataLoaded(state) && isSharingEnabled(sharingFeatures.url),
         _emailSharingVisible: isSharingEnabled(sharingFeatures.email),
         _invitationText: getInviteText({ state,
+            phoneNumber,
+            t: ownProps.t }),
+        _invitationTextiOS: getInviteTextiOS({ state,
             phoneNumber,
             t: ownProps.t }),
         _inviteAppName: inviteAppName,
