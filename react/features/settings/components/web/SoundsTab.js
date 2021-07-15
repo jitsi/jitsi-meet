@@ -42,16 +42,16 @@ export type Props = {
 }
 
 /**
- * React {@code Component} for modifying the local user's profile.
+ * React {@code Component} for modifying the local user's sound settings.
  *
  * @extends Component
  */
 class SoundsTab extends AbstractDialogTab<Props> {
     /**
-     * Initializes a new {@code ConnectedSettingsDialog} instance.
+     * Initializes a new {@code SoundsTab} instance.
      *
      * @param {Props} props - The React {@code Component} props to initialize
-     * the new {@code ConnectedSettingsDialog} instance with.
+     * the new {@code SoundsTab} instance with.
      */
     constructor(props: Props) {
         super(props);
