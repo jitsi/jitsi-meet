@@ -4,34 +4,6 @@
     width: 100%;
     font-weight: 500;
 
-    .speaker-stats-header {
-        display: inline-block;
-        width: 100%;
-        .speaker-stats-heading {
-            float: left;
-            > header {
-                padding: 17px 0;
-            }
-        }
-        .speaker-stats-search {
-            float: right;
-            > div {
-                width: 170px;
-                > label {
-                    display: none;
-                }
-                > div {
-                    margin-top: 10px;
-                    > div {
-                        > div {
-                            border-color: #202B3D !important;
-                        }
-                    }
-                } 
-            }
-        }
-    }
-
     .speaker-stats-item__status-dot {
         position: relative;
         display: block;

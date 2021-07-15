@@ -8,9 +8,9 @@ import { getLocalParticipant } from '../../base/participants';
 import { connect } from '../../base/redux';
 import { escapeRegexp } from '../../base/util';
 
-import SpeakerStatsHeader from './SpeakerStatsHeader';
 import SpeakerStatsItem from './SpeakerStatsItem';
 import SpeakerStatsLabels from './SpeakerStatsLabels';
+import SpeakerStatsSearch from './SpeakerStatsSearch';
 
 declare var interfaceConfig: Object;
 
@@ -112,9 +112,10 @@ class SpeakerStats extends Component<Props, State> {
         return (
             <Dialog
                 cancelKey = { 'dialog.close' }
-                submitDisabled = { true } >
+                submitDisabled = { true }
+                titleKey = { 'speakerStats.speakerStats' }>
                 <div className = 'speaker-stats'>
-                    <SpeakerStatsHeader onSearch = { this._onSearch } />
+                    <SpeakerStatsSearch onSearch = { this._onSearch } />
                     <SpeakerStatsLabels />
                     { items }
                 </div>

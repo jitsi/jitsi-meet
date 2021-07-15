@@ -1,11 +1,22 @@
 /* @flow */
 
 import { FieldTextStateless as TextField } from '@atlaskit/field-text';
+import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
-import { translate } from '../../base/i18n';
 import { getFieldValue } from '../../base/react';
+
+const useStyles = makeStyles(() => {
+    return {
+        speakerStatsSearch: {
+            position: 'absolute',
+            right: '50px',
+            top: '-5px'
+        }
+    };
+});
 
 /**
  * The type of the React {@code Component} props of {@link SpeakerStatsSearch}.
@@ -17,10 +28,6 @@ type Props = {
      */
     onSearch: Function,
 
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
 };
 
 /**
@@ -28,7 +35,9 @@ type Props = {
  *
  * @returns {React$Element<any>}
  */
-function SpeakerStatsSearch({ onSearch, t }: Props) {
+function SpeakerStatsSearch({ onSearch }: Props) {
+    const classes = useStyles();
+    const { t } = useTranslation();
     const [ searchValue, setSearchValue ] = useState<string>('');
     const onChange = useCallback((evt: Event) => {
         const value = getFieldValue(evt);
@@ -46,7 +55,7 @@ function SpeakerStatsSearch({ onSearch, t }: Props) {
     }
 
     return (
-        <div className = 'speaker-stats-search'>
+        <div className = { classes.speakerStatsSearch }>
             <TextField
                 autoComplete = 'off'
                 autoFocus = { false }
@@ -61,5 +70,5 @@ function SpeakerStatsSearch({ onSearch, t }: Props) {
     );
 }
 
-export default translate(SpeakerStatsSearch);
+export default SpeakerStatsSearch;
 
