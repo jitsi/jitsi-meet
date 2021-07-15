@@ -318,8 +318,9 @@ function _handleReceivedMessage({ dispatch, getState },
     // Logic for all platforms:
     const state = getState();
     const { isOpen: isChatOpen } = state['features/chat'];
+    const { soundsIncomingMessage: soundEnabled } = state['features/base/settings'];
 
-    if (shouldPlaySound && !isChatOpen) {
+    if (soundEnabled && shouldPlaySound && !isChatOpen) {
         dispatch(playSound(INCOMING_MSG_SOUND_ID));
     }
 

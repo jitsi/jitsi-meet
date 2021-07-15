@@ -47,7 +47,12 @@ MiddlewareRegistry.register(store => next => action => {
                     customActionHandler: () => dispatch(setAudioMuted(false))
                 }));
 
-                dispatch(playSound(TALK_WHILE_MUTED_SOUND_ID));
+                const { soundsTalkWhileMuted } = getState()['features/base/settings'];
+
+                if (soundsTalkWhileMuted) {
+                    dispatch(playSound(TALK_WHILE_MUTED_SOUND_ID));
+                }
+
 
                 if (notification) {
                     // we store the last start muted notification id that we showed,
