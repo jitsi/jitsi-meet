@@ -10,6 +10,7 @@ import {
     sendAnalytics
 } from '../../../analytics';
 import { getToolbarButtons } from '../../../base/config';
+import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
 import { Icon, IconMenuDown, IconMenuUp } from '../../../base/icons';
 import { connect } from '../../../base/redux';
@@ -17,7 +18,7 @@ import { showToolbox } from '../../../toolbox/actions.web';
 import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';
 import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
 import { setFilmstripVisible, setVisibleRemoteParticipants } from '../../actions';
-import { TILE_HORIZONTAL_MARGIN, TILE_VERTICAL_MARGIN, TOOLBAR_HEIGHT } from '../../constants';
+import { ASPECT_RATIO_BREAKPOINT, TILE_HORIZONTAL_MARGIN, TILE_VERTICAL_MARGIN, TOOLBAR_HEIGHT } from '../../constants';
 import { shouldRemoteVideosBeVisible } from '../../functions';
 
 import AudioTracksContainer from './AudioTracksContainer';
@@ -485,10 +486,6 @@ function _mapStateToProps(state) {
     const reduceHeight = state['features/toolbox'].visible && toolbarButtons.length;
     const remoteVideosVisible = shouldRemoteVideosBeVisible(state);
     const { isOpen: shiftRight } = state['features/chat'];
-    const className = `${remoteVideosVisible ? '' : 'hide-videos'} ${
-        reduceHeight ? 'reduce-height' : ''
-    } ${shiftRight ? 'shift-right' : ''}`.trim();
-    const videosClassName = `filmstrip__videos${visible ? '' : ' hidden'}`;
     const {
         gridDimensions = {},
         filmstripHeight,
@@ -496,12 +493,22 @@ function _mapStateToProps(state) {
         thumbnailSize: tileViewThumbnailSize
     } = state['features/filmstrip'].tileViewDimensions;
     const _currentLayout = getCurrentLayout(state);
+    const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
+    const filmstripOverflows = filmstripHeight >= clientHeight - TOOLBAR_HEIGHT;
+    const collapseTileView = reduceHeight
+        && filmstripOverflows
+        && isMobileBrowser()
+        && clientWidth <= ASPECT_RATIO_BREAKPOINT;
+    const className = `${remoteVideosVisible ? '' : 'hide-videos'} ${
+        reduceHeight ? 'reduce-height' : ''
+    } ${shiftRight ? 'shift-right' : ''} ${collapseTileView ? 'collapse' : ''}`.trim();
+    const videosClassName = `filmstrip__videos${visible ? '' : ' hidden'}`;
     let _thumbnailSize, remoteFilmstripHeight, remoteFilmstripWidth;
 
     switch (_currentLayout) {
     case LAYOUTS.TILE_VIEW:
         _thumbnailSize = tileViewThumbnailSize;
-        remoteFilmstripHeight = filmstripHeight;
+        remoteFilmstripHeight = filmstripHeight - (collapseTileView ? TOOLBAR_HEIGHT : 0);
         remoteFilmstripWidth = filmstripWidth;
         break;
     case LAYOUTS.VERTICAL_FILMSTRIP_VIEW: {
