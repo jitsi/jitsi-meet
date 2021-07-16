@@ -1320,6 +1320,19 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that participant pane is hidden or showing.
+     *
+     * @param {boolean} enabled - True if participant pane is showing, false otherwise.
+     * @returns {void}
+     */
+     notifyShowParticipantList(enabled: boolean) {
+        this._sendEvent({
+            name: "show-participant-list",
+            enabled,
+        });
+    }
+    
+    /**
      * Disposes the allocated resources.
      *
      * @returns {void}
