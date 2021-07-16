@@ -16,6 +16,7 @@ import {
     participantIsKnockingOrUpdated,
     setLobbyModeEnabled,
     startKnocking,
+    cancelKnocking,
     setPasswordJoinFailed
 } from './actions';
 
@@ -117,6 +118,7 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
             hideErrorSupportLink: true,
             titleKey: 'lobby.joinRejectedMessage'
         }));
+        dispatch(cancelKnocking());
     }
 
     return next(action);
