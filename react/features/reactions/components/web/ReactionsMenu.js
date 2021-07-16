@@ -11,7 +11,7 @@ import { translate } from '../../../base/i18n';
 import { getLocalParticipant, getParticipantCount, participantUpdated } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { dockToolbox } from '../../../toolbox/actions.web';
-import { sendReaction } from '../../actions.any';
+import { addReactionToBuffer } from '../../actions.any';
 import { toggleReactionsMenuVisibility } from '../../actions.web';
 import { REACTIONS } from '../../constants';
 
@@ -152,7 +152,7 @@ class ReactionsMenu extends Component<Props> {
              * @returns {void}
              */
             function sendMessage() {
-                dispatch(sendReaction(key));
+                dispatch(addReactionToBuffer(key));
             }
 
             return (<ReactionButton

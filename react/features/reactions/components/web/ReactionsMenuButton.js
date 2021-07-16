@@ -7,7 +7,7 @@ import { IconRaisedHand } from '../../../base/icons';
 import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import ToolbarButton from '../../../toolbox/components/web/ToolbarButton';
-import { sendReaction } from '../../actions.any';
+import { addReactionToBuffer } from '../../actions.any';
 import { toggleReactionsMenuVisibility } from '../../actions.web';
 import { REACTIONS, type ReactionEmojiProps } from '../../constants';
 import { getReactionsQueue } from '../../functions.any';
@@ -69,7 +69,7 @@ function ReactionsMenuButton({
         const KEYBOARD_SHORTCUTS = Object.keys(REACTIONS).map(key => {
             return {
                 character: REACTIONS[key].shortcutChar,
-                exec: () => dispatch(sendReaction(key)),
+                exec: () => dispatch(addReactionToBuffer(key)),
                 helpDescription: t(`toolbar.reaction${key.charAt(0).toUpperCase()}${key.slice(1)}`),
                 altKey: true
             };

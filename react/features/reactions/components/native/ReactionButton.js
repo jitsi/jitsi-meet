@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
 import type { StyleType } from '../../../base/styles';
-import { sendReaction } from '../../actions.any';
+import { addReactionToBuffer } from '../../actions.any';
 import { REACTIONS } from '../../constants';
 
 
@@ -78,7 +78,7 @@ function ReactionButton({
      * @returns {void}
      */
     function _onClick() {
-        dispatch(sendReaction(reaction));
+        dispatch(addReactionToBuffer(reaction));
     }
 
     return (
