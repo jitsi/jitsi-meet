@@ -340,7 +340,7 @@ const _mapStateToProps = state => {
         bannerCfg: state['features/base/config'].chromeExtensionBanner || emptyObject,
         conference: getCurrentConference(state),
         iAmRecorder: state['features/base/config'].iAmRecorder,
-        isVpaas: isVpaasMeeting(state, false)
+        isVpaas: isVpaasMeeting(state)
     };
 };
 
