@@ -181,7 +181,7 @@ export function initAnalytics({ getState }: { getState: Function }, handlers: Ar
     permanentProperties.appName = getAppName();
 
     // Report if user is using websocket
-    permanentProperties.websocket = navigator.product !== 'ReactNative' && typeof config.websocket === 'string';
+    permanentProperties.websocket = typeof config.websocket === 'string';
 
     // Report if user is using the external API
     permanentProperties.externalApi = typeof API_ID === 'number';
