@@ -45,17 +45,18 @@ const _URI_PATH_PATTERN = '([^?#]*)';
 export const URI_PROTOCOL_PATTERN = '^([a-z][a-z0-9\\.\\+-]*:)';
 
 /**
- * Excludes/removes certain characters from a specific room (name) which are
- * incompatible with Jitsi Meet on the client and/or server sides.
+ * Excludes/removes certain characters from a specific path part which are
+ * incompatible with Jitsi Meet on the client and/or server sides. The main
+ * use case for this method is to clean up the room name and the tenant.
  *
- * @param {?string} room - The room (name) to fix.
+ * @param {?string} pathPart - The path part to fix.
  * @private
  * @returns {?string}
  */
-function _fixRoom(room: ?string) {
-    return room
-        ? room.replace(new RegExp(_ROOM_EXCLUDE_PATTERN, 'g'), '')
-        : room;
+function _fixPathPart(pathPart: ?string) {
+    return pathPart
+        ? pathPart.replace(new RegExp(_ROOM_EXCLUDE_PATTERN, 'g'), '')
+        : pathPart;
 }
 
 /**
@@ -335,6 +336,11 @@ export function parseURIString(uri: ?string) {
 
     const obj = parseStandardURIString(_fixURIStringScheme(uri));
 
+    // XXX While the components/segments of pathname are URI encoded, Jitsi Meet
+    // on the client and/or server sides still don't support certain characters.
+    obj.pathname = obj.pathname.split('/').map(pathPart => _fixPathPart(pathPart))
+        .join('/');
+
     // Add the properties that are specific to a Jitsi Meet resource (location)
     // such as contextRoot, room:
 
@@ -344,24 +350,9 @@ export function parseURIString(uri: ?string) {
     // The room (name) is the last component/segment of pathname.
     const { pathname } = obj;
 
-    // XXX While the components/segments of pathname are URI encoded, Jitsi Meet
-    // on the client and/or server sides still don't support certain characters.
     const contextRootEndIndex = pathname.lastIndexOf('/');
-    let room = pathname.substring(contextRootEndIndex + 1) || undefined;
 
-    if (room) {
-        const fixedRoom = _fixRoom(room);
-
-        if (fixedRoom !== room) {
-            room = fixedRoom;
-
-            // XXX Drive fixedRoom into pathname (because room is derived from
-            // pathname).
-            obj.pathname
-                = pathname.substring(0, contextRootEndIndex + 1) + (room || '');
-        }
-    }
-    obj.room = room;
+    obj.room = pathname.substring(contextRootEndIndex + 1) || undefined;
 
     if (contextRootEndIndex > 1) {
         // The part of the pathname from the beginning to the room name is the tenant.
