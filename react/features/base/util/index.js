@@ -4,3 +4,4 @@ export * from './loadScript';
 export * from './openURLInBrowser';
 export * from './uri';
 export * from './parseURLParams';
+export * from './downloadJSON';

@@ -98,6 +98,14 @@ var interfaceConfig = {
     DISPLAY_WELCOME_PAGE_CONTENT: false,
     DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
 
+    /**
+     * If true, auto download after call end
+     * of the current chat
+     *
+     * @type {boolean}
+     */
+    Downloadafterhangup: true,
+
     ENABLE_DIAL_OUT: true,
 
     ENABLE_FEEDBACK_ANIMATION: false, // Enables feedback star animation.
@@ -240,6 +248,7 @@ var interfaceConfig = {
      * @type {boolean}
      */
     VIDEO_QUALITY_LABEL_DISABLED: false,
+
 
     /**
      * How many columns the tile view can expand to. The respected range is
