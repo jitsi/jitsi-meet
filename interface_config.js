@@ -120,7 +120,15 @@ var interfaceConfig = {
     JITSI_WATERMARK_LINK: 'https://jitsi.org',
 
     LANG_DETECTION: true, // Allow i18n to detect the system language
+
+    /**
+     * Specify custom streaming service.
+     */
+    // LIVE_STREAMING_DATA_PRIVACY_LINK: 'https://policies.google.com/privacy',
     LIVE_STREAMING_HELP_LINK: 'https://jitsi.org/live', // Documentation reference for the live streaming feature.
+    // LIVE_STREAMING_REGEXP: '^(?:[a-zA-Z0-9]{4}(?:-(?!$)|$)){4}',
+    // LIVE_STREAMING_TERMS_LINK: 'https://www.youtube.com/t/terms',
+
     LOCAL_THUMBNAIL_RATIO: 16 / 9, // 16:9
 
     /**

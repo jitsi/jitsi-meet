@@ -7,7 +7,6 @@ import { translate } from '../../../../base/i18n';
 import AbstractStreamKeyForm, {
     type Props
 } from '../AbstractStreamKeyForm';
-import { GOOGLE_PRIVACY_POLICY, YOUTUBE_TERMS_URL } from '../constants';
 
 /**
  * A React Component for entering a key for starting a YouTube live stream.
@@ -77,14 +76,14 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
                     </div>
                     <a
                         className = 'helper-link'
-                        href = { YOUTUBE_TERMS_URL }
+                        href = { this.termsURL }
                         rel = 'noopener noreferrer'
                         target = '_blank'>
                         { t('liveStreaming.youtubeTerms') }
                     </a>
                     <a
                         className = 'helper-link'
-                        href = { GOOGLE_PRIVACY_POLICY }
+                        href = { this.dataPrivacyURL }
                         rel = 'noopener noreferrer'
                         target = '_blank'>
                         { t('liveStreaming.googlePrivacyPolicy') }

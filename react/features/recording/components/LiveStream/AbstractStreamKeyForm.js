@@ -3,6 +3,8 @@
 import debounce from 'lodash/debounce';
 import { Component } from 'react';
 
+import { GOOGLE_PRIVACY_POLICY, YOUTUBE_TERMS_URL } from './constants';
+
 declare var interfaceConfig: Object;
 
 /**
@@ -55,6 +57,10 @@ type State = {
 export default class AbstractStreamKeyForm<P: Props>
     extends Component<P, State> {
     helpURL: string;
+    termsURL: string;
+    dataPrivacyURL: string;
+    streamLinkRegexp: RegExp;
+
     _debouncedUpdateValidationErrorVisibility: Function;
 
     /**
@@ -73,6 +79,19 @@ export default class AbstractStreamKeyForm<P: Props>
         this.helpURL = (typeof interfaceConfig !== 'undefined'
             && interfaceConfig.LIVE_STREAMING_HELP_LINK)
             || LIVE_STREAMING_HELP_LINK;
+
+        const {
+            LIVE_STREAMING_TERMS_LINK,
+            LIVE_STREAMING_DATA_PRIVACY_LINK,
+            LIVE_STREAMING_REGEXP
+        } = interfaceConfig;
+
+        const fourGroupsDashSeparated = /^(?:[a-zA-Z0-9]{4}(?:-(?!$)|$)){4}/;
+
+        this.termsURL = LIVE_STREAMING_TERMS_LINK || YOUTUBE_TERMS_URL;
+        this.dataPrivacyURL = LIVE_STREAMING_DATA_PRIVACY_LINK || GOOGLE_PRIVACY_POLICY;
+        this.streamLinkRegexp = (LIVE_STREAMING_REGEXP && new RegExp(LIVE_STREAMING_REGEXP))
+            || fourGroupsDashSeparated;
 
         this._debouncedUpdateValidationErrorVisibility = debounce(
             this._updateValidationErrorVisibility.bind(this),
@@ -150,8 +169,7 @@ export default class AbstractStreamKeyForm<P: Props>
      */
     _validateStreamKey(streamKey = '') {
         const trimmedKey = streamKey.trim();
-        const fourGroupsDashSeparated = /^(?:[a-zA-Z0-9]{4}(?:-(?!$)|$)){4}/;
-        const match = fourGroupsDashSeparated.exec(trimmedKey);
+        const match = this.streamLinkRegexp.exec(trimmedKey);
 
         return Boolean(match);
     }

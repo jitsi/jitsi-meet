@@ -10,7 +10,6 @@ import { StyleType } from '../../../../base/styles';
 import AbstractStreamKeyForm, {
     type Props as AbstractProps
 } from '../AbstractStreamKeyForm';
-import { GOOGLE_PRIVACY_POLICY, YOUTUBE_TERMS_URL } from '../constants';
 
 type Props = AbstractProps & {
 
@@ -147,7 +146,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
      * @returns {void}
      */
     _onOpenGooglePrivacyPolicy() {
-        Linking.openURL(GOOGLE_PRIVACY_POLICY);
+        Linking.openURL(this.dataPrivacyURL);
     }
 
     _onOpenHelp: () => void
@@ -176,7 +175,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
      * @returns {void}
      */
     _onOpenYoutubeTerms() {
-        Linking.openURL(YOUTUBE_TERMS_URL);
+        Linking.openURL(this.termsURL);
     }
 }
 
