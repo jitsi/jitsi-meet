@@ -371,6 +371,7 @@ function _localParticipantLeft({ dispatch }, next, action) {
 function _maybePlaySounds({ getState, dispatch }, action) {
     const state = getState();
     const { startAudioMuted, disableJoinLeaveSounds } = state['features/base/config'];
+    const { soundsParticipantJoined: joinSound, soundsParticipantLeft: leftSound } = state['features/base/settings'];
 
     // If we have join/leave sounds disabled, don't play anything.
     if (disableJoinLeaveSounds) {
@@ -387,13 +388,16 @@ function _maybePlaySounds({ getState, dispatch }, action) {
         const { isReplacing, isReplaced } = action.participant;
 
         if (action.type === PARTICIPANT_JOINED) {
+            if (!joinSound) {
+                return;
+            }
             const { presence } = action.participant;
 
             // The sounds for the poltergeist are handled by features/invite.
             if (presence !== INVITED && presence !== CALLING && !isReplacing) {
                 dispatch(playSound(PARTICIPANT_JOINED_SOUND_ID));
             }
-        } else if (action.type === PARTICIPANT_LEFT && !isReplaced) {
+        } else if (action.type === PARTICIPANT_LEFT && !isReplaced && leftSound) {
             dispatch(playSound(PARTICIPANT_LEFT_SOUND_ID));
         }
     }
