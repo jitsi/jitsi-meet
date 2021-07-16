@@ -595,7 +595,7 @@ function _mapStateToProps(state) {
     return {
         ..._abstractMapStateToProps(state),
         _footerTextEnabled: footerTextEnabled,
-        _isVpaas: isVpaasMeeting(state)
+        _isVpaas: isVpaasMeeting(state, false)
     };
 }
 

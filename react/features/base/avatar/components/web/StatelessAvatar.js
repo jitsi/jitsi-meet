@@ -2,7 +2,6 @@
 
 import React from 'react';
 
-import { translate } from '../../../../base/i18n';
 import { Icon } from '../../../icons';
 import AbstractStatelessAvatar, { type Props as AbstractProps } from '../AbstractStatelessAvatar';
 
@@ -31,19 +30,14 @@ type Props = AbstractProps & {
     /**
      * TestId of the element, if any.
      */
-    testId?: string,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
+    testId?: string
 };
 
 /**
  * Implements a stateless avatar component that renders an avatar purely from what gets passed through
  * props.
  */
-class StatelessAvatar extends AbstractStatelessAvatar<Props> {
+export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
     /**
      * Implements {@code Component#render}.
      *
@@ -70,7 +64,7 @@ class StatelessAvatar extends AbstractStatelessAvatar<Props> {
             return (
                 <div className = { this._getBadgeClassName() }>
                     <img
-                        alt = { this.props.t('profile.avatar') }
+                        alt = 'avatar'
                         className = { this._getAvatarClassName() }
                         data-testid = { this.props.testId }
                         id = { this.props.id }
@@ -111,7 +105,7 @@ class StatelessAvatar extends AbstractStatelessAvatar<Props> {
         return (
             <div className = { this._getBadgeClassName() }>
                 <img
-                    alt = { this.props.t('profile.avatar') }
+                    alt = 'avatar'
                     className = { this._getAvatarClassName('defaultAvatar') }
                     data-testid = { this.props.testId }
                     id = { this.props.id }
@@ -165,5 +159,3 @@ class StatelessAvatar extends AbstractStatelessAvatar<Props> {
 
     _isIcon: (?string | ?Object) => boolean
 }
-
-export default translate(StatelessAvatar);

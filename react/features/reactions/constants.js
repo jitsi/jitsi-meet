@@ -1,30 +1,30 @@
 // @flow
 
 export const REACTIONS = {
-    clap: {
-        message: ':clap:',
-        emoji: '👏',
-        shortcutChar: 'C'
-    },
     like: {
         message: ':thumbs_up:',
         emoji: '👍',
         shortcutChar: 'T'
     },
-    smile: {
-        message: ':smile:',
-        emoji: '😀',
-        shortcutChar: 'S'
+    clap: {
+        message: ':clap:',
+        emoji: '👏',
+        shortcutChar: 'C'
     },
     joy: {
-        message: ':joy:',
-        emoji: '😂',
+        message: ':grinning_face:',
+        emoji: '😀',
         shortcutChar: 'L'
     },
     surprised: {
         message: ':face_with_open_mouth:',
         emoji: '😮',
         shortcutChar: 'O'
+    },
+    boo: {
+        message: ':slightly_frowning_face:',
+        emoji: '🙁',
+        shortcutChar: 'B'
     },
     party: {
         message: ':party_popper:',

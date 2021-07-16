@@ -122,11 +122,11 @@ body.welcome-page {
         #moderated-meetings {
             max-width: calc(100% - 40px);
             padding: 16px 0 39px 0;
-            margin: $welcomePageEnterRoomMargin;
             width: $welcomePageEnterRoomWidth;
 
             p {
                 color: $welcomePageDescriptionColor;
+                float: left;
                 text-align: $welcomePageHeaderTextAlign;
 
                 a {
