@@ -144,6 +144,13 @@ class ReactionsMenu extends Component<Props> {
      */
     _getReactionButtons() {
         const { t, dispatch } = this.props;
+        let modifierKey = 'Alt';
+
+        if (window.navigator?.platform) {
+            if (window.navigator.platform.indexOf('Mac') !== -1) {
+                modifierKey = '⌥';
+            }
+        }
 
         return Object.keys(REACTIONS).map(key => {
             /**
@@ -161,7 +168,7 @@ class ReactionsMenu extends Component<Props> {
                 key = { key }
                 onClick = { sendMessage }
                 toggled = { false }
-                tooltip = { t(`toolbar.${key}`) } />);
+                tooltip = { `${t(`toolbar.${key}`)} ${modifierKey} + ${REACTIONS[key].shortcutChar}` } />);
         });
     }
 
