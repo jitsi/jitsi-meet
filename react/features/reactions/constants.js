@@ -11,7 +11,7 @@ export const REACTIONS = {
         emoji: '👏',
         shortcutChar: 'C'
     },
-    joy: {
+    laugh: {
         message: ':grinning_face:',
         emoji: '😀',
         shortcutChar: 'L'
