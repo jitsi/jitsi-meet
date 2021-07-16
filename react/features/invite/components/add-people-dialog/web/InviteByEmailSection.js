@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 
+import { isIosMobileBrowser } from '../../../../base/environment/utils';
 import { translate } from '../../../../base/i18n';
 import {
     Icon,
@@ -28,6 +29,11 @@ type Props = {
     inviteText: string,
 
     /**
+     * The encoded no new-lines iOS invitation text to be sent on default mail.
+     */
+    inviteTextiOS: string,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function,
@@ -38,10 +44,13 @@ type Props = {
  *
  * @returns {React$Element<any>}
  */
-function InviteByEmailSection({ inviteSubject, inviteText, t }: Props) {
+function InviteByEmailSection({ inviteSubject, inviteText, inviteTextiOS, t }: Props) {
     const [ isActive, setIsActive ] = useState(false);
     const encodedInviteSubject = encodeURIComponent(inviteSubject);
     const encodedInviteText = encodeURIComponent(inviteText);
+    const encodedInviteTextiOS = encodeURIComponent(inviteTextiOS);
+
+    const encodedDefaultEmailText = isIosMobileBrowser() ? encodedInviteTextiOS : encodedInviteText;
 
     /**
      * Copies the conference invitation to the clipboard.
@@ -100,7 +109,7 @@ function InviteByEmailSection({ inviteSubject, inviteText, t }: Props) {
             {
                 icon: IconEmail,
                 tooltipKey: 'addPeople.defaultEmail',
-                url: `mailto:?subject=${encodedInviteSubject}&body=${encodedInviteText}`
+                url: `mailto:?subject=${encodedInviteSubject}&body=${encodedDefaultEmailText}`
             },
             {
                 icon: IconGoogle,

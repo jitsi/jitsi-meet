@@ -511,11 +511,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
         const supportString = t('inlineDialogFailure.supportMsg');
         const supportLink = interfaceConfig.SUPPORT_URL;
 
-        if (!supportLink) {
-            return null;
-        }
-
-        const supportLinkContent = (
+        const supportLinkContent = supportLink ? (
             <span>
                 <span>
                     { supportString.padEnd(supportString.length + 1) }
@@ -524,13 +520,14 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
                     <a
                         aria-label = { supportLink }
                         href = { supportLink }
-                        rel = 'noopener noreferrer'>
+                        rel = 'noopener noreferrer'
+                        target = '_blank'>
                         { t('inlineDialogFailure.support') }
                     </a>
                 </span>
                 <span>.</span>
             </span>
-        );
+        ) : null;
 
         return (
             <div className = 'modal-dialog-form-error'>
