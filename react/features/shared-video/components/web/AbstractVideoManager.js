@@ -2,7 +2,7 @@
 /* eslint-disable no-invalid-this */
 import Logger from 'jitsi-meet-logger';
 import throttle from 'lodash/throttle';
-import { Component } from 'react';
+import { PureComponent } from 'react';
 
 import { sendAnalytics, createSharedVideoEvent as createEvent } from '../../../analytics';
 import { getCurrentConference } from '../../../base/conference';
@@ -34,7 +34,7 @@ function shouldSeekToPosition(newTime, previousTime) {
 }
 
 /**
- * The type of the React {@link Component} props of {@link YoutubeLargeVideo}.
+ * The type of the React {@link PureComponent} props of {@link AbstractVideoManager}.
  */
 export type Props = {
 
@@ -115,7 +115,7 @@ export type Props = {
 /**
  * Manager of shared video.
  */
-class AbstractVideoManager extends Component<Props> {
+class AbstractVideoManager extends PureComponent<Props> {
     throttledFireUpdateSharedVideoEvent: Function;
 
     /**
@@ -358,11 +358,6 @@ class AbstractVideoManager extends Component<Props> {
      * Retrieves current volume
      */
     getVolume: () => number;
-
-    /**
-      * Sets current volume
-    */
-    setVolume: (value: number) => void;
 
     /**
      * Plays video
