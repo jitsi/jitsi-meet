@@ -97,6 +97,7 @@ export default [
     'disableRtx',
     'disableShortcuts',
     'disableShowMoreStats',
+    'disableSpeakerStatsSearch',
     'disableSimulcast',
     'disableThirdPartyRequests',
     'disableTileView',
