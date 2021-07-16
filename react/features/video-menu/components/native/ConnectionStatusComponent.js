@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
-
+import { getLogger } from 'jitsi-meet-logger';
 import { Avatar } from '../../../base/avatar';
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, isDialogOpen, hideDialog } from '../../../base/dialog';
@@ -13,8 +13,10 @@ import { BaseIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { StyleType, ColorPalette } from '../../../base/styles';
 import statsEmitter from '../../../connection-indicator/statsEmitter';
-
 import styles from './styles';
+import { getLocalParticipant, getParticipantById } from '../../../base/participants';
+
+const logger = getLogger(__filename);
 
 /**
  * Size of the rendered avatar in the menu.
@@ -50,6 +52,11 @@ export type Props = {
     _isOpen: boolean,
 
     /**
+     * True if the menu is currently open, false otherwise.
+     */
+    _isLocal: boolean,
+
+    /**
      * Display name of the participant retrieved from Redux.
      */
     _participantDisplayName: string,
@@ -57,7 +64,7 @@ export type Props = {
     /**
      * The function to be used to translate i18n labels.
      */
-    t: Function
+    t: Function,
 }
 
 /**
@@ -67,11 +74,21 @@ type State = {
     resolutionString: string,
     downloadString: string,
     uploadString: string,
+    downloadBandwidthString: string,
+    uploadBandWidthString: string,
     packetLostDownloadString: string,
     packetLostUploadString: string,
     serverRegionString: string,
     codecString: string,
-    connectionString: string
+    connectionString: string,
+    transportData: {
+      localIP: [],
+      localPort: [],
+      remoteIP: [],
+      remotePort: [],
+      transportType: [],
+      additionalData: []
+    }
 };
 
 // eslint-disable-next-line prefer-const
@@ -101,11 +118,21 @@ class ConnectionStatusComponent extends Component<Props, State> {
             resolutionString: 'N/A',
             downloadString: 'N/A',
             uploadString: 'N/A',
+            downloadBandwidthString: 'N/A',
+            uploadBandWidthString: 'N/A',
             packetLostDownloadString: 'N/A',
             packetLostUploadString: 'N/A',
             serverRegionString: 'N/A',
             codecString: 'N/A',
-            connectionString: 'N/A'
+            connectionString: 'N/A',
+            transportData: {
+              localIP: [],
+              localPort: [],
+              remoteIP: [],
+              remotePort: [],
+              transportType: [],
+              additionalData: []
+            }
         };
     }
 
@@ -117,6 +144,7 @@ class ConnectionStatusComponent extends Component<Props, State> {
      */
     render(): React$Node {
         const { t } = this.props;
+        const isLocalVideo = this.props._isLocal;
 
         return (
             <BottomSheet
@@ -129,6 +157,14 @@ class ConnectionStatusComponent extends Component<Props, State> {
                         </Text>
                         <Text style = { styles.statsInfoText }>
                             { this.state.connectionString }
+                        </Text>
+                    </View>
+                    <View style = { styles.statsInfoCell }>
+                        <Text style = { styles.statsTitleText }>
+                            { `${t('connectionindicator.connectedTo')} ` }
+                        </Text>
+                        <Text style = { styles.statsInfoText }>
+                            { this.state.serverRegionString }
                         </Text>
                     </View>
                     <View style = { styles.statsInfoCell }>
@@ -150,6 +186,27 @@ class ConnectionStatusComponent extends Component<Props, State> {
                             }} />
                         <Text style = { styles.statsInfoText }>
                             { `${this.state.uploadString} Kbps` }
+                        </Text>
+                    </View>
+                    <View style = { styles.statsInfoCell }>
+                        <Text style = { styles.statsTitleText }>
+                            { `${t('connectionindicator.bandwidth')}` }
+                        </Text>
+                        <BaseIndicator
+                            icon = { IconArrowDownLarge }
+                            iconStyle = {{
+                                color: ColorPalette.darkGrey
+                            }} />
+                        <Text style = { styles.statsInfoText }>
+                            { this.state.downloadBandwidthString }
+                        </Text>
+                        <BaseIndicator
+                            icon = { IconArrowUpLarge }
+                            iconStyle = {{
+                                color: ColorPalette.darkGrey
+                            }} />
+                        <Text style = { styles.statsInfoText }>
+                            { `${this.state.uploadBandWidthString} Kbps` }
                         </Text>
                     </View>
                     <View style = { styles.statsInfoCell }>
@@ -189,6 +246,7 @@ class ConnectionStatusComponent extends Component<Props, State> {
                             { this.state.codecString }
                         </Text>
                     </View>
+                    { isLocalVideo ? this._renderTransport() : null }
                 </View>
             </BottomSheet>
         );
@@ -249,17 +307,22 @@ class ConnectionStatusComponent extends Component<Props, State> {
 
         const { download: downloadPacketLost, upload: uploadPacketLost } = this._extractPacketLost(stats) ?? {};
 
+        const { download: downloadBandwidth, upload: uploadBandWidth } = this._extractBandwidth(stats) ?? {};
+
         return {
             resolutionString: this._extractResolutionString(stats) ?? this.state.resolutionString,
             downloadString: downloadBitrate ?? this.state.downloadString,
             uploadString: uploadBitrate ?? this.state.uploadString,
+            downloadBandwidthString: downloadBandwidth ?? this.state.downloadBandwidthString,
+            uploadBandWidthString: uploadBandWidth ?? this.state.uploadBandWidthString,
             packetLostDownloadString: downloadPacketLost === undefined
                 ? this.state.packetLostDownloadString : `${downloadPacketLost}%`,
             packetLostUploadString: uploadPacketLost === undefined
                 ? this.state.packetLostUploadString : `${uploadPacketLost}%`,
             serverRegionString: this._extractServer(stats) ?? this.state.serverRegionString,
             codecString: this._extractCodecs(stats) ?? this.state.codecString,
-            connectionString: this._extractConnection(stats) ?? this.state.connectionString
+            connectionString: this._extractConnection(stats) ?? this.state.connectionString,
+            transportData: this._extractTransport(stats) ?? this.state.transportData
         };
     }
 
@@ -297,6 +360,17 @@ class ConnectionStatusComponent extends Component<Props, State> {
      */
     _extractBitrate(stats) {
         return stats.bitrate;
+    }
+
+    /**
+     * Extracts the download and upload bandwidth.
+     *
+     * @param {Object} stats - Connection stats from the library.
+     * @private
+     * @returns {{ download, upload }}
+     */
+    _extractBandwidth(stats) {
+        return stats.bandwidth;
     }
 
     /**
@@ -361,6 +435,78 @@ class ConnectionStatusComponent extends Component<Props, State> {
         }
     }
 
+    /**
+     * Extracts transports.
+     *
+     * @param {Object} stats - Connection stats from the library.
+     * @private
+     * @returns {string}
+     */
+    _extractTransport(stats) {
+        const { t, transport } = stats;
+        const data = {
+            localIP: [],
+            localPort: [],
+            remoteIP: [],
+            remotePort: [],
+            transportType: [],
+            additionalData: []
+        };
+
+        if(!this.props._isLocal) {
+            return data;
+        }
+
+        if (!transport || transport.length === 0) {
+            return data;
+        }
+
+        for (let i = 0; i < transport.length; i++) {
+            const ip = getIP(transport[i].ip);
+            const localIP = getIP(transport[i].localip);
+            const localPort = getPort(transport[i].localip);
+            const port = getPort(transport[i].ip);
+
+            if (!data.remoteIP.includes(ip)) {
+                data.remoteIP.push(ip);
+            }
+
+            if (!data.localIP.includes(localIP)) {
+                data.localIP.push(localIP);
+            }
+
+            if (!data.localPort.includes(localPort)) {
+                data.localPort.push(localPort);
+            }
+
+            if (!data.remotePort.includes(port)) {
+                data.remotePort.push(port);
+            }
+
+            if (!data.transportType.includes(transport[i].type)) {
+                data.transportType.push(transport[i].type);
+            }
+        }
+
+        // All of the transports should be either P2P or JVB
+        let isP2P = false, isTURN = false;
+
+        if (transport.length) {
+            isP2P = transport[0].p2p;
+            isTURN = transport[0].localCandidateType === 'relay'
+                || transport[0].remoteCandidateType === 'relay';
+        }
+
+        if (isP2P) {
+            data.additionalData.push(t('connectionindicator.peer_to_peer'));
+        }
+        if (isTURN) {
+            data.additionalData.push(t('connectionindicator.turn'));
+        }
+
+        return data;
+    }
+
     _onCancel: () => boolean;
 
     /**
@@ -375,7 +521,6 @@ class ConnectionStatusComponent extends Component<Props, State> {
 
         if (this.props._isOpen) {
             this.props.dispatch(hideDialog(ConnectionStatusComponent_));
-
             return true;
         }
 
@@ -406,6 +551,111 @@ class ConnectionStatusComponent extends Component<Props, State> {
             </View>
         );
     }
+
+    /**
+     * Creates table rows as ReactElements for displaying transport related
+     * statistics.
+     *
+     * @private
+     * @returns {ReactElement[]}
+     */
+    _renderTransport() {
+        const { t } = this.props;
+
+        return (
+            <View>
+                <View style = { styles.statsInfoCell }>
+                    <Text style = { styles.statsTitleText }>
+                        { `${t('connectionindicator.remoteaddress')}` }
+                    </Text>
+                    <Text style = { styles.statsInfoText }>
+                        { getStringFromArray(this.state.transportData.remoteIP) }{ this.state.transportData.additionalData || null }
+                    </Text>
+                </View>
+                <View style = { styles.statsInfoCell }>
+                    <Text style = { styles.statsTitleText }>
+                        { `${t('connectionindicator.remoteport')}` }
+                    </Text>
+                    <Text style = { styles.statsInfoText }>
+                        { getStringFromArray(this.state.transportData.remotePort) }
+                    </Text>
+                </View>
+                <View style = { styles.statsInfoCell }>
+                    <Text style = { styles.statsTitleText }>
+                        { `${t('connectionindicator.localaddress')}` }
+                    </Text>
+                    <Text style = { styles.statsInfoText }>
+                        { getStringFromArray(this.state.transportData.localIP) }
+                    </Text>
+                </View>
+                <View style = { styles.statsInfoCell }>
+                    <Text style = { styles.statsTitleText }>
+                        { `${t('connectionindicator.localport')}` }
+                    </Text>
+                    <Text style = { styles.statsInfoText }>
+                        { getStringFromArray(this.state.transportData.localPort) }
+                    </Text>
+                </View>
+                <View style = { styles.statsInfoCell }>
+                    <Text style = { styles.statsTitleText }>
+                        { `${t('connectionindicator.transport')}` }
+                    </Text>
+                    <Text style = { styles.statsInfoText }>
+                        { getStringFromArray(this.state.transportData.transportType) }
+                    </Text>
+                </View>
+            </View>
+        );
+    }
+}
+
+/**
+ * Utility for getting the IP from a transport statistics object's
+ * representation of an IP.
+ *
+ * @param {string} value - The transport's IP to parse.
+ * @private
+ * @returns {string}
+ */
+function getIP(value) {
+    if (!value) {
+        return '';
+    }
+
+    return value.substring(0, value.lastIndexOf(':'));
+}
+
+/**
+ * Utility for getting the port from a transport statistics object's
+ * representation of an IP.
+ *
+ * @param {string} value - The transport's IP to parse.
+ * @private
+ * @returns {string}
+ */
+function getPort(value) {
+    if (!value) {
+        return '';
+    }
+
+    return value.substring(value.lastIndexOf(':') + 1, value.length);
+}
+
+/**
+ * Utility for concatenating values in an array into a comma separated string.
+ *
+ * @param {Array} array - Transport statistics to concatenate.
+ * @private
+ * @returns {string}
+ */
+function getStringFromArray(array) {
+    let res = '';
+
+    for (let i = 0; i < array.length; i++) {
+        res += (i === 0 ? '' : ', ') + array[i];
+    }
+
+    return res;
 }
 
 /**
@@ -419,9 +669,13 @@ class ConnectionStatusComponent extends Component<Props, State> {
 function _mapStateToProps(state, ownProps) {
     const { participantID } = ownProps;
 
+    const participant = getParticipantById(state, participantID);
+    const isLocal = participant?.local ?? true;
+
     return {
         _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
         _isOpen: isDialogOpen(state, ConnectionStatusComponent_),
+        _isLocal: isLocal,
         _participantDisplayName: getParticipantDisplayName(state, participantID)
     };
 }
