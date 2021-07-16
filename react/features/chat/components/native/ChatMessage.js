@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Text, View } from 'react-native';
+import Markdown from 'react-native-markdown-display';
 
 import { Avatar } from '../../../base/avatar';
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
@@ -71,6 +72,13 @@ class ChatMessage extends AbstractChatMessage<Props> {
             messageBubbleStyle.push(_styles.privateMessageBubble);
         }
 
+        const parsedString = replaceNonUnicodeEmojis(this._getMessageText());
+        const renderers = {
+            text: () => (<Linkify
+                children = { parsedString }
+                linkStyle = { styles.chatLink } />)
+        };
+
         return (
             <View style = { styles.messageWrapper } >
                 { this._renderAvatar() }
@@ -78,9 +86,11 @@ class ChatMessage extends AbstractChatMessage<Props> {
                     <View style = { messageBubbleStyle }>
                         <View style = { styles.textWrapper } >
                             { this._renderDisplayName() }
-                            <Linkify linkStyle = { styles.chatLink }>
-                                { replaceNonUnicodeEmojis(this._getMessageText()) }
-                            </Linkify>
+                            <Markdown
+                                key = { message.toString() }
+                                renderers = { renderers }>
+                                { parsedString }
+                            </Markdown>
                             { this._renderPrivateNotice() }
                         </View>
                         { this._renderPrivateReplyButton() }
