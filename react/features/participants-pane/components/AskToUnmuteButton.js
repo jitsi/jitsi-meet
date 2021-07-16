@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 
 import { approveParticipant } from '../../av-moderation/actions';
 
-import { QuickActionButton } from './styled';
+import { QuickActionButton } from './web/styled';
 
 type Props = {
 

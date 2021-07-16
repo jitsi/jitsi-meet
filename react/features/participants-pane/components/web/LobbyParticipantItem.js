@@ -4,8 +4,8 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
-import { approveKnockingParticipant, rejectKnockingParticipant } from '../../lobby/actions';
-import { ACTION_TRIGGER, MEDIA_STATE } from '../constants';
+import { approveKnockingParticipant, rejectKnockingParticipant } from '../../../lobby/actions';
+import { ACTION_TRIGGER, MEDIA_STATE } from '../../constants';
 
 import ParticipantItem from './ParticipantItem';
 import { ParticipantActionButton } from './styled';

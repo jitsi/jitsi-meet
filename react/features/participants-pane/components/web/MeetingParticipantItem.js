@@ -2,14 +2,14 @@
 
 import React from 'react';
 
-import { getParticipantByIdOrUndefined, getParticipantDisplayName } from '../../base/participants';
-import { connect } from '../../base/redux';
-import { isParticipantAudioMuted, isParticipantVideoMuted } from '../../base/tracks';
-import { ACTION_TRIGGER, MEDIA_STATE, type MediaState } from '../constants';
-import { getParticipantAudioMediaState, getQuickActionButtonType } from '../functions';
+import { getParticipantByIdOrUndefined, getParticipantDisplayName } from '../../../base/participants';
+import { connect } from '../../../base/redux';
+import { isParticipantAudioMuted, isParticipantVideoMuted } from '../../../base/tracks';
+import { ACTION_TRIGGER, MEDIA_STATE, type MediaState } from '../../constants';
+import { getParticipantAudioMediaState, getQuickActionButtonType } from '../../functions';
+import ParticipantQuickAction from '../ParticipantQuickAction';
 
 import ParticipantItem from './ParticipantItem';
-import ParticipantQuickAction from './ParticipantQuickAction';
 import { ParticipantActionEllipsis } from './styled';
 
 type Props = {

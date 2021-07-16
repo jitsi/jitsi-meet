@@ -3,7 +3,7 @@
 import { openDialog } from '../../../base/dialog';
 import { getFeatureFlag, OVERFLOW_MENU_ENABLED } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
-import { IconMenuThumb } from '../../../base/icons';
+import { IconHorizontalPoints } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 
@@ -25,7 +25,7 @@ type Props = AbstractButtonProps & {
  */
 class OverflowMenuButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.moreActions';
-    icon = IconMenuThumb;
+    icon = IconHorizontalPoints;
     label = 'toolbar.moreActions';
 
     /**

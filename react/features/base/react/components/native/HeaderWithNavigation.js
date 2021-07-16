@@ -28,6 +28,11 @@ type Props = {
     headerLabelKey: ?string,
 
     /**
+     * True if the header with navigation should be hidden, false otherwise.
+     */
+    hideHeaderWithNavigation?: boolean,
+
+    /**
      * Callback to be invoked on pressing the back button.
      */
     onPressBack: ?Function,
@@ -48,17 +53,18 @@ class HeaderWithNavigation extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { onPressBack, onPressForward } = this.props;
+        const { hideHeaderWithNavigation, onPressBack, onPressForward } = this.props;
 
         return (
-            <Header>
-                { onPressBack && <BackButton onPress = { onPressBack } /> }
-                <HeaderLabel labelKey = { this.props.headerLabelKey } />
-                { onPressForward && <ForwardButton
-                    disabled = { this.props.forwardDisabled }
-                    labelKey = { this.props.forwardLabelKey }
-                    onPress = { onPressForward } /> }
-            </Header>
+            !hideHeaderWithNavigation
+                    && <Header>
+                        { onPressBack && <BackButton onPress = { onPressBack } /> }
+                        <HeaderLabel labelKey = { this.props.headerLabelKey } />
+                        { onPressForward && <ForwardButton
+                            disabled = { this.props.forwardDisabled }
+                            labelKey = { this.props.forwardLabelKey }
+                            onPress = { onPressForward } /> }
+                    </Header>
         );
     }
 }

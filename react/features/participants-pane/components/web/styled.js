@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { Icon, IconHorizontalPoints } from '../../base/icons';
-import { ACTION_TRIGGER } from '../constants';
+import { Icon, IconHorizontalPoints } from '../../../base/icons';
+import { ACTION_TRIGGER } from '../../constants';
 
 export const ignoredChildClassName = 'ignore-child';
 

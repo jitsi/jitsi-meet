@@ -2,15 +2,15 @@
 
 import React, { type Node } from 'react';
 
-import { Avatar } from '../../base/avatar';
+import { Avatar } from '../../../base/avatar';
 import {
     Icon,
     IconCameraEmpty,
     IconCameraEmptyDisabled,
     IconMicrophoneEmpty,
     IconMicrophoneEmptySlash
-} from '../../base/icons';
-import { ACTION_TRIGGER, MEDIA_STATE, type ActionTrigger, type MediaState } from '../constants';
+} from '../../../base/icons';
+import { ACTION_TRIGGER, MEDIA_STATE, type ActionTrigger, type MediaState } from '../../constants';
 
 import { RaisedHandIndicator } from './RaisedHandIndicator';
 import {
