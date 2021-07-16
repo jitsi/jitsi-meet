@@ -99,6 +99,12 @@ export const IOS_SCREENSHARING_ENABLED = 'ios.screensharing.enabled';
 export const KICK_OUT_ENABLED = 'kick-out.enabled';
 
 /**
+ * Flag indicating if remote mute and "Mute Everyone Else" is enabled.
+ * Default: enabled (true).
+ */
+export const REMOTE_MUTE_ENABLED = 'remote-mute.enabled';
+
+/**
  * Flag indicating if live-streaming should be enabled.
  * Default: auto-detected.
  */
