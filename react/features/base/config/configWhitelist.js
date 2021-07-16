@@ -87,6 +87,7 @@ export default [
     'disableH264',
     'disableHPF',
     'disableInviteFunctions',
+    'disableIncomingMessageSound',
     'disableJoinLeaveSounds',
     'disableLocalVideoFlip',
     'disableNS',

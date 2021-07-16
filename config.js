@@ -603,6 +603,9 @@ var config = {
     // conference (if set to true, these sounds will not be played).
     // disableJoinLeaveSounds: false,
 
+    // Disables the sounds that play when a chat message is received.
+    // disableIncomingMessageSound: false,
+
     // Information for the chrome extension banner
     // chromeExtensionBanner: {
     //     // The chrome extension to be installed address
