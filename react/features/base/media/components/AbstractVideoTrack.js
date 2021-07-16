@@ -102,14 +102,7 @@ export default class AbstractVideoTrack<P: Props> extends Component<P> {
 
         const stream = render && videoTrack
             ? videoTrack.jitsiTrack.getOriginalStream() : null;
-
-        // Actual zoom is currently only enabled if the stream is a desktop
-        // stream.
-        const zoomEnabled
-            = this.props.zoomEnabled
-                && stream
-                && videoTrack
-                && videoTrack.videoType === 'desktop';
+        const zoomEnabled = true;
 
         return (
             <Video
