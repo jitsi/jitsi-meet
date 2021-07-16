@@ -256,7 +256,6 @@ class Toolbox extends Component<Props> {
         this._onToolbarOpenVideoQuality = this._onToolbarOpenVideoQuality.bind(this);
         this._onToolbarToggleChat = this._onToolbarToggleChat.bind(this);
         this._onToolbarToggleFullScreen = this._onToolbarToggleFullScreen.bind(this);
-        this._onToolbarToggleScreenshare = this._onToolbarToggleScreenshare.bind(this);
         this._onShortcutToggleTileView = this._onShortcutToggleTileView.bind(this);
         this._onEscKey = this._onEscKey.bind(this);
     }
@@ -540,7 +539,6 @@ class Toolbox extends Component<Props> {
         const desktop = this._showDesktopSharingButton() && {
             key: 'desktop',
             Content: ShareDesktopButton,
-            handleClick: this._onToolbarToggleScreenshare,
             group: 2
         };
 
@@ -1020,25 +1018,6 @@ class Toolbox extends Component<Props> {
                 }));
         this._closeOverflowMenuIfOpen();
         this._doToggleFullScreen();
-    }
-
-    _onToolbarToggleScreenshare: () => void;
-
-    /**
-     * Creates an analytics toolbar event and dispatches an action for toggling
-     * screensharing.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onToolbarToggleScreenshare() {
-        sendAnalytics(createToolbarEvent(
-            'toggle.screen.sharing',
-            ACTION_SHORTCUT_TRIGGERED,
-            { enable: !this.props._screenSharing }));
-
-        this._closeOverflowMenuIfOpen();
-        this._doToggleScreenshare();
     }
 
     /**

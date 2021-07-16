@@ -4,7 +4,8 @@ import { ReducerRegistry } from '../base/redux';
 
 import {
     SET_AUDIO_SETTINGS_VISIBILITY,
-    SET_VIDEO_SETTINGS_VISIBILITY
+    SET_VIDEO_SETTINGS_VISIBILITY,
+    SET_DESKTOP_SHARE_SETTINGS_VISIBILITY
 } from './actionTypes';
 
 ReducerRegistry.register('features/settings', (state = {}, action) => {
@@ -18,6 +19,11 @@ ReducerRegistry.register('features/settings', (state = {}, action) => {
         return {
             ...state,
             videoSettingsVisible: action.value
+        };
+    case SET_DESKTOP_SHARE_SETTINGS_VISIBILITY:
+        return {
+            ...state,
+            desktopShareSettingsVisible: action.value
         };
     }
 
