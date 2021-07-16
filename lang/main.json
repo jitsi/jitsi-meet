@@ -305,7 +305,7 @@
         "sessionRestarted": "Call restarted by the bridge",
         "Share": "Share",
         "shareAudio": "Continue",
-        "shareAudioTitle" : "How to share audio",
+        "shareAudioTitle": "How to share audio",
         "shareAudioWarningTitle": "You need to stop screen sharing before sharing audio",
         "shareAudioWarningH1": "If you want to share just audio:",
         "shareAudioWarningD1": "you need to stop screen sharing before sharing your audio.",
@@ -372,15 +372,15 @@
         "none": "None",
         "uploadedImage": "Uploaded image {{index}}",
         "deleteImage": "Delete image",
-        "image1" : "Beach",
-        "image2" : "White neutral wall",
-        "image3" : "White empty room",
-        "image4" : "Black floor lamp",
-        "image5" : "Mountain",
-        "image6" : "Forest ",
-        "image7" : "Sunrise",
+        "image1": "Beach",
+        "image2": "White neutral wall",
+        "image3": "White empty room",
+        "image4": "Black floor lamp",
+        "image5": "Mountain",
+        "image6": "Forest ",
+        "image7": "Sunrise",
         "desktopShareError": "Could not create desktop share",
-        "desktopShare":"Desktop share",
+        "desktopShare": "Desktop share",
         "webAssemblyWarning": "WebAssembly not supported"
     },
     "feedback": {
@@ -408,7 +408,7 @@
         "country": "Country",
         "dialANumber": "To join your meeting, dial one of these numbers and then enter the pin.",
         "dialInConferenceID": "PIN:",
-        "copyNumber":"Copy number",
+        "copyNumber": "Copy number",
         "dialInNotSupported": "Sorry, dialing in is currently not supported.",
         "dialInNumber": "Dial-in:",
         "dialInSummaryError": "Error fetching dial-in info now. Please try again later.",
@@ -614,23 +614,23 @@
         "configuringDevices": "Configuring devices...",
         "connectedWithAudioQ": "You’re connected with audio?",
         "connection": {
-           "good": "Your internet connection looks good!",
-           "nonOptimal": "Your internet connection is not optimal",
-           "poor": "You have a poor internet connection"
+            "good": "Your internet connection looks good!",
+            "nonOptimal": "Your internet connection is not optimal",
+            "poor": "You have a poor internet connection"
         },
         "connectionDetails": {
-          "audioClipping": "We expect your audio to be clipped.",
-          "audioHighQuality": "We expect your audio to have excellent quality.",
-          "audioLowNoVideo": "We expect your audio quality to be low and no video.",
-          "goodQuality": "Awesome! Your media quality is going to be great.",
-          "noMediaConnectivity": "We could not find a way to establish media connectivity for this test. This is typically caused by a firewall or NAT.",
-          "noVideo": "We expect that your video will be terrible.",
-          "undetectable": "If you still can not make calls in browser, we recommend that you make sure your speakers, microphone and camera are properly set up, that you have granted your browser rights to use your microphone and camera, and that your browser version is up-to-date. If you still have trouble calling, you should contact the web application developer.",
-          "veryPoorConnection": "We expect your call quality to be really terrible.",
-          "videoFreezing": "We expect your video to freeze, turn black, and be pixelated.",
-          "videoHighQuality": "We expect your video to have good quality.",
-          "videoLowQuality": "We expect your video to have low quality in terms of frame rate and resolution.",
-          "videoTearing": "We expect your video to be pixelated or have visual artefacts."
+            "audioClipping": "We expect your audio to be clipped.",
+            "audioHighQuality": "We expect your audio to have excellent quality.",
+            "audioLowNoVideo": "We expect your audio quality to be low and no video.",
+            "goodQuality": "Awesome! Your media quality is going to be great.",
+            "noMediaConnectivity": "We could not find a way to establish media connectivity for this test. This is typically caused by a firewall or NAT.",
+            "noVideo": "We expect that your video will be terrible.",
+            "undetectable": "If you still can not make calls in browser, we recommend that you make sure your speakers, microphone and camera are properly set up, that you have granted your browser rights to use your microphone and camera, and that your browser version is up-to-date. If you still have trouble calling, you should contact the web application developer.",
+            "veryPoorConnection": "We expect your call quality to be really terrible.",
+            "videoFreezing": "We expect your video to freeze, turn black, and be pixelated.",
+            "videoHighQuality": "We expect your video to have good quality.",
+            "videoLowQuality": "We expect your video to have low quality in terms of frame rate and resolution.",
+            "videoTearing": "We expect your video to be pixelated or have visual artefacts."
         },
         "copyAndShare": "Copy & share meeting link",
         "dialInMeeting": "Dial into the meeting",
@@ -654,7 +654,7 @@
         "or": "or",
         "premeeting": "Pre meeting",
         "showScreen": "Enable pre meeting screen",
-        "keyboardShortcuts" : "Enable Keyboard shortcuts",
+        "keyboardShortcuts": "Enable Keyboard shortcuts",
         "startWithPhone": "Start with phone audio",
         "screenSharingError": "Screen sharing error:",
         "videoOnlyError": "Video error:",
@@ -858,6 +858,7 @@
             "toggleFilmstrip": "Toggle filmstrip",
             "videomute": "Start / Stop camera",
             "videoblur": "Toggle video blur",
+            "selectAvatar": "Select Avatar",
             "selectBackground": "Select Background",
             "expand": "Expand",
             "collapse": "Collapse"
@@ -940,6 +941,7 @@
         "tileViewToggle": "Toggle tile view",
         "toggleCamera": "Toggle camera",
         "videomute": "Start / Stop camera",
+        "selectAvatar": "Select Avatar",
         "selectBackground": "Select background"
     },
     "transcribing": {
@@ -1049,13 +1051,13 @@
         "startMeeting": "Start meeting",
         "terms": "Terms",
         "title": "Secure, fully featured, and completely free video conferencing",
-        "logo":{
-           "calendar":"Calendar logo",
-           "microsoftLogo":"Microsoft logo",
-           "logoDeepLinking":"Jitsi meet logo",
-           "desktopPreviewThumbnail":"Desktop preview thumbnail",
-           "googleLogo":"Google Logo",
-           "policyLogo":"Policy logo"
+        "logo": {
+            "calendar": "Calendar logo",
+            "microsoftLogo": "Microsoft logo",
+            "logoDeepLinking": "Jitsi meet logo",
+            "desktopPreviewThumbnail": "Desktop preview thumbnail",
+            "googleLogo": "Google Logo",
+            "policyLogo": "Policy logo"
         }
     },
     "lonelyMeetingExperience": {

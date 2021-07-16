@@ -54,6 +54,7 @@ import { SpeakerStatsButton } from '../../../speaker-stats';
 import {
     ClosedCaptionButton
 } from '../../../subtitles';
+import { VideoAvatarButton } from '../../../video-avatar';
 import {
     TileViewButton,
     shouldDisplayTileView,
@@ -691,6 +692,12 @@ class Toolbox extends Component<Props> {
             group: 4
         };
 
+        const videoAvatars = {
+            key: 'select-avatar',
+            Content: VideoAvatarButton,
+            group: 4
+        };
+
         return {
             microphone,
             camera,
@@ -720,7 +727,8 @@ class Toolbox extends Component<Props> {
             embed,
             feedback,
             download,
-            help
+            help,
+            videoAvatars
         };
     }
 
