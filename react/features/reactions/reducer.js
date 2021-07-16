@@ -4,9 +4,9 @@ import { ReducerRegistry } from '../base/redux';
 
 import {
     TOGGLE_REACTIONS_VISIBLE,
-    SET_REACTIONS_MESSAGE,
-    CLEAR_REACTIONS_MESSAGE,
-    SET_REACTION_QUEUE
+    SET_REACTION_QUEUE,
+    ADD_REACTION_BUFFER,
+    FLUSH_REACTION_BUFFER
 } from './actionTypes';
 
 /**
@@ -30,11 +30,11 @@ function _getInitialState() {
         visible: false,
 
         /**
-         * A string that contains the message to be added to the chat.
+         * An array that contains the reactions buffer to be sent.
          *
-         * @type {string}
+         * @type {Array}
          */
-        message: '',
+        buffer: [],
 
         /**
          * A number, non-zero value which identifies the timer created by a call
@@ -64,17 +64,17 @@ ReducerRegistry.register(
                 visible: !state.visible
             };
 
-        case SET_REACTIONS_MESSAGE:
+        case ADD_REACTION_BUFFER:
             return {
                 ...state,
-                message: action.message,
+                buffer: action.buffer,
                 timeoutID: action.timeoutID
             };
 
-        case CLEAR_REACTIONS_MESSAGE:
+        case FLUSH_REACTION_BUFFER:
             return {
                 ...state,
-                message: '',
+                buffer: [],
                 timeoutID: null
             };
 

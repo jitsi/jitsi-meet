@@ -2,12 +2,13 @@
 
 import React, { useEffect } from 'react';
 
+import { createShortcutEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
 import { IconRaisedHand } from '../../../base/icons';
 import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import ToolbarButton from '../../../toolbox/components/web/ToolbarButton';
-import { sendReaction } from '../../actions.any';
+import { addReactionToBuffer } from '../../actions.any';
 import { toggleReactionsMenuVisibility } from '../../actions.web';
 import { REACTIONS, type ReactionEmojiProps } from '../../constants';
 import { getReactionsQueue } from '../../functions.any';
@@ -67,9 +68,16 @@ function ReactionsMenuButton({
 
     useEffect(() => {
         const KEYBOARD_SHORTCUTS = Object.keys(REACTIONS).map(key => {
+            const onShortcutSendReaction = () => {
+                dispatch(addReactionToBuffer(key));
+                sendAnalytics(createShortcutEvent(
+                    `reaction.${key}`
+                ));
+            };
+
             return {
                 character: REACTIONS[key].shortcutChar,
-                exec: () => dispatch(sendReaction(key)),
+                exec: onShortcutSendReaction,
                 helpDescription: t(`toolbar.reaction${key.charAt(0).toUpperCase()}${key.slice(1)}`),
                 altKey: true
             };
