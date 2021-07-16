@@ -3,11 +3,12 @@ import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
 import { CONNECTION_FAILED } from '../base/connection';
 import { JitsiConnectionErrors } from '../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../base/redux';
-import { isVpaasMeeting } from '../billing-counter/functions';
+
 
 import { SET_DETAILS } from './actionTypes';
 import { getCustomerDetails } from './actions';
 import { STATUSES } from './constants';
+import { isVpaasMeeting } from './functions';
 
 /**
  * The redux middleware for jaas.

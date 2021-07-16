@@ -2,7 +2,7 @@
 
 import { ENDPOINT_REACTION_NAME } from '../../../modules/API/constants';
 import { MiddlewareRegistry } from '../base/redux';
-import { isVpaasMeeting } from '../billing-counter/functions';
+import { isVpaasMeeting } from '../jaas/functions';
 
 import {
     SET_REACTIONS_MESSAGE,
