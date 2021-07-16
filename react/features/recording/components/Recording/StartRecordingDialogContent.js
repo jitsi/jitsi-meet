@@ -21,8 +21,8 @@ import {
 } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ColorPalette, StyleType } from '../../../base/styles';
-import { isVpaasMeeting } from '../../../billing-counter/functions';
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox';
+import { isVpaasMeeting } from '../../../jaas/functions';
 import { RECORDING_TYPES } from '../../constants';
 import { getRecordingDurationEstimation } from '../../functions';
 

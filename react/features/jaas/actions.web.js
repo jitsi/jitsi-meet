@@ -1,12 +1,11 @@
 // @flow
 
 import { openDialog } from '../base/dialog';
-import { VPAAS_TENANT_PREFIX } from '../billing-counter/constants';
-import { getVpaasTenant } from '../billing-counter/functions';
 
 import { SET_DETAILS } from './actionTypes';
 import { PremiumFeatureDialog } from './components';
-import { isFeatureDisabled, sendGetDetailsRequest } from './functions';
+import { VPAAS_TENANT_PREFIX } from './constants';
+import { getVpaasTenant, isFeatureDisabled, sendGetDetailsRequest } from './functions';
 import logger from './logger';
 
 /**

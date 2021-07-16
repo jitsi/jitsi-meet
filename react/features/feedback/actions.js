@@ -4,8 +4,8 @@ import type { Dispatch } from 'redux';
 
 import { FEEDBACK_REQUEST_IN_PROGRESS } from '../../../modules/UI/UIErrors';
 import { openDialog } from '../base/dialog';
-import { isVpaasMeeting } from '../billing-counter/functions';
 import { extractFqnFromPath } from '../dynamic-branding/functions';
+import { isVpaasMeeting } from '../jaas/functions';
 
 import {
     CANCEL_FEEDBACK,

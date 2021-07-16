@@ -16,7 +16,7 @@ import { translate } from '../../base/i18n';
 import { Icon, IconClose } from '../../base/icons';
 import { browser } from '../../base/lib-jitsi-meet';
 import { connect } from '../../base/redux';
-import { isVpaasMeeting } from '../../billing-counter/functions';
+import { isVpaasMeeting } from '../../jaas/functions';
 import logger from '../logger';
 
 

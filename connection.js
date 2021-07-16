@@ -17,8 +17,7 @@ import {
     JitsiConnectionErrors,
     JitsiConnectionEvents
 } from './react/features/base/lib-jitsi-meet';
-import { isVpaasMeeting } from './react/features/billing-counter/functions';
-import { getJaasJWT } from './react/features/jaas/functions';
+import { isVpaasMeeting, getJaasJWT } from './react/features/jaas/functions';
 import { setPrejoinDisplayNameRequired } from './react/features/prejoin/actions';
 const logger = Logger.getLogger(__filename);
 

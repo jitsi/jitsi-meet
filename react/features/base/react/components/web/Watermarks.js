@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import { isVpaasMeeting } from '../../../../billing-counter/functions';
+import { isVpaasMeeting } from '../../../../jaas/functions';
 import { translate } from '../../../i18n';
 import { connect } from '../../../redux';
 
