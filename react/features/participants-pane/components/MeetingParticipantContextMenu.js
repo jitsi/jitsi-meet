@@ -1,7 +1,8 @@
 // @flow
-
+import { withStyles } from '@material-ui/core/styles';
 import React, { Component } from 'react';
 
+import { Avatar } from '../../base/avatar';
 import { isToolbarButtonEnabled } from '../../base/config/functions.web';
 import { openDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
@@ -19,8 +20,10 @@ import {
     isParticipantModerator
 } from '../../base/participants';
 import { connect } from '../../base/redux';
+import { withPixelLineHeight } from '../../base/styles/functions.web';
 import { isParticipantAudioMuted, isParticipantVideoMuted } from '../../base/tracks';
-import { openChat } from '../../chat/actions';
+import { openChatById } from '../../chat/actions';
+import { Drawer, DrawerPortal } from '../../toolbox/components/web';
 import { GrantModeratorDialog, KickRemoteParticipantDialog, MuteEveryoneDialog } from '../../video-menu';
 import MuteRemoteParticipantsVideoDialog from '../../video-menu/components/web/MuteRemoteParticipantsVideoDialog';
 import { getComputedOuterHeight } from '../functions';
@@ -66,9 +69,25 @@ type Props = {
     _participant: Object,
 
     /**
+     * Closes a drawer if open.
+     */
+    closeDrawer: Function,
+
+    /**
+     * An object containing the CSS classes.
+     */
+    classes?: {[ key: string]: string},
+
+    /**
      * The dispatch function from redux.
      */
     dispatch: Function,
+
+    /**
+     * The participant for which the drawer is open.
+     * It contains the displayName & participantID.
+     */
+    drawerParticipant: Object,
 
     /**
      * Callback used to open a confirmation dialog for audio muting.
@@ -101,6 +120,12 @@ type Props = {
     participantID: string,
 
     /**
+     * True if an overflow drawer should be displayed.
+     */
+    overflowDrawer: boolean,
+
+
+    /**
      * The translate function.
      */
     t: Function
@@ -113,6 +138,25 @@ type State = {
      */
     isHidden: boolean
 };
+
+const styles = theme => {
+    return {
+        drawer: {
+            '& > div': {
+                ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
+                lineHeight: '32px',
+
+                '& svg': {
+                    fill: theme.palette.icon01
+                }
+            },
+            '&:first-child': {
+                marginTop: 15
+            }
+        }
+    };
+};
+
 
 /**
  * Implements the MeetingParticipantContextMenu component.
@@ -138,12 +182,26 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
 
         this._containerRef = React.createRef();
 
+        this._getCurrentParticipantId = this._getCurrentParticipantId.bind(this);
         this._onGrantModerator = this._onGrantModerator.bind(this);
         this._onKick = this._onKick.bind(this);
         this._onMuteEveryoneElse = this._onMuteEveryoneElse.bind(this);
         this._onMuteVideo = this._onMuteVideo.bind(this);
         this._onSendPrivateMessage = this._onSendPrivateMessage.bind(this);
         this._position = this._position.bind(this);
+    }
+
+    _getCurrentParticipantId: () => string;
+
+    /**
+     * Returns the participant id for the item we want to operate.
+     *
+     * @returns {void}
+     */
+    _getCurrentParticipantId() {
+        const { _participant, drawerParticipant, overflowDrawer } = this.props;
+
+        return overflowDrawer ? drawerParticipant?.participantID : _participant?.id;
     }
 
     _onGrantModerator: () => void;
@@ -154,10 +212,8 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
      * @returns {void}
      */
     _onGrantModerator() {
-        const { _participant, dispatch } = this.props;
-
-        dispatch(openDialog(GrantModeratorDialog, {
-            participantID: _participant?.id
+        this.props.dispatch(openDialog(GrantModeratorDialog, {
+            participantID: this._getCurrentParticipantId()
         }));
     }
 
@@ -169,10 +225,8 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
      * @returns {void}
      */
     _onKick() {
-        const { _participant, dispatch } = this.props;
-
-        dispatch(openDialog(KickRemoteParticipantDialog, {
-            participantID: _participant?.id
+        this.props.dispatch(openDialog(KickRemoteParticipantDialog, {
+            participantID: this._getCurrentParticipantId()
         }));
     }
 
@@ -184,10 +238,8 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
      * @returns {void}
      */
     _onMuteEveryoneElse() {
-        const { _participant, dispatch } = this.props;
-
-        dispatch(openDialog(MuteEveryoneDialog, {
-            exclude: [ _participant?.id ]
+        this.props.dispatch(openDialog(MuteEveryoneDialog, {
+            exclude: [ this._getCurrentParticipantId() ]
         }));
     }
 
@@ -199,10 +251,8 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
      * @returns {void}
      */
     _onMuteVideo() {
-        const { _participant, dispatch } = this.props;
-
-        dispatch(openDialog(MuteRemoteParticipantsVideoDialog, {
-            participantID: _participant?.id
+        this.props.dispatch(openDialog(MuteRemoteParticipantsVideoDialog, {
+            participantID: this._getCurrentParticipantId()
         }));
     }
 
@@ -214,9 +264,10 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
      * @returns {void}
      */
     _onSendPrivateMessage() {
-        const { _participant, dispatch } = this.props;
+        const { closeDrawer, dispatch, overflowDrawer } = this.props;
 
-        dispatch(openChat(_participant));
+        dispatch(openChatById(this._getCurrentParticipantId()));
+        overflowDrawer && closeDrawer();
     }
 
     _position: () => void;
@@ -283,9 +334,13 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
             _isParticipantVideoMuted,
             _isParticipantAudioMuted,
             _participant,
+            classes,
+            closeDrawer,
+            drawerParticipant,
             onEnter,
             onLeave,
             onSelect,
+            overflowDrawer,
             muteAudio,
             t
         } = this.props;
@@ -294,17 +349,10 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
             return null;
         }
 
-        return (
-            <ContextMenu
-                className = { ignoredChildClassName }
-                innerRef = { this._containerRef }
-                isHidden = { this.state.isHidden }
-                onClick = { onSelect }
-                onMouseEnter = { onEnter }
-                onMouseLeave = { onLeave }>
-                <ContextMenuItemGroup>
-                    {
-                        _isLocalModerator && (
+        const actions = <>
+            <ContextMenuItemGroup>
+                {
+                    _isLocalModerator && (
                             <>
                                 {
                                     !_isParticipantAudioMuted
@@ -319,24 +367,24 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
                                     <span>{t('toolbar.accessibilityLabel.muteEveryoneElse')}</span>
                                 </ContextMenuItem>
                             </>
-                        )
-                    }
+                    )
+                }
 
-                    {
-                        _isLocalModerator && (
-                            _isParticipantVideoMuted || (
-                                <ContextMenuItem onClick = { this._onMuteVideo }>
-                                    <ContextMenuIcon src = { IconVideoOff } />
-                                    <span>{t('participantsPane.actions.stopVideo')}</span>
-                                </ContextMenuItem>
-                            )
+                {
+                    _isLocalModerator && (
+                        _isParticipantVideoMuted || (
+                            <ContextMenuItem onClick = { this._onMuteVideo }>
+                                <ContextMenuIcon src = { IconVideoOff } />
+                                <span>{t('participantsPane.actions.stopVideo')}</span>
+                            </ContextMenuItem>
                         )
-                    }
-                </ContextMenuItemGroup>
+                    )
+                }
+            </ContextMenuItemGroup>
 
-                <ContextMenuItemGroup>
-                    {
-                        _isLocalModerator && (
+            <ContextMenuItemGroup>
+                {
+                    _isLocalModerator && (
                             <>
                                 {
                                     !_isParticipantModerator && (
@@ -351,18 +399,48 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
                                     <span>{ t('videothumbnail.kick') }</span>
                                 </ContextMenuItem>
                             </>
-                        )
-                    }
-                    {
-                        _isChatButtonEnabled && (
-                            <ContextMenuItem onClick = { this._onSendPrivateMessage }>
-                                <ContextMenuIcon src = { IconMessage } />
-                                <span>{t('toolbar.accessibilityLabel.privateMessage')}</span>
+                    )
+                }
+                {
+                    _isChatButtonEnabled && (
+                        <ContextMenuItem onClick = { this._onSendPrivateMessage }>
+                            <ContextMenuIcon src = { IconMessage } />
+                            <span>{t('toolbar.accessibilityLabel.privateMessage')}</span>
+                        </ContextMenuItem>
+                    )
+                }
+            </ContextMenuItemGroup>
+                        </>;
+
+        return (
+            <>
+                { !overflowDrawer
+                  && <ContextMenu
+                      className = { ignoredChildClassName }
+                      innerRef = { this._containerRef }
+                      isHidden = { this.state.isHidden }
+                      onClick = { onSelect }
+                      onMouseEnter = { onEnter }
+                      onMouseLeave = { onLeave }>
+                      { actions }
+                  </ContextMenu>}
+
+                <DrawerPortal>
+                    <Drawer
+                        isOpen = { drawerParticipant && overflowDrawer }
+                        onClose = { closeDrawer }>
+                        <div className = { classes && classes.drawer }>
+                            <ContextMenuItem>
+                                <Avatar
+                                    participantId = { drawerParticipant && drawerParticipant.participantID }
+                                    size = { 20 } />
+                                <span>{ drawerParticipant && drawerParticipant.displayName }</span>
                             </ContextMenuItem>
-                        )
-                    }
-                </ContextMenuItemGroup>
-            </ContextMenu>
+                            { actions }
+                        </div>
+                    </Drawer>
+                </DrawerPortal>
+            </>
         );
     }
 }
@@ -396,4 +474,4 @@ function _mapStateToProps(state, ownProps): Object {
     };
 }
 
-export default translate(connect(_mapStateToProps)(MeetingParticipantContextMenu));
+export default withStyles(styles)(translate(connect(_mapStateToProps)(MeetingParticipantContextMenu)));

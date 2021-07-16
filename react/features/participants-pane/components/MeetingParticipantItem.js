@@ -83,6 +83,17 @@ type Props = {
     onLeave: Function,
 
     /**
+     * Callback used to open an actions drawer for a participant.
+     */
+    openDrawerForPaticipant: Function,
+
+    /**
+     * True if an overflow drawer should be displayed.
+     */
+    overflowDrawer: boolean,
+
+
+    /**
      * The aria-label for the ellipsis action.
      */
     participantActionEllipsisLabel: string,
@@ -118,6 +129,8 @@ function MeetingParticipantItem({
     onLeave,
     muteAudio,
     muteParticipantButtonText,
+    openDrawerForPaticipant,
+    overflowDrawer,
     participantActionEllipsisLabel,
     youText
 }: Props) {
@@ -129,19 +142,25 @@ function MeetingParticipantItem({
             isHighlighted = { isHighlighted }
             local = { _local }
             onLeave = { onLeave }
+            openDrawerForPaticipant = { openDrawerForPaticipant }
+            overflowDrawer = { overflowDrawer }
             participantID = { _participantID }
             raisedHand = { _raisedHand }
             videoMuteState = { _isVideoMuted ? MEDIA_STATE.MUTED : MEDIA_STATE.UNMUTED }
             youText = { youText }>
-            <ParticipantQuickAction
-                askUnmuteText = { askUnmuteText }
-                buttonType = { _quickActionButtonType }
-                muteAudio = { muteAudio }
-                muteParticipantButtonText = { muteParticipantButtonText }
-                participantID = { _participantID } />
-            <ParticipantActionEllipsis
-                aria-label = { participantActionEllipsisLabel }
-                onClick = { onContextMenu } />
+
+            {!overflowDrawer
+             && <>
+                 <ParticipantQuickAction
+                     askUnmuteText = { askUnmuteText }
+                     buttonType = { _quickActionButtonType }
+                     muteAudio = { muteAudio }
+                     muteParticipantButtonText = { muteParticipantButtonText }
+                     participantID = { _participantID } />
+                 <ParticipantActionEllipsis
+                     aria-label = { participantActionEllipsisLabel }
+                     onClick = { onContextMenu } />
+                 </>}
         </ParticipantItem>
     );
 }

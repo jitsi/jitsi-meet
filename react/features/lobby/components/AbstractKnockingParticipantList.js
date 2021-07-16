@@ -4,7 +4,7 @@ import { PureComponent } from 'react';
 
 import { isLocalParticipantModerator } from '../../base/participants';
 import { setKnockingParticipantApproval } from '../actions';
-import { getLobbyState } from '../functions';
+import { getKnockingParticipants, getLobbyEnabled } from '../functions';
 
 export type Props = {
 
@@ -67,7 +67,8 @@ export default class AbstractKnockingParticipantList<P: Props = Props> extends P
  * @returns {Props}
  */
 export function mapStateToProps(state: Object): $Shape<Props> {
-    const { knockingParticipants, lobbyEnabled } = getLobbyState(state);
+    const lobbyEnabled = getLobbyEnabled(state);
+    const knockingParticipants = getKnockingParticipants(state);
 
     return {
         _participants: knockingParticipants,

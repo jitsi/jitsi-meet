@@ -1,6 +1,7 @@
 // @flow
 
 import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -35,6 +36,14 @@ const useStyles = makeStyles(() => {
             transform: 'translateY(-100%)',
             width: '238px'
         },
+        drawer: {
+            width: '100%',
+            top: 0,
+
+            '& > div': {
+                lineHeight: '32px'
+            }
+        },
         text: {
             marginLeft: '52px',
             lineHeight: '40px'
@@ -47,13 +56,18 @@ const useStyles = makeStyles(() => {
 
 type Props = {
 
-  /**
-   * Callback for the mouse leaving this item
-   */
-  onMouseLeave: Function
+    /**
+     * Whether the menu is displayed inside a drawer.
+     */
+    inDrawer?: boolean,
+
+    /**
+     * Callback for the mouse leaving this item.
+     */
+    onMouseLeave?: Function
 };
 
-export const FooterContextMenu = ({ onMouseLeave }: Props) => {
+export const FooterContextMenu = ({ inDrawer, onMouseLeave }: Props) => {
     const dispatch = useDispatch();
     const isModerationSupported = useSelector(isAvModerationSupported());
     const allModerators = useSelector(isEveryoneModerator);
@@ -72,7 +86,7 @@ export const FooterContextMenu = ({ onMouseLeave }: Props) => {
 
     return (
         <ContextMenu
-            className = { classes.contextMenu }
+            className = { clsx(classes.contextMenu, inDrawer && clsx(classes.drawer)) }
             onMouseLeave = { onMouseLeave }>
             <ContextMenuItem
                 id = 'participants-pane-context-menu-stop-video'
