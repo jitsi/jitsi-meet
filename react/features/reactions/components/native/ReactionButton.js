@@ -4,6 +4,7 @@ import React from 'react';
 import { Text, TouchableHighlight } from 'react-native';
 import { useDispatch } from 'react-redux';
 
+import { createReactionMenuEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
 import type { StyleType } from '../../../base/styles';
 import { addReactionToBuffer } from '../../actions.any';
@@ -79,6 +80,7 @@ function ReactionButton({
      */
     function _onClick() {
         dispatch(addReactionToBuffer(reaction));
+        sendAnalytics(createReactionMenuEvent(reaction));
     }
 
     return (

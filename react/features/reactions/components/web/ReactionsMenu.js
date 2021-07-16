@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 
 import {
+    createReactionMenuEvent,
     createToolbarEvent,
     sendAnalytics
 } from '../../../analytics';
@@ -158,15 +159,16 @@ class ReactionsMenu extends Component<Props> {
              *
              * @returns {void}
              */
-            function sendMessage() {
+            function doSendReaction() {
                 dispatch(addReactionToBuffer(key));
+                sendAnalytics(createReactionMenuEvent(key));
             }
 
             return (<ReactionButton
                 accessibilityLabel = { t(`toolbar.accessibilityLabel.${key}`) }
                 icon = { REACTIONS[key].emoji }
                 key = { key }
-                onClick = { sendMessage }
+                onClick = { doSendReaction }
                 toggled = { false }
                 tooltip = { `${t(`toolbar.${key}`)} ${modifierKey} + ${REACTIONS[key].shortcutChar}` } />);
         });
