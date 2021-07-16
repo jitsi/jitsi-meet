@@ -16,8 +16,8 @@
     z-index: $subtitlesZ;
 
     &.lifted {
-        // Lift subtitle above toolbar+invite box.
-        bottom: $newToolbarSize + 112px + 40px;
+        // Lift subtitle above toolbar+dominant speaker box.
+        bottom: $newToolbarSize + 36px + 40px;
     }
 
     span {
