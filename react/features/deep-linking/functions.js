@@ -49,7 +49,7 @@ export function generateDeepLinkingURL() {
  * @param {Object} state - Object containing current redux state.
  * @returns {Promise<Component>}
  */
-export function getDeepLinkingPage(state) {
+export function mgetDeepLinkingPage(state) {
     const { room } = state['features/base/conference'];
     const { launchInWeb } = state['features/deep-linking'];
     const appScheme = typeof interfaceConfig !== 'undefined' && interfaceConfig.APP_SCHEME;
@@ -58,7 +58,7 @@ export function getDeepLinkingPage(state) {
     if (launchInWeb
             || !room
             || state['features/base/config'].disableDeepLinking
-            || (isVpaasMeeting(state) && !appScheme)) {
+            || (isVpaasMeeting(state) && (!appScheme || appScheme === 'com.8x8.meet'))) {
         return Promise.resolve();
     }
 
