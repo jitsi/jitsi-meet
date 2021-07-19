@@ -2,6 +2,7 @@
 
 import { ENDPOINT_REACTION_NAME } from '../../../modules/API/constants';
 import { MiddlewareRegistry } from '../base/redux';
+import { isVpaasMeeting } from '../billing-counter/functions';
 
 import {
     SET_REACTIONS_MESSAGE,
@@ -17,6 +18,7 @@ import {
     setReactionQueue
 } from './actions.any';
 import { REACTIONS } from './constants';
+import { messageToKeyArray, sendReactionsWebhook } from './functions.any';
 
 
 declare var APP: Object;
@@ -46,7 +48,12 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case CLEAR_REACTIONS_MESSAGE: {
-        const { message } = getState()['features/reactions'];
+        const state = getState();
+        const { message } = state['features/reactions'];
+
+        if (isVpaasMeeting(state)) {
+            sendReactionsWebhook(state, messageToKeyArray(message));
+        }
 
         dispatch(addReactionsMessageToChat(message));
 

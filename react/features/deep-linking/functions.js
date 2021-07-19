@@ -58,7 +58,7 @@ export function getDeepLinkingPage(state) {
     if (launchInWeb
             || !room
             || state['features/base/config'].disableDeepLinking
-            || (isVpaasMeeting(state) && !appScheme)) {
+            || (isVpaasMeeting(state) && (!appScheme || appScheme === 'com.8x8.meet'))) {
         return Promise.resolve();
     }
 

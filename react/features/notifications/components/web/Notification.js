@@ -116,7 +116,7 @@ class Notification extends AbstractNotification<Props> {
                 }
             ];
 
-            if (!hideErrorSupportLink) {
+            if (!hideErrorSupportLink && interfaceConfig.SUPPORT_URL) {
                 buttons.push({
                     content: this.props.t('dialog.contactSupport'),
                     onClick: this._onOpenSupportLink
