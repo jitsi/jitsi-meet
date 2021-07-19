@@ -72,9 +72,9 @@ function ConferenceInfo(props: Props) {
     } = props;
 
     const getLeftMargin = () => {
-        const subjectContainerWidth = document.getElementById('subject-container')?.clientWidth;
-        const recContainerWidth = document.getElementById('rec-container')?.clientWidth;
-        const subjectDetailsContainer = document.getElementById('subject-details-container')?.clientWidth;
+        const subjectContainerWidth = document.getElementById('subject-container')?.clientWidth ?? 0;
+        const recContainerWidth = document.getElementById('rec-container')?.clientWidth ?? 0;
+        const subjectDetailsContainer = document.getElementById('subject-details-container')?.clientWidth ?? 0;
 
         return (subjectContainerWidth - recContainerWidth - subjectDetailsContainer) / 2;
     };
