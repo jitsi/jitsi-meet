@@ -4,10 +4,15 @@ import i18next from 'i18next';
 import _ from 'lodash';
 import type { Dispatch } from 'redux';
 
-import { getCurrentConference, setRoom } from '../base/conference';
-import { connect, disconnect } from '../base/connection';
+import {
+    conferenceLeft,
+    conferenceWillLeave,
+    createConference,
+    getCurrentConference,
+    setRoom
+} from '../base/conference';
+import { setAudioMuted, setVideoMuted } from '../base/media';
 import { getRemoteParticipants } from '../base/participants';
-import { createDesiredLocalTracks } from '../base/tracks';
 import { getConferenceOptions } from '../conference/functions';
 import { clearNotifications } from '../notifications';
 
@@ -23,6 +28,7 @@ import {
     getMainRoomId,
     isInBreakoutRoom
 } from './functions';
+import logger from './logger';
 
 declare var APP: Object;
 
@@ -143,14 +149,31 @@ export function sendParticipantToRoom(participantId: string, roomId: string) {
  */
 export function moveToRoom(roomId?: string) {
     return (dispatch: Dispatch<any>, getState: Function) => {
+        // FIXME: Move this code to conference.js
+        // respectively the base/conference feature.
         const _roomId = roomId || getMainRoomId(getState);
 
         if (navigator.product === 'ReactNative') {
-            dispatch(disconnect());
+            const conference = getCurrentConference(getState);
+            const { audio, video } = getState()['features/base/media'];
+
+            dispatch(conferenceWillLeave(conference));
+            conference.leave()
+            .catch(error => {
+                logger.warn(
+                    'JitsiConference.leave() rejected with:',
+                    error);
+
+                dispatch(conferenceLeft(conference));
+            });
             dispatch(clearNotifications());
             dispatch(setRoom(_roomId));
-            dispatch(createDesiredLocalTracks());
-            dispatch(connect());
+            dispatch(createConference()).then(result => {
+                dispatch(setAudioMuted(audio.muted));
+                dispatch(setVideoMuted(video.muted));
+
+                return result;
+            });
         } else {
             const join = () => APP.conference.joinRoom(_roomId);
 
