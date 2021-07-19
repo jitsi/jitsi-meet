@@ -57,62 +57,20 @@ class SoundsTab extends AbstractDialogTab<Props> {
         super(props);
 
         // Bind event handlers so they are only bound once for every instance.
-        this._onIncomingMessageChange = this._onIncomingMessageChange.bind(this);
-        this._onParticipantJoinedChange = this._onParticipantJoinedChange.bind(this);
-        this._onParticipantLeftChange = this._onParticipantLeftChange.bind(this);
-        this._onTalkWhileMutedChange = this._onTalkWhileMutedChange.bind(this);
+        this._onChange = this._onChange.bind(this);
     }
 
-    _onIncomingMessageChange: (Object) => void;
-
-    _onParticipantJoinedChange: (Object) => void;
-
-    _onParticipantLeftChange: (Object) => void;
-
-    _onTalkWhileMutedChange: (Object) => void;
+    _onChange: (Object) => void;
 
     /**
-     * Changes incoming message sound state.
+     * Changes a sound setting state.
      *
      * @param {Object} e - The key event to handle.
      *
      * @returns {void}
      */
-    _onIncomingMessageChange({ target: { checked } }) {
-        super._onChange({ soundsIncomingMessage: checked });
-    }
-
-    /**
-     * Changes participant joined sound state.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    _onParticipantJoinedChange({ target: { checked } }) {
-        super._onChange({ soundsParticipantJoined: checked });
-    }
-
-    /**
-     * Changes participant left sound state.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    _onParticipantLeftChange({ target: { checked } }) {
-        super._onChange({ soundsParticipantLeft: checked });
-    }
-
-    /**
-     * Changes talk while muted sound state.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    _onTalkWhileMutedChange({ target: { checked } }) {
-        super._onChange({ soundsTalkWhileMuted: checked });
+    _onChange({ target }) {
+        super._onChange({ [target.name]: target.checked });
     }
 
     /**
@@ -140,23 +98,23 @@ class SoundsTab extends AbstractDialogTab<Props> {
                 <Checkbox
                     isChecked = { soundsIncomingMessage }
                     label = { t('settings.incomingMessage') }
-                    name = 'incoming-message'
-                    onChange = { this._onIncomingMessageChange } />
+                    name = 'soundsIncomingMessage'
+                    onChange = { this._onChange } />
                 <Checkbox
                     isChecked = { soundsParticipantJoined }
                     label = { t('settings.participantJoined') }
-                    name = 'participant-joined'
-                    onChange = { this._onParticipantJoinedChange } />
+                    name = 'soundsParticipantJoined'
+                    onChange = { this._onChange } />
                 <Checkbox
                     isChecked = { soundsParticipantLeft }
                     label = { t('settings.participantLeft') }
-                    name = 'participant-left'
-                    onChange = { this._onParticipantLeftChange } />
+                    name = 'soundsParticipantLeft'
+                    onChange = { this._onChange } />
                 <Checkbox
                     isChecked = { soundsTalkWhileMuted }
                     label = { t('settings.talkWhileMuted') }
-                    name = 'talk-while-muted'
-                    onChange = { this._onTalkWhileMutedChange } />
+                    name = 'soundsTalkWhileMuted'
+                    onChange = { this._onChange } />
             </div>
         );
     }
