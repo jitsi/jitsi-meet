@@ -18,7 +18,13 @@ import { showToolbox } from '../../../toolbox/actions.web';
 import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';
 import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
 import { setFilmstripVisible, setVisibleRemoteParticipants } from '../../actions';
-import { ASPECT_RATIO_BREAKPOINT, TILE_HORIZONTAL_MARGIN, TILE_VERTICAL_MARGIN, TOOLBAR_HEIGHT } from '../../constants';
+import {
+    ASPECT_RATIO_BREAKPOINT,
+    TILE_HORIZONTAL_MARGIN,
+    TILE_VERTICAL_MARGIN,
+    TOOLBAR_HEIGHT,
+    TOOLBAR_HEIGHT_MOBILE
+} from '../../constants';
 import { shouldRemoteVideosBeVisible } from '../../functions';
 
 import AudioTracksContainer from './AudioTracksContainer';
@@ -494,7 +500,7 @@ function _mapStateToProps(state) {
     } = state['features/filmstrip'].tileViewDimensions;
     const _currentLayout = getCurrentLayout(state);
     const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
-    const filmstripOverflows = filmstripHeight >= clientHeight - TOOLBAR_HEIGHT;
+    const filmstripOverflows = (clientHeight - filmstripHeight) / 2 < TOOLBAR_HEIGHT_MOBILE;
     const collapseTileView = reduceHeight
         && filmstripOverflows
         && isMobileBrowser()
@@ -508,7 +514,7 @@ function _mapStateToProps(state) {
     switch (_currentLayout) {
     case LAYOUTS.TILE_VIEW:
         _thumbnailSize = tileViewThumbnailSize;
-        remoteFilmstripHeight = filmstripHeight - (collapseTileView ? TOOLBAR_HEIGHT : 0);
+        remoteFilmstripHeight = filmstripHeight - (collapseTileView ? TOOLBAR_HEIGHT_MOBILE : 0);
         remoteFilmstripWidth = filmstripWidth;
         break;
     case LAYOUTS.VERTICAL_FILMSTRIP_VIEW: {

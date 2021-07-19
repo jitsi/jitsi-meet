@@ -60,8 +60,8 @@
         }
 
         &.collapse {
-            height: calc(100% - #{$newToolbarSize});
-            margin-bottom: $newToolbarSize;
+            height: calc(100% - #{$newToolbarSizeMobile});
+            margin-bottom: $newToolbarSizeMobile;
         }
     }
 
