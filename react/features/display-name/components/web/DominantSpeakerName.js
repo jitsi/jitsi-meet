@@ -4,8 +4,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { getDominantSpeakerParticipant, getLocalParticipant, getPinnedParticipant } from '../../../base/participants';
+import { getLocalParticipant } from '../../../base/participants';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
+import { getLargeVideoParticipant } from '../../../large-video/functions';
 import { isToolboxVisible } from '../../../toolbox/functions.web';
 import { isLayoutTileView } from '../../../video-layout';
 
@@ -34,12 +35,9 @@ const useStyles = makeStyles(theme => {
  */
 const DominantSpeakerName = () => {
     const classes = useStyles();
-
-    const pinnedParticipant = useSelector(getPinnedParticipant);
-    const dominantSpeaker = useSelector(getDominantSpeakerParticipant);
-    const selectedParticipant = pinnedParticipant ?? dominantSpeaker;
-    const nameToDisplay = selectedParticipant?.name;
-    const selectedId = selectedParticipant?.id;
+    const largeVideoParticipant = useSelector(getLargeVideoParticipant);
+    const nameToDisplay = largeVideoParticipant?.name;
+    const selectedId = largeVideoParticipant?.id;
 
     const localParticipant = useSelector(getLocalParticipant);
     const localId = localParticipant?.id;

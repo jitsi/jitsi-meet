@@ -749,7 +749,6 @@ class Thumbnail extends Component<Props, State> {
             _disableLocalVideoFlip,
             _isMobile,
             _isScreenSharing,
-            _isTileView,
             _localFlipX,
             _participant,
             _videoTrack
@@ -792,11 +791,9 @@ class Thumbnail extends Component<Props, State> {
                 <div className = 'videocontainer__toptoolbar'>
                     { this._renderTopIndicators() }
                 </div>
-                { _isTileView && (
-                    <ParticipantName
-                        participantId = { id }
-                        participantSuffix = { _defaultLocalDisplayName } />
-                ) }
+                <ParticipantName
+                    participantId = { id }
+                    participantSuffix = { _defaultLocalDisplayName } />
                 { this._renderAvatar(styles.avatar) }
                 <span className = 'audioindicator-container'>
                     <AudioLevelIndicator audioLevel = { audioLevel } />
@@ -871,7 +868,6 @@ class Thumbnail extends Component<Props, State> {
         const {
             _isMobile,
             _isTestModeEnabled,
-            _isTileView,
             _participant,
             _startSilent,
             _videoTrack,
@@ -932,7 +928,7 @@ class Thumbnail extends Component<Props, State> {
                 <div className = 'videocontainer__toolbar'>
                     <StatusIndicators participantID = { id } />
                 </div>
-                { _isTileView && <ParticipantName participantId = { id } /> }
+                <ParticipantName participantId = { id } />
                 { this._renderAvatar(styles.avatar) }
                 <div className = 'presence-label-container'>
                     <PresenceLabel

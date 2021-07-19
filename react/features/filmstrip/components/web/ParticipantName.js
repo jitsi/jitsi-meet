@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { getLocalParticipant, getParticipantDisplayNameWithId } from '../../../base/participants';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { DisplayNameBadge, appendSuffix } from '../../../display-name';
+import { isLayoutTileView } from '../../../video-layout';
 
 type Props = {
 
@@ -23,16 +24,20 @@ type Props = {
 
 const useStyles = makeStyles(theme => {
     return {
-        badgeContainer: {
+        badge: {
             ...withPixelLineHeight(theme.typography.labelRegular),
             alignItems: 'center',
-            bottom: theme.spacing(2),
             display: 'flex',
             justifyContent: 'center',
             position: 'absolute',
-            transition: 'margin-bottom 0.3s',
             width: '100%',
             zIndex: '2'
+        },
+        stageBadge: {
+            top: theme.spacing(2)
+        },
+        tileBadge: {
+            bottom: theme.spacing(2)
         }
     };
 });
@@ -45,6 +50,10 @@ const useStyles = makeStyles(theme => {
  */
 const ParticipantName = ({ participantId, participantSuffix }: Props) => {
     const classes = useStyles();
+
+    const isTileView = useSelector(isLayoutTileView);
+    const className = `${classes.badge}${isTileView ? ` ${classes.tileBadge}` : ` ${classes.stageBadge}`}`;
+
     const participantName = useSelector(getParticipantDisplayNameWithId(participantId));
     const fullName = appendSuffix(participantName, participantSuffix);
 
@@ -53,7 +62,7 @@ const ParticipantName = ({ participantId, participantSuffix }: Props) => {
 
     return (
         <div
-            className = { classes.badgeContainer }
+            className = { className }
             id = { isLocal ? 'localDisplayName' : `participant_${participantId}_name` }>
             <DisplayNameBadge name = { fullName } />
         </div>
