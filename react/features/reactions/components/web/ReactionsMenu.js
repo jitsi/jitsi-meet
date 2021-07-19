@@ -170,7 +170,7 @@ class ReactionsMenu extends Component<Props> {
                 key = { key }
                 onClick = { doSendReaction }
                 toggled = { false }
-                tooltip = { `${t(`toolbar.${key}`)} ${modifierKey} + ${REACTIONS[key].shortcutChar}` } />);
+                tooltip = { `${t(`toolbar.${key}`)} (${modifierKey} + ${REACTIONS[key].shortcutChar})` } />);
         });
     }
 
