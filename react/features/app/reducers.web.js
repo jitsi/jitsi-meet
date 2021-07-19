@@ -16,4 +16,5 @@ import '../screenshot-capture/reducer';
 import '../shared-video/reducer';
 import '../talk-while-muted/reducer';
 import '../virtual-background/reducer';
+import '../video-avatar/reducer';
 import './reducers.any';

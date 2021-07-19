@@ -1,13 +1,15 @@
 // @flow
 
-import { openDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { IconVirtualBackground } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { AbstractButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
+import { getLocalVideoTrack } from '../../base/tracks';
+import { toggleVideoAvatarEffect } from '../actions';
+declare var APP: Object;
 
-import { VirtualBackgroundDialog } from './index';
+// import { VirtualBackgroundDialog } from './index';
 
 /**
  * The type of the React {@code Component} props of {@link VideoBackgroundButton}.
@@ -41,10 +43,15 @@ class VideoAvatarButton extends AbstractButton<Props, *> {
      * @protected
      * @returns {void}
      */
-    _handleClick() {
+    async _handleClick() {
         const { dispatch } = this.props;
 
-        dispatch(openDialog(VirtualBackgroundDialog));
+        console.log('HELLLLOOO');
+        const jitsiTrack = getLocalVideoTrack(APP.store.getState()['features/base/tracks'])?.jitsiTrack;
+
+        console.log('JITSI TRACK', jitsiTrack);
+
+        dispatch(toggleVideoAvatarEffect({ enabled: true }, jitsiTrack));
     }
 
     /**
