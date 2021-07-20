@@ -1,4 +1,7 @@
 // @flow
+import * as facemesh from '@tensorflow-models/face-landmarks-detection';
+import * as tf from '@tensorflow/tfjs';
+
 import JitsiVideoAvatarEffect from './JitsiVideoAvatarEffect';
 
 /**
@@ -10,5 +13,7 @@ export async function createVideoAvatarEffect() {
     /**
      * The return function.
      */
-    return new JitsiVideoAvatarEffect();
+    const net = await facemesh.load(facemesh.SupportedPackages.mediapipeFacemesh);
+
+    return new JitsiVideoAvatarEffect(net);
 }
