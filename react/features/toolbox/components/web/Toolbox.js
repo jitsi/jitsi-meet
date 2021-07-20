@@ -36,7 +36,9 @@ import {
 } from '../../../participants-pane/actions';
 import ParticipantsPaneButton from '../../../participants-pane/components/ParticipantsPaneButton';
 import { getParticipantsPaneOpen } from '../../../participants-pane/functions';
+import { addReactionToBuffer } from '../../../reactions/actions.any';
 import { ReactionsMenuButton } from '../../../reactions/components';
+import { REACTIONS } from '../../../reactions/constants';
 import {
     LiveStreamButton,
     RecordButton
@@ -268,7 +270,7 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     componentDidMount() {
-        const { _toolbarButtons } = this.props;
+        const { _toolbarButtons, t, dispatch } = this.props;
         const KEYBOARD_SHORTCUTS = [
             isToolbarButtonEnabled('videoquality', _toolbarButtons) && {
                 character: 'A',
@@ -316,6 +318,31 @@ class Toolbox extends Component<Props> {
                     shortcut.helpDescription);
             }
         });
+
+        const REACTION_SHORTCUTS = Object.keys(REACTIONS).map(key => {
+            const onShortcutSendReaction = () => {
+                dispatch(addReactionToBuffer(key));
+                sendAnalytics(createShortcutEvent(
+                    `reaction.${key}`
+                ));
+            };
+
+            return {
+                character: REACTIONS[key].shortcutChar,
+                exec: onShortcutSendReaction,
+                helpDescription: t(`toolbar.reaction${key.charAt(0).toUpperCase()}${key.slice(1)}`),
+                altKey: true
+            };
+        });
+
+        REACTION_SHORTCUTS.forEach(shortcut => {
+            APP.keyboardshortcut.registerShortcut(
+                shortcut.character,
+                null,
+                shortcut.exec,
+                shortcut.helpDescription,
+                shortcut.altKey);
+        });
     }
 
     /**
@@ -346,6 +373,10 @@ class Toolbox extends Component<Props> {
     componentWillUnmount() {
         [ 'A', 'C', 'D', 'R', 'S' ].forEach(letter =>
             APP.keyboardshortcut.unregisterShortcut(letter));
+
+        Object.keys(REACTIONS).map(key => REACTIONS[key].shortcutChar)
+            .forEach(letter =>
+                APP.keyboardshortcut.unregisterShortcut(letter, true));
     }
 
     /**

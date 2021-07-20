@@ -1,24 +1,25 @@
 // @flow
 
+import { batch } from 'react-redux';
+
 import { ENDPOINT_REACTION_NAME } from '../../../modules/API/constants';
 import { MiddlewareRegistry } from '../base/redux';
 import { isVpaasMeeting } from '../jaas/functions';
 
 import {
-    SET_REACTIONS_MESSAGE,
-    CLEAR_REACTIONS_MESSAGE,
-    SEND_REACTION,
-    PUSH_REACTION
+    ADD_REACTION_BUFFER,
+    FLUSH_REACTION_BUFFER,
+    SEND_REACTIONS,
+    PUSH_REACTIONS
 } from './actionTypes';
 import {
-    addReactionsMessage,
-    addReactionsMessageToChat,
-    flushReactionsToChat,
-    pushReaction,
+    addReactionsToChat,
+    flushReactionBuffer,
+    pushReactions,
+    sendReactions,
     setReactionQueue
 } from './actions.any';
-import { REACTIONS } from './constants';
-import { messageToKeyArray, sendReactionsWebhook } from './functions.any';
+import { getReactionMessageFromBuffer, getReactionsWithId, sendReactionsWebhook } from './functions.any';
 
 
 declare var APP: Object;
@@ -34,56 +35,57 @@ MiddlewareRegistry.register(store => next => action => {
     const { dispatch, getState } = store;
 
     switch (action.type) {
-    case SET_REACTIONS_MESSAGE: {
-        const { timeoutID, message } = getState()['features/reactions'];
+    case ADD_REACTION_BUFFER: {
+        const { timeoutID, buffer } = getState()['features/reactions'];
         const { reaction } = action;
 
         clearTimeout(timeoutID);
-        action.message = `${message}${reaction}`;
+        buffer.push(reaction);
+        action.buffer = buffer;
         action.timeoutID = setTimeout(() => {
-            dispatch(flushReactionsToChat());
+            dispatch(flushReactionBuffer());
         }, 500);
 
         break;
     }
 
-    case CLEAR_REACTIONS_MESSAGE: {
+    case FLUSH_REACTION_BUFFER: {
         const state = getState();
-        const { message } = state['features/reactions'];
+        const { buffer } = state['features/reactions'];
+
+        batch(() => {
+            dispatch(sendReactions());
+            dispatch(addReactionsToChat(getReactionMessageFromBuffer(buffer)));
+            dispatch(pushReactions(buffer));
+        });
 
         if (isVpaasMeeting(state)) {
-            sendReactionsWebhook(state, messageToKeyArray(message));
+            sendReactionsWebhook(state, buffer);
         }
-
-        dispatch(addReactionsMessageToChat(message));
 
         break;
     }
 
-    case SEND_REACTION: {
-        const state = store.getState();
+    case SEND_REACTIONS: {
+        const state = getState();
+        const { buffer } = state['features/reactions'];
         const { conference } = state['features/base/conference'];
 
         if (conference) {
             conference.sendEndpointMessage('', {
                 name: ENDPOINT_REACTION_NAME,
-                reaction: action.reaction,
+                reactions: buffer,
                 timestamp: Date.now()
             });
-            dispatch(addReactionsMessage(REACTIONS[action.reaction].message));
-            dispatch(pushReaction(action.reaction));
         }
         break;
     }
 
-    case PUSH_REACTION: {
+    case PUSH_REACTIONS: {
         const queue = store.getState()['features/reactions'].queue;
-        const reaction = action.reaction;
+        const reactions = action.reactions;
 
-        dispatch(setReactionQueue([ ...queue, {
-            reaction,
-            uid: window.Date.now()
-        } ]));
+        dispatch(setReactionQueue([ ...queue, ...getReactionsWithId(reactions) ]));
     }
     }
 
