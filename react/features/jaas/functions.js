@@ -37,10 +37,15 @@ export function getVpaasTenant(state: Object) {
  * @returns {boolean}
  */
 export function isVpaasMeeting(state: Object) {
-    return Boolean(
-        extractVpaasTenantFromPath(
-            state['features/base/connection'].locationURL.pathname)
-    );
+    const connection = state['features/base/connection'];
+
+    if (connection?.locationURL?.pathname) {
+        return Boolean(
+            extractVpaasTenantFromPath(connection?.locationURL?.pathname)
+        );
+    }
+
+    return false;
 }
 
 /**
