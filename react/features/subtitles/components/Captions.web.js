@@ -2,8 +2,10 @@
 
 import React from 'react';
 
-import { getParticipantCountWithFake } from '../../base/participants';
+import { getLocalParticipant } from '../../base/participants';
 import { connect } from '../../base/redux';
+import { getLargeVideoParticipant } from '../../large-video/functions';
+import { isLayoutTileView } from '../../video-layout';
 
 import {
     _abstractMapStateToProps,
@@ -74,9 +76,13 @@ class Captions
  * @returns {Object}
  */
 function mapStateToProps(state) {
+    const isTileView = isLayoutTileView(state);
+    const largeVideoParticipant = getLargeVideoParticipant(state);
+    const localParticipant = getLocalParticipant(state);
+
     return {
         ..._abstractMapStateToProps(state),
-        _isLifted: getParticipantCountWithFake(state) < 2
+        _isLifted: largeVideoParticipant && largeVideoParticipant?.id !== localParticipant?.id && !isTileView
     };
 }
 
