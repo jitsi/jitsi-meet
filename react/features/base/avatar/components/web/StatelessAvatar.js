@@ -125,7 +125,7 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
         const { size } = this.props;
 
         return {
-            backgroundColor: color || undefined,
+            background: color || undefined,
             fontSize: size ? size * 0.5 : '180%',
             height: size || '100%',
             width: size || '100%'
