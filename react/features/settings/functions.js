@@ -157,6 +157,32 @@ export function getProfileTabProps(stateful: Object | Function) {
 }
 
 /**
+ * Returns the properties for the "Sounds" tab from settings dialog from Redux
+ * state.
+ *
+ * @param {(Function|Object)} stateful -The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {Object} - The properties for the "Sounds" tab from settings
+ * dialog.
+ */
+export function getSoundsTabProps(stateful: Object | Function) {
+    const state = toState(stateful);
+    const {
+        soundsIncomingMessage,
+        soundsParticipantJoined,
+        soundsParticipantLeft,
+        soundsTalkWhileMuted
+    } = state['features/base/settings'];
+
+    return {
+        soundsIncomingMessage,
+        soundsParticipantJoined,
+        soundsParticipantLeft,
+        soundsTalkWhileMuted
+    };
+}
+
+/**
  * Returns a promise which resolves with a list of objects containing
  * all the video jitsiTracks and appropriate errors for the given device ids.
  *
