@@ -1,15 +1,14 @@
 // @flow
 
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import { translate } from '../../../base/i18n';
 import { IconRaisedHand } from '../../../base/icons';
 import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import ToolbarButton from '../../../toolbox/components/web/ToolbarButton';
-import { sendReaction } from '../../actions.any';
 import { toggleReactionsMenuVisibility } from '../../actions.web';
-import { REACTIONS, type ReactionEmojiProps } from '../../constants';
+import { type ReactionEmojiProps } from '../../constants';
 import { getReactionsQueue } from '../../functions.any';
 import { getReactionsMenuVisibility } from '../../functions.web';
 
@@ -64,32 +63,6 @@ function ReactionsMenuButton({
     reactionsQueue,
     dispatch
 }: Props) {
-
-    useEffect(() => {
-        const KEYBOARD_SHORTCUTS = Object.keys(REACTIONS).map(key => {
-            return {
-                character: REACTIONS[key].shortcutChar,
-                exec: () => dispatch(sendReaction(key)),
-                helpDescription: t(`toolbar.reaction${key.charAt(0).toUpperCase()}${key.slice(1)}`),
-                altKey: true
-            };
-        });
-
-        KEYBOARD_SHORTCUTS.forEach(shortcut => {
-            APP.keyboardshortcut.registerShortcut(
-                shortcut.character,
-                null,
-                shortcut.exec,
-                shortcut.helpDescription,
-                shortcut.altKey);
-        });
-
-        return () => {
-            Object.keys(REACTIONS).map(key => REACTIONS[key].shortcutChar)
-                .forEach(letter =>
-                    APP.keyboardshortcut.unregisterShortcut(letter, true));
-        };
-    }, []);
 
     /**
      * Toggles the reactions menu visibility.

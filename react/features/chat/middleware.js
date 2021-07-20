@@ -22,11 +22,9 @@ import {
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { openDisplayNamePrompt } from '../display-name';
-import { ADD_REACTIONS_MESSAGE } from '../reactions/actionTypes';
-import {
-    pushReaction
-} from '../reactions/actions.any';
-import { REACTIONS } from '../reactions/constants';
+import { ADD_REACTION_MESSAGE } from '../reactions/actionTypes';
+import { pushReactions } from '../reactions/actions.any';
+import { getReactionMessageFromBuffer } from '../reactions/functions.any';
 import { endpointMessageReceived } from '../subtitles';
 import { showToolbox } from '../toolbox/actions';
 import {
@@ -158,7 +156,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case ADD_REACTIONS_MESSAGE: {
+    case ADD_REACTION_MESSAGE: {
         _handleReceivedMessage(store, {
             id: localParticipant.id,
             message: action.message,
@@ -212,8 +210,6 @@ StateListenerRegistry.register(
  * @returns {void}
  */
 function _addChatMsgListener(conference, store) {
-    const reactions = {};
-
     if (store.getState()['features/base/config'].iAmRecorder) {
         // We don't register anything on web if we are in iAmRecorder mode
         return;
@@ -252,30 +248,21 @@ function _addChatMsgListener(conference, store) {
                 const [ { _id }, eventData ] = args;
 
                 if (eventData.name === ENDPOINT_REACTION_NAME) {
-                    reactions[_id] = reactions[_id] ?? {
-                        timeout: null,
-                        message: ''
-                    };
                     batch(() => {
-                        store.dispatch(pushReaction(eventData.reaction));
                         store.dispatch(setToolboxVisible(true));
                         store.dispatch(setToolboxTimeout(
                                 () => store.dispatch(hideToolbox()),
                                 5000)
                         );
+                        store.dispatch(pushReactions(eventData.reactions));
                     });
 
-                    clearTimeout(reactions[_id].timeout);
-                    reactions[_id].message = `${reactions[_id].message}${REACTIONS[eventData.reaction].message}`;
-                    reactions[_id].timeout = setTimeout(() => {
-                        _handleReceivedMessage(store, {
-                            id: _id,
-                            message: reactions[_id].message,
-                            privateMessage: false,
-                            timestamp: eventData.timestamp
-                        }, false);
-                        delete reactions[_id];
-                    }, 500);
+                    _handleReceivedMessage(store, {
+                        id: _id,
+                        message: getReactionMessageFromBuffer(eventData.reactions),
+                        privateMessage: false,
+                        timestamp: eventData.timestamp
+                    }, false);
                 }
             }
         });

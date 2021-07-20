@@ -1,5 +1,7 @@
 // @flow
 
+import uuid from 'uuid';
+
 import { getLocalParticipant } from '../base/participants';
 import { extractFqnFromPath } from '../dynamic-branding/functions';
 
@@ -17,28 +19,28 @@ export function getReactionsQueue(state: Object) {
 }
 
 /**
- * Returns reaction key from the reaction message.
+ * Returns chat message from reactions buffer.
  *
- * @param {string} message - The reaction message.
+ * @param {Array} buffer - The reactions buffer.
  * @returns {string}
  */
-export function getReactionKeyByMessage(message: string): ?string {
-    return Object.keys(REACTIONS).find(key => REACTIONS[key].message === `:${message}:`);
+export function getReactionMessageFromBuffer(buffer: Array<string>) {
+    return buffer.map(reaction => REACTIONS[reaction].message).reduce((acc, val) => `${acc}${val}`);
 }
 
 /**
- * Gets reactions key array from concatenated message.
+ * Returns reactions array with uid.
  *
- * @param {string} message - The reaction message.
+ * @param {Array} buffer - The reactions buffer.
  * @returns {Array}
  */
-export function messageToKeyArray(message: string) {
-    let formattedMessage = message.replace(/::/g, '-');
-
-    formattedMessage = formattedMessage.replace(/:/g, '');
-    const messageArray = formattedMessage.split('-');
-
-    return messageArray.map<?string>(getReactionKeyByMessage);
+export function getReactionsWithId(buffer: Array<string>) {
+    return buffer.map<Object>(reaction => {
+        return {
+            reaction,
+            uid: uuid.v4()
+        };
+    });
 }
 
 /**

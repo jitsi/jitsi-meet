@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 
 import {
+    createReactionMenuEvent,
     createToolbarEvent,
     sendAnalytics
 } from '../../../analytics';
@@ -11,7 +12,7 @@ import { translate } from '../../../base/i18n';
 import { getLocalParticipant, getParticipantCount, participantUpdated } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { dockToolbox } from '../../../toolbox/actions.web';
-import { sendReaction } from '../../actions.any';
+import { addReactionToBuffer } from '../../actions.any';
 import { toggleReactionsMenuVisibility } from '../../actions.web';
 import { REACTIONS } from '../../constants';
 
@@ -144,6 +145,13 @@ class ReactionsMenu extends Component<Props> {
      */
     _getReactionButtons() {
         const { t, dispatch } = this.props;
+        let modifierKey = 'Alt';
+
+        if (window.navigator?.platform) {
+            if (window.navigator.platform.indexOf('Mac') !== -1) {
+                modifierKey = '⌥';
+            }
+        }
 
         return Object.keys(REACTIONS).map(key => {
             /**
@@ -151,17 +159,18 @@ class ReactionsMenu extends Component<Props> {
              *
              * @returns {void}
              */
-            function sendMessage() {
-                dispatch(sendReaction(key));
+            function doSendReaction() {
+                dispatch(addReactionToBuffer(key));
+                sendAnalytics(createReactionMenuEvent(key));
             }
 
             return (<ReactionButton
                 accessibilityLabel = { t(`toolbar.accessibilityLabel.${key}`) }
                 icon = { REACTIONS[key].emoji }
                 key = { key }
-                onClick = { sendMessage }
+                onClick = { doSendReaction }
                 toggled = { false }
-                tooltip = { t(`toolbar.${key}`) } />);
+                tooltip = { `${t(`toolbar.${key}`)} (${modifierKey} + ${REACTIONS[key].shortcutChar})` } />);
         });
     }
 
