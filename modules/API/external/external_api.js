@@ -770,6 +770,17 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Returns any custom avatars backgrounds.
+     *
+     * @returns {Promise} - Resolves with the list of custom avatar backgrounds.
+     */
+    getCustomAvatarBackgrounds() {
+        return this._transport.sendRequest({
+            name: 'get-custom-avatar-backgrounds'
+        });
+    }
+
+    /**
      * Returns the current livestream url.
      *
      * @returns {Promise} - Resolves with the current livestream URL if exists, with
