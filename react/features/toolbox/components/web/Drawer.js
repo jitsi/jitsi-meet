@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback } from 'react';
 
 
 type Props = {
@@ -30,36 +30,38 @@ function Drawer({
     children,
     isOpen,
     onClose }: Props) {
-    const drawerRef: Object = useRef(null);
 
     /**
-     * Closes the drawer when clicking or touching outside of it.
+     * Handles clicks within the menu, preventing the propagation of the click event.
      *
-     * @param {Event} event - Mouse down/start touch event object.
+     * @param {Object} event - The click event.
      * @returns {void}
      */
-    function handleOutsideClickOrTouch(event: Event) {
-        if (drawerRef.current && !drawerRef.current.contains(event.target)) {
-            onClose();
-        }
-    }
+    const handleInsideClick = useCallback(event => {
+        event.stopPropagation();
+    }, []);
 
-    useEffect(() => {
-        window.addEventListener('mousedown', handleOutsideClickOrTouch);
-        window.addEventListener('touchstart', handleOutsideClickOrTouch);
-
-        return () => {
-            window.removeEventListener('mousedown', handleOutsideClickOrTouch);
-            window.removeEventListener('touchstart', handleOutsideClickOrTouch);
-        };
-    }, [ drawerRef ]);
+    /**
+     * Handles clicks outside of the menu, closing it, and also stopping further propagation.
+     *
+     * @param {Object} event - The click event.
+     * @returns {void}
+     */
+    const handleOutsideClick = useCallback(event => {
+        event.stopPropagation();
+        onClose();
+    }, [ onClose ]);
 
     return (
         isOpen ? (
             <div
-                className = 'drawer-menu'
-                ref = { drawerRef }>
-                {children}
+                className = 'drawer-menu-container'
+                onClick = { handleOutsideClick }>
+                <div
+                    className = 'drawer-menu'
+                    onClick = { handleInsideClick }>
+                    {children}
+                </div>
             </div>
         ) : null
     );
