@@ -15,6 +15,15 @@ import {
 const STORE_NAME = 'features/dynamic-branding';
 
 const DEFAULT_STATE = {
+
+    /**
+     * The pool of avatar backgrounds.
+     *
+     * @public
+     * @type {Array<string>}
+     */
+    avatarBackgrounds: [],
+
     /**
      * The custom background color for the LargeVideo.
      *
@@ -112,10 +121,12 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
             didPageUrl,
             inviteDomain,
             logoClickUrl,
-            logoImageUrl
+            logoImageUrl,
+            avatarBackgrounds
         } = action.value;
 
         return {
+            avatarBackgrounds,
             backgroundColor,
             backgroundImageUrl,
             defaultBranding,
