@@ -53,7 +53,7 @@
                 margin-left: $sidebarWidth;
                 width: calc(100% - #{$sidebarWidth});
 
-                .remote-videos{
+                .remote-videos {
                     width: calc(100vw - #{$sidebarWidth});
                 }
             }
@@ -62,6 +62,11 @@
         &.collapse {
             height: calc(100% - #{$newToolbarSizeMobile});
             margin-bottom: $newToolbarSizeMobile;
+
+            .remote-videos {
+                // !important is needed here as overflow is set via element.style in a FixedSizeGrid.
+                overflow: hidden auto !important;
+            }
         }
     }
 
