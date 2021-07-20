@@ -1,11 +1,11 @@
 // @flow
 
 import {
-    ADD_REACTIONS_MESSAGE,
-    CLEAR_REACTIONS_MESSAGE,
-    PUSH_REACTION,
-    SEND_REACTION,
-    SET_REACTIONS_MESSAGE,
+    ADD_REACTION_BUFFER,
+    ADD_REACTION_MESSAGE,
+    FLUSH_REACTION_BUFFER,
+    PUSH_REACTIONS,
+    SEND_REACTIONS,
     SET_REACTION_QUEUE
 } from './actionTypes';
 import { type ReactionEmojiProps } from './constants';
@@ -23,42 +23,6 @@ export function setReactionQueue(value: Array<ReactionEmojiProps>) {
     };
 }
 
-/**
- * Appends the reactions message to the chat and resets the state.
- *
- * @returns {void}
- */
-export function flushReactionsToChat() {
-    return {
-        type: CLEAR_REACTIONS_MESSAGE
-    };
-}
-
-/**
- * Adds a new reaction to the reactions message.
- *
- * @param {boolean} value - The new reaction.
- * @returns {Object}
- */
-export function addReactionsMessage(value: string) {
-    return {
-        type: SET_REACTIONS_MESSAGE,
-        reaction: value
-    };
-}
-
-/**
- * Adds a new reaction to the reactions message.
- *
- * @param {boolean} value - Reaction to be added to queue.
- * @returns {Object}
- */
-export function pushReaction(value: string) {
-    return {
-        type: PUSH_REACTION,
-        reaction: value
-    };
-}
 
 /**
  * Removes a reaction from the queue.
@@ -76,33 +40,75 @@ export function removeReaction(uid: number) {
 
 
 /**
- * Sends a reaction message to everyone in the conference.
+ * Sends the reactions buffer to everyone in the conference.
  *
- * @param {string} reaction - The reaction to send out.
  * @returns {{
- *     type: SEND_REACTION,
+ *     type: SEND_REACTION
+ * }}
+ */
+export function sendReactions() {
+    return {
+        type: SEND_REACTIONS
+    };
+}
+
+/**
+ * Adds a reaction to the local buffer.
+ *
+ * @param {string} reaction - The reaction to be added.
+ * @returns {{
+ *     type: ADD_REACTION_BUFFER,
  *     reaction: string
  * }}
  */
-export function sendReaction(reaction: string) {
+export function addReactionToBuffer(reaction: string) {
     return {
-        type: SEND_REACTION,
+        type: ADD_REACTION_BUFFER,
         reaction
     };
 }
 
 /**
- * Adds a reactions message to the chat.
+ * Clears the reaction buffer.
  *
- * @param {string} message - The reactions message to add to chat.
  * @returns {{
- *     type: ADD_REACTIONS_MESSAGE,
+ *     type: FLUSH_REACTION_BUFFER
+ * }}
+ */
+export function flushReactionBuffer() {
+    return {
+        type: FLUSH_REACTION_BUFFER
+    };
+}
+
+/**
+ * Adds a reaction message to the chat.
+ *
+ * @param {string} message - The reaction message.
+ * @returns {{
+ *     type: ADD_REACTION_MESSAGE,
  *     message: string
  * }}
  */
-export function addReactionsMessageToChat(message: string) {
+export function addReactionsToChat(message: string) {
     return {
-        type: ADD_REACTIONS_MESSAGE,
+        type: ADD_REACTION_MESSAGE,
         message
+    };
+}
+
+/**
+ * Adds reactions to the animation queue.
+ *
+ * @param {Array} reactions - The reactions to be animated.
+ * @returns {{
+ *     type: PUSH_REACTIONS,
+ *     reactions: Array
+ * }}
+ */
+export function pushReactions(reactions: Array<string>) {
+    return {
+        type: PUSH_REACTIONS,
+        reactions
     };
 }
