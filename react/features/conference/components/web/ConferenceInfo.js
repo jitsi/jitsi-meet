@@ -39,6 +39,11 @@ type Props = {
     _hideConferenceTimer: boolean,
 
     /**
+     * Whether the recording label should be shown or not.
+     */
+    _hideRecordingLabel: boolean,
+
+    /**
      * Whether the participant count should be shown or not.
      */
     _showParticipantCount: boolean,
@@ -66,6 +71,7 @@ function ConferenceInfo(props: Props) {
         _hideConferenceNameAndTimer,
         _hideConferenceTimer,
         _showParticipantCount,
+        _hideRecordingLabel,
         _subject,
         _fullWidth,
         _visible
@@ -84,7 +90,7 @@ function ConferenceInfo(props: Props) {
             <div
                 className = { `subject-info-container${_fullWidth ? ' subject-info-container--full-width' : ''}` }
                 id = 'subject-container'>
-                <div
+                {!_hideRecordingLabel && <div
                     className = 'show-always'
                     id = 'rec-container'
                     // eslint-disable-next-line react-native/no-inline-styles
@@ -95,6 +101,7 @@ function ConferenceInfo(props: Props) {
                     <RecordingLabel mode = { JitsiRecordingConstants.mode.STREAM } />
                     <LocalRecordingLabel />
                 </div>
+                }
                 <div
                     className = 'subject-details-container'
                     id = 'subject-details-container'>
@@ -131,12 +138,18 @@ function ConferenceInfo(props: Props) {
  */
 function _mapStateToProps(state) {
     const participantCount = getParticipantCount(state);
-    const { hideConferenceTimer, hideConferenceSubject, hideParticipantsStats } = state['features/base/config'];
+    const {
+        hideConferenceTimer,
+        hideConferenceSubject,
+        hideParticipantsStats,
+        hideRecordingLabel
+    } = state['features/base/config'];
     const { clientWidth } = state['features/base/responsive-ui'];
 
     return {
         _hideConferenceNameAndTimer: clientWidth < 300,
         _hideConferenceTimer: Boolean(hideConferenceTimer),
+        _hideRecordingLabel: hideRecordingLabel,
         _fullWidth: state['features/video-layout'].tileViewEnabled,
         _showParticipantCount: participantCount > 2 && !hideParticipantsStats,
         _subject: hideConferenceSubject ? '' : getConferenceName(state),
