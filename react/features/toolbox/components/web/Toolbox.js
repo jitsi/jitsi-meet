@@ -24,6 +24,7 @@ import { connect } from '../../../base/redux';
 import { getLocalVideoTrack } from '../../../base/tracks';
 import { toggleChat } from '../../../chat';
 import { ChatButton } from '../../../chat/components';
+import { DominantSpeakerName } from '../../../display-name';
 import { EmbedMeetingButton } from '../../../embed-meeting';
 import { SharedDocumentButton } from '../../../etherpad';
 import { FeedbackButton } from '../../../feedback';
@@ -1145,6 +1146,7 @@ class Toolbox extends Component<Props> {
                     onFocus = { this._onTabIn }
                     onMouseOut = { this._onMouseOut }
                     onMouseOver = { this._onMouseOver }>
+                    <DominantSpeakerName />
                     <div className = 'toolbox-content-items'>
                         {mainMenuButtons.map(({ Content, key, ...rest }) => Content !== Separator && (
                             <Content

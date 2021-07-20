@@ -208,3 +208,13 @@ export function updateAutoPinnedParticipant(
         dispatch(pinParticipant(latestScreenShareParticipantId));
     }
 }
+
+/**
+ * Selector for whether we are currently in tile view.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {boolean}
+ */
+export function isLayoutTileView(state: Object) {
+    return getCurrentLayout(state) === LAYOUTS.TILE_VIEW;
+}
