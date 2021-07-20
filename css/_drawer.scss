@@ -4,8 +4,19 @@
     right: 0;
     bottom: 0;
     z-index: $drawerZ;
-    background-color: #141414;
     border-radius: 16px 16px 0 0;
+}
+
+.drawer-portal::after {
+    content: '';
+    background-color: $participantsPaneBgColor;
+    margin-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.drawer-menu-container {
+    height: 100vh;
+    display: flex;
+    align-items: flex-end;
 }
 
 .drawer-menu {
@@ -14,6 +25,7 @@
     border-radius: 16px 16px 0 0;
     overflow-y: hidden;
     margin-bottom: env(safe-area-inset-bottom, 0);
+    width: 100%;
 
     .drawer-toggle {
         display: flex;
