@@ -8,9 +8,9 @@ import { Dialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
 import { connect } from '../../../../base/redux';
-import { isVpaasMeeting } from '../../../../billing-counter/functions';
 import { isDynamicBrandingDataLoaded } from '../../../../dynamic-branding/functions';
 import EmbedMeetingTrigger from '../../../../embed-meeting/components/EmbedMeetingTrigger';
+import { isVpaasMeeting } from '../../../../jaas/functions';
 import { getActiveSession } from '../../../../recording';
 import { updateDialInNumbers } from '../../../actions';
 import {

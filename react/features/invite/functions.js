@@ -9,7 +9,7 @@ import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 import { getLocalParticipant, isLocalParticipantModerator } from '../base/participants';
 import { toState } from '../base/redux';
 import { doGetJSON, parseURIString } from '../base/util';
-import { isVpaasMeeting } from '../billing-counter/functions';
+import { isVpaasMeeting } from '../jaas/functions';
 
 import { INVITE_TYPES, SIP_ADDRESS_REGEX } from './constants';
 import logger from './logger';
