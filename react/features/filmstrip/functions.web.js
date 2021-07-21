@@ -215,8 +215,8 @@ export function calculateThumbnailSizeForTileView({
 
 
     return {
-        height,
-        width
+        height: initialHeight,
+        width: initialWidth
     };
 }
 
