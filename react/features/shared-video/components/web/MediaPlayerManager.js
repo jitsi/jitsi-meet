@@ -156,7 +156,7 @@ class MediaPlayerManager extends AbstractVideoManager<Props> {
         const showControls = _isOwner;
 
         let options = {
-            id: 'sharedMediaPlayer',
+            id: 'sharedVideoPlayer',
             height: '100%',
             width: '100%',
             url: videoId,
