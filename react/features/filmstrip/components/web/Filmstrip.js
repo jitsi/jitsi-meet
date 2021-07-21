@@ -499,12 +499,25 @@ function _mapStateToProps(state) {
         thumbnailSize: tileViewThumbnailSize
     } = state['features/filmstrip'].tileViewDimensions;
     const _currentLayout = getCurrentLayout(state);
+
     const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
-    const filmstripOverflows = (clientHeight - filmstripHeight) / 2 < TOOLBAR_HEIGHT_MOBILE;
+    const availableSpace = clientHeight - filmstripHeight;
+    let filmstripPadding = 0;
+
+    if (availableSpace > 0) {
+        const paddingValue = TOOLBAR_HEIGHT_MOBILE - availableSpace;
+
+        if (paddingValue > 0) {
+            filmstripPadding = paddingValue;
+        }
+    } else {
+        filmstripPadding = TOOLBAR_HEIGHT_MOBILE;
+    }
+
     const collapseTileView = reduceHeight
-        && filmstripOverflows
         && isMobileBrowser()
         && clientWidth <= ASPECT_RATIO_BREAKPOINT;
+
     const className = `${remoteVideosVisible ? '' : 'hide-videos'} ${
         reduceHeight ? 'reduce-height' : ''
     } ${shiftRight ? 'shift-right' : ''} ${collapseTileView ? 'collapse' : ''}`.trim();
@@ -514,7 +527,7 @@ function _mapStateToProps(state) {
     switch (_currentLayout) {
     case LAYOUTS.TILE_VIEW:
         _thumbnailSize = tileViewThumbnailSize;
-        remoteFilmstripHeight = filmstripHeight - (collapseTileView ? TOOLBAR_HEIGHT_MOBILE : 0);
+        remoteFilmstripHeight = filmstripHeight - (collapseTileView && filmstripPadding > 0 ? filmstripPadding : 0);
         remoteFilmstripWidth = filmstripWidth;
         break;
     case LAYOUTS.VERTICAL_FILMSTRIP_VIEW: {
