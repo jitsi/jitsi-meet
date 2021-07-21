@@ -88,3 +88,13 @@ export async function sendReactionsWebhook(state: Object, reactions: Array<?stri
         }
     }
 }
+
+/**
+ * Returns unique reactions from the reactions buffer.
+ *
+ * @param {Array} reactions - The reactions buffer.
+ * @returns {Array}
+ */
+export function getUniqueReactions(reactions: Array<string>) {
+    return [ ...new Set(reactions) ];
+}

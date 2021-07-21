@@ -3,7 +3,9 @@
 import { batch } from 'react-redux';
 
 import { ENDPOINT_REACTION_NAME } from '../../../modules/API/constants';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import { MiddlewareRegistry } from '../base/redux';
+import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { isVpaasMeeting } from '../jaas/functions';
 
 import {
@@ -19,7 +21,13 @@ import {
     sendReactions,
     setReactionQueue
 } from './actions.any';
-import { getReactionMessageFromBuffer, getReactionsWithId, sendReactionsWebhook } from './functions.any';
+import { REACTIONS } from './constants';
+import {
+    getReactionMessageFromBuffer,
+    getReactionsWithId,
+    getUniqueReactions,
+    sendReactionsWebhook
+} from './functions.any';
 
 
 declare var APP: Object;
@@ -35,6 +43,20 @@ MiddlewareRegistry.register(store => next => action => {
     const { dispatch, getState } = store;
 
     switch (action.type) {
+    case APP_WILL_MOUNT:
+        batch(() => {
+            Object.keys(REACTIONS).forEach(key =>
+                dispatch(registerSound(REACTIONS[key].soundId, REACTIONS[key].soundFile))
+            );
+        });
+        break;
+
+    case APP_WILL_UNMOUNT:
+        batch(() => {
+            Object.keys(REACTIONS).forEach(key => dispatch(unregisterSound(REACTIONS[key].soundId)));
+        });
+        break;
+
     case ADD_REACTION_BUFFER: {
         const { timeoutID, buffer } = getState()['features/reactions'];
         const { reaction } = action;
@@ -85,7 +107,12 @@ MiddlewareRegistry.register(store => next => action => {
         const queue = store.getState()['features/reactions'].queue;
         const reactions = action.reactions;
 
-        dispatch(setReactionQueue([ ...queue, ...getReactionsWithId(reactions) ]));
+        const uniqueReactions = getUniqueReactions(reactions);
+
+        batch(() => {
+            uniqueReactions.forEach(reaction => dispatch(playSound(REACTIONS[reaction].soundId)));
+            dispatch(setReactionQueue([ ...queue, ...getReactionsWithId(reactions) ]));
+        });
     }
     }
 
