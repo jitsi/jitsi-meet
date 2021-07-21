@@ -34,11 +34,11 @@ export const BOO_SOUND_FILE = 'boo.mp3';
 export const SURPRISE_SOUND_FILE = 'surprise.mp3';
 
 /**
- * The name of the bundled audio file which will be played for the party reaction sound.
+ * The name of the bundled audio file which will be played for the silence reaction sound.
  *
  * @type {string}
  */
-export const PARTY_SOUND_FILE = 'party.mp3';
+export const SILENCE_SOUND_FILE = 'crickets.mp3';
 
 /**
  * The name of the bundled audio file which will be played for the raise hand sound.

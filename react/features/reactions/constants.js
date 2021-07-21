@@ -4,9 +4,9 @@ import {
     CLAP_SOUND_FILE,
     LAUGH_SOUND_FILE,
     LIKE_SOUND_FILE,
-    PARTY_SOUND_FILE,
     BOO_SOUND_FILE,
-    SURPRISE_SOUND_FILE
+    SURPRISE_SOUND_FILE,
+    SILENCE_SOUND_FILE
 } from './sounds';
 
 /**
@@ -51,11 +51,11 @@ export const SURPRISE_SOUND_ID = 'SURPRISE_SOUND';
 
 /**
  * The audio ID of the audio element for which the {@link playAudio} action is
- * triggered when new party reaction is received.
+ * triggered when new silence reaction is received.
  *
  * @type {string}
  */
-export const PARTY_SOUND_ID = 'PARTY_SOUND';
+export const SILENCE_SOUND_ID = 'SILENCE_SOUND';
 
 /**
  * The audio ID of the audio element for which the {@link playAudio} action is
@@ -96,18 +96,18 @@ export const REACTIONS = {
         soundFile: SURPRISE_SOUND_FILE
     },
     boo: {
-        message: ':slightly_frowning_face:',
-        emoji: '🙁',
+        message: ':frowning_face:',
+        emoji: '☹️',
         shortcutChar: 'B',
         soundId: BOO_SOUND_ID,
         soundFile: BOO_SOUND_FILE
     },
-    party: {
-        message: ':party_popper:',
-        emoji: '🎉',
-        shortcutChar: 'P',
-        soundId: PARTY_SOUND_ID,
-        soundFile: PARTY_SOUND_FILE
+    silence: {
+        message: ':face_without_mouth:',
+        emoji: '😶',
+        shortcutChar: 'S',
+        soundId: SILENCE_SOUND_ID,
+        soundFile: SILENCE_SOUND_FILE
     }
 };
 
