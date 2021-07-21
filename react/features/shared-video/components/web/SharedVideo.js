@@ -7,7 +7,7 @@ import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { getToolboxHeight } from '../../../toolbox/functions.web';
 
-import VideoManager from './VideoManager';
+import MediaPlayerManager from './MediaPlayerManager';
 import YoutubeVideoManager from './YoutubeVideoManager';
 
 declare var interfaceConfig: Object;
@@ -98,7 +98,7 @@ class SharedVideo extends Component<Props> {
         }
 
         if (videoUrl.match(/http/)) {
-            return <VideoManager videoId = { videoUrl } />;
+            return <MediaPlayerManager videoId = { videoUrl } />;
         }
 
         return <YoutubeVideoManager videoId = { videoUrl } />;

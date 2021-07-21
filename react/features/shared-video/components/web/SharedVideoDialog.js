@@ -7,6 +7,7 @@ import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { getFieldValue } from '../../../base/react';
 import { connect } from '../../../base/redux';
+import { Tooltip } from '../../../base/tooltip';
 import { defaultSharedVideoLink } from '../../constants';
 import { getYoutubeId } from '../../functions';
 import AbstractSharedVideoDialog from '../AbstractSharedVideoDialog';
@@ -79,6 +80,11 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
                 onSubmit = { this._onSubmitValue }
                 titleKey = { t('dialog.shareVideoTitle') }
                 width = { 'small' }>
+                <Tooltip
+                    content = { defaultSharedVideoLink }
+                    position = { 'right' }>
+                    <span className = 'info-button'>&#9432;</span>
+                </Tooltip>
                 <FieldTextStateless
                     autoFocus = { true }
                     className = 'input-control'

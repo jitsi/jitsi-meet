@@ -118,6 +118,15 @@
         color: inherit;
     }
 
+    .info-button {
+        position: absolute;
+        font-weight: bolder;
+        cursor: pointer;
+        font-size: larger;
+        left: 87px;
+        top: 93px;
+    }
+
     &-error {
         margin-bottom: 8px;
     }

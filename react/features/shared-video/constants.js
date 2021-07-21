@@ -4,7 +4,8 @@
  * Placeholder for web share video input.
  * @type {string}
  */
-export const defaultSharedVideoLink = 'Youtube link or direct video link';
+export const defaultSharedVideoLink = `${'Supported links & files: YouTube, SoundCloud, Facebook, '}`
++ `${'Vimeo, Twitch, Streamable, Wistia, DailyMotion, Mixcloud, Vidyard, mp4, webm, ogv, mp3, HLS(m3u8), DASH(mpd)'}`;
 
 /**
  * Mobile example for a youtube video
