@@ -19,7 +19,11 @@
 
 #import <JitsiMeetSDK/JitsiMeetConferenceOptions.h>
 
+@class RCTBridgeWrapper;
+
 @interface JitsiMeet : NSObject
+
+@property (nonatomic, strong, nullable) RCTBridgeWrapper *bridgeWrapper;
 
 /**
  * Name for the conference NSUserActivity type. This is used when integrating with
