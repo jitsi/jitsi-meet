@@ -8,7 +8,7 @@ import { getParticipantCount } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux';
 import { E2EELabel } from '../../../e2ee';
 import { LocalRecordingLabel } from '../../../local-recording';
-import { RecordingLabel } from '../../../recording';
+import { getSessionStatusToShow, RecordingLabel } from '../../../recording';
 import { isToolboxVisible } from '../../../toolbox/functions.web';
 import { TranscribingLabel } from '../../../transcribing';
 import { VideoQualityLabel } from '../../../video-quality';
@@ -57,7 +57,12 @@ type Props = {
     /**
      * Indicates whether the component should be visible or not.
      */
-    _visible: boolean
+    _visible: boolean,
+
+    /**
+     * Whether or not the recording label is visible.
+     */
+    _recordingLabel: boolean
 };
 
 const getLeftMargin = () => {
@@ -82,11 +87,12 @@ function ConferenceInfo(props: Props) {
         _hideRecordingLabel,
         _subject,
         _fullWidth,
-        _visible
+        _visible,
+        _recordingLabel
     } = props;
 
     return (
-        <div className = { `subject ${_visible ? 'visible' : ''}` }>
+        <div className = { `subject ${_recordingLabel ? 'recording' : ''} ${_visible ? 'visible' : ''}` }>
             <div
                 className = { `subject-info-container${_fullWidth ? ' subject-info-container--full-width' : ''}` }
                 id = 'subject-container'>
@@ -95,7 +101,7 @@ function ConferenceInfo(props: Props) {
                     id = 'rec-container'
                     // eslint-disable-next-line react-native/no-inline-styles
                     style = {{
-                        marginLeft: _visible ? 0 : getLeftMargin()
+                        marginLeft: !_recordingLabel || _visible ? 0 : getLeftMargin()
                     }}>
                     <RecordingLabel mode = { JitsiRecordingConstants.mode.FILE } />
                     <RecordingLabel mode = { JitsiRecordingConstants.mode.STREAM } />
@@ -146,6 +152,13 @@ function _mapStateToProps(state) {
     } = state['features/base/config'];
     const { clientWidth } = state['features/base/responsive-ui'];
 
+    const fileRecordingStatus = getSessionStatusToShow(state, JitsiRecordingConstants.mode.FILE);
+    const streamRecordingStatus = getSessionStatusToShow(state, JitsiRecordingConstants.mode.STREAM);
+    const isFileRecording = fileRecordingStatus ? fileRecordingStatus !== JitsiRecordingConstants.status.OFF : false;
+    const isStreamRecording = streamRecordingStatus
+        ? streamRecordingStatus !== JitsiRecordingConstants.status.OFF : false;
+    const { isEngaged } = state['features/local-recording'];
+
     return {
         _hideConferenceNameAndTimer: clientWidth < 300,
         _hideConferenceTimer: Boolean(hideConferenceTimer),
@@ -153,7 +166,8 @@ function _mapStateToProps(state) {
         _fullWidth: state['features/video-layout'].tileViewEnabled,
         _showParticipantCount: participantCount > 2 && !hideParticipantsStats,
         _subject: hideConferenceSubject ? '' : getConferenceName(state),
-        _visible: isToolboxVisible(state)
+        _visible: isToolboxVisible(state),
+        _recordingLabel: (isFileRecording || isStreamRecording || isEngaged) && !hideRecordingLabel
     };
 }
 

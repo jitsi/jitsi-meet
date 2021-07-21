@@ -3,22 +3,32 @@
     color: #fff;
     margin-top: 20px;
     position: absolute;
+    top: -120px;
+    transition: top .3s ease-in;
     width: 100%;
     z-index: $zindex3;
 
     &.visible {
+        top: 0;
+    }
+
+    &.recording {
+        top: 0;
+
         .subject-details-container {
-            opacity: 1;
+            opacity: 0;
+            transition: opacity .3s ease-in;
         }
-    }
 
-    .subject-details-container {
-        opacity: 0;
-        transition: opacity .3s ease-in;
-    }
+        .subject-info-container .show-always {
+            transition: margin-left .3s ease-in;
+        }
 
-    .subject-info-container .show-always {
-        transition: margin-left .3s ease-in;
+        &.visible {
+            .subject-details-container {
+                opacity: 1;
+            }
+        }
     }
 }
 
