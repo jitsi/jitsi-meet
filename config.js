@@ -735,6 +735,9 @@ var config = {
     // Hides the conference subject
     // hideConferenceSubject: true,
 
+    // Hides the recording label
+    // hideRecordingLabel: false,
+
     // Hides the conference timer.
     // hideConferenceTimer: true,
 
