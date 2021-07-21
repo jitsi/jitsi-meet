@@ -88,8 +88,9 @@ export async function connect(id, password, roomName) {
     const connectionConfig = Object.assign({}, config);
     const state = APP.store.getState();
     let { jwt } = state['features/base/jwt'];
+    const { iAmRecorder, iAmSipGateway } = state['features/base/config'];
 
-    if (!jwt && isVpaasMeeting(state)) {
+    if (!iAmRecorder && !iAmSipGateway && !jwt && isVpaasMeeting(state)) {
         jwt = await getJaasJWT(state);
         APP.store.dispatch(setJWT(jwt));
     }
