@@ -60,6 +60,14 @@ type Props = {
     _visible: boolean
 };
 
+const getLeftMargin = () => {
+    const subjectContainerWidth = document.getElementById('subject-container')?.clientWidth ?? 0;
+    const recContainerWidth = document.getElementById('rec-container')?.clientWidth ?? 0;
+    const subjectDetailsContainer = document.getElementById('subject-details-container')?.clientWidth ?? 0;
+
+    return (subjectContainerWidth - recContainerWidth - subjectDetailsContainer) / 2;
+};
+
 /**
  * The upper band of the meeing containing the conference name, timer and labels.
  *
@@ -76,14 +84,6 @@ function ConferenceInfo(props: Props) {
         _fullWidth,
         _visible
     } = props;
-
-    const getLeftMargin = () => {
-        const subjectContainerWidth = document.getElementById('subject-container')?.clientWidth ?? 0;
-        const recContainerWidth = document.getElementById('rec-container')?.clientWidth ?? 0;
-        const subjectDetailsContainer = document.getElementById('subject-details-container')?.clientWidth ?? 0;
-
-        return (subjectContainerWidth - recContainerWidth - subjectDetailsContainer) / 2;
-    };
 
     return (
         <div className = { `subject ${_visible ? 'visible' : ''}` }>
