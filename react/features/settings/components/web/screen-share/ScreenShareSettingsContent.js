@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { openDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import { IconVirtualBackground } from '../../../../base/icons';
+import MainShareDesktopButton from '../../../../toolbox/components/MainShareDesktopButton';
 import ToolbarButton from '../../../../toolbox/components/web/ToolbarButton';
 import { VirtualBackgroundDialog } from '../../../../virtual-background/components/index';
 
@@ -19,7 +20,7 @@ type Props = {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function,
+    t: Function
 };
 const ScreenShareSettingsContent = ({ t, openEmbedDialog }: Props) => {
     const shareScreenAsVirtualBackground = () => {
@@ -30,16 +31,28 @@ const ScreenShareSettingsContent = ({ t, openEmbedDialog }: Props) => {
 
     return (
         <div className = 'screen-share-settings'>
-            <ToolbarButton
-                accessibilityLabel = { t('toolbar.accessibilityLabel.shareYourScreen') }
-                icon = { IconVirtualBackground }
-                key = 'desktop-share-as-a-background'
-                /* eslint-disable react/jsx-no-bind */
-                onClick = { shareScreenAsVirtualBackground }
-                tooltip = { t('virtualBackground.desktopShareAsAVirtualBackground') } />
+            <div className = 'screen-share-menu-item'>
+                <ToolbarButton
+                    accessibilityLabel = { t('toolbar.accessibilityLabel.shareYourScreen') }
+                    icon = { IconVirtualBackground }
+                    key = 'desktop-share-as-a-background'
+                    /* eslint-disable react/jsx-no-bind */
+                    onClick = { shareScreenAsVirtualBackground }
+                    tooltip = { t('virtualBackground.desktopShareAsAVirtualBackground') } />
+                <span>{t('virtualBackground.desktopShareAsAVirtualBackground')}</span>
+            </div>
+            <div className = 'screen-share-menu-item'>
+                <MainShareDesktopButton />
+                <span>{t('toolbar.accessibilityLabel.shareYourScreen')}</span>
+            </div>
         </div>
     );
 };
 const mapDispatchToProps = { openEmbedDialog: openDialog };
 
-export default translate(connect(null, mapDispatchToProps)(ScreenShareSettingsContent));
+export default translate(
+    connect(
+        null,
+        mapDispatchToProps
+    )(ScreenShareSettingsContent)
+);

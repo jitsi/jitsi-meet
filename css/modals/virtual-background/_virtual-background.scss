@@ -215,3 +215,19 @@
         transition: all 0, 5s ease-in;
     }
 }
+
+.screen-share-settings {
+    display: grid;
+}
+
+.screen-share-menu-item {
+    cursor: pointer;
+    font-size: 14px;
+    color: white;
+    padding-right: 15px;
+    text-align: left;
+}
+
+.screen-share-menu-item span {
+    vertical-align: super;
+}
