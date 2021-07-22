@@ -1161,7 +1161,8 @@ class Toolbox extends Component<Props> {
             _isMobile,
             _overflowMenuVisible,
             _toolbarButtons,
-            t
+            t,
+            _reactionsEnabled
         } = this.props;
 
         const toolbarAccLabel = 'toolbar.accessibilityLabel.moreActionsMenu';
@@ -1190,7 +1191,7 @@ class Toolbox extends Component<Props> {
                                 key = 'overflow-menu'
                                 onVisibilityChange = { this._onSetOverflowVisible }
                                 showMobileReactions = {
-                                    overflowMenuButtons.find(({ key }) => key === 'raisehand')
+                                    _reactionsEnabled && overflowMenuButtons.find(({ key }) => key === 'raisehand')
                                 }>
                                 <ul
                                     aria-label = { t(toolbarAccLabel) }
@@ -1201,7 +1202,7 @@ class Toolbox extends Component<Props> {
                                     {overflowMenuButtons.map(({ group, key, Content, ...rest }, index, arr) => {
                                         const showSeparator = index > 0 && arr[index - 1].group !== group;
 
-                                        return key !== 'raisehand'
+                                        return (key !== 'raisehand' || !_reactionsEnabled)
                                             && <>
                                                 {showSeparator && <Separator key = { `hr${group}` } />}
                                                 <Content
@@ -1285,7 +1286,7 @@ function _mapStateToProps(state) {
         _toolbarButtons: getToolbarButtons(state),
         _visible: isToolboxVisible(state),
         _visibleButtons: getToolbarButtons(state),
-        _reactionsEnabled: enableReactions
+        _reactionsEnabled: enableReactions || true
     };
 }
 
