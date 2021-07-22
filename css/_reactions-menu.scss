@@ -90,7 +90,7 @@
 	width: 20%;
 	bottom: 0;
 	left: 40%;
-	height: 48px;
+	height: 0;
 }
 
 .reactions-menu-popup-container,
@@ -111,8 +111,8 @@ $reactionCount: 20;
 	line-height: 32px;
 	width: 32px;
 	height: 32px;
-	top: 32px;
-	left: 10px;
+	top: 0;
+	left: 20px;
 	opacity: 0;
 	z-index: 1;
 
@@ -123,8 +123,8 @@ $reactionCount: 20;
 	@for $i from 1 through $reactionCount {
 	&.reaction-#{$i} {
 		animation: animation-#{$i} 5s forwards ease-in-out;
-		top: #{random(50, 0)}px;
-		left: #{random(-10, 10)}px;
+		top: #{random(-40, 10)}px;
+		left: #{random(0, 30)}px;
 	}
 }
 }

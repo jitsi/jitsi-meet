@@ -84,6 +84,7 @@ import AudioSettingsButton from './AudioSettingsButton';
 import FullscreenButton from './FullscreenButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import ProfileButton from './ProfileButton';
+import RaiseHandButton from './RaiseHandButton';
 import Separator from './Separator';
 import ShareDesktopButton from './ShareDesktopButton';
 import VideoSettingsButton from './VideoSettingsButton';
@@ -212,7 +213,12 @@ type Props = {
     /**
      * Returns the selected virtual source object.
      */
-     _virtualSource: Object,
+    _virtualSource: Object,
+
+    /**
+     * Whether or not reactions feature is enabled.
+     */
+    _reactionsEnabled: boolean,
 
     /**
      * Invoked to active other features of the app.
@@ -258,6 +264,7 @@ class Toolbox extends Component<Props> {
         this._onToolbarOpenVideoQuality = this._onToolbarOpenVideoQuality.bind(this);
         this._onToolbarToggleChat = this._onToolbarToggleChat.bind(this);
         this._onToolbarToggleFullScreen = this._onToolbarToggleFullScreen.bind(this);
+        this._onToolbarToggleRaiseHand = this._onToolbarToggleRaiseHand.bind(this);
         this._onToolbarToggleScreenshare = this._onToolbarToggleScreenshare.bind(this);
         this._onShortcutToggleTileView = this._onShortcutToggleTileView.bind(this);
         this._onEscKey = this._onEscKey.bind(this);
@@ -270,7 +277,7 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     componentDidMount() {
-        const { _toolbarButtons, t, dispatch } = this.props;
+        const { _toolbarButtons, t, dispatch, _reactionsEnabled } = this.props;
         const KEYBOARD_SHORTCUTS = [
             isToolbarButtonEnabled('videoquality', _toolbarButtons) && {
                 character: 'A',
@@ -319,30 +326,32 @@ class Toolbox extends Component<Props> {
             }
         });
 
-        const REACTION_SHORTCUTS = Object.keys(REACTIONS).map(key => {
-            const onShortcutSendReaction = () => {
-                dispatch(addReactionToBuffer(key));
-                sendAnalytics(createShortcutEvent(
-                    `reaction.${key}`
-                ));
-            };
+        if (_reactionsEnabled) {
+            const REACTION_SHORTCUTS = Object.keys(REACTIONS).map(key => {
+                const onShortcutSendReaction = () => {
+                    dispatch(addReactionToBuffer(key));
+                    sendAnalytics(createShortcutEvent(
+                        `reaction.${key}`
+                    ));
+                };
 
-            return {
-                character: REACTIONS[key].shortcutChar,
-                exec: onShortcutSendReaction,
-                helpDescription: t(`toolbar.reaction${key.charAt(0).toUpperCase()}${key.slice(1)}`),
-                altKey: true
-            };
-        });
+                return {
+                    character: REACTIONS[key].shortcutChar,
+                    exec: onShortcutSendReaction,
+                    helpDescription: t(`toolbar.reaction${key.charAt(0).toUpperCase()}${key.slice(1)}`),
+                    altKey: true
+                };
+            });
 
-        REACTION_SHORTCUTS.forEach(shortcut => {
-            APP.keyboardshortcut.registerShortcut(
-                shortcut.character,
-                null,
-                shortcut.exec,
-                shortcut.helpDescription,
-                shortcut.altKey);
-        });
+            REACTION_SHORTCUTS.forEach(shortcut => {
+                APP.keyboardshortcut.registerShortcut(
+                    shortcut.character,
+                    null,
+                    shortcut.exec,
+                    shortcut.helpDescription,
+                    shortcut.altKey);
+            });
+        }
     }
 
     /**
@@ -374,9 +383,11 @@ class Toolbox extends Component<Props> {
         [ 'A', 'C', 'D', 'R', 'S' ].forEach(letter =>
             APP.keyboardshortcut.unregisterShortcut(letter));
 
-        Object.keys(REACTIONS).map(key => REACTIONS[key].shortcutChar)
-            .forEach(letter =>
-                APP.keyboardshortcut.unregisterShortcut(letter, true));
+        if (this.props._reactionsEnabled) {
+            Object.keys(REACTIONS).map(key => REACTIONS[key].shortcutChar)
+                .forEach(letter =>
+                    APP.keyboardshortcut.unregisterShortcut(letter, true));
+        }
     }
 
     /**
@@ -540,7 +551,8 @@ class Toolbox extends Component<Props> {
         const {
             _feedbackConfigured,
             _isMobile,
-            _screenSharing
+            _screenSharing,
+            _reactionsEnabled
         } = this.props;
 
         const microphone = {
@@ -577,7 +589,8 @@ class Toolbox extends Component<Props> {
 
         const raisehand = {
             key: 'raisehand',
-            Content: ReactionsMenuButton,
+            Content: _reactionsEnabled ? ReactionsMenuButton : RaiseHandButton,
+            handleClick: _reactionsEnabled ? null : this._onToolbarToggleRaiseHand,
             group: 2
         };
 
@@ -1053,6 +1066,23 @@ class Toolbox extends Component<Props> {
         this._doToggleFullScreen();
     }
 
+    _onToolbarToggleRaiseHand: () => void;
+
+    /**
+     * Creates an analytics toolbar event and dispatches an action for toggling
+     * raise hand.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onToolbarToggleRaiseHand() {
+        sendAnalytics(createToolbarEvent(
+            'raise.hand',
+            { enable: !this.props._raisedHand }));
+
+        this._doToggleRaiseHand();
+    }
+
     _onToolbarToggleScreenshare: () => void;
 
     /**
@@ -1130,7 +1160,8 @@ class Toolbox extends Component<Props> {
             _isMobile,
             _overflowMenuVisible,
             _toolbarButtons,
-            t
+            t,
+            _reactionsEnabled
         } = this.props;
 
         const toolbarAccLabel = 'toolbar.accessibilityLabel.moreActionsMenu';
@@ -1158,7 +1189,7 @@ class Toolbox extends Component<Props> {
                                 key = 'overflow-menu'
                                 onVisibilityChange = { this._onSetOverflowVisible }
                                 showMobileReactions = {
-                                    overflowMenuButtons.find(({ key }) => key === 'raisehand')
+                                    _reactionsEnabled && overflowMenuButtons.find(({ key }) => key === 'raisehand')
                                 }>
                                 <ul
                                     aria-label = { t(toolbarAccLabel) }
@@ -1169,7 +1200,7 @@ class Toolbox extends Component<Props> {
                                     {overflowMenuButtons.map(({ group, key, Content, ...rest }, index, arr) => {
                                         const showSeparator = index > 0 && arr[index - 1].group !== group;
 
-                                        return key !== 'raisehand'
+                                        return (key !== 'raisehand' || !_reactionsEnabled)
                                             && <>
                                                 {showSeparator && <Separator key = { `hr${group}` } />}
                                                 <Content
@@ -1216,6 +1247,7 @@ function _mapStateToProps(state) {
     const localParticipant = getLocalParticipant(state);
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
     const { clientWidth } = state['features/base/responsive-ui'];
+    const { enableReactions } = state['features/base/config'];
 
     let desktopSharingDisabledTooltipKey;
 
@@ -1251,7 +1283,8 @@ function _mapStateToProps(state) {
         _screenSharing: isScreenVideoShared(state),
         _toolbarButtons: getToolbarButtons(state),
         _visible: isToolboxVisible(state),
-        _visibleButtons: getToolbarButtons(state)
+        _visibleButtons: getToolbarButtons(state),
+        _reactionsEnabled: enableReactions
     };
 }
 
