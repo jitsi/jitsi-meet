@@ -87,6 +87,7 @@ import ProfileButton from './ProfileButton';
 import RaiseHandButton from './RaiseHandButton';
 import Separator from './Separator';
 import ShareDesktopButton from './ShareDesktopButton';
+import ToggleCameraButton from './ToggleCameraButton';
 import VideoSettingsButton from './VideoSettingsButton';
 
 /**
@@ -608,6 +609,12 @@ class Toolbox extends Component<Props> {
             group: 2
         };
 
+        const toggleCamera = {
+            key: 'toggle-camera',
+            Content: ToggleCameraButton,
+            group: 2
+        };
+
         const videoQuality = {
             key: 'videoquality',
             Content: VideoQualityButton,
@@ -740,6 +747,7 @@ class Toolbox extends Component<Props> {
             raisehand,
             participants,
             tileview,
+            toggleCamera,
             videoQuality,
             fullscreen,
             security,
