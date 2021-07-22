@@ -15,12 +15,17 @@ import {
  */
 export const REDUCER_KEY = 'features/participants-pane';
 
-export type ActionTrigger = 'Hover' | 'Permanent'
+export type ActionTrigger = 'Focus' | 'Hover' | 'Permanent'
 
 /**
  * Enum of possible participant action triggers.
  */
-export const ACTION_TRIGGER: {HOVER: ActionTrigger, PERMANENT: ActionTrigger} = {
+export const ACTION_TRIGGER: {
+    FOCUS: ActionTrigger,
+    HOVER: ActionTrigger,
+    PERMANENT: ActionTrigger
+} = {
+    FOCUS: 'Focus',
     HOVER: 'Hover',
     PERMANENT: 'Permanent'
 };

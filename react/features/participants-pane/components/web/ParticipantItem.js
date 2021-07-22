@@ -87,6 +87,8 @@ type Props = {
      */
     actionsTrigger: ActionTrigger,
 
+    focusActionTrigger: ActionTrigger,
+
     /**
      * Media state for audio
      */
@@ -149,6 +151,7 @@ export default function ParticipantItem({
     isHighlighted,
     onLeave,
     actionsTrigger = ACTION_TRIGGER.HOVER,
+    focusActionTrigger = ACTION_TRIGGER.FOCUS,
     audioMediaState = MEDIA_STATE.NONE,
     videoMuteState = MEDIA_STATE.NONE,
     displayName,
@@ -163,7 +166,8 @@ export default function ParticipantItem({
         <ParticipantContainer
             isHighlighted = { isHighlighted }
             onMouseLeave = { onLeave }
-            trigger = { actionsTrigger }>
+            trigger = { actionsTrigger }
+            triggerFocus = { focusActionTrigger }>
             <Avatar
                 className = 'participant-avatar'
                 participantId = { participantID }

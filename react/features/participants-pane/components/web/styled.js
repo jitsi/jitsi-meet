@@ -252,7 +252,9 @@ export const ParticipantContent = styled.div`
   padding-right: ${props => props.theme.panePadding}px;
 `;
 
-export const ParticipantContainer = styled.div`
+export const ParticipantContainer = styled.div.attrs({
+    tabindex: 0
+})`
   align-items: center;
   color: white;
   display: flex;
@@ -267,6 +269,20 @@ export const ParticipantContainer = styled.div`
 
     & ${ParticipantActions} {
       ${props => props.trigger === ACTION_TRIGGER.HOVER && `
+        display: flex;
+      `}
+    }
+
+    & ${ParticipantContent} {
+      box-shadow: none;
+    }
+  ${props => !props.isHighlighted && '}'}
+
+  ${props => !props.isHighlighted && '&:focus {'}
+    background-color: #292929;
+
+    & ${ParticipantActions} {
+      ${props => props.triggerFocus === ACTION_TRIGGER.FOCUS && `
         display: flex;
       `}
     }

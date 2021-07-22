@@ -142,6 +142,7 @@ function MeetingParticipantItem({
             actionsTrigger = { ACTION_TRIGGER.HOVER }
             audioMediaState = { _audioMediaState }
             displayName = { _displayName }
+            focusActionTrigger = { ACTION_TRIGGER.FOCUS }
             isHighlighted = { isHighlighted }
             local = { _local }
             onLeave = { onLeave }
