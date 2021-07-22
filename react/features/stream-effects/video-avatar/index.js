@@ -1,5 +1,6 @@
 // @flow
 import * as facemesh from '@tensorflow-models/face-landmarks-detection';
+// eslint-disable-next-line no-unused-vars
 import * as tf from '@tensorflow/tfjs';
 
 import JitsiVideoAvatarEffect from './JitsiVideoAvatarEffect';

@@ -1,7 +1,6 @@
 // @flow
 
 // import { JEELIZFACEFILTER, NN_DEFAULT } from 'facefilter';
-// import * as THREE from 'three';
 
 import {
     CLEAR_TIMEOUT,
@@ -9,7 +8,8 @@ import {
     SET_TIMEOUT,
     timerWorkerScript
 } from './TimerWorker';
-import { TRIANGULATION } from './utils/Triangulations';
+import FacePaint from './utils/FacePaint';
+import { TRIANGULATION } from './utils/Triangulation';
 
 // import { JeelizResizer } from './utils/JeelizResizer';
 // import { JeelizThreeHelper } from './utils/JeelizThreeHelper';
@@ -40,6 +40,7 @@ export default class JitsiVideoAvatarEffect {
     stopEffect: Function;
     _threeCamera: Object;
     _net: Object;
+    _faceCanvas: Object;
 
     /**
      * Represents a modified video MediaStream track.
@@ -52,124 +53,18 @@ export default class JitsiVideoAvatarEffect {
         this._onMaskFrameTimer = this._onMaskFrameTimer.bind(this);
 
         this._outputCanvasElement = document.createElement('canvas');
-        this._outputCanvasElement.getContext('2d');
-        this._outputCanvasElement.id = 'outputCanvas';
         this._inputVideoElement = document.createElement('video');
     }
 
     /**
-     * To do.
+     * Draw a triangle map on detected face.
      *
-     * @returns {void}
-     */
-    // main() {
-    //     const track = this._stream.getVideoTracks()[0];
-    //     const { height, width } = track.getSettings() ?? track.getConstraints();
-    //     const gl = document.createElement('canvas').getContext('webgl2');
-
-
-    //     if (gl) {
-    //         console.log('webgl2 works!');
-    //     } else {
-    //         console.log('your browser/OS/drivers do not support WebGL2');
-    //     }
-
-    //     this._outputCanvasElement.height = height;
-    //     this._outputCanvasElement.width = width;
-    //     this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
-    //     console.log('CANVAS', this._outputCanvasElement.getBoundingClientRect());
-    //     JeelizResizer.size_canvas({
-    //         canvas: this._outputCanvasElement,
-    //         callback: function() {
-    //             this.initFaceFilter();
-    //         }.bind(this)
-    //     });
-    // }
-
-    /**
-     * To do.
-     *
-     * @returns {void}
-     */
-    // initFaceFilter(): void {
-    //     console.log('initFaceFilter');
-    //     JEELIZFACEFILTER.init({
-    //         followZRot: true,
-    //         canvas: this._outputCanvasElement,
-    //         NNC: NN_DEFAULT, // root of NN_DEFAULT.json file
-    //         maxFacesDetected: 1,
-    //         callbackReady: this._callbackReady,
-    //         callbackTrack: this._callbackTrack
-    //     });
-    // }
-
-    /**
-     * The ready callback function.
-     *
-     * @param  {number} errCode - To do.
-     * @param  {Object} spec - To do.
+     * @param {Object} ctx - To do.
+     * @param {Object} points - To do.
+     * @param {boolean} closePath - To do.
      * @returns {void}.
      */
-    // _callbackReady(errCode: number, spec: Object): void {
-    //     if (errCode) {
-    //         console.log('AN ERROR HAPPENS. ERR =', errCode);
-
-    //         return;
-    //     }
-
-    //     console.log('INFO: JEELIZFACEFILTER IS READY');
-    //     this.initThreeScene(spec);
-    // }
-
-    /**
-     * The ready callback function.
-     *
-     * @param  {Object} spec - To do.
-     * @returns {void}.
-     */
-    // initThreeScene(spec: any) {
-    //     console.log('INFO: three spec');
-    //     const threeStuffs = JeelizThreeHelper.init(spec, this.detectCallback);
-
-    //     // CREATE A CUBE
-    //     const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
-    //     const cubeMaterial = new THREE.MeshNormalMaterial();
-    //     const threeCube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-
-    //     threeCube.frustumCulled = false;
-    //     threeStuffs.faceObject.add(threeCube);
-
-    //     // CREATE THE CAMERA
-    //     this._threeCamera = JeelizThreeHelper.create_camera();
-    // } // end init_threeScene()
-
-    /**
-     * To do.
-     *
-     * @param  {number} faceIndex - To do.
-     * @param  {boolean} isDetected - To do.
-     * @returns {void}
-     */
-    // detectCallback(faceIndex: number, isDetected: boolean) {
-    //     if (isDetected) {
-    //         console.log('INFO in detect_callback(): DETECTED');
-    //     } else {
-    //         console.log('INFO in detect_callback(): LOST');
-    //     }
-    // }
-
-    /**
-     * The track callback function.
-     *
-     * @param {Object} detectState - Something.
-     * @returns {void}.
-     */
-    // _callbackTrack(detectState: Object): void {
-    //     // if 1 face detection, wrap in an array
-    //     JeelizThreeHelper.render(detectState, this._threeCamera);
-    // }
-
-    drawPath = (ctx: Object, points: Object, closePath: boolean) => {
+    _drawPath = (ctx: Object, points: Object, closePath: boolean) => {
         const region = new Path2D();
 
         region.moveTo(points[0][0], points[0][1]);
@@ -193,7 +88,7 @@ export default class JitsiVideoAvatarEffect {
      * @param  {Object} ctx - Canvas context.
      * @returns {void}
      */
-    drawMesh(predictions: Array<Object>, ctx: Object) {
+    _drawMesh(predictions: Array<Object>, ctx: Object) {
         if (predictions.length > 0) {
             predictions.forEach(prediction => {
                 const keypoints = prediction.scaledMesh;
@@ -207,7 +102,7 @@ export default class JitsiVideoAvatarEffect {
                     ].map(index => keypoints[index]);
 
                     //  Draw triangle
-                    this.drawPath(ctx, points, true);
+                    this._drawPath(ctx, points, true);
                 }
 
                 // Draw Dots
@@ -225,6 +120,30 @@ export default class JitsiVideoAvatarEffect {
     }
 
     /**
+     * Draw a canvas with mask and background.
+     *
+     * @param  {Array<Object>} predictions - Face predictions.
+     * @param {number} height - Height.
+     * @param {number} width - Width.
+     * @returns {void}
+     */
+    _drawCanvas(predictions: Array<Object>, height: number, width: number) {
+
+        if (predictions.length > 0) {
+            const positionBufferData = predictions[0].scaledMesh.reduce((acc, pos) => acc.concat(pos), []);
+
+            if (!this._faceCanvas) {
+                this._faceCanvas = new FacePaint(this._outputCanvasElement,
+                                                this._inputVideoElement,
+                                                width,
+                                                height);
+            }
+
+            this._faceCanvas.render(positionBufferData);
+        }
+    }
+
+    /**
      * Loop function to render the background mask.
      *
      * @private
@@ -234,12 +153,14 @@ export default class JitsiVideoAvatarEffect {
         const track = this._stream.getVideoTracks()[0];
         const { height, width } = track.getSettings() ?? track.getConstraints();
 
-        this._outputCanvasElement.height = height;
-        this._outputCanvasElement.width = width;
-        this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
+        // this._outputCanvasElement.height = height;
+        // this._outputCanvasElement.width = width;
+
+        // this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
         this._net.estimateFaces({ input: this._inputVideoElement }).then(face => {
-            console.log(face);
-            this.drawMesh(face, this._outputCanvasCtx);
+            // this._drawMesh(face, this._outputCanvasCtx);
+
+            this._drawCanvas(face, height, width);
         });
 
         this._maskFrameTimerWorker.postMessage({
@@ -286,21 +207,12 @@ export default class JitsiVideoAvatarEffect {
         const { height, frameRate, width }
             = firstVideoTrack.getSettings ? firstVideoTrack.getSettings() : firstVideoTrack.getConstraints();
 
-        // this._segmentationMask = new ImageData(this._options.width, this._options.height);
-        // this._segmentationMaskCanvas = document.createElement('canvas');
-        // this._segmentationMaskCanvas.width = this._options.width;
-        // this._segmentationMaskCanvas.height = this._options.height;
-        // this._segmentationMaskCtx = this._segmentationMaskCanvas.getContext('2d');
-
         this._outputCanvasElement.width = parseInt(width, 10);
         this._outputCanvasElement.height = parseInt(height, 10);
-        this._outputCanvasCtx = this._outputCanvasElement.getContext('2d');
         this._inputVideoElement.width = parseInt(width, 10);
         this._inputVideoElement.height = parseInt(height, 10);
         this._inputVideoElement.autoplay = true;
         this._inputVideoElement.srcObject = this._stream;
-
-        // this.main();
 
         this._inputVideoElement.onloadeddata = () => {
             this._maskFrameTimerWorker.postMessage({

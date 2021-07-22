@@ -46,10 +46,7 @@ class VideoAvatarButton extends AbstractButton<Props, *> {
     async _handleClick() {
         const { dispatch } = this.props;
 
-        console.log('HELLLLOOO');
         const jitsiTrack = getLocalVideoTrack(APP.store.getState()['features/base/tracks'])?.jitsiTrack;
-
-        console.log('JITSI TRACK', jitsiTrack);
 
         dispatch(toggleVideoAvatarEffect({ enabled: true }, jitsiTrack));
     }
