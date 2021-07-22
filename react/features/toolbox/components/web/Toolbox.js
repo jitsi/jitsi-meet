@@ -1286,7 +1286,7 @@ function _mapStateToProps(state) {
         _toolbarButtons: getToolbarButtons(state),
         _visible: isToolboxVisible(state),
         _visibleButtons: getToolbarButtons(state),
-        _reactionsEnabled: enableReactions || true
+        _reactionsEnabled: enableReactions
     };
 }
 
