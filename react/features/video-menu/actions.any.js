@@ -23,7 +23,6 @@ import {
     getRemoteParticipants,
     muteRemoteParticipant
 } from '../base/participants';
-import { getIsParticipantAudioMuted } from '../base/tracks';
 
 declare var APP: Object;
 
@@ -108,18 +107,3 @@ export function muteAllParticipants(exclude: Array<string>, mediaType: MEDIA_TYP
     };
 }
 
-
-/**
- * Don't allow participants to unmute video/audio.
- *
- * @returns {Function}
- */
-export function blockParticipantsAudioVideo() {
-    return (dispatch: Dispatch<any>, getState: Function) => {
-        const state = getState();
-        const participants = state['features/base/participants'];
-
-        participants
-            .map(p => !getIsParticipantAudioMuted(p) && setAudioMuted(true));
-    };
-}
