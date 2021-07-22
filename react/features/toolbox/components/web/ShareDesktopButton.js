@@ -122,7 +122,7 @@ const mapStateToProps = state => {
     if (enableFeaturesBasedOnToken) {
         // we enable desktop sharing if any participant already have this
         // feature enabled
-        desktopSharingEnabled = state['features/base/participant'].haveParticipantWithScreenSharingFeature;
+        desktopSharingEnabled = state['features/base/participants'].haveParticipantWithScreenSharingFeature;
         desktopSharingDisabledTooltipKey = 'dialog.shareYourScreenDisabled';
     }
 
