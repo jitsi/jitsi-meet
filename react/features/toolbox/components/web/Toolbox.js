@@ -73,7 +73,7 @@ import {
     setToolbarHovered,
     showToolbox
 } from '../../actions';
-import { THRESHOLDS } from '../../constants';
+import { THRESHOLDS, NOT_APPLICABLE } from '../../constants';
 import { isToolboxVisible } from '../../functions';
 import DownloadButton from '../DownloadButton';
 import HangupButton from '../HangupButton';
@@ -597,6 +597,7 @@ class Toolbox extends Component<Props> {
 
         const participants = {
             key: 'participants-pane',
+            alias: 'invite',
             Content: ParticipantsPaneButton,
             handleClick: this._onToolbarToggleParticipantsPane,
             group: 2
@@ -624,12 +625,7 @@ class Toolbox extends Component<Props> {
 
         const security = {
             key: 'security',
-            Content: SecurityDialogButton,
-            group: 2
-        };
-
-        const info = {
-            key: 'info',
+            alias: 'info',
             Content: SecurityDialogButton,
             group: 2
         };
@@ -748,7 +744,6 @@ class Toolbox extends Component<Props> {
             videoQuality,
             fullscreen,
             security,
-            info,
             cc,
             recording,
             localRecording,
@@ -793,7 +788,8 @@ class Toolbox extends Component<Props> {
         const filtered = [
             ...order.map(key => buttons[key]),
             ...Object.values(buttons).filter((button, index) => !order.includes(keys[index]))
-        ].filter(Boolean).filter(({ key }) => isToolbarButtonEnabled(key, _toolbarButtons));
+        ].filter(Boolean).filter(({ key, alias = NOT_APPLICABLE }) =>
+            isToolbarButtonEnabled(key, _toolbarButtons) || isToolbarButtonEnabled(alias, _toolbarButtons));
 
         if (isHangupVisible) {
             sliceIndex -= 1;
