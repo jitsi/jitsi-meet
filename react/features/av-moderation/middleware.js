@@ -112,6 +112,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
         conference.disableAVModeration(MEDIA_TYPE.AUDIO);
         conference.disableAVModeration(MEDIA_TYPE.VIDEO);
+
         break;
     }
     case REQUEST_ENABLE_MODERATION: {
@@ -119,6 +120,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
         conference.enableAVModeration(MEDIA_TYPE.AUDIO);
         conference.enableAVModeration(MEDIA_TYPE.VIDEO);
+
         break;
     }
     case PARTICIPANT_UPDATED: {
