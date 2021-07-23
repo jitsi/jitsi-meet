@@ -35,7 +35,7 @@ class MediaPlayerManager extends AbstractVideoManager<Props> {
      * Retrieves the current player ref.
      */
     get player() {
-        return this.playerRef.current;
+        return this.playerRef?.current?.getInternalPlayer();
     }
 
     /**
@@ -151,6 +151,12 @@ class MediaPlayerManager extends AbstractVideoManager<Props> {
             this.player.muted = false;
         }
     }
+
+    /**
+     * Retrieves video tag params.
+     *
+     * @returns {void}
+     */
     getPlayerOptions = () => {
         const { _isOwner, videoId } = this.props;
         const showControls = _isOwner;
@@ -162,15 +168,14 @@ class MediaPlayerManager extends AbstractVideoManager<Props> {
             url: videoId,
             controls: showControls,
             playing: true,
-            onError: () => this.onError(),
-            onPlay: () => this.onPlay()
+            onError: () => this.onError()
         };
 
         if (_isOwner) {
             options = {
                 ...options,
                 onPause: () => this.onPause(),
-                onTimeUpdate: this.throttledFireUpdateSharedVideoEvent
+                onPlay: () => this.onPlay()
             };
 
         }
