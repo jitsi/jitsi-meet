@@ -1,5 +1,6 @@
 // @flow
 
+import { hideDialog } from '../base/dialog';
 import { JitsiTrackEvents } from '../base/lib-jitsi-meet';
 import { updateSettings } from '../base/settings';
 
@@ -116,5 +117,6 @@ export function localTrackStopped(dispatch: Function, desktopTrack: Object, curr
         dispatch(updateSettings({
             localFlipX: true
         }));
+        dispatch(hideDialog());
     });
 }

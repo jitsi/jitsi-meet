@@ -22,6 +22,7 @@ import { VIRTUAL_BACKGROUND_TYPE } from '../constants';
 import { resizeImage, toDataURL } from '../functions';
 import logger from '../logger';
 
+import SizeAndPosition from './SizeAndPosition';
 import VirtualBackgroundPreview from './VirtualBackgroundPreview';
 
 
@@ -154,6 +155,13 @@ function VirtualBackground({
     t
 }: Props) {
     const [ options, setOptions ] = useState({ ...initialOptions });
+    const [ areaConstrains, setAreaConstrains ] = useState({
+        areaWidth: 200,
+        areaHeight: 100,
+        areaLeft: 355,
+        areaTop: 145,
+        applied: false,
+    });
     const localImages = jitsiLocalStorage.getItem('virtualBackgrounds');
     const [ storedImages, setStoredImages ] = useState<Array<Image>>((localImages && Bourne.parse(localImages)) || []);
     const [ loading, setLoading ] = useState(false);
@@ -265,7 +273,8 @@ function VirtualBackground({
             backgroundType: VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE,
             enabled: true,
             selectedThumbnail: 'desktop-share',
-            url
+            url,
+            areaConstrains
         };
 
         /**
@@ -395,6 +404,8 @@ function VirtualBackground({
             await activeDesktopVideo.dispose();
         }
         setLoading(true);
+        options.areaConstrains.applied = true
+        console.log(options)
         await dispatch(toggleBackgroundEffect(options, _jitsiTrack));
         await setLoading(false);
         if (_localFlipX && options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
@@ -425,6 +436,21 @@ function VirtualBackground({
         dispatch(hideDialog());
     });
 
+    const getSizeAndPosition = async (areaWidth, areaHeight, areaLeft, areaTop) => {
+        const areaConstrainsObj = {
+            areaWidth,
+            areaHeight,
+            areaLeft,
+            areaTop
+        };
+
+        await setAreaConstrains(areaConstrainsObj);
+        await setOptions(prevState => ({
+            ...prevState,
+            areaConstrains: areaConstrainsObj
+        }));
+    };
+
     return (
         <Dialog
             hideCancelButton = { false }
@@ -433,7 +459,11 @@ function VirtualBackground({
             onSubmit = { applyVirtualBackground }
             submitDisabled = { !options || loading }
             titleKey = { 'virtualBackground.title' } >
-            <VirtualBackgroundPreview options = { options } />
+                        <div className = 'preview-area'>
+                {options.selectedThumbnail === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE
+                    && <SizeAndPosition dialogCallback = { getSizeAndPosition } />}
+                <VirtualBackgroundPreview options = { options } />
+            </div>
             {loading ? (
                 <div className = 'virtual-background-loading'>
                     <Spinner

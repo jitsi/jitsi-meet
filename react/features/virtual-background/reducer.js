@@ -19,7 +19,7 @@ const STORE_NAME = 'features/virtual-background';
  * specified action.
  */
 ReducerRegistry.register(STORE_NAME, (state = {}, action) => {
-    const { virtualSource, backgroundEffectEnabled, blurValue, backgroundType, selectedThumbnail } = action;
+    const { virtualSource, backgroundEffectEnabled, blurValue, backgroundType, selectedThumbnail, areaConstrains } = action;
 
     /**
      * Sets up the persistence of the feature {@code virtual-background}.
@@ -33,7 +33,8 @@ ReducerRegistry.register(STORE_NAME, (state = {}, action) => {
             virtualSource,
             blurValue,
             backgroundType,
-            selectedThumbnail
+            selectedThumbnail,
+            areaConstrains
         };
     }
     case BACKGROUND_ENABLED: {

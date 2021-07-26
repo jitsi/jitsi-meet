@@ -210,16 +210,16 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
      */
     async componentDidUpdate(prevProps) {
         if (!equals(this.props._currentCameraDeviceId, prevProps._currentCameraDeviceId)) {
-            this._setTracks();
+            await this._setTracks();
         }
         if (!equals(this.props.options, prevProps.options)) {
-            if (prevProps.options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
-                prevProps.options.url.dispose();
+            if (prevProps?.options?.selectedThumbnail === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE
+                && this.props?.options?.selectedThumbnail !== VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE
+                && prevProps?.options?.url?.videoType === VIDEO_TYPE.DESKTOP) {
+                await prevProps.options.url.dispose();
+                await this._setTracks();
             }
             this._applyBackgroundEffect();
-        }
-        if (this.props.options.url?.videoType === VIDEO_TYPE.DESKTOP) {
-            localTrackStopped(this.props.dispatch, this.props.options.url, this.state.jitsiTrack);
         }
     }
 

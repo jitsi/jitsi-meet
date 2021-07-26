@@ -201,3 +201,22 @@
     top: 40%;
     left: 45%;
 }
+
+.outputCanvas{
+    position: 'absolute';
+    height: 250px;
+    width: 570px;
+    z-index: 5;
+    // touch-action: none;
+
+    // /* This makes things *much* easier */
+    // box-sizing: border-box;
+ }
+
+ .preview-area{
+     width: fit-content
+ }
+
+ .screen-share-settings{
+     display: inline-grid
+ }
