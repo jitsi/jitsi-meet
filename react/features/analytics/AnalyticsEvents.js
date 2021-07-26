@@ -867,3 +867,15 @@ export function createWelcomePageEvent(action, actionSubject, attributes = {}) {
         source: 'welcomePage'
     };
 }
+
+/**
+ * Creates an event which indicates a screenshot of the screensharing has been taken.
+ *
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createScreensharingCaptureTakenEvent() {
+    return {
+        action: 'screen.sharing.capture'
+    };
+}
