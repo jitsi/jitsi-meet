@@ -220,7 +220,7 @@ export const ParticipantActions = styled.div`
 export const ParticipantActionsHover = styled(ParticipantActions)`
   background-color: #292929;
   bottom: 1px;
-  display: none;
+  opacity: 0;
   position: absolute;
   right: ${props => props.theme.panePadding};
   top: 0;
@@ -253,7 +253,7 @@ export const ParticipantContent = styled.div`
 `;
 
 export const ParticipantContainer = styled.div.attrs({
-    tabindex: 0
+    tabIndex: 0
 })`
   align-items: center;
   color: white;
@@ -270,6 +270,7 @@ export const ParticipantContainer = styled.div.attrs({
     & ${ParticipantActions} {
       ${props => props.trigger === ACTION_TRIGGER.HOVER && `
         display: flex;
+        opacity: 1;
       `}
     }
 
@@ -284,6 +285,7 @@ export const ParticipantContainer = styled.div.attrs({
     & ${ParticipantActions} {
       ${props => props.triggerFocus === ACTION_TRIGGER.FOCUS && `
         display: flex;
+        opacity: 1;
       `}
     }
 
@@ -343,11 +345,6 @@ export const RaisedHandIndicatorBackground = styled.div`
 export const VolumeInput = styled.input.attrs({
     type: 'range'
 })`
-  width: 100%;
-`;
-
-export const VolumeInputContainer = styled.div`
-  position: relative;
   width: 100%;
 `;
 
