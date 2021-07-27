@@ -25,7 +25,7 @@ export function getMovableButtons(width: number): Set<string> {
 
     switch (true) {
     case width >= WIDTH.FIT_9_ICONS: {
-        buttons = [ 'togglecamera', 'chat', 'invite', 'raisehand', 'tileview' ];
+        buttons = [ 'togglecamera', 'chat', 'participantspane', 'raisehand', 'tileview' ];
         break;
     }
     case width >= WIDTH.FIT_8_ICONS: {

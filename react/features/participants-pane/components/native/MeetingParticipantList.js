@@ -30,18 +30,19 @@ export const MeetingParticipantList = () => {
     const { t } = useTranslation();
 
     // eslint-disable-next-line react/no-multi-comp
-    const renderParticipant = id => (
+    const renderParticipant = p => (
+
         <MeetingParticipantItem
-            key = { id }
+            key = { p.id }
             /* eslint-disable-next-line react/jsx-no-bind */
-            onPress = { () => dispatch(showContextMenuDetails(id)) }
-            participantID = { id } />
+            onPress = { () => !p.local && dispatch(showContextMenuDetails(p.id)) }
+            participantID = { p.id } />
     );
 
-    localParticipant && items.push(renderParticipant(localParticipant?.id));
+    items.push(renderParticipant(localParticipant));
 
     participants.forEach(p => {
-        items.push(renderParticipant(p?.id));
+        items.push(renderParticipant(p));
     });
 
     return (

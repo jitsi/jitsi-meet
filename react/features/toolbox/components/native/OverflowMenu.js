@@ -8,7 +8,6 @@ import { getFeatureFlag, REACTIONS_ENABLED } from '../../../base/flags';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { SharedDocumentButton } from '../../../etherpad';
-import { InviteButton } from '../../../invite';
 import { AudioRouteButton } from '../../../mobile/audio-mode';
 import { ParticipantsPaneButton } from '../../../participants-pane/components/native';
 import { ReactionMenu } from '../../../reactions/components';
@@ -126,8 +125,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                 style: {
                     ..._bottomSheetStyles.buttons.style,
                     borderTopLeftRadius: 16,
-                    borderTopRightRadius: 16,
-                    paddingTop: 16
+                    borderTopRightRadius: 16
                 }
             }
         };
@@ -140,7 +138,6 @@ class OverflowMenu extends PureComponent<Props, State> {
                     : null }>
                 <AudioRouteButton { ...topButtonProps } />
                 <ParticipantsPaneButton { ...buttonProps } />
-                {!toolbarButtons.has('invite') && <InviteButton { ...buttonProps } />}
                 <AudioOnlyButton { ...buttonProps } />
                 {!_reactionsEnabled && !toolbarButtons.has('raisehand') && <RaiseHandButton { ...buttonProps } />}
                 <SecurityDialogButton { ...buttonProps } />
