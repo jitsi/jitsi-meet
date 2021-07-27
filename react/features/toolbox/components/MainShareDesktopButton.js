@@ -4,7 +4,6 @@ import { ACTION_SHORTCUT_TRIGGERED, createToolbarEvent, sendAnalytics } from '..
 import { translate } from '../../base/i18n';
 import { IconShareDesktop } from '../../base/icons';
 import JitsiMeetJS from '../../base/lib-jitsi-meet/_';
-import { getParticipants } from '../../base/participants';
 import { connect } from '../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 import { getLocalVideoTrack } from '../../base/tracks';

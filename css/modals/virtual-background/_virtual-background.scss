@@ -202,12 +202,12 @@
     left: 45%;
 }
 
-.focus-desktop-share {
+.highlight-desktop-share {
     animation: highlight 3000ms;
 }
 
 @keyframes highlight {
-    to {
+    from {
         box-shadow: 0 0 0 99999px rgba(0, 0, 0, 0.8);
         position: relative;
         z-index: 9;

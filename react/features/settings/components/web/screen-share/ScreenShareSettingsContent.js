@@ -25,7 +25,7 @@ type Props = {
 const ScreenShareSettingsContent = ({ t, openEmbedDialog }: Props) => {
     const shareScreenAsVirtualBackground = () => {
         openEmbedDialog(VirtualBackgroundDialog, {
-            share: true
+            openFromToolbox: true
         });
     };
 
