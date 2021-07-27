@@ -34,7 +34,7 @@ export const MeetingParticipantList = () => {
         <MeetingParticipantItem
             key = { id }
             /* eslint-disable-next-line react/jsx-no-bind */
-            onPress = { () => dispatch(showContextMenuDetails(id)) }
+            onPress = { () => !localParticipant && dispatch(showContextMenuDetails(id)) }
             participantID = { id } />
     );
 

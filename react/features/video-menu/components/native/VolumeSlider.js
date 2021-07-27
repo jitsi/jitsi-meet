@@ -1,8 +1,9 @@
 // @flow
 
+import Slider from '@react-native-community/slider';
 import _ from 'lodash';
 import React, { PureComponent } from 'react';
-import { Slider, View } from 'react-native';
+import { View } from 'react-native';
 import { withTheme } from 'react-native-paper';
 
 import { Icon, IconVolumeEmpty } from '../../../base/icons';

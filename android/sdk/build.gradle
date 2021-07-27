@@ -75,6 +75,7 @@ dependencies {
     implementation project(':react-native-webrtc')
     implementation project(':react-native-webview')
     implementation project(':react-native-splash-screen')
+    implementation project(':react-native-slider')
 
     testImplementation 'junit:junit:4.12'
 }
