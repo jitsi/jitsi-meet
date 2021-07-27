@@ -54,12 +54,15 @@ export default createStyleSheet({
     volumeSliderContainer: {
         alignItems: 'center',
         flexDirection: 'row',
-        marginLeft: BaseTheme.spacing[3],
-        marginTop: BaseTheme.spacing[3]
+        marginLeft: BaseTheme.spacing[3]
     },
 
     sliderContainer: {
-        marginLeft: BaseTheme.spacing[3],
-        minWidth: '84%'
+        marginLeft: BaseTheme.spacing[4],
+        minWidth: '78%'
+    },
+
+    divider: {
+        backgroundColor: BaseTheme.palette.section01
     }
 });

@@ -179,7 +179,6 @@ ColorSchemeRegistry.register('BottomSheet', {
          */
         style: {
             ...brandedDialogItemContainerStyle,
-            backgroundColor: ColorPalette.darkBackground,
             paddingHorizontal: MD_ITEM_MARGIN_PADDING
         },
 

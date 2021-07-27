@@ -2,6 +2,7 @@
 
 import React, { PureComponent } from 'react';
 import { Text, View } from 'react-native';
+import { Divider } from 'react-native-paper';
 
 import { Avatar } from '../../../base/avatar';
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
@@ -18,7 +19,9 @@ import GrantModeratorButton from './GrantModeratorButton';
 import KickButton from './KickButton';
 import MuteButton from './MuteButton';
 import MuteEveryoneElseButton from './MuteEveryoneElseButton';
+import MuteVideoButton from './MuteVideoButton';
 import PinButton from './PinButton';
+import VolumeSlider from './VolumeSlider';
 import styles from './styles';
 
 /**
@@ -66,7 +69,12 @@ type Props = {
     /**
      * Display name of the participant retrieved from Redux.
      */
-    _participantDisplayName: string
+    _participantDisplayName: string,
+
+    /**
+     * The ID of the participant.
+     */
+    _participantID: ?string,
 }
 
 // eslint-disable-next-line prefer-const
@@ -94,7 +102,13 @@ class RemoteVideoMenu extends PureComponent<Props> {
      * @inheritdoc
      */
     render() {
-        const { _disableKick, _disableRemoteMute, _disableGrantModerator, participant } = this.props;
+        const {
+            _disableKick,
+            _disableRemoteMute,
+            _disableGrantModerator,
+            _participantID,
+            participant
+        } = this.props;
         const buttonProps = {
             afterClick: this._onCancel,
             showLabel: true,
@@ -107,11 +121,15 @@ class RemoteVideoMenu extends PureComponent<Props> {
                 onCancel = { this._onCancel }
                 renderHeader = { this._renderMenuHeader }>
                 { !_disableRemoteMute && <MuteButton { ...buttonProps } /> }
+                <MuteEveryoneElseButton { ...buttonProps } />
+                { !_disableRemoteMute && <MuteVideoButton { ...buttonProps } /> }
+                <Divider style = { styles.divider } />
                 { !_disableKick && <KickButton { ...buttonProps } /> }
                 { !_disableGrantModerator && <GrantModeratorButton { ...buttonProps } /> }
                 <PinButton { ...buttonProps } />
                 <PrivateMessageButton { ...buttonProps } />
-                <MuteEveryoneElseButton { ...buttonProps } />
+                <Divider style = { styles.divider } />
+                <VolumeSlider participantID = { _participantID } />
                 <ConnectionStatusButton { ...buttonProps } />
             </BottomSheet>
         );
@@ -182,7 +200,8 @@ function _mapStateToProps(state, ownProps) {
         _disableKick: Boolean(disableKick),
         _disableRemoteMute: Boolean(disableRemoteMute),
         _isOpen: isDialogOpen(state, RemoteVideoMenu_),
-        _participantDisplayName: getParticipantDisplayName(state, participant.id)
+        _participantDisplayName: getParticipantDisplayName(state, participant.id),
+        _participantID: participant.id
     };
 }
 
