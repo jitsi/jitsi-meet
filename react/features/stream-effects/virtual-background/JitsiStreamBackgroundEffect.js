@@ -90,13 +90,13 @@ export default class JitsiStreamBackgroundEffect {
         const { height, width } = track.getSettings() ?? track.getConstraints();
         const { backgroundType } = this._options.virtualBackground;
 
-// if(this._options.virtualBackground.areaConstrains.applied){
-//     this._outputCanvasElement.width = parseInt(width, 10);
-//     this._outputCanvasElement.height = parseInt(height, 10);
-// }else{
-        this._outputCanvasElement.width = 570;
-        this._outputCanvasElement.height = 250;
-//}
+if(backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE){
+    this._outputCanvasElement.width = 570;
+    this._outputCanvasElement.height = 250;
+ }else{
+    this._outputCanvasElement.width = parseInt(width, 10);
+    this._outputCanvasElement.height = parseInt(height, 10);
+}
         this._outputCanvasCtx.globalCompositeOperation = 'copy';
 
         // Draw segmentation mask.
@@ -150,7 +150,7 @@ export default class JitsiStreamBackgroundEffect {
                 this._options.virtualBackground.areaConstrains.areaHeight
             );
         } else {
-           // this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
+            this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
         }
         if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
             this._outputCanvasCtx.restore();
@@ -278,13 +278,13 @@ export default class JitsiStreamBackgroundEffect {
         this._segmentationMaskCanvas.height = this._options.height;
         this._segmentationMaskCtx = this._segmentationMaskCanvas.getContext('2d');
 
-        // if(this._options.virtualBackground.areaConstrains.applied){
-        //     this._outputCanvasElement.width = parseInt(width, 10);
-        //     this._outputCanvasElement.height = parseInt(height, 10);
-        // }else{
-                this._outputCanvasElement.width = 570;
-                this._outputCanvasElement.height = 250;
-        //}
+        if(this._options?.virtualBackground?.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE){
+            this._outputCanvasElement.width = 570;
+            this._outputCanvasElement.height = 250;
+        }else{
+            this._outputCanvasElement.width = parseInt(width, 10);
+            this._outputCanvasElement.height = parseInt(height, 10);
+        }
         this._outputCanvasCtx = this._outputCanvasElement.getContext('2d');
         this._inputVideoElement.width = parseInt(width, 10);
         this._inputVideoElement.height = parseInt(height, 10);
