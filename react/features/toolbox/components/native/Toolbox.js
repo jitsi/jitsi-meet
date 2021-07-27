@@ -8,6 +8,7 @@ import { getFeatureFlag, REACTIONS_ENABLED } from '../../../base/flags';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { ChatButton } from '../../../chat';
+import { ParticipantsPaneButton } from '../../../participants-pane/components/native';
 import { ReactionsMenuButton } from '../../../reactions/components';
 import { TileViewButton } from '../../../video-layout';
 import { isToolboxVisible, getMovableButtons } from '../../functions.native';
@@ -100,6 +101,10 @@ function Toolbox(props: Props) {
                         styles = { buttonStylesBorderless }
                         toggledStyles = { backgroundToggledStyle } />)}
                 {additionalButtons.has('tileview') && <TileViewButton styles = { buttonStylesBorderless } />}
+                {additionalButtons.has('participantspane')
+                && <ParticipantsPaneButton
+                    styles = { buttonStylesBorderless } />
+                }
                 {additionalButtons.has('togglecamera')
                       && <ToggleCameraButton
                           styles = { buttonStylesBorderless }
