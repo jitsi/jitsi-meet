@@ -168,14 +168,16 @@ class MediaPlayerManager extends AbstractVideoManager<Props> {
             url: videoId,
             controls: showControls,
             playing: true,
-            onError: () => this.onError()
+            onError: () => this.onError(),
+            onPlay: () => this.onPlay(),
+            onVolumeChange: () => this.onVolumeChange()
         };
 
         if (_isOwner) {
             options = {
                 ...options,
                 onPause: () => this.onPause(),
-                onPlay: () => this.onPlay()
+                onTimeUpdate: this.throttledFireUpdateSharedVideoEvent
             };
 
         }
