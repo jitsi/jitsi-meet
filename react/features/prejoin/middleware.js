@@ -33,7 +33,7 @@ MiddlewareRegistry.register(store => next => async action => {
         const { getState, dispatch } = store;
         const state = getState();
         const { userSelectedSkipPrejoin } = state['features/prejoin'];
-        const localTracks = getLocalTracks(state['features/base/tracks']);
+        let localTracks = getLocalTracks(state['features/base/tracks']);
         const { options } = action;
 
         options && store.dispatch(updateConfig(options));
@@ -48,6 +48,12 @@ MiddlewareRegistry.register(store => next => async action => {
                 await dispatch(replaceLocalTrack(track.jitsiTrack, null));
             }
         }
+
+        // Re-fetch the local tracks after muted tracks have been removed above.
+        // This is needed, because the tracks are effectively disposed by the replaceLocalTrack and should not be used
+        // anymore.
+        localTracks = getLocalTracks(getState()['features/base/tracks']);
+
         const jitsiTracks = localTracks.map(t => t.jitsiTrack);
 
         dispatch(setPrejoinPageVisibility(false));
