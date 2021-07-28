@@ -174,13 +174,15 @@ export function getSoundsTabProps(stateful: Object | Function) {
         soundsTalkWhileMuted,
         soundsReactions
     } = state['features/base/settings'];
+    const { enableReactions } = state['features/base/config'];
 
     return {
         soundsIncomingMessage,
         soundsParticipantJoined,
         soundsParticipantLeft,
         soundsTalkWhileMuted,
-        soundsReactions
+        soundsReactions,
+        enableReactions
     };
 }
 

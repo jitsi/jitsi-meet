@@ -42,9 +42,13 @@ declare var APP: Object;
  */
 MiddlewareRegistry.register(store => next => action => {
     const { dispatch, getState } = store;
+    const { enableReactions } = getState()['features/base/config'];
 
     switch (action.type) {
     case APP_WILL_MOUNT:
+        if (!enableReactions) {
+            break;
+        }
         batch(() => {
             Object.keys(REACTIONS).forEach(key => {
                 for (let i = 0; i < SOUNDS_THRESHOLDS.length; i++) {
@@ -61,6 +65,9 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case APP_WILL_UNMOUNT:
+        if (!enableReactions) {
+            break;
+        }
         batch(() => {
             Object.keys(REACTIONS).forEach(key => {
                 for (let i = 0; i < SOUNDS_THRESHOLDS.length; i++) {
