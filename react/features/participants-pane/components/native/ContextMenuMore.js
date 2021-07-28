@@ -10,22 +10,23 @@ import { openDialog, hideDialog } from '../../../base/dialog/actions';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import {
     Icon,
-    IconCheck,
     IconVideoOff
 } from '../../../base/icons';
 import {
     getLocalParticipant,
     getParticipantCount
 } from '../../../base/participants';
-import { BlockAudioVideoDialog } from '../../../video-menu';
 import MuteEveryonesVideoDialog
     from '../../../video-menu/components/native/MuteEveryonesVideoDialog';
 
 import styles from './styles';
 
+// import { BlockAudioVideoDialog } from '../../../video-menu';
+
 export const ContextMenuMore = () => {
     const dispatch = useDispatch();
-    const blockAudioVideo = useCallback(() => dispatch(openDialog(BlockAudioVideoDialog)), [ dispatch ]);
+
+    // const blockAudioVideo = useCallback(() => dispatch(openDialog(BlockAudioVideoDialog)), [ dispatch ]);
     const cancel = useCallback(() => dispatch(hideDialog()), [ dispatch ]);
     const { id } = useSelector(getLocalParticipant);
     const participantsCount = useSelector(getParticipantCount);
@@ -50,16 +51,16 @@ export const ContextMenuMore = () => {
                     src = { IconVideoOff } />
                 <Text style = { styles.contextMenuItemText }>{t('participantsPane.actions.stopEveryonesVideo')}</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-                onPress = { blockAudioVideo }
-                style = { styles.contextMenuItem }>
-                <Icon
-                    size = { 24 }
-                    src = { IconCheck } />
-                <Text style = { styles.contextMenuItemText }>
-                    {t('participantsPane.actions.blockEveryoneMicCamera')}
-                </Text>
-            </TouchableOpacity>
+            {/* <TouchableOpacity*/}
+            {/*    onPress = { blockAudioVideo }*/}
+            {/*    style = { styles.contextMenuItem }>*/}
+            {/*    <Icon*/}
+            {/*        size = { 24 }*/}
+            {/*        src = { IconCheck } />*/}
+            {/*    <Text style = { styles.contextMenuItemText }>*/}
+            {/*        {t('participantsPane.actions.blockEveryoneMicCamera')}*/}
+            {/*    </Text>*/}
+            {/* </TouchableOpacity>*/}
         </BottomSheet>
     );
 };
