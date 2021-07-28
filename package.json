@@ -36,7 +36,7 @@
     "@jitsi/js-utils": "1.0.6",
     "@material-ui/core": "4.11.3",
     "@microsoft/microsoft-graph-client": "1.1.0",
-    "@react-native-async-storage/async-storage": "1.13.2",
+    "@react-native-async-storage/async-storage": "1.15.5",
     "@react-native-community/google-signin": "3.0.1",
     "@react-native-community/netinfo": "4.1.5",
     "@react-native-community/slider": "3.0.3",

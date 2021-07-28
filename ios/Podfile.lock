@@ -346,8 +346,8 @@ PODS:
     - React-jsi (= 0.61.5-jitsi.2)
     - ReactCommon/jscallinvoker (= 0.61.5-jitsi.2)
     - ReactCommon/turbomodule/core (= 0.61.5-jitsi.2)
-  - RNCAsyncStorage (1.13.2):
-    - React
+  - RNCAsyncStorage (1.15.5):
+    - React-Core
   - RNDefaultPreference (1.4.2):
     - React
   - RNDeviceInfo (8.0.0):
@@ -571,7 +571,7 @@ SPEC CHECKSUMS:
   React-RCTText: 4f1b99f228278d2a5e9008eced8dc9c974c4a270
   React-RCTVibration: c1041024893fdfdb8371e7c720c437751b711676
   ReactCommon: 18014e1d98dbeb9141e935cfe35fc93bd511ffb6
-  RNCAsyncStorage: bc2f81cc1df90c267ce9ed30bb2dbc93b945a8ee
+  RNCAsyncStorage: 8324611026e8dc3706f829953aa6e3899f581589
   RNDefaultPreference: 56a405ce61033ac77b95004dccd7ac54c2eb50d1
   RNDeviceInfo: 72ded653ce636b3f03571e90bed99309a714944e
   RNGoogleSignin: 39336070b35fc4cea6a98cf111e00480317be0ae
