@@ -755,6 +755,7 @@
         "participantJoined": "Participant Joined",
         "participantLeft": "Participant Left",
         "playSounds": "Play sound on",
+        "reactions": "Reactions",
         "sameAsSystem": "Same as system ({{label}})",
         "selectAudioOutput": "Audio output",
         "selectCamera": "Camera",

@@ -81,7 +81,7 @@ export const REACTIONS = {
         soundId: CLAP_SOUND_ID,
         soundFile: CLAP_SOUND_FILE
     },
-    joy: {
+    laugh: {
         message: ':grinning_face:',
         emoji: '😀',
         shortcutChar: 'L',

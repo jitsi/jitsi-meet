@@ -31,6 +31,7 @@ const DEFAULT_STATE = {
     soundsParticipantJoined: true,
     soundsParticipantLeft: true,
     soundsTalkWhileMuted: true,
+    soundsReactions: true,
     startAudioOnly: false,
     startWithAudioMuted: false,
     startWithVideoMuted: false,

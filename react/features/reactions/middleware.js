@@ -104,13 +104,17 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case PUSH_REACTIONS: {
-        const queue = store.getState()['features/reactions'].queue;
+        const state = getState();
+        const queue = state['features/reactions'].queue;
+        const { soundsReactions } = state['features/base/settings'];
         const reactions = action.reactions;
 
         const uniqueReactions = getUniqueReactions(reactions);
 
         batch(() => {
-            uniqueReactions.forEach(reaction => dispatch(playSound(REACTIONS[reaction].soundId)));
+            if (soundsReactions) {
+                uniqueReactions.forEach(reaction => dispatch(playSound(REACTIONS[reaction].soundId)));
+            }
             dispatch(setReactionQueue([ ...queue, ...getReactionsWithId(reactions) ]));
         });
     }
