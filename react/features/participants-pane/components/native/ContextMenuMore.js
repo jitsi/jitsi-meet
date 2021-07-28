@@ -9,7 +9,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { openDialog, hideDialog } from '../../../base/dialog/actions';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import {
-    Icon, IconMicDisabledHollow,
+    Icon,
+    IconCheck,
     IconVideoOff
 } from '../../../base/icons';
 import {
@@ -45,7 +46,7 @@ export const ContextMenuMore = () => {
                 onPress = { muteAllVideo }
                 style = { styles.contextMenuItem }>
                 <Icon
-                    size = { 20 }
+                    size = { 24 }
                     src = { IconVideoOff } />
                 <Text style = { styles.contextMenuItemText }>{t('participantsPane.actions.stopEveryonesVideo')}</Text>
             </TouchableOpacity>
@@ -53,9 +54,8 @@ export const ContextMenuMore = () => {
                 onPress = { blockAudioVideo }
                 style = { styles.contextMenuItem }>
                 <Icon
-                    size = { 20 }
-                    src = { IconMicDisabledHollow }
-                    style = { styles.contextMenuIcon } />
+                    size = { 24 }
+                    src = { IconCheck } />
                 <Text style = { styles.contextMenuItemText }>
                     {t('participantsPane.actions.blockEveryoneMicCamera')}
                 </Text>

@@ -8,13 +8,16 @@ import { Avatar } from '../../../base/avatar';
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, isDialogOpen } from '../../../base/dialog';
 import { KICK_OUT_ENABLED, getFeatureFlag } from '../../../base/flags';
-import { getParticipantDisplayName } from '../../../base/participants';
+import {
+    getLocalParticipant,
+    getParticipantDisplayName, getRemoteParticipants
+} from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { PrivateMessageButton } from '../../../chat';
 import { hideRemoteVideoMenu } from '../../actions.native';
 
-import ConnectionStatusButton from './ConnectionStatusButton';
+// import ConnectionStatusButton from './ConnectionStatusButton';
 import GrantModeratorButton from './GrantModeratorButton';
 import KickButton from './KickButton';
 import MuteButton from './MuteButton';
@@ -27,7 +30,7 @@ import styles from './styles';
 /**
  * Size of the rendered avatar in the menu.
  */
-const AVATAR_SIZE = 25;
+const AVATAR_SIZE = 24;
 
 type Props = {
 
@@ -65,6 +68,11 @@ type Props = {
      * True if the menu is currently open, false otherwise.
      */
     _isOpen: boolean,
+
+    /**
+     * Whether the participant is present in the room or not.
+     */
+    _isParticipantIDAvailable?: boolean,
 
     /**
      * Display name of the participant retrieved from Redux.
@@ -106,6 +114,7 @@ class RemoteVideoMenu extends PureComponent<Props> {
             _disableKick,
             _disableRemoteMute,
             _disableGrantModerator,
+            _isParticipantIDAvailable,
             _participantID,
             participant
         } = this.props;
@@ -119,7 +128,8 @@ class RemoteVideoMenu extends PureComponent<Props> {
         return (
             <BottomSheet
                 onCancel = { this._onCancel }
-                renderHeader = { this._renderMenuHeader }>
+                renderHeader = { this._renderMenuHeader }
+                showSlidingView = { _isParticipantIDAvailable }>
                 { !_disableRemoteMute && <MuteButton { ...buttonProps } /> }
                 <MuteEveryoneElseButton { ...buttonProps } />
                 { !_disableRemoteMute && <MuteVideoButton { ...buttonProps } /> }
@@ -130,7 +140,7 @@ class RemoteVideoMenu extends PureComponent<Props> {
                 <PrivateMessageButton { ...buttonProps } />
                 <Divider style = { styles.divider } />
                 <VolumeSlider participantID = { _participantID } />
-                <ConnectionStatusButton { ...buttonProps } />
+                {/* <ConnectionStatusButton { ...buttonProps } />*/}
             </BottomSheet>
         );
     }
@@ -190,8 +200,20 @@ class RemoteVideoMenu extends PureComponent<Props> {
 function _mapStateToProps(state, ownProps) {
     const kickOutEnabled = getFeatureFlag(state, KICK_OUT_ENABLED, true);
     const { participant } = ownProps;
+    const participantIDS = [];
+
     const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
     let { disableKick } = remoteVideoMenu;
+    const localParticipant = getLocalParticipant(state);
+    const remoteParticipants = getRemoteParticipants(state);
+
+    localParticipant && participantIDS.push(localParticipant?.id);
+
+    remoteParticipants.forEach(p => {
+        participantIDS.push(p?.id);
+    });
+
+    const isParticipantIDAvailable = participantIDS.find(partID => partID === participant.id);
 
     disableKick = disableKick || !kickOutEnabled;
 
@@ -200,6 +222,7 @@ function _mapStateToProps(state, ownProps) {
         _disableKick: Boolean(disableKick),
         _disableRemoteMute: Boolean(disableRemoteMute),
         _isOpen: isDialogOpen(state, RemoteVideoMenu_),
+        _isParticipantIDAvailable: Boolean(isParticipantIDAvailable),
         _participantDisplayName: getParticipantDisplayName(state, participant.id),
         _participantID: participant.id
     };

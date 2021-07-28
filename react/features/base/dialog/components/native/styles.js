@@ -171,7 +171,7 @@ ColorSchemeRegistry.register('BottomSheet', {
          */
         labelStyle: {
             ...brandedDialogLabelStyle,
-            marginLeft: 32
+            marginLeft: 16
         },
 
         /**
