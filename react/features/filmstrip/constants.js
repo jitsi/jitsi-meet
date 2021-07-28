@@ -164,6 +164,11 @@ export const TILE_HORIZONTAL_MARGIN = 4;
 export const TOOLBAR_HEIGHT = 72;
 
 /**
+ * The height of the whole toolbar.
+ */
+export const TOOLBAR_HEIGHT_MOBILE = 60;
+
+/**
  * The size of the horizontal border of a thumbnail.
  *
  * @type {number}

@@ -4,14 +4,14 @@ import React, { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { openDialog } from '../../base/dialog';
+import { openDialog } from '../../../base/dialog';
 import {
     getLocalParticipant,
     getParticipantCountWithFake,
     getRemoteParticipants
-} from '../../base/participants';
-import MuteRemoteParticipantDialog from '../../video-menu/components/web/MuteRemoteParticipantDialog';
-import { findStyledAncestor, shouldRenderInviteButton } from '../functions';
+} from '../../../base/participants';
+import MuteRemoteParticipantDialog from '../../../video-menu/components/web/MuteRemoteParticipantDialog';
+import { findStyledAncestor, shouldRenderInviteButton } from '../../functions';
 
 import { InviteButton } from './InviteButton';
 import MeetingParticipantContextMenu from './MeetingParticipantContextMenu';

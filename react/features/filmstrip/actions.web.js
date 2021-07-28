@@ -137,7 +137,7 @@ export function clickOnVideo(n: number) {
 }
 
 /**
- * Sets the volume for a thumnail's audio.
+ * Sets the volume for a thumbnail's audio.
  *
  * @param {string} participantId - The participant ID asociated with the audio.
  * @param {string} volume - The volume level.

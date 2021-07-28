@@ -1,3 +1,5 @@
+// @flow
+
 import {
     PARTICIPANTS_PANE_CLOSE,
     PARTICIPANTS_PANE_OPEN

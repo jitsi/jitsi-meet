@@ -4,13 +4,7 @@ import React, { Component } from 'react';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconVolume } from '../../../base/icons';
-
-/**
- * Used to modify initialValue, which is expected to be a decimal value between
- * 0 and 1, and converts it to a number representable by an input slider, which
- * recognizes whole numbers.
- */
-const VOLUME_SLIDER_SCALE = 100;
+import { VOLUME_SLIDER_SCALE } from '../../constants';
 
 /**
  * The type of the React {@code Component} props of {@link VolumeSlider}.

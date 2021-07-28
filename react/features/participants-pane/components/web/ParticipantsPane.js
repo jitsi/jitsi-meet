@@ -3,19 +3,19 @@
 import React, { Component } from 'react';
 import { ThemeProvider } from 'styled-components';
 
-import { openDialog } from '../../base/dialog';
-import { translate } from '../../base/i18n';
+import { openDialog } from '../../../base/dialog';
+import { translate } from '../../../base/i18n';
 import {
     getParticipantCount,
     isLocalParticipantModerator
-} from '../../base/participants';
-import { connect } from '../../base/redux';
-import { MuteEveryoneDialog } from '../../video-menu/components/';
-import { close } from '../actions';
-import { classList, findStyledAncestor, getParticipantsPaneOpen } from '../functions';
-import theme from '../theme.json';
+} from '../../../base/participants';
+import { connect } from '../../../base/redux';
+import { MuteEveryoneDialog } from '../../../video-menu/components/';
+import { close } from '../../actions';
+import { classList, findStyledAncestor, getParticipantsPaneOpen } from '../../functions';
+import theme from '../../theme.json';
+import { FooterContextMenu } from '../FooterContextMenu';
 
-import { FooterContextMenu } from './FooterContextMenu';
 import { LobbyParticipantList } from './LobbyParticipantList';
 import { MeetingParticipantList } from './MeetingParticipantList';
 import {

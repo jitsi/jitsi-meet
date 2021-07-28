@@ -2,9 +2,9 @@
 
 import React, { Component } from 'react';
 
-import { isToolbarButtonEnabled } from '../../base/config/functions.web';
-import { openDialog } from '../../base/dialog';
-import { translate } from '../../base/i18n';
+import { isToolbarButtonEnabled } from '../../../base/config/functions.web';
+import { openDialog } from '../../../base/dialog';
+import { translate } from '../../../base/i18n';
 import {
     IconCloseCircle,
     IconCrown,
@@ -12,18 +12,18 @@ import {
     IconMicDisabled,
     IconMuteEveryoneElse,
     IconVideoOff
-} from '../../base/icons';
+} from '../../../base/icons';
 import {
     getParticipantByIdOrUndefined,
     isLocalParticipantModerator,
     isParticipantModerator
-} from '../../base/participants';
-import { connect } from '../../base/redux';
-import { isParticipantAudioMuted, isParticipantVideoMuted } from '../../base/tracks';
-import { openChat } from '../../chat/actions';
-import { GrantModeratorDialog, KickRemoteParticipantDialog, MuteEveryoneDialog } from '../../video-menu';
-import MuteRemoteParticipantsVideoDialog from '../../video-menu/components/web/MuteRemoteParticipantsVideoDialog';
-import { getComputedOuterHeight } from '../functions';
+} from '../../../base/participants';
+import { connect } from '../../../base/redux';
+import { isParticipantAudioMuted, isParticipantVideoMuted } from '../../../base/tracks';
+import { openChat } from '../../../chat/actions';
+import { GrantModeratorDialog, KickRemoteParticipantDialog, MuteEveryoneDialog } from '../../../video-menu';
+import MuteRemoteParticipantsVideoDialog from '../../../video-menu/components/web/MuteRemoteParticipantsVideoDialog';
+import { getComputedOuterHeight } from '../../functions';
 
 import {
     ContextMenu,
