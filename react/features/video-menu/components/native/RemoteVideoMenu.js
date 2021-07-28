@@ -9,8 +9,8 @@ import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, isDialogOpen } from '../../../base/dialog';
 import { KICK_OUT_ENABLED, getFeatureFlag } from '../../../base/flags';
 import {
-    getLocalParticipant,
-    getParticipantDisplayName, getRemoteParticipants
+    getParticipantDisplayName,
+    getRemoteParticipants
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
