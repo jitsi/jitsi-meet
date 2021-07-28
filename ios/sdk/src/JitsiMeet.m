@@ -28,9 +28,11 @@
 #import <RNGoogleSignin/RNGoogleSignin.h>
 #import <WebRTC/RTCLogging.h>
 
-@interface JitsiMeet {
-    @property (nonatomic, strong, nullable) RCTBridgeWrapper *bridgeWrapper;
-}
+@interface JitsiMeet ()
+
+@property (nonatomic, strong, nullable) RCTBridgeWrapper *bridgeWrapper;
+
+@end
 
 @implementation JitsiMeet {
     NSDictionary *_launchOptions;
