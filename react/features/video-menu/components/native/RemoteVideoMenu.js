@@ -202,10 +202,7 @@ function _mapStateToProps(state, ownProps) {
 
     const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
     let { disableKick } = remoteVideoMenu;
-    const localParticipant = getLocalParticipant(state);
     const remoteParticipants = getRemoteParticipants(state);
-
-    localParticipant && participantIDS.push(localParticipant?.id);
 
     remoteParticipants.forEach(p => {
         participantIDS.push(p?.id);
