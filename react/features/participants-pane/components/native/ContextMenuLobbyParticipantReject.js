@@ -3,7 +3,7 @@
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TouchableOpacity, View } from 'react-native';
-import {Divider, Text} from 'react-native-paper';
+import { Text } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Avatar } from '../../../base/avatar';

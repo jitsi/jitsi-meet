@@ -13,7 +13,7 @@ import {
     getRemoteParticipants
 } from '../../../base/participants';
 import { doInvitePeople } from '../../../invite/actions.native';
-import { showConnectionStatus, showContextMenuDetails } from '../../actions';
+import { showConnectionStatus, showContextMenuDetails } from '../../actions.native';
 import { shouldRenderInviteButton } from '../../functions';
 
 import MeetingParticipantItem from './MeetingParticipantItem';

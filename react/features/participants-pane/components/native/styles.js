@@ -1,4 +1,3 @@
-import { ColorPalette } from '../../../base/styles';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 /**
