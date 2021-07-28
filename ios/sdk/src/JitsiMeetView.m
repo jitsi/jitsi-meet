@@ -87,11 +87,6 @@ static void initializeViewsMap() {
     return self;
 }
 
-- (void)dealloc {    
-    NSLog(@"### JitsiMeetView dealloc");
-    JitsiMeet.sharedInstance.bridgeWrapper = nil;
-}
-
 /**
  * Internal initialization:
  *

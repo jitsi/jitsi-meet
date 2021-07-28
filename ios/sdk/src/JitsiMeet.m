@@ -28,8 +28,11 @@
 #import <RNGoogleSignin/RNGoogleSignin.h>
 #import <WebRTC/RTCLogging.h>
 
+@interface JitsiMeet {
+    @property (nonatomic, strong, nullable) RCTBridgeWrapper *bridgeWrapper;
+}
+
 @implementation JitsiMeet {
-//    RCTBridgeWrapper *_bridgeWrapper;
     NSDictionary *_launchOptions;
     ScheenshareEventEmiter *_screenshareEventEmiter;
 }
@@ -49,9 +52,6 @@
 
 - (instancetype)init {
     if (self = [super init]) {
-        // Initialize the on and only bridge for interfacing with React Native.
-//        _bridgeWrapper = [[RCTBridgeWrapper alloc] init];
-        
         // Initialize the listener for handling start/stop screensharing notifications.
         _screenshareEventEmiter = [[ScheenshareEventEmiter alloc] init];
 
@@ -117,6 +117,14 @@
 }
 
 #pragma mark - Utility methods
+
+- (void)instantiateBridgeWrapper {
+    _bridgeWrapper = [[RCTBridgeWrapper alloc] init];
+}
+
+- (void)destroyBridgeWrapper {
+    self.bridgeWrapper = nil;
+}
 
 - (JitsiMeetConferenceOptions *)getInitialConferenceOptions {
     if (_launchOptions[UIApplicationLaunchOptionsURLKey]) {

@@ -23,8 +23,6 @@
 
 @interface JitsiMeet : NSObject
 
-@property (nonatomic, strong, nullable) RCTBridgeWrapper *bridgeWrapper;
-
 /**
  * Name for the conference NSUserActivity type. This is used when integrating with
  * SiriKit or Handoff, for example.
@@ -62,6 +60,10 @@
             options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *_Nonnull)options;
 
 #pragma mark - Utility methods
+
+- (void)instantiateBridgeWrapper;
+
+- (void)destroyBridgeWrapper;
 
 - (JitsiMeetConferenceOptions *_Nonnull)getInitialConferenceOptions;
 
