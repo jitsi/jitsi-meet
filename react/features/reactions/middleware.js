@@ -21,13 +21,14 @@ import {
     sendReactions,
     setReactionQueue
 } from './actions.any';
-import { REACTIONS } from './constants';
+import { RAISE_HAND_SOUND_ID, REACTIONS, SOUNDS_THRESHOLDS } from './constants';
 import {
     getReactionMessageFromBuffer,
+    getReactionsSoundsThresholds,
     getReactionsWithId,
-    getUniqueReactions,
     sendReactionsWebhook
 } from './functions.any';
+import { RAISE_HAND_SOUND_FILE } from './sounds';
 
 
 declare var APP: Object;
@@ -45,15 +46,28 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case APP_WILL_MOUNT:
         batch(() => {
-            Object.keys(REACTIONS).forEach(key =>
-                dispatch(registerSound(REACTIONS[key].soundId, REACTIONS[key].soundFile))
+            Object.keys(REACTIONS).forEach(key => {
+                for (let i = 0; i < SOUNDS_THRESHOLDS.length; i++) {
+                    dispatch(registerSound(
+                        `${REACTIONS[key].soundId}${SOUNDS_THRESHOLDS[i]}`,
+                        REACTIONS[key].soundFiles[i]
+                    )
+                    );
+                }
+            }
             );
+            dispatch(registerSound(RAISE_HAND_SOUND_ID, RAISE_HAND_SOUND_FILE));
         });
         break;
 
     case APP_WILL_UNMOUNT:
         batch(() => {
-            Object.keys(REACTIONS).forEach(key => dispatch(unregisterSound(REACTIONS[key].soundId)));
+            Object.keys(REACTIONS).forEach(key => {
+                for (let i = 0; i < SOUNDS_THRESHOLDS.length; i++) {
+                    dispatch(unregisterSound(`${REACTIONS[key].soundId}${SOUNDS_THRESHOLDS[i]}`));
+                }
+            });
+            dispatch(unregisterSound(RAISE_HAND_SOUND_ID));
         });
         break;
 
@@ -109,11 +123,13 @@ MiddlewareRegistry.register(store => next => action => {
         const { soundsReactions } = state['features/base/settings'];
         const reactions = action.reactions;
 
-        const uniqueReactions = getUniqueReactions(reactions);
+        const reactionSoundsThresholds = getReactionsSoundsThresholds(reactions);
 
         batch(() => {
             if (soundsReactions) {
-                uniqueReactions.forEach(reaction => dispatch(playSound(REACTIONS[reaction].soundId)));
+                reactionSoundsThresholds.forEach(reaction =>
+                    dispatch(playSound(`${REACTIONS[reaction.reaction].soundId}${reaction.threshold}`))
+                );
             }
             dispatch(setReactionQueue([ ...queue, ...getReactionsWithId(reactions) ]));
         });
