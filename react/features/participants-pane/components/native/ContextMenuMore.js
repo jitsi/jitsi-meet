@@ -21,8 +21,6 @@ import MuteEveryonesVideoDialog
 
 import styles from './styles';
 
-// import { BlockAudioVideoDialog } from '../../../video-menu';
-
 export const ContextMenuMore = () => {
     const dispatch = useDispatch();
 

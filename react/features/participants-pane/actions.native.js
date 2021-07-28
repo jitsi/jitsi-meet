@@ -35,10 +35,10 @@ export function showConnectionStatus(participantID: String) {
 /**
  * Displays the context menu for the selected meeting participant.
  *
- * @param {string} participant - The selected meeting participant.
+ * @param {Object} participant - The selected meeting participant.
  * @returns {Function}
  */
-export function showContextMenuDetails(participant: String) {
+export function showContextMenuDetails(participant: Object) {
     return openDialog(RemoteVideoMenu, { participant });
 }
 
