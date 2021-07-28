@@ -1,5 +1,6 @@
 // @flow
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 import { TRIANGULATION } from './Triangulation';
 import { uvs } from './frontProjectionUVMap';
@@ -25,7 +26,18 @@ export default class FacePaint {
     _backgroundGeometry: Object;
     _backgroundMaterial: Object;
     _backgroundMesh: Object;
-    _controls: Object;
+    _glScene: Object;
+    _glMaterial: Object;
+    _glGeometry: Object;
+    _glMesh: Object;
+    _prev: THREE.Vector3;
+    _current: THREE.Vector3;
+    _difference: THREE.Vector3;
+    _differences: Array<number>;
+    _prevArea: number;
+    _currentArea: number;
+    _prevVectors: Object;
+    _currentVectors: Object;
 
     /**
      * To do.
@@ -92,9 +104,18 @@ export default class FacePaint {
         //         this._halfH,
         //         0
         // );
-        this._camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 9000);
-        this._camera.position.z = (window.innerHeight / 2) / Math.tan((Math.PI * 45) / 360);
+        // this._camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.25, 20);
+        // this._camera.position.set(-1.8, 0.6, 2.7);
+
+        this._camera = new THREE.PerspectiveCamera(45, this._width / this._height, 1, 9000);
+
+        // this._camera.position.z = (this._height / 2) / Math.tan((Math.PI * 45) / 360);
+        this._camera.position.z = 800;
+        console.log('CAMERA', this._camera.position.z);
         this._camera.lookAt(new THREE.Vector3(0, 0, 0));
+        this._prev = new THREE.Vector3();
+        this._current = new THREE.Vector3();
+        this._difference = new THREE.Vector3();
     }
 
     /**
@@ -145,18 +166,19 @@ export default class FacePaint {
         this._geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
         this._geometry.computeVertexNormals();
 
-        // this._backgroundGeometry = new THREE.PlaneGeometry(this._halfW * 2, this._halfH * 2);
+        this._backgroundGeometry = new THREE.PlaneGeometry(this._halfW * 2, this._halfH * 2);
 
-        this._backgroundGeometry = new THREE.PlaneGeometry(window.innerWidth, window.innerHeight);
+        // this._backgroundGeometry = new THREE.PlaneGeometry(this._width, this._height);
+        this._backgroundGeometry = new THREE.BufferGeometry();
 
-        // const vertices = [
-        //     0, 0, 200,
-        //     0, this._halfH * 2, 200,
-        //     this._halfW * 2, 0.0, 200,
-        //     this._halfW * 2, 0.0, 200,
-        //     0.0, this._halfH * 2, 200,
-        //     this._halfW * 2, this._halfH * 2, 200
-        // ];
+        const vertices = [
+            0, 0, 200,
+            0, this._halfH * 2, 200,
+            this._halfW * 2, 0.0, 200,
+            this._halfW * 2, 0.0, 200,
+            0.0, this._halfH * 2, 200,
+            this._halfW * 2, this._halfH * 2, 200
+        ];
 
         // const newUvs = [
         //     0.0, this._halfH * 2,
@@ -167,34 +189,29 @@ export default class FacePaint {
         //     this._halfW * 2, this._halfH * 2
         // ];
 
-        // this._backgroundGeometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+        this._backgroundGeometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
 
-        const height = this._halfH * 2;
-        const width = (this._halfW * 2) - 550;
-        let vValue = 0;
-        let uValue = 0;
+        // const height = this._height;
+        // const width = this._width - 550;
+        // const vValue = 0;
+        // let uValue = 0;
 
-        const heightAspectRatio = (height * window.innerHeight) / width;
-        let widthAspectRatio = 0;
+        // let widthAspectRatio = 0;
 
-        if (heightAspectRatio >= window.innerHeight) {
-            vValue = ((heightAspectRatio - window.innerHeight) / 2) / heightAspectRatio;
-        } else {
-            widthAspectRatio = (width * window.innerWidth) / height;
-            uValue = ((widthAspectRatio - window.innerWidth) / 2) / widthAspectRatio;
-        }
+        // widthAspectRatio = (width * width) / height;
+        // uValue = ((widthAspectRatio - width) / 2) / widthAspectRatio;
 
-        const background = [
-            new THREE.Vector2(0 + uValue, 0 + vValue),
-            new THREE.Vector2(1 - uValue, 0 + vValue),
-            new THREE.Vector2(1 - uValue, 1 - vValue),
-            new THREE.Vector2(0 + uValue, 1 - vValue)
-        ];
+        // const background = [
+        //     new THREE.Vector2(0 + uValue, 0 + vValue),
+        //     new THREE.Vector2(1 - uValue, 0 + vValue),
+        //     new THREE.Vector2(1 - uValue, 1 - vValue),
+        //     new THREE.Vector2(0 + uValue, 1 - vValue)
+        // ];
 
 
-        this._backgroundGeometry.faceVertexUvs[0] = [];
-        this._backgroundGeometry.faceVertexUvs[0][0] = [ background[3], background[0], background[2] ];
-        this._backgroundGeometry.faceVertexUvs[0][1] = [ background[0], background[1], background[2] ];
+        // this._backgroundGeometry.faceVertexUvs[0] = [];
+        // this._backgroundGeometry.faceVertexUvs[0][0] = [ background[3], background[0], background[2] ];
+        // this._backgroundGeometry.faceVertexUvs[0][1] = [ background[0], background[1], background[2] ];
 
         // this._backgroundGeometry.setAttribute('uv', new THREE.Float32BufferAttribute(background, 2));
     }
@@ -205,13 +222,14 @@ export default class FacePaint {
      * @returns {void}
      */
     _addMaterial() {
-        this._textureLoader = new THREE.TextureLoader();
+        // this._textureLoader = new THREE.TextureLoader();
 
         this._material = new THREE.MeshNormalMaterial();
-        const texture = new THREE.VideoTexture(this._background);
+
+        // const texture = new THREE.VideoTexture(this._background);
 
         this._backgroundMaterial = new THREE.MeshBasicMaterial({
-            map: texture
+            color: new THREE.Color('0xffffff')
         });
 
     }
@@ -228,13 +246,100 @@ export default class FacePaint {
         this._addGeometry();
         this._addMaterial();
         this._mesh = new THREE.Mesh(this._geometry, this._material);
+
         this._mesh.rotation.x = 9.1;
         this._mesh.position.x -= 640;
-        this._mesh.position.y += 355;
-        this._mesh.position.z += 260;
+        this._mesh.position.y += 360;
+        this._mesh.position.z += 70;
         this._backgroundMesh = new THREE.Mesh(this._backgroundGeometry, this._backgroundMaterial);
-        this._scene.add(this._mesh);
+
+        // this._scene.add(this._mesh);
+
         this._scene.add(this._backgroundMesh);
+        const SETTINGS = {
+            gltfModelURL: 'images/DamagedHelmet/DamagedHelmet.gltf',
+            cubeMapURL: 'images/Bridge2/',
+            offsetYZ: [ 0.3, 0 ], // offset of the model in 3D along vertical and depth axis
+            scale: 2.5
+        };
+        const path = SETTINGS.cubeMapURL;
+        const format = '.jpg';
+        const envMap = new THREE.CubeTextureLoader().load([
+            `${path}posx${format}`, `${path}negx${format}`,
+            `${path}posy${format}`, `${path}negy${format}`,
+            `${path}posz${format}`, `${path}negz${format}`
+        ]);
+
+        // IMPORT THE GLTF MODEL:
+        // from https://threejs.org/examples/#webgl_loader_gltf
+        const gltfLoader = new GLTFLoader();
+
+        gltfLoader.load('images/DamagedHelmet/glTF/DamagedHelmet.gltf',
+        gltf => {
+            gltf.scene.traverse(child => {
+                if (child.isMesh) {
+                    child.material.envMap = envMap;
+                    this._glMaterial = child.material;
+                    this._glMesh = child;
+                    this._glGeometry = child.geometry;
+                    this._glGeometry.computeVertexNormals();
+                }
+            });
+            gltf.scene.frustumCulled = false;
+
+            this._glMesh.scale.set(200, 200, 200);
+            this._scene.add(this._glMesh);
+            this._glMesh.position.z = this._mesh.position.z + 150;
+            this._glMesh.position.x -= 700;
+            this._glMesh.position.y += 400;
+
+            // console.log('SCENE', gltf.scene);
+
+            // dispatch the model:
+        });
+    }
+
+    /**
+     * Gets the area of a triangle.
+     *
+     * @param  {number} pointIndex1 - First point index from positionBuffer.
+     * @param  {number} pointIndex2 - Second point index from positionBuffer.
+     * @param  {number} pointIndex3 - Third point index from positionBuffer.
+     * @param  {Array<number>} positionBuffer - Buffer with all the points.
+     * @returns {number}
+     */
+    _getTriangleAria(pointIndex1: number,
+            pointIndex2: number,
+            pointIndex3: number,
+            positionBuffer: Array<number>): number {
+        let point1 = positionBuffer.slice(3 * pointIndex1, (3 * pointIndex1) + 3);
+        let point2 = positionBuffer.slice(3 * pointIndex2, (3 * pointIndex2) + 3);
+        let point3 = positionBuffer.slice(3 * pointIndex3, (3 * pointIndex3) + 3);
+
+        point1 = new THREE.Vector3(point1[0], point1[1], point1[2]);
+        point2 = new THREE.Vector3(point2[0], point2[1], point2[2]);
+        point3 = new THREE.Vector3(point3[0], point3[1], point3[2]);
+        const triangle = new THREE.Triangle(point1, point2, point3);
+
+        return triangle.getArea();
+    }
+
+    /**
+     * Returns the vector between two given points.
+     *
+     * @param  {number} pointIndex1 - First point index from positionBuffer.
+     * @param  {number} pointIndex2 - Second point index from positionBuffer.
+     * @param  {Array<number>} positionBuffer - Buffer with all the points.
+     * @returns {THREE.Vector3}
+     */
+    _getVectorFromTwoPoints(pointIndex1: number, pointIndex2: number, positionBuffer: Array<number>): THREE.Vector3 {
+        let point1 = positionBuffer.slice(3 * pointIndex1, (3 * pointIndex1) + 3);
+        let point2 = positionBuffer.slice(3 * pointIndex2, (3 * pointIndex2) + 3);
+
+        point1 = new THREE.Vector3(point1[0], point1[1], point1[2]);
+        point2 = new THREE.Vector3(point2[0], point2[1], point2[2]);
+
+        return point1.sub(point2);
     }
 
     /**
@@ -246,8 +351,49 @@ export default class FacePaint {
      */
     render(positionBuffer: Array<number>): void {
         // console.log('background', background);
+        if (!this._prev) {
+            this._prev.fromArray(positionBuffer.slice(3, 6));
+        }
+        if (!this._prevArea) {
+            this._prevArea = this._getTriangleAria(4, 104, 333, positionBuffer);
+        }
+        if (!this._prevVectors) {
+            this._prevVectors = { x: this._getVectorFromTwoPoints(152, 10, positionBuffer),
+                y: this._getVectorFromTwoPoints(234, 454, positionBuffer) };
+        }
+        if (this._glMesh) {
+
+            this._current.fromArray(positionBuffer.slice(3, 6));
+            this._difference.subVectors(this._current, this._prev);
+
+            this._currentArea = this._getTriangleAria(4, 104, 333, positionBuffer);
+            this._currentVectors = { x: this._getVectorFromTwoPoints(152, 10, positionBuffer),
+                y: this._getVectorFromTwoPoints(234, 454, positionBuffer) };
+
+            const quaternion = new THREE.Quaternion();
+            const depthDiff = (this._currentArea - this._prevArea) / 100;
+
+            quaternion.setFromUnitVectors(this._prevVectors.x, this._currentVectors.x);
+            this._glMesh.rotateX(quaternion.x);
+
+            quaternion.setFromUnitVectors(this._prevVectors.y, this._currentVectors.y);
+            this._glMesh.rotateZ(quaternion.y);
+
+            this._glMesh.rotation.y = 0;
+
+            this._glMesh.position.x += this._difference.x;
+            this._glMesh.position.y -= this._difference.y;
+            this._glMesh.position.z += depthDiff;
+
+            this._prev = this._current.clone();
+            this._prevArea = this._currentArea;
+            this._prevVectors = this._currentVectors;
+
+        }
         this._geometry.setAttribute('position', new THREE.Float32BufferAttribute(positionBuffer, 3));
         this._geometry.attributes.position.needsUpdate = true;
+
+
         this._renderer.render(this._scene, this._camera);
     }
 }

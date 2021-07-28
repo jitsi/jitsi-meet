@@ -214,7 +214,7 @@ module.exports = [
             ...getBundleAnalyzerPlugin('app'),
             new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
         ],
-        performance: getPerformanceHints(4 * 1024 * 1024)
+        performance: getPerformanceHints(8 * 1024 * 1024)
     }),
     Object.assign({}, config, {
         entry: {

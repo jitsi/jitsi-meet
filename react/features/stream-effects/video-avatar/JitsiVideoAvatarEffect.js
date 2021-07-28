@@ -138,7 +138,6 @@ export default class JitsiVideoAvatarEffect {
                                                 width,
                                                 height);
             }
-
             this._faceCanvas.render(positionBufferData);
         }
     }
@@ -158,8 +157,6 @@ export default class JitsiVideoAvatarEffect {
 
         // this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
         this._net.estimateFaces({ input: this._inputVideoElement }).then(face => {
-            // this._drawMesh(face, this._outputCanvasCtx);
-
             this._drawCanvas(face, height, width);
         });
 
