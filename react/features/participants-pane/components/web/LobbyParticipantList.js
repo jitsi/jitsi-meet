@@ -53,9 +53,13 @@ export const LobbyParticipantList = () => {
             <div className = { classes.heading }>
                 {t('participantsPane.headings.lobby', { count: participants.length })}
             </div>
-            <div
-                className = { classes.link }
-                onClick = { admitAll }>{t('lobby.admitAll')}</div>
+            {
+                participants.length > 1 && (
+                    <div
+                        className = { classes.link }
+                        onClick = { admitAll }>{t('lobby.admitAll')}</div>
+                )
+            }
         </div>
         <div>
             {participants.map(p => (
