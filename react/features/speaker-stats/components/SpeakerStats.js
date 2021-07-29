@@ -69,11 +69,9 @@ class SpeakerStats extends Component<Props, State> {
         super(props);
 
         this.state = {
-            stats: [],
+            stats: this._getSpeakerStats(),
             criteria: ''
         };
-
-        this.state.stats = this._getSpeakerStats();
 
         // Bind event handlers so they are only bound once per instance.
         this._updateStats = this._updateStats.bind(this);
@@ -132,7 +130,7 @@ class SpeakerStats extends Component<Props, State> {
     _getSpeakerStats() {
         const stats = { ...this.props.conference.getSpeakerStats() };
 
-        if (this.state.criteria) {
+        if (this.state?.criteria) {
             const searchRegex = new RegExp(this.state.criteria, 'gi');
 
             for (const id in stats) {
