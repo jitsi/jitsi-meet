@@ -9,8 +9,8 @@ import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, isDialogOpen } from '../../../base/dialog';
 import { KICK_OUT_ENABLED, getFeatureFlag } from '../../../base/flags';
 import {
-    getParticipantDisplayName,
-    getRemoteParticipants
+    getParticipantById,
+    getParticipantDisplayName
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
@@ -71,7 +71,7 @@ type Props = {
     /**
      * Whether the participant is present in the room or not.
      */
-    _isParticipantIDAvailable?: boolean,
+    _isParticipantAvailable?: boolean,
 
     /**
      * Display name of the participant retrieved from Redux.
@@ -113,7 +113,7 @@ class RemoteVideoMenu extends PureComponent<Props> {
             _disableKick,
             _disableRemoteMute,
             _disableGrantModerator,
-            _isParticipantIDAvailable,
+            _isParticipantAvailable,
             _participantID,
             participant
         } = this.props;
@@ -128,7 +128,7 @@ class RemoteVideoMenu extends PureComponent<Props> {
             <BottomSheet
                 onCancel = { this._onCancel }
                 renderHeader = { this._renderMenuHeader }
-                showSlidingView = { _isParticipantIDAvailable }>
+                showSlidingView = { _isParticipantAvailable }>
                 { !_disableRemoteMute && <MuteButton { ...buttonProps } /> }
                 <MuteEveryoneElseButton { ...buttonProps } />
                 { !_disableRemoteMute && <MuteVideoButton { ...buttonProps } /> }
@@ -198,17 +198,9 @@ class RemoteVideoMenu extends PureComponent<Props> {
 function _mapStateToProps(state, ownProps) {
     const kickOutEnabled = getFeatureFlag(state, KICK_OUT_ENABLED, true);
     const { participant } = ownProps;
-    const participantIDS = [];
-
     const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
+    const isParticipantAvailable = getParticipantById(state, participant.id);
     let { disableKick } = remoteVideoMenu;
-    const remoteParticipants = getRemoteParticipants(state);
-
-    remoteParticipants.forEach(p => {
-        participantIDS.push(p?.id);
-    });
-
-    const isParticipantIDAvailable = participantIDS.find(partID => partID === participant.id);
 
     disableKick = disableKick || !kickOutEnabled;
 
@@ -217,7 +209,7 @@ function _mapStateToProps(state, ownProps) {
         _disableKick: Boolean(disableKick),
         _disableRemoteMute: Boolean(disableRemoteMute),
         _isOpen: isDialogOpen(state, RemoteVideoMenu_),
-        _isParticipantIDAvailable: Boolean(isParticipantIDAvailable),
+        _isParticipantAvailable: Boolean(isParticipantAvailable),
         _participantDisplayName: getParticipantDisplayName(state, participant.id),
         _participantID: participant.id
     };
