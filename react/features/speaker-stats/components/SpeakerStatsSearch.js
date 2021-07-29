@@ -51,7 +51,7 @@ function SpeakerStatsSearch({ onSearch }: Props) {
     );
 
     if (disableSpeakerStatsSearch) {
-        return <></>;
+        return null;
     }
 
     return (
