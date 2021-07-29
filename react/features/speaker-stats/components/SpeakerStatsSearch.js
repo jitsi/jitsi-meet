@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 import { getFieldValue } from '../../base/react';
+import { isSpeakerStatsSearchDisabled } from '../functions';
 
 const useStyles = makeStyles(() => {
     return {
@@ -47,7 +48,7 @@ function SpeakerStatsSearch({ onSearch }: Props) {
         onSearch && onSearch(value);
     }, []);
     const disableSpeakerStatsSearch = useSelector(
-        (state: Object) => state['features/base/config']?.disableSpeakerStatsSearch
+        (state: Object) => isSpeakerStatsSearchDisabled(state)
     );
 
     if (disableSpeakerStatsSearch) {
