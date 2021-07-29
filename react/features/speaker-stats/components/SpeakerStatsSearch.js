@@ -47,9 +47,7 @@ function SpeakerStatsSearch({ onSearch }: Props) {
 
         onSearch && onSearch(value);
     }, []);
-    const disableSpeakerStatsSearch = useSelector(
-        (state: Object) => isSpeakerStatsSearchDisabled(state)
-    );
+    const disableSpeakerStatsSearch = useSelector(isSpeakerStatsSearchDisabled);
 
     if (disableSpeakerStatsSearch) {
         return null;
