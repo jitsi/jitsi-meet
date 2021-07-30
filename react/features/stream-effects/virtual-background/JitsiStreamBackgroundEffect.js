@@ -159,6 +159,7 @@ export default class JitsiStreamBackgroundEffect {
 
                 if (canvasWidth / canvasHeight < videoWidth / videoHeight) {
                     const th = canvasWidth * videoHeight / videoWidth;
+
                     this._outputCanvasCtx.drawImage(
                         this._virtualVideo,
                         0,
@@ -172,6 +173,7 @@ export default class JitsiStreamBackgroundEffect {
                     );
                 } else {
                     const tw = canvasHeight * videoWidth / videoHeight;
+
                     this._outputCanvasCtx.drawImage(
                         this._virtualVideo,
                         0,
