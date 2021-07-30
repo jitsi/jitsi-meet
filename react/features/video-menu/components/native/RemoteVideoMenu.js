@@ -16,6 +16,7 @@ import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { PrivateMessageButton } from '../../../chat';
 import { hideRemoteVideoMenu } from '../../actions.native';
+import ConnectionStatusButton from '../native/ConnectionStatusButton';
 
 import GrantModeratorButton from './GrantModeratorButton';
 import KickButton from './KickButton';
@@ -23,8 +24,10 @@ import MuteButton from './MuteButton';
 import MuteEveryoneElseButton from './MuteEveryoneElseButton';
 import MuteVideoButton from './MuteVideoButton';
 import PinButton from './PinButton';
-import VolumeSlider from './VolumeSlider';
 import styles from './styles';
+
+// import VolumeSlider from './VolumeSlider';
+
 
 /**
  * Size of the rendered avatar in the menu.
@@ -114,7 +117,6 @@ class RemoteVideoMenu extends PureComponent<Props> {
             _disableRemoteMute,
             _disableGrantModerator,
             _isParticipantAvailable,
-            _participantID,
             participant
         } = this.props;
         const buttonProps = {
@@ -137,8 +139,9 @@ class RemoteVideoMenu extends PureComponent<Props> {
                 { !_disableGrantModerator && <GrantModeratorButton { ...buttonProps } /> }
                 <PinButton { ...buttonProps } />
                 <PrivateMessageButton { ...buttonProps } />
-                <Divider style = { styles.divider } />
-                <VolumeSlider participantID = { _participantID } />
+                <ConnectionStatusButton { ...buttonProps } />
+                {/* <Divider style = { styles.divider } />*/}
+                {/* <VolumeSlider participantID = { _participantID } />*/}
             </BottomSheet>
         );
     }

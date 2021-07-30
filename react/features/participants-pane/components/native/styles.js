@@ -299,8 +299,6 @@ export default {
         marginHorizontal: BaseTheme.spacing[0],
         paddingTop: 12,
         paddingBottom: 12,
-        paddingRight: BaseTheme.spacing[3],
-        paddingLeft: BaseTheme.spacing[3],
         textTransform: 'capitalize',
         width: 94
     },
