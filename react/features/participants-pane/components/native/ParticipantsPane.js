@@ -7,7 +7,7 @@ import { Button } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { openDialog } from '../../../base/dialog';
-import { Icon, IconClose, IconHorizontalPoints } from '../../../base/icons';
+import { Icon, IconHorizontalPoints } from '../../../base/icons';
 import { JitsiModal } from '../../../base/modal';
 import {
     getParticipantCount,
@@ -40,21 +40,11 @@ const ParticipantsPane = () => {
 
     return (
         <JitsiModal
-            hideHeaderWithNavigation = { true }
+            headerProps = {{
+                headerLabelKey: 'participantsPane.header'
+            }}
+            onClose = { closePane }
             style = { styles.participantsPane }>
-            <View style = { styles.header }>
-                <Button
-                    /* eslint-disable-next-line react/jsx-no-bind */
-                    icon = { () =>
-                        (<Icon
-                            size = { 20 }
-                            src = { IconClose } />)
-                    }
-                    labelStyle = { styles.closeIcon }
-                    mode = 'contained'
-                    onPress = { closePane }
-                    style = { styles.closeButton } />
-            </View>
             <ScrollView>
                 <LobbyParticipantList />
                 <MeetingParticipantList />
