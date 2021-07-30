@@ -115,6 +115,11 @@ type Props = {
     local: boolean,
 
     /**
+     * Callback for the keydown event,
+     */
+    onKeyDown?: Function,
+
+    /**
      * Callback for when the mouse leaves this component
      */
     onLeave?: Function,
@@ -149,6 +154,7 @@ type Props = {
 export default function ParticipantItem({
     children,
     isHighlighted,
+    onKeyDown,
     onLeave,
     actionsTrigger = ACTION_TRIGGER.HOVER,
     focusActionTrigger = ACTION_TRIGGER.FOCUS,
@@ -165,6 +171,7 @@ export default function ParticipantItem({
     return (
         <ParticipantContainer
             isHighlighted = { isHighlighted }
+            onKeyDown = { onKeyDown }
             onMouseLeave = { onLeave }
             trigger = { actionsTrigger }
             triggerFocus = { focusActionTrigger }>

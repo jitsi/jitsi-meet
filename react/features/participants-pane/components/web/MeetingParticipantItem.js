@@ -145,6 +145,12 @@ function MeetingParticipantItem({
             focusActionTrigger = { ACTION_TRIGGER.FOCUS }
             isHighlighted = { isHighlighted }
             local = { _local }
+            /* eslint-disable-next-line react/jsx-no-bind */
+            onKeyDown = { e => {
+                if (e.key === 'Enter') {
+                    onContextMenu(e.target);
+                }
+            } }
             onLeave = { onLeave }
             participantID = { _participantID }
             raisedHand = { _raisedHand }
