@@ -1179,8 +1179,10 @@ class Toolbox extends Component<Props> {
                 <div
                     className = 'toolbox-content-wrapper'
                     onFocus = { this._onTabIn }
-                    onMouseOut = { this._onMouseOut }
-                    onMouseOver = { this._onMouseOver }>
+                    { ...(_isMobile ? {} : {
+                        onMouseOut: this._onMouseOut,
+                        onMouseOver: this._onMouseOver
+                    }) }>
                     <DominantSpeakerName />
                     <div className = 'toolbox-content-items'>
                         {mainMenuButtons.map(({ Content, key, ...rest }) => Content !== Separator && (
