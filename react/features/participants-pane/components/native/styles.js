@@ -213,19 +213,6 @@ export default {
         marginLeft: BaseTheme.spacing[3]
     },
 
-    header: {
-        alignItems: 'center',
-        backgroundColor: BaseTheme.palette.ui01,
-        top: BaseTheme.spacing[0],
-        display: 'flex',
-        flexDirection: 'row',
-        height: BaseTheme.spacing[10],
-        paddingRight: BaseTheme.spacing[3],
-        position: 'relative',
-        right: BaseTheme.spacing[0],
-        left: BaseTheme.spacing[0]
-    },
-
     footer: {
         alignItems: 'center',
         backgroundColor: BaseTheme.palette.ui01,
@@ -238,17 +225,6 @@ export default {
         position: 'relative',
         right: BaseTheme.spacing[0],
         left: BaseTheme.spacing[0]
-    },
-
-    closeButton: {
-        ...smallButton,
-        marginLeft: 'auto'
-    },
-
-    closeIcon: {
-        ...buttonContent,
-        height: BaseTheme.spacing[5],
-        marginLeft: 'auto'
     },
 
     inviteButton: {
