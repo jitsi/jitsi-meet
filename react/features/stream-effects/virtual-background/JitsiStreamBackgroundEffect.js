@@ -142,14 +142,49 @@ export default class JitsiStreamBackgroundEffect {
         this._outputCanvasCtx.globalCompositeOperation = 'destination-over';
         if (backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE
             || backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
-            this._outputCanvasCtx.drawImage(
-                backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE
-                    ? this._virtualImage : this._virtualVideo,
-                0,
-                0,
-                this._outputCanvasElement.width,
-                this._outputCanvasElement.height
-            );
+
+            if (backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE) {
+                this._outputCanvasCtx.drawImage(
+                    this._virtualImage,
+                    0,
+                    0,
+                    this._outputCanvasElement.width,
+                    this._outputCanvasElement.height
+                );
+            } else {
+                const canvasWidth = this._outputCanvasElement.width;
+                const canvasHeight = this._outputCanvasElement.height;
+                const videoWidth = this._virtualVideo.videoWidth;
+                const videoHeight = this._virtualVideo.videoHeight;
+
+                if (canvasWidth / canvasHeight < videoWidth / videoHeight) {
+                    const th = canvasWidth * videoHeight / videoWidth;
+                    this._outputCanvasCtx.drawImage(
+                        this._virtualVideo,
+                        0,
+                        0,
+                        videoWidth,
+                        videoHeight,
+                        0,
+                        (canvasHeight - th) / 2,
+                        canvasWidth,
+                        th
+                    );
+                } else {
+                    const tw = canvasHeight * videoWidth / videoHeight;
+                    this._outputCanvasCtx.drawImage(
+                        this._virtualVideo,
+                        0,
+                        0,
+                        videoWidth,
+                        videoHeight,
+                        (canvasWidth - tw) / 2,
+                        0,
+                        tw,
+                        canvasHeight
+                    );
+                }
+            }
         } else {
             this._outputCanvasCtx.filter = `blur(${this._options.virtualBackground.blurValue}px)`;
             this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
@@ -172,7 +207,7 @@ export default class JitsiStreamBackgroundEffect {
             const backgroundExp = Math.exp(background - shift);
             const personExp = Math.exp(person - shift);
 
-            // Sets only the alpha component of each pixel.
+            // Sets only the alpha component of eacanvasHeight pixel.
             this._segmentationMask.data[(i * 4) + 3] = (255 * personExp) / (backgroundExp + personExp);
         }
         this._segmentationMaskCtx.putImageData(this._segmentationMask, 0, 0);
@@ -229,7 +264,7 @@ export default class JitsiStreamBackgroundEffect {
     }
 
     /**
-     * Checks if the local track supports this effect.
+     * CanvasHeightecks if the local track supports this effect.
      *
      * @param {JitsiLocalTrack} jitsiLocalTrack - Track to apply effect.
      * @returns {boolean} - Returns true if this effect can run on the specified track
