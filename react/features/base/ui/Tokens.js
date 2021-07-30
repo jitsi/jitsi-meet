@@ -18,6 +18,7 @@ export const colors = {
     primary08: '#99BBF3',
     primary09: '#CCDDF9',
 
+    surface00: '#111111',
     surface01: '#040404',
     surface02: '#141414',
     surface03: '#292929',
@@ -29,6 +30,7 @@ export const colors = {
     surface09: '#C2C2C2',
     surface10: '#E0E0E0',
     surface11: '#FFF',
+    surface12: '#AAAAAA',
 
     success04: '#189B55',
     success05: '#1EC26A',
@@ -109,6 +111,9 @@ export const colorMap = {
     // Disabled state for danger buttons
     actionDangerDisabled: 'error03',
 
+    // Bottom sheet background
+    bottomSheet: 'surface00',
+
     // Primary text – default color for body copy & headers
     text01: 'surface11',
 
@@ -117,6 +122,9 @@ export const colorMap = {
 
     // Tertiary text with low contrast – placeholders, disabled actions, label for disabled buttons
     text03: 'surface07',
+
+    // Text for bottom sheet items
+    text04: 'surface12',
 
     // error messages
     textError: 'error06',
@@ -148,6 +156,9 @@ export const colorMap = {
 
     // Background for high-contrast input fields
     field02: 'surface11',
+
+    // Color for the section divider
+    dividerColor: 'surface12',
 
     // Background for high-contrast input fields on hover
     field02Hover: 'primary09',

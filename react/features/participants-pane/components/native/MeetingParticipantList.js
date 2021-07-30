@@ -13,7 +13,7 @@ import {
     getRemoteParticipants
 } from '../../../base/participants';
 import { doInvitePeople } from '../../../invite/actions.native';
-import { showContextMenuDetails } from '../../actions.native';
+import { showConnectionStatus, showContextMenuDetails } from '../../actions.native';
 import { shouldRenderInviteButton } from '../../functions';
 
 import MeetingParticipantItem from './MeetingParticipantItem';
@@ -31,11 +31,11 @@ export const MeetingParticipantList = () => {
 
     // eslint-disable-next-line react/no-multi-comp
     const renderParticipant = p => (
-
         <MeetingParticipantItem
             key = { p.id }
-            /* eslint-disable-next-line react/jsx-no-bind */
-            onPress = { () => !p.local && dispatch(showContextMenuDetails(p.id)) }
+            /* eslint-disable-next-line react/jsx-no-bind,no-confusing-arrow */
+            onPress = { () => p.local
+                ? dispatch(showConnectionStatus(p.id)) : dispatch(showContextMenuDetails(p)) }
             participantID = { p.id } />
     );
 

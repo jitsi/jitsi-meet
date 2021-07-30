@@ -11,8 +11,8 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 export default createStyleSheet({
     participantNameContainer: {
         alignItems: 'center',
-        borderBottomColor: ColorPalette.lightGrey,
-        borderBottomWidth: 1,
+        borderBottomColor: BaseTheme.palette.dividerColor,
+        borderBottomWidth: 0.4,
         borderTopLeftRadius: 16,
         borderTopRightRadius: 16,
         flexDirection: 'row',
@@ -29,12 +29,14 @@ export default createStyleSheet({
     },
 
     statsTitleText: {
+        color: BaseTheme.palette.text01,
         fontSize: 16,
         fontWeight: 'bold',
         marginRight: 3
     },
 
     statsInfoText: {
+        color: BaseTheme.palette.text01,
         fontSize: 16,
         marginRight: 2,
         marginLeft: 2
@@ -48,18 +50,22 @@ export default createStyleSheet({
     },
 
     statsWrapper: {
-        marginVertical: 10
+        margin: BaseTheme.spacing[3]
     },
 
     volumeSliderContainer: {
         alignItems: 'center',
         flexDirection: 'row',
-        marginLeft: BaseTheme.spacing[3],
-        marginTop: BaseTheme.spacing[3]
+        marginHorizontal: BaseTheme.spacing[3],
+        marginVertical: BaseTheme.spacing[2]
     },
 
     sliderContainer: {
         marginLeft: BaseTheme.spacing[3],
-        minWidth: '84%'
+        minWidth: '80%'
+    },
+
+    divider: {
+        backgroundColor: BaseTheme.palette.dividerColor
     }
 });
