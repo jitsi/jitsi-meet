@@ -116,10 +116,6 @@ export default {
         textTransform: 'capitalize'
     },
 
-    admitAllParticipantsActionButton: {
-        marginLeft: 'auto'
-    },
-
     participantContainer: {
         alignItems: 'center',
         borderBottomColor: BaseTheme.palette.field01Hover,

@@ -18,7 +18,7 @@ import MuteEveryoneDialog
 import { close } from '../../actions.native';
 
 import { ContextMenuMore } from './ContextMenuMore';
-import { LobbyParticipantList } from './LobbyParticipantList';
+import LobbyParticipantList from './LobbyParticipantList';
 import { MeetingParticipantList } from './MeetingParticipantList';
 import styles from './styles';
 
