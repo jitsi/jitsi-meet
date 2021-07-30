@@ -10,7 +10,7 @@ import {
     getDeviceIdByLabel,
     groupDevicesByKind,
     setAudioInputDeviceAndUpdateSettings,
-    setAudioOutputDeviceId,
+    setAudioOutputDevice,
     setVideoInputDeviceAndUpdateSettings
 } from '../base/devices';
 import { isIosMobileBrowser } from '../base/environment/utils';
@@ -189,12 +189,11 @@ export function processExternalDeviceRequest( // eslint-disable-line max-params
 
         if (deviceId) {
             switch (device.kind) {
-            case 'audioinput': {
+            case 'audioinput':
                 dispatch(setAudioInputDeviceAndUpdateSettings(deviceId));
                 break;
-            }
             case 'audiooutput':
-                setAudioOutputDeviceId(deviceId, dispatch);
+                dispatch(setAudioOutputDevice(deviceId));
                 break;
             case 'videoinput':
                 dispatch(setVideoInputDeviceAndUpdateSettings(deviceId));
