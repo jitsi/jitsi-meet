@@ -151,7 +151,6 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
         this._onMuteEveryoneElse = this._onMuteEveryoneElse.bind(this);
         this._onMuteVideo = this._onMuteVideo.bind(this);
         this._onSendPrivateMessage = this._onSendPrivateMessage.bind(this);
-        this._onStopSharedVideo = this._onStopSharedVideo.bind(this);
         this._position = this._position.bind(this);
     }
 
@@ -241,6 +240,45 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
         dispatch(openChat(_participant));
     }
 
+    _onKeyDown: Object => void;
+
+    /**
+     * On keydown event.
+     *
+     * @param {Event} e - Key down event object.
+     * @returns {void}
+     */
+    _onKeyDown(e) {
+        const focusableElements = 'div, [tabindex]:not([tabindex="-1"])';
+        const contextMenu = document.getElementsByClassName(ignoredChildClassName)[0];
+        const firstFocusableElement = contextMenu.querySelectorAll(focusableElements)[0];
+        const focusableContent = contextMenu.querySelectorAll(focusableElements);
+        const lastFocusableElement = focusableContent[focusableContent.length - 2];
+
+        console.log(contextMenu, 'MENU');
+        console.log(firstFocusableElement, 'FIRST');
+        console.log(lastFocusableElement, 'LAST');
+        console.log(focusableContent, 'CONTENT');
+
+        const isTabPressed = e.key === 'Tab' || e.key === 9;
+
+        if (!isTabPressed) {
+            return;
+        }
+
+        if (e.shiftKey) {
+            if (document.activeElement === firstFocusableElement) {
+                lastFocusableElement.focus();
+                e.preventDefault();
+            }
+        } else if (document.activeElement === lastFocusableElement) {
+            firstFocusableElement.focus();
+            e.preventDefault();
+        }
+
+        firstFocusableElement.focus();
+    }
+
     _position: () => void;
 
     /**
@@ -323,6 +361,7 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
                 innerRef = { this._containerRef }
                 isHidden = { this.state.isHidden }
                 onClick = { onSelect }
+                onKeyDown = { this._onKeyDown }
                 onMouseEnter = { onEnter }
                 onMouseLeave = { onLeave }>
                 {
@@ -334,24 +373,30 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
                                         <>
                                             {
                                                 !_isParticipantAudioMuted
-                                                && <ContextMenuItem onClick = { muteAudio(_participant) }>
+                                                && <ContextMenuItem
+                                                    onClick = { muteAudio(_participant) }
+                                                    tabIndex = '0'>
                                                     <ContextMenuIcon src = { IconMicDisabled } />
                                                     <span>{t('dialog.muteParticipantButton')}</span>
                                                 </ContextMenuItem>
                                             }
 
-                                            <ContextMenuItem onClick = { this._onMuteEveryoneElse }>
+                                            <ContextMenuItem
+                                                onClick = { this._onMuteEveryoneElse }
+                                                tabIndex = '0'>
                                                 <ContextMenuIcon src = { IconMuteEveryoneElse } />
                                                 <span>{t('toolbar.accessibilityLabel.muteEveryoneElse')}</span>
                                             </ContextMenuItem>
-                                        </>
+                            </>
                                     )
                                 }
 
                                 {
                                     _isLocalModerator && (
                                         _isParticipantVideoMuted || (
-                                            <ContextMenuItem onClick = { this._onMuteVideo }>
+                                            <ContextMenuItem
+                                                onClick = { this._onMuteVideo }
+                                                tabIndex = '0'>
                                                 <ContextMenuIcon src = { IconVideoOff } />
                                                 <span>{t('participantsPane.actions.stopVideo')}</span>
                                             </ContextMenuItem>
@@ -366,13 +411,17 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
                                         <>
                                             {
                                                 !_isParticipantModerator && (
-                                                    <ContextMenuItem onClick = { this._onGrantModerator }>
+                                                    <ContextMenuItem
+                                                        onClick = { this._onGrantModerator }
+                                                        tabIndex = '0'>
                                                         <ContextMenuIcon src = { IconCrown } />
                                                         <span>{t('toolbar.accessibilityLabel.grantModerator')}</span>
                                                     </ContextMenuItem>
                                                 )
                                             }
-                                            <ContextMenuItem onClick = { this._onKick }>
+                                            <ContextMenuItem
+                                                onClick = { this._onKick }
+                                                tabIndex = '0'>
                                                 <ContextMenuIcon src = { IconCloseCircle } />
                                                 <span>{ t('videothumbnail.kick') }</span>
                                             </ContextMenuItem>
@@ -381,7 +430,9 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
                                 }
                                 {
                                     _isChatButtonEnabled && (
-                                        <ContextMenuItem onClick = { this._onSendPrivateMessage }>
+                                        <ContextMenuItem
+                                            onClick = { this._onSendPrivateMessage }
+                                            tabIndex = '0'>
                                             <ContextMenuIcon src = { IconMessage } />
                                             <span>{t('toolbar.accessibilityLabel.privateMessage')}</span>
                                         </ContextMenuItem>
@@ -391,7 +442,6 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
                         </>
                     )
                 }
-
                 {
                     _participant.isFakeParticipant && _localVideoOwner && (
                         <ContextMenuItem onClick = { this._onStopSharedVideo }>
