@@ -3,6 +3,7 @@
 import { getFakeParticipants } from '../base/participants';
 
 import { VIDEO_PLAYER_PARTICIPANT_NAME, YOUTUBE_PLAYER_PARTICIPANT_NAME } from './constants';
+import {toState} from "../base/redux";
 
 /**
  * Validates the entered video url.
@@ -54,3 +55,13 @@ export function isVideoPlaying(stateful: Object | Function): boolean {
     return videoPlaying;
 }
 
+/**
+ * Gets video owner id.
+ *
+ *
+ * @param {Object | Function} stateful - The Redux state or a function that gets resolved to the Redux state.
+ * @returns {string} The shared video owner id.
+ */
+export function getVideoOwnerId(stateful: Object | Function) {
+    return toState(stateful)['features/shared-video'].ownerId;
+}
