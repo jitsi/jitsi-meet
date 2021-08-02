@@ -91,7 +91,7 @@ MiddlewareRegistry.register(store => next => action => {
             break;
         }
 
-        const updatedData = {
+        const updatedData: Object = {
             conference,
             id,
             local: isLocal
