@@ -2,11 +2,10 @@ import React from 'react';
 import Video from 'react-native-youtube-iframe';
 
 import { connect } from '../../../base/redux';
+import { PLAYBACK_STATUSES } from '../../constants';
 
 import AbstractVideoManager, {
-    _mapDispatchToProps,
     _mapStateToProps,
-    PLAYBACK_STATES,
     Props
 } from './AbstractVideoManager';
 
@@ -52,16 +51,16 @@ class YoutubeVideoManager extends AbstractVideoManager<Props> {
      *
      * @returns {string}
      */
-    getPlaybackState() {
-        let state;
+    getPlaybackStatus() {
+        let status;
 
         if (this.state.paused) {
-            state = PLAYBACK_STATES.PAUSED;
+            status = PLAYBACK_STATUSES.PAUSED;
         } else {
-            state = PLAYBACK_STATES.PLAYING;
+            status = PLAYBACK_STATUSES.PLAYING;
         }
 
-        return state;
+        return status;
     }
 
     /**
@@ -191,4 +190,4 @@ class YoutubeVideoManager extends AbstractVideoManager<Props> {
     }
 }
 
-export default connect(_mapStateToProps, _mapDispatchToProps)(YoutubeVideoManager);
+export default connect(_mapStateToProps)(YoutubeVideoManager);

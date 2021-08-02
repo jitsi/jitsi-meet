@@ -13,11 +13,7 @@ import { showWarningNotification } from '../../../notifications/actions';
 import { dockToolbox } from '../../../toolbox/actions.web';
 import { muteLocal } from '../../../video-menu/actions.any';
 import { setSharedVideoStatus, stopSharedVideo } from '../../actions.any';
-export const PLAYBACK_STATES = {
-    PLAYING: 'playing',
-    PAUSED: 'pause',
-    STOPPED: 'stop'
-};
+import { PLAYBACK_STATUSES } from '../../constants';
 
 const logger = Logger.getLogger(__filename);
 
@@ -190,12 +186,12 @@ class AbstractVideoManager extends PureComponent<Props> {
             this.seek(_time);
         }
 
-        if (this.getPlaybackState() !== _status) {
-            if (_status === PLAYBACK_STATES.PLAYING) {
+        if (this.getPlaybackStatus() !== _status) {
+            if (_status === PLAYBACK_STATUSES.PLAYING) {
                 this.play();
             }
 
-            if (_status === PLAYBACK_STATES.PAUSED) {
+            if (_status === PLAYBACK_STATUSES.PAUSED) {
                 this.pause();
             }
         }
@@ -270,7 +266,7 @@ class AbstractVideoManager extends PureComponent<Props> {
      * @returns {void}
      */
     fireUpdatePlayingVideoEvent() {
-        if (this.getPlaybackState() === PLAYBACK_STATES.PLAYING) {
+        if (this.getPlaybackStatus() === PLAYBACK_STATUSES.PLAYING) {
             this.fireUpdateSharedVideoEvent();
         }
     }
@@ -287,9 +283,9 @@ class AbstractVideoManager extends PureComponent<Props> {
             return;
         }
 
-        const status = this.getPlaybackState();
+        const status = this.getPlaybackStatus();
 
-        if (!Object.values(PLAYBACK_STATES).includes(status)) {
+        if (!Object.values(PLAYBACK_STATUSES).includes(status)) {
             return;
         }
 
@@ -317,7 +313,7 @@ class AbstractVideoManager extends PureComponent<Props> {
      * currently on.
      */
     isSharedVideoVolumeOn() {
-        return this.getPlaybackState() === PLAYBACK_STATES.PLAYING
+        return this.getPlaybackStatus() === PLAYBACK_STATUSES.PLAYING
                 && !this.isMuted()
                 && this.getVolume() > 0;
     }
@@ -347,7 +343,7 @@ class AbstractVideoManager extends PureComponent<Props> {
     /**
      * Indicates the playback state of the video
      */
-    getPlaybackState: () => boolean;
+    getPlaybackStatus: () => boolean;
 
     /**
      * Indicates whether the video is muted

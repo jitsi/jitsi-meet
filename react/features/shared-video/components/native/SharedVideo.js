@@ -12,8 +12,6 @@ import VideoManager from './VideoManager';
 import YoutubeVideoManager from './YoutubeVideoManager';
 import styles from './styles';
 
-declare var interfaceConfig: Object;
-
 type Props = {
 
     /**
@@ -115,7 +113,7 @@ class SharedVideo extends Component<Props> {
         return (
             <View
                 pointerEvents = { isOwner ? 'auto' : 'none' }
-                style = { styles.youtubeVideoContainer } >
+                style = { styles.videoContainer } >
                 {videoUrl.match(/http/)
                     ? (
                         <VideoManager

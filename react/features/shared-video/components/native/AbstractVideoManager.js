@@ -7,12 +7,7 @@ import { PureComponent } from 'react';
 import { getCurrentConference } from '../../../base/conference';
 import { getLocalParticipant } from '../../../base/participants';
 import { setSharedVideoStatus } from '../../actions.any';
-
-export const PLAYBACK_STATES = {
-    PLAYING: 'playing',
-    PAUSED: 'pause',
-    STOPPED: 'stop'
-};
+import { PLAYBACK_STATUSES } from '../../constants';
 
 /**
  * Return true if the diffenrece between the two timees is larger than 5.
@@ -49,11 +44,6 @@ export type Props = {
     _ownerId: string,
 
     /**
-     * Updates the shared video status
-     */
-    _setSharedVideoStatus: Function,
-
-    /**
      * The shared video status
      */
      _status: string,
@@ -69,6 +59,10 @@ export type Props = {
      */
      _videoUrl: string,
 
+    /**
+     * The Redux dispatch function.
+     */
+     dispatch: Function,
 
     /**
       * The player's height
@@ -150,12 +144,10 @@ class AbstractVideoManager extends PureComponent<Props> {
             this.seek(_time);
         }
 
-        if (this.getPlaybackState() !== _status) {
-            if (_status === PLAYBACK_STATES.PLAYING) {
+        if (this.getPlaybackStatus() !== _status) {
+            if (_status === PLAYBACK_STATUSES.PLAYING) {
                 this.play();
-            }
-
-            if (_status === PLAYBACK_STATES.PAUSED) {
+            } else if (_status === PLAYBACK_STATUSES.PAUSED) {
                 this.pause();
             }
         }
@@ -191,9 +183,9 @@ class AbstractVideoManager extends PureComponent<Props> {
             return;
         }
 
-        const status = this.getPlaybackState();
+        const status = this.getPlaybackStatus();
 
-        if (!Object.values(PLAYBACK_STATES).includes(status)) {
+        if (!Object.values(PLAYBACK_STATUSES).includes(status)) {
             return;
         }
 
@@ -201,16 +193,16 @@ class AbstractVideoManager extends PureComponent<Props> {
 
         const {
             _ownerId,
-            _setSharedVideoStatus,
-            _videoUrl
+            _videoUrl,
+            dispatch
         } = this.props;
 
-        _setSharedVideoStatus({
+        dispatch(setSharedVideoStatus({
             videoUrl: _videoUrl,
             status,
             time,
             ownerId: _ownerId
-        });
+        }));
     }
 
     /**
@@ -222,7 +214,7 @@ class AbstractVideoManager extends PureComponent<Props> {
     /**
      * Indicates the playback state of the video
      */
-    getPlaybackState: () => boolean;
+    getPlaybackStatus: () => boolean;
 
     /**
      * Plays video
@@ -265,24 +257,5 @@ export function _mapStateToProps(state: Object): $Shape<Props> {
         _status: status,
         _time: time,
         _videoUrl: videoUrl
-    };
-}
-
-/**
- * Maps part of the props of this component to Redux actions.
- *
- * @param {Function} dispatch - The Redux dispatch function.
- * @returns {Props}
- */
-export function _mapDispatchToProps(dispatch: Function): $Shape<Props> {
-    return {
-        _setSharedVideoStatus: ({ videoUrl, status, time, ownerId }) => {
-            dispatch(setSharedVideoStatus({
-                videoUrl,
-                status,
-                time,
-                ownerId
-            }));
-        }
     };
 }
