@@ -98,6 +98,7 @@ export default [
     'disableRtx',
     'disableShortcuts',
     'disableShowMoreStats',
+    'disableRemoveRaisedHandOnFocus',
     'disableSimulcast',
     'disableThirdPartyRequests',
     'disableTileView',

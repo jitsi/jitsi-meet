@@ -144,6 +144,9 @@ var config = {
     // Sets the preferred resolution (height) for local video. Defaults to 720.
     // resolution: 720,
 
+    // Specifies whether the raised hand will hide when someone becomes a dominant speaker or not
+    // disableRemoveRaisedHandOnFocus: false,
+
     // How many participants while in the tile view mode, before the receiving video quality is reduced from HD to SD.
     // Use -1 to disable.
     // maxFullResolutionParticipants: 2,
