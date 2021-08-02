@@ -9,6 +9,7 @@ import {
     timerWorkerScript
 } from './TimerWorker';
 import FacePaint from './utils/FacePaint';
+import GLTFScene from './utils/GLTFScene';
 import { TRIANGULATION } from './utils/Triangulation';
 
 // import { JeelizResizer } from './utils/JeelizResizer';
@@ -40,16 +41,19 @@ export default class JitsiVideoAvatarEffect {
     stopEffect: Function;
     _threeCamera: Object;
     _net: Object;
-    _faceCanvas: Object;
+    _avatarScene: GLTFScene;
+    _faceCanvas: FacePaint;
 
     /**
      * Represents a modified video MediaStream track.
      *
      * @param {Object} net - TF model.
+     * @param {GLTFScene} avatarScene - Scene with the avatar.
      */
-    constructor(net: Object) {
+    constructor(net: Object, avatarScene: GLTFScene) {
         // this._threeCamera = null;
         this._net = net;
+        this._avatarScene = avatarScene;
         this._onMaskFrameTimer = this._onMaskFrameTimer.bind(this);
 
         this._outputCanvasElement = document.createElement('canvas');
@@ -134,7 +138,7 @@ export default class JitsiVideoAvatarEffect {
 
             if (!this._faceCanvas) {
                 this._faceCanvas = new FacePaint(this._outputCanvasElement,
-                                                this._inputVideoElement,
+                                                this._avatarScene,
                                                 width,
                                                 height);
             }

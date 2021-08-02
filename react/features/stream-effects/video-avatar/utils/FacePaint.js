@@ -1,7 +1,7 @@
 // @flow
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
+import GLTFScene from './GLTFScene';
 import { TRIANGULATION } from './Triangulation';
 import { uvs } from './frontProjectionUVMap';
 import { positionBufferData } from './positionBufferData';
@@ -26,10 +26,7 @@ export default class FacePaint {
     _backgroundGeometry: Object;
     _backgroundMaterial: Object;
     _backgroundMesh: Object;
-    _glScene: Object;
-    _glMaterial: Object;
-    _glGeometry: Object;
-    _glMesh: Object;
+    _avatarScene: GLTFScene;
     _prev: THREE.Vector3;
     _current: THREE.Vector3;
     _difference: THREE.Vector3;
@@ -43,22 +40,22 @@ export default class FacePaint {
      * To do.
      *
      * @param  {Object} canvas - To do.
-     * @param  {Object} background - To do.
+     * @param  {GLTFScene} avatarScene - To do.
      * @param  {number} w - To do.
      * @param  {number} h - To do.
      */
-    constructor(canvas: Object, background: Object, w: number, h: number) {
+    constructor(canvas: Object, avatarScene: GLTFScene, w: number, h: number) {
         this._renderer = new THREE.WebGLRenderer({
             antialias: true,
             alpha: true,
             canvas });
+        this._avatarScene = avatarScene;
         this._renderer.setPixelRatio(window.devicePixelRatio);
         this._renderer.setSize(w, h);
         this._halfW = w * 0.5;
         this._halfH = h * 0.5;
         this._height = h;
         this._width = w;
-        this._background = background;
         this._setupScene();
 
     }
@@ -138,7 +135,7 @@ export default class FacePaint {
         this._scene.add(light);
         const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
 
-        directionalLight.position.set(this._halfW, this._halfH * 0.5, -1000).normalize();
+        directionalLight.position.set(0, 0, 900).normalize();
         this._scene.add(directionalLight);
     }
 
@@ -251,52 +248,13 @@ export default class FacePaint {
         this._mesh.position.x -= 640;
         this._mesh.position.y += 360;
         this._mesh.position.z += 70;
-        this._backgroundMesh = new THREE.Mesh(this._backgroundGeometry, this._backgroundMaterial);
+        this._scene.add(this._avatarScene);
+
+        // this._backgroundMesh = new THREE.Mesh(this._backgroundGeometry, this._backgroundMaterial);
 
         // this._scene.add(this._mesh);
 
-        this._scene.add(this._backgroundMesh);
-        const SETTINGS = {
-            gltfModelURL: 'images/DamagedHelmet/DamagedHelmet.gltf',
-            cubeMapURL: 'images/Bridge2/',
-            offsetYZ: [ 0.3, 0 ], // offset of the model in 3D along vertical and depth axis
-            scale: 2.5
-        };
-        const path = SETTINGS.cubeMapURL;
-        const format = '.jpg';
-        const envMap = new THREE.CubeTextureLoader().load([
-            `${path}posx${format}`, `${path}negx${format}`,
-            `${path}posy${format}`, `${path}negy${format}`,
-            `${path}posz${format}`, `${path}negz${format}`
-        ]);
-
-        // IMPORT THE GLTF MODEL:
-        // from https://threejs.org/examples/#webgl_loader_gltf
-        const gltfLoader = new GLTFLoader();
-
-        gltfLoader.load('images/DamagedHelmet/glTF/DamagedHelmet.gltf',
-        gltf => {
-            gltf.scene.traverse(child => {
-                if (child.isMesh) {
-                    child.material.envMap = envMap;
-                    this._glMaterial = child.material;
-                    this._glMesh = child;
-                    this._glGeometry = child.geometry;
-                    this._glGeometry.computeVertexNormals();
-                }
-            });
-            gltf.scene.frustumCulled = false;
-
-            this._glMesh.scale.set(200, 200, 200);
-            this._scene.add(this._glMesh);
-            this._glMesh.position.z = this._mesh.position.z + 150;
-            this._glMesh.position.x -= 700;
-            this._glMesh.position.y += 400;
-
-            // console.log('SCENE', gltf.scene);
-
-            // dispatch the model:
-        });
+        // this._scene.add(this._backgroundMesh);
     }
 
     /**
@@ -361,7 +319,7 @@ export default class FacePaint {
             this._prevVectors = { x: this._getVectorFromTwoPoints(152, 10, positionBuffer),
                 y: this._getVectorFromTwoPoints(234, 454, positionBuffer) };
         }
-        if (this._glMesh) {
+        if (this._avatarScene) {
 
             this._current.fromArray(positionBuffer.slice(3, 6));
             this._difference.subVectors(this._current, this._prev);
@@ -373,27 +331,33 @@ export default class FacePaint {
             const quaternion = new THREE.Quaternion();
             const depthDiff = (this._currentArea - this._prevArea) / 100;
 
+            const rotation = {
+                x: 0,
+                y: 0,
+                z: 0
+            };
+
             quaternion.setFromUnitVectors(this._prevVectors.x, this._currentVectors.x);
-            this._glMesh.rotateX(quaternion.x);
+            rotation.x = quaternion.x;
 
             quaternion.setFromUnitVectors(this._prevVectors.y, this._currentVectors.y);
-            this._glMesh.rotateZ(quaternion.y);
+            rotation.y = quaternion.y;
 
-            this._glMesh.rotation.y = 0;
+            rotation.z = quaternion.z;
+            this._avatarScene.rotate(rotation.x, rotation.y, rotation.z);
 
-            this._glMesh.position.x += this._difference.x;
-            this._glMesh.position.y -= this._difference.y;
-            this._glMesh.position.z += depthDiff;
+            if (this._prev.x !== 0 && this._prev.y !== 0) {
+                this._avatarScene.move(this._difference.x, this._difference.y, depthDiff);
+            }
 
             this._prev = this._current.clone();
             this._prevArea = this._currentArea;
             this._prevVectors = this._currentVectors;
-
         }
-        this._geometry.setAttribute('position', new THREE.Float32BufferAttribute(positionBuffer, 3));
-        this._geometry.attributes.position.needsUpdate = true;
-
-
         this._renderer.render(this._scene, this._camera);
+
+        // this._geometry.setAttribute('position', new THREE.Float32BufferAttribute(positionBuffer, 3));
+        // this._geometry.attributes.position.needsUpdate = true;
     }
+
 }

@@ -4,6 +4,9 @@ import * as facemesh from '@tensorflow-models/face-landmarks-detection';
 import * as tf from '@tensorflow/tfjs';
 
 import JitsiVideoAvatarEffect from './JitsiVideoAvatarEffect';
+import Zoprac from './utils/Scenes/Zoprac';
+
+// import Helmet from './utils/Scenes/Helmet';
 
 /**
  * Creates a new instance of JitsiVideoAvatarEffect.
@@ -16,5 +19,8 @@ export async function createVideoAvatarEffect() {
      */
     const net = await facemesh.load(facemesh.SupportedPackages.mediapipeFacemesh);
 
-    return new JitsiVideoAvatarEffect(net);
+    // const object = new Helmet();
+    const object = new Zoprac();
+
+    return new JitsiVideoAvatarEffect(net, object);
 }
