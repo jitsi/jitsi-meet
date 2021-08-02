@@ -288,6 +288,11 @@ PODS:
     - React
   - react-native-splash-screen (3.2.0):
     - React
+  - react-native-video (5.1.1):
+    - React-Core
+    - react-native-video/Video (= 5.1.1)
+  - react-native-video/Video (5.1.1):
+    - React-Core
   - react-native-webrtc (1.89.3):
     - React-Core
   - react-native-webview (11.0.2):
@@ -394,6 +399,7 @@ DEPENDENCIES:
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
+  - react-native-video (from `../node_modules/react-native-video/react-native-video.podspec`)
   - react-native-webrtc (from `../node_modules/react-native-webrtc`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -478,6 +484,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/slider"
   react-native-splash-screen:
     :path: "../node_modules/react-native-splash-screen"
+  react-native-video:
+    :path: "../node_modules/react-native-video/react-native-video.podspec"
   react-native-webrtc:
     :path: "../node_modules/react-native-webrtc"
   react-native-webview:
@@ -559,6 +567,7 @@ SPEC CHECKSUMS:
   react-native-netinfo: 8d8db463bcc5db66a8ac5c48a7d86beb3b92f61a
   react-native-slider: b733e17fdd31186707146debf1f04b5d94aa1a93
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
+  react-native-video: 1574074179ecaf6a9dd067116c8f31bf9fec15c8
   react-native-webrtc: 2e8095a43dd3d95ce796d9750280c0f48aadad3d
   react-native-webview: b2542d6fd424bcc3e3b2ec5f854f0abb4ec86c87
   React-RCTActionSheet: bcbc311dc3b47bc8efb2737ff0940239a45789a9
@@ -580,6 +589,6 @@ SPEC CHECKSUMS:
   RNWatch: a5320c959c75e72845c07985f3e935e58998f1d3
   Yoga: 96b469c5e81ff51b917b92e8c3390642d4ded30c
 
-PODFILE CHECKSUM: 1fa5a1e259f145d32c1ca968b26dac65cff34b49
+PODFILE CHECKSUM: f4db44d934caeae7212dbaa33abe62ed164363e8
 
 COCOAPODS: 1.10.1
