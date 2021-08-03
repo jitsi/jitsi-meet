@@ -7,7 +7,7 @@ import { ThemeProvider } from 'styled-components';
 
 import { getParticipantCount, isLocalParticipantModerator } from '../../../base/participants';
 import { equals } from '../../../base/redux';
-import ParticipantItem from '../../../participants-pane/components/ParticipantItem';
+import ParticipantItem from '../../../participants-pane/components/web/ParticipantItem';
 import { getRooms, isInBreakoutRoom, getCurrentRoomId } from '../../functions';
 
 import { AutoAssignButton } from './AutoAssignButton';

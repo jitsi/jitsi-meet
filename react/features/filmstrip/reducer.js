@@ -31,7 +31,7 @@ const DEFAULT_STATE = {
     horizontalViewDimensions: {},
 
     /**
-     * The custom audio volume levels per perticipant.
+     * The custom audio volume levels per participant.
      *
      * @type {Object}
      */

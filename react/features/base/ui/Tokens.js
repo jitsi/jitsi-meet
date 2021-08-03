@@ -18,6 +18,7 @@ export const colors = {
     primary08: '#99BBF3',
     primary09: '#CCDDF9',
 
+    surface00: '#111111',
     surface01: '#040404',
     surface02: '#141414',
     surface03: '#292929',
@@ -29,11 +30,13 @@ export const colors = {
     surface09: '#C2C2C2',
     surface10: '#E0E0E0',
     surface11: '#FFF',
+    surface12: '#AAAAAA',
 
     success04: '#189B55',
     success05: '#1EC26A',
 
-    warning05: '#F8AE1A'
+    warning05: '#F8AE1A',
+    warning06: '#ED9E1B'
 };
 
 // Mapping between the token used and the color
@@ -108,6 +111,9 @@ export const colorMap = {
     // Disabled state for danger buttons
     actionDangerDisabled: 'error03',
 
+    // Bottom sheet background
+    bottomSheet: 'surface00',
+
     // Primary text – default color for body copy & headers
     text01: 'surface11',
 
@@ -116,6 +122,9 @@ export const colorMap = {
 
     // Tertiary text with low contrast – placeholders, disabled actions, label for disabled buttons
     text03: 'surface07',
+
+    // Text for bottom sheet items
+    text04: 'surface12',
 
     // error messages
     textError: 'error06',
@@ -147,6 +156,9 @@ export const colorMap = {
 
     // Background for high-contrast input fields
     field02: 'surface11',
+
+    // Color for the section divider
+    dividerColor: 'surface12',
 
     // Background for high-contrast input fields on hover
     field02Hover: 'primary09',
@@ -197,20 +209,24 @@ export const colorMap = {
     success02: 'success05',
 
     // Color for warning messages applied to icons, borders & backgrounds
-    warning01: 'warning05'
+    warning01: 'warning05',
+
+    // Color for indicating a raised hand
+    warning02: 'warning06'
 };
 
 
 export const font = {
-    weightRegular: 400,
-    weightSemiBold: 600
+    weightRegular: '400',
+    weightSemiBold: '600'
 };
 
 export const shape = {
-    borderRadius: 6
+    borderRadius: 6,
+    boxShadow: 'inset 0px -1px 0px rgba(255, 255, 255, 0.15)'
 };
 
-export const spacing = [ 0, 4, 8, 16, 24, 32, 40, 48, 56 ];
+export const spacing = [ 0, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80 ];
 
 export const typography = {
     labelRegular: {

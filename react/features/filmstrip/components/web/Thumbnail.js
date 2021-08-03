@@ -2,10 +2,10 @@
 
 import React, { Component } from 'react';
 
-import { isMobileBrowser } from '../../../../../react/features/base/environment/utils';
 import { createScreenSharingIssueEvent, sendAnalytics } from '../../../analytics';
 import { AudioLevelIndicator } from '../../../audio-level-indicator';
 import { Avatar } from '../../../base/avatar';
+import { isMobileBrowser } from '../../../base/environment/utils';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
 import { MEDIA_TYPE, VideoTrack } from '../../../base/media';
 import {
@@ -138,6 +138,11 @@ export type Props = {|
      * Indicates whether the participant associated with the thumbnail is displayed on the large video.
      */
     _isCurrentlyOnLargeVideo: boolean,
+
+    /**
+     * Whether we are currently running in a mobile browser.
+     */
+    _isMobile: boolean,
 
     /**
      * Indicates whether the participant is screen sharing.
@@ -612,7 +617,7 @@ class Thumbnail extends Component<Props, State> {
      * @returns {ReactElement}
      */
     _renderFakeParticipant() {
-        const { _participant: { avatarURL } } = this.props;
+        const { _isMobile, _participant: { avatarURL } } = this.props;
         const styles = this._getStyles();
         const containerClassName = this._getContainerClassName();
 
@@ -621,8 +626,10 @@ class Thumbnail extends Component<Props, State> {
                 className = { containerClassName }
                 id = 'sharedVideoContainer'
                 onClick = { this._onClick }
-                onMouseEnter = { this._onMouseEnter }
-                onMouseLeave = { this._onMouseLeave }
+                { ...(_isMobile ? {} : {
+                    onMouseEnter: this._onMouseEnter,
+                    onMouseLeave: this._onMouseLeave
+                }) }
                 style = { styles.thumbnail }>
                 {avatarURL ? (
                     <img
@@ -753,6 +760,7 @@ class Thumbnail extends Component<Props, State> {
         const {
             _defaultLocalDisplayName,
             _disableLocalVideoFlip,
+            _isMobile,
             _isScreenSharing,
             _localFlipX,
             _disableProfile,
@@ -772,13 +780,17 @@ class Thumbnail extends Component<Props, State> {
                 className = { containerClassName }
                 id = 'localVideoContainer'
                 onClick = { this._onClick }
-                onMouseEnter = { this._onMouseEnter }
-                onMouseLeave = { this._onMouseLeave }
-                { ...(isMobileBrowser() ? {
-                    onTouchEnd: this._onTouchEnd,
-                    onTouchMove: this._onTouchMove,
-                    onTouchStart: this._onTouchStart
-                } : {}) }
+                { ...(_isMobile
+                    ? {
+                        onTouchEnd: this._onTouchEnd,
+                        onTouchMove: this._onTouchMove,
+                        onTouchStart: this._onTouchStart
+                    }
+                    : {
+                        onMouseEnter: this._onMouseEnter,
+                        onMouseLeave: this._onMouseLeave
+                    }
+                ) }
                 style = { styles.thumbnail }>
                 <div className = 'videocontainer__background' />
                 <span id = 'localVideoWrapper'>
@@ -875,6 +887,7 @@ class Thumbnail extends Component<Props, State> {
      */
     _renderRemoteParticipant() {
         const {
+            _isMobile,
             _isTestModeEnabled,
             _participant,
             _startSilent,
@@ -909,13 +922,17 @@ class Thumbnail extends Component<Props, State> {
                 className = { containerClassName }
                 id = { `participant_${id}` }
                 onClick = { this._onClick }
-                onMouseEnter = { this._onMouseEnter }
-                onMouseLeave = { this._onMouseLeave }
-                { ...(isMobileBrowser() ? {
-                    onTouchEnd: this._onTouchEnd,
-                    onTouchMove: this._onTouchMove,
-                    onTouchStart: this._onTouchStart
-                } : {}) }
+                { ...(_isMobile
+                    ? {
+                        onTouchEnd: this._onTouchEnd,
+                        onTouchMove: this._onTouchMove,
+                        onTouchStart: this._onTouchStart
+                    }
+                    : {
+                        onMouseEnter: this._onMouseEnter,
+                        onMouseLeave: this._onMouseLeave
+                    }
+                ) }
                 style = { styles.thumbnail }>
                 {
                     _videoTrack && <VideoTrack
@@ -1031,6 +1048,7 @@ function _mapStateToProps(state, ownProps): Object {
     } = state['features/base/config'];
     const { NORMAL = 8 } = interfaceConfig.INDICATOR_FONT_SIZES || {};
     const { localFlipX } = state['features/base/settings'];
+    const _isMobile = isMobileBrowser();
 
 
     switch (_currentLayout) {
@@ -1072,7 +1090,7 @@ function _mapStateToProps(state, ownProps): Object {
     return {
         _audioTrack,
         _connectionIndicatorAutoHideEnabled: interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_ENABLED,
-        _connectionIndicatorDisabled: isMobileBrowser() || interfaceConfig.CONNECTION_INDICATOR_DISABLED,
+        _connectionIndicatorDisabled: _isMobile || interfaceConfig.CONNECTION_INDICATOR_DISABLED,
         _currentLayout,
         _defaultLocalDisplayName: interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME,
         _disableLocalVideoFlip: Boolean(disableLocalVideoFlip),
@@ -1081,6 +1099,7 @@ function _mapStateToProps(state, ownProps): Object {
         _isAudioOnly: Boolean(state['features/base/audio-only'].enabled),
         _isCurrentlyOnLargeVideo: state['features/large-video']?.participantId === id,
         _isDominantSpeakerDisabled: interfaceConfig.DISABLE_DOMINANT_SPEAKER_INDICATOR,
+        _isMobile,
         _isScreenSharing: _videoTrack?.videoType === 'desktop',
         _isTestModeEnabled: isTestModeEnabled(state),
         _isVideoPlayable: id && isVideoPlayable(state, id),

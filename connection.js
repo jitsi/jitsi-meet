@@ -17,8 +17,7 @@ import {
     JitsiConnectionErrors,
     JitsiConnectionEvents
 } from './react/features/base/lib-jitsi-meet';
-import { isVpaasMeeting } from './react/features/billing-counter/functions';
-import { getJaasJWT } from './react/features/jaas/functions';
+import { isVpaasMeeting, getJaasJWT } from './react/features/jaas/functions';
 import { setPrejoinDisplayNameRequired } from './react/features/prejoin/actions';
 const logger = Logger.getLogger(__filename);
 
@@ -89,8 +88,9 @@ export async function connect(id, password, roomName) {
     const connectionConfig = Object.assign({}, config);
     const state = APP.store.getState();
     let { jwt } = state['features/base/jwt'];
+    const { iAmRecorder, iAmSipGateway } = state['features/base/config'];
 
-    if (!jwt && isVpaasMeeting(state, false)) {
+    if (!iAmRecorder && !iAmSipGateway && !jwt && isVpaasMeeting(state)) {
         jwt = await getJaasJWT(state);
         APP.store.dispatch(setJWT(jwt));
     }

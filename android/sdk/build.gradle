@@ -70,11 +70,13 @@ dependencies {
     implementation project(':react-native-default-preference')
     implementation project(':react-native-immersive')
     implementation project(':react-native-keep-awake')
+    implementation project(':react-native-slider')
     implementation project(':react-native-sound')
+    implementation project(':react-native-splash-screen')
     implementation project(':react-native-svg')
+    implementation project(':react-native-video')
     implementation project(':react-native-webrtc')
     implementation project(':react-native-webview')
-    implementation project(':react-native-splash-screen')
 
     testImplementation 'junit:junit:4.12'
 }

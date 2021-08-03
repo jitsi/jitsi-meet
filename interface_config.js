@@ -174,7 +174,7 @@ var interfaceConfig = {
     RECENT_LIST_ENABLED: true,
     REMOTE_THUMBNAIL_RATIO: 1, // 1:1
 
-    SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar' ],
+    SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar', 'sounds' ],
 
     /**
      * Specify which sharing features should be displayed. If the value is not set
@@ -208,13 +208,7 @@ var interfaceConfig = {
      * DEPRECATED!
      * This config was moved to config.js as `toolbarButtons`.
      */
-    // TOOLBAR_BUTTONS: [
-    //     'microphone', 'camera', 'closedcaptions', 'desktop', 'embedmeeting', 'fullscreen',
-    //     'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
-    //     'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
-    //     'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
-    //     'tileview', 'select-background', 'download', 'help', 'mute-everyone', 'mute-video-everyone', 'security'
-    // ],
+    // TOOLBAR_BUTTONS: [],
 
     TOOLBAR_TIMEOUT: 4000,
 

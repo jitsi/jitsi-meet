@@ -574,6 +574,12 @@ function initCommands() {
             });
             break;
         }
+        case 'get-custom-avatar-backgrounds' : {
+            callback({
+                avatarBackgrounds: APP.store.getState()['features/dynamic-branding'].avatarBackgrounds
+            });
+            break;
+        }
         default:
             return false;
         }

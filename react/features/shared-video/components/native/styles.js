@@ -4,7 +4,7 @@
  * The style of toolbar buttons.
  */
 export default {
-    youtubeVideoContainer: {
+    videoContainer: {
         alignItems: 'center',
         flex: 1,
         flexDirection: 'column',

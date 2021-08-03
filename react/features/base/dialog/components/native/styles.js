@@ -171,7 +171,7 @@ ColorSchemeRegistry.register('BottomSheet', {
          */
         labelStyle: {
             ...brandedDialogLabelStyle,
-            marginLeft: 32
+            marginLeft: 16
         },
 
         /**
@@ -179,7 +179,6 @@ ColorSchemeRegistry.register('BottomSheet', {
          */
         style: {
             ...brandedDialogItemContainerStyle,
-            backgroundColor: ColorPalette.darkBackground,
             paddingHorizontal: MD_ITEM_MARGIN_PADDING
         },
 

@@ -1,8 +1,52 @@
 // @flow
 
-import { getVpaasTenant } from '../billing-counter/functions';
 
+import { VPAAS_TENANT_PREFIX } from './constants';
 import logger from './logger';
+
+/**
+ * Returns the full vpaas tenant if available, given a path.
+ *
+ * @param {string} path - The meeting url path.
+ * @returns {string}
+ */
+function extractVpaasTenantFromPath(path: string) {
+    const [ , tenant ] = path.split('/');
+
+    if (tenant.startsWith(VPAAS_TENANT_PREFIX)) {
+        return tenant;
+    }
+
+    return '';
+}
+
+/**
+ * Returns the vpaas tenant.
+ *
+ * @param {Object} state - The global state.
+ * @returns {string}
+ */
+export function getVpaasTenant(state: Object) {
+    return extractVpaasTenantFromPath(state['features/base/connection'].locationURL.pathname);
+}
+
+/**
+ * Returns true if the current meeting is a vpaas one.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {boolean}
+ */
+export function isVpaasMeeting(state: Object) {
+    const connection = state['features/base/connection'];
+
+    if (connection?.locationURL?.pathname) {
+        return Boolean(
+            extractVpaasTenantFromPath(connection?.locationURL?.pathname)
+        );
+    }
+
+    return false;
+}
 
 /**
  * Sends a request for retrieving jaas customer details.

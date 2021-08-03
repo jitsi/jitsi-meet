@@ -3,11 +3,11 @@ import React from 'react';
 import YouTube from 'react-youtube';
 
 import { connect } from '../../../base/redux';
+import { PLAYBACK_STATUSES } from '../../constants';
 
 import AbstractVideoManager, {
     _mapDispatchToProps,
-    _mapStateToProps,
-    PLAYBACK_STATES
+    _mapStateToProps
 } from './AbstractVideoManager';
 
 /**
@@ -34,8 +34,8 @@ class YoutubeVideoManager extends AbstractVideoManager<Props> {
      *
      * @returns {string}
      */
-    getPlaybackState() {
-        let state;
+    getPlaybackStatus() {
+        let status;
 
         if (!this.player) {
             return;
@@ -44,14 +44,14 @@ class YoutubeVideoManager extends AbstractVideoManager<Props> {
         const playerState = this.player.getPlayerState();
 
         if (playerState === YouTube.PlayerState.PLAYING) {
-            state = PLAYBACK_STATES.PLAYING;
+            status = PLAYBACK_STATUSES.PLAYING;
         }
 
         if (playerState === YouTube.PlayerState.PAUSED) {
-            state = PLAYBACK_STATES.PAUSED;
+            status = PLAYBACK_STATUSES.PAUSED;
         }
 
-        return state;
+        return status;
     }
 
     /**
@@ -70,17 +70,6 @@ class YoutubeVideoManager extends AbstractVideoManager<Props> {
      */
     getVolume() {
         return this.player?.getVolume();
-    }
-
-    /**
-     * Sets player volume.
-     *
-     * @param {number} value - The volume.
-     *
-     * @returns {void}
-     */
-    setVolume(value) {
-        return this.player?.setVolume(value);
     }
 
     /**
