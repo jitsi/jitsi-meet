@@ -91,17 +91,14 @@ MiddlewareRegistry.register(store => next => action => {
             break;
         }
 
-        const updatedData: Object = {
-            conference,
-            id,
-            local: isLocal
-        };
-
         if (!getDisableRemoveRaisedHandOnFocus(state)) {
-            updatedData.raisedHand = false;
+            participant && store.dispatch(participantUpdated({
+                conference,
+                id,
+                local: isLocal,
+                raisedHand: false
+            }));
         }
-
-        participant && store.dispatch(participantUpdated(updatedData));
 
         break;
     }
