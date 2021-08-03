@@ -1334,12 +1334,10 @@ export default {
     },
 
     _createRoom(localTracks) {
-        const conferenceOptions = this._getConferenceOptions();
-
         room
             = connection.initJitsiConference(
                 APP.conference.roomName,
-                conferenceOptions);
+                this._getConferenceOptions());
 
         APP.store.dispatch(conferenceWillJoin(room));
 
