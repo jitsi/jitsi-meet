@@ -10,7 +10,8 @@ import {
     IconCrown,
     IconMessage,
     IconMicDisabled,
-    IconMuteEveryoneElse, IconShareVideo,
+    IconMuteEveryoneElse,
+    IconShareVideo,
     IconVideoOff
 } from '../../../base/icons';
 import {

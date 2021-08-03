@@ -257,9 +257,6 @@ function _mapStateToProps(state, ownProps) {
     const renderModeratorIndicator = !_isEveryoneModerator
         && participant && participant.role === PARTICIPANT_ROLE.MODERATOR;
 
-    console.log(fakeParticipant, 'VIDEOOOOOOOOOOOOOOOO');
-    console.log(participant?.isFakeParticipant, 'FAKE');
-
     return {
         _audioMuted: audioTrack?.muted ?? true,
         _largeVideo: largeVideo,

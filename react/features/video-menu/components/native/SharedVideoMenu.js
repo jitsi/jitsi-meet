@@ -66,7 +66,7 @@ type Props = {
 let SharedVideoMenu_;
 
 /**
- * Class to implement a popup menu that opens upon long pressing a thumbnail.
+ * Class to implement a popup menu that opens upon long pressing a fake participant thumbnail.
  */
 class SharedVideoMenu extends PureComponent<Props> {
     /**
