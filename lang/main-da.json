@@ -215,7 +215,7 @@
         "muteEveryoneElseTitle": "Slå lyd fra for alle undtagen {{whom}}?",
         "muteEveryoneDialog": "Er du sikker på at du vil slå lyden fra for alle? Du kan ikke tænde lyden igen, men de kan selv tænde til enhver tid.",
         "muteEveryoneTitle": "Slå lyd fra for alle?",
-        "muteEveryoneSelf": "Dig selv",
+        "muteEveryoneSelf": "dig selv",
         "muteEveryoneStartMuted": "Lyden er slået fra for alle fra nu af",
         "muteParticipantBody": "Du kan ikke tænde for deres mikrofon, men de kan selv tænde for deres mikrofon til enhver tid.",
         "muteParticipantButton": "Slå lyd fra",
@@ -461,6 +461,28 @@
         "newDeviceAudioTitle": "Ny lydenhed fundet",
         "newDeviceAction": "Benyt"
     },
+    "participantsPane": {
+        "close": "Close",
+        "header": "Deltagere",
+        "headings": {
+            "lobby": "Lobby ({{count}})",
+            "participantsList": "Mødedeltagere ({{count}})",
+            "waitingLobby": "Venter i lobbyen ({{count}})"
+        },
+        "actions": {
+            "allow": "Allow attendees to:",
+            "blockEveryoneMicCamera": "Block everyone's mic and camera",
+            "invite": "Invite Someone",
+            "askUnmute": "Ask to unmute",
+            "mute": "Mute",
+            "muteAll": "Mute all",
+            "muteEveryoneElse": "Mute everyone else",
+            "startModeration": "Unmute themselves or start video",
+            "stopEveryonesVideo": "Stop everyone's video",
+            "stopVideo": "Stop video",
+            "unblockEveryoneMicCamera": "Unblock everyone's mic and camera"
+        }
+    },
     "passwordSetRemotely": "Sat af et andet medlem",
     "passwordDigitsOnly": "Op til {{number}} tal",
     "poweredby": "Powered by",
@@ -515,6 +537,11 @@
     "sectionList": {
         "pullToRefresh": "Træk ned for at opdatere"
     },
+      "security": {
+        "about": "Du kan tilføje et $t(lockRoomPassword) til dit møde. Deltagere skal indtaste den valgte $t(lockRoomPassword) for at få adgang til mødet.",
+        "aboutReadOnly": "Moderator participants can add a $t(lockRoomPassword) to the meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
+        "insecureRoomNameWarning": "The room name is unsafe. Unwanted participants may join your conference. Consider securing your meeting using the security button.",
+        "securityOptions": "Sikkerhedsindstillinger"
     "settings": {
         "calendar": {
             "about": "{{appName}}s kalenderintegration benyttes til sikkert at tilgå din kalender så den kan læse fremtidige aftaler.",
@@ -588,6 +615,7 @@
             "chat": "Slå chat fra/til",
             "document": "Slå delte dokumenter fra/til",
             "download": "Hent vores apps",
+            "embedMeeting": "Indlejre møde",
             "feedback": "Giv feedback",
             "fullScreen": "Slå fuld skærm fra/til",
             "hangup": "Forlad mødet",
@@ -601,13 +629,17 @@
             "moreOptions": "Vis flere indstillinger",
             "mute": "Slå lyd til/fra",
             "muteEveryone": "Slå lyd fra for alle",
+            "muteEveryoneElsesVideo": "Slå alle andres kamera fra",
+            "participants": "Deltagere",
             "pip": "Slå Billede-i-billede fra/til",
             "privateMessage": "Send privatbesked",
             "profile": "Redigér profil",
             "raiseHand": "Slå løft hånden fra/til",
             "recording": "Slå optagelse til/fra",
             "remoteMute": "Slå lyd fra for deltager",
+            "security": "Sikkerhedsindstillinger",
             "Settings": "Slå indstillinger fra/til",
+            "shareaudio": "Del lyd",
             "sharedvideo": "Slå YouTube-videodeling fra/til",
             "shareRoom": "Invitér nogen",
             "shareYourScreen": "Slå skærmdeling fra/til",
@@ -618,6 +650,7 @@
             "toggleCamera": "Slå kamera fra/til",
             "videomute": "Slå video fra/til",
             "videoblur": "Slå baggrundssløring fra/til"
+            "selectBackground": "Vælg baggrund",
         },
         "addPeople": "Tilføj deltager til mødet",
         "audioOnlyOff": "Slå kun-lyd møder fra",
@@ -766,5 +799,40 @@
         "sendFeedback": "Giv tilbagemelding",
         "betingelser": "Betingelser",
         "title": "Skærmbesøg & videomøder"
-    }
+    },
+"lobby": {
+        "admit": "Admit",
+        "admitAll": "Tillad alle",
+        "knockingParticipantList": "Knocking participant list",
+        "allow": "Tillad",
+        "backToKnockModeButton": "No password, ask to join instead",
+        "dialogTitle": "Lobby mode",
+        "disableDialogContent": "Lobby mode is currently enabled. This feature ensures that unwanted participants can't join your meeting. Do you want to disable it?",
+        "disableDialogSubmit": "Disable",
+        "emailField": "Enter your email address",
+        "enableDialogPasswordField": "Set password (optional)",
+        "enableDialogSubmit": "Aktivér",
+        "enableDialogText": "Lobby mode lader dig godkende deltagere før de får adgang til mødet",
+        "enterPasswordButton": "Indtast adgangskode til mødet",
+        "enterPasswordTitle": "Indtast koden for at komme ind i mødet",
+        "invalidPassword": "Forkert kodeord",
+        "joiningMessage": "Du kommer ind i mødet så snart nogle lukker dig ind. ",
+        "joinWithPasswordMessage": "Trying to join with password, please wait...",
+        "joinRejectedMessage": "Your join request was rejected by a moderator.",
+        "joinTitle": "Join Meeting",
+        "joiningTitle": "Asking to join meeting...",
+        "joiningWithPasswordTitle": "Joining with password...",
+        "knockButton": "Anmod om deltagelse",
+        "knockTitle": "Someone wants to join the meeting",
+        "nameField": "Enter your name",
+        "notificationLobbyAccessDenied": "{{targetParticipantName}} has been rejected to join by {{originParticipantName}}",
+        "notificationLobbyAccessGranted": "{{targetParticipantName}} has been allowed to join by {{originParticipantName}}",
+        "notificationLobbyDisabled": "Lobby has been disabled by {{originParticipantName}}",
+        "notificationLobbyEnabled": "Lobby has been enabled by {{originParticipantName}}",
+        "notificationTitle": "Lobby",
+        "passwordField": "Indtast møde-adgangskode",
+        "passwordJoinButton": "Deltag",
+        "reject": "Afvis",
+        "rejectAll": "Reject all",
+        "toggleLabel": "Enable lobby"
 }
