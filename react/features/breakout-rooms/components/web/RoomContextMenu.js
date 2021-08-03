@@ -10,9 +10,9 @@ import {
     IconMeetingUnlocked
 } from '../../../base/icons';
 import { isLocalParticipantModerator } from '../../../base/participants';
+import { getComputedOuterHeight } from '../../../participants-pane/functions';
 import { removeBreakoutRoom, moveToRoom, closeRoom } from '../../actions';
 
-import { getComputedOuterHeight } from './functions';
 import {
     ContextMenu,
     ContextMenuIcon,

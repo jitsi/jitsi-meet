@@ -437,15 +437,12 @@ export function createConference() {
         const config = state['features/base/config'];
         const { tenant } = state['features/base/jwt'];
         const { email, name: nick } = getLocalParticipant(state);
-        const customDomain = /_[-\da-f]{36}$/.test(room) ? `breakout.${config.hosts.domain}` : null;
-
         const conference
             = connection.initJitsiConference(
 
                 getBackendSafeRoomName(room), {
                     ...config,
                     applicationName: getName(),
-                    customDomain,
                     getWiFiStatsMethod: getJitsiMeetGlobalNS().getWiFiStats,
                     confID: `${locationURL.host}${getBackendSafePath(locationURL.pathname)}`,
                     siteID: tenant,

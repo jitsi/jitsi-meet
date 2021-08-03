@@ -68,7 +68,7 @@ export const Room = ({
             onMouseLeave = { onLeave }
             trigger = { actionsTrigger }>
             <Heading>
-                { room?.name || t('breakoutRooms.mainRoom') }
+                { room.name || t('breakoutRooms.mainRoom') }
                 { participants.length > 0 && ` (${participants.length})` }
             </Heading>
             <RoomActions children = { children } />

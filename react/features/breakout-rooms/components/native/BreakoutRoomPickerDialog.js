@@ -49,7 +49,7 @@ type Props = {
 };
 
 /**
- * {@code AudioRoutePickerDialog}'s React {@code Component} state types.
+ * {@code BreakoutRoomPickerDialog}'s React {@code Component} state types.
  */
  type State = {};
 

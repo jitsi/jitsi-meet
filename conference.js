@@ -1316,9 +1316,7 @@ export default {
     async joinRoom(roomName) {
         this.roomName = roomName;
 
-        const initialOptions = { startScreenSharing: false };
-
-        const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(initialOptions);
+        const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks();
         const localTracks = await tryCreateLocalTracks;
 
         this._displayErrorsForCreateInitialLocalTracks(errors);
@@ -1337,15 +1335,11 @@ export default {
 
     _createRoom(localTracks) {
         const conferenceOptions = this._getConferenceOptions();
-        const customDomain = /_[-\da-f]{36}$/.test(APP.conference.roomName)
-            ? `breakout.${conferenceOptions.hosts.domain}`
-            : null;
 
         room
             = connection.initJitsiConference(
                 APP.conference.roomName,
-                { ...conferenceOptions,
-                    customDomain });
+                conferenceOptions);
 
         APP.store.dispatch(conferenceWillJoin(room));
 

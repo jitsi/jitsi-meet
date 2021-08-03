@@ -71,6 +71,12 @@ function get_main_room_jid(room_jid)
         or node:sub(1, breakout_room_suffix_index - 1) .. '@' .. main_muc_component_config;
 end
 
+function get_main_room(room_jid)
+    local main_room_jid = get_main_room_jid(room_jid);
+
+    return main_muc_service.get_room_from_jid(main_room_jid), main_room_jid;
+end
+
 function get_room_from_jid(room_jid)
     local _, host = jid_split(room_jid);
 
@@ -130,8 +136,7 @@ function get_participants(room)
 end
 
 function broadcast_breakout_rooms(room_jid)
-    local main_room_jid = get_main_room_jid(room_jid);
-    local main_room = main_muc_service.get_room_from_jid(main_room_jid);
+    local main_room, main_room_jid = get_main_room(room_jid);
 
     if not main_room or main_room._data.is_broadcast_breakout_scheduled then
         return;
@@ -191,10 +196,9 @@ end
 -- Managing breakout rooms
 
 function create_breakout_room(room_jid, from, subject, next_index)
-    local main_room_jid = get_main_room_jid(room_jid);
+    local main_room, main_room_jid = get_main_room(room_jid);
     local node = jid_split(main_room_jid);
     local breakout_room_jid = node .. '_' .. uuid_gen() .. '@' .. breakout_rooms_muc_component_config;
-    local main_room = main_muc_service.get_room_from_jid(main_room_jid);
 
     if not main_room._data.breakout_rooms then
         main_room._data.breakout_rooms = {};
@@ -208,24 +212,25 @@ function create_breakout_room(room_jid, from, subject, next_index)
 end
 
 function destroy_breakout_room(room_jid, message)
-    local main_room_jid = get_main_room_jid(room_jid);
+    local main_room, main_room_jid = get_main_room(room_jid);
 
     if room_jid == main_room_jid then
         return;
     end
 
-    local main_room = main_muc_service.get_room_from_jid(main_room_jid);
     local breakout_room = breakout_rooms_muc_service.get_room_from_jid(room_jid);
 
     if breakout_room then
         message = message or 'Breakout room removed.';
         breakout_room:destroy(main_room_jid, message);
     end
-    if main_room._data.breakout_rooms then
-        main_room._data.breakout_rooms[room_jid] = nil;
+    if main_room then
+        if main_room._data.breakout_rooms then
+            main_room._data.breakout_rooms[room_jid] = nil;
+        end
+        main_room:save(true);
+        broadcast_breakout_rooms(main_room_jid);
     end
-    main_room:save(true);
-    broadcast_breakout_rooms(main_room_jid);
 end
 
 
@@ -277,8 +282,7 @@ end
 
 function handle_breakout_room_pre_create(event)
     local room = event.room;
-    local main_room_jid = get_main_room_jid(room.jid);
-    local main_room = main_muc_service.get_room_from_jid(main_room_jid);
+    local main_room, main_room_jid = get_main_room(room.jid);
 
     if main_room and main_room._data.breakout_rooms then
         room._data.subject = main_room._data.breakout_rooms[room.jid];
@@ -292,8 +296,7 @@ end
 
 function handle_occupant_joined(event)
     local room = event.room;
-    local main_room_jid = get_main_room_jid(room.jid);
-    local main_room = main_muc_service.get_room_from_jid(main_room_jid);
+    local main_room = get_main_room(room.jid);
 
     if jid_split(event.occupant.jid) ~= 'focus' then
         broadcast_breakout_rooms(room.jid);
@@ -335,9 +338,7 @@ end
 
 function handle_occupant_left(event)
     local room = event.room;
-    local main_room_jid = get_main_room_jid(room.jid);
-    local main_room = main_muc_service.get_room_from_jid(main_room_jid);
-    module:log('info', '---- handle_occupant_left', event.occupant.jid, room.jid, main_room_jid, main_room);
+    local main_room, main_room_jid = get_main_room(room.jid);
 
     if jid_split(event.occupant.jid) ~= 'focus' then
         broadcast_breakout_rooms(room.jid);
@@ -349,7 +350,7 @@ function handle_occupant_left(event)
         main_room:save(true);
         timer.add_task(ROOMS_TTL_IF_ALL_LEFT, function()
             if main_room._data.is_close_all_scheduled then
-                module:log('info', 'Closing conference %s as all left for good.', main_room_jid);
+                module:log('debug', 'Closing conference %s as all left for good.', main_room_jid);
                 main_room:set_persistent(false);
                 main_room:save(true);
                 main_room:destroy(main_room_jid, 'All occupants left.');
@@ -388,6 +389,7 @@ function process_host_module(name, callback)
     end
 end
 
+
 -- operates on already loaded breakout rooms muc module
 function process_breakout_rooms_muc_loaded(breakout_rooms_muc, host_module)
     module:log('debug', 'Breakout rooms muc loaded');
@@ -398,12 +400,31 @@ function process_breakout_rooms_muc_loaded(breakout_rooms_muc, host_module)
     host_module:hook('muc-occupant-left', handle_occupant_left);
     host_module:hook('muc-room-pre-create', handle_breakout_room_pre_create);
 
+    host_module:hook('muc-disco#info', function (event)
+        local room = event.room;
+        local main_room = get_main_room(room.jid);
+
+        if (main_room._data.lobbyroom and main_room:get_members_only()) then
+            table.insert(event.form, {
+                name = 'muc#roominfo_lobbyroom';
+                label = 'Lobby room jid';
+                value = '';
+            });
+            event.formdata['muc#roominfo_lobbyroom'] = main_room._data.lobbyroom;
+        end
+    end);
+
     local room_mt = breakout_rooms_muc_service.room_mt;
+
+    room_mt.get_members_only = function(room)
+        local main_room = get_main_room(room.jid);
+
+        return main_room.get_members_only(main_room)
+    end
 
     -- we base affiliations (roles) in breakout rooms muc component to be based on the roles in the main muc
     room_mt.get_affiliation = function(room, jid)
-        local main_room_jid = get_main_room_jid(room.jid);
-        local main_room = main_muc_service.get_room_from_jid(main_room_jid);
+        local main_room, main_room_jid = get_main_room(room.jid);
 
         if not main_room then
             module:log('error', 'No main room(%s) for %s!', room.jid, jid);
@@ -443,10 +464,10 @@ function process_main_muc_loaded(main_muc, host_module)
     module:log('debug', 'Main muc loaded');
 
     main_muc_service = main_muc;
-    host_module:hook('message/full', handle_json_chat_messages, 1000);
-    host_module:hook('muc-occupant-joined', handle_occupant_joined, 1000);
-    host_module:hook('muc-occupant-left', handle_occupant_left, 1000);
-    host_module:hook('muc-room-destroyed', handle_main_room_destroyed, 1000);
+    host_module:hook('message/full', handle_json_chat_messages);
+    host_module:hook('muc-occupant-joined', handle_occupant_joined);
+    host_module:hook('muc-occupant-left', handle_occupant_left);
+    host_module:hook('muc-room-destroyed', handle_main_room_destroyed);
 end
 
 -- process or waits to process the main muc component

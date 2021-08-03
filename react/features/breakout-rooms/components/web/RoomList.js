@@ -8,13 +8,13 @@ import { ThemeProvider } from 'styled-components';
 import { getParticipantCount, isLocalParticipantModerator } from '../../../base/participants';
 import { equals } from '../../../base/redux';
 import ParticipantItem from '../../../participants-pane/components/web/ParticipantItem';
+import { findStyledAncestor } from '../../../participants-pane/functions';
 import { getRooms, isInBreakoutRoom, getCurrentRoomId } from '../../functions';
 
 import { AutoAssignButton } from './AutoAssignButton';
 import { LeaveButton } from './LeaveButton';
 import { RoomContextMenu } from './RoomContextMenu';
 import { RoomItem } from './RoomItem';
-import { findStyledAncestor } from './functions';
 import { RoomContainer } from './styled';
 import theme from './theme.json';
 
@@ -33,7 +33,7 @@ type RaiseContext = NullProto | {
   /**
    * Room reference
    */
-  room?: Object,
+  room: Object,
 };
 
 const initialState = Object.freeze(Object.create(null));

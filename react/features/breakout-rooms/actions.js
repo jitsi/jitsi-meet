@@ -11,7 +11,6 @@ import {
     getCurrentConference,
     setRoom
 } from '../base/conference';
-import { setAudioMuted, setVideoMuted } from '../base/media';
 import { getRemoteParticipants } from '../base/participants';
 import { getConferenceOptions } from '../conference/functions';
 import { clearNotifications } from '../notifications';
@@ -126,7 +125,7 @@ export function autoAssignToBreakoutRooms() {
 export function sendParticipantToRoom(participantId: string, roomId: string) {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const conferenceOptions = getConferenceOptions(getState);
-        const id = participantId.indexOf('@') >= 0
+        const fullJid = participantId.indexOf('@') >= 0
             ? participantId
             : `${getCurrentRoomId(getState)}@${isInBreakoutRoom(getState)
                 ? `breakout.${conferenceOptions.hosts.domain}`
@@ -137,7 +136,7 @@ export function sendParticipantToRoom(participantId: string, roomId: string) {
             roomId
         };
 
-        getCurrentConference(getState).sendMessage(message, id);
+        getCurrentConference(getState).sendMessage(message, fullJid);
     };
 }
 
@@ -149,13 +148,10 @@ export function sendParticipantToRoom(participantId: string, roomId: string) {
  */
 export function moveToRoom(roomId?: string) {
     return (dispatch: Dispatch<any>, getState: Function) => {
-        // FIXME: Move this code to conference.js
-        // respectively the base/conference feature.
         const _roomId = roomId || getMainRoomId(getState);
 
         if (navigator.product === 'ReactNative') {
             const conference = getCurrentConference(getState);
-            const { audio, video } = getState()['features/base/media'];
 
             dispatch(conferenceWillLeave(conference));
             conference.leave()
@@ -168,12 +164,7 @@ export function moveToRoom(roomId?: string) {
             });
             dispatch(clearNotifications());
             dispatch(setRoom(_roomId));
-            dispatch(createConference()).then(result => {
-                dispatch(setAudioMuted(audio.muted));
-                dispatch(setVideoMuted(video.muted));
-
-                return result;
-            });
+            dispatch(createConference());
         } else {
             const join = () => APP.conference.joinRoom(_roomId);
 
