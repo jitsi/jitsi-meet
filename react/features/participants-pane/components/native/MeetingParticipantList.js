@@ -4,7 +4,8 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
-import { connect, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+
 
 import { Icon, IconInviteMore } from '../../../base/icons';
 import {
@@ -12,6 +13,7 @@ import {
     getParticipantCountWithFake,
     getRemoteParticipants
 } from '../../../base/participants';
+import { connect } from '../../../base/redux';
 import { doInvitePeople } from '../../../invite/actions.native';
 import {
     showConnectionStatus,
@@ -54,20 +56,19 @@ const MeetingParticipantList = ({ _localVideoOwner }: Props) => {
                 );
             }
 
-            return null;
+            return (
+                <MeetingParticipantItem
+                    key = { p.id }
+                    participantID = { p.id } />
+            );
         }
 
         return (
             <MeetingParticipantItem
                 key = { p.id }
                 /* eslint-disable-next-line react/jsx-no-bind,no-confusing-arrow */
-                onPress = { () => {
-                    if (p.local) {
-                        dispatch(showConnectionStatus(p.id));
-                    }
-                    dispatch(showContextMenuDetails(p));
-                }
-                }
+                onPress = { () => p.local
+                    ? dispatch(showConnectionStatus(p.id)) : dispatch(showContextMenuDetails(p)) }
                 participantID = { p.id } />
         );
     };

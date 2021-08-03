@@ -166,11 +166,9 @@ function MeetingParticipantItem({
             }
             {
                 _participant.isFakeParticipant && _localVideoOwner && (
-                    <>
-                        <ParticipantActionEllipsis
-                            aria-label = { participantActionEllipsisLabel }
-                            onClick = { onContextMenu } />
-                    </>
+                    <ParticipantActionEllipsis
+                        aria-label = { participantActionEllipsisLabel }
+                        onClick = { onContextMenu } />
                 )
             }
         </ParticipantItem>
