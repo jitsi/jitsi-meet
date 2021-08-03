@@ -14,7 +14,7 @@ import {
     isEveryoneModerator,
     pinParticipant,
     getParticipantByIdOrUndefined,
-    getFakeParticipants, getLocalParticipant
+    getLocalParticipant
 } from '../../../base/participants';
 import { Container } from '../../../base/react';
 import { connect } from '../../../base/redux';
@@ -244,7 +244,6 @@ function _mapStateToProps(state, ownProps) {
     const tracks = state['features/base/tracks'];
     const { participantID } = ownProps;
     const participant = getParticipantByIdOrUndefined(state, participantID);
-    const fakeParticipant = getFakeParticipants(state);
     const localParticipantId = getLocalParticipant(state).id;
     const id = participant?.id;
     const audioTrack
