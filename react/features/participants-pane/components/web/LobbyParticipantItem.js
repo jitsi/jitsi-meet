@@ -29,6 +29,7 @@ export const LobbyParticipantItem = ({ participant: p }: Props) => {
             actionsTrigger = { ACTION_TRIGGER.PERMANENT }
             audioMediaState = { MEDIA_STATE.NONE }
             displayName = { p.name }
+            focusActionTrigger = { ACTION_TRIGGER.FOCUS }
             local = { p.local }
             participantID = { p.id }
             raisedHand = { p.raisedHand }

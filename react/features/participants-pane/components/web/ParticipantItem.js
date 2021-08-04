@@ -87,6 +87,9 @@ type Props = {
      */
     actionsTrigger: ActionTrigger,
 
+    /**
+     * Type of trigger for the participant focus action
+     */
     focusActionTrigger: ActionTrigger,
 
     /**
