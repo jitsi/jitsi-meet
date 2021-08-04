@@ -159,11 +159,7 @@ function Thumbnail(props: Props) {
                     participant
                 }));
             }
-
-            return null;
-        }
-
-        if (!participant.local && !participant.isFakeParticipant) {
+        } else {
             dispatch(openDialog(RemoteVideoMenu, {
                 participant
             }));

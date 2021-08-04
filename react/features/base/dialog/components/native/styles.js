@@ -196,6 +196,13 @@ ColorSchemeRegistry.register('BottomSheet', {
         backgroundColor: BaseTheme.palette.ui02,
         borderTopLeftRadius: 16,
         borderTopRightRadius: 16
+    },
+
+    /**
+     * Bottom sheet's base style with header.
+     */
+    sheetHeader: {
+        backgroundColor: BaseTheme.palette.ui02
     }
 });
 
