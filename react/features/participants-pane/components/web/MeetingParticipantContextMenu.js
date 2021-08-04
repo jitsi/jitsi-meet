@@ -147,6 +147,8 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
         this._containerRef = React.createRef();
 
         this._onGrantModerator = this._onGrantModerator.bind(this);
+        this._onKeyDown = this._onKeyDown.bind(this);
+        this._onEnterKeyDown = this._onEnterKeyDown.bind(this);
         this._onKick = this._onKick.bind(this);
         this._onMuteEveryoneElse = this._onMuteEveryoneElse.bind(this);
         this._onMuteVideo = this._onMuteVideo.bind(this);
@@ -255,15 +257,14 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
         const focusableContent = contextMenu.querySelectorAll(focusableElements);
         const lastFocusableElement = focusableContent[focusableContent.length - 2];
 
-        console.log(contextMenu, 'MENU');
-        console.log(firstFocusableElement, 'FIRST');
-        console.log(lastFocusableElement, 'LAST');
-        console.log(focusableContent, 'CONTENT');
+        if (document.activeElement === contextMenu && e.key === 'Enter') {
+            firstFocusableElement.focus();
+            e.preventDefault();
+        }
 
-        const isTabPressed = e.key === 'Tab' || e.key === 9;
-
-        if (!isTabPressed) {
-            return;
+        if (document.activeElement === contextMenu && e.key === 'Escape') {
+            firstFocusableElement.blur();
+            e.preventDefault();
         }
 
         if (e.shiftKey) {
@@ -277,6 +278,21 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
         }
 
         firstFocusableElement.focus();
+    }
+
+    _onEnterKeyDown: Object => void;
+
+    /**
+     * On enter keydown event.
+     *
+     * @param {Event} e - Key down event object.
+     * @param {Function} action - Function call.
+     * @returns {void}
+     */
+    _onEnterKeyDown(e, action) {
+        if (e.key === 'Enter') {
+            action();
+        }
     }
 
     _position: () => void;
@@ -295,7 +311,10 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
             && offsetTarget.offsetParent instanceof HTMLElement
         ) {
             const { current: container } = this._containerRef;
-            const { offsetTop, offsetParent: { offsetHeight, scrollTop } } = offsetTarget;
+            const {
+                offsetTop,
+                offsetParent: { offsetHeight, scrollTop }
+            } = offsetTarget;
             const outerHeight = getComputedOuterHeight(container);
 
             container.style.top = offsetTop + outerHeight > offsetHeight + scrollTop
@@ -363,7 +382,8 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
                 onClick = { onSelect }
                 onKeyDown = { this._onKeyDown }
                 onMouseEnter = { onEnter }
-                onMouseLeave = { onLeave }>
+                onMouseLeave = { onLeave }
+                tabIndex = '0'>
                 {
                     !_participant.isFakeParticipant && (
                         <>
@@ -375,19 +395,25 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
                                                 !_isParticipantAudioMuted
                                                 && <ContextMenuItem
                                                     onClick = { muteAudio(_participant) }
+                                                    /* eslint-disable-next-line react/jsx-no-bind,max-len */
+                                                    onKeyDown = { e => this._onEnterKeyDown(e, muteAudio(_participant)) }
                                                     tabIndex = '0'>
-                                                    <ContextMenuIcon src = { IconMicDisabled } />
+                                                    <ContextMenuIcon
+                                                        src = { IconMicDisabled } />
                                                     <span>{t('dialog.muteParticipantButton')}</span>
                                                 </ContextMenuItem>
                                             }
 
                                             <ContextMenuItem
                                                 onClick = { this._onMuteEveryoneElse }
+                                                /* eslint-disable-next-line react/jsx-no-bind */
+                                                onKeyDown = { e => this._onEnterKeyDown(e, this._onMuteEveryoneElse) }
                                                 tabIndex = '0'>
-                                                <ContextMenuIcon src = { IconMuteEveryoneElse } />
+                                                <ContextMenuIcon
+                                                    src = { IconMuteEveryoneElse } />
                                                 <span>{t('toolbar.accessibilityLabel.muteEveryoneElse')}</span>
                                             </ContextMenuItem>
-                            </>
+                                        </>
                                     )
                                 }
 
@@ -396,8 +422,11 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
                                         _isParticipantVideoMuted || (
                                             <ContextMenuItem
                                                 onClick = { this._onMuteVideo }
+                                                /* eslint-disable-next-line react/jsx-no-bind */
+                                                onKeyDown = { e => this._onEnterKeyDown(e, this._onMuteVideo) }
                                                 tabIndex = '0'>
-                                                <ContextMenuIcon src = { IconVideoOff } />
+                                                <ContextMenuIcon
+                                                    src = { IconVideoOff } />
                                                 <span>{t('participantsPane.actions.stopVideo')}</span>
                                             </ContextMenuItem>
                                         )
@@ -413,17 +442,23 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
                                                 !_isParticipantModerator && (
                                                     <ContextMenuItem
                                                         onClick = { this._onGrantModerator }
+                                                        /* eslint-disable-next-line react/jsx-no-bind,max-len */
+                                                        onKeyDown = { e => this._onEnterKeyDown(e, this._onGrantModerator) }
                                                         tabIndex = '0'>
-                                                        <ContextMenuIcon src = { IconCrown } />
+                                                        <ContextMenuIcon
+                                                            src = { IconCrown } />
                                                         <span>{t('toolbar.accessibilityLabel.grantModerator')}</span>
                                                     </ContextMenuItem>
                                                 )
                                             }
                                             <ContextMenuItem
                                                 onClick = { this._onKick }
+                                                /* eslint-disable-next-line react/jsx-no-bind */
+                                                onKeyDown = { e => this._onEnterKeyDown(e, this._onKick) }
                                                 tabIndex = '0'>
-                                                <ContextMenuIcon src = { IconCloseCircle } />
-                                                <span>{ t('videothumbnail.kick') }</span>
+                                                <ContextMenuIcon
+                                                    src = { IconCloseCircle } />
+                                                <span>{t('videothumbnail.kick')}</span>
                                             </ContextMenuItem>
                                         </>
                                     )
@@ -432,6 +467,8 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
                                     _isChatButtonEnabled && (
                                         <ContextMenuItem
                                             onClick = { this._onSendPrivateMessage }
+                                            /* eslint-disable-next-line react/jsx-no-bind */
+                                            onKeyDown = { e => this._onEnterKeyDown(e, this._onSendPrivateMessage) }
                                             tabIndex = '0'>
                                             <ContextMenuIcon src = { IconMessage } />
                                             <span>{t('toolbar.accessibilityLabel.privateMessage')}</span>
@@ -454,6 +491,7 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
         );
     }
 }
+
 
 /**
  * Maps (parts of) the redux state to the associated props for this component.
