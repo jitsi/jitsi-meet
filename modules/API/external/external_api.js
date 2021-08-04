@@ -170,7 +170,7 @@ function parseArguments(args) {
 
     switch (typeof firstArg) {
     case 'string': // old arguments format
-    case undefined: {
+    case 'undefined': {
         // Not sure which format but we are trying to parse the old
         // format because if the new format is used everything will be undefined
         // anyway.
