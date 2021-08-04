@@ -13,7 +13,8 @@ import {
     getParticipantCount,
     isEveryoneModerator,
     pinParticipant,
-    getParticipantByIdOrUndefined
+    getParticipantByIdOrUndefined,
+    getLocalParticipant
 } from '../../../base/participants';
 import { Container } from '../../../base/react';
 import { connect } from '../../../base/redux';
@@ -24,6 +25,8 @@ import { DisplayNameLabel } from '../../../display-name';
 import { toggleToolboxVisible } from '../../../toolbox/actions.native';
 import { RemoteVideoMenu } from '../../../video-menu';
 import ConnectionStatusComponent from '../../../video-menu/components/native/ConnectionStatusComponent';
+import SharedVideoMenu
+    from '../../../video-menu/components/native/SharedVideoMenu';
 
 import AudioMutedIndicator from './AudioMutedIndicator';
 import DominantSpeakerIndicator from './DominantSpeakerIndicator';
@@ -47,6 +50,11 @@ type Props = {
      * The Redux representation of the state "features/large-video".
      */
     _largeVideo: Object,
+
+    /**
+     * Shared video local participant owner.
+     */
+    _localVideoOwner: boolean,
 
     /**
      * The Redux representation of the participant to display.
@@ -116,6 +124,7 @@ function Thumbnail(props: Props) {
     const {
         _audioMuted: audioMuted,
         _largeVideo: largeVideo,
+        _localVideoOwner,
         _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,
         _renderModeratorIndicator: renderModeratorIndicator,
         _participant: participant,
@@ -144,11 +153,19 @@ function Thumbnail(props: Props) {
             dispatch(openDialog(ConnectionStatusComponent, {
                 participantID: participant.id
             }));
-        } else {
-            dispatch(openDialog(RemoteVideoMenu, {
-                participant
-            }));
+        } else if (participant.isFakeParticipant) {
+            if (_localVideoOwner) {
+                dispatch(openDialog(SharedVideoMenu, {
+                    participant
+                }));
+            }
+
+            return null;
         }
+
+        dispatch(openDialog(RemoteVideoMenu, {
+            participant
+        }));
     }, [ participant, dispatch ]);
 
     return (
@@ -223,9 +240,11 @@ function _mapStateToProps(state, ownProps) {
     // filmstrip doesn't render the video of the participant who is rendered on
     // the stage i.e. as a large video.
     const largeVideo = state['features/large-video'];
+    const { ownerId } = state['features/shared-video'];
     const tracks = state['features/base/tracks'];
     const { participantID } = ownProps;
     const participant = getParticipantByIdOrUndefined(state, participantID);
+    const localParticipantId = getLocalParticipant(state).id;
     const id = participant?.id;
     const audioTrack
         = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, id);
@@ -240,6 +259,7 @@ function _mapStateToProps(state, ownProps) {
     return {
         _audioMuted: audioTrack?.muted ?? true,
         _largeVideo: largeVideo,
+        _localVideoOwner: Boolean(ownerId === localParticipantId),
         _participant: participant,
         _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,
         _renderModeratorIndicator: renderModeratorIndicator,

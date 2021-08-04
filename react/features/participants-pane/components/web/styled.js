@@ -235,7 +235,6 @@ export const ParticipantActionsHover = styled(ParticipantActions)`
     position: absolute;
     top: 0;
     transform: translateX(-100%);
-    width: 40px;
   }
 `;
 
