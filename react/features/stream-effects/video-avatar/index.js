@@ -4,6 +4,7 @@ import * as facemesh from '@tensorflow-models/face-landmarks-detection';
 import * as tf from '@tensorflow/tfjs';
 
 import JitsiVideoAvatarEffect from './JitsiVideoAvatarEffect';
+import GLTFScene from './utils/GLTFScene';
 import Zoprac from './utils/Scenes/Zoprac';
 
 // import Helmet from './utils/Scenes/Helmet';
@@ -21,6 +22,8 @@ export async function createVideoAvatarEffect() {
 
     // const object = new Helmet();
     const object = new Zoprac();
+
+    // const object = new GLTFScene('images/maskTest/mask.gltf');
 
     return new JitsiVideoAvatarEffect(net, object);
 }

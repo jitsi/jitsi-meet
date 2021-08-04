@@ -143,6 +143,8 @@ export default class JitsiVideoAvatarEffect {
                                                 height);
             }
             this._faceCanvas.render(positionBufferData);
+        } else {
+            // this._faceCanvas.renderInitial();
         }
     }
 

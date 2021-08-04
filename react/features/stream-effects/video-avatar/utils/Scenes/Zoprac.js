@@ -13,6 +13,7 @@ export default class Zoprac extends GLTFScene {
      */
     constructor() {
         super('images/Zoprac/untitled.gltf');
-        this.scale.set(3, 3, 3);
+        this.scale.set(4, 4, 4);
+        this.position.y -= 100;
     }
 }

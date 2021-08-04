@@ -50,5 +50,27 @@ export default class GLTFScene extends THREE.Scene {
         this.position.z += z;
     }
 
+    /**
+     * Sets the rotation to initial values.
+     *
+     * @returns {void}
+     */
+    resetRotation(): void {
+        this.rotation.x = 0;
+        this.rotation.y = 0;
+        this.rotation.z = 0;
+    }
+
+    /**
+     * Sets the position to initial values.
+     *
+     * @returns {void}
+     */
+    resetPosition(): void {
+        this.position.x = 0;
+        this.position.y = 0;
+        this.position.z = 0;
+    }
+
 
 }

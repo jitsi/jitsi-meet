@@ -1,5 +1,6 @@
 // @flow
 import * as THREE from 'three';
+import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
 
 import GLTFScene from './GLTFScene';
 import { TRIANGULATION } from './Triangulation';
@@ -35,6 +36,7 @@ export default class FacePaint {
     _currentArea: number;
     _prevVectors: Object;
     _currentVectors: Object;
+    _prevBuffer: Array<number>;
 
     /**
      * To do.
@@ -108,7 +110,6 @@ export default class FacePaint {
 
         // this._camera.position.z = (this._height / 2) / Math.tan((Math.PI * 45) / 360);
         this._camera.position.z = 800;
-        console.log('CAMERA', this._camera.position.z);
         this._camera.lookAt(new THREE.Vector3(0, 0, 0));
         this._prev = new THREE.Vector3();
         this._current = new THREE.Vector3();
@@ -221,7 +222,7 @@ export default class FacePaint {
     _addMaterial() {
         // this._textureLoader = new THREE.TextureLoader();
 
-        this._material = new THREE.MeshNormalMaterial();
+        this._material = new THREE.MeshNormalMaterial({color: new THREE.Color('0xffffff')});
 
         // const texture = new THREE.VideoTexture(this._background);
 
@@ -242,20 +243,65 @@ export default class FacePaint {
         this._addLights();
         this._addGeometry();
         this._addMaterial();
-        this._mesh = new THREE.Mesh(this._geometry, this._material);
+        this._mesh = new THREE.Mesh(this._geometry, this._backgroundMaterial);
 
-        this._mesh.rotation.x = 9.1;
-        this._mesh.position.x -= 640;
-        this._mesh.position.y += 360;
-        this._mesh.position.z += 70;
+        
         this._scene.add(this._avatarScene);
 
         // this._backgroundMesh = new THREE.Mesh(this._backgroundGeometry, this._backgroundMaterial);
 
         // this._scene.add(this._mesh);
 
+        // eslint-disable-next-line no-undef
+        // const gltfExporter = new GLTFExporter();
+
+        // const options = {
+        //     trs: false,
+        //     onlyVisible: true,
+        //     truncateDrawRange: true,
+        //     binary: false,
+        //     maxTextureSize: 4096 // To prevent NaN value
+        // };
+
+        // gltfExporter.parse(this._mesh, result => {
+        //     if (result instanceof ArrayBuffer) {
+        //         this.saveArrayBuffer(result, 'scene.glb');
+
+        //     } else {
+
+        //         const output = JSON.stringify(result, null, 2);
+
+        //         console.log(output);
+        //         this.saveString(output, 'scene.gltf');
+
+        //     }
+
+        // }, options);
+
         // this._scene.add(this._backgroundMesh);
     }
+
+    // save( blob, filename ) {
+
+	// 			link.href = URL.createObjectURL( blob );
+	// 			link.download = filename;
+	// 			link.click();
+
+	// 			// URL.revokeObjectURL( url ); breaks Firefox...
+
+	// }
+
+    // saveString( text, filename ) {
+
+	// 			this.save( new Blob( [ text ], { type: 'text/plain' } ), filename );
+
+	// }
+
+    // saveArrayBuffer(buffer, filename ) {
+
+	// 			save( new Blob( [ buffer ], { type: 'application/octet-stream' } ), filename );
+
+	// }
 
     /**
      * Gets the area of a triangle.
@@ -348,16 +394,41 @@ export default class FacePaint {
 
             if (this._prev.x !== 0 && this._prev.y !== 0) {
                 this._avatarScene.move(this._difference.x, this._difference.y, depthDiff);
+
+                // const geometry = Array.from(this._avatarScene.children[0].children[0].geometry.attributes.position.array);
+
+                // this._avatarScene.children[0].children[0].material = this._material;
+                // this._avatarScene.position.x = 500;
+
+                // for (let i = 0; i < positionBuffer.length; i += 3) {
+                //     geometry[i] += positionBuffer[i] - this._prevBuffer[i];
+                //     geometry[i + 1] += positionBuffer[i + 1] - this._prevBuffer[i + 1];
+                //     geometry[i + 2] += positionBuffer[i + 2] - this._prevBuffer[i + 2];
+                // }
+
+                // console.log(geometry, positionBuffer);
+                // this._avatarScene.children[0].children[0].geometry.setAttribute('position', new THREE.Float32BufferAttribute(geometry, 3));
+                // this._geometry.attributes.position.needsUpdate = true;
             }
 
             this._prev = this._current.clone();
             this._prevArea = this._currentArea;
             this._prevVectors = this._currentVectors;
+            
         }
+        this._prevBuffer = positionBuffer;
         this._renderer.render(this._scene, this._camera);
+    }
 
-        // this._geometry.setAttribute('position', new THREE.Float32BufferAttribute(positionBuffer, 3));
-        // this._geometry.attributes.position.needsUpdate = true;
+    /**
+     * Render in initial position.
+     *
+     * @returns {void}
+     */
+    renderInitial(): void {
+        this._avatarScene.resetRotation();
+        this._avatarScene.resetPosition();
+        this._renderer.render(this._scene, this._camera);
     }
 
 }
