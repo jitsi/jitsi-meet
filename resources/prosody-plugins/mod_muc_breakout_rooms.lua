@@ -156,8 +156,7 @@ function broadcast_breakout_rooms(room_jid)
                 id = main_room_id,
                 jid = main_room_jid,
                 name = main_room._data.subject,
-                participants = get_participants(main_room),
-                room = main_room
+                participants = get_participants(main_room)
             };
         }
 
@@ -168,8 +167,7 @@ function broadcast_breakout_rooms(room_jid)
             rooms[breakout_room_id] = {
                 id = breakout_room_id,
                 jid = breakout_room_jid,
-                name = subject,
-                room = breakout_room
+                name = subject
             }
             if breakout_room then
                 rooms[breakout_room_id].participants = get_participants(breakout_room);
