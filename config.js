@@ -71,7 +71,7 @@ var config = {
     },
 
     // Enables reactions feature.
-    enableReactions: false,
+    // enableReactions: false,
 
     // Disables ICE/UDP by filtering out local and remote UDP candidates in
     // signalling.
