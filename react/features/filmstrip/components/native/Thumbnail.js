@@ -159,13 +159,11 @@ function Thumbnail(props: Props) {
                     participant
                 }));
             }
-
-            return null;
+        } else {
+            dispatch(openDialog(RemoteVideoMenu, {
+                participant
+            }));
         }
-
-        dispatch(openDialog(RemoteVideoMenu, {
-            participant
-        }));
     }, [ participant, dispatch ]);
 
     return (
