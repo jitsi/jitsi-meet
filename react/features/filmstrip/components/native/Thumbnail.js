@@ -163,9 +163,11 @@ function Thumbnail(props: Props) {
             return null;
         }
 
-        dispatch(openDialog(RemoteVideoMenu, {
-            participant
-        }));
+        if (!participant.local && !participant.isFakeParticipant) {
+            dispatch(openDialog(RemoteVideoMenu, {
+                participant
+            }));
+        }
     }, [ participant, dispatch ]);
 
     return (
