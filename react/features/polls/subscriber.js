@@ -1,6 +1,7 @@
 // @flow
 
 import { getCurrentConference } from '../base/conference';
+import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { StateListenerRegistry } from '../base/redux';
 import {
     NOTIFICATION_TIMEOUT,
@@ -56,7 +57,7 @@ StateListenerRegistry.register(
     state => getCurrentConference(state),
     (conference, store, previousConference) => {
         if (conference && conference !== previousConference) {
-            conference.room.addListener('xmmp.json_message_received', (senderJid, data) => {
+            const receiveMessage = (_, data) => {
                 if (data.type === COMMAND_NEW_POLL) {
                     const { question, answers, pollId, senderId, senderName } = data;
 
@@ -106,7 +107,9 @@ StateListenerRegistry.register(
                         }
                     }
                 }
-            });
+            };
+            conference.on(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED, receiveMessage);
+            conference.on(JitsiConferenceEvents.NON_PARTICIPANT_MESSAGE_RECEIVED, receiveMessage);
         }
     }
 );
