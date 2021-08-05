@@ -65,6 +65,7 @@ Component "conference.jitmeet.example.com" "muc"
     modules_enabled = {
         "muc_meeting_id";
         "muc_domain_mapper";
+        "polls";
         --"token_verification";
     }
     admins = { "focusUser@auth.jitmeet.example.com" }
