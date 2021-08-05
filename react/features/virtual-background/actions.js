@@ -2,7 +2,7 @@
 
 import { createVirtualBackgroundEffect } from '../stream-effects/virtual-background';
 
-import { BACKGROUND_ENABLED, SET_VIRTUAL_BACKGROUND } from './actionTypes';
+import { BACKGROUND_ENABLED, SET_VIRTUAL_BACKGROUND, CHANGE_BACKGROUND } from './actionTypes';
 import logger from './logger';
 
 /**
@@ -69,5 +69,13 @@ export function backgroundEnabled(backgroundEffectEnabled: boolean) {
     return {
         type: BACKGROUND_ENABLED,
         backgroundEffectEnabled
+    };
+}
+
+/**
+ */
+export function changeBackground() {
+    return {
+        type: CHANGE_BACKGROUND
     };
 }

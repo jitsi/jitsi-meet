@@ -1,6 +1,9 @@
 import * as faceapi from 'face-api.js';
 
-
+/**
+ * @param  {HTMLVideoElement} videoInput
+ * @param  {HTMLCanvasElement} outputCanvas
+ */
 export async function detectFacialExpression(videoInput: HTMLVideoElement, outputCanvas: HTMLCanvasElement) {
     const { height, width } = videoInput;
     const outputCanvasContext = outputCanvas.getContext('2d');

@@ -12,18 +12,23 @@ let interval;
 const videoElement = document.createElement('video');
 const outputCanvas = document.createElement('canvas');
 
+/**
+ * @param  {boolean} loaded
+ */
 function setFacialRecognitionModelsLoaded(loaded: boolean) {
     return {
         type: SET_FACIAL_RECOGNITION_MODELS_LOADED,
         payload: loaded
     };
 }
-
-export function maybeStartFacialRecognition() {
+/**
+ */
+export function maybeStartFacialRecognition(track) {
     return async function(dispatch: Function, getState: Function) {
         if (interval) {
             return;
         }
+        console.log('STAAART');
 
         const state = getState();
         const { facialRecognitionModelsLoaded } = state['features/facial-recognition'];
@@ -40,8 +45,8 @@ export function maybeStartFacialRecognition() {
             }
         }
 
-        const { jitsiTrack: localVideoTrack } = getLocalVideoTrack(state['features/base/tracks']);
-        const stream = localVideoTrack.getOriginalStream();
+        // const { jitsiTrack: localVideoTrack } = getLocalVideoTrack(state['features/base/tracks']);
+        const stream = track.getOriginalStream();
         const firstVideoTrack = stream.getVideoTracks()[0];
         const { height, width } = firstVideoTrack.getSettings() ?? firstVideoTrack.getConstraints();
 
@@ -55,13 +60,30 @@ export function maybeStartFacialRecognition() {
 
         videoElement.onloadeddata = () => {
             interval = setInterval(() => detectFacialExpression(videoElement, outputCanvas), 5000);
-        }
+        };
+        document.body.append(videoElement);
 
-    }
+    };
 }
-
+/**
+ */
 export function stopFacialRecognition() {
+    console.log('STOP');
     clearInterval(interval);
     videoElement.onloadeddata = null;
     interval = null;
+}
+
+/**
+ */
+export function resetTrack() {
+    return function(dispatch: Function, getState: Function) {
+        console.log('RESET');
+        videoElement.onloadeddata = null;
+        const state = getState();
+        const { jitsiTrack: localVideoTrack } = getLocalVideoTrack(state['features/base/tracks']);
+        const stream = localVideoTrack.getOriginalStream();
+
+        videoElement.srcObject = stream;
+    };
 }
