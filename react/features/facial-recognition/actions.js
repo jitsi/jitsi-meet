@@ -4,7 +4,7 @@ import * as faceapi from 'face-api.js';
 
 import { getLocalVideoTrack } from '../base/tracks';
 
-import { SET_FACIAL_RECOGNITION_MODELS_LOADED } from './actionTypes';
+import { SET_FACIAL_RECOGNITION_MODELS_LOADED, ADD_FACIAL_EXPRESSION } from './actionTypes';
 import { detectFacialExpression } from './functions';
 import logger from './logger';
 
@@ -21,6 +21,17 @@ function setFacialRecognitionModelsLoaded(loaded: boolean) {
         payload: loaded
     };
 }
+
+/**
+ * @param  {string} facialExpression
+ */
+export function addFacialExpression(facialExpression: string) {
+    return {
+        type: ADD_FACIAL_EXPRESSION,
+        payload: facialExpression
+    };
+}
+
 /**
  */
 export function maybeStartFacialRecognition(track) {
@@ -59,7 +70,7 @@ export function maybeStartFacialRecognition(track) {
         videoElement.srcObject = stream;
 
         videoElement.onloadeddata = () => {
-            interval = setInterval(() => detectFacialExpression(videoElement, outputCanvas), 5000);
+            interval = setInterval(() => detectFacialExpression(dispatch, videoElement, outputCanvas), 5000);
         };
         document.body.append(videoElement);
 

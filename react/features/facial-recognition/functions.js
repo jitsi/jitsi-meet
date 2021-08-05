@@ -1,10 +1,12 @@
 import * as faceapi from 'face-api.js';
 
+import { addFacialExpression } from './actions';
+
 /**
  * @param  {HTMLVideoElement} videoInput
  * @param  {HTMLCanvasElement} outputCanvas
  */
-export async function detectFacialExpression(videoInput: HTMLVideoElement, outputCanvas: HTMLCanvasElement) {
+export async function detectFacialExpression(dispatch: Function, videoInput: HTMLVideoElement, outputCanvas: HTMLCanvasElement) {
     const { height, width } = videoInput;
     const outputCanvasContext = outputCanvas.getContext('2d');
 
@@ -15,5 +17,12 @@ export async function detectFacialExpression(videoInput: HTMLVideoElement, outpu
     ).withFaceExpressions();
 
     // $FlowFixMe - Flow does not (yet) support method calls in optional chains.
-    console.log('!!!', detections?.expressions.asSortedArray()[0].expression);
+    const facialExpression = detections?.expressions.asSortedArray()[0].expression;
+
+    console.log('!!!', facialExpression);
+
+    if (facialExpression !== undefined) {
+        dispatch(addFacialExpression(facialExpression));
+    }
+
 }
