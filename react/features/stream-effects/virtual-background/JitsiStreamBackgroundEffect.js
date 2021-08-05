@@ -140,53 +140,34 @@ export default class JitsiStreamBackgroundEffect {
         // Draw the background.
 
         this._outputCanvasCtx.globalCompositeOperation = 'destination-over';
-        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE
-            || backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
 
-            if (backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE) {
-                this._outputCanvasCtx.drawImage(
-                    this._virtualImage,
-                    0,
-                    0,
-                    this._outputCanvasElement.width,
-                    this._outputCanvasElement.height
-                );
-            } else {
-                const canvasWidth = this._outputCanvasElement.width;
-                const canvasHeight = this._outputCanvasElement.height;
-                const videoWidth = this._virtualVideo.videoWidth;
-                const videoHeight = this._virtualVideo.videoHeight;
+        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE) {
+            this._outputCanvasCtx.drawImage(
+                this._virtualImage,
+                0,
+                0,
+                this._outputCanvasElement.width,
+                this._outputCanvasElement.height
+            );
+        }
+        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
+            // Get the scale.
+            const scale = Math.min(
+                this._outputCanvasElement.width / this._virtualVideo.videoWidth,
+                this._outputCanvasElement.height / this._virtualVideo.videoHeight
+            );
 
-                if (canvasWidth / canvasHeight < videoWidth / videoHeight) {
-                    const th = canvasWidth * videoHeight / videoWidth;
+            // Get the top left position of the video.
+            const x = (this._outputCanvasElement.width / 2) - ((this._virtualVideo.videoWidth / 2) * scale);
+            const y = (this._outputCanvasElement.height / 2) - ((this._virtualVideo.videoHeight / 2) * scale);
 
-                    this._outputCanvasCtx.drawImage(
-                        this._virtualVideo,
-                        0,
-                        0,
-                        videoWidth,
-                        videoHeight,
-                        0,
-                        (canvasHeight - th) / 2,
-                        canvasWidth,
-                        th
-                    );
-                } else {
-                    const tw = canvasHeight * videoWidth / videoHeight;
-
-                    this._outputCanvasCtx.drawImage(
-                        this._virtualVideo,
-                        0,
-                        0,
-                        videoWidth,
-                        videoHeight,
-                        (canvasWidth - tw) / 2,
-                        0,
-                        tw,
-                        canvasHeight
-                    );
-                }
-            }
+            this._outputCanvasCtx.drawImage(
+                this._virtualVideo,
+                x,
+                y,
+                this._virtualVideo.videoWidth * scale,
+                this._virtualVideo.videoHeight * scale
+            );
         } else {
             this._outputCanvasCtx.filter = `blur(${this._options.virtualBackground.blurValue}px)`;
             this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
@@ -209,7 +190,7 @@ export default class JitsiStreamBackgroundEffect {
             const backgroundExp = Math.exp(background - shift);
             const personExp = Math.exp(person - shift);
 
-            // Sets only the alpha component of eacanvasHeight pixel.
+            // Sets only the alpha component of each pixel.
             this._segmentationMask.data[(i * 4) + 3] = (255 * personExp) / (backgroundExp + personExp);
         }
         this._segmentationMaskCtx.putImageData(this._segmentationMask, 0, 0);
@@ -266,7 +247,7 @@ export default class JitsiStreamBackgroundEffect {
     }
 
     /**
-     * CanvasHeightecks if the local track supports this effect.
+     * Checks if the local track supports this effect.
      *
      * @param {JitsiLocalTrack} jitsiLocalTrack - Track to apply effect.
      * @returns {boolean} - Returns true if this effect can run on the specified track
