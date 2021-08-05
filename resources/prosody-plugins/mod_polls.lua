@@ -1,3 +1,7 @@
+-- This module provides persistence for the "polls" feature,
+-- by keeping track of the state of polls in each room, and sending
+-- that state to new participants when they join.
+
 local json = require("util.json");
 local st = require("util.stanza");
 
@@ -6,6 +10,9 @@ local muc = module:depends("muc");
 
 local is_healthcheck_room = util.is_healthcheck_room;
 
+-- Checks if the given stanza contains a JSON message,
+-- and that the message type pertains to the polls feature.
+-- If yes, returns the parsed message. Otherwise, returns nil.
 local function get_poll_message(stanza)
 	if stanza.attr.type ~= "groupchat" then
 		return nil;
@@ -21,6 +28,8 @@ local function get_poll_message(stanza)
 	return data;
 end
 
+-- Logs a warning and returns true if a room does not
+-- have poll data associated with it.
 local function check_polls(room)
 	if room.polls == nil then
 		module:log("warn", "no polls data in room");
@@ -29,6 +38,7 @@ local function check_polls(room)
 	return false;
 end
 
+-- Sets up poll data in new rooms.
 module:hook("muc-room-created", function(event)
 	local room = event.room;
 	if is_healthcheck_room(room.jid) then return end
@@ -39,6 +49,10 @@ module:hook("muc-room-created", function(event)
 	};
 end);
 
+-- Keeps track of the current state of the polls in each room,
+-- by listening to "new-poll" and "answer-poll" messages,
+-- and updating the room poll data accordingly.
+-- This mirrors the client-side poll update logic.
 module:hook("message/bare", function(event)
 	local data = get_poll_message(event.stanza);
 	if data == nil then return end
@@ -78,6 +92,7 @@ module:hook("message/bare", function(event)
 	end
 end);
 
+-- Sends the current poll state to new occupants after joining a room.
 module:hook("muc-occupant-joined", function(event)
 	local room = event.room;
 	if is_healthcheck_room(room.jid) then return end
