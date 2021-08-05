@@ -295,6 +295,18 @@
         margin: 200px auto 0 auto;
     }
 
+    &-btn-wrapper{
+        background: #131519;
+        box-shadow: 0 2px 8px 4px rgb(0 0 0 / 25%), 0 0 0 1px rgb(0 0 0 / 15%);
+        border-radius: 6px;
+        margin: 0 auto;
+        padding: 6px;
+        text-align: center;
+        display: flex;
+        justify-content: space-between;
+        min-width: 165px;
+    }
+
     &-btn-container {
         display: flex;
         justify-content: center;

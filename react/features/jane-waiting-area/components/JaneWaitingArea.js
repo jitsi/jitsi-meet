@@ -48,9 +48,11 @@ class JaneWaitingArea extends Component<Props> {
                     connection && <Modal isMobile = { isMobile } />
                 }
                 <div className = 'jane-waiting-area-preview-btn-container settings-button-container'>
-                    <AudioSettingsButton visible = { true } />
-                    <JaneHangupButton visible = { true } />
-                    <VideoSettingsButton visible = { true } />
+                    <div className = 'jane-waiting-area-preview-btn-wrapper'>
+                        <AudioSettingsButton visible = { true } />
+                        <VideoSettingsButton visible = { true } />
+                        <JaneHangupButton visible = { true } />
+                    </div>
                 </div>
                 {deviceStatusVisible && <DeviceStatus />}
                 {

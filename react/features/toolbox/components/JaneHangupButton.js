@@ -53,7 +53,7 @@ class JaneHangupButton extends Component<Props> {
                         </span> }
                     isOpen = { tooltipText && tooltipText.length > 0 }
                     position = { 'top center' }>
-                    <div className = 'jane-hangup-btn-icon'>
+                    <div className = 'toolbox-icon hangup-button'>
                         <Icon
                             onClick = { this._onClick }
                             src = { IconHangup } />
