@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.facebook.react.bridge.ReadableMap;
+import com.google.gson.Gson;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
@@ -44,7 +45,7 @@ public class BroadcastEvent {
 
             for (String key : this.data.keySet()) {
                 try {
-                    intent.putExtra(key, this.data.get(key).toString());
+                    intent.putExtra(key, new Gson().toJson(this.data.get(key)));
                 } catch (Exception e) {
                     JitsiMeetLogger.w(TAG + " invalid extra data in event", e);
                 }
