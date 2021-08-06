@@ -16,6 +16,11 @@ import { getSessionStatusToShow } from '../functions';
 type Props = {
 
     /**
+     * Whether this is the Jibri recorder participant.
+     */
+    _iAmRecorder: boolean,
+
+    /**
      * The status of the highermost priority session.
      */
     _status: ?string,
@@ -100,7 +105,7 @@ export default class AbstractRecordingLabel
      * @inheritdoc
      */
     render() {
-        return this.props._status && !this.state.staleLabel
+        return this.props._status && !this.state.staleLabel && !this.props._iAmRecorder
             ? this._renderLabel() : null;
     }
 
@@ -172,6 +177,7 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
     const { mode } = ownProps;
 
     return {
+        _iAmRecorder: state['features/base/config'].iAmRecorder,
         _status: getSessionStatusToShow(state, mode)
     };
 }

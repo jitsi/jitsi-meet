@@ -904,14 +904,31 @@ var config = {
     // If true, tile view will not be enabled automatically when the participants count threshold is reached.
     // disableTileView: true,
 
+    // Controls the visibility and behavior of the top header conference info labels.
+    // If a label's id is not in any of the 2 arrays, it will not be visible at all on the header.
+    // conferenceInfo: {
+    //     // those labels will not be hidden in tandem with the toolbox.
+    //     alwaysVisible: ['recording', 'local-recording'],
+    //     // those labels will be auto-hidden in tandem with the toolbox buttons.
+    //     autoHide: [
+    //         'subject',
+    //         'conference-timer',
+    //         'participants-count',
+    //         'e2ee',
+    //         'transcribing',
+    //         'video-quality',
+    //         'insecure-room'
+    //     ]
+    // },
+
     // Hides the conference subject
     // hideConferenceSubject: true,
 
-    // Hides the recording label
-    // hideRecordingLabel: false,
-
     // Hides the conference timer.
     // hideConferenceTimer: true,
+
+    // Hides the recording label
+    // hideRecordingLabel: false,
 
     // Hides the participants stats
     // hideParticipantsStats: true,

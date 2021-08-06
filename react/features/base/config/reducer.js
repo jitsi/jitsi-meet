@@ -2,6 +2,7 @@
 
 import _ from 'lodash';
 
+import { CONFERENCE_INFO } from '../../conference/components/constants';
 import { equals, ReducerRegistry } from '../redux';
 
 import {
@@ -173,6 +174,27 @@ function _setConfig(state, { config }) {
 }
 
 /**
+ * Processes the conferenceInfo object against the defaults.
+ *
+ * @param {Object} config - The old config.
+ * @returns {Object} The processed conferenceInfo object.
+ */
+function _getConferenceInfo(config) {
+    const { conferenceInfo } = config;
+
+    if (conferenceInfo) {
+        return {
+            alwaysVisible: conferenceInfo.alwaysVisible ?? [ ...CONFERENCE_INFO.alwaysVisible ],
+            autoHide: conferenceInfo.autoHide ?? [ ...CONFERENCE_INFO.autoHide ]
+        };
+    }
+
+    return {
+        ...CONFERENCE_INFO
+    };
+}
+
+/**
  * Constructs a new config {@code Object}, if necessary, out of a specific
  * config {@code Object} which is in the latest format supported by jitsi-meet.
  * Such a translation from an old config format to a new/the latest config
@@ -192,6 +214,46 @@ function _translateLegacyConfig(oldValue: Object) {
     if (!Array.isArray(oldValue.toolbarButtons)
             && typeof interfaceConfig === 'object' && Array.isArray(interfaceConfig.TOOLBAR_BUTTONS)) {
         newValue.toolbarButtons = interfaceConfig.TOOLBAR_BUTTONS;
+    }
+
+    const {
+        hideConferenceTimer,
+        hideConferenceSubject,
+        hideParticipantsStats,
+        hideRecordingLabel
+    } = oldValue;
+
+    if (hideConferenceTimer || hideConferenceSubject || hideParticipantsStats || hideRecordingLabel) {
+        newValue.conferenceInfo = _getConferenceInfo(oldValue);
+
+        if (hideConferenceTimer) {
+            newValue.conferenceInfo.alwaysVisible
+                = newValue.conferenceInfo.alwaysVisible.filter(c => c !== 'conference-timer');
+            newValue.conferenceInfo.autoHide
+                = newValue.conferenceInfo.autoHide.filter(c => c !== 'conference-timer');
+        }
+        if (hideConferenceSubject) {
+            newValue.conferenceInfo.alwaysVisible
+                = newValue.conferenceInfo.alwaysVisible.filter(c => c !== 'subject');
+            newValue.conferenceInfo.autoHide
+                = newValue.conferenceInfo.autoHide.filter(c => c !== 'subject');
+        }
+        if (hideParticipantsStats) {
+            newValue.conferenceInfo.alwaysVisible
+                = newValue.conferenceInfo.alwaysVisible.filter(c => c !== 'participants-count');
+            newValue.conferenceInfo.autoHide
+                = newValue.conferenceInfo.autoHide.filter(c => c !== 'participants-count');
+        }
+
+        // hideRecordingLabel does not mean not render it at all, but autoHide it
+        if (hideRecordingLabel) {
+            const recValues = [ 'recording', 'local-recording' ];
+
+            newValue.conferenceInfo.alwaysVisible
+                = newValue.conferenceInfo.alwaysVisible.filter(c => !recValues.includes(c));
+            newValue.conferenceInfo.autoHide
+                = _.union(newValue.conferenceInfo.autoHide, recValues);
+        }
     }
 
     if (!oldValue.connectionIndicators
