@@ -87,7 +87,7 @@ function ResizeAndDrag({ options, _currentCameraDeviceId, dispatch }: Props) {
                 window.requestAnimationFrame(step);
             });
 
-            // create new transformer
+            // Create new transformer.
             const desktopTr = new Konva.Transformer({
                 centeredScaling: false,
                 node: desktopImage
@@ -132,7 +132,7 @@ function ResizeAndDrag({ options, _currentCameraDeviceId, dispatch }: Props) {
                 window.requestAnimationFrame(step);
             });
 
-            // create new transformer
+            // Create new transformer.
             const tr = new Konva.Transformer({
                 node: image,
                 ignoreStroke: true
