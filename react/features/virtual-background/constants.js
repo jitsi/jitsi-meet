@@ -9,7 +9,20 @@ export const VIRTUAL_BACKGROUND_TYPE = {
     IMAGE: 'image',
     DESKTOP_SHARE: 'desktop-share',
     BLUR: 'blur',
-    NONE: 'none'
+    NONE: 'none',
+    TRANSPARENT: 'transparent'
+};
+
+/**
+ * An enumeration of the different desktop share dimensions types.
+ *
+ * @enum {string}
+ */
+export const DESKTOP_SHARE_DIMENSIONS = {
+    RECTANGLE_WIDTH: 200,
+    RECTANGLE_HEIGHT: 100,
+    CONTAINER_WIDTH: 570,
+    CONTAINER_HEIGHT: 250
 };
 
 

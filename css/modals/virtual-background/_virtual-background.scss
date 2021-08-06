@@ -201,3 +201,11 @@
     top: 40%;
     left: 45%;
 }
+
+.drag-and-resize-area{
+    position: absolute;
+    z-index:10;
+    left: 50%;
+    top: 34%;
+    transform: translate(-50%,-50%);
+}

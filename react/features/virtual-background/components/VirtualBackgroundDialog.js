@@ -23,6 +23,7 @@ import logger from '../logger';
 
 import UploadImageButton from './UploadImageButton';
 import VirtualBackgroundPreview from './VirtualBackgroundPreview';
+import ResizeAndDrag from './ResizeAndDrag';
 
 type Props = {
 
@@ -371,9 +372,19 @@ function VirtualBackground({
             onSubmit = { applyVirtualBackground }
             submitDisabled = { !options || loading || !previewIsLoaded }
             titleKey = { 'virtualBackground.title' } >
-            <VirtualBackgroundPreview
-                loadedPreview = { loadedPreviewState }
-                options = { options } />
+            {selectedThumbnail === 'desktop-share-transform'
+                || selectedThumbnail === 'transparent-preview'
+                ? <div className = 'virtual-background-preview-dnd'>
+                    <ResizeAndDrag
+                        dispatch = { dispatch }
+                        screen = { existingSharing }
+                        updateTransparent = { updateTransparentOptions } />
+                </div>
+                : <div className = 'virtual-background-preview'>
+                    <VirtualBackgroundPreview
+                        loadedPreview = { loadedPreviewState }
+                        options = { options } />
+                </div>}
             {loading ? (
                 <div className = 'virtual-background-loading'>
                     <Spinner

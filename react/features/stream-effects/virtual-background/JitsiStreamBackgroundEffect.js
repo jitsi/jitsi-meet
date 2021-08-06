@@ -29,6 +29,7 @@ export default class JitsiStreamBackgroundEffect {
     _segmentationMaskCanvas: Object;
     _renderMask: Function;
     _virtualImage: HTMLImageElement;
+    _virtualCanvas: HTMLImageElement;
     _virtualVideo: HTMLVideoElement;
     isEnabled: Function;
     startEffect: Function;
@@ -149,8 +150,9 @@ export default class JitsiStreamBackgroundEffect {
                 this._outputCanvasElement.width,
                 this._outputCanvasElement.height
             );
-        }
-        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
+        } else if (backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT) {
+            this._outputCanvasCtx.globalAlpha = 0;
+        } else if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
             // Get the scale.
             const scale = Math.min(
                 this._outputCanvasElement.width / this._virtualVideo.videoWidth,
