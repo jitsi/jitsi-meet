@@ -592,6 +592,7 @@
     },
     "participantsPane": {
         "close": "Close",
+        "header": "Participants",
         "headings": {
             "lobby": "Lobby ({{count}})",
             "participantsList": "Meeting participants ({{count}})",

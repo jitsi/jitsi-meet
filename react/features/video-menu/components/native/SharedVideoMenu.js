@@ -7,26 +7,16 @@ import { Divider } from 'react-native-paper';
 import { Avatar } from '../../../base/avatar';
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, isDialogOpen } from '../../../base/dialog';
-import { KICK_OUT_ENABLED, getFeatureFlag } from '../../../base/flags';
 import {
     getParticipantById,
     getParticipantDisplayName
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
-import { PrivateMessageButton } from '../../../chat';
-import { hideRemoteVideoMenu } from '../../actions.native';
-import ConnectionStatusButton from '../native/ConnectionStatusButton';
+import { SharedVideoButton } from '../../../shared-video/components';
+import { hideSharedVideoMenu } from '../../actions.native';
 
-import GrantModeratorButton from './GrantModeratorButton';
-import KickButton from './KickButton';
-import MuteButton from './MuteButton';
-import MuteEveryoneElseButton from './MuteEveryoneElseButton';
-import MuteVideoButton from './MuteVideoButton';
-import PinButton from './PinButton';
 import styles from './styles';
-
-// import VolumeSlider from './VolumeSlider';
 
 
 /**
@@ -52,21 +42,6 @@ type Props = {
     _bottomSheetStyles: StyleType,
 
     /**
-     * Whether or not to display the kick button.
-     */
-    _disableKick: boolean,
-
-    /**
-     * Whether or not to display the remote mute buttons.
-     */
-    _disableRemoteMute: boolean,
-
-    /**
-     * Whether or not to display the grant moderator button.
-     */
-    _disableGrantModerator: Boolean,
-
-    /**
      * True if the menu is currently open, false otherwise.
      */
     _isOpen: boolean,
@@ -88,12 +63,12 @@ type Props = {
 }
 
 // eslint-disable-next-line prefer-const
-let RemoteVideoMenu_;
+let SharedVideoMenu_;
 
 /**
- * Class to implement a popup menu that opens upon long pressing a thumbnail.
+ * Class to implement a popup menu that opens upon long pressing a fake participant thumbnail.
  */
-class RemoteVideoMenu extends PureComponent<Props> {
+class SharedVideoMenu extends PureComponent<Props> {
     /**
      * Constructor of the component.
      *
@@ -113,12 +88,10 @@ class RemoteVideoMenu extends PureComponent<Props> {
      */
     render() {
         const {
-            _disableKick,
-            _disableRemoteMute,
-            _disableGrantModerator,
             _isParticipantAvailable,
             participant
         } = this.props;
+
         const buttonProps = {
             afterClick: this._onCancel,
             showLabel: true,
@@ -131,17 +104,8 @@ class RemoteVideoMenu extends PureComponent<Props> {
                 onCancel = { this._onCancel }
                 renderHeader = { this._renderMenuHeader }
                 showSlidingView = { _isParticipantAvailable }>
-                { !_disableRemoteMute && <MuteButton { ...buttonProps } /> }
-                <MuteEveryoneElseButton { ...buttonProps } />
-                { !_disableRemoteMute && <MuteVideoButton { ...buttonProps } /> }
                 <Divider style = { styles.divider } />
-                { !_disableKick && <KickButton { ...buttonProps } /> }
-                { !_disableGrantModerator && <GrantModeratorButton { ...buttonProps } /> }
-                <PinButton { ...buttonProps } />
-                <PrivateMessageButton { ...buttonProps } />
-                <ConnectionStatusButton { ...buttonProps } />
-                {/* <Divider style = { styles.divider } />*/}
-                {/* <VolumeSlider participantID = { _participantID } />*/}
+                <SharedVideoButton { ...buttonProps } />
             </BottomSheet>
         );
     }
@@ -149,14 +113,14 @@ class RemoteVideoMenu extends PureComponent<Props> {
     _onCancel: () => boolean;
 
     /**
-     * Callback to hide the {@code RemoteVideoMenu}.
+     * Callback to hide the {@code SharedVideoMenu}.
      *
      * @private
      * @returns {boolean}
      */
     _onCancel() {
         if (this.props._isOpen) {
-            this.props.dispatch(hideRemoteVideoMenu());
+            this.props.dispatch(hideSharedVideoMenu());
 
             return true;
         }
@@ -199,25 +163,18 @@ class RemoteVideoMenu extends PureComponent<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state, ownProps) {
-    const kickOutEnabled = getFeatureFlag(state, KICK_OUT_ENABLED, true);
     const { participant } = ownProps;
-    const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
     const isParticipantAvailable = getParticipantById(state, participant.id);
-    let { disableKick } = remoteVideoMenu;
-
-    disableKick = disableKick || !kickOutEnabled;
 
     return {
         _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
-        _disableKick: Boolean(disableKick),
-        _disableRemoteMute: Boolean(disableRemoteMute),
-        _isOpen: isDialogOpen(state, RemoteVideoMenu_),
+        _isOpen: isDialogOpen(state, SharedVideoMenu_),
         _isParticipantAvailable: Boolean(isParticipantAvailable),
         _participantDisplayName: getParticipantDisplayName(state, participant.id),
         _participantID: participant.id
     };
 }
 
-RemoteVideoMenu_ = connect(_mapStateToProps)(RemoteVideoMenu);
+SharedVideoMenu_ = connect(_mapStateToProps)(SharedVideoMenu);
 
-export default RemoteVideoMenu_;
+export default SharedVideoMenu_;

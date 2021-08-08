@@ -5,10 +5,10 @@ import React from 'react';
 import { batch } from 'react-redux';
 
 import { BaseApp } from '../../../features/base/app';
+import { getConferenceOptions } from '../../base/conference/functions';
 import { setConfig } from '../../base/config';
 import { DialogContainer } from '../../base/dialog';
 import { createPrejoinTracks } from '../../base/tracks';
-import { getConferenceOptions } from '../../conference/functions';
 import { initPrejoin, makePrecallTest } from '../actions';
 
 import Prejoin from './Prejoin';

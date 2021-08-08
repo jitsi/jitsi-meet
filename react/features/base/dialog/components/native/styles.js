@@ -2,6 +2,7 @@
 
 import { StyleSheet } from 'react-native';
 
+import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
 import { ColorSchemeRegistry, schemeColor } from '../../../color-scheme';
 import { BoxModel, ColorPalette } from '../../../styles';
 import { PREFERRED_DIALOG_SIZE } from '../../constants';
@@ -171,7 +172,7 @@ ColorSchemeRegistry.register('BottomSheet', {
          */
         labelStyle: {
             ...brandedDialogLabelStyle,
-            marginLeft: 32
+            marginLeft: 16
         },
 
         /**
@@ -179,7 +180,6 @@ ColorSchemeRegistry.register('BottomSheet', {
          */
         style: {
             ...brandedDialogItemContainerStyle,
-            backgroundColor: ColorPalette.darkBackground,
             paddingHorizontal: MD_ITEM_MARGIN_PADDING
         },
 
@@ -193,9 +193,16 @@ ColorSchemeRegistry.register('BottomSheet', {
      * Bottom sheet's base style.
      */
     sheet: {
-        backgroundColor: ColorPalette.black,
+        backgroundColor: BaseTheme.palette.ui02,
         borderTopLeftRadius: 16,
         borderTopRightRadius: 16
+    },
+
+    /**
+     * Bottom sheet's base style with header.
+     */
+    sheetHeader: {
+        backgroundColor: BaseTheme.palette.ui02
     }
 });
 

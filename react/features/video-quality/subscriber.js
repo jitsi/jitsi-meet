@@ -189,9 +189,15 @@ function _updateReceiverVideoConstraints({ getState }) {
     }
     const { lastN } = state['features/base/lastn'];
     const { maxReceiverVideoQuality, preferredVideoQuality } = state['features/video-quality'];
-    const { visibleParticipants } = state['features/filmstrip'];
     const { participantId: largeVideoParticipantId } = state['features/large-video'];
     const maxFrameHeight = Math.min(maxReceiverVideoQuality, preferredVideoQuality);
+    let { visibleParticipants } = state['features/filmstrip'];
+
+    // TODO: implement this on mobile.
+    if (navigator.product === 'ReactNative') {
+        visibleParticipants = Array.from(state['features/base/participants'].remote.keys());
+    }
+
     const receiverConstraints = {
         constraints: {},
         defaultConstraints: { 'maxHeight': VIDEO_QUALITY_LEVELS.NONE },

@@ -53,20 +53,20 @@ export const disableModeration = (mediaType: MediaType, actor: Object) => {
  * @returns {Object}
  */
 export function dismissPendingAudioParticipant(participant: Object) {
-    return dismissPendingParticipant(participant, MEDIA_TYPE.AUDIO);
+    return dismissPendingParticipant(participant.id, MEDIA_TYPE.AUDIO);
 }
 
 /**
  * Hides the notification with the participant that asked to unmute.
  *
- * @param {Object} participant - The participant for which the notification to be hidden.
+ * @param {string} id - The participant id for which the notification to be hidden.
  * @param {MediaType} mediaType - The media type.
  * @returns {Object}
  */
-export function dismissPendingParticipant(participant: Object, mediaType: MediaType) {
+export function dismissPendingParticipant(id: string, mediaType: MediaType) {
     return {
         type: DISMISS_PENDING_PARTICIPANT,
-        participant,
+        id,
         mediaType
     };
 }
