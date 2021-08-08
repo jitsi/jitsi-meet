@@ -107,6 +107,12 @@ class SoundsTab extends AbstractDialogTab<Props> {
                 <h2 className = 'mock-atlaskit-label'>
                     {t('settings.playSounds')}
                 </h2>
+                {enableReactions && <Checkbox
+                    isChecked = { soundsReactions }
+                    label = { t('settings.reactions') }
+                    name = 'soundsReactions'
+                    onChange = { this._onChange } />
+                }
                 <Checkbox
                     isChecked = { soundsIncomingMessage }
                     label = { t('settings.incomingMessage') }
@@ -127,12 +133,6 @@ class SoundsTab extends AbstractDialogTab<Props> {
                     label = { t('settings.talkWhileMuted') }
                     name = 'soundsTalkWhileMuted'
                     onChange = { this._onChange } />
-                {enableReactions && <Checkbox
-                    isChecked = { soundsReactions }
-                    label = { t('settings.reactions') }
-                    name = 'soundsReactions'
-                    onChange = { this._onChange } />
-                }
             </div>
         );
     }
