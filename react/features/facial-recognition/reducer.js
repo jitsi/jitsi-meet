@@ -21,7 +21,7 @@ ReducerRegistry.register('features/facial-recognition', (state = defaultState, a
     case ADD_FACIAL_EXPRESSION: {
         return {
             ...state,
-            facialExpressions: [ ...state.facialExpressions, action.payload ]
+            facialExpressions: [ action.payload, ...state.facialExpressions ]
         };
     }
     }

@@ -18,6 +18,8 @@ import SpeakerStatsSearch from './SpeakerStatsSearch';
 
 declare var interfaceConfig: Object;
 
+declare var APP;
+
 /**
  * The type of the React {@code Component} props of {@link SpeakerStats}.
  */
@@ -51,7 +53,10 @@ type Props = {
     /**
      * The function to translate human-readable text.
      */
-    t: Function
+    t: Function,
+    stats: Object,
+
+    lastFacialExpression: string,
 };
 
 /**
@@ -70,6 +75,11 @@ class SpeakerStats extends Component<Props> {
      */
     constructor(props) {
         super(props);
+
+        this.state = {
+            stats: this.props.conference.getSpeakerStats(),
+            lastFacialExpression: ''
+        };
 
         // Bind event handlers so they are only bound once per instance.
         this._updateStats = this._updateStats.bind(this);
@@ -146,7 +156,8 @@ class SpeakerStats extends Component<Props> {
                 dominantSpeakerTime = { dominantSpeakerTime }
                 hasLeft = { hasLeft }
                 isDominantSpeaker = { isDominantSpeaker }
-                key = { userId } />
+                key = { userId }
+                lastFacialExpression = { this.state.lastFacialExpression } />
         );
     }
 
