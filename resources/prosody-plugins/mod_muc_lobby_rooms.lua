@@ -113,13 +113,16 @@ function filter_stanza(stanza)
 
     if from_domain == lobby_muc_component_config then
         if stanza.name == 'presence' then
-            if presence_check_status(stanza:get_child('x', MUC_NS..'#user'), '110') then
+            local muc_x = stanza:get_child('x', MUC_NS..'#user');
+            if presence_check_status(muc_x, '110') then
                 return stanza;
             end
 
             -- check is an owner, only owners can receive the presence
+            -- do not forward presence of owners
             local room = main_muc_service.get_room_from_jid(jid_bare(node .. '@' .. main_muc_component_config));
-            if not room or room.get_affiliation(room, stanza.attr.to) == 'owner' then
+            local item = muc_x:get_child("item");
+            if not room or (room.get_affiliation(room, stanza.attr.to) == 'owner' and room.get_affiliation(room, item.attr.jid) ~= 'owner') then
                 return stanza;
             end
 
@@ -296,13 +299,15 @@ process_host_module(main_muc_component_config, function(host_module, host)
     end);
     host_module:hook('muc-disco#info', function (event)
         local room = event.room;
-        if (room._data.lobbyroom and room:get_members_only()) then
+        -- FIXME: implement clean way to determine the lobby of breakout rooms.
+        local lobbyroom = room.get_lobby(room);
+        if (lobbyroom and room:get_members_only()) then
             table.insert(event.form, {
                 name = 'muc#roominfo_lobbyroom';
                 label = 'Lobby room jid';
                 value = '';
             });
-            event.formdata['muc#roominfo_lobbyroom'] = room._data.lobbyroom;
+            event.formdata['muc#roominfo_lobbyroom'] = lobbyroom;
         end
     end);
 
