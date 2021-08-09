@@ -4,6 +4,7 @@
 import Konva from 'konva';
 import React, { useEffect, useRef, useState } from 'react';
 
+import { createLocalTrack } from '../../base/lib-jitsi-meet/functions';
 import { connect } from '../../base/redux';
 import { getCurrentCameraDeviceId } from '../../base/settings';
 import { createLocalTracksF } from '../../base/tracks/functions';
@@ -18,11 +19,6 @@ type Props = {
     _currentCameraDeviceId: string,
 
     /**
-     * Returns the selected virtual background object.
-     */
-    options: Object,
-
-    /**
      * The redux {@code dispatch} function.
      */
     dispatch: Function
@@ -33,11 +29,11 @@ type Props = {
  *
  * @returns {ReactElement}
  */
-function ResizeAndDrag({ options, _currentCameraDeviceId, dispatch }: Props) {
+function ResizeAndDrag({ _currentCameraDeviceId, dispatch }: Props) {
     const [ containerWidth ] = useState(DESKTOP_SHARE_DIMENSIONS.CONTAINER_WIDTH);
     const [ containerHeight ] = useState(DESKTOP_SHARE_DIMENSIONS.CONTAINER_HEIGHT);
     const dragAndResizeRef = useRef(null);
-    const createLocalTrack = async () => {
+    const createLocalJitsiTrack = async () => {
         const [ jitsiTrack ] = await createLocalTracksF({
             cameraDeviceId: _currentCameraDeviceId,
             devices: [ 'video' ]
@@ -60,8 +56,9 @@ function ResizeAndDrag({ options, _currentCameraDeviceId, dispatch }: Props) {
 
             stage.add(layer);
             const desktopVideo = document.createElement('video');
+            const url = await createLocalTrack('desktop', '');
 
-            desktopVideo.srcObject = await options.url.stream;
+            desktopVideo.srcObject = await url.stream;
 
             const desktopImage = new Konva.Image({
                 image: desktopVideo,
@@ -87,7 +84,7 @@ function ResizeAndDrag({ options, _currentCameraDeviceId, dispatch }: Props) {
                 window.requestAnimationFrame(step);
             });
 
-            // Create new transformer.
+            // Create new transformer
             const desktopTr = new Konva.Transformer({
                 centeredScaling: false,
                 node: desktopImage
@@ -132,7 +129,7 @@ function ResizeAndDrag({ options, _currentCameraDeviceId, dispatch }: Props) {
                 window.requestAnimationFrame(step);
             });
 
-            // Create new transformer.
+            // create new transformer
             const tr = new Konva.Transformer({
                 node: image,
                 ignoreStroke: true
@@ -150,7 +147,7 @@ function ResizeAndDrag({ options, _currentCameraDeviceId, dispatch }: Props) {
 
     useEffect(() => {
         if (dragAndResizeRef.current) {
-            createLocalTrack();
+            createLocalJitsiTrack();
         }
     }, [ dragAndResizeRef ]);
 

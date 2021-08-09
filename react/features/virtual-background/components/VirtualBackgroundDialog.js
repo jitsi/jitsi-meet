@@ -196,6 +196,13 @@ function VirtualBackground({
         }
     }, [ enableSlideBlur ]);
 
+    const shareTransparentDesktop = useCallback(() => {
+        setOptions({
+            backgroundType: VIRTUAL_BACKGROUND_TYPE.TRANSPARENT,
+            enabled: true,
+            selectedThumbnail: 'transparent'
+        });
+    });
 
     const shareDesktop = useCallback(async () => {
         let isCancelled = false, url;
@@ -453,18 +460,18 @@ function VirtualBackground({
                             content = { t('virtualBackground.desktopShare') }
                             position = { 'top' }>
                             <div
-                                aria-checked = { _selectedThumbnail === 'desktop-share' }
+                                aria-checked = { _selectedThumbnail === 'transparent' }
                                 aria-label = { t('virtualBackground.desktopShare') }
-                                className = { _selectedThumbnail === 'desktop-share'
-                                    ? 'background-option desktop-share-selected'
-                                    : 'background-option desktop-share' }
-                                onClick = { shareDesktop }
+                                className = { _selectedThumbnail === 'transparent'
+                                    ? 'background-option transparent-selected'
+                                    : 'background-option transparent' }
+                                onClick = { shareTransparentDesktop }
                                 onKeyPress = { shareDesktopKeyPress }
                                 role = 'radio'
                                 tabIndex = { 0 }>
                                 <Icon
                                     className = 'share-desktop-icon'
-                                    size = { 30 }
+                                    size = { 15 }
                                     src = { IconShareDesktop } />
                             </div>
                         </Tooltip>
