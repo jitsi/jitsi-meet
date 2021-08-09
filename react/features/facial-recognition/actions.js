@@ -9,11 +9,14 @@ import { detectFacialExpression } from './functions';
 import logger from './logger';
 
 let interval;
-const videoElement = document.createElement('video');
+let imageCapture;
 const outputCanvas = document.createElement('canvas');
 
 /**
- * @param  {boolean} loaded
+ * Sets the state of the models for the face api.
+ *
+ * @param  {boolean} loaded - The state of the models.
+ * @returns {Object}
  */
 function setFacialRecognitionModelsLoaded(loaded: boolean) {
     return {
@@ -23,7 +26,10 @@ function setFacialRecognitionModelsLoaded(loaded: boolean) {
 }
 
 /**
- * @param  {string} facialExpression
+ * Adds a new expression to the store.
+ *
+ * @param  {string} facialExpression - Facial expression to be added.
+ * @returns {Object}
  */
 export function addFacialExpression(facialExpression: string) {
     return {
@@ -33,13 +39,16 @@ export function addFacialExpression(facialExpression: string) {
 }
 
 /**
+ * Starts the recognition and detection of face expressions.
+ *
+ * @param  {Object} track - Video track.
+ * @returns {Function}
  */
-export function maybeStartFacialRecognition(track) {
+export function maybeStartFacialRecognition(track: Object) {
     return async function(dispatch: Function, getState: Function) {
         if (interval) {
             return;
         }
-        console.log('STAAART');
 
         const state = getState();
         const { facialRecognitionModelsLoaded } = state['features/facial-recognition'];
@@ -61,40 +70,39 @@ export function maybeStartFacialRecognition(track) {
         const firstVideoTrack = stream.getVideoTracks()[0];
         const { height, width } = firstVideoTrack.getSettings() ?? firstVideoTrack.getConstraints();
 
+        imageCapture = new ImageCapture(firstVideoTrack);
+
         outputCanvas.width = parseInt(width, 10);
         outputCanvas.height = parseInt(height, 10);
-
-        videoElement.width = parseInt(width, 10);
-        videoElement.height = parseInt(height, 10);
-        videoElement.autoplay = true;
-        videoElement.srcObject = stream;
-
-        videoElement.onloadeddata = () => {
-            interval = setInterval(() => detectFacialExpression(dispatch, videoElement, outputCanvas), 5000);
-        };
-        document.body.append(videoElement);
+        interval = setInterval(() => detectFacialExpression(dispatch, imageCapture, outputCanvas), 1000);
 
     };
 }
+
 /**
+ * Stops the recognition and detection of face expressions.
+ *
+ * @returns {void}
  */
 export function stopFacialRecognition() {
-    console.log('STOP');
     clearInterval(interval);
-    videoElement.onloadeddata = null;
+    imageCapture = null;
     interval = null;
 }
 
 /**
+ * Resets the track in the image capture.
+ *
+ * @returns {void}
  */
 export function resetTrack() {
     return function(dispatch: Function, getState: Function) {
-        console.log('RESET');
-        videoElement.onloadeddata = null;
         const state = getState();
         const { jitsiTrack: localVideoTrack } = getLocalVideoTrack(state['features/base/tracks']);
         const stream = localVideoTrack.getOriginalStream();
+        const firstVideoTrack = stream.getVideoTracks()[0];
 
-        videoElement.srcObject = stream;
+        imageCapture = new ImageCapture(firstVideoTrack);
+
     };
 }

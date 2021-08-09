@@ -1,16 +1,32 @@
+// @flow
 import * as faceapi from 'face-api.js';
 
 import { addFacialExpression } from './actions';
 
 /**
- * @param  {HTMLVideoElement} videoInput
- * @param  {HTMLCanvasElement} outputCanvas
+ * Detects the facial expression.
+ *
+ * @param  {Function} dispatch - Function for dispatching actions.
+ * @param  {ImageCapture} imageCapture - Object containing the video track.
+ * @param  {HTMLCanvasElement} outputCanvas - Canvas with the frame.
+ * @returns {void}
  */
-export async function detectFacialExpression(dispatch: Function, videoInput: HTMLVideoElement, outputCanvas: HTMLCanvasElement) {
-    const { height, width } = videoInput;
+export async function detectFacialExpression(
+        dispatch: Function,
+        imageCapture: ImageCapture,
+        outputCanvas: HTMLCanvasElement
+) {
+    // const { height, width } = videoInput;
     const outputCanvasContext = outputCanvas.getContext('2d');
+    let imageBitmap;
 
-    outputCanvasContext.drawImage(videoInput, 0, 0, width, height);
+    try {
+        imageBitmap = await imageCapture.grabFrame();
+    } catch (err) {
+        return;
+    }
+
+    outputCanvasContext.drawImage(imageBitmap, 0, 0, imageBitmap.width, imageBitmap.height);
     const detections = await faceapi.detectSingleFace(
         outputCanvas,
         new faceapi.TinyFaceDetectorOptions()

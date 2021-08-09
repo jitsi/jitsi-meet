@@ -20,7 +20,6 @@ MiddlewareRegistry.register(store => next => action => {
                 dispatch(maybeStartFacialRecognition(action.track.jitsiTrack));
             }
         }
-        console.log(action.track.jitsiTrack, muted);
 
         const { videoType } = action.track.jitsiTrack;
 
