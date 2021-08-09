@@ -3,6 +3,7 @@
 import _ from 'lodash';
 
 import { getName } from '../../app/functions';
+import { determineTranscriptionLanguage } from '../../transcribing/functions';
 import { JitsiTrackErrors } from '../lib-jitsi-meet';
 import {
     getLocalParticipant,
@@ -231,6 +232,7 @@ export function getConferenceOptions(stateful: Function | Object) {
     }
 
     options.applicationName = getName();
+    options.transcriptionLanguage = determineTranscriptionLanguage(options);
 
     // Disable analytics, if requessted.
     if (options.disableThirdPartyRequests) {
