@@ -13,7 +13,7 @@ const DEFAULT_TRANSCRIBER_LANG = 'en-US';
  * @param {*} config - Application config.
  * @returns {string}
  */
-export function determineTranscriptionLanguage(config) {
+export function determineTranscriptionLanguage(config: Object) {
 
     const { preferredTranscribeLanguage, transcribeWithAppLanguage = true } = config;
 
