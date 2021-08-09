@@ -6,7 +6,16 @@ import { SET_FACIAL_RECOGNITION_MODELS_LOADED, ADD_FACIAL_EXPRESSION } from './a
 
 const defaultState = {
     facialRecognitionModelsLoaded: false,
-    facialExpressions: []
+    lastFacialExpression: '',
+    facialExpressions: {
+        neutral: 0,
+        happy: 0,
+        sad: 0,
+        angry: 0,
+        fearful: 0,
+        disgusted: 0,
+        surprised: 0
+    }
 };
 
 ReducerRegistry.register('features/facial-recognition', (state = defaultState, action) => {
@@ -19,9 +28,11 @@ ReducerRegistry.register('features/facial-recognition', (state = defaultState, a
     }
 
     case ADD_FACIAL_EXPRESSION: {
+        state.facialExpressions[action.payload]++;
+
         return {
             ...state,
-            facialExpressions: [ action.payload, ...state.facialExpressions ]
+            lastFacialExpression: action.payload
         };
     }
     }
