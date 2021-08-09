@@ -234,9 +234,10 @@ var config = {
     // The application language is either explicitly set by participants in their settings or automatically
     // detected based on the environment, e.g. if the app is opened in a chrome instance which is using french as its
     // default language then transcriptions for that participant will be in french.
+    // Defaults to true.
     // transcribeWithAppLanguage: true,
 
-    // Transcriber language. This settings will only work if "transcribeWithAppLanguage" is set to false.
+    // Transcriber language. This settings will only work if "transcribeWithAppLanguage" is explicitly set to false.
     // Available languages can be found in lang/language.json.
     // preferredTranscribeLanguage: 'en',
 

@@ -15,7 +15,7 @@ const DEFAULT_TRANSCRIBER_LANG = 'en-US';
  */
 export function determineTranscriptionLanguage(config) {
 
-    const { preferredTranscribeLanguage, transcribeWithAppLanguage } = config;
+    const { preferredTranscribeLanguage, transcribeWithAppLanguage = true } = config;
 
     // Depending on the config either use the language that the app automatically detected or the hardcoded
     // config value.
