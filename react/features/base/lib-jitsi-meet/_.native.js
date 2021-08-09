@@ -21,5 +21,5 @@ import './native';
 // used it from source. As an intermediate step, start using the library
 // lib-jitsi-meet as a binary on mobile at the time of this writing. In the
 // future, implement not packaging it in the application bundle.
-import JitsiMeetJS from 'lib-jitsi-meet/lib-jitsi-meet.min';
+import JitsiMeetJS from 'lib-jitsi-meet/lib-jitsi-meet.js';
 export { JitsiMeetJS as default };

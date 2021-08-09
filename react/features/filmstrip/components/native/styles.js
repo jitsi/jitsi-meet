@@ -125,16 +125,10 @@ export default {
     },
 
     tileView: {
-        alignSelf: 'center'
-    },
-
-    tileViewRows: {
+        alignItems: 'center',
+        alignSelf: 'center',
         justifyContent: 'center'
-    },
-
-    tileViewRow: {
-        flexDirection: 'row',
-        justifyContent: 'center'
+        // flexGrow: 1
     }
 };
 

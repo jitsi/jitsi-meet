@@ -220,3 +220,14 @@ export const HORIZONTAL_FILMSTRIP_MARGIN = 39;
  * @type {number}
  */
 export const SHOW_TOOLBAR_CONTEXT_MENU_AFTER = 600;
+
+/**
+ * The margin for each side of the tile view. Taken away from the available
+ * height and width for the tile container to display in.
+ *
+ * NOTE: Mobile specific.
+ *
+ * @private
+ * @type {number}
+ */
+export const TILE_MARGIN = 10;

@@ -158,7 +158,9 @@ ReducerRegistry.register(
                 }
             }
 
-            return state;
+            return {
+                ...state
+            };
         }
         case PARTICIPANT_LEFT: {
             const { id, local } = action.participant;
@@ -187,7 +189,9 @@ ReducerRegistry.register(
 
             delete state.participantsVolume[id];
 
-            return state;
+            return {
+                ...state
+            };
         }
         }
 

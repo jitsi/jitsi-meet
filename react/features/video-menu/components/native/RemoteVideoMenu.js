@@ -36,7 +36,7 @@ type Props = {
     /**
      * The participant for which this menu opened for.
      */
-    participant: Object,
+    participantId: String,
 
     /**
      * The color-schemed stylesheet of the BottomSheet.
@@ -94,11 +94,11 @@ class RemoteVideoMenu extends PureComponent<Props> {
      * @inheritdoc
      */
     render() {
-        const { _disableKick, _disableRemoteMute, _disableGrantModerator, participant } = this.props;
+        const { _disableKick, _disableRemoteMute, _disableGrantModerator, participantId } = this.props;
         const buttonProps = {
             afterClick: this._onCancel,
             showLabel: true,
-            participantID: participant.id,
+            participantID: participantId,
             styles: this.props._bottomSheetStyles.buttons
         };
 
@@ -143,7 +143,7 @@ class RemoteVideoMenu extends PureComponent<Props> {
      * @returns {React$Element}
      */
     _renderMenuHeader() {
-        const { _bottomSheetStyles, participant } = this.props;
+        const { _bottomSheetStyles, participantId } = this.props;
 
         return (
             <View
@@ -151,7 +151,7 @@ class RemoteVideoMenu extends PureComponent<Props> {
                     _bottomSheetStyles.sheet,
                     styles.participantNameContainer ] }>
                 <Avatar
-                    participantId = { participant.id }
+                    participantId = { participantId }
                     size = { AVATAR_SIZE } />
                 <Text style = { styles.participantNameLabel }>
                     { this.props._participantDisplayName }
@@ -171,7 +171,7 @@ class RemoteVideoMenu extends PureComponent<Props> {
  */
 function _mapStateToProps(state, ownProps) {
     const kickOutEnabled = getFeatureFlag(state, KICK_OUT_ENABLED, true);
-    const { participant } = ownProps;
+    const { participantId } = ownProps;
     const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
     let { disableKick } = remoteVideoMenu;
 
@@ -182,7 +182,7 @@ function _mapStateToProps(state, ownProps) {
         _disableKick: Boolean(disableKick),
         _disableRemoteMute: Boolean(disableRemoteMute),
         _isOpen: isDialogOpen(state, RemoteVideoMenu_),
-        _participantDisplayName: getParticipantDisplayName(state, participant.id)
+        _participantDisplayName: getParticipantDisplayName(state, participantId)
     };
 }
 

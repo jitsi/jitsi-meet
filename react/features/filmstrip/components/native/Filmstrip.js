@@ -1,16 +1,19 @@
 // @flow
 
 import React, { Component } from 'react';
-import { SafeAreaView, ScrollView } from 'react-native';
+import { FlatList, SafeAreaView, ScrollView } from 'react-native';
 
 import { Platform } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
+import { setVisibleRemoteParticipants } from '../../actions';
 import { isFilmstripVisible } from '../../functions';
+
 
 import LocalThumbnail from './LocalThumbnail';
 import Thumbnail from './Thumbnail';
 import styles from './styles';
+
 
 /**
  * Filmstrip component's property types.
@@ -30,7 +33,12 @@ type Props = {
     /**
      * The indicator which determines whether the filmstrip is visible.
      */
-    _visible: boolean
+    _visible: boolean,
+
+    /**
+     * Invoked to trigger state changes in Redux.
+     */
+    dispatch: Dispatch<any>,
 };
 
 /**
@@ -75,6 +83,65 @@ class Filmstrip extends Component<Props> {
     }
 
     /**
+     *
+     * @param {*} item
+     * @returns
+     */
+     _keyExtractor(item) {
+        return item;
+    }
+
+    /**
+     *
+     * @param {*} data
+     * @param {*} index
+     * @returns
+     */
+    _getItemLayout(data, index) {
+        const { _aspectRatio } = this.props;
+        const isNarrowAspectRatio = _aspectRatio === ASPECT_RATIO_NARROW;
+        const length = isNarrowAspectRatio ? styles.thumbnail.width : styles.thumbnail.height;
+
+        return {
+            length,
+            offset: length * index,
+            index
+        };
+    }
+
+    /**
+     * A handler for visible items changes.
+     *
+     * @param {Object} data - The visible items data.
+     * @param {Array<Object>} data.viewableItems - The visible items array.
+     * @returns {void}
+     */
+    _onViewableItemsChanged({ viewableItems = 0 }) {
+        console.log(`visisble indexes ${JSON.stringify((viewableItems || []).map(i => i.index))}`);
+        const indexArray = viewableItems.map(i => i.index);
+
+        this.props.dispatch(setVisibleRemoteParticipants(Math.min(indexArray), Math.max(indexArray)));
+    }
+
+    /**
+     * Creates React Elements to display each participant in a thumbnail. Each
+     * tile will be.
+     *
+     * @private
+     * @returns {ReactElement[]}
+     */
+    _renderThumbnail({ item, index /*, separators */ }) {
+        console.log(`1rendering thumbnail with index ${index}`);
+
+        return (
+            <Thumbnail
+                index = { index }
+                key = { item }
+                participantID = { item } />)
+        ;
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -89,6 +156,8 @@ class Filmstrip extends Component<Props> {
 
         const isNarrowAspectRatio = _aspectRatio === ASPECT_RATIO_NARROW;
         const filmstripStyle = isNarrowAspectRatio ? styles.filmstripNarrow : styles.filmstripWide;
+        const participants = this._sort(_participants, isNarrowAspectRatio);
+        const initialRowsToRender = Math.ceil(_height / _thumbnailHeight);
 
         return (
             <SafeAreaView style = { filmstripStyle }>
@@ -97,6 +166,18 @@ class Filmstrip extends Component<Props> {
                         && !isNarrowAspectRatio
                         && <LocalThumbnail />
                 }
+                <FlatList
+                    data = { participants }
+                    getItemLayout = { this._getItemLayout }
+                    horizontal = { isNarrowAspectRatio }
+                    initialNumToRender = { initialRowsToRender }
+                    key = { isNarrowAspectRatio ? 'narrow' : 'wide' }
+                    keyExtractor = { this._keyExtractor }
+                    onViewableItemsChanged = { this._onViewableItemsChanged }
+                    renderItem = { this._renderThumbnail }
+                    style = { styles.scrollView }
+                    viewabilityConfig = { this.viewabilityConfig }
+                    windowSize = { 2 } />
                 <ScrollView
                     horizontal = { isNarrowAspectRatio }
                     showsHorizontalScrollIndicator = { false }
@@ -125,6 +206,40 @@ class Filmstrip extends Component<Props> {
                         && <LocalThumbnail />
                 }
             </SafeAreaView>
+        );
+    }
+
+    /**
+     * Implements React's {@link Component#render()}.
+     *
+     * @inheritdoc
+     * @returns {ReactElement}
+     */
+     render() {
+        const { _columns, _height, _thumbnailHeight, _width, onClick } = this.props;
+
+        const participants = this._getSortedParticipants();
+        const initialRowsToRender = Math.ceil(_height / _thumbnailHeight);
+
+        return (
+            <TouchableWithoutFeedback onPress = { onClick }>
+                <FlatList
+                    contentContainerStyle = { styles.tileView }
+                    data = { participants }
+                    horizontal = { false }
+                    initialNumToRender = { initialRowsToRender }
+                    key = { _columns }
+                    keyExtractor = { this._keyExtractor }
+                    numColumns = { _columns }
+                    onViewableItemsChanged = { this._onViewableItemsChanged }
+                    renderItem = { this._renderThumbnail }
+                    style = {{
+                        height: _height,
+                        width: _width
+                    }}
+                    viewabilityConfig = { this.viewabilityConfig }
+                    windowSize = { 2 } />
+            </TouchableWithoutFeedback>
         );
     }
 

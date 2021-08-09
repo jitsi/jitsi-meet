@@ -32,6 +32,8 @@ import RaisedHandIndicator from './RaisedHandIndicator';
 import ScreenShareIndicator from './ScreenShareIndicator';
 import VideoMutedIndicator from './VideoMutedIndicator';
 import styles, { AVATAR_SIZE } from './styles';
+import { PureComponent } from 'react';
+import { SQUARE_TILE_ASPECT_RATIO } from '../../constants';
 
 /**
  * Thumbnail component's property types.
@@ -112,103 +114,149 @@ type Props = {
  * @param {Props} props - Properties passed to this functional component.
  * @returns {Component} - A React component.
  */
-function Thumbnail(props: Props) {
-    const {
-        _audioMuted: audioMuted,
-        _largeVideo: largeVideo,
-        _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,
-        _renderModeratorIndicator: renderModeratorIndicator,
-        _participant: participant,
-        _styles,
-        _videoTrack: videoTrack,
-        dispatch,
-        disableTint,
-        renderDisplayName,
-        tileView
-    } = props;
+class Thumbnail extends PureComponent<Props> {
 
-    const participantId = participant.id;
-    const participantInLargeVideo
-        = participantId === largeVideo.participantId;
-    const videoMuted = !videoTrack || videoTrack.muted;
-    const isScreenShare = videoTrack && videoTrack.videoType === VIDEO_TYPE.DESKTOP;
-    const onClick = useCallback(() => {
+    /**
+     *
+     * @param {*} props
+     * @returns
+     */
+    constructor(props: Props) {
+        super(props);
+
+        this._onClick = this._onClick.bind(this);
+        this._onThumbnailLongPress = this._onThumbnailLongPress.bind(this);
+    }
+
+    /**
+     * Thumbnail click handler.
+     *
+     * @returns {void}
+     */
+    _onClick() {
+        const { _participantId, _pinned, dispatch, tileView } = this.props;
+
         if (tileView) {
             dispatch(toggleToolboxVisible());
         } else {
-            dispatch(pinParticipant(participant.pinned ? null : participant.id));
+            dispatch(pinParticipant(_pinned ? null : _participantId));
         }
-    }, [ participant, tileView, dispatch ]);
-    const onThumbnailLongPress = useCallback(() => {
-        if (participant.local) {
+    }
+
+    /**
+     * Thumbnail long press handler.
+     *
+     * @returns {void}
+     */
+    _onThumbnailLongPress() {
+        const { _participantId, _local, dispatch } = this.props;
+
+        if (_local) {
             dispatch(openDialog(ConnectionStatusComponent, {
-                participantID: participant.id
+                participantID: _participantId
             }));
         } else {
             dispatch(openDialog(RemoteVideoMenu, {
-                participant
+                participantId: _participantId
             }));
         }
-    }, [ participant, dispatch ]);
+    }
 
-    return (
-        <Container
-            onClick = { onClick }
-            onLongPress = { onThumbnailLongPress }
-            style = { [
-                styles.thumbnail,
-                participant.pinned && !tileView
-                    ? _styles.thumbnailPinned : null,
-                props.styleOverrides || null
-            ] }
-            touchFeedback = { false }>
+    /**
+     *
+     * @returns
+     */
+    render() {
+        const {
+            _audioMuted: audioMuted,
+            _isScreenShare: isScreenShare,
+            _isFakeParticipant,
+            _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,
+            _renderModeratorIndicator: renderModeratorIndicator,
+            _participantId: participantId,
+            _participantInLargeVideo: participantInLargeVideo,
+            _pinned,
+            _styles,
+            _videoMuted: videoMuted,
+            disableTint,
+            height,
+            index,
+            renderDisplayName,
+            tileView
+        } = this.props;
 
-            <ParticipantView
-                avatarSize = { tileView ? AVATAR_SIZE * 1.5 : AVATAR_SIZE }
-                disableVideo = { isScreenShare || participant.isFakeParticipant }
-                participantId = { participantId }
-                style = { _styles.participantViewStyle }
-                tintEnabled = { participantInLargeVideo && !disableTint }
-                tintStyle = { _styles.activeThumbnailTint }
-                zOrder = { 1 } />
+        const styleOverrides = tileView ? {
+            aspectRatio: SQUARE_TILE_ASPECT_RATIO,
+            flex: 0,
+            height,
+            maxHeight: null,
+            maxWidth: null,
+            width: null
+        } : null;
 
-            { renderDisplayName && <Container style = { styles.displayNameContainer }>
-                <DisplayNameLabel participantId = { participantId } />
-            </Container> }
+        console.log(`rendering thumbnail with index ${index}`);
 
-            { renderModeratorIndicator
-                && <View style = { styles.moderatorIndicatorContainer }>
-                    <ModeratorIndicator />
-                </View>}
-
-            { !participant.isFakeParticipant && <View
+        return (
+            <Container
+                onClick = { this._onClick }
+                onLongPress = { this._onThumbnailLongPress }
                 style = { [
-                    styles.thumbnailTopIndicatorContainer,
-                    styles.thumbnailTopLeftIndicatorContainer
-                ] }>
-                <RaisedHandIndicator participantId = { participant.id } />
-                { renderDominantSpeakerIndicator && <DominantSpeakerIndicator /> }
-            </View> }
-
-            { !participant.isFakeParticipant && <View
-                style = { [
-                    styles.thumbnailTopIndicatorContainer,
-                    styles.thumbnailTopRightIndicatorContainer
-                ] }>
-                <ConnectionIndicator participantId = { participant.id } />
-            </View> }
-
-            { !participant.isFakeParticipant && <Container style = { styles.thumbnailIndicatorContainer }>
-                { audioMuted
-                    && <AudioMutedIndicator /> }
-                { videoMuted
-                    && <VideoMutedIndicator /> }
-                { isScreenShare
-                    && <ScreenShareIndicator /> }
-            </Container> }
-
-        </Container>
-    );
+                    styles.thumbnail,
+                    _pinned && !tileView ? _styles.thumbnailPinned : null,
+                    styleOverrides
+                ] }
+                touchFeedback = { false }>
+                <ParticipantView
+                    avatarSize = { tileView ? AVATAR_SIZE * 1.5 : AVATAR_SIZE }
+                    disableVideo = { isScreenShare || _isFakeParticipant }
+                    participantId = { participantId }
+                    style = { _styles.participantViewStyle }
+                    tintEnabled = { participantInLargeVideo && !disableTint }
+                    tintStyle = { _styles.activeThumbnailTint }
+                    zOrder = { 1 } />
+                {
+                    renderDisplayName
+                        && <Container style = { styles.displayNameContainer }>
+                            <DisplayNameLabel participantId = { participantId } />
+                        </Container>
+                }
+                { renderModeratorIndicator
+                    && <View style = { styles.moderatorIndicatorContainer }>
+                        <ModeratorIndicator />
+                    </View>
+                }
+                {
+                    !_isFakeParticipant
+                        && <View
+                            style = { [
+                                styles.thumbnailTopIndicatorContainer,
+                                styles.thumbnailTopLeftIndicatorContainer
+                            ] }>
+                            <RaisedHandIndicator participantId = { participantId } />
+                            { renderDominantSpeakerIndicator && <DominantSpeakerIndicator /> }
+                        </View>
+                }
+                {
+                    !_isFakeParticipant
+                        && <View
+                            style = { [
+                                styles.thumbnailTopIndicatorContainer,
+                                styles.thumbnailTopRightIndicatorContainer
+                            ] }>
+                            <ConnectionIndicator participantId = { participantId } />
+                        </View>
+                }
+                {
+                    !_isFakeParticipant
+                        && <Container style = { styles.thumbnailIndicatorContainer }>
+                            { audioMuted && <AudioMutedIndicator /> }
+                            { videoMuted && <VideoMutedIndicator /> }
+                            { isScreenShare && <ScreenShareIndicator /> }
+                        </Container>
+                }
+            </Container>
+        );
+    }
 }
 
 /**
@@ -231,20 +279,27 @@ function _mapStateToProps(state, ownProps) {
         = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, id);
     const videoTrack
         = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
+    const videoMuted = !videoTrack || videoTrack.muted;
+    const isScreenShare = videoTrack && videoTrack.videoType === VIDEO_TYPE.DESKTOP;
     const participantCount = getParticipantCount(state);
     const renderDominantSpeakerIndicator = participant && participant.dominantSpeaker && participantCount > 2;
     const _isEveryoneModerator = isEveryoneModerator(state);
     const renderModeratorIndicator = !_isEveryoneModerator
         && participant && participant.role === PARTICIPANT_ROLE.MODERATOR;
+    const participantInLargeVideo = id === largeVideo.participantId;
 
     return {
         _audioMuted: audioTrack?.muted ?? true,
-        _largeVideo: largeVideo,
-        _participant: participant,
+        _isScreenShare: isScreenShare,
+        _isFakeParticipant: participant.isFakeParticipant,
+        _local: participant.local,
+        _participantInLargeVideo: participantInLargeVideo,
+        _participantId: id,
+        _pinned: participant.pinned,
         _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,
         _renderModeratorIndicator: renderModeratorIndicator,
         _styles: ColorSchemeRegistry.get(state, 'Thumbnail'),
-        _videoTrack: videoTrack
+        _videoMuted: videoMuted
     };
 }
 
