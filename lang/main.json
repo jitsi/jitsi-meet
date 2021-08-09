@@ -588,6 +588,7 @@
         "moderationStoppedTitle": "Moderation stopped",
         "moderationToggleDescription": "by {{participantDisplayName}}",
         "raiseHandAction": "Raise hand",
+        "reactionSounds": "Disable sounds",
         "groupTitle": "Notifications"
     },
     "participantsPane": {
@@ -894,6 +895,7 @@
         "clap": "Clap",
         "closeChat": "Close chat",
         "closeReactionsMenu": "Close reactions menu",
+        "disableReactionSounds": "You can disable reaction sounds for this meeting",
         "documentClose": "Close shared document",
         "documentOpen": "Open shared document",
         "download": "Download our apps",

@@ -58,3 +58,8 @@ export const SEND_REACTIONS = 'SEND_REACTIONS';
  * The type of action to adds reactions to the queue.
  */
 export const PUSH_REACTIONS = 'PUSH_REACTIONS';
+
+/**
+ * The type of action to display disable notification sounds.
+ */
+export const SHOW_SOUNDS_NOTIFICATION = 'SHOW_SOUNDS_NOTIFICATION';

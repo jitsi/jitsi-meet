@@ -5,14 +5,17 @@ import { batch } from 'react-redux';
 import { ENDPOINT_REACTION_NAME } from '../../../modules/API/constants';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import { MiddlewareRegistry } from '../base/redux';
+import { updateSettings } from '../base/settings';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { isVpaasMeeting } from '../jaas/functions';
+import { NOTIFICATION_TIMEOUT, showNotification } from '../notifications';
 
 import {
     ADD_REACTION_BUFFER,
     FLUSH_REACTION_BUFFER,
     SEND_REACTIONS,
-    PUSH_REACTIONS
+    PUSH_REACTIONS,
+    SHOW_SOUNDS_NOTIFICATION
 } from './actionTypes';
 import {
     addReactionsToChat,
@@ -21,6 +24,7 @@ import {
     sendReactions,
     setReactionQueue
 } from './actions.any';
+import { displayReactionSoundsNotification } from './actions.web';
 import { RAISE_HAND_SOUND_ID, REACTIONS, SOUNDS_THRESHOLDS } from './constants';
 import {
     getReactionMessageFromBuffer,
@@ -126,20 +130,35 @@ MiddlewareRegistry.register(store => next => action => {
 
     case PUSH_REACTIONS: {
         const state = getState();
-        const queue = state['features/reactions'].queue;
+        const { queue, notificationDisplayed } = state['features/reactions'];
         const { soundsReactions } = state['features/base/settings'];
         const reactions = action.reactions;
 
-        const reactionSoundsThresholds = getReactionsSoundsThresholds(reactions);
-
         batch(() => {
+            if (!notificationDisplayed && soundsReactions) {
+                dispatch(displayReactionSoundsNotification());
+            }
             if (soundsReactions) {
+                const reactionSoundsThresholds = getReactionsSoundsThresholds(reactions);
+
                 reactionSoundsThresholds.forEach(reaction =>
                     dispatch(playSound(`${REACTIONS[reaction.reaction].soundId}${reaction.threshold}`))
                 );
             }
             dispatch(setReactionQueue([ ...queue, ...getReactionsWithId(reactions) ]));
         });
+        break;
+    }
+
+    case SHOW_SOUNDS_NOTIFICATION: {
+        dispatch(showNotification({
+            titleKey: 'toolbar.disableReactionSounds',
+            customActionNameKey: 'notify.reactionSounds',
+            customActionHandler: () => dispatch(updateSettings({
+                soundsReactions: false
+            }))
+        }, NOTIFICATION_TIMEOUT));
+        break;
     }
     }
 
