@@ -4,6 +4,7 @@ import {
     ADD_MESSAGE,
     CLEAR_MESSAGES,
     CLOSE_CHAT,
+    CLOSE_CHAT_BACKGROUND,
     SEND_MESSAGE,
     SET_PRIVATE_MESSAGE_RECIPIENT
 } from './actionTypes';
@@ -60,6 +61,19 @@ export function clearMessages() {
 export function closeChat() {
     return {
         type: CLOSE_CHAT
+    };
+}
+
+/**
+ * Action to signal the closing of the chat background dialog.
+ *
+ * @returns {{
+ *     type: CLOSE_CHAT
+ * }}
+ */
+export function closeChatBackground() {
+    return {
+        type: CLOSE_CHAT_BACKGROUND
     };
 }
 

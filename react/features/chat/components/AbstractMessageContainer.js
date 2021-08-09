@@ -5,9 +5,14 @@ import { PureComponent } from 'react';
 export type Props = {
 
     /**
+     * The chat background image object.
+     */
+    background: any,
+
+    /**
      * The messages array to render.
      */
-    messages: Array<Object>
+    messages: Array<Object>,
 }
 
 /**

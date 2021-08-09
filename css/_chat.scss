@@ -563,6 +563,37 @@
     overflow: auto;
 }
 
+.chat-background-button {
+    margin-right: auto;
+    padding-left: 10px;
+}
+
+.chat-background-panel {
+    border-radius: 3px;
+    display: flex;
+    margin-left: 18px;
+    margin-right: 18px;
+    padding-bottom: 20px;
+}
+
+.chat-background-image {
+    object-fit: cover;
+    cursor: pointer;
+    border-radius: 6px;
+    height: 40px;
+    width: 40px;
+    text-align: center;
+    justify-content: center;
+    font-weight: 700;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    margin:auto;
+}
+
+.chat-background-item {
+    background: #525252;
+}
 /**
  * Make header close button more easily tappable on mobile.
  */

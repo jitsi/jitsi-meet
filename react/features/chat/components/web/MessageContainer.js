@@ -75,6 +75,7 @@ export default class MessageContainer extends AbstractMessageContainer<Props> {
                 onScroll = { this._onChatScroll }
                 ref = { this._messageListRef }
                 role = 'log'
+                style = {{ backgroundImage: `url(${this.props?.background?.src})` }}
                 tabIndex = { 0 }>
                 { messages }
                 <div ref = { this._messagesListEndRef } />

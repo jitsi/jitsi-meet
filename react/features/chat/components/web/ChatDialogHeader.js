@@ -3,9 +3,11 @@
 import React, { useCallback } from 'react';
 
 import { translate } from '../../../base/i18n';
-import { Icon, IconClose } from '../../../base/icons';
+import { Icon, IconClose, IconVirtualBackground } from '../../../base/icons';
 import { connect } from '../../../base/redux';
-import { toggleChat } from '../../actions.web';
+import { toggleChat, toggleChatBackground } from '../../actions.web';
+
+import ChatBackgroundPanel from './ChatBackgroundPanel';
 
 type Props = {
 
@@ -13,6 +15,11 @@ type Props = {
      * Function to be called when pressing the close button.
      */
     onCancel: Function,
+
+    /**
+     * Function to be called when pressing the chat background button.
+     */
+    onChatBackground: Function,
 
     /**
      * An optional class name.
@@ -30,7 +37,7 @@ type Props = {
  *
  * @returns {React$Element<any>}
  */
-function Header({ onCancel, className, t }: Props) {
+function Header({ onCancel, onChatBackground, className, t }: Props) {
 
     const onKeyPressHandler = useCallback(e => {
         if (onCancel && (e.key === ' ' || e.key === 'Enter')) {
@@ -39,22 +46,41 @@ function Header({ onCancel, className, t }: Props) {
         }
     }, [ onCancel ]);
 
+    const onChatBackgroundKeyPressHandler = useCallback(e => {
+        if (onChatBackground && (e.key === ' ' || e.key === 'Enter')) {
+            e.preventDefault();
+            onChatBackground();
+        }
+    }, [ onChatBackground ]);
+
     return (
-        <div
-            className = { className || 'chat-dialog-header' }
-            role = 'heading'>
-            { t('chat.title') }
-            <Icon
-                ariaLabel = { t('toolbar.closeChat') }
-                onClick = { onCancel }
-                onKeyPress = { onKeyPressHandler }
-                role = 'button'
-                src = { IconClose }
-                tabIndex = { 0 } />
+        <div>
+            <div
+                className = { className || 'chat-dialog-header' }
+                role = 'heading'>
+                { t('chat.title') }
+                <Icon
+                    ariaLabel = { t('toolbar.closeChat') }
+                    className = 'chat-background-button'
+                    onClick = { onChatBackground }
+                    onKeyPress = { onChatBackgroundKeyPressHandler }
+                    role = 'button'
+                    src = { IconVirtualBackground }
+                    tabIndex = { 0 } />
+                <Icon
+                    ariaLabel = { t('toolbar.closeChat') }
+                    onClick = { onCancel }
+                    onKeyPress = { onKeyPressHandler }
+                    role = 'button'
+                    src = { IconClose }
+                    tabIndex = { 1 } />
+            </div>
+            <ChatBackgroundPanel />
         </div>
     );
 }
 
-const mapDispatchToProps = { onCancel: toggleChat };
+const mapDispatchToProps = { onCancel: toggleChat,
+    onChatBackground: toggleChatBackground };
 
 export default translate(connect(null, mapDispatchToProps)(Header));

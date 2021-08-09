@@ -13,6 +13,11 @@ import { SMALL_WIDTH_THRESHOLD } from '../constants';
 export type Props = {
 
     /**
+     * The chat background image object.
+     */
+    _chatBackgroundImage: Object,
+
+    /**
      * Whether the chat is opened in a modal or not (computed based on window width).
      */
     _isModal: boolean,
@@ -95,16 +100,18 @@ export default class AbstractChat<P: Props> extends Component<P> {
  * @param {Object} state - The redux store/state.
  * @private
  * @returns {{
+ *     _chatBackgroundImage: Object,
  *     _isOpen: boolean,
  *     _messages: Array<Object>,
  *     _showNamePrompt: boolean
  * }}
  */
 export function _mapStateToProps(state: Object) {
-    const { isOpen, messages } = state['features/chat'];
+    const { isOpen, messages, chatBackgroundImage } = state['features/chat'];
     const _localParticipant = getLocalParticipant(state);
 
     return {
+        _chatBackgroundImage: chatBackgroundImage,
         _isModal: window.innerWidth <= SMALL_WIDTH_THRESHOLD,
         _isOpen: isOpen,
         _messages: messages,

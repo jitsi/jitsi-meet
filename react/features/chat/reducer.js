@@ -1,23 +1,40 @@
 // @flow
 
-import { ReducerRegistry } from '../base/redux';
+import { PersistenceRegistry, ReducerRegistry } from '../base/redux';
 
 import {
     ADD_MESSAGE,
     CLEAR_MESSAGES,
     CLOSE_CHAT,
     OPEN_CHAT,
+    OPEN_CHAT_BACKGROUND,
+    CLOSE_CHAT_BACKGROUND,
+    SET_CHAT_BACKGROUND,
     SET_PRIVATE_MESSAGE_RECIPIENT
 } from './actionTypes';
 
 const DEFAULT_STATE = {
+    chatBackgroundImage: undefined,
+    isBackgroundOpen: false,
     isOpen: false,
     lastReadMessage: undefined,
     messages: [],
     privateMessageRecipient: undefined
 };
 
-ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
+const STORE_NAME = 'features/chat';
+
+PersistenceRegistry.register(STORE_NAME, true,  {
+    chatBackgroundImage: true,
+    messages: false,
+    lastReadMessage: false,
+    privateMessageRecipient: false,
+    isBackgroundOpen: false,
+    isOpen: false,
+});
+
+ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
+
     switch (action.type) {
     case ADD_MESSAGE: {
         const newMessage = {
@@ -62,7 +79,11 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
             ...state,
             privateMessageRecipient: action.participant
         };
-
+    case SET_CHAT_BACKGROUND:
+        return {
+            ...state,
+            chatBackgroundImage: action.chatBackgroundImage
+        };
     case OPEN_CHAT:
         return {
             ...state,
@@ -77,6 +98,16 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
             lastReadMessage: state.messages[
                 navigator.product === 'ReactNative' ? 0 : state.messages.length - 1],
             privateMessageRecipient: action.participant
+        };
+    case OPEN_CHAT_BACKGROUND:
+        return {
+            ...state,
+            isBackgroundOpen: true
+        };
+    case CLOSE_CHAT_BACKGROUND:
+        return {
+            ...state,
+            isBackgroundOpen: false
         };
     }
 

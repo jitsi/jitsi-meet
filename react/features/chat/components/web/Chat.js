@@ -132,6 +132,7 @@ class Chat extends AbstractChat<Props> {
             <>
                 <TouchmoveHack isModal = { this.props._isModal }>
                     <MessageContainer
+                        background = { this.props._chatBackgroundImage }
                         messages = { this.props._messages }
                         ref = { this._messageContainerRef } />
                 </TouchmoveHack>

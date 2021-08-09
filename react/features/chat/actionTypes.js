@@ -43,6 +43,33 @@ export const CLOSE_CHAT = 'CLOSE_CHAT';
 export const OPEN_CHAT = 'OPEN_CHAT';
 
 /**
+ * The type of the action which signals to display the chat background panel.
+ *
+ * {
+ *     type: OPEN_CHAT_BACKGROUND
+ * }
+ */
+export const OPEN_CHAT_BACKGROUND = 'OPEN_CHAT_BACKGROUND';
+
+/**
+ * The type of the action which signals the cancellation the chat background panel.
+ *
+ * {
+ *     type: CLOSE_CHAT_BACKGROUND
+ * }
+ */
+export const CLOSE_CHAT_BACKGROUND = 'CLOSE_CHAT_BACKGROUND';
+
+/**
+ * The type of the action which signals the which chat background image is displayed.
+ *
+ * {
+ *     type: SET_CHAT_BACKGROUND
+ * }
+ */
+export const SET_CHAT_BACKGROUND = 'SET_CHAT_BACKGROUND';
+
+/**
  * The type of the action which signals a send a chat message to everyone in the
  * conference.
  *
