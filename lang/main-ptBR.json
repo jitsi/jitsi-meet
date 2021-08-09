@@ -16,15 +16,8 @@
         "inviteMoreMailSubject": "Entre na reunião {{appName}}",
         "inviteMorePrompt": "Convide mais pessoas",
         "linkCopied": "Link copiado para a área de transferência",
-        "loading": "Procurando por pessoas e números de telefone",
-        "loadingNumber": "Validando o número de telefone",
-        "loadingPeople": "Procurando por pessoas para convidar",
         "noResults": "Nenhum resultado de busca correspondente",
-        "noValidNumbers": "Por favor, digite um número de telefone",
         "outlookEmail": "E-mail Outlook ",
-        "searchNumbers": "Adicionar números de telefone",
-        "searchPeople": "Pesquisar pessoas",
-        "searchPeopleAndNumbers": "Pesquisar por pessoas ou adicionar seus números de telefone",
         "shareInvite": "Compartilhar convite da reunião",
         "shareLink": "Compartilhando o link da reunião",
         "shareStream": "Compartilhar o link da transmissão ao vivo",
@@ -220,7 +213,6 @@
         "kickTitle": "Ai! {{participantDisplayName}} expulsou você da reunião",
         "liveStreaming": "Transmissão ao Vivo",
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "Não é possível transmitir enquanto a gravação está ativa",
-        "liveStreamingDisabledForGuestTooltip": "Visitantes não podem iniciar transmissão ao vivo.",
         "liveStreamingDisabledTooltip": "Iniciar transmissão ao vivo desativada.",
         "lockMessage": "Falha ao travar a conferência.",
         "lockRoom": "Adicionar reunião $t(lockRoomPasswordUppercase)",
@@ -255,7 +247,6 @@
         "readMore": "mais...",
         "recording": "Gravando",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Não é possível transmitir enquanto a gravação está ativa",
-        "recordingDisabledForGuestTooltip": "Visitantes não podem iniciar gravações.",
         "recordingDisabledTooltip": "Iniciar gravação desativada.",
         "rejoinNow": "Reconectar agora",
         "remoteControlAllowedMessage": "{{user}} aceitou sua requisição de controle remoto!",
@@ -287,7 +278,6 @@
         "shareVideoTitle": "Compartilhar um vídeo",
         "shareYourScreen": "Compartilhar sua tela",
         "shareYourScreenDisabled": "Compartilhamento de tela desativada.",
-        "shareYourScreenDisabledForGuest": "Visitantes não podem compartilhar tela.",
         "startLiveStreaming": "Iniciar transmissão ao vivo",
         "startRecording": "Iniciar gravação",
         "startRemoteControlErrorMessage": "Um erro ocorreu enquanto tentava iniciar uma sessão de controle remoto!",
@@ -419,8 +409,7 @@
         "toggleFilmstrip": "Mostrar ou ocultar miniaturas de vídeo",
         "toggleScreensharing": "Trocar entre câmera e compartilhamento de tela",
         "toggleShortcuts": "Mostrar ou ocultar atalhos de teclado",
-        "videoMute": "Iniciar ou parar sua câmera",
-        "videoQuality": "Gerenciar qualidade da chamada"
+        "videoMute": "Iniciar ou parar sua câmera"
     },
     "liveStreaming": {
         "limitNotificationDescriptionWeb": "Devido a alta demanda sua transmissão será limitada a {{limit}} minutos. Para transmissão ilimitada tente <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
@@ -828,8 +817,6 @@
         "tileViewToggle": "Alternar visualização em blocos",
         "toggleCamera": "Alternar câmera",
         "videomute": "Iniciar ou parar a câmera",
-        "startvideoblur": "Desfocar meu plano de fundo",
-        "stopvideoblur": "Desativar desfoque de fundo",
         "selectBackground": "Selecionar fundo"
     },
     "transcribing": {
@@ -878,8 +865,6 @@
         "ld": "LD",
         "ldTooltip": "Ver vídeo em baixa definição",
         "lowDefinition": "Baixa definição (LD)",
-        "onlyAudioAvailable": "Somente áudio disponível",
-        "onlyAudioSupported": "Suportamos somente áudio neste navegador.",
         "sd": "SD",
         "sdTooltip": "Ver vídeo em definição padrão",
         "standardDefinition": "Definição padrão"
