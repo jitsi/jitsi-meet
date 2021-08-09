@@ -53,13 +53,14 @@ const PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE = [
 ];
 
 const DEFAULT_STATE = {
-    haveParticipantWithScreenSharingFeature: false,
     dominantSpeaker: undefined,
     everyoneIsModerator: false,
-    pinnedParticipant: undefined,
+    fakeParticipants: new Map(),
+    haveParticipantWithScreenSharingFeature: false,
     local: undefined,
-    remote: new Map(),
-    fakeParticipants: new Map()
+    pinnedParticipant: undefined,
+    previousSpeakers: undefined,
+    remote: new Map()
 };
 
 /**
@@ -93,7 +94,7 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
     }
     case DOMINANT_SPEAKER_CHANGED: {
         const { participant } = action;
-        const { id } = participant;
+        const { id, previousSpeakers = [] } = participant;
         const { dominantSpeaker } = state;
 
         // Only one dominant speaker is allowed.
@@ -104,7 +105,8 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
         if (_updateParticipantProperty(state, id, 'dominantSpeaker', true)) {
             return {
                 ...state,
-                dominantSpeaker: id
+                dominantSpeaker: id,
+                previousSpeakers
             };
         }
 

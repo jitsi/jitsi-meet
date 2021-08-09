@@ -1,12 +1,13 @@
 // @flow
 
-import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../base/participants';
+import { PARTICIPANT_LEFT } from '../base/participants';
 import { ReducerRegistry } from '../base/redux';
 
 import {
     SET_FILMSTRIP_ENABLED,
     SET_FILMSTRIP_VISIBLE,
     SET_HORIZONTAL_VIEW_DIMENSIONS,
+    SET_REMOTE_PARTICIPANTS,
     SET_TILE_VIEW_DIMENSIONS,
     SET_VERTICAL_VIEW_DIMENSIONS,
     SET_VISIBLE_REMOTE_PARTICIPANTS,
@@ -40,8 +41,8 @@ const DEFAULT_STATE = {
     /**
      * The ordered IDs of the remote participants displayed in the filmstrip.
      *
-     * NOTE: Currently the order will match the one from the base/participants array. But this is good initial step for
-     * reordering the remote participants.
+     * @public
+     * @type {Array<string>}
      */
     remoteParticipants: [],
 
@@ -116,6 +117,14 @@ ReducerRegistry.register(
                 ...state,
                 horizontalViewDimensions: action.dimensions
             };
+        case SET_REMOTE_PARTICIPANTS: {
+            const { visibleParticipantsStartIndex: startIndex, visibleParticipantsEndIndex: endIndex } = state;
+
+            state.remoteParticipants = action.participants;
+            state.visibleParticipants = state.remoteParticipants.slice(startIndex, endIndex + 1);
+
+            return state;
+        }
         case SET_TILE_VIEW_DIMENSIONS:
             return {
                 ...state,
@@ -145,46 +154,12 @@ ReducerRegistry.register(
                 visibleParticipantsEndIndex: action.endIndex,
                 visibleParticipants: state.remoteParticipants.slice(action.startIndex, action.endIndex + 1)
             };
-        case PARTICIPANT_JOINED: {
-            const { id, local } = action.participant;
-
-            if (!local) {
-                state.remoteParticipants = [ ...state.remoteParticipants, id ];
-
-                const { visibleParticipantsStartIndex: startIndex, visibleParticipantsEndIndex: endIndex } = state;
-
-                if (state.remoteParticipants.length - 1 <= endIndex) {
-                    state.visibleParticipants = state.remoteParticipants.slice(startIndex, endIndex + 1);
-                }
-            }
-
-            return state;
-        }
         case PARTICIPANT_LEFT: {
             const { id, local } = action.participant;
 
             if (local) {
                 return state;
             }
-
-            let removedParticipantIndex = 0;
-
-            state.remoteParticipants = state.remoteParticipants.filter((participantId, index) => {
-                if (participantId === id) {
-                    removedParticipantIndex = index;
-
-                    return false;
-                }
-
-                return true;
-            });
-
-            const { visibleParticipantsStartIndex: startIndex, visibleParticipantsEndIndex: endIndex } = state;
-
-            if (removedParticipantIndex >= startIndex && removedParticipantIndex <= endIndex) {
-                state.visibleParticipants = state.remoteParticipants.slice(startIndex, endIndex + 1);
-            }
-
             delete state.participantsVolume[id];
 
             return state;

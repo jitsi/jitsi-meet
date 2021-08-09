@@ -1,6 +1,6 @@
 // @flow
 
-import { getParticipantCountWithFake } from '../base/participants';
+import { getParticipantCountWithFake, getRemoteParticipantCount } from '../base/participants';
 import { StateListenerRegistry, equals } from '../base/redux';
 import { clientResized } from '../base/responsive-ui';
 import { setFilmstripVisible } from '../filmstrip/actions';
@@ -8,7 +8,12 @@ import { getParticipantsPaneOpen } from '../participants-pane/functions';
 import { setOverflowDrawer } from '../toolbox/actions.web';
 import { getCurrentLayout, getTileViewGridDimensions, shouldDisplayTileView, LAYOUTS } from '../video-layout';
 
-import { setHorizontalViewDimensions, setTileViewDimensions, setVerticalViewDimensions } from './actions.web';
+import {
+    setHorizontalViewDimensions,
+    setRemoteParticipants,
+    setTileViewDimensions,
+    setVerticalViewDimensions
+} from './actions.web';
 import {
     ASPECT_RATIO_BREAKPOINT,
     DISPLAY_DRAWER_THRESHOLD,
@@ -153,3 +158,96 @@ StateListenerRegistry.register(
             store.dispatch(setTileViewDimensions(gridDimensions));
         }
     });
+
+/**
+ * Listens for changes to the remote participant count to recompute the reordered list of the remote participants.
+ */
+StateListenerRegistry.register(
+    /* selector */ getRemoteParticipantCount,
+    /* listener */ (count, store) => _updateRemoteParticipants(store));
+
+/**
+ * Listens for changes to the screensharing status of the remote participants to recompute the reordered list of the
+ * remote endpoints.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => state['features/video-layout'].remoteScreenShares,
+    /* listener */ (remoteScreenShares, store) => _updateRemoteParticipants(store));
+
+StateListenerRegistry.register(
+    /* selector */ state => state['features/base/participants'].dominantSpeaker,
+    /* listener */ (dominantSpeaker, store) => _updateRemoteParticipants(store));
+
+/**
+ * Private helper to calculate the reordered list of remote participants.
+ *
+ * @param {*} store - The redux store.
+ * @returns {void}
+ */
+function _updateRemoteParticipants(store) {
+    const state = store.getState();
+    const { dominantSpeaker, local, previousSpeakers, remote } = state['features/base/participants'];
+
+    if (!remote) {
+        return;
+    }
+    const { remoteParticipants, visibleParticipants } = state['features/filmstrip'];
+    const currentParticipants = Array.from(remote.values());
+    const { remoteScreenShares } = state['features/video-layout'];
+
+    // Make a copy so that we don't modify the values in redux.
+    const screenShares = (remoteScreenShares || []).slice();
+    const compareDisplayNames = function(a, b) {
+        const nameA = a.name.toUpperCase();
+        const nameB = b.name.toUpperCase();
+        const result = nameA > nameB
+            ? 1
+            : nameA < nameB ? -1 : 0;
+
+        return result;
+    };
+
+    // Sort the remote participants alphabetically.
+    let reorderedParticipants
+        = currentParticipants
+            .sort(compareDisplayNames)
+            .map(p => p.id);
+
+    const speakersList = [];
+
+    dominantSpeaker && speakersList.push(dominantSpeaker);
+
+    // Check if the previous speakers are still in the conference. Ideally, the bridge should send an updated dominant
+    // speaker event when any of the previous speakers leave the conference.
+    // TODO: Remove this check when that is fixed in the bridge.
+    if (previousSpeakers?.length) {
+        const connected = previousSpeakers.filter(speaker => currentParticipants.findIndex(p => p === speaker) >= 0);
+
+        speakersList.push(...connected);
+    }
+
+    // Move the speakers up the list only if both the below conditions are met.
+    // 1. They are not the local participant.
+    // 2. They are currently not visible in the filmstrip.
+    for (const speaker of speakersList.reverse()) {
+        const speakerIndex = (visibleParticipants || []).findIndex(p => p === speaker);
+
+        if (speaker !== local?.id && speakerIndex < 0) {
+            reorderedParticipants.splice(speakerIndex, 1);
+            reorderedParticipants.splice(0, 0, speaker);
+        }
+    }
+
+    // Add the remote screenshares (if any) to the beginning of the list.
+    if (screenShares.length) {
+        reorderedParticipants
+            = reorderedParticipants.filter(participant => screenShares.findIndex(share => share === participant) < 0);
+
+        // We want to put the latest share at the top.
+        reorderedParticipants.splice(0, 0, ...screenShares.reverse());
+    }
+
+    if (reorderedParticipants !== remoteParticipants) {
+        store.dispatch(setRemoteParticipants(reorderedParticipants));
+    }
+}

@@ -6,7 +6,9 @@
  * {
  *     type: DOMINANT_SPEAKER_CHANGED,
  *     participant: {
- *         id: string
+ *         conference: JitsiConference,
+ *         id: string,
+ *         previousSpeakers: Array<string>
  *     }
  * }
  */
