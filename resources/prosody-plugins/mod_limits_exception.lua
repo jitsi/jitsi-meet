@@ -24,7 +24,7 @@ module:hook("authentication-success", function (event)
 			session.throttle = nil;
 		end
 
-		if unlimited_stanza_size_limit then
+		if unlimited_stanza_size_limit and session.stream.set_stanza_size_limit then
 			module:log('info', 'Setting stanza size limits for %s to %s', jid, unlimited_stanza_size_limit)
 			session.stream:set_stanza_size_limit(unlimited_stanza_size_limit);
 		end
