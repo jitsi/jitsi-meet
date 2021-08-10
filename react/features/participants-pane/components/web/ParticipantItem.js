@@ -161,7 +161,7 @@ export default function ParticipantItem({
 
     return (
         <ParticipantContainer
-            id = { raisedHand && 'raised-hand-participant' }
+            id = { raisedHand ? 'raised-hand-participant' : 'participant-item' }
             isHighlighted = { isHighlighted }
             onMouseLeave = { onLeave }
             trigger = { actionsTrigger }>
