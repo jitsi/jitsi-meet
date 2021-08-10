@@ -294,7 +294,7 @@
         "reservationError": "Erro de sistema de reserva",
         "reservationErrorMsg": "Código do erro: {{code}}, mensagem: {{msg}}",
         "retry": "Tentar novamente",
-        "screenSharingAudio": "Compartilha áudio",
+        "screenSharingAudio": "Compartilhar áudio",
         "screenSharingFailed": "Oops! Alguma coisa de errado aconteceu, não é possível habilitar o compartilhamento de tela!",
         "screenSharingFailedTitle": "Falha ao compartilhar a tela!",
         "screenSharingPermissionDeniedError": "Oops! Alguma coisa está errada com suas permissões de compartilhamento de tela. Recarregue e tente de novo.",
