@@ -1,8 +1,7 @@
 // @flow
 
 import { createVirtualBackgroundEffect } from '../stream-effects/virtual-background';
-import { showWarningNotification } from '../notifications/actions';
-import { hideDialog} from '../base/dialog';
+
 import { BACKGROUND_ENABLED, SET_VIRTUAL_BACKGROUND } from './actionTypes';
 import logger from './logger';
 
@@ -32,13 +31,6 @@ export function toggleBackgroundEffect(options: Object, jitsiTrack: Object) {
                 dispatch(backgroundEnabled(false));
                 logger.error('Error on apply background effect:', error);
             }
-        } else {
-            dispatch(backgroundEnabled(false));
-            dispatch(hideDialog())
-            dispatch(showWarningNotification({
-                titleKey: 'virtualBackground.cameraError',
-            }));
-            logger.error('Failed to access camera device. Error on apply background effect.');
         }
     };
 }

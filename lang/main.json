@@ -384,7 +384,7 @@
         "desktopShareError": "Could not create desktop share",
         "desktopShare":"Desktop share",
         "webAssemblyWarning": "WebAssembly not supported",
-        "cameraError": "Error on apply background effect. Failed to access camera device."
+        "cameraError": "Failed to apply background effect."
     },
     "feedback": {
         "average": "Average",

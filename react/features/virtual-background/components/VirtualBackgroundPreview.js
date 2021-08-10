@@ -3,15 +3,18 @@
 import Spinner from '@atlaskit/spinner';
 import React, { PureComponent } from 'react';
 
+import { hideDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { VIDEO_TYPE } from '../../base/media';
 import Video from '../../base/media/components/Video';
 import { connect, equals } from '../../base/redux';
 import { getCurrentCameraDeviceId } from '../../base/settings';
 import { createLocalTracksF } from '../../base/tracks/functions';
+import { showWarningNotification } from '../../notifications/actions';
 import { toggleBackgroundEffect } from '../actions';
 import { VIRTUAL_BACKGROUND_TYPE } from '../constants';
 import { localTrackStopped } from '../functions';
+import logger from '../logger';
 
 const videoClassName = 'video-preview-video';
 
@@ -104,7 +107,6 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
             devices: [ 'video' ]
         });
 
-
         // In case the component gets unmounted before the tracks are created
         // avoid a leak by not setting the state
         if (this._componentWasUnmounted) {
@@ -127,10 +129,20 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
      * @returns {Promise}
      */
     async _applyBackgroundEffect() {
-        this.setState({ loading: true });
-        console.log(this.state.jitsiTrack, 'this.state.jitsiTrackthis.state.jitsiTrackthis.state.jitsiTrack')
-        await this.props.dispatch(toggleBackgroundEffect(this.props.options, this.state.jitsiTrack));
-        this.setState({ loading: false });
+        if (this.state.jitsiTrack === null) {
+            this.props.dispatch(hideDialog());
+            this.props.dispatch(
+                showWarningNotification({
+                    titleKey: 'virtualBackground.cameraError',
+                    description: 'Failed to access camera device.'
+                })
+            );
+            logger.error('Failed to access camera device. Error on apply background effect.');
+        } else {
+            this.setState({ loading: true });
+            await this.props.dispatch(toggleBackgroundEffect(this.props.options, this.state.jitsiTrack));
+            this.setState({ loading: false });
+        }
     }
 
     /**
