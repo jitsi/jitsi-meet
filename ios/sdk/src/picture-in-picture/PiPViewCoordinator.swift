@@ -144,7 +144,6 @@ public class PiPViewCoordinator {
     /// screen size changes
     public func resetBounds(bounds: CGRect) {
         currentBounds = bounds
-        exitPictureInPicture()
     }
 
     /// Stop the dragging gesture of the root view
