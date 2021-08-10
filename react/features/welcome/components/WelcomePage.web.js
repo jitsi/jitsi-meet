@@ -201,7 +201,7 @@ class WelcomePage extends AbstractWelcomePage {
                     <div className = 'header-image' />
                     <div className = 'header-container'>
                         <h1 className = 'header-text-title'>
-                            { t('welcomepage.headerTitle') }
+                            { interfaceConfig.APP_NAME }
                         </h1>
                         <span className = 'header-text-subtitle'>
                             { t('welcomepage.headerSubtitle')}
