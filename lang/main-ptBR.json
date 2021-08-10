@@ -382,7 +382,7 @@
         "image6": "Floresta",
         "image7": "Alvorada",
         "desktopShareError": "Não foi possível compartilhar o desktop",
-        "desktopShare":"Compartilhar desktop",
+        "desktopShare": "Compartilhar desktop",
         "webAssemblyWarning": "Não há suporte para WebAssembly"
     },
     "feedback": {
@@ -410,7 +410,7 @@
         "country": "País",
         "dialANumber": "Para entrar na reunião, disque um desses números e depois insira o PIN.",
         "dialInConferenceID": "PIN:",
-        "copyNumber":"Copiar número",
+        "copyNumber": "Copiar número",
         "dialInNotSupported": "Desculpe, a discagem não é atualmente suportada.",
         "dialInNumber": "Discar:",
         "dialInSummaryError": "Ocorreu um erro ao buscar a informação de discagem. Tente novamente mais tarde.",
@@ -1067,13 +1067,13 @@
         "startMeeting": "Iniciar reunião",
         "terms": "Termos",
         "title": "Videoconferências mais seguras, flexíveis e totalmente gratuitas",
-        "logo":{
-            "calendar":"Logo do Calendário",
-            "microsoftLogo":"Logo da Microsoft",
-            "logoDeepLinking":"Logo do Jitsi Meet",
-            "desktopPreviewThumbnail":"Miniatura de Visualização do Desktop",
-            "googleLogo":"Logo do Google",
-            "policyLogo":"Logo da Política de Privacidade"
+        "logo": {
+            "calendar": "Logo do Calendário",
+            "microsoftLogo": "Logo da Microsoft",
+            "logoDeepLinking": "Logo do Jitsi Meet",
+            "desktopPreviewThumbnail": "Miniatura de Visualização do Desktop",
+            "googleLogo": "Logo do Google",
+            "policyLogo": "Logo da Política de Privacidade"
         }
     },
     "lonelyMeetingExperience": {
