@@ -125,9 +125,11 @@
         "appNotInstalled": "Precisa da aplicação móvel {{app}} para participar na reunião com o seu telefone.",
         "description": "Não acontece nada? Estamos a tentar iniciar a sua reunião na aplicação desktop {{app}}. Tente novamente ou inicie na aplicação web {{app}}.",
         "descriptionWithoutWeb": "Não aconteceu nada? Tentamos iniciar a sua reunião na aplicação desktop {{app}}.",
-        "downloadApp": "Transfira a Aplicação",
+        "downloadApp": "Transfira a aplicação",
+        "ifDoNotHaveApp": "Se ainda não tem a aplicação:",
+        "ifHaveApp": "Se já tem a aplicação:",
+        "joinInApp": "Participe nesta reunião utilizando a aplicação",
         "launchWebButton": "Iniciar na web",
-        "openApp": "Continue na aplicação",
         "title": "A iniciar a sua reunião na {{app}}...",
         "tryAgainButton": "Tente novamente no desktop"
     },
@@ -633,7 +635,7 @@
         "speakers": "Participantes",
         "startAudioMuted": "Todos começam com microfone desligado",
         "startVideoMuted": "Todos começam com câmara desligada",
-        "talkWhileMuted": "se fala e está com microfone desligado",
+        "talkWhileMuted": "Se fala e está com microfone desligado",
         "title": "Definições"
     },
     "settingsView": {
