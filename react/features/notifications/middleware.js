@@ -34,7 +34,7 @@ MiddlewareRegistry.register(store => next => action => {
         const { participant: p } = action;
         const { dispatch, getState } = store;
 
-        if (!p.local && !joinLeaveNotificationsDisabled()) {
+        if (!p.local && !joinLeaveNotificationsDisabled() && !p.isReplacing) {
             dispatch(showParticipantJoinedNotification(
                 getParticipantDisplayName(getState, p.id)
             ));
@@ -45,13 +45,15 @@ MiddlewareRegistry.register(store => next => action => {
             // Do not show the notification for mobile and also when the focus indicator is disabled.
             const displayName = getParticipantDisplayName(getState, p.id);
 
-            dispatch(showNotification({
-                descriptionArguments: { to: displayName || '$t(notify.somebody)' },
-                descriptionKey: 'notify.grantedTo',
-                titleKey: 'notify.somebody',
-                title: displayName
-            },
-            NOTIFICATION_TIMEOUT));
+            if (!p.isReplacing) {
+                dispatch(showNotification({
+                    descriptionArguments: { to: displayName || '$t(notify.somebody)' },
+                    descriptionKey: 'notify.grantedTo',
+                    titleKey: 'notify.somebody',
+                    title: displayName
+                },
+                NOTIFICATION_TIMEOUT));
+            }
         }
 
         return result;
@@ -65,7 +67,8 @@ MiddlewareRegistry.register(store => next => action => {
 
             if (typeof interfaceConfig === 'object'
                 && participant
-                && !participant.local) {
+                && !participant.local
+                && !action.participant.isReplaced) {
                 store.dispatch(showNotification({
                     descriptionKey: 'notify.disconnected',
                     titleKey: 'notify.somebody',

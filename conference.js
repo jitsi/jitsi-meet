@@ -39,12 +39,14 @@ import {
     conferenceWillJoin,
     conferenceWillLeave,
     dataChannelOpened,
+    getConferenceOptions,
     kickedOut,
     lockStateChanged,
     onStartMutedPolicyChanged,
     p2pStatusChanged,
     sendLocalParticipant
 } from './react/features/base/conference';
+import { getReplaceParticipant } from './react/features/base/config/functions';
 import {
     checkAndNotifyForNewDevice,
     getAvailableDevices,
@@ -110,7 +112,6 @@ import {
     trackRemoved
 } from './react/features/base/tracks';
 import { downloadJSON } from './react/features/base/util/downloadJSON';
-import { getConferenceOptions } from './react/features/conference/functions';
 import { showDesktopPicker } from './react/features/desktop-picker';
 import { appendSuffix } from './react/features/display-name';
 import {
@@ -131,6 +132,7 @@ import { setScreenAudioShareState, isScreenAudioShared } from './react/features/
 import { toggleScreenshotCaptureEffect } from './react/features/screenshot-capture';
 import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
 import { createPresenterEffect } from './react/features/stream-effects/presenter';
+import { createRnnoiseProcessor } from './react/features/stream-effects/rnnoise';
 import { endpointMessageReceived } from './react/features/subtitles';
 import UIEvents from './service/UI/UIEvents';
 
@@ -304,10 +306,13 @@ class ConferenceConnector {
 
         // not enough rights to create conference
         case JitsiConferenceErrors.AUTHENTICATION_REQUIRED: {
+
+            const replaceParticipant = getReplaceParticipant(APP.store.getState());
+
             // Schedule reconnect to check if someone else created the room.
             this.reconnectTimeout = setTimeout(() => {
                 APP.store.dispatch(conferenceWillJoin(room));
-                room.join();
+                room.join(null, replaceParticipant);
             }, 5000);
 
             const { password }
@@ -393,8 +398,10 @@ class ConferenceConnector {
      *
      */
     connect() {
+        const replaceParticipant = getReplaceParticipant(APP.store.getState());
+
         // the local storage overrides here and in connection.js can be used by jibri
-        room.join(jitsiLocalStorage.getItem('xmpp_conference_password_override'));
+        room.join(jitsiLocalStorage.getItem('xmpp_conference_password_override'), replaceParticipant);
     }
 }
 
@@ -1351,7 +1358,11 @@ export default {
     },
 
     _getConferenceOptions() {
-        return getConferenceOptions(APP.store.getState());
+        const options = getConferenceOptions(APP.store.getState());
+
+        options.createVADProcessor = createRnnoiseProcessor;
+
+        return options;
     },
 
     /**
@@ -1861,7 +1872,6 @@ export default {
                     await this.useVideoStream(desktopVideoStream);
                 }
 
-
                 if (this._desktopAudioStream) {
                     // If there is a localAudio stream, mix in the desktop audio stream captured by the screen sharing
                     // api.
@@ -2167,7 +2177,24 @@ export default {
             JitsiConferenceEvents.LOCK_STATE_CHANGED,
             (...args) => APP.store.dispatch(lockStateChanged(room, ...args)));
 
-        room.on(JitsiConferenceEvents.KICKED, participant => {
+        room.on(JitsiConferenceEvents.KICKED, (participant, reason, isReplaced) => {
+            if (isReplaced) {
+                // this event triggers when the local participant is kicked, `participant`
+                // is the kicker. In replace participant case, kicker is undefined,
+                // as the server initiated it. We mark in store the local participant
+                // as being replaced based on jwt.
+                const localParticipant = getLocalParticipant(APP.store.getState());
+
+                APP.store.dispatch(participantUpdated({
+                    conference: room,
+                    id: localParticipant.id,
+                    isReplaced
+                }));
+
+                // we send readyToClose when kicked participant is replace so that
+                // embedding app can choose to dispose the iframe API on the handler.
+                APP.API.notifyReadyToClose();
+            }
             APP.store.dispatch(kickedOut(room, participant));
         });
 
@@ -2440,8 +2467,8 @@ export default {
         });
 
         APP.UI.addListener(
-            UIEvents.TOGGLE_SCREENSHARING, audioOnly => {
-                this.toggleScreenSharing(undefined, { audioOnly });
+            UIEvents.TOGGLE_SCREENSHARING, ({ enabled, audioOnly }) => {
+                this.toggleScreenSharing(enabled, { audioOnly });
             }
         );
     },

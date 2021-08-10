@@ -59,7 +59,7 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
      * @returns {boolean}
      */
     _onSubmitValue() {
-        return this._onSetVideoLink(this.state.value);
+        return super._onSetVideoLink(this.state.value);
     }
 
     /**
@@ -91,28 +91,6 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
                     value = { this.state.value } />
             </Dialog>
         );
-    }
-
-    /**
-     * Validates the entered video link by extracting the id and dispatches it.
-     *
-     * It returns a boolean to comply the Dialog behaviour:
-     *     {@code true} - the dialog should be closed.
-     *     {@code false} - the dialog should be left open.
-     *
-    * @param {string} link - The entered video link.
-     * @returns {boolean}
-     */
-    _onSetVideoLink(link: string) {
-        if (!link || !link.trim()) {
-            return false;
-        }
-
-        const { onPostSubmit } = this.props;
-
-        onPostSubmit(link);
-
-        return true;
     }
 
     _onChange: Object => void;

@@ -40,7 +40,25 @@ export function createFakeConfig(baseURL: string) {
     };
 }
 
-/* eslint-disable max-params, no-shadow */
+/**
+ * Selector used to get the meeting region.
+ *
+ * @param {Object} state - The global state.
+ * @returns {string}
+ */
+export function getMeetingRegion(state: Object) {
+    return state['features/base/config']?.deploymentInfo?.region || '';
+}
+
+/**
+ * Selector used to get the endpoint used for fetching the recording.
+ *
+ * @param {Object} state - The global state.
+ * @returns {string}
+ */
+export function getRecordingSharingUrl(state: Object) {
+    return state['features/base/config'].recordingSharingUrl;
+}
 
 /**
  * Overrides JSON properties in {@code config} and

@@ -227,7 +227,7 @@ export function noDataFromSource(track) {
  * @returns {Function}
  */
 export function showNoDataFromSourceVideoError(jitsiTrack) {
-    return (dispatch, getState) => {
+    return async (dispatch, getState) => {
         let notificationInfo;
 
         const track = getTrackByJitsiTrack(getState()['features/base/tracks'], jitsiTrack);
@@ -239,12 +239,11 @@ export function showNoDataFromSourceVideoError(jitsiTrack) {
         if (track.isReceivingData) {
             notificationInfo = undefined;
         } else {
-            const notificationAction = showErrorNotification({
+            const notificationAction = await dispatch(showErrorNotification({
                 descriptionKey: 'dialog.cameraNotSendingData',
                 titleKey: 'dialog.cameraNotSendingDataTitle'
-            });
+            }));
 
-            dispatch(notificationAction);
             notificationInfo = {
                 uid: notificationAction.uid
             };
@@ -362,7 +361,7 @@ function replaceStoredTracks(oldTrack, newTrack) {
  * @returns {{ type: TRACK_ADDED, track: Track }}
  */
 export function trackAdded(track) {
-    return (dispatch, getState) => {
+    return async (dispatch, getState) => {
         track.on(
             JitsiTrackEvents.TRACK_MUTE_CHANGED,
             () => dispatch(trackMutedChanged(track)));
@@ -389,12 +388,10 @@ export function trackAdded(track) {
             track.on(JitsiTrackEvents.NO_DATA_FROM_SOURCE, () => dispatch(noDataFromSource({ jitsiTrack: track })));
             if (!isReceivingData) {
                 if (mediaType === MEDIA_TYPE.AUDIO) {
-                    const notificationAction = showNotification({
+                    const notificationAction = await dispatch(showNotification({
                         descriptionKey: 'dialog.micNotSendingData',
                         titleKey: 'dialog.micNotSendingDataTitle'
-                    });
-
-                    dispatch(notificationAction);
+                    }));
 
                     // Set the notification ID so that other parts of the application know that this was
                     // displayed in the context of the current device.

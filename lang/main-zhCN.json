@@ -574,7 +574,7 @@
         "setDisplayNameLabel": "设定您的显示名称",
         "setEmailInput": "输入您的邮箱",
         "setEmailLabel": "设置您的个人全球统一标识邮箱",
-        "title": "简介"
+        "title": "个人信息"
     },
     "raisedHand": "请求发言",
     "recording": {
@@ -621,7 +621,7 @@
             "disconnect": "断开连接",
             "microsoftSignIn": "Microsoft帐号登录",
             "signedIn": "目前通过 {{email}} 获取日历事件。点击下方断开连接按钮停止访问。",
-            "title": "标题"
+            "title": "日历集成"
         },
         "devices": "设备",
         "followMe": "分机随行",
@@ -638,7 +638,7 @@
         "speakers": "发言人",
         "startAudioMuted": "所有人开始时静音",
         "startVideoMuted": "所有人开始时隐藏视频画面",
-        "title": "抬头"
+        "title": "设置"
     },
     "settingsView": {
         "advanced": "高级",

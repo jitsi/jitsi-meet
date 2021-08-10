@@ -1,7 +1,7 @@
 // @flow
 
 import { openDialog } from '../../base/dialog';
-import { IconKick } from '../../base/icons';
+import { IconCloseCircle } from '../../base/icons';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 
 import { KickRemoteParticipantDialog } from '.';
@@ -29,7 +29,7 @@ export type Props = AbstractButtonProps & {
  */
 export default class AbstractKickButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.kick';
-    icon = IconKick;
+    icon = IconCloseCircle;
     label = 'videothumbnail.kick';
 
     /**

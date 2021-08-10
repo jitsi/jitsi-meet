@@ -3,12 +3,13 @@
 import { getActiveSession } from '../../features/recording/functions';
 import { getRoomName } from '../base/conference';
 import { getInviteURL } from '../base/connection';
+import { isIosMobileBrowser } from '../base/environment/utils';
 import { i18next } from '../base/i18n';
 import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 import { getLocalParticipant, isLocalParticipantModerator } from '../base/participants';
 import { toState } from '../base/redux';
 import { doGetJSON, parseURIString } from '../base/util';
-import { isVpaasMeeting } from '../billing-counter/functions';
+import { isVpaasMeeting } from '../jaas/functions';
 
 import { INVITE_TYPES, SIP_ADDRESS_REGEX } from './constants';
 import logger from './logger';
@@ -252,6 +253,49 @@ export function getInviteResultsForQuery(
 }
 
 /**
+ * Creates a custom no new lines message for iOS default mail describing how to dial in to the conference.
+ *
+ * @returns {string}
+ */
+export function getInviteTextiOS({
+    state,
+    phoneNumber,
+    t
+}: Object) {
+    if (!isIosMobileBrowser()) {
+        return '';
+    }
+
+    const dialIn = state['features/invite'];
+    const inviteUrl = getInviteURL(state);
+    const localParticipant = getLocalParticipant(state);
+    const localParticipantName = localParticipant?.name;
+
+    const inviteURL = _decodeRoomURI(inviteUrl);
+
+    let invite = localParticipantName
+        ? t('info.inviteTextiOSPersonal', { name: localParticipantName })
+        : t('info.inviteURLFirstPartGeneral');
+
+    invite += ' ';
+
+    invite += t('info.inviteTextiOSInviteUrl', { inviteUrl });
+    invite += ' ';
+
+    if (shouldDisplayDialIn(dialIn)) {
+        invite += t('info.inviteTextiOSPhone', {
+            number: phoneNumber,
+            conferenceID: dialIn.conferenceID,
+            didUrl: getDialInfoPageURL(state)
+        });
+    }
+    invite += ' ';
+    invite += t('info.inviteTextiOSJoinSilent', { silentUrl: `${inviteURL}#config.startSilent=true` });
+
+    return invite;
+}
+
+/**
  * Creates a message describing how to dial in to the conference.
  *
  * @returns {string}
@@ -271,7 +315,6 @@ export function getInviteText({
     const localParticipantName = localParticipant?.name;
 
     const inviteURL = _decodeRoomURI(inviteUrl);
-
     let invite = localParticipantName
         ? t('info.inviteURLFirstPartPersonal', { name: localParticipantName })
         : t('info.inviteURLFirstPartGeneral');

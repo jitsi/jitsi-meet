@@ -12,6 +12,7 @@ import {
     SET_LOADABLE_AVATAR_URL
 } from './actionTypes';
 import { LOCAL_PARTICIPANT_DEFAULT_ID, PARTICIPANT_ROLE } from './constants';
+import { isParticipantModerator } from './functions';
 
 /**
  * Participant object.
@@ -51,6 +52,16 @@ const PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE = [
     'pinned'
 ];
 
+const DEFAULT_STATE = {
+    haveParticipantWithScreenSharingFeature: false,
+    dominantSpeaker: undefined,
+    everyoneIsModerator: false,
+    pinnedParticipant: undefined,
+    local: undefined,
+    remote: new Map(),
+    fakeParticipants: new Map()
+};
+
 /**
  * Listen for actions which add, remove, or update the set of participants in
  * the conference.
@@ -62,18 +73,157 @@ const PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE = [
  * added/removed/modified.
  * @returns {Participant[]}
  */
-ReducerRegistry.register('features/base/participants', (state = [], action) => {
+ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, action) => {
     switch (action.type) {
+    case PARTICIPANT_ID_CHANGED: {
+        const { local } = state;
+
+        if (local) {
+            state.local = {
+                ...local,
+                id: action.newValue
+            };
+
+            return {
+                ...state
+            };
+        }
+
+        return state;
+    }
+    case DOMINANT_SPEAKER_CHANGED: {
+        const { participant } = action;
+        const { id } = participant;
+        const { dominantSpeaker } = state;
+
+        // Only one dominant speaker is allowed.
+        if (dominantSpeaker) {
+            _updateParticipantProperty(state, dominantSpeaker, 'dominantSpeaker', false);
+        }
+
+        if (_updateParticipantProperty(state, id, 'dominantSpeaker', true)) {
+            return {
+                ...state,
+                dominantSpeaker: id
+            };
+        }
+
+        delete state.dominantSpeaker;
+
+        return {
+            ...state
+        };
+    }
+    case PIN_PARTICIPANT: {
+        const { participant } = action;
+        const { id } = participant;
+        const { pinnedParticipant } = state;
+
+        // Only one pinned participant is allowed.
+        if (pinnedParticipant) {
+            _updateParticipantProperty(state, pinnedParticipant, 'pinned', false);
+        }
+
+        if (_updateParticipantProperty(state, id, 'pinned', true)) {
+            return {
+                ...state,
+                pinnedParticipant: id
+            };
+        }
+
+        delete state.pinnedParticipant;
+
+        return {
+            ...state
+        };
+    }
     case SET_LOADABLE_AVATAR_URL:
-    case DOMINANT_SPEAKER_CHANGED:
-    case PARTICIPANT_ID_CHANGED:
-    case PARTICIPANT_UPDATED:
-    case PIN_PARTICIPANT:
-        return state.map(p => _participant(p, action));
+    case PARTICIPANT_UPDATED: {
+        const { participant } = action;
+        let { id } = participant;
+        const { local } = participant;
 
-    case PARTICIPANT_JOINED:
-        return [ ...state, _participantJoined(action) ];
+        if (!id && local) {
+            id = LOCAL_PARTICIPANT_DEFAULT_ID;
+        }
 
+        let newParticipant;
+
+        if (state.remote.has(id)) {
+            newParticipant = _participant(state.remote.get(id), action);
+            state.remote.set(id, newParticipant);
+        } else if (id === state.local?.id) {
+            newParticipant = state.local = _participant(state.local, action);
+        }
+
+        if (newParticipant) {
+
+            // everyoneIsModerator calculation:
+            const isModerator = isParticipantModerator(newParticipant);
+
+            if (state.everyoneIsModerator && !isModerator) {
+                state.everyoneIsModerator = false;
+            } else if (!state.everyoneIsModerator && isModerator) {
+                state.everyoneIsModerator = _isEveryoneModerator(state);
+            }
+
+            // haveParticipantWithScreenSharingFeature calculation:
+            const { features = {} } = participant;
+
+            // Currently we use only PARTICIPANT_UPDATED to set a feature to enabled and we never disable it.
+            if (String(features['screen-sharing']) === 'true') {
+                state.haveParticipantWithScreenSharingFeature = true;
+            }
+        }
+
+        return {
+            ...state
+        };
+    }
+    case PARTICIPANT_JOINED: {
+        const participant = _participantJoined(action);
+        const { pinnedParticipant, dominantSpeaker } = state;
+
+        if (participant.pinned) {
+            if (pinnedParticipant) {
+                _updateParticipantProperty(state, pinnedParticipant, 'pinned', false);
+            }
+
+            state.pinnedParticipant = participant.id;
+        }
+
+        if (participant.dominantSpeaker) {
+            if (dominantSpeaker) {
+                _updateParticipantProperty(state, dominantSpeaker, 'dominantSpeaker', false);
+            }
+            state.dominantSpeaker = participant.id;
+        }
+
+        const isModerator = isParticipantModerator(participant);
+        const { local, remote } = state;
+
+        if (state.everyoneIsModerator && !isModerator) {
+            state.everyoneIsModerator = false;
+        } else if (!local && remote.size === 0 && isModerator) {
+            state.everyoneIsModerator = true;
+        }
+
+        if (participant.local) {
+            return {
+                ...state,
+                local: participant
+            };
+        }
+
+        state.remote.set(participant.id, participant);
+
+        if (participant.isFakeParticipant) {
+            state.fakeParticipants.set(participant.id, participant);
+        }
+
+        return { ...state };
+
+    }
     case PARTICIPANT_LEFT: {
         // XXX A remote participant is uniquely identified by their id in a
         // specific JitsiConference instance. The local participant is uniquely
@@ -81,22 +231,110 @@ ReducerRegistry.register('features/base/participants', (state = [], action) => {
         // (and the fact that the local participant "joins" at the beginning of
         // the app and "leaves" at the end of the app).
         const { conference, id } = action.participant;
+        const { fakeParticipants, remote, local, dominantSpeaker, pinnedParticipant } = state;
+        let oldParticipant = remote.get(id);
 
-        return state.filter(p =>
-            !(
-                p.id === id
+        if (oldParticipant && oldParticipant.conference === conference) {
+            remote.delete(id);
+        } else if (local?.id === id) {
+            oldParticipant = state.local;
+            delete state.local;
+        } else {
+            // no participant found
+            return state;
+        }
 
-                    // XXX Do not allow collisions in the IDs of the local
-                    // participant and a remote participant cause the removal of
-                    // the local participant when the remote participant's
-                    // removal is requested.
-                    && p.conference === conference
-                    && (conference || p.local)));
+        if (!state.everyoneIsModerator && !isParticipantModerator(oldParticipant)) {
+            state.everyoneIsModerator = _isEveryoneModerator(state);
+        }
+
+        const { features = {} } = oldParticipant || {};
+
+        if (state.haveParticipantWithScreenSharingFeature && String(features['screen-sharing']) === 'true') {
+            const { features: localFeatures = {} } = state.local || {};
+
+            if (String(localFeatures['screen-sharing']) !== 'true') {
+                state.haveParticipantWithScreenSharingFeature = false;
+
+                // eslint-disable-next-line no-unused-vars
+                for (const [ key, participant ] of state.remote) {
+                    const { features: f = {} } = participant;
+
+                    if (String(f['screen-sharing']) === 'true') {
+                        state.haveParticipantWithScreenSharingFeature = true;
+                        break;
+                    }
+                }
+            }
+
+
+        }
+
+        if (dominantSpeaker === id) {
+            state.dominantSpeaker = undefined;
+        }
+
+        if (pinnedParticipant === id) {
+            state.pinnedParticipant = undefined;
+        }
+
+        if (fakeParticipants.has(id)) {
+            fakeParticipants.delete(id);
+        }
+
+        return { ...state };
     }
     }
 
     return state;
 });
+
+/**
+ * Loops trough the participants in the state in order to check if all participants are moderators.
+ *
+ * @param {Object} state - The local participant redux state.
+ * @returns {boolean}
+ */
+function _isEveryoneModerator(state) {
+    if (isParticipantModerator(state.local)) {
+        // eslint-disable-next-line no-unused-vars
+        for (const [ k, p ] of state.remote) {
+            if (!isParticipantModerator(p)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
+
+/**
+ * Updates a specific property for a participant.
+ *
+ * @param {State} state - The redux state.
+ * @param {string} id - The ID of the participant.
+ * @param {string} property - The property to update.
+ * @param {*} value - The new value.
+ * @returns {boolean} - True if a participant was updated and false otherwise.
+ */
+function _updateParticipantProperty(state, id, property, value) {
+    const { remote, local } = state;
+
+    if (remote.has(id)) {
+        remote.set(id, set(remote.get(id), property, value));
+
+        return true;
+    } else if (local?.id === id) {
+        state.local = set(local, property, value);
+
+        return true;
+    }
+
+    return false;
+}
 
 /**
  * Reducer function for a single participant.
@@ -112,56 +350,22 @@ ReducerRegistry.register('features/base/participants', (state = [], action) => {
  */
 function _participant(state: Object = {}, action) {
     switch (action.type) {
-    case DOMINANT_SPEAKER_CHANGED:
-        // Only one dominant speaker is allowed.
-        return (
-            set(state, 'dominantSpeaker', state.id === action.participant.id));
-
-    case PARTICIPANT_ID_CHANGED: {
-        // A participant is identified by an id-conference pair. Only the local
-        // participant is with an undefined conference.
-        const { conference } = action;
-
-        if (state.id === action.oldValue
-                && state.conference === conference
-                && (conference || state.local)) {
-            return {
-                ...state,
-                id: action.newValue
-            };
-        }
-        break;
-    }
-
     case SET_LOADABLE_AVATAR_URL:
     case PARTICIPANT_UPDATED: {
         const { participant } = action; // eslint-disable-line no-shadow
-        let { id } = participant;
-        const { local } = participant;
 
-        if (!id && local) {
-            id = LOCAL_PARTICIPANT_DEFAULT_ID;
-        }
+        const newState = { ...state };
 
-        if (state.id === id) {
-            const newState = { ...state };
-
-            for (const key in participant) {
-                if (participant.hasOwnProperty(key)
-                        && PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE.indexOf(key)
-                            === -1) {
-                    newState[key] = participant[key];
-                }
+        for (const key in participant) {
+            if (participant.hasOwnProperty(key)
+                    && PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE.indexOf(key)
+                        === -1) {
+                newState[key] = participant[key];
             }
-
-            return newState;
         }
-        break;
-    }
 
-    case PIN_PARTICIPANT:
-        // Currently, only one pinned participant is allowed.
-        return set(state, 'pinned', state.id === action.participant.id);
+        return newState;
+    }
     }
 
     return state;
@@ -187,6 +391,7 @@ function _participantJoined({ participant }) {
         dominantSpeaker,
         email,
         isFakeParticipant,
+        isReplacing,
         isJigasi,
         loadableAvatarUrl,
         local,
@@ -218,6 +423,7 @@ function _participantJoined({ participant }) {
         email,
         id,
         isFakeParticipant,
+        isReplacing,
         isJigasi,
         loadableAvatarUrl,
         local: local || false,

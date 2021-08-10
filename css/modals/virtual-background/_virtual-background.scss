@@ -1,5 +1,5 @@
 .virtual-background-dialog {
-    margin-left:-10px;
+    margin-left: -10px;
     position: relative;
     max-height: 300px;
     color: white;
@@ -7,166 +7,103 @@
     grid-template-columns: auto auto auto auto auto;
     column-gap: 9px;
     cursor: pointer;
-    .desktop-share:hover, .thumbnail:hover, .blur:hover, .slight-blur:hover, .virtual-background-none:hover{
-        height: 56px;
-        width: 103px;
-        opacity: .5;
+    .desktop-share:hover,
+    .thumbnail:hover,
+    .blur:hover,
+    .slight-blur:hover,
+    .virtual-background-none:hover {
+        opacity: 0.5;
         border: 2px solid #99bbf3;
-        @media (min-width: 432px) and (min-width: 432px) and (max-width: 632px) {
-            height: 56px;
-            width: 56px;
-        }
-        @media (max-width: 432px){
-            height: 56px;
-            width: 56px;
+        @media (max-width: 632px) {
+            height: 60px;
+            width: 60px;
         }
     }
-    .thumbnail {
+    .background-option {
         margin-top: 8px;
         border-radius: 6px;
-        object-fit: cover;
         height: 60px;
         width: 107px;
+        text-align: center;
+        justify-content: center;
+        font-weight: bold;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+    }
+    .thumbnail {
+        object-fit: cover;
     }
 
     .thumbnail:hover ~ .delete-image-icon {
         display: block;
     }
     .thumbnail-selected {
-        margin-top: 8px;
-        border-radius: 6px;
         object-fit: cover;
-        height: 56px;
-        width: 103px;
-        border: 2px solid #246FE5;
+        border: 2px solid #246fe5;
     }
-    .blur{
+    .blur {
         box-shadow: inset 0 0 12px #000000;
-        margin-top: 8px;
-        background: #7E8287;
-        font-weight: bold;
-        height: 60px;
-        width: 107px;
-        border-radius: 6px;
-        text-align: center;
-        vertical-align: middle;
-        line-height: 60px;
+        background: #7e8287;
+        padding: 0 10px;
     }
     .blur-selected {
         box-shadow: inset 0 0 12px #000000;
-        margin-top: 8px;
-        background: #7E8287;
-        font-weight: bold;
-        height: 56px;
-        width: 103px;
-        border-radius: 6px;
-        border: 2px solid #246FE5;
-        text-align: center;
-        vertical-align: middle;
-        line-height: 60px;
+        background: #7e8287;
+        border: 2px solid #246fe5;
+        padding: 0 10px;
     }
-    .slight-blur{
+    .slight-blur {
         box-shadow: inset 0 0 12px #000000;
-        margin-top: 8px;
-        background: #A4A4A4;
-        font-weight: bold;
-        height: 60px;
-        width: 107px;
-        border-radius: 6px;
-        text-align: center;
-        vertical-align: middle;
-        line-height: 60px;
+        background: #a4a4a4;
+        padding: 0 10px;
     }
-    .slight-blur-selected{
+    .slight-blur-selected {
         box-shadow: inset 0 0 12px #000000;
-        margin-top: 8px;
-        background: #A4A4A4;
-        font-weight: bold;
-        height: 56px;
-        width: 103px;
-        border-radius: 6px;
-        border: 2px solid #246FE5;
-        text-align: center;
-        vertical-align: middle;
-        line-height: 60px;
+        background: #a4a4a4;
+        border: 2px solid #246fe5;
+        padding: 0 10px;
     }
     .virtual-background-none {
-        margin-top: 8px;
         background: #525252;
-        font-weight: bold;
-        height: 60px;
-        width: 107px;
-        border-radius: 6px;
-        text-align: center;
-        vertical-align: middle;
-        line-height: 60px;
+        padding: 0 10px;
     }
     .none-selected {
-        margin-top: 8px;
         background: #525252;
-        font-weight: bold;
-        height: 56px;
-        width: 103px;
-        border-radius: 6px;
-        border: 2px solid #246FE5;
-        text-align: center;
-        vertical-align: middle;
-        line-height: 60px;
-    }
-    .desktop-share{
-        margin-top: 8px;
-        background: #525252;
-        font-weight: bold;
-        height: 60px;
-        width: 107px;
-        border-radius: 6px;
-        text-align: center;
-        vertical-align: middle;
-        line-height: 60px;
-    }
-    .desktop-share-selected{
-        margin-top: 8px;
-        background: #525252;
-        font-weight: bold;
-        height: 56px;
-        width: 103px;
-        border-radius: 6px;
-        border: 2px solid #246FE5;
-        text-align: center;
-        vertical-align: middle;
-        line-height: 60px;
-    }
-    .share-desktop-icon{
-        margin-top: 15%;
+        border: 2px solid #246fe5;
+        padding: 0 10px;
     }
 
-    @media (min-width: 432px) and (max-width: 632px) {
+    .desktop-share {
+        background: #525252;
+    }
+    .desktop-share-selected {
+        background: #525252;
+        border: 2px solid #246fe5;
+        padding: 0 10px;
+    }
+
+    @media (max-width: 632px) {
         font-size: 1.5vw;
-        .share-desktop-icon{
-            margin-top: 25%;
-        }
-        .desktop-share, .virtual-background-none, .thumbnail, .blur, .slight-blur{
+        .desktop-share,
+        .virtual-background-none,
+        .thumbnail,
+        .blur,
+        .slight-blur {
             height: 60px;
             width: 60px;
         }
-        .desktop-share-selected, .thumbnail-selected, .none-selected, .blur-selected, .slight-blur-selected{
-            height: 56px;
-            width: 56px;
+        .desktop-share-selected,
+        .thumbnail-selected,
+        .none-selected,
+        .blur-selected,
+        .slight-blur-selected {
+            height: 60px;
+            width: 60px;
         }
     }
-    @media (max-width: 432px){
-        .share-desktop-icon{
-            margin-top: 25%;
-        }
-        font-size: 1.5vw;
-        .desktop-share, .virtual-background-none, .thumbnail, .blur, .slight-blur{
-            height: 60px;
-            width: 60px;
-        }
-        .desktop-share-selected, .thumbnail-selected, .none-selected, .blur-selected, .slight-blur-selected{
-            height: 56px;
-            width: 56px;
-        }
+    @media (max-width: 360px) {
+        grid-template-columns: auto auto auto;
     }
 }
 
@@ -183,14 +120,14 @@
 .file-upload-btn {
     display: none;
 }
-.file-upload-label{
+.file-upload-label {
     font-size: 14px;
     font-weight: 600;
     line-height: 20px;
     margin-left: -10px;
     margin-top: 16px;
     margin-bottom: 8px;
-    color: #669AEC;
+    color: #669aec;
     display: inline-flex;
     cursor: pointer;
 }
@@ -201,63 +138,66 @@
     display: none;
     left: 96;
     bottom: 51;
-    @media (min-width: 432px) and (max-width: 632px) {
-        left: 51px
+    @media (max-width: 632px) {
+        left: 51px;
     }
 }
+
 .delete-image-icon:hover {
     display: block;
 }
 
 .thumbnail-container {
     position: relative;
+    &:focus-within {
+        .thumbnail ~ .delete-image-icon {
+            display: block;
+        }
+    }
 }
 
-.add-background{
+.add-background {
     margin-right: 8px;
 }
 
-.apply-background-btn{
+.apply-background-btn {
     margin-top: 16px;
     float: right;
- }
+}
 
- .video-background-preview-entry{
+.video-background-preview-entry {
     margin-left: -10px;
     height: 250px;
     width: 570px;
     margin-bottom: 8px;
     z-index: 2;
-    @media (min-width: 432px) and (max-width: 632px) {
+    @media (max-width: 632px) {
         max-width: 336;
     }
-    @media (max-width: 432px){
-        max-width: 336;
-    }
- }
+}
 
- .virtual-background-preview-video{
+.virtual-background-preview-video {
     margin-left: -10;
     border-radius: 6px;
     height: 100%;
     object-fit: cover;
     width: 100%;
- }
- .video-preview-loader{
-     border-radius: 6px;
-     background-color: transparent;
-     height: 250px;
-     margin-bottom: 8px;
-     width: 572px;
-     position: fixed;
-     z-index: 2;
-     @media (min-width: 432px) and (max-width: 632px) {
-         width: 340px;
-     }
- }
+}
+.video-preview-loader {
+    border-radius: 6px;
+    background-color: transparent;
+    height: 250px;
+    margin-bottom: 8px;
+    width: 572px;
+    position: fixed;
+    z-index: 2;
+    @media (min-width: 432px) and (max-width: 632px) {
+        width: 340px;
+    }
+}
 
- .video-preview-loader svg{
+.video-preview-loader svg {
     position: absolute;
     top: 40%;
     left: 45%;
- }
+}

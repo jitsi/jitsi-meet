@@ -4,6 +4,7 @@ import InlineDialog from '@atlaskit/inline-dialog';
 import React, { Component } from 'react';
 
 import { Drawer, DrawerPortal } from '../../../toolbox/components/web';
+import { isMobileBrowser } from '../../environment/utils';
 
 /**
  * A map of dialog positions, relative to trigger, to css classes used to
@@ -62,6 +63,11 @@ type Props = {
      * component.
      */
     id: string,
+
+    /**
+    * Callback to invoke when the popover has closed.
+    */
+    onPopoverClose: Function,
 
     /**
      * Callback to invoke when the popover has opened.
@@ -129,7 +135,19 @@ class Popover extends Component<Props, State> {
         // Bind event handlers so they are only bound once for every instance.
         this._onHideDialog = this._onHideDialog.bind(this);
         this._onShowDialog = this._onShowDialog.bind(this);
+        this._onKeyPress = this._onKeyPress.bind(this);
         this._drawerContainerRef = React.createRef();
+        this._onEscKey = this._onEscKey.bind(this);
+    }
+
+    /**
+     * Public method for triggering showing the context menu dialog.
+     *
+     * @returns {void}
+     * @public
+     */
+    showDialog() {
+        this.setState({ showDialog: true });
     }
 
     /**
@@ -143,7 +161,7 @@ class Popover extends Component<Props, State> {
      * @returns {void}
      */
     componentDidMount() {
-        if (this._drawerContainerRef && this._drawerContainerRef.current) {
+        if (this._drawerContainerRef && this._drawerContainerRef.current && !isMobileBrowser()) {
             this._drawerContainerRef.current.addEventListener('click', this._onShowDialog);
         }
     }
@@ -207,6 +225,7 @@ class Popover extends Component<Props, State> {
             <div
                 className = { className }
                 id = { id }
+                onKeyPress = { this._onKeyPress }
                 onMouseEnter = { this._onShowDialog }
                 onMouseLeave = { this._onHideDialog }>
                 <InlineDialog
@@ -229,15 +248,19 @@ class Popover extends Component<Props, State> {
      */
     _onHideDialog() {
         this.setState({ showDialog: false });
+
+        if (this.props.onPopoverClose) {
+            this.props.onPopoverClose();
+        }
     }
 
-    _onShowDialog: () => void;
+    _onShowDialog: (Object) => void;
 
     /**
      * Displays the {@code InlineDialog} and calls any registered onPopoverOpen
      * callbacks.
      *
-     * @param {MouseEvent} event - The mouse event to intercept.
+     * @param {Object} event - The mouse event or the keypress event to intercept.
      * @private
      * @returns {void}
      */
@@ -248,6 +271,45 @@ class Popover extends Component<Props, State> {
 
             if (this.props.onPopoverOpen) {
                 this.props.onPopoverOpen();
+            }
+        }
+    }
+
+    _onKeyPress: (Object) => void;
+
+    /**
+     * KeyPress handler for accessibility.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onKeyPress(e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            if (this.state.showDialog) {
+                this._onHideDialog();
+            } else {
+                this._onShowDialog(e);
+            }
+        }
+    }
+
+    _onEscKey: (Object) => void;
+
+    /**
+     * KeyPress handler for accessibility.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onEscKey(e) {
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            e.stopPropagation();
+            if (this.state.showDialog) {
+                this._onHideDialog();
             }
         }
     }
@@ -264,7 +326,9 @@ class Popover extends Component<Props, State> {
         const { content, position } = this.props;
 
         return (
-            <div className = 'popover'>
+            <div
+                className = 'popover'
+                onKeyDown = { this._onEscKey }>
                 { content }
                 <div className = 'popover-mouse-padding-top' />
                 <div className = { _mapPositionToPaddingClass(position) } />

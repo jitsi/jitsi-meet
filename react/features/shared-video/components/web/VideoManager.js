@@ -1,16 +1,14 @@
-import Logger from 'jitsi-meet-logger';
 import React from 'react';
 
 import { connect } from '../../../base/redux';
+import { PLAYBACK_STATUSES } from '../../constants';
 
 import AbstractVideoManager, {
     _mapDispatchToProps,
     _mapStateToProps,
-    PLAYBACK_STATES,
     Props
 } from './AbstractVideoManager';
 
-const logger = Logger.getLogger(__filename);
 
 /**
  * Manager of shared video.
@@ -41,20 +39,20 @@ class VideoManager extends AbstractVideoManager<Props> {
      *
      * @returns {string}
      */
-    getPlaybackState() {
-        let state;
+    getPlaybackStatus() {
+        let status;
 
         if (!this.player) {
             return;
         }
 
         if (this.player.paused) {
-            state = PLAYBACK_STATES.PAUSED;
+            status = PLAYBACK_STATUSES.PAUSED;
         } else {
-            state = PLAYBACK_STATES.PLAYING;
+            status = PLAYBACK_STATUSES.PLAYING;
         }
 
-        return state;
+        return status;
     }
 
     /**
@@ -73,19 +71,6 @@ class VideoManager extends AbstractVideoManager<Props> {
      */
     getVolume() {
         return this.player?.volume;
-    }
-
-    /**
-     * Sets player volume.
-     *
-     * @param {number} value - The volume.
-     *
-     * @returns {void}
-     */
-    setVolume(value) {
-        if (this.player) {
-            this.player.volume = value;
-        }
     }
 
     /**
@@ -162,9 +147,7 @@ class VideoManager extends AbstractVideoManager<Props> {
             autoPlay: true,
             src: videoId,
             controls: _isOwner,
-            onError: event => {
-                logger.error('Error in the player:', event);
-            },
+            onError: () => this.onError(),
             onPlay: () => this.onPlay(),
             onVolumeChange: () => this.onVolumeChange()
         };

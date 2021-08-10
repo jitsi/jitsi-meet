@@ -6,14 +6,13 @@ import {
     createStartMutedConfigurationEvent,
     sendAnalytics
 } from '../../analytics';
-import { getName } from '../../app/functions';
 import { endpointMessageReceived } from '../../subtitles';
+import { getReplaceParticipant } from '../config/functions';
 import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, setAudioMuted, setVideoMuted } from '../media';
 import {
     dominantSpeakerChanged,
-    getLocalParticipant,
     getNormalizedDisplayName,
     participantConnectionStatusChanged,
     participantKicked,
@@ -23,11 +22,7 @@ import {
     participantUpdated
 } from '../participants';
 import { getLocalTracks, replaceLocalTrack, trackAdded, trackRemoved } from '../tracks';
-import {
-    getBackendSafePath,
-    getBackendSafeRoomName,
-    getJitsiMeetGlobalNS
-} from '../util';
+import { getBackendSafeRoomName } from '../util';
 
 import {
     AUTH_STATUS_CHANGED,
@@ -60,6 +55,7 @@ import {
     _addLocalTracksToConference,
     commonUserJoinedHandling,
     commonUserLeftHandling,
+    getConferenceOptions,
     getCurrentConference,
     sendLocalParticipant
 } from './functions';
@@ -433,22 +429,7 @@ export function createConference() {
             throw new Error('Cannot join a conference without a room name!');
         }
 
-        const config = state['features/base/config'];
-        const { tenant } = state['features/base/jwt'];
-        const { email, name: nick } = getLocalParticipant(state);
-
-        const conference
-            = connection.initJitsiConference(
-
-                getBackendSafeRoomName(room), {
-                    ...config,
-                    applicationName: getName(),
-                    getWiFiStatsMethod: getJitsiMeetGlobalNS().getWiFiStats,
-                    confID: `${locationURL.host}${getBackendSafePath(locationURL.pathname)}`,
-                    siteID: tenant,
-                    statisticsDisplayName: config.enableDisplayNameInStats ? nick : undefined,
-                    statisticsId: config.enableEmailInStats ? email : undefined
-                });
+        const conference = connection.initJitsiConference(getBackendSafeRoomName(room), getConferenceOptions(state));
 
         connection[JITSI_CONNECTION_CONFERENCE_KEY] = conference;
 
@@ -460,7 +441,9 @@ export function createConference() {
 
         sendLocalParticipant(state, conference);
 
-        conference.join(password);
+        const replaceParticipant = getReplaceParticipant(state);
+
+        conference.join(password, replaceParticipant);
     };
 }
 
@@ -477,8 +460,10 @@ export function checkIfCanJoin() {
         const { authRequired, password }
             = getState()['features/base/conference'];
 
+        const replaceParticipant = getReplaceParticipant(APP.store.getState());
+
         authRequired && dispatch(_conferenceWillJoin(authRequired));
-        authRequired && authRequired.join(password);
+        authRequired && authRequired.join(password, replaceParticipant);
     };
 }
 

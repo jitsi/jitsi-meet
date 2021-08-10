@@ -16,7 +16,7 @@ import {
 } from '../../base/react';
 import { connect } from '../../base/redux';
 import { HELP_VIEW_MODAL_ID } from '../../help';
-import { SETTINGS_VIEW_ID } from '../../settings';
+import { SETTINGS_VIEW_ID } from '../../settings/constants';
 import { setSideBarVisible } from '../actions';
 
 import SideBarItem from './SideBarItem';

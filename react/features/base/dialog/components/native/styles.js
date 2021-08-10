@@ -2,6 +2,7 @@
 
 import { StyleSheet } from 'react-native';
 
+import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
 import { ColorSchemeRegistry, schemeColor } from '../../../color-scheme';
 import { BoxModel, ColorPalette } from '../../../styles';
 import { PREFERRED_DIALOG_SIZE } from '../../constants';
@@ -33,7 +34,7 @@ export const bottomSheetStyles = {
     },
 
     scrollView: {
-        paddingHorizontal: MD_ITEM_MARGIN_PADDING
+        paddingHorizontal: 0
     },
 
     /**
@@ -117,7 +118,7 @@ const brandedDialogText = {
 };
 
 const brandedDialogLabelStyle = {
-    color: schemeColor('text'),
+    color: ColorPalette.white,
     flexShrink: 1,
     fontSize: MD_FONT_SIZE,
     opacity: 0.90
@@ -130,7 +131,7 @@ const brandedDialogItemContainerStyle = {
 };
 
 const brandedDialogIconStyle = {
-    color: schemeColor('icon'),
+    color: ColorPalette.white,
     fontSize: 24
 };
 
@@ -171,27 +172,37 @@ ColorSchemeRegistry.register('BottomSheet', {
          */
         labelStyle: {
             ...brandedDialogLabelStyle,
-            marginLeft: 32
+            marginLeft: 16
         },
 
         /**
          * Container style for a generic item rendered in the menu.
          */
         style: {
-            ...brandedDialogItemContainerStyle
+            ...brandedDialogItemContainerStyle,
+            paddingHorizontal: MD_ITEM_MARGIN_PADDING
         },
 
         /**
          * Additional style that is not directly used as a style object.
          */
-        underlayColor: ColorPalette.overflowMenuItemUnderlay
+        underlayColor: ColorPalette.toggled
     },
 
     /**
      * Bottom sheet's base style.
      */
     sheet: {
-        backgroundColor: schemeColor('background')
+        backgroundColor: BaseTheme.palette.ui02,
+        borderTopLeftRadius: 16,
+        borderTopRightRadius: 16
+    },
+
+    /**
+     * Bottom sheet's base style with header.
+     */
+    sheetHeader: {
+        backgroundColor: BaseTheme.palette.ui02
     }
 });
 

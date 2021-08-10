@@ -30,6 +30,11 @@ type Props = {
     name?: string,
 
     /**
+     * Indicates whether the copy url button should be shown
+     */
+    showCopyUrlButton: boolean,
+
+    /**
      * Indicates whether the avatar should be shown when video is off
      */
     showAvatar: boolean,
@@ -77,6 +82,7 @@ export default class PreMeetingScreen extends PureComponent<Props> {
      */
     static defaultProps = {
         showAvatar: true,
+        showCopyUrlButton: true,
         showConferenceInfo: true
     };
 
@@ -86,8 +92,17 @@ export default class PreMeetingScreen extends PureComponent<Props> {
      * @inheritdoc
      */
     render() {
-        const { name, showAvatar, showConferenceInfo, title, videoMuted, videoTrack, visibleButtons } = this.props;
-        const showSharingButton = allowUrlSharing();
+        const {
+            name,
+            showAvatar,
+            showConferenceInfo,
+            showCopyUrlButton,
+            title,
+            videoMuted,
+            videoTrack,
+            visibleButtons
+        } = this.props;
+        const showSharingButton = allowUrlSharing() && showCopyUrlButton;
 
         return (
             <div
@@ -108,9 +123,9 @@ export default class PreMeetingScreen extends PureComponent<Props> {
                     )}
                     {showConferenceInfo && (
                         <>
-                            <div className = 'title'>
+                            <h1 className = 'title'>
                                 { title }
-                            </div>
+                            </h1>
                             {showSharingButton ? <CopyMeetingUrl /> : null}
                         </>
                     )}

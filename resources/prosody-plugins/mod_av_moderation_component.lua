@@ -132,14 +132,16 @@ function on_message(event)
                     module:log('warn', 'Concurrent moderator enable/disable request or something is out of sync');
                     return true;
                 else
-                    room.av_moderation = {};
-                    room.av_moderation_actors = {};
+                    if not room.av_moderation then
+                        room.av_moderation = {};
+                        room.av_moderation_actors = {};
+                    end
                     room.av_moderation[mediaType] = {};
                     room.av_moderation_actors[mediaType] = occupant.nick;
                 end
             else
                 enabled = false;
-                if not room.av_moderation or not room.av_moderation[mediaType] then
+                if not room.av_moderation then
                     module:log('warn', 'Concurrent moderator enable/disable request or something is out of sync');
                     return true;
                 else
@@ -147,10 +149,10 @@ function on_message(event)
                     room.av_moderation_actors[mediaType] = nil;
 
                     -- clears room.av_moderation if empty
-                    local is_empty = false;
+                    local is_empty = true;
                     for key,_ in pairs(room.av_moderation) do
                         if room.av_moderation[key] then
-                            is_empty = true;
+                            is_empty = false;
                         end
                     end
                     if is_empty then

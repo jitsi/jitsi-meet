@@ -39,6 +39,7 @@ class SecurityDialogButton extends AbstractButton<Props, *> {
     icon = IconSecurityOff;
     label = 'toolbar.security';
     toggledIcon = IconSecurityOn;
+    tooltip = 'toolbar.security';
 
     /**
      * Handles clicking / pressing the button, and opens / closes the appropriate dialog.

@@ -33,6 +33,7 @@ export function checkChromeExtensionsInstalled(config: Object = {}) {
         const img = new Image();
 
         img.src = `chrome-extension://${info.id}/${info.path}`;
+        img.setAttribute('aria-hidden', 'true');
         img.onload = function() {
             resolve(true);
         };

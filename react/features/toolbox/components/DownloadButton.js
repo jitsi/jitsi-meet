@@ -6,7 +6,7 @@ import { IconDownload } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 import { openURLInBrowser } from '../../base/util';
-import { isVpaasMeeting } from '../../billing-counter/functions';
+import { isVpaasMeeting } from '../../jaas/functions';
 
 type Props = AbstractButtonProps & {
 
@@ -23,6 +23,7 @@ class DownloadButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.download';
     icon = IconDownload;
     label = 'toolbar.download';
+    tooltip = 'toolbar.download';
 
     /**
      * Handles clicking / pressing the button, and opens a new window with the user documentation.

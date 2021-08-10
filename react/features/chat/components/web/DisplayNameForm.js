@@ -59,6 +59,7 @@ class DisplayNameForm extends Component<Props, State> {
         // Bind event handlers so they are only bound once for every instance.
         this._onDisplayNameChange = this._onDisplayNameChange.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
+        this._onKeyPress = this._onKeyPress.bind(this);
     }
 
     /**
@@ -74,6 +75,8 @@ class DisplayNameForm extends Component<Props, State> {
             <div id = 'nickname'>
                 <form onSubmit = { this._onSubmit }>
                     <FieldTextStateless
+                        aria-describedby = 'nickname-title'
+                        autoComplete = 'name'
                         autoFocus = { true }
                         compact = { true }
                         id = 'nickinput'
@@ -86,7 +89,10 @@ class DisplayNameForm extends Component<Props, State> {
                 </form>
                 <div
                     className = { `enter-chat${this.state.displayName.trim() ? '' : ' disabled'}` }
-                    onClick = { this._onSubmit }>
+                    onClick = { this._onSubmit }
+                    onKeyPress = { this._onKeyPress }
+                    role = 'button'
+                    tabIndex = { 0 }>
                     { t('chat.enter') }
                 </div>
                 <KeyboardAvoider />
@@ -124,6 +130,21 @@ class DisplayNameForm extends Component<Props, State> {
         this.props.dispatch(updateSettings({
             displayName: this.state.displayName
         }));
+    }
+
+    _onKeyPress: (Object) => void;
+
+    /**
+     * KeyPress handler for accessibility.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onKeyPress(e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            this._onSubmit(e);
+        }
     }
 }
 

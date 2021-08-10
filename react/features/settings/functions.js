@@ -11,6 +11,8 @@ import { toState } from '../base/redux';
 import { parseStandardURIString } from '../base/util';
 import { isFollowMeActive } from '../follow-me';
 
+import { SS_DEFAULT_FRAME_RATE, SS_SUPPORTED_FRAMERATES } from './constants';
+
 declare var interfaceConfig: Object;
 
 /**
@@ -95,6 +97,7 @@ export function shouldShowOnlyDeviceSelection() {
  */
 export function getMoreTabProps(stateful: Object | Function) {
     const state = toState(stateful);
+    const framerate = state['features/screen-share'].captureFrameRate ?? SS_DEFAULT_FRAME_RATE;
     const language = i18next.language || DEFAULT_LANGUAGE;
     const {
         conference,
@@ -112,7 +115,9 @@ export function getMoreTabProps(stateful: Object | Function) {
             && isLocalParticipantModerator(state));
 
     return {
+        currentFramerate: framerate,
         currentLanguage: language,
+        desktopShareFramerates: SS_SUPPORTED_FRAMERATES,
         followMeActive: Boolean(conference && followMeActive),
         followMeEnabled: Boolean(conference && followMeEnabled),
         languages: LANGUAGES,
@@ -148,6 +153,32 @@ export function getProfileTabProps(stateful: Object | Function) {
         authLogin,
         displayName: localParticipant.name,
         email: localParticipant.email
+    };
+}
+
+/**
+ * Returns the properties for the "Sounds" tab from settings dialog from Redux
+ * state.
+ *
+ * @param {(Function|Object)} stateful -The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {Object} - The properties for the "Sounds" tab from settings
+ * dialog.
+ */
+export function getSoundsTabProps(stateful: Object | Function) {
+    const state = toState(stateful);
+    const {
+        soundsIncomingMessage,
+        soundsParticipantJoined,
+        soundsParticipantLeft,
+        soundsTalkWhileMuted
+    } = state['features/base/settings'];
+
+    return {
+        soundsIncomingMessage,
+        soundsParticipantJoined,
+        soundsParticipantLeft,
+        soundsTalkWhileMuted
     };
 }
 

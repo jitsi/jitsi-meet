@@ -11,7 +11,7 @@ import type { Props as AbstractToolbarButtonProps }
 /**
  * The type of the React {@code Component} props of {@link ToolbarButton}.
  */
-type Props = AbstractToolbarButtonProps & {
+export type Props = AbstractToolbarButtonProps & {
 
     /**
      * The text to display in the tooltip.
@@ -22,7 +22,12 @@ type Props = AbstractToolbarButtonProps & {
      * From which direction the tooltip should appear, relative to the
      * button.
      */
-    tooltipPosition: string
+    tooltipPosition: string,
+
+    /**
+     * keyDown handler
+     */
+    onKeyDown?: Function
 };
 
 /**
@@ -48,31 +53,39 @@ class ToolbarButton extends AbstractToolbarButton<Props> {
     constructor(props: Props) {
         super(props);
 
-        this._onKeyDown = this._onKeyDown.bind(this);
+        this._onKeyPress = this._onKeyPress.bind(this);
+        this._onClick = this._onClick.bind(this);
     }
 
-    _onKeyDown: (Object) => void;
+    _onKeyPress: (Object) => void;
 
     /**
-     * Handles 'Enter' key on the button to trigger onClick for accessibility.
-     * We should be handling Space onKeyUp but it conflicts with PTT.
+     * Handles 'Enter' and Space key on the button to trigger onClick for accessibility.
      *
      * @param {Object} event - The key event.
      * @private
      * @returns {void}
      */
-    _onKeyDown(event) {
-        // If the event coming to the dialog has been subject to preventDefault
-        // we don't handle it here.
-        if (event.defaultPrevented) {
-            return;
-        }
-
-        if (event.key === 'Enter') {
+    _onKeyPress(event) {
+        if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
-            event.stopPropagation();
             this.props.onClick();
         }
+    }
+    _onClick: (Object) => void;
+
+    /**
+     * Handles button click.
+     *
+     * @param {Object} e - The key event.
+     * @private
+     * @returns {void}
+     */
+    _onClick(e) {
+        this.props.onClick(e);
+
+        // blur after click to release focus from button to allow PTT.
+        e && e.currentTarget && e.currentTarget.blur();
     }
 
     /**
@@ -89,8 +102,9 @@ class ToolbarButton extends AbstractToolbarButton<Props> {
                 aria-label = { this.props.accessibilityLabel }
                 aria-pressed = { this.props.toggled }
                 className = 'toolbox-button'
-                onClick = { this.props.onClick }
-                onKeyDown = { this._onKeyDown }
+                onClick = { this._onClick }
+                onKeyDown = { this.props.onKeyDown }
+                onKeyPress = { this._onKeyPress }
                 role = 'button'
                 tabIndex = { 0 }>
                 { this.props.tooltip

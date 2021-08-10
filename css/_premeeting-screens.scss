@@ -30,16 +30,18 @@
 
     .action-btn {
         border-radius: 3px;
+        box-sizing: border-box;
         color: #fff;
         cursor: pointer;
         display: inline-block;
         font-size: 15px;
         line-height: 24px;
-        margin-top: 16px;
         padding: 7px 16px;
         position: relative;
         text-align: center;
-        width: 286px;
+        width: 320px;
+
+        @include adjust-for-max-width(320px, 8px);
 
         &.primary {
             background: #0376DA;
@@ -113,7 +115,7 @@
             cursor: pointer;
             color: #fff;
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             font-size: 15px;
             font-weight: 300;
             justify-content: center;
@@ -139,6 +141,9 @@
                     margin-left: 10px;
                 }
             }
+            .copy-button{
+                width: 298px;
+             }
 
             .copy-meeting-text {
                 width: 266px;
@@ -172,12 +177,14 @@
             text-align: center;
             width: 320px;
 
+            @include adjust-for-max-width(320px, 8px);
+
             &.error {
                 box-shadow: 0px 0px 4px 3px rgba(225, 45, 45, 0.4);
             }
 
             &.focused {
-                box-shadow: 0px 0px 4px 3px #0376DA;
+                box-shadow: 0px 0px 1px 1.5px black, 0px 0px 1.3px 4px white;
             }
         }
     }
@@ -243,10 +250,15 @@
     transition: background 0.16s ease-out;
     width: 320px;
 
+    @include adjust-for-max-width(320px, 8px);
     @include flex-centered();
 
     svg {
         fill: transparent;
+    }
+
+    label {
+        cursor: pointer;
     }
 
     &:hover {

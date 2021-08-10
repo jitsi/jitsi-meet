@@ -56,12 +56,19 @@ function DeviceStatus({ deviceStatusType, deviceStatusText, rawError, t }: Props
     const { src, className } = iconMap[deviceStatusType];
 
     return (
-        <div className = { `prejoin-preview-status ${className}` }>
+        <div
+            className = { `prejoin-preview-status ${className}` }
+            role = 'alert'
+            tabIndex = { -1 }>
             <Icon
                 className = 'prejoin-preview-icon'
                 size = { 16 }
                 src = { src } />
-            <span className = 'prejoin-preview-error-desc'>{t(deviceStatusText)}</span>
+            <span
+                className = 'prejoin-preview-error-desc'
+                role = 'heading'>
+                {t(deviceStatusText)}
+            </span>
             { rawError && <span>
                 { rawError }
             </span> }

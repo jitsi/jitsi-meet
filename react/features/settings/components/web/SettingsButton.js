@@ -31,6 +31,7 @@ class SettingsButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.Settings';
     icon = IconSettings;
     label = 'toolbar.Settings';
+    tooltip = 'toolbar.Settings';
 
     /**
      * Handles clicking / pressing the button, and opens the appropriate dialog.

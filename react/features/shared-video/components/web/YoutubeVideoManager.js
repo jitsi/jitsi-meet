@@ -1,17 +1,14 @@
 /* eslint-disable no-invalid-this */
-import Logger from 'jitsi-meet-logger';
 import React from 'react';
 import YouTube from 'react-youtube';
 
 import { connect } from '../../../base/redux';
+import { PLAYBACK_STATUSES } from '../../constants';
 
 import AbstractVideoManager, {
     _mapDispatchToProps,
-    _mapStateToProps,
-    PLAYBACK_STATES
+    _mapStateToProps
 } from './AbstractVideoManager';
-
-const logger = Logger.getLogger(__filename);
 
 /**
  * Manager of shared video.
@@ -37,8 +34,8 @@ class YoutubeVideoManager extends AbstractVideoManager<Props> {
      *
      * @returns {string}
      */
-    getPlaybackState() {
-        let state;
+    getPlaybackStatus() {
+        let status;
 
         if (!this.player) {
             return;
@@ -47,14 +44,14 @@ class YoutubeVideoManager extends AbstractVideoManager<Props> {
         const playerState = this.player.getPlayerState();
 
         if (playerState === YouTube.PlayerState.PLAYING) {
-            state = PLAYBACK_STATES.PLAYING;
+            status = PLAYBACK_STATUSES.PLAYING;
         }
 
         if (playerState === YouTube.PlayerState.PAUSED) {
-            state = PLAYBACK_STATES.PAUSED;
+            status = PLAYBACK_STATUSES.PAUSED;
         }
 
-        return state;
+        return status;
     }
 
     /**
@@ -73,17 +70,6 @@ class YoutubeVideoManager extends AbstractVideoManager<Props> {
      */
     getVolume() {
         return this.player?.getVolume();
-    }
-
-    /**
-     * Sets player volume.
-     *
-     * @param {number} value - The volume.
-     *
-     * @returns {void}
-     */
-    setVolume(value) {
-        return this.player?.setVolume(value);
     }
 
     /**
@@ -152,11 +138,6 @@ class YoutubeVideoManager extends AbstractVideoManager<Props> {
             this.player.destroy();
             this.player = null;
         }
-
-        if (this.errorInPlayer) {
-            this.errorInPlayer.destroy();
-            this.errorInPlayer = null;
-        }
     }
 
     /**
@@ -195,20 +176,12 @@ class YoutubeVideoManager extends AbstractVideoManager<Props> {
         }
 
         this.play();
-    };
 
-    /**
-     * Fired when youtube player throws an error.
-     *
-     * @param {Object} event - Youtube player error event.
-     *
-     * @returns {void}
-     */
-    onPlayerError = event => {
-        logger.error('Error in the player:', event.data);
-
-        // store the error player, so we can remove it
-        this.errorInPlayer = event.target;
+        // sometimes youtube can get muted state from previous videos played in the browser
+        // and as we are disabling controls we want to unmute it
+        if (this.isMuted()) {
+            this.unMute();
+        }
     };
 
     getPlayerOptions = () => {
@@ -228,7 +201,7 @@ class YoutubeVideoManager extends AbstractVideoManager<Props> {
                     'rel': 0
                 }
             },
-            onError: this.onPlayerError,
+            onError: () => this.onError(),
             onReady: this.onPlayerReady,
             onStateChange: this.onPlayerStateChange,
             videoId

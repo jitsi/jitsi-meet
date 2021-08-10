@@ -41,6 +41,8 @@ $flagsImagePath: "../images/";
 @import 'modals/feedback/feedback';
 @import 'modals/invite/info';
 @import 'modals/settings/settings';
+@import 'modals/screen-share/share-audio';
+@import 'modals/screen-share/share-screen-warning';
 @import 'modals/speaker_stats/speaker_stats';
 @import 'modals/video-quality/video-quality';
 @import 'modals/virtual-background/virtual-background';
@@ -104,5 +106,7 @@ $flagsImagePath: "../images/";
 @import 'connection-status';
 @import 'drawer';
 @import 'participants-pane';
+@import 'reactions-menu';
+@import 'plan-limit';
 
 /* Modules END */

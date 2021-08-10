@@ -11,7 +11,9 @@ import {
     getDropboxData,
     isEnabled as isDropboxEnabled
 } from '../../../dropbox';
+import { showErrorNotification } from '../../../notifications';
 import { toggleRequestingSubtitles } from '../../../subtitles';
+import { setSelectedRecordingService } from '../../actions';
 import { RECORDING_TYPES } from '../../constants';
 
 type Props = {
@@ -196,7 +198,9 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
      * @returns {void}
      */
     _onSelectedRecordingServiceChanged(selectedRecordingService) {
-        this.setState({ selectedRecordingService });
+        this.setState({ selectedRecordingService }, () => {
+            this.props.dispatch(setSelectedRecordingService(selectedRecordingService));
+        });
     }
 
     /**
@@ -251,19 +255,24 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
         let appData;
         const attributes = {};
 
-        if (_isDropboxEnabled
-                && _token
-                && this.state.selectedRecordingService
-                    === RECORDING_TYPES.DROPBOX) {
-            appData = JSON.stringify({
-                'file_recording_metadata': {
-                    'upload_credentials': {
-                        'service_name': RECORDING_TYPES.DROPBOX,
-                        'token': _token
+        if (_isDropboxEnabled && this.state.selectedRecordingService === RECORDING_TYPES.DROPBOX) {
+            if (_token) {
+                appData = JSON.stringify({
+                    'file_recording_metadata': {
+                        'upload_credentials': {
+                            'service_name': RECORDING_TYPES.DROPBOX,
+                            'token': _token
+                        }
                     }
-                }
-            });
-            attributes.type = RECORDING_TYPES.DROPBOX;
+                });
+                attributes.type = RECORDING_TYPES.DROPBOX;
+            } else {
+                dispatch(showErrorNotification({
+                    titleKey: 'dialog.noDropboxToken'
+                }));
+
+                return;
+            }
         } else {
             appData = JSON.stringify({
                 'file_recording_metadata': {

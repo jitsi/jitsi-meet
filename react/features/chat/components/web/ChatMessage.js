@@ -23,7 +23,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { message } = this.props;
+        const { message, t } = this.props;
         const processedMessage = [];
 
         // content is an array of text and emoji components
@@ -38,12 +38,20 @@ class ChatMessage extends AbstractChatMessage<Props> {
         });
 
         return (
-            <div className = 'chatmessage-wrapper'>
+            <div
+                className = 'chatmessage-wrapper'
+                tabIndex = { -1 }>
                 <div className = { `chatmessage ${message.privateMessage ? 'privatemessage' : ''}` }>
                     <div className = 'replywrapper'>
                         <div className = 'messagecontent'>
                             { this.props.showDisplayName && this._renderDisplayName() }
                             <div className = 'usermessage'>
+                                <span className = 'sr-only'>
+                                    { this.props.message.displayName === this.props.message.recipient
+                                        ? t('chat.messageAccessibleTitleMe')
+                                        : t('chat.messageAccessibleTitle',
+                                        { user: this.props.message.displayName }) }
+                                </span>
                                 { processedMessage }
                             </div>
                             { message.privateMessage && this._renderPrivateNotice() }
@@ -77,7 +85,9 @@ class ChatMessage extends AbstractChatMessage<Props> {
      */
     _renderDisplayName() {
         return (
-            <div className = 'display-name'>
+            <div
+                aria-hidden = { true }
+                className = 'display-name'>
                 { this.props.message.displayName }
             </div>
         );

@@ -5,7 +5,6 @@ import type { Dispatch } from 'redux';
 
 import { createE2EEEvent, sendAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
-import { getParticipants } from '../../base/participants';
 import { Switch } from '../../base/react';
 import { connect } from '../../base/redux';
 import { toggleE2EE } from '../actions';
@@ -21,7 +20,7 @@ type Props = {
     /**
      * Indicates whether all participants in the conference currently support E2EE.
      */
-    _everyoneSupportsE2EE: boolean,
+    _everyoneSupportE2EE: boolean,
 
     /**
      * The redux {@code dispatch} function.
@@ -85,6 +84,7 @@ class E2EESection extends Component<Props, State> {
 
         // Bind event handlers so they are only bound once for every instance.
         this._onExpand = this._onExpand.bind(this);
+        this._onExpandKeyPress = this._onExpandKeyPress.bind(this);
         this._onToggle = this._onToggle.bind(this);
     }
 
@@ -95,23 +95,31 @@ class E2EESection extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { _everyoneSupportsE2EE, t } = this.props;
+        const { _everyoneSupportE2EE, t } = this.props;
         const { enabled, expand } = this.state;
         const description = t('dialog.e2eeDescription');
 
         return (
             <div id = 'e2ee-section'>
-                <p className = 'description'>
+                <p
+                    aria-live = 'polite'
+                    className = 'description'
+                    id = 'e2ee-section-description'>
                     { expand && description }
                     { !expand && description.substring(0, 100) }
                     { !expand && <span
+                        aria-controls = 'e2ee-section-description'
+                        aria-expanded = { expand }
                         className = 'read-more'
-                        onClick = { this._onExpand }>
+                        onClick = { this._onExpand }
+                        onKeyPress = { this._onExpandKeyPress }
+                        role = 'button'
+                        tabIndex = { 0 }>
                             ... { t('dialog.readMore') }
                     </span> }
                 </p>
                 {
-                    !_everyoneSupportsE2EE
+                    !_everyoneSupportE2EE
                         && <span className = 'warning'>
                             { t('dialog.e2eeWarning') }
                         </span>
@@ -142,6 +150,22 @@ class E2EESection extends Component<Props, State> {
         });
     }
 
+    _onExpandKeyPress: (Object) => void;
+
+    /**
+     * KeyPress handler for accessibility.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onExpandKeyPress(e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            this._onExpand();
+        }
+    }
+
     _onToggle: () => void;
 
     /**
@@ -170,12 +194,11 @@ class E2EESection extends Component<Props, State> {
  * @returns {Props}
  */
 function mapStateToProps(state) {
-    const { enabled } = state['features/e2ee'];
-    const participants = getParticipants(state).filter(p => !p.local);
+    const { enabled, everyoneSupportE2EE } = state['features/e2ee'];
 
     return {
         _enabled: enabled,
-        _everyoneSupportsE2EE: participants.every(p => Boolean(p.e2eeSupported))
+        _everyoneSupportE2EE: everyoneSupportE2EE
     };
 }
 

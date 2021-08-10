@@ -1,5 +1,6 @@
 // @flow
 
+import '../av-moderation/reducer';
 import '../base/devices/reducer';
 import '../e2ee/reducer';
 import '../feedback/reducer';
@@ -10,6 +11,7 @@ import '../participants-pane/reducer';
 import '../power-monitor/reducer';
 import '../prejoin/reducer';
 import '../remote-control/reducer';
+import '../screen-share/reducer';
 import '../screenshot-capture/reducer';
 import '../shared-video/reducer';
 import '../talk-while-muted/reducer';

@@ -4,10 +4,12 @@ import React from 'react';
 import { SafeAreaView, View } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
+import { getFeatureFlag, REACTIONS_ENABLED } from '../../../base/flags';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { ChatButton } from '../../../chat';
-import { InviteButton } from '../../../invite';
+import { ParticipantsPaneButton } from '../../../participants-pane/components/native';
+import { ReactionsMenuButton } from '../../../reactions/components';
 import { TileViewButton } from '../../../video-layout';
 import { isToolboxVisible, getMovableButtons } from '../../functions.native';
 import AudioMuteButton from '../AudioMuteButton';
@@ -40,6 +42,11 @@ type Props = {
     _width: number,
 
     /**
+     * Whether or not the reactions feature is enabled.
+     */
+    _reactionsEnabled: boolean,
+
+    /**
      * The redux {@code dispatch} function.
      */
     dispatch: Function
@@ -56,7 +63,7 @@ function Toolbox(props: Props) {
         return null;
     }
 
-    const { _styles, _width } = props;
+    const { _styles, _width, _reactionsEnabled } = props;
     const { buttonStylesBorderless, hangupButtonStyles, toggledButtonStyles } = _styles;
     const additionalButtons = getMovableButtons(_width);
     const backgroundToggledStyle = {
@@ -86,12 +93,18 @@ function Toolbox(props: Props) {
                           styles = { buttonStylesBorderless }
                           toggledStyles = { backgroundToggledStyle } />}
 
-                { additionalButtons.has('raisehand')
-                      && <RaiseHandButton
-                          styles = { buttonStylesBorderless }
-                          toggledStyles = { backgroundToggledStyle } />}
+                { additionalButtons.has('raisehand') && (_reactionsEnabled
+                    ? <ReactionsMenuButton
+                        styles = { buttonStylesBorderless }
+                        toggledStyles = { backgroundToggledStyle } />
+                    : <RaiseHandButton
+                        styles = { buttonStylesBorderless }
+                        toggledStyles = { backgroundToggledStyle } />)}
                 {additionalButtons.has('tileview') && <TileViewButton styles = { buttonStylesBorderless } />}
-                {additionalButtons.has('invite') && <InviteButton styles = { buttonStylesBorderless } />}
+                {additionalButtons.has('participantspane')
+                && <ParticipantsPaneButton
+                    styles = { buttonStylesBorderless } />
+                }
                 {additionalButtons.has('togglecamera')
                       && <ToggleCameraButton
                           styles = { buttonStylesBorderless }
@@ -119,7 +132,8 @@ function _mapStateToProps(state: Object): Object {
     return {
         _styles: ColorSchemeRegistry.get(state, 'Toolbox'),
         _visible: isToolboxVisible(state),
-        _width: state['features/base/responsive-ui'].clientWidth
+        _width: state['features/base/responsive-ui'].clientWidth,
+        _reactionsEnabled: getFeatureFlag(state, REACTIONS_ENABLED, false)
     };
 }
 

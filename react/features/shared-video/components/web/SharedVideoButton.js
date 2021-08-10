@@ -37,8 +37,27 @@ class SharedVideoButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.sharedvideo';
     icon = IconShareVideo;
     label = 'toolbar.sharedvideo';
-    tooltip = 'toolbar.sharedvideo';
     toggledLabel = 'toolbar.stopSharedVideo';
+
+    /**
+     * Dynamically retrieves tooltip based on sharing state.
+     */
+    get tooltip() {
+        if (this._isToggled()) {
+            return 'toolbar.stopSharedVideo';
+        }
+
+        return 'toolbar.sharedvideo';
+    }
+
+    /**
+     * Required by linter due to AbstractButton overwritten prop being writable.
+     *
+     * @param {string} value - The value.
+     */
+    set tooltip(value) {
+        return value;
+    }
 
     /**
      * Handles clicking / pressing the button, and opens a new dialog.

@@ -37,7 +37,7 @@ import {
     RECORDING_OFF_SOUND_ID,
     RECORDING_ON_SOUND_ID
 } from './constants';
-import { getSessionById } from './functions';
+import { getSessionById, getResourceId } from './functions';
 import {
     LIVE_STREAMING_OFF_SOUND_FILE,
     LIVE_STREAMING_ON_SOUND_FILE,
@@ -160,10 +160,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                     // Show notification with additional information to the initiator.
                     dispatch(showRecordingLimitNotification(mode));
                 } else {
-                    dispatch(showStartedRecordingNotification(
-                        mode, initiator && getParticipantDisplayName(getState, initiator.getId())));
+                    dispatch(showStartedRecordingNotification(mode, initiator, action.sessionData.id));
                 }
-
 
                 sendAnalytics(createRecordingEvent('start', mode));
 
@@ -188,8 +186,12 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 }
             } else if (updatedSessionData.status === OFF
                 && (!oldSessionData || oldSessionData.status !== OFF)) {
-                dispatch(showStoppedRecordingNotification(
-                    mode, terminator && getParticipantDisplayName(getState, terminator.getId())));
+                if (terminator) {
+                    dispatch(
+                        showStoppedRecordingNotification(
+                            mode, getParticipantDisplayName(getState, getResourceId(terminator))));
+                }
+
                 let duration = 0, soundOff, soundOn;
 
                 if (oldSessionData && oldSessionData.timestamp) {

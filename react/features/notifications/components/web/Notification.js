@@ -81,9 +81,9 @@ class Notification extends AbstractNotification<Props> {
 
         // the id is used for testing the UI
         return (
-            <div data-testid = { this._getDescriptionKey() } >
+            <p data-testid = { this._getDescriptionKey() } >
                 { description }
-            </div>
+            </p>
         );
     }
 
@@ -116,7 +116,7 @@ class Notification extends AbstractNotification<Props> {
                 }
             ];
 
-            if (!hideErrorSupportLink) {
+            if (!hideErrorSupportLink && interfaceConfig.SUPPORT_URL) {
                 buttons.push({
                     content: this.props.t('dialog.contactSupport'),
                     onClick: this._onOpenSupportLink

@@ -10,6 +10,8 @@ import {
     sendAnalytics,
     VIDEO_MUTE
 } from '../analytics';
+import { showModeratedNotification } from '../av-moderation/actions';
+import { shouldShowModeratedNotification } from '../av-moderation/functions';
 import {
     MEDIA_TYPE,
     setAudioMuted,
@@ -18,6 +20,7 @@ import {
 } from '../base/media';
 import {
     getLocalParticipant,
+    getRemoteParticipants,
     muteRemoteParticipant
 } from '../base/participants';
 
@@ -33,7 +36,7 @@ const logger = getLogger(__filename);
  * @returns {Function}
  */
 export function muteLocal(enable: boolean, mediaType: MEDIA_TYPE) {
-    return (dispatch: Dispatch<any>) => {
+    return (dispatch: Dispatch<any>, getState: Function) => {
         const isAudio = mediaType === MEDIA_TYPE.AUDIO;
 
         if (!isAudio && mediaType !== MEDIA_TYPE.VIDEO) {
@@ -41,6 +44,14 @@ export function muteLocal(enable: boolean, mediaType: MEDIA_TYPE) {
 
             return;
         }
+
+        // check for A/V Moderation when trying to unmute
+        if (!enable && shouldShowModeratedNotification(MEDIA_TYPE.AUDIO, getState())) {
+            dispatch(showModeratedNotification(MEDIA_TYPE.AUDIO));
+
+            return;
+        }
+
         sendAnalytics(createToolbarEvent(isAudio ? AUDIO_MUTE : VIDEO_MUTE, { enable }));
         dispatch(isAudio ? setAudioMuted(enable, /* ensureTrack */ true)
             : setVideoMuted(enable, mediaType, VIDEO_MUTISM_AUTHORITY.USER, /* ensureTrack */ true));
@@ -81,14 +92,18 @@ export function muteAllParticipants(exclude: Array<string>, mediaType: MEDIA_TYP
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
         const localId = getLocalParticipant(state).id;
-        const participantIds = state['features/base/participants']
-            .map(p => p.id);
 
-        /* eslint-disable no-confusing-arrow */
-        participantIds
-            .filter(id => !exclude.includes(id))
-            .map(id => id === localId ? muteLocal(true, mediaType) : muteRemote(id, mediaType))
-            .map(dispatch);
-        /* eslint-enable no-confusing-arrow */
+        if (!exclude.includes(localId)) {
+            dispatch(muteLocal(true, mediaType));
+        }
+
+        getRemoteParticipants(state).forEach((p, id) => {
+            if (exclude.includes(id)) {
+                return;
+            }
+
+            dispatch(muteRemote(id, mediaType));
+        });
     };
 }
+

@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { View } from 'react-native';
 import type { Dispatch } from 'redux';
 
@@ -12,7 +12,9 @@ import {
     ParticipantView,
     getParticipantCount,
     isEveryoneModerator,
-    pinParticipant
+    pinParticipant,
+    getParticipantByIdOrUndefined,
+    getLocalParticipant
 } from '../../../base/participants';
 import { Container } from '../../../base/react';
 import { connect } from '../../../base/redux';
@@ -23,6 +25,8 @@ import { DisplayNameLabel } from '../../../display-name';
 import { toggleToolboxVisible } from '../../../toolbox/actions.native';
 import { RemoteVideoMenu } from '../../../video-menu';
 import ConnectionStatusComponent from '../../../video-menu/components/native/ConnectionStatusComponent';
+import SharedVideoMenu
+    from '../../../video-menu/components/native/SharedVideoMenu';
 
 import AudioMutedIndicator from './AudioMutedIndicator';
 import DominantSpeakerIndicator from './DominantSpeakerIndicator';
@@ -48,14 +52,14 @@ type Props = {
     _largeVideo: Object,
 
     /**
-     * Handles click/tap event on the thumbnail.
+     * Shared video local participant owner.
      */
-    _onClick: ?Function,
+    _localVideoOwner: boolean,
 
     /**
-     * Handles long press on the thumbnail.
+     * The Redux representation of the participant to display.
      */
-    _onThumbnailLongPress: ?Function,
+     _participant: Object,
 
     /**
      * Whether to show the dominant speaker indicator or not.
@@ -90,9 +94,9 @@ type Props = {
     dispatch: Dispatch<any>,
 
     /**
-     * The Redux representation of the participant to display.
+     * The ID of the participant related to the thumbnail.
      */
-    participant: Object,
+    participantID: ?string,
 
     /**
      * Whether to display or hide the display name of the participant in the thumbnail.
@@ -120,14 +124,14 @@ function Thumbnail(props: Props) {
     const {
         _audioMuted: audioMuted,
         _largeVideo: largeVideo,
-        _onClick,
-        _onThumbnailLongPress,
+        _localVideoOwner,
         _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,
         _renderModeratorIndicator: renderModeratorIndicator,
+        _participant: participant,
         _styles,
         _videoTrack: videoTrack,
+        dispatch,
         disableTint,
-        participant,
         renderDisplayName,
         tileView
     } = props;
@@ -137,11 +141,35 @@ function Thumbnail(props: Props) {
         = participantId === largeVideo.participantId;
     const videoMuted = !videoTrack || videoTrack.muted;
     const isScreenShare = videoTrack && videoTrack.videoType === VIDEO_TYPE.DESKTOP;
+    const onClick = useCallback(() => {
+        if (tileView) {
+            dispatch(toggleToolboxVisible());
+        } else {
+            dispatch(pinParticipant(participant.pinned ? null : participant.id));
+        }
+    }, [ participant, tileView, dispatch ]);
+    const onThumbnailLongPress = useCallback(() => {
+        if (participant.local) {
+            dispatch(openDialog(ConnectionStatusComponent, {
+                participantID: participant.id
+            }));
+        } else if (participant.isFakeParticipant) {
+            if (_localVideoOwner) {
+                dispatch(openDialog(SharedVideoMenu, {
+                    participant
+                }));
+            }
+        } else {
+            dispatch(openDialog(RemoteVideoMenu, {
+                participant
+            }));
+        }
+    }, [ participant, dispatch ]);
 
     return (
         <Container
-            onClick = { _onClick }
-            onLongPress = { _onThumbnailLongPress }
+            onClick = { onClick }
+            onLongPress = { onThumbnailLongPress }
             style = { [
                 styles.thumbnail,
                 participant.pinned && !tileView
@@ -199,55 +227,6 @@ function Thumbnail(props: Props) {
 }
 
 /**
- * Maps part of redux actions to component's props.
- *
- * @param {Function} dispatch - Redux's {@code dispatch} function.
- * @param {Props} ownProps - The own props of the component.
- * @returns {{
- *     _onClick: Function,
- *     _onShowRemoteVideoMenu: Function
- * }}
- */
-function _mapDispatchToProps(dispatch: Function, ownProps): Object {
-    return {
-        /**
-         * Handles click/tap event on the thumbnail.
-         *
-         * @protected
-         * @returns {void}
-         */
-        _onClick() {
-            const { participant, tileView } = ownProps;
-
-            if (tileView) {
-                dispatch(toggleToolboxVisible());
-            } else {
-                dispatch(pinParticipant(participant.pinned ? null : participant.id));
-            }
-        },
-
-        /**
-         * Handles long press on the thumbnail.
-         *
-         * @returns {void}
-         */
-        _onThumbnailLongPress() {
-            const { participant } = ownProps;
-
-            if (participant.local) {
-                dispatch(openDialog(ConnectionStatusComponent, {
-                    participantID: participant.id
-                }));
-            } else {
-                dispatch(openDialog(RemoteVideoMenu, {
-                    participant
-                }));
-            }
-        }
-    };
-}
-
-/**
  * Function that maps parts of Redux state tree into component props.
  *
  * @param {Object} state - Redux state.
@@ -259,21 +238,27 @@ function _mapStateToProps(state, ownProps) {
     // filmstrip doesn't render the video of the participant who is rendered on
     // the stage i.e. as a large video.
     const largeVideo = state['features/large-video'];
+    const { ownerId } = state['features/shared-video'];
     const tracks = state['features/base/tracks'];
-    const { participant } = ownProps;
-    const id = participant.id;
+    const { participantID } = ownProps;
+    const participant = getParticipantByIdOrUndefined(state, participantID);
+    const localParticipantId = getLocalParticipant(state).id;
+    const id = participant?.id;
     const audioTrack
         = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, id);
     const videoTrack
         = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
     const participantCount = getParticipantCount(state);
-    const renderDominantSpeakerIndicator = participant.dominantSpeaker && participantCount > 2;
+    const renderDominantSpeakerIndicator = participant && participant.dominantSpeaker && participantCount > 2;
     const _isEveryoneModerator = isEveryoneModerator(state);
-    const renderModeratorIndicator = !_isEveryoneModerator && participant.role === PARTICIPANT_ROLE.MODERATOR;
+    const renderModeratorIndicator = !_isEveryoneModerator
+        && participant && participant.role === PARTICIPANT_ROLE.MODERATOR;
 
     return {
         _audioMuted: audioTrack?.muted ?? true,
         _largeVideo: largeVideo,
+        _localVideoOwner: Boolean(ownerId === localParticipantId),
+        _participant: participant,
         _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,
         _renderModeratorIndicator: renderModeratorIndicator,
         _styles: ColorSchemeRegistry.get(state, 'Thumbnail'),
@@ -281,4 +266,4 @@ function _mapStateToProps(state, ownProps) {
     };
 }
 
-export default connect(_mapStateToProps, _mapDispatchToProps)(Thumbnail);
+export default connect(_mapStateToProps)(Thumbnail);

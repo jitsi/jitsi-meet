@@ -11,13 +11,14 @@ import {
     getDeviceSelectionDialogProps,
     submitDeviceSelectionTab
 } from '../../../device-selection';
-import { submitMoreTab, submitProfileTab } from '../../actions';
+import { submitMoreTab, submitProfileTab, submitSoundsTab } from '../../actions';
 import { SETTINGS_TABS } from '../../constants';
-import { getMoreTabProps, getProfileTabProps } from '../../functions';
+import { getMoreTabProps, getProfileTabProps, getSoundsTabProps } from '../../functions';
 
 import CalendarTab from './CalendarTab';
 import MoreTab from './MoreTab';
 import ProfileTab from './ProfileTab';
+import SoundsTab from './SoundsTab';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -135,6 +136,7 @@ function _mapStateToProps(state) {
         = configuredTabs.includes('profile') && !state['features/base/config'].disableProfile;
     const showCalendarSettings
         = configuredTabs.includes('calendar') && isCalendarEnabled(state);
+    const showSoundsSettings = configuredTabs.includes('sounds');
     const tabs = [];
 
     if (showDeviceSettings) {
@@ -183,6 +185,17 @@ function _mapStateToProps(state) {
         });
     }
 
+    if (showSoundsSettings) {
+        tabs.push({
+            name: SETTINGS_TABS.SOUNDS,
+            component: SoundsTab,
+            label: 'settings.sounds',
+            props: getSoundsTabProps(state),
+            styles: 'settings-pane profile-pane',
+            submit: submitSoundsTab
+        });
+    }
+
     if (showModeratorSettings || showLanguageSettings || showPrejoinSettings) {
         tabs.push({
             name: SETTINGS_TABS.MORE,
@@ -194,6 +207,7 @@ function _mapStateToProps(state) {
 
                 return {
                     ...newProps,
+                    currentFramerate: tabState.currentFramerate,
                     currentLanguage: tabState.currentLanguage,
                     followMeEnabled: tabState.followMeEnabled,
                     showPrejoinPage: tabState.showPrejoinPage,

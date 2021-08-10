@@ -67,16 +67,28 @@ class KeyboardShortcutsDialog extends Component<Props> {
      * @returns {ReactElement}
      */
     _renderShortcutsListItem(keyboardKey, translationKey) {
+        let modifierKey = 'Alt';
+
+        if (window.navigator?.platform) {
+            if (window.navigator.platform.indexOf('Mac') !== -1) {
+                modifierKey = '⌥';
+            }
+        }
+
         return (
             <li
                 className = 'shortcuts-list__item'
                 key = { keyboardKey }>
-                <span className = 'shortcuts-list__description'>
+                <span
+                    aria-label = { this.props.t(translationKey) }
+                    className = 'shortcuts-list__description'>
                     { this.props.t(translationKey) }
                 </span>
                 <span className = 'item-action'>
                     <Lozenge isBold = { true }>
-                        { keyboardKey }
+                        { keyboardKey.startsWith(':')
+                            ? `${modifierKey} + ${keyboardKey.slice(1)}`
+                            : keyboardKey }
                     </Lozenge>
                 </span>
             </li>

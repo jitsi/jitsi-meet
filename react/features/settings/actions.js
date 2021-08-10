@@ -5,13 +5,14 @@ import { openDialog } from '../base/dialog';
 import { i18next } from '../base/i18n';
 import { updateSettings } from '../base/settings';
 import { setPrejoinPageVisibility } from '../prejoin/actions';
+import { setScreenshareFramerate } from '../screen-share/actions';
 
 import {
     SET_AUDIO_SETTINGS_VISIBILITY,
     SET_VIDEO_SETTINGS_VISIBILITY
 } from './actionTypes';
 import { LogoutDialog, SettingsDialog } from './components';
-import { getMoreTabProps, getProfileTabProps } from './functions';
+import { getMoreTabProps, getProfileTabProps, getSoundsTabProps } from './functions';
 
 declare var APP: Object;
 
@@ -99,6 +100,12 @@ export function submitMoreTab(newState: Object): Function {
         if (newState.currentLanguage !== currentState.currentLanguage) {
             i18next.changeLanguage(newState.currentLanguage);
         }
+
+        if (newState.currentFramerate !== currentState.currentFramerate) {
+            const frameRate = parseInt(newState.currentFramerate, 10);
+
+            dispatch(setScreenshareFramerate(frameRate));
+        }
     };
 }
 
@@ -118,6 +125,31 @@ export function submitProfileTab(newState: Object): Function {
 
         if (newState.email !== currentState.email) {
             APP.conference.changeLocalEmail(newState.email);
+        }
+    };
+}
+
+/**
+ * Submits the settings from the "Sounds" tab of the settings dialog.
+ *
+ * @param {Object} newState - The new settings.
+ * @returns {Function}
+ */
+export function submitSoundsTab(newState: Object): Function {
+    return (dispatch, getState) => {
+        const currentState = getSoundsTabProps(getState());
+        const shouldUpdate = (newState.soundsIncomingMessage !== currentState.soundsIncomingMessage)
+            || (newState.soundsParticipantJoined !== currentState.soundsParticipantJoined)
+            || (newState.soundsParticipantLeft !== currentState.soundsParticipantLeft)
+            || (newState.soundsTalkWhileMuted !== currentState.soundsTalkWhileMuted);
+
+        if (shouldUpdate) {
+            dispatch(updateSettings({
+                soundsIncomingMessage: newState.soundsIncomingMessage,
+                soundsParticipantJoined: newState.soundsParticipantJoined,
+                soundsParticipantLeft: newState.soundsParticipantLeft,
+                soundsTalkWhileMuted: newState.soundsTalkWhileMuted
+            }));
         }
     };
 }

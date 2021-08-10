@@ -9,23 +9,27 @@ import {
 import {
     getCurrentConference,
     sendTones,
+    setFollowMe,
     setPassword,
     setSubject
 } from '../../react/features/base/conference';
 import { overwriteConfig, getWhitelistedJSON } from '../../react/features/base/config';
+import { toggleDialog } from '../../react/features/base/dialog/actions';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../react/features/base/media';
 import {
     getLocalParticipant,
     getParticipantById,
-    participantUpdated,
     pinParticipant,
-    kickParticipant
+    kickParticipant,
+    raiseHand,
+    isParticipantModerator
 } from '../../react/features/base/participants';
 import { updateSettings } from '../../react/features/base/settings';
 import { isToggleCameraEnabled, toggleCamera } from '../../react/features/base/tracks';
 import {
+    sendMessage,
     setPrivateMessageRecipient,
     toggleChat
 } from '../../react/features/chat/actions';
@@ -37,17 +41,22 @@ import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox';
 import { toggleE2EE } from '../../react/features/e2ee/actions';
 import { invite } from '../../react/features/invite';
 import {
-    captureLargeVideoScreenshot,
-    resizeLargeVideo,
     selectParticipantInLargeVideo
-} from '../../react/features/large-video/actions';
+} from '../../react/features/large-video/actions.any';
+import {
+    captureLargeVideoScreenshot,
+    resizeLargeVideo
+} from '../../react/features/large-video/actions.web';
 import { toggleLobbyMode } from '../../react/features/lobby/actions';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession } from '../../react/features/recording/functions';
+import { isScreenAudioSupported } from '../../react/features/screen-share';
+import { startScreenShareFlow, startAudioScreenShareFlow } from '../../react/features/screen-share/actions';
 import { playSharedVideo, stopSharedVideo } from '../../react/features/shared-video/actions.any';
 import { toggleTileView, setTileView } from '../../react/features/video-layout';
 import { muteAllParticipants } from '../../react/features/video-menu/actions';
 import { setVideoQuality } from '../../react/features/video-quality';
+import VirtualBackgroundDialog from '../../react/features/virtual-background/components/VirtualBackgroundDialog';
 import { getJitsiMeetTransport } from '../transport';
 
 import { API_ID, ENDPOINT_TEXT_MESSAGE_NAME } from './constants';
@@ -97,13 +106,14 @@ function initCommands() {
             const muteMediaType = mediaType ? mediaType : MEDIA_TYPE.AUDIO;
 
             sendAnalytics(createApiEvent('muted-everyone'));
-            const participants = APP.store.getState()['features/base/participants'];
-            const localIds = participants
-                .filter(participant => participant.local)
-                .filter(participant => participant.role === 'moderator')
-                .map(participant => participant.id);
+            const localParticipant = getLocalParticipant(APP.store.getState());
+            const exclude = [];
 
-            APP.store.dispatch(muteAllParticipants(localIds, muteMediaType));
+            if (localParticipant && isParticipantModerator(localParticipant)) {
+                exclude.push(localParticipant.id);
+            }
+
+            APP.store.dispatch(muteAllParticipants(exclude, muteMediaType));
         },
         'toggle-lobby': isLobbyEnabled => {
             APP.store.dispatch(toggleLobbyMode(isLobbyEnabled));
@@ -147,6 +157,17 @@ function initCommands() {
             const { duration, tones, pause } = options;
 
             APP.store.dispatch(sendTones(tones, duration, pause));
+        },
+        'set-follow-me': value => {
+            logger.debug('Set follow me command received');
+
+            if (value) {
+                sendAnalytics(createApiEvent('follow.me.set'));
+            } else {
+                sendAnalytics(createApiEvent('follow.me.unset'));
+            }
+
+            APP.store.dispatch(setFollowMe(value));
         },
         'set-large-video-participant': participantId => {
             logger.debug('Set large video participant command received');
@@ -201,13 +222,17 @@ function initCommands() {
             const { raisedHand } = localParticipant;
 
             sendAnalytics(createApiEvent('raise-hand.toggled'));
-            APP.store.dispatch(
-                participantUpdated({
-                    id: APP.conference.getMyUserId(),
-                    local: true,
-                    raisedHand: !raisedHand
-                })
-            );
+            APP.store.dispatch(raiseHand(!raisedHand));
+        },
+        'toggle-share-audio': () => {
+            sendAnalytics(createApiEvent('audio.screen.sharing.toggled'));
+            if (isScreenAudioSupported()) {
+                APP.store.dispatch(startAudioScreenShareFlow());
+
+                return;
+            }
+
+            logger.error('Audio screen sharing is not supported by the current platform!');
         },
 
         /**
@@ -242,6 +267,24 @@ function initCommands() {
         'avatar-url': avatarUrl => {
             sendAnalytics(createApiEvent('avatar.url.changed'));
             APP.conference.changeLocalAvatarUrl(avatarUrl);
+        },
+        'send-chat-message': (message, to, ignorePrivacy = false) => {
+            logger.debug('Send chat message command received');
+            if (to) {
+                const participant = getParticipantById(APP.store.getState(), to);
+
+                if (participant) {
+                    APP.store.dispatch(setPrivateMessageRecipient(participant));
+                } else {
+                    logger.error(`Participant with id ${to} not found!`);
+
+                    return;
+                }
+            } else {
+                APP.store.dispatch(setPrivateMessageRecipient());
+            }
+
+            APP.store.dispatch(sendMessage(message, ignorePrivacy));
         },
         'send-endpoint-text-message': (to, text) => {
             logger.debug('Send endpoint message command received');
@@ -419,6 +462,9 @@ function initCommands() {
             const whitelistedConfig = getWhitelistedJSON('config', config);
 
             APP.store.dispatch(overwriteConfig(whitelistedConfig));
+        },
+        'toggle-virtual-background': () => {
+            APP.store.dispatch(toggleDialog(VirtualBackgroundDialog));
         }
     };
     transport.on('event', ({ data, name }) => {
@@ -528,6 +574,12 @@ function initCommands() {
             });
             break;
         }
+        case 'get-custom-avatar-backgrounds' : {
+            callback({
+                avatarBackgrounds: APP.store.getState()['features/dynamic-branding'].avatarBackgrounds
+            });
+            break;
+        }
         default:
             return false;
         }
@@ -564,10 +616,46 @@ function shouldBeEnabled() {
  */
 function toggleScreenSharing(enable) {
     if (JitsiMeetJS.isDesktopSharingEnabled()) {
-        APP.conference.toggleScreenSharing(enable).catch(() => {
-            logger.warn('Failed to toggle screen-sharing');
-        });
+        APP.store.dispatch(startScreenShareFlow(enable));
     }
+}
+
+/**
+ * Removes sensitive data from a mouse event.
+ *
+ * @param {MouseEvent} event - The mouse event to sanitize.
+ * @returns {Object}
+ */
+function sanitizeMouseEvent(event: MouseEvent) {
+    const {
+        clientX,
+        clientY,
+        movementX,
+        movementY,
+        offsetX,
+        offsetY,
+        pageX,
+        pageY,
+        x,
+        y,
+        screenX,
+        screenY
+    } = event;
+
+    return {
+        clientX,
+        clientY,
+        movementX,
+        movementY,
+        offsetX,
+        offsetY,
+        pageX,
+        pageY,
+        x,
+        y,
+        screenX,
+        screenY
+    };
 }
 
 /**
@@ -670,6 +758,45 @@ class API {
             name: 'outgoing-message',
             message,
             privateMessage
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the mouse has entered inside the iframe.
+     *
+     * @param {MouseEvent} event - The mousemove event.
+     * @returns {void}
+     */
+    notifyMouseEnter(event: MouseEvent) {
+        this._sendEvent({
+            name: 'mouse-enter',
+            event: sanitizeMouseEvent(event)
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the mouse has entered inside the iframe.
+     *
+     * @param {MouseEvent} event - The mousemove event.
+     * @returns {void}
+     */
+    notifyMouseLeave(event: MouseEvent) {
+        this._sendEvent({
+            name: 'mouse-leave',
+            event: sanitizeMouseEvent(event)
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the mouse has moved inside the iframe.
+     *
+     * @param {MouseEvent} event - The mousemove event.
+     * @returns {void}
+     */
+    notifyMouseMove(event: MouseEvent) {
+        this._sendEvent({
+            name: 'mouse-move',
+            event: sanitizeMouseEvent(event)
         });
     }
 

@@ -3,7 +3,7 @@
 import { isMobileBrowser } from '../base/environment/utils';
 import { Platform } from '../base/react';
 import { URI_PROTOCOL_PATTERN } from '../base/util';
-import { isVpaasMeeting } from '../billing-counter/functions';
+import { isVpaasMeeting } from '../jaas/functions';
 
 import {
     DeepLinkingDesktopPage,
@@ -52,9 +52,13 @@ export function generateDeepLinkingURL() {
 export function getDeepLinkingPage(state) {
     const { room } = state['features/base/conference'];
     const { launchInWeb } = state['features/deep-linking'];
+    const appScheme = typeof interfaceConfig !== 'undefined' && interfaceConfig.APP_SCHEME;
 
     // Show only if we are about to join a conference.
-    if (launchInWeb || !room || state['features/base/config'].disableDeepLinking || isVpaasMeeting(state)) {
+    if (launchInWeb
+            || !room
+            || state['features/base/config'].disableDeepLinking
+            || (isVpaasMeeting(state) && (!appScheme || appScheme === 'com.8x8.meet'))) {
         return Promise.resolve();
     }
 

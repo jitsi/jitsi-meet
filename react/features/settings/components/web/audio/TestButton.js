@@ -8,6 +8,11 @@ type Props = {
      * Click handler for the button.
      */
     onClick: Function,
+
+    /**
+     * keypress handler for the button.
+     */
+    onKeyPress: Function,
 };
 
 /**
@@ -15,11 +20,14 @@ type Props = {
  *
  * @returns { ReactElement}
  */
-export default function TestButton({ onClick }: Props) {
+export default function TestButton({ onClick, onKeyPress }: Props) {
     return (
         <div
             className = 'audio-preview-test-button'
-            onClick = { onClick }>
+            onClick = { onClick }
+            onKeyPress = { onKeyPress }
+            role = 'button'
+            tabIndex = { 0 }>
             Test
         </div>
     );

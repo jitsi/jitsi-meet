@@ -2,29 +2,37 @@
 
 import React, { PureComponent } from 'react';
 import { Text, View } from 'react-native';
+import { Divider } from 'react-native-paper';
 
 import { Avatar } from '../../../base/avatar';
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, isDialogOpen } from '../../../base/dialog';
 import { KICK_OUT_ENABLED, getFeatureFlag } from '../../../base/flags';
-import { getParticipantDisplayName } from '../../../base/participants';
+import {
+    getParticipantById,
+    getParticipantDisplayName
+} from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { PrivateMessageButton } from '../../../chat';
 import { hideRemoteVideoMenu } from '../../actions.native';
+import ConnectionStatusButton from '../native/ConnectionStatusButton';
 
-import ConnectionStatusButton from './ConnectionStatusButton';
 import GrantModeratorButton from './GrantModeratorButton';
 import KickButton from './KickButton';
 import MuteButton from './MuteButton';
 import MuteEveryoneElseButton from './MuteEveryoneElseButton';
+import MuteVideoButton from './MuteVideoButton';
 import PinButton from './PinButton';
 import styles from './styles';
+
+// import VolumeSlider from './VolumeSlider';
+
 
 /**
  * Size of the rendered avatar in the menu.
  */
-const AVATAR_SIZE = 25;
+const AVATAR_SIZE = 24;
 
 type Props = {
 
@@ -64,9 +72,19 @@ type Props = {
     _isOpen: boolean,
 
     /**
+     * Whether the participant is present in the room or not.
+     */
+    _isParticipantAvailable?: boolean,
+
+    /**
      * Display name of the participant retrieved from Redux.
      */
-    _participantDisplayName: string
+    _participantDisplayName: string,
+
+    /**
+     * The ID of the participant.
+     */
+    _participantID: ?string,
 }
 
 // eslint-disable-next-line prefer-const
@@ -94,7 +112,13 @@ class RemoteVideoMenu extends PureComponent<Props> {
      * @inheritdoc
      */
     render() {
-        const { _disableKick, _disableRemoteMute, _disableGrantModerator, participant } = this.props;
+        const {
+            _disableKick,
+            _disableRemoteMute,
+            _disableGrantModerator,
+            _isParticipantAvailable,
+            participant
+        } = this.props;
         const buttonProps = {
             afterClick: this._onCancel,
             showLabel: true,
@@ -105,14 +129,19 @@ class RemoteVideoMenu extends PureComponent<Props> {
         return (
             <BottomSheet
                 onCancel = { this._onCancel }
-                renderHeader = { this._renderMenuHeader }>
+                renderHeader = { this._renderMenuHeader }
+                showSlidingView = { _isParticipantAvailable }>
                 { !_disableRemoteMute && <MuteButton { ...buttonProps } /> }
+                <MuteEveryoneElseButton { ...buttonProps } />
+                { !_disableRemoteMute && <MuteVideoButton { ...buttonProps } /> }
+                <Divider style = { styles.divider } />
                 { !_disableKick && <KickButton { ...buttonProps } /> }
                 { !_disableGrantModerator && <GrantModeratorButton { ...buttonProps } /> }
                 <PinButton { ...buttonProps } />
                 <PrivateMessageButton { ...buttonProps } />
-                <MuteEveryoneElseButton { ...buttonProps } />
                 <ConnectionStatusButton { ...buttonProps } />
+                {/* <Divider style = { styles.divider } />*/}
+                {/* <VolumeSlider participantID = { _participantID } />*/}
             </BottomSheet>
         );
     }
@@ -173,6 +202,7 @@ function _mapStateToProps(state, ownProps) {
     const kickOutEnabled = getFeatureFlag(state, KICK_OUT_ENABLED, true);
     const { participant } = ownProps;
     const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
+    const isParticipantAvailable = getParticipantById(state, participant.id);
     let { disableKick } = remoteVideoMenu;
 
     disableKick = disableKick || !kickOutEnabled;
@@ -182,7 +212,9 @@ function _mapStateToProps(state, ownProps) {
         _disableKick: Boolean(disableKick),
         _disableRemoteMute: Boolean(disableRemoteMute),
         _isOpen: isDialogOpen(state, RemoteVideoMenu_),
-        _participantDisplayName: getParticipantDisplayName(state, participant.id)
+        _isParticipantAvailable: Boolean(isParticipantAvailable),
+        _participantDisplayName: getParticipantDisplayName(state, participant.id),
+        _participantID: participant.id
     };
 }
 
