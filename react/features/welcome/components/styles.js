@@ -197,7 +197,7 @@ export default {
      */
     sideBar: {
         width: 250,
-        height: Dimensions.get("window").height
+        height: Dimensions.get('window').height
     },
 
     /**
