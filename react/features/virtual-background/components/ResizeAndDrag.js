@@ -49,7 +49,8 @@ function ResizeAndDrag({ _currentCameraDeviceId, dispatch }: Props) {
             const stage = new Konva.Stage({
                 container: dragAndResizeRef.current,
                 width: containerWidth,
-                height: containerHeight
+                height: containerHeight,
+                scale: {x: 0.5, y: 0.5}
             });
 
             const layer = new Konva.Layer();
@@ -62,14 +63,18 @@ function ResizeAndDrag({ _currentCameraDeviceId, dispatch }: Props) {
 
             const desktopImage = new Konva.Image({
                 image: desktopVideo,
-                x: stage.width() - containerWidth,
-                y: stage.height() - containerHeight
+                x: stage.width()/2,
+                y: stage.height()/2 - containerHeight/2,
+                scaleX: 0.5,
+                scaleY: 0.5,
             });
+            desktopVideo.onresize = () => {
+                desktopImage.width(desktopVideo.videoWidth);
+                desktopImage.height(desktopVideo.videoHeight + containerHeight/2);
 
+            }
             layer.add(desktopImage);
             desktopVideo.addEventListener('loadedmetadata', () => {
-                desktopImage.width(containerWidth);
-                desktopImage.height(containerHeight);
                 desktopVideo.play();
 
                 /**
