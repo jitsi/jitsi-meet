@@ -128,6 +128,7 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
      */
     async _applyBackgroundEffect() {
         this.setState({ loading: true });
+        console.log(this.state.jitsiTrack, 'this.state.jitsiTrackthis.state.jitsiTrackthis.state.jitsiTrack')
         await this.props.dispatch(toggleBackgroundEffect(this.props.options, this.state.jitsiTrack));
         this.setState({ loading: false });
     }
