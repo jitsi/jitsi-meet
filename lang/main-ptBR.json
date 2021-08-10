@@ -1048,8 +1048,8 @@
         "goSmall": "IR",
         "headerTitle": "Jitsi Meet",
         "headerSubtitle": "Reuniões com segurança e alta qualidade",
-        "join": "CRIAR / ENTRAR",
         "info": "Informações",
+        "join": "CRIAR / ENTRAR",
         "jitsiOnMobile": "Jitsi em dispositivos móveis – baixe nossos aplicativos e inicie uma reunião em qualquer lugar",
         "mobileDownLoadLinkIos": "Baixar aplicativo móvel para iOS",
         "mobileDownLoadLinkAndroid": "Baixar aplicativo móvel para Android",
@@ -1077,8 +1077,8 @@
         }
     },
     "lonelyMeetingExperience": {
-        "youAreAlone": "Você é o único na reunião",
-        "button": "Convidar outros"
+        "button": "Convidar outros",
+        "youAreAlone": "Você é o único na reunião"
     },
     "helpView": {
         "header": "Centro de ajuda"
