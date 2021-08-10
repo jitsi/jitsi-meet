@@ -111,8 +111,8 @@ export const REACTIONS = {
         soundFiles: SURPRISE_SOUND_FILES
     },
     boo: {
-        message: ':frowning_face:',
-        emoji: '☹️',
+        message: ':slightly_frowning_face:',
+        emoji: '🙁',
         shortcutChar: 'B',
         soundId: BOO_SOUND_ID,
         soundFiles: BOO_SOUND_FILES
