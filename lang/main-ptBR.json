@@ -363,27 +363,27 @@
     "embedMeeting": {
         "title": "Reunião em formato compacto"
     },
-        "virtualBackground": {
-            "apply": "Aplicar",
-            "title": "Fundos virtuais",
-            "blur": "Desfoque",
-            "slightBlur": "Desfoque suave",
-            "removeBackground": "Remover fundo",
-            "addBackground": "Adicionar novo fundo",
-            "pleaseWait": "Aguarde...",
-            "none": "Nenhum",
-            "uploadedImage": "Imagem enviada {{index}}",
-            "deleteImage": "Excluir imagem",
-            "image1" : "Praia",
-            "image2" : "Parede branca neutra",
-            "image3" : "Quarto branco vazio",
-            "image4" : "Luminária preta",
-            "image5" : "Montanha",
-            "image6" : "Floresta",
-            "image7" : "Alvorada",
-            "desktopShareError": "Não foi possível compartilhar o desktop",
-            "desktopShare":"Compartilhar desktop",
-            "webAssemblyWarning": "Não há suporte para WebAssembly"
+    "virtualBackground": {
+        "apply": "Aplicar",
+        "title": "Fundos virtuais",
+        "blur": "Desfoque",
+        "slightBlur": "Desfoque suave",
+        "removeBackground": "Remover fundo",
+        "addBackground": "Adicionar novo fundo",
+        "pleaseWait": "Aguarde...",
+        "none": "Nenhum",
+        "uploadedImage": "Imagem enviada {{index}}",
+        "deleteImage": "Excluir imagem",
+        "image1" : "Praia",
+        "image2" : "Parede branca neutra",
+        "image3" : "Quarto branco vazio",
+        "image4" : "Luminária preta",
+        "image5" : "Montanha",
+        "image6" : "Floresta",
+        "image7" : "Alvorada",
+        "desktopShareError": "Não foi possível compartilhar o desktop",
+        "desktopShare":"Compartilhar desktop",
+        "webAssemblyWarning": "Não há suporte para WebAssembly"
     },
     "feedback": {
         "average": "Média",
@@ -590,26 +590,26 @@
         "raiseHandAction": "Levantar a mão",
         "groupTitle": "Notificações"
     },
-        "participantsPane": {
-            "close": "Fechar",
-            "header": "Participantes",
-            "headings": {
-                "lobby": "Sala de espera ({{count}})",
-                "participantsList": "Participantes da reunião ({{count}})",
-                "waitingLobby": "Aguardando na sala de espera ({{count}})"
-            },
-            "actions": {
-                "allow": "Permitir aos participantes:",
-                "blockEveryoneMicCamera": "Bloquear microfone e câmera de todos",
-                "invite": "Convidar alguém",
-                "askUnmute": "Pedir para ativar som",
-                "mute": "Silenciar",
-                "muteAll": "Silenciar todos",
-                "muteEveryoneElse": "Silenciar todos os demais",
-                "startModeration": "Ativar som eles mesmos ou iniciar vídeo",
-                "stopEveryonesVideo": "Parar vídeo de todos",
-                "stopVideo": "Parar vídeo",
-                "unblockEveryoneMicCamera": "Desbloquear microfone e câmera de todos"
+    "participantsPane": {
+        "close": "Fechar",
+        "header": "Participantes",
+        "headings": {
+            "lobby": "Sala de espera ({{count}})",
+            "participantsList": "Participantes da reunião ({{count}})",
+            "waitingLobby": "Aguardando na sala de espera ({{count}})"
+        },
+        "actions": {
+            "allow": "Permitir aos participantes:",
+            "blockEveryoneMicCamera": "Bloquear microfone e câmera de todos",
+            "invite": "Convidar alguém",
+            "askUnmute": "Pedir para ativar som",
+            "mute": "Silenciar",
+            "muteAll": "Silenciar todos",
+            "muteEveryoneElse": "Silenciar todos os demais",
+            "startModeration": "Ativar som eles mesmos ou iniciar vídeo",
+            "stopEveryonesVideo": "Parar vídeo de todos",
+            "stopVideo": "Parar vídeo",
+            "unblockEveryoneMicCamera": "Desbloquear microfone e câmera de todos"
         }
     },
     "passwordSetRemotely": "Definido por outro participante",
@@ -1068,12 +1068,12 @@
         "terms": "Termos",
         "title": "Videoconferências mais seguras, flexíveis e totalmente gratuitas",
         "logo":{
-           "calendar":"Logo do Calendário",
-           "microsoftLogo":"Logo da Microsoft",
-           "logoDeepLinking":"Logo do Jitsi Meet",
-           "desktopPreviewThumbnail":"Miniatura de Visualização do Desktop",
-           "googleLogo":"Logo do Google",
-           "policyLogo":"Logo da Política de Privacidade"
+            "calendar":"Logo do Calendário",
+            "microsoftLogo":"Logo da Microsoft",
+            "logoDeepLinking":"Logo do Jitsi Meet",
+            "desktopPreviewThumbnail":"Miniatura de Visualização do Desktop",
+            "googleLogo":"Logo do Google",
+            "policyLogo":"Logo da Política de Privacidade"
         }
     },
     "lonelyMeetingExperience": {
