@@ -23,7 +23,7 @@ type Props = {
     /**
      * CSS id of the button.
      */
-    id: string,
+    id?: string,
 
     /**
      * The participant.
