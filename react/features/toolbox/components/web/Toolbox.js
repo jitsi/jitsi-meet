@@ -66,7 +66,6 @@ import { VideoQualityDialog, VideoQualityButton } from '../../../video-quality/c
 import { VideoBackgroundButton } from '../../../virtual-background';
 import { toggleBackgroundEffect } from '../../../virtual-background/actions';
 import { VIRTUAL_BACKGROUND_TYPE } from '../../../virtual-background/constants';
-import { checkBlurSupport } from '../../../virtual-background/functions';
 import {
     setFullScreen,
     setOverflowMenuVisible,
@@ -691,7 +690,7 @@ class Toolbox extends Component<Props> {
             group: 3
         };
 
-        const virtualBackground = !_screenSharing && checkBlurSupport() && {
+        const virtualBackground = !_screenSharing && {
             key: 'select-background',
             Content: VideoBackgroundButton,
             group: 3
