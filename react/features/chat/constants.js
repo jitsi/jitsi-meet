@@ -31,3 +31,11 @@ export const MESSAGE_TYPE_LOCAL = 'local';
 export const MESSAGE_TYPE_REMOTE = 'remote';
 
 export const SMALL_WIDTH_THRESHOLD = 580;
+
+/**
+ * The modes of the buttons of the chat and polls tabs.
+ */
+export const BUTTON_MODES = {
+    CONTAINED: 'contained',
+    TEXT: 'text'
+};
