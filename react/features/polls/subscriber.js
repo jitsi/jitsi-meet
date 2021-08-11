@@ -58,7 +58,8 @@ StateListenerRegistry.register(
     (conference, store, previousConference) => {
         if (conference && conference !== previousConference) {
             const receiveMessage = (_, data) => {
-                if (data.type === COMMAND_NEW_POLL) {
+                switch (data.type) {
+                case COMMAND_NEW_POLL: {
                     const { question, answers, pollId, senderId, senderName } = data;
 
                     const poll = {
@@ -81,8 +82,11 @@ StateListenerRegistry.register(
                         titleKey: 'polls.notification.title',
                         descriptionKey: 'polls.notification.description'
                     }, NOTIFICATION_TIMEOUT));
+                    break;
 
-                } else if (data.type === COMMAND_ANSWER_POLL) {
+                }
+
+                case COMMAND_ANSWER_POLL: {
                     const { pollId, answers, voterId, voterName } = data;
 
                     const receivedAnswer: Answer = {
@@ -93,8 +97,11 @@ StateListenerRegistry.register(
                     };
 
                     store.dispatch(receiveAnswer(pollId, receivedAnswer));
+                    break;
 
-                } else if (data.type === COMMAND_OLD_POLLS) {
+                }
+
+                case COMMAND_OLD_POLLS: {
                     const { polls } = data;
 
                     for (const pollData of polls) {
@@ -106,6 +113,8 @@ StateListenerRegistry.register(
                             store.dispatch(receivePoll(pollData.id, poll, false));
                         }
                     }
+                    break;
+                }
                 }
             };
 
