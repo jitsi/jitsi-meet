@@ -94,7 +94,7 @@ export const IOS_SCREENSHARING_ENABLED = 'ios.screensharing.enabled';
 
 /**
  * Flag indicating if screen sharing should be enabled in android.
- * Default: disabled (false).
+ * Default: enabled (true).
  */
 export const ANDROID_SCREENSHARING_ENABLED = 'android.screensharing.enabled';
 
