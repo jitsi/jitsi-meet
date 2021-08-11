@@ -73,7 +73,6 @@ export default function ParticipantQuickAction({
         return (
             <AskToUnmuteButton
                 askUnmuteText = { askUnmuteText }
-                id = { participantID }
                 raisedHand = { raisedHand } />
         );
     }
