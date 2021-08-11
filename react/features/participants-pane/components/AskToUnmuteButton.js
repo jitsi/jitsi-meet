@@ -15,9 +15,9 @@ type Props = {
     askUnmuteText: string,
 
     /**
-     * Participant id.
+     * Participant participantID.
      */
-    id: string,
+    participantID: string,
 
     /**
      * Whether or not the local participant's hand is raised.
@@ -31,15 +31,15 @@ type Props = {
  * @param {Object} participant - Participant reference.
  * @returns {React$Element<'button'>}
  */
-export default function AskToUnmuteButton({ askUnmuteText, id, raisedHand }: Props) {
+export default function AskToUnmuteButton({ askUnmuteText, participantID, raisedHand }: Props) {
     const dispatch = useDispatch();
     const askToUnmute = useCallback(() => {
-        dispatch(approveParticipant(id));
-    }, [ dispatch, id ]);
+        dispatch(approveParticipant(participantID));
+    }, [ dispatch, participantID ]);
 
     return (
         <QuickActionButton
-            aria-label = { raisedHand ? askUnmuteText : `unmute-${id}` }
+            aria-label = { raisedHand ? askUnmuteText : `unmute-${participantID}` }
             onClick = { askToUnmute }
             primary = { true }
             theme = {{
