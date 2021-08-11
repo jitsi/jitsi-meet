@@ -25,7 +25,7 @@ const parsePollData = (pollData): Poll | null => {
         return null;
     }
 
-    const answers2 = [];
+    const answersParsed = [];
 
     for (const answer of answers) {
         const voters = new Map();
@@ -37,7 +37,7 @@ const parsePollData = (pollData): Poll | null => {
             voters.set(voterId, voter);
         }
 
-        answers2.push({
+        answersParsed.push({
             name: answer.name,
             voters
         });
@@ -49,7 +49,7 @@ const parsePollData = (pollData): Poll | null => {
         question,
         showResults: true,
         lastVote: null,
-        answers: answers2
+        answers: answersParsed
     };
 };
 
@@ -108,6 +108,7 @@ StateListenerRegistry.register(
                     }
                 }
             };
+
             conference.on(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED, receiveMessage);
             conference.on(JitsiConferenceEvents.NON_PARTICIPANT_MESSAGE_RECEIVED, receiveMessage);
         }
