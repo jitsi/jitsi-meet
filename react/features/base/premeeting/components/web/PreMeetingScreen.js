@@ -2,14 +2,13 @@
 
 import React, { PureComponent } from 'react';
 
+import { InviteButton } from '../../../../invite/components/add-people-dialog/web';
 import { AudioSettingsButton, VideoSettingsButton } from '../../../../toolbox/components/web';
 import { VideoBackgroundButton } from '../../../../virtual-background';
-import { checkBlurSupport } from '../../../../virtual-background/functions';
 import { Avatar } from '../../../avatar';
 import { allowUrlSharing } from '../../functions';
 
 import ConnectionStatus from './ConnectionStatus';
-import CopyMeetingUrl from './CopyMeetingUrl';
 import Preview from './Preview';
 
 type Props = {
@@ -102,7 +101,7 @@ export default class PreMeetingScreen extends PureComponent<Props> {
             videoTrack,
             visibleButtons
         } = this.props;
-        const showSharingButton = allowUrlSharing() && showCopyUrlButton;
+        const showInviteButton = allowUrlSharing() && showCopyUrlButton;
 
         return (
             <div
@@ -126,7 +125,6 @@ export default class PreMeetingScreen extends PureComponent<Props> {
                             <h1 className = 'title'>
                                 { title }
                             </h1>
-                            {showSharingButton ? <CopyMeetingUrl /> : null}
                         </>
                     )}
                     { this.props.children }
@@ -135,9 +133,16 @@ export default class PreMeetingScreen extends PureComponent<Props> {
                             <div className = 'toolbox-content-items'>
                                 <AudioSettingsButton visible = { true } />
                                 <VideoSettingsButton visible = { true } />
-                                { ((visibleButtons && visibleButtons.includes('select-background'))
-                                   || (visibleButtons && visibleButtons.includes('videobackgroundblur')))
-                                   && <VideoBackgroundButton visible = { checkBlurSupport() } /> }
+                                {visibleButtons && (
+                                    <>
+                                        {(visibleButtons.includes('select-background')
+                                            || visibleButtons.includes('videobackgroundblur'))
+                                                && <VideoBackgroundButton />}
+                                        {showInviteButton && (visibleButtons.includes('participants-pane')
+                                            || visibleButtons.includes('invite'))
+                                                && <InviteButton />}
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>
