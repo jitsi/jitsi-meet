@@ -105,7 +105,7 @@ export function setPrivateMessageRecipient(participant: Object) {
  * @param {boolean} isPollsTabFocused - The new value for _isPollsTabFocused.
  * @returns {Function}
  */
-export function setisPollsTabFocused(isPollsTabFocused: boolean) {
+export function setIsPollsTabFocused(isPollsTabFocused: boolean) {
     return {
         isPollsTabFocused,
         type: SET_IS_POLL_TAB_FOCUSED
