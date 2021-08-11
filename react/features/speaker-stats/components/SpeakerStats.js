@@ -183,7 +183,6 @@ class SpeakerStats extends Component<Props> {
      * @private
      */
     _updateStats() {
-<<<<<<< HEAD
         this.props.dispatch(initUpdateStats(() => this._getSpeakerStats()));
     }
 
@@ -218,17 +217,6 @@ class SpeakerStats extends Component<Props> {
         }
 
         return stats;
-=======
-        this.props.dispatch(initUpdateStats(() => this.props.conference.getSpeakerStats()));
-        const stats = this.props.conference.getSpeakerStats();
-
-        const expression = APP.store.getState()['features/facial-recognition'].lastFacialExpression;
-
-        this.setState({
-            stats,
-            lastFacialExpression: expression
-        });
->>>>>>> 0f11f6808 (fix(facial-expression): expression store)
     }
 }
 

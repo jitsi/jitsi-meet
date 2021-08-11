@@ -21,8 +21,6 @@ type Props = {
      */
     dominantSpeakerTime: number,
 
-    lastFacialExpression: string,
-
     /**
      * True if the participant is no longer in the meeting.
      */
@@ -74,11 +72,6 @@ class SpeakerStatsItem extends Component<Props> {
                     className = 'speaker-stats-item__time'>
                     <TimeElapsed
                         time = { this.props.dominantSpeakerTime } />
-                </div>
-                <div
-                    aria-label = 'Expression'
-                    className = 'speaker-stats-item__expression'>
-                    { this.props.lastFacialExpression }
                 </div>
             </div>
         );
