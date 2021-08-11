@@ -1,7 +1,7 @@
 // @flow
 
 import {
-    CLOSE_POLL_TAB,
+    POLL_TAB_CLOSED,
     RECEIVE_ANSWER,
     RECEIVE_POLL,
     REGISTER_VOTE,
@@ -86,14 +86,14 @@ export const retractVote = (pollId: string) => {
 };
 
 /**
- * Action to signal the closing of the chat dialog.
+ * Action to signal the closing of the polls tab.
  *
  * @returns {{
- *     type: CLOSE_CHAT
+ *     type: POLL_TAB_CLOSED
  * }}
  */
 export function closePollTab() {
     return {
-        type: CLOSE_POLL_TAB
+        type: POLL_TAB_CLOSED
     };
 }

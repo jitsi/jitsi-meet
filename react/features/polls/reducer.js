@@ -7,7 +7,7 @@ import {
     RECEIVE_ANSWER,
     REGISTER_VOTE,
     RETRACT_VOTE,
-    CLOSE_POLL_TAB
+    POLL_TAB_CLOSED
 } from './actionTypes';
 import type { Answer } from './types';
 
@@ -115,7 +115,7 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
         };
     }
 
-    case CLOSE_POLL_TAB: {
+    case POLL_TAB_CLOSED: {
         return {
             ...state,
             nbUnreadReadMessage: 0
