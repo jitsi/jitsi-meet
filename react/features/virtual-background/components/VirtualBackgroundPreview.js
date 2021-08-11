@@ -34,6 +34,11 @@ export type Props = {
     dispatch: Function,
 
     /**
+     * Dialog callback that indicates if the background preview was loaded.
+     */
+    loadedPreview: Function,
+
+    /**
      * Represents the virtual background setted options.
      */
     options: Object,
@@ -53,6 +58,11 @@ type State = {
      * Loader activated on setting virtual background.
      */
     loading: boolean,
+
+    /**
+     * Flag that indicates if the local track was loaded.
+     */
+    localTrackLoaded: boolean,
 
     /**
      * Activate the selected device camera only.
@@ -80,6 +90,7 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
 
         this.state = {
             loading: false,
+            localTrackLoaded: false,
             jitsiTrack: null
         };
     }
@@ -102,23 +113,42 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
      * @returns {void}
      */
     async _setTracks() {
-        const [ jitsiTrack ] = await createLocalTracksF({
-            cameraDeviceId: this.props._currentCameraDeviceId,
-            devices: [ 'video' ]
-        });
+        try {
+            this.setState({ loading: true });
+            const [ jitsiTrack ] = await createLocalTracksF({
+                cameraDeviceId: this.props._currentCameraDeviceId,
+                devices: [ 'video' ]
+            });
 
-        // In case the component gets unmounted before the tracks are created
-        // avoid a leak by not setting the state
-        if (this._componentWasUnmounted) {
-            this._stopStream(jitsiTrack);
+            this.setState({ localTrackLoaded: true });
+
+            // In case the component gets unmounted before the tracks are created
+            // avoid a leak by not setting the state
+            if (this._componentWasUnmounted) {
+                this._stopStream(jitsiTrack);
+
+                return;
+            }
+            this.setState({
+                jitsiTrack
+            });
+            this.setState({ loading: false });
+            this.props.loadedPreview(true);
+        } catch (error) {
+            this.props.dispatch(hideDialog());
+            this.props.dispatch(
+                showWarningNotification({
+                    titleKey: 'virtualBackground.cameraError',
+                    description: 'Failed to access camera device.'
+                })
+            );
+            logger.error('Failed to access camera device. Error on apply background effect.');
 
             return;
         }
-        this.setState({
-            jitsiTrack
-        });
 
-        if (this.props.options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
+        if (this.props.options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE
+                && this.state.localTrackLoaded) {
             this._applyBackgroundEffect();
         }
     }
@@ -129,20 +159,11 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
      * @returns {Promise}
      */
     async _applyBackgroundEffect() {
-        if (this.state.jitsiTrack === null) {
-            this.props.dispatch(hideDialog());
-            this.props.dispatch(
-                showWarningNotification({
-                    titleKey: 'virtualBackground.cameraError',
-                    description: 'Failed to access camera device.'
-                })
-            );
-            logger.error('Failed to access camera device. Error on apply background effect.');
-        } else {
-            this.setState({ loading: true });
-            await this.props.dispatch(toggleBackgroundEffect(this.props.options, this.state.jitsiTrack));
-            this.setState({ loading: false });
-        }
+        this.setState({ loading: true });
+        this.props.loadedPreview(false);
+        await this.props.dispatch(toggleBackgroundEffect(this.props.options, this.state.jitsiTrack));
+        this.props.loadedPreview(true);
+        this.setState({ loading: false });
     }
 
     /**
@@ -225,7 +246,7 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
         if (!equals(this.props._currentCameraDeviceId, prevProps._currentCameraDeviceId)) {
             this._setTracks();
         }
-        if (!equals(this.props.options, prevProps.options)) {
+        if (!equals(this.props.options, prevProps.options) && this.state.localTrackLoaded) {
             if (prevProps.options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
                 prevProps.options.url.dispose();
             }

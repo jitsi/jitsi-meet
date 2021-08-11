@@ -153,6 +153,7 @@ function VirtualBackground({
     initialOptions,
     t
 }: Props) {
+    const [ previewIsLoaded, setPreviewIsLoaded ] = useState(false);
     const [ options, setOptions ] = useState({ ...initialOptions });
     const localImages = jitsiLocalStorage.getItem('virtualBackgrounds');
     const [ storedImages, setStoredImages ] = useState<Array<Image>>((localImages && Bourne.parse(localImages)) || []);
@@ -189,7 +190,6 @@ function VirtualBackground({
             setStoredImages(storedImages.slice(1));
         }
     }, [ storedImages ]);
-
 
     const enableBlur = useCallback(async () => {
         setOptions({
@@ -425,15 +425,21 @@ function VirtualBackground({
         dispatch(hideDialog());
     });
 
+    const loadedPreviewState = useCallback(async loaded => {
+        await setPreviewIsLoaded(loaded);
+    });
+
     return (
         <Dialog
             hideCancelButton = { false }
             okKey = { 'virtualBackground.apply' }
             onCancel = { cancelVirtualBackground }
             onSubmit = { applyVirtualBackground }
-            submitDisabled = { !options || loading }
+            submitDisabled = { !options || loading || !previewIsLoaded }
             titleKey = { 'virtualBackground.title' } >
-            <VirtualBackgroundPreview options = { options } />
+            <VirtualBackgroundPreview
+                loadedPreview = { loadedPreviewState }
+                options = { options } />
             {loading ? (
                 <div className = 'virtual-background-loading'>
                     <Spinner
@@ -442,7 +448,7 @@ function VirtualBackground({
                 </div>
             ) : (
                 <div>
-                    <label
+                    {previewIsLoaded && <label
                         aria-label = { t('virtualBackground.uploadImage') }
                         className = 'file-upload-label'
                         htmlFor = 'file-upload'
@@ -453,7 +459,7 @@ function VirtualBackground({
                             size = { 20 }
                             src = { IconPlusCircle } />
                         {t('virtualBackground.addBackground')}
-                    </label>
+                    </label> }
                     <input
                         accept = 'image/*'
                         className = 'file-upload-btn'
