@@ -490,6 +490,28 @@
         "newDeviceAudioTitle": "Novo dispositivo de áudio detectado",
         "newDeviceAction": "Usar"
     },
+    "participantsPane": {
+        "close": "Fechar",
+        "header": "Participantes",
+        "headings": {
+            "lobby": "Sala de espera ({{count}})",
+            "participantsList": "Participantes da reunião ({{count}})",
+            "waitingLobby": "Aguardam na sala de espera ({{count}})"
+        },
+        "actions": {
+            "allow": "Permitir aos participantes:",
+            "blockEveryoneMicCamera": "Bloquear o microfone e a câmara de todos",
+            "invite": "Convidar alguém",
+            "askUnmute": "Pedir para ligar o microfone",
+            "mute": "Silenciar",
+            "muteAll": "Silenciar todos",
+            "muteEveryoneElse": "Silenciar todos os outros",
+            "startModeration": "Ligar o microfone ou a câmara.",
+            "stopEveryonesVideo": "Desligar a câmara de todos",
+            "stopVideo": "Desligar a câmara",
+            "unblockEveryoneMicCamera": "Desbloquear o microfone e a câmara de todos"
+        }
+    },
     "passwordSetRemotely": "Definido por outro participante",
     "passwordDigitsOnly": "Até {{number}} dígitos",
     "poweredby": "distribuído por",
