@@ -20,7 +20,6 @@ import MessageContainer from './MessageContainer';
 import MessageRecipient from './MessageRecipient';
 import TouchmoveHack from './TouchmoveHack';
 
-
 /**
  * React Component for holding the chat feature in a side panel that slides in
  * and out of view.
@@ -197,7 +196,6 @@ class Chat extends AbstractChat<Props> {
                 onCancel = { this._onToggleChat } />
         );
     }
-
 
     _renderPanelContent: () => React$Node | null;
 
