@@ -253,6 +253,18 @@ public class JitsiMeetConferenceOptions implements Parcelable {
             return this;
         }
 
+        public Builder setConfigOverride(String config, Bundle bundle) {
+            this.config.putBundle(config, bundle);
+
+            return this;
+        }
+
+        public Builder setConfigOverride(String config, String[] list) {
+            this.config.putStringArray(config, list);
+
+            return this;
+        }
+
         /**
          * Builds the immutable {@link JitsiMeetConferenceOptions} object with the configuration
          * that this {@link Builder} instance specified.

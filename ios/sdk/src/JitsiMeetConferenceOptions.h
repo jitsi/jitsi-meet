@@ -63,6 +63,8 @@
 
 - (void)setConfigOverride:(NSString *_Nonnull)config withBoolean:(BOOL)value;
 - (void)setConfigOverride:(NSString *_Nonnull)config withValue:(id _Nonnull)value;
+- (void)setConfigOverride:(NSString *_Nonnull)config withNSMutableDictionary:(NSMutableDictionary * _Nonnull)dictionary;
+- (void)setConfigOverride:(NSString *_Nonnull)config withNSArray:( NSArray * _Nonnull)array;
 
 - (void)setAudioOnly:(BOOL)audioOnly;
 - (void)setAudioMuted:(BOOL)audioMuted;
