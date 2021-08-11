@@ -45,7 +45,7 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
 
     const poll: Poll = useSelector(state => state['features/polls'].polls[pollId]);
 
-    const localId: string = useSelector(state => getLocalParticipant(state).id);
+    const { id: localId } = useSelector(getLocalParticipant);
 
     const [ checkBoxStates, setCheckBoxState ] = useState(() => {
         if (poll.lastVote !== null) {
