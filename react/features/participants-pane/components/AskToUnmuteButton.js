@@ -22,7 +22,7 @@ type Props = {
     /**
      * Whether or not the local participant's hand is raised.
      */
-    raisedHand?: boolean,
+    raisedHand?: boolean
 }
 
 /**
