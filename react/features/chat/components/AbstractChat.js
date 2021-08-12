@@ -13,6 +13,11 @@ import { SMALL_WIDTH_THRESHOLD } from '../constants';
 export type Props = {
 
     /**
+     * The chat message background color.
+     */
+    _chatMessageBackground: string,
+
+    /**
      * The chat background image object.
      */
     _chatBackgroundImage: Object,
@@ -100,6 +105,7 @@ export default class AbstractChat<P: Props> extends Component<P> {
  * @param {Object} state - The redux store/state.
  * @private
  * @returns {{
+ *     _chatMessageBackground: string,
  *     _chatBackgroundImage: Object,
  *     _isOpen: boolean,
  *     _messages: Array<Object>,
@@ -107,10 +113,11 @@ export default class AbstractChat<P: Props> extends Component<P> {
  * }}
  */
 export function _mapStateToProps(state: Object) {
-    const { isOpen, messages, chatBackgroundImage } = state['features/chat'];
+    const { isOpen, messages, chatBackgroundImage, chatMessageBackground } = state['features/chat'];
     const _localParticipant = getLocalParticipant(state);
 
     return {
+        _chatMessageBackground: chatMessageBackground,
         _chatBackgroundImage: chatBackgroundImage,
         _isModal: window.innerWidth <= SMALL_WIDTH_THRESHOLD,
         _isOpen: isOpen,

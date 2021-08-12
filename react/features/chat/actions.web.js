@@ -4,7 +4,7 @@ import type { Dispatch } from 'redux';
 
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 
-import { OPEN_CHAT, OPEN_CHAT_BACKGROUND, SET_CHAT_BACKGROUND } from './actionTypes';
+import { OPEN_CHAT, OPEN_CHAT_BACKGROUND, SET_CHAT_BACKGROUND, SET_CHAT_MESSAGE_BACKGROUND } from './actionTypes';
 import { closeChat, closeChatBackground } from './actions.any';
 
 export * from './actions.any';
@@ -46,7 +46,7 @@ export function openChatBackground(participant: Object) {
 }
 
 /**
- * Displays the chat background panel.
+ * Sets the chat background image.
  *
  * @param {Object} chatBackgroundImage - The chat background image.
  * @returns {{
@@ -59,6 +59,24 @@ export function setChatBackground(chatBackgroundImage: Object) {
         dispatch({
             chatBackgroundImage,
             type: SET_CHAT_BACKGROUND
+        });
+    };
+}
+
+/**
+ * Sets the chat message background.
+ *
+ * @param {Object} chatMessageBackground - The chat message background.
+ * @returns {{
+ *     participant: chatMessageBackground,
+ *     type: SET_CHAT_MESSAGE_BACKGROUND
+ * }}
+ */
+export function setChatMessageBackground(chatMessageBackground: Object) {
+    return function(dispatch: (Object) => Object) {
+        dispatch({
+            chatMessageBackground,
+            type: SET_CHAT_MESSAGE_BACKGROUND
         });
     };
 }

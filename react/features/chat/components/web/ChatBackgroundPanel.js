@@ -1,11 +1,11 @@
 // @flow
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import type { Dispatch } from 'redux';
 
 import { Icon, IconTrash } from '../../../base/icons';
 import { connect } from '../../../base/redux';
-import { setChatBackground, toggleChatBackground } from '../../actions.web';
+import { setChatBackground, toggleChatBackground, setChatMessageBackground } from '../../actions.web';
 
 type Image = {
     tooltip?: string,
@@ -39,6 +39,11 @@ const images: Array<Image> = [
 type Props = {
 
     /**
+     * Represents the selected chat message background.
+     */
+    _chatMessageBackground: string,
+
+    /**
      * Invoked to send chat messages.
      */
     dispatch: Dispatch<any>,
@@ -54,7 +59,9 @@ type Props = {
  *
  * @returns {ReactElement}
  */
-function ChatBackgroundPanel({ _isBackgroundOpen, dispatch }: Props) {
+function ChatBackgroundPanel({ _chatMessageBackground, _isBackgroundOpen, dispatch }: Props) {
+
+    const [ colorValue, setColorValue ] = useState(_chatMessageBackground ? _chatMessageBackground : '#ff0000');
     const setChatBackgroundImage = useCallback(async e => {
         const imageId = e.currentTarget.getAttribute('data-imageid');
         const image = images.find(img => img.id === imageId);
@@ -65,9 +72,14 @@ function ChatBackgroundPanel({ _isBackgroundOpen, dispatch }: Props) {
         }
     }, [ images, dispatch ]);
 
-    const removeChatBackground = useCallback(async e => {
-            dispatch(setChatBackground(undefined));
-            dispatch(toggleChatBackground());
+    const removeChatBackground = useCallback(async () => {
+        dispatch(setChatBackground(undefined));
+        dispatch(toggleChatBackground());
+    }, [ dispatch ]);
+
+    const changeMessageColor = useCallback(async e => {
+        setColorValue(e.target.value);
+        dispatch(setChatMessageBackground(e.target.value));
     }, [ dispatch ]);
 
     const onError = event => {
@@ -89,12 +101,20 @@ function ChatBackgroundPanel({ _isBackgroundOpen, dispatch }: Props) {
                             src = { image.src } />)
                     )}
                     <div
-                    className = 'chat-background-image chat-background-item'
-                    onClick = { removeChatBackground }>
-                    <Icon
-                        size = { 15}
-                        role = 'button'
-                        src = { IconTrash }/>
+                        className = 'chat-background-image chat-background-item'
+                        onClick = { removeChatBackground }>
+                        <Icon
+                            role = 'button'
+                            size = { 15 }
+                            src = { IconTrash } />
+                    </div>
+
+                    <div className = 'chat-background-image chat-background-item'>
+                        <input
+                            className = 'chat-color-picker'
+                            onChange = { changeMessageColor }
+                            type = 'color'
+                            value = { colorValue } />
                     </div>
                 </div>
             )}
@@ -111,10 +131,11 @@ function ChatBackgroundPanel({ _isBackgroundOpen, dispatch }: Props) {
  * @returns {{Props}}
  */
 function _mapStateToProps(state): Object {
-    const { isBackgroundOpen } = state['features/chat'];
+    const { isBackgroundOpen, chatMessageBackground } = state['features/chat'];
 
     return {
-        _isBackgroundOpen: isBackgroundOpen
+        _isBackgroundOpen: isBackgroundOpen,
+        _chatMessageBackground: chatMessageBackground
     };
 }
 

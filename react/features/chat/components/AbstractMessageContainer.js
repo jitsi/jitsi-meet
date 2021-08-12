@@ -13,6 +13,11 @@ export type Props = {
      * The messages array to render.
      */
     messages: Array<Object>,
+
+    /**
+     * The chat message background color.
+     */
+    messageColor: string,
 }
 
 /**

@@ -22,6 +22,11 @@ export default class MessageContainer extends AbstractMessageContainer<Props> {
     _isScrolledToBottom: boolean;
 
     /**
+     * The chat message background color.
+     */
+    messageColor: string;
+
+    /**
      * Reference to the HTML element at the end of the list of displayed chat
      * messages. Used for scrolling to the end of the chat messages.
      */
@@ -64,6 +69,7 @@ export default class MessageContainer extends AbstractMessageContainer<Props> {
                 <ChatMessageGroup
                     className = { messageType || MESSAGE_TYPE_REMOTE }
                     key = { index }
+                    messageColor = { this.props?.messageColor }
                     messages = { group } />
             );
         });

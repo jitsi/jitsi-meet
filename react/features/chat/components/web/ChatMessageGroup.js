@@ -15,6 +15,11 @@ type Props = {
      * The messages to display as a group.
      */
     messages: Array<Object>,
+
+    /**
+     * The chat message background color.
+     */
+    messageColor: string,
 };
 
 /**
@@ -34,7 +39,7 @@ class ChatMessageGroup extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { className, messages } = this.props;
+        const { className, messages, messageColor } = this.props;
 
         const messagesLength = messages.length;
 
@@ -49,6 +54,7 @@ class ChatMessageGroup extends Component<Props> {
                         <ChatMessage
                             key = { i }
                             message = { message }
+                            messageColor = { messageColor }
                             showDisplayName = { i === 0 }
                             showTimestamp = { i === messages.length - 1 } />
                     ))

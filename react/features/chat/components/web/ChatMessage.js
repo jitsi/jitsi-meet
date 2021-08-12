@@ -23,7 +23,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { message, t } = this.props;
+        const { message, t, messageColor } = this.props;
         const processedMessage = [];
 
         // content is an array of text and emoji components
@@ -41,7 +41,9 @@ class ChatMessage extends AbstractChatMessage<Props> {
             <div
                 className = 'chatmessage-wrapper'
                 tabIndex = { -1 }>
-                <div className = { `chatmessage ${message.privateMessage ? 'privatemessage' : ''}` }>
+                <div
+                    className = { `chatmessage ${message.privateMessage ? 'privatemessage' : ''}` }
+                    style = {{ background: `${messageColor}` }} >
                     <div className = 'replywrapper'>
                         <div className = 'messagecontent'>
                             { this.props.showDisplayName && this._renderDisplayName() }

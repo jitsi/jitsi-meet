@@ -61,13 +61,22 @@ export const OPEN_CHAT_BACKGROUND = 'OPEN_CHAT_BACKGROUND';
 export const CLOSE_CHAT_BACKGROUND = 'CLOSE_CHAT_BACKGROUND';
 
 /**
- * The type of the action which signals the which chat background image is displayed.
+ * The type of the action which signals which chat background image is displayed.
  *
  * {
  *     type: SET_CHAT_BACKGROUND
  * }
  */
 export const SET_CHAT_BACKGROUND = 'SET_CHAT_BACKGROUND';
+
+/**
+ * The type of the action which signals the which chat background color is displayed.
+ *
+ * {
+ *     type: SET_CHAT_MESSAGE_BACKGROUND
+ * }
+ */
+export const SET_CHAT_MESSAGE_BACKGROUND = 'SET_CHAT_MESSAGE_BACKGROUND';
 
 /**
  * The type of the action which signals a send a chat message to everyone in the

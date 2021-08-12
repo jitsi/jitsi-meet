@@ -10,11 +10,13 @@ import {
     OPEN_CHAT_BACKGROUND,
     CLOSE_CHAT_BACKGROUND,
     SET_CHAT_BACKGROUND,
+    SET_CHAT_MESSAGE_BACKGROUND,
     SET_PRIVATE_MESSAGE_RECIPIENT
 } from './actionTypes';
 
 const DEFAULT_STATE = {
     chatBackgroundImage: undefined,
+    chatMessageBackground: undefined,
     isBackgroundOpen: false,
     isOpen: false,
     lastReadMessage: undefined,
@@ -24,13 +26,14 @@ const DEFAULT_STATE = {
 
 const STORE_NAME = 'features/chat';
 
-PersistenceRegistry.register(STORE_NAME, true,  {
+PersistenceRegistry.register(STORE_NAME, true, {
     chatBackgroundImage: true,
+    chatMessageBackground: true,
     messages: false,
     lastReadMessage: false,
     privateMessageRecipient: false,
     isBackgroundOpen: false,
-    isOpen: false,
+    isOpen: false
 });
 
 ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
@@ -83,6 +86,11 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
         return {
             ...state,
             chatBackgroundImage: action.chatBackgroundImage
+        };
+    case SET_CHAT_MESSAGE_BACKGROUND:
+        return {
+            ...state,
+            chatMessageBackground: action.chatMessageBackground
         };
     case OPEN_CHAT:
         return {
