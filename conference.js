@@ -105,6 +105,7 @@ import {
     updateSettings
 } from './react/features/base/settings';
 import {
+    addLocalTrack,
     createLocalPresenterTrack,
     createLocalTracksF,
     destroyLocalTracks,
@@ -1911,7 +1912,24 @@ export default {
 
                 if (desktopVideoStream) {
                     logger.debug(`_switchToScreenSharing is using ${desktopVideoStream} for useVideoStream`);
-                    await this.useVideoStream(desktopVideoStream);
+                    await new Promise((resolve, reject) => {
+                        _replaceLocalVideoTrackQueue.enqueue(onFinish => {
+                            APP.store.dispatch(
+                                addLocalTrack(desktopVideoStream))
+                                .then(() => {
+                                    this._setSharingScreen(desktopVideoStream);
+
+                                    // TODO FIXME
+                                    // this.setVideoMuteStatus();
+                                })
+                                .then(resolve)
+                                .catch(error => {
+                                    logger.error(`_switchToScreenSharing failed: ${error}`);
+                                    reject(error);
+                                })
+                                .then(onFinish);
+                        });
+                    });
                 }
 
                 if (this._desktopAudioStream) {
