@@ -28,6 +28,7 @@ export type AbstractProps = InputProps & {
     moveAnswer: (number, number) => void,
     removeAnswer: number => void,
     onSubmit: Function,
+    isSubmitDisabled: boolean,
     t: Function,
 };
 
@@ -109,11 +110,17 @@ const AbstractPollCreate = (Component: AbstractComponent<AbstractProps>) => (pro
 
     }, [ conference, question, answers ]);
 
+    // Check if the poll create form can be submitted i.e. if the send button should be disabled.
+    const isSubmitDisabled
+        = question.trim().length <= 0 // If no question is provided
+        || answers.filter(answer => answer.trim().length > 0).length < 2; // If not enough options are provided
+
     const { t } = useTranslation();
 
     return (<Component
         addAnswer = { addAnswer }
         answers = { answers }
+        isSubmitDisabled = { isSubmitDisabled }
         moveAnswer = { moveAnswer }
         onSubmit = { onSubmit }
         question = { question }

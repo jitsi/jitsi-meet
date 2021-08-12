@@ -14,6 +14,7 @@ const PollCreate = (props: AbstractProps) => {
     const {
         addAnswer,
         answers,
+        isSubmitDisabled,
         moveAnswer,
         onSubmit,
         question,
@@ -161,6 +162,7 @@ const PollCreate = (props: AbstractProps) => {
                     onInput = { autogrow }
                     onKeyDown = { onQuestionKeyDown }
                     placeholder = { t('polls.create.questionPlaceholder') }
+                    required = { true }
                     row = '1'
                     value = { question } />
             </div>
@@ -181,6 +183,7 @@ const PollCreate = (props: AbstractProps) => {
                                 onKeyDown = { ev => onAnswerKeyDown(i, ev) }
                                 placeholder = { t('polls.create.answerPlaceholder', { index: i + 1 }) }
                                 ref = { r => registerFieldRef(i, r) }
+                                required = { true }
                                 row = { 1 }
                                 value = { answer } />
                             <button
@@ -228,6 +231,7 @@ const PollCreate = (props: AbstractProps) => {
             <button
                 aria-label = { t('polls.create.send') }
                 className = 'poll-small-primary-button'
+                disabled = { isSubmitDisabled }
                 type = 'submit' >
                 <span>{t('polls.create.send')}</span>
             </button>
