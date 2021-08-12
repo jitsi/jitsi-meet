@@ -61,7 +61,7 @@ type Props = {
  */
 function ChatBackgroundPanel({ _chatMessageBackground, _isBackgroundOpen, dispatch }: Props) {
 
-    const [ colorValue, setColorValue ] = useState(_chatMessageBackground ? _chatMessageBackground : '#ff0000');
+    const [ colorValue, setColorValue ] = useState(_chatMessageBackground ? _chatMessageBackground : '#242528');
     const setChatBackgroundImage = useCallback(async e => {
         const imageId = e.currentTarget.getAttribute('data-imageid');
         const image = images.find(img => img.id === imageId);
@@ -74,6 +74,7 @@ function ChatBackgroundPanel({ _chatMessageBackground, _isBackgroundOpen, dispat
 
     const removeChatBackground = useCallback(async () => {
         dispatch(setChatBackground(undefined));
+        dispatch(setChatMessageBackground('#242528'));
         dispatch(toggleChatBackground());
     }, [ dispatch ]);
 
