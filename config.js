@@ -594,6 +594,9 @@ var config = {
     },
 
     analytics: {
+        // True if the analytics should be disabled
+        // disabled: false,
+
         // The Google Analytics Tracking ID:
         // googleAnalyticsTrackingId: 'your-tracking-id-UA-123456-1'
 

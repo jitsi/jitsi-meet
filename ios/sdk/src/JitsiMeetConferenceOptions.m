@@ -84,7 +84,7 @@ static NSString *const WelcomePageEnabledFeatureFlag = @"welcomepage.enabled";
     [self setConfigOverride:config withValue:[NSNumber numberWithBool:value]];
 }
 
-- (void)setConfigOverride:(NSString *_Nonnull)config withNSMutableDictionary:(NSMutableDictionary*)dictionary {
+- (void)setConfigOverride:(NSString *_Nonnull)config withNSDictionary:(NSDictionary*)dictionary {
     _config[config] = dictionary;
 }
 
