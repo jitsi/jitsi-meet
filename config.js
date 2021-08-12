@@ -73,6 +73,9 @@ var config = {
     // Enables reactions feature.
     // enableReactions: false,
 
+    // Disables polls feature.
+    // disablePolls: false,
+
     // Disables ICE/UDP by filtering out local and remote UDP candidates in
     // signalling.
     // webrtcIceUdpDisable: false,

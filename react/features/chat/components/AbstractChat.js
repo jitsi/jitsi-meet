@@ -23,6 +23,11 @@ export type Props = {
     _isOpen: boolean,
 
     /**
+     * True if the polls feature is enabled.
+     */
+    _isPollsEnabled: boolean,
+
+    /**
      * Whether the poll tab is focused or not.
      */
     _isPollsTabFocused: boolean,
@@ -159,10 +164,12 @@ export function _mapStateToProps(state: Object) {
     const { isOpen, isPollsTabFocused, messages, nbUnreadMessages } = state['features/chat'];
     const { nbUnreadPolls } = state['features/polls'];
     const _localParticipant = getLocalParticipant(state);
+    const { disablePolls } = state['features/base/config'];
 
     return {
         _isModal: window.innerWidth <= SMALL_WIDTH_THRESHOLD,
         _isOpen: isOpen,
+        _isPollsEnabled: !disablePolls,
         _isPollsTabFocused: isPollsTabFocused,
         _messages: messages,
         _nbUnreadMessages: nbUnreadMessages,

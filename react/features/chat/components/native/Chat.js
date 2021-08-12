@@ -49,7 +49,7 @@ class Chat extends AbstractChat<Props> {
                 }}
                 modalId = { CHAT_VIEW_MODAL_ID }
                 onClose = { this._onClose }>
-                <View style = { styles.tabContainer }>
+                {this.props._isPollsEnabled && <View style = { styles.tabContainer }>
                     <Button
                         color = '#17a0db'
                         mode = {
@@ -60,11 +60,10 @@ class Chat extends AbstractChat<Props> {
                         onPress = { this._onToggleChatTab }
                         style = { styles.tabLeftButton }
                         uppercase = { false }>
-                        {`${this.props.t('chat.tabs.chat')}${
-                            this.props._isPollsTabFocused
-                            && this.props._nbUnreadMessages > 0
-                                ? `(${this.props._nbUnreadMessages})`
-                                : ''
+                        {`${this.props.t('chat.tabs.chat')}${this.props._isPollsTabFocused
+                                && this.props._nbUnreadMessages > 0
+                            ? `(${this.props._nbUnreadMessages})`
+                            : ''
                         }`}
                     </Button>
                     <Button
@@ -77,14 +76,13 @@ class Chat extends AbstractChat<Props> {
                         onPress = { this._onTogglePollsTab }
                         style = { styles.tabRightButton }
                         uppercase = { false }>
-                        {`${this.props.t('chat.tabs.polls')}${
-                            !this.props._isPollsTabFocused
-                            && this.props._nbUnreadPolls > 0
-                                ? `(${this.props._nbUnreadPolls})`
-                                : ''
+                        {`${this.props.t('chat.tabs.polls')}${!this.props._isPollsTabFocused
+                                && this.props._nbUnreadPolls > 0
+                            ? `(${this.props._nbUnreadPolls})`
+                            : ''
                         }`}
                     </Button>
-                </View>
+                </View>}
                 {this.props._isPollsTabFocused
                     ? <PollsPane />
                     : (
