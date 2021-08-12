@@ -624,6 +624,12 @@
     "sectionList": {
         "pullToRefresh": "Puxe para atualizar"
     },
+    "security": {
+        "about": "Pode adicionar uma $t(lockRoomPassword) à sua reunião. Os participantes terão de fornecer a $t(lockRoomPassword) antes de serem autorizados a participar na reunião.",
+        "aboutReadOnly": "Os participantes moderadores podem acrescentar uma $t(lockRoomPassword) à reunião. Os participantes terão de fornecer a $t(lockRoomPassword) antes de serem autorizados a participar na reunião.",
+        "insecureRoomNameWarning": "O nome da sala é inseguro. Participantes indesejados podem juntar-se à sua conferência. Considere proteger a sua reunião utilizando o botão de segurança.",
+        "securityOptions": "Opções de segurança"
+    },
     "settings": {
         "calendar": {
             "about": "A integração do calendário {{appName}} é utilizada para aceder com segurança ao seu calendário para que este possa ler os próximos eventos.",
