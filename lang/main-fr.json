@@ -58,7 +58,7 @@
     "today": "Aujourd'hui"
   },
   "chat": {
-    "enter": "Entrez dans le salon de chat",
+    "enter": "Entrez dans le salon",
     "error": "Erreur : votre message n'a pas été envoyé. Raison : {{error}}",
     "fieldPlaceHolder": "Tapez votre message ici",
     "messagebox": "Saisissez un message",
@@ -66,7 +66,7 @@
     "noMessagesMessage": "Il n'y a pas encore de messages dans cette réunion. Démarrez une conversation ici !",
     "nickname": {
       "popover": "Choisissez un pseudonyme",
-      "title": "Entrez un pseudonyme pour utiliser le chat"
+      "title": "Entrez un pseudonyme pour utiliser le chat et les sondages"
     },
     "privateNotice": "Message privé à {{recipient}}",
     "message": "Message",
