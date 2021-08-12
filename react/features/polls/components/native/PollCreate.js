@@ -5,6 +5,7 @@ import { View, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { Button } from 'react-native-paper';
 
 import { Icon, IconClose } from '../../../base/icons';
+import { BUTTON_MODES } from '../../../chat/constants';
 import AbstractPollCreate from '../AbstractPollCreate';
 import type { AbstractProps } from '../AbstractPollCreate';
 
@@ -139,7 +140,7 @@ const PollCreate = (props: AbstractProps) => {
 
                 <Button
                     color = '#3D3D3D'
-                    mode = 'contained'
+                    mode = { BUTTON_MODES.CONTAINED }
                     onPress = { () => {
                         // adding and answer
                         addAnswer();
@@ -155,7 +156,7 @@ const PollCreate = (props: AbstractProps) => {
 
                 <Button
                     color = '#3D3D3D'
-                    mode = 'contained'
+                    mode = { BUTTON_MODES.CONTAINED }
                     onPress = { () => setCreateMode(false) }
                     style = { chatStyles.pollCreateButton } >
                     {t('polls.create.cancel')}
@@ -163,7 +164,7 @@ const PollCreate = (props: AbstractProps) => {
 
                 <Button
                     color = '#17a0db'
-                    mode = 'contained'
+                    mode = { BUTTON_MODES.CONTAINED }
                     onPress = { onSubmit }
                     style = { chatStyles.pollCreateButton } >
                     {t('polls.create.send')}

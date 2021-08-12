@@ -5,6 +5,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { Button } from 'react-native-paper';
 
+import { BUTTON_MODES } from '../../../chat/constants';
 import AbstractPollsPane from '../AbstractPollsPane';
 import type { AbstractProps } from '../AbstractPollsPane';
 
@@ -25,7 +26,7 @@ const PollsPane = (props: AbstractProps) => {
                     <PollsList />
                     <Button
                         color = '#17a0db'
-                        mode = 'contained'
+                        mode = { BUTTON_MODES.CONTAINED }
                         onPress = { onCreate }
                         style = { chatStyles.createPollButton } >
                         {t('polls.create.create')}

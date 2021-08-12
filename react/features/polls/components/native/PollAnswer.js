@@ -4,6 +4,7 @@ import React from 'react';
 import { Switch, Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
 
+import { BUTTON_MODES } from '../../../chat/constants';
 import AbstractPollAnswer from '../AbstractPollAnswer';
 import type { AbstractProps } from '../AbstractPollAnswer';
 
@@ -42,14 +43,14 @@ const PollAnswer = (props: AbstractProps) => {
             <View style = { chatStyles.buttonRow }>
                 <Button
                     color = '#3D3D3D'
-                    mode = 'contained'
+                    mode = { BUTTON_MODES.CONTAINED }
                     onPress = { skipAnswer }
                     style = { chatStyles.pollCreateButton } >
                     {t('polls.answer.skip')}
                 </Button>
                 <Button
                     color = '#17a0db'
-                    mode = 'contained'
+                    mode = { BUTTON_MODES.CONTAINED }
                     onPress = { submitAnswer }
                     style = { chatStyles.pollCreateButton } >
                     {t('polls.answer.submit')}
