@@ -1,7 +1,7 @@
 // @flow
 
 import {
-    POLL_TAB_CLOSED,
+    RESET_NB_UNREAD_POLLS,
     RECEIVE_ANSWER,
     RECEIVE_POLL,
     REGISTER_VOTE,
@@ -92,8 +92,8 @@ export const retractVote = (pollId: string) => {
  *     type: POLL_TAB_CLOSED
  * }}
  */
-export function closePollTab() {
+export function resetNbUnreadPollsMessages() {
     return {
-        type: POLL_TAB_CLOSED
+        type: RESET_NB_UNREAD_POLLS
     };
 }

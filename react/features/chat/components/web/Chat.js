@@ -166,16 +166,36 @@ class Chat extends AbstractChat<Props> {
     _renderTabs() {
 
         return (
-            <div className = { 'chat-tabs-container' } >
+            <div className = { 'chat-tabs-container' }>
                 <div
-                    className = { `chat-tab ${this.props._isPollsTabFocused ? '' : 'chat-tab-focus'}` }
-                    onClick = { this._onToggleChatTab } >
-                    {this.props.t('chat.tabs.chat')}
+                    className = { `chat-tab ${
+                        this.props._isPollsTabFocused ? '' : 'chat-tab-focus'
+                    }` }
+                    onClick = { this._onToggleChatTab }>
+                    <span className = { 'chat-tab-title' }>
+                        {this.props.t('chat.tabs.chat')}
+                    </span>
+                    {this.props._isPollsTabFocused
+                        && this.props._nbUnreadMessages > 0 && (
+                        <span className = { 'chat-tab-badge' }>
+                            {this.props._nbUnreadMessages}
+                        </span>
+                    )}
                 </div>
                 <div
-                    className = { `chat-tab ${this.props._isPollsTabFocused ? 'chat-tab-focus' : ''}` }
-                    onClick = { this._onTogglePollsTab } >
-                    {this.props.t('chat.tabs.polls')}
+                    className = { `chat-tab ${
+                        this.props._isPollsTabFocused ? 'chat-tab-focus' : ''
+                    }` }
+                    onClick = { this._onTogglePollsTab }>
+                    <span className = { 'chat-tab-title' }>
+                        {this.props.t('chat.tabs.polls')}
+                    </span>
+                    {!this.props._isPollsTabFocused
+                        && this.props._nbUnreadPolls > 0 && (
+                        <span className = { 'chat-tab-badge' }>
+                            {this.props._nbUnreadPolls}
+                        </span>
+                    )}
                 </div>
             </div>
         );

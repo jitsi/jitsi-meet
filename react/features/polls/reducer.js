@@ -7,7 +7,7 @@ import {
     RECEIVE_ANSWER,
     REGISTER_VOTE,
     RETRACT_VOTE,
-    POLL_TAB_CLOSED
+    RESET_NB_UNREAD_POLLS
 } from './actionTypes';
 import type { Answer } from './types';
 
@@ -15,7 +15,7 @@ const INITIAL_STATE = {
     polls: {},
 
     // Number of not read message
-    nbUnreadReadMessage: 0
+    nbUnreadPolls: 0
 };
 
 ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
@@ -31,7 +31,7 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
                 // The poll is added to the dictionnary of received polls
                 [action.pollId]: action.poll
             },
-            nbUnreadReadMessage: state.nbUnreadReadMessage + 1
+            nbUnreadPolls: state.nbUnreadPolls + 1
         };
 
         return newState;
@@ -115,10 +115,10 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
         };
     }
 
-    case POLL_TAB_CLOSED: {
+    case RESET_NB_UNREAD_POLLS: {
         return {
             ...state,
-            nbUnreadReadMessage: 0
+            nbUnreadPolls: 0
         };
     }
 

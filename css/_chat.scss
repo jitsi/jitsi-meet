@@ -595,3 +595,20 @@
     border-bottom-style: solid;
     color: #FFF;
 }
+
+.chat-tab-title {
+    margin-right: 8px;
+}
+
+.chat-tab-badge {
+    background-color: #165ecc;
+    border-radius: 50%;
+    box-sizing: border-box;
+    font-weight: 700;
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    padding: 0 4px;
+    color: #FFF;
+}

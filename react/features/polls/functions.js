@@ -17,7 +17,7 @@ export const shouldShowResults = (state: Object, id: string) => Boolean(state['f
  * @returns {number} The number of unread messages.
  */
 export function getUnreadPollCount(state: Object) {
-    const { nbUnreadReadMessage } = state['features/polls'];
+    const { nbUnreadPolls } = state['features/polls'];
 
-    return nbUnreadReadMessage;
+    return nbUnreadPolls;
 }

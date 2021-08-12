@@ -49,7 +49,7 @@ export const RETRACT_VOTE = 'RETRACT_VOTE';
  * The type of the action triggered when the poll tab in chat pane is closed
  *
  * {
- *     type: POLL_TAB_CLOSED,
+ *     type: RESET_NB_UNREAD_POLLS,
  * }
  */
-export const POLL_TAB_CLOSED = 'POLL_TAB_CLOSED';
+export const RESET_NB_UNREAD_POLLS = 'RESET_NB_UNREAD_POLLS';

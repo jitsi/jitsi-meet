@@ -60,7 +60,12 @@ class Chat extends AbstractChat<Props> {
                         onPress = { this._onToggleChatTab }
                         style = { styles.tabLeftButton }
                         uppercase = { false }>
-                        {this.props.t('chat.tabs.chat')}
+                        {`${this.props.t('chat.tabs.chat')}${
+                            this.props._isPollsTabFocused
+                            && this.props._nbUnreadMessages > 0
+                                ? `(${this.props._nbUnreadMessages})`
+                                : ''
+                        }`}
                     </Button>
                     <Button
                         color = '#17a0db'
@@ -72,7 +77,12 @@ class Chat extends AbstractChat<Props> {
                         onPress = { this._onTogglePollsTab }
                         style = { styles.tabRightButton }
                         uppercase = { false }>
-                        {this.props.t('chat.tabs.polls')}
+                        {`${this.props.t('chat.tabs.polls')}${
+                            !this.props._isPollsTabFocused
+                            && this.props._nbUnreadPolls > 0
+                                ? `(${this.props._nbUnreadPolls})`
+                                : ''
+                        }`}
                     </Button>
                 </View>
                 {this.props._isPollsTabFocused

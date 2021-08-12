@@ -22,7 +22,7 @@ import {
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { openDisplayNamePrompt } from '../display-name';
-import { closePollTab } from '../polls/actions';
+import { resetNbUnreadPollsMessages } from '../polls/actions';
 import { ADD_REACTION_MESSAGE } from '../reactions/actionTypes';
 import { pushReactions } from '../reactions/actions.any';
 import { getReactionMessageFromBuffer } from '../reactions/functions.any';
@@ -123,7 +123,7 @@ MiddlewareRegistry.register(store => next => action => {
         }
 
         if (isPollTabOpen) {
-            dispatch(closePollTab());
+            dispatch(resetNbUnreadPollsMessages());
         }
 
         dispatch(setActiveModalId());
@@ -131,7 +131,7 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case SET_IS_POLL_TAB_FOCUSED: {
-        dispatch(closePollTab());
+        dispatch(resetNbUnreadPollsMessages());
         break;
     }
 

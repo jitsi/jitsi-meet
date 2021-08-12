@@ -33,6 +33,16 @@ export type Props = {
     _messages: Array<Object>,
 
     /**
+     * Number of unread chat messages.
+     */
+    _nbUnreadMessages: number,
+
+    /**
+     * Number of unread poll messages.
+     */
+    _nbUnreadPolls: number,
+
+    /**
      * Function to send a text message.
      *
      * @protected
@@ -71,7 +81,7 @@ export type Props = {
     /**
      * Function to be used to translate i18n labels.
      */
-    t: Function
+    t: Function,
 };
 
 /**
@@ -146,7 +156,8 @@ export default class AbstractChat<P: Props> extends Component<P> {
  * }}
  */
 export function _mapStateToProps(state: Object) {
-    const { isOpen, isPollsTabFocused, messages } = state['features/chat'];
+    const { isOpen, isPollsTabFocused, messages, nbUnreadMessages } = state['features/chat'];
+    const { nbUnreadPolls } = state['features/polls'];
     const _localParticipant = getLocalParticipant(state);
 
     return {
@@ -154,6 +165,8 @@ export function _mapStateToProps(state: Object) {
         _isOpen: isOpen,
         _isPollsTabFocused: isPollsTabFocused,
         _messages: messages,
+        _nbUnreadMessages: nbUnreadMessages,
+        _nbUnreadPolls: nbUnreadPolls,
         _showNamePrompt: !_localParticipant?.name
     };
 }

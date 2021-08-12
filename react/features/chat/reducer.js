@@ -17,6 +17,7 @@ const DEFAULT_STATE = {
     lastReadMessage: undefined,
     lastReadPoll: undefined,
     messages: [],
+    nbUnreadMessages: 0,
     privateMessageRecipient: undefined
 };
 
@@ -49,6 +50,7 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
             ...state,
             lastReadMessage:
                 action.hasRead ? newMessage : state.lastReadMessage,
+            nbUnreadMessages: state.isPollsTabFocused ? state.nbUnreadMessages + 1 : state.nbUnreadMessages,
             messages
         };
     }
@@ -85,7 +87,8 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
     case SET_IS_POLL_TAB_FOCUSED: {
         return {
             ...state,
-            isPollsTabFocused: action.isPollsTabFocused
+            isPollsTabFocused: action.isPollsTabFocused,
+            nbUnreadMessages: 0
         }; }
     }
 
