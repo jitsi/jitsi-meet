@@ -47,3 +47,12 @@ export function getSdkBundlePath() {
 export function getBrowserSessionId() {
     return DeviceInfo.getUniqueId();
 }
+
+/**
+ * Returns ios device id.
+ *
+ * @returns {string}
+ */
+export function getAppVersion() {
+    return DeviceInfo.getVersion();
+}

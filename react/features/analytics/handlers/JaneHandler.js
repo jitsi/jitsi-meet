@@ -1,4 +1,4 @@
-import { getBrowserSessionId } from '../../app/functions';
+import { getAppVersion, getBrowserSessionId } from '../../app/functions';
 import { getJitsiMeetGlobalNS } from '../../base/util';
 
 import AbstractHandler from './AbstractHandler';
@@ -30,6 +30,26 @@ export default class JaneHandler extends AbstractHandler {
         this._participant = options.participant;
         this.uid = options.uid;
         this.browserSessionId = getBrowserSessionId();
+
+    }
+
+    // eslint-disable-next-line require-jsdoc
+    getPermanentProperties(event) {
+        const eventName = this._extractName(event);
+        const participant = this._participant;
+        const permanentProperties = {
+            'name': eventName,
+            'participant_id': participant.participant_id,
+            'participant_type': participant.participant_type,
+            'uid': this.uid,
+            'browser_session_id': this.browserSessionId
+        };
+
+        if (navigator.product !== 'ReactNative') {
+            permanentProperties.appVersion = getAppVersion();
+        }
+
+        return permanentProperties;
     }
 
     /**
@@ -45,20 +65,13 @@ export default class JaneHandler extends AbstractHandler {
             return;
         }
 
-        const eventName = this._extractName(event);
-        const participant = this._participant;
-
         return fetch(this._janeEndpoint, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                'name': eventName,
-                'participant_id': participant.participant_id,
-                'participant_type': participant.participant_type,
-                'uid': this.uid,
-                'browser_session_id': this.browserSessionId,
+                ...this.getPermanentProperties(event),
                 ...event
             })
         });
