@@ -33,7 +33,7 @@
     "@atlaskit/toggle": "12.0.3",
     "@atlaskit/tooltip": "17.1.2",
     "@hapi/bourne": "2.0.0",
-    "@jitsi/js-utils": "1.0.6",
+    "@jitsi/js-utils": "github:jitsi/js-utils#85b6b590f8a15ab6a52cff1b5a07f0e3fe377d2e",
     "@material-ui/core": "4.11.3",
     "@microsoft/microsoft-graph-client": "1.1.0",
     "@react-native-async-storage/async-storage": "1.15.5",
