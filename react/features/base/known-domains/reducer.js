@@ -18,6 +18,7 @@ import { ADD_KNOWN_DOMAINS } from './actionTypes';
 export const DEFAULT_STATE = [
     'videochat.jane.qa',
     'videochat-jwt.jane.qa',
+    'videochat-chrisw.jane.qa',
     'videochat-us.janeapp.com',
     'videochat-ca.janeapp.com',
     'videochat-ca2.janeapp.com',

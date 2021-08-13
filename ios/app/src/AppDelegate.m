@@ -29,7 +29,7 @@
 
     jitsiMeet.conferenceActivityType = JitsiMeetConferenceActivityType;
     jitsiMeet.customUrlScheme = @"janeoa";
-    jitsiMeet.universalLinkDomains = @[@"videochat-jwt.jane.qa",@"videochat.jane.qa",@"videochat-us.janeapp.com",@"videochat-ca.janeapp.com",@"videochat-ca2.janeapp.com",@"videochat.janeapp.com.au",@"videochat.janeapp.co.uk"];
+    jitsiMeet.universalLinkDomains = @[@"videochat-jwt.jane.qa",@"videochat.jane.qa",@"videochat-us.janeapp.com",@"videochat-ca.janeapp.com",@"videochat-ca2.janeapp.com",@"videochat.janeapp.com.au",@"videochat.janeapp.co.uk", @"videochat-chrisw.jane.qa"];
 
     jitsiMeet.defaultConferenceOptions = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
         builder.serverURL = [NSURL URLWithString:@"https://videochat.jane.qa"];

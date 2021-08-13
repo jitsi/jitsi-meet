@@ -45,7 +45,7 @@ const _URI_PATH_PATTERN = '([^?#]*)';
  * @type {string}
  */
 // eslint-disable-next-line max-len,no-useless-escape
-const _JANE_UNIVERSAL_LINK_DOMAINS = /videochat(?:\-(?:(?:ca2?|us)\.janeapp\.com|jwt\.jane\.qa)|\.janeapp\.co(?:m\.au|\.uk))/;
+const _JANE_UNIVERSAL_LINK_DOMAINS = /videochat(?:\-(?:(?:ca2?|us)\.janeapp\.com|jwt|chrisw\.jane\.qa)|\.janeapp\.co(?:m\.au|\.uk))/;
 
 /**
  * The {@link RegExp} pattern of the protocol of a URI.

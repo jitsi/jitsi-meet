@@ -11,6 +11,7 @@
 		<string>applinks:videochat-ca2.janeapp.com</string>
 		<string>applinks:videochat.janeapp.com.au</string>
 		<string>applinks:videochat.janeapp.co.uk</string>
+		<string>applinks:videochat-chrisw.jane.qa</string>
 	</array>
 	<key>com.apple.developer.siri</key>
 	<true/>
