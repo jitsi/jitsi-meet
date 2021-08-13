@@ -59,7 +59,7 @@ const DEFAULT_STATE = {
     haveParticipantWithScreenSharingFeature: false,
     local: undefined,
     pinnedParticipant: undefined,
-    previousSpeakers: undefined,
+    previousSpeakers: [],
     remote: new Map()
 };
 
@@ -275,6 +275,9 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
         if (dominantSpeaker === id) {
             state.dominantSpeaker = undefined;
         }
+
+        // Remove the participant from the list of previous speakers.
+        state.previousSpeakers = state.previousSpeakers.filter(speaker => speaker !== id);
 
         if (pinnedParticipant === id) {
             state.pinnedParticipant = undefined;

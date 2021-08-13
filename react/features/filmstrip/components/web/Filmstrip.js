@@ -269,11 +269,11 @@ class Filmstrip extends PureComponent <Props> {
             return `empty-${index}`;
         }
 
-        if (index === _remoteParticipantsLength) {
+        if (index === 0) {
             return 'local';
         }
 
-        return _remoteParticipants[index];
+        return _remoteParticipants[index - 1];
     }
 
     _onListItemsRendered: Object => void;
@@ -287,7 +287,7 @@ class Filmstrip extends PureComponent <Props> {
     _onListItemsRendered({ visibleStartIndex, visibleStopIndex }) {
         const { dispatch } = this.props;
 
-        dispatch(setVisibleRemoteParticipants(visibleStartIndex, visibleStopIndex));
+        dispatch(setVisibleRemoteParticipants(visibleStartIndex, visibleStopIndex + 1));
     }
 
     _onGridItemsRendered: Object => void;
@@ -305,9 +305,12 @@ class Filmstrip extends PureComponent <Props> {
         visibleRowStopIndex
     }) {
         const { _columns, dispatch } = this.props;
-        const startIndex = (visibleRowStartIndex * _columns) + visibleColumnStartIndex;
+        let startIndex = (visibleRowStartIndex * _columns) + visibleColumnStartIndex;
         const endIndex = (visibleRowStopIndex * _columns) + visibleColumnStopIndex;
 
+        // In tile view, the start index needs to be offset by 1 because the first participant is the local
+        // participant.
+        startIndex = startIndex > 0 ? startIndex - 1 : 0;
         dispatch(setVisibleRemoteParticipants(startIndex, endIndex));
     }
 

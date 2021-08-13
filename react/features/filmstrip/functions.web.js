@@ -35,6 +35,24 @@ import {
 declare var interfaceConfig: Object;
 
 /**
+ * Compare function that defines the sort order for sorting the participants alphabetically.
+ *
+ * @param {string} a - First element for comparison.
+ * @param {string} b - Second element for comparison.
+ * @returns {number}
+ * @private
+ */
+function _compareDisplayNames(a, b) {
+    const nameA = a.name.toUpperCase();
+    const nameB = b.name.toUpperCase();
+    const result = nameA > nameB
+        ? 1
+        : nameA < nameB ? -1 : 0;
+
+    return result;
+}
+
+/**
  * Returns true if the filmstrip on mobile is visible, false otherwise.
  *
  * NOTE: Filmstrip on web behaves differently to mobile, much simpler, but so
@@ -264,4 +282,16 @@ export function computeDisplayMode(input: Object) {
 
     // check hovering and change state to avatar with name
     return isHovered ? DISPLAY_AVATAR_WITH_NAME : DISPLAY_AVATAR;
+}
+
+/**
+ * Calculates the reordered list of participants that are sorted alphabetically by display names.
+ *
+ * @param {Array<Object>} participants - The remote participants.
+ * @returns {Array<string>}
+ */
+export function sortRemoteParticipants(participants: Array<Object>): Array<String> {
+    return participants
+        .sort(_compareDisplayNames)
+        .map(p => p.id);
 }

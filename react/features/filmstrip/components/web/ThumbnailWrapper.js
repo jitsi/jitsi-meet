@@ -126,7 +126,8 @@ function _mapStateToProps(state, ownProps) {
             return {};
         }
 
-        if (index === remoteParticipantsLength) {
+        // Make the local participant as the first thumbnail (top left corner) in tile view.
+        if (index === 0) {
             return {
                 _participantID: 'local',
                 _horizontalOffset: horizontalOffset
@@ -134,7 +135,7 @@ function _mapStateToProps(state, ownProps) {
         }
 
         return {
-            _participantID: remoteParticipants[index],
+            _participantID: remoteParticipants[index - 1],
             _horizontalOffset: horizontalOffset
         };
     }

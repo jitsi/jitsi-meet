@@ -79,21 +79,20 @@ const DEFAULT_STATE = {
     visibleParticipantsEndIndex: 0,
 
     /**
-     * The visible participants in the filmstrip.
-     *
-     * @public
-     * @type {Array<string>}
-     */
-    visibleParticipants: [],
-
-
-    /**
      * The start index in the remote participants array that is visible in the filmstrip.
      *
      * @public
      * @type {number}
      */
-    visibleParticipantsStartIndex: 0
+    visibleParticipantsStartIndex: 0,
+
+    /**
+     * The visible remote participants in the filmstrip.
+     *
+     * @public
+     * @type {Set}
+     */
+    visibleRemoteParticipants: new Set()
 };
 
 ReducerRegistry.register(
@@ -121,9 +120,9 @@ ReducerRegistry.register(
             const { visibleParticipantsStartIndex: startIndex, visibleParticipantsEndIndex: endIndex } = state;
 
             state.remoteParticipants = action.participants;
-            state.visibleParticipants = state.remoteParticipants.slice(startIndex, endIndex + 1);
+            state.visibleRemoteParticipants = new Set(state.remoteParticipants.slice(startIndex, endIndex));
 
-            return state;
+            return { ...state };
         }
         case SET_TILE_VIEW_DIMENSIONS:
             return {
@@ -147,13 +146,14 @@ ReducerRegistry.register(
                     [action.participantId]: action.volume
                 }
             };
-        case SET_VISIBLE_REMOTE_PARTICIPANTS:
+        case SET_VISIBLE_REMOTE_PARTICIPANTS: {
             return {
                 ...state,
                 visibleParticipantsStartIndex: action.startIndex,
                 visibleParticipantsEndIndex: action.endIndex,
-                visibleParticipants: state.remoteParticipants.slice(action.startIndex, action.endIndex + 1)
+                visibleRemoteParticipants: new Set(state.remoteParticipants.slice(action.startIndex, action.endIndex))
             };
+        }
         case PARTICIPANT_LEFT: {
             const { id, local } = action.participant;
 
