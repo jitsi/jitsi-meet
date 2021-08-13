@@ -34,7 +34,7 @@
     "@atlaskit/toggle": "12.0.3",
     "@atlaskit/tooltip": "17.1.2",
     "@hapi/bourne": "2.0.0",
-    "@jitsi/js-utils": "1.0.6",
+    "@jitsi/js-utils": "2.0.0",
     "@material-ui/core": "4.11.3",
     "@matrix-org/olm": "https://gitlab.matrix.org/api/v4/projects/27/packages/npm/@matrix-org/olm/-/@matrix-org/olm-3.2.3.tgz",
     "@microsoft/microsoft-graph-client": "1.1.0",

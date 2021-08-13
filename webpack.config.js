@@ -72,9 +72,6 @@ const config = {
             // Transpile ES2015 (aka ES6) to ES5. Accept the JSX syntax by React
             // as well.
 
-            exclude: [
-                new RegExp(`${__dirname}/node_modules/(?!@jitsi/js-utils)`)
-            ],
             loader: 'babel-loader',
             options: {
                 // Avoid loading babel.config.js, since we only use it for React Native.
