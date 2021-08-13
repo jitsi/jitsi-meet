@@ -166,6 +166,10 @@
     * {
         background-color: transparent;
     }
+
+    &.drop-target {
+        background-color: $dominantSpeakerBg;
+    }
 }
 
 .send-button-container {

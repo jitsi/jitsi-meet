@@ -92,6 +92,7 @@ class ChatInput extends Component<Props, State> {
 
         this._textArea = null;
         this._fileInputRef = React.createRef();
+        this._chatInputRef = React.createRef();
 
         // Bind event handlers so they are only bound once for every instance.
         this._onDetectSubmit = this._onDetectSubmit.bind(this);
@@ -104,6 +105,10 @@ class ChatInput extends Component<Props, State> {
         this._onSubmitMessageKeyPress = this._onSubmitMessageKeyPress.bind(this);
         this._setTextAreaRef = this._setTextAreaRef.bind(this);
         this._onFileInputChange = this._onFileInputChange.bind(this);
+        this._uploadFile = this._uploadFile.bind(this);
+        this._onDragOver = this._onDragOver.bind(this);
+        this._onDragLeave = this._onDragLeave.bind(this);
+        this._onDrop = this._onDrop.bind(this);
     }
 
     /**
@@ -130,7 +135,12 @@ class ChatInput extends Component<Props, State> {
 
         return (
             <div className = { `chat-input-container${this.state.message.trim().length ? ' populated' : ''}` }>
-                <div id = 'chat-input' >
+                <div
+                    id = 'chat-input'
+                    onDragLeave = { this._onDragLeave }
+                    onDragOver = { this._onDragOver }
+                    onDrop = { this._onDrop }
+                    ref = { this._chatInputRef }>
                     <div className = 'smiley-input'>
                         <div id = 'smileysarea'>
                             <div id = 'smileys'>
@@ -206,17 +216,58 @@ class ChatInput extends Component<Props, State> {
         this._textArea && this._textArea.focus();
     }
 
-    _onFileInputChange: () => void;
+    _onDragOver: (e: MouseEvent) => void;
 
     /**
-     * Triggers upload of selected file.
+     * Drag over handler.
      *
+     * @param {MouseEvent} e - Mouse event.
      * @returns {void}
-     *
      */
-    _onFileInputChange() {
-        const file = this._fileInputRef?.current?.files[0];
+    _onDragOver(e) {
+        e.preventDefault();
+        this._chatInputRef.current.classList.add('drop-target');
+    }
 
+    _onDragLeave: (e: MouseEvent) => void;
+
+    /**
+     * Drag over handler.
+     *
+     * @param {MouseEvent} e - Mouse event.
+     * @returns {void}
+     */
+    _onDragLeave(e) {
+        e.preventDefault();
+        this._chatInputRef.current.classList.remove('drop-target');
+    }
+
+    _onDrop: (e: MouseEvent) => void;
+
+    /**
+     * Drop file handler. Initiates upload of dropped file.
+     *
+     * @param {MouseEvent} e - Mouse event.
+     * @returns {void}
+     */
+    _onDrop(e) {
+        e.preventDefault();
+        this._chatInputRef.current.classList.remove('drop-target');
+
+        if (e.dataTransfer.files.length > 0) {
+            this._uploadFile(e.dataTransfer.files[0]);
+        }
+    }
+
+    _uploadFile: (file: File) => void;
+
+    /**
+     * Uploads file to server.
+     *
+     * @param {File} file - File to upload.
+     * @returns {void}
+     */
+    _uploadFile(file: File) {
         if (!file) {
             return;
         }
@@ -246,23 +297,37 @@ class ChatInput extends Component<Props, State> {
             body: formData,
             method: 'POST'
         })
-        .then(resp => {
-            if (resp.ok) {
-                return resp.json();
-            }
-            throw new Error('Invalid response');
+            .then(resp => {
+                if (resp.ok) {
+                    return resp.json();
+                }
+                throw new Error('Invalid response');
 
-        })
-        .then(data => {
-            const mimeType = encodeURIComponent(data.mimetype);
-            const fileName = encodeURIComponent(data.fileName);
+            })
+            .then(data => {
+                const mimeType = encodeURIComponent(data.mimetype);
+                const fileName = encodeURIComponent(data.fileName);
 
-            this.props.onSend(`${fileTransferCdnServer}/${data.url}?mimeType=${mimeType}&fileName=${fileName}`);
-        })
-        .catch(err => {
-            console.error(err);
-        })
-        .finally(() => this.setState({ isUploading: false }));
+                this.props.onSend(`${fileTransferCdnServer}/${data.url}?mimeType=${mimeType}&fileName=${fileName}`);
+            })
+            .catch(err => {
+                console.error(err);
+            })
+            .finally(() => this.setState({ isUploading: false }));
+    }
+
+    _onFileInputChange: () => void;
+
+    /**
+     * Triggers upload of selected file.
+     *
+     * @returns {void}
+     *
+     */
+    _onFileInputChange() {
+        const file = this._fileInputRef?.current?.files[0];
+
+        this._uploadFile(file);
     }
 
     _onSubmitMessage: () => void;
