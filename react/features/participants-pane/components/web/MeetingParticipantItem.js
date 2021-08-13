@@ -157,8 +157,7 @@ function MeetingParticipantItem({
                             buttonType = { _quickActionButtonType }
                             muteAudio = { muteAudio }
                             muteParticipantButtonText = { muteParticipantButtonText }
-                            participantID = { _participantID }
-                            raisedHand = { _raisedHand } />
+                            participantID = { _participantID } />
                         <ParticipantActionEllipsis
                             aria-label = { participantActionEllipsisLabel }
                             onClick = { onContextMenu } />

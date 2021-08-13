@@ -38,11 +38,6 @@ type Props = {
      * The ID of the participant.
      */
     participantID: string,
-
-    /**
-     * Whether or not the local participant's hand is raised.
-     */
-    raisedHand?: boolean,
 }
 
 /**
@@ -56,8 +51,7 @@ export default function ParticipantQuickAction({
     buttonType,
     muteAudio,
     muteParticipantButtonText,
-    participantID,
-    raisedHand
+    participantID
 }: Props) {
     switch (buttonType) {
     case QUICK_ACTION_BUTTON.MUTE: {
@@ -73,8 +67,7 @@ export default function ParticipantQuickAction({
         return (
             <AskToUnmuteButton
                 askUnmuteText = { askUnmuteText }
-                participantID = { participantID }
-                raisedHand = { raisedHand } />
+                participantID = { participantID } />
         );
     }
     default: {
