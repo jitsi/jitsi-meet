@@ -802,6 +802,7 @@
     },
     "speaker": "Sprecher/-in",
     "speakerStats": {
+        "search": "Suche",
         "hours": "{{count}} Std. ",
         "minutes": "{{count}} Min. ",
         "name": "Name",
