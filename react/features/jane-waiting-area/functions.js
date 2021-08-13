@@ -4,7 +4,7 @@ import jwtDecode from 'jwt-decode';
 import _ from 'lodash';
 
 import {
-    createWaitingAreaPageEvent,
+    createWaitingAreaParticipantStatusChangedEvent,
     sendAnalytics
 } from '../analytics';
 import { showErrorNotification } from '../notifications';
@@ -36,10 +36,10 @@ export function updateParticipantReadyStatus(jwt: string, status: string): void 
         if (!res.ok) {
             throw new Error('Failed to update the waiting area state for the local participant.');
         }
-        sendAnalytics(createWaitingAreaPageEvent('participant.status.changed', { status }));
+        sendAnalytics(createWaitingAreaParticipantStatusChangedEvent(status));
     })
     .catch(error => {
-        sendAnalytics(createWaitingAreaPageEvent('participant.status.changed', { status: 'failed' }));
+        sendAnalytics(createWaitingAreaParticipantStatusChangedEvent('failed'));
 
         if (navigator.product !== 'ReactNative') {
             window.APP.store.dispatch(showErrorNotification({
