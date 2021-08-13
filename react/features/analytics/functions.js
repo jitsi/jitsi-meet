@@ -1,5 +1,8 @@
 // @flow
 
+import jwtDecode from 'jwt-decode';
+import _ from 'lodash';
+
 import { API_ID } from '../../../modules/API/constants';
 import { getName as getAppName } from '../app/functions';
 import {
@@ -11,10 +14,10 @@ import JitsiMeetJS, {
     browser,
     isAnalyticsEnabled
 } from '../base/lib-jitsi-meet';
-import { getLocalParticipantType } from '../base/participants';
+import { getLocalParticipantFromJwt, getLocalParticipantType } from '../base/participants';
 import { getJitsiMeetGlobalNS, loadScript } from '../base/util';
 
-import { AmplitudeHandler, MatomoHandler } from './handlers';
+import { JaneHandler } from './handlers';
 import logger from './logger';
 
 /**
@@ -69,7 +72,10 @@ export function createHandlers({ getState }: { getState: Function }) {
     const state = getState();
     const config = state['features/base/config'];
     const { locationURL } = state['features/base/connection'];
+    const { jwt } = state['features/base/jwt'];
+    const participant = getLocalParticipantFromJwt(state);
     const host = locationURL ? locationURL.host : '';
+    const janeEndpoint = getJaneEndpoint(state);
     const {
         analytics: analyticsConfig = {},
         deploymentInfo
@@ -97,25 +103,22 @@ export function createHandlers({ getState }: { getState: Function }) {
         subproduct: deploymentInfo && deploymentInfo.environment,
         user: user && user.id,
         version: JitsiMeetJS.version,
-        whiteListedEvents
+        whiteListedEvents,
+        janeEndpoint,
+        jwt,
+        participant
     };
     const handlers = [];
 
-    try {
-        const amplitude = new AmplitudeHandler(handlerConstructorOptions);
+    if (janeEndpoint) {
+        try {
+            const janeVideoChatAnalytics = new JaneHandler(handlerConstructorOptions);
 
-        analytics.amplitudeIdentityProps = amplitude.getIdentityProps();
-
-        handlers.push(amplitude);
-    // eslint-disable-next-line no-empty
-    } catch (e) {}
-
-    try {
-        const matomo = new MatomoHandler(handlerConstructorOptions);
-
-        handlers.push(matomo);
-    // eslint-disable-next-line no-empty
-    } catch (e) {}
+            handlers.push(janeVideoChatAnalytics);
+        } catch (e) {
+            logger.error('Failed to initialize Jane handler', e);
+        }
+    }
 
     return (
         _loadHandlers(scriptURLs, handlerConstructorOptions)
@@ -286,4 +289,17 @@ function _loadHandlers(scriptURLs = [], handlerConstructorOptions) {
 
         return handlers;
     });
+}
+
+/**
+ * Tries to load the scripts for the external analytics handlers and creates them.
+ *
+ * @param {State} state - The current redux state.
+ * @returns {string | undefined}
+ */
+function getJaneEndpoint(state) {
+    const { jwt } = state['features/base/jwt'];
+    const jwtPayload = (jwt && jwtDecode(jwt)) || {};
+
+    return _.get(jwtPayload, 'context.event_url');
 }

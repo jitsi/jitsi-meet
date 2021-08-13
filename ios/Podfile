@@ -4,8 +4,6 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 target 'Jane Online Appointments' do
   project 'app/app.xcodeproj'
-
-  pod 'Firebase/Crashlytics'
 end
 
 target 'JitsiMeet' do
@@ -70,7 +68,6 @@ target 'JitsiMeet' do
   # Native pod dependencies
   #
 
-  pod 'Amplitude-iOS', '~> 4.0.4'
   pod 'CocoaLumberjack', '~>3.5.3'
   pod 'ObjectiveDropboxOfficial', '~> 3.9.4'
 

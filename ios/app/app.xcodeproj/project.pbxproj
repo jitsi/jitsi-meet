@@ -18,7 +18,6 @@
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		2C722BBA256C77DE00A9D66B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2C722BB9256C77DE00A9D66B /* GoogleService-Info.plist */; };
 		443FAC8A751044E38C9EA7AB /* ProximaNova-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7E545339E87B44E4B8F93CD8 /* ProximaNova-Thin.otf */; };
 		53376CB74B944F44A6D0A187 /* ProximaNova-Reg.otf in Resources */ = {isa = PBXBuildFile; fileRef = 00702F4293D64B59A9731539 /* ProximaNova-Reg.otf */; };
 		5CC1393DFA294862AB59CE62 /* OpenSans-Light-webfont.svg in Resources */ = {isa = PBXBuildFile; fileRef = 41D7B16E683246C09137285D /* OpenSans-Light-webfont.svg */; };
@@ -26,7 +25,6 @@
 		6A63F383534145818B702D84 /* ProximaNova-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2A6A6C21EE2F4C7298D0E11D /* ProximaNova-Bold.otf */; };
 		6FBF54DE72114B38B3E3D6E0 /* OpenSans-Light-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 39A351573097466DA5DA80AD /* OpenSans-Light-webfont.ttf */; };
 		B1E8C33997D4498698D52F05 /* ProximaNova-Sbold.otf in Resources */ = {isa = PBXBuildFile; fileRef = F653AD91A1CE42ACA21E3CDD /* ProximaNova-Sbold.otf */; };
-		DE4C456121DE1E4E00EA0709 /* FIRUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = DE4C455F21DE1E4E00EA0709 /* FIRUtilities.m */; };
 		E484E90A2BA7452CBA8EC009 /* OpenSans-Light-webfont.woff in Resources */ = {isa = PBXBuildFile; fileRef = 9D10362D45AE444CAD45A026 /* OpenSans-Light-webfont.woff */; };
 /* End PBXBuildFile section */
 
@@ -72,7 +70,6 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		2A6A6C21EE2F4C7298D0E11D /* ProximaNova-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "ProximaNova-Bold.otf"; path = "../../fonts/ProximaNova-Bold.otf"; sourceTree = "<group>"; };
-		2C722BB9256C77DE00A9D66B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		39A351573097466DA5DA80AD /* OpenSans-Light-webfont.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Light-webfont.ttf"; path = "../../fonts/OpenSans-Light-webfont.ttf"; sourceTree = "<group>"; };
 		41D7B16E683246C09137285D /* OpenSans-Light-webfont.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Light-webfont.svg"; path = "../../fonts/OpenSans-Light-webfont.svg"; sourceTree = "<group>"; };
 		7E545339E87B44E4B8F93CD8 /* ProximaNova-Thin.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "ProximaNova-Thin.otf"; path = "../../fonts/ProximaNova-Thin.otf"; sourceTree = "<group>"; };
@@ -80,8 +77,6 @@
 		9D10362D45AE444CAD45A026 /* OpenSans-Light-webfont.woff */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Light-webfont.woff"; path = "../../fonts/OpenSans-Light-webfont.woff"; sourceTree = "<group>"; };
 		B3B083EB1D4955FF0069CEE7 /* app.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = app.entitlements; sourceTree = "<group>"; };
 		CACC72166A10497D853A028F /* ProximaNova-Light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "ProximaNova-Light.otf"; path = "../../fonts/ProximaNova-Light.otf"; sourceTree = "<group>"; };
-		DE4C455F21DE1E4E00EA0709 /* FIRUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FIRUtilities.m; sourceTree = "<group>"; };
-		DE4C456021DE1E4E00EA0709 /* FIRUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FIRUtilities.h; sourceTree = "<group>"; };
 		EA4FF8B034C08F7858EC139B /* Pods-Jane Online Appointments.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Jane Online Appointments.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-Jane Online Appointments/Pods-Jane Online Appointments.debug.xcconfig"; sourceTree = "<group>"; };
 		F653AD91A1CE42ACA21E3CDD /* ProximaNova-Sbold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "ProximaNova-Sbold.otf"; path = "../../fonts/ProximaNova-Sbold.otf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -115,11 +110,8 @@
 			children = (
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
-				DE4C456021DE1E4E00EA0709 /* FIRUtilities.h */,
-				DE4C455F21DE1E4E00EA0709 /* FIRUtilities.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
-				2C722BB9256C77DE00A9D66B /* GoogleService-Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				0B412F201EDEE95300B1A0A6 /* Main.storyboard */,
@@ -194,7 +186,6 @@
 				0BB7DA181EC9E695007AAE98 /* Adjust ATS */,
 				DEF4813D224925A2002AD03A /* Copy Google Plist file */,
 				DE11877A21EE09640078D059 /* Setup Google reverse URL handler */,
-				DE4F6D6E22005C0400DE699E /* Setup Dropbox */,
 				0BEA5C491F7B8F73000D0AB4 /* Embed Watch Content */,
 			);
 			buildRules = (
@@ -257,7 +248,6 @@
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				5CC1393DFA294862AB59CE62 /* OpenSans-Light-webfont.svg in Resources */,
 				6FBF54DE72114B38B3E3D6E0 /* OpenSans-Light-webfont.ttf in Resources */,
-				2C722BBA256C77DE00A9D66B /* GoogleService-Info.plist in Resources */,
 				E484E90A2BA7452CBA8EC009 /* OpenSans-Light-webfont.woff in Resources */,
 				011790A9F64D4563B3AD6F24 /* ProximaNova-Light.otf in Resources */,
 				6A63F383534145818B702D84 /* ProximaNova-Bold.otf in Resources */,
@@ -397,7 +387,6 @@
 			files = (
 				0B412F1F1EDEE6E800B1A0A6 /* ViewController.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
-				DE4C456121DE1E4E00EA0709 /* FIRUtilities.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

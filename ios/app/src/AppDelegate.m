@@ -16,10 +16,8 @@
  */
 
 #import "AppDelegate.h"
-#import "FIRUtilities.h"
 #import "Types.h"
 
-@import Firebase;
 @import JitsiMeet;
 
 
@@ -44,14 +42,6 @@
 #endif
     }];
 
-    // Initialize Crashlytics and Firebase if a valid GoogleService-Info.plist file was provided.
-  if ([FIRUtilities appContainsRealServiceInfoPlist]) {
-        NSLog(@"Enabling Firebase");
-        [FIRApp configure];
-
-        [[FIRCrashlytics crashlytics] setCrashlyticsCollectionEnabled:true];
-    }
-
     [jitsiMeet application:application didFinishLaunchingWithOptions:launchOptions];
 
     return YES;
@@ -62,28 +52,6 @@
 -    (BOOL)application:(UIApplication *)application
   continueUserActivity:(NSUserActivity *)userActivity
     restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> *restorableObjects))restorationHandler {
-
-//    if ([FIRUtilities appContainsRealServiceInfoPlist]) {
-//        // 1. Attempt to handle Universal Links through Firebase in order to support
-//        //    its Dynamic Links (which we utilize for the purposes of deferred deep
-//        //    linking).
-//        BOOL handled
-//          = [[FIRDynamicLinks dynamicLinks]
-//                handleUniversalLink:userActivity.webpageURL
-//                         completion:^(FIRDynamicLink * _Nullable dynamicLink, NSError * _Nullable error) {
-//           NSURL *firebaseUrl = [FIRUtilities extractURL:dynamicLink];
-//           if (firebaseUrl != nil) {
-//             userActivity.webpageURL = firebaseUrl;
-//             [[JitsiMeet sharedInstance] application:application
-//                                continueUserActivity:userActivity
-//                                  restorationHandler:restorationHandler];
-//           }
-//        }];
-//
-//        if (handled) {
-//          return handled;
-//        }
-//    }
 
     // 2. Default to plain old, non-Firebase-assisted Universal Links.
     return [[JitsiMeet sharedInstance] application:application
@@ -102,14 +70,6 @@
     }
 
     NSURL *openUrl = url;
-//    if ([FIRUtilities appContainsRealServiceInfoPlist]) {
-//        // Process Firebase Dynamic Links
-//        FIRDynamicLink *dynamicLink = [[FIRDynamicLinks dynamicLinks] dynamicLinkFromCustomSchemeURL:url];
-//        NSURL *firebaseUrl = [FIRUtilities extractURL:dynamicLink];
-//        if (firebaseUrl != nil) {
-//            openUrl = firebaseUrl;
-//        }
-//    }
 
     return [[JitsiMeet sharedInstance] application:app
                                            openURL:openUrl
