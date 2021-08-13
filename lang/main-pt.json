@@ -490,6 +490,28 @@
         "newDeviceAudioTitle": "Novo dispositivo de áudio detectado",
         "newDeviceAction": "Usar"
     },
+    "participantsPane": {
+        "close": "Fechar",
+        "header": "Participantes",
+        "headings": {
+            "lobby": "Sala de espera ({{count}})",
+            "participantsList": "Participantes da reunião ({{count}})",
+            "waitingLobby": "Aguardam na sala de espera ({{count}})"
+        },
+        "actions": {
+            "allow": "Permitir aos participantes:",
+            "blockEveryoneMicCamera": "Bloquear o microfone e a câmara de todos",
+            "invite": "Convidar alguém",
+            "askUnmute": "Pedir para ligar o microfone",
+            "mute": "Silenciar",
+            "muteAll": "Silenciar todos",
+            "muteEveryoneElse": "Silenciar todos os outros",
+            "startModeration": "Ligar o microfone ou a câmara.",
+            "stopEveryonesVideo": "Desligar a câmara de todos",
+            "stopVideo": "Desligar a câmara",
+            "unblockEveryoneMicCamera": "Desbloquear o microfone e a câmara de todos"
+        }
+    },
     "passwordSetRemotely": "Definido por outro participante",
     "passwordDigitsOnly": "Até {{number}} dígitos",
     "poweredby": "distribuído por",
@@ -601,6 +623,12 @@
     },
     "sectionList": {
         "pullToRefresh": "Puxe para atualizar"
+    },
+    "security": {
+        "about": "Pode adicionar uma $t(lockRoomPassword) à sua reunião. Os participantes terão de fornecer a $t(lockRoomPassword) antes de serem autorizados a participar na reunião.",
+        "aboutReadOnly": "Os participantes moderadores podem acrescentar uma $t(lockRoomPassword) à reunião. Os participantes terão de fornecer a $t(lockRoomPassword) antes de serem autorizados a participar na reunião.",
+        "insecureRoomNameWarning": "O nome da sala é inseguro. Participantes indesejados podem juntar-se à sua conferência. Considere proteger a sua reunião utilizando o botão de segurança.",
+        "securityOptions": "Opções de segurança"
     },
     "settings": {
         "calendar": {
@@ -890,5 +918,41 @@
         "sendFeedback": "Enviar comentários",
         "terms": "Termos",
         "title": "Videoconferências mais seguras, flexíveis e totalmente gratuitas"
+    },
+    "lobby": {
+        "admit": "Aceitar",
+        "admitAll": "Aceitar todos",
+        "knockingParticipantList": "Lista de participantes a expulsar",
+        "allow": "Permitir",
+        "backToKnockModeButton": "Sem senha, peça para aderir em vez disso",
+        "dialogTitle": "Modo sala de espera",
+        "disableDialogContent": "O modo sala de espera está actualmente activada. Esta característica assegura que os participantes indesejados não possam juntar-se à sua reunião. Quer desativá-la?",
+        "disableDialogSubmit": "Desativar",
+        "emailField": "Introduza o seu endereço de e-mail",
+        "enableDialogPasswordField": "Definir senha (opcional)",
+        "enableDialogSubmit": "Habilitar",
+        "enableDialogText": "O modo sala de espera permite-lhe proteger a sua reunião apenas permitindo a entrada de pessoas após uma aprovação formal por um moderador.",
+        "enterPasswordButton": "Introduza a senha da reunião",
+        "enterPasswordTitle": "Introduzir a senha para participar na reunião",
+        "invalidPassword": "Senha inválida",
+        "joiningMessage": "Participará na reunião assim que alguém aceitar o seu pedido",
+        "joinWithPasswordMessage": "Tentando aderir com senha, por favor aguarde...",
+        "joinRejectedMessage": "O seu pedido de adesão foi rejeitado por um moderador.",
+        "joinTitle": "Junte-se à reunião",
+        "joiningTitle": "Pedir para participar na reunião...",
+        "joiningWithPasswordTitle": "Participando com senha...",
+        "knockButton": "Pedir para participar",
+        "knockTitle": "Alguém quer juntar-se à reunião",
+        "nameField": "Introduza o seu nome",
+        "notificationLobbyAccessDenied": "{{targetParticipantName}} foi recusada a adesão por {{originParticipantName}}",
+        "notificationLobbyAccessGranted": "{{targetParticipantName}} foi autorizado a aderir por {{originParticipantName}}",
+        "notificationLobbyDisabled": "A sala de espera foi desactivada por {{originParticipantName}}",
+        "notificationLobbyEnabled": "A sala de espera foi activada por {{originParticipantName}}",
+        "notificationTitle": "Sala de espera",
+        "passwordField": "Introduza a senha da reunião",
+        "passwordJoinButton": "Solicitar",
+        "reject": "Rejeitar",
+        "rejectAll": "Rejeitar todos",
+        "toggleLabel": "Ativar sala de espera"
     }
 }
