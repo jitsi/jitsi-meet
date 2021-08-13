@@ -3,6 +3,7 @@
 import { Component } from 'react';
 import type { Dispatch } from 'redux';
 
+import getRoomName from '../../base/config/getRoomName';
 import { getLocalParticipant } from '../../base/participants';
 import { sendMessage } from '../actions';
 import { SMALL_WIDTH_THRESHOLD } from '../constants';
@@ -97,7 +98,9 @@ export default class AbstractChat<P: Props> extends Component<P> {
  * @returns {{
  *     _isOpen: boolean,
  *     _messages: Array<Object>,
- *     _showNamePrompt: boolean
+ *     _showNamePrompt: boolean,
+ *     _fileTransferCdnServer: string,
+ *     _roomName: string
  * }}
  */
 export function _mapStateToProps(state: Object) {
@@ -108,6 +111,8 @@ export function _mapStateToProps(state: Object) {
         _isModal: window.innerWidth <= SMALL_WIDTH_THRESHOLD,
         _isOpen: isOpen,
         _messages: messages,
-        _showNamePrompt: !_localParticipant?.name
+        _showNamePrompt: !_localParticipant?.name,
+        _fileTransferCdnServer: state['features/base/config'].fileTransferCdnServer,
+        _roomName: getRoomName(state)
     };
 }

@@ -74,7 +74,10 @@
         "message": "Message",
         "messageAccessibleTitle": "{{user}} says:",
         "messageAccessibleTitleMe": "me says:",
-        "smileysPanel": "Emoji panel"
+        "smileysPanel": "Emoji panel",
+        "fileTransfer": {
+            "fileTooBig": "Maximum allowed size: {{size}} MB"
+        }
     },
     "chromeExtensionBanner": {
         "installExtensionText": "Install the extension for Google Calendar and Office 365 integration",

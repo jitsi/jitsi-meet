@@ -125,6 +125,7 @@ export default [
     'failICE',
     'feedbackPercentage',
     'fileRecordingsEnabled',
+    'fileTransferCdnServer',
     'firefox_fake_device',
     'forceJVB121Ratio',
     'forceTurnRelay',

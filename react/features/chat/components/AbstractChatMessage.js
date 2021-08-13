@@ -16,6 +16,11 @@ const TIMESTAMP_FORMAT = 'H:mm';
 export type Props = {
 
     /**
+     * The server which hosts the file transfered from chat.
+     */
+    _fileTransferCdnServer: string,
+
+    /**
      * The representation of a chat message.
      */
     message: Object,

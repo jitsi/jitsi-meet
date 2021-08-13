@@ -137,8 +137,10 @@ class Chat extends AbstractChat<Props> {
                 </TouchmoveHack>
                 <MessageRecipient />
                 <ChatInput
+                    fileTransferCdnServer = { this.props._fileTransferCdnServer }
                     onResize = { this._onChatInputResize }
-                    onSend = { this._onSendMessage } />
+                    onSend = { this._onSendMessage }
+                    roomName = { this.props._roomName } />
                 <KeyboardAvoider />
             </>
         );

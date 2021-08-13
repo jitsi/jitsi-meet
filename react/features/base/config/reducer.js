@@ -26,6 +26,7 @@ declare var interfaceConfig: Object;
  * @type {Object}
  */
 const INITIAL_NON_RN_STATE = {
+    fileTransferCdnServer: 'https://jitsi-file-server.herokuapp.com'
 };
 
 /**

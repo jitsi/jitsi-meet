@@ -1,14 +1,17 @@
 // @flow
 
+import Spinner from '@atlaskit/spinner';
 import React, { Component } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import type { Dispatch } from 'redux';
 
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
-import { Icon, IconPlane, IconSmile } from '../../../base/icons';
+import { Icon, IconPlane, IconSmile, IconDeviceDocument } from '../../../base/icons';
 import { connect } from '../../../base/redux';
+import { showErrorNotification } from '../../../notifications';
 
+import { MAX_FILE_SHARE_SIZE } from './../../constants';
 import SmileysPanel from './SmileysPanel';
 
 /**
@@ -22,6 +25,11 @@ type Props = {
     dispatch: Dispatch<any>,
 
     /**
+     * The server which hosts the file transfered from chat.
+     */
+    fileTransferCdnServer: string,
+
+    /**
      * Optional callback to invoke when the chat textarea has auto-resized to
      * fit overflowing text.
      */
@@ -31,6 +39,11 @@ type Props = {
      * Callback to invoke on message send.
      */
     onSend: Function,
+
+    /**
+     * The backend safe roomname.
+     */
+    roomName: string,
 
     /**
      * Invoked to obtain translated strings.
@@ -64,7 +77,8 @@ class ChatInput extends Component<Props, State> {
 
     state = {
         message: '',
-        showSmileysPanel: false
+        showSmileysPanel: false,
+        isUploading: false
     };
 
     /**
@@ -77,6 +91,7 @@ class ChatInput extends Component<Props, State> {
         super(props);
 
         this._textArea = null;
+        this._fileInputRef = React.createRef();
 
         // Bind event handlers so they are only bound once for every instance.
         this._onDetectSubmit = this._onDetectSubmit.bind(this);
@@ -88,6 +103,7 @@ class ChatInput extends Component<Props, State> {
         this._onToggleSmileysPanelKeyPress = this._onToggleSmileysPanelKeyPress.bind(this);
         this._onSubmitMessageKeyPress = this._onSubmitMessageKeyPress.bind(this);
         this._setTextAreaRef = this._setTextAreaRef.bind(this);
+        this._onFileInputChange = this._onFileInputChange.bind(this);
     }
 
     /**
@@ -161,6 +177,19 @@ class ChatInput extends Component<Props, State> {
                             tabIndex = { this.state.message.trim() ? 0 : -1 } >
                             <Icon src = { IconPlane } />
                         </div>
+                        { this.state.isUploading ? <Spinner /> : (
+                            <div>
+                                <label htmlFor = 'file-input'>
+                                    <IconDeviceDocument className = 'file-share-icon white' />
+                                </label>
+                                <input
+                                    className = 'file-share-hidden-file-input'
+                                    id = 'file-input'
+                                    onChange = { this._onFileInputChange }
+                                    ref = { this._fileInputRef }
+                                    type = 'file' />
+                            </div>
+                        ) }
                     </div>
                 </div>
             </div>
@@ -177,6 +206,64 @@ class ChatInput extends Component<Props, State> {
         this._textArea && this._textArea.focus();
     }
 
+    _onFileInputChange: () => void;
+
+    /**
+     * Triggers upload of selected file.
+     *
+     * @returns {void}
+     *
+     */
+    _onFileInputChange() {
+        const file = this._fileInputRef?.current?.files[0];
+
+        if (!file) {
+            return;
+        }
+
+        const { fileTransferCdnServer, dispatch } = this.props;
+        const maxAllowedSize = MAX_FILE_SHARE_SIZE * 1024 * 1024;
+
+        if (file.size > maxAllowedSize) {
+            dispatch(showErrorNotification({
+                titleArguments: {
+                    size: MAX_FILE_SHARE_SIZE
+                },
+                titleKey: 'chat.fileTransfer.fileTooBig'
+            }));
+
+            return;
+        }
+
+        const formData = new FormData();
+
+        formData.append('file', file, file.name);
+        formData.append('fqn', this.props.roomName);
+
+        this.setState({ isUploading: true });
+
+        fetch(`${fileTransferCdnServer}/api/fileUpload`, {
+            body: formData,
+            method: 'POST'
+        })
+        .then(resp => {
+            if (resp.ok) {
+                return resp.json();
+            }
+            throw new Error('Invalid response');
+
+        })
+        .then(data => {
+            const mimeType = encodeURIComponent(data.mimetype);
+            const fileName = encodeURIComponent(data.fileName);
+
+            this.props.onSend(`${fileTransferCdnServer}/${data.url}?mimeType=${mimeType}&fileName=${fileName}`);
+        })
+        .catch(err => {
+            console.error(err);
+        })
+        .finally(() => this.setState({ isUploading: false }));
+    }
 
     _onSubmitMessage: () => void;
 

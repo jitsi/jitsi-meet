@@ -574,3 +574,46 @@
     background: #36383C;
     border-radius: 3px;
 }
+
+.file-share {
+
+    &-icon {
+        width: 25px;
+        height: 25px;
+
+        &.white {
+            fill: #FFF;
+        }
+    }
+
+    &-hidden-file-input {
+        display: none;
+    }
+
+    &-message-container {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    &-thumbnail {
+        width: 100px;
+        height: 100px;
+        border-radius: 3px;
+    }
+
+    &-download-pane {
+        cursor: 'pointer';
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    &-icon-download {
+        fill: #FFF;
+        width: 18px;
+        height: 18px;
+        margin-right: 5px;
+    }
+}

@@ -31,3 +31,8 @@ export const MESSAGE_TYPE_LOCAL = 'local';
 export const MESSAGE_TYPE_REMOTE = 'remote';
 
 export const SMALL_WIDTH_THRESHOLD = 580;
+
+/**
+ * The maximum shared file size in MB.
+ */
+export const MAX_FILE_SHARE_SIZE = 50;
