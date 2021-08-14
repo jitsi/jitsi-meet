@@ -1,4 +1,6 @@
 local jid_bare = require 'util.jid'.bare;
+local jid_node = require 'util.jid'.node;
+local jid_resource = require 'util.jid'.resource;
 local jid_split = require 'util.jid'.split;
 local json = require 'util.json';
 local st = require 'util.stanza';
@@ -12,7 +14,7 @@ local JSON_TYPE_ADD_BREAKOUT_ROOM = 'features/breakout-rooms/add';
 local JSON_TYPE_MOVE_TO_ROOM_REQUEST = 'features/breakout-rooms/move-to-room-request';
 local JSON_TYPE_REMOVE_BREAKOUT_ROOM = 'features/breakout-rooms/remove';
 local JSON_TYPE_UPDATE_BREAKOUT_ROOMS = 'features/breakout-rooms/update';
-local BREAKOUT_ROOMS_SUFFIX_PATTERN = '#breakout_[-%x]+$';
+local BREAKOUT_ROOMS_SUFFIX_PATTERN = '_breakout-[-%x]+$';
 
 local main_muc_component_config = module:get_option_string('main_muc');
 if main_muc_component_config == nil then
@@ -24,7 +26,7 @@ end
 -- Utility functions
 
 function get_main_room_jid(room_jid)
-    local node, host = jid_split(room_jid);
+    local node = jid_node(room_jid);
     local from_index, to_index = node:find(BREAKOUT_ROOMS_SUFFIX_PATTERN);
 
 	return from_index and node:sub(1, from_index - 1) .. room_jid:sub(to_index + 1) or room_jid
@@ -60,7 +62,7 @@ function get_participants(room)
     if room then
         for nick, occupant in room:each_occupant() do
             -- Filter focus as we keep it as a hidden participant
-            if jid_split(occupant.jid) ~= 'focus' then
+            if jid_node(occupant.jid) ~= 'focus' then
                 local display_name = occupant:get_presence():get_child_text(
                     'nick', 'http://jabber.org/protocol/nick');
                 participants[nick] = {
@@ -89,7 +91,7 @@ function broadcast_breakout_rooms(room_jid)
         main_room._data.is_broadcast_breakout_scheduled = false;
         main_room:save(true);
 
-        local main_room_node = jid_split(main_room_jid)
+        local main_room_node = jid_node(main_room_jid)
         local rooms = {
             [main_room_node] = {
                 isMainRoom = true,
@@ -102,7 +104,7 @@ function broadcast_breakout_rooms(room_jid)
 
         for breakout_room_jid, subject in pairs(main_room._data.breakout_rooms or {}) do
             local breakout_room = get_room_from_jid(breakout_room_jid);
-            local breakout_room_node = jid_split(breakout_room_jid)
+            local breakout_room_node = jid_node(breakout_room_jid)
 
             rooms[breakout_room_node] = {
                 id = breakout_room_node,
@@ -137,7 +139,7 @@ function create_breakout_room(room_jid, from, subject, next_index)
     local main_room, main_room_jid = get_main_room(room_jid);
     local node, host = jid_split(main_room_jid);
     -- Breakout rooms are named like the main room with a random uuid suffix
-    local breakout_room_jid = node .. '#breakout_' .. uuid_gen() .. '@' .. host;
+    local breakout_room_jid = node .. '_breakout-' .. uuid_gen() .. '@' .. host;
 
     if not main_room._data.breakout_rooms then
         main_room._data.breakout_rooms = {};
@@ -207,7 +209,7 @@ function on_message(event)
         return true;
     elseif message.type == JSON_TYPE_MOVE_TO_ROOM_REQUEST then
         if room and room.get_affiliation(room, from) == 'owner' then
-            local _, _, participant_nick = jid_split(stanza.attr.to);
+            local participant_nick = jid_resource(stanza.attr.to);
             local participant_room_jid = jid_bare(participant_nick);
             local participant_room = get_room_from_jid(participant_room_jid);
             local occupant = participant_room:get_occupant_by_nick(participant_nick);
@@ -243,7 +245,7 @@ function on_occupant_joined(event)
     local room = event.room;
     local main_room = get_main_room(room.jid);
 
-    if jid_split(event.occupant.jid) ~= 'focus' then
+    if jid_node(event.occupant.jid) ~= 'focus' then
         broadcast_breakout_rooms(room.jid);
     end
 
@@ -259,7 +261,7 @@ function exist_occupants_in_room(room)
         return false;
     end
     for occupant_jid, occupant in room:each_occupant() do
-        if jid_split(occupant.jid) ~= 'focus' then
+        if jid_node(occupant.jid) ~= 'focus' then
             return true;
         end
     end
@@ -285,7 +287,7 @@ function on_occupant_left(event)
     local room = event.room;
     local main_room, main_room_jid = get_main_room(room.jid);
 
-    if jid_split(event.occupant.jid) ~= 'focus' then
+    if jid_node(event.occupant.jid) ~= 'focus' then
         broadcast_breakout_rooms(room.jid);
     end
 
