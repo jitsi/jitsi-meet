@@ -91,6 +91,7 @@ export default [
     'disableJoinLeaveSounds',
     'disableLocalVideoFlip',
     'disableNS',
+    'disablePolls',
     'disableProfile',
     'disableRemoteControl',
     'disableRemoteMute',

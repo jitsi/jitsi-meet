@@ -58,7 +58,7 @@
         "today": "Today"
     },
     "chat": {
-        "enter": "Enter chat room",
+        "enter": "Enter room",
         "error": "Error: your message was not sent. Reason: {{error}}",
         "fieldPlaceHolder": "Type your message here",
         "messagebox": "Type a message",
@@ -66,15 +66,19 @@
         "noMessagesMessage": "There are no messages in the meeting yet. Start a conversation here!",
         "nickname": {
             "popover": "Choose a nickname",
-            "title": "Enter a nickname to use chat"
+            "title": "Enter a nickname to use chat and polls"
         },
         "privateNotice": "Private message to {{recipient}}",
-        "title": "Chat",
-        "you": "you",
         "message": "Message",
         "messageAccessibleTitle": "{{user}} says:",
         "messageAccessibleTitleMe": "me says:",
-        "smileysPanel": "Emoji panel"
+        "smileysPanel": "Emoji panel",
+        "tabs": {
+            "chat": "Chat",
+            "polls": "Polls"
+        },
+        "title": "Chat and Polls",
+        "you": "you"
     },
     "chromeExtensionBanner": {
         "installExtensionText": "Install the extension for Google Calendar and Office 365 integration",
@@ -614,6 +618,34 @@
     },
     "passwordSetRemotely": "Set by another participant",
     "passwordDigitsOnly": "Up to {{number}} digits",
+    "polls": {
+        "create": {
+            "addOption": "Add option",
+            "answerPlaceholder": "Option {{index}}",
+            "create": "Create a poll",
+            "cancel": "Cancel",
+            "pollOption" : "Poll option {{index}}",
+            "pollQuestion" : "Poll Question",
+            "questionPlaceholder": "Ask a question",
+            "removeOption": "Remove option",
+            "send": "Send"
+        },
+        "answer": {
+            "skip": "Skip",
+            "submit": "Submit"
+        },
+        "results": {
+            "vote": "Vote",
+            "changeVote": "Change vote",
+            "empty": "There are no polls in the meeting yet. Start a poll here!",
+            "hideDetailedResults": "Hide details",
+            "showDetailedResults": "Show details"
+        },
+        "notification": {
+            "title": "A new poll was added to this meeting",
+            "description": "Open polls tab to vote"
+        }
+    },
     "poweredby": "powered by",
     "prejoin": {
         "audioAndVideoError": "Audio and video error:",

@@ -34,6 +34,8 @@ import '../large-video/middleware';
 import '../lobby/middleware';
 import '../notifications/middleware';
 import '../overlay/middleware';
+import '../polls/middleware';
+import '../polls/subscriber';
 import '../reactions/middleware';
 import '../recent-list/middleware';
 import '../recording/middleware';
