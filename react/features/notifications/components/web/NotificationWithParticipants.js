@@ -80,6 +80,7 @@ export default function({
                     { <NotificationButton
                         action = { onApprove }
                         className = 'primary'
+                        id = 'unmute-button'
                         participant = { p }
                         testId = { `${testIdPrefix}.allow` }>
                         { approveButtonText }
@@ -87,6 +88,7 @@ export default function({
                     { <NotificationButton
                         action = { onReject }
                         className = 'borderLess'
+                        id = 'dismiss-button'
                         participant = { p }
                         testId = { `${testIdPrefix}.reject` }>
                         { rejectButtonText }

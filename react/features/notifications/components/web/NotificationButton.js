@@ -21,14 +21,19 @@ type Props = {
     className: string,
 
     /**
-     * The `data-testid` used for the button.
+     * CSS id of the button.
      */
-    testId: string,
+    id?: string,
 
     /**
      * The participant.
      */
-    participant: Object
+    participant: Object,
+
+    /**
+     * The `data-testid` used for the button.
+     */
+    testId: string
 }
 
 /**
@@ -36,7 +41,7 @@ type Props = {
  *
  * @returns {React$Element<'button'>}
  */
-export default function({ action, children, className, testId, participant }: Props) {
+export default function({ action, children, className, participant, id, testId }: Props) {
     const dispatch = useDispatch();
     const onClick = useCallback(() => dispatch(action(participant.id)), [ dispatch, participant ]);
 
@@ -44,6 +49,7 @@ export default function({ action, children, className, testId, participant }: Pr
         <button
             className = { className }
             data-testid = { testId }
+            id = { id }
             onClick = { onClick }
             type = 'button'>
             { children }
