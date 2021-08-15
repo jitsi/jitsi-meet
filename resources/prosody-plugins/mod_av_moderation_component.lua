@@ -136,6 +136,7 @@ function on_message(event)
                         room.av_moderation = {};
                         room.av_moderation_actors = {};
                     end
+                    room.av_moderation[mediaType] = {};
                     room.av_moderation_actors[mediaType] = occupant.nick;
                 end
             else

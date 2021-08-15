@@ -30,10 +30,6 @@
  */
 @property (nonatomic, copy, nullable) NSString *room;
 /**
- * Conference subject.
- */
-@property (nonatomic, copy, nullable) NSString *subject;
-/**
  * JWT token used for authentication.
  */
 @property (nonatomic, copy, nullable) NSString *token;
@@ -49,13 +45,7 @@
  */
 @property (nonatomic, readonly, nonnull) NSDictionary *featureFlags;
 
-/**
- * Set to YES to join the conference with audio / video muted or to start in audio
- * only mode respectively.
- */
-@property (nonatomic) BOOL audioOnly;
-@property (nonatomic) BOOL audioMuted;
-@property (nonatomic) BOOL videoMuted;
+@property (nonatomic, readonly, nonnull) NSDictionary *config;
 
 /**
  * Set to YES to enable the welcome page. Typically SDK users won't need this enabled
@@ -71,15 +61,17 @@
 - (void)setFeatureFlag:(NSString *_Nonnull)flag withBoolean:(BOOL)value;
 - (void)setFeatureFlag:(NSString *_Nonnull)flag withValue:(id _Nonnull)value;
 
-/**
- * CallKit call handle, to be used when implementing incoming calls.
- */
-@property (nonatomic, copy, nullable) NSString *callHandle;
+- (void)setConfigOverride:(NSString *_Nonnull)config withBoolean:(BOOL)value;
+- (void)setConfigOverride:(NSString *_Nonnull)config withValue:(id _Nonnull)value;
+- (void)setConfigOverride:(NSString *_Nonnull)config withDictionary:(NSDictionary * _Nonnull)dictionary;
+- (void)setConfigOverride:(NSString *_Nonnull)config withArray:( NSArray * _Nonnull)array;
 
-/**
- * CallKit call UUID, to be used when implementing incoming calls.
- */
-@property (nonatomic, copy, nullable) NSUUID *callUUID;
+- (void)setAudioOnly:(BOOL)audioOnly;
+- (void)setAudioMuted:(BOOL)audioMuted;
+- (void)setVideoMuted:(BOOL)videoMuted;
+- (void)setCallHandle:(NSString *_Nonnull)callHandle;
+- (void)setCallUUID:(NSUUID *_Nonnull)callUUID;
+- (void)setSubject:(NSString *_Nonnull)subject;
 
 @end
 
@@ -88,22 +80,14 @@
 @property (nonatomic, copy, nullable, readonly) NSURL *serverURL;
 
 @property (nonatomic, copy, nullable, readonly) NSString *room;
-@property (nonatomic, copy, nullable, readonly) NSString *subject;
 @property (nonatomic, copy, nullable, readonly) NSString *token;
 
 @property (nonatomic, copy, nullable) NSDictionary *colorScheme;
 @property (nonatomic, readonly, nonnull) NSDictionary *featureFlags;
 
-@property (nonatomic, readonly) BOOL audioOnly;
-@property (nonatomic, readonly) BOOL audioMuted;
-@property (nonatomic, readonly) BOOL videoMuted;
-
 @property (nonatomic, readonly) BOOL welcomePageEnabled;
 
 @property (nonatomic, nullable) JitsiMeetUserInfo *userInfo;
-
-@property (nonatomic, copy, nullable, readonly) NSString *callHandle;
-@property (nonatomic, copy, nullable, readonly) NSUUID *callUUID;
 
 + (instancetype _Nonnull)fromBuilder:(void (^_Nonnull)(JitsiMeetConferenceOptionsBuilder *_Nonnull))initBlock;
 - (instancetype _Nonnull)init NS_UNAVAILABLE;

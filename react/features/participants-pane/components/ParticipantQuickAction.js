@@ -10,6 +10,11 @@ import { QuickActionButton } from './web/styled';
 type Props = {
 
     /**
+     * The translated ask unmute aria label.
+     */
+    ariaLabel?: boolean,
+
+    /**
      * The translated "ask unmute" text.
      */
     askUnmuteText: string,
@@ -24,6 +29,9 @@ type Props = {
      */
     muteAudio: Function,
 
+    /**
+     * Label for mute participant button.
+     */
     muteParticipantButtonText: string,
 
     /**
@@ -59,7 +67,7 @@ export default function ParticipantQuickAction({
         return (
             <AskToUnmuteButton
                 askUnmuteText = { askUnmuteText }
-                id = { participantID } />
+                participantID = { participantID } />
         );
     }
     default: {

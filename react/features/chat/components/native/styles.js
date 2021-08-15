@@ -124,6 +124,25 @@ export default {
     timeText: {
         color: 'rgb(164, 184, 209)',
         fontSize: 13
+    },
+
+    tabContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center'
+    },
+
+    tabLeftButton: {
+        flex: 1,
+        borderTopLeftRadius: 0,
+        borderTopRightRadius: 0,
+        borderBottomLeftRadius: 0
+    },
+
+    tabRightButton: {
+        flex: 1,
+        borderTopLeftRadius: 0,
+        borderTopRightRadius: 0,
+        borderBottomRightRadius: 0
     }
 };
 

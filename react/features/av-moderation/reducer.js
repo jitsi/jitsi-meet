@@ -135,7 +135,7 @@ ReducerRegistry.register('features/av-moderation', (state = initialState, action
         }
 
         if (videoModerationEnabled) {
-            hasStateChanged = _updatePendingParticipant(MEDIA_TYPE.VIDEO, participant, state);
+            hasStateChanged = hasStateChanged || _updatePendingParticipant(MEDIA_TYPE.VIDEO, participant, state);
         }
 
         // If the state has changed we need to return a new object reference in order to trigger subscriber updates.
@@ -183,19 +183,19 @@ ReducerRegistry.register('features/av-moderation', (state = initialState, action
     }
 
     case DISMISS_PENDING_PARTICIPANT: {
-        const { participant, mediaType } = action;
+        const { id, mediaType } = action;
 
         if (mediaType === MEDIA_TYPE.AUDIO) {
             return {
                 ...state,
-                pendingAudio: state.pendingAudio.filter(pending => pending.id !== participant.id)
+                pendingAudio: state.pendingAudio.filter(pending => pending.id !== id)
             };
         }
 
         if (mediaType === MEDIA_TYPE.VIDEO) {
             return {
                 ...state,
-                pendingVideo: state.pendingVideo.filter(pending => pending.id !== participant.id)
+                pendingVideo: state.pendingVideo.filter(pending => pending.id !== id)
             };
         }
 
