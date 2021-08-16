@@ -81,10 +81,6 @@ export class AudioMixerEffect {
         this._mixedMediaStream = this._audioMixer.start();
         this._mixedMediaTrack = this._mixedMediaStream.getTracks()[0];
 
-        // Sync the resulting mixed track enabled state with that of the track using the effect.
-        this.setMuted(!this._originalTrack.enabled);
-        this._originalTrack.enabled = true;
-
         return this._mixedMediaStream;
     }
 
@@ -94,9 +90,6 @@ export class AudioMixerEffect {
      * @returns {void}
      */
     stopEffect() {
-        // Match state of the original track with that of the mixer track, not doing so can
-        // result in an inconsistent state e.g. redux state is muted yet track is enabled.
-        this._originalTrack.enabled = this._mixedMediaTrack.enabled;
         this._audioMixer.reset();
     }
 
@@ -107,7 +100,7 @@ export class AudioMixerEffect {
      * @returns {void}
      */
     setMuted(muted: boolean) {
-        this._mixedMediaTrack.enabled = !muted;
+        this._originalTrack.enabled = !muted;
     }
 
     /**
@@ -116,6 +109,6 @@ export class AudioMixerEffect {
      * @returns {boolean}
      */
     isMuted() {
-        return !this._mixedMediaTrack.enabled;
+        return !this._originalTrack.enabled;
     }
 }
