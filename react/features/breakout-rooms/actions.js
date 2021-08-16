@@ -11,6 +11,7 @@ import {
     getCurrentConference,
     setRoom
 } from '../base/conference';
+import { setAudioMuted, setVideoMuted } from '../base/media';
 import { getRemoteParticipants } from '../base/participants';
 import { getConferenceOptions } from '../conference/functions';
 import { clearNotifications } from '../notifications';
@@ -144,6 +145,7 @@ export function moveToRoom(roomId?: string) {
 
         if (navigator.product === 'ReactNative') {
             const conference = getCurrentConference(getState);
+            const { audio, video } = getState()['features/base/media'];
 
             dispatch(conferenceWillLeave(conference));
             conference.leave()
@@ -156,7 +158,12 @@ export function moveToRoom(roomId?: string) {
             });
             dispatch(clearNotifications());
             dispatch(setRoom(_roomId));
-            dispatch(createConference());
+            dispatch(createConference()).then(result => {
+                dispatch(setAudioMuted(audio.muted));
+                dispatch(setVideoMuted(video.muted));
+
+                return result;
+            });
         } else {
             const join = () => APP.conference.joinRoom(_roomId);
 
