@@ -50,6 +50,7 @@ export default [
      */
     'callHandle',
     'callStatsConfIDNamespace',
+    'callStatsConfigParams',
     'callStatsID',
     'callStatsSecret',
 
