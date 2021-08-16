@@ -671,6 +671,10 @@ class Thumbnail extends Component<Props, State> {
             statsPopoverPosition = 'left-start';
             tooltipPosition = 'left';
             break;
+        case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW:
+            statsPopoverPosition = 'top';
+            tooltipPosition = 'top';
+            break;
         default:
             statsPopoverPosition = 'auto';
             tooltipPosition = 'top';

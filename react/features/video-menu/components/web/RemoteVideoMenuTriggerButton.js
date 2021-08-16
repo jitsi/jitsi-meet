@@ -390,6 +390,9 @@ function _mapStateToProps(state, ownProps) {
     case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
         _menuPosition = 'left-end';
         break;
+    case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW:
+        _menuPosition = 'top';
+        break;
     default:
         _menuPosition = 'auto';
     }
