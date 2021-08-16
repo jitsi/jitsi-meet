@@ -120,7 +120,7 @@ type Props = {
     /**
      * The ID of the participant.
      */
-    participantID?: string,
+    participantID: string,
 
     /**
      * True if the participant have raised hand.

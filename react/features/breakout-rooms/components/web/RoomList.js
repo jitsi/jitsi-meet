@@ -114,7 +114,8 @@ export const RoomList = () => {
                             <ParticipantItem
                                 displayName = { p.displayName }
                                 key = { p.jid }
-                                local = { false } />
+                                local = { false }
+                                participantID = { p.jid } />
                         ))}
                     </div>
                 ))}
