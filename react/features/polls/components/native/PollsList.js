@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useCallback, useEffect, useRef } from '@atlaskit/checkbox';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList } from 'react-native';
 import { Text } from 'react-native-paper';
