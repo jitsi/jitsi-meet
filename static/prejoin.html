@@ -13,16 +13,12 @@
 
           const url = new URL(window.location.href);
           const params = new URLSearchParams(url.search);
-          const showAvatar = params.get('showAvatar') === 'true';
-          const showJoinActions = params.get('showJoinActions') === 'true';
-          const showSkipPrejoin = params.get('showSkipPrejoin') === 'true';
+          const styleType = params.get('styleType');
 
           JitsiMeetJS.app.renderEntryPoint({
               Component: JitsiMeetJS.app.entryPoints.PREJOIN,
               props: {
-                showAvatar,
-                showJoinActions,
-                showSkipPrejoin
+                styleType
               }
           })
       })

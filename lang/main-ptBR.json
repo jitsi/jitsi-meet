@@ -209,7 +209,6 @@
         "e2eeLabel": "Enable End-to-End Encryption",
         "e2eeWarning": "WARNING: Not all participants in this meeting seem to have support for End-to-End encryption. If you enable it they won't be able to see nor hear you.",
         "enterDisplayName": "Digite seu nome aqui",
-        "enterDisplayNameToJoin": "Digite seu nome para participar",
         "embedMeeting": "Reunião em formato compacto",
         "error": "Erro",
         "gracefulShutdown": "Nosso serviço está em manutenção. Tente novamente mais tarde.",

@@ -2,11 +2,8 @@
 
 import React, { PureComponent } from 'react';
 
-import { InviteButton } from '../../../../invite/components/add-people-dialog/web';
-import { AudioSettingsButton, VideoSettingsButton } from '../../../../toolbox/components/web';
-import { VideoBackgroundButton } from '../../../../virtual-background';
-import { Avatar } from '../../../avatar';
-import { allowUrlSharing } from '../../functions';
+import DeviceStatus from '../../../../prejoin/components/preview/DeviceStatus';
+import { Toolbox } from '../../../../toolbox/components/web';
 
 import ConnectionStatus from './ConnectionStatus';
 import Preview from './Preview';
@@ -16,12 +13,12 @@ type Props = {
     /**
      * Children component(s) to be rendered on the screen.
      */
-    children: React$Node,
+    children?: React$Node,
 
     /**
-     * Footer to be rendered for the page (if any).
+     * Additional CSS class names to set on the icon container.
      */
-    footer?: React$Node,
+    className?: string,
 
     /**
      * The name of the participant.
@@ -34,24 +31,24 @@ type Props = {
     showCopyUrlButton: boolean,
 
     /**
-     * Indicates whether the avatar should be shown when video is off
+     * Indicates whether the device status should be shown
      */
-    showAvatar: boolean,
-
-    /**
-     * Indicates whether the label and copy url action should be shown
-     */
-    showConferenceInfo: boolean,
-
-    /**
-     * Title of the screen.
-     */
-    title: string,
+    showDeviceStatus: boolean,
 
     /**
      * The 'Skip prejoin' button to be rendered (if any).
      */
      skipPrejoinButton?: React$Node,
+
+    /**
+     * Title of the screen.
+     */
+    title?: string,
+
+    /**
+     * Override for default toolbar buttons
+     */
+     toolbarButtons?: Array<string>,
 
     /**
      * True if the preview overlay should be muted, false otherwise.
@@ -61,13 +58,10 @@ type Props = {
     /**
      * The video track to render as preview (if omitted, the default local track will be rendered).
      */
-    videoTrack?: Object,
-
-    /**
-     * Array with the buttons which this Toolbox should display.
-     */
-    visibleButtons?: Array<string>
+    videoTrack?: Object
 }
+
+const buttons = [ 'microphone', 'camera', 'select-background', 'invite', 'settings' ];
 
 /**
  * Implements a pre-meeting screen that can be used at various pre-meeting phases, for example
@@ -80,9 +74,8 @@ export default class PreMeetingScreen extends PureComponent<Props> {
      * @static
      */
     static defaultProps = {
-        showAvatar: true,
         showCopyUrlButton: true,
-        showConferenceInfo: true
+        showToolbox: true
     };
 
     /**
@@ -92,63 +85,37 @@ export default class PreMeetingScreen extends PureComponent<Props> {
      */
     render() {
         const {
-            name,
-            showAvatar,
-            showConferenceInfo,
-            showCopyUrlButton,
+            children,
+            className,
+            showDeviceStatus,
+            skipPrejoinButton,
             title,
+            toolbarButtons,
             videoMuted,
-            videoTrack,
-            visibleButtons
+            videoTrack
         } = this.props;
-        const showInviteButton = allowUrlSharing() && showCopyUrlButton;
+
+        const containerClassName = `premeeting-screen ${className ? className : ''}`;
 
         return (
-            <div
-                className = 'premeeting-screen'
-                id = 'lobby-screen'>
-                <ConnectionStatus />
+            <div className = { containerClassName }>
+                <div className = 'content'>
+                    <ConnectionStatus />
+
+                    <div className = 'content-controls'>
+                        <h1 className = 'title'>
+                            { title }
+                        </h1>
+                        { children }
+                        <Toolbox toolbarButtons = { toolbarButtons || buttons } />
+                        { skipPrejoinButton }
+                        { showDeviceStatus && <DeviceStatus /> }
+                    </div>
+                </div>
+
                 <Preview
                     videoMuted = { videoMuted }
                     videoTrack = { videoTrack } />
-                <div className = 'content'>
-                    {showAvatar && videoMuted && (
-                        <Avatar
-                            className = 'premeeting-screen-avatar'
-                            displayName = { name }
-                            dynamicColor = { false }
-                            participantId = 'local'
-                            size = { 80 } />
-                    )}
-                    {showConferenceInfo && (
-                        <>
-                            <h1 className = 'title'>
-                                { title }
-                            </h1>
-                        </>
-                    )}
-                    { this.props.children }
-                    <div className = 'media-btn-container'>
-                        <div className = 'toolbox-content'>
-                            <div className = 'toolbox-content-items'>
-                                <AudioSettingsButton visible = { true } />
-                                <VideoSettingsButton visible = { true } />
-                                {visibleButtons && (
-                                    <>
-                                        {(visibleButtons.includes('select-background')
-                                            || visibleButtons.includes('videobackgroundblur'))
-                                                && <VideoBackgroundButton />}
-                                        {showInviteButton && (visibleButtons.includes('participants-pane')
-                                            || visibleButtons.includes('invite'))
-                                                && <InviteButton />}
-                                    </>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                    { this.props.skipPrejoinButton }
-                    { this.props.footer }
-                </div>
             </div>
         );
     }

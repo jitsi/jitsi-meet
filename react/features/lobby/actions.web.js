@@ -9,7 +9,6 @@ import {
     sendLocalParticipant,
     setPassword
 } from '../base/conference';
-import { hideDialog, openDialog } from '../base/dialog';
 import { getLocalParticipant } from '../base/participants';
 export * from './actions.any';
 
@@ -18,9 +17,9 @@ import {
     KNOCKING_PARTICIPANT_LEFT,
     SET_KNOCKING_STATE,
     SET_LOBBY_MODE_ENABLED,
+    SET_LOBBY_VISIBILITY,
     SET_PASSWORD_JOIN_FAILED
 } from './actionTypes';
-import { LobbyScreen } from './components';
 
 declare var APP: Object;
 
@@ -50,7 +49,10 @@ export function cancelKnocking() {
  * @returns {hideDialog}
  */
 export function hideLobbyScreen() {
-    return hideDialog(LobbyScreen);
+    return {
+        type: SET_LOBBY_VISIBILITY,
+        visible: false
+    };
 }
 
 /**
@@ -89,7 +91,10 @@ export function knockingParticipantLeft(id: string) {
  * @returns {openDialog}
  */
 export function openLobbyScreen() {
-    return openDialog(LobbyScreen, {}, true);
+    return {
+        type: SET_LOBBY_VISIBILITY,
+        visible: true
+    };
 }
 
 /**

@@ -209,7 +209,6 @@
         "e2eeLabel": "啟用端對端加密",
         "e2eeWarning": "警告：看來不是每位此會議的參與者都有啟用端對端加密，如果您啟用了，他們可能無法看/聽到您。",
         "enterDisplayName": "請在此輸入您自己的名字",
-        "enterDisplayNameToJoin": "請輸入您的名字以加入",
         "embedMeeting": "嵌入會議",
         "error": "錯誤",
         "gracefulShutdown": "我們的服務目前關閉維護中，請稍後再試。",

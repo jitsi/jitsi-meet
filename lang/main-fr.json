@@ -213,7 +213,6 @@
     "e2eeLabel": "Activer le chiffrement de Bout-en-Bout",
     "e2eeWarning": "ATTENTION : Tous les participants de cette réunion ne semblent pas prendre en charge le chiffrement de Bout-en-Bout. Si vous activez le chiffrement, ils ne pourront ni vous voir, ni vous entendre.",
     "enterDisplayName": "Merci de saisir votre nom ici",
-    "enterDisplayNameToJoin": "Merci de saisir votre nom pour rejoindre",
     "embedMeeting": "Intégrer la réunion",
     "error": "Erreur",
     "gracefulShutdown": "Notre service est actuellement en maintenance. Veuillez réessayer plus tard.",

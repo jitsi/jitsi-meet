@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
-import { Icon, IconCheck, IconExclamation } from '../../../base/icons';
+import { Icon, IconCheckSolid, IconExclamation } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import {
     getDeviceStatusType,
@@ -38,11 +38,11 @@ export type Props = {
 const iconMap = {
     warning: {
         src: IconExclamation,
-        className: 'prejoin-preview-status--warning'
+        className: 'device-icon--warning'
     },
     ok: {
-        src: IconCheck,
-        className: 'prejoin-preview-status--ok'
+        src: IconCheckSolid,
+        className: 'device-icon--ok'
     }
 };
 
@@ -57,15 +57,14 @@ function DeviceStatus({ deviceStatusType, deviceStatusText, rawError, t }: Props
 
     return (
         <div
-            className = { `prejoin-preview-status ${className}` }
+            className = 'device-status'
             role = 'alert'
             tabIndex = { -1 }>
             <Icon
-                className = 'prejoin-preview-icon'
+                className = { `device-icon ${className}` }
                 size = { 16 }
                 src = { src } />
             <span
-                className = 'prejoin-preview-error-desc'
                 role = 'heading'>
                 {t(deviceStatusText)}
             </span>

@@ -2,6 +2,8 @@
 
 import React from 'react';
 
+import { getDisplayName } from '../../../../base/settings';
+import { Avatar } from '../../../avatar';
 import { Video } from '../../../media';
 import { connect } from '../../../redux';
 import { getLocalVideoTrack } from '../../../tracks';
@@ -12,6 +14,11 @@ export type Props = {
      * Flag controlling whether the video should be flipped or not.
      */
     flipVideo: boolean,
+
+    /**
+     * The name of the user that is about to join.
+     */
+     name: string,
 
     /**
      * Flag signaling the visibility of camera preview.
@@ -31,20 +38,27 @@ export type Props = {
  * @returns {ReactElement}
  */
 function Preview(props: Props) {
-    const { videoMuted, videoTrack, flipVideo } = props;
+    const { flipVideo, name, videoMuted, videoTrack } = props;
     const className = flipVideo ? 'flipVideoX' : '';
 
-    if (!videoMuted && videoTrack) {
-        return (
-            <div id = 'preview'>
-                <Video
-                    className = { className }
-                    videoTrack = {{ jitsiTrack: videoTrack }} />
-            </div>
-        );
-    }
-
-    return null;
+    return (
+        <div id = 'preview'>
+            {!videoMuted && videoTrack
+                ? (
+                    <Video
+                        className = { className }
+                        videoTrack = {{ jitsiTrack: videoTrack }} />
+                )
+                : (
+                    <Avatar
+                        className = 'premeeting-screen-avatar'
+                        displayName = { name }
+                        dynamicColor = { false }
+                        participantId = 'local'
+                        size = { 180 } />
+                )}
+        </div>
+    );
 }
 
 /**
@@ -55,8 +69,11 @@ function Preview(props: Props) {
  * @returns {Props}
  */
 function _mapStateToProps(state, ownProps) {
+    const name = getDisplayName(state);
+
     return {
         flipVideo: state['features/base/settings'].localFlipX,
+        name,
         videoMuted: ownProps.videoTrack ? ownProps.videoMuted : state['features/base/media'].video.muted,
         videoTrack: ownProps.videoTrack || (getLocalVideoTrack(state['features/base/tracks']) || {}).jitsiTrack
     };

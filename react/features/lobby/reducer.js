@@ -8,6 +8,7 @@ import {
     KNOCKING_PARTICIPANT_LEFT,
     SET_KNOCKING_STATE,
     SET_LOBBY_MODE_ENABLED,
+    SET_LOBBY_VISIBILITY,
     SET_PASSWORD_JOIN_FAILED
 } from './actionTypes';
 
@@ -15,6 +16,7 @@ const DEFAULT_STATE = {
     knocking: false,
     knockingParticipants: [],
     lobbyEnabled: false,
+    lobbyVisible: false,
     passwordJoinFailed: false
 };
 
@@ -52,6 +54,11 @@ ReducerRegistry.register('features/lobby', (state = DEFAULT_STATE, action) => {
         return {
             ...state,
             lobbyEnabled: action.enabled
+        };
+    case SET_LOBBY_VISIBILITY:
+        return {
+            ...state,
+            lobbyVisible: action.visible
         };
     case SET_PASSWORD:
         return {

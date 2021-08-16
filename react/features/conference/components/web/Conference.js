@@ -15,6 +15,7 @@ import { Filmstrip } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
 import { KnockingParticipantList, LobbyScreen } from '../../../lobby';
+import { getIsLobbyVisible } from '../../../lobby/functions';
 import { ParticipantsPane } from '../../../participants-pane/components/web';
 import { getParticipantsPaneOpen } from '../../../participants-pane/functions';
 import { Prejoin, isPrejoinPageVisible } from '../../../prejoin';
@@ -71,11 +72,6 @@ type Props = AbstractProps & {
     _backgroundAlpha: number,
 
     /**
-     * Returns true if the 'lobby screen' is visible.
-     */
-    _isLobbyScreenVisible: boolean,
-
-    /**
      * If participants pane is visible or not.
      */
     _isParticipantsPaneVisible: boolean,
@@ -95,6 +91,11 @@ type Props = AbstractProps & {
      * Name for this conference room.
      */
     _roomName: string,
+
+    /**
+     * If lobby page is visible or not.
+     */
+     _showLobby: boolean,
 
     /**
      * If prejoin page is visible or not.
@@ -207,9 +208,9 @@ class Conference extends AbstractConference<Props, *> {
      */
     render() {
         const {
-            _isLobbyScreenVisible,
             _isParticipantsPaneVisible,
             _layoutClassName,
+            _showLobby,
             _showPrejoin
         } = this.props;
 
@@ -237,7 +238,7 @@ class Conference extends AbstractConference<Props, *> {
                         <Filmstrip />
                     </div>
 
-                    { _showPrejoin || _isLobbyScreenVisible || <Toolbox /> }
+                    { _showPrejoin || _showLobby || <Toolbox /> }
                     <Chat />
 
                     { this.renderNotificationsContainer() }
@@ -245,7 +246,7 @@ class Conference extends AbstractConference<Props, *> {
                     <CalleeInfoContainer />
 
                     { _showPrejoin && <Prejoin />}
-
+                    { _showLobby && <LobbyScreen />}
                 </div>
                 <ParticipantsPane />
             </div>
@@ -373,11 +374,11 @@ function _mapStateToProps(state) {
     return {
         ...abstractMapStateToProps(state),
         _backgroundAlpha: backgroundAlpha,
-        _isLobbyScreenVisible: state['features/base/dialog']?.component === LobbyScreen,
         _isParticipantsPaneVisible: getParticipantsPaneOpen(state),
         _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state)],
         _mouseMoveCallbackInterval: mouseMoveCallbackInterval,
         _roomName: getConferenceNameForTitle(state),
+        _showLobby: getIsLobbyVisible(state),
         _showPrejoin: isPrejoinPageVisible(state)
     };
 }

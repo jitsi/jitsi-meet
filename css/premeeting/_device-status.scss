@@ -1,0 +1,35 @@
+.device {
+    &-status {
+        align-items: center;
+        align-self: stretch;
+        color: #fff;
+        display: flex;
+        font-size: 14px;
+        font-weight: 400;
+        justify-content: center;
+        line-height: 20px;
+        margin-top: 8px;
+        padding: 6px;
+        text-align: center;
+    }
+
+    &-icon {
+        background-position: center;
+        background-repeat: no-repeat;
+        display: inline-block;
+        height: 16px;
+        margin-right: 10px;
+        width: 16px;
+
+        &--warning {
+            svg path {
+                fill: rgba(241, 173, 51, 1);
+            }
+        }
+        &--ok {
+            svg path {
+                fill: #189b55;
+            }
+        }
+    }
+}

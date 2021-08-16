@@ -213,14 +213,3 @@ export function getConnectionData(state: Object) {
         connectionDetails: []
     };
 }
-
-/**
- * Returns if url sharing is enabled in interface configuration.
- *
- * @returns {boolean}
- */
-export function allowUrlSharing() {
-    return typeof interfaceConfig === 'undefined'
-        || typeof interfaceConfig.SHARING_FEATURES === 'undefined'
-        || (interfaceConfig.SHARING_FEATURES.length && interfaceConfig.SHARING_FEATURES.indexOf('url') > -1);
-}

@@ -21,6 +21,11 @@ export const SET_LOBBY_MODE_ENABLED = 'SET_LOBBY_MODE_ENABLED';
 export const SET_KNOCKING_STATE = 'SET_KNOCKING_STATE';
 
 /**
+ * Action type to set the lobby visibility.
+ */
+export const SET_LOBBY_VISIBILITY = 'TOGGLE_LOBBY_VISIBILITY';
+
+/**
  * Action type to set the password join failed status.
  */
 export const SET_PASSWORD_JOIN_FAILED = 'SET_PASSWORD_JOIN_FAILED';

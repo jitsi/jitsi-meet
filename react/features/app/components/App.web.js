@@ -43,9 +43,11 @@ export class App extends AbstractApp {
      */
     _renderDialogContainer() {
         return (
-            <AtlasKitThemeProvider mode = 'dark'>
-                <DialogContainer />
-            </AtlasKitThemeProvider>
+            <JitsiThemeProvider>
+                <AtlasKitThemeProvider mode = 'dark'>
+                    <DialogContainer />
+                </AtlasKitThemeProvider>
+            </JitsiThemeProvider>
         );
     }
 }

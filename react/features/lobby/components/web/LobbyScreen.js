@@ -20,11 +20,13 @@ class LobbyScreen extends AbstractLobbyScreen {
      * @inheritdoc
      */
     render() {
-        const { showCopyUrlButton, t } = this.props;
+        const { _deviceStatusVisible, showCopyUrlButton, t } = this.props;
 
         return (
             <PreMeetingScreen
+                className = 'lobby-screen'
                 showCopyUrlButton = { showCopyUrlButton }
+                showDeviceStatus = { _deviceStatusVisible }
                 title = { t(this._getScreenTitleKey()) }>
                 { this._renderContent() }
             </PreMeetingScreen>
@@ -62,7 +64,7 @@ class LobbyScreen extends AbstractLobbyScreen {
      */
     _renderJoining() {
         return (
-            <div className = 'container'>
+            <div className = 'lobby-screen-content'>
                 <div className = 'spinner'>
                     <LoadingIndicator size = 'large' />
                 </div>
@@ -138,7 +140,7 @@ class LobbyScreen extends AbstractLobbyScreen {
                     onClick = { this._onJoinWithPassword }
                     testId = 'lobby.passwordJoinButton'
                     type = 'primary'>
-                    { t('lobby.passwordJoinButton') }
+                    { t('prejoin.joinMeeting') }
                 </ActionButton>
                 <ActionButton
                     onClick = { this._onSwitchToKnockMode }
