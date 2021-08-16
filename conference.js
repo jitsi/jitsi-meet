@@ -44,7 +44,8 @@ import {
     lockStateChanged,
     onStartMutedPolicyChanged,
     p2pStatusChanged,
-    sendLocalParticipant
+    sendLocalParticipant,
+    nonParticipantMessageReceived
 } from './react/features/base/conference';
 import { getReplaceParticipant } from './react/features/base/config/functions';
 import {
@@ -2192,6 +2193,10 @@ export default {
                     }
                 }
             });
+
+        room.on(
+            JitsiConferenceEvents.NON_PARTICIPANT_MESSAGE_RECEIVED,
+            (...args) => APP.store.dispatch(nonParticipantMessageReceived(...args)));
 
         room.on(
             JitsiConferenceEvents.LOCK_STATE_CHANGED,

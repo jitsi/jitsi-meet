@@ -1,7 +1,7 @@
 // @flow
 
+import { NON_PARTICIPANT_MESSAGE_RECEIVED } from '../base/conference';
 import { MiddlewareRegistry } from '../base/redux';
-import { ENDPOINT_MESSAGE_RECEIVED } from '../subtitles';
 
 import { UPDATE_BREAKOUT_ROOMS } from './actionTypes';
 import { moveToRoom } from './actions';
@@ -19,7 +19,7 @@ import {
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case ENDPOINT_MESSAGE_RECEIVED:
+    case NON_PARTICIPANT_MESSAGE_RECEIVED:
         _handleEndpointMessage(store, action);
         break;
     }
@@ -28,18 +28,18 @@ MiddlewareRegistry.register(store => next => action => {
 });
 
 /**
- * Handles {@code ENDPOINT_MESSAGE_RECEIVED} actions for the breakout-rooms feature.
+ * Handles {@code NON_PARTICIPANT_MESSAGE_RECEIVED} actions for the breakout-rooms feature.
  *
  * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
- * @param {Action} action - The redux action {@code ENDPOINT_MESSAGE_RECEIVED}
+ * @param {Action} action - The redux action {@code NON_PARTICIPANT_MESSAGE_RECEIVED}
  * which is being dispatched in the specified {@code store}.
  * @returns {void}
  */
 function _handleEndpointMessage(store, action) {
-    const { json, participant } = action;
+    const { json } = action;
 
-    if (json && participant?._id === 'focus') {
+    if (json) {
         switch (json.type) {
         case JSON_TYPE_UPDATE_BREAKOUT_ROOMS: {
             const { nextIndex, rooms } = json;

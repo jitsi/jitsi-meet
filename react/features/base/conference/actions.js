@@ -44,7 +44,8 @@ import {
     SET_PASSWORD_FAILED,
     SET_ROOM,
     SET_PENDING_SUBJECT_CHANGE,
-    SET_START_MUTED_POLICY
+    SET_START_MUTED_POLICY,
+    NON_PARTICIPANT_MESSAGE_RECEIVED
 } from './actionTypes';
 import {
     AVATAR_URL_COMMAND,
@@ -171,6 +172,10 @@ function _addConferenceListeners(conference, dispatch, state) {
     conference.on(
         JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
         id => dispatch(dominantSpeakerChanged(id, conference)));
+
+    conference.on(
+        JitsiConferenceEvents.NON_PARTICIPANT_MESSAGE_RECEIVED,
+        (...args) => dispatch(nonParticipantMessageReceived(...args)));
 
     conference.on(
         JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
@@ -519,6 +524,25 @@ export function lockStateChanged(conference: Object, locked: boolean) {
         type: LOCK_STATE_CHANGED,
         conference,
         locked
+    };
+}
+
+/**
+ * Signals that a non participant endpoint message has been received.
+ *
+ * @param {string} id - The resource id of the sender.
+ * @param {Object} json - The json carried by the endpoint message.
+ * @returns {{
+ *      type: NON_PARTICIPANT_MESSAGE_RECEIVED,
+ *      id: Object,
+ *      json: Object
+ * }}
+ */
+export function nonParticipantMessageReceived(id: String, json: Object) {
+    return {
+        type: NON_PARTICIPANT_MESSAGE_RECEIVED,
+        id,
+        json
     };
 }
 
