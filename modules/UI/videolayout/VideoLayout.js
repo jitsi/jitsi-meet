@@ -7,7 +7,10 @@ import {
     getPinnedParticipant,
     getParticipantById
 } from '../../../react/features/base/participants';
-import { getTrackByMediaTypeAndParticipant } from '../../../react/features/base/tracks';
+import {
+    getLastTrackByMediaTypeAndParticipant,
+    getTrackByMediaTypeAndParticipant
+} from '../../../react/features/base/tracks';
 
 import LargeVideoManager from './LargeVideoManager';
 import { VIDEO_CONTAINER_TYPE } from './VideoContainer';
@@ -177,7 +180,7 @@ const VideoLayout = {
         const currentContainerType = largeVideo.getCurrentContainerType();
         const isOnLarge = this.isCurrentlyOnLarge(id);
         const state = APP.store.getState();
-        const videoTrack = getTrackByMediaTypeAndParticipant(state['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
+        const videoTrack = getLastTrackByMediaTypeAndParticipant(state['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
         const videoStream = videoTrack?.jitsiTrack;
 
         if (isOnLarge && !forceUpdate
