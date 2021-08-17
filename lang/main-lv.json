@@ -29,7 +29,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Pievienot sapulces telpas saiti",
-        "confirmAddLink": "Vai vēlaties pievienot Jitsi saiti šim kalendāra notikumam?",
+        "confirmAddLink": "Vai vēlaties pievienot Next Level saiti šim kalendāra notikumam?",
         "error": {
             "appConfiguration": "Nepareizi iestatīta kalendāra integrācija.",
             "generic": "Gadījās ķibele. Pārbaudiet kalendāra iestatījumus vai pamēģiniet to atsvaidzināt.",
@@ -297,7 +297,7 @@
         "answer": "Atbilde",
         "audioCallTitle": "Ienākošs AUDIO zvans",
         "decline": "Noraidīt",
-        "productLabel": "no Jitsi Meet",
+        "productLabel": "no Next Level Meet",
         "videoCallTitle": "Ienākošs VIDEO zvans"
     },
     "info": {

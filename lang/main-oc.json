@@ -44,7 +44,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Ajustar un ligam de reünion",
-        "confirmAddLink": "Volètz ajustar un ligam Jitsi cap a aqueste eveniment ?",
+        "confirmAddLink": "Volètz ajustar un ligam Next Level cap a aqueste eveniment ?",
         "error": {
             "appConfiguration": "L’integracion del calendièr es pas corrèctament configurada.",
             "generic": "Una error s’es producha. Verificatz vòstres paramètres de calendièr o ensajatz de l’actualizar.",
@@ -336,7 +336,7 @@
         "answer": "Uèi",
         "audioCallTitle": "Sonada entranta",
         "decline": "Regetar",
-        "productLabel": "de Jitsi Meet estant",
+        "productLabel": "de Next Level Meet estant",
         "videoCallTitle": "Sonada vidèo entranta"
     },
     "info": {
@@ -498,7 +498,7 @@
         "newDeviceAction": "Utilizar",
         "oldElectronClientDescription3": " ara !",
         "oldElectronClientDescription2": "darrièra compilacion",
-        "oldElectronClientDescription1": "Sembla qu’utilizatz una version anciana del client Jitsi Meet qu’es conegut per conténer de problèmas de seguretat. Mercés de vos assegurar de metre a jorn ",
+        "oldElectronClientDescription1": "Sembla qu’utilizatz una version anciana del client Next Level Meet qu’es conegut per conténer de problèmas de seguretat. Mercés de vos assegurar de metre a jorn ",
         "OldElectronAPPTitle": "Problèma de seguretat !"
     },
     "passwordSetRemotely": "causit per qualqu'un mai",
@@ -830,11 +830,11 @@
         "title": "Conferéncias vidèo securizadas amb plen de foncionalitats e complètament gratuitas",
         "getHelp": "Obténer d’ajuda",
         "startMeeting": "Començar la reünion",
-        "jitsiOnMobile": "Jitsi sus mobil –telecargatz nòstra aplicacion e començatz de conferéncias de pertot",
+        "jitsiOnMobile": "Next Level sus mobil –telecargatz nòstra aplicacion e començatz de conferéncias de pertot",
         "moderatedMessage": "O <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">reservatz una URL de conferéncia</a> a l'avança ont sètz l'unic moderator.",
-        "jitsiMeet": "Jitsi Meet",
+        "jitsiMeet": "Next Level Meet",
         "secureMeetings": "Conferéncias seguras e de nauta qualitat",
-        "headerTitle": "Jitsi Meet"
+        "headerTitle": "Next Level Meet"
     },
     "helpView": {
         "header": "Centre d’ajuda"

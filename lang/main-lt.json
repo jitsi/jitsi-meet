@@ -29,7 +29,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Įdėti susitikimo nuorodą",
-        "confirmAddLink": "Ar norite pridėti Jitsi nuorodą į šį įvykį?",
+        "confirmAddLink": "Ar norite pridėti Next Level nuorodą į šį įvykį?",
         "error": {
             "appConfiguration": "Kalendoriaus integracija nėra tinkamai sukonfigūruota.",
             "generic": "Įvyko klaida. Patikrinkite kalendoriaus nustatymus arba pabandykite įkelti kalendorių iš naujo.",
@@ -302,7 +302,7 @@
         "answer": "Atsiliepti",
         "audioCallTitle": "Gaunamas skambutis",
         "decline": "Atmesti",
-        "productLabel": "iš Jitsi Susitikimo",
+        "productLabel": "iš Next Level Susitikimo",
         "videoCallTitle": "Gaunamas vaizdo skambutis"
     },
     "info": {

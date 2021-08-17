@@ -42,7 +42,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Rnu aseɣwen n temlilit",
-        "confirmAddLink": "Tebɣiḍ ad ternuḍ aseɣwen n Jitsi i uneḍru-a?",
+        "confirmAddLink": "Tebɣiḍ ad ternuḍ aseɣwen n Next Level i uneḍru-a?",
         "error": {
             "appConfiguration": "Amsidef n uwitay ur yettuswel ara akken iwata.",
             "generic": "Tella-d tuccḍa. Ttxil-k·m senqed iɣewwaren n uwitay-inek·inem neɣ ɛreḍ asnirem n uwitay.",
@@ -320,7 +320,7 @@
         "answer": "Tiririt",
         "audioCallTitle": "Asiwel i ikcem-d",
         "decline": "Agwi",
-        "productLabel": "seg Jitsi Meet",
+        "productLabel": "seg Next Level Meet",
         "videoCallTitle": "Asiwel s tvidyut ikcem-d"
     },
     "info": {
@@ -481,7 +481,7 @@
         "newDeviceAudioTitle": "Ibenk amaynut n umeslaw yettwaf-d",
         "newDeviceAction": "Seqdec",
         "suboptimalBrowserWarning": "Nkukra ɣef termit-ik·im n temlilit ur tettili ara tgerrez da. Nettmuqul ttawilat s wamek ara nqeɛɛed aya, maca sya ɣer yimir ɛreḍ ad tesqedceḍ yiwen seg <a href='{{recommendedBrowserPageLink}}' target='_blank'>yiminigen yettusefraken s lekmal</a>.",
-        "oldElectronClientDescription1": "Akka i nettwali tesseqdaceḍ lqem aqbur n umsaɣ Jitsi Meet i yesɛan uguren n tɣellist yettwassnen. Ma ulac aɣilif ḍmen ad tleqqmeḍ ",
+        "oldElectronClientDescription1": "Akka i nettwali tesseqdaceḍ lqem aqbur n umsaɣ Next Level Meet i yesɛan uguren n tɣellist yettwassnen. Ma ulac aɣilif ḍmen ad tleqqmeḍ ",
         "OldElectronAPPTitle": "Ur teǧhid ara tɣellist!",
         "oldElectronClientDescription2": "lqem akk aneggaru",
         "oldElectronClientDescription3": " tura!"

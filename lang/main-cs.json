@@ -44,7 +44,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Přidejte odkaz na setkání",
-        "confirmAddLink": "Chcete k této události přidat odkaz Jitsi?",
+        "confirmAddLink": "Chcete k této události přidat odkaz Next Level?",
         "error": {
             "appConfiguration": "Integrace kalendáře není správně nastavena.",
             "generic": "Došlo k chybě. Zkontrolujte nastavení kalendáře nebo zkuste obnovit kalendář.",
@@ -356,7 +356,7 @@
         "answer": "Odpovědět",
         "audioCallTitle": "Příchozí hovor",
         "decline": "OK",
-        "productLabel": "od Jitsi Meet",
+        "productLabel": "od Next Level Meet",
         "videoCallTitle": "Příchozí videohovor"
     },
     "info": {
@@ -545,7 +545,7 @@
         "newDeviceAction": "Použít",
         "newDeviceAudioTitle": "Detekováno nové zvukové zařízení",
         "newDeviceCameraTitle": "Detekována nová kamera",
-        "oldElectronClientDescription1": "Zdá se, že používáte zastaralou verzi klienta Jitsi Meet, který má známé bezpečnostní zranitelnosti. Aktualizujte prosím na ",
+        "oldElectronClientDescription1": "Zdá se, že používáte zastaralou verzi klienta Next Level Meet, který má známé bezpečnostní zranitelnosti. Aktualizujte prosím na ",
         "oldElectronClientDescription2": "nejnovější sestavení",
         "oldElectronClientDescription3": " ihned!",
         "passwordRemovedRemotely": "Jiný účastník odebral $t(lockRoomPassword)",
@@ -937,9 +937,9 @@
         "go": "ZAČÍT",
         "goSmall": "ZAČÍT",
         "headerSubtitle": "Bezpečné a kvalitní setkávání",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Next Level Meet",
         "info": "Informace o vytáčení",
-        "jitsiOnMobile": "Jitsi na mobilu – stáhněte si naše aplikace a spusťte hovor odkudkoliv",
+        "jitsiOnMobile": "Next Level na mobilu – stáhněte si naše aplikace a spusťte hovor odkudkoliv",
         "join": "VYTVOŘIT / PŘIPOJIT",
         "moderatedMessage": "Nebo si předem <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">rezervujte adresu setkání</a>, kde budete jediný moderátor.",
         "privacy": "Soukromí",

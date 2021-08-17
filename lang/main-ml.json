@@ -44,7 +44,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "ഒരു മീറ്റിംഗ് ലിങ്ക് ചേർക്കുക",
-        "confirmAddLink": "ഈ ഇവന്റിലേക്ക് Jitsi ലിങ്ക് ചേർക്കാൻ നിങ്ങൾ ആഗ്രഹിക്കുന്നുണ്ടോ?",
+        "confirmAddLink": "ഈ ഇവന്റിലേക്ക് Next Level ലിങ്ക് ചേർക്കാൻ നിങ്ങൾ ആഗ്രഹിക്കുന്നുണ്ടോ?",
         "error": {
             "appConfiguration": "Calendar integration is not properly configured.",
             "generic": "An error has occurred. Please check your calendar settings or try refreshing the calendar.",
@@ -331,7 +331,7 @@
         "answer": "കോളിന് മറുപടി നൽകുക",
         "audioCallTitle": "ഇൻകമിംഗ് കോൾ",
         "decline": "നിരസിക്കുക",
-        "productLabel": "Jitsi Meet-ൽ നിന്ന്",
+        "productLabel": "Next Level Meet-ൽ നിന്ന്",
         "videoCallTitle": "ഇൻകമിംഗ് വീഡിയോ കോൾ"
     },
     "info": {
@@ -492,7 +492,7 @@
         "newDeviceAudioTitle": "New audio device detected",
         "newDeviceAction": "Use",
         "OldElectronAPPTitle": "Security vulnerability!",
-        "oldElectronClientDescription1": "You appear to be using an old version of the Jitsi Meet client which has known security vulnerabilities. Please make sure you update to our ",
+        "oldElectronClientDescription1": "You appear to be using an old version of the Next Level Meet client which has known security vulnerabilities. Please make sure you update to our ",
         "oldElectronClientDescription2": "latest build",
         "oldElectronClientDescription3": " now!"
     },

@@ -29,7 +29,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Agiunghe unu ligàmene a s'addòbiu",
-        "confirmAddLink": "Boles agiùnghere unu ligàmene de Jitsi a custu addòbiu?",
+        "confirmAddLink": "Boles agiùnghere unu ligàmene de Next Level a custu addòbiu?",
         "error": {
             "appConfiguration": "S'integratzione de su calendàriu no est cunfigurada bene.",
             "generic": "Faddina. Controlla sa cunfiguratzione de calendàriu o proa de atualizare su calendàriu.",
@@ -303,7 +303,7 @@
         "answer": "Risponde",
         "audioCallTitle": "Mutida in intrada",
         "decline": "Iscarta",
-        "productLabel": "dae Jitsi Meet",
+        "productLabel": "dae Next Level Meet",
         "videoCallTitle": "Mutida de vìdeu in intrada"
     },
     "info": {

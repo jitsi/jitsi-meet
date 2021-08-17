@@ -29,7 +29,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Dodaj povezavo na srečanje",
-        "confirmAddLink": "Ali želite dodati Jitsi povezavo za ta dogodek?",
+        "confirmAddLink": "Ali želite dodati Next Level povezavo za ta dogodek?",
         "error": {
             "appConfiguration": "Integracija koledarja ni pravilno nastavljena.",
             "generic": "Prišlo je do napake. Prosimo preverite nastavitve svojega koledarja ali poskusite koledar osvežiti.",
@@ -312,7 +312,7 @@
         "answer": "Odgovori",
         "audioCallTitle": "Dohodni klic",
         "decline": "Zavrni",
-        "productLabel": "iz Jitsi Meet",
+        "productLabel": "iz Next Level Meet",
         "videoCallTitle": "Dohodni video klic"
     },
     "info": {
@@ -466,7 +466,7 @@
         "newDeviceAction": "Uporabi",
         "newDeviceAudioTitle": "Zaznana je bila nova zvočna naprava",
         "newDeviceCameraTitle": "Zaznana je bila nova kamera",
-        "oldElectronClientDescription1": "You appear to be using an old version of the Jitsi Meet client which has known security vulnerabilities. Please make sure you update to our ",
+        "oldElectronClientDescription1": "You appear to be using an old version of the Next Level Meet client which has known security vulnerabilities. Please make sure you update to our ",
         "oldElectronClientDescription2": "latest build",
         "oldElectronClientDescription3": " now!",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) je odstranil drug udeleženec srečanja",

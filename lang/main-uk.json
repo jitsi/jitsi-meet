@@ -43,7 +43,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Додати посилання на конференцію",
-        "confirmAddLink": "Додати посилання на Jitsi до цієї події?",
+        "confirmAddLink": "Додати посилання на Next Level до цієї події?",
         "error": {
             "appConfiguration": "Неправильно налаштовано інтеграцію календаря.",
             "generic": "Помилка: будь ласка, перевірте налаштування календаря або спробуйте перевантажити його.",
@@ -306,7 +306,7 @@
         "WaitForHostMsgWOk": "Конференція <b>{{room}}</b> ще не почалася. Якщо ви є організатором, будь ласка, клацніть на кнопку \"Гаразд\" для авторизації або дочекайтеся організатора.",
         "WaitingForHost": "Чекаємо на організатора...",
         "Yes": "Так",
-        "yourEntireScreen": "На повний екран"  ,      
+        "yourEntireScreen": "На повний екран"  ,
         "add": "Добавити",
         "copied": "Скопійовано",
         "e2eeLabel": "E2EE ключ",
@@ -346,7 +346,7 @@
         "answer": "Відповідь",
         "audioCallTitle": "Вхідний виклик",
         "decline": "Відхилити",
-        "productLabel": "з Jitsi Meet",
+        "productLabel": "з Next Level Meet",
         "videoCallTitle": "Вхідний відеовиклик"
     },
     "info": {
@@ -508,7 +508,7 @@
     "me": "я",
     "notify": {
         "OldElectronAPPTitle": "Уразливість в системі безпеки!",
-        "oldElectronClientDescription1": "Схоже, ви використовуєте стару версію клієнта Jitsi Meet, яка має відомі уразливості в системі безпеки. Переконайтеся, що ви оновились до нашої",
+        "oldElectronClientDescription1": "Схоже, ви використовуєте стару версію клієнта Next Level Meet, яка має відомі уразливості в системі безпеки. Переконайтеся, що ви оновились до нашої",
         "oldElectronClientDescription2": "останньої версії",
         "oldElectronClientDescription3": " зараз!",
         "connectedOneMember": "{{name}} приєднався до конференції",

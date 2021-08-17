@@ -44,7 +44,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Προσθέστε έναν σύνδεσμο συνάντησης",
-        "confirmAddLink": "Θέλετε να προσθέσετε έναν σύνδεσμο Jitsi σε αυτό το γεγονός;",
+        "confirmAddLink": "Θέλετε να προσθέσετε έναν σύνδεσμο Next Level σε αυτό το γεγονός;",
         "error": {
             "appConfiguration": "Η ενσωμάτωση ημερολόγιου δεν έχει ρυθμιστεί σωστά.",
             "generic": "Παρουσιάστηκε ένα σφάλμα. Παρακαλείστε να ελέγξετε τις ρυθμίσεις ημερολογίου σας ή να δοκιμάσετε να ανανεώσετε το ημερολόγιο.",
@@ -324,7 +324,7 @@
         "answer": "Απάντηση",
         "audioCallTitle": "Εισερχόμενη κλήση",
         "decline": "Απόρριψη",
-        "productLabel": "από το Jitsi Meet",
+        "productLabel": "από το Next Level Meet",
         "videoCallTitle": "Εισερχόμενη κλήση βίντεο"
     },
     "info": {
@@ -485,7 +485,7 @@
         "newDeviceAudioTitle": "Εντοπίστηκε νέα συσκευή ήχου",
         "newDeviceAction": "Χρήση",
         "OldElectronAPPTitle": "Θέμα ευπάθειας ασφαλείας!",
-        "oldElectronClientDescription1": "Φαίνεται ότι χρησιμοποιείτε μια παλιά έκδοση του πελάτη Jitsi Meet που έχει γνωστά θέματα ευπάθειας ασφαλείας. Παρακαλώ βεβαιωθείτε ότι έχετε την ενημερωμένη έκδοση για ",
+        "oldElectronClientDescription1": "Φαίνεται ότι χρησιμοποιείτε μια παλιά έκδοση του πελάτη Next Level Meet που έχει γνωστά θέματα ευπάθειας ασφαλείας. Παρακαλώ βεβαιωθείτε ότι έχετε την ενημερωμένη έκδοση για ",
         "oldElectronClientDescription2": "πρόσφατη έκδοση μας",
         "oldElectronClientDescription3": " τώρα!"
     },

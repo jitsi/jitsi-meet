@@ -28,7 +28,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Dodajte vezu sastanka",
-        "confirmAddLink": "Želite li dodati Jitsi vezu u ovaj događaj?",
+        "confirmAddLink": "Želite li dodati Next Level vezu u ovaj događaj?",
         "error": {
             "appConfiguration": "Integracija kalendara nije ispravno konfigurirana.",
             "generic": "Došlo je do pogreške. Provjerite postavke kalendara ili pokušajte osvježiti kalendar.",

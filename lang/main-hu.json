@@ -29,7 +29,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Értekezlet hivatkozásának hozzáadása",
-        "confirmAddLink": "Hozzáadható egy Jitsi hivatkozás az eseményhez?",
+        "confirmAddLink": "Hozzáadható egy Next Level hivatkozás az eseményhez?",
         "error": {
             "appConfiguration": "A naptárintegráció nincs helyesen konfigurálva.",
             "generic": "Hiba történt. Ellenőrizze a naptár beállításait vagy próbálja frissíteni a naptárat.",
@@ -299,7 +299,7 @@
         "answer": "Válasz",
         "audioCallTitle": "Bejövő hívás",
         "decline": "Elutasítás",
-        "productLabel": "a Jitsi Meettől",
+        "productLabel": "a Next Level Meettől",
         "videoCallTitle": "Bejövő videohívás"
     },
     "info": {

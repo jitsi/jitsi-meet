@@ -29,7 +29,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Bæta við fundartengli",
-        "confirmAddLink": "Viltu bæta við Jitsi-tengli í þennan atburð?",
+        "confirmAddLink": "Viltu bæta við Next Level-tengli í þennan atburð?",
         "error": {
             "appConfiguration": "Samþætting dagatals er ekki rétt uppsett.",
             "generic": "Villa kom upp. Athugaðu stillingar dagatalsins eða prófaðu að endurlesa það.",
@@ -303,7 +303,7 @@
         "answer": "Svara",
         "audioCallTitle": "Innhringing",
         "decline": "Hunsa",
-        "productLabel": "frá Jitsi Meet",
+        "productLabel": "frá Next Level Meet",
         "videoCallTitle": "Innhringing myndsamtals"
     },
     "info": {

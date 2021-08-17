@@ -39,7 +39,7 @@
     "audioOnly": { "audioOnly": "Banda-zabalera txikia" },
     "calendarSync": {
         "addMeetingURL": "Bileraren esteka gehitu",
-        "confirmAddLink": "Jitsi esteka gertaera honetara gehitu nahi duzu?",
+        "confirmAddLink": "Next Level esteka gertaera honetara gehitu nahi duzu?",
         "error": {
             "appConfiguration": "Egutegiaren integrazioa ez dago ondo konfiguratuta.",
             "generic": "Errore bat gertatu da. Egiaztatu zure egutegiaren ezarpenak edo saiatu egutegia eguneratzen.",
@@ -367,7 +367,7 @@
         "answer": "Erantzun",
         "audioCallTitle": "Sarrerako deia",
         "decline": "Baztertu",
-        "productLabel": "Jitsi Meet-etik",
+        "productLabel": "Next Level Meet-etik",
         "videoCallTitle": "Bideo-deia sartzen"
     },
     "info": {
@@ -535,7 +535,7 @@
         "newDeviceAudioTitle": "Audio-gailu berria hauteman da",
         "newDeviceAction": "Erabilera",
         "OldElectronAPPTitle": "Zaharkitutako aplikazioa",
-        "oldElectronClientDescription1": "Segurtasun arazoak dituen Jitsi Meet aplikazioa erabiltzen arai zara. Eguneratu ezazu",
+        "oldElectronClientDescription1": "Segurtasun arazoak dituen Next Level Meet aplikazioa erabiltzen arai zara. Eguneratu ezazu",
         "oldElectronClientDescription2": "bertsio berriagora",
         "oldElectronClientDescription3": "ORAIN!",
         "groupTitle": "Jakinarazpenak"
@@ -945,11 +945,11 @@
         "getHelp": "Lortu laguntza",
         "go": "JOAN",
         "goSmall": "JOAN",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Next Level Meet",
         "headerSubtitle": "Secure and high quality meetings",
         "info": "Informazioa",
         "join": "SORTU / SARTU",
-        "jitsiOnMobile": "Jitsi eramangarrian \u2013 deskargatu gure aplikazioak eta hasi bilerak edonondik",
+        "jitsiOnMobile": "Next Level eramangarrian \u2013 deskargatu gure aplikazioak eta hasi bilerak edonondik",
         "mobileDownLoadLinkIos": "Deskargatu iOS aplikazioa",
         "mobileDownLoadLinkAndroid": "Deskargatu Android aplikazioa",
         "mobileDownLoadLinkFDroid": "Deskargatu aplikazioa F-Droid-etik",
@@ -969,7 +969,7 @@
         "logo": {
             "calendar": "Egutegiaren logoa",
             "microsoftLogo": "Microsoften logo",
-            "logoDeepLinking": "Jitsi meeten logo",
+            "logoDeepLinking": "Next Level meeten logo",
             "desktopPreviewThumbnail": "Aurrebistaren iruditxoa",
             "googleLogo": "Googleren logoa",
             "policyLogo": "Politikaren logoa"

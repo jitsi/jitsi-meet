@@ -44,7 +44,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Pridať odkaz na konferenciu",
-        "confirmAddLink": "Chcete pridal Jitsi odkaz do tejto udalosti?",
+        "confirmAddLink": "Chcete pridal Next Level odkaz do tejto udalosti?",
         "error": {
             "appConfiguration": "Integrácia s kalendárom nie je správne nastavená.",
             "generic": "Stala sa chyba. Skontrolujte nastavenia kalendára a skúste obnoviť kalendár.",
@@ -494,7 +494,7 @@
         "newDeviceAudioTitle": "Bolo zistené nové audio zariadenie",
         "newDeviceAction": "Použiť",
         "OldElectronAPPTitle": "Bezpečnostná hrozba!",
-        "oldElectronClientDescription1": "Používate starú verziu klienta Jitsi Meet, ktorá má známe zraniteľnosti. Aktualizujte na ",
+        "oldElectronClientDescription1": "Používate starú verziu klienta Next Level Meet, ktorá má známe zraniteľnosti. Aktualizujte na ",
         "oldElectronClientDescription2": "najnovšiu verziu",
         "oldElectronClientDescription3": " teraz!"
     },

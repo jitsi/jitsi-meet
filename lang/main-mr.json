@@ -29,7 +29,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "मीटिंगचा दुवा जोडा",
-        "confirmAddLink": "आपण या कार्यक्रमास एक Jitsi  दुवा जोडू इच्छिता?",
+        "confirmAddLink": "आपण या कार्यक्रमास एक Next Level  दुवा जोडू इच्छिता?",
         "error": {
             "appConfiguration": "कॅलेंडर समाकलन योग्यरित्या कॉन्फिगर केलेले नाही.",
             "generic": "त्रुटी आढळली आहे. कृपया आपल्या कॅलेंडर सेटिंग्ज तपासा किंवा कॅलेंडर रीफ्रेश करा.",
@@ -308,7 +308,7 @@
         "answer": "उत्तर",
         "audioCallTitle": " कॉल येत आहे",
         "decline": "काढून टाकणे",
-        "productLabel": "Jitsi Meet पासून",
+        "productLabel": "Next Level Meet पासून",
         "videoCallTitle": "येणारा व्हिडिओ कॉल"
     },
     "info": {
@@ -475,7 +475,7 @@
     "passwordDigitsOnly": " पर्यंत {{number}} अंक",
     "poweredby": "द्वारा समर्थित",
     "prejoin": {
-       
+
         "audioAndVideoError": "ऑडिओ आणि व्हिडिओ त्रुटी:",
         "audioOnlyError": "ऑडिओ त्रुटी:",
         "audioTrackError": "ऑडिओ ट्रॅक तयार करू शकलो नाही.",
@@ -621,7 +621,7 @@
     },
     "toolbar": {
         "accessibilityLabel": {
-       
+
         },
         "addPeople": "आपल्या कॉलमध्ये लोकांना जोडा",
 "audioOnlyOff": "कमी बँडविड्थ मोड अक्षम करा",

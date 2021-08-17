@@ -45,7 +45,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Aggiungi un collegamento alla riunione",
-        "confirmAddLink": "Vuoi aggiungere un collegamento Jitsi a questo evento?",
+        "confirmAddLink": "Vuoi aggiungere un collegamento Next Level a questo evento?",
         "error": {
             "appConfiguration": "L'integrazione del calendario non è configurata in modo appropriato.",
             "generic": "È stato riscontrato un errore. Controllare le impostazioni del calendario o ricaricare la pagina.",
@@ -360,7 +360,7 @@
         "answer": "Rispondi",
         "audioCallTitle": "Chiamata in arrivo",
         "decline": "Chiudi",
-        "productLabel": "da Jitsi Meet",
+        "productLabel": "da Next Level Meet",
         "videoCallTitle": "Videochiamata in arrivo"
     },
     "info": {
@@ -525,7 +525,7 @@
         "newDeviceAudioTitle": "Trovata nuova origine audio",
         "newDeviceAction": "OK, usala",
         "OldElectronAPPTitle": "Falla di sicurezza!",
-        "oldElectronClientDescription1": "Sembri stare usando una versione obsoleta del client Jitsi Meet che ha dei problemi di sicurezza noti. Assicurati di aggiornarla presso il nostro ",
+        "oldElectronClientDescription1": "Sembri stare usando una versione obsoleta del client Next Level Meet che ha dei problemi di sicurezza noti. Assicurati di aggiornarla presso il nostro ",
         "oldElectronClientDescription2": "ultima build",
         "oldElectronClientDescription3": " ora!"
     },
@@ -900,7 +900,7 @@
         "connectionInfo": "Info connessione",
         "domute": "Disattiva audio",
         "domuteVideo": "Disattiva video",
-        "domuteOthers": "Disattiva audio di tutti gli altri",        
+        "domuteOthers": "Disattiva audio di tutti gli altri",
         "domuteVideoOfOthers": "Disattiva video di tutti gli altri",
         "flip": "Rifletti",
         "grantModerator": "Autorizza moderatore",
@@ -930,11 +930,11 @@
         "getHelp": "Trova aiuto",
         "go": "VAI",
         "goSmall": "VAI",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Next Level Meet",
         "headerSubtitle": "Riunioni sicure e di alta qualità",
         "info": "Informazioni chiamata",
         "join": "CREA / UNISCITI",
-        "jitsiOnMobile": "Jitsi su mobile – scarica le nostre app e dai inizio ad una riunione dovunque tu sia",
+        "jitsiOnMobile": "Next Level su mobile – scarica le nostre app e dai inizio ad una riunione dovunque tu sia",
         "moderatedMessage": "O <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">prepara una URL</a> in anticipo, per le riunioni di cui sei il moderatore.",
         "privacy": "Riservatezza",
         "recentList": "Recenti",

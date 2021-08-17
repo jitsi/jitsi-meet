@@ -44,7 +44,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "添加会议链接",
-        "confirmAddLink": "是否在此事件中添加Jitsi链接",
+        "confirmAddLink": "是否在此事件中添加Next Level链接",
         "error": {
             "appConfiguration": "配置错误",
             "generic": "发生错误。请检查日历设置或尝试刷新日历。",
@@ -331,7 +331,7 @@
         "answer": "应答",
         "audioCallTitle": "来电",
         "decline": "解除,离开",
-        "productLabel": "来自Jitsi Meet",
+        "productLabel": "来自Next Level Meet",
         "videoCallTitle": "视频来电"
     },
     "info": {
@@ -492,7 +492,7 @@
         "newDeviceAudioTitle": "检测到新音频设备",
         "newDeviceAction": "使用",
         "OldElectronAPPTitle": "安全漏洞！",
-        "oldElectronClientDescription1": "您似乎正在使用具有已知安全漏洞的Jitsi Meet客户端的旧版本。请确保您更新到最新版本",
+        "oldElectronClientDescription1": "您似乎正在使用具有已知安全漏洞的Next Level Meet客户端的旧版本。请确保您更新到最新版本",
         "oldElectronClientDescription2": "最新版本",
         "oldElectronClientDescription3": " 现在！"
     },

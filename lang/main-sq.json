@@ -44,7 +44,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Shtoni një lidhje takimi",
-        "confirmAddLink": "Doni të shtohet një lidhje Jitsi te kjo veprimtari?",
+        "confirmAddLink": "Doni të shtohet një lidhje Next Level te kjo veprimtari?",
         "error": {
             "appConfiguration": "Integrimi i kalendarëve s’është formësuar si duhet.",
             "generic": "Ndodhi një gabim. Ju lutemi, kontrolloni rregullimet për kalendarin tuaj, ose provoni të rifreskoni kalendarin.",
@@ -357,7 +357,7 @@
         "answer": "Përgjigjuni",
         "audioCallTitle": "Thirrje ardhëse",
         "decline": "Hidhe tej",
-        "productLabel": "nga Jitsi Meet",
+        "productLabel": "nga Next Level Meet",
         "videoCallTitle": "Thirrje ardhëse me video"
     },
     "info": {
@@ -519,7 +519,7 @@
         "newDeviceAudioTitle": "U pikas pajisje audio e re",
         "newDeviceAction": "Përdore",
         "OldElectronAPPTitle": "Cenueshmëri sigurie!",
-        "oldElectronClientDescription1": "Duket se përdorni një version të vjetër të klientit Jitsi Meet, i cili përmban cenueshmëri të ditura sigurie. Ju lutemi, siguroni përditësimin e tij me ",
+        "oldElectronClientDescription1": "Duket se përdorni një version të vjetër të klientit Next Level Meet, i cili përmban cenueshmëri të ditura sigurie. Ju lutemi, siguroni përditësimin e tij me ",
         "oldElectronClientDescription2": "montimin tonë më të ri",
         "oldElectronClientDescription3": " që tani!"
     },
@@ -909,11 +909,11 @@
         "getHelp": "Merrni ndihmë",
         "go": "SHKO",
         "goSmall": "SHKO",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Next Level Meet",
         "headerSubtitle": "Takime me siguri dhe me cilësi të lartë",
         "info": "Dial-in info",
         "join": "CREATE / JOIN",
-        "jitsiOnMobile": "Jitsi në celular – Shkarkoni aplikacione tona dhe nisni një takim prej ngado",
+        "jitsiOnMobile": "Next Level në celular – Shkarkoni aplikacione tona dhe nisni një takim prej ngado",
         "moderatedMessage": "Ose <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">rezervoni një URL takimi</a> paraprakisht, kur jeni i vetmi moderator.",
         "privacy": "Privatësi",
         "recentList": "Recent",

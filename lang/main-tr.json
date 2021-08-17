@@ -332,7 +332,7 @@
         "answer": "Cevapla",
         "audioCallTitle": "Gelen sesli arama",
         "decline": "Reddet",
-        "productLabel": "Jitsi Meet'den",
+        "productLabel": "Next Level Meet'den",
         "videoCallTitle": "Gelen görüntülü arama"
     },
     "info": {
@@ -493,7 +493,7 @@
         "newDeviceAudioTitle": "Yeni ses aygıtı algılandı",
         "newDeviceAction": "Kullan",
         "OldElectronAPPTitle": "Güvenlik açığı!",
-        "oldElectronClientDescription1": "Güvenlik açıkları bilinen Jitsi Meet istemcisinin eski bir sürümünü kullanıyor görünüyorsunuz. Lütfen güncellediğinizden emin olun.",
+        "oldElectronClientDescription1": "Güvenlik açıkları bilinen Next Level Meet istemcisinin eski bir sürümünü kullanıyor görünüyorsunuz. Lütfen güncellediğinizden emin olun.",
         "oldElectronClientDescription2": "son yapı",
         "oldElectronClientDescription3": " şimdi!"
 

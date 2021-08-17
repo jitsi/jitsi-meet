@@ -7,7 +7,7 @@
         "copyStream": "Kopiuj link transmisji na żywo",
         "countryNotSupported": "Nie obsługujemy jeszcze tej lokalizacji.",
         "countryReminder": "Dzwonisz spoza USA? Upewnij się, że zaczynasz od kodu kraju!",
-        "defaultEmail": "Domyślna poczta",        
+        "defaultEmail": "Domyślna poczta",
         "disabled": "Nie możesz zapraszać ludzi.",
         "failedToAdd": "Błąd dodawania uczestników",
         "footerText": "Wybieranie numeru jest wyłączone.",
@@ -44,7 +44,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Dodaj odnośnik do spotkania",
-        "confirmAddLink": "Czy chcesz dodać odnośnik Jitsi do tego wydarzenia?",
+        "confirmAddLink": "Czy chcesz dodać odnośnik Next Level do tego wydarzenia?",
         "error": {
             "appConfiguration": "Integracja z kalendarzem nie jest skonfigurowana poprawnie.",
             "generic": "Wystąpił problem. Sprawdź ustawienia kalendarza lub spróbuj odświeżyć kalendarz.",
@@ -333,7 +333,7 @@
         "answer": "Odbierz",
         "audioCallTitle": "Przychodzące połączenie",
         "decline": "Odrzuć",
-        "productLabel": "z Jitsi Meet",
+        "productLabel": "z Next Level Meet",
         "videoCallTitle": "Przychodzące połączenie wideo"
     },
     "info": {
@@ -494,7 +494,7 @@
         "newDeviceAudioTitle": "Wykryto nowe urządzenie dźwiękowe",
         "newDeviceAction": "Użyj",
         "OldElectronAPPTitle": "Luka bezpieczeństwa!",
-        "oldElectronClientDescription1": "Najprawdopodobniej używasz starej wersji klienta Jitsi Meet, który jest podatny na luki bezpieczeństwa. Proszę zaktualizować do ",
+        "oldElectronClientDescription1": "Najprawdopodobniej używasz starej wersji klienta Next Level Meet, który jest podatny na luki bezpieczeństwa. Proszę zaktualizować do ",
         "oldElectronClientDescription2": "najnowszej wersji",
         "oldElectronClientDescription3": " teraz!"
     },

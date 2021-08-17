@@ -47,7 +47,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "ミーティングのリンクを追加する",
-        "confirmAddLink": "このイベントに Jitsi のリンクを追加しますか?",
+        "confirmAddLink": "このイベントに Next Level のリンクを追加しますか?",
         "error": {
             "appConfiguration": "カレンダー統合が正しく設定されていません。",
             "generic": "エラーが発生しました。カレンダーの設定を確認するか、カレンダーを更新してください。",
@@ -363,7 +363,7 @@
         "answer": "応答",
         "audioCallTitle": "音声通話着信",
         "decline": "却下",
-        "productLabel": "Jitsi Meet からの",
+        "productLabel": "Next Level Meet からの",
         "videoCallTitle": "ビデオ通話着信"
     },
     "info": {
@@ -529,7 +529,7 @@
         "newDeviceAudioTitle": "新しいオーディオデバイスを検出しました",
         "newDeviceAction": "使用する",
         "OldElectronAPPTitle": "セキュリティ上の脆弱性があります!",
-        "oldElectronClientDescription1": "あなたは既知のセキュリティ上の脆弱性がある、旧バージョンの Jitsi Meet クライアントを使用しているようです。今すぐ",
+        "oldElectronClientDescription1": "あなたは既知のセキュリティ上の脆弱性がある、旧バージョンの Next Level Meet クライアントを使用しているようです。今すぐ",
         "oldElectronClientDescription2": "最新ビルド",
         "oldElectronClientDescription3": "に更新してください!"
     },
@@ -937,8 +937,8 @@
         "goSmall": "GO",
         "info": "ダイアルイン情報",
         "join": "作成/参加",
-        "jitsiMeet": "Jitsi Meet",
-        "jitsiOnMobile": "モバイル版 Jitsi – アプリをダウンロードして、どこからでも会議を開始できます",
+        "jitsiMeet": "Next Level Meet",
+        "jitsiOnMobile": "モバイル版 Next Level – アプリをダウンロードして、どこからでも会議を開始できます",
         "moderatedMessage": "または、前もってあなたのみがモデレーターである<a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">ミーティングの URL をブックマークに登録</a>しましょう。",
         "privacy": "プライバシー",
         "recentList": "最近の履歴",

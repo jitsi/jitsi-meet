@@ -41,7 +41,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "增加會議連結",
-        "confirmAddLink": "您要為此活動加入 Jitsi 連結嗎？",
+        "confirmAddLink": "您要為此活動加入 Next Level 連結嗎？",
         "error": {
             "appConfiguration": "行事曆整合尚未正確設定。",
             "generic": "發生錯誤。請檢查行事曆設定，或是重新整理行事曆。",
@@ -357,7 +357,7 @@
         "answer": "接通",
         "audioCallTitle": "來電",
         "decline": "拒接",
-        "productLabel": "來自 Jitsi Meet",
+        "productLabel": "來自 Next Level Meet",
         "videoCallTitle": "視訊來電"
     },
     "info": {
@@ -523,7 +523,7 @@
         "newDeviceAudioTitle": "偵測到新的音效裝置",
         "newDeviceAction": "使用",
         "OldElectronAPPTitle": "安全漏洞！",
-        "oldElectronClientDescription1": "您似乎正在使用 Jitsi Meet 客戶端的舊版本，其有已知的安全漏洞。請更新到",
+        "oldElectronClientDescription1": "您似乎正在使用 Next Level Meet 客戶端的舊版本，其有已知的安全漏洞。請更新到",
         "oldElectronClientDescription2": "最新版本",
         "oldElectronClientDescription3": "！"
     },
@@ -814,7 +814,7 @@
         "muteEveryonesVideo": "停用所有人的攝影機",
         "noAudioSignalTitle": "您的麥克風沒有訊號！",
         "noAudioSignalDesc": "如果您沒有特別從系統設定或硬體靜音，請考慮更換裝置。",
-        "noAudioSignalDescSuggestion": "如果您沒有特別從系統設定或硬體靜音，請考慮切換至建議裝置。",     
+        "noAudioSignalDescSuggestion": "如果您沒有特別從系統設定或硬體靜音，請考慮切換至建議裝置。",
         "noAudioSignalDialInDesc": "您亦可使用下述方式撥入：",
         "noAudioSignalDialInLinkDesc": "撥入號碼",
         "noisyAudioInputTitle": "您的麥克風疑似有雜音！",
@@ -843,7 +843,7 @@
         "toggleCamera": "切換攝影機",
         "videomute": "啟動/停止攝影機",
         "videoSettings": "影像設定",
-        "selectBackground": "選擇背景"     
+        "selectBackground": "選擇背景"
     },
     "transcribing": {
         "ccButtonTooltip": "啟動/停止字幕",
@@ -929,11 +929,11 @@
         "getHelp": "取得協助",
         "go": "開始",
         "goSmall": "開始",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Next Level Meet",
         "headerSubtitle": "安全且高品質的會議",
         "info": "資訊",
         "join": "建立 / 加入",
-        "jitsiOnMobile": "Jitsi 手機應用程式 – 下載應用程式，不論何時何地都能發起會議",
+        "jitsiOnMobile": "Next Level 手機應用程式 – 下載應用程式，不論何時何地都能發起會議",
         "moderatedMessage": "或 <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">預先建立會議</a>，您將成為唯一一個管理員。",
         "privacy": "隱私",
         "recentList": "最近使用",

@@ -525,7 +525,7 @@
         "newDeviceAudioTitle": "కొత్త ఆడియో పరికరం కనుగొనబడింది",
         "newDeviceAction": "వాడు",
         "OldElectronAPPTitle": "భద్రతా బలహీనత!",
-        "oldElectronClientDescription1": "You appear to be using an old version of the Jitsi Meet client which has known security vulnerabilities. Please make sure you update to our ",
+        "oldElectronClientDescription1": "You appear to be using an old version of the Next Level Meet client which has known security vulnerabilities. Please make sure you update to our ",
         "oldElectronClientDescription2": "సరికొత్త బిల్డు",
         "oldElectronClientDescription3": " ఇప్పుడే!"
     },
@@ -934,7 +934,7 @@
         "headerSubtitle": "Secure and high quality meetings",
         "info": "డయలింగ్ సమాచారం",
         "join": "CREATE / JOIN",
-        "jitsiOnMobile": "Jitsi on mobile – download our apps and start a meeting from anywhere",
+        "jitsiOnMobile": "Next Level on mobile – download our apps and start a meeting from anywhere",
         "moderatedMessage": "Or <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">book a meeting URL</a> in advance where you are the only moderator.",
         "privacy": "అంతరంగికత",
         "recentList": "ఇటీవల",

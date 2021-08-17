@@ -45,7 +45,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "एक मीटिंग लिंक जोड़ें",
-        "confirmAddLink": "क्या आप इस इवेंट में एक Jitsi लिंक जोड़ना चाहते हैं?",
+        "confirmAddLink": "क्या आप इस इवेंट में एक Next Level लिंक जोड़ना चाहते हैं?",
         "error": {
             "appConfiguration": "कैलेंडर एकीकरण ठीक से कॉन्फ़िगर नहीं किया गया है।",
             "generic": "एक त्रुटि हुई है। कृपया अपनी कैलेंडर सेटिंग जांचें या कैलेंडर को रीफ़्रेश करने का प्रयास करें।",
@@ -914,7 +914,7 @@
         "headerSubtitle": "सुरक्षित और उच्च गुणवत्ता बैठकें",
         "info": "डायल-इन जानकारी",
         "join": "बनाये / जुड़े ",
-        "jitsiOnMobile": "मोबाइल पर Jitsi – हमारे एप्लिकेशन डाउनलोड करें और कहीं से भी एक बैठक शुरू करें",
+        "jitsiOnMobile": "मोबाइल पर Next Level – हमारे एप्लिकेशन डाउनलोड करें और कहीं से भी एक बैठक शुरू करें",
         "moderatedMessage": "Or <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">book a meeting URL</a> in advance where you are the only moderator.",
         "privacy": "गोपनीयता",
         "recentList": "हाल का",

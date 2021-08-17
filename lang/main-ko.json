@@ -44,7 +44,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "회의 링크 추가",
-        "confirmAddLink": "이 이벤트에 Jitsi 링크를 추가 하시겠습니까?",
+        "confirmAddLink": "이 이벤트에 Next Level 링크를 추가 하시겠습니까?",
         "error": {
             "appConfiguration": "캘린더가 제대로 구성되지 않았습니다.",
             "generic": "오류가 발생했습니다. 캘린더 설정을 확인하거나 캘린더를 새로 고침 해보세요.",
@@ -334,7 +334,7 @@
         "answer": "응답",
         "audioCallTitle": "수신 전화",
         "decline": "거절",
-        "productLabel": "Jitsi Meet에서",
+        "productLabel": "Next Level Meet에서",
         "videoCallTitle": "수신 화상 전화"
     },
     "info": {

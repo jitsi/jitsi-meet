@@ -41,7 +41,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Add a meeting link",
-        "confirmAddLink": "Do you want to add a Jitsi link to this event?",
+        "confirmAddLink": "Do you want to add a Next Level link to this event?",
         "error": {
             "appConfiguration": "Calendar integration is not properly configured.",
             "generic": "An error has occurred. Please check your calendar settings or try refreshing the calendar.",
@@ -379,7 +379,7 @@
         "answer": "Answer",
         "audioCallTitle": "Incoming call",
         "decline": "Dismiss",
-        "productLabel": "from Jitsi Meet",
+        "productLabel": "from Next Level Meet",
         "videoCallTitle": "Incoming video call"
     },
     "info": {
@@ -547,7 +547,7 @@
         "newDeviceAudioTitle": "New audio device detected",
         "newDeviceAction": "Use",
         "OldElectronAPPTitle": "Security vulnerability!",
-        "oldElectronClientDescription1": "You appear to be using an old version of the Jitsi Meet client which has known security vulnerabilities. Please make sure you update to our ",
+        "oldElectronClientDescription1": "You appear to be using an old version of the Next Level Meet client which has known security vulnerabilities. Please make sure you update to our ",
         "oldElectronClientDescription2": "latest build",
         "oldElectronClientDescription3": " now!",
         "groupTitle": "Notifications"
@@ -966,11 +966,11 @@
         "getHelp": "Get help",
         "go": "GO",
         "goSmall": "GO",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Next Level Meet",
         "headerSubtitle": "Secure and high quality meetings",
         "info": "Dial-in info",
         "join": "CREATE / JOIN",
-        "jitsiOnMobile": "Jitsi on mobile – download our apps and start a meeting from anywhere",
+        "jitsiOnMobile": "Next Level on mobile – download our apps and start a meeting from anywhere",
         "mobileDownLoadLinkIos": "Download mobile app for iOS",
         "mobileDownLoadLinkAndroid": "Download mobile app for Android",
         "mobileDownLoadLinkFDroid": "Download mobile app for F-Droid",
@@ -990,7 +990,7 @@
         "logo":{
            "calendar":"Calendar logo",
            "microsoftLogo":"Microsoft logo",
-           "logoDeepLinking":"Jitsi meet logo",
+           "logoDeepLinking":"Next Level meet logo",
            "desktopPreviewThumbnail":"Desktop preview thumbnail",
            "googleLogo":"Google Logo",
            "policyLogo":"Policy logo"

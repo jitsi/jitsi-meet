@@ -44,7 +44,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Добавить ссылку конференции",
-        "confirmAddLink": "Вы хотите добавить ссылку Jitsi к этому календарному событию?",
+        "confirmAddLink": "Вы хотите добавить ссылку Next Level к этому календарному событию?",
         "error": {
             "appConfiguration": "Неправильно настроена интеграция календаря.",
             "generic": "Произошла ошибка. Проверьте настройки календаря или попробуйте обновить его.",
@@ -353,7 +353,7 @@
         "answer": "Ответ",
         "audioCallTitle": "Входящий звонок",
         "decline": "Отклонить",
-        "productLabel": "из Jitsi Meet",
+        "productLabel": "из Next Level Meet",
         "videoCallTitle": "Входящий видеозвонок"
     },
     "info": {
@@ -541,7 +541,7 @@
         "newDeviceAction": "Использовать",
         "newDeviceAudioTitle": "Обнаружено новое аудиоустройство",
         "newDeviceCameraTitle": "Обнаружена новая камера",
-        "oldElectronClientDescription1": "Похоже, вы используете старую версию клиента Jitsi Meet, которая имеет известные уязвимости в системе безопасности. Убедитесь, что вы обновили до нашей ",
+        "oldElectronClientDescription1": "Похоже, вы используете старую версию клиента Next Level Meet, которая имеет известные уязвимости в системе безопасности. Убедитесь, что вы обновили до нашей ",
         "oldElectronClientDescription2": "последней версии",
         "oldElectronClientDescription3": " сейчас!",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) удален другим участником.",
@@ -908,7 +908,7 @@
         "getHelp": "Справка",
         "go": "ОК",
         "goSmall": "ОК",
-        "headerTitle":"Сервер видеоконференцсвязи Jitsi Meet",
+        "headerTitle":"Сервер видеоконференцсвязи Next Level Meet",
         "headerSubtitle":"Защищенная высококачественная видеосвязь",
         "info": "Инфо",
         "join": "СОЗДАТЬ / ПРИСОЕДИНИТЬСЯ",
