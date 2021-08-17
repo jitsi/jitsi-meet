@@ -93,6 +93,12 @@ export const IOS_RECORDING_ENABLED = 'ios.recording.enabled';
 export const IOS_SCREENSHARING_ENABLED = 'ios.screensharing.enabled';
 
 /**
+ * Flag indicating if screen sharing should be enabled in android.
+ * Default: enabled (true).
+ */
+export const ANDROID_SCREENSHARING_ENABLED = 'android.screensharing.enabled';
+
+/**
  * Flag indicating if kickout is enabled.
  * Default: enabled (true).
  */

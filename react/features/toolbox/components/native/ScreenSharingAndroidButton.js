@@ -1,5 +1,9 @@
 // @flow
 
+import {
+    ANDROID_SCREENSHARING_ENABLED,
+    getFeatureFlag
+} from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconShareDesktop } from '../../../base/icons';
 import { connect } from '../../../base/redux';
@@ -82,8 +86,11 @@ class ScreenSharingAndroidButton extends AbstractButton<Props, *> {
  * }}
  */
 function _mapStateToProps(state): Object {
+    const enabled = getFeatureFlag(state, ANDROID_SCREENSHARING_ENABLED, true);
+
     return {
-        _screensharing: isLocalVideoTrackDesktop(state)
+        _screensharing: isLocalVideoTrackDesktop(state),
+        visible: enabled
     };
 }
 
