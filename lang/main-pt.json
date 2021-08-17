@@ -58,17 +58,26 @@
         "today": "Hoje"
     },
     "chat": {
+        "enter": "Entrar na sala",
         "error": "Erro: a sua mensagem não foi enviada. Motivo: {{error}}",
-        "fieldPlaceHolder": "",
-        "messagebox": "Digite uma mensagem",
+        "fieldPlaceHolder": "Escreva aqui a sua mensagem",
+        "messagebox": "Escreva uma mensagem",
         "messageTo": "Mensagem privada para {{recipient}}",
-        "noMessagesMessage": "",
+        "noMessagesMessage": "Ainda não há mensagens na reunião. Comece aqui uma conversa!",
         "nickname": {
             "popover": "Escolha um apelido",
-            "title": "Digite um apelido para usar na conversação"
+            "title": "Introduza um apelido para usar no bate-papo e nas sondagens"
         },
         "privateNotice": "Mensagem privada para {{recipient}}",
-        "title": "Conversação",
+        "message": "Mensagem",
+        "messageAccessibleTitle": "{{user}} disse:",
+        "messageAccessibleTitleMe": "Você disse:",
+        "smileysPanel": "Painel de Emojis",
+        "tabs": {
+            "chat": "Bate-papo",
+            "polls": "Sondagens"
+        },
+        "title": "Bate-papo e Sondagens",
         "you": "você"
     },
     "connectingOverlay": {
@@ -514,6 +523,34 @@
     },
     "passwordSetRemotely": "Definido por outro participante",
     "passwordDigitsOnly": "Até {{number}} dígitos",
+    "polls": {
+        "create": {
+            "addOption": "Adicionar opção",
+            "answerPlaceholder": "Opção {{index}}",
+            "create": "Criar uma sondagem",
+            "cancel": "Cancelar",
+            "pollOption" : "Opção de sondagem {{index}}",
+            "pollQuestion" : "Pergunta de Sondagem",
+            "questionPlaceholder": "Faça uma pergunta",
+            "removeOption": "Remover opção",
+            "send": "Enviar"
+        },
+        "answer": {
+            "skip": "Ignorar",
+            "submit": "Submeter"
+        },
+        "results": {
+            "vote": "Voto",
+            "changeVote": "Mudar o voto",
+            "empty": "Ainda não há sondagens na reunião. Comece aqui uma sondagem!",
+            "hideDetailedResults": "Ocultar detalhes",
+            "showDetailedResults": "Mostrar detalhes"
+        },
+        "notification": {
+            "title": "Uma nova sondagem foi adicionada a esta reunião",
+            "description": "Abrir o separador das sondagens para votar"
+        }
+    },
     "poweredby": "distribuído por",
     "prejoin": {
         "audioAndVideoError": "Erro no áudio e vídeo:",
