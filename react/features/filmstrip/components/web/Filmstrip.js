@@ -571,7 +571,9 @@ function _mapStateToProps(state) {
     const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
     const { visible, remoteParticipants } = state['features/filmstrip'];
     const reduceHeight = state['features/toolbox'].visible && toolbarButtons.length;
-    const remoteVideosVisible = shouldRemoteVideosBeVisible(state);
+    // TODO remove
+    // Forced true to stop hiding presenter's camera
+    const remoteVideosVisible = true;
     const { isOpen: shiftRight } = state['features/chat'];
     const {
         gridDimensions = {},
