@@ -43,8 +43,8 @@ declare var interfaceConfig: Object;
  * @private
  */
 function _compareDisplayNames(a, b) {
-    const nameA = a.name.toUpperCase();
-    const nameB = b.name.toUpperCase();
+    const nameA = a.name && a.name.toUpperCase();
+    const nameB = b.name && b.name.toUpperCase();
     const result = nameA > nameB
         ? 1
         : nameA < nameB ? -1 : 0;
