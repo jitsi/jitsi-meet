@@ -65,7 +65,7 @@ export const QUICK_ACTION_BUTTON: {
 export const AudioStateIcons: {[MediaState]: React$Element<any> | null} = {
     [MEDIA_STATE.DOMINANT_SPEAKER]: (
         <Icon
-            color = '#1EC26A'
+            className = 'jitsi-icon-dominant-speaker'
             size = { 16 }
             src = { IconMicrophoneEmpty } />
     ),

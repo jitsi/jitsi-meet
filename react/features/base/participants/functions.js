@@ -458,9 +458,12 @@ export function getSortedParticipants(stateful: Object | Function) {
     const remoteParticipants = getRemoteParticipants(stateful);
 
     const items = [];
+    const dominantSpeaker = getDominantSpeakerParticipant(stateful);
 
     remoteParticipants.forEach(p => {
-        items.push(p);
+        if (p !== dominantSpeaker) {
+            items.push(p);
+        }
     });
 
     items.sort((a, b) =>
@@ -468,6 +471,10 @@ export function getSortedParticipants(stateful: Object | Function) {
     );
 
     items.unshift(localParticipant);
+
+    if (dominantSpeaker && dominantSpeaker !== localParticipant) {
+        items.unshift(dominantSpeaker);
+    }
 
     return items;
 }

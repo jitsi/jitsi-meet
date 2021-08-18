@@ -259,6 +259,10 @@ export const ParticipantStates = styled.div`
   & > *:not(:last-child) {
     margin-right: 8px;
   }
+
+  .jitsi-icon {
+    padding: 3px;
+  }
 `;
 
 export const ParticipantContainer = styled.div`
