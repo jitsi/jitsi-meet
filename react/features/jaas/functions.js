@@ -54,24 +54,16 @@ export function isVpaasMeeting(state: Object) {
  * @param {Object} reqData - The request info.
  * @param {string} reqData.appId - The client appId.
  * @param {string} reqData.baseUrl - The base url for the request.
- * @param {string} reqData.jwt - The JWT token.
  * @returns {void}
  */
-export async function sendGetDetailsRequest({ appId, baseUrl, jwt }: {
+export async function sendGetDetailsRequest({ appId, baseUrl }: {
     appId: string,
     baseUrl: string,
-    jwt: string,
 }) {
-    const fullUrl = `${baseUrl}/v1/customers/${encodeURIComponent(appId)}`;
-    const headers = {
-        'Authorization': `Bearer ${jwt}`
-    };
+    const fullUrl = `${baseUrl}/v1/public/tenants/${encodeURIComponent(appId)}`;
 
     try {
-        const res = await fetch(fullUrl, {
-            method: 'GET',
-            headers
-        });
+        const res = await fetch(fullUrl);
 
         if (res.ok) {
             return res.json();
