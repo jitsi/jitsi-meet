@@ -149,7 +149,7 @@ var config = {
 
     // Specifies whether the raised hand will hide when someone becomes a dominant speaker or not
     // disableRemoveRaisedHandOnFocus: false,
-  
+
     // Specifies whether there will be a search field in speaker stats or not
     // disableSpeakerStatsSearch: false,
 
