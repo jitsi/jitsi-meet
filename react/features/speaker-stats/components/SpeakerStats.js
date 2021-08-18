@@ -4,14 +4,16 @@ import React, { Component } from 'react';
 
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
-import { getLocalParticipant } from '../../base/participants';
+import { getLocalParticipant, getParticipantById, PARTICIPANT_ROLE } from '../../base/participants';
 import { connect } from '../../base/redux';
-import { escapeRegexp } from '../../base/util';
+import { escapeRegexp, objectSort } from '../../base/util';
+import { getSpeakerStatsOrder } from '../functions';
 
 import SpeakerStatsItem from './SpeakerStatsItem';
 import SpeakerStatsLabels from './SpeakerStatsLabels';
 import SpeakerStatsSearch from './SpeakerStatsSearch';
 
+declare var APP: Object;
 declare var interfaceConfig: Object;
 
 /**
@@ -23,6 +25,11 @@ type Props = {
      * The display name for the local participant obtained from the redux store.
      */
     _localDisplayName: string,
+
+    /**
+     * The configuration setting to order paricipants.
+     */
+    _speakerStatsOrder: Array<String>,
 
     /**
      * The JitsiConference from which stats will be pulled.
@@ -144,7 +151,75 @@ class SpeakerStats extends Component<Props, State> {
             }
         }
 
+        if (this.props._speakerStatsOrder.length) {
+            return this._getSortedSpeakerStats(stats);
+        }
+
         return stats;
+    }
+
+    /**
+     * Get sorted speaker stats based on a configuration setting.
+     *
+     * @param {Object} stats - Unordered speaker stats.
+     * @returns {Object} - Ordered speaker stats.
+     * @private
+     */
+    _getSortedSpeakerStats(stats) {
+        for (const id in stats) {
+            if (stats[id].hasOwnProperty('_hasLeft') && !stats[id].hasLeft()) {
+                if (this.props._speakerStatsOrder.includes('name')) {
+                    const { _localDisplayName } = this.props;
+
+                    if (stats[id].isLocalStats()) {
+                        stats[id].setDisplayName(_localDisplayName);
+                    }
+                }
+
+                if (this.props._speakerStatsOrder.includes('role')) {
+                    const participant = getParticipantById(APP.store.getState(), stats[id].getUserId());
+
+                    stats[id].isModerator = participant.role === PARTICIPANT_ROLE.MODERATOR;
+                }
+            }
+        }
+
+        return objectSort(stats, (currentParticipant, nextParticipant) => {
+            if (this.props._speakerStatsOrder.includes('hasLeft')) {
+                if (nextParticipant.hasLeft() && !currentParticipant.hasLeft()) {
+                    return -1;
+                } else if (currentParticipant.hasLeft() && !nextParticipant.hasLeft()) {
+                    return 1;
+                }
+            }
+
+            let result;
+
+            for (const sortCriteria of this.props._speakerStatsOrder) {
+                switch (sortCriteria) {
+                case 'role':
+                    if (!nextParticipant.isModerator && currentParticipant.isModerator) {
+                        result = -1;
+                    } else if (!currentParticipant.isModerator && nextParticipant.isModerator) {
+                        result = 1;
+                    } else {
+                        result = 0;
+                    }
+                    break;
+                case 'name':
+                    result = (currentParticipant.getDisplayName() || '').localeCompare(
+                        nextParticipant.getDisplayName() || ''
+                    );
+                    break;
+                }
+
+                if (result !== 0) {
+                    break;
+                }
+            }
+
+            return result;
+        });
     }
 
     /**
@@ -231,7 +306,8 @@ class SpeakerStats extends Component<Props, State> {
  * @param {Object} state - The redux state.
  * @private
  * @returns {{
- *     _localDisplayName: ?string
+ *     _localDisplayName: ?string,
+ *     _speakerStatsOrder: Array<string>
  * }}
  */
 function _mapStateToProps(state) {
@@ -244,7 +320,8 @@ function _mapStateToProps(state) {
          * @private
          * @type {string|undefined}
          */
-        _localDisplayName: localParticipant && localParticipant.name
+        _localDisplayName: localParticipant && localParticipant.name,
+        _speakerStatsOrder: getSpeakerStatsOrder(state)
     };
 }
 

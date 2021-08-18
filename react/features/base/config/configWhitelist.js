@@ -101,6 +101,7 @@ export default [
     'disableShortcuts',
     'disableShowMoreStats',
     'disableSpeakerStatsSearch',
+    'speakerStatsOrder',
     'disableSimulcast',
     'disableThirdPartyRequests',
     'disableTileView',
