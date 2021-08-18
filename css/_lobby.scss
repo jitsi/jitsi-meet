@@ -51,6 +51,10 @@
     top: 30px;
     z-index: $toolbarZ + 1;
 
+    &:empty {
+        border: none;
+    }
+
     &.toolbox-visible {
         // Same as toolbox subject position
         top: 120px;
