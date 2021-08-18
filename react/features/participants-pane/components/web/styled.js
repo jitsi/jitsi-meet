@@ -190,12 +190,6 @@ export const Heading = styled.div`
   margin: 8px 0 ${props => props.theme.panePadding}px;
 `;
 
-export const ColoredIcon = styled.div`
-  & > div > svg {
-    fill: ${props => props.color || '#fff'};
-  }
-`;
-
 export const ParticipantActionButton = styled(Button)`
   height: ${props => props.theme.participantActionButtonHeight}px;
   padding: 6px 10px;

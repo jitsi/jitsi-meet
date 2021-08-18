@@ -153,6 +153,8 @@ export default function Icon(props: Props) {
         }
     }, [ onClick, onKeyPress ]);
 
+    const jitsiIconClassName = calculatedColor ? 'jitsi-icon' : 'jitsi-icon jitsi-icon-default';
+
     return (
         <Container
             { ...rest }
@@ -163,7 +165,7 @@ export default function Icon(props: Props) {
             aria-haspopup = { ariaHasPopup }
             aria-label = { ariaLabel }
             aria-pressed = { ariaPressed }
-            className = { `jitsi-icon ${className || ''}` }
+            className = { `${jitsiIconClassName} ${className || ''}` }
             id = { containerId }
             onClick = { onClick }
             onKeyDown = { onKeyDown }
