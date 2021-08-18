@@ -36,7 +36,7 @@ import {
         participants: Array<string>
     }}
  */
-export function setRemoteParticipants(participants: String[]) {
+export function setRemoteParticipants(participants: Array<string>) {
     return {
         type: SET_REMOTE_PARTICIPANTS,
         participants

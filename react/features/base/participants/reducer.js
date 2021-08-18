@@ -59,8 +59,9 @@ const DEFAULT_STATE = {
     haveParticipantWithScreenSharingFeature: false,
     local: undefined,
     pinnedParticipant: undefined,
-    previousSpeakers: [],
-    remote: new Map()
+    remote: new Map(),
+    sortedRemoteParticipants: new Map(),
+    speakersList: []
 };
 
 /**
@@ -95,7 +96,12 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
     case DOMINANT_SPEAKER_CHANGED: {
         const { participant } = action;
         const { id, previousSpeakers = [] } = participant;
-        const { dominantSpeaker } = state;
+        const { dominantSpeaker, local } = state;
+        const speakersList = [];
+
+        // Update the speakers list.
+        id !== local?.id && speakersList.push(id);
+        speakersList.push(...previousSpeakers.filter(p => p !== local?.id));
 
         // Only one dominant speaker is allowed.
         if (dominantSpeaker) {
@@ -106,7 +112,7 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
             return {
                 ...state,
                 dominantSpeaker: id,
-                previousSpeakers
+                speakersList
             };
         }
 
@@ -184,21 +190,22 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
     }
     case PARTICIPANT_JOINED: {
         const participant = _participantJoined(action);
+        const { id, isFakeParticipant, name, pinned } = participant;
         const { pinnedParticipant, dominantSpeaker } = state;
 
-        if (participant.pinned) {
+        if (pinned) {
             if (pinnedParticipant) {
                 _updateParticipantProperty(state, pinnedParticipant, 'pinned', false);
             }
 
-            state.pinnedParticipant = participant.id;
+            state.pinnedParticipant = id;
         }
 
         if (participant.dominantSpeaker) {
             if (dominantSpeaker) {
                 _updateParticipantProperty(state, dominantSpeaker, 'dominantSpeaker', false);
             }
-            state.dominantSpeaker = participant.id;
+            state.dominantSpeaker = id;
         }
 
         const isModerator = isParticipantModerator(participant);
@@ -217,10 +224,19 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
             };
         }
 
-        state.remote.set(participant.id, participant);
+        state.remote.set(id, participant);
 
-        if (participant.isFakeParticipant) {
-            state.fakeParticipants.set(participant.id, participant);
+        // Insert the new participant.
+        const displayName = name ?? 'Fellow Jitser';
+        const sortedRemoteParticipants = Array.from(state.sortedRemoteParticipants);
+
+        sortedRemoteParticipants.push([ id, displayName ]);
+        sortedRemoteParticipants.sort((a, b) => a[1].localeCompare(b[1]));
+
+        state.sortedRemoteParticipants = new Map(sortedRemoteParticipants);
+
+        if (isFakeParticipant) {
+            state.fakeParticipants.set(id, participant);
         }
 
         return { ...state };
@@ -245,6 +261,8 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
             // no participant found
             return state;
         }
+
+        state.sortedRemoteParticipants.delete(id);
 
         if (!state.everyoneIsModerator && !isParticipantModerator(oldParticipant)) {
             state.everyoneIsModerator = _isEveryoneModerator(state);
@@ -276,8 +294,8 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
             state.dominantSpeaker = undefined;
         }
 
-        // Remove the participant from the list of previous speakers.
-        state.previousSpeakers = state.previousSpeakers.filter(speaker => speaker !== id);
+        // Remove the participant from the list of speakers.
+        state.speakersList = state.speakersList.filter(speaker => speaker !== id);
 
         if (pinnedParticipant === id) {
             state.pinnedParticipant = undefined;

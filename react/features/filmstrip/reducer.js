@@ -90,7 +90,7 @@ const DEFAULT_STATE = {
      * The visible remote participants in the filmstrip.
      *
      * @public
-     * @type {Set}
+     * @type {Set<string>}
      */
     visibleRemoteParticipants: new Set()
 };

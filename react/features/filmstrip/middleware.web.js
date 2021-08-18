@@ -1,5 +1,4 @@
 // @flow
-import isEqual from 'lodash.isequal';
 
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../base/participants';
@@ -17,8 +16,7 @@ import {
     setTileViewDimensions,
     setVerticalViewDimensions
 } from './actions.web';
-import { sortRemoteParticipants } from './functions.web';
-
+import { updateRemoteParticipants } from './functions.web';
 import './subscriber.web';
 
 /**
@@ -50,10 +48,10 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
     case PARTICIPANT_JOINED: {
-        _updateRemoteParticipantsonJoin(store);
+        updateRemoteParticipants(store);
         break;
     }
-    case PARTICIPANT_LEFT : {
+    case PARTICIPANT_LEFT: {
         _updateRemoteParticipantsOnLeave(store, action.participant?.id);
         break;
     }
@@ -70,34 +68,9 @@ MiddlewareRegistry.register(store => next => action => {
 });
 
 /**
- * Private helper to calculate the reordered list of remote participants when a remote participant joins.
+ * Private helper to calculate the reordered list of remote participants when a participant leaves.
  *
  * @param {*} store - The redux store.
- * @returns {void}
- * @private
- */
-function _updateRemoteParticipantsonJoin(store) {
-    const state = store.getState();
-    const { remote } = state['features/base/participants'];
-
-    if (!remote) {
-        return;
-    }
-    const { remoteParticipants } = state['features/filmstrip'];
-    const currentParticipants = Array.from(remote.values());
-
-    // Sort the remote participants alphabetically.
-    const reorderedParticipants = sortRemoteParticipants(currentParticipants);
-
-    if (!isEqual(reorderedParticipants, remoteParticipants)) {
-        store.dispatch(setRemoteParticipants(reorderedParticipants));
-    }
-}
-
-/**
- * Private helper to calculate reordered list of remote participants when a remote participant leaves.
- *
- * @param {*} store - The redix store.
  * @param {string} participantId - The endpoint id of the participant leaving the call.
  * @returns {void}
  * @private
@@ -106,10 +79,10 @@ function _updateRemoteParticipantsOnLeave(store, participantId = null) {
     if (!participantId) {
         return;
     }
-
     const state = store.getState();
     const { remoteParticipants } = state['features/filmstrip'];
-    const reorderedParticipants = remoteParticipants.filter(p => p !== participantId);
+    const reorderedParticipants = new Set(remoteParticipants);
 
-    store.dispatch(setRemoteParticipants(reorderedParticipants));
+    reorderedParticipants.delete(participantId)
+        && store.dispatch(setRemoteParticipants(Array.from(reorderedParticipants)));
 }

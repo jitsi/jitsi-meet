@@ -1,5 +1,4 @@
 // @flow
-import isEqual from 'lodash.isequal';
 
 import { getParticipantCountWithFake } from '../base/participants';
 import { StateListenerRegistry, equals } from '../base/redux';
@@ -11,7 +10,6 @@ import { getCurrentLayout, getTileViewGridDimensions, shouldDisplayTileView, LAY
 
 import {
     setHorizontalViewDimensions,
-    setRemoteParticipants,
     setTileViewDimensions,
     setVerticalViewDimensions
 } from './actions.web';
@@ -21,7 +19,7 @@ import {
     SINGLE_COLUMN_BREAKPOINT,
     TWO_COLUMN_BREAKPOINT
 } from './constants';
-import { sortRemoteParticipants } from './functions.web';
+import { updateRemoteParticipants } from './functions.web';
 
 /**
  * Listens for changes in the number of participants to calculate the dimensions of the tile view grid and the tiles.
@@ -167,8 +165,11 @@ StateListenerRegistry.register(
  */
 StateListenerRegistry.register(
     /* selector */ state => state['features/video-layout'].remoteScreenShares,
-    /* listener */ (remoteScreenShares, store) => _reorderScreenshares(store));
+    /* listener */ (remoteScreenShares, store) => updateRemoteParticipants(store));
 
+/**
+ * Listens for changes to the dominant speaker to recompute the reordered list of the remote endpoints.
+ */
 StateListenerRegistry.register(
     /* selector */ state => state['features/base/participants'].dominantSpeaker,
     /* listener */ (dominantSpeaker, store) => _reorderDominantSpeakers(store));
@@ -182,70 +183,11 @@ StateListenerRegistry.register(
  */
 function _reorderDominantSpeakers(store) {
     const state = store.getState();
-    const { dominantSpeaker, local, previousSpeakers, remote } = state['features/base/participants'];
+    const { dominantSpeaker, local } = state['features/base/participants'];
+    const { visibleRemoteParticipants } = state['features/filmstrip'];
 
-    if (!remote) {
-        return;
-    }
-    const { remoteParticipants, visibleRemoteParticipants } = state['features/filmstrip'];
-    const reorderedParticipants = [ ...remoteParticipants ];
-    const speakersList = [];
-
-    dominantSpeaker && speakersList.push(dominantSpeaker);
-    previousSpeakers?.length && speakersList.push(...previousSpeakers);
-
-    // Move the speakers up the list only if both the below conditions are met.
-    // 1. They are not the local participant.
-    // 2. They are currently not visible in the filmstrip.
-    for (const speaker of speakersList.reverse()) {
-        if (speaker !== local?.id && !visibleRemoteParticipants.has(speaker)) {
-            const index = reorderedParticipants.findIndex(s => s === speaker);
-
-            reorderedParticipants.splice(index, 1);
-            reorderedParticipants.splice(0, 0, speaker);
-        }
-    }
-
-    if (!isEqual(remoteParticipants, reorderedParticipants)) {
-        store.dispatch(setRemoteParticipants(reorderedParticipants));
-    }
-}
-
-/**
- * Private helper function that reorders the remote participants based on changes to the remote screenshares.
- *
- * @param {*} store - The redux store.
- * @returns {void}
- * @private
- */
-function _reorderScreenshares(store) {
-    const state = store.getState();
-    const { remote } = state['features/base/participants'];
-
-    if (!remote) {
-        return;
-    }
-
-    const { remoteParticipants } = state['features/filmstrip'];
-    const currentParticipants = Array.from(remote.values());
-
-    // Sort the remote participants alphabetically.
-    let reorderedParticipants = sortRemoteParticipants(currentParticipants);
-    const { remoteScreenShares } = state['features/video-layout'];
-
-    // Make a copy so that we don't modify the values in redux.
-    const screenShares = (remoteScreenShares || []).slice();
-
-    // Add the remote screenshares (if any) to the beginning of the list.
-    if (screenShares.length) {
-        reorderedParticipants
-            = reorderedParticipants.filter(participant => screenShares.findIndex(share => share === participant) < 0);
-
-        // We want to put the latest share at the top.
-        reorderedParticipants.splice(0, 0, ...screenShares.reverse());
-    }
-
-    if (!isEqual(remoteParticipants, reorderedParticipants)) {
-        store.dispatch(setRemoteParticipants(reorderedParticipants));
+    // Reorder the participants if the new dominant speaker is currently not visible.
+    if (dominantSpeaker !== local?.id && !visibleRemoteParticipants.has(dominantSpeaker)) {
+        updateRemoteParticipants(store);
     }
 }
