@@ -1,44 +1,28 @@
 // @flow
-import * as faceapi from 'face-api.js';
-
-import { addFacialExpression } from './actions';
+declare var APP: Object;
 
 /**
- * Detects the facial expression.
+ * Broadcasts the changed facial expression.
  *
- * @param  {Function} dispatch - Function for dispatching actions.
- * @param  {ImageCapture} imageCapture - Object containing the video track.
- * @param  {HTMLCanvasElement} outputCanvas - Canvas with the frame.
+ * @param  {string} facialExpression - Facial expression to be broadcasted.
  * @returns {void}
  */
-export async function detectFacialExpression(
-        dispatch: Function,
-        imageCapture: ImageCapture,
-        outputCanvas: HTMLCanvasElement
-) {
-    // const { height, width } = videoInput;
-    const outputCanvasContext = outputCanvas.getContext('2d');
-    let imageBitmap;
+export async function changeFacialExpression(facialExpression: string) {
+    let count = 1;
 
     try {
-        imageBitmap = await imageCapture.grabFrame();
-    } catch (err) {
-        return;
+        count = APP.conference.membersCount;
+    } catch (e) {
+        // pass
     }
 
-    outputCanvasContext.drawImage(imageBitmap, 0, 0, imageBitmap.width, imageBitmap.height);
-    const detections = await faceapi.detectSingleFace(
-        outputCanvas,
-        new faceapi.TinyFaceDetectorOptions()
-    ).withFaceExpressions();
+    if (APP.conference !== undefined && count > 1) {
+        console.log('AICI');
+        const payload = {
+            type: 'facial_expression',
+            value: facialExpression
+        };
 
-    // $FlowFixMe - Flow does not (yet) support method calls in optional chains.
-    const facialExpression = detections?.expressions.asSortedArray()[0].expression;
-
-    console.log('!!!', facialExpression);
-
-    if (facialExpression !== undefined) {
-        dispatch(addFacialExpression(facialExpression));
+        APP.conference.broadcastEndpointMessage(payload);
     }
-
 }

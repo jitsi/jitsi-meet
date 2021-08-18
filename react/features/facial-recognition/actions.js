@@ -5,7 +5,7 @@ import * as faceapi from 'face-api.js';
 import { getLocalVideoTrack } from '../base/tracks';
 
 import { SET_FACIAL_RECOGNITION_MODELS_LOADED, ADD_FACIAL_EXPRESSION } from './actionTypes';
-import { detectFacialExpression } from './functions';
+import { changeFacialExpression } from './functions';
 import logger from './logger';
 
 let interval;
@@ -74,7 +74,7 @@ export function maybeStartFacialRecognition(track: Object) {
 
         outputCanvas.width = parseInt(width, 10);
         outputCanvas.height = parseInt(height, 10);
-        interval = setInterval(() => detectFacialExpression(dispatch, imageCapture, outputCanvas), 1000);
+        interval = setInterval(() => dispatch(testDetectFacialExpression()), 2000);
 
     };
 }
@@ -105,4 +105,41 @@ export function resetTrack() {
         imageCapture = new ImageCapture(firstVideoTrack);
 
     };
+}
+
+/**
+ * Detects facial expression.
+ *
+ * @returns {Function}
+ */
+export function testDetectFacialExpression() {
+    return async function(dispatch: Function, getState: Function) {
+        const outputCanvasContext = outputCanvas.getContext('2d');
+        let imageBitmap;
+
+        try {
+            imageBitmap = await imageCapture.grabFrame();
+        } catch (err) {
+            return;
+        }
+
+        outputCanvasContext.drawImage(imageBitmap, 0, 0, imageBitmap.width, imageBitmap.height);
+        const detections = await faceapi.detectSingleFace(
+            outputCanvas,
+            new faceapi.TinyFaceDetectorOptions()
+        ).withFaceExpressions();
+
+        // $FlowFixMe - Flow does not (yet) support method calls in optional chains.
+        const facialExpression = detections?.expressions.asSortedArray()[0].expression;
+
+        const state = getState();
+        const lastExpression = state['features/facial-recognition'].lastFacialExpression;
+
+        if (facialExpression !== undefined && facialExpression !== lastExpression) {
+            console.log('!!!', facialExpression);
+            dispatch(addFacialExpression(facialExpression));
+            changeFacialExpression(facialExpression);
+        }
+    };
+
 }

@@ -2998,6 +2998,10 @@ export default {
         room.sendEndpointMessage(to, payload);
     },
 
+    broadcastEndpointMessage(payload) {
+        room.broadcastEndpointMessage(payload);
+    },
+
     /**
      * Adds new listener.
      * @param {String} eventName the name of the event

@@ -9,7 +9,7 @@ import { maybeStartFacialRecognition, stopFacialRecognition, resetTrack } from '
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case TRACK_UPDATED: {
-        const { muted } = action.track;
+        const { muted } = action.track.jitsiTrack.track;
 
         const { dispatch } = store;
 

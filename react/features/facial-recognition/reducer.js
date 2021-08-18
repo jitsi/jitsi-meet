@@ -1,6 +1,6 @@
 // @flow
 
-import { PersistenceRegistry, ReducerRegistry } from '../base/redux';
+import { ReducerRegistry } from '../base/redux';
 
 import { SET_FACIAL_RECOGNITION_MODELS_LOADED, ADD_FACIAL_EXPRESSION } from './actionTypes';
 
