@@ -78,13 +78,10 @@ class E2EESection extends Component<Props, State> {
         super(props);
 
         this.state = {
-            enabled: false,
-            expand: false
+            enabled: false
         };
 
         // Bind event handlers so they are only bound once for every instance.
-        this._onExpand = this._onExpand.bind(this);
-        this._onExpandKeyPress = this._onExpandKeyPress.bind(this);
         this._onToggle = this._onToggle.bind(this);
     }
 
@@ -96,7 +93,7 @@ class E2EESection extends Component<Props, State> {
      */
     render() {
         const { _everyoneSupportE2EE, t } = this.props;
-        const { enabled, expand } = this.state;
+        const { enabled } = this.state;
         const description = t('dialog.e2eeDescription');
 
         return (
@@ -105,25 +102,10 @@ class E2EESection extends Component<Props, State> {
                     aria-live = 'polite'
                     className = 'description'
                     id = 'e2ee-section-description'>
-                    { expand && description }
-                    { !expand && description.substring(0, 100) }
-                    { !expand && <span
-                        aria-controls = 'e2ee-section-description'
-                        aria-expanded = { expand }
-                        className = 'read-more'
-                        onClick = { this._onExpand }
-                        onKeyPress = { this._onExpandKeyPress }
-                        role = 'button'
-                        tabIndex = { 0 }>
-                            ... { t('dialog.readMore') }
-                    </span> }
+                    { description }
+                    { !_everyoneSupportE2EE && <br /> }
+                    { !_everyoneSupportE2EE && t('dialog.e2eeWarning') }
                 </p>
-                {
-                    !_everyoneSupportE2EE
-                        && <span className = 'warning'>
-                            { t('dialog.e2eeWarning') }
-                        </span>
-                }
                 <div className = 'control-row'>
                     <label htmlFor = 'e2ee-section-switch'>
                         { t('dialog.e2eeLabel') }
@@ -135,35 +117,6 @@ class E2EESection extends Component<Props, State> {
                 </div>
             </div>
         );
-    }
-
-    _onExpand: () => void;
-
-    /**
-     * Callback to be invoked when the description is expanded.
-     *
-     * @returns {void}
-     */
-    _onExpand() {
-        this.setState({
-            expand: true
-        });
-    }
-
-    _onExpandKeyPress: (Object) => void;
-
-    /**
-     * KeyPress handler for accessibility.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    _onExpandKeyPress(e) {
-        if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            this._onExpand();
-        }
     }
 
     _onToggle: () => void;
