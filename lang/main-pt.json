@@ -388,19 +388,19 @@
     "keyboardShortcuts": {
         "focusLocal": "Focar no seu vídeo",
         "focusRemote": "Focar no vídeo de outro participante",
-        "fullScreen": "Entrar ou sair da tela cheia",
+        "fullScreen": "Entrar ou sair do ecrã completo",
         "keyboardShortcuts": "Atalhos de teclado",
         "localRecording": "Mostrar ou ocultar controlos de gravação local",
-        "mute": "Deixar mudo ou não o microfone",
+        "mute": "Ligar ou desligar o seu microfone",
         "pushToTalk": "Pressione para falar",
-        "raiseHand": "Erga ou baixe sua mão",
-        "showSpeakerStats": "Exibir estatísticas do alto falante",
+        "raiseHand": "Levantar ou baixar a sua mão",
+        "showSpeakerStats": "Mostrar as estatísticas dos participantes",
         "toggleChat": "Abrir ou fechar o painel de chat",
         "toggleFilmstrip": "Mostrar ou ocultar miniaturas de vídeo",
-        "toggleScreensharing": "Trocar entre câmera e compartilhamento de tela",
+        "toggleParticipantsPane": "Mostrar ou ocultar o painel de participantes",
+        "toggleScreensharing": "Alternar entre a partilha de câmara e de ecrã",
         "toggleShortcuts": "Mostrar ou ocultar atalhos de teclado",
-        "videoMute": "Iniciar ou parar sua câmera",
-        "videoQuality": "Gerenciar qualidade da chamada"
+        "videoMute": "Iniciar ou parar a sua câmara"
     },
     "liveStreaming": {
         "busy": "Estamos trabalhando para liberar os recursos de transmissão. Tente novamente em alguns minutos.",
