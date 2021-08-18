@@ -6,9 +6,8 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { openDialog } from '../../../base/dialog';
 import {
-    getLocalParticipant,
     getParticipantCountWithFake,
-    getRemoteParticipants
+    getSortedParticipantIds
 } from '../../../base/participants';
 import MuteRemoteParticipantDialog from '../../../video-menu/components/web/MuteRemoteParticipantDialog';
 import { findStyledAncestor, shouldRenderInviteButton } from '../../functions';
@@ -46,8 +45,7 @@ const initialState = Object.freeze(Object.create(null));
 export function MeetingParticipantList() {
     const dispatch = useDispatch();
     const isMouseOverMenu = useRef(false);
-    const participants = useSelector(getRemoteParticipants);
-    const localParticipant = useSelector(getLocalParticipant);
+    const sortedParticipantIds = useSelector(getSortedParticipantIds);
 
     // This is very important as getRemoteParticipants is not changing its reference object
     // and we will not re-render on change, but if count changes we will do
@@ -130,19 +128,12 @@ export function MeetingParticipantList() {
             youText = { youText } />
     );
 
-    const items = [];
-
-    localParticipant && items.push(renderParticipant(localParticipant?.id));
-    participants.forEach(p => {
-        items.push(renderParticipant(p?.id));
-    });
-
     return (
     <>
         <Heading>{t('participantsPane.headings.participantsList', { count: participantsCount })}</Heading>
         {showInviteButton && <InviteButton />}
         <div>
-            { items }
+            {sortedParticipantIds.map(renderParticipant)}
         </div>
         <MeetingParticipantContextMenu
             muteAudio = { muteAudio }

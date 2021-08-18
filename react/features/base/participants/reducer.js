@@ -30,8 +30,6 @@ import { isParticipantModerator } from './functions';
  * @property {string} email - Participant email.
  */
 
-declare var APP: Object;
-
 /**
  * The participant properties which cannot be updated through
  * {@link PARTICIPANT_UPDATED}. They either identify the participant or can only
