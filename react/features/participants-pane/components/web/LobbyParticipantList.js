@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { admitMultiple } from '../../../lobby/actions.web';
-import { getLobbyState } from '../../../lobby/functions';
+import { getKnockingParticipants, getLobbyEnabled } from '../../../lobby/functions';
 
 import { LobbyParticipantItem } from './LobbyParticipantItem';
 
@@ -32,10 +32,9 @@ const useStyles = makeStyles(theme => {
 
 
 export const LobbyParticipantList = () => {
-    const {
-        lobbyEnabled,
-        knockingParticipants: participants
-    } = useSelector(getLobbyState);
+    const lobbyEnabled = useSelector(getLobbyEnabled);
+    const participants = useSelector(getKnockingParticipants);
+
     const { t } = useTranslation();
     const classes = useStyles();
     const dispatch = useDispatch();
