@@ -8,7 +8,7 @@ import { translate } from '../../base/i18n';
 import { Switch } from '../../base/react';
 import { connect } from '../../base/redux';
 import { toggleE2EE } from '../actions';
-
+import { doesEveryoneSupportE2EE } from '../functions';
 
 type Props = {
 
@@ -38,12 +38,7 @@ type State = {
     /**
      * True if the switch is toggled on.
      */
-    enabled: boolean,
-
-    /**
-     * True if the section description should be expanded, false otherwise.
-     */
-    expand: boolean
+    enabled: boolean
 };
 
 /**
@@ -147,11 +142,11 @@ class E2EESection extends Component<Props, State> {
  * @returns {Props}
  */
 function mapStateToProps(state) {
-    const { enabled, everyoneSupportE2EE } = state['features/e2ee'];
+    const { enabled } = state['features/e2ee'];
 
     return {
         _enabled: enabled,
-        _everyoneSupportE2EE: everyoneSupportE2EE
+        _everyoneSupportE2EE: doesEveryoneSupportE2EE(state)
     };
 }
 
