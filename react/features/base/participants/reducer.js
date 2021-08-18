@@ -14,6 +14,8 @@ import {
 import { LOCAL_PARTICIPANT_DEFAULT_ID, PARTICIPANT_ROLE } from './constants';
 import { isParticipantModerator } from './functions';
 
+declare var interfaceConfig: Object;
+
 /**
  * Participant object.
  * @typedef {Object} Participant
@@ -227,12 +229,14 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
         state.remote.set(id, participant);
 
         // Insert the new participant.
-        const displayName = name ?? 'Fellow Jitser';
+        const displayName = name
+            ?? (typeof interfaceConfig === 'object' ? interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME : 'Fellow Jitser');
         const sortedRemoteParticipants = Array.from(state.sortedRemoteParticipants);
 
         sortedRemoteParticipants.push([ id, displayName ]);
         sortedRemoteParticipants.sort((a, b) => a[1].localeCompare(b[1]));
 
+        // The sort order of participants is preserved since Map remembers the original insertion order of the keys.
         state.sortedRemoteParticipants = new Map(sortedRemoteParticipants);
 
         if (isFakeParticipant) {
