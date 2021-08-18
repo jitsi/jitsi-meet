@@ -50,6 +50,7 @@ export default [
      */
     'callHandle',
     'callStatsConfIDNamespace',
+    'callStatsConfigParams',
     'callStatsID',
     'callStatsSecret',
 
@@ -91,6 +92,7 @@ export default [
     'disableJoinLeaveSounds',
     'disableLocalVideoFlip',
     'disableNS',
+    'disablePolls',
     'disableProfile',
     'disableRemoteControl',
     'disableRemoteMute',
@@ -99,6 +101,7 @@ export default [
     'disableShortcuts',
     'disableShowMoreStats',
     'disableRemoveRaisedHandOnFocus',
+    'disableSpeakerStatsSearch',
     'disableSimulcast',
     'disableThirdPartyRequests',
     'disableTileView',

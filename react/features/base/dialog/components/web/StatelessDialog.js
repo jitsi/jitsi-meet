@@ -72,6 +72,12 @@ type Props = {
     isModal: boolean,
 
     /**
+     * The handler for the event when clicking the 'confirmNo' button.
+     * Defaults to onCancel if absent.
+     */
+    onDecline?: Function,
+
+    /**
      * Disables rendering of the submit button.
      */
     submitDisabled: boolean,
@@ -268,7 +274,8 @@ class StatelessDialog extends Component<Props> {
         }
 
         const {
-            t /* The following fixes a flow error: */ = _.identity
+            t /* The following fixes a flow error: */ = _.identity,
+            onDecline
         } = this.props;
 
         return (
@@ -276,7 +283,7 @@ class StatelessDialog extends Component<Props> {
                 appearance = 'subtle'
                 id = { CANCEL_BUTTON_ID }
                 key = 'cancel'
-                onClick = { this._onCancel }
+                onClick = { onDecline || this._onCancel }
                 type = 'button'>
                 { t(this.props.cancelKey || 'dialog.Cancel') }
             </Button>

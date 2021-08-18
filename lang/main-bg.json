@@ -586,6 +586,7 @@
     },
     "speaker": "Говорещ",
     "speakerStats": {
+        "search": "Търсене",
         "hours": "{{count}}ч",
         "minutes": "{{count}}мин",
         "name": "Име",

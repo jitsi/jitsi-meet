@@ -41,10 +41,6 @@ public class JitsiMeetConferenceOptions implements Parcelable {
      */
     private String room;
     /**
-     * Conference subject.
-     */
-    private String subject;
-    /**
      * JWT token used for authentication.
      */
     private String token;
@@ -55,17 +51,14 @@ public class JitsiMeetConferenceOptions implements Parcelable {
     private Bundle colorScheme;
 
     /**
+     * Config. See: https://github.com/jitsi/jitsi-meet/blob/master/config.js
+     */
+    private Bundle config;
+
+    /**
      * Feature flags. See: https://github.com/jitsi/jitsi-meet/blob/master/react/features/base/flags/constants.js
      */
     private Bundle featureFlags;
-
-    /**
-     * Set to {@code true} to join the conference with audio / video muted or to start in audio
-     * only mode respectively.
-     */
-    private Boolean audioMuted;
-    private Boolean audioOnly;
-    private Boolean videoMuted;
 
     /**
      * USer information, to be used when no token is specified.
@@ -80,10 +73,6 @@ public class JitsiMeetConferenceOptions implements Parcelable {
         return room;
     }
 
-    public String getSubject() {
-        return subject;
-    }
-
     public String getToken() {
         return token;
     }
@@ -96,18 +85,6 @@ public class JitsiMeetConferenceOptions implements Parcelable {
         return featureFlags;
     }
 
-    public boolean getAudioMuted() {
-        return audioMuted;
-    }
-
-    public boolean getAudioOnly() {
-        return audioOnly;
-    }
-
-    public boolean getVideoMuted() {
-        return videoMuted;
-    }
-
     public JitsiMeetUserInfo getUserInfo() {
         return userInfo;
     }
@@ -118,19 +95,16 @@ public class JitsiMeetConferenceOptions implements Parcelable {
     public static class Builder {
         private URL serverURL;
         private String room;
-        private String subject;
         private String token;
 
         private Bundle colorScheme;
+        private Bundle config;
         private Bundle featureFlags;
-
-        private Boolean audioMuted;
-        private Boolean audioOnly;
-        private Boolean videoMuted;
 
         private JitsiMeetUserInfo userInfo;
 
         public Builder() {
+            config = new Bundle();
             featureFlags = new Bundle();
         }
 
@@ -162,7 +136,7 @@ public class JitsiMeetConferenceOptions implements Parcelable {
          * @return - The {@link Builder} object itself so the method calls can be chained.
          */
         public Builder setSubject(String subject) {
-            this.subject = subject;
+            setConfigOverride("subject", subject);
 
             return this;
         }
@@ -193,11 +167,11 @@ public class JitsiMeetConferenceOptions implements Parcelable {
 
         /**
          * Indicates the conference will be joined with the microphone muted.
-         * @param muted - Muted indication.
+         * @param audioMuted - Muted indication.
          * @return - The {@link Builder} object itself so the method calls can be chained.
          */
-        public Builder setAudioMuted(boolean muted) {
-            this.audioMuted = muted;
+        public Builder setAudioMuted(boolean audioMuted) {
+            setConfigOverride("startWithAudioMuted", audioMuted);
 
             return this;
         }
@@ -209,7 +183,7 @@ public class JitsiMeetConferenceOptions implements Parcelable {
          * @return - The {@link Builder} object itself so the method calls can be chained.
          */
         public Builder setAudioOnly(boolean audioOnly) {
-            this.audioOnly = audioOnly;
+            setConfigOverride("startAudioOnly", audioOnly);
 
             return this;
         }
@@ -219,7 +193,7 @@ public class JitsiMeetConferenceOptions implements Parcelable {
          * @return - The {@link Builder} object itself so the method calls can be chained.
          */
         public Builder setVideoMuted(boolean videoMuted) {
-            this.videoMuted = videoMuted;
+            setConfigOverride("startWithVideoMuted", videoMuted);
 
             return this;
         }
@@ -261,6 +235,36 @@ public class JitsiMeetConferenceOptions implements Parcelable {
             return this;
         }
 
+        public Builder setConfigOverride(String config, String value) {
+            this.config.putString(config, value);
+
+            return this;
+        }
+
+        public Builder setConfigOverride(String config, int value) {
+            this.config.putInt(config, value);
+
+            return this;
+        }
+
+        public Builder setConfigOverride(String config, boolean value) {
+            this.config.putBoolean(config, value);
+
+            return this;
+        }
+
+        public Builder setConfigOverride(String config, Bundle bundle) {
+            this.config.putBundle(config, bundle);
+
+            return this;
+        }
+
+        public Builder setConfigOverride(String config, String[] list) {
+            this.config.putStringArray(config, list);
+
+            return this;
+        }
+
         /**
          * Builds the immutable {@link JitsiMeetConferenceOptions} object with the configuration
          * that this {@link Builder} instance specified.
@@ -271,13 +275,10 @@ public class JitsiMeetConferenceOptions implements Parcelable {
 
             options.serverURL = this.serverURL;
             options.room = this.room;
-            options.subject = this.subject;
             options.token = this.token;
             options.colorScheme = this.colorScheme;
+            options.config = this.config;
             options.featureFlags = this.featureFlags;
-            options.audioMuted = this.audioMuted;
-            options.audioOnly = this.audioOnly;
-            options.videoMuted = this.videoMuted;
             options.userInfo = this.userInfo;
 
             return options;
@@ -290,17 +291,12 @@ public class JitsiMeetConferenceOptions implements Parcelable {
     private JitsiMeetConferenceOptions(Parcel in) {
         serverURL = (URL) in.readSerializable();
         room = in.readString();
-        subject = in.readString();
         token = in.readString();
         colorScheme = in.readBundle();
+        config = in.readBundle();
         featureFlags = in.readBundle();
         userInfo = new JitsiMeetUserInfo(in.readBundle());
         byte tmpAudioMuted = in.readByte();
-        audioMuted = tmpAudioMuted == 0 ? null : tmpAudioMuted == 1;
-        byte tmpAudioOnly = in.readByte();
-        audioOnly = tmpAudioOnly == 0 ? null : tmpAudioOnly == 1;
-        byte tmpVideoMuted = in.readByte();
-        videoMuted = tmpVideoMuted == 0 ? null : tmpVideoMuted == 1;
     }
 
     Bundle asProps() {
@@ -315,21 +311,6 @@ public class JitsiMeetConferenceOptions implements Parcelable {
 
         if (colorScheme != null) {
             props.putBundle("colorScheme", colorScheme);
-        }
-
-        Bundle config = new Bundle();
-
-        if (audioMuted != null) {
-            config.putBoolean("startWithAudioMuted", audioMuted);
-        }
-        if (audioOnly != null) {
-            config.putBoolean("startAudioOnly", audioOnly);
-        }
-        if (videoMuted != null) {
-            config.putBoolean("startWithVideoMuted", videoMuted);
-        }
-        if (subject != null) {
-            config.putString("subject", subject);
         }
 
         Bundle urlProps = new Bundle();
@@ -379,14 +360,11 @@ public class JitsiMeetConferenceOptions implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeSerializable(serverURL);
         dest.writeString(room);
-        dest.writeString(subject);
         dest.writeString(token);
         dest.writeBundle(colorScheme);
+        dest.writeBundle(config);
         dest.writeBundle(featureFlags);
         dest.writeBundle(userInfo != null ? userInfo.asBundle() : new Bundle());
-        dest.writeByte((byte) (audioMuted == null ? 0 : audioMuted ? 1 : 2));
-        dest.writeByte((byte) (audioOnly == null ? 0 : audioOnly ? 1 : 2));
-        dest.writeByte((byte) (videoMuted == null ? 0 : videoMuted ? 1 : 2));
     }
 
     @Override

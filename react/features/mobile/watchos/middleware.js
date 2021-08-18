@@ -98,7 +98,7 @@ function _appWillMount({ dispatch, getState }) {
 
         switch (command) {
         case CMD_HANG_UP:
-            if (typeof getCurrentConferenceUrl(getState()) !== undefined) {
+            if (typeof getCurrentConferenceUrl(getState()) !== 'undefined') {
                 dispatch(appNavigate(undefined));
             }
             break;

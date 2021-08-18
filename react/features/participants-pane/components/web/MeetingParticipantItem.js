@@ -2,7 +2,11 @@
 
 import React from 'react';
 
-import { getParticipantByIdOrUndefined, getParticipantDisplayName } from '../../../base/participants';
+import {
+    getLocalParticipant,
+    getParticipantByIdOrUndefined,
+    getParticipantDisplayName
+} from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { isParticipantAudioMuted, isParticipantVideoMuted } from '../../../base/tracks';
 import { ACTION_TRIGGER, MEDIA_STATE, type MediaState } from '../../constants';
@@ -33,6 +37,16 @@ type Props = {
      * True if the participant is the local participant.
      */
     _local: boolean,
+
+    /**
+     * Shared video local participant owner.
+     */
+    _localVideoOwner: boolean,
+
+    /**
+     * The participant.
+     */
+    _participant: Object,
 
     /**
      * The participant ID.
@@ -108,7 +122,9 @@ function MeetingParticipantItem({
     _audioMediaState,
     _displayName,
     _isVideoMuted,
+    _localVideoOwner,
     _local,
+    _participant,
     _participantID,
     _quickActionButtonType,
     _raisedHand,
@@ -133,15 +149,28 @@ function MeetingParticipantItem({
             raisedHand = { _raisedHand }
             videoMuteState = { _isVideoMuted ? MEDIA_STATE.MUTED : MEDIA_STATE.UNMUTED }
             youText = { youText }>
-            <ParticipantQuickAction
-                askUnmuteText = { askUnmuteText }
-                buttonType = { _quickActionButtonType }
-                muteAudio = { muteAudio }
-                muteParticipantButtonText = { muteParticipantButtonText }
-                participantID = { _participantID } />
-            <ParticipantActionEllipsis
-                aria-label = { participantActionEllipsisLabel }
-                onClick = { onContextMenu } />
+            {
+                !_participant.isFakeParticipant && (
+                    <>
+                        <ParticipantQuickAction
+                            askUnmuteText = { askUnmuteText }
+                            buttonType = { _quickActionButtonType }
+                            muteAudio = { muteAudio }
+                            muteParticipantButtonText = { muteParticipantButtonText }
+                            participantID = { _participantID } />
+                        <ParticipantActionEllipsis
+                            aria-label = { participantActionEllipsisLabel }
+                            onClick = { onContextMenu } />
+                    </>
+                )
+            }
+            {
+                _participant.isFakeParticipant && _localVideoOwner && (
+                    <ParticipantActionEllipsis
+                        aria-label = { participantActionEllipsisLabel }
+                        onClick = { onContextMenu } />
+                )
+            }
         </ParticipantItem>
     );
 }
@@ -156,6 +185,8 @@ function MeetingParticipantItem({
  */
 function _mapStateToProps(state, ownProps): Object {
     const { participantID } = ownProps;
+    const { ownerId } = state['features/shared-video'];
+    const localParticipantId = getLocalParticipant(state).id;
 
     const participant = getParticipantByIdOrUndefined(state, participantID);
 
@@ -170,6 +201,8 @@ function _mapStateToProps(state, ownProps): Object {
         _isAudioMuted,
         _isVideoMuted,
         _local: Boolean(participant?.local),
+        _localVideoOwner: Boolean(ownerId === localParticipantId),
+        _participant: participant,
         _participantID: participant?.id,
         _quickActionButtonType,
         _raisedHand: Boolean(participant?.raisedHand)

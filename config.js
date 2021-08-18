@@ -71,7 +71,10 @@ var config = {
     },
 
     // Enables reactions feature.
-    enableReactions: false,
+    // enableReactions: false,
+
+    // Disables polls feature.
+    // disablePolls: false,
 
     // Disables ICE/UDP by filtering out local and remote UDP candidates in
     // signalling.
@@ -146,6 +149,9 @@ var config = {
 
     // Specifies whether the raised hand will hide when someone becomes a dominant speaker or not
     // disableRemoveRaisedHandOnFocus: false,
+  
+    // Specifies whether there will be a search field in speaker stats or not
+    // disableSpeakerStatsSearch: false,
 
     // How many participants while in the tile view mode, before the receiving video quality is reduced from HD to SD.
     // Use -1 to disable.
@@ -232,6 +238,17 @@ var config = {
     // Transcription (in interface_config,
     // subtitles and buttons can be configured)
     // transcribingEnabled: false,
+
+    // If true transcriber will use the application language.
+    // The application language is either explicitly set by participants in their settings or automatically
+    // detected based on the environment, e.g. if the app is opened in a chrome instance which is using french as its
+    // default language then transcriptions for that participant will be in french.
+    // Defaults to true.
+    // transcribeWithAppLanguage: true,
+
+    // Transcriber language. This settings will only work if "transcribeWithAppLanguage" is explicitly set to false.
+    // Available languages can be found in lang/language.json.
+    // preferredTranscribeLanguage: 'en',
 
     // Enables automatic turning on captions when recording is started
     // autoCaptionOnRecord: false,
@@ -516,6 +533,28 @@ var config = {
     // callStatsID: '',
     // callStatsSecret: '',
 
+    // The callstats initialize config params as described in the API:
+    // https://docs.callstats.io/docs/javascript#callstatsinitialize-with-app-secret
+    // callStatsConfigParams: {
+    //     disableBeforeUnloadHandler: true, // disables callstats.js's window.onbeforeunload parameter.
+    //     applicationVersion: "app_version", // Application version specified by the developer.
+    //     disablePrecalltest: true, // disables the pre-call test, it is enabled by default.
+    //     siteID: "siteID", // The name/ID of the site/campus from where the call/pre-call test is made.
+    //     additionalIDs: { // additionalIDs object, contains application related IDs.
+    //         customerID: "Customer Identifier. Example, walmart.",
+    //         tenantID: "Tenant Identifier. Example, monster.",
+    //         productName: "Product Name. Example, Jitsi.",
+    //         meetingsName: "Meeting Name. Example, Jitsi loves callstats.",
+    //         serverName: "Server/MiddleBox Name. Example, jvb-prod-us-east-mlkncws12.",
+    //         pbxID: "PBX Identifier. Example, walmart.",
+    //         pbxExtensionID: "PBX Extension Identifier. Example, 5625.",
+    //         fqExtensionID: "Fully qualified Extension Identifier. Example, +71 (US) +5625.",
+    //         sessionID: "Session Identifier. Example, session-12-34"
+    //     },
+    //     collectLegacyStats: true, //enables the collection of legacy stats in chrome browser
+    //     collectIP: true //enables the collection localIP address
+    // },
+
     // Enables sending participants' display names to callstats
     // enableDisplayNameInStats: false,
 
@@ -586,6 +625,9 @@ var config = {
     },
 
     analytics: {
+        // True if the analytics should be disabled
+        // disabled: false,
+
         // The Google Analytics Tracking ID:
         // googleAnalyticsTrackingId: 'your-tracking-id-UA-123456-1'
 
