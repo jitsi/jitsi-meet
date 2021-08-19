@@ -115,13 +115,19 @@ class LobbyScreen extends AbstractLobbyScreen {
         const { _passwordJoinFailed, t } = this.props;
 
         return (
-            <InputField
-                className = { _passwordJoinFailed ? 'error' : '' }
-                onChange = { this._onChangePassword }
-                placeHolder = { _passwordJoinFailed ? t('lobby.invalidPassword') : t('lobby.passwordField') }
-                testId = 'lobby.password'
-                type = 'password'
-                value = { this.state.password } />
+            <>
+                <InputField
+                    className = { _passwordJoinFailed ? 'error' : '' }
+                    onChange = { this._onChangePassword }
+                    placeHolder = { t('lobby.passwordField') }
+                    testId = 'lobby.password'
+                    type = 'password'
+                    value = { this.state.password } />
+
+                {_passwordJoinFailed && <div
+                    className = 'prejoin-error'
+                    data-testid = 'lobby.errorMessage'>{t('lobby.errorMissingPassword')}</div>}
+            </>
         );
     }
 
@@ -136,7 +142,6 @@ class LobbyScreen extends AbstractLobbyScreen {
         return (
             <>
                 <ActionButton
-                    disabled = { !this.state.password }
                     onClick = { this._onJoinWithPassword }
                     testId = 'lobby.passwordJoinButton'
                     type = 'primary'>

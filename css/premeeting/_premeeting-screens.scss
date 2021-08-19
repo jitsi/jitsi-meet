@@ -83,6 +83,7 @@
         height: 100%;
         margin: 0 110px;
         padding: 24px 0 16px;
+        position: relative;
         width: $prejoinDefaultContentWidth;
         z-index: $toolbarZ + 2;
 
@@ -192,6 +193,10 @@
             padding: 8px 0;
         }
     }
+
+    input::placeholder {
+        color: #040404;
+    }
 }
 
 #preview {
@@ -213,7 +218,7 @@
     }
 
     video {
-        height: 100%;   
+        height: 100%;
         object-fit: cover;
         width: 100%;
     }

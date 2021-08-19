@@ -17,7 +17,6 @@ import {
     KNOCKING_PARTICIPANT_LEFT,
     SET_KNOCKING_STATE,
     SET_LOBBY_MODE_ENABLED,
-    SET_LOBBY_VISIBILITY,
     SET_PASSWORD_JOIN_FAILED
 } from './actionTypes';
 
@@ -40,18 +39,6 @@ export function cancelKnocking() {
         }
 
         dispatch(appNavigate(undefined));
-    };
-}
-
-/**
- * Action to hide the lobby screen.
- *
- * @returns {hideDialog}
- */
-export function hideLobbyScreen() {
-    return {
-        type: SET_LOBBY_VISIBILITY,
-        visible: false
     };
 }
 
@@ -82,18 +69,6 @@ export function knockingParticipantLeft(id: string) {
     return {
         id,
         type: KNOCKING_PARTICIPANT_LEFT
-    };
-}
-
-/**
- * Action to open the lobby screen.
- *
- * @returns {openDialog}
- */
-export function openLobbyScreen() {
-    return {
-        type: SET_LOBBY_VISIBILITY,
-        visible: true
     };
 }
 

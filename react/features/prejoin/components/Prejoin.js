@@ -333,7 +333,6 @@ class Prejoin extends Component<Props, State> {
                         autoFocus = { true }
                         className = { showError ? 'error' : '' }
                         hasError = { showError }
-                        id = { 'Prejoin-input-field-id' }
                         onChange = { _setName }
                         onSubmit = { joinConference }
                         placeHolder = { t('dialog.enterDisplayName') }

@@ -1,5 +1,4 @@
 .prejoin {
-
     &-input-area {
         width: 100%;
     }
@@ -20,13 +19,8 @@
         margin-top: -8px;
         font-size: 12px;
         text-align: center;
+        width: 100%;
     }
-}
-
-@mixin name-placeholder {
-    color: #fff;
-    font-weight: 300;
-    opacity: 0.6;
 }
 
 .prejoin-preview {
