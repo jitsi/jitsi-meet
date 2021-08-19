@@ -7,7 +7,12 @@ import ConnectionIndicatorContent from
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
 import { Icon, IconMenuThumb } from '../../../base/icons';
-import { getLocalParticipant, getParticipantById, PARTICIPANT_ROLE } from '../../../base/participants';
+import {
+    getLocalParticipant,
+    getParticipantById,
+    getParticipantCount,
+    PARTICIPANT_ROLE
+} from '../../../base/participants';
 import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
 import { requestRemoteControl, stopController } from '../../../remote-control';
@@ -57,7 +62,7 @@ type Props = {
     _disableGrantModerator: Boolean,
 
     /**
-     * The current height value of the filmstrip container
+     * The current height value of the filmstrip
      */
     _filmstripHeight: number,
 
@@ -77,6 +82,11 @@ type Props = {
      * Whether to display the Popover as a drawer.
      */
     _overflowDrawer: boolean,
+
+    /**
+     * Number of participants.
+     */
+    _participantCount: number,
 
     /**
      * The current state of the participant's remote control session.
@@ -285,6 +295,10 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
         } = this.props;
 
         const buttons = [];
+        const desktopVideoMenuStyles = {
+            maxHeight: this.props._filmstripHeight - 16,
+            overflowY: 'auto'
+        };
 
         if (_isModerator) {
             if (!_disableRemoteMute) {
@@ -368,21 +382,22 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
         }
 
         if (buttons.length > 0) {
-            const desktopVideoMenuStyles = {
-                maxHeight: this.props._filmstripHeight - 12,
-                overflow: 'scroll'
-            };
+            if (this.props._participantCount === 2) {
+                // This check was added because the issues was present
+                // in a two person meeting
+                if (this.props._filmstripHeight < 143) {
+                    return (
+                        <VideoMenu
+                            id = { participantID }>
+                            { buttons }
+                        </VideoMenu>
+                    );
+                }
 
-            const mobileVideoMenuStyles = {
-                maxHeight: 'none',
-                overflow: 'unset'
-            };
-
-            if (this.props._filmstripHeight < 143) {
                 return (
                     <VideoMenu
                         id = { participantID }
-                        style = { mobileVideoMenuStyles }>
+                        style = { desktopVideoMenuStyles }>
                         { buttons }
                     </VideoMenu>
                 );
@@ -390,8 +405,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
 
             return (
                 <VideoMenu
-                    id = { participantID }
-                    style = { desktopVideoMenuStyles }>
+                    id = { participantID }>
                     { buttons }
                 </VideoMenu>
             );
@@ -412,6 +426,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
 function _mapStateToProps(state, ownProps) {
     const { participantID } = ownProps;
     const localParticipant = getLocalParticipant(state);
+    const participantCount = getParticipantCount(state);
     const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
     const { disableKick, disableGrantModerator } = remoteVideoMenu;
     let _remoteControlState = null;
@@ -455,14 +470,15 @@ function _mapStateToProps(state, ownProps) {
     }
 
     return {
-        _filmstripHeight: filmstripHeight,
         _isModerator: Boolean(localParticipant?.role === PARTICIPANT_ROLE.MODERATOR),
         _disableKick: Boolean(disableKick),
         _disableRemoteMute: Boolean(disableRemoteMute),
+        _filmstripHeight: filmstripHeight,
         _remoteControlState,
         _menuPosition,
         _overflowDrawer: overflowDrawer,
         _participantDisplayName,
+        _participantCount: participantCount,
         _disableGrantModerator: Boolean(disableGrantModerator),
         _showConnectionInfo: showConnectionInfo,
         _toolboxEnabled: isToolboxEnabled(state)

@@ -185,8 +185,8 @@ class ConnectionStatsTable extends Component<Props> {
         const { isLocalVideo, enableSaveLogs, disableShowMoreStats } = this.props;
         const className = isMobileBrowser() ? 'connection-info connection-info__mobile' : 'connection-info';
         const connectionInfoStyles = {
-            maxHeight: this.props._filmstripHeight - 12,
-            overflow: 'scroll'
+            maxHeight: this.props._filmstripHeight - 14,
+            overflowY: 'auto'
         };
 
         return (
