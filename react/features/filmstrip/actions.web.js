@@ -1,7 +1,7 @@
 // @flow
 import type { Dispatch } from 'redux';
 
-import { getLocalParticipant, getRemoteParticipants, pinParticipant } from '../base/participants';
+import { getLocalParticipant, getParticipantById, pinParticipant } from '../base/participants';
 
 import {
     SET_HORIZONTAL_VIEW_DIMENSIONS,
@@ -130,9 +130,12 @@ export function setHorizontalViewDimensions() {
 export function clickOnVideo(n: number) {
     return (dispatch: Function, getState: Function) => {
         const state = getState();
-        const participants = [ getLocalParticipant(state), ...getRemoteParticipants(state).values() ];
-        const nThParticipant = participants[n];
-        const { id, pinned } = nThParticipant;
+        const { id: localId } = getLocalParticipant(state);
+
+        // Use the reordered list of participants.
+        const { remoteParticipants } = state['features/filmstrip'];
+        const participants = [ localId, ...remoteParticipants ];
+        const { id, pinned } = getParticipantById(state, participants[n]);
 
         dispatch(pinParticipant(pinned ? null : id));
     };
