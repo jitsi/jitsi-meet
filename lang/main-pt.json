@@ -58,17 +58,26 @@
         "today": "Hoje"
     },
     "chat": {
+        "enter": "Entrar na sala",
         "error": "Erro: a sua mensagem não foi enviada. Motivo: {{error}}",
-        "fieldPlaceHolder": "",
-        "messagebox": "Digite uma mensagem",
+        "fieldPlaceHolder": "Escreva aqui a sua mensagem",
+        "messagebox": "Escreva uma mensagem",
         "messageTo": "Mensagem privada para {{recipient}}",
-        "noMessagesMessage": "",
+        "noMessagesMessage": "Ainda não há mensagens na reunião. Comece aqui uma conversa!",
         "nickname": {
             "popover": "Escolha um apelido",
-            "title": "Digite um apelido para usar na conversação"
+            "title": "Introduza um apelido para usar no chat e nas sondagens"
         },
         "privateNotice": "Mensagem privada para {{recipient}}",
-        "title": "Conversação",
+        "message": "Mensagem",
+        "messageAccessibleTitle": "{{user}} disse:",
+        "messageAccessibleTitleMe": "Você disse:",
+        "smileysPanel": "Painel de Emojis",
+        "tabs": {
+            "chat": "Chat",
+            "polls": "Sondagens"
+        },
+        "title": "Chat e Sondagens",
         "you": "você"
     },
     "connectingOverlay": {
@@ -379,19 +388,19 @@
     "keyboardShortcuts": {
         "focusLocal": "Focar no seu vídeo",
         "focusRemote": "Focar no vídeo de outro participante",
-        "fullScreen": "Entrar ou sair da tela cheia",
+        "fullScreen": "Entrar ou sair do ecrã completo",
         "keyboardShortcuts": "Atalhos de teclado",
         "localRecording": "Mostrar ou ocultar controlos de gravação local",
-        "mute": "Deixar mudo ou não o microfone",
+        "mute": "Ligar ou desligar o seu microfone",
         "pushToTalk": "Pressione para falar",
-        "raiseHand": "Erga ou baixe sua mão",
-        "showSpeakerStats": "Exibir estatísticas do alto falante",
-        "toggleChat": "Abrir ou fechar o painel de bate-papo",
+        "raiseHand": "Levantar ou baixar a sua mão",
+        "showSpeakerStats": "Mostrar as estatísticas dos participantes",
+        "toggleChat": "Abrir ou fechar o painel de chat",
         "toggleFilmstrip": "Mostrar ou ocultar miniaturas de vídeo",
-        "toggleScreensharing": "Trocar entre câmera e compartilhamento de tela",
+        "toggleParticipantsPane": "Mostrar ou ocultar o painel de participantes",
+        "toggleScreensharing": "Alternar entre a partilha de câmara e de ecrã",
         "toggleShortcuts": "Mostrar ou ocultar atalhos de teclado",
-        "videoMute": "Iniciar ou parar sua câmera",
-        "videoQuality": "Gerenciar qualidade da chamada"
+        "videoMute": "Iniciar ou parar a sua câmara"
     },
     "liveStreaming": {
         "busy": "Estamos trabalhando para liberar os recursos de transmissão. Tente novamente em alguns minutos.",
@@ -514,6 +523,34 @@
     },
     "passwordSetRemotely": "Definido por outro participante",
     "passwordDigitsOnly": "Até {{number}} dígitos",
+    "polls": {
+        "create": {
+            "addOption": "Adicionar opção",
+            "answerPlaceholder": "Opção {{index}}",
+            "create": "Criar uma sondagem",
+            "cancel": "Cancelar",
+            "pollOption" : "Opção de sondagem {{index}}",
+            "pollQuestion" : "Pergunta de Sondagem",
+            "questionPlaceholder": "Faça uma pergunta",
+            "removeOption": "Remover opção",
+            "send": "Enviar"
+        },
+        "answer": {
+            "skip": "Ignorar",
+            "submit": "Submeter"
+        },
+        "results": {
+            "vote": "Voto",
+            "changeVote": "Mudar o voto",
+            "empty": "Ainda não há sondagens na reunião. Comece aqui uma sondagem!",
+            "hideDetailedResults": "Ocultar detalhes",
+            "showDetailedResults": "Mostrar detalhes"
+        },
+        "notification": {
+            "title": "Uma nova sondagem foi adicionada a esta reunião",
+            "description": "Abrir o separador das sondagens para votar"
+        }
+    },
     "poweredby": "distribuído por",
     "prejoin": {
         "audioAndVideoError": "Erro no áudio e vídeo:",
@@ -689,18 +726,19 @@
         "dialInfoText": "\n\n=====\n\nDeseja apenas discar no seu telefone?\n\n{{defaultDialInNumber}}Clique neste link para ver os números de telefone para esta reunião\n{{dialInfoPageUrl}}",
         "mainText": "Clique no seguinte link para entrar na reunião:{{roomUrl}}\n"
     },
-    "speaker": "Alto-falantes",
+    "speaker": "Participante",
     "speakerStats": {
         "hours": "{{count}}h",
         "minutes": "{{count}}m",
         "name": "Nome",
         "seconds": "{{count}}s",
-        "speakerStats": "Estatísticas do Apresentador",
-        "speakerTime": "Tempo do Apresentador"
+        "speakerStats": "Estatísticas dos Participantes",
+        "speakerTime": "Tempo do Participante"
     },
     "startupoverlay": {
         "policyText": " ",
-        "title": "O {{app}} precisa usar seu microfone e câmera."
+        "genericTitle": "A reunião precisa de usar o seu microfone e câmara.",
+        "title": "{{app}} precisa de usar o seu microfone e câmara."
     },
     "suspendedoverlay": {
         "rejoinKeyTitle": "Reconectar",
@@ -719,7 +757,7 @@
         "embedMeeting": "Reunião incorporada",
         "feedback": "Deixar comentários",
         "fullScreen": "Mudar para ecrã completo",
-        "grantModerator": "Atribuir Moderador",
+        "grantModerator": "Converter em moderador",
         "hangup": "Sair da reunião",
         "help": "Ajuda",
         "invite": "Convidar pessoas",
@@ -730,7 +768,7 @@
         "moreActions": "Mais ações",
         "moreActionsMenu": "Menu de mais ações",
         "moreOptions": "Mostrar mais opções",
-        "mute": "Mudo / Não mudo",
+        "mute": "Ativar / Desativar microfone",
         "muteEveryone": "Silenciar a todos",
         "muteEveryoneElse": "Silenciar todos os outros",
         "muteEveryonesVideo": "Desativar a câmara de todos",
@@ -741,7 +779,7 @@
         "profile": "Editar o seu perfil",
         "raiseHand": "Levantar / Baixar a mão",
         "recording": "Mudar gravação",
-        "remoteMute": "Participante mudo",
+        "remoteMute": "Participante sem som",
         "remoteVideoMute": "Desativar a câmara do participante",
         "security": "Opções de segurança",
         "Settings": "Mudar configurações",
@@ -791,7 +829,7 @@
     "lowerYourHand": "Baixar a mão",
     "moreActions": "Mais ações",
     "moreOptions": "Mais opções",
-    "mute": "Mudo / Não mudo",
+    "mute": "Ativar / Desativar microfone",
     "muteEveryone": "Silenciar todos",
     "muteEveryonesVideo": "Desativar a câmara de todos",
     "noAudioSignalTitle": "Não há nenhuma entrada vinda do seu microfone!",
@@ -820,7 +858,7 @@
     "stopScreenSharing": "Parar partilha de ecrã",
     "stopSubtitles": "Parar legendas",
     "stopSharedVideo": "Parar vídeo do YouTube",
-    "talkWhileMutedPopup": "Está a tentar falar? Está mudo.",
+    "talkWhileMutedPopup": "Está a tentar falar? Está com o som desligado.",
     "tileViewToggle": "Mudar para vista em quadrícula",
     "toggleCamera": "Mudar a câmara",
     "videomute": "Iniciar / Parar câmara",
@@ -879,15 +917,20 @@
         "standardDefinition": "Definição padrão"
     },
     "videothumbnail": {
-        "domute": "Mudo",
+        "connectionInfo": "Informações sobre a ligação",
+        "domute": "Sem som",
+        "domuteVideo": "Desativar a câmara",
+        "domuteOthers": "Silenciar todos os outros",
+        "domuteVideoOfOthers": "Desactivar a câmara de todos os outros",
         "flip": "Inverter",
+        "grantModerator": "Converter em moderador",
         "kick": "Expulsar",
         "moderator": "Moderador",
-        "mute": "Participante está mudo",
-        "muted": "Mudo",
-        "remoteControl": "Controle remoto",
-        "show": "Mostrar no palco",
-        "videomute": "O participante parou a câmera"
+        "mute": "Participante está sem som",
+        "muted": "Sem som",
+        "videomute": "O participante parou a câmara",
+        "remoteControl": "Iniciar / Parar o controlo remoto",
+        "show": "Mostrar no palco"
     },
     "welcomepage": {
         "accessibilityLabel": {
