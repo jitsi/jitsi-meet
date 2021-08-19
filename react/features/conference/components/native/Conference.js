@@ -22,6 +22,7 @@ import {
 import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
 import { KnockingParticipantList } from '../../../lobby';
+import { LobbyScreen } from '../../../lobby/components/native';
 import { getIsLobbyVisible } from '../../../lobby/functions';
 import { BackButtonRegistry } from '../../../mobile/back-button';
 import { ParticipantsPane } from '../../../participants-pane/components/native';
@@ -38,7 +39,6 @@ import type { AbstractProps } from '../AbstractConference';
 import LonelyMeetingExperience from './LonelyMeetingExperience';
 import NavigationBar from './NavigationBar';
 import styles from './styles';
-import { LobbyScreen } from '../../../lobby/components/native';
 
 
 /**

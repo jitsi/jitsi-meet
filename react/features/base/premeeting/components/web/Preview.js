@@ -5,10 +5,16 @@ import React from 'react';
 import { getDisplayName } from '../../../../base/settings';
 import { Avatar } from '../../../avatar';
 import { Video } from '../../../media';
+import { getLocalParticipant } from '../../../participants';
 import { connect } from '../../../redux';
 import { getLocalVideoTrack } from '../../../tracks';
 
 export type Props = {
+
+    /**
+     * Local participant id
+     */
+    _participantId: string,
 
     /**
      * Flag controlling whether the video should be flipped or not.
@@ -38,7 +44,7 @@ export type Props = {
  * @returns {ReactElement}
  */
 function Preview(props: Props) {
-    const { flipVideo, name, videoMuted, videoTrack } = props;
+    const { _participantId, flipVideo, name, videoMuted, videoTrack } = props;
     const className = flipVideo ? 'flipVideoX' : '';
 
     return (
@@ -54,7 +60,7 @@ function Preview(props: Props) {
                         className = 'premeeting-screen-avatar'
                         displayName = { name }
                         dynamicColor = { false }
-                        participantId = 'local'
+                        participantId = { _participantId }
                         size = { 180 } />
                 )}
         </div>
@@ -70,8 +76,10 @@ function Preview(props: Props) {
  */
 function _mapStateToProps(state, ownProps) {
     const name = getDisplayName(state);
+    const { id: _participantId } = getLocalParticipant(state);
 
     return {
+        _participantId,
         flipVideo: state['features/base/settings'].localFlipX,
         name,
         videoMuted: ownProps.videoTrack ? ownProps.videoMuted : state['features/base/media'].video.muted,
