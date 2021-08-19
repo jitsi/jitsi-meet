@@ -2,6 +2,8 @@
 
 import React from 'react';
 
+import type { StyleType } from '../../../base/styles';
+
 /**
  * The type of the React {@code Component} props of {@link VideoMenu}.
  */
@@ -16,7 +18,12 @@ type Props = {
      * The id attribute to be added to the component's DOM for retrieval when
      * querying the DOM. Not used directly by the component.
      */
-    id: string
+    id: string,
+
+    /**
+     * Style for the item itself.
+     */
+    style?: StyleType,
 };
 
 /**
@@ -43,7 +50,8 @@ export default function VideoMenu(props: Props) {
         <ul
             className = 'popupmenu'
             id = { props.id }
-            onClick = { onClick }>
+            onClick = { onClick }
+            style = { props.style }>
             { props.children }
         </ul>
     );

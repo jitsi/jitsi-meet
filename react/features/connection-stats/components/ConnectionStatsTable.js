@@ -4,12 +4,18 @@ import React, { Component } from 'react';
 
 import { isMobileBrowser } from '../../../features/base/environment/utils';
 import { translate } from '../../base/i18n';
+import { connect } from '../../base/redux';
 
 /**
  * The type of the React {@code Component} props of
  * {@link ConnectionStatsTable}.
  */
 type Props = {
+
+    /**
+     * The current height value of the filmstrip container
+     */
+    _filmstripHeight: number,
 
     /**
      * The audio SSRC of this client.
@@ -178,11 +184,16 @@ class ConnectionStatsTable extends Component<Props> {
     render() {
         const { isLocalVideo, enableSaveLogs, disableShowMoreStats } = this.props;
         const className = isMobileBrowser() ? 'connection-info connection-info__mobile' : 'connection-info';
+        const connectionInfoStyles = {
+            maxHeight: this.props._filmstripHeight - 12,
+            overflow: 'scroll'
+        };
 
         return (
             <div
                 className = { className }
-                onClick = { onClick }>
+                onClick = { onClick }
+                style = { connectionInfoStyles } >
                 { this._renderStatistics() }
                 <div className = 'connection-actions'>
                     { isLocalVideo && enableSaveLogs ? this._renderSaveLogs() : null}
@@ -839,4 +850,18 @@ function getStringFromArray(array) {
     return res;
 }
 
-export default translate(ConnectionStatsTable);
+/**
+ * Maps part of the Redux state to the props of this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {Props}
+ */
+function _mapStateToProps(state: Object) {
+    const { filmstripHeight } = state['features/filmstrip'].tileViewDimensions;
+
+    return {
+        _filmstripHeight: filmstripHeight
+    };
+}
+
+export default translate(connect(_mapStateToProps)(ConnectionStatsTable));

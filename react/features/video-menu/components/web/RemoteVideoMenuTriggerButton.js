@@ -57,6 +57,11 @@ type Props = {
     _disableGrantModerator: Boolean,
 
     /**
+     * The current height value of the filmstrip container
+     */
+    _filmstripHeight: number,
+
+    /**
      * Whether or not the participant is a conference moderator.
      */
     _isModerator: boolean,
@@ -363,8 +368,30 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
         }
 
         if (buttons.length > 0) {
+            const desktopVideoMenuStyles = {
+                maxHeight: this.props._filmstripHeight - 12,
+                overflow: 'scroll'
+            };
+
+            const mobileVideoMenuStyles = {
+                maxHeight: 'none',
+                overflow: 'unset'
+            };
+
+            if (this.props._filmstripHeight < 143) {
+                return (
+                    <VideoMenu
+                        id = { participantID }
+                        style = { mobileVideoMenuStyles }>
+                        { buttons }
+                    </VideoMenu>
+                );
+            }
+
             return (
-                <VideoMenu id = { participantID }>
+                <VideoMenu
+                    id = { participantID }
+                    style = { desktopVideoMenuStyles }>
                     { buttons }
                 </VideoMenu>
             );
@@ -397,6 +424,7 @@ function _mapStateToProps(state, ownProps) {
     const activeParticipant = requestedParticipant || controlled;
     const { overflowDrawer } = state['features/toolbox'];
     const { showConnectionInfo } = state['features/base/connection'];
+    const { filmstripHeight } = state['features/filmstrip'].tileViewDimensions;
 
     if (_supportsRemoteControl
             && ((!active && !_isRemoteControlSessionActive) || activeParticipant === participantID)) {
@@ -427,6 +455,7 @@ function _mapStateToProps(state, ownProps) {
     }
 
     return {
+        _filmstripHeight: filmstripHeight,
         _isModerator: Boolean(localParticipant?.role === PARTICIPANT_ROLE.MODERATOR),
         _disableKick: Boolean(disableKick),
         _disableRemoteMute: Boolean(disableRemoteMute),
