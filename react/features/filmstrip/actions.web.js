@@ -132,7 +132,7 @@ export function clickOnVideo(n: number) {
         const state = getState();
         const { id: localId } = getLocalParticipant(state);
 
-        // Use the reordered list of participants.
+        // Use the list that correctly represents the current order of the participants as visible in the UI.
         const { remoteParticipants } = state['features/filmstrip'];
         const participants = [ localId, ...remoteParticipants ];
         const { id, pinned } = getParticipantById(state, participants[n]);

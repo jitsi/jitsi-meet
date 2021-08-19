@@ -47,7 +47,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
     case PARTICIPANT_JOINED: {
-        updateRemoteParticipants(store);
+        updateRemoteParticipants(store, action.participant?.id);
         break;
     }
     case PARTICIPANT_LEFT: {
