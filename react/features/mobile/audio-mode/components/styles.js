@@ -17,7 +17,8 @@ export default createStyleSheet({
     deviceRow: {
         alignItems: 'center',
         flexDirection: 'row',
-        height: MD_ITEM_HEIGHT
+        height: MD_ITEM_HEIGHT,
+        marginLeft: 16
     },
 
     /**
