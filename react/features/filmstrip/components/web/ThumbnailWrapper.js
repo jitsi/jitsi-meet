@@ -104,6 +104,7 @@ function _mapStateToProps(state, ownProps) {
     const _currentLayout = getCurrentLayout(state);
     const { remoteParticipants } = state['features/filmstrip'];
     const remoteParticipantsLength = remoteParticipants.length;
+    const { enableThumbnailReordering = true } = state['features/base/config'];
 
     if (_currentLayout === LAYOUTS.TILE_VIEW) {
         const { columnIndex, rowIndex } = ownProps;
@@ -126,8 +127,11 @@ function _mapStateToProps(state, ownProps) {
             return {};
         }
 
-        // Make the local participant as the first thumbnail (top left corner) in tile view.
-        if (index === 0) {
+        // When the thumbnails are reordered, local participant is inserted at index 0.
+        const localIndex = enableThumbnailReordering ? 0 : remoteParticipantsLength;
+        const remoteIndex = enableThumbnailReordering ? index - 1 : index;
+
+        if (index === localIndex) {
             return {
                 _participantID: 'local',
                 _horizontalOffset: horizontalOffset
@@ -135,7 +139,7 @@ function _mapStateToProps(state, ownProps) {
         }
 
         return {
-            _participantID: remoteParticipants[index - 1],
+            _participantID: remoteParticipants[remoteIndex],
             _horizontalOffset: horizontalOffset
         };
     }

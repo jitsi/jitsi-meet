@@ -155,7 +155,8 @@ ReducerRegistry.register(
                 ...state,
                 visibleParticipantsStartIndex: action.startIndex,
                 visibleParticipantsEndIndex: action.endIndex,
-                visibleRemoteParticipants: new Set(state.remoteParticipants.slice(action.startIndex, action.endIndex))
+                visibleRemoteParticipants:
+                    new Set(state.remoteParticipants.slice(action.startIndex, action.endIndex + 1))
             };
         }
         case PARTICIPANT_LEFT: {
