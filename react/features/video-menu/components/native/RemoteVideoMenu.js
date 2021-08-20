@@ -42,9 +42,9 @@ type Props = {
     dispatch: Function,
 
     /**
-     * The participant for which this menu opened for.
+     * The ID of the participant for which this menu opened for.
      */
-    participant: Object,
+    participantId: String,
 
     /**
      * The color-schemed stylesheet of the BottomSheet.
@@ -79,12 +79,7 @@ type Props = {
     /**
      * Display name of the participant retrieved from Redux.
      */
-    _participantDisplayName: string,
-
-    /**
-     * The ID of the participant.
-     */
-    _participantID: ?string,
+    _participantDisplayName: string
 }
 
 // eslint-disable-next-line prefer-const
@@ -117,12 +112,12 @@ class RemoteVideoMenu extends PureComponent<Props> {
             _disableRemoteMute,
             _disableGrantModerator,
             _isParticipantAvailable,
-            participant
+            participantId
         } = this.props;
         const buttonProps = {
             afterClick: this._onCancel,
             showLabel: true,
-            participantID: participant.id,
+            participantID: participantId,
             styles: this.props._bottomSheetStyles.buttons
         };
 
@@ -141,7 +136,7 @@ class RemoteVideoMenu extends PureComponent<Props> {
                 <PrivateMessageButton { ...buttonProps } />
                 <ConnectionStatusButton { ...buttonProps } />
                 {/* <Divider style = { styles.divider } />*/}
-                {/* <VolumeSlider participantID = { _participantID } />*/}
+                {/* <VolumeSlider participantID = { participantId } />*/}
             </BottomSheet>
         );
     }
@@ -172,7 +167,7 @@ class RemoteVideoMenu extends PureComponent<Props> {
      * @returns {React$Element}
      */
     _renderMenuHeader() {
-        const { _bottomSheetStyles, participant } = this.props;
+        const { _bottomSheetStyles, participantId } = this.props;
 
         return (
             <View
@@ -180,7 +175,7 @@ class RemoteVideoMenu extends PureComponent<Props> {
                     _bottomSheetStyles.sheet,
                     styles.participantNameContainer ] }>
                 <Avatar
-                    participantId = { participant.id }
+                    participantId = { participantId }
                     size = { AVATAR_SIZE } />
                 <Text style = { styles.participantNameLabel }>
                     { this.props._participantDisplayName }
@@ -200,9 +195,9 @@ class RemoteVideoMenu extends PureComponent<Props> {
  */
 function _mapStateToProps(state, ownProps) {
     const kickOutEnabled = getFeatureFlag(state, KICK_OUT_ENABLED, true);
-    const { participant } = ownProps;
+    const { participantId } = ownProps;
     const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
-    const isParticipantAvailable = getParticipantById(state, participant.id);
+    const isParticipantAvailable = getParticipantById(state, participantId);
     let { disableKick } = remoteVideoMenu;
 
     disableKick = disableKick || !kickOutEnabled;
@@ -213,8 +208,7 @@ function _mapStateToProps(state, ownProps) {
         _disableRemoteMute: Boolean(disableRemoteMute),
         _isOpen: isDialogOpen(state, RemoteVideoMenu_),
         _isParticipantAvailable: Boolean(isParticipantAvailable),
-        _participantDisplayName: getParticipantDisplayName(state, participant.id),
-        _participantID: participant.id
+        _participantDisplayName: getParticipantDisplayName(state, participantId)
     };
 }
 

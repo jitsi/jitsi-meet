@@ -29,12 +29,13 @@ const REDUCED_UI_THRESHOLD = 300;
  */
 export function clientResized(clientWidth: number, clientHeight: number) {
     return (dispatch: Dispatch<any>, getState: Function) => {
-        const state = getState();
-        const { isOpen: isChatOpen } = state['features/chat'];
-        const isParticipantsPaneOpen = getParticipantsPaneOpen(state);
         let availableWidth = clientWidth;
 
         if (navigator.product !== 'ReactNative') {
+            const state = getState();
+            const { isOpen: isChatOpen } = state['features/chat'];
+            const isParticipantsPaneOpen = getParticipantsPaneOpen(state);
+
             if (isChatOpen) {
                 availableWidth -= CHAT_SIZE;
             }

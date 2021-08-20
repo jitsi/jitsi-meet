@@ -1,6 +1,11 @@
 // @flow
 
-import { SET_FILMSTRIP_ENABLED, SET_FILMSTRIP_VISIBLE, SET_REMOTE_PARTICIPANTS } from './actionTypes';
+import {
+    SET_FILMSTRIP_ENABLED,
+    SET_FILMSTRIP_VISIBLE,
+    SET_REMOTE_PARTICIPANTS,
+    SET_VISIBLE_REMOTE_PARTICIPANTS
+} from './actionTypes';
 
 /**
  * Sets whether the filmstrip is enabled.
@@ -48,5 +53,25 @@ export function setRemoteParticipants(participants: Array<string>) {
     return {
         type: SET_REMOTE_PARTICIPANTS,
         participants
+    };
+}
+
+/**
+ * Sets the list of the visible participants in the filmstrip by storing the start and end index from the remote
+ * participants array.
+ *
+ * @param {number} startIndex - The start index from the remote participants array.
+ * @param {number} endIndex - The end index from the remote participants array.
+ * @returns {{
+ *      type: SET_VISIBLE_REMOTE_PARTICIPANTS,
+ *      startIndex: number,
+ *      endIndex: number
+ * }}
+ */
+export function setVisibleRemoteParticipants(startIndex: number, endIndex: number) {
+    return {
+        type: SET_VISIBLE_REMOTE_PARTICIPANTS,
+        startIndex,
+        endIndex
     };
 }

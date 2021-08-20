@@ -15,7 +15,7 @@ type Props = {
     /**
      * The horizontal offset in px for the thumbnail. Used to center the thumbnails in the last row in tile view.
      */
-     _horizontalOffset: number,
+    _horizontalOffset: number,
 
     /**
      * The ID of the participant associated with the Thumbnail.
