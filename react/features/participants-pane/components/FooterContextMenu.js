@@ -13,10 +13,7 @@ import {
 import { openDialog } from '../../base/dialog';
 import { Icon, IconCheck, IconVideoOff } from '../../base/icons';
 import { MEDIA_TYPE } from '../../base/media';
-import {
-    getLocalParticipant,
-    isEveryoneModerator
-} from '../../base/participants';
+import { getLocalParticipant } from '../../base/participants';
 import { MuteEveryonesVideoDialog } from '../../video-menu/components';
 
 import {
@@ -57,7 +54,6 @@ type Props = {
 export const FooterContextMenu = ({ onMouseLeave }: Props) => {
     const dispatch = useDispatch();
     const isModerationSupported = useSelector(isAvModerationSupported());
-    const allModerators = useSelector(isEveryoneModerator);
     const isModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.AUDIO));
     const { id } = useSelector(getLocalParticipant);
     const { t } = useTranslation();
@@ -85,7 +81,7 @@ export const FooterContextMenu = ({ onMouseLeave }: Props) => {
                     <span>{ t('participantsPane.actions.stopEveryonesVideo') }</span>
                 </ContextMenuItem>
             </ContextMenuItemGroup>
-            { isModerationSupported && !allModerators ? (
+            { isModerationSupported ? (
                 <ContextMenuItemGroup>
                     <div className = { classes.text }>
                         {t('participantsPane.actions.allow')}
