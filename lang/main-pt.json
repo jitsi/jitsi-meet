@@ -188,7 +188,6 @@
         "e2eeLabel": "Habilitar encriptação de ponta a ponta",
         "e2eeWarning": "AVISO: Nem todos os participantes neste encontro parecem ter apoio para a encriptação de ponta a ponta. Se o permitir, eles não o poderão ver nem ouvir.",
         "enterDisplayName": "Digite o seu nome aqui",
-        "enterDisplayNameToJoin": "Por favor, digite o seu nome para participar",
         "embedMeeting": "Embutir reunião",
         "error": "Erro",
         "gracefulShutdown": "O nosso serviço está atualmente em manutenção. Por favor, tente novamente mais tarde.",

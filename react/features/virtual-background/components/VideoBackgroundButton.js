@@ -6,6 +6,7 @@ import { IconVirtualBackground } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { AbstractButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
+import { checkBlurSupport } from '../functions';
 
 import { VirtualBackgroundDialog } from './index';
 
@@ -72,7 +73,8 @@ class VideoBackgroundButton extends AbstractButton<Props, *> {
 function _mapStateToProps(state): Object {
 
     return {
-        _isBackgroundEnabled: Boolean(state['features/virtual-background'].backgroundEffectEnabled)
+        _isBackgroundEnabled: Boolean(state['features/virtual-background'].backgroundEffectEnabled),
+        visible: checkBlurSupport()
     };
 }
 

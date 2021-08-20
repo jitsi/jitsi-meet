@@ -6,6 +6,8 @@ import {
     getCurrentConference
 } from '../base/conference';
 
+import { SET_LOBBY_VISIBILITY } from './actionTypes';
+
 /**
  * Action to toggle lobby mode on or off.
  *
@@ -21,5 +23,29 @@ export function toggleLobbyMode(enabled: boolean) {
         } else {
             conference.disableLobby();
         }
+    };
+}
+
+/**
+ * Action to open the lobby screen.
+ *
+ * @returns {openDialog}
+ */
+export function openLobbyScreen() {
+    return {
+        type: SET_LOBBY_VISIBILITY,
+        visible: true
+    };
+}
+
+/**
+ * Action to hide the lobby screen.
+ *
+ * @returns {hideDialog}
+ */
+export function hideLobbyScreen() {
+    return {
+        type: SET_LOBBY_VISIBILITY,
+        visible: false
     };
 }

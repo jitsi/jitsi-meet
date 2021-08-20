@@ -28,6 +28,7 @@ import { DominantSpeakerName } from '../../../display-name';
 import { EmbedMeetingButton } from '../../../embed-meeting';
 import { SharedDocumentButton } from '../../../etherpad';
 import { FeedbackButton } from '../../../feedback';
+import { InviteButton } from '../../../invite/components/add-people-dialog';
 import { isVpaasMeeting } from '../../../jaas/functions';
 import { KeyboardShortcutsButton } from '../../../keyboard-shortcuts';
 import { LocalRecordingButton } from '../../../local-recording';
@@ -66,7 +67,6 @@ import { VideoQualityDialog, VideoQualityButton } from '../../../video-quality/c
 import { VideoBackgroundButton } from '../../../virtual-background';
 import { toggleBackgroundEffect } from '../../../virtual-background/actions';
 import { VIRTUAL_BACKGROUND_TYPE } from '../../../virtual-background/constants';
-import { checkBlurSupport } from '../../../virtual-background/functions';
 import {
     setFullScreen,
     setOverflowMenuVisible,
@@ -208,11 +208,6 @@ type Props = {
     _visible: boolean,
 
     /**
-     * Array with the buttons which this Toolbox should display.
-     */
-    _visibleButtons: Array<string>,
-
-    /**
      * Returns the selected virtual source object.
      */
     _virtualSource: Object,
@@ -230,7 +225,12 @@ type Props = {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * Explicitly passed array with the buttons which this Toolbox should display.
+     */
+    toolbarButtons: Array<string>,
 };
 
 declare var APP: Object;
@@ -399,9 +399,9 @@ class Toolbox extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _chatOpen, _visible, _visibleButtons } = this.props;
+        const { _chatOpen, _visible, _toolbarButtons } = this.props;
         const rootClassNames = `new-toolbox ${_visible ? 'visible' : ''} ${
-            _visibleButtons.length ? '' : 'no-buttons'} ${_chatOpen ? 'shift-right' : ''}`;
+            _toolbarButtons.length ? '' : 'no-buttons'} ${_chatOpen ? 'shift-right' : ''}`;
 
         return (
             <div
@@ -598,9 +598,14 @@ class Toolbox extends Component<Props> {
 
         const participants = {
             key: 'participants-pane',
-            alias: 'invite',
             Content: ParticipantsPaneButton,
             handleClick: this._onToolbarToggleParticipantsPane,
+            group: 2
+        };
+
+        const invite = {
+            key: 'invite',
+            Content: InviteButton,
             group: 2
         };
 
@@ -691,7 +696,7 @@ class Toolbox extends Component<Props> {
             group: 3
         };
 
-        const virtualBackground = !_screenSharing && checkBlurSupport() && {
+        const virtualBackground = !_screenSharing && {
             key: 'select-background',
             Content: VideoBackgroundButton,
             group: 3
@@ -747,6 +752,7 @@ class Toolbox extends Component<Props> {
             chat,
             raisehand,
             participants,
+            invite,
             tileview,
             toggleCamera,
             videoQuality,
@@ -1238,10 +1244,11 @@ class Toolbox extends Component<Props> {
  * props.
  *
  * @param {Object} state - The redux store/state.
+ * @param {Object} ownProps - The props explicitly passed.
  * @private
  * @returns {{}}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state, ownProps) {
     const { conference } = state['features/base/conference'];
     let desktopSharingEnabled = JitsiMeetJS.isDesktopSharingEnabled();
     const {
@@ -1268,6 +1275,15 @@ function _mapStateToProps(state) {
         }
     }
 
+    let { toolbarButtons } = ownProps;
+    const stateToolbarButtons = getToolbarButtons(state);
+
+    if (toolbarButtons) {
+        toolbarButtons = toolbarButtons.filter(name => isToolbarButtonEnabled(name, stateToolbarButtons));
+    } else {
+        toolbarButtons = stateToolbarButtons;
+    }
+
     return {
         _chatOpen: state['features/chat'].isOpen,
         _clientWidth: clientWidth,
@@ -1289,9 +1305,8 @@ function _mapStateToProps(state) {
         _participantsPaneOpen: getParticipantsPaneOpen(state),
         _raisedHand: localParticipant?.raisedHand,
         _screenSharing: isScreenVideoShared(state),
-        _toolbarButtons: getToolbarButtons(state),
+        _toolbarButtons: toolbarButtons,
         _visible: isToolboxVisible(state),
-        _visibleButtons: getToolbarButtons(state),
         _reactionsEnabled: enableReactions
     };
 }
