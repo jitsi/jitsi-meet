@@ -130,9 +130,13 @@ ReducerRegistry.register('features/base/tracks', (state = [], action) => {
         let withoutTrackStub = state;
 
         if (action.track.local) {
-            withoutTrackStub
-                = state.filter(
-                    t => !t.local || t.mediaType !== action.track.mediaType);
+            // FIXME verify if it's working as expected
+            // The track stubs were introduced to track get user media in progress state.
+            // Now this check will be over complicated with multiple tracks per type.
+            withoutTrackStub = state.filter(
+                t => !t.local
+                    || t.mediaType !== action.track.mediaType
+                    || (t.jitsiTrack && t.jitsiTrack !== action.track.jitsiTrack));
         }
 
         return [ ...withoutTrackStub, action.track ];

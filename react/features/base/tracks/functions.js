@@ -346,6 +346,12 @@ export function getLocalVideoTrack(tracks) {
     return getLocalTrack(tracks, MEDIA_TYPE.VIDEO);
 }
 
+// eslint-disable-next-line require-jsdoc
+export function getLocalCameraTrack(tracks) {
+    return getLocalTracks(tracks, false)
+        .find(t => t.videoType === VIDEO_TYPE.CAMERA);
+}
+
 /**
  * Returns the media type of the local video, presenter or video.
  *
@@ -463,16 +469,15 @@ export function getTracksByMediaType(tracks, mediaType) {
  */
 export function isLocalCameraTrackMuted(tracks) {
     const presenterTrack = getLocalTrack(tracks, MEDIA_TYPE.PRESENTER);
-    const videoTrack = getLocalTrack(tracks, MEDIA_TYPE.VIDEO);
+    const localCameraTrack = getLocalCameraTrack(tracks);
 
     // Make sure we check the mute status of only camera tracks, i.e.,
     // presenter track when it exists, camera track when the presenter
     // track doesn't exist.
     if (presenterTrack) {
         return isLocalTrackMuted(tracks, MEDIA_TYPE.PRESENTER);
-    } else if (videoTrack) {
-        return videoTrack.videoType === 'camera'
-            ? isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO) : true;
+    } else if (localCameraTrack) {
+        return localCameraTrack.muted;
     }
 
     return true;
