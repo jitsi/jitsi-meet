@@ -1,8 +1,8 @@
 // @flow
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import {
-    ScrollView,
+    FlatList,
     TouchableWithoutFeedback,
     View
 } from 'react-native';
@@ -10,12 +10,10 @@ import type { Dispatch } from 'redux';
 
 import { getLocalParticipant, getParticipantCountWithFake } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
-import { setTileViewDimensions } from '../../actions.native';
+import { setVisibleRemoteParticipants } from '../../actions.web';
 
 import Thumbnail from './Thumbnail';
 import styles from './styles';
-
 
 /**
  * The type of the React {@link Component} props of {@link TileView}.
@@ -26,6 +24,11 @@ type Props = {
      * Application's aspect ratio.
      */
     _aspectRatio: Symbol,
+
+    /**
+     * The number of columns.
+     */
+    _columns: number,
 
     /**
      * Application's viewport height.
@@ -48,6 +51,11 @@ type Props = {
     _remoteParticipants: Array<string>,
 
     /**
+     * The thumbnail height.
+     */
+    _thumbnailHeight: number,
+
+    /**
      * Application's viewport height.
      */
     _width: number,
@@ -64,45 +72,81 @@ type Props = {
 };
 
 /**
- * The margin for each side of the tile view. Taken away from the available
- * height and width for the tile container to display in.
- *
- * @private
- * @type {number}
- */
-const MARGIN = 10;
-
-/**
- * The aspect ratio the tiles should display in.
- *
- * @private
- * @type {number}
- */
-const TILE_ASPECT_RATIO = 1;
-
-/**
- * Implements a React {@link Component} which displays thumbnails in a two
+ * Implements a React {@link PureComponent} which displays thumbnails in a two
  * dimensional grid.
  *
- * @extends Component
+ * @extends PureComponent
  */
-class TileView extends Component<Props> {
-    /**
-     * Implements React's {@link Component#componentDidMount}.
-     *
-     * @inheritdoc
-     */
-    componentDidMount() {
-        this._updateReceiverQuality();
-    }
+class TileView extends PureComponent<Props> {
 
     /**
-     * Implements React's {@link Component#componentDidUpdate}.
-     *
-     * @inheritdoc
+     * The FlatList's viewabilityConfig.
      */
-    componentDidUpdate() {
-        this._updateReceiverQuality();
+    _viewabilityConfig: Object;
+
+    /**
+     * The styles for the FlatList.
+     */
+    _flatListStyles: Object;
+
+    /**
+     * The styles for the content container of the FlatList.
+     */
+    _contentContainerStyles: Object;
+
+    /**
+     * Creates new TileView component.
+     *
+     * @param {Props} props - The props of the component.
+     */
+    constructor(props: Props) {
+        super(props);
+
+        this._keyExtractor = this._keyExtractor.bind(this);
+        this._onViewableItemsChanged = this._onViewableItemsChanged.bind(this);
+        this._renderThumbnail = this._renderThumbnail.bind(this);
+        this._viewabilityConfig = {
+            itemVisiblePercentThreshold: 30
+        };
+        this._flatListStyles = {
+            ...styles.flatList
+        };
+        this._contentContainerStyles = {
+            ...styles.contentContainer
+        };
+    }
+
+    _keyExtractor: string => string;
+
+    /**
+     * Returns a key for a passed item of the list.
+     *
+     * @param {string} item - The user ID.
+     * @returns {string} - The user ID.
+     */
+    _keyExtractor(item) {
+        return item;
+    }
+
+    _onViewableItemsChanged: Object => void;
+
+    /**
+     * A handler for visible items changes.
+     *
+     * @param {Object} data - The visible items data.
+     * @param {Array<Object>} data.viewableItems - The visible items array.
+     * @returns {void}
+     */
+    _onViewableItemsChanged({ viewableItems = [] }: { viewableItems: Array<Object> }) {
+        const indexArray = viewableItems.map(i => i.index);
+
+        // We need to shift the start index of the remoteParticipants array with 1 because of the local video placed
+        // at the beginning and in the same time we don't need to adjust the end index because the end index will not be
+        // included.
+        const startIndex = Math.max(Math.min(...indexArray) - 1, 0);
+        const endIndex = Math.max(...indexArray);
+
+        this.props.dispatch(setVisibleRemoteParticipants(startIndex, endIndex));
     }
 
     /**
@@ -112,52 +156,47 @@ class TileView extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _height, _width, onClick } = this.props;
-        const rowElements = this._groupIntoRows(this._renderThumbnails(), this._getColumnCount());
+        const { _columns, _height, _thumbnailHeight, _width, onClick } = this.props;
+        const participants = this._getSortedParticipants();
+        const initialRowsToRender = Math.ceil(_height / (_thumbnailHeight + (2 * styles.thumbnail.margin)));
+
+        if (this._flatListStyles.minHeight !== _height || this._flatListStyles.minWidth !== _width) {
+            this._flatListStyles = {
+                ...styles.flatList,
+                minHeight: _height,
+                minWidth: _width
+            };
+        }
+
+        if (this._contentContainerStyles.minHeight !== _height || this._contentContainerStyles.minWidth !== _width) {
+            this._contentContainerStyles = {
+                ...styles.contentContainer,
+                minHeight: _height,
+                minWidth: _width
+            };
+        }
 
         return (
-            <ScrollView
-                style = {{
-                    ...styles.tileView,
-                    height: _height,
-                    width: _width
-                }}>
-                <TouchableWithoutFeedback onPress = { onClick }>
-                    <View
-                        style = {{
-                            ...styles.tileViewRows,
-                            minHeight: _height,
-                            minWidth: _width
-                        }}>
-                        { rowElements }
-                    </View>
-                </TouchableWithoutFeedback>
-            </ScrollView>
+            <TouchableWithoutFeedback onPress = { onClick }>
+                <View style = { styles.flatListContainer }>
+                    <FlatList
+                        contentContainerStyle = { this._contentContainerStyles }
+                        data = { participants }
+                        horizontal = { false }
+                        initialNumToRender = { initialRowsToRender }
+                        key = { _columns }
+                        keyExtractor = { this._keyExtractor }
+                        numColumns = { _columns }
+                        onViewableItemsChanged = { this._onViewableItemsChanged }
+                        renderItem = { this._renderThumbnail }
+                        showsHorizontalScrollIndicator = { false }
+                        showsVerticalScrollIndicator = { false }
+                        style = { this._flatListStyles }
+                        viewabilityConfig = { this._viewabilityConfig }
+                        windowSize = { 2 } />
+                </View>
+            </TouchableWithoutFeedback>
         );
-    }
-
-    /**
-     * Returns how many columns should be displayed for tile view.
-     *
-     * @returns {number}
-     * @private
-     */
-    _getColumnCount() {
-        const participantCount = this.props._participantCount;
-
-        // For narrow view, tiles should stack on top of each other for a lonely
-        // call and a 1:1 call. Otherwise tiles should be grouped into rows of
-        // two.
-        if (this.props._aspectRatio === ASPECT_RATIO_NARROW) {
-            return participantCount >= 3 ? 2 : 1;
-        }
-
-        if (participantCount === 4) {
-            // In wide view, a four person call should display as a 2x2 grid.
-            return 2;
-        }
-
-        return Math.min(3, participantCount);
     }
 
     /**
@@ -168,114 +207,33 @@ class TileView extends Component<Props> {
      */
     _getSortedParticipants() {
         const { _localParticipant, _remoteParticipants } = this.props;
-        const participants = [ ..._remoteParticipants ];
+        const participants = [];
 
         _localParticipant && participants.push(_localParticipant.id);
 
-        return participants;
+        return [ ...participants, ..._remoteParticipants ];
     }
 
-    /**
-     * Calculate the height and width for the tiles.
-     *
-     * @private
-     * @returns {Object}
-     */
-    _getTileDimensions() {
-        const { _height, _participantCount, _width } = this.props;
-        const columns = this._getColumnCount();
-        const heightToUse = _height - (MARGIN * 2);
-        const widthToUse = _width - (MARGIN * 2);
-        let tileWidth;
-
-        // If there is going to be at least two rows, ensure that at least two
-        // rows display fully on screen.
-        if (_participantCount / columns > 1) {
-            tileWidth = Math.min(widthToUse / columns, heightToUse / 2);
-        } else {
-            tileWidth = Math.min(widthToUse / columns, heightToUse);
-        }
-
-        return {
-            height: tileWidth / TILE_ASPECT_RATIO,
-            width: tileWidth
-        };
-    }
+    _renderThumbnail: Object => Object;
 
     /**
-     * Splits a list of thumbnails into React Elements with a maximum of
-     * {@link rowLength} thumbnails in each.
-     *
-     * @param {Array} thumbnails - The list of thumbnails that should be split
-     * into separate row groupings.
-     * @param {number} rowLength - How many thumbnails should be in each row.
-     * @private
-     * @returns {ReactElement[]}
-     */
-    _groupIntoRows(thumbnails, rowLength) {
-        const rowElements = [];
-
-        for (let i = 0; i < thumbnails.length; i++) {
-            if (i % rowLength === 0) {
-                const thumbnailsInRow = thumbnails.slice(i, i + rowLength);
-
-                rowElements.push(
-                    <View
-                        key = { rowElements.length }
-                        style = { styles.tileViewRow }>
-                        { thumbnailsInRow }
-                    </View>
-                );
-            }
-        }
-
-        return rowElements;
-    }
-
-    /**
-     * Creates React Elements to display each participant in a thumbnail. Each
-     * tile will be.
+     * Creates React Element to display each participant in a thumbnail.
      *
      * @private
-     * @returns {ReactElement[]}
+     * @returns {ReactElement}
      */
-    _renderThumbnails() {
-        const styleOverrides = {
-            aspectRatio: TILE_ASPECT_RATIO,
-            flex: 0,
-            height: this._getTileDimensions().height,
-            maxHeight: null,
-            maxWidth: null,
-            width: null
-        };
+    _renderThumbnail({ item/* , index , separators */ }) {
+        const { _thumbnailHeight } = this.props;
 
-        return this._getSortedParticipants()
-            .map(id => (
-                <Thumbnail
-                    disableTint = { true }
-                    key = { id }
-                    participantID = { id }
-                    renderDisplayName = { true }
-                    styleOverrides = { styleOverrides }
-                    tileView = { true } />));
-    }
-
-    /**
-     * Sets the receiver video quality based on the dimensions of the thumbnails
-     * that are displayed.
-     *
-     * @private
-     * @returns {void}
-     */
-    _updateReceiverQuality() {
-        const { height, width } = this._getTileDimensions();
-
-        this.props.dispatch(setTileViewDimensions({
-            thumbnailSize: {
-                height,
-                width
-            }
-        }));
+        return (
+            <Thumbnail
+                disableTint = { true }
+                height = { _thumbnailHeight }
+                key = { item }
+                participantID = { item }
+                renderDisplayName = { true }
+                tileView = { true } />)
+        ;
     }
 }
 
@@ -288,14 +246,18 @@ class TileView extends Component<Props> {
  */
 function _mapStateToProps(state) {
     const responsiveUi = state['features/base/responsive-ui'];
-    const { remoteParticipants } = state['features/filmstrip'];
+    const { remoteParticipants, tileViewDimensions } = state['features/filmstrip'];
+    const { height } = tileViewDimensions.thumbnailSize;
+    const { columns } = tileViewDimensions;
 
     return {
         _aspectRatio: responsiveUi.aspectRatio,
+        _columns: columns,
         _height: responsiveUi.clientHeight,
         _localParticipant: getLocalParticipant(state),
         _participantCount: getParticipantCountWithFake(state),
         _remoteParticipants: remoteParticipants,
+        _thumbnailHeight: height,
         _width: responsiveUi.clientWidth
     };
 }

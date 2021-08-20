@@ -15,6 +15,15 @@ export const AVATAR_SIZE = 50;
 export default {
 
     /**
+     * The FlatList content container styles
+     */
+    contentContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 0
+    },
+
+    /**
      * The display name container.
      */
     displayNameContainer: {
@@ -50,6 +59,22 @@ export default {
         position: 'absolute',
         right: 0,
         top: 0
+    },
+
+    /**
+     * The styles for the FlatList container.
+     */
+    flatListContainer: {
+        flexGrow: 1,
+        flexShrink: 1,
+        flex: 0
+    },
+
+    /**
+     * The styles for the FlatList.
+     */
+    flatList: {
+        flex: 0
     },
 
     /**
@@ -122,19 +147,6 @@ export default {
 
     thumbnailTopRightIndicatorContainer: {
         right: 0
-    },
-
-    tileView: {
-        alignSelf: 'center'
-    },
-
-    tileViewRows: {
-        justifyContent: 'center'
-    },
-
-    tileViewRow: {
-        flexDirection: 'row',
-        justifyContent: 'center'
     }
 };
 
