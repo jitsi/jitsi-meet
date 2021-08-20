@@ -150,7 +150,7 @@ function MeetingParticipantItem({
             videoMuteState = { _isVideoMuted ? MEDIA_STATE.MUTED : MEDIA_STATE.UNMUTED }
             youText = { youText }>
             {
-                !_participant.isFakeParticipant && (
+                !_participant?.isFakeParticipant && (
                     <>
                         <ParticipantQuickAction
                             askUnmuteText = { askUnmuteText }
@@ -165,7 +165,7 @@ function MeetingParticipantItem({
                 )
             }
             {
-                _participant.isFakeParticipant && _localVideoOwner && (
+                _participant?.isFakeParticipant && _localVideoOwner && (
                     <ParticipantActionEllipsis
                         aria-label = { participantActionEllipsisLabel }
                         onClick = { onContextMenu } />
