@@ -99,7 +99,7 @@ export const ContextMenuItem = styled.div`
   cursor: pointer;
   display: flex;
   min-height: 40px;
-  padding: 8px 16px;
+  padding: 10px 16px;
 
   & > *:not(:last-child) {
     margin-right: 16px;
