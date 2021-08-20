@@ -126,7 +126,7 @@ class LobbyScreen extends AbstractLobbyScreen {
 
                 {_passwordJoinFailed && <div
                     className = 'prejoin-error'
-                    data-testid = 'lobby.errorMessage'>{t('lobby.errorMissingPassword')}</div>}
+                    data-testid = 'lobby.errorMessage'>{t('lobby.invalidPassword')}</div>}
             </>
         );
     }

@@ -27,15 +27,16 @@ class LobbyScreen extends AbstractLobbyScreen {
 
         return (
             <CustomDialog
-                onCancel = { this._onCancel }
-                style = { styles.contentWrapper }>
-                <Text style = { styles.dialogTitle }>
-                    { t(this._getScreenTitleKey()) }
-                </Text>
-                <Text style = { styles.secondaryText }>
-                    { _meetingName }
-                </Text>
-                { this._renderContent() }
+                onCancel = { this._onCancel }>
+                <View style = { styles.contentWrapper }>
+                    <Text style = { styles.dialogTitle }>
+                        { t(this._getScreenTitleKey()) }
+                    </Text>
+                    <Text style = { styles.secondaryText }>
+                        { _meetingName }
+                    </Text>
+                    { this._renderContent() }
+                </View>
             </CustomDialog>
         );
     }
