@@ -9,7 +9,6 @@ import {
     sendLocalParticipant,
     setPassword
 } from '../base/conference';
-import { hideDialog, openDialog } from '../base/dialog';
 import { getLocalParticipant } from '../base/participants';
 export * from './actions.any';
 
@@ -20,7 +19,6 @@ import {
     SET_LOBBY_MODE_ENABLED,
     SET_PASSWORD_JOIN_FAILED
 } from './actionTypes';
-import { LobbyScreen } from './components';
 
 declare var APP: Object;
 
@@ -42,15 +40,6 @@ export function cancelKnocking() {
 
         dispatch(appNavigate(undefined));
     };
-}
-
-/**
- * Action to hide the lobby screen.
- *
- * @returns {hideDialog}
- */
-export function hideLobbyScreen() {
-    return hideDialog(LobbyScreen);
 }
 
 /**
@@ -81,15 +70,6 @@ export function knockingParticipantLeft(id: string) {
         id,
         type: KNOCKING_PARTICIPANT_LEFT
     };
-}
-
-/**
- * Action to open the lobby screen.
- *
- * @returns {openDialog}
- */
-export function openLobbyScreen() {
-    return openDialog(LobbyScreen, {}, true);
 }
 
 /**

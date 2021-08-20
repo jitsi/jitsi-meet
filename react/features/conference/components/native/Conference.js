@@ -22,6 +22,8 @@ import {
 import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
 import { KnockingParticipantList } from '../../../lobby';
+import { LobbyScreen } from '../../../lobby/components/native';
+import { getIsLobbyVisible } from '../../../lobby/functions';
 import { BackButtonRegistry } from '../../../mobile/back-button';
 import { ParticipantsPane } from '../../../participants-pane/components/native';
 import { Captions } from '../../../subtitles';
@@ -99,6 +101,11 @@ type Props = AbstractProps & {
     _toolboxVisible: boolean,
 
     /**
+     * Indicates whether the lobby screen should be visible.
+     */
+    _showLobby: boolean,
+
+    /**
      * The redux {@code dispatch} function.
      */
     dispatch: Function
@@ -154,7 +161,11 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {ReactElement}
      */
     render() {
-        const { _fullscreenEnabled } = this.props;
+        const { _fullscreenEnabled, _showLobby } = this.props;
+
+        if (_showLobby) {
+            return <LobbyScreen />;
+        }
 
         return (
             <Container style = { styles.conference }>
@@ -427,6 +438,7 @@ function _mapStateToProps(state) {
         _largeVideoParticipantId: state['features/large-video'].participantId,
         _pictureInPictureEnabled: getFeatureFlag(state, PIP_ENABLED),
         _reducedUI: reducedUI,
+        _showLobby: getIsLobbyVisible(state),
         _toolboxVisible: isToolboxVisible(state)
     };
 }
