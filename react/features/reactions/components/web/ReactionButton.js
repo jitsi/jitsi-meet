@@ -25,20 +25,31 @@ type Props = AbstractToolbarButtonProps & {
     /**
      * Optional label for the button
      */
-    label?: string,
+    label?: string
+};
+
+/**
+ * The type of the React {@code Component} state of {@link ReactionButton}.
+ */
+type State = {
 
     /**
      * Used to determine zoom level on reaction burst.
      */
-    increaseLevel: number
-};
+    increaseLevel: number,
+
+    /**
+     * Timeout ID to reset reaction burst.
+     */
+    increaseTimeout: TimeoutID | null
+}
 
 /**
  * Represents a button in the reactions menu.
  *
  * @extends AbstractToolbarButton
  */
-class ReactionButton extends AbstractToolbarButton<Props> {
+class ReactionButton extends AbstractToolbarButton<Props, State> {
     /**
      * Default values for {@code ReactionButton} component's properties.
      *

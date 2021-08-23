@@ -135,7 +135,7 @@ function getSoundThresholdByFrequency(frequency) {
 export function getReactionsSoundsThresholds(reactions: Array<string>) {
     const unique = getUniqueReactions(reactions);
 
-    return unique.map(reaction => {
+    return unique.map<Object>(reaction => {
         return {
             reaction,
             threshold: getSoundThresholdByFrequency(getReactionFrequency(reactions, reaction))
