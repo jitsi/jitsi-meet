@@ -1,5 +1,6 @@
 // @flow
 
+import { SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED } from '../../video-layout/actionTypes';
 import { ReducerRegistry, set } from '../redux';
 
 import {
@@ -61,6 +62,7 @@ const DEFAULT_STATE = {
     pinnedParticipant: undefined,
     remote: new Map(),
     sortedRemoteParticipants: new Map(),
+    sortedRemoteScreenshares: new Map(),
     speakersList: new Map()
 };
 
@@ -96,23 +98,15 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
     case DOMINANT_SPEAKER_CHANGED: {
         const { participant } = action;
         const { id, previousSpeakers = [] } = participant;
-        const { dominantSpeaker, local, speakersList } = state;
+        const { dominantSpeaker, local } = state;
         const newSpeakers = [ id, ...previousSpeakers ];
-        const sortedSpeakersList = Array.from(speakersList);
+        const sortedSpeakersList = [];
 
-        // Update the speakers list.
         for (const speaker of newSpeakers) {
-            if (!state.speakersList.has(speaker) && speaker !== local?.id) {
+            if (speaker !== local?.id) {
                 const remoteParticipant = state.remote.get(speaker);
 
                 remoteParticipant && sortedSpeakersList.push([ speaker, _getDisplayName(remoteParticipant.name) ]);
-            }
-        }
-
-        // Also check if any of the existing speakers have been kicked off the list.
-        for (const existingSpeaker of sortedSpeakersList.keys()) {
-            if (!newSpeakers.find(s => s === existingSpeaker)) {
-                sortedSpeakersList.filter(sortedSpeaker => sortedSpeaker[0] !== existingSpeaker);
             }
         }
 
@@ -324,6 +318,26 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
 
         return { ...state };
     }
+    case SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED: {
+        const { participantIds } = action;
+        const sortedSharesList = [];
+
+        for (const participant of participantIds) {
+            const remoteParticipant = state.remote.get(participant);
+
+            if (remoteParticipant) {
+                const displayName = _getDisplayName(remoteParticipant.name);
+
+                sortedSharesList.push([ participant, displayName ]);
+            }
+        }
+
+        // Keep the remote screen share list sorted alphabetically.
+        sortedSharesList.length && sortedSharesList.sort((a, b) => a[1].localeCompare(b[1]));
+        state.sortedRemoteScreenshares = new Map(sortedSharesList);
+
+        return { ...state };
+    }
     }
 
     return state;
@@ -335,7 +349,7 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
  * @param {string} name - The display name of the participant.
  * @returns {string}
  */
- function _getDisplayName(name) {
+function _getDisplayName(name) {
     return name
         ?? (typeof interfaceConfig === 'object' ? interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME : 'Fellow Jitser');
 }
@@ -468,7 +482,7 @@ function _participantJoined({ participant }) {
  * @param {*} value - The new value.
  * @returns {boolean} - True if a participant was updated and false otherwise.
  */
- function _updateParticipantProperty(state, id, property, value) {
+function _updateParticipantProperty(state, id, property, value) {
     const { remote, local } = state;
 
     if (remote.has(id)) {

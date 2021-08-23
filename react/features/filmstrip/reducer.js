@@ -123,7 +123,7 @@ ReducerRegistry.register(
             if (navigator.product !== 'ReactNative') {
                 const { visibleParticipantsStartIndex: startIndex, visibleParticipantsEndIndex: endIndex } = state;
 
-                state.visibleRemoteParticipants = new Set(state.remoteParticipants.slice(startIndex, endIndex));
+                state.visibleRemoteParticipants = new Set(state.remoteParticipants.slice(startIndex, endIndex + 1));
             }
 
             return { ...state };
