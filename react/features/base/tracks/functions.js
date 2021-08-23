@@ -352,6 +352,12 @@ export function getLocalCameraTrack(tracks) {
         .find(t => t.videoType === VIDEO_TYPE.CAMERA);
 }
 
+// eslint-disable-next-line require-jsdoc
+export function getLocalScreenTrack(tracks) {
+    return getLocalTracks(tracks, false)
+        .find(t => t.videoType === VIDEO_TYPE.DESKTOP);
+}
+
 /**
  * Returns the media type of the local video, presenter or video.
  *
@@ -402,6 +408,24 @@ export function getTrackByMediaTypeAndParticipant(
         participantId) {
     return tracks.find(
         t => Boolean(t.jitsiTrack) && t.participantId === participantId && t.mediaType === mediaType
+    );
+}
+
+// eslint-disable-next-line require-jsdoc
+export function getParticipantsCameraTrack(tracks, participantId) {
+    return tracks.find(
+        t => Boolean(t.jitsiTrack)
+            && t.participantId === participantId
+            && (t.videoType === undefined || t.videoType === VIDEO_TYPE.CAMERA)
+    );
+}
+
+// eslint-disable-next-line require-jsdoc
+export function getParticipantsScreenTrack(tracks, participantId) {
+    return tracks.find(
+        t => Boolean(t.jitsiTrack)
+            && t.participantId === participantId
+            && t.videoType === VIDEO_TYPE.DESKTOP
     );
 }
 

@@ -295,14 +295,14 @@ export function computeDisplayModeFromInput(input: Object) {
     const {
         isAudioOnly,
         isCurrentlyOnLargeVideo,
-        isScreenSharing,
+        hasOnlyScreenStream,
         canPlayEventReceived,
         isRemoteParticipant,
         tileViewActive
     } = input;
     const adjustedIsVideoPlayable = input.isVideoPlayable && (!isRemoteParticipant || canPlayEventReceived);
 
-    if (!tileViewActive && isScreenSharing && isRemoteParticipant) {
+    if (!tileViewActive && hasOnlyScreenStream && isRemoteParticipant) {
         return DISPLAY_AVATAR;
     } else if (isCurrentlyOnLargeVideo && !tileViewActive) {
         // Display name is always and only displayed when user is on the stage

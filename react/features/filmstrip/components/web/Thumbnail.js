@@ -18,7 +18,10 @@ import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { isTestModeEnabled } from '../../../base/testing';
 import {
     getLocalAudioTrack,
-    getLocalVideoTrack,
+    getLocalCameraTrack,
+    getLocalScreenTrack,
+    getParticipantsCameraTrack,
+    getParticipantsScreenTrack,
     getTrackByMediaTypeAndParticipant,
     updateLastTrackVideoMediaEvent
 } from '../../../base/tracks';
@@ -192,7 +195,9 @@ export type Props = {|
     /**
      * Styles that will be set to the Thumbnail's main span element.
      */
-    style?: ?Object
+    style?: ?Object,
+
+    _hasOnlyScreenStream: boolean,
 |};
 
 const defaultStyles = theme => {
@@ -369,14 +374,14 @@ class Thumbnail extends Component<Props, State> {
         const {
             _currentLayout,
             _isAudioOnly,
-            _isScreenSharing
+            _videoTrack
         } = this.props;
         const { displayMode } = this.state;
         const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
 
         if (!(DISPLAY_VIDEO === displayMode)
             && tileViewActive
-            && _isScreenSharing
+            && _videoTrack && _videoTrack.videoType === VIDEO_TYPE.DESKTOP
             && !_isAudioOnly) {
             sendAnalytics(createScreenSharingIssueEvent({
                 source: 'thumbnail',
@@ -969,6 +974,7 @@ function _mapStateToProps(state, ownProps): Object {
         _isMobile,
         _isMobilePortrait,
         _isScreenSharing: _videoTrack?.videoType === 'desktop',
+        _hasOnlyScreenStream: Boolean(_screenTrack) && !_cameraTrack,
         _isTestModeEnabled: isTestModeEnabled(state),
         _isVideoPlayable: id && isVideoPlayable(state, id),
         _localFlipX: Boolean(localFlipX),
