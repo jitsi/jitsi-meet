@@ -644,7 +644,7 @@
         "expandedPending": "Iniciando gravação...",
         "failedToStart": "Falha ao iniciar a gravação",
         "fileSharingdescription": "Compartilhar gravação com participantes da reunião",
-        "live": "EM DIRETO",
+        "live": "DIRETO",
         "loggedIn": "Conectado como {{userName}}",
         "off": "Gravação parada",
         "offBy": "{{name}} parou a gravação",
