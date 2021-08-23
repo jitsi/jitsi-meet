@@ -5,8 +5,11 @@ import { getConferenceState } from '../base/conference';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../base/media';
 import {
+    getLocalParticipant,
     getParticipantDisplayName,
+    getRemoteParticipants,
     isLocalParticipantModerator,
+    isParticipantModerator,
     PARTICIPANT_UPDATED,
     raiseHand
 } from '../base/participants';
@@ -124,19 +127,29 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     case PARTICIPANT_UPDATED: {
         const state = getState();
         const audioModerationEnabled = isEnabledFromState(MEDIA_TYPE.AUDIO, state);
+        const participant = action.participant;
 
-        // this is handled only by moderators
-        if (audioModerationEnabled && isLocalParticipantModerator(state)) {
-            const participant = action.participant;
+        if (participant && audioModerationEnabled) {
+            if (isLocalParticipantModerator(state)) {
 
-            if (participant.raisedHand) {
-                // if participant raises hand show notification
-                !isParticipantApproved(participant.id, MEDIA_TYPE.AUDIO)(state)
+                // this is handled only by moderators
+                if (participant.raisedHand) {
+                    // if participant raises hand show notification
+                    !isParticipantApproved(participant.id, MEDIA_TYPE.AUDIO)(state)
                     && dispatch(participantPendingAudio(participant));
-            } else {
-                // if participant lowers hand hide notification
-                isParticipantPending(participant, MEDIA_TYPE.AUDIO)(state)
+                } else {
+                    // if participant lowers hand hide notification
+                    isParticipantPending(participant, MEDIA_TYPE.AUDIO)(state)
                     && dispatch(dismissPendingAudioParticipant(participant));
+                }
+            } else if (participant.id === getLocalParticipant(state).id
+                && /* the new role */ isParticipantModerator(participant)) {
+
+                // this is the granted moderator case
+                getRemoteParticipants(state).forEach(p => {
+                    p.raisedHand && !isParticipantApproved(p.id, MEDIA_TYPE.AUDIO)(state)
+                        && dispatch(participantPendingAudio(p));
+                });
             }
         }
 
