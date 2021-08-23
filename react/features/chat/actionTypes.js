@@ -64,3 +64,13 @@ export const SEND_MESSAGE = 'SEND_MESSAGE';
  * }
  */
 export const SET_PRIVATE_MESSAGE_RECIPIENT = 'SET_PRIVATE_MESSAGE_RECIPIENT';
+
+/**
+ * The type of action which signals the update a _isPollsTabFocused.
+ *
+ * {
+ *     isPollsTabFocused: boolean,
+ *     type: SET_PRIVATE_MESSAGE_RECIPIENT
+ * }
+ */
+export const SET_IS_POLL_TAB_FOCUSED = 'SET_IS_POLL_TAB_FOCUSED';

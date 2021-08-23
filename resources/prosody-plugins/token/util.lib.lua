@@ -274,7 +274,7 @@ function Util:process_and_verify_token(session, acceptedIssuers)
         if alg == nil then
             return false, "not-allowed", "'alg' claim is missing";
         end
-        if alg.sub(alg,1,2) ~= "RS" then
+        if alg.sub(alg,1,2) ~= "RS" then -- do not remove - needed to protect jwt.decode in verify_token
             return false, "not-allowed", "'kid' claim only support with RS family";
         end
         pubKey = self:get_public_key(kid);

@@ -12,9 +12,6 @@ var loggingConfig = {
     // {@link #defaultLogLevel}:
     'modules/RTC/TraceablePeerConnection.js': 'info',
     'modules/statistics/CallStats.js': 'info',
-    'modules/sdp/SDPUtil.js': 'info',
-    'modules/xmpp/JingleSessionPC.js': 'info',
-    'modules/xmpp/strophe.jingle.js': 'info',
     'modules/xmpp/strophe.util.js': 'log'
 };
 

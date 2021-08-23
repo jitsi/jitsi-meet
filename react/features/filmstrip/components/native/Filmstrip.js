@@ -6,11 +6,14 @@ import { SafeAreaView, ScrollView } from 'react-native';
 import { Platform } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
-import { isFilmstripVisible } from '../../functions';
+import { isFilmstripVisible, shouldRemoteVideosBeVisible } from '../../functions';
 
 import LocalThumbnail from './LocalThumbnail';
 import Thumbnail from './Thumbnail';
 import styles from './styles';
+
+// Immutable reference to avoid re-renders.
+const NO_REMOTE_VIDEOS = [];
 
 /**
  * Filmstrip component's property types.
@@ -167,10 +170,11 @@ class Filmstrip extends Component<Props> {
  */
 function _mapStateToProps(state) {
     const { enabled, remoteParticipants } = state['features/filmstrip'];
+    const showRemoteVideos = shouldRemoteVideosBeVisible(state);
 
     return {
         _aspectRatio: state['features/base/responsive-ui'].aspectRatio,
-        _participants: remoteParticipants,
+        _participants: showRemoteVideos ? remoteParticipants : NO_REMOTE_VIDEOS,
         _visible: enabled && isFilmstripVisible(state)
     };
 }

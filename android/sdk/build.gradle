@@ -56,6 +56,7 @@ dependencies {
             exclude group: 'com.android.installreferrer'
         }
     } else {
+        implementation project(':amplitudereactnative')
         implementation project(':react-native-device-info')
         implementation(project(":react-native-google-signin")) {
             exclude group: 'com.google.android.gms'

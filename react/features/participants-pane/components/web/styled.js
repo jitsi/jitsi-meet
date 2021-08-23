@@ -99,7 +99,7 @@ export const ContextMenuItem = styled.div`
   cursor: pointer;
   display: flex;
   min-height: 40px;
-  padding: 8px 16px;
+  padding: 10px 16px;
 
   & > *:not(:last-child) {
     margin-right: 16px;
@@ -190,12 +190,6 @@ export const Heading = styled.div`
   margin: 8px 0 ${props => props.theme.panePadding}px;
 `;
 
-export const ColoredIcon = styled.div`
-  & > div > svg {
-    fill: ${props => props.color || '#fff'};
-  }
-`;
-
 export const ParticipantActionButton = styled(Button)`
   height: ${props => props.theme.participantActionButtonHeight}px;
   padding: 6px 10px;
@@ -235,7 +229,6 @@ export const ParticipantActionsHover = styled(ParticipantActions)`
     position: absolute;
     top: 0;
     transform: translateX(-100%);
-    width: 40px;
   }
 `;
 
@@ -253,6 +246,25 @@ export const ParticipantContent = styled.div`
   padding-right: ${props => props.theme.panePadding}px;
 `;
 
+export const ParticipantStates = styled.div`
+  display: flex;
+  justify-content: flex-end;
+
+  & > * {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+  }
+
+  & > *:not(:last-child) {
+    margin-right: 8px;
+  }
+
+  .jitsi-icon {
+    padding: 3px;
+  }
+`;
+
 export const ParticipantContainer = styled.div`
   align-items: center;
   color: white;
@@ -262,6 +274,12 @@ export const ParticipantContainer = styled.div`
   margin: 0 -${props => props.theme.panePadding}px;
   padding-left: ${props => props.theme.panePadding}px;
   position: relative;
+
+  &:hover {
+    ${ParticipantStates} {
+      ${props => !props.local && 'display: none'};
+    }
+  }
 
   ${props => !props.isHighlighted && '&:hover {'}
     background-color: #292929;
@@ -301,21 +319,6 @@ export const ParticipantNameContainer = styled.div`
   flex: 1;
   margin-right: 8px;
   overflow: hidden;
-`;
-
-export const ParticipantStates = styled.div`
-  display: flex;
-  justify-content: flex-end;
-
-  & > * {
-    align-items: center;
-    display: flex;
-    justify-content: center;
-  }
-
-  & > *:not(:last-child) {
-    margin-right: 8px;
-  }
 `;
 
 export const RaisedHandIndicatorBackground = styled.div`

@@ -6,9 +6,11 @@ import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { getLocalParticipant } from '../../base/participants';
 import { connect } from '../../base/redux';
+import { escapeRegexp } from '../../base/util';
 
 import SpeakerStatsItem from './SpeakerStatsItem';
 import SpeakerStatsLabels from './SpeakerStatsLabels';
+import SpeakerStatsSearch from './SpeakerStatsSearch';
 
 declare var interfaceConfig: Object;
 
@@ -41,7 +43,12 @@ type State = {
     /**
      * The stats summary provided by the JitsiConference.
      */
-    stats: Object
+    stats: Object,
+
+    /**
+     * The search input criteria.
+     */
+    criteria: string,
 };
 
 /**
@@ -62,11 +69,13 @@ class SpeakerStats extends Component<Props, State> {
         super(props);
 
         this.state = {
-            stats: this.props.conference.getSpeakerStats()
+            stats: this._getSpeakerStats(),
+            criteria: ''
         };
 
         // Bind event handlers so they are only bound once per instance.
         this._updateStats = this._updateStats.bind(this);
+        this._onSearch = this._onSearch.bind(this);
     }
 
     /**
@@ -102,13 +111,40 @@ class SpeakerStats extends Component<Props, State> {
             <Dialog
                 cancelKey = { 'dialog.close' }
                 submitDisabled = { true }
-                titleKey = 'speakerStats.speakerStats'>
+                titleKey = { 'speakerStats.speakerStats' }>
                 <div className = 'speaker-stats'>
+                    <SpeakerStatsSearch onSearch = { this._onSearch } />
                     <SpeakerStatsLabels />
                     { items }
                 </div>
             </Dialog>
         );
+    }
+
+    /**
+     * Update the internal state with the latest speaker stats.
+     *
+     * @returns {void}
+     * @private
+     */
+    _getSpeakerStats() {
+        const stats = { ...this.props.conference.getSpeakerStats() };
+
+        if (this.state?.criteria) {
+            const searchRegex = new RegExp(this.state.criteria, 'gi');
+
+            for (const id in stats) {
+                if (stats[id].hasOwnProperty('_isLocalStats')) {
+                    const name = stats[id].isLocalStats() ? this.props._localDisplayName : stats[id].getDisplayName();
+
+                    if (!name || !name.match(searchRegex)) {
+                        delete stats[id];
+                    }
+                }
+            }
+        }
+
+        return stats;
     }
 
     /**
@@ -155,6 +191,22 @@ class SpeakerStats extends Component<Props, State> {
         );
     }
 
+    _onSearch: () => void;
+
+    /**
+     * Search the existing participants by name.
+     *
+     * @returns {void}
+     * @param {string} criteria - The search parameter.
+     * @protected
+     */
+    _onSearch(criteria = '') {
+        this.setState({
+            ...this.state,
+            criteria: escapeRegexp(criteria)
+        });
+    }
+
     _updateStats: () => void;
 
     /**
@@ -164,9 +216,12 @@ class SpeakerStats extends Component<Props, State> {
      * @private
      */
     _updateStats() {
-        const stats = this.props.conference.getSpeakerStats();
+        const stats = this._getSpeakerStats();
 
-        this.setState({ stats });
+        this.setState({
+            ...this.state,
+            stats
+        });
     }
 }
 

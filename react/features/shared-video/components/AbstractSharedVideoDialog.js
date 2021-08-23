@@ -56,14 +56,20 @@ export default class AbstractSharedVideoDialog<S: *> extends Component < Props, 
      * @returns {boolean}
      */
     _onSetVideoLink(link: string) {
-        if (!link || !link.trim()) {
+        if (!link) {
             return false;
         }
 
-        const youtubeId = getYoutubeId(link);
+        const trimmedLink = link.trim();
+
+        if (!trimmedLink) {
+            return false;
+        }
+
+        const youtubeId = getYoutubeId(trimmedLink);
         const { onPostSubmit } = this.props;
 
-        onPostSubmit(youtubeId || link);
+        onPostSubmit(youtubeId || trimmedLink);
 
         return true;
     }

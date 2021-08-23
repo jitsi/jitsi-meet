@@ -120,6 +120,13 @@ function ConferenceInfo(props: Props) {
                     }
                     { _showParticipantCount && <ParticipantsCount /> }
                     <E2EELabel />
+                    {_hideRecordingLabel && (
+                        <>
+                            <RecordingLabel mode = { JitsiRecordingConstants.mode.FILE } />
+                            <RecordingLabel mode = { JitsiRecordingConstants.mode.STREAM } />
+                            <LocalRecordingLabel />
+                        </>
+                    )}
                     <TranscribingLabel />
                     <VideoQualityLabel />
                     <InsecureRoomNameLabel />
@@ -148,10 +155,12 @@ function _mapStateToProps(state) {
         hideConferenceTimer,
         hideConferenceSubject,
         hideParticipantsStats,
-        hideRecordingLabel
+        hideRecordingLabel,
+        iAmRecorder
     } = state['features/base/config'];
     const { clientWidth } = state['features/base/responsive-ui'];
 
+    const shouldHideRecordingLabel = hideRecordingLabel || iAmRecorder;
     const fileRecordingStatus = getSessionStatusToShow(state, JitsiRecordingConstants.mode.FILE);
     const streamRecordingStatus = getSessionStatusToShow(state, JitsiRecordingConstants.mode.STREAM);
     const isFileRecording = fileRecordingStatus ? fileRecordingStatus !== JitsiRecordingConstants.status.OFF : false;
@@ -162,12 +171,12 @@ function _mapStateToProps(state) {
     return {
         _hideConferenceNameAndTimer: clientWidth < 300,
         _hideConferenceTimer: Boolean(hideConferenceTimer),
-        _hideRecordingLabel: hideRecordingLabel,
+        _hideRecordingLabel: shouldHideRecordingLabel,
         _fullWidth: state['features/video-layout'].tileViewEnabled,
         _showParticipantCount: participantCount > 2 && !hideParticipantsStats,
         _subject: hideConferenceSubject ? '' : getConferenceName(state),
         _visible: isToolboxVisible(state),
-        _recordingLabel: (isFileRecording || isStreamRecording || isEngaged) && !hideRecordingLabel
+        _recordingLabel: (isFileRecording || isStreamRecording || isEngaged) && !shouldHideRecordingLabel
     };
 }
 

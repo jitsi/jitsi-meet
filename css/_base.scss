@@ -51,8 +51,10 @@ body {
     }
 }
 
-.jitsi-icon svg {
-    fill: white;
+.jitsi-icon {
+    &-default svg {
+        fill: white;
+    }
 }
 
 .disabled .jitsi-icon svg {

@@ -13,15 +13,13 @@ import {
 import { openDialog } from '../../base/dialog';
 import { Icon, IconCheck, IconVideoOff } from '../../base/icons';
 import { MEDIA_TYPE } from '../../base/media';
-import {
-    getLocalParticipant,
-    isEveryoneModerator
-} from '../../base/participants';
+import { getLocalParticipant } from '../../base/participants';
 import { MuteEveryonesVideoDialog } from '../../video-menu/components';
 
 import {
     ContextMenu,
-    ContextMenuItem
+    ContextMenuItem,
+    ContextMenuItemGroup
 } from './web/styled';
 
 const useStyles = makeStyles(() => {
@@ -33,11 +31,11 @@ const useStyles = makeStyles(() => {
             right: 0,
             top: '-8px',
             transform: 'translateY(-100%)',
-            width: '238px'
+            width: '283px'
         },
         text: {
-            marginLeft: '52px',
-            lineHeight: '40px'
+            color: '#C2C2C2',
+            padding: '10px 16px 10px 52px'
         },
         paddedAction: {
             marginLeft: '36px;'
@@ -56,7 +54,6 @@ type Props = {
 export const FooterContextMenu = ({ onMouseLeave }: Props) => {
     const dispatch = useDispatch();
     const isModerationSupported = useSelector(isAvModerationSupported());
-    const allModerators = useSelector(isEveryoneModerator);
     const isModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.AUDIO));
     const { id } = useSelector(getLocalParticipant);
     const { t } = useTranslation();
@@ -74,23 +71,24 @@ export const FooterContextMenu = ({ onMouseLeave }: Props) => {
         <ContextMenu
             className = { classes.contextMenu }
             onMouseLeave = { onMouseLeave }>
-            <ContextMenuItem
-                id = 'participants-pane-context-menu-stop-video'
-                onClick = { muteAllVideo }>
-                <Icon
-                    size = { 20 }
-                    src = { IconVideoOff } />
-                <span>{ t('participantsPane.actions.stopEveryonesVideo') }</span>
-            </ContextMenuItem>
-
-            { isModerationSupported && !allModerators ? (
-                <>
+            <ContextMenuItemGroup>
+                <ContextMenuItem
+                    id = 'participants-pane-context-menu-stop-video'
+                    onClick = { muteAllVideo }>
+                    <Icon
+                        size = { 20 }
+                        src = { IconVideoOff } />
+                    <span>{ t('participantsPane.actions.stopEveryonesVideo') }</span>
+                </ContextMenuItem>
+            </ContextMenuItemGroup>
+            { isModerationSupported ? (
+                <ContextMenuItemGroup>
                     <div className = { classes.text }>
                         {t('participantsPane.actions.allow')}
                     </div>
                     { isModerationEnabled ? (
                         <ContextMenuItem
-                            id = 'participants-pane-context-menu-start-moderation'
+                            id = 'participants-pane-context-menu-stop-moderation'
                             onClick = { disable }>
                             <span className = { classes.paddedAction }>
                                 { t('participantsPane.actions.startModeration') }
@@ -98,7 +96,7 @@ export const FooterContextMenu = ({ onMouseLeave }: Props) => {
                         </ContextMenuItem>
                     ) : (
                         <ContextMenuItem
-                            id = 'participants-pane-context-menu-stop-moderation'
+                            id = 'participants-pane-context-menu-start-moderation'
                             onClick = { enable }>
                             <Icon
                                 size = { 20 }
@@ -106,7 +104,7 @@ export const FooterContextMenu = ({ onMouseLeave }: Props) => {
                             <span>{ t('participantsPane.actions.startModeration') }</span>
                         </ContextMenuItem>
                     )}
-                </>
+                </ContextMenuItemGroup>
             ) : undefined
             }
         </ContextMenu>

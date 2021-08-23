@@ -5,8 +5,7 @@ import { IconShareDesktop } from '../../../base/icons';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-import { getLocalVideoTrack } from '../../../base/tracks';
-import { isScreenAudioShared } from '../../../screen-share';
+import { isScreenVideoShared } from '../../../screen-share';
 
 type Props = AbstractButtonProps & {
 
@@ -113,7 +112,6 @@ class ShareDesktopButton extends AbstractButton<Props, *> {
  * @returns {Object}
  */
 const mapStateToProps = state => {
-    const localVideo = getLocalVideoTrack(state['features/base/tracks']);
     let desktopSharingEnabled = JitsiMeetJS.isDesktopSharingEnabled();
     const { enableFeaturesBasedOnToken } = state['features/base/config'];
 
@@ -129,7 +127,7 @@ const mapStateToProps = state => {
     return {
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,
         _desktopSharingEnabled: desktopSharingEnabled,
-        _screensharing: (localVideo && localVideo.videoType === 'desktop') || isScreenAudioShared(state)
+        _screensharing: isScreenVideoShared(state)
     };
 };
 

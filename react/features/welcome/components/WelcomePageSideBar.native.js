@@ -83,7 +83,6 @@ class WelcomePageSideBar extends Component<Props> {
         return (
             <SlidingView
                 onHide = { this._onHideSideBar }
-                position = 'left'
                 show = { this.props._visible }
                 style = { styles.sideBar } >
                 <Header style = { styles.sideBarHeader }>

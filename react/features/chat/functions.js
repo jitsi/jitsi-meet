@@ -78,3 +78,15 @@ export function getUnreadCount(state: Object) {
 
     return messagesCount - (lastReadIndex + 1);
 }
+
+/**
+ * Selector for calculating the number of unread chat messages.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {number} The number of unread messages.
+ */
+export function getUnreadMessagesCount(state: Object) {
+    const { nbUnreadMessages } = state['features/chat'];
+
+    return nbUnreadMessages;
+}

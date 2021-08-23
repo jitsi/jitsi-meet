@@ -142,7 +142,9 @@ class BottomSheet extends PureComponent<Props> {
                     <SafeAreaView
                         style = { [
                             styles.sheetItemContainer,
-                            _styles.sheet,
+                            renderHeader
+                                ? _styles.sheetHeader
+                                : _styles.sheet,
                             style,
                             {
                                 maxHeight: _height - 100

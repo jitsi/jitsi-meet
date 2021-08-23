@@ -4,6 +4,8 @@ import { getRoomName } from '../base/conference';
 import { getDialOutStatusUrl, getDialOutUrl } from '../base/config/functions';
 import { isAudioMuted, isVideoMutedByUser } from '../base/media';
 
+import { PREJOIN_SCREEN_STATES } from './constants';
+
 /**
  * Selector for the visibility of the 'join by phone' button.
  *
@@ -160,7 +162,17 @@ export function isPrejoinPageEnabled(state: Object): boolean {
  * @returns {boolean}
  */
 export function isPrejoinPageVisible(state: Object): boolean {
-    return isPrejoinPageEnabled(state) && state['features/prejoin']?.showPrejoin;
+    return isPrejoinPageEnabled(state) && state['features/prejoin']?.showPrejoin === PREJOIN_SCREEN_STATES.VISIBLE;
+}
+
+/**
+ * Returns true if the prejoin page is loading.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {boolean}
+ */
+export function isPrejoinPageLoading(state: Object): boolean {
+    return isPrejoinPageEnabled(state) && state['features/prejoin']?.showPrejoin === PREJOIN_SCREEN_STATES.LOADING;
 }
 
 /**

@@ -206,6 +206,7 @@
         "e2eeDescription": "El cifrado de extremo a extremo es actualmente EXPERIMENTAL. Tenga en cuenta que activarlo puede deshabilitar servicios como: grabación, transmisión en vivo y participación telefónica. Además, esta reunión solo funcionará con personas que se unan con un navegador.",
         "e2eeWarning": "ADVERTENCIA: No todos los participantes de esta reunión soportan el cifrado de extremo a extremo. Si usted habilita esta opción, ellos no podrán verlo ni oírlo.",
         "enterDisplayName": "Por favor ingresa tu nombre aquí",
+        "enterDisplayNameToJoin": "Por favor ingresa tu nombre para unirte",
         "error": "Error",
         "externalInstallationMsg": "Necesita instalar nuestra extensión para compartir pantalla.",
         "externalInstallationTitle": "Extensión requerida",

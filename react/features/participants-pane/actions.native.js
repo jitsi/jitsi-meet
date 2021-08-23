@@ -1,6 +1,7 @@
 // @flow
 
 import { openDialog } from '../base/dialog';
+import { SharedVideoMenu } from '../video-menu';
 import ConnectionStatusComponent
     from '../video-menu/components/native/ConnectionStatusComponent';
 import RemoteVideoMenu from '../video-menu/components/native/RemoteVideoMenu';
@@ -40,6 +41,16 @@ export function showConnectionStatus(participantID: String) {
  */
 export function showContextMenuDetails(participant: Object) {
     return openDialog(RemoteVideoMenu, { participant });
+}
+
+/**
+ * Displays the shared video menu.
+ *
+ * @param {Object} participant - The selected meeting participant.
+ * @returns {Function}
+ */
+export function showSharedVideoMenu(participant: Object) {
+    return openDialog(SharedVideoMenu, { participant });
 }
 
 /**

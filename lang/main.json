@@ -58,7 +58,7 @@
         "today": "Today"
     },
     "chat": {
-        "enter": "Enter chat room",
+        "enter": "Enter room",
         "error": "Error: your message was not sent. Reason: {{error}}",
         "fieldPlaceHolder": "Type your message here",
         "messagebox": "Type a message",
@@ -66,15 +66,19 @@
         "noMessagesMessage": "There are no messages in the meeting yet. Start a conversation here!",
         "nickname": {
             "popover": "Choose a nickname",
-            "title": "Enter a nickname to use chat"
+            "title": "Enter a nickname to use chat and polls"
         },
         "privateNotice": "Private message to {{recipient}}",
-        "title": "Chat",
-        "you": "you",
         "message": "Message",
         "messageAccessibleTitle": "{{user}} says:",
         "messageAccessibleTitleMe": "me says:",
-        "smileysPanel": "Emoji panel"
+        "smileysPanel": "Emoji panel",
+        "tabs": {
+            "chat": "Chat",
+            "polls": "Polls"
+        },
+        "title": "Chat and Polls",
+        "you": "you"
     },
     "chromeExtensionBanner": {
         "installExtensionText": "Install the extension for Google Calendar and Office 365 integration",
@@ -205,11 +209,10 @@
         "dismiss": "Dismiss",
         "displayNameRequired": "Hi! What’s your name?",
         "done": "Done",
-        "e2eeDescription": "End-to-End Encryption is currently EXPERIMENTAL. Please keep in mind that turning on end-to-end encryption will effectively disable server-side provided services such as: recording, live streaming and phone participation. Also keep in mind that the meeting will only work for people joining from browsers with support for insertable streams.",
+        "e2eeDescription": "End-to-End Encryption is currently EXPERIMENTAL. Please keep in mind that turning on end-to-end encryption will effectively disable server-side provided services such as: phone participation. Also keep in mind that the meeting will only work for people joining from browsers with support for insertable streams.",
         "e2eeLabel": "Enable End-to-End Encryption",
         "e2eeWarning": "WARNING: Not all participants in this meeting seem to have support for End-to-End encryption. If you enable it they won't be able to see nor hear you.",
-        "enterDisplayName": "Please enter your name here",
-        "enterDisplayNameToJoin": "Please enter your name to join",
+        "enterDisplayName": "Enter your name here",
         "embedMeeting": "Embed meeting",
         "error": "Error",
         "gracefulShutdown": "Our service is currently down for maintenance. Please try again later.",
@@ -588,6 +591,7 @@
         "moderationStoppedTitle": "Moderation stopped",
         "moderationToggleDescription": "by {{participantDisplayName}}",
         "raiseHandAction": "Raise hand",
+        "reactionSounds": "Disable sounds",
         "groupTitle": "Notifications"
     },
     "participantsPane": {
@@ -614,6 +618,34 @@
     },
     "passwordSetRemotely": "Set by another participant",
     "passwordDigitsOnly": "Up to {{number}} digits",
+    "polls": {
+        "create": {
+            "addOption": "Add option",
+            "answerPlaceholder": "Option {{index}}",
+            "create": "Create a poll",
+            "cancel": "Cancel",
+            "pollOption" : "Poll option {{index}}",
+            "pollQuestion" : "Poll Question",
+            "questionPlaceholder": "Ask a question",
+            "removeOption": "Remove option",
+            "send": "Send"
+        },
+        "answer": {
+            "skip": "Skip",
+            "submit": "Submit"
+        },
+        "results": {
+            "vote": "Vote",
+            "changeVote": "Change vote",
+            "empty": "There are no polls in the meeting yet. Start a poll here!",
+            "hideDetailedResults": "Hide details",
+            "showDetailedResults": "Show details"
+        },
+        "notification": {
+            "title": "A new poll was added to this meeting",
+            "description": "Open polls tab to vote"
+        }
+    },
     "poweredby": "powered by",
     "prejoin": {
         "audioAndVideoError": "Audio and video error:",
@@ -662,7 +694,7 @@
         "joinWithoutAudio": "Join without audio",
         "initiated": "Call initiated",
         "linkCopied": "Link copied to clipboard",
-        "lookGood": "It sounds like your microphone is working properly",
+        "lookGood": "Your microphone is working properly",
         "or": "or",
         "premeeting": "Pre meeting",
         "showScreen": "Enable pre meeting screen",
@@ -763,6 +795,7 @@
         "participantJoined": "Participant Joined",
         "participantLeft": "Participant Left",
         "playSounds": "Play sound on",
+        "reactions": "Meeting reactions",
         "sameAsSystem": "Same as system ({{label}})",
         "selectAudioOutput": "Audio output",
         "selectCamera": "Camera",
@@ -802,6 +835,7 @@
     },
     "speaker": "Speaker",
     "speakerStats": {
+        "search": "Search",
         "hours": "{{count}}h",
         "minutes": "{{count}}m",
         "name": "Name",
@@ -852,7 +886,6 @@
             "muteEveryonesVideo": "Disable everyone's camera",
             "muteEveryoneElsesVideo": "Disable everyone else's camera",
             "participants": "Participants",
-            "party": "Party Popper",
             "pip": "Toggle Picture-in-Picture mode",
             "privateMessage": "Send private message",
             "profile": "Edit your profile",
@@ -869,6 +902,7 @@
             "shareYourScreen": "Start / Stop sharing your screen",
             "shortcuts": "Toggle shortcuts",
             "show": "Show on stage",
+            "silence": "Silence",
             "speakerStats": "Toggle speaker statistics",
             "surprised": "Surprised",
             "tileView": "Toggle tile view",
@@ -893,6 +927,7 @@
         "clap": "Clap",
         "closeChat": "Close chat",
         "closeReactionsMenu": "Close reactions menu",
+        "disableReactionSounds": "You can disable reaction sounds for this meeting",
         "documentClose": "Close shared document",
         "documentOpen": "Open shared document",
         "download": "Download our apps",
@@ -928,7 +963,6 @@
         "openChat": "Open chat",
         "openReactionsMenu": "Open reactions menu",
         "participants": "Participants",
-        "party": "Celebration",
         "pip": "Enter Picture-in-Picture mode",
         "privateMessage": "Send private message",
         "profile": "Edit your profile",
@@ -938,7 +972,7 @@
         "reactionClap": "Send clap reaction",
         "reactionLaugh": "Send laugh reaction",
         "reactionLike": "Send thumbs up reaction",
-        "reactionParty": "Send party popper reaction",
+        "reactionSilence": "Send silence reaction",
         "reactionSurprised": "Send surprised reaction",
         "security": "Security options",
         "Settings": "Settings",
@@ -946,6 +980,7 @@
         "sharedvideo": "Share video",
         "shareRoom": "Invite someone",
         "shortcuts": "View shortcuts",
+        "silence": "Silence",
         "speakerStats": "Speaker stats",
         "startScreenSharing": "Start screen sharing",
         "startSubtitles": "Start subtitles",
@@ -1088,7 +1123,7 @@
         "admitAll": "Admit all",
         "knockingParticipantList": "Knocking participant list",
         "allow": "Allow",
-        "backToKnockModeButton": "No password, ask to join instead",
+        "backToKnockModeButton": "Ask to join",
         "dialogTitle": "Lobby mode",
         "disableDialogContent": "Lobby mode is currently enabled. This feature ensures that unwanted participants can't join your meeting. Do you want to disable it?",
         "disableDialogSubmit": "Disable",
@@ -1098,6 +1133,7 @@
         "enableDialogText": "Lobby mode lets you protect your meeting by only allowing people to enter after a formal approval by a moderator.",
         "enterPasswordButton": "Enter meeting password",
         "enterPasswordTitle": "Enter password to join meeting",
+        "errorMissingPassword": "Please enter the meeting password",
         "invalidPassword": "Invalid password",
         "joiningMessage": "You'll join the meeting as soon as someone accepts your request",
         "joinWithPasswordMessage": "Trying to join with password, please wait...",
