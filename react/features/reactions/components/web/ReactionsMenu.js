@@ -119,7 +119,7 @@ class ReactionsMenu extends Component<Props> {
             { enable: !_raisedHand }));
         this._doToggleRaiseHand();
         dispatch(toggleReactionsMenuVisibility());
-        if (_reactionSounds) {
+        if (_reactionSounds && _raisedHand) {
             dispatch(playSound(RAISE_HAND_SOUND_ID));
         }
     }
