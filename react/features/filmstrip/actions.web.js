@@ -5,7 +5,6 @@ import { getLocalParticipant, getRemoteParticipants, pinParticipant } from '../b
 
 import {
     SET_HORIZONTAL_VIEW_DIMENSIONS,
-    SET_REMOTE_PARTICIPANTS,
     SET_TILE_VIEW_DIMENSIONS,
     SET_VERTICAL_VIEW_DIMENSIONS,
     SET_VISIBLE_REMOTE_PARTICIPANTS,
@@ -26,22 +25,7 @@ import {
     calculateThumbnailSizeForVerticalView
 } from './functions';
 
-/**
- * Sets the list of the reordered remote participants based on which the visible participants in the filmstrip will be
- * determined.
- *
- * @param {Array<string>} participants - The list of the remote participant endpoint IDs.
- * @returns {{
-        type: SET_REMOTE_PARTICIPANTS,
-        participants: Array<string>
-    }}
- */
-export function setRemoteParticipants(participants: Array<string>) {
-    return {
-        type: SET_REMOTE_PARTICIPANTS,
-        participants
-    };
-}
+export * from './actions.any';
 
 /**
  * Sets the dimensions of the tile view grid.
@@ -192,5 +176,3 @@ export function setVisibleRemoteParticipants(startIndex: number, endIndex: numbe
         endIndex
     };
 }
-
-export * from './actions.native';

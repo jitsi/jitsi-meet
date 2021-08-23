@@ -16,7 +16,6 @@ import {
     isRemoteTrackMuted
 } from '../base/tracks/functions';
 
-import { setRemoteParticipants } from './actions.web';
 import {
     ASPECT_RATIO_BREAKPOINT,
     DISPLAY_AVATAR,
@@ -32,6 +31,8 @@ import {
     TILE_VERTICAL_MARGIN,
     VERTICAL_FILMSTRIP_MIN_HORIZONTAL_MARGIN
 } from './constants';
+
+export * from './functions.any';
 
 declare var interfaceConfig: Object;
 
@@ -265,37 +266,4 @@ export function computeDisplayMode(input: Object) {
 
     // check hovering and change state to avatar with name
     return isHovered ? DISPLAY_AVATAR_WITH_NAME : DISPLAY_AVATAR;
-}
-
-/**
- * Computes the reorderd list of the remote participants.
- *
- * @param {*} store - The redux store.
- * @returns {void}
- * @private
- */
-export function updateRemoteParticipants(store: Object) {
-    const state = store.getState();
-    const { fakeParticipants, sortedRemoteParticipants, speakersList } = state['features/base/participants'];
-    const { remoteScreenShares } = state['features/video-layout'];
-    const screenShares = (remoteScreenShares || []).slice();
-    let speakers = (speakersList || []).slice();
-    const remoteParticipants = new Map(sortedRemoteParticipants);
-    const sharedVideos = fakeParticipants ? Array.from(fakeParticipants.keys()) : [];
-
-    for (const screenshare of screenShares) {
-        remoteParticipants.delete(screenshare);
-        speakers = speakers.filter(speaker => speaker !== screenshare);
-    }
-    for (const sharedVideo of sharedVideos) {
-        remoteParticipants.delete(sharedVideo);
-        speakers = speakers.filter(speaker => speaker !== sharedVideo);
-    }
-    for (const speaker of speakers) {
-        remoteParticipants.delete(speaker);
-    }
-    const reorderedParticipants
-        = [ ...screenShares.reverse(), ...sharedVideos, ...speakers, ...Array.from(remoteParticipants.keys()) ];
-
-    store.dispatch(setRemoteParticipants(reorderedParticipants));
 }

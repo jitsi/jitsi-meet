@@ -136,6 +136,13 @@ function Thumbnail(props: Props) {
         tileView
     } = props;
 
+    // It seems that on leave the Thumbnail for the left participant can be re-rendered.
+    // This will happen when mapStateToProps is executed before the remoteParticipants list in redux is updated.
+    if (typeof participant === 'undefined') {
+
+        return null;
+    }
+
     const participantId = participant.id;
     const participantInLargeVideo
         = participantId === largeVideo.participantId;
