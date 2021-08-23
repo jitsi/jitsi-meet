@@ -10,7 +10,7 @@ import { setRemoteParticipants } from './actions';
  * @returns {void}
  * @private
  */
- export function updateRemoteParticipants(store: Object, participantId: ?number) {
+export function updateRemoteParticipants(store: Object, participantId: ?number) {
     const state = store.getState();
     const { enableThumbnailReordering = true } = state['features/base/config'];
     let reorderedParticipants = [];
@@ -26,14 +26,18 @@ import { setRemoteParticipants } from './actions';
         return;
     }
 
-    const { fakeParticipants, sortedRemoteParticipants, speakersList } = state['features/base/participants'];
-    const { remoteScreenShares } = state['features/video-layout'];
-    const screenShares = (remoteScreenShares || []).slice();
-    const speakers = new Map(speakersList);
+    const {
+        fakeParticipants,
+        sortedRemoteParticipants,
+        sortedRemoteScreenshares,
+        speakersList
+    } = state['features/base/participants'];
     const remoteParticipants = new Map(sortedRemoteParticipants);
+    const screenShares = new Map(sortedRemoteScreenshares);
     const sharedVideos = fakeParticipants ? Array.from(fakeParticipants.keys()) : [];
+    const speakers = new Map(speakersList);
 
-    for (const screenshare of screenShares) {
+    for (const screenshare of screenShares.keys()) {
         remoteParticipants.delete(screenshare);
         speakers.delete(screenshare);
     }
@@ -47,7 +51,7 @@ import { setRemoteParticipants } from './actions';
 
     // Always update the order of the thumnails.
     reorderedParticipants = [
-        ...screenShares.reverse(),
+        ...Array.from(screenShares.keys()),
         ...sharedVideos,
         ...Array.from(speakers.keys()),
         ...Array.from(remoteParticipants.keys())
