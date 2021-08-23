@@ -3,46 +3,46 @@
  *
  * @type {string}
  */
-export const LAUGH_SOUND_FILES = [ 'laugh.mp3', 'boo.mp3', 'like.mp3' ];
+export const LAUGH_SOUND_FILES = [ 'reactions-laughter.mp3', 'reactions-laughter.mp3', 'reactions-laughter.mp3' ];
 
 /**
  * The name of the bundled audio file which will be played for the clap reaction sound.
  *
  * @type {string}
  */
-export const CLAP_SOUND_FILES = [ 'clap.mp3', 'laugh.mp3', 'like.mp3' ];
+export const CLAP_SOUND_FILES = [ 'reactions-applause.mp3', 'reactions-applause.mp3', 'reactions-applause.mp3' ];
 
 /**
  * The name of the bundled audio file which will be played for the like reaction sound.
  *
  * @type {string}
  */
-export const LIKE_SOUND_FILES = [ 'like.mp3', 'boo.mp3', 'laugh.mp3' ];
+export const LIKE_SOUND_FILES = [ 'reactions-thumbs-up.mp3', 'reactions-thumbs-up.mp3', 'reactions-thumbs-up.mp3' ];
 
 /**
  * The name of the bundled audio file which will be played for the boo reaction sound.
  *
  * @type {string}
  */
-export const BOO_SOUND_FILES = [ 'boo.mp3', 'laugh.mp3', 'like.mp3' ];
+export const BOO_SOUND_FILES = [ 'reactions-boo.mp3', 'reactions-boo.mp3', 'reactions-boo.mp3' ];
 
 /**
  * The name of the bundled audio file which will be played for the surprised reaction sound.
  *
  * @type {string}
  */
-export const SURPRISE_SOUND_FILES = [ 'surprise.mp3', 'boo.mp3', 'like.mp3' ];
+export const SURPRISE_SOUND_FILES = [ 'reactions-surprise.mp3', 'reactions-surprise.mp3', 'reactions-surprise.mp3' ];
 
 /**
  * The name of the bundled audio file which will be played for the silence reaction sound.
  *
  * @type {string}
  */
-export const SILENCE_SOUND_FILES = [ 'crickets.mp3', 'boo.mp3', 'like.mp3' ];
+export const SILENCE_SOUND_FILES = [ 'reactions-crickets.mp3', 'reactions-crickets.mp3', 'reactions-crickets.mp3' ];
 
 /**
  * The name of the bundled audio file which will be played for the raise hand sound.
  *
  * @type {string}
  */
-export const RAISE_HAND_SOUND_FILE = 'raiseHand.mp3';
+export const RAISE_HAND_SOUND_FILE = 'reactions-raised-hand.mp3';
