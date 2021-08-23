@@ -930,6 +930,11 @@ var config = {
     //     'notify.invitedThreePlusMembers', // shown when 3+ participants have been invited
     //     'notify.invitedTwoMembers', // shown when 2 participants have been invited
     //     'notify.kickParticipant', // shown when a participant is kicked
+    //     'notify.moderationStartedTitle', // shown when AV moderation is activated
+    //     'notify.moderationStoppedTitle', // shown when AV moderation is deactivated
+    //     'notify.moderationInEffectTitle', // shown when user attempts to unmute audio while AV moderation is in effect
+    //     'notify.moderationInEffectVideoTitle', // shown when user attempts to enable video while AV moderation is in effect
+    //     'notify.moderationInEffectCSTitle', // shown when user attempts to share content while AV moderation is in effect
     //     'notify.mutedRemotelyTitle', // shown when user is muted by a remote party
     //     'notify.mutedTitle', // shown when user has been muted upon joining,
     //     'notify.newDeviceAudioTitle', // prompts the user to use a newly detected audio device
@@ -938,6 +943,7 @@ var config = {
     //     'notify.passwordSetRemotely', // shown when a password has been set remotely
     //     'notify.raisedHand', // shown when a partcipant used raise hand,
     //     'notify.startSilentTitle', // shown when user joined with no audio
+    //     'notify.unmute', // shown to moderator when user raises hand while AV moderation is in effect
     //     'prejoin.errorDialOut',
     //     'prejoin.errorDialOutDisconnected',
     //     'prejoin.errorDialOutFailed',
