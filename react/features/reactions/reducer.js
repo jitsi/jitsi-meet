@@ -6,7 +6,8 @@ import {
     TOGGLE_REACTIONS_VISIBLE,
     SET_REACTION_QUEUE,
     ADD_REACTION_BUFFER,
-    FLUSH_REACTION_BUFFER
+    FLUSH_REACTION_BUFFER,
+    SHOW_SOUNDS_NOTIFICATION
 } from './actionTypes';
 
 /**
@@ -17,7 +18,8 @@ import {
  *     visible: boolean,
  *     message: string,
  *     timeoutID: number,
- *     queue: Array
+ *     queue: Array,
+ *     notificationDisplayed: boolean
  * }}
  */
 function _getInitialState() {
@@ -49,7 +51,12 @@ function _getInitialState() {
          *
          * @type {Array}
          */
-        queue: []
+        queue: [],
+
+        /**
+         * Whether or not the disable reaction sounds notification was shown
+         */
+        notificationDisplayed: false
     };
 }
 
@@ -82,6 +89,13 @@ ReducerRegistry.register(
             return {
                 ...state,
                 queue: action.value
+            };
+        }
+
+        case SHOW_SOUNDS_NOTIFICATION: {
+            return {
+                ...state,
+                notificationDisplayed: true
             };
         }
         }
