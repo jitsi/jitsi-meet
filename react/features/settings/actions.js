@@ -142,14 +142,16 @@ export function submitSoundsTab(newState: Object): Function {
         const shouldUpdate = (newState.soundsIncomingMessage !== currentState.soundsIncomingMessage)
             || (newState.soundsParticipantJoined !== currentState.soundsParticipantJoined)
             || (newState.soundsParticipantLeft !== currentState.soundsParticipantLeft)
-            || (newState.soundsTalkWhileMuted !== currentState.soundsTalkWhileMuted);
+            || (newState.soundsTalkWhileMuted !== currentState.soundsTalkWhileMuted)
+            || (newState.soundsReactions !== currentState.soundsReactions);
 
         if (shouldUpdate) {
             dispatch(updateSettings({
                 soundsIncomingMessage: newState.soundsIncomingMessage,
                 soundsParticipantJoined: newState.soundsParticipantJoined,
                 soundsParticipantLeft: newState.soundsParticipantLeft,
-                soundsTalkWhileMuted: newState.soundsTalkWhileMuted
+                soundsTalkWhileMuted: newState.soundsTalkWhileMuted,
+                soundsReactions: newState.soundsReactions
             }));
         }
     };

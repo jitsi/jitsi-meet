@@ -5,7 +5,7 @@ import uuid from 'uuid';
 import { getLocalParticipant } from '../base/participants';
 import { extractFqnFromPath } from '../dynamic-branding/functions';
 
-import { REACTIONS } from './constants';
+import { REACTIONS, SOUNDS_THRESHOLDS } from './constants';
 import logger from './logger';
 
 /**
@@ -87,4 +87,58 @@ export async function sendReactionsWebhook(state: Object, reactions: Array<?stri
             logger.error('Could not send request', err);
         }
     }
+}
+
+/**
+ * Returns unique reactions from the reactions buffer.
+ *
+ * @param {Array} reactions - The reactions buffer.
+ * @returns {Array}
+ */
+function getUniqueReactions(reactions: Array<string>) {
+    return [ ...new Set(reactions) ];
+}
+
+/**
+ * Returns frequency of given reaction in array.
+ *
+ * @param {Array} reactions - Array of reactions.
+ * @param {string} reaction - Reaction to get frequency for.
+ * @returns {number}
+ */
+function getReactionFrequency(reactions: Array<string>, reaction: string) {
+    return reactions.filter(r => r === reaction).length;
+}
+
+/**
+ * Returns the threshold number for a given frequency.
+ *
+ * @param {number} frequency - Frequency of reaction.
+ * @returns {number}
+ */
+function getSoundThresholdByFrequency(frequency) {
+    for (const i of SOUNDS_THRESHOLDS) {
+        if (frequency <= i) {
+            return i;
+        }
+    }
+
+    return SOUNDS_THRESHOLDS[SOUNDS_THRESHOLDS.length - 1];
+}
+
+/**
+ * Returns unique reactions with threshold.
+ *
+ * @param {Array} reactions - The reactions buffer.
+ * @returns {Array}
+ */
+export function getReactionsSoundsThresholds(reactions: Array<string>) {
+    const unique = getUniqueReactions(reactions);
+
+    return unique.map<Object>(reaction => {
+        return {
+            reaction,
+            threshold: getSoundThresholdByFrequency(getReactionFrequency(reactions, reaction))
+        };
+    });
 }
