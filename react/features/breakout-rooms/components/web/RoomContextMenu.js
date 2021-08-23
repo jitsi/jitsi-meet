@@ -11,7 +11,7 @@ import {
 } from '../../../base/icons';
 import { isLocalParticipantModerator } from '../../../base/participants';
 import { getComputedOuterHeight } from '../../../participants-pane/functions';
-import { removeBreakoutRoom, moveToRoom, closeRoom } from '../../actions';
+import { closeBreakoutRoom, moveToRoom, removeBreakoutRoom } from '../../actions';
 
 import {
     ContextMenu,
@@ -95,7 +95,7 @@ export const RoomContextMenu = ({
     }, [ dispatch, room ]);
 
     const onCloseBreakoutRoom = useCallback(() => {
-        dispatch(closeRoom(room.id));
+        dispatch(closeBreakoutRoom(room.id));
         setIsHidden(true);
     }, [ dispatch, room ]);
 

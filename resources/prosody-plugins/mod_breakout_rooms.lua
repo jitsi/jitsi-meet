@@ -8,7 +8,9 @@ local uuid_gen = require 'util.uuid'.generate;
 
 local get_room_from_jid = module:require "util".get_room_from_jid;
 
+-- only send at most this often updates on breakout rooms to avoid flooding.
 local BROADCAST_ROOMS_INTERVAL = .3;
+-- close conference after this amount of seconds if all leave.
 local ROOMS_TTL_IF_ALL_LEFT = 5;
 local JSON_TYPE_ADD_BREAKOUT_ROOM = 'features/breakout-rooms/add';
 local JSON_TYPE_MOVE_TO_ROOM_REQUEST = 'features/breakout-rooms/move-to-room-request';

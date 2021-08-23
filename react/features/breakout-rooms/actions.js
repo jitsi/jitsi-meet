@@ -58,7 +58,7 @@ export function createBreakoutRoom() {
  * If empty, the participants will be sent to the main room.
  * @returns {Function}
  */
-export function closeRoom(roomId: string, newRoomId?: string) {
+export function closeBreakoutRoom(roomId: string, newRoomId?: string) {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const { rooms = {} } = getBreakoutRooms(getState);
         const { participants = {} } = rooms[roomId];
@@ -158,12 +158,9 @@ export function moveToRoom(roomId?: string) {
             });
             dispatch(clearNotifications());
             dispatch(setRoom(_roomId));
-            dispatch(createConference()).then(result => {
-                dispatch(setAudioMuted(audio.muted));
-                dispatch(setVideoMuted(video.muted));
-
-                return result;
-            });
+            dispatch(createConference());
+            dispatch(setAudioMuted(audio.muted));
+            dispatch(setVideoMuted(video.muted));
         } else {
             const join = () => APP.conference.joinRoom(_roomId);
 
