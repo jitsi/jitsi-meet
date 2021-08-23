@@ -209,7 +209,6 @@
         "e2eeLabel": "Ende-zu-Ende-Verschlüsselung aktivieren",
         "e2eeWarning": "WARNUNG: Nicht alle Personen dieser Konferenz scheinen Ende-zu-Ende-Verschlüsselung zu unterstützen. Wenn Sie diese aktivieren, können die entsprechenden Personen nichts mehr sehen oder hören.",
         "enterDisplayName": "Bitte geben Sie hier Ihren Namen ein",
-        "enterDisplayNameToJoin" : "Benutzername für Konferenz eingeben" ,
         "embedMeeting": "Besprechung einbetten",
         "error": "Fehler",
         "gracefulShutdown": "Der Dienst steht momentan wegen Wartungsarbeiten nicht zur Verfügung. Bitte versuchen Sie es später noch einmal.",
@@ -802,6 +801,7 @@
     },
     "speaker": "Sprecher/-in",
     "speakerStats": {
+        "search": "Suche",
         "hours": "{{count}} Std. ",
         "minutes": "{{count}} Min. ",
         "name": "Name",

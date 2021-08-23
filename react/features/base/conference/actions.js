@@ -170,7 +170,7 @@ function _addConferenceListeners(conference, dispatch, state) {
 
     conference.on(
         JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
-        id => dispatch(dominantSpeakerChanged(id, conference)));
+        (dominant, previous) => dispatch(dominantSpeakerChanged(dominant, previous, conference)));
 
     conference.on(
         JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,

@@ -15,9 +15,9 @@ type Props = {
     askUnmuteText: string,
 
     /**
-     * Participant id.
+     * Participant participantID.
      */
-    id: string
+    participantID: string,
 }
 
 /**
@@ -26,14 +26,15 @@ type Props = {
  * @param {Object} participant - Participant reference.
  * @returns {React$Element<'button'>}
  */
-export default function AskToUnmuteButton({ id, askUnmuteText }: Props) {
+export default function AskToUnmuteButton({ askUnmuteText, participantID }: Props) {
     const dispatch = useDispatch();
     const askToUnmute = useCallback(() => {
-        dispatch(approveParticipant(id));
-    }, [ dispatch, id ]);
+        dispatch(approveParticipant(participantID));
+    }, [ dispatch, participantID ]);
 
     return (
         <QuickActionButton
+            aria-label = { `unmute-${participantID}` }
             onClick = { askToUnmute }
             primary = { true }
             theme = {{

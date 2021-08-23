@@ -443,3 +443,52 @@ async function _getFirstLoadableAvatarUrl(participant, store) {
 
     return undefined;
 }
+
+
+/**
+ * Selector for retrieving sorted participants by display name.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @returns {Array<Object>}
+ */
+export function getSortedParticipants(stateful: Object | Function) {
+    const localParticipant = getLocalParticipant(stateful);
+    const remoteParticipants = getRemoteParticipants(stateful);
+
+    const items = [];
+    const dominantSpeaker = getDominantSpeakerParticipant(stateful);
+
+    remoteParticipants.forEach(p => {
+        if (p !== dominantSpeaker) {
+            items.push(p);
+        }
+    });
+
+    items.sort((a, b) =>
+        getParticipantDisplayName(stateful, a.id).localeCompare(getParticipantDisplayName(stateful, b.id))
+    );
+
+    items.unshift(localParticipant);
+
+    if (dominantSpeaker && dominantSpeaker !== localParticipant) {
+        items.unshift(dominantSpeaker);
+    }
+
+    return items;
+}
+
+/**
+ * Selector for retrieving ids of alphabetically sorted participants by name.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @returns {Array<string>}
+ */
+export function getSortedParticipantIds(stateful: Object | Function): Array<string> {
+    const participantIds = getSortedParticipants(stateful).map((p): Object => p.id);
+
+    return participantIds;
+}

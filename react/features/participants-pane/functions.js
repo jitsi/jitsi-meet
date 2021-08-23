@@ -8,6 +8,7 @@ import {
 import { getFeatureFlag, INVITE_ENABLED } from '../base/flags';
 import { MEDIA_TYPE, type MediaType } from '../base/media/constants';
 import {
+    getDominantSpeakerParticipant,
     getParticipantCount,
     isLocalParticipantModerator,
     isParticipantModerator
@@ -74,6 +75,12 @@ export function isForceMuted(participant: Object, mediaType: MediaType, state: O
  * @returns {MediaState}
  */
 export function getParticipantAudioMediaState(participant: Object, muted: Boolean, state: Object) {
+    const dominantSpeaker = getDominantSpeakerParticipant(state);
+
+    if (participant === dominantSpeaker) {
+        return MEDIA_STATE.DOMINANT_SPEAKER;
+    }
+
     if (muted) {
         if (isForceMuted(participant, MEDIA_TYPE.AUDIO, state)) {
             return MEDIA_STATE.FORCE_MUTED;

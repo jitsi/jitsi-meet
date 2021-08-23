@@ -33,6 +33,7 @@ import {
     SET_PREJOIN_DEVICE_ERRORS,
     SET_PREJOIN_PAGE_VISIBILITY
 } from './actionTypes';
+import { type PREJOIN_SCREEN_STATE } from './constants';
 import {
     getFullDialOutNumber,
     getDialOutConferenceUrl,
@@ -480,10 +481,10 @@ export function setPrejoinDeviceErrors(value: Object) {
 /**
  * Action used to set the visibility of the prejoin page.
  *
- * @param {boolean} value - The value.
+ * @param {string} value - The value.
  * @returns {Object}
  */
-export function setPrejoinPageVisibility(value: boolean) {
+export function setPrejoinPageVisibility(value: PREJOIN_SCREEN_STATE) {
     return {
         type: SET_PREJOIN_PAGE_VISIBILITY,
         value

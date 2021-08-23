@@ -125,12 +125,19 @@ RCT_EXPORT_MODULE();
     return _workerQueue;
 }
 
+- (BOOL)setConfigWithoutLock:(RTCAudioSessionConfiguration *)config
+                       error:(NSError * _Nullable *)outError {
+    RTCAudioSession *session = [RTCAudioSession sharedInstance];
+
+    return [session setConfiguration:config error:outError];
+}
+
 - (BOOL)setConfig:(RTCAudioSessionConfiguration *)config
             error:(NSError * _Nullable *)outError {
 
     RTCAudioSession *session = [RTCAudioSession sharedInstance];
     [session lockForConfiguration];
-    BOOL success = [session setConfiguration:config error:outError];
+    BOOL success = [self setConfigWithoutLock:config error:outError];
     [session unlockForConfiguration];
 
     return success;
@@ -196,7 +203,7 @@ RCT_EXPORT_METHOD(setAudioDevice:(NSString *)device
                 break;
             }
         }
-        
+
         if (port != nil) {
             // First remove the override if we are going to select a different device.
             if (isSpeakerOn) {
@@ -206,11 +213,11 @@ RCT_EXPORT_METHOD(setAudioDevice:(NSString *)device
             // Special case for the earpiece.
             if ([port.portType isEqualToString:AVAudioSessionPortBuiltInMic]) {
                 forceEarpiece = YES;
-                [self setConfig:earpieceConfig error:nil];
+                [self setConfigWithoutLock:earpieceConfig error:nil];
             } else if (isEarpieceOn) {
                 // Reset the config.
                 RTCAudioSessionConfiguration *config = [self configForMode:activeMode];
-                [self setConfig:config error:nil];
+                [self setConfigWithoutLock:config error:nil];
             }
 
             // Select our preferred input.

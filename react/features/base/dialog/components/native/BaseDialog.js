@@ -50,7 +50,7 @@ class BaseDialog<P: Props, S: State> extends AbstractDialog<P, S> {
      * @returns {ReactElement}
      */
     render() {
-        const { _dialogStyles, style } = this.props;
+        const { _dialogStyles, style, t, titleKey } = this.props;
 
         return (
             <TouchableWithoutFeedback>
@@ -65,13 +65,18 @@ class BaseDialog<P: Props, S: State> extends AbstractDialog<P, S> {
                             _dialogStyles.dialog,
                             style
                         ] }>
-                        <TouchableOpacity
-                            onPress = { this._onCancel }
-                            style = { styles.closeWrapper }>
-                            <Icon
-                                src = { IconClose }
-                                style = { _dialogStyles.closeStyle } />
-                        </TouchableOpacity>
+                        <View style = { styles.headerWrapper }>
+                            <Text style = { styles.dialogTitle }>
+                                { titleKey ? t(titleKey) : ' ' }
+                            </Text>
+                            <TouchableOpacity
+                                onPress = { this._onCancel }
+                                style = { styles.closeWrapper }>
+                                <Icon
+                                    src = { IconClose }
+                                    style = { _dialogStyles.closeStyle } />
+                            </TouchableOpacity>
+                        </View>
                         { this._renderContent() }
                     </View>
                 </KeyboardAvoidingView>

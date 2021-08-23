@@ -58,7 +58,7 @@
     "today": "Aujourd'hui"
   },
   "chat": {
-    "enter": "Entrez dans le salon de chat",
+    "enter": "Entrez dans le salon",
     "error": "Erreur : votre message n'a pas été envoyé. Raison : {{error}}",
     "fieldPlaceHolder": "Tapez votre message ici",
     "messagebox": "Saisissez un message",
@@ -66,15 +66,19 @@
     "noMessagesMessage": "Il n'y a pas encore de messages dans cette réunion. Démarrez une conversation ici !",
     "nickname": {
       "popover": "Choisissez un pseudonyme",
-      "title": "Entrez un pseudonyme pour utiliser le chat"
+      "title": "Entrez un pseudonyme pour utiliser le chat et les sondages"
     },
     "privateNotice": "Message privé à {{recipient}}",
-    "title": "Chat",
-    "you": "vous",
     "message": "Message",
     "messageAccessibleTitle": "{{user}} dit: ",
     "messageAccessibleTitleMe": "Je dis: ",
-    "smileysPanel": "Panneaux des Émojis"
+    "smileysPanel": "Panneaux des Émojis",
+    "tabs": {
+            "chat": "Chat",
+            "polls": "Sondages"
+        },
+        "title": "Chat et Sondages",
+        "you": "vous"
   },
   "chromeExtensionBanner": {
     "installExtensionText": "Installer l'extension pour l'intégration de Google Calendar et Office 365",
@@ -209,7 +213,6 @@
     "e2eeLabel": "Activer le chiffrement de Bout-en-Bout",
     "e2eeWarning": "ATTENTION : Tous les participants de cette réunion ne semblent pas prendre en charge le chiffrement de Bout-en-Bout. Si vous activez le chiffrement, ils ne pourront ni vous voir, ni vous entendre.",
     "enterDisplayName": "Merci de saisir votre nom ici",
-    "enterDisplayNameToJoin": "Merci de saisir votre nom pour rejoindre",
     "embedMeeting": "Intégrer la réunion",
     "error": "Erreur",
     "gracefulShutdown": "Notre service est actuellement en maintenance. Veuillez réessayer plus tard.",
@@ -568,6 +571,34 @@
   },
   "passwordSetRemotely": "défini par un autre participant",
   "passwordDigitsOnly": "Jusqu'à {{number}} chiffres",
+  "polls": {
+    "create": {
+      "addOption": "Ajouter une option",
+      "answerPlaceholder": "Option {{index}}",
+      "create": "Créer un sondage",
+      "cancel": "Annuler",
+      "pollOption" : "Option {{index}}",
+      "pollQuestion" : "Question du sondage",
+      "questionPlaceholder": "Poser une question",
+      "removeOption": "Supprimer l'option",
+      "send": "Envoyer"
+    },
+    "answer": {
+      "skip": "Passer",
+      "submit": "Envoyer"
+    },
+    "results": {
+      "vote": "Voter",
+      "changeVote": "Changer le vote",
+      "empty": "Il n'y a pas encore de sondages dans cette réunion. Démarrez un sondage ici !",
+      "hideDetailedResults": "Cacher les détails",
+      "showDetailedResults": "Montrer les détails"
+    },
+    "notification": {
+      "title": "Un nouveau sondage a été ajouté à la réunion",
+      "description": "Ouvrez l'onget des sondages pour voter"
+    }
+  },
   "poweredby": "produit par",
   "prejoin": {
     "audioAndVideoError": "Erreur audio et video:",

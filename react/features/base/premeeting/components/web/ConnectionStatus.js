@@ -79,37 +79,35 @@ function ConnectionStatus({ connectionDetails, t, connectionType }: Props) {
 
     return (
         <div className = 'con-status'>
-            <div className = 'con-status-container'>
-                <div
-                    aria-level = { 1 }
-                    className = 'con-status-header'
-                    role = 'heading'>
-                    <div className = { `con-status-circle ${connectionClass}` }>
-                        <Icon
-                            size = { 16 }
-                            src = { icon } />
-                    </div>
-                    <span
-                        aria-hidden = { !showDetails }
-                        className = 'con-status-text'
-                        id = 'connection-status-description'>{t(connectionText)}</span>
+            <div
+                aria-level = { 1 }
+                className = 'con-status-header'
+                role = 'heading'>
+                <div className = { `con-status-circle ${connectionClass}` }>
                     <Icon
-                        ariaDescribedBy = 'connection-status-description'
-                        ariaPressed = { showDetails }
-                        className = { arrowClassName }
-                        onClick = { onToggleDetails }
-                        onKeyPress = { onKeyPressToggleDetails }
-                        role = 'button'
-                        size = { 24 }
-                        src = { IconArrowDownSmall }
-                        tabIndex = { 0 } />
+                        size = { 16 }
+                        src = { icon } />
                 </div>
-                <div
-                    aria-level = '2'
-                    className = { `con-status-details ${detailsClassName}` }
-                    role = 'heading'>
-                    {detailsText}</div>
+                <span
+                    aria-hidden = { !showDetails }
+                    className = 'con-status-text'
+                    id = 'connection-status-description'>{t(connectionText)}</span>
+                <Icon
+                    ariaDescribedBy = 'connection-status-description'
+                    ariaPressed = { showDetails }
+                    className = { arrowClassName }
+                    onClick = { onToggleDetails }
+                    onKeyPress = { onKeyPressToggleDetails }
+                    role = 'button'
+                    size = { 24 }
+                    src = { IconArrowDownSmall }
+                    tabIndex = { 0 } />
             </div>
+            <div
+                aria-level = '2'
+                className = { `con-status-details ${detailsClassName}` }
+                role = 'heading'>
+                {detailsText}</div>
         </div>
     );
 }
