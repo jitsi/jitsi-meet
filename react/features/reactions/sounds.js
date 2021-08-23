@@ -43,6 +43,6 @@ export const SILENCE_SOUND_FILES = [ 'reactions–crickets.mp3', 'reactions–cr
 /**
  * The name of the bundled audio file which will be played for the raise hand sound.
  *
- * @type {Array<string>}
+ * @type {string}
  */
 export const RAISE_HAND_SOUND_FILE = 'reactions–raised-hand.mp3';
