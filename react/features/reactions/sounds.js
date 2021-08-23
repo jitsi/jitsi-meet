@@ -10,39 +10,39 @@ export const LAUGH_SOUND_FILES = [ 'reactions-laughter.mp3', 'reactions-laughter
  *
  * @type {string}
  */
-export const CLAP_SOUND_FILES = [ 'reactions-applause.mp3', 'reactions-applause.mp3', 'reactions-applause.mp3' ];
+export const CLAP_SOUND_FILES = [ 'reactions–applause.mp3', 'reactions–applause.mp3', 'reactions–applause.mp3' ];
 
 /**
  * The name of the bundled audio file which will be played for the like reaction sound.
  *
  * @type {string}
  */
-export const LIKE_SOUND_FILES = [ 'reactions-thumbs-up.mp3', 'reactions-thumbs-up.mp3', 'reactions-thumbs-up.mp3' ];
+export const LIKE_SOUND_FILES = [ 'reactions–thumbs-up.mp3', 'reactions–thumbs-up.mp3', 'reactions–thumbs-up.mp3' ];
 
 /**
  * The name of the bundled audio file which will be played for the boo reaction sound.
  *
  * @type {string}
  */
-export const BOO_SOUND_FILES = [ 'reactions-boo.mp3', 'reactions-boo.mp3', 'reactions-boo.mp3' ];
+export const BOO_SOUND_FILES = [ 'reactions–boo.mp3', 'reactions–boo.mp3', 'reactions–boo.mp3' ];
 
 /**
  * The name of the bundled audio file which will be played for the surprised reaction sound.
  *
  * @type {string}
  */
-export const SURPRISE_SOUND_FILES = [ 'reactions-surprise.mp3', 'reactions-surprise.mp3', 'reactions-surprise.mp3' ];
+export const SURPRISE_SOUND_FILES = [ 'reactions–surprise.mp3', 'reactions–surprise.mp3', 'reactions–surprise.mp3' ];
 
 /**
  * The name of the bundled audio file which will be played for the silence reaction sound.
  *
  * @type {string}
  */
-export const SILENCE_SOUND_FILES = [ 'reactions-crickets.mp3', 'reactions-crickets.mp3', 'reactions-crickets.mp3' ];
+export const SILENCE_SOUND_FILES = [ 'reactions–crickets.mp3', 'reactions–crickets.mp3', 'reactions–crickets.mp3' ];
 
 /**
  * The name of the bundled audio file which will be played for the raise hand sound.
  *
  * @type {string}
  */
-export const RAISE_HAND_SOUND_FILE = 'reactions-raised-hand.mp3';
+export const RAISE_HAND_SOUND_FILE = 'reactions–raised-hand.mp3';
