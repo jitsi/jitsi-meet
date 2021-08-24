@@ -111,6 +111,7 @@ export default [
     'e2eping',
     'enableDisplayNameInStats',
     'enableEmailInStats',
+    'enableEncodedTransformSupport',
     'enableIceRestart',
     'enableInsecureRoomNameWarning',
     'enableLayerSuspension',

@@ -385,6 +385,11 @@ var config = {
     // bridge itself is reachable via UDP)
     // useTurnUdp: false
 
+    // Enable support for encoded transform in supported browsers. This allows
+    // E2EE to work in Safari if the corresponding flag is enabled in the browser.
+    // Experimental.
+    // enableEncodedTransformSupport: false,
+
     // UI
     //
 
