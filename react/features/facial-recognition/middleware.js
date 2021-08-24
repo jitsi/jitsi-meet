@@ -9,15 +9,19 @@ import { maybeStartFacialRecognition, stopFacialRecognition, resetTrack } from '
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case TRACK_UPDATED: {
-        const { muted } = action.track.jitsiTrack.track;
+        const { muted, videoStarted } = action.track;
 
         const { dispatch } = store;
 
-        if (typeof muted !== undefined) {
+        if (videoStarted === true) {
+            dispatch(maybeStartFacialRecognition());
+        }
+
+        if (muted !== undefined) {
             if (muted) {
                 stopFacialRecognition();
             } else {
-                dispatch(maybeStartFacialRecognition(action.track.jitsiTrack));
+                dispatch(maybeStartFacialRecognition());
             }
         }
 
@@ -35,7 +39,7 @@ MiddlewareRegistry.register(store => next => action => {
         const { mediaType, videoType } = action.track;
 
         if (mediaType === 'presenter' && videoType === 'camera') {
-            dispatch(maybeStartFacialRecognition(action.track.jitsiTrack));
+            dispatch(maybeStartFacialRecognition());
         }
 
         return next(action);

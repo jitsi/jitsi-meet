@@ -17,7 +17,6 @@ export async function changeFacialExpression(facialExpression: string) {
     }
 
     if (APP.conference !== undefined && count > 1) {
-        console.log('AICI');
         const payload = {
             type: 'facial_expression',
             value: facialExpression

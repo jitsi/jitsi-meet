@@ -41,16 +41,30 @@ export function addFacialExpression(facialExpression: string) {
 /**
  * Starts the recognition and detection of face expressions.
  *
- * @param  {Object} track - Video track.
+ * @param  {Object} stream - Video stream.
  * @returns {Function}
  */
-export function maybeStartFacialRecognition(track: Object) {
+export function maybeStartFacialRecognition() {
     return async function(dispatch: Function, getState: Function) {
         if (interval) {
             return;
         }
 
+
         const state = getState();
+        const localVideoTrack = getLocalVideoTrack(state['features/base/tracks']);
+
+        if (localVideoTrack === undefined) {
+            return;
+        }
+
+        const stream = localVideoTrack.jitsiTrack.getOriginalStream();
+
+        if (stream === null) {
+            return;
+        }
+        console.log('START');
+
         const { facialRecognitionModelsLoaded } = state['features/facial-recognition'];
 
         if (!facialRecognitionModelsLoaded) {
@@ -64,9 +78,6 @@ export function maybeStartFacialRecognition(track: Object) {
                 dispatch(setFacialRecognitionModelsLoaded(false));
             }
         }
-
-        // const { jitsiTrack: localVideoTrack } = getLocalVideoTrack(state['features/base/tracks']);
-        const stream = track.getOriginalStream();
         const firstVideoTrack = stream.getVideoTracks()[0];
         const { height, width } = firstVideoTrack.getSettings() ?? firstVideoTrack.getConstraints();
 
@@ -85,9 +96,12 @@ export function maybeStartFacialRecognition(track: Object) {
  * @returns {void}
  */
 export function stopFacialRecognition() {
-    clearInterval(interval);
-    imageCapture = null;
-    interval = null;
+    if (interval) {
+        console.log('STOP');
+        clearInterval(interval);
+        imageCapture = null;
+        interval = null;
+    }
 }
 
 /**
