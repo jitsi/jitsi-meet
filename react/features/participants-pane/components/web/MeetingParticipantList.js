@@ -2,13 +2,14 @@
 
 import React, { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import { openDialog } from '../../../base/dialog';
 import {
     getParticipantCountWithFake,
     getSortedParticipantIds
 } from '../../../base/participants';
+import { connect } from '../../../base/redux';
 import MuteRemoteParticipantDialog from '../../../video-menu/components/web/MuteRemoteParticipantDialog';
 import { findStyledAncestor, shouldRenderInviteButton } from '../../functions';
 
@@ -25,7 +26,7 @@ type NullProto = {
 type RaiseContext = NullProto | {|
 
   /**
-   * Target elements against which positioning calculations are made
+   * Target elements against which positioning calculations are made.
    */
   offsetTarget?: HTMLElement,
 
@@ -39,19 +40,18 @@ const initialState = Object.freeze(Object.create(null));
 
 /**
  * Renders the MeetingParticipantList component.
+ * NOTE: This component is not using useSelector on purpose. The child components MeetingParticipantItem
+ * and MeetingParticipantContextMenu are using connect. Having those mixed leads to problems.
+ * When this one was using useSelector and the other two were not -the other two were re-rendered before this one was
+ * re-rendered, so when participant is leaving, we first re-render the item and menu components,
+ * throwing errors (closing the page) before removing those components for the participant that left.
  *
  * @returns {ReactNode} - The component.
  */
-export function MeetingParticipantList() {
+function MeetingParticipantList({ participantsCount, showInviteButton, sortedParticipantIds = [] }) {
     const dispatch = useDispatch();
     const isMouseOverMenu = useRef(false);
-    const sortedParticipantIds = useSelector(getSortedParticipantIds);
 
-    // This is very important as getRemoteParticipants is not changing its reference object
-    // and we will not re-render on change, but if count changes we will do
-    const participantsCount = useSelector(getParticipantCountWithFake);
-
-    const showInviteButton = useSelector(shouldRenderInviteButton);
     const [ raiseContext, setRaiseContext ] = useState<RaiseContext>(initialState);
     const { t } = useTranslation();
 
@@ -144,3 +144,29 @@ export function MeetingParticipantList() {
     </>
     );
 }
+
+/**
+ * Maps (parts of) the redux state to the associated props for this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @param {Object} ownProps - The own props of the component.
+ * @private
+ * @returns {Props}
+ */
+function _mapStateToProps(state): Object {
+    const sortedParticipantIds = getSortedParticipantIds(state);
+
+    // This is very important as getRemoteParticipants is not changing its reference object
+    // and we will not re-render on change, but if count changes we will do
+    const participantsCount = getParticipantCountWithFake(state);
+
+    const showInviteButton = shouldRenderInviteButton(state);
+
+    return {
+        sortedParticipantIds,
+        participantsCount,
+        showInviteButton
+    };
+}
+
+export default connect(_mapStateToProps)(MeetingParticipantList);
