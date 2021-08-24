@@ -6,7 +6,7 @@ var config = {
 
     hosts: {
         // XMPP domain.
-        domain: 'jitsi-meet.example.com',
+        domain: 'conference.ameraiot.com',
 
         // When using authentication, domain for guest users.
         // anonymousdomain: 'guest.example.com',
@@ -18,14 +18,14 @@ var config = {
         // focus: 'focus.jitsi-meet.example.com',
 
         // XMPP MUC domain. FIXME: use XEP-0030 to discover it.
-        muc: 'conference.jitsi-meet.example.com'
+        muc: 'conference.conference.ameraiot.com'
     },
 
     // BOSH URL. FIXME: use XEP-0156 to discover it.
-    bosh: '//jitsi-meet.example.com/http-bind',
+    // bosh: '//jitsi-meet.example.com/http-bind',
 
     // Websocket URL
-    // websocket: 'wss://jitsi-meet.example.com/xmpp-websocket',
+    websocket: 'wss://conference.ameraiot.com/xmpp-websocket',
 
     // The real JID of focus participant - can be overridden here
     // Do not change username - FIXME: Make focus username configurable
@@ -142,7 +142,7 @@ var config = {
     // Video
 
     // Sets the preferred resolution (height) for local video. Defaults to 720.
-    // resolution: 720,
+    resolution: 360, //720
 
     // Specifies whether there will be a search field in speaker stats or not
     // disableSpeakerStatsSearch: false,
@@ -156,18 +156,18 @@ var config = {
     // util#browser#usesNewGumFlow. The constraints are independent from
     // this config's resolution value. Defaults to requesting an ideal
     // resolution of 720p.
-    // constraints: {
-    //     video: {
-    //         height: {
-    //             ideal: 720,
-    //             max: 720,
-    //             min: 240
-    //         }
-    //     }
-    // },
+    constraints: {
+        video: {
+            height: {
+                ideal: 360,
+                max: 360,
+                min: 240
+            }
+        }
+    },
 
     // Enable / disable simulcast support.
-    // disableSimulcast: false,
+    disableSimulcast: true, // false
 
     // Enable / disable layer suspension.  If enabled, endpoints whose HD
     // layers are not in use will be suspended (no longer sent) until they
@@ -186,13 +186,29 @@ var config = {
     // supported when  using H.264. For 1-to-1 calls this setting is enabled by
     // default and can be toggled in the p2p section.
     // This option has been deprecated, use preferredCodec under videoQuality section instead.
-    // preferH264: true,
+    preferH264: true,
 
     // If set to true, disable H.264 video codec by stripping it out of the
     // SDP.
-    // disableH264: false,
+    disableH264: false, //true
 
     // Desktop sharing
+
+    // The ID of the jidesha extension for Chrome.
+    desktopSharingChromeExtId: null,
+
+    // Whether desktop sharing should be disabled on Chrome.
+    // desktopSharingChromeDisabled: false,
+
+    // The media sources to use when using screen sharing with the Chrome
+    // extension.
+    desktopSharingChromeSources: [ 'screen', 'window', 'tab' ],
+
+    // Required version of Chrome extension
+    desktopSharingChromeMinExtVersion: '0.1',
+
+    // Whether desktop sharing should be disabled on Firefox.
+    // desktopSharingFirefoxDisabled: false,
 
     // Optional desktop sharing frame rate options. Default value: min:5, max:5.
     // desktopSharingFrameRate: {
@@ -206,7 +222,9 @@ var config = {
     // Recording
 
     // Whether to enable file recording or not.
-    // fileRecordingsEnabled: false,
+    fileRecordingsEnabled: true, //false
+    hiddenDomain: 'recorder.conference.ameraiot.com',
+
     // Enable the dropbox integration.
     // dropbox: {
     //     appKey: '<APP_KEY>' // Specify your app key here.
@@ -272,6 +290,19 @@ var config = {
     //     70: 5,
     //     90: 2
     // },
+
+    // Use XEP-0215 to fetch STUN and TURN servers.
+    useStunTurn: true,
+
+    // Enable IPv6 support.
+    // useIPv6: true,
+
+    // Enables / disables a data communication channel with the Videobridge.
+    // Values can be 'datachannel', 'websocket', true (treat it as
+    // 'datachannel'), undefined (treat it as 'datachannel') and false (don't
+    // open any channel).
+    openBridgeChannel: 'websocket',
+
 
     // Provides a way to translate the legacy bridge signaling messages, 'LastNChangedEvent',
     // 'SelectedEndpointsChangedEvent' and 'ReceiverVideoConstraint' into the new 'ReceiverVideoConstraints' message
@@ -399,7 +430,7 @@ var config = {
 
     // Whether to use a welcome page or not. In case it's false a random room
     // will be joined when no room is specified.
-    enableWelcomePage: true,
+    enableWelcomePage: false,
 
     // Disable app shortcuts that are registered upon joining a conference
     // disableShortcuts: false,
@@ -410,7 +441,7 @@ var config = {
 
     // Enabling the close page will ignore the welcome page redirection when
     // a call is hangup.
-    // enableClosePage: false,
+    enableClosePage: false,
 
     // Disable hiding of remote thumbnails when in a 1-on-1 conference call.
     // Setting this to null, will also disable showing the remote videos
@@ -418,13 +449,18 @@ var config = {
     // disable1On1Mode: null | false | true,
 
     // Default language for the user interface.
-    // defaultLanguage: 'en',
+    defaultLanguage: 'en',
 
     // Disables profile and the edit of all fields from the profile settings (display name and email)
     // disableProfile: false,
 
+    // If true all users without a token will be considered guests and all users
+    // with token will be considered non-guests. Only guests will be allowed to
+    // edit their profile.
+    enableUserRolesBasedOnToken: false,
+
     // Whether or not some features are checked based on token.
-    // enableFeaturesBasedOnToken: false,
+    enableFeaturesBasedOnToken: false,
 
     // When enabled the password used for locking a room is restricted to up to the number of digits specified
     // roomPasswordNumberOfDigits: 10,
@@ -510,6 +546,15 @@ var config = {
     //    '__end'
     // ],
 
+    toolbarButtons: [
+        'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
+        'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
+        'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
+        'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
+        'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone',
+        'e2ee', 'security'
+    ],
+
     // Stats
     //
 
@@ -580,6 +625,9 @@ var config = {
         // connection.
         enabled: true,
 
+        // Use XEP-0215 to fetch STUN and TURN servers.
+        useStunTurn: true,
+
         // Enable unified plan implementation support on Chromium for p2p connection.
         // enableUnifiedOnChrome: false,
 
@@ -593,7 +641,7 @@ var config = {
 
         // If set to true, it will prefer to use H.264 for P2P calls (if H.264
         // is supported). This setting is deprecated, use preferredCodec instead.
-        // preferH264: true,
+        preferH264: false,
 
         // Provides a way to set the video codec preference on the p2p connection. Acceptable
         // codec values are 'VP8', 'VP9' and 'H264'.
@@ -608,14 +656,16 @@ var config = {
 
         // How long we're going to wait, before going back to P2P after the 3rd
         // participant has left the conference (to filter out page reload).
-        // backToP2PDelay: 5,
+        backToP2PDelay: 5,
+
+        dontbreakme: false,
 
         // The STUN servers that will be used in the peer to peer connections
         stunServers: [
 
-            // { urls: 'stun:jitsi-meet.example.com:3478' },
-            { urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443' }
-        ]
+            { urls: 'stun:turn2.ameraiot.com:3478' },
+//            { urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443' }
+        ],
     },
 
     analytics: {
@@ -768,7 +818,7 @@ var config = {
     // disableRemoteMute: true,
 
     // Enables support for lip-sync for this client (if the browser supports it).
-    // enableLipSync: false
+    enableLipSync: true,
 
     /**
      External API url used to receive branding specific information.

@@ -8,8 +8,8 @@
  * config.js, and no new options should be added here.
  */
 
-var interfaceConfig = {
-    APP_NAME: 'Jitsi Meet',
+ var interfaceConfig = {
+    APP_NAME: 'AMERA Share',
     AUDIO_LEVEL_PRIMARY_COLOR: 'rgba(255,255,255,0.4)',
     AUDIO_LEVEL_SECONDARY_COLOR: 'rgba(255,255,255,0.2)',
 
@@ -54,7 +54,7 @@ var interfaceConfig = {
     DEFAULT_BACKGROUND: '#474747',
     DEFAULT_LOCAL_DISPLAY_NAME: 'me',
     DEFAULT_LOGO_URL: 'images/watermark.svg',
-    DEFAULT_REMOTE_DISPLAY_NAME: 'Fellow Jitster',
+    DEFAULT_REMOTE_DISPLAY_NAME: 'AMERA Share Participant',
     DEFAULT_WELCOME_PAGE_LOGO_URL: 'images/watermark.svg',
 
     DISABLE_DOMINANT_SPEAKER_INDICATOR: false,
@@ -95,7 +95,7 @@ var interfaceConfig = {
 
     DISPLAY_WELCOME_FOOTER: true,
     DISPLAY_WELCOME_PAGE_ADDITIONAL_CARD: false,
-    DISPLAY_WELCOME_PAGE_CONTENT: false,
+    DISPLAY_WELCOME_PAGE_CONTENT: true,
     DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
 
     ENABLE_DIAL_OUT: true,
@@ -117,11 +117,18 @@ var interfaceConfig = {
     HIDE_INVITE_MORE_HEADER: false,
 
     INITIAL_TOOLBAR_TIMEOUT: 20000,
-    JITSI_WATERMARK_LINK: 'https://jitsi.org',
+    JITSI_WATERMARK_LINK: 'https://www.ameraiot.com',
 
     LANG_DETECTION: true, // Allow i18n to detect the system language
-    LIVE_STREAMING_HELP_LINK: 'https://jitsi.org/live', // Documentation reference for the live streaming feature.
+    LIVE_STREAMING_HELP_LINK: 'https://conference.ameraiot.com/live',
     LOCAL_THUMBNAIL_RATIO: 16 / 9, // 16:9
+    INVITATION_POWERED_BY: true,
+
+    /**
+     * If we should show authentication block in profile
+     */
+    AUTHENTICATION_ENABLE: true,
+
 
     /**
      * Maximum coefficient of the ratio of the large video to the visible area
@@ -155,7 +162,7 @@ var interfaceConfig = {
      */
     MOBILE_DOWNLOAD_LINK_IOS: 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905',
 
-    NATIVE_APP_NAME: 'Jitsi Meet',
+    NATIVE_APP_NAME: 'AMERA Share',
 
     // Names of browsers which should show a warning stating the current browser
     // has a suboptimal experience. Browsers which are not listed as optimal or
@@ -164,24 +171,32 @@ var interfaceConfig = {
     OPTIMAL_BROWSERS: [ 'chrome', 'chromium', 'firefox', 'nwjs', 'electron', 'safari' ],
 
     POLICY_LOGO: null,
-    PROVIDER_NAME: 'Jitsi',
+    PROVIDER_NAME: 'AMERA Share',
 
     /**
      * If true, will display recent list
      *
      * @type {boolean}
      */
-    RECENT_LIST_ENABLED: true,
-    REMOTE_THUMBNAIL_RATIO: 1, // 1:1
+     RECENT_LIST_ENABLED: false,
+     REMOTE_THUMBNAIL_RATIO: 1, // 1:1
 
-    SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar', 'sounds' ],
+    // SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar', 'sounds' ],
+    SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar' ],
+
+    // Names of browsers which should show a warning stating the current browser
+    // has a suboptimal experience. Browsers which are not listed as optimal or
+    // unsupported are considered suboptimal. Valid values are:
+    // chrome, chromium, edge, electron, firefox, nwjs, opera, safari
+    OPTIMAL_BROWSERS: [ 'chrome', 'chromium', 'firefox', 'nwjs', 'electron', 'safari' ],
+
 
     /**
      * Specify which sharing features should be displayed. If the value is not set
      * all sharing features will be shown. You can set [] to disable all.
      */
     // SHARING_FEATURES: ['email', 'url', 'dial-in', 'embed'],
-
+    SHOW_WATERMARK_FOR_GUESTS: true,
     SHOW_BRAND_WATERMARK: false,
 
     /**
@@ -195,12 +210,14 @@ var interfaceConfig = {
     SHOW_JITSI_WATERMARK: true,
     SHOW_POWERED_BY: false,
     SHOW_PROMOTIONAL_CLOSE_PAGE: false,
-
+    RANDOM_AVATAR_URL_PREFIX: false,
+    RANDOM_AVATAR_URL_SUFFIX: false,
+    FILM_STRIP_MAX_HEIGHT: 120,
     /*
      * If indicated some of the error dialogs may point to the support URL for
      * help.
      */
-    SUPPORT_URL: 'https://community.jitsi.org/',
+    SUPPORT_URL: 'https://www.ameraiot.com/',
 
     TOOLBAR_ALWAYS_VISIBLE: false,
 
@@ -226,6 +243,16 @@ var interfaceConfig = {
     // screen, 'width' would fit the original video width to the width of the
     // screen respecting ratio.
     VIDEO_LAYOUT_FIT: 'both',
+
+    /**
+     * Whether to only show the filmstrip (and hide the toolbar).
+     */
+         filmStripOnly: false,
+
+    /**
+     * Whether to show thumbnails in filmstrip as a column instead of as a row.
+     */
+        VERTICAL_FILMSTRIP: true,
 
     /**
      * If true, hides the video quality label indicating the resolution status

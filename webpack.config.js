@@ -52,7 +52,7 @@ function getBundleAnalyzerPlugin(name) {
 const config = {
     devServer: {
         https: true,
-        host: '127.0.0.1',
+        host: '0.0.0.0',
         inline: true,
         proxy: {
             '/': {
