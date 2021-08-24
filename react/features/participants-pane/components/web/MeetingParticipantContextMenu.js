@@ -326,7 +326,7 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
                 onMouseEnter = { onEnter }
                 onMouseLeave = { onLeave }>
                 {
-                    !_participant?.isFakeParticipant && (
+                    !_participant.isFakeParticipant && (
                         <>
                             <ContextMenuItemGroup>
                                 {
@@ -393,7 +393,7 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
                 }
 
                 {
-                    _participant?.isFakeParticipant && _localVideoOwner && (
+                    _participant.isFakeParticipant && _localVideoOwner && (
                         <ContextMenuItem onClick = { this._onStopSharedVideo }>
                             <ContextMenuIcon src = { IconShareVideo } />
                             <span>{t('toolbar.stopSharedVideo')}</span>
