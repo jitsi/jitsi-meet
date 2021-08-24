@@ -103,7 +103,6 @@ export default function MeetingParticipants() {
     }, [ lowerMenu ]);
 
     const muteAudio = useCallback(id => () => {
-        // dispatch(openDialog(MuteRemoteParticipantDialog, { participantID: id }));
         dispatch(muteRemote(id, MEDIA_TYPE.AUDIO));
     }, [ dispatch ]);
     const [ drawerParticipant, closeDrawer, openDrawerForParticipant ] = useParticipantDrawer();
