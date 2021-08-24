@@ -284,13 +284,11 @@ StateListenerRegistry.register(
                     }
                 });
         } else {
-            const localParticipantId = getLocalParticipant(store.getState)?.id;
+            const localParticipantId = getLocalParticipant(store.getState).id;
 
-            if (localParticipantId) {
-                // We left the conference, the local participant must be updated.
-                _e2eeUpdated(store, conference, localParticipantId, false);
-                _raiseHandUpdated(store, conference, localParticipantId, false);
-            }
+            // We left the conference, the local participant must be updated.
+            _e2eeUpdated(store, conference, localParticipantId, false);
+            _raiseHandUpdated(store, conference, localParticipantId, false);
         }
     }
 );
