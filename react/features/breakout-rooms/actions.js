@@ -46,7 +46,7 @@ export function createBreakoutRoom() {
             nextIndex: index + 1,
             rooms
         });
-        getCurrentConference(getState).sendMessage(message, 'focus');
+        getCurrentConference(getState).sendMessage(message, 'prosody_mod_breakout_rooms');
     };
 }
 
@@ -83,7 +83,7 @@ export function removeBreakoutRoom(breakoutRoomJid: string) {
             breakoutRoomJid
         };
 
-        getCurrentConference(getState).sendMessage(message, 'focus');
+        getCurrentConference(getState).sendMessage(message, 'prosody_mod_breakout_rooms');
     };
 }
 
