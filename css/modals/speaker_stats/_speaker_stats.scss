@@ -27,7 +27,8 @@
 
     .speaker-stats-item__status,
     .speaker-stats-item__name,
-    .speaker-stats-item__time {
+    .speaker-stats-item__time,
+    .speaker-stats-item__expression {
         display: inline-block;
         margin: 5px 0;
         vertical-align: middle;
@@ -36,10 +37,14 @@
         width: 5%;
     }
     .speaker-stats-item__name {
-        width: 40%;
+        width: 30%;
     }
     .speaker-stats-item__time {
-        width: 55%;
+        width: 45%;
+    }
+
+    .speaker-stats-item__expression {
+        width: 20%;
     }
 
     .speaker-stats-item__name,

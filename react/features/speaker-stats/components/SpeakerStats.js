@@ -30,6 +30,8 @@ type Props = {
      */
     _localDisplayName: string,
 
+    _localFacialExpression: string,
+
     /**
      * The speaker paricipant stats.
      */
@@ -154,6 +156,7 @@ class SpeakerStats extends Component<Props> {
             <SpeakerStatsItem
                 displayName = { statsModel.getDisplayName() }
                 dominantSpeakerTime = { dominantSpeakerTime }
+                facialExpression = { facialExpression }
                 hasLeft = { hasLeft }
                 isDominantSpeaker = { isDominantSpeaker }
                 key = { userId }
@@ -234,6 +237,8 @@ class SpeakerStats extends Component<Props> {
 function _mapStateToProps(state) {
     const localParticipant = getLocalParticipant(state);
 
+    const { lastFacialExpression } = state['features/facial-recognition'];
+
     return {
         /**
          * The local display name.
@@ -243,7 +248,8 @@ function _mapStateToProps(state) {
          */
         _localDisplayName: localParticipant && localParticipant.name,
         _stats: getSpeakerStats(state),
-        _criteria: getSearchCriteria(state)
+        _criteria: getSearchCriteria(state),
+        _localFacialExpression: lastFacialExpression
     };
 }
 
