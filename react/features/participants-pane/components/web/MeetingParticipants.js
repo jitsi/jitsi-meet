@@ -4,13 +4,13 @@ import React, { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { openDialog } from '../../../base/dialog';
+import { MEDIA_TYPE } from '../../../base/media';
 import {
     getParticipantCountWithFake,
     getSortedParticipantIds
 } from '../../../base/participants';
 import { showOverflowDrawer } from '../../../toolbox/functions';
-import MuteRemoteParticipantDialog from '../../../video-menu/components/web/MuteRemoteParticipantDialog';
+import { muteRemote } from '../../../video-menu/actions.any';
 import { findStyledAncestor, shouldRenderInviteButton } from '../../functions';
 import { useParticipantDrawer } from '../../hooks';
 
@@ -103,7 +103,8 @@ export default function MeetingParticipants() {
     }, [ lowerMenu ]);
 
     const muteAudio = useCallback(id => () => {
-        dispatch(openDialog(MuteRemoteParticipantDialog, { participantID: id }));
+        // dispatch(openDialog(MuteRemoteParticipantDialog, { participantID: id }));
+        dispatch(muteRemote(id, MEDIA_TYPE.AUDIO));
     }, [ dispatch ]);
     const [ drawerParticipant, closeDrawer, openDrawerForParticipant ] = useParticipantDrawer();
 
