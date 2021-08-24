@@ -17,7 +17,7 @@ declare var config: Object;
  * @returns {boolean} Returns {@code true} if loaded in iframe.
  * @private
  */
- function _inIframe() {
+function _inIframe() {
     try {
         return window.self !== window.top;
     } catch (e) {
