@@ -27,6 +27,8 @@ local function is_admin(jid)
     return um_is_admin(jid, module.host);
 end
 
+local facialExpressions = {};
+
 -- receives messages from client currently connected to the room
 -- clients indicates their own dominant speaker events
 function on_message(event)
@@ -77,6 +79,32 @@ function on_message(event)
         room.speakerStats['dominantSpeakerId'] = occupant.jid;
     end
 
+    local facialExpression = event.stanza:get_child('facialExpression', 'http://jitsi.org/jitmeet');
+
+    if facialExpression then
+        local roomAddress = facialExpression.attr.room;
+        local room = get_room_from_jid(room_jid_match_rewrite(roomAddress));
+
+        if not room then
+            log("warn", "No room found %s", roomAddress);
+            return false;
+        end
+ 
+        if not room.speakerStats then
+            log("warn", "No speakerStats found for %s", roomAddress);
+            return false;
+        end
+        local from = event.stanza.attr.from;
+
+        local occupant = room:get_occupant_by_real_jid(from);
+        if not occupant then
+            log("warn", "No occupant %s found for %s", from, roomAddress);
+            return false;
+        end
+
+        facialExpressions[occupant.jid] = facialExpression.attr.expression;
+    end
+
     return true
 end
 
@@ -91,6 +119,7 @@ function new_SpeakerStats(nick, context_user)
         nick = nick;
         context_user = context_user;
         displayName = nil;
+        lastExpression = nil;
     }, SpeakerStats);
 end
 
