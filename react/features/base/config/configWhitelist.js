@@ -133,6 +133,7 @@ export default [
     'forceTurnRelay',
     'gatherStats',
     'googleApiApplicationClientID',
+    'hiddenPremeetingButtons',
     'hideConferenceSubject',
     'hideRecordingLabel',
     'hideParticipantsStats',

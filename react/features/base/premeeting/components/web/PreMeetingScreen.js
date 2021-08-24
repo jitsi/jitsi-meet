@@ -2,13 +2,20 @@
 
 import React, { PureComponent } from 'react';
 
+import { connect } from '../../../../base/redux';
 import DeviceStatus from '../../../../prejoin/components/preview/DeviceStatus';
 import { Toolbox } from '../../../../toolbox/components/web';
+import { PREMEETING_BUTTONS, THIRD_PARTY_PREJOIN_BUTTONS } from '../../../config/constants';
 
 import ConnectionStatus from './ConnectionStatus';
 import Preview from './Preview';
 
 type Props = {
+
+    /**
+     * The list of toolbar buttons to render.
+     */
+    _buttons: Array<string>,
 
     /**
      * Children component(s) to be rendered on the screen.
@@ -46,9 +53,9 @@ type Props = {
     title?: string,
 
     /**
-     * Override for default toolbar buttons
+     * Whether it's used in the 3rdParty prejoin screen or not.
      */
-     toolbarButtons?: Array<string>,
+    thirdParty?: boolean,
 
     /**
      * True if the preview overlay should be muted, false otherwise.
@@ -61,13 +68,11 @@ type Props = {
     videoTrack?: Object
 }
 
-const buttons = [ 'microphone', 'camera', 'select-background', 'invite', 'settings' ];
-
 /**
  * Implements a pre-meeting screen that can be used at various pre-meeting phases, for example
  * on the prejoin screen (pre-connection) or lobby (post-connection).
  */
-export default class PreMeetingScreen extends PureComponent<Props> {
+class PreMeetingScreen extends PureComponent<Props> {
     /**
      * Default values for {@code Prejoin} component's properties.
      *
@@ -85,12 +90,12 @@ export default class PreMeetingScreen extends PureComponent<Props> {
      */
     render() {
         const {
+            _buttons,
             children,
             className,
             showDeviceStatus,
             skipPrejoinButton,
             title,
-            toolbarButtons,
             videoMuted,
             videoTrack
         } = this.props;
@@ -107,7 +112,7 @@ export default class PreMeetingScreen extends PureComponent<Props> {
                             { title }
                         </h1>
                         { children }
-                        <Toolbox toolbarButtons = { toolbarButtons || buttons } />
+                        { _buttons.length && <Toolbox toolbarButtons = { _buttons } /> }
                         { skipPrejoinButton }
                         { showDeviceStatus && <DeviceStatus /> }
                     </div>
@@ -120,3 +125,24 @@ export default class PreMeetingScreen extends PureComponent<Props> {
         );
     }
 }
+
+
+/**
+ * Maps (parts of) the redux state to the React {@code Component} props.
+ *
+ * @param {Object} state - The redux state.
+ * @param {Object} ownProps - The props passed to the component.
+ * @returns {Object}
+ */
+function mapStateToProps(state, ownProps): Object {
+    const hideButtons = state['features/base/config'].hiddenPremeetingButtons || [];
+    const premeetingButtons = ownProps.thirdParty
+        ? THIRD_PARTY_PREJOIN_BUTTONS
+        : PREMEETING_BUTTONS;
+
+    return {
+        _buttons: premeetingButtons.filter(b => !hideButtons.includes(b))
+    };
+}
+
+export default connect(mapStateToProps)(PreMeetingScreen);
