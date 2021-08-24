@@ -105,13 +105,15 @@ export function showNotification(props: Object = {}, timeout: ?number) {
  * Queues a warning notification for display.
  *
  * @param {Object} props - The props needed to show the notification component.
+ * @param {number} timeout - How long the notification should display before
+ * automatically being hidden.
  * @returns {Object}
  */
-export function showWarningNotification(props: Object) {
+export function showWarningNotification(props: Object, timeout: ?number) {
     return showNotification({
         ...props,
         appearance: NOTIFICATION_TYPE.WARNING
-    });
+    }, timeout);
 }
 
 /**
