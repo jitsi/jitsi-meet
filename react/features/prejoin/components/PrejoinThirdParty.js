@@ -37,7 +37,6 @@ type Props = {
     videoTrack: ?Object
 };
 
-const buttons = [ 'microphone', 'camera', 'select-background' ];
 
 /**
  * This component is displayed before joining a meeting.
@@ -62,7 +61,7 @@ class PrejoinThirdParty extends Component<Props> {
                 className = { `prejoin-third-party ${className}` }
                 showDeviceStatus = { deviceStatusVisible }
                 skipPrejoinButton = { false }
-                toolbarButtons = { buttons }
+                thirdParty = { true }
                 videoMuted = { !showCameraPreview }
                 videoTrack = { videoTrack } />
         );
