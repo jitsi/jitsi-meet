@@ -751,6 +751,7 @@
     },
     "speaker": "Participante",
     "speakerStats": {
+        "search": "Pesquisar",
         "hours": "{{count}}h",
         "minutes": "{{count}}m",
         "name": "Nome",
