@@ -14,7 +14,7 @@ import theme from '../../theme.json';
 import { FooterContextMenu } from '../FooterContextMenu';
 
 import { LobbyParticipantList } from './LobbyParticipantList';
-import { MeetingParticipantList } from './MeetingParticipantList';
+import MeetingParticipantList from './MeetingParticipantList';
 import {
     AntiCollapse,
     Close,
