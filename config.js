@@ -515,6 +515,10 @@ var config = {
     //    '__end'
     // ],
 
+    // List of pre meeting screens buttons to hide. The values must be one or more of the 5 allowed buttons:
+    // 'microphone', 'camera', 'select-background', 'invite', 'settings'
+    // hiddenPremeetingButtons: [],
+
     // Stats
     //
 
