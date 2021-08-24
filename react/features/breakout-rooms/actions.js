@@ -162,10 +162,8 @@ export function moveToRoom(roomId?: string) {
             dispatch(setAudioMuted(audio.muted));
             dispatch(setVideoMuted(video.muted));
         } else {
-            const join = () => APP.conference.joinRoom(_roomId);
-
             APP.conference.leaveRoom()
-            .then(join, join);
+            .finally(() => APP.conference.joinRoom(_roomId));
         }
     };
 }

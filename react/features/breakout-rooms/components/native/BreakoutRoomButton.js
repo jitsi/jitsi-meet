@@ -17,7 +17,7 @@ import { isInBreakoutRoom, getRooms } from '../../functions';
 import { default as BreakoutRoomPickerDialog } from './BreakoutRoomPickerDialog';
 
 /**
- * The type of the React {@code Component} props of {@link RaiseHandButton}.
+ * The type of the React {@code Component} props of {@link BreakoutRoomButton}.
  */
 type Props = AbstractButtonProps & {
 
@@ -38,7 +38,7 @@ type Props = AbstractButtonProps & {
 };
 
 /**
- * An implementation of a button to raise or lower hand.
+ * An implementation of a button to join respectively leave a breakout room.
  */
 class BreakoutRoomButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.breakoutRoom';

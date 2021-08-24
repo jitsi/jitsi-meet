@@ -13,7 +13,9 @@ export const AddBreakoutRoomButton = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
-    const onAdd = useCallback(() => dispatch(createBreakoutRoom()), [ dispatch ]);
+    const onAdd = useCallback(() =>
+        dispatch(createBreakoutRoom())
+    , [ dispatch ]);
 
     return (
         <RoomAddButton
