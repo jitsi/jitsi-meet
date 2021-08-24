@@ -25,7 +25,8 @@ import {
     PARTICIPANT_DISPLAY_NAME_CHANGED,
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
-    PARTICIPANT_UPDATED
+    PARTICIPANT_UPDATED,
+    RAISE_HAND_UPDATED
 } from './actionTypes';
 import {
     localParticipantIdChanged,
@@ -33,6 +34,7 @@ import {
     localParticipantLeft,
     participantLeft,
     participantUpdated,
+    raiseHandUpdateQueue,
     setLoadableAvatarUrl
 } from './actions';
 import {
@@ -46,6 +48,7 @@ import {
     getParticipantById,
     getParticipantCount,
     getParticipantDisplayName,
+    getRaiseHandsQueue,
     getRemoteParticipants
 } from './functions';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
@@ -118,6 +121,11 @@ MiddlewareRegistry.register(store => next => action => {
         const { enabled } = action;
         const localId = getLocalParticipant(store.getState())?.id;
 
+        store.dispatch(raiseHandUpdateQueue({
+            id: localId,
+            raisedHand: enabled
+        }));
+
         store.dispatch(participantUpdated({
             // XXX Only the local participant is allowed to update without
             // stating the JitsiConference instance (i.e. participant property
@@ -155,6 +163,21 @@ MiddlewareRegistry.register(store => next => action => {
             }
         }
 
+        break;
+    }
+
+    case RAISE_HAND_UPDATED: {
+        const { participant } = action;
+        const queue = getRaiseHandsQueue(store.getState());
+
+        if (participant.raisedHand) {
+            queue.push(participant.id);
+            action.queue = queue;
+        } else {
+            const filteredQueue = queue.filter(id => id !== participant.id);
+
+            action.queue = filteredQueue;
+        }
         break;
     }
 
@@ -425,6 +448,7 @@ function _participantJoinedOrUpdated(store, next, action) {
     // Send an external update of the local participant's raised hand state
     // if a new raised hand state is defined in the action.
     if (typeof raisedHand !== 'undefined') {
+
         if (local) {
             const { conference } = getState()['features/base/conference'];
 
@@ -480,6 +504,11 @@ function _raiseHandUpdated({ dispatch, getState }, conference, participantId, ne
 
     dispatch(participantUpdated({
         conference,
+        id: participantId,
+        raisedHand
+    }));
+
+    dispatch(raiseHandUpdateQueue({
         id: participantId,
         raisedHand
     }));
