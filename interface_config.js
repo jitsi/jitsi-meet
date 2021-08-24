@@ -9,7 +9,7 @@
  */
 
  var interfaceConfig = {
-    APP_NAME: 'AMERA Share',
+    APP_NAME: 'AmeraShare',
     AUDIO_LEVEL_PRIMARY_COLOR: 'rgba(255,255,255,0.4)',
     AUDIO_LEVEL_SECONDARY_COLOR: 'rgba(255,255,255,0.2)',
 
@@ -54,7 +54,7 @@
     DEFAULT_BACKGROUND: '#474747',
     DEFAULT_LOCAL_DISPLAY_NAME: 'me',
     DEFAULT_LOGO_URL: 'images/watermark.svg',
-    DEFAULT_REMOTE_DISPLAY_NAME: 'AMERA Share Participant',
+    DEFAULT_REMOTE_DISPLAY_NAME: 'AmeraShare Participant',
     DEFAULT_WELCOME_PAGE_LOGO_URL: 'images/watermark.svg',
 
     DISABLE_DOMINANT_SPEAKER_INDICATOR: false,
@@ -117,7 +117,7 @@
     HIDE_INVITE_MORE_HEADER: false,
 
     INITIAL_TOOLBAR_TIMEOUT: 20000,
-    JITSI_WATERMARK_LINK: 'https://www.ameraiot.com',
+    JITSI_WATERMARK_LINK: 'https://www.amerashare.com',
 
     LANG_DETECTION: true, // Allow i18n to detect the system language
     LIVE_STREAMING_HELP_LINK: 'https://conference.ameraiot.com/live',
@@ -162,7 +162,7 @@
      */
     MOBILE_DOWNLOAD_LINK_IOS: 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905',
 
-    NATIVE_APP_NAME: 'AMERA Share',
+    NATIVE_APP_NAME: 'AmeraShare',
 
     // Names of browsers which should show a warning stating the current browser
     // has a suboptimal experience. Browsers which are not listed as optimal or
@@ -171,7 +171,7 @@
     OPTIMAL_BROWSERS: [ 'chrome', 'chromium', 'firefox', 'nwjs', 'electron', 'safari' ],
 
     POLICY_LOGO: null,
-    PROVIDER_NAME: 'AMERA Share',
+    PROVIDER_NAME: 'AmeraShare',
 
     /**
      * If true, will display recent list
@@ -217,7 +217,7 @@
      * If indicated some of the error dialogs may point to the support URL for
      * help.
      */
-    SUPPORT_URL: 'https://www.ameraiot.com/',
+    SUPPORT_URL: 'https://www.amerashare.com/',
 
     TOOLBAR_ALWAYS_VISIBLE: false,
 
