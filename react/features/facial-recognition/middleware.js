@@ -27,10 +27,7 @@ MiddlewareRegistry.register(store => next => action => {
     case TRACK_UPDATED: {
         const { getState } = store;
         const state = getState();
-
         const { facialRecognitionAllowed } = state['features/facial-recognition'];
-
-        console.log('TRACK UPDATE');
 
         if (facialRecognitionAllowed) {
             const { muted, videoStarted } = action.track;

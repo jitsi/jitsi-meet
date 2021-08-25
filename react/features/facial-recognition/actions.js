@@ -92,7 +92,7 @@ export function maybeStartFacialRecognition() {
 
         outputCanvas.width = parseInt(width, 10);
         outputCanvas.height = parseInt(height, 10);
-        interval = setInterval(() => dispatch(testDetectFacialExpression()), 2000);
+        interval = setInterval(() => dispatch(testDetectFacialExpression()), 1000);
 
     };
 }
@@ -152,7 +152,6 @@ export function testDetectFacialExpression() {
 
         // $FlowFixMe - Flow does not (yet) support method calls in optional chains.
         const facialExpression = detections?.expressions.asSortedArray()[0].expression;
-
         const state = getState();
         const lastExpression = state['features/facial-recognition'].lastFacialExpression;
 
