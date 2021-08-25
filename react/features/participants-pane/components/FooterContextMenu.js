@@ -6,7 +6,12 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { requestDisableModeration, requestEnableModeration } from '../../av-moderation/actions';
+import {
+    requestDisableAudioModeration,
+    requestDisableVideoModeration,
+    requestEnableAudioModeration,
+    requestEnableVideoModeration
+} from '../../av-moderation/actions';
 import {
     isEnabled as isAvModerationEnabled,
     isSupported as isAvModerationSupported
@@ -72,13 +77,18 @@ export const FooterContextMenu = ({ inDrawer, onMouseLeave }: Props) => {
     const dispatch = useDispatch();
     const isModerationSupported = useSelector(isAvModerationSupported());
     const allModerators = useSelector(isEveryoneModerator);
-    const isModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.AUDIO));
+    const isAudioModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.AUDIO));
+    const isVideoModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.VIDEO));
     const { id } = useSelector(getLocalParticipant);
     const { t } = useTranslation();
 
-    const disable = useCallback(() => dispatch(requestDisableModeration()), [ dispatch ]);
+    const disableAudioModeration = useCallback(() => dispatch(requestDisableAudioModeration()), [ dispatch ]);
 
-    const enable = useCallback(() => dispatch(requestEnableModeration()), [ dispatch ]);
+    const disableVideoModeration = useCallback(() => dispatch(requestDisableVideoModeration()), [ dispatch ]);
+
+    const enableAudioModeration = useCallback(() => dispatch(requestEnableAudioModeration()), [ dispatch ]);
+
+    const enableVideoModeration = useCallback(() => dispatch(requestEnableVideoModeration()), [ dispatch ]);
 
     const classes = useStyles();
 
@@ -104,22 +114,40 @@ export const FooterContextMenu = ({ inDrawer, onMouseLeave }: Props) => {
                     <div className = { classes.text }>
                         {t('participantsPane.actions.allow')}
                     </div>
-                    { isModerationEnabled ? (
+                    { isAudioModerationEnabled ? (
                         <ContextMenuItem
-                            id = 'participants-pane-context-menu-stop-moderation'
-                            onClick = { disable }>
+                            id = 'participants-pane-context-menu-stop-audio-moderation'
+                            onClick = { disableAudioModeration }>
                             <span className = { classes.paddedAction }>
-                                { t('participantsPane.actions.startModeration') }
+                                {t('participantsPane.actions.audioModeration') }
                             </span>
                         </ContextMenuItem>
                     ) : (
                         <ContextMenuItem
-                            id = 'participants-pane-context-menu-start-moderation'
-                            onClick = { enable }>
+                            id = 'participants-pane-context-menu-start-audio-moderation'
+                            onClick = { enableAudioModeration }>
                             <Icon
                                 size = { 20 }
                                 src = { IconCheck } />
-                            <span>{ t('participantsPane.actions.startModeration') }</span>
+                            <span>{t('participantsPane.actions.audioModeration') }</span>
+                        </ContextMenuItem>
+                    )}
+                    { isVideoModerationEnabled ? (
+                        <ContextMenuItem
+                            id = 'participants-pane-context-menu-stop-video-moderation'
+                            onClick = { disableVideoModeration }>
+                            <span className = { classes.paddedAction }>
+                                {t('participantsPane.actions.videoModeration')}
+                            </span>
+                        </ContextMenuItem>
+                    ) : (
+                        <ContextMenuItem
+                            id = 'participants-pane-context-menu-start-video-moderation'
+                            onClick = { enableVideoModeration }>
+                            <Icon
+                                size = { 20 }
+                                src = { IconCheck } />
+                            <span>{t('participantsPane.actions.videoModeration')}</span>
                         </ContextMenuItem>
                     )}
                 </ContextMenuItemGroup>

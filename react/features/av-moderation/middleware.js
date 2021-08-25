@@ -21,8 +21,10 @@ import {
     DISABLE_MODERATION,
     ENABLE_MODERATION,
     LOCAL_PARTICIPANT_MODERATION_NOTIFICATION,
-    REQUEST_DISABLE_MODERATION,
-    REQUEST_ENABLE_MODERATION
+    REQUEST_DISABLE_AUDIO_MODERATION,
+    REQUEST_DISABLE_VIDEO_MODERATION,
+    REQUEST_ENABLE_AUDIO_MODERATION,
+    REQUEST_ENABLE_VIDEO_MODERATION
 } from './actionTypes';
 import {
     disableModeration,
@@ -107,17 +109,27 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
         break;
     }
-    case REQUEST_DISABLE_MODERATION: {
+    case REQUEST_DISABLE_AUDIO_MODERATION: {
         const { conference } = getConferenceState(getState());
 
         conference.disableAVModeration(MEDIA_TYPE.AUDIO);
+        break;
+    }
+    case REQUEST_DISABLE_VIDEO_MODERATION: {
+        const { conference } = getConferenceState(getState());
+
         conference.disableAVModeration(MEDIA_TYPE.VIDEO);
         break;
     }
-    case REQUEST_ENABLE_MODERATION: {
+    case REQUEST_ENABLE_AUDIO_MODERATION: {
         const { conference } = getConferenceState(getState());
 
         conference.enableAVModeration(MEDIA_TYPE.AUDIO);
+        break;
+    }
+    case REQUEST_ENABLE_VIDEO_MODERATION: {
+        const { conference } = getConferenceState(getState());
+
         conference.enableAVModeration(MEDIA_TYPE.VIDEO);
         break;
     }

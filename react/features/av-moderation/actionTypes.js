@@ -29,22 +29,40 @@ export const ENABLE_MODERATION = 'ENABLE_MODERATION';
 
 
 /**
- * The type of (redux) action which signals that A/V Moderation disable has been requested.
+ * The type of (redux) action which signals that Audio Moderation disable has been requested.
  *
  * {
- *     type: REQUEST_DISABLE_MODERATION
+ *     type: REQUEST_DISABLE_AUDIO_MODERATION
  * }
  */
-export const REQUEST_DISABLE_MODERATION = 'REQUEST_DISABLE_MODERATION';
+export const REQUEST_DISABLE_AUDIO_MODERATION = 'REQUEST_DISABLE_AUDIO_MODERATION';
 
 /**
- * The type of (redux) action which signals that A/V Moderation enable has been requested.
+ * The type of (redux) action which signals that Video Moderation disable has been requested.
  *
  * {
- *     type: REQUEST_ENABLE_MODERATION
+ *     type: REQUEST_DISABLE_VIDEO_MODERATION
  * }
  */
-export const REQUEST_ENABLE_MODERATION = 'REQUEST_ENABLE_MODERATION';
+export const REQUEST_DISABLE_VIDEO_MODERATION = 'REQUEST_DISABLE_VIDEO_MODERATION';
+
+/**
+ * The type of (redux) action which signals that Audio Moderation enable has been requested.
+ *
+ * {
+ *     type: REQUEST_ENABLE_AUDIO_MODERATION
+ * }
+ */
+export const REQUEST_ENABLE_AUDIO_MODERATION = 'REQUEST_ENABLE_AUDIO_MODERATION';
+
+/**
+ * The type of (redux) action which signals that Video Moderation enable has been requested.
+ *
+ * {
+ *     type: REQUEST_ENABLE_VIDEO_MODERATION
+ * }
+ */
+export const REQUEST_ENABLE_VIDEO_MODERATION = 'REQUEST_ENABLE_VIDEO_MODERATION';
 
 /**
  * The type of (redux) action which signals that the local participant had been approved.
