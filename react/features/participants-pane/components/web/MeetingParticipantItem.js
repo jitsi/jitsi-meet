@@ -9,8 +9,12 @@ import {
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { isParticipantAudioMuted, isParticipantVideoMuted } from '../../../base/tracks';
-import { ACTION_TRIGGER, MEDIA_STATE, type MediaState } from '../../constants';
-import { getParticipantAudioMediaState, getQuickActionButtonType } from '../../functions';
+import { ACTION_TRIGGER, type MediaState } from '../../constants';
+import {
+    getParticipantAudioMediaState,
+    getParticipantVideoMediaState,
+    getQuickActionButtonType
+} from '../../functions';
 import ParticipantQuickAction from '../ParticipantQuickAction';
 
 import ParticipantItem from './ParticipantItem';
@@ -24,14 +28,15 @@ type Props = {
     _audioMediaState: MediaState,
 
     /**
+     * Media state for video.
+     */
+    _videoMediaState: MediaState,
+
+
+    /**
      * The display name of the participant.
      */
     _displayName: string,
-
-    /**
-     * True if the participant is video muted.
-     */
-    _isVideoMuted: boolean,
 
     /**
      * True if the participant is the local participant.
@@ -131,8 +136,8 @@ type Props = {
  */
 function MeetingParticipantItem({
     _audioMediaState,
+    _videoMediaState,
     _displayName,
-    _isVideoMuted,
     _local,
     _localVideoOwner,
     _participant,
@@ -162,7 +167,7 @@ function MeetingParticipantItem({
             overflowDrawer = { overflowDrawer }
             participantID = { _participantID }
             raisedHand = { _raisedHand }
-            videoMuteState = { _isVideoMuted ? MEDIA_STATE.MUTED : MEDIA_STATE.UNMUTED }
+            videoMediaState = { _videoMediaState }
             youText = { youText }>
 
             {!overflowDrawer && !_participant.isFakeParticipant
@@ -206,13 +211,13 @@ function _mapStateToProps(state, ownProps): Object {
     const _isAudioMuted = isParticipantAudioMuted(participant, state);
     const _isVideoMuted = isParticipantVideoMuted(participant, state);
     const _audioMediaState = getParticipantAudioMediaState(participant, _isAudioMuted, state);
+    const _videoMediaState = getParticipantVideoMediaState(participant, _isVideoMuted, state);
     const _quickActionButtonType = getQuickActionButtonType(participant, _isAudioMuted, state);
 
     return {
         _audioMediaState,
+        _videoMediaState,
         _displayName: getParticipantDisplayName(state, participant?.id),
-        _isAudioMuted,
-        _isVideoMuted,
         _local: Boolean(participant?.local),
         _localVideoOwner: Boolean(ownerId === localParticipantId),
         _participant: participant,
