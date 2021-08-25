@@ -1326,6 +1326,19 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that an error was thrown.
+     *
+     * @param {Object} error - The error.
+     * @returns {void}
+     */
+    notifyErrorThrown(error: Object) {
+        this._sendEvent({
+            name: 'error-thrown',
+            error
+        });
+    }
+
+    /**
      * Disposes the allocated resources.
      *
      * @returns {void}
