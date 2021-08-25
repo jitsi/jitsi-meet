@@ -26,11 +26,27 @@ class ChatMessage extends AbstractChatMessage<Props> {
         const { message, t } = this.props;
         const processedMessage = [];
 
-        // content is an array of text and emoji components
-        const content = toArray(this._getMessageText(), { className: 'smiley' });
+        const txt = this._getMessageText();
+
+        // Tokenize the text in order to avoid emoji substitution for URLs.
+        const tokens = txt.split(' ');
+
+        // Content is an array of text and emoji components
+        const content = [];
+
+        for (const token of tokens) {
+            if (token.includes('://')) {
+                // It contains a link, bypass the emojification.
+                content.push(token);
+            } else {
+                content.push(...toArray(token, { className: 'smiley' }));
+            }
+
+            content.push(' ');
+        }
 
         content.forEach(i => {
-            if (typeof i === 'string') {
+            if (typeof i === 'string' && i !== ' ') {
                 processedMessage.push(<Linkify key = { i }>{ i }</Linkify>);
             } else {
                 processedMessage.push(i);
