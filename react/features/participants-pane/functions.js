@@ -93,6 +93,27 @@ export function getParticipantAudioMediaState(participant: Object, muted: Boolea
     return MEDIA_STATE.UNMUTED;
 }
 
+/**
+ * Determines the video media state (the mic icon) for a participant.
+ *
+ * @param {Object} participant - The participant.
+ * @param {boolean} muted - The mute state of the participant.
+ * @param {Object} state - The redux state.
+ * @param {boolean} ignoreDominantSpeaker - Whether to ignore the dominant speaker state.
+ * @returns {MediaState}
+ */
+export function getParticipantVideoMediaState(participant: Object, muted: Boolean, state: Object) {
+    if (muted) {
+        if (isForceMuted(participant, MEDIA_TYPE.VIDEO, state)) {
+            return MEDIA_STATE.FORCE_MUTED;
+        }
+
+        return MEDIA_STATE.MUTED;
+    }
+
+    return MEDIA_STATE.UNMUTED;
+}
+
 
 /**
  * Get a style property from a style declaration as a float.

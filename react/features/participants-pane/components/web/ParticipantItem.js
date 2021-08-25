@@ -91,7 +91,7 @@ type Props = {
     /**
      * Media state for video
      */
-    videoMuteState: MediaState,
+    videoMediaState: MediaState,
 
     /**
      * The translated "you" text.
@@ -111,7 +111,7 @@ export default function ParticipantItem({
     onLeave,
     actionsTrigger = ACTION_TRIGGER.HOVER,
     audioMediaState = MEDIA_STATE.NONE,
-    videoMuteState = MEDIA_STATE.NONE,
+    videoMediaState = MEDIA_STATE.NONE,
     displayName,
     participantID,
     local,
