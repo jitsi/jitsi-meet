@@ -3002,6 +3002,10 @@ export default {
         room.broadcastEndpointMessage(payload);
     },
 
+    sendFacialExpression(payload) {
+        room.sendFacialExpression(payload);
+    },
+
     /**
      * Adds new listener.
      * @param {String} eventName the name of the event

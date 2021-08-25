@@ -8,15 +8,11 @@ declare var APP: Object;
  * @returns {void}
  */
 export async function changeFacialExpression(facialExpression: string) {
-    let count = 1;
+    const count = APP.conference.membersCount;
 
-    try {
-        count = APP.conference.membersCount;
-    } catch (e) {
-        // pass
-    }
+    APP.conference.sendFacialExpression(facialExpression);
 
-    if (APP.conference !== undefined && count > 1) {
+    if (count > 1) {
         const payload = {
             type: 'facial_expression',
             value: facialExpression
