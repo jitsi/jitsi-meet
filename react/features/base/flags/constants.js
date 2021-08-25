@@ -155,6 +155,12 @@ export const PIP_ENABLED = 'pip.enabled';
 export const RAISE_HAND_ENABLED = 'raise-hand.enabled';
 
 /**
+ * Flag indicating if the reactions feature should be enabled.
+ * Default: enabled (true).
+ */
+export const REACTIONS_ENABLED = 'reactions.enabled';
+
+/**
  * Flag indicating if recording should be enabled.
  * Default: auto-detected.
  */
@@ -220,9 +226,3 @@ export const VIDEO_SHARE_BUTTON_ENABLED = 'video-share.enabled';
  * Default: disabled (false).
  */
 export const WELCOME_PAGE_ENABLED = 'welcomepage.enabled';
-
-/**
- * Flag indicating if the reactions feature should be enabled.
- * Default: disabled (false).
- */
-export const REACTIONS_ENABLED = 'reactions.enabled';

@@ -205,7 +205,7 @@ function _mapStateToProps(state) {
         _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
         _isOpen: isDialogOpen(state, OverflowMenu_),
         _width: state['features/base/responsive-ui'].clientWidth,
-        _reactionsEnabled: getFeatureFlag(state, REACTIONS_ENABLED, false)
+        _reactionsEnabled: getFeatureFlag(state, REACTIONS_ENABLED, true)
     };
 }
 
