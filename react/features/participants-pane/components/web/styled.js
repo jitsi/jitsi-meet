@@ -293,6 +293,10 @@ export const ParticipantContainer = styled.div`
     & ${ParticipantContent} {
       box-shadow: none;
     }
+
+    & ${ParticipantStates} {
+      display: none;
+    }
   ${props => !props.isHighlighted && '}'}
 `;
 
