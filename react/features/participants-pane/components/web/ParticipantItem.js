@@ -149,7 +149,7 @@ export default function ParticipantItem({
                 { !local && <ParticipantActions children = { children } /> }
                 <ParticipantStates>
                     { raisedHand && <RaisedHandIndicator /> }
-                    { VideoStateIcons[videoMuteState] }
+                    { VideoStateIcons[videoMediaState] }
                     { AudioStateIcons[audioMediaState] }
                 </ParticipantStates>
             </ParticipantContent>
