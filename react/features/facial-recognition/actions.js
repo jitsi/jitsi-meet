@@ -4,7 +4,11 @@ import * as faceapi from 'face-api.js';
 
 import { getLocalVideoTrack } from '../base/tracks';
 
-import { SET_FACIAL_RECOGNITION_MODELS_LOADED, ADD_FACIAL_EXPRESSION } from './actionTypes';
+import {
+    SET_FACIAL_RECOGNITION_MODELS_LOADED,
+    ADD_FACIAL_EXPRESSION,
+    SET_FACIAL_RECOGNITION_ALLOWED
+} from './actionTypes';
 import { changeFacialExpression } from './functions';
 import logger from './logger';
 
@@ -49,21 +53,24 @@ export function maybeStartFacialRecognition() {
         if (interval) {
             return;
         }
-
+        console.log('START');
 
         const state = getState();
         const localVideoTrack = getLocalVideoTrack(state['features/base/tracks']);
 
         if (localVideoTrack === undefined) {
+            stopFacialRecognition();
+
             return;
         }
 
         const stream = localVideoTrack.jitsiTrack.getOriginalStream();
 
         if (stream === null) {
+            stopFacialRecognition();
+
             return;
         }
-        console.log('START');
 
         const { facialRecognitionModelsLoaded } = state['features/facial-recognition'];
 
@@ -156,4 +163,17 @@ export function testDetectFacialExpression() {
         }
     };
 
+}
+
+/**
+ * Sets the facial recognition allowed.
+ *
+ * @param  {boolean} allowed - The current state.
+ * @returns {Object}
+ */
+export function setFacialRecognitionAllowed(allowed: boolean) {
+    return {
+        type: SET_FACIAL_RECOGNITION_ALLOWED,
+        payload: allowed
+    };
 }

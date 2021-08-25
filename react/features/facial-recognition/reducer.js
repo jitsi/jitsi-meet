@@ -2,10 +2,14 @@
 
 import { ReducerRegistry } from '../base/redux';
 
-import { SET_FACIAL_RECOGNITION_MODELS_LOADED, ADD_FACIAL_EXPRESSION } from './actionTypes';
+import {
+    SET_FACIAL_RECOGNITION_MODELS_LOADED,
+    ADD_FACIAL_EXPRESSION,
+    SET_FACIAL_RECOGNITION_ALLOWED } from './actionTypes';
 
 const defaultState = {
     facialRecognitionModelsLoaded: false,
+    facialRecognitionAllowed: false,
     lastFacialExpression: '',
     facialExpressions: {
         neutral: 0,
@@ -33,6 +37,12 @@ ReducerRegistry.register('features/facial-recognition', (state = defaultState, a
         return {
             ...state,
             lastFacialExpression: action.payload
+        };
+    }
+    case SET_FACIAL_RECOGNITION_ALLOWED: {
+        return {
+            ...state,
+            facialRecognitionAllowed: action.payload
         };
     }
     }
