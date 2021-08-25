@@ -1326,14 +1326,14 @@ class API {
     }
 
     /**
-     * Notify external application (if API is enabled) that an error was thrown.
+     * Notify external application (if API is enabled) that an error occured.
      *
      * @param {Object} error - The error.
      * @returns {void}
      */
-    notifyErrorThrown(error: Object) {
+    notifyError(error: Object) {
         this._sendEvent({
-            name: 'error-thrown',
+            name: 'error',
             error
         });
     }

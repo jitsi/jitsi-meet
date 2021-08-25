@@ -82,7 +82,7 @@ StateListenerRegistry.register(
         if (typeof APP !== 'undefined') {
             const parsedError = typeof error === 'string' ? { name: error } : error;
 
-            APP.API.notifyErrorThrown({
+            APP.API.notifyError({
                 ...parsedError,
                 ...getErrorExtraInfo(getState, error)
             });
