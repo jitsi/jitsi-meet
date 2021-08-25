@@ -605,16 +605,17 @@
         },
         "actions": {
             "allow": "Allow attendees to:",
+            "audioModeration": "Unmute themselves",
             "blockEveryoneMicCamera": "Block everyone's mic and camera",
             "invite": "Invite Someone",
             "askUnmute": "Ask to unmute",
             "mute": "Mute",
             "muteAll": "Mute all",
             "muteEveryoneElse": "Mute everyone else",
-            "startModeration": "Unmute themselves or start video",
             "stopEveryonesVideo": "Stop everyone's video",
             "stopVideo": "Stop video",
-            "unblockEveryoneMicCamera": "Unblock everyone's mic and camera"
+            "unblockEveryoneMicCamera": "Unblock everyone's mic and camera",
+            "videoModeration": "Start video"
         }
     },
     "passwordSetRemotely": "Set by another participant",
