@@ -31,9 +31,9 @@
     },
     "audioDevices": {
         "bluetooth": "Bluetooth",
-        "headphones": "Fones de ouvido",
+        "headphones": "Auscultadores",
         "phone": "Telemóvel",
-        "speaker": "Alto-falantes",
+        "speaker": "Altifalante",
         "none": "Sem dispositivos de áudio disponíveis"
     },
     "audioOnly": {
@@ -80,6 +80,12 @@
         "title": "Chat e Sondagens",
         "you": "você"
     },
+    "chromeExtensionBanner": {
+        "installExtensionText": "Instalar a extensão para a integração Google Calendar e Office 365",
+        "buttonText": "Instalar extensão do Chrome",
+        "dontShowAgain": "Não me mostre isto outra vez",
+        "close": "Fechar"
+    }
     "connectingOverlay": {
         "joiningRoom": "A ligá-lo à reunião…"
     },
@@ -93,27 +99,34 @@
         "DISCONNECTED": "Desligado",
         "DISCONNECTING": "A desligar",
         "ERROR": "Erro",
-        "RECONNECTING": "Ocorreu um problema de rede. A religar..."
+        "FETCH_SESSION_ID": "Obtenção da session-id...",
+        "GET_SESSION_ID_ERROR": "Obter erro de session-id: {{code}}",
+        "GOT_SESSION_ID": "Obtenção da  session-id... Feito",
+        "LOW_BANDWIDTH": "Vídeo para {{displayName}} foi desligada para poupar largura de banda"
     },
     "connectionindicator": {
         "address": "Endereço:",
+        "audio_ssrc": "Áudio SSRC:",
         "bandwidth": "Largura de banda estimada:",
         "bitrate": "Taxa de bits:",
         "bridgeCount": "Servidores: ",
+        "codecs": "Codecs (A/V): ",
         "connectedTo": "Ligado a:",
+        "e2e_rtt": "E2E RTT:",
         "framerate": "Taxa de frames:",
         "less": "Mostrar menos",
         "localaddress": "Endereço local:",
         "localaddress_plural": "Endereços locais:",
         "localport": "Porta local:",
         "localport_plural": "Portas locais:",
+        "maxEnabledResolution": "enviar máx",
         "more": "Mostrar mais",
         "packetloss": "Perda de pacote:",
         "quality": {
             "good": "Boa",
             "inactive": "Inativo",
             "lost": "Perdido",
-            "nonoptimal": "Não ótima",
+            "nonoptimal": "Não é ótima",
             "poor": "Pobre"
         },
         "remoteaddress": "Endereço remoto:",
@@ -121,9 +134,12 @@
         "remoteport": "Porta remota:",
         "remoteport_plural": "Portas remotas:",
         "resolution": "Resolução:",
+        "savelogs": "Guardar registos",
+        "participant_id": "Participante id:",
         "status": "Ligação:",
         "transport": "Transporte:",
-        "transport_plural": "Transportes:"
+        "transport_plural": "Transportes:",
+        "video_ssrc": "Vídeo SSRC:"
     },
     "dateUtils": {
         "earlier": "Mais cedo",
@@ -145,8 +161,8 @@
     "defaultLink": "ex.: {{url}}",
     "defaultNickname": "ex.: João Pedro",
     "deviceError": {
-        "cameraError": "Falha ao aceder à sua câmera",
-        "cameraPermission": "Erro ao obter permissão para a câmera",
+        "cameraError": "Falha ao aceder à sua câmara",
+        "cameraPermission": "Erro ao obter permissão para a câmara",
         "microphoneError": "Falha ao aceder ao seu microfone",
         "microphonePermission": "Erro ao obter permissão para o microfone"
     },
@@ -324,19 +340,48 @@
     "documentSharing": {
         "title": "Documento compartilhado"
     },
+    "e2ee": {
+        "labelToolTip": "A comunicação áudio e vídeo nesta chamada é encriptada de ponta a ponta"
+    },
+    "embedMeeting": {
+        "title": "Incorporar esta reunião"
+    },
+    "virtualBackground": {
+        "apply": "Aplicar",
+        "title": "Planos de Fundo virtuais",
+        "blur": "Desfocar",
+        "slightBlur": "Desfocar ligeiro",
+        "removeBackground": "Remover imagem de fundo",
+        "addBackground": "Adicionar imagem de fundo",
+        "pleaseWait": "Por favor aguarde...",
+        "none": "Nenhum",
+        "uploadedImage": "Imagem carregada {{index}}",
+        "deleteImage": "Apagar imagem",
+        "image1" : "Praia",
+        "image2" : "Parede branca neutra",
+        "image3" : "Quarto branco vazio",
+        "image4" : "Luminária preta",
+        "image5" : "Montanha",
+        "image6" : "Floresta ",
+        "image7" : "Nascer do sol",
+        "desktopShareError": "Não foi possível partilhar a área de trabalho",
+        "desktopShare":"Partilhar área de trabalho",
+        "webAssemblyWarning": "WebAssembly não suportado"
+    },
     "feedback": {
         "average": "Média",
-        "bad": "Ruim",
-        "detailsLabel": "Nos conte mais sobre isso.",
+        "bad": "Má",
+        "detailsLabel": "Conte-nos mais sobre isso.",
         "good": "Boa",
         "rateExperience": "Avalie sua experiência na reunião",
-        "veryBad": "Muito ruim",
-        "veryGood": "Muito boa"
+        "veryBad": "Muito má",
+        "veryGood": "Muito boa",
+        "star": "Estrela"
     },
     "incomingCall": {
         "answer": "Responder",
         "audioCallTitle": "Chamada recebida",
-        "decline": "Dispensar",
+        "decline": "Recusar",
         "productLabel": "do Jitsi Meet",
         "videoCallTitle": "Chamada de vídeo recebida"
     },
