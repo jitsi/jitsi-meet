@@ -40,13 +40,15 @@ export const ParticipantsPane = () => {
           !paneOpen && 'participants_pane--closed'
                 ) }>
                 <div className = 'participants_pane-content'>
-                    <Header>
+                    {/* <Header>
+
                         <Close onClick = { closePane } />
-                    </Header>
+                        { t('toolbar.participants') }
+                    </Header> */}
                     <Container>
                         <LobbyParticipantList />
                         <AntiCollapse />
-                        <MeetingParticipantList />
+                        {/* <MeetingParticipantList /> */}
                     </Container>
                     {isLocalModerator && (
                         <Footer>

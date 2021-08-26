@@ -780,6 +780,7 @@
             "videomute": "Toggle mute video",
             "selectBackground": "Select Background"
         },
+
         "addPeople": "Add people to your call",
         "audioSettings": "Audio settings",
         "audioOnlyOff": "Disable low bandwidth mode",
