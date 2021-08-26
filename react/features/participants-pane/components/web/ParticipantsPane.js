@@ -5,10 +5,7 @@ import { ThemeProvider } from 'styled-components';
 
 import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
-import {
-    getParticipantCount,
-    isLocalParticipantModerator
-} from '../../../base/participants';
+import { isLocalParticipantModerator } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { AddBreakoutRoomButton } from '../../../breakout-rooms/components/web/AddBreakoutRoomButton';
 import { RoomList } from '../../../breakout-rooms/components/web/RoomList';
@@ -19,7 +16,7 @@ import theme from '../../theme.json';
 import { FooterContextMenu } from '../FooterContextMenu';
 
 import { LobbyParticipantList } from './LobbyParticipantList';
-import { MeetingParticipantList } from './MeetingParticipantList';
+import MeetingParticipantList from './MeetingParticipantList';
 import {
     AntiCollapse,
     Close,
@@ -45,11 +42,6 @@ type Props = {
      * Is the participants pane open.
      */
     _paneOpen: boolean,
-
-    /**
-     * Whether to show context menu.
-     */
-    _showContextMenu: boolean,
 
     /**
      * Whether to show the footer menu.
@@ -130,7 +122,6 @@ class ParticipantsPane extends Component<Props, State> {
         const {
             _showAddRoomButton,
             _paneOpen,
-            _showContextMenu,
             _showFooter,
             t
         } = this.props;
@@ -165,15 +156,13 @@ class ParticipantsPane extends Component<Props, State> {
                                 <FooterButton onClick = { this._onMuteAll }>
                                     {t('participantsPane.actions.muteAll')}
                                 </FooterButton>
-                                {_showContextMenu && (
-                                    <FooterEllipsisContainer>
-                                        <FooterEllipsisButton
-                                            id = 'participants-pane-context-menu'
-                                            onClick = { this._onToggleContext } />
-                                        {this.state.contextOpen
-                                            && <FooterContextMenu onMouseLeave = { this._onToggleContext } />}
-                                    </FooterEllipsisContainer>
-                                )}
+                                <FooterEllipsisContainer>
+                                    <FooterEllipsisButton
+                                        id = 'participants-pane-context-menu'
+                                        onClick = { this._onToggleContext } />
+                                    {this.state.contextOpen
+                                        && <FooterContextMenu onMouseLeave = { this._onToggleContext } />}
+                                </FooterEllipsisContainer>
                             </Footer>
                         )}
                     </div>
@@ -259,7 +248,6 @@ class ParticipantsPane extends Component<Props, State> {
  * @protected
  * @returns {{
  *     _paneOpen: boolean,
- *     _showContextMenu: boolean,
  *     _showFooter: boolean
  * }}
  */
@@ -271,8 +259,7 @@ function _mapStateToProps(state: Object) {
     return {
         _showAddRoomButton: !hideAddRoomButton && _isLocalParticipantModerator,
         _paneOpen: isPaneOpen,
-        _showContextMenu: isPaneOpen && getParticipantCount(state) > 2,
-        _showFooter: isPaneOpen && _isLocalParticipantModerator
+        _showFooter: isPaneOpen && isLocalParticipantModerator(state)
     };
 }
 

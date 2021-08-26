@@ -20,11 +20,13 @@ class LobbyScreen extends AbstractLobbyScreen {
      * @inheritdoc
      */
     render() {
-        const { showCopyUrlButton, t } = this.props;
+        const { _deviceStatusVisible, showCopyUrlButton, t } = this.props;
 
         return (
             <PreMeetingScreen
+                className = 'lobby-screen'
                 showCopyUrlButton = { showCopyUrlButton }
+                showDeviceStatus = { _deviceStatusVisible }
                 title = { t(this._getScreenTitleKey()) }>
                 { this._renderContent() }
             </PreMeetingScreen>
@@ -62,7 +64,7 @@ class LobbyScreen extends AbstractLobbyScreen {
      */
     _renderJoining() {
         return (
-            <div className = 'container'>
+            <div className = 'lobby-screen-content'>
                 <div className = 'spinner'>
                     <LoadingIndicator size = 'large' />
                 </div>
@@ -113,13 +115,19 @@ class LobbyScreen extends AbstractLobbyScreen {
         const { _passwordJoinFailed, t } = this.props;
 
         return (
-            <InputField
-                className = { _passwordJoinFailed ? 'error' : '' }
-                onChange = { this._onChangePassword }
-                placeHolder = { _passwordJoinFailed ? t('lobby.invalidPassword') : t('lobby.passwordField') }
-                testId = 'lobby.password'
-                type = 'password'
-                value = { this.state.password } />
+            <>
+                <InputField
+                    className = { _passwordJoinFailed ? 'error' : '' }
+                    onChange = { this._onChangePassword }
+                    placeHolder = { t('lobby.passwordField') }
+                    testId = 'lobby.password'
+                    type = 'password'
+                    value = { this.state.password } />
+
+                {_passwordJoinFailed && <div
+                    className = 'prejoin-error'
+                    data-testid = 'lobby.errorMessage'>{t('lobby.invalidPassword')}</div>}
+            </>
         );
     }
 
@@ -134,11 +142,10 @@ class LobbyScreen extends AbstractLobbyScreen {
         return (
             <>
                 <ActionButton
-                    disabled = { !this.state.password }
                     onClick = { this._onJoinWithPassword }
                     testId = 'lobby.passwordJoinButton'
                     type = 'primary'>
-                    { t('lobby.passwordJoinButton') }
+                    { t('prejoin.joinMeeting') }
                 </ActionButton>
                 <ActionButton
                     onClick = { this._onSwitchToKnockMode }

@@ -93,6 +93,12 @@ export const IOS_RECORDING_ENABLED = 'ios.recording.enabled';
 export const IOS_SCREENSHARING_ENABLED = 'ios.screensharing.enabled';
 
 /**
+ * Flag indicating if screen sharing should be enabled in android.
+ * Default: enabled (true).
+ */
+export const ANDROID_SCREENSHARING_ENABLED = 'android.screensharing.enabled';
+
+/**
  * Flag indicating if kickout is enabled.
  * Default: enabled (true).
  */
@@ -147,6 +153,12 @@ export const PIP_ENABLED = 'pip.enabled';
  * Default: enabled.
  */
 export const RAISE_HAND_ENABLED = 'raise-hand.enabled';
+
+/**
+ * Flag indicating if the reactions feature should be enabled.
+ * Default: enabled (true).
+ */
+export const REACTIONS_ENABLED = 'reactions.enabled';
 
 /**
  * Flag indicating if recording should be enabled.
@@ -214,9 +226,3 @@ export const VIDEO_SHARE_BUTTON_ENABLED = 'video-share.enabled';
  * Default: disabled (false).
  */
 export const WELCOME_PAGE_ENABLED = 'welcomepage.enabled';
-
-/**
- * Flag indicating if the reactions feature should be enabled.
- * Default: disabled (false).
- */
-export const REACTIONS_ENABLED = 'reactions.enabled';

@@ -32,6 +32,8 @@ import {
     VERTICAL_FILMSTRIP_MIN_HORIZONTAL_MARGIN
 } from './constants';
 
+export * from './functions.any';
+
 declare var interfaceConfig: Object;
 
 /**

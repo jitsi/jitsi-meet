@@ -22,8 +22,8 @@ declare var APP: Object;
  * scrolling through the thumbnails prompting updates to the selected endpoints.
  */
 StateListenerRegistry.register(
-    /* selector */ state => state['features/filmstrip'].visibleParticipants,
-    /* listener */ debounce((visibleParticipants, store) => {
+    /* selector */ state => state['features/filmstrip'].visibleRemoteParticipants,
+    /* listener */ debounce((visibleRemoteParticipants, store) => {
         _updateReceiverVideoConstraints(store);
     }, 100));
 
@@ -191,11 +191,11 @@ function _updateReceiverVideoConstraints({ getState }) {
     const { maxReceiverVideoQuality, preferredVideoQuality } = state['features/video-quality'];
     const { participantId: largeVideoParticipantId } = state['features/large-video'];
     const maxFrameHeight = Math.min(maxReceiverVideoQuality, preferredVideoQuality);
-    let { visibleParticipants } = state['features/filmstrip'];
+    let { visibleRemoteParticipants } = state['features/filmstrip'];
 
     // TODO: implement this on mobile.
     if (navigator.product === 'ReactNative') {
-        visibleParticipants = Array.from(state['features/base/participants'].remote.keys());
+        visibleRemoteParticipants = new Set(Array.from(state['features/base/participants'].remote.keys()));
     }
 
     const receiverConstraints = {
@@ -208,22 +208,22 @@ function _updateReceiverVideoConstraints({ getState }) {
 
     // Tile view.
     if (shouldDisplayTileView(state)) {
-        if (!visibleParticipants?.length) {
+        if (!visibleRemoteParticipants?.size) {
             return;
         }
 
-        visibleParticipants.forEach(participantId => {
+        visibleRemoteParticipants.forEach(participantId => {
             receiverConstraints.constraints[participantId] = { 'maxHeight': maxFrameHeight };
         });
 
     // Stage view.
     } else {
-        if (!visibleParticipants?.length && !largeVideoParticipantId) {
+        if (!visibleRemoteParticipants?.size && !largeVideoParticipantId) {
             return;
         }
 
-        if (visibleParticipants?.length > 0) {
-            visibleParticipants.forEach(participantId => {
+        if (visibleRemoteParticipants?.size > 0) {
+            visibleRemoteParticipants.forEach(participantId => {
                 receiverConstraints.constraints[participantId] = { 'maxHeight': VIDEO_QUALITY_LEVELS.LOW };
             });
         }

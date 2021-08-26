@@ -1,6 +1,6 @@
 // @flow
 
-import { StyleSheet } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 
 import { BoxModel, ColorPalette } from '../../base/styles';
 
@@ -196,7 +196,8 @@ export default {
      * Container of the side bar.
      */
     sideBar: {
-        width: 250
+        width: 250,
+        height: Dimensions.get('window').height
     },
 
     /**

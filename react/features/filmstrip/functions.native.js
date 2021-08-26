@@ -4,6 +4,8 @@ import { getFeatureFlag, FILMSTRIP_ENABLED } from '../base/flags';
 import { getParticipantCountWithFake, getPinnedParticipant } from '../base/participants';
 import { toState } from '../base/redux';
 
+export * from './functions.any';
+
 /**
  * Returns true if the filmstrip on mobile is visible, false otherwise.
  *

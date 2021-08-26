@@ -1,42 +1,8 @@
 // @flow
 
-import {
-    SET_FILMSTRIP_ENABLED,
-    SET_FILMSTRIP_VISIBLE,
-    SET_TILE_VIEW_DIMENSIONS
-} from './actionTypes';
+import { SET_TILE_VIEW_DIMENSIONS } from './actionTypes';
 
-/**
- * Sets whether the filmstrip is enabled.
- *
- * @param {boolean} enabled - Whether the filmstrip is enabled.
- * @returns {{
- *     type: SET_FILMSTRIP_ENABLED,
- *     enabled: boolean
- * }}
- */
-export function setFilmstripEnabled(enabled: boolean) {
-    return {
-        type: SET_FILMSTRIP_ENABLED,
-        enabled
-    };
-}
-
-/**
- * Sets whether the filmstrip is visible.
- *
- * @param {boolean} visible - Whether the filmstrip is visible.
- * @returns {{
- *     type: SET_FILMSTRIP_VISIBLE,
- *     visible: boolean
- * }}
- */
-export function setFilmstripVisible(visible: boolean) {
-    return {
-        type: SET_FILMSTRIP_VISIBLE,
-        visible
-    };
-}
+export * from './actions.any';
 
 /**
  * Sets the dimensions of the tile view grid. The action is only partially implemented on native as not all

@@ -25,6 +25,8 @@ import {
     calculateThumbnailSizeForVerticalView
 } from './functions';
 
+export * from './actions.any';
+
 /**
  * Sets the dimensions of the tile view grid.
  *
@@ -174,5 +176,3 @@ export function setVisibleRemoteParticipants(startIndex: number, endIndex: numbe
         endIndex
     };
 }
-
-export * from './actions.native';

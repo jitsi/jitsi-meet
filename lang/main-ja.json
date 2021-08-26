@@ -534,14 +534,25 @@
         "oldElectronClientDescription3": "に更新してください!"
     },
     "participantsPane": {
+        "close": "閉じる",
+        "header": "参加者",
         "headings": {
             "lobby": "ロビー ({{count}})",
-            "participantsList": "参加者会議 ({{count}})"
+            "participantsList": "会議参加者 ({{count}})",
+            "waitingLobby": "({{count}}) ロビーで待つ"
         },
         "actions": {
+            "allow": "参加者に:",
+            "blockEveryoneMicCamera": "全員の音声と動画をブロックにする",
             "invite": "参加者招待",
+            "askUnmute": "ミュートを解除するよう依頼する",
+            "mute": "ニューと",
             "muteAll": "全員音声無効",
-            "stopVideo": "ビデオ停止"
+            "muteEveryoneElse": "他のすべての人をミュートする",
+            "startModeration": "ミュート解除するか、動画を開始する",
+            "stopEveryonesVideo": "全員の動画を無効にする",
+            "stopVideo": "ビデオ停止",
+            "unblockEveryoneMicCamera": "全員の音声と動画のブロックを解除する"
         }
     },
     "passwordSetRemotely": "他の参加者によりセット",

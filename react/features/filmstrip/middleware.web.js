@@ -1,6 +1,7 @@
 // @flow
 
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
+import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { CLIENT_RESIZED } from '../base/responsive-ui';
 import { SETTINGS_UPDATED } from '../base/settings';
@@ -9,9 +10,13 @@ import {
     LAYOUTS
 } from '../video-layout';
 
-import { setHorizontalViewDimensions, setTileViewDimensions, setVerticalViewDimensions } from './actions.web';
-
-import './subscriber.web';
+import {
+    setHorizontalViewDimensions,
+    setTileViewDimensions,
+    setVerticalViewDimensions
+} from './actions';
+import { updateRemoteParticipants, updateRemoteParticipantsOnLeave } from './functions';
+import './subscriber';
 
 /**
  * The middleware of the feature Filmstrip.
@@ -41,6 +46,14 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
     }
+    case PARTICIPANT_JOINED: {
+        updateRemoteParticipants(store);
+        break;
+    }
+    case PARTICIPANT_LEFT: {
+        updateRemoteParticipantsOnLeave(store, action.participant?.id);
+        break;
+    }
     case SETTINGS_UPDATED: {
         if (typeof action.settings?.localFlipX === 'boolean') {
             // TODO: This needs to be removed once the large video is Reactified.
@@ -52,4 +65,3 @@ MiddlewareRegistry.register(store => next => action => {
 
     return result;
 });
-

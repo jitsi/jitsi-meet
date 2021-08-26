@@ -12,6 +12,20 @@ declare var APP: Object;
 declare var config: Object;
 
 /**
+ * Checks whether we are loaded in an iframe.
+ *
+ * @returns {boolean} Returns {@code true} if loaded in iframe.
+ * @private
+ */
+function _inIframe() {
+    try {
+        return window.self !== window.top;
+    } catch (e) {
+        return true;
+    }
+}
+
+/**
  * Handles changes of the fake local storage.
  *
  * @returns {void}
@@ -41,7 +55,9 @@ function shouldUseHostPageLocalStorage(urlParams) {
         return true;
     }
 
-    if (browser.isWebKitBased()) { // Webkit browsers don't persist local storage for third-party iframes.
+    if (browser.isWebKitBased() && _inIframe()) {
+        // WebKit browsers don't persist local storage for third-party iframes.
+
         return true;
     }
 

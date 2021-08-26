@@ -11,7 +11,7 @@ import { Icon, IconInviteMore } from '../../../base/icons';
 import {
     getLocalParticipant,
     getParticipantCountWithFake,
-    getRemoteParticipants
+    getSortedParticipants
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { doInvitePeople } from '../../../invite/actions.native';
@@ -35,11 +35,9 @@ type Props = {
 
 const MeetingParticipantList = ({ _localVideoOwner }: Props) => {
     const dispatch = useDispatch();
-    const items = [];
-    const localParticipant = useSelector(getLocalParticipant);
     const onInvite = useCallback(() => dispatch(doInvitePeople()), [ dispatch ]);
-    const participants = useSelector(getRemoteParticipants);
     const participantsCount = useSelector(getParticipantCountWithFake);
+    const sortedParticipants = useSelector(getSortedParticipants);
     const showInviteButton = useSelector(shouldRenderInviteButton);
     const { t } = useTranslation();
 
@@ -73,12 +71,6 @@ const MeetingParticipantList = ({ _localVideoOwner }: Props) => {
         );
     };
 
-    items.push(renderParticipant(localParticipant));
-
-    participants.forEach(p => {
-        items.push(renderParticipant(p));
-    });
-
     return (
         <View style = { styles.meetingList }>
             <Text style = { styles.meetingListDescription }>
@@ -100,7 +92,7 @@ const MeetingParticipantList = ({ _localVideoOwner }: Props) => {
                     onPress = { onInvite }
                     style = { styles.inviteButton } />
             }
-            { items }
+            { sortedParticipants.map(renderParticipant) }
         </View>
     );
 };

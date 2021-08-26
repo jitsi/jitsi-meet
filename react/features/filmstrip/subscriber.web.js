@@ -8,13 +8,19 @@ import { getParticipantsPaneOpen } from '../participants-pane/functions';
 import { setOverflowDrawer } from '../toolbox/actions.web';
 import { getCurrentLayout, getTileViewGridDimensions, shouldDisplayTileView, LAYOUTS } from '../video-layout';
 
-import { setHorizontalViewDimensions, setTileViewDimensions, setVerticalViewDimensions } from './actions.web';
+import {
+    setHorizontalViewDimensions,
+    setTileViewDimensions,
+    setVerticalViewDimensions
+} from './actions';
 import {
     ASPECT_RATIO_BREAKPOINT,
     DISPLAY_DRAWER_THRESHOLD,
     SINGLE_COLUMN_BREAKPOINT,
     TWO_COLUMN_BREAKPOINT
 } from './constants';
+import './subscriber.any';
+
 
 /**
  * Listens for changes in the number of participants to calculate the dimensions of the tile view grid and the tiles.

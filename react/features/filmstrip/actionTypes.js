@@ -51,6 +51,15 @@ export const SET_TILE_VIEW_DIMENSIONS = 'SET_TILE_VIEW_DIMENSIONS';
 export const SET_HORIZONTAL_VIEW_DIMENSIONS = 'SET_HORIZONTAL_VIEW_DIMENSIONS';
 
 /**
+ * The type of (redux) action which sets the reordered list of the remote participants in the filmstrip.
+ * {
+ *      type: SET_REMOTE_PARTICIPANTS,
+ *      participants: Array<string>
+ * }
+ */
+export const SET_REMOTE_PARTICIPANTS = 'SET_REMOTE_PARTICIPANTS';
+
+/**
  * The type of (redux) action which sets the dimensions of the thumbnails in vertical view.
  *
  * {

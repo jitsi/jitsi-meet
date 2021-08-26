@@ -50,6 +50,7 @@ export default [
      */
     'callHandle',
     'callStatsConfIDNamespace',
+    'callStatsConfigParams',
     'callStatsID',
     'callStatsSecret',
 
@@ -110,6 +111,7 @@ export default [
     'e2eping',
     'enableDisplayNameInStats',
     'enableEmailInStats',
+    'enableEncodedTransformSupport',
     'enableIceRestart',
     'enableInsecureRoomNameWarning',
     'enableLayerSuspension',
@@ -132,6 +134,7 @@ export default [
     'forceTurnRelay',
     'gatherStats',
     'googleApiApplicationClientID',
+    'hiddenPremeetingButtons',
     'hideConferenceSubject',
     'hideRecordingLabel',
     'hideParticipantsStats',
