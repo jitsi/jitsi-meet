@@ -3,8 +3,10 @@
 import { batch } from 'react-redux';
 
 import UIEvents from '../../../../service/UI/UIEvents';
+import { approveParticipant } from '../../av-moderation/actions';
 import { toggleE2EE } from '../../e2ee/actions';
 import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
+import { isForceMuted } from '../../participants-pane/functions';
 import { CALLING, INVITED } from '../../presence-status';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 import {
@@ -13,6 +15,7 @@ import {
     getCurrentConference
 } from '../conference';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
+import { MEDIA_TYPE } from '../media';
 import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
 import { playSound, registerSound, unregisterSound } from '../sounds';
 
@@ -49,7 +52,8 @@ import {
     getParticipantCount,
     getParticipantDisplayName,
     getRaiseHandsQueue,
-    getRemoteParticipants
+    getRemoteParticipants,
+    isLocalParticipantModerator
 } from './functions';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
 
@@ -501,6 +505,7 @@ function _participantJoinedOrUpdated(store, next, action) {
  */
 function _raiseHandUpdated({ dispatch, getState }, conference, participantId, newValue) {
     const raisedHand = newValue === 'true';
+    const state = getState();
 
     dispatch(participantUpdated({
         conference,
@@ -517,12 +522,26 @@ function _raiseHandUpdated({ dispatch, getState }, conference, participantId, ne
         APP.API.notifyRaiseHandUpdated(participantId, raisedHand);
     }
 
+    const isModerator = isLocalParticipantModerator(state);
+    const participant = getParticipantById(state, participantId);
+    let shouldDisplayAllowAction = false;
+
+    if (isModerator) {
+        shouldDisplayAllowAction = isForceMuted(participant, MEDIA_TYPE.AUDIO, state)
+            || isForceMuted(participant, MEDIA_TYPE.VIDEO, state);
+    }
+
+    const action = shouldDisplayAllowAction ? {
+        customActionNameKey: 'notify.allowAction',
+        customActionHandler: () => dispatch(approveParticipant(participantId))
+    } : {};
+
     if (raisedHand) {
         dispatch(showNotification({
-            titleArguments: {
-                name: getParticipantDisplayName(getState, participantId)
-            },
-            titleKey: 'notify.raisedHand'
+            titleKey: 'notify.somebody',
+            title: getParticipantDisplayName(state, participantId),
+            descriptionKey: 'notify.raisedHand',
+            ...action
         }, NOTIFICATION_TIMEOUT));
     }
 }
