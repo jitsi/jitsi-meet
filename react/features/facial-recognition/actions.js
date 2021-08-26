@@ -2,6 +2,7 @@
 
 import * as faceapi from 'face-api.js';
 
+import { getConferenceTimestamp } from '../base/conference/functions';
 import { getLocalVideoTrack } from '../base/tracks';
 
 import {
@@ -9,7 +10,7 @@ import {
     ADD_FACIAL_EXPRESSION,
     SET_FACIAL_RECOGNITION_ALLOWED
 } from './actionTypes';
-import { changeFacialExpression } from './functions';
+import { sendFacialExpression, getLastFacialExpression } from './functions';
 import logger from './logger';
 
 let interval;
@@ -32,10 +33,10 @@ function setFacialRecognitionModelsLoaded(loaded: boolean) {
 /**
  * Adds a new expression to the store.
  *
- * @param  {string} facialExpression - Facial expression to be added.
+ * @param  {Object} facialExpression - Facial expression to be added.
  * @returns {Object}
  */
-export function addFacialExpression(facialExpression: string) {
+export function addFacialExpression(facialExpression: Object) {
     return {
         type: ADD_FACIAL_EXPRESSION,
         payload: facialExpression
@@ -151,14 +152,22 @@ export function testDetectFacialExpression() {
         ).withFaceExpressions();
 
         // $FlowFixMe - Flow does not (yet) support method calls in optional chains.
-        const facialExpression = detections?.expressions.asSortedArray()[0].expression;
+        const expression = detections?.expressions.asSortedArray()[0].expression;
         const state = getState();
-        const lastExpression = state['features/facial-recognition'].lastFacialExpression;
+        const lastExpression = getLastFacialExpression(state['features/facial-recognition'].facialExpressions);
 
-        if (facialExpression !== undefined && facialExpression !== lastExpression) {
-            console.log('!!!', facialExpression);
+        if (expression !== undefined && expression !== lastExpression) {
+            const time = new Date().getTime() - getConferenceTimestamp(state);
+
+            console.log('!!!', expression, time);
+
+            const facialExpression = {
+                expression,
+                time
+            };
+
             dispatch(addFacialExpression(facialExpression));
-            changeFacialExpression(facialExpression);
+            sendFacialExpression(facialExpression);
         }
     };
 

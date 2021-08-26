@@ -4,10 +4,10 @@ declare var APP: Object;
 /**
  * Broadcasts the changed facial expression.
  *
- * @param  {string} facialExpression - Facial expression to be broadcasted.
+ * @param  {Object} facialExpression - Facial expression to be broadcasted.
  * @returns {void}
  */
-export async function changeFacialExpression(facialExpression: string) {
+export async function sendFacialExpression(facialExpression: Object) {
     const count = APP.conference.membersCount;
 
     APP.conference.sendFacialExpression(facialExpression);
@@ -20,4 +20,20 @@ export async function changeFacialExpression(facialExpression: string) {
 
         APP.conference.broadcastEndpointMessage(payload);
     }
+}
+
+/**
+ * Returns the last facial expression of the local participant.
+ *
+ * @param  {Array<Object>} facialExpressions - The current redux state.
+ * @returns {FacialExpression}
+ */
+export function getLastFacialExpression(facialExpressions: Array<Object>): string | null {
+    if (facialExpressions.length === 0) {
+        return null;
+    }
+
+    const { expression: lastFacialExpression } = facialExpressions[facialExpressions.length - 1];
+
+    return lastFacialExpression;
 }

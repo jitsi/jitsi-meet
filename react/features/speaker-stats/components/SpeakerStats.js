@@ -8,6 +8,7 @@ import { translate } from '../../base/i18n';
 import { getLocalParticipant } from '../../base/participants';
 import { connect } from '../../base/redux';
 import { escapeRegexp } from '../../base/util';
+import { getLastFacialExpression } from '../../facial-recognition/functions';
 import { initUpdateStats, initSearch } from '../actions';
 import { SPEAKER_STATS_RELOAD_INTERVAL } from '../constants';
 import { getSpeakerStats, getSearchCriteria } from '../functions';
@@ -30,7 +31,7 @@ type Props = {
      */
     _localDisplayName: string,
 
-    _localFacialExpression: string,
+    _localFacialExpressions: Array<Object>,
 
     /**
      * The speaker paricipant stats.
@@ -152,6 +153,28 @@ class SpeakerStats extends Component<Props> {
         const dominantSpeakerTime = statsModel.getTotalDominantSpeakerTime();
         const hasLeft = statsModel.hasLeft();
 
+<<<<<<< HEAD
+=======
+        let displayName;
+        let facialExpression;
+
+        if (statsModel.isLocalStats()) {
+            const { t } = this.props;
+            const meString = t('me');
+
+            displayName = this.props._localDisplayName;
+            displayName
+                = displayName ? `${displayName} (${meString})` : meString;
+            facialExpression = getLastFacialExpression(this.props._localFacialExpressions);
+        } else {
+            displayName
+                = this.props._stats[userId].getDisplayName()
+                    || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
+            facialExpression = this.state.stats[userId].getLastFacialExpression();
+            facialExpression = facialExpression ? facialExpression : '';
+        }
+
+>>>>>>> 297b2fd66 (feat(facial-expressions): store expresions as a timeline)
         return (
             <SpeakerStatsItem
                 displayName = { statsModel.getDisplayName() }
@@ -236,8 +259,7 @@ class SpeakerStats extends Component<Props> {
  */
 function _mapStateToProps(state) {
     const localParticipant = getLocalParticipant(state);
-
-    const { lastFacialExpression } = state['features/facial-recognition'];
+    const { facialExpressions: localFacialExpressions } = state['features/facial-recognition'];
 
     return {
         /**
@@ -249,7 +271,7 @@ function _mapStateToProps(state) {
         _localDisplayName: localParticipant && localParticipant.name,
         _stats: getSpeakerStats(state),
         _criteria: getSearchCriteria(state),
-        _localFacialExpression: lastFacialExpression
+        _localFacialExpressions: localFacialExpressions
     };
 }
 
