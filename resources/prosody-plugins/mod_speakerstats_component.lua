@@ -45,8 +45,7 @@ function on_message(event)
             log("warn", "No room found %s", roomAddress);
             return false;
         end
- 
-        if not room.speakerStats then
+         if not room.speakerStats then
             log("warn", "No speakerStats found for %s", roomAddress);
             return false;
         end
@@ -87,8 +86,7 @@ function on_message(event)
             log("warn", "No room found %s", roomAddress);
             return false;
         end
- 
-        if not room.speakerStats then
+         if not room.speakerStats then
             log("warn", "No speakerStats found for %s", roomAddress);
             return false;
         end
@@ -99,8 +97,13 @@ function on_message(event)
             log("warn", "No occupant %s found for %s", from, roomAddress);
             return false;
         end
-
-        room.speakerStats[occupant.jid].lastExpression = facialExpression.attr.expression;
+        table.insert(
+            room.speakerStats[occupant.jid].facialExpressions,
+            {                 
+                expression = facialExpression.attr.expression,
+                time = facialExpression.attr.time
+            }
+	    );
     end
 
     return true
@@ -117,7 +120,7 @@ function new_SpeakerStats(nick, context_user)
         nick = nick;
         context_user = context_user;
         displayName = nil;
-        lastExpression = nil;
+        facialExpressions = {};
     }, SpeakerStats);
 end
 
@@ -176,7 +179,7 @@ function occupant_joined(event)
             for jid, values in pairs(room.speakerStats) do
                 -- skip reporting those without a nick('dominantSpeakerId')
                 -- and skip focus if sneaked into the table
-                if values.nick ~= nil and values.nick ~= 'focus' or values.lastExpression ~= nil then
+                if values.nick ~= nil and values.nick ~= 'focus' then
                     local totalDominantSpeakerTime = values.totalDominantSpeakerTime;
                     if totalDominantSpeakerTime > 0 or room:get_occupant_jid(jid) == nil or values:isDominantSpeaker() then
                         -- before sending we need to calculate current dominant speaker state
@@ -188,7 +191,7 @@ function occupant_joined(event)
                         users_json[values.nick] =  {
                             displayName = values.displayName,
                             totalDominantSpeakerTime = totalDominantSpeakerTime,
-                            lastExpression = values.lastExpression
+                            facialExpressions = values.facialExpressions
                         };
                     end
                 end
@@ -222,8 +225,7 @@ function occupant_leaving(event)
     if is_healthcheck_room(room.jid) then
         return;
     end
- 
-    if not room.speakerStats then
+     if not room.speakerStats then
         return;
     end
 
