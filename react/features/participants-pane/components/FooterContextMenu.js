@@ -20,7 +20,6 @@ import { openDialog } from '../../base/dialog';
 import { Icon, IconCheck, IconVideoOff } from '../../base/icons';
 import { MEDIA_TYPE } from '../../base/media';
 import {
-    getLocalParticipant,
     isEveryoneModerator
 } from '../../base/participants';
 import { MuteEveryonesVideoDialog } from '../../video-menu/components';
@@ -79,7 +78,7 @@ export const FooterContextMenu = ({ inDrawer, onMouseLeave }: Props) => {
     const allModerators = useSelector(isEveryoneModerator);
     const isAudioModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.AUDIO));
     const isVideoModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.VIDEO));
-    const { id } = useSelector(getLocalParticipant);
+
     const { t } = useTranslation();
 
     const disableAudioModeration = useCallback(() => dispatch(requestDisableAudioModeration()), [ dispatch ]);
@@ -93,7 +92,7 @@ export const FooterContextMenu = ({ inDrawer, onMouseLeave }: Props) => {
     const classes = useStyles();
 
     const muteAllVideo = useCallback(
-        () => dispatch(openDialog(MuteEveryonesVideoDialog, { exclude: [ id ] })), [ dispatch ]);
+        () => dispatch(openDialog(MuteEveryonesVideoDialog)), [ dispatch ]);
 
     return (
         <ContextMenu

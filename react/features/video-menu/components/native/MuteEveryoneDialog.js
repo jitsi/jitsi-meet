@@ -10,7 +10,7 @@ import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import AbstractMuteEveryoneDialog, {
     abstractMapStateToProps,
-    type Props as AbstractProps } from '../AbstractMuteEveryoneDialog';
+    type Props as AbstractProps, type State } from '../AbstractMuteEveryoneDialog';
 
 type Props = AbstractProps & {
 
@@ -26,7 +26,7 @@ type Props = AbstractProps & {
  *
  * @extends AbstractMuteEveryoneDialog
  */
-class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<Props> {
+class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<Props, State> {
 
     /**
      * Implements {@code Component#render}.

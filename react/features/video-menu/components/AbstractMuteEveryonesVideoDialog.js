@@ -2,9 +2,11 @@
 
 import React from 'react';
 
+import { requestEnableVideoModeration } from '../../av-moderation/actions';
+import { isEnabledFromState } from '../../av-moderation/functions';
 import { Dialog } from '../../base/dialog';
 import { MEDIA_TYPE } from '../../base/media';
-import { getLocalParticipant, getParticipantDisplayName } from '../../base/participants';
+import { getLocalParticipant, getParticipantCount, getParticipantDisplayName } from '../../base/participants';
 import { muteAllParticipants } from '../actions';
 
 import AbstractMuteRemoteParticipantsVideoDialog, {
@@ -19,7 +21,14 @@ export type Props = AbstractProps & {
 
     content: string,
     exclude: Array<string>,
-    title: string
+    title: string,
+    showAdvancedModerationToggle: boolean,
+    isVideoModerationEnabled: boolean
+};
+
+export type State = {
+    enableModeration: boolean;
+    content: string;
 };
 
 /**
@@ -29,11 +38,31 @@ export type Props = AbstractProps & {
  *
  * @extends AbstractMuteRemoteParticipantsVideoDialog
  */
-export default class AbstractMuteEveryonesVideoDialog<P: Props> extends AbstractMuteRemoteParticipantsVideoDialog<P> {
+export default class AbstractMuteEveryonesVideoDialog<P: Props, S: State>
+    extends AbstractMuteRemoteParticipantsVideoDialog<P, S> {
     static defaultProps = {
         exclude: [],
         muteLocal: false
     };
+
+    /**
+     * Initializes a new {@code AbstractMuteRemoteParticipantsVideoDialog} instance.
+     *
+     * @param {Object} props - The read-only properties with which the new
+     * instance is to be initialized.
+     */
+    constructor(props: P) {
+        super(props);
+
+        this.state = {
+            enableModeration: props.isVideoModerationEnabled,
+            content: props.content
+        };
+
+        // Bind event handlers so they are only bound once per instance.
+        this._onSubmit = this._onSubmit.bind(this);
+        this._onToggleModeration = this._onToggleModeration.bind(this);
+    }
 
     /**
      * Implements React's {@link Component#render()}.
@@ -59,6 +88,8 @@ export default class AbstractMuteEveryonesVideoDialog<P: Props> extends Abstract
 
     _onSubmit: () => boolean;
 
+    _onToggleModeration: () => void;
+
     /**
      * Callback to be invoked when the value of this dialog is submitted.
      *
@@ -71,6 +102,9 @@ export default class AbstractMuteEveryonesVideoDialog<P: Props> extends Abstract
         } = this.props;
 
         dispatch(muteAllParticipants(exclude, MEDIA_TYPE.VIDEO));
+        if (this.state.enableModeration) {
+            dispatch(requestEnableVideoModeration());
+        }
 
         return true;
     }
@@ -84,7 +118,9 @@ export default class AbstractMuteEveryonesVideoDialog<P: Props> extends Abstract
  * @returns {Props}
  */
 export function abstractMapStateToProps(state: Object, ownProps: Props) {
-    const { exclude, t } = ownProps;
+    const { exclude = [], t } = ownProps;
+    const showAdvancedModerationToggle = getParticipantCount(state) > 2;
+    const isVideoModerationEnabled = isEnabledFromState(MEDIA_TYPE.VIDEO, state);
 
     const whom = exclude
         // eslint-disable-next-line no-confusing-arrow
@@ -98,6 +134,8 @@ export function abstractMapStateToProps(state: Object, ownProps: Props) {
         title: t('dialog.muteEveryoneElsesVideoTitle', { whom })
     } : {
         content: t('dialog.muteEveryonesVideoDialog'),
-        title: t('dialog.muteEveryonesVideoTitle')
+        title: t('dialog.muteEveryonesVideoTitle'),
+        showAdvancedModerationToggle,
+        isVideoModerationEnabled
     };
 }
