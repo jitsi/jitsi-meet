@@ -52,7 +52,7 @@ type Props = {
     _isFakeParticipant: boolean,
 
     /**
-     * Indicates whether the participant is fake.
+     * Indicates whether the participant is screen sharing.
      */
     _isScreenShare: boolean,
 
@@ -200,12 +200,11 @@ class Thumbnail extends PureComponent<Props> {
     }
 
     /**
-     * Implements React's {@link Component#render()}.
+     * Renders the indicators for the thumbnail.
      *
-     * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    _renderIndicators() {
         const {
             _audioMuted: audioMuted,
             _isScreenShare: isScreenShare,
@@ -213,10 +212,56 @@ class Thumbnail extends PureComponent<Props> {
             _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,
             _renderModeratorIndicator: renderModeratorIndicator,
             _participantId: participantId,
+            _videoMuted: videoMuted
+        } = this.props;
+        const indicators = [];
+
+        if (renderModeratorIndicator) {
+            indicators.push(<View style = { styles.moderatorIndicatorContainer }>
+                <ModeratorIndicator />
+            </View>);
+        }
+
+        if (!_isFakeParticipant) {
+            indicators.push(<View
+                style = { [
+                    styles.thumbnailTopIndicatorContainer,
+                    styles.thumbnailTopLeftIndicatorContainer
+                ] }>
+                <RaisedHandIndicator participantId = { participantId } />
+                { renderDominantSpeakerIndicator && <DominantSpeakerIndicator /> }
+            </View>);
+            indicators.push(<View
+                style = { [
+                    styles.thumbnailTopIndicatorContainer,
+                    styles.thumbnailTopRightIndicatorContainer
+                ] }>
+                <ConnectionIndicator participantId = { participantId } />
+            </View>);
+            indicators.push(<Container style = { styles.thumbnailIndicatorContainer }>
+                { audioMuted && <AudioMutedIndicator /> }
+                { videoMuted && <VideoMutedIndicator /> }
+                { isScreenShare && <ScreenShareIndicator /> }
+            </Container>);
+        }
+
+        return indicators;
+    }
+
+    /**
+     * Implements React's {@link Component#render()}.
+     *
+     * @inheritdoc
+     * @returns {ReactElement}
+     */
+    render() {
+        const {
+            _isScreenShare: isScreenShare,
+            _isFakeParticipant,
+            _participantId: participantId,
             _participantInLargeVideo: participantInLargeVideo,
             _pinned,
             _styles,
-            _videoMuted: videoMuted,
             disableTint,
             height,
             renderDisplayName,
@@ -255,39 +300,8 @@ class Thumbnail extends PureComponent<Props> {
                             <DisplayNameLabel participantId = { participantId } />
                         </Container>
                 }
-                { renderModeratorIndicator
-                    && <View style = { styles.moderatorIndicatorContainer }>
-                        <ModeratorIndicator />
-                    </View>
-                }
                 {
-                    !_isFakeParticipant
-                        && <View
-                            style = { [
-                                styles.thumbnailTopIndicatorContainer,
-                                styles.thumbnailTopLeftIndicatorContainer
-                            ] }>
-                            <RaisedHandIndicator participantId = { participantId } />
-                            { renderDominantSpeakerIndicator && <DominantSpeakerIndicator /> }
-                        </View>
-                }
-                {
-                    !_isFakeParticipant
-                        && <View
-                            style = { [
-                                styles.thumbnailTopIndicatorContainer,
-                                styles.thumbnailTopRightIndicatorContainer
-                            ] }>
-                            <ConnectionIndicator participantId = { participantId } />
-                        </View>
-                }
-                {
-                    !_isFakeParticipant
-                        && <Container style = { styles.thumbnailIndicatorContainer }>
-                            { audioMuted && <AudioMutedIndicator /> }
-                            { videoMuted && <VideoMutedIndicator /> }
-                            { isScreenShare && <ScreenShareIndicator /> }
-                        </Container>
+                    this._renderIndicators()
                 }
             </Container>
         );
