@@ -8,12 +8,12 @@ import {
     conferenceLeft,
     conferenceWillLeave,
     createConference,
+    getConferenceOptions,
     getCurrentConference,
     setRoom
 } from '../base/conference';
 import { setAudioMuted, setVideoMuted } from '../base/media';
 import { getRemoteParticipants } from '../base/participants';
-import { getConferenceOptions } from '../conference/functions';
 import { clearNotifications } from '../notifications';
 
 import { UPDATE_BREAKOUT_ROOMS } from './actionTypes';
@@ -22,7 +22,12 @@ import {
     JSON_TYPE_MOVE_TO_ROOM_REQUEST,
     JSON_TYPE_REMOVE_BREAKOUT_ROOM
 } from './constants';
-import { getBreakoutRooms, getCurrentRoomId, getMainRoomId } from './functions';
+import {
+    getBreakoutRooms,
+    getCurrentRoomId,
+    getMainRoomId,
+    isInBreakoutRoom
+} from './functions';
 import logger from './logger';
 
 declare var APP: Object;
@@ -123,7 +128,10 @@ export function sendParticipantToRoom(participantId: string, roomId: string) {
         const conferenceOptions = getConferenceOptions(getState);
         const fullJid = participantId.indexOf('@') >= 0
             ? participantId
-            : `${getCurrentRoomId(getState)}@${conferenceOptions.hosts.muc}/${participantId}`;
+            : `${getCurrentRoomId(getState)}@${isInBreakoutRoom(getState)
+                ? `breakout.${conferenceOptions.hosts.domain}`
+                : conferenceOptions.hosts.muc
+            }/${participantId}`;
         const message = {
             type: JSON_TYPE_MOVE_TO_ROOM_REQUEST,
             roomId
