@@ -6,7 +6,6 @@ import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../base/media';
 import {
     getLocalParticipant,
-    getParticipantDisplayName,
     getRemoteParticipants,
     isLocalParticipantModerator,
     isParticipantModerator,
@@ -16,13 +15,10 @@ import {
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import {
     hideNotification,
-    NOTIFICATION_TIMEOUT,
     showNotification
 } from '../notifications';
 
 import {
-    DISABLE_MODERATION,
-    ENABLE_MODERATION,
     LOCAL_PARTICIPANT_MODERATION_NOTIFICATION,
     REQUEST_DISABLE_AUDIO_MODERATION,
     REQUEST_DISABLE_VIDEO_MODERATION,
@@ -49,29 +45,9 @@ const AUDIO_MODERATION_NOTIFICATION_ID = 'audio-moderation';
 const CS_MODERATION_NOTIFICATION_ID = 'video-moderation';
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
-    const { actor, mediaType, type } = action;
+    const { type } = action;
 
     switch (type) {
-    case DISABLE_MODERATION:
-    case ENABLE_MODERATION: {
-        // Audio & video moderation are both enabled at the same time.
-        // Avoid displaying 2 different notifications.
-        if (mediaType === MEDIA_TYPE.VIDEO) {
-            const titleKey = type === ENABLE_MODERATION
-                ? 'notify.moderationStartedTitle'
-                : 'notify.moderationStoppedTitle';
-
-            dispatch(showNotification({
-                descriptionKey: actor ? 'notify.moderationToggleDescription' : undefined,
-                descriptionArguments: actor ? {
-                    participantDisplayName: getParticipantDisplayName(getState, actor.getId())
-                } : undefined,
-                titleKey
-            }, NOTIFICATION_TIMEOUT));
-        }
-
-        break;
-    }
     case LOCAL_PARTICIPANT_MODERATION_NOTIFICATION: {
         let descriptionKey;
         let titleKey;
