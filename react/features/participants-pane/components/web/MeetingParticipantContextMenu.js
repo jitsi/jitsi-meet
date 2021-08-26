@@ -46,7 +46,7 @@ type Props = {
      */
      _currentRoomId: String,
 
-     /**
+    /**
      * True if the local participant is moderator and false otherwise.
      */
     _isLocalModerator: boolean,

@@ -36,7 +36,7 @@ type Props = {
     /**
      * Should the add breakout room button be displayed?
      */
-     _showAddRoomButton: boolean,
+    _showAddRoomButton: boolean,
 
     /**
      * Is the participants pane open.

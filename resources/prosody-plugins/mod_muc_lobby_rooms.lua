@@ -299,15 +299,13 @@ process_host_module(main_muc_component_config, function(host_module, host)
     end);
     host_module:hook('muc-disco#info', function (event)
         local room = event.room;
-        -- FIXME: implement clean way to determine the lobby of breakout rooms.
-        local lobbyroom = room.get_lobby(room);
-        if (lobbyroom and room:get_members_only()) then
+        if (room._data.lobbyroom and room:get_members_only()) then
             table.insert(event.form, {
                 name = 'muc#roominfo_lobbyroom';
                 label = 'Lobby room jid';
                 value = '';
             });
-            event.formdata['muc#roominfo_lobbyroom'] = lobbyroom;
+            event.formdata['muc#roominfo_lobbyroom'] = room._data.lobbyroom;
         end
     end);
 
