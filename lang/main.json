@@ -386,7 +386,8 @@
         "image7" : "Sunrise",
         "desktopShareError": "Could not create desktop share",
         "desktopShare":"Desktop share",
-        "webAssemblyWarning": "WebAssembly not supported"
+        "webAssemblyWarning": "WebAssembly not supported",
+        "backgroundEffectError": "Failed to apply background effect."
     },
     "feedback": {
         "average": "Average",

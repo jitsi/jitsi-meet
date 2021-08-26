@@ -3,15 +3,18 @@
 import Spinner from '@atlaskit/spinner';
 import React, { PureComponent } from 'react';
 
+import { hideDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { VIDEO_TYPE } from '../../base/media';
 import Video from '../../base/media/components/Video';
 import { connect, equals } from '../../base/redux';
 import { getCurrentCameraDeviceId } from '../../base/settings';
 import { createLocalTracksF } from '../../base/tracks/functions';
+import { showWarningNotification } from '../../notifications/actions';
 import { toggleBackgroundEffect } from '../actions';
 import { VIRTUAL_BACKGROUND_TYPE } from '../constants';
 import { localTrackStopped } from '../functions';
+import logger from '../logger';
 
 const videoClassName = 'video-preview-video';
 
@@ -29,6 +32,11 @@ export type Props = {
      * The redux {@code dispatch} function.
      */
     dispatch: Function,
+
+    /**
+     * Dialog callback that indicates if the background preview was loaded.
+     */
+    loadedPreview: Function,
 
     /**
      * Represents the virtual background setted options.
@@ -50,6 +58,11 @@ type State = {
      * Loader activated on setting virtual background.
      */
     loading: boolean,
+
+    /**
+     * Flag that indicates if the local track was loaded.
+     */
+    localTrackLoaded: boolean,
 
     /**
      * Activate the selected device camera only.
@@ -77,6 +90,7 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
 
         this.state = {
             loading: false,
+            localTrackLoaded: false,
             jitsiTrack: null
         };
     }
@@ -99,24 +113,42 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
      * @returns {void}
      */
     async _setTracks() {
-        const [ jitsiTrack ] = await createLocalTracksF({
-            cameraDeviceId: this.props._currentCameraDeviceId,
-            devices: [ 'video' ]
-        });
+        try {
+            this.setState({ loading: true });
+            const [ jitsiTrack ] = await createLocalTracksF({
+                cameraDeviceId: this.props._currentCameraDeviceId,
+                devices: [ 'video' ]
+            });
 
+            this.setState({ localTrackLoaded: true });
 
-        // In case the component gets unmounted before the tracks are created
-        // avoid a leak by not setting the state
-        if (this._componentWasUnmounted) {
-            this._stopStream(jitsiTrack);
+            // In case the component gets unmounted before the tracks are created
+            // avoid a leak by not setting the state
+            if (this._componentWasUnmounted) {
+                this._stopStream(jitsiTrack);
+
+                return;
+            }
+            this.setState({
+                jitsiTrack,
+                loading: false
+            });
+            this.props.loadedPreview(true);
+        } catch (error) {
+            this.props.dispatch(hideDialog());
+            this.props.dispatch(
+                showWarningNotification({
+                    titleKey: 'virtualBackground.backgroundEffectError',
+                    description: 'Failed to access camera device.'
+                })
+            );
+            logger.error('Failed to access camera device. Error on apply background effect.');
 
             return;
         }
-        this.setState({
-            jitsiTrack
-        });
 
-        if (this.props.options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
+        if (this.props.options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE
+                && this.state.localTrackLoaded) {
             this._applyBackgroundEffect();
         }
     }
@@ -128,7 +160,9 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
      */
     async _applyBackgroundEffect() {
         this.setState({ loading: true });
+        this.props.loadedPreview(false);
         await this.props.dispatch(toggleBackgroundEffect(this.props.options, this.state.jitsiTrack));
+        this.props.loadedPreview(true);
         this.setState({ loading: false });
     }
 
@@ -212,7 +246,7 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
         if (!equals(this.props._currentCameraDeviceId, prevProps._currentCameraDeviceId)) {
             this._setTracks();
         }
-        if (!equals(this.props.options, prevProps.options)) {
+        if (!equals(this.props.options, prevProps.options) && this.state.localTrackLoaded) {
             if (prevProps.options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
                 prevProps.options.url.dispose();
             }
