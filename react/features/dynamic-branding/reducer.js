@@ -100,6 +100,14 @@ const DEFAULT_STATE = {
     logoImageUrl: '',
 
     /**
+     * The lobby/prejoin background.
+     *
+     * @public
+     * @type {string}
+     */
+    premeetingBackground: '',
+
+    /**
      * Flag used to signal if the app should use a custom logo or not
      *
      * @public
@@ -115,6 +123,7 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
     switch (action.type) {
     case SET_DYNAMIC_BRANDING_DATA: {
         const {
+            avatarBackgrounds,
             backgroundColor,
             backgroundImageUrl,
             defaultBranding,
@@ -122,7 +131,7 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
             inviteDomain,
             logoClickUrl,
             logoImageUrl,
-            avatarBackgrounds
+            premeetingBackground
         } = action.value;
 
         return {
@@ -134,6 +143,7 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
             inviteDomain,
             logoClickUrl,
             logoImageUrl,
+            premeetingBackground,
             customizationFailed: false,
             customizationReady: true,
             useDynamicBrandingData: true
