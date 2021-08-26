@@ -138,7 +138,7 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
             this.props.dispatch(hideDialog());
             this.props.dispatch(
                 showWarningNotification({
-                    titleKey: 'virtualBackground.cameraError',
+                    titleKey: 'virtualBackground.backgroundEffectError',
                     description: 'Failed to access camera device.'
                 })
             );

@@ -1,6 +1,7 @@
 // @flow
 
 import { showWarningNotification } from '../../notifications/actions';
+import { timeout } from '../../virtual-background/functions';
 import logger from '../../virtual-background/logger';
 
 import JitsiStreamBackgroundEffect from './JitsiStreamBackgroundEffect';
@@ -45,16 +46,23 @@ export async function createVirtualBackgroundEffect(virtualBackground: Object, d
     try {
         wasmCheck = require('wasm-check');
         if (wasmCheck?.feature?.simd) {
-            tflite = await createTFLiteSIMDModule();
+            tflite = await timeout(10000, createTFLiteSIMDModule());
         } else {
-            tflite = await createTFLiteModule();
+            tflite = await timeout(10000, createTFLiteModule());
         }
     } catch (err) {
-        logger.error('Looks like WebAssembly is disabled or not supported on this browser');
-        dispatch(showWarningNotification({
-            titleKey: 'virtualBackground.webAssemblyWarning',
-            description: 'WebAssembly disabled or not supported by this browser'
-        }));
+        if (err?.message === '408') {
+            logger.error('Failed to download tflite model!');
+            dispatch(showWarningNotification({
+                titleKey: 'virtualBackground.backgroundEffectError'
+            }));
+        } else {
+            logger.error('Looks like WebAssembly is disabled or not supported on this browser');
+            dispatch(showWarningNotification({
+                titleKey: 'virtualBackground.webAssemblyWarning',
+                description: 'WebAssembly disabled or not supported by this browser'
+            }));
+        }
 
         return;
 
