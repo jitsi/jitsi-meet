@@ -224,7 +224,8 @@ var interfaceConfig = {
     // Determines how the video would fit the screen. 'both' would fit the whole
     // screen, 'height' would fit the original video height to the height of the
     // screen, 'width' would fit the original video width to the width of the
-    // screen respecting ratio.
+    // screen respecting ratio, 'nocrop' would make the video as large as
+    // possible and preserve aspect ratio without cropping.
     VIDEO_LAYOUT_FIT: 'both',
 
     /**
