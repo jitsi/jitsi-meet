@@ -46,7 +46,7 @@ export const LobbyParticipantItem = ({
             overflowDrawer = { overflowDrawer }
             participantID = { id }
             raisedHand = { p.raisedHand }
-            videoMuteState = { MEDIA_STATE.NONE }
+            videoMediaState = { MEDIA_STATE.NONE }
             youText = { t('chat.you') }>
             <ParticipantActionButton
                 onClick = { admit }
