@@ -72,6 +72,12 @@ type Props = {
 };
 
 /**
+ * An empty array. The purpose of the constant is to use the same reference every time we need an empty array.
+ * This will prevent unnecessary re-renders.
+ */
+const EMPTY_ARRAY = [];
+
+/**
  * Implements a React {@link PureComponent} which displays thumbnails in a two
  * dimensional grid.
  *
@@ -109,7 +115,7 @@ class TileView extends PureComponent<Props> {
             itemVisiblePercentThreshold: 30
         };
         this._flatListStyles = {
-            ...styles.flatList
+            ...styles.flatListTileView
         };
         this._contentContainerStyles = {
             ...styles.contentContainer
@@ -162,7 +168,7 @@ class TileView extends PureComponent<Props> {
 
         if (this._flatListStyles.minHeight !== _height || this._flatListStyles.minWidth !== _width) {
             this._flatListStyles = {
-                ...styles.flatList,
+                ...styles.flatListTileView,
                 minHeight: _height,
                 minWidth: _width
             };
@@ -207,11 +213,12 @@ class TileView extends PureComponent<Props> {
      */
     _getSortedParticipants() {
         const { _localParticipant, _remoteParticipants } = this.props;
-        const participants = [];
 
-        _localParticipant && participants.push(_localParticipant.id);
+        if (!_localParticipant) {
+            return EMPTY_ARRAY;
+        }
 
-        return [ ...participants, ..._remoteParticipants ];
+        return [ _localParticipant?.id, ..._remoteParticipants ];
     }
 
     _renderThumbnail: Object => Object;

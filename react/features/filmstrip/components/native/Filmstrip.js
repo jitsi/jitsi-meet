@@ -237,7 +237,7 @@ class Filmstrip extends PureComponent<Props> {
                     renderItem = { this._renderThumbnail }
                     showsHorizontalScrollIndicator = { false }
                     showsVerticalScrollIndicator = { false }
-                    style = { styles.scrollView }
+                    style = { styles.flatListStageView }
                     viewabilityConfig = { this._viewabilityConfig }
                     windowSize = { 2 } />
                 {

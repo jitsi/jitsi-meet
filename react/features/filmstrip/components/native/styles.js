@@ -71,9 +71,16 @@ export default {
     },
 
     /**
-     * The styles for the FlatList.
+     * The styles for the FlatList component in stage view.
      */
-    flatList: {
+    flatListStageView: {
+        flexGrow: 0
+    },
+
+    /**
+     * The styles for the FlatList component in tile view.
+     */
+    flatListTileView: {
         flex: 0
     },
 
@@ -92,13 +99,6 @@ export default {
         bottom: 4,
         position: 'absolute',
         right: 4
-    },
-
-    /**
-     * The style of the scrollview containing the remote thumbnails.
-     */
-    scrollView: {
-        flexGrow: 0
     },
 
     /**
