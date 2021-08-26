@@ -18,6 +18,11 @@ type Props = {
     _buttons: Array<string>,
 
     /**
+     * The branding background of the premeeting screen(lobby/prejoin).
+     */
+    _premeetingBackground: string,
+
+    /**
      * Children component(s) to be rendered on the screen.
      */
     children?: React$Node,
@@ -91,6 +96,7 @@ class PreMeetingScreen extends PureComponent<Props> {
     render() {
         const {
             _buttons,
+            _premeetingBackground,
             children,
             className,
             showDeviceStatus,
@@ -101,23 +107,29 @@ class PreMeetingScreen extends PureComponent<Props> {
         } = this.props;
 
         const containerClassName = `premeeting-screen ${className ? className : ''}`;
+        const style = _premeetingBackground ? {
+            background: _premeetingBackground,
+            backgroundPosition: 'center',
+            backgroundSize: 'cover'
+        } : {};
 
         return (
             <div className = { containerClassName }>
-                <div className = 'content'>
-                    <ConnectionStatus />
+                <div style = { style }>
+                    <div className = 'content'>
+                        <ConnectionStatus />
 
-                    <div className = 'content-controls'>
-                        <h1 className = 'title'>
-                            { title }
-                        </h1>
-                        { children }
-                        { _buttons.length && <Toolbox toolbarButtons = { _buttons } /> }
-                        { skipPrejoinButton }
-                        { showDeviceStatus && <DeviceStatus /> }
+                        <div className = 'content-controls'>
+                            <h1 className = 'title'>
+                                { title }
+                            </h1>
+                            { children }
+                            { _buttons.length && <Toolbox toolbarButtons = { _buttons } /> }
+                            { skipPrejoinButton }
+                            { showDeviceStatus && <DeviceStatus /> }
+                        </div>
                     </div>
                 </div>
-
                 <Preview
                     videoMuted = { videoMuted }
                     videoTrack = { videoTrack } />
@@ -139,9 +151,11 @@ function mapStateToProps(state, ownProps): Object {
     const premeetingButtons = ownProps.thirdParty
         ? THIRD_PARTY_PREJOIN_BUTTONS
         : PREMEETING_BUTTONS;
+    const { premeetingBackground } = state['features/dynamic-branding'];
 
     return {
-        _buttons: premeetingButtons.filter(b => !hideButtons.includes(b))
+        _buttons: premeetingButtons.filter(b => !hideButtons.includes(b)),
+        _premeetingBackground: premeetingBackground
     };
 }
 

@@ -794,7 +794,11 @@ var config = {
          // The anchor url used when clicking the logo image
          logoClickUrl: 'https://example-company.org',
          // The url used for the image used as logo
-         logoImageUrl: 'https://example.com/logo-img.png'
+         logoImageUrl: 'https://example.com/logo-img.png',
+         // Overwrite for pool of background images for avatars
+         avatarBackgrounds: ['url(https://example.com/avatar-background-1.png)', '#FFF'],
+         // The lobby/prejoin screen background
+         premeetingBackground: 'url(https://example.com/premeeting-background.png)'
      }
     */
     // dynamicBrandingUrl: '',
