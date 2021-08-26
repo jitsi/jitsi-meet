@@ -130,9 +130,9 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
                 return;
             }
             this.setState({
-                jitsiTrack
+                jitsiTrack,
+                loading: false
             });
-            this.setState({ loading: false });
             this.props.loadedPreview(true);
         } catch (error) {
             this.props.dispatch(hideDialog());

@@ -45,10 +45,12 @@ export async function createVirtualBackgroundEffect(virtualBackground: Object, d
 
     try {
         wasmCheck = require('wasm-check');
+        const tfliteTimeout = 10000;
+
         if (wasmCheck?.feature?.simd) {
-            tflite = await timeout(10000, createTFLiteSIMDModule());
+            tflite = await timeout(tfliteTimeout, createTFLiteSIMDModule());
         } else {
-            tflite = await timeout(10000, createTFLiteModule());
+            tflite = await timeout(tfliteTimeout, createTFLiteModule());
         }
     } catch (err) {
         if (err?.message === '408') {
