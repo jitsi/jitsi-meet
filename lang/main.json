@@ -216,7 +216,7 @@
         "embedMeeting": "Embed meeting",
         "error": "Error",
         "gracefulShutdown": "Our service is currently down for maintenance. Please try again later.",
-        "grantModeratorDialog": "Are you sure you want to make this participant a moderator?",
+        "grantModeratorDialog": "Are you sure you want to grant moderator rights to {{participantName}}?",
         "grantModeratorTitle": "Grant moderator",
         "hideShareAudioHelper": "Don't show this dialog again",
         "IamHost": "I am the host",
