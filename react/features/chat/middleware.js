@@ -9,6 +9,7 @@ import {
     getCurrentConference
 } from '../base/conference';
 import { openDialog } from '../base/dialog';
+import { getFeatureFlag, REACTIONS_ENABLED } from '../base/flags';
 import {
     JitsiConferenceErrors,
     JitsiConferenceEvents
@@ -256,6 +257,20 @@ function _addChatMsgListener(conference, store) {
     conference.on(
         JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
         (...args) => {
+            let featureFlag = false;
+            const state = store.getState();
+
+            if (navigator.product === 'ReactNative') {
+                featureFlag = getFeatureFlag(state, REACTIONS_ENABLED, true);
+            } else {
+                const { enableReactions } = state['features/base/config'];
+
+                featureFlag = enableReactions;
+            }
+            if (!featureFlag) {
+                return;
+            }
+
             store.dispatch(endpointMessageReceived(...args));
 
             if (args && args.length >= 2) {
