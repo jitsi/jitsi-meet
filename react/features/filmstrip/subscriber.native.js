@@ -14,11 +14,11 @@ StateListenerRegistry.register(
     /* selector */ state => {
         const participantCount = getParticipantCountWithFake(state);
 
-        if (participantCount < 5) { // the dimensions are updated only when the participant count is lower than 5.
+        if (participantCount < 6) { // the dimensions are updated only when the participant count is lower than 6.
             return participantCount;
         }
 
-        return 4; // make sure we don't update the dimensions.
+        return 5; // make sure we don't update the dimensions.
     },
     /* listener */ (_, store) => {
         const state = store.getState();
