@@ -227,6 +227,7 @@ class Filmstrip extends PureComponent<Props> {
                         && <LocalThumbnail />
                 }
                 <FlatList
+                    bounces = { false }
                     data = { participants }
                     getItemLayout = { this._getItemLayout }
                     horizontal = { isNarrowAspectRatio }
