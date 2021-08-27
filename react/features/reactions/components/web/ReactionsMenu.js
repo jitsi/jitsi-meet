@@ -11,11 +11,10 @@ import {
 import { translate } from '../../../base/i18n';
 import { getLocalParticipant, getParticipantCount, participantUpdated } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { playSound } from '../../../base/sounds';
 import { dockToolbox } from '../../../toolbox/actions.web';
 import { addReactionToBuffer } from '../../actions.any';
 import { toggleReactionsMenuVisibility } from '../../actions.web';
-import { RAISE_HAND_SOUND_ID, REACTIONS } from '../../constants';
+import { REACTIONS } from '../../constants';
 
 import ReactionButton from './ReactionButton';
 
@@ -54,12 +53,7 @@ type Props = {
     /**
      * Whether or not it's displayed in the overflow menu.
      */
-    overflowMenu: boolean,
-
-    /**
-     * Whether or not reaction sounds are enabled.
-     */
-    _reactionSounds: boolean
+    overflowMenu: boolean
 };
 
 declare var APP: Object;
@@ -112,16 +106,13 @@ class ReactionsMenu extends Component<Props> {
      * @returns {void}
      */
     _onToolbarToggleRaiseHand() {
-        const { dispatch, _raisedHand, _reactionSounds } = this.props;
+        const { dispatch, _raisedHand } = this.props;
 
         sendAnalytics(createToolbarEvent(
             'raise.hand',
             { enable: !_raisedHand }));
         this._doToggleRaiseHand();
         dispatch(toggleReactionsMenuVisibility());
-        if (_reactionSounds && _raisedHand) {
-            dispatch(playSound(RAISE_HAND_SOUND_ID));
-        }
     }
 
     /**
@@ -223,13 +214,11 @@ class ReactionsMenu extends Component<Props> {
  */
 function mapStateToProps(state) {
     const localParticipant = getLocalParticipant(state);
-    const { soundsReactions } = state['features/base/settings'];
 
     return {
         _localParticipantID: localParticipant.id,
         _raisedHand: localParticipant.raisedHand,
-        _participantCount: getParticipantCount(state),
-        _reactionSounds: soundsReactions
+        _participantCount: getParticipantCount(state)
     };
 }
 
