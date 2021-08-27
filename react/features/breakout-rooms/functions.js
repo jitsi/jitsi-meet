@@ -70,9 +70,5 @@ export const getRoomParticipants = (stateful: Function | Object, roomId: string)
  * {@code getState} function, or the redux state itself.
  * @returns {boolean}
  */
-export const isInBreakoutRoom = (stateful: Function | Object) => {
-    const mainRoomId = getMainRoomId(stateful);
-    const currentRoomId = getCurrentRoomId(stateful);
-
-    return typeof mainRoomId !== 'undefined' && mainRoomId !== currentRoomId;
-};
+export const isInBreakoutRoom = (stateful: Function | Object) =>
+    /_[-\da-f]{36}$/.test(getCurrentRoomId(stateful));
