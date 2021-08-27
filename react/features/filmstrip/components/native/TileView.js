@@ -186,6 +186,7 @@ class TileView extends PureComponent<Props> {
             <TouchableWithoutFeedback onPress = { onClick }>
                 <View style = { styles.flatListContainer }>
                     <FlatList
+                        bounces = { false }
                         contentContainerStyle = { this._contentContainerStyles }
                         data = { participants }
                         horizontal = { false }
