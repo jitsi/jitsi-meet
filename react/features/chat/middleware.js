@@ -261,7 +261,7 @@ function _addChatMsgListener(conference, store) {
             const state = store.getState();
 
             if (navigator.product === 'ReactNative') {
-                featureFlag = getFeatureFlag(state, REACTIONS_ENABLED, false);
+                featureFlag = getFeatureFlag(state, REACTIONS_ENABLED, true);
             } else {
                 const { enableReactions } = state['features/base/config'];
 

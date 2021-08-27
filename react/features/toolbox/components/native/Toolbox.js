@@ -133,7 +133,7 @@ function _mapStateToProps(state: Object): Object {
         _styles: ColorSchemeRegistry.get(state, 'Toolbox'),
         _visible: isToolboxVisible(state),
         _width: state['features/base/responsive-ui'].clientWidth,
-        _reactionsEnabled: getFeatureFlag(state, REACTIONS_ENABLED, false)
+        _reactionsEnabled: getFeatureFlag(state, REACTIONS_ENABLED, true)
     };
 }
 
