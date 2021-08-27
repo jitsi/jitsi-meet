@@ -28,8 +28,6 @@ if not have_async then
     return;
 end
 
-module:depends('jitsi_session');
-
 local jid_bare = require 'util.jid'.bare;
 local jid_node = require 'util.jid'.node;
 local jid_host = require 'util.jid'.host;
@@ -41,6 +39,7 @@ local uuid_gen = require 'util.uuid'.generate;
 
 local get_room_from_jid = module:require "util".get_room_from_jid;
 
+local BREAKOUT_ROOMS_IDENTITY_TYPE = 'breakout_rooms';
 -- only send at most this often updates on breakout rooms to avoid flooding.
 local BROADCAST_ROOMS_INTERVAL = .3;
 -- close conference after this amount of seconds if all leave.
@@ -55,11 +54,9 @@ if main_muc_component_config == nil then
     module:log('error', 'breakout rooms not enabled missing main_muc config');
     return ;
 end
-local breakout_rooms_muc_component_config = module:get_option_string('breakout_rooms_muc');
-if breakout_rooms_muc_component_config == nil then
-    module:log('error', 'breakout rooms not enabled missing breakout_rooms_muc config');
-    return ;
-end
+local breakout_rooms_muc_component_config = module:get_option_string('breakout_rooms_muc', 'breakout.'..module.host);
+
+module:depends('jitsi_session');
 
 local breakout_rooms_muc_service;
 local main_muc_service;
@@ -389,6 +386,9 @@ end
 -- operates on already loaded breakout rooms muc module
 function process_breakout_rooms_muc_loaded(breakout_rooms_muc, host_module)
     module:log('debug', 'Breakout rooms muc loaded');
+
+    -- Advertise the breakout rooms component so clients can pick up the address and use it
+    module:add_identity('component', BREAKOUT_ROOMS_IDENTITY_TYPE, breakout_rooms_muc_component_config);
 
     breakout_rooms_muc_service = breakout_rooms_muc;
     module:log("info", "Hook to muc events on %s", breakout_rooms_muc_component_config);

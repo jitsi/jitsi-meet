@@ -44,7 +44,7 @@ type Props = {
     /**
      * The id of the current room.
      */
-     _currentRoomId: String,
+    _currentRoomId: String,
 
     /**
      * True if the local participant is moderator and false otherwise.

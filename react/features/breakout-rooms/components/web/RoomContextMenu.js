@@ -112,17 +112,18 @@ export const RoomContextMenu = ({
                     <ContextMenuIcon src = { IconMeetingUnlocked } />
                     <span>{t('breakoutRooms.actions.join')}</span>
                 </ContextMenuItem>
-                {_.isEmpty(room?.participants)
-                    ? isLocalModerator
-                        && <ContextMenuItem onClick = { onRemoveBreakoutRoom }>
-                            <ContextMenuIcon src = { IconClose } />
-                            <span>{t('breakoutRooms.actions.remove')}</span>
-                        </ContextMenuItem>
-                    : isLocalModerator
-                        && <ContextMenuItem onClick = { onCloseBreakoutRoom }>
-                            <ContextMenuIcon src = { IconClose } />
-                            <span>{t('breakoutRooms.actions.close')}</span>
-                        </ContextMenuItem>
+                {!room?.isMainRoom
+                    && (_.isEmpty(room?.participants)
+                        ? isLocalModerator
+                            && <ContextMenuItem onClick = { onRemoveBreakoutRoom }>
+                                <ContextMenuIcon src = { IconClose } />
+                                <span>{t('breakoutRooms.actions.remove')}</span>
+                            </ContextMenuItem>
+                        : isLocalModerator
+                            && <ContextMenuItem onClick = { onCloseBreakoutRoom }>
+                                <ContextMenuIcon src = { IconClose } />
+                                <span>{t('breakoutRooms.actions.close')}</span>
+                            </ContextMenuItem>)
                 }
             </ContextMenuItemGroup>
         </ContextMenu>
