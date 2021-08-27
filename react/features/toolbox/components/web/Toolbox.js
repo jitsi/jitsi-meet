@@ -17,6 +17,7 @@ import { translate } from '../../../base/i18n';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet';
 import {
     getLocalParticipant,
+    getParticipantCount,
     haveParticipantWithScreenSharingFeature,
     raiseHand
 } from '../../../base/participants';
@@ -218,6 +219,11 @@ type Props = {
     _reactionsEnabled: boolean,
 
     /**
+     * Number of participants in the conference.
+     */
+    _participantCount: number,
+
+    /**
      * Invoked to active other features of the app.
      */
     dispatch: Function,
@@ -235,12 +241,16 @@ type Props = {
 
 declare var APP: Object;
 
+type State = {
+    reactionsShortcutsRegistered: boolean
+};
+
 /**
  * Implements the conference toolbox on React/Web.
  *
  * @extends Component
  */
-class Toolbox extends Component<Props> {
+class Toolbox extends Component<Props, State> {
     /**
      * Initializes a new {@code Toolbox} instance.
      *
@@ -249,6 +259,10 @@ class Toolbox extends Component<Props> {
      */
     constructor(props: Props) {
         super(props);
+
+        this.state = {
+            reactionsShortcutsRegistered: false
+        };
 
         // Bind event handlers so they are only bound once per instance.
         this._onMouseOut = this._onMouseOut.bind(this);
@@ -279,7 +293,7 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     componentDidMount() {
-        const { _toolbarButtons, t, dispatch, _reactionsEnabled } = this.props;
+        const { _toolbarButtons, t, dispatch, _reactionsEnabled, _participantCount } = this.props;
         const KEYBOARD_SHORTCUTS = [
             isToolbarButtonEnabled('videoquality', _toolbarButtons) && {
                 character: 'A',
@@ -328,7 +342,7 @@ class Toolbox extends Component<Props> {
             }
         });
 
-        if (_reactionsEnabled) {
+        if (_reactionsEnabled && _participantCount > 1) {
             const REACTION_SHORTCUTS = Object.keys(REACTIONS).map(key => {
                 const onShortcutSendReaction = () => {
                     dispatch(addReactionToBuffer(key));
@@ -373,6 +387,41 @@ class Toolbox extends Component<Props> {
             this._onSetOverflowVisible(false);
             this.props.dispatch(setToolbarHovered(false));
         }
+
+        if (!this.state.reactionsShortcutsRegistered
+            && (prevProps._reactionsEnabled !== this.props._reactionsEnabled
+            || prevProps._participantCount !== this.props._participantCount)) {
+            if (this.props._reactionsEnabled && this.props._participantCount > 1) {
+                // eslint-disable-next-line react/no-did-update-set-state
+                this.setState({
+                    reactionsShortcutsRegistered: true
+                });
+                const REACTION_SHORTCUTS = Object.keys(REACTIONS).map(key => {
+                    const onShortcutSendReaction = () => {
+                        this.props.dispatch(addReactionToBuffer(key));
+                        sendAnalytics(createShortcutEvent(
+                            `reaction.${key}`
+                        ));
+                    };
+
+                    return {
+                        character: REACTIONS[key].shortcutChar,
+                        exec: onShortcutSendReaction,
+                        helpDescription: this.props.t(`toolbar.reaction${key.charAt(0).toUpperCase()}${key.slice(1)}`),
+                        altKey: true
+                    };
+                });
+
+                REACTION_SHORTCUTS.forEach(shortcut => {
+                    APP.keyboardshortcut.registerShortcut(
+                        shortcut.character,
+                        null,
+                        shortcut.exec,
+                        shortcut.helpDescription,
+                        shortcut.altKey);
+                });
+            }
+        }
     }
 
     /**
@@ -385,7 +434,7 @@ class Toolbox extends Component<Props> {
         [ 'A', 'C', 'D', 'R', 'S' ].forEach(letter =>
             APP.keyboardshortcut.unregisterShortcut(letter));
 
-        if (this.props._reactionsEnabled) {
+        if (this.props._reactionsEnabled && this.state.reactionsShortcutsRegistered) {
             Object.keys(REACTIONS).map(key => REACTIONS[key].shortcutChar)
                 .forEach(letter =>
                     APP.keyboardshortcut.unregisterShortcut(letter, true));
@@ -1307,7 +1356,8 @@ function _mapStateToProps(state, ownProps) {
         _screenSharing: isScreenVideoShared(state),
         _toolbarButtons: toolbarButtons,
         _visible: isToolboxVisible(state),
-        _reactionsEnabled: enableReactions
+        _reactionsEnabled: enableReactions,
+        _participantCount: getParticipantCount(state)
     };
 }
 
