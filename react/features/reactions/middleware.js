@@ -17,6 +17,7 @@ import {
     PUSH_REACTIONS,
     SHOW_SOUNDS_NOTIFICATION
 } from './actionTypes';
+import { displayReactionSoundsNotification } from './actions';
 import {
     addReactionsToChat,
     flushReactionBuffer,
@@ -24,7 +25,6 @@ import {
     sendReactions,
     setReactionQueue
 } from './actions.any';
-import { displayReactionSoundsNotification } from './actions.web';
 import { RAISE_HAND_SOUND_ID, REACTIONS, SOUNDS_THRESHOLDS } from './constants';
 import {
     getReactionMessageFromBuffer,
@@ -128,7 +128,7 @@ MiddlewareRegistry.register(store => next => action => {
         const reactions = action.reactions;
 
         batch(() => {
-            if (!notificationDisplayed && soundsReactions) {
+            if (!notificationDisplayed && soundsReactions && displayReactionSoundsNotification) {
                 dispatch(displayReactionSoundsNotification());
             }
             if (soundsReactions) {

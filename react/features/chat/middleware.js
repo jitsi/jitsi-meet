@@ -27,12 +27,13 @@ import { ADD_REACTION_MESSAGE } from '../reactions/actionTypes';
 import { pushReactions } from '../reactions/actions.any';
 import { getReactionMessageFromBuffer } from '../reactions/functions.any';
 import { endpointMessageReceived } from '../subtitles';
-import { showToolbox } from '../toolbox/actions';
 import {
+    showToolbox,
     hideToolbox,
     setToolboxTimeout,
     setToolboxVisible
-} from '../toolbox/actions.web';
+} from '../toolbox/actions';
+
 
 import { ADD_MESSAGE, SEND_MESSAGE, OPEN_CHAT, CLOSE_CHAT, SET_IS_POLL_TAB_FOCUSED } from './actionTypes';
 import { addMessage, clearMessages } from './actions';
@@ -264,7 +265,7 @@ function _addChatMsgListener(conference, store) {
                     batch(() => {
                         store.dispatch(setToolboxVisible(true));
                         store.dispatch(setToolboxTimeout(
-                                () => store.dispatch(hideToolbox()),
+                                () => store.dispatch(hideToolbox ? hideToolbox() : setToolboxVisible(false)),
                                 5000)
                         );
                         store.dispatch(pushReactions(eventData.reactions));
