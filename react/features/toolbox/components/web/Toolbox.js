@@ -153,10 +153,6 @@ type Props = {
      */
     _isProfileDisabled: boolean,
 
-    /**
-     * Whether or not the tile view is enabled.
-     */
-    _tileViewEnabled: boolean,
 
     /**
      * Whether or not the current meeting belongs to a JaaS user.
@@ -179,6 +175,11 @@ type Props = {
     _overflowMenuVisible: boolean,
 
     /**
+     * Number of participants in the conference.
+     */
+    _participantCount: number,
+
+    /**
      * Whether or not the participants pane is open.
      */
     _participantsPaneOpen: boolean,
@@ -189,6 +190,11 @@ type Props = {
     _raisedHand: boolean,
 
     /**
+     * Whether or not reactions feature is enabled.
+     */
+    _reactionsEnabled: boolean,
+
+    /**
      * Whether or not the local participant is screenSharing.
      */
     _screenSharing: boolean,
@@ -197,6 +203,11 @@ type Props = {
      * Whether or not the local participant is sharing a YouTube video.
      */
     _sharingVideo: boolean,
+
+    /**
+     * Whether or not the tile view is enabled.
+     */
+    _tileViewEnabled: boolean,
 
     /**
      * The enabled buttons.
@@ -212,16 +223,6 @@ type Props = {
      * Returns the selected virtual source object.
      */
     _virtualSource: Object,
-
-    /**
-     * Whether or not reactions feature is enabled.
-     */
-    _reactionsEnabled: boolean,
-
-    /**
-     * Number of participants in the conference.
-     */
-    _participantCount: number,
 
     /**
      * Invoked to active other features of the app.
@@ -1334,30 +1335,30 @@ function _mapStateToProps(state, ownProps) {
     }
 
     return {
+        _backgroundType: state['features/virtual-background'].backgroundType,
         _chatOpen: state['features/chat'].isOpen,
         _clientWidth: clientWidth,
         _conference: conference,
         _desktopSharingEnabled: desktopSharingEnabled,
-        _backgroundType: state['features/virtual-background'].backgroundType,
-        _virtualSource: state['features/virtual-background'].virtualSource,
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,
         _dialog: Boolean(state['features/base/dialog'].component),
         _feedbackConfigured: Boolean(callStatsID),
+        _fullScreen: fullScreen,
         _isProfileDisabled: Boolean(state['features/base/config'].disableProfile),
         _isMobile: isMobileBrowser(),
         _isVpaasMeeting: isVpaasMeeting(state),
-        _fullScreen: fullScreen,
-        _tileViewEnabled: shouldDisplayTileView(state),
         _localParticipantID: localParticipant?.id,
         _localVideo: localVideo,
         _overflowMenuVisible: overflowMenuVisible,
+        _participantCount: getParticipantCount(state),
         _participantsPaneOpen: getParticipantsPaneOpen(state),
         _raisedHand: localParticipant?.raisedHand,
-        _screenSharing: isScreenVideoShared(state),
-        _toolbarButtons: toolbarButtons,
-        _visible: isToolboxVisible(state),
         _reactionsEnabled: enableReactions,
-        _participantCount: getParticipantCount(state)
+        _screenSharing: isScreenVideoShared(state),
+        _tileViewEnabled: shouldDisplayTileView(state),
+        _toolbarButtons: toolbarButtons,
+        _virtualSource: state['features/virtual-background'].virtualSource,
+        _visible: isToolboxVisible(state)
     };
 }
 
