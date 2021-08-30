@@ -86,9 +86,9 @@ const EMPTY_ARRAY = [];
 class TileView extends PureComponent<Props> {
 
     /**
-     * The FlatList's viewabilityConfig.
+     * The styles for the content container of the FlatList.
      */
-    _viewabilityConfig: Object;
+    _contentContainerStyles: Object;
 
     /**
      * The styles for the FlatList.
@@ -96,9 +96,9 @@ class TileView extends PureComponent<Props> {
     _flatListStyles: Object;
 
     /**
-     * The styles for the content container of the FlatList.
+     * The FlatList's viewabilityConfig.
      */
-    _contentContainerStyles: Object;
+    _viewabilityConfig: Object;
 
     /**
      * Creates new TileView component.

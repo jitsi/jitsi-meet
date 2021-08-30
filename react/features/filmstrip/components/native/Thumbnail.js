@@ -341,8 +341,8 @@ function _mapStateToProps(state, ownProps) {
 
     return {
         _audioMuted: audioTrack?.muted ?? true,
-        _isScreenShare: isScreenShare,
         _isFakeParticipant: participant?.isFakeParticipant,
+        _isScreenShare: isScreenShare,
         _local: participant?.local,
         _localVideoOwner: Boolean(ownerId === localParticipantId),
         _participantInLargeVideo: participantInLargeVideo,
