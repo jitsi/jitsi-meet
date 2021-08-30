@@ -5,6 +5,7 @@ import { batch } from 'react-redux';
 import UIEvents from '../../../../service/UI/UIEvents';
 import { approveParticipant } from '../../av-moderation/actions';
 import { toggleE2EE } from '../../e2ee/actions';
+import { MAX_MODE } from '../../e2ee/constants';
 import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
 import { isForceMuted } from '../../participants-pane/functions';
 import { CALLING, INVITED } from '../../presence-status';
@@ -327,16 +328,20 @@ StateListenerRegistry.register(
 /**
  * Handles a E2EE enabled status update.
  *
- * @param {Function} dispatch - The Redux dispatch function.
+ * @param {Store} store - The redux store.
  * @param {Object} conference - The conference for which we got an update.
  * @param {string} participantId - The ID of the participant from which we got an update.
  * @param {boolean} newValue - The new value of the E2EE enabled status.
  * @returns {void}
  */
-function _e2eeUpdated({ dispatch }, conference, participantId, newValue) {
+function _e2eeUpdated({ getState, dispatch }, conference, participantId, newValue) {
     const e2eeEnabled = newValue === 'true';
 
-    dispatch(toggleE2EE(e2eeEnabled));
+    const { maxMode } = getState()['features/e2ee'];
+
+    if (maxMode !== MAX_MODE.THRESHOLD_EXCEEDED || !e2eeEnabled) {
+        dispatch(toggleE2EE(e2eeEnabled));
+    }
 
     dispatch(participantUpdated({
         conference,
