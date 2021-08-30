@@ -114,7 +114,7 @@ function filter_stanza(stanza)
     if from_domain == lobby_muc_component_config then
         if stanza.name == 'presence' then
             local muc_x = stanza:get_child('x', MUC_NS..'#user');
-            if presence_check_status(muc_x, '110') then
+            if not muc_x or presence_check_status(muc_x, '110') then
                 return stanza;
             end
 
