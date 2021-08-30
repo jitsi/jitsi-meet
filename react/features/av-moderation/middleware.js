@@ -17,6 +17,7 @@ import {
     hideNotification,
     showNotification
 } from '../notifications';
+import { muteLocal } from '../video-menu/actions.any';
 
 import {
     LOCAL_PARTICIPANT_MODERATION_NOTIFICATION,
@@ -164,9 +165,11 @@ StateListenerRegistry.register(
                 // Avoid displaying 2 different notifications.
                 if (mediaType === MEDIA_TYPE.VIDEO) {
                     dispatch(showNotification({
-                        titleKey: 'notify.unmute',
-                        descriptionKey: 'notify.hostAskedUnmute',
-                        sticky: true
+                        titleKey: 'notify.hostAskedUnmute',
+                        descriptionKey: 'notify.allowedUnmute',
+                        sticky: true,
+                        customActionNameKey: 'notify.unmute',
+                        customActionHandler: () => dispatch(muteLocal(false, MEDIA_TYPE.AUDIO))
                     }));
                 }
             });
