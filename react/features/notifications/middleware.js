@@ -7,7 +7,8 @@ import {
     PARTICIPANT_ROLE,
     PARTICIPANT_UPDATED,
     getParticipantById,
-    getParticipantDisplayName
+    getParticipantDisplayName,
+    getLocalParticipant
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 
@@ -38,22 +39,6 @@ MiddlewareRegistry.register(store => next => action => {
             dispatch(showParticipantJoinedNotification(
                 getParticipantDisplayName(getState, p.id)
             ));
-        }
-
-        if (typeof interfaceConfig === 'object'
-                && !interfaceConfig.DISABLE_FOCUS_INDICATOR && p.role === PARTICIPANT_ROLE.MODERATOR) {
-            // Do not show the notification for mobile and also when the focus indicator is disabled.
-            const displayName = getParticipantDisplayName(getState, p.id);
-
-            if (!p.isReplacing) {
-                dispatch(showNotification({
-                    descriptionArguments: { to: displayName || '$t(notify.somebody)' },
-                    descriptionKey: 'notify.grantedTo',
-                    titleKey: 'notify.somebody',
-                    title: displayName
-                },
-                NOTIFICATION_TIMEOUT));
-            }
         }
 
         return result;
@@ -87,17 +72,19 @@ MiddlewareRegistry.register(store => next => action => {
 
         const { id, role } = action.participant;
         const state = store.getState();
+        const localParticipant = getLocalParticipant(state);
+
+        if (localParticipant.id !== id) {
+            return next(action);
+        }
+
         const oldParticipant = getParticipantById(state, id);
         const oldRole = oldParticipant?.role;
 
         if (oldRole && oldRole !== role && role === PARTICIPANT_ROLE.MODERATOR) {
-            const displayName = getParticipantDisplayName(state, id);
 
             store.dispatch(showNotification({
-                descriptionArguments: { to: displayName || '$t(notify.somebody)' },
-                descriptionKey: 'notify.grantedTo',
-                titleKey: 'notify.somebody',
-                title: displayName
+                titleKey: 'notify.granted'
             },
             NOTIFICATION_TIMEOUT));
         }
