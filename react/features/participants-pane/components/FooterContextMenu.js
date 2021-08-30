@@ -43,7 +43,9 @@ const useStyles = makeStyles(() => {
         },
         drawer: {
             width: '100%',
-            top: 0,
+            top: 'auto',
+            bottom: 0,
+            transform: 'none',
 
             '& > div': {
                 lineHeight: '32px'
