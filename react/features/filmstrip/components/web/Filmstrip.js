@@ -528,7 +528,8 @@ class Filmstrip extends PureComponent <Props> {
  */
 function _mapStateToProps(state) {
     const toolbarButtons = getToolbarButtons(state);
-    const { enableThumbnailReordering = true } = state['features/base/config'];
+    const { testing = {} } = state['features/base/config'];
+    const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
     const { visible, remoteParticipants } = state['features/filmstrip'];
     const reduceHeight = state['features/toolbox'].visible && toolbarButtons.length;
     const remoteVideosVisible = shouldRemoteVideosBeVisible(state);
