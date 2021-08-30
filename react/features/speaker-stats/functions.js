@@ -56,7 +56,7 @@ export function getSearchCriteria(state: Object) {
  * @returns {Object} - Ordered speaker stats.
  * @public
  */
-export function getSortedSpeakerStats(state) {
+export function getSortedSpeakerStats(state: Object) {
     const stats = _.cloneDeep(getSpeakerStats(state));
     const orderConfig = getSpeakerStatsOrder(state);
 
@@ -147,7 +147,7 @@ function getEnhancedStatsForOrdering(state, stats, orderConfig) {
  * @returns {Object} - Filtered speaker stats.
  * @public
  */
-export function filterBySearchCriteria(state, stats) {
+export function filterBySearchCriteria(state: Object, stats: ?Object) {
     const filteredStats = _.cloneDeep(stats ?? getSpeakerStats(state));
     const criteria = getSearchCriteria(state);
 

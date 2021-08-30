@@ -13,7 +13,7 @@ import {
  * @param {string} criteria - The search criteria.
  * @returns {Function}
  */
-export function initSearch(criteria) {
+export function initSearch(criteria: string) {
     return {
         type: INIT_SEARCH,
         criteria
@@ -26,7 +26,7 @@ export function initSearch(criteria) {
  * @param {boolean} reorder - Should reorder or not.
  * @returns {Function}
  */
-export function initUpdateStats(reorder = false) {
+export function initUpdateStats(reorder: boolean = false) {
     return {
         type: INIT_UPDATE_STATS,
         reorder

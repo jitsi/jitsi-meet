@@ -16,7 +16,7 @@ import {
  * @type {Object}
  */
 const INITIAL_STATE = {
-    stats: [],
+    stats: {},
     criteria: ''
 };
 

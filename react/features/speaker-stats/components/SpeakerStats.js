@@ -31,7 +31,7 @@ type Props = {
     /**
      * The speaker paricipant stats.
      */
-    _stats: Array<String>,
+    _stats: Object,
 
     /**
      * The search criteria.
@@ -79,7 +79,7 @@ class SpeakerStats extends Component<Props> {
      * @inheritdoc
      */
     componentDidMount() {
-        this._updateInterval = setInterval(this._updateStats, SPEAKER_STATS_RELOAD_INTERVAL);
+        this._updateInterval = setInterval(() => this._updateStats(false), SPEAKER_STATS_RELOAD_INTERVAL);
     }
 
     /**
@@ -173,7 +173,7 @@ class SpeakerStats extends Component<Props> {
         APP.store.dispatch(initSearch(escapeRegexp(criteria)));
     }
 
-    _updateStats: (reorder: boolean) => void;
+    _updateStats: (reorder: ?boolean) => void;
 
     /**
      * Update the internal state with the latest speaker stats.
@@ -194,6 +194,8 @@ class SpeakerStats extends Component<Props> {
  * @private
  * @returns {{
  *     _localDisplayName: ?string,
+ *     _stats: Object,
+ *     _criteria: string,
  * }}
  */
 function _mapStateToProps(state) {
