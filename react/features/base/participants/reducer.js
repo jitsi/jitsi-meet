@@ -101,19 +101,11 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
         const { participant } = action;
         const { id, previousSpeakers = [] } = participant;
         const { dominantSpeaker, local } = state;
-        const newSpeakers = [ id, ...previousSpeakers ];
-        const sortedSpeakersList = [];
+        let newSpeakers = [ id, ...previousSpeakers ];
 
-        for (const speaker of newSpeakers) {
-            if (speaker !== local?.id) {
-                const remoteParticipant = state.remote.get(speaker);
-
-                remoteParticipant && sortedSpeakersList.push([ speaker, _getDisplayName(remoteParticipant.name) ]);
-            }
-        }
-
-        // Keep the remote speaker list sorted alphabetically.
-        sortedSpeakersList.sort((a, b) => a[1].localeCompare(b[1]));
+        // Filter out the local participant from the speakers list.
+        newSpeakers = newSpeakers.filter(s => s !== local?.id);
+        const sortedSpeakersList = _sortParticipantsByDisplayname(state, newSpeakers);
 
         // Only one dominant speaker is allowed.
         if (dominantSpeaker) {
@@ -124,7 +116,7 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
             return {
                 ...state,
                 dominantSpeaker: id,
-                speakersList: new Map(sortedSpeakersList)
+                speakersList: sortedSpeakersList
             };
         }
 
@@ -202,7 +194,7 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
     }
     case PARTICIPANT_JOINED: {
         const participant = _participantJoined(action);
-        const { id, isFakeParticipant, name, pinned } = participant;
+        const { id, isFakeParticipant, pinned } = participant;
         const { pinnedParticipant, dominantSpeaker } = state;
 
         if (pinned) {
@@ -238,15 +230,11 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
 
         state.remote.set(id, participant);
 
-        // Insert the new participant.
-        const displayName = _getDisplayName(name);
-        const sortedRemoteParticipants = Array.from(state.sortedRemoteParticipants);
+        // Insert the new participant and sort it alphabetically.
+        const remoteParticipants = Array.from(state.sortedRemoteParticipants.keys());
 
-        sortedRemoteParticipants.push([ id, displayName ]);
-        sortedRemoteParticipants.sort((a, b) => a[1].localeCompare(b[1]));
-
-        // The sort order of participants is preserved since Map remembers the original insertion order of the keys.
-        state.sortedRemoteParticipants = new Map(sortedRemoteParticipants);
+        remoteParticipants.push(id);
+        state.sortedRemoteParticipants = _sortParticipantsByDisplayname(state, remoteParticipants);
 
         if (isFakeParticipant) {
             state.fakeParticipants.set(id, participant);
@@ -479,6 +467,28 @@ function _participantJoined({ participant }) {
         presence,
         role: role || PARTICIPANT_ROLE.NONE
     };
+}
+
+/**
+ * Returns a map of the remote participants which are sorted alphabetically by display name.
+ *
+ * @param {State} state - The redux state.
+ * @param {Array<string>} participants - Ids of the participants that need to be sorted.
+ * @returns {Map<string, string>}
+ */
+function _sortParticipantsByDisplayname(state: Object, participants: Array<string>) {
+    const sortedParticipants = [];
+
+    for (const p of participants) {
+        const remoteParticipant = state.remote.get(p);
+
+        remoteParticipant && sortedParticipants.push([ p, _getDisplayName(remoteParticipant.name) ]);
+    }
+
+    // Keep the remote speaker list sorted alphabetically.
+    sortedParticipants.sort((a, b) => a[1].localeCompare(b[1]));
+
+    return new Map(sortedParticipants);
 }
 
 /**
