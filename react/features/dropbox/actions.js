@@ -24,7 +24,7 @@ export function authorizeDropbox() {
 
         _authorizeDropbox(dropbox.appKey, redirectURI)
             .then(
-                token => dispatch(updateDropboxToken(token)));
+                ({ token, rToken, expireDate }) => dispatch(updateDropboxToken(token, rToken, expireDate)));
     };
 }
 
@@ -32,14 +32,20 @@ export function authorizeDropbox() {
  * Action to update the dropbox access token.
  *
  * @param {string} token - The new token.
+ * @param {string} rToken - The refresh token.
+ * @param {string} expireDate - The token expiration date as ISO string.
  * @returns {{
  *     type: UPDATE_DROPBOX_TOKEN,
- *     token: string
+ *     token: string,
+ *     rToken: string,
+ *     expireDate: string
  * }}
  */
-export function updateDropboxToken(token: string) {
+export function updateDropboxToken(token: string, rToken: string, expireDate: string) {
     return {
         type: UPDATE_DROPBOX_TOKEN,
-        token
+        token,
+        rToken,
+        expireDate
     };
 }

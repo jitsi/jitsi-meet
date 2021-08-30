@@ -19,7 +19,9 @@ ReducerRegistry.register(STORE_NAME, (state = {}, action) => {
     case UPDATE_DROPBOX_TOKEN:
         return {
             ...state,
-            token: action.token
+            token: action.token,
+            rToken: action.rToken,
+            expireDate: action.expireDate
         };
     default:
         return state;
