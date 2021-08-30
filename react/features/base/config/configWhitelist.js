@@ -117,6 +117,7 @@ export default [
     'enableLayerSuspension',
     'enableLipSync',
     'enableOpusRed',
+    'enableReactions',
     'enableRemb',
     'enableSaveLogs',
     'enableScreenshotCapture',
