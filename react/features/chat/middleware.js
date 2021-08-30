@@ -9,7 +9,6 @@ import {
     getCurrentConference
 } from '../base/conference';
 import { openDialog } from '../base/dialog';
-import { getFeatureFlag, REACTIONS_ENABLED } from '../base/flags';
 import {
     JitsiConferenceErrors,
     JitsiConferenceEvents
