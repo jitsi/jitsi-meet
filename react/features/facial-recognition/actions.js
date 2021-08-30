@@ -136,6 +136,20 @@ export function resetTrack() {
 }
 
 /**
+ * Changes the track from the image capture.
+ *
+ * @param  {Object} track - The track that will be in the new image capture.
+ * @returns {void}
+ */
+export function changeTrack(track: Object) {
+    const { jitsiTrack } = track;
+    const stream = jitsiTrack.getOriginalStream();
+    const firstVideoTrack = stream.getVideoTracks()[0];
+
+    imageCapture = new ImageCapture(firstVideoTrack);
+}
+
+/**
  * Detects facial expression.
  *
  * @returns {Function}

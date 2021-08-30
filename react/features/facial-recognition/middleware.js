@@ -2,14 +2,15 @@
 
 import { CONFERENCE_JOINED } from '../base/conference';
 import { MiddlewareRegistry } from '../base/redux';
-import { TRACK_UPDATED, TRACK_ADDED } from '../base/tracks';
+import { TRACK_UPDATED, TRACK_ADDED, TRACK_REMOVED } from '../base/tracks';
 import { CHANGE_BACKGROUND } from '../virtual-background/actionTypes';
 
 import {
     maybeStartFacialRecognition,
     stopFacialRecognition,
     resetTrack,
-    setFacialRecognitionAllowed
+    setFacialRecognitionAllowed,
+    changeTrack
 } from './actions';
 
 
@@ -28,28 +29,25 @@ MiddlewareRegistry.register(store => next => action => {
         const { getState } = store;
         const state = getState();
         const { facialRecognitionAllowed } = state['features/facial-recognition'];
+        const { videoType, type } = action.track.jitsiTrack;
 
-        if (facialRecognitionAllowed) {
+        if (facialRecognitionAllowed && videoType === 'camera') {
             const { muted, videoStarted } = action.track;
             const { dispatch } = store;
-            const { type } = action.track.jitsiTrack;
 
             if (videoStarted === true) {
                 dispatch(maybeStartFacialRecognition());
             }
-
-            if (muted !== undefined && type === 'video') {
+            if (muted !== undefined) {
                 if (muted) {
                     stopFacialRecognition();
                 } else {
                     dispatch(maybeStartFacialRecognition());
+                    // eslint-disable-next-line max-depth
+                    if (type === 'presenter') {
+                        changeTrack(action.track);
+                    }
                 }
-            }
-
-            const { videoType } = action.track.jitsiTrack;
-
-            if (videoType === 'desktop') {
-                stopFacialRecognition();
             }
         }
 
@@ -62,6 +60,17 @@ MiddlewareRegistry.register(store => next => action => {
 
         if (mediaType === 'presenter' && videoType === 'camera') {
             dispatch(maybeStartFacialRecognition());
+            changeTrack(action.track);
+        }
+
+        return next(action);
+    }
+
+    case TRACK_REMOVED: {
+        const { videoType } = action.track.jitsiTrack;
+
+        if ([ 'camera', 'desktop' ].includes(videoType)) {
+            stopFacialRecognition();
         }
 
         return next(action);
