@@ -46,6 +46,7 @@ const useStyles = makeStyles(() => {
             top: 'auto',
             bottom: 0,
             transform: 'none',
+            position: 'relative',
 
             '& > div': {
                 lineHeight: '32px'
