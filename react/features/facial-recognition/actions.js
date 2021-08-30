@@ -15,6 +15,7 @@ import logger from './logger';
 
 let interval;
 let imageCapture;
+let TinyFaceDetectorOptions;
 const outputCanvas = document.createElement('canvas');
 
 /**
@@ -75,6 +76,10 @@ export function maybeStartFacialRecognition() {
 
         const { facialRecognitionModelsLoaded } = state['features/facial-recognition'];
 
+        faceapi.tf.setBackend('webgl');
+
+        console.log('BACKEND', faceapi.tf.getBackend());
+
         if (!facialRecognitionModelsLoaded) {
             try {
                 await faceapi.nets.tinyFaceDetector.loadFromUri('/libs');
@@ -90,6 +95,7 @@ export function maybeStartFacialRecognition() {
         const { height, width } = firstVideoTrack.getSettings() ?? firstVideoTrack.getConstraints();
 
         imageCapture = new ImageCapture(firstVideoTrack);
+        TinyFaceDetectorOptions = new faceapi.TinyFaceDetectorOptions();
 
         outputCanvas.width = parseInt(width, 10);
         outputCanvas.height = parseInt(height, 10);
@@ -148,7 +154,7 @@ export function testDetectFacialExpression() {
         outputCanvasContext.drawImage(imageBitmap, 0, 0, imageBitmap.width, imageBitmap.height);
         const detections = await faceapi.detectSingleFace(
             outputCanvas,
-            new faceapi.TinyFaceDetectorOptions()
+            TinyFaceDetectorOptions
         ).withFaceExpressions();
 
         // $FlowFixMe - Flow does not (yet) support method calls in optional chains.

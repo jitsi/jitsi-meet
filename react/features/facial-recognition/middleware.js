@@ -32,12 +32,13 @@ MiddlewareRegistry.register(store => next => action => {
         if (facialRecognitionAllowed) {
             const { muted, videoStarted } = action.track;
             const { dispatch } = store;
+            const { type } = action.track.jitsiTrack;
 
             if (videoStarted === true) {
                 dispatch(maybeStartFacialRecognition());
             }
 
-            if (muted !== undefined) {
+            if (muted !== undefined && type === 'video') {
                 if (muted) {
                     stopFacialRecognition();
                 } else {
