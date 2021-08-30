@@ -26,7 +26,7 @@ import { openDisplayNamePrompt } from '../display-name';
 import { resetNbUnreadPollsMessages } from '../polls/actions';
 import { ADD_REACTION_MESSAGE } from '../reactions/actionTypes';
 import { pushReactions } from '../reactions/actions.any';
-import { getReactionMessageFromBuffer } from '../reactions/functions.any';
+import { getReactionMessageFromBuffer, isReactionsEnabled } from '../reactions/functions.any';
 import { endpointMessageReceived } from '../subtitles';
 import {
     showToolbox,
@@ -257,17 +257,9 @@ function _addChatMsgListener(conference, store) {
     conference.on(
         JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
         (...args) => {
-            let featureFlag = false;
             const state = store.getState();
 
-            if (navigator.product === 'ReactNative') {
-                featureFlag = getFeatureFlag(state, REACTIONS_ENABLED, true);
-            } else {
-                const { enableReactions } = state['features/base/config'];
-
-                featureFlag = enableReactions;
-            }
-            if (!featureFlag) {
+            if (!isReactionsEnabled(state)) {
                 return;
             }
 
