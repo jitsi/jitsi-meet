@@ -25,8 +25,10 @@ import { connect } from '../../../base/redux';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { isParticipantAudioMuted, isParticipantVideoMuted } from '../../../base/tracks';
 import { openChatById } from '../../../chat/actions';
+import { setVolume } from '../../../filmstrip/actions.web';
 import { Drawer, DrawerPortal } from '../../../toolbox/components/web';
 import { GrantModeratorDialog, KickRemoteParticipantDialog, MuteEveryoneDialog } from '../../../video-menu';
+import { VolumeSlider } from '../../../video-menu/components/web';
 import MuteRemoteParticipantsVideoDialog from '../../../video-menu/components/web/MuteRemoteParticipantsVideoDialog';
 import { getComputedOuterHeight } from '../../functions';
 
@@ -68,12 +70,18 @@ type Props = {
     /**
      * Shared video local participant owner.
      */
-     _localVideoOwner: boolean,
+    _localVideoOwner: boolean,
 
     /**
      * Participant reference
      */
     _participant: Object,
+
+    /**
+     * A value between 0 and 1 indicating the volume of the participant's
+     * audio element.
+     */
+    _volume: ?number,
 
     /**
      * Closes a drawer if open.
@@ -196,6 +204,7 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
         this._onMuteVideo = this._onMuteVideo.bind(this);
         this._onSendPrivateMessage = this._onSendPrivateMessage.bind(this);
         this._position = this._position.bind(this);
+        this._onVolumeChange = this._onVolumeChange.bind(this);
     }
 
     _getCurrentParticipantId: () => string;
@@ -319,6 +328,21 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
         }
     }
 
+    _onVolumeChange: (number) => void;
+
+    /**
+     * Handles volume changes.
+     *
+     * @param {number} value - The new value for the volume.
+     * @returns {void}
+     */
+    _onVolumeChange(value) {
+        const { _participant, dispatch } = this.props;
+        const { id } = _participant;
+
+        dispatch(setVolume(id, value));
+    }
+
     /**
      * Implements React Component's componentDidMount.
      *
@@ -355,6 +379,7 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
             _isParticipantAudioMuted,
             _localVideoOwner,
             _participant,
+            _volume = 1,
             classes,
             closeDrawer,
             drawerParticipant,
@@ -438,6 +463,14 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
                             )
                         }
                     </ContextMenuItemGroup>
+                    { overflowDrawer && typeof _volume === 'number' && !isNaN(_volume)
+                        && <ContextMenuItemGroup>
+                            <VolumeSlider
+                                initialValue = { _volume }
+                                key = 'volume-slider'
+                                onChange = { this._onVolumeChange } />
+                        </ContextMenuItemGroup>
+                    }
                 </>
             );
 
@@ -459,12 +492,14 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
                         isOpen = { drawerParticipant && overflowDrawer }
                         onClose = { closeDrawer }>
                         <div className = { classes && classes.drawer }>
-                            <ContextMenuItem>
-                                <Avatar
-                                    participantId = { drawerParticipant && drawerParticipant.participantID }
-                                    size = { 20 } />
-                                <span>{ drawerParticipant && drawerParticipant.displayName }</span>
-                            </ContextMenuItem>
+                            <ContextMenuItemGroup>
+                                <ContextMenuItem>
+                                    <Avatar
+                                        participantId = { drawerParticipant && drawerParticipant.participantID }
+                                        size = { 20 } />
+                                    <span>{ drawerParticipant && drawerParticipant.displayName }</span>
+                                </ContextMenuItem>
+                            </ContextMenuItemGroup>
                             { actions }
                         </div>
                     </Drawer>
@@ -483,17 +518,22 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
  * @returns {Props}
  */
 function _mapStateToProps(state, ownProps): Object {
-    const { participantID } = ownProps;
+    const { participantID, overflowDrawer, drawerParticipant } = ownProps;
     const { ownerId } = state['features/shared-video'];
     const localParticipantId = getLocalParticipant(state).id;
 
-    const participant = getParticipantByIdOrUndefined(state, participantID);
+    const participant = getParticipantByIdOrUndefined(state,
+        overflowDrawer ? drawerParticipant?.participantID : participantID);
 
     const _isLocalModerator = isLocalParticipantModerator(state);
     const _isChatButtonEnabled = isToolbarButtonEnabled('chat', state);
     const _isParticipantVideoMuted = isParticipantVideoMuted(participant, state);
     const _isParticipantAudioMuted = isParticipantAudioMuted(participant, state);
     const _isParticipantModerator = isParticipantModerator(participant);
+
+    const { participantsVolume } = state['features/filmstrip'];
+    const id = participant?.id;
+    const isLocal = participant?.local ?? true;
 
     return {
         _isLocalModerator,
@@ -502,7 +542,8 @@ function _mapStateToProps(state, ownProps): Object {
         _isParticipantVideoMuted,
         _isParticipantAudioMuted,
         _localVideoOwner: Boolean(ownerId === localParticipantId),
-        _participant: participant
+        _participant: participant,
+        _volume: isLocal ? undefined : id ? participantsVolume[id] : undefined
     };
 }
 
