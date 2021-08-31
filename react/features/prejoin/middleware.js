@@ -2,7 +2,8 @@
 
 import { CONFERENCE_JOINED } from '../base/conference';
 import { updateConfig } from '../base/config';
-import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../base/media';
+import { isIosMobileBrowser } from '../base/environment/utils';
+import { MEDIA_TYPE, SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../base/media';
 import { MiddlewareRegistry } from '../base/redux';
 import { updateSettings } from '../base/settings';
 import {
@@ -46,7 +47,10 @@ MiddlewareRegistry.register(store => next => async action => {
 
         // Do not signal audio/video tracks if the user joins muted.
         for (const track of localTracks) {
-            if (track.muted) {
+            // Always add the audio track on mobile Safari because of a known issue where audio playout doesn't happen
+            // if the user joins audio and video muted.
+            if (track.muted
+                && !(isIosMobileBrowser() && track.jitsiTrack && track.jitsiTrack.getType() === MEDIA_TYPE.AUDIO)) {
                 await dispatch(replaceLocalTrack(track.jitsiTrack, null));
             }
         }
