@@ -4,6 +4,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
+import { isToolbarButtonEnabled } from '../../../base/config/functions.web';
 import { openDialog } from '../../../base/dialog';
 import {
     getParticipantCountWithFake,
@@ -160,7 +161,7 @@ function _mapStateToProps(state): Object {
     // and we will not re-render on change, but if count changes we will do
     const participantsCount = getParticipantCountWithFake(state);
 
-    const showInviteButton = shouldRenderInviteButton(state);
+    const showInviteButton = shouldRenderInviteButton(state) && isToolbarButtonEnabled('invite', state);
 
     return {
         sortedParticipantIds,
