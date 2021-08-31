@@ -153,28 +153,6 @@ class SpeakerStats extends Component<Props> {
         const dominantSpeakerTime = statsModel.getTotalDominantSpeakerTime();
         const hasLeft = statsModel.hasLeft();
 
-<<<<<<< HEAD
-=======
-        let displayName;
-        let facialExpression;
-
-        if (statsModel.isLocalStats()) {
-            const { t } = this.props;
-            const meString = t('me');
-
-            displayName = this.props._localDisplayName;
-            displayName
-                = displayName ? `${displayName} (${meString})` : meString;
-            facialExpression = getLastFacialExpression(this.props._localFacialExpressions);
-        } else {
-            displayName
-                = this.props._stats[userId].getDisplayName()
-                    || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
-            facialExpression = this.state.stats[userId].getLastFacialExpression();
-            facialExpression = facialExpression ? facialExpression : '';
-        }
-
->>>>>>> 297b2fd66 (feat(facial-expressions): store expresions as a timeline)
         return (
             <SpeakerStatsItem
                 displayName = { statsModel.getDisplayName() }

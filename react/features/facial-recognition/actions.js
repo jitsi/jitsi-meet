@@ -5,6 +5,9 @@ import * as faceapi from 'face-api.js';
 import { getConferenceTimestamp } from '../base/conference/functions';
 import { getLocalVideoTrack } from '../base/tracks';
 
+import 'image-capture';
+import './createImageBitmap';
+
 import {
     SET_FACIAL_RECOGNITION_MODELS_LOADED,
     ADD_FACIAL_EXPRESSION,
