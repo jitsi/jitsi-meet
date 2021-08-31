@@ -170,14 +170,24 @@ class Filmstrip extends PureComponent<Props> {
      * @returns {void}
      */
     _onViewableItemsChanged({ viewableItems = [] }) {
-        const indexArray: Array<number> = viewableItems.map(i => i.index);
+        if (!this._separateLocalThumbnail && viewableItems[0]?.index === 0) {
+            // Skip the local thumbnail.
+            viewableItems.shift();
+        }
 
-        // If the local video placed at the beginning we need to shift the start index of the remoteParticipants array
-        // with 1 because and in the same time we don't need to adjust the end index because the end index will not be
-        // included.
-        const startIndex
-            = this._separateLocalThumbnail ? Math.min(...indexArray) : Math.max(Math.min(...indexArray) - 1, 0);
-        const endIndex = Math.max(...indexArray) + (this._separateLocalThumbnail ? 1 : 0);
+        if (viewableItems.length === 0) {
+            // User might be fast-scrolling, it will stabilize.
+            return;
+        }
+
+        let startIndex = viewableItems[0].index;
+        let endIndex = viewableItems[viewableItems.length - 1].index;
+
+        if (!this._separateLocalThumbnail) {
+            // We are off by one in the remote participants array.
+            startIndex -= 1;
+            endIndex -= 1;
+        }
 
         this.props.dispatch(setVisibleRemoteParticipants(startIndex, endIndex));
     }
