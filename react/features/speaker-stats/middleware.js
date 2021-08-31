@@ -37,9 +37,9 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     case PARTICIPANT_UPDATED: {
         let reorderFlag = true;
 
-        if (action.type === INIT_UPDATE_STATS) {
+        if (action.type === INIT_UPDATE_STATS && action.getSpeakerStats) {
             const state = getState();
-            const speakerStats = { ...APP.conference.getSpeakerStats() };
+            const speakerStats = { ...action.getSpeakerStats() };
             const stats = filterBySearchCriteria(state, speakerStats);
 
             dispatch(updateStats(stats));

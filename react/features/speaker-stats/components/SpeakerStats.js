@@ -44,6 +44,11 @@ type Props = {
     conference: Object,
 
     /**
+     * Redux store dispatch method.
+     */
+    dispatch: Dispatch<any>,
+
+    /**
      * The function to translate human-readable text.
      */
     t: Function
@@ -170,7 +175,7 @@ class SpeakerStats extends Component<Props> {
      * @protected
      */
     _onSearch(criteria = '') {
-        APP.store.dispatch(initSearch(escapeRegexp(criteria)));
+        this.props.dispatch(initSearch(escapeRegexp(criteria)));
     }
 
     _updateStats: (reorder: ?boolean) => void;
@@ -183,7 +188,7 @@ class SpeakerStats extends Component<Props> {
      * @private
      */
     _updateStats(reorder = false) {
-        APP.store.dispatch(initUpdateStats(reorder));
+        this.props.dispatch(initUpdateStats(reorder, () => this.props.conference.getSpeakerStats()));
     }
 }
 

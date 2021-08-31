@@ -11,7 +11,7 @@ import {
  * Starts a search by criteria.
  *
  * @param {string} criteria - The search criteria.
- * @returns {Function}
+ * @returns {Object}
  */
 export function initSearch(criteria: string) {
     return {
@@ -24,12 +24,14 @@ export function initSearch(criteria: string) {
  * Gets the new stats and triggers update.
  *
  * @param {boolean} reorder - Should reorder or not.
- * @returns {Function}
+ * @param {Function} getSpeakerStats - Function to get the speaker stats.
+ * @returns {Object}
  */
-export function initUpdateStats(reorder: boolean = false) {
+export function initUpdateStats(reorder: boolean, getSpeakerStats: Function) {
     return {
         type: INIT_UPDATE_STATS,
-        reorder
+        reorder,
+        getSpeakerStats
     };
 }
 
@@ -37,7 +39,7 @@ export function initUpdateStats(reorder: boolean = false) {
  * Updates the stats with new stats.
  *
  * @param {Object} stats - The new stats.
- * @returns {Function}
+ * @returns {Object}
  */
 export function updateStats(stats: Object) {
     return {
@@ -50,7 +52,7 @@ export function updateStats(stats: Object) {
  * Reorders the stats with new stats.
  *
  * @param {Object} stats - The new stats.
- * @returns {Function}
+ * @returns {Object}
  */
 export function reorderStats(stats: Object) {
     return {

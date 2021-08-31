@@ -14,7 +14,8 @@ export const INIT_SEARCH = 'INIT_SEARCH';
  *
  * {
  *     type: INIT_UPDATE_STATS,
- *     reorder: boolean
+ *     reorder: boolean,
+ *     getSpeakerStats: Function
  * }
  */
 export const INIT_UPDATE_STATS = 'INIT_UPDATE_STATS';
