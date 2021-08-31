@@ -22,6 +22,15 @@ import './subscriber';
  * The middleware of the feature Filmstrip.
  */
 MiddlewareRegistry.register(store => next => action => {
+    if (action.type === PARTICIPANT_LEFT) {
+        // This has to be executed before we remove the participant from features/base/participants state in order to
+        // remove the related thumbnail component before we need to re-render it. If we do this after next()
+        // we will be in sitation where the participant exists in the remoteParticipants array in features/filmstrip
+        // but doesn't exist in features/base/participants state which will lead to rendering a thumbnail for
+        // non-existing participant.
+        updateRemoteParticipantsOnLeave(store, action.participant?.id);
+    }
+
     const result = next(action);
 
     switch (action.type) {
@@ -48,10 +57,6 @@ MiddlewareRegistry.register(store => next => action => {
     }
     case PARTICIPANT_JOINED: {
         updateRemoteParticipants(store, action.participant?.id);
-        break;
-    }
-    case PARTICIPANT_LEFT: {
-        updateRemoteParticipantsOnLeave(store, action.participant?.id);
         break;
     }
     case SETTINGS_UPDATED: {

@@ -274,6 +274,17 @@ export function getRemoteParticipants(stateful: Object | Function) {
 }
 
 /**
+ * Selectors for the getting the remote participants in the order that they are displayed in the filmstrip.
+ *
+@param {(Function|Object)} stateful - The (whole) redux state, or redux's {@code getState} function to be used to
+ * retrieve the state features/filmstrip.
+ * @returns {Array<string>}
+ */
+export function getRemoteParticipantsSorted(stateful: Object | Function) {
+    return toState(stateful)['features/filmstrip'].remoteParticipants;
+}
+
+/**
  * Returns the participant which has its pinned state set to truthy.
  *
  * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
@@ -290,6 +301,17 @@ export function getPinnedParticipant(stateful: Object | Function) {
     }
 
     return getParticipantById(stateful, pinnedParticipant);
+}
+
+/**
+ * Returns the participants that have their hands raised.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's {@code getState} function to be used to
+ * retrieve the state features/base/participants.
+ * @returns {Set<string>}
+ */
+export function getRaisedHandParticipants(stateful: Object | Function) {
+    return toState(stateful)['features/base/participants'].raisedHandParticipants;
 }
 
 /**
@@ -459,25 +481,25 @@ async function _getFirstLoadableAvatarUrl(participant, store) {
  * @returns {Array<string>}
  */
 export function getSortedParticipantIds(stateful: Object | Function): Array<string> {
-    const state = toState(stateful);
-    const { id } = getLocalParticipant(state);
-    const { remoteParticipants } = state['features/filmstrip'];
+    const { id } = getLocalParticipant(stateful);
+    const remoteParticipants = getRemoteParticipantsSorted(stateful);
     const reorderedParticipants = new Set(remoteParticipants);
-    const raisedHandParticipants = new Set(getRaiseHandsQueue(stateful));
+    const raisedHandParticipants = getRaisedHandParticipants(stateful);
+    const remoteRaisedHandParticipants = new Set(raisedHandParticipants || []);
 
-    for (const participant of raisedHandParticipants.values()) {
+    for (const participant of remoteRaisedHandParticipants.keys()) {
         reorderedParticipants.delete(participant);
     }
-    raisedHandParticipants.delete(id);
+
+    // Remove self.
+    remoteRaisedHandParticipants.has(id) && remoteRaisedHandParticipants.delete(id);
 
     // Move self and participants with raised hand to the top of the list.
-    const participantIds = [
+    return [
         id,
-        ...Array.from(raisedHandParticipants.values()),
-        ...Array.from(reorderedParticipants.values())
+        ...Array.from(remoteRaisedHandParticipants.keys()),
+        ...Array.from(reorderedParticipants.keys())
     ];
-
-    return participantIds;
 }
 
 /**
