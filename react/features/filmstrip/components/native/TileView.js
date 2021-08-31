@@ -146,13 +146,19 @@ class TileView extends PureComponent<Props> {
      * @returns {void}
      */
     _onViewableItemsChanged({ viewableItems = [] }: { viewableItems: Array<Object> }) {
-        const indexArray = viewableItems.map(i => i.index);
+        if (viewableItems[0]?.index === 0) {
+            // Skip the local thumbnail.
+            viewableItems.shift();
+        }
 
-        // We need to shift the start index of the remoteParticipants array with 1 because of the local video placed
-        // at the beginning and in the same time we don't need to adjust the end index because the end index will not be
-        // included.
-        const startIndex = Math.max(Math.min(...indexArray) - 1, 0);
-        const endIndex = Math.max(...indexArray);
+        if (viewableItems.length === 0) {
+            // User might be fast-scrolling, it will stabilize.
+            return;
+        }
+
+        // We are off by one in the remote participants array.
+        const startIndex = viewableItems[0].index - 1;
+        const endIndex = viewableItems[viewableItems.length - 1].index - 1;
 
         this.props.dispatch(setVisibleRemoteParticipants(startIndex, endIndex));
     }
