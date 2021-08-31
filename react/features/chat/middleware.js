@@ -1,8 +1,5 @@
 // @flow
 
-import { batch } from 'react-redux';
-
-import { ENDPOINT_REACTION_NAME } from '../../../modules/API/constants';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import {
     CONFERENCE_JOINED,
@@ -25,14 +22,13 @@ import { openDisplayNamePrompt } from '../display-name';
 import { resetNbUnreadPollsMessages } from '../polls/actions';
 import { ADD_REACTION_MESSAGE } from '../reactions/actionTypes';
 import { pushReactions } from '../reactions/actions.any';
-import { getReactionMessageFromBuffer } from '../reactions/functions.any';
+import { ENDPOINT_REACTION_NAME } from '../reactions/constants';
+import { getReactionMessageFromBuffer, isReactionsEnabled } from '../reactions/functions.any';
 import { endpointMessageReceived } from '../subtitles';
-import { showToolbox } from '../toolbox/actions';
 import {
-    hideToolbox,
-    setToolboxTimeout,
-    setToolboxVisible
-} from '../toolbox/actions.web';
+    showToolbox
+} from '../toolbox/actions';
+
 
 import { ADD_MESSAGE, SEND_MESSAGE, OPEN_CHAT, CLOSE_CHAT, SET_IS_POLL_TAB_FOCUSED } from './actionTypes';
 import { addMessage, clearMessages } from './actions';
@@ -255,20 +251,19 @@ function _addChatMsgListener(conference, store) {
     conference.on(
         JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
         (...args) => {
+            const state = store.getState();
+
+            if (!isReactionsEnabled(state)) {
+                return;
+            }
+
             store.dispatch(endpointMessageReceived(...args));
 
             if (args && args.length >= 2) {
                 const [ { _id }, eventData ] = args;
 
                 if (eventData.name === ENDPOINT_REACTION_NAME) {
-                    batch(() => {
-                        store.dispatch(setToolboxVisible(true));
-                        store.dispatch(setToolboxTimeout(
-                                () => store.dispatch(hideToolbox()),
-                                5000)
-                        );
-                        store.dispatch(pushReactions(eventData.reactions));
-                    });
+                    store.dispatch(pushReactions(eventData.reactions));
 
                     _handleReceivedMessage(store, {
                         id: _id,
@@ -318,7 +313,7 @@ function _handleReceivedMessage({ dispatch, getState },
     // Logic for all platforms:
     const state = getState();
     const { isOpen: isChatOpen } = state['features/chat'];
-    const { disableIncomingMessageSound } = state['features/base/config'];
+    const { disableIncomingMessageSound, iAmRecorder } = state['features/base/config'];
     const { soundsIncomingMessage: soundEnabled } = state['features/base/settings'];
 
     if (!disableIncomingMessageSound && soundEnabled && shouldPlaySound && !isChatOpen) {
@@ -356,7 +351,10 @@ function _handleReceivedMessage({ dispatch, getState },
             ts: timestamp
         });
 
-        dispatch(showToolbox(4000));
+        if (!iAmRecorder) {
+            dispatch(showToolbox(4000));
+        }
+
     }
 }
 

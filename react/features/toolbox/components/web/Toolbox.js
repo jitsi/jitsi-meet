@@ -17,6 +17,7 @@ import { translate } from '../../../base/i18n';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet';
 import {
     getLocalParticipant,
+    getParticipantCount,
     haveParticipantWithScreenSharingFeature,
     raiseHand
 } from '../../../base/participants';
@@ -41,6 +42,7 @@ import { getParticipantsPaneOpen } from '../../../participants-pane/functions';
 import { addReactionToBuffer } from '../../../reactions/actions.any';
 import { ReactionsMenuButton } from '../../../reactions/components';
 import { REACTIONS } from '../../../reactions/constants';
+import { isReactionsEnabled } from '../../../reactions/functions.any';
 import {
     LiveStreamButton,
     RecordButton
@@ -152,10 +154,6 @@ type Props = {
      */
     _isProfileDisabled: boolean,
 
-    /**
-     * Whether or not the tile view is enabled.
-     */
-    _tileViewEnabled: boolean,
 
     /**
      * Whether or not the current meeting belongs to a JaaS user.
@@ -178,6 +176,11 @@ type Props = {
     _overflowMenuVisible: boolean,
 
     /**
+     * Number of participants in the conference.
+     */
+    _participantCount: number,
+
+    /**
      * Whether or not the participants pane is open.
      */
     _participantsPaneOpen: boolean,
@@ -188,6 +191,11 @@ type Props = {
     _raisedHand: boolean,
 
     /**
+     * Whether or not reactions feature is enabled.
+     */
+    _reactionsEnabled: boolean,
+
+    /**
      * Whether or not the local participant is screenSharing.
      */
     _screenSharing: boolean,
@@ -196,6 +204,11 @@ type Props = {
      * Whether or not the local participant is sharing a YouTube video.
      */
     _sharingVideo: boolean,
+
+    /**
+     * Whether or not the tile view is enabled.
+     */
+    _tileViewEnabled: boolean,
 
     /**
      * The enabled buttons.
@@ -211,11 +224,6 @@ type Props = {
      * Returns the selected virtual source object.
      */
     _virtualSource: Object,
-
-    /**
-     * Whether or not reactions feature is enabled.
-     */
-    _reactionsEnabled: boolean,
 
     /**
      * Invoked to active other features of the app.
@@ -235,12 +243,16 @@ type Props = {
 
 declare var APP: Object;
 
+type State = {
+    reactionsShortcutsRegistered: boolean
+};
+
 /**
  * Implements the conference toolbox on React/Web.
  *
  * @extends Component
  */
-class Toolbox extends Component<Props> {
+class Toolbox extends Component<Props, State> {
     /**
      * Initializes a new {@code Toolbox} instance.
      *
@@ -249,6 +261,10 @@ class Toolbox extends Component<Props> {
      */
     constructor(props: Props) {
         super(props);
+
+        this.state = {
+            reactionsShortcutsRegistered: false
+        };
 
         // Bind event handlers so they are only bound once per instance.
         this._onMouseOut = this._onMouseOut.bind(this);
@@ -279,7 +295,7 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     componentDidMount() {
-        const { _toolbarButtons, t, dispatch, _reactionsEnabled } = this.props;
+        const { _toolbarButtons, t, dispatch, _reactionsEnabled, _participantCount } = this.props;
         const KEYBOARD_SHORTCUTS = [
             isToolbarButtonEnabled('videoquality', _toolbarButtons) && {
                 character: 'A',
@@ -328,7 +344,7 @@ class Toolbox extends Component<Props> {
             }
         });
 
-        if (_reactionsEnabled) {
+        if (_reactionsEnabled && _participantCount > 1) {
             const REACTION_SHORTCUTS = Object.keys(REACTIONS).map(key => {
                 const onShortcutSendReaction = () => {
                     dispatch(addReactionToBuffer(key));
@@ -373,6 +389,41 @@ class Toolbox extends Component<Props> {
             this._onSetOverflowVisible(false);
             this.props.dispatch(setToolbarHovered(false));
         }
+
+        if (!this.state.reactionsShortcutsRegistered
+            && (prevProps._reactionsEnabled !== this.props._reactionsEnabled
+            || prevProps._participantCount !== this.props._participantCount)) {
+            if (this.props._reactionsEnabled && this.props._participantCount > 1) {
+                // eslint-disable-next-line react/no-did-update-set-state
+                this.setState({
+                    reactionsShortcutsRegistered: true
+                });
+                const REACTION_SHORTCUTS = Object.keys(REACTIONS).map(key => {
+                    const onShortcutSendReaction = () => {
+                        this.props.dispatch(addReactionToBuffer(key));
+                        sendAnalytics(createShortcutEvent(
+                            `reaction.${key}`
+                        ));
+                    };
+
+                    return {
+                        character: REACTIONS[key].shortcutChar,
+                        exec: onShortcutSendReaction,
+                        helpDescription: this.props.t(`toolbar.reaction${key.charAt(0).toUpperCase()}${key.slice(1)}`),
+                        altKey: true
+                    };
+                });
+
+                REACTION_SHORTCUTS.forEach(shortcut => {
+                    APP.keyboardshortcut.registerShortcut(
+                        shortcut.character,
+                        null,
+                        shortcut.exec,
+                        shortcut.helpDescription,
+                        shortcut.altKey);
+                });
+            }
+        }
     }
 
     /**
@@ -385,7 +436,7 @@ class Toolbox extends Component<Props> {
         [ 'A', 'C', 'D', 'R', 'S' ].forEach(letter =>
             APP.keyboardshortcut.unregisterShortcut(letter));
 
-        if (this.props._reactionsEnabled) {
+        if (this.props._reactionsEnabled && this.state.reactionsShortcutsRegistered) {
             Object.keys(REACTIONS).map(key => REACTIONS[key].shortcutChar)
                 .forEach(letter =>
                     APP.keyboardshortcut.unregisterShortcut(letter, true));
@@ -1262,7 +1313,6 @@ function _mapStateToProps(state, ownProps) {
     const localParticipant = getLocalParticipant(state);
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
     const { clientWidth } = state['features/base/responsive-ui'];
-    const { enableReactions } = state['features/base/config'];
 
     let desktopSharingDisabledTooltipKey;
 
@@ -1285,29 +1335,30 @@ function _mapStateToProps(state, ownProps) {
     }
 
     return {
+        _backgroundType: state['features/virtual-background'].backgroundType,
         _chatOpen: state['features/chat'].isOpen,
         _clientWidth: clientWidth,
         _conference: conference,
         _desktopSharingEnabled: desktopSharingEnabled,
-        _backgroundType: state['features/virtual-background'].backgroundType,
-        _virtualSource: state['features/virtual-background'].virtualSource,
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,
         _dialog: Boolean(state['features/base/dialog'].component),
         _feedbackConfigured: Boolean(callStatsID),
+        _fullScreen: fullScreen,
         _isProfileDisabled: Boolean(state['features/base/config'].disableProfile),
         _isMobile: isMobileBrowser(),
         _isVpaasMeeting: isVpaasMeeting(state),
-        _fullScreen: fullScreen,
-        _tileViewEnabled: shouldDisplayTileView(state),
         _localParticipantID: localParticipant?.id,
         _localVideo: localVideo,
         _overflowMenuVisible: overflowMenuVisible,
+        _participantCount: getParticipantCount(state),
         _participantsPaneOpen: getParticipantsPaneOpen(state),
         _raisedHand: localParticipant?.raisedHand,
+        _reactionsEnabled: isReactionsEnabled(state),
         _screenSharing: isScreenVideoShared(state),
+        _tileViewEnabled: shouldDisplayTileView(state),
         _toolbarButtons: toolbarButtons,
-        _visible: isToolboxVisible(state),
-        _reactionsEnabled: enableReactions
+        _virtualSource: state['features/virtual-background'].virtualSource,
+        _visible: isToolboxVisible(state)
     };
 }
 

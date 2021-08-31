@@ -2,7 +2,6 @@
 
 import { batch } from 'react-redux';
 
-import { ENDPOINT_REACTION_NAME } from '../../../modules/API/constants';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import { MiddlewareRegistry } from '../base/redux';
 import { updateSettings } from '../base/settings';
@@ -17,6 +16,7 @@ import {
     PUSH_REACTIONS,
     SHOW_SOUNDS_NOTIFICATION
 } from './actionTypes';
+import { displayReactionSoundsNotification } from './actions';
 import {
     addReactionsToChat,
     flushReactionBuffer,
@@ -24,8 +24,7 @@ import {
     sendReactions,
     setReactionQueue
 } from './actions.any';
-import { displayReactionSoundsNotification } from './actions.web';
-import { RAISE_HAND_SOUND_ID, REACTIONS, SOUNDS_THRESHOLDS } from './constants';
+import { ENDPOINT_REACTION_NAME, RAISE_HAND_SOUND_ID, REACTIONS, SOUNDS_THRESHOLDS } from './constants';
 import {
     getReactionMessageFromBuffer,
     getReactionsSoundsThresholds,
@@ -128,7 +127,7 @@ MiddlewareRegistry.register(store => next => action => {
         const reactions = action.reactions;
 
         batch(() => {
-            if (!notificationDisplayed && soundsReactions) {
+            if (!notificationDisplayed && soundsReactions && displayReactionSoundsNotification) {
                 dispatch(displayReactionSoundsNotification());
             }
             if (soundsReactions) {
