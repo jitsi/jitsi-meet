@@ -1,6 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
+import type { Dispatch } from 'redux';
 
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
@@ -15,7 +16,6 @@ import SpeakerStatsItem from './SpeakerStatsItem';
 import SpeakerStatsLabels from './SpeakerStatsLabels';
 import SpeakerStatsSearch from './SpeakerStatsSearch';
 
-declare var APP: Object;
 declare var interfaceConfig: Object;
 
 /**

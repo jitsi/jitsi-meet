@@ -13,8 +13,6 @@ import { reorderStats, updateStats } from './actions';
 import { SPEAKER_STATS_RELOAD_INTERVAL } from './constants';
 import { filterBySearchCriteria, getSortedSpeakerStats } from './functions';
 
-declare var APP: Object;
-
 let reorderTimeoutHandle;
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
