@@ -2,7 +2,6 @@
 
 import { batch } from 'react-redux';
 
-import { ENDPOINT_REACTION_NAME } from '../../../modules/API/constants';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import { MiddlewareRegistry } from '../base/redux';
 import { updateSettings } from '../base/settings';
@@ -25,7 +24,7 @@ import {
     sendReactions,
     setReactionQueue
 } from './actions.any';
-import { RAISE_HAND_SOUND_ID, REACTIONS, SOUNDS_THRESHOLDS } from './constants';
+import { ENDPOINT_REACTION_NAME, RAISE_HAND_SOUND_ID, REACTIONS, SOUNDS_THRESHOLDS } from './constants';
 import {
     getReactionMessageFromBuffer,
     getReactionsSoundsThresholds,

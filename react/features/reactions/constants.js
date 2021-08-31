@@ -10,6 +10,11 @@ import {
 } from './sounds';
 
 /**
+ * The payload name for the datachannel/endpoint reaction event
+ */
+export const ENDPOINT_REACTION_NAME = 'endpoint-reaction';
+
+/**
  * The audio ID prefix of the audio element for which the {@link playAudio} action is
  * triggered when a new laugh reaction is received.
  *

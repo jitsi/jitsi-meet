@@ -1,8 +1,5 @@
 // @flow
 
-import { batch } from 'react-redux';
-
-import { ENDPOINT_REACTION_NAME } from '../../../modules/API/constants';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import {
     CONFERENCE_JOINED,
@@ -25,13 +22,11 @@ import { openDisplayNamePrompt } from '../display-name';
 import { resetNbUnreadPollsMessages } from '../polls/actions';
 import { ADD_REACTION_MESSAGE } from '../reactions/actionTypes';
 import { pushReactions } from '../reactions/actions.any';
+import { ENDPOINT_REACTION_NAME } from '../reactions/constants';
 import { getReactionMessageFromBuffer, isReactionsEnabled } from '../reactions/functions.any';
 import { endpointMessageReceived } from '../subtitles';
 import {
-    showToolbox,
-    hideToolbox,
-    setToolboxTimeout,
-    setToolboxVisible
+    showToolbox
 } from '../toolbox/actions';
 
 
@@ -268,14 +263,7 @@ function _addChatMsgListener(conference, store) {
                 const [ { _id }, eventData ] = args;
 
                 if (eventData.name === ENDPOINT_REACTION_NAME) {
-                    batch(() => {
-                        store.dispatch(setToolboxVisible(true));
-                        store.dispatch(setToolboxTimeout(
-                                () => store.dispatch(hideToolbox ? hideToolbox() : setToolboxVisible(false)),
-                                5000)
-                        );
-                        store.dispatch(pushReactions(eventData.reactions));
-                    });
+                    store.dispatch(pushReactions(eventData.reactions));
 
                     _handleReceivedMessage(store, {
                         id: _id,
@@ -325,7 +313,7 @@ function _handleReceivedMessage({ dispatch, getState },
     // Logic for all platforms:
     const state = getState();
     const { isOpen: isChatOpen } = state['features/chat'];
-    const { disableIncomingMessageSound } = state['features/base/config'];
+    const { disableIncomingMessageSound, iAmRecorder } = state['features/base/config'];
     const { soundsIncomingMessage: soundEnabled } = state['features/base/settings'];
 
     if (!disableIncomingMessageSound && soundEnabled && shouldPlaySound && !isChatOpen) {
@@ -363,7 +351,10 @@ function _handleReceivedMessage({ dispatch, getState },
             ts: timestamp
         });
 
-        dispatch(showToolbox(4000));
+        if (!iAmRecorder) {
+            dispatch(showToolbox(4000));
+        }
+
     }
 }
 
