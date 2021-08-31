@@ -32,9 +32,9 @@ type Props = {
     dispatch: Function,
 
     /**
-     * The participant for which this menu opened for.
+     * The ID of the participant for which this menu opened for.
      */
-    participant: Object,
+    participantId: string,
 
     /**
      * The color-schemed stylesheet of the BottomSheet.
@@ -55,11 +55,6 @@ type Props = {
      * Display name of the participant retrieved from Redux.
      */
     _participantDisplayName: string,
-
-    /**
-     * The ID of the participant.
-     */
-    _participantID: ?string,
 }
 
 // eslint-disable-next-line prefer-const
@@ -89,13 +84,13 @@ class SharedVideoMenu extends PureComponent<Props> {
     render() {
         const {
             _isParticipantAvailable,
-            participant
+            participantId
         } = this.props;
 
         const buttonProps = {
             afterClick: this._onCancel,
             showLabel: true,
-            participantID: participant.id,
+            participantID: participantId,
             styles: this.props._bottomSheetStyles.buttons
         };
 
@@ -136,7 +131,7 @@ class SharedVideoMenu extends PureComponent<Props> {
      * @returns {React$Element}
      */
     _renderMenuHeader() {
-        const { _bottomSheetStyles, participant } = this.props;
+        const { _bottomSheetStyles, participantId } = this.props;
 
         return (
             <View
@@ -144,7 +139,7 @@ class SharedVideoMenu extends PureComponent<Props> {
                     _bottomSheetStyles.sheet,
                     styles.participantNameContainer ] }>
                 <Avatar
-                    participantId = { participant.id }
+                    participantId = { participantId }
                     size = { AVATAR_SIZE } />
                 <Text style = { styles.participantNameLabel }>
                     { this.props._participantDisplayName }
@@ -163,15 +158,14 @@ class SharedVideoMenu extends PureComponent<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state, ownProps) {
-    const { participant } = ownProps;
-    const isParticipantAvailable = getParticipantById(state, participant.id);
+    const { participantId } = ownProps;
+    const isParticipantAvailable = getParticipantById(state, participantId);
 
     return {
         _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
         _isOpen: isDialogOpen(state, SharedVideoMenu_),
         _isParticipantAvailable: Boolean(isParticipantAvailable),
-        _participantDisplayName: getParticipantDisplayName(state, participant.id),
-        _participantID: participant.id
+        _participantDisplayName: getParticipantDisplayName(state, participantId)
     };
 }
 

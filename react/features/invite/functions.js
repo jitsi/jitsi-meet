@@ -439,7 +439,7 @@ export function isDialOutEnabled(state: Object): boolean {
  */
 export function isSipInviteEnabled(state: Object): boolean {
     const { sipInviteUrl } = state['features/base/config'];
-    const { features = {} } = getLocalParticipant(state);
+    const { features = {} } = getLocalParticipant(state) || {};
 
     return state['features/base/jwt'].jwt
         && Boolean(sipInviteUrl)

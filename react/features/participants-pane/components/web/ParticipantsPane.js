@@ -5,10 +5,7 @@ import { ThemeProvider } from 'styled-components';
 
 import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
-import {
-    getParticipantCount,
-    isLocalParticipantModerator
-} from '../../../base/participants';
+import { isLocalParticipantModerator } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { Drawer, DrawerPortal } from '../../../toolbox/components/web';
 import { showOverflowDrawer } from '../../../toolbox/functions';
@@ -45,11 +42,6 @@ type Props = {
      * Is the participants pane open.
      */
     _paneOpen: boolean,
-
-    /**
-     * Whether to show context menu.
-     */
-    _showContextMenu: boolean,
 
     /**
      * Whether to show the footer menu.
@@ -131,7 +123,6 @@ class ParticipantsPane extends Component<Props, State> {
         const {
             _overflowDrawer,
             _paneOpen,
-            _showContextMenu,
             _showFooter,
             t
         } = this.props;
@@ -165,22 +156,19 @@ class ParticipantsPane extends Component<Props, State> {
                                 <FooterButton onClick = { this._onMuteAll }>
                                     {t('participantsPane.actions.muteAll')}
                                 </FooterButton>
-                                {_showContextMenu && (
-                                    <FooterEllipsisContainer>
-                                        <FooterEllipsisButton
-                                            id = 'participants-pane-context-menu'
-                                            onClick = { this._onToggleContext } />
-                                        {contextOpen
-                                         && !_overflowDrawer
-                                         && <FooterContextMenu onMouseLeave = { this._onToggleContext } />}
-                                    </FooterEllipsisContainer>
-                                )}
+                                <FooterEllipsisContainer>
+                                    <FooterEllipsisButton
+                                        id = 'participants-pane-context-menu'
+                                        onClick = { this._onToggleContext } />
+                                    {this.state.contextOpen
+                                        && <FooterContextMenu onMouseLeave = { this._onToggleContext } />}
+                                </FooterEllipsisContainer>
                             </Footer>
                         )}
                     </div>
                     <DrawerPortal>
                         <Drawer
-                            isOpen = { _showContextMenu && contextOpen && _overflowDrawer }
+                            isOpen = { contextOpen && _overflowDrawer }
                             onClose = { this._onDrawerClose }>
                             <FooterContextMenu inDrawer = { true } />
                         </Drawer>
@@ -283,7 +271,6 @@ class ParticipantsPane extends Component<Props, State> {
  * @protected
  * @returns {{
  *     _paneOpen: boolean,
- *     _showContextMenu: boolean,
  *     _showFooter: boolean
  * }}
  */
@@ -293,7 +280,6 @@ function _mapStateToProps(state: Object) {
     return {
         _overflowDrawer: showOverflowDrawer(state),
         _paneOpen: isPaneOpen,
-        _showContextMenu: isPaneOpen && getParticipantCount(state) > 2,
         _showFooter: isPaneOpen && isLocalParticipantModerator(state)
     };
 }

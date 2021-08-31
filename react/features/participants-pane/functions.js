@@ -9,7 +9,6 @@ import { getFeatureFlag, INVITE_ENABLED } from '../base/flags';
 import { MEDIA_TYPE, type MediaType } from '../base/media/constants';
 import {
     getDominantSpeakerParticipant,
-    getParticipantCount,
     isLocalParticipantModerator,
     isParticipantModerator
 } from '../base/participants/functions';
@@ -50,7 +49,7 @@ export const findStyledAncestor = (target: Object, component: any) => {
  * @returns {MediaState}
  */
 export function isForceMuted(participant: Object, mediaType: MediaType, state: Object) {
-    if (getParticipantCount(state) > 2 && isEnabledFromState(mediaType, state)) {
+    if (isEnabledFromState(mediaType, state)) {
         if (participant.local) {
             return !isLocalParticipantApprovedFromState(mediaType, state);
         }

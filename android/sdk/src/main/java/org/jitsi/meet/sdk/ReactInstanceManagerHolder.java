@@ -203,6 +203,16 @@ class ReactInstanceManagerHolder {
                     }
                 }));
 
+        // AmplitudeReactNativePackage
+        try {
+            Class<?> amplitudePackageClass = Class.forName("com.amplitude.reactnative.AmplitudeReactNativePackage");
+            Constructor constructor = amplitudePackageClass.getConstructor();
+            packages.add((ReactPackage)constructor.newInstance());
+        } catch (Exception e) {
+            // Ignore any error, the module is not compiled when LIBRE_BUILD is enabled.
+        }
+
+        // RNGoogleSigninPackage
         try {
             Class<?> googlePackageClass = Class.forName("co.apptailor.googlesignin.RNGoogleSigninPackage");
             Constructor constructor = googlePackageClass.getConstructor();

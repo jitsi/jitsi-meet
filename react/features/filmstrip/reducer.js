@@ -117,10 +117,10 @@ ReducerRegistry.register(
                 horizontalViewDimensions: action.dimensions
             };
         case SET_REMOTE_PARTICIPANTS: {
+            state.remoteParticipants = action.participants;
             const { visibleParticipantsStartIndex: startIndex, visibleParticipantsEndIndex: endIndex } = state;
 
-            state.remoteParticipants = action.participants;
-            state.visibleRemoteParticipants = new Set(state.remoteParticipants.slice(startIndex, endIndex));
+            state.visibleRemoteParticipants = new Set(state.remoteParticipants.slice(startIndex, endIndex + 1));
 
             return { ...state };
         }
@@ -151,7 +151,8 @@ ReducerRegistry.register(
                 ...state,
                 visibleParticipantsStartIndex: action.startIndex,
                 visibleParticipantsEndIndex: action.endIndex,
-                visibleRemoteParticipants: new Set(state.remoteParticipants.slice(action.startIndex, action.endIndex))
+                visibleRemoteParticipants:
+                    new Set(state.remoteParticipants.slice(action.startIndex, action.endIndex + 1))
             };
         }
         case PARTICIPANT_LEFT: {
@@ -162,7 +163,9 @@ ReducerRegistry.register(
             }
             delete state.participantsVolume[id];
 
-            return state;
+            return {
+                ...state
+            };
         }
         }
 

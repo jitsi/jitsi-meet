@@ -282,7 +282,31 @@
     "dialOut": {
         "statusMessage": "är nu {{status}}"
     },
+    "virtualBackground": {
+        "apply": "Tillämpa",
+        "title": "Virtuella bakgrunder",
+        "blur": "Oskärpa",
+        "slightBlur": "Lätt oskärpa",
+        "removeBackground": "Ta bort bakgrunden",
+        "addBackground": "Lägg till bakgrund",
+        "pleaseWait": "Vänligen vänta...",
+        "none": "Ingen",
+        "uploadedImage": "Uppladdad bild {{index}}",
+        "deleteImage": "Ta bort bild",
+        "image1" : "Strand",
+        "image2" : "Vit neutral bakgrund",
+        "image3" : "Vitt tomt rum",
+        "image4" : "Svart golvlampa",
+        "image5" : "Berg",
+        "image6" : "Skog",
+        "image7" : "Soluppgång",
+        "desktopShareError": "Det gick inte att dela skrivbordet",
+        "desktopShare":"Dela skrivbord",
+        "webAssemblyWarning": "WebAssembly stöds inte",
+        "backgroundEffectError": "Det gick inte att tillämpa bakgrundseffekt."
+    },    
     "feedback": {
+        "star": "Stjärna",
         "average": "Medel",
         "bad": "Dåligt",
         "detailsLabel": "Berätta mer.",
@@ -458,6 +482,64 @@
     "passwordSetRemotely": "satt av en annan deltagare",
     "passwordDigitsOnly": "",
     "poweredby": "drivs med",
+    "prejoin": {
+        "audioAndVideoError": "Ljud- och videofel:",
+        "audioDeviceProblem": "Det finns ett problem med din ljudenhet",
+        "audioOnlyError": "Ljudfel:",
+        "audioTrackError": "Det gick inte att skapa ljudspår.",
+        "calling": "Ringer",
+        "callMe": "Ring mig",
+        "callMeAtNumber": "Ring mig på det här numret:",
+        "configuringDevices": "Konfigurerar enheter...",
+        "connectedWithAudioQ": "Är din mikrofon ansluten?",
+        "connection": {
+           "good": "Din internetanslutning fungerar bra!",
+           "nonOptimal": "Din internetanslutning är inte optimal",
+           "poor": "Din internetanslutning fungerar dåligt"
+        },
+        "connectionDetails": {
+          "audioClipping": "Ditt ljud kan upplevas hackigt.",
+          "audioHighQuality": "Vi förväntar oss att ditt ljud har utmärkt kvalitet.",
+          "audioLowNoVideo": "Vi förväntar oss att din ljudkvalitet är låg och ingen video.",
+          "goodQuality": "Grymt bra! Din mediekvalitet kommer att bli bra.",
+          "noMediaConnectivity": "Vi kunde inte hitta ett sätt att upprätta mediaanslutning för detta test. Detta orsakas vanligtvis av en brandvägg eller NAT.",
+          "noVideo": "Vi förväntar oss att din video kommer ha låg kvalitet eller inte fungera.",
+          "undetectable": "Om du fortfarande inte kan ringa i webbläsaren rekommenderar vi att du ser till att dina högtalare, mikrofon och kamera är korrekt inställda, att du har beviljat din webbläsare rättigheter att använda din mikrofon och kamera och att din webbläsarversion är uppdaterad.",
+          "veryPoorConnection": "Vi förväntar oss att din samtalskvalitet är riktigt dålig.",
+          "videoFreezing": "Vi förväntar oss att din video fryser, blir svart och pixeleras.",
+          "videoHighQuality": "Vi förväntar oss att din video har bra kvalitet.",
+          "videoLowQuality": "Vi förväntar oss att din video har låg kvalitet när det gäller bildhastighet och upplösning.",
+          "videoTearing": "Vi förväntar oss att din video ska vara pixelerad eller ha visuella artefakter."
+        },
+        "copyAndShare": "Kopiera och dela möteslänk",
+        "dialInMeeting": "Ring in till mötet",
+        "dialInPin": "Ring in till mötet och ange PIN-kod:",
+        "dialing": "Ringer",
+        "doNotShow": "Visa inte denna ruta igen",
+        "errorDialOut": "Kunde inte ringa ut",
+        "errorDialOutDisconnected": "Kunde inte ringa ut. Kopplar ner",
+        "errorDialOutFailed": "Kunde inte ringa ut. Samtal misslyckades",
+        "errorDialOutStatus": "Kunde inte hämta status på utgående samtal",
+        "errorMissingName": "Ange ditt namn för att ansluta till mötet",
+        "errorStatusCode": "Kunde inte ringa ut, statuskod: {{status}}",
+        "errorValidation": "Ogiltigt nummer",
+        "iWantToDialIn": "Jag vill ringa in",
+        "joinAudioByPhone": "Anslut med ljud via telefon",
+        "joinMeeting": "Anslut till mötet",
+        "joinWithoutAudio": "Anslut utan ljud",
+        "initiated": "Samtalet påbörjades",
+        "linkCopied": "Länken kopierades till urklipp",
+        "lookGood": "Din mikrofon fungerar som den ska",
+        "or": "eller",
+        "premeeting": "Förmöte",
+        "showScreen": "Aktivera skärmen före mötet",
+        "keyboardShortcuts" : "Aktivera kortkommandon",
+        "startWithPhone": "Börja med telefonljud",
+        "screenSharingError": "Skärmdelningsfel:",
+        "videoOnlyError": "Videofel:",
+        "videoTrackError": "Det gick inte att skapa videospår.",
+        "viewAllNumbers": "visa alla nummer"
+    },
     "presenceStatus": {
         "busy": "Upptagen",
         "calling": "Ringer…",
@@ -517,7 +599,7 @@
             "title": "Kalender"
         },
         "devices": "Enheter",
-        "followMe": "Alla följer mej",
+        "followMe": "Alla följer mig",
         "language": "Språk",
         "loggedIn": "Inloggad som {{name}}",
         "moderator": "Moderator",
@@ -771,11 +853,57 @@
         "installExtensionText": "Installera tillägget för integration med Google Kalender och Office 365"
     },
     "documentSharing": {
-        "title": ""
+        "title": "Delade dokument"
     },
-    "raisedHand": "Jag vill prata",
+    "e2ee": {
+        "labelToolTip": "jud- och videokommunikation för detta samtal är krypterad från dator till dator"
+    },
+    "embedMeeting": {
+        "title": "Bädda in möte"
+    },
+    "raisedHand": "Räck upp handen",
     "lonelyMeetingExperience": {
         "youAreAlone": "Du är ensam i mötet",
         "button": "Bjud in andra"
+    },
+    "helpView": {
+        "header": "Hjälpcenter"
+    },
+    "lobby": {
+        "admit": "Godkänn",
+        "admitAll": "Godkänn alla",
+        "knockingParticipantList": "Väntande deltagare",
+        "allow": "Tillåt",
+        "backToKnockModeButton": "Tillbaka till väntrum",
+        "dialogTitle": "Väntrum",
+        "disableDialogContent": "Väntrumsläge är för närvarande aktiverat. Denna funktion säkerställer att oönskade deltagare inte kan gå med i ditt möte. Vill du inaktivera det?",
+        "disableDialogSubmit": "Inaktivera",
+        "emailField": "Skriv in din mailadress",
+        "enableDialogPasswordField": "Ange lösenord (valfritt)",
+        "enableDialogSubmit": "Aktivera",
+        "enableDialogText": "Väntrumsläge låter dig skydda ditt möte genom att bara tillåta människor att komma in efter ett formellt godkännande av en moderator.",
+        "enterPasswordButton": "Ange möteslösenord",
+        "enterPasswordTitle": "Ange lösenord för att ansluta till mötet",
+        "errorMissingPassword": "Ange möteslösenord",
+        "invalidPassword": "Felaktigt lösenord",
+        "joiningMessage": "Du kommer anslutas till mötet så snart någon accepterat din begäran",
+        "joinWithPasswordMessage": "Försöker ansluta med lösenord, vänta...",
+        "joinRejectedMessage": "Din anslutningsbegäran avvisades av en moderator.",
+        "joinTitle": "Anslut till mötet",
+        "joiningTitle": "Begär att få delta i mötet...",
+        "joiningWithPasswordTitle": "Ansluter med lösenord...",
+        "knockButton": "Anslut till mötet",
+        "knockTitle": "Någon önskar delta i mötet",
+        "nameField": "Ange ditt namn",
+        "notificationLobbyAccessDenied": "{{targetParticipantName}} har nekats att delta av {{originParticipantName}}",
+        "notificationLobbyAccessGranted": "{{targetParticipantName}} har godkänts att delta av {{originParticipantName}}",
+        "notificationLobbyDisabled": "Väntrumsläge har inaktiverats av {{originParticipantName}}",
+        "notificationLobbyEnabled": "Väntrumsläge har aktiverats av {{originParticipantName}}",
+        "notificationTitle": "Väntrum",
+        "passwordField": "Ange möteslösenord",
+        "passwordJoinButton": "Anslut",
+        "reject": "Avvisa",
+        "rejectAll": "Avvisa alla",
+        "toggleLabel": "Aktivera väntrum"
     }
 }

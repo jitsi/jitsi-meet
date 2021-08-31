@@ -111,7 +111,7 @@ export const FooterContextMenu = ({ inDrawer, onMouseLeave }: Props) => {
                     <span>{ t('participantsPane.actions.stopEveryonesVideo') }</span>
                 </ContextMenuItem>
             </ContextMenuItemGroup>
-            { isModerationSupported && !allModerators ? (
+            {isModerationSupported && !allModerators ? (
                 <ContextMenuItemGroup>
                     <div className = { classes.text }>
                         {t('participantsPane.actions.allow')}

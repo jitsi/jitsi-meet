@@ -95,6 +95,11 @@ type Props = {
     _thumbnailWidth: number,
 
     /**
+     * Flag that indicates whether the thumbnails will be reordered.
+     */
+    _thumbnailsReordered: Boolean,
+
+    /**
      * Additional CSS class names to add to the container of all the thumbnails.
      */
     _videosClassName: string,
@@ -222,6 +227,33 @@ class Filmstrip extends PureComponent <Props> {
         );
     }
 
+    /**
+     * Calculates the start and stop indices based on whether the thumbnails need to be reordered in the filmstrip.
+     *
+     * @param {number} startIndex - The start index.
+     * @param {number} stopIndex - The stop index.
+     * @returns {Object}
+     */
+    _calculateIndices(startIndex, stopIndex) {
+        const { _currentLayout, _thumbnailsReordered } = this.props;
+        let start = startIndex;
+        let stop = stopIndex;
+
+        if (_thumbnailsReordered) {
+            // In tile view, the start index needs to be offset by 1 because the first thumbnail is that of the local
+            // endpoint. The remote participants start from index 1.
+            if (_currentLayout === LAYOUTS.TILE_VIEW) {
+                start = startIndex > 0 ? startIndex - 1 : 0;
+                stop = stopIndex - 1;
+            }
+        }
+
+        return {
+            startIndex: start,
+            stopIndex: stop
+        };
+    }
+
     _onTabIn: () => void;
 
     /**
@@ -262,18 +294,22 @@ class Filmstrip extends PureComponent <Props> {
      * @returns {string} - The key.
      */
     _gridItemKey({ columnIndex, rowIndex }) {
-        const { _columns, _remoteParticipants, _remoteParticipantsLength } = this.props;
+        const { _columns, _remoteParticipants, _remoteParticipantsLength, _thumbnailsReordered } = this.props;
         const index = (rowIndex * _columns) + columnIndex;
+
+        // When the thumbnails are reordered, local participant is inserted at index 0.
+        const localIndex = _thumbnailsReordered ? 0 : _remoteParticipantsLength;
+        const remoteIndex = _thumbnailsReordered ? index - 1 : index;
 
         if (index > _remoteParticipantsLength) {
             return `empty-${index}`;
         }
 
-        if (index === 0) {
+        if (index === localIndex) {
             return 'local';
         }
 
-        return _remoteParticipants[index - 1];
+        return _remoteParticipants[remoteIndex];
     }
 
     _onListItemsRendered: Object => void;
@@ -286,8 +322,9 @@ class Filmstrip extends PureComponent <Props> {
      */
     _onListItemsRendered({ visibleStartIndex, visibleStopIndex }) {
         const { dispatch } = this.props;
+        const { startIndex, stopIndex } = this._calculateIndices(visibleStartIndex, visibleStopIndex);
 
-        dispatch(setVisibleRemoteParticipants(visibleStartIndex, visibleStopIndex + 1));
+        dispatch(setVisibleRemoteParticipants(startIndex, stopIndex));
     }
 
     _onGridItemsRendered: Object => void;
@@ -305,13 +342,11 @@ class Filmstrip extends PureComponent <Props> {
         visibleRowStopIndex
     }) {
         const { _columns, dispatch } = this.props;
-        let startIndex = (visibleRowStartIndex * _columns) + visibleColumnStartIndex;
-        const endIndex = (visibleRowStopIndex * _columns) + visibleColumnStopIndex;
+        const start = (visibleRowStartIndex * _columns) + visibleColumnStartIndex;
+        const stop = (visibleRowStopIndex * _columns) + visibleColumnStopIndex;
+        const { startIndex, stopIndex } = this._calculateIndices(start, stop);
 
-        // In tile view, the start index needs to be offset by 1 because the first participant is the local
-        // participant.
-        startIndex = startIndex > 0 ? startIndex - 1 : 0;
-        dispatch(setVisibleRemoteParticipants(startIndex, endIndex));
+        dispatch(setVisibleRemoteParticipants(startIndex, stopIndex));
     }
 
     /**
@@ -493,6 +528,7 @@ class Filmstrip extends PureComponent <Props> {
  */
 function _mapStateToProps(state) {
     const toolbarButtons = getToolbarButtons(state);
+    const { enableThumbnailReordering = true } = state['features/base/config'];
     const { visible, remoteParticipants } = state['features/filmstrip'];
     const reduceHeight = state['features/toolbox'].visible && toolbarButtons.length;
     const remoteVideosVisible = shouldRemoteVideosBeVisible(state);
@@ -565,6 +601,7 @@ function _mapStateToProps(state) {
         _rows: gridDimensions.rows,
         _thumbnailWidth: _thumbnailSize?.width,
         _thumbnailHeight: _thumbnailSize?.height,
+        _thumbnailsReordered: enableThumbnailReordering,
         _videosClassName: videosClassName,
         _visible: visible,
         _isToolboxVisible: isToolboxVisible(state)

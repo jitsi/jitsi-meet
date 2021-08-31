@@ -46,3 +46,13 @@ export const TOOLBAR_BUTTONS = [
     'toggle-camera',
     'videoquality'
 ];
+
+/**
+ * The toolbar buttons to show on premeeting screens.
+ */
+export const PREMEETING_BUTTONS = [ 'microphone', 'camera', 'select-background', 'invite', 'settings' ];
+
+/**
+  * The toolbar buttons to show on 3rdParty prejoin screen.
+  */
+export const THIRD_PARTY_PREJOIN_BUTTONS = [ 'microphone', 'camera', 'select-background' ];
