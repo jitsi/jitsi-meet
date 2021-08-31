@@ -111,8 +111,10 @@ class TileView extends PureComponent<Props> {
         this._keyExtractor = this._keyExtractor.bind(this);
         this._onViewableItemsChanged = this._onViewableItemsChanged.bind(this);
         this._renderThumbnail = this._renderThumbnail.bind(this);
+
         this._viewabilityConfig = {
-            itemVisiblePercentThreshold: 30
+            itemVisiblePercentThreshold: 30,
+            minimumViewTime: 500
         };
         this._flatListStyles = {
             ...styles.flatListTileView

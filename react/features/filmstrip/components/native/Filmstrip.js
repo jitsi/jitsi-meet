@@ -95,8 +95,10 @@ class Filmstrip extends PureComponent<Props> {
         this._separateLocalThumbnail = Platform.OS !== 'android';
 
         this._viewabilityConfig = {
-            itemVisiblePercentThreshold: 30
+            itemVisiblePercentThreshold: 30,
+            minimumViewTime: 500
         };
+
         this._keyExtractor = this._keyExtractor.bind(this);
         this._getItemLayout = this._getItemLayout.bind(this);
         this._onViewableItemsChanged = this._onViewableItemsChanged.bind(this);
