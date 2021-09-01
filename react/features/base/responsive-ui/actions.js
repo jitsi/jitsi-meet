@@ -1,5 +1,6 @@
 // @flow
 
+import { batch } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { CHAT_SIZE } from '../../chat/constants';
@@ -45,10 +46,13 @@ export function clientResized(clientWidth: number, clientHeight: number) {
             }
         }
 
-        return dispatch({
-            type: CLIENT_RESIZED,
-            clientHeight,
-            clientWidth: availableWidth
+        batch(() => {
+            dispatch({
+                type: CLIENT_RESIZED,
+                clientHeight,
+                clientWidth: availableWidth
+            });
+            dispatch(setAspectRatio(clientWidth, clientHeight));
         });
     };
 }
