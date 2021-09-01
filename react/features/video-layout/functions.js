@@ -61,7 +61,9 @@ export function getCurrentLayout(state: Object) {
  * @returns {number}
  */
 export function getMaxColumnCount(state: Object) {
-    const configuredMax = interfaceConfig.TILE_VIEW_MAX_COLUMNS || DEFAULT_MAX_COLUMNS;
+    const configuredMax = (typeof interfaceConfig === 'undefined'
+        ? DEFAULT_MAX_COLUMNS
+        : interfaceConfig.TILE_VIEW_MAX_COLUMNS) || DEFAULT_MAX_COLUMNS;
     const { disableResponsiveTiles } = state['features/base/config'];
 
     if (!disableResponsiveTiles) {
