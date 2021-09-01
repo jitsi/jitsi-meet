@@ -33,17 +33,19 @@ MiddlewareRegistry.register(store => next => action => {
         const result = next(action);
         const { participant: p } = action;
         const { dispatch, getState } = store;
+        const state = getState();
+        const { conference } = state['features/base/conference'];
 
-        if (!p.local && !joinLeaveNotificationsDisabled() && !p.isReplacing) {
+        if (conference && !p.local && !joinLeaveNotificationsDisabled() && !p.isReplacing) {
             dispatch(showParticipantJoinedNotification(
-                getParticipantDisplayName(getState, p.id)
+                getParticipantDisplayName(state, p.id)
             ));
         }
 
         if (typeof interfaceConfig === 'object'
                 && !interfaceConfig.DISABLE_FOCUS_INDICATOR && p.role === PARTICIPANT_ROLE.MODERATOR) {
             // Do not show the notification for mobile and also when the focus indicator is disabled.
-            const displayName = getParticipantDisplayName(getState, p.id);
+            const displayName = getParticipantDisplayName(state, p.id);
 
             if (!p.isReplacing) {
                 dispatch(showNotification({
