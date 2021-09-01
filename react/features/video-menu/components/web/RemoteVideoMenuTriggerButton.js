@@ -299,7 +299,6 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
             maxHeight: this.props._filmstripHeight - 16,
             overflowY: 'auto'
         };
-
         const smallScreenFilmstripHeight = 143;
 
         if (_isModerator) {
