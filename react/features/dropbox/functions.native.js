@@ -7,10 +7,10 @@ const { Dropbox } = NativeModules;
 /**
  * Action to authorize the Jitsi Recording app in dropbox.
  *
- * @returns {Promise<string>} - The promise will be resolved with the dropbox
+ * @returns {Promise<Object>} - The promise will be resolved with the dropbox
  * access token or rejected with an error.
  */
-export function _authorizeDropbox(): Promise<string> {
+export function _authorizeDropbox(): Promise<Object> {
     return Dropbox.authorize();
 }
 

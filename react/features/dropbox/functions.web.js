@@ -42,7 +42,7 @@ function getTokenExpiresAtTimestamp(expiresIn: number) {
  *
  * @param {string} appKey - The Jitsi Recorder dropbox app key.
  * @param {string} redirectURI - The return URL.
- * @returns {Promise<string>}
+ * @returns {Promise<Object>}
  */
 export function _authorizeDropbox(
         appKey: string,
