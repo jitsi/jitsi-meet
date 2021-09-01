@@ -52,7 +52,7 @@ export function _authorizeDropbox(
             return {
                 token: resp.result.access_token,
                 rToken: resp.result.refresh_token,
-                expireDate: resp.result.expires_in * 2000
+                expireDate: resp.result.expires_in * 1000
             };
         });
 }
