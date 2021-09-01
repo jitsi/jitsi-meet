@@ -58,9 +58,9 @@ type Props = {
     _rToken: string,
 
     /**
-     * Access token's expiration date as ISO string.
+     * Access token's expiration date as UNIX timestamp.
      */
-    _tokenExpireDate?: string,
+    _tokenExpireDate?: number,
 
     /**
      * The dropbox access token.
@@ -350,7 +350,7 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
  *     _fileRecordingsServiceSharingEnabled: boolean,
  *     _isDropboxEnabled: boolean,
  *     _rToken:string,
- *     _tokenExpireDate: string,
+ *     _tokenExpireDate: number,
  *     _token: string
  * }}
  */

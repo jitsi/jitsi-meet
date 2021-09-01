@@ -224,6 +224,7 @@ class Thumbnail extends PureComponent<Props> {
 
         if (!_isFakeParticipant) {
             indicators.push(<View
+                key = 'top-left-indicators'
                 style = { [
                     styles.thumbnailTopIndicatorContainer,
                     styles.thumbnailTopLeftIndicatorContainer
@@ -232,13 +233,16 @@ class Thumbnail extends PureComponent<Props> {
                 { renderDominantSpeakerIndicator && <DominantSpeakerIndicator /> }
             </View>);
             indicators.push(<View
+                key = 'top-right-indicators'
                 style = { [
                     styles.thumbnailTopIndicatorContainer,
                     styles.thumbnailTopRightIndicatorContainer
                 ] }>
                 <ConnectionIndicator participantId = { participantId } />
             </View>);
-            indicators.push(<Container style = { styles.thumbnailIndicatorContainer }>
+            indicators.push(<Container
+                key = 'bottom-indicators'
+                style = { styles.thumbnailIndicatorContainer }>
                 { audioMuted && <AudioMutedIndicator /> }
                 { videoMuted && <VideoMutedIndicator /> }
                 { isScreenShare && <ScreenShareIndicator /> }

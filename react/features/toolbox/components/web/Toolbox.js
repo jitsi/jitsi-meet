@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 
 import keyboardShortcut from '../../../../../modules/keyboardshortcut/keyboardshortcut';
 import {
@@ -1266,13 +1266,13 @@ class Toolbox extends Component<Props, State> {
                                         const showSeparator = index > 0 && arr[index - 1].group !== group;
 
                                         return (key !== 'raisehand' || !_reactionsEnabled)
-                                            && <>
+                                            && <Fragment key = { `f${key}` }>
                                                 {showSeparator && <Separator key = { `hr${group}` } />}
                                                 <Content
                                                     { ...rest }
                                                     key = { key }
                                                     showLabel = { true } />
-                                            </>
+                                            </Fragment>
                                         ;
                                     })}
                                 </ul>

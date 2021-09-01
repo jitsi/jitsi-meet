@@ -33,15 +33,15 @@ export function authorizeDropbox() {
  *
  * @param {string} token - The new token.
  * @param {string} rToken - The refresh token.
- * @param {string} expireDate - The token expiration date as ISO string.
+ * @param {number} expireDate - The token expiration date as UNIX timestamp.
  * @returns {{
  *     type: UPDATE_DROPBOX_TOKEN,
  *     token: string,
  *     rToken: string,
- *     expireDate: string
+ *     expireDate: number
  * }}
  */
-export function updateDropboxToken(token: string, rToken: string, expireDate: string) {
+export function updateDropboxToken(token: string, rToken: string, expireDate: number) {
     return {
         type: UPDATE_DROPBOX_TOKEN,
         token,
