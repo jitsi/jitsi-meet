@@ -115,7 +115,7 @@ PODS:
     - nanopb/encode (= 1.30906.0)
   - nanopb/decode (1.30906.0)
   - nanopb/encode (1.30906.0)
-  - ObjectiveDropboxOfficial (3.9.4)
+  - ObjectiveDropboxOfficial (6.1.0)
   - PromisesObjC (1.2.12)
   - RCTRequired (0.61.5-jitsi.2)
   - RCTTypeSafety (0.61.5-jitsi.2):
@@ -386,7 +386,7 @@ DEPENDENCIES:
   - Firebase/DynamicLinks (~> 6.33.0)
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
-  - ObjectiveDropboxOfficial (~> 3.9.4)
+  - ObjectiveDropboxOfficial (~> 6.1.0)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired/`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety/`)
   - React (from `../node_modules/react-native/`)
@@ -560,7 +560,7 @@ SPEC CHECKSUMS:
   GTMAppAuth: ad5c2b70b9a8689e1a04033c9369c4915bfcbe89
   GTMSessionFetcher: 36689134877faeb055b27dfa4ccc9ceaa42e029e
   nanopb: 59317e09cf1f1a0af72f12af412d54edf52603fc
-  ObjectiveDropboxOfficial: a5afefc83f6467c42c45f2253f583f2ad1ffc701
+  ObjectiveDropboxOfficial: b4765572e334d6fc6214b43a7595510324bbbbaa
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
   RCTRequired: a686731276578c125dff205f08b6ec9cee6ede32
   RCTTypeSafety: 88e5500e801c00d16a3d1895e3470d13beed6584
@@ -599,6 +599,6 @@ SPEC CHECKSUMS:
   RNWatch: a5320c959c75e72845c07985f3e935e58998f1d3
   Yoga: 96b469c5e81ff51b917b92e8c3390642d4ded30c
 
-PODFILE CHECKSUM: 1ae1a9823f3eab0b6e735b9637ba7588e0890d08
+PODFILE CHECKSUM: 6f4485ed41286517917d47d2170b0de97d32bbfb
 
 COCOAPODS: 1.10.1
