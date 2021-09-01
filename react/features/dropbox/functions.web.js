@@ -28,6 +28,16 @@ function authorize(authUrl: string): Promise<string> {
 }
 
 /**
+ * Returns the token's expiry date as UNIX timestamp.
+ *
+ * @param {number} expiresIn - The seconds in which the token expires.
+ * @returns {number} - The timestamp value for the expiry date.
+ */
+function getTokenExpiresAtTimestamp(expiresIn: number) {
+    return new Date(Date.now() + (expiresIn * 1000)).getTime();
+}
+
+/**
  * Action to authorize the Jitsi Recording app in dropbox.
  *
  * @param {string} appKey - The Jitsi Recorder dropbox app key.
@@ -52,7 +62,7 @@ export function _authorizeDropbox(
             return {
                 token: resp.result.access_token,
                 rToken: resp.result.refresh_token,
-                expireDate: resp.result.expires_in * 1000
+                expireDate: getTokenExpiresAtTimestamp(resp.result.expires_in)
             };
         });
 }
