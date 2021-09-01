@@ -186,11 +186,11 @@ class DropboxModule
         DbxCredential credential = Auth.getDbxCredential();
 
         if (credential != null && this.promise != null) {
-            WritableMap result = new WritableNativeMap();
+            WritableMap result = Arguments.createMap();
             result.putString("token", credential.getAccessToken());
             result.putString("rToken", credential.getRefreshToken());
             result.putDouble("expireDate", credential.getExpiresAt());
-            
+
             this.promise.resolve(result);
             this.promise = null;
         }
