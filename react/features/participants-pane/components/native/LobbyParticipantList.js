@@ -2,7 +2,7 @@
 
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import { Button, withTheme } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -54,13 +54,15 @@ const LobbyParticipantList = ({ theme }: Props) => {
                     )
                 }
             </View>
-            {
-                participants.map(p => (
-                    <LobbyParticipantItem
-                        key = { p.id }
-                        participant = { p } />)
-                )
-            }
+            <ScrollView>
+                {
+                    participants.map(p => (
+                        <LobbyParticipantItem
+                            key = { p.id }
+                            participant = { p } />)
+                    )
+                }
+            </ScrollView>
         </View>
     );
 };

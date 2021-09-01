@@ -29,28 +29,28 @@ export function showContextMenuReject(participant: Object) {
  * @param {string} participantID - The selected meeting participant id.
  * @returns {Function}
  */
-export function showConnectionStatus(participantID: String) {
+export function showConnectionStatus(participantID: string) {
     return openDialog(ConnectionStatusComponent, { participantID });
 }
 
 /**
  * Displays the context menu for the selected meeting participant.
  *
- * @param {Object} participant - The selected meeting participant.
+ * @param {string} participantId - The ID of the selected meeting participant.
  * @returns {Function}
  */
-export function showContextMenuDetails(participant: Object) {
-    return openDialog(RemoteVideoMenu, { participant });
+export function showContextMenuDetails(participantId: string) {
+    return openDialog(RemoteVideoMenu, { participantId });
 }
 
 /**
  * Displays the shared video menu.
  *
- * @param {Object} participant - The selected meeting participant.
+ * @param {string} participantId - The ID of the selected meeting participant.
  * @returns {Function}
  */
-export function showSharedVideoMenu(participant: Object) {
-    return openDialog(SharedVideoMenu, { participant });
+export function showSharedVideoMenu(participantId: string) {
+    return openDialog(SharedVideoMenu, { participantId });
 }
 
 /**

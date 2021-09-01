@@ -2,7 +2,7 @@
 
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, View } from 'react-native';
+import { View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -45,10 +45,8 @@ const ParticipantsPane = () => {
             }}
             onClose = { closePane }
             style = { styles.participantsPane }>
-            <ScrollView>
-                <LobbyParticipantList />
-                <MeetingParticipantList />
-            </ScrollView>
+            <LobbyParticipantList />
+            <MeetingParticipantList />
             {
                 isLocalModerator
                 && <View style = { styles.footer }>

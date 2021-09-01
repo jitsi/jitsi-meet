@@ -1,25 +1,14 @@
 // @flow
 
-import React, { useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Text, View } from 'react-native';
+import React, { PureComponent } from 'react';
+import { FlatList, Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
 
-
+import { translate } from '../../../base/i18n';
 import { Icon, IconInviteMore } from '../../../base/icons';
-import {
-    getLocalParticipant,
-    getParticipantCountWithFake,
-    getSortedParticipants
-} from '../../../base/participants';
+import { getLocalParticipant, getParticipantCountWithFake } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { doInvitePeople } from '../../../invite/actions.native';
-import {
-    showConnectionStatus,
-    showContextMenuDetails,
-    showSharedVideoMenu
-} from '../../actions.native';
 import { shouldRenderInviteButton } from '../../functions';
 
 import MeetingParticipantItem from './MeetingParticipantItem';
@@ -28,74 +17,150 @@ import styles from './styles';
 type Props = {
 
     /**
-     * Shared video local participant owner.
+     * The ID of the local participant.
      */
-    _localVideoOwner: boolean
+    _localParticipantId: string,
+
+    /**
+     * The number of participants in the conference.
+     */
+    _participantsCount: number,
+
+    /**
+     * Whether or not to show the invite button.
+     */
+    _showInviteButton: boolean,
+
+    /**
+     * The remote participants.
+     */
+    _sortedRemoteParticipants: Map<string, string>,
+
+    /**
+     * The redux dispatch function.
+     */
+    dispatch: Function,
+
+    /**
+     * Translation function.
+     */
+    t: Function
 }
 
-const MeetingParticipantList = ({ _localVideoOwner }: Props) => {
-    const dispatch = useDispatch();
-    const onInvite = useCallback(() => dispatch(doInvitePeople()), [ dispatch ]);
-    const participantsCount = useSelector(getParticipantCountWithFake);
-    const sortedParticipants = useSelector(getSortedParticipants);
-    const showInviteButton = useSelector(shouldRenderInviteButton);
-    const { t } = useTranslation();
+/**
+ *  The meeting participant list component.
+ */
+class MeetingParticipantList extends PureComponent<Props> {
 
-    // eslint-disable-next-line react/no-multi-comp
-    const renderParticipant = p => {
-        if (p.isFakeParticipant) {
-            if (_localVideoOwner) {
-                return (
-                    <MeetingParticipantItem
-                        key = { p.id }
-                        /* eslint-disable-next-line react/jsx-no-bind,no-confusing-arrow */
-                        onPress = { () => dispatch(showSharedVideoMenu(p)) }
-                        participantID = { p.id } />
-                );
-            }
+    /**
+     * Creates new MeetingParticipantList instance.
+     *
+     * @param {Props} props - The props of the component.
+     */
+    constructor(props: Props) {
+        super(props);
 
-            return (
-                <MeetingParticipantItem
-                    key = { p.id }
-                    participantID = { p.id } />
-            );
-        }
+        this._keyExtractor = this._keyExtractor.bind(this);
+        this._onInvite = this._onInvite.bind(this);
+        this._renderParticipant = this._renderParticipant.bind(this);
+    }
 
+    _keyExtractor: Function;
+
+    /**
+     * Returns a key for a passed item of the list.
+     *
+     * @param {string} item - The user ID.
+     * @returns {string} - The user ID.
+     */
+    _keyExtractor(item) {
+        return item;
+    }
+
+    _onInvite: () => void;
+
+    /**
+     * Handles ivite button presses.
+     *
+     * @returns {void}
+     */
+    _onInvite() {
+        this.props.dispatch(doInvitePeople());
+    }
+
+    /**
+     * Renders the "invite more" icon.
+     *
+     * @returns {ReactElement}
+     */
+    _renderInviteMoreIcon() {
+        return (
+            <Icon
+                size = { 20 }
+                src = { IconInviteMore } />
+        );
+    }
+
+    _renderParticipant: Object => Object;
+
+    /**
+     * Renders a participant.
+     *
+     * @param {Object} flatListItem - Information about the item to be rendered.
+     * @param {string} flatListItem.item - The ID of the participant.
+     * @returns {ReactElement}
+     */
+    _renderParticipant({ item/* , index, separators */ }) {
         return (
             <MeetingParticipantItem
-                key = { p.id }
-                /* eslint-disable-next-line react/jsx-no-bind,no-confusing-arrow */
-                onPress = { () => p.local
-                    ? dispatch(showConnectionStatus(p.id)) : dispatch(showContextMenuDetails(p)) }
-                participantID = { p.id } />
+                key = { item }
+                participantID = { item } />
         );
-    };
+    }
 
-    return (
-        <View style = { styles.meetingList }>
-            <Text style = { styles.meetingListDescription }>
-                {t('participantsPane.headings.participantsList',
-                    { count: participantsCount })}
-            </Text>
-            {
-                showInviteButton
-                && <Button
-                    children = { t('participantsPane.actions.invite') }
-                    /* eslint-disable-next-line react/jsx-no-bind */
-                    icon = { () =>
-                        (<Icon
-                            size = { 20 }
-                            src = { IconInviteMore } />)
-                    }
-                    labelStyle = { styles.inviteLabel }
-                    mode = 'contained'
-                    onPress = { onInvite }
-                    style = { styles.inviteButton } />
-            }
-            { sortedParticipants.map(renderParticipant) }
-        </View>
-    );
-};
+    /**
+     * Implements React's {@link Component#render()}.
+     *
+     * @inheritdoc
+     * @returns {ReactElement}
+     */
+    render() {
+        const {
+            _localParticipantId,
+            _participantsCount,
+            _showInviteButton,
+            _sortedRemoteParticipants,
+            t
+        } = this.props;
+
+        return (
+            <View style = { styles.meetingList }>
+                <Text style = { styles.meetingListDescription }>
+                    {t('participantsPane.headings.participantsList',
+                        { count: _participantsCount })}
+                </Text>
+                {
+                    _showInviteButton
+                    && <Button
+                        children = { t('participantsPane.actions.invite') }
+                        icon = { this._renderInviteMoreIcon }
+                        labelStyle = { styles.inviteLabel }
+                        mode = 'contained'
+                        onPress = { this._onInvite }
+                        style = { styles.inviteButton } />
+                }
+                <FlatList
+                    bounces = { false }
+                    data = { [ _localParticipantId, ..._sortedRemoteParticipants ] }
+                    horizontal = { false }
+                    keyExtractor = { this._keyExtractor }
+                    renderItem = { this._renderParticipant }
+                    showsHorizontalScrollIndicator = { false }
+                    windowSize = { 2 } />
+            </View>
+        );
+    }
+}
 
 /**
  * Maps (parts of) the redux state to the associated props for this component.
@@ -105,12 +170,16 @@ const MeetingParticipantList = ({ _localVideoOwner }: Props) => {
  * @returns {Props}
  */
 function _mapStateToProps(state): Object {
-    const { ownerId } = state['features/shared-video'];
-    const localParticipantId = getLocalParticipant(state).id;
+    const _participantsCount = getParticipantCountWithFake(state);
+    const { remoteParticipants } = state['features/filmstrip'];
+    const _showInviteButton = shouldRenderInviteButton(state);
 
     return {
-        _localVideoOwner: Boolean(ownerId === localParticipantId)
+        _participantsCount,
+        _showInviteButton,
+        _sortedRemoteParticipants: remoteParticipants,
+        _localParticipantId: getLocalParticipant(state)?.id
     };
 }
 
-export default connect(_mapStateToProps)(MeetingParticipantList);
+export default translate(connect(_mapStateToProps)(MeetingParticipantList));
