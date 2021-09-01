@@ -11,7 +11,15 @@ import {
 const defaultState = {
     facialRecognitionModelsLoaded: false,
     facialRecognitionAllowed: false,
-    facialExpressions: []
+    lastFacialExpression: null,
+    facialExpressions: {
+        happy: 0,
+        neutral: 0,
+        surprised: 0,
+        angry: 0,
+        fearful: 0,
+        sad: 0
+    }
 };
 
 ReducerRegistry.register('features/facial-recognition', (state = defaultState, action) => {
@@ -24,9 +32,12 @@ ReducerRegistry.register('features/facial-recognition', (state = defaultState, a
     }
 
     case ADD_FACIAL_EXPRESSION: {
-        state.facialExpressions.push(action.payload);
+        state.facialExpressions[action.payload]++;
 
-        return state;
+        return {
+            ...state,
+            lastFacialExpression: action.payload
+        };
     }
     case SET_FACIAL_RECOGNITION_ALLOWED: {
         return {

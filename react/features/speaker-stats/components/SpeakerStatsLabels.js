@@ -40,7 +40,16 @@ class SpeakerStatsLabels extends Component<Props> {
                     { t('speakerStats.speakerTime') }
                 </div>
                 <div className = 'speaker-stats-item__expression'>
-                    Facial Expression
+                    Smiles
+                </div>
+                <div className = 'speaker-stats-item__expression'>
+                    Neutrals
+                </div>
+                <div className = 'speaker-stats-item__expression'>
+                    Gasps
+                </div>
+                <div className = 'speaker-stats-item__expression'>
+                    Frowns
                 </div>
             </div>
         );

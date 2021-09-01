@@ -8,7 +8,6 @@ import { translate } from '../../base/i18n';
 import { getLocalParticipant } from '../../base/participants';
 import { connect } from '../../base/redux';
 import { escapeRegexp } from '../../base/util';
-import { getLastFacialExpression } from '../../facial-recognition/functions';
 import { initUpdateStats, initSearch } from '../actions';
 import { SPEAKER_STATS_RELOAD_INTERVAL } from '../constants';
 import { getSpeakerStats, getSearchCriteria } from '../functions';
@@ -124,7 +123,8 @@ class SpeakerStats extends Component<Props> {
             <Dialog
                 cancelKey = 'dialog.close'
                 submitDisabled = { true }
-                titleKey = 'speakerStats.speakerStats'>
+                titleKey = 'speakerStats.speakerStats'
+                width = 'large'>
                 <div className = 'speaker-stats'>
                     <SpeakerStatsSearch onSearch = { this._onSearch } />
                     <SpeakerStatsLabels />
@@ -157,7 +157,7 @@ class SpeakerStats extends Component<Props> {
             <SpeakerStatsItem
                 displayName = { statsModel.getDisplayName() }
                 dominantSpeakerTime = { dominantSpeakerTime }
-                facialExpression = { facialExpression }
+                facialExpressions = { facialExpressions }
                 hasLeft = { hasLeft }
                 isDominantSpeaker = { isDominantSpeaker }
                 key = { userId }

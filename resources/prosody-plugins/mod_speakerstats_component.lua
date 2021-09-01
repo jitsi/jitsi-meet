@@ -97,13 +97,8 @@ function on_message(event)
             log("warn", "No occupant %s found for %s", from, roomAddress);
             return false;
         end
-        table.insert(
-            room.speakerStats[occupant.jid].facialExpressions,
-            {                 
-                expression = facialExpression.attr.expression,
-                time = facialExpression.attr.time
-            }
-	    );
+        local facialExpressions = room.speakerStats[occupant.jid].facialExpressions;
+        facialExpressions[facialExpression.attr.expression] = facialExpressions[facialExpression.attr.expression] + 1;
     end
 
     return true
@@ -120,7 +115,14 @@ function new_SpeakerStats(nick, context_user)
         nick = nick;
         context_user = context_user;
         displayName = nil;
-        facialExpressions = {};
+        facialExpressions = {
+            happy = 0,
+            neutral = 0,
+            surprised = 0,
+            angry = 0,
+            fearful = 0,
+            sad = 0
+        };
     }, SpeakerStats);
 end
 
@@ -181,7 +183,9 @@ function occupant_joined(event)
                 -- and skip focus if sneaked into the table
                 if values.nick ~= nil and values.nick ~= 'focus' then
                     local totalDominantSpeakerTime = values.totalDominantSpeakerTime;
-                    if totalDominantSpeakerTime > 0 or room:get_occupant_jid(jid) == nil or values:isDominantSpeaker() then
+                    local facialExpressions = values.facialExpressions;
+                    if totalDominantSpeakerTime > 0 or room:get_occupant_jid(jid) == nil or values:isDominantSpeaker() 
+                        or get_participant_expressions_count(facialExpressions) > 0 then
                         -- before sending we need to calculate current dominant speaker state
                         if values:isDominantSpeaker() then
                             local timeElapsed = math.floor(socket.gettime()*1000 - values._dominantSpeakerStart);
@@ -191,7 +195,7 @@ function occupant_joined(event)
                         users_json[values.nick] =  {
                             displayName = values.displayName,
                             totalDominantSpeakerTime = totalDominantSpeakerTime,
-                            facialExpressions = values.facialExpressions
+                            facialExpressions = facialExpressions
                         };
                     end
                 end
@@ -275,4 +279,13 @@ if prosody.hosts[muc_component_host] == nil then
     prosody.events.add_handler("host-activated", process_host);
 else
     process_host(muc_component_host);
+end
+
+function get_participant_expressions_count(facialExpressions)
+    local count = 0;
+    for expression, value in pairs(facialExpressions) do
+        count = count + value;
+    end
+
+    return count;
 end

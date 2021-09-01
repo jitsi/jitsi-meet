@@ -21,19 +21,3 @@ export async function sendFacialExpression(facialExpression: Object) {
         APP.conference.broadcastEndpointMessage(payload);
     }
 }
-
-/**
- * Returns the last facial expression of the local participant.
- *
- * @param  {Array<Object>} facialExpressions - The current redux state.
- * @returns {FacialExpression}
- */
-export function getLastFacialExpression(facialExpressions: Array<Object>): string | null {
-    if (facialExpressions.length === 0) {
-        return null;
-    }
-
-    const { expression: lastFacialExpression } = facialExpressions[facialExpressions.length - 1];
-
-    return lastFacialExpression;
-}

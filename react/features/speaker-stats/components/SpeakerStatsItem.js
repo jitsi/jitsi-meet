@@ -31,7 +31,7 @@ type Props = {
      */
     isDominantSpeaker: boolean,
 
-    facialExpression: string,
+    facialExpressions: Object,
 
     /**
      * Invoked to obtain translated strings.
@@ -76,9 +76,24 @@ class SpeakerStatsItem extends Component<Props> {
                         time = { this.props.dominantSpeakerTime } />
                 </div>
                 <div
-                    aria-label = { 'Facial Expression' }
+                    aria-label = { 'Smiles' }
                     className = 'speaker-stats-item__expression'>
-                    { this.props.facialExpression }
+                    { this.props.facialExpressions.happy }
+                </div>
+                <div
+                    aria-label = { 'Neutrals' }
+                    className = 'speaker-stats-item__expression'>
+                    { this.props.facialExpressions.neutral }
+                </div>
+                <div
+                    aria-label = { 'Gasps' }
+                    className = 'speaker-stats-item__expression'>
+                    { this.props.facialExpressions.surprised }
+                </div>
+                <div
+                    aria-label = { 'Frowns' }
+                    className = 'speaker-stats-item__expression'>
+                    { this.props.facialExpressions.angry }
                 </div>
             </div>
         );

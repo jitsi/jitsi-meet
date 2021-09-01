@@ -13,7 +13,7 @@ import {
     ADD_FACIAL_EXPRESSION,
     SET_FACIAL_RECOGNITION_ALLOWED
 } from './actionTypes';
-import { sendFacialExpression, getLastFacialExpression } from './functions';
+import { sendFacialExpression } from './functions';
 import logger from './logger';
 
 let interval;
@@ -175,20 +175,14 @@ export function testDetectFacialExpression() {
         ).withFaceExpressions();
 
         // $FlowFixMe - Flow does not (yet) support method calls in optional chains.
-        const expression = detections?.expressions.asSortedArray()[0].expression;
+        const facialExpression = detections?.expressions.asSortedArray()[0].expression;
         const state = getState();
-        const lastExpression = getLastFacialExpression(state['features/facial-recognition'].facialExpressions);
+        const { lastFacialExpression } = state['features/facial-recognition'];
 
-        if (expression !== undefined && expression !== lastExpression) {
-            const time = new Date().getTime() - getConferenceTimestamp(state);
+        if (facialExpression && facialExpression !== lastFacialExpression) {
+            // const time = new Date().getTime() - getConferenceTimestamp(state);
 
-            console.log('!!!', expression, time);
-
-            const facialExpression = {
-                expression,
-                time
-            };
-
+            console.log('!!!', facialExpression);
             dispatch(addFacialExpression(facialExpression));
             sendFacialExpression(facialExpression);
         }
