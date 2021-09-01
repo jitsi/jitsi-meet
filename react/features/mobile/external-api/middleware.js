@@ -189,20 +189,20 @@ MiddlewareRegistry.register(store => next => action => {
 
     case PARTICIPANT_JOINED:
     case PARTICIPANT_LEFT: {
+        // Skip these events while not in a conference. SDK users can still retrieve them.
+        const { conference } = store.getState()['features/base/conference'];
+
+        if (!conference) {
+            break;
+        }
+
         const { participant } = action;
 
         sendEvent(
             store,
             action.type,
-            /* data */ {
-                isLocal: participant.local,
-                email: participant.email,
-                name: participant.name,
-                participantId: participant.id,
-                displayName: participant.displayName,
-                avatarUrl: participant.avatarURL,
-                role: participant.role
-            });
+            _participantToParticipantInfo(participant) /* data */
+        );
         break;
     }
 
