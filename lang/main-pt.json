@@ -78,7 +78,7 @@
             "polls": "Sondagens"
         },
         "title": "Chat e Sondagens",
-        "you": "eu"
+        "you": "você"
     },
     "chromeExtensionBanner": {
         "installExtensionText": "Instalar a extensão para a integração Google Calendar e Office 365",
