@@ -63,17 +63,22 @@ function _updateCriteria(state, { criteria }) {
 /**
  * Reduces a specific Redux action UPDATE_STATS of the feature
  * speaker-stats.
+ * The speaker stats order is based on the stats object properties.
+ * When updating without reordering, the new stats object properties are reordered
+ * as the last in state, otherwise the order would be lost on each update.
+ * If there was already a pending reorder, the stats object properties already have
+ * the correct order, so the property order is not changing.
  *
  * @param {Object} state - The Redux state of the feature speaker-stats.
  * @param {Action} action - The Redux action UPDATE_STATS to reduce.
  * @private
- * @returns {Object} The new state after the reduction of the specified action.
+ * @returns {Object} - The new state after the reduction of the specified action.
  */
 function _updateStats(state, { stats }) {
     const finalStats = state.pendingReorder ? stats : state.stats;
 
     if (!state.pendingReorder) {
-        // Avoid reordering the object properties
+        // Avoid reordering the speaker stats object properties
         const finalKeys = Object.keys(stats);
 
         finalKeys.forEach(newStatId => {
