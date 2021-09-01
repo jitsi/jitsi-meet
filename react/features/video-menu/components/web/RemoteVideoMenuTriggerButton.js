@@ -300,6 +300,8 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
             overflowY: 'auto'
         };
 
+        const smallScreenFilmstripHeight = 143;
+
         if (_isModerator) {
             if (!_disableRemoteMute) {
                 buttons.push(
@@ -382,13 +384,15 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
         }
 
         if (buttons.length > 0) {
+
+            // This check was added because the issues was present
+            // in a two person meeting
             if (this.props._participantCount === 2) {
-                // This check was added because the issues was present
-                // in a two person meeting
-                if (this.props._filmstripHeight < 143) {
+
+                // Here we check if the filmstrip height is getting smaller
+                if (this.props._filmstripHeight < smallScreenFilmstripHeight) {
                     return (
-                        <VideoMenu
-                            id = { participantID }>
+                        <VideoMenu id = { participantID }>
                             { buttons }
                         </VideoMenu>
                     );
@@ -401,11 +405,11 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                         { buttons }
                     </VideoMenu>
                 );
+
             }
 
             return (
-                <VideoMenu
-                    id = { participantID }>
+                <VideoMenu id = { participantID }>
                     { buttons }
                 </VideoMenu>
             );
@@ -426,7 +430,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
 function _mapStateToProps(state, ownProps) {
     const { participantID } = ownProps;
     const localParticipant = getLocalParticipant(state);
-    const participantCount = getParticipantCount(state);
+    const _participantCount = getParticipantCount(state);
     const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
     const { disableKick, disableGrantModerator } = remoteVideoMenu;
     let _remoteControlState = null;
@@ -478,7 +482,7 @@ function _mapStateToProps(state, ownProps) {
         _menuPosition,
         _overflowDrawer: overflowDrawer,
         _participantDisplayName,
-        _participantCount: participantCount,
+        _participantCount,
         _disableGrantModerator: Boolean(disableGrantModerator),
         _showConnectionInfo: showConnectionInfo,
         _toolboxEnabled: isToolboxEnabled(state)
