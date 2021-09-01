@@ -19,12 +19,13 @@ const STORE_NAME = 'features/virtual-background';
  * specified action.
  */
 ReducerRegistry.register(STORE_NAME, (state = {}, action) => {
-    const { virtualSource, backgroundEffectEnabled, blurValue, backgroundType, selectedThumbnail } = action;
+    const { virtualSource, backgroundEffectEnabled, blurValue, backgroundType, selectedThumbnail, dimensions } = action;
 
     /**
      * Sets up the persistence of the feature {@code virtual-background}.
      */
-    PersistenceRegistry.register(STORE_NAME, state.backgroundType !== VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE);
+    PersistenceRegistry.register(STORE_NAME, state.backgroundType !== VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE
+        && state.backgroundType !== VIRTUAL_BACKGROUND_TYPE.TRANSPARENT && state.backgroundType !== VIRTUAL_BACKGROUND_TYPE.TRANSPARENT_PREVIEW);
 
     switch (action.type) {
     case SET_VIRTUAL_BACKGROUND: {
@@ -33,7 +34,8 @@ ReducerRegistry.register(STORE_NAME, (state = {}, action) => {
             virtualSource,
             blurValue,
             backgroundType,
-            selectedThumbnail
+            selectedThumbnail,
+            dimensions
         };
     }
     case BACKGROUND_ENABLED: {

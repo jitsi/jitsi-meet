@@ -10,7 +10,8 @@ export const VIRTUAL_BACKGROUND_TYPE = {
     DESKTOP_SHARE: 'desktop-share',
     BLUR: 'blur',
     NONE: 'none',
-    TRANSPARENT: 'transparent'
+    TRANSPARENT: 'transparent',
+    TRANSPARENT_PREVIEW: 'transparent-preview'
 };
 
 /**
@@ -21,7 +22,7 @@ export const VIRTUAL_BACKGROUND_TYPE = {
 export const DESKTOP_SHARE_DIMENSIONS = {
     RECTANGLE_WIDTH: 200,
     RECTANGLE_HEIGHT: 100,
-    CONTAINER_WIDTH: 570,
+    CONTAINER_WIDTH: 600,
     CONTAINER_HEIGHT: 250
 };
 

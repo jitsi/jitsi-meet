@@ -333,13 +333,15 @@ function VirtualBackground({
     }, [ setUploadedImageBackground ]);
 
     const applyVirtualBackground = useCallback(async () => {
+        // console.log(options, _jitsiTrack);
+        // return;
         if (activeDesktopVideo) {
             await activeDesktopVideo.dispose();
         }
         setLoading(true);
         await dispatch(toggleBackgroundEffect(options, _jitsiTrack));
         await setLoading(false);
-        if (_localFlipX && options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
+        if (_localFlipX && options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE || _localFlipX && options.backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT) {
             dispatch(updateSettings({
                 localFlipX: !_localFlipX
             }));
@@ -366,6 +368,17 @@ function VirtualBackground({
         });
         dispatch(hideDialog());
     });
+    const updateTransparentOptions = useCallback(async dimensions => {
+        setOptions({
+            backgroundType: VIRTUAL_BACKGROUND_TYPE.TRANSPARENT,
+            enabled: true,
+            selectedThumbnail: 'transparent',
+            dimensions,
+            url: dimensions.url
+        });
+        logger.info('"Transparent" option setted for virtual background preview!');
+
+    }, []);
 
     const loadedPreviewState = useCallback(async loaded => {
         await setPreviewIsLoaded(loaded);

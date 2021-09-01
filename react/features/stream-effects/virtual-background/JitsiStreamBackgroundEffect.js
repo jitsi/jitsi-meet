@@ -55,6 +55,12 @@ export default class JitsiStreamBackgroundEffect {
             this._virtualVideo.autoplay = true;
             this._virtualVideo.srcObject = this._options?.virtualBackground?.virtualSource?.stream;
         }
+        if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT && this._options?.virtualBackground?.dimensions?.x) {
+            console.log(this._options.virtualBackground)
+            this._virtualVideo = document.createElement('video');
+            this._virtualVideo.autoplay = true;
+            this._virtualVideo.srcObject = this._options?.virtualBackground?.virtualSource?.stream;
+        }
         this._model = model;
         this._segmentationPixelCount = this._options.width * this._options.height;
 
@@ -99,7 +105,7 @@ export default class JitsiStreamBackgroundEffect {
 
         // Smooth out the edges.
         this._outputCanvasCtx.filter = backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE ? 'blur(4px)' : 'blur(8px)';
-        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
+        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE || backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT) {
             // Save current context before applying transformations.
             this._outputCanvasCtx.save();
 
@@ -107,25 +113,26 @@ export default class JitsiStreamBackgroundEffect {
             this._outputCanvasCtx.scale(-1, 1);
             this._outputCanvasCtx.translate(-this._outputCanvasElement.width, 0);
         }
+
         this._outputCanvasCtx.drawImage(
             this._segmentationMaskCanvas,
             0,
             0,
             this._options.width,
             this._options.height,
-            0,
-            0,
-            this._inputVideoElement.width,
-            this._inputVideoElement.height
+            backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT && this._options?.virtualBackground?.dimensions?.x ? this._options?.virtualBackground?.dimensions?.x : 0,
+            backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT && this._options?.virtualBackground?.dimensions?.y ? this._options?.virtualBackground?.dimensions?.y : 0,
+            backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT && this._options?.virtualBackground?.dimensions?.width ? this._options?.virtualBackground?.dimensions?.width : this._inputVideoElement.width,
+            backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT && this._options?.virtualBackground?.dimensions?.height ? this._options?.virtualBackground?.dimensions?.height : this._inputVideoElement.height
         );
-        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
+        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE || backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT) {
             this._outputCanvasCtx.restore();
         }
         this._outputCanvasCtx.globalCompositeOperation = 'source-in';
         this._outputCanvasCtx.filter = 'none';
 
         // Draw the foreground video.
-        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
+        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE || backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT) {
             // Save current context before applying transformations.
             this._outputCanvasCtx.save();
 
@@ -133,8 +140,21 @@ export default class JitsiStreamBackgroundEffect {
             this._outputCanvasCtx.scale(-1, 1);
             this._outputCanvasCtx.translate(-this._outputCanvasElement.width, 0);
         }
-        this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
-        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
+if(backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT){
+    this._outputCanvasCtx.drawImage(this._inputVideoElement,
+        0,
+        0,
+        this._outputCanvasElement.width,
+        this._outputCanvasElement.height,
+        this._options?.virtualBackground?.dimensions?.x,
+        this._options?.virtualBackground?.dimensions?.y,
+        this._options?.virtualBackground?.dimensions?.width,
+        this._options?.virtualBackground?.dimensions?.height
+        );
+} else {
+    this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
+}
+        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE || backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT) {
             this._outputCanvasCtx.restore();
         }
 
@@ -150,9 +170,9 @@ export default class JitsiStreamBackgroundEffect {
                 this._outputCanvasElement.width,
                 this._outputCanvasElement.height
             );
-        } else if (backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT) {
+        } else if (backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT_PREVIEW) {
             this._outputCanvasCtx.globalAlpha = 0;
-        } else if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
+        } else if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE || backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT) {
             // Get the scale.
             const scale = Math.min(
                 this._outputCanvasElement.width / this._virtualVideo.videoWidth,

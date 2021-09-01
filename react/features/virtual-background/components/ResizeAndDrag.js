@@ -21,7 +21,12 @@ type Props = {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function
+    dispatch: Function,
+
+    /**
+     * Callback function for virtual background dialog.
+     */
+    updateTransparent: Function
 };
 
 /**
@@ -29,7 +34,7 @@ type Props = {
  *
  * @returns {ReactElement}
  */
-function ResizeAndDrag({ _currentCameraDeviceId, dispatch }: Props) {
+function ResizeAndDrag({ _currentCameraDeviceId, dispatch, updateTransparent }: Props) {
     const [ containerWidth ] = useState(DESKTOP_SHARE_DIMENSIONS.CONTAINER_WIDTH);
     const [ containerHeight ] = useState(DESKTOP_SHARE_DIMENSIONS.CONTAINER_HEIGHT);
     const dragAndResizeRef = useRef(null);
@@ -39,9 +44,9 @@ function ResizeAndDrag({ _currentCameraDeviceId, dispatch }: Props) {
             devices: [ 'video' ]
         });
         const transparentOptions = {
-            backgroundType: VIRTUAL_BACKGROUND_TYPE.TRANSPARENT,
+            backgroundType: VIRTUAL_BACKGROUND_TYPE.TRANSPARENT_PREVIEW,
             enabled: true,
-            selectedThumbnail: 'transparent'
+            selectedThumbnail: 'transparent-preview'
         };
 
         await dispatch(toggleBackgroundEffect(transparentOptions, jitsiTrack));
@@ -50,7 +55,10 @@ function ResizeAndDrag({ _currentCameraDeviceId, dispatch }: Props) {
                 container: dragAndResizeRef.current,
                 width: containerWidth,
                 height: containerHeight,
-                scale: {x: 0.5, y: 0.5}
+                scale: {
+                    x: 0.5,
+                    y: 0.5
+                }
             });
 
             const layer = new Konva.Layer();
@@ -61,19 +69,43 @@ function ResizeAndDrag({ _currentCameraDeviceId, dispatch }: Props) {
 
             desktopVideo.srcObject = await url.stream;
 
+            const video = document.createElement('video');
+
+            video.srcObject = await jitsiTrack.stream;
+
+            const image = new Konva.Image({
+                image: video,
+                draggable: true,
+                x: stage.width() - DESKTOP_SHARE_DIMENSIONS.RECTANGLE_WIDTH,
+                y: stage.height() - DESKTOP_SHARE_DIMENSIONS.RECTANGLE_HEIGHT
+            });
+
             const desktopImage = new Konva.Image({
                 image: desktopVideo,
-                x: stage.width()/2,
-                y: stage.height()/2 - containerHeight/2,
+                x: stage.width() / 2,
+                y: (stage.height() / 2) - (containerHeight / 2),
                 scaleX: 0.5,
-                scaleY: 0.5,
+                scaleY: 0.5
             });
+
+            layer.add(desktopImage);
+
             desktopVideo.onresize = () => {
                 desktopImage.width(desktopVideo.videoWidth);
-                desktopImage.height(desktopVideo.videoHeight + containerHeight/2);
+                desktopImage.height(desktopVideo.videoHeight + (containerHeight / 2));
+                const desktopImageDimensions = desktopImage.getClientRect({ skipTransform: false });
 
-            }
-            layer.add(desktopImage);
+                stage.height(desktopImageDimensions.height);
+
+                // We need to scale the person image on desktop video resize.
+                const scale = desktopImageDimensions.width / dragAndResizeRef.current.offsetWidth;
+
+                image.scale({
+                    x: scale,
+                    y: scale
+                });
+            };
+
             desktopVideo.addEventListener('loadedmetadata', () => {
                 desktopVideo.play();
 
@@ -89,12 +121,9 @@ function ResizeAndDrag({ _currentCameraDeviceId, dispatch }: Props) {
                 window.requestAnimationFrame(step);
             });
 
-            // Create new transformer
+            // Create new transformer.
             const desktopTr = new Konva.Transformer({
-                centeredScaling: false,
                 node: desktopImage
-
-                // ignoreStroke: true
             });
 
             // Enable specific anchors.
@@ -105,15 +134,35 @@ function ResizeAndDrag({ _currentCameraDeviceId, dispatch }: Props) {
             layer.add(desktopTr);
             desktopTr.nodes([ desktopImage ]);
 
-            const video = document.createElement('video');
+            // Create new transformer
+            const personTr = new Konva.Transformer({
+                node: image
+            });
 
-            video.srcObject = await jitsiTrack.stream;
+            // Enable specific anchors.
+            personTr.enabledAnchors([ 'top-left', 'top-right', 'bottom-left', 'bottom-right' ]);
 
-            const image = new Konva.Image({
-                image: video,
-                draggable: true,
-                x: stage.width() - DESKTOP_SHARE_DIMENSIONS.RECTANGLE_WIDTH,
-                y: stage.height() - DESKTOP_SHARE_DIMENSIONS.RECTANGLE_HEIGHT
+            // Disable rotation.
+            personTr.rotateEnabled(false);
+            layer.add(personTr);
+            personTr.nodes([ image ]);
+
+            image.on('transformstart', () => {
+                updateTransformValues();
+            });
+
+            image.on('dragmove', () => {
+                updateTransformValues();
+            });
+
+            // Change cursor style on drag action.
+            image.on('mouseenter', () => {
+                stage.container().style.cursor = 'move';
+            });
+
+            // Return to default cursor style after drag action.
+            image.on('mouseleave', () => {
+                stage.container().style.cursor = 'default';
             });
 
             layer.add(image);
@@ -134,19 +183,24 @@ function ResizeAndDrag({ _currentCameraDeviceId, dispatch }: Props) {
                 window.requestAnimationFrame(step);
             });
 
-            // create new transformer
-            const tr = new Konva.Transformer({
-                node: image,
-                ignoreStroke: true
-            });
+            /**
+            * This function updates human and desktop videos size values after resizing or repositioning actions.
+            *
+            * @returns {void}
+            */
+            function updateTransformValues() {
+                const dimensions = {
+                    x: image.x() + dragAndResizeRef.current.getBoundingClientRect().left,
+                    y: image.y() + dragAndResizeRef.current.getBoundingClientRect().top,
+                    width: Math.max(5, image.width() * image.scaleX()),
+                    height: Math.max(5, image.height() * image.scaleY()),
+                    scaleX: image.scaleX(),
+                    scaleY: image.scaleY(),
+                    url
+                };
 
-            // Enable specific anchors.
-            tr.enabledAnchors([ 'top-left', 'top-right', 'bottom-left', 'bottom-right' ]);
-
-            // Disable rotation.
-            tr.rotateEnabled(false);
-            layer.add(tr);
-            tr.nodes([ image ]);
+                updateTransparent(dimensions);
+            }
         }
     };
 
