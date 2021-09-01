@@ -4,7 +4,7 @@ import {
     INIT_SEARCH,
     INIT_UPDATE_STATS,
     UPDATE_STATS,
-    REORDER_STATS
+    INIT_REORDER_STATS
 } from './actionTypes';
 
 /**
@@ -49,14 +49,12 @@ export function updateStats(stats: Object) {
 }
 
 /**
- * Reorders the stats with new stats.
+ * Initiates reordering of the stats.
  *
- * @param {Object} stats - The new stats.
  * @returns {Object}
  */
-export function reorderStats(stats: Object) {
+export function initReorderStats() {
     return {
-        type: REORDER_STATS,
-        stats
+        type: INIT_REORDER_STATS
     };
 }

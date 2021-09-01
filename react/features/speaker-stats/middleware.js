@@ -9,11 +9,8 @@ import {
 import { MiddlewareRegistry } from '../base/redux';
 
 import { INIT_SEARCH, INIT_UPDATE_STATS } from './actionTypes';
-import { reorderStats, updateStats } from './actions';
-import { SPEAKER_STATS_RELOAD_INTERVAL } from './constants';
-import { filterBySearchCriteria, getSortedSpeakerStats } from './functions';
-
-let reorderTimeoutHandle;
+import { initReorderStats, updateStats } from './actions';
+import { filterBySearchCriteria, getSortedSpeakerStats, getPendingReorder } from './functions';
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     const result = next(action);
@@ -29,30 +26,20 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     }
 
     case INIT_UPDATE_STATS:
+        if (action.getSpeakerStats) {
+            const state = getState();
+            const speakerStats = { ...action.getSpeakerStats() };
+            const stats = filterBySearchCriteria(state, speakerStats);
+            const pendingReorder = getPendingReorder(state);
+
+            dispatch(updateStats(pendingReorder ? getSortedSpeakerStats(state, stats) : stats));
+        }
+        break;
     case PARTICIPANT_JOINED:
     case PARTICIPANT_LEFT:
     case PARTICIPANT_KICKED:
     case PARTICIPANT_UPDATED: {
-        let reorderFlag = true;
-
-        if (action.type === INIT_UPDATE_STATS && action.getSpeakerStats) {
-            const state = getState();
-            const speakerStats = { ...action.getSpeakerStats() };
-            const stats = filterBySearchCriteria(state, speakerStats);
-
-            dispatch(updateStats(stats));
-
-            reorderFlag = Boolean(action.reorder);
-        }
-
-        if (reorderFlag) {
-            clearTimeout(reorderTimeoutHandle);
-            reorderTimeoutHandle = setTimeout(() => {
-                const newState = getState();
-
-                dispatch(reorderStats(getSortedSpeakerStats(newState)));
-            }, SPEAKER_STATS_RELOAD_INTERVAL);
-        }
+        dispatch(initReorderStats());
 
         break;
     }

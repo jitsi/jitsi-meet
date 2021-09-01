@@ -7,7 +7,7 @@ import { ReducerRegistry } from '../base/redux';
 import {
     INIT_SEARCH,
     UPDATE_STATS,
-    REORDER_STATS
+    INIT_REORDER_STATS
 } from './actionTypes';
 
 /**
@@ -17,6 +17,7 @@ import {
  */
 const INITIAL_STATE = {
     stats: {},
+    pendingReorder: true,
     criteria: ''
 };
 
@@ -26,8 +27,8 @@ ReducerRegistry.register('features/speaker-stats', (state = _getInitialState(), 
         return _updateCriteria(state, action);
     case UPDATE_STATS:
         return _updateStats(state, action);
-    case REORDER_STATS:
-        return _reorderStats(state, action);
+    case INIT_REORDER_STATS:
+        return _initReorderStats(state, action);
     }
 
     return state;
@@ -69,41 +70,45 @@ function _updateCriteria(state, { criteria }) {
  * @returns {Object} The new state after the reduction of the specified action.
  */
 function _updateStats(state, { stats }) {
-    const finalStats = _.cloneDeep(state.stats);
+    const finalStats = state.pendingReorder ? stats : state.stats;
 
-    // Avoid reordering the object properties
-    const finalKeys = Object.keys(stats);
+    if (!state.pendingReorder) {
+        // Avoid reordering the object properties
+        const finalKeys = Object.keys(stats);
 
-    finalKeys.forEach(newStatId => {
-        finalStats[newStatId] = _.clone(stats[newStatId]);
-    });
+        finalKeys.forEach(newStatId => {
+            finalStats[newStatId] = _.clone(stats[newStatId]);
+        });
 
-    Object.keys(finalStats).forEach(key => {
-        if (!finalKeys.includes(key)) {
-            delete finalStats[key];
-        }
-    });
+        Object.keys(finalStats).forEach(key => {
+            if (!finalKeys.includes(key)) {
+                delete finalStats[key];
+            }
+        });
+    }
 
     return _.assign(
         {},
         state,
-        { stats: finalStats },
+        {
+            stats: finalStats,
+            pendingReorder: false
+        },
     );
 }
 
 /**
- * Reduces a specific Redux action REORDER_STATS of the feature
+ * Reduces a specific Redux action INIT_REORDER_STATS of the feature
  * speaker-stats.
  *
  * @param {Object} state - The Redux state of the feature speaker-stats.
- * @param {Action} action - The Redux action REORDER_STATS to reduce.
  * @private
  * @returns {Object} The new state after the reduction of the specified action.
  */
-function _reorderStats(state, { stats }) {
+function _initReorderStats(state) {
     return _.assign(
         {},
         state,
-        { stats },
+        { pendingReorder: true },
     );
 }

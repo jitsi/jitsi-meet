@@ -50,14 +50,24 @@ export function getSearchCriteria(state: Object) {
 }
 
 /**
+ * Gets if speaker stats reorder is pending.
+ *
+ * @param {*} state - The redux state.
+ * @returns {boolean} - The pending reorder flag.
+ */
+export function getPendingReorder(state: Object) {
+    return state['features/speaker-stats']?.pendingReorder ?? false;
+}
+
+/**
  * Get sorted speaker stats based on a configuration setting.
  *
  * @param {Object} state - The redux state.
+ * @param {Object} stats - The current speaker stats.
  * @returns {Object} - Ordered speaker stats.
  * @public
  */
-export function getSortedSpeakerStats(state: Object) {
-    const stats = _.cloneDeep(getSpeakerStats(state));
+export function getSortedSpeakerStats(state, stats) {
     const orderConfig = getSpeakerStatsOrder(state);
 
     if (orderConfig) {
@@ -130,7 +140,7 @@ function getEnhancedStatsForOrdering(state, stats, orderConfig) {
             if (orderConfig.includes('role')) {
                 const participant = getParticipantById(state, stats[id].getUserId());
 
-                stats[id].isModerator = participant.role === PARTICIPANT_ROLE.MODERATOR;
+                stats[id].isModerator = participant && participant.role === PARTICIPANT_ROLE.MODERATOR;
             }
         }
     }

@@ -31,13 +31,12 @@ export const INIT_UPDATE_STATS = 'INIT_UPDATE_STATS';
 export const UPDATE_STATS = 'UPDATE_STATS';
 
 /**
- * Action type to reorder stats.
+ * Action type to initiate reordering of the stats.
  *
  * {
- *     type: REORDER_STATS,
- *     stats: Object
+ *     type: INIT_REORDER_STATS
  * }
  *
  * @protected
  */
-export const REORDER_STATS = 'REORDER_STATS';
+export const INIT_REORDER_STATS = 'INIT_REORDER_STATS';
