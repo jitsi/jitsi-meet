@@ -79,10 +79,6 @@ export function maybeStartFacialRecognition() {
 
         const { facialRecognitionModelsLoaded } = state['features/facial-recognition'];
 
-        faceapi.tf.setBackend('webgl');
-
-        console.log('BACKEND', faceapi.tf.getBackend());
-
         if (!facialRecognitionModelsLoaded) {
             try {
                 await faceapi.nets.tinyFaceDetector.loadFromUri('/libs');
