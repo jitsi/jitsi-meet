@@ -75,7 +75,7 @@ class SpeakerStats extends Component<Props> {
         this._updateStats = this._updateStats.bind(this);
         this._onSearch = this._onSearch.bind(this);
 
-        this._updateStats(true);
+        this._updateStats();
     }
 
     /**
@@ -84,7 +84,7 @@ class SpeakerStats extends Component<Props> {
      * @inheritdoc
      */
     componentDidMount() {
-        this._updateInterval = setInterval(() => this._updateStats(false), SPEAKER_STATS_RELOAD_INTERVAL);
+        this._updateInterval = setInterval(() => this._updateStats(), SPEAKER_STATS_RELOAD_INTERVAL);
     }
 
     /**
@@ -178,17 +178,16 @@ class SpeakerStats extends Component<Props> {
         this.props.dispatch(initSearch(escapeRegexp(criteria)));
     }
 
-    _updateStats: (reorder: ?boolean) => void;
+    _updateStats: () => void;
 
     /**
      * Update the internal state with the latest speaker stats.
      *
-     * @param {boolean} reorder - Should reorder boolean or not.
      * @returns {void}
      * @private
      */
-    _updateStats(reorder = false) {
-        this.props.dispatch(initUpdateStats(reorder, () => this.props.conference.getSpeakerStats()));
+    _updateStats() {
+        this.props.dispatch(initUpdateStats(() => this.props.conference.getSpeakerStats()));
     }
 }
 

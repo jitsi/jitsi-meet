@@ -14,7 +14,6 @@ export const INIT_SEARCH = 'INIT_SEARCH';
  *
  * {
  *     type: INIT_UPDATE_STATS,
- *     reorder: boolean,
  *     getSpeakerStats: Function
  * }
  */
@@ -36,7 +35,5 @@ export const UPDATE_STATS = 'UPDATE_STATS';
  * {
  *     type: INIT_REORDER_STATS
  * }
- *
- * @protected
  */
 export const INIT_REORDER_STATS = 'INIT_REORDER_STATS';

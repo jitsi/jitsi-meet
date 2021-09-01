@@ -23,14 +23,12 @@ export function initSearch(criteria: string) {
 /**
  * Gets the new stats and triggers update.
  *
- * @param {boolean} reorder - Should reorder or not.
  * @param {Function} getSpeakerStats - Function to get the speaker stats.
  * @returns {Object}
  */
-export function initUpdateStats(reorder: boolean, getSpeakerStats: Function) {
+export function initUpdateStats(getSpeakerStats: Function) {
     return {
         type: INIT_UPDATE_STATS,
-        reorder,
         getSpeakerStats
     };
 }
