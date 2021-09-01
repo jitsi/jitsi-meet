@@ -28,7 +28,7 @@ ReducerRegistry.register('features/speaker-stats', (state = _getInitialState(), 
     case UPDATE_STATS:
         return _updateStats(state, action);
     case INIT_REORDER_STATS:
-        return _initReorderStats(state, action);
+        return _initReorderStats(state);
     }
 
     return state;

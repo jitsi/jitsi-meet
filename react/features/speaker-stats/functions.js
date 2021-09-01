@@ -67,7 +67,7 @@ export function getPendingReorder(state: Object) {
  * @returns {Object} - Ordered speaker stats.
  * @public
  */
-export function getSortedSpeakerStats(state, stats) {
+export function getSortedSpeakerStats(state: Object, stats: Object) {
     const orderConfig = getSpeakerStatsOrder(state);
 
     if (orderConfig) {
