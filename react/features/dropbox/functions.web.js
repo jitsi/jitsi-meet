@@ -1,12 +1,8 @@
 // @flow
 
-import { Dropbox } from 'dropbox';
+import { Dropbox, DropboxAuth } from 'dropbox';
 
-import {
-    getJitsiMeetGlobalNS,
-    parseStandardURIString,
-    parseURLParams
-} from '../base/util';
+import { getJitsiMeetGlobalNS } from '../base/util';
 
 /**
  * Executes the oauth flow.
@@ -32,6 +28,16 @@ function authorize(authUrl: string): Promise<string> {
 }
 
 /**
+ * Returns the token's expiry date as ISO string.
+ *
+ * @param {number} expiresIn - The seconds in which the token expires.
+ * @returns {string} - The ISO value for the expiry date.
+ */
+function getTokenExpiresAtDate(expiresIn: number) {
+    return new Date(Date.now() + (expiresIn * 1000)).toISOString();
+}
+
+/**
  * Action to authorize the Jitsi Recording app in dropbox.
  *
  * @param {string} appKey - The Jitsi Recorder dropbox app key.
@@ -41,16 +47,47 @@ function authorize(authUrl: string): Promise<string> {
 export function _authorizeDropbox(
         appKey: string,
         redirectURI: string
-): Promise<string> {
-    const dropboxAPI = new Dropbox({ clientId: appKey });
-    const url = dropboxAPI.getAuthenticationUrl(redirectURI);
+): Promise<Object> {
+    const dropbox = new DropboxAuth({ clientId: appKey });
 
-    return authorize(url).then(returnUrl => {
-        const params
-            = parseURLParams(parseStandardURIString(returnUrl), true) || {};
+    return dropbox.getAuthenticationUrl(redirectURI, undefined, 'code', 'offline', undefined, undefined, true)
+        .then(authorize)
+        .then(returnUrl => {
+            const params = new URLSearchParams(new URL(returnUrl).search);
+            const code = params.get('code');
 
-        return params.access_token;
-    });
+            return dropbox.getAccessTokenFromCode(redirectURI, code);
+        })
+        .then(resp => {
+            return {
+                token: resp.result.access_token,
+                rToken: resp.result.refresh_token,
+                expireDate: getTokenExpiresAtDate(resp.result.expires_in)
+            };
+        });
+}
+
+
+/**
+ * Gets a new acccess token based on the refresh token.
+ *
+ * @param {string} appKey - The dropbox appKey.
+ * @param {string} rToken - The refresh token.
+ * @returns {Promise}
+ */
+export function getNewAccessToken(appKey: string, rToken: string) {
+    const dropbox = new DropboxAuth({ clientId: appKey });
+
+    dropbox.setRefreshToken(rToken);
+
+    return dropbox.refreshAccessToken()
+        .then(() => {
+            return {
+                token: dropbox.getAccessToken(),
+                rToken: dropbox.getRefreshToken(),
+                expireDate: dropbox.getAccessTokenExpiresAt().toISOString()
+            };
+        });
 }
 
 /**
@@ -68,7 +105,7 @@ export function getDisplayName(token: string, appKey: string) {
 
     return (
         dropboxAPI.usersGetCurrentAccount()
-            .then(account => account.name.display_name));
+            .then(account => account.result.name.display_name));
 }
 
 /**
@@ -85,7 +122,7 @@ export function getSpaceUsage(token: string, appKey: string) {
     });
 
     return dropboxAPI.usersGetSpaceUsage().then(space => {
-        const { allocation, used } = space;
+        const { allocation, used } = space.result;
         const { allocated } = allocation;
 
         return {

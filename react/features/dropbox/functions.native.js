@@ -13,7 +13,10 @@ const { Dropbox } = NativeModules;
  * access token or rejected with an error.
  */
 export function _authorizeDropbox(): Promise<string> {
-    return Dropbox.authorize();
+    return Dropbox.authorize()
+        .then(token => {
+            return { token };
+        });
 }
 
 /**

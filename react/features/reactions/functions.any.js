@@ -2,6 +2,7 @@
 
 import uuid from 'uuid';
 
+import { getFeatureFlag, REACTIONS_ENABLED } from '../base/flags';
 import { getLocalParticipant } from '../base/participants';
 import { extractFqnFromPath } from '../dynamic-branding/functions';
 
@@ -141,4 +142,20 @@ export function getReactionsSoundsThresholds(reactions: Array<string>) {
             threshold: getSoundThresholdByFrequency(getReactionFrequency(reactions, reaction))
         };
     });
+}
+
+/**
+ * Whether or not the reactions are enabled.
+ *
+ * @param {Object} state - The Redux state object.
+ * @returns {boolean}
+ */
+export function isReactionsEnabled(state: Object) {
+    const { enableReactions } = state['features/base/config'];
+
+    if (navigator.product === 'ReactNative') {
+        return enableReactions && getFeatureFlag(state, REACTIONS_ENABLED, true);
+    }
+
+    return enableReactions;
 }

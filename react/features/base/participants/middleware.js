@@ -8,6 +8,7 @@ import { toggleE2EE } from '../../e2ee/actions';
 import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
 import { isForceMuted } from '../../participants-pane/functions';
 import { CALLING, INVITED } from '../../presence-status';
+import { RAISE_HAND_SOUND_ID } from '../../reactions/constants';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 import {
     CONFERENCE_WILL_JOIN,
@@ -543,6 +544,7 @@ function _raiseHandUpdated({ dispatch, getState }, conference, participantId, ne
             descriptionKey: 'notify.raisedHand',
             ...action
         }, NOTIFICATION_TIMEOUT));
+        dispatch(playSound(RAISE_HAND_SOUND_ID));
     }
 }
 
