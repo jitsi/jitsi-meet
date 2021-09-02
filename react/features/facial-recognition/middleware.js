@@ -10,7 +10,8 @@ import {
     stopFacialRecognition,
     resetTrack,
     setFacialRecognitionAllowed,
-    changeTrack
+    changeTrack,
+    loadWorker
 } from './actions';
 
 
@@ -19,6 +20,7 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_JOINED: {
         const { dispatch } = store;
 
+        dispatch(loadWorker());
         dispatch(setFacialRecognitionAllowed(true));
         dispatch(maybeStartFacialRecognition());
 

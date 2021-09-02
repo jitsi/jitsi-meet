@@ -1,36 +1,46 @@
 // @flow
-
-import * as faceapi from 'face-api.js';
-
-import { getConferenceTimestamp } from '../base/conference/functions';
 import { getLocalVideoTrack } from '../base/tracks';
 
 import 'image-capture';
 import './createImageBitmap';
 
 import {
-    SET_FACIAL_RECOGNITION_MODELS_LOADED,
     ADD_FACIAL_EXPRESSION,
     SET_FACIAL_RECOGNITION_ALLOWED
 } from './actionTypes';
-import { sendFacialExpression } from './functions';
+import { sendFacialExpression, testDetectFacialExpression } from './functions';
 import logger from './logger';
 
 let interval;
 let imageCapture;
-let TinyFaceDetectorOptions;
+let worker;
 const outputCanvas = document.createElement('canvas');
 
 /**
- * Sets the state of the models for the face api.
+ * Loads the worker that predicts the facial expression.
  *
- * @param  {boolean} loaded - The state of the models.
- * @returns {Object}
+ * @returns {void}
  */
-function setFacialRecognitionModelsLoaded(loaded: boolean) {
-    return {
-        type: SET_FACIAL_RECOGNITION_MODELS_LOADED,
-        payload: loaded
+export function loadWorker() {
+    return function(dispatch: Function, getState: Function) {
+        if (window.Worker) {
+            worker = new Worker('libs/facialExpressionWorker.js');
+            worker.onmessage = function(e) {
+                const state = getState();
+                const facialExpression = e.data;
+                const { lastFacialExpression } = state['features/facial-recognition'];
+
+                if (facialExpression && facialExpression !== lastFacialExpression) {
+                    // const time = new Date().getTime() - getConferenceTimestamp(state);
+
+                    console.log('!!!', facialExpression);
+                    dispatch(addFacialExpression(facialExpression));
+                    sendFacialExpression(facialExpression);
+                }
+            };
+        } else {
+            logger.debug('Browser does not support web workers');
+        }
     };
 }
 
@@ -76,29 +86,14 @@ export function maybeStartFacialRecognition() {
 
             return;
         }
-
-        const { facialRecognitionModelsLoaded } = state['features/facial-recognition'];
-
-        if (!facialRecognitionModelsLoaded) {
-            try {
-                await faceapi.nets.tinyFaceDetector.loadFromUri('/libs');
-                await faceapi.nets.faceExpressionNet.loadFromUri('/libs');
-
-                dispatch(setFacialRecognitionModelsLoaded(true));
-            } catch {
-                logger.debug('Failed to load faceapi nets, unable to start facial recognition');
-                dispatch(setFacialRecognitionModelsLoaded(false));
-            }
-        }
         const firstVideoTrack = stream.getVideoTracks()[0];
         const { height, width } = firstVideoTrack.getSettings() ?? firstVideoTrack.getConstraints();
 
         imageCapture = new ImageCapture(firstVideoTrack);
-        TinyFaceDetectorOptions = new faceapi.TinyFaceDetectorOptions();
 
         outputCanvas.width = parseInt(width, 10);
         outputCanvas.height = parseInt(height, 10);
-        interval = setInterval(() => dispatch(testDetectFacialExpression()), 1000);
+        interval = setInterval(() => testDetectFacialExpression(worker, imageCapture), 1000);
 
     };
 }
@@ -146,44 +141,6 @@ export function changeTrack(track: Object) {
     const firstVideoTrack = stream.getVideoTracks()[0];
 
     imageCapture = new ImageCapture(firstVideoTrack);
-}
-
-/**
- * Detects facial expression.
- *
- * @returns {Function}
- */
-export function testDetectFacialExpression() {
-    return async function(dispatch: Function, getState: Function) {
-        const outputCanvasContext = outputCanvas.getContext('2d');
-        let imageBitmap;
-
-        try {
-            imageBitmap = await imageCapture.grabFrame();
-        } catch (err) {
-            return;
-        }
-
-        outputCanvasContext.drawImage(imageBitmap, 0, 0, imageBitmap.width, imageBitmap.height);
-        const detections = await faceapi.detectSingleFace(
-            outputCanvas,
-            TinyFaceDetectorOptions
-        ).withFaceExpressions();
-
-        // $FlowFixMe - Flow does not (yet) support method calls in optional chains.
-        const facialExpression = detections?.expressions.asSortedArray()[0].expression;
-        const state = getState();
-        const { lastFacialExpression } = state['features/facial-recognition'];
-
-        if (facialExpression && facialExpression !== lastFacialExpression) {
-            // const time = new Date().getTime() - getConferenceTimestamp(state);
-
-            console.log('!!!', facialExpression);
-            dispatch(addFacialExpression(facialExpression));
-            sendFacialExpression(facialExpression);
-        }
-    };
-
 }
 
 /**

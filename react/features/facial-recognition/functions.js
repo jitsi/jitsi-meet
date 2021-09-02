@@ -21,3 +21,21 @@ export async function sendFacialExpression(facialExpression: Object) {
         APP.conference.broadcastEndpointMessage(payload);
     }
 }
+
+/**
+ * Detects facial expression.
+ *
+ * @param {Worker} worker - Facial expression worker.
+ * @param {Object} imageCapture - Image capture that contains the current track.
+ * @returns {Function}
+ */
+export async function testDetectFacialExpression(worker: Worker, imageCapture: Object) {
+    let imageBitmap;
+
+    try {
+        imageBitmap = await imageCapture.grabFrame();
+    } catch (err) {
+        return;
+    }
+    worker.postMessage(imageBitmap);
+}
