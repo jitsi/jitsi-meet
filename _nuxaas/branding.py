@@ -4,7 +4,6 @@ from collections.abc import ByteString
 from json import dumps, loads
 from pathlib import Path
 from re import RegexFlag, compile
-from sys import stderr
 from typing import Any, Callable, Mapping, Sequence
 
 _TOP_LV = Path(__file__).resolve().parent.parent
