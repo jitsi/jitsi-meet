@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-
 from collections.abc import ByteString
 from json import dumps, loads
+from os import linesep
 from pathlib import Path
 from re import RegexFlag, compile
+from shutil import get_terminal_size
+from sys import stderr
 from typing import Any, Callable, Mapping, Sequence
 
 _TOP_LV = Path(__file__).resolve().parent.parent
@@ -34,12 +36,15 @@ def _map(fn: Callable[[Any], Any], x: Any) -> Any:
 
 
 def main() -> None:
+    cols, _ = get_terminal_size()
+    line = linesep + cols * "-" + linesep
     for path in _LANG.glob("*.json"):
         raw = path.read_text()
         json = loads(raw)
         xformed = _map(_simple_trans, x=json)
         raw = dumps(xformed, check_circular=False, ensure_ascii=False, indent=4)
         path.write_text(raw)
+        print(path, line, end="")
 
 
 main()
