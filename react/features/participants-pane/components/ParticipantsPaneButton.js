@@ -14,11 +14,6 @@ type Props = AbstractButtonProps & {
      * Whether or not the participants pane is open.
      */
     _isOpen: boolean,
-
-    /**
-     * External handler for click action.
-     */
-    handleClick: Function
 };
 
 /**

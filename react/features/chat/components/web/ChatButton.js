@@ -18,11 +18,6 @@ type Props = AbstractButtonProps & {
      * Whether or not the chat feature is currently displayed.
      */
      _chatOpen: boolean,
-
-    /**
-     * External handler for click action.
-     */
-    handleClick: Function
 };
 
 /**

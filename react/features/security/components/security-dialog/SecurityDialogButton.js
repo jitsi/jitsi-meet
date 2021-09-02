@@ -48,8 +48,16 @@ class SecurityDialogButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        sendAnalytics(createToolbarEvent('toggle.security', { enable: !this.props._locked }));
-        this.props.dispatch(toggleSecurityDialog());
+        const { _locked, dispatch, handleClick } = this.props;
+
+        if (handleClick) {
+            handleClick();
+
+            return;
+        }
+
+        sendAnalytics(createToolbarEvent('toggle.security', { enable: !_locked }));
+        dispatch(toggleSecurityDialog());
     }
 
     /**

@@ -11,11 +11,6 @@ type Props = AbstractButtonProps & {
    * Whether or not the app is currently in full screen.
    */
    _fullScreen: boolean,
-
-    /**
-     * External handler for click action.
-     */
-    handleClick: Function
 };
 
 /**

@@ -21,6 +21,11 @@ export type Props = {
     disabledStyles: ?Styles,
 
     /**
+     * External handler for click action.
+     */
+     handleClick?: Function,
+
+    /**
      * Whether to show the label or not.
      */
     showLabel: boolean,

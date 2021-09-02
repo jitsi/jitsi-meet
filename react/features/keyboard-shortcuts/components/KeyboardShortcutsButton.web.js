@@ -34,7 +34,13 @@ class KeyboardShortcutsButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { dispatch } = this.props;
+        const { dispatch, handleClick } = this.props;
+
+        if (handleClick) {
+            handleClick();
+
+            return;
+        }
 
         sendAnalytics(createToolbarEvent('shortcuts'));
         dispatch(openKeyboardShortcutsDialog());
