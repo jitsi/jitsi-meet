@@ -8,7 +8,7 @@ from re import RegexFlag, compile
 from sys import stderr
 from typing import Any, Callable, Mapping, Sequence
 
-_TOP_LV = Path(__file__).resolve().parent
+_TOP_LV = Path(__file__).resolve().parent.parent
 _LANG = _TOP_LV / "lang"
 
 
