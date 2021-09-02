@@ -88,7 +88,7 @@ MiddlewareRegistry.register(store => next => action => {
         if (oldRole && oldRole !== role && role === PARTICIPANT_ROLE.MODERATOR) {
 
             store.dispatch(showNotification({
-                titleKey: 'notify.granted'
+                titleKey: 'notify.moderator'
             },
             NOTIFICATION_TIMEOUT));
         }
