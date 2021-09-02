@@ -65,7 +65,7 @@ MiddlewareRegistry.register(store => next => action => {
         return next(action);
     }
     case PARTICIPANT_UPDATED: {
-        if (typeof interfaceConfig === 'undefined' || interfaceConfig.DISABLE_FOCUS_INDICATOR) {
+        if (typeof interfaceConfig === 'undefined') {
             // Do not show the notification for mobile and also when the focus indicator is disabled.
             return next(action);
         }
