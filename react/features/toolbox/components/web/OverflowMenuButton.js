@@ -36,9 +36,9 @@ type Props = {
     isOpen: boolean,
 
     /**
-     * Callback to change the visibility of the overflow menu.
+     * Callback invoked to change the visibility of the overflow menu.
      */
-    onVisibilityChange: Function,
+    onToggle: Function,
 
     /**
      * Whether to display the OverflowMenu as a drawer.
@@ -117,7 +117,7 @@ class OverflowMenuButton extends Component<Props> {
                             <DrawerPortal>
                                 <Drawer
                                     isOpen = { isOpen }
-                                    onClose = { this._onCloseDialog }>
+                                    onClose = { this._onToggleDialogVisibility }>
                                     {children}
                                     {showMobileReactions && <ReactionsMenu overflowMenu = { true } />}
                                 </Drawer>
@@ -134,7 +134,7 @@ class OverflowMenuButton extends Component<Props> {
                         <InlineDialog
                             content = { children }
                             isOpen = { isOpen }
-                            onClose = { this._onCloseDialog }
+                            onClose = { this._onToggleDialogVisibility }
                             placement = 'top-end'>
                             {this._renderToolbarButton()}
                         </InlineDialog>
@@ -178,7 +178,7 @@ class OverflowMenuButton extends Component<Props> {
      * @returns {void}
      */
     _onCloseDialog() {
-        this.props.onVisibilityChange(false);
+        this.props.onToggle(false);
     }
 
     _onToggleDialogVisibility: () => void;
@@ -193,7 +193,7 @@ class OverflowMenuButton extends Component<Props> {
     _onToggleDialogVisibility() {
         sendAnalytics(createToolbarEvent('overflow'));
 
-        this.props.onVisibilityChange(!this.props.isOpen);
+        this.props.onToggle(!this.props.isOpen);
     }
 }
 
@@ -205,10 +205,7 @@ class OverflowMenuButton extends Component<Props> {
  * @returns {Props}
  */
 function mapStateToProps(state) {
-    const { overflowDrawer } = state['features/toolbox'];
-
     return {
-        overflowDrawer,
         reactionsQueue: getReactionsQueue(state)
     };
 }

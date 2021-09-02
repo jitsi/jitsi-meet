@@ -1,5 +1,5 @@
 // @flow
-
+import clsx from 'clsx';
 import React, { Component, Fragment } from 'react';
 
 import keyboardShortcut from '../../../../../modules/keyboardshortcut/keyboardshortcut';
@@ -70,6 +70,7 @@ import { VideoBackgroundButton } from '../../../virtual-background';
 import { toggleBackgroundEffect } from '../../../virtual-background/actions';
 import { VIRTUAL_BACKGROUND_TYPE } from '../../../virtual-background/constants';
 import {
+    hideToolbox,
     setFullScreen,
     setOverflowMenuVisible,
     setToolbarHovered,
@@ -176,6 +177,11 @@ type Props = {
     _overflowMenuVisible: boolean,
 
     /**
+     * Whether or not the drawer is visible.
+     */
+    _overflowDrawer: boolean,
+
+    /**
      * Number of participants in the conference.
      */
     _participantCount: number,
@@ -269,6 +275,7 @@ class Toolbox extends Component<Props, State> {
         // Bind event handlers so they are only bound once per instance.
         this._onMouseOut = this._onMouseOut.bind(this);
         this._onMouseOver = this._onMouseOver.bind(this);
+        this._onOverflowMenuToggle = this._onOverflowMenuToggle.bind(this);
         this._onSetOverflowVisible = this._onSetOverflowVisible.bind(this);
         this._onTabIn = this._onTabIn.bind(this);
 
@@ -451,8 +458,12 @@ class Toolbox extends Component<Props, State> {
      */
     render() {
         const { _chatOpen, _visible, _toolbarButtons } = this.props;
-        const rootClassNames = `new-toolbox ${_visible ? 'visible' : ''} ${
-            _toolbarButtons.length ? '' : 'no-buttons'} ${_chatOpen ? 'shift-right' : ''}`;
+        const rootClassNames = clsx(
+            'new-toolbox',
+            _visible && 'visible',
+            !_toolbarButtons.length && 'no-buttons',
+            _chatOpen && 'shift-right'
+        );
 
         return (
             <div
@@ -895,6 +906,23 @@ class Toolbox extends Component<Props, State> {
         this.props.dispatch(setToolbarHovered(true));
     }
 
+    _onOverflowMenuToggle: (boolean) => void;
+
+    /**
+     * Toggles overflow menu.
+     *
+     * @private
+     * @param {boolean} visible - If the overflow menu should become visible or not.
+     * @returns {void}
+     */
+    _onOverflowMenuToggle(visible) {
+        const { _overflowDrawer, dispatch } = this.props;
+
+        this._onSetOverflowVisible(visible);
+        if (!visible && _overflowDrawer) {
+            dispatch(hideToolbox(true));
+        }
+    }
 
     _onSetOverflowVisible: (boolean) => void;
 
@@ -1221,6 +1249,7 @@ class Toolbox extends Component<Props, State> {
         const {
             _isMobile,
             _overflowMenuVisible,
+            _overflowDrawer,
             _toolbarButtons,
             t,
             _reactionsEnabled
@@ -1252,7 +1281,8 @@ class Toolbox extends Component<Props, State> {
                                 ariaControls = 'overflow-menu'
                                 isOpen = { _overflowMenuVisible }
                                 key = 'overflow-menu'
-                                onVisibilityChange = { this._onSetOverflowVisible }
+                                onToggle = { this._onOverflowMenuToggle }
+                                overflowDrawer = { _overflowDrawer }
                                 showMobileReactions = {
                                     _reactionsEnabled && overflowMenuButtons.find(({ key }) => key === 'raisehand')
                                 }>
@@ -1350,6 +1380,7 @@ function _mapStateToProps(state, ownProps) {
         _localParticipantID: localParticipant?.id,
         _localVideo: localVideo,
         _overflowMenuVisible: overflowMenuVisible,
+        _overflowDrawer: state['features/toolbox'].overflowDrawer,
         _participantCount: getParticipantCount(state),
         _participantsPaneOpen: getParticipantsPaneOpen(state),
         _raisedHand: localParticipant?.raisedHand,
