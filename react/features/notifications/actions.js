@@ -141,8 +141,7 @@ const _throttledNotifyParticipantConnected = throttle((dispatch: Dispatch<any>) 
     if (joinedParticipantsCount >= 3) {
         notificationProps = {
             titleArguments: {
-                name: joinedParticipantsNames[0],
-                count: joinedParticipantsCount - 1
+                name: joinedParticipantsNames[0]
             },
             titleKey: 'notify.connectedThreePlusMembers'
         };

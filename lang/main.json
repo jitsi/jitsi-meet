@@ -543,7 +543,7 @@
     "me": "me",
     "notify": {
         "connectedOneMember": "{{name}} joined the meeting",
-        "connectedThreePlusMembers": "{{name}} and {{count}} others joined the meeting",
+        "connectedThreePlusMembers": "{{name}} and many others joined the meeting",
         "connectedTwoMembers": "{{first}} and {{second}} joined the meeting",
         "disconnected": "disconnected",
         "focus": "Conference focus",
