@@ -40,7 +40,7 @@ export default class JitsiStreamBackgroundEffect {
      *
      * @class
      * @param {Object} model - Meet model.
-     * @param {Object} options - Segmentation dragAndDropOptions.
+     * @param {Object} options - Segmentation dimensions.
      */
     constructor(model: Object, options: Object) {
         this._options = options;
