@@ -25,9 +25,9 @@ class MuteEveryonesVideoDialog extends AbstractMuteEveryonesVideoDialog<Props, S
     _onToggleModeration() {
         this.setState(state => {
             return {
-                enableModeration: !state.enableModeration,
+                moderationEnabled: !state.moderationEnabled,
                 content: this.props.t(
-                    `dialog.muteEveryonesVideoDialog${state.enableModeration
+                    `dialog.muteEveryonesVideoDialog${state.moderationEnabled
                         ? ''
                         : 'ModerationOn'}`
                 )
@@ -50,7 +50,7 @@ class MuteEveryonesVideoDialog extends AbstractMuteEveryonesVideoDialog<Props, S
                 width = 'small'>
                 <div className = 'mute-dialog'>
                     {this.state.content}
-                    {this.props.exclude.length === 0 && this.props.showAdvancedModerationToggle && (
+                    {this.props.exclude.length === 0 && (
                         <>
                             <div className = 'separator-line' />
                             <div className = 'control-row'>
@@ -60,7 +60,7 @@ class MuteEveryonesVideoDialog extends AbstractMuteEveryonesVideoDialog<Props, S
                                 <Switch
                                     id = 'moderation-switch'
                                     onValueChange = { this._onToggleModeration }
-                                    value = { this.state.enableModeration } />
+                                    value = { !this.state.moderationEnabled } />
                             </div>
                         </>
                     )}

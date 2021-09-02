@@ -25,9 +25,9 @@ class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<Props, State> {
     _onToggleModeration() {
         this.setState(state => {
             return {
-                enableAudioModeration: !state.enableAudioModeration,
+                audioModerationEnabled: !state.audioModerationEnabled,
                 content: this.props.t(
-                    `dialog.muteEveryoneDialog${state.enableAudioModeration
+                    `dialog.muteEveryoneDialog${state.audioModerationEnabled
                         ? ''
                         : 'ModerationOn'}`
                 )
@@ -50,7 +50,7 @@ class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<Props, State> {
                 width = 'small'>
                 <div className = 'mute-dialog'>
                     { this.state.content }
-                    {this.props.exclude.length === 0 && this.props.showAdvancedModerationToggle && (
+                    {this.props.exclude.length === 0 && (
                         <>
                             <div className = 'separator-line' />
                             <div className = 'control-row'>
@@ -60,7 +60,7 @@ class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<Props, State> {
                                 <Switch
                                     id = 'moderation-switch'
                                     onValueChange = { this._onToggleModeration }
-                                    value = { this.state.enableAudioModeration } />
+                                    value = { !this.state.audioModerationEnabled } />
                             </div>
                         </>
                     )}
