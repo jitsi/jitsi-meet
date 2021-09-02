@@ -13,7 +13,6 @@ const models = {
     
 };
 
-//Bloomberg Modification (Roshan Pulapura)
 const segmentationDimensions = {
     model_general: {
         height: 256,
@@ -73,8 +72,7 @@ export async function createVirtualBackgroundEffect(virtualBackground: Object, d
     }
 
     const modelBufferOffset = tflite._getModelBufferMemoryOffset();
-    //const modelResponse = await fetch(wasmCheck.feature.simd ? models.model144 : models.model96);
-    const modelResponse = await fetch(models.model_landscape); //Bloomberg Modification (Roshan Pulapura)
+    const modelResponse = await fetch(models.model_landscape); 
 
     if (!modelResponse.ok) {
         throw new Error('Failed to download tflite model!');
@@ -87,10 +85,9 @@ export async function createVirtualBackgroundEffect(virtualBackground: Object, d
     tflite._loadModel(model.byteLength);
 
     const options = {
-        //...wasmCheck.feature.simd ? segmentationDimensions.model144 : segmentationDimensions.model96,
         ...segmentationDimensions.model_landscape,
         virtualBackground
-    }; //Bloomberg Modification (Roshan Pulapura)
+    }; 
 
 
     
