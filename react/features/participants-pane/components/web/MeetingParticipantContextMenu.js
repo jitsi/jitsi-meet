@@ -411,7 +411,7 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
                         <ContextMenuItemGroup>
                             <>
                                 {
-                                    !_isParticipantAudioMuted
+                                    !_isParticipantAudioMuted && overflowDrawer
                                     && <ContextMenuItem onClick = { muteAudio(_participant) }>
                                         <ContextMenuIcon src = { IconMicDisabled } />
                                         <span>{t('dialog.muteParticipantButton')}</span>
