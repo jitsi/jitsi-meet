@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 from collections.abc import ByteString
 from json import dumps, loads
 from os import linesep
@@ -45,6 +46,11 @@ def main() -> None:
         raw = dumps(xformed, check_circular=False, ensure_ascii=False, indent=4)
         path.write_text(raw)
         print(path, line, end="", file=stderr)
+
+    for path in _TOP_LV.glob("*.html"):
+        html = path.read_text()
+        html = _simple_trans(html)
+        path.write_text(html)
 
 
 main()
