@@ -2,7 +2,6 @@
 
 from collections.abc import ByteString
 from json import dumps, loads
-from json.decoder import JSONDecodeError
 from pathlib import Path
 from re import RegexFlag, compile
 from sys import stderr
@@ -38,14 +37,10 @@ def _map(fn: Callable[[Any], Any], x: Any) -> Any:
 def main() -> None:
     for path in _LANG.glob("*.json"):
         raw = path.read_text()
-        try:
-            json = loads(raw)
-        except JSONDecodeError:
-            print(path, file=stderr)
-        else:
-            xformed = _map(_simple_trans, x=json)
-            raw = dumps(xformed, check_circular=False, ensure_ascii=False, indent=4)
-            path.write_text(raw)
+        json = loads(raw)
+        xformed = _map(_simple_trans, x=json)
+        raw = dumps(xformed, check_circular=False, ensure_ascii=False, indent=4)
+        path.write_text(raw)
 
 
 main()
