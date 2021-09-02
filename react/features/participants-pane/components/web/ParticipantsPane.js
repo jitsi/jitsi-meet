@@ -160,7 +160,7 @@ class ParticipantsPane extends Component<Props, State> {
                                     <FooterEllipsisButton
                                         id = 'participants-pane-context-menu'
                                         onClick = { this._onToggleContext } />
-                                    {this.state.contextOpen
+                                    {this.state.contextOpen && !_overflowDrawer
                                         && <FooterContextMenu onMouseLeave = { this._onToggleContext } />}
                                 </FooterEllipsisContainer>
                             </Footer>
