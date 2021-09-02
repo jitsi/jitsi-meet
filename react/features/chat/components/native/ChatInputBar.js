@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Platform, TextInput, TouchableOpacity, View } from 'react-native';
+import { Platform, TextInput, TouchableOpacity, View, Keyboard } from 'react-native';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconChatSend } from '../../../base/icons';
@@ -150,7 +150,7 @@ class ChatInputBar extends Component<Props, State> {
      */
     _onSubmit() {
         const message = this.state.message.trim();
-
+        Keyboard.dismiss();
         message && this.props.onSend(message);
         this.setState({
             message: '',
