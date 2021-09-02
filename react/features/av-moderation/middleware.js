@@ -166,7 +166,6 @@ StateListenerRegistry.register(
                 if (mediaType === MEDIA_TYPE.VIDEO) {
                     dispatch(showNotification({
                         titleKey: 'notify.hostAskedUnmute',
-                        descriptionKey: 'notify.allowedUnmute',
                         sticky: true,
                         customActionNameKey: 'notify.unmute',
                         customActionHandler: () => dispatch(muteLocal(false, MEDIA_TYPE.AUDIO))
