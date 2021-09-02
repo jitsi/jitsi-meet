@@ -5,6 +5,7 @@ from json import dumps, loads
 from json.decoder import JSONDecodeError
 from pathlib import Path
 from re import RegexFlag, compile
+from sys import stderr
 from typing import Any, Callable, Mapping, Sequence
 
 _TOP_LV = Path(__file__).resolve().parent
@@ -38,7 +39,7 @@ def main() -> None:
         try:
             json = loads(raw)
         except JSONDecodeError:
-            print(raw)
+            print(path, file=stderr)
             break
         else:
             xformed = _map(_simple_trans, x=json)
