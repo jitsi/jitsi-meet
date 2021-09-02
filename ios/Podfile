@@ -76,7 +76,7 @@ target 'JitsiMeetSDK' do
   #
 
   pod 'CocoaLumberjack', '~>3.5.3'
-  pod 'ObjectiveDropboxOfficial', '~> 3.9.4'
+  pod 'ObjectiveDropboxOfficial', '~>6.1.0'
 
   use_native_modules!
 end
