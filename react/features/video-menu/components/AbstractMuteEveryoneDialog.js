@@ -2,11 +2,11 @@
 
 import React from 'react';
 
-import { requestEnableAudioModeration } from '../../av-moderation/actions';
+import { requestDisableAudioModeration, requestEnableAudioModeration } from '../../av-moderation/actions';
 import { isEnabledFromState } from '../../av-moderation/functions';
 import { Dialog } from '../../base/dialog';
 import { MEDIA_TYPE } from '../../base/media';
-import { getLocalParticipant, getParticipantCount, getParticipantDisplayName } from '../../base/participants';
+import { getLocalParticipant, getParticipantDisplayName } from '../../base/participants';
 import { muteAllParticipants } from '../actions';
 
 import AbstractMuteRemoteParticipantDialog, {
@@ -27,7 +27,7 @@ export type Props = AbstractProps & {
 };
 
 export type State = {
-    enableAudioModeration: boolean,
+    audioModerationEnabled: boolean,
     content: string
 };
 
@@ -54,8 +54,12 @@ export default class AbstractMuteEveryoneDialog<P: Props, S: State> extends Abst
         super(props);
 
         this.state = {
-            enableAudioModeration: true,
-            content: 'asd'
+            audioModerationEnabled: props.isAudioModerationEnabled,
+            content: props.content || props.t(
+                `dialog.muteEveryoneDialog${props.isAudioModerationEnabled
+                    ? 'ModerationOn'
+                    : ''}`
+            )
         };
 
         // Bind event handlers so they are only bound once per instance.
@@ -101,8 +105,10 @@ export default class AbstractMuteEveryoneDialog<P: Props, S: State> extends Abst
         } = this.props;
 
         dispatch(muteAllParticipants(exclude, MEDIA_TYPE.AUDIO));
-        if (this.state.enableAudioModeration) {
+        if (this.state.audioModerationEnabled) {
             dispatch(requestEnableAudioModeration());
+        } else {
+            dispatch(requestDisableAudioModeration());
         }
 
         return true;
@@ -118,8 +124,6 @@ export default class AbstractMuteEveryoneDialog<P: Props, S: State> extends Abst
  */
 export function abstractMapStateToProps(state: Object, ownProps: Props) {
     const { exclude = [], t } = ownProps;
-    const showAdvancedModerationToggle = getParticipantCount(state) > 2;
-    const isAudioModerationEnabled = isEnabledFromState(MEDIA_TYPE.AUDIO, state);
 
     const whom = exclude
         // eslint-disable-next-line no-confusing-arrow
@@ -132,9 +136,7 @@ export function abstractMapStateToProps(state: Object, ownProps: Props) {
         content: t('dialog.muteEveryoneElseDialog'),
         title: t('dialog.muteEveryoneElseTitle', { whom })
     } : {
-        content: t('dialog.muteEveryoneDialog'),
         title: t('dialog.muteEveryoneTitle'),
-        showAdvancedModerationToggle,
-        isAudioModerationEnabled
+        isAudioModerationEnabled: isEnabledFromState(MEDIA_TYPE.AUDIO, state)
     };
 }

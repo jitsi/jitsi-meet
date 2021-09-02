@@ -2,11 +2,11 @@
 
 import React from 'react';
 
-import { requestEnableVideoModeration } from '../../av-moderation/actions';
+import { requestDisableVideoModeration, requestEnableVideoModeration } from '../../av-moderation/actions';
 import { isEnabledFromState } from '../../av-moderation/functions';
 import { Dialog } from '../../base/dialog';
 import { MEDIA_TYPE } from '../../base/media';
-import { getLocalParticipant, getParticipantCount, getParticipantDisplayName } from '../../base/participants';
+import { getLocalParticipant, getParticipantDisplayName } from '../../base/participants';
 import { muteAllParticipants } from '../actions';
 
 import AbstractMuteRemoteParticipantsVideoDialog, {
@@ -27,7 +27,7 @@ export type Props = AbstractProps & {
 };
 
 export type State = {
-    enableModeration: boolean;
+    moderationEnabled: boolean;
     content: string;
 };
 
@@ -55,8 +55,12 @@ export default class AbstractMuteEveryonesVideoDialog<P: Props, S: State>
         super(props);
 
         this.state = {
-            enableModeration: props.isVideoModerationEnabled,
-            content: props.content
+            moderationEnabled: props.isVideoModerationEnabled,
+            content: props.content || props.t(
+                `dialog.muteEveryonesVideoDialog${props.isVideoModerationEnabled
+                    ? 'ModerationOn'
+                    : ''}`
+            )
         };
 
         // Bind event handlers so they are only bound once per instance.
@@ -102,8 +106,10 @@ export default class AbstractMuteEveryonesVideoDialog<P: Props, S: State>
         } = this.props;
 
         dispatch(muteAllParticipants(exclude, MEDIA_TYPE.VIDEO));
-        if (this.state.enableModeration) {
+        if (this.state.moderationEnabled) {
             dispatch(requestEnableVideoModeration());
+        } else {
+            dispatch(requestDisableVideoModeration());
         }
 
         return true;
@@ -119,7 +125,6 @@ export default class AbstractMuteEveryonesVideoDialog<P: Props, S: State>
  */
 export function abstractMapStateToProps(state: Object, ownProps: Props) {
     const { exclude = [], t } = ownProps;
-    const showAdvancedModerationToggle = getParticipantCount(state) > 2;
     const isVideoModerationEnabled = isEnabledFromState(MEDIA_TYPE.VIDEO, state);
 
     const whom = exclude
@@ -133,9 +138,7 @@ export function abstractMapStateToProps(state: Object, ownProps: Props) {
         content: t('dialog.muteEveryoneElsesVideoDialog'),
         title: t('dialog.muteEveryoneElsesVideoTitle', { whom })
     } : {
-        content: t('dialog.muteEveryonesVideoDialog'),
         title: t('dialog.muteEveryonesVideoTitle'),
-        showAdvancedModerationToggle,
         isVideoModerationEnabled
     };
 }
