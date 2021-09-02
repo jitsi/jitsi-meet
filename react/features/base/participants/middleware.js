@@ -542,8 +542,9 @@ function _raiseHandUpdated({ dispatch, getState }, conference, participantId, ne
             titleKey: 'notify.somebody',
             title: getParticipantDisplayName(state, participantId),
             descriptionKey: 'notify.raisedHand',
+            raiseHandNotification: true,
             ...action
-        }, NOTIFICATION_TIMEOUT));
+        }, NOTIFICATION_TIMEOUT * (shouldDisplayAllowAction ? 2 : 1)));
         dispatch(playSound(RAISE_HAND_SOUND_ID));
     }
 }

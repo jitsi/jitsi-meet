@@ -8,6 +8,7 @@ import { NOTIFICATIONS_ENABLED, getFeatureFlag } from '../base/flags';
 import {
     CLEAR_NOTIFICATIONS,
     HIDE_NOTIFICATION,
+    HIDE_RAISE_HAND_NOTIFICATIONS,
     SET_NOTIFICATIONS_ENABLED,
     SHOW_NOTIFICATION
 } from './actionTypes';
@@ -40,6 +41,19 @@ export function hideNotification(uid: string) {
     return {
         type: HIDE_NOTIFICATION,
         uid
+    };
+}
+
+/**
+ * Removes the raise hand notifications.
+ *
+ * @returns {{
+ *     type: HIDE_RAISE_HAND_NOTIFICATIONS
+ * }}
+ */
+export function hideRaiseHandNotifications() {
+    return {
+        type: HIDE_RAISE_HAND_NOTIFICATIONS
     };
 }
 

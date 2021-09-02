@@ -11,9 +11,11 @@ import {
     getLocalParticipant
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
+import { PARTICIPANTS_PANE_OPEN } from '../participants-pane/actionTypes';
 
 import {
     clearNotifications,
+    hideRaiseHandNotifications,
     showNotification,
     showParticipantJoinedNotification
 } from './actions';
@@ -90,6 +92,10 @@ MiddlewareRegistry.register(store => next => action => {
         }
 
         return next(action);
+    }
+    case PARTICIPANTS_PANE_OPEN: {
+        store.dispatch(hideRaiseHandNotifications());
+        break;
     }
     }
 
