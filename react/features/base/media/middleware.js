@@ -8,12 +8,15 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { APP_STATE_CHANGED } from '../../mobile/background';
+import { isForceMuted } from '../../participants-pane/functions';
 import { SET_AUDIO_ONLY, setAudioOnly } from '../audio-only';
 import { isRoomValid, SET_ROOM } from '../conference';
+import { getLocalParticipant } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 import { getPropertyValue } from '../settings';
 import { isLocalVideoTrackDesktop, setTrackMuted, TRACK_ADDED } from '../tracks';
 
+import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from './actionTypes';
 import { setAudioMuted, setCameraFacingMode, setVideoMuted } from './actions';
 import {
     CAMERA_FACING_MODE,
@@ -54,6 +57,26 @@ MiddlewareRegistry.register(store => next => action => {
             && _syncTrackMutedState(store, track);
 
         return result;
+    }
+
+    case SET_AUDIO_MUTED: {
+        const state = store.getState();
+        const participant = getLocalParticipant(state);
+
+        if (!action.muted && isForceMuted(participant, MEDIA_TYPE.AUDIO, state)) {
+            return;
+        }
+        break;
+    }
+
+    case SET_VIDEO_MUTED: {
+        const state = store.getState();
+        const participant = getLocalParticipant(state);
+
+        if (!action.muted && isForceMuted(participant, MEDIA_TYPE.VIDEO, state)) {
+            return;
+        }
+        break;
     }
     }
 
