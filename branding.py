@@ -40,7 +40,6 @@ def main() -> None:
             json = loads(raw)
         except JSONDecodeError:
             print(path, file=stderr)
-            break
         else:
             xformed = _map(_simple_trans, x=json)
             raw = dumps(xformed, check_circular=False, ensure_ascii=False, indent=2)
