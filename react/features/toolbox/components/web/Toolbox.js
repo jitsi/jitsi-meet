@@ -231,6 +231,11 @@ type Props = {
     dispatch: Function,
 
     /**
+     * If the dominant speaker name should be displayed or not.
+     */
+    showDominantSpeakerName?: boolean,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function,
@@ -239,6 +244,7 @@ type Props = {
      * Explicitly passed array with the buttons which this Toolbox should display.
      */
     toolbarButtons: Array<string>,
+
 };
 
 declare var APP: Object;
@@ -1222,6 +1228,7 @@ class Toolbox extends Component<Props, State> {
             _isMobile,
             _overflowMenuVisible,
             _toolbarButtons,
+            showDominantSpeakerName,
             t,
             _reactionsEnabled
         } = this.props;
@@ -1240,7 +1247,9 @@ class Toolbox extends Component<Props, State> {
                         onMouseOut: this._onMouseOut,
                         onMouseOver: this._onMouseOver
                     }) }>
-                    <DominantSpeakerName />
+
+                    { showDominantSpeakerName && <DominantSpeakerName /> }
+
                     <div className = 'toolbox-content-items'>
                         {mainMenuButtons.map(({ Content, key, ...rest }) => Content !== Separator && (
                             <Content
