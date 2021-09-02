@@ -5,7 +5,6 @@ from os import linesep
 from pathlib import Path
 from re import RegexFlag, compile
 from shutil import get_terminal_size
-from sys import stderr
 from typing import Any, Callable, Mapping, Sequence
 
 _TOP_LV = Path(__file__).resolve().parent.parent
