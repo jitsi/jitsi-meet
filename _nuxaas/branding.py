@@ -5,6 +5,7 @@ from os import linesep
 from pathlib import Path
 from re import RegexFlag, compile
 from shutil import get_terminal_size
+from sys import stderr
 from typing import Any, Callable, Mapping, Sequence
 
 _TOP_LV = Path(__file__).resolve().parent.parent
@@ -43,7 +44,7 @@ def main() -> None:
         xformed = _map(_simple_trans, x=json)
         raw = dumps(xformed, check_circular=False, ensure_ascii=False, indent=4)
         path.write_text(raw)
-        print(path, line, end="")
+        print(path, line, end="", file=stderr)
 
 
 main()
