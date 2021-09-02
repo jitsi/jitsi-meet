@@ -8,16 +8,18 @@ import JitsiStreamBackgroundEffect from './JitsiStreamBackgroundEffect';
 import createTFLiteModule from './vendor/tflite/tflite';
 import createTFLiteSIMDModule from './vendor/tflite/tflite-simd';
 const models = {
-    model96: 'libs/segm_lite_v681.tflite',
-    model144: 'libs/segm_full_v679.tflite'
+    model_general: 'libs/selfie_segmentation.tflite',
+    model_landscape: 'libs/selfie_segmentation_landscape.tflite'
+    
 };
 
+//Bloomberg Modification (Roshan Pulapura)
 const segmentationDimensions = {
-    model96: {
-        height: 96,
-        width: 160
+    model_general: {
+        height: 256,
+        width: 256
     },
-    model144: {
+    model_landscape: {
         height: 144,
         width: 256
     }
@@ -71,7 +73,8 @@ export async function createVirtualBackgroundEffect(virtualBackground: Object, d
     }
 
     const modelBufferOffset = tflite._getModelBufferMemoryOffset();
-    const modelResponse = await fetch(wasmCheck.feature.simd ? models.model144 : models.model96);
+    //const modelResponse = await fetch(wasmCheck.feature.simd ? models.model144 : models.model96);
+    const modelResponse = await fetch(models.model_landscape); //Bloomberg Modification (Roshan Pulapura)
 
     if (!modelResponse.ok) {
         throw new Error('Failed to download tflite model!');
@@ -84,9 +87,13 @@ export async function createVirtualBackgroundEffect(virtualBackground: Object, d
     tflite._loadModel(model.byteLength);
 
     const options = {
-        ...wasmCheck.feature.simd ? segmentationDimensions.model144 : segmentationDimensions.model96,
+        //...wasmCheck.feature.simd ? segmentationDimensions.model144 : segmentationDimensions.model96,
+        ...segmentationDimensions.model_landscape,
         virtualBackground
-    };
+    }; //Bloomberg Modification (Roshan Pulapura)
+
+
+    
 
     return new JitsiStreamBackgroundEffect(tflite, options);
 }
