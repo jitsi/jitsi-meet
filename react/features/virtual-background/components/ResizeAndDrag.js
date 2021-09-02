@@ -50,7 +50,7 @@ function ResizeAndDrag({ _currentCameraDeviceId, dispatch, updateTransparent }: 
         };
 
         await dispatch(toggleBackgroundEffect(transparentOptions, jitsiTrack));
-        if (dragAndResizeRef.current && jitsiTrack) {
+        if (dragAndResizeRef?.current && jitsiTrack) {
             const stage = new Konva.Stage({
                 container: dragAndResizeRef.current,
                 width: containerWidth,
@@ -73,6 +73,12 @@ function ResizeAndDrag({ _currentCameraDeviceId, dispatch, updateTransparent }: 
 
             video.srcObject = await jitsiTrack.stream;
 
+            const desktopImage = new Konva.Image({
+                image: desktopVideo,
+                scaleX: 0.5,
+                scaleY: 0.5
+            });
+
             const image = new Konva.Image({
                 image: video,
                 draggable: true,
@@ -80,30 +86,20 @@ function ResizeAndDrag({ _currentCameraDeviceId, dispatch, updateTransparent }: 
                 y: stage.height() - DESKTOP_SHARE_DIMENSIONS.RECTANGLE_HEIGHT
             });
 
-            const desktopImage = new Konva.Image({
-                image: desktopVideo,
-                x: stage.width() / 2,
-                y: (stage.height() / 2) - (containerHeight / 2),
-                scaleX: 0.5,
-                scaleY: 0.5
-            });
-
             layer.add(desktopImage);
 
             desktopVideo.onresize = () => {
                 desktopImage.width(desktopVideo.videoWidth);
                 desktopImage.height(desktopVideo.videoHeight + (containerHeight / 2));
+
                 const desktopImageDimensions = desktopImage.getClientRect({ skipTransform: false });
 
                 stage.height(desktopImageDimensions.height);
+                stage.width(desktopImageDimensions.width);
+                dragAndResizeRef.current.style.width = `${desktopImageDimensions.width}px`;
 
-                // We need to scale the person image on desktop video resize.
-                const scale = desktopImageDimensions.width / dragAndResizeRef.current.offsetWidth;
-
-                image.scale({
-                    x: scale,
-                    y: scale
-                });
+                // Be sure that sizes of human video are updated after desktop video resize.
+                updateTransformValues(image, url, jitsiTrack);
             };
 
             desktopVideo.addEventListener('loadedmetadata', () => {
@@ -148,11 +144,11 @@ function ResizeAndDrag({ _currentCameraDeviceId, dispatch, updateTransparent }: 
             personTr.nodes([ image ]);
 
             image.on('transformstart', () => {
-                updateTransformValues();
+                updateTransformValues(image, url, jitsiTrack);
             });
 
             image.on('dragmove', () => {
-                updateTransformValues();
+                updateTransformValues(image, url, jitsiTrack);
             });
 
             // Change cursor style on drag action.
@@ -182,25 +178,28 @@ function ResizeAndDrag({ _currentCameraDeviceId, dispatch, updateTransparent }: 
                 }
                 window.requestAnimationFrame(step);
             });
+        }
 
-            /**
-            * This function updates human and desktop videos size values after resizing or repositioning actions.
-            *
-            * @returns {void}
-            */
-            function updateTransformValues() {
-                const dimensions = {
-                    x: image.x() + dragAndResizeRef.current.getBoundingClientRect().left,
-                    y: image.y() + dragAndResizeRef.current.getBoundingClientRect().top,
-                    width: Math.max(5, image.width() * image.scaleX()),
-                    height: Math.max(5, image.height() * image.scaleY()),
-                    scaleX: image.scaleX(),
-                    scaleY: image.scaleY(),
-                    url
-                };
+        /**
+        * This function updates human and desktop videos size values after resizing or repositioning actions.
+        *
+        * @param {HTMLCanvasElement} image  - Person image.
+        * @param {Object} url - Local video track.
+        * @param {Object} track - Local desktop track.
+        * @returns {void}
+        */
+        function updateTransformValues(image, url, track) {
+            const personImageCoordonates = image.getClientRect({ skipTransform: false });
+            const dragAndDropOptions = {
+                x: (personImageCoordonates.x - 0) / dragAndResizeRef?.current.getBoundingClientRect().width,
+                y: (personImageCoordonates.y - 0) / dragAndResizeRef?.current.getBoundingClientRect().height,
+                width: Math.max(5, image.width() * image.scaleX()) * 1.5,
+                height: Math.max(5, image.height() * image.scaleY()) * 1.5,
+                url,
+                jitsiTrack: track
+            };
 
-                updateTransparent(dimensions);
-            }
+            updateTransparent(dragAndDropOptions);
         }
     };
 

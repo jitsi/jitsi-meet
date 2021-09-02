@@ -40,7 +40,7 @@ export default class JitsiStreamBackgroundEffect {
      *
      * @class
      * @param {Object} model - Meet model.
-     * @param {Object} options - Segmentation dimensions.
+     * @param {Object} options - Segmentation dragAndDropOptions.
      */
     constructor(model: Object, options: Object) {
         this._options = options;
@@ -55,8 +55,8 @@ export default class JitsiStreamBackgroundEffect {
             this._virtualVideo.autoplay = true;
             this._virtualVideo.srcObject = this._options?.virtualBackground?.virtualSource?.stream;
         }
-        if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT && this._options?.virtualBackground?.dimensions?.x) {
-            console.log(this._options.virtualBackground)
+        if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT
+              && this._options?.virtualBackground?.dragAndDropOptions?.x) {
             this._virtualVideo = document.createElement('video');
             this._virtualVideo.autoplay = true;
             this._virtualVideo.srcObject = this._options?.virtualBackground?.virtualSource?.stream;
@@ -105,13 +105,15 @@ export default class JitsiStreamBackgroundEffect {
 
         // Smooth out the edges.
         this._outputCanvasCtx.filter = backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE ? 'blur(4px)' : 'blur(8px)';
-        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE || backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT) {
+        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE
+            || backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT
+            || backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT_PREVIEW) {
             // Save current context before applying transformations.
-            this._outputCanvasCtx.save();
+            // this._outputCanvasCtx.save();
 
-            // Flip the canvas and prevent mirror behaviour.
-            this._outputCanvasCtx.scale(-1, 1);
-            this._outputCanvasCtx.translate(-this._outputCanvasElement.width, 0);
+            // // Flip the canvas and prevent mirror behaviour.
+            // this._outputCanvasCtx.scale(-1, 1);
+            // this._outputCanvasCtx.translate(-this._outputCanvasElement.width, 0);
         }
 
         this._outputCanvasCtx.drawImage(
@@ -120,43 +122,58 @@ export default class JitsiStreamBackgroundEffect {
             0,
             this._options.width,
             this._options.height,
-            backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT && this._options?.virtualBackground?.dimensions?.x ? this._options?.virtualBackground?.dimensions?.x : 0,
-            backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT && this._options?.virtualBackground?.dimensions?.y ? this._options?.virtualBackground?.dimensions?.y : 0,
-            backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT && this._options?.virtualBackground?.dimensions?.width ? this._options?.virtualBackground?.dimensions?.width : this._inputVideoElement.width,
-            backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT && this._options?.virtualBackground?.dimensions?.height ? this._options?.virtualBackground?.dimensions?.height : this._inputVideoElement.height
+            backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT
+              && this._options?.virtualBackground?.dragAndDropOptions?.x
+                ? this._options?.virtualBackground?.dragAndDropOptions?.x * this._outputCanvasElement.width : 0,
+            backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT
+              && this._options?.virtualBackground?.dragAndDropOptions?.y
+                ? this._options?.virtualBackground?.dragAndDropOptions?.y * this._outputCanvasElement.height : 0,
+            backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT
+              && this._options?.virtualBackground?.dragAndDropOptions?.width
+                ? this._options?.virtualBackground?.dragAndDropOptions?.width : this._inputVideoElement.width,
+            backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT
+              && this._options?.virtualBackground?.dragAndDropOptions?.height
+                ? this._options?.virtualBackground?.dragAndDropOptions?.height : this._inputVideoElement.height
         );
-        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE || backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT) {
-            this._outputCanvasCtx.restore();
+        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE
+            || backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT
+            || backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT_PREVIEW) {
+            // this._outputCanvasCtx.restore();
         }
         this._outputCanvasCtx.globalCompositeOperation = 'source-in';
         this._outputCanvasCtx.filter = 'none';
 
         // Draw the foreground video.
-        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE || backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT) {
+        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE
+            || backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT
+            || backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT_PREVIEW) {
             // Save current context before applying transformations.
-            this._outputCanvasCtx.save();
+            // this._outputCanvasCtx.save();
 
-            // Flip the canvas and prevent mirror behaviour.
-            this._outputCanvasCtx.scale(-1, 1);
-            this._outputCanvasCtx.translate(-this._outputCanvasElement.width, 0);
+            // // Flip the canvas and prevent mirror behaviour.
+            // this._outputCanvasCtx.scale(-1, 1);
+            // this._outputCanvasCtx.translate(-this._outputCanvasElement.width, 0);
         }
-if(backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT){
-    this._outputCanvasCtx.drawImage(this._inputVideoElement,
-        0,
-        0,
-        this._outputCanvasElement.width,
-        this._outputCanvasElement.height,
-        this._options?.virtualBackground?.dimensions?.x,
-        this._options?.virtualBackground?.dimensions?.y,
-        this._options?.virtualBackground?.dimensions?.width,
-        this._options?.virtualBackground?.dimensions?.height
-        );
-} else {
-    this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
-}
-        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE || backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT) {
-            this._outputCanvasCtx.restore();
+        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT) {
+            this._outputCanvasCtx.drawImage(this._inputVideoElement,
+                0,
+                0,
+                this._outputCanvasElement.width,
+                this._outputCanvasElement.height,
+                this._options?.virtualBackground?.dragAndDropOptions?.x * this._outputCanvasElement.width,
+                this._options?.virtualBackground?.dragAndDropOptions?.y * this._outputCanvasElement.height,
+                this._options?.virtualBackground?.dragAndDropOptions?.width,
+                this._options?.virtualBackground?.dragAndDropOptions?.height
+            );
+        } else {
+            this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
         }
+
+        // if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE
+        //     || backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT
+        //     || backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT_PREVIEW) {
+        //     this._outputCanvasCtx.restore();
+        // }
 
         // Draw the background.
 
@@ -172,7 +189,8 @@ if(backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT){
             );
         } else if (backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT_PREVIEW) {
             this._outputCanvasCtx.globalAlpha = 0;
-        } else if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE || backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT) {
+        } else if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE
+            || backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT) {
             // Get the scale.
             const scale = Math.min(
                 this._outputCanvasElement.width / this._virtualVideo.videoWidth,

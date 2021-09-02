@@ -160,6 +160,13 @@ function VirtualBackground({
         }
     }, [ storedImages ]);
 
+    const destroyTemporaryTracks = () => {
+        if (options?.dragAndDropOptions?.jitsiTrack) {
+            // eslint-disable-next-line no-unused-expressions
+            options.dragAndDropOptions.jitsiTrack.dispose();
+        }
+    };
+
     const enableBlur = useCallback(async () => {
         setOptions({
             backgroundType: VIRTUAL_BACKGROUND_TYPE.BLUR,
@@ -333,15 +340,15 @@ function VirtualBackground({
     }, [ setUploadedImageBackground ]);
 
     const applyVirtualBackground = useCallback(async () => {
-        // console.log(options, _jitsiTrack);
-        // return;
         if (activeDesktopVideo) {
             await activeDesktopVideo.dispose();
         }
+        destroyTemporaryTracks();
         setLoading(true);
         await dispatch(toggleBackgroundEffect(options, _jitsiTrack));
         await setLoading(false);
-        if (_localFlipX && options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE || _localFlipX && options.backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT) {
+        if ((_localFlipX && options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE)
+            || (_localFlipX && options.backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT)) {
             dispatch(updateSettings({
                 localFlipX: !_localFlipX
             }));
@@ -366,15 +373,16 @@ function VirtualBackground({
             selectedThumbnail: initialVirtualBackground.selectedThumbnail,
             blurValue: initialVirtualBackground.blurValue
         });
+        destroyTemporaryTracks();
         dispatch(hideDialog());
     });
-    const updateTransparentOptions = useCallback(async dimensions => {
+    const updateTransparentOptions = useCallback(async dragAndDropOptions => {
         setOptions({
             backgroundType: VIRTUAL_BACKGROUND_TYPE.TRANSPARENT,
             enabled: true,
             selectedThumbnail: 'transparent',
-            dimensions,
-            url: dimensions.url
+            dragAndDropOptions,
+            url: dragAndDropOptions.url
         });
         logger.info('"Transparent" option setted for virtual background preview!');
 

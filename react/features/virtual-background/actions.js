@@ -53,7 +53,7 @@ export function setVirtualBackground(options: Object) {
         blurValue: options?.blurValue,
         backgroundType: options?.backgroundType,
         selectedThumbnail: options?.selectedThumbnail,
-        dimensions: options?.dimensions
+        dragAndDropOptions: options?.dragAndDropOptions
     };
 }
 
