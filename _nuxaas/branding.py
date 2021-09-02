@@ -44,7 +44,7 @@ def main() -> None:
             print(path, file=stderr)
         else:
             xformed = _map(_simple_trans, x=json)
-            raw = dumps(xformed, check_circular=False, ensure_ascii=False, indent=2)
+            raw = dumps(xformed, check_circular=False, ensure_ascii=False, indent=4)
             path.write_text(raw)
 
 
