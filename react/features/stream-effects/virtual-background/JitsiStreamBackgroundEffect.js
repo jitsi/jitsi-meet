@@ -105,15 +105,13 @@ export default class JitsiStreamBackgroundEffect {
 
         // Smooth out the edges.
         this._outputCanvasCtx.filter = backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE ? 'blur(4px)' : 'blur(8px)';
-        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE
-            || backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT
-            || backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT_PREVIEW) {
+        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
             // Save current context before applying transformations.
-            // this._outputCanvasCtx.save();
+            this._outputCanvasCtx.save();
 
-            // // Flip the canvas and prevent mirror behaviour.
-            // this._outputCanvasCtx.scale(-1, 1);
-            // this._outputCanvasCtx.translate(-this._outputCanvasElement.width, 0);
+            // Flip the canvas and prevent mirror behaviour.
+            this._outputCanvasCtx.scale(-1, 1);
+            this._outputCanvasCtx.translate(-this._outputCanvasElement.width, 0);
         }
 
         this._outputCanvasCtx.drawImage(
@@ -135,24 +133,20 @@ export default class JitsiStreamBackgroundEffect {
               && this._options?.virtualBackground?.dragAndDropOptions?.height
                 ? this._options?.virtualBackground?.dragAndDropOptions?.height : this._inputVideoElement.height
         );
-        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE
-            || backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT
-            || backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT_PREVIEW) {
-            // this._outputCanvasCtx.restore();
+        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
+            this._outputCanvasCtx.restore();
         }
         this._outputCanvasCtx.globalCompositeOperation = 'source-in';
         this._outputCanvasCtx.filter = 'none';
 
         // Draw the foreground video.
-        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE
-            || backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT
-            || backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT_PREVIEW) {
+        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
             // Save current context before applying transformations.
-            // this._outputCanvasCtx.save();
+            this._outputCanvasCtx.save();
 
-            // // Flip the canvas and prevent mirror behaviour.
-            // this._outputCanvasCtx.scale(-1, 1);
-            // this._outputCanvasCtx.translate(-this._outputCanvasElement.width, 0);
+            // Flip the canvas and prevent mirror behaviour.
+            this._outputCanvasCtx.scale(-1, 1);
+            this._outputCanvasCtx.translate(-this._outputCanvasElement.width, 0);
         }
         if (backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT) {
             this._outputCanvasCtx.drawImage(this._inputVideoElement,
@@ -169,11 +163,9 @@ export default class JitsiStreamBackgroundEffect {
             this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
         }
 
-        // if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE
-        //     || backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT
-        //     || backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT_PREVIEW) {
-        //     this._outputCanvasCtx.restore();
-        // }
+        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
+            this._outputCanvasCtx.restore();
+        }
 
         // Draw the background.
 
