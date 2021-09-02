@@ -22,8 +22,8 @@ import { toDataURL } from '../functions';
 import logger from '../logger';
 
 import UploadImageButton from './UploadImageButton';
-import VirtualBackgroundPreview from './VirtualBackgroundPreview';
 import ResizeAndDrag from './ResizeAndDrag';
+import VirtualBackgroundPreview from './VirtualBackgroundPreview';
 
 type Props = {
 
@@ -122,7 +122,11 @@ function VirtualBackground({
     initialOptions,
     t
 }: Props) {
+    const [ tempDesktopVideos, setTempDesktopVideos ] = useState([]);
+    const [ existingSharing, setExistingSharing ] = useState(null);
+    const [ selectedThumbnail, setSelectedThumbnail ] = useState(_selectedThumbnail);
     const [ previewIsLoaded, setPreviewIsLoaded ] = useState(false);
+    const [ dragAndDropOpt, setDragAndDropOpt ] = useState({});
     const [ options, setOptions ] = useState({ ...initialOptions });
     const localImages = jitsiLocalStorage.getItem('virtualBackgrounds');
     const [ storedImages, setStoredImages ] = useState<Array<Image>>((localImages && Bourne.parse(localImages)) || []);
@@ -161,18 +165,32 @@ function VirtualBackground({
     }, [ storedImages ]);
 
     const destroyTemporaryTracks = () => {
-        if (options?.dragAndDropOptions?.jitsiTrack) {
-            // eslint-disable-next-line no-unused-expressions
-            options.dragAndDropOptions.jitsiTrack.dispose();
+        for (let i = 0; i < tempDesktopVideos.length; i++) {
+            if (tempDesktopVideos[i]) {
+                tempDesktopVideos[i].dispose();
+            }
+        }
+
+        if (options.backgroundType !== VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM
+            && dragAndDropOpt.url) {
+            dragAndDropOpt.url.dispose();
+            dragAndDropOpt.jitsiTrack.dispose();
+        }
+        if (options.backgroundType !== VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM
+            && initialVirtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM) {
+            initialVirtualBackground.dragAndDropOptions.url.dispose();
+            initialVirtualBackground.dragAndDropOptions.jitsiTrack.dispose();
         }
     };
 
     const enableBlur = useCallback(async () => {
+        setSelectedThumbnail(VIRTUAL_BACKGROUND_TYPE.BLUR);
         setOptions({
             backgroundType: VIRTUAL_BACKGROUND_TYPE.BLUR,
             enabled: true,
             blurValue: 25,
-            selectedThumbnail: 'blur'
+            selectedThumbnail: 'blur',
+            dragAndDropOptions: dragAndDropOpt
         });
         logger.info('"Blur" option setted for virtual background preview!');
 
@@ -186,11 +204,13 @@ function VirtualBackground({
     }, [ enableBlur ]);
 
     const enableSlideBlur = useCallback(async () => {
+        setSelectedThumbnail('slight-blur');
         setOptions({
             backgroundType: VIRTUAL_BACKGROUND_TYPE.BLUR,
             enabled: true,
             blurValue: 8,
-            selectedThumbnail: 'slight-blur'
+            selectedThumbnail: 'slight-blur',
+            dragAndDropOptions: dragAndDropOpt
         });
         logger.info('"Slight-blur" option setted for virtual background preview!');
 
@@ -203,78 +223,26 @@ function VirtualBackground({
         }
     }, [ enableSlideBlur ]);
 
-    const shareTransparentDesktop = useCallback(() => {
-        setOptions({
-            backgroundType: VIRTUAL_BACKGROUND_TYPE.TRANSPARENT,
-            enabled: true,
-            selectedThumbnail: 'transparent'
-        });
+    const shareTransparentDesktop = useCallback(async () => {
+        dragAndDropOpt?.url && await setTempDesktopVideos(oldArray => [ ...oldArray, dragAndDropOpt.url ]);
+        if (options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM
+            || initialVirtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM) {
+
+            if (initialVirtualBackground?.virtualSource) {
+                await setExistingSharing(initialVirtualBackground);
+            } else {
+                await setExistingSharing(dragAndDropOpt);
+            }
+        }
+        setSelectedThumbnail('transparent-preview');
     });
 
-    const shareDesktop = useCallback(async () => {
-        let isCancelled = false, url;
-
-        try {
-            url = await createLocalTrack('desktop', '');
-        } catch (e) {
-            if (e.name === JitsiTrackErrors.SCREENSHARING_USER_CANCELED) {
-                isCancelled = true;
-            } else {
-                logger.error(e);
-            }
-        }
-
-        if (!url) {
-            if (!isCancelled) {
-                dispatch(showErrorNotification({
-                    titleKey: 'virtualBackground.desktopShareError'
-                }));
-                logger.error('Could not create desktop share as a virtual background!');
-            }
-
-            /**
-             * For electron createLocalTrack will open the {@code DesktopPicker} dialog and hide the
-             * {@code VirtualBackgroundDialog}. That's why we need to reopen the {@code VirtualBackgroundDialog}
-             * and restore the current state through {@code initialOptions} prop.
-             */
-            if (browser.isElectron()) {
-                dispatch(openDialog(VirtualBackgroundDialog, { initialOptions: options }));
-            }
-
-            return;
-        }
-
-        const newOptions = {
-            backgroundType: VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE,
-            enabled: true,
-            selectedThumbnail: 'desktop-share',
-            url
-        };
-
-        /**
-         * For electron createLocalTrack will open the {@code DesktopPicker} dialog and hide the
-         * {@code VirtualBackgroundDialog}. That's why we need to reopen the {@code VirtualBackgroundDialog}
-         * and force it to show desktop share virtual background through {@code initialOptions} prop.
-         */
-        if (browser.isElectron()) {
-            dispatch(openDialog(VirtualBackgroundDialog, { initialOptions: newOptions }));
-        } else {
-            setOptions(newOptions);
-            logger.info('"Desktop-share" option setted for virtual background preview!');
-        }
-    }, [ dispatch, options ]);
-
-    const shareDesktopKeyPress = useCallback(e => {
-        if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            shareDesktop();
-        }
-    }, [ shareDesktop ]);
-
     const removeBackground = useCallback(async () => {
+        setSelectedThumbnail('none');
         setOptions({
             enabled: false,
-            selectedThumbnail: 'none'
+            selectedThumbnail: 'none',
+            dragAndDropOptions: dragAndDropOpt
         });
         logger.info('"None" option setted for virtual background preview!');
 
@@ -296,8 +264,10 @@ function VirtualBackground({
                 backgroundType: 'image',
                 enabled: true,
                 url: image.src,
-                selectedThumbnail: image.id
+                selectedThumbnail: image.id,
+                dragAndDropOptions: dragAndDropOpt
             });
+            setSelectedThumbnail(image.id);
             logger.info('Uploaded image setted for virtual background preview!');
         }
     }, [ storedImages ]);
@@ -314,8 +284,10 @@ function VirtualBackground({
                     backgroundType: 'image',
                     enabled: true,
                     url,
-                    selectedThumbnail: image.id
+                    selectedThumbnail: image.id,
+                    dragAndDropOptions: dragAndDropOpt
                 });
+                setSelectedThumbnail(image.id);
                 logger.info('Image set for virtual background preview!');
             } catch (err) {
                 logger.error('Could not fetch virtual background image:', err);
@@ -371,12 +343,14 @@ function VirtualBackground({
             enabled: initialVirtualBackground.backgroundEffectEnabled,
             url: initialVirtualBackground.virtualSource,
             selectedThumbnail: initialVirtualBackground.selectedThumbnail,
-            blurValue: initialVirtualBackground.blurValue
+            blurValue: initialVirtualBackground.blurValue,
+            dragAndDropOptions: dragAndDropOpt
         });
         destroyTemporaryTracks();
         dispatch(hideDialog());
     });
     const updateTransparentOptions = useCallback(async dragAndDropOptions => {
+        await setDragAndDropOpt(dragAndDropOptions);
         setOptions({
             backgroundType: VIRTUAL_BACKGROUND_TYPE.TRANSPARENT,
             enabled: true,
@@ -385,6 +359,7 @@ function VirtualBackground({
             url: dragAndDropOptions.url
         });
         logger.info('"Transparent" option setted for virtual background preview!');
+        await setPreviewIsLoaded(true);
 
     }, []);
 
@@ -481,18 +456,17 @@ function VirtualBackground({
                             content = { t('virtualBackground.desktopShare') }
                             position = { 'top' }>
                             <div
-                                aria-checked = { _selectedThumbnail === 'transparent' }
+                                aria-checked = { selectedThumbnail === 'desktop-share-transform' }
                                 aria-label = { t('virtualBackground.desktopShare') }
-                                className = { _selectedThumbnail === 'transparent'
-                                    ? 'background-option transparent-selected'
-                                    : 'background-option transparent' }
+                                className = { selectedThumbnail === 'desktop-share-transform'
+                                    ? 'background-option desktop-share-transform-selected'
+                                    : 'background-option desktop-share-transform' }
                                 onClick = { shareTransparentDesktop }
-                                onKeyPress = { shareDesktopKeyPress }
                                 role = 'radio'
                                 tabIndex = { 0 }>
                                 <Icon
                                     className = 'share-desktop-icon'
-                                    size = { 15 }
+                                    size = { 30 }
                                     src = { IconShareDesktop } />
                             </div>
                         </Tooltip>
