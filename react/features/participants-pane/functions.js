@@ -166,7 +166,7 @@ export const getParticipantsPaneOpen = (state: Object) => Boolean(getState(state
 export function getQuickActionButtonType(participant: Object, isAudioMuted: Boolean, state: Object) {
     // handled only by moderators
     if (isLocalParticipantModerator(state)) {
-        if (isForceMuted(participant, MEDIA_TYPE.AUDIO, state)) {
+        if (isForceMuted(participant, MEDIA_TYPE.AUDIO, state) || isForceMuted(participant, MEDIA_TYPE.VIDEO, state)) {
             return QUICK_ACTION_BUTTON.ASK_TO_UNMUTE;
         }
         if (!isAudioMuted) {
