@@ -11,26 +11,28 @@ from typing import Any, Callable, Mapping, Sequence
 _TOP_LV = Path(__file__).resolve().parent
 _LANG = _TOP_LV / "lang"
 
-_RE_1 = compile("jitsi meet", flags=RegexFlag.IGNORECASE)
-_RE_2 = compile("jitsi", flags=RegexFlag.IGNORECASE)
+
+_FLAGS = RegexFlag.MULTILINE | RegexFlag.IGNORECASE
+_RE_1 = compile("jitsi meet", flags=_FLAGS)
+_RE_2 = compile("jitsi", flags=_FLAGS)
 
 
 def _simple_trans(val: Any) -> Any:
     if not isinstance(val, str):
         return val
     else:
-        val = _RE_1.sub("τΛ Talk", val)
-        val = _RE_2.sub("τΛ", val)
-        return val
+        v1 = _RE_1.sub("τΛ Talk", val)
+        v2 = _RE_2.sub("τΛ", v1)
+        return v2
 
 
 def _map(fn: Callable[[Any], Any], x: Any) -> Any:
     if isinstance(x, Mapping):
-        return {key: fn(val) for key, val in x.items()}
+        return {key: _map(fn, x=val) for key, val in x.items()}
     elif isinstance(x, Sequence) and not isinstance(x, (str, ByteString)):
         return tuple(_map(fn, x=el) for el in x)
     else:
-        return x
+        return fn(x)
 
 
 def main() -> None:
