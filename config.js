@@ -973,6 +973,9 @@ var config = {
     //     'lobby.notificationTitle', // shown when lobby is toggled and when join requests are allowed / denied
     //     'localRecording.localRecording', // shown when a local recording is started
     //     'notify.disconnected', // shown when a participant has left
+    //     'notify.connectedOneMember', // show when a participant joined
+    //     'notify.connectedTwoMembers', // show when two participants joined simultaneously
+    //     'notify.connectedThreePlusMembers', // show when more than 2 participants joined simultaneously
     //     'notify.grantedTo', // shown when moderator rights were granted to a participant
     //     'notify.invitedOneMember', // shown when 1 participant has been invited
     //     'notify.invitedThreePlusMembers', // shown when 3+ participants have been invited
