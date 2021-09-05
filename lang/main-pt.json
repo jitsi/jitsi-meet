@@ -543,7 +543,7 @@
     "me": "eu",
     "notify": {
         "connectedOneMember": "{{name}} entrou na reunião",
-        "connectedThreePlusMembers": "{{name}} e outros {{count}} entraram na reunião",
+        "connectedThreePlusMembers": "{{name}} e muitos outros entraram na reunião",
         "connectedTwoMembers": "{{first}} e {{second}} entraram na reunião",
         "disconnected": "desconectado",
         "focus": "Foco da conferência",
@@ -796,7 +796,7 @@
         "participantJoined": "Entrar um participante",
         "participantLeft": "Sair um participante",
         "playSounds": "Reproduzir som quando",
-        "reactions": "Reações de reunião",
+        "reactions": "Expressarem uma reação",
         "sameAsSystem": "O mesmo que o sistema ({{label}})",
         "selectAudioOutput": "Saída de áudio",
         "selectCamera": "Câmara",
