@@ -10,8 +10,6 @@
 		0B412F181EDEC65D00B1A0A6 /* JitsiMeetView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B412F161EDEC65D00B1A0A6 /* JitsiMeetView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0B412F191EDEC65D00B1A0A6 /* JitsiMeetView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B412F171EDEC65D00B1A0A6 /* JitsiMeetView.m */; };
 		0B412F221EDEF6EA00B1A0A6 /* JitsiMeetViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B412F1B1EDEC80100B1A0A6 /* JitsiMeetViewDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		0B49424520AD8DBD00BD2DE0 /* outgoingStart.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0B49424320AD8DBD00BD2DE0 /* outgoingStart.wav */; };
-		0B49424620AD8DBD00BD2DE0 /* outgoingRinging.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0B49424420AD8DBD00BD2DE0 /* outgoingRinging.wav */; };
 		0B93EF7E1EC9DDCD0030D24D /* RCTBridgeWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B93EF7C1EC9DDCD0030D24D /* RCTBridgeWrapper.h */; };
 		0B93EF7F1EC9DDCD0030D24D /* RCTBridgeWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B93EF7D1EC9DDCD0030D24D /* RCTBridgeWrapper.m */; };
 		0BA13D311EE83FF8007BEF7F /* ExternalAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BA13D301EE83FF8007BEF7F /* ExternalAPI.m */; };
@@ -26,16 +24,8 @@
 		0BD906EA1EC0C00300C8C18E /* JitsiMeet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BD906E81EC0C00300C8C18E /* JitsiMeet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4E51B76425E5345E0038575A /* ScheenshareEventEmiter.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E51B76225E5345E0038575A /* ScheenshareEventEmiter.h */; };
 		4E51B76525E5345E0038575A /* ScheenshareEventEmiter.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E51B76325E5345E0038575A /* ScheenshareEventEmiter.m */; };
-		6C31EDC820C06D490089C899 /* recordingOn.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6C31EDC720C06D490089C899 /* recordingOn.mp3 */; };
-		6C31EDCA20C06D530089C899 /* recordingOff.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6C31EDC920C06D530089C899 /* recordingOff.mp3 */; };
 		6F08DF7D4458EE3CF3F36F6D /* libPods-JitsiMeetSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4376CA6886DE68FD7A4294B /* libPods-JitsiMeetSDK.a */; };
-		75635B0A20751D6D00F29C9F /* joined.wav in Resources */ = {isa = PBXBuildFile; fileRef = 75635B0820751D6D00F29C9F /* joined.wav */; };
-		75635B0B20751D6D00F29C9F /* left.wav in Resources */ = {isa = PBXBuildFile; fileRef = 75635B0920751D6D00F29C9F /* left.wav */; };
-		87FE6F3321E52437004A5DC7 /* incomingMessage.wav in Resources */ = {isa = PBXBuildFile; fileRef = 87FE6F3221E52437004A5DC7 /* incomingMessage.wav */; };
-		A4414AE020B37F1A003546E6 /* rejected.wav in Resources */ = {isa = PBXBuildFile; fileRef = A4414ADF20B37F1A003546E6 /* rejected.wav */; };
 		A4A934E9212F3ADB001E9388 /* Dropbox.m in Sources */ = {isa = PBXBuildFile; fileRef = A4A934E8212F3ADB001E9388 /* Dropbox.m */; };
-		C30F88D0CB0F4F5593216D24 /* liveStreamingOff.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C30F88D1CB0F4F5593216D24 /* liveStreamingOff.mp3 */; };
-		C30F88D2CB0F4F5593216D24 /* liveStreamingOn.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C30F88D3CB0F4F5593216D24 /* liveStreamingOn.mp3 */; };
 		C6245F5D2053091D0040BE68 /* image-resize@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C6245F5B2053091D0040BE68 /* image-resize@2x.png */; };
 		C6245F5E2053091D0040BE68 /* image-resize@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = C6245F5C2053091D0040BE68 /* image-resize@3x.png */; };
 		C69EFA0C209A0F660027712B /* JMCallKitEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C69EFA09209A0F650027712B /* JMCallKitEmitter.swift */; };
@@ -46,21 +36,6 @@
 		C81E9AB925AC5AD800B134D9 /* ExternalAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = C81E9AB825AC5AD800B134D9 /* ExternalAPI.h */; };
 		C8AFD27F2462C613000293D2 /* InfoPlistUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = C8AFD27D2462C613000293D2 /* InfoPlistUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C8AFD2802462C613000293D2 /* InfoPlistUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = C8AFD27E2462C613000293D2 /* InfoPlistUtil.m */; };
-		DE29467B26D7D10A00C407A3 /* e2eeOn.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DE29466426D7D10900C407A3 /* e2eeOn.mp3 */; };
-		DE29467C26D7D10A00C407A3 /* reactions–applause.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DE29466626D7D10900C407A3 /* reactions–applause.mp3 */; };
-		DE29467D26D7D10A00C407A3 /* reactions–raised-hand.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DE29466726D7D10900C407A3 /* reactions–raised-hand.mp3 */; };
-		DE29467E26D7D10A00C407A3 /* knock.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DE29466826D7D10900C407A3 /* knock.mp3 */; };
-		DE29467F26D7D10A00C407A3 /* noAudioSignal.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DE29466B26D7D10900C407A3 /* noAudioSignal.mp3 */; };
-		DE29468026D7D10A00C407A3 /* noisyAudioInput.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DE29466C26D7D10900C407A3 /* noisyAudioInput.mp3 */; };
-		DE29468126D7D10A00C407A3 /* talkWhileMuted.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DE29466D26D7D10900C407A3 /* talkWhileMuted.mp3 */; };
-		DE29468226D7D10A00C407A3 /* ring.wav in Resources */ = {isa = PBXBuildFile; fileRef = DE29466E26D7D10900C407A3 /* ring.wav */; };
-		DE29468326D7D10A00C407A3 /* ring.ogg in Resources */ = {isa = PBXBuildFile; fileRef = DE29466F26D7D10900C407A3 /* ring.ogg */; };
-		DE29468426D7D10A00C407A3 /* reactions–thumbs-up.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DE29467126D7D10900C407A3 /* reactions–thumbs-up.mp3 */; };
-		DE29468526D7D10A00C407A3 /* reactions–crickets.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DE29467226D7D10900C407A3 /* reactions–crickets.mp3 */; };
-		DE29468626D7D10A00C407A3 /* e2eeOff.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DE29467326D7D10900C407A3 /* e2eeOff.mp3 */; };
-		DE29468726D7D10A00C407A3 /* reactions–boo.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DE29467526D7D10900C407A3 /* reactions–boo.mp3 */; };
-		DE29468826D7D10A00C407A3 /* reactions–surprise.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DE29467726D7D10A00C407A3 /* reactions–surprise.mp3 */; };
-		DE29468926D7D10A00C407A3 /* reactions-laughter.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DE29467A26D7D10A00C407A3 /* reactions-laughter.mp3 */; };
 		DE438CDA2350934700DD541D /* JavaScriptSandbox.m in Sources */ = {isa = PBXBuildFile; fileRef = DE438CD82350934700DD541D /* JavaScriptSandbox.m */; };
 		DE65AACA2317FFCD00290BEC /* LogUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = DE65AAC92317FFCD00290BEC /* LogUtils.h */; };
 		DE65AACC2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = DE65AACB2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h */; };
@@ -85,8 +60,6 @@
 		0B412F161EDEC65D00B1A0A6 /* JitsiMeetView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JitsiMeetView.h; sourceTree = "<group>"; };
 		0B412F171EDEC65D00B1A0A6 /* JitsiMeetView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JitsiMeetView.m; sourceTree = "<group>"; };
 		0B412F1B1EDEC80100B1A0A6 /* JitsiMeetViewDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiMeetViewDelegate.h; sourceTree = "<group>"; };
-		0B49424320AD8DBD00BD2DE0 /* outgoingStart.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = outgoingStart.wav; path = ../../sounds/outgoingStart.wav; sourceTree = "<group>"; };
-		0B49424420AD8DBD00BD2DE0 /* outgoingRinging.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = outgoingRinging.wav; path = ../../sounds/outgoingRinging.wav; sourceTree = "<group>"; };
 		0B93EF7A1EC608550030D24D /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		0B93EF7C1EC9DDCD0030D24D /* RCTBridgeWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTBridgeWrapper.h; sourceTree = "<group>"; };
 		0B93EF7D1EC9DDCD0030D24D /* RCTBridgeWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTBridgeWrapper.m; sourceTree = "<group>"; };
@@ -104,19 +77,11 @@
 		0BD906E91EC0C00300C8C18E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4E51B76225E5345E0038575A /* ScheenshareEventEmiter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScheenshareEventEmiter.h; sourceTree = "<group>"; };
 		4E51B76325E5345E0038575A /* ScheenshareEventEmiter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScheenshareEventEmiter.m; sourceTree = "<group>"; };
-		6C31EDC720C06D490089C899 /* recordingOn.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = recordingOn.mp3; path = ../../sounds/recordingOn.mp3; sourceTree = "<group>"; };
-		6C31EDC920C06D530089C899 /* recordingOff.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = recordingOff.mp3; path = ../../sounds/recordingOff.mp3; sourceTree = "<group>"; };
-		75635B0820751D6D00F29C9F /* joined.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = joined.wav; path = ../../sounds/joined.wav; sourceTree = "<group>"; };
-		75635B0920751D6D00F29C9F /* left.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = left.wav; path = ../../sounds/left.wav; sourceTree = "<group>"; };
-		87FE6F3221E52437004A5DC7 /* incomingMessage.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = incomingMessage.wav; path = ../../sounds/incomingMessage.wav; sourceTree = "<group>"; };
 		891FE43DAD30BC8976683100 /* Pods-JitsiMeetSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeetSDK.release.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeetSDK/Pods-JitsiMeetSDK.release.xcconfig"; sourceTree = "<group>"; };
 		98E09B5C73D9036B4ED252FC /* Pods-JitsiMeet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.debug.xcconfig"; sourceTree = "<group>"; };
 		9C77CA3CC919B081F1A52982 /* Pods-JitsiMeet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.release.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.release.xcconfig"; sourceTree = "<group>"; };
-		A4414ADF20B37F1A003546E6 /* rejected.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = rejected.wav; path = ../../sounds/rejected.wav; sourceTree = "<group>"; };
 		A4A934E8212F3ADB001E9388 /* Dropbox.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Dropbox.m; sourceTree = "<group>"; };
 		A4A934EB21349A06001E9388 /* Dropbox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Dropbox.h; sourceTree = "<group>"; };
-		C30F88D1CB0F4F5593216D24 /* liveStreamingOff.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = liveStreamingOff.mp3; path = ../../sounds/liveStreamingOff.mp3; sourceTree = "<group>"; };
-		C30F88D3CB0F4F5593216D24 /* liveStreamingOn.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = liveStreamingOn.mp3; path = ../../sounds/liveStreamingOn.mp3; sourceTree = "<group>"; };
 		C6245F5B2053091D0040BE68 /* image-resize@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "image-resize@2x.png"; path = "src/picture-in-picture/image-resize@2x.png"; sourceTree = "<group>"; };
 		C6245F5C2053091D0040BE68 /* image-resize@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "image-resize@3x.png"; path = "src/picture-in-picture/image-resize@3x.png"; sourceTree = "<group>"; };
 		C69EFA09209A0F650027712B /* JMCallKitEmitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JMCallKitEmitter.swift; sourceTree = "<group>"; };
@@ -128,31 +93,6 @@
 		C81E9AB825AC5AD800B134D9 /* ExternalAPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExternalAPI.h; sourceTree = "<group>"; };
 		C8AFD27D2462C613000293D2 /* InfoPlistUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InfoPlistUtil.h; sourceTree = "<group>"; };
 		C8AFD27E2462C613000293D2 /* InfoPlistUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = InfoPlistUtil.m; sourceTree = "<group>"; };
-		DE29466226D7D10800C407A3 /* outgoingRinging.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = outgoingRinging.wav; path = ../../sounds/outgoingRinging.wav; sourceTree = "<group>"; };
-		DE29466326D7D10900C407A3 /* recordingOff.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = recordingOff.mp3; path = ../../sounds/recordingOff.mp3; sourceTree = "<group>"; };
-		DE29466426D7D10900C407A3 /* e2eeOn.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = e2eeOn.mp3; path = ../../sounds/e2eeOn.mp3; sourceTree = "<group>"; };
-		DE29466526D7D10900C407A3 /* rejected.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = rejected.wav; path = ../../sounds/rejected.wav; sourceTree = "<group>"; };
-		DE29466626D7D10900C407A3 /* reactions–applause.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "reactions–applause.mp3"; path = "../../sounds/reactions–applause.mp3"; sourceTree = "<group>"; };
-		DE29466726D7D10900C407A3 /* reactions–raised-hand.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "reactions–raised-hand.mp3"; path = "../../sounds/reactions–raised-hand.mp3"; sourceTree = "<group>"; };
-		DE29466826D7D10900C407A3 /* knock.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = knock.mp3; path = ../../sounds/knock.mp3; sourceTree = "<group>"; };
-		DE29466926D7D10900C407A3 /* left.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = left.wav; path = ../../sounds/left.wav; sourceTree = "<group>"; };
-		DE29466A26D7D10900C407A3 /* liveStreamingOn.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = liveStreamingOn.mp3; path = ../../sounds/liveStreamingOn.mp3; sourceTree = "<group>"; };
-		DE29466B26D7D10900C407A3 /* noAudioSignal.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = noAudioSignal.mp3; path = ../../sounds/noAudioSignal.mp3; sourceTree = "<group>"; };
-		DE29466C26D7D10900C407A3 /* noisyAudioInput.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = noisyAudioInput.mp3; path = ../../sounds/noisyAudioInput.mp3; sourceTree = "<group>"; };
-		DE29466D26D7D10900C407A3 /* talkWhileMuted.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = talkWhileMuted.mp3; path = ../../sounds/talkWhileMuted.mp3; sourceTree = "<group>"; };
-		DE29466E26D7D10900C407A3 /* ring.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = ring.wav; path = ../../sounds/ring.wav; sourceTree = "<group>"; };
-		DE29466F26D7D10900C407A3 /* ring.ogg */ = {isa = PBXFileReference; lastKnownFileType = file; name = ring.ogg; path = ../../sounds/ring.ogg; sourceTree = "<group>"; };
-		DE29467026D7D10900C407A3 /* incomingMessage.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = incomingMessage.wav; path = ../../sounds/incomingMessage.wav; sourceTree = "<group>"; };
-		DE29467126D7D10900C407A3 /* reactions–thumbs-up.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "reactions–thumbs-up.mp3"; path = "../../sounds/reactions–thumbs-up.mp3"; sourceTree = "<group>"; };
-		DE29467226D7D10900C407A3 /* reactions–crickets.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "reactions–crickets.mp3"; path = "../../sounds/reactions–crickets.mp3"; sourceTree = "<group>"; };
-		DE29467326D7D10900C407A3 /* e2eeOff.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = e2eeOff.mp3; path = ../../sounds/e2eeOff.mp3; sourceTree = "<group>"; };
-		DE29467426D7D10900C407A3 /* outgoingStart.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = outgoingStart.wav; path = ../../sounds/outgoingStart.wav; sourceTree = "<group>"; };
-		DE29467526D7D10900C407A3 /* reactions–boo.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "reactions–boo.mp3"; path = "../../sounds/reactions–boo.mp3"; sourceTree = "<group>"; };
-		DE29467626D7D10900C407A3 /* liveStreamingOff.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = liveStreamingOff.mp3; path = ../../sounds/liveStreamingOff.mp3; sourceTree = "<group>"; };
-		DE29467726D7D10A00C407A3 /* reactions–surprise.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "reactions–surprise.mp3"; path = "../../sounds/reactions–surprise.mp3"; sourceTree = "<group>"; };
-		DE29467826D7D10A00C407A3 /* joined.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = joined.wav; path = ../../sounds/joined.wav; sourceTree = "<group>"; };
-		DE29467926D7D10A00C407A3 /* recordingOn.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = recordingOn.mp3; path = ../../sounds/recordingOn.mp3; sourceTree = "<group>"; };
-		DE29467A26D7D10A00C407A3 /* reactions-laughter.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "reactions-laughter.mp3"; path = "../../sounds/reactions-laughter.mp3"; sourceTree = "<group>"; };
 		DE438CD82350934700DD541D /* JavaScriptSandbox.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JavaScriptSandbox.m; sourceTree = "<group>"; };
 		DE65AAC92317FFCD00290BEC /* LogUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LogUtils.h; sourceTree = "<group>"; };
 		DE65AACB2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JitsiMeetBaseLogHandler+Private.h"; sourceTree = "<group>"; };
@@ -195,44 +135,9 @@
 		0BCA49681EC4BBE500B793EE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				DE29466426D7D10900C407A3 /* e2eeOn.mp3 */,
-				87FE6F3221E52437004A5DC7 /* incomingMessage.wav */,
-				DE29467326D7D10900C407A3 /* e2eeOff.mp3 */,
-				DE29467026D7D10900C407A3 /* incomingMessage.wav */,
-				DE29467826D7D10A00C407A3 /* joined.wav */,
-				DE29466826D7D10900C407A3 /* knock.mp3 */,
-				DE29466926D7D10900C407A3 /* left.wav */,
-				DE29467626D7D10900C407A3 /* liveStreamingOff.mp3 */,
-				DE29466A26D7D10900C407A3 /* liveStreamingOn.mp3 */,
-				DE29466B26D7D10900C407A3 /* noAudioSignal.mp3 */,
-				DE29466C26D7D10900C407A3 /* noisyAudioInput.mp3 */,
-				DE29466226D7D10800C407A3 /* outgoingRinging.wav */,
-				DE29467426D7D10900C407A3 /* outgoingStart.wav */,
-				DE29467A26D7D10A00C407A3 /* reactions-laughter.mp3 */,
-				DE29466626D7D10900C407A3 /* reactions–applause.mp3 */,
-				DE29467526D7D10900C407A3 /* reactions–boo.mp3 */,
-				DE29467226D7D10900C407A3 /* reactions–crickets.mp3 */,
-				DE29466726D7D10900C407A3 /* reactions–raised-hand.mp3 */,
-				DE29467726D7D10A00C407A3 /* reactions–surprise.mp3 */,
-				DE29467126D7D10900C407A3 /* reactions–thumbs-up.mp3 */,
-				DE29466326D7D10900C407A3 /* recordingOff.mp3 */,
-				DE29467926D7D10A00C407A3 /* recordingOn.mp3 */,
-				DE29466526D7D10900C407A3 /* rejected.wav */,
-				DE29466F26D7D10900C407A3 /* ring.ogg */,
-				DE29466E26D7D10900C407A3 /* ring.wav */,
-				DE29466D26D7D10900C407A3 /* talkWhileMuted.mp3 */,
 				0BC4B8681F8C01E100CE8B21 /* CallKitIcon.png */,
 				C6245F5B2053091D0040BE68 /* image-resize@2x.png */,
 				C6245F5C2053091D0040BE68 /* image-resize@3x.png */,
-				75635B0820751D6D00F29C9F /* joined.wav */,
-				75635B0920751D6D00F29C9F /* left.wav */,
-				C30F88D1CB0F4F5593216D24 /* liveStreamingOff.mp3 */,
-				C30F88D3CB0F4F5593216D24 /* liveStreamingOn.mp3 */,
-				0B49424420AD8DBD00BD2DE0 /* outgoingRinging.wav */,
-				0B49424320AD8DBD00BD2DE0 /* outgoingStart.wav */,
-				6C31EDC920C06D530089C899 /* recordingOff.mp3 */,
-				6C31EDC720C06D490089C899 /* recordingOn.mp3 */,
-				A4414ADF20B37F1A003546E6 /* rejected.wav */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -393,6 +298,7 @@
 				0BD906E11EC0C00300C8C18E /* Frameworks */,
 				0BD906E21EC0C00300C8C18E /* Headers */,
 				0BD906E31EC0C00300C8C18E /* Resources */,
+				DE17D0D426E0B86300F77E2E /* Copy sounds */,
 				0BCA49651EC4B77500B793EE /* Package React bundle */,
 				C7BC10B338C94EEB98048E64 /* [CP] Copy Pods Resources */,
 			);
@@ -444,33 +350,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0B49424620AD8DBD00BD2DE0 /* outgoingRinging.wav in Resources */,
-				6C31EDCA20C06D530089C899 /* recordingOff.mp3 in Resources */,
-				DE29467B26D7D10A00C407A3 /* e2eeOn.mp3 in Resources */,
-				A4414AE020B37F1A003546E6 /* rejected.wav in Resources */,
-				DE29467C26D7D10A00C407A3 /* reactions–applause.mp3 in Resources */,
-				DE29467D26D7D10A00C407A3 /* reactions–raised-hand.mp3 in Resources */,
-				DE29467E26D7D10A00C407A3 /* knock.mp3 in Resources */,
-				75635B0B20751D6D00F29C9F /* left.wav in Resources */,
-				C30F88D2CB0F4F5593216D24 /* liveStreamingOn.mp3 in Resources */,
-				DE29467F26D7D10A00C407A3 /* noAudioSignal.mp3 in Resources */,
-				DE29468026D7D10A00C407A3 /* noisyAudioInput.mp3 in Resources */,
-				DE29468126D7D10A00C407A3 /* talkWhileMuted.mp3 in Resources */,
-				DE29468226D7D10A00C407A3 /* ring.wav in Resources */,
-				DE29468326D7D10A00C407A3 /* ring.ogg in Resources */,
-				87FE6F3321E52437004A5DC7 /* incomingMessage.wav in Resources */,
-				DE29468426D7D10A00C407A3 /* reactions–thumbs-up.mp3 in Resources */,
-				DE29468526D7D10A00C407A3 /* reactions–crickets.mp3 in Resources */,
-				DE29468626D7D10A00C407A3 /* e2eeOff.mp3 in Resources */,
-				0B49424520AD8DBD00BD2DE0 /* outgoingStart.wav in Resources */,
-				DE29468726D7D10A00C407A3 /* reactions–boo.mp3 in Resources */,
-				C30F88D0CB0F4F5593216D24 /* liveStreamingOff.mp3 in Resources */,
-				DE29468826D7D10A00C407A3 /* reactions–surprise.mp3 in Resources */,
-				75635B0A20751D6D00F29C9F /* joined.wav in Resources */,
-				6C31EDC820C06D490089C899 /* recordingOn.mp3 in Resources */,
-				DE29468926D7D10A00C407A3 /* reactions-laughter.mp3 in Resources */,
-				C6245F5D2053091D0040BE68 /* image-resize@2x.png in Resources */,
 				0BC4B8691F8C03A700CE8B21 /* CallKitIcon.png in Resources */,
+				C6245F5D2053091D0040BE68 /* image-resize@2x.png in Resources */,
 				C6245F5E2053091D0040BE68 /* image-resize@3x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -529,6 +410,24 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-JitsiMeetSDK/Pods-JitsiMeetSDK-resources.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		DE17D0D426E0B86300F77E2E /* Copy sounds */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy sounds";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "SOUNDS_DIR=\"${PROJECT_DIR}/../../sounds\"\n\ncp $SOUNDS_DIR/* ${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

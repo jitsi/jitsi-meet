@@ -1333,7 +1333,7 @@ class API {
      */
     notifyError(error: Object) {
         this._sendEvent({
-            name: 'error',
+            name: 'error-occurred',
             error
         });
     }

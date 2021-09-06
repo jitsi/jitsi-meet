@@ -1,11 +1,13 @@
 {
     "addPeople": {
         "add": "Mời",
+        "copyInvite": "Sao chép lời mời",
         "countryNotSupported": "Chúng tôi chưa hỗ trợ đích đến này.",
         "countryReminder": "Đang gọi ra ngoài Mỹ? Đảm bảo bắt đầu bằng mã quốc gia!",
         "disabled": "Bạn không thể mời thêm người.",
         "failedToAdd": "",
         "footerText": "Quay số bị tắt.",
+        "inviteMorePrompt": "Mời thêm người tham dự",
         "loading": "Đang tìm kiếm người hoặc số điện thoại.",
         "loadingNumber": "Đang xác nhận số điện thoại.",
         "loadingPeople": "Đang tìm kiếm người để mời",
@@ -14,6 +16,8 @@
         "searchNumbers": "Thêm số điện thoại",
         "searchPeople": "Tìm người",
         "searchPeopleAndNumbers": "Tìm người và thêm số",
+        "shareLink": "Chia sẻ đường dẫn để mời người khác tham dự cuộc họp",
+        "shareInvite": "Chia sẻ lời mời tham dự cuộc họp",
         "telephone": "Số:{{number}}",
         "title": "Mời người tham dự cuộc họp này"
     },
@@ -45,13 +49,14 @@
         "today": "Hôm nay"
     },
     "chat": {
-        "error": "Lỗi: thông điệp của bạn \"{{originalText}}\" không được gửi. Nguyên nhân: {{error}}",
-        "messagebox": "Nhập một thông điệp",
+        "error": "Lỗi: tin nhắn của bạn \"{{originalText}}\" không được gửi. Nguyên nhân: {{error}}",
+        "messagebox": "Nhập nội dung tin nhắn",
         "nickname": {
-            "popover": "Chọn biệt danh",
-            "title": "Nhập một tên để sử dụng Chat"
+            "popover": "Chọn tên",
+            "title": "Nhập tên của bạn để tán gẫu"
         },
-        "title": "Chat"
+        "title": "Tán gẫu",
+        "you": "bạn"
     },
     "connectingOverlay": {
         "joiningRoom": "Đang kết nối tới cuộc họp của bạn…"
@@ -94,6 +99,7 @@
         "remoteport_0": "Cổng từ xa:",
         "remoteport_1": "Các cổng từ xa:",
         "resolution": "Độ phân giải:",
+        "participant_id": "ID của người tham dự:",
         "status": "Kết nối:",
         "transport_0": "Vận chuyển:",
         "transport_1": "Các vận chuyển:",
@@ -160,8 +166,12 @@
         "dismiss": "Hủy",
         "displayNameRequired": "",
         "done": "Xong",
+        "e2eeDescription": "Mã hóa end-to-end vẫn đang trong giai đoạn THỬ NGHIỆM. Vui lòng lưu ý rằng việc kích hoạt mã hóa end-to-end sẽ tắt một số tính năng trên máy chủ bao gồm: ghi hình, phát trực tiếp và tham gia cuộc họp từ điện thoại. Đồng thời vui lòng lưu ý rằng chỉ có thể tham dự cuộc họp từ các trình duyệt có hỗ trợ nhúng luồng.",
+        "e2eeLabel": "Kích hoạt mã hóa end-to-end",
+        "e2eeWarning": " CẢNH BÁO: Có vẻ không phải phải tất cả mọi người trong cuộc họp này đều hỗ trợ mã hóa end-to-end. Nếu bạn kích hoạt nó, họ sẽ có thể không còn nghe hoặc thấy gì nữa.",
         "enterDisplayName": "",
         "error": "Lỗi",
+        "grantModeratorDialog": " Bạn có thực sự muốn cấp quyền quản trị cho người này?",
         "externalInstallationMsg": "Bạn cần cài đặt tiện ích mở rộng chia sẻ máy tính của chúng tôi.",
         "externalInstallationTitle": "Yêu cầu tiện ích mở rộng",
         "goToStore": "Đi tới cửa hàng trên mạng",
@@ -194,10 +204,19 @@
         "micNotSendingDataTitle": "",
         "micPermissionDeniedError": "Bạn chưa cấp phép sử dụng microphone của bạn. Bạn vẫn có thể tham gia hội nghị nhưng những người khác sẽ không nghe thấy bạn. Sử dụng nút camera trên thanh địa chỉ để sửa lỗi này.",
         "micUnknownError": "Không thể sử dụng microphone vì lý do không rõ ràng.",
+        "muteEveryoneElseDialog": "Một khi đã tắt tiếng, bạn không thể bật lại. Nhưng họ có thể tự mở tiếng lại bất kỳ lúc nào.",
+        "muteEveryoneElseTitle": "Tắt tiếng tất cả ngoại trừ {{whom}}?",
+        "muteEveryoneDialog": " Bạn có thực sự muốn tắt tiếng tất cả mọi người? Bạn sẽ không thể bật lại tiếng cho họ nhưng họ có thể tự mở tiếng lại bất kỳ lúc nào.",
+        "muteEveryoneTitle": "Tắt tiếng tất cả mọi người?",
+        "muteEveryonesVideoDialog": " Bạn có chắc muốn tắt camera của tất cả mọi người? Bạn không thể mở lại camera của người tham dự nhưng họ có thể mở lại bất kỳ lúc nào.",
+        "muteEveryonesVideoTitle": "Tắt camera của tất cả mọi người?",
         "muteParticipantBody": "Bạn không thể tắt tiếng của họ, nhưng họ có thể tự tắt tiếng bất cứ lúc nào.",
         "muteParticipantButton": "Tắt tiếng",
         "muteParticipantDialog": "Bạn muốn tắt tiếng của người này? Bạn sẽ không thể bật lại tiếng, nhưng họ có thể tự bật lại tiếng bất cứ lúc nào.",
         "muteParticipantTitle": "Tắt tiếng của người tham dự này?",
+        "muteParticipantsVideoButton": "Tắt camera",
+        "muteParticipantsVideoTitle": "Tắt camera của người này?",
+        "muteParticipantsVideoBody": "Bạn không thể bật lại camera, nhưng họ có thể bật lại bất kỳ lúc nào.",
         "Ok": "Được",
         "passwordLabel": "",
         "passwordNotSupported": "Phòng họp không hỗ trợ khóa bằng mật khẩu.",
@@ -223,6 +242,7 @@
         "reservationError": "Lỗi hệ thống đặt phòng",
         "reservationErrorMsg": "Mã lỗi: {{code}}, thông báo: {{msg}}",
         "retry": "Thử lại",
+        "screenSharingAudio": "Chia sẻ âm thanh",
         "screenSharingFailedToInstall": "Duh! Không cài đặt được bộ mở rộng chia sẻ màn hình",
         "screenSharingFailedToInstallTitle": "Duh! Bộ mở rộng chia sẻ màn hình có vấn đề với cấu hình bảo mật. Làm ơn tải và thử lại ",
         "screenSharingFirefoxPermissionDeniedError": "Có gì đó sai khi chúng tôi cố gắng chia sẻ màn hình của bạn. Vui lòng đảm bảo bạn đã cho phép chúng tôi thực hiện.",
@@ -260,6 +280,32 @@
     },
     "dialOut": {
         "statusMessage": "hiện đang {{status}}"
+    },
+    "embedMeeting": {
+        "title": "Nhúng cuộc họp"
+    },
+    "virtualBackground": {
+        "apply": "Áp dụng",
+        "title": "Hình nền ảo",
+        "blur": "Làm mờ",
+        "slightBlur": "Làm mờ nhẹ",
+        "removeBackground": "Xóa hình nền",
+        "addBackground": "Thêm hình nền",
+        "pleaseWait": "Vui lòng đợi...",
+        "none": "Không có",
+        "uploadedImage": "Tải ảnh lên {{index}}",
+        "deleteImage": "Xóa ảnh",
+        "image1": "Bãi biển",
+        "image2": "Tường trắng trung tính",
+        "image3": "Phòng trống màu trắng",
+        "image4": "Đèn sàn màu đen",
+        "image5": "Núi",
+        "image6": "Rừng",
+        "image7": "Mặt trời mọc",
+        "desktopShareError": "Không thể chia sẻ màn hình",
+        "desktopShare": "Chia sẻ màn hình",
+        "webAssemblyWarning": "WebAssembly không được hỗ trợ",
+        "backgroundEffectError": "Không thể áp dụng hiệu ứng hình nền."
     },
     "feedback": {
         "average": "Trung bình",
@@ -428,6 +474,25 @@
         "newDeviceAudioTitle": "Thiết bị âm thanh mới được phát hiện",
         "newDeviceAction": "Sử dụng"
     },
+    "participantsPane": {
+        "headings": {
+            "lobby": "Phòng chờ ({{count}})",
+            "participantsList": "Những người tham dự ({{count}})",
+            "waitingLobby": "Đang đợi ở phòng chờ ({{count}})"
+        },
+        "actions": {
+            "muteEveryoneElse": "Tắt tiếng những người khác",
+            "invite": "Mời người tham dự",
+            "askUnmute": "Yêu cầu bật tiếng",
+            "mute": "Tắt tiếng",
+            "muteAll": "Tắt tiếng tất cả mọi người",
+            "muteEveryoneElse": "Tắt tiếng tất cả những người khác",
+            "startModeration": "Unmute themselves or start video",
+            "stopEveryonesVideo": "Tắt hình của tất cả mọi người",
+            "stopVideo": "Tắt hình",
+            "unblockEveryoneMicCamera": "Mở khóa camera và micro của tất cả mọi người"
+        }
+    },
     "passwordSetRemotely": "được thiết lập bởi một người khác",
     "passwordDigitsOnly": "",
     "poweredby": "Được hỗ trợ bởi",
@@ -478,6 +543,11 @@
     },
     "sectionList": {
         "pullToRefresh": "Kéo để làm tươi"
+    },
+    "security": {
+        "about": "Bạn có thể thiết lập mật khẩu cho cuộc họp. Người tham dự cần phải nhập mật khẩu trước khi được phép vào phòng họp.",
+        "insecureRoomNameWarning": "Cuộc họp này không bảo mật. Những người tham dự không mong muốn có thể tham gia cuộc họp của bạn.",
+        "securityOptions": "Tùy chọn bảo mật"
     },
     "settings": {
         "calendar": {
@@ -549,6 +619,7 @@
             "document": "Mở/Đóng tài liệu được chia sẻ",
             "feedback": "Để lại phản hồi",
             "fullScreen": "Mở/Đóng toàn màn hình",
+            "grantModerator": "Cấp quyền quản trị",
             "hangup": "Rời cuộc gọi",
             "invite": "Mời người tham gia",
             "kick": "Đẩy người tham gia ra",
@@ -557,6 +628,9 @@
             "moreActions": "Mở/Đóng Thêm hành động",
             "moreActionsMenu": "Menu Thêm hành động",
             "mute": "Mở/Đóng Tắt tiếng",
+            "muteEveryone": "Tắt tiếng tất cả mọi người",
+            "muteEveryoneElse": "Tắt tiếng những người khác",
+            "muteEveryonesVideo": "Tắt tất cả camera",
             "pip": "Mở/Đóng chế độ Hình-trong-Hình",
             "profile": "Chỉnh sửa hồ sơ cá nhân",
             "raiseHand": "Mở/Đóng Giơ tay",
@@ -572,9 +646,12 @@
             "tileView": "Mở/Đóng Xem dạng lưới",
             "toggleCamera": "Mở/Đóng Camera",
             "videomute": "Mở/Đóng Tiếng, Hình",
-            "videoblur": ""
+            "videoblur": "Chuyển đổi làm mờ video",
+            "selectBackground": "Chọn hình nền"
         },
         "addPeople": "Thêm người vào cuộc gọi",
+        "audioSettings": "Cài đặt âm thanh",
+        "videoSettings": "Cài đặt hình ảnh",
         "audioOnlyOff": "Chế độ chỉ tắt tiếng",
         "audioOnlyOn": "Bật chế độ Chỉ âm thanh",
         "audioRoute": "Chọn thiết bị âm thanh",
@@ -596,11 +673,17 @@
         "lowerYourHand": "Hạ tay",
         "moreActions": "Thêm hành động",
         "mute": "Tắt tiếng / Bật tiếng",
+        "muteEveryone": "Tắt tiếng tất cả mọi người",
+        "muteEveryonesVideo": "Tắt tất cả camera",
+        "noisyAudioInputTitle": "Micro của bạn dường như có nhiều tiếng ồn!",
+        "noisyAudioInputDesc": "Dường như micro của bạn đang tạo ra tiếng ồn. Vui lòng tắt tiếng hoặc thay thiết bị khác.",
         "openChat": "Mở Chat",
+        "participants": "Những người tham dự",
         "pip": "Vào chế độ Ảnh-trong-Ảnh",
         "profile": "Chỉnh sửa hồ sơ cá nhân",
         "raiseHand": "Giơ / Hạ tay",
         "raiseYourHand": "Giơ tay",
+        "security": "Tùy chọn bảo mật",
         "Settings": "Cài đặt",
         "sharedvideo": "Chia sẻ YouTube video",
         "shareRoom": "Mời ai đó",
@@ -616,7 +699,8 @@
         "toggleCamera": "Mở/Đóng Camera",
         "videomute": "Bật / Tắt camera",
         "startvideoblur": "",
-        "stopvideoblur": ""
+        "stopvideoblur": "",
+        "selectBackground": "Chọn hình nền"
     },
     "transcribing": {
         "ccButtonTooltip": "Chạy/Dừng phụ đề",
@@ -655,7 +739,7 @@
     "videoStatus": {
         "audioOnly": "AUD",
         "audioOnlyExpanded": "Bạn đang ở chế độ chỉ tiếng. Chế độ này giảm băng thông nhưng không thấy hình ảnh người khác.",
-        "callQuality": "",
+        "callQuality": "Chất lượng hình ảnh",
         "hd": "HD",
         "highDefinition": "HD",
         "labelTooiltipNoVideo": "Không hình ảnh",
@@ -670,6 +754,7 @@
     "videothumbnail": {
         "domute": "Tắt tiếng",
         "flip": "Lật",
+        "grantModerator": "Cấp quyền quản trị",
         "kick": "Đẩy ra",
         "moderator": "Quản trị viên",
         "mute": "Người tham gia bị tắt tiếng",
