@@ -1,10 +1,9 @@
 /* eslint-disable */
-self.importScripts('fix.js');
-self.importScripts('face-api.js');
+self.importScripts('face-api-fix.js');
+self.importScripts('face-api.min.js');
 
 let modelsLoaded = false;
 
-// eslint-disable-next-line vars-on-top
 var window = {
     screen: {
         width: 1280,
@@ -13,34 +12,23 @@ var window = {
 
 };
 
-onmessage = async function(imageBitmap) {
+onmessage = async function(message) {
     if(!modelsLoaded) {
         await faceapi.loadTinyFaceDetectorModel('.');
         await faceapi.loadFaceExpressionModel('.');
         modelsLoaded = true;
         console.log('LOADED');
     }
-
-    const canvas = new Canvas(imageBitmap.data.width, imageBitmap.data.height);
-    const ctx = canvas.getContext('2d');
-
-    ctx.drawImage(imageBitmap.data, 0, 0);
+    
+    const imageData = new ImageData(message.data.imageData.data, message.data.imageData.width);
+    const tensor = faceapi.tf.browser.fromPixels(imageData);
     const detections = await faceapi.detectSingleFace(
-            canvas,
+            tensor,
             new faceapi.TinyFaceDetectorOptions()
     ).withFaceExpressions();
 
     if (detections) {
-        let correctExpression = {
-            expression: null,
-            probability: 0.0
-        };
-
-        for (let e of detections.expressions) {
-            if (e.probability > correctExpression.probability) {
-                correctExpression = e;
-            }
-        }
-        postMessage(correctExpression.expression);
+        const facialExpression = detections.expressions.asSortedArray()[0].expression;
+        postMessage(facialExpression);
     }
 };

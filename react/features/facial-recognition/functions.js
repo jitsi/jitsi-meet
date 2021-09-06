@@ -30,12 +30,17 @@ export async function sendFacialExpression(facialExpression: Object) {
  * @returns {Function}
  */
 export async function testDetectFacialExpression(worker: Worker, imageCapture: Object) {
-    let imageBitmap;
+    const imageBitmap = await imageCapture.grabFrame();
+    const testCanvas = document.createElement('canvas');
+    const testContext = testCanvas.getContext('2d');
 
-    try {
-        imageBitmap = await imageCapture.grabFrame();
-    } catch (err) {
-        return;
-    }
-    worker.postMessage(imageBitmap);
+    testCanvas.width = imageBitmap.width;
+    testCanvas.height = imageBitmap.height;
+    testContext.drawImage(imageBitmap, 0, 0);
+
+    const imageData = testContext.getImageData(0, 0, imageBitmap.width, imageBitmap.height);
+
+    worker.postMessage({
+        imageData
+    });
 }

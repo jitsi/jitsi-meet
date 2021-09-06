@@ -2,6 +2,22 @@
 // From: https://github.com/justadudewhohacks/face-api.js/issues/47
 // This is needed because face-api.js does not support working in a WebWorker natively
 // Updated Dec 1 2020 to work on latest Chrome (tested in WebWorkers on Chrome Mobile on Android / Google Pixel 3 as well)
+if(!self.OffscreenCanvas) {
+	self.OffscreenCanvas = class OffscreenCanvas {
+		constructor() {
+
+		}
+	}
+}
+
+if(!self.OffscreenCanvasRenderingContext2D) {
+	self.OffscreenCanvasRenderingContext2D = class OffscreenCanvasRenderingContext2D {
+		constructor() {
+			
+		}
+	}
+}
+
 self.Canvas = self.HTMLCanvasElement = OffscreenCanvas;
 // self.HTMLCanvasElement.name = 'HTMLCanvasElement';
 // self.Canvas.name = 'Canvas';

@@ -22,17 +22,13 @@ const outputCanvas = document.createElement('canvas');
  * @returns {void}
  */
 export function loadWorker() {
-    return function(dispatch: Function, getState: Function) {
+    return function(dispatch: Function) {
         if (window.Worker) {
             worker = new Worker('libs/facialExpressionWorker.js');
             worker.onmessage = function(e) {
-                const state = getState();
                 const facialExpression = e.data;
-                const { lastFacialExpression } = state['features/facial-recognition'];
 
-                if (facialExpression && facialExpression !== lastFacialExpression) {
-                    // const time = new Date().getTime() - getConferenceTimestamp(state);
-
+                if (facialExpression !== null && facialExpression !== undefined) {
                     console.log('!!!', facialExpression);
                     dispatch(addFacialExpression(facialExpression));
                     sendFacialExpression(facialExpression);
