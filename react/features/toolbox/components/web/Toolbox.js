@@ -845,7 +845,7 @@ class Toolbox extends Component<Props, State> {
             return;
         }
 
-        Object.values(buttons).forEach(button => {
+        Object.values(buttons).forEach((button: any) => {
             if (this.props._buttonsWithNotifyClick.includes(button.key)) {
                 button.handleClick = () => APP.API.notifyToolbarButtonClicked(button.key);
             }

@@ -86,7 +86,7 @@ class AudioSettingsButton extends Component<Props> {
         }
     }
 
-    _onClick: (MouseEvent) => void;
+    _onClick: () => void;
 
     /**
      * Click handler for the more actions entries.
