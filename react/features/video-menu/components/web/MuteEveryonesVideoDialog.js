@@ -6,7 +6,7 @@ import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { Switch } from '../../../base/react';
 import { connect } from '../../../base/redux';
-import AbstractMuteEveryonesVideoDialog, { abstractMapStateToProps, type Props, type State }
+import AbstractMuteEveryonesVideoDialog, { abstractMapStateToProps, type Props }
     from '../AbstractMuteEveryonesVideoDialog';
 
 /**
@@ -15,7 +15,7 @@ import AbstractMuteEveryonesVideoDialog, { abstractMapStateToProps, type Props, 
  *
  * @extends AbstractMuteEveryonesVideoDialog
  */
-class MuteEveryonesVideoDialog extends AbstractMuteEveryonesVideoDialog<Props, State> {
+class MuteEveryonesVideoDialog extends AbstractMuteEveryonesVideoDialog<Props> {
 
     /**
      * Toggles advanced moderation switch.
