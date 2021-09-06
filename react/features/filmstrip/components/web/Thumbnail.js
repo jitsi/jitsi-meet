@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import { createScreenSharingIssueEvent, sendAnalytics } from '../../../analytics';
 import { AudioLevelIndicator } from '../../../audio-level-indicator';
 import { Avatar } from '../../../base/avatar';
+import { isNameReadOnly } from '../../../base/config';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
 import { MEDIA_TYPE, VideoTrack } from '../../../base/media';
@@ -74,6 +75,11 @@ export type State = {|
 export type Props = {|
 
     /**
+     * If the display name is editable or not.
+     */
+    _allowEditing: boolean,
+
+    /**
      * The audio track related to the participant.
      */
     _audioTrack: ?Object,
@@ -102,11 +108,6 @@ export type Props = {|
      * Indicates whether the local video flip feature is disabled or not.
      */
     _disableLocalVideoFlip: boolean,
-
-    /**
-     * Indicates whether the profile functionality is disabled.
-     */
-    _disableProfile: boolean,
 
     /**
      * The display mode of the thumbnail.
@@ -763,13 +764,13 @@ class Thumbnail extends Component<Props, State> {
      */
     _renderLocalParticipant() {
         const {
+            _allowEditing,
             _defaultLocalDisplayName,
             _disableLocalVideoFlip,
             _isMobile,
             _isMobilePortrait,
             _isScreenSharing,
             _localFlipX,
-            _disableProfile,
             _participant,
             _videoTrack
         } = this.props;
@@ -820,7 +821,7 @@ class Thumbnail extends Component<Props, State> {
                     className = 'displayNameContainer'
                     onClick = { onClick }>
                     <DisplayName
-                        allowEditing = { !_disableProfile }
+                        allowEditing = { _allowEditing }
                         displayNameSuffix = { _defaultLocalDisplayName }
                         elementID = 'localDisplayName'
                         participantID = { id } />
@@ -1053,7 +1054,6 @@ function _mapStateToProps(state, ownProps): Object {
     const {
         startSilent,
         disableLocalVideoFlip,
-        disableProfile,
         iAmRecorder,
         iAmSipGateway
     } = state['features/base/config'];
@@ -1102,6 +1102,7 @@ function _mapStateToProps(state, ownProps): Object {
     }
 
     return {
+        _allowEditing: !isNameReadOnly(state),
         _audioTrack,
         _connectionIndicatorAutoHideEnabled:
         Boolean(state['features/base/config'].connectionIndicators?.autoHide ?? true),
@@ -1110,7 +1111,6 @@ function _mapStateToProps(state, ownProps): Object {
         _currentLayout,
         _defaultLocalDisplayName: interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME,
         _disableLocalVideoFlip: Boolean(disableLocalVideoFlip),
-        _disableProfile: disableProfile,
         _isHidden: isLocal && iAmRecorder && !iAmSipGateway,
         _isAudioOnly: Boolean(state['features/base/audio-only'].enabled),
         _isCurrentlyOnLargeVideo: state['features/large-video']?.participantId === id,

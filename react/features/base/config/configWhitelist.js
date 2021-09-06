@@ -175,6 +175,7 @@ export default [
     'requireDisplayName',
     'remoteVideoMenu',
     'roomPasswordNumberOfDigits',
+    'readOnlyName',
     'replaceParticipant',
     'resolution',
     'startAudioMuted',
