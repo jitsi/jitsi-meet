@@ -53,7 +53,6 @@ local function check_for_max_occupants(event)
 		-- from the count.
 		for _, occupant in room:each_occupant() do
 			user, domain, res = split_jid(occupant.bare_jid);
-            module:log("info","Doman %s user %s whitelist",domain,user,whitelist)
 			if not whitelist:contains(domain) and not whitelist:contains(user..'@'..domain) then
 				slots = slots - 1
 			end
