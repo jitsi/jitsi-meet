@@ -43,6 +43,11 @@ export type Props = {
     email: string,
 
     /**
+     * If the display name is read only.
+     */
+    readOnlyName: boolean,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -111,6 +116,7 @@ class ProfileTab extends AbstractDialogTab<Props> {
             authEnabled,
             displayName,
             email,
+            readOnlyName,
             t
         } = this.props;
 
@@ -122,6 +128,7 @@ class ProfileTab extends AbstractDialogTab<Props> {
                             autoComplete = 'name'
                             compact = { true }
                             id = 'setDisplayName'
+                            isReadOnly = { readOnlyName }
                             label = { t('profile.setDisplayNameLabel') }
                             onChange = { this._onDisplayNameChange }
                             placeholder = { t('settings.name') }

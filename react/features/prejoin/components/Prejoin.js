@@ -4,6 +4,7 @@ import InlineDialog from '@atlaskit/inline-dialog';
 import React, { Component } from 'react';
 
 import { getRoomName } from '../../base/conference';
+import { isNameReadOnly } from '../../base/config';
 import { translate } from '../../base/i18n';
 import { Icon, IconArrowDown, IconArrowUp, IconPhone, IconVolumeOff } from '../../base/icons';
 import { isVideoMutedByUser } from '../../base/media';
@@ -63,6 +64,11 @@ type Props = {
      * Updates settings.
      */
     updateSettings: Function,
+
+    /**
+     * Whether the name input should be read only or not.
+     */
+    readOnlyName: boolean,
 
     /**
      * The name of the meeting that is about to be joined.
@@ -308,6 +314,7 @@ class Prejoin extends Component<Props, State> {
             joinConference,
             joinConferenceWithoutAudio,
             name,
+            readOnlyName,
             showCameraPreview,
             showDialog,
             t,
@@ -336,6 +343,7 @@ class Prejoin extends Component<Props, State> {
                         onChange = { _setName }
                         onSubmit = { joinConference }
                         placeHolder = { t('dialog.enterDisplayName') }
+                        readOnly = { readOnlyName }
                         value = { name } />
 
                     {showError && <div
@@ -439,6 +447,7 @@ function mapStateToProps(state): Object {
         showDialog: isJoinByPhoneDialogVisible(state),
         showErrorOnJoin,
         hasJoinByPhoneButton: isJoinByPhoneButtonVisible(state),
+        readOnlyName: isNameReadOnly(state),
         showCameraPreview: !isVideoMutedByUser(state),
         videoTrack: getLocalJitsiVideoTrack(state)
     };
