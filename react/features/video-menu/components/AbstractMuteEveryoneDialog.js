@@ -26,7 +26,7 @@ export type Props = AbstractProps & {
     isAudioModerationEnabled: boolean
 };
 
-export type State = {
+type State = {
     audioModerationEnabled: boolean,
     content: string
 };
@@ -38,7 +38,7 @@ export type State = {
  *
  * @extends AbstractMuteRemoteParticipantDialog
  */
-export default class AbstractMuteEveryoneDialog<P: Props, S: State> extends AbstractMuteRemoteParticipantDialog<P, S> {
+export default class AbstractMuteEveryoneDialog<P: Props> extends AbstractMuteRemoteParticipantDialog<P, State> {
     static defaultProps = {
         exclude: [],
         muteLocal: false
