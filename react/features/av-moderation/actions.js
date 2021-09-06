@@ -16,6 +16,7 @@ import {
     REQUEST_DISABLE_VIDEO_MODERATION,
     REQUEST_ENABLE_VIDEO_MODERATION
 } from './actionTypes';
+import { isEnabledFromState } from './functions';
 
 /**
  * Action used by moderator to approve audio and video for a participant.
@@ -24,10 +25,15 @@ import {
  * @returns {void}
  */
 export const approveParticipant = (id: string) => (dispatch: Function, getState: Function) => {
-    const { conference } = getConferenceState(getState());
+    const state = getState();
+    const { conference } = getConferenceState(state);
 
-    conference.avModerationApprove(MEDIA_TYPE.AUDIO, id);
-    conference.avModerationApprove(MEDIA_TYPE.VIDEO, id);
+    if (isEnabledFromState(MEDIA_TYPE.AUDIO, state)) {
+        conference.avModerationApprove(MEDIA_TYPE.AUDIO, id);
+    }
+    if (isEnabledFromState(MEDIA_TYPE.VIDEO, state)) {
+        conference.avModerationApprove(MEDIA_TYPE.VIDEO, id);
+    }
 };
 
 /**
