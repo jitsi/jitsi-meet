@@ -55,7 +55,7 @@ class MuteEveryonesVideoDialog extends AbstractMuteEveryonesVideoDialog<Props> {
                             <div className = 'separator-line' />
                             <div className = 'control-row'>
                                 <label htmlFor = 'moderation-switch'>
-                                    {this.props.t('dialog.moderationAudioLabel')}
+                                    {this.props.t('dialog.moderationVideoLabel')}
                                 </label>
                                 <Switch
                                     id = 'moderation-switch'

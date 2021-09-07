@@ -57,19 +57,16 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         switch (action.mediaType) {
         case MEDIA_TYPE.AUDIO: {
             titleKey = 'notify.moderationInEffectTitle';
-            descriptionKey = 'notify.moderationInEffectDescription';
             uid = AUDIO_MODERATION_NOTIFICATION_ID;
             break;
         }
         case MEDIA_TYPE.VIDEO: {
             titleKey = 'notify.moderationInEffectVideoTitle';
-            descriptionKey = 'notify.moderationInEffectVideoDescription';
             uid = VIDEO_MODERATION_NOTIFICATION_ID;
             break;
         }
         case MEDIA_TYPE.PRESENTER: {
             titleKey = 'notify.moderationInEffectCSTitle';
-            descriptionKey = 'notify.moderationInEffectCSDescription';
             uid = CS_MODERATION_NOTIFICATION_ID;
             break;
         }
