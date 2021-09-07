@@ -26,10 +26,8 @@ class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<Props> {
         this.setState(state => {
             return {
                 audioModerationEnabled: !state.audioModerationEnabled,
-                content: this.props.t(
-                    `dialog.muteEveryoneDialog${state.audioModerationEnabled
-                        ? ''
-                        : 'ModerationOn'}`
+                content: this.props.t(state.audioModerationEnabled
+                    ? 'dialog.muteEveryoneDialog' : 'dialog.muteEveryoneDialogModerationOn'
                 )
             };
         });

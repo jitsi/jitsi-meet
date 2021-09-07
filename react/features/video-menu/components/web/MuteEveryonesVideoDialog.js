@@ -26,10 +26,8 @@ class MuteEveryonesVideoDialog extends AbstractMuteEveryonesVideoDialog<Props> {
         this.setState(state => {
             return {
                 moderationEnabled: !state.moderationEnabled,
-                content: this.props.t(
-                    `dialog.muteEveryonesVideoDialog${state.moderationEnabled
-                        ? ''
-                        : 'ModerationOn'}`
+                content: this.props.t(state.moderationEnabled
+                    ? 'dialog.muteEveryonesVideoDialog' : 'dialog.muteEveryonesVideoDialogModerationOn'
                 )
             };
         });

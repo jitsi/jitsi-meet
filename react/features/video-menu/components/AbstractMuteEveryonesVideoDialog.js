@@ -56,10 +56,8 @@ export default class AbstractMuteEveryonesVideoDialog<P: Props>
 
         this.state = {
             moderationEnabled: props.isVideoModerationEnabled,
-            content: props.content || props.t(
-                `dialog.muteEveryonesVideoDialog${props.isVideoModerationEnabled
-                    ? 'ModerationOn'
-                    : ''}`
+            content: props.content || props.t(props.isVideoModerationEnabled
+                ? 'dialog.muteEveryonesVideoDialogModerationOn' : 'dialog.muteEveryonesVideoDialog'
             )
         };
 

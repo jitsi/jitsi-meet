@@ -55,10 +55,8 @@ export default class AbstractMuteEveryoneDialog<P: Props> extends AbstractMuteRe
 
         this.state = {
             audioModerationEnabled: props.isAudioModerationEnabled,
-            content: props.content || props.t(
-                `dialog.muteEveryoneDialog${props.isAudioModerationEnabled
-                    ? 'ModerationOn'
-                    : ''}`
+            content: props.content || props.t(props.isAudioModerationEnabled
+                ? 'dialog.muteEveryoneDialogModerationOn' : 'dialog.muteEveryoneDialog'
             )
         };
 
