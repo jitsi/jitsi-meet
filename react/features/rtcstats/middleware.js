@@ -1,7 +1,6 @@
 // @flow
 
 import { getAmplitudeIdentity } from '../analytics';
-import { participantApproved } from '../av-moderation/actions';
 import { CONFERENCE_UNIQUE_ID_SET, getConferenceOptions, getRoomName } from '../base/conference';
 import { LIB_WILL_INIT } from '../base/lib-jitsi-meet';
 import { DOMINANT_SPEAKER_CHANGED, getLocalParticipant } from '../base/participants';
