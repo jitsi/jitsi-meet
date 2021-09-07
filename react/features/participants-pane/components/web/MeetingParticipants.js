@@ -33,10 +33,10 @@ type RaiseContext = NullProto | {|
      */
     offsetTarget?: HTMLElement,
 
-        /**
-         * The ID of the participant.
-         */
-        participantID ?: string,
+    /**
+     * The ID of the participant.
+     */
+    participantID ?: string,
 |};
 
 const initialState = Object.freeze(Object.create(null));

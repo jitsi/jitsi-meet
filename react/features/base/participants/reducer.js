@@ -320,6 +320,12 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
 
         return { ...state };
     }
+    case RAISE_HAND_UPDATED: {
+        return {
+            ...state,
+            raisedHandsQueue: action.queue
+        };
+    }
     case SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED: {
         const { participantIds } = action;
         const sortedSharesList = [];
@@ -339,12 +345,6 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
         state.sortedRemoteScreenshares = new Map(sortedSharesList);
 
         return { ...state };
-    }
-    case RAISE_HAND_UPDATED: {
-        return {
-            ...state,
-            raisedHandsQueue: action.queue
-        };
     }
     }
 
