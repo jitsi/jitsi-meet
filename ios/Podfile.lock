@@ -288,6 +288,8 @@ PODS:
     - React
   - react-native-netinfo (4.1.5):
     - React
+  - react-native-performance (2.0.0):
+    - React-Core
   - react-native-slider (3.0.3):
     - React
   - react-native-splash-screen (3.2.0):
@@ -402,6 +404,7 @@ DEPENDENCIES:
   - react-native-calendar-events (from `../node_modules/react-native-calendar-events`)
   - react-native-keep-awake (from `../node_modules/react-native-keep-awake`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
+  - react-native-performance (from `../node_modules/react-native-performance/ios`)
   - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - react-native-video (from `../node_modules/react-native-video/react-native-video.podspec`)
@@ -488,6 +491,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-keep-awake"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
+  react-native-performance:
+    :path: "../node_modules/react-native-performance/ios"
   react-native-slider:
     :path: "../node_modules/@react-native-community/slider"
   react-native-splash-screen:
@@ -575,6 +580,7 @@ SPEC CHECKSUMS:
   react-native-calendar-events: 1442fad71a00388f933cfa25512588fec300fcf8
   react-native-keep-awake: eba3137546b10003361b37c761f6c429b59814ae
   react-native-netinfo: 8d8db463bcc5db66a8ac5c48a7d86beb3b92f61a
+  react-native-performance: 8edfa2bbc9a2af4a02f01d342118e413a95145e0
   react-native-slider: b733e17fdd31186707146debf1f04b5d94aa1a93
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-video: 1574074179ecaf6a9dd067116c8f31bf9fec15c8
@@ -599,6 +605,6 @@ SPEC CHECKSUMS:
   RNWatch: a5320c959c75e72845c07985f3e935e58998f1d3
   Yoga: 96b469c5e81ff51b917b92e8c3390642d4ded30c
 
-PODFILE CHECKSUM: 6f4485ed41286517917d47d2170b0de97d32bbfb
+PODFILE CHECKSUM: e830b1b5a46d340e22689b146b55dcf24664c6f1
 
 COCOAPODS: 1.10.1
