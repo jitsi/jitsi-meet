@@ -163,7 +163,7 @@ StateListenerRegistry.register(
 
                 // Audio & video moderation are both enabled at the same time.
                 // Avoid displaying 2 different notifications.
-                if (mediaType === MEDIA_TYPE.VIDEO) {
+                if (mediaType === MEDIA_TYPE.AUDIO) {
                     dispatch(showNotification({
                         titleKey: 'notify.hostAskedUnmute',
                         sticky: true,
