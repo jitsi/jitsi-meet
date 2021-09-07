@@ -55,8 +55,7 @@ export default class JitsiStreamBackgroundEffect {
             this._virtualVideo.autoplay = true;
             this._virtualVideo.srcObject = this._options?.virtualBackground?.virtualSource?.stream;
         }
-        if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT
-              && this._options?.virtualBackground?.dragAndDropOptions?.x) {
+        if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT) {
             this._virtualVideo = document.createElement('video');
             this._virtualVideo.autoplay = true;
             this._virtualVideo.srcObject = this._options?.virtualBackground?.virtualSource?.stream;
@@ -97,8 +96,8 @@ export default class JitsiStreamBackgroundEffect {
         const { height, width } = track.getSettings() ?? track.getConstraints();
         const { backgroundType } = this._options.virtualBackground;
 
-        this._outputCanvasElement.height = height;
-        this._outputCanvasElement.width = width;
+        this._outputCanvasElement.height = parseInt(height, 10);
+        this._outputCanvasElement.width = parseInt(width, 10);
         this._outputCanvasCtx.globalCompositeOperation = 'copy';
 
         // Draw segmentation mask.
@@ -200,6 +199,15 @@ export default class JitsiStreamBackgroundEffect {
                 this._virtualVideo.videoWidth * scale,
                 this._virtualVideo.videoHeight * scale
             );
+            this._outputCanvasCtx.drawImage(
+                this._outputCanvasElement,
+                x,
+                y,
+                this._virtualVideo.videoWidth * scale,
+                this._virtualVideo.videoHeight * scale
+            );
+            // this._ctx.drawImage(this._videoElement, this._canvas.width - this._videoElement.width, this._canvas.height
+            //     - this._videoElement.height, this._videoElement.width, this._videoElement.height);
         } else {
             this._outputCanvasCtx.filter = `blur(${this._options.virtualBackground.blurValue}px)`;
             this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
