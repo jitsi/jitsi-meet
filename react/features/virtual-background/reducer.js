@@ -26,7 +26,7 @@ ReducerRegistry.register(STORE_NAME, (state = {}, action) => {
      * Sets up the persistence of the feature {@code virtual-background}.
      */
     PersistenceRegistry.register(STORE_NAME, state.backgroundType !== VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE
-        && state.backgroundType !== VIRTUAL_BACKGROUND_TYPE.TRANSPARENT
+        && state.backgroundType !== VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM
         && state.backgroundType !== VIRTUAL_BACKGROUND_TYPE.TRANSPARENT_PREVIEW);
 
     switch (action.type) {

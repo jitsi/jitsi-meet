@@ -55,7 +55,7 @@ export default class JitsiStreamBackgroundEffect {
             this._virtualVideo.autoplay = true;
             this._virtualVideo.srcObject = this._options?.virtualBackground?.virtualSource?.stream;
         }
-        if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT) {
+        if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM) {
             this._virtualVideo = document.createElement('video');
             this._virtualVideo.autoplay = true;
             this._virtualVideo.srcObject = this._options?.virtualBackground?.virtualSource?.stream;
@@ -119,16 +119,16 @@ export default class JitsiStreamBackgroundEffect {
             0,
             this._options.width,
             this._options.height,
-            backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT
+            backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM
               && this._options?.virtualBackground?.dragAndDropOptions?.x
                 ? this._options?.virtualBackground?.dragAndDropOptions?.x * this._outputCanvasElement.width : 0,
-            backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT
+            backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM
               && this._options?.virtualBackground?.dragAndDropOptions?.y
                 ? this._options?.virtualBackground?.dragAndDropOptions?.y * this._outputCanvasElement.height : 0,
-            backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT
+            backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM
               && this._options?.virtualBackground?.dragAndDropOptions?.width
                 ? this._options?.virtualBackground?.dragAndDropOptions?.width : this._inputVideoElement.width,
-            backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT
+            backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM
               && this._options?.virtualBackground?.dragAndDropOptions?.height
                 ? this._options?.virtualBackground?.dragAndDropOptions?.height : this._inputVideoElement.height
         );
@@ -147,7 +147,7 @@ export default class JitsiStreamBackgroundEffect {
             this._outputCanvasCtx.scale(-1, 1);
             this._outputCanvasCtx.translate(-this._outputCanvasElement.width, 0);
         }
-        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT) {
+        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM) {
             this._outputCanvasCtx.drawImage(this._inputVideoElement,
                 0,
                 0,
@@ -181,7 +181,7 @@ export default class JitsiStreamBackgroundEffect {
         } else if (backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT_PREVIEW) {
             this._outputCanvasCtx.globalAlpha = 0;
         } else if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE
-            || backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT) {
+            || backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM) {
             // Get the scale.
             const scale = Math.min(
                 this._outputCanvasElement.width / this._virtualVideo.videoWidth,

@@ -7,7 +7,7 @@
     grid-template-columns: auto auto auto auto auto;
     column-gap: 9px;
     cursor: pointer;
-    .transparent:hover,
+    .desktop-share-transform:hover,
     .desktop-share:hover,
     .thumbnail:hover,
     .blur:hover,
@@ -84,10 +84,10 @@
         padding: 0 10px;
     }
 
-    .transparent {
+    .desktop-share-transform {
         background: #525252;
     }
-    .transparent-selected {
+    .desktop-share-transform-selected {
         background: #525252;
         border: 2px solid #246fe5;
         padding: 0 10px;
@@ -96,7 +96,7 @@
     @media (max-width: 632px) {
         font-size: 1.5vw;
         .desktop-share,
-        .transparent,
+        .desktop-share-transform,
         .virtual-background-none,
         .thumbnail,
         .blur,
@@ -105,7 +105,7 @@
             width: 60px;
         }
         .desktop-share-selected,
-        .transparent-selected,
+        .desktop-share-transform-selected,
         .thumbnail-selected,
         .none-selected,
         .blur-selected,

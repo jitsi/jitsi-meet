@@ -320,7 +320,7 @@ function VirtualBackground({
         await dispatch(toggleBackgroundEffect(options, _jitsiTrack));
         await setLoading(false);
         if ((_localFlipX && options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE)
-            || (_localFlipX && options.backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT)) {
+            || (_localFlipX && options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM)) {
             dispatch(updateSettings({
                 localFlipX: !_localFlipX
             }));
@@ -352,9 +352,9 @@ function VirtualBackground({
     const updateTransparentOptions = useCallback(async dragAndDropOptions => {
         await setDragAndDropOpt(dragAndDropOptions);
         setOptions({
-            backgroundType: VIRTUAL_BACKGROUND_TYPE.TRANSPARENT,
+            backgroundType: VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM,
             enabled: true,
-            selectedThumbnail: 'transparent',
+            selectedThumbnail: 'desktop-share-transform',
             dragAndDropOptions,
             url: dragAndDropOptions.url
         });

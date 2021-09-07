@@ -10,7 +10,7 @@ export const VIRTUAL_BACKGROUND_TYPE = {
     DESKTOP_SHARE: 'desktop-share',
     BLUR: 'blur',
     NONE: 'none',
-    TRANSPARENT: 'transparent',
+    DESKTOP_SHARE_TRANSFORM: 'desktop-share-transform',
     TRANSPARENT_PREVIEW: 'transparent-preview'
 };
 
