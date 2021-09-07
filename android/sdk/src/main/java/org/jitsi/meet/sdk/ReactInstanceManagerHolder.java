@@ -184,6 +184,7 @@ class ReactInstanceManagerHolder {
                 new com.horcrux.svg.SvgPackage(),
                 new com.kevinresol.react_native_default_preference.RNDefaultPreferencePackage(),
                 new com.learnium.RNDeviceInfo.RNDeviceInfo(),
+                new com.oblador.performance.PerformancePackage(),
                 new com.ocetnik.timer.BackgroundTimerPackage(),
                 new com.reactnativecommunity.asyncstorage.AsyncStoragePackage(),
                 new com.reactnativecommunity.netinfo.NetInfoPackage(),
