@@ -86,6 +86,16 @@ class RTCStats {
     }
 
     /**
+     * Send dominant speaker data, the data will be processed by rtcstats-server and saved in the dump file.
+     *
+     * @param {Object} dominantSpeakerData - Dominant speaker data to be saved in the rtcstats dump.
+     * @returns {void}
+     */
+    sendDominantSpeakerData(dominantSpeakerData) {
+        this.trace && this.trace.statsEntry('dominantSpeaker', null, dominantSpeakerData);
+    }
+
+    /**
      * Connect to the rtcstats server instance. Stats (data obtained from getstats) won't be send until the
      * connect successfully initializes, however calls to GUM are recorded in an internal buffer even if not
      * connected and sent once it is established.
