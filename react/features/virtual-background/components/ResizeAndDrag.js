@@ -35,9 +35,9 @@ type Props = {
  * @returns {ReactElement}
  */
 function ResizeAndDrag({ _currentCameraDeviceId, dispatch, updateTransparent }: Props) {
+    const dragAndResizeRef = useRef(null);
     const [ containerWidth ] = useState(DESKTOP_SHARE_DIMENSIONS.CONTAINER_WIDTH);
     const [ containerHeight ] = useState(DESKTOP_SHARE_DIMENSIONS.CONTAINER_HEIGHT);
-    const dragAndResizeRef = useRef(null);
     const createLocalJitsiTrack = async () => {
         const [ jitsiTrack ] = await createLocalTracksF({
             cameraDeviceId: _currentCameraDeviceId,
@@ -207,7 +207,7 @@ function ResizeAndDrag({ _currentCameraDeviceId, dispatch, updateTransparent }: 
         if (dragAndResizeRef.current) {
             createLocalJitsiTrack();
         }
-    }, [ dragAndResizeRef ]);
+    }, [ dragAndResizeRef.current ]);
 
     return (<div
         className = 'drag-and-resize-area video-preview'

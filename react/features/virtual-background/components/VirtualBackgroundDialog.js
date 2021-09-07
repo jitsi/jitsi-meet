@@ -277,21 +277,17 @@ function VirtualBackground({
         const image = _images.find(img => img.id === imageId);
 
         if (image) {
-            try {
-                const url = await toDataURL(image.src);
+            const url = await toDataURL(image.src);
 
-                setOptions({
-                    backgroundType: 'image',
-                    enabled: true,
-                    url,
-                    selectedThumbnail: image.id,
-                    dragAndDropOptions: dragAndDropOpt
-                });
-                setSelectedThumbnail(image.id);
-                logger.info('Image set for virtual background preview!');
-            } catch (err) {
-                logger.error('Could not fetch virtual background image:', err);
-            }
+            setOptions({
+                backgroundType: 'image',
+                enabled: true,
+                url,
+                selectedThumbnail: image.id,
+                dragAndDropOptions: dragAndDropOpt
+            });
+            setSelectedThumbnail(image.id);
+            logger.info('Image setted for virtual background preview!');
 
             setLoading(false);
         }
@@ -349,6 +345,7 @@ function VirtualBackground({
         destroyTemporaryTracks();
         dispatch(hideDialog());
     });
+
     const updateTransparentOptions = useCallback(async dragAndDropOptions => {
         await setDragAndDropOpt(dragAndDropOptions);
         setOptions({
@@ -360,7 +357,6 @@ function VirtualBackground({
         });
         logger.info('"Transparent" option setted for virtual background preview!');
         await setPreviewIsLoaded(true);
-
     }, []);
 
     const loadedPreviewState = useCallback(async loaded => {
