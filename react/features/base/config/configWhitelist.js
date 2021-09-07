@@ -94,6 +94,7 @@ export default [
     'disableNS',
     'disablePolls',
     'disableProfile',
+    'disableRecordAudioNotification',
     'disableRemoteControl',
     'disableRemoteMute',
     'disableResponsiveTiles',
