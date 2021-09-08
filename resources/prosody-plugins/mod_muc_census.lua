@@ -3,6 +3,8 @@
 local jid = require "util.jid";
 local json = require "util.json";
 local iterators = require "util.iterators";
+local util = module:require "util";
+local is_healthcheck_room = util.is_healthcheck_room;
 
 local have_async = pcall(require, "util.async");
 if not have_async then
@@ -39,7 +41,7 @@ function handle_get_room_census(event)
 
     room_data = {}
     for room in host_session.modules.muc.each_room() do
-        if not tostring(room.jid):find("__jicofo-health-check", 1, true) then -- filter out test rooms
+        if not is_healthcheck_room(room.jid) then
             local occupants = room._occupants;
             if occupants then
                 participant_count = iterators.count(room:each_occupant()) - 1; -- subtract focus
