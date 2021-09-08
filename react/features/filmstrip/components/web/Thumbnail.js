@@ -100,11 +100,6 @@ export type Props = {|
     _defaultLocalDisplayName: string,
 
     /**
-     * Indicates whether the gsm bars are visible or not.
-     */
-    _disableGsmBars: boolean,
-
-    /**
      * Indicates whether the local video flip feature is disabled or not.
      */
     _disableLocalVideoFlip: boolean,
@@ -656,7 +651,6 @@ class Thumbnail extends Component<Props, State> {
             _connectionIndicatorAutoHideEnabled,
             _connectionIndicatorDisabled,
             _currentLayout,
-            _disableGsmBars,
             _isDominantSpeakerDisabled,
             _indicatorIconSize: iconSize,
             _participant,
@@ -690,7 +684,7 @@ class Thumbnail extends Component<Props, State> {
             <div>
                 { !_connectionIndicatorDisabled
                     && <ConnectionIndicator
-                        alwaysVisible = { showConnectionIndicator && !_disableGsmBars }
+                        alwaysVisible = { showConnectionIndicator }
                         enableStatsDisplay = { true }
                         iconSize = { iconSize }
                         participantId = { id }
@@ -1053,7 +1047,6 @@ function _mapStateToProps(state, ownProps): Object {
         startSilent,
         disableLocalVideoFlip,
         disableProfile,
-        disableGsmBars,
         iAmRecorder,
         iAmSipGateway
     } = state['features/base/config'];
@@ -1100,13 +1093,13 @@ function _mapStateToProps(state, ownProps): Object {
 
     return {
         _audioTrack,
-        _connectionIndicatorAutoHideEnabled: interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_ENABLED,
-        _connectionIndicatorDisabled: _isMobile || interfaceConfig.CONNECTION_INDICATOR_DISABLED,
+        _connectionIndicatorAutoHideEnabled: Boolean(state['features/base/config'].connectionIndicators?.autoHide),
+        _connectionIndicatorDisabled: _isMobile
+        || Boolean(state['features/base/config'].connectionIndicators?.disabled),
         _currentLayout,
         _defaultLocalDisplayName: interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME,
         _disableLocalVideoFlip: Boolean(disableLocalVideoFlip),
         _disableProfile: disableProfile,
-        _disableGsmBars: Boolean(disableGsmBars),
         _isHidden: isLocal && iAmRecorder && !iAmSipGateway,
         _isAudioOnly: Boolean(state['features/base/audio-only'].enabled),
         _isCurrentlyOnLargeVideo: state['features/large-video']?.participantId === id,

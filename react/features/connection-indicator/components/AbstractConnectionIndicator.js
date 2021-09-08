@@ -20,6 +20,11 @@ export const INDICATOR_DISPLAY_THRESHOLD = 30;
 export type Props = {
 
     /**
+     * How long the connection indicator should remain displayed before hiding.
+     */
+    _autoHideTimeout: number,
+
+    /**
      * The ID of the participant associated with the displayed connection indication and
      * stats.
      */
@@ -52,7 +57,7 @@ export type State = {
  *
  * @extends {Component}
  */
-export default class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
+class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
     /**
      * The timeout for automatically hiding the indicator.
      */
@@ -167,7 +172,26 @@ export default class AbstractConnectionIndicator<P: Props, S: State> extends Com
                 });
             }, typeof interfaceConfig === 'undefined'
                 ? 5000
-                : interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT);
+                : this.props._autoHideTimeout);
         }
     }
 }
+
+/**
+ * Maps (parts of) the Redux state to the associated props for the
+ * {@code ConnectorIndicator} component.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {{
+ *     _autoHideTimeout: number
+ * }}
+ */
+export function mapStateToProps(state: Object) {
+
+    return {
+        _autoHideTimeout: state['features/base/config'].connectionIndicators?.autoHideTimeout
+    };
+}
+
+export default AbstractConnectionIndicator;

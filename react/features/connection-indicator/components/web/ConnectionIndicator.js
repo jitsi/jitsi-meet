@@ -65,6 +65,11 @@ type Props = AbstractProps & {
     _connectionStatus: string,
 
     /**
+     * Disable/enable inactive indicator.
+     */
+    _connectionIndicatorInactiveDisabled: boolean,
+
+    /**
      * Whether or not the component should ignore setting a visibility class for
      * hiding the component when the connection quality is not strong.
      */
@@ -225,7 +230,8 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, AbstractSta
      */
     _renderIcon() {
         if (this.props._connectionStatus
-            === JitsiParticipantConnectionStatus.INACTIVE) {
+            === JitsiParticipantConnectionStatus.INACTIVE
+            && this.props._connectionIndicatorInactiveDisabled === false) {
             return (
                 <span className = 'connection_ninja'>
                     <Icon
@@ -289,6 +295,8 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
         = participantId ? getParticipantById(state, participantId) : getLocalParticipant(state);
 
     return {
+        _connectionIndicatorInactiveDisabled:
+        Boolean(state['features/base/config'].connectionIndicators?.inactiveDisabled),
         _connectionStatus: participant?.connectionStatus
     };
 }
