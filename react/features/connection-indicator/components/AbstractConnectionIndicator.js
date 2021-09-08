@@ -6,6 +6,8 @@ import statsEmitter from '../statsEmitter';
 
 declare var interfaceConfig: Object;
 
+const defaultAutoHideTimeout = 5000;
+
 /**
  * The connection quality percentage that must be reached to be considered of
  * good quality and can result in the connection indicator being hidden.
@@ -170,9 +172,7 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
                 this.setState({
                     showIndicator: false
                 });
-            }, typeof interfaceConfig === 'undefined'
-                ? 5000
-                : this.props._autoHideTimeout);
+            }, this.props._autoHideTimeout);
         }
     }
 }
@@ -190,7 +190,7 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
 export function mapStateToProps(state: Object) {
 
     return {
-        _autoHideTimeout: state['features/base/config'].connectionIndicators?.autoHideTimeout
+        _autoHideTimeout: state['features/base/config'].connectionIndicators.autoHideTimeout ?? defaultAutoHideTimeout
     };
 }
 

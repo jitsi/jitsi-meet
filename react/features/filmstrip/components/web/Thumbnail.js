@@ -1093,7 +1093,8 @@ function _mapStateToProps(state, ownProps): Object {
 
     return {
         _audioTrack,
-        _connectionIndicatorAutoHideEnabled: Boolean(state['features/base/config'].connectionIndicators?.autoHide),
+        _connectionIndicatorAutoHideEnabled:
+        Boolean(state['features/base/config'].connectionIndicators?.autoHide ?? true),
         _connectionIndicatorDisabled: _isMobile
         || Boolean(state['features/base/config'].connectionIndicators?.disabled),
         _currentLayout,

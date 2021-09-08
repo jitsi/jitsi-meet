@@ -231,7 +231,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, AbstractSta
     _renderIcon() {
         if (this.props._connectionStatus
             === JitsiParticipantConnectionStatus.INACTIVE
-            && this.props._connectionIndicatorInactiveDisabled === false) {
+            && !this.props._connectionIndicatorInactiveDisabled) {
             return (
                 <span className = 'connection_ninja'>
                     <Icon
