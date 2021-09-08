@@ -8,7 +8,7 @@ import { approveKnockingParticipant, rejectKnockingParticipant } from '../lobby/
  *
  * @param {Object} participant - The participant for which the actions are created.
  * @param {Function} closeDrawer - Callback for closing the drawer.
- * @returns {Object}
+ * @returns {Array<Function>}
  */
 export function useLobbyActions(participant, closeDrawer) {
     const dispatch = useDispatch();
@@ -30,7 +30,7 @@ export function useLobbyActions(participant, closeDrawer) {
 /**
  * Hook used to create actions & state for opening a drawer.
  *
- * @returns {Object}
+ * @returns {Array<any>}
  */
 export function useParticipantDrawer() {
     const [ drawerParticipant, openDrawerForParticipant ] = useState(null);

@@ -47,6 +47,7 @@ const CS_MODERATION_NOTIFICATION_ID = 'video-moderation';
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     const { type } = action;
+    const { conference } = getConferenceState(getState());
 
     switch (type) {
     case LOCAL_PARTICIPANT_MODERATION_NOTIFICATION: {
@@ -87,26 +88,18 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         break;
     }
     case REQUEST_DISABLE_AUDIO_MODERATION: {
-        const { conference } = getConferenceState(getState());
-
         conference.disableAVModeration(MEDIA_TYPE.AUDIO);
         break;
     }
     case REQUEST_DISABLE_VIDEO_MODERATION: {
-        const { conference } = getConferenceState(getState());
-
         conference.disableAVModeration(MEDIA_TYPE.VIDEO);
         break;
     }
     case REQUEST_ENABLE_AUDIO_MODERATION: {
-        const { conference } = getConferenceState(getState());
-
         conference.enableAVModeration(MEDIA_TYPE.AUDIO);
         break;
     }
     case REQUEST_ENABLE_VIDEO_MODERATION: {
-        const { conference } = getConferenceState(getState());
-
         conference.enableAVModeration(MEDIA_TYPE.VIDEO);
         break;
     }

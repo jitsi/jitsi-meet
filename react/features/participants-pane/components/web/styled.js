@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import { Icon, IconHorizontalPoints } from '../../../base/icons';
 import { ACTION_TRIGGER } from '../../constants';
 
+const MD_BREAKPOINT = '580px';
+
 export const ignoredChildClassName = 'ignore-child';
 
 export const AntiCollapse = styled.br`
@@ -163,7 +165,7 @@ export const FooterButton = styled(Button)`
   font-size: 15px;
   padding: 0 16px;
 
-  @media (max-width: 580px) {
+  @media (max-width: ${MD_BREAKPOINT}) {
     font-size: 16px;
     height: 48px;
     min-width: 48px;
@@ -195,7 +197,7 @@ export const Heading = styled.div`
   line-height: 24px;
   margin: 8px 0 ${props => props.theme.panePadding}px;
 
-  @media (max-width: 580px) {
+  @media (max-width: ${MD_BREAKPOINT}) {
     font-size: 16px;
   }
 `;
@@ -285,7 +287,7 @@ export const ParticipantContainer = styled.div`
   padding-left: ${props => props.theme.panePadding}px;
   position: relative;
 
-  @media (max-width: 580px) {
+  @media (max-width: ${MD_BREAKPOINT}) {
     font-size: 16px;
     height: 64px;
   }
@@ -326,7 +328,7 @@ export const ParticipantInviteButton = styled(Button).attrs({
     margin-right: 8px;
   }
 
-  @media (max-width: 580px) {
+  @media (max-width: ${MD_BREAKPOINT}) {
     font-size: 16px;
     height: 48px;
   }
