@@ -13,6 +13,11 @@ import { doesEveryoneSupportE2EE } from '../functions';
 type Props = {
 
     /**
+     * Custom e2ee label.
+     */
+    _e2eeLabel: string,
+
+    /**
      * Whether E2EE is currently enabled or not.
      */
     _enabled: boolean,
@@ -87,9 +92,21 @@ class E2EESection extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { _everyoneSupportE2EE, t } = this.props;
+        const { _e2eeLabel, _everyoneSupportE2EE, t } = this.props;
         const { enabled } = this.state;
-        const description = t('dialog.e2eeDescription');
+        let description;
+        let label;
+        let warning;
+
+        if (_e2eeLabel) {
+            description = t('dialog.e2eeDescriptionCustom', { label: _e2eeLabel });
+            label = t('dialog.e2eeLabelCustom', { label: _e2eeLabel });
+            warning = t('dialog.e2eeWarningCustom', { label: _e2eeLabel });
+        } else {
+            description = t('dialog.e2eeDescription');
+            label = t('dialog.e2eeLabel');
+            warning = t('dialog.e2eeWarning');
+        }
 
         return (
             <div id = 'e2ee-section'>
@@ -99,11 +116,11 @@ class E2EESection extends Component<Props, State> {
                     id = 'e2ee-section-description'>
                     { description }
                     { !_everyoneSupportE2EE && <br /> }
-                    { !_everyoneSupportE2EE && t('dialog.e2eeWarning') }
+                    { !_everyoneSupportE2EE && warning }
                 </p>
                 <div className = 'control-row'>
                     <label htmlFor = 'e2ee-section-switch'>
-                        { t('dialog.e2eeLabel') }
+                        { label }
                     </label>
                     <Switch
                         id = 'e2ee-section-switch'
@@ -143,8 +160,10 @@ class E2EESection extends Component<Props, State> {
  */
 function mapStateToProps(state) {
     const { enabled } = state['features/e2ee'];
+    const { e2eeLabel } = state['features/base/config'];
 
     return {
+        _e2eeLabel: e2eeLabel,
         _enabled: enabled,
         _everyoneSupportE2EE: doesEveryoneSupportE2EE(state)
     };
