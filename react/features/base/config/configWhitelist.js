@@ -84,6 +84,7 @@ export default [
     'disableAudioLevels',
     'disableDeepLinking',
     'disableFilmstripAutohiding',
+    'disableGsmBars',
     'disableInitialGUM',
     'disableH264',
     'disableHPF',

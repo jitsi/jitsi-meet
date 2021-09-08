@@ -428,6 +428,9 @@ var config = {
     // Disables profile and the edit of all fields from the profile settings (display name and email)
     // disableProfile: false,
 
+    // Disable gsm bars from thumbnails.
+    // disableGsmBars: false,
+
     // Whether or not some features are checked based on token.
     // enableFeaturesBasedOnToken: false,
 
