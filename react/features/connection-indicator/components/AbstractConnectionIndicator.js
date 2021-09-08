@@ -183,12 +183,9 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {{
- *     _autoHideTimeout: number
- * }}
+ * @returns {Props}
  */
 export function mapStateToProps(state: Object) {
-
     return {
         _autoHideTimeout: state['features/base/config'].connectionIndicators.autoHideTimeout ?? defaultAutoHideTimeout
     };

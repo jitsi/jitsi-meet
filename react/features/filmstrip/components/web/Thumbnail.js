@@ -1096,7 +1096,7 @@ function _mapStateToProps(state, ownProps): Object {
         _connectionIndicatorAutoHideEnabled:
         Boolean(state['features/base/config'].connectionIndicators?.autoHide ?? true),
         _connectionIndicatorDisabled: _isMobile
-        || Boolean(state['features/base/config'].connectionIndicators?.disabled),
+            || Boolean(state['features/base/config'].connectionIndicators?.disabled),
         _currentLayout,
         _defaultLocalDisplayName: interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME,
         _disableLocalVideoFlip: Boolean(disableLocalVideoFlip),

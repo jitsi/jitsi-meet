@@ -195,9 +195,10 @@ function _translateLegacyConfig(oldValue: Object) {
     }
 
     if (!oldValue.connectionIndicators
-    && typeof interfaceConfig === 'object' && (interfaceConfig.CONNECTION_INDICATOR_DISABLED
-        || interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_ENABLED
-        || interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT)) {
+            && typeof interfaceConfig === 'object'
+            && (interfaceConfig.hasOwnProperty('CONNECTION_INDICATOR_DISABLED')
+                || interfaceConfig.hasOwnProperty('CONNECTION_INDICATOR_AUTO_HIDE_ENABLED')
+                || interfaceConfig.hasOwnProperty('CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT'))) {
         newValue.connectionIndicators = {
             disabled: interfaceConfig.CONNECTION_INDICATOR_DISABLED,
             autoHide: interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_ENABLED,
