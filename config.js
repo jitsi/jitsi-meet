@@ -829,6 +829,7 @@ var config = {
      disableRemoteControl
      displayJids
      externalConnectUrl
+     e2eeLabel
      firefox_fake_device
      googleApiApplicationClientID
      iAmRecorder

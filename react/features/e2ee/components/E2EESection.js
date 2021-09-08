@@ -13,6 +13,11 @@ import { toggleE2EE } from '../actions';
 type Props = {
 
     /**
+     * Custom e2ee label.
+     */
+    _e2eeLabel: string,
+
+    /**
      * Whether E2EE is currently enabled or not.
      */
     _enabled: boolean,
@@ -95,9 +100,21 @@ class E2EESection extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { _everyoneSupportE2EE, t } = this.props;
-        const { enabled, expand } = this.state;
-        const description = t('dialog.e2eeDescription');
+        const { _e2eeLabel, _everyoneSupportE2EE, t } = this.props;
+        const { enabled } = this.state;
+        let description;
+        let label;
+        let warning;
+
+        if (_e2eeLabel) {
+            description = t('dialog.e2eeDescriptionCustom', { label: _e2eeLabel });
+            label = t('dialog.e2eeLabelCustom', { label: _e2eeLabel });
+            warning = t('dialog.e2eeWarningCustom', { label: _e2eeLabel });
+        } else {
+            description = t('dialog.e2eeDescription');
+            label = t('dialog.e2eeLabel');
+            warning = t('dialog.e2eeWarning');
+        }
 
         return (
             <div id = 'e2ee-section'>
@@ -105,18 +122,9 @@ class E2EESection extends Component<Props, State> {
                     aria-live = 'polite'
                     className = 'description'
                     id = 'e2ee-section-description'>
-                    { expand && description }
-                    { !expand && description.substring(0, 100) }
-                    { !expand && <span
-                        aria-controls = 'e2ee-section-description'
-                        aria-expanded = { expand }
-                        className = 'read-more'
-                        onClick = { this._onExpand }
-                        onKeyPress = { this._onExpandKeyPress }
-                        role = 'button'
-                        tabIndex = { 0 }>
-                            ... { t('dialog.readMore') }
-                    </span> }
+                    { description }
+                    { !_everyoneSupportE2EE && <br /> }
+                    { !_everyoneSupportE2EE && warning }
                 </p>
                 {
                     !_everyoneSupportE2EE
@@ -126,7 +134,7 @@ class E2EESection extends Component<Props, State> {
                 }
                 <div className = 'control-row'>
                     <label htmlFor = 'e2ee-section-switch'>
-                        { t('dialog.e2eeLabel') }
+                        { label }
                     </label>
                     <Switch
                         id = 'e2ee-section-switch'
@@ -195,8 +203,10 @@ class E2EESection extends Component<Props, State> {
  */
 function mapStateToProps(state) {
     const { enabled, everyoneSupportE2EE } = state['features/e2ee'];
+    const { e2eeLabel } = state['features/base/config'];
 
     return {
+        _e2eeLabel: e2eeLabel,
         _enabled: enabled,
         _everyoneSupportE2EE: everyoneSupportE2EE
     };
