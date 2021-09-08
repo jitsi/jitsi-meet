@@ -109,6 +109,7 @@ export default [
     'doNotStoreRoom',
     'doNotFlipLocalVideo',
     'dropbox',
+    'e2eeLabel',
     'e2eping',
     'enableDisplayNameInStats',
     'enableEmailInStats',
