@@ -126,12 +126,6 @@ class E2EESection extends Component<Props, State> {
                     { !_everyoneSupportE2EE && <br /> }
                     { !_everyoneSupportE2EE && warning }
                 </p>
-                {
-                    !_everyoneSupportE2EE
-                        && <span className = 'warning'>
-                            { t('dialog.e2eeWarning') }
-                        </span>
-                }
                 <div className = 'control-row'>
                     <label htmlFor = 'e2ee-section-switch'>
                         { label }
