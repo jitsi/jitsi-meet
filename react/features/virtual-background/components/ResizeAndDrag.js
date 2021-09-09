@@ -1,6 +1,4 @@
-
-// @flow
-
+/* eslint-disable flowtype/no-types-missing-file-annotation */
 import Konva from 'konva';
 import React, { useEffect, useRef, useState } from 'react';
 
