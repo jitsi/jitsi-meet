@@ -26,7 +26,7 @@ var interfaceConfig = {
 
     CLOSE_PAGE_GUEST_HINT: false, // A html text to be shown to guests on the close page, false disables it
 
-    // Connection indicators got moved to config.js
+    // Connection indicators (CONNECTION_INDICATOR_AUTO_HIDE_ENABLED, CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT, CONNECTION_INDICATOR_DISABLED) got moved to config.js.
 
     DEFAULT_BACKGROUND: '#474747',
     DEFAULT_LOCAL_DISPLAY_NAME: 'me',
