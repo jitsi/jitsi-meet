@@ -1,4 +1,5 @@
-/* eslint-disable flowtype/no-types-missing-file-annotation */
+// @flow
+
 import Konva from 'konva';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -33,7 +34,8 @@ type Props = {
  * @returns {ReactElement}
  */
 function ResizeAndDrag({ _currentCameraDeviceId, dispatch, updateTransparent }: Props) {
-    const dragAndResizeRef = useRef(null);
+    const dragAndResizeRef = useRef();
+    const [ refVisible, setRefVisible ] = useState(false);
     const [ containerWidth ] = useState(DESKTOP_SHARE_DIMENSIONS.CONTAINER_WIDTH);
     const [ containerHeight ] = useState(DESKTOP_SHARE_DIMENSIONS.CONTAINER_HEIGHT);
     const createLocalJitsiTrack = async () => {
@@ -48,7 +50,7 @@ function ResizeAndDrag({ _currentCameraDeviceId, dispatch, updateTransparent }: 
         };
 
         await dispatch(toggleBackgroundEffect(transparentOptions, jitsiTrack));
-        if (dragAndResizeRef?.current && jitsiTrack) {
+        if (dragAndResizeRef?.current && jitsiTrack && refVisible) {
             const stage = new Konva.Stage({
                 container: dragAndResizeRef.current,
                 width: containerWidth,
@@ -94,6 +96,8 @@ function ResizeAndDrag({ _currentCameraDeviceId, dispatch, updateTransparent }: 
 
                 stage.height(desktopImageDimensions.height);
                 stage.width(desktopImageDimensions.width);
+
+                // $FlowExpectedError
                 dragAndResizeRef.current.style.width = `${desktopImageDimensions.width}px`;
 
                 // Be sure that sizes of human video are updated after desktop video resize.
@@ -187,29 +191,41 @@ function ResizeAndDrag({ _currentCameraDeviceId, dispatch, updateTransparent }: 
         * @returns {void}
         */
         function updateTransformValues(image, url, track) {
-            const personImageCoordonates = image.getClientRect({ skipTransform: false });
-            const dragAndDropOptions = {
-                x: (personImageCoordonates.x - 0) / dragAndResizeRef?.current.getBoundingClientRect().width,
-                y: (personImageCoordonates.y - 0) / dragAndResizeRef?.current.getBoundingClientRect().height,
-                width: Math.max(5, image.width() * image.scaleX()) * 1.5,
-                height: Math.max(5, image.height() * image.scaleY()) * 1.5,
-                url,
-                jitsiTrack: track
-            };
+            if (refVisible) {
+                const personImageCoordonates = image.getClientRect({ skipTransform: false });
+                const dragAndDropOptions = {
 
-            updateTransparent(dragAndDropOptions);
+                    // $FlowExpectedError
+                    x: (personImageCoordonates.x - 0) / dragAndResizeRef.current.getBoundingClientRect().width,
+
+                    // $FlowExpectedError
+                    y: (personImageCoordonates.y - 0) / dragAndResizeRef.current.getBoundingClientRect().height,
+                    width: Math.max(5, image.width() * image.scaleX()) * 1.5,
+                    height: Math.max(5, image.height() * image.scaleY()) * 1.5,
+                    url,
+                    jitsiTrack: track
+                };
+
+                updateTransparent(dragAndDropOptions);
+            }
         }
     };
 
     useEffect(() => {
-        if (dragAndResizeRef.current) {
+        if (!refVisible) {
+            return;
+        }
+        if (dragAndResizeRef.current && refVisible) {
             createLocalJitsiTrack();
         }
-    }, [ dragAndResizeRef.current ]);
+    }, [ dragAndResizeRef, refVisible ]);
 
     return (<div
         className = 'drag-and-resize-area video-preview'
-        ref = { dragAndResizeRef } />);
+        // eslint-disable-next-line react/jsx-no-bind
+        ref = { () => {
+            setRefVisible(true);
+        } } />);
 }
 
 /**
