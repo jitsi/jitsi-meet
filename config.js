@@ -169,9 +169,10 @@ var config = {
     // Enable / disable simulcast support.
     // disableSimulcast: false,
 
-    // Enable / disable layer suspension.  If enabled, endpoints whose HD
-    // layers are not in use will be suspended (no longer sent) until they
-    // are requested again.
+    // Enable / disable layer suspension.  If enabled, endpoints whose HD layers are not in use will be suspended
+    // (no longer sent) until they are requested again. This is enabled by default. This must be enabled for screen
+    // sharing to work as expected on Chrome. Disabling this might result in low resolution screenshare being sent
+    // by the client.
     // enableLayerSuspension: false,
 
     // Every participant after the Nth will start video muted.
@@ -320,7 +321,7 @@ var config = {
     //          VP9: {
     //              low: 100000,
     //              standard: 300000,
-    //              high:  1200000
+    //              high: 1200000
     //          }
     //    },
     //
@@ -859,6 +860,7 @@ var config = {
      disableRemoteControl
      displayJids
      externalConnectUrl
+     e2eeLabel
      firefox_fake_device
      googleApiApplicationClientID
      iAmRecorder
