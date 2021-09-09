@@ -1,13 +1,15 @@
 // @flow
+import { getConferenceTimestamp } from '../base/conference/functions';
+
 declare var APP: Object;
 
 /**
  * Broadcasts the changed facial expression.
  *
- * @param  {Object} facialExpression - Facial expression to be broadcasted.
+ * @param  {string} facialExpression - Facial expression to be broadcasted.
  * @returns {void}
  */
-export async function sendFacialExpression(facialExpression: Object) {
+export function sendFacialExpression(facialExpression: string): void {
     const count = APP.conference.membersCount;
 
     APP.conference.sendFacialExpression(facialExpression);
@@ -27,20 +29,72 @@ export async function sendFacialExpression(facialExpression: Object) {
  *
  * @param {Worker} worker - Facial expression worker.
  * @param {Object} imageCapture - Image capture that contains the current track.
- * @returns {Function}
+ * @returns {Promise<void>}
  */
-export async function testDetectFacialExpression(worker: Worker, imageCapture: Object) {
+export async function detectFacialExpression(worker: Worker, imageCapture: Object): Promise<void> {
     const imageBitmap = await imageCapture.grabFrame();
-    const testCanvas = document.createElement('canvas');
-    const testContext = testCanvas.getContext('2d');
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
 
-    testCanvas.width = imageBitmap.width;
-    testCanvas.height = imageBitmap.height;
-    testContext.drawImage(imageBitmap, 0, 0);
+    canvas.width = imageBitmap.width;
+    canvas.height = imageBitmap.height;
+    context.drawImage(imageBitmap, 0, 0);
 
-    const imageData = testContext.getImageData(0, 0, imageBitmap.width, imageBitmap.height);
+    const imageData = context.getImageData(0, 0, imageBitmap.width, imageBitmap.height);
 
     worker.postMessage({
         imageData
     });
+}
+
+/**
+ * Gets the time with camera unmuted.
+ *
+ * @param  {Object} cameraTimeTracker - Object with the status, time unmuted and last update of the camera.
+ * @returns {number}
+ */
+export function getCameraTime(cameraTimeTracker: {
+    muted: boolean,
+    cameraTime: number,
+    lastCameraUpdate: number
+}): number {
+    let cameraTime = cameraTimeTracker.cameraTime;
+    const state = APP.store.getState();
+    const conferenceTimestamp = getConferenceTimestamp(state);
+
+    if (!cameraTimeTracker.muted) {
+        const currentTime = conferenceTimestamp
+            ? new Date().getTime() - conferenceTimestamp
+            : 0;
+
+        cameraTime += currentTime - cameraTimeTracker.lastCameraUpdate;
+    }
+
+    return cameraTime;
+}
+
+/**
+ * Sends updated for the camera time tracker to sever-side and other participants.
+ *
+ * @param  {boolean} muted - The status of the camera.
+ * @param  {number} lastCameraUpdate - The time when the status of the camera changed last time.
+ * @returns {void}
+ */
+export function sendCameraTimeTrackerUpdate(muted: boolean, lastCameraUpdate: number): void {
+    const count = APP.conference.membersCount;
+
+    APP.conference.sendCameraTimeTrackerUpdate({
+        muted,
+        lastCameraUpdate
+    });
+
+    if (count > 1) {
+        const payload = {
+            type: 'camera_time_tracker',
+            muted,
+            lastCameraUpdate
+        };
+
+        APP.conference.broadcastEndpointMessage(payload);
+    }
 }

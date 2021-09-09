@@ -51,6 +51,9 @@ class SpeakerStatsLabels extends Component<Props> {
                 <div className = 'speaker-stats-item__expression'>
                     Frowns
                 </div>
+                <div className = 'speaker-stats-item__expression'>
+                    Total
+                </div>
             </div>
         );
     }

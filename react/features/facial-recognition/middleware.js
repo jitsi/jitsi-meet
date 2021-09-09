@@ -6,7 +6,7 @@ import { TRACK_UPDATED, TRACK_ADDED, TRACK_REMOVED } from '../base/tracks';
 import { CHANGE_BACKGROUND } from '../virtual-background/actionTypes';
 
 import {
-    maybeStartFacialRecognition,
+    startFacialRecognition,
     stopFacialRecognition,
     resetTrack,
     setFacialRecognitionAllowed,
@@ -22,7 +22,7 @@ MiddlewareRegistry.register(store => next => action => {
 
         dispatch(loadWorker());
         dispatch(setFacialRecognitionAllowed(true));
-        dispatch(maybeStartFacialRecognition());
+        dispatch(startFacialRecognition());
 
         return next(action);
     }
@@ -38,13 +38,13 @@ MiddlewareRegistry.register(store => next => action => {
             const { dispatch } = store;
 
             if (videoStarted === true) {
-                dispatch(maybeStartFacialRecognition());
+                dispatch(startFacialRecognition());
             }
             if (muted !== undefined) {
                 if (muted) {
-                    stopFacialRecognition();
+                    dispatch(stopFacialRecognition());
                 } else {
-                    dispatch(maybeStartFacialRecognition());
+                    dispatch(startFacialRecognition());
                     // eslint-disable-next-line max-depth
                     if (type === 'presenter') {
                         changeTrack(action.track);
@@ -61,7 +61,7 @@ MiddlewareRegistry.register(store => next => action => {
         const { mediaType, videoType } = action.track;
 
         if (mediaType === 'presenter' && videoType === 'camera') {
-            dispatch(maybeStartFacialRecognition());
+            dispatch(startFacialRecognition());
             changeTrack(action.track);
         }
 
@@ -70,9 +70,10 @@ MiddlewareRegistry.register(store => next => action => {
 
     case TRACK_REMOVED: {
         const { videoType } = action.track.jitsiTrack;
+        const { dispatch } = store;
 
         if ([ 'camera', 'desktop' ].includes(videoType)) {
-            stopFacialRecognition();
+            dispatch(stopFacialRecognition());
         }
 
         return next(action);

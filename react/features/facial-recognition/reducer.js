@@ -5,7 +5,8 @@ import { ReducerRegistry } from '../base/redux';
 import {
     SET_FACIAL_RECOGNITION_MODELS_LOADED,
     ADD_FACIAL_EXPRESSION,
-    SET_FACIAL_RECOGNITION_ALLOWED
+    SET_FACIAL_RECOGNITION_ALLOWED,
+    UPDATE_CAMERA_TIME_TRACKER
 } from './actionTypes';
 
 const defaultState = {
@@ -18,6 +19,11 @@ const defaultState = {
         angry: 0,
         fearful: 0,
         sad: 0
+    },
+    cameraTimeTracker: {
+        muted: true,
+        cameraTime: 0,
+        lastCameraUpdate: 0
     }
 };
 
@@ -40,6 +46,15 @@ ReducerRegistry.register('features/facial-recognition', (state = defaultState, a
             ...state,
             facialRecognitionAllowed: action.payload
         };
+    }
+    case UPDATE_CAMERA_TIME_TRACKER: {
+        if (action.muted) {
+            state.cameraTimeTracker.cameraTime += action.lastCameraUpdate - state.cameraTimeTracker.lastCameraUpdate;
+        }
+        state.cameraTimeTracker.muted = action.muted;
+        state.cameraTimeTracker.lastCameraUpdate = action.lastCameraUpdate;
+
+        return state;
     }
     }
 

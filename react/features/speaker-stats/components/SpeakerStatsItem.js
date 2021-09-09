@@ -33,6 +33,8 @@ type Props = {
 
     facialExpressions: Object,
 
+    cameraTime: number,
+
     /**
      * Invoked to obtain translated strings.
      */
@@ -94,6 +96,12 @@ class SpeakerStatsItem extends Component<Props> {
                     aria-label = { 'Frowns' }
                     className = 'speaker-stats-item__expression'>
                     { this.props.facialExpressions.angry }
+                </div>
+                <div
+                    aria-label = { 'Total' }
+                    className = 'speaker-stats-item__expression'>
+                    <TimeElapsed
+                        time = { this.props.cameraTime } />
                 </div>
             </div>
         );

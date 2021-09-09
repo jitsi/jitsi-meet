@@ -3006,6 +3006,10 @@ export default {
         room.sendFacialExpression(payload);
     },
 
+    sendCameraTimeTrackerUpdate(payload) {
+        room.sendCameraTimeTrackerUpdate(payload);
+    },
+
     /**
      * Adds new listener.
      * @param {String} eventName the name of the event
