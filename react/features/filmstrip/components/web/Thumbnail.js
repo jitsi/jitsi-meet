@@ -1093,8 +1093,10 @@ function _mapStateToProps(state, ownProps): Object {
 
     return {
         _audioTrack,
-        _connectionIndicatorAutoHideEnabled: interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_ENABLED,
-        _connectionIndicatorDisabled: _isMobile || interfaceConfig.CONNECTION_INDICATOR_DISABLED,
+        _connectionIndicatorAutoHideEnabled:
+        Boolean(state['features/base/config'].connectionIndicators?.autoHide ?? true),
+        _connectionIndicatorDisabled: _isMobile
+            || Boolean(state['features/base/config'].connectionIndicators?.disabled),
         _currentLayout,
         _defaultLocalDisplayName: interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME,
         _disableLocalVideoFlip: Boolean(disableLocalVideoFlip),

@@ -253,6 +253,14 @@ var config = {
     // Default value for the channel "last N" attribute. -1 for unlimited.
     channelLastN: -1,
 
+    // Connection indicators
+    // connectionIndicators: {
+    //     autoHide: true,
+    //     autoHideTimeout: 5000,
+    //     disabled: false,
+    //     inactiveDisabled: false
+    // },
+
     // Provides a way for the lastN value to be controlled through the UI.
     // When startLastN is present, conference starts with a last-n value of startLastN and channelLastN
     // value will be used when the quality level is selected using "Manage Video Quality" slider.

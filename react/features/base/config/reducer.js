@@ -194,6 +194,18 @@ function _translateLegacyConfig(oldValue: Object) {
         newValue.toolbarButtons = interfaceConfig.TOOLBAR_BUTTONS;
     }
 
+    if (!oldValue.connectionIndicators
+            && typeof interfaceConfig === 'object'
+            && (interfaceConfig.hasOwnProperty('CONNECTION_INDICATOR_DISABLED')
+                || interfaceConfig.hasOwnProperty('CONNECTION_INDICATOR_AUTO_HIDE_ENABLED')
+                || interfaceConfig.hasOwnProperty('CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT'))) {
+        newValue.connectionIndicators = {
+            disabled: interfaceConfig.CONNECTION_INDICATOR_DISABLED,
+            autoHide: interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_ENABLED,
+            autoHideTimeout: interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT
+        };
+    }
+
     if (oldValue.stereo || oldValue.opusMaxAverageBitrate) {
         newValue.audioQuality = {
             opusMaxAverageBitrate: oldValue.audioQuality?.opusMaxAverageBitrate ?? oldValue.opusMaxAverageBitrate,

@@ -6,6 +6,8 @@ import statsEmitter from '../statsEmitter';
 
 declare var interfaceConfig: Object;
 
+const defaultAutoHideTimeout = 5000;
+
 /**
  * The connection quality percentage that must be reached to be considered of
  * good quality and can result in the connection indicator being hidden.
@@ -18,6 +20,11 @@ export const INDICATOR_DISPLAY_THRESHOLD = 30;
  * The type of the React {@code Component} props of {@link ConnectionIndicator}.
  */
 export type Props = {
+
+    /**
+     * How long the connection indicator should remain displayed before hiding.
+     */
+    _autoHideTimeout: number,
 
     /**
      * The ID of the participant associated with the displayed connection indication and
@@ -52,7 +59,7 @@ export type State = {
  *
  * @extends {Component}
  */
-export default class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
+class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
     /**
      * The timeout for automatically hiding the indicator.
      */
@@ -165,9 +172,23 @@ export default class AbstractConnectionIndicator<P: Props, S: State> extends Com
                 this.setState({
                     showIndicator: false
                 });
-            }, typeof interfaceConfig === 'undefined'
-                ? 5000
-                : interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT);
+            }, this.props._autoHideTimeout);
         }
     }
 }
+
+/**
+ * Maps (parts of) the Redux state to the associated props for the
+ * {@code ConnectorIndicator} component.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {Props}
+ */
+export function mapStateToProps(state: Object) {
+    return {
+        _autoHideTimeout: state['features/base/config'].connectionIndicators.autoHideTimeout ?? defaultAutoHideTimeout
+    };
+}
+
+export default AbstractConnectionIndicator;

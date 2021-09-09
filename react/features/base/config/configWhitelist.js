@@ -70,6 +70,7 @@ export default [
     'callUUID',
 
     'channelLastN',
+    'connectionIndicators',
     'constraints',
     'brandingRoomAlias',
     'debug',
