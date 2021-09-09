@@ -2,10 +2,11 @@
 
 import i18next from 'i18next';
 
-import JITSI_TO_BCP47_MAP from './jitsiToBCP47LocaleMap.json';
+import JITSI_TO_BCP47_MAP from './jitsi-bcp47-map.json';
+import logger from './logger';
+import TRANSCRIBER_LANGS from './transcriber-langs.json';
 
 const DEFAULT_TRANSCRIBER_LANG = 'en-US';
-
 
 /**
  * Determine which language to use for transcribing.
@@ -14,17 +15,23 @@ const DEFAULT_TRANSCRIBER_LANG = 'en-US';
  * @returns {string}
  */
 export function determineTranscriptionLanguage(config: Object) {
-
     const { preferredTranscribeLanguage, transcribeWithAppLanguage = true } = config;
 
     // Depending on the config either use the language that the app automatically detected or the hardcoded
-    // config value.
-    const jitsiLocale = transcribeWithAppLanguage ? i18next.language : preferredTranscribeLanguage;
+    // config BCP47 value.
+    // Jitsi language detections uses custom language tags, but the transcriber expects BCP-47 compliant tags,
+    // we use a mapping file to convert them.
+    const bcp47Locale = transcribeWithAppLanguage ? JITSI_TO_BCP47_MAP[i18next.language] : preferredTranscribeLanguage;
 
-    // Jitsi uses custom language tags, but the transcriber expects BCP-47 compliant tags. We use a mapping file
-    // to convert them.
-    // Not all languages that the app might detect are supported by the transcriber in which case use the default.
-    const { [jitsiLocale]: bcp47Locale = DEFAULT_TRANSCRIBER_LANG } = JITSI_TO_BCP47_MAP;
+    // Check if the obtained language is supported by the transcriber
+    let safeBCP47Locale = TRANSCRIBER_LANGS[bcp47Locale] && bcp47Locale;
 
-    return bcp47Locale;
+    if (!safeBCP47Locale) {
+        safeBCP47Locale = DEFAULT_TRANSCRIBER_LANG;
+        logger.warn(`Transcriber language ${bcp47Locale} is not supported, using default ${DEFAULT_TRANSCRIBER_LANG}`);
+    }
+
+    logger.info(`Transcriber language set to ${safeBCP47Locale}`);
+
+    return safeBCP47Locale;
 }
