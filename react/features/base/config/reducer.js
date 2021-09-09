@@ -209,23 +209,20 @@ function _translateLegacyConfig(oldValue: Object) {
     newValue.disabledSounds = newValue.disabledSounds || [];
 
     if (oldValue.disableJoinLeaveSounds) {
-        newValue.disabledSounds = newValue.disabledSounds
-            .concat([ 'PARTICIPANT_LEFT_SOUND', 'PARTICIPANT_JOINED_SOUND' ]);
+        newValue.disabledSounds.unshift('PARTICIPANT_LEFT_SOUND', 'PARTICIPANT_JOINED_SOUND');
     }
 
     if (oldValue.disableRecordAudioNotification) {
-        newValue.disabledSounds = newValue.disabledSounds
-            .concat([
-                'RECORDING_ON_SOUND',
-                'RECORDING_OFF_SOUND',
-                'LIVE_STREAMING_ON_SOUND',
-                'LIVE_STREAMING_OFF_SOUND'
-            ]);
+        newValue.disabledSounds.unshift(
+            'RECORDING_ON_SOUND',
+            'RECORDING_OFF_SOUND',
+            'LIVE_STREAMING_ON_SOUND',
+            'LIVE_STREAMING_OFF_SOUND'
+        );
     }
 
     if (oldValue.disableIncomingMessageSound) {
-        newValue.disabledSounds = newValue.disabledSounds
-            .concat([ 'INCOMING_MSG_SOUND' ]);
+        newValue.disabledSounds.unshift('INCOMING_MSG_SOUND');
     }
 
     if (oldValue.stereo || oldValue.opusMaxAverageBitrate) {
