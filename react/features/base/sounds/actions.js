@@ -64,10 +64,7 @@ export function _removeAudioElement(soundId: string) {
  *
  * @param {string} soundId - The id of the sound to be played (the same one
  * which was used in {@link registerSound} to register the sound).
- * @returns {{
- *     type: PLAY_SOUND,
- *     soundId: string
- * }}
+ * @returns {Function}
  */
 export function playSound(soundId: string): Object {
     return (dispatch: Function, getState: Function) => {
