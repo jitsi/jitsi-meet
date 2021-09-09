@@ -103,6 +103,7 @@ export default [
     'disableRtx',
     'disableShortcuts',
     'disableShowMoreStats',
+    'disableRemoveRaisedHandOnFocus',
     'disableSpeakerStatsSearch',
     'disableSimulcast',
     'disableThirdPartyRequests',

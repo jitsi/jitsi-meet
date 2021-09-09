@@ -13,6 +13,7 @@ import {
     forEachConference,
     getCurrentConference
 } from '../conference';
+import { getDisableRemoveRaisedHandOnFocus } from '../config/functions.any';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
 import { playSound, registerSound, unregisterSound } from '../sounds';
@@ -81,7 +82,8 @@ MiddlewareRegistry.register(store => next => action => {
         // and only if it was set when this is the local participant
 
         const { conference, id } = action.participant;
-        const participant = getLocalParticipant(store.getState());
+        const state = store.getState();
+        const participant = getLocalParticipant(state);
         const isLocal = participant && participant.id === id;
 
         if (isLocal && participant.raisedHand === undefined) {
@@ -90,13 +92,14 @@ MiddlewareRegistry.register(store => next => action => {
             break;
         }
 
-        participant
-            && store.dispatch(participantUpdated({
+        if (!getDisableRemoveRaisedHandOnFocus(state)) {
+            participant && store.dispatch(participantUpdated({
                 conference,
                 id,
                 local: isLocal,
                 raisedHand: false
             }));
+        }
 
         break;
     }
