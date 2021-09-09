@@ -789,7 +789,7 @@ class Thumbnail extends Component<Props, State> {
 
         styles.thumbnail.height = _isMobilePortrait
             ? `${Math.floor(_height * MOBILE_FILMSTRIP_PORTRAIT_RATIO)}px`
-            : styles.height;
+            : styles.thumbnail.height;
 
         return (
             <span
