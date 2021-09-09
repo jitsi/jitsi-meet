@@ -41,6 +41,11 @@ export type Props = {
     disableDeviceChange: boolean,
 
     /**
+     * Whether video input dropdown should be enabled or not.
+     */
+    disableVideoInputSelect: boolean,
+
+    /**
      * Whether or not the audio permission was granted.
      */
     hasAudioPermission: boolean,
@@ -58,6 +63,12 @@ export type Props = {
     hideAudioInputPreview: boolean,
 
     /**
+     * If true, the button to play a test sound on the selected speaker will not be displayed.
+     * This needs to be hidden on browsers that do not support selecting an audio output device.
+     */
+    hideAudioOutputPreview: boolean,
+
+    /**
      * Whether or not the audio output source selector should display. If
      * true, the audio output selector and test audio link will not be
      * rendered.
@@ -69,12 +80,6 @@ export type Props = {
      * (In the case of iOS Safari)
      */
     hideVideoInputPreview: boolean,
-
-    /**
-     * Whether video output dropdown should be displayed or not.
-     * (In the case of iOS Safari)
-     */
-    hideVideoOutputSelect: boolean,
 
     /**
      * An optional callback to invoke after the component has completed its
@@ -212,7 +217,7 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
     render() {
         const {
             hideAudioInputPreview,
-            hideAudioOutputSelect,
+            hideAudioOutputPreview,
             hideVideoInputPreview,
             selectedAudioOutputId
         } = this.props;
@@ -237,7 +242,7 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
                         className = 'device-selectors'>
                         { this._renderSelectors() }
                     </div>
-                    { !hideAudioOutputSelect
+                    { !hideAudioOutputPreview
                         && <AudioOutputPreview
                             deviceId = { selectedAudioOutputId } /> }
                 </div>
@@ -371,33 +376,27 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
                 devices: availableDevices.audioInput,
                 hasPermission: hasAudioPermission,
                 icon: 'icon-microphone',
-                isDisabled: this.props.disableAudioInputChange
-                    || this.props.disableDeviceChange,
+                isDisabled: this.props.disableAudioInputChange || this.props.disableDeviceChange,
                 key: 'audioInput',
                 id: 'audioInput',
                 label: 'settings.selectMic',
-                onSelect: selectedAudioInputId =>
-                    super._onChange({ selectedAudioInputId }),
+                onSelect: selectedAudioInputId => super._onChange({ selectedAudioInputId }),
                 selectedDeviceId: this.state.previewAudioTrack
-                    ? this.state.previewAudioTrack.getDeviceId() : null
-            }
-        ];
-
-        if (!this.props.hideVideoOutputSelect) {
-            configurations.unshift({
+                    ? this.state.previewAudioTrack.getDeviceId() : this.props.selectedAudioInputId
+            },
+            {
                 devices: availableDevices.videoInput,
                 hasPermission: hasVideoPermission,
                 icon: 'icon-camera',
-                isDisabled: this.props.disableDeviceChange,
+                isDisabled: this.props.disableVideoInputSelect || this.props.disableDeviceChange,
                 key: 'videoInput',
                 id: 'videoInput',
                 label: 'settings.selectCamera',
-                onSelect: selectedVideoInputId =>
-                    super._onChange({ selectedVideoInputId }),
+                onSelect: selectedVideoInputId => super._onChange({ selectedVideoInputId }),
                 selectedDeviceId: this.state.previewVideoTrack
-                    ? this.state.previewVideoTrack.getDeviceId() : null
-            });
-        }
+                    ? this.state.previewVideoTrack.getDeviceId() : this.props.selectedVideoInputId
+            }
+        ];
 
         if (!this.props.hideAudioOutputSelect) {
             configurations.push({
@@ -408,8 +407,7 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
                 key: 'audioOutput',
                 id: 'audioOutput',
                 label: 'settings.selectAudioOutput',
-                onSelect: selectedAudioOutputId =>
-                    super._onChange({ selectedAudioOutputId }),
+                onSelect: selectedAudioOutputId => super._onChange({ selectedAudioOutputId }),
                 selectedDeviceId: this.props.selectedAudioOutputId
             });
         }
