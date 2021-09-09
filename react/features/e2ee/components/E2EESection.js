@@ -13,9 +13,9 @@ import { doesEveryoneSupportE2EE } from '../functions';
 type Props = {
 
     /**
-     * Custom e2ee label.
+     * Custom e2ee labels.
      */
-    _e2eeLabel: string,
+    _e2eeLabels: Object,
 
     /**
      * Whether E2EE is currently enabled or not.
@@ -92,21 +92,11 @@ class E2EESection extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { _e2eeLabel, _everyoneSupportE2EE, t } = this.props;
+        const { _e2eeLabels, _everyoneSupportE2EE, t } = this.props;
         const { enabled } = this.state;
-        let description;
-        let label;
-        let warning;
-
-        if (_e2eeLabel) {
-            description = t('dialog.e2eeDescriptionCustom', { label: _e2eeLabel });
-            label = t('dialog.e2eeLabelCustom', { label: _e2eeLabel });
-            warning = t('dialog.e2eeWarningCustom', { label: _e2eeLabel });
-        } else {
-            description = t('dialog.e2eeDescription');
-            label = t('dialog.e2eeLabel');
-            warning = t('dialog.e2eeWarning');
-        }
+        const description = _e2eeLabels?.description || t('dialog.e2eeDescription');
+        const label = _e2eeLabels?.label || t('dialog.e2eeLabel');
+        const warning = _e2eeLabels?.warning || t('dialog.e2eeWarning');
 
         return (
             <div id = 'e2ee-section'>
@@ -160,10 +150,10 @@ class E2EESection extends Component<Props, State> {
  */
 function mapStateToProps(state) {
     const { enabled } = state['features/e2ee'];
-    const { e2eeLabel } = state['features/base/config'];
+    const { e2eeLabels } = state['features/base/config'];
 
     return {
-        _e2eeLabel: e2eeLabel,
+        _e2eeLabels: e2eeLabels,
         _enabled: enabled,
         _everyoneSupportE2EE: doesEveryoneSupportE2EE(state)
     };
