@@ -604,7 +604,7 @@
     "preCallMessage": {
         "sitBack": "Sit back, relax and take a moment for yourself.",
         "WaitingforOthers": "Waiting for the other participant to join...",
-        "willBeginAt": "Your appointment will begin at.",
+        "willBeginAt": "Your appointment will begin at {{time}}.",
         "testing": "Testing your audio and video...",
         "waitingForPractitioner": "Waiting for the practitioner...",
         "hangUpToClose": "When you are done testing your audio and video, hang up to close this screen. Begin your online appointment from your upcoming appointments page."

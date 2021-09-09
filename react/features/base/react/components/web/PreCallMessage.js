@@ -99,8 +99,8 @@ class PreCallMessage extends Component<Props, State> {
         let message = t('preCallMessage.sitBack');
 
         if (beforeAppointmentStart && appointmentStartAt) {
-            header = `${t('preCallMessage.willBeginAt')} 
-            ${getLocalizedDateFormatter(appointmentStartAt).format('hh:mm A')}`;
+            header = t('preCallMessage.willBeginAt', { time: getLocalizedDateFormatter(appointmentStartAt)
+                    .format('hh:mm A') });
         }
 
         if (isTestCall) {

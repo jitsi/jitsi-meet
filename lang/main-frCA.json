@@ -495,7 +495,7 @@
     "preCallMessage" : {
         "sitBack" : "Asseyez-vous, détendez-vous et prenez un moment pour vous.",
         "WaitingforOthers" : "En attendant que l'autre participant se joigne à nous...",
-        "willBeginAt" : "Votre rendez-vous commencera à...",
+        "willBeginAt" : "Votre rendez-vous commencera à {{time}}",
         "testing" : "Test de votre audio et vidéo...",
         "waitingForPractitioner" : "En attendant le praticien...",
         "hangUpToClose" : "Quand vous aurez fini de tester votre audio et votre vidéo, Raccrochez pour fermer cet écran. Commencez votre rendez-vous en ligne à partir de votre page de rendez-vous à venir."
