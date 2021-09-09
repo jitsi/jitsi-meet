@@ -242,8 +242,9 @@ var config = {
     // transcribeWithAppLanguage: true,
 
     // Transcriber language. This settings will only work if "transcribeWithAppLanguage" is explicitly set to false.
-    // Available languages can be found in lang/language.json.
-    // preferredTranscribeLanguage: 'en',
+    // Available languages can be found in
+    // ./src/react/features/transcribing/transcriber-langs.json.
+    // preferredTranscribeLanguage: 'en-US',
 
     // Enables automatic turning on captions when recording is started
     // autoCaptionOnRecord: false,
