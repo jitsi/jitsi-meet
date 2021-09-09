@@ -104,6 +104,7 @@ export default [
     'disableShowMoreStats',
     'disableSpeakerStatsSearch',
     'disableSimulcast',
+    'disabledSoundIds',
     'disableThirdPartyRequests',
     'disableTileView',
     'displayJids',

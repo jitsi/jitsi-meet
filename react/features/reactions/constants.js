@@ -68,7 +68,7 @@ export const SILENCE_SOUND_ID = 'SILENCE_SOUND_';
  *
  * @type {string}
  */
-export const RAISE_HAND_SOUND_ID = 'RAISE_HAND_SOUND_ID';
+export const RAISE_HAND_SOUND_ID = 'RAISE_HAND_SOUND';
 
 export type ReactionEmojiProps = {
 

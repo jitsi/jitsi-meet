@@ -313,10 +313,10 @@ function _handleReceivedMessage({ dispatch, getState },
     // Logic for all platforms:
     const state = getState();
     const { isOpen: isChatOpen } = state['features/chat'];
-    const { disableIncomingMessageSound, iAmRecorder } = state['features/base/config'];
+    const { iAmRecorder } = state['features/base/config'];
     const { soundsIncomingMessage: soundEnabled } = state['features/base/settings'];
 
-    if (!disableIncomingMessageSound && soundEnabled && shouldPlaySound && !isChatOpen) {
+    if (soundEnabled && shouldPlaySound && !isChatOpen) {
         dispatch(playSound(INCOMING_MSG_SOUND_ID));
     }
 
