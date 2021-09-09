@@ -14,8 +14,9 @@
 -- 
 -- to activate, add "muc_census" to the modules_enabled table in prosody.cfg.lua
 -- 
--- warning: this module is unprotected. if you enable it, be sure to secure it
--- with web server, firewall or ther rules
+-- warning: this module is unprotected and intended for server admin use only.
+-- when enabled, make sure to secure the endpoint at the web server or via
+-- network filters
 
 local jid = require "util.jid";
 local json = require "util.json";
