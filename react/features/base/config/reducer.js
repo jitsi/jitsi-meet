@@ -206,13 +206,15 @@ function _translateLegacyConfig(oldValue: Object) {
         };
     }
 
+    newValue.disabledSounds = newValue.disabledSounds || [];
+
     if (oldValue.disableJoinLeaveSounds) {
-        newValue.disabledSoundIds = (newValue.disabledSoundIds || [])
+        newValue.disabledSounds = newValue.disabledSounds
             .concat([ 'PARTICIPANT_LEFT_SOUND', 'PARTICIPANT_JOINED_SOUND' ]);
     }
 
     if (oldValue.disableRecordAudioNotification) {
-        newValue.disabledSoundIds = (newValue.disabledSoundIds || [])
+        newValue.disabledSounds = newValue.disabledSounds
             .concat([
                 'RECORDING_ON_SOUND',
                 'RECORDING_OFF_SOUND',
@@ -222,7 +224,7 @@ function _translateLegacyConfig(oldValue: Object) {
     }
 
     if (oldValue.disableIncomingMessageSound) {
-        newValue.disabledSoundIds = (newValue.disabledSoundIds || [])
+        newValue.disabledSounds = newValue.disabledSounds
             .concat([ 'INCOMING_MSG_SOUND' ]);
     }
 

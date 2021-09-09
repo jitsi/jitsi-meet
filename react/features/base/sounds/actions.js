@@ -11,7 +11,7 @@ import {
     UNREGISTER_SOUND
 } from './actionTypes';
 import { getSoundsPath } from './functions';
-import { getDisabledSoundIds } from './functions.any';
+import { getDisabledSounds } from './functions.any';
 
 /**
  * Adds {@link AudioElement} instance to the base/sounds feature state for the
@@ -68,9 +68,9 @@ export function _removeAudioElement(soundId: string) {
  */
 export function playSound(soundId: string): Object {
     return (dispatch: Function, getState: Function) => {
-        const disabledSoundIds = getDisabledSoundIds(getState());
+        const disabledSounds = getDisabledSounds(getState());
 
-        if (!disabledSoundIds.includes(soundId)) {
+        if (!disabledSounds.includes(soundId)) {
             dispatch({
                 type: PLAY_SOUND,
                 soundId

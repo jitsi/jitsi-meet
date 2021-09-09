@@ -685,36 +685,36 @@ var config = {
 
     // Array<string> of disabled sounds.
     // Possible values:
-    // - PARTICIPANT_JOINED_SOUND,
-    // - PARTICIPANT_LEFT_SOUND,
-    // - RAISE_HAND_SOUND,
-    // - INCOMING_MSG_SOUND,
-    // - E2EE_OFF_SOUND
-    // - E2EE_ON_SOUND
-    // - OUTGOING_CALL_START_SOUND
-    // - OUTGOING_CALL_RINGING_SOUND
-    // - OUTGOING_CALL_REJECTED_SOUND
-    // - OUTGOING_CALL_EXPIRED_SOUND
-    // - KNOCKING_PARTICIPANT_SOUND
-    // - NO_AUDIO_SIGNAL_SOUND
-    // - NOISY_AUDIO_INPUT_SOUND
-    // - RECORDING_ON_SOUND
-    // - RECORDING_OFF_SOUND
-    // - LIVE_STREAMING_ON_SOUND
-    // - LIVE_STREAMING_OFF_SOUND
-    // - TALK_WHILE_MUTED_SOUND
-    // disabledSoundIds: [],
+    // - 'E2EE_OFF_SOUND'
+    // - 'E2EE_ON_SOUND'
+    // - 'INCOMING_MSG_SOUND'
+    // - 'KNOCKING_PARTICIPANT_SOUND'
+    // - 'LIVE_STREAMING_OFF_SOUND'
+    // - 'LIVE_STREAMING_ON_SOUND'
+    // - 'NO_AUDIO_SIGNAL_SOUND'
+    // - 'NOISY_AUDIO_INPUT_SOUND'
+    // - 'OUTGOING_CALL_EXPIRED_SOUND'
+    // - 'OUTGOING_CALL_REJECTED_SOUND'
+    // - 'OUTGOING_CALL_RINGING_SOUND'
+    // - 'OUTGOING_CALL_START_SOUND'
+    // - 'PARTICIPANT_JOINED_SOUND'
+    // - 'PARTICIPANT_LEFT_SOUND'
+    // - 'RAISE_HAND_SOUND'
+    // - 'RECORDING_OFF_SOUND'
+    // - 'RECORDING_ON_SOUND'
+    // - 'TALK_WHILE_MUTED_SOUND'
+    // disabledSounds: [],
 
-    // DEPRECATED! Use `disabledSoundIds` instead.
+    // DEPRECATED! Use `disabledSounds` instead.
     // Decides whether the start/stop recording audio notifications should play on record.
     // disableRecordAudioNotification: false,
 
-    // DEPRECATED! Use `disabledSoundIds` instead.
+    // DEPRECATED! Use `disabledSounds` instead.
     // Disables the sounds that play when other participants join or leave the
     // conference (if set to true, these sounds will not be played).
     // disableJoinLeaveSounds: false,
 
-    // DEPRECATED! Use `disabledSoundIds` instead.
+    // DEPRECATED! Use `disabledSounds` instead.
     // Disables the sounds that play when a chat message is received.
     // disableIncomingMessageSound: false,
 

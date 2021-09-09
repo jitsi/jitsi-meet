@@ -84,7 +84,7 @@ export default [
     'disableAP',
     'disableAudioLevels',
     'disableDeepLinking',
-    'disabledSoundIds',
+    'disabledSounds',
     'disableFilmstripAutohiding',
     'disableInitialGUM',
     'disableH264',
