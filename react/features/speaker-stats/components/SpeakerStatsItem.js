@@ -80,22 +80,26 @@ class SpeakerStatsItem extends Component<Props> {
                 <div
                     aria-label = { 'Smiles' }
                     className = 'speaker-stats-item__expression'>
-                    { this.props.facialExpressions.happy }
+                    <TimeElapsed
+                        time = { this.props.facialExpressions.happy * 1000 } />
                 </div>
                 <div
                     aria-label = { 'Neutrals' }
                     className = 'speaker-stats-item__expression'>
-                    { this.props.facialExpressions.neutral }
+                    <TimeElapsed
+                        time = { this.props.facialExpressions.neutral * 1000 } />
                 </div>
                 <div
                     aria-label = { 'Gasps' }
                     className = 'speaker-stats-item__expression'>
-                    { this.props.facialExpressions.surprised }
+                    <TimeElapsed
+                        time = { this.props.facialExpressions.surprised * 1000 } />
                 </div>
                 <div
                     aria-label = { 'Frowns' }
                     className = 'speaker-stats-item__expression'>
-                    { this.props.facialExpressions.angry }
+                    <TimeElapsed
+                        time = { this.props.facialExpressions.angry * 1000 } />
                 </div>
                 <div
                     aria-label = { 'Total' }
