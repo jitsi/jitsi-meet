@@ -4,6 +4,11 @@
 export type Props = {
 
     /**
+     * Custom e2ee labels.
+     */
+    _e2eeLabels?: Object;
+
+    /**
      * True if the label needs to be rendered, false otherwise.
      */
     _showLabel: boolean,
@@ -23,6 +28,7 @@ export type Props = {
  */
 export function _mapStateToProps(state: Object) {
     return {
+        _e2eeLabels: state['features/base/config'].e2eeLabels,
         _showLabel: state['features/e2ee'].everyoneEnabledE2EE
     };
 }
