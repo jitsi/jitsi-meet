@@ -399,7 +399,8 @@ function _visitNode(node, callback) {
 
     const perf = require('react-native-performance');
 
-    global.performance = perf;
+    global.performance = perf.default;
+    global.performance.now = now;
     global.PerformanceObserver = perf.PerformanceObserver;
 
     // CallStats
