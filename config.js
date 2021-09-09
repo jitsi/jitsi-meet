@@ -1017,6 +1017,9 @@ var config = {
     // Prevent the filmstrip from autohiding when screen width is under a certain threshold
     // disableFilmstripAutohiding: false,
 
+    // Specifies whether the chat emoticons are disabled or not
+    // disableChatSmileys: false,
+
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.
     makeJsonParserHappy: 'even if last key had a trailing comma'

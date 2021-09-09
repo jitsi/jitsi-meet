@@ -83,6 +83,7 @@ export default [
     'disableAGC',
     'disableAP',
     'disableAudioLevels',
+    'disableChatSmileys',
     'disableDeepLinking',
     'disabledSounds',
     'disableFilmstripAutohiding',
