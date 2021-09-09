@@ -7,6 +7,7 @@ import {
     createWaitingAreaParticipantStatusChangedEvent,
     sendAnalytics
 } from '../analytics';
+import { getBrowserSessionId } from '../app/functions';
 import { showErrorNotification } from '../notifications';
 
 export function isJaneWaitingAreaEnabled(state: Object): boolean {
@@ -20,6 +21,7 @@ export function isJaneWaitingAreaEnabled(state: Object): boolean {
 export function updateParticipantReadyStatus(jwt: string, status: string): void {
     const jwtPayload = jwt && jwtDecode(jwt) ?? {};
     const updateParticipantStatusUrl = _.get(jwtPayload, 'context.update_participant_status_url') ?? '';
+    const browserSessionId = getBrowserSessionId();
     const info = { status };
 
     return fetch(updateParticipantStatusUrl, {
@@ -29,7 +31,8 @@ export function updateParticipantReadyStatus(jwt: string, status: string): void 
         },
         body: JSON.stringify({
             'jwt': jwt,
-            'info': info
+            'info': info,
+            'browser_session_id': browserSessionId
         })
     })
     .then(res => {

@@ -1,3 +1,4 @@
+import { getBrowserSessionId } from '../../app/functions';
 import { getJitsiMeetGlobalNS } from '../../base/util';
 
 import AbstractHandler from './AbstractHandler';
@@ -13,11 +14,11 @@ export default class JaneHandler extends AbstractHandler {
      * @param {Object} options -
      * @param {string} options.janeEndpoint - The Jane endpoint.
      * @param {string} options.jwt - The Jane jwt token.
-     * @param {string} options.participant - The participant info.
+     * @param {string} options.participant - Local participant info.
+     * @param {string} options.uid - The combination of clinic id and user id.
      */
     constructor(options) {
         super(options);
-        this._userProperties = {};
 
         if (!options.janeEndpoint || !options.jwt) {
             throw new Error(
@@ -27,6 +28,8 @@ export default class JaneHandler extends AbstractHandler {
         this._enabled = true;
         this._janeEndpoint = options.janeEndpoint;
         this._participant = options.participant;
+        this.uid = options.uid;
+        this.browserSessionId = getBrowserSessionId();
     }
 
     /**
@@ -53,6 +56,8 @@ export default class JaneHandler extends AbstractHandler {
                 'name': eventName,
                 'participant_id': participant.participant_id,
                 'participant_type': participant.participant_type,
+                'uid': this.uid,
+                'browser_session_id': this.browserSessionId,
                 ...event
             })
         });

@@ -1,5 +1,7 @@
 // @flow
 
+import uuid from 'uuid';
+
 import { toState } from '../base/redux';
 import { getServerURL } from '../base/settings';
 
@@ -31,4 +33,24 @@ export function getDefaultURL(stateful: Function | Object) {
  */
 export function getName() {
     return interfaceConfig.APP_NAME;
+}
+
+/**
+ * Set browser session id.
+ *
+ * @returns {void}
+ */
+export function setBrowserSessionId() {
+    if (!getBrowserSessionId()) {
+        window.sessionStorage.setItem('browser_session_id', uuid.v4());
+    }
+}
+
+/**
+ * Get browser session id.
+ *
+ * @returns {string}
+ */
+export function getBrowserSessionId() {
+    return window.sessionStorage.getItem('browser_session_id');
 }

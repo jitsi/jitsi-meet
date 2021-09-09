@@ -73,9 +73,12 @@ export function createHandlers({ getState }: { getState: Function }) {
     const config = state['features/base/config'];
     const { locationURL } = state['features/base/connection'];
     const { jwt } = state['features/base/jwt'];
+    const jwtPayload = (jwt && jwtDecode(jwt)) || {};
     const participant = getLocalParticipantFromJwt(state);
     const host = locationURL ? locationURL.host : '';
-    const janeEndpoint = getJaneEndpoint(state);
+    const janeEndpoint = _.get(jwtPayload, 'context.event_url');
+    const uid = _.get(jwtPayload, 'context.user.id');
+
     const {
         analytics: analyticsConfig = {},
         deploymentInfo
@@ -106,7 +109,8 @@ export function createHandlers({ getState }: { getState: Function }) {
         whiteListedEvents,
         janeEndpoint,
         jwt,
-        participant
+        participant,
+        uid
     };
     const handlers = [];
 
@@ -289,17 +293,4 @@ function _loadHandlers(scriptURLs = [], handlerConstructorOptions) {
 
         return handlers;
     });
-}
-
-/**
- * Tries to load the scripts for the external analytics handlers and creates them.
- *
- * @param {State} state - The current redux state.
- * @returns {string | undefined}
- */
-function getJaneEndpoint(state) {
-    const { jwt } = state['features/base/jwt'];
-    const jwtPayload = (jwt && jwtDecode(jwt)) || {};
-
-    return _.get(jwtPayload, 'context.event_url');
 }
