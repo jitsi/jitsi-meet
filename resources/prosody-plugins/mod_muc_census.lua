@@ -40,7 +40,7 @@ local muc_domain_prefix = module:get_option_string("muc_mapper_domain_prefix", "
 --- handles request to get number of participants in all rooms
 -- @return GET response
 function handle_get_room_census(event)
-    local host_session = prosody.hosts["conference." .. tostring(module.host)]
+    local host_session = prosody.hosts[muc_domain_prefix .. tostring(module.host)]
     if not host_session or not host_session.modules.muc then
         return { status_code = 400; }
     end
