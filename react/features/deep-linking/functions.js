@@ -62,6 +62,8 @@ export function getDeepLinkingPage(state) {
         return Promise.resolve();
     }
 
+    // !! NUXAAS PATCH -- BEGIN !!
+    // Reason :: unanble to disable mobile from config
     //if (isMobileBrowser()) { // mobile
     //    const mobileAppPromo
     //        = typeof interfaceConfig === 'object'
@@ -71,6 +73,7 @@ export function getDeepLinkingPage(state) {
     //        typeof mobileAppPromo === 'undefined' || Boolean(mobileAppPromo)
     //            ? DeepLinkingMobilePage : NoMobileApp);
     //}
+    // !! NUXAAS PATCH -- END !!
 
     return _openDesktopApp(state).then(
         // eslint-disable-next-line no-confusing-arrow
