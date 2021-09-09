@@ -783,13 +783,13 @@ class Thumbnail extends Component<Props, State> {
         const { id } = _participant || {};
         const { audioLevel } = this.state;
         const styles = this._getStyles();
-        const localVideoStyle = {
-            ...styles.thumbnail,
-            height: _isMobilePortrait ? `${Math.floor(_height * MOBILE_FILMSTRIP_PORTRAIT_RATIO)}px` : styles.height
-        };
         const containerClassName = this._getContainerClassName();
         const videoTrackClassName
             = !_disableLocalVideoFlip && _videoTrack && !_isScreenSharing && _localFlipX ? 'flipVideoX' : '';
+
+        styles.thumbnail.height = _isMobilePortrait
+            ? `${Math.floor(_height * MOBILE_FILMSTRIP_PORTRAIT_RATIO)}px`
+            : styles.height;
 
         return (
             <span
@@ -807,7 +807,7 @@ class Thumbnail extends Component<Props, State> {
                         onMouseLeave: this._onMouseLeave
                     }
                 ) }
-                style = { localVideoStyle }>
+                style = { styles.thumbnail }>
                 <div className = 'videocontainer__background' />
                 <span id = 'localVideoWrapper'>
                     <VideoTrack
