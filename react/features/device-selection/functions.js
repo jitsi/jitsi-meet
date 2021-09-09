@@ -35,10 +35,15 @@ export function getDeviceSelectionDialogProps(stateful: Object | Function) {
     const { conference } = state['features/base/conference'];
     const { permissions } = state['features/base/devices'];
     const isMobileSafari = isIosMobileBrowser();
+    const cameraChangeSupported = JitsiMeetJS.mediaDevices.isDeviceChangeAvailable('input');
+    const speakerChangeSupported = JitsiMeetJS.mediaDevices.isDeviceChangeAvailable('output');
+    const userSelectedCamera = getUserSelectedCameraDeviceId(state);
+    const userSelectedMic = getUserSelectedMicDeviceId(state);
     let disableAudioInputChange = !JitsiMeetJS.mediaDevices.isMultipleAudioInputSupported();
-    let selectedAudioInputId = settings.micDeviceId;
+    let disableVideoInputSelect = !cameraChangeSupported;
+    let selectedAudioInputId = isMobileSafari ? userSelectedMic : settings.micDeviceId;
     let selectedAudioOutputId = getAudioOutputDeviceId();
-    let selectedVideoInputId = settings.cameraDeviceId;
+    let selectedVideoInputId = isMobileSafari ? userSelectedCamera : settings.cameraDeviceId;
 
     // audio input change will be a problem only when we are in a
     // conference and this is not supported, when we open device selection on
@@ -46,9 +51,10 @@ export function getDeviceSelectionDialogProps(stateful: Object | Function) {
     // on welcome page we also show only what we have saved as user selected devices
     if (!conference) {
         disableAudioInputChange = false;
-        selectedAudioInputId = getUserSelectedMicDeviceId(state);
+        disableVideoInputSelect = false;
+        selectedAudioInputId = userSelectedMic;
         selectedAudioOutputId = getUserSelectedOutputDeviceId(state);
-        selectedVideoInputId = getUserSelectedCameraDeviceId(state);
+        selectedVideoInputId = userSelectedCamera;
     }
 
     // we fill the device selection dialog with the devices that are currently
@@ -56,16 +62,14 @@ export function getDeviceSelectionDialogProps(stateful: Object | Function) {
     return {
         availableDevices: state['features/base/devices'].availableDevices,
         disableAudioInputChange,
-        disableDeviceChange:
-            !JitsiMeetJS.mediaDevices.isDeviceChangeAvailable(),
+        disableDeviceChange: !JitsiMeetJS.mediaDevices.isDeviceChangeAvailable(),
+        disableVideoInputSelect,
         hasAudioPermission: permissions.audio,
         hasVideoPermission: permissions.video,
-        hideAudioInputPreview:
-            !JitsiMeetJS.isCollectingLocalStats(),
-        hideAudioOutputSelect: !JitsiMeetJS.mediaDevices
-                            .isDeviceChangeAvailable('output'),
-        hideVideoInputPreview: isMobileSafari,
-        hideVideoOutputSelect: isMobileSafari,
+        hideAudioInputPreview: disableAudioInputChange || !JitsiMeetJS.isCollectingLocalStats(),
+        hideAudioOutputPreview: !speakerChangeSupported,
+        hideAudioOutputSelect: !speakerChangeSupported,
+        hideVideoInputPreview: !cameraChangeSupported,
         selectedAudioInputId,
         selectedAudioOutputId,
         selectedVideoInputId
