@@ -106,6 +106,7 @@ export default [
     'disableShowMoreStats',
     'disableRemoveRaisedHandOnFocus',
     'disableSpeakerStatsSearch',
+    'speakerStatsOrder',
     'disableSimulcast',
     'disableThirdPartyRequests',
     'disableTileView',
