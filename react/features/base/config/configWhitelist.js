@@ -81,6 +81,7 @@ export default [
     'disableAEC',
     'disableAGC',
     'disableAP',
+    'disableAddingBackgroundImages',
     'disableAudioLevels',
     'disableDeepLinking',
     'disableFilmstripAutohiding',
