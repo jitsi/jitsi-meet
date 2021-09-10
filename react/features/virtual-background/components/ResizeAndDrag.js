@@ -35,7 +35,6 @@ type Props = {
  */
 function ResizeAndDrag({ _currentCameraDeviceId, dispatch, updateTransparent }: Props) {
     const dragAndResizeRef = useRef();
-    const [ refVisible, setRefVisible ] = useState(false);
     const [ containerWidth ] = useState(DESKTOP_SHARE_DIMENSIONS.CONTAINER_WIDTH);
     const [ containerHeight ] = useState(DESKTOP_SHARE_DIMENSIONS.CONTAINER_HEIGHT);
     const createLocalJitsiTrack = async () => {
@@ -50,7 +49,7 @@ function ResizeAndDrag({ _currentCameraDeviceId, dispatch, updateTransparent }: 
         };
 
         await dispatch(toggleBackgroundEffect(transparentOptions, jitsiTrack));
-        if (dragAndResizeRef?.current && jitsiTrack && refVisible) {
+        if (dragAndResizeRef?.current && jitsiTrack) {
             const stage = new Konva.Stage({
                 container: dragAndResizeRef.current,
                 width: containerWidth,
@@ -191,41 +190,34 @@ function ResizeAndDrag({ _currentCameraDeviceId, dispatch, updateTransparent }: 
         * @returns {void}
         */
         function updateTransformValues(image, url, track) {
-            if (refVisible) {
-                const personImageCoordonates = image.getClientRect({ skipTransform: false });
-                const dragAndDropOptions = {
+            const personImageCoordonates = image.getClientRect({ skipTransform: false });
+            const dragAndDropOptions = {
 
-                    // $FlowExpectedError
-                    x: (personImageCoordonates.x - 0) / dragAndResizeRef.current.getBoundingClientRect().width,
+                // $FlowExpectedError
+                x: (personImageCoordonates.x - 0) / dragAndResizeRef.current.getBoundingClientRect().width,
 
-                    // $FlowExpectedError
-                    y: (personImageCoordonates.y - 0) / dragAndResizeRef.current.getBoundingClientRect().height,
-                    width: Math.max(5, image.width() * image.scaleX()) * 1.5,
-                    height: Math.max(5, image.height() * image.scaleY()) * 1.5,
-                    url,
-                    jitsiTrack: track
-                };
+                // $FlowExpectedError
+                y: (personImageCoordonates.y - 0) / dragAndResizeRef.current.getBoundingClientRect().height,
+                width: Math.max(5, image.width() * image.scaleX()) * 1.5,
+                height: Math.max(5, image.height() * image.scaleY()) * 1.5,
+                url,
+                jitsiTrack: track
+            };
 
-                updateTransparent(dragAndDropOptions);
-            }
+            updateTransparent(dragAndDropOptions);
         }
     };
 
     useEffect(() => {
-        if (!refVisible) {
-            return;
-        }
-        if (dragAndResizeRef.current && refVisible) {
+        if (dragAndResizeRef.current) {
             createLocalJitsiTrack();
         }
-    }, [ dragAndResizeRef, refVisible ]);
+    }, [ dragAndResizeRef ]);
 
     return (<div
         className = 'drag-and-resize-area video-preview'
         // eslint-disable-next-line react/jsx-no-bind
-        ref = { () => {
-            setRefVisible(true);
-        } } />);
+        ref = { dragAndResizeRef } />);
 }
 
 /**
