@@ -68,10 +68,12 @@
         "noMessagesMessage": "会议中还没有消息，在这里开始谈话吧！",
         "nickname": {
             "popover": "选择一个昵称",
-            "title": "输入一个昵称用于聊天"
+            "title": "输入一个昵称用于聊天",
+            "titleWithPolls": "输入一个昵称用于聊天"
         },
         "privateNotice": "与 {{recipient}} 的私人聊天",
         "title": "话题",
+        "titleWithPolls": "话题",
         "you": "您"
     },
     "chromeExtensionBanner": {

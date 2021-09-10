@@ -72,10 +72,12 @@
         "noMessagesMessage": "このミーティングにはまだメッセージがありません。会話を開始してください!",
         "nickname": {
             "popover": "ニックネームを入力",
-            "title": "チャットで使用するニックネームを入力してください"
+            "title": "チャットで使用するニックネームを入力してください",
+            "titleWithPolls": "チャットで使用するニックネームを入力してください"
         },
         "privateNotice": "{{recipient}} へのプライベートメッセージ",
         "title": "チャット",
+        "titleWithPolls": "チャット",
         "you": "あなた"
     },
     "chromeExtensionBanner": {

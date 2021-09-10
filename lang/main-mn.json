@@ -53,10 +53,12 @@
         "noMessagesMessage": "Энэ хуралд ямар ч зурвас байхгүй. Эндээс зурвасаа эхлүүл!",
         "nickname": {
             "popover": "Нэр бичнэ үү",
-            "title": "Нэрээ оруулна уу"
+            "title": "Нэрээ оруулна уу",
+            "titleWithPolls": "Нэрээ оруулна уу"
         },
         "privateNotice": "Хувийн зурвас {{recipient}}",
         "title": "Чат",
+        "titleWithPolls": "Чат",
         "you": "чи"
     },
     "chromeExtensionBanner": {

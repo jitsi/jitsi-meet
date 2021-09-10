@@ -68,10 +68,12 @@
         "noMessagesMessage": "No hay mensajes en la reunión. ¡Inicie una conversación!",
         "nickname": {
             "popover": "Selecciona un apodo",
-            "title": "Introduce un apodo para usar el chat"
+            "title": "Introduce un apodo para usar el chat",
+            "titleWithPolls": "Introduce un apodo para usar el chat"
         },
         "privateNotice": "Mensaje privado para {{recipient}}",
         "title": "Chat",
+        "titleWithPolls": "Chat",
         "you": "usted"
     },
     "chromeExtensionBanner": {

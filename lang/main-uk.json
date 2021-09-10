@@ -67,10 +67,12 @@
         "noMessagesMessage": "У цій конференції відсутні повідомлення. Будь ласка, почніть розмову тут.",
         "nickname": {
             "popover": "Зазначте ім'я",
-            "title": "Зазначте ваше ім'я для чату"
+            "title": "Зазначте ваше ім'я для чату",
+            "titleWithPolls": "Зазначте ваше ім'я для чату"
         },
         "privateNotice": "Приватне повідомлення для {{recipient}}",
         "title": "Чат",
+        "titleWithPolls": "Чат",
         "you": "Ви"
     },
     "chromeExtensionBanner": {

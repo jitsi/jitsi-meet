@@ -53,10 +53,12 @@
         "noMessagesMessage": "Aínda non hai mensaxes na reunión. Comece unha conversación aquí!",
         "nickname": {
             "popover": "Escolla un alcume",
-            "title": "Escriba un alcume para utilizar no chat"
+            "title": "Escriba un alcume para utilizar no chat",
+            "titleWithPolls": "Escriba un alcume para utilizar no chat"
         },
         "privateNotice": "Mensaxe privada para {{recipient}}",
         "title": "Chat",
+        "titleWithPolls": "Chat",
         "you": "vostede"
     },
     "chromeExtensionBanner": {

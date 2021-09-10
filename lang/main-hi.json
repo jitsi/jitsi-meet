@@ -70,10 +70,12 @@
         "noMessagesMessage": "अभी तक मीटिंग में कोई संदेश नहीं आया है। वार्तालाप प्रारंभ करें!",
         "nickname": {
             "popover": "एक उपनाम चुनें",
-            "title": "चैट का उपयोग करने के लिए एक उपनाम दर्ज करें"
+            "title": "चैट का उपयोग करने के लिए एक उपनाम दर्ज करें",
+            "titleWithPolls": "चैट का उपयोग करने के लिए एक उपनाम दर्ज करें"
         },
         "privateNotice": "{{recipient}} के लिए निजी संदेश",
         "title": "चैट",
+        "titleWithPolls": "चैट",
         "you": "आप"
     },
     "chromeExtensionBanner": {

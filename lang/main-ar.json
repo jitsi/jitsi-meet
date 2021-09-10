@@ -68,10 +68,12 @@
         "noMessagesMessage": "لا يوجد أي رسالة في الاجتماع بعد. ابدأ محادثة هنا.",
         "nickname": {
             "popover": "اختر لقبًا",
-            "title": "اكتب لقبًا لاعتماده في المحادثة"
+            "title": "اكتب لقبًا لاعتماده في المحادثة",
+            "titleWithPolls": "اكتب لقبًا لاعتماده في المحادثة"
         },
         "privateNotice": "أرسل رسالة خاصة إلى {{recipient}}",
         "title": "محادثة",
+        "titleWithPolls": "محادثة",
         "you": "أنت"
     },
     "chromeExtensionBanner": {

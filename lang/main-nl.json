@@ -69,10 +69,12 @@
         "noMessagesMessage": "Er zijn nog geen berichten in de vergadering. Begin hier een gesprek!",
         "nickname": {
             "popover": "Kies een bijnaam",
-            "title": "Voer een bijnaam in om chat te gebruiken"
+            "title": "Voer een bijnaam in om chat te gebruiken",
+            "titleWithPolls": "Voer een bijnaam in om chat te gebruiken"
         },
         "privateNotice": "Privébericht aan {{recipient}}",
         "title": "Chat",
+        "titleWithPolls": "Chat",
         "you": "u"
     },
     "chromeExtensionBanner": {

@@ -20,6 +20,11 @@ type Props = {
     className: string,
 
     /**
+     * Whether the polls feature is enabled or not.
+     */
+    isPollsEnabled: boolean,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -30,7 +35,7 @@ type Props = {
  *
  * @returns {React$Element<any>}
  */
-function Header({ onCancel, className, t }: Props) {
+function Header({ onCancel, className, isPollsEnabled, t }: Props) {
 
     const onKeyPressHandler = useCallback(e => {
         if (onCancel && (e.key === ' ' || e.key === 'Enter')) {
@@ -43,7 +48,7 @@ function Header({ onCancel, className, t }: Props) {
         <div
             className = { className || 'chat-dialog-header' }
             role = 'heading'>
-            { t('chat.title') }
+            { t(isPollsEnabled ? 'chat.titleWithPolls' : 'chat.title') }
             <Icon
                 ariaLabel = { t('toolbar.closeChat') }
                 onClick = { onCancel }

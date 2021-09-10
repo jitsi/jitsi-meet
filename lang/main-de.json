@@ -66,10 +66,12 @@
         "noMessagesMessage": "Es gibt noch keine Nachricht in dieser Konferenz. Starten Sie hier eine Unterhaltung!",
         "nickname": {
             "popover": "Wähle einen Alias",
-            "title": "Geben Sie einen Alias zum Chatten ein"
+            "title": "Geben Sie einen Alias zum Chatten ein",
+            "titleWithPolls": "Geben Sie einen Alias zum Chatten ein"
         },
         "privateNotice": "Private Nachricht an {{recipient}}",
         "title": "Chatten",
+        "titleWithPolls": "Chatten",
         "you": "Sie",
         "message": "Nachricht",
         "messageAccessibleTitle": "{{user}} sagt:",

@@ -66,10 +66,12 @@
         "noMessagesMessage": "Ende s’ka mesazhe te takimi. Filloni një bisedë këtu!",
         "nickname": {
             "popover": "Zgjidhni një nofkë",
-            "title": "Që të përdorni fjalosjen, jepni një nofkë"
+            "title": "Që të përdorni fjalosjen, jepni një nofkë",
+            "titleWithPolls": "Që të përdorni fjalosjen, jepni një nofkë"
         },
         "privateNotice": "Mesazh privat për {{recipient}}",
         "title": "Fjalosje",
+        "titleWithPolls": "Fjalosje",
         "you": "ju",
         "message": "Mesazh",
         "messageAccessibleTitle": "{{user}} thotë:",

@@ -53,10 +53,12 @@
         "noMessagesMessage": "There are no messages in the meeting yet. Start a conversation here!",
         "nickname": {
             "popover": "Choose a nickname",
-            "title": "Enter a nickname to use chat"
+            "title": "Enter a nickname to use chat",
+            "titleWithPolls": "Enter a nickname to use chat"
         },
         "privateNotice": "Private message to {{recipient}}",
         "title": "Chat",
+        "titleWithPolls": "Chat",
         "you": "you"
     },
     "chromeExtensionBanner": {

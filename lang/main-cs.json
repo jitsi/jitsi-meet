@@ -67,11 +67,13 @@
         "messagebox": "Napište zprávu",
         "nickname": {
             "popover": "Zvolte si přezdívku",
-            "title": "Vložte přezdívku, abyste mohl/a používat zprávy"
+            "title": "Vložte přezdívku, abyste mohl/a používat zprávy",
+            "titleWithPolls": "Vložte přezdívku, abyste mohl/a používat zprávy"
         },
         "noMessagesMessage": "V setkání zatím nejsou žádné zprávy. Tady můžete začít konverzaci!",
         "privateNotice": "Soukromá zpráva pro {{recipient}}",
         "title": "Zprávy",
+        "titleWithPolls": "Zprávy",
         "you": "vy"
     },
     "chromeExtensionBanner": {

@@ -64,10 +64,12 @@
         "noMessagesMessage": "Bileran oraindik mezurik ez dago. Hasi elkarrizketa hemen!",
         "nickname": {
             "popover": "Aukeratu goitizena",
-            "title": "Sartu goitizena txata erabiltzeko"
+            "title": "Sartu goitizena txata erabiltzeko",
+            "titleWithPolls": "Sartu goitizena txata erabiltzeko"
         },
         "privateNotice": "Mezu pribatua {{recipient}}(e)ri",
         "title": "Txata",
+        "titleWithPolls": "Txata",
         "you": "zu",
         "message": "Mezua",
         "messageAccessibleTitle": "{{user}} partaideak zera dio:",
