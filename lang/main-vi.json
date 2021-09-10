@@ -53,9 +53,11 @@
         "messagebox": "Nhập nội dung tin nhắn",
         "nickname": {
             "popover": "Chọn tên",
-            "title": "Nhập tên của bạn để tán gẫu"
+            "title": "Nhập tên của bạn để tán gẫu",
+            "titleWithPolls": "Nhập tên của bạn để tán gẫu"
         },
         "title": "Tán gẫu",
+        "titleWithPolls": "Tán gẫu",
         "you": "bạn"
     },
     "connectingOverlay": {

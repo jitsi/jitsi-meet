@@ -70,10 +70,12 @@
         "noMessagesMessage": "Non ci sono ancora messaggi nella riunione. Comincia una conversazione, qui!",
         "nickname": {
             "popover": "Scegli un nickname",
-            "title": "Inserire un nickname per utilizzare la conversazione"
+            "title": "Inserire un nickname per utilizzare la conversazione",
+            "titleWithPolls": "Inserire un nickname per utilizzare la conversazione"
         },
         "privateNotice": "Messaggio privato per {{recipient}}",
         "title": "Conversazione",
+        "titleWithPolls": "Conversazione",
         "you": "tu"
     },
     "chromeExtensionBanner": {

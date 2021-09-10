@@ -70,9 +70,11 @@
         "messagebox": "Skriv ett meddelande",
         "nickname": {
             "popover": "Välj ett namn",
-            "title": "Skriv in ett namn för att börja använda chatten"
+            "title": "Skriv in ett namn för att börja använda chatten",
+            "titleWithPolls": "Skriv in ett namn för att börja använda chatten"
         },
         "title": "Chatt",
+        "titleWithPolls": "Chatt",
         "you": "du",
         "privateNotice": "Privat meddelande till {{recipient}}",
         "noMessagesMessage": "Det finns ännu inga meddelanden i mötet. Påbörja en konversation!",

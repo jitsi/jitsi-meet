@@ -54,10 +54,12 @@
         "noMessagesMessage": "Der er ikke nogen beskeder i mødet endnu. Skriv noget!",
         "nickname": {
             "popover": "Vælg dit navn/alias",
-            "title": "Indtast et navn/alias for at deltage i chatten"
+            "title": "Indtast et navn/alias for at deltage i chatten",
+            "titleWithPolls": "Indtast et navn/alias for at deltage i chatten"
         },
         "privateNotice": "Privat besked til {{recipient}}",
         "title": "Chat",
+        "titleWithPolls": "Chat",
         "you": "Dig"
     },
     "chromeExtensionBanner": {

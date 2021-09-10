@@ -53,10 +53,12 @@
         "noMessagesMessage": "Ankoraŭ ne estas mesaĝoj en la kunveno. Komencu konversation ĉi tie!",
         "nickname": {
             "popover": "Elektu kaŝnomon",
-            "title": "Elektu kaŝnomon por uzi la babilejon"
+            "title": "Elektu kaŝnomon por uzi la babilejon",
+            "titleWithPolls": "Elektu kaŝnomon por uzi la babilejon"
         },
         "privateNotice": "Privata mesaĝo al {{recipient}}",
         "title": "Babilejo",
+        "titleWithPolls": "Babilejo",
         "you": "vi"
     },
     "chromeExtensionBanner": {

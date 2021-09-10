@@ -69,10 +69,12 @@
         "noMessagesMessage": "아직 회의에 메시지가 없습니다. 여기서 대화를 시작하세요!",
         "nickname": {
             "popover": "닉네임을 선택하세요",
-            "title": "채팅에서 사용할 닉네임을 입력하세요"
+            "title": "채팅에서 사용할 닉네임을 입력하세요",
+            "titleWithPolls": "채팅에서 사용할 닉네임을 입력하세요"
         },
         "privateNotice": "{{recipient}}에게 보내는 비공개 메시지",
         "title": "채팅",
+        "titleWithPolls": "채팅",
         "you": "당신"
     },
     "chromeExtensionBanner": {

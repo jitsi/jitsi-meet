@@ -66,10 +66,12 @@
         "noMessagesMessage": "Não há mensagens na reunião ainda. Inicie uma conversa aqui!",
         "nickname": {
             "popover": "Escolha um apelido",
-            "title": "Digite um apelido para usar o bate-papo"
+            "title": "Digite um apelido para usar o bate-papo",
+            "titleWithPolls": "Digite um apelido para usar o bate-papo"
         },
         "privateNotice": "Mensagem privada para {{recipient}}",
         "title": "Bate-papo",
+        "titleWithPolls": "Bate-papo",
         "you": "você",
         "message": "Mensagem",
         "messageAccessibleTitle": "{{user}} disse:",

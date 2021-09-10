@@ -53,10 +53,12 @@
         "noMessagesMessage": "Encara no hi ha cap missatge en aquesta reunió. Comenceu una conversa aquí!",
         "nickname": {
             "popover": "Trieu un sobrenom",
-            "title": "Introduïu un sobrenom per a usar el xat"
+            "title": "Introduïu un sobrenom per a usar el xat",
+            "titleWithPolls": "Introduïu un sobrenom per a usar el xat"
         },
         "privateNotice": "Missatge privat per a {{recipient}}",
         "title": "Xat",
+        "titleWithPolls": "Xat",
         "you": "vós"
     },
     "chromeExtensionBanner": {

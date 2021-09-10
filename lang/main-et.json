@@ -53,10 +53,12 @@
         "noMessagesMessage": "Kirjavahetust pole veel alustatud. Alusta kirjavahetust siin!",
         "nickname": {
             "popover": "Sisesta nimi",
-            "title": "Sisesta nimi, et kõnega alustada"
+            "title": "Sisesta nimi, et kõnega alustada",
+            "titleWithPolls": "Sisesta nimi, et kõnega alustada"
         },
         "privateNotice": "Privaatsõnum kasutajale {{recipient}}",
         "title": "Kõne",
+        "titleWithPolls": "Kõne",
         "you": "you"
     },
     "chromeExtensionBanner": {

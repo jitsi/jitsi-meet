@@ -66,7 +66,8 @@
         "noMessagesMessage": "Ainda não há mensagens na reunião. Comece aqui uma conversa!",
         "nickname": {
             "popover": "Escolha um apelido",
-            "title": "Introduza um apelido para usar no chat e nas sondagens"
+            "title": "Introduza um apelido para usar no chat e nas sondagens",
+            "titleWithPolls": "Introduza um apelido para usar no chat e nas sondagens"
         },
         "privateNotice": "Mensagem privada para {{recipient}}",
         "message": "Mensagem",
@@ -78,6 +79,7 @@
             "polls": "Sondagens"
         },
         "title": "Chat e Sondagens",
+        "titleWithPolls": "Chat e Sondagens",
         "you": "você"
     },
     "chromeExtensionBanner": {

@@ -71,12 +71,14 @@
         "messageTo": "Messatge privat per {{recipient}}",
         "nickname": {
             "popover": "Causissètz un escais",
-            "title": "Picatz un escais-nom per utilizar la messatjariá"
+            "title": "Picatz un escais-nom per utilizar la messatjariá",
+            "titleWithPolls": "Picatz un escais-nom per utilizar la messatjariá"
         },
         "noMessagesMessage": "I a pas cap de messatge dins la conferéncia pel moment. Començat una conversacion aquí !",
         "privateNotice": "Messatge privat per {{recipient}}",
         "smileysPanel": "Panèl d’Emoji",
         "title": "Messatjariá",
+        "titleWithPolls": "Messatjariá",
         "you": "vos"
     },
     "chromeExtensionBanner": {

@@ -52,11 +52,13 @@
         "messagebox": "Vnesite sporočilo",
         "nickname": {
             "popover": "Izberite svoje ime",
-            "title": "Vnesite ime, ki ga želite uporabljati na srečanju"
+            "title": "Vnesite ime, ki ga želite uporabljati na srečanju",
+            "titleWithPolls": "Vnesite ime, ki ga želite uporabljati na srečanju"
         },
         "noMessagesMessage": "There are no messages in the meeting yet. Start a conversation here!",
         "privateNotice": "Zasebno sporočilo za uporabnika {{recipient}}",
         "title": "Klepet",
+        "titleWithPolls": "Klepet",
         "you": "vi"
     },
     "chromeExtensionBanner": {

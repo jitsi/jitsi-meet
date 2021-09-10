@@ -67,12 +67,13 @@
         "noMessagesMessage": "Toplantıda henüz mesaj yok. Burada bir konuşma başlatın!",
         "nickname": {
             "popover": "Bir takma ad seçin",
-            "title": "Sohbette kullanmak için bir takma ad girin"
+            "title": "Sohbette kullanmak için bir takma ad girin",
+            "titleWithPolls": "Sohbette kullanmak için bir takma ad girin"
         },
-	"privateNotice": "{{recipient}} için özel mesaj",
+	    "privateNotice": "{{recipient}} için özel mesaj",
         "title": "Sohbet",
+        "titleWithPolls": "Sohbet",
         "you": "sen"
-
     },
     "connectingOverlay": {
         "joiningRoom": "Toplantıya bağlanılıyor..."
