@@ -14,6 +14,7 @@ import { setPictureInPictureDisabled } from '../mobile/picture-in-picture/functi
  */
 export function _authorizeDropbox(): Promise<Object> {
     setPictureInPictureDisabled(true);
+
     return Dropbox.authorize().finally(() => setPictureInPictureDisabled(false));
 }
 

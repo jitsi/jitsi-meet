@@ -30,7 +30,7 @@ export function authorizeDropbox() {
                 ({ token, rToken, expireDate }) => {
                     dispatch(updateDropboxToken(token, rToken, expireDate));
                 })
-            .catch(error => logger.log("Cannot authorize dropbox", error));;
+            .catch(error => logger.log('Cannot authorize dropbox', error));
     };
 }
 
