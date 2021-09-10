@@ -2,6 +2,7 @@
 
 import '../authentication/middleware';
 import '../base/devices/middleware';
+import '../dynamic-branding/middleware';
 import '../e2ee/middleware';
 import '../external-api/middleware';
 import '../keyboard-shortcuts/middleware';

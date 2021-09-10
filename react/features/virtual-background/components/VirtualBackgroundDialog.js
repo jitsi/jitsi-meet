@@ -3,12 +3,11 @@
 import Spinner from '@atlaskit/spinner';
 import Bourne from '@hapi/bourne';
 import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import uuid from 'uuid';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import { Dialog, hideDialog, openDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
-import { Icon, IconCloseSmall, IconPlusCircle, IconShareDesktop } from '../../base/icons';
+import { Icon, IconCloseSmall, IconShareDesktop } from '../../base/icons';
 import { browser, JitsiTrackErrors } from '../../base/lib-jitsi-meet';
 import { createLocalTrack } from '../../base/lib-jitsi-meet/functions';
 import { VIDEO_TYPE } from '../../base/media';
@@ -18,61 +17,19 @@ import { Tooltip } from '../../base/tooltip';
 import { getLocalVideoTrack } from '../../base/tracks';
 import { showErrorNotification } from '../../notifications';
 import { toggleBackgroundEffect } from '../actions';
-import { VIRTUAL_BACKGROUND_TYPE } from '../constants';
-import { resizeImage, toDataURL } from '../functions';
+import { IMAGES, BACKGROUNDS_LIMIT, VIRTUAL_BACKGROUND_TYPE, type Image } from '../constants';
+import { toDataURL } from '../functions';
 import logger from '../logger';
 
+import UploadImageButton from './UploadImageButton';
 import VirtualBackgroundPreview from './VirtualBackgroundPreview';
 
-
-type Image = {
-    tooltip?: string,
-    id: string,
-    src: string
-}
-
-// The limit of virtual background uploads is 24. When the number
-// of uploads is 25 we trigger the deleteStoredImage function to delete
-// the first/oldest uploaded background.
-const backgroundsLimit = 25;
-const images: Array<Image> = [
-    {
-        tooltip: 'image1',
-        id: '1',
-        src: 'images/virtual-background/background-1.jpg'
-    },
-    {
-        tooltip: 'image2',
-        id: '2',
-        src: 'images/virtual-background/background-2.jpg'
-    },
-    {
-        tooltip: 'image3',
-        id: '3',
-        src: 'images/virtual-background/background-3.jpg'
-    },
-    {
-        tooltip: 'image4',
-        id: '4',
-        src: 'images/virtual-background/background-4.jpg'
-    },
-    {
-        tooltip: 'image5',
-        id: '5',
-        src: 'images/virtual-background/background-5.jpg'
-    },
-    {
-        tooltip: 'image6',
-        id: '6',
-        src: 'images/virtual-background/background-6.jpg'
-    },
-    {
-        tooltip: 'image7',
-        id: '7',
-        src: 'images/virtual-background/background-7.jpg'
-    }
-];
 type Props = {
+
+    /**
+     * The list of Images to choose from.
+     */
+    _images: Array<Image>,
 
     /**
      * The current local flip x status.
@@ -88,6 +45,11 @@ type Props = {
      * Returns the selected thumbnail identifier.
      */
     _selectedThumbnail: string,
+
+    /**
+     * If the upload button should be displayed or not.
+     */
+    _showUploadButton: boolean,
 
     /**
      * Returns the selected virtual background object.
@@ -128,11 +90,15 @@ const onError = event => {
  */
 function _mapStateToProps(state): Object {
     const { localFlipX } = state['features/base/settings'];
+    const dynamicBrandingImages = state['features/dynamic-branding'].virtualBackgrounds;
+    const hasBrandingImages = Boolean(dynamicBrandingImages.length);
 
     return {
         _localFlipX: Boolean(localFlipX),
+        _images: (hasBrandingImages && dynamicBrandingImages) || IMAGES,
         _virtualBackground: state['features/virtual-background'],
         _selectedThumbnail: state['features/virtual-background'].selectedThumbnail,
+        _showUploadButton: !(hasBrandingImages || state['features/base/config'].disableAddingBackgroundImages),
         _jitsiTrack: getLocalVideoTrack(state['features/base/tracks'])?.jitsiTrack
     };
 }
@@ -145,9 +111,11 @@ const VirtualBackgroundDialog = translate(connect(_mapStateToProps)(VirtualBackg
  * @returns {ReactElement}
  */
 function VirtualBackground({
-    _localFlipX,
+    _images,
     _jitsiTrack,
+    _localFlipX,
     _selectedThumbnail,
+    _showUploadButton,
     _virtualBackground,
     dispatch,
     initialOptions,
@@ -158,7 +126,7 @@ function VirtualBackground({
     const localImages = jitsiLocalStorage.getItem('virtualBackgrounds');
     const [ storedImages, setStoredImages ] = useState<Array<Image>>((localImages && Bourne.parse(localImages)) || []);
     const [ loading, setLoading ] = useState(false);
-    const uploadImageButton: Object = useRef(null);
+
     const [ activeDesktopVideo ] = useState(_virtualBackground?.virtualSource?.videoType === VIDEO_TYPE.DESKTOP
         ? _virtualBackground.virtualSource
         : null);
@@ -186,7 +154,7 @@ function VirtualBackground({
             // Preventing localStorage QUOTA_EXCEEDED_ERR
             err && setStoredImages(storedImages.slice(1));
         }
-        if (storedImages.length === backgroundsLimit) {
+        if (storedImages.length === BACKGROUNDS_LIMIT) {
             setStoredImages(storedImages.slice(1));
         }
     }, [ storedImages ]);
@@ -321,60 +289,26 @@ function VirtualBackground({
 
     const setImageBackground = useCallback(async e => {
         const imageId = e.currentTarget.getAttribute('data-imageid');
-        const image = images.find(img => img.id === imageId);
+        const image = _images.find(img => img.id === imageId);
 
         if (image) {
-            const url = await toDataURL(image.src);
+            try {
+                const url = await toDataURL(image.src);
 
-            setOptions({
-                backgroundType: 'image',
-                enabled: true,
-                url,
-                selectedThumbnail: image.id
-            });
-            logger.info('Image setted for virtual background preview!');
+                setOptions({
+                    backgroundType: 'image',
+                    enabled: true,
+                    url,
+                    selectedThumbnail: image.id
+                });
+                logger.info('Image set for virtual background preview!');
+            } catch (err) {
+                logger.error('Could not fetch virtual background image:', err);
+            }
 
             setLoading(false);
         }
     }, []);
-
-    const uploadImage = useCallback(async e => {
-        const reader = new FileReader();
-        const imageFile = e.target.files;
-
-        reader.readAsDataURL(imageFile[0]);
-        reader.onload = async () => {
-            const url = await resizeImage(reader.result);
-            const uuId = uuid.v4();
-
-            setStoredImages([
-                ...storedImages,
-                {
-                    id: uuId,
-                    src: url
-                }
-            ]);
-            setOptions({
-                backgroundType: VIRTUAL_BACKGROUND_TYPE.IMAGE,
-                enabled: true,
-                url,
-                selectedThumbnail: uuId
-            });
-        };
-        logger.info('New virtual background image uploaded!');
-
-        reader.onerror = () => {
-            setLoading(false);
-            logger.error('Failed to upload virtual image!');
-        };
-    }, [ dispatch, storedImages ]);
-
-    const uploadImageKeyPress = useCallback(e => {
-        if (uploadImageButton.current && (e.key === ' ' || e.key === 'Enter')) {
-            e.preventDefault();
-            uploadImageButton.current.click();
-        }
-    }, [ uploadImageButton.current ]);
 
     const setImageBackgroundKeyPress = useCallback(e => {
         if (e.key === ' ' || e.key === 'Enter') {
@@ -448,25 +382,13 @@ function VirtualBackground({
                 </div>
             ) : (
                 <div>
-                    {previewIsLoaded && <label
-                        aria-label = { t('virtualBackground.uploadImage') }
-                        className = 'file-upload-label'
-                        htmlFor = 'file-upload'
-                        onKeyPress = { uploadImageKeyPress }
-                        tabIndex = { 0 } >
-                        <Icon
-                            className = { 'add-background' }
-                            size = { 20 }
-                            src = { IconPlusCircle } />
-                        {t('virtualBackground.addBackground')}
-                    </label> }
-                    <input
-                        accept = 'image/*'
-                        className = 'file-upload-btn'
-                        id = 'file-upload'
-                        onChange = { uploadImage }
-                        ref = { uploadImageButton }
-                        type = 'file' />
+                    {_showUploadButton
+                    && <UploadImageButton
+                        setLoading = { setLoading }
+                        setOptions = { setOptions }
+                        setStoredImages = { setStoredImages }
+                        showLabel = { previewIsLoaded }
+                        storedImages = { storedImages } />}
                     <div
                         className = 'virtual-background-dialog'
                         role = 'radiogroup'
@@ -535,7 +457,7 @@ function VirtualBackground({
                                     src = { IconShareDesktop } />
                             </div>
                         </Tooltip>
-                        {images.map(image => (
+                        {_images.map(image => (
                             <Tooltip
                                 content = { image.tooltip && t(`virtualBackground.${image.tooltip}`) }
                                 key = { image.id }

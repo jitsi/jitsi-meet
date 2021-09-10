@@ -909,6 +909,10 @@ var config = {
     */
     // dynamicBrandingUrl: '',
 
+    // When true the user cannot add more images to be used as virtual background.
+    // Only the default ones from will be available.
+    // disableAddingBackgroundImages: false,
+
     // Sets the background transparency level. '0' is fully transparent, '1' is opaque.
     // backgroundAlpha: 1,
 

@@ -84,6 +84,7 @@ export default [
     'disableAEC',
     'disableAGC',
     'disableAP',
+    'disableAddingBackgroundImages',
     'disableAudioLevels',
     'disableChatSmileys',
     'disableDeepLinking',

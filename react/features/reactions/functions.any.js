@@ -55,7 +55,6 @@ export async function sendReactionsWebhook(state: Object, reactions: Array<?stri
     const { webhookProxyUrl: url } = state['features/base/config'];
     const { conference } = state['features/base/conference'];
     const { jwt } = state['features/base/jwt'];
-    const { locationURL } = state['features/base/connection'];
     const localParticipant = getLocalParticipant(state);
 
     const headers = {
@@ -65,7 +64,7 @@ export async function sendReactionsWebhook(state: Object, reactions: Array<?stri
 
 
     const reqBody = {
-        meetingFqn: extractFqnFromPath(locationURL.pathname),
+        meetingFqn: extractFqnFromPath(),
         sessionId: conference.sessionId,
         submitted: Date.now(),
         reactions,
