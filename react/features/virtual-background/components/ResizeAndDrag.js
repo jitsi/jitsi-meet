@@ -81,8 +81,8 @@ function ResizeAndDrag({ _currentCameraDeviceId, dispatch, updateTransparent }: 
             const image = new Konva.Image({
                 image: video,
                 draggable: true,
-                x: stage.width() - DESKTOP_SHARE_DIMENSIONS.RECTANGLE_WIDTH,
-                y: stage.height() - DESKTOP_SHARE_DIMENSIONS.RECTANGLE_HEIGHT
+                x: 0,
+                y: 0
             });
 
             layer.add(desktopImage);
