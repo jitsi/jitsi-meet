@@ -396,7 +396,7 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
         }
 
         const actions
-            = _participant.isFakeParticipant ? (
+            = _participant?.isFakeParticipant ? (
                 <>
                     {_localVideoOwner && (
                         <ContextMenuItem onClick = { this._onStopSharedVideo }>

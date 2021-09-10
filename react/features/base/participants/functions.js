@@ -304,17 +304,6 @@ export function getPinnedParticipant(stateful: Object | Function) {
 }
 
 /**
- * Returns the participants that have their hands raised.
- *
- * @param {(Function|Object)} stateful - The (whole) redux state, or redux's {@code getState} function to be used to
- * retrieve the state features/base/participants.
- * @returns {Set<string>}
- */
-export function getRaisedHandParticipants(stateful: Object | Function) {
-    return toState(stateful)['features/base/participants'].raisedHandParticipants;
-}
-
-/**
  * Returns true if the participant is a moderator.
  *
  * @param {string} participant - Participant object.
@@ -484,11 +473,16 @@ export function getSortedParticipantIds(stateful: Object | Function): Array<stri
     const { id } = getLocalParticipant(stateful);
     const remoteParticipants = getRemoteParticipantsSorted(stateful);
     const reorderedParticipants = new Set(remoteParticipants);
-    const raisedHandParticipants = getRaisedHandParticipants(stateful);
+    const raisedHandParticipants = getRaiseHandsQueue(stateful);
     const remoteRaisedHandParticipants = new Set(raisedHandParticipants || []);
 
     for (const participant of remoteRaisedHandParticipants.keys()) {
-        reorderedParticipants.delete(participant);
+        // Avoid duplicates.
+        if (reorderedParticipants.has(participant)) {
+            reorderedParticipants.delete(participant);
+        } else {
+            remoteRaisedHandParticipants.delete(participant);
+        }
     }
 
     // Remove self.
