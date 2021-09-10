@@ -728,9 +728,7 @@ export default {
                 track.mute();
             }
         });
-        logger.log(`Initialized with ${tracks.length} local tracks`);
 
-        this._localTracksInitialized = true;
         con.addEventListener(JitsiConnectionEvents.CONNECTION_FAILED, _connectionFailedHandler);
         APP.connection = connection = con;
 
@@ -1350,7 +1348,7 @@ export default {
      * @private
      */
     _setLocalAudioVideoStreams(tracks = []) {
-        return tracks.map(track => {
+        const promise = tracks.map(track => {
             if (track.isAudioTrack()) {
                 return this.useAudioStream(track);
             } else if (track.isVideoTrack()) {
@@ -1359,11 +1357,15 @@ export default {
                 return this.useVideoStream(track);
             }
 
-            logger.error(
-                    'Ignored not an audio nor a video track: ', track);
+            logger.error('Ignored not an audio nor a video track: ', track);
 
             return Promise.resolve();
 
+        });
+
+        return promise.then(() => {
+            this._localTracksInitialized = true;
+            logger.log(`Initialized with ${tracks.length} local tracks`);
         });
     },
 
