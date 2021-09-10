@@ -15,6 +15,7 @@ import {
 } from '../../../base/participants';
 import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
+import { DISPLAY_DRAWER_THRESHOLD } from '../../../filmstrip';
 import { requestRemoteControl, stopController } from '../../../remote-control';
 import { setToolboxEnabled, disableToolboxOnTileView } from '../../../toolbox/actions';
 import { isToolboxEnabled } from '../../../toolbox/functions';
@@ -37,7 +38,6 @@ import {
     VideoMenu,
     VolumeSlider
 } from './';
-import {DISPLAY_DRAWER_THRESHOLD} from "../../../filmstrip";
 
 declare var $: Object;
 
@@ -305,7 +305,6 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
             maxHeight: this.props._filmstripHeight - 16,
             overflowY: 'auto'
         };
-        const smallScreenFilmstripHeight = 143;
 
         if (_isModerator) {
             if (!_disableRemoteMute) {
