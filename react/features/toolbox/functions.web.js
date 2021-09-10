@@ -32,7 +32,7 @@ export function isButtonEnabled(name: string, state: Object) {
 /**
  * Indicates if the toolbox is visible or not.
  *
- * @param {string} state - The state from the Redux store.
+ * @param {Object} state - The state from the Redux store.
  * @returns {boolean} - True to indicate that the toolbox is visible, false -
  * otherwise.
  */
@@ -52,7 +52,7 @@ export function isToolboxVisible(state: Object) {
 /**
  * Indicates if the audio settings button is disabled or not.
  *
- * @param {string} state - The state from the Redux store.
+ * @param {Object} state - The state from the Redux store.
  * @returns {boolean}
  */
 export function isAudioSettingsButtonDisabled(state: Object) {
@@ -64,7 +64,7 @@ export function isAudioSettingsButtonDisabled(state: Object) {
 /**
  * Indicates if the video settings button is disabled or not.
  *
- * @param {string} state - The state from the Redux store.
+ * @param {Object} state - The state from the Redux store.
  * @returns {boolean}
  */
 export function isVideoSettingsButtonDisabled(state: Object) {
@@ -74,9 +74,30 @@ export function isVideoSettingsButtonDisabled(state: Object) {
 /**
  * Indicates if the video mute button is disabled or not.
  *
- * @param {string} state - The state from the Redux store.
+ * @param {Object} state - The state from the Redux store.
  * @returns {boolean}
  */
 export function isVideoMuteButtonDisabled(state: Object) {
     return !hasAvailableDevices(state, 'videoInput');
+}
+
+/**
+ * If an overflow drawer should be displayed or not.
+ * This is usually done for mobile devices or on narrow screens.
+ *
+ * @param {Object} state - The state from the Redux store.
+ * @returns {boolean}
+ */
+export function showOverflowDrawer(state: Object) {
+    return state['features/toolbox'].overflowDrawer;
+}
+
+/**
+ * Indicates whether the toolbox is enabled or not.
+ *
+ * @param {Object} state - The state from the Redux store.
+ * @returns {boolean}
+ */
+export function isToolboxEnabled(state: Object) {
+    return state['features/toolbox'].enabled;
 }
