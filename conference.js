@@ -455,25 +455,10 @@ export default {
     isSharingScreen: false,
 
     /**
-     * The local audio track (if any).
-     * FIXME tracks from redux store should be the single source of truth
-     * @type {JitsiLocalTrack|null}
-     */
-    localAudio: null,
-
-    /**
      * The local presenter video track (if any).
      * @type {JitsiLocalTrack|null}
      */
     localPresenterVideo: null,
-
-    /**
-     * The local video track (if any).
-     * FIXME tracks from redux store should be the single source of truth, but
-     * more refactoring is required around screen sharing ('localVideo' usages).
-     * @type {JitsiLocalTrack|null}
-     */
-    localVideo: null,
 
     /**
      * Returns an object containing a promise which resolves with the created tracks &
@@ -905,7 +890,9 @@ export default {
             return;
         }
 
-        if (!this.localAudio && !mute) {
+        const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
+
+        if (!localAudio && !mute) {
             const maybeShowErrorDialog = error => {
                 showUI && APP.store.dispatch(notifyMicError(error));
             };
@@ -1459,12 +1446,11 @@ export default {
         return new Promise((resolve, reject) => {
             _replaceLocalAudioTrackQueue.enqueue(onFinish => {
                 const state = APP.store.getState();
+                const oldTrack = getLocalJitsiAudioTrack(state);
 
                 // When the prejoin page is displayed localAudio is not set
                 // so just replace the audio track from the store with the new one.
                 if (isPrejoinPageVisible(state)) {
-                    const oldTrack = getLocalJitsiAudioTrack(state);
-
                     return APP.store.dispatch(replaceLocalTrack(oldTrack, newTrack))
                         .then(resolve)
                         .catch(reject)
@@ -1472,9 +1458,9 @@ export default {
                 }
 
                 APP.store.dispatch(
-                replaceLocalTrack(this.localAudio, newTrack, room))
+                replaceLocalTrack(oldTrack, newTrack, room))
                     .then(() => {
-                        this.localAudio = newTrack;
+                        // TODO do it isPrejoinPageVisible conditionally although it would not hurt to run always
                         this.setAudioMuteStatus(this.isLocalAudioMuted());
                     })
                     .then(resolve)
@@ -1549,7 +1535,9 @@ export default {
 
         // If system audio was also shared stop the AudioMixerEffect and dispose of the desktop audio track.
         if (this._mixerEffect) {
-            await this.localAudio.setEffect(undefined);
+            const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
+
+            await localAudio.setEffect(undefined);
             await this._desktopAudioStream.dispose();
             this._mixerEffect = undefined;
             this._desktopAudioStream = undefined;
@@ -1884,12 +1872,14 @@ export default {
                 }
 
                 if (this._desktopAudioStream) {
+                    const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
+
                     // If there is a localAudio stream, mix in the desktop audio stream captured by the screen sharing
                     // api.
-                    if (this.localAudio) {
+                    if (localAudio) {
                         this._mixerEffect = new AudioMixerEffect(this._desktopAudioStream);
 
-                        await this.localAudio.setEffect(this._mixerEffect);
+                        await localAudio.setEffect(this._mixerEffect);
                     } else {
                         // If no local stream is present ( i.e. no input audio devices) we use the screen share audio
                         // stream as we would use a regular stream.
@@ -2070,10 +2060,10 @@ export default {
         });
 
         room.on(JitsiConferenceEvents.TRACK_AUDIO_LEVEL_CHANGED, (id, lvl) => {
+            const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
             let newLvl = lvl;
 
-            if (this.isLocalId(id)
-                && this.localAudio && this.localAudio.isMuted()) {
+            if (this.isLocalId(id) && localAudio?.isMuted()) {
                 newLvl = 0;
             }
 
@@ -2431,13 +2421,15 @@ export default {
                     return this.useAudioStream(stream);
                 })
                 .then(() => {
-                    if (this.localAudio && hasDefaultMicChanged) {
+                    const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
+
+                    if (localAudio && hasDefaultMicChanged) {
                         // workaround for the default device to be shown as selected in the
                         // settings even when the real device id was passed to gUM because of the
                         // above mentioned chrome bug.
-                        this.localAudio._realDeviceId = this.localAudio.deviceId = 'default';
+                        localAudio._realDeviceId = localAudio.deviceId = 'default';
                     }
-                    logger.log(`switched local audio device: ${this.localAudio?.getDeviceId()}`);
+                    logger.log(`switched local audio device: ${localAudio?.getDeviceId()}`);
 
                     this._updateAudioDeviceId();
                 })
@@ -2503,8 +2495,6 @@ export default {
                 JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED,
                 this.deviceChangeListener);
         }
-
-        this.localAudio = null;
     },
 
     /**
@@ -2589,9 +2579,11 @@ export default {
      * @private
      */
     _updateAudioDeviceId() {
-        if (this.localAudio) {
+        const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
+
+        if (localAudio) {
             APP.store.dispatch(updateSettings({
-                micDeviceId: this.localAudio.getDeviceId()
+                micDeviceId: localAudio.getDeviceId()
             }));
         }
     },
@@ -2605,6 +2597,7 @@ export default {
      */
     _onDeviceListChanged(devices) {
         const oldDevices = APP.store.getState()['features/base/devices'].availableDevices;
+        const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
         const localVideo = getLocalJitsiVideoTrack(APP.store.getState());
 
         APP.store.dispatch(updateDeviceList(devices));
@@ -2614,7 +2607,7 @@ export default {
                 devices,
                 this.isSharingScreen,
                 localVideo,
-                this.localAudio);
+                localAudio);
         const promises = [];
         const audioWasMuted = this.isLocalAudioMuted();
         const videoWasMuted = this.isLocalVideoMuted();
@@ -2637,8 +2630,8 @@ export default {
         // simpler):
         // If the default device is changed we need to first stop the local streams and then call GUM. Otherwise GUM
         // will return a stream using the old default device.
-        if (requestedInput.audio && this.localAudio) {
-            this.localAudio.stopStream();
+        if (requestedInput.audio && localAudio) {
+            localAudio.stopStream();
         }
 
         if (requestedInput.video && localVideo) {
@@ -2722,15 +2715,16 @@ export default {
                                         = mediaType === 'audio'
                                             ? this.useAudioStream.bind(this)
                                             : this.useVideoStream.bind(this);
+                                    const track = tracks.find(t => t.getType() === mediaType) || null;
 
                                     // Use the new stream or null if we failed to obtain it.
-                                    return useStream(tracks.find(track => track.getType() === mediaType) || null)
+                                    return useStream(track)
                                         .then(() => {
-                                            if (this.localAudio && hasDefaultMicChanged) {
+                                            if (track?.isAudioTrack() && hasDefaultMicChanged) {
                                                 // workaround for the default device to be shown as selected in the
                                                 // settings even when the real device id was passed to gUM because of
                                                 // the above mentioned chrome bug.
-                                                this.localAudio._realDeviceId = this.localAudio.deviceId = 'default';
+                                                track._realDeviceId = track.deviceId = 'default';
                                             }
                                             mediaType === 'audio'
                                                 ? this._updateAudioDeviceId()
@@ -2770,14 +2764,13 @@ export default {
      * Determines whether or not the audio button should be enabled.
      */
     updateAudioIconEnabled() {
-        const audioMediaDevices
-            = APP.store.getState()['features/base/devices'].availableDevices.audioInput;
-        const audioDeviceCount
-            = audioMediaDevices ? audioMediaDevices.length : 0;
+        const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
+        const audioMediaDevices = APP.store.getState()['features/base/devices'].availableDevices.audioInput;
+        const audioDeviceCount = audioMediaDevices ? audioMediaDevices.length : 0;
 
         // The audio functionality is considered available if there are any
         // audio devices detected or if the local audio stream already exists.
-        const available = audioDeviceCount > 0 || Boolean(this.localAudio);
+        const available = audioDeviceCount > 0 || Boolean(localAudio);
 
         APP.store.dispatch(setAudioAvailable(available));
         APP.API.notifyAudioAvailabilityChanged(available);
@@ -2816,7 +2809,6 @@ export default {
 
         APP.store.dispatch(destroyLocalTracks());
         this._localTracksInitialized = false;
-        this.localAudio = null;
 
         // Remove unnecessary event listeners from firing callbacks.
         if (this.deviceChangeListener) {
