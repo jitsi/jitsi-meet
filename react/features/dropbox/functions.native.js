@@ -17,8 +17,6 @@ export async function _authorizeDropbox(): Promise<Object> {
 
     try {
         return await Dropbox.authorize();
-    } catch (error) {
-        throw error;
     } finally {
         setPictureInPictureDisabled(false);
     }
