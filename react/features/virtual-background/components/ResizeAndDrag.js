@@ -216,13 +216,12 @@ function ResizeAndDrag({ _currentCameraDeviceId, dispatch, updateTransparent }: 
 
     return (<div
         className = 'drag-and-resize-area video-preview'
-        // eslint-disable-next-line react/jsx-no-bind
         ref = { dragAndResizeRef } />);
 }
 
 /**
  * Maps (parts of) the redux state to the associated props for the
- * {@code VirtualBackgroundPreview} component.
+ * {@code ResizeAndDrag} component.
  *
  * @param {Object} state - The Redux state.
  * @private
