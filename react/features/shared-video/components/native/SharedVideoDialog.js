@@ -4,6 +4,7 @@ import React from 'react';
 
 import { InputDialog } from '../../../base/dialog';
 import { connect } from '../../../base/redux';
+import { ColorPalette } from '../../../base/styles';
 import { defaultSharedVideoLink } from '../../constants';
 import AbstractSharedVideoDialog from '../AbstractSharedVideoDialog';
 
@@ -45,7 +46,8 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
                 contentKey = 'dialog.shareVideoTitle'
                 onSubmit = { this._onSubmitValue }
                 textInputProps = {{
-                    placeholder: defaultSharedVideoLink
+                    placeholder: defaultSharedVideoLink,
+                    placeholderTextColor: ColorPalette.lightGrey
                 }} />
         );
     }

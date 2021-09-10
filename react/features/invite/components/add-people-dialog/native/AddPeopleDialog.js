@@ -30,6 +30,7 @@ import {
     type Item
 } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
+import { ColorPalette } from '../../../../base/styles';
 import { beginShareRoom } from '../../../../share-room';
 import { ADD_PEOPLE_DIALOG_VIEW_ID, INVITE_TYPES } from '../../../constants';
 import AbstractAddPeopleDialog, {
@@ -197,6 +198,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                         placeholder = {
                             this.props.t(`inviteDialog.${placeholderKey}`)
                         }
+                        placeholderTextColor = { ColorPalette.lightGrey }
                         ref = { this._setFieldRef }
                         style = { styles.searchField }
                         value = { this.state.fieldValue } />
