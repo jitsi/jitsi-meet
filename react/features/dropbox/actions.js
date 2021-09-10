@@ -1,10 +1,7 @@
 // @flow
-import Logger from 'jitsi-meet-logger';
-
 import { UPDATE_DROPBOX_TOKEN } from './actionTypes';
 import { _authorizeDropbox } from './functions';
-
-const logger = Logger.getLogger('features/dropbox');
+import logger from './logger';
 
 /**
  * Action to authorize the Jitsi Recording app in dropbox.
