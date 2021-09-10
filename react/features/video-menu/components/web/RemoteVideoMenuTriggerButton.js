@@ -11,6 +11,8 @@ import { getLocalParticipant, getParticipantById, PARTICIPANT_ROLE } from '../..
 import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
 import { requestRemoteControl, stopController } from '../../../remote-control';
+import { setToolboxEnabled, disableToolboxOnTileView } from '../../../toolbox/actions';
+import { isToolboxEnabled } from '../../../toolbox/functions';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
 import { renderConnectionStatus } from '../../actions.web';
 
@@ -77,6 +79,11 @@ type Props = {
     _remoteControlState: number,
 
     /**
+     * Whether the toolbox is enabled or not.
+     */
+    _toolboxEnabled: boolean,
+
+    /**
      * The redux dispatch function.
      */
     dispatch: Function,
@@ -127,6 +134,11 @@ type Props = {
  */
 class RemoteVideoMenuTriggerButton extends Component<Props> {
     /**
+     * Preserve the intial toolbox state.
+     */
+     initialToolboxEnabled: boolean;
+
+    /**
      * Reference to the Popover instance.
      */
     popoverRef: Object;
@@ -141,7 +153,9 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
         super(props);
 
         this.popoverRef = React.createRef();
+        this.initialToolboxEnabled = true;
         this._onPopoverClose = this._onPopoverClose.bind(this);
+        this._onPopoverOpen = this._onPopoverOpen.bind(this);
     }
 
     /**
@@ -165,6 +179,8 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
         if (this.props.getRef) {
             this.props.getRef(this);
         }
+
+        this.initialToolboxEnabled = this.props._toolboxEnabled;
     }
 
     /**
@@ -201,6 +217,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
             <Popover
                 content = { content }
                 onPopoverClose = { this._onPopoverClose }
+                onPopoverOpen = { this._onPopoverOpen }
                 overflowDrawer = { this.props._overflowDrawer }
                 position = { this.props._menuPosition }
                 ref = { this.popoverRef }>
@@ -219,6 +236,17 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
         );
     }
 
+    _onPopoverOpen: () => void;
+
+    /**
+     * Disable and hide toolbox while context menu is open.
+     *
+     * @returns {void}
+     */
+    _onPopoverOpen() {
+        this.props.dispatch(disableToolboxOnTileView());
+    }
+
     _onPopoverClose: () => void;
 
     /**
@@ -227,6 +255,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
      * @returns {void}
      */
     _onPopoverClose() {
+        this.props.dispatch(setToolboxEnabled(this.initialToolboxEnabled));
         this.props.dispatch(renderConnectionStatus(false));
     }
 
@@ -406,7 +435,8 @@ function _mapStateToProps(state, ownProps) {
         _overflowDrawer: overflowDrawer,
         _participantDisplayName,
         _disableGrantModerator: Boolean(disableGrantModerator),
-        _showConnectionInfo: showConnectionInfo
+        _showConnectionInfo: showConnectionInfo,
+        _toolboxEnabled: isToolboxEnabled(state)
     };
 }
 
