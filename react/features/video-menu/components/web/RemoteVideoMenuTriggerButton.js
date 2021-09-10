@@ -37,6 +37,7 @@ import {
     VideoMenu,
     VolumeSlider
 } from './';
+import {DISPLAY_DRAWER_THRESHOLD} from "../../../filmstrip";
 
 declare var $: Object;
 
@@ -65,6 +66,11 @@ type Props = {
      * The current height value of the filmstrip
      */
     _filmstripHeight: number,
+
+    /**
+     * The current width value of the filmstrip
+     */
+    _filmstripWidth: number,
 
     /**
      * Whether or not the participant is a conference moderator.
@@ -386,10 +392,10 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
 
             // This check was added because the issues was present
             // in a two person meeting
-            if (this.props._participantCount === 2) {
+            if (this.props._participantCount) {
 
-                // Here we check if the filmstrip height is getting smaller
-                if (this.props._filmstripHeight < smallScreenFilmstripHeight) {
+                // Here we check if the filmstrip width is getting smaller
+                if (this.props._filmstripWidth < DISPLAY_DRAWER_THRESHOLD) {
                     return (
                         <VideoMenu id = { participantID }>
                             { buttons }
@@ -442,7 +448,7 @@ function _mapStateToProps(state, ownProps) {
     const activeParticipant = requestedParticipant || controlled;
     const { overflowDrawer } = state['features/toolbox'];
     const { showConnectionInfo } = state['features/base/connection'];
-    const { filmstripHeight } = state['features/filmstrip'].tileViewDimensions;
+    const { filmstripHeight, filmstripWidth } = state['features/filmstrip'].tileViewDimensions;
 
     if (_supportsRemoteControl
             && ((!active && !_isRemoteControlSessionActive) || activeParticipant === participantID)) {
@@ -477,11 +483,12 @@ function _mapStateToProps(state, ownProps) {
         _disableKick: Boolean(disableKick),
         _disableRemoteMute: Boolean(disableRemoteMute),
         _filmstripHeight: filmstripHeight,
+        _filmstripWidth: filmstripWidth,
         _remoteControlState,
         _menuPosition,
         _overflowDrawer: overflowDrawer,
         _participantDisplayName,
-        _participantCount,
+        _participantCount: Boolean(_participantCount === 2),
         _disableGrantModerator: Boolean(disableGrantModerator),
         _showConnectionInfo: showConnectionInfo,
         _toolboxEnabled: isToolboxEnabled(state)
