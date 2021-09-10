@@ -15,7 +15,8 @@ import {
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT,
-    SET_LOADABLE_AVATAR_URL
+    SET_LOADABLE_AVATAR_URL,
+    RAISE_HAND_UPDATED
 } from './actionTypes';
 import {
     DISCO_REMOTE_CONTROL_FEATURE
@@ -465,7 +466,7 @@ export function participantUpdated(participant = {}) {
  * @returns {Promise}
  */
 export function participantMutedUs(participant, track) {
-    return (dispatch, getState) => {
+    return dispatch => {
         if (!participant) {
             return;
         }
@@ -473,12 +474,7 @@ export function participantMutedUs(participant, track) {
         const isAudio = track.isAudioTrack();
 
         dispatch(showNotification({
-            descriptionKey: isAudio ? 'notify.mutedRemotelyDescription' : 'notify.videoMutedRemotelyDescription',
-            titleKey: isAudio ? 'notify.mutedRemotelyTitle' : 'notify.videoMutedRemotelyTitle',
-            titleArguments: {
-                participantDisplayName:
-                    getParticipantDisplayName(getState, participant.getId())
-            }
+            titleKey: isAudio ? 'notify.mutedRemotelyTitle' : 'notify.videoMutedRemotelyTitle'
         }));
     };
 }
@@ -572,5 +568,21 @@ export function raiseHand(enabled) {
     return {
         type: LOCAL_PARTICIPANT_RAISE_HAND,
         enabled
+    };
+}
+
+/**
+ * Update raise hand queue of participants.
+ *
+ * @param {Object} participant - Participant that updated raised hand.
+ * @returns {{
+ *      type: RAISE_HAND_UPDATED,
+ *      participant: Object
+ * }}
+ */
+export function raiseHandUpdateQueue(participant) {
+    return {
+        type: RAISE_HAND_UPDATED,
+        participant
     };
 }

@@ -94,6 +94,7 @@ export const AudioStateIcons: {[MediaState]: React$Element<any> | null} = {
 export const VideoStateIcons = {
     [MEDIA_STATE.FORCE_MUTED]: (
         <Icon
+            color = '#E04757'
             size = { 16 }
             src = { IconCameraEmptyDisabled } />
     ),

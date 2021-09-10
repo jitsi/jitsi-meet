@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import { Icon, IconHorizontalPoints } from '../../../base/icons';
 import { ACTION_TRIGGER } from '../../constants';
 
+const MD_BREAKPOINT = '580px';
+
 export const ignoredChildClassName = 'ignore-child';
 
 export const AntiCollapse = styled.br`
@@ -89,7 +91,7 @@ export const ContextMenuIcon = styled(Icon).attrs({
     size: 20
 })`
   & > svg {
-    fill: #a4b8d1;
+    fill: #ffffff;
   }
 `;
 
@@ -162,6 +164,12 @@ export const FooterButton = styled(Button)`
   height: 40px;
   font-size: 15px;
   padding: 0 16px;
+
+  @media (max-width: ${MD_BREAKPOINT}) {
+    font-size: 16px;
+    height: 48px;
+    min-width: 48px;
+  }
 `;
 
 export const FooterEllipsisButton = styled(FooterButton).attrs({
@@ -188,6 +196,10 @@ export const Heading = styled.div`
   font-size: 15px;
   line-height: 24px;
   margin: 8px 0 ${props => props.theme.panePadding}px;
+
+  @media (max-width: ${MD_BREAKPOINT}) {
+    font-size: 16px;
+  }
 `;
 
 export const ParticipantActionButton = styled(Button)`
@@ -275,6 +287,11 @@ export const ParticipantContainer = styled.div`
   padding-left: ${props => props.theme.panePadding}px;
   position: relative;
 
+  @media (max-width: ${MD_BREAKPOINT}) {
+    font-size: 16px;
+    height: 64px;
+  }
+
   &:hover {
     ${ParticipantStates} {
       ${props => !props.local && 'display: none'};
@@ -293,6 +310,10 @@ export const ParticipantContainer = styled.div`
     & ${ParticipantContent} {
       box-shadow: none;
     }
+
+    & ${ParticipantStates} {
+      display: none;
+    }
   ${props => !props.isHighlighted && '}'}
 `;
 
@@ -305,6 +326,11 @@ export const ParticipantInviteButton = styled(Button).attrs({
 
   & > *:not(:last-child) {
     margin-right: 8px;
+  }
+
+  @media (max-width: ${MD_BREAKPOINT}) {
+    font-size: 16px;
+    height: 48px;
   }
 `;
 

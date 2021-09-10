@@ -14,7 +14,8 @@ import {
     SET_VIDEO_MUTED,
     VIDEO_MUTISM_AUTHORITY,
     TOGGLE_CAMERA_FACING_MODE,
-    toggleCameraFacingMode
+    toggleCameraFacingMode,
+    VIDEO_TYPE
 } from '../media';
 import { MiddlewareRegistry } from '../redux';
 
@@ -28,6 +29,7 @@ import {
 import {
     createLocalTracksA,
     showNoDataFromSourceVideoError,
+    toggleScreensharing,
     trackNoDataFromSourceNotificationInfoChanged
 } from './actions';
 import {
@@ -137,9 +139,9 @@ MiddlewareRegistry.register(store => next => action => {
 
     case TOGGLE_SCREENSHARING:
         if (typeof APP === 'object') {
-
             // check for A/V Moderation when trying to start screen sharing
-            if (action.enabled && shouldShowModeratedNotification(MEDIA_TYPE.VIDEO, store.getState())) {
+            if ((action.enabled || action.enabled === undefined)
+                && shouldShowModeratedNotification(MEDIA_TYPE.VIDEO, store.getState())) {
                 store.dispatch(showModeratedNotification(MEDIA_TYPE.PRESENTER));
 
                 return;
@@ -171,8 +173,10 @@ MiddlewareRegistry.register(store => next => action => {
                 // Do not change the video mute state for local presenter tracks.
                 if (jitsiTrack.type === MEDIA_TYPE.PRESENTER) {
                     APP.conference.mutePresenter(muted);
-                } else if (jitsiTrack.isLocal()) {
+                } else if (jitsiTrack.isLocal() && !(jitsiTrack.videoType === VIDEO_TYPE.DESKTOP)) {
                     APP.conference.setVideoMuteStatus();
+                } else if (jitsiTrack.isLocal() && muted && jitsiTrack.videoType === VIDEO_TYPE.DESKTOP) {
+                    store.dispatch(toggleScreensharing(false));
                 } else {
                     APP.UI.setVideoMuted(participantID);
                 }

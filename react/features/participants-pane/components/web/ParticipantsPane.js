@@ -7,14 +7,16 @@ import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { isLocalParticipantModerator } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+import { Drawer, DrawerPortal } from '../../../toolbox/components/web';
+import { showOverflowDrawer } from '../../../toolbox/functions';
 import { MuteEveryoneDialog } from '../../../video-menu/components/';
 import { close } from '../../actions';
 import { classList, findStyledAncestor, getParticipantsPaneOpen } from '../../functions';
 import theme from '../../theme.json';
 import { FooterContextMenu } from '../FooterContextMenu';
 
-import { LobbyParticipantList } from './LobbyParticipantList';
-import MeetingParticipantList from './MeetingParticipantList';
+import LobbyParticipants from './LobbyParticipants';
+import MeetingParticipants from './MeetingParticipants';
 import {
     AntiCollapse,
     Close,
@@ -30,6 +32,11 @@ import {
  * The type of the React {@code Component} props of {@link ParticipantsPane}.
  */
 type Props = {
+
+    /**
+     * Whether to display the context menu  as a drawer.
+     */
+    _overflowDrawer: boolean,
 
     /**
      * Is the participants pane open.
@@ -81,6 +88,7 @@ class ParticipantsPane extends Component<Props, State> {
 
         // Bind event handlers so they are only bound once per instance.
         this._onClosePane = this._onClosePane.bind(this);
+        this._onDrawerClose = this._onDrawerClose.bind(this);
         this._onKeyPress = this._onKeyPress.bind(this);
         this._onMuteAll = this._onMuteAll.bind(this);
         this._onToggleContext = this._onToggleContext.bind(this);
@@ -113,10 +121,12 @@ class ParticipantsPane extends Component<Props, State> {
      */
     render() {
         const {
+            _overflowDrawer,
             _paneOpen,
             _showFooter,
             t
         } = this.props;
+        const { contextOpen } = this.state;
 
         // when the pane is not open optimize to not
         // execute the MeetingParticipantList render for large list of participants
@@ -137,9 +147,9 @@ class ParticipantsPane extends Component<Props, State> {
                                 tabIndex = { 0 } />
                         </Header>
                         <Container>
-                            <LobbyParticipantList />
+                            <LobbyParticipants />
                             <AntiCollapse />
-                            <MeetingParticipantList />
+                            <MeetingParticipants />
                         </Container>
                         {_showFooter && (
                             <Footer>
@@ -150,12 +160,19 @@ class ParticipantsPane extends Component<Props, State> {
                                     <FooterEllipsisButton
                                         id = 'participants-pane-context-menu'
                                         onClick = { this._onToggleContext } />
-                                    {this.state.contextOpen
+                                    {this.state.contextOpen && !_overflowDrawer
                                         && <FooterContextMenu onMouseLeave = { this._onToggleContext } />}
                                 </FooterEllipsisContainer>
                             </Footer>
                         )}
                     </div>
+                    <DrawerPortal>
+                        <Drawer
+                            isOpen = { contextOpen && _overflowDrawer }
+                            onClose = { this._onDrawerClose }>
+                            <FooterContextMenu inDrawer = { true } />
+                        </Drawer>
+                    </DrawerPortal>
                 </div>
             </ThemeProvider>
         );
@@ -171,6 +188,20 @@ class ParticipantsPane extends Component<Props, State> {
      */
     _onClosePane() {
         this.props.dispatch(close());
+    }
+
+    _onDrawerClose: () => void
+
+    /**
+     * Callback for closing the drawer.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onDrawerClose() {
+        this.setState({
+            contextOpen: false
+        });
     }
 
     _onKeyPress: (Object) => void;
@@ -228,6 +259,8 @@ class ParticipantsPane extends Component<Props, State> {
             });
         }
     }
+
+
 }
 
 /**
@@ -245,6 +278,7 @@ function _mapStateToProps(state: Object) {
     const isPaneOpen = getParticipantsPaneOpen(state);
 
     return {
+        _overflowDrawer: showOverflowDrawer(state),
         _paneOpen: isPaneOpen,
         _showFooter: isPaneOpen && isLocalParticipantModerator(state)
     };

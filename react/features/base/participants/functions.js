@@ -456,21 +456,35 @@ async function _getFirstLoadableAvatarUrl(participant, store) {
 export function getSortedParticipants(stateful: Object | Function) {
     const localParticipant = getLocalParticipant(stateful);
     const remoteParticipants = getRemoteParticipants(stateful);
+    const raisedHandParticipantIds = getRaiseHandsQueue(stateful);
 
     const items = [];
     const dominantSpeaker = getDominantSpeakerParticipant(stateful);
+    const raisedHandParticipants = [];
+
+    raisedHandParticipantIds
+        .map(id => remoteParticipants.get(id) || localParticipant)
+        .forEach(p => {
+            if (p !== dominantSpeaker) {
+                raisedHandParticipants.push(p);
+            }
+        });
 
     remoteParticipants.forEach(p => {
-        if (p !== dominantSpeaker) {
+        if (p !== dominantSpeaker && !raisedHandParticipantIds.find(id => p.id === id)) {
             items.push(p);
         }
     });
+
+    if (!raisedHandParticipantIds.find(id => localParticipant.id === id)) {
+        items.push(localParticipant);
+    }
 
     items.sort((a, b) =>
         getParticipantDisplayName(stateful, a.id).localeCompare(getParticipantDisplayName(stateful, b.id))
     );
 
-    items.unshift(localParticipant);
+    items.unshift(...raisedHandParticipants);
 
     if (dominantSpeaker && dominantSpeaker !== localParticipant) {
         items.unshift(dominantSpeaker);
@@ -491,4 +505,18 @@ export function getSortedParticipantIds(stateful: Object | Function): Array<stri
     const participantIds = getSortedParticipants(stateful).map((p): Object => p.id);
 
     return participantIds;
+}
+
+/**
+ * Get the participants queue with raised hands.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @returns {Array<string>}
+ */
+export function getRaiseHandsQueue(stateful: Object | Function): Array<string> {
+    const { raisedHandsQueue } = toState(stateful)['features/base/participants'];
+
+    return raisedHandsQueue;
 }

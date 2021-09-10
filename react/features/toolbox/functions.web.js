@@ -80,3 +80,14 @@ export function isVideoSettingsButtonDisabled(state: Object) {
 export function isVideoMuteButtonDisabled(state: Object) {
     return !hasAvailableDevices(state, 'videoInput');
 }
+
+/**
+ * If an overflow drawer should be displayed or not.
+ * This is usually done for mobile devices or on narrow screens.
+ *
+ * @param {Object} state - The state from the Redux store.
+ * @returns {boolean}
+ */
+export function showOverflowDrawer(state: Object) {
+    return state['features/toolbox'].overflowDrawer;
+}
