@@ -12,10 +12,16 @@ import { setPictureInPictureDisabled } from '../mobile/picture-in-picture/functi
  * @returns {Promise<Object>} - The promise will be resolved with the dropbox
  * access token or rejected with an error.
  */
-export function _authorizeDropbox(): Promise<Object> {
+export async function _authorizeDropbox(): Promise<Object> {
     setPictureInPictureDisabled(true);
 
-    return Dropbox.authorize().finally(() => setPictureInPictureDisabled(false));
+    try {
+        return await Dropbox.authorize();
+    } catch (error) {
+        throw error;
+    } finally {
+        setPictureInPictureDisabled(false);
+    }
 }
 
 /**
