@@ -4,7 +4,6 @@ import InlineDialog from '@atlaskit/inline-dialog';
 import React, { Component } from 'react';
 
 import { Drawer, DrawerPortal } from '../../../toolbox/components/web';
-import { isMobileBrowser } from '../../environment/utils';
 
 /**
  * A map of dialog positions, relative to trigger, to css classes used to
@@ -115,11 +114,6 @@ class Popover extends Component<Props, State> {
     };
 
     /**
-     * Reference to the Popover that is meant to open as a drawer.
-     */
-    _drawerContainerRef: Object;
-
-    /**
      * Initializes a new {@code Popover} instance.
      *
      * @param {Object} props - The read-only properties with which the new
@@ -136,8 +130,8 @@ class Popover extends Component<Props, State> {
         this._onHideDialog = this._onHideDialog.bind(this);
         this._onShowDialog = this._onShowDialog.bind(this);
         this._onKeyPress = this._onKeyPress.bind(this);
-        this._drawerContainerRef = React.createRef();
         this._onEscKey = this._onEscKey.bind(this);
+        this._onThumbClick = this._onThumbClick.bind(this);
     }
 
     /**
@@ -148,50 +142,6 @@ class Popover extends Component<Props, State> {
      */
     showDialog() {
         this.setState({ showDialog: true });
-    }
-
-    /**
-     * Sets up an event listener to open a drawer when clicking, rather than entering the
-     * overflow area.
-     *
-     * TODO: This should be done by setting an {@code onClick} handler on the div, but for some
-     * reason that doesn't seem to work whatsoever.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    componentDidMount() {
-        if (this._drawerContainerRef && this._drawerContainerRef.current && !isMobileBrowser()) {
-            this._drawerContainerRef.current.addEventListener('click', this._onShowDialog);
-        }
-    }
-
-    /**
-     * Removes the listener set up in the {@code componentDidMount} method.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    componentWillUnmount() {
-        if (this._drawerContainerRef && this._drawerContainerRef.current) {
-            this._drawerContainerRef.current.removeEventListener('click', this._onShowDialog);
-        }
-    }
-
-    /**
-     * Implements React Component's componentDidUpdate.
-     *
-     * @inheritdoc
-     */
-    componentDidUpdate(prevProps: Props) {
-        if (prevProps.overflowDrawer !== this.props.overflowDrawer) {
-            // Make sure the listeners are set up when resizing the screen past the drawer threshold.
-            if (this.props.overflowDrawer) {
-                this.componentDidMount();
-            } else {
-                this.componentWillUnmount();
-            }
-        }
     }
 
     /**
@@ -208,7 +158,7 @@ class Popover extends Component<Props, State> {
                 <div
                     className = { className }
                     id = { id }
-                    ref = { this._drawerContainerRef }>
+                    onClick = { this._onShowDialog }>
                     { children }
                     <DrawerPortal>
                         <Drawer
@@ -225,6 +175,7 @@ class Popover extends Component<Props, State> {
             <div
                 className = { className }
                 id = { id }
+                onClick = { this._onThumbClick }
                 onKeyPress = { this._onKeyPress }
                 onMouseEnter = { this._onShowDialog }
                 onMouseLeave = { this._onHideDialog }>
@@ -273,6 +224,20 @@ class Popover extends Component<Props, State> {
                 this.props.onPopoverOpen();
             }
         }
+    }
+
+    _onThumbClick: (Object) => void;
+
+    /**
+     * Prevents switching from tile view to stage view on accidentally clicking
+     * the popover thumbs.
+     *
+     * @param {Object} event - The mouse event or the keypress event to intercept.
+     * @private
+     * @returns {void}
+     */
+    _onThumbClick(event) {
+        event.stopPropagation();
     }
 
     _onKeyPress: (Object) => void;

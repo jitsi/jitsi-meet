@@ -2,6 +2,8 @@
 
 import type { Dispatch } from 'redux';
 
+import { isLayoutTileView } from '../video-layout';
+
 import {
     FULL_SCREEN_CHANGED,
     SET_FULL_SCREEN,
@@ -11,7 +13,8 @@ import {
     clearToolboxTimeout,
     setToolboxTimeout,
     setToolboxTimeoutMS,
-    setToolboxVisible
+    setToolboxVisible,
+    setToolboxEnabled
 } from './actions.native';
 
 declare var interfaceConfig: Object;
@@ -161,5 +164,21 @@ export function setOverflowDrawer(displayAsDrawer: boolean) {
     return {
         type: SET_OVERFLOW_DRAWER,
         displayAsDrawer
+    };
+}
+
+/**
+ * Disables and hides the toolbox on demand when in tile view.
+ *
+ * @returns {void}
+ */
+export function disableToolboxOnTileView() {
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        if (!isLayoutTileView(getState())) {
+            return;
+        }
+
+        dispatch(setToolboxEnabled(false));
+        dispatch(hideToolbox(true));
     };
 }
