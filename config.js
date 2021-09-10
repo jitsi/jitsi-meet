@@ -41,6 +41,10 @@ var config = {
         // issues related to insertable streams.
         // disableE2EE: false,
 
+        // Enables/disables thumbnail reordering in the filmstrip. It is enabled by default unless explicitly
+        // disabled by the below option.
+        // enableThumbnailReordering: true,
+
         // P2P test mode disables automatic switching to P2P when there are 2
         // participants in the conference.
         p2pTestMode: false

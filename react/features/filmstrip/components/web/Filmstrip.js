@@ -240,10 +240,10 @@ class Filmstrip extends PureComponent <Props> {
         let stop = stopIndex;
 
         if (_thumbnailsReordered) {
-            // In tile view, the start index needs to be offset by 1 because the first thumbnail is that of the local
+            // In tile view, the indices needs to be offset by 1 because the first thumbnail is that of the local
             // endpoint. The remote participants start from index 1.
             if (_currentLayout === LAYOUTS.TILE_VIEW) {
-                start = startIndex > 0 ? startIndex - 1 : 0;
+                start = Math.max(startIndex - 1, 0);
                 stop = stopIndex - 1;
             }
         }
@@ -528,7 +528,8 @@ class Filmstrip extends PureComponent <Props> {
  */
 function _mapStateToProps(state) {
     const toolbarButtons = getToolbarButtons(state);
-    const { enableThumbnailReordering = true } = state['features/base/config'];
+    const { testing = {} } = state['features/base/config'];
+    const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
     const { visible, remoteParticipants } = state['features/filmstrip'];
     const reduceHeight = state['features/toolbox'].visible && toolbarButtons.length;
     const remoteVideosVisible = shouldRemoteVideosBeVisible(state);

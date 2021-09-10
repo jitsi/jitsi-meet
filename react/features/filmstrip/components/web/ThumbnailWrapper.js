@@ -104,7 +104,8 @@ function _mapStateToProps(state, ownProps) {
     const _currentLayout = getCurrentLayout(state);
     const { remoteParticipants } = state['features/filmstrip'];
     const remoteParticipantsLength = remoteParticipants.length;
-    const { enableThumbnailReordering = true } = state['features/base/config'];
+    const { testing = {} } = state['features/base/config'];
+    const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
 
     if (_currentLayout === LAYOUTS.TILE_VIEW) {
         const { columnIndex, rowIndex } = ownProps;

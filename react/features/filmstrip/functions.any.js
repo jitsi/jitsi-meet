@@ -12,7 +12,8 @@ import { setRemoteParticipants } from './actions';
  */
 export function updateRemoteParticipants(store: Object, participantId: ?number) {
     const state = store.getState();
-    const { enableThumbnailReordering = true } = state['features/base/config'];
+    const { testing = {} } = state['features/base/config'];
+    const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
     let reorderedParticipants = [];
 
     if (!enableThumbnailReordering) {

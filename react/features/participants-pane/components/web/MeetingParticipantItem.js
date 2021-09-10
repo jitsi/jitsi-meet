@@ -170,7 +170,7 @@ function MeetingParticipantItem({
             videoMediaState = { _videoMediaState }
             youText = { youText }>
 
-            {!overflowDrawer && !_participant.isFakeParticipant
+            {!overflowDrawer && !_participant?.isFakeParticipant
                 && <>
                     <ParticipantQuickAction
                         askUnmuteText = { askUnmuteText }
@@ -184,7 +184,7 @@ function MeetingParticipantItem({
                  </>
             }
 
-            {!overflowDrawer && _localVideoOwner && _participant.isFakeParticipant && (
+            {!overflowDrawer && _localVideoOwner && _participant?.isFakeParticipant && (
                 <ParticipantActionEllipsis
                     aria-label = { participantActionEllipsisLabel }
                     onClick = { onContextMenu } />

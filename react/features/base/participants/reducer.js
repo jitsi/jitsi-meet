@@ -61,11 +61,11 @@ const DEFAULT_STATE = {
     haveParticipantWithScreenSharingFeature: false,
     local: undefined,
     pinnedParticipant: undefined,
+    raisedHandsQueue: [],
     remote: new Map(),
     sortedRemoteParticipants: new Map(),
     sortedRemoteScreenshares: new Map(),
-    speakersList: new Map(),
-    raisedHandsQueue: []
+    speakersList: new Map()
 };
 
 /**
