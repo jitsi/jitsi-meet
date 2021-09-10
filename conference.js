@@ -1375,24 +1375,10 @@ export default {
 
         return new Promise((resolve, reject) => {
             _replaceLocalVideoTrackQueue.enqueue(onFinish => {
-                const state = APP.store.getState();
-                const oldTrack = getLocalJitsiVideoTrack(state);
-
-                // When the prejoin page is displayed localVideo is not set
-                // so just replace the video track from the store with the new one.
-                if (isPrejoinPageVisible(state)) {
-                    logger.debug(`useVideoStream on the prejoin screen: Replacing ${oldTrack} with ${newTrack}`);
-
-                    return APP.store.dispatch(replaceLocalTrack(oldTrack, newTrack))
-                        .then(resolve)
-                        .catch(error => {
-                            logger.error(`useVideoStream failed on the prejoin screen: ${error}`);
-                            reject(error);
-                        })
-                        .then(onFinish);
-                }
+                const oldTrack = getLocalJitsiVideoTrack(APP.store.getState());
 
                 logger.debug(`useVideoStream: Replacing ${oldTrack} with ${newTrack}`);
+
                 APP.store.dispatch(
                     replaceLocalTrack(oldTrack, newTrack, room))
                     .then(() => {
@@ -1445,22 +1431,11 @@ export default {
     useAudioStream(newTrack) {
         return new Promise((resolve, reject) => {
             _replaceLocalAudioTrackQueue.enqueue(onFinish => {
-                const state = APP.store.getState();
-                const oldTrack = getLocalJitsiAudioTrack(state);
-
-                // When the prejoin page is displayed localAudio is not set
-                // so just replace the audio track from the store with the new one.
-                if (isPrejoinPageVisible(state)) {
-                    return APP.store.dispatch(replaceLocalTrack(oldTrack, newTrack))
-                        .then(resolve)
-                        .catch(reject)
-                        .then(onFinish);
-                }
+                const oldTrack = getLocalJitsiAudioTrack(APP.store.getState());
 
                 APP.store.dispatch(
                 replaceLocalTrack(oldTrack, newTrack, room))
                     .then(() => {
-                        // TODO do it isPrejoinPageVisible conditionally although it would not hurt to run always
                         this.setAudioMuteStatus(this.isLocalAudioMuted());
                     })
                     .then(resolve)
