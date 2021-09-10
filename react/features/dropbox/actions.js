@@ -1,7 +1,10 @@
 // @flow
+import Logger from 'jitsi-meet-logger';
 
 import { UPDATE_DROPBOX_TOKEN } from './actionTypes';
 import { _authorizeDropbox } from './functions';
+
+const logger = Logger.getLogger(__filename);
 
 /**
  * Action to authorize the Jitsi Recording app in dropbox.
@@ -24,7 +27,10 @@ export function authorizeDropbox() {
 
         _authorizeDropbox(dropbox.appKey, redirectURI)
             .then(
-                ({ token, rToken, expireDate }) => dispatch(updateDropboxToken(token, rToken, expireDate)));
+                ({ token, rToken, expireDate }) => {
+                    dispatch(updateDropboxToken(token, rToken, expireDate));
+                })
+            .catch(error => logger.log("Cannot authorize dropbox", error));;
     };
 }
 

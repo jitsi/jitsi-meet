@@ -4,6 +4,8 @@ import { NativeModules } from 'react-native';
 
 const { Dropbox } = NativeModules;
 
+import { setPictureInPictureDisabled } from '../mobile/picture-in-picture/functions';
+
 /**
  * Action to authorize the Jitsi Recording app in dropbox.
  *
@@ -11,7 +13,8 @@ const { Dropbox } = NativeModules;
  * access token or rejected with an error.
  */
 export function _authorizeDropbox(): Promise<Object> {
-    return Dropbox.authorize();
+    setPictureInPictureDisabled(true);
+    return Dropbox.authorize().finally(() => setPictureInPictureDisabled(false));
 }
 
 /**

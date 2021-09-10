@@ -184,14 +184,21 @@ class DropboxModule
     public void onHostResume() {
         DbxCredential credential = Auth.getDbxCredential();
 
-        if (credential != null && this.promise != null) {
-            WritableMap result = Arguments.createMap();
-            result.putString("token", credential.getAccessToken());
-            result.putString("rToken", credential.getRefreshToken());
-            result.putDouble("expireDate", credential.getExpiresAt());
+        if (this.promise != null ) {
+            if (credential != null) {
+                WritableMap result = Arguments.createMap();
+                result.putString("token", credential.getAccessToken());
+                result.putString("rToken", credential.getRefreshToken());
+                result.putDouble("expireDate", credential.getExpiresAt());
 
-            this.promise.resolve(result);
+                this.promise.resolve(result);
+                this.promise = null;
+            } else {
+                this.promise.reject("Invalid dropbox credentials");
+            }
+
             this.promise = null;
         }
+
     }
 }
