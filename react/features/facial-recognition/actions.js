@@ -8,11 +8,13 @@ import './createImageBitmap';
 import {
     ADD_FACIAL_EXPRESSION,
     SET_FACIAL_RECOGNITION_ALLOWED,
+    SET_TF_BACKEND,
     UPDATE_CAMERA_TIME_TRACKER
 } from './actionTypes';
 import { sendFacialExpression, detectFacialExpression, sendCameraTimeTrackerUpdate } from './functions';
 import logger from './logger';
 
+let intervalTime = -1;
 let interval;
 let imageCapture;
 let worker;
@@ -28,12 +30,21 @@ export function loadWorker() {
         if (window.Worker) {
             worker = new Worker('libs/facialExpressionWorker.js', { name: 'Facial Expression Worker' });
             worker.onmessage = function(e) {
-                const facialExpression = e.data;
+                const { type, value } = e.data;
 
-                if (facialExpression !== null && facialExpression !== undefined) {
-                    console.log('!!!', facialExpression);
-                    dispatch(addFacialExpression(facialExpression));
-                    sendFacialExpression(facialExpression);
+                if (type === 'tf-backend' && value !== undefined) {
+                    if (value === 'webgl') {
+                        intervalTime = 1000;
+                    } else if (value === 'cpu') {
+                        intervalTime = 3000;
+                    }
+                    interval = setInterval(() => detectFacialExpression(worker, imageCapture), intervalTime);
+                }
+
+                if (type === 'facial-expression' && value !== null && value !== undefined) {
+                    console.log('!!!', value);
+                    dispatch(addFacialExpression(value));
+                    sendFacialExpression(value);
                 }
             };
         } else {
@@ -66,6 +77,10 @@ export function startFacialRecognition() {
         if (interval) {
             return;
         }
+
+        if (worker === undefined || worker === null) {
+            return;
+        }
         logger.log('Start face recognition');
 
         const state = getState();
@@ -92,8 +107,12 @@ export function startFacialRecognition() {
         outputCanvas.width = parseInt(width, 10);
         outputCanvas.height = parseInt(height, 10);
         dispatch(updateCameraTimeTracker(false));
-        interval = setInterval(() => detectFacialExpression(worker, imageCapture), 1000);
 
+        if (intervalTime === -1) {
+            detectFacialExpression(worker, imageCapture);
+        } else {
+            interval = setInterval(() => detectFacialExpression(worker, imageCapture), intervalTime);
+        }
     };
 }
 
