@@ -1335,7 +1335,7 @@ export default {
      * @private
      */
     _setLocalAudioVideoStreams(tracks = []) {
-        const promise = tracks.map(track => {
+        const promises = tracks.map(track => {
             if (track.isAudioTrack()) {
                 return this.useAudioStream(track);
             } else if (track.isVideoTrack()) {
@@ -1350,7 +1350,7 @@ export default {
 
         });
 
-        return promise.then(() => {
+        return Promise.all(promises).then(() => {
             this._localTracksInitialized = true;
             logger.log(`Initialized with ${tracks.length} local tracks`);
         });
@@ -1378,6 +1378,13 @@ export default {
                 const oldTrack = getLocalJitsiVideoTrack(APP.store.getState());
 
                 logger.debug(`useVideoStream: Replacing ${oldTrack} with ${newTrack}`);
+
+                if (oldTrack === newTrack) {
+                    resolve();
+                    onFinish();
+
+                    return;
+                }
 
                 APP.store.dispatch(
                     replaceLocalTrack(oldTrack, newTrack, room))
@@ -1432,6 +1439,13 @@ export default {
         return new Promise((resolve, reject) => {
             _replaceLocalAudioTrackQueue.enqueue(onFinish => {
                 const oldTrack = getLocalJitsiAudioTrack(APP.store.getState());
+
+                if (oldTrack === newTrack) {
+                    resolve();
+                    onFinish();
+
+                    return;
+                }
 
                 APP.store.dispatch(
                 replaceLocalTrack(oldTrack, newTrack, room))
