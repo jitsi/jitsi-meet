@@ -103,7 +103,7 @@
                 margin-bottom: 32px;
                 text-align: center;
             }
-    
+
             input.field {
                 background-color: white;
                 border: none;
@@ -116,11 +116,11 @@
                 padding: 10px 16px;
                 text-align: center;
                 width: 100%;
-    
+
                 &.error {
                     border: 1px solid #E04757;
                 }
-    
+
                 &.focused {
                     box-shadow: 0px 0px 1px 1.5px black, 0px 0px 1.3px 4px white;
                 }
@@ -144,7 +144,7 @@
 
     @media (max-width: 1000px) {
         flex-direction: column-reverse;
-        
+
         .content {
             height: auto;
             margin: 0 auto;
@@ -208,8 +208,6 @@
     width: 100%;
 
     .avatar {
-        background: #0045B3;
-
         text {
             fill: white;
             font-size: 26px;
