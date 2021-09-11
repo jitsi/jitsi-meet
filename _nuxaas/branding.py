@@ -22,8 +22,8 @@ def _simple_trans(val: Any) -> Any:
     if not isinstance(val, str):
         return val
     else:
-        v1 = _RE_1.sub("τΛ Talk", val)
-        v2 = _RE_2.sub("τΛ", v1)
+        v1 = _RE_1.sub("kΛ Talk", val)
+        v2 = _RE_2.sub("kΛ", v1)
         return v2
 
 
