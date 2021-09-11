@@ -49,7 +49,7 @@ def main() -> None:
 
     for path in _TOP_LV.glob("*.html"):
         html = path.read_text()
-        html = _RE_1.sub("τΛ Talk", html)
+        html = _RE_1.sub("kΛ Talk", html)
         path.write_text(html)
 
 
