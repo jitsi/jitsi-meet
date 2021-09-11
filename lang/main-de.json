@@ -70,13 +70,17 @@
             "titleWithPolls": "Geben Sie einen Alias zum Chatten ein"
         },
         "privateNotice": "Private Nachricht an {{recipient}}",
-        "title": "Chatten",
-        "titleWithPolls": "Chatten",
-        "you": "Sie",
         "message": "Nachricht",
         "messageAccessibleTitle": "{{user}} sagt:",
         "messageAccessibleTitleMe": "Ich sage:",
-        "smileysPanel": "Emoji-Auswahl"
+        "smileysPanel": "Emoji-Auswahl",
+        "tabs": {
+            "chat": "Chatten",
+            "polls": "Umfragen"
+        },
+        "title": "Chatten",
+        "titleWithPolls": "Chatten und Umfragen",
+        "you": "Sie"
     },
     "chromeExtensionBanner": {
         "installExtensionText": "Installieren Sie die Erweiterung für die Integration von Google Calendar und Office 365",
@@ -245,13 +249,17 @@
         "micPermissionDeniedError": "Die Berechtigung zur Verwendung des Mikrofons wurde nicht erteilt. Sie können trotzdem an der Konferenz teilnehmen, aber die anderen Personen können Sie nicht hören. Verwenden Sie die Kamera-Schaltfläche in der Adressleiste, um die Berechtigungen zu erteilen.",
         "micTimeoutError": "Audioquelle konnte nicht gestartet werden. Zeitüberschreitung",
         "micUnknownError": "Das Mikrofon kann aus einem unbekannten Grund nicht verwendet werden.",
+        "moderationAudioLabel": "Erlaube Anwesenden die Stummschaltung für sich aufzuheben",
+        "moderationVideoLabel": "Erlaube Anwesenden ihre Kamera einzuschalten",
         "muteEveryoneElseDialog": "Einmal stummgeschaltet, können Sie deren Stummschaltung nicht mehr beenden, aber sie können ihre Stummschaltung jederzeit selbst beenden.",
         "muteEveryoneElseTitle": "Alle außer {{whom}} stummschalten?",
         "muteEveryoneDialog": "Wollen Sie wirklich alle stummschalten? Sie können deren Stummschaltung nicht mehr beenden, aber sie können ihre Stummschaltung jederzeit selbst beenden.",
+        "muteEveryoneDialogModerationOn": "Die Anwesenden können eine Anfrage zum Sprechen jederzeit senden.",
         "muteEveryoneTitle": "Alle stummschalten?",
         "muteEveryoneElsesVideoDialog": "Sobald die Kamera deaktiviert ist, können Sie sie nicht wieder aktivieren, die Teilnehmer können dies aber jederzeit wieder ändern.",
         "muteEveryoneElsesVideoTitle": "Die Kamera von allen außer {{whom}} ausschalten?",
         "muteEveryonesVideoDialog": "Sind Sie sicher, dass Sie die Kamera von allen Teilnehmern deaktivieren möchten? Sie können sie nicht wieder aktivieren, die Teilnehmer können dies aber jederzeit wieder ändern.",
+        "muteEveryonesVideoDialogModerationOn": "Die Anwesenden können jederzeit eine Anfrage senden, um ihre Kamera einzuschalten.",
         "muteEveryonesVideoDialogOk": "deaktivieren",
         "muteEveryonesVideoTitle": "Die Kamera von allen anderen ausschalten?",
         "muteEveryoneSelf": "sich selbst",
@@ -384,7 +392,8 @@
         "image7" : "Sonnenaufgang",
         "desktopShareError": "Desktop konnte nicht freigegeben werden",
         "desktopShare": "Desktopfreigabe",
-        "webAssemblyWarning": "WebAssembly wird nicht unterstützt"
+        "webAssemblyWarning": "WebAssembly wird nicht unterstützt",
+        "backgroundEffectError": "Failed to apply background effect."
     },
     "feedback": {
         "average": "Durchschnittlich",
@@ -589,6 +598,8 @@
         "moderationStoppedTitle": "Moderation gestoppt",
         "moderationToggleDescription": "von {{participantDisplayName}}",
         "raiseHandAction": "Melden",
+        "groupTitle": "Benachrichtigungen",
+        "reactionSounds": "Interaktionstöne deaktivieren",
         "groupTitle": "Benachrichtigungen"
     },
     "participantsPane": {
@@ -601,20 +612,49 @@
         },
         "actions": {
             "allow": "Anwesenden erlauben:",
+            "audioModeration": "Für sich selbst die Stummschaltung aufzuheben",
             "blockEveryoneMicCamera": "Kamera und Mikrofon von allen sperren",
             "invite": "Person einladen",
             "askUnmute": "Anfragen, Stummschaltung aufzuheben",
             "mute": "Stummschalten",
             "muteAll": "Alle stummschalten",
             "muteEveryoneElse": "Alle anderen stummschalten",
-            "startModeration": "Stummschaltung aufheben oder Kamera aktivieren",
             "stopEveryonesVideo": "Alle Kameras ausschalten",
             "stopVideo": "Kamera ausschalten",
-            "unblockEveryoneMicCamera": "Kamera und Mikrofon von allen entsperren"
+            "unblockEveryoneMicCamera": "Kamera und Mikrofon von allen entsperren",
+            "videoModeration": "Kamera einschalten"
         }
     },
     "passwordSetRemotely": "von einer anderen Person gesetzt",
     "passwordDigitsOnly": "Bis zu {{number}} Ziffern",
+    "polls": {
+        "create": {
+            "addOption": "Antwort hinzufügen",
+            "answerPlaceholder": "Antwort {{index}}",
+            "create": "Umfrage erstellen",
+            "cancel": "Abbrechen",
+            "pollOption" : "Antwort {{index}}",
+            "pollQuestion" : "Frage",
+            "questionPlaceholder": "Eine Frage stellen",
+            "removeOption": "Antwort entfernen",
+            "send": "Erstellen"
+        },
+        "answer": {
+            "skip": "Überspringen",
+            "submit": "Speichern"
+        },
+        "results": {
+            "vote": "Vote",
+            "changeVote": "Antwort ändern",
+            "empty": "Es gibt bisher keine Umfragen in dieser Konferenz. Sie können hier eine Umfrage starten!",
+            "hideDetailedResults": "Details verbergen",
+            "showDetailedResults": "Details anzeigen"
+        },
+        "notification": {
+            "title": "Dieser Konferenz wurde eine Umfrage hinzugefügt",
+            "description": "Öffnen Sie das Umfragen-Tab um abzustimmen"
+        }
+    },
     "poweredby": "Betrieben von",
     "prejoin": {
         "audioAndVideoError": "Audio- und Videofehler:",
@@ -764,6 +804,7 @@
         "participantJoined": "Neue Person nimmt teil",
         "participantLeft": "Person verlässt die Konferenz",
         "playSounds": "Hinweistöne aktiviert",
+        "reactions": "Interaktionen",
         "sameAsSystem": "Wie System ({{label}})",
         "selectAudioOutput": "Audioausgabe",
         "selectCamera": "Kamera",
@@ -854,7 +895,6 @@
             "muteEveryonesVideo": "Alle Kameras ausschalten",
             "muteEveryoneElsesVideo": "Alle anderen Kameras ausschalten",
             "participants": "Anwesende",
-            "party": "Konfetti",
             "pip": "Bild-in-Bild-Modus ein-/ausschalten",
             "privateMessage": "Private Nachricht senden",
             "profile": "Profil bearbeiten",
@@ -871,6 +911,7 @@
             "shareYourScreen": "Bildschirmfreigabe ein-/ausschalten",
             "shortcuts": "Tastenkombinationen ein-/ausblenden",
             "show": "Im Vordergrund anzeigen",
+            "silence": "Stille",
             "speakerStats": "Sprechstatistik ein-/ausblenden",
             "surprised": "Überrascht",
             "tileView": "Kachelansicht ein-/ausschalten",
@@ -895,6 +936,7 @@
         "clap": "Klatschen",
         "closeChat": "Chat schließen",
         "closeReactionsMenu": "Interationsmenü schließen",
+        "disableReactionSounds": "Sie können die Interaktionstöne für diese Konferenz deaktivieren",
         "documentClose": "Geteiltes Dokument schließen",
         "documentOpen": "Geteiltes Dokument öffnen",
         "download": "Unsere Apps herunterladen",
@@ -930,7 +972,6 @@
         "openChat": "Chat öffnen",
         "openReactionsMenu": "Interationsmenü öffnen",
         "participants": "Anwesende",
-        "party": "Konfetti",
         "pip": "Bild-in-Bild-Modus einschalten",
         "privateMessage": "Private Nachricht senden",
         "profile": "Profil bearbeiten",
@@ -940,7 +981,7 @@
         "reactionClap": "Klatschen senden",
         "reactionLaugh": "Lachen senden",
         "reactionLike": "Daumen hoch senden",
-        "reactionParty": "Konfetti senden",
+        "reactionSilence": "Stille senden",
         "reactionSurprised": "Überrascht senden",
         "security": "Sicherheitsoptionen",
         "Settings": "Einstellungen",
@@ -948,6 +989,7 @@
         "sharedvideo": "YouTube-Video teilen",
         "shareRoom": "Person einladen",
         "shortcuts": "Tastenkürzel anzeigen",
+        "silence": "Stille",
         "speakerStats": "Sprechstatistik",
         "startScreenSharing": "Bildschirmfreigabe starten",
         "startSubtitles": "Untertitel einschalten",
@@ -1100,6 +1142,7 @@
         "enableDialogText": "Mit dem Lobbymodus schützen Sie Ihre Konferenz, damit der Beitritt von Ihnen moderiert werden kann.",
         "enterPasswordButton": "Konferenzpasswort eingeben",
         "enterPasswordTitle": "Passwort zum Beitreten benutzen",
+        "errorMissingPassword": "Bitte das Konferenzpasswort eingeben",
         "invalidPassword": "Ungültiges Passwort",
         "joiningMessage": "Sie treten der Konferenz bei, sobald jemand Ihre Anfrage annimmt.",
         "joinWithPasswordMessage": "Beitrittsversuch mit Passwort, bitte warten …",
