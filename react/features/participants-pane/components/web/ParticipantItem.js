@@ -4,12 +4,17 @@ import React, { type Node, useCallback } from 'react';
 
 import { Avatar } from '../../../base/avatar';
 import {
+    PARTICIPANT_ROLE,
+    type ParticipantRole
+} from '../../../base/participants';
+import {
     ACTION_TRIGGER,
     AudioStateIcons,
     MEDIA_STATE,
     type ActionTrigger,
     type MediaState,
-    VideoStateIcons
+    VideoStateIcons,
+    RoleStateIcons
 } from '../../constants';
 
 import { RaisedHandIndicator } from './RaisedHandIndicator';
@@ -89,6 +94,11 @@ type Props = {
     raisedHand: boolean,
 
     /**
+     * State of participant's role
+     */
+    roleState?: ParticipantRole,
+
+    /**
      * Media state for video
      */
     videoMediaState: MediaState,
@@ -112,6 +122,7 @@ export default function ParticipantItem({
     actionsTrigger = ACTION_TRIGGER.HOVER,
     audioMediaState = MEDIA_STATE.NONE,
     videoMediaState = MEDIA_STATE.NONE,
+    roleState = PARTICIPANT_ROLE.PARTICIPANT,
     displayName,
     participantID,
     local,
@@ -149,6 +160,7 @@ export default function ParticipantItem({
                 { !local && <ParticipantActions children = { children } /> }
                 <ParticipantStates>
                     { raisedHand && <RaisedHandIndicator /> }
+                    { RoleStateIcons[roleState] }
                     { VideoStateIcons[videoMediaState] }
                     { AudioStateIcons[audioMediaState] }
                 </ParticipantStates>

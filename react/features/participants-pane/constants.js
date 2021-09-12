@@ -7,8 +7,10 @@ import {
     IconCameraEmpty,
     IconCameraEmptyDisabled,
     IconMicrophoneEmpty,
-    IconMicrophoneEmptySlash
+    IconMicrophoneEmptySlash,
+    IconModerator
 } from '../base/icons';
+import { PARTICIPANT_ROLE, type ParticipantRole } from '../base/participants/constants';
 
 /**
  * Reducer key for the feature.
@@ -109,4 +111,17 @@ export const VideoStateIcons = {
             src = { IconCameraEmpty } />
     ),
     [MEDIA_STATE.NONE]: null
+};
+
+/**
+ * Icon mapping for possible participant roles.
+ */
+export const RoleStateIcons: {[ParticipantRole]: React$Element<any> | null} = {
+    [PARTICIPANT_ROLE.MODERATOR]: (
+        <Icon
+            size = { 16 }
+            src = { IconModerator } />
+    ),
+    [PARTICIPANT_ROLE.PARTICIPANT]: null,
+    [PARTICIPANT_ROLE.NONE]: null
 };

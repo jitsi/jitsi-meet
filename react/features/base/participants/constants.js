@@ -58,6 +58,8 @@ export const PARTICIPANT_JOINED_SOUND_ID = 'PARTICIPANT_JOINED_SOUND';
  */
 export const PARTICIPANT_LEFT_SOUND_ID = 'PARTICIPANT_LEFT_SOUND';
 
+export type ParticipantRole = 'moderator' | 'none' | 'participant';
+
 /**
  * The set of possible XMPP MUC roles for conference participants.
  *

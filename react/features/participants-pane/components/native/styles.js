@@ -163,11 +163,16 @@ export default {
     participantStatesContainer: {
         display: 'flex',
         flexDirection: 'row',
+        justifyContent: 'flex-end',
         marginLeft: 'auto',
         width: '15%'
     },
 
     participantStateVideo: {
+        paddingRight: BaseTheme.spacing[3]
+    },
+
+    participantStateRole: {
         paddingRight: BaseTheme.spacing[3]
     },
 

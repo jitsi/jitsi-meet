@@ -6,7 +6,8 @@ import { translate } from '../../../base/i18n';
 import {
     getLocalParticipant,
     getParticipantByIdOrUndefined,
-    getParticipantDisplayName
+    getParticipantDisplayName,
+    type ParticipantRole
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import {
@@ -62,6 +63,11 @@ type Props = {
      * True if the participant have raised hand.
      */
     _raisedHand: boolean,
+
+    /**
+    * Participant's role.
+    */
+    _role: ParticipantRole,
 
     /**
      * The redux dispatch function.
@@ -130,7 +136,8 @@ class MeetingParticipantItem extends PureComponent<Props> {
             _isVideoMuted,
             _local,
             _participantID,
-            _raisedHand
+            _raisedHand,
+            _role
         } = this.props;
 
         return (
@@ -142,6 +149,7 @@ class MeetingParticipantItem extends PureComponent<Props> {
                 onPress = { this._onPress }
                 participantID = { _participantID }
                 raisedHand = { _raisedHand }
+                roleState = { _role }
                 videoMediaState = { _isVideoMuted ? MEDIA_STATE.MUTED : MEDIA_STATE.UNMUTED } />
         );
     }
@@ -173,7 +181,8 @@ function mapStateToProps(state, ownProps): Object {
         _local: Boolean(participant?.local),
         _localVideoOwner: Boolean(ownerId === localParticipantId),
         _participantID: participant?.id,
-        _raisedHand: Boolean(participant?.raisedHand)
+        _raisedHand: Boolean(participant?.raisedHand),
+        _role: participant?.role
     };
 }
 

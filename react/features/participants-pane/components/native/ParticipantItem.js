@@ -7,7 +7,8 @@ import { TouchableOpacity, View } from 'react-native';
 import { Text } from 'react-native-paper';
 
 import { Avatar } from '../../../base/avatar';
-import { MEDIA_STATE, type MediaState, AudioStateIcons, VideoStateIcons } from '../../constants';
+import { PARTICIPANT_ROLE, type ParticipantRole } from '../../../base/participants';
+import { MEDIA_STATE, type MediaState, AudioStateIcons, VideoStateIcons, RoleStateIcons } from '../../constants';
 
 import { RaisedHandIndicator } from './RaisedHandIndicator';
 import styles from './styles';
@@ -55,6 +56,11 @@ type Props = {
     raisedHand: boolean,
 
     /**
+     * State of participant's role
+     */
+    roleState?: ParticipantRole,
+
+    /**
      * Media state for video
      */
     videoMediaState: MediaState
@@ -74,7 +80,8 @@ function ParticipantItem({
     participantID,
     raisedHand,
     audioMediaState = MEDIA_STATE.NONE,
-    videoMediaState = MEDIA_STATE.NONE
+    videoMediaState = MEDIA_STATE.NONE,
+    roleState = PARTICIPANT_ROLE.PARTICIPANT
 }: Props) {
 
     const { t } = useTranslation();
@@ -101,6 +108,7 @@ function ParticipantItem({
                             raisedHand && <RaisedHandIndicator />
                         }
                         <View style = { styles.participantStatesContainer }>
+                            <View style = { styles.participantStateRole }>{RoleStateIcons[roleState]}</View>
                             <View style = { styles.participantStateVideo }>{VideoStateIcons[videoMediaState]}</View>
                             <View>{AudioStateIcons[audioMediaState]}</View>
                         </View>
