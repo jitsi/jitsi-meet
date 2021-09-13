@@ -622,7 +622,7 @@
             "stopEveryonesVideo": "Stop everyone's video",
             "stopVideo": "Stop video",
             "unblockEveryoneMicCamera": "Unblock everyone's mic and camera",
-            "videoModeration": "Start video"
+            "videoModeration": "Start their video"
         }
     },
     "passwordSetRemotely": "Set by another participant",
