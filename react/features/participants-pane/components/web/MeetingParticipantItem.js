@@ -5,7 +5,8 @@ import React from 'react';
 import {
     getLocalParticipant,
     getParticipantByIdOrUndefined,
-    getParticipantDisplayName
+    getParticipantDisplayName,
+    isParticipantModerator
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { isParticipantAudioMuted, isParticipantVideoMuted } from '../../../base/tracks';
@@ -161,6 +162,7 @@ function MeetingParticipantItem({
             audioMediaState = { _audioMediaState }
             displayName = { _displayName }
             isHighlighted = { isHighlighted }
+            isModerator = { isParticipantModerator(_participant) }
             local = { _local }
             onLeave = { onLeave }
             openDrawerForParticipant = { openDrawerForParticipant }
