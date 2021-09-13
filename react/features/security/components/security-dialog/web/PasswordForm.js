@@ -88,7 +88,7 @@ class PasswordForm extends Component<Props, State> {
         this._onEnteredPasswordChange
             = this._onEnteredPasswordChange.bind(this);
         this._onPasswordSubmit = this._onPasswordSubmit.bind(this);
-        this._onKeyDown = this._onKeyDown.bind(this);
+        this._onKeyPress = this._onKeyPress.bind(this);
     }
 
     /**
@@ -133,9 +133,10 @@ class PasswordForm extends Component<Props, State> {
             return (
                 <form
                     className = 'info-password-form'
-                    onKeyDown = { this._onKeyDown }
+                    onKeyPress = { this._onKeyPress }
                     onSubmit = { this._onPasswordSubmit }>
                     <input
+                        aria-label = { this.props.t('info.addPassword') }
                         autoFocus = { true }
                         className = 'info-password-input'
                         maxLength = { this.props.passwordNumberOfDigits }
@@ -198,7 +199,7 @@ class PasswordForm extends Component<Props, State> {
         this.props.onSubmit(this.state.enteredPassword);
     }
 
-    _onKeyDown: (Object) => void;
+    _onKeyPress: (Object) => void;
 
     /**
      * Stops the the EnterKey for propagation in order to prevent the dialog
@@ -208,7 +209,7 @@ class PasswordForm extends Component<Props, State> {
      * @private
      * @returns {void}
      */
-    _onKeyDown(event) {
+    _onKeyPress(event) {
         if (event.key === 'Enter') {
             event.stopPropagation();
         }

@@ -1,5 +1,6 @@
 // @flow
 
+import Bourne from '@hapi/bourne';
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import md5 from 'js-md5';
 
@@ -68,7 +69,7 @@ class PersistenceRegistry {
 
             if (persistedState) {
                 try {
-                    persistedState = JSON.parse(persistedState);
+                    persistedState = Bourne.parse(persistedState);
                 } catch (error) {
                     logger.error(
                         'Error parsing persisted state',
@@ -223,7 +224,7 @@ class PersistenceRegistry {
 
         if (persistedSubtree) {
             try {
-                persistedSubtree = JSON.parse(persistedSubtree);
+                persistedSubtree = Bourne.parse(persistedSubtree);
 
                 const filteredSubtree
                     = this._getFilteredSubtree(persistedSubtree, subtreeConfig);

@@ -50,9 +50,11 @@
         "messagebox": "Scrieți mesajul",
         "nickname": {
             "popover": "Alegeți un pseudonim",
-            "title": "Introduceți un pseudonim pentru a conversa"
+            "title": "Introduceți un pseudonim pentru a conversa",
+            "titleWithPolls": "Introduceți un pseudonim pentru a conversa"
         },
         "title": "Apel video",
+        "titleWithPolls": "Apel video",
         "you": "",
         "privateNotice": "",
         "noMessagesMessage": "",

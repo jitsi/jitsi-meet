@@ -16,11 +16,18 @@
     }
 
     .mock-atlaskit-label {
-        color: #56637A;
+        color: #b8c7e0;
         font-size: 12px;
         font-weight: 600;
         line-height: 1.33;
         padding: 20px 0px 4px 0px;
+    }
+    input[type="checkbox"]:checked + svg {
+        --checkbox-background-color: #6492e7;
+        --checkbox-border-color: #6492e7;
+    }
+    input[type="checkbox"] + svg + span {
+        color: #b8c7e0;
     }
 
     input[type="checkbox"] + svg + span {
@@ -29,6 +36,12 @@
 
     .calendar-tab,
     .more-tab,
+    .box {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+
     .profile-edit {
         display: flex;
         width: 100%;
@@ -38,16 +51,22 @@
         flex: 1;
     }
     .settings-sub-pane {
-        flex-grow: 1;
+        flex: 1;
     }
 
+    .settings-sub-pane .right {
+        flex: 1;
+    }
+    .settings-sub-pane .left {
+        flex: 1;
+    }
+
+    .settings-sub-pane-element {
+        text-align: left;
+        flex: 1;
+    }
     .profile-edit-field {
         margin-right: 20px;
-    }
-
-    .language-settings {
-        max-width: 50%;
-        width: 35%;
     }
 
     .calendar-tab {
@@ -64,5 +83,15 @@
 
     .sign-out-cta {
         margin-bottom: 20px;
+    }
+
+    @media only screen and (max-width: $smallScreen) {
+        .device-selection {
+            display: flex;
+            flex-direction: column;
+        }
+        .more-tab {
+            flex-direction: column;
+        }
     }
 }

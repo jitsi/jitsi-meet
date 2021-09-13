@@ -4,8 +4,10 @@ import React from 'react';
 
 import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
+import { Switch } from '../../../base/react';
 import { connect } from '../../../base/redux';
-import AbstractMuteEveryoneDialog, { abstractMapStateToProps, type Props } from '../AbstractMuteEveryoneDialog';
+import AbstractMuteEveryoneDialog, { abstractMapStateToProps, type Props }
+    from '../AbstractMuteEveryoneDialog';
 
 /**
  * A React Component with the contents for a dialog that asks for confirmation
@@ -14,6 +16,23 @@ import AbstractMuteEveryoneDialog, { abstractMapStateToProps, type Props } from 
  * @extends AbstractMuteEveryoneDialog
  */
 class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<Props> {
+
+    /**
+     * Toggles advanced moderation switch.
+     *
+     * @returns {void}
+     */
+    _onToggleModeration() {
+        this.setState(state => {
+            return {
+                audioModerationEnabled: !state.audioModerationEnabled,
+                content: this.props.t(state.audioModerationEnabled
+                    ? 'dialog.muteEveryoneDialog' : 'dialog.muteEveryoneDialogModerationOn'
+                )
+            };
+        });
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -27,8 +46,22 @@ class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<Props> {
                 onSubmit = { this._onSubmit }
                 titleString = { this.props.title }
                 width = 'small'>
-                <div>
-                    { this.props.content }
+                <div className = 'mute-dialog'>
+                    { this.state.content }
+                    {this.props.exclude.length === 0 && (
+                        <>
+                            <div className = 'separator-line' />
+                            <div className = 'control-row'>
+                                <label htmlFor = 'moderation-switch'>
+                                    {this.props.t('dialog.moderationAudioLabel')}
+                                </label>
+                                <Switch
+                                    id = 'moderation-switch'
+                                    onValueChange = { this._onToggleModeration }
+                                    value = { !this.state.audioModerationEnabled } />
+                            </div>
+                        </>
+                    )}
                 </div>
             </Dialog>
         );

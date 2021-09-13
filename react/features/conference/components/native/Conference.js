@@ -22,7 +22,10 @@ import {
 import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
 import { KnockingParticipantList } from '../../../lobby';
+import { LobbyScreen } from '../../../lobby/components/native';
+import { getIsLobbyVisible } from '../../../lobby/functions';
 import { BackButtonRegistry } from '../../../mobile/back-button';
+import { ParticipantsPane } from '../../../participants-pane/components/native';
 import { Captions } from '../../../subtitles';
 import { setToolboxVisible } from '../../../toolbox/actions';
 import { Toolbox } from '../../../toolbox/components/native';
@@ -72,6 +75,11 @@ type Props = AbstractProps & {
     _fullscreenEnabled: boolean,
 
     /**
+     * The indicator which determines if the participants pane is open.
+     */
+    _isParticipantsPaneOpen: boolean,
+
+    /**
      * The ID of the participant currently on stage (if any)
      */
     _largeVideoParticipantId: string,
@@ -91,6 +99,11 @@ type Props = AbstractProps & {
      * The indicator which determines whether the Toolbox is visible.
      */
     _toolboxVisible: boolean,
+
+    /**
+     * Indicates whether the lobby screen should be visible.
+     */
+    _showLobby: boolean,
 
     /**
      * The redux {@code dispatch} function.
@@ -148,7 +161,11 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {ReactElement}
      */
     render() {
-        const { _fullscreenEnabled } = this.props;
+        const { _fullscreenEnabled, _showLobby } = this.props;
+
+        if (_showLobby) {
+            return <LobbyScreen />;
+        }
 
         return (
             <Container style = { styles.conference }>
@@ -237,6 +254,7 @@ class Conference extends AbstractConference<Props, *> {
     _renderContent() {
         const {
             _connecting,
+            _isParticipantsPaneOpen,
             _largeVideoParticipantId,
             _reducedUI,
             _shouldDisplayTileView
@@ -284,8 +302,7 @@ class Conference extends AbstractConference<Props, *> {
 
                     <LonelyMeetingExperience />
 
-                    { _shouldDisplayTileView ? undefined : <Filmstrip /> }
-                    <Toolbox />
+                    { _shouldDisplayTileView || <><Filmstrip /><Toolbox /></> }
                 </View>
 
                 <SafeAreaView
@@ -297,10 +314,14 @@ class Conference extends AbstractConference<Props, *> {
                 </SafeAreaView>
 
                 <TestConnectionInfo />
-
                 { this._renderConferenceNotification() }
 
                 { this._renderConferenceModals() }
+
+                {_shouldDisplayTileView && <Toolbox />}
+
+                { _isParticipantsPaneOpen && <ParticipantsPane /> }
+
             </>
         );
     }
@@ -391,6 +412,7 @@ function _mapStateToProps(state) {
         membersOnly,
         leaving
     } = state['features/base/conference'];
+    const { isOpen } = state['features/participants-pane'];
     const { aspectRatio, reducedUI } = state['features/base/responsive-ui'];
 
     // XXX There is a window of time between the successful establishment of the
@@ -412,9 +434,11 @@ function _mapStateToProps(state) {
         _connecting: Boolean(connecting_),
         _filmstripVisible: isFilmstripVisible(state),
         _fullscreenEnabled: getFeatureFlag(state, FULLSCREEN_ENABLED, true),
+        _isParticipantsPaneOpen: isOpen,
         _largeVideoParticipantId: state['features/large-video'].participantId,
         _pictureInPictureEnabled: getFeatureFlag(state, PIP_ENABLED),
         _reducedUI: reducedUI,
+        _showLobby: getIsLobbyVisible(state),
         _toolboxVisible: isToolboxVisible(state)
     };
 }

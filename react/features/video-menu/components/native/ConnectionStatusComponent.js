@@ -2,6 +2,8 @@
 
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
+import { withTheme } from 'react-native-paper';
+
 
 import { Avatar } from '../../../base/avatar';
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
@@ -11,7 +13,7 @@ import { IconArrowDownLarge, IconArrowUpLarge } from '../../../base/icons';
 import { getParticipantDisplayName } from '../../../base/participants';
 import { BaseIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
-import { StyleType, ColorPalette } from '../../../base/styles';
+import { StyleType } from '../../../base/styles';
 import statsEmitter from '../../../connection-indicator/statsEmitter';
 
 import styles from './styles';
@@ -57,7 +59,12 @@ export type Props = {
     /**
      * The function to be used to translate i18n labels.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * Theme used for styles.
+     */
+    theme: Object
 }
 
 /**
@@ -116,7 +123,8 @@ class ConnectionStatusComponent extends Component<Props, State> {
      * @returns {React$Node}
      */
     render(): React$Node {
-        const { t } = this.props;
+        const { t, theme } = this.props;
+        const { palette } = theme;
 
         return (
             <BottomSheet
@@ -138,7 +146,7 @@ class ConnectionStatusComponent extends Component<Props, State> {
                         <BaseIndicator
                             icon = { IconArrowDownLarge }
                             iconStyle = {{
-                                color: ColorPalette.darkGrey
+                                color: palette.icon03
                             }} />
                         <Text style = { styles.statsInfoText }>
                             { this.state.downloadString }
@@ -146,7 +154,7 @@ class ConnectionStatusComponent extends Component<Props, State> {
                         <BaseIndicator
                             icon = { IconArrowUpLarge }
                             iconStyle = {{
-                                color: ColorPalette.darkGrey
+                                color: palette.icon03
                             }} />
                         <Text style = { styles.statsInfoText }>
                             { `${this.state.uploadString} Kbps` }
@@ -159,7 +167,7 @@ class ConnectionStatusComponent extends Component<Props, State> {
                         <BaseIndicator
                             icon = { IconArrowDownLarge }
                             iconStyle = {{
-                                color: ColorPalette.darkGrey
+                                color: palette.icon03
                             }} />
                         <Text style = { styles.statsInfoText }>
                             { this.state.packetLostDownloadString }
@@ -167,7 +175,7 @@ class ConnectionStatusComponent extends Component<Props, State> {
                         <BaseIndicator
                             icon = { IconArrowUpLarge }
                             iconStyle = {{
-                                color: ColorPalette.darkGrey
+                                color: palette.icon03
                             }} />
                         <Text style = { styles.statsInfoText }>
                             { this.state.packetLostUploadString }
@@ -426,6 +434,6 @@ function _mapStateToProps(state, ownProps) {
     };
 }
 
-ConnectionStatusComponent_ = translate(connect(_mapStateToProps)(ConnectionStatusComponent));
+ConnectionStatusComponent_ = translate(connect(_mapStateToProps)(withTheme(ConnectionStatusComponent)));
 
 export default ConnectionStatusComponent_;

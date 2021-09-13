@@ -10,7 +10,10 @@ import { Dialog } from '../../../base/dialog';
 import { translate, translateToHTML } from '../../../base/i18n';
 import { JitsiConnectionErrors } from '../../../base/lib-jitsi-meet';
 import { connect as reduxConnect } from '../../../base/redux';
-import { authenticateAndUpgradeRole, cancelLogin } from '../../actions.web';
+import {
+    authenticateAndUpgradeRole,
+    cancelLogin
+} from '../../actions.web';
 
 /**
  * The type of the React {@code Component} props of {@link LoginDialog}.
@@ -242,6 +245,8 @@ class LoginDialog extends Component<Props, State> {
 
         return (
             <Dialog
+                disableBlanketClickDismiss = { true }
+                hideCloseIconButton = { true }
                 okDisabled = {
                     connecting
                     || loginStarted

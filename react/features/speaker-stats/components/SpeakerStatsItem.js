@@ -2,6 +2,8 @@
 
 import React, { Component } from 'react';
 
+import { translate } from '../../base/i18n';
+
 import TimeElapsed from './TimeElapsed';
 
 /**
@@ -27,7 +29,12 @@ type Props = {
     /**
      * True if the participant is currently the dominant speaker.
      */
-    isDominantSpeaker: boolean
+    isDominantSpeaker: boolean,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
 };
 
 /**
@@ -55,10 +62,14 @@ class SpeakerStatsItem extends Component<Props> {
                 <div className = 'speaker-stats-item__status'>
                     <span className = { speakerStatusClass } />
                 </div>
-                <div className = 'speaker-stats-item__name'>
+                <div
+                    aria-label = { this.props.t('speakerStats.speakerStats') }
+                    className = 'speaker-stats-item__name'>
                     { this.props.displayName }
                 </div>
-                <div className = 'speaker-stats-item__time'>
+                <div
+                    aria-label = { this.props.t('speakerStats.speakerTime') }
+                    className = 'speaker-stats-item__time'>
                     <TimeElapsed
                         time = { this.props.dominantSpeakerTime } />
                 </div>
@@ -67,4 +78,4 @@ class SpeakerStatsItem extends Component<Props> {
     }
 }
 
-export default SpeakerStatsItem;
+export default translate(SpeakerStatsItem);

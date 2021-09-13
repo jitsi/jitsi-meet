@@ -22,14 +22,26 @@ type Props = AudioSettingsEntryProps & {
     hasError?: boolean,
 
     /**
+     * Flag indicating if there is a problem with the device.
+     */
+    index?: number,
+
+    /**
      * The audio track for the current entry.
      */
     jitsiTrack: Object,
 
     /**
+     * The length of the microphone list
+     */
+    length: number,
+
+
+    /**
      * Click handler for component.
      */
     onClick: Function,
+    listHeaderId: string
 }
 
 type State = {
@@ -37,7 +49,7 @@ type State = {
     /**
      * The audio level.
      */
-    level: number,
+    level: number
 }
 
 /**
@@ -60,6 +72,7 @@ export default class MicrophoneEntry extends Component<Props, State> {
             level: -1
         };
         this._onClick = this._onClick.bind(this);
+        this._onKeyPress = this._onKeyPress.bind(this);
         this._updateLevel = this._updateLevel.bind(this);
     }
 
@@ -72,6 +85,28 @@ export default class MicrophoneEntry extends Component<Props, State> {
      */
     _onClick() {
         this.props.onClick(this.props.deviceId);
+    }
+
+    /**
+     * Key pressed handler for the entry.
+     *
+     * @returns {void}
+     */
+    _onKeyPress: (KeyboardEvent) => void;
+
+    /**
+     * Key pressed handler for the entry.
+     *
+     * @param {Object} e - The event.
+     * @private
+     *
+     * @returns {void}
+     */
+    _onKeyPress(e) {
+        if (e.key === ' ') {
+            e.preventDefault();
+            this.props.onClick(this.props.deviceId);
+        }
     }
 
     _updateLevel: (number) => void;
@@ -150,15 +185,28 @@ export default class MicrophoneEntry extends Component<Props, State> {
      * @inheritdoc
      */
     render() {
-        const { children, hasError, isSelected, jitsiTrack } = this.props;
+
+        const { deviceId, children, hasError, index, isSelected, length, jitsiTrack, listHeaderId } = this.props;
+
+        const deviceTextId: string = `choose_microphone${deviceId}`;
+
+        const labelledby: string = `${listHeaderId} ${deviceTextId} `;
 
         return (
-            <div
+            <li
+                aria-checked = { isSelected }
+                aria-labelledby = { labelledby }
+                aria-posinset = { index }
+                aria-setsize = { length }
                 className = 'audio-preview-microphone'
-                onClick = { this._onClick }>
+                onClick = { this._onClick }
+                onKeyPress = { this._onKeyPress }
+                role = 'radio'
+                tabIndex = { 0 }>
                 <AudioSettingsEntry
                     hasError = { hasError }
-                    isSelected = { isSelected }>
+                    isSelected = { isSelected }
+                    labelId = { deviceTextId }>
                     {children}
                 </AudioSettingsEntry>
                 { Boolean(jitsiTrack) && <Meter
@@ -166,7 +214,7 @@ export default class MicrophoneEntry extends Component<Props, State> {
                     isDisabled = { hasError }
                     level = { this.state.level } />
                 }
-            </div>
+            </li>
         );
     }
 }

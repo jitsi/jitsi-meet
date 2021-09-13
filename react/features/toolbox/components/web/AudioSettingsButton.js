@@ -9,6 +9,7 @@ import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
 import { connect } from '../../../base/redux';
 import { ToolboxButtonWithIcon } from '../../../base/toolbox/components';
 import { AudioSettingsPopup, toggleAudioSettings } from '../../../settings';
+import { getAudioSettingsVisibility } from '../../../settings/functions';
 import { isAudioSettingsButtonDisabled } from '../../functions';
 import AudioMuteButton from '../AudioMuteButton';
 
@@ -38,7 +39,12 @@ type Props = {
      * Flag controlling the visibility of the button.
      * AudioSettings popup is disabled on mobile browsers.
      */
-    visible: boolean
+    visible: boolean,
+
+    /**
+     * Defines is popup is open
+     */
+    isOpen: boolean,
 };
 
 /**
@@ -47,6 +53,32 @@ type Props = {
  * @returns {ReactElement}
  */
 class AudioSettingsButton extends Component<Props> {
+    /**
+     * Initializes a new {@code AudioSettingsButton} instance.
+     *
+     * @inheritdoc
+     */
+    constructor(props: Props) {
+        super(props);
+
+        this._onEscClick = this._onEscClick.bind(this);
+    }
+
+    _onEscClick: (KeyboardEvent) => void;
+
+    /**
+     * Click handler for the more actions entries.
+     *
+     * @param {KeyboardEvent} event - Esc key click to close the popup.
+     * @returns {void}
+     */
+    _onEscClick(event) {
+        if (event.key === 'Escape' && this.props.isOpen) {
+            event.preventDefault();
+            event.stopPropagation();
+            this.props.onAudioOptionsClick();
+        }
+    }
 
     /**
      * Implements React's {@link Component#render}.
@@ -54,7 +86,7 @@ class AudioSettingsButton extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { hasPermissions, isDisabled, onAudioOptionsClick, t, visible } = this.props;
+        const { hasPermissions, isDisabled, onAudioOptionsClick, visible, isOpen, t } = this.props;
         const settingsDisabled = !hasPermissions
             || isDisabled
             || !JitsiMeetJS.mediaDevices.isMultipleAudioInputSupported();
@@ -62,10 +94,16 @@ class AudioSettingsButton extends Component<Props> {
         return visible ? (
             <AudioSettingsPopup>
                 <ToolboxButtonWithIcon
+                    ariaControls = 'audio-settings-dialog'
+                    ariaExpanded = { isOpen }
+                    ariaHasPopup = { true }
+                    ariaLabel = { t('toolbar.audioSettings') }
                     icon = { IconArrowUp }
                     iconDisabled = { settingsDisabled }
+                    iconId = 'audio-settings-button'
                     iconTooltip = { t('toolbar.audioSettings') }
-                    onIconClick = { onAudioOptionsClick }>
+                    onIconClick = { onAudioOptionsClick }
+                    onIconKeyDown = { this._onEscClick }>
                     <AudioMuteButton />
                 </ToolboxButtonWithIcon>
             </AudioSettingsPopup>
@@ -85,6 +123,7 @@ function mapStateToProps(state) {
     return {
         hasPermissions: permissions.audio,
         isDisabled: isAudioSettingsButtonDisabled(state),
+        isOpen: getAudioSettingsVisibility(state),
         visible: !isMobileBrowser()
     };
 }

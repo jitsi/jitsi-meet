@@ -24,7 +24,7 @@ import {
 } from '../../base/tracks';
 import { HelpView } from '../../help';
 import { DialInSummary } from '../../invite';
-import { SettingsView } from '../../settings';
+import { SettingsView } from '../../settings/components';
 import { setSideBarVisible } from '../actions';
 
 import {

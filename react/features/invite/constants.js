@@ -17,7 +17,7 @@ export const DIAL_IN_SUMMARY_VIEW_ID = 'DIAL_IN_SUMMARY_VIEW_ID';
  * @type {string}
  */
 export const OUTGOING_CALL_EXPIRED_SOUND_ID
-    = 'OUTGOING_CALL_EXPIRED_SOUND_ID';
+    = 'OUTGOING_CALL_EXPIRED_SOUND';
 
 /**
  * The identifier of the sound to be played when the status of an outgoing call
@@ -26,7 +26,7 @@ export const OUTGOING_CALL_EXPIRED_SOUND_ID
  * @type {string}
  */
 export const OUTGOING_CALL_REJECTED_SOUND_ID
-    = 'OUTGOING_CALL_REJECTED_SOUND_ID';
+    = 'OUTGOING_CALL_REJECTED_SOUND';
 
 /**
  * The identifier of the sound to be played when the status of an outgoing call
@@ -34,17 +34,28 @@ export const OUTGOING_CALL_REJECTED_SOUND_ID
  *
  * @type {string}
  */
-export const OUTGOING_CALL_RINGING_SOUND_ID = 'OUTGOING_CALL_RINGING_SOUND_ID';
+export const OUTGOING_CALL_RINGING_SOUND_ID = 'OUTGOING_CALL_RINGING_SOUND';
 
 /**
  * The identifier of the sound to be played when outgoing call is started.
  *
  * @type {string}
  */
-export const OUTGOING_CALL_START_SOUND_ID = 'OUTGOING_CALL_START_SOUND_ID';
+export const OUTGOING_CALL_START_SOUND_ID = 'OUTGOING_CALL_START_SOUND';
 
 /**
  * Regex for matching sip addresses.
  */
 // eslint-disable-next-line max-len
-export const SIP_ADDRESS_REGEX = /^[a-zA-Z]+(?:([^\s>:@]+)(?::([^\s@>]+))?@)?([\w\-.]+)(?::(\d+))?((?:;[^\s=?>;]+(?:=[^\s?;]+)?)*)(?:\?(([^\s&=>]+=[^\s&=>]+)(&[^\s&=>]+=[^\s&=>]+)*))?$/;
+export const SIP_ADDRESS_REGEX = /^[+a-zA-Z0-9]+(?:([^\s>:@]+)(?::([^\s@>]+))?@)?([\w\-.]+)(?::(\d+))?((?:;[^\s=?>;]+(?:=[^\s?;]+)?)*)(?:\?(([^\s&=>]+=[^\s&=>]+)(&[^\s&=>]+=[^\s&=>]+)*))?$/;
+
+/**
+ * Different invite types mapping
+ */
+export const INVITE_TYPES = {
+    PHONE: 'phone',
+    ROOM: 'room',
+    SIP: 'sip',
+    USER: 'user',
+    VIDEO_ROOM: 'videosipgw'
+};

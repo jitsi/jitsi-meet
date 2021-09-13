@@ -68,10 +68,12 @@
         "noMessagesMessage": "No hay mensajes en la reunión. ¡Inicie una conversación!",
         "nickname": {
             "popover": "Selecciona un apodo",
-            "title": "Introduce un apodo para usar el chat"
+            "title": "Introduce un apodo para usar el chat",
+            "titleWithPolls": "Introduce un apodo para usar el chat"
         },
         "privateNotice": "Mensaje privado para {{recipient}}",
         "title": "Chat",
+        "titleWithPolls": "Chat",
         "you": "usted"
     },
     "chromeExtensionBanner": {
@@ -206,6 +208,7 @@
         "e2eeDescription": "El cifrado de extremo a extremo es actualmente EXPERIMENTAL. Tenga en cuenta que activarlo puede deshabilitar servicios como: grabación, transmisión en vivo y participación telefónica. Además, esta reunión solo funcionará con personas que se unan con un navegador.",
         "e2eeWarning": "ADVERTENCIA: No todos los participantes de esta reunión soportan el cifrado de extremo a extremo. Si usted habilita esta opción, ellos no podrán verlo ni oírlo.",
         "enterDisplayName": "Por favor ingresa tu nombre aquí",
+        "enterDisplayNameToJoin": "Por favor ingresa tu nombre para unirte",
         "error": "Error",
         "externalInstallationMsg": "Necesita instalar nuestra extensión para compartir pantalla.",
         "externalInstallationTitle": "Extensión requerida",
@@ -257,6 +260,9 @@
         "passwordNotSupported": "No se soporta $t(lockRoomPassword) en la reunión",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) no es compatible",
         "passwordRequired": "$t(lockRoomPasswordUppercase) necesario",
+        "permissionErrorTitle": "Permiso necesario",
+        "permissionCameraRequiredError": "El permiso de cámara es necesario para participar en conferencias con vídeo. Por favor, permítelo en Ajustes",
+        "permissionMicRequiredError": "El permiso de micrófono es necesario para participar en conferencias con sonido. Por favor, permítelo en Ajustes",
         "popupError": "Su navegador está bloqueando las ventanas emergentes de este sitio. Habilite las ventanas emergentes en la configuración de seguridad de su navegador y vuelva a intentarlo.",
         "popupErrorTitle": "Ventana emergente bloqueada",
         "readMore": "mas",

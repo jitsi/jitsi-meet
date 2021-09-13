@@ -5,7 +5,7 @@ import { NativeEventEmitter, NativeModules } from 'react-native';
 
 import { ENDPOINT_TEXT_MESSAGE_NAME } from '../../../../modules/API/constants';
 import { appNavigate } from '../../app/actions';
-import { APP_WILL_MOUNT } from '../../base/app/actionTypes';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app/actionTypes';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
@@ -28,7 +28,13 @@ import {
 import { JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../base/media';
 import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
-import { PARTICIPANT_JOINED, PARTICIPANT_LEFT, getParticipants, getParticipantById } from '../../base/participants';
+import {
+    PARTICIPANT_JOINED,
+    PARTICIPANT_LEFT,
+    getParticipantById,
+    getRemoteParticipants,
+    getLocalParticipant
+} from '../../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';
 import { toggleScreensharing } from '../../base/tracks';
 import { OPEN_CHAT, CLOSE_CHAT } from '../../chat';
@@ -92,6 +98,9 @@ MiddlewareRegistry.register(store => next => action => {
     switch (type) {
     case APP_WILL_MOUNT:
         _registerForNativeEvents(store);
+        break;
+    case APP_WILL_UNMOUNT:
+        _unregisterForNativeEvents();
         break;
     case CONFERENCE_FAILED: {
         const { error, ...data } = action;
@@ -180,20 +189,20 @@ MiddlewareRegistry.register(store => next => action => {
 
     case PARTICIPANT_JOINED:
     case PARTICIPANT_LEFT: {
+        // Skip these events while not in a conference. SDK users can still retrieve them.
+        const { conference } = store.getState()['features/base/conference'];
+
+        if (!conference) {
+            break;
+        }
+
         const { participant } = action;
 
         sendEvent(
             store,
             action.type,
-            /* data */ {
-                isLocal: participant.local,
-                email: participant.email,
-                name: participant.name,
-                participantId: participant.id,
-                displayName: participant.displayName,
-                avatarUrl: participant.avatarURL,
-                role: participant.role
-            });
+            _participantToParticipantInfo(participant) /* data */
+        );
         break;
     }
 
@@ -266,6 +275,24 @@ StateListenerRegistry.register(
     }, 100));
 
 /**
+ * Returns a participant info object based on the passed participant object from redux.
+ *
+ * @param {Participant} participant - The participant object from the redux store.
+ * @returns {Object} - The participant info object.
+ */
+function _participantToParticipantInfo(participant) {
+    return {
+        isLocal: participant.local,
+        email: participant.email,
+        name: participant.name,
+        participantId: participant.id,
+        displayName: participant.displayName,
+        avatarUrl: participant.avatarURL,
+        role: participant.role
+    };
+}
+
+/**
  * Registers for events sent from the native side via NativeEventEmitter.
  *
  * @param {Store} store - The redux store.
@@ -300,22 +327,21 @@ function _registerForNativeEvents(store) {
         }
     });
 
-    eventEmitter.addListener(ExternalAPI.TOGGLE_SCREEN_SHARE, () => {
-        dispatch(toggleScreensharing());
+    eventEmitter.addListener(ExternalAPI.TOGGLE_SCREEN_SHARE, ({ enabled }) => {
+        dispatch(toggleScreensharing(enabled));
     });
 
     eventEmitter.addListener(ExternalAPI.RETRIEVE_PARTICIPANTS_INFO, ({ requestId }) => {
 
-        const participantsInfo = getParticipants(store).map(participant => {
-            return {
-                isLocal: participant.local,
-                email: participant.email,
-                name: participant.name,
-                participantId: participant.id,
-                displayName: participant.displayName,
-                avatarUrl: participant.avatarURL,
-                role: participant.role
-            };
+        const participantsInfo = [];
+        const remoteParticipants = getRemoteParticipants(store);
+        const localParticipant = getLocalParticipant(store);
+
+        participantsInfo.push(_participantToParticipantInfo(localParticipant));
+        remoteParticipants.forEach(participant => {
+            if (!participant.isFakeParticipant) {
+                participantsInfo.push(_participantToParticipantInfo(participant));
+            }
         });
 
         sendEvent(
@@ -347,6 +373,24 @@ function _registerForNativeEvents(store) {
         dispatch(sendMessage(message));
     });
 
+}
+
+/**
+ * Unregister for events sent from the native side via NativeEventEmitter.
+ *
+ * @private
+ * @returns {void}
+ */
+function _unregisterForNativeEvents() {
+    eventEmitter.removeAllListeners(ExternalAPI.HANG_UP);
+    eventEmitter.removeAllListeners(ExternalAPI.SET_AUDIO_MUTED);
+    eventEmitter.removeAllListeners(ExternalAPI.SET_VIDEO_MUTED);
+    eventEmitter.removeAllListeners(ExternalAPI.SEND_ENDPOINT_TEXT_MESSAGE);
+    eventEmitter.removeAllListeners(ExternalAPI.TOGGLE_SCREEN_SHARE);
+    eventEmitter.removeAllListeners(ExternalAPI.RETRIEVE_PARTICIPANTS_INFO);
+    eventEmitter.removeAllListeners(ExternalAPI.OPEN_CHAT);
+    eventEmitter.removeAllListeners(ExternalAPI.CLOSE_CHAT);
+    eventEmitter.removeAllListeners(ExternalAPI.SEND_CHAT_MESSAGE);
 }
 
 /**

@@ -53,8 +53,10 @@ const NavigationBar = (props: Props) => {
         <View
             pointerEvents = 'box-none'
             style = { styles.navBarWrapper }>
-            <PictureInPictureButton
-                styles = { styles.navBarButton } />
+            <View style = { styles.pipButtonContainer }>
+                <PictureInPictureButton
+                    styles = { styles.pipButton } />
+            </View>
             <View
                 pointerEvents = 'box-none'
                 style = { styles.roomNameWrapper }>

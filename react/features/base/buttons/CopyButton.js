@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 
 import { Icon, IconCheck, IconCopy } from '../../base/icons';
-import { translate } from '../i18n';
 import { copyText } from '../util';
 
 
@@ -32,7 +31,12 @@ type Props = {
     /**
      * The text displayed on copy success
      */
-    textOnCopySuccess: string
+    textOnCopySuccess: string,
+
+    /**
+     * The id of the button
+     */
+    id?: string,
 };
 
 /**
@@ -40,7 +44,7 @@ type Props = {
  *
  * @returns {React$Element<any>}
  */
-function CopyButton({ className, displayedText, textToCopy, textOnHover, textOnCopySuccess }: Props) {
+function CopyButton({ className, displayedText, textToCopy, textOnHover, textOnCopySuccess, id }: Props) {
     const [ isClicked, setIsClicked ] = useState(false);
     const [ isHovered, setIsHovered ] = useState(false);
 
@@ -84,6 +88,20 @@ function CopyButton({ className, displayedText, textToCopy, textOnHover, textOnC
     }
 
     /**
+     * KeyPress handler for accessibility.
+     *
+     * @param {React.KeyboardEventHandler<HTMLDivElement>} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    function onKeyPress(e) {
+        if (onClick && (e.key === ' ' || e.key === 'Enter')) {
+            e.preventDefault();
+            onClick();
+        }
+    }
+
+    /**
      * Renders the content of the link based on the state.
      *
      * @returns {React$Element<any>}
@@ -93,7 +111,7 @@ function CopyButton({ className, displayedText, textToCopy, textOnHover, textOnC
             return (
                 <>
                     <div className = 'copy-button-content selected'>
-                        {textOnCopySuccess}
+                        <span role = { 'alert' }>{ textOnCopySuccess }</span>
                     </div>
                     <Icon src = { IconCheck } />
                 </>
@@ -112,10 +130,17 @@ function CopyButton({ className, displayedText, textToCopy, textOnHover, textOnC
 
     return (
         <div
+            aria-label = { textOnHover }
             className = { `${className} copy-button${isClicked ? ' clicked' : ''}` }
+            id = { id }
+            onBlur = { onHoverOut }
             onClick = { onClick }
+            onFocus = { onHoverIn }
+            onKeyPress = { onKeyPress }
             onMouseOut = { onHoverOut }
-            onMouseOver = { onHoverIn }>
+            onMouseOver = { onHoverIn }
+            role = 'button'
+            tabIndex = { 0 }>
             { renderContent() }
         </div>
     );
@@ -125,4 +150,4 @@ CopyButton.defaultProps = {
     className: ''
 };
 
-export default translate(CopyButton);
+export default CopyButton;

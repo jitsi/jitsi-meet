@@ -1,4 +1,9 @@
 // @flow
+
+import { JitsiTrackEvents } from '../base/lib-jitsi-meet';
+import { updateSettings } from '../base/settings';
+
+import { toggleBackgroundEffect } from './actions';
 let filterSupport;
 
 /**
@@ -83,5 +88,55 @@ export function resizeImage(base64image: any, width: number = 1920, height: numb
             resolve(canvas.toDataURL('image/jpeg', 0.5));
         };
         img.src = base64image;
+    });
+}
+
+/**
+ * Check if the local desktop track was stopped and apply none option on virtual background.
+ *
+ * @param {Function} dispatch - The Redux dispatch function.
+ * @param {Object} desktopTrack - The desktop track that needs to be checked if it was stopped.
+ * @param {Object} currentLocalTrack - The current local track where we apply none virtual
+ * background option if the desktop track was stopped.
+ * @returns {Promise}
+ */
+export function localTrackStopped(dispatch: Function, desktopTrack: Object, currentLocalTrack: Object) {
+    const noneOptions = {
+        enabled: false,
+        backgroundType: 'none',
+        selectedThumbnail: 'none',
+        backgroundEffectEnabled: false
+    };
+
+    desktopTrack
+    && desktopTrack.on(JitsiTrackEvents.LOCAL_TRACK_STOPPED, () => {
+        dispatch(toggleBackgroundEffect(noneOptions, currentLocalTrack));
+
+        // Set x scale to default value.
+        dispatch(updateSettings({
+            localFlipX: true
+        }));
+    });
+}
+
+/**
+ * Creating a wrapper for promises on a specific time interval.
+ *
+ * @param {number} milliseconds - The number of milliseconds to wait the specified
+ * {@code promise} to settle before automatically rejecting the returned
+ * {@code Promise}.
+ * @param {Promise} promise - The {@code Promise} for which automatic rejecting
+ * after the specified timeout is to be implemented.
+ * @returns {Promise}
+ */
+export function timeout(milliseconds: number, promise: Promise<*>): Promise<Object> {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            reject(new Error('408'));
+
+            return;
+        }, milliseconds);
+
+        promise.then(resolve, reject);
     });
 }

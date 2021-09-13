@@ -28,6 +28,12 @@ type Props = BaseProps & {
      */
     contentKey: string | { key: string, params: Object},
 
+    /**
+     * The handler for the event when clicking the 'confirmNo' button.
+     * Defaults to onCancel if absent.
+     */
+    onDecline?: Function,
+
     t: Function
 }
 
@@ -55,11 +61,11 @@ class ConfirmDialog extends BaseSubmitDialog<Props, *> {
      * @inheritdoc
      */
     _renderAdditionalButtons() {
-        const { _dialogStyles, cancelKey, t } = this.props;
+        const { _dialogStyles, cancelKey, onDecline, t } = this.props;
 
         return (
             <TouchableOpacity
-                onPress = { this._onCancel }
+                onPress = { onDecline || this._onCancel }
                 style = { [
                     _dialogStyles.button,
                     brandedDialog.buttonFarLeft,

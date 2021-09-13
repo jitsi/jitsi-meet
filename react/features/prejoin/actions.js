@@ -6,12 +6,14 @@ import uuid from 'uuid';
 
 import { getDialOutStatusUrl, getDialOutUrl } from '../base/config/functions';
 import { createLocalTrack } from '../base/lib-jitsi-meet';
+import { isVideoMutedByUser } from '../base/media';
 import {
     getLocalAudioTrack,
     getLocalVideoTrack,
     trackAdded,
     replaceLocalTrack
 } from '../base/tracks';
+import { createLocalTracksF } from '../base/tracks/functions';
 import { openURLInBrowser } from '../base/util';
 import { executeDialOutRequest, executeDialOutStatusRequest, getDialInfoPageURL } from '../invite/functions';
 import { showErrorNotification } from '../notifications';
@@ -31,6 +33,7 @@ import {
     SET_PREJOIN_DEVICE_ERRORS,
     SET_PREJOIN_PAGE_VISIBILITY
 } from './actionTypes';
+import { type PREJOIN_SCREEN_STATE } from './constants';
 import {
     getFullDialOutNumber,
     getDialOutConferenceUrl,
@@ -309,10 +312,17 @@ export function replaceVideoTrackById(deviceId: Object) {
     return async (dispatch: Function, getState: Function) => {
         try {
             const tracks = getState()['features/base/tracks'];
-            const newTrack = await createLocalTrack('video', deviceId);
+            const wasVideoMuted = isVideoMutedByUser(getState());
+            const [ newTrack ] = await createLocalTracksF(
+                { cameraDeviceId: deviceId,
+                    devices: [ 'video' ] },
+                { dispatch,
+                    getState }
+            );
             const oldTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
 
             dispatch(replaceLocalTrack(oldTrack, newTrack));
+            wasVideoMuted && newTrack.mute();
         } catch (err) {
             dispatch(setDeviceStatusWarning('prejoin.videoTrackError'));
             logger.log('Error replacing video track', err);
@@ -471,10 +481,10 @@ export function setPrejoinDeviceErrors(value: Object) {
 /**
  * Action used to set the visibility of the prejoin page.
  *
- * @param {boolean} value - The value.
+ * @param {string} value - The value.
  * @returns {Object}
  */
-export function setPrejoinPageVisibility(value: boolean) {
+export function setPrejoinPageVisibility(value: PREJOIN_SCREEN_STATE) {
     return {
         type: SET_PREJOIN_PAGE_VISIBILITY,
         value

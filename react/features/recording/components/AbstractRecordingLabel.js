@@ -21,6 +21,11 @@ type Props = {
     _status: ?string,
 
     /**
+     * An object containing the CSS classes.
+     */
+    classes: ?{[ key: string]: string},
+
+    /**
      * The recording mode this indicator should display.
      */
     mode: string,

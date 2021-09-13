@@ -4,7 +4,8 @@ import React, { Component } from 'react';
 
 import {
     getLocalizedDateFormatter,
-    getLocalizedDurationFormatter
+    getLocalizedDurationFormatter,
+    translate
 } from '../../../i18n';
 import { Icon, IconTrash } from '../../../icons';
 
@@ -41,7 +42,12 @@ type Props = {
     /**
      * Handler for deleting an item.
      */
-    onItemDelete?: Function
+    onItemDelete?: Function,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
 };
 
 /**
@@ -80,7 +86,7 @@ function _toTimeString(times) {
  *
  * @extends Component
  */
-export default class MeetingsList extends Component<Props> {
+class MeetingsList extends Component<Props> {
     /**
      * Constructor of the MeetingsList component.
      *
@@ -99,7 +105,7 @@ export default class MeetingsList extends Component<Props> {
      * @returns {React.ReactNode}
      */
     render() {
-        const { listEmptyComponent, meetings } = this.props;
+        const { listEmptyComponent, meetings, t } = this.props;
 
         /**
          * If there are no recent meetings we don't want to display anything
@@ -107,7 +113,10 @@ export default class MeetingsList extends Component<Props> {
         if (meetings) {
             return (
                 <Container
-                    className = 'meetings-list'>
+                    aria-label = { t('welcomepage.recentList') }
+                    className = 'meetings-list'
+                    role = 'menu'
+                    tabIndex = '-1'>
                     {
                         meetings.length === 0
                             ? listEmptyComponent
@@ -139,6 +148,29 @@ export default class MeetingsList extends Component<Props> {
         return null;
     }
 
+    _onKeyPress: string => Function;
+
+    /**
+     * Returns a function that is used in the onPress callback of the items.
+     *
+     * @param {string} url - The URL of the item to navigate to.
+     * @private
+     * @returns {Function}
+     */
+    _onKeyPress(url) {
+        const { disabled, onPress } = this.props;
+
+        if (!disabled && url && typeof onPress === 'function') {
+            return e => {
+                if (e.key === ' ' || e.key === 'Enter') {
+                    onPress(url);
+                }
+            };
+        }
+
+        return null;
+    }
+
     _onDelete: Object => Function;
 
     /**
@@ -155,6 +187,27 @@ export default class MeetingsList extends Component<Props> {
             evt.stopPropagation();
 
             onItemDelete && onItemDelete(item);
+        };
+    }
+
+    _onDeleteKeyPress: Object => Function;
+
+    /**
+     * Returns a function that is used on the onDelete keypress callback.
+     *
+     * @param {Object} item - The item to be deleted.
+     * @private
+     * @returns {Function}
+     */
+    _onDeleteKeyPress(item) {
+        const { onItemDelete } = this.props;
+
+        return e => {
+            if (onItemDelete && (e.key === ' ' || e.key === 'Enter')) {
+                e.preventDefault();
+                e.stopPropagation();
+                onItemDelete(item);
+            }
         };
     }
 
@@ -176,17 +229,22 @@ export default class MeetingsList extends Component<Props> {
             title,
             url
         } = meeting;
-        const { hideURL = false, onItemDelete } = this.props;
+        const { hideURL = false, onItemDelete, t } = this.props;
         const onPress = this._onPress(url);
+        const onKeyPress = this._onKeyPress(url);
         const rootClassName
             = `item ${
                 onPress ? 'with-click-handler' : 'without-click-handler'}`;
 
         return (
             <Container
+                aria-label = { title }
                 className = { rootClassName }
                 key = { index }
-                onClick = { onPress }>
+                onClick = { onPress }
+                onKeyPress = { onKeyPress }
+                role = 'menuitem'
+                tabIndex = { 0 }>
                 <Container className = 'left-column'>
                     <Text className = 'title'>
                         { _toDateString(date) }
@@ -216,11 +274,17 @@ export default class MeetingsList extends Component<Props> {
                     { elementAfter || null }
 
                     { onItemDelete && <Icon
+                        ariaLabel = { t('welcomepage.recentListDelete') }
                         className = 'delete-meeting'
                         onClick = { this._onDelete(meeting) }
-                        src = { IconTrash } />}
+                        onKeyPress = { this._onDeleteKeyPress(meeting) }
+                        role = 'button'
+                        src = { IconTrash }
+                        tabIndex = { 0 } />}
                 </Container>
             </Container>
         );
     }
 }
+
+export default translate(MeetingsList);

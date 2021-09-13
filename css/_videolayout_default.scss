@@ -240,6 +240,15 @@
     object-fit: cover;
 }
 
+#sharedVideo video {
+    width: 100%;
+    height: 100%;
+}
+
+#sharedVideo.disable-pointer {
+    pointer-events: none;
+}
+
 #sharedVideo,
 #etherpad,
 #localVideoWrapper video,
@@ -419,7 +428,7 @@
     right: 0;
     z-index: $zindex2;
     width: 18px;
-    height: 13px;
+    height: 18px;
     color: #FFF;
     font-size: 10pt;
     margin-right: $remoteVideoMenuIconMargin;

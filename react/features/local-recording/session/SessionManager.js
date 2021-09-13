@@ -1,5 +1,6 @@
 /* @flow */
 
+import Bourne from '@hapi/bourne';
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 
 import logger from '../logger';
@@ -163,7 +164,7 @@ class SessionManager {
 
         if (dataStr !== null) {
             try {
-                const dataObject = JSON.parse(dataStr);
+                const dataObject = Bourne.parse(dataStr);
 
                 this._sessionsMetadata = dataObject;
             } catch (e) {

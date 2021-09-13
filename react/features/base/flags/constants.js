@@ -93,6 +93,12 @@ export const IOS_RECORDING_ENABLED = 'ios.recording.enabled';
 export const IOS_SCREENSHARING_ENABLED = 'ios.screensharing.enabled';
 
 /**
+ * Flag indicating if screen sharing should be enabled in android.
+ * Default: enabled (true).
+ */
+export const ANDROID_SCREENSHARING_ENABLED = 'android.screensharing.enabled';
+
+/**
  * Flag indicating if kickout is enabled.
  * Default: enabled (true).
  */
@@ -105,6 +111,12 @@ export const KICK_OUT_ENABLED = 'kick-out.enabled';
 export const LIVE_STREAMING_ENABLED = 'live-streaming.enabled';
 
 /**
+ * Flag indicating if lobby mode button should be enabled.
+ * Default: enabled.
+ */
+export const LOBBY_MODE_ENABLED = 'lobby-mode.enabled';
+
+/**
  * Flag indicating if displaying the meeting name should be enabled.
  * Default: enabled (true).
  */
@@ -113,7 +125,7 @@ export const MEETING_NAME_ENABLED = 'meeting-name.enabled';
 /**
  * Flag indicating if the meeting password button should be enabled.
  * Note that this flag just decides on the button, if a meeting has a password
- * set, the password ddialog will still show up.
+ * set, the password dialog will still show up.
  * Default: enabled (true).
  */
 export const MEETING_PASSWORD_ENABLED = 'meeting-password.enabled';
@@ -143,10 +155,22 @@ export const PIP_ENABLED = 'pip.enabled';
 export const RAISE_HAND_ENABLED = 'raise-hand.enabled';
 
 /**
+ * Flag indicating if the reactions feature should be enabled.
+ * Default: enabled (true).
+ */
+export const REACTIONS_ENABLED = 'reactions.enabled';
+
+/**
  * Flag indicating if recording should be enabled.
  * Default: auto-detected.
  */
 export const RECORDING_ENABLED = 'recording.enabled';
+
+/**
+ * Flag indicating if the user should join the conference with the replaceParticipant functionality.
+ * Default: (false).
+ */
+export const REPLACE_PARTICIPANT = 'replace.participant';
 
 /**
  * Flag indicating the local and (maximum) remote video resolution. Overrides
@@ -154,6 +178,12 @@ export const RECORDING_ENABLED = 'recording.enabled';
  * Default: (unset).
  */
 export const RESOLUTION = 'resolution';
+
+/**
+ * Flag indicating if the security options button should be enabled.
+ * Default: enabled (true)
+ */
+export const SECURITY_OPTIONS_ENABLED = 'security-options.enabled';
 
 /**
  * Flag indicating if server URL change is enabled.

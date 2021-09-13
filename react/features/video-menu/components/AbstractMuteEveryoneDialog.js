@@ -2,6 +2,8 @@
 
 import React from 'react';
 
+import { requestDisableAudioModeration, requestEnableAudioModeration } from '../../av-moderation/actions';
+import { isEnabledFromState } from '../../av-moderation/functions';
 import { Dialog } from '../../base/dialog';
 import { MEDIA_TYPE } from '../../base/media';
 import { getLocalParticipant, getParticipantDisplayName } from '../../base/participants';
@@ -19,7 +21,14 @@ export type Props = AbstractProps & {
 
     content: string,
     exclude: Array<string>,
-    title: string
+    title: string,
+    showAdvancedModerationToggle: boolean,
+    isAudioModerationEnabled: boolean
+};
+
+type State = {
+    audioModerationEnabled: boolean,
+    content: string
 };
 
 /**
@@ -29,11 +38,32 @@ export type Props = AbstractProps & {
  *
  * @extends AbstractMuteRemoteParticipantDialog
  */
-export default class AbstractMuteEveryoneDialog<P: Props> extends AbstractMuteRemoteParticipantDialog<P> {
+export default class AbstractMuteEveryoneDialog<P: Props> extends AbstractMuteRemoteParticipantDialog<P, State> {
     static defaultProps = {
         exclude: [],
         muteLocal: false
     };
+
+    /**
+     * Initializes a new {@code AbstractMuteRemoteParticipantDialog} instance.
+     *
+     * @param {Object} props - The read-only properties with which the new
+     * instance is to be initialized.
+     */
+    constructor(props: P) {
+        super(props);
+
+        this.state = {
+            audioModerationEnabled: props.isAudioModerationEnabled,
+            content: props.content || props.t(props.isAudioModerationEnabled
+                ? 'dialog.muteEveryoneDialogModerationOn' : 'dialog.muteEveryoneDialog'
+            )
+        };
+
+        // Bind event handlers so they are only bound once per instance.
+        this._onSubmit = this._onSubmit.bind(this);
+        this._onToggleModeration = this._onToggleModeration.bind(this);
+    }
 
     /**
      * Implements React's {@link Component#render()}.
@@ -59,6 +89,8 @@ export default class AbstractMuteEveryoneDialog<P: Props> extends AbstractMuteRe
 
     _onSubmit: () => boolean;
 
+    _onToggleModeration: () => void;
+
     /**
      * Callback to be invoked when the value of this dialog is submitted.
      *
@@ -71,6 +103,11 @@ export default class AbstractMuteEveryoneDialog<P: Props> extends AbstractMuteRe
         } = this.props;
 
         dispatch(muteAllParticipants(exclude, MEDIA_TYPE.AUDIO));
+        if (this.state.audioModerationEnabled) {
+            dispatch(requestEnableAudioModeration());
+        } else {
+            dispatch(requestDisableAudioModeration());
+        }
 
         return true;
     }
@@ -97,7 +134,7 @@ export function abstractMapStateToProps(state: Object, ownProps: Props) {
         content: t('dialog.muteEveryoneElseDialog'),
         title: t('dialog.muteEveryoneElseTitle', { whom })
     } : {
-        content: t('dialog.muteEveryoneDialog'),
-        title: t('dialog.muteEveryoneTitle')
+        title: t('dialog.muteEveryoneTitle'),
+        isAudioModerationEnabled: isEnabledFromState(MEDIA_TYPE.AUDIO, state)
     };
 }

@@ -8,13 +8,15 @@ import { Dialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
 import { connect } from '../../../../base/redux';
-import { isVpaasMeeting } from '../../../../billing-counter/functions';
+import { isDynamicBrandingDataLoaded } from '../../../../dynamic-branding/functions';
 import EmbedMeetingTrigger from '../../../../embed-meeting/components/EmbedMeetingTrigger';
+import { isVpaasMeeting } from '../../../../jaas/functions';
 import { getActiveSession } from '../../../../recording';
 import { updateDialInNumbers } from '../../../actions';
 import {
     _getDefaultPhoneNumber,
     getInviteText,
+    getInviteTextiOS,
     isAddPeopleEnabled,
     isDialOutEnabled,
     sharingFeatures,
@@ -62,6 +64,17 @@ type Props = {
     _invitationText: string,
 
     /**
+     * The custom no new-lines meeting invitation text for iOS default email.
+     * Needed because of this mailto: iOS issue: https://developer.apple.com/forums/thread/681023
+     */
+    _invitationTextiOS: string,
+
+    /**
+     * An alternate app name to be displayed in the email subject.
+     */
+    _inviteAppName: ?string,
+
+    /**
      * Whether or not invite contacts should be visible.
      */
     _inviteContactsVisible: boolean,
@@ -104,6 +117,8 @@ function AddPeopleDialog({
     _urlSharingVisible,
     _emailSharingVisible,
     _invitationText,
+    _invitationTextiOS,
+    _inviteAppName,
     _inviteContactsVisible,
     _inviteUrl,
     _liveStreamViewURL,
@@ -136,7 +151,7 @@ function AddPeopleDialog({
     }, []);
 
     const inviteSubject = t('addPeople.inviteMoreMailSubject', {
-        appName: interfaceConfig.APP_NAME
+        appName: _inviteAppName ?? interfaceConfig.APP_NAME
     });
 
     return (
@@ -153,7 +168,8 @@ function AddPeopleDialog({
                     _emailSharingVisible
                         ? <InviteByEmailSection
                             inviteSubject = { inviteSubject }
-                            inviteText = { _invitationText } />
+                            inviteText = { _invitationText }
+                            inviteTextiOS = { _invitationTextiOS } />
                         : null
                 }
                 { _embedMeetingVisible && <EmbedMeetingTrigger /> }
@@ -184,7 +200,7 @@ function AddPeopleDialog({
 function mapStateToProps(state, ownProps) {
     const currentLiveStreamingSession
         = getActiveSession(state, JitsiRecordingConstants.mode.STREAM);
-    const { iAmRecorder } = state['features/base/config'];
+    const { iAmRecorder, inviteAppName } = state['features/base/config'];
     const addPeopleEnabled = isAddPeopleEnabled(state);
     const dialOutEnabled = isDialOutEnabled(state);
     const hideInviteContacts = iAmRecorder || (!addPeopleEnabled && !dialOutEnabled);
@@ -195,11 +211,15 @@ function mapStateToProps(state, ownProps) {
         _dialIn: dialIn,
         _embedMeetingVisible: !isVpaasMeeting(state) && isSharingEnabled(sharingFeatures.embed),
         _dialInVisible: isSharingEnabled(sharingFeatures.dialIn),
-        _urlSharingVisible: isSharingEnabled(sharingFeatures.url),
+        _urlSharingVisible: isDynamicBrandingDataLoaded(state) && isSharingEnabled(sharingFeatures.url),
         _emailSharingVisible: isSharingEnabled(sharingFeatures.email),
         _invitationText: getInviteText({ state,
             phoneNumber,
             t: ownProps.t }),
+        _invitationTextiOS: getInviteTextiOS({ state,
+            phoneNumber,
+            t: ownProps.t }),
+        _inviteAppName: inviteAppName,
         _inviteContactsVisible: interfaceConfig.ENABLE_DIAL_OUT && !hideInviteContacts,
         _inviteUrl: getInviteURL(state),
         _liveStreamViewURL:

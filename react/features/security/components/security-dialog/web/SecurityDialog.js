@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 
 import { setPassword as setPass } from '../../../../base/conference';
 import { Dialog } from '../../../../base/dialog';
-import { translate } from '../../../../base/i18n';
 import { isLocalParticipantModerator } from '../../../../base/participants';
 import { connect } from '../../../../base/redux';
 import { E2EESection } from '../../../../e2ee/components';
@@ -49,12 +48,7 @@ type Props = {
     /**
      * Action that sets the conference password.
      */
-    setPassword: Function,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
+    setPassword: Function
 };
 
 /**
@@ -125,6 +119,8 @@ function mapStateToProps(state) {
     } = state['features/base/conference'];
     const { roomPasswordNumberOfDigits } = state['features/base/config'];
 
+    const showE2ee = Boolean(e2eeSupported) && isLocalParticipantModerator(state);
+
     return {
         _canEditPassword: isLocalParticipantModerator(state),
         _conference: conference,
@@ -132,10 +128,10 @@ function mapStateToProps(state) {
         _locked: locked,
         _password: password,
         _passwordNumberOfDigits: roomPasswordNumberOfDigits,
-        _showE2ee: Boolean(e2eeSupported)
+        _showE2ee: showE2ee
     };
 }
 
 const mapDispatchToProps = { setPassword: setPass };
 
-export default translate(connect(mapStateToProps, mapDispatchToProps)(SecurityDialog));
+export default connect(mapStateToProps, mapDispatchToProps)(SecurityDialog);

@@ -9,8 +9,31 @@
     z-index: $zindex3;
 
     &.visible {
-        top: 0px;
+        top: 0;
     }
+
+    &.recording {
+        top: 0;
+
+        .subject-details-container {
+            opacity: 0;
+            transition: opacity .3s ease-in;
+        }
+
+        .subject-info-container .show-always {
+            transition: margin-left .3s ease-in;
+        }
+
+        &.visible {
+            .subject-details-container {
+                opacity: 1;
+            }
+        }
+    }
+}
+
+.subject-details-container {
+    display: flex;
 }
 
 .subject-info-container {

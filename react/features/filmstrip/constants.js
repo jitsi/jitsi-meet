@@ -143,3 +143,99 @@ export const DISPLAY_MODE_TO_STRING = [
     'video-with-name',
     'avatar-with-name'
 ];
+
+/**
+ * The vertical margin of a tile.
+ *
+ * @type {number}
+ */
+export const TILE_VERTICAL_MARGIN = 4;
+
+/**
+ * The horizontal margin of a tile.
+ *
+ * @type {number}
+ */
+export const TILE_HORIZONTAL_MARGIN = 4;
+
+/**
+ * The height of the whole toolbar.
+ */
+export const TOOLBAR_HEIGHT = 72;
+
+/**
+ * The height of the whole toolbar.
+ */
+export const TOOLBAR_HEIGHT_MOBILE = 60;
+
+/**
+ * The size of the horizontal border of a thumbnail.
+ *
+ * @type {number}
+ */
+export const STAGE_VIEW_THUMBNAIL_HORIZONTAL_BORDER = 4;
+
+/**
+ * The size of the vertical border of a thumbnail.
+ *
+ * @type {number}
+ */
+export const STAGE_VIEW_THUMBNAIL_VERTICAL_BORDER = 4;
+
+/**
+ * The size of the scroll.
+ *
+ * @type {number}
+ */
+export const SCROLL_SIZE = 7;
+
+/**
+ * The total vertical space between the thumbnails container and the edges of the window.
+ *
+ * NOTE: This will include margins, paddings and the space for the 'hide filmstrip' icon.
+ *
+ * @type {number}
+ */
+export const VERTICAL_FILMSTRIP_VERTICAL_MARGIN = 60;
+
+/**
+ * The min horizontal space between the thumbnails container and the edges of the window.
+ *
+ * @type {number}
+ */
+export const VERTICAL_FILMSTRIP_MIN_HORIZONTAL_MARGIN = 10;
+
+/**
+ * The total horizontal space between the thumbnails container and the edges of the window.
+ *
+ * NOTE: This will include margins, paddings and the space for the 'hide filmstrip' icon.
+ *
+ * @type {number}
+ */
+export const HORIZONTAL_FILMSTRIP_MARGIN = 39;
+
+/**
+ * Sets after how many ms to show the thumbnail context menu on long touch on mobile.
+ *
+ * @type {number}
+ */
+export const SHOW_TOOLBAR_CONTEXT_MENU_AFTER = 600;
+
+
+/**
+ * The ratio for filmstrip self view on mobile portrait mode.
+ *
+ * @type {number}
+ */
+export const MOBILE_FILMSTRIP_PORTRAIT_RATIO = 2.5;
+
+/**
+ * The margin for each side of the tile view. Taken away from the available
+ * height and width for the tile container to display in.
+ *
+ * NOTE: Mobile specific.
+ *
+ * @private
+ * @type {number}
+ */
+export const TILE_MARGIN = 10;

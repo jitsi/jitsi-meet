@@ -1,9 +1,8 @@
 /* application specific logic */
 
 import 'jquery';
-import 'jQuery-Impromptu';
 
-import 'olm';
+import '@matrix-org/olm';
 
 import 'focus-visible';
 

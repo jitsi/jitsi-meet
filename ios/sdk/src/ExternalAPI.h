@@ -21,7 +21,7 @@
 - (void)sendHangUp;
 - (void)sendSetAudioMuted:(BOOL)muted;
 - (void)sendEndpointTextMessage:(NSString*)message :(NSString*)to;
-- (void)toggleScreenShare;
+- (void)toggleScreenShare:(BOOL)enabled;
 - (void)retrieveParticipantsInfo:(void (^)(NSArray*))completion;
 - (void)openChat:(NSString*)to;
 - (void)closeChat;

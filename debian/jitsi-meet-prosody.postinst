@@ -125,11 +125,11 @@ case "$1" in
 
         # Check whether prosody config has the internal muc, if not add it,
         # as we are migrating configs
-        if [ -f $PROSODY_HOST_CONFIG ] && ! grep -q "internal.auth.$JVB_HOSTNAME" $PROSODY_HOST_CONFIG; then
-            echo -e "\nComponent \"internal.auth.$JVB_HOSTNAME\" \"muc\"" >> $PROSODY_HOST_CONFIG
+        if [ -f $PROSODY_HOST_CONFIG ] && ! grep -q "internal.$JICOFO_AUTH_DOMAIN" $PROSODY_HOST_CONFIG; then
+            echo -e "\nComponent \"internal.$JICOFO_AUTH_DOMAIN\" \"muc\"" >> $PROSODY_HOST_CONFIG
             echo -e "    storage = \"memory\"" >> $PROSODY_HOST_CONFIG
             echo -e "    modules_enabled = { \"ping\"; }" >> $PROSODY_HOST_CONFIG
-            echo -e "    admins = { \"$JICOFO_AUTH_USER@auth.$JVB_HOSTNAME\", \"jvb@auth.$JVB_HOSTNAME\" }" >> $PROSODY_HOST_CONFIG
+            echo -e "    admins = { \"$JICOFO_AUTH_USER@$JICOFO_AUTH_DOMAIN\", \"jvb@$JICOFO_AUTH_DOMAIN\" }" >> $PROSODY_HOST_CONFIG
         fi
 
         # Convert the old focus component config to the new one.
@@ -140,7 +140,7 @@ case "$1" in
         # Component "focus.jitmeet.example.com" "client_proxy"
         #    target_address = "focus@auth.jitmeet.example.com"
         if grep -q "Component \"focus.$JVB_HOSTNAME\"" $PROSODY_HOST_CONFIG && ! grep "Component \"focus.$JVB_HOSTNAME\" \"client_proxy\"" $PROSODY_HOST_CONFIG ;then
-            sed -i "s/Component \"focus.$JVB_HOSTNAME\"/Component \"focus.$JVB_HOSTNAME\" \"client_proxy\"\n    target_address = \"$JICOFO_AUTH_USER@auth.$JVB_HOSTNAME\"/g" $PROSODY_HOST_CONFIG
+            sed -i "s/Component \"focus.$JVB_HOSTNAME\"/Component \"focus.$JVB_HOSTNAME\" \"client_proxy\"\n    target_address = \"$JICOFO_AUTH_USER@$JICOFO_AUTH_DOMAIN\"/g" $PROSODY_HOST_CONFIG
             PROSODY_CONFIG_PRESENT="false"
         fi
 
@@ -151,8 +151,21 @@ case "$1" in
             PROSODY_CONFIG_PRESENT="false"
         fi
 
+        # Updates main muc component
+        MAIN_MUC_PATTERN="Component \"conference.$JVB_HOSTNAME\" \"muc\""
+        if ! grep -A 2 -- "${MAIN_MUC_PATTERN}" $PROSODY_HOST_CONFIG | grep -q "restrict_room_creation" ;then
+            sed -i "s/${MAIN_MUC_PATTERN}/${MAIN_MUC_PATTERN}\n    restrict_room_creation = true/g" $PROSODY_HOST_CONFIG
+            PROSODY_CONFIG_PRESENT="false"
+        fi
+
+        if ! grep -q -- 'unlimited_jids' $PROSODY_HOST_CONFIG ;then
+            sed -i "1s/^/unlimited_jids = { \"$JICOFO_AUTH_USER@$JICOFO_AUTH_DOMAIN\", \"jvb@$JICOFO_AUTH_DOMAIN\" }\n/" $PROSODY_HOST_CONFIG
+            sed -i "s/VirtualHost \"$JICOFO_AUTH_DOMAIN\"/VirtualHost \"$JICOFO_AUTH_DOMAIN\"\n    modules_enabled = { \"limits_exception\"; }/g" $PROSODY_HOST_CONFIG
+            PROSODY_CONFIG_PRESENT="false"
+        fi
+
         # Make sure the focus@auth user's roster includes the proxy component (this is idempotent)
-        prosodyctl mod_roster_command subscribe focus.$JVB_HOSTNAME $JICOFO_AUTH_USER@auth.$JVB_HOSTNAME
+        prosodyctl mod_roster_command subscribe focus.$JVB_HOSTNAME $JICOFO_AUTH_USER@$JICOFO_AUTH_DOMAIN
 
         if [ ! -f /var/lib/prosody/$JVB_HOSTNAME.crt ]; then
             # prosodyctl takes care for the permissions

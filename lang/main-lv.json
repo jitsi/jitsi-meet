@@ -53,10 +53,12 @@
         "noMessagesMessage": "Sapulcē pagaidām nav nevienas ziņas. Uzsāciet saraksti!",
         "nickname": {
             "popover": "Izvēlieties vārdu",
-            "title": "Ierakstiet vārdu izmantošanai tērziņā"
+            "title": "Ierakstiet vārdu izmantošanai tērziņā",
+            "titleWithPolls": "Ierakstiet vārdu izmantošanai tērziņā"
         },
         "privateNotice": "Privāta ziņa/paziņojums lietotājam {{recipient}}",
         "title": "Tērzēšana",
+        "titleWithPolls": "Tērzēšana",
         "you": "mans vārds"
     },
     "chromeExtensionBanner": {

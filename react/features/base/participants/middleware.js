@@ -1,16 +1,23 @@
 // @flow
 
+import { batch } from 'react-redux';
+
 import UIEvents from '../../../../service/UI/UIEvents';
+import { approveParticipant } from '../../av-moderation/actions';
 import { toggleE2EE } from '../../e2ee/actions';
 import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
+import { isForceMuted } from '../../participants-pane/functions';
 import { CALLING, INVITED } from '../../presence-status';
+import { RAISE_HAND_SOUND_ID } from '../../reactions/constants';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 import {
     CONFERENCE_WILL_JOIN,
     forEachConference,
     getCurrentConference
 } from '../conference';
+import { getDisableRemoveRaisedHandOnFocus } from '../config/functions.any';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
+import { MEDIA_TYPE } from '../media';
 import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
 import { playSound, registerSound, unregisterSound } from '../sounds';
 
@@ -18,11 +25,13 @@ import {
     DOMINANT_SPEAKER_CHANGED,
     GRANT_MODERATOR,
     KICK_PARTICIPANT,
+    LOCAL_PARTICIPANT_RAISE_HAND,
     MUTE_REMOTE_PARTICIPANT,
     PARTICIPANT_DISPLAY_NAME_CHANGED,
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
-    PARTICIPANT_UPDATED
+    PARTICIPANT_UPDATED,
+    RAISE_HAND_UPDATED
 } from './actionTypes';
 import {
     localParticipantIdChanged,
@@ -30,6 +39,7 @@ import {
     localParticipantLeft,
     participantLeft,
     participantUpdated,
+    raiseHandUpdateQueue,
     setLoadableAvatarUrl
 } from './actions';
 import {
@@ -42,7 +52,10 @@ import {
     getLocalParticipant,
     getParticipantById,
     getParticipantCount,
-    getParticipantDisplayName
+    getParticipantDisplayName,
+    getRaiseHandsQueue,
+    getRemoteParticipants,
+    isLocalParticipantModerator
 } from './functions';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
 
@@ -76,7 +89,8 @@ MiddlewareRegistry.register(store => next => action => {
         // and only if it was set when this is the local participant
 
         const { conference, id } = action.participant;
-        const participant = getLocalParticipant(store.getState());
+        const state = store.getState();
+        const participant = getLocalParticipant(state);
         const isLocal = participant && participant.id === id;
 
         if (isLocal && participant.raisedHand === undefined) {
@@ -85,13 +99,14 @@ MiddlewareRegistry.register(store => next => action => {
             break;
         }
 
-        participant
-            && store.dispatch(participantUpdated({
+        if (!getDisableRemoveRaisedHandOnFocus(state)) {
+            participant && store.dispatch(participantUpdated({
                 conference,
                 id,
                 local: isLocal,
                 raisedHand: false
             }));
+        }
 
         break;
     }
@@ -107,6 +122,34 @@ MiddlewareRegistry.register(store => next => action => {
         const { conference } = store.getState()['features/base/conference'];
 
         conference.kickParticipant(action.id);
+        break;
+    }
+
+    case LOCAL_PARTICIPANT_RAISE_HAND: {
+        const { enabled } = action;
+        const localId = getLocalParticipant(store.getState())?.id;
+
+        store.dispatch(raiseHandUpdateQueue({
+            id: localId,
+            raisedHand: enabled
+        }));
+
+        store.dispatch(participantUpdated({
+            // XXX Only the local participant is allowed to update without
+            // stating the JitsiConference instance (i.e. participant property
+            // `conference` for a remote participant) because the local
+            // participant is uniquely identified by the very fact that there is
+            // only one local participant.
+
+            id: localId,
+            local: true,
+            raisedHand: enabled
+        }));
+
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyRaiseHandUpdated(localId, enabled);
+        }
+
         break;
     }
 
@@ -128,6 +171,21 @@ MiddlewareRegistry.register(store => next => action => {
             }
         }
 
+        break;
+    }
+
+    case RAISE_HAND_UPDATED: {
+        const { participant } = action;
+        const queue = getRaiseHandsQueue(store.getState());
+
+        if (participant.raisedHand) {
+            queue.push(participant.id);
+            action.queue = queue;
+        } else {
+            const filteredQueue = queue.filter(id => id !== participant.id);
+
+            action.queue = filteredQueue;
+        }
         break;
     }
 
@@ -158,11 +216,12 @@ MiddlewareRegistry.register(store => next => action => {
 StateListenerRegistry.register(
     /* selector */ state => getCurrentConference(state),
     /* listener */ (conference, { dispatch, getState }) => {
-        for (const p of getState()['features/base/participants']) {
-            !p.local
-                && (!conference || p.conference !== conference)
-                && dispatch(participantLeft(p.id, p.conference));
-        }
+        batch(() => {
+            for (const [ id, p ] of getRemoteParticipants(getState())) {
+                (!conference || p.conference !== conference)
+                    && dispatch(participantLeft(id, p.conference, p.isReplaced));
+            }
+        });
     });
 
 /**
@@ -277,9 +336,7 @@ StateListenerRegistry.register(
 function _e2eeUpdated({ dispatch }, conference, participantId, newValue) {
     const e2eeEnabled = newValue === 'true';
 
-    if (e2eeEnabled) {
-        dispatch(toggleE2EE(e2eeEnabled));
-    }
+    dispatch(toggleE2EE(e2eeEnabled));
 
     dispatch(participantUpdated({
         conference,
@@ -344,12 +401,8 @@ function _localParticipantLeft({ dispatch }, next, action) {
  */
 function _maybePlaySounds({ getState, dispatch }, action) {
     const state = getState();
-    const { startAudioMuted, disableJoinLeaveSounds } = state['features/base/config'];
-
-    // If we have join/leave sounds disabled, don't play anything.
-    if (disableJoinLeaveSounds) {
-        return;
-    }
+    const { startAudioMuted } = state['features/base/config'];
+    const { soundsParticipantJoined: joinSound, soundsParticipantLeft: leftSound } = state['features/base/settings'];
 
     // We're not playing sounds for local participant
     // nor when the user is joining past the "startAudioMuted" limit.
@@ -358,14 +411,19 @@ function _maybePlaySounds({ getState, dispatch }, action) {
     if (!action.participant.local
             && (!startAudioMuted
                 || getParticipantCount(state) < startAudioMuted)) {
+        const { isReplacing, isReplaced } = action.participant;
+
         if (action.type === PARTICIPANT_JOINED) {
+            if (!joinSound) {
+                return;
+            }
             const { presence } = action.participant;
 
             // The sounds for the poltergeist are handled by features/invite.
-            if (presence !== INVITED && presence !== CALLING) {
+            if (presence !== INVITED && presence !== CALLING && !isReplacing) {
                 dispatch(playSound(PARTICIPANT_JOINED_SOUND_ID));
             }
-        } else if (action.type === PARTICIPANT_LEFT) {
+        } else if (action.type === PARTICIPANT_LEFT && !isReplaced && leftSound) {
             dispatch(playSound(PARTICIPANT_LEFT_SOUND_ID));
         }
     }
@@ -393,6 +451,7 @@ function _participantJoinedOrUpdated(store, next, action) {
     // Send an external update of the local participant's raised hand state
     // if a new raised hand state is defined in the action.
     if (typeof raisedHand !== 'undefined') {
+
         if (local) {
             const { conference } = getState()['features/base/conference'];
 
@@ -407,16 +466,20 @@ function _participantJoinedOrUpdated(store, next, action) {
     // to the new avatar and emit out change events if necessary.
     const result = next(action);
 
-    const { disableThirdPartyRequests } = getState()['features/base/config'];
+    // Only run this if the config is populated, otherwise we preload external resources
+    // even if disableThirdPartyRequests is set to true in config
+    if (Object.keys(getState()['features/base/config']).length) {
+        const { disableThirdPartyRequests } = getState()['features/base/config'];
 
-    if (!disableThirdPartyRequests && (avatarURL || email || id || name)) {
-        const participantId = !id && local ? getLocalParticipant(getState()).id : id;
-        const updatedParticipant = getParticipantById(getState(), participantId);
+        if (!disableThirdPartyRequests && (avatarURL || email || id || name)) {
+            const participantId = !id && local ? getLocalParticipant(getState()).id : id;
+            const updatedParticipant = getParticipantById(getState(), participantId);
 
-        getFirstLoadableAvatarUrl(updatedParticipant, store)
-            .then(url => {
-                dispatch(setLoadableAvatarUrl(participantId, url));
-            });
+            getFirstLoadableAvatarUrl(updatedParticipant, store)
+                .then(url => {
+                    dispatch(setLoadableAvatarUrl(participantId, url));
+                });
+        }
     }
 
     // Notify external listeners of potential avatarURL changes.
@@ -441,9 +504,15 @@ function _participantJoinedOrUpdated(store, next, action) {
  */
 function _raiseHandUpdated({ dispatch, getState }, conference, participantId, newValue) {
     const raisedHand = newValue === 'true';
+    const state = getState();
 
     dispatch(participantUpdated({
         conference,
+        id: participantId,
+        raisedHand
+    }));
+
+    dispatch(raiseHandUpdateQueue({
         id: participantId,
         raisedHand
     }));
@@ -452,13 +521,29 @@ function _raiseHandUpdated({ dispatch, getState }, conference, participantId, ne
         APP.API.notifyRaiseHandUpdated(participantId, raisedHand);
     }
 
+    const isModerator = isLocalParticipantModerator(state);
+    const participant = getParticipantById(state, participantId);
+    let shouldDisplayAllowAction = false;
+
+    if (isModerator) {
+        shouldDisplayAllowAction = isForceMuted(participant, MEDIA_TYPE.AUDIO, state)
+            || isForceMuted(participant, MEDIA_TYPE.VIDEO, state);
+    }
+
+    const action = shouldDisplayAllowAction ? {
+        customActionNameKey: 'notify.allowAction',
+        customActionHandler: () => dispatch(approveParticipant(participantId))
+    } : {};
+
     if (raisedHand) {
         dispatch(showNotification({
-            titleArguments: {
-                name: getParticipantDisplayName(getState, participantId)
-            },
-            titleKey: 'notify.raisedHand'
-        }, NOTIFICATION_TIMEOUT));
+            titleKey: 'notify.somebody',
+            title: getParticipantDisplayName(state, participantId),
+            descriptionKey: 'notify.raisedHand',
+            raiseHandNotification: true,
+            ...action
+        }, NOTIFICATION_TIMEOUT * (shouldDisplayAllowAction ? 2 : 1)));
+        dispatch(playSound(RAISE_HAND_SOUND_ID));
     }
 }
 

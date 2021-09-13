@@ -1,5 +1,9 @@
 // @flow
 
+import {
+    ANDROID_SCREENSHARING_ENABLED,
+    getFeatureFlag
+} from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconShareDesktop } from '../../../base/icons';
 import { connect } from '../../../base/redux';
@@ -10,6 +14,11 @@ import { toggleScreensharing, isLocalVideoTrackDesktop } from '../../../base/tra
  * The type of the React {@code Component} props of {@link ScreenSharingAndroidButton}.
  */
 type Props = AbstractButtonProps & {
+
+    /**
+     * True if the button needs to be disabled.
+     */
+    _disabled: boolean,
 
     /**
      * Whether video is currently muted or not.
@@ -39,7 +48,19 @@ class ScreenSharingAndroidButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        this.props.dispatch(toggleScreensharing());
+        const enable = !this._isToggled();
+
+        this.props.dispatch(toggleScreensharing(enable));
+    }
+
+    /**
+     * Returns a boolean value indicating if this button is disabled or not.
+     *
+     * @protected
+     * @returns {boolean}
+     */
+    _isDisabled() {
+        return this.props._disabled;
     }
 
     /**
@@ -61,13 +82,15 @@ class ScreenSharingAndroidButton extends AbstractButton<Props, *> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _disabled: boolean,
  *     _screensharing: boolean
  * }}
  */
 function _mapStateToProps(state): Object {
+    const enabled = getFeatureFlag(state, ANDROID_SCREENSHARING_ENABLED, true);
+
     return {
-        _screensharing: isLocalVideoTrackDesktop(state)
+        _screensharing: isLocalVideoTrackDesktop(state),
+        visible: enabled
     };
 }
 

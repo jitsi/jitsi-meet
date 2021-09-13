@@ -111,15 +111,9 @@ class StreamKeyPicker extends PureComponent<Props, State> {
         const dropdownItems
             = broadcasts.map(broadcast => (
                 <DropdownItem
+                    data-streamid = { broadcast.boundStreamID }
                     key = { broadcast.boundStreamID }
-
-                    // eslint-disable-next-line react/jsx-no-bind
-                    onClick = {
-                        e => {
-                            e.stopPropagation();
-                            this._onSelect(broadcast.boundStreamID);
-                        }
-                    }>
+                    onClick = { this._onSelect }>
                     { broadcast.title }
                 </DropdownItem>));
         const selected
@@ -188,12 +182,14 @@ class StreamKeyPicker extends PureComponent<Props, State> {
     /**
      * Callback invoked when an item has been clicked in the dropdown menu.
      *
-     * @param {Object} boundStreamID - The bound stream ID for the selected
-     * broadcast.
+     * @param {Object} e - The key event to handle.
+     *
      * @returns {void}
      */
-    _onSelect(boundStreamID) {
-        this.props.onBroadcastSelected(boundStreamID);
+    _onSelect(e) {
+        const streamId = e.currentTarget.getAttribute('data-streamid');
+
+        this.props.onBroadcastSelected(streamId);
     }
 }
 

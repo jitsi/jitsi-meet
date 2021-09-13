@@ -68,10 +68,12 @@
         "noMessagesMessage": "هیچ گفتگویی در جلسه وجود ندارد، گفتگو را شما آعاز کنید!",
         "nickname": {
             "popover": "نام نمایشی خود را وارد نمایید",
-            "title": "نام نمایشی خود را در گفتگو وارد نمایید"
+            "title": "نام نمایشی خود را در گفتگو وارد نمایید",
+            "titleWithPolls": "نام نمایشی خود را در گفتگو وارد نمایید"
         },
         "privateNotice": "پیام خصوصی به {{recipient}}",
         "title": "گفتگو",
+        "titleWithPolls": "گفتگو",
         "you": "شما"
     },
     "chromeExtensionBanner": {

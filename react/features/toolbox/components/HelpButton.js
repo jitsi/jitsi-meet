@@ -7,7 +7,7 @@ import { IconHelp } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 import { openURLInBrowser } from '../../base/util';
-
+import { isVpaasMeeting } from '../../jaas/functions';
 
 type Props = AbstractButtonProps & {
 
@@ -24,6 +24,7 @@ class HelpButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.help';
     icon = IconHelp;
     label = 'toolbar.help';
+    tooltip = 'toolbar.help';
 
     /**
      * Handles clicking / pressing the button, and opens a new window with the user documentation.
@@ -47,7 +48,7 @@ class HelpButton extends AbstractButton<Props, *> {
 function _mapStateToProps(state: Object) {
     const { userDocumentationURL } = state['features/base/config'].deploymentUrls || {};
     const enabled = getFeatureFlag(state, HELP_BUTTON_ENABLED, true);
-    const visible = typeof userDocumentationURL === 'string' && enabled;
+    const visible = typeof userDocumentationURL === 'string' && enabled && !isVpaasMeeting(state);
 
     return {
         _userDocumentationURL: userDocumentationURL,

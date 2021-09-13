@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 
 import { translate } from '../../../../base/i18n';
+import { Icon, IconSip } from '../../../../base/icons';
 
 type Props = {
 
@@ -65,8 +66,9 @@ class NumbersList extends Component<Props> {
                 (resultNumbers, number) => {
                     // The i18n-iso-countries package insists on upper case.
                     const countryCode = number.countryCode.toUpperCase();
-                    const countryName
-                        = t(`countries:countries.${countryCode}`);
+                    const countryName = countryCode === 'SIP'
+                        ? t('info.sip')
+                        : t(`countries:countries.${countryCode}`);
 
                     if (resultNumbers[countryName]) {
                         resultNumbers[countryName].push(number);
@@ -143,7 +145,10 @@ class NumbersList extends Component<Props> {
         if (countryCode) {
             return (
                 <td className = 'flag-cell'>
-                    <i className = { `flag iti-flag ${countryCode}` } />
+                    {countryCode === 'SIP'
+                        ? <Icon src = { IconSip } />
+                        : <i className = { `flag iti-flag ${countryCode}` } />
+                    }
                 </td>);
         }
 

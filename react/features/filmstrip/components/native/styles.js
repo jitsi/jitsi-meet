@@ -15,6 +15,15 @@ export const AVATAR_SIZE = 50;
 export default {
 
     /**
+     * The FlatList content container styles
+     */
+    contentContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 0
+    },
+
+    /**
      * The display name container.
      */
     displayNameContainer: {
@@ -53,6 +62,29 @@ export default {
     },
 
     /**
+     * The styles for the FlatList container.
+     */
+    flatListContainer: {
+        flexGrow: 1,
+        flexShrink: 1,
+        flex: 0
+    },
+
+    /**
+     * The styles for the FlatList component in stage view.
+     */
+    flatListStageView: {
+        flexGrow: 0
+    },
+
+    /**
+     * The styles for the FlatList component in tile view.
+     */
+    flatListTileView: {
+        flex: 0
+    },
+
+    /**
      * Container of the {@link LocalThumbnail}.
      */
     localThumbnail: {
@@ -67,13 +99,6 @@ export default {
         bottom: 4,
         position: 'absolute',
         right: 4
-    },
-
-    /**
-     * The style of the scrollview containing the remote thumbnails.
-     */
-    scrollView: {
-        flexGrow: 0
     },
 
     /**
@@ -122,19 +147,6 @@ export default {
 
     thumbnailTopRightIndicatorContainer: {
         right: 0
-    },
-
-    tileView: {
-        alignSelf: 'center'
-    },
-
-    tileViewRows: {
-        justifyContent: 'center'
-    },
-
-    tileViewRow: {
-        flexDirection: 'row',
-        justifyContent: 'center'
     }
 };
 

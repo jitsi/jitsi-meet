@@ -29,7 +29,7 @@
     margin: 8px 16px 8px 0;
 }
 
-@media (max-width: 375px) {
+@media (max-width: 580px) {
     .participants_pane {
         height: 100vh;
         height: -webkit-fill-available;
@@ -47,5 +47,12 @@
 
     .participants_pane-content {
         width: 100%;
+    }
+}
+
+.jitsi-icon {
+    &-dominant-speaker {
+        background-color: #1EC26A;
+        border-radius: 3px;
     }
 }

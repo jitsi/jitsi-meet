@@ -398,10 +398,9 @@ function _pinParticipant({ getState }, next, action) {
         return next(action);
     }
 
-    const participants = state['features/base/participants'];
     const id = action.participant.id;
-    const participantById = getParticipantById(participants, id);
-    const pinnedParticipant = getPinnedParticipant(participants);
+    const participantById = getParticipantById(state, id);
+    const pinnedParticipant = getPinnedParticipant(state);
     const actionName = id ? ACTION_PINNED : ACTION_UNPINNED;
     const local
         = (participantById && participantById.local)
@@ -552,7 +551,7 @@ function _updateLocalParticipantInConference({ dispatch, getState }, next, actio
 
     const localParticipant = getLocalParticipant(getState);
 
-    if (conference && participant.id === localParticipant.id) {
+    if (conference && participant.id === localParticipant?.id) {
         if ('name' in participant) {
             conference.setDisplayName(participant.name);
         }

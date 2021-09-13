@@ -2,29 +2,37 @@
 
 import React, { PureComponent } from 'react';
 import { Text, View } from 'react-native';
+import { Divider } from 'react-native-paper';
 
 import { Avatar } from '../../../base/avatar';
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, isDialogOpen } from '../../../base/dialog';
 import { KICK_OUT_ENABLED, getFeatureFlag } from '../../../base/flags';
-import { getParticipantDisplayName } from '../../../base/participants';
+import {
+    getParticipantById,
+    getParticipantDisplayName
+} from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { PrivateMessageButton } from '../../../chat';
 import { hideRemoteVideoMenu } from '../../actions.native';
+import ConnectionStatusButton from '../native/ConnectionStatusButton';
 
-import ConnectionStatusButton from './ConnectionStatusButton';
 import GrantModeratorButton from './GrantModeratorButton';
 import KickButton from './KickButton';
 import MuteButton from './MuteButton';
 import MuteEveryoneElseButton from './MuteEveryoneElseButton';
+import MuteVideoButton from './MuteVideoButton';
 import PinButton from './PinButton';
 import styles from './styles';
+
+// import VolumeSlider from './VolumeSlider';
+
 
 /**
  * Size of the rendered avatar in the menu.
  */
-const AVATAR_SIZE = 25;
+const AVATAR_SIZE = 24;
 
 type Props = {
 
@@ -34,9 +42,9 @@ type Props = {
     dispatch: Function,
 
     /**
-     * The participant for which this menu opened for.
+     * The ID of the participant for which this menu opened for.
      */
-    participant: Object,
+    participantId: String,
 
     /**
      * The color-schemed stylesheet of the BottomSheet.
@@ -54,9 +62,19 @@ type Props = {
     _disableRemoteMute: boolean,
 
     /**
+     * Whether or not to display the grant moderator button.
+     */
+    _disableGrantModerator: Boolean,
+
+    /**
      * True if the menu is currently open, false otherwise.
      */
     _isOpen: boolean,
+
+    /**
+     * Whether the participant is present in the room or not.
+     */
+    _isParticipantAvailable?: boolean,
 
     /**
      * Display name of the participant retrieved from Redux.
@@ -89,25 +107,36 @@ class RemoteVideoMenu extends PureComponent<Props> {
      * @inheritdoc
      */
     render() {
-        const { _disableKick, _disableRemoteMute, participant } = this.props;
+        const {
+            _disableKick,
+            _disableRemoteMute,
+            _disableGrantModerator,
+            _isParticipantAvailable,
+            participantId
+        } = this.props;
         const buttonProps = {
             afterClick: this._onCancel,
             showLabel: true,
-            participantID: participant.id,
+            participantID: participantId,
             styles: this.props._bottomSheetStyles.buttons
         };
 
         return (
             <BottomSheet
                 onCancel = { this._onCancel }
-                renderHeader = { this._renderMenuHeader }>
+                renderHeader = { this._renderMenuHeader }
+                showSlidingView = { _isParticipantAvailable }>
                 { !_disableRemoteMute && <MuteButton { ...buttonProps } /> }
+                <MuteEveryoneElseButton { ...buttonProps } />
+                { !_disableRemoteMute && <MuteVideoButton { ...buttonProps } /> }
+                <Divider style = { styles.divider } />
                 { !_disableKick && <KickButton { ...buttonProps } /> }
-                <GrantModeratorButton { ...buttonProps } />
+                { !_disableGrantModerator && <GrantModeratorButton { ...buttonProps } /> }
                 <PinButton { ...buttonProps } />
                 <PrivateMessageButton { ...buttonProps } />
-                <MuteEveryoneElseButton { ...buttonProps } />
                 <ConnectionStatusButton { ...buttonProps } />
+                {/* <Divider style = { styles.divider } />*/}
+                {/* <VolumeSlider participantID = { participantId } />*/}
             </BottomSheet>
         );
     }
@@ -138,7 +167,7 @@ class RemoteVideoMenu extends PureComponent<Props> {
      * @returns {React$Element}
      */
     _renderMenuHeader() {
-        const { _bottomSheetStyles, participant } = this.props;
+        const { _bottomSheetStyles, participantId } = this.props;
 
         return (
             <View
@@ -146,7 +175,7 @@ class RemoteVideoMenu extends PureComponent<Props> {
                     _bottomSheetStyles.sheet,
                     styles.participantNameContainer ] }>
                 <Avatar
-                    participantId = { participant.id }
+                    participantId = { participantId }
                     size = { AVATAR_SIZE } />
                 <Text style = { styles.participantNameLabel }>
                     { this.props._participantDisplayName }
@@ -166,8 +195,9 @@ class RemoteVideoMenu extends PureComponent<Props> {
  */
 function _mapStateToProps(state, ownProps) {
     const kickOutEnabled = getFeatureFlag(state, KICK_OUT_ENABLED, true);
-    const { participant } = ownProps;
+    const { participantId } = ownProps;
     const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
+    const isParticipantAvailable = getParticipantById(state, participantId);
     let { disableKick } = remoteVideoMenu;
 
     disableKick = disableKick || !kickOutEnabled;
@@ -177,7 +207,8 @@ function _mapStateToProps(state, ownProps) {
         _disableKick: Boolean(disableKick),
         _disableRemoteMute: Boolean(disableRemoteMute),
         _isOpen: isDialogOpen(state, RemoteVideoMenu_),
-        _participantDisplayName: getParticipantDisplayName(state, participant.id)
+        _isParticipantAvailable: Boolean(isParticipantAvailable),
+        _participantDisplayName: getParticipantDisplayName(state, participantId)
     };
 }
 

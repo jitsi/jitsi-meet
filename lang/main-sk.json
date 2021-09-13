@@ -68,10 +68,12 @@
         "noMessagesMessage": "V tejto konferencii ešte nie je žiadna správa. Začnite tu vašu diskusiu!",
         "nickname": {
             "popover": "Zvoľte meno",
-            "title": "Zadajte vašu prezývku"
+            "title": "Zadajte vašu prezývku",
+            "titleWithPolls": "Zadajte vašu prezývku"
         },
         "privateNotice": "Súkromná správa pre {{recipient}}",
         "title": "Chat",
+        "titleWithPolls": "Chat",
         "you": "Vy"
     },
     "chromeExtensionBanner": {

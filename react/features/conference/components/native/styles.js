@@ -53,12 +53,18 @@ export default {
         paddingVertical: 12
     },
 
-    navBarButton: {
+    pipButtonContainer: {
+        position: 'absolute',
+        top: 10,
+        left: 5,
+        zIndex: 1
+    },
+
+    pipButton: {
         iconStyle: {
             color: ColorPalette.white,
             fontSize: 24
         },
-
         underlayColor: 'transparent'
     },
 

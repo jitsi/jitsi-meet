@@ -1,5 +1,6 @@
 // @flow
 
+import Bourne from '@hapi/bourne';
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 
 import { APP_WILL_MOUNT } from '../base/app';
@@ -125,7 +126,7 @@ function _getLegacyRecentRoomList(): Array<Object> {
 
     if (str) {
         try {
-            return JSON.parse(str);
+            return Bourne.parse(str);
         } catch (error) {
             logger.warn('Failed to parse legacy recent-room list!');
         }

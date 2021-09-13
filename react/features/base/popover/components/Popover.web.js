@@ -64,6 +64,11 @@ type Props = {
     id: string,
 
     /**
+    * Callback to invoke when the popover has closed.
+    */
+    onPopoverClose: Function,
+
+    /**
      * Callback to invoke when the popover has opened.
      */
     onPopoverOpen: Function,
@@ -109,11 +114,6 @@ class Popover extends Component<Props, State> {
     };
 
     /**
-     * Reference to the Popover that is meant to open as a drawer.
-     */
-    _drawerContainerRef: Object;
-
-    /**
      * Initializes a new {@code Popover} instance.
      *
      * @param {Object} props - The read-only properties with which the new
@@ -129,51 +129,19 @@ class Popover extends Component<Props, State> {
         // Bind event handlers so they are only bound once for every instance.
         this._onHideDialog = this._onHideDialog.bind(this);
         this._onShowDialog = this._onShowDialog.bind(this);
-        this._drawerContainerRef = React.createRef();
+        this._onKeyPress = this._onKeyPress.bind(this);
+        this._onEscKey = this._onEscKey.bind(this);
+        this._onThumbClick = this._onThumbClick.bind(this);
     }
 
     /**
-     * Sets up an event listener to open a drawer when clicking, rather than entering the
-     * overflow area.
+     * Public method for triggering showing the context menu dialog.
      *
-     * TODO: This should be done by setting an {@code onClick} handler on the div, but for some
-     * reason that doesn't seem to work whatsoever.
-     *
-     * @inheritdoc
      * @returns {void}
+     * @public
      */
-    componentDidMount() {
-        if (this._drawerContainerRef && this._drawerContainerRef.current) {
-            this._drawerContainerRef.current.addEventListener('click', this._onShowDialog);
-        }
-    }
-
-    /**
-     * Removes the listener set up in the {@code componentDidMount} method.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    componentWillUnmount() {
-        if (this._drawerContainerRef && this._drawerContainerRef.current) {
-            this._drawerContainerRef.current.removeEventListener('click', this._onShowDialog);
-        }
-    }
-
-    /**
-     * Implements React Component's componentDidUpdate.
-     *
-     * @inheritdoc
-     */
-    componentDidUpdate(prevProps: Props) {
-        if (prevProps.overflowDrawer !== this.props.overflowDrawer) {
-            // Make sure the listeners are set up when resizing the screen past the drawer threshold.
-            if (this.props.overflowDrawer) {
-                this.componentDidMount();
-            } else {
-                this.componentWillUnmount();
-            }
-        }
+    showDialog() {
+        this.setState({ showDialog: true });
     }
 
     /**
@@ -190,7 +158,7 @@ class Popover extends Component<Props, State> {
                 <div
                     className = { className }
                     id = { id }
-                    ref = { this._drawerContainerRef }>
+                    onClick = { this._onShowDialog }>
                     { children }
                     <DrawerPortal>
                         <Drawer
@@ -207,6 +175,8 @@ class Popover extends Component<Props, State> {
             <div
                 className = { className }
                 id = { id }
+                onClick = { this._onThumbClick }
+                onKeyPress = { this._onKeyPress }
                 onMouseEnter = { this._onShowDialog }
                 onMouseLeave = { this._onHideDialog }>
                 <InlineDialog
@@ -229,15 +199,19 @@ class Popover extends Component<Props, State> {
      */
     _onHideDialog() {
         this.setState({ showDialog: false });
+
+        if (this.props.onPopoverClose) {
+            this.props.onPopoverClose();
+        }
     }
 
-    _onShowDialog: () => void;
+    _onShowDialog: (Object) => void;
 
     /**
      * Displays the {@code InlineDialog} and calls any registered onPopoverOpen
      * callbacks.
      *
-     * @param {MouseEvent} event - The mouse event to intercept.
+     * @param {Object} event - The mouse event or the keypress event to intercept.
      * @private
      * @returns {void}
      */
@@ -248,6 +222,59 @@ class Popover extends Component<Props, State> {
 
             if (this.props.onPopoverOpen) {
                 this.props.onPopoverOpen();
+            }
+        }
+    }
+
+    _onThumbClick: (Object) => void;
+
+    /**
+     * Prevents switching from tile view to stage view on accidentally clicking
+     * the popover thumbs.
+     *
+     * @param {Object} event - The mouse event or the keypress event to intercept.
+     * @private
+     * @returns {void}
+     */
+    _onThumbClick(event) {
+        event.stopPropagation();
+    }
+
+    _onKeyPress: (Object) => void;
+
+    /**
+     * KeyPress handler for accessibility.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onKeyPress(e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            if (this.state.showDialog) {
+                this._onHideDialog();
+            } else {
+                this._onShowDialog(e);
+            }
+        }
+    }
+
+    _onEscKey: (Object) => void;
+
+    /**
+     * KeyPress handler for accessibility.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onEscKey(e) {
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            e.stopPropagation();
+            if (this.state.showDialog) {
+                this._onHideDialog();
             }
         }
     }
@@ -264,7 +291,9 @@ class Popover extends Component<Props, State> {
         const { content, position } = this.props;
 
         return (
-            <div className = 'popover'>
+            <div
+                className = 'popover'
+                onKeyDown = { this._onEscKey }>
                 { content }
                 <div className = 'popover-mouse-padding-top' />
                 <div className = { _mapPositionToPaddingClass(position) } />

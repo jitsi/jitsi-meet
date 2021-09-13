@@ -5,13 +5,17 @@ import type { Dispatch } from 'redux';
 
 import { createE2EEEvent, sendAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
-import { getParticipants } from '../../base/participants';
 import { Switch } from '../../base/react';
 import { connect } from '../../base/redux';
 import { toggleE2EE } from '../actions';
-
+import { doesEveryoneSupportE2EE } from '../functions';
 
 type Props = {
+
+    /**
+     * Custom e2ee labels.
+     */
+    _e2eeLabels: Object,
 
     /**
      * Whether E2EE is currently enabled or not.
@@ -21,7 +25,7 @@ type Props = {
     /**
      * Indicates whether all participants in the conference currently support E2EE.
      */
-    _everyoneSupportsE2EE: boolean,
+    _everyoneSupportE2EE: boolean,
 
     /**
      * The redux {@code dispatch} function.
@@ -39,12 +43,7 @@ type State = {
     /**
      * True if the switch is toggled on.
      */
-    enabled: boolean,
-
-    /**
-     * True if the section description should be expanded, false otherwise.
-     */
-    expand: boolean
+    enabled: boolean
 };
 
 /**
@@ -79,12 +78,10 @@ class E2EESection extends Component<Props, State> {
         super(props);
 
         this.state = {
-            enabled: false,
-            expand: false
+            enabled: false
         };
 
         // Bind event handlers so they are only bound once for every instance.
-        this._onExpand = this._onExpand.bind(this);
         this._onToggle = this._onToggle.bind(this);
     }
 
@@ -95,30 +92,25 @@ class E2EESection extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { _everyoneSupportsE2EE, t } = this.props;
-        const { enabled, expand } = this.state;
-        const description = t('dialog.e2eeDescription');
+        const { _e2eeLabels, _everyoneSupportE2EE, t } = this.props;
+        const { enabled } = this.state;
+        const description = _e2eeLabels?.description || t('dialog.e2eeDescription');
+        const label = _e2eeLabels?.label || t('dialog.e2eeLabel');
+        const warning = _e2eeLabels?.warning || t('dialog.e2eeWarning');
 
         return (
             <div id = 'e2ee-section'>
-                <p className = 'description'>
-                    { expand && description }
-                    { !expand && description.substring(0, 100) }
-                    { !expand && <span
-                        className = 'read-more'
-                        onClick = { this._onExpand }>
-                            ... { t('dialog.readMore') }
-                    </span> }
+                <p
+                    aria-live = 'polite'
+                    className = 'description'
+                    id = 'e2ee-section-description'>
+                    { description }
+                    { !_everyoneSupportE2EE && <br /> }
+                    { !_everyoneSupportE2EE && warning }
                 </p>
-                {
-                    !_everyoneSupportsE2EE
-                        && <span className = 'warning'>
-                            { t('dialog.e2eeWarning') }
-                        </span>
-                }
                 <div className = 'control-row'>
                     <label htmlFor = 'e2ee-section-switch'>
-                        { t('dialog.e2eeLabel') }
+                        { label }
                     </label>
                     <Switch
                         id = 'e2ee-section-switch'
@@ -127,19 +119,6 @@ class E2EESection extends Component<Props, State> {
                 </div>
             </div>
         );
-    }
-
-    _onExpand: () => void;
-
-    /**
-     * Callback to be invoked when the description is expanded.
-     *
-     * @returns {void}
-     */
-    _onExpand() {
-        this.setState({
-            expand: true
-        });
     }
 
     _onToggle: () => void;
@@ -171,11 +150,12 @@ class E2EESection extends Component<Props, State> {
  */
 function mapStateToProps(state) {
     const { enabled } = state['features/e2ee'];
-    const participants = getParticipants(state).filter(p => !p.local);
+    const { e2eeLabels } = state['features/base/config'];
 
     return {
+        _e2eeLabels: e2eeLabels,
         _enabled: enabled,
-        _everyoneSupportsE2EE: participants.every(p => Boolean(p.e2eeSupported))
+        _everyoneSupportE2EE: doesEveryoneSupportE2EE(state)
     };
 }
 

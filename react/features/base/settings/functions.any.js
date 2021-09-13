@@ -248,3 +248,13 @@ function _getUserSelectedDeviceId(options) {
         ? foundMatchBasedOnLabel.deviceId : userSelectedDeviceId;
 }
 
+/**
+ * Should we hide the helper dialog when a user tries to do audio only screen sharing.
+ *
+ * @param {Object} state - The state of the application.
+ * @returns {boolean}
+ */
+export function shouldHideShareAudioHelper(state: Object): boolean {
+
+    return state['features/base/settings'].hideShareAudioHelper;
+}

@@ -6,7 +6,7 @@ import {
     createRemoteVideoMenuButtonEvent,
     sendAnalytics
 } from '../../analytics';
-import { grantModerator } from '../../base/participants';
+import { getParticipantById, grantModerator } from '../../base/participants';
 
 type Props = {
 
@@ -19,6 +19,11 @@ type Props = {
      * The ID of the remote participant to be granted moderator rights.
      */
     participantID: string,
+
+    /**
+     * The name of the remote participant to be granted moderator rights.
+     */
+    participantName: string,
 
     /**
      * Function to translate i18n labels.
@@ -63,4 +68,18 @@ export default class AbstractGrantModeratorDialog
 
         return true;
     }
+}
+
+/**
+ * Maps (parts of) the Redux state to the associated {@code AbstractMuteEveryoneDialog}'s props.
+ *
+ * @param {Object} state - The redux state.
+ * @param {Object} ownProps - The properties explicitly passed to the component.
+ * @returns {Props}
+ */
+export function abstractMapStateToProps(state: Object, ownProps: Props) {
+
+    return {
+        participantName: getParticipantById(state, ownProps.participantID).name
+    };
 }

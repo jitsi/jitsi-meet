@@ -44,7 +44,7 @@ dependencies {
     //noinspection GradleDynamicVersion
     implementation 'org.webkit:android-jsc:+'
 
-    implementation 'com.dropbox.core:dropbox-core-sdk:3.0.8'
+    implementation 'com.dropbox.core:dropbox-core-sdk:4.0.1'
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'com.squareup.duktape:duktape-android:1.3.0'
     implementation 'com.google.code.gson:gson:2.8.6'
@@ -56,6 +56,7 @@ dependencies {
             exclude group: 'com.android.installreferrer'
         }
     } else {
+        implementation project(':react-native-amplitude')
         implementation project(':react-native-device-info')
         implementation(project(":react-native-google-signin")) {
             exclude group: 'com.google.android.gms'
@@ -70,11 +71,14 @@ dependencies {
     implementation project(':react-native-default-preference')
     implementation project(':react-native-immersive')
     implementation project(':react-native-keep-awake')
+    implementation project(':react-native-performance')
+    implementation project(':react-native-slider')
     implementation project(':react-native-sound')
+    implementation project(':react-native-splash-screen')
     implementation project(':react-native-svg')
+    implementation project(':react-native-video')
     implementation project(':react-native-webrtc')
     implementation project(':react-native-webview')
-    implementation project(':react-native-splash-screen')
 
     testImplementation 'junit:junit:4.12'
 }
@@ -153,16 +157,9 @@ android.libraryVariants.all { def variant ->
         // Bundle sounds
         //
         copy {
-            from("${projectDir}/../../sounds/incomingMessage.wav")
-            from("${projectDir}/../../sounds/joined.wav")
-            from("${projectDir}/../../sounds/left.wav")
-            from("${projectDir}/../../sounds/liveStreamingOn.mp3")
-            from("${projectDir}/../../sounds/liveStreamingOff.mp3")
-            from("${projectDir}/../../sounds/outgoingRinging.wav")
-            from("${projectDir}/../../sounds/outgoingStart.wav")
-            from("${projectDir}/../../sounds/recordingOn.mp3")
-            from("${projectDir}/../../sounds/recordingOff.mp3")
-            from("${projectDir}/../../sounds/rejected.wav")
+            from("${projectDir}/../../sounds")
+            include("*.wav")
+            include("*.mp3")
             into("${assetsDir}/sounds")
         }
 

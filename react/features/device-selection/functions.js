@@ -9,10 +9,11 @@ import {
     getAvailableDevices,
     getDeviceIdByLabel,
     groupDevicesByKind,
-    setAudioInputDevice,
-    setAudioOutputDeviceId,
-    setVideoInputDevice
+    setAudioInputDeviceAndUpdateSettings,
+    setAudioOutputDevice,
+    setVideoInputDeviceAndUpdateSettings
 } from '../base/devices';
+import { isIosMobileBrowser } from '../base/environment/utils';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { toState } from '../base/redux';
 import {
@@ -33,10 +34,16 @@ export function getDeviceSelectionDialogProps(stateful: Object | Function) {
     const settings = state['features/base/settings'];
     const { conference } = state['features/base/conference'];
     const { permissions } = state['features/base/devices'];
+    const isMobileSafari = isIosMobileBrowser();
+    const cameraChangeSupported = JitsiMeetJS.mediaDevices.isDeviceChangeAvailable('input');
+    const speakerChangeSupported = JitsiMeetJS.mediaDevices.isDeviceChangeAvailable('output');
+    const userSelectedCamera = getUserSelectedCameraDeviceId(state);
+    const userSelectedMic = getUserSelectedMicDeviceId(state);
     let disableAudioInputChange = !JitsiMeetJS.mediaDevices.isMultipleAudioInputSupported();
-    let selectedAudioInputId = settings.micDeviceId;
+    let disableVideoInputSelect = !cameraChangeSupported;
+    let selectedAudioInputId = isMobileSafari ? userSelectedMic : settings.micDeviceId;
     let selectedAudioOutputId = getAudioOutputDeviceId();
-    let selectedVideoInputId = settings.cameraDeviceId;
+    let selectedVideoInputId = isMobileSafari ? userSelectedCamera : settings.cameraDeviceId;
 
     // audio input change will be a problem only when we are in a
     // conference and this is not supported, when we open device selection on
@@ -44,9 +51,10 @@ export function getDeviceSelectionDialogProps(stateful: Object | Function) {
     // on welcome page we also show only what we have saved as user selected devices
     if (!conference) {
         disableAudioInputChange = false;
-        selectedAudioInputId = getUserSelectedMicDeviceId(state);
+        disableVideoInputSelect = false;
+        selectedAudioInputId = userSelectedMic;
         selectedAudioOutputId = getUserSelectedOutputDeviceId(state);
-        selectedVideoInputId = getUserSelectedCameraDeviceId(state);
+        selectedVideoInputId = userSelectedCamera;
     }
 
     // we fill the device selection dialog with the devices that are currently
@@ -54,14 +62,14 @@ export function getDeviceSelectionDialogProps(stateful: Object | Function) {
     return {
         availableDevices: state['features/base/devices'].availableDevices,
         disableAudioInputChange,
-        disableDeviceChange:
-            !JitsiMeetJS.mediaDevices.isDeviceChangeAvailable(),
+        disableDeviceChange: !JitsiMeetJS.mediaDevices.isDeviceChangeAvailable(),
+        disableVideoInputSelect,
         hasAudioPermission: permissions.audio,
         hasVideoPermission: permissions.video,
-        hideAudioInputPreview:
-            !JitsiMeetJS.isCollectingLocalStats(),
-        hideAudioOutputSelect: !JitsiMeetJS.mediaDevices
-                            .isDeviceChangeAvailable('output'),
+        hideAudioInputPreview: disableAudioInputChange || !JitsiMeetJS.isCollectingLocalStats(),
+        hideAudioOutputPreview: !speakerChangeSupported,
+        hideAudioOutputSelect: !speakerChangeSupported,
+        hideVideoInputPreview: !cameraChangeSupported,
         selectedAudioInputId,
         selectedAudioOutputId,
         selectedVideoInputId
@@ -185,15 +193,14 @@ export function processExternalDeviceRequest( // eslint-disable-line max-params
 
         if (deviceId) {
             switch (device.kind) {
-            case 'audioinput': {
-                dispatch(setAudioInputDevice(deviceId));
+            case 'audioinput':
+                dispatch(setAudioInputDeviceAndUpdateSettings(deviceId));
                 break;
-            }
             case 'audiooutput':
-                setAudioOutputDeviceId(deviceId, dispatch);
+                dispatch(setAudioOutputDevice(deviceId));
                 break;
             case 'videoinput':
-                dispatch(setVideoInputDevice(deviceId));
+                dispatch(setVideoInputDeviceAndUpdateSettings(deviceId));
                 break;
             default:
                 result = false;

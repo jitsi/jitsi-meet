@@ -67,11 +67,13 @@
         "messagebox": "Введите сообщение",
         "nickname": {
             "popover": "Выберите имя",
-            "title": "Введите имя для использования чата"
+            "title": "Введите имя для использования чата",
+            "titleWithPolls": "Введите имя для использования чата"
         },
         "noMessagesMessage": "В конференции пока нет никаких сообщений. Начните разговор!",
         "privateNotice": "Личное сообщение пользователю {{recipient}}",
         "title": "Чат",
+        "titleWithPolls": "Чат",
         "you": "вы"
     },
     "chromeExtensionBanner": {

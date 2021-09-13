@@ -21,68 +21,50 @@ import logger from './logger';
 export const getTrackState = state => state['features/base/tracks'];
 
 /**
- * Higher-order function that returns a selector for a specific participant
- * and media type.
+ * Checks if the passed media type is muted for the participant.
  *
  * @param {Object} participant - Participant reference.
  * @param {MEDIA_TYPE} mediaType - Media type.
- * @returns {Function} Selector.
+ * @param {Object} state - Global state.
+ * @returns {boolean} - Is the media type muted for the participant.
  */
-export const getIsParticipantMediaMuted = (participant, mediaType) =>
+export function isParticipantMediaMuted(participant, mediaType, state) {
+    if (!participant) {
+        return false;
+    }
 
-    /**
-     * Bound selector.
-     *
-     * @param {Object} state - Global state.
-     * @returns {boolean} Is the media type muted for the participant.
-     */
-    state => {
-        if (!participant) {
-            return;
-        }
+    const tracks = getTrackState(state);
 
-        const tracks = getTrackState(state);
+    if (participant?.local) {
+        return isLocalTrackMuted(tracks, mediaType);
+    } else if (!participant?.isFakeParticipant) {
+        return isRemoteTrackMuted(tracks, mediaType, participant.id);
+    }
 
-        if (participant?.local) {
-            return isLocalTrackMuted(tracks, mediaType);
-        } else if (!participant?.isFakeParticipant) {
-            return isRemoteTrackMuted(tracks, mediaType, participant.id);
-        }
-
-        return true;
-    };
+    return true;
+}
 
 /**
- * Higher-order function that returns a selector for a specific participant.
+ * Checks if the participant is audio muted.
  *
  * @param {Object} participant - Participant reference.
- * @returns {Function} Selector.
+ * @param {Object} state - Global state.
+ * @returns {boolean} - Is audio muted for the participant.
  */
-export const getIsParticipantAudioMuted = participant =>
-
-    /**
-     * Bound selector.
-     *
-     * @param {Object} state - Global state.
-     * @returns {boolean} Is audio muted for the participant.
-     */
-    state => getIsParticipantMediaMuted(participant, MEDIA_TYPE.AUDIO)(state);
+export function isParticipantAudioMuted(participant, state) {
+    return isParticipantMediaMuted(participant, MEDIA_TYPE.AUDIO, state);
+}
 
 /**
- * Higher-order function that returns a selector for a specific participant.
+ * Checks if the participant is video muted.
  *
  * @param {Object} participant - Participant reference.
- * @returns {Function} Selector.
+ * @param {Object} state - Global state.
+ * @returns {boolean} - Is video muted for the participant.
  */
-export const getIsParticipantVideoMuted = participant =>
-
-    /**
-     * Bound selector.
-     *
-     * @param {Object} state - Global state.
-     * @returns {boolean} Is video muted for the participant.
-     */
-    state => getIsParticipantMediaMuted(participant, MEDIA_TYPE.VIDEO)(state);
+export function isParticipantVideoMuted(participant, state) {
+    return isParticipantMediaMuted(participant, MEDIA_TYPE.VIDEO, state);
+}
 
 /**
  * Creates a local video track for presenter. The constraints are computed based

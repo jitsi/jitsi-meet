@@ -2,6 +2,9 @@
 
 import type { Dispatch } from 'redux';
 
+import { showModeratedNotification } from '../../av-moderation/actions';
+import { shouldShowModeratedNotification } from '../../av-moderation/functions';
+
 import {
     SET_AUDIO_MUTED,
     SET_AUDIO_AVAILABLE,
@@ -12,8 +15,8 @@ import {
     TOGGLE_CAMERA_FACING_MODE
 } from './actionTypes';
 import {
-    CAMERA_FACING_MODE,
     MEDIA_TYPE,
+    type MediaType,
     VIDEO_MUTISM_AUTHORITY
 } from './constants';
 
@@ -64,7 +67,7 @@ export function setAudioMuted(muted: boolean, ensureTrack: boolean = false) {
  *     cameraFacingMode: CAMERA_FACING_MODE
  * }}
  */
-export function setCameraFacingMode(cameraFacingMode: CAMERA_FACING_MODE) {
+export function setCameraFacingMode(cameraFacingMode: string) {
     return {
         type: SET_CAMERA_FACING_MODE,
         cameraFacingMode
@@ -102,11 +105,20 @@ export function setVideoAvailable(available: boolean) {
  */
 export function setVideoMuted(
         muted: boolean,
-        mediaType: MEDIA_TYPE = MEDIA_TYPE.VIDEO,
+        mediaType: MediaType = MEDIA_TYPE.VIDEO,
         authority: number = VIDEO_MUTISM_AUTHORITY.USER,
         ensureTrack: boolean = false) {
     return (dispatch: Dispatch<any>, getState: Function) => {
-        const oldValue = getState()['features/base/media'].video.muted;
+        const state = getState();
+
+        // check for A/V Moderation when trying to unmute
+        if (!muted && shouldShowModeratedNotification(MEDIA_TYPE.VIDEO, state)) {
+            ensureTrack && dispatch(showModeratedNotification(MEDIA_TYPE.VIDEO));
+
+            return;
+        }
+
+        const oldValue = state['features/base/media'].video.muted;
 
         // eslint-disable-next-line no-bitwise
         const newValue = muted ? oldValue | authority : oldValue & ~authority;

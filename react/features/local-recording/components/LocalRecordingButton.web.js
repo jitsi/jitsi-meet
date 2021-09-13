@@ -1,85 +1,46 @@
-/* @flow */
+// @flow
 
-import React, { Component } from 'react';
-
+import { createToolbarEvent, sendAnalytics } from '../../analytics';
+import { openDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { IconRec } from '../../base/icons';
-import { ToolbarButton } from '../../toolbox/components/web';
+import { connect } from '../../base/redux';
+import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
+
+import LocalRecordingInfoDialog from './LocalRecordingInfoDialog';
 
 /**
- * The type of the React {@code Component} state of
- * {@link LocalRecordingButton}.
+ * The type of the React {@code Component} props of {@link LocalRecording}.
  */
-type Props = {
+type Props = AbstractButtonProps & {
 
     /**
-     * Whether or not {@link LocalRecordingInfoDialog} should be displayed.
+     * The redux {@code dispatch} function.
      */
-    isDialogShown: boolean,
-
-    /**
-     * Callback function called when {@link LocalRecordingButton} is clicked.
-     */
-    onClick: Function,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
-}
+    dispatch: Function
+};
 
 /**
- * A React {@code Component} for opening or closing the
- * {@code LocalRecordingInfoDialog}.
- *
- * @extends Component
+ * Implementation of a button for opening local recording dialog.
  */
-class LocalRecordingButton extends Component<Props> {
+class LocalRecording extends AbstractButton<Props, *> {
+    accessibilityLabel = 'toolbar.accessibilityLabel.localRecording';
+    icon = IconRec;
+    label = 'localRecording.dialogTitle';
+    tooltip = 'localRecording.dialogTitle';
 
     /**
-     * Initializes a new {@code LocalRecordingButton} instance.
+     * Handles clicking / pressing the button, and opens the appropriate dialog.
      *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
-     */
-    constructor(props: Props) {
-        super(props);
-
-        // Bind event handlers so they are only bound once per instance.
-        this._onClick = this._onClick.bind(this);
-    }
-
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    render() {
-        const { isDialogShown, t } = this.props;
-
-        return (
-            <ToolbarButton
-                accessibilityLabel
-                    = { t('toolbar.accessibilityLabel.localRecording') }
-                icon = { IconRec }
-                onClick = { this._onClick }
-                toggled = { isDialogShown }
-                tooltip = { t('localRecording.dialogTitle') } />
-        );
-    }
-
-    _onClick: () => void;
-
-    /**
-     * Callback invoked when the Toolbar button is clicked.
-     *
-     * @private
+     * @protected
      * @returns {void}
      */
-    _onClick() {
-        this.props.onClick();
+    _handleClick() {
+        const { dispatch } = this.props;
+
+        sendAnalytics(createToolbarEvent('local.recording'));
+        dispatch(openDialog(LocalRecordingInfoDialog));
     }
 }
 
-export default translate(LocalRecordingButton);
+export default translate(connect()(LocalRecording));

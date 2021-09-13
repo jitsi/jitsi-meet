@@ -1,5 +1,5 @@
-/* global APP, $ */
-
+/* global APP */
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import Logger from 'jitsi-meet-logger';
 
 import {
@@ -30,44 +30,65 @@ const _shortcuts = new Map();
 const _shortcutsHelp = new Map();
 
 /**
- * True if the keyboard shortcuts are enabled and false if not.
- * @type {boolean}
+ * The key used to save in local storage if keyboard shortcuts are enabled.
  */
-let enabled = true;
+const _enableShortcutsKey = 'enableShortcuts';
+
+/**
+ * Prefer keyboard handling of these elements over global shortcuts.
+ * If a button is triggered using the Spacebar it should not trigger PTT.
+ * If an input element is focused and M is pressed it should not mute audio.
+ */
+const _elementsBlacklist = [
+    'input',
+    'textarea',
+    'button',
+    '[role=button]',
+    '[role=menuitem]',
+    '[role=radio]',
+    '[role=tab]',
+    '[role=option]',
+    '[role=switch]',
+    '[role=range]',
+    '[role=log]'
+];
+
+/**
+ * An element selector for elements that have their own keyboard handling.
+ */
+const _focusedElementsSelector = `:focus:is(${_elementsBlacklist.join(',')})`;
 
 /**
  * Maps keycode to character, id of popover for given function and function.
  */
 const KeyboardShortcut = {
+
     init() {
         this._initGlobalShortcuts();
 
         window.onkeyup = e => {
-            if (!enabled) {
+            if (!this.getEnabled()) {
                 return;
             }
             const key = this._getKeyboardKey(e).toUpperCase();
             const num = parseInt(key, 10);
 
-            if (!($(':focus').is('input[type=text]')
-                || $(':focus').is('input[type=password]')
-                || $(':focus').is('textarea'))) {
+            if (!document.querySelector(_focusedElementsSelector)) {
                 if (_shortcuts.has(key)) {
                     _shortcuts.get(key).function(e);
                 } else if (!isNaN(num) && num >= 0 && num <= 9) {
                     APP.store.dispatch(clickOnVideo(num));
                 }
-
             }
         };
 
         window.onkeydown = e => {
-            if (!enabled) {
+            if (!this.getEnabled()) {
                 return;
             }
-            if (!($(':focus').is('input[type=text]')
-                || $(':focus').is('input[type=password]')
-                || $(':focus').is('textarea'))) {
+            const focusedElement = document.querySelector(_focusedElementsSelector);
+
+            if (!focusedElement) {
                 if (this._getKeyboardKey(e).toUpperCase() === ' ') {
                     if (APP.conference.isLocalAudioMuted()) {
                         sendAnalytics(createShortcutEvent(
@@ -76,6 +97,11 @@ const KeyboardShortcut = {
                         logger.log('Talk shortcut pressed');
                         APP.conference.muteAudio(false);
                     }
+                }
+            } else if (this._getKeyboardKey(e).toUpperCase() === 'ESCAPE') {
+                // Allow to remove focus from selected elements using ESC key.
+                if (focusedElement && focusedElement.blur) {
+                    focusedElement.blur();
                 }
             }
         };
@@ -86,7 +112,13 @@ const KeyboardShortcut = {
      * @param {boolean} value - the new value.
      */
     enable(value) {
-        enabled = value;
+        jitsiLocalStorage.setItem(_enableShortcutsKey, value);
+    },
+
+    getEnabled() {
+        // Should be enabled if not explicitly set to false
+        // eslint-disable-next-line no-unneeded-ternary
+        return jitsiLocalStorage.getItem(_enableShortcutsKey) === 'false' ? false : true;
     },
 
     /**
@@ -110,20 +142,23 @@ const KeyboardShortcut = {
      * @param exec the function to be executed when the shortcut is pressed
      * @param helpDescription the description of the shortcut that would appear
      * in the help menu
+     * @param altKey whether or not the alt key must be pressed.
      */
     registerShortcut(// eslint-disable-line max-params
             shortcutChar,
             shortcutAttr,
             exec,
-            helpDescription) {
-        _shortcuts.set(shortcutChar, {
+            helpDescription,
+            altKey = false) {
+        _shortcuts.set(altKey ? `:${shortcutChar}` : shortcutChar, {
             character: shortcutChar,
             function: exec,
-            shortcutAttr
+            shortcutAttr,
+            altKey
         });
 
         if (helpDescription) {
-            this._addShortcutToHelp(shortcutChar, helpDescription);
+            this._addShortcutToHelp(altKey ? `:${shortcutChar}` : shortcutChar, helpDescription);
         }
     },
 
@@ -132,9 +167,10 @@ const KeyboardShortcut = {
      *
      * @param shortcutChar unregisters the given shortcut, which means it will
      * no longer be usable
+     * @param altKey whether or not shortcut is combo with alt key
      */
-    unregisterShortcut(shortcutChar) {
-        _shortcuts.delete(shortcutChar);
+    unregisterShortcut(shortcutChar, altKey = false) {
+        _shortcuts.delete(altKey ? `:${shortcutChar}` : shortcutChar);
         _shortcutsHelp.delete(shortcutChar);
     },
 
@@ -143,6 +179,15 @@ const KeyboardShortcut = {
      * @returns {string} e.key or something close if not supported
      */
     _getKeyboardKey(e) {
+        // If alt is pressed a different char can be returned so this takes
+        // the char from the code. It also prefixes with a colon to differentiate
+        // alt combo from simple keypress.
+        if (e.altKey) {
+            const key = e.code.replace('Key', '');
+
+            return `:${key}`;
+        }
+
         // If e.key is a string, then it is assumed it already plainly states
         // the key pressed. This may not be true in all cases, such as with Edge
         // and "?", when the browser cannot properly map a key press event to a

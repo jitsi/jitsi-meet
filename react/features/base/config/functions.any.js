@@ -1,5 +1,6 @@
 // @flow
 
+import Bourne from '@hapi/bourne';
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import _ from 'lodash';
 
@@ -32,14 +33,41 @@ export function createFakeConfig(baseURL: string) {
             muc: `conference.${url.hostname}`
         },
         bosh: `${baseURL}http-bind`,
-        clientNode: 'https://jitsi.org/jitsi-meet',
         p2p: {
             enabled: true
         }
     };
 }
 
-/* eslint-disable max-params, no-shadow */
+/**
+ * Selector used to get the meeting region.
+ *
+ * @param {Object} state - The global state.
+ * @returns {string}
+ */
+export function getMeetingRegion(state: Object) {
+    return state['features/base/config']?.deploymentInfo?.region || '';
+}
+
+/**
+ * Selector used to get the disableRemoveRaisedHandOnFocus.
+ *
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+export function getDisableRemoveRaisedHandOnFocus(state: Object) {
+    return state['features/base/config']?.disableRemoveRaisedHandOnFocus || false;
+}
+
+/**
+ * Selector used to get the endpoint used for fetching the recording.
+ *
+ * @param {Object} state - The global state.
+ * @returns {string}
+ */
+export function getRecordingSharingUrl(state: Object) {
+    return state['features/base/config'].recordingSharingUrl;
+}
 
 /**
  * Overrides JSON properties in {@code config} and
@@ -141,7 +169,7 @@ export function restoreConfig(baseURL: string): ?Object {
 
     if (config) {
         try {
-            return JSON.parse(config) || undefined;
+            return Bourne.parse(config) || undefined;
         } catch (e) {
             // Somehow incorrect data ended up in the storage. Clean it up.
             jitsiLocalStorage.removeItem(key);

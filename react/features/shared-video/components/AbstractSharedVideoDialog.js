@@ -3,8 +3,7 @@
 import { Component } from 'react';
 import type { Dispatch } from 'redux';
 
-import { getYoutubeLink } from '../functions';
-
+import { getYoutubeId } from '../functions';
 
 /**
  * The type of the React {@code Component} props of
@@ -20,7 +19,7 @@ export type Props = {
     /**
      * Function to be invoked after typing a valid video.
      */
-    onPostSubmit: ?Function,
+    onPostSubmit: Function,
 
     /**
      * Invoked to obtain translated strings.
@@ -32,6 +31,7 @@ export type Props = {
  * Implements an abstract class for {@code SharedVideoDialog}.
  */
 export default class AbstractSharedVideoDialog<S: *> extends Component < Props, S > {
+
     /**
      * Instantiates a new component.
      *
@@ -52,26 +52,25 @@ export default class AbstractSharedVideoDialog<S: *> extends Component < Props, 
      *     {@code true} - the dialog should be closed.
      *     {@code false} - the dialog should be left open.
      *
-     * @param {string} link - The entered video link.
+    * @param {string} link - The entered video link.
      * @returns {boolean}
      */
     _onSetVideoLink(link: string) {
-        if (!link || !link.trim()) {
+        if (!link) {
             return false;
         }
 
-        const videoId = getYoutubeLink(link);
+        const trimmedLink = link.trim();
 
-        if (videoId) {
-            const { onPostSubmit } = this.props;
-
-            onPostSubmit && onPostSubmit(videoId);
-
-            return true;
+        if (!trimmedLink) {
+            return false;
         }
 
-        return false;
+        const youtubeId = getYoutubeId(trimmedLink);
+        const { onPostSubmit } = this.props;
+
+        onPostSubmit(youtubeId || trimmedLink);
+
+        return true;
     }
 }
-
-

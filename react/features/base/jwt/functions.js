@@ -67,49 +67,59 @@ export function validateJwt(jwt: string) {
             return errors;
         }
 
-        const { kid } = header;
-
-        // if Key ID is missing, we return the error immediately without further validations.
-        if (!kid) {
-            errors.push('- Key ID(kid) missing');
-
-            return errors;
-        }
+        const {
+            aud,
+            context,
+            exp,
+            iss,
+            nbf,
+            sub
+        } = payload;
 
         // JaaS only
-        if (kid.startsWith('vpaas-magic-cookie')) {
-            if (kid.substring(0, header.kid.indexOf('/')) !== payload.sub) {
+        if (sub && sub.startsWith('vpaas-magic-cookie')) {
+            const { kid } = header;
+
+            // if Key ID is missing, we return the error immediately without further validations.
+            if (!kid) {
+                errors.push('- Key ID(kid) missing');
+
+                return errors;
+            }
+
+            if (kid.substring(0, kid.indexOf('/')) !== sub) {
                 errors.push('- Key ID(kid) does not match sub');
             }
-            if (payload.aud !== 'jitsi') {
+
+            if (aud !== 'jitsi') {
                 errors.push('- invalid `aud` value. It should be `jitsi`');
             }
 
-            if (payload.iss !== 'chat') {
+            if (iss !== 'chat') {
                 errors.push('- invalid `iss` value. It should be `chat`');
             }
 
-            if (!payload.context?.features) {
+            if (!context?.features) {
                 errors.push('- `features` object is missing from the payload');
             }
         }
 
-        if (!isValidUnixTimestamp(payload.nbf)) {
+        if (!isValidUnixTimestamp(nbf)) {
             errors.push('- invalid `nbf` value');
-        } else if (currentTimestamp < payload.nbf * 1000) {
+        } else if (currentTimestamp < nbf * 1000) {
             errors.push('- `nbf` value is in the future');
         }
 
-        if (!isValidUnixTimestamp(payload.exp)) {
+        if (!isValidUnixTimestamp(exp)) {
             errors.push('- invalid `exp` value');
-        } else if (currentTimestamp > payload.exp * 1000) {
+        } else if (currentTimestamp > exp * 1000) {
             errors.push('- token is expired');
         }
 
-        if (!payload.context) {
+        if (!context) {
             errors.push('- `context` object is missing from the payload');
-        } else if (payload.context.features) {
-            const { features } = payload.context;
+        } else if (context.features) {
+            const { features } = context;
 
             Object.keys(features).forEach(feature => {
                 if (MEET_FEATURES.includes(feature)) {

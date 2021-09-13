@@ -78,3 +78,27 @@ export function getUnreadCount(state: Object) {
 
     return messagesCount - (lastReadIndex + 1);
 }
+
+/**
+ * Selector for calculating the number of unread chat messages.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {number} The number of unread messages.
+ */
+export function getUnreadMessagesCount(state: Object) {
+    const { nbUnreadMessages } = state['features/chat'];
+
+    return nbUnreadMessages;
+}
+
+/**
+ * Get whether the chat smileys are disabled or not.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {boolean} The disabled flag.
+ */
+export function areSmileysDisabled(state: Object) {
+    const disableChatSmileys = state['features/base/config']?.disableChatSmileys === true;
+
+    return disableChatSmileys;
+}

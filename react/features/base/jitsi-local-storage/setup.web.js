@@ -1,5 +1,6 @@
 // @flow
 
+import Bourne from '@hapi/bourne';
 import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
 
 import { browser } from '../lib-jitsi-meet';
@@ -9,6 +10,20 @@ import logger from './logger';
 
 declare var APP: Object;
 declare var config: Object;
+
+/**
+ * Checks whether we are loaded in an iframe.
+ *
+ * @returns {boolean} Returns {@code true} if loaded in iframe.
+ * @private
+ */
+function _inIframe() {
+    try {
+        return window.self !== window.top;
+    } catch (e) {
+        return true;
+    }
+}
 
 /**
  * Handles changes of the fake local storage.
@@ -40,7 +55,9 @@ function shouldUseHostPageLocalStorage(urlParams) {
         return true;
     }
 
-    if (browser.isWebKitBased()) { // Webkit browsers don't persist local storage for third-party iframes.
+    if (browser.isWebKitBased() && _inIframe()) {
+        // WebKit browsers don't persist local storage for third-party iframes.
+
         return true;
     }
 
@@ -57,7 +74,7 @@ function setupJitsiLocalStorage() {
 
     if (shouldUseHostPageLocalStorage(urlParams)) {
         try {
-            const localStorageContent = JSON.parse(urlParams['appData.localStorageContent']);
+            const localStorageContent = Bourne.parse(urlParams['appData.localStorageContent']);
 
             if (typeof localStorageContent === 'object') {
                 Object.keys(localStorageContent).forEach(key => {

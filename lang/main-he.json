@@ -53,10 +53,12 @@
         "noMessagesMessage": "אין עדיין הודעות בפגישה. התחל שיחה כאן!",
         "nickname": {
             "popover": "בחר שם משתמש",
-            "title": "נא להזין שם משתמש בכדי להשתמש בצ'אט"
+            "title": "נא להזין שם משתמש בכדי להשתמש בצ'אט",
+            "titleWithPolls": "נא להזין שם משתמש בכדי להשתמש בצ'אט"
         },
         "privateNotice": "הודעה פרטית אל {{recipient}}",
         "title": "צ'אט",
+        "titleWithPolls": "צ'אט",
         "you": "אתה"
     },
     "chromeExtensionBanner": {

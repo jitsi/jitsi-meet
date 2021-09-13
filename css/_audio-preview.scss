@@ -9,6 +9,11 @@
         max-height: 456px;
         overflow: auto;
         width: 300px;
+        &-ul {
+            margin:0;
+            padding:0;
+            list-style-type: none;
+        }
     }
 
     &-header {
@@ -64,7 +69,13 @@
     &-speaker {
         position: relative;
 
-        &:hover {
+        &-ul {
+            margin:0;
+            padding:0;
+            list-style-type: none;
+        }
+
+        &:hover, &:focus-within, &:focus {
             .audio-preview-entry {
                 background: #36383C;
                 margin-left: 0;
@@ -81,7 +92,7 @@
             }
 
             .audio-preview-entry-text {
-                max-width: 196px;
+                max-width: 178px;
             }
         }
 
@@ -90,7 +101,7 @@
         }
 
         .audio-preview-entry-text {
-            max-width: 256px;
+            max-width: 238px;
         }
     }
 
@@ -150,8 +161,9 @@
         color: #1C2025;
         cursor: pointer;
         font-weight: 600;
+        font-size: 0.8rem;
         line-height: 24px;
-        padding: 2px 16px;
+        padding: 2px 8px;
         position: absolute;
         right: 16px;
         top: 5px;
@@ -161,5 +173,11 @@
         position: absolute;
         right: 16px;
         top: 14px;
+    }
+
+    // Override @atlaskit/InlineDialog container which is made with styled components
+    & > div:nth-child(2) {
+        outline: none;
+        padding: 0;
     }
 }

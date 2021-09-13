@@ -6,6 +6,10 @@ import { translate } from '../../i18n';
 import { Container, Text } from '../../react';
 
 type Props = {
+
+    /**
+     * Invoked to obtain translated strings.
+     */
     t: Function
 };
 

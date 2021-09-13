@@ -3,14 +3,15 @@
 import { getActiveSession } from '../../features/recording/functions';
 import { getRoomName } from '../base/conference';
 import { getInviteURL } from '../base/connection';
+import { isIosMobileBrowser } from '../base/environment/utils';
 import { i18next } from '../base/i18n';
 import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 import { getLocalParticipant, isLocalParticipantModerator } from '../base/participants';
 import { toState } from '../base/redux';
 import { doGetJSON, parseURIString } from '../base/util';
-import { isVpaasMeeting } from '../billing-counter/functions';
+import { isVpaasMeeting } from '../jaas/functions';
 
-import { SIP_ADDRESS_REGEX } from './constants';
+import { INVITE_TYPES, SIP_ADDRESS_REGEX } from './constants';
 import logger from './logger';
 
 declare var $: Function;
@@ -227,13 +228,13 @@ export function getInviteResultsForQuery(
              * the phone number can then be cleaned up when convenient.
              */
             const hasPhoneResult
-                = peopleResults.find(result => result.type === 'phone');
+                = peopleResults.find(result => result.type === INVITE_TYPES.PHONE);
 
             if (!hasPhoneResult && typeof phoneResults.allow === 'boolean') {
                 results.push({
                     allowed: phoneResults.allow,
                     country: phoneResults.country,
-                    type: 'phone',
+                    type: INVITE_TYPES.PHONE,
                     number: phoneResults.phone,
                     originalEntry: text,
                     showCountryCodeReminder: !hasCountryCode
@@ -242,13 +243,56 @@ export function getInviteResultsForQuery(
 
             if (sipInviteEnabled && isASipAddress(text)) {
                 results.push({
-                    type: 'sip',
+                    type: INVITE_TYPES.SIP,
                     address: text
                 });
             }
 
             return results;
         });
+}
+
+/**
+ * Creates a custom no new lines message for iOS default mail describing how to dial in to the conference.
+ *
+ * @returns {string}
+ */
+export function getInviteTextiOS({
+    state,
+    phoneNumber,
+    t
+}: Object) {
+    if (!isIosMobileBrowser()) {
+        return '';
+    }
+
+    const dialIn = state['features/invite'];
+    const inviteUrl = getInviteURL(state);
+    const localParticipant = getLocalParticipant(state);
+    const localParticipantName = localParticipant?.name;
+
+    const inviteURL = _decodeRoomURI(inviteUrl);
+
+    let invite = localParticipantName
+        ? t('info.inviteTextiOSPersonal', { name: localParticipantName })
+        : t('info.inviteURLFirstPartGeneral');
+
+    invite += ' ';
+
+    invite += t('info.inviteTextiOSInviteUrl', { inviteUrl });
+    invite += ' ';
+
+    if (shouldDisplayDialIn(dialIn)) {
+        invite += t('info.inviteTextiOSPhone', {
+            number: phoneNumber,
+            conferenceID: dialIn.conferenceID,
+            didUrl: getDialInfoPageURL(state)
+        });
+    }
+    invite += ' ';
+    invite += t('info.inviteTextiOSJoinSilent', { silentUrl: `${inviteURL}#config.startSilent=true` });
+
+    return invite;
 }
 
 /**
@@ -271,7 +315,6 @@ export function getInviteText({
     const localParticipantName = localParticipant?.name;
 
     const inviteURL = _decodeRoomURI(inviteUrl);
-
     let invite = localParticipantName
         ? t('info.inviteURLFirstPartPersonal', { name: localParticipantName })
         : t('info.inviteURLFirstPartGeneral');
@@ -396,7 +439,7 @@ export function isDialOutEnabled(state: Object): boolean {
  */
 export function isSipInviteEnabled(state: Object): boolean {
     const { sipInviteUrl } = state['features/base/config'];
-    const { features = {} } = getLocalParticipant(state);
+    const { features = {} } = getLocalParticipant(state) || {};
 
     return state['features/base/jwt'].jwt
         && Boolean(sipInviteUrl)
@@ -558,7 +601,7 @@ export function getShareInfoText(
             .catch(error =>
                 logger.error('Error fetching numbers or conferenceID', error))
             .then(defaultDialInNumber => {
-                let dialInfoPageUrl = getDialInfoPageURL(state);
+                let dialInfoPageUrl = getDialInfoPageURL(state, room);
 
                 if (useHtml) {
                     dialInfoPageUrl
@@ -580,11 +623,12 @@ export function getShareInfoText(
  * Generates the URL for the static dial in info page.
  *
  * @param {Object} state - The state from the Redux store.
+ * @param {string?} roomName - The conference name. Optional name, if missing will be extracted from state.
  * @returns {string}
  */
-export function getDialInfoPageURL(state: Object) {
+export function getDialInfoPageURL(state: Object, roomName: ?string) {
     const { didPageUrl } = state['features/dynamic-branding'];
-    const conferenceName = getRoomName(state);
+    const conferenceName = roomName ?? getRoomName(state);
     const { locationURL } = state['features/base/connection'];
     const { href } = locationURL;
     const room = _decodeRoomURI(conferenceName);
@@ -829,8 +873,9 @@ export function inviteSipEndpoints( // eslint-disable-line max-params
         return Promise.resolve();
     }
 
+    const regex = new RegExp(`/${roomName}`, 'i');
     const baseUrl = Object.assign(new URL(locationURL.toString()), {
-        pathname: locationURL.pathname.replace(`/${roomName}`, ''),
+        pathname: locationURL.pathname.replace(regex, ''),
         hash: '',
         search: ''
     });

@@ -383,6 +383,26 @@ function _visitNode(node, callback) {
     // WebRTC
     require('./webrtc');
 
+    // Performance API
+
+    // RN 0.61 does not provide performance.now(), and react-native-performance
+    // requires it.
+    const now = () => Date.now();
+
+    if (!global.performance) {
+        global.performance = {};
+    }
+
+    if (!global.performance.now) {
+        global.performance.now = now;
+    }
+
+    const perf = require('react-native-performance');
+
+    global.performance = perf.default;
+    global.performance.now = now;
+    global.PerformanceObserver = perf.PerformanceObserver;
+
     // CallStats
     //
     // Required by:

@@ -51,7 +51,12 @@ type Props = {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * The id of the dropdown element
+     */
+    id: string
 };
 
 /**
@@ -81,6 +86,10 @@ class DeviceSelector extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
+        if (this.props.hasPermission === undefined) {
+            return null;
+        }
+
         if (!this.props.hasPermission) {
             return this._renderNoPermission();
         }
@@ -134,14 +143,10 @@ class DeviceSelector extends Component<Props> {
     _createDropdownItem(device) {
         return (
             <DropdownItem
+                data-deviceid = { device.deviceId }
+                isSelected = { device.deviceId === this.props.selectedDeviceId }
                 key = { device.deviceId }
-                // eslint-disable-next-line react/jsx-no-bind
-                onClick = {
-                    e => {
-                        e.stopPropagation();
-                        this._onSelect(device.deviceId);
-                    }
-                }>
+                onClick = { this._onSelect }>
                 { device.label || device.deviceId }
             </DropdownItem>
         );
@@ -183,7 +188,8 @@ class DeviceSelector extends Component<Props> {
                     shouldFitContainer = { true }
                     trigger = { triggerText }
                     triggerButtonProps = {{
-                        shouldFitContainer: true
+                        shouldFitContainer: true,
+                        id: this.props.id
                     }}
                     triggerType = 'button'>
                     <DropdownItemGroup>
@@ -199,13 +205,16 @@ class DeviceSelector extends Component<Props> {
     /**
      * Invokes the passed in callback to notify of selection changes.
      *
-     * @param {Object} newDeviceId - Selected device id from DropdownMenu option.
+     * @param {Object} e - The key event to handle.
+     *
      * @private
      * @returns {void}
      */
-    _onSelect(newDeviceId) {
-        if (this.props.selectedDeviceId !== newDeviceId) {
-            this.props.onSelect(newDeviceId);
+    _onSelect(e) {
+        const deviceId = e.currentTarget.getAttribute('data-deviceid');
+
+        if (this.props.selectedDeviceId !== deviceId) {
+            this.props.onSelect(deviceId);
         }
     }
 

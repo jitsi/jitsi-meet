@@ -51,6 +51,15 @@ export function isMacOS() {
 }
 
 /**
+ * Returns whether or not the current OS is Windows.
+ *
+ * @returns {boolean}
+ */
+export function isWindows() {
+    return Platform.OS === 'windows';
+}
+
+/**
  * Returns whether or not the current browser or the list of passed in browsers
  * is considered suboptimal. Suboptimal means it is a supported browser but has
  * not been explicitly listed as being optimal, possibly due to functionality

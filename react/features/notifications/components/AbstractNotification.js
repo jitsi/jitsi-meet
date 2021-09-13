@@ -90,7 +90,7 @@ export type Props = {
     /**
      * The unique identifier for the notification.
      */
-    uid: number
+    uid: string
 };
 
 /**

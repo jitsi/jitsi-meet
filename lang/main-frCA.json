@@ -53,10 +53,12 @@
         "noMessagesMessage": "Il n'y a pas encore de messages dans cette réunion. Démarrez une conversation ici !",
         "nickname": {
             "popover": "Choisissez un nom d'affichage",
-            "title": "Entrer un nom d'affichage pour utiliser le clavardage"
+            "title": "Entrer un nom d'affichage pour utiliser le clavardage",
+            "titleWithPolls": "Entrer un nom d'affichage pour utiliser le clavardage"
         },
         "privateNotice": "Message privé à {{recipient}}",
         "title": "Clavardage",
+        "titleWithPolls": "Clavardage",
         "you": "vous"
     },
     "connectingOverlay": {
