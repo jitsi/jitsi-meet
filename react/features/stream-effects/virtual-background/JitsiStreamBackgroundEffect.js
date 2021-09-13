@@ -34,6 +34,9 @@ export default class JitsiStreamBackgroundEffect {
     isEnabled: Function;
     startEffect: Function;
     stopEffect: Function;
+    drawScale: number;
+    xScale: number;
+    yScale: number;
 
     /**
      * Represents a modified video MediaStream track.
@@ -99,6 +102,24 @@ export default class JitsiStreamBackgroundEffect {
         this._outputCanvasElement.height = parseInt(height, 10);
         this._outputCanvasElement.width = parseInt(width, 10);
         this._outputCanvasCtx.globalCompositeOperation = 'copy';
+        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM) {
+            this._outputCanvasElement.height = window.innerHeight;
+            this._outputCanvasElement.width = window.innerWidth;
+            this._inputVideoElement.height = window.innerHeight;
+            this._inputVideoElement.width = window.innerWidth;
+
+            // Get scale.
+            this.drawScale = Math.min(
+                this._outputCanvasElement.width / this._virtualVideo.videoWidth,
+                this._outputCanvasElement.height / this._virtualVideo.videoHeight
+            );
+
+            // Get the top left position of the video.
+            this.xScale = (this._outputCanvasElement.width / 2)
+            - ((this._virtualVideo.videoWidth / 2) * this.drawScale);
+            this.yScale = (this._outputCanvasElement.height / 2)
+            - ((this._virtualVideo.videoHeight / 2) * this.drawScale);
+        }
 
         // Draw segmentation mask.
 
@@ -112,7 +133,6 @@ export default class JitsiStreamBackgroundEffect {
             this._outputCanvasCtx.scale(-1, 1);
             this._outputCanvasCtx.translate(-this._outputCanvasElement.width, 0);
         }
-
         this._outputCanvasCtx.drawImage(
             this._segmentationMaskCanvas,
             0,
@@ -121,10 +141,12 @@ export default class JitsiStreamBackgroundEffect {
             this._options.height,
             backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM
               && this._options?.virtualBackground?.dragAndDropOptions?.x
-                ? this._options?.virtualBackground?.dragAndDropOptions?.x * this._outputCanvasElement.width : 0,
+                ? this.xScale + (this._options?.virtualBackground?.dragAndDropOptions?.x
+                * (this._outputCanvasElement.width - (this.xScale * 2))) : 0,
             backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM
               && this._options?.virtualBackground?.dragAndDropOptions?.y
-                ? this._options?.virtualBackground?.dragAndDropOptions?.y * this._outputCanvasElement.height : 0,
+                ? this.yScale + (this._options?.virtualBackground?.dragAndDropOptions?.y
+                * (this._outputCanvasElement.height - (this.yScale * 2))) : 0,
             backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM
               && this._options?.virtualBackground?.dragAndDropOptions?.width
                 ? this._options?.virtualBackground?.dragAndDropOptions?.width : this._inputVideoElement.width,
@@ -153,8 +175,10 @@ export default class JitsiStreamBackgroundEffect {
                 0,
                 this._outputCanvasElement.width,
                 this._outputCanvasElement.height,
-                this._options?.virtualBackground?.dragAndDropOptions?.x * this._outputCanvasElement.width,
-                this._options?.virtualBackground?.dragAndDropOptions?.y * this._outputCanvasElement.height,
+                this.xScale + (this._options?.virtualBackground?.dragAndDropOptions?.x
+                * (this._outputCanvasElement.width - (this.xScale * 2))),
+                this.yScale + (this._options?.virtualBackground?.dragAndDropOptions?.y
+                * (this._outputCanvasElement.height - (this.yScale * 2))),
                 this._options?.virtualBackground?.dragAndDropOptions?.width,
                 this._options?.virtualBackground?.dragAndDropOptions?.height
             );
@@ -182,22 +206,13 @@ export default class JitsiStreamBackgroundEffect {
             this._outputCanvasCtx.globalAlpha = 0;
         } else if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE
             || backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM) {
-            // Get the scale.
-            const scale = Math.min(
-                this._outputCanvasElement.width / this._virtualVideo.videoWidth,
-                this._outputCanvasElement.height / this._virtualVideo.videoHeight
-            );
-
-            // Get the top left position of the video.
-            const x = (this._outputCanvasElement.width / 2) - ((this._virtualVideo.videoWidth / 2) * scale);
-            const y = (this._outputCanvasElement.height / 2) - ((this._virtualVideo.videoHeight / 2) * scale);
 
             this._outputCanvasCtx.drawImage(
                 this._virtualVideo,
-                x,
-                y,
-                this._virtualVideo.videoWidth * scale,
-                this._virtualVideo.videoHeight * scale
+                this.xScale,
+                this.yScale,
+                this._virtualVideo.videoWidth * this.drawScale,
+                this._virtualVideo.videoHeight * this.drawScale
             );
         } else {
             this._outputCanvasCtx.filter = `blur(${this._options.virtualBackground.blurValue}px)`;
