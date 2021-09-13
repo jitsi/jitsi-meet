@@ -174,11 +174,17 @@ export function setOverflowDrawer(displayAsDrawer: boolean) {
  */
 export function disableToolboxOnTileView() {
     return (dispatch: Dispatch<any>, getState: Function) => {
-        if (!isLayoutTileView(getState())) {
+        const state = getState();
+        const { overflowDrawer } = state['features/toolbox'];
+        const { contextMenuOpened } = state['features/base/responsive-ui'];
+
+        if (overflowDrawer || !contextMenuOpened) {
             return;
         }
 
-        dispatch(setToolboxEnabled(false));
-        dispatch(hideToolbox(true));
+        if (isLayoutTileView(state)) {
+            dispatch(setToolboxEnabled(false));
+            dispatch(hideToolbox(true));
+        }
     };
 }

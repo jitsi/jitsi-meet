@@ -373,6 +373,9 @@ class Filmstrip extends PureComponent <Props> {
         }
 
         if (_currentLayout === LAYOUTS.TILE_VIEW) {
+            // Fixes case in which context menu overflows and creates a scroll on the whole filmstrip videos pane.
+            const style = { overflow: 'visible' };
+
             return (
                 <FixedSizeGrid
                     className = 'filmstrip__videos remote-videos'
@@ -386,6 +389,7 @@ class Filmstrip extends PureComponent <Props> {
                     overscanRowCount = { 1 }
                     rowCount = { _rows }
                     rowHeight = { _thumbnailHeight + TILE_VERTICAL_MARGIN }
+                    style = { style }
                     width = { _filmstripWidth }>
                     {
                         ThumbnailWrapper

@@ -1,6 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
+import { batch } from 'react-redux';
 
 import ConnectionIndicatorContent from
     '../../../../features/connection-indicator/components/web/ConnectionIndicatorContent';
@@ -10,6 +11,7 @@ import { Icon, IconMenuThumb } from '../../../base/icons';
 import { getLocalParticipant, getParticipantById, PARTICIPANT_ROLE } from '../../../base/participants';
 import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
+import { isParticipantContextMenuOpen } from '../../../base/responsive-ui/actions';
 import { requestRemoteControl, stopController } from '../../../remote-control';
 import { setToolboxEnabled, disableToolboxOnTileView } from '../../../toolbox/actions';
 import { isToolboxEnabled } from '../../../toolbox/functions';
@@ -202,7 +204,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _showConnectionInfo, _participantDisplayName, participantID } = this.props;
+        const { _overflowDrawer, _showConnectionInfo, _participantDisplayName, participantID } = this.props;
         const content = _showConnectionInfo
             ? <ConnectionIndicatorContent participantId = { participantID } />
             : this._renderRemoteVideoMenu();
@@ -218,18 +220,19 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                 content = { content }
                 onPopoverClose = { this._onPopoverClose }
                 onPopoverOpen = { this._onPopoverOpen }
-                overflowDrawer = { this.props._overflowDrawer }
+                overflowDrawer = { _overflowDrawer }
                 position = { this.props._menuPosition }
                 ref = { this.popoverRef }>
-                {!isMobileBrowser() && (
+                {!_overflowDrawer && (
                     <span className = 'popover-trigger remote-video-menu-trigger'>
-                        <Icon
+                        {!isMobileBrowser() && <Icon
                             ariaLabel = { this.props.t('dialog.remoteUserControls', { username }) }
                             role = 'button'
                             size = '1.4em'
                             src = { IconMenuThumb }
                             tabIndex = { 0 }
                             title = { this.props.t('dialog.remoteUserControls', { username }) } />
+                        }
                     </span>
                 )}
             </Popover>
@@ -244,7 +247,12 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
      * @returns {void}
      */
     _onPopoverOpen() {
-        this.props.dispatch(disableToolboxOnTileView());
+        const { dispatch } = this.props;
+
+        batch(() => {
+            dispatch(isParticipantContextMenuOpen(true));
+            dispatch(disableToolboxOnTileView());
+        });
     }
 
     _onPopoverClose: () => void;
@@ -255,8 +263,13 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
      * @returns {void}
      */
     _onPopoverClose() {
-        this.props.dispatch(setToolboxEnabled(this.initialToolboxEnabled));
-        this.props.dispatch(renderConnectionStatus(false));
+        const { dispatch } = this.props;
+
+        batch(() => {
+            dispatch(isParticipantContextMenuOpen(false));
+            dispatch(setToolboxEnabled(this.initialToolboxEnabled));
+            dispatch(renderConnectionStatus(false));
+        });
     }
 
     /**
@@ -349,6 +362,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
         if (isMobileBrowser()) {
             buttons.push(
                 <ConnectionStatusButton
+                    key = 'conn-status'
                     participantId = { participantID } />
             );
         }
