@@ -1350,7 +1350,7 @@ export default {
 
         });
 
-        return Promise.all(promises).then(() => {
+        return Promise.allSettled(promises).then(() => {
             this._localTracksInitialized = true;
             logger.log(`Initialized with ${tracks.length} local tracks`);
         });
