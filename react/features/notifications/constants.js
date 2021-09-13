@@ -1,5 +1,12 @@
 // @flow
 
+import {
+    AUDIO_MODERATION_NOTIFICATION_ID,
+    CS_MODERATION_NOTIFICATION_ID,
+    VIDEO_MODERATION_NOTIFICATION_ID
+} from '../av-moderation/middleware';
+import { MEDIA_TYPE } from '../base/media';
+
 /**
  * The standard time when auto-disappearing notifications should disappear.
  */
@@ -35,3 +42,9 @@ export const NOTIFICATION_TYPE_PRIORITIES = {
  * Amount of participants beyond which no join notification will be emitted.
  */
 export const SILENT_JOIN_THRESHOLD = 30;
+
+export const MODERATION_NOTIFICATIONS = {
+    [MEDIA_TYPE.AUDIO]: AUDIO_MODERATION_NOTIFICATION_ID,
+    [MEDIA_TYPE.VIDEO]: VIDEO_MODERATION_NOTIFICATION_ID,
+    [MEDIA_TYPE.PRESENTER]: CS_MODERATION_NOTIFICATION_ID
+};

@@ -41,9 +41,9 @@ import {
     isParticipantPending
 } from './functions';
 
-const VIDEO_MODERATION_NOTIFICATION_ID = 'video-moderation';
-const AUDIO_MODERATION_NOTIFICATION_ID = 'audio-moderation';
-const CS_MODERATION_NOTIFICATION_ID = 'video-moderation';
+export const AUDIO_MODERATION_NOTIFICATION_ID = 'audio-moderation';
+export const VIDEO_MODERATION_NOTIFICATION_ID = 'video-moderation';
+export const CS_MODERATION_NOTIFICATION_ID = 'screensharing-moderation';
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     const { type } = action;
