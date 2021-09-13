@@ -230,7 +230,9 @@ class Popover extends Component<Props, State> {
     _onTouchStart(event) {
         if (this.state.showDialog
             && !this.props.overflowDrawer
-            && !this._containerRef?.current?.contains(event.target)) {
+            && this._containerRef
+            && this._containerRef.current
+            && !this._containerRef.current.contains(event.target)) {
             this._onHideDialog();
         }
     }
