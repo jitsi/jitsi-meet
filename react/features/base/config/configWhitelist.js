@@ -129,6 +129,7 @@ export default [
     'enableSaveLogs',
     'enableScreenshotCapture',
     'enableTalkWhileMuted',
+    'enableUnifiedOnChrome',
     'enableNoAudioDetection',
     'enableNoisyMicDetection',
     'enableTcc',
