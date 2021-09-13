@@ -11,11 +11,10 @@ import {
 } from '../../../base/participants';
 import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
-import { isParticipantContextMenuOpen } from '../../../base/responsive-ui/actions';
+import { setParticipantContextMenuOpen } from '../../../base/responsive-ui/actions';
 import { getLocalVideoTrack } from '../../../base/tracks';
 import ConnectionIndicatorContent from '../../../connection-indicator/components/web/ConnectionIndicatorContent';
-import { setToolboxEnabled, disableToolboxOnTileView } from '../../../toolbox/actions';
-import { isToolboxEnabled } from '../../../toolbox/functions';
+import { hideToolboxOnTileView } from '../../../toolbox/actions';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
 import { renderConnectionStatus } from '../../actions.web';
 
@@ -68,11 +67,6 @@ type Props = {
     _showLocalVideoFlipButton: boolean,
 
     /**
-     * Whether the toolbox is enabled or not.
-     */
-    _toolboxEnabled: boolean,
-
-    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -85,11 +79,6 @@ type Props = {
  * @extends {Component}
  */
 class LocalVideoMenuTriggerButton extends Component<Props> {
-    /**
-     * Preserve the intial toolbox state.
-     */
-     initialToolboxEnabled: boolean;
-
     /**
      * Reference to the Popover instance.
      */
@@ -105,7 +94,6 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
         super(props);
 
         this.popoverRef = React.createRef();
-        this.initialToolboxEnabled = true;
         this._onPopoverClose = this._onPopoverClose.bind(this);
         this._onPopoverOpen = this._onPopoverOpen.bind(this);
     }
@@ -131,8 +119,6 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
         if (this.props.getRef) {
             this.props.getRef(this);
         }
-
-        this.initialToolboxEnabled = this.props._toolboxEnabled;
     }
 
     /**
@@ -209,12 +195,8 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
      * @returns {void}
      */
     _onPopoverOpen() {
-        const { dispatch } = this.props;
-
-        batch(() => {
-            dispatch(isParticipantContextMenuOpen(true));
-            dispatch(disableToolboxOnTileView());
-        });
+        this.props.dispatch(setParticipantContextMenuOpen(true));
+        this.props.dispatch(hideToolboxOnTileView());
     }
 
     _onPopoverClose: () => void;
@@ -228,8 +210,7 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
         const { dispatch } = this.props;
 
         batch(() => {
-            dispatch(isParticipantContextMenuOpen(false));
-            dispatch(setToolboxEnabled(this.initialToolboxEnabled));
+            dispatch(setParticipantContextMenuOpen(false));
             dispatch(renderConnectionStatus(false));
         });
     }
@@ -271,8 +252,7 @@ function _mapStateToProps(state) {
         _showLocalVideoFlipButton: !disableLocalVideoFlip && videoTrack?.videoType !== 'desktop',
         _overflowDrawer: overflowDrawer,
         _localParticipantId: localParticipant.id,
-        _showConnectionInfo: showConnectionInfo,
-        _toolboxEnabled: isToolboxEnabled(state)
+        _showConnectionInfo: showConnectionInfo
     };
 }
 

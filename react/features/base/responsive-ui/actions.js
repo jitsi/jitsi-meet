@@ -117,7 +117,7 @@ export function setReducedUI(width: number, height: number): Function {
  * @param {boolean} isOpen - Whether local or remote context menu is open.
  * @returns {Object}
  */
-export function isParticipantContextMenuOpen(isOpen: boolean) {
+export function setParticipantContextMenuOpen(isOpen: boolean) {
     return {
         type: SET_CONTEXT_MENU_OPEN,
         isOpen

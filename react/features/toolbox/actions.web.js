@@ -13,8 +13,7 @@ import {
     clearToolboxTimeout,
     setToolboxTimeout,
     setToolboxTimeoutMS,
-    setToolboxVisible,
-    setToolboxEnabled
+    setToolboxVisible
 } from './actions.native';
 
 declare var interfaceConfig: Object;
@@ -132,10 +131,13 @@ export function showToolbox(timeout: number = 0): Object {
             alwaysVisible,
             enabled,
             timeoutMS,
-            visible
+            visible,
+            overflowDrawer
         } = state['features/toolbox'];
+        const { contextMenuOpened } = state['features/base/responsive-ui'];
 
-        if (enabled && !visible) {
+        if (enabled && !visible
+            && !(isLayoutTileView(state) && contextMenuOpened && !overflowDrawer)) {
             dispatch(setToolboxVisible(true));
 
             // If the Toolbox is always visible, there's no need for a timeout
@@ -167,23 +169,19 @@ export function setOverflowDrawer(displayAsDrawer: boolean) {
     };
 }
 
+
 /**
  * Disables and hides the toolbox on demand when in tile view.
  *
  * @returns {void}
  */
-export function disableToolboxOnTileView() {
+export function hideToolboxOnTileView() {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
         const { overflowDrawer } = state['features/toolbox'];
-        const { contextMenuOpened } = state['features/base/responsive-ui'];
 
-        if (overflowDrawer || !contextMenuOpened) {
-            return;
-        }
 
-        if (isLayoutTileView(state)) {
-            dispatch(setToolboxEnabled(false));
+        if (!overflowDrawer && isLayoutTileView(state)) {
             dispatch(hideToolbox(true));
         }
     };
