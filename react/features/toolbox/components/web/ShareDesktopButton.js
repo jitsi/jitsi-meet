@@ -29,11 +29,6 @@ type Props = AbstractButtonProps & {
      * The redux {@code dispatch} function.
      */
      dispatch: Function,
-
-     /**
-      * External handler for click action.
-      */
-      handleClick: Function
 };
 
 /**
@@ -79,7 +74,13 @@ class ShareDesktopButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        this.props.handleClick();
+        const { handleClick } = this.props;
+
+        if (handleClick) {
+            handleClick();
+
+            return;
+        }
     }
 
     /**

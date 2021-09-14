@@ -41,7 +41,13 @@ class SpeakerStatsButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { _conference, dispatch } = this.props;
+        const { _conference, dispatch, handleClick } = this.props;
+
+        if (handleClick) {
+            handleClick();
+
+            return;
+        }
 
         sendAnalytics(createToolbarEvent('speaker.stats'));
         dispatch(openDialog(SpeakerStats, {
