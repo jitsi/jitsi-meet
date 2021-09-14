@@ -696,6 +696,7 @@
         "errorDialOutFailed": "Could not dial out. Call failed",
         "errorDialOutStatus": "Error getting dial out status",
         "errorMissingName": "Please enter your name to join the meeting",
+        "errorNoPermissions": "You need to enable microphone and camera access",
         "errorStatusCode": "Error dialing out, status code: {{status}}",
         "errorValidation": "Number validation failed",
         "iWantToDialIn": "I want to dial in",
