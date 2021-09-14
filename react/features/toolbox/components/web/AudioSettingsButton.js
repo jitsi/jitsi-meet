@@ -16,6 +16,11 @@ import AudioMuteButton from '../AudioMuteButton';
 type Props = {
 
     /**
+     * External handler for click action.
+     */
+     handleClick: Function,
+
+    /**
      * Indicates whether audio permissions have been granted or denied.
      */
     hasPermissions: boolean,
@@ -62,6 +67,7 @@ class AudioSettingsButton extends Component<Props> {
         super(props);
 
         this._onEscClick = this._onEscClick.bind(this);
+        this._onClick = this._onClick.bind(this);
     }
 
     _onEscClick: (KeyboardEvent) => void;
@@ -76,8 +82,27 @@ class AudioSettingsButton extends Component<Props> {
         if (event.key === 'Escape' && this.props.isOpen) {
             event.preventDefault();
             event.stopPropagation();
-            this.props.onAudioOptionsClick();
+            this._onClick();
         }
+    }
+
+    _onClick: () => void;
+
+    /**
+     * Click handler for the more actions entries.
+     *
+     * @returns {void}
+     */
+    _onClick() {
+        const { handleClick, onAudioOptionsClick } = this.props;
+
+        if (handleClick) {
+            handleClick();
+
+            return;
+        }
+
+        onAudioOptionsClick();
     }
 
     /**
@@ -86,7 +111,7 @@ class AudioSettingsButton extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { hasPermissions, isDisabled, onAudioOptionsClick, visible, isOpen, t } = this.props;
+        const { handleClick, hasPermissions, isDisabled, visible, isOpen, t } = this.props;
         const settingsDisabled = !hasPermissions
             || isDisabled
             || !JitsiMeetJS.mediaDevices.isMultipleAudioInputSupported();
@@ -102,12 +127,12 @@ class AudioSettingsButton extends Component<Props> {
                     iconDisabled = { settingsDisabled }
                     iconId = 'audio-settings-button'
                     iconTooltip = { t('toolbar.audioSettings') }
-                    onIconClick = { onAudioOptionsClick }
+                    onIconClick = { this._onClick }
                     onIconKeyDown = { this._onEscClick }>
-                    <AudioMuteButton />
+                    <AudioMuteButton handleClick = { handleClick } />
                 </ToolboxButtonWithIcon>
             </AudioSettingsPopup>
-        ) : <AudioMuteButton />;
+        ) : <AudioMuteButton handleClick = { handleClick } />;
     }
 }
 

@@ -18,11 +18,6 @@ type Props = AbstractButtonProps & {
      * Whether or not the chat feature is currently displayed.
      */
      _chatOpen: boolean,
-
-    /**
-     * External handler for click action.
-     */
-    handleClick: Function
 };
 
 /**
@@ -61,7 +56,13 @@ class ChatButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        this.props.handleClick();
+        const { handleClick } = this.props;
+
+        if (handleClick) {
+            handleClick();
+
+            return;
+        }
     }
 
     /**
