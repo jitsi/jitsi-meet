@@ -199,18 +199,13 @@ function MeetingParticipantItem({
         };
     }, [ _audioTrack ]);
 
-    const _getAudioMediaState = () => {
-        if (_audioMediaState === MEDIA_STATE.UNMUTED && hasAudioLevels) {
-            return MEDIA_STATE.DOMINANT_SPEAKER;
-        }
-
-        return _audioMediaState;
-    };
+    const audioMediaState = _audioMediaState === MEDIA_STATE.UNMUTED && hasAudioLevels
+        ? MEDIA_STATE.DOMINANT_SPEAKER : _audioMediaState;
 
     return (
         <ParticipantItem
             actionsTrigger = { ACTION_TRIGGER.HOVER }
-            audioMediaState = { _getAudioMediaState() }
+            audioMediaState = { audioMediaState }
             displayName = { _displayName }
             isHighlighted = { isHighlighted }
             isModerator = { isParticipantModerator(_participant) }
@@ -234,7 +229,7 @@ function MeetingParticipantItem({
                     <ParticipantActionEllipsis
                         aria-label = { participantActionEllipsisLabel }
                         onClick = { onContextMenu } />
-                 </>
+                </>
             }
 
             {!overflowDrawer && _localVideoOwner && _participant?.isFakeParticipant && (
