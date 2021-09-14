@@ -3,6 +3,8 @@ import { BoxModel, ColorPalette, fixAndroidViewClipping } from '../../../base/st
 
 export const INSECURE_ROOM_NAME_LABEL_COLOR = ColorPalette.warning;
 
+const NAVBAR_BUTTON_SIZE = 24;
+
 /**
  * The styles of the feature conference.
  */
@@ -29,6 +31,22 @@ export default {
         flexDirection: 'row'
     },
 
+    inviteButtonContainer: {
+        paddingHorizontal: 10,
+        paddingVertical: 10,
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        zIndex: 1
+    },
+
+    inviteButton: {
+        iconStyle: {
+            color: ColorPalette.white,
+            fontSize: NAVBAR_BUTTON_SIZE
+        },
+        underlayColor: 'transparent'
+    },
 
     lonelyButton: {
         alignItems: 'center',
@@ -54,16 +72,18 @@ export default {
     },
 
     pipButtonContainer: {
+        paddingHorizontal: 10,
+        paddingVertical: 10,
         position: 'absolute',
-        top: 10,
-        left: 5,
+        top: 0,
+        left: 0,
         zIndex: 1
     },
 
     pipButton: {
         iconStyle: {
             color: ColorPalette.white,
-            fontSize: 24
+            fontSize: NAVBAR_BUTTON_SIZE
         },
         underlayColor: 'transparent'
     },
@@ -117,7 +137,8 @@ export default {
     },
 
     roomNameWrapper: {
-        flexDirection: 'row'
+        flexDirection: 'row',
+        marginHorizontal: 35
     },
 
     /**
