@@ -29,6 +29,7 @@ import { shouldShowModeratedNotification } from './react/features/av-moderation/
 import {
     AVATAR_URL_COMMAND,
     EMAIL_COMMAND,
+    _conferenceWillJoin,
     authStatusChanged,
     commonUserJoinedHandling,
     commonUserLeftHandling,
@@ -47,7 +48,7 @@ import {
     onStartMutedPolicyChanged,
     p2pStatusChanged,
     sendLocalParticipant,
-    _conferenceWillJoin
+    nonParticipantMessageReceived
 } from './react/features/base/conference';
 import { getReplaceParticipant } from './react/features/base/config/functions';
 import {
@@ -1360,11 +1361,49 @@ export default {
         }
     },
 
-    _createRoom(localTracks) {
+    /**
+     * Used by the Breakout Rooms feature to join a breakout room or go back to the main room.
+     */
+    async joinRoom(roomName, isBreakoutRoom = false) {
+        this.roomName = roomName;
+
+        const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks();
+        const localTracks = await tryCreateLocalTracks;
+
+        this._displayErrorsForCreateInitialLocalTracks(errors);
+        localTracks.forEach(track => {
+            if ((track.isAudioTrack() && this.isLocalAudioMuted())
+                || (track.isVideoTrack() && this.isLocalVideoMuted())) {
+                track.mute();
+            }
+        });
+        this._createRoom(localTracks, isBreakoutRoom);
+
+        return new Promise((resolve, reject) => {
+            new ConferenceConnector(resolve, reject).connect();
+        });
+    },
+
+    _createRoom(localTracks, isBreakoutRoom = false) {
+        const extraOptions = {};
+
+        if (isBreakoutRoom) {
+            // We must be in a room already.
+            if (!room?.xmpp?.breakoutRoomsComponentAddress) {
+                throw new Error('Breakout Rooms not enabled');
+            }
+
+            // TODO: re-evaluate this. -saghul
+            extraOptions.customDomain = room.xmpp.breakoutRoomsComponentAddress;
+        }
+
         room
             = connection.initJitsiConference(
                 APP.conference.roomName,
-                this._getConferenceOptions());
+                {
+                    ...this._getConferenceOptions(),
+                    ...extraOptions
+                });
 
         // Filter out the tracks that are muted (except on Safari).
         const tracks = browser.isWebKitBased() ? localTracks : localTracks.filter(track => !track.isMuted());
@@ -2223,6 +2262,10 @@ export default {
             });
 
         room.on(
+            JitsiConferenceEvents.NON_PARTICIPANT_MESSAGE_RECEIVED,
+            (...args) => APP.store.dispatch(nonParticipantMessageReceived(...args)));
+
+        room.on(
             JitsiConferenceEvents.LOCK_STATE_CHANGED,
             (...args) => APP.store.dispatch(lockStateChanged(room, ...args)));
 
@@ -2902,6 +2945,17 @@ export default {
             }
             APP.store.dispatch(maybeRedirectToWelcomePage(values[0]));
         });
+    },
+
+    /**
+     * Leaves the room.
+     *
+     * @returns {Promise}
+     */
+    leaveRoom() {
+        if (room && room.isJoined()) {
+            return room.leave();
+        }
     },
 
     /**

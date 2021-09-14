@@ -431,7 +431,10 @@ var config = {
     // hideLobbyButton: false,
 
     // If Lobby is enabled starts knocking automatically.
-    // autoKnockLobby: false
+    // autoKnockLobby: false,
+
+    // Hides add breakout room button
+    // hideAddRoomButton: false,
 
     // Require users to always specify a display name.
     // requireDisplayName: true,
