@@ -7,6 +7,7 @@ import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, hideDialog, isDialogOpen } from '../../../base/dialog';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
+import { BreakoutRoomButton } from '../../../breakout-rooms/components/native';
 import { SharedDocumentButton } from '../../../etherpad';
 import { AudioRouteButton } from '../../../mobile/audio-mode';
 import { ParticipantsPaneButton } from '../../../participants-pane/components/native';
@@ -143,6 +144,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                 <AudioOnlyButton { ...buttonProps } />
                 {!_reactionsEnabled && !toolbarButtons.has('raisehand') && <RaiseHandButton { ...buttonProps } />}
                 <Divider style = { styles.divider } />
+                <BreakoutRoomButton { ...buttonProps } />
                 <SecurityDialogButton { ...buttonProps } />
                 <RecordButton { ...buttonProps } />
                 <LiveStreamButton { ...buttonProps } />

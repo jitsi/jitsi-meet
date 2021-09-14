@@ -39,17 +39,17 @@ type Props = {
     /**
      * Type of trigger for the participant actions
      */
-    actionsTrigger: ActionTrigger,
+    actionsTrigger?: ActionTrigger,
 
     /**
      * Media state for audio
      */
-    audioMediaState: MediaState,
+    audioMediaState?: MediaState,
 
     /**
      * React children
      */
-    children: Node,
+    children?: Node,
 
     /**
      * The name of the participant. Used for showing lobby names.
@@ -69,12 +69,12 @@ type Props = {
     /**
      * True if the participant is local.
      */
-    local: Boolean,
+    local: boolean,
 
     /**
      * Opens a drawer with participant actions.
      */
-    openDrawerForParticipant: Function,
+    openDrawerForParticipant?: Function,
 
     /**
      * Callback for when the mouse leaves this component
@@ -94,12 +94,12 @@ type Props = {
     /**
      * True if the participant have raised hand.
      */
-    raisedHand: boolean,
+    raisedHand?: boolean,
 
     /**
      * Media state for video
      */
-    videoMediaState: MediaState,
+    videoMediaState?: MediaState,
 
     /**
      * Invoked to obtain translated strings.
@@ -109,7 +109,7 @@ type Props = {
     /**
      * The translated "you" text.
      */
-    youText: string
+    youText?: string
 }
 
 /**
@@ -137,7 +137,7 @@ function ParticipantItem({
 }: Props) {
     const ParticipantActions = Actions[actionsTrigger];
     const onClick = useCallback(
-        () => openDrawerForParticipant({
+        () => openDrawerForParticipant && openDrawerForParticipant({
             participantID,
             displayName
         }));

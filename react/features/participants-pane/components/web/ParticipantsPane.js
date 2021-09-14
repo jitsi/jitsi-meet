@@ -7,6 +7,8 @@ import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { isLocalParticipantModerator } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+import { AddBreakoutRoomButton } from '../../../breakout-rooms/components/web/AddBreakoutRoomButton';
+import { RoomList } from '../../../breakout-rooms/components/web/RoomList';
 import { Drawer, DrawerPortal } from '../../../toolbox/components/web';
 import { showOverflowDrawer } from '../../../toolbox/functions';
 import { MuteEveryoneDialog } from '../../../video-menu/components/';
@@ -37,6 +39,11 @@ type Props = {
      * Whether to display the context menu  as a drawer.
      */
     _overflowDrawer: boolean,
+
+    /**
+     * Should the add breakout room button be displayed?
+     */
+    _showAddRoomButton: boolean,
 
     /**
      * Is the participants pane open.
@@ -122,6 +129,7 @@ class ParticipantsPane extends Component<Props, State> {
     render() {
         const {
             _overflowDrawer,
+            _showAddRoomButton,
             _paneOpen,
             _showFooter,
             t
@@ -150,6 +158,8 @@ class ParticipantsPane extends Component<Props, State> {
                             <LobbyParticipants />
                             <AntiCollapse />
                             <MeetingParticipants />
+                            <RoomList />
+                            {_showAddRoomButton && <AddBreakoutRoomButton />}
                         </Container>
                         {_showFooter && (
                             <Footer>
@@ -276,9 +286,12 @@ class ParticipantsPane extends Component<Props, State> {
  */
 function _mapStateToProps(state: Object) {
     const isPaneOpen = getParticipantsPaneOpen(state);
+    const { hideAddRoomButton } = state['features/base/config'];
+    const _isLocalParticipantModerator = isLocalParticipantModerator(state);
 
     return {
         _overflowDrawer: showOverflowDrawer(state),
+        _showAddRoomButton: !hideAddRoomButton && _isLocalParticipantModerator,
         _paneOpen: isPaneOpen,
         _showFooter: isPaneOpen && isLocalParticipantModerator(state)
     };

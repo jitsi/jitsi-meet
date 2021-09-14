@@ -39,6 +39,19 @@
     "audioOnly": {
         "audioOnly": "Low bandwidth"
     },
+    "breakoutRooms": {
+        "defaultName": "Breakout room #{{index}}",
+        "mainRoom": "Main room",
+        "actions": {
+            "add": "Add breakout room",
+            "autoAssign": "Auto assign to breakout rooms",
+            "close": "Close",
+            "join": "Join",
+            "remove": "Remove",
+            "leaveBreakoutRoom": "Leave breakout room",
+            "sendToBreakoutRoom": "Send to {{name}}"
+        }
+    },
     "calendarSync": {
         "addMeetingURL": "Add a meeting link",
         "confirmAddLink": "Do you want to add a Jitsi link to this event?",
@@ -869,6 +882,7 @@
             "audioOnly": "Toggle audio only",
             "audioRoute": "Select the sound device",
             "boo": "Boo",
+            "breakoutRoom": "Join/leave breakout room",
             "callQuality": "Manage video quality",
             "cc": "Toggle subtitles",
             "chat": "Open / Close chat",
@@ -952,7 +966,9 @@
         "hangup": "Leave the meeting",
         "help": "Help",
         "invite": "Invite people",
+        "joinBreakoutRoom": "Join breakout room",
         "laugh": "Laugh",
+        "leaveBreakoutRoom": "Leave breakout room",
         "like": "Thumbs Up",
         "lobbyButtonDisable": "Disable lobby mode",
         "lobbyButtonEnable": "Enable lobby mode",

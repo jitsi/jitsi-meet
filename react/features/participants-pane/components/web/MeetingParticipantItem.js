@@ -54,7 +54,7 @@ type Props = {
     /**
      * True if the participant is the local participant.
      */
-    _local: Boolean,
+    _local: boolean,
 
     /**
      * Shared video local participant owner.

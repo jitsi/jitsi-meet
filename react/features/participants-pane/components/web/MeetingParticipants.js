@@ -11,6 +11,7 @@ import {
     getSortedParticipantIds
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+import { getCurrentRoomId, getRooms } from '../../../breakout-rooms/functions';
 import { showOverflowDrawer } from '../../../toolbox/functions';
 import { muteRemote } from '../../../video-menu/actions.any';
 import { findStyledAncestor, shouldRenderInviteButton } from '../../functions';
@@ -51,7 +52,13 @@ const initialState = Object.freeze(Object.create(null));
  *
  * @returns {ReactNode} - The component.
  */
-function MeetingParticipants({ participantsCount, showInviteButton, overflowDrawer, sortedParticipantIds = [] }) {
+function MeetingParticipants({
+    currentRoom,
+    overflowDrawer,
+    participantsCount,
+    showInviteButton,
+    sortedParticipantIds = []
+}) {
     const dispatch = useDispatch();
     const isMouseOverMenu = useRef(false);
 
@@ -120,7 +127,12 @@ function MeetingParticipants({ participantsCount, showInviteButton, overflowDraw
 
     return (
         <>
-            <Heading>{t('participantsPane.headings.participantsList', { count: participantsCount })}</Heading>
+            <Heading> {
+                currentRoom?.name
+                    ? `${currentRoom.name} (${participantsCount})`
+                    : t('participantsPane.headings.participantsList', { count: participantsCount })
+            }
+            </Heading>
             {showInviteButton && <InviteButton />}
             <div>
                 <MeetingParticipantItems
@@ -169,11 +181,15 @@ function _mapStateToProps(state): Object {
 
     const overflowDrawer = showOverflowDrawer(state);
 
+    const currentRoomId = getCurrentRoomId(state);
+    const { [currentRoomId]: currentRoom } = getRooms(state);
+
     return {
-        sortedParticipantIds,
+        currentRoom,
+        overflowDrawer,
         participantsCount,
         showInviteButton,
-        overflowDrawer
+        sortedParticipantIds
     };
 }
 

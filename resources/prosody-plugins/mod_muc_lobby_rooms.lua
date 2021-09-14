@@ -113,13 +113,19 @@ function filter_stanza(stanza)
 
     if from_domain == lobby_muc_component_config then
         if stanza.name == 'presence' then
-            if presence_check_status(stanza:get_child('x', MUC_NS..'#user'), '110') then
+            local muc_x = stanza:get_child('x', MUC_NS..'#user');
+            if not muc_x or presence_check_status(muc_x, '110') then
                 return stanza;
             end
 
             -- check is an owner, only owners can receive the presence
+            -- do not forward presence of owners (other than unavailable)
             local room = main_muc_service.get_room_from_jid(jid_bare(node .. '@' .. main_muc_component_config));
-            if not room or room.get_affiliation(room, stanza.attr.to) == 'owner' then
+            local item = muc_x:get_child("item");
+            if not room
+                or stanza.attr.type == 'unavailable'
+                or (room.get_affiliation(room, stanza.attr.to) == 'owner'
+                    and room.get_affiliation(room, item.attr.jid) ~= 'owner') then
                 return stanza;
             end
 
