@@ -66,10 +66,24 @@ export default class AbstractSharedVideoDialog<S: *> extends Component < Props, 
             return false;
         }
 
-        const youtubeId = getYoutubeId(trimmedLink);
         const { onPostSubmit } = this.props;
+        const youtubeId = getYoutubeId(trimmedLink);
 
-        onPostSubmit(youtubeId || trimmedLink);
+        if (youtubeId) {
+            onPostSubmit(youtubeId);
+
+            return true;
+        }
+
+        // Check if the URL is valid, native may crash otherwise.
+        try {
+            // eslint-disable-next-line no-new
+            new URL(trimmedLink);
+        } catch (_) {
+            return false;
+        }
+
+        onPostSubmit(trimmedLink);
 
         return true;
     }
