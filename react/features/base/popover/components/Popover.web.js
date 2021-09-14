@@ -114,6 +114,12 @@ class Popover extends Component<Props, State> {
     };
 
     /**
+     * Reference to the dialog container.
+     */
+    _containerRef: Object;
+
+
+    /**
      * Initializes a new {@code Popover} instance.
      *
      * @param {Object} props - The read-only properties with which the new
@@ -130,8 +136,10 @@ class Popover extends Component<Props, State> {
         this._onHideDialog = this._onHideDialog.bind(this);
         this._onShowDialog = this._onShowDialog.bind(this);
         this._onKeyPress = this._onKeyPress.bind(this);
+        this._containerRef = React.createRef();
         this._onEscKey = this._onEscKey.bind(this);
         this._onThumbClick = this._onThumbClick.bind(this);
+        this._onTouchStart = this._onTouchStart.bind(this);
     }
 
     /**
@@ -141,7 +149,27 @@ class Popover extends Component<Props, State> {
      * @public
      */
     showDialog() {
-        this.setState({ showDialog: true });
+        this._onShowDialog();
+    }
+
+    /**
+     * Sets up a touch event listener to attach.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidMount() {
+        window.addEventListener('touchstart', this._onTouchStart);
+    }
+
+    /**
+     * Removes the listener set up in the {@code componentDidMount} method.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentWillUnmount() {
+        window.removeEventListener('touchstart', this._onTouchStart);
     }
 
     /**
@@ -178,7 +206,8 @@ class Popover extends Component<Props, State> {
                 onClick = { this._onThumbClick }
                 onKeyPress = { this._onKeyPress }
                 onMouseEnter = { this._onShowDialog }
-                onMouseLeave = { this._onHideDialog }>
+                onMouseLeave = { this._onHideDialog }
+                ref = { this._containerRef }>
                 <InlineDialog
                     content = { this._renderContent() }
                     isOpen = { this.state.showDialog }
@@ -187,6 +216,25 @@ class Popover extends Component<Props, State> {
                 </InlineDialog>
             </div>
         );
+    }
+
+    _onTouchStart: (event: TouchEvent) => void;
+
+    /**
+     * Hide dialog on touch outside of the context menu.
+     *
+     * @param {TouchEvent} event - The touch event.
+     * @private
+     * @returns {void}
+     */
+    _onTouchStart(event) {
+        if (this.state.showDialog
+            && !this.props.overflowDrawer
+            && this._containerRef
+            && this._containerRef.current
+            && !this._containerRef.current.contains(event.target)) {
+            this._onHideDialog();
+        }
     }
 
     _onHideDialog: () => void;
@@ -216,7 +264,7 @@ class Popover extends Component<Props, State> {
      * @returns {void}
      */
     _onShowDialog(event) {
-        event.stopPropagation();
+        event && event.stopPropagation();
         if (!this.props.disablePopover) {
             this.setState({ showDialog: true });
 

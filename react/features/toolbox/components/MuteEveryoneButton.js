@@ -39,7 +39,13 @@ class MuteEveryoneButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { dispatch, localParticipantId } = this.props;
+        const { dispatch, localParticipantId, handleClick } = this.props;
+
+        if (handleClick) {
+            handleClick();
+
+            return;
+        }
 
         sendAnalytics(createToolbarEvent('mute.everyone.pressed'));
         dispatch(openDialog(MuteEveryoneDialog, {
