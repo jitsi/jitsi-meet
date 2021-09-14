@@ -36,6 +36,11 @@ export type Props = {
     disableBlanketClickDismiss: boolean,
 
     /**
+     * Hide Cancel Button.
+     */
+    hideCancelButton: boolean,
+
+    /**
      * Callback invoked when the Save button has been pressed.
      */
     onSubmit: Function,
@@ -110,6 +115,7 @@ class DialogWithTabs extends Component<Props, State> {
             <StatelessDialog
                 disableBlanketClickDismiss
                     = { this.props.disableBlanketClickDismiss }
+                hideCancelButton = { this.props.hideCancelButton }
                 onCancel = { onCancel }
                 onSubmit = { this._onSubmit }
                 titleKey = { this.props.titleKey } >

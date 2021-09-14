@@ -4,12 +4,12 @@ import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
 import { translate } from '../../base/i18n';
-import { getLocalParticipant } from '../../base/participants';
+import { getLocalParticipant, getParticipants } from '../../base/participants';
 import { connect } from '../../base/redux';
 import { escapeRegexp } from '../../base/util';
-import { initUpdateStats, initSearch } from '../actions';
+import { initSearch } from '../actions';
 import { SPEAKER_STATS_RELOAD_INTERVAL } from '../constants';
-import { getSpeakerStats, getSearchCriteria } from '../functions';
+import { getSearchCriteria } from '../functions';
 
 import SpeakerStatsItem from './SpeakerStatsItem';
 import SpeakerStatsLabels from './SpeakerStatsLabels';
@@ -18,7 +18,7 @@ import SpeakerStatsSearch from './SpeakerStatsSearch';
 declare var interfaceConfig: Object;
 
 /**
- * The type of the React {@code Component} props of {@link SpeakerStats}.
+ * The type of the React {@code Component} props of {@link RaisedHandStats}.
  */
 type Props = {
 
@@ -28,14 +28,14 @@ type Props = {
     _localDisplayName: string,
 
     /**
-     * The speaker paricipant stats.
-     */
-    _stats: Object,
-
-    /**
      * The search criteria.
      */
     _criteria: string,
+
+    /**
+     * The participants.
+     */
+    _participants: Object,
 
     /**
      * The JitsiConference from which stats will be pulled.
@@ -53,16 +53,23 @@ type Props = {
     t: Function
 };
 
+type State = {
+    /**
+     * The stats summary provided by the Redux store.
+     */
+    participants: Object[]
+};
+
 /**
  * React component for displaying a list of speaker stats.
  *
  * @extends Component
  */
-class SpeakerStats extends Component<Props> {
+class RaisedHandStats extends Component<Props, State> {
     _updateInterval: IntervalID;
 
     /**
-     * Initializes a new SpeakerStats instance.
+     * Initializes a new RaisedHandStats instance.
      *
      * @param {Object} props - The read-only React Component props with which
      * the new instance is to be initialized.
@@ -70,11 +77,13 @@ class SpeakerStats extends Component<Props> {
     constructor(props) {
         super(props);
 
+        this.state = {
+            participants: props._participants
+        };
+
         // Bind event handlers so they are only bound once per instance.
         this._updateStats = this._updateStats.bind(this);
         this._onSearch = this._onSearch.bind(this);
-
-        this._updateStats();
     }
 
     /**
@@ -83,7 +92,7 @@ class SpeakerStats extends Component<Props> {
      * @inheritdoc
      */
     componentDidMount() {
-        this._onSearch(this.props._criteria);
+        this._updateStats();
         this._updateInterval = setInterval(() => this._updateStats(), SPEAKER_STATS_RELOAD_INTERVAL);
     }
 
@@ -104,61 +113,48 @@ class SpeakerStats extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const userIds = Object.keys(this.props._stats);
-        const items = userIds.map(userId => this._createStatsItem(userId));
+        const items = this.state.participants.map(p => this._createStatsItem(p));
 
         return (
-            <div className='speaker-stats'>
+            <div className = 'speaker-stats'>
                 <SpeakerStatsSearch
                     initCriteria = { this.props._criteria }
                     onSearch = { this._onSearch } />
-                <SpeakerStatsLabels />
+                <SpeakerStatsLabels raisedHand = { true } />
                 {items}
             </div>
         );
     }
 
     /**
-     * Create a SpeakerStatsItem instance for the passed in user id.
+     * Create a SpeakerStatsItem instance for the passed in participant.
      *
-     * @param {string} userId -  User id used to look up the associated
-     * speaker stats from the jitsi library.
+     * @param {Object} participant -  Participant used to look up the associated
+     * speaker stats from the Redux store.
      * @returns {SpeakerStatsItem|null}
      * @private
      */
-    _createStatsItem(userId) {
-        const statsModel = this.props._stats[userId];
-
-        if (!statsModel || statsModel.hidden) {
+    _createStatsItem(participant) {
+        if (!participant || !participant?.raisedHand?.raisedAt) {
             return null;
         }
 
-        const isDominantSpeaker = statsModel.isDominantSpeaker();
-        const dominantSpeakerTime = statsModel.getTotalDominantSpeakerTime();
-        const hasLeft = statsModel.hasLeft();
+        const { t } = this.props;
+        const meString = t('me');
 
-        let displayName;
+        let displayName = participant.name;
 
-        if (statsModel.isLocalStats()) {
-            const { t } = this.props;
-            const meString = t('me');
-
-            displayName = this.props._localDisplayName;
-            displayName
-                = displayName ? `${displayName} (${meString})` : meString;
-        } else {
-            displayName
-                = this.props._stats[userId].getDisplayName()
-                    || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
+        if (participant.local) {
+            displayName = `${displayName} (${meString})`;
         }
 
         return (
             <SpeakerStatsItem
                 displayName = { displayName }
-                dominantSpeakerTime = { dominantSpeakerTime }
-                hasLeft = { hasLeft }
-                isDominantSpeaker = { isDominantSpeaker }
-                key = { userId } />
+                dominantSpeakerTime = { (Date.now() - participant?.raisedHand?.raisedAt) }
+                hasLeft = { false }
+                isDominantSpeaker = { participant.dominantSpeaker }
+                key = { participant.id } />
         );
     }
 
@@ -173,6 +169,7 @@ class SpeakerStats extends Component<Props> {
      */
     _onSearch(criteria = '') {
         this.props.dispatch(initSearch(escapeRegexp(criteria)));
+        this._updateStats(escapeRegexp(criteria));
     }
 
     _updateStats: () => void;
@@ -181,10 +178,24 @@ class SpeakerStats extends Component<Props> {
      * Update the internal state with the latest speaker stats.
      *
      * @returns {void}
+     * @param {string} criteria - The search parameter.
      * @private
      */
-    _updateStats() {
-        this.props.dispatch(initUpdateStats(() => this.props.conference.getSpeakerStats()));
+    _updateStats(criteria = '') {
+        const search = escapeRegexp(criteria || this.props._criteria);
+        const participants = this.props._participants
+            .filter(p => p?.raisedHand?.raisedAt && (p.name.includes(search) || !search)).sort((a, b) => {
+                if (a?.raisedHand?.raisedAt < b?.raisedHand?.raisedAt) {
+                    return -1;
+                }
+                if (a?.raisedHand?.raisedAt > b?.raisedHand?.raisedAt) {
+                    return 1;
+                }
+
+                return 0;
+            });
+
+        this.setState({ participants });
     }
 }
 
@@ -195,8 +206,8 @@ class SpeakerStats extends Component<Props> {
  * @private
  * @returns {{
  *     _localDisplayName: ?string,
- *     _stats: Object,
  *     _criteria: string,
+ *     _participants: Arran<Object>
  * }}
  */
 function _mapStateToProps(state) {
@@ -210,9 +221,9 @@ function _mapStateToProps(state) {
          * @type {string|undefined}
          */
         _localDisplayName: localParticipant && localParticipant.name,
-        _stats: getSpeakerStats(state),
-        _criteria: getSearchCriteria(state)
+        _criteria: getSearchCriteria(state),
+        _participants: getParticipants(state)
     };
 }
 
-export default translate(connect(_mapStateToProps)(SpeakerStats));
+export default translate(connect(_mapStateToProps)(RaisedHandStats));

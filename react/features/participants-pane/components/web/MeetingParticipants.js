@@ -8,7 +8,8 @@ import { isToolbarButtonEnabled } from '../../../base/config/functions.web';
 import { MEDIA_TYPE } from '../../../base/media';
 import {
     getParticipantCountWithFake,
-    getSortedParticipantIds
+    getSortedParticipantIds,
+    getRaisedHandFirstParticipant
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { showOverflowDrawer } from '../../../toolbox/functions';
@@ -51,7 +52,7 @@ const initialState = Object.freeze(Object.create(null));
  *
  * @returns {ReactNode} - The component.
  */
-function MeetingParticipants({ participantsCount, showInviteButton, overflowDrawer, sortedParticipantIds = [] }) {
+function MeetingParticipants({ participantsCount, showInviteButton, overflowDrawer, sortedParticipantIds = [], raisedFirstId }) {
     const dispatch = useDispatch();
     const isMouseOverMenu = useRef(false);
 
@@ -134,6 +135,7 @@ function MeetingParticipants({ participantsCount, showInviteButton, overflowDraw
                     participantIds = { sortedParticipantIds }
                     participantsCount = { participantsCount }
                     raiseContextId = { raiseContext.participantID }
+                    raisedFirstId = { raisedFirstId }
                     toggleMenu = { toggleMenu }
                     youText = { youText } />
             </div>
@@ -160,6 +162,7 @@ function MeetingParticipants({ participantsCount, showInviteButton, overflowDraw
  */
 function _mapStateToProps(state): Object {
     const sortedParticipantIds = getSortedParticipantIds(state);
+    const raisedFirstParticipant = getRaisedHandFirstParticipant(state);
 
     // This is very important as getRemoteParticipants is not changing its reference object
     // and we will not re-render on change, but if count changes we will do
@@ -173,7 +176,8 @@ function _mapStateToProps(state): Object {
         sortedParticipantIds,
         participantsCount,
         showInviteButton,
-        overflowDrawer
+        overflowDrawer,
+        raisedFirstId: raisedFirstParticipant?.id
     };
 }
 

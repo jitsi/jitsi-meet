@@ -10,6 +10,11 @@ import { translate } from '../../base/i18n';
 type Props = {
 
     /**
+     * True if is for raised hands statistics tab.
+     */
+    raisedHand: boolean,
+
+    /**
      * The function to translate human-readable text.
      */
     t: Function
@@ -28,7 +33,7 @@ class SpeakerStatsLabels extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { t } = this.props;
+        const { raisedHand, t } = this.props;
 
         return (
             <div className = 'speaker-stats-item__labels'>
@@ -37,7 +42,7 @@ class SpeakerStatsLabels extends Component<Props> {
                     { t('speakerStats.name') }
                 </div>
                 <div className = 'speaker-stats-item__time'>
-                    { t('speakerStats.speakerTime') }
+                    { t(raisedHand ? 'speakerStats.raisedHandTime' : 'speakerStats.speakerTime') }
                 </div>
             </div>
         );

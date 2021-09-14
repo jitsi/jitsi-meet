@@ -35,7 +35,7 @@ export const LobbyParticipantItem = ({ participant: p }: Props) => {
             onPress = { openContextMenuReject }
             participant = { p }
             participantID = { p.id }
-            raisedHand = { p.raisedHand }
+            raisedHand = { p?.raisedHand?.enabled }
             videoMediaState = { MEDIA_STATE.NONE }>
             <Button
                 children = { t('lobby.admit') }

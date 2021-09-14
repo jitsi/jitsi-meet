@@ -1,8 +1,9 @@
 // @flow
 
-import React, { type Node, useCallback } from 'react';
+import React, { type Node, useCallback, useState, useEffect } from 'react';
 
 import { Avatar } from '../../../base/avatar';
+import TimeElapsed from '../../../speaker-stats/components/TimeElapsed';
 import {
     ACTION_TRIGGER,
     AudioStateIcons,
@@ -20,7 +21,8 @@ import {
     ParticipantContent,
     ParticipantName,
     ParticipantNameContainer,
-    ParticipantStates
+    ParticipantStates,
+    TimeElapsedSpacer
 } from './styled';
 
 /**
@@ -84,6 +86,16 @@ type Props = {
     participantID: string,
 
     /**
+     * Time when the participant have raised hand.
+     */
+    raisedAt: number,
+
+    /**
+     * True if the participant have raised hand first.
+     */
+    raisedFirst: boolean,
+
+    /**
      * True if the participant have raised hand.
      */
     raisedHand: boolean,
@@ -117,9 +129,13 @@ export default function ParticipantItem({
     local,
     openDrawerForParticipant,
     overflowDrawer,
+    raisedAt,
+    raisedFirst,
     raisedHand,
     youText
 }: Props) {
+    const [ waitingTime, setWaitingTime ] = useState(Date.now() - raisedAt);
+    const [ showHandTime, setShowHandTime ] = useState(false);
     const ParticipantActions = Actions[actionsTrigger];
     const onClick = useCallback(
         () => openDrawerForParticipant({
@@ -127,13 +143,24 @@ export default function ParticipantItem({
             displayName
         }));
 
+    useEffect(() => {
+        const timeInterval = setInterval(() => {
+            const tm = raisedAt ? Date.now() - raisedAt : 0;
+
+            setWaitingTime(isNaN(tm) ? 0 : tm);
+        }, 1000);
+
+        return () => clearInterval(timeInterval);
+    }, [ raisedAt ]);
+
     return (
         <ParticipantContainer
             id = { `participant-item-${participantID}` }
             isHighlighted = { isHighlighted }
             local = { local }
             onClick = { !local && overflowDrawer ? onClick : undefined }
-            onMouseLeave = { onLeave }
+            onMouseEnter = { () => setShowHandTime(true) }
+            onMouseLeave = { e => { onLeave(e); setShowHandTime(false); } }
             trigger = { actionsTrigger }>
             <Avatar
                 className = 'participant-avatar'
@@ -147,8 +174,9 @@ export default function ParticipantItem({
                     { local ? <span>&nbsp;({ youText })</span> : null }
                 </ParticipantNameContainer>
                 { !local && <ParticipantActions children = { children } /> }
+                { (showHandTime && raisedAt > 0) && <TimeElapsedSpacer isLocal = { local }><TimeElapsed time = { waitingTime } /></TimeElapsedSpacer> }
                 <ParticipantStates>
-                    { raisedHand && <RaisedHandIndicator /> }
+                    { raisedHand && <RaisedHandIndicator isFirst = { raisedFirst } /> }
                     { VideoStateIcons[videoMediaState] }
                     { AudioStateIcons[audioMediaState] }
                 </ParticipantStates>

@@ -29,6 +29,11 @@ type Props = {
      */
     onSearch: Function,
 
+    /**
+     * Initial criteria value.
+     */
+    initCriteria?: string
+
 };
 
 /**
@@ -36,10 +41,10 @@ type Props = {
  *
  * @returns {React$Element<any>}
  */
-function SpeakerStatsSearch({ onSearch }: Props) {
+function SpeakerStatsSearch({ onSearch, initCriteria }: Props) {
     const classes = useStyles();
     const { t } = useTranslation();
-    const [ searchValue, setSearchValue ] = useState<string>('');
+    const [ searchValue, setSearchValue ] = useState<string>(initCriteria || '');
     const onChange = useCallback((evt: Event) => {
         const value = getFieldValue(evt);
 

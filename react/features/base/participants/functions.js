@@ -455,6 +455,62 @@ async function _getFirstLoadableAvatarUrl(participant, store) {
     return undefined;
 }
 
+
+/**
+ * Selector for retrieving participants.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @returns {Array<Object>}
+ */
+export function getParticipants(stateful: Object | Function) {
+    const localParticipant = getLocalParticipant(stateful);
+    const remoteParticipants = getRemoteParticipants(stateful);
+
+    const items = [];
+    const dominantSpeaker = getDominantSpeakerParticipant(stateful);
+
+    remoteParticipants.forEach(p => {
+        if (p !== dominantSpeaker) {
+            items.push(p);
+        }
+    });
+
+    items.unshift(localParticipant);
+
+    if (dominantSpeaker && dominantSpeaker !== localParticipant) {
+        items.unshift(dominantSpeaker);
+    }
+
+    return items;
+}
+
+
+/**
+ * Selector for retrieving raised hand first participant.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's.
+ * @param {(Array<Object>|undefined)} parts - Array of already retrieved participants
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @returns {Object}
+ */
+export function getRaisedHandFirstParticipant(stateful: Object | Function, parts = undefined) {
+    const participants = parts || getParticipants(stateful);
+
+    return participants.filter(p => p?.raisedHand?.enabled).sort((a, b) => {
+        if (a?.raisedHand?.raisedAt < b?.raisedHand?.raisedAt) {
+            return -1;
+        }
+        if (a?.raisedHand?.raisedAt > b?.raisedHand?.raisedAt) {
+            return 1;
+        }
+
+        return 0;
+    })[0];
+}
+
 /**
  * Selector for retrieving ids of participants in the order that they are displayed in the filmstrip (with the
  * exception of participants with raised hand). The participants are reordered as follows.

@@ -81,7 +81,7 @@ function _mapStateToProps(state, ownProps): Object {
     const { visible = enabled } = ownProps;
 
     return {
-        _raisedHand: _localParticipant.raisedHand,
+        _raisedHand: _localParticipant?.raisedHand?.enabled,
         _reactionsOpen: isDialogOpen(state, ReactionMenuDialog),
         visible
     };

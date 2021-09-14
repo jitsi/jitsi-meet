@@ -76,7 +76,7 @@ const mapStateToProps = state => {
     const localParticipant = getLocalParticipant(state);
 
     return {
-        _raisedHand: localParticipant.raisedHand
+        _raisedHand: localParticipant?.raisedHand?.enabled
     };
 };
 

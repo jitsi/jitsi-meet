@@ -389,8 +389,42 @@
     }
 }
 
+@keyframes raisehand {
+    from {
+        background-color: $raiseHandTileBg;
+    }
+  
+    to {
+        background-color: $raiseHandAlertBg;
+        transform: scale(1.1);
+    }
+}
+  
 .raisehandindicator {
-  background: $raiseHandBg;
+    animation-name: raisehand;
+    animation-duration: 2s;
+    animation-direction: alternate;
+    animation-delay: 5s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes raisehandfirst {
+    from {
+        background-color: $raiseHandTileBg;
+    }
+  
+    to {
+        background-color: $raiseHandFirstBg;
+        transform: scale(1.1);
+    }
+}
+  
+.raisehandfirstindicator {
+    animation-name: raisehandfirst;
+    animation-duration: 2s;
+    animation-direction: alternate;
+    animation-delay: 5s;
+    animation-iteration-count: infinite;
 }
 
 .connection-indicator {

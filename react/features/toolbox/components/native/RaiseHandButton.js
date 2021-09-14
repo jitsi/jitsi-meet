@@ -97,7 +97,7 @@ function _mapStateToProps(state, ownProps): Object {
 
     return {
         _localParticipant,
-        _raisedHand: _localParticipant.raisedHand,
+        _raisedHand: _localParticipant?.raisedHand?.enabled,
         visible
     };
 }

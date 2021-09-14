@@ -105,7 +105,7 @@ function mapStateToProps(state) {
     return {
         isOpen: getReactionsMenuVisibility(state),
         reactionsQueue: getReactionsQueue(state),
-        raisedHand: localParticipant?.raisedHand
+        raisedHand: localParticipant?.raisedHand?.enabled
     };
 }
 

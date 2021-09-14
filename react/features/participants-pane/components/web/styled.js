@@ -348,10 +348,14 @@ export const ParticipantNameContainer = styled.div`
 `;
 
 export const RaisedHandIndicatorBackground = styled.div`
-  background-color: #ed9e1b;
+  background-color: ${props => props.isFirst ? 'red' : '#ed9e1b'};
   border-radius: 3px;
   height: 24px;
   width: 24px;
+`;
+
+export const TimeElapsedSpacer = styled.div`
+  margin-right: ${props => props.isLocal ? '0px' : '40px'};
 `;
 
 export const VolumeInput = styled.input.attrs({

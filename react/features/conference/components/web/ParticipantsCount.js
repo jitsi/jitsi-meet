@@ -8,7 +8,7 @@ import { IconUserGroups } from '../../../base/icons';
 import { Label } from '../../../base/label';
 import { getParticipantCount } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { SpeakerStats } from '../../../speaker-stats';
+import { StatsDialog } from '../../../speaker-stats';
 
 
 /**
@@ -54,7 +54,7 @@ class ParticipantsCount extends PureComponent<Props> {
     _onClick: () => void;
 
     /**
-     * Callback invoked to display {@code SpeakerStats}.
+     * Callback invoked to display {@code StatsDialog}.
      *
      * @private
      * @returns {void}
@@ -62,7 +62,7 @@ class ParticipantsCount extends PureComponent<Props> {
     _onClick() {
         const { dispatch, conference } = this.props;
 
-        dispatch(openDialog(SpeakerStats, { conference }));
+        dispatch(openDialog(StatsDialog, { conference }));
     }
 
     /**

@@ -644,7 +644,10 @@
         "name": "Όνομα",
         "seconds": "{{count}}δ",
         "speakerStats": "Στατιστικά ομιλητή",
-        "speakerTime": "Χρόνος ομιλητή"
+        "speakerTime": "Χρόνος ομιλητή",
+        "raisedHandStats": "Θέλουν να μιλήσουν",
+        "raisedHandTime": "Χρόνος αναμονής",
+        "dialogTitle": "Στατιστικά"
     },
     "startupoverlay": {
         "policyText": " ",

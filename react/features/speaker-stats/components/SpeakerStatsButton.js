@@ -7,7 +7,7 @@ import { IconPresentation } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 
-import SpeakerStats from './SpeakerStats';
+import StatsDialog from './StatsDialog';
 
 /**
  * The type of the React {@code Component} props of {@link SpeakerStatsButton}.
@@ -44,7 +44,7 @@ class SpeakerStatsButton extends AbstractButton<Props, *> {
         const { _conference, dispatch } = this.props;
 
         sendAnalytics(createToolbarEvent('speaker.stats'));
-        dispatch(openDialog(SpeakerStats, {
+        dispatch(openDialog(StatsDialog, {
             conference: _conference
         }));
     }

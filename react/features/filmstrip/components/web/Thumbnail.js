@@ -11,7 +11,8 @@ import { MEDIA_TYPE, VideoTrack } from '../../../base/media';
 import {
     getParticipantByIdOrUndefined,
     getParticipantCount,
-    pinParticipant
+    pinParticipant,
+    getRaisedHandFirstParticipant
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
@@ -185,6 +186,11 @@ export type Props = {|
      * An object with information about the participant related to the thumbnaul.
      */
     _participant: Object,
+
+    /**
+     * An object with information about the raised hand first participant related to the thumbnaul.
+     */
+     _raisedFirst: Object,
 
     /**
      * True if there are more than 2 participants in the call.
@@ -661,7 +667,8 @@ class Thumbnail extends Component<Props, State> {
             _isDominantSpeakerDisabled,
             _indicatorIconSize: iconSize,
             _participant,
-            _participantCountMoreThan2
+            _participantCountMoreThan2,
+            _raisedFirst
         } = this.props;
         const { isHovered } = this.state;
         const showConnectionIndicator = isHovered || !_connectionIndicatorAutoHideEnabled;
@@ -700,6 +707,7 @@ class Thumbnail extends Component<Props, State> {
                 <RaisedHandIndicator
                     iconSize = { iconSize }
                     participantId = { id }
+                    raisedFirst = { _raisedFirst && _raisedFirst.id === id && _raisedFirst?.raisedHand?.raisedAt }
                     tooltipPosition = { tooltipPosition } />
                 { showDominantSpeaker && _participantCountMoreThan2
                     && <DominantSpeakerIndicator
@@ -1130,6 +1138,7 @@ function _mapStateToProps(state, ownProps): Object {
         _localFlipX: Boolean(localFlipX),
         _participant: participant,
         _participantCountMoreThan2: getParticipantCount(state) > 2,
+        _raisedFirst: getRaisedHandFirstParticipant(state),
         _startSilent: Boolean(startSilent),
         _videoTrack,
         _volume: isLocal ? undefined : id ? participantsVolume[id] : undefined,

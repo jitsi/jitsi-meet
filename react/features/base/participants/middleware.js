@@ -104,7 +104,10 @@ MiddlewareRegistry.register(store => next => action => {
                 conference,
                 id,
                 local: isLocal,
-                raisedHand: false
+                raisedHand: {
+                    enabled: false,
+                    raisedAt: 0
+                }
             }));
         }
 
@@ -126,12 +129,12 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case LOCAL_PARTICIPANT_RAISE_HAND: {
-        const { enabled } = action;
+        const { raisedHand } = action;
         const localId = getLocalParticipant(store.getState())?.id;
 
         store.dispatch(raiseHandUpdateQueue({
             id: localId,
-            raisedHand: enabled
+            raisedHand
         }));
 
         store.dispatch(participantUpdated({
@@ -143,11 +146,11 @@ MiddlewareRegistry.register(store => next => action => {
 
             id: localId,
             local: true,
-            raisedHand: enabled
+            raisedHand
         }));
 
         if (typeof APP !== 'undefined') {
-            APP.API.notifyRaiseHandUpdated(localId, enabled);
+            APP.API.notifyRaiseHandUpdated(localId, raisedHand);
         }
 
         break;
@@ -456,8 +459,8 @@ function _participantJoinedOrUpdated(store, next, action) {
             const { conference } = getState()['features/base/conference'];
 
             // Send raisedHand signalling only if there is a change
-            if (conference && raisedHand !== getLocalParticipant(getState()).raisedHand) {
-                conference.setLocalParticipantProperty('raisedHand', raisedHand);
+            if (conference && raisedHand?.enabled !== getLocalParticipant(getState())?.raisedHand?.enabled) {
+                conference.setLocalParticipantProperty('raisedHand', JSON.stringify(raisedHand));
             }
         }
     }
@@ -503,7 +506,7 @@ function _participantJoinedOrUpdated(store, next, action) {
  * @returns {void}
  */
 function _raiseHandUpdated({ dispatch, getState }, conference, participantId, newValue) {
-    const raisedHand = newValue === 'true';
+    const raisedHand = JSON.parse(newValue);
     const state = getState();
 
     dispatch(participantUpdated({
@@ -535,7 +538,7 @@ function _raiseHandUpdated({ dispatch, getState }, conference, participantId, ne
         customActionHandler: () => dispatch(approveParticipant(participantId))
     } : {};
 
-    if (raisedHand) {
+    if (raisedHand?.enabled) {
         dispatch(showNotification({
             titleKey: 'notify.somebody',
             title: getParticipantDisplayName(state, participantId),

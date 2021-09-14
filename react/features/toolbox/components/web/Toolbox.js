@@ -536,11 +536,14 @@ class Toolbox extends Component<Props, State> {
      */
     _doToggleRaiseHand() {
         const { _localParticipantID, _raisedHand } = this.props;
-        const newRaisedStatus = !_raisedHand;
+        const newRaisedStatus = !(_raisedHand || false);
 
         this.props.dispatch(raiseHand(newRaisedStatus));
 
-        APP.API.notifyRaiseHandUpdated(_localParticipantID, newRaisedStatus);
+        APP.API.notifyRaiseHandUpdated(_localParticipantID, {
+            enabled: newRaisedStatus,
+            raisedAt: newRaisedStatus ? Date.now() : 0
+        });
     }
 
     /**
@@ -1361,7 +1364,7 @@ function _mapStateToProps(state, ownProps) {
         _overflowMenuVisible: overflowMenuVisible,
         _participantCount: getParticipantCount(state),
         _participantsPaneOpen: getParticipantsPaneOpen(state),
-        _raisedHand: localParticipant?.raisedHand,
+        _raisedHand: localParticipant?.raisedHand?.enabled,
         _reactionsEnabled: isReactionsEnabled(state),
         _screenSharing: isScreenVideoShared(state),
         _tileViewEnabled: shouldDisplayTileView(state),

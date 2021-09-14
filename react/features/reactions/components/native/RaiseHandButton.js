@@ -157,7 +157,7 @@ function _mapStateToProps(state): Object {
 
     return {
         _localParticipant,
-        _raisedHand: _localParticipant.raisedHand,
+        _raisedHand: _localParticipant?.raisedHand?.enabled,
         _styles: ColorSchemeRegistry.get(state, 'Toolbox').raiseHandButton
     };
 }

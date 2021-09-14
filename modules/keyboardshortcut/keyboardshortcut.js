@@ -12,7 +12,7 @@ import { toggleDialog } from '../../react/features/base/dialog';
 import { clickOnVideo } from '../../react/features/filmstrip/actions';
 import { KeyboardShortcutsDialog }
     from '../../react/features/keyboard-shortcuts';
-import { SpeakerStats } from '../../react/features/speaker-stats';
+import { StatsDialog } from '../../react/features/speaker-stats';
 
 const logger = Logger.getLogger(__filename);
 
@@ -251,7 +251,7 @@ const KeyboardShortcut = {
 
         this.registerShortcut('T', null, () => {
             sendAnalytics(createShortcutEvent('speaker.stats'));
-            APP.store.dispatch(toggleDialog(SpeakerStats, {
+            APP.store.dispatch(toggleDialog(StatsDialog, {
                 conference: APP.conference
             }));
         }, 'keyboardShortcuts.showSpeakerStats');

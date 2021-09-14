@@ -57,6 +57,6 @@ export function _mapStateToProps(state: Object, ownProps: Props): Object {
     const participant = getParticipantById(state, ownProps.participantId);
 
     return {
-        _raisedHand: participant && participant.raisedHand
+        _raisedHand: participant && participant?.raisedHand?.enabled
     };
 }

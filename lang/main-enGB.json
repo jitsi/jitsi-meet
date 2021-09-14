@@ -569,7 +569,10 @@
         "name": "Name",
         "seconds": "{{count}}s",
         "speakerStats": "Speaker Stats",
-        "speakerTime": "Speaker Time"
+        "speakerTime": "Speaker Time",
+        "raisedHandStats": "Hands Raised",
+        "raisedHandTime": "Waiting Time",
+        "dialogTitle": "Statistics"
     },
     "startupoverlay": {
         "policyText": " ",

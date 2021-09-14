@@ -217,7 +217,7 @@ function mapStateToProps(state) {
 
     return {
         _localParticipantID: localParticipant.id,
-        _raisedHand: localParticipant.raisedHand,
+        _raisedHand: localParticipant?.raisedHand?.enabled,
         _participantCount: getParticipantCount(state)
     };
 }

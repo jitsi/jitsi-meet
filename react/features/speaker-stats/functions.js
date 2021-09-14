@@ -173,6 +173,12 @@ export function filterBySearchCriteria(state: Object, stats: ?Object) {
                 }
             }
         }
+    } else {
+        for (const id in filteredStats) {
+            if (filteredStats[id].hasOwnProperty('_isLocalStats')) {
+                filteredStats[id].hidden = false;
+            }
+        }
     }
 
     return filteredStats;

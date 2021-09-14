@@ -77,6 +77,7 @@ function MeetingParticipantItems({
     openDrawerForParticipant,
     overflowDrawer,
     raiseContextId,
+    raisedFirstId,
     participantActionEllipsisLabel,
     youText
 }) {
@@ -93,6 +94,7 @@ function MeetingParticipantItems({
             overflowDrawer = { overflowDrawer }
             participantActionEllipsisLabel = { participantActionEllipsisLabel }
             participantID = { id }
+            raisedFirstId = { raisedFirstId }
             youText = { youText } />
     );
 
