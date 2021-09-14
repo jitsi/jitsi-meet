@@ -16,6 +16,9 @@
 
 package org.jitsi.meet.sdk;
 
+import static org.jitsi.meet.sdk.NotificationChannels.ONGOING_CONFERENCE_CHANNEL_ID;
+import static org.jitsi.meet.sdk.NotificationChannels.ONGOING_CONFERNCE_CHANNEL_NAME;
+
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -39,9 +42,6 @@ import java.util.Random;
 class OngoingNotification {
     private static final String TAG = OngoingNotification.class.getSimpleName();
 
-    private static final String CHANNEL_ID = "JitsiNotificationChannel";
-    private static final String CHANNEL_NAME = "Ongoing Conference Notifications";
-
     static final int NOTIFICATION_ID = new Random().nextInt(99999) + 10000;
     private static long startingTime = 0;
 
@@ -60,13 +60,13 @@ class OngoingNotification {
             = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         NotificationChannel channel
-            = notificationManager.getNotificationChannel(CHANNEL_ID);
+            = notificationManager.getNotificationChannel(ONGOING_CONFERENCE_CHANNEL_ID);
         if (channel != null) {
             // The channel was already created, no need to do it again.
             return;
         }
 
-        channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
+        channel = new NotificationChannel(ONGOING_CONFERENCE_CHANNEL_ID, ONGOING_CONFERNCE_CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
         channel.enableLights(false);
         channel.enableVibration(false);
         channel.setShowBadge(false);
@@ -84,7 +84,7 @@ class OngoingNotification {
         Intent notificationIntent = new Intent(context, context.getClass());
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, ONGOING_CONFERENCE_CHANNEL_ID);
 
         if (startingTime == 0) {
             startingTime = System.currentTimeMillis();
