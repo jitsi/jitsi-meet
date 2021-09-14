@@ -333,6 +333,7 @@
         "shareScreenWarningH1": "If you want to share just your screen:",
         "shareScreenWarningD1": "you need to stop audio sharing before sharing your screen.",
         "shareScreenWarningD2": "you need to stop audio sharing, start screen sharing and check the \"share audio\" option.",
+        "sharedVideoLinkPlaceholder": "YouTube link or direct video link",
         "stopLiveStreaming": "Stop live stream",
         "stopRecording": "Stop recording",
         "stopRecordingWarning": "Are you sure you would like to stop the recording?",
