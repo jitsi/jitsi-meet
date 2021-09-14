@@ -35,6 +35,11 @@ declare var APP: Object;
 declare var interfaceConfig: Object;
 
 /**
+ * Fixes case in which context menu overflows and creates a scroll on the whole filmstrip videos pane.
+ */
+const TILEVIEW_VIDEO_PANES_STYLE = { overflow: 'visible' };
+
+/**
  * The type of the React {@code Component} props of {@link Filmstrip}.
  */
 type Props = {
@@ -386,6 +391,7 @@ class Filmstrip extends PureComponent <Props> {
                     overscanRowCount = { 1 }
                     rowCount = { _rows }
                     rowHeight = { _thumbnailHeight + TILE_VERTICAL_MARGIN }
+                    style = { TILEVIEW_VIDEO_PANES_STYLE }
                     width = { _filmstripWidth }>
                     {
                         ThumbnailWrapper

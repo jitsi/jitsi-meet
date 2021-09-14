@@ -2,7 +2,7 @@
 
 import { ReducerRegistry, set } from '../redux';
 
-import { CLIENT_RESIZED, SET_ASPECT_RATIO, SET_REDUCED_UI } from './actionTypes';
+import { CLIENT_RESIZED, SET_ASPECT_RATIO, SET_CONTEXT_MENU_OPEN, SET_REDUCED_UI } from './actionTypes';
 import { ASPECT_RATIO_NARROW } from './constants';
 
 const {
@@ -17,7 +17,8 @@ const DEFAULT_STATE = {
     aspectRatio: ASPECT_RATIO_NARROW,
     clientHeight: innerHeight,
     clientWidth: innerWidth,
-    reducedUI: false
+    reducedUI: false,
+    contextMenuOpened: false
 };
 
 ReducerRegistry.register('features/base/responsive-ui', (state = DEFAULT_STATE, action) => {
@@ -34,6 +35,9 @@ ReducerRegistry.register('features/base/responsive-ui', (state = DEFAULT_STATE, 
 
     case SET_REDUCED_UI:
         return set(state, 'reducedUI', action.reducedUI);
+
+    case SET_CONTEXT_MENU_OPEN:
+        return set(state, 'contextMenuOpened', action.isOpen);
     }
 
     return state;
