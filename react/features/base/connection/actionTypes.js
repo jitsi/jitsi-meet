@@ -54,4 +54,13 @@ export const CONNECTION_WILL_CONNECT = 'CONNECTION_WILL_CONNECT';
  */
 export const SET_LOCATION_URL = 'SET_LOCATION_URL';
 
+/**
+ * The type of (redux) action which tells whether connection info should be displayed
+ * on context menu.
+ *
+ * {
+ *     type: SHOW_CONNECTION_INFO,
+ *     showConnectionInfo: boolean
+ * }
+ */
 export const SHOW_CONNECTION_INFO = 'SHOW_CONNECTION_INFO';
