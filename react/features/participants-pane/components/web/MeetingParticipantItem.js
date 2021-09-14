@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../../base/media';
@@ -173,34 +173,44 @@ function MeetingParticipantItem({
     const [ hasAudioLevels, setHasAudioLevel ] = useState(false);
     const [ registeredEvent, setRegisteredEvent ] = useState(false);
 
-    const _updateAudioLevel = level => {
+    const _updateAudioLevel = useCallback(level => {
         const audioLevel = typeof level === 'number' && !isNaN(level)
             ? level : 0;
 
         setHasAudioLevel(audioLevel > 0.009);
-    };
+    }, []);
 
     useEffect(() => {
         if (_audioTrack && !registeredEvent) {
             const { jitsiTrack } = _audioTrack;
 
-            jitsiTrack && jitsiTrack.on(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, _updateAudioLevel);
-            setRegisteredEvent(true);
+            if (jitsiTrack) {
+                jitsiTrack.on(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, _updateAudioLevel);
+                setRegisteredEvent(true);
+            }
         }
+
+        return () => {
+            if (_audioTrack && registeredEvent) {
+                const { jitsiTrack } = _audioTrack;
+
+                jitsiTrack && jitsiTrack.off(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, _updateAudioLevel);
+            }
+        };
     }, [ _audioTrack ]);
 
-    const _getAudioMediaState = useMemo(() => {
+    const _getAudioMediaState = () => {
         if (_audioMediaState === MEDIA_STATE.UNMUTED && hasAudioLevels) {
             return MEDIA_STATE.DOMINANT_SPEAKER;
         }
 
         return _audioMediaState;
-    }, [ hasAudioLevels, _audioMediaState ]);
+    };
 
     return (
         <ParticipantItem
             actionsTrigger = { ACTION_TRIGGER.HOVER }
-            audioMediaState = { _getAudioMediaState }
+            audioMediaState = { _getAudioMediaState() }
             displayName = { _displayName }
             isHighlighted = { isHighlighted }
             isModerator = { isParticipantModerator(_participant) }
