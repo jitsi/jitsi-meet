@@ -5,7 +5,6 @@ import { View } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
-import { getParticipantCount } from '../../../base/participants';
 import { REACTIONS } from '../../constants';
 
 import RaiseHandButton from './RaiseHandButton';
@@ -37,20 +36,17 @@ function ReactionMenu({
     overflowMenu
 }: Props) {
     const _styles = useSelector(state => ColorSchemeRegistry.get(state, 'Toolbox'));
-    const _participantCount = useSelector(state => getParticipantCount(state));
 
     return (
         <View style = { overflowMenu ? _styles.overflowReactionMenu : _styles.reactionMenu }>
-            {_participantCount > 1
-                && <View style = { _styles.reactionRow }>
-                    {Object.keys(REACTIONS).map(key => (
-                        <ReactionButton
-                            key = { key }
-                            reaction = { key }
-                            styles = { _styles.reactionButton } />
-                    ))}
-                </View>
-            }
+            <View style = { _styles.reactionRow }>
+                {Object.keys(REACTIONS).map(key => (
+                    <ReactionButton
+                        key = { key }
+                        reaction = { key }
+                        styles = { _styles.reactionButton } />
+                ))}
+            </View>
             <RaiseHandButton onCancel = { onCancel } />
         </View>
     );

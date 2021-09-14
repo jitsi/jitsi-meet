@@ -3,6 +3,7 @@
 import { batch } from 'react-redux';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
+import { getParticipantCount } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { updateSettings } from '../base/settings';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
@@ -91,9 +92,12 @@ MiddlewareRegistry.register(store => next => action => {
     case FLUSH_REACTION_BUFFER: {
         const state = getState();
         const { buffer } = state['features/reactions'];
+        const participantCount = getParticipantCount(state);
 
         batch(() => {
-            dispatch(sendReactions());
+            if (participantCount > 1) {
+                dispatch(sendReactions());
+            }
             dispatch(addReactionsToChat(getReactionMessageFromBuffer(buffer)));
             dispatch(pushReactions(buffer));
         });

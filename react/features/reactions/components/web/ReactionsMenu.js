@@ -9,7 +9,7 @@ import {
     sendAnalytics
 } from '../../../analytics';
 import { translate } from '../../../base/i18n';
-import { getLocalParticipant, getParticipantCount, participantUpdated } from '../../../base/participants';
+import { getLocalParticipant, participantUpdated } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { dockToolbox } from '../../../toolbox/actions.web';
 import { addReactionToBuffer } from '../../actions.any';
@@ -19,11 +19,6 @@ import { REACTIONS } from '../../constants';
 import ReactionButton from './ReactionButton';
 
 type Props = {
-
-    /**
-     * The number of conference participants.
-     */
-    _participantCount: number,
 
     /**
      * Used for translation.
@@ -182,13 +177,13 @@ class ReactionsMenu extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { _participantCount, _raisedHand, t, overflowMenu } = this.props;
+        const { _raisedHand, t, overflowMenu } = this.props;
 
         return (
             <div className = { `reactions-menu ${overflowMenu ? 'overflow' : ''}` }>
-                { _participantCount > 1 && <div className = 'reactions-row'>
+                <div className = 'reactions-row'>
                     { this._getReactionButtons() }
-                </div> }
+                </div>
                 <div className = 'raise-hand-row'>
                     <ReactionButton
                         accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
@@ -217,8 +212,7 @@ function mapStateToProps(state) {
 
     return {
         _localParticipantID: localParticipant.id,
-        _raisedHand: localParticipant.raisedHand,
-        _participantCount: getParticipantCount(state)
+        _raisedHand: localParticipant.raisedHand
     };
 }
 
