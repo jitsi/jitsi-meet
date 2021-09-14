@@ -148,7 +148,7 @@ function ResizeAndDrag({ _currentCameraDeviceId, dispatch, updateTransparent }: 
                 updateTransformValues(image, url, jitsiTrack);
             });
 
-            image.on('dragmove', () => {
+            image.on('dragend', () => {
                 updateTransformValues(image, url, jitsiTrack);
             });
 
