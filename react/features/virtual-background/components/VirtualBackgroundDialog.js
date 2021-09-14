@@ -10,7 +10,6 @@ import { translate } from '../../base/i18n';
 import { Icon, IconCloseSmall, IconShareDesktop } from '../../base/icons';
 import { browser, JitsiTrackErrors } from '../../base/lib-jitsi-meet';
 import { createLocalTrack } from '../../base/lib-jitsi-meet/functions';
-import { VIDEO_TYPE } from '../../base/media';
 import { connect } from '../../base/redux';
 import { updateSettings } from '../../base/settings';
 import { Tooltip } from '../../base/tooltip';
@@ -131,10 +130,7 @@ function VirtualBackground({
     const localImages = jitsiLocalStorage.getItem('virtualBackgrounds');
     const [ storedImages, setStoredImages ] = useState<Array<Image>>((localImages && Bourne.parse(localImages)) || []);
     const [ loading, setLoading ] = useState(false);
-
-    const [ activeDesktopVideo ] = useState(_virtualBackground?.virtualSource?.videoType === VIDEO_TYPE.DESKTOP
-        ? _virtualBackground.virtualSource
-        : null);
+    const uploadImageButton: Object = useRef(null);
     const [ initialVirtualBackground ] = useState(_virtualBackground);
     const deleteStoredImage = useCallback(e => {
         const imageId = e.currentTarget.getAttribute('data-imageid');
@@ -308,9 +304,6 @@ function VirtualBackground({
     }, [ setUploadedImageBackground ]);
 
     const applyVirtualBackground = useCallback(async () => {
-        if (activeDesktopVideo) {
-            await activeDesktopVideo.dispose();
-        }
         destroyTemporaryTracks();
         setLoading(true);
         await dispatch(toggleBackgroundEffect(options, _jitsiTrack));

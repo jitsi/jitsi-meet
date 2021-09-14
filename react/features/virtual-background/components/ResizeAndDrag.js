@@ -18,6 +18,11 @@ type Props = {
     _currentCameraDeviceId: string,
 
     /**
+     * Returns the selected virtual background object.
+     */
+    _virtualBackground: Object,
+
+    /**
      * The redux {@code dispatch} function.
      */
     dispatch: Function,
@@ -33,7 +38,7 @@ type Props = {
  *
  * @returns {ReactElement}
  */
-function ResizeAndDrag({ _currentCameraDeviceId, dispatch, updateTransparent }: Props) {
+function ResizeAndDrag({ _currentCameraDeviceId, _virtualBackground, dispatch, updateTransparent }: Props) {
     const dragAndResizeRef = useRef();
     const [ containerWidth ] = useState(DESKTOP_SHARE_DIMENSIONS.CONTAINER_WIDTH);
     const [ containerHeight ] = useState(DESKTOP_SHARE_DIMENSIONS.CONTAINER_HEIGHT);
@@ -64,9 +69,9 @@ function ResizeAndDrag({ _currentCameraDeviceId, dispatch, updateTransparent }: 
 
             stage.add(layer);
             const desktopVideo = document.createElement('video');
-            const url = await createLocalTrack('desktop', '');
+            const url = await _virtualBackground?.virtualSource ?? await createLocalTrack('desktop', '');
 
-            desktopVideo.srcObject = await url.stream;
+            desktopVideo.srcObject = url.stream;
 
             const video = document.createElement('video');
 
@@ -81,8 +86,8 @@ function ResizeAndDrag({ _currentCameraDeviceId, dispatch, updateTransparent }: 
             const image = new Konva.Image({
                 image: video,
                 draggable: true,
-                x: 0,
-                y: 0
+                x: _virtualBackground?.dragAndDropOptions?.previewX ?? 0,
+                y: _virtualBackground?.dragAndDropOptions?.previewY ?? 0
             });
 
             layer.add(desktopImage);
@@ -164,8 +169,10 @@ function ResizeAndDrag({ _currentCameraDeviceId, dispatch, updateTransparent }: 
 
             layer.add(image);
             video.addEventListener('loadedmetadata', () => {
-                image.width(DESKTOP_SHARE_DIMENSIONS.RECTANGLE_WIDTH);
-                image.height(DESKTOP_SHARE_DIMENSIONS.RECTANGLE_HEIGHT);
+                image.width(_virtualBackground?.dragAndDropOptions?.previewWidth
+                    ?? DESKTOP_SHARE_DIMENSIONS.RECTANGLE_WIDTH);
+                image.height(_virtualBackground?.dragAndDropOptions?.previewHeight
+                    ?? DESKTOP_SHARE_DIMENSIONS.RECTANGLE_HEIGHT);
                 video.play();
 
                 /**
@@ -201,7 +208,11 @@ function ResizeAndDrag({ _currentCameraDeviceId, dispatch, updateTransparent }: 
                 width: Math.max(5, image.width() * image.scaleX()) * 1.5,
                 height: Math.max(5, image.height() * image.scaleY()) * 1.5,
                 url,
-                jitsiTrack: track
+                jitsiTrack: track,
+                previewX: image.x(),
+                previewY: image.y(),
+                previewWidth: Math.max(5, image.width() * image.scaleX()),
+                previewHeight: Math.max(5, image.height() * image.scaleY())
             };
 
             updateTransparent(dragAndDropOptions);
@@ -212,6 +223,13 @@ function ResizeAndDrag({ _currentCameraDeviceId, dispatch, updateTransparent }: 
         if (dragAndResizeRef.current) {
             createLocalJitsiTrack();
         }
+
+        return function cleanup() {
+            if (_virtualBackground?.dragAndDropOptions?.jitsiTrack) {
+                _virtualBackground.dragAndDropOptions.jitsiTrack.dispose();
+            }
+        };
+
     }, [ dragAndResizeRef ]);
 
     return (<div
@@ -229,7 +247,8 @@ function ResizeAndDrag({ _currentCameraDeviceId, dispatch, updateTransparent }: 
  */
 function _mapStateToProps(state): Object {
     return {
-        _currentCameraDeviceId: getCurrentCameraDeviceId(state)
+        _currentCameraDeviceId: getCurrentCameraDeviceId(state),
+        _virtualBackground: state['features/virtual-background']
     };
 }
 
