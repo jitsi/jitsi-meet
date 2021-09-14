@@ -1,26 +1,34 @@
 // @flow
-import { getConferenceTimestamp } from '../base/conference/functions';
-
 declare var APP: Object;
 
 /**
  * Broadcasts the changed facial expression.
  *
  * @param  {string} facialExpression - Facial expression to be broadcasted.
+ * @param {number} duration - The duration of the facial expression in seconds.
  * @returns {void}
  */
-export function sendFacialExpression(facialExpression: string): void {
+export function sendFacialExpression(facialExpression: string, duration: number): void {
+    console.log('AICI');
     const count = APP.conference.membersCount;
 
-    APP.conference.sendFacialExpression(facialExpression);
+    APP.conference.sendFacialExpression({
+        facialExpression,
+        duration
+    });
 
     if (count > 1) {
         const payload = {
             type: 'facial_expression',
-            value: facialExpression
+            facialExpression,
+            duration
         };
 
-        APP.conference.broadcastEndpointMessage(payload);
+        try {
+            APP.conference.broadcastEndpointMessage(payload);
+        } catch (e) {
+            console.error(e);
+        }
     }
 }
 
@@ -32,19 +40,30 @@ export function sendFacialExpression(facialExpression: string): void {
  * @returns {Promise<void>}
  */
 export async function detectFacialExpression(worker: Worker, imageCapture: Object): Promise<void> {
-    const imageBitmap = await imageCapture.grabFrame();
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
+    if (imageCapture === null) {
+        return;
+    }
 
-    canvas.width = imageBitmap.width;
-    canvas.height = imageBitmap.height;
-    context.drawImage(imageBitmap, 0, 0);
+    let imageBitmap;
 
-    const imageData = context.getImageData(0, 0, imageBitmap.width, imageBitmap.height);
+    try {
+        imageBitmap = await imageCapture.grabFrame();
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
 
-    worker.postMessage({
-        imageData
-    });
+        canvas.width = imageBitmap.width;
+        canvas.height = imageBitmap.height;
+        context.drawImage(imageBitmap, 0, 0);
+
+        const imageData = context.getImageData(0, 0, imageBitmap.width, imageBitmap.height);
+
+        worker.postMessage({
+            imageData
+        });
+    } catch (e) {
+        console.error(e);
+    }
+
 }
 
 /**
@@ -59,13 +78,10 @@ export function getCameraTime(cameraTimeTracker: {
     lastCameraUpdate: number
 }): number {
     let cameraTime = cameraTimeTracker.cameraTime;
-    const state = APP.store.getState();
-    const conferenceTimestamp = getConferenceTimestamp(state);
 
     if (!cameraTimeTracker.muted) {
-        const currentTime = conferenceTimestamp
-            ? new Date().getTime() - conferenceTimestamp
-            : 0;
+        cameraTime = cameraTimeTracker.cameraTime;
+        const currentTime = new Date().getTime();
 
         cameraTime += currentTime - cameraTimeTracker.lastCameraUpdate;
     }

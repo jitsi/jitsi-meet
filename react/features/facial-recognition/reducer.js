@@ -20,6 +20,7 @@ const defaultState = {
         fearful: 0,
         sad: 0
     },
+    lastFacialExpression: null,
     cameraTimeTracker: {
         muted: true,
         cameraTime: 0,
@@ -37,9 +38,14 @@ ReducerRegistry.register('features/facial-recognition', (state = defaultState, a
     }
 
     case ADD_FACIAL_EXPRESSION: {
-        state.facialExpressions[action.payload]++;
+        if (state.lastFacialExpression) {
+            state.facialExpressions[state.lastFacialExpression] += action.duration;
+        }
 
-        return state;
+        return {
+            ...state,
+            lastFacialExpression: action.facialExpression
+        };
     }
     case SET_FACIAL_RECOGNITION_ALLOWED: {
         return {
@@ -48,7 +54,7 @@ ReducerRegistry.register('features/facial-recognition', (state = defaultState, a
         };
     }
     case UPDATE_CAMERA_TIME_TRACKER: {
-        if (action.muted) {
+        if (action.muted && state.cameraTimeTracker.lastCameraUpdate !== 0) {
             state.cameraTimeTracker.cameraTime += action.lastCameraUpdate - state.cameraTimeTracker.lastCameraUpdate;
         }
         state.cameraTimeTracker.muted = action.muted;

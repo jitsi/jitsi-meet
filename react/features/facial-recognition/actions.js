@@ -1,5 +1,4 @@
 // @flow
-import { getConferenceTimestamp } from '../base/conference/functions';
 import { getLocalVideoTrack } from '../base/tracks';
 
 import 'image-capture';
@@ -8,16 +7,18 @@ import './createImageBitmap';
 import {
     ADD_FACIAL_EXPRESSION,
     SET_FACIAL_RECOGNITION_ALLOWED,
-    SET_TF_BACKEND,
     UPDATE_CAMERA_TIME_TRACKER
 } from './actionTypes';
 import { sendFacialExpression, detectFacialExpression, sendCameraTimeTrackerUpdate } from './functions';
 import logger from './logger';
 
 let intervalTime = -1;
-let interval;
+let interval = null;
 let imageCapture;
 let worker;
+let duplicateConsecutiveExpressions = 0;
+
+export let cameraMuted = true;
 const outputCanvas = document.createElement('canvas');
 
 /**
@@ -26,13 +27,13 @@ const outputCanvas = document.createElement('canvas');
  * @returns {void}
  */
 export function loadWorker() {
-    return function(dispatch: Function) {
+    return function(dispatch: Function, getState: Function) {
         if (window.Worker) {
             worker = new Worker('libs/facialExpressionWorker.js', { name: 'Facial Expression Worker' });
-            worker.onmessage = function(e) {
+            worker.onmessage = function(e: Object) {
                 const { type, value } = e.data;
 
-                if (type === 'tf-backend' && value !== undefined) {
+                if (type === 'tf-backend' && value) {
                     if (value === 'webgl') {
                         intervalTime = 1000;
                     } else if (value === 'cpu') {
@@ -41,10 +42,18 @@ export function loadWorker() {
                     interval = setInterval(() => detectFacialExpression(worker, imageCapture), intervalTime);
                 }
 
-                if (type === 'facial-expression' && value !== null && value !== undefined) {
-                    console.log('!!!', value);
-                    dispatch(addFacialExpression(value));
-                    sendFacialExpression(value);
+                if (type === 'facial-expression' && value) {
+                    const state = getState();
+                    const { lastFacialExpression } = state['features/facial-recognition'];
+
+                    if (value === lastFacialExpression) {
+                        duplicateConsecutiveExpressions++;
+                    } else {
+                        console.log('!!!', value);
+                        dispatch(addFacialExpression(value, duplicateConsecutiveExpressions + 1));
+                        sendFacialExpression(lastFacialExpression, duplicateConsecutiveExpressions + 1);
+                        duplicateConsecutiveExpressions = 0;
+                    }
                 }
             };
         } else {
@@ -56,13 +65,15 @@ export function loadWorker() {
 /**
  * Adds a new expression to the store.
  *
- * @param  {Object} facialExpression - Facial expression to be added.
+ * @param  {string} facialExpression - Facial expression to be added.
+ * @param  {number} duration - Duration in seconds of the facial expression.
  * @returns {Object}
  */
-export function addFacialExpression(facialExpression: Object) {
+export function addFacialExpression(facialExpression: string, duration: number) {
     return {
         type: ADD_FACIAL_EXPRESSION,
-        payload: facialExpression
+        facialExpression,
+        duration
     };
 }
 
@@ -74,44 +85,44 @@ export function addFacialExpression(facialExpression: Object) {
  */
 export function startFacialRecognition() {
     return async function(dispatch: Function, getState: Function) {
-        if (interval) {
+        if (interval || (worker === undefined || worker === null)) {
             return;
         }
 
-        if (worker === undefined || worker === null) {
-            return;
-        }
-        logger.log('Start face recognition');
 
         const state = getState();
         const localVideoTrack = getLocalVideoTrack(state['features/base/tracks']);
 
         if (localVideoTrack === undefined) {
-            dispatch(stopFacialRecognition());
-
             return;
         }
 
         const stream = localVideoTrack.jitsiTrack.getOriginalStream();
 
         if (stream === null) {
-            dispatch(stopFacialRecognition());
-
             return;
         }
+        logger.log('Start face recognition');
+
+        console.log('START');
         const firstVideoTrack = stream.getVideoTracks()[0];
         const { height, width } = firstVideoTrack.getSettings() ?? firstVideoTrack.getConstraints();
 
+        // $FlowFixMe
         imageCapture = new ImageCapture(firstVideoTrack);
 
         outputCanvas.width = parseInt(width, 10);
         outputCanvas.height = parseInt(height, 10);
-        dispatch(updateCameraTimeTracker(false));
-
         if (intervalTime === -1) {
             detectFacialExpression(worker, imageCapture);
         } else {
             interval = setInterval(() => detectFacialExpression(worker, imageCapture), intervalTime);
+        }
+        try {
+            dispatch(updateCameraTimeTracker(false));
+        } catch (e) {
+            console.error(e);
+            cameraMuted = false;
         }
     };
 }
@@ -122,14 +133,27 @@ export function startFacialRecognition() {
  * @returns {void}
  */
 export function stopFacialRecognition() {
-    return function(dispatch: Function) {
-        if (interval) {
-            logger.log('Stop face recognition');
+    return function(dispatch: Function, getState: Function) {
+        if (interval === null) {
             clearInterval(interval);
             imageCapture = null;
             interval = null;
-            dispatch(updateCameraTimeTracker(true));
+
+            return;
         }
+        console.log('STOP1');
+        clearInterval(interval);
+        imageCapture = null;
+        interval = null;
+        const state = getState();
+        const { lastFacialExpression } = state['features/facial-recognition'];
+
+        dispatch(addFacialExpression(lastFacialExpression, duplicateConsecutiveExpressions + 1));
+        sendFacialExpression(lastFacialExpression, duplicateConsecutiveExpressions + 1);
+        duplicateConsecutiveExpressions = 0;
+        dispatch(updateCameraTimeTracker(true));
+        console.log('STOP2');
+        logger.log('Stop face recognition');
     };
 }
 
@@ -145,6 +169,7 @@ export function resetTrack() {
         const stream = localVideoTrack.getOriginalStream();
         const firstVideoTrack = stream.getVideoTracks()[0];
 
+        // $FlowFixMe
         imageCapture = new ImageCapture(firstVideoTrack);
 
     };
@@ -161,6 +186,7 @@ export function changeTrack(track: Object) {
     const stream = jitsiTrack.getOriginalStream();
     const firstVideoTrack = stream.getVideoTracks()[0];
 
+    // $FlowFixMe
     imageCapture = new ImageCapture(firstVideoTrack);
 }
 
@@ -184,18 +210,13 @@ export function setFacialRecognitionAllowed(allowed: boolean) {
  * @returns {Object}
  */
 export function updateCameraTimeTracker(muted: boolean) {
-    return function(dispatch: Function, getState: Function) {
-        const state = getState();
-        const lastCameraUpdate = getConferenceTimestamp(state)
-            ? new Date().getTime() - getConferenceTimestamp(state)
-            : 0;
+    const lastCameraUpdate = new Date().getTime();
 
-        sendCameraTimeTrackerUpdate(muted, lastCameraUpdate);
+    sendCameraTimeTrackerUpdate(muted, lastCameraUpdate);
 
-        return dispatch({
-            type: UPDATE_CAMERA_TIME_TRACKER,
-            muted,
-            lastCameraUpdate
-        });
+    return {
+        type: UPDATE_CAMERA_TIME_TRACKER,
+        muted,
+        lastCameraUpdate
     };
 }

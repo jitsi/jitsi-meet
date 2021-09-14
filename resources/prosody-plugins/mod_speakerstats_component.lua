@@ -98,7 +98,7 @@ function on_message(event)
             return false;
         end
         local facialExpressions = room.speakerStats[occupant.jid].facialExpressions;
-        facialExpressions[facialExpression.attr.expression] = facialExpressions[facialExpression.attr.expression] + 1;
+        facialExpressions[facialExpression.attr.expression] = facialExpressions[facialExpression.attr.expression] + facialExpression.attr.duration;
     end
 
     local cameraTimeTrackerUpdate = event.stanza:get_child('cameraTimeTracker', 'http://jitsi.org/jitmeet');

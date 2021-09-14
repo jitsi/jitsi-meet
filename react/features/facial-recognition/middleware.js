@@ -1,6 +1,6 @@
 // @flow
 
-import { CONFERENCE_JOINED } from '../base/conference';
+import { CONFERENCE_JOINED, DATA_CHANNEL_OPENED } from '../base/conference';
 import { MiddlewareRegistry } from '../base/redux';
 import { TRACK_UPDATED, TRACK_ADDED, TRACK_REMOVED } from '../base/tracks';
 import { CHANGE_BACKGROUND } from '../virtual-background/actionTypes';
@@ -11,7 +11,9 @@ import {
     resetTrack,
     setFacialRecognitionAllowed,
     changeTrack,
-    loadWorker
+    loadWorker,
+    updateCameraTimeTracker,
+    cameraMuted
 } from './actions';
 
 
@@ -23,6 +25,17 @@ MiddlewareRegistry.register(store => next => action => {
         dispatch(loadWorker());
         dispatch(setFacialRecognitionAllowed(true));
         dispatch(startFacialRecognition());
+
+        return next(action);
+    }
+    case DATA_CHANNEL_OPENED: {
+        const { dispatch, getState } = store;
+        const state = getState();
+        const { cameraTimeTracker } = state['features/facial-recognition'];
+
+        if (!cameraMuted && (cameraTimeTracker.cameraTime + cameraTimeTracker.lastCameraUpdate) === 0) {
+            dispatch(updateCameraTimeTracker(cameraMuted));
+        }
 
         return next(action);
     }
