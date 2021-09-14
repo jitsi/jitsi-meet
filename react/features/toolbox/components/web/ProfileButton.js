@@ -87,7 +87,13 @@ class ProfileButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { dispatch, _unclickable } = this.props;
+        const { dispatch, _unclickable, handleClick } = this.props;
+
+        if (handleClick) {
+            handleClick();
+
+            return;
+        }
 
         if (!_unclickable) {
             sendAnalytics(createToolbarEvent('profile'));

@@ -47,8 +47,16 @@ class ShareAudioButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        this.props.dispatch(startAudioScreenShareFlow());
-        this.props.dispatch(setOverflowMenuVisible(false));
+        const { dispatch, handleClick } = this.props;
+
+        if (handleClick) {
+            handleClick();
+
+            return;
+        }
+
+        dispatch(startAudioScreenShareFlow());
+        dispatch(setOverflowMenuVisible(false));
     }
 
     /**
