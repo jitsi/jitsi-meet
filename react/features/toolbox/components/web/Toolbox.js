@@ -102,6 +102,11 @@ type Props = {
     _backgroundType: String,
 
     /**
+     * Toolbar buttons which have their click exposed through the API.
+     */
+    _buttonsWithNotifyClick: Array<string>,
+
+    /**
      * Whether or not the chat feature is currently displayed.
      */
     _chatOpen: boolean,
@@ -779,6 +784,24 @@ class Toolbox extends Component<Props> {
     }
 
     /**
+     * Overwrites click handlers for buttons in case click is exposed through the iframe API.
+     *
+     * @param {Object} buttons - The list of toolbar buttons.
+     * @returns {void}
+     */
+    _overwriteButtonsClickHandlers(buttons) {
+        if (typeof APP === 'undefined' || !this.props._buttonsWithNotifyClick?.length) {
+            return;
+        }
+
+        Object.values(buttons).forEach((button: any) => {
+            if (this.props._buttonsWithNotifyClick.includes(button.key)) {
+                button.handleClick = () => APP.API.notifyToolbarButtonClicked(button.key);
+            }
+        });
+    }
+
+    /**
      * Returns all buttons that need to be rendered.
      *
      * @param {Object} state - The redux state.
@@ -792,6 +815,8 @@ class Toolbox extends Component<Props> {
 
 
         const buttons = this._getAllButtons();
+
+        this._overwriteButtonsClickHandlers(buttons);
         const isHangupVisible = isToolbarButtonEnabled('hangup', _toolbarButtons);
         const { order } = THRESHOLDS.find(({ width }) => _clientWidth > width)
             || THRESHOLDS[THRESHOLDS.length - 1];
@@ -1253,7 +1278,9 @@ function _mapStateToProps(state, ownProps) {
     let desktopSharingEnabled = JitsiMeetJS.isDesktopSharingEnabled();
     const {
         callStatsID,
-        enableFeaturesBasedOnToken
+        disableProfile,
+        enableFeaturesBasedOnToken,
+        buttonsWithNotifyClick
     } = state['features/base/config'];
     const {
         fullScreen,
@@ -1285,6 +1312,7 @@ function _mapStateToProps(state, ownProps) {
     }
 
     return {
+        _buttonsWithNotifyClick: buttonsWithNotifyClick,
         _chatOpen: state['features/chat'].isOpen,
         _clientWidth: clientWidth,
         _conference: conference,
@@ -1294,7 +1322,7 @@ function _mapStateToProps(state, ownProps) {
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,
         _dialog: Boolean(state['features/base/dialog'].component),
         _feedbackConfigured: Boolean(callStatsID),
-        _isProfileDisabled: Boolean(state['features/base/config'].disableProfile),
+        _isProfileDisabled: Boolean(disableProfile),
         _isMobile: isMobileBrowser(),
         _isVpaasMeeting: isVpaasMeeting(state),
         _fullScreen: fullScreen,

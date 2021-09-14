@@ -12,11 +12,6 @@ type Props = AbstractButtonProps & {
      * Whether or not the local participant's hand is raised.
      */
     _raisedHand: boolean,
-
-    /**
-     * External handler for click action.
-     */
-    handleClick: Function
 };
 
 /**
@@ -51,7 +46,13 @@ class RaiseHandButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        this.props.handleClick();
+        const { handleClick } = this.props;
+
+        if (handleClick) {
+            handleClick();
+
+            return;
+        }
     }
 
     /**

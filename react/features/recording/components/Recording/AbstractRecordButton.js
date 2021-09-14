@@ -77,7 +77,13 @@ export default class AbstractRecordButton<P: Props> extends AbstractButton<P, *>
      * @returns {void}
      */
     async _handleClick() {
-        const { _isRecordingRunning, dispatch } = this.props;
+        const { _isRecordingRunning, dispatch, handleClick } = this.props;
+
+        if (handleClick) {
+            handleClick();
+
+            return;
+        }
 
         sendAnalytics(createToolbarEvent(
             'recording.button',

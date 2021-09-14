@@ -11,9 +11,9 @@ import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/com
 type Props = AbstractButtonProps & {
 
     /**
-     * External handler for click action.
+     * Whether or not the participants pane is open.
      */
-    handleClick: Function
+    _isOpen: boolean,
 };
 
 /**
@@ -32,7 +32,13 @@ class ParticipantsPaneButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        this.props.handleClick();
+        const { handleClick } = this.props;
+
+        if (handleClick) {
+            handleClick();
+
+            return;
+        }
     }
 }
 

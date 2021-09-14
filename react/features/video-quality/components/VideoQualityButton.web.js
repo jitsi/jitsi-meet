@@ -43,11 +43,6 @@ type Props = AbstractButtonProps & {
     _videoQuality: number,
 
     /**
-     * Callback to invoke when {@link VideoQualityButton} is clicked.
-     */
-     handleClick: Function,
-
-    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -97,7 +92,13 @@ class VideoQualityButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        this.props.handleClick();
+        const { handleClick } = this.props;
+
+        if (handleClick) {
+            handleClick();
+
+            return;
+        }
     }
 }
 
