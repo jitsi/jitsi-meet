@@ -17,6 +17,11 @@ import VideoMuteButton from '../VideoMuteButton';
 type Props = {
 
     /**
+     * External handler for click action.
+     */
+    handleClick: Function,
+
+    /**
      * Click handler for the small icon. Opens video options.
      */
     onVideoOptionsClick: Function,
@@ -62,7 +67,7 @@ type Props = {
  */
 class VideoSettingsButton extends Component<Props> {
     /**
-     * Initializes a new {@code AudioSettingsButton} instance.
+     * Initializes a new {@code VideoSettingsButton} instance.
      *
      * @inheritdoc
      */
@@ -70,6 +75,7 @@ class VideoSettingsButton extends Component<Props> {
         super(props);
 
         this._onEscClick = this._onEscClick.bind(this);
+        this._onClick = this._onClick.bind(this);
     }
 
     /**
@@ -94,8 +100,27 @@ class VideoSettingsButton extends Component<Props> {
         if (event.key === 'Escape' && this.props.isOpen) {
             event.preventDefault();
             event.stopPropagation();
-            this.props.onVideoOptionsClick();
+            this._onClick();
         }
+    }
+
+    _onClick: () => void;
+
+    /**
+     * Click handler for the more actions entries.
+     *
+     * @returns {void}
+     */
+    _onClick() {
+        const { handleClick, onVideoOptionsClick } = this.props;
+
+        if (handleClick) {
+            handleClick();
+
+            return;
+        }
+
+        onVideoOptionsClick();
     }
 
     /**
@@ -104,7 +129,7 @@ class VideoSettingsButton extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { onVideoOptionsClick, t, visible, isOpen } = this.props;
+        const { handleClick, t, visible, isOpen } = this.props;
 
         return visible ? (
             <VideoSettingsPopup>
@@ -117,12 +142,12 @@ class VideoSettingsButton extends Component<Props> {
                     iconDisabled = { this._isIconDisabled() }
                     iconId = 'video-settings-button'
                     iconTooltip = { t('toolbar.videoSettings') }
-                    onIconClick = { onVideoOptionsClick }
+                    onIconClick = { this._onClick }
                     onIconKeyDown = { this._onEscClick }>
-                    <VideoMuteButton />
+                    <VideoMuteButton handleClick = { handleClick } />
                 </ToolboxButtonWithIcon>
             </VideoSettingsPopup>
-        ) : <VideoMuteButton />;
+        ) : <VideoMuteButton handleClick = { handleClick } />;
     }
 }
 

@@ -19,6 +19,7 @@ export default [
     'apiLogLevels',
     'avgRtpStatsN',
     'backgroundAlpha',
+    'buttonsWithNotifyClick',
 
     /**
      * The display name of the CallKit call representing the conference/meeting
