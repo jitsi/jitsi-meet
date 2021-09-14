@@ -44,7 +44,8 @@ import {
     lockStateChanged,
     onStartMutedPolicyChanged,
     p2pStatusChanged,
-    sendLocalParticipant
+    sendLocalParticipant,
+    _conferenceWillJoin
 } from './react/features/base/conference';
 import { getReplaceParticipant } from './react/features/base/config/functions';
 import {
@@ -1315,13 +1316,13 @@ export default {
                 APP.conference.roomName,
                 this._getConferenceOptions());
 
-        APP.store.dispatch(conferenceWillJoin(room));
-
         // Filter out the tracks that are muted (except on mobile Safari).
         const tracks = isIosMobileBrowser() ? localTracks : localTracks.filter(track => !track.isMuted());
 
         this._setLocalAudioVideoStreams(tracks);
         this._room = room; // FIXME do not use this
+
+        APP.store.dispatch(_conferenceWillJoin(room));
 
         sendLocalParticipant(APP.store, room);
 
