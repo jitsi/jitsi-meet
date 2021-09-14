@@ -128,6 +128,17 @@ export const KICKED_OUT = 'KICKED_OUT';
 export const LOCK_STATE_CHANGED = 'LOCK_STATE_CHANGED';
 
 /**
+ * The type of (redux) action which signals that a system (non-participant) message has been received.
+ *
+ * {
+ *     type: NON_PARTICIPANT_MESSAGE_RECEIVED,
+ *     id: String,
+ *     json: Object
+ * }
+ */
+export const NON_PARTICIPANT_MESSAGE_RECEIVED = 'NON_PARTICIPANT_MESSAGE_RECEIVED';
+
+/**
  * The type of (redux) action which sets the peer2peer flag for the current
  * conference.
  *

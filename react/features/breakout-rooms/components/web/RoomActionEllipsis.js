@@ -2,16 +2,12 @@
 
 import { makeStyles } from '@material-ui/styles';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { QuickActionButton } from '../../../base/components';
 import { Icon, IconHorizontalPoints } from '../../../base/icons';
 
 type Props = {
-
-    /**
-     * Label used for accessibility.
-     */
-    accessibilityLabel: string,
 
     /**
      * Click handler function.
@@ -27,12 +23,13 @@ const useStyles = makeStyles(() => {
     };
 });
 
-const ParticipantActionEllipsis = ({ accessibilityLabel, onClick }: Props) => {
+const RoomActionEllipsis = ({ onClick }: Props) => {
     const styles = useStyles();
+    const { t } = useTranslation();
 
     return (
         <QuickActionButton
-            accessibilityLabel = { accessibilityLabel }
+            accessibilityLabel = { t('breakoutRooms.actions.more') }
             className = { styles.button }
             onClick = { onClick }>
             <Icon src = { IconHorizontalPoints } />
@@ -40,4 +37,4 @@ const ParticipantActionEllipsis = ({ accessibilityLabel, onClick }: Props) => {
     );
 };
 
-export default ParticipantActionEllipsis;
+export default RoomActionEllipsis;

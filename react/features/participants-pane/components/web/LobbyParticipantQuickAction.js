@@ -3,7 +3,7 @@
 import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 
-import QuickActionButton from '../../../base/components/buttons/QuickActionButton';
+import { QuickActionButton } from '../../../base/components';
 
 type Props = {
 

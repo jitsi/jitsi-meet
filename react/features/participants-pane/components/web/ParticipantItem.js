@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/styles';
 import React, { type Node, useCallback } from 'react';
 
 import { Avatar } from '../../../base/avatar';
-import ListItem from '../../../base/components/particpants-pane-list/ListItem';
+import { ListItem } from '../../../base/components';
 import { translate } from '../../../base/i18n';
 import {
     ACTION_TRIGGER,
@@ -22,17 +22,17 @@ type Props = {
     /**
      * Type of trigger for the participant actions.
      */
-    actionsTrigger: ActionTrigger,
+    actionsTrigger?: ActionTrigger,
 
     /**
      * Media state for audio.
      */
-    audioMediaState: MediaState,
+    audioMediaState?: MediaState,
 
     /**
      * React children.
      */
-    children: Node,
+    children?: Node,
 
     /**
      * Whether or not to disable the moderator indicator.
@@ -57,12 +57,12 @@ type Props = {
     /**
      * True if the participant is local.
      */
-    local: Boolean,
+    local: boolean,
 
     /**
      * Opens a drawer with participant actions.
      */
-    openDrawerForParticipant: Function,
+    openDrawerForParticipant?: Function,
 
     /**
      * Callback for when the mouse leaves this component.
@@ -82,12 +82,12 @@ type Props = {
     /**
      * True if the participant have raised hand.
      */
-    raisedHand: boolean,
+    raisedHand?: boolean,
 
     /**
      * Media state for video.
      */
-    videoMediaState: MediaState,
+    videoMediaState?: MediaState,
 
     /**
      * Invoked to obtain translated strings.
@@ -97,7 +97,7 @@ type Props = {
     /**
      * The translated "you" text.
      */
-    youText: string
+    youText?: string
 }
 
 const useStyles = makeStyles(theme => {
@@ -147,7 +147,7 @@ function ParticipantItem({
     youText
 }: Props) {
     const onClick = useCallback(
-        () => openDrawerForParticipant({
+        () => openDrawerForParticipant && openDrawerForParticipant({
             participantID,
             displayName
         }));
@@ -157,6 +157,7 @@ function ParticipantItem({
     const icon = (
         <Avatar
             className = 'participant-avatar'
+            displayName = { displayName }
             participantId = { participantID }
             size = { 32 } />
     );

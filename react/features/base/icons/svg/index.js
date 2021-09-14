@@ -101,6 +101,7 @@ export { default as IconRemoteControlStart } from './play.svg';
 export { default as IconRemoteControlStop } from './stop.svg';
 export { default as IconReply } from './reply.svg';
 export { default as IconRestore } from './restore.svg';
+export { default as IconRingGroup } from './icon-ring-group.svg';
 export { default as IconRoomLock } from './security.svg';
 export { default as IconRoomUnlock } from './security-locked.svg';
 export { default as IconSecurityOff } from './security-off.svg';

@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import { approveParticipant } from '../../../av-moderation/actions';
-import QuickActionButton from '../../../base/components/buttons/QuickActionButton';
+import { QuickActionButton } from '../../../base/components';
 import { QUICK_ACTION_BUTTON } from '../../constants';
 
 type Props = {
