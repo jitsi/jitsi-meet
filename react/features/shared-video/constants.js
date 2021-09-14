@@ -1,12 +1,6 @@
 // @flow
 
 /**
- * Placeholder for web share video input.
- * @type {string}
- */
-export const defaultSharedVideoLink = 'Youtube link or direct video link';
-
-/**
  * Fixed name of the video player fake participant.
  * @type {string}
  */

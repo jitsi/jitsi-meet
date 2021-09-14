@@ -7,7 +7,6 @@ import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { getFieldValue } from '../../../base/react';
 import { connect } from '../../../base/redux';
-import { defaultSharedVideoLink } from '../../constants';
 import AbstractSharedVideoDialog from '../AbstractSharedVideoDialog';
 
 /**
@@ -85,7 +84,7 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
                     label = { t('dialog.videoLink') }
                     name = 'sharedVideoUrl'
                     onChange = { this._onChange }
-                    placeholder = { defaultSharedVideoLink }
+                    placeholder = { t('dialog.sharedVideoLinkPlaceholder') }
                     shouldFitContainer = { true }
                     type = 'text'
                     value = { this.state.value } />
