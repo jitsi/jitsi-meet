@@ -1,9 +1,8 @@
 // @flow
 
+import { MODERATION_NOTIFICATIONS } from '../av-moderation/constants';
 import { MEDIA_TYPE } from '../base/media';
 import { toState } from '../base/redux';
-
-import { MODERATION_NOTIFICATIONS } from './constants';
 
 declare var interfaceConfig: Object;
 
