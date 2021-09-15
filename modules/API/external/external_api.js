@@ -76,6 +76,7 @@ const events = {
     'avatar-changed': 'avatarChanged',
     'audio-availability-changed': 'audioAvailabilityChanged',
     'audio-mute-status-changed': 'audioMuteStatusChanged',
+    'browser-support': 'browserSupport',
     'camera-error': 'cameraError',
     'chat-updated': 'chatUpdated',
     'content-sharing-participants-changed': 'contentSharingParticipantsChanged',
