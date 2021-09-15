@@ -4,7 +4,7 @@ import {
     AUDIO_MODERATION_NOTIFICATION_ID,
     CS_MODERATION_NOTIFICATION_ID,
     VIDEO_MODERATION_NOTIFICATION_ID
-} from '../av-moderation/middleware';
+} from '../av-moderation/constants';
 import { MEDIA_TYPE } from '../base/media';
 
 /**

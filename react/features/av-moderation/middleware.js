@@ -37,17 +37,17 @@ import {
     participantApproved,
     participantPendingAudio
 } from './actions';
-import { ASKED_TO_UNMUTE_SOUND_ID } from './constants';
+import {
+    ASKED_TO_UNMUTE_SOUND_ID, AUDIO_MODERATION_NOTIFICATION_ID,
+    CS_MODERATION_NOTIFICATION_ID,
+    VIDEO_MODERATION_NOTIFICATION_ID
+} from './constants';
 import {
     isEnabledFromState,
     isParticipantApproved,
     isParticipantPending
 } from './functions';
 import { ASKED_TO_UNMUTE_FILE } from './sounds';
-
-export const AUDIO_MODERATION_NOTIFICATION_ID = 'audio-moderation';
-export const VIDEO_MODERATION_NOTIFICATION_ID = 'video-moderation';
-export const CS_MODERATION_NOTIFICATION_ID = 'screensharing-moderation';
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     const { type } = action;

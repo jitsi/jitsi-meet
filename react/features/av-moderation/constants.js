@@ -19,3 +19,7 @@ export const MEDIA_TYPE_TO_PENDING_STORE_KEY: {[key: MediaType]: string} = {
 };
 
 export const ASKED_TO_UNMUTE_SOUND_ID = 'ASKED_TO_UNMUTE_SOUND';
+
+export const AUDIO_MODERATION_NOTIFICATION_ID = 'audio-moderation';
+export const VIDEO_MODERATION_NOTIFICATION_ID = 'video-moderation';
+export const CS_MODERATION_NOTIFICATION_ID = 'screensharing-moderation';
