@@ -4,6 +4,7 @@ import React, { type Node, useCallback, useState, useEffect } from 'react';
 
 import { Avatar } from '../../../base/avatar';
 import TimeElapsed from '../../../speaker-stats/components/TimeElapsed';
+import { translate } from '../../../base/i18n';
 import {
     ACTION_TRIGGER,
     AudioStateIcons,
@@ -15,10 +16,12 @@ import {
 
 import { RaisedHandIndicator } from './RaisedHandIndicator';
 import {
+    ModeratorLabel,
     ParticipantActionsHover,
     ParticipantActionsPermanent,
     ParticipantContainer,
     ParticipantContent,
+    ParticipantDetailsContainer,
     ParticipantName,
     ParticipantNameContainer,
     ParticipantStates,
@@ -59,6 +62,11 @@ type Props = {
      * Is this item highlighted/raised
      */
     isHighlighted?: boolean,
+
+    /**
+     * Whether or not the participant is a moderator.
+     */
+    isModerator: boolean,
 
     /**
      * True if the participant is local.
@@ -106,6 +114,11 @@ type Props = {
     videoMediaState: MediaState,
 
     /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function,
+
+    /**
      * The translated "you" text.
      */
     youText: string
@@ -117,9 +130,10 @@ type Props = {
  * @param {Props} props - The props of the component.
  * @returns {ReactNode}
  */
-export default function ParticipantItem({
+function ParticipantItem({
     children,
     isHighlighted,
+    isModerator,
     onLeave,
     actionsTrigger = ACTION_TRIGGER.HOVER,
     audioMediaState = MEDIA_STATE.NONE,
@@ -132,6 +146,7 @@ export default function ParticipantItem({
     raisedAt,
     raisedFirst,
     raisedHand,
+    t,
     youText
 }: Props) {
     const [ waitingTime, setWaitingTime ] = useState(Date.now() - raisedAt);
@@ -167,12 +182,17 @@ export default function ParticipantItem({
                 participantId = { participantID }
                 size = { 32 } />
             <ParticipantContent>
-                <ParticipantNameContainer>
-                    <ParticipantName>
-                        { displayName }
-                    </ParticipantName>
-                    { local ? <span>&nbsp;({ youText })</span> : null }
-                </ParticipantNameContainer>
+                <ParticipantDetailsContainer>
+                    <ParticipantNameContainer>
+                        <ParticipantName>
+                            { displayName }
+                        </ParticipantName>
+                        { local ? <span>&nbsp;({ youText })</span> : null }
+                    </ParticipantNameContainer>
+                    {isModerator && <ModeratorLabel>
+                        {t('videothumbnail.moderator')}
+                    </ModeratorLabel>}
+                </ParticipantDetailsContainer>
                 { !local && <ParticipantActions children = { children } /> }
                 { (showHandTime && raisedAt > 0) && <TimeElapsedSpacer isLocal = { local }><TimeElapsed time = { waitingTime } /></TimeElapsedSpacer> }
                 <ParticipantStates>
@@ -184,3 +204,5 @@ export default function ParticipantItem({
         </ParticipantContainer>
     );
 }
+
+export default translate(ParticipantItem);

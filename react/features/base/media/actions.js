@@ -4,6 +4,7 @@ import type { Dispatch } from 'redux';
 
 import { showModeratedNotification } from '../../av-moderation/actions';
 import { shouldShowModeratedNotification } from '../../av-moderation/functions';
+import { isModerationNotificationDisplayed } from '../../notifications';
 
 import {
     SET_AUDIO_MUTED,
@@ -113,7 +114,9 @@ export function setVideoMuted(
 
         // check for A/V Moderation when trying to unmute
         if (!muted && shouldShowModeratedNotification(MEDIA_TYPE.VIDEO, state)) {
-            ensureTrack && dispatch(showModeratedNotification(MEDIA_TYPE.VIDEO));
+            if (!isModerationNotificationDisplayed(MEDIA_TYPE.VIDEO, state)) {
+                ensureTrack && dispatch(showModeratedNotification(MEDIA_TYPE.VIDEO));
+            }
 
             return;
         }

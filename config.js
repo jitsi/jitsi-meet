@@ -737,6 +737,7 @@ var config = {
 
     // Array<string> of disabled sounds.
     // Possible values:
+    // - 'ASKED_TO_UNMUTE_SOUND'
     // - 'E2EE_OFF_SOUND'
     // - 'E2EE_ON_SOUND'
     // - 'INCOMING_MSG_SOUND'

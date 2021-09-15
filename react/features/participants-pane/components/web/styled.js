@@ -282,6 +282,7 @@ export const ParticipantContainer = styled.div`
   color: white;
   display: flex;
   font-size: 13px;
+  font-weight: normal;
   height: ${props => props.theme.participantItemHeight}px;
   margin: 0 -${props => props.theme.panePadding}px;
   padding-left: ${props => props.theme.panePadding}px;
@@ -343,8 +344,22 @@ export const ParticipantName = styled.div`
 export const ParticipantNameContainer = styled.div`
   display: flex;
   flex: 1;
+  overflow: hidden;
+`;
+
+export const ModeratorLabel = styled.div`
+  font-size: 12px;
+  line-height: 16px;
+  color: #858585;
+`;
+
+export const ParticipantDetailsContainer = styled.div`
+  display: flex;
+  flex: 1;
   margin-right: 8px;
   overflow: hidden;
+  flex-direction: column;
+  justify-content: flex-start;
 `;
 
 export const RaisedHandIndicatorBackground = styled.div`

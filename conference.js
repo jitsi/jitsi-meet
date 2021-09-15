@@ -24,6 +24,8 @@ import {
     redirectToStaticPage,
     reloadWithStoredParams
 } from './react/features/app/actions';
+import { showModeratedNotification } from './react/features/av-moderation/actions';
+import { shouldShowModeratedNotification } from './react/features/av-moderation/functions';
 import {
     AVATAR_URL_COMMAND,
     EMAIL_COMMAND,
@@ -44,7 +46,8 @@ import {
     lockStateChanged,
     onStartMutedPolicyChanged,
     p2pStatusChanged,
-    sendLocalParticipant
+    sendLocalParticipant,
+    _conferenceWillJoin
 } from './react/features/base/conference';
 import { getReplaceParticipant } from './react/features/base/config/functions';
 import {
@@ -119,7 +122,7 @@ import {
     maybeOpenFeedbackDialog,
     submitFeedback
 } from './react/features/feedback';
-import { showNotification } from './react/features/notifications';
+import { isModerationNotificationDisplayed, showNotification } from './react/features/notifications';
 import { mediaPermissionPromptVisibilityChanged, toggleSlowGUMOverlay } from './react/features/overlay';
 import { suspendDetected } from './react/features/power-monitor';
 import {
@@ -870,9 +873,20 @@ export default {
      * dialogs in case of media permissions error.
      */
     muteAudio(mute, showUI = true) {
+        const state = APP.store.getState();
+
         if (!mute
-                && isUserInteractionRequiredForUnmute(APP.store.getState())) {
+            && isUserInteractionRequiredForUnmute(state)) {
             logger.error('Unmuting audio requires user interaction');
+
+            return;
+        }
+
+        // check for A/V Moderation when trying to unmute
+        if (!mute && shouldShowModeratedNotification(MEDIA_TYPE.AUDIO, state)) {
+            if (!isModerationNotificationDisplayed(MEDIA_TYPE.AUDIO, state)) {
+                APP.store.dispatch(showModeratedNotification(MEDIA_TYPE.AUDIO));
+            }
 
             return;
         }
@@ -1315,13 +1329,13 @@ export default {
                 APP.conference.roomName,
                 this._getConferenceOptions());
 
-        APP.store.dispatch(conferenceWillJoin(room));
-
         // Filter out the tracks that are muted (except on mobile Safari).
         const tracks = isIosMobileBrowser() ? localTracks : localTracks.filter(track => !track.isMuted());
 
         this._setLocalAudioVideoStreams(tracks);
         this._room = room; // FIXME do not use this
+
+        APP.store.dispatch(_conferenceWillJoin(room));
 
         sendLocalParticipant(APP.store, room);
 
