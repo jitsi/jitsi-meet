@@ -35,7 +35,9 @@ import {
     enableModeration,
     localParticipantApproved,
     participantApproved,
-    participantPendingAudio
+    participantPendingAudio,
+    localParticipantRejected,
+    participantRejected
 } from './actions';
 import {
     ASKED_TO_UNMUTE_SOUND_ID, AUDIO_MODERATION_NOTIFICATION_ID,
@@ -176,6 +178,10 @@ StateListenerRegistry.register(
                 }
             });
 
+            conference.on(JitsiConferenceEvents.AV_MODERATION_REJECTED, ({ mediaType }) => {
+                dispatch(localParticipantRejected(mediaType));
+            });
+
             conference.on(JitsiConferenceEvents.AV_MODERATION_CHANGED, ({ enabled, mediaType, actor }) => {
                 enabled ? dispatch(enableModeration(mediaType, actor)) : dispatch(disableModeration(mediaType, actor));
             });
@@ -193,6 +199,15 @@ StateListenerRegistry.register(
                         // remove from pending list
                         dispatch(dismissPendingParticipant(id, mediaType));
                     });
+                });
+
+            // this is received by moderators
+            conference.on(
+                JitsiConferenceEvents.AV_MODERATION_PARTICIPANT_REJECTED,
+                ({ participant, mediaType }) => {
+                    const { _id: id } = participant;
+
+                    dispatch(participantRejected(id, mediaType));
                 });
         }
     });

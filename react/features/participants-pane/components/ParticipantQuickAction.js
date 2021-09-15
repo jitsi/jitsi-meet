@@ -63,15 +63,12 @@ export default function ParticipantQuickAction({
             </QuickActionButton>
         );
     }
-    case QUICK_ACTION_BUTTON.ASK_TO_UNMUTE: {
+    default: {
         return (
             <AskToUnmuteButton
                 askUnmuteText = { askUnmuteText }
                 participantID = { participantID } />
         );
-    }
-    default: {
-        return null;
     }
     }
 }

@@ -13,6 +13,17 @@ end
 
 module:log('info', 'Starting av_moderation for %s', muc_component_host);
 
+-- Returns the index of the given element in the table
+-- @param table in which to look
+-- @param elem the element for which to find the index
+function get_index_in_table(table, elem)
+    for index, value in pairs(table) do
+        if value == elem then
+            return index
+        end
+    end
+end
+
 -- Sends a json-message to the destination jid
 -- @param to_jid the destination jid
 -- @param json_message the message content to send
@@ -46,20 +57,22 @@ function notify_occupants_enable(jid, enable, room, actorJid, mediaType)
     end
 end
 
--- Notifies about a jid added to the whitelist. Notifies all moderators and admin and the jid itself
+-- Notifies about a change to the whitelist. Notifies all moderators and admin and the jid itself
 -- @param jid the jid to notify about the change
 -- @param moderators whether to notify all moderators in the room
 -- @param room the room where to send it
 -- @param mediaType used only when a participant is approved (not sent to moderators)
-function notify_whitelist_change(jid, moderators, room, mediaType)
+-- @param removed whether the jid is removed or added
+function notify_whitelist_change(jid, moderators, room, mediaType, removed)
     local body_json = {};
     body_json.type = 'av_moderation';
     body_json.room = internal_room_jid_match_rewrite(room.jid);
     body_json.whitelists = room.av_moderation;
+    body_json.removed = removed;
+    body_json.mediaType = mediaType;
     local moderators_body_json_str = json.encode(body_json);
     body_json.whitelists = nil;
     body_json.approved = true; -- we want to send to participants only that they were approved to unmute
-    body_json.mediaType = mediaType;
     local participant_body_json_str = json.encode(body_json);
 
     for _, occupant in room:each_occupant() do
@@ -75,6 +88,22 @@ function notify_whitelist_change(jid, moderators, room, mediaType)
             end
         end
     end
+end
+
+-- Notifies jid that is approved. This is a moderator to jid message to ask to unmute,
+-- @param jid the jid to notify about the change
+-- @param from the jid that triggered this
+-- @param room the room where to send it
+-- @param mediaType the mediaType it was approved for
+function notify_jid_approved(jid, from, room, mediaType)
+    local body_json = {};
+    body_json.type = 'av_moderation';
+    body_json.room = internal_room_jid_match_rewrite(room.jid);
+    body_json.approved = true; -- we want to send to participants only that they were approved to unmute
+    body_json.mediaType = mediaType;
+    body_json.from = from;
+
+    send_json_message(jid, json.encode(body_json));
 end
 
 -- receives messages from clients to the component sending A/V moderation enable/disable commands or adding
@@ -166,7 +195,7 @@ function on_message(event)
             -- send message to all occupants
             notify_occupants_enable(nil, enabled, room, occupant.nick, mediaType);
             return true;
-        elseif moderation_command.attr.jidToWhitelist and room.av_moderation then
+        elseif moderation_command.attr.jidToWhitelist then
             local occupant_jid = moderation_command.attr.jidToWhitelist;
             -- check if jid is in the room, if so add it to whitelist
             -- inform all moderators and admins and the jid
@@ -176,16 +205,44 @@ function on_message(event)
                 return false;
             end
 
-            local whitelist = room.av_moderation[mediaType];
-            if not whitelist then
-                whitelist = {};
-                room.av_moderation[mediaType] = whitelist;
+            if room.av_moderation then
+                local whitelist = room.av_moderation[mediaType];
+                if not whitelist then
+                    whitelist = {};
+                    room.av_moderation[mediaType] = whitelist;
+                end
+                table.insert(whitelist, occupant_jid);
+
+                notify_whitelist_change(occupant_to_add.jid, true, room, mediaType, false);
+
+                return true;
+            else
+                -- this is a moderator asking the jid to unmute without enabling av moderation
+                -- let's just send the event
+                notify_jid_approved(occupant_to_add.jid, occupant.nick, room, mediaType);
             end
-            table.insert(whitelist, occupant_jid);
+        elseif moderation_command.attr.jidToBlacklist then
+            local occupant_jid = moderation_command.attr.jidToBlacklist;
+            -- check if jid is in the room, if so remove it from the whitelist
+            -- inform all moderators and admins
+            local occupant_to_remove = room:get_occupant_by_nick(room_jid_match_rewrite(occupant_jid));
+            if not occupant_to_remove then
+                module:log('warn', 'No occupant %s found for %s', occupant_jid, room.jid);
+                return false;
+            end
 
-            notify_whitelist_change(occupant_to_add.jid, true, room, mediaType);
+            if room.av_moderation then
+                local whitelist = room.av_moderation[mediaType];
+                if whitelist then
+                    local index = get_index_in_table(whitelist, occupant_jid)
+                    if(index) then
+                        table.remove(whitelist, index);
+                        notify_whitelist_change(occupant_to_remove.jid, true, room, mediaType, true);
+                    end
+                end
 
-            return true;
+                return true;
+            end
         end
     end
 

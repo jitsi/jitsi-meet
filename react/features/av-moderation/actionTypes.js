@@ -75,6 +75,16 @@ export const REQUEST_ENABLE_VIDEO_MODERATION = 'REQUEST_ENABLE_VIDEO_MODERATION'
 export const LOCAL_PARTICIPANT_APPROVED = 'LOCAL_PARTICIPANT_APPROVED';
 
 /**
+ * The type of (redux) action which signals that the local participant had been blocked.
+ *
+ * {
+ *     type: LOCAL_PARTICIPANT_REJECTED,
+ *     mediaType: MediaType
+ * }
+ */
+export const LOCAL_PARTICIPANT_REJECTED = 'LOCAL_PARTICIPANT_REJECTED';
+
+/**
  * The type of (redux) action which signals to show notification to the local participant.
  *
  * {
@@ -93,6 +103,17 @@ export const LOCAL_PARTICIPANT_MODERATION_NOTIFICATION = 'LOCAL_PARTICIPANT_MODE
  * }
  */
 export const PARTICIPANT_APPROVED = 'PARTICIPANT_APPROVED';
+
+/**
+ * The type of (redux) action which signals that a participant was blocked for a media type.
+ *
+ * {
+ *     type: PARTICIPANT_REJECTED,
+ *     mediaType: MediaType
+ *     participantId: String
+ * }
+ */
+export const PARTICIPANT_REJECTED = 'PARTICIPANT_REJECTED';
 
 
 /**
