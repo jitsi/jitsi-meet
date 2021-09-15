@@ -275,8 +275,14 @@ function _constructOptions(state) {
     // redux store.
     const options = _.cloneDeep(state['features/base/config']);
 
-    let { bosh } = options;
-    const { websocket } = options;
+    let { bosh, websocket } = options;
+
+    // TESTING: Only enable WebSocket for some percentage of users.
+    if (websocket) {
+        if ((Math.random() * 100) >= (options?.testing?.mobileXmppWsThreshold ?? 0)) {
+            websocket = undefined;
+        }
+    }
 
     // Normalize the BOSH URL.
     if (bosh && !websocket) {
@@ -300,6 +306,8 @@ function _constructOptions(state) {
 
     // WebSocket is preferred over BOSH.
     const serviceUrl = websocket || bosh;
+
+    logger.log(`Using service URL ${serviceUrl}`);
 
     // Append room to the URL's search.
     const { room } = state['features/base/conference'];
