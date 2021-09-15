@@ -376,41 +376,6 @@ class Toolbox extends Component<Props> {
             this._onSetOverflowVisible(false);
             dispatch(setToolbarHovered(false));
         }
-
-        if (!this.state.reactionsShortcutsRegistered
-            && (prevProps._reactionsEnabled !== _reactionsEnabled
-            || prevProps._participantCount !== _participantCount)) {
-            if (_reactionsEnabled && _participantCount > 1) {
-                // eslint-disable-next-line react/no-did-update-set-state
-                this.setState({
-                    reactionsShortcutsRegistered: true
-                });
-                const REACTION_SHORTCUTS = Object.keys(REACTIONS).map(key => {
-                    const onShortcutSendReaction = () => {
-                        dispatch(addReactionToBuffer(key));
-                        sendAnalytics(createShortcutEvent(
-                            `reaction.${key}`
-                        ));
-                    };
-
-                    return {
-                        character: REACTIONS[key].shortcutChar,
-                        exec: onShortcutSendReaction,
-                        helpDescription: t(`toolbar.reaction${key.charAt(0).toUpperCase()}${key.slice(1)}`),
-                        altKey: true
-                    };
-                });
-
-                REACTION_SHORTCUTS.forEach(shortcut => {
-                    APP.keyboardshortcut.registerShortcut(
-                        shortcut.character,
-                        null,
-                        shortcut.exec,
-                        shortcut.helpDescription,
-                        shortcut.altKey);
-                });
-            }
-        }
     }
 
     /**
