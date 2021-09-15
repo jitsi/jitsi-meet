@@ -3,6 +3,7 @@
 import React, { type Node, useCallback } from 'react';
 
 import { Avatar } from '../../../base/avatar';
+import { translate } from '../../../base/i18n';
 import {
     ACTION_TRIGGER,
     AudioStateIcons,
@@ -14,10 +15,12 @@ import {
 
 import { RaisedHandIndicator } from './RaisedHandIndicator';
 import {
+    ModeratorLabel,
     ParticipantActionsHover,
     ParticipantActionsPermanent,
     ParticipantContainer,
     ParticipantContent,
+    ParticipantDetailsContainer,
     ParticipantName,
     ParticipantNameContainer,
     ParticipantStates
@@ -59,6 +62,11 @@ type Props = {
     isHighlighted?: boolean,
 
     /**
+     * Whether or not the participant is a moderator.
+     */
+    isModerator: boolean,
+
+    /**
      * True if the participant is local.
      */
     local: Boolean,
@@ -94,6 +102,11 @@ type Props = {
     videoMediaState: MediaState,
 
     /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function,
+
+    /**
      * The translated "you" text.
      */
     youText: string
@@ -105,9 +118,10 @@ type Props = {
  * @param {Props} props - The props of the component.
  * @returns {ReactNode}
  */
-export default function ParticipantItem({
+function ParticipantItem({
     children,
     isHighlighted,
+    isModerator,
     onLeave,
     actionsTrigger = ACTION_TRIGGER.HOVER,
     audioMediaState = MEDIA_STATE.NONE,
@@ -118,6 +132,7 @@ export default function ParticipantItem({
     openDrawerForParticipant,
     overflowDrawer,
     raisedHand,
+    t,
     youText
 }: Props) {
     const ParticipantActions = Actions[actionsTrigger];
@@ -140,12 +155,17 @@ export default function ParticipantItem({
                 participantId = { participantID }
                 size = { 32 } />
             <ParticipantContent>
-                <ParticipantNameContainer>
-                    <ParticipantName>
-                        { displayName }
-                    </ParticipantName>
-                    { local ? <span>&nbsp;({ youText })</span> : null }
-                </ParticipantNameContainer>
+                <ParticipantDetailsContainer>
+                    <ParticipantNameContainer>
+                        <ParticipantName>
+                            { displayName }
+                        </ParticipantName>
+                        { local ? <span>&nbsp;({ youText })</span> : null }
+                    </ParticipantNameContainer>
+                    {isModerator && <ModeratorLabel>
+                        {t('videothumbnail.moderator')}
+                    </ModeratorLabel>}
+                </ParticipantDetailsContainer>
                 { !local && <ParticipantActions children = { children } /> }
                 <ParticipantStates>
                     { raisedHand && <RaisedHandIndicator /> }
@@ -156,3 +176,5 @@ export default function ParticipantItem({
         </ParticipantContainer>
     );
 }
+
+export default translate(ParticipantItem);

@@ -566,9 +566,9 @@
         "moderator": "You're now a moderator",
         "muted": "You have started the conversation muted.",
         "mutedTitle": "You're muted!",
-        "mutedRemotelyTitle": "You've been muted by the moderator",
+        "mutedRemotelyTitle": "You've been muted by {{moderator}}",
         "mutedRemotelyDescription": "You can always unmute when you're ready to speak. Mute back when you're done to keep noise away from the meeting.",
-        "videoMutedRemotelyTitle": "Your camera has been turned off by the moderator",
+        "videoMutedRemotelyTitle": "Your camera has been turned off by {{moderator}}",
         "videoMutedRemotelyDescription": "You can always turn it on again.",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) removed by another participant",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) set by another participant",
@@ -623,7 +623,7 @@
             "stopEveryonesVideo": "Stop everyone's video",
             "stopVideo": "Stop video",
             "unblockEveryoneMicCamera": "Unblock everyone's mic and camera",
-            "videoModeration": "Start video"
+            "videoModeration": "Start their video"
         }
     },
     "passwordSetRemotely": "Set by another participant",

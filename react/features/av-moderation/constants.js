@@ -17,3 +17,15 @@ export const MEDIA_TYPE_TO_PENDING_STORE_KEY: {[key: MediaType]: string} = {
     [MEDIA_TYPE.AUDIO]: 'pendingAudio',
     [MEDIA_TYPE.VIDEO]: 'pendingVideo'
 };
+
+export const ASKED_TO_UNMUTE_SOUND_ID = 'ASKED_TO_UNMUTE_SOUND';
+
+export const AUDIO_MODERATION_NOTIFICATION_ID = 'audio-moderation';
+export const VIDEO_MODERATION_NOTIFICATION_ID = 'video-moderation';
+export const CS_MODERATION_NOTIFICATION_ID = 'screensharing-moderation';
+
+export const MODERATION_NOTIFICATIONS = {
+    [MEDIA_TYPE.AUDIO]: AUDIO_MODERATION_NOTIFICATION_ID,
+    [MEDIA_TYPE.VIDEO]: VIDEO_MODERATION_NOTIFICATION_ID,
+    [MEDIA_TYPE.PRESENTER]: CS_MODERATION_NOTIFICATION_ID
+};
