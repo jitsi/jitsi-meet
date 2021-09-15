@@ -466,7 +466,7 @@ export function participantUpdated(participant = {}) {
  * @returns {Promise}
  */
 export function participantMutedUs(participant, track) {
-    return dispatch => {
+    return (dispatch, getState) => {
         if (!participant) {
             return;
         }
@@ -474,7 +474,10 @@ export function participantMutedUs(participant, track) {
         const isAudio = track.isAudioTrack();
 
         dispatch(showNotification({
-            titleKey: isAudio ? 'notify.mutedRemotelyTitle' : 'notify.videoMutedRemotelyTitle'
+            titleKey: isAudio ? 'notify.mutedRemotelyTitle' : 'notify.videoMutedRemotelyTitle',
+            titleArguments: {
+                moderator: getParticipantDisplayName(getState, participant.getId())
+            }
         }));
     };
 }
