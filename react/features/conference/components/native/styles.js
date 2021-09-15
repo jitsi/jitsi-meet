@@ -32,8 +32,6 @@ export default {
     },
 
     inviteButtonContainer: {
-        paddingHorizontal: 10,
-        paddingVertical: 10,
         position: 'absolute',
         top: 0,
         right: 0,
@@ -42,10 +40,11 @@ export default {
 
     inviteButton: {
         iconStyle: {
+            padding: 10,
             color: ColorPalette.white,
             fontSize: NAVBAR_BUTTON_SIZE
         },
-        underlayColor: 'transparent'
+        underlayColor: ColorPalette.buttonUnderlay
     },
 
     lonelyButton: {
@@ -72,8 +71,6 @@ export default {
     },
 
     pipButtonContainer: {
-        paddingHorizontal: 10,
-        paddingVertical: 10,
         position: 'absolute',
         top: 0,
         left: 0,
@@ -82,10 +79,11 @@ export default {
 
     pipButton: {
         iconStyle: {
+            padding: 10,
             color: ColorPalette.white,
             fontSize: NAVBAR_BUTTON_SIZE
         },
-        underlayColor: 'transparent'
+        underlayColor: ColorPalette.buttonUnderlay
     },
 
     navBarSafeView: {
