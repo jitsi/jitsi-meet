@@ -55,10 +55,10 @@ const useStyles = makeStyles(() => {
         },
         text: {
             color: '#C2C2C2',
-            padding: '10px 16px 10px 52px'
+            padding: '10px 16px'
         },
         paddedAction: {
-            marginLeft: '36px;'
+            marginLeft: '36px'
         }
     };
 });

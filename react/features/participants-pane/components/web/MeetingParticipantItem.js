@@ -1,15 +1,23 @@
 // @flow
 
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
+import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
+import { MEDIA_TYPE } from '../../../base/media';
 import {
     getLocalParticipant,
     getParticipantByIdOrUndefined,
-    getParticipantDisplayName
+    getParticipantDisplayName,
+    isParticipantModerator
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { isParticipantAudioMuted, isParticipantVideoMuted } from '../../../base/tracks';
-import { ACTION_TRIGGER, type MediaState } from '../../constants';
+import {
+    getLocalAudioTrack,
+    getTrackByMediaTypeAndParticipant,
+    isParticipantAudioMuted,
+    isParticipantVideoMuted
+} from '../../../base/tracks';
+import { ACTION_TRIGGER, type MediaState, MEDIA_STATE } from '../../constants';
 import {
     getParticipantAudioMediaState,
     getParticipantVideoMediaState,
@@ -26,6 +34,11 @@ type Props = {
      * Media state for audio.
      */
     _audioMediaState: MediaState,
+
+    /**
+     * The audio track related to the participant.
+     */
+    _audioTrack: ?Object,
 
     /**
      * Media state for video.
@@ -136,6 +149,7 @@ type Props = {
  */
 function MeetingParticipantItem({
     _audioMediaState,
+    _audioTrack,
     _videoMediaState,
     _displayName,
     _local,
@@ -155,12 +169,46 @@ function MeetingParticipantItem({
     participantActionEllipsisLabel,
     youText
 }: Props) {
+
+    const [ hasAudioLevels, setHasAudioLevel ] = useState(false);
+    const [ registeredEvent, setRegisteredEvent ] = useState(false);
+
+    const _updateAudioLevel = useCallback(level => {
+        const audioLevel = typeof level === 'number' && !isNaN(level)
+            ? level : 0;
+
+        setHasAudioLevel(audioLevel > 0.009);
+    }, []);
+
+    useEffect(() => {
+        if (_audioTrack && !registeredEvent) {
+            const { jitsiTrack } = _audioTrack;
+
+            if (jitsiTrack) {
+                jitsiTrack.on(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, _updateAudioLevel);
+                setRegisteredEvent(true);
+            }
+        }
+
+        return () => {
+            if (_audioTrack && registeredEvent) {
+                const { jitsiTrack } = _audioTrack;
+
+                jitsiTrack && jitsiTrack.off(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, _updateAudioLevel);
+            }
+        };
+    }, [ _audioTrack ]);
+
+    const audioMediaState = _audioMediaState === MEDIA_STATE.UNMUTED && hasAudioLevels
+        ? MEDIA_STATE.DOMINANT_SPEAKER : _audioMediaState;
+
     return (
         <ParticipantItem
             actionsTrigger = { ACTION_TRIGGER.HOVER }
-            audioMediaState = { _audioMediaState }
+            audioMediaState = { audioMediaState }
             displayName = { _displayName }
             isHighlighted = { isHighlighted }
+            isModerator = { isParticipantModerator(_participant) }
             local = { _local }
             onLeave = { onLeave }
             openDrawerForParticipant = { openDrawerForParticipant }
@@ -181,7 +229,7 @@ function MeetingParticipantItem({
                     <ParticipantActionEllipsis
                         aria-label = { participantActionEllipsisLabel }
                         onClick = { onContextMenu } />
-                 </>
+                </>
             }
 
             {!overflowDrawer && _localVideoOwner && _participant?.isFakeParticipant && (
@@ -214,8 +262,13 @@ function _mapStateToProps(state, ownProps): Object {
     const _videoMediaState = getParticipantVideoMediaState(participant, _isVideoMuted, state);
     const _quickActionButtonType = getQuickActionButtonType(participant, _isAudioMuted, state);
 
+    const tracks = state['features/base/tracks'];
+    const _audioTrack = participantID === localParticipantId
+        ? getLocalAudioTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, participantID);
+
     return {
         _audioMediaState,
+        _audioTrack,
         _videoMediaState,
         _displayName: getParticipantDisplayName(state, participant?.id),
         _local: Boolean(participant?.local),

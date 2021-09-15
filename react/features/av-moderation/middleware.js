@@ -1,6 +1,7 @@
 // @flow
 import { batch } from 'react-redux';
 
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import { getConferenceState } from '../base/conference';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../base/media';
@@ -13,6 +14,7 @@ import {
     raiseHand
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
+import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import {
     hideNotification,
     showNotification
@@ -36,20 +38,30 @@ import {
     participantPendingAudio
 } from './actions';
 import {
+    ASKED_TO_UNMUTE_SOUND_ID, AUDIO_MODERATION_NOTIFICATION_ID,
+    CS_MODERATION_NOTIFICATION_ID,
+    VIDEO_MODERATION_NOTIFICATION_ID
+} from './constants';
+import {
     isEnabledFromState,
     isParticipantApproved,
     isParticipantPending
 } from './functions';
-
-const VIDEO_MODERATION_NOTIFICATION_ID = 'video-moderation';
-const AUDIO_MODERATION_NOTIFICATION_ID = 'audio-moderation';
-const CS_MODERATION_NOTIFICATION_ID = 'video-moderation';
+import { ASKED_TO_UNMUTE_FILE } from './sounds';
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     const { type } = action;
     const { conference } = getConferenceState(getState());
 
     switch (type) {
+    case APP_WILL_MOUNT: {
+        dispatch(registerSound(ASKED_TO_UNMUTE_SOUND_ID, ASKED_TO_UNMUTE_FILE));
+        break;
+    }
+    case APP_WILL_UNMOUNT: {
+        dispatch(unregisterSound(ASKED_TO_UNMUTE_SOUND_ID));
+        break;
+    }
     case LOCAL_PARTICIPANT_MODERATION_NOTIFICATION: {
         let descriptionKey;
         let titleKey;
@@ -160,6 +172,7 @@ StateListenerRegistry.register(
                         customActionNameKey: 'notify.unmute',
                         customActionHandler: () => dispatch(muteLocal(false, MEDIA_TYPE.AUDIO))
                     }));
+                    dispatch(playSound(ASKED_TO_UNMUTE_SOUND_ID));
                 }
             });
 
