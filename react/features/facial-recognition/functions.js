@@ -9,7 +9,6 @@ declare var APP: Object;
  * @returns {void}
  */
 export function sendFacialExpression(facialExpression: string, duration: number): void {
-    console.log('AICI');
     const count = APP.conference.membersCount;
 
     APP.conference.sendFacialExpression({

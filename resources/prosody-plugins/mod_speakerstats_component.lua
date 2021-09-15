@@ -98,7 +98,7 @@ function on_message(event)
             return false;
         end
         local facialExpressions = room.speakerStats[occupant.jid].facialExpressions;
-        facialExpressions[facialExpression.attr.expression] = facialExpressions[facialExpression.attr.expression] + facialExpression.attr.duration;
+        facialExpressions[facialExpression.attr.expression] = facialExpressions[facialExpression.attr.expression] + tonumber(facialExpression.attr.duration);
     end
 
     local cameraTimeTrackerUpdate = event.stanza:get_child('cameraTimeTracker', 'http://jitsi.org/jitmeet');
@@ -122,9 +122,12 @@ function on_message(event)
             return false;
         end
 
-        local muted = cameraTimeTrackerUpdate.attr.muted;
-        local lastCameraUpdate = cameraTimeTrackerUpdate.attr.lastCameraUpdate;
+        local muted = true;
+        local lastCameraUpdate = tonumber(cameraTimeTrackerUpdate.attr.lastCameraUpdate);
         local cameraTimeTracker = room.speakerStats[occupant.jid].cameraTimeTracker;
+        if cameraTimeTrackerUpdate.attr.muted == "false" then
+            muted = false;
+        end
 
         if muted then
                 cameraTimeTracker.cameraTime = lastCameraUpdate - cameraTimeTracker.lastCameraUpdate;
