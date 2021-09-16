@@ -110,7 +110,7 @@ class Notification extends AbstractNotification<Props> {
      * @private
      * @returns {Object[]}
      */
-    _mapAppearanceToButtons(hideErrorSupportLink) {
+    _mapAppearanceToButtons(hideErrorSupportLink = true) {
         switch (this.props.appearance) {
         case NOTIFICATION_TYPE.ERROR: {
             const buttons = [
