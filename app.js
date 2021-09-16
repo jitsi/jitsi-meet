@@ -41,6 +41,9 @@ window.APP = {
         'index.loaded': window.indexLoadedTime
     },
 
+    waitingArea: {
+        status: null
+    },
     keyboardshortcut,
     remoteControl,
     translation,

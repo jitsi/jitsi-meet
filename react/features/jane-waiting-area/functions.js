@@ -11,6 +11,7 @@ import {
     getLocalParticipantType
 } from '../base/participants/functions';
 import { doGetJSON } from '../base/util';
+import { showErrorNotification } from '../notifications';
 
 import { UPDATE_REMOTE_PARTICIPANT_STATUSES } from './actionTypes';
 import { updateRemoteParticipantsStatuses } from './actions';
@@ -151,31 +152,42 @@ export function getRemoteParticipantsStatuses(participantStatuses: Array<Object>
 }
 
 export function updateParticipantReadyStatus(status: string): void {
-    try {
-        const { jwt } = window.APP.store.getState()['features/base/jwt'];
-        const jwtPayload = jwt && jwtDecode(jwt) ?? {};
-        const updateParticipantStatusUrl = _.get(jwtPayload, 'context.update_participant_status_url') ?? '';
-        const info = { status };
+    const { jwt } = window.APP.store.getState()['features/base/jwt'];
+    const jwtPayload = jwt && jwtDecode(jwt) ?? {};
 
-        sendAnalytics(createWaitingAreaParticipantStatusChangedEvent(status));
+    const updateParticipantStatusUrl = _.get(jwtPayload, 'context.update_participant_status_url') ?? '';
+    const info = { status };
 
-        return fetch(updateParticipantStatusUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                'jwt': jwt,
-                'info': info
-            })
-        }).then(res => {
-            if (!res.ok) {
-                throw Error('Can Not Update Current Participant\'s Status.');
-            }
-        });
-    } catch (e) {
-        console.error(e);
-    }
+    return fetch(updateParticipantStatusUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            'jwt': jwt,
+            'info': info
+        })
+    })
+    .then(res => {
+        if (!res.ok) {
+            throw new Error('Failed to update the waiting area state for the local participant.');
+        }
+
+        // The 'left' amplitude event will be fired outside of this function
+        // because if the user quits the call by closing the browser window directly,
+        // we won't able to get the response from the promise in time here.
+        if (status !== 'left') {
+            sendAnalytics(createWaitingAreaParticipantStatusChangedEvent(status));
+        }
+    })
+    .catch(error => {
+        sendAnalytics(createWaitingAreaParticipantStatusChangedEvent('failed'));
+        window.APP.store.dispatch(showErrorNotification({
+            descriptionKey: error,
+            titleKey: 'Waiting area error'
+        }));
+        console.error(error);
+    });
 }
 
 export function isRNSocketWebView(locationURL: Object): boolean {
