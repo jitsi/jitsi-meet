@@ -148,8 +148,7 @@ function ResizeAndDrag({ _currentCameraDeviceId, _virtualBackground, dispatch, u
             personTr.rotateEnabled(false);
             layer.add(personTr);
             personTr.nodes([ image ]);
-
-            image.on('transformstart', () => {
+            image.on('transformend', () => {
                 updateTransformValues(image, url, jitsiTrack);
             });
 

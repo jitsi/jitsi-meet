@@ -132,28 +132,34 @@ export default class JitsiStreamBackgroundEffect {
             // Flip the canvas and prevent mirror behaviour.
             this._outputCanvasCtx.scale(-1, 1);
             this._outputCanvasCtx.translate(-this._outputCanvasElement.width, 0);
+        } else if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM) {
+            this._outputCanvasCtx.drawImage(
+                this._segmentationMaskCanvas,
+                0,
+                0,
+                this._options.width,
+                this._options.height,
+                this.xScale + (this._options.virtualBackground.dragAndDropOptions.x
+                    * (this._outputCanvasElement.width - (this.xScale * 2))),
+                this.yScale + (this._options.virtualBackground.dragAndDropOptions.y
+                    * (this._outputCanvasElement.height - (this.yScale * 2))),
+                this._options.virtualBackground.dragAndDropOptions.width,
+                this._options.virtualBackground.dragAndDropOptions.height
+            );
+        } else {
+            this._outputCanvasCtx.drawImage(
+                this._segmentationMaskCanvas,
+                0,
+                0,
+                this._options.width,
+                this._options.height,
+                0,
+                0,
+                this._inputVideoElement.width,
+                this._inputVideoElement.height
+            );
         }
-        this._outputCanvasCtx.drawImage(
-            this._segmentationMaskCanvas,
-            0,
-            0,
-            this._options.width,
-            this._options.height,
-            backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM
-              && this._options?.virtualBackground?.dragAndDropOptions?.x
-                ? this.xScale + (this._options?.virtualBackground?.dragAndDropOptions?.x
-                * (this._outputCanvasElement.width - (this.xScale * 2))) : 0,
-            backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM
-              && this._options?.virtualBackground?.dragAndDropOptions?.y
-                ? this.yScale + (this._options?.virtualBackground?.dragAndDropOptions?.y
-                * (this._outputCanvasElement.height - (this.yScale * 2))) : 0,
-            backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM
-              && this._options?.virtualBackground?.dragAndDropOptions?.width
-                ? this._options?.virtualBackground?.dragAndDropOptions?.width : this._inputVideoElement.width,
-            backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM
-              && this._options?.virtualBackground?.dragAndDropOptions?.height
-                ? this._options?.virtualBackground?.dragAndDropOptions?.height : this._inputVideoElement.height
-        );
+
         if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
             this._outputCanvasCtx.restore();
         }
@@ -168,8 +174,7 @@ export default class JitsiStreamBackgroundEffect {
             // Flip the canvas and prevent mirror behaviour.
             this._outputCanvasCtx.scale(-1, 1);
             this._outputCanvasCtx.translate(-this._outputCanvasElement.width, 0);
-        }
-        if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM) {
+        } else if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM) {
             this._outputCanvasCtx.drawImage(this._inputVideoElement,
                 0,
                 0,
