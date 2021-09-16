@@ -36,6 +36,11 @@ import {
 type Props = {
 
     /**
+     * Whether there is backend support for Breakout Rooms.
+     */
+    _isBreakoutRoomsSupported: Boolean,
+
+    /**
      * Whether to display the context menu  as a drawer.
      */
     _overflowDrawer: boolean,
@@ -128,6 +133,7 @@ class ParticipantsPane extends Component<Props, State> {
      */
     render() {
         const {
+            _isBreakoutRoomsSupported,
             _overflowDrawer,
             _showAddRoomButton,
             _paneOpen,
@@ -158,7 +164,7 @@ class ParticipantsPane extends Component<Props, State> {
                             <LobbyParticipants />
                             <AntiCollapse />
                             <MeetingParticipants />
-                            <RoomList />
+                            {_isBreakoutRoomsSupported && <RoomList />}
                             {_showAddRoomButton && <AddBreakoutRoomButton />}
                         </Container>
                         {_showFooter && (
@@ -279,19 +285,19 @@ class ParticipantsPane extends Component<Props, State> {
  *
  * @param {Object} state - The redux state.
  * @protected
- * @returns {{
- *     _paneOpen: boolean,
- *     _showFooter: boolean
- * }}
+ * @returns {Props}
  */
 function _mapStateToProps(state: Object) {
     const isPaneOpen = getParticipantsPaneOpen(state);
     const { hideAddRoomButton } = state['features/base/config'];
+    const { conference } = state['features/base/conference'];
+    const _isBreakoutRoomsSupported = Boolean(conference && conference.isBreakoutRoomsSupported());
     const _isLocalParticipantModerator = isLocalParticipantModerator(state);
 
     return {
+        _isBreakoutRoomsSupported,
         _overflowDrawer: showOverflowDrawer(state),
-        _showAddRoomButton: !hideAddRoomButton && _isLocalParticipantModerator,
+        _showAddRoomButton: _isBreakoutRoomsSupported && !hideAddRoomButton && _isLocalParticipantModerator,
         _paneOpen: isPaneOpen,
         _showFooter: isPaneOpen && isLocalParticipantModerator(state)
     };
