@@ -7,12 +7,12 @@ import './createImageBitmap';
 import {
     ADD_FACIAL_EXPRESSION,
     SET_FACIAL_RECOGNITION_ALLOWED,
+    SET_DETECTION_TIME_INTERVAL,
     UPDATE_CAMERA_TIME_TRACKER
 } from './actionTypes';
 import { sendFacialExpression, detectFacialExpression } from './functions';
 import logger from './logger';
 
-let intervalTime = -1;
 let interval = null;
 let imageCapture;
 let worker;
@@ -32,12 +32,15 @@ export function loadWorker() {
                 const { type, value } = e.data;
 
                 if (type === 'tf-backend' && value) {
+                    let detectionTimeInterval = -1;
+
                     if (value === 'webgl') {
-                        intervalTime = 1000;
+                        detectionTimeInterval = 1000;
                     } else if (value === 'cpu') {
-                        intervalTime = 3000;
+                        detectionTimeInterval = 3000;
                     }
-                    interval = setInterval(() => detectFacialExpression(worker, imageCapture), intervalTime);
+                    dispatch(setDetectionTimeInterval(detectionTimeInterval));
+                    interval = setInterval(() => detectFacialExpression(worker, imageCapture), detectionTimeInterval);
                 }
 
                 if (type === 'facial-expression' && value) {
@@ -111,10 +114,12 @@ export function startFacialRecognition() {
 
         outputCanvas.width = parseInt(width, 10);
         outputCanvas.height = parseInt(height, 10);
-        if (intervalTime === -1) {
+        const { detectionTimeInterval } = state['features/facial-recognition'];
+
+        if (detectionTimeInterval === -1) {
             detectFacialExpression(worker, imageCapture);
         } else {
-            interval = setInterval(() => detectFacialExpression(worker, imageCapture), intervalTime);
+            interval = setInterval(() => detectFacialExpression(worker, imageCapture), detectionTimeInterval);
         }
 
         dispatch(updateCameraTimeTracker(false));
@@ -193,6 +198,19 @@ export function setFacialRecognitionAllowed(allowed: boolean) {
     return {
         type: SET_FACIAL_RECOGNITION_ALLOWED,
         payload: allowed
+    };
+}
+
+/**
+ * Sets the time interval for the detection worker post message.
+ *
+ * @param  {number} time - The time interval.
+ * @returns {Object}
+ */
+export function setDetectionTimeInterval(time: number) {
+    return {
+        type: SET_DETECTION_TIME_INTERVAL,
+        time
     };
 }
 

@@ -6,6 +6,7 @@ import {
     SET_FACIAL_RECOGNITION_MODELS_LOADED,
     ADD_FACIAL_EXPRESSION,
     SET_FACIAL_RECOGNITION_ALLOWED,
+    SET_DETECTION_TIME_INTERVAL,
     UPDATE_CAMERA_TIME_TRACKER
 } from './actionTypes';
 
@@ -21,6 +22,7 @@ const defaultState = {
         disgusted: 0,
         sad: 0
     },
+    detectionTimeInterval: -1,
     lastFacialExpression: null,
     cameraTimeTracker: {
         muted: true,
@@ -52,6 +54,12 @@ ReducerRegistry.register('features/facial-recognition', (state = defaultState, a
         return {
             ...state,
             facialRecognitionAllowed: action.payload
+        };
+    }
+    case SET_DETECTION_TIME_INTERVAL: {
+        return {
+            ...state,
+            detectionTimeInterval: action.time
         };
     }
     case UPDATE_CAMERA_TIME_TRACKER: {
