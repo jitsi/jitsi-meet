@@ -149,7 +149,7 @@ function computeCameraVideoSize( // eslint-disable-line max-params
             width = maxWidth - padding;
         }
 
-        return [ width, height ];
+        return [ Math.round(width), Math.round(height) ];
     }
     default:
         return [ videoWidth, videoHeight ];
