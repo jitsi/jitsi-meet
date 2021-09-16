@@ -258,6 +258,12 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
      * @returns {void}
      */
     _createAudioInputTrack(deviceId) {
+        const { hideAudioInputPreview } = this.props;
+
+        if (hideAudioInputPreview) {
+            return;
+        }
+
         return this._disposeAudioInputPreview()
             .then(() => createLocalTrack('audio', deviceId, 5000))
             .then(jitsiLocalTrack => {
