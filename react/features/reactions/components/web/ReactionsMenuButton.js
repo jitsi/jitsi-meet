@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
-import { IconRaisedHand } from '../../../base/icons';
+import { IconEmoji } from '../../../base/icons';
 import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import ToolbarButton from '../../../toolbox/components/web/ToolbarButton';
@@ -78,7 +78,7 @@ function ReactionsMenuButton({
             <ReactionsMenuPopup>
                 <ToolbarButton
                     accessibilityLabel = { t('toolbar.accessibilityLabel.reactionsMenu') }
-                    icon = { IconRaisedHand }
+                    icon = { IconEmoji }
                     key = 'reactions'
                     onClick = { toggleReactionsMenu }
                     toggled = { raisedHand }
