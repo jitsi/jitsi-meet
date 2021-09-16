@@ -3,6 +3,7 @@
 import aliases from 'react-emoji-render/data/aliases';
 import emojiAsciiAliases from 'react-emoji-render/data/asciiAliases';
 
+import { getLocalParticipant } from '../base/participants';
 import { escapeRegexp } from '../base/util';
 
 /**
@@ -69,14 +70,31 @@ export function getUnreadCount(state: Object) {
         return 0;
     }
 
+    const localParticipant = getLocalParticipant(state);
+    let sentMessagesSinceLastRead = 0;
+
     if (navigator.product === 'ReactNative') {
+        const lastReadIndex = messages.indexOf(lastReadMessage);
+
+        for (let i = 0; i < lastReadIndex; i++) {
+            if (messages[i].id === localParticipant.id) {
+                sentMessagesSinceLastRead++;
+            }
+        }
+
         // React native stores the messages in a reversed order.
-        return messages.indexOf(lastReadMessage);
+        return lastReadIndex - sentMessagesSinceLastRead;
     }
 
     const lastReadIndex = messages.lastIndexOf(lastReadMessage);
 
-    return messagesCount - (lastReadIndex + 1);
+    for (let i = lastReadIndex > 0 ? lastReadIndex : 0; i < messagesCount; i++) {
+        if (messages[i].id === localParticipant.id) {
+            sentMessagesSinceLastRead++;
+        }
+    }
+
+    return messagesCount - (lastReadIndex + 1) - sentMessagesSinceLastRead;
 }
 
 /**
