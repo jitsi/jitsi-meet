@@ -405,8 +405,24 @@ function process_breakout_rooms_muc_loaded(breakout_rooms_muc, host_module)
 
     host_module:hook('muc-disco#info', function (event)
         local room = event.room;
-        local main_room = get_main_room(room.jid);
+        local main_room, main_room_jid = get_main_room(room.jid);
 
+        -- Breakout room matadata.
+        table.insert(event.form, {
+            name = 'muc#roominfo_isbreakout';
+            label = 'Is this a breakout room?';
+            type = "boolean";
+            value = true;
+        });
+        event.formdata['muc#roominfo_isbreakout'] = true;
+        table.insert(event.form, {
+            name = 'muc#roominfo_breakout_main_room';
+            label = 'The main room associated with this breakout room';
+            value = '';
+        });
+        event.formdata['muc#roominfo_breakout_main_room'] = main_room_jid;
+
+        -- If the main room has a lobby, make it so this breakout room also uses it.
         if (main_room._data.lobbyroom and main_room:get_members_only()) then
             table.insert(event.form, {
                 name = 'muc#roominfo_lobbyroom';
