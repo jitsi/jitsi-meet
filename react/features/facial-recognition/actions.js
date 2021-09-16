@@ -121,7 +121,7 @@ export function startFacialRecognition() {
         try {
             dispatch(updateCameraTimeTracker(false));
         } catch (e) {
-            console.error(e);
+            logger.debug('Data channel is not yet initialized!');
             cameraMuted = false;
         }
     };
@@ -141,7 +141,6 @@ export function stopFacialRecognition() {
 
             return;
         }
-        console.log('STOP1');
         clearInterval(interval);
         imageCapture = null;
         interval = null;
@@ -152,7 +151,6 @@ export function stopFacialRecognition() {
         sendFacialExpression(lastFacialExpression, duplicateConsecutiveExpressions + 1);
         duplicateConsecutiveExpressions = 0;
         dispatch(updateCameraTimeTracker(true));
-        console.log('STOP2');
         logger.log('Stop face recognition');
     };
 }

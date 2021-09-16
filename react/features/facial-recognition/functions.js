@@ -1,4 +1,6 @@
 // @flow
+import logger from './logger';
+
 declare var APP: Object;
 
 /**
@@ -11,10 +13,14 @@ declare var APP: Object;
 export function sendFacialExpression(facialExpression: string, duration: number): void {
     const count = APP.conference.membersCount;
 
-    APP.conference.sendFacialExpression({
-        facialExpression,
-        duration
-    });
+    try {
+        APP.conference.sendFacialExpression({
+            facialExpression,
+            duration
+        });
+    } catch (e) {
+        logger.debug('Could not send the facial expression');
+    }
 
     if (count > 1) {
         const payload = {
@@ -26,7 +32,7 @@ export function sendFacialExpression(facialExpression: string, duration: number)
         try {
             APP.conference.broadcastEndpointMessage(payload);
         } catch (e) {
-            console.error(e);
+            logger.debug('Could not send the facial expression');
         }
     }
 }

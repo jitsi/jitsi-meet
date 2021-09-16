@@ -18,6 +18,7 @@ const defaultState = {
         surprised: 0,
         angry: 0,
         fearful: 0,
+        disgusted: 0,
         sad: 0
     },
     lastFacialExpression: null,

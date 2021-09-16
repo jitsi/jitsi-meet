@@ -1,6 +1,6 @@
 // @flow
 
-import { CONFERENCE_JOINED, DATA_CHANNEL_OPENED } from '../base/conference';
+import { CONFERENCE_JOINED, DATA_CHANNEL_OPENED, CONFERENCE_WILL_LEAVE } from '../base/conference';
 import { MiddlewareRegistry } from '../base/redux';
 import { TRACK_UPDATED, TRACK_ADDED, TRACK_REMOVED } from '../base/tracks';
 import { CHANGE_BACKGROUND } from '../virtual-background/actionTypes';
@@ -36,6 +36,14 @@ MiddlewareRegistry.register(store => next => action => {
         if (!cameraMuted && (cameraTimeTracker.cameraTime + cameraTimeTracker.lastCameraUpdate) === 0) {
             dispatch(updateCameraTimeTracker(cameraMuted));
         }
+
+        return next(action);
+    }
+
+    case CONFERENCE_WILL_LEAVE : {
+        const { dispatch } = store;
+
+        dispatch(stopFacialRecognition());
 
         return next(action);
     }

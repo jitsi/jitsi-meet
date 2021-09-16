@@ -157,6 +157,7 @@ function new_SpeakerStats(nick, context_user)
             surprised = 0,
             angry = 0,
             fearful = 0,
+            disgusted = 0,
             sad = 0
         };
         cameraTimeTracker = {

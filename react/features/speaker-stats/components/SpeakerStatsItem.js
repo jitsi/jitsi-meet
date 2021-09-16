@@ -35,6 +35,8 @@ type Props = {
 
     cameraTime: number,
 
+    reduceExpressions: boolean,
+
     /**
      * Invoked to obtain translated strings.
      */
@@ -78,35 +80,46 @@ class SpeakerStatsItem extends Component<Props> {
                         time = { this.props.dominantSpeakerTime } />
                 </div>
                 <div
-                    aria-label = { 'Smiles' }
+                    aria-label = { 'Happy' }
                     className = 'speaker-stats-item__expression'>
-                    <TimeElapsed
-                        time = { this.props.facialExpressions.happy * 1000 } />
+                    { this.props.facialExpressions.happy }
                 </div>
                 <div
-                    aria-label = { 'Neutrals' }
+                    aria-label = { 'Neutral' }
                     className = 'speaker-stats-item__expression'>
-                    <TimeElapsed
-                        time = { this.props.facialExpressions.neutral * 1000 } />
+                    { this.props.facialExpressions.neutral }
                 </div>
                 <div
-                    aria-label = { 'Gasps' }
+                    aria-label = { 'Sad' }
                     className = 'speaker-stats-item__expression'>
-                    <TimeElapsed
-                        time = { this.props.facialExpressions.surprised * 1000 } />
+                    { this.props.facialExpressions.sad }
                 </div>
                 <div
-                    aria-label = { 'Frowns' }
+                    aria-label = { 'Surprised' }
                     className = 'speaker-stats-item__expression'>
-                    <TimeElapsed
-                        time = { this.props.facialExpressions.angry * 1000 } />
+                    { this.props.facialExpressions.surprised }
                 </div>
-                <div
-                    aria-label = { 'Total' }
-                    className = 'speaker-stats-item__expression'>
-                    <TimeElapsed
-                        time = { this.props.cameraTime } />
-                </div>
+
+                {!this.props.reduceExpressions && (
+                    <>
+                        <div
+                            aria-label = { 'Angry' }
+                            className = 'speaker-stats-item__expression'>
+                            { this.props.facialExpressions.angry }
+                        </div>
+                        <div
+                            aria-label = { 'Fearful' }
+                            className = 'speaker-stats-item__expression'>
+                            { this.props.facialExpressions.fearful }
+                        </div>
+                        <div
+                            aria-label = { 'Disgusted' }
+                            className = 'speaker-stats-item__expression'>
+                            { this.props.facialExpressions.disgusted }
+                        </div>
+                    </>
+                )}
+
             </div>
         );
     }

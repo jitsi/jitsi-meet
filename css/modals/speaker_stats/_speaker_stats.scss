@@ -44,11 +44,25 @@
     }
 
     .speaker-stats-item__expression {
-        width: 10%;
+        width: 7%;
+        text-align: center;
+    }
+
+    @media(max-width: 750px) {
+        .speaker-stats-item__name {
+            width: 25%;
+        }
+        .speaker-stats-item__time {
+            width: 30%;
+        }
+        .speaker-stats-item__expression {
+            width: 10%;
+        }
     }
 
     .speaker-stats-item__name,
-    .speaker-stats-item__time {
+    .speaker-stats-item__time,
+    .speaker-stats-item__expression {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;

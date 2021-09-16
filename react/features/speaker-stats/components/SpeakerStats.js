@@ -35,6 +35,8 @@ type Props = {
 
     _localCameraTimeTracker: Object,
 
+    _reduceExpressions: boolean,
+
     /**
      * The speaker paricipant stats.
      */
@@ -130,7 +132,7 @@ class SpeakerStats extends Component<Props> {
                 width = 'large'>
                 <div className = 'speaker-stats'>
                     <SpeakerStatsSearch onSearch = { this._onSearch } />
-                    <SpeakerStatsLabels />
+                    <SpeakerStatsLabels reduceExpressions = { this.props._reduceExpressions } />
                     { items }
                 </div>
             </Dialog>
@@ -195,7 +197,7 @@ class SpeakerStats extends Component<Props> {
                 hasLeft = { hasLeft }
                 isDominantSpeaker = { isDominantSpeaker }
                 key = { userId }
-                lastFacialExpression = { this.state.lastFacialExpression } />
+                reduceExpressions = { this.props._reduceExpressions } />
         );
     }
 
@@ -273,6 +275,7 @@ function _mapStateToProps(state) {
     const localParticipant = getLocalParticipant(state);
     const { facialExpressions: localFacialExpressions } = state['features/facial-recognition'];
     const { cameraTimeTracker: localCameraTimeTracker } = state['features/facial-recognition'];
+    const { clientWidth } = state['features/base/responsive-ui'];
 
     return {
         /**
@@ -285,7 +288,8 @@ function _mapStateToProps(state) {
         _stats: getSpeakerStats(state),
         _criteria: getSearchCriteria(state),
         _localFacialExpressions: localFacialExpressions,
-        _localCameraTimeTracker: localCameraTimeTracker
+        _localCameraTimeTracker: localCameraTimeTracker,
+        _reduceExpressions: clientWidth < 750
     };
 }
 

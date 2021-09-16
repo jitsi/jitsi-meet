@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
+import { FACIAL_EXPRESSION_EMOJIS } from '../../facial-recognition/constants.js';
 
 /**
  * The type of the React {@code Component} props of {@link SpeakerStatsLabels}.
@@ -12,7 +13,9 @@ type Props = {
     /**
      * The function to translate human-readable text.
      */
-    t: Function
+    t: Function,
+
+    reduceExpressions: boolean
 };
 
 /**
@@ -39,21 +42,22 @@ class SpeakerStatsLabels extends Component<Props> {
                 <div className = 'speaker-stats-item__time'>
                     { t('speakerStats.speakerTime') }
                 </div>
-                <div className = 'speaker-stats-item__expression'>
-                    Smiles
-                </div>
-                <div className = 'speaker-stats-item__expression'>
-                    Neutrals
-                </div>
-                <div className = 'speaker-stats-item__expression'>
-                    Gasps
-                </div>
-                <div className = 'speaker-stats-item__expression'>
-                    Frowns
-                </div>
-                <div className = 'speaker-stats-item__expression'>
-                    Total
-                </div>
+                {
+                    (this.props.reduceExpressions
+                        ? Object.keys(FACIAL_EXPRESSION_EMOJIS)
+                            .filter(expression => ![ 'angry', 'fearful', 'disgusted' ].includes(expression))
+                        : Object.keys(FACIAL_EXPRESSION_EMOJIS)
+                    ).map(
+                    expression => (
+                        <div
+                            className = 'speaker-stats-item__expression'
+                            key = { expression }
+                            // eslint-disable-next-line react-native/no-inline-styles
+                            style = {{ fontSize: 17 }} >
+                            { FACIAL_EXPRESSION_EMOJIS[expression] }
+                        </div>
+                    ))
+                }
             </div>
         );
     }
