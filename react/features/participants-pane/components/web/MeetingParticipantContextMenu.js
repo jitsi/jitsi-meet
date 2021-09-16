@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import { Avatar } from '../../../base/avatar';
 import { isToolbarButtonEnabled } from '../../../base/config/functions.web';
 import { openDialog } from '../../../base/dialog';
+import { isIosMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
 import {
     IconCloseCircle,
@@ -395,6 +396,11 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
             return null;
         }
 
+        const showVolumeSlider = !isIosMobileBrowser()
+              && overflowDrawer
+              && typeof _volume === 'number'
+              && !isNaN(_volume);
+
         const actions
             = _participant?.isFakeParticipant ? (
                 <>
@@ -463,7 +469,7 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
                             )
                         }
                     </ContextMenuItemGroup>
-                    { overflowDrawer && typeof _volume === 'number' && !isNaN(_volume)
+                    { showVolumeSlider
                         && <ContextMenuItemGroup>
                             <VolumeSlider
                                 initialValue = { _volume }
