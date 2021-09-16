@@ -6,7 +6,6 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
-import { maybeRedirectToWelcomePage } from '../../app/actions';
 import { disconnect } from '../../base/connection';
 import { translate } from '../../base/i18n';
 import { IconHangup } from '../../base/icons';
@@ -33,7 +32,6 @@ class JaneHangupButton extends Component<Props> {
     _hangup = _.once(props => {
         window.APP.API.notifyReadyToClose();
         sendAnalytics(createToolbarEvent('hangup'));
-        props.dispatch(maybeRedirectToWelcomePage());
         props.dispatch(disconnect(false));
     })
 
