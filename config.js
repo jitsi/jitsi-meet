@@ -77,8 +77,8 @@ var config = {
     // Disables moderator indicators.
     // disableModeratorIndicator: false,
 
-    // Enables reactions feature.
-    // enableReactions: false,
+    // Disables the reactions feature.
+    // disableReactions: true,
 
     // Disables polls feature.
     // disablePolls: false,

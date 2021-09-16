@@ -43,7 +43,7 @@ export type Props = {
     /**
      * Whether or not the reactions feature is enabled.
      */
-    enableReactions: Boolean,
+    disableReactions: Boolean,
 
     /**
      * Invoked to obtain translated strings.
@@ -96,7 +96,7 @@ class SoundsTab extends AbstractDialogTab<Props> {
             soundsParticipantLeft,
             soundsTalkWhileMuted,
             soundsReactions,
-            enableReactions,
+            disableReactions,
             t
         } = this.props;
 
@@ -107,7 +107,7 @@ class SoundsTab extends AbstractDialogTab<Props> {
                 <h2 className = 'mock-atlaskit-label'>
                     {t('settings.playSounds')}
                 </h2>
-                {enableReactions && <Checkbox
+                {!disableReactions && <Checkbox
                     isChecked = { soundsReactions }
                     label = { t('settings.reactions') }
                     name = 'soundsReactions'
