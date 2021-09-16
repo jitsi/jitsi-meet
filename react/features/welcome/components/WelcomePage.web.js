@@ -181,7 +181,7 @@ class WelcomePage extends AbstractWelcomePage {
                     {/* <div className = 'header-image' /> */}
                     <div className = 'header-text'>
                         <h1 className = 'header-text-title'>
-                            Welcome to Jane Video Chat
+                            {t('welcomepage.welcomeToJaneVideoChat')}
                         </h1>
                         {/* <p className = 'header-text-description'>
                             { t('welcomepage.appDescription',

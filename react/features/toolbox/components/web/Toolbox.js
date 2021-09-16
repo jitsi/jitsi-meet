@@ -1362,7 +1362,7 @@ class Toolbox extends Component<Props, State> {
                     <HangupButton
                         visible={this._shouldShowButton('hangup') && !_isJaneTestCall}/>
                     <JaneHangupButton visible={_isJaneTestCall}
-                                      tooltipText="Finished testing? Click here."/>
+                                      tooltipText={t("toolbar.finishedTesting")}/>
                     {this._renderVideoButton()}
                 </div>
                 <div className = 'button-group-right'>
