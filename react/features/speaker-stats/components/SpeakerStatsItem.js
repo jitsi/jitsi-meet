@@ -33,8 +33,6 @@ type Props = {
 
     facialExpressions: Object,
 
-    cameraTime: number,
-
     reduceExpressions: boolean,
 
     /**

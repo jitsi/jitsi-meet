@@ -8,7 +8,6 @@ import { translate } from '../../base/i18n';
 import { getLocalParticipant } from '../../base/participants';
 import { connect } from '../../base/redux';
 import { escapeRegexp } from '../../base/util';
-import { getCameraTime } from '../../facial-recognition/functions';
 import { initUpdateStats, initSearch } from '../actions';
 import { SPEAKER_STATS_RELOAD_INTERVAL } from '../constants';
 import { getSpeakerStats, getSearchCriteria } from '../functions';
@@ -165,7 +164,6 @@ class SpeakerStats extends Component<Props> {
 =======
         let displayName;
         let facialExpressions;
-        let cameraTime;
 
         if (statsModel.isLocalStats()) {
             const { t } = this.props;
@@ -176,20 +174,16 @@ class SpeakerStats extends Component<Props> {
                 = displayName ? `${displayName} (${meString})` : meString;
 
             facialExpressions = this.props._localFacialExpressions;
-            cameraTime = getCameraTime(this.props._localCameraTimeTracker);
         } else {
             displayName
                 = this.props._stats[userId].getDisplayName()
                     || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
 
             facialExpressions = this.state.stats[userId].getFacialExpressions();
-            // eslint-disable-next-line max-len
-            cameraTime = this.state.stats[userId].getCameraTimeTracker() && getCameraTime(this.state.stats[userId].getCameraTimeTracker());
         }
 
         return (
             <SpeakerStatsItem
-                cameraTime = { cameraTime }
                 displayName = { displayName }
 >>>>>>> d3d39da0f (feat(facial-expressions): camera time tracker)
                 dominantSpeakerTime = { dominantSpeakerTime }

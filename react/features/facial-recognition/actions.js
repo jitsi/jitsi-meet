@@ -9,7 +9,7 @@ import {
     SET_FACIAL_RECOGNITION_ALLOWED,
     UPDATE_CAMERA_TIME_TRACKER
 } from './actionTypes';
-import { sendFacialExpression, detectFacialExpression, sendCameraTimeTrackerUpdate } from './functions';
+import { sendFacialExpression, detectFacialExpression } from './functions';
 import logger from './logger';
 
 let intervalTime = -1;
@@ -17,8 +17,6 @@ let interval = null;
 let imageCapture;
 let worker;
 let duplicateConsecutiveExpressions = 0;
-
-export let cameraMuted = true;
 const outputCanvas = document.createElement('canvas');
 
 /**
@@ -118,12 +116,9 @@ export function startFacialRecognition() {
         } else {
             interval = setInterval(() => detectFacialExpression(worker, imageCapture), intervalTime);
         }
-        try {
-            dispatch(updateCameraTimeTracker(false));
-        } catch (e) {
-            logger.debug('Data channel is not yet initialized!');
-            cameraMuted = false;
-        }
+
+        dispatch(updateCameraTimeTracker(false));
+
     };
 }
 
@@ -208,13 +203,9 @@ export function setFacialRecognitionAllowed(allowed: boolean) {
  * @returns {Object}
  */
 export function updateCameraTimeTracker(muted: boolean) {
-    const lastCameraUpdate = new Date().getTime();
-
-    sendCameraTimeTrackerUpdate(muted, lastCameraUpdate);
-
     return {
         type: UPDATE_CAMERA_TIME_TRACKER,
         muted,
-        lastCameraUpdate
+        lastCameraUpdate: new Date().getTime()
     };
 }
