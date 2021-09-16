@@ -174,7 +174,7 @@ class ReactInstanceManagerHolder {
             return;
         }
 
-        SoLoader.init(activity, /* native exopackage */ false);
+        SoLoader.init(activity.getApplication(), /* native exopackage */ false);
 
         List<ReactPackage> packages
             = new ArrayList<>(Arrays.asList(
