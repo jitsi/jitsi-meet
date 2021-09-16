@@ -171,7 +171,7 @@ export function moveToRoom(roomId?: string) {
             dispatch(setVideoMuted(video.muted));
         } else {
             APP.conference.leaveRoom()
-            .finally(() => APP.conference.joinRoom(_roomId));
+                .finally(() => APP.conference.joinRoom(_roomId, _roomId === roomId /* isBreakoutRoom */));
         }
     };
 }
