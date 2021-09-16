@@ -61,17 +61,18 @@ module:depends('jitsi_session');
 local breakout_rooms_muc_service;
 local main_muc_service;
 
+-- Maps a breakout room jid to the main room jid
+local main_rooms_map = {};
 
 -- Utility functions
 
 function get_main_room_jid(room_jid)
     local node, host = jid_split(room_jid);
-    local breakout_room_suffix_index = node:find('_[-%x]+$');
 
 	return
         host == main_muc_component_config
         and room_jid
-        or node:sub(1, breakout_room_suffix_index - 1) .. '@' .. main_muc_component_config;
+        or main_rooms_map[room_jid];
 end
 
 function get_main_room(room_jid)
@@ -189,6 +190,7 @@ function create_breakout_room(room_jid, from, subject, next_index)
     local main_room, main_room_jid = get_main_room(room_jid);
     local node = jid_split(main_room_jid);
     -- Breakout rooms are named like the main room with a random uuid suffix and the breakout domain.
+    -- TODO: remove this convention and just use uuids once Jicofo knows how to map a room to the main.
     local breakout_room_jid = node .. '_' .. uuid_gen() .. '@' .. breakout_rooms_muc_component_config;
 
     if not main_room._data.breakout_rooms then
@@ -199,6 +201,8 @@ function create_breakout_room(room_jid, from, subject, next_index)
     -- Make room persistent - not to be destroyed - if all participants join breakout rooms.
     main_room:set_persistent(true);
     main_room:save(true);
+
+    main_rooms_map[breakout_room_jid] = main_room_jid;
     broadcast_breakout_rooms(main_room_jid);
 end
 
@@ -220,6 +224,8 @@ function destroy_breakout_room(room_jid, message)
             main_room._data.breakout_rooms[room_jid] = nil;
         end
         main_room:save(true);
+
+        main_rooms_map[room_jid] = nil;
         broadcast_breakout_rooms(main_room_jid);
     end
 end
@@ -343,7 +349,7 @@ function on_occupant_left(event)
         main_room:save(true);
         module:add_timer(ROOMS_TTL_IF_ALL_LEFT, function()
             if main_room._data.is_close_all_scheduled then
-                module:log('info', 'Closing conference %s as all left for good.', main_room_jid);
+                --module:log('info', 'Closing conference %s as all left for good.', main_room_jid);
                 main_room:set_persistent(false);
                 main_room:save(true);
                 main_room:destroy(main_room_jid, 'All occupants left.');
