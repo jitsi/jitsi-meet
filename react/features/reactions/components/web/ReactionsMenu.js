@@ -8,6 +8,7 @@ import {
     createToolbarEvent,
     sendAnalytics
 } from '../../../analytics';
+import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
 import { getLocalParticipant, participantUpdated } from '../../../base/participants';
 import { connect } from '../../../base/redux';
@@ -21,14 +22,14 @@ import ReactionButton from './ReactionButton';
 type Props = {
 
     /**
-     * Used for translation.
+     * Docks the toolbox
      */
-    t: Function,
+    _dockToolbox: Function,
 
     /**
-     * Whether or not the local participant's hand is raised.
+     * Whether or not it's a mobile browser.
      */
-    _raisedHand: boolean,
+    _isMobile: boolean,
 
     /**
      * The ID of the local participant.
@@ -36,19 +37,24 @@ type Props = {
     _localParticipantID: String,
 
     /**
+     * Whether or not the local participant's hand is raised.
+     */
+    _raisedHand: boolean,
+
+    /**
      * The Redux Dispatch function.
      */
     dispatch: Function,
 
     /**
-     * Docks the toolbox
-     */
-    _dockToolbox: Function,
-
-    /**
      * Whether or not it's displayed in the overflow menu.
      */
-    overflowMenu: boolean
+    overflowMenu: boolean,
+
+    /**
+     * Used for translation.
+     */
+    t: Function
 };
 
 declare var APP: Object;
@@ -177,25 +183,27 @@ class ReactionsMenu extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { _raisedHand, t, overflowMenu } = this.props;
+        const { _raisedHand, t, overflowMenu, _isMobile } = this.props;
 
         return (
             <div className = { `reactions-menu ${overflowMenu ? 'overflow' : ''}` }>
                 <div className = 'reactions-row'>
                     { this._getReactionButtons() }
                 </div>
-                <div className = 'raise-hand-row'>
-                    <ReactionButton
-                        accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
-                        icon = '✋'
-                        key = 'raisehand'
-                        label = {
-                            `${t(`toolbar.${_raisedHand ? 'lowerYourHand' : 'raiseYourHand'}`)}
-                            ${overflowMenu ? '' : ' (R)'}`
-                        }
-                        onClick = { this._onToolbarToggleRaiseHand }
-                        toggled = { true } />
-                </div>
+                {_isMobile && (
+                    <div className = 'raise-hand-row'>
+                        <ReactionButton
+                            accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
+                            icon = '✋'
+                            key = 'raisehand'
+                            label = {
+                                `${t(`toolbar.${_raisedHand ? 'lowerYourHand' : 'raiseYourHand'}`)}
+                                ${overflowMenu ? '' : ' (R)'}`
+                            }
+                            onClick = { this._onToolbarToggleRaiseHand }
+                            toggled = { true } />
+                    </div>
+                )}
             </div>
         );
     }
@@ -212,6 +220,7 @@ function mapStateToProps(state) {
 
     return {
         _localParticipantID: localParticipant.id,
+        _isMobile: isMobileBrowser(),
         _raisedHand: localParticipant.raisedHand
     };
 }
