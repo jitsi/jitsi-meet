@@ -65,6 +65,11 @@ type Props = {
     _filmstripHeight: number,
 
     /**
+     * Whether this is a recorder or not.
+     */
+    _iAmRecorder: boolean,
+
+    /**
      * Whether the filmstrip button is enabled.
      */
     _isFilmstripButtonEnabled: boolean,
@@ -235,14 +240,14 @@ class Filmstrip extends PureComponent <Props> {
      * @returns {Object}
      */
     _calculateIndices(startIndex, stopIndex) {
-        const { _currentLayout, _thumbnailsReordered } = this.props;
+        const { _currentLayout, _iAmRecorder, _thumbnailsReordered } = this.props;
         let start = startIndex;
         let stop = stopIndex;
 
         if (_thumbnailsReordered) {
             // In tile view, the indices needs to be offset by 1 because the first thumbnail is that of the local
             // endpoint. The remote participants start from index 1.
-            if (_currentLayout === LAYOUTS.TILE_VIEW) {
+            if (!_iAmRecorder && _currentLayout === LAYOUTS.TILE_VIEW) {
                 start = Math.max(startIndex - 1, 0);
                 stop = stopIndex - 1;
             }
@@ -294,18 +299,24 @@ class Filmstrip extends PureComponent <Props> {
      * @returns {string} - The key.
      */
     _gridItemKey({ columnIndex, rowIndex }) {
-        const { _columns, _remoteParticipants, _remoteParticipantsLength, _thumbnailsReordered } = this.props;
+        const {
+            _columns,
+            _iAmRecorder,
+            _remoteParticipants,
+            _remoteParticipantsLength,
+            _thumbnailsReordered
+        } = this.props;
         const index = (rowIndex * _columns) + columnIndex;
 
         // When the thumbnails are reordered, local participant is inserted at index 0.
         const localIndex = _thumbnailsReordered ? 0 : _remoteParticipantsLength;
-        const remoteIndex = _thumbnailsReordered ? index - 1 : index;
+        const remoteIndex = _thumbnailsReordered && !_iAmRecorder ? index - 1 : index;
 
-        if (index > _remoteParticipantsLength) {
+        if (index > _remoteParticipantsLength - (_iAmRecorder ? 1 : 0)) {
             return `empty-${index}`;
         }
 
-        if (index === localIndex) {
+        if (!_iAmRecorder && index === localIndex) {
             return 'local';
         }
 
@@ -528,7 +539,7 @@ class Filmstrip extends PureComponent <Props> {
  */
 function _mapStateToProps(state) {
     const toolbarButtons = getToolbarButtons(state);
-    const { testing = {} } = state['features/base/config'];
+    const { testing = {}, iAmRecorder } = state['features/base/config'];
     const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
     const { visible, remoteParticipants } = state['features/filmstrip'];
     const reduceHeight = state['features/toolbox'].visible && toolbarButtons.length;
@@ -596,6 +607,7 @@ function _mapStateToProps(state) {
         _currentLayout,
         _filmstripHeight: remoteFilmstripHeight,
         _filmstripWidth: remoteFilmstripWidth,
+        _iAmRecorder: Boolean(iAmRecorder),
         _isFilmstripButtonEnabled: isButtonEnabled('filmstrip', state),
         _remoteParticipantsLength: remoteParticipants.length,
         _remoteParticipants: remoteParticipants,
