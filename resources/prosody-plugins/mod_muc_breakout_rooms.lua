@@ -412,13 +412,11 @@ function process_breakout_rooms_muc_loaded(breakout_rooms_muc, host_module)
             name = 'muc#roominfo_isbreakout';
             label = 'Is this a breakout room?';
             type = "boolean";
-            value = true;
         });
         event.formdata['muc#roominfo_isbreakout'] = true;
         table.insert(event.form, {
             name = 'muc#roominfo_breakout_main_room';
             label = 'The main room associated with this breakout room';
-            value = '';
         });
         event.formdata['muc#roominfo_breakout_main_room'] = main_room_jid;
 
@@ -427,10 +425,28 @@ function process_breakout_rooms_muc_loaded(breakout_rooms_muc, host_module)
             table.insert(event.form, {
                 name = 'muc#roominfo_lobbyroom';
                 label = 'Lobby room jid';
-                value = '';
             });
             event.formdata['muc#roominfo_lobbyroom'] = main_room._data.lobbyroom;
         end
+    end);
+
+    host_module:hook("muc-config-form", function(event)
+        local room = event.room;
+        local main_room, main_room_jid = get_main_room(room.jid);
+
+        -- Breakout room matadata.
+        table.insert(event.form, {
+            name = 'muc#roominfo_isbreakout';
+            label = 'Is this a breakout room?';
+            type = "boolean";
+            value = true;
+        });
+
+        table.insert(event.form, {
+            name = 'muc#roominfo_breakout_main_room';
+            label = 'The main room associated with this breakout room';
+            value = main_room_jid;
+        });
     end);
 
     local room_mt = breakout_rooms_muc_service.room_mt;
