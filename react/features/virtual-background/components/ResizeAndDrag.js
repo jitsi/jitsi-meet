@@ -103,6 +103,13 @@ function ResizeAndDrag({ _currentCameraDeviceId, _virtualBackground, dispatch, u
 
                 // $FlowExpectedError
                 dragAndResizeRef.current.style.width = `${desktopImageDimensions.width}px`;
+                const virtualBackgroundPreview = document.querySelector('.virtual-background-preview');
+
+                // $FlowExpectedError
+                virtualBackgroundPreview.style.height = `${desktopImageDimensions.height}px`;
+
+                // $FlowExpectedError
+                virtualBackgroundPreview.style.width = `${desktopImageDimensions.width}px`;
 
                 // Be sure that sizes of human video are updated after desktop video resize.
                 updateTransformValues(image, url, jitsiTrack);
@@ -198,12 +205,14 @@ function ResizeAndDrag({ _currentCameraDeviceId, _virtualBackground, dispatch, u
         function updateTransformValues(image, url, track) {
             const personImageCoordonates = image.getClientRect({ skipTransform: false });
             const dragAndDropOptions = {
+                x: (personImageCoordonates.x - 0)
 
                 // $FlowExpectedError
-                x: (personImageCoordonates.x - 0) / dragAndResizeRef.current.getBoundingClientRect().width,
+                / document.querySelector('.virtual-background-preview').getBoundingClientRect().width,
+                y: (personImageCoordonates.y - 0)
 
                 // $FlowExpectedError
-                y: (personImageCoordonates.y - 0) / dragAndResizeRef.current.getBoundingClientRect().height,
+                / document.querySelector('.virtual-background-preview').getBoundingClientRect().height,
                 width: Math.max(5, image.width() * image.scaleX()) * 1.5,
                 height: Math.max(5, image.height() * image.scaleY()) * 1.5,
                 url,

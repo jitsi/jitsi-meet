@@ -197,6 +197,7 @@
 }
 
 .virtual-background-preview{
+    margin: auto;
     height: 250px;
     width: 570px;
 }
@@ -221,9 +222,6 @@
 
 .drag-and-resize-area{
     width: 100%;
-    position: absolute;
     z-index:10;
     left: 50%;
-    top: 34%;
-    transform: translate(-50%,-50%);
 }
