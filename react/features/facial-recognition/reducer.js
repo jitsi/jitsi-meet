@@ -3,7 +3,6 @@
 import { ReducerRegistry } from '../base/redux';
 
 import {
-    SET_FACIAL_RECOGNITION_MODELS_LOADED,
     ADD_FACIAL_EXPRESSION,
     SET_FACIAL_RECOGNITION_ALLOWED,
     SET_DETECTION_TIME_INTERVAL,
@@ -33,13 +32,6 @@ const defaultState = {
 
 ReducerRegistry.register('features/facial-recognition', (state = defaultState, action) => {
     switch (action.type) {
-    case SET_FACIAL_RECOGNITION_MODELS_LOADED: {
-        return {
-            ...state,
-            facialRecognitionModelsLoaded: action.payload
-        };
-    }
-
     case ADD_FACIAL_EXPRESSION: {
         if (state.lastFacialExpression) {
             state.facialExpressions[state.lastFacialExpression] += action.duration;
@@ -53,7 +45,7 @@ ReducerRegistry.register('features/facial-recognition', (state = defaultState, a
     case SET_FACIAL_RECOGNITION_ALLOWED: {
         return {
             ...state,
-            facialRecognitionAllowed: action.payload
+            facialRecognitionAllowed: action.allowed
         };
     }
     case SET_DETECTION_TIME_INTERVAL: {

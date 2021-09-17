@@ -15,6 +15,9 @@ type Props = {
      */
     t: Function,
 
+    /**
+     * True if the client width is les than 750.
+     */
     reduceExpressions: boolean
 };
 

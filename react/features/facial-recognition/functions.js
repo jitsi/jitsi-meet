@@ -4,9 +4,10 @@ import logger from './logger';
 declare var APP: Object;
 
 /**
- * Broadcasts the changed facial expression.
+ * Sends the facial expression with its duration to the xmpp server and.
+ * Also it broadcasts it to the other participants.
  *
- * @param  {string} facialExpression - Facial expression to be broadcasted.
+ * @param  {string} facialExpression - Facial expression to be sent.
  * @param {number} duration - The duration of the facial expression in seconds.
  * @returns {void}
  */
@@ -19,7 +20,7 @@ export function sendFacialExpression(facialExpression: string, duration: number)
             duration
         });
     } catch (e) {
-        logger.debug('Could not send the facial expression');
+        logger.debug('Could not send the facial expression to xmpp server');
     }
 
     if (count > 1) {
@@ -32,19 +33,19 @@ export function sendFacialExpression(facialExpression: string, duration: number)
         try {
             APP.conference.broadcastEndpointMessage(payload);
         } catch (e) {
-            logger.debug('Could not send the facial expression');
+            logger.debug('Could not broadcast the facial expression to the other participants');
         }
     }
 }
 
 /**
- * Detects facial expression.
+ * Sends the image data a canvas from the track in the image capture to the facial expression worker.
  *
  * @param {Worker} worker - Facial expression worker.
  * @param {Object} imageCapture - Image capture that contains the current track.
  * @returns {Promise<void>}
  */
-export async function detectFacialExpression(worker: Worker, imageCapture: Object): Promise<void> {
+export async function sendDataToWorker(worker: Worker, imageCapture: Object): Promise<void> {
     if (imageCapture === null) {
         return;
     }

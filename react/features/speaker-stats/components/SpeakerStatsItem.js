@@ -31,8 +31,15 @@ type Props = {
      */
     isDominantSpeaker: boolean,
 
+    /**
+     * The object that has as keys the facial expressions of the
+     * participant and as values a number that represents the count .
+     */
     facialExpressions: Object,
 
+    /**
+     * True if the client width is les than 750.
+     */
     reduceExpressions: boolean,
 
     /**

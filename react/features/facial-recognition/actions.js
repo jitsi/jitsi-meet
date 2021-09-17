@@ -10,7 +10,7 @@ import {
     SET_DETECTION_TIME_INTERVAL,
     UPDATE_CAMERA_TIME_TRACKER
 } from './actionTypes';
-import { sendFacialExpression, detectFacialExpression } from './functions';
+import { sendFacialExpression, sendDataToWorker } from './functions';
 import logger from './logger';
 
 let interval = null;
@@ -26,55 +26,44 @@ const outputCanvas = document.createElement('canvas');
  */
 export function loadWorker() {
     return function(dispatch: Function, getState: Function) {
-        if (window.Worker) {
-            worker = new Worker('libs/facialExpressionWorker.js', { name: 'Facial Expression Worker' });
-            worker.onmessage = function(e: Object) {
-                const { type, value } = e.data;
-
-                if (type === 'tf-backend' && value) {
-                    let detectionTimeInterval = -1;
-
-                    if (value === 'webgl') {
-                        detectionTimeInterval = 1000;
-                    } else if (value === 'cpu') {
-                        detectionTimeInterval = 3000;
-                    }
-                    dispatch(setDetectionTimeInterval(detectionTimeInterval));
-                    interval = setInterval(() => detectFacialExpression(worker, imageCapture), detectionTimeInterval);
-                }
-
-                if (type === 'facial-expression' && value) {
-                    const state = getState();
-                    const { lastFacialExpression } = state['features/facial-recognition'];
-
-                    if (value === lastFacialExpression) {
-                        duplicateConsecutiveExpressions++;
-                    } else {
-                        console.log('!!!', value);
-                        dispatch(addFacialExpression(value, duplicateConsecutiveExpressions + 1));
-                        sendFacialExpression(lastFacialExpression, duplicateConsecutiveExpressions + 1);
-                        duplicateConsecutiveExpressions = 0;
-                    }
-                }
-            };
-        } else {
+        if (!window.Worker) {
             logger.debug('Browser does not support web workers');
-        }
-    };
-}
 
-/**
- * Adds a new expression to the store.
- *
- * @param  {string} facialExpression - Facial expression to be added.
- * @param  {number} duration - Duration in seconds of the facial expression.
- * @returns {Object}
- */
-export function addFacialExpression(facialExpression: string, duration: number) {
-    return {
-        type: ADD_FACIAL_EXPRESSION,
-        facialExpression,
-        duration
+            return;
+        }
+        worker = new Worker('libs/facialExpressionWorker.js', { name: 'Facial Expression Worker' });
+        worker.onmessage = function(e: Object) {
+            const { type, value } = e.data;
+
+            // receives a message indicating what type of backend tfjs decided to use.
+            // it is received after as a response to the first message sent to the worker.
+            if (type === 'tf-backend' && value) {
+                let detectionTimeInterval = -1;
+
+                if (value === 'webgl') {
+                    detectionTimeInterval = 1000;
+                } else if (value === 'cpu') {
+                    detectionTimeInterval = 3000;
+                }
+                dispatch(setDetectionTimeInterval(detectionTimeInterval));
+                interval = setInterval(() => sendDataToWorker(worker, imageCapture), detectionTimeInterval);
+            }
+
+            // receives a message with the predicted facial expression.
+            if (type === 'facial-expression' && value) {
+                const state = getState();
+                const { lastFacialExpression } = state['features/facial-recognition'];
+
+                if (value === lastFacialExpression) {
+                    duplicateConsecutiveExpressions++;
+                } else {
+                    console.log('!!!', value);
+                    dispatch(addFacialExpression(value, duplicateConsecutiveExpressions + 1));
+                    sendFacialExpression(lastFacialExpression, duplicateConsecutiveExpressions + 1);
+                    duplicateConsecutiveExpressions = 0;
+                }
+            }
+        };
     };
 }
 
@@ -89,37 +78,32 @@ export function startFacialRecognition() {
         if (interval || (worker === undefined || worker === null)) {
             return;
         }
-
-
         const state = getState();
         const localVideoTrack = getLocalVideoTrack(state['features/base/tracks']);
 
         if (localVideoTrack === undefined) {
             return;
         }
-
         const stream = localVideoTrack.jitsiTrack.getOriginalStream();
 
         if (stream === null) {
             return;
         }
         logger.log('Start face recognition');
-
-        console.log('START');
         const firstVideoTrack = stream.getVideoTracks()[0];
         const { height, width } = firstVideoTrack.getSettings() ?? firstVideoTrack.getConstraints();
 
         // $FlowFixMe
         imageCapture = new ImageCapture(firstVideoTrack);
-
         outputCanvas.width = parseInt(width, 10);
         outputCanvas.height = parseInt(height, 10);
         const { detectionTimeInterval } = state['features/facial-recognition'];
+        const facialRecognitionModelsLoaded = detectionTimeInterval !== -1;
 
-        if (detectionTimeInterval === -1) {
-            detectFacialExpression(worker, imageCapture);
+        if (facialRecognitionModelsLoaded) {
+            interval = setInterval(() => sendDataToWorker(worker, imageCapture), detectionTimeInterval);
         } else {
-            interval = setInterval(() => detectFacialExpression(worker, imageCapture), detectionTimeInterval);
+            sendDataToWorker(worker, imageCapture);
         }
 
         dispatch(updateCameraTimeTracker(false));
@@ -147,10 +131,10 @@ export function stopFacialRecognition() {
         const state = getState();
         const { lastFacialExpression } = state['features/facial-recognition'];
 
+        dispatch(updateCameraTimeTracker(true));
         dispatch(addFacialExpression(lastFacialExpression, duplicateConsecutiveExpressions + 1));
         sendFacialExpression(lastFacialExpression, duplicateConsecutiveExpressions + 1);
         duplicateConsecutiveExpressions = 0;
-        dispatch(updateCameraTimeTracker(true));
         logger.log('Stop face recognition');
     };
 }
@@ -174,7 +158,7 @@ export function resetTrack() {
 }
 
 /**
- * Changes the track from the image capture.
+ * Changes the track from the image capture with a given one.
  *
  * @param  {Object} track - The track that will be in the new image capture.
  * @returns {void}
@@ -189,7 +173,7 @@ export function changeTrack(track: Object) {
 }
 
 /**
- * Sets the facial recognition allowed.
+ * Sets if the facial recognition is allowed or not.
  *
  * @param  {boolean} allowed - The current state.
  * @returns {Object}
@@ -197,7 +181,22 @@ export function changeTrack(track: Object) {
 export function setFacialRecognitionAllowed(allowed: boolean) {
     return {
         type: SET_FACIAL_RECOGNITION_ALLOWED,
-        payload: allowed
+        allowed
+    };
+}
+
+/**
+ * Adds a new expression to the store.
+ *
+ * @param  {string} facialExpression - Facial expression to be added.
+ * @param  {number} duration - Duration in seconds of the facial expression.
+ * @returns {Object}
+ */
+function addFacialExpression(facialExpression: string, duration: number) {
+    return {
+        type: ADD_FACIAL_EXPRESSION,
+        facialExpression,
+        duration
     };
 }
 
@@ -207,7 +206,7 @@ export function setFacialRecognitionAllowed(allowed: boolean) {
  * @param  {number} time - The time interval.
  * @returns {Object}
  */
-export function setDetectionTimeInterval(time: number) {
+function setDetectionTimeInterval(time: number) {
     return {
         type: SET_DETECTION_TIME_INTERVAL,
         time
@@ -215,12 +214,12 @@ export function setDetectionTimeInterval(time: number) {
 }
 
 /**
- * Sets the camera time tracker on or off.
+ * Updates the camera time tracker with the current state of the camera.
  *
  * @param  {boolean} muted - The state of the camera.
  * @returns {Object}
  */
-export function updateCameraTimeTracker(muted: boolean) {
+function updateCameraTimeTracker(muted: boolean) {
     return {
         type: UPDATE_CAMERA_TIME_TRACKER,
         muted,
