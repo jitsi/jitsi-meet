@@ -107,6 +107,7 @@ function ReactionsMenuButton({
                             ariaHasPopup = { true }
                             ariaLabel = { t('toolbar.accessibilityLabel.reactionsMenu') }
                             icon = { IconArrowUp }
+                            iconDisabled = { false }
                             iconId = 'reactions-menu-button'
                             iconTooltip = { t(`toolbar.${isOpen ? 'closeReactionsMenu' : 'openReactionsMenu'}`) }
                             onIconClick = { toggleReactionsMenu }>
