@@ -48,7 +48,6 @@ export { default as IconDragHandle } from './drag-handle.svg';
 export { default as IconE2EE } from './e2ee.svg';
 export { default as IconEdit } from './edit.svg';
 export { default as IconEmail } from './envelope.svg';
-export { default as IconEmoji } from './face-smile.svg';
 export { default as IconEventNote } from './event_note.svg';
 export { default as IconExclamation } from './exclamation.svg';
 export { default as IconExclamationSolid } from './exclamation-solid.svg';
