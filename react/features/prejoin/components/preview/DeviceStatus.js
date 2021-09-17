@@ -3,12 +3,11 @@
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
-import { Icon, IconCheckSolid, IconExclamation } from '../../../base/icons';
+import { Icon, IconCheckSolid, IconExclamationTriangle } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import {
     getDeviceStatusType,
-    getDeviceStatusText,
-    getRawError
+    getDeviceStatusText
 } from '../../functions';
 
 export type Props = {
@@ -25,11 +24,6 @@ export type Props = {
     deviceStatusType: string,
 
     /**
-     * The error coming from device configuration.
-     */
-    rawError: string,
-
-    /**
      * Used for translation.
      */
     t: Function
@@ -37,7 +31,7 @@ export type Props = {
 
 const iconMap = {
     warning: {
-        src: IconExclamation,
+        src: IconExclamationTriangle,
         className: 'device-icon--warning'
     },
     ok: {
@@ -52,25 +46,23 @@ const iconMap = {
  *
  * @returns {ReactElement}
  */
-function DeviceStatus({ deviceStatusType, deviceStatusText, rawError, t }: Props) {
+function DeviceStatus({ deviceStatusType, deviceStatusText, t }: Props) {
     const { src, className } = iconMap[deviceStatusType];
+    const hasError = deviceStatusType === 'warning';
+    const containerClassName = `device-status ${hasError ? 'device-status-error' : ''}`;
 
     return (
         <div
-            className = 'device-status'
+            className = { containerClassName }
             role = 'alert'
             tabIndex = { -1 }>
             <Icon
                 className = { `device-icon ${className}` }
                 size = { 16 }
                 src = { src } />
-            <span
-                role = 'heading'>
-                {t(deviceStatusText)}
+            <span role = 'heading'>
+                {hasError ? t('prejoin.errorNoPermissions') : t(deviceStatusText)}
             </span>
-            { rawError && <span>
-                { rawError }
-            </span> }
         </div>
     );
 }
@@ -84,8 +76,7 @@ function DeviceStatus({ deviceStatusType, deviceStatusText, rawError, t }: Props
 function mapStateToProps(state) {
     return {
         deviceStatusText: getDeviceStatusText(state),
-        deviceStatusType: getDeviceStatusType(state),
-        rawError: getRawError(state)
+        deviceStatusType: getDeviceStatusType(state)
     };
 }
 
