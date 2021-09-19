@@ -5,9 +5,10 @@ import type { Node } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TouchableOpacity, View } from 'react-native';
 import { Text } from 'react-native-paper';
+import { useSelector } from 'react-redux';
 
 import { Avatar } from '../../../base/avatar';
-import { PARTICIPANT_ROLE, type ParticipantRole } from '../../../base/participants';
+import { PARTICIPANT_ROLE, type ParticipantRole, isEveryoneModerator } from '../../../base/participants';
 import { MEDIA_STATE, type MediaState, AudioStateIcons, VideoStateIcons, RoleStateIcons } from '../../constants';
 
 import { RaisedHandIndicator } from './RaisedHandIndicator';
@@ -85,6 +86,7 @@ function ParticipantItem({
 }: Props) {
 
     const { t } = useTranslation();
+    const allModerators = useSelector(isEveryoneModerator);
 
     return (
         <View style = { styles.participantContainer } >
@@ -104,11 +106,15 @@ function ParticipantItem({
                 {
                     !isKnockingParticipant
                     && <>
-                        {
-                            raisedHand && <RaisedHandIndicator />
-                        }
+
                         <View style = { styles.participantStatesContainer }>
-                            <View style = { styles.participantStateRole }>{RoleStateIcons[roleState]}</View>
+                            {
+                                !allModerators
+                                && <View style = { styles.participantStateRole }>{RoleStateIcons[roleState]}</View>
+                            }
+                            {
+                                raisedHand && <RaisedHandIndicator />
+                            }
                             <View style = { styles.participantStateVideo }>{VideoStateIcons[videoMediaState]}</View>
                             <View>{AudioStateIcons[audioMediaState]}</View>
                         </View>

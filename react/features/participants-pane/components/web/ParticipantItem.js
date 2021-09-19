@@ -28,6 +28,8 @@ import {
     ParticipantStates
 } from './styled';
 
+declare var interfaceConfig: Object;
+
 /**
  * Participant actions component mapping depending on trigger type.
  */
@@ -159,8 +161,8 @@ export default function ParticipantItem({
                 </ParticipantNameContainer>
                 { !local && <ParticipantActions children = { children } /> }
                 <ParticipantStates>
+                    { !interfaceConfig.DISABLE_FOCUS_INDICATOR && RoleStateIcons[roleState] }
                     { raisedHand && <RaisedHandIndicator /> }
-                    { RoleStateIcons[roleState] }
                     { VideoStateIcons[videoMediaState] }
                     { AudioStateIcons[audioMediaState] }
                 </ParticipantStates>

@@ -142,7 +142,7 @@ export default {
         flexDirection: 'row',
         overflow: 'hidden',
         paddingLeft: BaseTheme.spacing[3],
-        width: '63%'
+        width: '55%'
     },
 
     participantName: {
@@ -161,11 +161,12 @@ export default {
     },
 
     participantStatesContainer: {
+        alignItems: 'center',
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'flex-end',
         marginLeft: 'auto',
-        width: '15%'
+        width: '45%'
     },
 
     participantStateVideo: {
@@ -180,7 +181,7 @@ export default {
         backgroundColor: BaseTheme.palette.warning02,
         borderRadius: BaseTheme.shape.borderRadius / 2,
         height: BaseTheme.spacing[4],
-        marginLeft: BaseTheme.spacing[2],
+        marginRight: BaseTheme.spacing[3],
         width: BaseTheme.spacing[4]
     },
 
