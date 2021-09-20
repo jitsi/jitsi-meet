@@ -34,3 +34,12 @@ export const SET_EVERYONE_SUPPORT_E2EE = 'SET_EVERYONE_SUPPORT_E2EE';
  * }
  */
 export const SET_MAX_MODE = 'SET_MAX_MODE';
+
+/**
+ * The type of the action which signals to set media encryption key for e2ee.
+ *
+ * {
+ *     type: SET_MEDIA_ENCRYPTION_KEY
+ * }
+ */
+export const SET_MEDIA_ENCRYPTION_KEY = 'SET_MEDIA_ENCRYPTION_KEY';

@@ -314,6 +314,12 @@ function _translateLegacyConfig(oldValue: Object) {
         newValue.disableModeratorIndicator = interfaceConfig.DISABLE_FOCUS_INDICATOR;
     }
 
+    newValue.e2ee = newValue.e2ee || {};
+
+    if (oldValue.e2eeLabels) {
+        newValue.e2ee.e2eeLabels = oldValue.e2eeLabels;
+    }
+
     return newValue;
 }
 
