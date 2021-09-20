@@ -355,7 +355,7 @@
         "answer": "Ответ",
         "audioCallTitle": "Входящий звонок",
         "decline": "Отклонить",
-        "productLabel": "из Jitsi Meet",
+        "productLabel": "из Sugar Talk",
         "videoCallTitle": "Входящий видеозвонок"
     },
     "info": {
@@ -543,7 +543,7 @@
         "newDeviceAction": "Использовать",
         "newDeviceAudioTitle": "Обнаружено новое аудиоустройство",
         "newDeviceCameraTitle": "Обнаружена новая камера",
-        "oldElectronClientDescription1": "Похоже, вы используете старую версию клиента Jitsi Meet, которая имеет известные уязвимости в системе безопасности. Убедитесь, что вы обновили до нашей ",
+        "oldElectronClientDescription1": "Похоже, вы используете старую версию клиента Sugar Talk, которая имеет известные уязвимости в системе безопасности. Убедитесь, что вы обновили до нашей ",
         "oldElectronClientDescription2": "последней версии",
         "oldElectronClientDescription3": " сейчас!",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) удален другим участником.",
@@ -910,7 +910,7 @@
         "getHelp": "Справка",
         "go": "ОК",
         "goSmall": "ОК",
-        "headerTitle":"Сервер видеоконференцсвязи Jitsi Meet",
+        "headerTitle":"Сервер видеоконференцсвязи Sugar Talk",
         "headerSubtitle":"Защищенная высококачественная видеосвязь",
         "info": "Инфо",
         "join": "СОЗДАТЬ / ПРИСОЕДИНИТЬСЯ",

@@ -1090,7 +1090,7 @@
         "getHelp": "Hilfe",
         "go": "Los",
         "goSmall": "Los",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sugar Talk",
         "headerSubtitle": "Sichere und hochqualitative Meetings",
         "info": "Einwahlinformationen",
         "join": "ERSTELLEN / BEITRETEN",
@@ -1114,7 +1114,7 @@
         "logo":{
            "calendar":"Kalender Logo",
            "microsoftLogo":"Microsoft Logo",
-           "logoDeepLinking":"Jitsi Meet Logo",
+           "logoDeepLinking":"Sugar Talk Logo",
            "desktopPreviewThumbnail":"Desktop-Vorschau Thumbnail",
            "googleLogo":"Google Logo",
            "policyLogo":"Richtlinienlogo"

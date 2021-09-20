@@ -404,7 +404,7 @@
         "answer": "Odbierz",
         "audioCallTitle": "Przychodzące połączenie",
         "decline": "Odrzuć",
-        "productLabel": "z Jitsi Meet",
+        "productLabel": "z Sugar Talk",
         "videoCallTitle": "Przychodzące połączenie wideo"
     },
     "info": {
@@ -578,7 +578,7 @@
         "newDeviceAudioTitle": "Wykryto nowe urządzenie dźwiękowe",
         "newDeviceAction": "Użyj",
         "OldElectronAPPTitle": "Luka bezpieczeństwa!",
-        "oldElectronClientDescription1": "Najprawdopodobniej używasz starej wersji klienta Jitsi Meet, który jest podatny na luki bezpieczeństwa. Proszę zaktualizować do ",
+        "oldElectronClientDescription1": "Najprawdopodobniej używasz starej wersji klienta Sugar Talk, który jest podatny na luki bezpieczeństwa. Proszę zaktualizować do ",
         "oldElectronClientDescription2": "najnowszej wersji",
         "oldElectronClientDescription3": " teraz!",
         "moderationInEffectDescription": "Podnieś rękę, jeżeli chcesz mówić",
@@ -1083,7 +1083,7 @@
         "getHelp": "Pomoc",
         "go": "Dalej",
         "goSmall": "Dalej",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sugar Talk",
         "headerSubtitle": "Bezpieczne i wysokiej jakości spotkania",
         "info": "Informacje",
         "join": "Utwórz / Dołącz",

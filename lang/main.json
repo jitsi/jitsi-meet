@@ -410,7 +410,7 @@
         "answer": "Answer",
         "audioCallTitle": "Incoming call",
         "decline": "Dismiss",
-        "productLabel": "from Jitsi Meet",
+        "productLabel": "from Sugar Talk",
         "videoCallTitle": "Incoming video call"
     },
     "info": {
@@ -585,7 +585,7 @@
         "newDeviceAudioTitle": "New audio device detected",
         "newDeviceAction": "Use",
         "OldElectronAPPTitle": "Security vulnerability!",
-        "oldElectronClientDescription1": "You appear to be using an old version of the Jitsi Meet client which has known security vulnerabilities. Please make sure you update to our ",
+        "oldElectronClientDescription1": "You appear to be using an old version of the Sugar Talk client which has known security vulnerabilities. Please make sure you update to our ",
         "oldElectronClientDescription2": "latest build",
         "oldElectronClientDescription3": " now!",
         "moderationInEffectDescription": "Please raise hand if you want to speak.",
@@ -1116,7 +1116,7 @@
         "logo":{
            "calendar":"Calendar logo",
            "microsoftLogo":"Microsoft logo",
-           "logoDeepLinking":"Jitsi meet logo",
+           "logoDeepLinking":"Sugar talk logo",
            "desktopPreviewThumbnail":"Desktop preview thumbnail",
            "googleLogo":"Google Logo",
            "policyLogo":"Policy logo"
