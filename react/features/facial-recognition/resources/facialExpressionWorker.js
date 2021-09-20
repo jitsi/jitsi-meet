@@ -12,36 +12,63 @@ var window = {
     }
 
 };
+var timer;
 
 onmessage = async function(message) {
-    if(!modelsLoaded) {
-        await faceapi.loadTinyFaceDetectorModel('.');
-        await faceapi.loadFaceExpressionModel('.');
-        modelsLoaded = true;
-    }
+    if (message.data.id = 'SET_TIMEOUT') {
 
-    const tensor = faceapi.tf.browser.fromPixels(message.data.imageData);
-    const detections = await faceapi.detectSingleFace(
-            tensor,
-            new faceapi.TinyFaceDetectorOptions()
-    ).withFaceExpressions();
-    
-    if (!backendSet) {
-        const backend = faceapi.tf.getBackend();
-        if (backend !== undefined) {
+        if (message.data.imageData === null || message.data.imageData === undefined) {
+            return;
+        }
+        
+        if(!modelsLoaded) {
+            await faceapi.loadTinyFaceDetectorModel('.');
+            await faceapi.loadFaceExpressionModel('.');
+            modelsLoaded = true;
+        }
+
+        const tensor = faceapi.tf.browser.fromPixels(message.data.imageData);
+        const detections = await faceapi.detectSingleFace(
+                tensor,
+                new faceapi.TinyFaceDetectorOptions()
+        ).withFaceExpressions();
+        
+        if (!backendSet) {
+            const backend = faceapi.tf.getBackend();
+            if (backend !== undefined) {
+                postMessage({
+                    type: 'tf-backend',
+                    value: backend,
+                })
+                backendSet = true;
+            }
+        }
+
+        let facialExpression;
+
+        if (detections) {
+            facialExpression = detections.expressions.asSortedArray()[0].expression;
+        }
+
+        if (message.data.time === -1) {
+                postMessage({
+                    type: 'facial-expression',
+                    value: facialExpression
+                });
+                return;
+        }
+        timer = setTimeout(() =>{
             postMessage({
-                type: 'tf-backend',
-                value: backend,
-            })
-            backendSet = true;
+                type: 'facial-expression',
+                value: facialExpression
+            });
+        }, message.data.time)
+
+    } else if (message.data.id = 'CLEAR_TIMEOUT') {
+        if (timer) {
+            clearTimeout(timer);
+            timer = null;
         }
     }
-
-    if (detections) {
-        const facialExpression = detections.expressions.asSortedArray()[0].expression;
-        postMessage({ 
-            type: 'facial-expression',
-            value: facialExpression
-        });
-    }
+    
 };

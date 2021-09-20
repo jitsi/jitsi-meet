@@ -8,12 +8,13 @@ import {
     ADD_FACIAL_EXPRESSION,
     SET_FACIAL_RECOGNITION_ALLOWED,
     SET_DETECTION_TIME_INTERVAL,
-    UPDATE_CAMERA_TIME_TRACKER
+    UPDATE_CAMERA_TIME_TRACKER,
+    START_FACIAL_RECOGNITION,
+    STOP_FACIAL_RECOGNITION
 } from './actionTypes';
 import { sendFacialExpression, sendDataToWorker } from './functions';
 import logger from './logger';
 
-let interval = null;
 let imageCapture;
 let worker;
 let duplicateConsecutiveExpressions = 0;
@@ -34,6 +35,7 @@ export function loadWorker() {
         worker = new Worker('libs/facialExpressionWorker.js', { name: 'Facial Expression Worker' });
         worker.onmessage = function(e: Object) {
             const { type, value } = e.data;
+            const state = getState();
 
             // receives a message indicating what type of backend tfjs decided to use.
             // it is received after as a response to the first message sent to the worker.
@@ -46,12 +48,12 @@ export function loadWorker() {
                     detectionTimeInterval = 3000;
                 }
                 dispatch(setDetectionTimeInterval(detectionTimeInterval));
-                interval = setInterval(() => sendDataToWorker(worker, imageCapture), detectionTimeInterval);
+
+                // interval = setInterval(() => sendDataToWorker(worker, imageCapture), detectionTimeInterval);
             }
 
             // receives a message with the predicted facial expression.
             if (type === 'facial-expression' && value) {
-                const state = getState();
                 const { lastFacialExpression } = state['features/facial-recognition'];
 
                 if (value === lastFacialExpression) {
@@ -63,6 +65,9 @@ export function loadWorker() {
                     duplicateConsecutiveExpressions = 0;
                 }
             }
+            const { detectionTimeInterval } = state['features/facial-recognition'];
+
+            sendDataToWorker(worker, imageCapture, detectionTimeInterval);
         };
     };
 }
@@ -75,10 +80,15 @@ export function loadWorker() {
  */
 export function startFacialRecognition() {
     return async function(dispatch: Function, getState: Function) {
-        if (interval || (worker === undefined || worker === null)) {
+        if (worker === undefined || worker === null) {
             return;
         }
         const state = getState();
+        const { recognitionActive } = state['features/facial-recognition'];
+
+        if (recognitionActive) {
+            return;
+        }
         const localVideoTrack = getLocalVideoTrack(state['features/base/tracks']);
 
         if (localVideoTrack === undefined) {
@@ -89,6 +99,7 @@ export function startFacialRecognition() {
         if (stream === null) {
             return;
         }
+        dispatch({ type: START_FACIAL_RECOGNITION });
         logger.log('Start face recognition');
         const firstVideoTrack = stream.getVideoTracks()[0];
         const { height, width } = firstVideoTrack.getSettings() ?? firstVideoTrack.getConstraints();
@@ -97,15 +108,10 @@ export function startFacialRecognition() {
         imageCapture = new ImageCapture(firstVideoTrack);
         outputCanvas.width = parseInt(width, 10);
         outputCanvas.height = parseInt(height, 10);
+
         const { detectionTimeInterval } = state['features/facial-recognition'];
-        const facialRecognitionModelsLoaded = detectionTimeInterval !== -1;
 
-        if (facialRecognitionModelsLoaded) {
-            interval = setInterval(() => sendDataToWorker(worker, imageCapture), detectionTimeInterval);
-        } else {
-            sendDataToWorker(worker, imageCapture);
-        }
-
+        sendDataToWorker(worker, imageCapture, detectionTimeInterval);
         dispatch(updateCameraTimeTracker(false));
 
     };
@@ -118,23 +124,25 @@ export function startFacialRecognition() {
  */
 export function stopFacialRecognition() {
     return function(dispatch: Function, getState: Function) {
-        if (interval === null) {
-            clearInterval(interval);
+        const state = getState();
+        const { recognitionActive } = state['features/facial-recognition'];
+
+        if (!recognitionActive) {
             imageCapture = null;
-            interval = null;
 
             return;
         }
-        clearInterval(interval);
-        imageCapture = null;
-        interval = null;
-        const state = getState();
+        worker.postMessage({
+            id: 'CLEAR_TIMEOUT'
+        });
+
         const { lastFacialExpression } = state['features/facial-recognition'];
 
         dispatch(updateCameraTimeTracker(true));
         dispatch(addFacialExpression(lastFacialExpression, duplicateConsecutiveExpressions + 1));
         sendFacialExpression(lastFacialExpression, duplicateConsecutiveExpressions + 1);
         duplicateConsecutiveExpressions = 0;
+        dispatch({ type: STOP_FACIAL_RECOGNITION });
         logger.log('Stop face recognition');
     };
 }
