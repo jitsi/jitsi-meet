@@ -1,54 +1,22 @@
 .subject {
-    box-sizing: border-box;
     color: #fff;
-    margin-top: 20px;
-    position: absolute;
-    top: -120px;
-    transition: top .3s ease-in;
-    width: 100%;
+    margin-top: -120px;
+    transition: margin-top .3s ease-in;
     z-index: $zindex3;
 
     &.visible {
-        top: 0;
+        margin-top: 20px;
     }
-
-    &.recording {
-        top: 0;
-
-        .subject-details-container {
-            opacity: 0;
-            transition: opacity .3s ease-in;
-        }
-
-        .subject-info-container .show-always {
-            transition: margin-left .3s ease-in;
-        }
-
-        &.visible {
-            .subject-details-container {
-                opacity: 1;
-            }
-        }
-    }
-}
-
-.subject-details-container {
-    display: flex;
 }
 
 .subject-info-container {
     display: flex;
     justify-content: center;
-    max-width: calc(100% - 280px);
     margin: 0 auto;
-
-    &--full-width {
-        max-width: 100%;
-    }
+    height: 28px;
 
     @media (max-width: 500px) {
         flex-wrap: wrap;
-        max-width: 100%;
     }
 }
 
@@ -63,21 +31,47 @@
 .subject-text {
     background: rgba(0, 0, 0, 0.6);
     border-radius: 3px 0px 0px 3px;
+    box-sizing: border-box;
     font-size: 14px;
-    line-height: 24px;
-    padding: 2px 16px;
-    height: 24px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    line-height: 28px;
+    padding: 0 16px;
+    height: 28px;
+
+    @media (max-width: 700px) {
+        max-width: 100px;
+    }
+
+    @media (max-width: 300px) {
+        display: none;
+    }
+
+    &--content {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 }
 
 .subject-timer {
     background: rgba(0, 0, 0, 0.8);
     border-radius: 0px 3px 3px 0px;
-    display: inline-block;
+    box-sizing: border-box;
     font-size: 12px;
-    line-height: 16px;
+    line-height: 28px;
     min-width: 34px;
-    padding: 6px 8px;
+    padding: 0 8px;
+    height: 28px;
+
+    @media (max-width: 300px) {
+        display: none;
+    }
+}
+
+.details-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    height: 48px;
 }
