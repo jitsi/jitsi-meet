@@ -400,7 +400,7 @@
         "answer": "Responder",
         "audioCallTitle": "Chamada recebida",
         "decline": "Dispensar",
-        "productLabel": "do Jitsi Meet",
+        "productLabel": "do Sugar Talk",
         "videoCallTitle": "Chamada de vídeo recebida"
     },
     "info": {
@@ -574,7 +574,7 @@
         "newDeviceAudioTitle": "Novo dispositivo de áudio detectado",
         "newDeviceAction": "Usar",
         "OldElectronAPPTitle": "Vulnerabilidade de segurança!",
-        "oldElectronClientDescription1": "Você está usando um versão antiga do cliente Jitsi Meet que possui uma conhecida vulnerabilidade de segurança. Por favor tenha certeza de atulizar para a nossa ",
+        "oldElectronClientDescription1": "Você está usando um versão antiga do cliente Sugar Talk que possui uma conhecida vulnerabilidade de segurança. Por favor tenha certeza de atulizar para a nossa ",
         "oldElectronClientDescription2": "última versão",
         "oldElectronClientDescription3": " agora!",
         "moderationInEffectDescription": "Levante a mão se quiser falar",
@@ -1047,7 +1047,7 @@
         "getHelp": "Obter ajuda",
         "go": "IR",
         "goSmall": "IR",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Sugar Talk",
         "headerSubtitle": "Reuniões com segurança e alta qualidade",
         "info": "Informações",
         "join": "CRIAR / ENTRAR",
@@ -1071,7 +1071,7 @@
         "logo": {
             "calendar": "Logo do Calendário",
             "microsoftLogo": "Logo da Microsoft",
-            "logoDeepLinking": "Logo do Jitsi Meet",
+            "logoDeepLinking": "Logo do Sugar Talk",
             "desktopPreviewThumbnail": "Miniatura de Visualização do Desktop",
             "googleLogo": "Logo do Google",
             "policyLogo": "Logo da Política de Privacidade"
