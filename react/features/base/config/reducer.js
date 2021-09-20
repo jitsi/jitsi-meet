@@ -2,6 +2,7 @@
 
 import _ from 'lodash';
 
+import { CONFERENCE_INFO } from '../../conference/components/constants';
 import { equals, ReducerRegistry } from '../redux';
 
 import {
@@ -54,6 +55,17 @@ const INITIAL_RN_STATE = {
         preferredCodec: 'H264',
         preferH264: true // deprecated
     }
+};
+
+/**
+ * Mapping between old configs controlling the conference info headers visibility and the
+ * new configs. Needed in order to keep backwards compatibility.
+ */
+const CONFERENCE_HEADER_MAPPING = {
+    hideConferenceTimer: [ 'conference-timer' ],
+    hideConferenceSubject: [ 'subject' ],
+    hideParticipantsStats: [ 'participants-count' ],
+    hideRecordingLabel: [ 'recording', 'local-recording' ]
 };
 
 ReducerRegistry.register('features/base/config', (state = _getInitialState(), action) => {
@@ -173,6 +185,27 @@ function _setConfig(state, { config }) {
 }
 
 /**
+ * Processes the conferenceInfo object against the defaults.
+ *
+ * @param {Object} config - The old config.
+ * @returns {Object} The processed conferenceInfo object.
+ */
+function _getConferenceInfo(config) {
+    const { conferenceInfo } = config;
+
+    if (conferenceInfo) {
+        return {
+            alwaysVisible: conferenceInfo.alwaysVisible ?? [ ...CONFERENCE_INFO.alwaysVisible ],
+            autoHide: conferenceInfo.autoHide ?? [ ...CONFERENCE_INFO.autoHide ]
+        };
+    }
+
+    return {
+        ...CONFERENCE_INFO
+    };
+}
+
+/**
  * Constructs a new config {@code Object}, if necessary, out of a specific
  * config {@code Object} which is in the latest format supported by jitsi-meet.
  * Such a translation from an old config format to a new/the latest config
@@ -192,6 +225,27 @@ function _translateLegacyConfig(oldValue: Object) {
     if (!Array.isArray(oldValue.toolbarButtons)
             && typeof interfaceConfig === 'object' && Array.isArray(interfaceConfig.TOOLBAR_BUTTONS)) {
         newValue.toolbarButtons = interfaceConfig.TOOLBAR_BUTTONS;
+    }
+
+    const filteredConferenceInfo = Object.keys(CONFERENCE_HEADER_MAPPING).filter(key => oldValue[key]);
+
+    if (filteredConferenceInfo.length) {
+        newValue.conferenceInfo = _getConferenceInfo(oldValue);
+
+        filteredConferenceInfo.forEach(key => {
+            // hideRecordingLabel does not mean not render it at all, but autoHide it
+            if (key === 'hideRecordingLabel') {
+                newValue.conferenceInfo.alwaysVisible
+                    = newValue.conferenceInfo.alwaysVisible.filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
+                newValue.conferenceInfo.autoHide
+                    = _.union(newValue.conferenceInfo.autoHide, CONFERENCE_HEADER_MAPPING[key]);
+            } else {
+                newValue.conferenceInfo.alwaysVisible
+                    = newValue.conferenceInfo.alwaysVisible.filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
+                newValue.conferenceInfo.autoHide
+                    = newValue.conferenceInfo.autoHide.filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
+            }
+        });
     }
 
     if (!oldValue.connectionIndicators

@@ -19,7 +19,7 @@ type Props = {
     /**
      * Number of the conference participants.
      */
-    count: string,
+    count: number,
 
     /**
      * Conference data.
@@ -72,6 +72,12 @@ class ParticipantsCount extends PureComponent<Props> {
      * @returns {ReactElement}
      */
     render() {
+        const { count } = this.props;
+
+        if (count <= 2) {
+            return null;
+        }
+
         return (
             <div
                 className = 'participants-count'
@@ -79,7 +85,7 @@ class ParticipantsCount extends PureComponent<Props> {
                 <Label
                     className = 'label--white'
                     icon = { IconUserGroups }
-                    text = { this.props.count } />
+                    text = { count } />
             </div>
         );
     }

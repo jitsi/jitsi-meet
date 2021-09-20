@@ -70,6 +70,7 @@ export default [
      */
     'callUUID',
 
+    'conferenceInfo',
     'channelLastN',
     'connectionIndicators',
     'constraints',
