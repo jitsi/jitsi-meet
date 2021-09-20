@@ -151,7 +151,11 @@ export function getReactionsSoundsThresholds(reactions: Array<string>) {
  * @returns {boolean}
  */
 export function isReactionsEnabled(state: Object) {
-    const { disableReactions } = state['features/base/config'];
+    let { disableReactions } = state['features/base/config'];
+
+    if (disableReactions === undefined) {
+        disableReactions = true;
+    }
 
     if (navigator.product === 'ReactNative') {
         return !disableReactions && getFeatureFlag(state, REACTIONS_ENABLED, true);
