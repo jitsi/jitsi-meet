@@ -57,6 +57,17 @@ const INITIAL_RN_STATE = {
     }
 };
 
+/**
+ * Mapping between old configs controlling the conference info headers visibility and the
+ * new configs. Needed in order to keep backwards compatibility.
+ */
+ const CONFERENCE_HEADER_MAPPING = {
+    hideConferenceTimer: [ 'conference-timer' ],
+    hideConferenceSubject: [ 'subject' ],
+    hideParticipantsStats: [ 'participants-count' ],
+    hideRecordingLabel: [ 'recording', 'local-recording' ]
+};
+
 ReducerRegistry.register('features/base/config', (state = _getInitialState(), action) => {
     switch (action.type) {
     case UPDATE_CONFIG:
@@ -216,44 +227,25 @@ function _translateLegacyConfig(oldValue: Object) {
         newValue.toolbarButtons = interfaceConfig.TOOLBAR_BUTTONS;
     }
 
-    const {
-        hideConferenceTimer,
-        hideConferenceSubject,
-        hideParticipantsStats,
-        hideRecordingLabel
-    } = oldValue;
+    const filteredConferenceInfo = Object.keys(CONFERENCE_HEADER_MAPPING).filter(key => oldValue[key]);
 
-    if (hideConferenceTimer || hideConferenceSubject || hideParticipantsStats || hideRecordingLabel) {
+    if (filteredConferenceInfo.length) {
         newValue.conferenceInfo = _getConferenceInfo(oldValue);
 
-        if (hideConferenceTimer) {
-            newValue.conferenceInfo.alwaysVisible
-                = newValue.conferenceInfo.alwaysVisible.filter(c => c !== 'conference-timer');
-            newValue.conferenceInfo.autoHide
-                = newValue.conferenceInfo.autoHide.filter(c => c !== 'conference-timer');
-        }
-        if (hideConferenceSubject) {
-            newValue.conferenceInfo.alwaysVisible
-                = newValue.conferenceInfo.alwaysVisible.filter(c => c !== 'subject');
-            newValue.conferenceInfo.autoHide
-                = newValue.conferenceInfo.autoHide.filter(c => c !== 'subject');
-        }
-        if (hideParticipantsStats) {
-            newValue.conferenceInfo.alwaysVisible
-                = newValue.conferenceInfo.alwaysVisible.filter(c => c !== 'participants-count');
-            newValue.conferenceInfo.autoHide
-                = newValue.conferenceInfo.autoHide.filter(c => c !== 'participants-count');
-        }
-
-        // hideRecordingLabel does not mean not render it at all, but autoHide it
-        if (hideRecordingLabel) {
-            const recValues = [ 'recording', 'local-recording' ];
-
-            newValue.conferenceInfo.alwaysVisible
-                = newValue.conferenceInfo.alwaysVisible.filter(c => !recValues.includes(c));
-            newValue.conferenceInfo.autoHide
-                = _.union(newValue.conferenceInfo.autoHide, recValues);
-        }
+        filteredConferenceInfo.forEach(key => {
+            // hideRecordingLabel does not mean not render it at all, but autoHide it
+            if (key === 'hideRecordingLabel') {
+                newValue.conferenceInfo.alwaysVisible
+                    = newValue.conferenceInfo.alwaysVisible.filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
+                newValue.conferenceInfo.autoHide
+                    = _.union(newValue.conferenceInfo.autoHide, CONFERENCE_HEADER_MAPPING[key]);
+            } else {
+                newValue.conferenceInfo.alwaysVisible
+                    = newValue.conferenceInfo.alwaysVisible.filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
+                newValue.conferenceInfo.autoHide
+                    = newValue.conferenceInfo.autoHide.filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
+            }
+        });
     }
 
     if (!oldValue.connectionIndicators
