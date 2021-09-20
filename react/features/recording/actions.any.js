@@ -204,7 +204,7 @@ export function showStartedRecordingNotification(
             }
         }
 
-        dispatch(showNotification(dialogProps));
+        dispatch(showNotification(dialogProps, NOTIFICATION_TIMEOUT));
     };
 }
 
