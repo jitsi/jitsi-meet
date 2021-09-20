@@ -35,6 +35,13 @@ MiddlewareRegistry.register(store => next => async action => {
     case PREJOIN_START_CONFERENCE: {
         const { getState, dispatch } = store;
         const state = getState();
+
+        // Do nothing if the user is in the conference already. We do not want to attempt multiple joins when
+        // the user hits the join button multiple times in close succession.
+        if (!isPrejoinPageVisible(state)) {
+            break;
+        }
+
         const { userSelectedSkipPrejoin } = state['features/prejoin'];
         let localTracks = getLocalTracks(state['features/base/tracks']);
         const { options } = action;
