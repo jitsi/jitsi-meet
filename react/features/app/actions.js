@@ -30,7 +30,8 @@ import { setFatalError } from '../overlay';
 
 import {
     getDefaultURL,
-    getName
+    getName,
+    setBrowserSessionId
 } from './functions';
 import logger from './logger';
 
@@ -74,6 +75,10 @@ export function appNavigate(uri: ?string) {
         location.protocol || (location.protocol = 'https:');
         const { contextRoot, host, room } = location;
         const locationURL = new URL(location.toString());
+
+        if (navigator.product !== 'ReactNative') {
+            setBrowserSessionId();
+        }
 
         // Disconnect from any current conference.
         // FIXME: unify with web.

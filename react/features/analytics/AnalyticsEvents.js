@@ -802,7 +802,8 @@ export function createWelcomePageEvent(action, actionSubject, attributes = {}) {
  */
 export function createConnectionQualityChangedEvent(strength, stats) {
     return {
-        action: 'connection.quality.changed',
+        actionSubject: 'connection.quality.changed',
+        action: strength,
         attributes: {
             bandwidth: stats.bandwidth,
             bitrate: stats.bitrate,
@@ -831,7 +832,8 @@ function removeTrackIdFromEventPropertyObject(event) {
 // eslint-disable-next-line require-jsdoc
 export function createWaitingAreaParticipantStatusChangedEvent(status) {
     return {
-        action: 'waiting.area.participant.status.changed',
+        action: status,
+        actionSubject: 'waiting.area.participant.status.changed',
         attributes: {
             status
         }
