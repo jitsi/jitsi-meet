@@ -10,11 +10,6 @@ import { getLocalizedDateFormatter, translate } from '../../../base/i18n';
 import { getLocalParticipantType } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux';
 import { openURLInBrowser } from '../../../base/util';
-import JaneHangupButton from '../../../toolbox/components/JaneHangupButton';
-import AudioSettingsButton
-    from '../../../toolbox/components/web/AudioSettingsButton';
-import VideoSettingsButton
-    from '../../../toolbox/components/web/VideoSettingsButton';
 import {
     joinConference as joinConferenceAction
 } from '../../actions';
@@ -31,14 +26,16 @@ type Props = {
     participantType: string,
     participant: Object,
     authState: string,
-    localParticipantCanJoin: boolean
+    localParticipantCanJoin: boolean,
+    isMobile: boolean
 };
 
 type DialogTitleProps = {
     t: Function,
     participantType: string,
     localParticipantCanJoin: boolean,
-    authState: string
+    authState: string,
+    isMobile: boolean
 }
 
 function DialogTitleComp(props: DialogTitleProps) {
@@ -60,7 +57,7 @@ function DialogTitleComp(props: DialogTitleProps) {
         header = props.t('janeWaitingArea.authenticationExpired');
     }
 
-    return <div className = 'jane-waiting-area-info-title'>{header}</div>;
+    return <div className = 'jane-waiting-area-modal-title'>{header}</div>;
 }
 
 function DialogTitleMsgComp(props: DialogTitleProps) {
@@ -72,20 +69,35 @@ function DialogTitleMsgComp(props: DialogTitleProps) {
             title = props.t('janeWaitingArea.whenYouAreReady');
         }
     } else {
-        title = props.t('janeWaitingArea.testYourDevice');
+        title = `${props.t('janeWaitingArea.keepOpen')} ${props.t('janeWaitingArea.youMayTest')}`;
+        if (props.participantType === 'Patient') {
+            title = `${title} ${props.t('janeWaitingArea.callWillBegin')}`;
+        }
     }
 
     if (props.authState === 'failed') {
         title = '';
     }
 
-    return <div className = 'jane-waiting-area-info-title-msg'>{title}</div>;
+    if (title === '') {
+        return null;
+    }
+
+    if (props.participantType === 'Patient' && props.isMobile) {
+        return <>
+            <div className = 'jane-waiting-area-modal-title-msg'>{props.t('janeWaitingArea.keepOpen')}</div>
+            <div className = 'jane-waiting-area-modal-title-msg'>{props.t('janeWaitingArea.youMayTest')}</div>
+            <div className = 'jane-waiting-area-modal-title-msg'>{props.t('janeWaitingArea.callWillBegin')}</div>
+        </>;
+    }
+
+    return <div className = 'jane-waiting-area-modal-title-msg'>{title}</div>;
 }
 
 const DialogTitle = translate(DialogTitleComp);
 const DialogTitleMsg = translate(DialogTitleMsgComp);
 
-class JaneDialog extends Component<Props> {
+class Modal extends Component<Props> {
 
     _joinConference: Function;
     _onFailed: Function;
@@ -101,6 +113,16 @@ class JaneDialog extends Component<Props> {
 
         updateParticipantReadyStatus('joined');
         joinConference();
+    }
+
+    componentDidUpdate(prevProps: Props) {
+        const { localParticipantCanJoin, participantType } = this.props;
+
+        if (localParticipantCanJoin !== prevProps.localParticipantCanJoin
+            && localParticipantCanJoin
+            && participantType === 'Patient') {
+            this._joinConference();
+        }
     }
 
     _getStartDate() {
@@ -192,80 +214,74 @@ class JaneDialog extends Component<Props> {
             jwtPayload,
             localParticipantCanJoin,
             authState,
-            t
+            t,
+            isMobile
         } = this.props;
         const { _joinConference } = this;
 
-        return (<div className = 'jane-waiting-area-info-area-container'>
-            <div className = 'jane-waiting-area-info-area'>
-                <div className = 'jane-waiting-area-info'>
-                    <div className = 'jane-waiting-area-info-logo-wrapper'>
-                        <div className = 'jane-waiting-area-info-logo' />
-                        {participantType === 'StaffMember' && localParticipantCanJoin
-                            && <p className = 'jane-waiting-area-info-patient-waiting'>
-                                {t('janeWaitingArea.clientIsWaiting')}</p>}
-                    </div>
-                    <div className = 'jane-waiting-area-info-text-wrapper'>
-                        <DialogTitle
-                            authState = { authState }
-                            localParticipantCanJoin = { localParticipantCanJoin }
-                            participantType = { participantType } />
-                        <DialogTitleMsg
-                            authState = { authState }
-                            localParticipantCanJoin = { localParticipantCanJoin }
-                            participantType = { participantType } />
-                        <div className = 'jane-waiting-area-info-detail'>
-                            <p>
-                                {
-                                    _.get(jwtPayload, 'context.treatment')
-                                }
-                            </p>
-                            <p>
-                                {
-                                    _.get(jwtPayload, 'context.practitioner_name')
-                                }
-                            </p>
+        return (<div className = 'jane-waiting-area-modal'>
+            <div className = 'jane-waiting-area-modal-dialog'>
+                <div className = 'jane-waiting-area-modal-logo-wrapper'>
+                    <div className = 'jane-waiting-area-modal-logo' />
+                    {participantType === 'StaffMember' && localParticipantCanJoin
+                    && <p className = 'jane-waiting-area-modal-patient-waiting-badge'>
+                        {t('janeWaitingArea.clientIsWaiting')}</p>}
+                </div>
+                <div className = 'jane-waiting-area-modal-text-wrapper'>
+                    <DialogTitle
+                        authState = { authState }
+                        localParticipantCanJoin = { localParticipantCanJoin }
+                        participantType = { participantType } />
+                    <DialogTitleMsg
+                        authState = { authState }
+                        isMobile = { isMobile }
+                        localParticipantCanJoin = { localParticipantCanJoin }
+                        participantType = { participantType } />
+                    <div className = 'jane-waiting-area-modal-detail'>
+                        <p>
                             {
-                                this._getStartDate()
+                                _.get(jwtPayload, 'context.treatment')
                             }
+                        </p>
+                        <p>
                             {
-                                this._getStartTimeAndEndTime()
+                                _.get(jwtPayload, 'context.practitioner_name')
                             }
-                            {
-                                this._getDuration()
-                            }
-                        </div>
+                        </p>
+                        {
+                            this._getStartDate()
+                        }
+                        {
+                            this._getStartTimeAndEndTime()
+                        }
+                        {
+                            this._getDuration()
+                        }
                     </div>
                 </div>
-                {
-                    <div
-                        className = 'jane-waiting-area-preview-join-btn-container'>
-                        {
-                            authState !== 'failed' && <ActionButton
-                                disabled = { !localParticipantCanJoin }
-
-                                onClick = { _joinConference }
-                                type = 'primary'>
-                                {this._getBtnText()}
-                            </ActionButton>
-                        }
-                        {
-                            authState === 'failed' && <ActionButton
-                                onClick = { this._onFailed }
-                                type = 'primary'>
-                                {this._getBtnText()}
-                            </ActionButton>
-                        }
-                    </div>
-                }
             </div>
-            <div className = 'jane-waiting-area-preview-btn-container settings-button-container'>
-                <AudioSettingsButton visible = { true } />
-                <JaneHangupButton visible = { true } />
-                <VideoSettingsButton visible = { true } />
-            </div>
-        </div>
-        );
+            {
+                authState !== 'failed' && participantType === 'StaffMember' && <div
+                    className = 'jane-waiting-area-preview-join-btn-container'>
+                    <ActionButton
+                        disabled = { !localParticipantCanJoin }
+                        onClick = { _joinConference }
+                        type = 'primary'>
+                        {this._getBtnText()}
+                    </ActionButton>
+                </div>
+            }
+            {
+                authState === 'failed' && <div
+                    className = 'jane-waiting-area-preview-join-btn-container'>
+                    <ActionButton
+                        onClick = { this._onFailed }
+                        type = 'primary'>
+                        {this._getBtnText()}
+                    </ActionButton>
+                </div>
+            }
+        </div>);
     }
 }
 
@@ -292,4 +308,4 @@ function mapDispatchToProps(dispatch): Object {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(translate(JaneDialog));
+export default connect(mapStateToProps, mapDispatchToProps)(translate(Modal));

@@ -6,13 +6,16 @@ import React, { Component } from 'react';
 import { translate } from '../../base/i18n';
 import { Watermarks } from '../../base/react/components/web';
 import { connect } from '../../base/redux';
+import JaneHangupButton from '../../toolbox/components/JaneHangupButton';
+import AudioSettingsButton from '../../toolbox/components/web/AudioSettingsButton';
+import VideoSettingsButton from '../../toolbox/components/web/VideoSettingsButton';
 import {
     isDeviceStatusVisible,
     getJaneWaitingAreaPageDisplayName
 } from '../functions';
 
 import SocketConnection from './SocketConnection.web';
-import JaneDialog from './dialogs/JaneDialog';
+import Modal from './modal/Modal';
 import DeviceStatus from './preview/DeviceStatus';
 import Preview from './preview/Preview';
 
@@ -20,6 +23,7 @@ type Props = {
     t: Function,
     deviceStatusVisible: boolean,
     name: string,
+    isMobile: boolean
 };
 
 class JaneWaitingArea extends Component<Props> {
@@ -27,14 +31,22 @@ class JaneWaitingArea extends Component<Props> {
     render() {
         const {
             name,
-            deviceStatusVisible
+            deviceStatusVisible,
+            isMobile
         } = this.props;
 
         return (
             <div className = 'jane-waiting-area-full-page'>
-                <Watermarks />
+                {
+                    isMobile && <Watermarks />
+                }
                 <Preview name = { name } />
-                <JaneDialog />
+                <Modal isMobile = { isMobile } />
+                <div className = 'jane-waiting-area-preview-btn-container settings-button-container'>
+                    <AudioSettingsButton visible = { true } />
+                    <JaneHangupButton visible = { true } />
+                    <VideoSettingsButton visible = { true } />
+                </div>
                 {deviceStatusVisible && <DeviceStatus />}
                 <SocketConnection />
             </div>
@@ -43,9 +55,12 @@ class JaneWaitingArea extends Component<Props> {
 }
 
 function mapStateToProps(state): Object {
+    const { clientWidth } = state['features/base/responsive-ui'];
+
     return {
         deviceStatusVisible: isDeviceStatusVisible(state),
-        name: getJaneWaitingAreaPageDisplayName(state)
+        name: getJaneWaitingAreaPageDisplayName(state),
+        isMobile: clientWidth <= 768
     };
 }
 
