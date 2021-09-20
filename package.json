@@ -1,7 +1,7 @@
 {
-  "name": "jitsi-meet",
+  "name": "sugar-talk-spa",
   "version": "0.0.0",
-  "description": "A sample app for the Jitsi Videobridge",
+  "description": "A sample app for the Sugat Talk",
   "repository": {
     "type": "git",
     "url": "git://github.com/jitsi/jitsi-meet"
