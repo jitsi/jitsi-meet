@@ -137,17 +137,30 @@ class JaneDialog extends Component<Props> {
 
     _getDuration() {
         const { jwtPayload, t } = this.props;
-        const startAt = _.get(jwtPayload, 'context.start_at') ?? '';
-        const endAt = _.get(jwtPayload, 'context.end_at') ?? '';
+        const startAt = _.get(jwtPayload, 'context.start_at');
+        const endAt = _.get(jwtPayload, 'context.end_at');
+        const treatmentDuration = _.get(jwtPayload, 'context.treatment_duration');
+        let duration;
 
-        if (!startAt || !endAt) {
+        if (treatmentDuration) {
+            duration = Number(treatmentDuration) / 60;
+        }
+
+        if (startAt && endAt && !treatmentDuration) {
+            const ms = getLocalizedDateFormatter(endAt)
+                .valueOf() - getLocalizedDateFormatter(startAt)
+                .valueOf();
+
+            duration = moment.duration(ms).asMinutes();
+        }
+
+        if (!duration) {
             return null;
         }
-        const duration = getLocalizedDateFormatter(endAt).valueOf() - getLocalizedDateFormatter(startAt).valueOf();
 
         return (<p>
             {
-                t('janeWaitingArea.minutes', { duration: moment.duration(duration).asMinutes() })
+                t('janeWaitingArea.minutes', { duration })
             }
         </p>);
     }
