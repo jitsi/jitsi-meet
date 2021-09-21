@@ -122,8 +122,8 @@ export default class JitsiStreamBackgroundEffect {
             - ((this._virtualVideo.videoHeight / 2) * this.drawScale);
 
             this.dNdScale = Math.min(
-                this._outputCanvasElement.width / this._options.virtualBackground.dragAndDropOptions.x2,
-                this._outputCanvasElement.height / this._options.virtualBackground.dragAndDropOptions.y2
+                this._outputCanvasElement.width / this._options.virtualBackground.dragAndDropOptions.bkgWidth,
+                this._outputCanvasElement.height / this._options.virtualBackground.dragAndDropOptions.bkgHeight
             );
         }
 

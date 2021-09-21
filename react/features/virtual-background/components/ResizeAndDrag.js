@@ -212,8 +212,8 @@ function ResizeAndDrag({ _currentCameraDeviceId, _virtualBackground, dispatch, u
             const dragAndDropOptions = {
                 x: (personImageCoordonates.x - 0) / virtualBackgroundPreview.width,
                 y: (personImageCoordonates.y - 0) / virtualBackgroundPreview.height,
-                x2: virtualBackgroundPreview.width,
-                y2: virtualBackgroundPreview.height,
+                bkgWidth: virtualBackgroundPreview.width,
+                bkgHeight: virtualBackgroundPreview.height,
                 width: personImageCoordonates.width,
                 height: personImageCoordonates.height,
                 url,
