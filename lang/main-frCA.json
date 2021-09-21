@@ -492,12 +492,13 @@
         "youMayTest" : "Vous pouvez tester votre audio et votre vidéo pendant que vous attendez",
         "callWillBegin" : "Votre appel commencera automatiquement dans un instant.",
         "authenticationExpired" : "Votre prise de rendez-vous a expiré",
-        "minutes": "{{duration}} Minutes"
+        "minutes": "{{duration}} Minutes",
+        "keepAppOpen": "Veuillez garder votre application ouverte pour rester sur l'appel."
     },
     "preCallMessage" : {
         "sitBack" : "Asseyez-vous, détendez-vous et prenez un moment pour vous.",
         "WaitingforOthers" : "En attendant que l'autre participant se joigne à nous...",
-        "willBeginAt" : "Votre rendez-vous commencera à {{time}}",
+        "willBeginAt" : "Votre rendez-vous commencera à {{time}}.",
         "testing" : "Test de votre audio et vidéo...",
         "waitingForPractitioner" : "En attendant le praticien...",
         "hangUpToClose" : "Quand vous aurez fini de tester votre audio et votre vidéo, Raccrochez pour fermer cet écran. Commencez votre rendez-vous en ligne à partir de votre page de rendez-vous à venir."
@@ -780,6 +781,28 @@
         "terms": "Termes",
         "title": "Conférence vidéo sécurisée, pleinement fonctionnelle et entièrement gratuite",
         "getHelp": "Obtenir de l'aide",
-        "welcomeToJaneVideoChat": "Bienvenue à Jane Video Chat"
+        "welcomeToJaneVideoChat": "Bienvenue à Jane Video Chat",
+        "gotAppInstalled" : "Nice ! L'application est installée.",
+        "howToJoin" : "Nous allons vous expliquer rapidement comment rejoindre votre rendez-vous en ligne.",
+        "joinAsStaff" : "Rejoindre en tant que membre du personnel...",
+        "watchGuidedTour" : "Regardez une visite guidée sur la façon de joindre votre appel.",
+        "doYouHaveAccess" : "Avez-vous accès à votre messagerie sur cet appareil ?",
+        "confirmNo": "Non",
+        "confirmYes": "Oui",
+        "confirmNext" : "Suivant",
+        "youWillBeEmailed" : "Vous recevrez un lien par courriel.",
+        "youWillBeEmailedBefore" : "Vous recevrez par e-mail un lien pour vous joindre à votre appel 30 minutes avant votre rendez-vous",
+        "checkYourEmail" : "Vérifiez votre e-mail sur cet appareil et appuyez sur le lien. C'est tout",
+        "allSet" : "Great. Vous êtes prêt.",
+        "remindMe" : "Rappelez-moi comment joindre mon appel",
+        "noEmail" : "Pas d'email ?",
+        "signInToJoin" : "Connectez-vous pour rejoindre votre appel",
+        "loginToJoin" : "Vous pouvez rejoindre votre appel en vous connectant à votre compte sur le site Jane de votre clinique, en utilisant le bouton Sign In en haut de la page.",
+        "somethingLike" : "L'URL du site Jane de la clinique ressemblera à quelque chose comme :",
+        "willIncludeDirectLink" : "Les cliniques incluront souvent un lien direct vers leur site de réservation en ligne Jane sur leur site Web, mais vous pouvez toujours demander si vous n'êtes pas sûr !",
+        "gotIt" : "OK. Je l'ai eu !",
+        "joinAsStaffMember" : "Adhérer en tant que membre du personnel",
+        "firstStep" : "1. Connectez-vous à votre compte Jane sur cet appareil et consultez vos rendez-vous programmés.",
+        "secondStep" : "2. Sélectionnez le rendez-vous et appuyez sur commencer."
     }
 }

@@ -764,7 +764,8 @@
         "callWillBegin": "Your call will automatically begin momentarily.",
         "authenticationExpired": "Your appointment booking has expired",
         "minutes": "{{duration}} Minutes",
-        "errorTitleKey": "Waiting area error."
+        "errorTitleKey": "Waiting area error.",
+        "keepAppOpen": "Please keep your app open to stay on the call.",
     },
     "preCallMessage": {
         "sitBack": "Sit back, relax and take a moment for yourself.",
@@ -1161,7 +1162,29 @@
            "desktopPreviewThumbnail":"Desktop preview thumbnail",
            "googleLogo":"Google Logo",
            "policyLogo":"Policy logo"
-        }
+        },
+        "gotAppInstalled": "Nice! You've got the app installed.",
+        "howToJoin": "We’ll give you a quick tour of how to join your online appointment.",
+        "joinAsStaff": "Join as a staff member...",
+        "watchGuidedTour": "Watch a guided tour of how to join your call.",
+        "doYouHaveAccess": "Do you have access to your email on this device?",
+        "confirmNo": "No",
+        "confirmYes": "Yes",
+        "confirmNext": "Next",
+        "youWillBeEmailed": "You’ll be emailed a link to join your call.",
+        "youWillBeEmailedBefore": "You’ll be emailed a link to join your call 30 minutes before your appointment.",
+        "checkYourEmail": "Check your email on this device and tap the link. That’s it",
+        "allSet": "Great. You’re all set.",
+        "remindMe": "Remind me how to join my call",
+        "noEmail": "No email?",
+        "signInToJoin": "Sign in to join your call.",
+        "loginToJoin": "You can join your call by logging into your account on your clinic’s Jane site, using the Sign In button at the top of the page.",
+        "somethingLike": "The URL to the clinic’s Jane site will look something like:",
+        "willIncludeDirectLink": "Clinics will often include a direct link to their Jane online booking site on their website, but you can always ask if you are unsure!",
+        "gotIt": "OK.Got it!",
+        "joinAsStaffMember": "Join as a Staff Member",
+        "firstStep": "1. Sign in to your Jane Account on this device and view your scheduled appointments.",
+        "secondStep": "2. Select the appointment and tap begin."
     },
     "lonelyMeetingExperience": {
         "button": "Invite others",

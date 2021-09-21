@@ -1,26 +1,29 @@
 // @flow
 /* eslint-disable react/no-multi-comp */
+import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import React from 'react';
 import {
     Image,
     SafeAreaView,
     View
 } from 'react-native';
+import Video from 'react-native-video';
+import type { Dispatch } from 'redux';
+
+import { translate } from '../../../base/i18n';
+import { Platform } from '../../../base/react';
 import { JaneButton, FixedScaleText } from '../../../base/react/components/native';
-import tutorialStyles from './styles';
+import { connect } from '../../../base/redux';
 import {
     ColorPalette,
     sizeHelper
 } from '../../../base/styles';
-import { Indicator } from '../Indicator';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
-import Video from 'react-native-video';
-import { connect } from '../../../base/redux';
 import { setScreen } from '../../actions';
-import { Platform } from '../../../base/react';
-import type { Dispatch } from 'redux';
+import { Indicator } from '../Indicator';
 import VideoChatUrlDetector from '../VideoChatUrlDetector';
+
+import tutorialStyles from './styles';
 
 const WHITE_COLOR = ColorPalette.white;
 const JANE_COLOR = ColorPalette.jane;
@@ -39,6 +42,7 @@ const videoUrl = 'https://player.vimeo.com/external/509989030.hd.mp4?s=f61e57ff1
 
 type Props = {
     dispatch: Dispatch<any>,
+    t: Function
 };
 
 type TutorialLayoutProps = {
@@ -49,6 +53,7 @@ const setUpRedirectTo = dispatch => screenName => () => dispatch(setScreen(scree
 
 const StepOne = (props: Props) => {
     const redirectTo = setUpRedirectTo(props.dispatch);
+    const { t } = props;
 
     return (<View
         style = { tutorialStyles.wrapper }>
@@ -60,15 +65,19 @@ const StepOne = (props: Props) => {
                     style = { tutorialStyles.stepOne.logo } />
                 <FixedScaleText
                     style = { tutorialStyles.stepOne.header }>
-                    Nice! You've got the app installed.
+                    {
+                        t('welcomepage.gotAppInstalled')
+                    }
                 </FixedScaleText>
                 <FixedScaleText
                     style = { tutorialStyles.stepOne.messageText } >
-                    We’ll give you a quick tour of how to join your online appointment.
+                    {
+                        t('welcomepage.howToJoin')
+                    }
                 </FixedScaleText>
                 <JaneButton
                     borderColor = { JANE_COLOR }
-                    content = 'Next'
+                    content = { t('welcomepage.confirmNext') }
                     onPress = { redirectTo('stepTwo') }
                     textColor = { JANE_COLOR } />
             </View>
@@ -82,7 +91,7 @@ const StepOne = (props: Props) => {
             style = { tutorialStyles.buttonContainer } >
             <JaneButton
                 borderColor = { WHITE_COLOR }
-                content = 'Join as a staff member...'
+                content = { t('welcomepage.joinAsStaff') }
                 onPress = { redirectTo('staff') }
                 textColor = { WHITE_COLOR } />
 
@@ -91,10 +100,11 @@ const StepOne = (props: Props) => {
 };
 
 // use connect HOC wrapper here to pass the redux dispatch function to the component.
-const StepOneScreen = connect()(StepOne);
+const StepOneScreen = connect()(translate(StepOne));
 
 const StepTwo = (props: Props) => {
     const redirectTo = setUpRedirectTo(props.dispatch);
+    const { t } = props;
 
     return (<View
         style = { tutorialStyles.wrapper }>
@@ -106,7 +116,9 @@ const StepTwo = (props: Props) => {
                     style = { tutorialStyles.stepTwo.logo } />
                 <FixedScaleText
                     style = { tutorialStyles.stepTwo.header }>
-                    Watch a guided tour of how to join your call.
+                    {
+                        t('welcomepage.watchGuidedTour')
+                    }
                 </FixedScaleText>
                 <Video
                     controls = { true }
@@ -121,7 +133,7 @@ const StepTwo = (props: Props) => {
             <View style = { tutorialStyles.stepTwo.innerLowerContainer }>
                 <JaneButton
                     borderColor = { JANE_COLOR }
-                    content = 'Next'
+                    content = { t('welcomepage.confirmNext') }
                     onPress = { redirectTo('stepThree') }
                     textColor = { JANE_COLOR } />
                 <Indicator
@@ -134,7 +146,7 @@ const StepTwo = (props: Props) => {
                 style = { tutorialStyles.buttonContainer } >
                 <JaneButton
                     borderColor = { WHITE_COLOR }
-                    content = 'Join as a staff member...'
+                    content = { t('welcomepage.joinAsStaff') }
                     onPress = { redirectTo('staff') }
                     textColor = { WHITE_COLOR } />
 
@@ -143,10 +155,11 @@ const StepTwo = (props: Props) => {
     </View>);
 };
 
-const StepTwoScreen = connect()(StepTwo);
+const StepTwoScreen = connect()(translate(StepTwo));
 
 const StepThree = (props: Props) => {
     const redirectTo = setUpRedirectTo(props.dispatch);
+    const { t } = props;
 
     return (<View
         style = { tutorialStyles.wrapper }>
@@ -159,17 +172,19 @@ const StepThree = (props: Props) => {
                     size = { ENVELOPE_ICON_SIZE } />
                 <FixedScaleText
                     style = { tutorialStyles.stepThree.header }>
-                    Do you have access to your email on this device?
+                    {
+                        t('welcomepage.doYouHaveAccess')
+                    }
                 </FixedScaleText>
                 <JaneButton
                     borderColor = { JANE_COLOR }
-                    content = 'Yes'
+                    content = { t('welcomepage.confirmYes') }
                     marginBottom = { 17 }
                     onPress = { redirectTo('stepFour') }
                     textColor = { JANE_COLOR } />
                 <JaneButton
                     borderColor = { JANE_COLOR }
-                    content = 'No'
+                    content = { t('welcomepage.confirmNo') }
                     onPress = { redirectTo('noEmail') }
                     textColor = { JANE_COLOR } />
             </View>
@@ -185,7 +200,7 @@ const StepThree = (props: Props) => {
                 style = { tutorialStyles.buttonContainer } >
                 <JaneButton
                     borderColor = { WHITE_COLOR }
-                    content = 'Join as a staff member...'
+                    content = { t('welcomepage.joinAsStaff') }
                     onPress = { redirectTo('staff') }
                     textColor = { WHITE_COLOR } />
 
@@ -194,10 +209,11 @@ const StepThree = (props: Props) => {
     </View>);
 };
 
-const StepThreeScreen = connect()(StepThree);
+const StepThreeScreen = connect()(translate(StepThree));
 
 const StepFour = (props: Props) => {
     const redirectTo = setUpRedirectTo(props.dispatch);
+    const { t } = props;
 
     return (<View
         style = { tutorialStyles.wrapper }>
@@ -206,22 +222,28 @@ const StepFour = (props: Props) => {
             <View style = { tutorialStyles.stepFour.innerUpperContainer }>
                 <FixedScaleText
                     style = { tutorialStyles.stepFour.header }>
-                    You’ll be emailed a link to join your call.
+                    {
+                        t('welcomepage.youWillBeEmailed')
+                    }
                 </FixedScaleText>
                 <Image
                     source = { require('../../../../../images/patient-email-mobile-screen.png') }
                     style = { tutorialStyles.stepFour.mobileScreen } />
                 <FixedScaleText
                     style = { tutorialStyles.stepFour.message }>
-                    You’ll be emailed a link to join your call 30 minutes before your appointment.
+                    {
+                        t('welcomepage.youWillBeEmailedBefore')
+                    }
                     {'\n'} {'\n'}
-                    Check your email on this device and tap the link. That’s it.
+                    {
+                        t('welcomepage.checkYourEmail')
+                    }
                 </FixedScaleText>
             </View>
             <View style = { tutorialStyles.stepFour.innerLowerContainer }>
                 <JaneButton
                     borderColor = { JANE_COLOR }
-                    content = 'Next'
+                    content = { t('welcomepage.confirmNext') }
                     marginBottom = { sizeHelper.getActualSizeH(36) }
                     onPress = { redirectTo('done') }
                     textColor = { JANE_COLOR } />
@@ -235,7 +257,7 @@ const StepFour = (props: Props) => {
                 style = { tutorialStyles.buttonContainer } >
                 <JaneButton
                     borderColor = { WHITE_COLOR }
-                    content = 'Join as a staff member...'
+                    content = { t('welcomepage.joinAsStaff') }
                     onPress = { redirectTo('staff') }
                     textColor = { WHITE_COLOR } />
 
@@ -244,11 +266,12 @@ const StepFour = (props: Props) => {
     </View>);
 };
 
-const StepFourScreen = connect()(StepFour);
+const StepFourScreen = connect()(translate(StepFour));
 
 
 const Done = (props: Props) => {
     const redirectTo = setUpRedirectTo(props.dispatch);
+    const { t } = props;
 
     return (<View
         style = { tutorialStyles.wrapper }>
@@ -259,11 +282,13 @@ const Done = (props: Props) => {
                 style = { [ tutorialStyles.logo, tutorialStyles.done.logo ] } />
             <FixedScaleText
                 style = { tutorialStyles.done.header }>
-                Great. You’re all set.
+                {
+                    t('welcomepage.allSet')
+                }
             </FixedScaleText>
             <JaneButton
                 borderColor = { WHITE_COLOR }
-                content = 'Remind me how to join my call'
+                content = { t('welcomepage.remindMe') }
                 onPress = { redirectTo('stepOne') }
                 textColor = { WHITE_COLOR } />
         </View>
@@ -271,7 +296,7 @@ const Done = (props: Props) => {
             style = { tutorialStyles.buttonContainer } >
             <JaneButton
                 borderColor = { WHITE_COLOR }
-                content = 'Join as a staff member...'
+                content = { t('welcomepage.joinAsStaff') }
                 onPress = { redirectTo('staff') }
                 textColor = { WHITE_COLOR } />
 
@@ -279,10 +304,11 @@ const Done = (props: Props) => {
     </View>);
 };
 
-const DoneScreen = connect()(Done);
+const DoneScreen = connect()(translate(Done));
 
 const NoEmail = (props: Props) => {
     const redirectTo = setUpRedirectTo(props.dispatch);
+    const { t } = props;
 
     return (<View
         style = { tutorialStyles.wrapper }>
@@ -291,32 +317,41 @@ const NoEmail = (props: Props) => {
             <View style = { tutorialStyles.noEmail.innerUpperContainer }>
                 <FixedScaleText
                     style = { [ tutorialStyles.bigText, tutorialStyles.noEmail.header ] }>
-                    No email?
+                    {
+                        t('welcomepage.noEmail')
+                    }
                     {'\n'}
-                    Sign in to join your call.
+                    {
+                        t('welcomepage.signInToJoin')
+                    }
                 </FixedScaleText>
                 <Image
                     source = { require('../../../../../images/upcoming-appoiment-email.png') }
                     style = { tutorialStyles.noEmail.mobileScreen } />
                 <FixedScaleText
                     style = { tutorialStyles.noEmail.regularText }>
-                    You can join your call by logging into your account on your clinic’s Jane site,
-                    using the Sign In button at the top of the page.
+                    {
+                        t('welcomepage.loginToJoin')
+                    }
                     {'\n'} {'\n'}
-                    The URL to the clinic’s Jane site will look something like:{'\n'}
+                    {
+                        t('welcomepage.somethingLike')
+                    }
+                    {'\n'}
                     <FixedScaleText
                         style = { [ tutorialStyles.noEmail.regularText, tutorialStyles.noEmail.boldText ] }>
                         clinicnamehere.janeapp.com
                     </FixedScaleText>
                     {'\n'} {'\n'}
-                    Clinics will often include a direct link to their Jane online booking
-                    site on their website, but you can always ask if you are unsure!
+                    {
+                        t('welcomepage.willIncludeDirectLink')
+                    }
                 </FixedScaleText>
             </View>
             <View style = { tutorialStyles.noEmail.innerLowerContainer }>
                 <JaneButton
                     borderColor = { JANE_COLOR }
-                    content = 'OK.Got it!'
+                    content = { t('welcomepage.gotIt') }
                     onPress = { redirectTo('done') }
                     textColor = { JANE_COLOR } />
                 <Indicator
@@ -329,7 +364,7 @@ const NoEmail = (props: Props) => {
                 style = { tutorialStyles.buttonContainer } >
                 <JaneButton
                     borderColor = { WHITE_COLOR }
-                    content = 'Join as a staff member...'
+                    content = { t('welcomepage.joinAsStaff') }
                     onPress = { redirectTo('staff') }
                     textColor = { WHITE_COLOR } />
 
@@ -338,11 +373,12 @@ const NoEmail = (props: Props) => {
     </View>);
 };
 
-const NoEmailScreen = connect()(NoEmail);
+const NoEmailScreen = connect()(translate(NoEmail));
 
 
 const Staff = (props: Props) => {
     const redirectTo = setUpRedirectTo(props.dispatch);
+    const { t } = props;
 
     return (<View
         style = { tutorialStyles.wrapper }>
@@ -351,15 +387,23 @@ const Staff = (props: Props) => {
             <View style = { tutorialStyles.staff.innerUpperContainer }>
                 <FixedScaleText
                     style = { tutorialStyles.bigText }>
-                    Join as a Staff Member
+                    {
+                        t('welcomepage.joinAsStaffMember')
+                    }
+                </FixedScaleText>
+                <FixedScaleText
+                    style = { tutorialStyles.staff.lightText } >
+                    {
+
+                        t('welcomepage.firstStep')
+                    }
                 </FixedScaleText>
                 <FixedScaleText
                     style = { tutorialStyles.staff.lightText }>
-                    1. Sign in to your Jane Account on this device and view your scheduled appointments.
-                </FixedScaleText>
-                <FixedScaleText
-                    style = { tutorialStyles.staff.lightText }>
-                    2. Select the appointment and tap begin.
+                    {
+
+                        t('welcomepage.secondStep')
+                    }
                 </FixedScaleText>
                 <Image
                     source = { require('../../../../../images/staff-mobile-screen.png') }
@@ -368,7 +412,7 @@ const Staff = (props: Props) => {
             <View style = { tutorialStyles.staff.innerLowerContainer }>
                 <JaneButton
                     borderColor = { JANE_COLOR }
-                    content = 'OK Got it!'
+                    content = { t('welcomepage.gotIt') }
                     onPress = { redirectTo('done') }
                     textColor = { JANE_COLOR } />
             </View>
@@ -376,7 +420,7 @@ const Staff = (props: Props) => {
     </View>);
 };
 
-const StaffScreen = connect()(Staff);
+const StaffScreen = connect()(translate(Staff));
 
 const DefaultScreen = () => (<View
     style = { tutorialStyles.wrapper }>
@@ -413,7 +457,7 @@ const TutorialLayout = (props: TutorialLayoutProps) => (<SafeAreaView style = { 
     {
         getStepScreen(props.screenName)
     }
-    <VideoChatUrlDetector/>
+    <VideoChatUrlDetector />
 </SafeAreaView>);
 
 export default TutorialLayout;

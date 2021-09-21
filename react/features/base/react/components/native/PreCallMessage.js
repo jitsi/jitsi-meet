@@ -36,7 +36,8 @@ type Props = {
     isStaffMember: boolean,
     isTestCall: boolean,
     isWaitingAreaPageEnabled: boolean,
-    showPreCallMessage: boolean
+    showPreCallMessage: boolean,
+    t: Function
 };
 
 type State = {
@@ -121,28 +122,27 @@ class PreCallMessage extends Component<Props, State> {
     }
 
     _getPreCallMessage() {
-        const { isTestCall, appointmentStartAt, isWaitingAreaPageEnabled } = this.props;
+        const { isTestCall, appointmentStartAt, isWaitingAreaPageEnabled, t } = this.props;
         const { beforeAppointmentStart } = this.state;
 
-        let header = 'Waiting for the other participant to join...';
+        let header = t('preCallMessage.WaitingforOthers');
 
-        let message = 'Sit back, relax and take a moment for yourself.';
+        let message = t('preCallMessage.sitBack');
 
         if (beforeAppointmentStart && appointmentStartAt) {
             const timeStamp = getTimeStamp(appointmentStartAt);
 
-            header = `Your appointment will begin at ${getLocalizedDateFormatter(timeStamp)
-                        .format('hh:mm A')}`;
+            header = t('preCallMessage.willBeginAt', { time: getLocalizedDateFormatter(timeStamp)
+                    .format('hh:mm A') });
         }
 
         if (isTestCall) {
-            header = 'Testing your audio and video...';
-            message = 'When you are done testing your audio and video, '
-                + 'hang up to close this screen. Begin your online appointment from your upcoming appointments page.';
+            header = t('preCallMessage.testing');
+            message = t('preCallMessage.hangUpToClose');
         }
 
         if (isWaitingAreaPageEnabled) {
-            header = 'Waiting for the practitioner...';
+            header = t('preCallMessage.waitingForPractitioner');
         }
 
         return (<TouchableOpacity

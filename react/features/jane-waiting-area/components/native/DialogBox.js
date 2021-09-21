@@ -317,18 +317,18 @@ class DialogBox extends Component<DialogBoxProps> {
                     participantType === 'StaffMember' && <View style = { styles.actionButtonWrapper }>
                         {
                             authState !== 'failed'
-                            && <ActionButton
-                                containerStyle = { styles.joinButtonContainer }
-                                disabled = { !localParticipantCanJoin }
-                                onPress = { this._joinConference }
-                                title = { this._getBtnText() }
-                                titleStyle = { styles.joinButtonText } />
+                        && <ActionButton
+                            containerStyle = { styles.joinButtonContainer }
+                            disabled = { !localParticipantCanJoin }
+                            onPress = { this._joinConference }
+                            title = { this._getBtnText() }
+                            titleStyle = { styles.joinButtonText } />
                         }
                         {
                             authState === 'failed'
-                            && <ActionButton
-                                onPress = { this._return }
-                                title = { t('janeWaitingArea.returnToSchedule') } />
+                        && <ActionButton
+                            onPress = { this._return }
+                            title = { t('janeWaitingArea.returnToSchedule') } />
                         }
                     </View>
                 }
