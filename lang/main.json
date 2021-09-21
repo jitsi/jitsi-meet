@@ -570,7 +570,7 @@
         "mutedTitle": "You're muted!",
         "mutedRemotelyTitle": "You've been muted by {{moderator}}",
         "mutedRemotelyDescription": "You can always unmute when you're ready to speak. Mute back when you're done to keep noise away from the meeting.",
-        "videoMutedRemotelyTitle": "Your camera has been turned off by {{moderator}}",
+        "videoMutedRemotelyTitle": "Your video has been turned off by {{moderator}}",
         "videoMutedRemotelyDescription": "You can always turn it on again.",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) removed by another participant",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) set by another participant",

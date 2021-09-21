@@ -39,7 +39,8 @@ var interfaceConfig = {
 
     DISABLE_DOMINANT_SPEAKER_INDICATOR: false,
 
-    DISABLE_FOCUS_INDICATOR: false,
+    // Deprecated. Please use disableModeratorIndicator from config.js
+    // DISABLE_FOCUS_INDICATOR: false,
 
     /**
      * If true, notifications regarding joining/leaving are no longer displayed.
