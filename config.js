@@ -74,6 +74,9 @@ var config = {
         // callStatsThreshold: 5 // enable callstats for 5% of the users.
     },
 
+    // Disables moderator indicators.
+    // disableModeratorIndicator: false,
+
     // Enables reactions feature.
     // enableReactions: false,
 
