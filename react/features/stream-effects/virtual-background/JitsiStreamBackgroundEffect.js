@@ -109,18 +109,20 @@ export default class JitsiStreamBackgroundEffect {
             this._inputVideoElement.height = window.innerHeight;
             this._inputVideoElement.width = window.innerWidth;
 
-            // Get scale.
+            // Scale the virtual video proportionally based on available output canvas height and width.
             this.drawScale = Math.min(
                 this._outputCanvasElement.width / this._virtualVideo.videoWidth,
                 this._outputCanvasElement.height / this._virtualVideo.videoHeight
             );
 
-            // Get the top left position of the video.
+            // Get the top left position of the desktop share video.
             this.xScale = (this._outputCanvasElement.width / 2)
             - ((this._virtualVideo.videoWidth / 2) * this.drawScale);
             this.yScale = (this._outputCanvasElement.height / 2)
             - ((this._virtualVideo.videoHeight / 2) * this.drawScale);
 
+            // Scale the virtual background preview proportionally based on available output canvas height and width.
+            // We use this value to resize the draggable&resizible video from virtual background preview.
             this.dNdScale = Math.min(
                 this._outputCanvasElement.width / this._options.virtualBackground.dragAndDropOptions.bkgWidth,
                 this._outputCanvasElement.height / this._options.virtualBackground.dragAndDropOptions.bkgHeight
@@ -149,8 +151,8 @@ export default class JitsiStreamBackgroundEffect {
                     * (this._outputCanvasElement.width - (this.xScale * 2))),
                 this.yScale + (this._options.virtualBackground.dragAndDropOptions.y
                     * (this._outputCanvasElement.height - (this.yScale * 2))),
-                    this._options?.virtualBackground?.dragAndDropOptions?.width * this.dNdScale,
-                    this._options?.virtualBackground?.dragAndDropOptions?.height * this.dNdScale
+                    this._options.virtualBackground.dragAndDropOptions.width * this.dNdScale,
+                    this._options.virtualBackground.dragAndDropOptions.height * this.dNdScale
             );
         } else {
             this._outputCanvasCtx.drawImage(
@@ -186,12 +188,12 @@ export default class JitsiStreamBackgroundEffect {
                 0,
                 this._outputCanvasElement.width,
                 this._outputCanvasElement.height,
-                this.xScale + (this._options?.virtualBackground?.dragAndDropOptions?.x
+                this.xScale + (this._options.virtualBackground.dragAndDropOptions.x
                 * (this._outputCanvasElement.width - (this.xScale * 2))),
-                this.yScale + (this._options?.virtualBackground?.dragAndDropOptions?.y
+                this.yScale + (this._options.virtualBackground.dragAndDropOptions.y
                 * (this._outputCanvasElement.height - (this.yScale * 2))),
-                this._options?.virtualBackground?.dragAndDropOptions?.width * this.dNdScale,
-                this._options?.virtualBackground?.dragAndDropOptions?.height * this.dNdScale
+                this._options.virtualBackground.dragAndDropOptions.width * this.dNdScale,
+                this._options.virtualBackground.dragAndDropOptions.height * this.dNdScale
             );
         } else {
             this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
