@@ -34,7 +34,6 @@ import {
     DISPLAY_MODE_TO_STRING,
     DISPLAY_VIDEO,
     DISPLAY_VIDEO_WITH_NAME,
-    MOBILE_FILMSTRIP_PORTRAIT_RATIO,
     VIDEO_TEST_EVENTS,
     SHOW_TOOLBAR_CONTEXT_MENU_AFTER
 } from '../../constants';
@@ -771,7 +770,6 @@ class Thumbnail extends Component<Props, State> {
         const {
             _defaultLocalDisplayName,
             _disableLocalVideoFlip,
-            _height,
             _isMobile,
             _isMobilePortrait,
             _isScreenSharing,
@@ -783,13 +781,14 @@ class Thumbnail extends Component<Props, State> {
         const { id } = _participant || {};
         const { audioLevel } = this.state;
         const styles = this._getStyles();
-        const containerClassName = this._getContainerClassName();
+        let containerClassName = this._getContainerClassName();
         const videoTrackClassName
             = !_disableLocalVideoFlip && _videoTrack && !_isScreenSharing && _localFlipX ? 'flipVideoX' : '';
 
-        styles.thumbnail.height = _isMobilePortrait
-            ? `${Math.floor(_height * MOBILE_FILMSTRIP_PORTRAIT_RATIO)}px`
-            : styles.thumbnail.height;
+        if (_isMobilePortrait) {
+            styles.thumbnail.height = styles.thumbnail.width;
+            containerClassName = `${containerClassName} self-view-mobile-portrait`;
+        }
 
         return (
             <span
