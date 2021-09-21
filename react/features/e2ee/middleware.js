@@ -31,9 +31,6 @@ import { E2EE_OFF_SOUND_FILE, E2EE_ON_SOUND_FILE } from './sounds';
  * @returns {Function}
  */
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
-    const conference = getCurrentConference(getState);
-    const participantCount = getParticipantCount(getState);
-
     switch (action.type) {
     case APP_WILL_MOUNT:
         dispatch(registerSound(
@@ -103,6 +100,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         const result = next(action);
         const { e2eeEnabled, e2eeSupported, local } = action.participant;
         const { everyoneEnabledE2EE } = getState()['features/e2ee'];
+        const participantCount = getParticipantCount(getState);
 
         // the initial values
         if (participantCount === 1) {
@@ -130,14 +128,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             dispatch(setEveryoneSupportE2EE(false));
         }
 
-        if (isMaxModeReached(getState)) {
-            if (isMaxModeThresholdReached(getState)) {
-                dispatch(setE2EEMaxMode(MAX_MODE.THRESHOLD_EXCEEDED));
-                dispatch(toggleE2EE(false));
-            } else {
-                dispatch(setE2EEMaxMode(MAX_MODE.ENABLED));
-            }
-        }
+        _updateMaxMode(dispatch, getState);
 
         return result;
     }
@@ -188,16 +179,14 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             });
         }
 
-        if (!isMaxModeReached(getState)) {
-            dispatch(setE2EEMaxMode(MAX_MODE.DISABLED));
-        } else if (!isMaxModeThresholdReached(getState)) {
-            dispatch(setE2EEMaxMode(MAX_MODE.ENABLED));
-        }
+        _updateMaxMode(dispatch, getState);
 
         return result;
     }
 
     case TOGGLE_E2EE: {
+        const conference = getCurrentConference(getState);
+
         if (conference && conference.isE2EEEnabled() !== action.enabled) {
             logger.debug(`E2EE will be ${action.enabled ? 'enabled' : 'disabled'}`);
             conference.toggleE2EE(action.enabled);
@@ -234,3 +223,24 @@ StateListenerRegistry.register(
             dispatch(toggleE2EE(false));
         }
     });
+
+/**
+ * Sets the maxMode based on the number of participants in the conference.
+ *
+ * @param { Dispatch<any>} dispatch - The redux dispatch function.
+ * @param {Function|Object} getState - The {@code getState} function.
+ * @private
+ * @returns {void}
+ */
+function _updateMaxMode(dispatch, getState) {
+    const state = getState();
+
+    if (isMaxModeThresholdReached(state)) {
+        dispatch(setE2EEMaxMode(MAX_MODE.THRESHOLD_EXCEEDED));
+        dispatch(toggleE2EE(false));
+    } else if (isMaxModeReached(state)) {
+        dispatch(setE2EEMaxMode(MAX_MODE.ENABLED));
+    } else {
+        dispatch(setE2EEMaxMode(MAX_MODE.DISABLED));
+    }
+}

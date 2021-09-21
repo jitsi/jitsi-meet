@@ -166,7 +166,10 @@ function mapStateToProps(state) {
 
     let descriptionResource = '';
 
-    if (maxMode === MAX_MODE.THRESHOLD_EXCEEDED) {
+    if (e2eeLabels) {
+        // When e2eeLabels are present, the descriptionResouse is ignored.
+        descriptionResource = undefined;
+    } else if (maxMode === MAX_MODE.THRESHOLD_EXCEEDED) {
         descriptionResource = 'dialog.e2eeDisabledDueToMaxModeDescription';
     } else if (maxMode === MAX_MODE.ENABLED) {
         descriptionResource = e2eeEnabled
