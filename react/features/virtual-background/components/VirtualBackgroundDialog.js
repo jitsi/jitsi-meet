@@ -405,9 +405,9 @@ function VirtualBackground({
                             content = { t('virtualBackground.removeBackground') }
                             position = { 'top' }>
                             <div
-                                aria-checked = { _selectedThumbnail === 'none' }
+                                aria-checked = { selectedThumbnail === 'none' }
                                 aria-label = { t('virtualBackground.removeBackground') }
-                                className = { _selectedThumbnail === 'none' ? 'background-option none-selected'
+                                className = { selectedThumbnail === 'none' ? 'background-option none-selected'
                                     : 'background-option virtual-background-none' }
                                 onClick = { removeBackground }
                                 onKeyPress = { removeBackgroundKeyPress }
@@ -420,9 +420,9 @@ function VirtualBackground({
                             content = { t('virtualBackground.slightBlur') }
                             position = { 'top' }>
                             <div
-                                aria-checked = { _selectedThumbnail === 'slight-blur' }
+                                aria-checked = { selectedThumbnail === 'slight-blur' }
                                 aria-label = { t('virtualBackground.slightBlur') }
-                                className = { _selectedThumbnail === 'slight-blur'
+                                className = { selectedThumbnail === 'slight-blur'
                                     ? 'background-option slight-blur-selected' : 'background-option slight-blur' }
                                 onClick = { enableSlideBlur }
                                 onKeyPress = { enableSlideBlurKeyPress }
@@ -435,9 +435,9 @@ function VirtualBackground({
                             content = { t('virtualBackground.blur') }
                             position = { 'top' }>
                             <div
-                                aria-checked = { _selectedThumbnail === 'blur' }
+                                aria-checked = { selectedThumbnail === 'blur' }
                                 aria-label = { t('virtualBackground.blur') }
-                                className = { _selectedThumbnail === 'blur' ? 'background-option blur-selected'
+                                className = { selectedThumbnail === 'blur' ? 'background-option blur-selected'
                                     : 'background-option blur' }
                                 onClick = { enableBlur }
                                 onKeyPress = { enableBlurKeyPress }
@@ -472,9 +472,9 @@ function VirtualBackground({
                                 <img
                                     alt = { image.tooltip && t(`virtualBackground.${image.tooltip}`) }
                                     aria-checked = { options.selectedThumbnail === image.id
-                                        || _selectedThumbnail === image.id }
+                                        || selectedThumbnail === image.id }
                                     className = {
-                                        options.selectedThumbnail === image.id || _selectedThumbnail === image.id
+                                        options.selectedThumbnail === image.id || selectedThumbnail === image.id
                                             ? 'background-option thumbnail-selected' : 'background-option thumbnail' }
                                     data-imageid = { image.id }
                                     onClick = { setImageBackground }
@@ -491,8 +491,8 @@ function VirtualBackground({
                                 key = { image.id }>
                                 <img
                                     alt = { t('virtualBackground.uploadedImage', { index: index + 1 }) }
-                                    aria-checked = { _selectedThumbnail === image.id }
-                                    className = { _selectedThumbnail === image.id
+                                    aria-checked = { selectedThumbnail === image.id }
+                                    className = { selectedThumbnail === image.id
                                         ? 'background-option thumbnail-selected' : 'background-option thumbnail' }
                                     data-imageid = { image.id }
                                     onClick = { setUploadedImageBackground }

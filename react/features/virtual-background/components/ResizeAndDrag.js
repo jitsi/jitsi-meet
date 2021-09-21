@@ -40,6 +40,9 @@ type Props = {
  */
 function ResizeAndDrag({ _currentCameraDeviceId, _virtualBackground, dispatch, updateTransparent }: Props) {
     const dragAndResizeRef = useRef();
+    const [ desktopShareType ]
+    = useState((_virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT_PREVIEW)
+    || (_virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM));
     const [ containerWidth ] = useState(DESKTOP_SHARE_DIMENSIONS.CONTAINER_WIDTH);
     const [ containerHeight ] = useState(DESKTOP_SHARE_DIMENSIONS.CONTAINER_HEIGHT);
     const createLocalJitsiTrack = async () => {
@@ -69,7 +72,8 @@ function ResizeAndDrag({ _currentCameraDeviceId, _virtualBackground, dispatch, u
 
             stage.add(layer);
             const desktopVideo = document.createElement('video');
-            const url = await _virtualBackground?.virtualSource ?? await createLocalTrack('desktop', '');
+            const url = desktopShareType ? await _virtualBackground?.virtualSource
+                : await createLocalTrack('desktop', '');
 
             desktopVideo.srcObject = url.stream;
 
@@ -103,7 +107,7 @@ function ResizeAndDrag({ _currentCameraDeviceId, _virtualBackground, dispatch, u
 
                 // $FlowExpectedError
                 dragAndResizeRef.current.style.width = `${desktopImageDimensions.width}px`;
-                const virtualBackgroundPreview = document.querySelector('.virtual-background-preview');
+                const virtualBackgroundPreview = document.querySelector('.virtual-background-preview-dnd');
 
                 // $FlowExpectedError
                 virtualBackgroundPreview.style.height = `${desktopImageDimensions.height}px`;
@@ -208,7 +212,7 @@ function ResizeAndDrag({ _currentCameraDeviceId, _virtualBackground, dispatch, u
             const virtualBackgroundPreview
 
             // $FlowExpectedError
-            = document.querySelector('.virtual-background-preview').getBoundingClientRect();
+            = document.querySelector('.virtual-background-preview-dnd').getBoundingClientRect();
             const dragAndDropOptions = {
                 x: (personImageCoordonates.x - 0) / virtualBackgroundPreview.width,
                 y: (personImageCoordonates.y - 0) / virtualBackgroundPreview.height,
