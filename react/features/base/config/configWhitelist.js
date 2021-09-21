@@ -96,6 +96,7 @@ export default [
     'disableIncomingMessageSound',
     'disableJoinLeaveSounds',
     'disableLocalVideoFlip',
+    'disableModeratorIndicator',
     'disableNS',
     'disablePolls',
     'disableProfile',
