@@ -2,6 +2,8 @@
 import { getParticipantCount } from '../base/participants/functions';
 import { toState } from '../base/redux';
 
+import { MAX_MODE_LIMIT, MAX_MODE_THRESHOLD } from './constants';
+
 /**
  * Gets the value of a specific React {@code Component} prop of the currently
  * mounted {@link App}.
@@ -26,4 +28,30 @@ export function doesEveryoneSupportE2EE(stateful) {
     }
 
     return everyoneSupportE2EE;
+}
+
+/**
+ * Returns true is the number of participants is larger than {@code MAX_MODE_LIMIT}.
+ *
+ * @param {Function|Object} stateful - The redux store or {@code getState}
+ * function.
+ * @returns {boolean}.
+ */
+export function isMaxModeReached(stateful) {
+    const participantCount = getParticipantCount(toState(stateful));
+
+    return participantCount >= MAX_MODE_LIMIT;
+}
+
+/**
+ * Returns true is the number of participants is larger than {@code MAX_MODE_LIMIT + MAX_MODE_THREHOLD}.
+ *
+ * @param {Function|Object} stateful - The redux store or {@code getState}
+ * function.
+ * @returns {boolean}.
+ */
+export function isMaxModeThresholdReached(stateful) {
+    const participantCount = getParticipantCount(toState(stateful));
+
+    return participantCount >= MAX_MODE_LIMIT + MAX_MODE_THRESHOLD;
 }

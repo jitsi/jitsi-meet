@@ -3,7 +3,7 @@
 import { batch } from 'react-redux';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
-import { getCurrentConference } from '../base/conference';
+import { CONFERENCE_JOINED, getCurrentConference } from '../base/conference';
 import {
     getLocalParticipant,
     getParticipantById,
@@ -18,8 +18,9 @@ import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
 
 import { TOGGLE_E2EE } from './actionTypes';
-import { setEveryoneEnabledE2EE, setEveryoneSupportE2EE, toggleE2EE } from './actions';
-import { E2EE_OFF_SOUND_ID, E2EE_ON_SOUND_ID } from './constants';
+import { setE2EEMaxMode, setEveryoneEnabledE2EE, setEveryoneSupportE2EE, toggleE2EE } from './actions';
+import { E2EE_OFF_SOUND_ID, E2EE_ON_SOUND_ID, MAX_MODE } from './constants';
+import { isMaxModeReached, isMaxModeThresholdReached } from './functions';
 import logger from './logger';
 import { E2EE_OFF_SOUND_FILE, E2EE_ON_SOUND_FILE } from './sounds';
 
@@ -44,6 +45,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     case APP_WILL_UNMOUNT:
         dispatch(unregisterSound(E2EE_OFF_SOUND_ID));
         dispatch(unregisterSound(E2EE_ON_SOUND_ID));
+        break;
+
+    case CONFERENCE_JOINED:
+        _updateMaxMode(dispatch, getState);
+
         break;
 
     case PARTICIPANT_UPDATED: {
@@ -88,7 +94,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         const result = next(action);
         const { e2eeEnabled, e2eeSupported, local } = action.participant;
         const { everyoneEnabledE2EE } = getState()['features/e2ee'];
-        const participantCount = getParticipantCount(getState());
+        const participantCount = getParticipantCount(getState);
 
         // the initial values
         if (participantCount === 1) {
@@ -115,6 +121,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         if (everyoneSupportE2EE && !e2eeSupported) {
             dispatch(setEveryoneSupportE2EE(false));
         }
+
+        _updateMaxMode(dispatch, getState);
 
         return result;
     }
@@ -165,6 +173,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             });
         }
 
+        _updateMaxMode(dispatch, getState);
+
         return result;
     }
 
@@ -207,3 +217,24 @@ StateListenerRegistry.register(
             dispatch(toggleE2EE(false));
         }
     });
+
+/**
+ * Sets the maxMode based on the number of participants in the conference.
+ *
+ * @param { Dispatch<any>} dispatch - The redux dispatch function.
+ * @param {Function|Object} getState - The {@code getState} function.
+ * @private
+ * @returns {void}
+ */
+function _updateMaxMode(dispatch, getState) {
+    const state = getState();
+
+    if (isMaxModeThresholdReached(state)) {
+        dispatch(setE2EEMaxMode(MAX_MODE.THRESHOLD_EXCEEDED));
+        dispatch(toggleE2EE(false));
+    } else if (isMaxModeReached(state)) {
+        dispatch(setE2EEMaxMode(MAX_MODE.ENABLED));
+    } else {
+        dispatch(setE2EEMaxMode(MAX_MODE.DISABLED));
+    }
+}
