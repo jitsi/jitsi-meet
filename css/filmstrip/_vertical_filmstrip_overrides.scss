@@ -84,6 +84,10 @@
         margin-bottom: 3px;
         margin-left: $remoteVideoMenuIconMargin;
     }
+
+    .self-view-mobile-portrait video {
+        object-fit: contain;
+    }
 }
 
 /**
@@ -111,4 +115,12 @@
         transition: 1.2s ease-in-out;
         transition-delay: 0.1s;
     }
+}
+
+/**
+ * Overrides for self view when in portrait mode on mobile.
+ * This is done in order to keep the aspect ratio.
+ */
+.vertical-filmstrip .self-view-mobile-portrait #localVideo_container {
+    object-fit: contain;
 }
