@@ -1,6 +1,5 @@
 // @flow
 
-import '../av-moderation/reducer';
 import '../base/devices/reducer';
 import '../e2ee/reducer';
 import '../feedback/reducer';
