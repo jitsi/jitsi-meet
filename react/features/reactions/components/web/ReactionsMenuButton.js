@@ -2,14 +2,16 @@
 
 import React from 'react';
 
+import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
-import { IconRaisedHand } from '../../../base/icons';
+import { IconArrowUp, IconRaisedHand } from '../../../base/icons';
 import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+import { ToolboxButtonWithIcon } from '../../../base/toolbox/components';
 import ToolbarButton from '../../../toolbox/components/web/ToolbarButton';
 import { toggleReactionsMenuVisibility } from '../../actions.web';
 import { type ReactionEmojiProps } from '../../constants';
-import { getReactionsQueue } from '../../functions.any';
+import { getReactionsQueue, isReactionsEnabled } from '../../functions.any';
 import { getReactionsMenuVisibility } from '../../functions.web';
 
 import ReactionEmoji from './ReactionEmoji';
@@ -18,19 +20,19 @@ import ReactionsMenuPopup from './ReactionsMenuPopup';
 type Props = {
 
     /**
-     * Used for translation.
+     * Whether or not reactions are enabled.
      */
-    t: Function,
+    _reactionsEnabled: Boolean,
 
     /**
-     * Whether or not the local participant's hand is raised.
+     * Redux dispatch function.
      */
-    raisedHand: boolean,
+    dispatch: Function,
 
     /**
-     * Click handler for the reaction button. Toggles the reactions menu.
+     * Click handler for raise hand functionality.
      */
-    onReactionsClick: Function,
+    handleClick: Function,
 
     /**
      * Whether or not the reactions menu is open.
@@ -38,14 +40,24 @@ type Props = {
     isOpen: boolean,
 
     /**
+     * Whether or not it's a mobile browser.
+     */
+    isMobile: boolean,
+
+    /**
+     * Whether or not the local participant's hand is raised.
+     */
+    raisedHand: boolean,
+
+    /**
      * The array of reactions to be displayed.
      */
     reactionsQueue: Array<ReactionEmojiProps>,
 
     /**
-     * Redux dispatch function.
+     * Used for translation.
      */
-    dispatch: Function
+    t: Function
 };
 
 
@@ -57,11 +69,14 @@ declare var APP: Object;
  * @returns {ReactElement}
  */
 function ReactionsMenuButton({
-    t,
-    raisedHand,
+    _reactionsEnabled,
+    dispatch,
+    handleClick,
     isOpen,
+    isMobile,
+    raisedHand,
     reactionsQueue,
-    dispatch
+    t
 }: Props) {
 
     /**
@@ -73,16 +88,32 @@ function ReactionsMenuButton({
         dispatch(toggleReactionsMenuVisibility());
     }
 
+    const raiseHandButton = (<ToolbarButton
+        accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
+        icon = { IconRaisedHand }
+        key = 'raise-hand'
+        onClick = { handleClick }
+        toggled = { raisedHand }
+        tooltip = { t('toolbar.raiseHand') } />);
+
     return (
         <div className = 'reactions-menu-popup-container'>
             <ReactionsMenuPopup>
-                <ToolbarButton
-                    accessibilityLabel = { t('toolbar.accessibilityLabel.reactionsMenu') }
-                    icon = { IconRaisedHand }
-                    key = 'reactions'
-                    onClick = { toggleReactionsMenu }
-                    toggled = { raisedHand }
-                    tooltip = { t(`toolbar.${isOpen ? 'closeReactionsMenu' : 'openReactionsMenu'}`) } />
+                {!_reactionsEnabled || isMobile ? raiseHandButton
+                    : (
+                        <ToolboxButtonWithIcon
+                            ariaControls = 'reactions-menu-dialog'
+                            ariaExpanded = { isOpen }
+                            ariaHasPopup = { true }
+                            ariaLabel = { t('toolbar.accessibilityLabel.reactionsMenu') }
+                            icon = { IconArrowUp }
+                            iconDisabled = { false }
+                            iconId = 'reactions-menu-button'
+                            iconTooltip = { t(`toolbar.${isOpen ? 'closeReactionsMenu' : 'openReactionsMenu'}`) }
+                            onIconClick = { toggleReactionsMenu }>
+                            {raiseHandButton}
+                        </ToolboxButtonWithIcon>
+                    )}
             </ReactionsMenuPopup>
             {reactionsQueue.map(({ reaction, uid }, index) => (<ReactionEmoji
                 index = { index }
@@ -103,7 +134,9 @@ function mapStateToProps(state) {
     const localParticipant = getLocalParticipant(state);
 
     return {
+        _reactionsEnabled: isReactionsEnabled(state),
         isOpen: getReactionsMenuVisibility(state),
+        isMobile: isMobileBrowser(),
         reactionsQueue: getReactionsQueue(state),
         raisedHand: localParticipant?.raisedHand
     };

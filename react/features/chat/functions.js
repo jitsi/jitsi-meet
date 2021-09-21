@@ -69,14 +69,30 @@ export function getUnreadCount(state: Object) {
         return 0;
     }
 
+    let reactionMessages = 0;
+
     if (navigator.product === 'ReactNative') {
         // React native stores the messages in a reversed order.
-        return messages.indexOf(lastReadMessage);
+        const lastReadIndex = messages.indexOf(lastReadMessage);
+
+        for (let i = 0; i < lastReadIndex; i++) {
+            if (messages[i].isReaction) {
+                reactionMessages++;
+            }
+        }
+
+        return lastReadIndex - reactionMessages;
     }
 
     const lastReadIndex = messages.lastIndexOf(lastReadMessage);
 
-    return messagesCount - (lastReadIndex + 1);
+    for (let i = lastReadIndex + 1; i < messagesCount; i++) {
+        if (messages[i].isReaction) {
+            reactionMessages++;
+        }
+    }
+
+    return messagesCount - (lastReadIndex + 1) - reactionMessages;
 }
 
 /**

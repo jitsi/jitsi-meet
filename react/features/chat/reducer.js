@@ -28,6 +28,7 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
             displayName: action.displayName,
             error: action.error,
             id: action.id,
+            isReaction: action.isReaction,
             messageType: action.messageType,
             message: action.message,
             privateMessage: action.privateMessage,
