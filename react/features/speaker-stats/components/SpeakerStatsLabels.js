@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
+import { Tooltip } from '../../base/tooltip';
 import { FACIAL_EXPRESSION_EMOJIS } from '../../facial-recognition/constants.js';
 
 /**
@@ -65,11 +66,20 @@ class SpeakerStatsLabels extends Component<Props> {
                     expression => (
                         <div
                             className = 'speaker-stats-item__expression'
-                            key = { expression }
-                            // eslint-disable-next-line react-native/no-inline-styles
-                            style = {{ fontSize: 17 }} >
-                            { FACIAL_EXPRESSION_EMOJIS[expression] }
+                            key = { expression }>
+                            <Tooltip
+                                content = { t(`speakerStats.${expression}`) }
+                                position = { 'top' } >
+                                <div
+                                    // eslint-disable-next-line react-native/no-inline-styles
+                                    style = {{ fontSize: 17 }}>
+
+                                    { FACIAL_EXPRESSION_EMOJIS[expression] }
+                                </div>
+
+                            </Tooltip>
                         </div>
+
                     ))
                 }
             </div>
