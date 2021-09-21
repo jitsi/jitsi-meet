@@ -69,10 +69,10 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case ADD_MESSAGE:
         unreadCount = getUnreadCount(getState());
-        if (action.updateUnreadCount) {
-            unreadCount = action.hasRead ? 0 : unreadCount + 1;
-        } else {
+        if (action.isReaction) {
             action.hasRead = false;
+        } else {
+            unreadCount = action.hasRead ? 0 : unreadCount + 1;
         }
         isOpen = getState()['features/chat'].isOpen;
 
@@ -176,7 +176,7 @@ MiddlewareRegistry.register(store => next => action => {
             message: action.message,
             privateMessage: false,
             timestamp: Date.now()
-        }, false, false);
+        }, false, true);
     }
     }
 
@@ -275,7 +275,7 @@ function _addChatMsgListener(conference, store) {
                         message: getReactionMessageFromBuffer(eventData.reactions),
                         privateMessage: false,
                         timestamp: eventData.timestamp
-                    }, false);
+                    }, false, true);
                 }
             }
         });
@@ -309,13 +309,13 @@ function _handleChatError({ dispatch }, error) {
  * @param {Store} store - The Redux store.
  * @param {Object} message - The message object.
  * @param {boolean} shouldPlaySound - Whether or not to play the incoming message sound.
- * @param {boolean} updateUnreadCount - Whether or not to update the unread count.
+ * @param {boolean} isReaction - Whether or not the message is a reaction message.
  * @returns {void}
  */
 function _handleReceivedMessage({ dispatch, getState },
         { id, message, privateMessage, timestamp },
         shouldPlaySound = true,
-        updateUnreadCount = true
+        isReaction = false
 ) {
     // Logic for all platforms:
     const state = getState();
@@ -345,7 +345,7 @@ function _handleReceivedMessage({ dispatch, getState },
         privateMessage,
         recipient: getParticipantDisplayName(state, localParticipant.id),
         timestamp: millisecondsTimestamp,
-        updateUnreadCount
+        isReaction
     }));
 
     if (typeof APP !== 'undefined') {
