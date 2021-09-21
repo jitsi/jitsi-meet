@@ -94,7 +94,7 @@ export function getUnreadCount(state: Object) {
         }
     }
 
-    return messagesCount - (lastReadIndex + 1) - sentMessagesSinceLastRead;
+    return Math.max(messagesCount - (lastReadIndex + 1) - sentMessagesSinceLastRead, 0);
 }
 
 /**
