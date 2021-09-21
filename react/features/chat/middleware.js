@@ -68,7 +68,12 @@ MiddlewareRegistry.register(store => next => action => {
 
     switch (action.type) {
     case ADD_MESSAGE:
-        unreadCount = action.hasRead ? 0 : getUnreadCount(getState()) + 1;
+        unreadCount = getUnreadCount(getState());
+        if (action.isReaction) {
+            action.hasRead = false;
+        } else {
+            unreadCount = action.hasRead ? 0 : unreadCount + 1;
+        }
         isOpen = getState()['features/chat'].isOpen;
 
         if (typeof APP !== 'undefined') {
@@ -171,7 +176,7 @@ MiddlewareRegistry.register(store => next => action => {
             message: action.message,
             privateMessage: false,
             timestamp: Date.now()
-        }, false);
+        }, false, true);
     }
     }
 
@@ -270,7 +275,7 @@ function _addChatMsgListener(conference, store) {
                         message: getReactionMessageFromBuffer(eventData.reactions),
                         privateMessage: false,
                         timestamp: eventData.timestamp
-                    }, false);
+                    }, false, true);
                 }
             }
         });
@@ -304,11 +309,13 @@ function _handleChatError({ dispatch }, error) {
  * @param {Store} store - The Redux store.
  * @param {Object} message - The message object.
  * @param {boolean} shouldPlaySound - Whether or not to play the incoming message sound.
+ * @param {boolean} isReaction - Whether or not the message is a reaction message.
  * @returns {void}
  */
 function _handleReceivedMessage({ dispatch, getState },
         { id, message, privateMessage, timestamp },
-        shouldPlaySound = true
+        shouldPlaySound = true,
+        isReaction = false
 ) {
     // Logic for all platforms:
     const state = getState();
@@ -337,7 +344,8 @@ function _handleReceivedMessage({ dispatch, getState },
         message,
         privateMessage,
         recipient: getParticipantDisplayName(state, localParticipant.id),
-        timestamp: millisecondsTimestamp
+        timestamp: millisecondsTimestamp,
+        isReaction
     }));
 
     if (typeof APP !== 'undefined') {

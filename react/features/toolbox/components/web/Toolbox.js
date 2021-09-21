@@ -17,7 +17,6 @@ import { translate } from '../../../base/i18n';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet';
 import {
     getLocalParticipant,
-    getParticipantCount,
     haveParticipantWithScreenSharingFeature,
     raiseHand
 } from '../../../base/participants';
@@ -87,7 +86,6 @@ import AudioSettingsButton from './AudioSettingsButton';
 import FullscreenButton from './FullscreenButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import ProfileButton from './ProfileButton';
-import RaiseHandButton from './RaiseHandButton';
 import Separator from './Separator';
 import ShareDesktopButton from './ShareDesktopButton';
 import ToggleCameraButton from './ToggleCameraButton';
@@ -181,11 +179,6 @@ type Props = {
     _overflowMenuVisible: boolean,
 
     /**
-     * Number of participants in the conference.
-     */
-    _participantCount: number,
-
-    /**
      * Whether or not the participants pane is open.
      */
     _participantsPaneOpen: boolean,
@@ -254,16 +247,12 @@ type Props = {
 
 declare var APP: Object;
 
-type State = {
-    reactionsShortcutsRegistered: boolean
-};
-
 /**
  * Implements the conference toolbox on React/Web.
  *
  * @extends Component
  */
-class Toolbox extends Component<Props, State> {
+class Toolbox extends Component<Props> {
     /**
      * Initializes a new {@code Toolbox} instance.
      *
@@ -272,10 +261,6 @@ class Toolbox extends Component<Props, State> {
      */
     constructor(props: Props) {
         super(props);
-
-        this.state = {
-            reactionsShortcutsRegistered: false
-        };
 
         // Bind event handlers so they are only bound once per instance.
         this._onMouseOut = this._onMouseOut.bind(this);
@@ -306,7 +291,7 @@ class Toolbox extends Component<Props, State> {
      * @returns {void}
      */
     componentDidMount() {
-        const { _toolbarButtons, t, dispatch, _reactionsEnabled, _participantCount } = this.props;
+        const { _toolbarButtons, t, dispatch, _reactionsEnabled } = this.props;
         const KEYBOARD_SHORTCUTS = [
             isToolbarButtonEnabled('videoquality', _toolbarButtons) && {
                 character: 'A',
@@ -355,7 +340,7 @@ class Toolbox extends Component<Props, State> {
             }
         });
 
-        if (_reactionsEnabled && _participantCount > 1) {
+        if (_reactionsEnabled) {
             const REACTION_SHORTCUTS = Object.keys(REACTIONS).map(key => {
                 const onShortcutSendReaction = () => {
                     dispatch(addReactionToBuffer(key));
@@ -389,7 +374,7 @@ class Toolbox extends Component<Props, State> {
      * @inheritdoc
      */
     componentDidUpdate(prevProps) {
-        const { _dialog, _reactionsEnabled, _participantCount, dispatch, t } = this.props;
+        const { _dialog, dispatch } = this.props;
 
 
         if (prevProps._overflowMenuVisible
@@ -397,41 +382,6 @@ class Toolbox extends Component<Props, State> {
             && _dialog) {
             this._onSetOverflowVisible(false);
             dispatch(setToolbarHovered(false));
-        }
-
-        if (!this.state.reactionsShortcutsRegistered
-            && (prevProps._reactionsEnabled !== _reactionsEnabled
-            || prevProps._participantCount !== _participantCount)) {
-            if (_reactionsEnabled && _participantCount > 1) {
-                // eslint-disable-next-line react/no-did-update-set-state
-                this.setState({
-                    reactionsShortcutsRegistered: true
-                });
-                const REACTION_SHORTCUTS = Object.keys(REACTIONS).map(key => {
-                    const onShortcutSendReaction = () => {
-                        dispatch(addReactionToBuffer(key));
-                        sendAnalytics(createShortcutEvent(
-                            `reaction.${key}`
-                        ));
-                    };
-
-                    return {
-                        character: REACTIONS[key].shortcutChar,
-                        exec: onShortcutSendReaction,
-                        helpDescription: t(`toolbar.reaction${key.charAt(0).toUpperCase()}${key.slice(1)}`),
-                        altKey: true
-                    };
-                });
-
-                REACTION_SHORTCUTS.forEach(shortcut => {
-                    APP.keyboardshortcut.registerShortcut(
-                        shortcut.character,
-                        null,
-                        shortcut.exec,
-                        shortcut.helpDescription,
-                        shortcut.altKey);
-                });
-            }
         }
     }
 
@@ -445,7 +395,7 @@ class Toolbox extends Component<Props, State> {
         [ 'A', 'C', 'D', 'R', 'S' ].forEach(letter =>
             APP.keyboardshortcut.unregisterShortcut(letter));
 
-        if (this.props._reactionsEnabled && this.state.reactionsShortcutsRegistered) {
+        if (this.props._reactionsEnabled) {
             Object.keys(REACTIONS).map(key => REACTIONS[key].shortcutChar)
                 .forEach(letter =>
                     APP.keyboardshortcut.unregisterShortcut(letter, true));
@@ -613,8 +563,7 @@ class Toolbox extends Component<Props, State> {
         const {
             _feedbackConfigured,
             _isMobile,
-            _screenSharing,
-            _reactionsEnabled
+            _screenSharing
         } = this.props;
 
         const microphone = {
@@ -651,8 +600,8 @@ class Toolbox extends Component<Props, State> {
 
         const raisehand = {
             key: 'raisehand',
-            Content: _reactionsEnabled ? ReactionsMenuButton : RaiseHandButton,
-            handleClick: _reactionsEnabled ? null : this._onToolbarToggleRaiseHand,
+            Content: ReactionsMenuButton,
+            handleClick: this._onToolbarToggleRaiseHand,
             group: 2
         };
 
@@ -1388,7 +1337,6 @@ function _mapStateToProps(state, ownProps) {
         _localParticipantID: localParticipant?.id,
         _localVideo: localVideo,
         _overflowMenuVisible: overflowMenuVisible,
-        _participantCount: getParticipantCount(state),
         _participantsPaneOpen: getParticipantsPaneOpen(state),
         _raisedHand: localParticipant?.raisedHand,
         _reactionsEnabled: isReactionsEnabled(state),

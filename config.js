@@ -71,8 +71,8 @@ var config = {
         // callStatsThreshold: 5 // enable callstats for 5% of the users.
     },
 
-    // Enables reactions feature.
-    // enableReactions: false,
+    // Disables the reactions feature.
+    // disableReactions: true,
 
     // Disables polls feature.
     // disablePolls: false,

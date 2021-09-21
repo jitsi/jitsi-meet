@@ -10,6 +10,7 @@ import {
 import { toState } from '../base/redux';
 import { parseStandardURIString } from '../base/util';
 import { isFollowMeActive } from '../follow-me';
+import { isReactionsEnabled } from '../reactions/functions.any';
 
 import { SS_DEFAULT_FRAME_RATE, SS_SUPPORTED_FRAMERATES } from './constants';
 
@@ -174,7 +175,7 @@ export function getSoundsTabProps(stateful: Object | Function) {
         soundsTalkWhileMuted,
         soundsReactions
     } = state['features/base/settings'];
-    const { enableReactions } = state['features/base/config'];
+    const enableReactions = isReactionsEnabled(state);
 
     return {
         soundsIncomingMessage,

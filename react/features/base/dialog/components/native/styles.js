@@ -213,6 +213,13 @@ ColorSchemeRegistry.register('BottomSheet', {
      */
     sheetHeader: {
         backgroundColor: BaseTheme.palette.ui02
+    },
+
+    /**
+     * Bottom sheet's background color with footer.
+     */
+    sheetFooter: {
+        backgroundColor: BaseTheme.palette.bottomSheet
     }
 });
 
