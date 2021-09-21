@@ -69,13 +69,14 @@ MiddlewareRegistry.register(store => next => action => {
         return next(action);
     }
     case PARTICIPANT_UPDATED: {
-        if (typeof interfaceConfig === 'undefined') {
-            // Do not show the notification for mobile and also when the focus indicator is disabled.
+        const state = store.getState();
+        const { disableModeratorIndicator } = state['features/base/config'];
+
+        if (disableModeratorIndicator) {
             return next(action);
         }
 
         const { id, role } = action.participant;
-        const state = store.getState();
         const localParticipant = getLocalParticipant(state);
 
         if (localParticipant.id !== id) {
