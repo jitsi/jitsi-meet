@@ -286,6 +286,12 @@ function _translateLegacyConfig(oldValue: Object) {
         };
     }
 
+    if (oldValue.disableModeratorIndicator === undefined
+        && typeof interfaceConfig === 'object'
+        && interfaceConfig.hasOwnProperty('DISABLE_FOCUS_INDICATOR')) {
+        newValue.disableModeratorIndicator = interfaceConfig.DISABLE_FOCUS_INDICATOR;
+    }
+
     return newValue;
 }
 
