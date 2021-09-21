@@ -204,17 +204,18 @@ function ResizeAndDrag({ _currentCameraDeviceId, _virtualBackground, dispatch, u
         */
         function updateTransformValues(image, url, track) {
             const personImageCoordonates = image.getClientRect({ skipTransform: false });
+
+            const virtualBackgroundPreview
+
+            // $FlowExpectedError
+            = document.querySelector('.virtual-background-preview').getBoundingClientRect();
             const dragAndDropOptions = {
-                x: (personImageCoordonates.x - 0)
-
-                // $FlowExpectedError
-                / document.querySelector('.virtual-background-preview').getBoundingClientRect().width,
-                y: (personImageCoordonates.y - 0)
-
-                // $FlowExpectedError
-                / document.querySelector('.virtual-background-preview').getBoundingClientRect().height,
-                width: Math.max(5, image.width() * image.scaleX()) * 1.5,
-                height: Math.max(5, image.height() * image.scaleY()) * 1.5,
+                x: (personImageCoordonates.x - 0) / virtualBackgroundPreview.width,
+                y: (personImageCoordonates.y - 0) / virtualBackgroundPreview.height,
+                x2: virtualBackgroundPreview.width,
+                y2: virtualBackgroundPreview.height,
+                width: personImageCoordonates.width,
+                height: personImageCoordonates.height,
                 url,
                 jitsiTrack: track,
                 previewX: image.x(),

@@ -305,6 +305,11 @@ function VirtualBackground({
 
     const applyVirtualBackground = useCallback(async () => {
         destroyTemporaryTracks();
+        if (options.backgroundType !== VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM
+            && initialVirtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM) {
+            initialVirtualBackground.dragAndDropOptions.url.dispose();
+            initialVirtualBackground.dragAndDropOptions.jitsiTrack.dispose();
+        }
         setLoading(true);
         await dispatch(toggleBackgroundEffect(options, _jitsiTrack));
         await setLoading(false);

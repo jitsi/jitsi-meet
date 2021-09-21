@@ -37,6 +37,7 @@ export default class JitsiStreamBackgroundEffect {
     drawScale: number;
     xScale: number;
     yScale: number;
+    dNdScale: number;
 
     /**
      * Represents a modified video MediaStream track.
@@ -119,6 +120,11 @@ export default class JitsiStreamBackgroundEffect {
             - ((this._virtualVideo.videoWidth / 2) * this.drawScale);
             this.yScale = (this._outputCanvasElement.height / 2)
             - ((this._virtualVideo.videoHeight / 2) * this.drawScale);
+
+            this.dNdScale = Math.min(
+                this._outputCanvasElement.width / this._options.virtualBackground.dragAndDropOptions.x2,
+                this._outputCanvasElement.height / this._options.virtualBackground.dragAndDropOptions.y2
+            );
         }
 
         // Draw segmentation mask.
@@ -143,8 +149,8 @@ export default class JitsiStreamBackgroundEffect {
                     * (this._outputCanvasElement.width - (this.xScale * 2))),
                 this.yScale + (this._options.virtualBackground.dragAndDropOptions.y
                     * (this._outputCanvasElement.height - (this.yScale * 2))),
-                this._options.virtualBackground.dragAndDropOptions.width,
-                this._options.virtualBackground.dragAndDropOptions.height
+                    this._options?.virtualBackground?.dragAndDropOptions?.width * this.dNdScale,
+                    this._options?.virtualBackground?.dragAndDropOptions?.height * this.dNdScale
             );
         } else {
             this._outputCanvasCtx.drawImage(
@@ -184,8 +190,8 @@ export default class JitsiStreamBackgroundEffect {
                 * (this._outputCanvasElement.width - (this.xScale * 2))),
                 this.yScale + (this._options?.virtualBackground?.dragAndDropOptions?.y
                 * (this._outputCanvasElement.height - (this.yScale * 2))),
-                this._options?.virtualBackground?.dragAndDropOptions?.width,
-                this._options?.virtualBackground?.dragAndDropOptions?.height
+                this._options?.virtualBackground?.dragAndDropOptions?.width * this.dNdScale,
+                this._options?.virtualBackground?.dragAndDropOptions?.height * this.dNdScale
             );
         } else {
             this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
