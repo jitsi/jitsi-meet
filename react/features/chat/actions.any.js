@@ -22,6 +22,8 @@ import {
  * "error" or "local" or "remote".
  * @param {string} messageDetails.timestamp - A timestamp to display for when
  * the message was received.
+ * @param {string} messageDetails.isReaction - Whether or not the
+ * message is a reaction message.
  * @returns {{
  *     type: ADD_MESSAGE,
  *     displayName: string,
@@ -29,6 +31,7 @@ import {
  *     message: string,
  *     messageType: string,
  *     timestamp: string,
+ *     isReaction: boolean
  * }}
  */
 export function addMessage(messageDetails: Object) {

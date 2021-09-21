@@ -145,6 +145,7 @@ class BottomSheet extends PureComponent<Props> {
                             renderHeader
                                 ? _styles.sheetHeader
                                 : _styles.sheet,
+                            renderFooter && _styles.sheetFooter,
                             style,
                             {
                                 maxHeight: _height - 100
@@ -154,7 +155,10 @@ class BottomSheet extends PureComponent<Props> {
                         <ScrollView
                             bounces = { false }
                             showsVerticalScrollIndicator = { false }
-                            style = { addScrollViewPadding && styles.scrollView } >
+                            style = { [
+                                renderFooter && _styles.sheet,
+                                addScrollViewPadding && styles.scrollView
+                            ] } >
                             { this.props.children }
                         </ScrollView>
                         { renderFooter && renderFooter() }
