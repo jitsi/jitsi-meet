@@ -80,10 +80,11 @@ export function loadWorker() {
  */
 export function startFacialRecognition() {
     return async function(dispatch: Function, getState: Function) {
+        const state = getState();
+
         if (worker === undefined || worker === null) {
             return;
         }
-        const state = getState();
         const { recognitionActive } = state['features/facial-recognition'];
 
         if (recognitionActive) {

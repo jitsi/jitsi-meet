@@ -18,7 +18,12 @@ import {
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CONFERENCE_JOINED: {
-        const { dispatch } = store;
+        const { getState, dispatch } = store;
+        const { disableFacialRecognition } = getState()['features/base/config'];
+
+        if (disableFacialRecognition) {
+            return next(action);
+        }
 
         dispatch(loadWorker());
         dispatch(setFacialRecognitionAllowed(true));
@@ -28,7 +33,12 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case CONFERENCE_WILL_LEAVE : {
-        const { dispatch } = store;
+        const { getState, dispatch } = store;
+        const { disableFacialRecognition } = getState()['features/base/config'];
+
+        if (disableFacialRecognition) {
+            return next(action);
+        }
 
         dispatch(stopFacialRecognition());
 
@@ -36,14 +46,16 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case TRACK_UPDATED: {
-        const { getState } = store;
-        const state = getState();
-        const { facialRecognitionAllowed } = state['features/facial-recognition'];
+        const { getState, dispatch } = store;
+        const { facialRecognitionAllowed } = getState()['features/facial-recognition'];
+
+        if (!facialRecognitionAllowed) {
+            return next(action);
+        }
         const { videoType, type } = action.track.jitsiTrack;
 
-        if (facialRecognitionAllowed && videoType === 'camera') {
+        if (videoType === 'camera') {
             const { muted, videoStarted } = action.track;
-            const { dispatch } = store;
 
             if (videoStarted === true) {
                 dispatch(startFacialRecognition());
@@ -64,8 +76,12 @@ MiddlewareRegistry.register(store => next => action => {
         return next(action);
     }
     case TRACK_ADDED: {
+        const { getState, dispatch } = store;
+        const { facialRecognitionAllowed } = getState()['features/facial-recognition'];
 
-        const { dispatch } = store;
+        if (!facialRecognitionAllowed) {
+            return next(action);
+        }
         const { mediaType, videoType } = action.track;
 
         if (mediaType === 'presenter' && videoType === 'camera') {
@@ -77,8 +93,13 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case TRACK_REMOVED: {
+        const { getState, dispatch } = store;
+        const { facialRecognitionAllowed } = getState()['features/facial-recognition'];
+
+        if (!facialRecognitionAllowed) {
+            return next(action);
+        }
         const { videoType } = action.track.jitsiTrack;
-        const { dispatch } = store;
 
         if ([ 'camera', 'desktop' ].includes(videoType)) {
             dispatch(stopFacialRecognition());
@@ -87,8 +108,12 @@ MiddlewareRegistry.register(store => next => action => {
         return next(action);
     }
     case CHANGE_BACKGROUND: {
-        const { dispatch } = store;
+        const { getState, dispatch } = store;
+        const { facialRecognitionAllowed } = getState()['features/facial-recognition'];
 
+        if (!facialRecognitionAllowed) {
+            return next(action);
+        }
         dispatch(resetTrack());
 
         return next(action);

@@ -11,14 +11,19 @@ import { FACIAL_EXPRESSION_EMOJIS } from '../../facial-recognition/constants.js'
 type Props = {
 
     /**
+     * True if the client width is les than 750.
+     */
+    reduceExpressions: boolean,
+
+    /**
+     * True if the facial recognition is not disabled.
+     */
+    showFacialExpressions: boolean,
+
+    /**
      * The function to translate human-readable text.
      */
     t: Function,
-
-    /**
-     * True if the client width is les than 750.
-     */
-    reduceExpressions: boolean
 };
 
 /**
@@ -39,14 +44,20 @@ class SpeakerStatsLabels extends Component<Props> {
         return (
             <div className = 'speaker-stats-item__labels'>
                 <div className = 'speaker-stats-item__status' />
-                <div className = 'speaker-stats-item__name'>
+                <div
+                    className = { `speaker-stats-item__name${
+                        this.props.showFacialExpressions ? '_expressions_on' : ''
+                    }` }>
                     { t('speakerStats.name') }
                 </div>
-                <div className = 'speaker-stats-item__time'>
+                <div
+                    className = { `speaker-stats-item__time${
+                        this.props.showFacialExpressions ? '_expressions_on' : ''
+                    }` }>
                     { t('speakerStats.speakerTime') }
                 </div>
-                {
-                    (this.props.reduceExpressions
+                {this.props.showFacialExpressions
+                    && (this.props.reduceExpressions
                         ? Object.keys(FACIAL_EXPRESSION_EMOJIS)
                             .filter(expression => ![ 'angry', 'fearful', 'disgusted' ].includes(expression))
                         : Object.keys(FACIAL_EXPRESSION_EMOJIS)

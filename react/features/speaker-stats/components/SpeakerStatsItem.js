@@ -43,6 +43,11 @@ type Props = {
     reduceExpressions: boolean,
 
     /**
+     * True if the facial recognition is not disabled.
+     */
+    showFacialExpressions: boolean,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -75,55 +80,65 @@ class SpeakerStatsItem extends Component<Props> {
                 </div>
                 <div
                     aria-label = { this.props.t('speakerStats.speakerStats') }
-                    className = 'speaker-stats-item__name'>
+                    className = { `speaker-stats-item__name${
+                        this.props.showFacialExpressions ? '_expressions_on' : ''
+                    }` }>
                     { this.props.displayName }
                 </div>
                 <div
                     aria-label = { this.props.t('speakerStats.speakerTime') }
-                    className = 'speaker-stats-item__time'>
+                    className = { `speaker-stats-item__time${
+                        this.props.showFacialExpressions ? '_expressions_on' : ''
+                    }` }>
                     <TimeElapsed
                         time = { this.props.dominantSpeakerTime } />
                 </div>
-                <div
-                    aria-label = { 'Happy' }
-                    className = 'speaker-stats-item__expression'>
-                    { this.props.facialExpressions.happy }
-                </div>
-                <div
-                    aria-label = { 'Neutral' }
-                    className = 'speaker-stats-item__expression'>
-                    { this.props.facialExpressions.neutral }
-                </div>
-                <div
-                    aria-label = { 'Sad' }
-                    className = 'speaker-stats-item__expression'>
-                    { this.props.facialExpressions.sad }
-                </div>
-                <div
-                    aria-label = { 'Surprised' }
-                    className = 'speaker-stats-item__expression'>
-                    { this.props.facialExpressions.surprised }
-                </div>
+                { this.props.showFacialExpressions
+                    && (
+                        <>
+                            <div
+                                aria-label = { 'Happy' }
+                                className = 'speaker-stats-item__expression'>
+                                { this.props.facialExpressions.happy }
+                            </div>
+                            <div
+                                aria-label = { 'Neutral' }
+                                className = 'speaker-stats-item__expression'>
+                                { this.props.facialExpressions.neutral }
+                            </div>
+                            <div
+                                aria-label = { 'Sad' }
+                                className = 'speaker-stats-item__expression'>
+                                { this.props.facialExpressions.sad }
+                            </div>
+                            <div
+                                aria-label = { 'Surprised' }
+                                className = 'speaker-stats-item__expression'>
+                                { this.props.facialExpressions.surprised }
+                            </div>
+                            {!this.props.reduceExpressions && (
+                                <>
+                                    <div
+                                        aria-label = { 'Angry' }
+                                        className = 'speaker-stats-item__expression'>
+                                        { this.props.facialExpressions.angry }
+                                    </div>
+                                    <div
+                                        aria-label = { 'Fearful' }
+                                        className = 'speaker-stats-item__expression'>
+                                        { this.props.facialExpressions.fearful }
+                                    </div>
+                                    <div
+                                        aria-label = { 'Disgusted' }
+                                        className = 'speaker-stats-item__expression'>
+                                        { this.props.facialExpressions.disgusted }
+                                    </div>
+                                </>
+                            )}
+                        </>
+                    )
+                }
 
-                {!this.props.reduceExpressions && (
-                    <>
-                        <div
-                            aria-label = { 'Angry' }
-                            className = 'speaker-stats-item__expression'>
-                            { this.props.facialExpressions.angry }
-                        </div>
-                        <div
-                            aria-label = { 'Fearful' }
-                            className = 'speaker-stats-item__expression'>
-                            { this.props.facialExpressions.fearful }
-                        </div>
-                        <div
-                            aria-label = { 'Disgusted' }
-                            className = 'speaker-stats-item__expression'>
-                            { this.props.facialExpressions.disgusted }
-                        </div>
-                    </>
-                )}
 
             </div>
         );

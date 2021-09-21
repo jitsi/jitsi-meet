@@ -30,10 +30,21 @@ type Props = {
      */
     _localDisplayName: string,
 
+    /**
+     * The flag which shows if the facial recognition is disabled, obtained from the redux store.
+     * if disabled facial expressions are not shown
+     */
+    _disableFacialRecognition: boolean,
+
+    /**
+     * The facial expressions for the local participant obtained from the redux store.
+     */
     _localFacialExpressions: Array<Object>,
 
-    _localCameraTimeTracker: Object,
-
+    /**
+     * The flag which shows if all the facial expressions are shown or only 4
+     * if true show only 4, if false show all
+     */
     _reduceExpressions: boolean,
 
     /**
@@ -128,10 +139,12 @@ class SpeakerStats extends Component<Props> {
                 cancelKey = 'dialog.close'
                 submitDisabled = { true }
                 titleKey = 'speakerStats.speakerStats'
-                width = 'large'>
+                width = { this.props._disableFacialRecognition ? 'medium' : 'large' }>
                 <div className = 'speaker-stats'>
                     <SpeakerStatsSearch onSearch = { this._onSearch } />
-                    <SpeakerStatsLabels reduceExpressions = { this.props._reduceExpressions } />
+                    <SpeakerStatsLabels
+                        reduceExpressions = { this.props._reduceExpressions }
+                        showFacialExpressions = { !this.props._disableFacialRecognition } />
                     { items }
                 </div>
             </Dialog>
@@ -191,7 +204,8 @@ class SpeakerStats extends Component<Props> {
                 hasLeft = { hasLeft }
                 isDominantSpeaker = { isDominantSpeaker }
                 key = { userId }
-                reduceExpressions = { this.props._reduceExpressions } />
+                reduceExpressions = { this.props._reduceExpressions }
+                showFacialExpressions = { !this.props._disableFacialRecognition } />
         );
     }
 
@@ -267,8 +281,8 @@ class SpeakerStats extends Component<Props> {
  */
 function _mapStateToProps(state) {
     const localParticipant = getLocalParticipant(state);
+    const { disableFacialRecognition } = state['features/base/config'];
     const { facialExpressions: localFacialExpressions } = state['features/facial-recognition'];
-    const { cameraTimeTracker: localCameraTimeTracker } = state['features/facial-recognition'];
     const { clientWidth } = state['features/base/responsive-ui'];
 
     return {
@@ -281,8 +295,8 @@ function _mapStateToProps(state) {
         _localDisplayName: localParticipant && localParticipant.name,
         _stats: getSpeakerStats(state),
         _criteria: getSearchCriteria(state),
+        _disableFacialRecognition: disableFacialRecognition,
         _localFacialExpressions: localFacialExpressions,
-        _localCameraTimeTracker: localCameraTimeTracker,
         _reduceExpressions: clientWidth < 750
     };
 }
