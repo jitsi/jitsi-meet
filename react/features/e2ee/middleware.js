@@ -48,13 +48,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         break;
 
     case CONFERENCE_JOINED:
-        if (isMaxModeReached(getState)) {
-            if (isMaxModeThresholdReached(getState)) {
-                dispatch(setE2EEMaxMode(MAX_MODE.THRESHOLD_EXCEEDED));
-            } else {
-                dispatch(setE2EEMaxMode(MAX_MODE.ENABLED));
-            }
-        }
+        _updateMaxMode(dispatch, getState);
 
         break;
 
