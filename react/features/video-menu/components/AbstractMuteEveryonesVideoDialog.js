@@ -106,7 +106,7 @@ export default class AbstractMuteEveryonesVideoDialog<P: Props>
         dispatch(muteAllParticipants(exclude, MEDIA_TYPE.VIDEO));
         if (this.state.moderationEnabled) {
             dispatch(requestEnableVideoModeration());
-        } else {
+        } else if (this.state.moderationEnabled !== undefined) {
             dispatch(requestDisableVideoModeration());
         }
 
