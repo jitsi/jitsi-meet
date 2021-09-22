@@ -1,5 +1,6 @@
 // @flow
 
+import Spinner from '@atlaskit/spinner';
 import Konva from 'konva';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -45,7 +46,25 @@ function ResizeAndDrag({ _currentCameraDeviceId, _virtualBackground, dispatch, u
     || (_virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM));
     const [ containerWidth ] = useState(DESKTOP_SHARE_DIMENSIONS.CONTAINER_WIDTH);
     const [ containerHeight ] = useState(DESKTOP_SHARE_DIMENSIONS.CONTAINER_HEIGHT);
+    const [ loader, setLoader ] = useState(false);
+
+    /**
+     * Apply video preview loader.
+     *
+     * @returns {Promise}
+     */
+    const loadVideoPreview = () =>
+        (
+            <div className = 'video-preview-loader'>
+                <Spinner
+                    invertColor = { true }
+                    isCompleting = { false }
+                    size = { 'large' } />
+            </div>
+        );
+
     const createLocalJitsiTrack = async () => {
+        setLoader(true);
         const [ jitsiTrack ] = await createLocalTracksF({
             cameraDeviceId: _currentCameraDeviceId,
             devices: [ 'video' ]
@@ -57,6 +76,7 @@ function ResizeAndDrag({ _currentCameraDeviceId, _virtualBackground, dispatch, u
         };
 
         await dispatch(toggleBackgroundEffect(transparentOptions, jitsiTrack));
+        setLoader(false);
         if (dragAndResizeRef?.current && jitsiTrack) {
             const stage = new Konva.Stage({
                 container: dragAndResizeRef.current,
@@ -245,9 +265,15 @@ function ResizeAndDrag({ _currentCameraDeviceId, _virtualBackground, dispatch, u
 
     }, [ dragAndResizeRef ]);
 
-    return (<div
-        className = 'drag-and-resize-area video-preview'
-        ref = { dragAndResizeRef } />);
+    return (
+        <>
+            { loader
+                ? <div className = 'video-preview-loader'>{ loadVideoPreview() }</div>
+                : <div
+                    className = 'drag-and-resize-area video-preview'
+                    ref = { dragAndResizeRef } />}
+        </>
+    );
 }
 
 /**
