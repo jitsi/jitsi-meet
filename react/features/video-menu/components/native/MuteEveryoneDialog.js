@@ -1,7 +1,8 @@
 // @flow
 
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, View, Switch } from 'react-native';
+import { Divider } from 'react-native-paper';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { ConfirmDialog } from '../../../base/dialog';
@@ -11,6 +12,8 @@ import { StyleType } from '../../../base/styles';
 import AbstractMuteEveryoneDialog, {
     abstractMapStateToProps,
     type Props as AbstractProps } from '../AbstractMuteEveryoneDialog';
+
+import styles from './styles';
 
 type Props = AbstractProps & {
 
@@ -29,6 +32,22 @@ type Props = AbstractProps & {
 class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<Props> {
 
     /**
+     * Toggles advanced moderation switch.
+     *
+     * @returns {void}
+     */
+    _onToggleModeration() {
+        this.setState(state => {
+            return {
+                audioModerationEnabled: !state.audioModerationEnabled,
+                content: this.props.t(state.audioModerationEnabled
+                    ? 'dialog.muteEveryoneDialog' : 'dialog.muteEveryoneDialogModerationOn'
+                )
+            };
+        });
+    }
+
+    /**
      * Implements {@code Component#render}.
      *
      * @inheritdoc
@@ -39,8 +58,23 @@ class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<Props> {
                 okKey = 'dialog.muteParticipantButton'
                 onSubmit = { this._onSubmit } >
                 <Text style = { this.props._dialogStyles.text }>
-                    { `${this.props.title} \n\n ${this.props.content}` }
+                    { `${this.props.title} \n\n ${this.state.content}` }
                 </Text>
+                {this.props.exclude.length === 0 && <>
+                    <Divider style = { styles.dividerWithSpacing } />
+                    <View style = { styles.toggleContainer }>
+                        <Text
+                            style = {{
+                                ...this.props._dialogStyles.text,
+                                ...styles.toggleLabel
+                            }}>
+                            {this.props.t('dialog.moderationAudioLabel')}
+                        </Text>
+                        <Switch
+                            onValueChange = { this._onToggleModeration }
+                            value = { !this.state.audioModerationEnabled } />
+                    </View>
+                </>}
             </ConfirmDialog>
         );
     }

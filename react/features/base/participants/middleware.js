@@ -546,6 +546,7 @@ function _raiseHandUpdated({ dispatch, getState }, conference, participantId, ne
             title: getParticipantDisplayName(state, participantId),
             descriptionKey: 'notify.raisedHand',
             raiseHandNotification: true,
+            concatText: true,
             ...action
         }, NOTIFICATION_TIMEOUT * (shouldDisplayAllowAction ? 2 : 1)));
         dispatch(playSound(RAISE_HAND_SOUND_ID));

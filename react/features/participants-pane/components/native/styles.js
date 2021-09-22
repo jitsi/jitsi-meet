@@ -78,8 +78,7 @@ const contextMenuItem = {
     display: 'flex',
     flexDirection: 'row',
     height: BaseTheme.spacing[7],
-    marginLeft: BaseTheme.spacing[3],
-    marginTop: BaseTheme.spacing[2]
+    marginLeft: BaseTheme.spacing[3]
 };
 
 /**
@@ -137,17 +136,30 @@ export default {
         width: '100%'
     },
 
+    participantDetailsContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%'
+    },
+
     participantNameContainer: {
         display: 'flex',
         flexDirection: 'row',
         overflow: 'hidden',
         paddingLeft: BaseTheme.spacing[3],
-        width: '63%'
+        width: '100%'
     },
 
     participantName: {
         overflow: 'hidden',
         color: BaseTheme.palette.text01
+    },
+
+    moderatorLabel: {
+        color: BaseTheme.palette.text03,
+        alignSelf: 'flex-start',
+        paddingLeft: BaseTheme.spacing[3],
+        paddingTop: BaseTheme.spacing[1]
     },
 
     isLocal: {
@@ -249,11 +261,6 @@ export default {
         marginLeft: 'auto'
     },
 
-    contextMenuMore: {
-        backgroundColor: BaseTheme.palette.bottomSheet,
-        borderRadius: BaseTheme.shape.borderRadius
-    },
-
     muteAllButton: {
         ...muteAllButton
     },
@@ -298,6 +305,11 @@ export default {
     contextMenuItemText: {
         ...contextMenuItemText,
         marginLeft: BaseTheme.spacing[3]
+    },
+
+    contextMenuItemTextNoIcon: {
+        ...contextMenuItemText,
+        marginLeft: BaseTheme.spacing[6]
     },
 
     contextMenuItemName: {

@@ -18,6 +18,7 @@ import { PrivateMessageButton } from '../../../chat';
 import { hideRemoteVideoMenu } from '../../actions.native';
 import ConnectionStatusButton from '../native/ConnectionStatusButton';
 
+import AskUnmuteButton from './AskUnmuteButton';
 import GrantModeratorButton from './GrantModeratorButton';
 import KickButton from './KickButton';
 import MuteButton from './MuteButton';
@@ -126,6 +127,7 @@ class RemoteVideoMenu extends PureComponent<Props> {
                 onCancel = { this._onCancel }
                 renderHeader = { this._renderMenuHeader }
                 showSlidingView = { _isParticipantAvailable }>
+                <AskUnmuteButton { ...buttonProps } />
                 { !_disableRemoteMute && <MuteButton { ...buttonProps } /> }
                 <MuteEveryoneElseButton { ...buttonProps } />
                 { !_disableRemoteMute && <MuteVideoButton { ...buttonProps } /> }

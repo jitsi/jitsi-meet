@@ -6,7 +6,8 @@ import { translate } from '../../../base/i18n';
 import {
     getLocalParticipant,
     getParticipantByIdOrUndefined,
-    getParticipantDisplayName
+    getParticipantDisplayName,
+    isParticipantModerator
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import {
@@ -14,9 +15,8 @@ import {
     isParticipantVideoMuted
 } from '../../../base/tracks';
 import { showConnectionStatus, showContextMenuDetails, showSharedVideoMenu } from '../../actions.native';
-import { MEDIA_STATE } from '../../constants';
 import type { MediaState } from '../../constants';
-import { getParticipantAudioMediaState } from '../../functions';
+import { getParticipantAudioMediaState, getParticipantVideoMediaState } from '../../functions';
 
 import ParticipantItem from './ParticipantItem';
 
@@ -39,9 +39,9 @@ type Props = {
     _isFakeParticipant: boolean,
 
     /**
-     * True if the participant is video muted.
+     * Whether or not the user is a moderator.
      */
-    _isVideoMuted: boolean,
+    _isModerator: boolean,
 
     /**
      * True if the participant is the local participant.
@@ -62,6 +62,11 @@ type Props = {
      * True if the participant have raised hand.
      */
     _raisedHand: boolean,
+
+    /**
+     * Media state for video.
+     */
+    _videoMediaState: MediaState,
 
     /**
      * The redux dispatch function.
@@ -127,10 +132,11 @@ class MeetingParticipantItem extends PureComponent<Props> {
         const {
             _audioMediaState,
             _displayName,
-            _isVideoMuted,
+            _isModerator,
             _local,
             _participantID,
-            _raisedHand
+            _raisedHand,
+            _videoMediaState
         } = this.props;
 
         return (
@@ -138,11 +144,12 @@ class MeetingParticipantItem extends PureComponent<Props> {
                 audioMediaState = { _audioMediaState }
                 displayName = { _displayName }
                 isKnockingParticipant = { false }
+                isModerator = { _isModerator }
                 local = { _local }
                 onPress = { this._onPress }
                 participantID = { _participantID }
                 raisedHand = { _raisedHand }
-                videoMediaState = { _isVideoMuted ? MEDIA_STATE.MUTED : MEDIA_STATE.UNMUTED } />
+                videoMediaState = { _videoMediaState } />
         );
     }
 }
@@ -161,19 +168,21 @@ function mapStateToProps(state, ownProps): Object {
     const localParticipantId = getLocalParticipant(state).id;
     const participant = getParticipantByIdOrUndefined(state, participantID);
     const _isAudioMuted = isParticipantAudioMuted(participant, state);
-    const isVideoMuted = isParticipantVideoMuted(participant, state);
+    const _isVideoMuted = isParticipantVideoMuted(participant, state);
     const audioMediaState = getParticipantAudioMediaState(participant, _isAudioMuted, state);
+    const videoMediaState = getParticipantVideoMediaState(participant, _isVideoMuted, state);
 
     return {
         _audioMediaState: audioMediaState,
         _displayName: getParticipantDisplayName(state, participant?.id),
         _isAudioMuted,
         _isFakeParticipant: Boolean(participant?.isFakeParticipant),
-        _isVideoMuted: isVideoMuted,
+        _isModerator: isParticipantModerator(participant),
         _local: Boolean(participant?.local),
         _localVideoOwner: Boolean(ownerId === localParticipantId),
         _participantID: participant?.id,
-        _raisedHand: Boolean(participant?.raisedHand)
+        _raisedHand: Boolean(participant?.raisedHand),
+        _videoMediaState: videoMediaState
     };
 }
 
