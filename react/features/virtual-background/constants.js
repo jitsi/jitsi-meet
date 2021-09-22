@@ -7,7 +7,6 @@
  */
 export const VIRTUAL_BACKGROUND_TYPE = {
     IMAGE: 'image',
-    DESKTOP_SHARE: 'desktop-share',
     BLUR: 'blur',
     NONE: 'none',
     DESKTOP_SHARE_TRANSFORM: 'desktop-share-transform',

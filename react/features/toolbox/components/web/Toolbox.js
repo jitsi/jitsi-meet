@@ -513,7 +513,7 @@ class Toolbox extends Component<Props> {
             dispatch
         } = this.props;
 
-        if (_backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
+        if (_backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM) {
             const noneOptions = {
                 enabled: false,
                 backgroundType: VIRTUAL_BACKGROUND_TYPE.NONE,

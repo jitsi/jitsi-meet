@@ -5,16 +5,13 @@ import Bourne from '@hapi/bourne';
 import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
 import React, { useState, useEffect, useCallback } from 'react';
 
-import { Dialog, hideDialog, openDialog } from '../../base/dialog';
+import { Dialog, hideDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { Icon, IconCloseSmall, IconShareDesktop } from '../../base/icons';
-import { browser, JitsiTrackErrors } from '../../base/lib-jitsi-meet';
-import { createLocalTrack } from '../../base/lib-jitsi-meet/functions';
 import { connect } from '../../base/redux';
 import { updateSettings } from '../../base/settings';
 import { Tooltip } from '../../base/tooltip';
 import { getLocalVideoTrack } from '../../base/tracks';
-import { showErrorNotification } from '../../notifications';
 import { toggleBackgroundEffect } from '../actions';
 import { IMAGES, BACKGROUNDS_LIMIT, VIRTUAL_BACKGROUND_TYPE, type Image } from '../constants';
 import { toDataURL } from '../functions';
@@ -313,8 +310,7 @@ function VirtualBackground({
         setLoading(true);
         await dispatch(toggleBackgroundEffect(options, _jitsiTrack));
         await setLoading(false);
-        if ((_localFlipX && options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE)
-            || (_localFlipX && options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM)) {
+        if (_localFlipX && options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM) {
             dispatch(updateSettings({
                 localFlipX: !_localFlipX
             }));

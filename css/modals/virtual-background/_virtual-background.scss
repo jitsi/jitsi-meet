@@ -8,7 +8,6 @@
     column-gap: 9px;
     cursor: pointer;
     .desktop-share-transform:hover,
-    .desktop-share:hover,
     .thumbnail:hover,
     .blur:hover,
     .slight-blur:hover,
@@ -75,15 +74,6 @@
         padding: 0 10px;
     }
 
-    .desktop-share {
-        background: #525252;
-    }
-    .desktop-share-selected {
-        background: #525252;
-        border: 2px solid #246fe5;
-        padding: 0 10px;
-    }
-
     .desktop-share-transform {
         background: #525252;
     }
@@ -95,7 +85,6 @@
 
     @media (max-width: 632px) {
         font-size: 1.5vw;
-        .desktop-share,
         .desktop-share-transform,
         .virtual-background-none,
         .thumbnail,
@@ -104,7 +93,6 @@
             height: 60px;
             width: 60px;
         }
-        .desktop-share-selected,
         .desktop-share-transform-selected,
         .thumbnail-selected,
         .none-selected,

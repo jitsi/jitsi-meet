@@ -12,7 +12,6 @@ import { getCurrentCameraDeviceId } from '../../base/settings';
 import { createLocalTracksF } from '../../base/tracks/functions';
 import { showWarningNotification } from '../../notifications/actions';
 import { toggleBackgroundEffect } from '../actions';
-import { VIRTUAL_BACKGROUND_TYPE } from '../constants';
 import { localTrackStopped } from '../functions';
 import logger from '../logger';
 
@@ -146,11 +145,6 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
 
             return;
         }
-
-        if (this.props.options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE
-                && this.state.localTrackLoaded) {
-            this._applyBackgroundEffect();
-        }
     }
 
     /**
@@ -247,9 +241,6 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
             this._setTracks();
         }
         if (!equals(this.props.options, prevProps.options) && this.state.localTrackLoaded) {
-            if (prevProps.options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
-                prevProps.options.url.dispose();
-            }
             this._applyBackgroundEffect();
         }
         if (this.props.options.url?.videoType === VIDEO_TYPE.DESKTOP) {
