@@ -1503,14 +1503,14 @@ export default {
      *
      * @param {boolean} didHaveVideo indicates if there was a camera video being
      * used, before switching to screen sharing.
-     * @param {boolean} wasVideoMuted indicates if the video was muted, before
-     * switching to screen sharing.
+     * @param {boolean} ignoreDidHaveVideo indicates if the camera video should be
+     * ignored when switching screen sharing off.
      * @return {Promise} resolved after the screen sharing is turned off, or
      * rejected with some error (no idea what kind of error, possible GUM error)
      * in case it fails.
      * @private
      */
-    async _turnScreenSharingOff(didHaveVideo) {
+    async _turnScreenSharingOff(didHaveVideo, ignoreDidHaveVideo) {
         this._untoggleScreenSharing = null;
         this.videoSwitchInProgress = true;
 
@@ -1554,7 +1554,7 @@ export default {
 
         APP.store.dispatch(setScreenAudioShareState(false));
 
-        if (didHaveVideo) {
+        if (didHaveVideo && !ignoreDidHaveVideo) {
             promise = promise.then(() => createLocalTracksF({ devices: [ 'video' ] }))
                 .then(([ stream ]) => {
                     logger.debug(`_turnScreenSharingOff using ${stream} for useVideoStream`);
@@ -1605,9 +1605,10 @@ export default {
      * @param {Array<string>} [options.desktopSharingSources] - Array with the
      * sources that have to be displayed in the desktop picker window ('screen',
      * 'window', etc.).
+     * @param {boolean} ignoreDidHaveVideo - if true ignore if video was on when sharing started.
      * @return {Promise.<T>}
      */
-    async toggleScreenSharing(toggle = !this._untoggleScreenSharing, options = {}) {
+    async toggleScreenSharing(toggle = !this._untoggleScreenSharing, options = {}, ignoreDidHaveVideo) {
         logger.debug(`toggleScreenSharing: ${toggle}`);
         if (this.videoSwitchInProgress) {
             return Promise.reject('Switch in progress.');
@@ -1633,7 +1634,7 @@ export default {
         }
 
         return this._untoggleScreenSharing
-            ? this._untoggleScreenSharing()
+            ? this._untoggleScreenSharing(ignoreDidHaveVideo)
             : Promise.resolve();
     },
 
@@ -2476,8 +2477,8 @@ export default {
         });
 
         APP.UI.addListener(
-            UIEvents.TOGGLE_SCREENSHARING, ({ enabled, audioOnly }) => {
-                this.toggleScreenSharing(enabled, { audioOnly });
+            UIEvents.TOGGLE_SCREENSHARING, ({ enabled, audioOnly, ignoreDidHaveVideo }) => {
+                this.toggleScreenSharing(enabled, { audioOnly }, ignoreDidHaveVideo);
             }
         );
     },
