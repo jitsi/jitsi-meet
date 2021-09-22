@@ -615,6 +615,7 @@
         },
         "actions": {
             "allow": "Allow attendees to:",
+            "allowVideo": "Allow video",
             "audioModeration": "Unmute themselves",
             "blockEveryoneMicCamera": "Block everyone's mic and camera",
             "invite": "Invite Someone",

@@ -2,6 +2,8 @@
 
 import { getConferenceState } from '../base/conference';
 import { MEDIA_TYPE, type MediaType } from '../base/media/constants';
+import { getParticipantById } from '../base/participants';
+import { isForceMuted } from '../participants-pane/functions';
 
 import {
     DISMISS_PENDING_PARTICIPANT,
@@ -27,11 +29,15 @@ import { isEnabledFromState } from './functions';
 export const approveParticipant = (id: string) => (dispatch: Function, getState: Function) => {
     const state = getState();
     const { conference } = getConferenceState(state);
+    const participant = getParticipantById(state, id);
 
-    if (isEnabledFromState(MEDIA_TYPE.AUDIO, state)) {
+    const isAudioForceMuted = isForceMuted(participant, MEDIA_TYPE.AUDIO, state);
+    const isVideoForceMuted = isForceMuted(participant, MEDIA_TYPE.VIDEO, state);
+
+    if (isEnabledFromState(MEDIA_TYPE.AUDIO, state) && isAudioForceMuted) {
         conference.avModerationApprove(MEDIA_TYPE.AUDIO, id);
     }
-    if (isEnabledFromState(MEDIA_TYPE.VIDEO, state)) {
+    if (isEnabledFromState(MEDIA_TYPE.VIDEO, state) && isVideoForceMuted) {
         conference.avModerationApprove(MEDIA_TYPE.VIDEO, id);
     }
 };
