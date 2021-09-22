@@ -25,7 +25,6 @@ const defaultState = {
     },
     detectionTimeInterval: -1,
     recognitionActive: false,
-    lastFacialExpression: null,
     cameraTimeTracker: {
         muted: true,
         cameraTime: 0,
@@ -36,14 +35,9 @@ const defaultState = {
 ReducerRegistry.register('features/facial-recognition', (state = defaultState, action) => {
     switch (action.type) {
     case ADD_FACIAL_EXPRESSION: {
-        if (state.lastFacialExpression) {
-            state.facialExpressions[state.lastFacialExpression] += action.duration;
-        }
+        state.facialExpressions[action.facialExpression] += action.duration;
 
-        return {
-            ...state,
-            lastFacialExpression: action.facialExpression
-        };
+        return state;
     }
     case SET_FACIAL_RECOGNITION_ALLOWED: {
         return {

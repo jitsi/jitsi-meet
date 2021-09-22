@@ -12,13 +12,13 @@ import {
     START_FACIAL_RECOGNITION,
     STOP_FACIAL_RECOGNITION
 } from './actionTypes';
-import { sendFacialExpression, sendDataToWorker } from './functions';
+import { sendDataToWorker } from './functions';
 import logger from './logger';
 
 let imageCapture;
 let worker;
+let lastFacialExpression;
 let duplicateConsecutiveExpressions = 0;
-const outputCanvas = document.createElement('canvas');
 
 /**
  * Loads the worker that predicts the facial expression.
@@ -28,7 +28,7 @@ const outputCanvas = document.createElement('canvas');
 export function loadWorker() {
     return function(dispatch: Function, getState: Function) {
         if (!window.Worker) {
-            logger.debug('Browser does not support web workers');
+            logger.warn('Browser does not support web workers');
 
             return;
         }
@@ -48,20 +48,16 @@ export function loadWorker() {
                     detectionTimeInterval = 3000;
                 }
                 dispatch(setDetectionTimeInterval(detectionTimeInterval));
-
-                // interval = setInterval(() => sendDataToWorker(worker, imageCapture), detectionTimeInterval);
             }
 
             // receives a message with the predicted facial expression.
             if (type === 'facial-expression' && value) {
-                const { lastFacialExpression } = state['features/facial-recognition'];
-
                 if (value === lastFacialExpression) {
                     duplicateConsecutiveExpressions++;
                 } else {
-                    console.log('!!!', value);
-                    dispatch(addFacialExpression(value, duplicateConsecutiveExpressions + 1));
-                    sendFacialExpression(lastFacialExpression, duplicateConsecutiveExpressions + 1);
+                    lastFacialExpression
+                    && dispatch(addFacialExpression(lastFacialExpression, duplicateConsecutiveExpressions + 1));
+                    lastFacialExpression = value;
                     duplicateConsecutiveExpressions = 0;
                 }
             }
@@ -80,11 +76,10 @@ export function loadWorker() {
  */
 export function startFacialRecognition() {
     return async function(dispatch: Function, getState: Function) {
-        const state = getState();
-
         if (worker === undefined || worker === null) {
             return;
         }
+        const state = getState();
         const { recognitionActive } = state['features/facial-recognition'];
 
         if (recognitionActive) {
@@ -103,12 +98,9 @@ export function startFacialRecognition() {
         dispatch({ type: START_FACIAL_RECOGNITION });
         logger.log('Start face recognition');
         const firstVideoTrack = stream.getVideoTracks()[0];
-        const { height, width } = firstVideoTrack.getSettings() ?? firstVideoTrack.getConstraints();
 
         // $FlowFixMe
         imageCapture = new ImageCapture(firstVideoTrack);
-        outputCanvas.width = parseInt(width, 10);
-        outputCanvas.height = parseInt(height, 10);
 
         const { detectionTimeInterval } = state['features/facial-recognition'];
 
@@ -136,12 +128,9 @@ export function stopFacialRecognition() {
         worker.postMessage({
             id: 'CLEAR_TIMEOUT'
         });
-
-        const { lastFacialExpression } = state['features/facial-recognition'];
-
         dispatch(updateCameraTimeTracker(true));
-        dispatch(addFacialExpression(lastFacialExpression, duplicateConsecutiveExpressions + 1));
-        sendFacialExpression(lastFacialExpression, duplicateConsecutiveExpressions + 1);
+        lastFacialExpression
+        && dispatch(addFacialExpression(lastFacialExpression, duplicateConsecutiveExpressions + 1));
         duplicateConsecutiveExpressions = 0;
         dispatch({ type: STOP_FACIAL_RECOGNITION });
         logger.log('Stop face recognition');
@@ -195,7 +184,7 @@ export function setFacialRecognitionAllowed(allowed: boolean) {
 }
 
 /**
- * Adds a new expression to the store.
+ * Adds a new facial expression and its duration.
  *
  * @param  {string} facialExpression - Facial expression to be added.
  * @param  {number} duration - Duration in seconds of the facial expression.

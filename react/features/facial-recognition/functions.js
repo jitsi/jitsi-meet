@@ -1,40 +1,51 @@
 // @flow
 import logger from './logger';
 
-declare var APP: Object;
-
 /**
- * Sends the facial expression with its duration to the xmpp server and.
- * Also it broadcasts it to the other participants.
+ * Sends the facial expression with its duration to all the other participants.
  *
+ * @param {Object} conference - The current conference.
  * @param  {string} facialExpression - Facial expression to be sent.
  * @param {number} duration - The duration of the facial expression in seconds.
  * @returns {void}
  */
-export function sendFacialExpression(facialExpression: string, duration: number): void {
-    const count = APP.conference.membersCount;
-
+export function sendFacialExpressionToParticipants(
+        conference: Object,
+        facialExpression: string,
+        duration: number
+): void {
     try {
-        APP.conference.sendFacialExpression({
-            facialExpression,
-            duration
-        });
-    } catch (e) {
-        logger.debug('Could not send the facial expression to xmpp server');
-    }
-
-    if (count > 1) {
-        const payload = {
+        conference.sendEndpointMessage('', {
             type: 'facial_expression',
             facialExpression,
             duration
-        };
+        });
+    } catch (err) {
+        logger.warn('Could not broadcast the facial expression to the other participants', err);
+    }
 
-        try {
-            APP.conference.broadcastEndpointMessage(payload);
-        } catch (e) {
-            logger.debug('Could not broadcast the facial expression to the other participants');
-        }
+}
+
+/**
+ * Sends the facial expression with its duration to xmpp server.
+ *
+ * @param {Object} conference - The current conference.
+ * @param  {string} facialExpression - Facial expression to be sent.
+ * @param {number} duration - The duration of the facial expression in seconds.
+ * @returns {void}
+ */
+export function sendFacialExpressionToServer(
+        conference: Object,
+        facialExpression: string,
+        duration: number
+): void {
+    try {
+        conference.sendFacialExpression({
+            facialExpression,
+            duration
+        });
+    } catch (err) {
+        logger.warn('Could not send the facial expression to xmpp server', err);
     }
 }
 
@@ -51,7 +62,7 @@ export async function sendDataToWorker(
         imageCapture: Object,
         time: number
 ): Promise<void> {
-    if (imageCapture === null) {
+    if (imageCapture === null || imageCapture === undefined) {
         return;
     }
 
@@ -59,22 +70,26 @@ export async function sendDataToWorker(
 
     try {
         imageBitmap = await imageCapture.grabFrame();
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d');
+    } catch (err) {
+        logger.warn(err);
 
-        canvas.width = imageBitmap.width;
-        canvas.height = imageBitmap.height;
-        context.drawImage(imageBitmap, 0, 0);
-
-        const imageData = context.getImageData(0, 0, imageBitmap.width, imageBitmap.height);
-
-        worker.postMessage({
-            id: 'SET_TIMEOUT',
-            time,
-            imageData
-        });
-    } catch (e) {
-        console.error(e);
+        return;
     }
+
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+
+    canvas.width = imageBitmap.width;
+    canvas.height = imageBitmap.height;
+    context.drawImage(imageBitmap, 0, 0);
+
+    const imageData = context.getImageData(0, 0, imageBitmap.width, imageBitmap.height);
+
+    worker.postMessage({
+        id: 'SET_TIMEOUT',
+        time,
+        imageData
+    });
+
 
 }

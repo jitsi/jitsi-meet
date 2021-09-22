@@ -1,10 +1,12 @@
 // @flow
 
-import { CONFERENCE_JOINED, CONFERENCE_WILL_LEAVE } from '../base/conference';
+import { CONFERENCE_JOINED, CONFERENCE_WILL_LEAVE, getCurrentConference } from '../base/conference';
+import { getParticipantCount } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { TRACK_UPDATED, TRACK_ADDED, TRACK_REMOVED } from '../base/tracks';
 import { CHANGE_BACKGROUND } from '../virtual-background/actionTypes';
 
+import { ADD_FACIAL_EXPRESSION } from './actionTypes';
 import {
     startFacialRecognition,
     stopFacialRecognition,
@@ -13,6 +15,7 @@ import {
     changeTrack,
     loadWorker
 } from './actions';
+import { sendFacialExpressionToServer, sendFacialExpressionToParticipants } from './functions';
 
 
 MiddlewareRegistry.register(store => next => action => {
@@ -117,6 +120,16 @@ MiddlewareRegistry.register(store => next => action => {
         dispatch(resetTrack());
 
         return next(action);
+    }
+    case ADD_FACIAL_EXPRESSION: {
+        const { getState } = store;
+        const state = getState();
+        const conference = getCurrentConference(state);
+
+        if (getParticipantCount(state) > 1) {
+            sendFacialExpressionToParticipants(conference, action.facialExpression, action.duration);
+        }
+        sendFacialExpressionToServer(conference, action.facialExpression, action.duration);
     }
     }
 

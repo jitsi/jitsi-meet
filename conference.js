@@ -2998,16 +2998,13 @@ export default {
         room.sendEndpointMessage(to, payload);
     },
 
-    broadcastEndpointMessage(payload) {
-        room.broadcastEndpointMessage(payload);
-    },
-
+    /**
+     * Sends a facial expression as a string and its duration as a number
+     * @param {object} payload - Object containing the {string} facialExpression
+     * and {number} duration
+     */
     sendFacialExpression(payload) {
         room.sendFacialExpression(payload);
-    },
-
-    sendCameraTimeTrackerUpdate(payload) {
-        room.sendCameraTimeTrackerUpdate(payload);
     },
 
     /**
