@@ -119,7 +119,10 @@ export default class JitsiStreamBackgroundEffect {
 
             // Scale the virtual background preview proportionally based on available output canvas height and width.
             // We use this value to resize the draggable&resizible video from virtual background preview.
-            this.dNdScale = Math.min(
+            this.dNdScale = window.devicePixelRatio === 1 ? Math.max(
+                this._outputCanvasElement.width / this._options.virtualBackground.dragAndDropOptions.bkgWidth,
+                this._outputCanvasElement.height / this._options.virtualBackground.dragAndDropOptions.bkgHeight
+            ) : Math.min(
                 this._outputCanvasElement.width / this._options.virtualBackground.dragAndDropOptions.bkgWidth,
                 this._outputCanvasElement.height / this._options.virtualBackground.dragAndDropOptions.bkgHeight
             );
