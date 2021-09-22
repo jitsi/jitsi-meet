@@ -23,6 +23,7 @@ import {
     getRemoteParticipants,
     muteRemoteParticipant
 } from '../base/participants';
+import { toggleScreensharing } from '../base/tracks';
 import { isModerationNotificationDisplayed } from '../notifications';
 
 declare var APP: Object;
@@ -53,6 +54,10 @@ export function muteLocal(enable: boolean, mediaType: MEDIA_TYPE) {
             }
 
             return;
+        }
+
+        if (enable) {
+            dispatch(toggleScreensharing(false, false, true));
         }
 
         sendAnalytics(createToolbarEvent(isAudio ? AUDIO_MUTE : VIDEO_MUTE, { enable }));
