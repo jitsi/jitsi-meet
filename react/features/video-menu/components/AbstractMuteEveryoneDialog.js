@@ -105,7 +105,7 @@ export default class AbstractMuteEveryoneDialog<P: Props> extends AbstractMuteRe
         dispatch(muteAllParticipants(exclude, MEDIA_TYPE.AUDIO));
         if (this.state.audioModerationEnabled) {
             dispatch(requestEnableAudioModeration());
-        } else {
+        } else if (this.state.audioModerationEnabled !== undefined) {
             dispatch(requestDisableAudioModeration());
         }
 
