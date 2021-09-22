@@ -32,7 +32,7 @@ type Props = {
     /**
      * The remote participants.
      */
-    _sortedParticipants: Map<string, string>,
+    _sortedParticipants: Array<string>,
 
     /**
      * The redux dispatch function.
