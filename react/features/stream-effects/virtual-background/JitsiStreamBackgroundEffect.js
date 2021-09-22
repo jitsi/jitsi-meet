@@ -103,6 +103,7 @@ export default class JitsiStreamBackgroundEffect {
         this._outputCanvasElement.height = parseInt(height, 10);
         this._outputCanvasElement.width = parseInt(width, 10);
         this._outputCanvasCtx.globalCompositeOperation = 'copy';
+
         if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM) {
             this._outputCanvasElement.height = window.innerHeight;
             this._outputCanvasElement.width = window.innerWidth;
