@@ -258,17 +258,20 @@ export function showNoDataFromSourceVideoError(jitsiTrack) {
  *
  * @param {boolean} enabled - The state to toggle screen sharing to.
  * @param {boolean} audioOnly - Only share system audio.
+ * @param {boolean} ignoreDidHaveVideo - Wether or not to ignore if video was on when sharing started.
  * @returns {{
  *     type: TOGGLE_SCREENSHARING,
  *     on: boolean,
- *     audioOnly: boolean
+ *     audioOnly: boolean,
+ *     ignoreDidHaveVideo: boolean
  * }}
  */
-export function toggleScreensharing(enabled, audioOnly = false) {
+export function toggleScreensharing(enabled, audioOnly = false, ignoreDidHaveVideo = false) {
     return {
         type: TOGGLE_SCREENSHARING,
         enabled,
-        audioOnly
+        audioOnly,
+        ignoreDidHaveVideo
     };
 }
 

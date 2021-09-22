@@ -149,10 +149,11 @@ MiddlewareRegistry.register(store => next => action => {
                 return;
             }
 
-            const { enabled, audioOnly } = action;
+            const { enabled, audioOnly, ignoreDidHaveVideo } = action;
 
             APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING, { enabled,
-                audioOnly });
+                audioOnly,
+                ignoreDidHaveVideo });
         }
         break;
 
