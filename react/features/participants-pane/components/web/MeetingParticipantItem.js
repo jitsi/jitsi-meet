@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 
+import { translate } from '../../../base/i18n';
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../../base/media';
 import {
@@ -136,6 +137,11 @@ type Props = {
     participantID: ?string,
 
     /**
+     * The translate function.
+     */
+    t: Function,
+
+    /**
      * The translated "you" text.
      */
     youText: string
@@ -167,6 +173,7 @@ function MeetingParticipantItem({
     openDrawerForParticipant,
     overflowDrawer,
     participantActionEllipsisLabel,
+    t,
     youText
 }: Props) {
 
@@ -202,6 +209,12 @@ function MeetingParticipantItem({
     const audioMediaState = _audioMediaState === MEDIA_STATE.UNMUTED && hasAudioLevels
         ? MEDIA_STATE.DOMINANT_SPEAKER : _audioMediaState;
 
+    let askToUnmuteText = askUnmuteText;
+
+    if (_audioMediaState !== MEDIA_STATE.FORCE_MUTED && _videoMediaState === MEDIA_STATE.FORCE_MUTED) {
+        askToUnmuteText = t('participantsPane.actions.allowVideo');
+    }
+
     return (
         <ParticipantItem
             actionsTrigger = { ACTION_TRIGGER.HOVER }
@@ -221,7 +234,7 @@ function MeetingParticipantItem({
             {!overflowDrawer && !_participant?.isFakeParticipant
                 && <>
                     <ParticipantQuickAction
-                        askUnmuteText = { askUnmuteText }
+                        askUnmuteText = { askToUnmuteText }
                         buttonType = { _quickActionButtonType }
                         muteAudio = { muteAudio }
                         muteParticipantButtonText = { muteParticipantButtonText }
@@ -280,4 +293,4 @@ function _mapStateToProps(state, ownProps): Object {
     };
 }
 
-export default connect(_mapStateToProps)(MeetingParticipantItem);
+export default translate(connect(_mapStateToProps)(MeetingParticipantItem));
