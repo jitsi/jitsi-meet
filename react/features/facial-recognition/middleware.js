@@ -4,7 +4,7 @@ import { CONFERENCE_JOINED, CONFERENCE_WILL_LEAVE, getCurrentConference } from '
 import { getParticipantCount } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { TRACK_UPDATED, TRACK_ADDED, TRACK_REMOVED } from '../base/tracks';
-import { CHANGE_BACKGROUND } from '../virtual-background/actionTypes';
+import { VIRTUAL_BACKGROUND_TRACK_CHANGED } from '../virtual-background/actionTypes';
 
 import { ADD_FACIAL_EXPRESSION } from './actionTypes';
 import {
@@ -110,7 +110,8 @@ MiddlewareRegistry.register(store => next => action => {
 
         return next(action);
     }
-    case CHANGE_BACKGROUND: {
+
+    case VIRTUAL_BACKGROUND_TRACK_CHANGED: {
         const { getState, dispatch } = store;
         const { facialRecognitionAllowed } = getState()['features/facial-recognition'];
 
@@ -121,6 +122,7 @@ MiddlewareRegistry.register(store => next => action => {
 
         return next(action);
     }
+
     case ADD_FACIAL_EXPRESSION: {
         const { getState } = store;
         const state = getState();
@@ -130,6 +132,8 @@ MiddlewareRegistry.register(store => next => action => {
             sendFacialExpressionToParticipants(conference, action.facialExpression, action.duration);
         }
         sendFacialExpressionToServer(conference, action.facialExpression, action.duration);
+
+        return next(action);
     }
     }
 

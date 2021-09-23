@@ -15,7 +15,7 @@ var window = {
 var timer;
 
 onmessage = async function(message) {
-    if (message.data.id = 'SET_TIMEOUT') {
+    if (message.data.id === 'SET_TIMEOUT') {
 
         if (message.data.imageData === null || message.data.imageData === undefined) {
             return;
@@ -64,7 +64,7 @@ onmessage = async function(message) {
             });
         }, message.data.time)
 
-    } else if (message.data.id = 'CLEAR_TIMEOUT') {
+    } else if (message.data.id === 'CLEAR_TIMEOUT') {
         if (timer) {
             clearTimeout(timer);
             timer = null;

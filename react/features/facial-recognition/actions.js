@@ -15,9 +15,35 @@ import {
 import { sendDataToWorker } from './functions';
 import logger from './logger';
 
+/**
+ * Time used for detection interval when facial expressions worker uses webgl backend.
+ */
+const WEBGL_TIME_INTERVAL = 1000;
+
+/**
+ * Time used for detection interval when facial expression worker uses cpu backend.
+ */
+const CPU_TIME_INTERVAL = 3000;
+
+/**
+ * Object containing  a image capture of the local track.
+ */
 let imageCapture;
+
+/**
+ * Object where the facial expression worker is stored.
+ */
 let worker;
+
+/**
+ * The last facial expression received from the worker.
+ */
 let lastFacialExpression;
+
+/**
+ * How many duplicate consecutive expression occurred.
+ * If a expression that is not the same as the last one it is reset to 0.
+ */
 let duplicateConsecutiveExpressions = 0;
 
 /**
@@ -43,9 +69,9 @@ export function loadWorker() {
                 let detectionTimeInterval = -1;
 
                 if (value === 'webgl') {
-                    detectionTimeInterval = 1000;
+                    detectionTimeInterval = WEBGL_TIME_INTERVAL;
                 } else if (value === 'cpu') {
-                    detectionTimeInterval = 3000;
+                    detectionTimeInterval = CPU_TIME_INTERVAL;
                 }
                 dispatch(setDetectionTimeInterval(detectionTimeInterval));
             }
@@ -125,6 +151,7 @@ export function stopFacialRecognition() {
 
             return;
         }
+        imageCapture = null;
         worker.postMessage({
             id: 'CLEAR_TIMEOUT'
         });
@@ -191,10 +218,18 @@ export function setFacialRecognitionAllowed(allowed: boolean) {
  * @returns {Object}
  */
 function addFacialExpression(facialExpression: string, duration: number) {
-    return {
-        type: ADD_FACIAL_EXPRESSION,
-        facialExpression,
-        duration
+    return function(dispatch: Function, getState: Function) {
+        const { detectionTimeInterval } = getState()['features/facial-recognition'];
+        let finalDuration = duration;
+
+        if (detectionTimeInterval !== -1) {
+            finalDuration *= detectionTimeInterval / 1000;
+        }
+        dispatch({
+            type: ADD_FACIAL_EXPRESSION,
+            facialExpression,
+            duration: finalDuration
+        });
     };
 }
 

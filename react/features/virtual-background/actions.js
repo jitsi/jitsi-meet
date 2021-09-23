@@ -2,7 +2,7 @@
 
 import { createVirtualBackgroundEffect } from '../stream-effects/virtual-background';
 
-import { BACKGROUND_ENABLED, SET_VIRTUAL_BACKGROUND, CHANGE_BACKGROUND } from './actionTypes';
+import { BACKGROUND_ENABLED, SET_VIRTUAL_BACKGROUND, VIRTUAL_BACKGROUND_TRACK_CHANGED } from './actionTypes';
 import logger from './logger';
 
 /**
@@ -73,9 +73,14 @@ export function backgroundEnabled(backgroundEffectEnabled: boolean) {
 }
 
 /**
+ * Signals if the local track was changed due to a changes of the virtual background.
+ *
+ * @returns {{
+ *    type: VIRTUAL_BACKGROUND_TRACK_CHANGED
+ *}}.
  */
-export function changeBackground() {
+export function virtualBackgroundTrackChanged() {
     return {
-        type: CHANGE_BACKGROUND
+        type: VIRTUAL_BACKGROUND_TRACK_CHANGED
     };
 }
