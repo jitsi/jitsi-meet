@@ -337,7 +337,7 @@ StateListenerRegistry.register(
 function _e2eeUpdated({ getState, dispatch }, conference, participantId, newValue) {
     const e2eeEnabled = newValue === 'true';
 
-    const { maxMode } = getState()['features/e2ee'];
+    const { maxMode } = getState()['features/e2ee'] || {};
 
     if (maxMode !== MAX_MODE.THRESHOLD_EXCEEDED || !e2eeEnabled) {
         dispatch(toggleE2EE(e2eeEnabled));
