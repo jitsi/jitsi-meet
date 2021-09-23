@@ -839,3 +839,22 @@ export function createWaitingAreaParticipantStatusChangedEvent(status) {
         }
     };
 }
+
+// eslint-disable-next-line require-jsdoc
+export function createWaitingAreaSocketEvent(action, event) {
+    return {
+        action,
+        actionSubject: 'waiting.area.socket',
+        attributes: {
+            event
+        }
+    };
+}
+
+// eslint-disable-next-line require-jsdoc
+export function createWaitingAreaModalEvent(action) {
+    return {
+        action,
+        actionSubject: 'waiting.area.modal'
+    };
+}

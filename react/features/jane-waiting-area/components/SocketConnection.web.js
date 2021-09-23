@@ -4,7 +4,11 @@
 import { Component } from 'react';
 
 import { Socket } from '../../../../service/Websocket/socket';
-import { createWaitingAreaParticipantStatusChangedEvent, sendAnalytics } from '../../analytics';
+import {
+    createWaitingAreaParticipantStatusChangedEvent,
+    createWaitingAreaSocketEvent,
+    sendAnalytics
+} from '../../analytics';
 import { getLocalParticipantInfoFromJwt, getLocalParticipantType } from '../../base/participants/functions';
 import { connect } from '../../base/redux';
 import { playSound as playSoundAction } from '../../base/sounds';
@@ -106,8 +110,9 @@ class SocketConnection extends Component<Props> {
         const { participantType, updateRemoteParticipantsStatusesFromSocket } = this.props;
 
         if (event.info && event.info.status && event.participant_type && (event.participant_type !== participantType)) {
-            this._playSound(event);
             updateRemoteParticipantsStatusesFromSocket(event);
+            sendAnalytics(createWaitingAreaSocketEvent('message.received', event));
+            this._playSound(event);
         }
     }
 
