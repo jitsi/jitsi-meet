@@ -33,7 +33,7 @@ export const LobbyParticipantItem = ({
     openDrawerForParticipant
 }: Props) => {
     const { id } = p;
-    const [ admit ] = useLobbyActions({ participantID: id });
+    const [ admit, reject ] = useLobbyActions({ participantID: id });
     const { t } = useTranslation();
 
     return (
@@ -48,6 +48,11 @@ export const LobbyParticipantItem = ({
             raisedHand = { p.raisedHand }
             videoMediaState = { MEDIA_STATE.NONE }
             youText = { t('chat.you') }>
+            <ParticipantActionButton
+                onClick = { reject }
+                primary = { false }>
+                {t('lobby.reject')}
+            </ParticipantActionButton>
             <ParticipantActionButton
                 onClick = { admit }
                 primary = { true }>
