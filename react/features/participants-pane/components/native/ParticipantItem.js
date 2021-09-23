@@ -27,7 +27,7 @@ type Props = {
     /**
      * Whether or not to disable the moderator indicator.
      */
-    disableModeratorIndicator: boolean,
+    disableModeratorIndicator?: boolean,
 
     /**
      * The name of the participant. Used for showing lobby names.
