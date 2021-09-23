@@ -56,16 +56,6 @@ export const SET_OVERFLOW_MENU_VISIBLE = 'SET_OVERFLOW_MENU_VISIBLE';
 export const SET_TOOLBAR_HOVERED = 'SET_TOOLBAR_HOVERED';
 
 /**
- * The type of the action which sets the permanent visibility of the Toolbox.
- *
- * {
- *     type: SET_TOOLBOX_ALWAYS_VISIBLE,
- *     alwaysVisible: boolean
- * }
- */
-export const SET_TOOLBOX_ALWAYS_VISIBLE = 'SET_TOOLBOX_ALWAYS_VISIBLE';
-
-/**
  * The type of the (redux) action which enables/disables the Toolbox.
  *
  * {
@@ -86,17 +76,6 @@ export const SET_TOOLBOX_ENABLED = 'SET_TOOLBOX_ENABLED';
  * }
  */
 export const SET_TOOLBOX_TIMEOUT = 'SET_TOOLBOX_TIMEOUT';
-
-/**
- * The type of the action which sets the delay in milliseconds after which
- * the Toolbox visibility is to be changed.
- *
- * {
- *     type: SET_TOOLBOX_TIMEOUT_MS,
- *     timeoutMS: number
- * }
- */
-export const SET_TOOLBOX_TIMEOUT_MS = 'SET_TOOLBOX_TIMEOUT_MS';
 
 /**
  * The type of the (redux) action which shows/hides the Toolbox.

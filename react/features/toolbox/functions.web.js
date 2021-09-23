@@ -3,6 +3,8 @@
 import { getToolbarButtons } from '../base/config';
 import { hasAvailableDevices } from '../base/devices';
 
+import { TOOLBAR_TIMEOUT } from './constants';
+
 /**
  * Helper for getting the height of the toolbox.
  *
@@ -37,9 +39,8 @@ export function isButtonEnabled(name: string, state: Object) {
  * otherwise.
  */
 export function isToolboxVisible(state: Object) {
-    const { iAmSipGateway } = state['features/base/config'];
+    const { iAmSipGateway, toolbarConfig: { alwaysVisible } } = state['features/base/config'];
     const {
-        alwaysVisible,
         timeoutID,
         visible
     } = state['features/toolbox'];
@@ -100,4 +101,16 @@ export function showOverflowDrawer(state: Object) {
  */
 export function isToolboxEnabled(state: Object) {
     return state['features/toolbox'].enabled;
+}
+
+/**
+ * Returns the toolbar timeout from config or the default value.
+ *
+ * @param {Object} state - The state from the Redux store.
+ * @returns {number} - Toolbar timeout in miliseconds.
+ */
+export function getToolbarTimeout(state: Object) {
+    const { toolbarConfig: { timeout } } = state['features/base/config'];
+
+    return timeout || TOOLBAR_TIMEOUT;
 }

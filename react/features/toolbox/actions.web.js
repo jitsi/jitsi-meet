@@ -2,6 +2,7 @@
 
 import type { Dispatch } from 'redux';
 
+import { overwriteConfig } from '../base/config';
 import { isLayoutTileView } from '../video-layout';
 
 import {
@@ -11,12 +12,10 @@ import {
     SET_OVERFLOW_DRAWER,
     SET_OVERFLOW_MENU_VISIBLE,
     SET_TOOLBAR_HOVERED,
-    SET_TOOLBOX_TIMEOUT,
-    SET_TOOLBOX_TIMEOUT_MS
+    SET_TOOLBOX_TIMEOUT
 } from './actionTypes';
-import { setToolboxVisible } from './actions.any';
-
-declare var interfaceConfig: Object;
+import { setToolboxVisible } from './actions';
+import { getToolbarTimeout } from './functions';
 
 export * from './actions.any';
 
@@ -28,7 +27,9 @@ export * from './actions.any';
  */
 export function dockToolbox(dock: boolean): Function {
     return (dispatch: Dispatch<any>, getState: Function) => {
-        const { timeoutMS, visible } = getState()['features/toolbox'];
+        const state = getState();
+        const { visible } = state['features/toolbox'];
+        const toolbarTimeout = getToolbarTimeout(state);
 
         if (dock) {
             // First make sure the toolbox is shown.
@@ -39,7 +40,7 @@ export function dockToolbox(dock: boolean): Function {
             dispatch(
                 setToolboxTimeout(
                     () => dispatch(hideToolbox()),
-                    timeoutMS));
+                    toolbarTimeout));
         } else {
             dispatch(showToolbox());
         }
@@ -73,11 +74,9 @@ export function fullScreenChanged(fullScreen: boolean) {
 export function hideToolbox(force: boolean = false): Function {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
-        const {
-            alwaysVisible,
-            hovered,
-            timeoutMS
-        } = state['features/toolbox'];
+        const { toolbarConfig: { alwaysVisible } } = state['features/base/config'];
+        const { hovered } = state['features/toolbox'];
+        const toolbarTimeout = getToolbarTimeout(state);
 
         if (alwaysVisible) {
             return;
@@ -95,7 +94,7 @@ export function hideToolbox(force: boolean = false): Function {
             dispatch(
                 setToolboxTimeout(
                     () => dispatch(hideToolbox()),
-                    timeoutMS));
+                    toolbarTimeout));
         } else {
             dispatch(setToolboxVisible(false));
         }
@@ -128,9 +127,13 @@ export function showToolbox(timeout: number = 0): Object {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
         const {
-            alwaysVisible,
+            toolbarConfig: { initialTimeout, alwaysVisible },
+            toolbarConfig
+        } = state['features/base/config'];
+        const toolbarTimeout = getToolbarTimeout(state);
+
+        const {
             enabled,
-            timeoutMS,
             visible,
             overflowDrawer
         } = state['features/toolbox'];
@@ -143,11 +146,17 @@ export function showToolbox(timeout: number = 0): Object {
             // If the Toolbox is always visible, there's no need for a timeout
             // to toggle its visibility.
             if (!alwaysVisible) {
+                if (typeof initialTimeout === 'number') {
+                    // reset `initialTimeout` once it is consumed once
+                    dispatch(overwriteConfig({ toolbarConfig: {
+                        ...toolbarConfig,
+                        initialTimeout: null
+                    } }));
+                }
                 dispatch(
                     setToolboxTimeout(
                         () => dispatch(hideToolbox()),
-                        timeout || timeoutMS));
-                dispatch(setToolboxTimeoutMS(interfaceConfig.TOOLBAR_TIMEOUT));
+                        timeout || initialTimeout || toolbarTimeout));
             }
         }
     };
@@ -250,18 +259,3 @@ export function setToolboxTimeout(handler: Function, timeoutMS: number): Object 
     };
 }
 
-/**
- * Dispatches an action which sets new toolbox timeout value.
- *
- * @param {number} timeoutMS - Delay.
- * @returns {{
- *     type: SET_TOOLBOX_TIMEOUT_MS,
- *     timeoutMS: number
- * }}
- */
-export function setToolboxTimeoutMS(timeoutMS: number): Object {
-    return {
-        type: SET_TOOLBOX_TIMEOUT_MS,
-        timeoutMS
-    };
-}
