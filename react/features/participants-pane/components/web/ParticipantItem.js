@@ -52,6 +52,11 @@ type Props = {
     children: Node,
 
     /**
+     * Whether or not to disable the moderator indicator.
+     */
+    disableModeratorIndicator: boolean,
+
+    /**
      * The name of the participant. Used for showing lobby names.
      */
     displayName: string,
@@ -119,20 +124,21 @@ type Props = {
  * @returns {ReactNode}
  */
 function ParticipantItem({
-    children,
-    isHighlighted,
-    isModerator,
-    onLeave,
     actionsTrigger = ACTION_TRIGGER.HOVER,
     audioMediaState = MEDIA_STATE.NONE,
-    videoMediaState = MEDIA_STATE.NONE,
+    children,
+    disableModeratorIndicator,
     displayName,
-    participantID,
+    isHighlighted,
+    isModerator,
     local,
+    onLeave,
     openDrawerForParticipant,
     overflowDrawer,
+    participantID,
     raisedHand,
     t,
+    videoMediaState = MEDIA_STATE.NONE,
     youText
 }: Props) {
     const ParticipantActions = Actions[actionsTrigger];
@@ -162,7 +168,7 @@ function ParticipantItem({
                         </ParticipantName>
                         { local ? <span>&nbsp;({ youText })</span> : null }
                     </ParticipantNameContainer>
-                    {isModerator && <ModeratorLabel>
+                    {isModerator && !disableModeratorIndicator && <ModeratorLabel>
                         {t('videothumbnail.moderator')}
                     </ModeratorLabel>}
                 </ParticipantDetailsContainer>

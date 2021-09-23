@@ -2,6 +2,7 @@
 import { withStyles } from '@material-ui/core/styles';
 import React, { Component } from 'react';
 
+import { approveParticipant } from '../../../av-moderation/actions';
 import { Avatar } from '../../../base/avatar';
 import { isToolbarButtonEnabled } from '../../../base/config/functions.web';
 import { openDialog } from '../../../base/dialog';
@@ -12,10 +13,12 @@ import {
     IconCrown,
     IconMessage,
     IconMicDisabled,
+    IconMicrophone,
     IconMuteEveryoneElse,
     IconShareVideo,
     IconVideoOff
 } from '../../../base/icons';
+import { MEDIA_TYPE } from '../../../base/media';
 import {
     getLocalParticipant,
     getParticipantByIdOrUndefined,
@@ -31,7 +34,7 @@ import { Drawer, DrawerPortal } from '../../../toolbox/components/web';
 import { GrantModeratorDialog, KickRemoteParticipantDialog, MuteEveryoneDialog } from '../../../video-menu';
 import { VolumeSlider } from '../../../video-menu/components/web';
 import MuteRemoteParticipantsVideoDialog from '../../../video-menu/components/web/MuteRemoteParticipantsVideoDialog';
-import { getComputedOuterHeight } from '../../functions';
+import { getComputedOuterHeight, isForceMuted } from '../../functions';
 
 import {
     ContextMenu,
@@ -42,6 +45,11 @@ import {
 } from './styled';
 
 type Props = {
+
+    /**
+     * Whether or not the participant is audio force muted.
+     */
+    _isAudioForceMuted: boolean,
 
     /**
      * True if the local participant is moderator and false otherwise.
@@ -67,6 +75,11 @@ type Props = {
      * True if the participant is audio muted and false otherwise.
      */
     _isParticipantAudioMuted: boolean,
+
+    /**
+     * Whether or not the participant is video force muted.
+     */
+    _isVideoForceMuted: boolean,
 
     /**
      * Shared video local participant owner.
@@ -206,6 +219,7 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
         this._onSendPrivateMessage = this._onSendPrivateMessage.bind(this);
         this._position = this._position.bind(this);
         this._onVolumeChange = this._onVolumeChange.bind(this);
+        this._onAskToUnmute = this._onAskToUnmute.bind(this);
     }
 
     _getCurrentParticipantId: () => string;
@@ -344,6 +358,20 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
         dispatch(setVolume(id, value));
     }
 
+    _onAskToUnmute: () => void;
+
+    /**
+     * Handles click on ask to unmute.
+     *
+     * @returns {void}
+     */
+    _onAskToUnmute() {
+        const { _participant, dispatch } = this.props;
+        const { id } = _participant;
+
+        dispatch(approveParticipant(id));
+    }
+
     /**
      * Implements React Component's componentDidMount.
      *
@@ -373,11 +401,13 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
      */
     render() {
         const {
+            _isAudioForceMuted,
             _isLocalModerator,
             _isChatButtonEnabled,
             _isParticipantModerator,
             _isParticipantVideoMuted,
             _isParticipantAudioMuted,
+            _isVideoForceMuted,
             _localVideoOwner,
             _participant,
             _volume = 1,
@@ -416,6 +446,16 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
                     {_isLocalModerator && (
                         <ContextMenuItemGroup>
                             <>
+                                {overflowDrawer && (_isAudioForceMuted || _isVideoForceMuted)
+                                        && <ContextMenuItem onClick = { this._onAskToUnmute }>
+                                            <ContextMenuIcon src = { IconMicrophone } />
+                                            <span>
+                                                {t(_isAudioForceMuted
+                                                    ? 'participantsPane.actions.askUnmute'
+                                                    : 'participantsPane.actions.allowVideo')}
+                                            </span>
+                                        </ContextMenuItem>
+                                }
                                 {
                                     !_isParticipantAudioMuted && overflowDrawer
                                     && <ContextMenuItem onClick = { muteAudio(_participant) }>
@@ -542,11 +582,13 @@ function _mapStateToProps(state, ownProps): Object {
     const isLocal = participant?.local ?? true;
 
     return {
+        _isAudioForceMuted: isForceMuted(participant, MEDIA_TYPE.AUDIO, state),
         _isLocalModerator,
         _isChatButtonEnabled,
         _isParticipantModerator,
         _isParticipantVideoMuted,
         _isParticipantAudioMuted,
+        _isVideoForceMuted: isForceMuted(participant, MEDIA_TYPE.VIDEO, state),
         _localVideoOwner: Boolean(ownerId === localParticipantId),
         _participant: participant,
         _volume: isLocal ? undefined : id ? participantsVolume[id] : undefined
