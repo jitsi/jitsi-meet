@@ -237,6 +237,10 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
      * @inheritdoc
      */
     async componentDidUpdate(prevProps) {
+        if (!this.state.localTrackLoaded) {
+            await this._setTracks();
+            await this._applyBackgroundEffect();
+        }
         if (!equals(this.props._currentCameraDeviceId, prevProps._currentCameraDeviceId)) {
             this._setTracks();
         }
