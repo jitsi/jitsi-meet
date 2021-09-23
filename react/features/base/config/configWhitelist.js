@@ -188,6 +188,7 @@ export default [
     'subject',
     'testing',
     'toolbarButtons',
+    'toolbarConfig',
     'useHostPageLocalStorage',
     'useTurnUdp',
     'videoQuality.persist',

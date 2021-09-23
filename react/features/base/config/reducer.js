@@ -227,6 +227,28 @@ function _translateLegacyConfig(oldValue: Object) {
         newValue.toolbarButtons = interfaceConfig.TOOLBAR_BUTTONS;
     }
 
+    if (!oldValue.toolbarConfig) {
+        oldValue.toolbarConfig = {};
+    }
+
+    if (typeof oldValue.toolbarConfig.alwaysVisible !== 'boolean'
+        && typeof interfaceConfig === 'object'
+        && typeof interfaceConfig.TOOLBAR_ALWAYS_VISIBLE === 'boolean') {
+        newValue.toolbarConfig.alwaysVisible = interfaceConfig.TOOLBAR_ALWAYS_VISIBLE;
+    }
+
+    if (typeof oldValue.toolbarConfig.initialTimeout !== 'number'
+        && typeof interfaceConfig === 'object'
+        && typeof interfaceConfig.INITIAL_TOOLBAR_TIMEOUT === 'number') {
+        newValue.toolbarConfig.initialTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
+    }
+
+    if (typeof oldValue.toolbarConfig.timeout !== 'number'
+        && typeof interfaceConfig === 'object'
+        && typeof interfaceConfig.TOOLBAR_TIMEOUT === 'number') {
+        newValue.toolbarConfig.timeout = interfaceConfig.TOOLBAR_TIMEOUT;
+    }
+
     const filteredConferenceInfo = Object.keys(CONFERENCE_HEADER_MAPPING).filter(key => oldValue[key]);
 
     if (filteredConferenceInfo.length) {
