@@ -17,21 +17,17 @@
         "inviteMoreMailSubject": "Rejónher la conferéncia {{appName}}",
         "inviteMorePrompt": "Convidar mai de monde",
         "linkCopied": "Ligam copiat al quichapapièrs",
-        "loading": "Recèrca de monde e de numèro de telefòn",
-        "loadingNumber": "Validacion del numèro de telefòn",
-        "loadingPeople": "Recèrca de monde de convidar",
         "noResults": "Pas cap de resultat trobat",
-        "noValidNumbers": "Picatz lo numèro de telefòn",
         "outlookEmail": "Outlook Email",
-        "searchNumbers": "Apondre de numèros de telefòn",
-        "searchPeople": "Cercar de monde",
-        "searchPeopleAndNumbers": "Cercar de monde o apondre lor numèros de telefòn",
         "shareInvite": "Partejar invitacion conferéncia",
         "shareLink": "Partejar lo ligam de la conferéncia per convidar de monde",
         "shareStream": "Partejar la ligam de la difusion en dirècte",
         "telephone": "Telefòn : {{number}}",
         "title": "Convidatz de monde a vòstra conferéncia",
-        "yahooEmail": "Yahoo Email"
+        "yahooEmail": "Yahoo Email",
+        "phoneNumbers": "numèros de telefòn",
+        "searching": "Recèrca...",
+        "sipAddresses": "adreças sip"
     },
     "audioDevices": {
         "bluetooth": "Bluetooth",
@@ -79,12 +75,18 @@
         "smileysPanel": "Panèl d’Emoji",
         "title": "Messatjariá",
         "titleWithPolls": "Messatjariá",
-        "you": "vos"
+        "you": "vos",
+        "enter": "Dintrar dins la sala",
+        "tabs": {
+            "chat": "Messatjariá",
+            "polls": "Sondatges"
+        }
     },
     "chromeExtensionBanner": {
         "buttonText": "Installar l’extension Chrome",
         "dontShowAgain": "Me mostrar pas mai aquò",
-        "installExtensionText": "Installar l’extension per l’integracion de Google Calendar e Office 365"
+        "installExtensionText": "Installar l’extension per l’integracion de Google Calendar e Office 365",
+        "close": "Tampar"
     },
     "connectingOverlay": {
         "joiningRoom": "Connexion a vòstra reünion…"
@@ -102,8 +104,7 @@
         "FETCH_SESSION_ID": "Obtencion de session-id...",
         "GET_SESSION_ID_ERROR": "Obténer l’error session-id : {{code}}",
         "GOT_SESSION_ID": "Obtencion de session-id... Fach",
-        "LOW_BANDWIDTH": "La vidèo per {{displayName}} es estada copada per estalviar la banda passanta",
-        "RECONNECTING": "Un problèma ret s'es produita. Reconnexion en cors..."
+        "LOW_BANDWIDTH": "La vidèo per {{displayName}} es estada copada per estalviar la banda passanta"
     },
     "connectionindicator": {
         "address": "Adreça :",
@@ -156,7 +157,6 @@
         "ifHaveApp": "S’avètz ja l’aplicacion :",
         "joinInApp": "Rejónher la conferéncia en utilizant l’aplicacion",
         "launchWebButton": "Lançar del navigador",
-        "openApp": "Telecargar l’aplicacion",
         "title": "Aviada de vòstra conferéncia dins {{app}}…",
         "tryAgainButton": "Tornar ensajar del burèu"
     },
@@ -214,17 +214,12 @@
         "e2eeWarning": "AVERTIMENT : pas totes los participants d'aquesta conferéncia semblan poder suportar lo chiframent del cap a la fin. Se l'activatz poiràn pas vos veire nimai vos entendre.",
         "enterDisplayName": "Volgatz picar vòstre nom aquí",
         "error": "Error",
-        "externalInstallationMsg": "Avètz d'installar nòstra extension de partiment d'ecran.",
-        "externalInstallationTitle": "Extension requesida",
-        "goToStore": "Anar al webstore",
         "gracefulShutdown": "Lo servici es actualament en mantenença. Ensajatz tornamai pus tard.",
         "grantModeratorDialog": "Volètz vertadièrament far venir aqueste participant moderator ?",
         "grantModeratorTitle": "Passar moderator",
         "IamHost": "Soi l’òste",
         "incorrectPassword": "Nom de compte o senhal incorrècte",
         "incorrectRoomLockPassword": "Senhal incorrècte",
-        "inlineInstallationMsg": "Avètz d'installar nòstra extension de partiment d'ecran.",
-        "inlineInstallExtension": "Installar ara",
         "internalError": "Òu ! Quicòm a pas foncionat. L'error seguenta s'es producha : {{error}}",
         "internalErrorTitle": "Error intèrna",
         "kickMessage": "Podètz contactat {{participantDisplayName}} per mai de detalhs.",
@@ -234,7 +229,6 @@
         "kickTitle": "Ai ! {{participantDisplayName}} vos a forabandit de la conferéncia",
         "liveStreaming": "La difusion en dirècte es estada arrestada",
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "Impossible pendent un enregistrament actiu",
-        "liveStreamingDisabledForGuestTooltip": "Los convidats pòdon pas aviar una difusion en dirècte.",
         "liveStreamingDisabledTooltip": "Difusion en dirècte desactivada.",
         "lockMessage": "Impossible de verrolhar la conferéncia.",
         "lockRoom": "Ajustar un $t(lockRoomPasswordUppercase) a la conferéncia",
@@ -269,7 +263,6 @@
         "readMore": "mai",
         "recording": "Enregistrament",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Impossible pendent una difusion activa",
-        "recordingDisabledForGuestTooltip": "Los convits pòdon pas lançar d’enregistraments.",
         "recordingDisabledTooltip": "L’enregistrament es desactivat.",
         "rejoinNow": "Participar ara",
         "remoteControlAllowedMessage": "{{user}} a acceptat vòstra demanda de contraròtle alonhat !",
@@ -289,10 +282,6 @@
         "screenSharingAudio": "Partejar l’àudio",
         "screenSharingFailed": "Ops ! Quicòm a trucat, avèm pas pogut començar lo partiment d'ecran!",
         "screenSharingFailedTitle": "Fracàs del partiment d'ecran !",
-        "screenSharingFailedToInstall": "Òu ! Fracàs de l'installacion de partatge d'ecran.",
-        "screenSharingFailedToInstallTitle": "Fracàs de l'installacion de partatge d'ecran",
-        "screenSharingFirefoxPermissionDeniedError": "Quicòm a fach mèuca quand èrem a ensajar de partejar vòstre ecran. Mercés de verificar qu’avètz donat l’autorizacion de lo partejar.",
-        "screenSharingFirefoxPermissionDeniedTitle": "Ops ! Avèm pas pogut aviar lo partatge d’ecran.",
         "screenSharingPermissionDeniedError": "Òps ! Quicòm s'es pas ben passat amb l'autorizacion de vòstra autorizacion de partatge d'ecran. Mercés de recargar e tornar ensajar.",
         "sendPrivateMessage": "Avètz recentament recebut un messatge privat. Avètz ensajat d’i respondre en privat, o volètz enviar lo messatge al grop ?",
         "sendPrivateMessageCancel": "Enviar al grop",
@@ -305,7 +294,6 @@
         "shareVideoTitle": "Partejar una vidèo",
         "shareYourScreen": "Partejar vòstre ecran",
         "shareYourScreenDisabled": "Lo partiment d’ecran es desactivat.",
-        "shareYourScreenDisabledForGuest": "Los convits pòdon pas partejar l’ecran.",
         "startLiveStreaming": "Aviar una difusion en dirècte",
         "startRecording": "Arrestar l'enregistrament",
         "startRemoteControlErrorMessage": "Una error s'es produsida en ensajar de començar la session de contraròtle a distància !",
@@ -325,9 +313,47 @@
         "userPassword": "senhal utilizaire",
         "WaitForHostMsg": "La conferéncia <b>{{room}}</b> a pas encara començat. Se sètz l’òst volgatz ben vos identificar. Autrament esperatz qu’arribe l’òste.",
         "WaitForHostMsgWOk": "La conferéncia <b>{{room}}</b> a pas encara començat. Se sètz l’òst volgatz ben clicar Ok per vos identificar. Autrament esperatz qu’arribe l’òste.",
-        "WaitingForHost": "En espèra de l’òste...",
         "Yes": "Òc",
-        "yourEntireScreen": "Vòstre ecran complet"
+        "yourEntireScreen": "Vòstre ecran complet",
+        "authenticationRequired": "Autentificacion requerida",
+        "login": "Connexion",
+        "muteEveryoneElsesVideoDialog": "Un còp la camèra desactivada, poiretz pas la reactivar, mas pòdon la reactivar quand vòlgan.",
+        "WaitingForHostTitle": "En espèra de l’òste...",
+        "embedMeeting": "Integrar la conferéncia",
+        "hideShareAudioHelper": "Afichar pas mai aquesta fenèstra",
+        "micTimeoutError": "Aviada impossibla de la font àudio. Relambi despassat !",
+        "moderationAudioLabel": "Permetre als convidats de se copar lo son",
+        "moderationVideoLabel": "Permetre als convidats d’aviar lor vidèo",
+        "muteEveryoneDialogModerationOn": "Los participants pòdon enviar una requèsta per parlar quand vòlgan.",
+        "muteEveryoneElsesVideoTitle": "Arrestar la vidèo de tot lo monde levat {{whom}} ?",
+        "muteEveryonesVideoTitle": "Arrestar la vidèo de tot lo monde ?",
+        "muteParticipantsVideoButton": "Arrestar la camèra",
+        "muteParticipantsVideoTitle": "Desactivar la camèra d’aqueste participant ?",
+        "noDropboxToken": "Cap de geton Dropbox pas valid",
+        "password": "Senhal",
+        "sessionRestarted": "Sonada reaviada pel pont",
+        "shareAudio": "Contunhar",
+        "shareAudioTitle": "Cossí partejar l’àudio",
+        "shareAudioWarningTitle": "Devètz arrestar lo partiment d’ecran abans lo partiment d’àudio",
+        "shareAudioWarningH1": "Se volètz partejar pas que l’àudio :",
+        "shareAudioWarningD1": "devètz arrestar lo partiment d’ecran abans lo partiment d’àudio.",
+        "shareMediaWarningGenericH2": "Se volètz partejar vòstre ecran e l’àudio",
+        "shareScreenWarningTitle": "Devètz arrestar lo partiment àudio abans lo partiment de l’ecran",
+        "shareScreenWarningH1": "Se volètz partejar pas que l’ecran :",
+        "shareScreenWarningD1": "devètz arrestar lo partiment àudio abans lo partiment de l’ecran.",
+        "sharedVideoLinkPlaceholder": "Ligam YouTube o ligam vidèo dirèct",
+        "userIdentifier": "Identificador utilizaire",
+        "cameraTimeoutError": "Aviada impossibla de la font vidèo. Relambi despassat !",
+        "muteEveryonesVideoDialog": "Los participants pòdon activar lor vidèo quand vòlgan.",
+        "muteEveryonesVideoDialogModerationOn": "Los participants pòdon enviar una requèsta per activar lor vidèo quand vòlgan.",
+        "muteEveryonesVideoDialogOk": "Desactivar",
+        "permissionErrorTitle": "Autorizacion requerida",
+        "videoLink": "ligam vidèo",
+        "viewUpgradeOptions": "Veire las opcions de mesa a nivèl",
+        "viewUpgradeOptionsTitle": "Avètz descobèrt una foncionalitat premium !",
+        "e2eeDisabledDueToMaxModeDescription": "Impossible d'activar lo chiframent del cap a la fin a causa d'un nombre tròp bèl de participants dins la conferéncia.",
+        "remoteUserControls": "Contraròtle a distància de l'utilizaire {{username}}",
+        "e2eeWillDisableDueToMaxModeDescription": "AVERTIMENT : lo chiframent del cap a la fin serà automaticament desactivat se mai de participants rejonhent la conferéncia."
     },
     "dialOut": {
         "statusMessage": "ara es {{status}}"
@@ -348,7 +374,8 @@
         "good": "Bona",
         "rateExperience": "Mercés de donar una nòta a vòstra experiéncia",
         "veryBad": "Fòrça marrida",
-        "veryGood": "Fòrça bona"
+        "veryGood": "Fòrça bona",
+        "star": "Estela"
     },
     "helpView": {
         "header": "Centre d’ajuda"
@@ -388,7 +415,10 @@
         "numbers": "Sonar de numèros",
         "password": "$t(lockRoomPasswordUppercase) :",
         "title": "Partejar",
-        "tooltip": "Partejar lo ligam e las informacions d’aquesta conferéncia"
+        "tooltip": "Partejar lo ligam e las informacions d’aquesta conferéncia",
+        "copyNumber": "Copiar lo numèro",
+        "inviteTextiOSPersonal": "{{name}} vos convida a la conferéncia.",
+        "sip": "adreça SIP"
     },
     "inlineDialogFailure": {
         "msg": "Avèm un pauc patit a manténer la connexion.",
@@ -419,7 +449,7 @@
         "toggleScreensharing": "Caplevar entre camèra e partatge d'ecran",
         "toggleShortcuts": "Mostrar o amagar los acorchis clavièr",
         "videoMute": "Aviar o arrestar vòstra camèra",
-        "videoQuality": "Gerir la qualitat de las sonadas"
+        "toggleParticipantsPane": "Afichar o amagar lo panèl dels participants"
     },
     "liveStreaming": {
         "busy": "Sèm a ensajar de liurar de ressorças flux. Mercés de tornar ensajar dins una estona.",
@@ -484,7 +514,11 @@
         "passwordField": "Picatz lo senhal de la conferéncia",
         "passwordJoinButton": "Rejónher",
         "reject": "Regetar",
-        "toggleLabel": "Activar la sala d'espèra"
+        "toggleLabel": "Activar la sala d'espèra",
+        "admit": "Acceptar",
+        "admitAll": "Tot acceptar",
+        "rejectAll": "Tot regetar",
+        "errorMissingPassword": "Mercés de picar lo senhal de la conferéncia"
     },
     "localRecording": {
         "clientState": {
@@ -529,7 +563,6 @@
         "disconnected": "desconnectat",
         "focus": "Focus de conferéncia",
         "focusFail": "{{component}} es pas disponible - ensajatz tornamai dins {{ms}} sec",
-        "grantedTo": "Dreches moderator acordats a {{to}} !",
         "invitedOneMember": "{{name}} es estat convidat",
         "invitedThreePlusMembers": "{{name}} e {{count}} autres son estats convidats",
         "invitedTwoMembers": "{{first}} e {{second}} son estats convidats",
@@ -555,7 +588,22 @@
         "startSilentTitle": "Avètz jonch sens cap de sortida àudio !",
         "suboptimalBrowserWarning": "Planhèm que vòstra experiéncia de la conferéncia siá pas de las bonas. Sèm a cercar de solucions per melhorar aquò, d’aquel temps, ensajatz un dels <a href='{{recommendedBrowserPageLink}}' target='_blank'>navegators compatibles</a>.",
         "suboptimalExperienceTitle": "Avertiment del navegador",
-        "unmute": "Restablir lo son"
+        "unmute": "Restablir lo son",
+        "allowAction": "Autorizar",
+        "videoMutedRemotelyTitle": "{{moderator}} a copat vòstra camèra",
+        "moderationInEffectTitle": "Lo moderator a amudit vòstre microfòn",
+        "moderationInEffectVideoTitle": "Lo moderator a blocat vòstra camèra",
+        "videoMutedRemotelyDescription": "La podètz totjorn tornar activar.",
+        "moderationInEffectCSTitle": "Lo moderator a blocat lo partiment d’ecran",
+        "moderationRequestFromModerator": "L’òste volriá que restabliguèssetz vòstre son",
+        "moderationRequestFromParticipant": "Vòl parlar",
+        "moderationStartedTitle": "Moderacion començada",
+        "moderationStoppedTitle": "Moderacion arrestada",
+        "moderationToggleDescription": "per {{participantDisplayName}}",
+        "raiseHandAction": "Levar la man",
+        "reactionSounds": "Desactivar los sons",
+        "groupTitle": "Notificacions",
+        "hostAskedUnmute": "Lo moderator vos que parletz"
     },
     "passwordDigitsOnly": "Fins a {{number}} chifras",
     "passwordSetRemotely": "causit per qualqu'un mai",
@@ -749,7 +797,6 @@
             "chat": "Passar a la fenèstra chat",
             "document": "Tampar los documents partejats",
             "download": "Telecargar nòstra aplicacion",
-            "e2ee": "Chiframent del cap a la fin",
             "embedMeeting": "Conferéncia integrada",
             "feedback": "Daissar un comentari",
             "fullScreen": "Passar al ecran complèt",
@@ -818,8 +865,8 @@
         "muteEveryone": "Rendre mut tot lo monde",
         "noAudioSignalDesc": "S’avètz pas volontàriament copat lo son a partir dels paramètres sistèma o material, pensatz de cambiar d’aparelh.",
         "noAudioSignalDescSuggestion": "S’avètz pas volontàriament copat lo son a partir dels paramètres sistèma o material, pensatz d’utilizar un autre aparelh suggerit.",
-        "noAudioSignalDialInDesc": "",
-        "noAudioSignalDialInLinkDesc": "",
+        "noAudioSignalDialInDesc": "Podètz tanben sonar en utilizant :",
+        "noAudioSignalDialInLinkDesc": "Numèros de sonada",
         "noAudioSignalTitle": "I a pas cap de son en entrada del microfòn !",
         "noisyAudioInputDesc": "Sembla que vòstre microfòn mene bruch, pensatz de lo copar o de lo cambiar.",
         "noisyAudioInputTitle": "Vòstre microfòn sembla brusent !",
@@ -837,15 +884,25 @@
         "speakerStats": "Estatisticas parladors",
         "startScreenSharing": "Aviar lo partatge d’ecran",
         "startSubtitles": "Aviar los sostítols",
-        "startvideoblur": "Trebolar mon rèire-plan",
         "stopScreenSharing": "Arrestar lo partatge d’ecran",
         "stopSharedVideo": "Arrestar la vidèo Youtube",
         "stopSubtitles": "Arrestar los sostítols",
-        "stopvideoblur": "Desactivar lo borrolatge del rèire-plan",
         "talkWhileMutedPopup": "Ensajatz de parlar ? Vòstre microfòn es copat.",
         "tileViewToggle": "Activar/Desactivar la vista en mosaïc",
         "toggleCamera": "Passar a la camèra",
-        "videomute": "Aviar / Arrestar la camèra"
+        "videomute": "Aviar / Arrestar la camèra",
+        "openReactionsMenu": "Dobrir lo menú de reaccions",
+        "participants": "Participants",
+        "shareaudio": "Partejar l’àudio",
+        "silence": "Amudir",
+        "surprised": "Suspresa",
+        "selectBackground": "Seleccionar un rèireplan",
+        "audioSettings": "Paramètres àudio",
+        "videoSettings": "Paramètres vidèo",
+        "laugh": "Rire",
+        "muteEveryonesVideo": "Desactivar la camèra de tot lo monde",
+        "stopAudioSharing": "Arrestar lo partiment àudio",
+        "closeReactionsMenu": "Tampar lo menú de reaccions"
     },
     "transcribing": {
         "ccButtonTooltip": "Aviar / Arrestat los sostítols",
@@ -893,8 +950,6 @@
         "ld": "Bassa definicion",
         "ldTooltip": "Difusion vidèo en bassa definicion",
         "lowDefinition": "Bassa definicion",
-        "onlyAudioAvailable": "Pas que l’àudio es disponible",
-        "onlyAudioSupported": "Sèm compatibles solament amb l’àudio dins aqueste navigator.",
         "sd": "SD",
         "sdTooltip": "Difusion vidèo en definicion estandard",
         "standardDefinition": "Definicion estandard"
@@ -911,7 +966,10 @@
         "muted": "Mut",
         "remoteControl": "Contraròtle alonhat",
         "show": "Mostrar davant",
-        "videomute": "Lo participant a arrestat la camèra"
+        "videomute": "Lo participant a arrestat la camèra",
+        "domuteVideo": "Desactivar la camèra",
+        "domuteVideoOfOthers": "Desactivar la camèra dels demai",
+        "videoMuted": "Camèra desactivada"
     },
     "welcomepage": {
         "accessibilityLabel": {
@@ -932,7 +990,6 @@
         "goSmall": "Crear",
         "headerTitle": "Jitsi Meet",
         "info": "Infor",
-        "jitsiMeet": "Jitsi Meet",
         "jitsiOnMobile": "Jitsi sus mobil –telecargatz nòstra aplicacion e començatz de conferéncias de pertot",
         "join": "CREAR / REJÓNHER",
         "moderatedMessage": "O <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">reservatz una URL de conferéncia</a> a l'avança ont sètz l'unic moderator.",
@@ -944,10 +1001,95 @@
         "roomname": "Sasissètz un nom de sala",
         "roomNameAllowedChars": "Lo nom de la conferéncia deu pas conténer aqueles caractèrs : ?, &, :, ', \", %, #.",
         "roomnameHint": "Picatz lo nom o l’URL de la sala que volètz jónher. Podètz inventar un nom, cal pas que lo monde que volètz convidar lo sàpian.",
-        "secureMeetings": "Conferéncias seguras e de nauta qualitat",
         "sendFeedback": "Mandar vòstra opinion",
         "startMeeting": "Començar la reünion",
         "terms": "Tèrmes",
-        "title": "Conferéncias vidèo securizadas amb plen de foncionalitats e complètament gratuitas"
+        "title": "Conferéncias vidèo securizadas amb plen de foncionalitats e complètament gratuitas",
+        "addMeetingName": "Nomenar la conferéncia",
+        "mobileDownLoadLinkIos": "Telecargar l'aplicacion per iOS",
+        "mobileDownLoadLinkAndroid": "Telecargar l'aplicacion per Android",
+        "mobileDownLoadLinkFDroid": "Telecargar l'aplicacion per F-Droid",
+        "headerSubtitle": "Conferéncias securizadas e de Nauta qualitat",
+        "logo": {
+            "policyLogo": "Logotipe de la politica",
+            "calendar": "Logotipe Calendar",
+            "microsoftLogo": "Logotipe Microsoft",
+            "logoDeepLinking": "Logotipe Jitsi meet",
+            "desktopPreviewThumbnail": "Vinheta d'apercebut del burèu",
+            "googleLogo": "Logotipe Google"
+        }
+    },
+    "virtualBackground": {
+        "addBackground": "Apondre un rèireplan",
+        "image7": "Solelh levant",
+        "backgroundEffectError": "Aplicacion fracassada de l’efeich al rèireplan.",
+        "apply": "Aplicar",
+        "title": "Rèireplans virtuals",
+        "blur": "Fosc",
+        "slightBlur": "Fosc leugièr",
+        "removeBackground": "Suprimir lo rèireplan",
+        "pleaseWait": "Esperatz...",
+        "none": "Cap",
+        "uploadedImage": "Imatge enviat {{index}}",
+        "deleteImage": "Suprimir l’imatge",
+        "image1": "Plaja",
+        "image2": "Paret blanca neutra",
+        "image3": "Sala voida blanca",
+        "image4": "Lampadari negre",
+        "image5": "Montanha",
+        "image6": "Forèst ",
+        "desktopShareError": "Creacion impossibla d’un partiment de burèu",
+        "desktopShare": "Partiment de burèu",
+        "webAssemblyWarning": "WebAssembly pas pres en carga"
+    },
+    "participantsPane": {
+        "headings": {
+            "lobby": "Sala d’espèra ({{count}})",
+            "participantsList": "Participants de la conferéncia ({{count}})",
+            "waitingLobby": "Dins la sala d'espèra ({{count}})"
+        },
+        "close": "Tancar",
+        "header": "Participants",
+        "actions": {
+            "allow": "Permetre als convidats de :",
+            "audioModeration": "Se tornar lo son",
+            "blockEveryoneMicCamera": "Blocar lo microfòn e la camèra del monde",
+            "invite": "Convidar qualqu'un",
+            "askUnmute": "Demandar a restablir lo son",
+            "mute": "Amudir",
+            "muteAll": "Amudir tot lo monde",
+            "muteEveryoneElse": "Amudir tot los demai",
+            "stopEveryonesVideo": "Arrestar la vidèo de tot lo monde",
+            "stopVideo": "Arrestar la vidèo",
+            "unblockEveryoneMicCamera": "Desblocar lo microfòn e la camèra de tot lo monde",
+            "videoModeration": "Aviar lor vidèo"
+        }
+    },
+    "jitsiHome": "{{logo}} Logotipe, mena a la pagina d'acuèlh",
+    "polls": {
+        "create": {
+            "addOption": "Apondre una opcion",
+            "answerPlaceholder": "Opcion {{index}}",
+            "create": "Crear un sondatge",
+            "cancel": "Anullar",
+            "pollOption": "Opcion sondarge {{index}}",
+            "pollQuestion": "Question del sondatge",
+            "questionPlaceholder": "Pausar una question",
+            "removeOption": "Suprimir l'opcion",
+            "send": "Enviar"
+        },
+        "answer": {
+            "skip": "Sautar",
+            "submit": "Enviar"
+        },
+        "results": {
+            "vote": "Votar",
+            "changeVote": "Cambiar lo vote",
+            "hideDetailedResults": "Rescondre los detalhs",
+            "showDetailedResults": "Mostrar los detalhs"
+        },
+        "notification": {
+            "title": "Un sondatge novèl es estat apondut a la conferéncia"
+        }
     }
 }
