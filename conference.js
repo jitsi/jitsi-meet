@@ -157,6 +157,15 @@ let connection;
 let _connectionPromise;
 
 /**
+ * We are storing the resolve function of a Promise that waits for the _connectionPromise to be created. This is needed
+ * when the prejoin button was pressed before the conference object was initialized and the _connectionPromise has not
+ * been initialized when we tried to execute prejoinStart. In this case in prejoinStart we create a new Promise, assign
+ * the resolve function to this variable and wait for the promise to resolve before we continue. The
+ * _onConnectionPromiseCreated will be called once the _connectionPromise is created.
+ */
+let _onConnectionPromiseCreated;
+
+/**
  * This promise is used for chaining mutePresenterVideo calls in order to avoid  calling GUM multiple times if it takes
  * a while to finish.
  *
@@ -794,6 +803,10 @@ export default {
                 return c;
             });
 
+            if (_onConnectionPromiseCreated) {
+                _onConnectionPromiseCreated();
+            }
+
             APP.store.dispatch(makePrecallTest(this._getConferenceOptions()));
 
             const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(initialOptions);
@@ -837,12 +850,20 @@ export default {
      * Joins conference after the tracks have been configured in the prejoin screen.
      *
      * @param {Object[]} tracks - An array with the configured tracks
-     * @returns {Promise}
+     * @returns {void}
      */
     async prejoinStart(tracks) {
+        if (!_connectionPromise) {
+            // The conference object isn't initialized yet. Wait for the promise to initialise.
+            await new Promise(resolve => {
+                _onConnectionPromiseCreated = resolve;
+            });
+            _onConnectionPromiseCreated = undefined;
+        }
+
         const con = await _connectionPromise;
 
-        return this.startConference(con, tracks);
+        this.startConference(con, tracks);
     },
 
     /**
