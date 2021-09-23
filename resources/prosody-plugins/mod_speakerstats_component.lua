@@ -98,7 +98,8 @@ function on_message(event)
             return false;
         end
         local facialExpressions = room.speakerStats[occupant.jid].facialExpressions;
-        facialExpressions[facialExpression.attr.expression] = facialExpressions[facialExpression.attr.expression] + tonumber(facialExpression.attr.duration);
+        facialExpressions[facialExpression.attr.expression] = 
+            facialExpressions[facialExpression.attr.expression] + tonumber(facialExpression.attr.duration);
     end
 
     return true

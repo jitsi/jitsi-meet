@@ -22,6 +22,12 @@ type Props = {
     dominantSpeakerTime: number,
 
     /**
+     * The object that has as keys the facial expressions of the
+     * participant and as values a number that represents the count .
+     */
+    facialExpressions: Object,
+
+    /**
      * True if the participant is no longer in the meeting.
      */
     hasLeft: boolean,
@@ -30,12 +36,6 @@ type Props = {
      * True if the participant is currently the dominant speaker.
      */
     isDominantSpeaker: boolean,
-
-    /**
-     * The object that has as keys the facial expressions of the
-     * participant and as values a number that represents the count .
-     */
-    facialExpressions: Object,
 
     /**
      * True if the client width is les than 750.

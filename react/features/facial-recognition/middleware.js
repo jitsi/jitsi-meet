@@ -8,14 +8,14 @@ import { VIRTUAL_BACKGROUND_TRACK_CHANGED } from '../virtual-background/actionTy
 
 import { ADD_FACIAL_EXPRESSION } from './actionTypes';
 import {
-    startFacialRecognition,
-    stopFacialRecognition,
+    changeTrack,
+    loadWorker,
     resetTrack,
     setFacialRecognitionAllowed,
-    changeTrack,
-    loadWorker
+    stopFacialRecognition,
+    startFacialRecognition
 } from './actions';
-import { sendFacialExpressionToServer, sendFacialExpressionToParticipants } from './functions';
+import { sendFacialExpressionToParticipants, sendFacialExpressionToServer } from './functions';
 
 
 MiddlewareRegistry.register(store => next => action => {

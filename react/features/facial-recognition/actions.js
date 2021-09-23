@@ -6,11 +6,11 @@ import './createImageBitmap';
 
 import {
     ADD_FACIAL_EXPRESSION,
-    SET_FACIAL_RECOGNITION_ALLOWED,
     SET_DETECTION_TIME_INTERVAL,
-    UPDATE_CAMERA_TIME_TRACKER,
+    SET_FACIAL_RECOGNITION_ALLOWED,
     START_FACIAL_RECOGNITION,
-    STOP_FACIAL_RECOGNITION
+    STOP_FACIAL_RECOGNITION,
+    UPDATE_CAMERA_TIME_TRACKER
 } from './actionTypes';
 import { sendDataToWorker } from './functions';
 import logger from './logger';
