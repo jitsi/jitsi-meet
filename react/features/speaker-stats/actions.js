@@ -10,10 +10,10 @@ import {
 /**
  * Starts a search by criteria.
  *
- * @param {string} criteria - The search criteria.
+ * @param {string | null} criteria - The search criteria.
  * @returns {Object}
  */
-export function initSearch(criteria: string) {
+export function initSearch(criteria: string | null) {
     return {
         type: INIT_SEARCH,
         criteria
