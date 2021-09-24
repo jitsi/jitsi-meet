@@ -301,7 +301,7 @@ function VirtualBackground({
     }, [ setUploadedImageBackground ]);
 
     const applyVirtualBackground = useCallback(async () => {
-        destroyTemporaryTracks();
+        await destroyTemporaryTracks();
         if (options.backgroundType !== VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM
             && initialVirtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM) {
             initialVirtualBackground.dragAndDropOptions.url.dispose();

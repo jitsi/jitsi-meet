@@ -4,6 +4,8 @@ import Spinner from '@atlaskit/spinner';
 import Konva from 'konva';
 import React, { useEffect, useRef, useState } from 'react';
 
+import { hideDialog } from '../../base/dialog';
+import { JitsiTrackErrors } from '../../base/lib-jitsi-meet';
 import { createLocalTrack } from '../../base/lib-jitsi-meet/functions';
 import { connect } from '../../base/redux';
 import { getCurrentCameraDeviceId } from '../../base/settings';
@@ -31,6 +33,11 @@ type Props = {
     /**
      * Callback function for virtual background dialog.
      */
+    screen: Object,
+
+    /**
+     * Callback function for virtual background dialog.
+     */
     updateTransparent: Function
 };
 
@@ -39,7 +46,7 @@ type Props = {
  *
  * @returns {ReactElement}
  */
-function ResizeAndDrag({ _currentCameraDeviceId, _virtualBackground, dispatch, updateTransparent }: Props) {
+function ResizeAndDrag({ _currentCameraDeviceId, _virtualBackground, dispatch, screen, updateTransparent }: Props) {
 
     // Define several math function.
 
@@ -148,8 +155,10 @@ function ResizeAndDrag({ _currentCameraDeviceId, _virtualBackground, dispatch, u
             </div>
         );
 
-    const createLocalJitsiTrack = async () => {
+    const createLocalJitsiTrack = async sharingObject => {
+
         setLoader(true);
+
         const [ jitsiTrack ] = await createLocalTracksF({
             cameraDeviceId: _currentCameraDeviceId,
             devices: [ 'video' ]
@@ -161,7 +170,9 @@ function ResizeAndDrag({ _currentCameraDeviceId, _virtualBackground, dispatch, u
         };
 
         await dispatch(toggleBackgroundEffect(transparentOptions, jitsiTrack));
+
         setLoader(false);
+
         if (dragAndResizeRef?.current && jitsiTrack) {
             const stage = new Konva.Stage({
                 container: dragAndResizeRef.current,
@@ -177,10 +188,33 @@ function ResizeAndDrag({ _currentCameraDeviceId, _virtualBackground, dispatch, u
 
             stage.add(layer);
             const desktopVideo = document.createElement('video');
-            const url = desktopShareType ? await _virtualBackground?.virtualSource
-                : await createLocalTrack('desktop', '');
+            let url;
 
-            desktopVideo.srcObject = url.stream;
+            /* eslint-disable max-depth */
+            if (desktopShareType && sharingObject === null) {
+                url = await _virtualBackground?.virtualSource;
+            } else {
+                try {
+                    url = await createLocalTrack('desktop', '');
+                } catch (e) {
+                    if (e.name === JitsiTrackErrors.SCREENSHARING_USER_CANCELED) {
+                        url = await sharingObject?.virtualSource ?? sharingObject?.url;
+                        if (!url) {
+                            const noneOptions = {
+                                enabled: false,
+                                selectedThumbnail: 'none'
+                            };
+
+                            await dispatch(toggleBackgroundEffect(noneOptions, jitsiTrack));
+                            dispatch(hideDialog());
+
+                            return;
+                        }
+                    }
+                }
+            }
+
+            desktopVideo.srcObject = url?.stream;
 
             const video = document.createElement('video');
 
@@ -383,7 +417,11 @@ function ResizeAndDrag({ _currentCameraDeviceId, _virtualBackground, dispatch, u
 
     useEffect(() => {
         if (dragAndResizeRef.current) {
-            createLocalJitsiTrack();
+            createLocalJitsiTrack(null);
+        }
+
+        if (screen !== null) {
+            createLocalJitsiTrack(screen);
         }
 
         return function cleanup() {
@@ -392,7 +430,7 @@ function ResizeAndDrag({ _currentCameraDeviceId, _virtualBackground, dispatch, u
             }
         };
 
-    }, [ dragAndResizeRef ]);
+    }, [ dragAndResizeRef, screen ]);
 
     return (
         <>
