@@ -81,11 +81,6 @@ class SpeakerStats extends Component<Props> {
     constructor(props) {
         super(props);
 
-        this.state = {
-            stats: this.props.conference.getSpeakerStats(),
-            lastFacialExpression: ''
-        };
-
         // Bind event handlers so they are only bound once per instance.
         this._updateStats = this._updateStats.bind(this);
         this._onSearch = this._onSearch.bind(this);
