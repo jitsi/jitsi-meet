@@ -55,9 +55,12 @@ export function createDesiredLocalTracks(...desiredTypes) {
         dispatch(destroyLocalDesktopTrackIfExists());
 
         if (desiredTypes.length === 0) {
-            const { audio, video } = state['features/base/media'];
+            const { video } = state['features/base/media'];
 
-            audio.muted || desiredTypes.push(MEDIA_TYPE.AUDIO);
+            // XXX: Always create the audio track early, even if it will be muted.
+            // This fixes a timing issue when adding the track to the conference which
+            // manifests primarily on iOS 15.
+            desiredTypes.push(MEDIA_TYPE.AUDIO);
 
             // XXX When the app is coming into the foreground from the
             // background in order to handle a URL, it may realize the new
