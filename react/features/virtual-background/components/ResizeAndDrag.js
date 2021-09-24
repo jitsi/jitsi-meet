@@ -426,9 +426,6 @@ function ResizeAndDrag({ _currentCameraDeviceId, _virtualBackground, dispatch, s
         }
 
         return () => {
-            if (_virtualBackground?.dragAndDropOptions?.jitsiTrack) {
-                _virtualBackground.dragAndDropOptions.jitsiTrack.dispose();
-            }
             dragAndResizeRef.current = false;
         };
 
