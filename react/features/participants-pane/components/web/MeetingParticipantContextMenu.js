@@ -1,12 +1,12 @@
 // @flow
-import { withStyles } from '@material-ui/core/styles';
-import React, { Component } from 'react';
+import { withStyles } from "@material-ui/core/styles";
+import React, { Component } from "react";
 
-import { Avatar } from '../../../base/avatar';
-import { isToolbarButtonEnabled } from '../../../base/config/functions.web';
-import { openDialog } from '../../../base/dialog';
-import { isIosMobileBrowser } from '../../../base/environment/utils';
-import { translate } from '../../../base/i18n';
+import { Avatar } from "../../../base/avatar";
+import { isToolbarButtonEnabled } from "../../../base/config/functions.web";
+import { openDialog } from "../../../base/dialog";
+import { isIosMobileBrowser } from "../../../base/environment/utils";
+import { translate } from "../../../base/i18n";
 import {
     IconCloseCircle,
     IconCrown,
@@ -14,35 +14,41 @@ import {
     IconMicDisabled,
     IconMuteEveryoneElse,
     IconShareVideo,
-    IconVideoOff
-} from '../../../base/icons';
+    IconVideoOff,
+} from "../../../base/icons";
 import {
     getLocalParticipant,
     getParticipantByIdOrUndefined,
     isLocalParticipantModerator,
-    isParticipantModerator
-} from '../../../base/participants';
-import { connect } from '../../../base/redux';
-import { withPixelLineHeight } from '../../../base/styles/functions.web';
-import { isParticipantAudioMuted, isParticipantVideoMuted } from '../../../base/tracks';
-import { openChatById } from '../../../chat/actions';
-import { setVolume } from '../../../filmstrip/actions.web';
-import { Drawer, DrawerPortal } from '../../../toolbox/components/web';
-import { GrantModeratorDialog, KickRemoteParticipantDialog, MuteEveryoneDialog } from '../../../video-menu';
-import { VolumeSlider } from '../../../video-menu/components/web';
-import MuteRemoteParticipantsVideoDialog from '../../../video-menu/components/web/MuteRemoteParticipantsVideoDialog';
-import { getComputedOuterHeight } from '../../functions';
+    isParticipantModerator,
+} from "../../../base/participants";
+import { connect } from "../../../base/redux";
+import { withPixelLineHeight } from "../../../base/styles/functions.web";
+import {
+    isParticipantAudioMuted,
+    isParticipantVideoMuted,
+} from "../../../base/tracks";
+import { openChatById } from "../../../chat/actions";
+import { setVolume } from "../../../filmstrip/actions.web";
+import { Drawer, DrawerPortal } from "../../../toolbox/components/web";
+import {
+    GrantModeratorDialog,
+    KickRemoteParticipantDialog,
+    MuteEveryoneDialog,
+} from "../../../video-menu";
+import { VolumeSlider } from "../../../video-menu/components/web";
+import MuteRemoteParticipantsVideoDialog from "../../../video-menu/components/web/MuteRemoteParticipantsVideoDialog";
+import { getComputedOuterHeight } from "../../functions";
 
 import {
     ContextMenu,
     ContextMenuIcon,
     ContextMenuItem,
     ContextMenuItemGroup,
-    ignoredChildClassName
-} from './styled';
+    ignoredChildClassName,
+} from "./styled";
 
 type Props = {
-
     /**
      * True if the local participant is moderator and false otherwise.
      */
@@ -92,7 +98,7 @@ type Props = {
     /**
      * An object containing the CSS classes.
      */
-    classes?: {[ key: string]: string},
+    classes?: { [key: string]: string },
 
     /**
      * The dispatch function from redux.
@@ -140,45 +146,41 @@ type Props = {
      */
     overflowDrawer: boolean,
 
-
     /**
      * The translate function.
      */
-    t: Function
+    t: Function,
 };
 
 type State = {
-
     /**
      * If true the context menu will be hidden.
      */
-    isHidden: boolean
+    isHidden: boolean,
 };
 
-const styles = theme => {
+const styles = (theme) => {
     return {
         drawer: {
-            '& > div': {
+            "& > div": {
                 ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
-                lineHeight: '32px',
+                lineHeight: "32px",
 
-                '& svg': {
-                    fill: theme.palette.icon01
-                }
+                "& svg": {
+                    fill: theme.palette.icon01,
+                },
             },
-            '&:first-child': {
-                marginTop: 15
-            }
-        }
+            "&:first-child": {
+                marginTop: 15,
+            },
+        },
     };
 };
-
 
 /**
  * Implements the MeetingParticipantContextMenu component.
  */
 class MeetingParticipantContextMenu extends Component<Props, State> {
-
     /**
      * Reference to the context menu container div.
      */
@@ -193,12 +195,13 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
         super(props);
 
         this.state = {
-            isHidden: true
+            isHidden: true,
         };
 
         this._containerRef = React.createRef();
 
-        this._getCurrentParticipantId = this._getCurrentParticipantId.bind(this);
+        this._getCurrentParticipantId =
+            this._getCurrentParticipantId.bind(this);
         this._onGrantModerator = this._onGrantModerator.bind(this);
         this._onKick = this._onKick.bind(this);
         this._onMuteEveryoneElse = this._onMuteEveryoneElse.bind(this);
@@ -218,7 +221,9 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
     _getCurrentParticipantId() {
         const { _participant, drawerParticipant, overflowDrawer } = this.props;
 
-        return overflowDrawer ? drawerParticipant?.participantID : _participant?.id;
+        return overflowDrawer
+            ? drawerParticipant?.participantID
+            : _participant?.id;
     }
 
     _onGrantModerator: () => void;
@@ -229,9 +234,11 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
      * @returns {void}
      */
     _onGrantModerator() {
-        this.props.dispatch(openDialog(GrantModeratorDialog, {
-            participantID: this._getCurrentParticipantId()
-        }));
+        this.props.dispatch(
+            openDialog(GrantModeratorDialog, {
+                participantID: this._getCurrentParticipantId(),
+            })
+        );
     }
 
     _onKick: () => void;
@@ -242,9 +249,11 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
      * @returns {void}
      */
     _onKick() {
-        this.props.dispatch(openDialog(KickRemoteParticipantDialog, {
-            participantID: this._getCurrentParticipantId()
-        }));
+        this.props.dispatch(
+            openDialog(KickRemoteParticipantDialog, {
+                participantID: this._getCurrentParticipantId(),
+            })
+        );
     }
 
     _onStopSharedVideo: () => void;
@@ -268,9 +277,11 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
      * @returns {void}
      */
     _onMuteEveryoneElse() {
-        this.props.dispatch(openDialog(MuteEveryoneDialog, {
-            exclude: [ this._getCurrentParticipantId() ]
-        }));
+        this.props.dispatch(
+            openDialog(MuteEveryoneDialog, {
+                exclude: [this._getCurrentParticipantId()],
+            })
+        );
     }
 
     _onMuteVideo: () => void;
@@ -281,9 +292,11 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
      * @returns {void}
      */
     _onMuteVideo() {
-        this.props.dispatch(openDialog(MuteRemoteParticipantsVideoDialog, {
-            participantID: this._getCurrentParticipantId()
-        }));
+        this.props.dispatch(
+            openDialog(MuteRemoteParticipantsVideoDialog, {
+                participantID: this._getCurrentParticipantId(),
+            })
+        );
     }
 
     _onSendPrivateMessage: () => void;
@@ -310,18 +323,23 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
     _position() {
         const { _participant, offsetTarget } = this.props;
 
-        if (_participant
-            && this._containerRef.current
-            && offsetTarget?.offsetParent
-            && offsetTarget.offsetParent instanceof HTMLElement
+        if (
+            _participant &&
+            this._containerRef.current &&
+            offsetTarget?.offsetParent &&
+            offsetTarget.offsetParent instanceof HTMLElement
         ) {
             const { current: container } = this._containerRef;
-            const { offsetTop, offsetParent: { offsetHeight, scrollTop } } = offsetTarget;
+            const {
+                offsetTop,
+                offsetParent: { offsetHeight, scrollTop },
+            } = offsetTarget;
             const outerHeight = getComputedOuterHeight(container);
 
-            container.style.top = offsetTop + outerHeight > offsetHeight + scrollTop
-                ? offsetTop - outerHeight
-                : offsetTop;
+            container.style.top =
+                offsetTop + outerHeight > offsetHeight + scrollTop
+                    ? offsetTop - outerHeight
+                    : offsetTop;
 
             this.setState({ isHidden: false });
         } else {
@@ -360,7 +378,10 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
      * @inheritdoc
      */
     componentDidUpdate(prevProps: Props) {
-        if (prevProps.offsetTarget !== this.props.offsetTarget || prevProps._participant !== this.props._participant) {
+        if (
+            prevProps.offsetTarget !== this.props.offsetTarget ||
+            prevProps._participant !== this.props._participant
+        ) {
             this._position();
         }
     }
@@ -389,124 +410,144 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
             onSelect,
             overflowDrawer,
             muteAudio,
-            t
+            t,
         } = this.props;
 
         if (!_participant) {
             return null;
         }
 
-        const showVolumeSlider = !isIosMobileBrowser()
-              && overflowDrawer
-              && typeof _volume === 'number'
-              && !isNaN(_volume);
+        const showVolumeSlider =
+            !isIosMobileBrowser() &&
+            overflowDrawer &&
+            typeof _volume === "number" &&
+            !isNaN(_volume);
 
-        const actions
-            = _participant?.isFakeParticipant ? (
-                <>
-                    {_localVideoOwner && (
-                        <ContextMenuItem onClick = { this._onStopSharedVideo }>
-                            <ContextMenuIcon src = { IconShareVideo } />
-                            <span>{t('toolbar.stopSharedVideo')}</span>
+        const actions = _participant?.isFakeParticipant ? (
+            <>
+                {_localVideoOwner && (
+                    <ContextMenuItem onClick={this._onStopSharedVideo}>
+                        <ContextMenuIcon src={IconShareVideo} />
+                        <span>{t("toolbar.stopSharedVideo")}</span>
+                    </ContextMenuItem>
+                )}
+            </>
+        ) : (
+            <>
+                {_isLocalModerator && (
+                    <ContextMenuItemGroup>
+                        <>
+                            {!_isParticipantAudioMuted && overflowDrawer && (
+                                <ContextMenuItem
+                                    onClick={muteAudio(_participant)}
+                                >
+                                    <ContextMenuIcon src={IconMicDisabled} />
+                                    <span>
+                                        {t("dialog.muteParticipantButton")}
+                                    </span>
+                                </ContextMenuItem>
+                            )}
+
+                            <ContextMenuItem onClick={this._onMuteEveryoneElse}>
+                                <ContextMenuIcon src={IconMuteEveryoneElse} />
+                                <span>
+                                    {t(
+                                        "toolbar.accessibilityLabel.muteEveryoneElse"
+                                    )}
+                                </span>
+                            </ContextMenuItem>
+                        </>
+
+                        {_isParticipantVideoMuted || (
+                            <ContextMenuItem onClick={this._onMuteVideo}>
+                                <ContextMenuIcon src={IconVideoOff} />
+                                <span>
+                                    {t("participantsPane.actions.stopVideo")}
+                                </span>
+                            </ContextMenuItem>
+                        )}
+                    </ContextMenuItemGroup>
+                )}
+
+                <ContextMenuItemGroup>
+                    {_isLocalModerator && (
+                        <>
+                            {!_isParticipantModerator && (
+                                <ContextMenuItem
+                                    onClick={this._onGrantModerator}
+                                >
+                                    <ContextMenuIcon src={IconCrown} />
+                                    <span>
+                                        {t(
+                                            "toolbar.accessibilityLabel.grantModerator"
+                                        )}
+                                    </span>
+                                </ContextMenuItem>
+                            )}
+                            <ContextMenuItem onClick={this._onKick}>
+                                <ContextMenuIcon src={IconCloseCircle} />
+                                <span>{t("videothumbnail.kick")}</span>
+                            </ContextMenuItem>
+                        </>
+                    )}
+                    {_isChatButtonEnabled && (
+                        <ContextMenuItem onClick={this._onSendPrivateMessage}>
+                            <ContextMenuIcon src={IconMessage} />
+                            <span>
+                                {t("toolbar.accessibilityLabel.privateMessage")}
+                            </span>
                         </ContextMenuItem>
                     )}
-                </>
-            ) : (
-                <>
-                    {_isLocalModerator && (
-                        <ContextMenuItemGroup>
-                            <>
-                                {
-                                    !_isParticipantAudioMuted && overflowDrawer
-                                    && <ContextMenuItem onClick = { muteAudio(_participant) }>
-                                        <ContextMenuIcon src = { IconMicDisabled } />
-                                        <span>{t('dialog.muteParticipantButton')}</span>
-                                    </ContextMenuItem>
-                                }
-
-                                <ContextMenuItem onClick = { this._onMuteEveryoneElse }>
-                                    <ContextMenuIcon src = { IconMuteEveryoneElse } />
-                                    <span>{t('toolbar.accessibilityLabel.muteEveryoneElse')}</span>
-                                </ContextMenuItem>
-                            </>
-
-                            {
-                                _isParticipantVideoMuted || (
-                                    <ContextMenuItem onClick = { this._onMuteVideo }>
-                                        <ContextMenuIcon src = { IconVideoOff } />
-                                        <span>{t('participantsPane.actions.stopVideo')}</span>
-                                    </ContextMenuItem>
-                                )
-                            }
-                        </ContextMenuItemGroup>
-                    )}
-
+                </ContextMenuItemGroup>
+                {showVolumeSlider && (
                     <ContextMenuItemGroup>
-                        {
-                            _isLocalModerator && (
-                                    <>
-                                        {
-                                            !_isParticipantModerator && (
-                                                <ContextMenuItem onClick = { this._onGrantModerator }>
-                                                    <ContextMenuIcon src = { IconCrown } />
-                                                    <span>{t('toolbar.accessibilityLabel.grantModerator')}</span>
-                                                </ContextMenuItem>
-                                            )
-                                        }
-                                        <ContextMenuItem onClick = { this._onKick }>
-                                            <ContextMenuIcon src = { IconCloseCircle } />
-                                            <span>{ t('videothumbnail.kick') }</span>
-                                        </ContextMenuItem>
-                                    </>
-                            )
-                        }
-                        {
-                            _isChatButtonEnabled && (
-                                <ContextMenuItem onClick = { this._onSendPrivateMessage }>
-                                    <ContextMenuIcon src = { IconMessage } />
-                                    <span>{t('toolbar.accessibilityLabel.privateMessage')}</span>
-                                </ContextMenuItem>
-                            )
-                        }
+                        <VolumeSlider
+                            initialValue={_volume}
+                            key="volume-slider"
+                            onChange={this._onVolumeChange}
+                        />
                     </ContextMenuItemGroup>
-                    { showVolumeSlider
-                        && <ContextMenuItemGroup>
-                            <VolumeSlider
-                                initialValue = { _volume }
-                                key = 'volume-slider'
-                                onChange = { this._onVolumeChange } />
-                        </ContextMenuItemGroup>
-                    }
-                </>
-            );
+                )}
+            </>
+        );
 
         return (
             <>
-                { !overflowDrawer
-                  && <ContextMenu
-                      className = { ignoredChildClassName }
-                      innerRef = { this._containerRef }
-                      isHidden = { this.state.isHidden }
-                      onClick = { onSelect }
-                      onMouseEnter = { onEnter }
-                      onMouseLeave = { onLeave }>
-                      { actions }
-                  </ContextMenu>}
+                {!overflowDrawer && (
+                    <ContextMenu
+                        className={ignoredChildClassName}
+                        innerRef={this._containerRef}
+                        isHidden={this.state.isHidden}
+                        onClick={onSelect}
+                        onMouseEnter={onEnter}
+                        onMouseLeave={onLeave}
+                    >
+                        {actions}
+                    </ContextMenu>
+                )}
 
                 <DrawerPortal>
                     <Drawer
-                        isOpen = { drawerParticipant && overflowDrawer }
-                        onClose = { closeDrawer }>
-                        <div className = { classes && classes.drawer }>
+                        isOpen={drawerParticipant && overflowDrawer}
+                        onClose={closeDrawer}
+                    >
+                        <div className={classes && classes.drawer}>
                             <ContextMenuItemGroup>
                                 <ContextMenuItem>
                                     <Avatar
-                                        participantId = { drawerParticipant && drawerParticipant.participantID }
-                                        size = { 20 } />
-                                    <span>{ drawerParticipant && drawerParticipant.displayName }</span>
+                                        participantId={
+                                            drawerParticipant &&
+                                            drawerParticipant.participantID
+                                        }
+                                        size={20}
+                                    />
+                                    <span>
+                                        {drawerParticipant &&
+                                            drawerParticipant.displayName}
+                                    </span>
                                 </ContextMenuItem>
                             </ContextMenuItemGroup>
-                            { actions }
+                            {actions}
                         </div>
                     </Drawer>
                 </DrawerPortal>
@@ -525,19 +566,27 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
  */
 function _mapStateToProps(state, ownProps): Object {
     const { participantID, overflowDrawer, drawerParticipant } = ownProps;
-    const { ownerId } = state['features/shared-video'];
+    const { ownerId } = state["features/shared-video"];
     const localParticipantId = getLocalParticipant(state).id;
 
-    const participant = getParticipantByIdOrUndefined(state,
-        overflowDrawer ? drawerParticipant?.participantID : participantID);
+    const participant = getParticipantByIdOrUndefined(
+        state,
+        overflowDrawer ? drawerParticipant?.participantID : participantID
+    );
 
     const _isLocalModerator = isLocalParticipantModerator(state);
-    const _isChatButtonEnabled = isToolbarButtonEnabled('chat', state);
-    const _isParticipantVideoMuted = isParticipantVideoMuted(participant, state);
-    const _isParticipantAudioMuted = isParticipantAudioMuted(participant, state);
+    const _isChatButtonEnabled = isToolbarButtonEnabled("chat", state);
+    const _isParticipantVideoMuted = isParticipantVideoMuted(
+        participant,
+        state
+    );
+    const _isParticipantAudioMuted = isParticipantAudioMuted(
+        participant,
+        state
+    );
     const _isParticipantModerator = isParticipantModerator(participant);
 
-    const { participantsVolume } = state['features/filmstrip'];
+    const { participantsVolume } = state["features/filmstrip"];
     const id = participant?.id;
     const isLocal = participant?.local ?? true;
 
@@ -549,8 +598,10 @@ function _mapStateToProps(state, ownProps): Object {
         _isParticipantAudioMuted,
         _localVideoOwner: Boolean(ownerId === localParticipantId),
         _participant: participant,
-        _volume: isLocal ? undefined : id ? participantsVolume[id] : undefined
+        _volume: isLocal ? undefined : id ? participantsVolume[id] : undefined,
     };
 }
 
-export default withStyles(styles)(translate(connect(_mapStateToProps)(MeetingParticipantContextMenu)));
+export default withStyles(styles)(
+    translate(connect(_mapStateToProps)(MeetingParticipantContextMenu))
+);

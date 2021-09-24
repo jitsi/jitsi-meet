@@ -1,26 +1,25 @@
 // @flow
 
-import { AtlasKitThemeProvider } from '@atlaskit/theme';
-import React from 'react';
-import { batch } from 'react-redux';
+import { AtlasKitThemeProvider } from "@atlaskit/theme";
+import React from "react";
+import { batch } from "react-redux";
 
-import { BaseApp } from '../../../features/base/app';
-import { getConferenceOptions } from '../../base/conference/functions';
-import { setConfig } from '../../base/config';
-import { DialogContainer } from '../../base/dialog';
-import { createPrejoinTracks } from '../../base/tracks';
-import JitsiThemeProvider from '../../base/ui/components/JitsiThemeProvider';
-import { initPrejoin, makePrecallTest } from '../actions';
+import { BaseApp } from "../../../features/base/app";
+import { getConferenceOptions } from "../../base/conference/functions";
+import { setConfig } from "../../base/config";
+import { DialogContainer } from "../../base/dialog";
+import { createPrejoinTracks } from "../../base/tracks";
+import JitsiThemeProvider from "../../base/ui/components/JitsiThemeProvider";
+import { initPrejoin, makePrecallTest } from "../actions";
 
-import PrejoinThirdParty from './PrejoinThirdParty';
+import PrejoinThirdParty from "./PrejoinThirdParty";
 
 type Props = {
-
     /**
      * Indicates the style type that needs to be applied.
      */
-    styleType: string
-}
+    styleType: string,
+};
 
 /**
  * Wrapper application for prejoin.
@@ -46,17 +45,20 @@ export default class PrejoinApp extends BaseApp<Props> {
             super._navigate({
                 component: PrejoinThirdParty,
                 props: {
-                    className: styleType
-                }
+                    className: styleType,
+                },
             });
 
-            const { startWithAudioMuted, startWithVideoMuted } = store.getState()['features/base/settings'];
+            const { startWithAudioMuted, startWithVideoMuted } =
+                store.getState()["features/base/settings"];
 
-            dispatch(setConfig({
-                prejoinPageEnabled: true,
-                startWithAudioMuted,
-                startWithVideoMuted
-            }));
+            dispatch(
+                setConfig({
+                    prejoinPageEnabled: true,
+                    startWithAudioMuted,
+                    startWithVideoMuted,
+                })
+            );
 
             const { tryCreateLocalTracks, errors } = createPrejoinTracks();
 
@@ -64,7 +66,9 @@ export default class PrejoinApp extends BaseApp<Props> {
 
             batch(() => {
                 dispatch(initPrejoin(tracks, errors));
-                dispatch(makePrecallTest(getConferenceOptions(store.getState())));
+                dispatch(
+                    makePrecallTest(getConferenceOptions(store.getState()))
+                );
             });
         });
     }
@@ -78,8 +82,8 @@ export default class PrejoinApp extends BaseApp<Props> {
     _createMainElement(component, props) {
         return (
             <JitsiThemeProvider>
-                <AtlasKitThemeProvider mode = 'dark'>
-                    { super._createMainElement(component, props) }
+                <AtlasKitThemeProvider mode="dark">
+                    {super._createMainElement(component, props)}
                 </AtlasKitThemeProvider>
             </JitsiThemeProvider>
         );
@@ -93,7 +97,7 @@ export default class PrejoinApp extends BaseApp<Props> {
     _renderDialogContainer() {
         return (
             <JitsiThemeProvider>
-                <AtlasKitThemeProvider mode = 'dark'>
+                <AtlasKitThemeProvider mode="dark">
                     <DialogContainer />
                 </AtlasKitThemeProvider>
             </JitsiThemeProvider>

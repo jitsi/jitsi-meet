@@ -1,51 +1,56 @@
 // @flow
 
-import React from 'react';
-import { NativeModules, SafeAreaView, StatusBar, View } from 'react-native';
+import React from "react";
+import { NativeModules, SafeAreaView, StatusBar, View } from "react-native";
 
-import { appNavigate } from '../../../app/actions';
-import { PIP_ENABLED, FULLSCREEN_ENABLED, getFeatureFlag } from '../../../base/flags';
-import { Container, LoadingIndicator, TintedView } from '../../../base/react';
-import { connect } from '../../../base/redux';
-import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
-import { TestConnectionInfo } from '../../../base/testing';
-import { ConferenceNotification, isCalendarEnabled } from '../../../calendar-sync';
-import { Chat } from '../../../chat';
-import { DisplayNameLabel } from '../../../display-name';
-import { SharedDocument } from '../../../etherpad';
+import { appNavigate } from "../../../app/actions";
+import {
+    PIP_ENABLED,
+    FULLSCREEN_ENABLED,
+    getFeatureFlag,
+} from "../../../base/flags";
+import { Container, LoadingIndicator, TintedView } from "../../../base/react";
+import { connect } from "../../../base/redux";
+import { ASPECT_RATIO_NARROW } from "../../../base/responsive-ui/constants";
+import { TestConnectionInfo } from "../../../base/testing";
+import {
+    ConferenceNotification,
+    isCalendarEnabled,
+} from "../../../calendar-sync";
+import { Chat } from "../../../chat";
+import { DisplayNameLabel } from "../../../display-name";
+import { SharedDocument } from "../../../etherpad";
 import {
     FILMSTRIP_SIZE,
     Filmstrip,
     isFilmstripVisible,
-    TileView
-} from '../../../filmstrip';
-import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
-import { LargeVideo } from '../../../large-video';
-import { KnockingParticipantList } from '../../../lobby';
-import { LobbyScreen } from '../../../lobby/components/native';
-import { getIsLobbyVisible } from '../../../lobby/functions';
-import { BackButtonRegistry } from '../../../mobile/back-button';
-import { ParticipantsPane } from '../../../participants-pane/components/native';
-import { Captions } from '../../../subtitles';
-import { setToolboxVisible } from '../../../toolbox/actions';
-import { Toolbox } from '../../../toolbox/components/native';
-import { isToolboxVisible } from '../../../toolbox/functions';
+    TileView,
+} from "../../../filmstrip";
+import { AddPeopleDialog, CalleeInfoContainer } from "../../../invite";
+import { LargeVideo } from "../../../large-video";
+import { KnockingParticipantList } from "../../../lobby";
+import { LobbyScreen } from "../../../lobby/components/native";
+import { getIsLobbyVisible } from "../../../lobby/functions";
+import { BackButtonRegistry } from "../../../mobile/back-button";
+import { ParticipantsPane } from "../../../participants-pane/components/native";
+import { Captions } from "../../../subtitles";
+import { setToolboxVisible } from "../../../toolbox/actions";
+import { Toolbox } from "../../../toolbox/components/native";
+import { isToolboxVisible } from "../../../toolbox/functions";
 import {
     AbstractConference,
-    abstractMapStateToProps
-} from '../AbstractConference';
-import type { AbstractProps } from '../AbstractConference';
+    abstractMapStateToProps,
+} from "../AbstractConference";
+import type { AbstractProps } from "../AbstractConference";
 
-import LonelyMeetingExperience from './LonelyMeetingExperience';
-import NavigationBar from './NavigationBar';
-import styles from './styles';
-
+import LonelyMeetingExperience from "./LonelyMeetingExperience";
+import NavigationBar from "./NavigationBar";
+import styles from "./styles";
 
 /**
  * The type of the React {@code Component} props of {@link Conference}.
  */
 type Props = AbstractProps & {
-
     /**
      * Application's aspect ratio.
      */
@@ -108,7 +113,7 @@ type Props = AbstractProps & {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function
+    dispatch: Function,
 };
 
 /**
@@ -168,12 +173,13 @@ class Conference extends AbstractConference<Props, *> {
         }
 
         return (
-            <Container style = { styles.conference }>
+            <Container style={styles.conference}>
                 <StatusBar
-                    barStyle = 'light-content'
-                    hidden = { _fullscreenEnabled }
-                    translucent = { _fullscreenEnabled } />
-                { this._renderContent() }
+                    barStyle="light-content"
+                    hidden={_fullscreenEnabled}
+                    translucent={_fullscreenEnabled}
+                />
+                {this._renderContent()}
             </Container>
         );
     }
@@ -207,7 +213,7 @@ class Conference extends AbstractConference<Props, *> {
 
             p = PictureInPicture.enterPictureInPicture();
         } else {
-            p = Promise.reject(new Error('PiP not enabled'));
+            p = Promise.reject(new Error("PiP not enabled"));
         }
 
         p.catch(() => {
@@ -224,9 +230,9 @@ class Conference extends AbstractConference<Props, *> {
      */
     _renderConferenceModals() {
         return [
-            <AddPeopleDialog key = 'addPeopleDialog' />,
-            <Chat key = 'chat' />,
-            <SharedDocument key = 'sharedDocument' />
+            <AddPeopleDialog key="addPeopleDialog" />,
+            <Chat key="chat" />,
+            <SharedDocument key="sharedDocument" />,
         ];
     }
 
@@ -239,10 +245,9 @@ class Conference extends AbstractConference<Props, *> {
     _renderConferenceNotification() {
         const { _calendarEnabled, _reducedUI } = this.props;
 
-        return (
-            _calendarEnabled && !_reducedUI
-                ? <ConferenceNotification />
-                : undefined);
+        return _calendarEnabled && !_reducedUI ? (
+            <ConferenceNotification />
+        ) : undefined;
     }
 
     /**
@@ -257,7 +262,7 @@ class Conference extends AbstractConference<Props, *> {
             _isParticipantsPaneOpen,
             _largeVideoParticipantId,
             _reducedUI,
-            _shouldDisplayTileView
+            _shouldDisplayTileView,
         } = this.props;
 
         if (_reducedUI) {
@@ -266,62 +271,77 @@ class Conference extends AbstractConference<Props, *> {
 
         return (
             <>
-                {/*
-                  * The LargeVideo is the lowermost stacking layer.
-                  */
-                    _shouldDisplayTileView
-                        ? <TileView onClick = { this._onClick } />
-                        : <LargeVideo onClick = { this._onClick } />
+                {
+                    /*
+                     * The LargeVideo is the lowermost stacking layer.
+                     */
+                    _shouldDisplayTileView ? (
+                        <TileView onClick={this._onClick} />
+                    ) : (
+                        <LargeVideo onClick={this._onClick} />
+                    )
                 }
 
-                {/*
-                  * If there is a ringing call, show the callee's info.
-                  */
+                {
+                    /*
+                     * If there is a ringing call, show the callee's info.
+                     */
                     <CalleeInfoContainer />
                 }
 
-                {/*
-                  * The activity/loading indicator goes above everything, except
-                  * the toolbox/toolbars and the dialogs.
-                  */
-                    _connecting
-                        && <TintedView>
+                {
+                    /*
+                     * The activity/loading indicator goes above everything, except
+                     * the toolbox/toolbars and the dialogs.
+                     */
+                    _connecting && (
+                        <TintedView>
                             <LoadingIndicator />
                         </TintedView>
+                    )
                 }
 
                 <View
-                    pointerEvents = 'box-none'
-                    style = { styles.toolboxAndFilmstripContainer }>
+                    pointerEvents="box-none"
+                    style={styles.toolboxAndFilmstripContainer}
+                >
+                    <Captions onPress={this._onClick} />
 
-                    <Captions onPress = { this._onClick } />
-
-                    { _shouldDisplayTileView || <Container style = { styles.displayNameContainer }>
-                        <DisplayNameLabel participantId = { _largeVideoParticipantId } />
-                    </Container> }
+                    {_shouldDisplayTileView || (
+                        <Container style={styles.displayNameContainer}>
+                            <DisplayNameLabel
+                                participantId={_largeVideoParticipantId}
+                            />
+                        </Container>
+                    )}
 
                     <LonelyMeetingExperience />
 
-                    { _shouldDisplayTileView || <><Filmstrip /><Toolbox /></> }
+                    {_shouldDisplayTileView || (
+                        <>
+                            <Filmstrip />
+                            <Toolbox />
+                        </>
+                    )}
                 </View>
 
                 <SafeAreaView
-                    pointerEvents = 'box-none'
-                    style = { styles.navBarSafeView }>
+                    pointerEvents="box-none"
+                    style={styles.navBarSafeView}
+                >
                     <NavigationBar />
-                    { this._renderNotificationsContainer() }
+                    {this._renderNotificationsContainer()}
                     <KnockingParticipantList />
                 </SafeAreaView>
 
                 <TestConnectionInfo />
-                { this._renderConferenceNotification() }
+                {this._renderConferenceNotification()}
 
-                { this._renderConferenceModals() }
+                {this._renderConferenceModals()}
 
                 {_shouldDisplayTileView && <Toolbox />}
 
-                { _isParticipantsPaneOpen && <ParticipantsPane /> }
-
+                {_isParticipantsPaneOpen && <ParticipantsPane />}
             </>
         );
     }
@@ -337,14 +357,13 @@ class Conference extends AbstractConference<Props, *> {
 
         return (
             <>
-                <LargeVideo onClick = { this._onClick } />
+                <LargeVideo onClick={this._onClick} />
 
-                {
-                    _connecting
-                        && <TintedView>
-                            <LoadingIndicator />
-                        </TintedView>
-                }
+                {_connecting && (
+                    <TintedView>
+                        <LoadingIndicator />
+                    </TintedView>
+                )}
             </>
         );
     }
@@ -375,11 +394,9 @@ class Conference extends AbstractConference<Props, *> {
             notificationsStyle.marginRight = FILMSTRIP_SIZE;
         }
 
-        return super.renderNotificationsContainer(
-            {
-                style: notificationsStyle
-            }
-        );
+        return super.renderNotificationsContainer({
+            style: notificationsStyle,
+        });
     }
 
     _setToolboxVisible: (boolean) => void;
@@ -405,15 +422,11 @@ class Conference extends AbstractConference<Props, *> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
-    const { connecting, connection } = state['features/base/connection'];
-    const {
-        conference,
-        joining,
-        membersOnly,
-        leaving
-    } = state['features/base/conference'];
-    const { isOpen } = state['features/participants-pane'];
-    const { aspectRatio, reducedUI } = state['features/base/responsive-ui'];
+    const { connecting, connection } = state["features/base/connection"];
+    const { conference, joining, membersOnly, leaving } =
+        state["features/base/conference"];
+    const { isOpen } = state["features/participants-pane"];
+    const { aspectRatio, reducedUI } = state["features/base/responsive-ui"];
 
     // XXX There is a window of time between the successful establishment of the
     // XMPP connection and the subsequent commencement of joining the MUC during
@@ -424,8 +437,9 @@ function _mapStateToProps(state) {
     // - the XMPP connection is connected and the conference is joining, or
     // - the XMPP connection is connected and we have no conference yet, nor we
     //   are leaving one.
-    const connecting_
-        = connecting || (connection && (!membersOnly && (joining || (!conference && !leaving))));
+    const connecting_ =
+        connecting ||
+        (connection && !membersOnly && (joining || (!conference && !leaving)));
 
     return {
         ...abstractMapStateToProps(state),
@@ -435,11 +449,11 @@ function _mapStateToProps(state) {
         _filmstripVisible: isFilmstripVisible(state),
         _fullscreenEnabled: getFeatureFlag(state, FULLSCREEN_ENABLED, true),
         _isParticipantsPaneOpen: isOpen,
-        _largeVideoParticipantId: state['features/large-video'].participantId,
+        _largeVideoParticipantId: state["features/large-video"].participantId,
         _pictureInPictureEnabled: getFeatureFlag(state, PIP_ENABLED),
         _reducedUI: reducedUI,
         _showLobby: getIsLobbyVisible(state),
-        _toolboxVisible: isToolboxVisible(state)
+        _toolboxVisible: isToolboxVisible(state),
     };
 }
 

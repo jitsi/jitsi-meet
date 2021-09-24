@@ -4,12 +4,12 @@ import {
     NOTIFICATION_TIMEOUT,
     showErrorNotification,
     showNotification,
-    showWarningNotification
-} from '../../../react/features/notifications';
+    showWarningNotification,
+} from "../../../react/features/notifications";
 
 const messageHandler = {
-    OK: 'dialog.OK',
-    CANCEL: 'dialog.Cancel',
+    OK: "dialog.OK",
+    CANCEL: "dialog.Cancel",
 
     /**
      * Returns the formatted title string.
@@ -17,13 +17,12 @@ const messageHandler = {
      * @return the title string formatted as a div.
      */
     _getFormattedTitleString(titleKey) {
-        const $titleString = $('<h2>');
+        const $titleString = $("<h2>");
 
-        $titleString.addClass('aui-dialog2-header-main');
-        $titleString.attr('data-i18n', titleKey);
+        $titleString.addClass("aui-dialog2-header-main");
+        $titleString.attr("data-i18n", titleKey);
 
-        return $('<div>').append($titleString)
-            .html();
+        return $("<div>").append($titleString).html();
     },
 
     /**
@@ -31,18 +30,18 @@ const messageHandler = {
      *
      * @return the dialog css classes
      */
-    _getDialogClasses(size = 'small') {
+    _getDialogClasses(size = "small") {
         return {
-            box: '',
-            form: '',
+            box: "",
+            form: "",
             prompt: `dialog aui-layer aui-dialog2 aui-dialog2-${size}`,
-            close: 'aui-hide',
-            fade: 'aui-blanket',
-            button: 'button-control',
-            message: 'aui-dialog2-content',
-            buttons: 'aui-dialog2-footer',
-            defaultButton: 'button-control_primary',
-            title: 'aui-dialog2-header'
+            close: "aui-hide",
+            fade: "aui-blanket",
+            button: "button-control",
+            message: "aui-dialog2-content",
+            buttons: "aui-dialog2-footer",
+            defaultButton: "button-control_primary",
+            title: "aui-dialog2-header",
         };
     },
 
@@ -61,11 +60,13 @@ const messageHandler = {
      */
     // eslint-disable-next-line max-params
     openCenteredPopup(url, w, h, onPopupClosed) {
-        const l = window.screenX + (window.innerWidth / 2) - (w / 2);
-        const t = window.screenY + (window.innerHeight / 2) - (h / 2);
+        const l = window.screenX + window.innerWidth / 2 - w / 2;
+        const t = window.screenY + window.innerHeight / 2 - h / 2;
         const popup = window.open(
-            url, '_blank',
-            String(`top=${t}, left=${l}, width=${w}, height=${h}`));
+            url,
+            "_blank",
+            String(`top=${t}, left=${l}, width=${w}, height=${h}`)
+        );
 
         if (popup && onPopupClosed) {
             const pollTimer = window.setInterval(() => {
@@ -112,20 +113,25 @@ const messageHandler = {
      * @param optional configurations for the notification (e.g. timeout)
      */
     participantNotification( // eslint-disable-line max-params
-            displayName,
-            displayNameKey,
-            cls,
-            messageKey,
-            messageArguments,
-            timeout = NOTIFICATION_TIMEOUT) {
-        APP.store.dispatch(showNotification({
-            descriptionArguments: messageArguments,
-            descriptionKey: messageKey,
-            titleKey: displayNameKey,
-            title: displayName
-        },
-        timeout));
-    }
+        displayName,
+        displayNameKey,
+        cls,
+        messageKey,
+        messageArguments,
+        timeout = NOTIFICATION_TIMEOUT
+    ) {
+        APP.store.dispatch(
+            showNotification(
+                {
+                    descriptionArguments: messageArguments,
+                    descriptionKey: messageKey,
+                    titleKey: displayNameKey,
+                    title: displayName,
+                },
+                timeout
+            )
+        );
+    },
 };
 
 export default messageHandler;

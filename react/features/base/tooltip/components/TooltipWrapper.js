@@ -1,12 +1,11 @@
 // @flow
 
-import Tooltip from '@atlaskit/tooltip';
-import React from 'react';
+import Tooltip from "@atlaskit/tooltip";
+import React from "react";
 
-import { isMobileBrowser } from '../../environment/utils';
+import { isMobileBrowser } from "../../environment/utils";
 
 type Props = {
-
     /**
      * Children of the component.
      */
@@ -20,28 +19,21 @@ type Props = {
     /**
      * The position of the tooltip relative to the element it contains.
      */
-    position?: string
-
-}
+    position?: string,
+};
 
 /**
  * Wrapper of AtlasKit Tooltip that doesn't render the actual tooltip in mobile browsers.
  *
  * @returns {ReactElement}
  */
-function TooltipWrapper({
-    children,
-    content,
-    position
-}: Props) {
+function TooltipWrapper({ children, content, position }: Props) {
     if (isMobileBrowser()) {
         return children;
     }
 
     return (
-        <Tooltip
-            content = { content }
-            position = { position }>
+        <Tooltip content={content} position={position}>
             {children}
         </Tooltip>
     );

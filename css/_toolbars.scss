@@ -27,9 +27,8 @@
     left: 0;
     position: absolute;
     right: 0;
-    transition: bottom .3s ease-in;
+    transition: bottom 0.3s ease-in;
     width: 100%;
-
 
     &.visible {
         bottom: 0;
@@ -109,7 +108,7 @@
 }
 
 .toolbox-content-wrapper::after {
-    content: '';
+    content: "";
     background: $newToolbarBackgroundColor;
     padding-bottom: env(safe-area-inset-bottom, 0);
 }
@@ -121,9 +120,11 @@
     padding: 6px;
     text-align: center;
     pointer-events: all;
-    box-shadow: 0px 2px 8px 4px rgba(0, 0, 0, 0.25), 0px 0px 0px 1px rgba(0, 0, 0, 0.15);
+    box-shadow: 0px 2px 8px 4px rgba(0, 0, 0, 0.25),
+        0px 0px 0px 1px rgba(0, 0, 0, 0.15);
+    position: relative !important;
 
-    >div {
+    > div {
         margin-left: 8px;
 
         &:first-child {
@@ -184,7 +185,6 @@
         svg {
             fill: #929292;
         }
-
     }
 
     @media (hover: hover) and (pointer: fine) {
@@ -195,7 +195,7 @@
 }
 
 .beta-tag {
-    background: #36383C;
+    background: #36383c;
     border-radius: 3px;
     color: #fff;
     font-size: 12px;
@@ -230,9 +230,8 @@
     }
 }
 
-
 .overflow-menu-hr {
-    border-top: 1px solid #4C4D50;
+    border-top: 1px solid #4c4d50;
     border-bottom: 0;
     margin: 8px 0;
 }
@@ -295,13 +294,13 @@
 .fadeIn {
     opacity: 1;
 
-    @include transition(all .3s ease-in);
+    @include transition(all 0.3s ease-in);
 }
 
 .fadeOut {
     opacity: 0;
 
-    @include transition(all .3s ease-out);
+    @include transition(all 0.3s ease-out);
 }
 
 /**
@@ -316,7 +315,6 @@
             background: $newToolbarButtonHoverColor;
         }
     }
-
 }
 
 /**

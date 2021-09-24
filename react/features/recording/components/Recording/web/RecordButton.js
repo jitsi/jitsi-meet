@@ -1,12 +1,12 @@
 // @flow
 
-import { getToolbarButtons } from '../../../../base/config';
-import { translate } from '../../../../base/i18n';
-import { connect } from '../../../../base/redux';
+import { getToolbarButtons } from "../../../../base/config";
+import { translate } from "../../../../base/i18n";
+import { connect } from "../../../../base/redux";
 import AbstractRecordButton, {
     _mapStateToProps as _abstractMapStateToProps,
-    type Props
-} from '../AbstractRecordButton';
+    type Props,
+} from "../AbstractRecordButton";
 
 /**
  * Maps (parts of) the redux state to the associated props for the
@@ -27,13 +27,13 @@ export function _mapStateToProps(state: Object, ownProps: Props): Object {
     const toolbarButtons = getToolbarButtons(state);
     let { visible } = ownProps;
 
-    if (typeof visible === 'undefined') {
-        visible = toolbarButtons.includes('recording') && abstractProps.visible;
+    if (typeof visible === "undefined") {
+        visible = toolbarButtons.includes("recording") && abstractProps.visible;
     }
 
     return {
         ...abstractProps,
-        visible
+        visible,
     };
 }
 

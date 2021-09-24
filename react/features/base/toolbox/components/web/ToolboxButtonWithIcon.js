@@ -1,12 +1,11 @@
 // @flow
 
-import React from 'react';
+import React from "react";
 
-import { Icon } from '../../../icons';
-import { Tooltip } from '../../../tooltip';
+import { Icon } from "../../../icons";
+import { Tooltip } from "../../../tooltip";
 
 type Props = {
-
     /**
      * The decorated component (ToolboxButton).
      */
@@ -65,7 +64,7 @@ type Props = {
     /**
      * The ID of the icon button
      */
-    iconId: string
+    iconId: string,
 };
 
 /**
@@ -87,42 +86,38 @@ export default function ToolboxButtonWithIcon(props: Props) {
         ariaHasPopup,
         ariaControls,
         ariaExpanded,
-        iconId
+        iconId,
     } = props;
 
     const iconProps = {};
 
     if (iconDisabled) {
-        iconProps.className
-            = 'settings-button-small-icon settings-button-small-icon--disabled';
+        iconProps.className =
+            "settings-button-small-icon settings-button-small-icon--disabled";
     } else {
-        iconProps.className = 'settings-button-small-icon';
+        iconProps.className = "settings-button-small-icon";
         iconProps.onClick = onIconClick;
         iconProps.onKeyDown = onIconKeyDown;
-        iconProps.role = 'button';
+        iconProps.role = "button";
         iconProps.tabIndex = 0;
         iconProps.ariaControls = ariaControls;
         iconProps.ariaExpanded = ariaExpanded;
         iconProps.containerId = iconId;
     }
 
-
     return (
-        <div
-            className = 'settings-button-container'
-            styles = { styles }>
+        <div className="settings-button-container" styles={styles}>
             {children}
 
             <div>
-                <Tooltip
-                    content = { iconTooltip }
-                    position = 'top'>
+                <Tooltip content={iconTooltip} position="top">
                     <Icon
-                        { ...iconProps }
-                        ariaHasPopup = { ariaHasPopup }
-                        ariaLabel = { ariaLabel }
-                        size = { 9 }
-                        src = { icon } />
+                        {...iconProps}
+                        ariaHasPopup={ariaHasPopup}
+                        ariaLabel={ariaLabel}
+                        size={9}
+                        src={icon}
+                    />
                 </Tooltip>
             </div>
         </div>

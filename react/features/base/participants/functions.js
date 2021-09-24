@@ -1,20 +1,20 @@
 // @flow
 
-import { getGravatarURL } from '@jitsi/js-utils/avatar';
-import type { Store } from 'redux';
+import { getGravatarURL } from "@jitsi/js-utils/avatar";
+import type { Store } from "redux";
 
-import { JitsiParticipantConnectionStatus } from '../lib-jitsi-meet';
-import { MEDIA_TYPE, shouldRenderVideoTrack } from '../media';
-import { toState } from '../redux';
-import { getTrackByMediaTypeAndParticipant } from '../tracks';
-import { createDeferred } from '../util';
+import { JitsiParticipantConnectionStatus } from "../lib-jitsi-meet";
+import { MEDIA_TYPE, shouldRenderVideoTrack } from "../media";
+import { toState } from "../redux";
+import { getTrackByMediaTypeAndParticipant } from "../tracks";
+import { createDeferred } from "../util";
 
 import {
     JIGASI_PARTICIPANT_ICON,
     MAX_DISPLAY_NAME_LENGTH,
-    PARTICIPANT_ROLE
-} from './constants';
-import { preloadImage } from './preloadImage';
+    PARTICIPANT_ROLE,
+} from "./constants";
+import { preloadImage } from "./preloadImage";
 
 declare var interfaceConfig: Object;
 
@@ -26,22 +26,27 @@ const AVATAR_CHECKED_URLS = new Map();
 /* eslint-disable arrow-body-style, no-unused-vars */
 const AVATAR_CHECKER_FUNCTIONS = [
     (participant, _) => {
-        return participant && participant.isJigasi ? JIGASI_PARTICIPANT_ICON : null;
+        return participant && participant.isJigasi
+            ? JIGASI_PARTICIPANT_ICON
+            : null;
     },
     (participant, _) => {
-        return participant && participant.avatarURL ? participant.avatarURL : null;
+        return participant && participant.avatarURL
+            ? participant.avatarURL
+            : null;
     },
     (participant, store) => {
         if (participant && participant.email) {
             // TODO: remove once libravatar has deployed their new scaled up infra. -saghul
-            const gravatarBaseURL
-                = store.getState()['features/base/config'].gravatarBaseURL ?? 'https://www.gravatar.com/avatar/';
+            const gravatarBaseURL =
+                store.getState()["features/base/config"].gravatarBaseURL ??
+                "https://www.gravatar.com/avatar/";
 
             return getGravatarURL(participant.email, gravatarBaseURL);
         }
 
         return null;
-    }
+    },
 ];
 /* eslint-enable arrow-body-style, no-unused-vars */
 
@@ -52,12 +57,14 @@ const AVATAR_CHECKER_FUNCTIONS = [
  * @param {Store} store - Redux store.
  * @returns {Promise}
  */
-export function getFirstLoadableAvatarUrl(participant: Object, store: Store<any, any>) {
+export function getFirstLoadableAvatarUrl(
+    participant: Object,
+    store: Store<any, any>
+) {
     const deferred = createDeferred();
     const fullPromise = deferred.promise
         .then(() => _getFirstLoadableAvatarUrl(participant, store))
-        .then(src => {
-
+        .then((src) => {
             if (AVATAR_QUEUE.length) {
                 const next = AVATAR_QUEUE.shift();
 
@@ -85,7 +92,7 @@ export function getFirstLoadableAvatarUrl(participant: Object, store: Store<any,
  * @returns {(Participant|undefined)}
  */
 export function getLocalParticipant(stateful: Object | Function) {
-    const state = toState(stateful)['features/base/participants'];
+    const state = toState(stateful)["features/base/participants"];
 
     return state.local;
 }
@@ -116,8 +123,10 @@ export function getNormalizedDisplayName(name: string) {
  * @returns {(Participant|undefined)}
  */
 export function getParticipantById(
-        stateful: Object | Function, id: string): ?Object {
-    const state = toState(stateful)['features/base/participants'];
+    stateful: Object | Function,
+    id: string
+): ?Object {
+    const state = toState(stateful)["features/base/participants"];
     const { local, remote } = state;
 
     return remote.get(id) || (local?.id === id ? local : undefined);
@@ -133,8 +142,13 @@ export function getParticipantById(
  * @param {string|undefined} [participantID] - An optional partipantID argument.
  * @returns {Participant|undefined}
  */
-export function getParticipantByIdOrUndefined(stateful: Object | Function, participantID: ?string) {
-    return participantID ? getParticipantById(stateful, participantID) : getLocalParticipant(stateful);
+export function getParticipantByIdOrUndefined(
+    stateful: Object | Function,
+    participantID: ?string
+) {
+    return participantID
+        ? getParticipantById(stateful, participantID)
+        : getLocalParticipant(stateful);
 }
 
 /**
@@ -147,7 +161,7 @@ export function getParticipantByIdOrUndefined(stateful: Object | Function, parti
  * @returns {number}
  */
 export function getParticipantCount(stateful: Object | Function) {
-    const state = toState(stateful)['features/base/participants'];
+    const state = toState(stateful)["features/base/participants"];
     const { local, remote, fakeParticipants } = state;
 
     return remote.size - fakeParticipants.size + (local ? 1 : 0);
@@ -162,7 +176,7 @@ export function getParticipantCount(stateful: Object | Function) {
  * @returns {Map<string, Participant>} - The Map with fake participants.
  */
 export function getFakeParticipants(stateful: Object | Function) {
-    return toState(stateful)['features/base/participants'].fakeParticipants;
+    return toState(stateful)["features/base/participants"].fakeParticipants;
 }
 
 /**
@@ -174,7 +188,7 @@ export function getFakeParticipants(stateful: Object | Function) {
  * @returns {number}
  */
 export function getRemoteParticipantCount(stateful: Object | Function) {
-    const state = toState(stateful)['features/base/participants'];
+    const state = toState(stateful)["features/base/participants"];
 
     return state.remote.size;
 }
@@ -189,7 +203,7 @@ export function getRemoteParticipantCount(stateful: Object | Function) {
  * @returns {number}
  */
 export function getParticipantCountWithFake(stateful: Object | Function) {
-    const state = toState(stateful)['features/base/participants'];
+    const state = toState(stateful)["features/base/participants"];
     const { local, remote } = state;
 
     return remote.size + (local ? 1 : 0);
@@ -207,8 +221,9 @@ export function getParticipantCountWithFake(stateful: Object | Function) {
  * @returns {string}
  */
 export function getParticipantDisplayName(
-        stateful: Object | Function,
-        id: string) {
+    stateful: Object | Function,
+    id: string
+) {
     const participant = getParticipantById(stateful, id);
 
     if (participant) {
@@ -217,15 +232,15 @@ export function getParticipantDisplayName(
         }
 
         if (participant.local) {
-            return typeof interfaceConfig === 'object'
+            return typeof interfaceConfig === "object"
                 ? interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME
-                : 'me';
+                : "me";
         }
     }
 
-    return typeof interfaceConfig === 'object'
+    return typeof interfaceConfig === "object"
         ? interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME
-        : 'Fellow Jitster';
+        : "Fellow Jitster";
 }
 
 /**
@@ -237,7 +252,9 @@ export function getParticipantDisplayName(
  * @returns {string} - The presence status.
  */
 export function getParticipantPresenceStatus(
-        stateful: Object | Function, id: string) {
+    stateful: Object | Function,
+    id: string
+) {
     if (!id) {
         return undefined;
     }
@@ -257,8 +274,11 @@ export function getParticipantPresenceStatus(
  * {@code getState} function to be used to retrieve the state.
  * @returns {boolean}
  */
-export function haveParticipantWithScreenSharingFeature(stateful: Object | Function) {
-    return toState(stateful)['features/base/participants'].haveParticipantWithScreenSharingFeature;
+export function haveParticipantWithScreenSharingFeature(
+    stateful: Object | Function
+) {
+    return toState(stateful)["features/base/participants"]
+        .haveParticipantWithScreenSharingFeature;
 }
 
 /**
@@ -270,7 +290,7 @@ export function haveParticipantWithScreenSharingFeature(stateful: Object | Funct
  * @returns {Map<string, Object>}
  */
 export function getRemoteParticipants(stateful: Object | Function) {
-    return toState(stateful)['features/base/participants'].remote;
+    return toState(stateful)["features/base/participants"].remote;
 }
 
 /**
@@ -281,7 +301,7 @@ export function getRemoteParticipants(stateful: Object | Function) {
  * @returns {Array<string>}
  */
 export function getRemoteParticipantsSorted(stateful: Object | Function) {
-    return toState(stateful)['features/filmstrip'].remoteParticipants;
+    return toState(stateful)["features/filmstrip"].remoteParticipants;
 }
 
 /**
@@ -293,7 +313,7 @@ export function getRemoteParticipantsSorted(stateful: Object | Function) {
  * @returns {(Participant|undefined)}
  */
 export function getPinnedParticipant(stateful: Object | Function) {
-    const state = toState(stateful)['features/base/participants'];
+    const state = toState(stateful)["features/base/participants"];
     const { pinnedParticipant } = state;
 
     if (!pinnedParticipant) {
@@ -310,7 +330,10 @@ export function getPinnedParticipant(stateful: Object | Function) {
  * @returns {boolean}
  */
 export function isParticipantModerator(participant: Object) {
-    return participant?.role === PARTICIPANT_ROLE.MODERATOR;
+    return (
+        participant?.role === PARTICIPANT_ROLE.MODERATOR ||
+        PARTICIPANT_ROLE.NONE
+    );
 }
 
 /**
@@ -321,7 +344,7 @@ export function isParticipantModerator(participant: Object) {
  * @returns {Participant} - The participant from the redux store.
  */
 export function getDominantSpeakerParticipant(stateful: Object | Function) {
-    const state = toState(stateful)['features/base/participants'];
+    const state = toState(stateful)["features/base/participants"];
     const { dominantSpeaker } = state;
 
     if (!dominantSpeaker) {
@@ -339,7 +362,7 @@ export function getDominantSpeakerParticipant(stateful: Object | Function) {
  * @returns {boolean}
  */
 export function isEveryoneModerator(stateful: Object | Function) {
-    const state = toState(stateful)['features/base/participants'];
+    const state = toState(stateful)["features/base/participants"];
 
     return state.everyoneIsModerator === true;
 }
@@ -351,7 +374,10 @@ export function isEveryoneModerator(stateful: Object | Function) {
  * @returns {boolean}
  */
 export function isIconUrl(icon: ?string | ?Object) {
-    return Boolean(icon) && (typeof icon === 'object' || typeof icon === 'function');
+    return (
+        Boolean(icon) &&
+        (typeof icon === "object" || typeof icon === "function")
+    );
 }
 
 /**
@@ -363,7 +389,7 @@ export function isIconUrl(icon: ?string | ?Object) {
  * @returns {boolean}
  */
 export function isLocalParticipantModerator(stateful: Object | Function) {
-    const state = toState(stateful)['features/base/participants'];
+    const state = toState(stateful)["features/base/participants"];
 
     const { local } = state;
 
@@ -383,7 +409,10 @@ export function isLocalParticipantModerator(stateful: Object | Function) {
  * @param {string} id - The ID of the participant.
  * @returns {boolean}
  */
-export function shouldRenderParticipantVideo(stateful: Object | Function, id: string) {
+export function shouldRenderParticipantVideo(
+    stateful: Object | Function,
+    id: string
+) {
     const state = toState(stateful);
     const participant = getParticipantById(state, id);
 
@@ -392,32 +421,38 @@ export function shouldRenderParticipantVideo(stateful: Object | Function, id: st
     }
 
     /* First check if we have an unmuted video track. */
-    const videoTrack
-        = getTrackByMediaTypeAndParticipant(state['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
+    const videoTrack = getTrackByMediaTypeAndParticipant(
+        state["features/base/tracks"],
+        MEDIA_TYPE.VIDEO,
+        id
+    );
 
     if (!shouldRenderVideoTrack(videoTrack, /* waitForVideoStarted */ false)) {
         return false;
     }
 
     /* Then check if the participant connection is active. */
-    const connectionStatus = participant.connectionStatus || JitsiParticipantConnectionStatus.ACTIVE;
+    const connectionStatus =
+        participant.connectionStatus || JitsiParticipantConnectionStatus.ACTIVE;
 
     if (connectionStatus !== JitsiParticipantConnectionStatus.ACTIVE) {
         return false;
     }
 
     /* Then check if audio-only mode is not active. */
-    const audioOnly = state['features/base/audio-only'].enabled;
+    const audioOnly = state["features/base/audio-only"].enabled;
 
     if (!audioOnly) {
         return true;
     }
 
     /* Last, check if the participant is sharing their screen and they are on stage. */
-    const remoteScreenShares = state['features/video-layout'].remoteScreenShares || [];
-    const largeVideoParticipantId = state['features/large-video'].participantId;
-    const participantIsInLargeVideoWithScreen
-        = participant.id === largeVideoParticipantId && remoteScreenShares.includes(participant.id);
+    const remoteScreenShares =
+        state["features/video-layout"].remoteScreenShares || [];
+    const largeVideoParticipantId = state["features/large-video"].participantId;
+    const participantIsInLargeVideoWithScreen =
+        participant.id === largeVideoParticipantId &&
+        remoteScreenShares.includes(participant.id);
 
     return participantIsInLargeVideoWithScreen;
 }
@@ -469,7 +504,9 @@ async function _getFirstLoadableAvatarUrl(participant, store) {
  * {@code getState} function to be used to retrieve the state features/base/participants.
  * @returns {Array<string>}
  */
-export function getSortedParticipantIds(stateful: Object | Function): Array<string> {
+export function getSortedParticipantIds(
+    stateful: Object | Function
+): Array<string> {
     const { id } = getLocalParticipant(stateful);
     const remoteParticipants = getRemoteParticipantsSorted(stateful);
     const reorderedParticipants = new Set(remoteParticipants);
@@ -486,13 +523,14 @@ export function getSortedParticipantIds(stateful: Object | Function): Array<stri
     }
 
     // Remove self.
-    remoteRaisedHandParticipants.has(id) && remoteRaisedHandParticipants.delete(id);
+    remoteRaisedHandParticipants.has(id) &&
+        remoteRaisedHandParticipants.delete(id);
 
     // Move self and participants with raised hand to the top of the list.
     return [
         id,
         ...Array.from(remoteRaisedHandParticipants.keys()),
-        ...Array.from(reorderedParticipants.keys())
+        ...Array.from(reorderedParticipants.keys()),
     ];
 }
 
@@ -505,7 +543,8 @@ export function getSortedParticipantIds(stateful: Object | Function): Array<stri
  * @returns {Array<string>}
  */
 export function getRaiseHandsQueue(stateful: Object | Function): Array<string> {
-    const { raisedHandsQueue } = toState(stateful)['features/base/participants'];
+    const { raisedHandsQueue } =
+        toState(stateful)["features/base/participants"];
 
     return raisedHandsQueue;
 }

@@ -6,7 +6,7 @@ var config = {
 
     hosts: {
         // XMPP domain.
-        domain: 'jitsi-meet.example.com',
+        domain: "cefis.live",
 
         // When using authentication, domain for guest users.
         // anonymousdomain: 'guest.example.com',
@@ -18,11 +18,11 @@ var config = {
         // focus: 'focus.jitsi-meet.example.com',
 
         // XMPP MUC domain. FIXME: use XEP-0030 to discover it.
-        muc: 'conference.jitsi-meet.example.com'
+        muc: "conference.cefis.live",
     },
 
     // BOSH URL. FIXME: use XEP-0156 to discover it.
-    bosh: '//jitsi-meet.example.com/http-bind',
+    bosh: "//jitsi-meet.example.com/http-bind",
 
     // Websocket URL
     // websocket: 'wss://jitsi-meet.example.com/xmpp-websocket',
@@ -32,7 +32,6 @@ var config = {
     // https://github.com/jitsi/jitsi-meet/issues/7376
     // focusUserJid: 'focus@auth.jitsi-meet.example.com',
 
-
     // Testing / experimental features.
     //
 
@@ -40,25 +39,19 @@ var config = {
         // Disables the End to End Encryption feature. Useful for debugging
         // issues related to insertable streams.
         // disableE2EE: false,
-
         // Enables/disables thumbnail reordering in the filmstrip. It is enabled by default unless explicitly
         // disabled by the below option.
         // enableThumbnailReordering: true,
-
         // Enables XMPP WebSocket (as opposed to BOSH) for the given amount of users.
         // mobileXmppWsThreshold: 10 // enable XMPP WebSockets on mobile for 10% of the users
-
         // P2P test mode disables automatic switching to P2P when there are 2
         // participants in the conference.
         // p2pTestMode: false,
-
         // Enables the test specific features consumed by jitsi-meet-torture
         // testMode: false
-
         // Disables the auto-play behavior of *all* newly created video element.
         // This is useful when the client runs on a host with limited resources.
         // noAutoPlayVideo: false
-
         // Enable / disable 500 Kbps bitrate cap on desktop tracks. When enabled,
         // simulcast is turned off for the desktop share. If presenter is turned
         // on while screensharing is in progress, the max bitrate is automatically
@@ -67,7 +60,6 @@ var config = {
         // desktopSharingFrameRate.max now determines whether simulcast will be enabled
         // or disabled for the screenshare.
         // capScreenshareBitrate: 1 // 0 to disable - deprecated.
-
         // Enable callstats only for a percentage of users.
         // This takes a value between 0 and 100 which determines the probability for
         // the callstats to be enabled.
@@ -87,7 +79,6 @@ var config = {
     // Disables ICE/TCP by filtering out local and remote TCP candidates in
     // signalling.
     // webrtcIceTcpDisable: false,
-
 
     // Media
     //
@@ -224,28 +215,31 @@ var config = {
     // Recording
 
     // Whether to enable file recording or not.
-    // fileRecordingsEnabled: false,
+    fileRecordingsEnabled: true,
     // Enable the dropbox integration.
-    // dropbox: {
-    //     appKey: '<APP_KEY>' // Specify your app key here.
+    //dropbox: {
+    //appKey: "<APP_KEY>", // Specify your app key here.
     //     // A URL to redirect the user to, after authenticating
     //     // by default uses:
-    //     // 'https://jitsi-meet.example.com/static/oauth.html'
-    //     redirectURI:
-    //          'https://jitsi-meet.example.com/subfolder/static/oauth.html'
-    // },
+    // 'https://jitsi-meet.example.com/static/oauth.html'
+    //redirectURI:
+    //      "https://jitsi-meet.example.com/subfolder/static/oauth.html",
+    //},
     // When integrations like dropbox are enabled only that will be shown,
     // by enabling fileRecordingsServiceEnabled, we show both the integrations
     // and the generic recording service (its configuration and storage type
     // depends on jibri configuration)
-    // fileRecordingsServiceEnabled: false,
+    fileRecordingsServiceEnabled: false,
     // Whether to show the possibility to share file recording with other people
     // (e.g. meeting participants), based on the actual implementation
     // on the backend.
-    // fileRecordingsServiceSharingEnabled: false,
+    fileRecordingsServiceSharingEnabled: false,
 
     // Whether to enable live streaming or not.
-    // liveStreamingEnabled: false,
+    liveStreamingEnabled: true,
+    hiddenDomain: "recorder.cefis.live",
+    recordingType: "jibri",
+    enableRecording: true,
 
     // Transcription (in interface_config,
     // subtitles and buttons can be configured)
@@ -528,7 +522,7 @@ var config = {
     //    'participants-pane',
     //    'profile',
     //    'raisehand',
-    //    'recording',
+    // "recording",
     //    'security',
     //    'select-background',
     //    'settings',
@@ -640,7 +634,6 @@ var config = {
     // will not function.
     // disableThirdPartyRequests: false,
 
-
     // Peer-To-Peer mode: used (if enabled) when there are just 2 participants.
     //
 
@@ -685,41 +678,33 @@ var config = {
 
         // The STUN servers that will be used in the peer to peer connections
         stunServers: [
-
             // { urls: 'stun:jitsi-meet.example.com:3478' },
-            { urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443' }
-        ]
+            { urls: "stun:meet-jit-si-turnrelay.jitsi.net:443" },
+        ],
     },
 
     analytics: {
         // True if the analytics should be disabled
         // disabled: false,
-
         // The Google Analytics Tracking ID:
         // googleAnalyticsTrackingId: 'your-tracking-id-UA-123456-1'
-
         // Matomo configuration:
         // matomoEndpoint: 'https://your-matomo-endpoint/',
         // matomoSiteID: '42',
-
         // The Amplitude APP Key:
         // amplitudeAPPKey: '<APP_KEY>'
-
         // Configuration for the rtcstats server:
         // By enabling rtcstats server every time a conference is joined the rtcstats
         // module connects to the provided rtcstatsEndpoint and sends statistics regarding
         // PeerConnection states along with getStats metrics polled at the specified
         // interval.
         // rtcstatsEnabled: true,
-
         // In order to enable rtcstats one needs to provide a endpoint url.
         // rtcstatsEndpoint: wss://rtcstats-server-pilot.jitsi.net/,
-
         // The interval at which rtcstats will poll getStats, defaults to 1000ms.
         // If the value is set to 0 getStats won't be polled and the rtcstats client
         // will only send data related to RTCPeerConnection events.
         // rtcstatsPolIInterval: 1000,
-
         // Array of script URLs to load as lib-jitsi-meet "analytics handlers".
         // scriptURLs: [
         //      "libs/analytics-ga.min.js", // google-analytics
@@ -791,20 +776,19 @@ var config = {
     // Local Recording
     //
 
-    // localRecording: {
-    // Enables local recording.
-    // Additionally, 'localrecording' (all lowercase) needs to be added to
-    // the `toolbarButtons`-array for the Local Recording button to show up
-    // on the toolbar.
-    //
-    //     enabled: true,
-    //
+    localRecording: {
+        // Enables local recording.
+        // Additionally, 'localrecording' (all lowercase) needs to be added to
+        // the `toolbarButtons`-array for the Local Recording button to show up
+        // on the toolbar.
+        //
+        enabled: true,
+        //
 
-    // The recording format, can be one of 'ogg', 'flac' or 'wav'.
-    //     format: 'flac'
-    //
-
-    // },
+        // The recording format, can be one of 'ogg', 'flac' or 'wav'.
+        format: "flac",
+        //
+    },
 
     // Options related to end-to-end (participant to participant) ping.
     // e2eping: {
@@ -1074,7 +1058,7 @@ var config = {
 
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.
-    makeJsonParserHappy: 'even if last key had a trailing comma'
+    makeJsonParserHappy: "even if last key had a trailing comma",
 
     // no configuration value should follow this line.
 };

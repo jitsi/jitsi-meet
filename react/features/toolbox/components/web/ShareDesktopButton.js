@@ -1,18 +1,20 @@
 // @flow
 
-import { translate } from '../../../base/i18n';
-import { IconShareDesktop } from '../../../base/icons';
-import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
-import { connect } from '../../../base/redux';
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-import { isScreenVideoShared } from '../../../screen-share';
+import { translate } from "../../../base/i18n";
+import { IconShareDesktop } from "../../../base/icons";
+import JitsiMeetJS from "../../../base/lib-jitsi-meet/_";
+import { connect } from "../../../base/redux";
+import {
+    AbstractButton,
+    type AbstractButtonProps,
+} from "../../../base/toolbox/components";
+import { isScreenVideoShared } from "../../../screen-share";
 
 type Props = AbstractButtonProps & {
-
-     /**
+    /**
      * Whether or not screensharing is initialized.
      */
-      _desktopSharingEnabled: boolean,
+    _desktopSharingEnabled: boolean,
 
     /**
      * The tooltip key to use when screensharing is disabled. Or undefined
@@ -23,36 +25,40 @@ type Props = AbstractButtonProps & {
     /**
      * Whether or not the local participant is screensharing.
      */
-     _screensharing: boolean,
+    _screensharing: boolean,
 
     /**
      * The redux {@code dispatch} function.
      */
-     dispatch: Function,
+    dispatch: Function,
 };
 
 /**
  * Implementation of a button for sharing desktop / windows.
  */
 class ShareDesktopButton extends AbstractButton<Props, *> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.shareYourScreen';
-    label = 'toolbar.startScreenSharing';
+    accessibilityLabel = "toolbar.accessibilityLabel.shareYourScreen";
+    label = "toolbar.startScreenSharing";
     icon = IconShareDesktop;
-    toggledLabel = 'toolbar.stopScreenSharing'
-    tooltip = 'toolbar.accessibilityLabel.shareYourScreen';
+    toggledLabel = "toolbar.stopScreenSharing";
+    tooltip = "toolbar.accessibilityLabel.shareYourScreen";
 
     /**
      * Retrieves tooltip dynamically.
      */
     get tooltip() {
-        const { _desktopSharingDisabledTooltipKey, _desktopSharingEnabled, _screensharing } = this.props;
+        const {
+            _desktopSharingDisabledTooltipKey,
+            _desktopSharingEnabled,
+            _screensharing,
+        } = this.props;
 
         if (_desktopSharingEnabled) {
             if (_screensharing) {
-                return 'toolbar.stopScreenSharing';
+                return "toolbar.stopScreenSharing";
             }
 
-            return 'toolbar.startScreenSharing';
+            return "toolbar.startScreenSharing";
         }
 
         return _desktopSharingDisabledTooltipKey;
@@ -108,27 +114,29 @@ class ShareDesktopButton extends AbstractButton<Props, *> {
 
 /**
  * Function that maps parts of Redux state tree into component props.
-*
+ *
  * @param {Object} state - Redux state.
  * @returns {Object}
  */
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     let desktopSharingEnabled = JitsiMeetJS.isDesktopSharingEnabled();
-    const { enableFeaturesBasedOnToken } = state['features/base/config'];
+    const { enableFeaturesBasedOnToken } = state["features/base/config"];
 
     let desktopSharingDisabledTooltipKey;
 
     if (enableFeaturesBasedOnToken) {
         // we enable desktop sharing if any participant already have this
         // feature enabled
-        desktopSharingEnabled = state['features/base/participants'].haveParticipantWithScreenSharingFeature;
-        desktopSharingDisabledTooltipKey = 'dialog.shareYourScreenDisabled';
+        desktopSharingEnabled =
+            state["features/base/participants"]
+                .haveParticipantWithScreenSharingFeature;
+        desktopSharingDisabledTooltipKey = "dialog.shareYourScreenDisabled";
     }
 
     return {
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,
         _desktopSharingEnabled: desktopSharingEnabled,
-        _screensharing: isScreenVideoShared(state)
+        _screensharing: isScreenVideoShared(state),
     };
 };
 

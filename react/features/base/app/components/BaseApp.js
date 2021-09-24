@@ -1,23 +1,23 @@
 // @flow
 
-import { jitsiLocalStorage } from '@jitsi/js-utils';
-import _ from 'lodash';
-import React, { Component, Fragment } from 'react';
-import { I18nextProvider } from 'react-i18next';
-import { Provider } from 'react-redux';
-import { compose, createStore } from 'redux';
-import Thunk from 'redux-thunk';
+import { jitsiLocalStorage } from "@jitsi/js-utils";
+import _ from "lodash";
+import React, { Component, Fragment } from "react";
+import { I18nextProvider } from "react-i18next";
+import { Provider } from "react-redux";
+import { compose, createStore } from "redux";
+import Thunk from "redux-thunk";
 
-import { i18next } from '../../i18n';
+import { i18next } from "../../i18n";
 import {
     MiddlewareRegistry,
     PersistenceRegistry,
     ReducerRegistry,
-    StateListenerRegistry
-} from '../../redux';
-import { SoundCollection } from '../../sounds';
-import { appWillMount, appWillUnmount } from '../actions';
-import logger from '../logger';
+    StateListenerRegistry,
+} from "../../redux";
+import { SoundCollection } from "../../sounds";
+import { appWillMount, appWillUnmount } from "../actions";
+import logger from "../logger";
 
 declare var APP: Object;
 
@@ -25,7 +25,6 @@ declare var APP: Object;
  * The type of the React {@code Component} state of {@link BaseApp}.
  */
 type State = {
-
     /**
      * The {@code Route} rendered by the {@code BaseApp}.
      */
@@ -34,7 +33,7 @@ type State = {
     /**
      * The redux store used by the {@code BaseApp}.
      */
-    store: Object
+    store: Object,
 };
 
 /**
@@ -56,7 +55,7 @@ export default class BaseApp extends Component<*, State> {
 
         this.state = {
             route: {},
-            store: undefined
+            store: undefined,
         };
     }
 
@@ -75,17 +74,23 @@ export default class BaseApp extends Component<*, State> {
          * @type {Promise}
          */
         this._init = this._initStorage()
-            .catch(err => {
+            .catch((err) => {
                 /* BaseApp should always initialize! */
                 logger.error(err);
             })
-            .then(() => new Promise(resolve => {
-                this.setState({
-                    store: this._createStore()
-                }, resolve);
-            }))
+            .then(
+                () =>
+                    new Promise((resolve) => {
+                        this.setState(
+                            {
+                                store: this._createStore(),
+                            },
+                            resolve
+                        );
+                    })
+            )
             .then(() => this.state.store.dispatch(appWillMount(this)))
-            .catch(err => {
+            .catch((err) => {
                 /* BaseApp should always initialize! */
                 logger.error(err);
             });
@@ -122,7 +127,7 @@ export default class BaseApp extends Component<*, State> {
      * @returns {Promise}
      */
     _initStorage(): Promise<*> {
-        const _initializing = jitsiLocalStorage.getItem('_initializing');
+        const _initializing = jitsiLocalStorage.getItem("_initializing");
 
         return _initializing || Promise.resolve();
     }
@@ -134,17 +139,20 @@ export default class BaseApp extends Component<*, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { route: { component, props }, store } = this.state;
+        const {
+            route: { component, props },
+            store,
+        } = this.state;
 
         if (store) {
             return (
-                <I18nextProvider i18n = { i18next }>
-                    <Provider store = { store }>
+                <I18nextProvider i18n={i18next}>
+                    <Provider store={store}>
                         <Fragment>
-                            { this._createMainElement(component, props) }
+                            {this._createMainElement(component, props)}
                             <SoundCollection />
-                            { this._createExtraElement() }
-                            { this._renderDialogContainer() }
+                            {this._createExtraElement()}
+                            {this._renderDialogContainer()}
                         </Fragment>
                     </Provider>
                 </I18nextProvider>
@@ -204,13 +212,18 @@ export default class BaseApp extends Component<*, State> {
         // available for the purposes of facilitating development.
         let devToolsExtension;
 
-        if (typeof window === 'object'
-                && (devToolsExtension = window.devToolsExtension)) {
+        if (
+            typeof window === "object" &&
+            (devToolsExtension = window.devToolsExtension)
+        ) {
             middleware = compose(middleware, devToolsExtension());
         }
 
         const store = createStore(
-            reducer, PersistenceRegistry.getPersistedState(), middleware);
+            reducer,
+            PersistenceRegistry.getPersistedState(),
+            middleware
+        );
 
         // StateListenerRegistry
         StateListenerRegistry.subscribe(store);
@@ -219,7 +232,7 @@ export default class BaseApp extends Component<*, State> {
         // non-reactified parts of the code (conference.js for example).
         // Don't use in the react code!!!
         // FIXME: remove when the reactification is finished!
-        if (typeof APP !== 'undefined') {
+        if (typeof APP !== "undefined") {
             APP.store = store;
         }
 
@@ -249,7 +262,7 @@ export default class BaseApp extends Component<*, State> {
         // performed before setState completes, the app may not navigate to the
         // expected route. In order to mitigate the problem, _navigate was
         // changed to return a Promise.
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             this.setState({ route }, resolve);
         });
     }
@@ -259,5 +272,5 @@ export default class BaseApp extends Component<*, State> {
      *
      * @returns {React$Element}
      */
-    _renderDialogContainer: () => React$Element<*>
+    _renderDialogContainer: () => React$Element<*>;
 }

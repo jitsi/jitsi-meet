@@ -4,28 +4,43 @@
 export const THRESHOLDS = [
     {
         width: 520,
-        order: [ 'microphone', 'camera', 'desktop', 'chat', 'raisehand', 'participants', 'tileview' ]
+        order: [
+            "microphone",
+            "camera",
+            "desktop",
+            "recording",
+            "chat",
+            "participants",
+            "tileview",
+        ],
     },
     {
         width: 470,
-        order: [ 'microphone', 'camera', 'desktop', 'chat', 'raisehand', 'participants' ]
+        order: [
+            "microphone",
+            "camera",
+            "desktop",
+            "recording",
+            "chat",
+            "participants",
+        ],
     },
     {
         width: 420,
-        order: [ 'microphone', 'camera', 'desktop', 'chat', 'participants' ]
+        order: ["microphone", "camera", "desktop", "recording", "participants"],
     },
     {
         width: 370,
-        order: [ 'microphone', 'camera', 'chat', 'participants' ]
+        order: ["microphone", "camera", "recording", "participants"],
     },
     {
         width: 320,
-        order: [ 'microphone', 'camera', 'chat' ]
+        order: ["microphone", "camera", "recording"],
     },
     {
         width: 270,
-        order: [ 'microphone', 'camera' ]
-    }
+        order: ["microphone", "camera"],
+    },
 ];
 
-export const NOT_APPLICABLE = 'N/A';
+export const NOT_APPLICABLE = "N/A";

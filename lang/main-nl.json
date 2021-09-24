@@ -537,9 +537,9 @@
         "configuringDevices": "Apparaten instellen...",
         "connectedWithAudioQ": "Bent u verbonden met audio?",
         "connection": {
-           "good": "Uw internetverbinding lijkt goed te zijn!",
-           "nonOptimal": "Uw internetverbinding is niet optimaal",
-           "poor": "Uw internetverbinding is slecht"
+            "good": "Uw internetverbinding lijkt goed te zijn!",
+            "nonOptimal": "Uw internetverbinding is niet optimaal",
+            "poor": "Uw internetverbinding is slecht"
         },
         "copyAndShare": "Kopieer & deel link naar vergadering",
         "dialInMeeting": "Inbellen naar de vergadering",
@@ -898,7 +898,7 @@
         "getHelp": "Hulp krijgen",
         "go": "GAAN",
         "goSmall": "GAAN",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "CEFIS.LIVE | VÍDEO CONFERÊNCIA FREE",
         "headerSubtitle": "Veilige vergaderingen van hoge kwaliteit",
         "info": "Informatie",
         "join": "AANMAKEN / DEELNEMEN",
@@ -925,7 +925,7 @@
         "header": "Helpcentrum"
     },
     "lobby": {
-        "knockingParticipantList" : "Lijst van aankloppende deelnemers",
+        "knockingParticipantList": "Lijst van aankloppende deelnemers",
         "allow": "Toestaan",
         "backToKnockModeButton": "Geen wachtwoord, vraag om deel te mogen nemen",
         "dialogTitle": "Lobby-modus",

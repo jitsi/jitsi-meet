@@ -1,15 +1,15 @@
 // @flow
 
-import { withStyles } from '@material-ui/core/styles';
-import React from 'react';
+import { withStyles } from "@material-ui/core/styles";
+import React from "react";
 
-import { translate } from '../../../base/i18n';
-import { Label } from '../../../base/label';
-import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
-import { connect } from '../../../base/redux';
+import { translate } from "../../../base/i18n";
+import { Label } from "../../../base/label";
+import { JitsiRecordingConstants } from "../../../base/lib-jitsi-meet";
+import { connect } from "../../../base/redux";
 import AbstractRecordingLabel, {
-    _mapStateToProps
-} from '../AbstractRecordingLabel';
+    _mapStateToProps,
+} from "../AbstractRecordingLabel";
 
 /**
  * Creates the styles for the component.
@@ -18,14 +18,14 @@ import AbstractRecordingLabel, {
  *
  * @returns {Object}
  */
-const styles = theme => {
+const styles = (theme) => {
     return {
         [JitsiRecordingConstants.mode.STREAM]: {
-            background: theme.palette.ui03
+            background: theme.palette.ui03,
         },
         [JitsiRecordingConstants.mode.FILE]: {
-            background: theme.palette.iconError
-        }
+            background: theme.palette.iconError,
+        },
     };
 };
 
@@ -53,13 +53,16 @@ class RecordingLabel extends AbstractRecordingLabel {
         return (
             <div>
                 <Label
-                    className = { classes && classes[mode] }
-                    text = { t(this._getLabelKey()) } />
+                    className={classes && classes[mode]}
+                    text={t(this._getLabelKey())}
+                />
             </div>
         );
     }
 
-    _getLabelKey: () => ?string
+    _getLabelKey: () => ?string;
 }
 
-export default withStyles(styles)(translate(connect(_mapStateToProps)(RecordingLabel)));
+export default withStyles(styles)(
+    translate(connect(_mapStateToProps)(RecordingLabel))
+);

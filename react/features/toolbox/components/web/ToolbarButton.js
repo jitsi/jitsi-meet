@@ -1,18 +1,16 @@
 /* @flow */
 
-import React from 'react';
+import React from "react";
 
-import { Icon } from '../../../base/icons';
-import { Tooltip } from '../../../base/tooltip';
-import AbstractToolbarButton from '../AbstractToolbarButton';
-import type { Props as AbstractToolbarButtonProps }
-    from '../AbstractToolbarButton';
+import { Icon } from "../../../base/icons";
+import { Tooltip } from "../../../base/tooltip";
+import AbstractToolbarButton from "../AbstractToolbarButton";
+import type { Props as AbstractToolbarButtonProps } from "../AbstractToolbarButton";
 
 /**
  * The type of the React {@code Component} props of {@link ToolbarButton}.
  */
 export type Props = AbstractToolbarButtonProps & {
-
     /**
      * The text to display in the tooltip.
      */
@@ -27,7 +25,7 @@ export type Props = AbstractToolbarButtonProps & {
     /**
      * keyDown handler
      */
-    onKeyDown?: Function
+    onKeyDown?: Function,
 };
 
 /**
@@ -42,7 +40,7 @@ class ToolbarButton extends AbstractToolbarButton<Props> {
      * @static
      */
     static defaultProps = {
-        tooltipPosition: 'top'
+        tooltipPosition: "top",
     };
 
     /**
@@ -67,7 +65,7 @@ class ToolbarButton extends AbstractToolbarButton<Props> {
      * @returns {void}
      */
     _onKeyPress(event) {
-        if (event.key === 'Enter' || event.key === ' ') {
+        if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
             this.props.onClick();
         }
@@ -99,21 +97,25 @@ class ToolbarButton extends AbstractToolbarButton<Props> {
     _renderButton(children) {
         return (
             <div
-                aria-label = { this.props.accessibilityLabel }
-                aria-pressed = { this.props.toggled }
-                className = 'toolbox-button'
-                onClick = { this._onClick }
-                onKeyDown = { this.props.onKeyDown }
-                onKeyPress = { this._onKeyPress }
-                role = 'button'
-                tabIndex = { 0 }>
-                { this.props.tooltip
-                    ? <Tooltip
-                        content = { this.props.tooltip }
-                        position = { this.props.tooltipPosition }>
-                        { children }
+                aria-label={this.props.accessibilityLabel}
+                aria-pressed={this.props.toggled}
+                className="toolbox-button"
+                onClick={this._onClick}
+                onKeyDown={this.props.onKeyDown}
+                onKeyPress={this._onKeyPress}
+                role="button"
+                tabIndex={0}
+            >
+                {this.props.tooltip ? (
+                    <Tooltip
+                        content={this.props.tooltip}
+                        position={this.props.tooltipPosition}
+                    >
+                        {children}
                     </Tooltip>
-                    : children }
+                ) : (
+                    children
+                )}
             </div>
         );
     }
@@ -125,8 +127,12 @@ class ToolbarButton extends AbstractToolbarButton<Props> {
      */
     _renderIcon() {
         return (
-            <div className = { `toolbox-icon ${this.props.toggled ? 'toggled' : ''}` }>
-                <Icon src = { this.props.icon } />
+            <div
+                className={`toolbox-icon ${
+                    this.props.toggled ? "toggled" : ""
+                }`}
+            >
+                <Icon src={this.props.icon} />
             </div>
         );
     }

@@ -1,11 +1,11 @@
 // @flow
 
-import React, { Fragment } from 'react';
+import React, { Fragment } from "react";
 
-import { Icon } from '../../../icons';
-import { Tooltip } from '../../../tooltip';
-import AbstractToolboxItem from '../AbstractToolboxItem';
-import type { Props } from '../AbstractToolboxItem';
+import { Icon } from "../../../icons";
+import { Tooltip } from "../../../tooltip";
+import AbstractToolboxItem from "../AbstractToolboxItem";
+import type { Props } from "../AbstractToolboxItem";
 
 /**
  * Web implementation of {@code AbstractToolboxItem}.
@@ -32,7 +32,7 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
      * @returns {void}
      */
     _onKeyPress(event) {
-        if (event.key === 'Enter' || event.key === ' ') {
+        if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
             this.props.onClick();
         }
@@ -54,38 +54,34 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
             onClick,
             showLabel,
             tooltipPosition,
-            toggled
+            toggled,
         } = this.props;
-        const className = showLabel ? 'overflow-menu-item' : 'toolbox-button';
+        const className = showLabel ? "overflow-menu-item" : "toolbox-button";
         const props = {
-            'aria-pressed': toggled,
-            'aria-disabled': disabled,
-            'aria-label': this.accessibilityLabel,
-            className: className + (disabled ? ' disabled' : ''),
+            "aria-pressed": toggled,
+            "aria-disabled": disabled,
+            "aria-label": this.accessibilityLabel,
+            className: className + (disabled ? " disabled" : ""),
             onClick: disabled ? undefined : onClick,
             onKeyPress: this._onKeyPress,
             tabIndex: 0,
-            role: showLabel ? 'menuitem' : 'button'
+            role: showLabel ? "menuitem" : "button",
         };
 
-        const elementType = showLabel ? 'li' : 'div';
+        const elementType = showLabel ? "li" : "div";
         const useTooltip = this.tooltip && this.tooltip.length > 0;
         let children = (
             <Fragment>
-                { this._renderIcon() }
-                { showLabel && <span>
-                    { this.label }
-                </span> }
-                { elementAfter }
+                {this._renderIcon()}
+                {showLabel && <span>{this.label}</span>}
+                {elementAfter}
             </Fragment>
         );
 
         if (useTooltip) {
             children = (
-                <Tooltip
-                    content = { this.tooltip }
-                    position = { tooltipPosition }>
-                    { children }
+                <Tooltip content={this.tooltip} position={tooltipPosition}>
+                    {children}
                 </Tooltip>
             );
         }
@@ -101,10 +97,13 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
      */
     _renderIcon() {
         const { customClass, disabled, icon, showLabel, toggled } = this.props;
-        const iconComponent = <Icon src = { icon } />;
-        const elementType = showLabel ? 'span' : 'div';
-        const className = `${showLabel ? 'overflow-menu-item-icon' : 'toolbox-icon'} ${
-            toggled ? 'toggled' : ''} ${disabled ? 'disabled' : ''} ${customClass ?? ''}`;
+        const iconComponent = <Icon src={icon} />;
+        const elementType = showLabel ? "span" : "div";
+        const className = `${
+            showLabel ? "overflow-menu-item-icon" : "toolbox-icon"
+        } ${toggled ? "toggled" : ""} ${disabled ? "disabled" : ""} ${
+            customClass ?? ""
+        }`;
 
         return React.createElement(elementType, { className }, iconComponent);
     }

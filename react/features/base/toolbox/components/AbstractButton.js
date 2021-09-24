@@ -1,14 +1,13 @@
 // @flow
 
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import { combineStyles } from '../../styles';
+import { combineStyles } from "../../styles";
 
-import type { Styles } from './AbstractToolboxItem';
-import ToolboxItem from './ToolboxItem';
+import type { Styles } from "./AbstractToolboxItem";
+import ToolboxItem from "./ToolboxItem";
 
 export type Props = {
-
     /**
      * Function to be called after the click handler has been processed.
      */
@@ -23,7 +22,7 @@ export type Props = {
     /**
      * External handler for click action.
      */
-     handleClick?: Function,
+    handleClick?: Function,
 
     /**
      * Whether to show the label or not.
@@ -48,7 +47,7 @@ export type Props = {
     /**
      * Whether this button is visible or not.
      */
-    visible: boolean
+    visible: boolean,
 };
 
 /**
@@ -56,13 +55,13 @@ export type Props = {
  */
 export const defaultDisabledButtonStyles = {
     iconStyle: {
-        opacity: 0.5
+        opacity: 0.5,
     },
     labelStyle: {
-        opacity: 0.5
+        opacity: 0.5,
     },
     style: undefined,
-    underlayColor: undefined
+    underlayColor: undefined,
 };
 
 /**
@@ -75,8 +74,8 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
         showLabel: false,
         styles: undefined,
         toggledStyles: undefined,
-        tooltipPosition: 'top',
-        visible: true
+        tooltipPosition: "top",
+        visible: true,
     };
 
     /**
@@ -165,9 +164,7 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
      * @returns {string}
      */
     _getIcon() {
-        return (
-            this._isToggled() ? this.toggledIcon : this.icon
-        ) || this.icon;
+        return (this._isToggled() ? this.toggledIcon : this.icon) || this.icon;
     }
 
     /**
@@ -179,8 +176,9 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
      * @returns {string}
      */
     _getLabel() {
-        return (this._isToggled() ? this.toggledLabel : this.label)
-            || this.label;
+        return (
+            (this._isToggled() ? this.toggledLabel : this.label) || this.label
+        );
     }
 
     /**
@@ -193,19 +191,22 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
      */
     _getStyles(): ?Styles {
         const { disabledStyles, styles, toggledStyles } = this.props;
-        const buttonStyles
-            = (this._isToggled() ? toggledStyles : styles) || styles;
+        const buttonStyles =
+            (this._isToggled() ? toggledStyles : styles) || styles;
 
         if (this._isDisabled() && buttonStyles && disabledStyles) {
             return {
                 iconStyle: combineStyles(
-                    buttonStyles.iconStyle, disabledStyles.iconStyle),
+                    buttonStyles.iconStyle,
+                    disabledStyles.iconStyle
+                ),
                 labelStyle: combineStyles(
-                    buttonStyles.labelStyle, disabledStyles.labelStyle),
-                style: combineStyles(
-                    buttonStyles.style, disabledStyles.style),
+                    buttonStyles.labelStyle,
+                    disabledStyles.labelStyle
+                ),
+                style: combineStyles(buttonStyles.style, disabledStyles.style),
                 underlayColor:
-                    disabledStyles.underlayColor || buttonStyles.underlayColor
+                    disabledStyles.underlayColor || buttonStyles.underlayColor,
             };
         }
 
@@ -219,7 +220,7 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
      * @returns {string}
      */
     _getTooltip() {
-        return this.tooltip || '';
+        return this.tooltip || "";
     }
 
     /**
@@ -281,14 +282,15 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
             label: this._getLabel(),
             styles: this._getStyles(),
             toggled: this._isToggled(),
-            tooltip: this._getTooltip()
+            tooltip: this._getTooltip(),
         };
 
         return (
             <ToolboxItem
-                disabled = { this._isDisabled() }
-                onClick = { this._onClick }
-                { ...props } />
+                disabled={this._isDisabled()}
+                onClick={this._onClick}
+                {...props}
+            />
         );
     }
 }

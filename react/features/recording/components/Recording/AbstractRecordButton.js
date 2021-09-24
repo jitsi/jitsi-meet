@@ -1,29 +1,28 @@
 // @flow
 
-import {
-    createToolbarEvent,
-    sendAnalytics
-} from '../../../analytics';
-import { openDialog } from '../../../base/dialog';
-import { IconToggleRecording } from '../../../base/icons';
-import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
+import { createToolbarEvent, sendAnalytics } from "../../../analytics";
+import { openDialog } from "../../../base/dialog";
+import { IconToggleRecording } from "../../../base/icons";
+import { JitsiRecordingConstants } from "../../../base/lib-jitsi-meet";
 import {
     getLocalParticipant,
-    isLocalParticipantModerator
-} from '../../../base/participants';
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
-import { FEATURES } from '../../../jaas/constants';
-import { getActiveSession } from '../../functions';
+    isLocalParticipantModerator,
+} from "../../../base/participants";
+import {
+    AbstractButton,
+    type AbstractButtonProps,
+} from "../../../base/toolbox/components";
+import { maybeShowPremiumFeatureDialog } from "../../../jaas/actions";
+import { FEATURES } from "../../../jaas/constants";
+import { getActiveSession } from "../../functions";
 
-import { StartRecordingDialog, StopRecordingDialog } from './_';
+import { StartRecordingDialog, StopRecordingDialog } from "./_";
 
 /**
  * The type of the React {@code Component} props of
  * {@link AbstractRecordButton}.
  */
 export type Props = AbstractButtonProps & {
-
     /**
      * True if the button needs to be disabled.
      */
@@ -47,17 +46,20 @@ export type Props = AbstractButtonProps & {
     /**
      * The i18n translate function.
      */
-    t: Function
+    t: Function,
 };
 
 /**
  * An abstract implementation of a button for starting and stopping recording.
  */
-export default class AbstractRecordButton<P: Props> extends AbstractButton<P, *> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.recording';
+export default class AbstractRecordButton<P: Props> extends AbstractButton<
+    P,
+    *
+> {
+    accessibilityLabel = "toolbar.accessibilityLabel.recording";
     icon = IconToggleRecording;
-    label = 'dialog.startRecording';
-    toggledLabel = 'dialog.stopRecording';
+    label = "dialog.startRecording";
+    toggledLabel = "dialog.stopRecording";
 
     /**
      * Returns the tooltip that should be displayed when the button is disabled.
@@ -66,7 +68,7 @@ export default class AbstractRecordButton<P: Props> extends AbstractButton<P, *>
      * @returns {string}
      */
     _getTooltip() {
-        return this.props._tooltip || '';
+        return this.props._tooltip || "";
     }
 
     /**
@@ -85,19 +87,25 @@ export default class AbstractRecordButton<P: Props> extends AbstractButton<P, *>
             return;
         }
 
-        sendAnalytics(createToolbarEvent(
-            'recording.button',
-            {
-                'is_recording': _isRecordingRunning,
-                type: JitsiRecordingConstants.mode.FILE
-            }));
+        sendAnalytics(
+            createToolbarEvent("recording.button", {
+                is_recording: _isRecordingRunning,
+                type: JitsiRecordingConstants.mode.FILE,
+            })
+        );
 
-        const dialogShown = await dispatch(maybeShowPremiumFeatureDialog(FEATURES.RECORDING));
+        const dialogShown = await dispatch(
+            maybeShowPremiumFeatureDialog(FEATURES.RECORDING)
+        );
 
         if (!dialogShown) {
-            dispatch(openDialog(
-                _isRecordingRunning ? StopRecordingDialog : StartRecordingDialog
-            ));
+            dispatch(
+                openDialog(
+                    _isRecordingRunning
+                        ? StopRecordingDialog
+                        : StartRecordingDialog
+                )
+            );
         }
     }
 
@@ -144,28 +152,28 @@ export function _mapStateToProps(state: Object, ownProps: Props): Object {
     // a button can be disabled/enabled if enableFeaturesBasedOnToken
     // is on or if the livestreaming is running.
     let _disabled;
-    let _tooltip = '';
+    let _tooltip = "";
 
-    if (typeof visible === 'undefined') {
+    if (typeof visible === "undefined") {
         // If the containing component provides the visible prop, that is one
         // above all, but if not, the button should be autonomus and decide on
         // its own to be visible or not.
         const isModerator = isLocalParticipantModerator(state);
-        const {
-            enableFeaturesBasedOnToken,
-            fileRecordingsEnabled
-        } = state['features/base/config'];
+        const { enableFeaturesBasedOnToken, fileRecordingsEnabled, hosts } =
+            state["features/base/config"];
         const { features = {} } = getLocalParticipant(state);
 
-        visible = isModerator && fileRecordingsEnabled;
+        visible =
+            (isModerator && fileRecordingsEnabled) ||
+            hosts.domain === "alpha.jitsi.net";
 
         if (enableFeaturesBasedOnToken) {
-            visible = visible && String(features.recording) === 'true';
-            _disabled = String(features.recording) === 'disabled';
+            visible = visible && String(features.recording) === "true";
+            _disabled = String(features.recording) === "disabled";
             if (!visible && !_disabled) {
                 _disabled = true;
                 visible = true;
-                _tooltip = 'dialog.recordingDisabledTooltip';
+                _tooltip = "dialog.recordingDisabledTooltip";
             }
         }
     }
@@ -173,13 +181,16 @@ export function _mapStateToProps(state: Object, ownProps: Props): Object {
     // disable the button if the livestreaming is running.
     if (getActiveSession(state, JitsiRecordingConstants.mode.STREAM)) {
         _disabled = true;
-        _tooltip = 'dialog.recordingDisabledBecauseOfActiveLiveStreamingTooltip';
+        _tooltip =
+            "dialog.recordingDisabledBecauseOfActiveLiveStreamingTooltip";
     }
 
     return {
         _disabled,
-        _isRecordingRunning: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE)),
+        _isRecordingRunning: Boolean(
+            getActiveSession(state, JitsiRecordingConstants.mode.FILE)
+        ),
         _tooltip,
-        visible
+        visible,
     };
 }
