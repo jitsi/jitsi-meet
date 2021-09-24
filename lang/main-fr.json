@@ -248,6 +248,8 @@
     "micPermissionDeniedError": "Vous n'avez pas autorisé l'utilisation de votre microphone. Vous pouvez toujours participer à la conférence, mais les autres ne vont pas vous entendre. Utilisez le bouton du microphone dans la barre d'adresse pour résoudre ce problème.",
     "micTimeoutError": "Impossible de démarrer la source audio. Délai dépassé!",
     "micUnknownError": "Vous ne pouvez pas utiliser le microphone pour une raison inconnue.",
+    "moderationAudioLabel": "Autoriser les participants à réactiver leur micro",
+    "moderationVideoLabel": "Autoriser les participants à démarrer leur vidéo",
     "muteEveryoneElseDialog": "Une fois leur micro coupé, vous ne pourrez plus le réactiver, mais ils pourront l'activer par eux-mêmes à tout moment.",
     "muteEveryoneElseTitle": "Couper le micro de tout le monde sauf de {{whom}} ?",
     "muteEveryoneDialog": "Êtes-vous sûr de vouloir couper les micros de tout le monde ? Vous ne pourrez plus réactiver leur micro, mais ils pourront l'activer par eux-mêmes à tout moment.",
@@ -563,12 +565,21 @@
     "close": "Fermer",
     "headings": {
       "lobby": "Salle d'attente ({{count}})",
-      "participantsList": "Participants de la réunion ({{count}})"
+      "participantsList": "Participants de la réunion ({{count}})",
+      "waitingLobby": "Dans la salle d'attente ({{count}})"
     },
     "actions": {
+      "allow": "Autoriser les participant à:",
+      "blockEveryoneMicCamera": "Bloquer tous les micros et caméras",
       "invite": "Inviter quelqu'un",
-      "muteAll": "couper le micro de tout le monde",
-      "stopVideo": "couper la vidéo"
+      "askUnmute": "Demander de réactiver le micro",
+      "mute": "Couper le micro",
+      "muteAll": "Couper le micro de tout le monde",
+      "muteEveryoneElse": "Couper le micro de tous les autres",
+      "startModeration": "Réactiver son micro ou démarrer sa vidéo",
+      "stopEveryonesVideo": "Couper toutes les caméras",
+      "stopVideo": "Couper la vidéo",
+      "unblockEveryoneMicCamera": "Débloquer tous les micros et caméras"
     }
   },
   "passwordSetRemotely": "défini par un autre participant",
