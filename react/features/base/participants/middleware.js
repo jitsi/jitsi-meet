@@ -59,6 +59,7 @@ import {
     isLocalParticipantModerator
 } from './functions';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
+import logger from './logger';
 
 declare var APP: Object;
 
@@ -462,6 +463,10 @@ function _participantJoinedOrUpdated(store, next, action) {
 
             // Send raisedHand signalling only if there is a change
             if (conference && raisedHand !== getLocalParticipant(getState()).raisedHand) {
+                const e = new Error();
+
+                logger.info(`Will send raised hand ${e.stack}`);
+
                 conference.setLocalParticipantProperty('raisedHand', raisedHand);
             }
         }
