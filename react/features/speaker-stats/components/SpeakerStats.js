@@ -130,15 +130,36 @@ class SpeakerStats extends Component<Props, State> {
     _getSpeakerStats() {
         const stats = { ...this.props.conference.getSpeakerStats() };
 
+        for (const userId in stats) {
+            if (stats[userId]) {
+                let displayName;
+
+                if (stats[userId].isLocalStats()) {
+                    const { t } = this.props;
+                    const meString = t('me');
+
+                    displayName = this.props._localDisplayName;
+                    displayName
+                        = displayName ? `${displayName} (${meString})` : meString;
+                } else {
+                    displayName
+                        = stats[userId].getDisplayName()
+                            || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
+                }
+
+                stats[userId].displayName = displayName;
+            }
+        }
+
         if (this.state?.criteria) {
             const searchRegex = new RegExp(this.state.criteria, 'gi');
 
-            for (const id in stats) {
-                if (stats[id].hasOwnProperty('_isLocalStats')) {
-                    const name = stats[id].isLocalStats() ? this.props._localDisplayName : stats[id].getDisplayName();
+            for (const userId in stats) {
+                if (stats[userId]) {
+                    const name = stats[userId].getDisplayName();
 
                     if (!name || !name.match(searchRegex)) {
-                        delete stats[id];
+                        delete stats[userId];
                     }
                 }
             }
@@ -166,24 +187,9 @@ class SpeakerStats extends Component<Props, State> {
         const dominantSpeakerTime = statsModel.getTotalDominantSpeakerTime();
         const hasLeft = statsModel.hasLeft();
 
-        let displayName;
-
-        if (statsModel.isLocalStats()) {
-            const { t } = this.props;
-            const meString = t('me');
-
-            displayName = this.props._localDisplayName;
-            displayName
-                = displayName ? `${displayName} (${meString})` : meString;
-        } else {
-            displayName
-                = this.state.stats[userId].getDisplayName()
-                    || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
-        }
-
         return (
             <SpeakerStatsItem
-                displayName = { displayName }
+                displayName = { statsModel.getDisplayName() }
                 dominantSpeakerTime = { dominantSpeakerTime }
                 hasLeft = { hasLeft }
                 isDominantSpeaker = { isDominantSpeaker }
