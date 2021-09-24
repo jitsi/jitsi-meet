@@ -168,9 +168,7 @@ export function filterBySearchCriteria(state: Object, stats: ?Object) {
             if (filteredStats[id].hasOwnProperty('_isLocalStats')) {
                 const name = filteredStats[id].getDisplayName();
 
-                if (!name || !name.match(searchRegex)) {
-                    filteredStats[id].hidden = true;
-                }
+                filteredStats[id].hidden = !name || !name.match(searchRegex);
             }
         }
     }
