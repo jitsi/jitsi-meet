@@ -10,7 +10,7 @@ import { connect } from '../../base/redux';
 import { escapeRegexp } from '../../base/util';
 import { initUpdateStats, initSearch } from '../actions';
 import { SPEAKER_STATS_RELOAD_INTERVAL } from '../constants';
-import { getSpeakerStats, getSearchCriteria } from '../functions';
+import { getSpeakerStats } from '../functions';
 
 import SpeakerStatsItem from './SpeakerStatsItem';
 import SpeakerStatsLabels from './SpeakerStatsLabels';
@@ -36,7 +36,7 @@ type Props = {
     /**
      * The search criteria.
      */
-    _criteria: string,
+    _criteria: string | null,
 
     /**
      * The JitsiConference from which stats will be pulled.
@@ -140,24 +140,9 @@ class SpeakerStats extends Component<Props> {
         const dominantSpeakerTime = statsModel.getTotalDominantSpeakerTime();
         const hasLeft = statsModel.hasLeft();
 
-        let displayName;
-
-        if (statsModel.isLocalStats()) {
-            const { t } = this.props;
-            const meString = t('me');
-
-            displayName = this.props._localDisplayName;
-            displayName
-                = displayName ? `${displayName} (${meString})` : meString;
-        } else {
-            displayName
-                = this.props._stats[userId].getDisplayName()
-                    || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
-        }
-
         return (
             <SpeakerStatsItem
-                displayName = { displayName }
+                displayName = { statsModel.getDisplayName() }
                 dominantSpeakerTime = { dominantSpeakerTime }
                 hasLeft = { hasLeft }
                 isDominantSpeaker = { isDominantSpeaker }
@@ -187,7 +172,40 @@ class SpeakerStats extends Component<Props> {
      * @private
      */
     _updateStats() {
-        this.props.dispatch(initUpdateStats(() => this.props.conference.getSpeakerStats()));
+        this.props.dispatch(initUpdateStats(() => this._getSpeakerStats()));
+    }
+
+    /**
+     * Update the internal state with the latest speaker stats.
+     *
+     * @returns {Object}
+     * @private
+     */
+    _getSpeakerStats() {
+        const stats = { ...this.props.conference.getSpeakerStats() };
+
+        for (const userId in stats) {
+            if (stats[userId]) {
+                if (stats[userId].isLocalStats()) {
+                    const { t } = this.props;
+                    const meString = t('me');
+
+                    stats[userId].setDisplayName(
+                        this.props._localDisplayName
+                            ? `${this.props._localDisplayName} (${meString})`
+                            : meString
+                    );
+                }
+
+                if (!stats[userId].getDisplayName()) {
+                    stats[userId].setDisplayName(
+                        interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME
+                    );
+                }
+            }
+        }
+
+        return stats;
     }
 }
 
@@ -198,8 +216,7 @@ class SpeakerStats extends Component<Props> {
  * @private
  * @returns {{
  *     _localDisplayName: ?string,
- *     _stats: Object,
- *     _criteria: string,
+ *     _stats: Object
  * }}
  */
 function _mapStateToProps(state) {
@@ -213,8 +230,7 @@ function _mapStateToProps(state) {
          * @type {string|undefined}
          */
         _localDisplayName: localParticipant && localParticipant.name,
-        _stats: getSpeakerStats(state),
-        _criteria: getSearchCriteria(state)
+        _stats: getSpeakerStats(state)
     };
 }
 
