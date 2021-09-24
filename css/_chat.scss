@@ -213,6 +213,7 @@
 }
 
 #usermsg {
+    -ms-overflow-style: none;
     border: 0px none;
     border-radius:0;
     box-shadow: none;
@@ -221,8 +222,13 @@
     padding: 10px;
     overflow-y: auto;
     resize: none;
+    scrollbar-width: none;
     width: 100%;
     word-break: break-word;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
 }
 
 #usermsg:hover {
