@@ -58,8 +58,8 @@ import {
     getRemoteParticipants,
     isLocalParticipantModerator
 } from './functions';
-import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
 import logger from './logger';
+import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
 
 declare var APP: Object;
 
