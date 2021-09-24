@@ -75,3 +75,7 @@
     top: 0;
     height: 48px;
 }
+
+.shift-right .details-container {
+    margin-left: calc(#{$sidebarWidth} / 2);
+}
