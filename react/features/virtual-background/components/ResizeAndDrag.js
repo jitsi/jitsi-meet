@@ -132,7 +132,7 @@ function ResizeAndDrag({ _currentCameraDeviceId, _virtualBackground, dispatch, s
         };
     }
 
-    const dragAndResizeRef = useRef();
+    const dragAndResizeRef = useRef(null);
     const [ desktopShareType ]
     = useState((_virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.TRANSPARENT_PREVIEW)
     || (_virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE_TRANSFORM));
@@ -416,21 +416,23 @@ function ResizeAndDrag({ _currentCameraDeviceId, _virtualBackground, dispatch, s
     };
 
     useEffect(() => {
+        dragAndResizeRef.current = true;
         if (dragAndResizeRef.current) {
             createLocalJitsiTrack(null);
         }
 
-        if (screen !== null) {
+        if (screen !== null && dragAndResizeRef.current) {
             createLocalJitsiTrack(screen);
         }
 
-        return function cleanup() {
+        return () => {
             if (_virtualBackground?.dragAndDropOptions?.jitsiTrack) {
                 _virtualBackground.dragAndDropOptions.jitsiTrack.dispose();
             }
+            dragAndResizeRef.current = false;
         };
 
-    }, [ dragAndResizeRef, screen ]);
+    }, [ screen ]);
 
     return (
         <>
