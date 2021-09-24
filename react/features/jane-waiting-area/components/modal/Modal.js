@@ -6,6 +6,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import React, { Component } from 'react';
 
+import { createWaitingAreaModalEvent, sendAnalytics } from '../../../analytics';
 import { getLocalizedDateFormatter, translate } from '../../../base/i18n';
 import { getLocalParticipantType } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux';
@@ -101,11 +102,13 @@ class Modal extends Component<Props> {
 
     _joinConference: Function;
     _onFailed: Function;
+    _admitClient: Function;
 
     constructor(props) {
         super(props);
         this._joinConference = this._joinConference.bind(this);
         this._onFailed = this._onFailed.bind(this);
+        this._admitClient = this._admitClient.bind(this);
     }
 
     _joinConference() {
@@ -115,13 +118,22 @@ class Modal extends Component<Props> {
         joinConference();
     }
 
+    _admitClient() {
+        sendAnalytics(createWaitingAreaModalEvent('admit.button.clicked'));
+        this._joinConference();
+    }
+
     componentDidUpdate(prevProps: Props) {
         const { localParticipantCanJoin, participantType } = this.props;
 
         if (localParticipantCanJoin !== prevProps.localParticipantCanJoin
-            && localParticipantCanJoin
-            && participantType === 'Patient') {
-            this._joinConference();
+            && localParticipantCanJoin) {
+            if (participantType === 'Patient') {
+                this._joinConference();
+            }
+            if (participantType === 'StaffMember') {
+                sendAnalytics(createWaitingAreaModalEvent('admit.button.enabled'));
+            }
         }
     }
 
@@ -217,7 +229,7 @@ class Modal extends Component<Props> {
             t,
             isMobile
         } = this.props;
-        const { _joinConference } = this;
+        const { _admitClient } = this;
 
         return (<div className = 'jane-waiting-area-modal'>
             <div className = 'jane-waiting-area-modal-dialog'>
@@ -265,7 +277,7 @@ class Modal extends Component<Props> {
                     className = 'jane-waiting-area-preview-join-btn-container'>
                     <ActionButton
                         disabled = { !localParticipantCanJoin }
-                        onClick = { _joinConference }
+                        onClick = { _admitClient }
                         type = 'primary'>
                         {this._getBtnText()}
                     </ActionButton>
