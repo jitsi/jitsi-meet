@@ -258,7 +258,7 @@
         "passwordNotSupported": "Ajustar un $t(lockRoomPassword) a una conferéncia es pas suportat.",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) pas suportat",
         "passwordRequired": "$t(lockRoomPasswordUppercase) requesit",
-        "popupError": "Vòstre navigator bloca las fenèstras que sorgisson a partir d'aqueste site. Mercés d'activar aquelas fenèstras dins los paramètres de vòstre navigator e de tornar ensajar.",
+        "popupError": "Vòstre navigador bloca las fenèstras que sorgisson a partir d'aqueste site. Mercés d'activar aquelas fenèstras dins los paramètres de vòstre navigador e de tornar ensajar.",
         "popupErrorTitle": "Fenèstra que sorgís blocada",
         "readMore": "mai",
         "recording": "Enregistrament",
@@ -353,7 +353,15 @@
         "viewUpgradeOptionsTitle": "Avètz descobèrt una foncionalitat premium !",
         "e2eeDisabledDueToMaxModeDescription": "Impossible d'activar lo chiframent del cap a la fin a causa d'un nombre tròp bèl de participants dins la conferéncia.",
         "remoteUserControls": "Contraròtle a distància de l'utilizaire {{username}}",
-        "e2eeWillDisableDueToMaxModeDescription": "AVERTIMENT : lo chiframent del cap a la fin serà automaticament desactivat se mai de participants rejonhent la conferéncia."
+        "e2eeWillDisableDueToMaxModeDescription": "AVERTIMENT : lo chiframent del cap a la fin serà automaticament desactivat se mai de participants rejonhent la conferéncia.",
+        "permissionCameraRequiredError": "L’autorizacion de la camèra es requerida per participar a la conferéncia amb la vidèo. Mercés de la donar als Paramètres",
+        "permissionMicRequiredError": "L’autorizacion del microfòn es requerida per participar a la conferéncia amb l’àudio. Mercés de la donar als Paramètres",
+        "viewUpgradeOptionsContent": "Per obténer un accès sens limit a las foncionalitats premium coma l’enregistrament, la transcripcion, la difusion RTMP e encara mai, devètz passar al nivèl superior.",
+        "muteParticipantsVideoDialog": "Volètz vertadièrament copar la camèra d’aqueste participant ? Poiretz pas li activar de nòu, mas poiriá se la restablir quand vòlga.",
+        "muteParticipantsVideoBody": "Poiretz pas lor activar la camèra de nòu, mas poirián se la restablir quand vòlga.",
+        "shareAudioWarningD2": "devètz reaviar lo partiment d’ecran e clicar l’opcion « partejar l’àudio ».",
+        "shareScreenWarningD2": "devètz arrestar lo partiment àudio, aviar lo partiment d’ecran e clicar l’opcion « partejar l’àudio ».",
+        "localUserControls": "Contraròtles de l’utilizaire local"
     },
     "dialOut": {
         "statusMessage": "ara es {{status}}"
@@ -418,7 +426,11 @@
         "tooltip": "Partejar lo ligam e las informacions d’aquesta conferéncia",
         "copyNumber": "Copiar lo numèro",
         "inviteTextiOSPersonal": "{{name}} vos convida a la conferéncia.",
-        "sip": "adreça SIP"
+        "sip": "adreça SIP",
+        "inviteSipEndpoint": "Per rejónher en utilizant l’adreça SIP, picatz aquò : {{sipUri}}",
+        "inviteTextiOSPhone": "Per participar per telefòn, utilizatz aqueste numèro : {{number}},,{{conferenceID}}#. Se cercatz un numèro diferent, vaquí la lista complèta : {{didUrl}}.",
+        "inviteTextiOSInviteUrl": "Clicatz lo ligam seguent per rejónher : {{inviteUrl}}.",
+        "inviteTextiOSJoinSilent": "Se sonatz via un aparelh de sala de reünion, utilizatz aqueste ligam per rejónher sens connectar l’àudio : {{silentUrl}}."
     },
     "inlineDialogFailure": {
         "msg": "Avèm un pauc patit a manténer la connexion.",
@@ -518,7 +530,9 @@
         "admit": "Acceptar",
         "admitAll": "Tot acceptar",
         "rejectAll": "Tot regetar",
-        "errorMissingPassword": "Mercés de picar lo senhal de la conferéncia"
+        "errorMissingPassword": "Mercés de picar lo senhal de la conferéncia",
+        "disableDialogContent": "La sala d’espèra es actualament activada. Aquesta foncionalitat assegura que los participants indesirables poiràn pas participar. La volètz desactivar ?",
+        "enableDialogText": "La sala d’espèra vos permet de protegir vòstras conferéncias en autorizant las personas de dintrar qu’aprèp l’aprobacion formala d’un moderator."
     },
     "localRecording": {
         "clientState": {
@@ -568,10 +582,10 @@
         "invitedTwoMembers": "{{first}} e {{second}} son estats convidats",
         "kickParticipant": "{{kicked}} es estat expulsat per {{kicker}}",
         "me": "Ieu",
-        "moderator": "Dreches moderator acordats !",
+        "moderator": "Sètz ara moderator",
         "muted": "Avètz començat la conversacion en mut.",
         "mutedRemotelyDescription": "Podètz totjorn activar vòstre microfòn per prendre la paraula. Desactivatz lo microfò quand terminetz per evitar los bruches parasits.",
-        "mutedRemotelyTitle": "{{participantDisplayName}} vos a mes en silenci !",
+        "mutedRemotelyTitle": "{{participantDisplayName}} vos a mes en silenci",
         "mutedTitle": "Sètz en mut !",
         "newDeviceAction": "Utilizar",
         "newDeviceAudioTitle": "Nòu periferic àudio detectat",
@@ -586,8 +600,8 @@
         "somebody": "Qualqu'un",
         "startSilentDescription": "Rejónher la conferéncia per activar l’àudio",
         "startSilentTitle": "Avètz jonch sens cap de sortida àudio !",
-        "suboptimalBrowserWarning": "Planhèm que vòstra experiéncia de la conferéncia siá pas de las bonas. Sèm a cercar de solucions per melhorar aquò, d’aquel temps, ensajatz un dels <a href='{{recommendedBrowserPageLink}}' target='_blank'>navegators compatibles</a>.",
-        "suboptimalExperienceTitle": "Avertiment del navegador",
+        "suboptimalBrowserWarning": "Planhèm que vòstra experiéncia de la conferéncia siá pas de las bonas. Sèm a cercar de solucions per melhorar aquò, d’aquel temps, ensajatz un dels <a href='{{recommendedBrowserPageLink}}' target='_blank'>navigadors compatibles</a>.",
+        "suboptimalExperienceTitle": "Avertiment del navigador",
         "unmute": "Restablir lo son",
         "allowAction": "Autorizar",
         "videoMutedRemotelyTitle": "{{moderator}} a copat vòstra camèra",
@@ -603,7 +617,13 @@
         "raiseHandAction": "Levar la man",
         "reactionSounds": "Desactivar los sons",
         "groupTitle": "Notificacions",
-        "hostAskedUnmute": "Lo moderator vos que parletz"
+        "hostAskedUnmute": "Lo moderator vos que parletz",
+        "moderationInEffectDescription": "Volgatz levar la man se volètz parlar.",
+        "screenShareNoAudioTitle": "Partiment impossible de l’àudio del sistèma !",
+        "allowedUnmute": "Vos podètz restablir lo son del microfòn, aviar la camèra e partejar l’ecran.",
+        "screenShareNoAudio": " La casa Partejar l’àudio es pas estada marcada a l’ecran de seleccion de la fenèstra.",
+        "moderationInEffectCSDescription": "Volgatz levar la man se volètz partejar vòstre ecran.",
+        "moderationInEffectVideoDescription": "Volgatz levar la man se volètz aviar vòstra camèra."
     },
     "passwordDigitsOnly": "Fins a {{number}} chifras",
     "passwordSetRemotely": "causit per qualqu'un mai",
@@ -632,7 +652,10 @@
             "noVideo": "Nos esperam a trobat vòstra qualitat vidèo òrra.",
             "veryPoorConnection": "Nos esperam a trobar vòstra qualitat vidèo plan òrra.",
             "videoFreezing": "Nos esperam a veire vòstra vidèo se gelar, venir negra e se pixelizar.",
-            "videoHighQuality": "Nos esperam a trobar vòstra qualitat vidèo de bona qualitat."
+            "videoHighQuality": "Nos esperam a trobar vòstra qualitat vidèo de bona qualitat.",
+            "undetectable": "Se capitatz totjorn pas de sonar del navigador estant, vos recomandam de vos assegurar que vos naut-parlaires, lo microfòn e la camèra son corrèctament configurats, qu’avètz donadas las autorizacions al navegador pel microfòn e la camèra e que lo navigador es a jorn. Se tenètz d’aver de dificultats per sonar, devètz contactar lo desvolopaire de l’aplicacion Web.",
+            "videoLowQuality": "Presumissèm que vòstra vidèo aurà una baissa qualitat tocant la frequéncia d’imatge e la resolucion.",
+            "videoTearing": "Presumissèm que vòstra vidèo serà pixelizada e aurà d’artefacts visuals."
         },
         "copyAndShare": "Copiar e partejar lo ligam de conferéncia",
         "dialing": "A sonar",
@@ -658,7 +681,11 @@
         "startWithPhone": "Començar amb l’àudio del telefòn",
         "videoOnlyError": "Error vidèo :",
         "videoTrackError": "Creacion d’una pista àudio impossibla.",
-        "viewAllNumbers": "veire totes los numèros"
+        "viewAllNumbers": "veire totes los numèros",
+        "errorValidation": "Validacion del numèro fracassada",
+        "keyboardShortcuts": "Activar los acorchis de clavièr",
+        "errorStatusCode": "Error de numerotacion, còdi d’estat : {{status}}",
+        "errorNoPermissions": "Devètz activar l’accès al microfòn e a la camèra"
     },
     "presenceStatus": {
         "busy": "Ocupat",
@@ -678,7 +705,8 @@
         "setDisplayNameLabel": "Causissètz vòstre escais",
         "setEmailInput": "Picatz lo corrièl",
         "setEmailLabel": "Definissètz vòstre corrièl per Gravatar",
-        "title": "Perfil"
+        "title": "Perfil",
+        "avatar": "avatar"
     },
     "raisedHand": "Volriá charrar",
     "recording": {
@@ -707,7 +735,13 @@
         "signIn": "Connexion",
         "signOut": "Se desconnectar",
         "unavailable": "Ops ! Lo {{serviceName}} es pas disponible pel moment. Sèm a reglar aqueste problèma. Mercés de tornar ensajar mai tard.",
-        "unavailableTitle": "Enregistrament indisponible"
+        "unavailableTitle": "Enregistrament indisponible",
+        "copyLink": "Copiar lo ligam",
+        "linkGenerated": "Avèm generat un ligam pel vòstre enregistrament.",
+        "uploadToCloud": "Enviar al cloud",
+        "limitNotificationDescriptionWeb": "A causa d’una demanda fòrta vòstre enregistrament serà limitat a {{limit}} min. Per d’enregistraments sens limit ensajatz <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
+        "limitNotificationDescriptionNative": "A causa d’una demanda fòrta vòstre enregistrament serà limitat a {{limit}} min. Per d’enregistraments sens limit ensajatz <3>{{app}}</3>.",
+        "errorFetchingLink": "Error en recuperant lo ligam de l’enregistrament."
     },
     "sectionList": {
         "pullToRefresh": "Tirar per actualizar"
@@ -741,7 +775,19 @@
         "speakers": "Naut-parlairs",
         "startAudioMuted": "Començan totes sens son",
         "startVideoMuted": "Començan totes sens vidèo",
-        "title": "Paramètres"
+        "title": "Paramètres",
+        "desktopShareFramerate": "Frequéncia d’imatge del partiment de burèu",
+        "framesPerSecond": "frames-per-second",
+        "participantJoined": "Lo participant a rejonch",
+        "participantLeft": "Lo participant es partit",
+        "playSounds": "Lectura dels sons activa",
+        "reactions": "Reaccions de la conferéncia",
+        "sameAsSystem": "Coma pel sistèma ({{label}})",
+        "sounds": "Sons",
+        "talkWhileMuted": "Parlar en mut",
+        "desktopShareHighFpsWarning": "Una frequéncia d’imatge mai nauta pel partiment burèu pòt afectar la benda passanta. Devètz reaviar lo partiment d’ecran per aplicar los paramètres novèls.",
+        "desktopShareWarning": "Devètz reaviar lo partiment d’ecran per prendre en compte las modificacions.",
+        "incomingMessage": "Messatge dintrant"
     },
     "settingsView": {
         "advanced": "Avançat",
@@ -776,7 +822,8 @@
         "name": "Escais",
         "seconds": "{{count}} segondas",
         "speakerStats": "Estatisticas orator",
-        "speakerTime": "Temps de paraula"
+        "speakerTime": "Temps de paraula",
+        "search": "Recercar"
     },
     "startupoverlay": {
         "genericTitle": "Aquesta reünion requerís l'utilizacion del microfòn e de la camèra.",
@@ -831,7 +878,23 @@
             "toggleCamera": "Passar a la camèra",
             "toggleFilmstrip": "Bascular mòde benda film",
             "videoblur": "Enfoscar o non la vidèo",
-            "videomute": "Silenciar la vidèo"
+            "videomute": "Silenciar la vidèo",
+            "boo": "Aücar",
+            "clap": "Picar de las mans",
+            "laugh": "Rire",
+            "like": "Levar lo det gròs",
+            "muteEveryonesVideo": "Copar la camèra dels autres",
+            "muteEveryoneElsesVideo": "Copar la camèra de los demai",
+            "participants": "Participants",
+            "remoteVideoMute": "Copar la camèra del participant",
+            "shareaudio": "Partejar l’àudio",
+            "silence": "Amudir",
+            "surprised": "Suspresa",
+            "selectBackground": "Seleccionar un rèireplan",
+            "expand": "Espandir",
+            "collapse": "Plegar",
+            "muteEveryoneElse": "Copar lo microfòn dels autres",
+            "reactionsMenu": "Dobrir / Tampar lo menú de reaccions"
         },
         "addPeople": "Ajustar de monde a vòstra sonada",
         "audioOnlyOff": "Desactivar lo mòde connexion febla",
@@ -902,7 +965,17 @@
         "laugh": "Rire",
         "muteEveryonesVideo": "Desactivar la camèra de tot lo monde",
         "stopAudioSharing": "Arrestar lo partiment àudio",
-        "closeReactionsMenu": "Tampar lo menú de reaccions"
+        "closeReactionsMenu": "Tampar lo menú de reaccions",
+        "boo": "Aücar",
+        "clap": "Picar de las mans",
+        "disableReactionSounds": "Podètz desactivar los sons de las reaccions per aquesta conferéncia",
+        "like": "Levar lo det gròs",
+        "reactionBoo": "Enviar una reaccion de bramada",
+        "reactionLaugh": "Enviar una reaccion de rire",
+        "reactionLike": "Enviar una reaccion d’aprobacion",
+        "reactionSilence": "Enviar una reaccion de silenci",
+        "reactionSurprised": "Enviar una reaccion de suspresa",
+        "reactionClap": "Enviar una reaccion d’aplaudiment"
     },
     "transcribing": {
         "ccButtonTooltip": "Aviar / Arrestat los sostítols",
@@ -1062,7 +1135,8 @@
             "stopEveryonesVideo": "Arrestar la vidèo de tot lo monde",
             "stopVideo": "Arrestar la vidèo",
             "unblockEveryoneMicCamera": "Desblocar lo microfòn e la camèra de tot lo monde",
-            "videoModeration": "Aviar lor vidèo"
+            "videoModeration": "Aviar lor vidèo",
+            "allowVideo": "Autorizar la vidèo"
         }
     },
     "jitsiHome": "{{logo}} Logotipe, mena a la pagina d'acuèlh",
@@ -1086,10 +1160,13 @@
             "vote": "Votar",
             "changeVote": "Cambiar lo vote",
             "hideDetailedResults": "Rescondre los detalhs",
-            "showDetailedResults": "Mostrar los detalhs"
+            "showDetailedResults": "Mostrar los detalhs",
+            "empty": "I a pas cap de sondatge dins la conferéncia pel moment. Començatz-ne un aicí !"
         },
         "notification": {
-            "title": "Un sondatge novèl es estat apondut a la conferéncia"
+            "title": "Un sondatge novèl es estat apondut a la conferéncia",
+            "description": "Dobrissètz l’onglet dels sondatge per votar"
         }
-    }
+    },
+    "volumeSlider": "Nivèl de volum"
 }
