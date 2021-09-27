@@ -179,7 +179,7 @@ MiddlewareRegistry.register(store => next => action => {
                 } else if (jitsiTrack.isLocal() && !(jitsiTrack.videoType === VIDEO_TYPE.DESKTOP)) {
                     APP.conference.setVideoMuteStatus();
                 } else if (jitsiTrack.isLocal() && muted && jitsiTrack.videoType === VIDEO_TYPE.DESKTOP) {
-                    store.dispatch(toggleScreensharing(false));
+                    store.dispatch(toggleScreensharing(false, false, true));
                 } else {
                     APP.UI.setVideoMuted(participantID);
                 }
