@@ -142,6 +142,8 @@ function ResizeAndDrag({ _currentCameraDeviceId, _virtualBackground, dispatch, s
                 scaleY: 0.5
             });
 
+            layer.add(desktopImage);
+
             const image = new Konva.Image({
                 image: video,
                 draggable: true,
@@ -149,11 +151,10 @@ function ResizeAndDrag({ _currentCameraDeviceId, _virtualBackground, dispatch, s
                 y: _virtualBackground?.dragAndDropOptions?.previewY ?? 0
             });
 
-            layer.add(desktopImage);
-
+            layer.add(image);
             desktopVideo.onresize = () => {
                 desktopImage.width(desktopVideo.videoWidth);
-                desktopImage.height(desktopVideo.videoHeight + (containerHeight / 2));
+                desktopImage.height(desktopVideo.videoHeight);
 
                 const desktopImageDimensions = desktopImage.getClientRect({ skipTransform: false });
 
@@ -276,7 +277,6 @@ function ResizeAndDrag({ _currentCameraDeviceId, _virtualBackground, dispatch, s
                 stage.container().style.cursor = 'default';
             });
 
-            layer.add(image);
             video.addEventListener('loadedmetadata', () => {
                 image.width(_virtualBackground?.dragAndDropOptions?.previewWidth
                     ?? DESKTOP_SHARE_DIMENSIONS.RECTANGLE_WIDTH);
