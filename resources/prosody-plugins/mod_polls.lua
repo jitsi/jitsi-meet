@@ -22,7 +22,7 @@ local function get_poll_message(stanza)
 		return nil;
 	end
 	local data = json.decode(json_data);
-	if data.type ~= "new-poll" and data.type ~= "answer-poll" then
+	if not data or (data.type ~= "new-poll" and data.type ~= "answer-poll") then
 		return nil;
 	end
 	return data;
@@ -42,7 +42,7 @@ end
 module:hook("muc-room-created", function(event)
 	local room = event.room;
 	if is_healthcheck_room(room.jid) then return end
-	module:log("debug", "setting up polls in room "..tostring(room));
+	module:log("debug", "setting up polls in room %s", room.jid);
 	room.polls = {
 		by_id = {};
 		order = {};
