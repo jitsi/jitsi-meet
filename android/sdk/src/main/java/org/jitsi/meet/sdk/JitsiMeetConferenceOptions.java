@@ -296,7 +296,6 @@ public class JitsiMeetConferenceOptions implements Parcelable {
         config = in.readBundle();
         featureFlags = in.readBundle();
         userInfo = new JitsiMeetUserInfo(in.readBundle());
-        byte tmpAudioMuted = in.readByte();
     }
 
     Bundle asProps() {
