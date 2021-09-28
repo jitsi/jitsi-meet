@@ -10,7 +10,7 @@ import { connect } from '../../base/redux';
 import { escapeRegexp } from '../../base/util';
 import { initUpdateStats, initSearch } from '../actions';
 import { SPEAKER_STATS_RELOAD_INTERVAL } from '../constants';
-import { getSpeakerStats } from '../functions';
+import { getSpeakerStats, getSearchCriteria } from '../functions';
 
 import SpeakerStatsItem from './SpeakerStatsItem';
 import SpeakerStatsLabels from './SpeakerStatsLabels';
@@ -216,7 +216,8 @@ class SpeakerStats extends Component<Props> {
  * @private
  * @returns {{
  *     _localDisplayName: ?string,
- *     _stats: Object
+ *     _stats: Object,
+ *     _criteria: string,
  * }}
  */
 function _mapStateToProps(state) {
@@ -230,7 +231,8 @@ function _mapStateToProps(state) {
          * @type {string|undefined}
          */
         _localDisplayName: localParticipant && localParticipant.name,
-        _stats: getSpeakerStats(state)
+        _stats: getSpeakerStats(state),
+        _criteria: getSearchCriteria(state)
     };
 }
 
