@@ -129,7 +129,8 @@ import {
     initPrejoin,
     isPrejoinPageEnabled,
     isPrejoinPageVisible,
-    makePrecallTest
+    makePrecallTest,
+    setJoiningInProgress
 } from './react/features/prejoin';
 import { disableReceiver, stopReceiver } from './react/features/remote-control';
 import { setScreenAudioShareState, isScreenAudioShared } from './react/features/screen-share/';
@@ -861,9 +862,15 @@ export default {
             _onConnectionPromiseCreated = undefined;
         }
 
-        const con = await _connectionPromise;
+        let con;
 
-        this.startConference(con, tracks);
+        try {
+            con = await _connectionPromise;
+            this.startConference(con, tracks);
+        } catch (error) {
+            logger.error(`An error occurred while trying to join a meeting from the prejoin screen: ${error}`);
+            APP.store.dispatch(setJoiningInProgress(false));
+        }
     },
 
     /**
