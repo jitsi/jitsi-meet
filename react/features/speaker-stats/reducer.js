@@ -96,7 +96,7 @@ function _updateStats(state, { stats }) {
         {},
         state,
         {
-            stats: finalStats,
+            stats: { ...finalStats },
             pendingReorder: false
         },
     );
