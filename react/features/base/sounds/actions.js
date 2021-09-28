@@ -70,7 +70,7 @@ export function playSound(soundId: string): Object {
     return (dispatch: Function, getState: Function) => {
         const disabledSounds = getDisabledSounds(getState());
 
-        if (!disabledSounds.includes(soundId)) {
+        if (!disabledSounds.includes(soundId) && !disabledSounds.find(id => soundId.startsWith(id))) {
             dispatch({
                 type: PLAY_SOUND,
                 soundId

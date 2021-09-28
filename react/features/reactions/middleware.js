@@ -7,6 +7,7 @@ import { getParticipantCount } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { updateSettings } from '../base/settings';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
+import { getDisabledSounds } from '../base/sounds/functions.any';
 import { isVpaasMeeting } from '../jaas/functions';
 import { NOTIFICATION_TIMEOUT, showNotification } from '../notifications';
 
@@ -25,7 +26,13 @@ import {
     sendReactions,
     setReactionQueue
 } from './actions.any';
-import { ENDPOINT_REACTION_NAME, RAISE_HAND_SOUND_ID, REACTIONS, SOUNDS_THRESHOLDS } from './constants';
+import {
+    ENDPOINT_REACTION_NAME,
+    RAISE_HAND_SOUND_ID,
+    REACTIONS,
+    REACTION_SOUND,
+    SOUNDS_THRESHOLDS
+} from './constants';
 import {
     getReactionMessageFromBuffer,
     getReactionsSoundsThresholds,
@@ -128,10 +135,12 @@ MiddlewareRegistry.register(store => next => action => {
         const state = getState();
         const { queue, notificationDisplayed } = state['features/reactions'];
         const { soundsReactions } = state['features/base/settings'];
+        const disabledSounds = getDisabledSounds(state);
         const reactions = action.reactions;
 
         batch(() => {
-            if (!notificationDisplayed && soundsReactions && displayReactionSoundsNotification) {
+            if (!notificationDisplayed && soundsReactions && !disabledSounds.includes(REACTION_SOUND)
+                && displayReactionSoundsNotification) {
                 dispatch(displayReactionSoundsNotification());
             }
             if (soundsReactions) {
