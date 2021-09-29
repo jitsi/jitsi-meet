@@ -299,7 +299,7 @@ PODS:
     - react-native-video/Video (= 5.1.1)
   - react-native-video/Video (5.1.1):
     - React-Core
-  - react-native-webrtc (1.92.1):
+  - react-native-webrtc (1.92.2):
     - React-Core
   - react-native-webview (11.0.2):
     - React-Core
@@ -584,7 +584,7 @@ SPEC CHECKSUMS:
   react-native-slider: b733e17fdd31186707146debf1f04b5d94aa1a93
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-video: 1574074179ecaf6a9dd067116c8f31bf9fec15c8
-  react-native-webrtc: 77b969fe6bc5b7c93b455f93a13698812fb8bb4e
+  react-native-webrtc: 41526e4060dac373c18676f866962d4180ee47b9
   react-native-webview: b2542d6fd424bcc3e3b2ec5f854f0abb4ec86c87
   React-RCTActionSheet: bcbc311dc3b47bc8efb2737ff0940239a45789a9
   React-RCTAnimation: 65f61080ce632f6dea23d52e354ffac9948396c6
