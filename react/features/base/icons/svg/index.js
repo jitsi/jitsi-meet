@@ -33,6 +33,7 @@ export { default as IconCloseX } from './close-x.svg';
 export { default as IconClosedCaption } from './closed_caption.svg';
 export { default as IconCloseSmall } from './close-small.svg';
 export { default as IconCodeBlock } from './code-block.svg';
+export { default as IconGauge } from './gauge.svg';
 export { default as IconConnectionActive } from './gsm-bars.svg';
 export { default as IconConnectionInactive } from './ninja.svg';
 export { default as IconCopy } from './copy.svg';

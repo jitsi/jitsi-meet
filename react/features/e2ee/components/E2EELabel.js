@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import { translate } from '../../base/i18n';
 import { IconE2EE } from '../../base/icons';
 import { Label } from '../../base/label';
+import { COLORS } from '../../base/label/constants';
 import { connect } from '../../base/redux';
 import { Tooltip } from '../../base/tooltip';
 
@@ -36,7 +37,7 @@ class E2EELabel extends Component<Props> {
                 content = { content }
                 position = { 'bottom' }>
                 <Label
-                    className = 'label--green'
+                    color = { COLORS.green }
                     icon = { IconE2EE } />
             </Tooltip>
         );
