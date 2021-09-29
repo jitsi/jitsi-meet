@@ -82,7 +82,6 @@ const _updateLastN = debounce(({ dispatch, getState }) => {
         lastNSelected = 1;
     }
 
-    logger.info(`Setting last N to: ${lastNSelected}`);
     dispatch(setLastN(lastNSelected));
 }, 1000); /* Don't send this more often than once a second. */
 

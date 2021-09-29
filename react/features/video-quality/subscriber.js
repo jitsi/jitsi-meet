@@ -229,7 +229,6 @@ function _updateReceiverVideoConstraints({ getState }) {
         }
     }
 
-    logger.info(`Setting receiver video constraints to ${JSON.stringify(receiverConstraints)}`);
     try {
         conference.setReceiverConstraints(receiverConstraints);
     } catch (error) {
