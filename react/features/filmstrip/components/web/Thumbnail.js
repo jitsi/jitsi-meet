@@ -31,14 +31,12 @@ import { LocalVideoMenuTriggerButton, RemoteVideoMenuTriggerButton } from '../..
 import { setVolume } from '../../actions.web';
 import {
     DISPLAY_MODE_TO_CLASS_NAME,
-    DISPLAY_MODE_TO_STRING,
     DISPLAY_VIDEO,
     DISPLAY_VIDEO_WITH_NAME,
     VIDEO_TEST_EVENTS,
     SHOW_TOOLBAR_CONTEXT_MENU_AFTER
 } from '../../constants';
 import { isVideoPlayable, computeDisplayMode } from '../../functions';
-import logger from '../../logger';
 
 const JitsiTrackEvents = JitsiMeetJS.events.track;
 
@@ -333,11 +331,8 @@ class Thumbnail extends Component<Props, State> {
      */
     _onDisplayModeChanged() {
         const input = Thumbnail.getDisplayModeInput(this.props, this.state);
-        const displayModeString = DISPLAY_MODE_TO_STRING[this.state.displayMode];
-        const id = this.props._participant?.id;
 
         this._maybeSendScreenSharingIssueEvents(input);
-        logger.debug(`Displaying ${displayModeString} for ${id}, data: [${JSON.stringify(input)}]`);
     }
 
     /**
