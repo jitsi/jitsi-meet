@@ -22,7 +22,7 @@
         left: 0;
         top: 0;
         height: 100%;
-        z-index: 99999;
+        z-index: 500;
     }
 
     &-modal-dialog {
@@ -31,15 +31,15 @@
     }
 
     &-modal-logo-wrapper {
-        padding: 40px 14px;
+        padding: 4vh 1.4vh;
         text-align: left;
     }
 
     &-modal-logo {
         background-image: url($defaultWatermarkLink);
         background-position: center;
-        width: 88px;
-        height: 70px;
+        width: 8.8vh;
+        height: 7vh;
         background-size: contain;
         background-repeat: no-repeat;
         z-index: $zindex2;
@@ -61,31 +61,31 @@
     &-modal-text-wrapper {
         display: flex;
         flex-direction: column;
-        padding: 0px 14px;
+        padding: 0px 1.4vh;
     }
 
     &-modal-title {
-        font-size: 25px;
+        font-size: 2.5vh;
         text-align: left;
         color: $waitingAreaInfoTitleColor;
         font-weight: 600;
-        line-height: 25px;
+        line-height: 2.5vh;
     }
 
     &-modal-title-msg {
-        font-size: 20px;
+        font-size: 2vh;
         text-align: left;
         color: $waitingAreaInfoMsgColor;
-        margin-top: 40px;
-        line-height: 25px;
+        margin-top: 4vh;
+        line-height: 2.5vh;
         font-family: ProximaNovaLtReg !important;
     }
 
     &-modal-detail {
-        font-size: 20px;
+        font-size: 2vh;
         text-align: left;
-        margin-top: 40px;
-        line-height: 22px;
+        margin-top: 4vh;
+        line-height: 2.2vh;
         color: $waitingAreaInfoDetailColor;
         font-weight: 600;
     }
@@ -95,13 +95,13 @@
         color: $defaultColor;
         cursor: pointer;
         display: inline-block;
-        line-height: 34px;
-        font-size: 14px;
-        padding: 0px 24px;
+        line-height: 3.4vh;
+        font-size: 1.4vh;
+        padding: 0px 2.4vh;
         position: relative;
         text-align: center;
-        min-width: 100px;
-        margin-top: 28px;
+        min-width: 10vh;
+        margin-top: 2.8vh;
         &--primary {
             background: $janeBlue;
         }
@@ -117,7 +117,7 @@
         }
 
         &--close {
-            margin-top: 16px;
+            margin-top: 1.6vh;
             background: #fff;
             color: #333;
             border: solid 1px #ccc;
@@ -125,7 +125,7 @@
 
         &--text {
             width: auto;
-            font-size: 13px;
+            font-size: 1.3vh;
             margin: 0;
             padding: 0;
         }
@@ -157,7 +157,7 @@
         position: absolute;
         right: 0;
         top: 0;
-        width: 40px;
+        width: 4vh;
     }
 
     &-text-btns {
@@ -174,7 +174,7 @@
             left: 0;
             right: 0;
             top: unset;
-            z-index: 99999;
+            z-index: 500;
         }
 
         &-modal-dialog {
