@@ -7,6 +7,17 @@ import {
     sendAnalytics
 } from '../../react/features/analytics';
 import {
+    approveParticipantAudio,
+    approveParticipantVideo,
+    rejectParticipantAudio,
+    rejectParticipantVideo,
+    requestDisableAudioModeration,
+    requestDisableVideoModeration,
+    requestEnableAudioModeration,
+    requestEnableVideoModeration
+} from '../../react/features/av-moderation/actions';
+import { isEnabledFromState } from '../../react/features/av-moderation/functions';
+import {
     getCurrentConference,
     sendTones,
     setFollowMe,
@@ -25,7 +36,8 @@ import {
     pinParticipant,
     kickParticipant,
     raiseHand,
-    isParticipantModerator
+    isParticipantModerator,
+    isLocalParticipantModerator
 } from '../../react/features/base/participants';
 import { updateSettings } from '../../react/features/base/settings';
 import { isToggleCameraEnabled, toggleCamera } from '../../react/features/base/tracks';
@@ -50,6 +62,7 @@ import {
     resizeLargeVideo
 } from '../../react/features/large-video/actions.web';
 import { toggleLobbyMode } from '../../react/features/lobby/actions';
+import { isForceMuted } from '../../react/features/participants-pane/functions';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession } from '../../react/features/recording/functions';
 import { isScreenAudioSupported } from '../../react/features/screen-share';
@@ -100,6 +113,20 @@ let videoAvailable = true;
  */
 function initCommands() {
     commands = {
+        'approve-video': participantId => {
+            if (!isLocalParticipantModerator(APP.store.getState())) {
+                return;
+            }
+
+            APP.store.dispatch(approveParticipantVideo(participantId));
+        },
+        'ask-to-unmute': participantId => {
+            if (!isLocalParticipantModerator(APP.store.getState())) {
+                return;
+            }
+
+            APP.store.dispatch(approveParticipantAudio(participantId));
+        },
         'display-name': displayName => {
             sendAnalytics(createApiEvent('display.name.changed'));
             APP.conference.changeLocalDisplayName(displayName);
@@ -149,6 +176,15 @@ function initCommands() {
         },
         'proxy-connection-event': event => {
             APP.conference.onProxyConnectionEvent(event);
+        },
+        'reject-participant': (participantId, mediaType) => {
+            if (!isLocalParticipantModerator(APP.store.getState())) {
+                return;
+            }
+
+            const reject = mediaType === MEDIA_TYPE.VIDEO ? rejectParticipantVideo : rejectParticipantAudio;
+
+            APP.store.dispatch(reject(participantId));
         },
         'resize-large-video': (width, height) => {
             logger.debug('Resize large video command received');
@@ -217,6 +253,24 @@ function initCommands() {
         'toggle-chat': () => {
             sendAnalytics(createApiEvent('chat.toggled'));
             APP.store.dispatch(toggleChat());
+        },
+        'toggle-moderation': (enabled, mediaType) => {
+            const state = APP.store.getState();
+
+            if (!isLocalParticipantModerator(state)) {
+                return;
+            }
+
+            const enable = mediaType === MEDIA_TYPE.VIDEO
+                ? requestEnableVideoModeration : requestEnableAudioModeration;
+            const disable = mediaType === MEDIA_TYPE.VIDEO
+                ? requestDisableVideoModeration : requestDisableAudioModeration;
+
+            if (enabled) {
+                APP.store.dispatch(enable());
+            } else {
+                APP.store.dispatch(disable());
+            }
         },
         'toggle-raise-hand': () => {
             const localParticipant = getLocalParticipant(APP.store.getState());
@@ -541,6 +595,22 @@ function initCommands() {
         case 'is-audio-muted':
             callback(APP.conference.isLocalAudioMuted());
             break;
+        case 'is-moderation-on': {
+            const { mediaType } = request;
+            const type = mediaType || MEDIA_TYPE.AUDIO;
+
+            callback(isEnabledFromState(type, APP.store.getState()));
+            break;
+        }
+        case 'is-participant-force-muted': {
+            const state = APP.store.getState();
+            const { participantId, mediaType } = request;
+            const type = mediaType || MEDIA_TYPE.AUDIO;
+            const participant = getParticipantById(state, participantId);
+
+            callback(isForceMuted(participant, type, state));
+            break;
+        }
         case 'is-video-muted':
             callback(APP.conference.isLocalVideoMuted());
             break;
@@ -803,6 +873,51 @@ class API {
         this._sendEvent({
             name: 'mouse-move',
             event: sanitizeMouseEvent(event)
+        });
+    }
+
+    /**
+     * Notify the external application that the moderation status has changed.
+     *
+     * @param {string} mediaType - Media type for which the moderation changed.
+     * @param {boolean} enabled - Whether or not the new moderation status is enabled.
+     * @returns {void}
+     */
+    notifyModerationChanged(mediaType: string, enabled: boolean) {
+        this._sendEvent({
+            name: 'moderation-status-changed',
+            mediaType,
+            enabled
+        });
+    }
+
+    /**
+     * Notify the external application that a participant was approved on moderation.
+     *
+     * @param {string} participantId - The ID of the participant that got approved.
+     * @param {string} mediaType - Media type for which the participant was approved.
+     * @returns {void}
+     */
+    notifyParticipantApproved(participantId: string, mediaType: string) {
+        this._sendEvent({
+            name: 'moderation-participant-approved',
+            id: participantId,
+            mediaType
+        });
+    }
+
+    /**
+     * Notify the external application that a participant was rejected on moderation.
+     *
+     * @param {string} participantId - The ID of the participant that got rejected.
+     * @param {string} mediaType - Media type for which the participant was rejected.
+     * @returns {void}
+     */
+    notifyParticipantRejected(participantId: string, mediaType: string) {
+        this._sendEvent({
+            name: 'moderation-participant-rejected',
+            id: participantId,
+            mediaType
         });
     }
 
