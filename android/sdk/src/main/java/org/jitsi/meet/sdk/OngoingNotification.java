@@ -82,7 +82,7 @@ class OngoingNotification {
         }
 
         Intent notificationIntent = new Intent(context, context.getClass());
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, ONGOING_CONFERENCE_CHANNEL_ID);
 
@@ -125,7 +125,7 @@ class OngoingNotification {
         Intent intent = new Intent(context, JitsiMeetOngoingConferenceService.class);
         intent.setAction(action.getName());
         PendingIntent pendingIntent
-            = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
         String title = context.getString(titleId);
         return new NotificationCompat.Action(0, title, pendingIntent);
     }
