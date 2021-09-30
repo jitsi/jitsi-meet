@@ -1034,6 +1034,15 @@ class API {
     }
 
     /**
+     * Notify external application that the data channel has been opened.
+     *
+     * @returns {void}
+     */
+    notifyDataChannelOpened() {
+        this._sendEvent({ name: 'data-channel-opened' });
+    }
+
+    /**
      * Notify external application (if API is enabled) that we are ready to be
      * closed.
      *
