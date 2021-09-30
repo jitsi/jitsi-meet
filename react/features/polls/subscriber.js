@@ -9,8 +9,13 @@ import {
     showNotification
 } from '../notifications';
 
-import { receiveAnswer, receivePoll } from './actions';
-import { COMMAND_NEW_POLL, COMMAND_ANSWER_POLL, COMMAND_OLD_POLLS } from './constants';
+import { receiveAnswer, receivePoll, removePoll } from './actions';
+import {
+    COMMAND_NEW_POLL,
+    COMMAND_REMOVE_POLL,
+    COMMAND_ANSWER_POLL,
+    COMMAND_OLD_POLLS
+} from './constants';
 import type { Answer, Poll } from './types';
 
 
@@ -82,6 +87,14 @@ StateListenerRegistry.register(
                         titleKey: 'polls.notification.title',
                         descriptionKey: 'polls.notification.description'
                     }, NOTIFICATION_TIMEOUT));
+                    break;
+
+                }
+
+                case COMMAND_REMOVE_POLL: {
+                    const { pollId } = data;
+
+                    store.dispatch(removePoll(pollId));
                     break;
 
                 }

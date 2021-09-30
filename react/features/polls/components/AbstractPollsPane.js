@@ -3,6 +3,10 @@
 import React, { useState } from 'react';
 import type { AbstractComponent } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
+
+import { isLocalParticipantModerator } from '../../base/participants';
+import { isPollsModerationEnabled } from '../functions';
 
 /*
  * Props that will be passed by the AbstractPollsPane to its
@@ -10,6 +14,8 @@ import { useTranslation } from 'react-i18next';
  **/
 export type AbstractProps = {
     createMode: boolean,
+    isModerator: boolean,
+    isModerationEnabled: boolean,
     onCreate: void => void,
     setCreateMode: boolean => void,
     t: Function,
@@ -25,6 +31,8 @@ export type AbstractProps = {
 const AbstractPollsPane = (Component: AbstractComponent<AbstractProps>) => () => {
 
     const [ createMode, setCreateMode ] = useState(false);
+    const isModerator = useSelector(state => isLocalParticipantModerator(state));
+    const isModerationEnabled = useSelector(state => isPollsModerationEnabled(state));
 
     const onCreate = () => {
         setCreateMode(true);
@@ -34,6 +42,8 @@ const AbstractPollsPane = (Component: AbstractComponent<AbstractProps>) => () =>
 
     return (<Component
         createMode = { createMode }
+        isModerationEnabled = { isModerationEnabled }
+        isModerator = { isModerator }
         /* eslint-disable react/jsx-no-bind */
         onCreate = { onCreate }
         setCreateMode = { setCreateMode }

@@ -83,6 +83,11 @@ var config = {
     // Disables polls feature.
     // disablePolls: false,
 
+    // Specifies whether the moderators will have more polls priviledges than the participants.
+    // - Participants are unable to create polls.
+    // - Moderators are able to remove polls.
+    // enablePollsModeration: false,
+
     // Disables ICE/UDP by filtering out local and remote UDP candidates in
     // signalling.
     // webrtcIceUdpDisable: false,

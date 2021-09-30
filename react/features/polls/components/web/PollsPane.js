@@ -11,7 +11,7 @@ import { PollCreate } from '.';
 
 const PollsPane = (props: AbstractProps) => {
 
-    const { createMode, onCreate, setCreateMode, t } = props;
+    const { createMode, isModerationEnabled, isModerator, onCreate, setCreateMode, t } = props;
 
     return createMode
         ? <PollCreate setCreateMode = { setCreateMode } />
@@ -20,13 +20,13 @@ const PollsPane = (props: AbstractProps) => {
                 <PollsList />
             </div>
             <div className = { 'poll-footer' }>
-                <button
+                { !isModerationEnabled || isModerator ? <button
                     aria-label = { t('polls.create.create') }
                     className = { 'poll-primary-button' }
                     // eslint-disable-next-line react/jsx-no-bind
                     onClick = { onCreate } >
                     <span>{t('polls.create.create')}</span>
-                </button>
+                </button> : null }
             </div>
         </div>;
 };

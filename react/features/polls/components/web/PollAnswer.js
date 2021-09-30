@@ -11,7 +11,10 @@ const PollAnswer = (props: AbstractProps) => {
 
     const {
         checkBoxStates,
+        isModerationEnabled,
+        isModerator,
         poll,
+        removePoll,
         setCheckbox,
         skipAnswer,
         submitAnswer,
@@ -23,6 +26,13 @@ const PollAnswer = (props: AbstractProps) => {
             <div className = 'poll-header'>
                 <div className = 'poll-question'>
                     <span>{ poll.question }</span>
+                    {
+                        isModerationEnabled && isModerator ? <a
+                            className = 'poll-remove-link'
+                            onClick = { removePoll }>
+                            {t('polls.results.removePoll')}
+                        </a> : null
+                    }
                 </div>
             </div>
             <ol className = 'poll-answer-list'>

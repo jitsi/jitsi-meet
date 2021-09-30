@@ -15,7 +15,7 @@ import { chatStyles } from './styles';
 
 const PollsPane = (props: AbstractProps) => {
 
-    const { createMode, onCreate, setCreateMode, t } = props;
+    const { createMode, isModerationEnabled, isModerator, onCreate, setCreateMode, t } = props;
 
     return (
         <View style = { chatStyles.PollPane }>
@@ -24,18 +24,17 @@ const PollsPane = (props: AbstractProps) => {
                 : <View style = { chatStyles.PollPaneContent }>
                     {/* <View /> */}
                     <PollsList />
-                    <Button
+                    { !isModerationEnabled || isModerator ? <Button
                         color = '#17a0db'
                         mode = { BUTTON_MODES.CONTAINED }
                         onPress = { onCreate }
                         style = { chatStyles.createPollButton } >
                         {t('polls.create.create')}
-                    </Button>
+                    </Button> : null }
                 </View>}
         </View>
     );
 };
-
 
 /*
  * We apply AbstractPollsPane to fill in the AbstractProps common

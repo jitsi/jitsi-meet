@@ -5,9 +5,14 @@ import type { AbstractComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { getLocalParticipant, getParticipantById } from '../../base/participants/functions';
+import {
+    getLocalParticipant,
+    getParticipantById,
+    isLocalParticipantModerator
+} from '../../base/participants/functions';
 import { retractVote } from '../actions';
-import { COMMAND_ANSWER_POLL } from '../constants';
+import { COMMAND_ANSWER_POLL, COMMAND_REMOVE_POLL } from '../constants';
+import { isPollsModerationEnabled } from '../functions';
 
 /**
  * The type of the React {@code Component} props of inheriting component.
@@ -32,7 +37,10 @@ export type AnswerInfo = {
  */
 export type AbstractProps = {
     answers: Array<AnswerInfo>,
+    isModerator: boolean,
+    isModerationEnabled: boolean,
     changeVote: Function,
+    removePoll: Function,
     showDetails: boolean,
     question: string,
     t: Function,
@@ -50,6 +58,8 @@ export type AbstractProps = {
 const AbstractPollResults = (Component: AbstractComponent<AbstractProps>) => (props: InputProps) => {
     const { pollId } = props;
 
+    const isModerator = useSelector(state => isLocalParticipantModerator(state));
+    const isModerationEnabled = useSelector(state => isPollsModerationEnabled(state));
     const pollDetails = useSelector(state => state['features/polls'].polls[pollId]);
 
     const [ showDetails, setShowDetails ] = useState(false);
@@ -108,6 +118,12 @@ const AbstractPollResults = (Component: AbstractComponent<AbstractProps>) => (pr
         });
         dispatch(retractVote(pollId));
     }, [ pollId, localId, localName, pollDetails ]);
+    const removePoll = useCallback(() => {
+        conference.sendMessage({
+            type: COMMAND_REMOVE_POLL,
+            pollId
+        });
+    }, [ pollId ]);
 
     const { t } = useTranslation();
 
@@ -115,7 +131,10 @@ const AbstractPollResults = (Component: AbstractComponent<AbstractProps>) => (pr
         answers = { answers }
         changeVote = { changeVote }
         haveVoted = { pollDetails.lastVote !== null }
+        isModerationEnabled = { isModerationEnabled }
+        isModerator = { isModerator }
         question = { pollDetails.question }
+        removePoll = { removePoll }
         showDetails = { showDetails }
         t = { t }
         toggleIsDetailed = { toggleIsDetailed } />);

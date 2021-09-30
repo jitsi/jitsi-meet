@@ -193,10 +193,14 @@ ol.poll-result-list {
     justify-content: space-between;
 }
 
-a.poll-detail-link, a.poll-change-vote-link {
+a.poll-detail-link, a.poll-change-vote-link, a.poll-remove-link {
     color: #246FE5;
     cursor: pointer;
     text-decoration: none;
+}
+
+a.poll-remove-link {
+    float: right;
 }
 
 .polls-pane-content {

@@ -5,9 +5,10 @@ import type { AbstractComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { getLocalParticipant, getParticipantById } from '../../base/participants';
+import { getLocalParticipant, getParticipantById, isLocalParticipantModerator } from '../../base/participants';
 import { registerVote } from '../actions';
-import { COMMAND_ANSWER_POLL } from '../constants';
+import { COMMAND_ANSWER_POLL, COMMAND_REMOVE_POLL } from '../constants';
+import { isPollsModerationEnabled } from '../functions';
 import type { Poll } from '../types';
 
 /**
@@ -23,7 +24,10 @@ type InputProps = {
  **/
 export type AbstractProps = {
     checkBoxStates: Function,
+    isModerationEnabled: boolean,
+    isModerator: boolean,
     poll: Poll,
+    removePoll: Function,
     setCheckbox: Function,
     skipAnswer: Function,
     submitAnswer: Function,
@@ -42,7 +46,8 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
     const { pollId } = props;
 
     const conference: Object = useSelector(state => state['features/base/conference'].conference);
-
+    const isModerator = useSelector(state => isLocalParticipantModerator(state));
+    const isModerationEnabled = useSelector(state => isPollsModerationEnabled(state));
     const poll: Poll = useSelector(state => state['features/polls'].polls[pollId]);
 
     const { id: localId } = useSelector(getLocalParticipant);
@@ -86,11 +91,21 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
 
     }, [ pollId ]);
 
+    const removePoll = useCallback(() => {
+        conference.sendMessage({
+            type: COMMAND_REMOVE_POLL,
+            pollId
+        });
+    }, [ pollId ]);
+
     const { t } = useTranslation();
 
     return (<Component
         checkBoxStates = { checkBoxStates }
+        isModerationEnabled = { isModerationEnabled }
+        isModerator = { isModerator }
         poll = { poll }
+        removePoll = { removePoll }
         setCheckbox = { setCheckbox }
         skipAnswer = { skipAnswer }
         submitAnswer = { submitAnswer }

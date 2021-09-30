@@ -4,6 +4,7 @@ import {
     RESET_NB_UNREAD_POLLS,
     RECEIVE_ANSWER,
     RECEIVE_POLL,
+    REMOVE_POLL,
     REGISTER_VOTE,
     RETRACT_VOTE
 } from './actionTypes';
@@ -28,6 +29,22 @@ export const receivePoll = (pollId: string, poll: Poll, notify: boolean) => {
         poll,
         pollId,
         notify
+    };
+};
+
+/**
+ * Action to signal that a poll was removed.
+ *
+ * @param {string} pollId - The id of the incoming poll.
+ * @returns {{
+ *     type: REMOVE_POLL,
+ *     pollId: string
+ * }}
+ */
+export const removePoll = (pollId: string) => {
+    return {
+        type: REMOVE_POLL,
+        pollId
     };
 };
 

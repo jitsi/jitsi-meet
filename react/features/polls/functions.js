@@ -21,3 +21,15 @@ export function getUnreadPollCount(state: Object) {
 
     return nbUnreadPolls;
 }
+
+/**
+ * Get whether the polls moderation is enabled or not.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {boolean} The enabled flag.
+ */
+export function isPollsModerationEnabled(state: Object) {
+    const enablePollsModeration = state['features/base/config']?.enablePollsModeration === true;
+
+    return enablePollsModeration;
+}

@@ -14,6 +14,17 @@
 export const RECEIVE_POLL = 'RECEIVE_POLL';
 
 /**
+ * The type of the action which signals that a Poll was removed.
+ *
+ * {
+ *     type: REMOVE_POLL,
+ *     pollId: string
+ * }
+ *
+ */
+export const REMOVE_POLL = 'REMOVE_POLL';
+
+/**
  * The type of the action which signals that a new Answer was received.
  *
  * {

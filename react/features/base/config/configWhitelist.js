@@ -100,6 +100,7 @@ export default [
     'disableModeratorIndicator',
     'disableNS',
     'disablePolls',
+    'enablePollsModeration',
     'disableProfile',
     'disableReactions',
     'disableRecordAudioNotification',

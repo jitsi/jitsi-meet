@@ -14,8 +14,11 @@ import type { AbstractProps } from '../AbstractPollResults';
  */
 const PollResults = (props: AbstractProps) => {
     const {
+        isModerationEnabled,
+        isModerator,
         answers,
         changeVote,
+        removePoll,
         haveVoted,
         showDetails,
         question,
@@ -28,6 +31,13 @@ const PollResults = (props: AbstractProps) => {
             <div className = 'poll-header'>
                 <div className = 'poll-question'>
                     <strong>{ question }</strong>
+                    {
+                        isModerationEnabled && isModerator ? <a
+                            className = 'poll-remove-link'
+                            onClick = { removePoll }>
+                            {t('polls.results.removePoll')}
+                        </a> : null
+                    }
                 </div>
             </div>
             <ol className = 'poll-result-list'>

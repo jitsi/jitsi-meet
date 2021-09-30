@@ -4,6 +4,7 @@ import { ReducerRegistry } from '../base/redux';
 
 import {
     RECEIVE_POLL,
+    REMOVE_POLL,
     RECEIVE_ANSWER,
     REGISTER_VOTE,
     RETRACT_VOTE,
@@ -30,6 +31,22 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
 
                 // The poll is added to the dictionnary of received polls
                 [action.pollId]: action.poll
+            },
+            nbUnreadPolls: state.nbUnreadPolls + 1
+        };
+
+        return newState;
+    }
+
+    // Reducer triggered when a poll is removed
+    case REMOVE_POLL: {
+        // eslint-disable-next-line no-unused-vars
+        const { [action.pollId]: remove, ...restPolls } = state.polls;
+
+        const newState = {
+            ...state,
+            polls: {
+                ...restPolls
             },
             nbUnreadPolls: state.nbUnreadPolls + 1
         };
