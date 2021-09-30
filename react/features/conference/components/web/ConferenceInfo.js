@@ -161,10 +161,8 @@ class ConferenceInfo extends Component<Props> {
     render() {
         return (
             <div className = 'details-container' >
-                { [
-                    this._renderAlwaysVisible(),
-                    this._renderAutoHide()
-                ] }
+                { this._renderAlwaysVisible() }
+                { this._renderAutoHide() }
             </div>
         );
     }
