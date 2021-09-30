@@ -68,11 +68,15 @@ function notify_whitelist_change(jid, moderators, room, mediaType, removed)
     body_json.type = 'av_moderation';
     body_json.room = internal_room_jid_match_rewrite(room.jid);
     body_json.whitelists = room.av_moderation;
-    body_json.removed = removed;
+    if removed then
+        body_json.removed = true;
+    end
     body_json.mediaType = mediaType;
     local moderators_body_json_str = json.encode(body_json);
     body_json.whitelists = nil;
-    body_json.approved = true; -- we want to send to participants only that they were approved to unmute
+    if not removed then
+        body_json.approved = true; -- we want to send to participants only that they were approved to unmute
+    end
     local participant_body_json_str = json.encode(body_json);
 
     for _, occupant in room:each_occupant() do
