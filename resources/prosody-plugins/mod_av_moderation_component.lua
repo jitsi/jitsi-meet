@@ -2,6 +2,7 @@ local get_room_by_name_and_subdomain = module:require 'util'.get_room_by_name_an
 local is_healthcheck_room = module:require 'util'.is_healthcheck_room;
 local internal_room_jid_match_rewrite = module:require "util".internal_room_jid_match_rewrite;
 local room_jid_match_rewrite = module:require "util".room_jid_match_rewrite;
+local array = require "util.array";
 local json = require 'util.json';
 local st = require 'util.stanza';
 
@@ -171,7 +172,7 @@ function on_message(event)
                         room.av_moderation = {};
                         room.av_moderation_actors = {};
                     end
-                    room.av_moderation[mediaType] = {};
+                    room.av_moderation[mediaType] = array{};
                     room.av_moderation_actors[mediaType] = occupant.nick;
                 end
             else
@@ -212,10 +213,10 @@ function on_message(event)
             if room.av_moderation then
                 local whitelist = room.av_moderation[mediaType];
                 if not whitelist then
-                    whitelist = {};
+                    whitelist = array{};
                     room.av_moderation[mediaType] = whitelist;
                 end
-                table.insert(whitelist, occupant_jid);
+                whitelist:push(occupant_jid);
 
                 notify_whitelist_change(occupant_to_add.jid, true, room, mediaType, false);
 
@@ -240,7 +241,7 @@ function on_message(event)
                 if whitelist then
                     local index = get_index_in_table(whitelist, occupant_jid)
                     if(index) then
-                        table.remove(whitelist, index);
+                        whitelist:pop(index);
                         notify_whitelist_change(occupant_to_remove.jid, true, room, mediaType, true);
                     end
                 end
