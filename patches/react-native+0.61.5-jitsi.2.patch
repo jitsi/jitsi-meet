@@ -1,3 +1,22 @@
+diff --git a/node_modules/react-native/Libraries/WebSocket/RCTWebSocketModule.m b/node_modules/react-native/Libraries/WebSocket/RCTWebSocketModule.m
+index d9387c4..a487da0 100644
+--- a/node_modules/react-native/Libraries/WebSocket/RCTWebSocketModule.m
++++ b/node_modules/react-native/Libraries/WebSocket/RCTWebSocketModule.m
+@@ -165,10 +165,10 @@ - (void)webSocket:(RCTSRWebSocket *)webSocket didFailWithError:(NSError *)error
+   NSNumber *socketID = [webSocket reactTag];
+   _contentHandlers[socketID] = nil;
+   _sockets[socketID] = nil;
+-  [self sendEventWithName:@"websocketFailed" body:@{
+-    @"message": error.localizedDescription,
+-    @"id": socketID
+-  }];
++  NSDictionary *body =
++      @{@"message" : error.localizedDescription ?: @"Undefined, error is nil",
++        @"id" : socketID ?: @(-1)};
++  [self sendEventWithName:@"websocketFailed" body:body];
+ }
+ 
+ - (void)webSocket:(RCTSRWebSocket *)webSocket
 diff --git a/node_modules/react-native/React/CxxBridge/RCTCxxBridge.mm b/node_modules/react-native/React/CxxBridge/RCTCxxBridge.mm
 index bd48f44..d243ed0 100644
 --- a/node_modules/react-native/React/CxxBridge/RCTCxxBridge.mm
