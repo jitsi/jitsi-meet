@@ -8,7 +8,6 @@ import { translate } from '../../base/i18n';
 import { getLocalParticipant } from '../../base/participants';
 import { connect } from '../../base/redux';
 import { escapeRegexp } from '../../base/util';
-import { getCameraTime } from '../../facial-recognition/functions';
 import { initUpdateStats, initSearch } from '../actions';
 import { SPEAKER_STATS_RELOAD_INTERVAL } from '../constants';
 import { getSpeakerStats, getSearchCriteria } from '../functions';
@@ -31,6 +30,15 @@ type Props = {
      */
     _localDisplayName: string,
 
+    /**
+     * The flag which shows if the facial recognition is enabled, obtained from the redux store.
+     * if enabled facial expressions are shown
+     */
+    _enableFacialRecognition: boolean,
+
+    /**
+     * The facial expressions for the local participant obtained from the redux store.
+     */
     _localFacialExpressions: Array<Object>,
 
     _localCameraTimeTracker: Object,
@@ -122,10 +130,12 @@ class SpeakerStats extends Component<Props> {
                 cancelKey = 'dialog.close'
                 submitDisabled = { true }
                 titleKey = 'speakerStats.speakerStats'
-                width = 'large'>
+                width = { this.props._enableFacialRecognition ? 'large' : 'medium' }>
                 <div className = 'speaker-stats'>
                     <SpeakerStatsSearch onSearch = { this._onSearch } />
-                    <SpeakerStatsLabels />
+                    <SpeakerStatsLabels
+                        reduceExpressions = { this.props._reduceExpressions }
+                        showFacialExpressions = { this.props._enableFacialRecognition } />
                     { items }
                 </div>
             </Dialog>
@@ -159,7 +169,8 @@ class SpeakerStats extends Component<Props> {
                 hasLeft = { hasLeft }
                 isDominantSpeaker = { isDominantSpeaker }
                 key = { userId }
-                lastFacialExpression = { this.state.lastFacialExpression } />
+                reduceExpressions = { this.props._reduceExpressions }
+                showFacialExpressions = { this.props._enableFacialRecognition } />
         );
     }
 
@@ -208,6 +219,7 @@ class SpeakerStats extends Component<Props> {
                             ? `${this.props._localDisplayName} (${meString})`
                             : meString
                     );
+                    stats[userId].setFacialExpressions(this.props._localFacialExpressions);
                 }
 
                 if (!stats[userId].getDisplayName()) {
@@ -235,6 +247,7 @@ class SpeakerStats extends Component<Props> {
  */
 function _mapStateToProps(state) {
     const localParticipant = getLocalParticipant(state);
+    const { enableFacialRecognition } = state['features/base/config'];
     const { facialExpressions: localFacialExpressions } = state['features/facial-recognition'];
     const { cameraTimeTracker: localCameraTimeTracker } = state['features/facial-recognition'];
 
@@ -248,6 +261,7 @@ function _mapStateToProps(state) {
         _localDisplayName: localParticipant && localParticipant.name,
         _stats: getSpeakerStats(state),
         _criteria: getSearchCriteria(state),
+        _enableFacialRecognition: enableFacialRecognition,
         _localFacialExpressions: localFacialExpressions,
         _localCameraTimeTracker: localCameraTimeTracker
     };

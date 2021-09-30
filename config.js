@@ -649,6 +649,9 @@ var config = {
     // Enables sending participants' emails (if available) to callstats and other analytics
     // enableEmailInStats: false,
 
+    // Enables detecting faces of participants and get their expression and send it to other participants
+    // enableFaceRecognition: true,
+
     // Controls the percentage of automatic feedback shown to participants when callstats is enabled.
     // The default value is 100%. If set to 0, no automatic feedback will be requested
     // feedbackPercentage: 100,
@@ -1149,10 +1152,6 @@ var config = {
 
     // Specifies whether the chat emoticons are disabled or not
     // disableChatSmileys: false,
-
-    // Prevent facial recognition from starting and to show facial expression in speakerstats.
-    // If true the facial recognition will not be triggered.
-    // disableFaceRecognition: false,
 
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.

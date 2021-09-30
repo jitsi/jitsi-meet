@@ -22,9 +22,9 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CONFERENCE_JOINED: {
         const { getState, dispatch } = store;
-        const { disableFacialRecognition } = getState()['features/base/config'];
+        const { enableFacialRecognition } = getState()['features/base/config'];
 
-        if (disableFacialRecognition) {
+        if (!enableFacialRecognition) {
             return next(action);
         }
 
@@ -37,9 +37,9 @@ MiddlewareRegistry.register(store => next => action => {
 
     case CONFERENCE_WILL_LEAVE : {
         const { getState, dispatch } = store;
-        const { disableFacialRecognition } = getState()['features/base/config'];
+        const { facialRecognitionAllowed } = getState()['features/facial-recognition'];
 
-        if (disableFacialRecognition) {
+        if (!facialRecognitionAllowed) {
             return next(action);
         }
 
