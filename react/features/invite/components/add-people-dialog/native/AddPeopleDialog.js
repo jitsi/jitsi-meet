@@ -200,6 +200,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                         }
                         placeholderTextColor = { ColorPalette.lightGrey }
                         ref = { this._setFieldRef }
+                        spellCheck = { false }
                         style = { styles.searchField }
                         value = { this.state.fieldValue } />
                     { this._renderClearButton() }
