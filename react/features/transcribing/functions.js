@@ -15,7 +15,12 @@ const DEFAULT_TRANSCRIBER_LANG = 'en-US';
  * @returns {string}
  */
 export function determineTranscriptionLanguage(config: Object) {
-    const { preferredTranscribeLanguage, transcribeWithAppLanguage = true } = config;
+    const { preferredTranscribeLanguage, transcribeWithAppLanguage = true, transcribingEnabled } = config;
+
+    // if transcriptions are not enabled nothing to determine
+    if (!transcribingEnabled) {
+        return undefined;
+    }
 
     // Depending on the config either use the language that the app automatically detected or the hardcoded
     // config BCP47 value.
