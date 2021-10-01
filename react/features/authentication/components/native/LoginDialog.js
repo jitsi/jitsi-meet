@@ -167,6 +167,7 @@ class LoginDialog extends Component<Props, State> {
                         onChangeText = { this._onUsernameChange }
                         placeholder = { 'user@domain.com' }
                         placeholderTextColor = { PLACEHOLDER_COLOR }
+                        spellCheck = { false }
                         style = { _dialogStyles.field }
                         underlineColorAndroid = { FIELD_UNDERLINE }
                         value = { this.state.username } />
