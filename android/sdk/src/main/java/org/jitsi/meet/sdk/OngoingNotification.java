@@ -17,7 +17,6 @@
 package org.jitsi.meet.sdk;
 
 import static org.jitsi.meet.sdk.NotificationChannels.ONGOING_CONFERENCE_CHANNEL_ID;
-import static org.jitsi.meet.sdk.NotificationChannels.ONGOING_CONFERNCE_CHANNEL_NAME;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -66,7 +65,7 @@ class OngoingNotification {
             return;
         }
 
-        channel = new NotificationChannel(ONGOING_CONFERENCE_CHANNEL_ID, ONGOING_CONFERNCE_CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
+        channel = new NotificationChannel(ONGOING_CONFERENCE_CHANNEL_ID, context.getString(R.string.ongoing_notification_action_unmute), NotificationManager.IMPORTANCE_DEFAULT);
         channel.enableLights(false);
         channel.enableVibration(false);
         channel.setShowBadge(false);
