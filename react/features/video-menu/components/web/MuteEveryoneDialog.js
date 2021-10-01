@@ -48,7 +48,7 @@ class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<Props> {
                 width = 'small'>
                 <div className = 'mute-dialog'>
                     { this.state.content }
-                    {this.props.exclude.length === 0 && (
+                    { this.props.isModerationSupported && this.props.exclude.length === 0 && (
                         <>
                             <div className = 'separator-line' />
                             <div className = 'control-row'>

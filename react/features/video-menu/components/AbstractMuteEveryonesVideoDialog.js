@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { requestDisableVideoModeration, requestEnableVideoModeration } from '../../av-moderation/actions';
-import { isEnabledFromState } from '../../av-moderation/functions';
+import { isEnabledFromState, isSupported } from '../../av-moderation/functions';
 import { Dialog } from '../../base/dialog';
 import { MEDIA_TYPE } from '../../base/media';
 import { getLocalParticipant, getParticipantDisplayName } from '../../base/participants';
@@ -23,7 +23,8 @@ export type Props = AbstractProps & {
     exclude: Array<string>,
     title: string,
     showAdvancedModerationToggle: boolean,
-    isVideoModerationEnabled: boolean
+    isVideoModerationEnabled: boolean,
+    isModerationSupported: boolean
 };
 
 type State = {
@@ -137,6 +138,7 @@ export function abstractMapStateToProps(state: Object, ownProps: Props) {
         title: t('dialog.muteEveryoneElsesVideoTitle', { whom })
     } : {
         title: t('dialog.muteEveryonesVideoTitle'),
-        isVideoModerationEnabled
+        isVideoModerationEnabled,
+        isModerationSupported: isSupported()(state)
     };
 }
