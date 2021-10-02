@@ -14,12 +14,16 @@ const PollAnswer = (props: AbstractProps) => {
         isModerationEnabled,
         isModerator,
         poll,
-        removePoll,
+        pollVisibility: { showPoll, hidePoll },
         setCheckbox,
         skipAnswer,
         submitAnswer,
         t
     } = props;
+
+    if (!isModerator && poll.hidden) {
+        return null;
+    }
 
     return (
         <div className = 'poll-answer'>
@@ -28,9 +32,9 @@ const PollAnswer = (props: AbstractProps) => {
                     <span>{ poll.question }</span>
                     {
                         isModerationEnabled && isModerator ? <a
-                            className = 'poll-remove-link'
-                            onClick = { removePoll }>
-                            {t('polls.results.removePoll')}
+                            className = 'poll-visibility-link'
+                            onClick = { poll.hidden ? showPoll : hidePoll }>
+                            { poll.hidden ? t('polls.results.showPoll') : t('polls.results.hidePoll') }
                         </a> : null
                     }
                 </div>

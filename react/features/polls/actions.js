@@ -4,7 +4,8 @@ import {
     RESET_NB_UNREAD_POLLS,
     RECEIVE_ANSWER,
     RECEIVE_POLL,
-    REMOVE_POLL,
+    SHOW_POLL,
+    HIDE_POLL,
     REGISTER_VOTE,
     RETRACT_VOTE
 } from './actionTypes';
@@ -33,17 +34,33 @@ export const receivePoll = (pollId: string, poll: Poll, notify: boolean) => {
 };
 
 /**
- * Action to signal that a poll was removed.
+ * Action to signal that a poll was hidden.
  *
- * @param {string} pollId - The id of the incoming poll.
+ * @param {string} pollId - The id of the poll.
  * @returns {{
- *     type: REMOVE_POLL,
+ *     type: HIDE_POLL,
  *     pollId: string
  * }}
  */
-export const removePoll = (pollId: string) => {
+export const hidePoll = (pollId: string) => {
     return {
-        type: REMOVE_POLL,
+        type: HIDE_POLL,
+        pollId
+    };
+};
+
+/**
+ * Action to signal that a poll was shown.
+ *
+ * @param {string} pollId - The id of the poll.
+ * @returns {{
+ *     type: SHOW_POLL,
+ *     pollId: string
+ * }}
+ */
+export const showPoll = (pollId: string) => {
+    return {
+        type: SHOW_POLL,
         pollId
     };
 };

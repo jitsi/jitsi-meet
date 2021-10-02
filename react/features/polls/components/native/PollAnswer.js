@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { Switch, Text, View, TouchableOpacity } from 'react-native';
+import { Switch, Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
 
 import { BUTTON_MODES } from '../../../chat/constants';
@@ -15,10 +15,7 @@ const PollAnswer = (props: AbstractProps) => {
 
     const {
         checkBoxStates,
-        isModerationEnabled,
-        isModerator,
         poll,
-        removePoll,
         setCheckbox,
         skipAnswer,
         submitAnswer,
@@ -29,14 +26,6 @@ const PollAnswer = (props: AbstractProps) => {
         <View>
             <View>
                 <Text style = { dialogStyles.question } >{ poll.question }</Text>
-                {
-                    isModerationEnabled && isModerator ? <TouchableOpacity onPress = { removePoll }>
-                        <Text
-                            style = { chatStyles.toggleText }>
-                            { t('polls.results.removePoll')}
-                        </Text>
-                    </TouchableOpacity> : null
-                }
             </View>
             <View style = { chatStyles.answerContent }>
                 {poll.answers.map((answer, index) => (

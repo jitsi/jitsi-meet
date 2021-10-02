@@ -4,7 +4,8 @@ import { ReducerRegistry } from '../base/redux';
 
 import {
     RECEIVE_POLL,
-    REMOVE_POLL,
+    SHOW_POLL,
+    HIDE_POLL,
     RECEIVE_ANSWER,
     REGISTER_VOTE,
     RETRACT_VOTE,
@@ -38,17 +39,37 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
         return newState;
     }
 
-    // Reducer triggered when a poll is removed
-    case REMOVE_POLL: {
-        // eslint-disable-next-line no-unused-vars
-        const { [action.pollId]: remove, ...restPolls } = state.polls;
+    // Reducer triggered when a poll is hidden
+    case HIDE_POLL: {
+        const { [action.pollId]: poll, ...restPolls } = state.polls;
 
         const newState = {
             ...state,
             polls: {
-                ...restPolls
-            },
-            nbUnreadPolls: state.nbUnreadPolls + 1
+                ...restPolls,
+                [action.pollId]: {
+                    ...poll,
+                    hidden: true
+                }
+            }
+        };
+
+        return newState;
+    }
+
+    // Reducer triggered when a poll is shown
+    case SHOW_POLL: {
+        const { [action.pollId]: poll, ...restPolls } = state.polls;
+
+        const newState = {
+            ...state,
+            polls: {
+                ...restPolls,
+                [action.pollId]: {
+                    ...poll,
+                    hidden: false
+                }
+            }
         };
 
         return newState;

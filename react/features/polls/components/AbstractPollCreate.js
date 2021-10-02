@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 
 import { getParticipantDisplayName } from '../../base/participants';
 import { COMMAND_NEW_POLL } from '../constants';
+import { isPollsModerationEnabled } from '../functions';
 
 /**
  * The type of the React {@code Component} props of inheriting component.
@@ -85,6 +86,7 @@ const AbstractPollCreate = (Component: AbstractComponent<AbstractProps>) => (pro
     const conference = useSelector(state => state['features/base/conference'].conference);
     const myId = conference.myUserId();
     const myName = useSelector(state => getParticipantDisplayName(state, myId));
+    const isModerationEnabled = useSelector(state => isPollsModerationEnabled(state));
 
     const onSubmit = useCallback(ev => {
         if (ev) {
@@ -103,12 +105,13 @@ const AbstractPollCreate = (Component: AbstractComponent<AbstractProps>) => (pro
             senderId: myId,
             senderName: myName,
             question,
+            hidden: isModerationEnabled,
             answers: filteredAnswers
         });
 
         setCreateMode(false);
 
-    }, [ conference, question, answers ]);
+    }, [ conference, question, answers, isModerationEnabled ]);
 
     // Check if the poll create form can be submitted i.e. if the send button should be disabled.
     const isSubmitDisabled

@@ -58,4 +58,25 @@ export type Poll = {
      * the name of the answer name and a map of ids and names of voters voting for this option
      */
     answers: Array<{ name: string, voters: Map<string, string> }>,
+
+    /**
+     * Indicates whether the poll is invisible for non-moderators.
+     */
+    hidden: string,
+
+};
+
+export type PollVisibility = {
+
+    /**
+     * Function used to hide a poll.
+     */
+    hidePoll: Function,
+
+
+    /**
+     * Function used to show a poll.
+     */
+    showPoll: Function,
+
 };

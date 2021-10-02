@@ -11,8 +11,10 @@ import {
     isLocalParticipantModerator
 } from '../../base/participants/functions';
 import { retractVote } from '../actions';
-import { COMMAND_ANSWER_POLL, COMMAND_REMOVE_POLL } from '../constants';
+import { COMMAND_ANSWER_POLL } from '../constants';
 import { isPollsModerationEnabled } from '../functions';
+import { usePollVisibility } from '../hooks';
+import type { Poll, PollVisibility } from '../types';
 
 /**
  * The type of the React {@code Component} props of inheriting component.
@@ -40,7 +42,8 @@ export type AbstractProps = {
     isModerator: boolean,
     isModerationEnabled: boolean,
     changeVote: Function,
-    removePoll: Function,
+    poll: Poll,
+    pollVisibility: PollVisibility,
     showDetails: boolean,
     question: string,
     t: Function,
@@ -118,13 +121,8 @@ const AbstractPollResults = (Component: AbstractComponent<AbstractProps>) => (pr
         });
         dispatch(retractVote(pollId));
     }, [ pollId, localId, localName, pollDetails ]);
-    const removePoll = useCallback(() => {
-        conference.sendMessage({
-            type: COMMAND_REMOVE_POLL,
-            pollId
-        });
-    }, [ pollId ]);
 
+    const pollVisibility = usePollVisibility(pollId, conference);
     const { t } = useTranslation();
 
     return (<Component
@@ -133,8 +131,9 @@ const AbstractPollResults = (Component: AbstractComponent<AbstractProps>) => (pr
         haveVoted = { pollDetails.lastVote !== null }
         isModerationEnabled = { isModerationEnabled }
         isModerator = { isModerator }
+        poll = { pollDetails }
+        pollVisibility = { pollVisibility }
         question = { pollDetails.question }
-        removePoll = { removePoll }
         showDetails = { showDetails }
         t = { t }
         toggleIsDetailed = { toggleIsDetailed } />);

@@ -7,9 +7,10 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { getLocalParticipant, getParticipantById, isLocalParticipantModerator } from '../../base/participants';
 import { registerVote } from '../actions';
-import { COMMAND_ANSWER_POLL, COMMAND_REMOVE_POLL } from '../constants';
+import { COMMAND_ANSWER_POLL } from '../constants';
 import { isPollsModerationEnabled } from '../functions';
-import type { Poll } from '../types';
+import { usePollVisibility } from '../hooks';
+import type { Poll, PollVisibility } from '../types';
 
 /**
  * The type of the React {@code Component} props of inheriting component.
@@ -27,7 +28,7 @@ export type AbstractProps = {
     isModerationEnabled: boolean,
     isModerator: boolean,
     poll: Poll,
-    removePoll: Function,
+    pollVisibility: PollVisibility,
     setCheckbox: Function,
     skipAnswer: Function,
     submitAnswer: Function,
@@ -49,6 +50,7 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
     const isModerator = useSelector(state => isLocalParticipantModerator(state));
     const isModerationEnabled = useSelector(state => isPollsModerationEnabled(state));
     const poll: Poll = useSelector(state => state['features/polls'].polls[pollId]);
+    const pollVisibility = usePollVisibility(pollId, conference);
 
     const { id: localId } = useSelector(getLocalParticipant);
 
@@ -91,13 +93,6 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
 
     }, [ pollId ]);
 
-    const removePoll = useCallback(() => {
-        conference.sendMessage({
-            type: COMMAND_REMOVE_POLL,
-            pollId
-        });
-    }, [ pollId ]);
-
     const { t } = useTranslation();
 
     return (<Component
@@ -105,7 +100,7 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
         isModerationEnabled = { isModerationEnabled }
         isModerator = { isModerator }
         poll = { poll }
-        removePoll = { removePoll }
+        pollVisibility = { pollVisibility }
         setCheckbox = { setCheckbox }
         skipAnswer = { skipAnswer }
         submitAnswer = { submitAnswer }

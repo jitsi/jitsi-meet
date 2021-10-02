@@ -19,9 +19,6 @@ const PollResults = (props: AbstractProps) => {
     const {
         answers,
         changeVote,
-        isModerationEnabled,
-        isModerator,
-        removePoll,
         haveVoted,
         showDetails,
         question,
@@ -91,14 +88,6 @@ const PollResults = (props: AbstractProps) => {
         <View>
             <View>
                 <Text style = { dialogStyles.question } >{ question }</Text>
-                {
-                    isModerationEnabled && isModerator ? <TouchableOpacity onPress = { removePoll }>
-                        <Text
-                            style = { chatStyles.toggleText }>
-                            { t('polls.results.removePoll')}
-                        </Text>
-                    </TouchableOpacity> : null
-                }
             </View>
             <FlatList
                 data = { answers }

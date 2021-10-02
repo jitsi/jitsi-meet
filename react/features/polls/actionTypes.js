@@ -14,15 +14,26 @@
 export const RECEIVE_POLL = 'RECEIVE_POLL';
 
 /**
- * The type of the action which signals that a Poll was removed.
+ * The type of the action which signals that a Poll was hided.
  *
  * {
- *     type: REMOVE_POLL,
+ *     type: HIDE_POLL,
  *     pollId: string
  * }
  *
  */
-export const REMOVE_POLL = 'REMOVE_POLL';
+export const HIDE_POLL = 'HIDE_POLL';
+
+/**
+ * The type of the action which signals that a Poll was shown.
+ *
+ * {
+ *     type: SHOW_POLL,
+ *     pollId: string
+ * }
+ *
+ */
+export const SHOW_POLL = 'SHOW_POLL';
 
 /**
  * The type of the action which signals that a new Answer was received.

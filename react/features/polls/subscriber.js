@@ -9,10 +9,11 @@ import {
     showNotification
 } from '../notifications';
 
-import { receiveAnswer, receivePoll, removePoll } from './actions';
+import { receiveAnswer, receivePoll, hidePoll, showPoll } from './actions';
 import {
     COMMAND_NEW_POLL,
-    COMMAND_REMOVE_POLL,
+    COMMAND_SHOW_POLL,
+    COMMAND_HIDE_POLL,
     COMMAND_ANSWER_POLL,
     COMMAND_OLD_POLLS
 } from './constants';
@@ -20,10 +21,11 @@ import type { Answer, Poll } from './types';
 
 
 const parsePollData = (pollData): Poll | null => {
+    console.log('pollData xxxxx: ', pollData);
     if (typeof pollData !== 'object' || pollData === null) {
         return null;
     }
-    const { id, senderId, senderName, question, answers } = pollData;
+    const { id, senderId, senderName, question, answers, hidden } = pollData;
 
     if (typeof id !== 'string' || typeof senderId !== 'string' || typeof senderName !== 'string'
         || typeof question !== 'string' || !(answers instanceof Array)) {
@@ -52,6 +54,7 @@ const parsePollData = (pollData): Poll | null => {
         senderId,
         senderName,
         question,
+        hidden,
         showResults: true,
         lastVote: null,
         answers: answersParsed
@@ -65,11 +68,12 @@ StateListenerRegistry.register(
             const receiveMessage = (_, data) => {
                 switch (data.type) {
                 case COMMAND_NEW_POLL: {
-                    const { question, answers, pollId, senderId, senderName } = data;
+                    const { question, answers, pollId, senderId, senderName, hidden } = data;
 
                     const poll = {
                         senderId,
                         senderName,
+                        hidden,
                         showResults: false,
                         lastVote: null,
                         question,
@@ -82,6 +86,22 @@ StateListenerRegistry.register(
                     };
 
                     store.dispatch(receivePoll(pollId, poll, true));
+
+                    if (!hidden) {
+                        store.dispatch(showNotification({
+                            appearance: NOTIFICATION_TYPE.NORMAL,
+                            titleKey: 'polls.notification.title',
+                            descriptionKey: 'polls.notification.description'
+                        }, NOTIFICATION_TIMEOUT));
+                    }
+                    break;
+
+                }
+
+                case COMMAND_SHOW_POLL: {
+                    const { pollId } = data;
+
+                    store.dispatch(showPoll(pollId));
                     store.dispatch(showNotification({
                         appearance: NOTIFICATION_TYPE.NORMAL,
                         titleKey: 'polls.notification.title',
@@ -91,10 +111,10 @@ StateListenerRegistry.register(
 
                 }
 
-                case COMMAND_REMOVE_POLL: {
+                case COMMAND_HIDE_POLL: {
                     const { pollId } = data;
 
-                    store.dispatch(removePoll(pollId));
+                    store.dispatch(hidePoll(pollId));
                     break;
 
                 }
