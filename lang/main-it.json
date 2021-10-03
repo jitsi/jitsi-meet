@@ -376,7 +376,7 @@
         "title": "Incorpora questa riunione"
     },
     "virtualBackground": {
-        "apply": "Applica"
+        "apply": "Applica",
         "title": "Sfondi",
         "blur": "Sfuoca",
         "slightBlur": "Sfuoca leggermente",
@@ -589,7 +589,7 @@
         "OldElectronAPPTitle": "Falla di sicurezza!",
         "oldElectronClientDescription1": "Sembri stare usando una versione obsoleta del client Jitsi Meet che ha dei problemi di sicurezza noti. Assicurati di aggiornarla presso il nostro ",
         "oldElectronClientDescription2": "ultima build",
-        "oldElectronClientDescription3": " ora!"
+        "oldElectronClientDescription3": " ora!",
         "moderationInEffectDescription": "Alza la mano, se vuoi prender la parola, per favore.",
         "moderationInEffectCSDescription": "Alza la mano, se vuoi condividere lo schermo, per favore.",
         "moderationInEffectVideoDescription": "Alza la mano, se vuoi avviare la tua videocamera, per favore.",
@@ -624,7 +624,7 @@
             "muteAll": "Silenzia tutti",
             "muteEveryoneElse": "Silenzia tutti gli altri",
             "stopEveryonesVideo": "Ferma il video di tutti",
-            "stopVideo": "Ferma il video"
+            "stopVideo": "Ferma il video",
             "unblockEveryoneMicCamera": "Sblocca audio e video a tutti",
             "videoModeration": "Avvia il loro video"
         }
@@ -1115,7 +1115,7 @@
         "sendFeedback": "Invia feedback",
         "startMeeting": "Inizia riunione",
         "terms": "Termini di utilizzo",
-        "title": "Il sistema di videoconferenza sicuro, funzionale e completamente gratuito."
+        "title": "Il sistema di videoconferenza sicuro, funzionale e completamente gratuito.",
         "logo":{
            "calendar":"Logo calendario",
            "microsoftLogo":"Logo Microsoft",
