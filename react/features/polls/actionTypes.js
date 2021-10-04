@@ -14,6 +14,18 @@
 export const RECEIVE_POLL = 'RECEIVE_POLL';
 
 /**
+ * The type of the action which signals that new were received.
+ *
+ * {
+ *     type: RECEIVE_POLLS,
+ *     polls: Object,
+ *     notify: boolean
+ * }
+ *
+ */
+export const RECEIVE_POLLS = 'RECEIVE_POLLS';
+
+/**
  * The type of the action which signals that a Poll was hided.
  *
  * {

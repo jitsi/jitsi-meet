@@ -4,12 +4,34 @@ import {
     RESET_NB_UNREAD_POLLS,
     RECEIVE_ANSWER,
     RECEIVE_POLL,
+    RECEIVE_POLLS,
     SHOW_POLL,
     HIDE_POLL,
     REGISTER_VOTE,
     RETRACT_VOTE
 } from './actionTypes';
 import type { Answer, Poll } from './types';
+
+/**
+ * Action to signal that polls were received.
+ *
+ * @param {Array<string>} pollIds - The new poll ids.
+ * @param {Object} polls - The incoming object containing Poll objects.
+ * @param {boolean} notify - Whether to send or not a notification.
+ * @returns {{
+ *     type: RECEIVE_POLLS,
+ *     polls: Polls,
+ *     notify: boolean
+ * }}
+ */
+export const receivePolls = (pollIds: Array<string>, polls: Array<Poll>, notify: boolean) => {
+    return {
+        type: RECEIVE_POLLS,
+        pollIds,
+        polls,
+        notify
+    };
+};
 
 /**
  * Action to signal that a new poll was received.

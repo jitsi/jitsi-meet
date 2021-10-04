@@ -9,19 +9,26 @@ import {
     showNotification
 } from '../notifications';
 
-import { receiveAnswer, receivePoll, hidePoll, showPoll } from './actions';
+import {
+    receiveAnswer,
+    receivePoll,
+    receivePolls,
+    hidePoll,
+    showPoll
+} from './actions';
 import {
     COMMAND_NEW_POLL,
+    COMMAND_NEW_POLLS,
     COMMAND_SHOW_POLL,
     COMMAND_HIDE_POLL,
     COMMAND_ANSWER_POLL,
     COMMAND_OLD_POLLS
 } from './constants';
+import { formatNewPollData, getNewPollId } from './functions';
 import type { Answer, Poll } from './types';
 
 
 const parsePollData = (pollData): Poll | null => {
-    console.log('pollData xxxxx: ', pollData);
     if (typeof pollData !== 'object' || pollData === null) {
         return null;
     }
@@ -68,26 +75,29 @@ StateListenerRegistry.register(
             const receiveMessage = (_, data) => {
                 switch (data.type) {
                 case COMMAND_NEW_POLL: {
-                    const { question, answers, pollId, senderId, senderName, hidden } = data;
-
-                    const poll = {
-                        senderId,
-                        senderName,
-                        hidden,
-                        showResults: false,
-                        lastVote: null,
-                        question,
-                        answers: answers.map(answer => {
-                            return {
-                                name: answer,
-                                voters: new Map()
-                            };
-                        })
-                    };
+                    const { pollId } = data;
+                    const poll = formatNewPollData(data);
 
                     store.dispatch(receivePoll(pollId, poll, true));
 
-                    if (!hidden) {
+                    if (!poll.hidden) {
+                        store.dispatch(showNotification({
+                            appearance: NOTIFICATION_TYPE.NORMAL,
+                            titleKey: 'polls.notification.title',
+                            descriptionKey: 'polls.notification.description'
+                        }, NOTIFICATION_TIMEOUT));
+                    }
+                    break;
+                }
+                case COMMAND_NEW_POLLS: {
+                    const { polls } = data;
+                    const newPollsData = polls.map(poll => formatNewPollData(poll));
+                    const newPollIds = polls.map(() => getNewPollId());
+console.log('newPollsData xxxxx: ', newPollsData);
+console.log('newPollIds xxxxx: ', newPollIds);
+                    store.dispatch(receivePolls(newPollIds, newPollsData, true));
+
+                    if (newPollsData.some(poll => !poll.hidden)) {
                         store.dispatch(showNotification({
                             appearance: NOTIFICATION_TYPE.NORMAL,
                             titleKey: 'polls.notification.title',

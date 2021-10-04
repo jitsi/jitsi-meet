@@ -86,6 +86,18 @@ var config = {
     // Specifies whether the moderators will have more polls priviledges than the participants.
     // - Participants are unable to create polls.
     // - Moderators are able to show or hide polls for participants.
+    // - Moderators are able to import or export json file with polls.
+    // - Json import file format:
+    // [
+    //     {
+    //         "answers": [
+    //             "answer 1",
+    //             "answer 2",
+    //             "answer 3"
+    //         ],
+    //         "question": "question"
+    //     }
+    // ]
     // enablePollsModeration: false,
 
     // Disables ICE/UDP by filtering out local and remote UDP candidates in

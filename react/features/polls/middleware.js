@@ -4,7 +4,7 @@ import { MiddlewareRegistry } from '../base/redux';
 import { playSound } from '../base/sounds';
 import { INCOMING_MSG_SOUND_ID } from '../chat/constants';
 
-import { RECEIVE_POLL } from './actionTypes';
+import { RECEIVE_POLL, RECEIVE_POLLS } from './actionTypes';
 
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
@@ -12,7 +12,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
     switch (action.type) {
 
+    // Middleware triggered when multiple polls are received
+    case RECEIVE_POLLS:
+
     // Middleware triggered when a poll is received
+    // eslint-disable-next-line no-fallthrough
     case RECEIVE_POLL: {
 
         const state = getState();

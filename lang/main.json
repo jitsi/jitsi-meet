@@ -632,6 +632,10 @@
     "passwordSetRemotely": "Set by another participant",
     "passwordDigitsOnly": "Up to {{number}} digits",
     "polls": {
+        "moderation": {
+            "export": "Export",
+            "import": "Import"
+        },
         "create": {
             "addOption": "Add option",
             "answerPlaceholder": "Option {{index}}",

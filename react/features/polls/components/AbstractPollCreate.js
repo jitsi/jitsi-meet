@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 
 import { getParticipantDisplayName } from '../../base/participants';
 import { COMMAND_NEW_POLL } from '../constants';
-import { isPollsModerationEnabled } from '../functions';
+import { isPollsModerationEnabled, getNewPollId } from '../functions';
 
 /**
  * The type of the React {@code Component} props of inheriting component.
@@ -101,7 +101,7 @@ const AbstractPollCreate = (Component: AbstractComponent<AbstractProps>) => (pro
 
         conference.sendMessage({
             type: COMMAND_NEW_POLL,
-            pollId: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(36),
+            pollId: getNewPollId(),
             senderId: myId,
             senderName: myName,
             question,

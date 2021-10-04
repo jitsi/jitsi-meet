@@ -1,4 +1,7 @@
 // @flow
+import { v4 as getUuid } from 'uuid';
+
+import type { Poll } from './types';
 
 /**
  * Should poll results be shown.
@@ -8,6 +11,42 @@
  * @returns {boolean} Should poll results be shown.
  */
 export const shouldShowResults = (state: Object, id: string) => Boolean(state['features/polls']?.polls[id].showResults);
+
+/**
+ * Get new poll id.
+ *
+ * @returns {string} The final poll object.
+ */
+export function getNewPollId() {
+    return getUuid();
+}
+
+/**
+ * Format new poll data.
+ *
+ * @param {Object} pollData - Poll data.
+ * @returns {Poll} The final poll object.
+ */
+export function formatNewPollData(pollData: Object) {
+    const { question, answers, senderId, senderName, hidden } = pollData;
+
+    const poll = {
+        senderId,
+        senderName,
+        hidden,
+        showResults: false,
+        lastVote: null,
+        question,
+        answers: answers.map(answer => {
+            return {
+                name: answer,
+                voters: new Map()
+            };
+        })
+    };
+
+    return poll;
+}
 
 /**
  * Selector for calculating the number of hidden poll messages.

@@ -4,6 +4,7 @@ import { ReducerRegistry } from '../base/redux';
 
 import {
     RECEIVE_POLL,
+    RECEIVE_POLLS,
     SHOW_POLL,
     HIDE_POLL,
     RECEIVE_ANSWER,
@@ -22,6 +23,26 @@ const INITIAL_STATE = {
 
 ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
     switch (action.type) {
+
+    // Reducer triggered when multiple polls are received
+    case RECEIVE_POLLS: {
+        const newPolls = {};
+
+        for (let i = 0; i < action.pollIds.length; i++) {
+            newPolls[action.pollIds[i]] = action.polls[i];
+        }
+
+        const newState = {
+            ...state,
+            polls: {
+                ...state.polls,
+                ...newPolls
+            },
+            nbUnreadPolls: state.nbUnreadPolls + action.polls.length
+        };
+
+        return newState;
+    }
 
     // Reducer triggered when a poll is received
     case RECEIVE_POLL: {
