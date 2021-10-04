@@ -57,6 +57,7 @@ export default function ParticipantQuickAction({
     case QUICK_ACTION_BUTTON.MUTE: {
         return (
             <QuickActionButton
+                aria-label = { `mute-${participantID}` }
                 onClick = { muteAudio(participantID) }
                 primary = { true }>
                 { muteParticipantButtonText }
