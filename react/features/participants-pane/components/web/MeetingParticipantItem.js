@@ -235,7 +235,9 @@ function MeetingParticipantItem({
     }
 
     const buttonType = _isModerationSupported
-        ? _localModerator ? QUICK_ACTION_BUTTON.ASK_TO_UNMUTE : _quickActionButtonType
+        ? _localModerator && _audioMediaState !== MEDIA_STATE.UNMUTED
+            ? QUICK_ACTION_BUTTON.ASK_TO_UNMUTE
+            : _quickActionButtonType
         : '';
 
     return (

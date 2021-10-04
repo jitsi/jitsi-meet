@@ -44,10 +44,10 @@ class MuteVideoButton extends AbstractMuteVideoButton {
         const { _videoTrackMuted, participantID, t } = this.props;
         const muteConfig = _videoTrackMuted ? {
             translationKey: 'videothumbnail.videoMuted',
-            muteClassName: 'mutelink disabled'
+            muteClassName: 'mutevideolink disabled'
         } : {
             translationKey: 'videothumbnail.domuteVideo',
-            muteClassName: 'mutelink'
+            muteClassName: 'mutevideolink'
         };
 
         return (
