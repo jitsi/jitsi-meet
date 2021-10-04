@@ -85,6 +85,12 @@ function provider.get_sasl_handler(session)
             return res, error, reason;
         end
 
+        local shouldAllow = prosody.events.fire_event("jitsi-access-ban-check", session);
+        if shouldAllow == false then
+            log("warn", "user is banned")
+            return false, "not-allowed", "user is banned";
+        end
+
         local customUsername
             = prosody.events.fire_event("pre-jitsi-authentication", session);
 
