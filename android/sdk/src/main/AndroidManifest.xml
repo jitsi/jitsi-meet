@@ -57,6 +57,14 @@
             android:enabled="false"
             tools:replace="android:authorities">
         </provider>
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false">
+            <meta-data  android:name="org.jitsi.meet.sdk.JitsiInitializer"
+                android:value="androidx.startup" />
+        </provider>
+
     </application>
 
 </manifest>
