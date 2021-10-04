@@ -33,12 +33,11 @@ export const approveParticipant = (id: string) => (dispatch: Function, getState:
     const { conference } = getConferenceState(state);
     const participant = getParticipantById(state, id);
 
-    const isAudioForceMuted = isForceMuted(participant, MEDIA_TYPE.AUDIO, state);
     const isVideoForceMuted = isForceMuted(participant, MEDIA_TYPE.VIDEO, state);
     const isAudioModerationOn = isEnabledFromState(MEDIA_TYPE.AUDIO, state);
     const isVideoModerationOn = isEnabledFromState(MEDIA_TYPE.VIDEO, state);
 
-    if (!(isAudioModerationOn || isVideoModerationOn) || (isAudioModerationOn && isAudioForceMuted)) {
+    if (isAudioModerationOn || !isVideoModerationOn) {
         conference.avModerationApprove(MEDIA_TYPE.AUDIO, id);
     }
     if (isVideoModerationOn && isVideoForceMuted) {
