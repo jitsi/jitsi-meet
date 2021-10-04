@@ -10,7 +10,7 @@ import { Icon, IconCheck, IconClose } from '../../../base/icons';
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { admitMultiple } from '../../../lobby/actions.web';
 import { getLobbyEnabled, getKnockingParticipants } from '../../../lobby/functions';
-import { Drawer, DrawerPortal } from '../../../toolbox/components/web';
+import { Drawer, JitsiPortal } from '../../../toolbox/components/web';
 import { showOverflowDrawer } from '../../../toolbox/functions';
 import { useLobbyActions, useParticipantDrawer } from '../../hooks';
 
@@ -96,7 +96,7 @@ export default function LobbyParticipants() {
             openDrawerForParticipant = { openDrawerForParticipant }
             overflowDrawer = { overflowDrawer }
             participants = { participants } />
-        <DrawerPortal>
+        <JitsiPortal>
             <Drawer
                 isOpen = { Boolean(drawerParticipant && overflowDrawer) }
                 onClose = { closeDrawer }>
@@ -128,7 +128,7 @@ export default function LobbyParticipants() {
                     </li>
                 </ul>
             </Drawer>
-        </DrawerPortal>
+        </JitsiPortal>
     </>
     );
 }

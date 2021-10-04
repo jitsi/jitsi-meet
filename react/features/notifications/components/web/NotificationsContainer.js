@@ -1,38 +1,173 @@
 // @flow
 
-import { FlagGroup } from '@atlaskit/flag';
-import React from 'react';
+import { FlagGroupContext } from '@atlaskit/flag/flag-group';
+import { AtlasKitThemeProvider } from '@atlaskit/theme';
+import { withStyles } from '@material-ui/styles';
+import React, { Component } from 'react';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-import AbstractNotificationsContainer, {
-    _abstractMapStateToProps,
-    type Props as AbstractProps
-} from '../AbstractNotificationsContainer';
+import { hideNotification } from '../../actions';
+import { areThereNotifications } from '../../functions';
 
 import Notification from './Notification';
 
-type Props = AbstractProps & {
+declare var interfaceConfig: Object;
+
+type Props = {
 
     /**
      * Whether we are a SIP gateway or not.
      */
-     _iAmSipGateway: boolean,
+    _iAmSipGateway: boolean,
 
-     /**
+    /**
+     * Whether or not the chat is open.
+     */
+    _isChatOpen: boolean,
+
+    /**
+     * The notifications to be displayed, with the first index being the
+     * notification at the top and the rest shown below it in order.
+     */
+    _notifications: Array<Object>,
+
+    /**
+     * The length, in milliseconds, to use as a default timeout for all
+     * dismissible timeouts that do not have a timeout specified.
+     */
+    autoDismissTimeout: number,
+
+    /**
+     * JSS classes object.
+     */
+    classes: Object,
+
+    /**
+     * Invoked to update the redux store in order to remove notifications.
+     */
+    dispatch: Function,
+
+    /**
+     * Whether or not the notifications are displayed in a portal.
+     */
+    portal?: boolean,
+
+    /**
      * Invoked to obtain translated strings.
      */
-     t: Function
+    t: Function
+};
+
+const useStyles = theme => {
+    return {
+        container: {
+            position: 'absolute',
+            left: '16px',
+            bottom: '90px',
+            width: '400px',
+            maxWidth: '100%',
+            zIndex: 600
+        },
+
+        containerPortal: {
+            maxWidth: 'calc(100% - 32px)'
+        },
+
+        containerChatOpen: {
+            left: '331px'
+        },
+
+        transitionGroup: {
+            '& > *': {
+                marginBottom: '20px',
+                borderRadius: '6px!important', // !important used to overwrite atlaskit style
+                position: 'relative'
+            },
+
+            '& div > span > svg > path': {
+                fill: 'inherit'
+            },
+
+            '& div > span, & div > p': {
+                color: theme.palette.field01
+            },
+
+            '& .ribbon': {
+                width: '4px',
+                height: 'calc(100% - 16px)',
+                position: 'absolute',
+                left: 0,
+                top: '8px',
+                borderRadius: '4px',
+
+                '&.normal': {
+                    backgroundColor: theme.palette.link01Active
+                },
+
+                '&.error': {
+                    backgroundColor: theme.palette.iconError
+                },
+
+                '&.warning': {
+                    backgroundColor: theme.palette.warning01
+                }
+            }
+        }
+    };
 };
 
 /**
  * Implements a React {@link Component} which displays notifications and handles
- * automatic dismissmal after a notification is shown for a defined timeout
+ * automatic dismissal after a notification is shown for a defined timeout
  * period.
  *
  * @extends {Component}
  */
-class NotificationsContainer extends AbstractNotificationsContainer<Props> {
+class NotificationsContainer extends Component<Props> {
+    _api: Object;
+    _timeouts: Map<string, TimeoutID>;
+
+    /**
+     * Initializes a new {@code NotificationsContainer} instance.
+     *
+     * @inheritdoc
+     */
+    constructor(props: Props) {
+        super(props);
+
+        this._timeouts = new Map();
+
+        // Bind event handlers so they are only bound once for every instance.
+        this._onDismissed = this._onDismissed.bind(this);
+
+        // HACK ALERT! We are rendering AtlasKit Flag elements outside of a FlagGroup container.
+        // In order to hook-up the dismiss action we'll a fake context provider,
+        // just like FlagGroup does.
+        this._api = {
+            onDismissed: this._onDismissed,
+            dismissAllowed: () => true
+        };
+    }
+
+    /**
+     * Sets a timeout for each notification, where applicable.
+     *
+     * @inheritdoc
+     */
+    componentDidMount() {
+        this._updateTimeouts();
+    }
+
+    /**
+     * Sets a timeout for each notification, where applicable.
+     *
+     * @inheritdoc
+     */
+    componentDidUpdate() {
+        this._updateTimeouts();
+    }
 
     /**
      * Implements React's {@link Component#render()}.
@@ -46,16 +181,45 @@ class NotificationsContainer extends AbstractNotificationsContainer<Props> {
         }
 
         return (
-            <FlagGroup
-                id = 'notifications-container'
-                label = { this.props.t('notify.groupTitle') }
-                onDismissed = { this._onDismissed }>
-                { this._renderFlags() }
-            </FlagGroup>
+            <AtlasKitThemeProvider mode = 'light'>
+                <FlagGroupContext.Provider value = { this._api }>
+                    <div
+                        className = { `${this.props.classes.container} ${this.props.portal
+                            ? this.props.classes.containerPortal
+                            : this.props._isChatOpen
+                                ? this.props.classes.containerChatOpen
+                                : ''}`
+                        }
+                        id = 'notifications-container'>
+                        <TransitionGroup className = { this.props.classes.transitionGroup }>
+                            {this._renderFlags()}
+                        </TransitionGroup>
+                    </div>
+                </FlagGroupContext.Provider>
+            </AtlasKitThemeProvider>
         );
     }
 
     _onDismissed: number => void;
+
+    /**
+     * Emits an action to remove the notification from the redux store so it
+     * stops displaying.
+     *
+     * @param {number} uid - The id of the notification to be removed.
+     * @private
+     * @returns {void}
+     */
+    _onDismissed(uid) {
+        const timeout = this._timeouts.get(uid);
+
+        if (timeout) {
+            clearTimeout(timeout);
+            this._timeouts.delete(uid);
+        }
+
+        this.props.dispatch(hideNotification(uid));
+    }
 
     /**
      * Renders notifications to display as ReactElements. An empty array will
@@ -74,14 +238,45 @@ class NotificationsContainer extends AbstractNotificationsContainer<Props> {
             // either id or key to set a key on notifications, but accessing
             // props.key will cause React to print an error.
             return (
-                <Notification
-                    { ...props }
-                    id = { uid }
+                <CSSTransition
+                    appear = { true }
+                    classNames = 'notification'
+                    in = { true }
                     key = { uid }
-                    onDismissed = { this._onDismissed }
-                    uid = { uid } />
+                    timeout = { 200 }>
+                    <Notification
+                        { ...props }
+                        id = { uid }
+                        onDismissed = { this._onDismissed }
+                        uid = { uid } />
+                </CSSTransition>
             );
         });
+    }
+
+    /**
+     * Updates the timeouts for every notification.
+     *
+     * @returns {void}
+     */
+    _updateTimeouts() {
+        const { _notifications, autoDismissTimeout } = this.props;
+
+        for (const notification of _notifications) {
+            if ((notification.timeout || typeof autoDismissTimeout === 'number')
+                    && notification.props.isDismissAllowed !== false
+                    && !this._timeouts.has(notification.uid)) {
+                const {
+                    timeout = autoDismissTimeout,
+                    uid
+                } = notification;
+                const timerID = setTimeout(() => {
+                    this._onDismissed(uid);
+                }, timeout);
+
+                this._timeouts.set(uid, timerID);
+            }
+        }
     }
 }
 
@@ -93,13 +288,17 @@ class NotificationsContainer extends AbstractNotificationsContainer<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
+    const { notifications } = state['features/notifications'];
     const { iAmSipGateway } = state['features/base/config'];
+    const { isOpen: isChatOpen } = state['features/chat'];
+    const _visible = areThereNotifications(state);
 
     return {
-        ..._abstractMapStateToProps(state),
-        _iAmSipGateway: Boolean(iAmSipGateway)
+        _iAmSipGateway: Boolean(iAmSipGateway),
+        _isChatOpen: isChatOpen,
+        _notifications: _visible ? notifications : [],
+        autoDismissTimeout: interfaceConfig.ENFORCE_NOTIFICATION_AUTO_DISMISS_TIMEOUT
     };
 }
 
-
-export default translate(connect(_mapStateToProps)(NotificationsContainer));
+export default translate(connect(_mapStateToProps)(withStyles(useStyles)(NotificationsContainer)));
