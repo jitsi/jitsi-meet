@@ -8,7 +8,6 @@ import { MiddlewareRegistry } from '../base/redux';
 import { updateSettings } from '../base/settings';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { getDisabledSounds } from '../base/sounds/functions.any';
-import { isVpaasMeeting } from '../jaas/functions';
 import { NOTIFICATION_TIMEOUT, showNotification } from '../notifications';
 
 import {
@@ -109,9 +108,7 @@ MiddlewareRegistry.register(store => next => action => {
             dispatch(pushReactions(buffer));
         });
 
-        if (isVpaasMeeting(state)) {
-            sendReactionsWebhook(state, buffer);
-        }
+        sendReactionsWebhook(state, buffer);
 
         break;
     }
