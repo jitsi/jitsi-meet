@@ -599,7 +599,8 @@
         "youMayTest": "You may test your audio and video while you wait.",
         "callWillBegin": "Your call will automatically begin momentarily.",
         "authenticationExpired": "Your appointment booking has expired",
-        "minutes": "{{duration}} Minutes"
+        "minutes": "{{duration}} Minutes",
+        "errorTitleKey": "Waiting area error."
     },
     "preCallMessage": {
         "sitBack": "Sit back, relax and take a moment for yourself.",
