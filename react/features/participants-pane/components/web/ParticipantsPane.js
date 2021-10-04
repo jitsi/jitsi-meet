@@ -7,7 +7,7 @@ import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { isLocalParticipantModerator } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { Drawer, DrawerPortal } from '../../../toolbox/components/web';
+import { Drawer, JitsiPortal } from '../../../toolbox/components/web';
 import { showOverflowDrawer } from '../../../toolbox/functions';
 import { MuteEveryoneDialog } from '../../../video-menu/components/';
 import { close } from '../../actions';
@@ -166,13 +166,13 @@ class ParticipantsPane extends Component<Props, State> {
                             </Footer>
                         )}
                     </div>
-                    <DrawerPortal>
+                    <JitsiPortal>
                         <Drawer
                             isOpen = { contextOpen && _overflowDrawer }
                             onClose = { this._onDrawerClose }>
                             <FooterContextMenu inDrawer = { true } />
                         </Drawer>
-                    </DrawerPortal>
+                    </JitsiPortal>
                 </div>
             </ThemeProvider>
         );

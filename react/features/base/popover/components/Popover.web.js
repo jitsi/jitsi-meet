@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import { Drawer, DrawerPortal, DialogPortal } from '../../../toolbox/components/web';
+import { Drawer, JitsiPortal, DialogPortal } from '../../../toolbox/components/web';
 import { isMobileBrowser } from '../../environment/utils';
 import { getContextMenuStyle } from '../functions.web';
 
@@ -173,13 +173,13 @@ class Popover extends Component<Props, State> {
                     id = { id }
                     onClick = { this._onShowDialog }>
                     { children }
-                    <DrawerPortal>
+                    <JitsiPortal>
                         <Drawer
                             isOpen = { this.state.showDialog }
                             onClose = { this._onHideDialog }>
                             { content }
                         </Drawer>
-                    </DrawerPortal>
+                    </JitsiPortal>
                 </div>
             );
         }

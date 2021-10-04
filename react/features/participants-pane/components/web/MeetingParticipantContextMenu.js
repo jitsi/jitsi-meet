@@ -30,7 +30,7 @@ import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import { isParticipantAudioMuted, isParticipantVideoMuted } from '../../../base/tracks';
 import { openChatById } from '../../../chat/actions';
 import { setVolume } from '../../../filmstrip/actions.web';
-import { Drawer, DrawerPortal } from '../../../toolbox/components/web';
+import { Drawer, JitsiPortal } from '../../../toolbox/components/web';
 import { GrantModeratorDialog, KickRemoteParticipantDialog, MuteEveryoneDialog } from '../../../video-menu';
 import { VolumeSlider } from '../../../video-menu/components/web';
 import MuteRemoteParticipantsVideoDialog from '../../../video-menu/components/web/MuteRemoteParticipantsVideoDialog';
@@ -533,7 +533,7 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
                       { actions }
                   </ContextMenu>}
 
-                <DrawerPortal>
+                <JitsiPortal>
                     <Drawer
                         isOpen = { drawerParticipant && overflowDrawer }
                         onClose = { closeDrawer }>
@@ -549,7 +549,7 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
                             { actions }
                         </div>
                     </Drawer>
-                </DrawerPortal>
+                </JitsiPortal>
             </>
         );
     }
