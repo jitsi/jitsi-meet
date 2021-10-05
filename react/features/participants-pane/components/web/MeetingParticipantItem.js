@@ -2,7 +2,6 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { isSupported } from '../../../av-moderation/functions';
 import { translate } from '../../../base/i18n';
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../../base/media';
@@ -10,7 +9,6 @@ import {
     getLocalParticipant,
     getParticipantByIdOrUndefined,
     getParticipantDisplayName,
-    isLocalParticipantModerator,
     isParticipantModerator
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
@@ -20,7 +18,7 @@ import {
     isParticipantAudioMuted,
     isParticipantVideoMuted
 } from '../../../base/tracks';
-import { ACTION_TRIGGER, type MediaState, MEDIA_STATE, QUICK_ACTION_BUTTON } from '../../constants';
+import { ACTION_TRIGGER, type MediaState, MEDIA_STATE } from '../../constants';
 import {
     getParticipantAudioMediaState,
     getParticipantVideoMediaState,
@@ -174,9 +172,7 @@ function MeetingParticipantItem({
     _audioTrack,
     _disableModeratorIndicator,
     _displayName,
-    _isModerationSupported,
     _local,
-    _localModerator,
     _localVideoOwner,
     _participant,
     _participantID,
@@ -234,12 +230,6 @@ function MeetingParticipantItem({
         askToUnmuteText = t('participantsPane.actions.allowVideo');
     }
 
-    const buttonType = _isModerationSupported
-        ? _localModerator && _audioMediaState !== MEDIA_STATE.UNMUTED
-            ? QUICK_ACTION_BUTTON.ASK_TO_UNMUTE
-            : _quickActionButtonType
-        : '';
-
     return (
         <ParticipantItem
             actionsTrigger = { ACTION_TRIGGER.HOVER }
@@ -261,7 +251,7 @@ function MeetingParticipantItem({
                 && <>
                     <ParticipantQuickAction
                         askUnmuteText = { askToUnmuteText }
-                        buttonType = { buttonType }
+                        buttonType = { _quickActionButtonType }
                         muteAudio = { muteAudio }
                         muteParticipantButtonText = { muteParticipantButtonText }
                         participantID = { _participantID } />
@@ -307,16 +297,12 @@ function _mapStateToProps(state, ownProps): Object {
 
     const { disableModeratorIndicator } = state['features/base/config'];
 
-    const _localModerator = isLocalParticipantModerator(state);
-
     return {
         _audioMediaState,
         _audioTrack,
         _disableModeratorIndicator: disableModeratorIndicator,
         _displayName: getParticipantDisplayName(state, participant?.id),
-        _isModerationSupported: isSupported()(state),
         _local: Boolean(participant?.local),
-        _localModerator,
         _localVideoOwner: Boolean(ownerId === localParticipantId),
         _participant: participant,
         _participantID: participant?.id,
