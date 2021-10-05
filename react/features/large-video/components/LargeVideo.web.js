@@ -168,7 +168,7 @@ class LargeVideo extends Component<Props> {
     _onDoubleTap: () => void
 
     /**
-     * Creates the custom styles object.
+     * Sets view to tile view on double tap.
      *
      * @param {Object} e - The event.
      * @private
