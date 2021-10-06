@@ -72,6 +72,7 @@ class CalendarList extends AbstractPage<Props> {
         this._getRenderListEmptyComponent
             = this._getRenderListEmptyComponent.bind(this);
         this._onOpenSettings = this._onOpenSettings.bind(this);
+        this._onKeyPressOpenSettings = this._onKeyPressOpenSettings.bind(this);
         this._onRefreshEvents = this._onRefreshEvents.bind(this);
     }
 
@@ -187,7 +188,9 @@ class CalendarList extends AbstractPage<Props> {
         return (
             <div className = 'meetings-list-empty'>
                 <div className = 'meetings-list-empty-image'>
-                    <img src = './images/calendar.svg' />
+                    <img
+                        alt = { t('welcomepage.logo.calendar') }
+                        src = './images/calendar.svg' />
                 </div>
                 <div className = 'description'>
                     { t('welcomepage.connectCalendarText', {
@@ -197,7 +200,9 @@ class CalendarList extends AbstractPage<Props> {
                 </div>
                 <div
                     className = 'meetings-list-empty-button'
-                    onClick = { this._onOpenSettings }>
+                    onClick = { this._onOpenSettings }
+                    onKeyPress = { this._onKeyPressOpenSettings }
+                    role = 'button'>
                     <Icon
                         className = 'meetings-list-empty-icon'
                         src = { IconPlusCalendar } />
@@ -219,6 +224,22 @@ class CalendarList extends AbstractPage<Props> {
         sendAnalytics(createCalendarClickedEvent('calendar.connect'));
 
         this.props.dispatch(openSettingsDialog(SETTINGS_TABS.CALENDAR));
+    }
+
+    _onKeyPressOpenSettings: (Object) => void;
+
+    /**
+     * KeyPress handler for accessibility.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onKeyPressOpenSettings(e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            this._onOpenSettings();
+        }
     }
 
     _onRefreshEvents: () => void;

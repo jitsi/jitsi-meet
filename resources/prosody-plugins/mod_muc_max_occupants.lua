@@ -7,6 +7,7 @@
 local split_jid = require "util.jid".split;
 local st = require "util.stanza";
 local it = require "util.iterators";
+local is_healthcheck_room = module:require "util".is_healthcheck_room;
 
 local whitelist = module:get_option_set("muc_access_whitelist");
 local MAX_OCCUPANTS = module:get_option_number("muc_max_occupants", -1);
@@ -17,9 +18,11 @@ end
 
 local function check_for_max_occupants(event)
   local room, origin, stanza = event.room, event.origin, event.stanza;
-
-	local actor = stanza.attr.from;
   local user, domain, res = split_jid(stanza.attr.from);
+
+  if is_healthcheck_room(room.jid) then
+    return;
+  end
 
   --no user object means no way to check for max occupants
   if user == nil then
@@ -32,11 +35,14 @@ local function check_for_max_occupants(event)
   end
 
 	if room and not room._jid_nick[stanza.attr.from] then
+        local max_occupants_by_room = event.room._data.max_occupants;
 		local count = count_keys(room._occupants);
-		local slots = MAX_OCCUPANTS;
+        -- if no of occupants limit is set per room basis use
+        -- that settings otherwise use the global one
+        local slots = max_occupants_by_room or MAX_OCCUPANTS;
 
 		-- If there is no whitelist, just check the count.
-		if not whitelist and count >= MAX_OCCUPANTS then
+		if not whitelist and count >= slots then
 			module:log("info", "Attempt to enter a maxed out MUC");
 			origin.send(st.error_reply(stanza, "cancel", "service-unavailable"));
 			return true;

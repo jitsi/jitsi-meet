@@ -5,7 +5,7 @@ import { NativeEventEmitter, NativeModules } from 'react-native';
 
 import { ENDPOINT_TEXT_MESSAGE_NAME } from '../../../../modules/API/constants';
 import { appNavigate } from '../../app/actions';
-import { APP_WILL_MOUNT } from '../../base/app/actionTypes';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app/actionTypes';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
@@ -26,16 +26,37 @@ import {
     getURLWithoutParams
 } from '../../base/connection';
 import { JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
-import { SET_AUDIO_MUTED } from '../../base/media/actionTypes';
-import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../../base/participants';
+import { MEDIA_TYPE } from '../../base/media';
+import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
+import {
+    PARTICIPANT_JOINED,
+    PARTICIPANT_LEFT,
+    getParticipantById,
+    getRemoteParticipants,
+    getLocalParticipant
+} from '../../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';
 import { toggleScreensharing } from '../../base/tracks';
-import { muteLocal } from '../../remote-video-menu/actions';
+import { OPEN_CHAT, CLOSE_CHAT } from '../../chat';
+import { openChat } from '../../chat/actions';
+import { sendMessage, setPrivateMessageRecipient, closeChat } from '../../chat/actions.any';
+import { muteLocal } from '../../video-menu/actions';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 
 import { setParticipantsWithScreenShare } from './actions';
 import { sendEvent } from './functions';
 import logger from './logger';
+
+/**
+ * Event which will be emitted on the native side when a chat message is received
+ * through the channel.
+ */
+const CHAT_MESSAGE_RECEIVED = 'CHAT_MESSAGE_RECEIVED';
+
+/**
+ * Event which will be emitted on the native side when the chat dialog is displayed/closed.
+ */
+const CHAT_TOGGLED = 'CHAT_TOGGLED';
 
 /**
  * Event which will be emitted on the native side to indicate the conference
@@ -55,6 +76,11 @@ const ENDPOINT_TEXT_MESSAGE_RECEIVED = 'ENDPOINT_TEXT_MESSAGE_RECEIVED';
  */
 const SCREEN_SHARE_TOGGLED = 'SCREEN_SHARE_TOGGLED';
 
+/**
+ * Event which will be emitted on the native side with the participant info array.
+ */
+const PARTICIPANTS_INFO_RETRIEVED = 'PARTICIPANTS_INFO_RETRIEVED';
+
 const { ExternalAPI } = NativeModules;
 const eventEmitter = new NativeEventEmitter(ExternalAPI);
 
@@ -72,6 +98,9 @@ MiddlewareRegistry.register(store => next => action => {
     switch (type) {
     case APP_WILL_MOUNT:
         _registerForNativeEvents(store);
+        break;
+    case APP_WILL_UNMOUNT:
+        _unregisterForNativeEvents();
         break;
     case CONFERENCE_FAILED: {
         const { error, ...data } = action;
@@ -147,19 +176,33 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
+    case OPEN_CHAT:
+    case CLOSE_CHAT: {
+        sendEvent(
+            store,
+            CHAT_TOGGLED,
+            /* data */ {
+                isOpen: action.type === OPEN_CHAT
+            });
+        break;
+    }
+
     case PARTICIPANT_JOINED:
     case PARTICIPANT_LEFT: {
+        // Skip these events while not in a conference. SDK users can still retrieve them.
+        const { conference } = store.getState()['features/base/conference'];
+
+        if (!conference) {
+            break;
+        }
+
         const { participant } = action;
 
         sendEvent(
             store,
             action.type,
-            /* data */ {
-                isLocal: participant.local,
-                email: participant.email,
-                name: participant.name,
-                participantId: participant.id
-            });
+            _participantToParticipantInfo(participant) /* data */
+        );
         break;
     }
 
@@ -171,6 +214,15 @@ MiddlewareRegistry.register(store => next => action => {
         sendEvent(
             store,
             'AUDIO_MUTED_CHANGED',
+            /* data */ {
+                muted: action.muted
+            });
+        break;
+
+    case SET_VIDEO_MUTED:
+        sendEvent(
+            store,
+            'VIDEO_MUTED_CHANGED',
             /* data */ {
                 muted: action.muted
             });
@@ -223,19 +275,43 @@ StateListenerRegistry.register(
     }, 100));
 
 /**
+ * Returns a participant info object based on the passed participant object from redux.
+ *
+ * @param {Participant} participant - The participant object from the redux store.
+ * @returns {Object} - The participant info object.
+ */
+function _participantToParticipantInfo(participant) {
+    return {
+        isLocal: participant.local,
+        email: participant.email,
+        name: participant.name,
+        participantId: participant.id,
+        displayName: participant.displayName,
+        avatarUrl: participant.avatarURL,
+        role: participant.role
+    };
+}
+
+/**
  * Registers for events sent from the native side via NativeEventEmitter.
  *
  * @param {Store} store - The redux store.
  * @private
  * @returns {void}
  */
-function _registerForNativeEvents({ getState, dispatch }) {
+function _registerForNativeEvents(store) {
+    const { getState, dispatch } = store;
+
     eventEmitter.addListener(ExternalAPI.HANG_UP, () => {
         dispatch(appNavigate(undefined));
     });
 
     eventEmitter.addListener(ExternalAPI.SET_AUDIO_MUTED, ({ muted }) => {
-        dispatch(muteLocal(muted === 'true'));
+        dispatch(muteLocal(muted, MEDIA_TYPE.AUDIO));
+    });
+
+    eventEmitter.addListener(ExternalAPI.SET_VIDEO_MUTED, ({ muted }) => {
+        dispatch(muteLocal(muted, MEDIA_TYPE.VIDEO));
     });
 
     eventEmitter.addListener(ExternalAPI.SEND_ENDPOINT_TEXT_MESSAGE, ({ to, message }) => {
@@ -251,9 +327,70 @@ function _registerForNativeEvents({ getState, dispatch }) {
         }
     });
 
-    eventEmitter.addListener(ExternalAPI.TOGGLE_SCREEN_SHARE, () => {
-        dispatch(toggleScreensharing());
+    eventEmitter.addListener(ExternalAPI.TOGGLE_SCREEN_SHARE, ({ enabled }) => {
+        dispatch(toggleScreensharing(enabled));
     });
+
+    eventEmitter.addListener(ExternalAPI.RETRIEVE_PARTICIPANTS_INFO, ({ requestId }) => {
+
+        const participantsInfo = [];
+        const remoteParticipants = getRemoteParticipants(store);
+        const localParticipant = getLocalParticipant(store);
+
+        participantsInfo.push(_participantToParticipantInfo(localParticipant));
+        remoteParticipants.forEach(participant => {
+            if (!participant.isFakeParticipant) {
+                participantsInfo.push(_participantToParticipantInfo(participant));
+            }
+        });
+
+        sendEvent(
+            store,
+            PARTICIPANTS_INFO_RETRIEVED,
+            /* data */ {
+                participantsInfo,
+                requestId
+            });
+    });
+
+    eventEmitter.addListener(ExternalAPI.OPEN_CHAT, ({ to }) => {
+        const participant = getParticipantById(store, to);
+
+        dispatch(openChat(participant));
+    });
+
+    eventEmitter.addListener(ExternalAPI.CLOSE_CHAT, () => {
+        dispatch(closeChat());
+    });
+
+    eventEmitter.addListener(ExternalAPI.SEND_CHAT_MESSAGE, ({ message, to }) => {
+        const participant = getParticipantById(store, to);
+
+        if (participant) {
+            dispatch(setPrivateMessageRecipient(participant));
+        }
+
+        dispatch(sendMessage(message));
+    });
+
+}
+
+/**
+ * Unregister for events sent from the native side via NativeEventEmitter.
+ *
+ * @private
+ * @returns {void}
+ */
+function _unregisterForNativeEvents() {
+    eventEmitter.removeAllListeners(ExternalAPI.HANG_UP);
+    eventEmitter.removeAllListeners(ExternalAPI.SET_AUDIO_MUTED);
+    eventEmitter.removeAllListeners(ExternalAPI.SET_VIDEO_MUTED);
+    eventEmitter.removeAllListeners(ExternalAPI.SEND_ENDPOINT_TEXT_MESSAGE);
+    eventEmitter.removeAllListeners(ExternalAPI.TOGGLE_SCREEN_SHARE);
+    eventEmitter.removeAllListeners(ExternalAPI.RETRIEVE_PARTICIPANTS_INFO);
+    eventEmitter.removeAllListeners(ExternalAPI.OPEN_CHAT);
+    eventEmitter.removeAllListeners(ExternalAPI.CLOSE_CHAT);
+    eventEmitter.removeAllListeners(ExternalAPI.SEND_CHAT_MESSAGE);
 }
 
 /**
@@ -283,6 +420,36 @@ function _registerForEndpointTextMessages(store) {
                 }
             }
         });
+
+    conference.on(
+        JitsiConferenceEvents.MESSAGE_RECEIVED,
+            (id, message, timestamp) => {
+                sendEvent(
+                    store,
+                    CHAT_MESSAGE_RECEIVED,
+                    /* data */ {
+                        senderId: id,
+                        message,
+                        isPrivate: false,
+                        timestamp
+                    });
+            }
+    );
+
+    conference.on(
+        JitsiConferenceEvents.PRIVATE_MESSAGE_RECEIVED,
+            (id, message, timestamp) => {
+                sendEvent(
+                    store,
+                    CHAT_MESSAGE_RECEIVED,
+                    /* data */ {
+                        senderId: id,
+                        message,
+                        isPrivate: true,
+                        timestamp
+                    });
+            }
+    );
 }
 
 /**

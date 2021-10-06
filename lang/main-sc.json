@@ -53,10 +53,12 @@
         "noMessagesMessage": "Perunu messàgiu ancora in sa riunione. Cumintza una tzarrada inoghe!",
         "nickname": {
             "popover": "Sèbera unu nòmine",
-            "title": "Inserta su nòmine pro impreare sa tzarrada"
+            "title": "Inserta su nòmine pro impreare sa tzarrada",
+            "titleWithPolls": "Inserta su nòmine pro impreare sa tzarrada"
         },
         "privateNotice": "Messàgiu privadu a {{recipient}}",
         "title": "Tzarrada",
+        "titleWithPolls": "Tzarrada",
         "you": "tue"
     },
     "chromeExtensionBanner": {

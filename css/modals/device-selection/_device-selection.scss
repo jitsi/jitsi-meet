@@ -103,7 +103,7 @@
         font-size: 14px;
 
         a {
-            color: #2684FF;
+            color: #6FB1EA;
             cursor: pointer;
             text-decoration: none;
         }
@@ -119,7 +119,7 @@
         height: 8px;
 
         .audio-input-preview-level {
-            background: #4C9AFF;
+            background: #75B1FF;
             border-radius: 5px;
             height: 100%;
             -webkit-transition: width .1s ease-in-out;
@@ -127,5 +127,22 @@
             -o-transition: width .1s ease-in-out;
             transition: width .1s ease-in-out;
         }
+    }
+}
+
+.device-selection.video-hidden {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    .column-selectors {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .column-video {
+        order: 1;
+        width: 100%;
+        margin-top: 8px;
     }
 }

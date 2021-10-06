@@ -13,6 +13,11 @@ export type Props = {
     appearance: string,
 
     /**
+     * Whether or not the title and description should be concatenated.
+     */
+    concatText?: boolean,
+
+    /**
      * Callback invoked when the custom button is clicked.
      */
     customActionHandler: Function,
@@ -90,7 +95,7 @@ export type Props = {
     /**
      * The unique identifier for the notification.
      */
-    uid: number
+    uid: string
 };
 
 /**

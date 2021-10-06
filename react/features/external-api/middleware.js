@@ -3,6 +3,7 @@
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
+    DATA_CHANNEL_OPENED,
     KICKED_OUT
 } from '../base/conference';
 import { NOTIFY_CAMERA_ERROR, NOTIFY_MIC_ERROR } from '../base/devices';
@@ -103,6 +104,10 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
+    case DATA_CHANNEL_OPENED:
+        APP.API.notifyDataChannelOpened();
+        break;
+
     case DOMINANT_SPEAKER_CHANGED:
         APP.API.notifyDominantSpeakerChanged(action.participant.id);
         break;
@@ -113,7 +118,7 @@ MiddlewareRegistry.register(store => next => action => {
                 id: getLocalParticipant(store.getState()).id,
                 local: true
             },
-            { id: action.participant.getId() }
+            { id: action.participant ? action.participant.getId() : undefined }
         );
         break;
 

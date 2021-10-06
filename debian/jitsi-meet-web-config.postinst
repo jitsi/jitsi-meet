@@ -32,12 +32,12 @@ case "$1" in
             db_go
             db_get jitsi-videobridge/jvb-hostname
         fi
-        JVB_HOSTNAME="$RET"
+        JVB_HOSTNAME=$(echo "$RET" | xargs echo -n)
 
         # detect dpkg-reconfigure
         RECONFIGURING="false"
         db_get jitsi-meet/jvb-hostname
-        JVB_HOSTNAME_OLD=$RET
+        JVB_HOSTNAME_OLD=$(echo "$RET" | xargs echo -n)
         if [ -n "$RET" ] && [ ! "$JVB_HOSTNAME_OLD" = "$JVB_HOSTNAME" ] ; then
             RECONFIGURING="true"
             rm -f /etc/jitsi/meet/$JVB_HOSTNAME_OLD-config.js
@@ -218,7 +218,7 @@ case "$1" in
             # apache2 config
             if [ ! -f /etc/apache2/sites-available/$JVB_HOSTNAME.conf ] ; then
                 # when creating new config, make sure all needed modules are enabled
-                a2enmod rewrite ssl headers proxy_http include
+                a2enmod rewrite ssl headers proxy_http proxy_wstunnel include
                 cp /usr/share/jitsi-meet-web-config/jitsi-meet.example-apache /etc/apache2/sites-available/$JVB_HOSTNAME.conf
                 a2ensite $JVB_HOSTNAME.conf
                 sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" /etc/apache2/sites-available/$JVB_HOSTNAME.conf

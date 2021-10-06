@@ -31,7 +31,7 @@ case "$1" in
 
     purge)
         db_get jitsi-meet-prosody/jvb-hostname
-        JVB_HOSTNAME=$RET
+        JVB_HOSTNAME=$(echo "$RET" | xargs echo -n)
         if [ -n "$RET" ]; then
             rm -f /etc/prosody/conf.avail/$JVB_HOSTNAME.cfg.lua
             rm -f /etc/prosody/conf.d/$JVB_HOSTNAME.cfg.lua

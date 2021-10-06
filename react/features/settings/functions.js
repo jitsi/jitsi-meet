@@ -1,5 +1,6 @@
 // @flow
 
+import { isNameReadOnly } from '../base/config';
 import { SERVER_URL_CHANGE_ENABLED, getFeatureFlag } from '../base/flags';
 import { i18next, DEFAULT_LANGUAGE, LANGUAGES } from '../base/i18n';
 import { createLocalTrack } from '../base/lib-jitsi-meet/functions';
@@ -10,6 +11,9 @@ import {
 import { toState } from '../base/redux';
 import { parseStandardURIString } from '../base/util';
 import { isFollowMeActive } from '../follow-me';
+import { isReactionsEnabled } from '../reactions/functions.any';
+
+import { SS_DEFAULT_FRAME_RATE, SS_SUPPORTED_FRAMERATES } from './constants';
 
 declare var interfaceConfig: Object;
 
@@ -95,6 +99,7 @@ export function shouldShowOnlyDeviceSelection() {
  */
 export function getMoreTabProps(stateful: Object | Function) {
     const state = toState(stateful);
+    const framerate = state['features/screen-share'].captureFrameRate ?? SS_DEFAULT_FRAME_RATE;
     const language = i18next.language || DEFAULT_LANGUAGE;
     const {
         conference,
@@ -112,7 +117,9 @@ export function getMoreTabProps(stateful: Object | Function) {
             && isLocalParticipantModerator(state));
 
     return {
+        currentFramerate: framerate,
         currentLanguage: language,
+        desktopShareFramerates: SS_SUPPORTED_FRAMERATES,
         followMeActive: Boolean(conference && followMeActive),
         followMeEnabled: Boolean(conference && followMeEnabled),
         languages: LANGUAGES,
@@ -147,7 +154,38 @@ export function getProfileTabProps(stateful: Object | Function) {
         authEnabled: Boolean(conference && authEnabled),
         authLogin,
         displayName: localParticipant.name,
-        email: localParticipant.email
+        email: localParticipant.email,
+        readOnlyName: isNameReadOnly(state)
+    };
+}
+
+/**
+ * Returns the properties for the "Sounds" tab from settings dialog from Redux
+ * state.
+ *
+ * @param {(Function|Object)} stateful -The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {Object} - The properties for the "Sounds" tab from settings
+ * dialog.
+ */
+export function getSoundsTabProps(stateful: Object | Function) {
+    const state = toState(stateful);
+    const {
+        soundsIncomingMessage,
+        soundsParticipantJoined,
+        soundsParticipantLeft,
+        soundsTalkWhileMuted,
+        soundsReactions
+    } = state['features/base/settings'];
+    const enableReactions = isReactionsEnabled(state);
+
+    return {
+        soundsIncomingMessage,
+        soundsParticipantJoined,
+        soundsParticipantLeft,
+        soundsTalkWhileMuted,
+        soundsReactions,
+        enableReactions
     };
 }
 
@@ -155,12 +193,13 @@ export function getProfileTabProps(stateful: Object | Function) {
  * Returns a promise which resolves with a list of objects containing
  * all the video jitsiTracks and appropriate errors for the given device ids.
  *
- * @param {string[]} ids - The list of the camera ids for wich to create tracks.
+ * @param {string[]} ids - The list of the camera ids for which to create tracks.
+ * @param {number} [timeout] - A timeout for the createLocalTrack function call.
  *
  * @returns {Promise<Object[]>}
  */
-export function createLocalVideoTracks(ids: string[]) {
-    return Promise.all(ids.map(deviceId => createLocalTrack('video', deviceId)
+export function createLocalVideoTracks(ids: string[], timeout: ?number) {
+    return Promise.all(ids.map(deviceId => createLocalTrack('video', deviceId, timeout)
                    .then(jitsiTrack => {
                        return {
                            jitsiTrack,
@@ -182,6 +221,7 @@ export function createLocalVideoTracks(ids: string[]) {
  * the audio track and the corresponding audio device information.
  *
  * @param {Object[]} devices - A list of microphone devices.
+ * @param {number} [timeout] - A timeout for the createLocalTrack function call.
  * @returns {Promise<{
  *   deviceId: string,
  *   hasError: boolean,
@@ -189,14 +229,14 @@ export function createLocalVideoTracks(ids: string[]) {
  *   label: string
  * }[]>}
  */
-export function createLocalAudioTracks(devices: Object[]) {
+export function createLocalAudioTracks(devices: Object[], timeout: ?number) {
     return Promise.all(
         devices.map(async ({ deviceId, label }) => {
             let jitsiTrack = null;
             let hasError = false;
 
             try {
-                jitsiTrack = await createLocalTrack('audio', deviceId);
+                jitsiTrack = await createLocalTrack('audio', deviceId, timeout);
             } catch (err) {
                 hasError = true;
             }

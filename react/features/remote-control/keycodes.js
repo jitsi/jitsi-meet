@@ -69,7 +69,7 @@ export const KEYS = {
 
 /* eslint-disable max-len */
 /**
- * Mapping between the key codes and keys deined in KEYS.
+ * Mapping between the key codes and keys defined in KEYS.
  * The mappings are based on
  * https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode#Specifications
  */

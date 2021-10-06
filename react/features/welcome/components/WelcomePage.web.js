@@ -176,11 +176,12 @@ class WelcomePage extends AbstractWelcomePage {
         const showAdditionalCard = this._shouldShowAdditionalCard();
         const showAdditionalContent = this._shouldShowAdditionalContent();
         const showAdditionalToolbarContent = this._shouldShowAdditionalToolbarContent();
+        const contentClassName = showAdditionalContent ? 'with-content' : 'without-content';
+        const footerClassName = DISPLAY_WELCOME_FOOTER ? 'with-footer' : 'without-footer';
 
         return (
             <div
-                className = { `welcome ${showAdditionalContent
-                    ? 'with-content' : 'without-content'}` }
+                className = { `welcome ${contentClassName} ${footerClassName}` }
                 id = 'welcome_page'>
                 <div className = 'welcome-watermark'>
                     <Watermarks defaultJitsiLogoURL = { DEFAULT_WELCOME_PAGE_LOGO_URL } />
@@ -355,17 +356,23 @@ class WelcomePage extends AbstractWelcomePage {
                         <a
                             className = 'welcome-badge'
                             href = { MOBILE_DOWNLOAD_LINK_IOS }>
-                            <img src = './images/app-store-badge.png' />
+                            <img
+                                alt = { t('welcomepage.mobileDownLoadLinkIos') }
+                                src = './images/app-store-badge.png' />
                         </a>
                         <a
                             className = 'welcome-badge'
                             href = { MOBILE_DOWNLOAD_LINK_ANDROID }>
-                            <img src = './images/google-play-badge.png' />
+                            <img
+                                alt = { t('welcomepage.mobileDownLoadLinkAndroid') }
+                                src = './images/google-play-badge.png' />
                         </a>
                         <a
                             className = 'welcome-badge'
                             href = { MOBILE_DOWNLOAD_LINK_F_DROID }>
-                            <img src = './images/f-droid-badge.png' />
+                            <img
+                                alt = { t('welcomepage.mobileDownLoadLinkFDroid') }
+                                src = './images/f-droid-badge.png' />
                         </a>
                     </div>
                 </div>

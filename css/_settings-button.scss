@@ -1,84 +1,62 @@
-.settings-button {
-    &-container {
-        position: relative;
+.settings-button-container {
+    position: relative;
 
-        .toolbox-icon {
-            align-items: center;
-            cursor: pointer;
-            display: flex;
-            background-color: #fff;
-            border-radius: 50%;
-            border: 1px solid #d1dbe8;
-            justify-content: center;
-            width: 38px;
-            height: 38px;
+    .toolbox-icon {
+        align-items: center;
+        border-radius: 3px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+
+        &.disabled, .disabled & {
+            cursor: initial;
+            color: #929292;
+            background-color: #36383c;
 
             &:hover {
-                background-color: #daebfa;
-                border: 1px solid #daebfa;
-            }
-
-            &.toggled {
-                background: #2a3a4b;
-                border: 1px solid #5e6d7a;
-
-                svg {
-                    fill: #fff;
-                }
-
-                &:hover {
-                    background-color: #5e6d7a;
-                }
-            }
-
-            &.disabled, .disabled & {
-                cursor: initial;
-                color: #fff;
-                background-color: #a4b8d1;
-
-                &:hover {
-                    background-color: #a4b8d1;
-                }
-            }
-
-            svg {
-                fill: #5e6d7a;
+                background-color: #36383c;
             }
         }
     }
+}
 
-    &-small-icon {
-        background: #FFF;
-        border: 1px solid rgba(0, 0, 0, 0.2);
-        border-radius: 50%;
-        bottom: 0;
-        box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
-        cursor: pointer;
-        height: 16px;
-        position: absolute;
-        text-align: center;
-        right: 4px;
-        width: 16px;
+.settings-button-small-icon {
+    background: #36383C;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 0px 0px 1px rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    cursor: pointer;
+    padding: 4px;
+    position: absolute;
+    right: -4px;
+    top: -3px;
+
+   &:hover {
+        background: #F2F3F4;
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 0px 0px 1px rgba(0, 0, 0, 0.1);
 
         &> svg {
-            fill: #5e6d7a;
-            margin-top: 5px;
+            fill: #000;
         }
 
-        &--disabled {
-            background-color: #a4b8d1;
-            cursor: default;
-        }
-
-        &--hovered {
-            bottom: -1px;
-            height: 20px;
-            right: 2px;
-            width: 20px;
+        &.settings-button-small-icon--disabled {
+            background: #36383C;
 
             &> svg {
-                margin-top: 6px;
-            }
+               fill: #929292;
+           }
+        }
+    }
+
+    &> svg {
+        fill: #fff;
+    }
+
+    &--disabled {
+        background-color: #36383c;
+        cursor: default;
+
+        &> svg {
+            fill: #929292;
         }
     }
 }

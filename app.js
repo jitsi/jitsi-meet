@@ -1,10 +1,8 @@
 /* application specific logic */
 
 import 'jquery';
-import 'jquery-contextmenu';
-import 'jQuery-Impromptu';
 
-import 'olm';
+import '@matrix-org/olm';
 
 import 'focus-visible';
 

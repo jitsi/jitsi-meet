@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 
+import { isMobileBrowser } from '../../../features/base/environment/utils';
 import { translate } from '../../base/i18n';
 
 /**
@@ -58,6 +59,11 @@ type Props = {
      * Whether or not should display the "Save Logs" link.
      */
     enableSaveLogs: boolean,
+
+    /**
+     * Whether or not should display the "Show More" link.
+     */
+    disableShowMoreStats: boolean,
 
     /**
      * The endpoint id of this client.
@@ -146,6 +152,18 @@ type Props = {
 };
 
 /**
+ * Click handler.
+ *
+ * @param {SyntheticEvent} event - The click event.
+ * @returns {void}
+ */
+function onClick(event) {
+    // If the event is propagated to the thumbnail container the participant will be pinned. That's why the propagation
+    // needs to be stopped.
+    event.stopPropagation();
+}
+
+/**
  * React {@code Component} for displaying connection statistics.
  *
  * @extends Component
@@ -158,14 +176,17 @@ class ConnectionStatsTable extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { isLocalVideo, enableSaveLogs } = this.props;
+        const { isLocalVideo, enableSaveLogs, disableShowMoreStats } = this.props;
+        const className = isMobileBrowser() ? 'connection-info connection-info__mobile' : 'connection-info';
 
         return (
-            <div className = 'connection-info'>
+            <div
+                className = { className }
+                onClick = { onClick }>
                 { this._renderStatistics() }
                 <div className = 'connection-actions'>
                     { isLocalVideo && enableSaveLogs ? this._renderSaveLogs() : null}
-                    { this._renderShowMoreLink() }
+                    { !disableShowMoreStats && this._renderShowMoreLink() }
                 </div>
                 { this.props.shouldShowMore ? this._renderAdditionalStats() : null }
             </div>
@@ -558,7 +579,9 @@ class ConnectionStatsTable extends Component<Props> {
             <span>
                 <a
                     className = 'savelogs link'
-                    onClick = { this.props.onSaveLogs } >
+                    onClick = { this.props.onSaveLogs }
+                    role = 'button'
+                    tabIndex = { 0 }>
                     { this.props.t('connectionindicator.savelogs') }
                 </a>
                 <span> | </span>
@@ -583,7 +606,9 @@ class ConnectionStatsTable extends Component<Props> {
         return (
             <a
                 className = 'showmore link'
-                onClick = { this.props.onShowMore } >
+                onClick = { this.props.onShowMore }
+                role = 'button'
+                tabIndex = { 0 }>
                 { this.props.t(translationKey) }
             </a>
         );

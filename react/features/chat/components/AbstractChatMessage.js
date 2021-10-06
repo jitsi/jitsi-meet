@@ -59,7 +59,7 @@ export default class AbstractChatMessage<P: Props> extends PureComponent<P> {
     }
 
     /**
-     * Generates the message text to be redered in the component.
+     * Generates the message text to be rendered in the component.
      *
      * @returns {string}
      */

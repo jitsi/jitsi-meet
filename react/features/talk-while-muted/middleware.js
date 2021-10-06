@@ -3,13 +3,15 @@
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import { CONFERENCE_JOINED } from '../base/conference';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
-import { setAudioMuted } from '../base/media';
+import { MEDIA_TYPE, setAudioMuted } from '../base/media';
+import { getLocalParticipant, raiseHand } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import {
     hideNotification,
     showNotification
 } from '../notifications';
+import { isForceMuted } from '../participants-pane/functions';
 
 import { setCurrentNotificationUid } from './actions';
 import { TALK_WHILE_MUTED_SOUND_ID } from './constants';
@@ -41,13 +43,21 @@ MiddlewareRegistry.register(store => next => action => {
             });
         conference.on(
             JitsiConferenceEvents.TALK_WHILE_MUTED, async () => {
+                const state = getState();
+                const local = getLocalParticipant(state);
+                const forceMuted = isForceMuted(local, MEDIA_TYPE.AUDIO, state);
                 const notification = await dispatch(showNotification({
                     titleKey: 'toolbar.talkWhileMutedPopup',
-                    customActionNameKey: 'notify.unmute',
-                    customActionHandler: () => dispatch(setAudioMuted(false))
+                    customActionNameKey: forceMuted ? 'notify.raiseHandAction' : 'notify.unmute',
+                    customActionHandler: () => dispatch(forceMuted ? raiseHand(true) : setAudioMuted(false))
                 }));
 
-                dispatch(playSound(TALK_WHILE_MUTED_SOUND_ID));
+                const { soundsTalkWhileMuted } = getState()['features/base/settings'];
+
+                if (soundsTalkWhileMuted) {
+                    dispatch(playSound(TALK_WHILE_MUTED_SOUND_ID));
+                }
+
 
                 if (notification) {
                     // we store the last start muted notification id that we showed,

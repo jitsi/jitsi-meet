@@ -2,13 +2,24 @@
 
 import React from 'react';
 
+import { getLocalParticipant } from '../../base/participants';
 import { connect } from '../../base/redux';
+import { getLargeVideoParticipant } from '../../large-video/functions';
+import { isLayoutTileView } from '../../video-layout';
 
 import {
     _abstractMapStateToProps,
     AbstractCaptions,
-    type AbstractCaptionsProps as Props
+    type AbstractCaptionsProps
 } from './AbstractCaptions';
+
+type Props = {
+
+    /**
+     * Whether the subtitles container is lifted above the invite box.
+     */
+    _isLifted: boolean
+} & AbstractCaptionsProps;
 
 /**
  * React {@code Component} which can display speech-to-text results from
@@ -45,12 +56,34 @@ class Captions
      */
     _renderSubtitlesContainer(
             paragraphs: Array<React$Element<*>>): React$Element<*> {
+
+        const className = this.props._isLifted ? 'transcription-subtitles lifted' : 'transcription-subtitles';
+
         return (
-            <div className = 'transcription-subtitles' >
+            <div className = { className } >
                 { paragraphs }
             </div>
         );
     }
 }
 
-export default connect(_abstractMapStateToProps)(Captions);
+/**
+ * Maps (parts of) the redux state to the associated {@code }'s
+ * props.
+ *
+ * @param {Object} state - The redux state.
+ * @private
+ * @returns {Object}
+ */
+function mapStateToProps(state) {
+    const isTileView = isLayoutTileView(state);
+    const largeVideoParticipant = getLargeVideoParticipant(state);
+    const localParticipant = getLocalParticipant(state);
+
+    return {
+        ..._abstractMapStateToProps(state),
+        _isLifted: largeVideoParticipant && largeVideoParticipant?.id !== localParticipant?.id && !isTileView
+    };
+}
+
+export default connect(mapStateToProps)(Captions);

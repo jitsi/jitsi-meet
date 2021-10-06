@@ -71,13 +71,18 @@ export default class AbstractRecentList<P: Props> extends AbstractPage<P> {
      */
     _getRenderListEmptyComponent() {
         const { t } = this.props;
+        const descriptionId = 'meetings-list-empty-description';
 
         return (
             <Container
+                aria-describedby = { descriptionId }
+                aria-label = { t('welcomepage.recentList') }
                 className = 'meetings-list-empty'
+                role = 'region'
                 style = { styles.emptyListContainer }>
                 <Text
                     className = 'description'
+                    id = { descriptionId }
                     style = { styles.emptyListText }>
                     { t('welcomepage.recentListEmpty') }
                 </Text>

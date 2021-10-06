@@ -19,10 +19,11 @@ import { CHAT_SIZE } from '../../../react/features/chat';
 import {
     updateKnownLargeVideoResolution
 } from '../../../react/features/large-video/actions';
+import { getParticipantsPaneOpen } from '../../../react/features/participants-pane/functions';
+import theme from '../../../react/features/participants-pane/theme.json';
 import { PresenceLabel } from '../../../react/features/presence-status';
 import { shouldDisplayTileView } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
-import UIEvents from '../../../service/UI/UIEvents';
 import { createDeferred } from '../../util/helpers';
 import AudioLevels from '../audio_levels/AudioLevels';
 
@@ -51,21 +52,19 @@ export default class LargeVideoManager {
     /**
      *
      */
-    constructor(emitter) {
+    constructor() {
         /**
          * The map of <tt>LargeContainer</tt>s where the key is the video
          * container type.
          * @type {Object.<string, LargeContainer>}
          */
         this.containers = {};
-        this.eventEmitter = emitter;
 
         this.state = VIDEO_CONTAINER_TYPE;
 
         // FIXME: We are passing resizeContainer as parameter which is calling
         // Container.resize. Probably there's better way to implement this.
-        this.videoContainer = new VideoContainer(
-            () => this.resizeContainer(VIDEO_CONTAINER_TYPE), emitter);
+        this.videoContainer = new VideoContainer(() => this.resizeContainer(VIDEO_CONTAINER_TYPE));
         this.addContainer(VIDEO_CONTAINER_TYPE, this.videoContainer);
 
         // use the same video container to handle desktop tracks
@@ -300,7 +299,6 @@ export default class LargeVideoManager {
             // after everything is done check again if there are any pending
             // new streams.
             this.updateInProcess = false;
-            this.eventEmitter.emit(UIEvents.LARGE_VIDEO_ID_CHANGED, this.id);
             this.scheduleLargeVideoUpdate();
         });
     }
@@ -370,7 +368,13 @@ export default class LargeVideoManager {
         }
 
         let widthToUse = this.preferredWidth || window.innerWidth;
-        const { isOpen } = APP.store.getState()['features/chat'];
+        const state = APP.store.getState();
+        const { isOpen } = state['features/chat'];
+        const isParticipantsPaneOpen = getParticipantsPaneOpen(state);
+
+        if (isParticipantsPaneOpen) {
+            widthToUse -= theme.participantsPaneWidth;
+        }
 
         if (isOpen && window.innerWidth > 580) {
             /**

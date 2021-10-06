@@ -53,10 +53,12 @@
         "noMessagesMessage": "A találkozón még nincsenek üzenetek. Itt kezdhet beszélgetést!",
         "nickname": {
             "popover": "Becenév kiválasztása",
-            "title": "Adjon meg egy becenevet a csevegés számára"
+            "title": "Adjon meg egy becenevet a csevegés számára",
+            "titleWithPolls": "Adjon meg egy becenevet a csevegés számára"
         },
         "privateNotice": "Privát üzenet a felhasználónak: {{recipient}}",
         "title": "Csevegés",
+        "titleWithPolls": "Csevegés",
         "you": "neked"
     },
     "connectingOverlay": {

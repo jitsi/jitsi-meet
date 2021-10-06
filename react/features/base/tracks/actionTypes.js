@@ -76,6 +76,16 @@ export const TRACK_NO_DATA_FROM_SOURCE = 'TRACK_NO_DATA_FROM_SOURCE';
 export const TRACK_REMOVED = 'TRACK_REMOVED';
 
 /**
+ * The type of redux action dispatched when a track has stopped.
+ *
+ * {
+ *      type: TRACK_STOPPED,
+ *      track: Track
+ * }
+ */
+export const TRACK_STOPPED = 'TRACK_STOPPED';
+
+/**
  * The type of redux action dispatched when a track's properties were updated.
  *
  * {

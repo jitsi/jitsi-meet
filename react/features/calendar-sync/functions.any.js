@@ -73,7 +73,7 @@ export function _updateCalendarEntries(events: Array<Object>) {
 
                 // XXX Eventually, given that the URL and the title are the
                 // same, what sets one event apart from another is the start
-                // time of the day (note the use of toTimeString() bellow)! The
+                // time of the day (note the use of toTimeString() below)! The
                 // day itself is not important because we don't want multiple
                 // occurrences of a recurring event or repetitions of an even
                 // from multiple calendars.

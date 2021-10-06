@@ -27,8 +27,8 @@ class BaseSubmitDialog<P: Props, S: *> extends BaseDialog<P, S> {
     /**
      * Returns the title key of the submit button.
      *
-     * NOTE: Please do not change this, this should be consistent accross the
-     * application. This method is here to be able to be overriden ONLY by the
+     * NOTE: Please do not change this, this should be consistent across the
+     * application. This method is here to be able to be overridden ONLY by the
      * {@code ConfirmDialog}.
      *
      * @returns {string}

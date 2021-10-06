@@ -30,19 +30,25 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        margin-right: 5px;
     }
 
     .info-password-none,
     .info-password-remote {
-        opacity: 0.5;
+        color: #fff;
     }
 
     .info-password-input {
         width: 100%;
-        background-color: transparent;
-        border: none;
+        background-color: #0E1624;
+        border-radius: 3px;
+        border: 2px solid #202B3D;
         color: inherit;
         padding-left: 0;
+    }
+    .info-password-input:focus ,
+    .info-password-input:active {
+       border: 2px solid #B8C7E0;
     }
 
     .info-password-local {

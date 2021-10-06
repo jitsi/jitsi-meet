@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { Icon, IconArrowDown } from '../../../icons';
 
@@ -46,10 +46,36 @@ type Props = {
      */
     onClick: Function,
 
+
     /**
      * Click handler for options.
      */
-    onOptionsClick?: Function
+    onOptionsClick?: Function,
+
+    /**
+     * to navigate with the keyboard.
+     */
+    tabIndex?: number,
+
+    /**
+     * to give a role to the icon.
+     */
+    role?: string,
+
+    /**
+     * to give a aria-pressed to the icon.
+     */
+    ariaPressed?: boolean,
+
+    /**
+     * The Label of the current element
+     */
+    ariaLabel?: string,
+
+    /**
+     * The Label of the child element
+     */
+    ariaDropDownLabel?: string
 };
 
 /**
@@ -66,23 +92,57 @@ function ActionButton({
     testId,
     type = 'primary',
     onClick,
-    onOptionsClick
+    onOptionsClick,
+    tabIndex,
+    role,
+    ariaPressed,
+    ariaLabel,
+    ariaDropDownLabel
 }: Props) {
+
+    const onKeyPressHandler = useCallback(e => {
+        if (onClick && !disabled && (e.key === ' ' || e.key === 'Enter')) {
+            e.preventDefault();
+            onClick(e);
+        }
+    }, [ onClick, disabled ]);
+
+    const onOptionsKeyPressHandler = useCallback(e => {
+        if (onOptionsClick && !disabled && (e.key === ' ' || e.key === 'Enter')) {
+            e.preventDefault();
+            e.stopPropagation();
+            onOptionsClick(e);
+        }
+    }, [ onOptionsClick, disabled ]);
+
     return (
         <div
+            aria-disabled = { disabled }
+            aria-label = { ariaLabel }
             className = { `action-btn ${className} ${type} ${disabled ? 'disabled' : ''}` }
             data-testid = { testId ? testId : undefined }
-            onClick = { disabled ? undefined : onClick }>
+            onClick = { disabled ? undefined : onClick }
+            onKeyPress = { onKeyPressHandler }
+            role = 'button'
+            tabIndex = { 0 } >
             {children}
-            {hasOptions && <div
-                className = 'options'
-                data-testid = 'prejoin.joinOptions'
-                onClick = { disabled ? undefined : onOptionsClick }>
-                <Icon
-                    className = 'icon'
-                    size = { 14 }
-                    src = { OptionsIcon } />
-            </div>
+            { hasOptions
+                  && <div
+                      aria-disabled = { disabled }
+                      aria-haspopup = 'true'
+                      aria-label = { ariaDropDownLabel }
+                      aria-pressed = { ariaPressed }
+                      className = 'options'
+                      data-testid = 'prejoin.joinOptions'
+                      onClick = { disabled ? undefined : onOptionsClick }
+                      onKeyPress = { onOptionsKeyPressHandler }
+                      role = { role }
+                      tabIndex = { tabIndex }>
+                      <Icon
+                          className = 'icon'
+                          size = { 14 }
+                          src = { OptionsIcon } />
+                  </div>
             }
         </div>
     );

@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { IconWarning } from '../../../base/icons';
-import { CircularLabel } from '../../../base/label';
+import { Label } from '../../../base/label';
 import { connect } from '../../../base/redux';
 import AbstractInsecureRoomNameLabel, { _mapStateToProps } from '../AbstractInsecureRoomNameLabel';
 
@@ -14,13 +14,13 @@ import styles from './styles';
  */
 class InsecureRoomNameLabel extends AbstractInsecureRoomNameLabel {
     /**
-     * Renders the platform dependant content.
+     * Renders the platform dependent content.
      *
      * @inheritdoc
      */
     _render() {
         return (
-            <CircularLabel
+            <Label
                 icon = { IconWarning }
                 style = { styles.insecureRoomNameLabel } />
         );

@@ -2,6 +2,7 @@
 
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const process = require('process');
+const webpack = require('webpack');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 /**
@@ -24,17 +25,34 @@ const minimize
  */
 function getPerformanceHints(size) {
     return {
-        hints: minimize ? 'error' : false,
+        hints: minimize && !analyzeBundle ? 'error' : false,
         maxAssetSize: size,
         maxEntrypointSize: size
     };
 }
+
+/**
+ * Build a BundleAnalyzerPlugin plugin instance for the given bundle name.
+ */
+function getBundleAnalyzerPlugin(name) {
+    if (!analyzeBundle) {
+        return [];
+    }
+
+    return [ new BundleAnalyzerPlugin({
+        analyzerMode: 'disabled',
+        generateStatsFile: true,
+        statsFilename: `${name}-stats.json`
+    }) ];
+}
+
 
 // The base Webpack configuration to bundle the JavaScript artifacts of
 // jitsi-meet such as app.bundle.js and external_api.js.
 const config = {
     devServer: {
         https: true,
+        host: '127.0.0.1',
         inline: true,
         proxy: {
             '/': {
@@ -59,6 +77,9 @@ const config = {
             ],
             loader: 'babel-loader',
             options: {
+                // Avoid loading babel.config.js, since we only use it for React Native.
+                configFile: false,
+
                 // XXX The require.resolve bellow solves failures to locate the
                 // presets when lib-jitsi-meet, for example, is npm linked in
                 // jitsi-meet.
@@ -158,11 +179,6 @@ const config = {
         sourceMapFilename: `[name].${minimize ? 'min' : 'js'}.map`
     },
     plugins: [
-        analyzeBundle
-            && new BundleAnalyzerPlugin({
-                analyzerMode: 'disabled',
-                generateStatsFile: true
-            }),
         detectCircularDeps
             && new CircularDependencyPlugin({
                 allowAsyncCycles: false,
@@ -193,82 +209,73 @@ module.exports = [
         entry: {
             'app.bundle': './app.js'
         },
+        plugins: [
+            ...config.plugins,
+            ...getBundleAnalyzerPlugin('app'),
+            new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+        ],
         performance: getPerformanceHints(4 * 1024 * 1024)
-    }),
-    Object.assign({}, config, {
-        entry: {
-            'device_selection_popup_bundle': './react/features/settings/popup.js'
-        },
-        performance: getPerformanceHints(750 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
             'alwaysontop': './react/features/always-on-top/index.js'
         },
-        performance: getPerformanceHints(400 * 1024)
+        plugins: [
+            ...config.plugins,
+            ...getBundleAnalyzerPlugin('alwaysontop')
+        ],
+        performance: getPerformanceHints(800 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
             'dial_in_info_bundle': './react/features/invite/components/dial-in-info-page'
         },
+        plugins: [
+            ...config.plugins,
+            ...getBundleAnalyzerPlugin('dial_in_info'),
+            new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+        ],
         performance: getPerformanceHints(500 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
             'do_external_connect': './connection_optimization/do_external_connect.js'
         },
+        plugins: [
+            ...config.plugins,
+            ...getBundleAnalyzerPlugin('do_external_connect')
+        ],
         performance: getPerformanceHints(5 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
             'flacEncodeWorker': './react/features/local-recording/recording/flac/flacEncodeWorker.js'
         },
+        plugins: [
+            ...config.plugins,
+            ...getBundleAnalyzerPlugin('flacEncodeWorker')
+        ],
         performance: getPerformanceHints(5 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
             'analytics-ga': './react/features/analytics/handlers/GoogleAnalyticsHandler.js'
         },
+        plugins: [
+            ...config.plugins,
+            ...getBundleAnalyzerPlugin('analytics-ga')
+        ],
         performance: getPerformanceHints(5 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
             'close3': './static/close3.js'
         },
+        plugins: [
+            ...config.plugins,
+            ...getBundleAnalyzerPlugin('close3')
+        ],
         performance: getPerformanceHints(128 * 1024)
-    }),
-
-    // Because both video-blur-effect and rnnoise-processor modules are loaded
-    // in a lazy manner using the loadScript function with a hard coded name,
-    // i.e.loadScript('libs/rnnoise-processor.min.js'), webpack dev server
-    // won't know how to properly load them using the default config filename
-    // and sourceMapFilename parameters which target libs without .min in dev
-    // mode. Thus we change these modules to have the same filename in both
-    // prod and dev mode.
-    Object.assign({}, config, {
-        entry: {
-            'video-blur-effect': './react/features/stream-effects/blur/index.js'
-        },
-        output: Object.assign({}, config.output, {
-            library: [ 'JitsiMeetJS', 'app', 'effects' ],
-            libraryTarget: 'window',
-            filename: '[name].min.js',
-            sourceMapFilename: '[name].min.map'
-        }),
-        performance: getPerformanceHints(1 * 1024 * 1024)
-    }),
-
-    Object.assign({}, config, {
-        entry: {
-            'rnnoise-processor': './react/features/stream-effects/rnnoise/index.js'
-        },
-        output: Object.assign({}, config.output, {
-            library: [ 'JitsiMeetJS', 'app', 'effects', 'rnnoise' ],
-            libraryTarget: 'window',
-            filename: '[name].min.js',
-            sourceMapFilename: '[name].min.map'
-        }),
-        performance: getPerformanceHints(30 * 1024)
     }),
 
     Object.assign({}, config, {
@@ -279,6 +286,10 @@ module.exports = [
             library: 'JitsiMeetExternalAPI',
             libraryTarget: 'umd'
         }),
+        plugins: [
+            ...config.plugins,
+            ...getBundleAnalyzerPlugin('external_api')
+        ],
         performance: getPerformanceHints(35 * 1024)
     })
 ];

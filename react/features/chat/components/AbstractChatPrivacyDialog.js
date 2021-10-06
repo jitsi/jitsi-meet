@@ -33,7 +33,7 @@ type Props = {
     _onSetMessageRecipient: Function,
 
     /**
-     * The participant retreived from Redux by the participanrID prop.
+     * The participant retrieved from Redux by the participanrID prop.
      */
     _participant: Object
 };

@@ -8,6 +8,8 @@ import {
     isLocalParticipantModerator
 } from '../../../base/participants';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
+import { FEATURES } from '../../../jaas/constants';
 import { getActiveSession } from '../../functions';
 
 import {
@@ -73,12 +75,22 @@ export default class AbstractLiveStreamButton<P: Props> extends AbstractButton<P
      * @protected
      * @returns {void}
      */
-    _handleClick() {
-        const { _isLiveStreamRunning, dispatch } = this.props;
+    async _handleClick() {
+        const { _isLiveStreamRunning, dispatch, handleClick } = this.props;
 
-        dispatch(openDialog(
-            _isLiveStreamRunning ? StopLiveStreamDialog : StartLiveStreamDialog
-        ));
+        if (handleClick) {
+            handleClick();
+
+            return;
+        }
+
+        const dialogShown = await dispatch(maybeShowPremiumFeatureDialog(FEATURES.RECORDING));
+
+        if (!dialogShown) {
+            dispatch(openDialog(
+                _isLiveStreamRunning ? StopLiveStreamDialog : StartLiveStreamDialog
+            ));
+        }
     }
 
     /**

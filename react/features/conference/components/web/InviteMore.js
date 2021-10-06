@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconInviteMore } from '../../../base/icons';
@@ -8,22 +8,20 @@ import { getParticipantCount } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { beginAddPeople } from '../../../invite';
 import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';
-import { shouldDisplayTileView } from '../../../video-layout/functions';
 
 declare var interfaceConfig: Object;
 
 type Props = {
 
     /**
-     * Whether tile view is enabled.
+     * Whether to show the option to invite more people.
      */
-    _tileViewEnabled: Boolean,
+    _shouldShow: boolean,
 
     /**
-     * Whether to show the option to invite more people
-     * instead of the subject.
+     * Whether the toolbox is visible.
      */
-    _visible: boolean,
+    _toolboxVisible: boolean,
 
     /**
      * Handler to open the invite dialog.
@@ -44,23 +42,37 @@ type Props = {
  * @returns {React$Element<any>}
  */
 function InviteMore({
-    _tileViewEnabled,
-    _visible,
+    _shouldShow,
+    _toolboxVisible,
     onClick,
     t
 }: Props) {
+    const onKeyPressHandler = useCallback(e => {
+        if (onClick && (e.key === ' ' || e.key === 'Enter')) {
+            e.preventDefault();
+            onClick();
+        }
+    }, [ onClick ]);
+
     return (
-        _visible
-            ? <div className = { `invite-more-container${_tileViewEnabled ? ' elevated' : ''}` }>
-                <div className = 'invite-more-header'>
-                    {t('addPeople.inviteMoreHeader')}
-                </div>
-                <div
-                    className = 'invite-more-button'
-                    onClick = { onClick }>
-                    <Icon src = { IconInviteMore } />
-                    <div className = 'invite-more-button-text'>
-                        {t('addPeople.inviteMorePrompt')}
+        _shouldShow
+            ? <div className = { `invite-more-container${_toolboxVisible ? '' : ' elevated'}` }>
+                <div className = 'invite-more-content'>
+                    <div
+                        className = 'invite-more-header'
+                        role = 'heading'>
+                        {t('addPeople.inviteMoreHeader')}
+                    </div>
+                    <div
+                        className = 'invite-more-button'
+                        onClick = { onClick }
+                        onKeyPress = { onKeyPressHandler }
+                        role = 'button'
+                        tabIndex = { 0 }>
+                        <Icon src = { IconInviteMore } />
+                        <div className = 'invite-more-button-text'>
+                            {t('addPeople.inviteMorePrompt')}
+                        </div>
                     </div>
                 </div>
             </div> : null
@@ -81,8 +93,8 @@ function mapStateToProps(state) {
     const hide = interfaceConfig.HIDE_INVITE_MORE_HEADER;
 
     return {
-        _tileViewEnabled: shouldDisplayTileView(state),
-        _visible: isToolboxVisible(state) && isButtonEnabled('invite') && isAlone && !hide
+        _shouldShow: isButtonEnabled('invite', state) && isAlone && !hide,
+        _toolboxVisible: isToolboxVisible(state)
     };
 }
 

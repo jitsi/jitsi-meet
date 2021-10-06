@@ -2,24 +2,35 @@
 
 import React, { PureComponent } from 'react';
 
-import { AudioSettingsButton, VideoSettingsButton } from '../../../../toolbox/components/web';
-import { Avatar } from '../../../avatar';
+import { connect } from '../../../../base/redux';
+import DeviceStatus from '../../../../prejoin/components/preview/DeviceStatus';
+import { Toolbox } from '../../../../toolbox/components/web';
+import { PREMEETING_BUTTONS, THIRD_PARTY_PREJOIN_BUTTONS } from '../../../config/constants';
 
 import ConnectionStatus from './ConnectionStatus';
-import CopyMeetingUrl from './CopyMeetingUrl';
 import Preview from './Preview';
 
 type Props = {
 
     /**
-     * Children component(s) to be rendered on the screen.
+     * The list of toolbar buttons to render.
      */
-    children: React$Node,
+    _buttons: Array<string>,
 
     /**
-     * Footer to be rendered for the page (if any).
+     * The branding background of the premeeting screen(lobby/prejoin).
      */
-    footer?: React$Node,
+    _premeetingBackground: string,
+
+    /**
+     * Children component(s) to be rendered on the screen.
+     */
+    children?: React$Node,
+
+    /**
+     * Additional CSS class names to set on the icon container.
+     */
+    className?: string,
 
     /**
      * The name of the participant.
@@ -27,24 +38,29 @@ type Props = {
     name?: string,
 
     /**
-     * Indicates whether the avatar should be shown when video is off
+     * Indicates whether the copy url button should be shown
      */
-    showAvatar: boolean,
+    showCopyUrlButton: boolean,
 
     /**
-     * Indicates whether the label and copy url action should be shown
+     * Indicates whether the device status should be shown
      */
-    showConferenceInfo: boolean,
-
-    /**
-     * Title of the screen.
-     */
-    title: string,
+    showDeviceStatus: boolean,
 
     /**
      * The 'Skip prejoin' button to be rendered (if any).
      */
      skipPrejoinButton?: React$Node,
+
+    /**
+     * Title of the screen.
+     */
+    title?: string,
+
+    /**
+     * Whether it's used in the 3rdParty prejoin screen or not.
+     */
+    thirdParty?: boolean,
 
     /**
      * True if the preview overlay should be muted, false otherwise.
@@ -61,15 +77,15 @@ type Props = {
  * Implements a pre-meeting screen that can be used at various pre-meeting phases, for example
  * on the prejoin screen (pre-connection) or lobby (post-connection).
  */
-export default class PreMeetingScreen extends PureComponent<Props> {
+class PreMeetingScreen extends PureComponent<Props> {
     /**
      * Default values for {@code Prejoin} component's properties.
      *
      * @static
      */
     static defaultProps = {
-        showAvatar: true,
-        showConferenceInfo: true
+        showCopyUrlButton: true,
+        showToolbox: true
     };
 
     /**
@@ -78,43 +94,69 @@ export default class PreMeetingScreen extends PureComponent<Props> {
      * @inheritdoc
      */
     render() {
-        const { name, showAvatar, showConferenceInfo, title, videoMuted, videoTrack } = this.props;
+        const {
+            _buttons,
+            _premeetingBackground,
+            children,
+            className,
+            showDeviceStatus,
+            skipPrejoinButton,
+            title,
+            videoMuted,
+            videoTrack
+        } = this.props;
+
+        const containerClassName = `premeeting-screen ${className ? className : ''}`;
+        const style = _premeetingBackground ? {
+            background: _premeetingBackground,
+            backgroundPosition: 'center',
+            backgroundSize: 'cover'
+        } : {};
 
         return (
-            <div
-                className = 'premeeting-screen'
-                id = 'lobby-screen'>
-                <ConnectionStatus />
+            <div className = { containerClassName }>
+                <div style = { style }>
+                    <div className = 'content'>
+                        <ConnectionStatus />
+
+                        <div className = 'content-controls'>
+                            <h1 className = 'title'>
+                                { title }
+                            </h1>
+                            { children }
+                            { _buttons.length && <Toolbox toolbarButtons = { _buttons } /> }
+                            { skipPrejoinButton }
+                            { showDeviceStatus && <DeviceStatus /> }
+                        </div>
+                    </div>
+                </div>
                 <Preview
                     videoMuted = { videoMuted }
                     videoTrack = { videoTrack } />
-                {!videoMuted && <div className = 'preview-overlay' />}
-                <div className = 'content'>
-                    {showAvatar && videoMuted && (
-                        <Avatar
-                            className = 'premeeting-screen-avatar'
-                            displayName = { name }
-                            dynamicColor = { false }
-                            participantId = 'local'
-                            size = { 80 } />
-                    )}
-                    {showConferenceInfo && (
-                        <>
-                            <div className = 'title'>
-                                { title }
-                            </div>
-                            <CopyMeetingUrl />
-                        </>
-                    )}
-                    { this.props.children }
-                    <div className = 'media-btn-container'>
-                        <AudioSettingsButton visible = { true } />
-                        <VideoSettingsButton visible = { true } />
-                    </div>
-                    { this.props.skipPrejoinButton }
-                    { this.props.footer }
-                </div>
             </div>
         );
     }
 }
+
+
+/**
+ * Maps (parts of) the redux state to the React {@code Component} props.
+ *
+ * @param {Object} state - The redux state.
+ * @param {Object} ownProps - The props passed to the component.
+ * @returns {Object}
+ */
+function mapStateToProps(state, ownProps): Object {
+    const hideButtons = state['features/base/config'].hiddenPremeetingButtons || [];
+    const premeetingButtons = ownProps.thirdParty
+        ? THIRD_PARTY_PREJOIN_BUTTONS
+        : PREMEETING_BUTTONS;
+    const { premeetingBackground } = state['features/dynamic-branding'];
+
+    return {
+        _buttons: premeetingButtons.filter(b => !hideButtons.includes(b)),
+        _premeetingBackground: premeetingBackground
+    };
+}
+
+export default connect(mapStateToProps)(PreMeetingScreen);

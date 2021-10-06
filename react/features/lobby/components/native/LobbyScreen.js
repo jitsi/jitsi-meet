@@ -27,15 +27,16 @@ class LobbyScreen extends AbstractLobbyScreen {
 
         return (
             <CustomDialog
-                onCancel = { this._onCancel }
-                style = { styles.contentWrapper }>
-                <Text style = { styles.dialogTitle }>
-                    { t(this._getScreenTitleKey()) }
-                </Text>
-                <Text style = { styles.secondaryText }>
-                    { _meetingName }
-                </Text>
-                { this._renderContent() }
+                onCancel = { this._onCancel }>
+                <View style = { styles.contentWrapper }>
+                    <Text style = { styles.dialogTitle }>
+                        { t(this._getScreenTitleKey()) }
+                    </Text>
+                    <Text style = { styles.secondaryText }>
+                        { _meetingName }
+                    </Text>
+                    { this._renderContent() }
+                </View>
             </CustomDialog>
         );
     }
@@ -208,7 +209,7 @@ class LobbyScreen extends AbstractLobbyScreen {
      * @inheritdoc
      */
     _renderStandardButtons() {
-        const { _knocking, t } = this.props;
+        const { _knocking, _renderPassword, t } = this.props;
 
         return (
             <>
@@ -223,7 +224,7 @@ class LobbyScreen extends AbstractLobbyScreen {
                         { t('lobby.knockButton') }
                     </Text>
                 </TouchableOpacity> }
-                <TouchableOpacity
+                { _renderPassword && <TouchableOpacity
                     onPress = { this._onSwitchToPasswordMode }
                     style = { [
                         styles.button,
@@ -232,7 +233,7 @@ class LobbyScreen extends AbstractLobbyScreen {
                     <Text>
                         { t('lobby.enterPasswordButton') }
                     </Text>
-                </TouchableOpacity>
+                </TouchableOpacity> }
             </>
         );
     }

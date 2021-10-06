@@ -32,7 +32,7 @@ type Props = {
 };
 
 /**
- * This component displays the dialog from wich the user can enter the
+ * This component displays the dialog from which the user can enter the
  * phone number in order to be called by the meeting.
  *
  * @param {Props} props - The props of the component.
@@ -50,6 +50,7 @@ function DialOutDialog(props: Props) {
                 <Icon
                     className = 'prejoin-dialog-icon'
                     onClick = { onClose }
+                    role = 'button'
                     size = { 24 }
                     src = { IconClose } />
             </div>

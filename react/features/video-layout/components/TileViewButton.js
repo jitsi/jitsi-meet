@@ -9,7 +9,6 @@ import {
 import { TILE_VIEW_ENABLED, getFeatureFlag } from '../../base/flags';
 import { translate } from '../../base/i18n';
 import { IconTileView } from '../../base/icons';
-import { getParticipantCount } from '../../base/participants';
 import { connect } from '../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 import { setTileView } from '../actions';
@@ -52,14 +51,21 @@ class TileViewButton<P: Props> extends AbstractButton<P, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { _tileViewEnabled, dispatch } = this.props;
+        const { _tileViewEnabled, dispatch, handleClick } = this.props;
+
+        if (handleClick) {
+            handleClick();
+
+            return;
+        }
+
+        const value = !_tileViewEnabled;
 
         sendAnalytics(createToolbarEvent(
             'tileview.button',
             {
-                'is_enabled': _tileViewEnabled
+                'is_enabled': value
             }));
-        const value = !_tileViewEnabled;
 
         logger.debug(`Tile view ${value ? 'enable' : 'disable'}`);
         dispatch(setTileView(value));
@@ -87,8 +93,7 @@ class TileViewButton<P: Props> extends AbstractButton<P, *> {
  */
 function _mapStateToProps(state, ownProps) {
     const enabled = getFeatureFlag(state, TILE_VIEW_ENABLED, true);
-    const lonelyMeeting = getParticipantCount(state) < 2;
-    const { visible = enabled && !lonelyMeeting } = ownProps;
+    const { visible = enabled } = ownProps;
 
     return {
         _tileViewEnabled: shouldDisplayTileView(state),

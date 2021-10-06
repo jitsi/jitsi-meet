@@ -1,10 +1,10 @@
 /* @flow */
 
-import Tooltip from '@atlaskit/tooltip';
 import React, { Component } from 'react';
 
 import { translate } from '../../../i18n';
 import { Icon } from '../../../icons';
+import { Tooltip } from '../../../tooltip';
 
 /**
  * The type of the React {@code Component} props of {@link BaseIndicator}.
@@ -37,7 +37,7 @@ type Props = {
     iconSize: string,
 
     /**
-     * The ID attribue to set on the root element of the component.
+     * The ID attribute to set on the root element of the component.
      */
     id: string,
 

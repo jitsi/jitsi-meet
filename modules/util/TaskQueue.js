@@ -46,7 +46,14 @@ export class TaskQueue {
         this._currentTask = this._queue.shift() || null;
 
         if (this._currentTask) {
-            this._currentTask(this._onTaskComplete);
+            logger.debug('Executing a task.');
+
+            try {
+                this._currentTask(this._onTaskComplete);
+            } catch (error) {
+                logger.error(`Task execution failed: ${error}`);
+                this._onTaskComplete();
+            }
         }
     }
 
@@ -58,6 +65,7 @@ export class TaskQueue {
      */
     _onTaskComplete() {
         this._currentTask = null;
+        logger.debug('Task completed.');
         this._executeNext();
     }
 }

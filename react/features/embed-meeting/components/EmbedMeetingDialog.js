@@ -33,7 +33,7 @@ function EmbedMeeting({ t, url }: Props) {
      * @returns {string} The iframe embed code.
      */
     const getEmbedCode = () =>
-        `<iframe allow="camera; microphone; fullscreen; display-capture" src="${url}"`
+        `<iframe allow="camera; microphone; fullscreen; display-capture; autoplay" src="${url}"`
         + ' style="height: 100%; width: 100%; border: 0px;"></iframe>';
 
     return (
@@ -44,10 +44,12 @@ function EmbedMeeting({ t, url }: Props) {
             width = 'small'>
             <div className = 'embed-meeting-dialog'>
                 <textarea
+                    aria-label = { t('dialog.embedMeeting') }
                     className = 'embed-meeting-code'
                     readOnly = { true }
                     value = { getEmbedCode() } />
                 <CopyButton
+                    aria-label = { t('addPeople.copyLink') }
                     className = 'embed-meeting-copy'
                     displayedText = { t('dialog.copy') }
                     textOnCopySuccess = { t('dialog.copied') }

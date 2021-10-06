@@ -1,5 +1,6 @@
 // @flow
 
+import Bourne from '@hapi/bourne';
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import md5 from 'js-md5';
 
@@ -36,7 +37,7 @@ class PersistenceRegistry {
     /**
      * Returns the persisted redux state. Takes the {@link #_elements} into
      * account as we may have persisted something in the past that we don't want
-     * to retreive anymore. The next {@link #persistState} will remove such
+     * to retrieve anymore. The next {@link #persistState} will remove such
      * values.
      *
      * @returns {Object}
@@ -68,7 +69,7 @@ class PersistenceRegistry {
 
             if (persistedState) {
                 try {
-                    persistedState = JSON.parse(persistedState);
+                    persistedState = Bourne.parse(persistedState);
                 } catch (error) {
                     logger.error(
                         'Error parsing persisted state',
@@ -209,7 +210,7 @@ class PersistenceRegistry {
     }
 
     /**
-     * Retreives a persisted subtree from the storage.
+     * Retrieves a persisted subtree from the storage.
      *
      * @param {string} subtreeName - The name of the subtree.
      * @param {Object} subtreeConfig - The config of the subtree from
@@ -223,7 +224,7 @@ class PersistenceRegistry {
 
         if (persistedSubtree) {
             try {
-                persistedSubtree = JSON.parse(persistedSubtree);
+                persistedSubtree = Bourne.parse(persistedSubtree);
 
                 const filteredSubtree
                     = this._getFilteredSubtree(persistedSubtree, subtreeConfig);

@@ -4,7 +4,7 @@
         "addContacts": "Пригласите других людей",
         "copyInvite": "Скопировать приглашение на встречу",
         "copyLink": "Скопировать ссылку на встречу",
-        "copyStream": "Скопировать ссылку на прямую транасляцию",
+        "copyStream": "Скопировать ссылку на прямую трансляцию",
         "countryNotSupported": "Эта страна пока не поддерживается.",
         "countryReminder": "Вызов не в США? Пожалуйста, убедитесь, что указали код страны!",
         "defaultEmail": "Ваш адрес электронной почты",
@@ -67,11 +67,13 @@
         "messagebox": "Введите сообщение",
         "nickname": {
             "popover": "Выберите имя",
-            "title": "Введите имя для использования чата"
+            "title": "Введите имя для использования чата",
+            "titleWithPolls": "Введите имя для использования чата"
         },
         "noMessagesMessage": "В конференции пока нет никаких сообщений. Начните разговор!",
         "privateNotice": "Личное сообщение пользователю {{recipient}}",
         "title": "Чат",
+        "titleWithPolls": "Чат",
         "you": "вы"
     },
     "chromeExtensionBanner": {
@@ -452,6 +454,7 @@
         "youtubeTerms": "Условия использования YouTube"
     },
     "lobby": {
+        "allow": "Разрешить",
         "disableDialogContent": "В настоящее время включен режим лобби. Эта функция гарантирует, что нежелательные участники не смогут присоединиться к вашей встрече. Вы хотите его отключить?",
         "disableDialogSubmit": "Отключить",
         "emailField": "Введите ваш адрес электронной почты",
@@ -472,7 +475,7 @@
         "knockingParticipantList": "Список ожидающих участников",
         "nameField": "Введите ваше имя",
         "notificationLobbyAccessDenied": "{{originParticipantName}} запретил присоединиться {{targetParticipantName}}",
-        "notificationLobbyAccessGranted": "{{originParticipantName}}разрешил присоединиться {{targetParticipantName}} ",
+        "notificationLobbyAccessGranted": "{{originParticipantName}} разрешил присоединиться {{targetParticipantName}} ",
         "notificationLobbyDisabled": "Лобби отключено пользователем {{originParticipantName}}",
         "notificationLobbyEnabled": "Лобби включено пользователем {{originParticipantName}}",
         "notificationTitle": "Лобби",
@@ -748,6 +751,7 @@
             "moreOptions": "Меню доп. настроек",
             "mute": "Вкл/Выкл звук",
             "muteEveryone": "Выкл. микрофон у всех",
+            "participants": "Участники",
             "pip": "Вкл/Выкл режим Картинка-в-картинке",
             "privateMessage": "Отправить личное сообщение",
             "profile": "Редактировать профиль",
@@ -797,14 +801,16 @@
         "moreOptions": "Больше настроек",
         "mute": "Микрофон (вкл./выкл.)",
         "muteEveryone": "Выкл. микрофон у всех",
+        "muteEveryonesVideo": "Выкл. Камеру у всех",
+        "noAudioSignalTitle": "От вашего микрофона не идет звуковой сигнал!",
         "noAudioSignalDesc": "Если вы специально не отключали микрофон в системных настройках, подумайте о том, чтобы поменять его.",
         "noAudioSignalDescSuggestion": "Если вы специально не отключали микрофон в системных настройках, вы можете попробовать использовать следующее устройство:",
         "noAudioSignalDialInDesc": "Вы можете также дозвониться используя:",
         "noAudioSignalDialInLinkDesc": "Номера для дозвона",
-        "noAudioSignalTitle": "От вашего микрофона не идет звуковой сигнал!",
-        "noisyAudioInputDesc": "Возможно, ваш микрофон создает шум. Вы можете выключить его или смените устройство.",
         "noisyAudioInputTitle": "Похоже, ваш микрофон создает шум!",
+        "noisyAudioInputDesc": "Возможно, ваш микрофон создает шум. Вы можете выключить его или смените устройство.",
         "openChat": "Открыть чат",
+        "participants": "Участники",
         "pip": "Вкл режим Картинка-в-картинке",
         "privateMessage": "Отправить личное сообщение",
         "profile": "Редактировать профиль",
@@ -908,6 +914,8 @@
         "getHelp": "Справка",
         "go": "ОК",
         "goSmall": "ОК",
+        "headerTitle":"Сервер видеоконференцсвязи Jitsi Meet",
+        "headerSubtitle":"Защищенная высококачественная видеосвязь",
         "info": "Инфо",
         "join": "СОЗДАТЬ / ПРИСОЕДИНИТЬСЯ",
         "moderatedMessage": "Или заранее <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">зарезервируйте URL-адрес встречи</a>, где вы будете единственным модератором.",
@@ -920,6 +928,7 @@
         "roomname": "Укажите название комнаты",
         "roomnameHint": "Укажите название комнаты или ее адрес. Можете сами создать название и передать его будущим участникам встречи, чтобы они использовали именно его.",
         "sendFeedback": "Обратная связь",
+        "startMeeting": "Создать конференцию",
         "terms": "Условия",
         "title": "Защищенная, полнофункциональная и совершенно бесплатная система видеоконференций"
     }

@@ -33,18 +33,46 @@ class SharedDocumentButton extends AbstractButton<Props, *> {
     toggledLabel = 'toolbar.documentClose';
 
     /**
+     * Dynamically retrieves tooltip based on sharing state.
+     */
+    get tooltip() {
+        if (this._isToggled()) {
+            return 'toolbar.documentClose';
+        }
+
+        return 'toolbar.documentOpen';
+    }
+
+    /**
+     * Required by linter due to AbstractButton overwritten prop being writable.
+     *
+     * @param {string} value - The value.
+     */
+    set tooltip(value) {
+        return value;
+    }
+
+    /**
      * Handles clicking / pressing the button, and opens / closes the appropriate dialog.
      *
      * @private
      * @returns {void}
      */
     _handleClick() {
+        const { _editing, dispatch, handleClick } = this.props;
+
+        if (handleClick) {
+            handleClick();
+
+            return;
+        }
+
         sendAnalytics(createToolbarEvent(
             'toggle.etherpad',
             {
-                enable: !this.props._editing
+                enable: !_editing
             }));
-        this.props.dispatch(toggleDocument());
+        dispatch(toggleDocument());
     }
 
     /**
