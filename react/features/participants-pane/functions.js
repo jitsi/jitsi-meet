@@ -11,7 +11,10 @@ import { MEDIA_TYPE, type MediaType } from '../base/media/constants';
 import {
     getDominantSpeakerParticipant,
     isLocalParticipantModerator,
-    isParticipantModerator
+    isParticipantModerator,
+    getLocalParticipant,
+    getRemoteParticipantsSorted,
+    getRaiseHandsQueue
 } from '../base/participants/functions';
 import { toState } from '../base/redux';
 
@@ -188,3 +191,57 @@ export const shouldRenderInviteButton = (state: Object) => {
 
     return flagEnabled && !disableInviteFunctions;
 };
+
+/**
+ * Selector for retrieving ids of participants in the order that they are displayed in the filmstrip (with the
+ * exception of participants with raised hand). The participants are reordered as follows.
+ * 1. Dominant speaker.
+ * 2. Local participant.
+ * 3. Participants with raised hand.
+ * 4. Participants with screenshare sorted alphabetically by their display name.
+ * 5. Shared video participants.
+ * 6. Recent speakers sorted alphabetically by their display name.
+ * 7. Rest of the participants sorted alphabetically by their display name.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state features/base/participants.
+ * @returns {Array<string>}
+ */
+export function getSortedParticipantIds(stateful: Object | Function): Array<string> {
+    const { id } = getLocalParticipant(stateful);
+    const remoteParticipants = getRemoteParticipantsSorted(stateful);
+    const reorderedParticipants = new Set(remoteParticipants);
+    const raisedHandParticipants = getRaiseHandsQueue(stateful);
+    const remoteRaisedHandParticipants = new Set(raisedHandParticipants || []);
+    const dominantSpeaker = getDominantSpeakerParticipant(stateful);
+
+    for (const participant of remoteRaisedHandParticipants.keys()) {
+        // Avoid duplicates.
+        if (reorderedParticipants.has(participant)) {
+            reorderedParticipants.delete(participant);
+        } else {
+            remoteRaisedHandParticipants.delete(participant);
+        }
+    }
+
+    // Remove self.
+    remoteRaisedHandParticipants.delete(id);
+
+    const dominant = [];
+
+    // Remove dominant speaker.
+    if (dominantSpeaker && dominantSpeaker.id !== id) {
+        remoteRaisedHandParticipants.delete(dominantSpeaker.id);
+        reorderedParticipants.delete(dominantSpeaker.id);
+        dominant.push(dominantSpeaker.id);
+    }
+
+    // Move self and participants with raised hand to the top of the list.
+    return [
+        ...dominant,
+        id,
+        ...Array.from(remoteRaisedHandParticipants.keys()),
+        ...Array.from(reorderedParticipants.keys())
+    ];
+}
+
