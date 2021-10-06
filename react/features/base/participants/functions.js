@@ -456,47 +456,6 @@ async function _getFirstLoadableAvatarUrl(participant, store) {
 }
 
 /**
- * Selector for retrieving ids of participants in the order that they are displayed in the filmstrip (with the
- * exception of participants with raised hand). The participants are reordered as follows.
- * 1. Local participant.
- * 2. Participants with raised hand.
- * 3. Participants with screenshare sorted alphabetically by their display name.
- * 4. Shared video participants.
- * 5. Recent speakers sorted alphabetically by their display name.
- * 6. Rest of the participants sorted alphabetically by their display name.
- *
- * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
- * {@code getState} function to be used to retrieve the state features/base/participants.
- * @returns {Array<string>}
- */
-export function getSortedParticipantIds(stateful: Object | Function): Array<string> {
-    const { id } = getLocalParticipant(stateful);
-    const remoteParticipants = getRemoteParticipantsSorted(stateful);
-    const reorderedParticipants = new Set(remoteParticipants);
-    const raisedHandParticipants = getRaiseHandsQueue(stateful);
-    const remoteRaisedHandParticipants = new Set(raisedHandParticipants || []);
-
-    for (const participant of remoteRaisedHandParticipants.keys()) {
-        // Avoid duplicates.
-        if (reorderedParticipants.has(participant)) {
-            reorderedParticipants.delete(participant);
-        } else {
-            remoteRaisedHandParticipants.delete(participant);
-        }
-    }
-
-    // Remove self.
-    remoteRaisedHandParticipants.has(id) && remoteRaisedHandParticipants.delete(id);
-
-    // Move self and participants with raised hand to the top of the list.
-    return [
-        id,
-        ...Array.from(remoteRaisedHandParticipants.keys()),
-        ...Array.from(reorderedParticipants.keys())
-    ];
-}
-
-/**
  * Get the participants queue with raised hands.
  *
  * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
