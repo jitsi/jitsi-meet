@@ -7,6 +7,7 @@ import {
     HIDDEN_PARTICIPANT_LEFT,
     GRANT_MODERATOR,
     KICK_PARTICIPANT,
+    LOCAL_PARTICIPANT_RAISE_HAND,
     MUTE_REMOTE_PARTICIPANT,
     PARTICIPANT_ID_CHANGED,
     PARTICIPANT_JOINED,
@@ -14,9 +15,12 @@ import {
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT,
-    SET_LOADABLE_AVATAR_URL
+    SET_LOADABLE_AVATAR_URL,
+    RAISE_HAND_UPDATED
 } from './actionTypes';
-import { DISCO_REMOTE_CONTROL_FEATURE } from './constants';
+import {
+    DISCO_REMOTE_CONTROL_FEATURE
+} from './constants';
 import {
     getLocalParticipant,
     getNormalizedDisplayName,
@@ -28,7 +32,8 @@ import logger from './logger';
 /**
  * Create an action for when dominant speaker changes.
  *
- * @param {string} id - Participant's ID.
+ * @param {string} dominantSpeaker - Participant ID of the dominant speaker.
+ * @param {Array<string>} previousSpeakers - Participant IDs of the previous speakers.
  * @param {JitsiConference} conference - The {@code JitsiConference} associated
  * with the participant identified by the specified {@code id}. Only the local
  * participant is allowed to not specify an associated {@code JitsiConference}
@@ -37,16 +42,18 @@ import logger from './logger';
  *     type: DOMINANT_SPEAKER_CHANGED,
  *     participant: {
  *         conference: JitsiConference,
- *         id: string
+ *         id: string,
+ *         previousSpeakers: Array<string>
  *     }
  * }}
  */
-export function dominantSpeakerChanged(id, conference) {
+export function dominantSpeakerChanged(dominantSpeaker, previousSpeakers, conference) {
     return {
         type: DOMINANT_SPEAKER_CHANGED,
         participant: {
             conference,
-            id
+            id: dominantSpeaker,
+            previousSpeakers
         }
     };
 }
@@ -192,15 +199,18 @@ export function localParticipantRoleChanged(role) {
  * Create an action for muting another participant in the conference.
  *
  * @param {string} id - Participant's ID.
+ * @param {MEDIA_TYPE} mediaType - The media to mute.
  * @returns {{
  *     type: MUTE_REMOTE_PARTICIPANT,
- *     id: string
+ *     id: string,
+ *     mediaType: MEDIA_TYPE
  * }}
  */
-export function muteRemoteParticipant(id) {
+export function muteRemoteParticipant(id, mediaType) {
     return {
         type: MUTE_REMOTE_PARTICIPANT,
-        id
+        id,
+        mediaType
     };
 }
 
@@ -361,6 +371,7 @@ export function hiddenParticipantLeft(id) {
  * with the participant identified by the specified {@code id}. Only the local
  * participant is allowed to not specify an associated {@code JitsiConference}
  * instance.
+ * @param {boolean} isReplaced - Whether the participant is to be replaced in the meeting.
  * @returns {{
  *     type: PARTICIPANT_LEFT,
  *     participant: {
@@ -369,12 +380,13 @@ export function hiddenParticipantLeft(id) {
  *     }
  * }}
  */
-export function participantLeft(id, conference) {
+export function participantLeft(id, conference, isReplaced) {
     return {
         type: PARTICIPANT_LEFT,
         participant: {
             conference,
-            id
+            id,
+            isReplaced
         }
     };
 }
@@ -450,20 +462,21 @@ export function participantUpdated(participant = {}) {
  * Action to signal that a participant has muted us.
  *
  * @param {JitsiParticipant} participant - Information about participant.
+ * @param {JitsiLocalTrack} track - Information about the track that has been muted.
  * @returns {Promise}
  */
-export function participantMutedUs(participant) {
+export function participantMutedUs(participant, track) {
     return (dispatch, getState) => {
         if (!participant) {
             return;
         }
 
+        const isAudio = track.isAudioTrack();
+
         dispatch(showNotification({
-            descriptionKey: 'notify.mutedRemotelyDescription',
-            titleKey: 'notify.mutedRemotelyTitle',
+            titleKey: isAudio ? 'notify.mutedRemotelyTitle' : 'notify.videoMutedRemotelyTitle',
             titleArguments: {
-                participantDisplayName:
-                    getParticipantDisplayName(getState, participant.getId())
+                moderator: getParticipantDisplayName(getState, participant.getId())
             }
         }));
     };
@@ -482,8 +495,12 @@ export function participantKicked(kicker, kicked) {
         dispatch({
             type: PARTICIPANT_KICKED,
             kicked: kicked.getId(),
-            kicker: kicker.getId()
+            kicker: kicker?.getId()
         });
+
+        if (kicked.isReplaced && kicked.isReplaced()) {
+            return;
+        }
 
         dispatch(showNotification({
             titleArguments: {
@@ -541,3 +558,34 @@ export function setLoadableAvatarUrl(participantId, url) {
     };
 }
 
+/**
+ * Raise hand for the local participant.
+ *
+ * @param {boolean} enabled - Raise or lower hand.
+ * @returns {{
+ *     type: LOCAL_PARTICIPANT_RAISE_HAND,
+ *     enabled: boolean
+ * }}
+ */
+export function raiseHand(enabled) {
+    return {
+        type: LOCAL_PARTICIPANT_RAISE_HAND,
+        enabled
+    };
+}
+
+/**
+ * Update raise hand queue of participants.
+ *
+ * @param {Object} participant - Participant that updated raised hand.
+ * @returns {{
+ *      type: RAISE_HAND_UPDATED,
+ *      participant: Object
+ * }}
+ */
+export function raiseHandUpdateQueue(participant) {
+    return {
+        type: RAISE_HAND_UPDATED,
+        participant
+    };
+}

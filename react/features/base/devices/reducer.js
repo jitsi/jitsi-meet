@@ -2,6 +2,7 @@ import { ReducerRegistry } from '../redux';
 
 import {
     ADD_PENDING_DEVICE_REQUEST,
+    DEVICE_PERMISSIONS_CHANGED,
     REMOVE_PENDING_DEVICE_REQUESTS,
     SET_AUDIO_INPUT_DEVICE,
     SET_VIDEO_INPUT_DEVICE,
@@ -16,7 +17,11 @@ const DEFAULT_STATE = {
         audioOutput: [],
         videoInput: []
     },
-    pendingRequests: []
+    pendingRequests: [],
+    permissions: {
+        audio: false,
+        video: false
+    }
 };
 
 /**
@@ -67,6 +72,12 @@ ReducerRegistry.register(
             logger.debug(`set video input device: ${action.deviceId}`);
 
             return state;
+        }
+        case DEVICE_PERMISSIONS_CHANGED: {
+            return {
+                ...state,
+                permissions: action.permissions
+            };
         }
         default:
             return state;

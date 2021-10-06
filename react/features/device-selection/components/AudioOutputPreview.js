@@ -44,6 +44,7 @@ class AudioOutputPreview extends Component<Props> {
 
         this._audioElementReady = this._audioElementReady.bind(this);
         this._onClick = this._onClick.bind(this);
+        this._onKeyPress = this._onKeyPress.bind(this);
     }
 
     /**
@@ -66,7 +67,12 @@ class AudioOutputPreview extends Component<Props> {
     render() {
         return (
             <div className = 'audio-output-preview'>
-                <a onClick = { this._onClick }>
+                <a
+                    aria-label = { this.props.t('deviceSelection.testAudio') }
+                    onClick = { this._onClick }
+                    onKeyPress = { this._onKeyPress }
+                    role = 'button'
+                    tabIndex = { 0 }>
                     { this.props.t('deviceSelection.testAudio') }
                 </a>
                 <Audio
@@ -103,6 +109,22 @@ class AudioOutputPreview extends Component<Props> {
     _onClick() {
         this._audioElement
             && this._audioElement.play();
+    }
+
+    _onKeyPress: (Object) => void;
+
+    /**
+     * KeyPress handler for accessibility.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onKeyPress(e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            this._onClick();
+        }
     }
 
     /**

@@ -50,9 +50,11 @@
         "messagebox": "Type a message",
         "nickname": {
             "popover": "Choose a nickname",
-            "title": "Enter a nickname to use chat"
+            "title": "Enter a nickname to use chat",
+            "titleWithPolls": "Enter a nickname to use chat"
         },
         "title": "Chat",
+        "titleWithPolls": "Chat",
         "you": "",
         "privateNotice": "",
         "noMessagesMessage": "",

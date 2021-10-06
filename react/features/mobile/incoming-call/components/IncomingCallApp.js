@@ -37,7 +37,7 @@ export default class IncomingCallApp extends BaseApp<Props> {
     /**
      * Navigates to {@link IncomingCallPage} upon mount.
      *
-     * NOTE: This was implmented here instead of in a middleware for the
+     * NOTE: This was implemented here instead of in a middleware for the
      * {@link APP_WILL_MOUNT} action because that would run also for
      * {@link App}.
      *

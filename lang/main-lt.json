@@ -53,10 +53,12 @@
         "noMessagesMessage": "Susitikime dar nėra pranešimų. Pradėkite pokalbį čia!",
         "nickname": {
             "popover": "Pridėkite slapyvardį",
-            "title": "Norėdami naudoti pokalbį, įveskite slapyvardį"
+            "title": "Norėdami naudoti pokalbį, įveskite slapyvardį",
+            "titleWithPolls": "Norėdami naudoti pokalbį, įveskite slapyvardį"
         },
         "privateNotice": "Asmeninis pranešimas {{gavėjui}}",
         "title": "Pokalbis",
+        "titleWithPolls": "Pokalbis",
         "you": "Jūs"
     },
     "chromeExtensionBanner": {

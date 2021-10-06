@@ -1,7 +1,7 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-import { KeyboardAvoidingView, SafeAreaView } from 'react-native';
+import { KeyboardAvoidingView, Platform, SafeAreaView } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../color-scheme';
 import { HeaderWithNavigation, SlidingView } from '../../react';
@@ -51,6 +51,11 @@ type Props = {
     headerProps: Object,
 
     /**
+     * True if the header with navigation should be hidden, false otherwise.
+     */
+    hideHeaderWithNavigation?: boolean,
+
+    /**
      * The ID of the modal that is being rendered. This is used to show/hide the modal.
      */
     modalId: string,
@@ -78,7 +83,8 @@ type Props = {
  */
 class JitsiModal extends PureComponent<Props> {
     static defaultProps = {
-        position: 'bottom'
+        position: 'bottom',
+        hideHeaderWithNavigation: false
     };
 
     /**
@@ -98,7 +104,17 @@ class JitsiModal extends PureComponent<Props> {
      * @inheritdoc
      */
     render() {
-        const { _headerStyles, _show, _styles, children, footerComponent, headerProps, position, style } = this.props;
+        const {
+            _headerStyles,
+            _show,
+            _styles,
+            children,
+            footerComponent,
+            headerProps,
+            position,
+            hideHeaderWithNavigation,
+            style
+        } = this.props;
 
         return (
             <SlidingView
@@ -106,7 +122,12 @@ class JitsiModal extends PureComponent<Props> {
                 position = { position }
                 show = { _show }>
                 <KeyboardAvoidingView
-                    behavior = 'height'
+                    behavior =
+                        {
+                            Platform.OS === 'ios'
+                                ? 'padding' : 'height'
+                        }
+                    enabled = { true }
                     style = { [
                         _headerStyles.page,
                         _styles.page,
@@ -114,6 +135,7 @@ class JitsiModal extends PureComponent<Props> {
                     ] }>
                     <HeaderWithNavigation
                         { ...headerProps }
+                        hideHeaderWithNavigation = { hideHeaderWithNavigation }
                         onPressBack = { this._onRequestClose } />
                     <SafeAreaView style = { styles.safeArea }>
                         { children }

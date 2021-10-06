@@ -4,13 +4,19 @@ import React, { Component } from 'react';
 
 import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
-import { InviteMore, Subject } from '../../conference';
-import { fetchCustomBrandingData } from '../../dynamic-branding';
+import { setColorAlpha } from '../../base/util';
+import { SharedVideo } from '../../shared-video/components/web';
 import { Captions } from '../../subtitles/';
+import { setTileView } from '../../video-layout/actions';
 
 declare var interfaceConfig: Object;
 
 type Props = {
+
+    /**
+     * The alpha(opacity) of the background
+     */
+    _backgroundAlpha: number,
 
     /**
      * The user selected background color.
@@ -23,11 +29,6 @@ type Props = {
      _customBackgroundImageUrl: string,
 
     /**
-     * Fetches the branding data.
-     */
-    _fetchCustomBrandingData: Function,
-
-    /**
      * Prop that indicates whether the chat is open.
      */
     _isChatOpen: boolean,
@@ -36,7 +37,12 @@ type Props = {
      * Used to determine the value of the autoplay attribute of the underlying
      * video element.
      */
-    _noAutoPlayVideo: boolean
+    _noAutoPlayVideo: boolean,
+
+    /**
+     * The Redux dispatch function.
+     */
+    dispatch: Function
 }
 
 /**
@@ -46,13 +52,18 @@ type Props = {
  * @extends Component
  */
 class LargeVideo extends Component<Props> {
+    _tappedTimeout: ?TimeoutID
+
     /**
-     * Implements React's {@link Component#componentDidMount}.
+     * Constructor of the component.
      *
      * @inheritdoc
      */
-    componentDidMount() {
-        this.props._fetchCustomBrandingData();
+    constructor(props) {
+        super(props);
+
+        this._clearTapTimeout = this._clearTapTimeout.bind(this);
+        this._onDoubleTap = this._onDoubleTap.bind(this);
     }
 
     /**
@@ -62,24 +73,26 @@ class LargeVideo extends Component<Props> {
      * @returns {React$Element}
      */
     render() {
+        const {
+            _isChatOpen,
+            _noAutoPlayVideo
+        } = this.props;
         const style = this._getCustomSyles();
-        const className = `videocontainer${this.props._isChatOpen ? ' shift-right' : ''}`;
+        const className = `videocontainer${_isChatOpen ? ' shift-right' : ''}`;
 
         return (
             <div
                 className = { className }
                 id = 'largeVideoContainer'
                 style = { style }>
-                <Subject />
-                <InviteMore />
-                <div id = 'sharedVideo'>
-                    <div id = 'sharedVideoIFrame' />
-                </div>
+                <SharedVideo />
                 <div id = 'etherpad' />
 
                 <Watermarks />
 
-                <div id = 'dominantSpeaker'>
+                <div
+                    id = 'dominantSpeaker'
+                    onTouchEnd = { this._onDoubleTap }>
                     <div className = 'dynamic-shadow' />
                     <div id = 'dominantSpeakerAvatarContainer' />
                 </div>
@@ -96,9 +109,12 @@ class LargeVideo extends Component<Props> {
                       * another container for the background and the
                       * largeVideoWrapper in order to hide/show them.
                       */}
-                    <div id = 'largeVideoWrapper'>
+                    <div
+                        id = 'largeVideoWrapper'
+                        onTouchEnd = { this._onDoubleTap }
+                        role = 'figure' >
                         <video
-                            autoPlay = { !this.props._noAutoPlayVideo }
+                            autoPlay = { !_noAutoPlayVideo }
                             id = 'largeVideo'
                             muted = { true }
                             playsInline = { true } /* for Safari on iOS to work */ />
@@ -108,6 +124,19 @@ class LargeVideo extends Component<Props> {
                     || <Captions /> }
             </div>
         );
+    }
+
+    _clearTapTimeout: () => void
+
+    /**
+     * Clears the '_tappedTimout'.
+     *
+     * @private
+     * @returns {void}
+     */
+    _clearTapTimeout() {
+        clearTimeout(this._tappedTimeout);
+        this._tappedTimeout = undefined;
     }
 
     /**
@@ -122,12 +151,39 @@ class LargeVideo extends Component<Props> {
 
         styles.backgroundColor = _customBackgroundColor || interfaceConfig.DEFAULT_BACKGROUND;
 
+        if (this.props._backgroundAlpha !== undefined) {
+            const alphaColor = setColorAlpha(styles.backgroundColor, this.props._backgroundAlpha);
+
+            styles.backgroundColor = alphaColor;
+        }
+
         if (_customBackgroundImageUrl) {
             styles.backgroundImage = `url(${_customBackgroundImageUrl})`;
             styles.backgroundSize = 'cover';
         }
 
         return styles;
+    }
+
+    _onDoubleTap: () => void
+
+    /**
+     * Sets view to tile view on double tap.
+     *
+     * @param {Object} e - The event.
+     * @private
+     * @returns {void}
+     */
+    _onDoubleTap(e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        if (this._tappedTimeout) {
+            this._clearTapTimeout();
+            this.props.dispatch(setTileView(true));
+        } else {
+            this._tappedTimeout = setTimeout(this._clearTapTimeout, 300);
+        }
     }
 }
 
@@ -145,6 +201,7 @@ function _mapStateToProps(state) {
     const { isOpen: isChatOpen } = state['features/chat'];
 
     return {
+        _backgroundAlpha: state['features/base/config'].backgroundAlpha,
         _customBackgroundColor: backgroundColor,
         _customBackgroundImageUrl: backgroundImageUrl,
         _isChatOpen: isChatOpen,
@@ -152,8 +209,4 @@ function _mapStateToProps(state) {
     };
 }
 
-const _mapDispatchToProps = {
-    _fetchCustomBrandingData: fetchCustomBrandingData
-};
-
-export default connect(_mapStateToProps, _mapDispatchToProps)(LargeVideo);
+export default connect(_mapStateToProps)(LargeVideo);

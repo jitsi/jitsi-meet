@@ -13,7 +13,7 @@ import { _formatConferenceIDPin } from '../../../_utils';
 type Props = {
 
     /**
-     * The numberic identifier for the current conference, used after dialing a
+     * The numeric identifier for the current conference, used after dialing a
      * the number to join the conference.
      */
     conferenceID: number,
@@ -49,6 +49,7 @@ class DialInNumber extends Component<Props> {
 
         // Bind event handler so it is only bound once for every instance.
         this._onCopyText = this._onCopyText.bind(this);
+        this._onCopyTextKeyPress = this._onCopyTextKeyPress.bind(this);
     }
 
     _onCopyText: () => void;
@@ -66,6 +67,22 @@ class DialInNumber extends Component<Props> {
         const textToCopy = `${dialInLabel} ${phoneNumber} ${passcode} ${conferenceIDPin}`;
 
         copyText(textToCopy);
+    }
+
+    _onCopyTextKeyPress: (Object) => void;
+
+    /**
+     * KeyPress handler for accessibility.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onCopyTextKeyPress(e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            this._onCopyText();
+        }
     }
 
     /**
@@ -101,8 +118,12 @@ class DialInNumber extends Component<Props> {
                     </span>
                 </div>
                 <a
+                    aria-label = { t('info.copyNumber') }
                     className = 'dial-in-copy'
-                    onClick = { this._onCopyText }>
+                    onClick = { this._onCopyText }
+                    onKeyPress = { this._onCopyTextKeyPress }
+                    role = 'button'
+                    tabIndex = { 0 }>
                     <Icon src = { IconCopy } />
                 </a>
             </div>

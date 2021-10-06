@@ -11,7 +11,12 @@ type Props = {
     /**
      * Children of the component.
      */
-    children: React$Node
+    children: React$Node,
+
+    /**
+     * Whether the polls feature is enabled or not.
+     */
+    isPollsEnabled: boolean
 }
 
 /**
@@ -19,14 +24,15 @@ type Props = {
  *
  * @returns {React$Element<any>}
  */
-function ChatDialog({ children }: Props) {
+function ChatDialog({ children, isPollsEnabled }: Props) {
     return (
         <Dialog
             customHeader = { Header }
             disableEnter = { true }
+            disableFooter = { true }
             hideCancelButton = { true }
             submitDisabled = { true }
-            titleKey = 'chat.title'>
+            titleKey = { isPollsEnabled ? 'chat.titleWithPolls' : 'chat.title' } >
             <div className = 'chat-dialog'>
                 {children}
             </div>

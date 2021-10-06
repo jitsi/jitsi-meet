@@ -4,6 +4,8 @@ import { findIndex } from 'lodash';
 
 import { CONNECTION_TYPE } from './constants';
 
+declare var interfaceConfig: Object;
+
 const LOSS_AUDIO_THRESHOLDS = [ 0.33, 0.05 ];
 const LOSS_VIDEO_THRESHOLDS = [ 0.33, 0.1, 0.05 ];
 
@@ -21,12 +23,12 @@ const ratio = 1 / 3;
 const maxSize = 190;
 
 /**
- * The window limit hight over which the avatar should have the default dimension.
+ * The window limit height over which the avatar should have the default dimension.
  */
 const upperHeightLimit = 760;
 
 /**
- * The window limit hight under which the avatar should not be resized anymore.
+ * The window limit height under which the avatar should not be resized anymore.
  */
 const lowerHeightLimit = 460;
 

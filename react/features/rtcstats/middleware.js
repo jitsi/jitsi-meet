@@ -1,15 +1,13 @@
 // @flow
 
 import { getAmplitudeIdentity } from '../analytics';
-import {
-    CONFERENCE_JOINED
-} from '../base/conference';
+import { CONFERENCE_UNIQUE_ID_SET, getConferenceOptions, getRoomName } from '../base/conference';
 import { LIB_WILL_INIT } from '../base/lib-jitsi-meet';
-import { getLocalParticipant } from '../base/participants';
+import { DOMINANT_SPEAKER_CHANGED, getLocalParticipant } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 
 import RTCStats from './RTCStats';
-import { isRtcstatsEnabled } from './functions';
+import { canSendRtcstatsData, isRtcstatsEnabled } from './functions';
 import logger from './logger';
 
 /**
@@ -24,6 +22,7 @@ MiddlewareRegistry.register(store => next => action => {
     const config = state['features/base/config'];
     const { analytics } = config;
 
+
     switch (action.type) {
     case LIB_WILL_INIT: {
         if (isRtcstatsEnabled(state)) {
@@ -32,14 +31,17 @@ MiddlewareRegistry.register(store => next => action => {
             // init, we need to add these proxies before it initializes, otherwise lib-jitsi-meet will use the
             // original non proxy versions of these functions.
             try {
-                // Default poll interval is 1000ms if not provided in the config.
+                // Default poll interval is 1000ms and standard stats will be used, if not provided in the config.
                 const pollInterval = analytics.rtcstatsPollInterval || 1000;
+                const useLegacy = analytics.rtcstatsUseLegacy || false;
+
 
                 // Initialize but don't connect to the rtcstats server wss, as it will start sending data for all
                 // media calls made even before the conference started.
                 RTCStats.init({
-                    rtcstatsEndpoint: analytics.rtcstatsEndpoint,
-                    rtcstatsPollInterval: pollInterval
+                    endpoint: analytics.rtcstatsEndpoint,
+                    useLegacy,
+                    pollInterval
                 });
             } catch (error) {
                 logger.error('Failed to initialize RTCStats: ', error);
@@ -47,16 +49,24 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
     }
-    case CONFERENCE_JOINED: {
-        if (isRtcstatsEnabled(state) && RTCStats.isInitialized()) {
+    case CONFERENCE_UNIQUE_ID_SET: {
+        if (canSendRtcstatsData(state)) {
+
             // Once the conference started connect to the rtcstats server and send data.
             try {
                 RTCStats.connect();
 
                 const localParticipant = getLocalParticipant(state);
+                const options = getConferenceOptions(state);
+
+
+                // Unique identifier for a conference session, not to be confused with meeting name
+                // i.e. If all participants leave a meeting it will have a different value on the next join.
+                const { conference } = action;
+                const meetingUniqueId = conference && conference.getMeetingUniqueId();
 
                 // The current implementation of rtcstats-server is configured to send data to amplitude, thus
-                // we add identity specific information so we can corelate on the amplitude side. If amplitude is
+                // we add identity specific information so we can correlate on the amplitude side. If amplitude is
                 // not configured an empty object will be sent.
                 // The current configuration of the conference is also sent as metadata to rtcstats server.
                 // This is done in order to facilitate queries based on different conference configurations.
@@ -64,13 +74,25 @@ MiddlewareRegistry.register(store => next => action => {
                 // conference with a specific version.
                 RTCStats.sendIdentityData({
                     ...getAmplitudeIdentity(),
-                    ...config,
-                    displayName: localParticipant?.name
+                    ...options,
+                    endpointId: localParticipant?.id,
+                    confName: getRoomName(state),
+                    displayName: localParticipant?.name,
+                    meetingUniqueId
                 });
             } catch (error) {
                 // If the connection failed do not impact jitsi-meet just silently fail.
                 logger.error('RTCStats connect failed with: ', error);
             }
+        }
+        break;
+    }
+    case DOMINANT_SPEAKER_CHANGED: {
+        if (canSendRtcstatsData(state)) {
+            const { id, previousSpeakers } = action.participant;
+
+            RTCStats.sendDominantSpeakerData({ dominantSpeakerEndpoint: id,
+                previousSpeakers });
         }
         break;
     }

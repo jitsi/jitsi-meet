@@ -8,9 +8,11 @@
     .toolbox-icon {
         cursor: pointer;
         padding: 7px;
+        width: 22px;
+        height : 22px;
 
         &.toggled {
-            background: $AOTToolbarButtonToggleColor;
+            background: none;
         }
 
         &.disabled {
@@ -23,44 +25,11 @@
     flex-direction: row;
     left: 50%;
     position: absolute;
-    top: 10px;
+    bottom: 10px;
     transform: translateX(-50%);
-
-    .toolbox-button {
-        &:first-child {
-            .toolbox-icon {
-                border-top-left-radius: 3px;
-                border-bottom-left-radius: 3px;
-            }
-        }
-
-        &:nth-child(2) {
-            svg {
-                fill: $hangupColor;
-            }
-        }
-
-        &:last-child {
-            .toolbox-icon {
-                border-top-right-radius: 3px;
-                border-bottom-right-radius: 3px;
-            }
-        }
-    }
+    padding: 3px !important;
 }
 
 .filmstrip-toolbox {
     flex-direction: column;
-
-    .toolbox-button {
-        &:nth-child(1) {
-            svg {
-                fill: $hangupColor;
-            }
-        }
-
-        .toolbox-icon {
-            border-radius: 3px;
-        }
-    }
 }

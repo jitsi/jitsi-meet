@@ -21,6 +21,7 @@ const TOOLBAR_TIMEOUT = 4000;
  */
 type State = {
     avatarURL: string,
+    customAvatarBackgrounds: Array<string>,
     displayName: string,
     formattedDisplayName: string,
     isVideoDisplayed: boolean,
@@ -48,6 +49,7 @@ export default class AlwaysOnTop extends Component<*, State> {
 
         this.state = {
             avatarURL: '',
+            customAvatarBackgrounds: [],
             displayName: '',
             formattedDisplayName: '',
             isVideoDisplayed: true,
@@ -178,7 +180,14 @@ export default class AlwaysOnTop extends Component<*, State> {
      * @returns {ReactElement}
      */
     _renderVideoNotAvailableScreen() {
-        const { avatarURL, displayName, formattedDisplayName, isVideoDisplayed, userID } = this.state;
+        const {
+            avatarURL,
+            customAvatarBackgrounds,
+            displayName,
+            formattedDisplayName,
+            isVideoDisplayed,
+            userID
+        } = this.state;
 
         if (isVideoDisplayed) {
             return null;
@@ -188,7 +197,7 @@ export default class AlwaysOnTop extends Component<*, State> {
             <div id = 'videoNotAvailableScreen'>
                 <div id = 'avatarContainer'>
                     <StatelessAvatar
-                        color = { getAvatarColor(userID) }
+                        color = { getAvatarColor(userID, customAvatarBackgrounds) }
                         id = 'avatar'
                         initials = { getInitials(displayName) }
                         url = { avatarURL } />)
@@ -218,6 +227,12 @@ export default class AlwaysOnTop extends Component<*, State> {
         window.addEventListener('mousemove', this._mouseMove);
 
         this._hideToolbarAfterTimeout();
+        api.getCustomAvatarBackgrounds()
+            .then(res =>
+                this.setState({
+                    customAvatarBackgrounds: res.avatarBackgrounds || []
+                }))
+            .catch(console.error);
     }
 
     /**

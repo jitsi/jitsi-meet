@@ -113,7 +113,7 @@ export default class AudioMuteButton
     }
 
     /**
-     * Indicates if audio is currently muted ot nor.
+     * Indicates if audio is currently muted or not.
      *
      * @override
      * @protected

@@ -7,8 +7,8 @@
  * @param {string} path - The URL path.
  * @returns {string}
  */
-export function extractFqnFromPath(path: string) {
-    const parts = path.split('/');
+export function extractFqnFromPath() {
+    const parts = window.location.pathname.split('/');
     const len = parts.length;
 
     return parts.length > 2 ? `${parts[len - 2]}/${parts[len - 1]}` : '';
@@ -28,9 +28,19 @@ export function getDynamicBrandingUrl(state: Object) {
     }
 
     const baseUrl = state['features/base/config'].brandingDataUrl;
-    const fqn = extractFqnFromPath(state['features/base/connection'].locationURL.pathname);
+    const fqn = extractFqnFromPath();
 
     if (baseUrl && fqn) {
         return `${baseUrl}?conferenceFqn=${encodeURIComponent(fqn)}`;
     }
+}
+
+/**
+ * Selector used for getting the load state of the dynamic branding data.
+ *
+ * @param {Object} state - Global state of the app.
+ * @returns {boolean}
+ */
+export function isDynamicBrandingDataLoaded(state: Object) {
+    return state['features/dynamic-branding'].customizationReady;
 }

@@ -19,7 +19,7 @@ export function isRemoteControlEnabled(state: Object) {
 }
 
 /**
- * Sends remote control message to other participant trough data channel.
+ * Sends remote control message to other participant through data channel.
  *
  * @param {JitsiConference} conference - The JitsiConference object.
  * @param {string} to - The participant who will receive the event.

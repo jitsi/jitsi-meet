@@ -4,11 +4,11 @@ import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
 import { BoxModel, ColorPalette } from '../../../base/styles';
 
 export const DROPBOX_LOGO = require('../../../../../images/dropboxLogo_square.png');
-export const ICON_SHARE = require('../../../../../images/icon-users.png');
+export const ICON_CLOUD = require('../../../../../images/icon-cloud.png');
 export const JITSI_LOGO = require('../../../../../images/jitsiLogo_square.png');
 
 // XXX The "standard" {@code BoxModel.padding} has been deemed insufficient in
-// the special case(s) of the recording feature bellow.
+// the special case(s) of the recording feature below.
 const _PADDING = BoxModel.padding * 1.5;
 
 /**

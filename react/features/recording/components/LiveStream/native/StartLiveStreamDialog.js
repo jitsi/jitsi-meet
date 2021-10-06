@@ -112,7 +112,7 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<Props> {
      * TODO: Handle errors by showing some indication to the user.
      *
      * @private
-     * @param {Object} response - The retreived signin response.
+     * @param {Object} response - The retrieved signin response.
      * @returns {void}
      */
     _onUserChanged(response) {

@@ -1,7 +1,9 @@
 // @flow
 
 import UIEvents from '../../../../service/UI/UIEvents';
-import { hideNotification } from '../../notifications';
+import { showModeratedNotification } from '../../av-moderation/actions';
+import { shouldShowModeratedNotification } from '../../av-moderation/functions';
+import { hideNotification, isModerationNotificationDisplayed } from '../../notifications';
 import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { getAvailableDevices } from '../devices/actions';
 import {
@@ -12,7 +14,8 @@ import {
     SET_VIDEO_MUTED,
     VIDEO_MUTISM_AUTHORITY,
     TOGGLE_CAMERA_FACING_MODE,
-    toggleCameraFacingMode
+    toggleCameraFacingMode,
+    VIDEO_TYPE
 } from '../media';
 import { MiddlewareRegistry } from '../redux';
 
@@ -26,6 +29,7 @@ import {
 import {
     createLocalTracksA,
     showNoDataFromSourceVideoError,
+    toggleScreensharing,
     trackNoDataFromSourceNotificationInfoChanged
 } from './actions';
 import {
@@ -135,7 +139,21 @@ MiddlewareRegistry.register(store => next => action => {
 
     case TOGGLE_SCREENSHARING:
         if (typeof APP === 'object') {
-            APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING);
+            // check for A/V Moderation when trying to start screen sharing
+            if ((action.enabled || action.enabled === undefined)
+                && shouldShowModeratedNotification(MEDIA_TYPE.VIDEO, store.getState())) {
+                if (!isModerationNotificationDisplayed(MEDIA_TYPE.PRESENTER, store.getState())) {
+                    store.dispatch(showModeratedNotification(MEDIA_TYPE.PRESENTER));
+                }
+
+                return;
+            }
+
+            const { enabled, audioOnly, ignoreDidHaveVideo } = action;
+
+            APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING, { enabled,
+                audioOnly,
+                ignoreDidHaveVideo });
         }
         break;
 
@@ -158,12 +176,13 @@ MiddlewareRegistry.register(store => next => action => {
                 // Do not change the video mute state for local presenter tracks.
                 if (jitsiTrack.type === MEDIA_TYPE.PRESENTER) {
                     APP.conference.mutePresenter(muted);
-                } else if (jitsiTrack.isLocal()) {
-                    APP.conference.setVideoMuteStatus(muted);
+                } else if (jitsiTrack.isLocal() && !(jitsiTrack.videoType === VIDEO_TYPE.DESKTOP)) {
+                    APP.conference.setVideoMuteStatus();
+                } else if (jitsiTrack.isLocal() && muted && jitsiTrack.videoType === VIDEO_TYPE.DESKTOP) {
+                    store.dispatch(toggleScreensharing(false, false, true));
                 } else {
                     APP.UI.setVideoMuted(participantID);
                 }
-                APP.UI.onPeerVideoTypeChanged(participantID, jitsiTrack.videoType);
             } else if (jitsiTrack.isLocal()) {
                 APP.conference.setAudioMuteStatus(muted);
             } else {

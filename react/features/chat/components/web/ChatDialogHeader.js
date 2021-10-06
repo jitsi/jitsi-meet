@@ -1,11 +1,11 @@
 // @flow
 
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconClose } from '../../../base/icons';
 import { connect } from '../../../base/redux';
-import { toggleChat } from '../../../chat';
+import { toggleChat } from '../../actions.web';
 
 type Props = {
 
@@ -20,6 +20,11 @@ type Props = {
     className: string,
 
     /**
+     * Whether the polls feature is enabled or not.
+     */
+    isPollsEnabled: boolean,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -30,14 +35,27 @@ type Props = {
  *
  * @returns {React$Element<any>}
  */
-function Header({ onCancel, className, t }: Props) {
+function Header({ onCancel, className, isPollsEnabled, t }: Props) {
+
+    const onKeyPressHandler = useCallback(e => {
+        if (onCancel && (e.key === ' ' || e.key === 'Enter')) {
+            e.preventDefault();
+            onCancel();
+        }
+    }, [ onCancel ]);
+
     return (
         <div
-            className = { className || 'chat-dialog-header' }>
-            { t('chat.title') }
+            className = { className || 'chat-dialog-header' }
+            role = 'heading'>
+            { t(isPollsEnabled ? 'chat.titleWithPolls' : 'chat.title') }
             <Icon
+                ariaLabel = { t('toolbar.closeChat') }
                 onClick = { onCancel }
-                src = { IconClose } />
+                onKeyPress = { onKeyPressHandler }
+                role = 'button'
+                src = { IconClose }
+                tabIndex = { 0 } />
         </div>
     );
 }

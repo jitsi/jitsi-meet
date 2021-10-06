@@ -25,7 +25,7 @@ case "$1" in
         . /usr/share/debconf/confmodule
 
         db_get jitsi-meet-prosody/jvb-hostname
-        JVB_HOSTNAME="$RET"
+        JVB_HOSTNAME=$(echo "$RET" | xargs echo -n)
 
         db_get jitsi-meet-tokens/appid
         if [ "$RET" = "false" ] ; then

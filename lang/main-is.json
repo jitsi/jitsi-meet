@@ -53,10 +53,12 @@
         "noMessagesMessage": "Það eru ennþá engin skilaboð á fundinum. Byrjaðu umræðuna hér!",
         "nickname": {
             "popover": "Veldu gælunafn",
-            "title": "Settu inn gælunafn/stuttnefni til að nota við spjall"
+            "title": "Settu inn gælunafn/stuttnefni til að nota við spjall",
+            "titleWithPolls": "Settu inn gælunafn/stuttnefni til að nota við spjall"
         },
         "privateNotice": "Einkaskilaboð til {{recipient}}",
         "title": "Spjall",
+        "titleWithPolls": "Spjall",
         "you": "þú"
     },
     "chromeExtensionBanner": {

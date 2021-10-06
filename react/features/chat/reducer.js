@@ -1,20 +1,23 @@
 // @flow
 
-import { SET_ACTIVE_MODAL_ID } from '../base/modal';
 import { ReducerRegistry } from '../base/redux';
 
 import {
     ADD_MESSAGE,
     CLEAR_MESSAGES,
+    CLOSE_CHAT,
+    OPEN_CHAT,
     SET_PRIVATE_MESSAGE_RECIPIENT,
-    TOGGLE_CHAT
+    SET_IS_POLL_TAB_FOCUSED
 } from './actionTypes';
-import { CHAT_VIEW_MODAL_ID } from './constants';
 
 const DEFAULT_STATE = {
     isOpen: false,
+    isPollsTabFocused: false,
     lastReadMessage: undefined,
+    lastReadPoll: undefined,
     messages: [],
+    nbUnreadMessages: 0,
     privateMessageRecipient: undefined
 };
 
@@ -25,6 +28,7 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
             displayName: action.displayName,
             error: action.error,
             id: action.id,
+            isReaction: action.isReaction,
             messageType: action.messageType,
             message: action.message,
             privateMessage: action.privateMessage,
@@ -47,6 +51,7 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
             ...state,
             lastReadMessage:
                 action.hasRead ? newMessage : state.lastReadMessage,
+            nbUnreadMessages: state.isPollsTabFocused ? state.nbUnreadMessages + 1 : state.nbUnreadMessages,
             messages
         };
     }
@@ -58,38 +63,35 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
             messages: []
         };
 
-    case SET_ACTIVE_MODAL_ID:
-        if (action.activeModalId === CHAT_VIEW_MODAL_ID) {
-            return updateChatState(state);
-        }
-
-        break;
     case SET_PRIVATE_MESSAGE_RECIPIENT:
         return {
             ...state,
-            isOpen: Boolean(action.participant) || state.isOpen,
             privateMessageRecipient: action.participant
         };
 
-    case TOGGLE_CHAT:
-        return updateChatState(state);
+    case OPEN_CHAT:
+        return {
+            ...state,
+            isOpen: true,
+            privateMessageRecipient: action.participant
+        };
+
+    case CLOSE_CHAT:
+        return {
+            ...state,
+            isOpen: false,
+            lastReadMessage: state.messages[
+                navigator.product === 'ReactNative' ? 0 : state.messages.length - 1],
+            privateMessageRecipient: action.participant
+        };
+
+    case SET_IS_POLL_TAB_FOCUSED: {
+        return {
+            ...state,
+            isPollsTabFocused: action.isPollsTabFocused,
+            nbUnreadMessages: 0
+        }; }
     }
 
     return state;
 });
-
-/**
- * Updates the chat status on opening the chat view.
- *
- * @param {Object} state - The Redux state of the feature.
- * @returns {Object}
- */
-function updateChatState(state) {
-    return {
-        ...state,
-        isOpen: !state.isOpen,
-        lastReadMessage: state.messages[
-            navigator.product === 'ReactNative' ? 0 : state.messages.length - 1],
-        privateMessageRecipient: state.isOpen ? undefined : state.privateMessageRecipient
-    };
-}

@@ -185,7 +185,7 @@ class Encoder {
 
             FLAC_COMPRESSION_LEVEL,
 
-            // Pass 0 in becuase of unknown total samples,
+            // Pass 0 in because of unknown total samples,
             0,
 
             // checksum, FIXME: double-check whether this is necessary
@@ -207,7 +207,7 @@ class Encoder {
         );
 
         if (initResult !== 0) {
-            throw new Error('Failed to initalise libflac encoder.');
+            throw new Error('Failed to initialise libflac encoder.');
         }
 
         this._state = EncoderState.WORKING;

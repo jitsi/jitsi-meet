@@ -37,7 +37,7 @@ const UIUtil = {
      * @param {string} url - The redirect URL.
      * NOTE: Currently used to redirect to 3rd party location for
      * authentication. In most cases redirectWithStoredParams action must be
-     * used instead of this method in order to preserve curent URL params.
+     * used instead of this method in order to preserve current URL params.
      */
     redirect(url) {
         window.location.href = url;

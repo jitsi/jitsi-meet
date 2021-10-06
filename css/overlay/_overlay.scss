@@ -33,4 +33,12 @@
         bottom: 24px;
         width: 100%;
     }
+
+    &__spinner-container {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        justify-content: center;
+        align-items: center;
+    }
 }

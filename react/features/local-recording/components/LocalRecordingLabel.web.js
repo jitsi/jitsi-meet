@@ -1,11 +1,11 @@
 // @flow
 
-import Tooltip from '@atlaskit/tooltip';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n/index';
-import { CircularLabel } from '../../base/label/index';
+import { Label } from '../../base/label/index';
 import { connect } from '../../base/redux';
+import { Tooltip } from '../../base/tooltip';
 
 
 /**
@@ -14,14 +14,19 @@ import { connect } from '../../base/redux';
 type Props = {
 
     /**
+     * Whether this is the Jibri recorder participant.
+     */
+     _iAmRecorder: boolean,
+
+     /**
+      * Whether local recording is engaged or not.
+      */
+     _isEngaged: boolean,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function,
-
-    /**
-     * Whether local recording is engaged or not.
-     */
-    isEngaged: boolean
 };
 
 /**
@@ -38,17 +43,17 @@ class LocalRecordingLabel extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        if (!this.props.isEngaged) {
+        if (!this.props._isEngaged || this.props._iAmRecorder) {
             return null;
         }
 
         return (
             <Tooltip
                 content = { this.props.t('localRecording.labelToolTip') }
-                position = { 'left' }>
-                <CircularLabel
+                position = { 'bottom' }>
+                <Label
                     className = 'local-rec'
-                    label = { this.props.t('localRecording.label') } />
+                    text = { this.props.t('localRecording.label') } />
             </Tooltip>
         );
     }
@@ -66,9 +71,11 @@ class LocalRecordingLabel extends Component<Props> {
  */
 function _mapStateToProps(state) {
     const { isEngaged } = state['features/local-recording'];
+    const { iAmRecorder } = state['features/base/config'];
 
     return {
-        isEngaged
+        _isEngaged: isEngaged,
+        _iAmRecorder: iAmRecorder
     };
 }
 

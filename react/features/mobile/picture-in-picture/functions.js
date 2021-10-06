@@ -11,5 +11,7 @@ import { NativeModules } from 'react-native';
 export function setPictureInPictureDisabled(disabled: boolean) {
     const { PictureInPicture } = NativeModules;
 
-    PictureInPicture.setPictureInPictureDisabled(disabled);
+    if (PictureInPicture) {
+        PictureInPicture.setPictureInPictureDisabled(disabled);
+    }
 }

@@ -17,15 +17,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     if (action.type === UPDATE_DEVICE_LIST) {
         const state = store.getState();
-        const { popupDialogData } = state['features/device-selection'];
         const { availableDevices } = state['features/base/devices'] || {};
-
-        if (popupDialogData) {
-            popupDialogData.transport.sendEvent({
-                name: 'deviceListChanged',
-                devices: availableDevices
-            });
-        }
 
         if (typeof APP !== 'undefined') {
             APP.API.notifyDeviceListChanged(availableDevices);

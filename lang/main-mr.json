@@ -53,10 +53,12 @@
         "noMessagesMessage": "अद्याप मीटिंगमध्ये कोणतेही संदेश नाहीत. येथे संभाषण सुरू करा!",
         "nickname": {
             "popover": "टोपणनाव निवडा",
-            "title": "चॅट वापरण्यासाठी टोपणनाव प्रविष्ट करा"
+            "title": "चॅट वापरण्यासाठी टोपणनाव प्रविष्ट करा",
+            "titleWithPolls": "चॅट वापरण्यासाठी टोपणनाव प्रविष्ट करा"
         },
         "privateNotice": "यांना खाजगी संदेश{{recipient}}",
         "title": "गप्पा",
+        "titleWithPolls": "गप्पा",
         "you": "आपण"
     },
     "chromeExtensionBanner": {

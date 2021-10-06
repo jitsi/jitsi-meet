@@ -1,5 +1,13 @@
 #videoconference_page {
     min-height: 100%;
+    position: relative;
+    transform: translate3d(0, 0, 0);
+    width: 100%;
+}
+
+#layout_wrapper {
+    display: flex;
+    height: 100%;
 }
 
 #videospace {
@@ -232,6 +240,15 @@
     object-fit: cover;
 }
 
+#sharedVideo video {
+    width: 100%;
+    height: 100%;
+}
+
+#sharedVideo.disable-pointer {
+    pointer-events: none;
+}
+
 #sharedVideo,
 #etherpad,
 #localVideoWrapper video,
@@ -400,7 +417,9 @@
     }
 }
 
+.local-video-menu-trigger,
 .remote-video-menu-trigger,
+.localvideomenu,
 .remotevideomenu
 {
     display: inline-block;
@@ -409,7 +428,7 @@
     right: 0;
     z-index: $zindex2;
     width: 18px;
-    height: 13px;
+    height: 18px;
     color: #FFF;
     font-size: 10pt;
     margin-right: $remoteVideoMenuIconMargin;
@@ -418,6 +437,7 @@
         cursor: hand;
     }
 }
+.local-video-menu-trigger,
 .remote-video-menu-trigger {
     margin-top: 7px;
 }
@@ -478,14 +498,6 @@
     -webkit-border-radius: 5px;
     -webkit-background-clip: padding-box;
     z-index: $reloadZ; /*The reload button should appear on top of the header!*/
-}
-
-.audiolevel {
-    display: inline-block;
-    position: absolute;
-    z-index: $zindex0;
-    border-radius:1px;
-    pointer-events: none;
 }
 
 #dominantSpeaker {

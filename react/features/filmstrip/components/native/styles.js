@@ -2,7 +2,7 @@
 
 import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
 import { ColorPalette } from '../../../base/styles';
-import { FILMSTRIP_SIZE } from '../../constants';
+import { SMALL_THUMBNAIL_SIZE } from '../../constants';
 
 /**
  * Size for the Avatar.
@@ -13,6 +13,15 @@ export const AVATAR_SIZE = 50;
  * The styles of the feature filmstrip.
  */
 export default {
+
+    /**
+     * The FlatList content container styles
+     */
+    contentContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 0
+    },
 
     /**
      * The display name container.
@@ -33,7 +42,7 @@ export default {
         flexDirection: 'row',
         flexGrow: 0,
         justifyContent: 'flex-end',
-        height: FILMSTRIP_SIZE
+        marginBottom: 5
     },
 
     /**
@@ -50,6 +59,29 @@ export default {
         position: 'absolute',
         right: 0,
         top: 0
+    },
+
+    /**
+     * The styles for the FlatList container.
+     */
+    flatListContainer: {
+        flexGrow: 1,
+        flexShrink: 1,
+        flex: 0
+    },
+
+    /**
+     * The styles for the FlatList component in stage view.
+     */
+    flatListStageView: {
+        flexGrow: 0
+    },
+
+    /**
+     * The styles for the FlatList component in tile view.
+     */
+    flatListTileView: {
+        flex: 0
     },
 
     /**
@@ -70,13 +102,6 @@ export default {
     },
 
     /**
-     * The style of the scrollview containing the remote thumbnails.
-     */
-    scrollView: {
-        flexGrow: 0
-    },
-
-    /**
      * The style of a participant's Thumbnail which renders either the video or
      * the avatar of the associated participant.
      */
@@ -88,12 +113,14 @@ export default {
         borderStyle: 'solid',
         borderWidth: 1,
         flex: 1,
-        height: 80,
+        height: SMALL_THUMBNAIL_SIZE,
         justifyContent: 'center',
         margin: 2,
+        maxHeight: SMALL_THUMBNAIL_SIZE,
+        maxWidth: SMALL_THUMBNAIL_SIZE,
         overflow: 'hidden',
         position: 'relative',
-        width: 80
+        width: SMALL_THUMBNAIL_SIZE
     },
 
     /**
@@ -120,19 +147,6 @@ export default {
 
     thumbnailTopRightIndicatorContainer: {
         right: 0
-    },
-
-    tileView: {
-        alignSelf: 'center'
-    },
-
-    tileViewRows: {
-        justifyContent: 'center'
-    },
-
-    tileViewRow: {
-        flexDirection: 'row',
-        justifyContent: 'center'
     }
 };
 
