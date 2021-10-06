@@ -6,4 +6,5 @@
     <string name="ongoing_notification_action_hang_up">Hang up</string>
     <string name="ongoing_notification_action_mute">Mute</string>
     <string name="ongoing_notification_action_unmute">Unmute</string>
+    <string name="ongoing_notification_channel_name">Ongoing Conference Notifications</string>
 </resources>

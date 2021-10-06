@@ -52,9 +52,19 @@ type Props = {
     _displayName: string,
 
     /**
+     * Whether or not moderation is supported.
+     */
+    _isModerationSupported: boolean,
+
+    /**
      * True if the participant is the local participant.
      */
     _local: Boolean,
+
+    /**
+     * Whether or not the local participant is moderator.
+     */
+    _localModerator: boolean,
 
     /**
      * Shared video local participant owner.

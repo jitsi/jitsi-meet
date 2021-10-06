@@ -493,6 +493,10 @@ var config = {
     // When 'true', it shows an intermediate page before joining, where the user can configure their devices.
     // prejoinPageEnabled: false,
 
+    // When 'true', the user cannot edit the display name.
+    // (Mainly useful when used in conjuction with the JWT so the JWT name becomes read only.)
+    // readOnlyName: false,
+
     // If etherpad integration is enabled, setting this to true will
     // automatically open the etherpad when a participant joins.  This
     // does not affect the mobile app since opening an etherpad
@@ -789,6 +793,7 @@ var config = {
     // - 'PARTICIPANT_JOINED_SOUND'
     // - 'PARTICIPANT_LEFT_SOUND'
     // - 'RAISE_HAND_SOUND'
+    // - 'REACTION_SOUND'
     // - 'RECORDING_OFF_SOUND'
     // - 'RECORDING_ON_SOUND'
     // - 'TALK_WHILE_MUTED_SOUND'

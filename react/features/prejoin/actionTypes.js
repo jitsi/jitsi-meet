@@ -1,8 +1,8 @@
 
 /**
- * Action type to signal the start of the conference.
+ * Action type to signal that joining is in progress.
  */
-export const PREJOIN_START_CONFERENCE = 'PREJOIN_START_CONFERENCE';
+export const PREJOIN_JOINING_IN_PROGRESS = 'PREJOIN_JOINING_IN_PROGRESS';
 
 /**
  * Action type to signal that prejoin page was initialized.

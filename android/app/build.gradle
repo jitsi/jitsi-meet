@@ -78,7 +78,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.2.0'
 
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 
     if (!rootProject.ext.libreBuild) {
         implementation 'com.google.android.gms:play-services-auth:16.0.1'
@@ -109,6 +109,7 @@ gradle.projectsEvaluated {
         def dropboxActivity = """
           <activity
               android:configChanges="keyboard|orientation"
+              android:exported="true"
               android:launchMode="singleTask"
               android:name="com.dropbox.core.android.AuthActivity">
             <intent-filter>

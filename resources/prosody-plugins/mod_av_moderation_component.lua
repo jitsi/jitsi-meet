@@ -2,6 +2,7 @@ local get_room_by_name_and_subdomain = module:require 'util'.get_room_by_name_an
 local is_healthcheck_room = module:require 'util'.is_healthcheck_room;
 local internal_room_jid_match_rewrite = module:require "util".internal_room_jid_match_rewrite;
 local room_jid_match_rewrite = module:require "util".room_jid_match_rewrite;
+local array = require "util.array";
 local json = require 'util.json';
 local st = require 'util.stanza';
 
@@ -68,11 +69,15 @@ function notify_whitelist_change(jid, moderators, room, mediaType, removed)
     body_json.type = 'av_moderation';
     body_json.room = internal_room_jid_match_rewrite(room.jid);
     body_json.whitelists = room.av_moderation;
-    body_json.removed = removed;
+    if removed then
+        body_json.removed = true;
+    end
     body_json.mediaType = mediaType;
     local moderators_body_json_str = json.encode(body_json);
     body_json.whitelists = nil;
-    body_json.approved = true; -- we want to send to participants only that they were approved to unmute
+    if not removed then
+        body_json.approved = true; -- we want to send to participants only that they were approved to unmute
+    end
     local participant_body_json_str = json.encode(body_json);
 
     for _, occupant in room:each_occupant() do
@@ -167,7 +172,7 @@ function on_message(event)
                         room.av_moderation = {};
                         room.av_moderation_actors = {};
                     end
-                    room.av_moderation[mediaType] = {};
+                    room.av_moderation[mediaType] = array{};
                     room.av_moderation_actors[mediaType] = occupant.nick;
                 end
             else
@@ -208,10 +213,10 @@ function on_message(event)
             if room.av_moderation then
                 local whitelist = room.av_moderation[mediaType];
                 if not whitelist then
-                    whitelist = {};
+                    whitelist = array{};
                     room.av_moderation[mediaType] = whitelist;
                 end
-                table.insert(whitelist, occupant_jid);
+                whitelist:push(occupant_jid);
 
                 notify_whitelist_change(occupant_to_add.jid, true, room, mediaType, false);
 
@@ -236,7 +241,7 @@ function on_message(event)
                 if whitelist then
                     local index = get_index_in_table(whitelist, occupant_jid)
                     if(index) then
-                        table.remove(whitelist, index);
+                        whitelist:pop(index);
                         notify_whitelist_change(occupant_to_remove.jid, true, room, mediaType, true);
                     end
                 end
