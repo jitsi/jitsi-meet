@@ -973,11 +973,6 @@ var config = {
     // will open an etherpad document.
     // etherpad_base: 'https://your-etherpad-installati.on/p/',
 
-    // If etherpad_base is set, and useRoomAsSharedDocumentName is set to true,
-    // open a pad with the name of the room (lowercased) instead of a pad with a
-    // random UUID.
-    // useRoomAsSharedDocumentName: true,
-
     // List of undocumented settings used in jitsi-meet
     /**
      _immediateReloadThreshold
