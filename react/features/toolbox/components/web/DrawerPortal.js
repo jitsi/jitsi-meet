@@ -1,7 +1,7 @@
 // @flow
+import React from 'react';
 
-import { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
+import DialogPortal from './DialogPortal';
 
 type Props = {
 
@@ -18,29 +18,10 @@ type Props = {
  * @returns {ReactElement}
  */
 function DrawerPortal({ children }: Props) {
-    const [ portalTarget ] = useState(() => {
-        const portalDiv = document.createElement('div');
-
-        portalDiv.className = 'drawer-portal';
-
-        return portalDiv;
-    });
-
-    useEffect(() => {
-        if (document.body) {
-            document.body.appendChild(portalTarget);
-        }
-
-        return () => {
-            if (document.body) {
-                document.body.removeChild(portalTarget);
-            }
-        };
-    }, []);
-
-    return ReactDOM.createPortal(
-      children,
-      portalTarget
+    return (
+        <DialogPortal className = 'drawer-portal'>
+            { children }
+        </DialogPortal>
     );
 }
 

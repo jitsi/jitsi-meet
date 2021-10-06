@@ -13,7 +13,6 @@ import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
 import { setParticipantContextMenuOpen } from '../../../base/responsive-ui/actions';
 import { requestRemoteControl, stopController } from '../../../remote-control';
-import { hideToolboxOnTileView } from '../../../toolbox/actions';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
 import { renderConnectionStatus } from '../../actions.web';
 
@@ -234,7 +233,6 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
      */
     _onPopoverOpen() {
         this.props.dispatch(setParticipantContextMenuOpen(true));
-        this.props.dispatch(hideToolboxOnTileView());
     }
 
     _onPopoverClose: () => void;
