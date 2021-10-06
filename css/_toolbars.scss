@@ -29,6 +29,7 @@
     right: 0;
     transition: bottom .3s ease-in;
     width: 100%;
+    pointer-events: none;
 
 
     &.visible {
