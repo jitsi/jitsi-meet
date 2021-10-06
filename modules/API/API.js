@@ -1095,6 +1095,19 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that user updated their hand raised.
+     *
+     * @param {boolean} lobbyMode - Whether lobby is currently enabled.
+     * @returns {void}
+     */
+    notifyLobbyModeUpdated(id: string, lobbyEnabled: boolean) {
+        this._sendEvent({
+            name: 'lobby-mode-updated',
+            lobbyEnabled
+        });
+    }
+
+    /**
      * Disposes the allocated resources.
      *
      * @returns {void}
