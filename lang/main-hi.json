@@ -296,7 +296,7 @@
         "sendPrivateMessageTitle": "निजी तौर पर भेजें?",
         "serviceUnavailable": "सेवा अनुपलब्ध",
         "sessTerminated": "कॉल समाप्त",
-        "sessionRestarted": "Call restarted by the bridge",
+        "sessionRestarted": "Call restarted because of a connection issue",
         "Share": "Share",
         "shareVideoLinkError": "कृपया एक सही यूट्यूब लिंक प्रदान करें।.",
         "shareVideoTitle": "एक वीडियो साझा करें",
