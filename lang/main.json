@@ -315,7 +315,7 @@
         "sendPrivateMessageTitle": "Send privately?",
         "serviceUnavailable": "Service unavailable",
         "sessTerminated": "Call terminated",
-        "sessionRestarted": "Call restarted by the bridge",
+        "sessionRestarted": "Call restarted because of a connection issue.",
         "Share": "Share",
         "shareAudio": "Continue",
         "shareAudioTitle" : "How to share audio",

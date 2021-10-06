@@ -297,7 +297,7 @@
         "sendPrivateMessageTitle": "అంతరంగికంగా పంపించాలా?",
         "serviceUnavailable": "సేవ అందుబాటులో లేదు",
         "sessTerminated": "Call terminated",
-        "sessionRestarted": "Call restarted by the bridge",
+        "sessionRestarted": "Call restarted because of a connection issue.",
         "Share": "పంచుకోండి",
         "shareVideoLinkError": "దయచేసి సరైన యూట్యూబ్ లంకెను ఇవ్వండి.",
         "shareVideoTitle": "ఒక వీడియో పంచుకోండి",
