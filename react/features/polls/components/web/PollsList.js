@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 import { Icon, IconChatUnread } from '../../../base/icons';
+import { isPollsModerationEnabled } from '../../functions';
 
 import { PollItem } from '.';
 
@@ -20,11 +21,14 @@ const PollsList = () => {
         }
     };
 
-    useEffect(() => {
-        scrollToBottom();
-    }, [ polls ]);
-
+    const isModerationEnabled = useSelector(state => isPollsModerationEnabled(state));
     const listPolls = Object.keys(polls);
+
+    useEffect(() => {
+        if (!isModerationEnabled) {
+            scrollToBottom();
+        }
+    }, [ polls ]);
 
     return (
     <>

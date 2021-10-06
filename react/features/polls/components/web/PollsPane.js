@@ -22,21 +22,23 @@ const PollsPane = (props: AbstractProps) => {
         t
     } = props;
 
-    const fileInputRef = useRef();
+    const fileInputRef = useRef(null);
 
     const startFileUpload = useCallback(() => {
-        if (fileInputRef?.current) {
+        if (fileInputRef.current) {
             fileInputRef.current.click();
         }
-    }, []);
+    }, [ fileInputRef ]);
 
     const onFileUpload = useCallback(e => {
         if (e?.target?.files?.length === 1) {
             onImport(e.target.files[0]);
 
-            fileInputRef.current.value = null;
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
         }
-    }, []);
+    }, [ fileInputRef ]);
 
     return createMode
         ? <PollCreate setCreateMode = { setCreateMode } />

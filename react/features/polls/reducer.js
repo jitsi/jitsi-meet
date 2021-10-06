@@ -12,6 +12,9 @@ import {
     RETRACT_VOTE,
     RESET_NB_UNREAD_POLLS
 } from './actionTypes';
+import {
+    getHiddenPollCount
+} from './functions';
 import type { Answer } from './types';
 
 const INITIAL_STATE = {
@@ -62,17 +65,15 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
 
     // Reducer triggered when a poll is hidden
     case HIDE_POLL: {
-        const { [action.pollId]: poll, ...restPolls } = state.polls;
+        const polls = { ...state.polls };
+
+        if (polls[action.pollId]) {
+            polls[action.pollId].hidden = true;
+        }
 
         const newState = {
             ...state,
-            polls: {
-                ...restPolls,
-                [action.pollId]: {
-                    ...poll,
-                    hidden: true
-                }
-            }
+            polls
         };
 
         return newState;
@@ -80,17 +81,15 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
 
     // Reducer triggered when a poll is shown
     case SHOW_POLL: {
-        const { [action.pollId]: poll, ...restPolls } = state.polls;
+        const polls = { ...state.polls };
+
+        if (polls[action.pollId]) {
+            polls[action.pollId].hidden = false;
+        }
 
         const newState = {
             ...state,
-            polls: {
-                ...restPolls,
-                [action.pollId]: {
-                    ...poll,
-                    hidden: false
-                }
-            }
+            polls
         };
 
         return newState;
@@ -177,7 +176,7 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
     case RESET_NB_UNREAD_POLLS: {
         return {
             ...state,
-            nbUnreadPolls: 0
+            nbUnreadPolls: 0 + getHiddenPollCount(state)
         };
     }
 

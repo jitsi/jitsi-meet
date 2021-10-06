@@ -4,6 +4,7 @@ import { Component } from 'react';
 import type { Dispatch } from 'redux';
 
 import { getLocalParticipant } from '../../base/participants';
+import { getUnreadPollCount } from '../../polls/functions';
 import { sendMessage, setIsPollsTabFocused } from '../actions';
 import { SMALL_WIDTH_THRESHOLD } from '../constants';
 
@@ -162,7 +163,7 @@ export default class AbstractChat<P: Props> extends Component<P> {
  */
 export function _mapStateToProps(state: Object) {
     const { isOpen, isPollsTabFocused, messages, nbUnreadMessages } = state['features/chat'];
-    const { nbUnreadPolls } = state['features/polls'];
+    const nbUnreadPolls = getUnreadPollCount(state);
     const _localParticipant = getLocalParticipant(state);
     const { disablePolls } = state['features/base/config'];
 

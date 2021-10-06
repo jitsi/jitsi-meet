@@ -6,8 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 import { isLocalParticipantModerator, getParticipantDisplayName } from '../../base/participants';
-import { COMMAND_NEW_POLLS } from '../constants';
-import { isPollsModerationEnabled, getNewPollId } from '../functions';
+import { isPollsModerationEnabled, importPollsFromFile, exportPollsToFile } from '../functions';
 
 /*
  * Props that will be passed by the AbstractPollsPane to its
@@ -37,50 +36,20 @@ const AbstractPollsPane = (Component: AbstractComponent<AbstractProps>) => () =>
     const isModerator = useSelector(state => isLocalParticipantModerator(state));
     const isModerationEnabled = useSelector(state => isPollsModerationEnabled(state));
     const conference = useSelector(state => state['features/base/conference'].conference);
-    const myId = conference.myUserId();
-    const myName = useSelector(state => getParticipantDisplayName(state, myId));
+    const myName = useSelector(state => getParticipantDisplayName(state, conference.myUserId()));
+    const polls = useSelector(state => state['features/polls']?.polls);
 
     const onCreate = () => {
         setCreateMode(true);
     };
 
     const onImport = useCallback((file: File) => {
-        if (file) {
-            const reader = new FileReader();
-
-            reader.readAsText(file);
-
-            reader.onload = event => {
-                if (event?.target?.result) {
-                    console.log('event?.target?.result xxxxx: ', event?.target?.result);
-                    const pollsData = JSON.parse(event?.target?.result);
-
-                    if (pollsData?.length) {
-                        const newPollsData = pollsData
-                            .filter(poll => poll.question && poll.answers.length > 2)
-                            .map(poll => {
-                                return {
-                                    ...poll,
-                                    pollId: getNewPollId(),
-                                    senderId: myId,
-                                    senderName: myName,
-                                    hidden: isModerationEnabled
-                                };
-                            });
-
-                        conference.sendMessage({
-                            type: COMMAND_NEW_POLLS,
-                            polls: newPollsData
-                        });
-                    }
-                }
-            };
-        }
-    }, [ myId, myName, isModerationEnabled ]);
+        importPollsFromFile(file, conference, myName, isModerationEnabled);
+    }, [ myName, isModerationEnabled, conference ]);
 
     const onExport = useCallback(() => {
-        console.log('2 xxxxx: ', 2);
-    }, []);
+        exportPollsToFile(polls);
+    }, [ polls ]);
 
     const { t } = useTranslation();
 

@@ -1,6 +1,9 @@
 // @flow
-import { v4 as getUuid } from 'uuid';
+import uuid from 'uuid';
 
+import { downloadJSON } from '../base/util/downloadJSON';
+
+import { COMMAND_NEW_POLLS } from './constants';
 import type { Poll } from './types';
 
 /**
@@ -18,7 +21,7 @@ export const shouldShowResults = (state: Object, id: string) => Boolean(state['f
  * @returns {string} The final poll object.
  */
 export function getNewPollId() {
-    return getUuid();
+    return uuid.v4();
 }
 
 /**
@@ -27,7 +30,7 @@ export function getNewPollId() {
  * @param {Object} pollData - Poll data.
  * @returns {Poll} The final poll object.
  */
-export function formatNewPollData(pollData: Object) {
+export function formatNewPollData(pollData: Object): Poll {
     const { question, answers, senderId, senderName, hidden } = pollData;
 
     const poll = {
@@ -46,6 +49,91 @@ export function formatNewPollData(pollData: Object) {
     };
 
     return poll;
+}
+
+/**
+ * Import polls from json file.
+ *
+ * @param {File} file - The json file.
+ * @param {Object} conference - Conference redux object.
+ * @param {string} myName - Current participant redux name.
+ * @param {boolean} isModerationEnabled - Moderation enabled flag.
+ * @returns {void}
+ */
+export function importPollsFromFile(
+        file: File,
+        conference: Object,
+        myName: string,
+        isModerationEnabled: boolean
+): void {
+    if (file && conference) {
+        const myId = conference.myUserId();
+        const reader = new FileReader();
+
+        reader.readAsText(file);
+
+        reader.onload = event => {
+            if (event?.target?.result) {
+                let pollsData = JSON.parse(event?.target?.result);
+
+                if (!Array.isArray(pollsData)) {
+                    pollsData = Object.keys(pollsData).map(pollId => {
+                        return {
+                            question: pollsData[pollId].question,
+                            answers: pollsData[pollId].answers.map(answer => answer.name)
+                        };
+                    });
+                }
+
+                if (pollsData?.length) {
+                    const newPollsData = pollsData
+                        .filter(poll => poll.question && poll.answers.length > 2)
+                        .map(poll => {
+                            const answers = poll.answers.map(answer => answer?.name ?? answer);
+
+                            return {
+                                question: poll.question,
+                                answers,
+                                senderId: myId,
+                                senderName: myName,
+                                hidden: isModerationEnabled,
+                                pollId: getNewPollId()
+                            };
+                        });
+
+                    conference.sendMessage({
+                        type: COMMAND_NEW_POLLS,
+                        polls: newPollsData
+                    });
+                }
+            }
+        };
+    }
+}
+
+/**
+ * Export polls to json file.
+ *
+ * @param {Object} polls - Polls data.
+ * @returns {void}
+ */
+export function exportPollsToFile(polls: Object): void {
+    const date = new Date();
+
+    downloadJSON(
+        Object.keys(polls).map(pollId => {
+            return {
+                ...polls[pollId],
+                answers: polls[pollId].answers.map(answer => {
+                    return {
+                        name: answer.name,
+                        voters: Object.fromEntries(answer.voters)
+                    };
+                })
+            };
+        }),
+        `poll-export-${date.toISOString()}.json`
+    );
 }
 
 /**

@@ -24,7 +24,7 @@ import {
     COMMAND_ANSWER_POLL,
     COMMAND_OLD_POLLS
 } from './constants';
-import { formatNewPollData, getNewPollId } from './functions';
+import { formatNewPollData } from './functions';
 import type { Answer, Poll } from './types';
 
 
@@ -92,9 +92,8 @@ StateListenerRegistry.register(
                 case COMMAND_NEW_POLLS: {
                     const { polls } = data;
                     const newPollsData = polls.map(poll => formatNewPollData(poll));
-                    const newPollIds = polls.map(() => getNewPollId());
-console.log('newPollsData xxxxx: ', newPollsData);
-console.log('newPollIds xxxxx: ', newPollIds);
+                    const newPollIds = polls.map(({ pollId }) => pollId);
+
                     store.dispatch(receivePolls(newPollIds, newPollsData, true));
 
                     if (newPollsData.some(poll => !poll.hidden)) {
