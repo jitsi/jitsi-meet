@@ -50,7 +50,7 @@ If you'd like to run your own Jitsi Meet installation head over to the [handbook
 We provide Debian packages and a comprehensive Docker setup to make deployments as simple as possible.
 Advanced users also have the possibility of building all the components from source.
 
-You can check the latest releases [[here](https://jitsi.github.io/handbook/docs/releases).
+You can check the latest releases [here](https://jitsi.github.io/handbook/docs/releases).
 
 ## Jitsi as a Service
 
