@@ -59,9 +59,8 @@ function Preview(props: Props) {
                     <Avatar
                         className = 'premeeting-screen-avatar'
                         displayName = { name }
-                        dynamicColor = { false }
                         participantId = { _participantId }
-                        size = { 180 } />
+                        size = { 200 } />
                 )}
         </div>
     );
