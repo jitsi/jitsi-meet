@@ -94,7 +94,8 @@ const config = {
         filename: `[name]${minimize ? '.min' : ''}.js`,
         path: `${__dirname}/libs`,
         publicPath: 'load-test/libs/',
-        sourceMapFilename: `[name].${minimize ? 'min' : 'js'}.map`
+        sourceMapFilename: `[name].${minimize ? 'min' : 'js'}.map`,
+        hashFunction: 'sha256'
     },
     plugins: [
         analyzeBundle

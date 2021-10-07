@@ -203,7 +203,8 @@ function getConfig(options = {}) {
             filename: `[name]${minimize ? '.min' : ''}.js`,
             path: `${__dirname}/build`,
             publicPath: '/libs/',
-            sourceMapFilename: `[name].${minimize ? 'min' : 'js'}.map`
+            sourceMapFilename: `[name].${minimize ? 'min' : 'js'}.map`,
+            hashFunction: 'sha256'
         },
         plugins: [
             detectCircularDeps
