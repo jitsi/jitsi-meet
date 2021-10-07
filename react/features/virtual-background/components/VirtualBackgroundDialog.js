@@ -17,8 +17,8 @@ import { IMAGES, BACKGROUNDS_LIMIT, VIRTUAL_BACKGROUND_TYPE, type Image } from '
 import { toDataURL } from '../functions';
 import logger from '../logger';
 
-import UploadImageButton from './UploadImageButton';
 import ResizeAndDrag from './ResizeAndDrag';
+import UploadImageButton from './UploadImageButton';
 import VirtualBackgroundPreview from './VirtualBackgroundPreview';
 
 type Props = {
@@ -127,7 +127,6 @@ function VirtualBackground({
     const localImages = jitsiLocalStorage.getItem('virtualBackgrounds');
     const [ storedImages, setStoredImages ] = useState<Array<Image>>((localImages && Bourne.parse(localImages)) || []);
     const [ loading, setLoading ] = useState(false);
-    const uploadImageButton: Object = useRef(null);
     const [ initialVirtualBackground ] = useState(_virtualBackground);
     const deleteStoredImage = useCallback(e => {
         const imageId = e.currentTarget.getAttribute('data-imageid');
