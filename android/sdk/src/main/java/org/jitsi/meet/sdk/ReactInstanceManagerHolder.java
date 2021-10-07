@@ -30,7 +30,6 @@ import com.facebook.react.devsupport.DevInternalSettings;
 import com.facebook.react.jscexecutor.JSCExecutorFactory;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.uimanager.ViewManager;
-import com.facebook.soloader.SoLoader;
 import com.oney.WebRTCModule.RTCVideoViewManager;
 import com.oney.WebRTCModule.WebRTCModule;
 
@@ -173,8 +172,6 @@ class ReactInstanceManagerHolder {
         if (reactInstanceManager != null) {
             return;
         }
-
-        SoLoader.init(activity.getApplication(), /* native exopackage */ false);
 
         List<ReactPackage> packages
             = new ArrayList<>(Arrays.asList(
