@@ -78,6 +78,7 @@ class SecurityDialogButton extends AbstractButton<Props, *> {
  * @returns {Props}
  */
 function mapStateToProps(state: Object) {
+    console.log("This file has been updated!");
     const { conference } = state['features/base/conference'];
     const { hideLobbyButton } = state['features/base/config'];
     const { locked } = state['features/base/conference'];
