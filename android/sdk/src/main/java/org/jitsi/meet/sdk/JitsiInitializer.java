@@ -25,13 +25,13 @@ import com.facebook.soloader.SoLoader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JitsiInitializer implements Initializer<Object> {
+public class JitsiInitializer implements Initializer<Boolean> {
 
     @NonNull
     @Override
-    public Object create(@NonNull Context context) {
+    public Boolean create(@NonNull Context context) {
         SoLoader.init(context, /* native exopackage */ false);
-        return new Object();
+        return true;
     }
 
     @NonNull
