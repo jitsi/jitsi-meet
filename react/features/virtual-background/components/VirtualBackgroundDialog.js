@@ -452,6 +452,7 @@ function VirtualBackground({
                                     className = 'share-desktop-icon'
                                     size = { 30 }
                                     src = { IconShareDesktop } />
+                                { t('virtualBackground.beta') }
                             </div>
                         </Tooltip>
                         {_images.map(image => (

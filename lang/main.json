@@ -378,6 +378,7 @@
     "virtualBackground": {
         "apply": "Apply",
         "title": "Virtual backgrounds",
+        "beta": "Beta",
         "blur": "Blur",
         "slightBlur": "Slight Blur",
         "removeBackground": "Remove background",
