@@ -3,6 +3,7 @@
 import jwtDecode from 'jwt-decode';
 import _ from 'lodash';
 
+import { notifyBugsnag } from '../../../bugsnag';
 import {
     createWaitingAreaParticipantStatusChangedEvent,
     sendAnalytics
@@ -134,6 +135,7 @@ export async function checkRoomStatus(): Promise<Object> {
 
         return doGetJSON(url, true);
     } catch (e) {
+        notifyBugsnag('Unable to retrieve the room state.');
         throw Error(e);
     }
 }
@@ -185,6 +187,7 @@ export function updateParticipantReadyStatus(status: string): void {
     .catch(error => {
         sendAnalytics(createWaitingAreaParticipantStatusChangedEvent('failed'));
         console.error(error);
+        notifyBugsnag(error);
     });
 }
 
