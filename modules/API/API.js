@@ -145,7 +145,6 @@ function initCommands() {
             APP.store.dispatch(muteAllParticipants(exclude, muteMediaType));
         },
         'toggle-lobby': isLobbyEnabled => {
-			this.notifyLobbyModeUpdated(isLobbyEnabled);
             APP.store.dispatch(toggleLobbyMode(isLobbyEnabled));
         },
         'password': password => {
@@ -1492,19 +1491,6 @@ class API {
         this._sendEvent({
             name: 'browser-support',
             supported
-        });
-    }
-
-    /**
-     * Notify external application (if API is enabled) that user updated their hand raised.
-     *
-     * @param {boolean} lobbyMode - Whether lobby is currently enabled.
-     * @returns {void}
-     */
-    notifyLobbyModeUpdated(lobbyEnabled: boolean) {
-        this._sendEvent({
-            name: 'lobby-mode-updated',
-            lobbyEnabled
         });
     }
 

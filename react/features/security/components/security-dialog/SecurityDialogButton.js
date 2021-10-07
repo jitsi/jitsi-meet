@@ -92,7 +92,7 @@ function mapStateToProps(state: Object) {
     const { hideLobbyButton } = state['features/base/config'];
     const { locked } = state['features/base/conference'];
     const { passwordEnabled } = locked.password;
-    const { passwordRequired } = state['features/base/conference'];;
+    const { passwordRequired } = state['features/base/conference'];
     const lobbySupported = conference && conference.isLobbySupported();
     const lobby = lobbySupported && isLocalParticipantModerator(state) && !hideLobbyButton;
     const enabledFlag = getFeatureFlag(state, SECURITY_OPTIONS_ENABLED, true);
