@@ -69,7 +69,11 @@ const commands = {
     toggleShareScreen: 'toggle-share-screen',
     toggleTileView: 'toggle-tile-view',
     toggleVirtualBackgroundDialog: 'toggle-virtual-background',
-    toggleVideo: 'toggle-video'
+    toggleVideo: 'toggle-video',
+	
+	// Intulse added commands.
+    setStartMutedPolicy: 'set-start-muted-policy',
+    setEveryoneFollowsMe: 'set-everyone-follows-me'
 };
 
 /**
