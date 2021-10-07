@@ -25,7 +25,6 @@ import {
     setSubject,
 	
 	// Intulse added to support set-start-muted-policy and set-everyone-follows-me.
-	setFollowMe,
     setStartMutedPolicy
 } from '../../react/features/base/conference';
 import { overwriteConfig, getWhitelistedJSON } from '../../react/features/base/config';
@@ -138,10 +137,6 @@ function initCommands() {
 		// Intulse added: set-start-muted-policy.
 		'set-start-muted-policy': policy => {
             APP.store.dispatch(setStartMutedPolicy(policy.video, policy.audio));
-        },
-		// Intulse added: set-everyone-follows-me.
-        'set-everyone-follows-me': enabled => {
-            APP.store.dispatch(setFollowMe(enabled));
         },
         'mute-everyone': mediaType => {
             const muteMediaType = mediaType ? mediaType : MEDIA_TYPE.AUDIO;
