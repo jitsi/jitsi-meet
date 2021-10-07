@@ -62,9 +62,9 @@ deploy-appbundle:
 
 deploy-lib-jitsi-meet:
 	cp \
-		$(LIBJITSIMEET_DIR)/lib-jitsi-meet.min.js \
-		$(LIBJITSIMEET_DIR)/lib-jitsi-meet.min.map \
-		$(LIBJITSIMEET_DIR)/lib-jitsi-meet.e2ee-worker.js \
+		$(LIBJITSIMEET_DIR)/dist/umd/lib-jitsi-meet.min.js \
+		$(LIBJITSIMEET_DIR)/dist/umd/lib-jitsi-meet.min.map \
+		$(LIBJITSIMEET_DIR)/dist/umd/lib-jitsi-meet.e2ee-worker.js \
 		$(LIBJITSIMEET_DIR)/connection_optimization/external_connect.js \
 		$(LIBJITSIMEET_DIR)/modules/browser/capabilities.json \
 		$(DEPLOY_DIR)
