@@ -132,6 +132,7 @@ export async function createLocalPresenterTrack(options, desktopHeight) {
 export function createLocalTracksF(options = {}, store) {
     let { cameraDeviceId, micDeviceId } = options;
     const {
+        desktopSharingAudio,
         desktopSharingSourceDevice,
         desktopSharingSources,
         firePermissionPromptIsShownEvent,
@@ -171,6 +172,7 @@ export function createLocalTracksF(options = {}, store) {
                 {
                     cameraDeviceId,
                     constraints,
+                    desktopSharingAudio,
                     desktopSharingFrameRate,
                     desktopSharingSourceDevice,
                     desktopSharingSources,

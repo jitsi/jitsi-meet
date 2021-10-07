@@ -6,7 +6,6 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { hideDialog } from '../../base/dialog';
 import { JitsiTrackErrors } from '../../base/lib-jitsi-meet';
-import { createLocalTrack } from '../../base/lib-jitsi-meet/functions';
 import { connect } from '../../base/redux';
 import { getCurrentCameraDeviceId } from '../../base/settings';
 import { createLocalTracksF } from '../../base/tracks/functions';
@@ -111,7 +110,12 @@ function ResizeAndDrag({ _currentCameraDeviceId, _virtualBackground, dispatch, s
                 url = await _virtualBackground?.virtualSource;
             } else {
                 try {
-                    url = await createLocalTrack('desktop', '');
+                    const [ desktopTrack ] = await createLocalTracksF({
+                        devices: [ 'desktop' ],
+                        desktopSharingAudio: false
+                    });
+
+                    url = desktopTrack;
                 } catch (e) {
                     if (e.name === JitsiTrackErrors.SCREENSHARING_USER_CANCELED) {
                         url = await sharingObject?.virtualSource ?? sharingObject?.url;
