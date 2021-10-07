@@ -1,12 +1,12 @@
 BUILD_DIR = build
 CLEANCSS = ./node_modules/.bin/cleancss
 DEPLOY_DIR = libs
-LIBJITSIMEET_DIR = node_modules/lib-jitsi-meet/
-LIBFLAC_DIR = node_modules/libflacjs/dist/min/
+LIBJITSIMEET_DIR = node_modules/lib-jitsi-meet
+LIBFLAC_DIR = node_modules/libflacjs/dist/min
 OLM_DIR = node_modules/@matrix-org/olm
-RNNOISE_WASM_DIR = node_modules/rnnoise-wasm/dist/
+RNNOISE_WASM_DIR = node_modules/rnnoise-wasm/dist
 TFLITE_WASM = react/features/stream-effects/virtual-background/vendor/tflite
-MEET_MODELS_DIR  = react/features/stream-effects/virtual-background/vendor/models/
+MEET_MODELS_DIR  = react/features/stream-effects/virtual-background/vendor/models
 FACIAL_MODELS_DIR = react/features/facial-recognition/resources
 NODE_SASS = ./node_modules/.bin/sass
 NPM = npm
