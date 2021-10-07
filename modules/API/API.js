@@ -560,6 +560,9 @@ function initCommands() {
                     });
                 });
             break;
+        case 'deployment-info':
+            callback(APP.store.getState()['features/base/config'].deploymentInfo);
+            break;
         case 'invite': {
             const { invitees } = request;
 

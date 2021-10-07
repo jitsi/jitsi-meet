@@ -10,6 +10,11 @@ if shard_name_config then
     module:add_identity("server", "shard", shard_name_config);
 end
 
+local region_name_config = module:get_option_string('region_name');
+if region_name_config then
+    module:add_identity("server", "region", region_name_config);
+end
+
 -- this is after xmpp-bind, the moment a client has resource and can be contacted
 module:hook("resource-bind", function (event)
     local session = event.session;

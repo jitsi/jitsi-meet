@@ -957,6 +957,17 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Gets the deployment info.
+     *
+     * @returns {Promise} - Resolves with the deployment info object.
+     */
+    getDeploymentInfo() {
+        return this._transport.sendRequest({
+            name: 'deployment-info'
+        });
+    }
+
+    /**
      * Returns the display name of a participant.
      *
      * @param {string} participantId - The id of the participant.
