@@ -23,6 +23,16 @@ type Props = AbstractButtonProps & {
      * Whether the shared document is being edited or not.
      */
     _locked: boolean,
+	
+    /**
+     * Whether the lobby is enabled or not.
+     */
+    _lobbyEnabled: boolean,
+	
+    /**
+     * Whether a password is enabled or not.
+     */
+    _passwordEnabled: boolean,
 
     /**
      * The redux {@code dispatch} function.
@@ -81,15 +91,22 @@ function mapStateToProps(state: Object) {
     const { conference } = state['features/base/conference'];
     const { hideLobbyButton } = state['features/base/config'];
     const { locked } = state['features/base/conference'];
-    const { lobbyEnabled } = state['features/lobby'];
+    const { passwordEnabled } = locked.password;
+    const { passwordRequired } = state['features/base/conference'];;
     const lobbySupported = conference && conference.isLobbySupported();
     const lobby = lobbySupported && isLocalParticipantModerator(state) && !hideLobbyButton;
     const enabledFlag = getFeatureFlag(state, SECURITY_OPTIONS_ENABLED, true);
     const enabledLobbyModeFlag = getFeatureFlag(state, LOBBY_MODE_ENABLED, true) && lobby;
     const enabledMeetingPassFlag = getFeatureFlag(state, MEETING_PASSWORD_ENABLED, true);
 
+	console.log("Checking conference state to see how to access password:");
+	console.log(locked);
+	console.log(locked.password);
+
     return {
         _locked: locked || lobbyEnabled,
+		_lobbyEnabled: lobbyEnabled,
+		_passwordEnabled: passwordEnabled,
         visible: enabledFlag || (enabledLobbyModeFlag || enabledMeetingPassFlag)
     };
 }
