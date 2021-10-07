@@ -9,7 +9,7 @@
  */
 
 var interfaceConfig = {
-    APP_NAME: 'Jitsi Meet',
+    APP_NAME: 'Intulse Meetings',
     AUDIO_LEVEL_PRIMARY_COLOR: 'rgba(255,255,255,0.4)',
     AUDIO_LEVEL_SECONDARY_COLOR: 'rgba(255,255,255,0.2)',
 
@@ -82,7 +82,7 @@ var interfaceConfig = {
     /**
      * Hide the logo on the deep linking pages.
      */
-    HIDE_DEEP_LINKING_LOGO: false,
+    HIDE_DEEP_LINKING_LOGO: true,
 
     /**
      * Hide the invite prompt in the header when alone in the meeting.
@@ -164,7 +164,7 @@ var interfaceConfig = {
     SHOW_CHROME_EXTENSION_BANNER: false,
 
     SHOW_DEEP_LINKING_IMAGE: false,
-    SHOW_JITSI_WATERMARK: true,
+    SHOW_JITSI_WATERMARK: false,
     SHOW_POWERED_BY: false,
     SHOW_PROMOTIONAL_CLOSE_PAGE: false,
 
