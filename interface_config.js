@@ -287,48 +287,6 @@ var interfaceConfig = {
     // Please use disableModeratorIndicator from config.js
     // DISABLE_FOCUS_INDICATOR: false,
 
-    // Moved to config.js as `toolbarConfig.initialTimeout`.
-    // INITIAL_TOOLBAR_TIMEOUT: 20000,
-
-    // Moved to config.js as `toolbarConfig.alwaysVisible`.
-    // TOOLBAR_ALWAYS_VISIBLE: false,
-
-    // This config was moved to config.js as `toolbarButtons`.
-    TOOLBAR_BUTTONS: [
-       'camera',
-       'chat',
-    //    'closedcaptions',
-        'desktop',
-    //    'download',
-    //    'embedmeeting',
-    //    'etherpad',
-    //    'feedback',
-    //    'filmstrip',
-       'fullscreen',
-       'hangup',
-    //    'help',
-       'invite',
-    //    'livestreaming',
-       'microphone',
-       'mute-everyone',
-    //    'mute-video-everyone',
-       'participants-pane',
-       'profile',
-       'raisehand',
-    //    'recording',
-       'security',
-       'select-background',
-       'settings',
-    //    'shareaudio',
-    //    'sharedvideo',
-       'shortcuts',
-    //    'stats',
-    //    'tileview',
-       'toggle-camera',
-       'videoquality',
-       '__end'
-    ],
-
     // Moved to config.js as `toolbarConfig.timeout`.
     // TOOLBAR_TIMEOUT: 4000,
 
