@@ -1045,7 +1045,10 @@
         "pending": "{{displayName}} has been invited"
     },
     "videoStatus": {
+        "adjustFor": "Adjust for:",
         "audioOnly": "AUD",
+        "bestPerformance": "Best performance",
+        "highestQuality": "Highest quality",
         "audioOnlyExpanded": "You are in low bandwidth mode. In this mode you will receive only audio and screen sharing.",
         "callQuality": "Video Quality",
         "hd": "HD",
