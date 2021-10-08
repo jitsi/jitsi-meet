@@ -2,8 +2,9 @@ import extraConfigWhitelist from './extraConfigWhitelist';
 
 /**
  * The config keys to whitelist, the keys that can be overridden.
- * Currently we can only whitelist the first part of the properties, like
- * 'p2p.enabled' we whitelist all p2p options.
+ * Whitelisting a key allows all properties under that key to be overridden.
+ * For example whitelisting 'p2p' allows 'p2p.enabled' to be overridden, and
+ * overriding 'p2p.enabled' does not modify any other keys under 'p2p'.
  * The whitelist is used only for config.js.
  *
  * @type Array
@@ -193,7 +194,7 @@ export default [
     'toolbarConfig',
     'useHostPageLocalStorage',
     'useTurnUdp',
-    'videoQuality.persist',
+    'videoQuality',
     'webrtcIceTcpDisable',
     'webrtcIceUdpDisable'
 ].concat(extraConfigWhitelist);
