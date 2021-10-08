@@ -24,61 +24,6 @@
     bottom: calc(#{$newToolbarSizeWithPadding}) !important;
 }
 
-.modal-dialog-form {
-    /**
-     * Override @atlaskit/dropdown-menu styling when in a modal because the
-     * dropdown backgrounds clash with the modal backgrounds.
-     */
-    .dropdown-menu div[style*="transform"] {
-        outline: 1px solid #455166;
-    }
-    .dropdown-menu button:not(:active):not(:hover) > span {
-        color: #B8C7E0;
-    }
-
-    /**
-    * Override @atlaskit/tab styling when in a modal because the
-    * tab text color clash with the modal backgrounds.
-    */
-    div[role="tablist"] > div:not([data-selected]):not(:hover),
-    label > div > span {
-        color: #B8C7E0 !important;
-    }
-}
-
-/**
- * Override @atlaskit/modal-dialog header styling
- */
-.atlaskit-portal [role="dialog"] header {
-    box-shadow: none;
-    .jitsi-icon {
-        cursor: pointer;
-    }
-
-    .jitsi-icon svg {
-        fill: #B8C7E0;
-    }
-}
-
-/**
- * Override @atlaskit/modal-dialog footer styling.
- */
- .atlaskit-portal [role="dialog"] footer {
-     box-shadow: none;
- }
-
-/**
- * Make header close button more easily tappable on mobile.
- */
-.mobile-browser .atlaskit-portal [role="dialog"] header .jitsi-icon {
-    display: grid;
-    place-items: center;
-    height: 48px;
-    width: 48px;
-    background: #2a3a4b;
-    border-radius: 3px;
-}
-
 /**
  * Override @atlaskit/theme styling for the top toolbar so it displays over
  * the video thumbnail while obscuring as little as possible.

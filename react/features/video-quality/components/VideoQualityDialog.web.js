@@ -21,8 +21,8 @@ export default class VideoQualityDialog extends Component {
         return (
             <Dialog
                 hideCancelButton = { true }
-                okKey = 'dialog.done'
-                titleKey = 'videoStatus.callQuality'
+                submitDisabled = { true }
+                titleKey = 'videoStatus.performanceSettings'
                 width = 'small'>
                 <VideoQualitySlider />
             </Dialog>
