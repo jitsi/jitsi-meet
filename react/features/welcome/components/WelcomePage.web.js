@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 /* global interfaceConfig */
 
 import React from 'react';
@@ -130,6 +131,7 @@ class WelcomePage extends AbstractWelcomePage {
         document.body.classList.add('welcome-page');
         document.title = interfaceConfig.APP_NAME;
 
+        /*
         if (this.state.generateRoomnames) {
             this._updateRoomname();
         }
@@ -150,6 +152,7 @@ class WelcomePage extends AbstractWelcomePage {
                 this._additionalCardTemplate.content.cloneNode(true)
             );
         }
+        */
     }
 
     /**
@@ -179,6 +182,8 @@ class WelcomePage extends AbstractWelcomePage {
         const contentClassName = showAdditionalContent ? 'with-content' : 'without-content';
         const footerClassName = DISPLAY_WELCOME_FOOTER ? 'with-footer' : 'without-footer';
 
+        
+        /*
         return (
             <div
                 className = { `welcome ${contentClassName} ${footerClassName}` }
@@ -272,6 +277,42 @@ class WelcomePage extends AbstractWelcomePage {
                 { DISPLAY_WELCOME_FOOTER && this._renderFooter()}
             </div>
 
+        );
+        */
+        return (
+            <div
+                className = { `welcome ${showAdditionalContent
+                    ? 'with-content' : 'without-content'}` }
+                id = 'welcome_page'>
+                <div className = 'welcome-watermark'>
+                    <Watermarks />
+                </div>
+                <div className = 'header'>
+                    <div className = 'welcome-page-settings'>
+                        <SettingsButton
+                            defaultTab = { SETTINGS_TABS.CALENDAR } />
+                        { showAdditionalToolbarContent
+                            ? <div
+                                className = 'settings-toolbar-content'
+                                ref = { this._setAdditionalToolbarContentRef } />
+                            : null
+                        }
+                    </div>
+                    <div className = 'header-image' />
+                    <div className = 'header-text'>
+                        <h1 className = 'header-text-title'>Thank you for using<br />Intulse Meetings!</h1>
+                        <p className = 'header-text-description'>
+                            Your meeting invitation should have included a valid meeting Id in the Url.
+                            Please visit the exact Url you were sent in an invitation.
+                        </p>
+                    </div>
+                </div>
+                { showAdditionalContent
+                    ? <div
+                        className = 'welcome-page-content'
+                        ref = { this._setAdditionalContentRef } />
+                    : null }
+            </div>
         );
     }
 

@@ -6,7 +6,7 @@ var config = {
 
     hosts: {
         // XMPP domain.
-        domain: 'jitsi-meet.example.com',
+        domain: 'meet.intul.se',
 
         // When using authentication, domain for guest users.
         // anonymousdomain: 'guest.example.com',
@@ -14,15 +14,21 @@ var config = {
         // Domain for authenticated users. Defaults to <domain>.
         // authdomain: 'jitsi-meet.example.com',
 
+        // Jirecon recording component domain.
+        // jirecon: 'jirecon.jitsi-meet.example.com',
+
+        // Call control component (Jigasi).
+        call_control: 'callcontrol.meet.intul.se',
+
         // Focus component domain. Defaults to focus.<domain>.
         // focus: 'focus.jitsi-meet.example.com',
 
         // XMPP MUC domain. FIXME: use XEP-0030 to discover it.
-        muc: 'conference.jitsi-meet.example.com'
+        muc: 'conference.meet.intul.se'
     },
 
     // BOSH URL. FIXME: use XEP-0156 to discover it.
-    bosh: '//jitsi-meet.example.com/http-bind',
+    bosh: '//meet.intul.se/http-bind',
 
     // Websocket URL
     // websocket: 'wss://jitsi-meet.example.com/xmpp-websocket',
@@ -1028,6 +1034,8 @@ var config = {
      websocketKeepAliveUrl
      */
 
+    dialInNumbersUrl: 'https://meet.intul.se/phoneNumberList.json',
+    dialInConfCodeUrl: 'https://jitsi-api.jitsi.net/conferenceMapper',
     /**
      * Default interval (milliseconds) for triggering mouseMoved iframe API event
      */
