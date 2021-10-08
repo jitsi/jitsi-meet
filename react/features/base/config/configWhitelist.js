@@ -194,7 +194,7 @@ export default [
     'toolbarConfig',
     'useHostPageLocalStorage',
     'useTurnUdp',
-    'videoQuality.persist',
+    'videoQuality',
     'webrtcIceTcpDisable',
     'webrtcIceUdpDisable'
 ].concat(extraConfigWhitelist);
