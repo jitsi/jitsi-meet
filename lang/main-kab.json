@@ -90,7 +90,7 @@
         "AUTHENTICATING": "Asesteb",
         "AUTHFAIL": "Asesteb ur yeddi ara",
         "CONNECTED": "Yeqqen",
-        "CONNECTING": "Yetteqqen",
+        "CONNECTING": "Tuqqna",
         "CONNFAIL": "Tuqqna ur teddi yara",
         "DISCONNECTED": "Ur yeqqin ara",
         "DISCONNECTING": "Tuffɣa",
@@ -115,7 +115,7 @@
         "more": "Sken-d ugar",
         "packetloss": "Asṛuḥu n ukemmus:",
         "quality": {
-            "good": "Yelha",
+            "good": "Telha",
             "inactive": "D arurmid",
             "lost": "Iruḥ",
             "nonoptimal": "Mačči d win igerrzen",
@@ -307,9 +307,9 @@
         "shareAudio": "Continuer",
         "copied": "Yenɣel",
         "authenticationRequired": "Tlaq tuqqna",
-        "login": "Qqen",
-        "muteEveryonesVideoDialogOk": "Sens",
-        "password": "Mot de passe",
+        "login": "Aseqdac",
+        "muteEveryonesVideoDialogOk": "Désactiver",
+        "password": "Awal uffir",
         "user": "Aseqdac",
         "WaitingForHostTitle": "Aṛaǧu n usenneftaɣ ...",
         "muteEveryoneElsesVideoTitle": "Seḥbes tavidyut n yal yiwen ala {{whom}}?",
@@ -338,11 +338,23 @@
         "embedMeeting": "Sleɣ timlilit",
         "hideShareAudioHelper": "Ur d-skan ara adiweni-agi tikelt nniḍen",
         "shareAudioWarningD1": "ilaq ad tesḥebseḍ beṭṭu n ugdil send beṭṭu n yimesli inek.inem.",
-        "shareScreenWarningTitle": "ilaq ad tesḥebseḍ beṭṭu n yimesli send beṭṭu n ugdil",
-        "shareScreenWarningH1": "Ma tebiḍ ad tebḍuḍ agdil kan:",
-        "shareScreenWarningD1": "ilaq ad tesḥebseḍ beṭṭu n yimesli send beṭṭu n ugdil.",
-        "sharedVideoLinkPlaceholder": "Aseɣwen YouTube neɣ aseɣwen usrid n tvidyut",
-        "shareMediaWarningGenericH2": "Ma tebiḍ ad tebḍuḍ agdil d yimesli"
+        "shareScreenWarningTitle": "Ilaq ad tesḥebseḍ beṭṭu n umeslaw send beṭṭu n ugdil",
+        "shareScreenWarningH1": "Ma yella tebɣiḍ ad tebḍuḍ kan agdil:",
+        "shareScreenWarningD1": "ilaq ad tesḥebseḍ beṭṭu n umeslaw send beṭṭu n ugdil.",
+        "sharedVideoLinkPlaceholder": "Aseɣwen n Youtube neɣ aseɣwen n tvidyut srid",
+        "shareMediaWarningGenericH2": "Ma yella tebɣiḍ ad tebḍuḍ agdil d umeslaw",
+        "sessionRestarted": "Allus n usenker n usiwel s ttawil n tqenṭert",
+        "shareScreenWarningD2": "tesriḍ ad tesḥebseḍ beṭṭu n umeslaw, senker beṭṭu n ugdil rnu senqed taxtiṛt \"bḍu ameslaw\".",
+        "userIdentifier": "Asulay n useqdac",
+        "viewUpgradeOptionsContent": "I wakken ad tesεuḍ anekcum war talast ɣer tmahilin premium am usekles, azemmem, asuddem RTMP & wayen-nniḍen, ilaq ad tleqqmeḍ aɣawas-ik·im.",
+        "permissionCameraRequiredError": "Tasiregt n tkamiṛat tettwasra i uttekki deg yisaragen s tvidyut. Ma ulac aɣilif, sireg-itt deg Yiɣewwaren",
+        "permissionMicRequiredError": "Tasiregt n usawad tettwasra i uttekki deg yisaragen s umeslaw. Ma ulac aɣilif, sireg-it deg Yiɣewwaren",
+        "viewUpgradeOptionsTitle": "Tufid-d tamahilt premium!",
+        "remoteUserControls": "Isenqaden n useqdac anmeggag n {{username}}",
+        "localUserControls": "Isenqaden n useqdac adigan",
+        "shareAudioWarningTitle": "Ilaq ad tesḥebseḍ beṭṭu n ugdil send beṭṭu n umeslaw",
+        "shareAudioWarningH1": "Ma yella tebɣiḍ ad tebḍuḍ kan ameslaw:",
+        "shareAudioWarningD2": "tesriḍ ad talseḍ asenker n beṭṭu n ugdil rnu senqed taxtiṛt \"bḍu ameslaw\"."
     },
     "dialOut": {
         "statusMessage": "tura d {{status}}"
@@ -395,7 +407,11 @@
         "label": "Talɣut n temlilit",
         "inviteTextiOSPersonal": "{{name}} isnubget-ik·ikem ɣer temlilit.",
         "sip": "Tansiwin SIP",
-        "copyNumber": "Nɣel uṭṭun"
+        "copyNumber": "Nɣel uṭṭun",
+        "inviteSipEndpoint": "I tmerna s useqdec n tansa n SIP, sekcem wa: {{sipUri}}",
+        "inviteTextiOSJoinSilent": "Ma yella tetteqneḍ s wuṭṭun n texxamt, seqdec aseɣwen-a i wakken ad ternuḍ war ma teqqneḍ ɣer umeslaw: {{silentUrl}}.",
+        "inviteTextiOSInviteUrl": "Sit ɣef useɣwen-a i wakken ad ternuḍ: {{inviteUrl}}.",
+        "inviteTextiOSPhone": "I tmerna s wuṭṭun n tiliɣri, seqdec uṭṭun-a: {{number}},,{{conferenceID}}#. Ma yella tettnadiḍ uṭṭun-nniḍen, ha-tt-a tebdart teččur: {{didUrl}}."
     },
     "inviteDialog": {
         "alertText": "Ancad n kra n yimttekkiyen ur yeddi ara.",
@@ -425,7 +441,8 @@
         "toggleFilmstrip": "Sken neɣ ffer tinfulin n tvidyutin",
         "toggleScreensharing": "Uɣal gar tkamiṛat d beṭṭu n ugdil",
         "toggleShortcuts": "Sken neɣ ffer inegzumen n unasiw",
-        "videoMute": "Sker neɣ seḥbes takamiṛat inek·inem"
+        "videoMute": "Sker neɣ seḥbes takamiṛat inek·inem",
+        "toggleParticipantsPane": "Sken neɣ ffer agalis n yimttekkiyen"
     },
     "liveStreaming": {
         "busy": "Aql-aɣ nxeddem ad d-neslelli tiɣbula n usuddem. Ma ulac aɣilif, ɛreḍ tikkelt-nniḍen deg kra n tesdidin.",
@@ -530,7 +547,23 @@
         "groupTitle": "Ilɣa",
         "moderationRequestFromParticipant": "Ibɣa ad imeslay",
         "raiseHandAction": "Rfed afus",
-        "reactionSounds": "Sens imesli"
+        "reactionSounds": "Sens imesli",
+        "allowedUnmute": "Tzemreḍ ad tekkseḍ asgugem i usawaḍ-ik·im, ad tesnekreḍ takamiṛat neɣ ad tebḍuḍ agdil.",
+        "hostAskedUnmute": "Imḍebber yebɣa ad temmeslayeḍ",
+        "screenShareNoAudio": " Tabewwaḍt n umeslaw n beṭṭu ur tettwaṛcam ara deg ugdil n tefrant n usfaylu.",
+        "screenShareNoAudioTitle": "Ur yezmir ara ad yebḍu ameslaw n unagraw!",
+        "moderationInEffectDescription": "Ma ulac aɣilif, rfed afus-ik·im ma tebɣiḍ ad temmeslayeḍ.",
+        "moderationInEffectCSDescription": "Ma ulac aɣilif, rfed afus-ik·im ma tebɣiḍ ad tebḍuḍ agdil.",
+        "moderationRequestFromModerator": "Asenneftaɣ yebɣa ad tekkseḍ asgugem",
+        "moderationStartedTitle": "Asektem yebda",
+        "moderationStoppedTitle": "Asektem yensa",
+        "moderationToggleDescription": "sɣur {{participantDisplayName}}",
+        "videoMutedRemotelyDescription": "Tzemreḍ ad ad t-tremdeḍ melmi tebɣiḍ.",
+        "moderationInEffectVideoDescription": "Ma ulac aɣilif, rfed afus-ik·im ma tebɣiḍ ad tesnekreḍ takamiṛat.",
+        "moderationInEffectTitle": "Asawaḍ-ik·im yettwasgugem sɣur yimḍebber",
+        "moderationInEffectCSTitle": "Beṭṭu n ugdil yettusewḥel sɣur yimḍebber",
+        "moderationInEffectVideoTitle": "Takamiṛat-ik·im tettusewḥel sɣur yimḍebber",
+        "videoMutedRemotelyTitle": "Tavidyut-ik·im tettwasens sɣur {{moderator}}"
     },
     "passwordSetRemotely": "Yettusbadu sɣur yimttekki-nniḍen",
     "passwordDigitsOnly": "Alamma d {{number}} yizwilen",
@@ -584,7 +617,11 @@
         "limitNotificationDescriptionNative": "Seg tuget n usuter, asekles-inek·inem ad yesɛu kan {{limit}} tesdidin. I yiseklas war tilas, ɛreḍ <3>{{app}}</3>.",
         "limitNotificationDescriptionWeb": "Seg tuget n usuter, asekles-inek·inem ad yesɛu kan {{limit}} tesdidin. I yiseklas war tilas, ɛreḍ <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "onBy": "{{name}} yebda asekles",
-        "copyLink": "Sukken aseɣwen"
+        "copyLink": "Sukken aseɣwen",
+        "errorFetchingLink": "Tuccḍa lawan n tririt n useɣwen n usekles.",
+        "linkGenerated": "Nsirew-d aseɣwen i usekles-inek·inem.",
+        "uploadToCloud": "Sali ɣer usigna",
+        "serviceDescriptionCloud": "Asekles deg usigna"
     },
     "sectionList": {
         "pullToRefresh": "Jbed-d i usnirem"
@@ -613,7 +650,18 @@
         "title": "Iɣewwaren",
         "microphones": "Isawaḍen",
         "speakers": "Imsiwilen",
-        "sounds": "Imeslan"
+        "sounds": "Imeslan",
+        "desktopShareWarning": "Ilaq ad talseḍ asenker n beṭṭu n ugdil i yiɣewwaren imaynuten i wakken ad ṭṭfen ibeddilen.",
+        "desktopShareHighFpsWarning": "Beṭṭu n tnarit s unya afellay izmer ad isaẓay tuqqna, Ilaq ales n tnekra n beṭṭu n ugdil akken asbadu amaynut ad iddu.",
+        "incomingMessage": "Iteddu-d yizen",
+        "participantJoined": "Yerna-d yimttekki",
+        "participantLeft": "Imttekki azelmaḍ",
+        "playSounds": "Rmed ṣṣut",
+        "reactions": "Tisedmirin n temlilit",
+        "sameAsSystem": "Kifkif akked unagraw ({{label}})",
+        "talkWhileMuted": "Mmeslay ma yettwakkes ṣṣut",
+        "desktopShareFramerate": "Anya n beṭṭu n tnarit",
+        "framesPerSecond": "tugniwin s tasint"
     },
     "settingsView": {
         "alertOk": "IH",
@@ -653,7 +701,8 @@
     },
     "startupoverlay": {
         "policyText": " ",
-        "title": "{{app}} yesra ad yesseqdec asawaḍ d tkamiṛat-inek·inem."
+        "title": "{{app}} yesra ad yesseqdec asawaḍ d tkamiṛat-inek·inem.",
+        "genericTitle": "Timlilit tesra aseqdec n usawaḍ d tkamiṛat inek·inem."
     },
     "suspendedoverlay": {
         "rejoinKeyTitle": "Kcem",
@@ -666,7 +715,7 @@
             "audioRoute": "Fren ibenk n yimesli",
             "callQuality": "Sefrek taɣara n tvidyut",
             "cc": "Ffer/Sken iduzwilen",
-            "chat": "Ldi / Mdel asqerdec",
+            "chat": "Ffer/Sken asfaylu n udiwenni",
             "document": "Ldi / Mdel isemli yettwabḍan",
             "feedback": "Eǧǧ tamuɣli",
             "fullScreen": "Ɛeddi ɣer ugdil aččuran",
@@ -708,7 +757,18 @@
             "collapse": "Ḍfes",
             "participants": "Imttekkiyen",
             "embedMeeting": "Sleɣ timlilit",
-            "silence": "Tasusmi"
+            "silence": "Tasusmi",
+            "reactionsMenu": "Ldi / Mdel umuɣ n tsedmirin",
+            "remoteVideoMute": "Sens takamiṛat n yimttekki",
+            "grantModerator": "Mudd tisirag n usektem",
+            "laugh": "Taḍsa",
+            "like": "Adebbuz d asawen",
+            "boo": "Boo",
+            "clap": "Aṣeffaq",
+            "surprised": "Awham",
+            "selectBackground": "Fren agilal",
+            "muteEveryonesVideo": "Sens tavidyut n yal yiwen",
+            "muteEveryoneElsesVideo": "Sens tavidyut n yal yiwen"
         },
         "addPeople": "Rnu-d imdanen ɣer usiwel-inek·inem",
         "audioOnlyOff": "Sens askar n tehri n tesfift adday",
@@ -771,7 +831,25 @@
         "shareaudio": "Bḍu ameslaw",
         "embedMeeting": "Sleɣ timlilit",
         "participants": "Imttekkiyen",
-        "silence": "Tasusmi"
+        "silence": "Tasusmi",
+        "boo": "Boo",
+        "reactionBoo": "Azen tasedmirt n boo",
+        "clap": "Aṣeffaq",
+        "closeReactionsMenu": "Mdel umuɣ n tsedmirin",
+        "noAudioSignalDialInLinkDesc": "Uṭṭunen n unekcum",
+        "reactionClap": "Azen tasedmirt n useffaq",
+        "reactionLaugh": "Azen tasedmert n teḍsa",
+        "reactionLike": "Azen tasedmert n udebbuz d asawen",
+        "reactionSilence": "Azen tasedmirt n tsusmi",
+        "reactionSurprised": "Azen tasedmirt n ubati",
+        "disableReactionSounds": "Tzemreḍ ad tsenseḍ imesliyen n tsedmirt i temlilit-a",
+        "laugh": "Taḍsa",
+        "like": "Adebbuz d asawen",
+        "muteEveryonesVideo": "Sens takamiṛat n yal yiwen",
+        "openReactionsMenu": "Ldi umuɣ n tsedmirin",
+        "stopAudioSharing": "Seḥbes beṭṭu n umeslaw",
+        "surprised": "Awham",
+        "selectBackground": "Fren agilal"
     },
     "transcribing": {
         "ccButtonTooltip": "Bdu / Seḥbes izwal isnawanen",
@@ -834,7 +912,11 @@
         "show": "Sken ɣef usayes",
         "videomute": "Imttekki isseḥbes takamiṛat",
         "domuteOthers": "Sgugem-iten i meṛṛa",
-        "videoMuted": "Tensa tkamiṛat"
+        "videoMuted": "Tensa tkamiṛat",
+        "domuteVideoOfOthers": "Sens takamiṛat n yal yiwen",
+        "grantModerator": "Mudd tisirag n usektem",
+        "connectionInfo": "Talɣut n tuqqna",
+        "domuteVideo": "Sens takamiṛat"
     },
     "welcomepage": {
         "accessibilityLabel": {
@@ -873,8 +955,16 @@
             "calendar": "Alugu n umitay",
             "microsoftLogo": "Alugu n Microsoft",
             "logoDeepLinking": "Alugu Jitsi Meet",
-            "googleLogo": "Alugu n Google"
-        }
+            "googleLogo": "Alugu n Google",
+            "desktopPreviewThumbnail": "Tanfult n teskant n tnarit",
+            "policyLogo": "Alugu n tsertit"
+        },
+        "mobileDownLoadLinkAndroid": "Sader asnas n uziraz i Android",
+        "mobileDownLoadLinkFDroid": "Sader asnas n uziraz i F-Droid",
+        "moderatedMessage": "Neɣ <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">ḥerr zik URL n temlilit</a> anida i telliḍ d kečč kan i d imḍebber.",
+        "headerSubtitle": "Timliliyin n tɣellist d tɣara meqqren",
+        "jitsiOnMobile": "Jitsi ɣef uziraz - sader isnasen-nneɣ syen tebduḍ timlilit seg wanda i tebɣiḍ",
+        "mobileDownLoadLinkIos": "Sader asnas n uziraz i iOS"
     },
     "prejoin": {
         "or": "neɣ",
@@ -911,7 +1001,29 @@
         "linkCopied": "Aseɣwen yettwanɣel 'ɣef wafus'",
         "premeeting": "Timlilit tuzwirt",
         "showScreen": "Rmed agdil n temlilit tuzwirt",
-        "keyboardShortcuts": "Rmed inegzumen n unasiw"
+        "keyboardShortcuts": "Rmed inegzumen n unasiw",
+        "audioDeviceProblem": "Yella wugur d yibenk-ik·im n umeslaw",
+        "connection": {
+            "good": "Tuqqna-inek·inem internet tettban tgerrez!",
+            "nonOptimal": "Tuqqna-inek·inem internet ur tgerrez ara maḍi",
+            "poor": "Tuqqna-inek·inem internet txuṣṣ aṭas"
+        },
+        "connectionDetails": {
+            "audioClipping": "Negmen ad yettwagzem umeslaw-inek·inem.",
+            "audioHighQuality": "Negmen belli ameslaw-inek·inem ad yesεu taɣara igerrzen aṭas.",
+            "audioLowNoVideo": "Negmen belli taɣara n umeslaw-inek·inem ad tili tṣubb yerna ulac tavidyut.",
+            "goodQuality": "Gedha! Taɣara n umidyat-inek·inem ad tili tgerrez aṭas.",
+            "noMediaConnectivity": "Ur nessaweḍ ara ad nserked tuqqna n umidya i usekyed-a. Ssebba n waya deg tudet d aɣrab n tmes neɣ d NAT.",
+            "noVideo": "Negmen belli tavidyut-ik·im ad tili txuṣ aṭas.",
+            "undetectable": "Ma mazal ur tezmireḍ ara ad tsiwleḍ deg yiminig, Wali ma yella imsmeɣrzen n imesli, asawaḍ akked tkamiṛat qaɛsen ne alla, daɣen ma yella tefkiḍ izerfan i yiminig ad iseqdec asawaḍ akked tkamiṛat, daɣen ma yella tesɛiḍ lqem aneggaru n yiminig. Ma mazal ugur, nermes aneflay n usnas web.",
+            "veryPoorConnection": "Negmen belli taɣara n usiwel-inek·inem ad yili ixuṣ aṭas.",
+            "videoFreezing": "Nerǧa d akken tavidyut ad teḥbes, ad tuɣal d taberkant neɣ texreb.",
+            "videoHighQuality": "Negmen belli tavidyut-ik·im ad tesεu taɣara igerrzen.",
+            "videoLowQuality": "Nerǧa tavidyut ad tenɣes deg tɣara deg wayen icudden ɣer ubeqqeḍ ines.",
+            "videoTearing": "Nerǧa tavidyut ad tenɣes deg ipiksilen neɣ ad tesɛu cammat."
+        },
+        "errorMissingName": "Ma ulac aɣilif, sekcem isem-ik·im i waken ad ternuḍ ɣer temlilit",
+        "errorNoPermissions": "Ilaq ad tremdeḍ anekcum ɣer usawaḍ d tkamiṛat"
     },
     "chromeExtensionBanner": {
         "buttonText": "Sbedd asiɣzef Chrome",
@@ -946,7 +1058,15 @@
         "passwordJoinButton": "Semlil",
         "rejectAll": "Agi akk",
         "joinTitle": "Ttekki deg temlilit",
-        "notificationTitle": "Taxxamt n uraǧu"
+        "notificationTitle": "Taxxamt n uraǧu",
+        "errorMissingPassword": "Ma ulac aɣilif, sekcem awal n uεeddi n temlilit",
+        "notificationLobbyAccessDenied": "{{targetParticipantName}} yettwagi ad yernu sɣur {{originParticipantName}}",
+        "notificationLobbyAccessGranted": "{{targetParticipantName}} yettusireg ad yernu sɣur {{originParticipantName}}",
+        "notificationLobbyDisabled": "Lobby yettwasens sɣur {{originParticipantName}}",
+        "notificationLobbyEnabled": "Lobby yettwarmed sɣur {{originParticipantName}}",
+        "admit": "Steεref",
+        "admitAll": "Steεref s kullec",
+        "knockingParticipantList": "Tadbart n yimttekkiyen n usṭebṭeb"
     },
     "security": {
         "about": "Tzemreḍ ad ternuḍ $t(lockRoomPassword) ɣer temlilit-ik·im. Imttekkiyen sran ad d-mudden $t(lockRoomPassword) send ad ttwaqeblen ad ttekkin deg temlilit.",
@@ -972,26 +1092,33 @@
     "polls": {
         "create": {
             "send": "Azen",
-            "cancel": "Semmet",
+            "cancel": "Sefex",
             "addOption": "Rnu aɣewwaṛ",
             "answerPlaceholder": "Aɣewwaṛ {{index}}",
             "questionPlaceholder": "Efk asteqsi",
             "removeOption": "Kkes aɣewwaṛ",
-            "create": "Snulfu-d tafrant"
+            "create": "Rnu asenqed",
+            "pollOption": "Taxtiṛt n usenqed {{index}}",
+            "pollQuestion": "Asteqsi n usenqed"
         },
         "answer": {
             "skip": "Ttu",
-            "submit": "Envoyer"
+            "submit": "Azen"
         },
         "results": {
             "hideDetailedResults": "Ffer tilɣa",
             "showDetailedResults": "Sken talqayt",
             "vote": "Tafrant",
-            "changeVote": "Snifel tafrant"
+            "changeVote": "Beddel tafrant",
+            "empty": "Ulac akka tura isenqaden deg temlilit. Bdu asenqed da!"
+        },
+        "notification": {
+            "title": "Asenqed amaynut yettwarna ɣer temlilt-a",
+            "description": "Ldi iccer n yisenqad i ufran"
         }
     },
     "virtualBackground": {
-        "apply": "Appliquer",
+        "apply": "Snes",
         "pleaseWait": "Ttxil-k rǧu...",
         "none": "Ula d yiwen",
         "image1": "Taftist",
@@ -1004,22 +1131,42 @@
         "title": "Igilalen uhlisen",
         "removeBackground": "Kkes agilal",
         "addBackground": "Rnu agilal",
-        "image6": "Tiẓgi "
+        "image6": "Tiẓgi ",
+        "image4": "Taftilt n wannag aberkan",
+        "uploadedImage": "Sali-d tugna {{index}}",
+        "image2": "Aɣrab acebḥan arawsan",
+        "image3": "Taxxamt tacebḥant tilemt",
+        "webAssemblyWarning": "WebAssembly ur yettusefrak ara",
+        "backgroundEffectError": "Asnes n yisemda n ugilal yecceḍ.",
+        "slightBlur": "Cwiṭ n uluɣu"
     },
     "participantsPane": {
         "close": "Mdel",
         "actions": {
-            "mute": "Kkes imesli",
+            "mute": "Asusam",
             "muteEveryoneElse": "Sgugem-iten i meṛṛa",
             "allowVideo": "Sireg tavidyut",
             "invite": "Snubget-d albaɛḍ",
             "muteAll": "Sgugem meṛṛa",
             "stopEveryonesVideo": "Seḥbes tavidyut n yal yiwen",
-            "stopVideo": "Seḥbes tavidyut n Youtube"
+            "stopVideo": "Seḥbes tavidyut n Youtube",
+            "allow": "Sireg i yimttekkiyen ad:",
+            "unblockEveryoneMicCamera": "Serreḥ i usawaḍ d tkamiṛat n yal yiwen",
+            "videoModeration": "Bdan tavidyut-nsen",
+            "audioModeration": "Kksen asgugem i yiman-nsen",
+            "blockEveryoneMicCamera": "Sewḥel asawaḍ d tkamiṛat n yal yiwen",
+            "askUnmute": "Suter tririt n ṣṣut"
         },
-        "header": "Imttekkiyen"
+        "header": "Imttekkiyen",
+        "headings": {
+            "lobby": "Lobby ({{count}})",
+            "participantsList": "Imttekkiyen n temlilit ({{count}})",
+            "waitingLobby": "Araǧu deg lobby ({{count}})"
+        }
     },
     "embedMeeting": {
         "title": "Sleɣ timlilit-a"
-    }
+    },
+    "jitsiHome": "{{logo}} Alugu, iseɣwan ɣer usebter agejdan",
+    "volumeSlider": "Tigri n ubleɣ"
 }
