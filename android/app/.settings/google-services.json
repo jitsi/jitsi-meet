@@ -1,0 +1,119 @@
+{
+  "project_info": {
+    "project_number": "802788472881",
+    "firebase_url": "https://teamiti-default-rtdb.firebaseio.com",
+    "project_id": "teamiti",
+    "storage_bucket": "teamiti.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:802788472881:android:9490678ff35c1e5f8a7d10",
+        "android_client_info": {
+          "package_name": "com.example.crewmeetpro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "802788472881-3sg6iu4tdq52r2k66n12ka77dljsnjiu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4ulK-rKUTbUrK1lllat4WF2azVzT7ry0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "802788472881-3sg6iu4tdq52r2k66n12ka77dljsnjiu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "802788472881-08bcq7pgvekkai67tfpvojevnl4mp19i.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.maka"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:802788472881:android:5a369c775d2ed9bf8a7d10",
+        "android_client_info": {
+          "package_name": "com.example.maka"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "802788472881-3sg6iu4tdq52r2k66n12ka77dljsnjiu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4ulK-rKUTbUrK1lllat4WF2azVzT7ry0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "802788472881-3sg6iu4tdq52r2k66n12ka77dljsnjiu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "802788472881-08bcq7pgvekkai67tfpvojevnl4mp19i.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.maka"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:802788472881:android:865a621b202e2f158a7d10",
+        "android_client_info": {
+          "package_name": "crew.teamigroup.meet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "802788472881-3sg6iu4tdq52r2k66n12ka77dljsnjiu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4ulK-rKUTbUrK1lllat4WF2azVzT7ry0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "802788472881-3sg6iu4tdq52r2k66n12ka77dljsnjiu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "802788472881-08bcq7pgvekkai67tfpvojevnl4mp19i.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.maka"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
