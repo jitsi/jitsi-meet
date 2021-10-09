@@ -1,0 +1,88 @@
+#!/usr/bin/with-contenv bash
+
+# make our folders
+mkdir -p \
+    /config/{nginx/site-confs,keys} \
+    /run \
+    /var/lib/nginx/tmp/client_body \
+    /var/tmp/nginx
+
+# generate keys (maybe)
+if [[ $DISABLE_HTTPS -ne 1 ]]; then
+    if [[ $ENABLE_LETSENCRYPT -eq 1 ]]; then
+        mkdir -p /config/acme.sh
+        pushd /opt
+        sh ./acme.sh --install --home /config/acme.sh --accountemail $LETSENCRYPT_EMAIL
+        popd
+
+        STAGING=""
+        if [[ $LETSENCRYPT_USE_STAGING -eq 1 ]]; then
+            STAGING="--staging"
+        fi
+        export LE_WORKING_DIR="/config/acme.sh"
+        # TODO: move away from standalone mode to webroot mode.
+        /config/acme.sh/acme.sh \
+            $STAGING \
+            --issue \
+            --standalone \
+            --pre-hook "if [[ -d /var/run/s6/services/nginx ]]; then s6-svc -d /var/run/s6/services/nginx; fi" \
+            --post-hook "if [[ -d /var/run/s6/services/nginx ]]; then s6-svc -u /var/run/s6/services/nginx; fi" \
+            -d $LETSENCRYPT_DOMAIN
+        rc=$?
+        if [[ $rc -eq 1 ]]; then
+            echo "Failed to obtain a certificate from the Let's Encrypt CA."
+            # this tries to get the user's attention and to spare the
+            # authority's rate limit:
+            sleep 15
+            echo "Exiting."
+            exit 1
+        fi
+        if [[ $rc -eq 0 ]]; then
+            mkdir -p /config/acme-certs/$LETSENCRYPT_DOMAIN
+            if ! /config/acme.sh/acme.sh \
+                    --install-cert -d $LETSENCRYPT_DOMAIN \
+                    --key-file /config/acme-certs/$LETSENCRYPT_DOMAIN/key.pem  \
+                    --fullchain-file /config/acme-certs/$LETSENCRYPT_DOMAIN/fullchain.pem ; then
+                echo "Failed to install certificate."
+                # this tries to get the user's attention and to spare the
+                # authority's rate limit:
+                sleep 15
+                echo "Exiting."
+                exit 1
+            fi
+        fi
+    else
+        # use self-signed certs
+        if [[ -f /config/keys/cert.key && -f /config/keys/cert.crt ]]; then
+            echo "using keys found in /config/keys"
+        else
+            echo "generating self-signed keys in /config/keys, you can replace these with your own keys if required"
+            SUBJECT="/C=US/ST=TX/L=Austin/O=jitsi.org/OU=Jitsi Server/CN=*"
+            openssl req -new -x509 -days 3650 -nodes -out /config/keys/cert.crt -keyout /config/keys/cert.key -subj "$SUBJECT"
+        fi
+    fi
+fi
+
+# copy config files
+tpl /defaults/nginx.conf > /config/nginx/nginx.conf
+
+tpl /defaults/meet.conf > /config/nginx/meet.conf
+if [[ -f /config/nginx/custom-meet.conf ]]; then
+    cat /config/nginx/custom-meet.conf >> /config/nginx/meet.conf
+fi
+
+tpl /defaults/ssl.conf > /config/nginx/ssl.conf
+
+tpl /defaults/default > /config/nginx/site-confs/default
+
+cp /defaults/config.js /config/config.js
+tpl /defaults/system-config.js >> /config/config.js
+tpl /defaults/settings-config.js >> /config/config.js
+if [[ -f /config/custom-config.js ]]; then
+    cat /config/custom-config.js >> /config/config.js
+fi
+
+cp /defaults/interface_config.js /config/interface_config.js
+if [[ -f /config/custom-interface_config.js ]]; then
+    cat /config/custom-interface_config.js >> /config/interface_config.js
+fi
