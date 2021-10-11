@@ -116,6 +116,13 @@ const PollCreate = (props: AbstractProps) => {
 
     const [ grabbing, setGrabbing ] = useState(null);
 
+    const interchangeHeights = (i, j) => {
+        const h = answerInputs.current[i].scrollHeight;
+
+        answerInputs.current[i].style.height = `${answerInputs.current[j].scrollHeight}px`;
+        answerInputs.current[j].style.height = `${h}px`;
+    };
+
     const onGrab = useCallback((i, ev) => {
         if (ev.button !== 0) {
             return;
@@ -131,6 +138,7 @@ const PollCreate = (props: AbstractProps) => {
     });
     const onMouseOver = useCallback(i => {
         if (grabbing !== null && grabbing !== i) {
+            interchangeHeights(i, grabbing);
             moveAnswer(grabbing, i);
             setGrabbing(i);
         }
