@@ -406,6 +406,7 @@ a.poll-detail-link, a.poll-change-vote-link {
     &:disabled {
         background-color: #00225A;
         color: #858585;
+        cursor: default;
     }
 
     & > *:not(:last-child) {
