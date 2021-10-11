@@ -204,11 +204,11 @@ var interfaceConfig = {
      * - 'desktop' controls the "Share your screen" button
      */
     TOOLBAR_BUTTONS: [
-        'microphone', 'camera', 'closedcaptions', 'desktop', /*'embedmeeting',*/ 'fullscreen',
+        'microphone', 'camera', /*'closedcaptions',*/ 'desktop', /*'embedmeeting',*/ 'fullscreen',
         'mute-video-everyone', 'fodeviceselection', 'hangup', 'profile', 'chat', /*'recording',
-        'livestreaming',*/ 'etherpad', /*'sharedvideo',*/ 'settings', 'raisehand',
-        'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
-        'tileview', 'select-background', /*'download',*/ 'help', 'mute-everyone', 'security'
+        'livestreaming', 'etherpad', 'sharedvideo',*/ 'settings', 'raisehand',
+        'videoquality', 'filmstrip', /*'invite', 'feedback', 'stats',*/ 'shortcuts',
+        'tileview', 'select-background', /*'download',*/ 'help', 'mute-everyone', 'security', 'participants-pane'
     ],
 
     TOOLBAR_TIMEOUT: 4000,
