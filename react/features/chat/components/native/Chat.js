@@ -45,7 +45,7 @@ class Chat extends AbstractChat<Props> {
         return (
             <JitsiModal
                 headerProps = {{
-                    headerLabelKey: 'chat.title'
+                    headerLabelKey: this.props._isPollsEnabled ? 'chat.titleWithPolls' : 'chat.title'
                 }}
                 modalId = { CHAT_VIEW_MODAL_ID }
                 onClose = { this._onClose }>
