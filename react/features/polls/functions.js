@@ -21,3 +21,13 @@ export function getUnreadPollCount(state: Object) {
 
     return nbUnreadPolls;
 }
+
+/**
+ * Determines if the submit poll answer button should be disabled.
+ *
+ * @param {Array<boolean>} checkBoxStates - The states of the checkboxes.
+ * @returns {boolean}
+ */
+export function isSubmitAnswerDisabled(checkBoxStates: Array<boolean>) {
+    return !checkBoxStates.find(checked => checked);
+}

@@ -5,6 +5,7 @@ import { Switch, Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
 
 import { BUTTON_MODES } from '../../../chat/constants';
+import { isSubmitAnswerDisabled } from '../../functions';
 import AbstractPollAnswer from '../AbstractPollAnswer';
 import type { AbstractProps } from '../AbstractPollAnswer';
 
@@ -12,7 +13,6 @@ import { chatStyles, dialogStyles } from './styles';
 
 
 const PollAnswer = (props: AbstractProps) => {
-
     const {
         checkBoxStates,
         poll,
@@ -50,6 +50,7 @@ const PollAnswer = (props: AbstractProps) => {
                 </Button>
                 <Button
                     color = '#17a0db'
+                    disabled = { isSubmitAnswerDisabled(checkBoxStates) }
                     mode = { BUTTON_MODES.CONTAINED }
                     onPress = { submitAnswer }
                     style = { chatStyles.pollCreateButton } >

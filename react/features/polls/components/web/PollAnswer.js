@@ -3,12 +3,11 @@
 import { Checkbox } from '@atlaskit/checkbox';
 import React from 'react';
 
+import { isSubmitAnswerDisabled } from '../../functions';
 import AbstractPollAnswer from '../AbstractPollAnswer';
 import type { AbstractProps } from '../AbstractPollAnswer';
 
-
 const PollAnswer = (props: AbstractProps) => {
-
     const {
         checkBoxStates,
         poll,
@@ -51,7 +50,8 @@ const PollAnswer = (props: AbstractProps) => {
                 </button>
                 <button
                     aria-label = { t('polls.answer.submit') }
-                    className = { 'poll-small-primary-button' }
+                    className = 'poll-small-primary-button'
+                    disabled = { isSubmitAnswerDisabled(checkBoxStates) }
                     onClick = { submitAnswer }>
                     <span>{t('polls.answer.submit')}</span>
                 </button>
