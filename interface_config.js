@@ -205,9 +205,9 @@ var interfaceConfig = {
      */
     TOOLBAR_BUTTONS: [
         'microphone', 'camera', 'closedcaptions', 'desktop', /*'embedmeeting',*/ 'fullscreen',
-        'fodeviceselection', 'hangup', 'profile', 'chat', /*'recording',
+        'mute-video-everyone', 'fodeviceselection', 'hangup', 'profile', 'chat', /*'recording',
         'livestreaming',*/ 'etherpad', /*'sharedvideo',*/ 'settings', 'raisehand',
-        'videoquality', 'filmstrip', 'invite', /*'feedback', 'stats',*/ 'shortcuts',
+        'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
         'tileview', 'select-background', /*'download',*/ 'help', 'mute-everyone', 'security'
     ],
 
