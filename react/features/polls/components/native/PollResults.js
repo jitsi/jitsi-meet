@@ -38,7 +38,9 @@ const PollResults = (props: AbstractProps) => {
     const renderHeader = (answer: string, percentage: number, nbVotes: number) => (
         <View style = { resultsStyles.answerHeader }>
             <Text style = { resultsStyles.answer }>{ answer }</Text>
-            <Text style = { resultsStyles.answer }>({nbVotes}) {percentage}%</Text>
+            <View>
+                <Text style = { resultsStyles.answer }>({nbVotes}) {percentage}%</Text>
+            </View>
 
             {/* <Text style = { resultsStyles.answer }>{ answer } - { percentage }%</Text>
             <Text style = { resultsStyles.answerVoteCount }>
