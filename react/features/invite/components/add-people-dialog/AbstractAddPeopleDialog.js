@@ -203,7 +203,7 @@ export default class AbstractAddPeopleDialog<P: Props, S: State>
 
                     if (notificationProps) {
                         dispatch(
-                            showNotification(notificationProps, NOTIFICATION_TIMEOUT));
+                            showNotification(notificationProps, NOTIFICATION_TIMEOUT.SHORT));
                     }
                 }
 

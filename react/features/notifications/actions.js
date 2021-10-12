@@ -192,7 +192,7 @@ const _throttledNotifyParticipantConnected = throttle((dispatch: Dispatch<any>, 
 
     if (notificationProps) {
         dispatch(
-            showNotification(notificationProps, NOTIFICATION_TIMEOUT));
+            showNotification(notificationProps, NOTIFICATION_TIMEOUT.SHORT));
     }
 
     joinedParticipantsNames = [];

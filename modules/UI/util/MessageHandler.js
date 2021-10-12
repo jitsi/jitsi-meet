@@ -79,7 +79,7 @@ const messageHandler = {
             cls,
             messageKey,
             messageArguments,
-            timeout = NOTIFICATION_TIMEOUT) {
+            timeout = NOTIFICATION_TIMEOUT.SHORT) {
         APP.store.dispatch(showNotification({
             descriptionArguments: messageArguments,
             descriptionKey: messageKey,

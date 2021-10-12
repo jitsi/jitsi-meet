@@ -54,12 +54,12 @@ MiddlewareRegistry.register(store => next => action => {
             store.dispatch(
                 showNotification({
                     titleKey: 'notify.passwordSetRemotely'
-                }, NOTIFICATION_TIMEOUT));
+                }, NOTIFICATION_TIMEOUT.SHORT));
         } else if (previousLockedState === LOCKED_REMOTELY && !currentLockedState) {
             store.dispatch(
                 showNotification({
                     titleKey: 'notify.passwordRemovedRemotely'
-                }, NOTIFICATION_TIMEOUT));
+                }, NOTIFICATION_TIMEOUT.SHORT));
         }
 
         return result;

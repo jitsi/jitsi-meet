@@ -62,7 +62,7 @@ MiddlewareRegistry.register(store => next => action => {
                     descriptionKey: 'notify.disconnected',
                     titleKey: 'notify.somebody',
                     title: participant.name
-                }, NOTIFICATION_TIMEOUT));
+                }, NOTIFICATION_TIMEOUT.SHORT));
             }
         }
 
@@ -91,7 +91,7 @@ MiddlewareRegistry.register(store => next => action => {
             store.dispatch(showNotification({
                 titleKey: 'notify.moderator'
             },
-            NOTIFICATION_TIMEOUT));
+            NOTIFICATION_TIMEOUT.SHORT));
         }
 
         return next(action);

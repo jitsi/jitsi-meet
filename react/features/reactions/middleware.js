@@ -169,7 +169,7 @@ MiddlewareRegistry.register(store => next => action => {
             customActionHandler: () => dispatch(updateSettings({
                 soundsReactions: false
             }))
-        }, NOTIFICATION_TIMEOUT));
+        }, NOTIFICATION_TIMEOUT.SHORT));
         break;
     }
     }

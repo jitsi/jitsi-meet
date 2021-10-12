@@ -127,7 +127,7 @@ export function showStoppedTranscribingNotification() {
     return showNotification({
         descriptionKey: 'transcribing.off',
         titleKey: 'dialog.transcribing'
-    }, NOTIFICATION_TIMEOUT);
+    }, NOTIFICATION_TIMEOUT.SHORT);
 }
 
 
