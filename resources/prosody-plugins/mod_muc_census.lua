@@ -55,7 +55,7 @@ function handle_get_room_census(event)
                 participant_count = 0
             end
             table.insert(room_data, {
-                room_name = room.jid;
+                room_name = jid.node(room.jid);
                 participants = participant_count;
                 created_time = room.created_timestamp;
             });
