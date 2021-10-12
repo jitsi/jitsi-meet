@@ -4,7 +4,7 @@ import {
     createTrackMutedEvent,
     sendAnalytics
 } from '../../analytics';
-import { showErrorNotification, showNotification } from '../../notifications';
+import { NOTIFICATION_TIMEOUT, showErrorNotification, showNotification } from '../../notifications';
 import { JitsiTrackErrors, JitsiTrackEvents, createLocalTrack } from '../lib-jitsi-meet';
 import {
     CAMERA_FACING_MODE,
@@ -406,7 +406,9 @@ export function trackAdded(track) {
 
                     noDataFromSourceNotificationInfo = { uid: notificationAction.uid };
                 } else {
-                    const timeout = setTimeout(() => dispatch(showNoDataFromSourceVideoError(track)), 5000);
+                    const timeout = setTimeout(() => dispatch(
+                        showNoDataFromSourceVideoError(track)),
+                        NOTIFICATION_TIMEOUT.MEDIUM);
 
                     noDataFromSourceNotificationInfo = { timeout };
                 }

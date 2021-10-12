@@ -3,7 +3,7 @@
 import React from 'react';
 
 import JitsiMeetJS from '../base/lib-jitsi-meet';
-import { showNotification } from '../notifications';
+import { NOTIFICATION_TIMEOUT, showNotification } from '../notifications';
 
 import { RecordingLimitNotificationDescription } from './components';
 
@@ -23,5 +23,5 @@ export function showRecordingLimitNotification(streamType: string) {
     return showNotification({
         description: <RecordingLimitNotificationDescription isLiveStreaming = { isLiveStreaming } />,
         titleKey: isLiveStreaming ? 'dialog.liveStreaming' : 'dialog.recording'
-    }, 10000);
+    }, NOTIFICATION_TIMEOUT.LONG);
 }
