@@ -10,7 +10,7 @@ const HEADER_HEIGHT = 48;
 const HEADER_PADDING = BoxModel.padding / 2;
 
 ColorSchemeRegistry.register('Header', {
-
+//#asd
     /**
      * Style of a disabled button in the header (e.g. Next).
      */

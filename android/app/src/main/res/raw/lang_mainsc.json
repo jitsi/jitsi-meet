@@ -29,7 +29,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Agiunghe unu ligàmene a s'addòbiu",
-        "confirmAddLink": "Boles agiùnghere unu ligàmene de Jitsi a custu addòbiu?",
+        "confirmAddLink": "Boles agiùnghere unu ligàmene de CREWSA a custu addòbiu?",
         "error": {
             "appConfiguration": "S'integratzione de su calendàriu no est cunfigurada bene.",
             "generic": "Faddina. Controlla sa cunfiguratzione de calendàriu o proa de atualizare su calendàriu.",

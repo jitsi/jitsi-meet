@@ -44,7 +44,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Přidejte odkaz na setkání",
-        "confirmAddLink": "Chcete k této události přidat odkaz Jitsi?",
+        "confirmAddLink": "Chcete k této události přidat odkaz CREWSA?",
         "error": {
             "appConfiguration": "Integrace kalendáře není správně nastavena.",
             "generic": "Došlo k chybě. Zkontrolujte nastavení kalendáře nebo zkuste obnovit kalendář.",

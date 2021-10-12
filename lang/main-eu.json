@@ -39,7 +39,7 @@
     "audioOnly": { "audioOnly": "Banda-zabalera txikia" },
     "calendarSync": {
         "addMeetingURL": "Bileraren esteka gehitu",
-        "confirmAddLink": "Jitsi esteka gertaera honetara gehitu nahi duzu?",
+        "confirmAddLink": "CREWSA esteka gertaera honetara gehitu nahi duzu?",
         "error": {
             "appConfiguration": "Egutegiaren integrazioa ez dago ondo konfiguratuta.",
             "generic": "Errore bat gertatu da. Egiaztatu zure egutegiaren ezarpenak edo saiatu egutegia eguneratzen.",

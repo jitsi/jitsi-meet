@@ -12,6 +12,11 @@ if (googleServicesEnabled) {
 // https://stackoverflow.com/a/38643838
 def vcode = (int) (((new Date().getTime() / 1000) - 1546297200) / 10)
 
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -21,9 +26,9 @@ android {
     }
 
     defaultConfig {
-        applicationId 'org.jitsi.meet'
-        versionCode vcode
-        versionName project.appVersion
+        applicationId 'crew.teamigroup.meet'
+        versionCode 13
+        versionName "2.1.4"
 
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
@@ -40,6 +45,12 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
     }
 
     buildTypes {
@@ -54,6 +65,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-release.pro'
             buildConfigField "boolean", "GOOGLE_SERVICES_ENABLED", "${googleServicesEnabled}"
             buildConfigField "boolean", "LIBRE_BUILD", "${rootProject.ext.libreBuild}"
+            signingConfig signingConfigs.release
         }
     }
 
@@ -86,6 +98,7 @@ dependencies {
         // Firebase
         //  - Crashlytics
         //  - Dynamic Links
+        implementation platform('com.google.firebase:firebase-bom:28.4.1')
         implementation 'com.google.firebase:firebase-analytics:17.5.0'
         implementation 'com.google.firebase:firebase-crashlytics:17.2.1'
         implementation 'com.google.firebase:firebase-dynamic-links:19.1.0'
@@ -172,4 +185,5 @@ gradle.projectsEvaluated {
 
 if (googleServicesEnabled) {
     apply plugin: 'com.google.gms.google-services'
+    apply plugin: 'com.android.application'
 }

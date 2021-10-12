@@ -28,7 +28,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Voeg ’n vergaderingskakel by",
-        "confirmAddLink": "Wil u ’n Jitsi-skakel by dié geleentheid voeg?",
+        "confirmAddLink": "Wil u ’n CREWSA-skakel by dié geleentheid voeg?",
         "error": {
             "appConfiguration": "",
             "generic": "",

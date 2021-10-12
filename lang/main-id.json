@@ -29,7 +29,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Buat link pertemuan",
-        "confirmAddLink": "Tambahkan link Jitsi pada event ini?",
+        "confirmAddLink": "Tambahkan link CREWSA pada event ini?",
         "error": {
             "appConfiguration": "Ada konfigurasi yang tidak tepat.",
             "generic": "Kesalahan terjadi. Cek pengaturan atau coba lakukan refresh.",

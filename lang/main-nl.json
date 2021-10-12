@@ -44,7 +44,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Een link naar een vergadering toevoegen",
-        "confirmAddLink": "Wilt u een Jitsi-link aan deze afspraak toevoegen?",
+        "confirmAddLink": "Wilt u een CREWSA-link aan deze afspraak toevoegen?",
         "error": {
             "appConfiguration": "De agenda-integratie is niet juist ingesteld.",
             "generic": "Er is een fout opgetreden. Controleer uw agenda-instellingen of vernieuw de agenda.",

@@ -4,15 +4,14 @@
 <dict>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:alpha.jitsi.net</string>
-		<string>applinks:beta.meet.jit.si</string>
-		<string>applinks:meet.jit.si</string>
-	</array>
-	<key>com.apple.security.application-groups</key>
-	<array>
-		<string>group.org.jitsi.meet.appgroup</string>
+		<string>applinks:go.crewsa.net</string>
+		<string>applinks:crewmeetpro.page.link</string>
 	</array>
 	<key>com.apple.developer.siri</key>
 	<true/>
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.com.example.crewmeetpro.appgroup</string>
+	</array>
 </dict>
 </plist>

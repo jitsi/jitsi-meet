@@ -27,7 +27,20 @@ const PAGED_LIST_STYLES = {
         alignItems: 'center',
         flexDirection: 'column',
         justifyContent: 'center',
-        padding: BoxModel.padding / 2
+        padding: BoxModel.padding / 2,
+        opacity: 0.6,
+        backgroundColor: '#333366',
+        borderRadius: 10,
+        padding: 10,
+        shadowColor: '#000000',
+        shadowOffset: {
+          width: 0,
+          height: 3
+        },
+        shadowRadius: 5,
+        shadowOpacity: 1.0
+      
+      // backgroundColor:ColorPalette.darkGrey  
     },
 
     /**
@@ -40,18 +53,34 @@ const PAGED_LIST_STYLES = {
     /**
      * Container for the page indicators (Android).
      */
+    //#asd button back color
     pageIndicatorContainer: {
         alignItems: 'center',
-        backgroundColor: ColorPalette.blue,
+        backgroundColor: 'transparent',//ColorPalette.blue,
         flexDirection: 'row',
-        justifyContent: 'space-around'
+        justifyContent: 'space-around',
+        // opacity: 0.6,
+        // backgroundColor: '#333366',
+        // borderRadius: 10,
+        // padding: 10,
+        // shadowColor: '#000000',
+        // shadowOffset: {
+        //   width: 0,
+        //   height: 3
+        // },
+        // shadowRadius: 5,
+        // shadowOpacity: 1.0
+      
     },
 
     pageIndicatorContent: {
         alignItems: 'center',
         flexDirection: 'column',
-        justifyContent: 'center'
-    },
+        justifyContent: 'center',
+        gradient:true,
+        borderColor: ColorPalette.red,
+         // backgroundColor:ColorPalette.darkGrey  
+     },
 
     /**
      * Icon of the page indicator (Android).
@@ -65,7 +94,9 @@ const PAGED_LIST_STYLES = {
      * Label of the page indicator (Android).
      */
     pageIndicatorText: {
-        color: ColorPalette.blueHighlight
+        color: ColorPalette.blueHighlight,
+       // backgroundColor: ColorPalette.red
+
     },
 
     /**
@@ -99,18 +130,21 @@ const SECTION_LIST_STYLES = {
         alignItems: 'center',
         flexDirection: 'row',
         justifyContent: 'space-around',
-        padding: 5
+        padding: 5,
+       // color:'red',
     },
 
     /**
      * Simple {@code Text} content of the avatar (the actual initials).
      */
+    //#asd avatar size
     avatarContent: {
         backgroundColor: 'rgba(0, 0, 0, 0)',
         color: OVERLAY_FONT_COLOR,
         fontSize: Math.floor(AVATAR_SIZE / 2),
         fontWeight: '100',
-        textAlign: 'center'
+        textAlign: 'center',
+        
     },
 
     /**
@@ -138,10 +172,22 @@ const SECTION_LIST_STYLES = {
         overflow: 'hidden',
         paddingHorizontal: 5
     },
-
+//#asd recent & calendar color
     listItemText: {
-        color: OVERLAY_FONT_COLOR,
-        fontSize: 14
+        color:'white',// OVERLAY_FONT_COLOR,
+        // textShadowColor: 'black',
+        // textShadowOffset: { width: 3, height: 3 },
+        // textShadowRadius: 40,
+        shadowColor: "black",
+shadowOffset: {
+	width: -1,
+	height: -1,
+},
+shadowOpacity: 4.7,
+shadowRadius:0.1,
+
+elevation: 6,
+        fontSize: 16
     },
 
     listItemTitle: {
@@ -157,11 +203,20 @@ const SECTION_LIST_STYLES = {
         paddingVertical: 5,
         paddingHorizontal: 10
     },
-
+//#asd section color
     listSectionText: {
-        color: OVERLAY_FONT_COLOR,
+        color:'white',// OVERLAY_FONT_COLOR,
         fontSize: 14,
-        fontWeight: 'normal'
+        fontWeight: 'normal',
+        shadowColor: "black",
+        shadowOffset: {
+            width: -1,
+            height: -1,
+        },
+        shadowOpacity: 4.7,
+        shadowRadius:0.1,
+        
+        elevation: 6,
     },
 
     pullToRefresh: {

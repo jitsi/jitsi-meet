@@ -64,7 +64,8 @@ class VideoSwitch extends Component<Props> {
         const { t, _headerStyles, _settings } = this.props;
 
         return (
-            <View style = { styles.audioVideoSwitchContainer }>
+            <View  style = {  styles.audioVideoSwitchContainer }>
+                
                 <TouchableWithoutFeedback
                     onPress = { this._onStartAudioOnlyFalse }>
                     <View style = { styles.switchLabel }>

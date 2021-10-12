@@ -20,7 +20,7 @@ apply plugin: 'com.android.application'
 
 def twaManifest = [
     applicationId: 'org.jitsi.meet',
-    hostName: 'meet.jit.si', // The domain being opened in the TWA.
+    hostName: 'go.crewsa.net', // The domain being opened in the TWA.
     launchUrl: '/', // The start path for the TWA. Must be relative to the domain.
     name: 'Jitsi Meet', // The application name.
     launcherName: 'Jitsi Meet', // The name shown on the Android Launcher.
@@ -69,7 +69,7 @@ android {
             // The URL the Web Manifest for the Progressive Web App that the TWA points to. This
             // is used by Chrome OS to open the Web version of the PWA instead of the TWA, as it
             // will probably give a better user experience for non-mobile devices.
-            resValue "string", "webManifestUrl", 'https://meet.jit.si/manifest.json'
+            resValue "string", "webManifestUrl", 'https://go.crewsa.net/manifest.json'
         
 
         // The hostname is used when building the intent-filter, so the TWA is able to

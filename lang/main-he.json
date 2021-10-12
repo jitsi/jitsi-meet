@@ -29,7 +29,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "הוסף קישור מפגש",
-        "confirmAddLink": "האם ברצונך הוסיף קישור Jitsi לאירוע זה?",
+        "confirmAddLink": "האם ברצונך הוסיף קישור CREWSA לאירוע זה?",
         "error": {
             "appConfiguration": "שילוב לוח השנה אינו מוגדר כראוי.",
             "generic": "אירעה שגיאה. אנא בדוק את הגדרות לוח השנה שלך או נסה לרענן את לוח השנה.",

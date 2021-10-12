@@ -203,15 +203,47 @@ export default {
     /**
      * The body of the side bar where the items are.
      */
+    //#asd slide color
     sideBarBody: {
-        backgroundColor: ColorPalette.white,
-        flex: 1
+       backgroundColor: ColorPalette.white,
+        flex: 1,
+        // resizeMode: 'cover',
+        // justifyContent: 'center',
+        // alignItems: 'center',
+        
+        //paddingVertical: 5,
+        // paddingHorizontal: 30,
+        // margin:20        
     },
+    //#asd  background image
+  backgb: {
+     // backgroundColor:'rgba(255,0,0,0.5)',//'#757cb7',// ColorPalette.white,
+    // resizeMethod:"resize",
+        // paddingRight: (Platform.OS) === 'ios' ? 20 : 0
+       //  opacity: 0.6
+       //  marginRight: -0,
+      //   borderRadius: 50,
+    //  backgroundSize: 'cover',
+    flex: 1,
+   
+   
+      //   resizeMode: 'stretch',
+       //  width: '100%'
+        //  justifyContent: 'center',
+        //  alignItems: 'center',
+         
+         //paddingVertical: 5,
+         // paddingHorizontal: 30,
+         // margin:20        
+     },
+ 
 
     /**
      * The style of the side bar header.
      */
+    //#asd slide header color 
     sideBarHeader: {
+        backgroundColor: ColorPalette.darkGrey,
         alignItems: 'center',
         flexDirection: 'column',
         height: SIDEBAR_HEADER_HEIGHT,
@@ -223,6 +255,7 @@ export default {
      * Style of the menu items in the side bar.
      */
     sideBarItem: {
+        
         padding: 13
     },
 
@@ -230,6 +263,7 @@ export default {
      * The View inside the side bar buttons (icon + text).
      */
     sideBarItemButtonContainer: {
+     
         alignItems: 'center',
         flexDirection: 'row',
         justifyContent: 'flex-start'

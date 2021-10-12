@@ -27,8 +27,8 @@ local expired_status   = "expired"
 -- provided a room jid. It is required that muc domain mapping
 -- is enabled and configured. There are two url formats that are supported.
 -- The following urls are examples of the supported formats.
---     https://meet.jit.si/jitsi/ProductiveMeeting
---     https://meet.jit.si/MoreProductiveMeeting
+--     https://go.crewsa.net/jitsi/ProductiveMeeting
+--     https://go.crewsa.net/MoreProductiveMeeting
 -- The urls are derived from portions of the room jid.
 local function url_from_room_jid(room_jid)
     local node, _, _ = jid.split(room_jid)

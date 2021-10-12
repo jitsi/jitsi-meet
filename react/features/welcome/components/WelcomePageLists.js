@@ -9,7 +9,7 @@ import { connect } from '../../base/redux';
 import { CalendarList, isCalendarEnabled } from '../../calendar-sync';
 import { RecentList } from '../../recent-list';
 import { setWelcomePageListsDefaultPage } from '../actions';
-
+import styles, { PLACEHOLDER_TEXT_COLOR } from './styles';
 /**
  * The type of the React {@code Component} props of {@link WelcomePageLists}.
  */
@@ -88,7 +88,7 @@ class WelcomePageLists extends Component<Props> {
         }
 
         return (
-            <PagedList
+            <PagedList style = {styles.hintTextContainer }
                 defaultPage = { _defaultPage }
                 disabled = { this.props.disabled }
                 onSelectPage = { this._onSelectPage }

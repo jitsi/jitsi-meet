@@ -2,14 +2,10 @@
     "applinks": {
         "apps": [],
         "details": [
-            {
-                "appID": "BQNXB4G3KQ.org.jitsi.JitsiMeet.ios",
-                "paths": [ "*" ]
-            },
-            {
-                "appID": "UPXU4CQZ5P.com.atlassian.JitsiMeet.ios",
-                "paths": [ "*" ]
-            }
-        ]
+           {
+          "appID": "CJMR3AP54Q.com.example.crewmeetpro",
+         "paths": [ "*" ]
+         }
+          ]
     }
 }

@@ -82,7 +82,7 @@ class RecentList extends AbstractRecentList<Props> {
         const recentList = toDisplayableList(_recentList, t, _defaultServerURL);
 
         return (
-            <NavigateSectionList
+            <NavigateSectionList 
                 disabled = { disabled }
                 onLongPress = { this._onLongPress }
                 onPress = { this._onPress }

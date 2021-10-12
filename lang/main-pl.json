@@ -41,7 +41,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Dodaj odnośnik do spotkania",
-        "confirmAddLink": "Czy chcesz dodać odnośnik Jitsi do tego wydarzenia?",
+        "confirmAddLink": "Czy chcesz dodać odnośnik CREWSA do tego wydarzenia?",
         "error": {
             "appConfiguration": "Integracja z kalendarzem nie jest skonfigurowana poprawnie.",
             "generic": "Wystąpił problem. Sprawdź ustawienia kalendarza lub spróbuj odświeżyć kalendarz.",

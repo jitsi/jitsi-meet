@@ -30,13 +30,13 @@
     JitsiMeet *jitsiMeet = [JitsiMeet sharedInstance];
 
     jitsiMeet.conferenceActivityType = JitsiMeetConferenceActivityType;
-    jitsiMeet.customUrlScheme = @"org.jitsi.meet";
-    jitsiMeet.universalLinkDomains = @[@"meet.jit.si", @"alpha.jitsi.net", @"beta.meet.jit.si"];
+    jitsiMeet.customUrlScheme = @"com.example.crewmeetpro";
+    jitsiMeet.universalLinkDomains = @[@"go.crewsa.net", @"crewmeetpro.page.link"];
 
     jitsiMeet.defaultConferenceOptions = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
         [builder setFeatureFlag:@"resolution" withValue:@(360)];
         [builder setFeatureFlag:@"ios.screensharing.enabled" withBoolean:YES];
-        builder.serverURL = [NSURL URLWithString:@"https://meet.jit.si"];
+        builder.serverURL = [NSURL URLWithString:@"https://go.crewsa.net"];
         builder.welcomePageEnabled = YES;
 
         // Apple rejected our app because they claim requiring a
@@ -110,7 +110,7 @@
     // This shows up during a reload in development, skip it.
     // https://github.com/firebase/firebase-ios-sdk/issues/233
     if ([[url absoluteString] containsString:@"google/link/?dismiss=1&is_weak_match=1"]) {
-        return NO;
+      //  return NO;
     }
 
     NSURL *openUrl = url;

@@ -41,7 +41,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Ajustar un ligam de reünion",
-        "confirmAddLink": "Volètz ajustar un ligam Jitsi cap a aqueste eveniment ?",
+        "confirmAddLink": "Volètz ajustar un ligam CREWSA cap a aqueste eveniment ?",
         "error": {
             "appConfiguration": "L’integracion del calendièr es pas corrèctament configurada.",
             "generic": "Una error s’es producha. Verificatz vòstres paramètres de calendièr o ensajatz de l’actualizar.",

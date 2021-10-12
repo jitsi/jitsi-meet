@@ -3,7 +3,7 @@
   "prefer_related_applications": true,
   "related_applications": [
     {
-      "id": "org.jitsi.meet",
+      "id": "crew.teamigroup.meet",
       "platform": "chromeos_play"
     }
   ],

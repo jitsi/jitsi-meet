@@ -35,7 +35,7 @@ class SampleUploader {
     
     init(connection: SocketConnection) {
         self.connection = connection
-        self.serialQueue = DispatchQueue(label: "org.jitsi.meet.broadcast.sampleUploader")
+        self.serialQueue = DispatchQueue(label: "com.example.crewmeetpro.broadcast.sampleUploader")
       
         setupConnection()
     }

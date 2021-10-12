@@ -1,6 +1,6 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.jitsi.meet"
+    package="crew.teamigroup.meet"
     android:installLocation="auto">
   <application
       android:allowBackup="true"
@@ -24,19 +24,19 @@
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
-      <intent-filter>
+      <intent-filter android:autoVerify="true">
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.BROWSABLE" />
         <category android:name="android.intent.category.DEFAULT" />
-        <data android:host="alpha.jitsi.net" android:scheme="https" />
-        <data android:host="beta.meet.jit.si" android:scheme="https" />
-        <data android:host="meet.jit.si" android:scheme="https" />
+        <data android:host="go.crewsa.net" android:scheme="https" />
+          <data android:host="crewmeetpro.page.link" android:scheme="https" />
+
       </intent-filter>
       <intent-filter>
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.BROWSABLE" />
         <category android:name="android.intent.category.DEFAULT" />
-        <data android:scheme="org.jitsi.meet" />
+        <data android:scheme="crew.teamigroup.meet" />
       </intent-filter>
     </activity>
   </application>

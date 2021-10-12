@@ -41,7 +41,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "增加會議連結",
-        "confirmAddLink": "您要為此活動加入 Jitsi 連結嗎？",
+        "confirmAddLink": "您要為此活動加入 CREWSA 連結嗎？",
         "error": {
             "appConfiguration": "行事曆整合尚未正確設定。",
             "generic": "發生錯誤。請檢查行事曆設定，或是重新整理行事曆。",

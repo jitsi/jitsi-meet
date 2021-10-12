@@ -29,7 +29,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Afegeix un enllaç de reunió",
-        "confirmAddLink": "Voleu afegir un enllaç Jitsi en aquest esdeveniment?",
+        "confirmAddLink": "Voleu afegir un enllaç CREWSA en aquest esdeveniment?",
         "error": {
             "appConfiguration": "La integració de l'agenda no està configurada correctament.",
             "generic": "S'ha produït un error. Comproveu la configuració de l'agenda o intenteu d'actualitzar-la.",

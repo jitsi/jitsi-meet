@@ -32,12 +32,13 @@ export default {
         buttonBackground: ColorPalette.blue,
         buttonLabel: ColorPalette.white
     },
+    //#asd header color
     'Header': {
-        background: ColorPalette.blue,
-        icon: ColorPalette.white,
+        background:'transparent',// ColorPalette.blue,
+        icon: '#acb087',//ColorPalette.white,
         statusBar: ColorPalette.blueHighlight,
         statusBarContent: ColorPalette.white,
-        text: ColorPalette.white
+        text:'#acb087',// ColorPalette.white
     },
     'Modal': {},
     'LargeVideo': {

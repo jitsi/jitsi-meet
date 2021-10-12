@@ -29,7 +29,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Pievienot sapulces telpas saiti",
-        "confirmAddLink": "Vai vēlaties pievienot Jitsi saiti šim kalendāra notikumam?",
+        "confirmAddLink": "Vai vēlaties pievienot CREWSA saiti šim kalendāra notikumam?",
         "error": {
             "appConfiguration": "Nepareizi iestatīta kalendāra integrācija.",
             "generic": "Gadījās ķibele. Pārbaudiet kalendāra iestatījumus vai pamēģiniet to atsvaidzināt.",

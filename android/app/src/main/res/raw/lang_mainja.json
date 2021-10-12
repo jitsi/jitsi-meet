@@ -47,7 +47,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "ミーティングのリンクを追加する",
-        "confirmAddLink": "このイベントに Jitsi のリンクを追加しますか?",
+        "confirmAddLink": "このイベントに CREWSA のリンクを追加しますか?",
         "error": {
             "appConfiguration": "カレンダー統合が正しく設定されていません。",
             "generic": "エラーが発生しました。カレンダーの設定を確認するか、カレンダーを更新してください。",
@@ -950,7 +950,7 @@
         "goSmall": "GO",
         "info": "ダイアルイン情報",
         "join": "作成/参加",
-        "jitsiMeet": "Jitsi Meet",
+        "jitsiMeet": "CREWSA Meet",
         "jitsiOnMobile": "モバイル版 Jitsi – アプリをダウンロードして、どこからでも会議を開始できます",
         "moderatedMessage": "または、前もってあなたのみがモデレーターである<a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">ミーティングの URL をブックマークに登録</a>しましょう。",
         "privacy": "プライバシー",

@@ -29,7 +29,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Dodaj povezavo na srečanje",
-        "confirmAddLink": "Ali želite dodati Jitsi povezavo za ta dogodek?",
+        "confirmAddLink": "Ali želite dodati CREWSA povezavo za ta dogodek?",
         "error": {
             "appConfiguration": "Integracija koledarja ni pravilno nastavljena.",
             "generic": "Prišlo je do napake. Prosimo preverite nastavitve svojega koledarja ali poskusite koledar osvežiti.",

@@ -65,7 +65,7 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
     const dispatch = useDispatch();
 
     const localParticipant = useSelector(state => getParticipantById(state, localId));
-    const localName: string = localParticipant.name ? localParticipant.name : 'Fellow Jitster';
+    const localName: string = localParticipant.name ? localParticipant.name : 'CREWSA member';
 
     const submitAnswer = useCallback(() => {
         conference.sendMessage({

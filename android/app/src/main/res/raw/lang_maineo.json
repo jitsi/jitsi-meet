@@ -29,7 +29,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Aldoni ligilon al la kunveno",
-        "confirmAddLink": "Ĉu vi volas aldoni Jitsi-ligilon al ĉi tiu evento?",
+        "confirmAddLink": "Ĉu vi volas aldoni CREWSA-ligilon al ĉi tiu evento?",
         "error": {
             "appConfiguration": "Kalendara integrigo ne estas ĝuste agordita.",
             "generic": "Okazis eraro. Bonvolu kontroli viajn kalendarajn agordojn aŭ provu aktualigi la kalendaron.",

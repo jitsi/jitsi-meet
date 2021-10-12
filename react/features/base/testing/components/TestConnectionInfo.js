@@ -179,19 +179,19 @@ class TestConnectionInfo extends Component<Props, State> {
         return (
             <Fragment accessible = { false } >
                 <TestHint
-                    id = 'org.jitsi.meet.conference.connectionState'
+                    id = 'com.example.crewmeetpro.conference.connectionState'
                     value = { this.props._conferenceConnectionState } />
                 <TestHint
-                    id = 'org.jitsi.meet.conference.joinedState'
+                    id = 'com.example.crewmeetpro.conference.joinedState'
                     value = { this.props._conferenceJoinedState } />
                 <TestHint
-                    id = 'org.jitsi.meet.conference.grantModeratorAvailable'
+                    id = 'com.example.crewmeetpro.conference.grantModeratorAvailable'
                     value = { true } />
                 <TestHint
-                    id = 'org.jitsi.meet.conference.localParticipantRole'
+                    id = 'com.example.crewmeetpro.conference.localParticipantRole'
                     value = { this.props._localUserRole } />
                 <TestHint
-                    id = 'org.jitsi.meet.stats.rtp'
+                    id = 'com.example.crewmeetpro.stats.rtp'
                     value = { JSON.stringify(this.state.stats) } />
             </Fragment>
         );

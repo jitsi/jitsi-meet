@@ -6,7 +6,8 @@ import {
     TextInput,
     TouchableHighlight,
     TouchableOpacity,
-    View
+    View,
+    ImageBackground
 } from 'react-native';
 
 import { getName } from '../../app/functions';
@@ -278,13 +279,20 @@ class WelcomePage extends AbstractWelcomePage {
      *
      * @returns {ReactElement}
      */
+    //#asd main interface
     _renderFullUI() {
         const roomnameAccLabel = 'welcomepage.accessibilityLabel.roomname';
         const { _headerStyles, t } = this.props;
+        const image =require('../../../../images/bg2.jpg');
 
         return (
+
             <LocalVideoTrackUnderlay style = { styles.welcomePage }>
+
                 <View style = { _headerStyles.page }>
+                <ImageBackground source={image}  style = { styles.backgb } 
+>
+
                     <Header style = { styles.header }>
                         <TouchableOpacity onPress = { this._onShowSideBar } >
                             <Icon
@@ -293,8 +301,10 @@ class WelcomePage extends AbstractWelcomePage {
                         </TouchableOpacity>
                         <VideoSwitch />
                     </Header>
+                   
                     <SafeAreaView style = { styles.roomContainer } >
                         <View style = { styles.joinControls } >
+                        
                             <Text style = { styles.enterRoomText }>
                                 { t('welcomepage.roomname') }
                             </Text>
@@ -320,13 +330,19 @@ class WelcomePage extends AbstractWelcomePage {
                             {
                                 this._renderHintBox()
                             }
+                          
                         </View>
                     </SafeAreaView>
                     <WelcomePageLists disabled = { this.state._fieldFocused } />
+                    </ImageBackground>
+
                 </View>
+                
                 <WelcomePageSideBar />
                 { this._renderWelcomePageModals() }
+                
             </LocalVideoTrackUnderlay>
+
         );
     }
 
