@@ -562,7 +562,7 @@ function _raiseHandUpdated({ dispatch, getState }, conference, participantId, ne
             raiseHandNotification: true,
             concatText: true,
             ...action
-        }, NOTIFICATION_TIMEOUT.SHORT * (shouldDisplayAllowAction ? 2 : 1)));
+        },  (shouldDisplayAllowAction ? NOTIFICATION_TIMEOUT.MEDIUM : NOTIFICATION_TIMEOUT.SHORT)));
         dispatch(playSound(RAISE_HAND_SOUND_ID));
     }
 }
