@@ -211,7 +211,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                     'raw',
                     new Uint8Array(exportedKey),
                     'AES-GCM',
-                    true,
+                    false,
                     [ 'encrypt', 'decrypt' ])
                 .then(
                     encryptionKey => {
@@ -258,6 +258,12 @@ StateListenerRegistry.register(
  */
 function _updateMaxMode(dispatch, getState) {
     const state = getState();
+
+    const { e2ee = {} } = state['features/base/config'];
+
+    if (e2ee.externallyManagedKey) {
+        return;
+    }
 
     if (isMaxModeThresholdReached(state)) {
         dispatch(setE2EEMaxMode(MAX_MODE.THRESHOLD_EXCEEDED));
