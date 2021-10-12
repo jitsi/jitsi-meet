@@ -13,9 +13,11 @@ const PollAnswer = (props: AbstractProps) => {
         poll,
         setCheckbox,
         skipAnswer,
+        skipChangeVote,
         submitAnswer,
         t
     } = props;
+    const { changingVote } = poll;
 
     return (
         <div className = 'poll-answer'>
@@ -45,7 +47,7 @@ const PollAnswer = (props: AbstractProps) => {
                 <button
                     aria-label = { t('polls.answer.skip') }
                     className = 'poll-button poll-button-secondary poll-button-shortest'
-                    onClick = { skipAnswer } >
+                    onClick = { changingVote ? skipChangeVote : skipAnswer } >
                     <span>{t('polls.answer.skip')}</span>
                 </button>
                 <button

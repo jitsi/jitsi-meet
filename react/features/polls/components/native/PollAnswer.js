@@ -18,9 +18,11 @@ const PollAnswer = (props: AbstractProps) => {
         poll,
         setCheckbox,
         skipAnswer,
+        skipChangeVote,
         submitAnswer,
         t
     } = props;
+    const { changingVote } = poll;
 
     return (
         <View>
@@ -44,7 +46,7 @@ const PollAnswer = (props: AbstractProps) => {
                 <Button
                     color = '#3D3D3D'
                     mode = { BUTTON_MODES.CONTAINED }
-                    onPress = { skipAnswer }
+                    onPress = { changingVote ? skipChangeVote : skipAnswer }
                     style = { chatStyles.pollCreateButton } >
                     {t('polls.answer.skip')}
                 </Button>

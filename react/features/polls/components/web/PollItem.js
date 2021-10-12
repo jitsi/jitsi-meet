@@ -17,7 +17,7 @@ type Props = {
 }
 
 const PollItem = React.forwardRef<Props, HTMLElement>(({ pollId }, ref) => {
-    const showResults = useSelector(state => shouldShowResults(state, pollId));
+    const showResults = useSelector(shouldShowResults(pollId));
 
     return (
         <div ref = { ref }>
