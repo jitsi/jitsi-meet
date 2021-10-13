@@ -382,13 +382,13 @@ function VirtualBackground({
                 </div>
             ) : (
                 <div>
-                    {_showUploadButton
+                    {/* {_showUploadButton
                     && <UploadImageButton
                         setLoading = { setLoading }
                         setOptions = { setOptions }
                         setStoredImages = { setStoredImages }
                         showLabel = { previewIsLoaded }
-                        storedImages = { storedImages } />}
+                        storedImages = { storedImages } />} */}
                     <div
                         className = 'virtual-background-dialog'
                         role = 'radiogroup'
