@@ -37,6 +37,7 @@ const commands = {
     toggleLobby: 'toggle-lobby',
     hangup: 'video-hangup',
     initiatePrivateChat: 'initiate-private-chat',
+    grantModerator: 'grant-moderator',
     kickParticipant: 'kick-participant',
     muteEveryone: 'mute-everyone',
     overwriteConfig: 'overwrite-config',

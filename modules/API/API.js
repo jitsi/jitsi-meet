@@ -37,6 +37,7 @@ import {
     getLocalParticipant,
     getParticipantById,
     pinParticipant,
+    grantModerator,
     kickParticipant,
     raiseHand,
     isParticipantModerator,
@@ -520,6 +521,9 @@ function initCommands() {
         },
         'cancel-private-chat': () => {
             APP.store.dispatch(setPrivateMessageRecipient());
+        },
+        'grant-moderator': participantId => {
+            APP.store.dispatch(grantModerator(participantId));
         },
         'kick-participant': participantId => {
             APP.store.dispatch(kickParticipant(participantId));
