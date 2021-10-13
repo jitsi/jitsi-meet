@@ -3,6 +3,7 @@
 // Apply all necessary polyfills as early as possible to make sure anything imported henceforth
 // sees them.
 import './features/mobile/polyfills';
+import 'react-native-get-random-values';
 
 import React, { PureComponent } from 'react';
 import { AppRegistry } from 'react-native';

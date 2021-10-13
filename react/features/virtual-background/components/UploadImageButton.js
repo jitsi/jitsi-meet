@@ -1,7 +1,6 @@
 // @flow
 
 import React, { useCallback, useRef } from 'react';
-import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 
 import { translate } from '../../base/i18n';
