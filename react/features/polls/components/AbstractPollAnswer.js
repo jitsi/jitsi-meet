@@ -5,6 +5,7 @@ import type { AbstractComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { sendAnalytics, createPollEvent } from '../../analytics';
 import { getLocalParticipant, getParticipantById } from '../../base/participants';
 import { registerVote } from '../actions';
 import { COMMAND_ANSWER_POLL } from '../constants';
@@ -60,6 +61,7 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
 
         newCheckBoxStates[index] = state;
         setCheckBoxState(newCheckBoxStates);
+        sendAnalytics(createPollEvent('vote.checked'));
     }, [ checkBoxStates ]);
 
     const dispatch = useDispatch();
@@ -76,6 +78,7 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
             answers: checkBoxStates
         });
 
+        sendAnalytics(createPollEvent('vote.sent'));
         dispatch(registerVote(pollId, checkBoxStates));
 
         return false;
@@ -83,6 +86,7 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
 
     const skipAnswer = useCallback(() => {
         dispatch(registerVote(pollId, null));
+        sendAnalytics(createPollEvent('vote.skipped'));
 
     }, [ pollId ]);
 
