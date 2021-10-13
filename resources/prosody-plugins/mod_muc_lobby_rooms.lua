@@ -328,6 +328,12 @@ process_host_module(main_muc_component_config, function(host_module, host)
             whitelistJoin = true;
         end
 
+        local session = event.origin;
+        if session.auth_token ~= nil then
+           module:log("info","Vinay: session.auth_token = %s",session.auth_token);
+            whitelistJoin = true;
+        end
+
         local password = join:get_child_text('password', MUC_NS);
         if password and room:get_password() and password == room:get_password() then
             whitelistJoin = true;
