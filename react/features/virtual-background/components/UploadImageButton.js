@@ -1,7 +1,8 @@
 // @flow
 
 import React, { useCallback, useRef } from 'react';
-import uuid from 'uuid';
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
 
 import { translate } from '../../base/i18n';
 import { Icon, IconPlusCircle } from '../../base/icons';
@@ -72,7 +73,7 @@ function UploadImageButton({
         reader.readAsDataURL(imageFile[0]);
         reader.onload = async () => {
             const url = await resizeImage(reader.result);
-            const uuId = uuid.v4();
+            const uuId = uuidv4();
 
             setStoredImages([
                 ...storedImages,

@@ -1,7 +1,8 @@
 // @flow
 
 import { Alert, NativeModules, Platform } from 'react-native';
-import uuid from 'uuid';
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
 
 import { createTrackMutedEvent, sendAnalytics } from '../../analytics';
 import { appNavigate } from '../../app/actions';
@@ -271,7 +272,7 @@ function _conferenceWillJoin({ dispatch, getState }, next, action) {
 
     // When assigning the call UUID, do so in upper case, since iOS will return
     // it upper cased.
-    conference.callUUID = (callUUID || uuid.v4()).toUpperCase();
+    conference.callUUID = (callUUID || uuidv4()).toUpperCase();
 
     CallIntegration.startCall(conference.callUUID, handle, hasVideo)
         .then(() => {
