@@ -105,7 +105,7 @@ MiddlewareRegistry.register(store => next => action => {
                 conference,
                 id,
                 local: isLocal,
-                raisedHand: false
+                raisedHand: 0
             }));
         }
 
@@ -127,13 +127,8 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case LOCAL_PARTICIPANT_RAISE_HAND: {
-        const { enabled } = action;
+        const { raisedHand } = action;
         const localId = getLocalParticipant(store.getState())?.id;
-
-        store.dispatch(raiseHandUpdateQueue({
-            id: localId,
-            raisedHand: enabled
-        }));
 
         store.dispatch(participantUpdated({
             // XXX Only the local participant is allowed to update without
@@ -144,11 +139,16 @@ MiddlewareRegistry.register(store => next => action => {
 
             id: localId,
             local: true,
-            raisedHand: enabled
+            raisedHand
+        }));
+
+        store.dispatch(raiseHandUpdateQueue({
+            id: localId,
+            raisedHand
         }));
 
         if (typeof APP !== 'undefined') {
-            APP.API.notifyRaiseHandUpdated(localId, enabled);
+            APP.API.notifyRaiseHandUpdated(localId, raisedHand);
         }
 
         break;
@@ -177,16 +177,22 @@ MiddlewareRegistry.register(store => next => action => {
 
     case RAISE_HAND_UPDATED: {
         const { participant } = action;
-        const queue = getRaiseHandsQueue(store.getState());
+        let queue = getRaiseHandsQueue(store.getState());
 
         if (participant.raisedHand) {
-            queue.push(participant.id);
-            action.queue = queue;
-        } else {
-            const filteredQueue = queue.filter(id => id !== participant.id);
+            queue.push({
+                id: participant.id,
+                raisedHandTimestamp: participant.raisedHand
+            });
 
-            action.queue = filteredQueue;
+            // sort the queue before adding to store.
+            queue = queue.sort(({ raisedHandTimestamp: a }, { raisedHandTimestamp: b }) => a - b);
+        } else {
+            // no need to sort on remove value.
+            queue = queue.filter(({ id }) => id !== participant.id);
         }
+
+        action.queue = queue;
         break;
     }
 
@@ -287,7 +293,8 @@ StateListenerRegistry.register(
                         id: participant.getId(),
                         features: { 'screen-sharing': true }
                     })),
-                'raisedHand': (participant, value) => _raiseHandUpdated(store, conference, participant.getId(), value),
+                'raisedHand': (participant, value) =>
+                    _raiseHandUpdated(store, conference, participant.getId(), value),
                 'remoteControlSessionStatus': (participant, value) =>
                     store.dispatch(participantUpdated({
                         conference,
@@ -320,7 +327,7 @@ StateListenerRegistry.register(
 
             // We left the conference, the local participant must be updated.
             _e2eeUpdated(store, conference, localParticipantId, false);
-            _raiseHandUpdated(store, conference, localParticipantId, false);
+            _raiseHandUpdated(store, conference, localParticipantId, 0);
         }
     }
 );
@@ -459,10 +466,11 @@ function _participantJoinedOrUpdated(store, next, action) {
 
         if (local) {
             const { conference } = getState()['features/base/conference'];
+            const rHand = parseInt(raisedHand, 10);
 
             // Send raisedHand signalling only if there is a change
-            if (conference && raisedHand !== getLocalParticipant(getState()).raisedHand) {
-                conference.setLocalParticipantProperty('raisedHand', raisedHand);
+            if (conference && rHand !== getLocalParticipant(getState()).raisedHand) {
+                conference.setLocalParticipantProperty('raisedHand', rHand);
             }
         }
     }
@@ -508,7 +516,19 @@ function _participantJoinedOrUpdated(store, next, action) {
  * @returns {void}
  */
 function _raiseHandUpdated({ dispatch, getState }, conference, participantId, newValue) {
-    const raisedHand = newValue === 'true';
+    let raisedHand;
+
+    switch (newValue) {
+    case undefined:
+    case 'false':
+        raisedHand = 0;
+        break;
+    case 'true':
+        raisedHand = Date.now();
+        break;
+    default:
+        raisedHand = parseInt(newValue, 10);
+    }
     const state = getState();
 
     dispatch(participantUpdated({

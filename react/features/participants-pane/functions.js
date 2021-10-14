@@ -211,7 +211,7 @@ export function getSortedParticipantIds(stateful: Object | Function): Array<stri
     const { id } = getLocalParticipant(stateful);
     const remoteParticipants = getRemoteParticipantsSorted(stateful);
     const reorderedParticipants = new Set(remoteParticipants);
-    const raisedHandParticipants = getRaiseHandsQueue(stateful);
+    const raisedHandParticipants = getRaiseHandsQueue(stateful).map(({ id: particId }) => particId);
     const remoteRaisedHandParticipants = new Set(raisedHandParticipants || []);
     const dominantSpeaker = getDominantSpeakerParticipant(stateful);
 
@@ -219,15 +219,11 @@ export function getSortedParticipantIds(stateful: Object | Function): Array<stri
         // Avoid duplicates.
         if (reorderedParticipants.has(participant)) {
             reorderedParticipants.delete(participant);
-        } else {
-            remoteRaisedHandParticipants.delete(participant);
         }
     }
 
-    // Remove self.
-    remoteRaisedHandParticipants.delete(id);
-
     const dominant = [];
+    const local = remoteRaisedHandParticipants.has(id) ? [] : [ id ];
 
     // Remove dominant speaker.
     if (dominantSpeaker && dominantSpeaker.id !== id) {
@@ -239,7 +235,7 @@ export function getSortedParticipantIds(stateful: Object | Function): Array<stri
     // Move self and participants with raised hand to the top of the list.
     return [
         ...dominant,
-        id,
+        ...local,
         ...Array.from(remoteRaisedHandParticipants.keys()),
         ...Array.from(reorderedParticipants.keys())
     ];
