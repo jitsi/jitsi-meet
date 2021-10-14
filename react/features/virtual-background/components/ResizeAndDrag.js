@@ -112,7 +112,7 @@ function ResizeAndDrag({ _currentCameraDeviceId, _virtualBackground, dispatch, s
                 try {
                     const [ desktopTrack ] = await createLocalTracksF({
                         devices: [ 'desktop' ],
-                        virtualBackgroundSharing: true
+                        shareDesktopAudio: true
                     });
 
                     url = desktopTrack;
