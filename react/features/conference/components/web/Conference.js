@@ -17,7 +17,7 @@ import { KnockingParticipantList, LobbyScreen } from '../../../lobby';
 import { getIsLobbyVisible } from '../../../lobby/functions';
 import { ParticipantsPane } from '../../../participants-pane/components/web';
 import { getParticipantsPaneOpen } from '../../../participants-pane/functions';
-import { Prejoin, isPrejoinPageVisible, isPrejoinPageLoading } from '../../../prejoin';
+import { Prejoin, isPrejoinPageVisible } from '../../../prejoin';
 import { fullScreenChanged, showToolbox } from '../../../toolbox/actions.web';
 import { JitsiPortal, Toolbox } from '../../../toolbox/components/web';
 import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
@@ -391,7 +391,7 @@ function _mapStateToProps(state) {
         _overflowDrawer: overflowDrawer,
         _roomName: getConferenceNameForTitle(state),
         _showLobby: getIsLobbyVisible(state),
-        _showPrejoin: isPrejoinPageVisible(state) || isPrejoinPageLoading(state)
+        _showPrejoin: isPrejoinPageVisible(state)
     };
 }
 
