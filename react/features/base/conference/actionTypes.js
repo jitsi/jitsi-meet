@@ -22,6 +22,16 @@ export const AUTH_STATUS_CHANGED = 'AUTH_STATUS_CHANGED';
 export const CONFERENCE_FAILED = 'CONFERENCE_FAILED';
 
 /**
+ * The type of (redux) action which signals that a specific conference is joining.
+ *
+ * {
+ *     type: CONFERENCE_JOIN_IN_PROGRESS,
+ *     conference: JitsiConference
+ * }
+ */
+export const CONFERENCE_JOIN_IN_PROGRESS = 'CONFERENCE_JOIN_IN_PROGRESS';
+
+/**
  * The type of (redux) action which signals that a specific conference was
  * joined.
  *

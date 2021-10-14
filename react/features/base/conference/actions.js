@@ -27,6 +27,7 @@ import { getBackendSafeRoomName } from '../util';
 import {
     AUTH_STATUS_CHANGED,
     CONFERENCE_FAILED,
+    CONFERENCE_JOIN_IN_PROGRESS,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     CONFERENCE_SUBJECT_CHANGED,
@@ -282,6 +283,22 @@ export function conferenceFailed(conference: Object, error: string, ...params: a
 export function conferenceJoined(conference: Object) {
     return {
         type: CONFERENCE_JOINED,
+        conference
+    };
+}
+
+/**
+ * Signals that a specific conference is joining.
+ *
+ * @param {JitsiConference} conference - The JitsiConference instance which is joining by the local participant.
+ * @returns {{
+ *     type: CONFERENCE_JOIN_IN_PROGRESS,
+ *     conference: JitsiConference
+ * }}
+ */
+export function conferenceJoinInProgress(conference: Object) {
+    return {
+        type: CONFERENCE_JOIN_IN_PROGRESS,
         conference
     };
 }

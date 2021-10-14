@@ -34,6 +34,7 @@ import {
     commonUserLeftHandling,
     conferenceFailed,
     conferenceJoined,
+    conferenceJoinInProgress,
     conferenceLeft,
     conferenceSubjectChanged,
     conferenceTimestampChanged,
@@ -2004,6 +2005,9 @@ export default {
         // add local streams when joined to the conference
         room.on(JitsiConferenceEvents.CONFERENCE_JOINED, () => {
             this._onConferenceJoined();
+        });
+        room.on(JitsiConferenceEvents.CONFERENCE_JOIN_IN_PROGRESS, () => {
+            APP.store.dispatch(conferenceJoinInProgress(room));
         });
 
         room.on(

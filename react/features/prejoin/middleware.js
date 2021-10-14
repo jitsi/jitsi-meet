@@ -1,6 +1,10 @@
 // @flow
 
-import { CONFERENCE_FAILED, CONFERENCE_JOINED } from '../base/conference';
+import {
+    CONFERENCE_FAILED,
+    CONFERENCE_JOIN_IN_PROGRESS,
+    CONFERENCE_JOINED
+} from '../base/conference';
 import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../base/media';
 import { MiddlewareRegistry } from '../base/redux';
 import { updateSettings } from '../base/settings';
@@ -69,6 +73,9 @@ MiddlewareRegistry.register(store => next => async action => {
     case CONFERENCE_FAILED:
         store.dispatch(setJoiningInProgress(false));
         break;
+    case CONFERENCE_JOIN_IN_PROGRESS:
+        store.dispatch(setPrejoinPageVisibility(false));
+        break;
     case CONFERENCE_JOINED:
         return _conferenceJoined(store, next, action);
     }
@@ -85,7 +92,6 @@ MiddlewareRegistry.register(store => next => async action => {
  * @returns {Object}
  */
 function _conferenceJoined({ dispatch }, next, action) {
-    dispatch(setPrejoinPageVisibility(false));
     dispatch(setJoiningInProgress(false));
 
     return next(action);
