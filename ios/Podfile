@@ -57,6 +57,7 @@ target 'JitsiMeetSDK' do
   pod 'amplitude-react-native', :path => '../node_modules/@amplitude/react-native'
   pod 'react-native-background-timer', :path => '../node_modules/react-native-background-timer'
   pod 'react-native-calendar-events', :path => '../node_modules/react-native-calendar-events'
+  pod 'react-native-get-random-values', :path => '../node_modules/react-native-get-random-values'
   pod 'react-native-keep-awake', :path => '../node_modules/react-native-keep-awake'
   pod 'react-native-netinfo', :path => '../node_modules/@react-native-community/netinfo'
   pod 'react-native-performance', :path => '../node_modules/react-native-performance/ios'
