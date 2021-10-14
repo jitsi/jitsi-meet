@@ -259,8 +259,6 @@ export function joinConference(options?: Object, ignoreJoiningInProgress: boolea
 
         const jitsiTracks = localTracks.map(t => t.jitsiTrack);
 
-        dispatch(setPrejoinPageVisibility(false));
-
         APP.conference.prejoinStart(jitsiTracks);
     };
 }
