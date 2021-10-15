@@ -6,6 +6,7 @@ import { Button } from 'react-native-paper';
 
 import { Icon, IconClose } from '../../../base/icons';
 import { BUTTON_MODES } from '../../../chat/constants';
+import { CHAR_LIMIT } from '../../constants';
 import AbstractPollCreate from '../AbstractPollCreate';
 import type { AbstractProps } from '../AbstractPollCreate';
 
@@ -105,6 +106,7 @@ const PollCreate = (props: AbstractProps) => {
                 style = { dialogStyles.optionContainer }>
                 <TextInput
                     blurOnSubmit = { false }
+                    maxLength = { CHAR_LIMIT }
                     multiline = { true }
                     onChangeText = { text => setAnswer(index, text) }
                     onKeyPress = { ev => onAnswerKeyDown(index, ev) }
@@ -125,6 +127,7 @@ const PollCreate = (props: AbstractProps) => {
                 <TextInput
                     autoFocus = { true }
                     blurOnSubmit = { false }
+                    maxLength = { CHAR_LIMIT }
                     multiline = { true }
                     onChangeText = { setQuestion }
                     onSubmitEditing = { onQuestionKeyDown }
