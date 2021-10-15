@@ -8,7 +8,12 @@ type Props = {
     /**
      * The component(s) to be displayed within the drawer portal.
      */
-    children: React$Node
+    children: React$Node,
+
+    /**
+     * Class name used to add custom styles to the portal.
+     */
+    className?: string
 };
 
 /**
@@ -17,12 +22,12 @@ type Props = {
  *
  * @returns {ReactElement}
  */
-function DrawerPortal({ children }: Props) {
+function JitsiPortal({ children, className }: Props) {
     return (
-        <DialogPortal className = 'drawer-portal'>
+        <DialogPortal className = { `drawer-portal ${className ?? ''}` }>
             { children }
         </DialogPortal>
     );
 }
 
-export default DrawerPortal;
+export default JitsiPortal;

@@ -542,7 +542,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Amplitude: 263118b9e691e73a1c864b05bb08a3aff3636d16
-  amplitude-react-native: 833a4bd7f656f826bda1de01a7b8593b58842209
+  amplitude-react-native: 9369759dc6d01590aeb6261f714d53beaebc7e6f
   AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   CocoaLumberjack: 2f44e60eb91c176d471fdba43b9e3eae6a721947
@@ -576,16 +576,16 @@ SPEC CHECKSUMS:
   React-jsi: ddb471a56185e4007835a1bba0882ecb5ce3dc0e
   React-jsiexecutor: 67106691c60030ec888d7cbbc4f48a3168e27a02
   React-jsinspector: 92ceee6c66dc19886289b52436ade7e020b89602
-  react-native-background-timer: e0384ea2fa5a98f67f84f9c4dc274260ddd674ed
-  react-native-calendar-events: 1442fad71a00388f933cfa25512588fec300fcf8
-  react-native-keep-awake: eba3137546b10003361b37c761f6c429b59814ae
-  react-native-netinfo: 8d8db463bcc5db66a8ac5c48a7d86beb3b92f61a
-  react-native-performance: 8edfa2bbc9a2af4a02f01d342118e413a95145e0
-  react-native-slider: b733e17fdd31186707146debf1f04b5d94aa1a93
+  react-native-background-timer: 029c606b3fd6dd476b153e177c518b6ade4c169f
+  react-native-calendar-events: 82dc6c915653a1a8a266e43fdbbfdb3b1022ca99
+  react-native-keep-awake: afad8a51dfef9fe9655a6344771be32c8596d774
+  react-native-netinfo: 0e563248a4b9a99c33ec29bd03c2d50767db22a6
+  react-native-performance: 6bd6cfac80594775fb782405fceaaf206becf53b
+  react-native-slider: e99fc201cefe81270fc9d81714a7a0f5e566b168
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
-  react-native-video: 1574074179ecaf6a9dd067116c8f31bf9fec15c8
+  react-native-video: 0bb76b6d6b77da3009611586c7dbf817b947f30e
   react-native-webrtc: 41526e4060dac373c18676f866962d4180ee47b9
-  react-native-webview: b2542d6fd424bcc3e3b2ec5f854f0abb4ec86c87
+  react-native-webview: dfd7202ff115c44d3ea401c2f36122fb3ac79f07
   React-RCTActionSheet: bcbc311dc3b47bc8efb2737ff0940239a45789a9
   React-RCTAnimation: 65f61080ce632f6dea23d52e354ffac9948396c6
   React-RCTBlob: 70d88f7b68b5c44953cdb286ac2e36a7a509a97e
@@ -596,11 +596,11 @@ SPEC CHECKSUMS:
   React-RCTText: 4f1b99f228278d2a5e9008eced8dc9c974c4a270
   React-RCTVibration: c1041024893fdfdb8371e7c720c437751b711676
   ReactCommon: 18014e1d98dbeb9141e935cfe35fc93bd511ffb6
-  RNCAsyncStorage: 8324611026e8dc3706f829953aa6e3899f581589
-  RNDefaultPreference: 56a405ce61033ac77b95004dccd7ac54c2eb50d1
-  RNDeviceInfo: 72ded653ce636b3f03571e90bed99309a714944e
+  RNCAsyncStorage: 56a3355a10b5d660c48c6e37325ac85ebfd09885
+  RNDefaultPreference: 1f8133ec0bc0f9453cdada578564ba1ef551fb44
+  RNDeviceInfo: 87d2d175c760f6bcf58acd036f887e8b2392802c
   RNGoogleSignin: 39336070b35fc4cea6a98cf111e00480317be0ae
-  RNSound: c980916b596cc15c8dcd2f6ecd3b13c4881dbe20
+  RNSound: da030221e6ac7e8290c6b43f2b5f2133a8e225b0
   RNSVG: ce9d996113475209013317e48b05c21ee988d42e
   RNWatch: a5320c959c75e72845c07985f3e935e58998f1d3
   Yoga: 96b469c5e81ff51b917b92e8c3390642d4ded30c

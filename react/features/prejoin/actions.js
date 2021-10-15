@@ -37,7 +37,6 @@ import {
     SET_PREJOIN_PAGE_VISIBILITY,
     SET_DEVICE_STATUS
 } from './actionTypes';
-import { type PREJOIN_SCREEN_STATE, PREJOIN_SCREEN_STATES } from './constants';
 import {
     getFullDialOutNumber,
     getDialOutConferenceUrl,
@@ -260,7 +259,7 @@ export function joinConference(options?: Object, ignoreJoiningInProgress: boolea
 
         const jitsiTracks = localTracks.map(t => t.jitsiTrack);
 
-        dispatch(setPrejoinPageVisibility(PREJOIN_SCREEN_STATES.LOADING));
+        dispatch(setPrejoinPageVisibility(false));
 
         APP.conference.prejoinStart(jitsiTracks);
     };
@@ -556,10 +555,10 @@ export function setPrejoinDeviceErrors(value: Object) {
 /**
  * Action used to set the visibility of the prejoin page.
  *
- * @param {string} value - The value.
+ * @param {boolean} value - The value.
  * @returns {Object}
  */
-export function setPrejoinPageVisibility(value: PREJOIN_SCREEN_STATE) {
+export function setPrejoinPageVisibility(value: boolean) {
     return {
         type: SET_PREJOIN_PAGE_VISIBILITY,
         value
