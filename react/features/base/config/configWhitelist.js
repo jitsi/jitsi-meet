@@ -172,6 +172,7 @@ export default [
     'maxFullResolutionParticipants',
     'mouseMoveCallbackInterval',
     'notifications',
+    'notificationTimeouts',
     'openSharedDocumentOnJoin',
     'opusMaxAverageBitrate',
     'p2p',

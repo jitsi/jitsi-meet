@@ -2,7 +2,7 @@
 
 import UIEvents from '../../../../service/UI/UIEvents';
 import { processExternalDeviceRequest } from '../../device-selection';
-import { NOTIFICATION_TIMEOUT, showNotification, showWarningNotification } from '../../notifications';
+import { NOTIFICATION_TIMEOUT_TYPE, showNotification, showWarningNotification } from '../../notifications';
 import { replaceAudioTrackById, replaceVideoTrackById, setDeviceStatusWarning } from '../../prejoin/actions';
 import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
@@ -132,7 +132,7 @@ MiddlewareRegistry.register(store => next => action => {
             description: additionalCameraErrorMsg,
             descriptionKey: cameraErrorMsg,
             titleKey
-        }, NOTIFICATION_TIMEOUT.MEDIUM));
+        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
 
         if (isPrejoinPageVisible(store.getState())) {
             store.dispatch(setDeviceStatusWarning(titleKey));
@@ -161,7 +161,7 @@ MiddlewareRegistry.register(store => next => action => {
             description: additionalMicErrorMsg,
             descriptionKey: micErrorMsg,
             titleKey
-        }, NOTIFICATION_TIMEOUT.MEDIUM));
+        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
 
         if (isPrejoinPageVisible(store.getState())) {
             store.dispatch(setDeviceStatusWarning(titleKey));

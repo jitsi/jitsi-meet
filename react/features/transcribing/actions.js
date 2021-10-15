@@ -1,7 +1,7 @@
 // @flow
 
 import {
-    NOTIFICATION_TIMEOUT,
+    NOTIFICATION_TIMEOUT_TYPE,
     hideNotification,
     showErrorNotification,
     showNotification
@@ -127,7 +127,7 @@ export function showStoppedTranscribingNotification() {
     return showNotification({
         descriptionKey: 'transcribing.off',
         titleKey: 'dialog.transcribing'
-    }, NOTIFICATION_TIMEOUT.SHORT);
+    }, NOTIFICATION_TIMEOUT_TYPE.SHORT);
 }
 
 

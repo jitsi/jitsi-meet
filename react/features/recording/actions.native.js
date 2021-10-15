@@ -1,7 +1,7 @@
 // @flow
 
 import JitsiMeetJS from '../base/lib-jitsi-meet';
-import { NOTIFICATION_TIMEOUT, showNotification } from '../notifications';
+import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../notifications';
 
 export * from './actions.any';
 
@@ -37,6 +37,6 @@ export function showRecordingLimitNotification(streamType: string) {
             descriptionKey,
             titleKey,
             maxLines: 2
-        }, NOTIFICATION_TIMEOUT.LONG));
+        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
     };
 }

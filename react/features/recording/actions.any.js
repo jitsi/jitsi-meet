@@ -6,7 +6,7 @@ import { getLocalParticipant, getParticipantDisplayName } from '../base/particip
 import { copyText } from '../base/util/helpers';
 import { getVpaasTenant, isVpaasMeeting } from '../jaas/functions';
 import {
-    NOTIFICATION_TIMEOUT,
+    NOTIFICATION_TIMEOUT_TYPE,
     hideNotification,
     showErrorNotification,
     showNotification,
@@ -149,7 +149,7 @@ export function showStoppedRecordingNotification(streamType: string, participant
         titleKey: 'dialog.recording'
     };
 
-    return showNotification(dialogProps, NOTIFICATION_TIMEOUT.SHORT);
+    return showNotification(dialogProps, NOTIFICATION_TIMEOUT_TYPE.SHORT);
 }
 
 /**
@@ -221,7 +221,7 @@ export function showStartedRecordingNotification(
             }
         }
 
-        dispatch(showNotification(dialogProps, NOTIFICATION_TIMEOUT.SHORT));
+        dispatch(showNotification(dialogProps, NOTIFICATION_TIMEOUT_TYPE.SHORT));
     };
 }
 

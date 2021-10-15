@@ -7,7 +7,17 @@ export const NOTIFICATION_TIMEOUT = {
     SHORT: 2500,
     MEDIUM: 5000,
     LONG: 10000,
-    STICKY: true
+    STICKY: Infinity
+};
+
+/**
+ * Notification timeout type.
+ */
+export const NOTIFICATION_TIMEOUT_TYPE = {
+    SHORT: 'short',
+    MEDIUM: 'medium',
+    LONG: 'long',
+    STICKY: 'sticky'
 };
 
 /**

@@ -1,7 +1,7 @@
 /* global APP */
 
 import {
-    NOTIFICATION_TIMEOUT,
+    NOTIFICATION_TIMEOUT_TYPE,
     showErrorNotification,
     showNotification,
     showWarningNotification
@@ -79,7 +79,7 @@ const messageHandler = {
             cls,
             messageKey,
             messageArguments,
-            timeout = NOTIFICATION_TIMEOUT.SHORT) {
+            timeout = NOTIFICATION_TIMEOUT_TYPE.SHORT) {
         APP.store.dispatch(showNotification({
             descriptionArguments: messageArguments,
             descriptionKey: messageKey,

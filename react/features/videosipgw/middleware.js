@@ -7,7 +7,7 @@ import {
 } from '../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../base/redux';
 import {
-    NOTIFICATION_TIMEOUT,
+    NOTIFICATION_TIMEOUT_TYPE,
     showErrorNotification,
     showNotification,
     showWarningNotification
@@ -149,7 +149,7 @@ function _sessionStateChanged(
             titleArguments: {
                 displayName: event.displayName
             }
-        }, NOTIFICATION_TIMEOUT.SHORT);
+        }, NOTIFICATION_TIMEOUT_TYPE.SHORT);
     }
     case JitsiSIPVideoGWStatus.STATE_FAILED: {
         return showErrorNotification({

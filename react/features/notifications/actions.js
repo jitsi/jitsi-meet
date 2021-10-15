@@ -1,5 +1,6 @@
 // @flow
 
+/* global APP */
 import throttle from 'lodash/throttle';
 import type { Dispatch } from 'redux';
 
@@ -14,10 +15,31 @@ import {
     SHOW_NOTIFICATION
 } from './actionTypes';
 import {
+    NOTIFICATION_TIMEOUT_TYPE,
     NOTIFICATION_TIMEOUT,
     NOTIFICATION_TYPE,
     SILENT_JOIN_THRESHOLD
 } from './constants';
+
+/**
+ * Function that returns notification timeout value based on notification timeout type.
+ *
+ * @param {string} type - Notification type.
+ * @returns {number}
+ */
+function getNotificationTimeout(type) {
+    const { notificationTimeouts } = APP.store.getState()['features/base/config'];
+
+    if (type === NOTIFICATION_TIMEOUT_TYPE.SHORT) {
+        return notificationTimeouts?.short ?? NOTIFICATION_TIMEOUT.SHORT;
+    } else if (type === NOTIFICATION_TIMEOUT_TYPE.MEDIUM) {
+        return notificationTimeouts?.medium ?? NOTIFICATION_TIMEOUT.MEDIUM;
+    } else if (type === NOTIFICATION_TIMEOUT_TYPE.LONG) {
+        return notificationTimeouts?.long ?? NOTIFICATION_TIMEOUT.LONG;
+    }
+
+    return NOTIFICATION_TIMEOUT.STICKY;
+}
 
 /**
  * Clears (removes) all the notifications.
@@ -95,11 +117,10 @@ export function showErrorNotification(props: Object) {
  * Queues a notification for display.
  *
  * @param {Object} props - The props needed to show the notification component.
- * @param {number} timeout - How long the notification should display before
- * automatically being hidden.
+ * @param {string} type - Notification type.
  * @returns {Function}
  */
-export function showNotification(props: Object = {}, timeout: ?number) {
+export function showNotification(props: Object = {}, type: ?string) {
     return function(dispatch: Function, getState: Function) {
         const { notifications } = getState()['features/base/config'];
         const enabledFlag = getFeatureFlag(getState(), NOTIFICATIONS_ENABLED, true);
@@ -113,7 +134,7 @@ export function showNotification(props: Object = {}, timeout: ?number) {
             return dispatch({
                 type: SHOW_NOTIFICATION,
                 props,
-                timeout,
+                timeout: getNotificationTimeout(type),
                 uid: props.uid || window.Date.now().toString()
             });
         }
@@ -124,15 +145,14 @@ export function showNotification(props: Object = {}, timeout: ?number) {
  * Queues a warning notification for display.
  *
  * @param {Object} props - The props needed to show the notification component.
- * @param {number} timeout - How long the notification should display before
- * automatically being hidden.
+ * @param {string} type - Notification type.
  * @returns {Object}
  */
-export function showWarningNotification(props: Object, timeout: ?number) {
+export function showWarningNotification(props: Object, type: ?string) {
     return showNotification({
         ...props,
         appearance: NOTIFICATION_TYPE.WARNING
-    }, timeout);
+    }, getNotificationTimeout(type));
 }
 
 /**
@@ -192,7 +212,7 @@ const _throttledNotifyParticipantConnected = throttle((dispatch: Dispatch<any>, 
 
     if (notificationProps) {
         dispatch(
-            showNotification(notificationProps, NOTIFICATION_TIMEOUT.SHORT));
+            showNotification(notificationProps, NOTIFICATION_TIMEOUT_TYPE.SHORT));
     }
 
     joinedParticipantsNames = [];
