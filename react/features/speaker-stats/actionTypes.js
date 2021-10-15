@@ -37,3 +37,21 @@ export const UPDATE_STATS = 'UPDATE_STATS';
  * }
  */
 export const INIT_REORDER_STATS = 'INIT_REORDER_STATS';
+
+/**
+ * The type of the action which signals the cancellation the speaker stats panel.
+ *
+ * {
+ *     type: CLOSE_SPEAKER_STATS
+ * }
+ */
+export const CLOSE_SPEAKER_STATS = 'CLOSE_SPEAKER_STATS';
+
+/**
+ * The type of the action which signals to display the speaker stats panel.
+ *
+ * {
+ *     type: OPEN_CHAT
+ * }
+ */
+export const OPEN_SPEAKER_STATS = 'OPEN_SPEAKER_STATS';

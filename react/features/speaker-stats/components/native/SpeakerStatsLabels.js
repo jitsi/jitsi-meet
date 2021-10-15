@@ -1,8 +1,9 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
+import { Text, View } from 'react-native';
 
-import { translate } from '../../base/i18n';
+import { translate } from '../../../base/i18n';
 
 /**
  * The type of the React {@code Component} props of {@link SpeakerStatsLabels}.
@@ -20,7 +21,7 @@ type Props = {
  *
  * @extends Component
  */
-class SpeakerStatsLabels extends Component<Props> {
+class SpeakerStatsLabels extends PureComponent<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -31,15 +32,14 @@ class SpeakerStatsLabels extends Component<Props> {
         const { t } = this.props;
 
         return (
-            <div className = 'speaker-stats-item__labels'>
-                <div className = 'speaker-stats-item__status' />
-                <div className = 'speaker-stats-item__name'>
+            <View>
+                <Text>
                     { t('speakerStats.name') }
-                </div>
-                <div className = 'speaker-stats-item__time'>
+                </Text>
+                <Text>
                     { t('speakerStats.speakerTime') }
-                </div>
-            </div>
+                </Text>
+            </View>
         );
     }
 }
