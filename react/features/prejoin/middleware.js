@@ -12,8 +12,7 @@ import {
 import {
     setDeviceStatusOk,
     setDeviceStatusWarning,
-    setJoiningInProgress,
-    setPrejoinPageVisibility
+    setJoiningInProgress
 } from './actions';
 import { isPrejoinPageVisible } from './functions';
 
@@ -85,7 +84,6 @@ MiddlewareRegistry.register(store => next => async action => {
  * @returns {Object}
  */
 function _conferenceJoined({ dispatch }, next, action) {
-    dispatch(setPrejoinPageVisibility(false));
     dispatch(setJoiningInProgress(false));
 
     return next(action);
