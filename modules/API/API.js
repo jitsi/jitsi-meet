@@ -522,8 +522,8 @@ function initCommands() {
         'cancel-private-chat': () => {
             APP.store.dispatch(setPrivateMessageRecipient());
         },
-        'disable-lobby': () => {
-            APP.store.dispatch(updateSettings({ userSelectedSkipPrejoin: true }));
+        'user-lobby-toggle': isLobbyEnabled => {
+            APP.store.dispatch(updateSettings({ userSelectedSkipPrejoin: isLobbyEnabled }));
         },
         'grant-moderator': participantId => {
             APP.store.dispatch(grantModerator(participantId));
