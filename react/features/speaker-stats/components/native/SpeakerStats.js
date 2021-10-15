@@ -1,22 +1,21 @@
 // @flow
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
+import { View } from 'react-native';
+import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
-import { Dialog } from '../../base/dialog';
-import { translate } from '../../base/i18n';
-import { getLocalParticipant } from '../../base/participants';
-import { connect } from '../../base/redux';
-import { escapeRegexp } from '../../base/util';
-import { initUpdateStats, initSearch } from '../actions';
-import { SPEAKER_STATS_RELOAD_INTERVAL } from '../constants';
-import { getSpeakerStats, getSearchCriteria } from '../functions';
+import { translate } from '../../../base/i18n';
+import { JitsiModal } from '../../../base/modal';
+import { getLocalParticipant } from '../../../base/participants';
+import { closeSpeakerStats, initUpdateStats } from '../../actions';
+import {
+    SPEAKER_STATS_RELOAD_INTERVAL, SPEAKER_STATS_VIEW_MODEL_ID
+} from '../../constants';
+import { getSearchCriteria, getSpeakerStats } from '../../functions';
 
 import SpeakerStatsItem from './SpeakerStatsItem';
 import SpeakerStatsLabels from './SpeakerStatsLabels';
-import SpeakerStatsSearch from './SpeakerStatsSearch';
-
-declare var interfaceConfig: Object;
 
 /**
  * The type of the React {@code Component} props of {@link SpeakerStats}.
@@ -55,25 +54,21 @@ type Props = {
 };
 
 /**
- * React component for displaying a list of speaker stats.
+ * Component that renders the list of speaker stats.
  *
- * @extends Component
+ * @returns {React$Element<any>}
  */
-class SpeakerStats extends Component<Props> {
-    _updateInterval: IntervalID;
-
+class SpeakerStats extends PureComponent<Props> {
     /**
-     * Initializes a new SpeakerStats instance.
+     * Instantiates a new {@code SpeakerStats}.
      *
-     * @param {Object} props - The read-only React Component props with which
-     * the new instance is to be initialized.
+     * @inheritdoc
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
         this._updateStats = this._updateStats.bind(this);
-        this._onSearch = this._onSearch.bind(this);
 
         this._updateStats();
     }
@@ -98,69 +93,41 @@ class SpeakerStats extends Component<Props> {
     }
 
     /**
-     * Implements React's {@link Component#render()}.
+     * Implements {@code SpeakerStats.render}.
      *
      * @inheritdoc
-     * @returns {ReactElement}
      */
     render() {
         const userIds = Object.keys(this.props._stats);
         const items = userIds.map(userId => this._createStatsItem(userId));
 
         return (
-            <Dialog
-                cancelKey = 'dialog.close'
-                submitDisabled = { true }
-                titleKey = 'speakerStats.speakerStats'>
-                <div className = 'speaker-stats'>
-                    <SpeakerStatsSearch onSearch = { this._onSearch } />
+            <JitsiModal
+                headerProps = {{
+                    headerLabelKey: 'speakerStats.speakerStats'
+                }}
+                modalId = { SPEAKER_STATS_VIEW_MODEL_ID }
+                onClose = { this._onClose } >
+
+                <View>
                     <SpeakerStatsLabels />
                     { items }
-                </div>
-            </Dialog>
+                </View>
+            </JitsiModal>
         );
     }
 
-    /**
-     * Create a SpeakerStatsItem instance for the passed in user id.
-     *
-     * @param {string} userId -  User id used to look up the associated
-     * speaker stats from the jitsi library.
-     * @returns {SpeakerStatsItem|null}
-     * @private
-     */
-    _createStatsItem(userId) {
-        const statsModel = this.props._stats[userId];
-
-        if (!statsModel || statsModel.hidden) {
-            return null;
-        }
-
-        const isDominantSpeaker = statsModel.isDominantSpeaker();
-        const dominantSpeakerTime = statsModel.getTotalDominantSpeakerTime();
-        const hasLeft = statsModel.hasLeft();
-
-        return (
-            <SpeakerStatsItem
-                displayName = { statsModel.getDisplayName() }
-                dominantSpeakerTime = { dominantSpeakerTime }
-                hasLeft = { hasLeft }
-                isDominantSpeaker = { isDominantSpeaker }
-                key = { userId } />
-        );
-    }
-
-    _onSearch: () => void;
+    _onClose: () => boolean;
 
     /**
-     * Search the existing participants by name.
+     * Closes the modal.
      *
-     * @returns {void}
-     * @param {string} criteria - The search parameter.
-     * @protected
+     * @returns {boolean}
      */
-    _onSearch(criteria = '') {
-        this.props.dispatch(initSearch(escapeRegexp(criteria)));
+    _onClose() {
+        this.props.dispatch(closeSpeakerStats());
+
+        return true;
     }
 
     _updateStats: () => void;
@@ -196,31 +163,49 @@ class SpeakerStats extends Component<Props> {
                             : meString
                     );
                 }
-
-                if (!stats[userId].getDisplayName()) {
-                    stats[userId].setDisplayName(
-                        interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME
-                    );
-                }
             }
         }
 
         return stats;
     }
+
+    /**
+     * Create a SpeakerStatsItem instance for the passed in user id.
+     *
+     * @param {string} userId -  User id used to look up the associated
+     * speaker stats from the jitsi library.
+     * @returns {SpeakerStatsItem|null}
+     * @private
+     */
+    _createStatsItem(userId) {
+        const statsModel = this.props._stats[userId];
+
+        if (!statsModel || statsModel.hidden) {
+            return null;
+        }
+
+        const isDominantSpeaker = statsModel.isDominantSpeaker();
+        const dominantSpeakerTime = statsModel.getTotalDominantSpeakerTime();
+        const hasLeft = statsModel.hasLeft();
+
+        return (
+            <SpeakerStatsItem
+                displayName = { statsModel.getDisplayName() }
+                dominantSpeakerTime = { dominantSpeakerTime }
+                hasLeft = { hasLeft }
+                isDominantSpeaker = { isDominantSpeaker }
+                key = { userId } />
+        );
+    }
 }
 
 /**
- * Maps (parts of) the redux state to the associated SpeakerStats's props.
+ * Maps part of the Redux state to the props of this component.
  *
- * @param {Object} state - The redux state.
- * @private
- * @returns {{
- *     _localDisplayName: ?string,
- *     _stats: Object,
- *     _criteria: string,
- * }}
+ * @param {Object} state - The Redux state.
+ * @returns {Props}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state: Object): Object {
     const localParticipant = getLocalParticipant(state);
 
     return {
@@ -235,5 +220,6 @@ function _mapStateToProps(state) {
         _criteria: getSearchCriteria(state)
     };
 }
+
 
 export default translate(connect(_mapStateToProps)(SpeakerStats));

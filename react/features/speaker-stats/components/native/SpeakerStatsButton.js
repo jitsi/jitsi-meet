@@ -1,13 +1,12 @@
 // @flow
 
-import { createToolbarEvent, sendAnalytics } from '../../analytics';
-import { openDialog } from '../../base/dialog';
-import { translate } from '../../base/i18n';
-import { IconPresentation } from '../../base/icons';
-import { connect } from '../../base/redux';
-import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 
-import SpeakerStats from './SpeakerStats';
+import { createToolbarEvent, sendAnalytics } from '../../../analytics';
+import { translate } from '../../../base/i18n';
+import { IconPresentation } from '../../../base/icons';
+import { connect } from '../../../base/redux';
+import { AbstractButton } from '../../../base/toolbox/components';
+import { openSpeakerStats } from '../../actions';
 
 /**
  * The type of the React {@code Component} props of {@link SpeakerStatsButton}.
@@ -50,9 +49,7 @@ class SpeakerStatsButton extends AbstractButton<Props, *> {
         }
 
         sendAnalytics(createToolbarEvent('speaker.stats'));
-        dispatch(openDialog(SpeakerStats, {
-            conference: _conference
-        }));
+        dispatch(openSpeakerStats(_conference));
     }
 }
 
