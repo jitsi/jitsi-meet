@@ -152,9 +152,7 @@ export function isPrejoinPageEnabled(state: Object): boolean {
     return navigator.product !== 'ReactNative'
         && state['features/base/config'].prejoinPageEnabled
         && !state['features/base/settings'].userSelectedSkipPrejoin
-        && !(state['features/base/config'].enableForcedReload && state['features/prejoin'].skipPrejoinOnReload)
-        // TODO: Brent testing
-        && false;
+        && !(state['features/base/config'].enableForcedReload && state['features/prejoin'].skipPrejoinOnReload);
 }
 
 /**

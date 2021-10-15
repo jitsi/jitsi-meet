@@ -41,8 +41,7 @@ const DEFAULT_STATE = {
     userSelectedAudioOutputDeviceLabel: undefined,
     userSelectedCameraDeviceLabel: undefined,
     userSelectedMicDeviceLabel: undefined,
-    // TODO: Brent testing
-    userSelectedSkipPrejoin: true
+    userSelectedSkipPrejoin: undefined
 };
 
 const STORE_NAME = 'features/base/settings';
