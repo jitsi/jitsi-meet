@@ -4,9 +4,9 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Icon, IconMenu } from '../../../base/icons';
 import { Tooltip } from '../../../base/tooltip';
+import { CHAR_LIMIT } from '../../constants';
 import AbstractPollCreate from '../AbstractPollCreate';
 import type { AbstractProps } from '../AbstractPollCreate';
-
 
 const PollCreate = (props: AbstractProps) => {
 
@@ -158,6 +158,7 @@ const PollCreate = (props: AbstractProps) => {
                 <textarea
                     autoFocus = { true }
                     className = 'expandable-input'
+                    maxLength = { CHAR_LIMIT }
                     onChange = { ev => setQuestion(ev.target.value) }
                     onInput = { autogrow }
                     onKeyDown = { onQuestionKeyDown }
@@ -178,6 +179,7 @@ const PollCreate = (props: AbstractProps) => {
                         <div className = 'poll-create-option-row'>
                             <textarea
                                 className = 'expandable-input'
+                                maxLength = { CHAR_LIMIT }
                                 onChange = { ev => setAnswer(i, ev.target.value) }
                                 onInput = { autogrow }
                                 onKeyDown = { ev => onAnswerKeyDown(i, ev) }
