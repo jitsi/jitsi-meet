@@ -80,8 +80,7 @@ class ParticipantsCount extends PureComponent<Props> {
 
         return (
             <div
-                className = 'participants-count'
-                onClick = { this._onClick }>
+                className = 'participants-count'>
                 <Label
                     className = 'label--white'
                     icon = { IconUserGroups }
