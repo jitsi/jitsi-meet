@@ -19,10 +19,10 @@ const PollsPane = (props: AbstractProps) => {
             <div className = { 'poll-container' } >
                 <PollsList />
             </div>
-            <div className = { 'poll-footer' }>
+            <div className = 'poll-footer poll-create-footer'>
                 <button
                     aria-label = { t('polls.create.create') }
-                    className = { 'poll-primary-button' }
+                    className = 'poll-button poll-button-primary'
                     // eslint-disable-next-line react/jsx-no-bind
                     onClick = { onCreate } >
                     <span>{t('polls.create.create')}</span>
