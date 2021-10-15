@@ -65,7 +65,7 @@ import {
     captureLargeVideoScreenshot,
     resizeLargeVideo
 } from '../../react/features/large-video/actions.web';
-import { toggleLobbyMode } from '../../react/features/lobby/actions';
+import { toggleLobbyMode, joinWithPassword } from '../../react/features/lobby/actions';
 import { isForceMuted } from '../../react/features/participants-pane/functions';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession } from '../../react/features/recording/functions';
@@ -521,6 +521,9 @@ function initCommands() {
         },
         'cancel-private-chat': () => {
             APP.store.dispatch(setPrivateMessageRecipient());
+        },
+        'join-with-password': password => {
+            APP.store.dispatch(joinWithPassword(password));
         },
         'grant-moderator': participantId => {
             APP.store.dispatch(grantModerator(participantId));
