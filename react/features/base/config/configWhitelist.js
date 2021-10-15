@@ -14,6 +14,7 @@ export default [
     '_peerConnStatusRtcMuteTimeout',
     'abTesting',
     'analytics.disabled',
+    'analytics.rtcstatsEnabled',
     'audioLevelsInterval',
     'audioQuality',
     'apiLogLevels',
