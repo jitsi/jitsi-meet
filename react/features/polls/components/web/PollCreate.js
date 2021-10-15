@@ -212,7 +212,7 @@ const PollCreate = (props: AbstractProps) => {
             <div className = 'poll-add-button'>
                 <button
                     aria-label = { 'Add option' }
-                    className = { 'poll-secondary-button' }
+                    className = 'poll-button poll-button-secondary'
                     onClick = { () => {
                         addAnswer();
                         requestFocus(answers.length);
@@ -222,17 +222,17 @@ const PollCreate = (props: AbstractProps) => {
                 </button>
             </div>
         </div>
-        <div className = 'poll-footer'>
+        <div className = 'poll-footer poll-create-footer'>
             <button
                 aria-label = { t('polls.create.cancel') }
-                className = 'poll-small-secondary-button'
+                className = 'poll-button poll-button-secondary poll-button-short'
                 onClick = { () => setCreateMode(false) }
                 type = 'button' >
                 <span>{t('polls.create.cancel')}</span>
             </button>
             <button
                 aria-label = { t('polls.create.send') }
-                className = 'poll-small-primary-button'
+                className = 'poll-button poll-button-primary poll-button-short'
                 disabled = { isSubmitDisabled }
                 type = 'submit' >
                 <span>{t('polls.create.send')}</span>
