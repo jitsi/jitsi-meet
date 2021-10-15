@@ -17,8 +17,7 @@ import { SETTINGS_UPDATED } from './actionTypes';
  *         serverURL: string,
  *         startAudioOnly: boolean,
  *         startWithAudioMuted: boolean,
- *         startWithVideoMuted: boolean,
- *         userSelectedSkipPrejoin: boolean,
+ *         startWithVideoMuted: boolean
  *     }
  * }}
  */
