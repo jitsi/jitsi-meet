@@ -4,8 +4,7 @@ import {
     INIT_SEARCH,
     INIT_UPDATE_STATS,
     UPDATE_STATS,
-    INIT_REORDER_STATS,
-    CLOSE_SPEAKER_STATS
+    INIT_REORDER_STATS
 } from './actionTypes';
 
 /**
@@ -58,15 +57,3 @@ export function initReorderStats() {
     };
 }
 
-/**
- * Action to signal the closing of the chat dialog.
- *
- * @returns {{
- *     type: CLOSE_CHAT
- * }}
- */
-export function closeSpeakerStats() {
-    return {
-        type: CLOSE_SPEAKER_STATS
-    };
-}

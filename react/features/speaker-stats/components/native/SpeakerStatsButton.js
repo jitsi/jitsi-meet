@@ -5,7 +5,10 @@ import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
 import { IconPresentation } from '../../../base/icons';
 import { connect } from '../../../base/redux';
-import { AbstractButton } from '../../../base/toolbox/components';
+import {
+    AbstractButton,
+    AbstractButtonProps
+} from '../../../base/toolbox/components';
 import { openSpeakerStats } from '../../actions';
 
 /**

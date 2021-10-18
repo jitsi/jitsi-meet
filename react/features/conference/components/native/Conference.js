@@ -26,6 +26,8 @@ import { LobbyScreen } from '../../../lobby/components/native';
 import { getIsLobbyVisible } from '../../../lobby/functions';
 import { BackButtonRegistry } from '../../../mobile/back-button';
 import { ParticipantsPane } from '../../../participants-pane/components/native';
+import SpeakerStats
+    from '../../../speaker-stats/components/native/SpeakerStats';
 import { Captions } from '../../../subtitles';
 import { setToolboxVisible } from '../../../toolbox/actions';
 import { Toolbox } from '../../../toolbox/components/native';
@@ -225,6 +227,7 @@ class Conference extends AbstractConference<Props, *> {
     _renderConferenceModals() {
         return [
             <AddPeopleDialog key = 'addPeopleDialog' />,
+            <SpeakerStats key = 'speakerStats' />,
             <Chat key = 'chat' />,
             <SharedDocument key = 'sharedDocument' />
         ];
