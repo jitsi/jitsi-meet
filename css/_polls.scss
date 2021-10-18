@@ -240,7 +240,7 @@ ol.poll-result-list {
     position: relative;
 
     @media (max-width: 580px) {
-        height: calc(100% - 32px);
+        height: 100%;
     }
 }
 
