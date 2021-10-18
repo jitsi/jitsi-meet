@@ -20,7 +20,7 @@ type Props = {
 }
 
 const PollItem = ({ pollId }: Props) => {
-    const showResults = useSelector(state => shouldShowResults(state, pollId));
+    const showResults = useSelector(shouldShowResults(pollId));
 
     return (
         <View
