@@ -377,6 +377,28 @@ export function createPinnedEvent(action, participantId, attributes) {
 }
 
 /**
+ * Creates a poll event.
+ * The following events will be created:
+ * - poll.created
+ * - poll.vote.checked
+ * - poll.vote.sent
+ * - poll.vote.skipped
+ * - poll.vote.detailsViewed
+ * - poll.vote.changed
+ * - poll.option.added
+ * - poll.option.moved
+ * - poll.option.removed.
+ *
+ * @param {string} action - The action.
+ * @returns {Object}
+ */
+export function createPollEvent(action) {
+    return {
+        action: `poll.${action}`
+    };
+}
+
+/**
  * Creates an event which indicates that a button in the profile panel was
  * clicked.
  *

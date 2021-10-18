@@ -1,5 +1,7 @@
 // @flow
 
+import { jitsiLocalStorage } from '@jitsi/js-utils';
+
 import { getAmplitudeIdentity } from '../analytics';
 import { CONFERENCE_UNIQUE_ID_SET, getConferenceOptions, getRoomName } from '../base/conference';
 import { LIB_WILL_INIT } from '../base/lib-jitsi-meet';
@@ -72,12 +74,18 @@ MiddlewareRegistry.register(store => next => action => {
                 // This is done in order to facilitate queries based on different conference configurations.
                 // e.g. Find all RTCPeerConnections that connect to a specific shard or were created in a
                 // conference with a specific version.
+                // XXX(george): we also want to be able to correlate between rtcstats and callstats, so we're
+                // appending the callstats user name (if it exists) to the display name.
+                const displayName = options.statisticsId
+                    || options.statisticsDisplayName
+                    || jitsiLocalStorage.getItem('callStatsUserName');
+
                 RTCStats.sendIdentityData({
                     ...getAmplitudeIdentity(),
                     ...options,
                     endpointId: localParticipant?.id,
                     confName: getRoomName(state),
-                    displayName: localParticipant?.name,
+                    displayName,
                     meetingUniqueId
                 });
             } catch (error) {

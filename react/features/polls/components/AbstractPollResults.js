@@ -5,6 +5,7 @@ import type { AbstractComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { sendAnalytics, createPollEvent } from '../../analytics';
 import { getLocalParticipant, getParticipantById } from '../../base/participants/functions';
 import { retractVote } from '../actions';
 import { COMMAND_ANSWER_POLL } from '../constants';
@@ -54,6 +55,7 @@ const AbstractPollResults = (Component: AbstractComponent<AbstractProps>) => (pr
 
     const [ showDetails, setShowDetails ] = useState(false);
     const toggleIsDetailed = useCallback(() => {
+        sendAnalytics(createPollEvent('vote.detailsViewed'));
         setShowDetails(!showDetails);
     });
 
@@ -107,6 +109,7 @@ const AbstractPollResults = (Component: AbstractComponent<AbstractProps>) => (pr
             answers: new Array(pollDetails.answers.length).fill(false)
         });
         dispatch(retractVote(pollId));
+        sendAnalytics(createPollEvent('vote.changed'));
     }, [ pollId, localId, localName, pollDetails ]);
 
     const { t } = useTranslation();

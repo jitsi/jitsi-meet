@@ -129,7 +129,8 @@ import {
     isPrejoinPageEnabled,
     isPrejoinPageVisible,
     makePrecallTest,
-    setJoiningInProgress
+    setJoiningInProgress,
+    setPrejoinPageVisibility
 } from './react/features/prejoin';
 import { disableReceiver, stopReceiver } from './react/features/remote-control';
 import { setScreenAudioShareState, isScreenAudioShared } from './react/features/screen-share/';
@@ -2004,6 +2005,9 @@ export default {
         // add local streams when joined to the conference
         room.on(JitsiConferenceEvents.CONFERENCE_JOINED, () => {
             this._onConferenceJoined();
+        });
+        room.on(JitsiConferenceEvents.CONFERENCE_JOIN_IN_PROGRESS, () => {
+            APP.store.dispatch(setPrejoinPageVisibility(false));
         });
 
         room.on(
