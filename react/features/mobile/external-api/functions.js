@@ -3,6 +3,9 @@
 import { NativeModules } from 'react-native';
 
 import { getAppProp } from '../../base/app';
+import { destroyLocalTracks } from '../../base/tracks/actions';
+
+import { CONFERENCE_TERMINATED } from './constants';
 
 /**
  * Sends a specific event to the native counterpart of the External API. Native
@@ -15,12 +18,23 @@ import { getAppProp } from '../../base/app';
  * by/associated with the specified {@code name}.
  * @returns {void}
  */
-export function sendEvent(store: Object, name: string, data: Object) {
+export async function sendEvent(store: Object, name: string, data: Object) {
     // The JavaScript App needs to provide uniquely identifying information to
     // the native ExternalAPI module so that the latter may match the former to
     // the native view which hosts it.
     const externalAPIScope = getAppProp(store, 'externalAPIScope');
 
-    externalAPIScope
-        && NativeModules.ExternalAPI.sendEvent(name, data, externalAPIScope);
+    if (!externalAPIScope) {
+        return;
+    }
+
+    if (name === CONFERENCE_TERMINATED) {
+        const { enableWelcomePage } = store.getState()['features/base/config'];
+
+        if (!enableWelcomePage) {
+            await store.dispatch(destroyLocalTracks());
+        }
+    }
+
+    NativeModules.ExternalAPI.sendEvent(name, data, externalAPIScope);
 }

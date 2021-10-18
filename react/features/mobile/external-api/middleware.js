@@ -44,42 +44,16 @@ import { muteLocal } from '../../video-menu/actions';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 
 import { setParticipantsWithScreenShare } from './actions';
+import {
+    CHAT_MESSAGE_RECEIVED,
+    CHAT_TOGGLED,
+    CONFERENCE_TERMINATED,
+    ENDPOINT_TEXT_MESSAGE_RECEIVED,
+    PARTICIPANTS_INFO_RETRIEVED,
+    SCREEN_SHARE_TOGGLED
+} from './constants';
 import { sendEvent } from './functions';
 import logger from './logger';
-
-/**
- * Event which will be emitted on the native side when a chat message is received
- * through the channel.
- */
-const CHAT_MESSAGE_RECEIVED = 'CHAT_MESSAGE_RECEIVED';
-
-/**
- * Event which will be emitted on the native side when the chat dialog is displayed/closed.
- */
-const CHAT_TOGGLED = 'CHAT_TOGGLED';
-
-/**
- * Event which will be emitted on the native side to indicate the conference
- * has ended either by user request or because an error was produced.
- */
-const CONFERENCE_TERMINATED = 'CONFERENCE_TERMINATED';
-
-/**
- * Event which will be emitted on the native side to indicate a message was received
- * through the channel.
- */
-const ENDPOINT_TEXT_MESSAGE_RECEIVED = 'ENDPOINT_TEXT_MESSAGE_RECEIVED';
-
-/**
- * Event which will be emitted on the native side to indicate a participant togggles
- * the screen share.
- */
-const SCREEN_SHARE_TOGGLED = 'SCREEN_SHARE_TOGGLED';
-
-/**
- * Event which will be emitted on the native side with the participant info array.
- */
-const PARTICIPANTS_INFO_RETRIEVED = 'PARTICIPANTS_INFO_RETRIEVED';
 
 const { ExternalAPI } = NativeModules;
 const eventEmitter = new NativeEventEmitter(ExternalAPI);
