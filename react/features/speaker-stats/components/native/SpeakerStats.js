@@ -69,6 +69,7 @@ class SpeakerStats extends PureComponent<Props> {
 
         // Bind event handlers so they are only bound once per instance.
         this._updateStats = this._updateStats.bind(this);
+        this._onClose = this._onClose.bind(this);
 
         this._updateStats();
     }
@@ -149,7 +150,7 @@ class SpeakerStats extends PureComponent<Props> {
      * @private
      */
     _getSpeakerStats() {
-        const stats = { ...this.props.conference.getSpeakerStats() };
+        const stats = { ...this.props.conference?.getSpeakerStats() };
 
         for (const userId in stats) {
             if (stats[userId]) {

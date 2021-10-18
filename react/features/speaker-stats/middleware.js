@@ -1,5 +1,6 @@
 // @flow
 
+import { setActiveModalId } from '../base/modal';
 import {
     PARTICIPANT_JOINED,
     PARTICIPANT_KICKED,
@@ -8,8 +9,13 @@ import {
 } from '../base/participants/actionTypes';
 import { MiddlewareRegistry } from '../base/redux';
 
-import { INIT_SEARCH, INIT_UPDATE_STATS } from './actionTypes';
+import {
+    INIT_SEARCH,
+    INIT_UPDATE_STATS,
+    OPEN_SPEAKER_STATS
+} from './actionTypes';
 import { initReorderStats, updateStats } from './actions';
+import { SPEAKER_STATS_VIEW_MODEL_ID } from './constants';
 import { filterBySearchCriteria, getSortedSpeakerStats, getPendingReorder } from './functions';
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
@@ -34,6 +40,9 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
             dispatch(updateStats(pendingReorder ? getSortedSpeakerStats(state, stats) : stats));
         }
+        break;
+    case OPEN_SPEAKER_STATS:
+        dispatch(setActiveModalId(SPEAKER_STATS_VIEW_MODEL_ID, action.conference));
         break;
     case PARTICIPANT_JOINED:
     case PARTICIPANT_LEFT:
