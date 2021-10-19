@@ -94,6 +94,10 @@ class LobbySection extends PureComponent<Props, State> {
     render() {
         const { _visible, t } = this.props;
         console.log("Rendering the lobby section: ", this.state.password);
+    
+        if(this.state.password !== _password) {
+            this.state.password = _password;
+        }
 
         if (!_visible) {
             return null;
@@ -157,10 +161,6 @@ function mapStateToProps(state: Object): $Shape<Props> {
     const { hideLobbyButton } = state['features/base/config'];
 
     console.log("Map state to props: ",password);
-    
-    if(this.state && this.state.password) {
-        this.state.password = password;
-    }
 
     return {
         _password: password,
