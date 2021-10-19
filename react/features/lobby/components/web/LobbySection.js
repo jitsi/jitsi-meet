@@ -145,6 +145,8 @@ function mapStateToProps(state: Object): $Shape<Props> {
             password } = state['features/base/conference'];
     const { hideLobbyButton } = state['features/base/config'];
 
+    console.log(password);
+
     return {
         _password: password,
         _lobbyEnabled: state['features/lobby'].lobbyEnabled,
