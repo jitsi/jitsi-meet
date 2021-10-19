@@ -2,19 +2,23 @@ local filters = require 'util.filters';
 local jid = require "util.jid";
 local jid_bare = require "util.jid".bare;
 local jid_host = require "util.jid".host;
+local st = require "util.stanza";
 local um_is_admin = require "core.usermanager".is_admin;
 local util = module:require "util";
 local is_healthcheck_room = util.is_healthcheck_room;
 local extract_subdomain = util.extract_subdomain;
+local get_room_from_jid = util.get_room_from_jid;
 local presence_check_status = util.presence_check_status;
 local MUC_NS = 'http://jabber.org/protocol/muc';
 
 local moderated_subdomains;
 local moderated_rooms;
+local disable_revoke_owners;
 
 local function load_config()
     moderated_subdomains = module:get_option_set("allowners_moderated_subdomains", {})
     moderated_rooms = module:get_option_set("allowners_moderated_rooms", {})
+    disable_revoke_owners = module:get_option_boolean("allowners_disable_revoke_owners", false);
 end
 load_config();
 
@@ -146,3 +150,30 @@ end
 
 -- enable filtering presences
 filters.add_filter_hook(filter_session);
+
+-- filters any attempt to revoke owner rights on non moderated rooms
+function filter_admin_set_query(event)
+    local origin, stanza = event.origin, event.stanza;
+    local room_jid = jid_bare(stanza.attr.to);
+    local room = get_room_from_jid(room_jid);
+
+    local item = stanza.tags[1].tags[1];
+    local _aff = item.attr.affiliation;
+
+    -- if it is a moderated room we skip it
+    if is_moderated(room.jid) then
+        return nil;
+    end
+
+    -- any revoking is disabled
+    if _aff ~= 'owner' then
+        origin.send(st.error_reply(stanza, "auth", "forbidden"));
+        return true;
+    end
+end
+
+if not disable_revoke_owners then
+    -- default prosody priority for handling these is -2
+    module:hook("iq-set/bare/http://jabber.org/protocol/muc#admin:query", filter_admin_set_query, 5);
+    module:hook("iq-set/host/http://jabber.org/protocol/muc#admin:query", filter_admin_set_query, 5);
+end
