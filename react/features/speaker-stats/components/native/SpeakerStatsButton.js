@@ -1,15 +1,15 @@
 // @flow
 
-
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
 import { IconPresentation } from '../../../base/icons';
+import { setActiveModalId } from '../../../base/modal';
 import { connect } from '../../../base/redux';
 import {
     AbstractButton,
     AbstractButtonProps
 } from '../../../base/toolbox/components';
-import { openSpeakerStats } from '../../actions';
+import { SPEAKER_STATS_VIEW_MODEL_ID } from '../../constants';
 
 /**
  * The type of the React {@code Component} props of {@link SpeakerStatsButton}.
@@ -43,7 +43,7 @@ class SpeakerStatsButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { _conference, dispatch, handleClick } = this.props;
+        const { dispatch, handleClick } = this.props;
 
         if (handleClick) {
             handleClick();
@@ -52,22 +52,8 @@ class SpeakerStatsButton extends AbstractButton<Props, *> {
         }
 
         sendAnalytics(createToolbarEvent('speaker.stats'));
-        dispatch(openSpeakerStats(_conference));
+        dispatch(setActiveModalId(SPEAKER_STATS_VIEW_MODEL_ID));
     }
 }
 
-/**
- * Maps (parts of) the Redux state to the associated
- * {@code SpeakerStatsButton} component's props.
- *
- * @param {Object} state - The Redux state.
- * @private
- * @returns {Object}
- */
-function mapStateToProps(state) {
-    return {
-        _conference: state['features/base/conference'].conference
-    };
-}
-
-export default translate(connect(mapStateToProps)(SpeakerStatsButton));
+export default translate(connect()(SpeakerStatsButton));

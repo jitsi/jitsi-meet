@@ -1,7 +1,7 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-import { View, Text } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 
 import { translate } from '../../../base/i18n';
 
@@ -38,6 +38,31 @@ type Props = {
     t: Function
 };
 
+const style = StyleSheet.create({
+    container: {
+        display: 'flex',
+        flexDirection: 'row'
+    },
+    speakerStatsItemStatus: {
+        flex: 1
+    },
+    speakerStatsItemStatusDot: {
+        width: 5,
+        height: 5,
+        marginLeft: 7,
+        marginTop: 8,
+        padding: 3,
+        borderRadius: 10,
+        borderWidth: 0
+    },
+    speakerStatsItemName: {
+        flex: 8
+    },
+    speakerStatsItemTime: {
+        flex: 12
+    }
+});
+
 /**
  * React component for display an individual user's speaker stats.
  *
@@ -51,14 +76,21 @@ class SpeakerStatsItem extends PureComponent<Props> {
      * @returns {ReactElement}
      */
     render() {
+
+        const dotColor = this.props.isDominantSpeaker
+            ? '#00FF00' : '#a0a0a0';
+
         return (
-            <View>
-                <View>
+            <View style = { style.container }>
+                <View style = { style.speakerStatsItemStatus }>
+                    <View style = { [ style.speakerStatsItemStatusDot, { backgroundColor: dotColor } ] } />
+                </View>
+                <View style = { [ style.speakerStatsItemStatus, style.speakerStatsItemName ] }>
                     <Text>
                         { this.props.displayName }
                     </Text>
                 </View>
-                <View>
+                <View style = { [ style.speakerStatsItemStatus, style.speakerStatsItemTime ] }>
                     <TimeElapsed
                         time = { this.props.dominantSpeakerTime } />
                 </View>

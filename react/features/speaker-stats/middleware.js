@@ -41,9 +41,6 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             dispatch(updateStats(pendingReorder ? getSortedSpeakerStats(state, stats) : stats));
         }
         break;
-    case OPEN_SPEAKER_STATS:
-        dispatch(setActiveModalId(SPEAKER_STATS_VIEW_MODEL_ID, action.conference));
-        break;
     case PARTICIPANT_JOINED:
     case PARTICIPANT_LEFT:
     case PARTICIPANT_KICKED:
