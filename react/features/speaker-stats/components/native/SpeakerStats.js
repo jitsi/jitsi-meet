@@ -1,7 +1,7 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
@@ -40,7 +40,7 @@ type Props = {
     /**
      * The JitsiConference from which stats will be pulled.
      */
-    conference: Object,
+    _conference: Object,
 
     /**
      * Redux store dispatch method.
@@ -150,7 +150,7 @@ class SpeakerStats extends PureComponent<Props> {
      * @private
      */
     _getSpeakerStats() {
-        const stats = { ...this.props.conference?.getSpeakerStats() };
+        const stats = { ...this.props._conference?.getSpeakerStats() };
 
         for (const userId in stats) {
             if (stats[userId]) {
@@ -218,7 +218,8 @@ function _mapStateToProps(state: Object): Object {
          */
         _localDisplayName: localParticipant && localParticipant.name,
         _stats: getSpeakerStats(state),
-        _criteria: getSearchCriteria(state)
+        _criteria: getSearchCriteria(state),
+        _conference: state['features/base/conference'].conference
     };
 }
 

@@ -59,18 +59,4 @@ class SpeakerStatsButton extends AbstractButton<Props, *> {
     }
 }
 
-/**
- * Maps (parts of) the Redux state to the associated
- * {@code SpeakerStatsButton} component's props.
- *
- * @param {Object} state - The Redux state.
- * @private
- * @returns {Object}
- */
-function mapStateToProps(state) {
-    return {
-        _conference: state['features/base/conference'].conference
-    };
-}
-
-export default translate(connect(mapStateToProps)(SpeakerStatsButton));
+export default translate(connect()(SpeakerStatsButton));

@@ -1,7 +1,7 @@
 /* @flow */
 
 import React, { PureComponent } from 'react';
-import { Text, View } from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 
 import { translate } from '../../../base/i18n';
 
@@ -15,6 +15,22 @@ type Props = {
      */
     t: Function
 };
+
+const style = StyleSheet.create({
+    container: {
+        display: 'flex',
+        flexDirection: 'row'
+    },
+    dummyElement: {
+        flex: 1
+    },
+    speakerName: {
+        flex: 8
+    },
+    speakerTime: {
+        flex: 12
+    }
+});
 
 /**
  * React component for labeling speaker stats column items.
@@ -32,13 +48,18 @@ class SpeakerStatsLabels extends PureComponent<Props> {
         const { t } = this.props;
 
         return (
-            <View>
-                <Text>
-                    { t('speakerStats.name') }
-                </Text>
-                <Text>
-                    { t('speakerStats.speakerTime') }
-                </Text>
+            <View style = { style.container }>
+                <View style = { style.dummyElement } />
+                <View style = { style.speakerName }>
+                    <Text>
+                        { t('speakerStats.name') }
+                    </Text>
+                </View>
+                <View style = { style.speakerTime }>
+                    <Text>
+                        { t('speakerStats.speakerTime') }
+                    </Text>
+                </View>
             </View>
         );
     }
