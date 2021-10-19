@@ -86,7 +86,9 @@ class LobbySection extends PureComponent<Props, State> {
      * @inheritdoc
      */
     render() {
-        const { _visible, t } = this.props;
+        const { _visible, _locked, t } = this.props;
+
+        console.log(_locked);
 
         if (!_visible) {
             return null;
