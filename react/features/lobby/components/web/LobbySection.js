@@ -41,12 +41,7 @@ type State = {
     /**
      * True if the lobby switch is toggled on.
      */
-    lobbyEnabled: boolean,
-    
-    /**
-     * The value for the conference password
-     */
-    password: string
+    lobbyEnabled: boolean
 }
 
 /**
@@ -62,11 +57,8 @@ class LobbySection extends PureComponent<Props, State> {
         super(props);
 
         this.state = {
-            lobbyEnabled: props._lobbyEnabled,
-            password: props._password
+            lobbyEnabled: props._lobbyEnabled
         };
-
-        console.log("State from constructor: ", this.state);
 
         this._onToggleLobby = this._onToggleLobby.bind(this);
     }
@@ -79,11 +71,8 @@ class LobbySection extends PureComponent<Props, State> {
     static getDerivedStateFromProps(props: Props, state: Object) {
         if (props._lobbyEnabled !== state.lobbyEnabled) {
 
-            console.log("Getting derived state from props: ", props);
-
             return {
-                lobbyEnabled: props._lobbyEnabled,
-                password: props._password
+                lobbyEnabled: props._lobbyEnabled
             };
         }
 
@@ -96,17 +85,7 @@ class LobbySection extends PureComponent<Props, State> {
      * @inheritdoc
      */
     render() {
-        console.log("Props", this.props);
         const { _visible, t } = this.props;
-        console.log("Rendering the lobby section: ", this.state.password);
-        console.log("Rendering the lobby section: ", this.props._password);
-    
-        if(this._password && this.state.password !== this.props._password) {
-            this.state.password = this.props._password;
-        }
-
-        console.log("Rendering the lobby section: ", this.state.password);
-        console.log("Rendering the lobby section: ", this.props._password);
 
         if (!_visible) {
             return null;
@@ -128,7 +107,7 @@ class LobbySection extends PureComponent<Props, State> {
                             id = 'lobby-section-switch'
                             onValueChange = { this._onToggleLobby }
                             value = { this.state.lobbyEnabled }
-                            disabled = { this.state.password } />
+                            disabled = { this.props._password } />
                     </div>
                 </div>
                 <div className = 'separator-line' />
@@ -146,13 +125,9 @@ class LobbySection extends PureComponent<Props, State> {
     _onToggleLobby() {
         const newValue = !this.state.lobbyEnabled;
 
-        console.log("Before setting state: ", this.state.password);
-
         this.setState({
             lobbyEnabled: newValue
         });
-
-        console.log("After setting state: ", this.state.password);
 
         this.props.dispatch(toggleLobbyMode(newValue));
     }
@@ -168,8 +143,6 @@ function mapStateToProps(state: Object): $Shape<Props> {
     const { conference,
             password } = state['features/base/conference'];
     const { hideLobbyButton } = state['features/base/config'];
-
-    console.log("Map state to props: ", password);
 
     return {
         _password: password,
