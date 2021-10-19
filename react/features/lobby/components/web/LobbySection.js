@@ -133,9 +133,13 @@ class LobbySection extends PureComponent<Props, State> {
     _onToggleLobby() {
         const newValue = !this.state.lobbyEnabled;
 
+        console.log("Before setting state: ", this.state.password);
+
         this.setState({
             lobbyEnabled: newValue
         });
+
+        console.log("After setting state: ", this.state.password);
 
         this.props.dispatch(toggleLobbyMode(newValue));
     }
