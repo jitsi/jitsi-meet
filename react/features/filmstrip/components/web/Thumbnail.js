@@ -1,5 +1,4 @@
 // @flow
-
 import React, { Component } from 'react';
 
 import { createScreenSharingIssueEvent, sendAnalytics } from '../../../analytics';
@@ -145,9 +144,10 @@ export type Props = {|
     _isMobile: boolean,
 
     /**
-     * Whether we are currently running in a mobile browser in portrait orientation.
+     * Whether we are currently running in a mobile browser in portrait orientation
+     * and remote videos are not shown.
      */
-    _isMobilePortrait: boolean,
+    _isMobilePortraitNoRemoteVideos: boolean,
 
     /**
      * Indicates whether the participant is screen sharing.
@@ -758,6 +758,30 @@ class Thumbnail extends Component<Props, State> {
     }
 
     /**
+     * Returns styles needed for local participant.
+     *
+     * @returns {Object}
+     */
+    _getLocalParticipantStyles() {
+        const { _isMobilePortraitNoRemoteVideos, _width } = this.props;
+        const styles = this._getStyles();
+
+        if (_isMobilePortraitNoRemoteVideos) {
+            // shirik the width of the container with 80%
+            const shrinked = _width * 80 / 100;
+
+            styles.thumbnail.height = styles.thumbnail.minHeight = `${shrinked * (16 / 9)}px`;
+            styles.thumbnail.width = styles.thumbnail.minWidth = `${shrinked}px`;
+
+            // align container to the right now that is narrower.
+            styles.thumbnail.right = 0;
+            styles.thumbnail.position = 'absolute';
+        }
+
+        return styles;
+    }
+
+    /**
      * Renders the local participant's thumbnail.
      *
      * @returns {ReactElement}
@@ -768,7 +792,6 @@ class Thumbnail extends Component<Props, State> {
             _defaultLocalDisplayName,
             _disableLocalVideoFlip,
             _isMobile,
-            _isMobilePortrait,
             _isScreenSharing,
             _localFlipX,
             _participant,
@@ -776,15 +799,10 @@ class Thumbnail extends Component<Props, State> {
         } = this.props;
         const { id } = _participant || {};
         const { audioLevel } = this.state;
-        const styles = this._getStyles();
-        let containerClassName = this._getContainerClassName();
+        const containerClassName = this._getContainerClassName();
+        const styles = this._getLocalParticipantStyles();
         const videoTrackClassName
             = !_disableLocalVideoFlip && _videoTrack && !_isScreenSharing && _localFlipX ? 'flipVideoX' : '';
-
-        if (_isMobilePortrait) {
-            styles.thumbnail.height = styles.thumbnail.width;
-            containerClassName = `${containerClassName} self-view-mobile-portrait`;
-        }
 
         return (
             <span
@@ -1050,7 +1068,7 @@ function _mapStateToProps(state, ownProps): Object {
         ? getLocalAudioTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, participantID);
     const _currentLayout = getCurrentLayout(state);
     let size = {};
-    let _isMobilePortrait = false;
+    let _isMobilePortraitNoRemoteVideos = false;
     const {
         startSilent,
         disableLocalVideoFlip,
@@ -1060,7 +1078,6 @@ function _mapStateToProps(state, ownProps): Object {
     const { NORMAL = 8 } = interfaceConfig.INDICATOR_FONT_SIZES || {};
     const { localFlipX } = state['features/base/settings'];
     const _isMobile = isMobileBrowser();
-
 
     switch (_currentLayout) {
     case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
@@ -1085,7 +1102,9 @@ function _mapStateToProps(state, ownProps): Object {
             _height: height
         };
 
-        _isMobilePortrait = _isMobile && state['features/base/responsive-ui'].aspectRatio === ASPECT_RATIO_NARROW;
+        _isMobilePortraitNoRemoteVideos = _isMobile
+            && state['features/base/responsive-ui'].aspectRatio === ASPECT_RATIO_NARROW
+            && state['features/base/config'].disable1On1Mode === null;
 
         break;
     }
@@ -1116,7 +1135,7 @@ function _mapStateToProps(state, ownProps): Object {
         _isCurrentlyOnLargeVideo: state['features/large-video']?.participantId === id,
         _isDominantSpeakerDisabled: interfaceConfig.DISABLE_DOMINANT_SPEAKER_INDICATOR,
         _isMobile,
-        _isMobilePortrait,
+        _isMobilePortraitNoRemoteVideos,
         _isScreenSharing: _videoTrack?.videoType === 'desktop',
         _isTestModeEnabled: isTestModeEnabled(state),
         _isVideoPlayable: id && isVideoPlayable(state, id),
