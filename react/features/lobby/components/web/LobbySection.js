@@ -23,7 +23,7 @@ type Props = {
     /**
      * The value for the conference password
      */
-    password: string,
+    _password: string,
 
     /**
      * The Redux Dispatch function.
@@ -41,7 +41,12 @@ type State = {
     /**
      * True if the lobby switch is toggled on.
      */
-    lobbyEnabled: boolean
+    lobbyEnabled: boolean,
+    
+    /**
+     * The value for the conference password
+     */
+    password: string
 }
 
 /**
@@ -57,7 +62,8 @@ class LobbySection extends PureComponent<Props, State> {
         super(props);
 
         this.state = {
-            lobbyEnabled: props._lobbyEnabled
+            lobbyEnabled: props._lobbyEnabled,
+            password: props._password
         };
 
         this._onToggleLobby = this._onToggleLobby.bind(this);
@@ -72,7 +78,8 @@ class LobbySection extends PureComponent<Props, State> {
         if (props._lobbyEnabled !== state.lobbyEnabled) {
 
             return {
-                lobbyEnabled: props._lobbyEnabled
+                lobbyEnabled: props._lobbyEnabled,
+                password: props._password
             };
         }
 
@@ -85,8 +92,8 @@ class LobbySection extends PureComponent<Props, State> {
      * @inheritdoc
      */
     render() {
-        const { _visible, password, t } = this.props;
-        console.log("Rendering the lobby section: ", this.password);
+        const { _visible, t } = this.props;
+        console.log("Rendering the lobby section: ", this.state.password);
 
         if (!_visible) {
             return null;
@@ -108,7 +115,7 @@ class LobbySection extends PureComponent<Props, State> {
                             id = 'lobby-section-switch'
                             onValueChange = { this._onToggleLobby }
                             value = { this.state.lobbyEnabled }
-                            disabled = { this.password } />
+                            disabled = { this.state.password } />
                     </div>
                 </div>
                 <div className = 'separator-line' />
@@ -148,7 +155,7 @@ function mapStateToProps(state: Object): $Shape<Props> {
     console.log("Map state to props: ",password);
 
     return {
-        password: password,
+        _password: password,
         _lobbyEnabled: state['features/lobby'].lobbyEnabled,
         _visible: conference && conference.isLobbySupported() && isLocalParticipantModerator(state)
             && !hideLobbyButton
