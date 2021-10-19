@@ -9,5 +9,11 @@ export default createWebTheme({
     colorMap,
     spacing,
     shape,
-    typography
+    typography,
+    breakpoints: {
+        values: {
+            '0': 0,
+            '480': 480
+        }
+    }
 });

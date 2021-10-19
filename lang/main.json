@@ -1045,7 +1045,10 @@
         "pending": "{{displayName}} has been invited"
     },
     "videoStatus": {
+        "adjustFor": "Adjust for:",
         "audioOnly": "AUD",
+        "bestPerformance": "Best performance",
+        "highestQuality": "Highest quality",
         "audioOnlyExpanded": "You are in low bandwidth mode. In this mode you will receive only audio and screen sharing.",
         "callQuality": "Video Quality",
         "hd": "HD",
@@ -1056,6 +1059,7 @@
         "ld": "LD",
         "ldTooltip": "Viewing low definition video",
         "lowDefinition": "Low definition",
+        "performanceSettings": "Performance settings",
         "sd": "SD",
         "sdTooltip": "Viewing standard definition video",
         "standardDefinition": "Standard definition"
