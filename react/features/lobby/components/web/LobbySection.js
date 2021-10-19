@@ -95,7 +95,7 @@ class LobbySection extends PureComponent<Props, State> {
         const { _visible, _password, t } = this.props;
         console.log("Rendering the lobby section: ", this.state.password);
     
-        if(this.state.password !== this._password) {
+        if(this._password && this.state.password !== this._password) {
             this.state.password = this._password;
         }
 
