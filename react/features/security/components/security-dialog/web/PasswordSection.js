@@ -11,6 +11,11 @@ import PasswordForm from './PasswordForm';
 type Props = {
 
     /**
+     * Whether or not the lobby is currently enabled.
+     */
+    lobbyEnabled: boolean,
+
+    /**
      * Whether or not the current user can modify the current password.
      */
     canEditPassword: boolean,
@@ -64,6 +69,7 @@ type Props = {
  * @returns {React$Element<any>}
  */
 function PasswordSection({
+    lobbyEnabled,
     canEditPassword,
     conference,
     locked,
@@ -226,13 +232,18 @@ function PasswordSection({
         if (locked) {
             return (
                 <>
-                    <a
-                        aria-label = { t('dialog.Remove') }
-                        className = 'remove-password'
-                        onClick = { onPasswordRemove }
-                        onKeyPress = { onPasswordRemoveKeyPressHandler }
-                        role = 'button'
-                        tabIndex = { 0 }>{ t('dialog.Remove') }</a>
+                    {
+                        // There are cases like lobby and grant moderator when password is not available
+                        lobbyEnabled ? <>
+                            <a
+                                aria-label = { t('dialog.Remove') }
+                                className = 'remove-password'
+                                onClick = { onPasswordRemove }
+                                onKeyPress = { onPasswordRemoveKeyPressHandler }
+                                role = 'button'
+                                tabIndex = { 0 }>{ t('dialog.Remove') }</a>
+                        </> : null
+                    }
                     {
 
                         // There are cases like lobby and grant moderator when password is not available

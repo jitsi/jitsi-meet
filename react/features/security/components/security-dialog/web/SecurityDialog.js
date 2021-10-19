@@ -82,6 +82,7 @@ function SecurityDialog({
             <div className = 'security-dialog'>
                 <LobbySection />
                 <PasswordSection
+                    lobbyEnabled = { _lobbyEnabled }
                     canEditPassword = { _canEditPassword }
                     conference = { _conference }
                     locked = { _locked }
@@ -122,6 +123,7 @@ function mapStateToProps(state) {
     const showE2ee = Boolean(e2eeSupported) && isLocalParticipantModerator(state);
 
     return {
+        _lobbyEnabled: state['features/lobby'].lobbyEnabled,
         _canEditPassword: isLocalParticipantModerator(state),
         _conference: conference,
         _dialIn: state['features/invite'],
