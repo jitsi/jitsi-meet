@@ -46,12 +46,3 @@ export const INIT_REORDER_STATS = 'INIT_REORDER_STATS';
  * }
  */
 export const CLOSE_SPEAKER_STATS = 'CLOSE_SPEAKER_STATS';
-
-/**
- * The type of the action which signals to display the speaker stats panel.
- *
- * {
- *     type: OPEN_SPEAKER_STATS
- * }
- */
-export const OPEN_SPEAKER_STATS = 'OPEN_SPEAKER_STATS';
