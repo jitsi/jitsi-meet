@@ -1,24 +1,30 @@
 // @flow
-/* eslint-disable require-jsdoc,max-len,camelcase*/
+/* eslint-disable */
 
 import { Component } from 'react';
 
+import { notifyBugsnag } from '../../../../bugsnag';
 import { Socket } from '../../../../service/Websocket/socket';
 import {
+    createWaitingAreaModalEvent,
     createWaitingAreaParticipantStatusChangedEvent,
     createWaitingAreaSocketEvent,
     sendAnalytics
 } from '../../analytics';
+import {
+    redirectToStaticPage
+} from '../../app/actions';
 import { getLocalParticipantInfoFromJwt, getLocalParticipantType } from '../../base/participants/functions';
 import { connect } from '../../base/redux';
 import { playSound as playSoundAction } from '../../base/sounds';
 import { sleep } from '../../base/util/helpers';
+import { showErrorNotification as showErrorNotificationAction } from '../../notifications';
 import {
     setJaneWaitingAreaAuthState as setJaneWaitingAreaAuthStateAction,
     updateRemoteParticipantsStatuses as updateRemoteParticipantsStatusesAction,
     updateRemoteParticipantsStatusesFromSocket as updateRemoteParticipantsStatusesFromSocketAction
-    , joinConference as joinConferenceAction
 } from '../actions';
+import { POLL_INTERVAL, REDIRECT_TO_WELCOME_PAGE_DELAY, CLOSE_BROWSER_DELAY } from '../constants';
 import {
     checkRoomStatus,
     getRemoteParticipantsStatuses, isRNSocketWebView,
@@ -38,18 +44,25 @@ type Props = {
     updateRemoteParticipantsStatusesFromSocket: Function,
     updateRemoteParticipantsStatuses: Function,
     playSound: Function,
-    joinConference: Function,
     setJaneWaitingAreaAuthState: Function,
-    remoteParticipantsStatuses: any
+    remoteParticipantsStatuses: any,
+    showErrorNotification: Function,
+    redirectToWelcomePage: Function
 };
 
 class SocketConnection extends Component<Props> {
 
     socket: Object;
 
+    interval: ?IntervalID;
+
+    connectionAttempts: number;
+
     constructor(props) {
         super(props);
         this.socket = null;
+        this.interval = undefined;
+        this.connectionAttempts = 0;
     }
 
     componentDidMount() {
@@ -70,14 +83,14 @@ class SocketConnection extends Component<Props> {
                     sendAnalytics(createWaitingAreaParticipantStatusChangedEvent('left'));
 
                     // sleep here to ensure the above code can be executed when the browser window is closed.
-                    sleep(2000);
+                    sleep(CLOSE_BROWSER_DELAY);
                 }
             };
 
             window.addEventListener('beforeunload', unloadHandler);
             window.addEventListener('unload', unloadHandler);
         }
-        this._connectSocket();
+        this._fetchDataAndconnectSocket();
     }
 
     componentDidUpdate() {
@@ -89,6 +102,10 @@ class SocketConnection extends Component<Props> {
     }
 
     componentWillUnmount() {
+        if (this.interval) {
+            clearInterval(this.interval);
+            this.interval = undefined;
+        }
         this.socket && this.socket.disconnect();
     }
 
@@ -117,41 +134,86 @@ class SocketConnection extends Component<Props> {
     }
 
     _connectionStatusListener(status) {
-        const { isRNWebViewPage, joinConference } = this.props;
-
-        if (isRNWebViewPage) {
-            sendMessageToIosApp({ message: status });
+        if (status && status.error && !this.interval) {
+            sendAnalytics(createWaitingAreaSocketEvent('error', status.error));
+            sendAnalytics(createWaitingAreaModalEvent('polling.started'));
+            notifyBugsnag(status.error);
+            console.log('socket fallback to polling');
+            this._polling();
         }
-        if (status && status.error) {
-            joinConference();
+
+        if (status && status.event === 'connected' && this.interval) {
+            sendAnalytics(createWaitingAreaModalEvent('polling.stoped'));
+            clearInterval(this.interval);
+            this.interval = undefined
+            this.connectionAttempts = 0;
         }
     }
 
+    _redirectToWelcomePage() {
+        const { redirectToWelcomePage } = this.props;
 
-    async _connectSocket() {
-        const { participantType, isRNWebViewPage, updateRemoteParticipantsStatuses, joinConference, setJaneWaitingAreaAuthState } = this.props;
+        // Wait 5 seconds before redirecting user to the welcome page
+        setTimeout(() => {
+            redirectToWelcomePage();
+        }, REDIRECT_TO_WELCOME_PAGE_DELAY);
+    }
+
+    _polling() {
+        this.interval
+            = setInterval(
+            () => {
+                this._fetchDataAndconnectSocket();
+            },
+            POLL_INTERVAL);
+    }
+
+    async _fetchDataAndconnectSocket() {
+        const { participantType,
+            isRNWebViewPage,
+            updateRemoteParticipantsStatuses,
+            setJaneWaitingAreaAuthState,
+            showErrorNotification } = this.props;
 
         try {
+            // fetch data
             const response = await checkRoomStatus();
             const remoteParticipantsStatuses = getRemoteParticipantsStatuses(response.participant_statuses, participantType);
 
+            // This action will update the remote participant states in reducer
             updateRemoteParticipantsStatuses(remoteParticipantsStatuses);
 
-            this.socket = new Socket({
-                socket_host: response.socket_host,
-                ws_token: response.socket_token
-            });
-            this.socket.onMessageReceivedListener = this._onMessageReceivedListener.bind(this);
-            this.socket.connectionStatusListener = this._connectionStatusListener.bind(this);
-            this.socket.connect();
-        } catch (error) {
-            if (isRNWebViewPage) {
-                sendMessageToIosApp({ message: error });
-            } else if (error && error.error === 'Signature has expired') {
-                setJaneWaitingAreaAuthState('failed');
+            if (this.socket) {
+                this.socket.reconnect(response.socket_token);
             } else {
-                joinConference();
+                this.socket = new Socket({
+                    socket_host: response.socket_host,
+                    ws_token: response.socket_token
+                });
+                this.socket.onMessageReceivedListener = this._onMessageReceivedListener.bind(this);
+                this.socket.connectionStatusListener = this._connectionStatusListener.bind(this);
+                this.socket.connect();
             }
+        } catch (error) {
+            if (this.connectionAttempts === 3) {
+                if (isRNWebViewPage) {
+                    sendMessageToIosApp({ message: error });
+                } else if (error && error.error === 'Signature has expired') {
+                    setJaneWaitingAreaAuthState('failed');
+                }
+                showErrorNotification({
+                    description: error && error.error,
+                    titleKey: 'janeWaitingArea.errorTitleKey'
+                });
+
+                // send event to datadog
+                sendAnalytics(createWaitingAreaModalEvent('polling.stoped'));
+                clearInterval(this.interval);
+                this.interval = undefined
+                return this._redirectToWelcomePage();
+            }
+            this.connectionAttempts++;
+            this._fetchDataAndconnectSocket();
         }
     }
 
@@ -186,11 +248,14 @@ function mapDispatchToProps(dispatch) {
         playSound(soundId) {
             dispatch(playSoundAction(soundId));
         },
-        joinConference() {
-            dispatch(joinConferenceAction());
-        },
         setJaneWaitingAreaAuthState(state) {
             dispatch(setJaneWaitingAreaAuthStateAction(state));
+        },
+        showErrorNotification(error) {
+            dispatch(showErrorNotificationAction(error));
+        },
+        redirectToWelcomePage() {
+            dispatch(redirectToStaticPage('/'));
         }
     };
 }
