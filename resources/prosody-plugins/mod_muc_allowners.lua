@@ -22,8 +22,8 @@ local function load_config()
 end
 load_config();
 
-local function is_admin(jid)
-    return um_is_admin(jid, module.host);
+local function is_admin(_jid)
+    return um_is_admin(_jid, module.host);
 end
 
 -- List of the bare_jids of all occupants that are currently joining (went through pre-join) and will be promoted
@@ -75,12 +75,14 @@ module:hook("muc-occupant-pre-join", function (event)
         end
 
         if not (room_name == session.jitsi_meet_room or session.jitsi_meet_room == '*') then
-            module:log('debug', 'skip allowners for auth user and non matching room name: %s, jwt room name: %s', room_name, session.jitsi_meet_room);
+            module:log('debug', 'skip allowners for auth user and non matching room name: %s, jwt room name: %s',
+                room_name, session.jitsi_meet_room);
             return;
         end
 
         if not (subdomain == session.jitsi_meet_context_group) then
-            module:log('debug', 'skip allowners for auth user and non matching room subdomain: %s, jwt subdomain: %s', subdomain, session.jitsi_meet_context_group);
+            module:log('debug', 'skip allowners for auth user and non matching room subdomain: %s, jwt subdomain: %s',
+                subdomain, session.jitsi_meet_context_group);
             return;
         end
     end
@@ -107,7 +109,10 @@ module:hook_global('config-reloaded', load_config);
 -- We want to filter those presences where we send first `participant` and just after it `moderator`
 function filter_stanza(stanza)
     -- when joining_moderator_participants is empty there is nothing to filter
-    if next(joining_moderator_participants) == nil or not stanza.attr or not stanza.attr.to or stanza.name ~= "presence" then
+    if next(joining_moderator_participants) == nil
+            or not stanza.attr
+            or not stanza.attr.to
+            or stanza.name ~= "presence" then
         return stanza;
     end
 
