@@ -909,7 +909,10 @@ var config = {
          // Overwrite for pool of background images for avatars
          avatarBackgrounds: ['url(https://example.com/avatar-background-1.png)', '#FFF'],
          // The lobby/prejoin screen background
-         premeetingBackground: 'url(https://example.com/premeeting-background.png)'
+         premeetingBackground: 'url(https://example.com/premeeting-background.png)',
+         // A list of images that can be used as video backgrounds.
+         // When this field is present, the default images will be replaced with those provided.
+         virtualBackgrounds: ['https://example.com/img.jpg']
      }
     */
     // dynamicBrandingUrl: '',
