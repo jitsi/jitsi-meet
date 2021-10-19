@@ -157,8 +157,10 @@ function mapStateToProps(state: Object): $Shape<Props> {
     const { hideLobbyButton } = state['features/base/config'];
 
     console.log("Map state to props: ",password);
-
-    this.state.password = password;
+    
+    if(this.state && this.state.password) {
+        this.state.password = password;
+    }
 
     return {
         _password: password,
