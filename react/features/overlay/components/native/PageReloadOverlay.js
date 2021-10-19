@@ -9,7 +9,7 @@ import { ConfirmDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
-import { setFatalError } from '../../actions';
+import { setFatalError, setPageReloadOverlayCanceled } from '../../actions';
 import AbstractPageReloadOverlay, {
     abstractMapStateToProps,
     type Props as AbstractProps
@@ -59,6 +59,7 @@ class PageReloadOverlay extends AbstractPageReloadOverlay<Props> {
     _onCancel() {
         clearInterval(this._interval);
         this.props.dispatch(setFatalError(undefined));
+        this.props.dispatch(setPageReloadOverlayCanceled());
         this.props.dispatch(appNavigate(undefined));
     }
 
