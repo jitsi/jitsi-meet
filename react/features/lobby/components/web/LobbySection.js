@@ -92,11 +92,11 @@ class LobbySection extends PureComponent<Props, State> {
      * @inheritdoc
      */
     render() {
-        const { _visible, t } = this.props;
+        const { _visible, _password, t } = this.props;
         console.log("Rendering the lobby section: ", this.state.password);
     
-        if(this.state.password !== _password) {
-            this.state.password = _password;
+        if(this.state.password !== this._password) {
+            this.state.password = this._password;
         }
 
         if (!_visible) {
