@@ -208,11 +208,15 @@ export function startKnocking() {
  */
 export function toggleLobbyMode(enabled: boolean) {
     return async (dispatch: Dispatch<any>, getState: Function) => {
+        console.log("Trying to toggle lobby mode...");
         const conference = getCurrentConference(getState);
+        console.log("Conference: ", conference);
 
         if (enabled) {
+            console.log("Enabling lobby");
             conference.enableLobby();
         } else {
+            console.log("Disabling lobby");
             conference.disableLobby();
         }
     };
