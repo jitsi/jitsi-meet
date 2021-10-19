@@ -14,6 +14,11 @@ import PasswordSection from './PasswordSection';
 type Props = {
 
     /**
+     * State of the lobby mode.
+     */
+    _lobbyEnabled: boolean,
+
+    /**
      * Whether or not the current user can modify the current password.
      */
     _canEditPassword: boolean,
@@ -57,6 +62,7 @@ type Props = {
  * @returns {React$Element<any>}
  */
 function SecurityDialog({
+    _lobbyEnabled,
     _canEditPassword,
     _conference,
     _locked,
