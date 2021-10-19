@@ -6,10 +6,9 @@ import ReactDOM from 'react-dom';
 
 import { browser } from '../../../react/features/base/lib-jitsi-meet';
 import { isTestModeEnabled } from '../../../react/features/base/testing';
-import { getRemoteTracks } from '../../../react/features/base/tracks';
+import { getRemoteTracks, isHdQualityEnabled } from '../../../react/features/base/tracks';
 import { ORIENTATION, LargeVideoBackground, updateLastLargeVideoMediaEvent } from '../../../react/features/large-video';
 import { LAYOUTS, getCurrentLayout } from '../../../react/features/video-layout';
-import { VIDEO_QUALITY_LEVELS } from '../../../react/features/video-quality/constants';
 import UIUtil from '../util/UIUtil';
 
 import Filmstrip from './Filmstrip';
@@ -19,7 +18,6 @@ import LargeContainer from './LargeContainer';
 export const VIDEO_CONTAINER_TYPE = 'camera';
 
 const FADE_DURATION_MS = 300;
-const SD_VIDEO_HEIGHT = VIDEO_QUALITY_LEVELS.STANDARD;
 const SD_VIDEO_CONTAINER_PADDING_PERCENTAGE = 0.1;
 const SD_VIDEO_CONTAINER_PADDING_BREAKPOINT = 768;
 
@@ -169,7 +167,17 @@ function getMaxZoomCoefficient(videoHeight, aspectRatio, tracks) {
     const conferenceHasStarted = getRemoteTracks(tracks).length > 0;
     const isMobileRemoteTrack = aspectRatio < 1 && conferenceHasStarted;
 
-    if ((videoHeight <= SD_VIDEO_HEIGHT && !isMobileRemoteTrack) || !conferenceHasStarted) {
+    // Because of browser compatibility issues, we are unable to add SD video constraints to Firefox.
+    // we need to determine here if HD quality is enabled in Jane
+    // and add paddings if the hd quality is disabled.
+    // TODO: If we decide to enable hd beta feature in the future,
+    //  we may need an xmpp listener/flag to check if the
+    //  practitioner side allows the patient to switch to hd,
+    //  since this feature is controlled by the practitioner side
+    const isHdVideoQualityFeatureEnable = isHdQualityEnabled(APP.store.getState());
+
+    if ((!isHdVideoQualityFeatureEnable && !isMobileRemoteTrack)
+        || !conferenceHasStarted) {
         return 1;
     }
 
