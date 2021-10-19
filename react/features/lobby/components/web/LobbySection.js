@@ -66,6 +66,8 @@ class LobbySection extends PureComponent<Props, State> {
             password: props._password
         };
 
+        console.log("State from constructor: ", this.state);
+
         this._onToggleLobby = this._onToggleLobby.bind(this);
     }
 
@@ -76,6 +78,8 @@ class LobbySection extends PureComponent<Props, State> {
      */
     static getDerivedStateFromProps(props: Props, state: Object) {
         if (props._lobbyEnabled !== state.lobbyEnabled) {
+
+            console.log("Getting derived state from props: ", props);
 
             return {
                 lobbyEnabled: props._lobbyEnabled,
@@ -92,6 +96,7 @@ class LobbySection extends PureComponent<Props, State> {
      * @inheritdoc
      */
     render() {
+        console.log("Props", this.props);
         const { _visible, _password, t } = this.props;
         console.log("Rendering the lobby section: ", this.state.password);
         console.log("Rendering the lobby section: ", this._password);
@@ -164,7 +169,7 @@ function mapStateToProps(state: Object): $Shape<Props> {
             password } = state['features/base/conference'];
     const { hideLobbyButton } = state['features/base/config'];
 
-    console.log("Map state to props: ",password);
+    console.log("Map state to props: ", password);
 
     return {
         _password: password,
