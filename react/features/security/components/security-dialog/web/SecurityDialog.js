@@ -86,8 +86,7 @@ function SecurityDialog({
             titleKey = 'security.securityOptions'
             width = { 'small' }>
             <div className = 'security-dialog'>
-                <LobbySection
-                    password = { _password } />
+                <LobbySection />
                 <PasswordSection
                     lobbyEnabled = { _lobbyEnabled }
                     canEditPassword = { _canEditPassword }

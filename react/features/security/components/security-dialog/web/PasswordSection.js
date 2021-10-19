@@ -230,6 +230,7 @@ function PasswordSection({
         }
 
         if (locked) {
+            console.log(lobbyEnabled);
             return (
                 <>
                     {
