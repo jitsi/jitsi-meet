@@ -134,7 +134,8 @@ class MeetingParticipantList extends PureComponent<Props> {
         } = this.props;
 
         return (
-            <View style = { styles.meetingList }>
+            <View
+                style = { styles.meetingListContainer }>
                 <Text style = { styles.meetingListDescription }>
                     {t('participantsPane.headings.participantsList',
                         { count: _participantsCount })}
@@ -156,6 +157,7 @@ class MeetingParticipantList extends PureComponent<Props> {
                     keyExtractor = { this._keyExtractor }
                     renderItem = { this._renderParticipant }
                     showsHorizontalScrollIndicator = { false }
+                    style = { styles.meetingList }
                     windowSize = { 2 } />
             </View>
         );

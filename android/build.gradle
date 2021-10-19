@@ -110,7 +110,7 @@ allprojects {
 
             project.version = "${json.version}-jitsi-${versionQualifierNumber}"
 
-            task androidSourcesJar(type: Jar) {
+            task jitsiAndroidSourcesJar(type: Jar) {
                 classifier = 'sources'
                 from android.sourceSets.main.java.source
             }
@@ -124,7 +124,7 @@ allprojects {
                     artifact("${project.buildDir}/outputs/aar/${project.name}-release.aar") {
                         extension "aar"
                     }
-                    artifact(androidSourcesJar)
+                    artifact(jitsiAndroidSourcesJar)
                     pom.withXml {
                         def pomXml = asNode()
                         pomXml.appendNode('name', project.name)
