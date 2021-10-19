@@ -158,6 +158,8 @@ function mapStateToProps(state: Object): $Shape<Props> {
 
     console.log("Map state to props: ",password);
 
+    this.state.password = password;
+
     return {
         _password: password,
         _lobbyEnabled: state['features/lobby'].lobbyEnabled,
