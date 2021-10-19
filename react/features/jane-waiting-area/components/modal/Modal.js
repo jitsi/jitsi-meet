@@ -111,11 +111,16 @@ class Modal extends Component<Props> {
         this._admitClient = this._admitClient.bind(this);
     }
 
-    _joinConference() {
+    async _joinConference() {
         const { joinConference } = this.props;
 
-        updateParticipantReadyStatus('joined');
-        joinConference();
+        try {
+            await updateParticipantReadyStatus('joined');
+        } catch (e) {
+            console.error(e);
+        } finally {
+            joinConference();
+        }
     }
 
     _admitClient() {

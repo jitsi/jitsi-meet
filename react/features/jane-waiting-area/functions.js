@@ -3,6 +3,7 @@
 import jwtDecode from 'jwt-decode';
 import _ from 'lodash';
 
+import { notifyBugsnag } from '../../../bugsnag';
 import {
     createWaitingAreaParticipantStatusChangedEvent,
     sendAnalytics
@@ -12,7 +13,6 @@ import {
     getLocalParticipantType
 } from '../base/participants/functions';
 import { doGetJSON } from '../base/util';
-import { showErrorNotification } from '../notifications';
 
 import { UPDATE_REMOTE_PARTICIPANT_STATUSES } from './actionTypes';
 import { updateRemoteParticipantsStatuses } from './actions';
@@ -135,6 +135,7 @@ export async function checkRoomStatus(): Promise<Object> {
 
         return doGetJSON(url, true);
     } catch (e) {
+        notifyBugsnag('Unable to retrieve the room state.');
         throw Error(e);
     }
 }
@@ -185,11 +186,8 @@ export function updateParticipantReadyStatus(status: string): void {
     })
     .catch(error => {
         sendAnalytics(createWaitingAreaParticipantStatusChangedEvent('failed'));
-        window.APP.store.dispatch(showErrorNotification({
-            descriptionKey: error,
-            titleKey: 'Waiting area error'
-        }));
         console.error(error);
+        notifyBugsnag(error);
     });
 }
 

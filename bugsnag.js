@@ -16,4 +16,12 @@ const getBugsnagClient = () => {
     return bugsnagClient;
 };
 
+export const notifyBugsnag = (error)=>{
+    if (window.bugsnag
+        && window.bugsnag.notify
+        && typeof window.bugsnag.notify === 'function') {
+        window.bugsnag.notify(error);
+    }
+}
+
 export { getBugsnagClient };
