@@ -185,6 +185,7 @@ class SecurityDialog extends PureComponent<Props, State> {
      */
     _renderLobbyMode() {
         const {
+            _lobbyEnabled,
             _lobbyModeSwitchVisible,
             _securityDialogStyles,
             t
@@ -203,6 +204,7 @@ class SecurityDialog extends PureComponent<Props, State> {
                     { t('lobby.enableDialogText') }
                 </Text>
                 <LobbyModeSwitch
+                    lobbyEnabled = { _lobbyEnabled }
                     onToggleLobbyMode = { this._onToggleLobbyMode } />
             </View>
         );
