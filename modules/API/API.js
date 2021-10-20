@@ -533,8 +533,11 @@ function initCommands() {
         'join-with-password': password => {
             APP.store.dispatch(joinWithPassword(password));
         },
-        'meeting-reconnect': password => {
-            APP.store.dispatch(joinWithPassword(""));
+        'meeting-reconnect': () => {
+            APP.store.dispatch(updateSettings({ userSelectedSkipPrejoin: true }));
+            setTimeout(() => {
+                APP.store.dispatch(joinWithPassword(""));                
+            }, 2000);
         },
         'grant-moderator': participantId => {
             APP.store.dispatch(grantModerator(participantId));
