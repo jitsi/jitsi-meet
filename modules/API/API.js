@@ -62,6 +62,9 @@ import {
     selectParticipantInLargeVideo
 } from '../../react/features/large-video/actions.any';
 import {
+    approveKnockingParticipant
+} from '../../react/features/lobby/actions.any';
+import {
     captureLargeVideoScreenshot,
     resizeLargeVideo
 } from '../../react/features/large-video/actions.web';
@@ -214,6 +217,11 @@ function initCommands() {
             }
 
             APP.store.dispatch(setFollowMe(value));
+        },
+        'set-knocking-participant-approval': participantId => {
+            console.log('Participant admitted command');
+            // APP.store.dispatch(startKnocking());
+            APP.store.dispatch(approveKnockingParticipant(participantId));
         },
         'set-large-video-participant': participantId => {
             logger.debug('Set large video participant command received');
@@ -524,6 +532,9 @@ function initCommands() {
         },
         'join-with-password': password => {
             APP.store.dispatch(joinWithPassword(password));
+        },
+        'meeting-reconnect': password => {
+            APP.store.dispatch(joinWithPassword(""));
         },
         'grant-moderator': participantId => {
             APP.store.dispatch(grantModerator(participantId));
