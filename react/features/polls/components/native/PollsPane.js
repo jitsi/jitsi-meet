@@ -6,7 +6,7 @@ import React, { useEffect } from 'react';
 import { Button, useTheme } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
-import JitsiScreen from '../../../base/modal/components/JitsiScreen';
+import { JitsiScreen } from '../../../base/modal';
 import { BUTTON_MODES } from '../../../chat/constants';
 import { screen } from '../../../conference/components/native/routes';
 import { getUnreadPollCount } from '../../functions';
@@ -37,21 +37,24 @@ const PollsPane = (props: AbstractProps) => {
 
     return (
         <JitsiScreen
-            avoidingViewStyle = { chatStyles.PollPaneContainer }
-            contentContainerStyle = { chatStyles.PollPane }>
+            contentContainerStyle = { chatStyles.PollPane }
+            hasTabNavigator = { true }
+            style = { chatStyles.PollPaneContainer }>
             {
                 createMode
                     ? <PollCreate setCreateMode = { setCreateMode } />
                     : <PollsList />
 
             }
-            <Button
-                color = { palette.screen01Header }
-                mode = { BUTTON_MODES.CONTAINED }
-                onPress = { onCreate }
-                style = { chatStyles.createPollButton } >
-                {t('polls.create.create')}
-            </Button>
+            {
+                !createMode && <Button
+                    color = { palette.screen01Header }
+                    mode = { BUTTON_MODES.CONTAINED }
+                    onPress = { onCreate }
+                    style = { chatStyles.createPollButton } >
+                    {t('polls.create.create')}
+                </Button>
+            }
         </JitsiScreen>
     );
 };

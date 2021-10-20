@@ -24,6 +24,11 @@ type Props = {
 type State = {
 
     /**
+     * Boolean to show if an extra padding needs to be added to the bar.
+     */
+    addPadding: boolean,
+
+    /**
      * The value of the input field.
      */
     message: string,
@@ -47,12 +52,13 @@ class ChatInputBar extends Component<Props, State> {
         super(props);
 
         this.state = {
+            addPadding: false,
             message: '',
             showSend: false
         };
 
         this._onChangeText = this._onChangeText.bind(this);
-        this._onFieldReferenceAvailable = this._onFieldReferenceAvailable.bind(this);
+        this._onFocused = this._onFocused.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
     }
 
@@ -64,16 +70,20 @@ class ChatInputBar extends Component<Props, State> {
     render() {
         return (
             <View
-                style = { styles.inputBar }>
+                style = { [
+                    styles.inputBar,
+                    this.state.addPadding ? styles.extraBarPadding : null
+                ] }>
                 <TextInput
                     blurOnSubmit = { false }
                     multiline = { false }
+                    onBlur = { this._onFocused(false) }
                     onChangeText = { this._onChangeText }
+                    onFocus = { this._onFocused(true) }
                     onSubmitEditing = { this._onSubmit }
                     placeholder = { this.props.t('chat.fieldPlaceHolder') }
-                    ref = { this._onFieldReferenceAvailable }
                     returnKeyType = 'send'
-                    style = { Platform.OS === 'ios' ? styles.iosInputField : styles.androidInputField }
+                    style = { styles.inputField }
                     value = { this.state.message } />
                 {
                     this.state.showSend && <TouchableOpacity onPress = { this._onSubmit }>
@@ -101,18 +111,21 @@ class ChatInputBar extends Component<Props, State> {
         });
     }
 
-    _onFieldReferenceAvailable: Object => void;
+    _onFocused: boolean => Function;
 
     /**
-     * Callback to be invoked when the field reference is available.
+     * Constructs a callback to be used to update the padding of the field if necessary.
      *
-     * @param {Object} field - The reference to the field.
-     * @returns {void}
+     * @param {boolean} focused - True of the field is focused.
+     * @returns {Function}
      */
-    _onFieldReferenceAvailable(field) {
-        field && field.focus();
+    _onFocused(focused) {
+        return () => {
+            Platform.OS === 'android' && this.setState({
+                addPadding: focused
+            });
+        };
     }
-
 
     _onSubmit: () => void;
 

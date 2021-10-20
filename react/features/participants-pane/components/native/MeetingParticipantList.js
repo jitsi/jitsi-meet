@@ -156,6 +156,7 @@ class MeetingParticipantList extends PureComponent<Props> {
                     horizontal = { false }
                     keyExtractor = { this._keyExtractor }
                     renderItem = { this._renderParticipant }
+                    scrollEnabled = { false }
                     showsHorizontalScrollIndicator = { false }
                     style = { styles.meetingList }
                     windowSize = { 2 } />

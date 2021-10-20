@@ -175,6 +175,7 @@ export const chatStyles = createStyleSheet({
     },
 
     createPollButton: {
+        padding: 8,
         margin: BaseTheme.spacing[2]
     },
 

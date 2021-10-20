@@ -7,7 +7,7 @@ import { WebView } from 'react-native-webview';
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { translate } from '../../../base/i18n';
 import { IconArrowBack } from '../../../base/icons';
-import JitsiScreen from '../../../base/modal/components/JitsiScreen';
+import { JitsiScreen } from '../../../base/modal';
 import { LoadingIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { goBack } from '../../../conference/components/native/ConferenceNavigationContainerRef';
@@ -89,8 +89,8 @@ class SharedDocument extends PureComponent<Props> {
         return (
             <JitsiScreen
                 addHeaderHeightValue = { true }
-                avoidingViewStyle = { styles.sharedDocContainer }
-                behavior = 'padding'>
+                hasTabNavigator = { false }
+                style = { styles.sharedDocContainer }>
                 <WebView
                     renderLoading = { this._renderLoading }
                     source = {{ uri: _documentUrl }}

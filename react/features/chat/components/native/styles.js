@@ -6,11 +6,6 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 const BUBBLE_RADIUS = 8;
 
-const inputField = {
-    color: 'rgb(28, 32, 37)',
-    flex: 1
-};
-
 /**
  * The styles of the feature chat.
  *
@@ -64,14 +59,10 @@ export default {
         paddingHorizontal: BoxModel.padding
     },
 
-    androidInputField: {
-        ...inputField,
+    inputField: {
+        color: 'rgb(28, 32, 37)',
+        flex: 1,
         height: 48
-    },
-
-    iosInputField: {
-        ...inputField,
-        height: 80
     },
 
     messageBubble: {

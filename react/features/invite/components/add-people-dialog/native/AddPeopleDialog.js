@@ -23,8 +23,7 @@ import {
     IconSearch,
     IconShare
 } from '../../../../base/icons';
-import { setActiveModalId } from '../../../../base/modal';
-import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
+import { JitsiScreen } from '../../../../base/modal';
 import {
     AvatarListItem,
     type Item
@@ -218,10 +217,9 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
 
         return (
             <JitsiScreen
-                addHeaderHeightValue = { Platform.OS === 'android' }
-                avoidingViewStyle = { styles.addPeopleContainer }
-                behavior = 'padding'
-                footerComponent = { this._renderShareMeetingButton }>
+                footerComponent = { this._renderShareMeetingButton }
+                hasTabNavigator = { false }
+                style = { styles.addPeopleContainer }>
                 <View
                     style = { styles.searchFieldWrapper }>
                     <View style = { styles.searchIconWrapper }>
@@ -370,8 +368,6 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                         inviteItems: invitesLeftToSend
                     });
                     this._showFailedInviteAlert();
-                } else {
-                    this.props.dispatch(setActiveModalId());
                 }
             });
     }

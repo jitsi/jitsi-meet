@@ -7,7 +7,7 @@ import { Button } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { openDialog } from '../../../base/dialog';
-import JitsiScreen from '../../../base/modal/components/JitsiScreen';
+import { JitsiScreen } from '../../../base/modal';
 import {
     isLocalParticipantModerator
 } from '../../../base/participants';
@@ -35,7 +35,8 @@ const ParticipantsPane = () => {
 
     return (
         <JitsiScreen
-            avoidingViewStyle = { styles.participantsPane }>
+            hasTabNavigator = { false }
+            style = { styles.participantsPane }>
             <ScrollView bounces = { false }>
                 <LobbyParticipantList />
                 <MeetingParticipantList />

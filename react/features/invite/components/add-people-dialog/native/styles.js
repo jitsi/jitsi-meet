@@ -25,8 +25,9 @@ export default {
 
     bottomBar: {
         alignItems: 'center',
+        justifyContent: 'center',
         backgroundColor: BaseTheme.palette.screen01Header,
-        height: BaseTheme.spacing[9]
+        height: BaseTheme.spacing[10]
     },
 
     clearButton: {
