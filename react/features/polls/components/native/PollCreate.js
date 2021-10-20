@@ -141,39 +141,38 @@ const PollCreate = (props: AbstractProps) => {
                     keyExtractor = { (item, index) => index.toString() }
                     ref = { answerListRef }
                     renderItem = { renderListItem } />
+                <View style = { chatStyles.pollCreateButtons }>
+                    <Button
+                        color = '#3D3D3D'
+                        mode = { BUTTON_MODES.CONTAINED }
+                        onPress = { () => {
+                            // adding and answer
+                            addAnswer();
+                            requestFocus(answers.length);
+                        } }
+                        style = { chatStyles.pollCreateAddButton }>
+                        {t('polls.create.addOption')}
+                    </Button>
+                    <View
+                        style = { chatStyles.buttonRow }>
+                        <Button
+                            color = '#3D3D3D'
+                            mode = { BUTTON_MODES.CONTAINED }
+                            onPress = { () => setCreateMode(false) }
+                            style = { chatStyles.pollCreateButton } >
+                            {t('polls.create.cancel')}
+                        </Button>
 
-                <Button
-                    color = '#3D3D3D'
-                    mode = { BUTTON_MODES.CONTAINED }
-                    onPress = { () => {
-                        // adding and answer
-                        addAnswer();
-                        requestFocus(answers.length);
-                    } }
-                    style = { chatStyles.pollCreateAddButton }>
-                    {t('polls.create.addOption')}
-                </Button>
-            </View>
-
-            <View
-                style = { chatStyles.buttonRow }>
-
-                <Button
-                    color = '#3D3D3D'
-                    mode = { BUTTON_MODES.CONTAINED }
-                    onPress = { () => setCreateMode(false) }
-                    style = { chatStyles.pollCreateButton } >
-                    {t('polls.create.cancel')}
-                </Button>
-
-                <Button
-                    color = '#17a0db'
-                    disabled = { isSubmitDisabled }
-                    mode = { BUTTON_MODES.CONTAINED }
-                    onPress = { onSubmit }
-                    style = { chatStyles.pollCreateButton } >
-                    {t('polls.create.send')}
-                </Button>
+                        <Button
+                            color = '#17a0db'
+                            disabled = { isSubmitDisabled }
+                            mode = { BUTTON_MODES.CONTAINED }
+                            onPress = { onSubmit }
+                            style = { chatStyles.pollCreateButton } >
+                            {t('polls.create.send')}
+                        </Button>
+                    </View>
+                </View>
             </View>
         </View>
     );

@@ -10,22 +10,18 @@ import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { TestConnectionInfo } from '../../../base/testing';
 import { ConferenceNotification, isCalendarEnabled } from '../../../calendar-sync';
-import { Chat } from '../../../chat';
 import { DisplayNameLabel } from '../../../display-name';
-import { SharedDocument } from '../../../etherpad';
 import {
     FILMSTRIP_SIZE,
     Filmstrip,
     isFilmstripVisible,
     TileView
 } from '../../../filmstrip';
-import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
+import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
 import { KnockingParticipantList } from '../../../lobby';
-import { LobbyScreen } from '../../../lobby/components/native';
 import { getIsLobbyVisible } from '../../../lobby/functions';
 import { BackButtonRegistry } from '../../../mobile/back-button';
-import { ParticipantsPane } from '../../../participants-pane/components/native';
 import { Captions } from '../../../subtitles';
 import { setToolboxVisible } from '../../../toolbox/actions';
 import { Toolbox } from '../../../toolbox/components/native';
@@ -36,8 +32,10 @@ import {
 } from '../AbstractConference';
 import type { AbstractProps } from '../AbstractConference';
 
+import { navigate } from './ConferenceNavigationContainerRef';
 import LonelyMeetingExperience from './LonelyMeetingExperience';
 import NavigationBar from './NavigationBar';
+import { screen } from './routes';
 import styles from './styles';
 
 
@@ -142,6 +140,23 @@ class Conference extends AbstractConference<Props, *> {
     }
 
     /**
+     * Implements {@code Component#componentDidUpdate}.
+     *
+     * @inheritdoc
+     */
+    componentDidUpdate(prevProps) {
+        const { _showLobby } = this.props;
+
+        if (!prevProps._showLobby && _showLobby) {
+            navigate(screen.lobby);
+        }
+
+        if (prevProps._showLobby && !_showLobby) {
+            navigate(screen.conference.main);
+        }
+    }
+
+    /**
      * Implements {@link Component#componentWillUnmount()}. Invoked immediately
      * before this component is unmounted and destroyed. Disconnects the
      * conference described by the redux store/state.
@@ -161,11 +176,7 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {ReactElement}
      */
     render() {
-        const { _fullscreenEnabled, _showLobby } = this.props;
-
-        if (_showLobby) {
-            return <LobbyScreen />;
-        }
+        const { _fullscreenEnabled } = this.props;
 
         return (
             <Container style = { styles.conference }>
@@ -218,19 +229,6 @@ class Conference extends AbstractConference<Props, *> {
     }
 
     /**
-     * Renders JitsiModals that are supposed to be on the conference screen.
-     *
-     * @returns {Array<ReactElement>}
-     */
-    _renderConferenceModals() {
-        return [
-            <AddPeopleDialog key = 'addPeopleDialog' />,
-            <Chat key = 'chat' />,
-            <SharedDocument key = 'sharedDocument' />
-        ];
-    }
-
-    /**
      * Renders the conference notification badge if the feature is enabled.
      *
      * @private
@@ -254,7 +252,6 @@ class Conference extends AbstractConference<Props, *> {
     _renderContent() {
         const {
             _connecting,
-            _isParticipantsPaneOpen,
             _largeVideoParticipantId,
             _reducedUI,
             _shouldDisplayTileView
@@ -316,12 +313,7 @@ class Conference extends AbstractConference<Props, *> {
                 <TestConnectionInfo />
                 { this._renderConferenceNotification() }
 
-                { this._renderConferenceModals() }
-
                 {_shouldDisplayTileView && <Toolbox />}
-
-                { _isParticipantsPaneOpen && <ParticipantsPane /> }
-
             </>
         );
     }

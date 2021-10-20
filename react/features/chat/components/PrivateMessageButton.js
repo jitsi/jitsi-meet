@@ -6,7 +6,8 @@ import { IconMessage, IconReply } from '../../base/icons';
 import { getParticipantById } from '../../base/participants';
 import { connect } from '../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
-import { openChat } from '../actions';
+import { navigate } from '../../conference/components/native/ConferenceNavigationContainerRef';
+import { screen } from '../../conference/components/native/routes';
 
 export type Props = AbstractButtonProps & {
 
@@ -31,6 +32,11 @@ export type Props = AbstractButtonProps & {
     dispatch: Function,
 
     /**
+     * True if the polls feature is disabled.
+     */
+    _isPollsDisabled: boolean,
+
+    /**
      * The participant object retrieved from Redux.
      */
     _participant: Object,
@@ -52,9 +58,16 @@ class PrivateMessageButton extends AbstractButton<Props, any> {
      * @returns {void}
      */
     _handleClick() {
-        const { dispatch, _participant } = this.props;
-
-        dispatch(openChat(_participant));
+        this.props._isPollsDisabled
+            ? navigate(screen.conference.chat, {
+                privateMessageRecipient: this.props._participant
+            })
+            : navigate(screen.conference.chatandpolls.main, {
+                screen: screen.conference.chatandpolls.tab.chat,
+                params: {
+                    privateMessageRecipient: this.props._participant
+                }
+            });
     }
 
     /**
@@ -79,9 +92,11 @@ class PrivateMessageButton extends AbstractButton<Props, any> {
  */
 export function _mapStateToProps(state: Object, ownProps: Props): $Shape<Props> {
     const enabled = getFeatureFlag(state, CHAT_ENABLED, true);
+    const { disablePolls } = state['features/base/config'];
     const { visible = enabled } = ownProps;
 
     return {
+        _isPollsDisabled: disablePolls,
         _participant: getParticipantById(state, ownProps.participantID),
         visible
     };

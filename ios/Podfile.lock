@@ -109,7 +109,7 @@ PODS:
   - GTMAppAuth (1.2.2):
     - AppAuth/Core (~> 1.4)
     - GTMSessionFetcher/Core (~> 1.5)
-  - GTMSessionFetcher/Core (1.6.1)
+  - GTMSessionFetcher/Core (1.7.0)
   - nanopb (1.30906.0):
     - nanopb/decode (= 1.30906.0)
     - nanopb/encode (= 1.30906.0)
@@ -290,6 +290,8 @@ PODS:
     - React
   - react-native-performance (2.0.0):
     - React-Core
+  - react-native-safe-area-context (3.3.2):
+    - React-Core
   - react-native-slider (3.0.3):
     - React
   - react-native-splash-screen (3.2.0):
@@ -359,13 +361,21 @@ PODS:
     - ReactCommon/turbomodule/core (= 0.61.5-jitsi.2)
   - RNCAsyncStorage (1.15.5):
     - React-Core
+  - RNCMaskedView (0.2.6):
+    - React-Core
   - RNDefaultPreference (1.4.2):
     - React
   - RNDeviceInfo (8.0.0):
     - React-Core
+  - RNGestureHandler (1.10.3):
+    - React-Core
   - RNGoogleSignin (3.0.1):
     - GoogleSignIn (~> 5.0.0)
     - React
+  - RNReanimated (1.13.3):
+    - React-Core
+  - RNScreens (2.18.1):
+    - React-Core
   - RNSound (0.11.0):
     - React
     - RNSound/Core (= 0.11.0)
@@ -405,6 +415,7 @@ DEPENDENCIES:
   - react-native-keep-awake (from `../node_modules/react-native-keep-awake`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-performance (from `../node_modules/react-native-performance/ios`)
+  - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - react-native-video (from `../node_modules/react-native-video/react-native-video.podspec`)
@@ -421,9 +432,13 @@ DEPENDENCIES:
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - ReactCommon/turbomodule (from `../node_modules/react-native/ReactCommon`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
+  - "RNCMaskedView (from `../node_modules/@react-native-masked-view/masked-view`)"
   - RNDefaultPreference (from `../node_modules/react-native-default-preference`)
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
+  - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - "RNGoogleSignin (from `../node_modules/@react-native-community/google-signin`)"
+  - RNReanimated (from `../node_modules/react-native-reanimated`)
+  - RNScreens (from `../node_modules/react-native-screens`)
   - RNSound (from `../node_modules/react-native-sound`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNWatch (from `../node_modules/react-native-watch-connectivity`)
@@ -493,6 +508,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-performance:
     :path: "../node_modules/react-native-performance/ios"
+  react-native-safe-area-context:
+    :path: "../node_modules/react-native-safe-area-context"
   react-native-slider:
     :path: "../node_modules/@react-native-community/slider"
   react-native-splash-screen:
@@ -525,12 +542,20 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
+  RNCMaskedView:
+    :path: "../node_modules/@react-native-masked-view/masked-view"
   RNDefaultPreference:
     :path: "../node_modules/react-native-default-preference"
   RNDeviceInfo:
     :path: "../node_modules/react-native-device-info"
+  RNGestureHandler:
+    :path: "../node_modules/react-native-gesture-handler"
   RNGoogleSignin:
     :path: "../node_modules/@react-native-community/google-signin"
+  RNReanimated:
+    :path: "../node_modules/react-native-reanimated"
+  RNScreens:
+    :path: "../node_modules/react-native-screens"
   RNSound:
     :path: "../node_modules/react-native-sound"
   RNSVG:
@@ -563,7 +588,7 @@ SPEC CHECKSUMS:
   GoogleSignIn: 7137d297ddc022a7e0aa4619c86d72c909fa7213
   GoogleUtilities: 7f2f5a07f888cdb145101d6042bc4422f57e70b3
   GTMAppAuth: ad5c2b70b9a8689e1a04033c9369c4915bfcbe89
-  GTMSessionFetcher: 36689134877faeb055b27dfa4ccc9ceaa42e029e
+  GTMSessionFetcher: 43748f93435c2aa068b1cbe39655aaf600652e91
   nanopb: 59317e09cf1f1a0af72f12af412d54edf52603fc
   ObjectiveDropboxOfficial: b4765572e334d6fc6214b43a7595510324bbbbaa
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
@@ -581,6 +606,7 @@ SPEC CHECKSUMS:
   react-native-keep-awake: afad8a51dfef9fe9655a6344771be32c8596d774
   react-native-netinfo: 0e563248a4b9a99c33ec29bd03c2d50767db22a6
   react-native-performance: 6bd6cfac80594775fb782405fceaaf206becf53b
+  react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
   react-native-slider: e99fc201cefe81270fc9d81714a7a0f5e566b168
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-video: 0bb76b6d6b77da3009611586c7dbf817b947f30e
@@ -597,14 +623,18 @@ SPEC CHECKSUMS:
   React-RCTVibration: c1041024893fdfdb8371e7c720c437751b711676
   ReactCommon: 18014e1d98dbeb9141e935cfe35fc93bd511ffb6
   RNCAsyncStorage: 56a3355a10b5d660c48c6e37325ac85ebfd09885
+  RNCMaskedView: c298b644a10c0c142055b3ae24d83879ecb13ccd
   RNDefaultPreference: 1f8133ec0bc0f9453cdada578564ba1ef551fb44
   RNDeviceInfo: 87d2d175c760f6bcf58acd036f887e8b2392802c
+  RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNGoogleSignin: 39336070b35fc4cea6a98cf111e00480317be0ae
+  RNReanimated: 514a11da3a2bcc6c3dfd9de32b38e2b9bf101926
+  RNScreens: f7ad633b2e0190b77b6a7aab7f914fad6f198d8d
   RNSound: da030221e6ac7e8290c6b43f2b5f2133a8e225b0
   RNSVG: ce9d996113475209013317e48b05c21ee988d42e
   RNWatch: a5320c959c75e72845c07985f3e935e58998f1d3
   Yoga: 96b469c5e81ff51b917b92e8c3390642d4ded30c
 
-PODFILE CHECKSUM: 3cc305fd6ee83fff506c10c4805471fa72b61c9a
+PODFILE CHECKSUM: 42be6796ba6ac039dae5c02125677728ecd0df0d
 
 COCOAPODS: 1.10.1

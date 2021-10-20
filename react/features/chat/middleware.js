@@ -10,7 +10,6 @@ import {
     JitsiConferenceErrors,
     JitsiConferenceEvents
 } from '../base/lib-jitsi-meet';
-import { setActiveModalId } from '../base/modal';
 import {
     getLocalParticipant,
     getParticipantById,
@@ -18,7 +17,6 @@ import {
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
-import { openDisplayNamePrompt } from '../display-name';
 import { resetNbUnreadPollsMessages } from '../polls/actions';
 import { ADD_REACTION_MESSAGE } from '../reactions/actionTypes';
 import { pushReactions } from '../reactions/actions.any';
@@ -35,7 +33,6 @@ import { addMessage, clearMessages } from './actions';
 import { closeChat } from './actions.any';
 import { ChatPrivacyDialog } from './components';
 import {
-    CHAT_VIEW_MODAL_ID,
     INCOMING_MSG_SOUND_ID,
     MESSAGE_TYPE_ERROR,
     MESSAGE_TYPE_LOCAL,
@@ -95,18 +92,6 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case OPEN_CHAT:
-        if (navigator.product === 'ReactNative') {
-            if (localParticipant.name) {
-                dispatch(setActiveModalId(CHAT_VIEW_MODAL_ID));
-            } else {
-                dispatch(openDisplayNamePrompt(() => {
-                    dispatch(setActiveModalId(CHAT_VIEW_MODAL_ID));
-                }));
-            }
-        } else {
-            dispatch(setActiveModalId(CHAT_VIEW_MODAL_ID));
-        }
-
         unreadCount = 0;
 
         if (typeof APP !== 'undefined') {
@@ -126,8 +111,6 @@ MiddlewareRegistry.register(store => next => action => {
         if (isPollTabOpen) {
             dispatch(resetNbUnreadPollsMessages());
         }
-
-        dispatch(setActiveModalId());
         break;
     }
 
