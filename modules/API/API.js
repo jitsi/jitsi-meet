@@ -61,8 +61,7 @@ import {
     captureLargeVideoScreenshot,
     resizeLargeVideo
 } from '../../react/features/large-video/actions.web';
-import { toggleLobbyMode } from '../../react/features/lobby/actions';
-import { setKnockingParticipantApproval } from '../../react/features/lobby/actions.any';
+import { toggleLobbyMode, setKnockingParticipantApproval } from '../../react/features/lobby/actions';
 import { isForceMuted } from '../../react/features/participants-pane/functions';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession } from '../../react/features/recording/functions';

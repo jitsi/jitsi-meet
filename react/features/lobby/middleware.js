@@ -71,8 +71,12 @@ StateListenerRegistry.register(
                         name
                     }));
                     dispatch(playSound(KNOCKING_PARTICIPANT_SOUND_ID));
-                    APP.API.notifyKnockingParticipant({ id,
-                        name });
+                    if (typeof APP !== 'undefined') {
+                        APP.API.notifyKnockingParticipant({
+                            id,
+                            name
+                        });
+                    }
                 });
             });
 
