@@ -14,11 +14,6 @@ import PasswordSection from './PasswordSection';
 type Props = {
 
     /**
-     * State of the lobby mode.
-     */
-    _lobbyEnabled: boolean,
-
-    /**
      * Whether or not the current user can modify the current password.
      */
     _canEditPassword: boolean,
@@ -62,7 +57,6 @@ type Props = {
  * @returns {React$Element<any>}
  */
 function SecurityDialog({
-    _lobbyEnabled,
     _canEditPassword,
     _conference,
     _locked,
@@ -88,7 +82,6 @@ function SecurityDialog({
             <div className = 'security-dialog'>
                 <LobbySection />
                 <PasswordSection
-                    lobbyEnabled = { _lobbyEnabled }
                     canEditPassword = { _canEditPassword }
                     conference = { _conference }
                     locked = { _locked }
@@ -129,7 +122,6 @@ function mapStateToProps(state) {
     const showE2ee = Boolean(e2eeSupported) && isLocalParticipantModerator(state);
 
     return {
-        _lobbyEnabled: state['features/lobby'].lobbyEnabled,
         _canEditPassword: isLocalParticipantModerator(state),
         _conference: conference,
         _dialIn: state['features/invite'],
