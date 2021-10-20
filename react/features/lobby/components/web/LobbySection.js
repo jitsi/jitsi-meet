@@ -19,6 +19,11 @@ type Props = {
      * True if the section should be visible.
      */
     _visible: boolean,
+    
+    /**
+     * The value for the conference password
+     */
+    _password: string,
 
     /**
      * The Redux Dispatch function.
@@ -101,7 +106,8 @@ class LobbySection extends PureComponent<Props, State> {
                         <Switch
                             id = 'lobby-section-switch'
                             onValueChange = { this._onToggleLobby }
-                            value = { this.state.lobbyEnabled } />
+                            value = { this.state.lobbyEnabled }
+                            disabled = { this.props._password } />
                     </div>
                 </div>
                 <div className = 'separator-line' />
@@ -134,10 +140,12 @@ class LobbySection extends PureComponent<Props, State> {
  * @returns {Props}
  */
 function mapStateToProps(state: Object): $Shape<Props> {
-    const { conference } = state['features/base/conference'];
+    const { conference,
+            password } = state['features/base/conference'];
     const { hideLobbyButton } = state['features/base/config'];
 
     return {
+        _password: password,
         _lobbyEnabled: state['features/lobby'].lobbyEnabled,
         _visible: conference && conference.isLobbySupported() && isLocalParticipantModerator(state)
             && !hideLobbyButton
