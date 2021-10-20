@@ -170,8 +170,8 @@ function filter_admin_set_query(event)
         return nil;
     end
 
-    -- any revoking is disabled
-    if _aff ~= 'owner' then
+    -- any revoking is disabled, everyone should be owners
+    if _aff == 'none' or _aff == 'outcast' or _aff == 'member' then
         origin.send(st.error_reply(stanza, "auth", "forbidden"));
         return true;
     end
