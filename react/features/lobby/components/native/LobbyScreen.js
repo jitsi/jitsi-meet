@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n';
 import { Icon, IconEdit } from '../../../base/icons';
-import { JitsiScreen } from '../../../base/modal';
+import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import AbstractLobbyScreen, { _mapStateToProps } from '../AbstractLobbyScreen';

@@ -45,20 +45,19 @@ const JitsiKeyboardAvoidingView = (
     const headerHeight = useHeaderHeight();
     const insets = useSafeAreaInsets();
     const [ bottomPadding, setBottomPadding ] = useState(insets.bottom);
-    const [ topPadding, setTopPadding ] = useState(insets.top);
 
     useEffect(() => {
         // This useEffect is needed because insets are undefined at first for some reason
         // https://github.com/th3rdwave/react-native-safe-area-context/issues/54
         setBottomPadding(insets.bottom);
-        setTopPadding(insets.top);
 
-    }, [ insets.bottom, insets.top ]);
+    }, [ insets.bottom ]);
 
-    const tabNavigatorBottomPadding = hasTabNavigator ? bottomPadding : 0;
-    const iosVerticalOffset
-        = headerHeight + topPadding + tabNavigatorBottomPadding;
-    const androidVerticalOffset = headerHeight + topPadding;
+    const tabNavigatorPadding
+        = hasTabNavigator ? headerHeight : 0;
+    const noNotchDevicePadding = bottomPadding || 10;
+    const iosVerticalOffset = headerHeight + noNotchDevicePadding + tabNavigatorPadding;
+    const androidVerticalOffset = headerHeight;
 
     return (
         <TouchableWithoutFeedback

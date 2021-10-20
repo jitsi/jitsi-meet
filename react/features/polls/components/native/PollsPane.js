@@ -6,7 +6,7 @@ import React, { useEffect } from 'react';
 import { Button, useTheme } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
-import { JitsiScreen } from '../../../base/modal';
+import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { BUTTON_MODES } from '../../../chat/constants';
 import { screen } from '../../../conference/components/native/routes';
 import { getUnreadPollCount } from '../../functions';

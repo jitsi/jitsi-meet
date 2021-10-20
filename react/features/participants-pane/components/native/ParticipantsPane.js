@@ -7,7 +7,7 @@ import { Button } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { openDialog } from '../../../base/dialog';
-import { JitsiScreen } from '../../../base/modal';
+import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import {
     isLocalParticipantModerator
 } from '../../../base/participants';
