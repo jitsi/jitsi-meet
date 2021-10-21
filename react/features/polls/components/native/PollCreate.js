@@ -141,7 +141,7 @@ const PollCreate = (props: AbstractProps) => {
                     keyExtractor = { (item, index) => index.toString() }
                     ref = { answerListRef }
                     renderItem = { renderListItem } />
-                <View style = { chatStyles.pollCreateButtons }>
+                <View style = { chatStyles.pollCreateButtonsContainer }>
                     <Button
                         color = '#3D3D3D'
                         mode = { BUTTON_MODES.CONTAINED }
