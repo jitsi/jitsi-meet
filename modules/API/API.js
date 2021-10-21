@@ -540,6 +540,7 @@ function initCommands() {
             APP.store.dispatch(joinWithPassword(""));
         },
         'grant-moderator': id => {
+            console.log("Granting moderator automatically: ", id);
             APP.store.dispatch(grantModerator(id));
         },
         'kick-participant': participantId => {
