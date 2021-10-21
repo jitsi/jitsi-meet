@@ -5,7 +5,6 @@ import React, { PureComponent } from 'react';
 import { translate } from '../../../base/i18n';
 import {
     getLocalParticipant,
-    getParticipantByIdOrUndefined,
     getParticipantDisplayName,
     hasRaisedHand,
     isParticipantModerator
@@ -80,9 +79,9 @@ type Props = {
     dispatch: Function,
 
     /**
-     * The ID of the participant.
+     * The participant.
      */
-    participantID: ?string
+    participant: ?Object
 };
 
 /**
@@ -171,10 +170,9 @@ class MeetingParticipantItem extends PureComponent<Props> {
  * @returns {Props}
  */
 function mapStateToProps(state, ownProps): Object {
-    const { participantID } = ownProps;
+    const { participant } = ownProps;
     const { ownerId } = state['features/shared-video'];
     const localParticipantId = getLocalParticipant(state).id;
-    const participant = getParticipantByIdOrUndefined(state, participantID);
     const _isAudioMuted = isParticipantAudioMuted(participant, state);
     const _isVideoMuted = isParticipantVideoMuted(participant, state);
     const audioMediaState = getParticipantAudioMediaState(participant, _isAudioMuted, state);

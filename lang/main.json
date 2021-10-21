@@ -627,7 +627,8 @@
             "stopVideo": "Stop video",
             "unblockEveryoneMicCamera": "Unblock everyone's mic and camera",
             "videoModeration": "Start their video"
-        }
+        },
+        "search": "Search participants"
     },
     "passwordSetRemotely": "Set by another participant",
     "passwordDigitsOnly": "Up to {{number}} digits",

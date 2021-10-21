@@ -5,8 +5,6 @@ import React from 'react';
 import {
     ActivityIndicator,
     FlatList,
-    Platform,
-    TextInput,
     TouchableOpacity,
     View
 } from 'react-native';
@@ -18,7 +16,6 @@ import {
     Icon,
     IconCancelSelection,
     IconCheck,
-    IconClose,
     IconPhone,
     IconSearch,
     IconShare
@@ -29,6 +26,7 @@ import {
     type Item
 } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
+import ClearableInput from '../../../../participants-pane/components/native/ClearableInput';
 import { beginShareRoom } from '../../../../share-room';
 import { INVITE_TYPES } from '../../../constants';
 import AbstractAddPeopleDialog, {
@@ -107,11 +105,6 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
     };
 
     /**
-     * Ref of the search field.
-     */
-    inputFieldRef: ?TextInput;
-
-    /**
      * TimeoutID to delay the search for the time the user is probably typing.
      */
     searchTimeout: TimeoutID;
@@ -136,7 +129,6 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         this._onShareMeeting = this._onShareMeeting.bind(this);
         this._onTypeQuery = this._onTypeQuery.bind(this);
         this._renderShareMeetingButton = this._renderShareMeetingButton.bind(this);
-        this._setFieldRef = this._setFieldRef.bind(this);
     }
 
     /**
@@ -220,33 +212,27 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                 footerComponent = { this._renderShareMeetingButton }
                 hasTabNavigator = { false }
                 style = { styles.addPeopleContainer }>
-                <View
-                    style = { styles.searchFieldWrapper }>
-                    <View style = { styles.searchIconWrapper }>
-                        { this.state.searchInprogress
+                <ClearableInput
+                    autoFocus = { false }
+                    customStyles = {{
+                        wrapper: styles.searchFieldWrapper,
+                        input: styles.searchField,
+                        clearButton: styles.clearButton,
+                        clearIcon: styles.clearIcon
+                    }}
+                    onChange = { this._onTypeQuery }
+                    placeholder = { this.props.t(`inviteDialog.${placeholderKey}`) }
+                    placeholderColor = { palette.text04 }
+                    prefixComponent = { <View style = { styles.searchIconWrapper }>
+                        {this.state.searchInprogress
                             ? <ActivityIndicator
                                 color = { DARK_GREY }
                                 size = 'small' />
                             : <Icon
                                 src = { IconSearch }
                                 style = { styles.searchIcon } />}
-                    </View>
-                    <TextInput
-                        autoCorrect = { false }
-                        autoFocus = { false }
-                        onBlur = { this._onFocused(false) }
-                        onChangeText = { this._onTypeQuery }
-                        onFocus = { this._onFocused(true) }
-                        placeholder = {
-                            this.props.t(`inviteDialog.${placeholderKey}`)
-                        }
-                        placeholderTextColor = { palette.text04 }
-                        ref = { this._setFieldRef }
-                        spellCheck = { false }
-                        style = { styles.searchField }
-                        value = { this.state.fieldValue } />
-                    { this._renderClearButton() }
-                </View>
+                    </View> }
+                    value = { this.state.fieldValue } />
                 { Boolean(inviteItems.length) && <View style = { styles.invitedList }>
                     <FlatList
                         data = { inviteItems }
@@ -335,22 +321,6 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
 
         // Clear search results
         this._onTypeQuery('');
-    }
-
-    _onFocused: boolean => Function;
-
-    /**
-     * Constructs a callback to be used to update the padding of the field if necessary.
-     *
-     * @param {boolean} focused - True of the field is focused.
-     * @returns {Function}
-     */
-    _onFocused(focused) {
-        return () => {
-            Platform.OS === 'android' && this.setState({
-                bottomPadding: focused
-            });
-        };
     }
 
     _onInvite: () => void
@@ -458,36 +428,11 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         .finally(() => {
             this.setState({
                 searchInprogress: false
-            }, () => {
-                this.inputFieldRef && this.inputFieldRef.focus();
             });
         });
     }
 
     _query: (string) => Promise<Array<Object>>;
-
-    /**
-     * Renders a button to clear the text field.
-     *
-     * @returns {React#Element<*>}
-     */
-    _renderClearButton() {
-        if (!this.state.fieldValue.length) {
-            return null;
-        }
-
-        return (
-            <TouchableOpacity
-                onPress = { this._onClearField }
-                style = { styles.clearButton }>
-                <View style = { styles.clearIconContainer }>
-                    <Icon
-                        src = { IconClose }
-                        style = { styles.clearIcon } />
-                </View>
-            </TouchableOpacity>
-        );
-    }
 
     _renderInvitedItem: Object => React$Element<any> | null
 
@@ -617,18 +562,6 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                 </TouchableOpacity>
             </View>
         );
-    }
-
-    _setFieldRef: ?TextInput => void
-
-    /**
-     * Sets a reference to the input field for later use.
-     *
-     * @param {?TextInput} input - The reference to the input field.
-     * @returns {void}
-     */
-    _setFieldRef(input) {
-        this.inputFieldRef = input;
     }
 
     /**

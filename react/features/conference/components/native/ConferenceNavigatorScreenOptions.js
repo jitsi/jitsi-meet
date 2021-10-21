@@ -96,13 +96,6 @@ export const participantsScreenOptions = {
 };
 
 /**
- * Screen options for speaker stats modal.
- */
-export const speakerStatsScreenOptions = {
-    ...presentationScreenOptions
-};
-
-/**
  * Screen options for shared document.
  */
 export const sharedDocumentScreenOptions = {

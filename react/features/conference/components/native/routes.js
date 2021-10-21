@@ -10,7 +10,6 @@ export const screen = {
             }
         },
         participants: 'Participants',
-        speakerStats: 'Speaker Stats',
         invite: 'Invite',
         sharedDocument: 'Shared document'
     },

@@ -29,6 +29,7 @@ export { default as IconCheck } from './check.svg';
 export { default as IconCheckSolid } from './check-solid.svg';
 export { default as IconClose } from './close.svg';
 export { default as IconCloseCircle } from './close-circle.svg';
+export { default as IconCloseSolid } from './close-solid.svg';
 export { default as IconCloseX } from './close-x.svg';
 export { default as IconClosedCaption } from './closed_caption.svg';
 export { default as IconCloseSmall } from './close-small.svg';
