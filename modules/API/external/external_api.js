@@ -27,6 +27,7 @@ const ALWAYS_ON_TOP_FILENAMES = [
  * commands expected by jitsi-meet
  */
 const commands = {
+    answerKnockingParticipant: 'answer-knocking-participant',
     approveVideo: 'approve-video',
     askToUnmute: 'ask-to-unmute',
     avatarUrl: 'avatar-url',
@@ -94,6 +95,7 @@ const events = {
     'feedback-prompt-displayed': 'feedbackPromptDisplayed',
     'filmstrip-display-changed': 'filmstripDisplayChanged',
     'incoming-message': 'incomingMessage',
+    'knocking-participant': 'knockingParticipant',
     'log': 'log',
     'mic-error': 'micError',
     'moderation-participant-approved': 'moderationParticipantApproved',
