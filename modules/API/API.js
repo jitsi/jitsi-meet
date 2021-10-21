@@ -540,7 +540,8 @@ function initCommands() {
             APP.store.dispatch(joinWithPassword(""));
         },
         'grant-moderator': () => {
-            APP.store.dispatch(grantModerator(this._getCurrentParticipantId()));
+            const localParticipant = getLocalParticipant(APP.store.getState());
+            APP.store.dispatch(grantModerator(localParticipant.id));
         },
         'kick-participant': participantId => {
             APP.store.dispatch(kickParticipant(participantId));
