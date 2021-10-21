@@ -60,6 +60,8 @@ import {
 } from './functions';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
 
+import { hasRaisedHand, raiseHand } from '.';
+
 declare var APP: Object;
 
 /**
@@ -86,27 +88,14 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case DOMINANT_SPEAKER_CHANGED: {
-        // Ensure the raised hand state is cleared for the dominant speaker
-        // and only if it was set when this is the local participant
-
-        const { conference, id } = action.participant;
+        // Lower hand through xmpp when local participant becomes dominant speaker.
+        const { id } = action.participant;
         const state = store.getState();
         const participant = getLocalParticipant(state);
         const isLocal = participant && participant.id === id;
 
-        if (isLocal && participant.raisedHandTimestamp === undefined) {
-            // if local was undefined, let's leave it like that
-            // avoids sending unnecessary presence updates
-            break;
-        }
-
-        if (!getDisableRemoveRaisedHandOnFocus(state)) {
-            participant && store.dispatch(participantUpdated({
-                conference,
-                id,
-                local: isLocal,
-                raisedHandTimestamp: 0
-            }));
+        if (isLocal && hasRaisedHand(participant) && !getDisableRemoveRaisedHandOnFocus(state)) {
+            store.dispatch(raiseHand(false));
         }
 
         break;
