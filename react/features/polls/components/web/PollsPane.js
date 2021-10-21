@@ -1,5 +1,7 @@
 // @flow
 
+import DownloadIcon from '@atlaskit/icon/glyph/download';
+import UploadIcon from '@atlaskit/icon/glyph/upload';
 import React, { useCallback, useRef } from 'react';
 
 import AbstractPollsPane from '../AbstractPollsPane';
@@ -46,6 +48,7 @@ const PollsPane = (props: AbstractProps) => {
             <div className = { 'poll-container' } >
                 <PollsList />
             </div>
+
             <div className = { 'poll-footer poll-create-footer' }>
                 { !isModerationEnabled || isModerator ? <button
                     aria-label = { t('polls.create.create') }
@@ -57,17 +60,17 @@ const PollsPane = (props: AbstractProps) => {
                 { isModerationEnabled && isModerator ? <>
                     <button
                         aria-label = { t('polls.moderation.export') }
-                        className = 'poll-small-secondary-button'
+                        className = 'poll-button poll-button-secondary poll-button-icon'
                         onClick = { onExport }
                         type = 'button' >
-                        <span>{t('polls.moderation.export')}</span>
+                        <DownloadIcon label = { t('polls.moderation.export') } />
                     </button>
                     <button
                         aria-label = { t('polls.moderation.import') }
-                        className = 'poll-small-secondary-button'
+                        className = 'poll-button poll-button-secondary poll-button-icon'
                         onClick = { startFileUpload }
                         type = 'button' >
-                        <span>{t('polls.moderation.import')}</span>
+                        <UploadIcon label = { t('polls.moderation.import') } />
                         <input
                             accept = '.json'
                             hidden = { true }

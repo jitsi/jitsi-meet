@@ -218,7 +218,7 @@ ol.poll-result-list {
     flex-direction: row;
     justify-content: space-between;
 
-    a.poll-detail-link, a.poll-change-vote-link, a.poll-visibility-link {
+    a.poll-detail-link, a.poll-change-vote-link {
       color: #669AEC;
       cursor: pointer;
       font-weight: 600;
@@ -232,9 +232,21 @@ ol.poll-result-list {
         color: #669AEC;
       }
     }
+}
 
-    a.poll-visibility-link {
-        float: right;
+a.poll-visibility-link {
+    float: right;
+    color: #669AEC;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+    color: #669AEC;
+    }
+
+    &:visited {
+    color: #669AEC;
     }
 }
 
@@ -431,6 +443,13 @@ ol.poll-result-list {
 
 .poll-button-shortest {
   max-width: 117px;
+}
+
+.poll-button-icon {
+  max-width: 40px;
+  &:not(:first-child) {
+    margin-left: 10px;
+  }
 }
 
 .poll-button-short,

@@ -1,3 +1,4 @@
+
 // @flow
 import uuid from 'uuid';
 
@@ -124,20 +125,22 @@ export function importPollsFromFile(
 export function exportPollsToFile(polls: Object): void {
     const date = new Date();
 
-    downloadJSON(
-        Object.keys(polls).map(pollId => {
-            return {
-                ...polls[pollId],
-                answers: polls[pollId].answers.map(answer => {
-                    return {
-                        name: answer.name,
-                        voters: Object.fromEntries(answer.voters)
-                    };
-                })
-            };
-        }),
-        `poll-export-${date.toISOString()}.json`
-    );
+    if (polls) {
+        downloadJSON(
+            Object.keys(polls).map(pollId => {
+                return {
+                    ...polls[pollId],
+                    answers: polls[pollId].answers.map(answer => {
+                        return {
+                            name: answer.name,
+                            voters: Object.fromEntries(answer.voters)
+                        };
+                    })
+                };
+            }),
+            `poll-export-${date.toISOString()}.json`
+        );
+    }
 }
 
 /**
@@ -147,12 +150,14 @@ export function exportPollsToFile(polls: Object): void {
  * @returns {number} The number of hidden polls.
  */
 export function getHiddenPollCount(state: Object) {
-    const { polls } = state['features/polls'];
+    const polls = state['features/polls']?.polls;
     let hiddenCount = 0;
 
-    for (const pollId of Object.keys(polls)) {
-        if (polls[pollId].hidden) {
-            hiddenCount++;
+    if (polls) {
+        for (const pollId of Object.keys(polls)) {
+            if (polls[pollId].hidden) {
+                hiddenCount++;
+            }
         }
     }
 
