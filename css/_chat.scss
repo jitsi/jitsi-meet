@@ -2,34 +2,39 @@
     background-color: $chatBackgroundColor;
     box-sizing: border-box;
     color: #FFF;
-    display: flex;
-    flex-direction: column;
     height: 100%;
-    left: -$sidebarWidth;
-    overflow: hidden;
     position: absolute;
     top: 0;
     width: $sidebarWidth;
     z-index: $sideToolbarContainerZ;
 
-    /**
-     * The sidebar (chat) is off-screen when hidden. Move it flush to the left
-     * side of the window when it should be visible.
-     */
-    &.slideInExt {
-        left: 0;
+    @media (max-width: 580px) {
+        width: 100%;
     }
+}
+
+.chat-panel {
+    display: flex;
+    flex-direction: column;
+    // extract header + tabs height
+    height: calc(100% - 102px);
+}
+
+.chat-panel-no-tabs {
+    // extract header height
+    height: calc(100% - 70px);
 }
 
 #chatconversation {
     box-sizing: border-box;
     flex: 1;
     font-size: 10pt;
+    // extract message input height
+    height: calc(100% - 68px);
     line-height: 20px;
     overflow: auto;
     padding: 16px;
     text-align: left;
-    width: $sidebarWidth;
     word-wrap: break-word;
 
     display: flex;
@@ -57,28 +62,6 @@
 
     a:active {
         color: black;
-    }
-
-    &::-webkit-scrollbar {
-        background: #06a5df;
-        width: 7px;
-    }
-
-    &::-webkit-scrollbar-button {
-        display: none;
-    }
-
-    &::-webkit-scrollbar-track {
-        background: black;
-    }
-
-    &::-webkit-scrollbar-track-piece {
-        background: black;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background: #06a5df;
-        border-radius: 4px;
     }
 }
 
@@ -318,10 +301,6 @@
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
-    }
-
-    @media (max-width: 580px) {
-        display: none !important;
     }
 }
 
