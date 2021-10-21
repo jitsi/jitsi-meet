@@ -1,13 +1,12 @@
 // @flow
 
-import type { Dispatch } from 'redux';
-
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
 import { IconShareDoc } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
-import { toggleDocument } from '../actions';
+import { navigate } from '../../conference/components/native/ConferenceNavigationContainerRef';
+import { screen } from '../../conference/components/native/routes';
 
 
 type Props = AbstractButtonProps & {
@@ -15,12 +14,7 @@ type Props = AbstractButtonProps & {
     /**
      * Whether the shared document is being edited or not.
      */
-    _editing: boolean,
-
-    /**
-     * Redux dispatch function.
-     */
-    dispatch: Dispatch<any>,
+    _editing: boolean
 };
 
 /**
@@ -59,7 +53,7 @@ class SharedDocumentButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { _editing, dispatch, handleClick } = this.props;
+        const { _editing, handleClick } = this.props;
 
         if (handleClick) {
             handleClick();
@@ -72,7 +66,8 @@ class SharedDocumentButton extends AbstractButton<Props, *> {
             {
                 enable: !_editing
             }));
-        dispatch(toggleDocument());
+
+        navigate(screen.conference.sharedDocument);
     }
 
     /**

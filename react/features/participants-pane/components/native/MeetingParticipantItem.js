@@ -7,6 +7,7 @@ import {
     getLocalParticipant,
     getParticipantByIdOrUndefined,
     getParticipantDisplayName,
+    hasRaisedHand,
     isParticipantModerator
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
@@ -190,7 +191,7 @@ function mapStateToProps(state, ownProps): Object {
         _local: Boolean(participant?.local),
         _localVideoOwner: Boolean(ownerId === localParticipantId),
         _participantID: participant?.id,
-        _raisedHand: Boolean(participant?.raisedHand),
+        _raisedHand: hasRaisedHand(participant),
         _videoMediaState: videoMediaState
     };
 }

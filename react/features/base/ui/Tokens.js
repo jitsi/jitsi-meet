@@ -17,6 +17,7 @@ export const colors = {
     primary07: '#669AEC',
     primary08: '#99BBF3',
     primary09: '#CCDDF9',
+    primary10: '#17A0DB',
 
     surface00: '#111111',
     surface01: '#040404',
@@ -53,6 +54,9 @@ export const colorMap = {
 
     // Primary buttons
     action01: 'primary05',
+
+    // Screen header
+    screen01Header: 'primary10',
 
     // Hover state for primary buttons
     action01Hover: 'primary06',
@@ -226,7 +230,8 @@ export const shape = {
     boxShadow: 'inset 0px -1px 0px rgba(255, 255, 255, 0.15)'
 };
 
-export const spacing = [ 0, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80 ];
+export const spacing
+    = [ 0, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128 ];
 
 export const typography = {
     labelRegular: {

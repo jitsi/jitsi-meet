@@ -602,13 +602,17 @@ export function createVideoBlurEvent(action) {
  * occurred (e.g. It was started or stopped).
  *
  * @param {string} action - The action which occurred.
+ * @param {number?} value - The screenshare duration in seconds.
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createScreenSharingEvent(action) {
+export function createScreenSharingEvent(action, value = null) {
     return {
         action,
-        actionSubject: 'screen.sharing'
+        actionSubject: 'screen.sharing',
+        attributes: {
+            value
+        }
     };
 }
 

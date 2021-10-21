@@ -3,34 +3,14 @@
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
 import { IconPresentation } from '../../../base/icons';
-import { setActiveModalId } from '../../../base/modal';
-import { connect } from '../../../base/redux';
-import {
-    AbstractButton,
-    AbstractButtonProps
-} from '../../../base/toolbox/components';
-import { SPEAKER_STATS_VIEW_MODEL_ID } from '../../constants';
-
-/**
- * The type of the React {@code Component} props of {@link SpeakerStatsButton}.
- */
-type Props = AbstractButtonProps & {
-
-    /**
-     * The {@code JitsiConference} for the current conference.
-     */
-     _conference: Object,
-
-    /**
-     * The redux {@code dispatch} function.
-     */
-    dispatch: Function
-};
+import { AbstractButton } from '../../../base/toolbox/components';
+import { navigate } from '../../../conference/components/native/ConferenceNavigationContainerRef';
+import { screen } from '../../../conference/components/native/routes';
 
 /**
  * Implementation of a button for opening speaker stats dialog.
  */
-class SpeakerStatsButton extends AbstractButton<Props, *> {
+class SpeakerStatsButton extends AbstractButton<*, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.speakerStats';
     icon = IconPresentation;
     label = 'toolbar.speakerStats';
@@ -43,17 +23,10 @@ class SpeakerStatsButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { dispatch, handleClick } = this.props;
-
-        if (handleClick) {
-            handleClick();
-
-            return;
-        }
-
         sendAnalytics(createToolbarEvent('speaker.stats'));
-        dispatch(setActiveModalId(SPEAKER_STATS_VIEW_MODEL_ID));
+
+        return navigate(screen.conference.speakerStats);
     }
 }
 
-export default translate(connect()(SpeakerStatsButton));
+export default translate(SpeakerStatsButton);

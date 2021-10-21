@@ -1,16 +1,16 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-import { View } from 'react-native';
+import { ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { translate } from '../../../base/i18n';
-import { JitsiModal } from '../../../base/modal';
+import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../../base/participants';
 import { closeSpeakerStats, initUpdateStats } from '../../actions';
 import {
-    SPEAKER_STATS_RELOAD_INTERVAL, SPEAKER_STATS_VIEW_MODEL_ID
+    SPEAKER_STATS_RELOAD_INTERVAL
 } from '../../constants';
 import { getSearchCriteria, getSpeakerStats } from '../../functions';
 
@@ -103,18 +103,13 @@ class SpeakerStats extends PureComponent<Props> {
         const items = userIds.map(userId => this._createStatsItem(userId));
 
         return (
-            <JitsiModal
-                headerProps = {{
-                    headerLabelKey: 'speakerStats.speakerStats'
-                }}
-                modalId = { SPEAKER_STATS_VIEW_MODEL_ID }
-                onClose = { this._onClose } >
-
-                <View>
+            <JitsiScreen
+                hasTabNavigator = { false }>
+                <ScrollView bounces = { false }>
                     <SpeakerStatsLabels />
                     { items }
-                </View>
-            </JitsiModal>
+                </ScrollView>
+            </JitsiScreen>
         );
     }
 
