@@ -130,9 +130,9 @@ $dropdownMaskZ: 900;
 $dropdownZ: 901;
 $centeredVideoLabelZ: 1010;
 $overlayZ: 1016;
-// Place filmstrip videos over toolbar in order
-// to make connection info visible.
-$filmstripVideosZ: $toolbarZ + 1;
+// Place filmstrip videos bellow toolbar in order
+// to make toolbar popups visible.
+$filmstripVideosZ: $toolbarZ - 1;
 
 
 /**
