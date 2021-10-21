@@ -8,16 +8,11 @@ import JitsiStreamBackgroundEffect from './JitsiStreamBackgroundEffect';
 import createTFLiteModule from './vendor/tflite/tflite';
 import createTFLiteSIMDModule from './vendor/tflite/tflite-simd';
 const models = {
-    model_general: 'libs/selfie_segmentation.tflite',
     model_landscape: 'libs/selfie_segmentation_landscape.tflite'
     
 };
 
 const segmentationDimensions = {
-    model_general: {
-        height: 256,
-        width: 256
-    },
     model_landscape: {
         height: 144,
         width: 256
