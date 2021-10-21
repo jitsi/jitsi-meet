@@ -539,10 +539,8 @@ function initCommands() {
         'meeting-reconnect': () => {
             APP.store.dispatch(joinWithPassword(""));
         },
-        'grant-moderator': () => {
-            const localParticipant = getLocalParticipant(APP.store.getState());
-            console.log("Trying to grant moderator automatically...", localParticipant.id);
-            APP.store.dispatch(grantModerator(localParticipant.id));
+        'grant-moderator': id => {
+            APP.store.dispatch(grantModerator(id));
         },
         'kick-participant': participantId => {
             APP.store.dispatch(kickParticipant(participantId));
