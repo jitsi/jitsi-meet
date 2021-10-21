@@ -1,6 +1,17 @@
 // @flow
 
 /**
+ * The type of the action which signals that a Poll will be changed
+ *
+ * {
+ *     type: CHANGE_VOTE,
+ * }
+ *
+ */
+export const CHANGE_VOTE = 'CHANGE_VOTE';
+
+
+/**
  * The type of the action which signals that a new Poll was received.
  *
  * {

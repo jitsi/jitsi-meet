@@ -58,6 +58,7 @@ const parsePollData = (pollData): Poll | null => {
     }
 
     return {
+        changingVote: false,
         senderId,
         senderName,
         question,

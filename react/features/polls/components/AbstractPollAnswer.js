@@ -5,10 +5,11 @@ import type { AbstractComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { sendAnalytics, createPollEvent } from '../../analytics';
 import { getLocalParticipant, getParticipantById, isLocalParticipantModerator } from '../../base/participants';
-import { registerVote } from '../actions';
+import { registerVote, setVoteChanging } from '../actions';
 import { COMMAND_ANSWER_POLL } from '../constants';
-import { isPollsModerationEnabled } from '../functions';
+import { isPollsModerationEnabled, getPoll } from '../functions';
 import { usePollVisibility } from '../hooks';
 import type { Poll, PollVisibility } from '../types';
 
@@ -31,6 +32,7 @@ export type AbstractProps = {
     pollVisibility: PollVisibility,
     setCheckbox: Function,
     skipAnswer: Function,
+    skipChangeVote: Function,
     submitAnswer: Function,
     t: Function,
 };
@@ -49,7 +51,7 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
     const conference: Object = useSelector(state => state['features/base/conference'].conference);
     const isModerator = useSelector(state => isLocalParticipantModerator(state));
     const isModerationEnabled = useSelector(state => isPollsModerationEnabled(state));
-    const poll: Poll = useSelector(state => state['features/polls'].polls[pollId]);
+    const poll: Poll = useSelector(getPoll(pollId));
     const pollVisibility = usePollVisibility(pollId, conference);
 
     const { id: localId } = useSelector(getLocalParticipant);
@@ -67,6 +69,7 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
 
         newCheckBoxStates[index] = state;
         setCheckBoxState(newCheckBoxStates);
+        sendAnalytics(createPollEvent('vote.checked'));
     }, [ checkBoxStates ]);
 
     const dispatch = useDispatch();
@@ -83,6 +86,7 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
             answers: checkBoxStates
         });
 
+        sendAnalytics(createPollEvent('vote.sent'));
         dispatch(registerVote(pollId, checkBoxStates));
 
         return false;
@@ -90,8 +94,13 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
 
     const skipAnswer = useCallback(() => {
         dispatch(registerVote(pollId, null));
+        sendAnalytics(createPollEvent('vote.skipped'));
 
     }, [ pollId ]);
+
+    const skipChangeVote = useCallback(() => {
+        dispatch(setVoteChanging(pollId, false));
+    }, [ dispatch, pollId ]);
 
     const { t } = useTranslation();
 
@@ -103,6 +112,7 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
         pollVisibility = { pollVisibility }
         setCheckbox = { setCheckbox }
         skipAnswer = { skipAnswer }
+        skipChangeVote = { skipChangeVote }
         submitAnswer = { submitAnswer }
         t = { t } />);
 

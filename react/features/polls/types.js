@@ -26,6 +26,11 @@ export type Answer = {
 export type Poll = {
 
     /**
+     * Whether the poll vote is being edited/changed.
+     */
+    changingVote: boolean,
+
+    /**
      * ID of the sender of this poll
      */
     senderId: string,

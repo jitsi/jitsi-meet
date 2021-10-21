@@ -23,6 +23,10 @@ export default {
         margin: 10
     },
 
+    headerNavigationButton: {
+        marginLeft: 12
+    },
+
     /**
      * View that contains the indicators.
      */

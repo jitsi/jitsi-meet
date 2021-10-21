@@ -10,8 +10,13 @@ jobs:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v1
       with:
-        node-version: '12.x'
+        node-version: '14.x'
+    - run: npm i -g npm@7
     - run: npm install
+    - name: Check git status
+      run: git status
+    - name: Check git diff
+      run: git diff
     - name: Check if the git repository is clean
       run: exit $( git status --porcelain --untracked-files=no | head -255 | wc -l )
     - run: npm run lint

@@ -926,7 +926,10 @@ var config = {
          // Overwrite for pool of background images for avatars
          avatarBackgrounds: ['url(https://example.com/avatar-background-1.png)', '#FFF'],
          // The lobby/prejoin screen background
-         premeetingBackground: 'url(https://example.com/premeeting-background.png)'
+         premeetingBackground: 'url(https://example.com/premeeting-background.png)',
+         // A list of images that can be used as video backgrounds.
+         // When this field is present, the default images will be replaced with those provided.
+         virtualBackgrounds: ['https://example.com/img.jpg']
      }
     */
     // dynamicBrandingUrl: '',
@@ -989,11 +992,6 @@ var config = {
     // If set, add a "Open shared document" link to the bottom right menu that
     // will open an etherpad document.
     // etherpad_base: 'https://your-etherpad-installati.on/p/',
-
-    // If etherpad_base is set, and useRoomAsSharedDocumentName is set to true,
-    // open a pad with the name of the room (lowercased) instead of a pad with a
-    // random UUID.
-    // useRoomAsSharedDocumentName: true,
 
     // List of undocumented settings used in jitsi-meet
     /**

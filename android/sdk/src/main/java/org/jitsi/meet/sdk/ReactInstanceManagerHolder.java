@@ -30,7 +30,6 @@ import com.facebook.react.devsupport.DevInternalSettings;
 import com.facebook.react.jscexecutor.JSCExecutorFactory;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.uimanager.ViewManager;
-import com.facebook.soloader.SoLoader;
 import com.oney.WebRTCModule.RTCVideoViewManager;
 import com.oney.WebRTCModule.WebRTCModule;
 
@@ -174,25 +173,28 @@ class ReactInstanceManagerHolder {
             return;
         }
 
-        SoLoader.init(activity.getApplication(), /* native exopackage */ false);
-
         List<ReactPackage> packages
             = new ArrayList<>(Arrays.asList(
+                new com.reactnativecommunity.asyncstorage.AsyncStoragePackage(),
+                new com.ocetnik.timer.BackgroundTimerPackage(),
                 new com.calendarevents.CalendarEventsPackage(),
                 new com.corbt.keepawake.KCKeepAwakePackage(),
                 new com.facebook.react.shell.MainReactPackage(),
-                new com.horcrux.svg.SvgPackage(),
+                new com.reactnativecommunity.netinfo.NetInfoPackage(),
+                new com.oblador.performance.PerformancePackage(),
+                new com.reactnativecommunity.slider.ReactSliderPackage(),
+                new com.brentvatne.react.ReactVideoPackage(),
+                new com.swmansion.reanimated.ReanimatedPackage(),
+                new org.reactnative.maskedview.RNCMaskedViewPackage(),
+                new com.reactnativecommunity.webview.RNCWebViewPackage(),
                 new com.kevinresol.react_native_default_preference.RNDefaultPreferencePackage(),
                 new com.learnium.RNDeviceInfo.RNDeviceInfo(),
-                new com.oblador.performance.PerformancePackage(),
-                new com.ocetnik.timer.BackgroundTimerPackage(),
-                new com.reactnativecommunity.asyncstorage.AsyncStoragePackage(),
-                new com.reactnativecommunity.netinfo.NetInfoPackage(),
-                new com.reactnativecommunity.slider.ReactSliderPackage(),
-                new com.reactnativecommunity.webview.RNCWebViewPackage(),
+                new com.swmansion.gesturehandler.react.RNGestureHandlerPackage(),
                 new com.rnimmersive.RNImmersivePackage(),
+                new com.swmansion.rnscreens.RNScreensPackage(),
                 new com.zmxv.RNSound.RNSoundPackage(),
-                new com.brentvatne.react.ReactVideoPackage(),
+                new com.th3rdwave.safeareacontext.SafeAreaContextPackage(),
+                new com.horcrux.svg.SvgPackage(),
                 new ReactPackageAdapter() {
                     @Override
                     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {

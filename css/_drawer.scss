@@ -5,6 +5,10 @@
     bottom: 0;
     z-index: $drawerZ;
     border-radius: 16px 16px 0 0;
+
+    &.notification-portal {
+        z-index: $dropdownZ;
+    }
 }
 
 .drawer-portal::after {

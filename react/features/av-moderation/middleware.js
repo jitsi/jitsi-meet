@@ -8,6 +8,7 @@ import { MEDIA_TYPE } from '../base/media';
 import {
     getLocalParticipant,
     getRemoteParticipants,
+    hasRaisedHand,
     isLocalParticipantModerator,
     isParticipantModerator,
     PARTICIPANT_UPDATED,
@@ -22,7 +23,13 @@ import {
 import { muteLocal } from '../video-menu/actions.any';
 
 import {
+    DISABLE_MODERATION,
+    ENABLE_MODERATION,
+    LOCAL_PARTICIPANT_APPROVED,
     LOCAL_PARTICIPANT_MODERATION_NOTIFICATION,
+    LOCAL_PARTICIPANT_REJECTED,
+    PARTICIPANT_APPROVED,
+    PARTICIPANT_REJECTED,
     REQUEST_DISABLE_AUDIO_MODERATION,
     REQUEST_DISABLE_VIDEO_MODERATION,
     REQUEST_ENABLE_AUDIO_MODERATION,
@@ -50,6 +57,8 @@ import {
     isParticipantPending
 } from './functions';
 import { ASKED_TO_UNMUTE_FILE } from './sounds';
+
+declare var APP: Object;
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     const { type } = action;
@@ -126,7 +135,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             if (isLocalParticipantModerator(state)) {
 
                 // this is handled only by moderators
-                if (participant.raisedHand) {
+                if (hasRaisedHand(participant)) {
                     // if participant raises hand show notification
                     !isParticipantApproved(participant.id, MEDIA_TYPE.AUDIO)(state)
                     && dispatch(participantPendingAudio(participant));
@@ -140,12 +149,52 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
                 // this is the granted moderator case
                 getRemoteParticipants(state).forEach(p => {
-                    p.raisedHand && !isParticipantApproved(p.id, MEDIA_TYPE.AUDIO)(state)
+                    hasRaisedHand(p) && !isParticipantApproved(p.id, MEDIA_TYPE.AUDIO)(state)
                         && dispatch(participantPendingAudio(p));
                 });
             }
         }
 
+        break;
+    }
+    case ENABLE_MODERATION: {
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyModerationChanged(action.mediaType, true);
+        }
+        break;
+    }
+    case DISABLE_MODERATION: {
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyModerationChanged(action.mediaType, false);
+        }
+        break;
+    }
+    case LOCAL_PARTICIPANT_APPROVED: {
+        if (typeof APP !== 'undefined') {
+            const local = getLocalParticipant(getState());
+
+            APP.API.notifyParticipantApproved(local.id, action.mediaType);
+        }
+        break;
+    }
+    case PARTICIPANT_APPROVED: {
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyParticipantApproved(action.id, action.mediaType);
+        }
+        break;
+    }
+    case LOCAL_PARTICIPANT_REJECTED: {
+        if (typeof APP !== 'undefined') {
+            const local = getLocalParticipant(getState());
+
+            APP.API.notifyParticipantRejected(local.id, action.mediaType);
+        }
+        break;
+    }
+    case PARTICIPANT_REJECTED: {
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyParticipantRejected(action.id, action.mediaType);
+        }
         break;
     }
     }

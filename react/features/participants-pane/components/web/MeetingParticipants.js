@@ -8,13 +8,12 @@ import { rejectParticipantAudio } from '../../../av-moderation/actions';
 import { isToolbarButtonEnabled } from '../../../base/config/functions.web';
 import { MEDIA_TYPE } from '../../../base/media';
 import {
-    getParticipantCountWithFake,
-    getSortedParticipantIds
+    getParticipantCountWithFake
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { showOverflowDrawer } from '../../../toolbox/functions';
 import { muteRemote } from '../../../video-menu/actions.any';
-import { findStyledAncestor, shouldRenderInviteButton } from '../../functions';
+import { findStyledAncestor, getSortedParticipantIds, shouldRenderInviteButton } from '../../functions';
 import { useParticipantDrawer } from '../../hooks';
 
 import { InviteButton } from './InviteButton';

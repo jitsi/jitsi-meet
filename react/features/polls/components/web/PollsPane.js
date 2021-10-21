@@ -46,36 +46,36 @@ const PollsPane = (props: AbstractProps) => {
             <div className = { 'poll-container' } >
                 <PollsList />
             </div>
-            { isModerationEnabled && isModerator ? <div className = { 'poll-footer' }>
-                <button
-                    aria-label = { t('polls.moderation.export') }
-                    className = 'poll-small-secondary-button'
-                    onClick = { onExport }
-                    type = 'button' >
-                    <span>{t('polls.moderation.export')}</span>
-                </button>
-                <button
-                    aria-label = { t('polls.moderation.import') }
-                    className = 'poll-small-secondary-button'
-                    onClick = { startFileUpload }
-                    type = 'button' >
-                    <span>{t('polls.moderation.import')}</span>
-                    <input
-                        accept = '.json'
-                        hidden = { true }
-                        onChange = { onFileUpload }
-                        ref = { fileInputRef }
-                        type = 'file' />
-                </button>
-            </div> : null }
-            <div className = { 'poll-footer' }>
+            <div className = { 'poll-footer poll-create-footer' }>
                 { !isModerationEnabled || isModerator ? <button
                     aria-label = { t('polls.create.create') }
-                    className = { 'poll-primary-button' }
+                    className = 'poll-button poll-button-primary'
                     // eslint-disable-next-line react/jsx-no-bind
                     onClick = { onCreate } >
                     <span>{t('polls.create.create')}</span>
                 </button> : null }
+                { isModerationEnabled && isModerator ? <>
+                    <button
+                        aria-label = { t('polls.moderation.export') }
+                        className = 'poll-small-secondary-button'
+                        onClick = { onExport }
+                        type = 'button' >
+                        <span>{t('polls.moderation.export')}</span>
+                    </button>
+                    <button
+                        aria-label = { t('polls.moderation.import') }
+                        className = 'poll-small-secondary-button'
+                        onClick = { startFileUpload }
+                        type = 'button' >
+                        <span>{t('polls.moderation.import')}</span>
+                        <input
+                            accept = '.json'
+                            hidden = { true }
+                            onChange = { onFileUpload }
+                            ref = { fileInputRef }
+                            type = 'file' />
+                    </button>
+                </> : null }
             </div>
         </div>;
 };

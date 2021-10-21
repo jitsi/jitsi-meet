@@ -27,6 +27,9 @@ const ALWAYS_ON_TOP_FILENAMES = [
  * commands expected by jitsi-meet
  */
 const commands = {
+    answerKnockingParticipant: 'answer-knocking-participant',
+    approveVideo: 'approve-video',
+    askToUnmute: 'ask-to-unmute',
     avatarUrl: 'avatar-url',
     cancelPrivateChat: 'cancel-private-chat',
     displayName: 'display-name',
@@ -40,6 +43,7 @@ const commands = {
     overwriteConfig: 'overwrite-config',
     password: 'password',
     pinParticipant: 'pin-participant',
+    rejectParticipant: 'reject-participant',
     resizeLargeVideo: 'resize-large-video',
     sendChatMessage: 'send-chat-message',
     sendEndpointTextMessage: 'send-endpoint-text-message',
@@ -60,6 +64,7 @@ const commands = {
     toggleCameraMirror: 'toggle-camera-mirror',
     toggleChat: 'toggle-chat',
     toggleFilmStrip: 'toggle-film-strip',
+    toggleModeration: 'toggle-moderation',
     toggleRaiseHand: 'toggle-raise-hand',
     toggleShareAudio: 'toggle-share-audio',
     toggleShareScreen: 'toggle-share-screen',
@@ -90,8 +95,12 @@ const events = {
     'feedback-prompt-displayed': 'feedbackPromptDisplayed',
     'filmstrip-display-changed': 'filmstripDisplayChanged',
     'incoming-message': 'incomingMessage',
+    'knocking-participant': 'knockingParticipant',
     'log': 'log',
     'mic-error': 'micError',
+    'moderation-participant-approved': 'moderationParticipantApproved',
+    'moderation-participant-rejected': 'moderationParticipantRejected',
+    'moderation-status-changed': 'moderationStatusChanged',
     'mouse-enter': 'mouseEnter',
     'mouse-leave': 'mouseLeave',
     'mouse-move': 'mouseMove',
@@ -897,6 +906,36 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Returns the moderation on status on the given mediaType.
+     *
+     * @param {string} mediaType - The media type for which to check moderation.
+     * @returns {Promise} - Resolves with the moderation on status and rejects on
+     * failure.
+     */
+    isModerationOn(mediaType) {
+        return this._transport.sendRequest({
+            name: 'is-moderation-on',
+            mediaType
+        });
+    }
+
+    /**
+     * Returns force muted status of the given participant id for the given media type.
+     *
+     * @param {string} participantId - The id of the participant to check.
+     * @param {string} mediaType - The media type for which to check.
+     * @returns {Promise} - Resolves with the force muted status and rejects on
+     * failure.
+     */
+    isParticipantForceMuted(participantId, mediaType) {
+        return this._transport.sendRequest({
+            name: 'is-participant-force-muted',
+            participantId,
+            mediaType
+        });
+    }
+
+    /**
      * Returns screen sharing status.
      *
      * @returns {Promise} - Resolves with screensharing status and rejects on failure.
@@ -917,6 +956,17 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         const { avatarURL } = this._participants[participantId] || {};
 
         return avatarURL;
+    }
+
+    /**
+     * Gets the deployment info.
+     *
+     * @returns {Promise} - Resolves with the deployment info object.
+     */
+    getDeploymentInfo() {
+        return this._transport.sendRequest({
+            name: 'deployment-info'
+        });
     }
 
     /**

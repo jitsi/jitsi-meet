@@ -3,6 +3,7 @@
 import { ReducerRegistry } from '../base/redux';
 
 import {
+    CHANGE_VOTE,
     RECEIVE_POLL,
     RECEIVE_POLLS,
     SHOW_POLL,
@@ -45,6 +46,22 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
         };
 
         return newState;
+    }
+
+    case CHANGE_VOTE: {
+        const { pollId, value } = action;
+
+        return {
+            ...state,
+            polls: {
+                ...state.polls,
+                [pollId]: {
+                    ...state.polls[pollId],
+                    changingVote: value,
+                    showResults: !value
+                }
+            }
+        };
     }
 
     // Reducer triggered when a poll is received
@@ -151,6 +168,7 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
                 ...state.polls,
                 [pollId]: {
                     ...state.polls[pollId],
+                    changingVote: false,
                     lastVote: answers,
                     showResults: true
                 }

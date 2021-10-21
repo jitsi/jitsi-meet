@@ -7,7 +7,7 @@ import { RAISE_HAND_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconRaisedHand } from '../../../base/icons';
 import {
-    getLocalParticipant
+    getLocalParticipant, hasRaisedHand
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
@@ -81,7 +81,7 @@ function _mapStateToProps(state, ownProps): Object {
     const { visible = enabled } = ownProps;
 
     return {
-        _raisedHand: _localParticipant.raisedHand,
+        _raisedHand: hasRaisedHand(_localParticipant),
         _reactionsOpen: isDialogOpen(state, ReactionMenuDialog),
         visible
     };

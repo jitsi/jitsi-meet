@@ -1,6 +1,7 @@
 // @flow
 
 import {
+    CHANGE_VOTE,
     RESET_NB_UNREAD_POLLS,
     RECEIVE_ANSWER,
     RECEIVE_POLL,
@@ -30,6 +31,26 @@ export const receivePolls = (pollIds: Array<string>, polls: Array<Poll>, notify:
         pollIds,
         polls,
         notify
+    };
+};
+
+/*
+ * Action to signal that a poll's vote will be changed.
+ *
+ * @param {string} pollId - The id of the incoming poll.
+ * @param {boolean} value - The value of the 'changing' state.
+
+ * @returns {{
+ *     type: CHANGE_VOTE,
+ *     pollId: string,
+ *     value: boolean
+ * }}
+ */
+export const setVoteChanging = (pollId: string, value: boolean) => {
+    return {
+        type: CHANGE_VOTE,
+        pollId,
+        value
     };
 };
 

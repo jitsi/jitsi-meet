@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 
+import { hasRaisedHand } from '../../../base/participants';
 import { approveKnockingParticipant } from '../../../lobby/actions.native';
 import { showContextMenuReject } from '../../actions.native';
 import { MEDIA_STATE } from '../../constants';
@@ -35,7 +36,7 @@ export const LobbyParticipantItem = ({ participant: p }: Props) => {
             onPress = { openContextMenuReject }
             participant = { p }
             participantID = { p.id }
-            raisedHand = { p.raisedHand }
+            raisedHand = { hasRaisedHand(p) }
             videoMediaState = { MEDIA_STATE.NONE }>
             <Button
                 children = { t('lobby.admit') }

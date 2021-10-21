@@ -12,13 +12,9 @@ import {
 import {
     setDeviceStatusOk,
     setDeviceStatusWarning,
-    setJoiningInProgress,
-    setPrejoinPageVisibility
+    setJoiningInProgress
 } from './actions';
-import { PREJOIN_SCREEN_STATES } from './constants';
 import { isPrejoinPageVisible } from './functions';
-
-declare var APP: Object;
 
 /**
  * The redux middleware for {@link PrejoinPage}.
@@ -88,7 +84,6 @@ MiddlewareRegistry.register(store => next => async action => {
  * @returns {Object}
  */
 function _conferenceJoined({ dispatch }, next, action) {
-    dispatch(setPrejoinPageVisibility(PREJOIN_SCREEN_STATES.HIDDEN));
     dispatch(setJoiningInProgress(false));
 
     return next(action);

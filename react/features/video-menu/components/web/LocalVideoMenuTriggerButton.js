@@ -14,7 +14,6 @@ import { connect } from '../../../base/redux';
 import { setParticipantContextMenuOpen } from '../../../base/responsive-ui/actions';
 import { getLocalVideoTrack } from '../../../base/tracks';
 import ConnectionIndicatorContent from '../../../connection-indicator/components/web/ConnectionIndicatorContent';
-import { hideToolboxOnTileView } from '../../../toolbox/actions';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
 import { renderConnectionStatus } from '../../actions.web';
 
@@ -175,7 +174,7 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
                             {!isMobileBrowser() && <Icon
                                 ariaLabel = { t('dialog.localUserControls') }
                                 role = 'button'
-                                size = '1em'
+                                size = '1.4em'
                                 src = { IconMenuThumb }
                                 tabIndex = { 0 }
                                 title = { t('dialog.localUserControls') } />
@@ -196,7 +195,6 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
      */
     _onPopoverOpen() {
         this.props.dispatch(setParticipantContextMenuOpen(true));
-        this.props.dispatch(hideToolboxOnTileView());
     }
 
     _onPopoverClose: () => void;

@@ -564,13 +564,13 @@ export function setLoadableAvatarUrl(participantId, url) {
  * @param {boolean} enabled - Raise or lower hand.
  * @returns {{
  *     type: LOCAL_PARTICIPANT_RAISE_HAND,
- *     enabled: boolean
+ *     raisedHandTimestamp: number
  * }}
  */
 export function raiseHand(enabled) {
     return {
         type: LOCAL_PARTICIPANT_RAISE_HAND,
-        enabled
+        raisedHandTimestamp: enabled ? Date.now() : 0
     };
 }
 

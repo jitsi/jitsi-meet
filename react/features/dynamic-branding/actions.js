@@ -27,7 +27,7 @@ export function fetchCustomBrandingData() {
         const { customizationReady } = state['features/dynamic-branding'];
 
         if (!customizationReady) {
-            const url = getDynamicBrandingUrl(state);
+            const url = await getDynamicBrandingUrl();
 
             if (url) {
                 try {

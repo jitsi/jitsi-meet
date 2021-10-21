@@ -127,6 +127,7 @@
 }
 
 - (void)destroyReactNativeBridge {
+    [_bridgeWrapper invalidate];
     _bridgeWrapper = nil;
 }
 

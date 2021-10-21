@@ -5,6 +5,7 @@ import type { AbstractComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
+import { sendAnalytics, createPollEvent } from '../../analytics';
 import { getParticipantDisplayName } from '../../base/participants';
 import { COMMAND_NEW_POLL } from '../constants';
 import { isPollsModerationEnabled, getNewPollId } from '../functions';
@@ -56,18 +57,18 @@ const AbstractPollCreate = (Component: AbstractComponent<AbstractProps>) => (pro
     });
 
     const addAnswer = useCallback((i: ?number) => {
-
         const newAnswers = [ ...answers ];
 
+        sendAnalytics(createPollEvent('option.added'));
         newAnswers.splice(typeof i === 'number' ? i : answers.length, 0, '');
         setAnswers(newAnswers);
     });
 
     const moveAnswer = useCallback((i, j) => {
         const newAnswers = [ ...answers ];
-
         const answer = answers[i];
 
+        sendAnalytics(createPollEvent('option.moved'));
         newAnswers.splice(i, 1);
         newAnswers.splice(j, 0, answer);
         setAnswers(newAnswers);
@@ -79,6 +80,7 @@ const AbstractPollCreate = (Component: AbstractComponent<AbstractProps>) => (pro
         }
         const newAnswers = [ ...answers ];
 
+        sendAnalytics(createPollEvent('option.removed'));
         newAnswers.splice(i, 1);
         setAnswers(newAnswers);
     });
@@ -108,6 +110,7 @@ const AbstractPollCreate = (Component: AbstractComponent<AbstractProps>) => (pro
             hidden: isModerationEnabled,
             answers: filteredAnswers
         });
+        sendAnalytics(createPollEvent('created'));
 
         setCreateMode(false);
 

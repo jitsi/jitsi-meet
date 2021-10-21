@@ -7,13 +7,16 @@ import { COMMAND_NEW_POLLS } from './constants';
 import type { Poll } from './types';
 
 /**
- * Should poll results be shown.
+ * Selector creator for determining if poll results should be displayed or not.
  *
- * @param {Object} state - Global state.
  * @param {string} id - Id of the poll.
- * @returns {boolean} Should poll results be shown.
+ * @returns {Function}
  */
-export const shouldShowResults = (state: Object, id: string) => Boolean(state['features/polls']?.polls[id].showResults);
+export function shouldShowResults(id: string) {
+    return function(state: Object) {
+        return Boolean(state['features/polls']?.polls[id].showResults);
+    };
+}
 
 /**
  * Get new poll id.
@@ -38,6 +41,7 @@ export function formatNewPollData(pollData: Object): Poll {
         senderName,
         hidden,
         showResults: false,
+        changingVote: false,
         lastVote: null,
         question,
         answers: answers.map(answer => {
@@ -156,6 +160,18 @@ export function getHiddenPollCount(state: Object) {
 }
 
 /**
+ * Selector creator for polls.
+ *
+ * @param {string} pollId - Id of the poll to get.
+ * @returns {Function}
+ */
+export function getPoll(pollId: string) {
+    return function(state: Object) {
+        return state['features/polls'].polls[pollId];
+    };
+}
+
+/**
  * Selector for calculating the number of unread poll messages.
  *
  * @param {Object} state - The redux state.
@@ -181,4 +197,14 @@ export function isPollsModerationEnabled(state: Object) {
     const enablePollsModeration = state['features/base/config']?.enablePollsModeration === true;
 
     return enablePollsModeration;
+}
+
+/**
+ * Determines if the submit poll answer button should be disabled.
+ *
+ * @param {Array<boolean>} checkBoxStates - The states of the checkboxes.
+ * @returns {boolean}
+ */
+export function isSubmitAnswerDisabled(checkBoxStates: Array<boolean>) {
+    return !checkBoxStates.find(checked => checked);
 }

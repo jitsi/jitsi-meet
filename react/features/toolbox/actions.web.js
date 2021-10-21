@@ -3,7 +3,6 @@
 import type { Dispatch } from 'redux';
 
 import { overwriteConfig } from '../base/config';
-import { isLayoutTileView } from '../video-layout';
 
 import {
     CLEAR_TOOLBOX_TIMEOUT,
@@ -134,13 +133,10 @@ export function showToolbox(timeout: number = 0): Object {
 
         const {
             enabled,
-            visible,
-            overflowDrawer
+            visible
         } = state['features/toolbox'];
-        const { contextMenuOpened } = state['features/base/responsive-ui'];
-        const contextMenuOpenedInTileview = isLayoutTileView(state) && contextMenuOpened && !overflowDrawer;
 
-        if (enabled && !visible && !contextMenuOpenedInTileview) {
+        if (enabled && !visible) {
             dispatch(setToolboxVisible(true));
 
             // If the Toolbox is always visible, there's no need for a timeout
@@ -175,23 +171,6 @@ export function setOverflowDrawer(displayAsDrawer: boolean) {
     return {
         type: SET_OVERFLOW_DRAWER,
         displayAsDrawer
-    };
-}
-
-
-/**
- * Disables and hides the toolbox on demand when in tile view.
- *
- * @returns {void}
- */
-export function hideToolboxOnTileView() {
-    return (dispatch: Dispatch<any>, getState: Function) => {
-        const state = getState();
-        const { overflowDrawer } = state['features/toolbox'];
-
-        if (!overflowDrawer && isLayoutTileView(state)) {
-            dispatch(hideToolbox(true));
-        }
     };
 }
 

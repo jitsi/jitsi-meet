@@ -3,6 +3,7 @@
 import ButtonGroup from '@atlaskit/button/button-group';
 import Button from '@atlaskit/button/standard-button';
 import Modal, { ModalFooter } from '@atlaskit/modal-dialog';
+import { withStyles } from '@material-ui/core/styles';
 import _ from 'lodash';
 import React, { Component } from 'react';
 
@@ -29,6 +30,11 @@ const OK_BUTTON_ID = 'modal-dialog-ok-button';
  * @static
  */
 type Props = DialogProps & {
+
+    /**
+     * An object containing the CSS classes.
+     */
+    classes: Object,
 
     /**
      * Custom dialog header that replaces the standard heading.
@@ -99,6 +105,19 @@ type Props = DialogProps & {
      * - string value for percentage
      */
     width: string
+};
+
+/**
+ * Creates the styles for the component.
+ *
+ * @returns {Object}
+ */
+const styles = () => {
+    return {
+        footer: {
+            boxShadow: 'none'
+        }
+    };
 };
 
 /**
@@ -205,7 +224,9 @@ class StatelessDialog extends Component<Props> {
         }
 
         return (
-            <ModalFooter showKeyline = { propsFromModalFooter.showKeyline } >
+            <ModalFooter
+                className = { this.props.classes.footer }
+                showKeyline = { propsFromModalFooter.showKeyline } >
                 {
 
                     /**
@@ -367,4 +388,4 @@ class StatelessDialog extends Component<Props> {
     }
 }
 
-export default translate(StatelessDialog);
+export default translate(withStyles(styles)(StatelessDialog));

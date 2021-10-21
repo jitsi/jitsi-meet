@@ -1,15 +1,19 @@
 // @flow
 
 import { BoxModel } from '../../../../base/styles';
+import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
 
 export const AVATAR_SIZE = 40;
 export const DARK_GREY = 'rgb(28, 32, 37)';
 export const LIGHT_GREY = 'rgb(209, 219, 232)';
 export const ICON_SIZE = 15;
 
-const FIELD_COLOR = 'rgb(240, 243, 247)';
-
 export default {
+
+    addPeopleContainer: {
+        flex: 1
+    },
+
     avatar: {
         backgroundColor: LIGHT_GREY
     },
@@ -21,8 +25,9 @@ export default {
 
     bottomBar: {
         alignItems: 'center',
-        flexDirection: 'row',
-        justifyContent: 'space-around'
+        justifyContent: 'center',
+        backgroundColor: BaseTheme.palette.screen01Header,
+        height: BaseTheme.spacing[10]
     },
 
     clearButton: {
@@ -39,7 +44,7 @@ export default {
 
     clearIconContainer: {
         alignItems: 'center',
-        backgroundColor: FIELD_COLOR,
+        backgroundColor: BaseTheme.palette.section01,
         borderRadius: 12,
         justifyContent: 'center',
         height: 24,
@@ -51,6 +56,15 @@ export default {
      */
     extraBarPadding: {
         paddingBottom: 30
+    },
+
+    headerCloseIcon: {
+        marginLeft: 12
+    },
+
+    headerSendInvite: {
+        color: BaseTheme.palette.text01,
+        marginRight: 12
     },
 
     invitedList: {
@@ -80,7 +94,7 @@ export default {
     },
 
     searchField: {
-        backgroundColor: FIELD_COLOR,
+        backgroundColor: BaseTheme.palette.section01,
         borderBottomRightRadius: 10,
         borderTopRightRadius: 10,
         color: DARK_GREY,
@@ -106,7 +120,7 @@ export default {
         alignItems: 'stretch',
         flexDirection: 'row',
         height: 52,
-        paddingHorizontal: 15,
+        paddingHorizontal: 12,
         paddingVertical: 8
     },
 
@@ -117,7 +131,7 @@ export default {
 
     searchIconWrapper: {
         alignItems: 'center',
-        backgroundColor: FIELD_COLOR,
+        backgroundColor: BaseTheme.palette.section01,
         borderBottomLeftRadius: 10,
         borderTopLeftRadius: 10,
         flexDirection: 'row',

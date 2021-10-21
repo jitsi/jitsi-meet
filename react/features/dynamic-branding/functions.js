@@ -1,4 +1,5 @@
 // @flow
+import { loadConfig } from '../base/lib-jitsi-meet';
 
 /**
  * Extracts the fqn part from a path, where fqn represents
@@ -17,17 +18,17 @@ export function extractFqnFromPath() {
 /**
  * Returns the url used for fetching dynamic branding.
  *
- * @param {Object} state - The state of the app.
  * @returns {string}
  */
-export function getDynamicBrandingUrl(state: Object) {
-    const { dynamicBrandingUrl } = state['features/base/config'];
+export async function getDynamicBrandingUrl() {
+    const config = await loadConfig(window.location.href);
+    const { dynamicBrandingUrl } = config;
 
     if (dynamicBrandingUrl) {
         return dynamicBrandingUrl;
     }
 
-    const baseUrl = state['features/base/config'].brandingDataUrl;
+    const { brandingDataUrl: baseUrl } = config;
     const fqn = extractFqnFromPath();
 
     if (baseUrl && fqn) {

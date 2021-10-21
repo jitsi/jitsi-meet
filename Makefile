@@ -14,12 +14,12 @@ STYLES_BUNDLE = css/all.bundle.css
 STYLES_DESTINATION = css/all.css
 STYLES_MAIN = css/main.scss
 WEBPACK = ./node_modules/.bin/webpack
-WEBPACK_DEV_SERVER = ./node_modules/.bin/webpack-dev-server
+WEBPACK_DEV_SERVER = ./node_modules/.bin/webpack serve --mode development
 
 all: compile deploy clean
 
 compile: compile-load-test
-	$(WEBPACK) -p
+	$(WEBPACK)
 
 compile-load-test:
 	${NPM} install --prefix resources/load-test && ${NPM} run build --prefix resources/load-test
@@ -51,9 +51,11 @@ deploy-appbundle:
 		$(OUTPUT_DIR)/analytics-ga.js \
 		$(BUILD_DIR)/analytics-ga.min.js \
 		$(BUILD_DIR)/analytics-ga.min.map \
+		$(DEPLOY_DIR)
+	cp \
 		$(BUILD_DIR)/close3.min.js \
 		$(BUILD_DIR)/close3.min.map \
-		$(DEPLOY_DIR)
+		$(DEPLOY_DIR) || true
 
 deploy-lib-jitsi-meet:
 	cp \
@@ -100,7 +102,7 @@ deploy-local:
 
 .NOTPARALLEL:
 dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-libflac deploy-olm
-	$(WEBPACK_DEV_SERVER) --detect-circular-deps
+	$(WEBPACK_DEV_SERVER)
 
 source-package:
 	mkdir -p source_package/jitsi-meet/css && \

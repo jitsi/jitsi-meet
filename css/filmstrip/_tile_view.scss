@@ -15,6 +15,7 @@
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
+        overscroll-behavior: contain;
     }
 
     .filmstrip__videos .videocontainer {

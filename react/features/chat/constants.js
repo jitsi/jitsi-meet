@@ -1,7 +1,5 @@
 // @flow
 
-export const CHAT_VIEW_MODAL_ID = 'chatView';
-
 /**
  * The size of the chat.
  */

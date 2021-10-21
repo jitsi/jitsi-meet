@@ -311,6 +311,7 @@ class WelcomePage extends AbstractWelcomePage {
                                 placeholder = { this.state.roomPlaceholder }
                                 placeholderTextColor = { PLACEHOLDER_TEXT_COLOR }
                                 returnKeyType = { 'go' }
+                                spellCheck = { false }
                                 style = { styles.textInput }
                                 underlineColorAndroid = 'transparent'
                                 value = { this.state.room } />

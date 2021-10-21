@@ -170,6 +170,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             mode = 'outlined'
                             onChangeText = { this._onChangeDisplayName }
                             placeholder = 'John Doe'
+                            spellCheck = { false }
                             style = { styles.textInputContainer }
                             textContentType = { 'name' } // iOS only
                             theme = {{
@@ -188,6 +189,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             mode = 'outlined'
                             onChangeText = { this._onChangeEmail }
                             placeholder = 'email@example.com'
+                            spellCheck = { false }
                             style = { styles.textInputContainer }
                             textContentType = { 'emailAddress' } // iOS only
                             theme = {{
@@ -212,6 +214,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             onBlur = { this._onBlurServerURL }
                             onChangeText = { this._onChangeServerURL }
                             placeholder = { this.props._serverURL }
+                            spellCheck = { false }
                             style = { styles.textInputContainer }
                             textContentType = { 'URL' } // iOS only
                             theme = {{

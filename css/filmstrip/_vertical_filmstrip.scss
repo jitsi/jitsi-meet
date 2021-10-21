@@ -114,6 +114,7 @@
     .remote-videos {
         display: flex;
         transition: height .3s ease-in;
+        overscroll-behavior: contain;
 
         & > div {
             position: absolute;
