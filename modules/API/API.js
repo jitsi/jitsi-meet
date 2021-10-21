@@ -539,8 +539,8 @@ function initCommands() {
         'meeting-reconnect': () => {
             APP.store.dispatch(joinWithPassword(""));
         },
-        'grant-moderator': participantId => {
-            APP.store.dispatch(grantModerator(participantId));
+        'grant-moderator': () => {
+            APP.store.dispatch(grantModerator(this._getCurrentParticipantId()));
         },
         'kick-participant': participantId => {
             APP.store.dispatch(kickParticipant(participantId));
