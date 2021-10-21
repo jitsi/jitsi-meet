@@ -37,7 +37,8 @@ import {
     kickParticipant,
     raiseHand,
     isParticipantModerator,
-    isLocalParticipantModerator
+    isLocalParticipantModerator,
+    hasRaisedHand
 } from '../../react/features/base/participants';
 import { updateSettings } from '../../react/features/base/settings';
 import { isToggleCameraEnabled, toggleCamera } from '../../react/features/base/tracks';
@@ -281,7 +282,7 @@ function initCommands() {
             if (!localParticipant) {
                 return;
             }
-            const { raisedHand } = localParticipant;
+            const raisedHand = hasRaisedHand(localParticipant);
 
             sendAnalytics(createApiEvent('raise-hand.toggled'));
             APP.store.dispatch(raiseHand(!raisedHand));

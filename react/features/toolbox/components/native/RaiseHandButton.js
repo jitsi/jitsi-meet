@@ -11,6 +11,7 @@ import { translate } from '../../../base/i18n';
 import { IconRaisedHand } from '../../../base/icons';
 import {
     getLocalParticipant,
+    hasRaisedHand,
     raiseHand
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
@@ -97,7 +98,7 @@ function _mapStateToProps(state, ownProps): Object {
 
     return {
         _localParticipant,
-        _raisedHand: _localParticipant.raisedHand,
+        _raisedHand: hasRaisedHand(_localParticipant),
         visible
     };
 }

@@ -12,6 +12,7 @@ import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { translate } from '../../../base/i18n';
 import {
     getLocalParticipant,
+    hasRaisedHand,
     raiseHand
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
@@ -157,7 +158,7 @@ function _mapStateToProps(state): Object {
 
     return {
         _localParticipant,
-        _raisedHand: _localParticipant.raisedHand,
+        _raisedHand: hasRaisedHand(_localParticipant),
         _styles: ColorSchemeRegistry.get(state, 'Toolbox').raiseHandButton
     };
 }

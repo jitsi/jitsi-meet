@@ -8,6 +8,7 @@ import { MEDIA_TYPE } from '../base/media';
 import {
     getLocalParticipant,
     getRemoteParticipants,
+    hasRaisedHand,
     isLocalParticipantModerator,
     isParticipantModerator,
     PARTICIPANT_UPDATED,
@@ -134,7 +135,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             if (isLocalParticipantModerator(state)) {
 
                 // this is handled only by moderators
-                if (participant.raisedHand) {
+                if (hasRaisedHand(participant)) {
                     // if participant raises hand show notification
                     !isParticipantApproved(participant.id, MEDIA_TYPE.AUDIO)(state)
                     && dispatch(participantPendingAudio(participant));
@@ -148,7 +149,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
                 // this is the granted moderator case
                 getRemoteParticipants(state).forEach(p => {
-                    p.raisedHand && !isParticipantApproved(p.id, MEDIA_TYPE.AUDIO)(state)
+                    hasRaisedHand(p) && !isParticipantApproved(p.id, MEDIA_TYPE.AUDIO)(state)
                         && dispatch(participantPendingAudio(p));
                 });
             }
