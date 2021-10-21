@@ -23,7 +23,8 @@ type Props = {
     t: Function,
     deviceStatusVisible: boolean,
     name: string,
-    isMobile: boolean
+    isMobile: boolean,
+    connection: Object
 };
 
 class JaneWaitingArea extends Component<Props> {
@@ -32,8 +33,10 @@ class JaneWaitingArea extends Component<Props> {
         const {
             name,
             deviceStatusVisible,
-            isMobile
+            isMobile,
+            connection
         } = this.props;
+
 
         return (
             <div className = 'jane-waiting-area-full-page'>
@@ -41,14 +44,18 @@ class JaneWaitingArea extends Component<Props> {
                     isMobile && <Watermarks />
                 }
                 <Preview name = { name } />
-                <Modal isMobile = { isMobile } />
+                {
+                    connection && <Modal isMobile = { isMobile } />
+                }
                 <div className = 'jane-waiting-area-preview-btn-container settings-button-container'>
                     <AudioSettingsButton visible = { true } />
                     <JaneHangupButton visible = { true } />
                     <VideoSettingsButton visible = { true } />
                 </div>
                 {deviceStatusVisible && <DeviceStatus />}
-                <SocketConnection />
+                {
+                    connection && <SocketConnection />
+                }
             </div>
         );
     }
@@ -60,7 +67,8 @@ function mapStateToProps(state): Object {
     return {
         deviceStatusVisible: isDeviceStatusVisible(state),
         name: getJaneWaitingAreaPageDisplayName(state),
-        isMobile: clientWidth <= 768
+        isMobile: clientWidth <= 768,
+        connection: state['features/jane-waiting-area']?.connection
     };
 }
 

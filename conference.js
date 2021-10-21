@@ -770,7 +770,7 @@ export default {
         }
 
         if (isJaneWaitingAreaPageEnabled(APP.store.getState())) {
-            _connectionPromise = connect(roomName).then(c => {
+            _connectionPromise = await connect(roomName).then(c => {
                 // we want to initialize it early, in case of errors to be able
                 // to gather logs
                 APP.connection = c;
@@ -786,7 +786,7 @@ export default {
             // they may remain as empty strings.
             this._initDeviceList(true);
 
-            return APP.store.dispatch(initJaneWaitingArea(tracks, errors));
+            return APP.store.dispatch(initJaneWaitingArea(tracks, _connectionPromise, errors));
         }
 
         const [ tracks, con ] = await this.createInitialLocalTracksAndConnect(
@@ -803,7 +803,6 @@ export default {
      * @param {Object[]} tracks - An array with the configured tracks
      * @returns {Promise}
      */
-
     async janeWaitingAreaStart(tracks) {
         const con = await _connectionPromise;
 
