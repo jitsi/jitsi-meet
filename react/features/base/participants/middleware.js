@@ -94,7 +94,7 @@ MiddlewareRegistry.register(store => next => action => {
         const participant = getLocalParticipant(state);
         const isLocal = participant && participant.id === id;
 
-        if (isLocal && participant.raisedHand === undefined) {
+        if (isLocal && participant.raisedHandTimestamp === undefined) {
             // if local was undefined, let's leave it like that
             // avoids sending unnecessary presence updates
             break;
@@ -105,7 +105,7 @@ MiddlewareRegistry.register(store => next => action => {
                 conference,
                 id,
                 local: isLocal,
-                raisedHand: 0
+                raisedHandTimestamp: 0
             }));
         }
 
@@ -127,7 +127,7 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case LOCAL_PARTICIPANT_RAISE_HAND: {
-        const { raisedHand } = action;
+        const { raisedHandTimestamp } = action;
         const localId = getLocalParticipant(store.getState())?.id;
 
         store.dispatch(participantUpdated({
@@ -139,16 +139,16 @@ MiddlewareRegistry.register(store => next => action => {
 
             id: localId,
             local: true,
-            raisedHand
+            raisedHandTimestamp
         }));
 
         store.dispatch(raiseHandUpdateQueue({
             id: localId,
-            raisedHand
+            raisedHandTimestamp
         }));
 
         if (typeof APP !== 'undefined') {
-            APP.API.notifyRaiseHandUpdated(localId, raisedHand);
+            APP.API.notifyRaiseHandUpdated(localId, raisedHandTimestamp);
         }
 
         break;
@@ -179,10 +179,10 @@ MiddlewareRegistry.register(store => next => action => {
         const { participant } = action;
         let queue = getRaiseHandsQueue(store.getState());
 
-        if (participant.raisedHand) {
+        if (participant.raisedHandTimestamp) {
             queue.push({
                 id: participant.id,
-                raisedHandTimestamp: participant.raisedHand
+                raisedHandTimestamp: participant.raisedHandTimestamp
             });
 
             // sort the queue before adding to store.
@@ -458,18 +458,18 @@ function _maybePlaySounds({ getState, dispatch }, action) {
  */
 function _participantJoinedOrUpdated(store, next, action) {
     const { dispatch, getState } = store;
-    const { participant: { avatarURL, email, id, local, name, raisedHand } } = action;
+    const { participant: { avatarURL, email, id, local, name, raisedHandTimestamp } } = action;
 
     // Send an external update of the local participant's raised hand state
     // if a new raised hand state is defined in the action.
-    if (typeof raisedHand !== 'undefined') {
+    if (typeof raisedHandTimestamp !== 'undefined') {
 
         if (local) {
             const { conference } = getState()['features/base/conference'];
-            const rHand = parseInt(raisedHand, 10);
+            const rHand = parseInt(raisedHandTimestamp, 10);
 
             // Send raisedHand signalling only if there is a change
-            if (conference && rHand !== getLocalParticipant(getState()).raisedHand) {
+            if (conference && rHand !== getLocalParticipant(getState()).raisedHandTimestamp) {
                 conference.setLocalParticipantProperty('raisedHand', rHand);
             }
         }
@@ -516,34 +516,34 @@ function _participantJoinedOrUpdated(store, next, action) {
  * @returns {void}
  */
 function _raiseHandUpdated({ dispatch, getState }, conference, participantId, newValue) {
-    let raisedHand;
+    let raisedHandTimestamp;
 
     switch (newValue) {
     case undefined:
     case 'false':
-        raisedHand = 0;
+        raisedHandTimestamp = 0;
         break;
     case 'true':
-        raisedHand = Date.now();
+        raisedHandTimestamp = Date.now();
         break;
     default:
-        raisedHand = parseInt(newValue, 10);
+        raisedHandTimestamp = parseInt(newValue, 10);
     }
     const state = getState();
 
     dispatch(participantUpdated({
         conference,
         id: participantId,
-        raisedHand
+        raisedHandTimestamp
     }));
 
     dispatch(raiseHandUpdateQueue({
         id: participantId,
-        raisedHand
+        raisedHandTimestamp
     }));
 
     if (typeof APP !== 'undefined') {
-        APP.API.notifyRaiseHandUpdated(participantId, raisedHand);
+        APP.API.notifyRaiseHandUpdated(participantId, raisedHandTimestamp);
     }
 
     const isModerator = isLocalParticipantModerator(state);
@@ -560,7 +560,7 @@ function _raiseHandUpdated({ dispatch, getState }, conference, participantId, ne
         customActionHandler: () => dispatch(approveParticipant(participantId))
     } : {};
 
-    if (raisedHand) {
+    if (raisedHandTimestamp) {
         dispatch(showNotification({
             titleKey: 'notify.somebody',
             title: getParticipantDisplayName(state, participantId),

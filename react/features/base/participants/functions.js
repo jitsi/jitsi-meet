@@ -476,5 +476,5 @@ export function getRaiseHandsQueue(stateful: Object | Function): Array<Object> {
  * @returns {boolean} - Whether participant has raise hand or not.
  */
 export function hasRaisedHand(participant: Object): boolean {
-    return Boolean(participant && participant.raisedHand);
+    return Boolean(participant && participant.raisedHandTimestamp);
 }
