@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { hasRaisedHand } from '../../../base/participants';
 
+import { hasRaisedHand } from '../../../base/participants';
 import { ACTION_TRIGGER, MEDIA_STATE } from '../../constants';
 import { useLobbyActions } from '../../hooks';
 
