@@ -238,10 +238,6 @@ ol.poll-result-list {
 .polls-pane-content {
     height: calc(100% - 102px);
     position: relative;
-
-    @media (max-width: 580px) {
-        height: 100%;
-    }
 }
 
 .pane-content{
