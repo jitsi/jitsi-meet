@@ -38,6 +38,7 @@ const commands = {
     hangup: 'video-hangup',
     initiatePrivateChat: 'initiate-private-chat',
     joinWithPassword: 'join-with-password',
+    skipPrejoin: 'skip-prejoin',
     meetingReconnect: 'meeting-reconnect',
     grantModerator: 'grant-moderator',
     kickParticipant: 'kick-participant',
