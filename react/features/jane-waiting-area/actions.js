@@ -21,7 +21,7 @@ import {
     SET_JANE_WAITING_AREA_VIDEO_MUTED,
     CONNECT_JANE_SOCKET_SERVER,
     UPDATE_REMOTE_PARTICIPANT_STATUSES,
-    SET_JANE_WAITING_AREA_AUTH_STATE
+    SET_JANE_WAITING_AREA_AUTH_STATE, ADD_CONNECTION_TO_JANE_WAITING_AREA
 } from './actionTypes';
 import {
     detectLegacyMobileApp,
@@ -29,10 +29,19 @@ import {
 } from './functions';
 import logger from './logger';
 
-export function initJaneWaitingArea(tracks: Object[], errors: Object) {
+
+export function addConnectionToJaneWaitingArea(connection: Object) {
+    return {
+        type: ADD_CONNECTION_TO_JANE_WAITING_AREA,
+        connection
+    };
+}
+
+export function initJaneWaitingArea(tracks: Object[], connection: Object[], errors: Object) {
     return async function(dispatch: Function) {
         dispatch(setJaneWaitingAreaDeviceErrors(errors));
         tracks.forEach(track => dispatch(trackAdded(track)));
+        dispatch(addConnectionToJaneWaitingArea(connection));
     };
 }
 
