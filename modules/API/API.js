@@ -541,6 +541,7 @@ function initCommands() {
         },
         'grant-moderator': () => {
             const localParticipant = getLocalParticipant(APP.store.getState());
+            console.log("Trying to grant moderator automatically...", localParticipant.id);
             APP.store.dispatch(grantModerator(localParticipant.id));
         },
         'kick-participant': participantId => {

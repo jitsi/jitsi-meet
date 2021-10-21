@@ -64,6 +64,7 @@ export default class AbstractGrantModeratorDialog
                 'participant_id': participantID
             }));
 
+        console.log("Granting moderator from button press...", participantID);
         dispatch(grantModerator(participantID));
 
         return true;
