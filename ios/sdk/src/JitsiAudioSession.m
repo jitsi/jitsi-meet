@@ -16,7 +16,6 @@
 
 #import "JitsiAudioSession.h"
 #import "JitsiAudioSession+Private.h"
-#import <WebRTC/WebRTC.h>
 
 @implementation JitsiAudioSession
 
