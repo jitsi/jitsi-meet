@@ -1,5 +1,6 @@
 // @flow
 
+import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -7,8 +8,8 @@ import { hasRaisedHand } from '../../../base/participants';
 import { ACTION_TRIGGER, MEDIA_STATE } from '../../constants';
 import { useLobbyActions } from '../../hooks';
 
+import LobbyParticipantQuickAction from './LobbyParticipantQuickAction';
 import ParticipantItem from './ParticipantItem';
-import { ParticipantActionButton } from './styled';
 
 type Props = {
 
@@ -28,6 +29,14 @@ type Props = {
     participant: Object
 };
 
+const useStyles = makeStyles(theme => {
+    return {
+        button: {
+            marginRight: `${theme.spacing(2)}px`
+        }
+    };
+});
+
 export const LobbyParticipantItem = ({
     overflowDrawer,
     participant: p,
@@ -36,6 +45,7 @@ export const LobbyParticipantItem = ({
     const { id } = p;
     const [ admit, reject ] = useLobbyActions({ participantID: id });
     const { t } = useTranslation();
+    const styles = useStyles();
 
     return (
         <ParticipantItem
@@ -49,20 +59,20 @@ export const LobbyParticipantItem = ({
             raisedHand = { hasRaisedHand(p) }
             videoMediaState = { MEDIA_STATE.NONE }
             youText = { t('chat.you') }>
-            <ParticipantActionButton
-                aria-label = { `Reject ${p.name}` }
-                data-testid = { `reject-${id}` }
+            <LobbyParticipantQuickAction
+                accessibilityLabel = { `${t('lobby.reject')} ${p.name}` }
+                className = { styles.button }
                 onClick = { reject }
-                primary = { false }>
-                {t('lobby.reject')}
-            </ParticipantActionButton>
-            <ParticipantActionButton
-                aria-label = { `Admit ${p.name}` }
-                data-testid = { `admit-${id}` }
+                secondary = { true }
+                testId = { `reject-${id}` }>
+                {t('lobby.reject') }
+            </LobbyParticipantQuickAction>
+            <LobbyParticipantQuickAction
+                accessibilityLabel = { `${t('lobby.admit')} ${p.name}` }
                 onClick = { admit }
-                primary = { true }>
+                testId = { `admit-${id}` }>
                 {t('lobby.admit')}
-            </ParticipantActionButton>
+            </LobbyParticipantQuickAction>
         </ParticipantItem>
     );
 };

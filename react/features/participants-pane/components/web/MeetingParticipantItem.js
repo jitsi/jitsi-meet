@@ -26,10 +26,11 @@ import {
     getParticipantVideoMediaState,
     getQuickActionButtonType
 } from '../../functions';
-import ParticipantQuickAction from '../ParticipantQuickAction';
 
+import ParticipantActionEllipsis from './ParticipantActionEllipsis';
 import ParticipantItem from './ParticipantItem';
-import { ParticipantActionEllipsis } from './styled';
+import ParticipantQuickAction from './ParticipantQuickAction';
+
 
 type Props = {
 
@@ -266,16 +267,17 @@ function MeetingParticipantItem({
                         buttonType = { _quickActionButtonType }
                         muteAudio = { muteAudio }
                         muteParticipantButtonText = { muteParticipantButtonText }
-                        participantID = { _participantID } />
+                        participantID = { _participantID }
+                        participantName = { _displayName } />
                     <ParticipantActionEllipsis
-                        aria-label = { participantActionEllipsisLabel }
+                        accessibilityLabel = { participantActionEllipsisLabel }
                         onClick = { onContextMenu } />
                 </>
             }
 
             {!overflowDrawer && _localVideoOwner && _participant?.isFakeParticipant && (
                 <ParticipantActionEllipsis
-                    aria-label = { participantActionEllipsisLabel }
+                    accessibilityLabel = { participantActionEllipsisLabel }
                     onClick = { onContextMenu } />
             )}
         </ParticipantItem>

@@ -1,32 +1,22 @@
 // @flow
 
+import { withStyles } from '@material-ui/core';
 import React, { Component } from 'react';
-import { ThemeProvider } from 'styled-components';
 
+import participantsPaneTheme from '../../../base/components/themes/participantsPaneTheme.json';
 import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
+import { Icon, IconClose, IconHorizontalPoints } from '../../../base/icons';
 import { isLocalParticipantModerator } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { Drawer, JitsiPortal } from '../../../toolbox/components/web';
-import { showOverflowDrawer } from '../../../toolbox/functions';
 import { MuteEveryoneDialog } from '../../../video-menu/components/';
 import { close } from '../../actions';
-import { classList, findStyledAncestor, getParticipantsPaneOpen } from '../../functions';
-import theme from '../../theme.json';
-import { FooterContextMenu } from '../FooterContextMenu';
+import { classList, findAncestorByClass, getParticipantsPaneOpen } from '../../functions';
 
+import FooterButton from './FooterButton';
+import { FooterContextMenu } from './FooterContextMenu';
 import LobbyParticipants from './LobbyParticipants';
 import MeetingParticipants from './MeetingParticipants';
-import {
-    AntiCollapse,
-    Close,
-    Container,
-    Footer,
-    FooterButton,
-    FooterEllipsisButton,
-    FooterEllipsisContainer,
-    Header
-} from './styled';
 
 /**
  * The type of the React {@code Component} props of {@link ParticipantsPane}.
@@ -54,6 +44,11 @@ type Props = {
     dispatch: Function,
 
     /**
+     * An object containing the CSS classes.
+     */
+    classes: Object,
+
+    /**
      * The i18n translate function.
      */
     t: Function
@@ -68,6 +63,68 @@ type State = {
      * Indicates if the footer context menu is open.
      */
     contextOpen: boolean,
+};
+
+const styles = theme => {
+    return {
+        container: {
+            boxSizing: 'border-box',
+            flex: 1,
+            overflowY: 'auto',
+            position: 'relative',
+            padding: `0 ${participantsPaneTheme.panePadding}px`,
+
+            [`& > * + *:not(.${participantsPaneTheme.ignoredChildClassName})`]: {
+                marginTop: theme.spacing(3)
+            },
+
+            '&::-webkit-scrollbar': {
+                display: 'none'
+            }
+        },
+
+        closeButton: {
+            alignItems: 'center',
+            cursor: 'pointer',
+            display: 'flex',
+            justifyContent: 'center'
+        },
+
+        header: {
+            alignItems: 'center',
+            boxSizing: 'border-box',
+            display: 'flex',
+            height: `${participantsPaneTheme.headerSize}px`,
+            padding: '0 20px',
+            justifyContent: 'flex-end'
+        },
+
+        antiCollapse: {
+            fontSize: 0,
+
+            '&:first-child': {
+                display: 'none'
+            },
+
+            '&:first-child + *': {
+                marginTop: 0
+            }
+        },
+
+        footer: {
+            display: 'flex',
+            justifyContent: 'flex-end',
+            padding: `${theme.spacing(4)}px ${participantsPaneTheme.panePadding}px`,
+
+            '& > *:not(:last-child)': {
+                marginRight: `${theme.spacing(3)}px`
+            }
+        },
+
+        footerMoreContainer: {
+            position: 'relative'
+        }
+    };
 };
 
 /**
@@ -121,9 +178,9 @@ class ParticipantsPane extends Component<Props, State> {
      */
     render() {
         const {
-            _overflowDrawer,
             _paneOpen,
             _showFooter,
+            classes,
             t
         } = this.props;
         const { contextOpen } = this.state;
@@ -135,46 +192,50 @@ class ParticipantsPane extends Component<Props, State> {
         }
 
         return (
-            <ThemeProvider theme = { theme }>
-                <div className = { classList('participants_pane', !_paneOpen && 'participants_pane--closed') }>
-                    <div className = 'participants_pane-content'>
-                        <Header>
-                            <Close
-                                aria-label = { t('participantsPane.close', 'Close') }
-                                onClick = { this._onClosePane }
-                                onKeyPress = { this._onKeyPress }
-                                role = 'button'
-                                tabIndex = { 0 } />
-                        </Header>
-                        <Container>
-                            <LobbyParticipants />
-                            <AntiCollapse />
-                            <MeetingParticipants />
-                        </Container>
-                        {_showFooter && (
-                            <Footer>
-                                <FooterButton onClick = { this._onMuteAll }>
-                                    {t('participantsPane.actions.muteAll')}
-                                </FooterButton>
-                                <FooterEllipsisContainer>
-                                    <FooterEllipsisButton
-                                        id = 'participants-pane-context-menu'
-                                        onClick = { this._onToggleContext } />
-                                    {this.state.contextOpen && !_overflowDrawer
-                                        && <FooterContextMenu onMouseLeave = { this._onToggleContext } />}
-                                </FooterEllipsisContainer>
-                            </Footer>
-                        )}
+            <div className = { classList('participants_pane', !_paneOpen && 'participants_pane--closed') }>
+                <div className = 'participants_pane-content'>
+                    <div className = { classes.header }>
+                        <div
+                            aria-label = { t('participantsPane.close', 'Close') }
+                            className = { classes.closeButton }
+                            onClick = { this._onClosePane }
+                            onKeyPress = { this._onKeyPress }
+                            role = 'button'
+                            tabIndex = { 0 }>
+                            <Icon
+                                size = { 24 }
+                                src = { IconClose } />
+                        </div>
                     </div>
-                    <JitsiPortal>
-                        <Drawer
-                            isOpen = { contextOpen && _overflowDrawer }
-                            onClose = { this._onDrawerClose }>
-                            <FooterContextMenu inDrawer = { true } />
-                        </Drawer>
-                    </JitsiPortal>
+                    <div className = { classes.container }>
+                        <LobbyParticipants />
+                        <br className = { classes.antiCollapse } />
+                        <MeetingParticipants />
+                    </div>
+                    {_showFooter && (
+                        <div className = { classes.footer }>
+                            <FooterButton
+                                accessibilityLabel = { t('participantsPane.actions.muteAll') }
+                                onClick = { this._onMuteAll }>
+                                {t('participantsPane.actions.muteAll')}
+                            </FooterButton>
+                            <div className = { classes.footerMoreContainer }>
+                                <FooterButton
+                                    accessibilityLabel = { t('participantsPane.actions.moreModerationActions') }
+                                    id = 'participants-pane-context-menu'
+                                    isIconButton = { true }
+                                    onClick = { this._onToggleContext }>
+                                    <Icon src = { IconHorizontalPoints } />
+                                </FooterButton>
+                                <FooterContextMenu
+                                    isOpen = { contextOpen }
+                                    onDrawerClose = { this._onDrawerClose }
+                                    onMouseLeave = { this._onToggleContext } />
+                            </div>
+                        </div>
+                    )}
                 </div>
-            </ThemeProvider>
+            </div>
         );
     }
 
@@ -253,7 +314,7 @@ class ParticipantsPane extends Component<Props, State> {
      * @returns {void}
      */
     _onWindowClickListener(e) {
-        if (this.state.contextOpen && !findStyledAncestor(e.target, FooterEllipsisContainer)) {
+        if (this.state.contextOpen && !findAncestorByClass(e.target, this.props.classes.footerMoreContainer)) {
             this.setState({
                 contextOpen: false
             });
@@ -278,10 +339,9 @@ function _mapStateToProps(state: Object) {
     const isPaneOpen = getParticipantsPaneOpen(state);
 
     return {
-        _overflowDrawer: showOverflowDrawer(state),
         _paneOpen: isPaneOpen,
         _showFooter: isPaneOpen && isLocalParticipantModerator(state)
     };
 }
 
-export default translate(connect(_mapStateToProps)(ParticipantsPane));
+export default translate(connect(_mapStateToProps)(withStyles(styles)(ParticipantsPane)));
