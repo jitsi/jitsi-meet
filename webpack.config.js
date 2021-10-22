@@ -203,7 +203,7 @@ function getConfig(options = {}) {
             filename: `[name]${minimize ? '.min' : ''}.js`,
             path: `${__dirname}/build`,
             publicPath: '/libs/',
-            sourceMapFilename: `[name].${minimize ? 'min' : 'js'}.map`
+            sourceMapFilename: '[file].map'
         },
         plugins: [
             detectCircularDeps
@@ -243,6 +243,7 @@ function getConfig(options = {}) {
  * Webpack 5 because only one devServer entry is supported, so we attach it to
  * the main bundle.
  *
+
  * @returns {Object} the dev server configuration.
  */
 function getDevServerConfig() {
@@ -255,6 +256,7 @@ function getDevServerConfig() {
         },
         https: true,
         host: '127.0.0.1',
+        hot: true,
         proxy: {
             '/': {
                 bypass: devServerProxyBypass,
