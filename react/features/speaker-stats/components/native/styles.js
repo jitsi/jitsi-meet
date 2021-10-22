@@ -3,14 +3,13 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 export default {
     speakerStatsContainer: {
         flexDirection: 'column',
-        justifyContent: 'center',
         flex: 1,
         height: 'auto'
     },
     speakerStatsItemContainer: {
         flexDirection: 'row',
         alignSelf: 'stretch',
-        flex: 1
+        height: 24
     },
     speakerStatsItemStatus: {
         flex: 1,
