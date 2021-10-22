@@ -1,14 +1,13 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-import { ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { translate } from '../../../base/i18n';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../../base/participants';
-import { closeSpeakerStats, initUpdateStats } from '../../actions';
+import { initUpdateStats } from '../../actions';
 import {
     SPEAKER_STATS_RELOAD_INTERVAL
 } from '../../constants';
@@ -16,6 +15,7 @@ import { getSearchCriteria, getSpeakerStats } from '../../functions';
 
 import SpeakerStatsItem from './SpeakerStatsItem';
 import SpeakerStatsLabels from './SpeakerStatsLabels';
+import style from './styles';
 
 /**
  * The type of the React {@code Component} props of {@link SpeakerStats}.
@@ -69,7 +69,6 @@ class SpeakerStats extends PureComponent<Props> {
 
         // Bind event handlers so they are only bound once per instance.
         this._updateStats = this._updateStats.bind(this);
-        this._onClose = this._onClose.bind(this);
 
         this._updateStats();
     }
@@ -104,26 +103,12 @@ class SpeakerStats extends PureComponent<Props> {
 
         return (
             <JitsiScreen
-                hasTabNavigator = { false }>
-                <ScrollView bounces = { false }>
-                    <SpeakerStatsLabels />
-                    { items }
-                </ScrollView>
+                hasTabNavigator = { false }
+                style = { style.speakerStatsContainer }>
+                <SpeakerStatsLabels />
+                { items }
             </JitsiScreen>
         );
-    }
-
-    _onClose: () => boolean;
-
-    /**
-     * Closes the modal.
-     *
-     * @returns {boolean}
-     */
-    _onClose() {
-        this.props.dispatch(closeSpeakerStats());
-
-        return true;
     }
 
     _updateStats: () => void;

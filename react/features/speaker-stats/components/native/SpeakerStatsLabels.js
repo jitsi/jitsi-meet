@@ -1,9 +1,11 @@
 /* @flow */
 
 import React, { PureComponent } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { translate } from '../../../base/i18n';
+
+import style from './styles';
 
 /**
  * The type of the React {@code Component} props of {@link SpeakerStatsLabels}.
@@ -15,22 +17,6 @@ type Props = {
      */
     t: Function
 };
-
-const style = StyleSheet.create({
-    container: {
-        display: 'flex',
-        flexDirection: 'row'
-    },
-    dummyElement: {
-        flex: 1
-    },
-    speakerName: {
-        flex: 8
-    },
-    speakerTime: {
-        flex: 12
-    }
-});
 
 /**
  * React component for labeling speaker stats column items.
@@ -48,7 +34,7 @@ class SpeakerStatsLabels extends PureComponent<Props> {
         const { t } = this.props;
 
         return (
-            <View style = { style.container }>
+            <View style = { style.speakerStatsLabelContainer } >
                 <View style = { style.dummyElement } />
                 <View style = { style.speakerName }>
                     <Text>
