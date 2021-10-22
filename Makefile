@@ -37,24 +37,24 @@ deploy-init:
 deploy-appbundle:
 	cp \
 		$(BUILD_DIR)/app.bundle.min.js \
-		$(BUILD_DIR)/app.bundle.min.map \
+		$(BUILD_DIR)/app.bundle.min.js.map \
 		$(BUILD_DIR)/do_external_connect.min.js \
-		$(BUILD_DIR)/do_external_connect.min.map \
+		$(BUILD_DIR)/do_external_connect.min.js.map \
 		$(BUILD_DIR)/external_api.min.js \
-		$(BUILD_DIR)/external_api.min.map \
+		$(BUILD_DIR)/external_api.min.js.map \
 		$(BUILD_DIR)/flacEncodeWorker.min.js \
-		$(BUILD_DIR)/flacEncodeWorker.min.map \
+		$(BUILD_DIR)/flacEncodeWorker.min.js.map \
 		$(BUILD_DIR)/dial_in_info_bundle.min.js \
-		$(BUILD_DIR)/dial_in_info_bundle.min.map \
+		$(BUILD_DIR)/dial_in_info_bundle.min.js.map \
 		$(BUILD_DIR)/alwaysontop.min.js \
-		$(BUILD_DIR)/alwaysontop.min.map \
+		$(BUILD_DIR)/alwaysontop.min.js.map \
 		$(OUTPUT_DIR)/analytics-ga.js \
 		$(BUILD_DIR)/analytics-ga.min.js \
-		$(BUILD_DIR)/analytics-ga.min.map \
+		$(BUILD_DIR)/analytics-ga.min.js.map \
 		$(DEPLOY_DIR)
 	cp \
 		$(BUILD_DIR)/close3.min.js \
-		$(BUILD_DIR)/close3.min.map \
+		$(BUILD_DIR)/close3.min.js.map \
 		$(DEPLOY_DIR) || true
 
 deploy-lib-jitsi-meet:
@@ -85,12 +85,12 @@ deploy-rnnoise-binary:
 deploy-tflite:
 	cp \
 		$(TFLITE_WASM)/*.wasm \
-		$(DEPLOY_DIR)		
+		$(DEPLOY_DIR)
 
 deploy-meet-models:
 	cp \
 		$(MEET_MODELS_DIR)/*.tflite \
-		$(DEPLOY_DIR)	
+		$(DEPLOY_DIR)
 
 deploy-css:
 	$(NODE_SASS) $(STYLES_MAIN) $(STYLES_BUNDLE) && \
