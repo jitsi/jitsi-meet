@@ -1,5 +1,5 @@
 /*
- * Copyright @ 2020-present 8x8, Inc.
+ * Copyright @ 2017-present 8x8, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,22 @@
  * limitations under the License.
  */
 
-#import <JitsiMeetSDK/JitsiMeet.h>
-#import <JitsiMeetSDK/JitsiMeetView.h>
-#import <JitsiMeetSDK/JitsiMeetViewDelegate.h>
-#import <JitsiMeetSDK/JitsiMeetConferenceOptions.h>
-#import <JitsiMeetSDK/JitsiMeetLogger.h>
-#import <JitsiMeetSDK/JitsiMeetBaseLogHandler.h>
-#import <JitsiMeetSDK/JitsiAudioSession.h>
-#import <JitsiMeetSDK/InfoPlistUtil.h>
+#import "JitsiAudioSession.h"
+#import "JitsiAudioSession+Private.h"
+#import <WebRTC/WebRTC.h>
+
+@implementation JitsiAudioSession
+
++ (RTCAudioSession *)rtcAudioSession {
+    return [RTCAudioSession sharedInstance];
+}
+
++ (void)activateWithAudioSession:(AVAudioSession *)session {
+    [self.rtcAudioSession audioSessionDidActivate:session];
+}
+
++ (void)deactivateWithAudioSession:(AVAudioSession *)session {
+    [self.rtcAudioSession audioSessionDidDeactivate:session];
+}
+
+@end
