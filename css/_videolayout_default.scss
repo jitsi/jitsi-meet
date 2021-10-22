@@ -190,6 +190,13 @@
         z-index: $zindex2;
     }
 
+    &__participant-name {
+        color: #fff;
+        background-color: rgba(0,0,0,.4);
+        padding: 3px 7px;
+        border-radius: 3px;
+    }
+
     @media (min-width: 581px) {
         &.shift-right {
             &#largeVideoContainer {
