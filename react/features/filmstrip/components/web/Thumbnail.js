@@ -180,7 +180,7 @@ export type Props = {|
     _localFlipX: boolean,
 
     /**
-     * An object with information about the participant related to the thumbnaul.
+     * An object with information about the participant related to the thumbnail.
      */
     _participant: Object,
 
@@ -786,6 +786,8 @@ class Thumbnail extends Component<Props, State> {
             containerClassName = `${containerClassName} self-view-mobile-portrait`;
         }
 
+        console.log(_participant);
+
         return (
             <span
                 className = { containerClassName }
@@ -812,6 +814,7 @@ class Thumbnail extends Component<Props, State> {
                 </span>
                 <div className = 'videocontainer__toolbar'>
                     <StatusIndicators participantID = { id } />
+                    <div>{ _participant.name }</div>
                 </div>
                 <div className = 'videocontainer__toptoolbar'>
                     { this._renderTopIndicators() }
