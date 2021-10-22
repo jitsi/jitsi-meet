@@ -9,6 +9,7 @@ export const screen = {
                 polls: 'Polls'
             }
         },
+        speakerStats: 'Speaker Stats',
         participants: 'Participants',
         invite: 'Invite',
         sharedDocument: 'Shared document'

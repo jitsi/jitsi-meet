@@ -9,9 +9,11 @@ import { useSelector } from 'react-redux';
 import { Chat, ChatAndPolls } from '../../../chat';
 import { SharedDocument } from '../../../etherpad';
 import AddPeopleDialog
-    from '../../../invite/components/add-people-dialog/native/AddPeopleDialog';
+from '../../../invite/components/add-people-dialog/native/AddPeopleDialog';
 import LobbyScreen from '../../../lobby/components/native/LobbyScreen';
 import { ParticipantsPane } from '../../../participants-pane/components/native';
+import SpeakerStats
+from '../../../speaker-stats/components/native/SpeakerStats';
 import { getDisablePolls } from '../../functions';
 
 import Conference from './Conference';
@@ -24,7 +26,8 @@ import {
     inviteScreenOptions,
     lobbyScreenOptions,
     participantsScreenOptions,
-    sharedDocumentScreenOptions
+    sharedDocumentScreenOptions,
+    speakerStatsScreenOptions
 } from './ConferenceNavigatorScreenOptions';
 import { screen } from './routes';
 
@@ -72,6 +75,12 @@ const ConferenceNavigationContainer = () => {
                         name = { screen.conference.participants }
                         options = {{
                             ...participantsScreenOptions
+                        }} />
+                    <ConferenceStack.Screen
+                        component = { SpeakerStats }
+                        name = { screen.conference.speakerStats }
+                        options = {{
+                            ...speakerStatsScreenOptions
                         }} />
                     <ConferenceStack.Screen
                         component = { LobbyScreen }
