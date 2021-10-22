@@ -1463,15 +1463,15 @@ class API {
     }
 
     /**
-     * Notify external application (if API is enabled) that the current recording download
-     * link is available.
+     * Notify external application (if API is enabled) that the current recording link is
+     * available.
      *
      * @param {string} link - The recording download link.
      * @returns {void}
      */
-    notifyRecordingDownloadLinkAvailable(link: string) {
+    notifyRecordingLinkAvailable(link: string) {
         this._sendEvent({
-            name: 'recording-download-link-available',
+            name: 'recording-link-available',
             link
         });
     }

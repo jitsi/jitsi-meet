@@ -191,7 +191,7 @@ export function showStartedRecordingNotification(
                     const link = await getRecordingLink(recordingSharingUrl, sessionId, region, tenant);
 
                     if (typeof APP === 'object') {
-                        APP.API.notifyRecordingDownloadLinkAvailable(link);
+                        APP.API.notifyRecordingLinkAvailable(link);
                     }
 
                     // add the option to copy recording link

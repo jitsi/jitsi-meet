@@ -112,7 +112,7 @@ const events = {
     'password-required': 'passwordRequired',
     'proxy-connection-event': 'proxyConnectionEvent',
     'raise-hand-updated': 'raiseHandUpdated',
-    'recording-download-link-available': 'recordingDownloadLinkAvailable',
+    'recording-link-available': 'recordingLinkAvailable',
     'recording-status-changed': 'recordingStatusChanged',
     'video-ready-to-close': 'readyToClose',
     'video-conference-joined': 'videoConferenceJoined',
