@@ -1469,7 +1469,7 @@ class API {
      * @param {string} link - The recording download link.
      * @returns {void}
      */
-     notifyRecordingDownloadLinkAvailable(link: string) {
+    notifyRecordingDownloadLinkAvailable(link: string) {
         this._sendEvent({
             name: 'recording-download-link-available',
             link
