@@ -786,8 +786,6 @@ class Thumbnail extends Component<Props, State> {
             containerClassName = `${containerClassName} self-view-mobile-portrait`;
         }
 
-        console.log(_participant);
-
         return (
             <span
                 className = { containerClassName }
