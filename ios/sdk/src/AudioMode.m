@@ -20,6 +20,7 @@
 #import <React/RCTLog.h>
 #import <WebRTC/WebRTC.h>
 
+#import "JitsiAudioSession+Private.h"
 #import "LogUtils.h"
 
 
@@ -113,7 +114,7 @@ RCT_EXPORT_MODULE();
         isSpeakerOn = NO;
         isEarpieceOn = NO;
 
-        RTCAudioSession *session = [RTCAudioSession sharedInstance];
+        RTCAudioSession *session = JitsiAudioSession.rtcAudioSession;
         [session addDelegate:self];
     }
 
@@ -127,7 +128,7 @@ RCT_EXPORT_MODULE();
 
 - (BOOL)setConfigWithoutLock:(RTCAudioSessionConfiguration *)config
                        error:(NSError * _Nullable *)outError {
-    RTCAudioSession *session = [RTCAudioSession sharedInstance];
+    RTCAudioSession *session = JitsiAudioSession.rtcAudioSession;
 
     return [session setConfiguration:config error:outError];
 }
@@ -135,7 +136,7 @@ RCT_EXPORT_MODULE();
 - (BOOL)setConfig:(RTCAudioSessionConfiguration *)config
             error:(NSError * _Nullable *)outError {
 
-    RTCAudioSession *session = [RTCAudioSession sharedInstance];
+    RTCAudioSession *session = JitsiAudioSession.rtcAudioSession;
     [session lockForConfiguration];
     BOOL success = [self setConfigWithoutLock:config error:outError];
     [session unlockForConfiguration];
@@ -178,7 +179,7 @@ RCT_EXPORT_METHOD(setAudioDevice:(NSString *)device
                   reject:(RCTPromiseRejectBlock)reject) {
     DDLogInfo(@"[AudioMode] Selected device: %@", device);
     
-    RTCAudioSession *session = [RTCAudioSession sharedInstance];
+    RTCAudioSession *session = JitsiAudioSession.rtcAudioSession;
     [session lockForConfiguration];
     BOOL success;
     NSError *error = nil;
@@ -273,7 +274,7 @@ RCT_EXPORT_METHOD(updateDeviceList) {
             RTCAudioSessionConfiguration *config = [self configForMode:self->activeMode];
             [self setConfig:config error:nil];
             if (self->forceSpeaker && !self->isSpeakerOn) {
-                RTCAudioSession *session = [RTCAudioSession sharedInstance];
+                RTCAudioSession *session = JitsiAudioSession.rtcAudioSession;
                 [session lockForConfiguration];
                 [session overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
                 [session unlockForConfiguration];

@@ -24,6 +24,8 @@
 		0BD906EA1EC0C00300C8C18E /* JitsiMeet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BD906E81EC0C00300C8C18E /* JitsiMeet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4E51B76425E5345E0038575A /* ScheenshareEventEmiter.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E51B76225E5345E0038575A /* ScheenshareEventEmiter.h */; };
 		4E51B76525E5345E0038575A /* ScheenshareEventEmiter.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E51B76325E5345E0038575A /* ScheenshareEventEmiter.m */; };
+		4ED4FFF32721B9B90074E620 /* JitsiAudioSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 4ED4FFF12721B9B90074E620 /* JitsiAudioSession.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4ED4FFF42721B9B90074E620 /* JitsiAudioSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 4ED4FFF22721B9B90074E620 /* JitsiAudioSession.m */; };
 		6F08DF7D4458EE3CF3F36F6D /* libPods-JitsiMeetSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4376CA6886DE68FD7A4294B /* libPods-JitsiMeetSDK.a */; };
 		A4A934E9212F3ADB001E9388 /* Dropbox.m in Sources */ = {isa = PBXBuildFile; fileRef = A4A934E8212F3ADB001E9388 /* Dropbox.m */; };
 		C6245F5D2053091D0040BE68 /* image-resize@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C6245F5B2053091D0040BE68 /* image-resize@2x.png */; };
@@ -77,6 +79,9 @@
 		0BD906E91EC0C00300C8C18E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4E51B76225E5345E0038575A /* ScheenshareEventEmiter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScheenshareEventEmiter.h; sourceTree = "<group>"; };
 		4E51B76325E5345E0038575A /* ScheenshareEventEmiter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScheenshareEventEmiter.m; sourceTree = "<group>"; };
+		4ED4FFF12721B9B90074E620 /* JitsiAudioSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiAudioSession.h; sourceTree = "<group>"; };
+		4ED4FFF22721B9B90074E620 /* JitsiAudioSession.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JitsiAudioSession.m; sourceTree = "<group>"; };
+		4ED4FFF52721BAE10074E620 /* JitsiAudioSession+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JitsiAudioSession+Private.h"; sourceTree = "<group>"; };
 		891FE43DAD30BC8976683100 /* Pods-JitsiMeetSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeetSDK.release.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeetSDK/Pods-JitsiMeetSDK.release.xcconfig"; sourceTree = "<group>"; };
 		98E09B5C73D9036B4ED252FC /* Pods-JitsiMeet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.debug.xcconfig"; sourceTree = "<group>"; };
 		9C77CA3CC919B081F1A52982 /* Pods-JitsiMeet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.release.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.release.xcconfig"; sourceTree = "<group>"; };
@@ -174,6 +179,9 @@
 				DEFE535821FB311F00011A3A /* JitsiMeet+Private.h */,
 				DEA9F283258A5D9900D4CD74 /* JitsiMeetSDK.h */,
 				DEFE535321FB1BF800011A3A /* JitsiMeet.m */,
+				4ED4FFF12721B9B90074E620 /* JitsiAudioSession.h */,
+				4ED4FFF52721BAE10074E620 /* JitsiAudioSession+Private.h */,
+				4ED4FFF22721B9B90074E620 /* JitsiAudioSession.m */,
 				DEAD3224220C497000E93636 /* JitsiMeetConferenceOptions.h */,
 				DEAD3228220C734300E93636 /* JitsiMeetConferenceOptions+Private.h */,
 				DEAD3225220C497000E93636 /* JitsiMeetConferenceOptions.m */,
@@ -277,6 +285,7 @@
 				4E51B76425E5345E0038575A /* ScheenshareEventEmiter.h in Headers */,
 				DE65AACC2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h in Headers */,
 				0B412F221EDEF6EA00B1A0A6 /* JitsiMeetViewDelegate.h in Headers */,
+				4ED4FFF32721B9B90074E620 /* JitsiAudioSession.h in Headers */,
 				0BD906EA1EC0C00300C8C18E /* JitsiMeet.h in Headers */,
 				DE81A2D42316AC4D00AE1940 /* JitsiMeetLogger.h in Headers */,
 				DE65AACA2317FFCD00290BEC /* LogUtils.h in Headers */,
@@ -438,6 +447,7 @@
 			files = (
 				0BB9AD7B1F5EC8F4001C08DB /* CallKit.m in Sources */,
 				DE81A2DF2317ED5400AE1940 /* JitsiMeetBaseLogHandler.m in Sources */,
+				4ED4FFF42721B9B90074E620 /* JitsiAudioSession.m in Sources */,
 				0BB9AD7D1F60356D001C08DB /* AppInfo.m in Sources */,
 				DE81A2D92316AC7600AE1940 /* LogBridge.m in Sources */,
 				DEAFA779229EAD520033A7FA /* RNRootView.m in Sources */,
