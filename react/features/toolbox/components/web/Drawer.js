@@ -1,5 +1,6 @@
 // @flow
 
+import { makeStyles } from '@material-ui/core';
 import React, { useCallback } from 'react';
 
 
@@ -21,6 +22,14 @@ type Props = {
     onClose: Function
 };
 
+const useStyles = makeStyles(theme => {
+    return {
+        drawer: {
+            backgroundColor: theme.palette.ui02
+        }
+    };
+});
+
 /**
  * Component that displays the mobile friendly drawer on web.
  *
@@ -29,7 +38,9 @@ type Props = {
 function Drawer({
     children,
     isOpen,
-    onClose }: Props) {
+    onClose
+}: Props) {
+    const styles = useStyles();
 
     /**
      * Handles clicks within the menu, preventing the propagation of the click event.
@@ -58,7 +69,7 @@ function Drawer({
                 className = 'drawer-menu-container'
                 onClick = { handleOutsideClick }>
                 <div
-                    className = 'drawer-menu'
+                    className = { `drawer-menu ${styles.drawer}` }
                     onClick = { handleInsideClick }>
                     {children}
                 </div>

@@ -620,6 +620,7 @@
             "blockEveryoneMicCamera": "Block everyone's mic and camera",
             "invite": "Invite Someone",
             "askUnmute": "Ask to unmute",
+            "moreModerationActions": "More moderation options",
             "mute": "Mute",
             "muteAll": "Mute all",
             "muteEveryoneElse": "Mute everyone else",

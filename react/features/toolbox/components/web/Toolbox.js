@@ -37,7 +37,7 @@ import {
     close as closeParticipantsPane,
     open as openParticipantsPane
 } from '../../../participants-pane/actions';
-import ParticipantsPaneButton from '../../../participants-pane/components/ParticipantsPaneButton';
+import { ParticipantsPaneButton } from '../../../participants-pane/components/web';
 import { getParticipantsPaneOpen } from '../../../participants-pane/functions';
 import { addReactionToBuffer } from '../../../reactions/actions.any';
 import { ReactionsMenuButton } from '../../../reactions/components';
