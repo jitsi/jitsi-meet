@@ -1,8 +1,9 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
+import { Text } from 'react-native';
 
-import { translate } from '../../base/i18n';
+import { translate } from '../../../base/i18n';
 
 /**
  * The type of the React {@code Component} props of {@link TimeElapsed}.
@@ -27,7 +28,7 @@ type Props = {
  *
  * @extends Component
  */
-class TimeElapsed extends Component<Props> {
+class TimeElapsed extends PureComponent<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -67,9 +68,9 @@ class TimeElapsed extends Component<Props> {
         timeElapsed.push(secondsPassed);
 
         return (
-            <div>
+            <Text>
                 { timeElapsed }
-            </div>
+            </Text>
         );
     }
 
@@ -88,9 +89,9 @@ class TimeElapsed extends Component<Props> {
         const { t } = this.props;
 
         return (
-            <span key = { countType } >
+            <Text key = { countType }>
                 { t(countNounKey, { count }) }
-            </span>
+            </Text>
         );
     }
 }

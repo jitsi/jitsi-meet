@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import { translate } from '../../base/i18n';
+import { translate } from '../../../base/i18n';
 
 /**
  * The type of the React {@code Component} props of {@link SpeakerStatsLabels}.

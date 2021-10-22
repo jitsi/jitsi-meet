@@ -1,13 +1,16 @@
 // @flow
 
-import { createToolbarEvent, sendAnalytics } from '../../analytics';
-import { openDialog } from '../../base/dialog';
-import { translate } from '../../base/i18n';
-import { IconPresentation } from '../../base/icons';
-import { connect } from '../../base/redux';
-import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
+import { createToolbarEvent, sendAnalytics } from '../../../analytics';
+import { openDialog } from '../../../base/dialog';
+import { translate } from '../../../base/i18n';
+import { IconPresentation } from '../../../base/icons';
+import { connect } from '../../../base/redux';
+import {
+    AbstractButton,
+    AbstractButtonProps
+} from '../../../base/toolbox/components';
 
-import SpeakerStats from './SpeakerStats';
+import { SpeakerStats } from './';
 
 /**
  * The type of the React {@code Component} props of {@link SpeakerStatsButton}.
@@ -56,18 +59,4 @@ class SpeakerStatsButton extends AbstractButton<Props, *> {
     }
 }
 
-/**
- * Maps (parts of) the Redux state to the associated
- * {@code SpeakerStatsButton} component's props.
- *
- * @param {Object} state - The Redux state.
- * @private
- * @returns {Object}
- */
-function mapStateToProps(state) {
-    return {
-        _conference: state['features/base/conference'].conference
-    };
-}
-
-export default translate(connect(mapStateToProps)(SpeakerStatsButton));
+export default translate(connect()(SpeakerStatsButton));

@@ -3,14 +3,14 @@
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
-import { Dialog } from '../../base/dialog';
-import { translate } from '../../base/i18n';
-import { getLocalParticipant } from '../../base/participants';
-import { connect } from '../../base/redux';
-import { escapeRegexp } from '../../base/util';
-import { initUpdateStats, initSearch } from '../actions';
-import { SPEAKER_STATS_RELOAD_INTERVAL } from '../constants';
-import { getSpeakerStats, getSearchCriteria } from '../functions';
+import { Dialog } from '../../../base/dialog';
+import { translate } from '../../../base/i18n';
+import { getLocalParticipant } from '../../../base/participants';
+import { connect } from '../../../base/redux';
+import { escapeRegexp } from '../../../base/util';
+import { initUpdateStats, initSearch } from '../../actions';
+import { SPEAKER_STATS_RELOAD_INTERVAL } from '../../constants';
+import { getSpeakerStats, getSearchCriteria } from '../../functions';
 
 import SpeakerStatsItem from './SpeakerStatsItem';
 import SpeakerStatsLabels from './SpeakerStatsLabels';
@@ -41,7 +41,7 @@ type Props = {
     /**
      * The JitsiConference from which stats will be pulled.
      */
-    conference: Object,
+    _conference: Object,
 
     /**
      * Redux store dispatch method.
@@ -182,7 +182,7 @@ class SpeakerStats extends Component<Props> {
      * @private
      */
     _getSpeakerStats() {
-        const stats = { ...this.props.conference.getSpeakerStats() };
+        const stats = { ...this.props._conference?.getSpeakerStats() };
 
         for (const userId in stats) {
             if (stats[userId]) {
@@ -232,7 +232,8 @@ function _mapStateToProps(state) {
          */
         _localDisplayName: localParticipant && localParticipant.name,
         _stats: getSpeakerStats(state),
-        _criteria: getSearchCriteria(state)
+        _criteria: getSearchCriteria(state),
+        _conference: state['features/base/conference'].conference
     };
 }
 
