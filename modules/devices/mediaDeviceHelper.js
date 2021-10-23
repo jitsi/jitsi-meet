@@ -155,24 +155,27 @@ export default {
     /**
      * Checks if the only difference between an object of known devices compared
      * to an array of new devices are only the labels for the devices.
-     * @param {} oldDevices
+     * @param {Object} oldDevices
      * @param {MediaDeviceInfo[]} newDevices
      * @returns {boolean}
      */
     newDeviceListAddedLabelsOnly(oldDevices, newDevices) {
-        const oldDevicesFlattend = oldDevices["audioInput"].concat(oldDevices["audioOutput"]).concat(oldDevices["videoInput"]);
+        const oldDevicesFlattend = oldDevices.audioInput.concat(oldDevices.audioOutput).concat(oldDevices.videoInput);
+
         if (oldDevicesFlattend.length !== newDevices.length) {
             return false;
         }
         oldDevicesFlattend.forEach(oldDevice => {
-            if (oldDevice.label !== "") {
+            if (oldDevice.label !== '') {
                 return false;
             }
-            const newDevice = newDevices.find(nd => nd.deviceId === oldDevice.deviceId)
-            if (!newDevice || newDevice.label === "") {
+            const newDevice = newDevices.find(nd => nd.deviceId === oldDevice.deviceId);
+
+            if (!newDevice || newDevice.label === '') {
                 return false;
             }
         });
+
         return true;
     },
 
