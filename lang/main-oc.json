@@ -327,11 +327,11 @@
         "muteEveryoneDialogModerationOn": "Los participants pòdon enviar una requèsta per parlar quand vòlgan.",
         "muteEveryoneElsesVideoTitle": "Arrestar la vidèo de tot lo monde levat {{whom}} ?",
         "muteEveryonesVideoTitle": "Arrestar la vidèo de tot lo monde ?",
-        "muteParticipantsVideoButton": "Arrestar la camèra",
+        "muteParticipantsVideoButton": "Arrestar la vidèo",
         "muteParticipantsVideoTitle": "Desactivar la camèra d’aqueste participant ?",
         "noDropboxToken": "Cap de geton Dropbox pas valid",
         "password": "Senhal",
-        "sessionRestarted": "Sonada reaviada pel pont",
+        "sessionRestarted": "Sonada reaviada a causa d’un problèma de connexion",
         "shareAudio": "Contunhar",
         "shareAudioTitle": "Cossí partejar l’àudio",
         "shareAudioWarningTitle": "Devètz arrestar lo partiment d’ecran abans lo partiment d’àudio",
@@ -883,8 +883,8 @@
             "clap": "Picar de las mans",
             "laugh": "Rire",
             "like": "Levar lo det gròs",
-            "muteEveryonesVideo": "Copar la camèra dels autres",
-            "muteEveryoneElsesVideo": "Copar la camèra de los demai",
+            "muteEveryonesVideo": "Copar la vidèo del monde",
+            "muteEveryoneElsesVideo": "Copar la vidèo de los demai",
             "participants": "Participants",
             "remoteVideoMute": "Copar la camèra del participant",
             "shareaudio": "Partejar l’àudio",
@@ -1025,7 +1025,11 @@
         "lowDefinition": "Bassa definicion",
         "sd": "SD",
         "sdTooltip": "Difusion vidèo en definicion estandard",
-        "standardDefinition": "Definicion estandard"
+        "standardDefinition": "Definicion estandard",
+        "performanceSettings": "Paramètres de performança",
+        "adjustFor": "Ajustar per :",
+        "bestPerformance": "Melhora performança",
+        "highestQuality": "Qualitat mai nauta"
     },
     "videothumbnail": {
         "connectionInfo": "Info connexion",
@@ -1137,7 +1141,8 @@
             "unblockEveryoneMicCamera": "Desblocar lo microfòn e la camèra de tot lo monde",
             "videoModeration": "Aviar lor vidèo",
             "allowVideo": "Autorizar la vidèo"
-        }
+        },
+        "search": "Cercar participants"
     },
     "jitsiHome": "{{logo}} Logotipe, mena a la pagina d'acuèlh",
     "polls": {
