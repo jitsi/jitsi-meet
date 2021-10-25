@@ -476,7 +476,7 @@ export function participantMutedUs(participant, track) {
         dispatch(showNotification({
             titleKey: isAudio ? 'notify.mutedRemotelyTitle' : 'notify.videoMutedRemotelyTitle',
             titleArguments: {
-                moderator: getParticipantDisplayName(getState, participant.getId())
+                participantDisplayName: getParticipantDisplayName(getState, participant.getId())
             }
         }));
     };
