@@ -155,7 +155,7 @@ class Filmstrip extends PureComponent <Props> {
         this._listItemKey = this._listItemKey.bind(this);
         this._onGridItemsRendered = this._onGridItemsRendered.bind(this);
         this._onListItemsRendered = this._onListItemsRendered.bind(this);
-        this._onTouchStart = this._onTouchStart.bind(this);
+        this._onToggleButtonTouch = this._onToggleButtonTouch.bind(this);
     }
 
     /**
@@ -501,18 +501,19 @@ class Filmstrip extends PureComponent <Props> {
         this._doToggleFilmstrip();
     }
 
-    _onTouchStart: (SyntheticEvent<HTMLButtonElement>) => void;
+    _onToggleButtonTouch: (SyntheticEvent<HTMLButtonElement>) => void;
 
     /**
-     * Handler for onTouchStart.
+     * Handler for touch start event of the 'toggle button'.
      *
      * @private
      * @param {Object} e - The synthetic event.
      * @returns {void}
      */
-    _onTouchStart(e: SyntheticEvent<HTMLButtonElement>) {
+    _onToggleButtonTouch(e: SyntheticEvent<HTMLButtonElement>) {
         // Don't propagate the touchStart event so the toolbar doesn't get toggled.
         e.stopPropagation();
+        this._onToolbarToggleFilmstrip();
     }
 
     /**
@@ -525,6 +526,9 @@ class Filmstrip extends PureComponent <Props> {
     _renderToggleButton() {
         const icon = this.props._visible ? IconMenuDown : IconMenuUp;
         const { t } = this.props;
+        const actions = isMobileBrowser()
+            ? { onTouchStart: this._onToggleButtonTouch }
+            : { onClick: this._onToolbarToggleFilmstrip };
 
         return (
             <div
@@ -533,10 +537,9 @@ class Filmstrip extends PureComponent <Props> {
                     aria-expanded = { this.props._visible }
                     aria-label = { t('toolbar.accessibilityLabel.toggleFilmstrip') }
                     id = 'toggleFilmstripButton'
-                    onClick = { this._onToolbarToggleFilmstrip }
                     onFocus = { this._onTabIn }
-                    onTouchStart = { this._onTouchStart }
-                    tabIndex = { 0 }>
+                    tabIndex = { 0 }
+                    { ...actions }>
                     <Icon
                         aria-label = { t('toolbar.accessibilityLabel.toggleFilmstrip') }
                         src = { icon } />

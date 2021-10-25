@@ -960,7 +960,6 @@ class Thumbnail extends Component<Props, State> {
             <span
                 className = { containerClassName }
                 id = { `participant_${id}` }
-                onClick = { _isMobile ? undefined : this._onClick }
                 { ...(_isMobile
                     ? {
                         onTouchEnd: this._onTouchEnd,
@@ -968,6 +967,7 @@ class Thumbnail extends Component<Props, State> {
                         onTouchStart: this._onTouchStart
                     }
                     : {
+                        onClick: this._onClick,
                         onMouseEnter: this._onMouseEnter,
                         onMouseLeave: this._onMouseLeave
                     }
