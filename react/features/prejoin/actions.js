@@ -3,7 +3,7 @@
 declare var JitsiMeetJS: Object;
 declare var APP: Object;
 
-import uuid from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 import { getDialOutStatusUrl, getDialOutUrl, updateConfig } from '../base/config';
 import { isIosMobileBrowser } from '../base/environment/utils';
@@ -152,7 +152,7 @@ function pollForStatus(
 export function dialOut(onSuccess: Function, onFail: Function) {
     return async function(dispatch: Function, getState: Function) {
         const state = getState();
-        const reqId = uuid.v4();
+        const reqId = uuidv4();
         const url = getDialOutUrl(state);
         const conferenceUrl = getDialOutConferenceUrl(state);
         const phoneNumber = getFullDialOutNumber(state);

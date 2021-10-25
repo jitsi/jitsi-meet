@@ -71,6 +71,7 @@ dependencies {
     implementation project(':react-native-community_netinfo')
     implementation project(':react-native-default-preference')
     implementation project(':react-native-gesture-handler')
+    implementation project(':react-native-get-random-values')
     implementation project(':react-native-immersive')
     implementation project(':react-native-keep-awake')
     implementation project(':react-native-masked-view_masked-view')
