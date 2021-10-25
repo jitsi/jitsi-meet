@@ -6,6 +6,7 @@ import React from 'react';
 import VideoLayout from '../../../../../modules/UI/videolayout/VideoLayout';
 import { getConferenceNameForTitle } from '../../../base/conference';
 import { connect, disconnect } from '../../../base/connection';
+import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
 import { connect as reactReduxConnect } from '../../../base/redux';
 import { setColorAlpha } from '../../../base/util';
@@ -18,6 +19,7 @@ import { getIsLobbyVisible } from '../../../lobby/functions';
 import { ParticipantsPane } from '../../../participants-pane/components/web';
 import { getParticipantsPaneOpen } from '../../../participants-pane/functions';
 import { Prejoin, isPrejoinPageVisible } from '../../../prejoin';
+import { toggleToolboxVisible } from '../../../toolbox/actions.any';
 import { fullScreenChanged, showToolbox } from '../../../toolbox/actions.web';
 import { JitsiPortal, Toolbox } from '../../../toolbox/components/web';
 import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
@@ -119,6 +121,7 @@ class Conference extends AbstractConference<Props, *> {
     _onMouseLeave: Function;
     _onMouseMove: Function;
     _onShowToolbar: Function;
+    _onVidespaceTouchStart: Function;
     _originalOnMouseMove: Function;
     _originalOnShowToolbar: Function;
     _setBackground: Function;
@@ -157,6 +160,7 @@ class Conference extends AbstractConference<Props, *> {
 
         // Bind event handler so it is only bound once for every instance.
         this._onFullScreenChange = this._onFullScreenChange.bind(this);
+        this._onVidespaceTouchStart = this._onVidespaceTouchStart.bind(this);
         this._setBackground = this._setBackground.bind(this);
     }
 
@@ -229,12 +233,14 @@ class Conference extends AbstractConference<Props, *> {
                 <div
                     className = { _layoutClassName }
                     id = 'videoconference_page'
-                    onMouseMove = { this._onShowToolbar }
+                    onMouseMove = { isMobileBrowser() ? undefined : this._onShowToolbar }
                     ref = { this._setBackground }>
                     <ConferenceInfo />
 
                     <Notice />
-                    <div id = 'videospace'>
+                    <div
+                        id = 'videospace'
+                        onTouchStart = { this._onVidespaceTouchStart }>
                         <LargeVideo />
                         {!_isParticipantsPaneVisible
                          && <div id = 'notification-participant-list'>
@@ -290,6 +296,16 @@ class Conference extends AbstractConference<Props, *> {
                 element.parentElement.style.background = alphaParentColor;
             }
         }
+    }
+
+    /**
+     * Handler used for touch start on Video container.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onVidespaceTouchStart() {
+        this.props.dispatch(toggleToolboxVisible());
     }
 
     /**
