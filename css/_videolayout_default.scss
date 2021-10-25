@@ -87,7 +87,6 @@
 
     &__toolbar {
         bottom: 0;
-        height: $thumbnailToolbarHeight;
         padding: 0 5px 0 5px;
     }
 
@@ -195,6 +194,13 @@
         background-color: rgba(0,0,0,.4);
         padding: 3px 7px;
         border-radius: 3px;
+        max-width: calc(100% - 32px);
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        height: 16px;
+        display: inline-block;
+        text-align: right;
     }
 
     @media (min-width: 581px) {
@@ -288,21 +294,8 @@
 #alwaysOnTop .displayname,
 .videocontainer .displayname,
 .videocontainer .editdisplayname {
-    display: inline-block;
-    position: absolute;
-    left: 10%;
-    width: 80%;
-    top: 50%;
-    @include transform(translateY(-40%));
-    color: $participantNameColor;
-    text-align: center;
-    text-overflow: ellipsis;
-    font-size: 12px;
     font-weight: 100;
-    overflow: hidden;
-    white-space: nowrap;
-    line-height: $thumbnailToolbarHeight;
-    z-index: $zindex2;
+    color: $participantNameColor;
 }
 
 #alwaysOnTop .displayname {

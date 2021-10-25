@@ -812,21 +812,20 @@ class Thumbnail extends Component<Props, State> {
                 </span>
                 <div className = 'videocontainer__toolbar'>
                     <StatusIndicators participantID = { id } />
-                    <span className = 'videocontainer__participant-name'>{_participant.name}</span>
+                    <div
+                        className = 'videocontainer__participant-name'
+                        onClick = { onClick }>
+                        <DisplayName
+                            allowEditing = { _allowEditing }
+                            displayNameSuffix = { _defaultLocalDisplayName }
+                            elementID = 'localDisplayName'
+                            participantID = { id } />
+                    </div>
                 </div>
                 <div className = 'videocontainer__toptoolbar'>
                     { this._renderTopIndicators() }
                 </div>
                 <div className = 'videocontainer__hoverOverlay' />
-                <div
-                    className = 'displayNameContainer'
-                    onClick = { onClick }>
-                    <DisplayName
-                        allowEditing = { _allowEditing }
-                        displayNameSuffix = { _defaultLocalDisplayName }
-                        elementID = 'localDisplayName'
-                        participantID = { id } />
-                </div>
                 { this._renderAvatar(styles.avatar) }
                 <span className = 'audioindicator-container'>
                     <AudioLevelIndicator audioLevel = { audioLevel } />
@@ -960,14 +959,13 @@ class Thumbnail extends Component<Props, State> {
                 </div>
                 <div className = 'videocontainer__toolbar'>
                     <StatusIndicators participantID = { id } />
-                    <span className = 'videocontainer__participant-name'>{_participant.name}</span>
+                    <div className = 'videocontainer__participant-name'>
+                        <DisplayName
+                            elementID = { `participant_${id}_name` }
+                            participantID = { id } />
+                    </div>
                 </div>
                 <div className = 'videocontainer__hoverOverlay' />
-                <div className = 'displayNameContainer'>
-                    <DisplayName
-                        elementID = { `participant_${id}_name` }
-                        participantID = { id } />
-                </div>
                 { this._renderAvatar(styles.avatar) }
                 <div className = 'presence-label-container'>
                     <PresenceLabel
