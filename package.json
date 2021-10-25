@@ -87,6 +87,7 @@
     "react-native-default-preference": "1.4.2",
     "react-native-device-info": "8.0.0",
     "react-native-gesture-handler": "1.10.3",
+    "react-native-get-random-values": "1.7.0",
     "react-native-immersive": "2.0.0",
     "react-native-keep-awake": "4.0.0",
     "react-native-paper": "4.8.1",
@@ -117,7 +118,7 @@
     "rtcstats": "github:jitsi/rtcstats#v8.1.0",
     "styled-components": "3.4.9",
     "util": "0.12.1",
-    "uuid": "3.1.0",
+    "uuid": "8.3.2",
     "wasm-check": "2.0.1",
     "windows-iana": "^3.1.0",
     "zxcvbn": "4.4.2"

@@ -284,6 +284,8 @@ PODS:
     - React
   - react-native-calendar-events (2.0.0):
     - React
+  - react-native-get-random-values (1.7.0):
+    - React-Core
   - react-native-keep-awake (4.0.0):
     - React
   - react-native-netinfo (4.1.5):
@@ -412,6 +414,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-background-timer (from `../node_modules/react-native-background-timer`)
   - react-native-calendar-events (from `../node_modules/react-native-calendar-events`)
+  - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
   - react-native-keep-awake (from `../node_modules/react-native-keep-awake`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-performance (from `../node_modules/react-native-performance/ios`)
@@ -502,6 +505,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-background-timer"
   react-native-calendar-events:
     :path: "../node_modules/react-native-calendar-events"
+  react-native-get-random-values:
+    :path: "../node_modules/react-native-get-random-values"
   react-native-keep-awake:
     :path: "../node_modules/react-native-keep-awake"
   react-native-netinfo:
@@ -603,6 +608,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 92ceee6c66dc19886289b52436ade7e020b89602
   react-native-background-timer: 029c606b3fd6dd476b153e177c518b6ade4c169f
   react-native-calendar-events: 82dc6c915653a1a8a266e43fdbbfdb3b1022ca99
+  react-native-get-random-values: 237bffb1c7e05fb142092681531810a29ba53015
   react-native-keep-awake: afad8a51dfef9fe9655a6344771be32c8596d774
   react-native-netinfo: 0e563248a4b9a99c33ec29bd03c2d50767db22a6
   react-native-performance: 6bd6cfac80594775fb782405fceaaf206becf53b
@@ -635,6 +641,6 @@ SPEC CHECKSUMS:
   RNWatch: a5320c959c75e72845c07985f3e935e58998f1d3
   Yoga: 96b469c5e81ff51b917b92e8c3390642d4ded30c
 
-PODFILE CHECKSUM: 42be6796ba6ac039dae5c02125677728ecd0df0d
+PODFILE CHECKSUM: 836d4804218c0608e1326471ec83fe31cfa9c86d
 
 COCOAPODS: 1.11.2
