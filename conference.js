@@ -2642,12 +2642,17 @@ export default {
 
         APP.store.dispatch(updateDeviceList(devices));
 
+        // Firefox users can choose their preferred device in the gUM prompt. In that case
+        // we should respect that and not attempt to switch to the preferred device from
+        // our settings.
+        const newLabelsOnly = mediaDeviceHelper.newDeviceListAddedLabelsOnly(oldDevices, devices);
         const newDevices
             = mediaDeviceHelper.getNewMediaDevicesAfterDeviceListChanged(
                 devices,
                 this.isSharingScreen,
                 localVideo,
-                localAudio);
+                localAudio,
+                newLabelsOnly);
         const promises = [];
         const audioWasMuted = this.isLocalAudioMuted();
         const videoWasMuted = this.isLocalVideoMuted();
