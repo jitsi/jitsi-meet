@@ -294,21 +294,8 @@
 #alwaysOnTop .displayname,
 .videocontainer .displayname,
 .videocontainer .editdisplayname {
-    display: inline-block;
-    position: absolute;
-    left: 10%;
-    width: 80%;
-    top: 50%;
-    @include transform(translateY(-40%));
-    color: $participantNameColor;
-    text-align: center;
-    text-overflow: ellipsis;
-    font-size: 12px;
     font-weight: 100;
-    overflow: hidden;
-    white-space: nowrap;
-    line-height: $thumbnailToolbarHeight;
-    z-index: $zindex2;
+    color: $participantNameColor;
 }
 
 #alwaysOnTop .displayname {
