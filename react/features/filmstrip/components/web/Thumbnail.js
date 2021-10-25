@@ -812,7 +812,7 @@ class Thumbnail extends Component<Props, State> {
                 </span>
                 <div className = 'videocontainer__toolbar'>
                     <StatusIndicators participantID = { id } />
-                    <span className = 'videocontainer__participant-name'>{_participant.name}</span>
+                    <div className = 'videocontainer__participant-name'>{_participant.name}</div>
                 </div>
                 <div className = 'videocontainer__toptoolbar'>
                     { this._renderTopIndicators() }
@@ -960,7 +960,7 @@ class Thumbnail extends Component<Props, State> {
                 </div>
                 <div className = 'videocontainer__toolbar'>
                     <StatusIndicators participantID = { id } />
-                    <span className = 'videocontainer__participant-name'>{_participant.name}</span>
+                    <div className = 'videocontainer__participant-name'>{_participant.name}</div>
                 </div>
                 <div className = 'videocontainer__hoverOverlay' />
                 <div className = 'displayNameContainer'>
