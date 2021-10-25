@@ -15,7 +15,7 @@ import {
     pinParticipant
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
+import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui';
 import { isTestModeEnabled } from '../../../base/testing';
 import {
     getLocalAudioTrack,
@@ -29,7 +29,7 @@ import { StatusIndicators, RaisedHandIndicator, DominantSpeakerIndicator } from 
 import { PresenceLabel } from '../../../presence-status';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
 import { LocalVideoMenuTriggerButton, RemoteVideoMenuTriggerButton } from '../../../video-menu';
-import { setVolume } from '../../actions.web';
+import { setVolume } from '../../actions';
 import {
     DISPLAY_MODE_TO_CLASS_NAME,
     DISPLAY_VIDEO,
@@ -786,6 +786,8 @@ class Thumbnail extends Component<Props, State> {
             containerClassName = `${containerClassName} self-view-mobile-portrait`;
         }
 
+        console.log(_participant);
+
         return (
             <span
                 className = { containerClassName }
@@ -812,21 +814,20 @@ class Thumbnail extends Component<Props, State> {
                 </span>
                 <div className = 'videocontainer__toolbar'>
                     <StatusIndicators participantID = { id } />
-                    <div className = 'videocontainer__participant-name'>{_participant.name}</div>
+                    <div
+                        className = 'videocontainer__participant-name'
+                        onClick = { onClick }>
+                        <DisplayName
+                            allowEditing = { _allowEditing }
+                            displayNameSuffix = { _defaultLocalDisplayName }
+                            elementID = 'localDisplayName'
+                            participantID = { id } />
+                    </div>
                 </div>
                 <div className = 'videocontainer__toptoolbar'>
                     { this._renderTopIndicators() }
                 </div>
                 <div className = 'videocontainer__hoverOverlay' />
-                <div
-                    className = 'displayNameContainer'
-                    onClick = { onClick }>
-                    <DisplayName
-                        allowEditing = { _allowEditing }
-                        displayNameSuffix = { _defaultLocalDisplayName }
-                        elementID = 'localDisplayName'
-                        participantID = { id } />
-                </div>
                 { this._renderAvatar(styles.avatar) }
                 <span className = 'audioindicator-container'>
                     <AudioLevelIndicator audioLevel = { audioLevel } />
@@ -960,14 +961,13 @@ class Thumbnail extends Component<Props, State> {
                 </div>
                 <div className = 'videocontainer__toolbar'>
                     <StatusIndicators participantID = { id } />
-                    <div className = 'videocontainer__participant-name'>{_participant.name}</div>
+                    <div className = 'videocontainer__participant-name'>
+                        <DisplayName
+                            elementID = { `participant_${id}_name` }
+                            participantID = { id } />
+                    </div>
                 </div>
                 <div className = 'videocontainer__hoverOverlay' />
-                <div className = 'displayNameContainer'>
-                    <DisplayName
-                        elementID = { `participant_${id}_name` }
-                        participantID = { id } />
-                </div>
                 { this._renderAvatar(styles.avatar) }
                 <div className = 'presence-label-container'>
                     <PresenceLabel
