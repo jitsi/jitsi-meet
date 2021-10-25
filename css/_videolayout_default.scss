@@ -422,6 +422,11 @@
     &.status-other {
         background: $connectionIndicatorBg;
     }
+
+    &.status-disabled {
+        background: transparent;
+        border: none
+    }
 }
 
 .local-video-menu-trigger,

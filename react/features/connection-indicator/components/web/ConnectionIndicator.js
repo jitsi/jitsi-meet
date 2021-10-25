@@ -180,6 +180,10 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, AbstractSta
         const { INACTIVE, INTERRUPTED } = JitsiParticipantConnectionStatus;
 
         if (_connectionStatus === INACTIVE) {
+            if (this.props._connectionIndicatorInactiveDisabled) {
+                return 'status-disabled';
+            }
+
             return 'status-other';
         } else if (_connectionStatus === INTERRUPTED) {
             return 'status-lost';
