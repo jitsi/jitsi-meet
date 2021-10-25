@@ -62,20 +62,37 @@ module:hook("message/bare", function(event)
 	if data.type == "new-poll" then
 		if check_polls(room) then return end
 
-		local answers = {}
-		for _, name in ipairs(data.answers) do
-			table.insert(answers, { name = name, voters = {} });
-		end
+        local answers = {}
+        local compactAnswers = {}
+        for _, name in ipairs(data.answers) do
+            table.insert(answers, { name = name, voters = {} });
+            table.insert(compactAnswers, {name = name});
+        end
 
-		local poll = {
-			id = data.pollId,
-			sender_id = data.senderId,
-			sender_name = data.senderName,
-			question = data.question,
-			answers = answers
-		};
-		room.polls.by_id[data.pollId] = poll
-		table.insert(room.polls.order, poll)
+        local poll = {
+            id = data.pollId,
+            sender_id = data.senderId,
+            sender_name = data.senderName,
+            question = data.question,
+            answers = answers
+        };
+
+        room.polls.by_id[data.pollId] = poll
+        table.insert(room.polls.order, poll)
+
+        local pollData = {
+			event = event,
+			room = room, 
+			poll = {
+                pollId = data.pollId,
+                senderId = data.senderId,
+                senderName = data.senderName,
+                question = data.question,
+                answers = compactAnswers
+			}
+        }
+
+        module:fire_event("poll-created", pollData);
 
 	elseif data.type == "answer-poll" then
 		if check_polls(room) then return end
@@ -86,9 +103,24 @@ module:hook("message/bare", function(event)
 			return;
 		end
 
+		local answers = {};
 		for i, value in ipairs(data.answers) do
+			table.insert(answers, {
+				value = value,
+				name = poll.answers[i].name,
+			});
 			poll.answers[i].voters[data.voterId] = value and data.voterName or nil;
 		end
+		local answerData = {
+			event = event,
+			room = room,
+			pollId = poll.id,
+			voterName = data.voterName,
+			voterId = data.voterId,
+			answers = answers
+		}
+
+		module:fire_event("answer-poll",  answerData);
 	end
 end);
 
