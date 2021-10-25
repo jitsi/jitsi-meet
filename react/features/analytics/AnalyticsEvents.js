@@ -822,6 +822,24 @@ export function createToolbarEvent(buttonName, attributes = {}) {
 }
 
 /**
+ * Creates an event associated with reactions.
+ *
+ * @param {string} action - Event action.
+ * @param {string} name - Event name.
+ * @param {string} source - Event source.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+function createReactionEvent(action, name, source) {
+    return {
+        action,
+        actionSubject: name,
+        source: `reaction.${source}`,
+        type: TYPE_UI
+    };
+}
+
+/**
  * Creates an event associated with a reaction button being clicked/pressed.
  *
  * @param {string} buttonName - The identifier of the reaction button which was
@@ -830,12 +848,17 @@ export function createToolbarEvent(buttonName, attributes = {}) {
  * sendAnalytics.
  */
 export function createReactionMenuEvent(buttonName) {
-    return {
-        action: 'clicked',
-        actionSubject: buttonName,
-        source: 'reaction.button',
-        type: TYPE_UI
-    };
+    return createReactionEvent('clicked', buttonName, 'button');
+}
+
+/**
+ * Creates an event associated with disabling of reaction sounds.
+ *
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createReactionSoundsDisabledEvent() {
+    return createReactionEvent('disabled', 'sounds', 'settings');
 }
 
 /**
