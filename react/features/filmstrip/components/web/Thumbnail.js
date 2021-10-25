@@ -259,6 +259,12 @@ class Thumbnail extends Component<Props, State> {
     videoMenuTriggerRef: Object;
 
     /**
+     * Timeout used to detect double tapping.
+     * It is active while user has tapped once.
+     */
+    _firstTap: ?TimeoutID;
+
+    /**
      * Initializes a new Thumbnail instance.
      *
      * @param {Object} props - The read-only React Component props with which
@@ -281,6 +287,7 @@ class Thumbnail extends Component<Props, State> {
         this.timeoutHandle = null;
         this.videoMenuTriggerRef = null;
 
+        this._clearDoubleClickTimeout = this._clearDoubleClickTimeout.bind(this);
         this._setInstance = this._setInstance.bind(this);
         this._updateAudioLevel = this._updateAudioLevel.bind(this);
         this._onCanPlay = this._onCanPlay.bind(this);
@@ -437,6 +444,18 @@ class Thumbnail extends Component<Props, State> {
         this._stopListeningForAudioUpdates(this.props._audioTrack);
     }
 
+    _clearDoubleClickTimeout: () => void
+
+    /**
+     * Clears the first click timeout.
+     *
+     * @returns {void}
+     */
+    _clearDoubleClickTimeout() {
+        clearTimeout(this._firstTap);
+        this._firstTap = undefined;
+    }
+
     /**
      * Starts listening for audio level updates from the library.
      *
@@ -580,12 +599,21 @@ class Thumbnail extends Component<Props, State> {
     _onTouchStart: () => void;
 
     /**
-     * Set showing popover context menu after x miliseconds.
+     * Handler for touch start.
      *
      * @returns {void}
      */
     _onTouchStart() {
         this.timeoutHandle = setTimeout(this._showPopupMenu, SHOW_TOOLBAR_CONTEXT_MENU_AFTER);
+
+        if (this._firstTap) {
+            this._clearDoubleClickTimeout();
+            this._onClick();
+
+            return;
+        }
+
+        this._firstTap = setTimeout(this._clearDoubleClickTimeout, 300);
     }
 
     _onTouchEnd: () => void;
@@ -790,7 +818,6 @@ class Thumbnail extends Component<Props, State> {
             <span
                 className = { containerClassName }
                 id = 'localVideoContainer'
-                onClick = { this._onClick }
                 { ...(_isMobile
                     ? {
                         onTouchEnd: this._onTouchEnd,
@@ -798,6 +825,7 @@ class Thumbnail extends Component<Props, State> {
                         onTouchStart: this._onTouchStart
                     }
                     : {
+                        onClick: this._onClick,
                         onMouseEnter: this._onMouseEnter,
                         onMouseLeave: this._onMouseLeave
                     }
@@ -932,7 +960,7 @@ class Thumbnail extends Component<Props, State> {
             <span
                 className = { containerClassName }
                 id = { `participant_${id}` }
-                onClick = { this._onClick }
+                onClick = { _isMobile ? undefined : this._onClick }
                 { ...(_isMobile
                     ? {
                         onTouchEnd: this._onTouchEnd,

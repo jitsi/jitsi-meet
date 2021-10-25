@@ -4,7 +4,8 @@ import type { Dispatch } from 'redux';
 
 import {
     SET_TOOLBOX_ENABLED,
-    SET_TOOLBOX_VISIBLE
+    SET_TOOLBOX_VISIBLE,
+    TOGGLE_TOOLBOX_VISIBLE
 } from './actionTypes';
 
 /**
@@ -40,6 +41,27 @@ export function setToolboxVisible(visible: boolean): Object {
         dispatch({
             type: SET_TOOLBOX_VISIBLE,
             visible
+        });
+    };
+}
+
+/**
+ * Action to toggle the toolbox visibility.
+ *
+ * @returns {Function}
+ */
+export function toggleToolboxVisible() {
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        const state = getState();
+        const { toolbarConfig: { alwaysVisible } } = state['features/base/config'];
+        const { visible } = state['features/toolbox'];
+
+        if (visible && alwaysVisible) {
+            return;
+        }
+
+        dispatch({
+            type: TOGGLE_TOOLBOX_VISIBLE
         });
     };
 }
