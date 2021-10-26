@@ -4,7 +4,8 @@ import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     DATA_CHANNEL_OPENED,
-    KICKED_OUT
+    KICKED_OUT,
+    SET_PASSWORD
 } from '../base/conference';
 import { NOTIFY_CAMERA_ERROR, NOTIFY_MIC_ERROR } from '../base/devices';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
@@ -179,6 +180,11 @@ MiddlewareRegistry.register(store => next => action => {
 
     case SUBMIT_FEEDBACK_SUCCESS:
         APP.API.notifyFeedbackSubmitted();
+        break;
+
+    case SET_PASSWORD:
+        console.log("Setting password action completed.");
+        APP.API.notifyOnPasswordChanged(action.password);
         break;
     }
 

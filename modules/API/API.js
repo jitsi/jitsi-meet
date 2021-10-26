@@ -83,6 +83,8 @@ import { getJitsiMeetTransport } from '../transport';
 
 import { API_ID, ENDPOINT_TEXT_MESSAGE_NAME } from './constants';
 
+declare var interfaceConfig: Object;
+
 const logger = Logger.getLogger(__filename);
 
 declare var APP: Object;
@@ -157,6 +159,28 @@ function initCommands() {
         },
         'toggle-lobby': isLobbyEnabled => {
             APP.store.dispatch(toggleLobbyMode(isLobbyEnabled));
+        },
+        'accessCode': () => {
+            const { conference, passwordRequired }
+                = APP.store.getState()['features/base/conference'];
+
+            if (passwordRequired) {
+                sendAnalytics(createApiEvent('submit.password'));
+
+                APP.store.dispatch(setPassword(
+                    passwordRequired,
+                    passwordRequired.join,
+                    interfaceConfig.ACCESS_CODE
+                ));
+            } else {
+                sendAnalytics(createApiEvent('password.changed'));
+
+                APP.store.dispatch(setPassword(
+                    conference,
+                    conference.lock,
+                    interfaceConfig.ACCESS_CODE
+                ));
+            }
         },
         'password': password => {
             const { conference, passwordRequired }
@@ -537,7 +561,7 @@ function initCommands() {
             APP.store.dispatch(updateSettings({ userSelectedSkipPrejoin: skipPrejoin }));
         },
         'meeting-reconnect': () => {
-            APP.store.dispatch(joinWithPassword(""));
+            APP.store.dispatch(joinWithPassword(interfaceConfig.ACCESS_CODE));
         },
         'grant-moderator': id => {
             console.log("Granting moderator automatically: ", id);
@@ -1368,6 +1392,18 @@ class API {
             kicked,
             kicker
         });
+    }
+
+    /**
+     * Notify external application of the current meeting requiring a password
+     * to join.
+     *
+     * @returns {void}
+     */
+    notifyOnPasswordChanged(password: string) {
+        console.log("Notifying on change.");
+        this._sendEvent({ name: 'password-changed',
+                          password });
     }
 
     /**

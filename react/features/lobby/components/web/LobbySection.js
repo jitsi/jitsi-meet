@@ -8,6 +8,8 @@ import { Switch } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { toggleLobbyMode } from '../../actions';
 
+declare var interfaceConfig: Object;
+
 type Props = {
 
     /**
@@ -107,7 +109,7 @@ class LobbySection extends PureComponent<Props, State> {
                             id = 'lobby-section-switch'
                             onValueChange = { this._onToggleLobby }
                             value = { this.state.lobbyEnabled }
-                            disabled = { this.props._password } />
+                            disabled = { this.props._password === interfaceConfig.ACCESS_CODE } />
                     </div>
                 </div>
                 <div className = 'separator-line' />

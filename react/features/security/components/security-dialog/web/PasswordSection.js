@@ -8,6 +8,8 @@ import { copyText } from '../../../../base/util';
 
 import PasswordForm from './PasswordForm';
 
+declare var interfaceConfig: Object;
+
 type Props = {
 
     /**
@@ -126,7 +128,7 @@ function PasswordSection({
      * @returns {void}
      */
     function onPasswordRemove() {
-        onPasswordSubmit('');
+        onPasswordSubmit(interfaceConfig.ACCESS_CODE);
     }
 
     /**
@@ -229,7 +231,7 @@ function PasswordSection({
             );
         }
 
-        if (locked) {
+        if (locked && password !== interfaceConfig.ACCESS_CODE) {
             console.log(lobbyEnabled);
             return (
                 <>

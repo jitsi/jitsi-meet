@@ -5,6 +5,8 @@ import React, { Component } from 'react';
 import { translate } from '../../../../base/i18n';
 import { LOCKED_LOCALLY } from '../../../../room-lock';
 
+declare var interfaceConfig: Object;
+
 /**
  * The type of the React {@code Component} props of {@link PasswordForm}.
  */
@@ -148,13 +150,13 @@ class PasswordForm extends Component<Props, State> {
                         value = { this.state.enteredPassword } />
                 </form>
             );
-        } else if (this.props.locked === LOCKED_LOCALLY) {
+        } else if (this.props.locked === LOCKED_LOCALLY && this.props.password !== interfaceConfig.ACCESS_CODE) {
             return (
                 <div className = 'info-password-local'>
                     { this.props.password }
                 </div>
             );
-        } else if (this.props.locked) {
+        } else if (this.props.locked && this.props.password !== interfaceConfig.ACCESS_CODE) {
             return (
                 <div className = 'info-password-remote'>
                     { this.props.t('passwordSetRemotely') }
