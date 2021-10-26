@@ -562,7 +562,6 @@ function initCommands() {
             APP.store.dispatch(joinWithPassword(interfaceConfig.ACCESS_CODE));
         },
         'grant-moderator': id => {
-            console.log("Granting moderator automatically: ", id);
             APP.store.dispatch(grantModerator(id));
         },
         'kick-participant': participantId => {
