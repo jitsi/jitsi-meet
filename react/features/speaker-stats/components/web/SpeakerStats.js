@@ -182,7 +182,7 @@ class SpeakerStats extends Component<Props> {
      * @private
      */
     _getSpeakerStats() {
-        const stats = { ...this.props._conference?.getSpeakerStats() };
+        const stats = { ...this.props._conference.getSpeakerStats() };
 
         for (const userId in stats) {
             if (stats[userId]) {

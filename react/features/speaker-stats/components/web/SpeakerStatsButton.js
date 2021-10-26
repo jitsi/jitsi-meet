@@ -5,10 +5,8 @@ import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { IconPresentation } from '../../../base/icons';
 import { connect } from '../../../base/redux';
-import {
-    AbstractButton,
-    AbstractButtonProps
-} from '../../../base/toolbox/components';
+import { AbstractButton } from '../../../base/toolbox/components';
+import type { AbstractButtonProps } from '../../../base/toolbox/components';
 
 import { SpeakerStats } from './';
 

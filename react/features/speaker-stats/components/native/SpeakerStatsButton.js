@@ -7,10 +7,11 @@ import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
 import { IconPresentation } from '../../../base/icons';
 import { AbstractButton } from '../../../base/toolbox/components';
+import type { AbstractButtonProps } from '../../../base/toolbox/components';
 import { navigate } from '../../../conference/components/native/ConferenceNavigationContainerRef';
 import { screen } from '../../../conference/components/native/routes';
 
-type Props = {
+type Props = AbstractButtonProps & {
 
     /**
      * True if the navigation bar should be visible.
