@@ -8,7 +8,8 @@ import {
 import {
     getUserSelectedCameraDeviceId,
     getUserSelectedMicDeviceId,
-    getUserSelectedOutputDeviceId
+    getUserSelectedOutputDeviceId,
+    updateSettings
 } from '../../react/features/base/settings';
 
 /**
@@ -61,6 +62,9 @@ function getNewAudioInputDevice(newDevices, localAudio, newLabel) {
     const selectedAudioInputDeviceId = getUserSelectedMicDeviceId(APP.store.getState());
     const selectedAudioInputDevice = availableAudioInputDevices.find(
         d => d.deviceId === selectedAudioInputDeviceId);
+    const localAudioDeviceId = localAudio.getDeviceId();
+    const localAudioDevice = availableAudioInputDevices.find(
+        d => d.deviceId === localAudioDeviceId);
 
     // Here we handle case when no device was initially plugged, but
     // then it's connected OR new device was connected when previous
@@ -76,13 +80,22 @@ function getNewAudioInputDevice(newDevices, localAudio, newLabel) {
             return availableAudioInputDevices[0].deviceId;
         }
     } else if (selectedAudioInputDevice
-        && selectedAudioInputDeviceId !== localAudio.getDeviceId()
-        && !newLabel) {
+        && selectedAudioInputDeviceId !== localAudio.getDeviceId()) {
 
-        // And here we handle case when we already have some device working,
-        // but we plug-in a "preferred" (previously selected in settings, stored
-        // in local storage) device.
-        return selectedAudioInputDeviceId;
+        if (newLabel) {
+            // If a Firefox user with manual permission prompt chose a different
+            // device from what we have stored as the preferred device we accept
+            // and store that as the new preferred device.
+            APP.store.dispatch(updateSettings({
+                userSelectedMicDeviceId: localAudioDeviceId,
+                userSelectedMicDeviceLabel: localAudioDevice.label
+            }));
+        } else {
+            // And here we handle case when we already have some device working,
+            // but we plug-in a "preferred" (previously selected in settings, stored
+            // in local storage) device.
+            return selectedAudioInputDeviceId;
+        }
     }
 }
 
@@ -101,6 +114,9 @@ function getNewVideoInputDevice(newDevices, localVideo, newLabel) {
     const selectedVideoInputDeviceId = getUserSelectedCameraDeviceId(APP.store.getState());
     const selectedVideoInputDevice = availableVideoInputDevices.find(
         d => d.deviceId === selectedVideoInputDeviceId);
+    const localVideoDeviceId = localVideo.getDeviceId();
+    const localVideoDevice = availableVideoInputDevices.find(
+        d => d.deviceId === localVideoDeviceId);
 
     // Here we handle case when no video input device was initially plugged,
     // but then device is connected OR new device was connected when
@@ -116,12 +132,22 @@ function getNewVideoInputDevice(newDevices, localVideo, newLabel) {
             return availableVideoInputDevices[0].deviceId;
         }
     } else if (selectedVideoInputDevice
-            && selectedVideoInputDeviceId !== localVideo.getDeviceId()
-            && !newLabel) {
-        // And here we handle case when we already have some device working,
-        // but we plug-in a "preferred" (previously selected in settings, stored
-        // in local storage) device.
-        return selectedVideoInputDeviceId;
+            && selectedVideoInputDeviceId !== localVideo.getDeviceId()) {
+
+        if (newLabel) {
+            // If a Firefox user with manual permission prompt chose a different
+            // device from what we have stored as the preferred device we accept
+            // and store that as the new preferred device.
+            APP.store.dispatch(updateSettings({
+                userSelectedCameraDeviceId: localVideoDeviceId,
+                userSelectedCameraDeviceLabel: localVideoDevice.label
+            }));
+        } else {
+            // And here we handle case when we already have some device working,
+            // but we plug-in a "preferred" (previously selected in settings, stored
+            // in local storage) device.
+            return selectedVideoInputDeviceId;
+        }
     }
 }
 
