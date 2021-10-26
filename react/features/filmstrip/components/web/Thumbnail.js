@@ -509,13 +509,26 @@ class Thumbnail extends Component<Props, State> {
      * @returns {Object} - The styles for the thumbnail.
      */
     _getStyles(): Object {
-        const { _height, _isHidden, _width, style, horizontalOffset } = this.props;
+
+        const { canPlayEventReceived } = this.state;
+        const {
+            _height,
+            _isHidden,
+            _isScreenSharing,
+            _participant,
+            _width,
+            horizontalOffset,
+            style
+        } = this.props;
+
         let styles: {
+            avatar: Object,
             thumbnail: Object,
-            avatar: Object
+            video: Object
         } = {
             thumbnail: {},
-            avatar: {}
+            avatar: {},
+            video: {}
         };
 
         const avatarSize = _height / 2;
@@ -523,6 +536,20 @@ class Thumbnail extends Component<Props, State> {
 
         if (typeof left === 'number' && horizontalOffset) {
             left += horizontalOffset;
+        }
+
+        let videoStyles = null;
+
+        if (!_isScreenSharing) {
+            if (canPlayEventReceived || _participant.local) {
+                videoStyles = {
+                    objectFit: _height > 320 ? 'cover' : 'contain'
+                };
+            } else {
+                videoStyles = {
+                    display: 'none'
+                };
+            }
         }
 
         styles = {
@@ -537,7 +564,8 @@ class Thumbnail extends Component<Props, State> {
             avatar: {
                 height: `${avatarSize}px`,
                 width: `${avatarSize}px`
-            }
+            },
+            video: videoStyles
         };
 
         if (_isHidden) {
@@ -836,6 +864,7 @@ class Thumbnail extends Component<Props, State> {
                     <VideoTrack
                         className = { videoTrackClassName }
                         id = 'localVideo_container'
+                        style = { styles.video }
                         videoTrack = { _videoTrack } />
                 </span>
                 <div className = 'videocontainer__toolbar'>
@@ -934,7 +963,7 @@ class Thumbnail extends Component<Props, State> {
             _volume = 1
         } = this.props;
         const { id } = _participant;
-        const { audioLevel, canPlayEventReceived } = this.state;
+        const { audioLevel } = this.state;
         const styles = this._getStyles();
         const containerClassName = this._getContainerClassName();
 
@@ -951,10 +980,6 @@ class Thumbnail extends Component<Props, State> {
         }
 
         videoEventListeners.onCanPlay = this._onCanPlay;
-
-        const videoElementStyle = canPlayEventReceived ? null : {
-            display: 'none'
-        };
 
         return (
             <span
@@ -978,7 +1003,7 @@ class Thumbnail extends Component<Props, State> {
                         eventHandlers = { videoEventListeners }
                         id = { `remoteVideo_${videoTrackId || ''}` }
                         muted = { true }
-                        style = { videoElementStyle }
+                        style = { styles.video }
                         videoTrack = { _videoTrack } />
                 }
                 <div className = 'videocontainer__background' />
