@@ -243,8 +243,6 @@ function initCommands() {
             APP.store.dispatch(setFollowMe(value));
         },
         'set-knocking-participant-approval': participantId => {
-            console.log('Participant admitted command');
-            // APP.store.dispatch(startKnocking());
             APP.store.dispatch(approveKnockingParticipant(participantId));
         },
         'set-large-video-participant': participantId => {

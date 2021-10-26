@@ -232,7 +232,6 @@ function PasswordSection({
         }
 
         if (locked && password !== interfaceConfig.ACCESS_CODE) {
-            console.log(lobbyEnabled);
             return (
                 <>
                     {

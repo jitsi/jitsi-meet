@@ -183,7 +183,6 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case SET_PASSWORD:
-        console.log("Method: ", action.method);
         if(action.method == action.conference.lock) {
             APP.API.notifyOnPasswordChanged(action.password);            
         }
