@@ -259,12 +259,6 @@ class Thumbnail extends Component<Props, State> {
     videoMenuTriggerRef: Object;
 
     /**
-     * Timeout used to detect double tapping.
-     * It is active while user has tapped once.
-     */
-    _firstTap: ?TimeoutID;
-
-    /**
      * Initializes a new Thumbnail instance.
      *
      * @param {Object} props - The read-only React Component props with which
@@ -287,7 +281,6 @@ class Thumbnail extends Component<Props, State> {
         this.timeoutHandle = null;
         this.videoMenuTriggerRef = null;
 
-        this._clearDoubleClickTimeout = this._clearDoubleClickTimeout.bind(this);
         this._setInstance = this._setInstance.bind(this);
         this._updateAudioLevel = this._updateAudioLevel.bind(this);
         this._onCanPlay = this._onCanPlay.bind(this);
@@ -444,18 +437,6 @@ class Thumbnail extends Component<Props, State> {
         this._stopListeningForAudioUpdates(this.props._audioTrack);
     }
 
-    _clearDoubleClickTimeout: () => void
-
-    /**
-     * Clears the first click timeout.
-     *
-     * @returns {void}
-     */
-    _clearDoubleClickTimeout() {
-        clearTimeout(this._firstTap);
-        this._firstTap = undefined;
-    }
-
     /**
      * Starts listening for audio level updates from the library.
      *
@@ -509,26 +490,13 @@ class Thumbnail extends Component<Props, State> {
      * @returns {Object} - The styles for the thumbnail.
      */
     _getStyles(): Object {
-
-        const { canPlayEventReceived } = this.state;
-        const {
-            _height,
-            _isHidden,
-            _isScreenSharing,
-            _participant,
-            _width,
-            horizontalOffset,
-            style
-        } = this.props;
-
+        const { _height, _isHidden, _width, style, horizontalOffset } = this.props;
         let styles: {
-            avatar: Object,
             thumbnail: Object,
-            video: Object
+            avatar: Object
         } = {
             thumbnail: {},
-            avatar: {},
-            video: {}
+            avatar: {}
         };
 
         const avatarSize = _height / 2;
@@ -536,20 +504,6 @@ class Thumbnail extends Component<Props, State> {
 
         if (typeof left === 'number' && horizontalOffset) {
             left += horizontalOffset;
-        }
-
-        let videoStyles = null;
-
-        if (!_isScreenSharing) {
-            if (canPlayEventReceived || _participant.local) {
-                videoStyles = {
-                    objectFit: _height > 320 ? 'cover' : 'contain'
-                };
-            } else {
-                videoStyles = {
-                    display: 'none'
-                };
-            }
         }
 
         styles = {
@@ -564,8 +518,7 @@ class Thumbnail extends Component<Props, State> {
             avatar: {
                 height: `${avatarSize}px`,
                 width: `${avatarSize}px`
-            },
-            video: videoStyles
+            }
         };
 
         if (_isHidden) {
@@ -627,21 +580,12 @@ class Thumbnail extends Component<Props, State> {
     _onTouchStart: () => void;
 
     /**
-     * Handler for touch start.
+     * Set showing popover context menu after x miliseconds.
      *
      * @returns {void}
      */
     _onTouchStart() {
         this.timeoutHandle = setTimeout(this._showPopupMenu, SHOW_TOOLBAR_CONTEXT_MENU_AFTER);
-
-        if (this._firstTap) {
-            this._clearDoubleClickTimeout();
-            this._onClick();
-
-            return;
-        }
-
-        this._firstTap = setTimeout(this._clearDoubleClickTimeout, 300);
     }
 
     _onTouchEnd: () => void;
@@ -846,6 +790,7 @@ class Thumbnail extends Component<Props, State> {
             <span
                 className = { containerClassName }
                 id = 'localVideoContainer'
+                onClick = { this._onClick }
                 { ...(_isMobile
                     ? {
                         onTouchEnd: this._onTouchEnd,
@@ -853,7 +798,6 @@ class Thumbnail extends Component<Props, State> {
                         onTouchStart: this._onTouchStart
                     }
                     : {
-                        onClick: this._onClick,
                         onMouseEnter: this._onMouseEnter,
                         onMouseLeave: this._onMouseLeave
                     }
@@ -864,25 +808,25 @@ class Thumbnail extends Component<Props, State> {
                     <VideoTrack
                         className = { videoTrackClassName }
                         id = 'localVideo_container'
-                        style = { styles.video }
                         videoTrack = { _videoTrack } />
                 </span>
                 <div className = 'videocontainer__toolbar'>
                     <StatusIndicators participantID = { id } />
-                    <div
-                        className = 'videocontainer__participant-name'
-                        onClick = { onClick }>
-                        <DisplayName
-                            allowEditing = { _allowEditing }
-                            displayNameSuffix = { _defaultLocalDisplayName }
-                            elementID = 'localDisplayName'
-                            participantID = { id } />
-                    </div>
+                    <span className = 'videocontainer__participant-name'>{_participant.name}</span>
                 </div>
                 <div className = 'videocontainer__toptoolbar'>
                     { this._renderTopIndicators() }
                 </div>
                 <div className = 'videocontainer__hoverOverlay' />
+                <div
+                    className = 'displayNameContainer'
+                    onClick = { onClick }>
+                    <DisplayName
+                        allowEditing = { _allowEditing }
+                        displayNameSuffix = { _defaultLocalDisplayName }
+                        elementID = 'localDisplayName'
+                        participantID = { id } />
+                </div>
                 { this._renderAvatar(styles.avatar) }
                 <span className = 'audioindicator-container'>
                     <AudioLevelIndicator audioLevel = { audioLevel } />
@@ -963,7 +907,7 @@ class Thumbnail extends Component<Props, State> {
             _volume = 1
         } = this.props;
         const { id } = _participant;
-        const { audioLevel } = this.state;
+        const { audioLevel, canPlayEventReceived } = this.state;
         const styles = this._getStyles();
         const containerClassName = this._getContainerClassName();
 
@@ -981,10 +925,15 @@ class Thumbnail extends Component<Props, State> {
 
         videoEventListeners.onCanPlay = this._onCanPlay;
 
+        const videoElementStyle = canPlayEventReceived ? null : {
+            display: 'none'
+        };
+
         return (
             <span
                 className = { containerClassName }
                 id = { `participant_${id}` }
+                onClick = { this._onClick }
                 { ...(_isMobile
                     ? {
                         onTouchEnd: this._onTouchEnd,
@@ -992,7 +941,6 @@ class Thumbnail extends Component<Props, State> {
                         onTouchStart: this._onTouchStart
                     }
                     : {
-                        onClick: this._onClick,
                         onMouseEnter: this._onMouseEnter,
                         onMouseLeave: this._onMouseLeave
                     }
@@ -1003,7 +951,7 @@ class Thumbnail extends Component<Props, State> {
                         eventHandlers = { videoEventListeners }
                         id = { `remoteVideo_${videoTrackId || ''}` }
                         muted = { true }
-                        style = { styles.video }
+                        style = { videoElementStyle }
                         videoTrack = { _videoTrack } />
                 }
                 <div className = 'videocontainer__background' />
@@ -1012,13 +960,14 @@ class Thumbnail extends Component<Props, State> {
                 </div>
                 <div className = 'videocontainer__toolbar'>
                     <StatusIndicators participantID = { id } />
-                    <div className = 'videocontainer__participant-name'>
-                        <DisplayName
-                            elementID = { `participant_${id}_name` }
-                            participantID = { id } />
-                    </div>
+                    <span className = 'videocontainer__participant-name'>{_participant.name}</span>
                 </div>
                 <div className = 'videocontainer__hoverOverlay' />
+                <div className = 'displayNameContainer'>
+                    <DisplayName
+                        elementID = { `participant_${id}_name` }
+                        participantID = { id } />
+                </div>
                 { this._renderAvatar(styles.avatar) }
                 <div className = 'presence-label-container'>
                     <PresenceLabel
