@@ -1,10 +1,10 @@
 // @flow
 
 import React from 'react';
-import { View } from 'react-native';
 
 import abstractSpeakerStatsList from '../AbstractSpeakerStatsList';
-import SpeakerStatsItem from '../native/SpeakerStatsItem';
+
+import SpeakerStatsItem from './SpeakerStatsItem';
 
 /**
  * Component that renders the list of speaker stats.
@@ -16,9 +16,9 @@ const SpeakerStatsList = () => {
     const items = abstractSpeakerStatsList(SpeakerStatsItem);
 
     return (
-        <View>
+        <div>
             {items}
-        </View>
+        </div>
     );
 };
 

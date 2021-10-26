@@ -55,7 +55,7 @@ import {
 import SecurityDialogButton from '../../../security/components/security-dialog/SecurityDialogButton';
 import { SettingsButton } from '../../../settings';
 import { SharedVideoButton } from '../../../shared-video/components';
-import { SpeakerStatsButton } from '../../../speaker-stats/components';
+import { SpeakerStatsButton } from '../../../speaker-stats/components/web';
 import {
     ClosedCaptionButton
 } from '../../../subtitles';
