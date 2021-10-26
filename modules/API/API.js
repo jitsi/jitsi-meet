@@ -1401,7 +1401,6 @@ class API {
      * @returns {void}
      */
     notifyOnPasswordChanged(password: string) {
-        console.log("Notifying on change.");
         this._sendEvent({ name: 'password-changed',
                           password });
     }
