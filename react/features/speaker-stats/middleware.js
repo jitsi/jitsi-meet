@@ -8,7 +8,10 @@ import {
 } from '../base/participants/actionTypes';
 import { MiddlewareRegistry } from '../base/redux';
 
-import { INIT_SEARCH, INIT_UPDATE_STATS } from './actionTypes';
+import {
+    INIT_SEARCH,
+    INIT_UPDATE_STATS
+} from './actionTypes';
 import { initReorderStats, updateStats } from './actions';
 import { filterBySearchCriteria, getSortedSpeakerStats, getPendingReorder } from './functions';
 
