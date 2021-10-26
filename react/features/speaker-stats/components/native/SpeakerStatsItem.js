@@ -3,6 +3,8 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 
+import { colors } from '../../../base/ui/Tokens';
+
 import TimeElapsed from './TimeElapsed';
 import style from './styles';
 
@@ -35,7 +37,7 @@ const SpeakerStatsItem = (props: Props) => {
      * @returns {ReactElement}
      */
     const dotColor = props.isDominantSpeaker
-        ? '#00FF00' : '#a0a0a0';
+        ? colors.success04 : colors.surface07;
 
     return (
         <View style = { style.speakerStatsItemContainer }>
