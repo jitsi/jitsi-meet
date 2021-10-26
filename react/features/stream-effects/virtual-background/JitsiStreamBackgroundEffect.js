@@ -167,8 +167,10 @@ export default class JitsiStreamBackgroundEffect {
 
         for (let i = 0; i < this._segmentationPixelCount; i++) {
             const person = this._model.HEAPF32[outputMemoryOffset + i];
+
             // Sets only the alpha component of each pixel.
-            this._segmentationMask.data[(i * 4) + 3] = (255 * person);
+            this._segmentationMask.data[(i * 4) + 3] = 255 * person;
+
         }
         this._segmentationMaskCtx.putImageData(this._segmentationMask, 0, 0);
     }

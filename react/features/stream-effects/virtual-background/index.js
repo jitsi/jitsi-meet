@@ -82,5 +82,6 @@ export async function createVirtualBackgroundEffect(virtualBackground: Object, d
         ...segmentationDimensions.modelLandscape,
         virtualBackground
     };
+
     return new JitsiStreamBackgroundEffect(tflite, options);
 }
