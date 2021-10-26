@@ -42,7 +42,15 @@ class SettingsButton extends AbstractButton<Props, *> {
     _handleClick() {
         const {
             defaultTab = SETTINGS_TABS.DEVICES,
-            dispatch } = this.props;
+            dispatch,
+            handleClick
+        } = this.props;
+
+        if (handleClick) {
+            handleClick();
+
+            return;
+        }
 
         sendAnalytics(createToolbarEvent('settings'));
         dispatch(openSettingsDialog(defaultTab));

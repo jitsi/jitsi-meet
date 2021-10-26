@@ -26,6 +26,12 @@ const DEFAULT_STATE = {
     localFlipX: true,
     micDeviceId: undefined,
     serverURL: undefined,
+    hideShareAudioHelper: false,
+    soundsIncomingMessage: true,
+    soundsParticipantJoined: true,
+    soundsParticipantLeft: true,
+    soundsTalkWhileMuted: true,
+    soundsReactions: true,
     startAudioOnly: false,
     startWithAudioMuted: false,
     startWithVideoMuted: false,
@@ -56,7 +62,7 @@ filterSubtree.audioOutputDeviceId = false;
 filterSubtree.cameraDeviceId = false;
 filterSubtree.micDeviceId = false;
 
-PersistenceRegistry.register(STORE_NAME, filterSubtree);
+PersistenceRegistry.register(STORE_NAME, filterSubtree, DEFAULT_STATE);
 
 ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
     switch (action.type) {

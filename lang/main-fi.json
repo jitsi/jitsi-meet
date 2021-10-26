@@ -49,9 +49,11 @@
         "messagebox": "Kirjoita viesti",
         "nickname": {
             "popover": "Valitse lempinimi",
-            "title": "Anna chatissä käytettävä lempinimi"
+            "title": "Anna chatissä käytettävä lempinimi",
+            "titleWithPolls": "Anna chatissä käytettävä lempinimi"
         },
-        "title": "Chatti"
+        "title": "Chatti",
+        "titleWithPolls": "Chatti"
     },
     "connectingOverlay": {
         "joiningRoom": "Yhdistetään kokoukseen…"

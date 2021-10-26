@@ -47,7 +47,7 @@ type Props = {
 };
 
 /**
- * This component displays the dialog whith all the information
+ * This component displays the dialog with all the information
  * to join a meeting by calling it.
  *
  * @param {Props} props - The props of the component.
@@ -73,6 +73,7 @@ function DialinDialog(props: Props) {
                 <Icon
                     className = 'prejoin-dialog-icon prejoin-dialog-dialin-icon'
                     onClick = { onBack }
+                    role = 'button'
                     size = { 24 }
                     src = { IconArrowLeft } />
                 <div className = 'prejoin-dialog-title'>

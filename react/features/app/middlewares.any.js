@@ -1,6 +1,7 @@
 // @flow
 
 import '../analytics/middleware';
+import '../av-moderation/middleware';
 import '../base/conference/middleware';
 import '../base/config/middleware';
 import '../base/jwt/middleware';
@@ -18,7 +19,6 @@ import '../base/sounds/middleware';
 import '../base/testing/middleware';
 import '../base/tracks/middleware';
 import '../base/user-interaction/middleware';
-import '../billing-counter/middleware';
 import '../calendar-sync/middleware';
 import '../chat/middleware';
 import '../conference/middleware';
@@ -30,15 +30,20 @@ import '../etherpad/middleware';
 import '../filmstrip/middleware';
 import '../follow-me/middleware';
 import '../invite/middleware';
+import '../jaas/middleware';
 import '../large-video/middleware';
 import '../lobby/middleware';
 import '../notifications/middleware';
 import '../overlay/middleware';
+import '../polls/middleware';
+import '../polls/subscriber';
+import '../reactions/middleware';
 import '../recent-list/middleware';
 import '../recording/middleware';
 import '../rejoin/middleware';
 import '../room-lock/middleware';
 import '../rtcstats/middleware';
+import '../speaker-stats/middleware';
 import '../subtitles/middleware';
 import '../toolbox/middleware';
 import '../transcribing/middleware';

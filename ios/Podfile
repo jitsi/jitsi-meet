@@ -1,4 +1,4 @@
-platform :ios, '11.0'
+platform :ios, '12.0'
 workspace 'jitsi-meet'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 install! 'cocoapods', :deterministic_uuids => false
@@ -29,7 +29,7 @@ target 'JitsiMeetSDK' do
     'CoreModulesHeaders',
     'DevSupport',
     'RCTWebSocket'
-  ]
+  ], :modular_headers => true
   pod 'React-CoreModules', :path => '../node_modules/react-native/React/CoreModules'
   pod 'React-RCTActionSheet', :path => '../node_modules/react-native/Libraries/ActionSheetIOS'
   pod 'React-RCTAnimation', :path => '../node_modules/react-native/Libraries/NativeAnimation'
@@ -54,14 +54,17 @@ target 'JitsiMeetSDK' do
   # React Native plugins
   #
 
+  pod 'amplitude-react-native', :path => '../node_modules/@amplitude/react-native'
   pod 'react-native-background-timer', :path => '../node_modules/react-native-background-timer'
   pod 'react-native-calendar-events', :path => '../node_modules/react-native-calendar-events'
   pod 'react-native-keep-awake', :path => '../node_modules/react-native-keep-awake'
   pod 'react-native-netinfo', :path => '../node_modules/@react-native-community/netinfo'
+  pod 'react-native-performance', :path => '../node_modules/react-native-performance/ios'
+  pod 'react-native-slider', :path => '../node_modules/@react-native-community/slider'
   pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
+  pod 'react-native-video', :path => '../node_modules/react-native-video/react-native-video.podspec'
   pod 'react-native-webview', :path => '../node_modules/react-native-webview'
   pod 'react-native-webrtc', :path => '../node_modules/react-native-webrtc'
-  pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
   pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-async-storage/async-storage'
   pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
   pod 'RNGoogleSignin', :path => '../node_modules/@react-native-community/google-signin'
@@ -74,7 +77,7 @@ target 'JitsiMeetSDK' do
   #
 
   pod 'CocoaLumberjack', '~>3.5.3'
-  pod 'ObjectiveDropboxOfficial', '~> 3.9.4'
+  pod 'ObjectiveDropboxOfficial', '~>6.1.0'
 
   use_native_modules!
 end
@@ -84,7 +87,7 @@ post_install do |installer|
     target.build_configurations.each do |config|
       config.build_settings['ENABLE_BITCODE'] = 'YES'
       config.build_settings['SUPPORTS_MACCATALYST'] = 'NO'
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '11.0'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
     end
   end
 end

@@ -30,7 +30,7 @@ case "$1" in
             db_input critical jitsi-videobridge/jvb-hostname || true
             db_go
         fi
-        JVB_HOSTNAME="$RET"
+        JVB_HOSTNAME=$(echo "$RET" | xargs echo -n)
 
         TURN_CONFIG="/etc/turnserver.conf"
         NGINX_CONFIG="/etc/nginx/sites-available/$JVB_HOSTNAME.conf"
@@ -44,7 +44,7 @@ case "$1" in
 
         # detect dpkg-reconfigure, just delete old links
         db_get jitsi-meet-turnserver/jvb-hostname
-        JVB_HOSTNAME_OLD=$RET
+        JVB_HOSTNAME_OLD=$(echo "$RET" | xargs echo -n)
         if [ -n "$RET" ] && [ ! "$JVB_HOSTNAME_OLD" = "$JVB_HOSTNAME" ] ; then
             if [[ -f $TURN_CONFIG ]] && grep -q "jitsi-meet coturn config" "$TURN_CONFIG" ; then
                 rm -f $TURN_CONFIG

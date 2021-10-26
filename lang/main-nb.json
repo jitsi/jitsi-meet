@@ -46,9 +46,11 @@
         "messagebox": "Skriv en melding",
         "nickname": {
             "popover": "Velg et kallenavn",
-            "title": ""
+            "title": "",
+            "titleWithPolls": ""
         },
         "title": "",
+        "titleWithPolls": "",
         "messageTo": "Privat melding til {{recipient}}",
         "fieldPlaceHolder": "Skriv inn din melding her"
     },

@@ -25,8 +25,16 @@
                 Component: JitsiMeetJS.app.entryPoints.APP
             })
 
+            const inIframe = () => {
+                try {
+                    return window.self !== window.top;
+                } catch (e) {
+                    return true;
+                }
+            };
+
             const isElectron = navigator.userAgent.includes('Electron');
-            const shouldRegisterWorker = !isElectron && 'serviceWorker' in navigator;
+            const shouldRegisterWorker = !isElectron && !inIframe() && 'serviceWorker' in navigator;
 
             if (shouldRegisterWorker) {
                 navigator.serviceWorker
@@ -186,10 +194,10 @@
     <!--#include virtual="static/settingsToolbarAdditionalContent.html" -->
   </head>
   <body>
-    <noscript>
+    <noscript aria-hidden="true">
         <div>JavaScript is disabled. </br>For this site to work you have to enable JavaScript.</div>
     </noscript>
     <!--#include virtual="body.html" -->
-    <div id="react"></div>
+    <div id="react" role="main"></div>
   </body>
 </html>

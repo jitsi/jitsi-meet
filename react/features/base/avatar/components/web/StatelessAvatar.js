@@ -64,6 +64,7 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
             return (
                 <div className = { this._getBadgeClassName() }>
                     <img
+                        alt = 'avatar'
                         className = { this._getAvatarClassName() }
                         data-testid = { this.props.testId }
                         id = { this.props.id }
@@ -88,7 +89,7 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
                         xmlnsXlink = 'http://www.w3.org/1999/xlink'>
                         <text
                             dominantBaseline = 'central'
-                            fill = 'rgba(255,255,255,.6)'
+                            fill = 'rgba(255,255,255,1)'
                             fontSize = '40pt'
                             textAnchor = 'middle'
                             x = '50'
@@ -104,6 +105,7 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
         return (
             <div className = { this._getBadgeClassName() }>
                 <img
+                    alt = 'avatar'
                     className = { this._getAvatarClassName('defaultAvatar') }
                     data-testid = { this.props.testId }
                     id = { this.props.id }
@@ -123,7 +125,7 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
         const { size } = this.props;
 
         return {
-            backgroundColor: color || undefined,
+            background: color || undefined,
             fontSize: size ? size * 0.5 : '180%',
             height: size || '100%',
             width: size || '100%'

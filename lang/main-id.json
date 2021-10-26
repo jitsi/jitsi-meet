@@ -53,10 +53,12 @@
         "noMessagesMessage": "There are no messages in the meeting yet. Start a conversation here!",
         "nickname": {
             "popover": "Choose a nickname",
-            "title": "Enter a nickname to use chat"
+            "title": "Enter a nickname to use chat",
+            "titleWithPolls": "Enter a nickname to use chat"
         },
         "privateNotice": "Private message to {{recipient}}",
         "title": "Chat",
+        "titleWithPolls": "Chat",
         "you": "you"
     },
     "chromeExtensionBanner": {
@@ -175,7 +177,7 @@
         "dismiss": "Dismiss",
         "displayNameRequired": "Hi! What’s your name?",
         "done": "Done",
-        "enterDisplayName": "Please enter your name here",
+        "enterDisplayName": "Enter your name here",
         "error": "Error",
         "externalInstallationMsg": "You need to install our desktop sharing extension.",
         "externalInstallationTitle": "Extension required",

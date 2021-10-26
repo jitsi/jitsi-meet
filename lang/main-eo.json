@@ -53,10 +53,12 @@
         "noMessagesMessage": "Ankoraŭ ne estas mesaĝoj en la kunveno. Komencu konversation ĉi tie!",
         "nickname": {
             "popover": "Elektu kaŝnomon",
-            "title": "Elektu kaŝnomon por uzi la babilejon"
+            "title": "Elektu kaŝnomon por uzi la babilejon",
+            "titleWithPolls": "Elektu kaŝnomon por uzi la babilejon"
         },
         "privateNotice": "Privata mesaĝo al {{recipient}}",
         "title": "Babilejo",
+        "titleWithPolls": "Babilejo",
         "you": "vi"
     },
     "chromeExtensionBanner": {
@@ -179,7 +181,7 @@
         "e2eeLabel": "Ŝlosilo",
         "e2eeTitle": "Tutvoja ĉifrado",
         "e2eeWarning": "<br /><p><strong>ATENTIGO:</strong> Ne ĉiuj partoprenantoj en ĉi tiu kunveno ŝajnas havi subtenon de tutvoja ĉifrado. Se vi ŝaltos ĝin, ili ne povos vidi aŭ aŭdi vin.</p>",
-        "enterDisplayName": "Please enter your name here",
+        "enterDisplayName": "Enter your name here",
         "error": "Eraro",
         "externalInstallationMsg": "Vi devas instali nian ekranvidadan kromprogramon.",
         "externalInstallationTitle": "Kromprogramo bezonata",

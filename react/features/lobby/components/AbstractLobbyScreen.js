@@ -2,10 +2,12 @@
 // eslint-disable-next-line no-unused-vars
 import React, { PureComponent } from 'react';
 
-import { getConferenceName } from '../../base/conference';
+import { conferenceWillJoin, getConferenceName } from '../../base/conference';
+import { getFeatureFlag, INVITE_ENABLED } from '../../base/flags';
 import { getLocalParticipant } from '../../base/participants';
 import { getFieldValue } from '../../base/react';
 import { updateSettings } from '../../base/settings';
+import { isDeviceStatusVisible } from '../../prejoin/functions';
 import { cancelKnocking, joinWithPassword, setPasswordJoinFailed, startKnocking } from '../actions';
 
 export const SCREEN_STATES = {
@@ -17,6 +19,11 @@ export const SCREEN_STATES = {
 export type Props = {
 
     /**
+     * Indicates whether the device status should be visible.
+     */
+    _deviceStatusVisible: boolean,
+
+    /**
      * True if knocking is already happening, so we're waiting for a response.
      */
     _knocking: boolean,
@@ -25,6 +32,11 @@ export type Props = {
      * The name of the meeting we're about to join.
      */
     _meetingName: string,
+
+    /**
+     * The members only conference if any,
+     */
+    _membersOnlyConference: Object,
 
     /**
      * The email of the participant about to knock/join.
@@ -47,9 +59,19 @@ export type Props = {
     _passwordJoinFailed: boolean,
 
     /**
+     * True if the password field should be available for lobby participants.
+     */
+     _renderPassword: boolean,
+
+    /**
      * The Redux dispatch function.
      */
     dispatch: Function,
+
+    /**
+     * Indicates whether the copy url button should be shown
+     */
+    showCopyUrlButton: boolean,
 
     /**
      * Function to be used to translate i18n labels.
@@ -271,6 +293,9 @@ export default class AbstractLobbyScreen<P: Props = Props> extends PureComponent
             screenState: this.state.displayName ? SCREEN_STATES.VIEW : SCREEN_STATES.EDIT
         });
         this.props.dispatch(setPasswordJoinFailed(false));
+
+        // let's return to the correct state after password failed
+        this.props.dispatch(conferenceWillJoin(this.props._membersOnlyConference));
     }
 
     _onSwitchToPasswordMode: () => void;
@@ -364,14 +389,24 @@ export default class AbstractLobbyScreen<P: Props = Props> extends PureComponent
 export function _mapStateToProps(state: Object): $Shape<Props> {
     const localParticipant = getLocalParticipant(state);
     const participantId = localParticipant?.id;
+    const inviteEnabledFlag = getFeatureFlag(state, INVITE_ENABLED, true);
+    const { disableInviteFunctions } = state['features/base/config'];
     const { knocking, passwordJoinFailed } = state['features/lobby'];
+    const { iAmSipGateway } = state['features/base/config'];
+    const showCopyUrlButton = inviteEnabledFlag || !disableInviteFunctions;
+    const deviceStatusVisible = isDeviceStatusVisible(state);
+    const { membersOnly } = state['features/base/conference'];
 
     return {
+        _deviceStatusVisible: deviceStatusVisible,
         _knocking: knocking,
         _meetingName: getConferenceName(state),
+        _membersOnlyConference: membersOnly,
         _participantEmail: localParticipant?.email,
         _participantId: participantId,
         _participantName: localParticipant?.name,
-        _passwordJoinFailed: passwordJoinFailed
+        _passwordJoinFailed: passwordJoinFailed,
+        _renderPassword: !iAmSipGateway,
+        showCopyUrlButton
     };
 }

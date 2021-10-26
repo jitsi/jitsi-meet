@@ -122,11 +122,11 @@ body.welcome-page {
         #moderated-meetings {
             max-width: calc(100% - 40px);
             padding: 16px 0 39px 0;
-            margin: $welcomePageEnterRoomMargin;
             width: $welcomePageEnterRoomWidth;
 
             p {
                 color: $welcomePageDescriptionColor;
+                float: left;
                 text-align: $welcomePageHeaderTextAlign;
 
                 a {
@@ -208,6 +208,11 @@ body.welcome-page {
             cursor: pointer;
             font-size: 32px;
         }
+
+        .toolbox-icon {
+            height: 24px;
+            width: 24px;
+        }
     }
 
     .welcome-watermark {
@@ -226,6 +231,10 @@ body.welcome-page {
             min-width: 500px;
             max-width: 580px;
         }
+    }
+
+    &.without-footer {
+        justify-content: start;
     }
 
     .welcome-cards-container {

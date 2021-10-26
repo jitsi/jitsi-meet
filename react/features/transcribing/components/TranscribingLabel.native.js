@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
-import { CircularLabel } from '../../base/label';
+import { Label } from '../../base/label';
 import { connect } from '../../base/redux';
 
 import { _mapStateToProps, type Props } from './AbstractTranscribingLabel';
@@ -26,10 +26,7 @@ class TranscribingLabel extends Component<Props> {
             return null;
         }
 
-        return (
-            <CircularLabel
-                label = { this.props.t('transcribing.tr') } />
-        );
+        return <Label text = { this.props.t('transcribing.tr') } />;
     }
 }
 

@@ -37,7 +37,7 @@ import {
     RECORDING_OFF_SOUND_ID,
     RECORDING_ON_SOUND_ID
 } from './constants';
-import { getSessionById } from './functions';
+import { getSessionById, getResourceId } from './functions';
 import {
     LIVE_STREAMING_OFF_SOUND_FILE,
     LIVE_STREAMING_ON_SOUND_FILE,
@@ -45,6 +45,7 @@ import {
     RECORDING_ON_SOUND_FILE
 } from './sounds';
 
+declare var APP: Object;
 declare var interfaceConfig: Object;
 
 /**
@@ -134,7 +135,6 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         const {
             iAmRecorder,
             iAmSipGateway,
-            disableRecordAudioNotification,
             recordingLimit
         } = getState()['features/base/config'];
 
@@ -159,16 +159,10 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                     // Show notification with additional information to the initiator.
                     dispatch(showRecordingLimitNotification(mode));
                 } else {
-                    dispatch(showStartedRecordingNotification(
-                        mode, initiator && getParticipantDisplayName(getState, initiator.getId())));
+                    dispatch(showStartedRecordingNotification(mode, initiator, action.sessionData.id));
                 }
-
 
                 sendAnalytics(createRecordingEvent('start', mode));
-
-                if (disableRecordAudioNotification) {
-                    break;
-                }
 
                 let soundID;
 
@@ -181,10 +175,18 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 if (soundID) {
                     dispatch(playSound(soundID));
                 }
+
+                if (typeof APP !== 'undefined') {
+                    APP.API.notifyRecordingStatusChanged(true, mode);
+                }
             } else if (updatedSessionData.status === OFF
                 && (!oldSessionData || oldSessionData.status !== OFF)) {
-                dispatch(showStoppedRecordingNotification(
-                    mode, terminator && getParticipantDisplayName(getState, terminator.getId())));
+                if (terminator) {
+                    dispatch(
+                        showStoppedRecordingNotification(
+                            mode, getParticipantDisplayName(getState, getResourceId(terminator))));
+                }
+
                 let duration = 0, soundOff, soundOn;
 
                 if (oldSessionData && oldSessionData.timestamp) {
@@ -192,10 +194,6 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                         = (Date.now() / 1000) - oldSessionData.timestamp;
                 }
                 sendAnalytics(createRecordingEvent('stop', mode, duration));
-
-                if (disableRecordAudioNotification) {
-                    break;
-                }
 
                 if (mode === JitsiRecordingConstants.mode.FILE) {
                     soundOff = RECORDING_OFF_SOUND_ID;
@@ -208,6 +206,10 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 if (soundOff && soundOn) {
                     dispatch(stopSound(soundOn));
                     dispatch(playSound(soundOff));
+                }
+
+                if (typeof APP !== 'undefined') {
+                    APP.API.notifyRecordingStatusChanged(false, mode);
                 }
             }
         }
@@ -231,11 +233,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
  * @returns {void}
  */
 function _showRecordingErrorNotification(recorderSession, dispatch) {
-    const isStreamMode
-        = recorderSession.getMode()
-            === JitsiMeetJS.constants.recording.mode.STREAM;
+    const mode = recorderSession.getMode();
+    const error = recorderSession.getError();
+    const isStreamMode = mode === JitsiMeetJS.constants.recording.mode.STREAM;
 
-    switch (recorderSession.getError()) {
+    switch (error) {
     case JitsiMeetJS.constants.recording.error.SERVICE_UNAVAILABLE:
         dispatch(showRecordingError({
             descriptionKey: 'recording.unavailable',
@@ -269,5 +271,9 @@ function _showRecordingErrorNotification(recorderSession, dispatch) {
                 : 'recording.failedToStart'
         }));
         break;
+    }
+
+    if (typeof APP !== 'undefined') {
+        APP.API.notifyRecordingStatusChanged(false, mode, error);
     }
 }

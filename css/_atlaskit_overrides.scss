@@ -1,4 +1,22 @@
 /**
+ * Mixins that mimic the way Atlaskit fills the screen with modals at low screen widths.
+ */
+@mixin full-size-modal-positioner() {
+    height: 100%;
+    left: 0;
+    position: fixed;
+    top: 0;
+    max-width: 100%;
+    width: 100%;
+}
+
+@mixin full-size-modal-dialog() {
+    height: 100%;
+    max-height: 100%;
+    border-radius: 0;
+}
+
+/**
  * Move the @atlaskit/flag container up a little bit so it does not cover the
  * toolbar with the first notification.
  */
@@ -14,12 +32,25 @@
     .dropdown-menu div[style*="transform"] {
         outline: 1px solid #455166;
     }
+    .dropdown-menu button:not(:active):not(:hover) > span {
+        color: #B8C7E0;
+    }
+
+    /**
+    * Override @atlaskit/tab styling when in a modal because the
+    * tab text color clash with the modal backgrounds.
+    */
+    div[role="tablist"] > div:not([data-selected]):not(:hover),
+    label > div > span {
+        color: #B8C7E0 !important;
+    }
 }
 
 /**
  * Override @atlaskit/modal-dialog header styling
  */
 .atlaskit-portal [role="dialog"] header {
+    box-shadow: none;
     .jitsi-icon {
         cursor: pointer;
     }
@@ -28,6 +59,13 @@
         fill: #B8C7E0;
     }
 }
+
+/**
+ * Override @atlaskit/modal-dialog footer styling.
+ */
+ .atlaskit-portal [role="dialog"] footer {
+     box-shadow: none;
+ }
 
 /**
  * Make header close button more easily tappable on mobile.
@@ -54,6 +92,69 @@
  * Keep overflow menu within screen vertical bounds and make it scrollable.
  */
  .toolbox-button-wth-dialog > div:nth-child(2) {
+    background: $menuBG;
     max-height: calc(100vh - #{$newToolbarSizeWithPadding} - 46px);
+    margin-bottom: 4px;
+    padding: 0;
     overflow-y: auto;
+}
+
+.audio-preview > div:nth-child(2),
+.video-preview > div:nth-child(2),
+.reactions-menu-popup > div:nth-child(2) {
+    margin-bottom: 4px;
+    outline: none;
+    padding: 0;
+}
+
+.reactions-menu-popup > div:nth-child(2) {
+    margin-bottom: 6px;
+    box-shadow: none;
+}
+
+/**
+ * The following selectors keep the chat modal full-size anywhere between 100px
+ * and 580px for desktop or 680px for mobile.
+ */
+@media (min-width: 100px) and (max-width: 320px) {
+    .smiley-input {
+        display: none;
+    }
+    .shift-right .focus-lock > div > div {
+        @include full-size-modal-positioner();
+    }
+
+    .shift-right .focus-lock [role="dialog"] {
+        @include full-size-modal-dialog();
+    }
+}
+
+@media (min-width: 480px) and (max-width: 580px) {
+    .shift-right .focus-lock > div > div {
+        @include full-size-modal-positioner();
+    }
+
+    .shift-right .focus-lock [role="dialog"] {
+        @include full-size-modal-dialog();
+    }
+}
+
+@media (max-width: 580px) {
+    // Override Atlaskit inline style for the modal background.
+    // Important is unfortunately needed for that.
+    .shift-right .focus-lock [role="dialog"][style] {
+        background-color: $chatBackgroundColor !important;
+    }
+
+    // Remove Atlaskit padding from the chat dialog.
+    .shift-right .focus-lock [role="dialog"] > div:first-child > div:nth-child(2) {
+        padding: 0;
+    }
+}
+
+div.Tooltip {
+    color: #fff;
+    font-size: 12px;
+    line-height: 14px;
+    padding: 8px;
 }

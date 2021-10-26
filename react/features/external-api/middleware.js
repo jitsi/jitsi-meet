@@ -3,7 +3,9 @@
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
-    KICKED_OUT
+    DATA_CHANNEL_OPENED,
+    KICKED_OUT,
+    SET_PASSWORD
 } from '../base/conference';
 import { NOTIFY_CAMERA_ERROR, NOTIFY_MIC_ERROR } from '../base/devices';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
@@ -103,6 +105,10 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
+    case DATA_CHANNEL_OPENED:
+        APP.API.notifyDataChannelOpened();
+        break;
+
     case DOMINANT_SPEAKER_CHANGED:
         APP.API.notifyDominantSpeakerChanged(action.participant.id);
         break;
@@ -113,7 +119,7 @@ MiddlewareRegistry.register(store => next => action => {
                 id: getLocalParticipant(store.getState()).id,
                 local: true
             },
-            { id: action.participant.getId() }
+            { id: action.participant ? action.participant.getId() : undefined }
         );
         break;
 
@@ -174,6 +180,12 @@ MiddlewareRegistry.register(store => next => action => {
 
     case SUBMIT_FEEDBACK_SUCCESS:
         APP.API.notifyFeedbackSubmitted();
+        break;
+
+    case SET_PASSWORD:
+        if(action.method == action.conference.lock) {
+            APP.API.notifyOnPasswordChanged(action.password);            
+        }
         break;
     }
 

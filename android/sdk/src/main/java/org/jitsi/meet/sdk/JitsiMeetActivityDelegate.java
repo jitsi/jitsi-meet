@@ -116,12 +116,15 @@ public class JitsiMeetActivityDelegate {
             = ReactInstanceManagerHolder.getReactInstanceManager();
 
         if (reactInstanceManager != null) {
-            // Try to avoid a crash because some devices trip on this assert:
-            // https://github.com/facebook/react-native/blob/df4e67fe75d781d1eb264128cadf079989542755/ReactAndroid/src/main/java/com/facebook/react/ReactInstanceManager.java#L512
-            // Why this happens is a mystery wrapped in an enigma.
-            ReactContext reactContext = reactInstanceManager.getCurrentReactContext();
-            if (reactContext != null && activity == reactContext.getCurrentActivity()) {
+            try {
                 reactInstanceManager.onHostPause(activity);
+            } catch (AssertionError e) {
+                // There seems to be a problem in RN when resuming an Activity when
+                // rotation is involved and the planets align. There doesn't seem to
+                // be a proper solution, but since the activity is going away anyway,
+                // we'll YOLO-ignore the exception and hope fo the best.
+                // Ref: https://github.com/facebook/react-native/search?q=Pausing+an+activity+that+is+not+the+current+activity%2C+this+is+incorrect%21&type=issues
+                JitsiMeetLogger.e(e, "Error running onHostPause, ignoring");
             }
         }
     }

@@ -1,9 +1,11 @@
+/* global APP */
+
 import {
     createTrackMutedEvent,
     sendAnalytics
 } from '../../analytics';
 import { showErrorNotification, showNotification } from '../../notifications';
-import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
+import { JitsiTrackErrors, JitsiTrackEvents, createLocalTrack } from '../lib-jitsi-meet';
 import {
     CAMERA_FACING_MODE,
     MEDIA_TYPE,
@@ -13,6 +15,7 @@ import {
     VIDEO_TYPE
 } from '../media';
 import { getLocalParticipant } from '../participants';
+import { updateSettings } from '../settings';
 
 import {
     SET_NO_SRC_DATA_NOTIFICATION_UID,
@@ -22,9 +25,10 @@ import {
     TRACK_CREATE_ERROR,
     TRACK_NO_DATA_FROM_SOURCE,
     TRACK_REMOVED,
+    TRACK_STOPPED,
     TRACK_UPDATED,
-    TRACK_WILL_CREATE,
-    TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT
+    TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT,
+    TRACK_WILL_CREATE
 } from './actionTypes';
 import {
     createLocalTracksF,
@@ -51,9 +55,12 @@ export function createDesiredLocalTracks(...desiredTypes) {
         dispatch(destroyLocalDesktopTrackIfExists());
 
         if (desiredTypes.length === 0) {
-            const { audio, video } = state['features/base/media'];
+            const { video } = state['features/base/media'];
 
-            audio.muted || desiredTypes.push(MEDIA_TYPE.AUDIO);
+            // XXX: Always create the audio track early, even if it will be muted.
+            // This fixes a timing issue when adding the track to the conference which
+            // manifests primarily on iOS 15.
+            desiredTypes.push(MEDIA_TYPE.AUDIO);
 
             // XXX When the app is coming into the foreground from the
             // background in order to handle a URL, it may realize the new
@@ -127,7 +134,6 @@ export function createLocalTracksA(options = {}) {
                             options.facingMode || CAMERA_FACING_MODE.USER,
                         micDeviceId: options.micDeviceId
                     },
-                    /* firePermissionPromptIsShownEvent */ false,
                     store)
                 .then(
                     localTracks => {
@@ -224,7 +230,7 @@ export function noDataFromSource(track) {
  * @returns {Function}
  */
 export function showNoDataFromSourceVideoError(jitsiTrack) {
-    return (dispatch, getState) => {
+    return async (dispatch, getState) => {
         let notificationInfo;
 
         const track = getTrackByJitsiTrack(getState()['features/base/tracks'], jitsiTrack);
@@ -236,12 +242,11 @@ export function showNoDataFromSourceVideoError(jitsiTrack) {
         if (track.isReceivingData) {
             notificationInfo = undefined;
         } else {
-            const notificationAction = showErrorNotification({
+            const notificationAction = await dispatch(showErrorNotification({
                 descriptionKey: 'dialog.cameraNotSendingData',
                 titleKey: 'dialog.cameraNotSendingDataTitle'
-            });
+            }));
 
-            dispatch(notificationAction);
             notificationInfo = {
                 uid: notificationAction.uid
             };
@@ -254,13 +259,22 @@ export function showNoDataFromSourceVideoError(jitsiTrack) {
  * Signals that the local participant is ending screensharing or beginning the
  * screensharing flow.
  *
+ * @param {boolean} enabled - The state to toggle screen sharing to.
+ * @param {boolean} audioOnly - Only share system audio.
+ * @param {boolean} ignoreDidHaveVideo - Wether or not to ignore if video was on when sharing started.
  * @returns {{
  *     type: TOGGLE_SCREENSHARING,
+ *     on: boolean,
+ *     audioOnly: boolean,
+ *     ignoreDidHaveVideo: boolean
  * }}
  */
-export function toggleScreensharing() {
+export function toggleScreensharing(enabled, audioOnly = false, ignoreDidHaveVideo = false) {
     return {
-        type: TOGGLE_SCREENSHARING
+        type: TOGGLE_SCREENSHARING,
+        enabled,
+        audioOnly,
+        ignoreDidHaveVideo
     };
 }
 
@@ -353,7 +367,7 @@ function replaceStoredTracks(oldTrack, newTrack) {
  * @returns {{ type: TRACK_ADDED, track: Track }}
  */
 export function trackAdded(track) {
-    return (dispatch, getState) => {
+    return async (dispatch, getState) => {
         track.on(
             JitsiTrackEvents.TRACK_MUTE_CHANGED,
             () => dispatch(trackMutedChanged(track)));
@@ -380,12 +394,10 @@ export function trackAdded(track) {
             track.on(JitsiTrackEvents.NO_DATA_FROM_SOURCE, () => dispatch(noDataFromSource({ jitsiTrack: track })));
             if (!isReceivingData) {
                 if (mediaType === MEDIA_TYPE.AUDIO) {
-                    const notificationAction = showNotification({
+                    const notificationAction = await dispatch(showNotification({
                         descriptionKey: 'dialog.micNotSendingData',
                         titleKey: 'dialog.micNotSendingDataTitle'
-                    });
-
-                    dispatch(notificationAction);
+                    }));
 
                     // Set the notification ID so that other parts of the application know that this was
                     // displayed in the context of the current device.
@@ -398,8 +410,15 @@ export function trackAdded(track) {
 
                     noDataFromSourceNotificationInfo = { timeout };
                 }
-
             }
+
+            track.on(JitsiTrackEvents.LOCAL_TRACK_STOPPED,
+                () => dispatch({
+                    type: TRACK_STOPPED,
+                    track: {
+                        jitsiTrack: track
+                    }
+                }));
         } else {
             participantId = track.getParticipantId();
             isReceivingData = true;
@@ -599,26 +618,20 @@ function _disposeTracks(tracks) {
  * Implements the {@code Promise} rejection handler of
  * {@code createLocalTracksA} and {@code createLocalTracksF}.
  *
- * @param {Object} reason - The {@code Promise} rejection reason.
+ * @param {Object} error - The {@code Promise} rejection reason.
  * @param {string} device - The device/{@code MEDIA_TYPE} associated with the
  * rejection.
  * @private
  * @returns {Function}
  */
-function _onCreateLocalTracksRejected({ gum }, device) {
+function _onCreateLocalTracksRejected(error, device) {
     return dispatch => {
         // If permissions are not allowed, alert the user.
-        if (gum) {
-            const { error } = gum;
-
-            if (error) {
-                dispatch({
-                    type: TRACK_CREATE_ERROR,
-                    permissionDenied: error.name === 'SecurityError',
-                    trackType: device
-                });
-            }
-        }
+        dispatch({
+            type: TRACK_CREATE_ERROR,
+            permissionDenied: error?.name === 'SecurityError',
+            trackType: device
+        });
     };
 }
 
@@ -722,5 +735,40 @@ export function updateLastTrackVideoMediaEvent(track, name) {
         type: TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT,
         track,
         name
+    };
+}
+
+/**
+ * Toggles the facingMode constraint on the video stream.
+ *
+ * @returns {Function}
+ */
+export function toggleCamera() {
+    return async (dispatch, getState) => {
+        const state = getState();
+        const tracks = state['features/base/tracks'];
+        const localVideoTrack = getLocalVideoTrack(tracks).jitsiTrack;
+        const currentFacingMode = localVideoTrack.getCameraFacingMode();
+
+        /**
+         * FIXME: Ideally, we should be dispatching {@code replaceLocalTrack} here,
+         * but it seems to not trigger the re-rendering of the local video on Chrome;
+         * could be due to a plan B vs unified plan issue. Therefore, we use the legacy
+         * method defined in conference.js that manually takes care of updating the local
+         * video as well.
+         */
+        await APP.conference.useVideoStream(null);
+
+        const targetFacingMode = currentFacingMode === CAMERA_FACING_MODE.USER
+            ? CAMERA_FACING_MODE.ENVIRONMENT
+            : CAMERA_FACING_MODE.USER;
+
+        // Update the flipX value so the environment facing camera is not flipped, before the new track is created.
+        dispatch(updateSettings({ localFlipX: targetFacingMode === CAMERA_FACING_MODE.USER }));
+
+        const newVideoTrack = await createLocalTrack('video', null, null, { facingMode: targetFacingMode });
+
+        // FIXME: See above.
+        await APP.conference.useVideoStream(newVideoTrack);
     };
 }

@@ -9,9 +9,13 @@ import {
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import {
     getDropboxData,
-    isEnabled as isDropboxEnabled
+    isEnabled as isDropboxEnabled,
+    getNewAccessToken,
+    updateDropboxToken
 } from '../../../dropbox';
+import { showErrorNotification } from '../../../notifications';
 import { toggleRequestingSubtitles } from '../../../subtitles';
+import { setSelectedRecordingService } from '../../actions';
 import { RECORDING_TYPES } from '../../constants';
 
 type Props = {
@@ -47,6 +51,16 @@ type Props = {
      * If true the dropbox integration is enabled, otherwise - disabled.
      */
     _isDropboxEnabled: boolean,
+
+    /**
+     * The dropbox refresh token.
+     */
+    _rToken: string,
+
+    /**
+     * Access token's expiration date as UNIX timestamp.
+     */
+    _tokenExpireDate?: number,
 
     /**
      * The dropbox access token.
@@ -196,7 +210,9 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
      * @returns {void}
      */
     _onSelectedRecordingServiceChanged(selectedRecordingService) {
-        this.setState({ selectedRecordingService });
+        this.setState({ selectedRecordingService }, () => {
+            this.props.dispatch(setSelectedRecordingService(selectedRecordingService));
+        });
     }
 
     /**
@@ -205,7 +221,7 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
      * @returns {void}
      */
     _onTokenUpdated() {
-        const { _appKey, _isDropboxEnabled, _token } = this.props;
+        const { _appKey, _isDropboxEnabled, _token, _rToken, _tokenExpireDate, dispatch } = this.props;
 
         if (!_isDropboxEnabled) {
             return;
@@ -217,6 +233,13 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
                 isValidating: false
             });
         } else {
+            if (_tokenExpireDate && Date.now() > new Date(_tokenExpireDate)) {
+                getNewAccessToken(_appKey, _rToken)
+                    .then(resp => dispatch(updateDropboxToken(resp.token, resp.rToken, resp.expireDate)));
+
+                return;
+            }
+
             this.setState({
                 isTokenValid: false,
                 isValidating: true
@@ -247,23 +270,38 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
      * @returns {boolean} - True (to note that the modal should be closed).
      */
     _onSubmit() {
-        const { _autoCaptionOnRecord, _conference, _isDropboxEnabled, _token, dispatch } = this.props;
+        const {
+            _appKey,
+            _autoCaptionOnRecord,
+            _conference,
+            _isDropboxEnabled,
+            _rToken,
+            _token,
+            dispatch
+        } = this.props;
         let appData;
         const attributes = {};
 
-        if (_isDropboxEnabled
-                && _token
-                && this.state.selectedRecordingService
-                    === RECORDING_TYPES.DROPBOX) {
-            appData = JSON.stringify({
-                'file_recording_metadata': {
-                    'upload_credentials': {
-                        'service_name': RECORDING_TYPES.DROPBOX,
-                        'token': _token
+        if (_isDropboxEnabled && this.state.selectedRecordingService === RECORDING_TYPES.DROPBOX) {
+            if (_token) {
+                appData = JSON.stringify({
+                    'file_recording_metadata': {
+                        'upload_credentials': {
+                            'service_name': RECORDING_TYPES.DROPBOX,
+                            'token': _token,
+                            'r_token': _rToken,
+                            'app_key': _appKey
+                        }
                     }
-                }
-            });
-            attributes.type = RECORDING_TYPES.DROPBOX;
+                });
+                attributes.type = RECORDING_TYPES.DROPBOX;
+            } else {
+                dispatch(showErrorNotification({
+                    titleKey: 'dialog.noDropboxToken'
+                }));
+
+                return;
+            }
         } else {
             appData = JSON.stringify({
                 'file_recording_metadata': {
@@ -311,6 +349,8 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
  *     _fileRecordingsServiceEnabled: boolean,
  *     _fileRecordingsServiceSharingEnabled: boolean,
  *     _isDropboxEnabled: boolean,
+ *     _rToken:string,
+ *     _tokenExpireDate: number,
  *     _token: string
  * }}
  */
@@ -329,6 +369,8 @@ export function mapStateToProps(state: Object) {
         _fileRecordingsServiceEnabled: fileRecordingsServiceEnabled,
         _fileRecordingsServiceSharingEnabled: fileRecordingsServiceSharingEnabled,
         _isDropboxEnabled: isDropboxEnabled(state),
+        _rToken: state['features/dropbox'].rToken,
+        _tokenExpireDate: state['features/dropbox'].expireDate,
         _token: state['features/dropbox'].token
     };
 }

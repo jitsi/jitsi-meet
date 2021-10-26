@@ -2,16 +2,25 @@
 
 import _ from 'lodash';
 
-import { equals, ReducerRegistry, set } from '../redux';
+import { CONFERENCE_INFO } from '../../conference/components/constants';
+import { equals, ReducerRegistry } from '../redux';
 
-import { UPDATE_CONFIG, CONFIG_WILL_LOAD, LOAD_CONFIG_ERROR, SET_CONFIG } from './actionTypes';
+import {
+    UPDATE_CONFIG,
+    CONFIG_WILL_LOAD,
+    LOAD_CONFIG_ERROR,
+    SET_CONFIG,
+    OVERWRITE_CONFIG
+} from './actionTypes';
 import { _cleanupConfig } from './functions';
+
+declare var interfaceConfig: Object;
 
 /**
  * The initial state of the feature base/config when executing in a
  * non-React Native environment. The mandatory configuration to be passed to
  * JitsiMeetJS#init(). The app will download config.js from the Jitsi Meet
- * deployment and take its values into account but the values bellow will be
+ * deployment and take its values into account but the values below will be
  * enforced (because they are essential to the correct execution of the
  * application).
  *
@@ -24,7 +33,7 @@ const INITIAL_NON_RN_STATE = {
  * The initial state of the feature base/config when executing in a React Native
  * environment. The mandatory configuration to be passed to JitsiMeetJS#init().
  * The app will download config.js from the Jitsi Meet deployment and take its
- * values into account but the values bellow will be enforced (because they are
+ * values into account but the values below will be enforced (because they are
  * essential to the correct execution of the application).
  *
  * @type {Object}
@@ -41,11 +50,22 @@ const INITIAL_RN_STATE = {
     disableAudioLevels: true,
 
     p2p: {
-        disableH264: false,
-        preferH264: true
-    },
+        disabledCodec: '',
+        disableH264: false, // deprecated
+        preferredCodec: 'H264',
+        preferH264: true // deprecated
+    }
+};
 
-    remoteVideoMenu: {}
+/**
+ * Mapping between old configs controlling the conference info headers visibility and the
+ * new configs. Needed in order to keep backwards compatibility.
+ */
+const CONFERENCE_HEADER_MAPPING = {
+    hideConferenceTimer: [ 'conference-timer' ],
+    hideConferenceSubject: [ 'subject' ],
+    hideParticipantsStats: [ 'participants-count' ],
+    hideRecordingLabel: [ 'recording', 'local-recording' ]
 };
 
 ReducerRegistry.register('features/base/config', (state = _getInitialState(), action) => {
@@ -58,11 +78,11 @@ ReducerRegistry.register('features/base/config', (state = _getInitialState(), ac
             error: undefined,
 
             /**
-                * The URL of the location associated with/configured by this
-                * configuration.
-                *
-                * @type URL
-                */
+            * The URL of the location associated with/configured by this
+            * configuration.
+            *
+            * @type URL
+            */
             locationURL: action.locationURL
         };
 
@@ -76,11 +96,11 @@ ReducerRegistry.register('features/base/config', (state = _getInitialState(), ac
         if (state.locationURL === action.locationURL) {
             return {
                 /**
-                    * The {@link Error} which prevented the loading of the
-                    * configuration of the associated {@code locationURL}.
-                    *
-                    * @type Error
-                    */
+                * The {@link Error} which prevented the loading of the
+                * configuration of the associated {@code locationURL}.
+                *
+                * @type Error
+                */
                 error: action.error
             };
         }
@@ -88,6 +108,12 @@ ReducerRegistry.register('features/base/config', (state = _getInitialState(), ac
 
     case SET_CONFIG:
         return _setConfig(state, action);
+
+    case OVERWRITE_CONFIG:
+        return {
+            ...state,
+            ...action.config
+        };
     }
 
     return state;
@@ -97,7 +123,7 @@ ReducerRegistry.register('features/base/config', (state = _getInitialState(), ac
  * Gets the initial state of the feature base/config. The mandatory
  * configuration to be passed to JitsiMeetJS#init(). The app will download
  * config.js from the Jitsi Meet deployment and take its values into account but
- * the values bellow will be enforced (because they are essential to the correct
+ * the values below will be enforced (because they are essential to the correct
  * execution of the application).
  *
  * @returns {Object}
@@ -129,9 +155,22 @@ function _setConfig(state, { config }) {
     // eslint-disable-next-line no-param-reassign
     config = _translateLegacyConfig(config);
 
+    const { audioQuality } = config;
+    const hdAudioOptions = {};
+
+    if (audioQuality?.stereo) {
+        Object.assign(hdAudioOptions, {
+            disableAP: true,
+            enableNoAudioDetection: false,
+            enableNoisyMicDetection: false,
+            enableTalkWhileMuted: false
+        });
+    }
+
     const newState = _.merge(
         {},
         config,
+        hdAudioOptions,
         { error: undefined },
 
         // The config of _getInitialState() is meant to override the config
@@ -143,6 +182,27 @@ function _setConfig(state, { config }) {
     _cleanupConfig(newState);
 
     return equals(state, newState) ? state : newState;
+}
+
+/**
+ * Processes the conferenceInfo object against the defaults.
+ *
+ * @param {Object} config - The old config.
+ * @returns {Object} The processed conferenceInfo object.
+ */
+function _getConferenceInfo(config) {
+    const { conferenceInfo } = config;
+
+    if (conferenceInfo) {
+        return {
+            alwaysVisible: conferenceInfo.alwaysVisible ?? [ ...CONFERENCE_INFO.alwaysVisible ],
+            autoHide: conferenceInfo.autoHide ?? [ ...CONFERENCE_INFO.autoHide ]
+        };
+    }
+
+    return {
+        ...CONFERENCE_INFO
+    };
 }
 
 /**
@@ -160,42 +220,99 @@ function _setConfig(state, { config }) {
  * supported by jitsi-meet.
  */
 function _translateLegacyConfig(oldValue: Object) {
-    let newValue = oldValue;
+    const newValue = oldValue;
 
-    const oldConfigToNewConfig = {
-        analytics: [
-            [ 'analyticsScriptUrls', 'scriptURLs' ],
-            [ 'googleAnalyticsTrackingId', 'googleAnalyticsTrackingId' ]
-        ]
-    };
+    if (!Array.isArray(oldValue.toolbarButtons)
+            && typeof interfaceConfig === 'object' && Array.isArray(interfaceConfig.TOOLBAR_BUTTONS)) {
+        newValue.toolbarButtons = interfaceConfig.TOOLBAR_BUTTONS;
+    }
 
-    // Translate the old config properties into the new config properties.
-    Object.keys(oldConfigToNewConfig).forEach(section => {
-        if (typeof oldValue[section] !== 'object') {
-            newValue = set(newValue, section, {});
-        }
+    if (!oldValue.toolbarConfig) {
+        oldValue.toolbarConfig = {};
+    }
 
-        for (const [ oldKey, newKey ] of oldConfigToNewConfig[section]) {
-            if (oldKey in newValue && !(newKey in newValue[section])) {
-                const v = newValue[oldKey];
+    if (typeof oldValue.toolbarConfig.alwaysVisible !== 'boolean'
+        && typeof interfaceConfig === 'object'
+        && typeof interfaceConfig.TOOLBAR_ALWAYS_VISIBLE === 'boolean') {
+        newValue.toolbarConfig.alwaysVisible = interfaceConfig.TOOLBAR_ALWAYS_VISIBLE;
+    }
 
-                // Do not modify oldValue.
-                if (newValue === oldValue) {
-                    newValue = {
-                        ...newValue
-                    };
-                }
-                delete newValue[oldKey];
+    if (typeof oldValue.toolbarConfig.initialTimeout !== 'number'
+        && typeof interfaceConfig === 'object'
+        && typeof interfaceConfig.INITIAL_TOOLBAR_TIMEOUT === 'number') {
+        newValue.toolbarConfig.initialTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
+    }
 
-                // Do not modify the section because it may be from oldValue
-                // i.e. do not modify oldValue.
-                newValue[section] = {
-                    ...newValue[section],
-                    [newKey]: v
-                };
+    if (typeof oldValue.toolbarConfig.timeout !== 'number'
+        && typeof interfaceConfig === 'object'
+        && typeof interfaceConfig.TOOLBAR_TIMEOUT === 'number') {
+        newValue.toolbarConfig.timeout = interfaceConfig.TOOLBAR_TIMEOUT;
+    }
+
+    const filteredConferenceInfo = Object.keys(CONFERENCE_HEADER_MAPPING).filter(key => oldValue[key]);
+
+    if (filteredConferenceInfo.length) {
+        newValue.conferenceInfo = _getConferenceInfo(oldValue);
+
+        filteredConferenceInfo.forEach(key => {
+            // hideRecordingLabel does not mean not render it at all, but autoHide it
+            if (key === 'hideRecordingLabel') {
+                newValue.conferenceInfo.alwaysVisible
+                    = newValue.conferenceInfo.alwaysVisible.filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
+                newValue.conferenceInfo.autoHide
+                    = _.union(newValue.conferenceInfo.autoHide, CONFERENCE_HEADER_MAPPING[key]);
+            } else {
+                newValue.conferenceInfo.alwaysVisible
+                    = newValue.conferenceInfo.alwaysVisible.filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
+                newValue.conferenceInfo.autoHide
+                    = newValue.conferenceInfo.autoHide.filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
             }
-        }
-    });
+        });
+    }
+
+    if (!oldValue.connectionIndicators
+            && typeof interfaceConfig === 'object'
+            && (interfaceConfig.hasOwnProperty('CONNECTION_INDICATOR_DISABLED')
+                || interfaceConfig.hasOwnProperty('CONNECTION_INDICATOR_AUTO_HIDE_ENABLED')
+                || interfaceConfig.hasOwnProperty('CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT'))) {
+        newValue.connectionIndicators = {
+            disabled: interfaceConfig.CONNECTION_INDICATOR_DISABLED,
+            autoHide: interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_ENABLED,
+            autoHideTimeout: interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT
+        };
+    }
+
+    newValue.disabledSounds = newValue.disabledSounds || [];
+
+    if (oldValue.disableJoinLeaveSounds) {
+        newValue.disabledSounds.unshift('PARTICIPANT_LEFT_SOUND', 'PARTICIPANT_JOINED_SOUND');
+    }
+
+    if (oldValue.disableRecordAudioNotification) {
+        newValue.disabledSounds.unshift(
+            'RECORDING_ON_SOUND',
+            'RECORDING_OFF_SOUND',
+            'LIVE_STREAMING_ON_SOUND',
+            'LIVE_STREAMING_OFF_SOUND'
+        );
+    }
+
+    if (oldValue.disableIncomingMessageSound) {
+        newValue.disabledSounds.unshift('INCOMING_MSG_SOUND');
+    }
+
+    if (oldValue.stereo || oldValue.opusMaxAverageBitrate) {
+        newValue.audioQuality = {
+            opusMaxAverageBitrate: oldValue.audioQuality?.opusMaxAverageBitrate ?? oldValue.opusMaxAverageBitrate,
+            stereo: oldValue.audioQuality?.stereo ?? oldValue.stereo
+        };
+    }
+
+    if (oldValue.disableModeratorIndicator === undefined
+        && typeof interfaceConfig === 'object'
+        && interfaceConfig.hasOwnProperty('DISABLE_FOCUS_INDICATOR')) {
+        newValue.disableModeratorIndicator = interfaceConfig.DISABLE_FOCUS_INDICATOR;
+    }
 
     return newValue;
 }

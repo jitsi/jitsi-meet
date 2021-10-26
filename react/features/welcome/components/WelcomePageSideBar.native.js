@@ -16,7 +16,7 @@ import {
 } from '../../base/react';
 import { connect } from '../../base/redux';
 import { HELP_VIEW_MODAL_ID } from '../../help';
-import { SETTINGS_VIEW_ID } from '../../settings';
+import { SETTINGS_VIEW_ID } from '../../settings/constants';
 import { setSideBarVisible } from '../actions';
 
 import SideBarItem from './SideBarItem';
@@ -83,7 +83,6 @@ class WelcomePageSideBar extends Component<Props> {
         return (
             <SlidingView
                 onHide = { this._onHideSideBar }
-                position = 'left'
                 show = { this.props._visible }
                 style = { styles.sideBar } >
                 <Header style = { styles.sideBarHeader }>

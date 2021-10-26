@@ -38,7 +38,103 @@ type Props = {
      * Used to determine the value of the autoplay attribute of the underlying
      * video element.
      */
-    playsinline: boolean
+    playsinline: boolean,
+
+    /**
+     * A map of the event handlers for the video HTML element.
+     */
+    eventHandlers?: {|
+
+        /**
+         * onAbort event handler.
+         */
+        onAbort?: ?Function,
+
+        /**
+         * onCanPlay event handler.
+         */
+        onCanPlay?: ?Function,
+
+        /**
+         * onCanPlayThrough event handler.
+         */
+        onCanPlayThrough?: ?Function,
+
+        /**
+         * onEmptied event handler.
+         */
+        onEmptied?: ?Function,
+
+        /**
+         * onEnded event handler.
+         */
+        onEnded?: ?Function,
+
+        /**
+         * onError event handler.
+         */
+        onError?: ?Function,
+
+        /**
+         * onLoadedData event handler.
+         */
+        onLoadedData?: ?Function,
+
+        /**
+         * onLoadedMetadata event handler.
+         */
+        onLoadedMetadata?: ?Function,
+
+        /**
+         * onLoadStart event handler.
+         */
+        onLoadStart?: ?Function,
+
+        /**
+         * onPause event handler.
+         */
+        onPause?: ?Function,
+
+        /**
+         * onPlay event handler.
+         */
+        onPlay?: ?Function,
+
+        /**
+         * onPlaying event handler.
+         */
+        onPlaying?: ?Function,
+
+        /**
+         * onRateChange event handler.
+         */
+        onRateChange?: ?Function,
+
+        /**
+         * onStalled event handler.
+         */
+        onStalled?: ?Function,
+
+        /**
+         * onSuspend event handler.
+         */
+        onSuspend?: ?Function,
+
+        /**
+         * onWaiting event handler.
+         */
+        onWaiting?: ?Function
+    |},
+
+    /**
+     * A styles that will be applied on the video element.
+     */
+    style?: Object,
+
+    /**
+     * The value of the muted attribute for the underlying video element.
+     */
+    muted?: boolean
 };
 
 /**
@@ -48,6 +144,7 @@ type Props = {
  */
 class Video extends Component<Props> {
     _videoElement: ?Object;
+    _mounted: boolean;
 
     /**
      * Default values for {@code Video} component's properties.
@@ -93,6 +190,8 @@ class Video extends Component<Props> {
      * @returns {void}
      */
     componentDidMount() {
+        this._mounted = true;
+
         if (this._videoElement) {
             this._videoElement.volume = 0;
             this._videoElement.onplaying = this._onVideoPlaying;
@@ -104,7 +203,14 @@ class Video extends Component<Props> {
             // Ensure the video gets play() called on it. This may be necessary in the
             // case where the local video container was moved and re-attached, in which
             // case video does not autoplay.
-            this._videoElement.play();
+            this._videoElement.play()
+                .catch(error => {
+                    // Prevent uncaught "DOMException: The play() request was interrupted by a new load request"
+                    // when video playback takes long to start and it starts after the component was unmounted.
+                    if (this._mounted) {
+                        throw error;
+                    }
+                });
         }
     }
 
@@ -116,6 +222,7 @@ class Video extends Component<Props> {
      * @returns {void}
      */
     componentWillUnmount() {
+        this._mounted = false;
         this._detachTrack(this.props.videoTrack);
     }
 
@@ -139,6 +246,10 @@ class Video extends Component<Props> {
             this._attachTrack(nextProps.videoTrack);
         }
 
+        if (this.props.style !== nextProps.style || this.props.className !== nextProps.className) {
+            return true;
+        }
+
         return false;
     }
 
@@ -149,13 +260,26 @@ class Video extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
+        const {
+            autoPlay,
+            className,
+            id,
+            muted,
+            playsinline,
+            style,
+            eventHandlers
+        } = this.props;
+
         return (
             <video
-                autoPlay = { this.props.autoPlay }
-                className = { this.props.className }
-                id = { this.props.id }
-                playsInline = { this.props.playsinline }
-                ref = { this._setVideoElement } />
+                autoPlay = { autoPlay }
+                className = { className }
+                id = { id }
+                muted = { muted }
+                playsInline = { playsinline }
+                ref = { this._setVideoElement }
+                style = { style }
+                { ...eventHandlers } />
         );
     }
 

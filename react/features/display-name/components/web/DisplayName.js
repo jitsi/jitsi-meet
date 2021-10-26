@@ -197,7 +197,7 @@ class DisplayName extends Component<Props, State> {
     _onKeyDown: () => void;
 
     /**
-     * Submits the editted display name update if the enter key is pressed.
+     * Submits the edited display name update if the enter key is pressed.
      *
      * @param {Event} event - Key down event object.
      * @private
@@ -288,8 +288,7 @@ function _mapStateToProps(state, ownProps) {
 
     return {
         _configuredDisplayName: participant && participant.name,
-        _nameToDisplay: getParticipantDisplayName(
-            state, participantID)
+        _nameToDisplay: getParticipantDisplayName(state, participantID)
     };
 }
 

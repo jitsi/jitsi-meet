@@ -63,9 +63,11 @@
         "messagebox": "Aru izen",
         "nickname": {
             "popover": "Fren meffer isem",
-            "title": "Sekcem meffer isem i useqdec n usqerdec"
+            "title": "Sekcem meffer isem i useqdec n usqerdec",
+            "titleWithPolls": "Sekcem meffer isem i useqdec n usqerdec"
         },
         "title": "Asqerdec",
+        "titleWithPolls": "Asqerdec",
         "noMessagesMessage": "Ulac iznan akka tura deg temlilit. Bdu adiwenni da!",
         "you": "kečč·kemm",
         "fieldPlaceHolder": "Aru izen-inek·inem da"

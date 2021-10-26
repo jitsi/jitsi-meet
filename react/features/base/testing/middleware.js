@@ -91,7 +91,7 @@ function _bindTortureHelpers(store) {
 }
 
 /**
- * The handler function for conference connection events which wil store the
+ * The handler function for conference connection events which will store the
  * latest even name in the Redux store of feature testing.
  *
  * @param {string} event - One of the lib-jitsi-meet JitsiConferenceEvents.

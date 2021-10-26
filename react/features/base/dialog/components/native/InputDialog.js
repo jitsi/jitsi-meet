@@ -96,6 +96,7 @@ class InputDialog extends BaseDialog<Props, State> {
                         { t(this.props.contentKey) }
                     </Text>
                     <TextInput
+                        autoFocus = { true }
                         onChangeText = { this._onChangeText }
                         style = { _dialogStyles.field }
                         underlineColorAndroid = { FIELD_UNDERLINE }

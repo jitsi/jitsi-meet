@@ -2,9 +2,6 @@
 <VirtualHost *:80>
     ServerName jitsi-meet.example.com
     Redirect permanent / https://jitsi-meet.example.com/
-    RewriteEngine On
-    RewriteCond %{HTTPS} off
-    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 </VirtualHost>
 
 <VirtualHost *:443>
@@ -42,11 +39,12 @@
     </Location>
 
     ProxyPreserveHost on
-    ProxyPass /http-bind http://localhost:5280/http-bind/
-    ProxyPassReverse /http-bind http://localhost:5280/http-bind/
-    ProxyPass /xmpp-websocket http://localhost:5280/xmpp-websocket
-    ProxyPassReverse /xmpp-websocket http://localhost:5280/xmpp-websocket
-    ProxyPassMatch ^/colibri-ws/default-id http://localhost:9090
+    ProxyPass /http-bind http://localhost:5280/http-bind
+    ProxyPassReverse /http-bind http://localhost:5280/http-bind
+    ProxyPass /xmpp-websocket ws://localhost:5280/xmpp-websocket
+    ProxyPassReverse /xmpp-websocket ws://localhost:5280/xmpp-websocket
+    ProxyPass /colibri-ws/default-id ws://localhost:9090/colibri-ws/default-id
+    ProxyPassReverse /colibri-ws/default-id ws://localhost:9090/colibri-ws/default-id
 
     RewriteEngine on
     RewriteRule ^/([a-zA-Z0-9]+)$ /index.html

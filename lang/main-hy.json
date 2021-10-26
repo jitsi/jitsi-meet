@@ -49,9 +49,11 @@
         "messagebox": "",
         "nickname": {
             "popover": "Ընտրեք մականուն",
-            "title": ""
+            "title": "",
+            "titleWithPolls": ""
         },
-        "title": ""
+        "title": "",
+        "titleWithPolls": ""
     },
     "connectingOverlay": {
         "joiningRoom": ""

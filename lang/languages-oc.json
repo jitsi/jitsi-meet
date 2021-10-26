@@ -18,6 +18,7 @@
     "fr": "Francés",
     "frCA": "Francés (Canadian)",
     "he": "Ebrèu",
+    "hi": "Indi",     
     "mr":"Marathi",
     "hr": "Croat",
     "hu": "Ongrés",
@@ -32,7 +33,9 @@
     "lv": "Leton",
     "nl": "Neerlandés",
     "oc": "Occitan",
+    "fa": "Persa",    
     "pl": "Polonés",
+    "pt": "Portugués",    
     "ptBR": "Portugués (Brasil)",
     "ru": "Rus",
     "ro": "Romanian",
@@ -40,7 +43,9 @@
     "sk": "Eslovac",
     "sl": "Eslovèn",
     "sr": "Sèrbe",
+    "sq": "Albanés",    
     "sv": "Suedés",
+    "te": "Telugu",    
     "th": "Tai",
     "tr": "Turc",
     "uk": "Ucraïnian",
@@ -48,5 +53,3 @@
     "zhCN": "Chinés (China)",
     "zhTW": "Chinés (Taiwan)"
 }
-
-

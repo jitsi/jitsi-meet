@@ -40,7 +40,8 @@
 
         <service
             android:name=".ConnectionService"
-            android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE">
+            android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.telecom.ConnectionService" />
             </intent-filter>
@@ -56,6 +57,14 @@
             android:enabled="false"
             tools:replace="android:authorities">
         </provider>
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false">
+            <meta-data  android:name="org.jitsi.meet.sdk.JitsiInitializer"
+                android:value="androidx.startup" />
+        </provider>
+
     </application>
 
 </manifest>

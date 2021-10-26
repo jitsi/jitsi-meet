@@ -132,6 +132,7 @@ public class JitsiMeetOngoingConferenceService extends Service
     public void onCurrentConferenceChanged(String conferenceUrl) {
         if (conferenceUrl == null) {
             stopSelf();
+            OngoingNotification.resetStartingtime();
             JitsiMeetLogger.i(TAG + "Service stopped");
         }
     }

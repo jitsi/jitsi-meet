@@ -3,16 +3,27 @@
 import React, { Component } from 'react';
 
 import { isMobileBrowser } from '../../../base/environment/utils';
-import { IconArrowDown } from '../../../base/icons';
+import { translate } from '../../../base/i18n';
+import { IconArrowUp } from '../../../base/icons';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
 import { connect } from '../../../base/redux';
 import { ToolboxButtonWithIcon } from '../../../base/toolbox/components';
-import { getMediaPermissionPromptVisibility } from '../../../overlay';
 import { AudioSettingsPopup, toggleAudioSettings } from '../../../settings';
+import { getAudioSettingsVisibility } from '../../../settings/functions';
 import { isAudioSettingsButtonDisabled } from '../../functions';
 import AudioMuteButton from '../AudioMuteButton';
 
 type Props = {
+
+    /**
+     * External handler for click action.
+     */
+     handleClick: Function,
+
+    /**
+     * Indicates whether audio permissions have been granted or denied.
+     */
+    hasPermissions: boolean,
 
     /**
      * Click handler for the small icon. Opens audio options.
@@ -20,96 +31,78 @@ type Props = {
     onAudioOptionsClick: Function,
 
     /**
-     * Whether the permission prompt is visible or not.
-     * Useful for enabling the button on permission grant.
-     */
-    permissionPromptVisibility: boolean,
-
-    /**
      * If the button should be disabled.
      */
     isDisabled: boolean,
+
+    /**
+     * Used for translation.
+     */
+    t: Function,
 
     /**
      * Flag controlling the visibility of the button.
      * AudioSettings popup is disabled on mobile browsers.
      */
     visible: boolean,
-};
-
-type State = {
 
     /**
-     * If there are permissions for audio devices.
+     * Defines is popup is open
      */
-    hasPermissions: boolean,
-}
+    isOpen: boolean,
+};
 
 /**
  * Button used for audio & audio settings.
  *
  * @returns {ReactElement}
  */
-class AudioSettingsButton extends Component<Props, State> {
-    _isMounted: boolean;
-
+class AudioSettingsButton extends Component<Props> {
     /**
      * Initializes a new {@code AudioSettingsButton} instance.
      *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
+     * @inheritdoc
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
-        this._isMounted = true;
-        this.state = {
-            hasPermissions: false
-        };
+        this._onEscClick = this._onEscClick.bind(this);
+        this._onClick = this._onClick.bind(this);
     }
 
-    /**
-     * Updates device permissions.
-     *
-     * @returns {Promise<void>}
-     */
-    async _updatePermissions() {
-        const hasPermissions = await JitsiMeetJS.mediaDevices.isDevicePermissionGranted(
-            'audio',
-        );
-
-        this._isMounted && this.setState({
-            hasPermissions
-        });
-    }
+    _onEscClick: (KeyboardEvent) => void;
 
     /**
-     * Implements React's {@link Component#componentDidMount}.
+     * Click handler for the more actions entries.
      *
-     * @inheritdoc
+     * @param {KeyboardEvent} event - Esc key click to close the popup.
+     * @returns {void}
      */
-    componentDidMount() {
-        this._updatePermissions();
-    }
-
-    /**
-     * Implements React's {@link Component#componentDidUpdate}.
-     *
-     * @inheritdoc
-     */
-    componentDidUpdate(prevProps) {
-        if (this.props.permissionPromptVisibility !== prevProps.permissionPromptVisibility) {
-            this._updatePermissions();
+    _onEscClick(event) {
+        if (event.key === 'Escape' && this.props.isOpen) {
+            event.preventDefault();
+            event.stopPropagation();
+            this._onClick();
         }
     }
 
+    _onClick: () => void;
+
     /**
-     * Implements React's {@link Component#componentWillUnmount}.
+     * Click handler for the more actions entries.
      *
-     * @inheritdoc
+     * @returns {void}
      */
-    componentWillUnmount() {
-        this._isMounted = false;
+    _onClick() {
+        const { handleClick, onAudioOptionsClick } = this.props;
+
+        if (handleClick) {
+            handleClick();
+
+            return;
+        }
+
+        onAudioOptionsClick();
     }
 
     /**
@@ -118,21 +111,28 @@ class AudioSettingsButton extends Component<Props, State> {
      * @inheritdoc
      */
     render() {
-        const { isDisabled, onAudioOptionsClick, visible } = this.props;
-        const settingsDisabled = !this.state.hasPermissions
+        const { handleClick, hasPermissions, isDisabled, visible, isOpen, t } = this.props;
+        const settingsDisabled = !hasPermissions
             || isDisabled
             || !JitsiMeetJS.mediaDevices.isMultipleAudioInputSupported();
 
         return visible ? (
             <AudioSettingsPopup>
                 <ToolboxButtonWithIcon
-                    icon = { IconArrowDown }
+                    ariaControls = 'audio-settings-dialog'
+                    ariaExpanded = { isOpen }
+                    ariaHasPopup = { true }
+                    ariaLabel = { t('toolbar.audioSettings') }
+                    icon = { IconArrowUp }
                     iconDisabled = { settingsDisabled }
-                    onIconClick = { onAudioOptionsClick }>
-                    <AudioMuteButton />
+                    iconId = 'audio-settings-button'
+                    iconTooltip = { t('toolbar.audioSettings') }
+                    onIconClick = { this._onClick }
+                    onIconKeyDown = { this._onEscClick }>
+                    <AudioMuteButton handleClick = { handleClick } />
                 </ToolboxButtonWithIcon>
             </AudioSettingsPopup>
-        ) : <AudioMuteButton />;
+        ) : <AudioMuteButton handleClick = { handleClick } />;
     }
 }
 
@@ -143,9 +143,12 @@ class AudioSettingsButton extends Component<Props, State> {
  * @returns {Object}
  */
 function mapStateToProps(state) {
+    const { permissions = {} } = state['features/base/devices'];
+
     return {
+        hasPermissions: permissions.audio,
         isDisabled: isAudioSettingsButtonDisabled(state),
-        permissionPromptVisibility: getMediaPermissionPromptVisibility(state),
+        isOpen: getAudioSettingsVisibility(state),
         visible: !isMobileBrowser()
     };
 }
@@ -154,7 +157,7 @@ const mapDispatchToProps = {
     onAudioOptionsClick: toggleAudioSettings
 };
 
-export default connect(
+export default translate(connect(
     mapStateToProps,
     mapDispatchToProps,
-)(AudioSettingsButton);
+)(AudioSettingsButton));

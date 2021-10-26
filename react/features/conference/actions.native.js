@@ -18,6 +18,12 @@ import { getParticipantDisplayName } from '../base/participants';
  */
 export function notifyKickedOut(participant: Object, submit: ?Function) {
     return (dispatch: Dispatch<any>, getState: Function) => {
+        if (!participant || (participant.isReplaced && participant.isReplaced())) {
+            submit && submit();
+
+            return;
+        }
+
         dispatch(openDialog(AlertDialog, {
             contentKey: {
                 key: 'dialog.kickTitle',

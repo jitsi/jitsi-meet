@@ -36,8 +36,7 @@ export default {
             }
         }
 
-        // Fix language format (en-US => enUS)
-        found = found.map<string>(f => f.replace(/[-_]+/g, ''));
+        found = found.map<string>(normalizeLanguage);
 
         return found.length > 0 ? found : undefined;
     },
@@ -47,3 +46,23 @@ export default {
      */
     name: 'customNavigatorDetector'
 };
+
+/**
+ * Normalize language format.
+ *
+ * (en-US => enUS)
+ * (en-gb => enGB)
+ * (es-es => es).
+ *
+ * @param {string} language - Language.
+ * @returns {string} The normalized language.
+ */
+function normalizeLanguage(language) {
+    const [ lang, variant ] = language.replace('_', '-').split('-');
+
+    if (!variant || lang === variant) {
+        return lang;
+    }
+
+    return lang + variant.toUpperCase();
+}

@@ -27,6 +27,8 @@ const ALWAYS_ON_TOP_FILENAMES = [
  * commands expected by jitsi-meet
  */
 const commands = {
+    approveVideo: 'approve-video',
+    askToUnmute: 'ask-to-unmute',
     avatarUrl: 'avatar-url',
     cancelPrivateChat: 'cancel-private-chat',
     displayName: 'display-name',
@@ -34,24 +36,44 @@ const commands = {
     email: 'email',
     toggleLobby: 'toggle-lobby',
     hangup: 'video-hangup',
-    intiatePrivateChat: 'initiate-private-chat',
+    initiatePrivateChat: 'initiate-private-chat',
+    joinWithPassword: 'join-with-password',
+    skipPrejoin: 'skip-prejoin',
+    meetingReconnect: 'meeting-reconnect',
+    grantModerator: 'grant-moderator',
+    kickParticipant: 'kick-participant',
     muteEveryone: 'mute-everyone',
+    overwriteConfig: 'overwrite-config',
     password: 'password',
+    accessCode: 'accessCode',
     pinParticipant: 'pin-participant',
+    rejectParticipant: 'reject-participant',
     resizeLargeVideo: 'resize-large-video',
+    sendChatMessage: 'send-chat-message',
     sendEndpointTextMessage: 'send-endpoint-text-message',
     sendTones: 'send-tones',
+    setFollowMe: 'set-follow-me',
     setLargeVideoParticipant: 'set-large-video-participant',
+    setParticipantVolume: 'set-participant-volume',
+    setTileView: 'set-tile-view',
     setVideoQuality: 'set-video-quality',
     startRecording: 'start-recording',
+    startShareVideo: 'start-share-video',
     stopRecording: 'stop-recording',
+    stopShareVideo: 'stop-share-video',
     subject: 'subject',
     submitFeedback: 'submit-feedback',
     toggleAudio: 'toggle-audio',
+    toggleCamera: 'toggle-camera',
+    toggleCameraMirror: 'toggle-camera-mirror',
     toggleChat: 'toggle-chat',
     toggleFilmStrip: 'toggle-film-strip',
+    toggleModeration: 'toggle-moderation',
+    toggleRaiseHand: 'toggle-raise-hand',
+    toggleShareAudio: 'toggle-share-audio',
     toggleShareScreen: 'toggle-share-screen',
     toggleTileView: 'toggle-tile-view',
+    toggleVirtualBackgroundDialog: 'toggle-virtual-background',
     toggleVideo: 'toggle-video',
 	
 	// Intulse added commands.
@@ -67,12 +89,15 @@ const events = {
     'avatar-changed': 'avatarChanged',
     'audio-availability-changed': 'audioAvailabilityChanged',
     'audio-mute-status-changed': 'audioMuteStatusChanged',
+    'browser-support': 'browserSupport',
     'camera-error': 'cameraError',
     'chat-updated': 'chatUpdated',
     'content-sharing-participants-changed': 'contentSharingParticipantsChanged',
+    'data-channel-opened': 'dataChannelOpened',
     'device-list-changed': 'deviceListChanged',
     'display-name-change': 'displayNameChange',
     'email-change': 'emailChange',
+    'error-occurred': 'errorOccurred',
     'endpoint-text-message-received': 'endpointTextMessageReceived',
     'feedback-submitted': 'feedbackSubmitted',
     'feedback-prompt-displayed': 'feedbackPromptDisplayed',
@@ -80,14 +105,22 @@ const events = {
     'incoming-message': 'incomingMessage',
     'log': 'log',
     'mic-error': 'micError',
+    'moderation-participant-approved': 'moderationParticipantApproved',
+    'moderation-participant-rejected': 'moderationParticipantRejected',
+    'moderation-status-changed': 'moderationStatusChanged',
+    'mouse-enter': 'mouseEnter',
+    'mouse-leave': 'mouseLeave',
+    'mouse-move': 'mouseMove',
     'outgoing-message': 'outgoingMessage',
     'participant-joined': 'participantJoined',
     'participant-kicked-out': 'participantKickedOut',
     'participant-left': 'participantLeft',
     'participant-role-changed': 'participantRoleChanged',
+    'password-changed': 'passwordChanged',
     'password-required': 'passwordRequired',
     'proxy-connection-event': 'proxyConnectionEvent',
     'raise-hand-updated': 'raiseHandUpdated',
+    'recording-status-changed': 'recordingStatusChanged',
     'video-ready-to-close': 'readyToClose',
     'video-conference-joined': 'videoConferenceJoined',
     'video-conference-left': 'videoConferenceLeft',
@@ -98,7 +131,9 @@ const events = {
     'dominant-speaker-changed': 'dominantSpeakerChanged',
     'subject-change': 'subjectChange',
     'suspend-detected': 'suspendDetected',
-    'tile-view-changed': 'tileViewChanged'
+    'tile-view-changed': 'tileViewChanged',
+    'toolbar-button-clicked': 'toolbarButtonClicked',
+    'lobby-mode-updated': 'lobbyModeUpdated'
 };
 
 /**
@@ -158,7 +193,7 @@ function parseArguments(args) {
 
     switch (typeof firstArg) {
     case 'string': // old arguments format
-    case undefined: {
+    case 'undefined': {
         // Not sure which format but we are trying to parse the old
         // format because if the new format is used everything will be undefined
         // anyway.
@@ -199,7 +234,7 @@ function parseArguments(args) {
  * @param {any} value - The value to be parsed.
  * @returns {string|undefined} The parsed value that can be used for setting
  * sizes through the style property. If invalid value is passed the method
- * retuns undefined.
+ * returns undefined.
  */
 function parseSizeParam(value) {
     let parsedValue;
@@ -323,7 +358,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         const frameName = `jitsiConferenceFrame${id}`;
 
         this._frame = document.createElement('iframe');
-        this._frame.allow = 'camera; microphone; display-capture';
+        this._frame.allow = 'camera; microphone; display-capture; autoplay; clipboard-write';
         this._frame.src = this._url;
         this._frame.name = frameName;
         this._frame.id = frameName;
@@ -758,6 +793,29 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Returns any custom avatars backgrounds.
+     *
+     * @returns {Promise} - Resolves with the list of custom avatar backgrounds.
+     */
+    getCustomAvatarBackgrounds() {
+        return this._transport.sendRequest({
+            name: 'get-custom-avatar-backgrounds'
+        });
+    }
+
+    /**
+     * Returns the current livestream url.
+     *
+     * @returns {Promise} - Resolves with the current livestream URL if exists, with
+     * undefined if not and rejects on failure.
+     */
+    getLivestreamUrl() {
+        return this._transport.sendRequest({
+            name: 'get-livestream-url'
+        });
+    }
+
+    /**
      * Returns the conference participants information.
      *
      * @returns {Array<Object>} - Returns an array containing participants
@@ -857,6 +915,36 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Returns the moderation on status on the given mediaType.
+     *
+     * @param {string} mediaType - The media type for which to check moderation.
+     * @returns {Promise} - Resolves with the moderation on status and rejects on
+     * failure.
+     */
+    isModerationOn(mediaType) {
+        return this._transport.sendRequest({
+            name: 'is-moderation-on',
+            mediaType
+        });
+    }
+
+    /**
+     * Returns force muted status of the given participant id for the given media type.
+     *
+     * @param {string} participantId - The id of the participant to check.
+     * @param {string} mediaType - The media type for which to check.
+     * @returns {Promise} - Resolves with the force muted status and rejects on
+     * failure.
+     */
+    isParticipantForceMuted(participantId, mediaType) {
+        return this._transport.sendRequest({
+            name: 'is-participant-force-muted',
+            participantId,
+            mediaType
+        });
+    }
+
+    /**
      * Returns screen sharing status.
      *
      * @returns {Promise} - Resolves with screensharing status and rejects on failure.
@@ -877,6 +965,17 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         const { avatarURL } = this._participants[participantId] || {};
 
         return avatarURL;
+    }
+
+    /**
+     * Gets the deployment info.
+     *
+     * @returns {Promise} - Resolves with the deployment info object.
+     */
+    getDeploymentInfo() {
+        return this._transport.sendRequest({
+            name: 'deployment-info'
+        });
     }
 
     /**

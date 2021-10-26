@@ -53,10 +53,12 @@
         "noMessagesMessage": "Il n'y a pas encore de messages dans cette réunion. Démarrez une conversation ici !",
         "nickname": {
             "popover": "Choisissez un nom d'affichage",
-            "title": "Entrer un nom d'affichage pour utiliser le clavardage"
+            "title": "Entrer un nom d'affichage pour utiliser le clavardage",
+            "titleWithPolls": "Entrer un nom d'affichage pour utiliser le clavardage"
         },
         "privateNotice": "Message privé à {{recipient}}",
         "title": "Clavardage",
+        "titleWithPolls": "Clavardage",
         "you": "vous"
     },
     "connectingOverlay": {
@@ -718,7 +720,7 @@
             "join": "Toucher pour rejoindre",
             "roomname": "Entrer le nom de la salle"
         },
-        "appDescription": "Profitez de la conversation vidéo avec toute votre équipe. Allez-y, invitez tous ceux que vous connaissez. {{app}} est une solution 100 % libre de conférence vidéo entièrement cryptée que vous pouvez utiliser en tout temps et gratuitement, sans avoir besoin de compte.",
+        "appDescription": "Profitez de la conversation vidéo avec toute votre équipe. Allez-y, invitez tous ceux que vous connaissez. {{app}} est une solution 100 % libre de conférence vidéo entièrement chiffrée que vous pouvez utiliser en tout temps et gratuitement, sans avoir besoin de compte.",
         "audioVideoSwitch": {
             "audio": "Téléphone",
             "video": "Vidéo"
