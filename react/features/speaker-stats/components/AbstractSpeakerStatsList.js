@@ -13,10 +13,10 @@ import {
 /**
  * Component that renders the list of speaker stats.
  *
- * @param {React$Element<any>} speakerStatsItem - React element tu use when rendering.
- * @returns {React$Element<any>}
+ * @param {Function} speakerStatsItem - React element tu use when rendering.
+ * @returns {Function}
  */
-const abstractSpeakerStatsList = speakerStatsItem => {
+const abstractSpeakerStatsList = (speakerStatsItem: Function): Function[] => {
 
     const dispatch = useDispatch();
     const { t } = useTranslation();
@@ -71,7 +71,7 @@ const abstractSpeakerStatsList = speakerStatsItem => {
         const statsModel = getLocalSpeakerStats()[userId];
 
         if (!statsModel || statsModel.hidden) {
-            return null;
+            return [];
         }
         const props = {};
 

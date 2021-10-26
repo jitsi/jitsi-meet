@@ -40,7 +40,7 @@ function getSecondsCount(milliseconds) {
  * @param {Function} t - Translate function.
  * @returns {string}
  */
-export function createLocalizedTime(time, t) {
+export function createLocalizedTime(time: number, t: Function) {
     const hours = getHoursCount(time);
     const minutes = getMinutesCount(time);
     const seconds = getSecondsCount(time);
