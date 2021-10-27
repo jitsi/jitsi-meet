@@ -1,6 +1,5 @@
 // @flow
 
-/* global APP */
 import throttle from 'lodash/throttle';
 import type { Dispatch } from 'redux';
 
@@ -21,6 +20,8 @@ import {
     SILENT_JOIN_THRESHOLD
 } from './constants';
 
+declare var APP: Object;
+
 /**
  * Function that returns notification timeout value based on notification timeout type.
  *
@@ -36,9 +37,9 @@ function getNotificationTimeout(type) {
         return notificationTimeouts?.medium ?? NOTIFICATION_TIMEOUT.MEDIUM;
     } else if (type === NOTIFICATION_TIMEOUT_TYPE.LONG) {
         return notificationTimeouts?.long ?? NOTIFICATION_TIMEOUT.LONG;
+    } else if (type === NOTIFICATION_TIMEOUT_TYPE.STICKY) {
+        return NOTIFICATION_TIMEOUT.STICKY;
     }
-
-    return NOTIFICATION_TIMEOUT.STICKY;
 }
 
 /**

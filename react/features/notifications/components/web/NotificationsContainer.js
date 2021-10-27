@@ -6,14 +6,13 @@ import { withStyles } from '@material-ui/styles';
 import React, { Component } from 'react';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
+import { NOTIFICATION_TIMEOUT } from '../../../../features/notifications';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import { hideNotification } from '../../actions';
 import { areThereNotifications } from '../../functions';
 
 import Notification from './Notification';
-
-declare var interfaceConfig: Object;
 
 type Props = {
 
@@ -290,6 +289,7 @@ class NotificationsContainer extends Component<Props> {
 function _mapStateToProps(state) {
     const { notifications } = state['features/notifications'];
     const { iAmSipGateway } = state['features/base/config'];
+    const { notificationTimeouts } = state['features/base/config'];
     const { isOpen: isChatOpen } = state['features/chat'];
     const _visible = areThereNotifications(state);
 
@@ -297,7 +297,7 @@ function _mapStateToProps(state) {
         _iAmSipGateway: Boolean(iAmSipGateway),
         _isChatOpen: isChatOpen,
         _notifications: _visible ? notifications : [],
-        autoDismissTimeout: interfaceConfig.ENFORCE_NOTIFICATION_AUTO_DISMISS_TIMEOUT
+        autoDismissTimeout: notificationTimeouts?.long ?? NOTIFICATION_TIMEOUT.LONG
     };
 }
 
