@@ -216,7 +216,7 @@ class Chat extends AbstractChat<Props> {
 
         return (
             <div
-                ariaLabel = { t(_isPollsEnabled ? 'chat.titleWithPolls' : 'chat.title') }
+                aria-label = { t(_isPollsEnabled ? 'chat.titleWithPolls' : 'chat.title') }
                 className = { 'chat-tabs-container' }
                 role = 'tablist'>
                 <div
