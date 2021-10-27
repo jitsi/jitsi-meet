@@ -41,7 +41,11 @@ type Props = {
      */
     _localFacialExpressions: Array<Object>,
 
-    _localCameraTimeTracker: Object,
+    /**
+     * The flag which shows if all the facial expressions are shown or only 4
+     * if true show only 4, if false show all
+     */
+    _reduceExpressions: boolean,
 
     /**
      * The speaker paricipant stats.
@@ -160,6 +164,11 @@ class SpeakerStats extends Component<Props> {
         const isDominantSpeaker = statsModel.isDominantSpeaker();
         const dominantSpeakerTime = statsModel.getTotalDominantSpeakerTime();
         const hasLeft = statsModel.hasLeft();
+        let facialExpressions;
+
+        if (this.props._enableFacialRecognition) {
+            facialExpressions = statsModel.getFacialExpressions();
+        }
 
         return (
             <SpeakerStatsItem
@@ -219,7 +228,9 @@ class SpeakerStats extends Component<Props> {
                             ? `${this.props._localDisplayName} (${meString})`
                             : meString
                     );
-                    stats[userId].setFacialExpressions(this.props._localFacialExpressions);
+                    if (this.props._enableFacialRecognition) {
+                        stats[userId].setFacialExpressions(this.props._localFacialExpressions);
+                    }
                 }
 
                 if (!stats[userId].getDisplayName()) {
@@ -250,6 +261,7 @@ function _mapStateToProps(state) {
     const { enableFacialRecognition } = state['features/base/config'];
     const { facialExpressions: localFacialExpressions } = state['features/facial-recognition'];
     const { cameraTimeTracker: localCameraTimeTracker } = state['features/facial-recognition'];
+    const { clientWidth } = state['features/base/responsive-ui'];
 
     return {
         /**
@@ -263,7 +275,8 @@ function _mapStateToProps(state) {
         _criteria: getSearchCriteria(state),
         _enableFacialRecognition: enableFacialRecognition,
         _localFacialExpressions: localFacialExpressions,
-        _localCameraTimeTracker: localCameraTimeTracker
+        _localCameraTimeTracker: localCameraTimeTracker,
+        _reduceExpressions: clientWidth < 750
     };
 }
 
