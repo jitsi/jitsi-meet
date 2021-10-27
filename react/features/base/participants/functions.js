@@ -3,7 +3,7 @@
 import { getGravatarURL } from '@jitsi/js-utils/avatar';
 import type { Store } from 'redux';
 
-import { isAvatarUrlValid, JitsiParticipantConnectionStatus } from '../lib-jitsi-meet';
+import { JitsiParticipantConnectionStatus } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, shouldRenderVideoTrack } from '../media';
 import { toState } from '../redux';
 import { getTrackByMediaTypeAndParticipant } from '../tracks';
@@ -74,6 +74,38 @@ export function getFirstLoadableAvatarUrl(participant: Object, store: Store<any,
     }
 
     return fullPromise;
+}
+
+/**
+ * Determines whether an avatar URL is valid.
+ *
+ * @param {Function|Object} stateful - The redux store, state, or
+ * {@code getState} function.
+ * @param {string} avatarURL - The avatar url to check.
+ * @returns {boolean} If the URL does not match the origin and disableThirdPartyRequests
+ * is defined, {@code false}; otherwise {@code true};
+ * {@code false}, otherwise.
+ */
+export function isAvatarUrlValid(stateful: Function | Object, avatarURL: string) {
+    const state = toState(stateful);
+    const { locationURL } = state['features/base/connection'];
+    const { disableThirdPartyRequests } = state['features/base/config'];
+
+    if (disableThirdPartyRequests) {
+        if (!locationURL || !locationURL.origin) {
+            return false;
+        }
+
+        try {
+            const url = new URL(avatarURL);
+
+            return url.origin === locationURL.origin;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 /**

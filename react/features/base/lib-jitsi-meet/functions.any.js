@@ -49,32 +49,6 @@ export function isAnalyticsEnabled(stateful: Function | Object) {
 }
 
 /**
- * Determines whether an avatar URL is valid.
- *
- * @param {Function|Object} stateful - The redux store, state, or
- * {@code getState} function.
- * @param {string} avatarURL - The avatar url to check.
- * @returns {boolean} If the URL does not match the origin and disableThirdPartyRequests
- * is defined, {@code false}; otherwise {@code true};
- * {@code false}, otherwise.
- */
-export function isAvatarUrlValid(stateful: Function | Object, avatarURL: string) {
-    const state = toState(stateful);
-    const { locationURL } = state['features/base/connection'];
-    const { disableThirdPartyRequests } = state['features/base/config'];
-
-    if (disableThirdPartyRequests) {
-        if (!locationURL || !locationURL.origin) {
-            return false;
-        }
-
-        return avatarURL && avatarURL.startsWith(locationURL.origin);
-    }
-
-    return true;
-}
-
-/**
  * Determines whether a specific {@link JitsiConferenceErrors} instance
  * indicates a fatal {@link JitsiConference} error.
  *
