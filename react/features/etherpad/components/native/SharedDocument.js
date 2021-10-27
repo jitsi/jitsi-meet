@@ -12,7 +12,7 @@ import { LoadingIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { goBack } from '../../../conference/components/native/ConferenceNavigationContainerRef';
 import HeaderNavigationButton
-    from '../../../conference/components/native/HeaderNavigationButton';
+from '../../../conference/components/native/HeaderNavigationButton';
 import { getSharedDocumentUrl } from '../../functions';
 
 import styles, { INDICATOR_COLOR } from './styles';

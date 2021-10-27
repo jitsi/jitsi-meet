@@ -11,7 +11,7 @@ import {
 import { toggleDialog } from '../../react/features/base/dialog';
 import { clickOnVideo } from '../../react/features/filmstrip/actions';
 import { KeyboardShortcutsDialog }
-    from '../../react/features/keyboard-shortcuts';
+from '../../react/features/keyboard-shortcuts';
 import { SpeakerStats } from '../../react/features/speaker-stats';
 
 const logger = Logger.getLogger(__filename);

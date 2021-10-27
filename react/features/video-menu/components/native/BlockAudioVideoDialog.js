@@ -6,7 +6,7 @@ import { ConfirmDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import AbstractBlockAudioVideoDialog
-    from '../AbstractBlockAudioVideoDialog';
+from '../AbstractBlockAudioVideoDialog';
 
 /**
  * Dialog to confirm a remote participant kick action.

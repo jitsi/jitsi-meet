@@ -7,7 +7,7 @@ import { translate } from '../../../base/i18n';
 import { Switch } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import AbstractMuteEveryonesVideoDialog, { abstractMapStateToProps, type Props }
-    from '../AbstractMuteEveryonesVideoDialog';
+from '../AbstractMuteEveryonesVideoDialog';
 
 /**
  * A React Component with the contents for a dialog that asks for confirmation

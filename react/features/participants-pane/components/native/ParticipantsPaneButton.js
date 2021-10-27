@@ -7,7 +7,7 @@ import { IconParticipants } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { navigate }
-    from '../../../conference/components/native/ConferenceNavigationContainerRef';
+from '../../../conference/components/native/ConferenceNavigationContainerRef';
 import { screen } from '../../../conference/components/native/routes';
 
 type Props = AbstractButtonProps & {

@@ -7,7 +7,7 @@ import { ConfirmDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import AbstractGrantModeratorDialog, { abstractMapStateToProps }
-    from '../AbstractGrantModeratorDialog';
+from '../AbstractGrantModeratorDialog';
 
 /**
  * Dialog to confirm a remote participant kick action.

@@ -26,7 +26,7 @@ import {
 import { MEDIA_TYPE } from '../../../base/media';
 import { getParticipantCount, isEveryoneModerator } from '../../../base/participants';
 import MuteEveryonesVideoDialog
-    from '../../../video-menu/components/native/MuteEveryonesVideoDialog';
+from '../../../video-menu/components/native/MuteEveryonesVideoDialog';
 
 import styles from './styles';
 

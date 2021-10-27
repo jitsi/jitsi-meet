@@ -6,7 +6,7 @@ import { translate, translateToHTML } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 
 import AbstractUserMediaPermissionsOverlay, { abstractMapStateToProps }
-    from './AbstractUserMediaPermissionsOverlay';
+from './AbstractUserMediaPermissionsOverlay';
 import OverlayFrame from './OverlayFrame';
 
 declare var interfaceConfig: Object;

@@ -22,7 +22,7 @@ import { isLocalParticipantModerator } from '../../../../base/participants';
 import { StyleType } from '../../../../base/styles';
 import { toggleLobbyMode } from '../../../../lobby/actions.any';
 import LobbyModeSwitch
-    from '../../../../lobby/components/native/LobbyModeSwitch';
+from '../../../../lobby/components/native/LobbyModeSwitch';
 import { LOCKED_LOCALLY } from '../../../../room-lock';
 import {
     endRoomLockRequest,

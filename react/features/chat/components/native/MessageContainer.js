@@ -8,7 +8,7 @@ import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import AbstractMessageContainer, { type Props as AbstractProps }
-    from '../AbstractMessageContainer';
+from '../AbstractMessageContainer';
 
 import ChatMessageGroup from './ChatMessageGroup';
 import styles from './styles';

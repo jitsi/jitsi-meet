@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 import { Chat, ChatAndPolls } from '../../../chat';
 import { SharedDocument } from '../../../etherpad';
 import AddPeopleDialog
-    from '../../../invite/components/add-people-dialog/native/AddPeopleDialog';
+from '../../../invite/components/add-people-dialog/native/AddPeopleDialog';
 import LobbyScreen from '../../../lobby/components/native/LobbyScreen';
 import { ParticipantsPane } from '../../../participants-pane/components/native';
 import { getDisablePolls } from '../../functions';

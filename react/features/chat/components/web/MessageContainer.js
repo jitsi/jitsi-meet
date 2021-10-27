@@ -4,7 +4,7 @@ import React from 'react';
 
 import { MESSAGE_TYPE_REMOTE } from '../../constants';
 import AbstractMessageContainer, { type Props }
-    from '../AbstractMessageContainer';
+from '../AbstractMessageContainer';
 
 import ChatMessageGroup from './ChatMessageGroup';
 

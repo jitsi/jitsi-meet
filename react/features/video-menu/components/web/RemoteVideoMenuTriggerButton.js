@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { batch } from 'react-redux';
 
 import ConnectionIndicatorContent from
-    '../../../../features/connection-indicator/components/web/ConnectionIndicatorContent';
+'../../../../features/connection-indicator/components/web/ConnectionIndicatorContent';
 import { isIosMobileBrowser, isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
 import { Icon, IconMenuThumb } from '../../../base/icons';

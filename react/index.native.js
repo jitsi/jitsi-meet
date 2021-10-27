@@ -9,8 +9,8 @@ import { AppRegistry } from 'react-native';
 
 import { App } from './features/app/components';
 import { _initLogging } from './features/base/logging/functions';
-import JitsiThemePaperProvider
-    from './features/base/ui/components/JitsiThemeProvider';
+import JitsiThemePaperProvider from
+'./features/base/ui/components/JitsiThemeProvider';
 import { IncomingCallApp } from './features/mobile/incoming-call';
 
 declare var __DEV__;

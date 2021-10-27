@@ -6,7 +6,7 @@ import { ConfirmDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import AbstractMuteRemoteParticipantsVideoDialog
-    from '../AbstractMuteRemoteParticipantsVideoDialog';
+from '../AbstractMuteRemoteParticipantsVideoDialog';
 
 /**
  * Dialog to confirm a remote participant's video stop action.
