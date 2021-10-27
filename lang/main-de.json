@@ -627,7 +627,8 @@
             "stopVideo": "Kamera ausschalten",
             "unblockEveryoneMicCamera": "Kamera und Mikrofon von allen entsperren",
             "videoModeration": "Kamera einschalten"
-        }
+        },
+        "search": "Suche Personen"
     },
     "passwordSetRemotely": "von einer anderen Person gesetzt",
     "passwordDigitsOnly": "Bis zu {{number}} Ziffern",
@@ -1045,8 +1046,11 @@
         "pending": "{{displayName}} wurde eingeladen"
     },
     "videoStatus": {
+        "adjustFor": "Anpassen für:",
         "audioOnly": "AUD",
         "audioOnlyExpanded": "Sie befinden sich im Modus „Nur Audio“. Dieser Modus benötigt weniger Bandbreite, Sie sehen jedoch nicht die Videos der anderen.",
+        "bestPerformance": "Beste Leistung",
+        "highestQuality": "Höchste Qualität",
         "callQuality": "Videoqualität",
         "hd": "HD",
         "hdTooltip": "Video wird in hoher Auflösung angezeigt",
@@ -1056,6 +1060,7 @@
         "ld": "LD",
         "ldTooltip": "Video wird in niedriger Auflösung angezeigt",
         "lowDefinition": "Niedrige Auflösung",
+        "performanceSettings": "Leistungseinstellungen",
         "sd": "SD",
         "sdTooltip": "Video wird in Standardauflösung angezeigt",
         "standardDefinition": "Standardauflösung"
