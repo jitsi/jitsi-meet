@@ -61,7 +61,7 @@ case "$1" in
                 sed -i '/^\s*--\s*"token_verification"/ s/--\s*//' $PROSODY_HOST_CONFIG
 
                 # Install luajwt
-                if ! luarocks install luajwtjitsi; then
+                if ! luarocks install luajwtjitsi 2.0-0; then
                    echo "Failed to install luajwtjitsi - try installing it manually"
                 fi
 
