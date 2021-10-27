@@ -19,7 +19,7 @@ import SpeakerStatsButton from '../../../speaker-stats/components/native/Speaker
 import { ClosedCaptionButton } from '../../../subtitles';
 import { TileViewButton } from '../../../video-layout';
 import styles from '../../../video-menu/components/native/styles';
-import { getMovableButtons } from '../../functions';
+import { getMovableButtons } from '../../functions.native';
 import HelpButton from '../HelpButton';
 import MuteEveryoneButton from '../MuteEveryoneButton';
 import MuteEveryonesVideoButton from '../MuteEveryonesVideoButton';
