@@ -59,7 +59,6 @@ export function initJaneWaitingArea(tracks: Object[], connection: Object[], erro
         const videoTrack = tracks.find(t => t.isVideoTrack());
 
         dispatch(setJaneWaitingAreaDeviceErrors(errors));
-        dispatch(addConnectionToJaneWaitingArea(connection));
 
         if (audioTrack) {
             dispatch(addJaneWaitingAreaAudioTrack(audioTrack));
@@ -77,6 +76,10 @@ export function initJaneWaitingArea(tracks: Object[], connection: Object[], erro
         } else {
             dispatch(setJaneWaitingAreaVideoDisabled(true));
         }
+
+        setTimeout(() => {
+            dispatch(addConnectionToJaneWaitingArea(connection));
+        });
     };
 }
 

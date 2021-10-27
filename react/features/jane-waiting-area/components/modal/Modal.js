@@ -134,7 +134,9 @@ class Modal extends Component<Props> {
         if (localParticipantCanJoin !== prevProps.localParticipantCanJoin
             && localParticipantCanJoin) {
             if (participantType === 'Patient') {
-                this._joinConference();
+                setTimeout(() => {
+                    this._joinConference();
+                }, 2000);
             }
             if (participantType === 'StaffMember') {
                 sendAnalytics(createWaitingAreaModalEvent('admit.button.enabled'));
