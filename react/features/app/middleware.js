@@ -2,6 +2,7 @@
 
 import {
     createConnectionEvent,
+    inIframe,
     sendAnalytics
 } from '../analytics';
 import { SET_ROOM } from '../base/conference';
@@ -52,6 +53,10 @@ function _connectionEstablished(store, next, action) {
     // lib-jitsi-meet. Consequenlty, the time to remove the params is
     // determined by when no one needs them anymore.
     const { history, location } = window;
+
+    if (inIframe()) {
+        return;
+    }
 
     if (history
             && location
