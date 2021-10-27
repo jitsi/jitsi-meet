@@ -41,7 +41,9 @@ export function initJaneWaitingArea(tracks: Object[], connection: Object[], erro
     return async function(dispatch: Function) {
         dispatch(setJaneWaitingAreaDeviceErrors(errors));
         tracks.forEach(track => dispatch(trackAdded(track)));
-        dispatch(addConnectionToJaneWaitingArea(connection));
+        setTimeout(() => {
+            dispatch(addConnectionToJaneWaitingArea(connection));
+        });
     };
 }
 
