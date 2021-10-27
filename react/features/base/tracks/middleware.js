@@ -158,7 +158,7 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
 
-    case TRACK_UPDATED:
+    case TRACK_UPDATED: {
         // TODO Remove the following calls to APP.UI once components interested
         // in track mute changes are moved into React and/or redux.
         if (typeof APP !== 'undefined') {
@@ -192,7 +192,14 @@ MiddlewareRegistry.register(store => next => action => {
 
             return result;
         }
+        const { jitsiTrack } = action.track;
 
+        if (jitsiTrack.isMuted()
+            && jitsiTrack.type === MEDIA_TYPE.VIDEO && jitsiTrack.videoType === VIDEO_TYPE.DESKTOP) {
+            store.dispatch(toggleScreensharing(false));
+        }
+        break;
+    }
     }
 
     return next(action);
