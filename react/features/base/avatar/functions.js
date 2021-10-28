@@ -3,14 +3,16 @@
 import _ from 'lodash';
 
 const AVATAR_COLORS = [
-    '232, 105, 156',
-    '255, 198, 115',
-    '128, 128, 255',
-    '105, 232, 194',
-    '234, 255, 128'
+    '#6A50D3',
+    '#FF9B42',
+    '#DF486F',
+    '#73348C',
+    '#B23683',
+    '#F96E57',
+    '#4380E2',
+    '#2AA076',
+    '#00A8B3'
 ];
-
-const AVATAR_OPACITY = 0.4;
 
 /**
  * Generates the background color of an initials based avatar.
@@ -35,7 +37,7 @@ export function getAvatarColor(initials: ?string, customAvatarBackgrounds: Array
         colorIndex = nameHash % colorsBase.length;
     }
 
-    return hasCustomAvatarBackgronds ? colorsBase[colorIndex] : `rgba(${colorsBase[colorIndex]}, ${AVATAR_OPACITY})`;
+    return colorsBase[colorIndex];
 }
 
 /**

@@ -41,7 +41,8 @@ import {
     kickParticipant,
     raiseHand,
     isParticipantModerator,
-    isLocalParticipantModerator
+    isLocalParticipantModerator,
+    hasRaisedHand
 } from '../../react/features/base/participants';
 import { updateSettings } from '../../react/features/base/settings';
 import { isToggleCameraEnabled, toggleCamera } from '../../react/features/base/tracks';
@@ -68,7 +69,7 @@ import {
     captureLargeVideoScreenshot,
     resizeLargeVideo
 } from '../../react/features/large-video/actions.web';
-import { toggleLobbyMode, joinWithPassword } from '../../react/features/lobby/actions';
+import { toggleLobbyMode, joinWithPassword, setKnockingParticipantApproval  } from '../../react/features/lobby/actions';
 import { isForceMuted } from '../../react/features/participants-pane/functions';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession } from '../../react/features/recording/functions';
@@ -122,6 +123,9 @@ let videoAvailable = true;
  */
 function initCommands() {
     commands = {
+        'answer-knocking-participant': (id, approved) => {
+            APP.store.dispatch(setKnockingParticipantApproval(id, approved));
+        },
         'approve-video': participantId => {
             if (!isLocalParticipantModerator(APP.store.getState())) {
                 return;
@@ -316,7 +320,7 @@ function initCommands() {
             if (!localParticipant) {
                 return;
             }
-            const { raisedHand } = localParticipant;
+            const raisedHand = hasRaisedHand(localParticipant);
 
             sendAnalytics(createApiEvent('raise-hand.toggled'));
             APP.store.dispatch(raiseHand(!raisedHand));
@@ -1516,6 +1520,33 @@ class API {
             on,
             mode,
             error
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the current recording link is
+     * available.
+     *
+     * @param {string} link - The recording download link.
+     * @returns {void}
+     */
+    notifyRecordingLinkAvailable(link: string) {
+        this._sendEvent({
+            name: 'recording-link-available',
+            link
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that a participant is knocking in the lobby.
+     *
+     * @param {Object} participant - Participant data such as id and name.
+     * @returns {void}
+     */
+    notifyKnockingParticipant(participant: Object) {
+        this._sendEvent({
+            name: 'knocking-participant',
+            participant
         });
     }
 

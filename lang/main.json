@@ -568,9 +568,9 @@
         "moderator": "You're now a moderator",
         "muted": "You have started the conversation muted.",
         "mutedTitle": "You're muted!",
-        "mutedRemotelyTitle": "You've been muted by {{moderator}}",
+        "mutedRemotelyTitle": "You've been muted by {{participantDisplayName}}",
         "mutedRemotelyDescription": "You can always unmute when you're ready to speak. Mute back when you're done to keep noise away from the meeting.",
-        "videoMutedRemotelyTitle": "Your video has been turned off by {{moderator}}",
+        "videoMutedRemotelyTitle": "Your video has been turned off by {{participantDisplayName}}",
         "videoMutedRemotelyDescription": "You can always turn it on again.",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) removed by another participant",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) set by another participant",
@@ -627,7 +627,8 @@
             "stopVideo": "Stop video",
             "unblockEveryoneMicCamera": "Unblock everyone's mic and camera",
             "videoModeration": "Start their video"
-        }
+        },
+        "search": "Search participants"
     },
     "passwordSetRemotely": "Set by another participant",
     "passwordDigitsOnly": "Up to {{number}} digits",
@@ -1045,7 +1046,10 @@
         "pending": "{{displayName}} has been invited"
     },
     "videoStatus": {
+        "adjustFor": "Adjust for:",
         "audioOnly": "AUD",
+        "bestPerformance": "Best performance",
+        "highestQuality": "Highest quality",
         "audioOnlyExpanded": "You are in low bandwidth mode. In this mode you will receive only audio and screen sharing.",
         "callQuality": "Video Quality",
         "hd": "HD",
@@ -1056,6 +1060,7 @@
         "ld": "LD",
         "ldTooltip": "Viewing low definition video",
         "lowDefinition": "Low definition",
+        "performanceSettings": "Performance settings",
         "sd": "SD",
         "sdTooltip": "Viewing standard definition video",
         "standardDefinition": "Standard definition"

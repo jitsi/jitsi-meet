@@ -2,10 +2,11 @@
 
 import { batch } from 'react-redux';
 
+import { createReactionSoundsDisabledEvent, sendAnalytics } from '../analytics';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import { getParticipantCount } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
-import { updateSettings } from '../base/settings';
+import { SETTINGS_UPDATED, updateSettings } from '../base/settings';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { getDisabledSounds } from '../base/sounds/functions.any';
 import { NOTIFICATION_TIMEOUT, showNotification } from '../notifications';
@@ -113,21 +114,6 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case SEND_REACTIONS: {
-        const state = getState();
-        const { buffer } = state['features/reactions'];
-        const { conference } = state['features/base/conference'];
-
-        if (conference) {
-            conference.sendEndpointMessage('', {
-                name: ENDPOINT_REACTION_NAME,
-                reactions: buffer,
-                timestamp: Date.now()
-            });
-        }
-        break;
-    }
-
     case PUSH_REACTIONS: {
         const state = getState();
         const { queue, notificationDisplayed } = state['features/reactions'];
@@ -149,6 +135,30 @@ MiddlewareRegistry.register(store => next => action => {
             }
             dispatch(setReactionQueue([ ...queue, ...getReactionsWithId(reactions) ]));
         });
+        break;
+    }
+
+    case SEND_REACTIONS: {
+        const state = getState();
+        const { buffer } = state['features/reactions'];
+        const { conference } = state['features/base/conference'];
+
+        if (conference) {
+            conference.sendEndpointMessage('', {
+                name: ENDPOINT_REACTION_NAME,
+                reactions: buffer,
+                timestamp: Date.now()
+            });
+        }
+        break;
+    }
+
+    case SETTINGS_UPDATED: {
+        const { soundsReactions } = getState()['features/base/settings'];
+
+        if (action.settings.soundsReactions === false && soundsReactions === true) {
+            sendAnalytics(createReactionSoundsDisabledEvent());
+        }
         break;
     }
 

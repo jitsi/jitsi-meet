@@ -2,7 +2,7 @@
 
 import { Component } from 'react';
 
-import { getParticipantById } from '../../base/participants';
+import { getParticipantById, hasRaisedHand } from '../../base/participants';
 
 export type Props = {
 
@@ -57,6 +57,6 @@ export function _mapStateToProps(state: Object, ownProps: Props): Object {
     const participant = getParticipantById(state, ownProps.participantId);
 
     return {
-        _raisedHand: participant && participant.raisedHand
+        _raisedHand: hasRaisedHand(participant)
     };
 }

@@ -44,7 +44,6 @@ $flagsImagePath: "../images/";
 @import 'modals/screen-share/share-audio';
 @import 'modals/screen-share/share-screen-warning';
 @import 'modals/speaker_stats/speaker_stats';
-@import 'modals/video-quality/video-quality';
 @import 'modals/virtual-background/virtual-background';
 @import 'modals/local-recording/local-recording';
 @import 'videolayout_default';
@@ -78,7 +77,6 @@ $flagsImagePath: "../images/";
 @import 'filmstrip/tile_view_overrides';
 @import 'filmstrip/vertical_filmstrip';
 @import 'filmstrip/vertical_filmstrip_overrides';
-@import 'labels';
 @import 'unsupported-browser/main';
 @import 'modals/invite/add-people';
 @import 'deep-linking/main';
@@ -106,5 +104,6 @@ $flagsImagePath: "../images/";
 @import 'reactions-menu';
 @import 'plan-limit';
 @import 'polls';
+@import 'notifications';
 
 /* Modules END */

@@ -44,6 +44,7 @@ const parsePollData = (pollData): Poll | null => {
     }
 
     return {
+        changingVote: false,
         senderId,
         senderName,
         question,
@@ -63,6 +64,7 @@ StateListenerRegistry.register(
                     const { question, answers, pollId, senderId, senderName } = data;
 
                     const poll = {
+                        changingVote: false,
                         senderId,
                         senderName,
                         showResults: false,

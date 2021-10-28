@@ -5,9 +5,9 @@ import type { AbstractComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { getLocalParticipant, getParticipantById } from '../../base/participants/functions';
-import { retractVote } from '../actions';
-import { COMMAND_ANSWER_POLL } from '../constants';
+import { sendAnalytics, createPollEvent } from '../../analytics';
+import { setVoteChanging } from '../actions';
+import { getPoll } from '../functions';
 
 /**
  * The type of the React {@code Component} props of inheriting component.
@@ -50,10 +50,11 @@ export type AbstractProps = {
 const AbstractPollResults = (Component: AbstractComponent<AbstractProps>) => (props: InputProps) => {
     const { pollId } = props;
 
-    const pollDetails = useSelector(state => state['features/polls'].polls[pollId]);
+    const pollDetails = useSelector(getPoll(pollId));
 
     const [ showDetails, setShowDetails ] = useState(false);
     const toggleIsDetailed = useCallback(() => {
+        sendAnalytics(createPollEvent('vote.detailsViewed'));
         setShowDetails(!showDetails);
     });
 
@@ -93,32 +94,23 @@ const AbstractPollResults = (Component: AbstractComponent<AbstractProps>) => (pr
     }, [ pollDetails.answers, showDetails ]);
 
     const dispatch = useDispatch();
-
-    const conference: Object = useSelector(state => state['features/base/conference'].conference);
-    const localId = useSelector(state => getLocalParticipant(state).id);
-    const localParticipant = useSelector(state => getParticipantById(state, localId));
-    const localName: string = localParticipant ? localParticipant.name : 'Fellow Jitster';
     const changeVote = useCallback(() => {
-        conference.sendMessage({
-            type: COMMAND_ANSWER_POLL,
-            pollId,
-            voterId: localId,
-            voterName: localName,
-            answers: new Array(pollDetails.answers.length).fill(false)
-        });
-        dispatch(retractVote(pollId));
-    }, [ pollId, localId, localName, pollDetails ]);
+        dispatch(setVoteChanging(pollId, true));
+        sendAnalytics(createPollEvent('vote.changed'));
+    }, [ dispatch, pollId ]);
 
     const { t } = useTranslation();
 
-    return (<Component
-        answers = { answers }
-        changeVote = { changeVote }
-        haveVoted = { pollDetails.lastVote !== null }
-        question = { pollDetails.question }
-        showDetails = { showDetails }
-        t = { t }
-        toggleIsDetailed = { toggleIsDetailed } />);
+    return (
+        <Component
+            answers = { answers }
+            changeVote = { changeVote }
+            haveVoted = { pollDetails.lastVote !== null }
+            question = { pollDetails.question }
+            showDetails = { showDetails }
+            t = { t }
+            toggleIsDetailed = { toggleIsDetailed } />
+    );
 };
 
 export default AbstractPollResults;

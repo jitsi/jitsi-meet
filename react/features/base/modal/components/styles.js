@@ -3,6 +3,11 @@
 import { ColorSchemeRegistry, schemeColor } from '../../color-scheme';
 
 export default {
+
+    jitsiScreenContainer: {
+        flex: 1
+    },
+
     safeArea: {
         flex: 1
     }

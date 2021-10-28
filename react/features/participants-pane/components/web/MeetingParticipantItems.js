@@ -57,6 +57,11 @@ type Props = {
     participantActionEllipsisLabel: string,
 
     /**
+     * Current search string.
+     */
+    searchString?: string,
+
+    /**
      * The translated "you" text.
      */
     youText: string
@@ -78,8 +83,9 @@ function MeetingParticipantItems({
     overflowDrawer,
     raiseContextId,
     participantActionEllipsisLabel,
+    searchString,
     youText
-}) {
+}: Props) {
     const renderParticipant = id => (
         <MeetingParticipantItem
             askUnmuteText = { askUnmuteText }
@@ -93,6 +99,7 @@ function MeetingParticipantItems({
             overflowDrawer = { overflowDrawer }
             participantActionEllipsisLabel = { participantActionEllipsisLabel }
             participantID = { id }
+            searchString = { searchString }
             youText = { youText } />
     );
 

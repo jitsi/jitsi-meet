@@ -247,6 +247,12 @@ function getConfig(options = {}) {
  */
 function getDevServerConfig() {
     return {
+        client: {
+            overlay: {
+                errors: true,
+                warnings: false
+            }
+        },
         https: true,
         host: '127.0.0.1',
         proxy: {
@@ -288,6 +294,10 @@ module.exports = (_env, argv) => {
             plugins: [
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'app'),
+                new webpack.IgnorePlugin({
+                    resourceRegExp: /^canvas$/,
+                    contextRegExp: /resemblejs$/
+                }),
                 new webpack.IgnorePlugin({
                     resourceRegExp: /^\.\/locale$/,
                     contextRegExp: /moment$/

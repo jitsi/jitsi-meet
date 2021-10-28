@@ -1,5 +1,7 @@
 // @flow
 
+import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import React, { useEffect, useRef } from 'react';
 
 import { isMobileBrowser } from '../../../base/environment/utils';
@@ -12,18 +14,36 @@ type Props = {
    children: React$Node,
 
     /**
+     * Whether the component should be flex container or not.
+     */
+    flex?: boolean,
+
+    /**
      * Whether the component is rendered within a modal.
      */
-    isModal: boolean
+    isModal: boolean,
+
 };
 
+const useStyles = makeStyles(() => {
+    return {
+        flex: {
+            display: 'flex',
+            flex: 1
+        },
+        base: {
+            height: '100%',
+            overflow: 'auto'
+        }
+    };
+});
 
 /**
  * Component that disables {@code touchmove} propagation below it.
  *
  * @returns {ReactElement}
  */
-function TouchmoveHack({ children, isModal }: Props) {
+function TouchmoveHack({ children, isModal, flex }: Props) {
     if (!isModal || !isMobileBrowser()) {
         return children;
     }
@@ -54,10 +74,11 @@ function TouchmoveHack({ children, isModal }: Props) {
             }
         };
     }, []);
+    const classes = useStyles();
 
     return (
         <div
-            className = 'touchmove-hack'
+            className = { clsx(classes.base, flex && classes.flex) }
             ref = { touchMoveElementRef }>
             {children}
         </div>

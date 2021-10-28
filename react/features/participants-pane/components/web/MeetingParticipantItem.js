@@ -9,6 +9,7 @@ import {
     getLocalParticipant,
     getParticipantByIdOrUndefined,
     getParticipantDisplayName,
+    hasRaisedHand,
     isParticipantModerator
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
@@ -18,6 +19,7 @@ import {
     isParticipantAudioMuted,
     isParticipantVideoMuted
 } from '../../../base/tracks';
+import { normalizeAccents } from '../../../base/util/strings';
 import { ACTION_TRIGGER, type MediaState, MEDIA_STATE } from '../../constants';
 import {
     getParticipantAudioMediaState,
@@ -70,6 +72,11 @@ type Props = {
      * Shared video local participant owner.
      */
     _localVideoOwner: boolean,
+
+    /**
+     * Whether or not the participant name matches the search string.
+     */
+    _matchesSearch: boolean,
 
     /**
      * The participant.
@@ -174,6 +181,7 @@ function MeetingParticipantItem({
     _displayName,
     _local,
     _localVideoOwner,
+    _matchesSearch,
     _participant,
     _participantID,
     _quickActionButtonType,
@@ -220,6 +228,10 @@ function MeetingParticipantItem({
             }
         };
     }, [ _audioTrack ]);
+
+    if (!_matchesSearch) {
+        return null;
+    }
 
     const audioMediaState = _audioMediaState === MEDIA_STATE.UNMUTED && hasAudioLevels
         ? MEDIA_STATE.DOMINANT_SPEAKER : _audioMediaState;
@@ -279,11 +291,30 @@ function MeetingParticipantItem({
  * @returns {Props}
  */
 function _mapStateToProps(state, ownProps): Object {
-    const { participantID } = ownProps;
+    const { participantID, searchString } = ownProps;
     const { ownerId } = state['features/shared-video'];
     const localParticipantId = getLocalParticipant(state).id;
 
     const participant = getParticipantByIdOrUndefined(state, participantID);
+
+    const _displayName = getParticipantDisplayName(state, participant?.id);
+
+    let _matchesSearch = false;
+    const names = normalizeAccents(_displayName)
+        .toLowerCase()
+        .split(' ');
+    const lowerCaseSearchString = searchString.toLowerCase();
+
+    if (lowerCaseSearchString === '') {
+        _matchesSearch = true;
+    } else {
+        for (const name of names) {
+            if (name.startsWith(lowerCaseSearchString)) {
+                _matchesSearch = true;
+                break;
+            }
+        }
+    }
 
     const _isAudioMuted = isParticipantAudioMuted(participant, state);
     const _isVideoMuted = isParticipantVideoMuted(participant, state);
@@ -301,13 +332,14 @@ function _mapStateToProps(state, ownProps): Object {
         _audioMediaState,
         _audioTrack,
         _disableModeratorIndicator: disableModeratorIndicator,
-        _displayName: getParticipantDisplayName(state, participant?.id),
+        _displayName,
         _local: Boolean(participant?.local),
         _localVideoOwner: Boolean(ownerId === localParticipantId),
+        _matchesSearch,
         _participant: participant,
         _participantID: participant?.id,
         _quickActionButtonType,
-        _raisedHand: Boolean(participant?.raisedHand),
+        _raisedHand: hasRaisedHand(participant),
         _videoMediaState
     };
 }

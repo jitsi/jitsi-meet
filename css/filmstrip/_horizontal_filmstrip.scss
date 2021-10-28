@@ -63,6 +63,8 @@
     }
 
     .remote-videos {
+        overscroll-behavior: contain;
+
         & > div {
             transition: opacity 1s;
             position: absolute;

@@ -2,18 +2,17 @@
 
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { openDialog } from '../../../base/dialog';
-import { JitsiModal } from '../../../base/modal';
+import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import {
     isLocalParticipantModerator
 } from '../../../base/participants';
 import MuteEveryoneDialog
     from '../../../video-menu/components/native/MuteEveryoneDialog';
-import { close } from '../../actions.native';
 
 import { ContextMenuMore } from './ContextMenuMore';
 import HorizontalDotsIcon from './HorizontalDotsIcon';
@@ -29,21 +28,19 @@ import styles from './styles';
 const ParticipantsPane = () => {
     const dispatch = useDispatch();
     const openMoreMenu = useCallback(() => dispatch(openDialog(ContextMenuMore)), [ dispatch ]);
-    const closePane = useCallback(() => dispatch(close()), [ dispatch ]);
     const isLocalModerator = useSelector(isLocalParticipantModerator);
     const muteAll = useCallback(() => dispatch(openDialog(MuteEveryoneDialog)),
         [ dispatch ]);
     const { t } = useTranslation();
 
     return (
-        <JitsiModal
-            headerProps = {{
-                headerLabelKey: 'participantsPane.header'
-            }}
-            onClose = { closePane }
+        <JitsiScreen
+            hasTabNavigator = { false }
             style = { styles.participantsPane }>
-            <LobbyParticipantList />
-            <MeetingParticipantList />
+            <ScrollView bounces = { false }>
+                <LobbyParticipantList />
+                <MeetingParticipantList />
+            </ScrollView>
             {
                 isLocalModerator
                 && <View style = { styles.footer }>
@@ -61,7 +58,7 @@ const ParticipantsPane = () => {
                         style = { styles.moreButton } />
                 </View>
             }
-        </JitsiModal>
+        </JitsiScreen>
     );
 };
 

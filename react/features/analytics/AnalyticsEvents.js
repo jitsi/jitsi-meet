@@ -377,6 +377,28 @@ export function createPinnedEvent(action, participantId, attributes) {
 }
 
 /**
+ * Creates a poll event.
+ * The following events will be created:
+ * - poll.created
+ * - poll.vote.checked
+ * - poll.vote.sent
+ * - poll.vote.skipped
+ * - poll.vote.detailsViewed
+ * - poll.vote.changed
+ * - poll.option.added
+ * - poll.option.moved
+ * - poll.option.removed.
+ *
+ * @param {string} action - The action.
+ * @returns {Object}
+ */
+export function createPollEvent(action) {
+    return {
+        action: `poll.${action}`
+    };
+}
+
+/**
  * Creates an event which indicates that a button in the profile panel was
  * clicked.
  *
@@ -580,13 +602,17 @@ export function createVideoBlurEvent(action) {
  * occurred (e.g. It was started or stopped).
  *
  * @param {string} action - The action which occurred.
+ * @param {number?} value - The screenshare duration in seconds.
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createScreenSharingEvent(action) {
+export function createScreenSharingEvent(action, value = null) {
     return {
         action,
-        actionSubject: 'screen.sharing'
+        actionSubject: 'screen.sharing',
+        attributes: {
+            value
+        }
     };
 }
 
@@ -796,6 +822,24 @@ export function createToolbarEvent(buttonName, attributes = {}) {
 }
 
 /**
+ * Creates an event associated with reactions.
+ *
+ * @param {string} action - Event action.
+ * @param {string} name - Event name.
+ * @param {string} source - Event source.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+function createReactionEvent(action, name, source) {
+    return {
+        action,
+        actionSubject: name,
+        source: `reaction.${source}`,
+        type: TYPE_UI
+    };
+}
+
+/**
  * Creates an event associated with a reaction button being clicked/pressed.
  *
  * @param {string} buttonName - The identifier of the reaction button which was
@@ -804,12 +848,17 @@ export function createToolbarEvent(buttonName, attributes = {}) {
  * sendAnalytics.
  */
 export function createReactionMenuEvent(buttonName) {
-    return {
-        action: 'clicked',
-        actionSubject: buttonName,
-        source: 'reaction.button',
-        type: TYPE_UI
-    };
+    return createReactionEvent('clicked', buttonName, 'button');
+}
+
+/**
+ * Creates an event associated with disabling of reaction sounds.
+ *
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createReactionSoundsDisabledEvent() {
+    return createReactionEvent('disabled', 'sounds', 'settings');
 }
 
 /**

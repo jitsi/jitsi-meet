@@ -3,20 +3,21 @@
 import { Checkbox } from '@atlaskit/checkbox';
 import React from 'react';
 
+import { isSubmitAnswerDisabled } from '../../functions';
 import AbstractPollAnswer from '../AbstractPollAnswer';
 import type { AbstractProps } from '../AbstractPollAnswer';
 
-
 const PollAnswer = (props: AbstractProps) => {
-
     const {
         checkBoxStates,
         poll,
         setCheckbox,
         skipAnswer,
+        skipChangeVote,
         submitAnswer,
         t
     } = props;
+    const { changingVote } = poll;
 
     return (
         <div className = 'poll-answer'>
@@ -34,7 +35,7 @@ const PollAnswer = (props: AbstractProps) => {
                             <Checkbox
                                 isChecked = { checkBoxStates[index] }
                                 key = { index }
-                                label = { <span>{ answer.name }</span> }
+                                label = { <span className = 'poll-answer-option'>{ answer.name }</span> }
                                 // eslint-disable-next-line react/jsx-no-bind
                                 onChange = { ev => setCheckbox(index, ev.target.checked) }
                                 size = 'large' />
@@ -42,21 +43,21 @@ const PollAnswer = (props: AbstractProps) => {
                     ))
                 }
             </ol>
-            <div className = { 'poll-footer' }>
+            <div className = 'poll-footer poll-answer-footer' >
                 <button
                     aria-label = { t('polls.answer.skip') }
-                    className = { 'poll-small-secondary-button' }
-                    onClick = { skipAnswer } >
+                    className = 'poll-button poll-button-secondary poll-button-shortest'
+                    onClick = { changingVote ? skipChangeVote : skipAnswer } >
                     <span>{t('polls.answer.skip')}</span>
                 </button>
                 <button
                     aria-label = { t('polls.answer.submit') }
-                    className = { 'poll-small-primary-button' }
+                    className = 'poll-button poll-button-primary poll-button-shortest'
+                    disabled = { isSubmitAnswerDisabled(checkBoxStates) }
                     onClick = { submitAnswer }>
                     <span>{t('polls.answer.submit')}</span>
                 </button>
             </div>
-
         </div>
     );
 };

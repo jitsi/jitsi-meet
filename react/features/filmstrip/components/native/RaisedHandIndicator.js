@@ -5,6 +5,7 @@ import React from 'react';
 import { IconRaisedHand } from '../../../base/icons';
 import { BaseIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import AbstractRaisedHandIndicator, {
     type Props,
     _mapStateToProps
@@ -24,6 +25,7 @@ class RaisedHandIndicator extends AbstractRaisedHandIndicator<Props> {
     _renderIndicator() {
         return (
             <BaseIndicator
+                backgroundColor = { BaseTheme.palette.warning01 }
                 highlight = { true }
                 icon = { IconRaisedHand } />
         );

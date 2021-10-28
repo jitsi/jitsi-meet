@@ -461,10 +461,20 @@ async function _getFirstLoadableAvatarUrl(participant, store) {
  * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state
  * features/base/participants.
- * @returns {Array<string>}
+ * @returns {Array<Object>}
  */
-export function getRaiseHandsQueue(stateful: Object | Function): Array<string> {
+export function getRaiseHandsQueue(stateful: Object | Function): Array<Object> {
     const { raisedHandsQueue } = toState(stateful)['features/base/participants'];
 
     return raisedHandsQueue;
+}
+
+/**
+ * Returns whether the given participant has his hand raised or not.
+ *
+ * @param {Object} participant - The participant.
+ * @returns {boolean} - Whether participant has raise hand or not.
+ */
+export function hasRaisedHand(participant: Object): boolean {
+    return Boolean(participant && participant.raisedHandTimestamp);
 }

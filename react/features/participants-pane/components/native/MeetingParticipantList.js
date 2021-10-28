@@ -2,29 +2,37 @@
 
 import React, { PureComponent } from 'react';
 import { FlatList, Text, View } from 'react-native';
-import { Button } from 'react-native-paper';
+import { Button, withTheme } from 'react-native-paper';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconInviteMore } from '../../../base/icons';
-import { getLocalParticipant, getParticipantCountWithFake } from '../../../base/participants';
+import { getLocalParticipant, getParticipantCountWithFake, getRemoteParticipants } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+import { normalizeAccents } from '../../../base/util/strings';
 import { doInvitePeople } from '../../../invite/actions.native';
 import { shouldRenderInviteButton } from '../../functions';
 
+import ClearableInput from './ClearableInput';
 import MeetingParticipantItem from './MeetingParticipantItem';
 import styles from './styles';
+
 
 type Props = {
 
     /**
-     * The ID of the local participant.
+     * The local participant.
      */
-    _localParticipantId: string,
+    _localParticipant: Object,
 
     /**
      * The number of participants in the conference.
      */
     _participantsCount: number,
+
+    /**
+     * The remote participants.
+     */
+    _remoteParticipants: Map<string, Object>,
 
     /**
      * Whether or not to show the invite button.
@@ -44,13 +52,22 @@ type Props = {
     /**
      * Translation function.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * Theme used for styles.
+     */
+    theme: Object
 }
+
+type State = {
+    searchString: string
+};
 
 /**
  *  The meeting participant list component.
  */
-class MeetingParticipantList extends PureComponent<Props> {
+class MeetingParticipantList extends PureComponent<Props, State> {
 
     /**
      * Creates new MeetingParticipantList instance.
@@ -60,9 +77,14 @@ class MeetingParticipantList extends PureComponent<Props> {
     constructor(props: Props) {
         super(props);
 
+        this.state = {
+            searchString: ''
+        };
+
         this._keyExtractor = this._keyExtractor.bind(this);
         this._onInvite = this._onInvite.bind(this);
         this._renderParticipant = this._renderParticipant.bind(this);
+        this._onSearchStringChange = this._onSearchStringChange.bind(this);
     }
 
     _keyExtractor: Function;
@@ -111,11 +133,49 @@ class MeetingParticipantList extends PureComponent<Props> {
      * @returns {ReactElement}
      */
     _renderParticipant({ item/* , index, separators */ }) {
-        return (
-            <MeetingParticipantItem
-                key = { item }
-                participantID = { item } />
-        );
+        const { _localParticipant, _remoteParticipants } = this.props;
+        const { searchString } = this.state;
+        const participant = item === _localParticipant?.id ? _localParticipant : _remoteParticipants.get(item);
+        const displayName = participant?.name;
+
+        if (displayName) {
+            const names = normalizeAccents(displayName)
+                .toLowerCase()
+                .split(' ');
+            const lowerCaseSearch = normalizeAccents(searchString).toLowerCase();
+
+            for (const name of names) {
+                if (lowerCaseSearch === '' || name.startsWith(lowerCaseSearch)) {
+                    return (
+                        <MeetingParticipantItem
+                            key = { item }
+                            participant = { participant } />
+                    );
+                }
+            }
+        } else if (displayName === '' && searchString === '') {
+            return (
+                <MeetingParticipantItem
+                    key = { item }
+                    participant = { participant } />
+            );
+        }
+
+        return null;
+    }
+
+    _onSearchStringChange: (text: string) => void;
+
+    /**
+     * Handles search string changes.
+     *
+     * @param {string} text - New value of the search string.
+     * @returns {void}
+     */
+    _onSearchStringChange(text: string) {
+        this.setState({
+            searchString: text
+        });
     }
 
     /**
@@ -126,7 +186,7 @@ class MeetingParticipantList extends PureComponent<Props> {
      */
     render() {
         const {
-            _localParticipantId,
+            _localParticipant,
             _participantsCount,
             _showInviteButton,
             _sortedRemoteParticipants,
@@ -134,7 +194,8 @@ class MeetingParticipantList extends PureComponent<Props> {
         } = this.props;
 
         return (
-            <View style = { styles.meetingList }>
+            <View
+                style = { styles.meetingListContainer }>
                 <Text style = { styles.meetingListDescription }>
                     {t('participantsPane.headings.participantsList',
                         { count: _participantsCount })}
@@ -149,13 +210,19 @@ class MeetingParticipantList extends PureComponent<Props> {
                         onPress = { this._onInvite }
                         style = { styles.inviteButton } />
                 }
+                <ClearableInput
+                    onChange = { this._onSearchStringChange }
+                    placeholder = { t('participantsPane.search') }
+                    selectionColor = { this.props.theme.palette.text01 } />
                 <FlatList
                     bounces = { false }
-                    data = { [ _localParticipantId, ..._sortedRemoteParticipants ] }
+                    data = { [ _localParticipant?.id, ..._sortedRemoteParticipants ] }
                     horizontal = { false }
                     keyExtractor = { this._keyExtractor }
                     renderItem = { this._renderParticipant }
+                    scrollEnabled = { false }
                     showsHorizontalScrollIndicator = { false }
+                    style = { styles.meetingList }
                     windowSize = { 2 } />
             </View>
         );
@@ -173,13 +240,15 @@ function _mapStateToProps(state): Object {
     const _participantsCount = getParticipantCountWithFake(state);
     const { remoteParticipants } = state['features/filmstrip'];
     const _showInviteButton = shouldRenderInviteButton(state);
+    const _remoteParticipants = getRemoteParticipants(state);
 
     return {
         _participantsCount,
+        _remoteParticipants,
         _showInviteButton,
         _sortedRemoteParticipants: remoteParticipants,
-        _localParticipantId: getLocalParticipant(state)?.id
+        _localParticipant: getLocalParticipant(state)
     };
 }
 
-export default translate(connect(_mapStateToProps)(MeetingParticipantList));
+export default translate(connect(_mapStateToProps)(withTheme(MeetingParticipantList)));

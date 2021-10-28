@@ -12,20 +12,29 @@ export default {
     button: {
         alignItems: 'center',
         borderRadius: 4,
-        marginVertical: 8,
-        paddingVertical: 10
+        marginVertical: 4,
+        paddingVertical: 8
     },
 
     contentWrapper: {
         alignItems: 'center',
+        display: 'flex',
         flexDirection: 'column',
-        padding: 32
+        justifyItems: 'center',
+        height: '100%'
+    },
+
+    closeIcon: {
+        color: 'red',
+        fontSize: 20
     },
 
     dialogTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 10
+        margin: 'auto',
+        marginVertical: 24,
+        textAlign: 'center'
     },
 
     displayNameText: {
@@ -71,6 +80,8 @@ export default {
     },
 
     joiningMessage: {
+        color: 'rgba(0, 0, 0, .7)',
+        paddingBottom: 36,
         textAlign: 'center'
     },
 
@@ -103,7 +114,15 @@ export default {
     },
 
     secondaryText: {
-        color: 'rgba(0, 0, 0, .7)'
+        color: 'rgba(0, 0, 0, .7)',
+        margin: 'auto',
+        textAlign: 'center'
+    },
+
+    cancelButton: {
+        alignItems: 'center',
+        backgroundColor: 'transparent',
+        marginVertical: 4
     },
 
     // KnockingParticipantList
