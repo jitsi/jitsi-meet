@@ -1,4 +1,4 @@
-FROM node:latest as builder
+FROM node:lts as builder
 
 RUN mkdir /app
 
