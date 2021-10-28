@@ -60,6 +60,7 @@ export default function({
             { participants.map(p => (
                 <li
                     className = 'knocking-participant'
+                    data-testid = { p.id }
                     key = { p.id }>
                     <Avatar
                         displayName = { p.name }
