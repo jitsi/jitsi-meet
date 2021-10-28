@@ -80,7 +80,7 @@ function getNewAudioInputDevice(newDevices, localAudio, newLabel) {
             return availableAudioInputDevices[0].deviceId;
         }
     } else if (selectedAudioInputDevice
-        && selectedAudioInputDeviceId !== localAudio.getDeviceId()) {
+        && selectedAudioInputDeviceId !== localAudioDeviceId) {
 
         if (newLabel) {
             // If a Firefox user with manual permission prompt chose a different
@@ -132,7 +132,7 @@ function getNewVideoInputDevice(newDevices, localVideo, newLabel) {
             return availableVideoInputDevices[0].deviceId;
         }
     } else if (selectedVideoInputDevice
-            && selectedVideoInputDeviceId !== localVideo.getDeviceId()) {
+            && selectedVideoInputDeviceId !== localVideoDeviceId) {
 
         if (newLabel) {
             // If a Firefox user with manual permission prompt chose a different
