@@ -12,9 +12,9 @@ export const DEFAULT_LAST_N = 20;
  */
 export const VIDEO_QUALITY_LEVELS = {
     ULTRA: 2160,
-    HIGH: 720,
-    STANDARD: 360,
-    LOW: 180,
+    HIGH: 1200,
+    STANDARD: 1080,
+    LOW: 720,
     NONE: 0
 };
 
