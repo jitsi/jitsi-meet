@@ -50,11 +50,15 @@ export const LobbyParticipantItem = ({
             videoMediaState = { MEDIA_STATE.NONE }
             youText = { t('chat.you') }>
             <ParticipantActionButton
+                aria-label = { `Reject ${p.name}` }
+                data-testid = { `reject-${id}` }
                 onClick = { reject }
                 primary = { false }>
                 {t('lobby.reject')}
             </ParticipantActionButton>
             <ParticipantActionButton
+                aria-label = { `Admit ${p.name}` }
+                data-testid = { `admit-${id}` }
                 onClick = { admit }
                 primary = { true }>
                 {t('lobby.admit')}

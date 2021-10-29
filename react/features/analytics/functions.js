@@ -187,7 +187,7 @@ export function initAnalytics({ getState }: { getState: Function }, handlers: Ar
     permanentProperties.externalApi = typeof API_ID === 'number';
 
     // Report if we are loaded in iframe
-    permanentProperties.inIframe = _inIframe();
+    permanentProperties.inIframe = inIframe();
 
     // Report the tenant from the URL.
     permanentProperties.tenant = tenant || '/';
@@ -227,7 +227,7 @@ export function initAnalytics({ getState }: { getState: Function }, handlers: Ar
  * @returns {boolean} Returns {@code true} if loaded in iframe.
  * @private
  */
-function _inIframe() {
+export function inIframe() {
     if (navigator.product === 'ReactNative') {
         return false;
     }
