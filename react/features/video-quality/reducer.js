@@ -12,8 +12,8 @@ const DEFAULT_STATE = {
     preferredVideoQuality: VIDEO_QUALITY_LEVELS.ULTRA
 };
 
-DEFAULT_STATE.minHeightForQualityLvl.set(360, VIDEO_QUALITY_LEVELS.STANDARD);
-DEFAULT_STATE.minHeightForQualityLvl.set(720, VIDEO_QUALITY_LEVELS.HIGH);
+DEFAULT_STATE.minHeightForQualityLvl.set(1080, VIDEO_QUALITY_LEVELS.STANDARD);
+DEFAULT_STATE.minHeightForQualityLvl.set(1200, VIDEO_QUALITY_LEVELS.HIGH);
 
 
 // When the persisted state is initialized the current state (for example the default state) is erased.
