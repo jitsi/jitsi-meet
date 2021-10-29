@@ -130,6 +130,8 @@ case "$1" in
             echo -e "    storage = \"memory\"" >> $PROSODY_HOST_CONFIG
             echo -e "    modules_enabled = { \"ping\"; }" >> $PROSODY_HOST_CONFIG
             echo -e "    admins = { \"$JICOFO_AUTH_USER@$JICOFO_AUTH_DOMAIN\", \"jvb@$JICOFO_AUTH_DOMAIN\" }" >> $PROSODY_HOST_CONFIG
+            echo -e "    muc_room_locking = false" >> $PROSODY_HOST_CONFIG
+            echo -e "    muc_room_default_public_jids = true" >> $PROSODY_HOST_CONFIG
         fi
 
         # Convert the old focus component config to the new one.
