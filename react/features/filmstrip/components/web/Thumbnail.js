@@ -66,7 +66,12 @@ export type State = {|
     /**
      * Indicates whether the thumbnail is hovered or not.
      */
-    isHovered: boolean
+    isHovered: boolean,
+
+    /**
+     * Whether popover is visible or not.
+     */
+    popoverVisible: boolean
 |};
 
 /**
@@ -277,18 +282,19 @@ class Thumbnail extends Component<Props, State> {
             audioLevel: 0,
             canPlayEventReceived: false,
             isHovered: false,
-            displayMode: DISPLAY_VIDEO
+            displayMode: DISPLAY_VIDEO,
+            popoverVisible: false
         };
 
         this.state = {
             ...state,
-            displayMode: computeDisplayMode(Thumbnail.getDisplayModeInput(props, state))
+            displayMode: computeDisplayMode(Thumbnail.getDisplayModeInput(props, state)),
+            popoverVisible: false
         };
         this.timeoutHandle = null;
         this.videoMenuTriggerRef = null;
 
         this._clearDoubleClickTimeout = this._clearDoubleClickTimeout.bind(this);
-        this._setInstance = this._setInstance.bind(this);
         this._updateAudioLevel = this._updateAudioLevel.bind(this);
         this._onCanPlay = this._onCanPlay.bind(this);
         this._onClick = this._onClick.bind(this);
@@ -299,7 +305,8 @@ class Thumbnail extends Component<Props, State> {
         this._onTouchStart = this._onTouchStart.bind(this);
         this._onTouchEnd = this._onTouchEnd.bind(this);
         this._onTouchMove = this._onTouchMove.bind(this);
-        this._showPopupMenu = this._showPopupMenu.bind(this);
+        this._showPopover = this._showPopover.bind(this);
+        this._hidePopover = this._hidePopover.bind(this);
     }
 
     /**
@@ -503,6 +510,34 @@ class Thumbnail extends Component<Props, State> {
         });
     }
 
+    _showPopover: () => void;
+
+    /**
+     * Shows popover.
+     *
+     * @private
+     * @returns {void}
+     */
+    _showPopover() {
+        this.setState({
+            popoverVisible: true
+        });
+    }
+
+    _hidePopover: () => void;
+
+    /**
+     * Hides popover.
+     *
+     * @private
+     * @returns {void}
+     */
+    _hidePopover() {
+        this.setState({
+            popoverVisible: false
+        });
+    }
+
     /**
      * Returns an object with the styles for thumbnail.
      *
@@ -611,19 +646,6 @@ class Thumbnail extends Component<Props, State> {
         this.setState({ isHovered: false });
     }
 
-    _showPopupMenu: () => void;
-
-    /**
-     * Triggers showing the popover context menu.
-     *
-     * @returns {void}
-     */
-    _showPopupMenu() {
-        if (this.videoMenuTriggerRef) {
-            this.videoMenuTriggerRef.showContextMenu();
-        }
-    }
-
     _onTouchStart: () => void;
 
     /**
@@ -632,7 +654,7 @@ class Thumbnail extends Component<Props, State> {
      * @returns {void}
      */
     _onTouchStart() {
-        this.timeoutHandle = setTimeout(this._showPopupMenu, SHOW_TOOLBAR_CONTEXT_MENU_AFTER);
+        this.timeoutHandle = setTimeout(this._showPopover, SHOW_TOOLBAR_CONTEXT_MENU_AFTER);
 
         if (this._firstTap) {
             this._clearDoubleClickTimeout();
@@ -889,7 +911,9 @@ class Thumbnail extends Component<Props, State> {
                 </span>
                 <span className = 'localvideomenu'>
                     <LocalVideoMenuTriggerButton
-                        getRef = { this._setInstance } />
+                        hidePopover = { this._hidePopover }
+                        popoverVisible = { this.state.popoverVisible }
+                        showPopover = { this._showPopover } />
                 </span>
 
             </span>
@@ -933,19 +957,6 @@ class Thumbnail extends Component<Props, State> {
         const jitsiVideoTrack = _videoTrack?.jitsiTrack;
 
         dispatch(updateLastTrackVideoMediaEvent(jitsiVideoTrack, event.type));
-    }
-
-    _setInstance: Object => void;
-
-    /**
-     * Stores the local or remote video menu button instance in a variable.
-     *
-     * @param {Object} instance - The local or remote video menu trigger instance.
-     *
-     * @returns {void}
-     */
-    _setInstance(instance) {
-        this.videoMenuTriggerRef = instance;
     }
 
     /**
@@ -1030,10 +1041,12 @@ class Thumbnail extends Component<Props, State> {
                 </span>
                 <span className = 'remotevideomenu'>
                     <RemoteVideoMenuTriggerButton
-                        getRef = { this._setInstance }
+                        hidePopover = { this._hidePopover }
                         initialVolumeValue = { _volume }
                         onVolumeChange = { onVolumeChange }
-                        participantID = { id } />
+                        participantID = { id }
+                        popoverVisible = { this.state.popoverVisible }
+                        showPopover = { this._showPopover } />
                 </span>
             </span>
         );

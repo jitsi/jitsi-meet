@@ -109,13 +109,21 @@ type Props = AbstractProps & {
     t: Function,
 };
 
+type State = AbstractState & {
+
+    /**
+     * Whether popover is ivisible or not.
+     */
+    popoverVisible: boolean
+}
+
 /**
  * Implements a React {@link Component} which displays the current connection
  * quality percentage and has a popover to show more detailed connection stats.
  *
  * @extends {Component}
  */
-class ConnectionIndicator extends AbstractConnectionIndicator<Props, AbstractState> {
+class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
     /**
      * Initializes a new {@code ConnectionIndicator} instance.
      *
@@ -126,10 +134,12 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, AbstractSta
         super(props);
 
         this.state = {
-            autoHideTimeout: undefined,
             showIndicator: false,
-            stats: {}
+            stats: {},
+            popoverVisible: false
         };
+        this._onShowPopover = this._onShowPopover.bind(this);
+        this._onHidePopover = this._onHidePopover.bind(this);
     }
 
     /**
@@ -139,6 +149,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, AbstractSta
      * @returns {ReactElement}
      */
     render() {
+        const { iconSize, enableStatsDisplay, participantId, statsPopoverPosition } = this.props;
         const visibilityClass = this._getVisibilityClass();
         const rootClassNames = `indicator-container ${visibilityClass}`;
 
@@ -151,13 +162,19 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, AbstractSta
                 className = { rootClassNames }
                 content = { <ConnectionIndicatorContent
                     inheritedStats = { this.state.stats }
-                    participantId = { this.props.participantId } /> }
-                disablePopover = { !this.props.enableStatsDisplay }
-                position = { this.props.statsPopoverPosition }>
+                    participantId = { participantId } /> }
+                disablePopover = { !enableStatsDisplay }
+                id = 'participant-connection-indicator'
+                noPaddingContent = { true }
+                onPopoverClose = { this._onHidePopover }
+                onPopoverOpen = { this._onShowPopover }
+                paddedContent = { true }
+                position = { statsPopoverPosition }
+                visible = { this.state.popoverVisible }>
                 <div className = 'popover-trigger'>
                     <div
                         className = { indicatorContainerClassNames }
-                        style = {{ fontSize: this.props.iconSize }}>
+                        style = {{ fontSize: iconSize }}>
                         <div className = 'connection indicatoricon'>
                             { this._renderIcon() }
                         </div>
@@ -226,6 +243,18 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, AbstractSta
             ? 'show-connection-indicator' : 'hide-connection-indicator';
     }
 
+    _onHidePopover: () => void;
+
+    /**
+     * Hides popover.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onHidePopover() {
+        this.setState({ popoverVisible: false });
+    }
+
     /**
      * Creates a ReactElement for displaying an icon that represents the current
      * connection quality.
@@ -285,6 +314,18 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, AbstractSta
                     src = { IconConnectionActive } />
             </span>
         ];
+    }
+
+    _onShowPopover: () => void;
+
+    /**
+     * Shows popover.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onShowPopover() {
+        this.setState({ popoverVisible: true });
     }
 }
 

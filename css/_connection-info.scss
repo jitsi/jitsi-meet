@@ -11,12 +11,6 @@
 {
     @extend %connection-info;
 
-    /**
-     * Apply negative margin to reduce the appearance of padding in AtlasKit
-     * InlineDialog.
-     */
-    margin: -15px;
-
     > table {
         white-space: nowrap;
         @extend %connection-info;
