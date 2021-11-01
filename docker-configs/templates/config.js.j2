@@ -7,18 +7,18 @@ var config = {
   websocket: 'wss://{{ PUBLIC_URL }}/xmpp-websocket',
   openBridgeChannel: 'websocket',
   clientNode: 'http://jitsi.org/jitsimeet',
-  testing: {
-    enableFirefoxSimulcast: false,
-    p2pTestMode: false,
-  },
   disableSuspendVideo: true,
   desktopSharingChromeExtId: null,
   desktopSharingChromeSources: [ 'screen', 'window', 'tab' ],
   desktopSharingChromeMinExtVersion: '0.1',
-  channelLastN: -1,
+  channelLastN: 10,
   enableWelcomePage: true,
   enableUserRolesBasedOnToken: false,
   enableLipSync: false,
+  disableSimulcast: false,
+  enableLayerSuspension: true,
+  enableTCC: true,
+  enableRemb: true,
   p2p: {
     enabled: true,
     useStunTurn: true,
@@ -38,7 +38,7 @@ var config = {
       height: {
         ideal: 360,
         max: 360,
-        min: 360
+        min: 180
       }
     }
   },
