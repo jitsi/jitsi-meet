@@ -1,9 +1,10 @@
 /* @flow */
-
+import clsx from 'clsx';
 import React, { Component } from 'react';
 
 import { Drawer, JitsiPortal, DialogPortal } from '../../../toolbox/components/web';
 import { isMobileBrowser } from '../../environment/utils';
+import { connect } from '../../redux';
 import { getContextMenuStyle } from '../functions.web';
 
 /**
@@ -57,7 +58,17 @@ type Props = {
      * From which side of the dialog trigger the dialog should display. The
      * value will be passed to {@code InlineDialog}.
      */
-    position: string
+    position: string,
+
+    /**
+     * Whether the content show have some padding.
+     */
+    paddedContent: ?boolean,
+
+    /**
+     * Whether the popover is visible or not.
+     */
+    visible: boolean
 };
 
 /**
@@ -68,12 +79,7 @@ type State = {
     /**
      * The style to apply to the context menu in order to position it correctly.
      */
-     contextMenuStyle: Object,
-
-    /**
-     * Whether or not the {@code InlineDialog} should be displayed.
-     */
-    showDialog: boolean
+     contextMenuStyle: Object
 };
 
 /**
@@ -110,7 +116,6 @@ class Popover extends Component<Props, State> {
         super(props);
 
         this.state = {
-            showDialog: false,
             contextMenuStyle: null
         };
 
@@ -125,16 +130,6 @@ class Popover extends Component<Props, State> {
         this._setContextMenuRef = this._setContextMenuRef.bind(this);
         this._setContextMenuStyle = this._setContextMenuStyle.bind(this);
         this._getCustomDialogStyle = this._getCustomDialogStyle.bind(this);
-    }
-
-    /**
-     * Public method for triggering showing the context menu dialog.
-     *
-     * @returns {void}
-     * @public
-     */
-    showDialog() {
-        this._onShowDialog();
     }
 
     /**
@@ -164,7 +159,7 @@ class Popover extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { children, className, content, id, overflowDrawer } = this.props;
+        const { children, className, content, id, overflowDrawer, visible } = this.props;
 
         if (overflowDrawer) {
             return (
@@ -175,7 +170,7 @@ class Popover extends Component<Props, State> {
                     { children }
                     <JitsiPortal>
                         <Drawer
-                            isOpen = { this.state.showDialog }
+                            isOpen = { visible }
                             onClose = { this._onHideDialog }>
                             { content }
                         </Drawer>
@@ -193,7 +188,7 @@ class Popover extends Component<Props, State> {
                 onMouseEnter = { this._onShowDialog }
                 onMouseLeave = { this._onHideDialog }
                 ref = { this._containerRef }>
-                { this.state.showDialog && (
+                { visible && (
                     <DialogPortal
                         getRef = { this._setContextMenuRef }
                         setSize = { this._setContextMenuStyle }
@@ -244,7 +239,7 @@ class Popover extends Component<Props, State> {
      * @returns {void}
      */
     _onTouchStart(event) {
-        if (this.state.showDialog
+        if (this.props.visible
             && !this.props.overflowDrawer
             && this._contextMenuRef
             && this._contextMenuRef.contains
@@ -263,7 +258,6 @@ class Popover extends Component<Props, State> {
      */
     _onHideDialog() {
         this.setState({
-            showDialog: false,
             contextMenuStyle: null
         });
 
@@ -284,12 +278,9 @@ class Popover extends Component<Props, State> {
      */
     _onShowDialog(event) {
         event && event.stopPropagation();
-        if (!this.props.disablePopover) {
-            this.setState({ showDialog: true });
 
-            if (this.props.onPopoverOpen) {
-                this.props.onPopoverOpen();
-            }
+        if (!this.props.disablePopover) {
+            this.props.onPopoverOpen();
         }
     }
 
@@ -319,7 +310,7 @@ class Popover extends Component<Props, State> {
     _onKeyPress(e) {
         if (e.key === ' ' || e.key === 'Enter') {
             e.preventDefault();
-            if (this.state.showDialog) {
+            if (this.props.visible) {
                 this._onHideDialog();
             } else {
                 this._onShowDialog(e);
@@ -340,7 +331,7 @@ class Popover extends Component<Props, State> {
         if (e.key === 'Escape') {
             e.preventDefault();
             e.stopPropagation();
-            if (this.state.showDialog) {
+            if (this.props.visible) {
                 this._onHideDialog();
             }
         }
@@ -373,11 +364,15 @@ class Popover extends Component<Props, State> {
      * @returns {ReactElement}
      */
     _renderContent() {
-        const { content } = this.props;
+        const { content, paddedContent } = this.props;
+        const className = clsx(
+            'popover popupmenu',
+            paddedContent && 'padded-content'
+        );
 
         return (
             <div
-                className = 'popover popupmenu'
+                className = { className }
                 onKeyDown = { this._onEscKey }>
                 { content }
                 {!isMobileBrowser() && (
@@ -392,4 +387,18 @@ class Popover extends Component<Props, State> {
     }
 }
 
-export default Popover;
+/**
+ * Maps (parts of) the Redux state to the associated {@code Popover}'s props.
+ *
+ * @param {Object} state - The Redux state.
+ * @param {Object} ownProps - The own props of the component.
+ * @private
+ * @returns {Props}
+ */
+function _mapStateToProps(state) {
+    return {
+        overflowDrawer: state['features/toolbox'].overflowDrawer
+    };
+}
+
+export default connect(_mapStateToProps)(Popover);

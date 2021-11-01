@@ -308,10 +308,9 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
      * @returns {void}
      */
     _onSendPrivateMessage() {
-        const { closeDrawer, dispatch, overflowDrawer } = this.props;
+        const { dispatch } = this.props;
 
         dispatch(openChatById(this._getCurrentParticipantId()));
-        overflowDrawer && closeDrawer();
     }
 
     _position: () => void;
@@ -444,7 +443,7 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
             ) : (
                 <>
                     {_isLocalModerator && (
-                        <ContextMenuItemGroup>
+                        <ContextMenuItemGroup onClick = { closeDrawer }>
                             <>
                                 {overflowDrawer && (_isAudioForceMuted || _isVideoForceMuted)
                                         && <ContextMenuItem onClick = { this._onAskToUnmute }>
@@ -481,7 +480,7 @@ class MeetingParticipantContextMenu extends Component<Props, State> {
                         </ContextMenuItemGroup>
                     )}
 
-                    <ContextMenuItemGroup>
+                    <ContextMenuItemGroup onClick = { closeDrawer }>
                         {
                             _isLocalModerator && (
                                     <>

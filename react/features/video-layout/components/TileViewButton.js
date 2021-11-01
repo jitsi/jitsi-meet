@@ -1,5 +1,5 @@
 // @flow
-
+import { batch } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import {
@@ -11,6 +11,7 @@ import { translate } from '../../base/i18n';
 import { IconTileView } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
+import { setOverflowMenuVisible } from '../../toolbox/actions';
 import { setTileView } from '../actions';
 import { shouldDisplayTileView } from '../functions';
 import logger from '../logger';
@@ -68,7 +69,11 @@ class TileViewButton<P: Props> extends AbstractButton<P, *> {
             }));
 
         logger.debug(`Tile view ${value ? 'enable' : 'disable'}`);
-        dispatch(setTileView(value));
+        batch(() => {
+            dispatch(setTileView(value));
+            dispatch(setOverflowMenuVisible(false));
+        });
+
     }
 
     /**

@@ -61,8 +61,7 @@ export default class VideoMenuButton extends Component<Props> {
     /**
      * KeyPress handler for accessibility.
      *
-     * @param {Object} e - The key event to handle.
-     *
+     * @param {Object} e - The synthetic event.
      * @returns {void}
      */
     _onKeyPress(e) {
