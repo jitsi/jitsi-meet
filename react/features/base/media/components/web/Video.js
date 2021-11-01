@@ -2,6 +2,9 @@
 
 import React, { Component } from 'react';
 
+// eslint-disable-next-line no-empty-function
+const noop = () => {};
+
 /**
  * The type of the React {@code Component} props of {@link Video}.
  */
@@ -144,7 +147,6 @@ type Props = {
  */
 class Video extends Component<Props> {
     _videoElement: ?Object;
-    _mounted: boolean;
 
     /**
      * Default values for {@code Video} component's properties.
@@ -190,8 +192,6 @@ class Video extends Component<Props> {
      * @returns {void}
      */
     componentDidMount() {
-        this._mounted = true;
-
         if (this._videoElement) {
             this._videoElement.volume = 0;
             this._videoElement.onplaying = this._onVideoPlaying;
@@ -203,14 +203,7 @@ class Video extends Component<Props> {
             // Ensure the video gets play() called on it. This may be necessary in the
             // case where the local video container was moved and re-attached, in which
             // case video does not autoplay.
-            this._videoElement.play()
-                .catch(error => {
-                    // Prevent uncaught "DOMException: The play() request was interrupted by a new load request"
-                    // when video playback takes long to start and it starts after the component was unmounted.
-                    if (this._mounted) {
-                        throw error;
-                    }
-                });
+            this._videoElement.play().then(null, noop);
         }
     }
 
@@ -222,7 +215,6 @@ class Video extends Component<Props> {
      * @returns {void}
      */
     componentWillUnmount() {
-        this._mounted = false;
         this._detachTrack(this.props.videoTrack);
     }
 
