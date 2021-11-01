@@ -50,10 +50,10 @@ const INITIAL_RN_STATE = {
     disableAudioLevels: true,
 
     p2p: {
-        disabledCodec: '',
-        disableH264: false, // deprecated
-        preferredCodec: 'H264',
-        preferH264: true // deprecated
+        disabledCodec: 'H264',
+        disableH264: true, // deprecated
+        preferredCodec: 'VP9',
+        preferH264: false // deprecated
     }
 };
 
