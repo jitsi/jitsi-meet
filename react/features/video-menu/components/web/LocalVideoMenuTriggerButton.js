@@ -39,6 +39,21 @@ type Props = {
      getRef: Function,
 
     /**
+     * Hides popover.
+     */
+     hidePopover: Function,
+
+    /**
+     * Whether the popover is visible or not.
+     */
+     popoverVisible: boolean,
+
+    /**
+     * Shows popover.
+     */
+     showPopover: Function,
+
+    /**
      * The id of the local participant.
      */
     _localParticipantId: string,
@@ -78,10 +93,6 @@ type Props = {
  * @extends {Component}
  */
 class LocalVideoMenuTriggerButton extends Component<Props> {
-    /**
-     * Reference to the Popover instance.
-     */
-    popoverRef: Object;
 
     /**
      * Initializes a new LocalVideoMenuTriggerButton instance.
@@ -92,45 +103,10 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
     constructor(props: Props) {
         super(props);
 
-        this.popoverRef = React.createRef();
         this._onPopoverClose = this._onPopoverClose.bind(this);
         this._onPopoverOpen = this._onPopoverOpen.bind(this);
     }
 
-    /**
-     * Triggers showing the popover's context menu.
-     *
-     * @returns {void}
-     */
-    showContextMenu() {
-        if (this.popoverRef && this.popoverRef.current) {
-            this.popoverRef.current.showDialog();
-        }
-    }
-
-    /**
-     * Calls the ref(instance) getter.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    componentDidMount() {
-        if (this.props.getRef) {
-            this.props.getRef(this);
-        }
-    }
-
-    /**
-     * Calls the ref(instance) getter.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    componentWillUnmount() {
-        if (this.props.getRef) {
-            this.props.getRef(null);
-        }
-    }
 
     /**
      * Implements React's {@link Component#render()}.
@@ -145,6 +121,8 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
             _showConnectionInfo,
             _overflowDrawer,
             _showLocalVideoFlipButton,
+            hidePopover,
+            popoverVisible,
             t
         } = this.props;
 
@@ -152,7 +130,7 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
             ? <ConnectionIndicatorContent participantId = { _localParticipantId } />
             : (
                 <VideoMenu id = 'localVideoMenu'>
-                    <FlipLocalVideoButton />
+                    <FlipLocalVideoButton onClick = { hidePopover } />
                     { isMobileBrowser()
                             && <ConnectionStatusButton participantId = { _localParticipantId } />
                     }
@@ -163,11 +141,12 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
             isMobileBrowser() || _showLocalVideoFlipButton
                 ? <Popover
                     content = { content }
+                    id = 'local-video-menu-trigger'
                     onPopoverClose = { this._onPopoverClose }
                     onPopoverOpen = { this._onPopoverOpen }
                     overflowDrawer = { _overflowDrawer }
                     position = { _menuPosition }
-                    ref = { this.popoverRef }>
+                    visible = { popoverVisible }>
                     {!_overflowDrawer && (
                         <span
                             className = 'popover-trigger local-video-menu-trigger'>
@@ -194,7 +173,10 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
      * @returns {void}
      */
     _onPopoverOpen() {
-        this.props.dispatch(setParticipantContextMenuOpen(true));
+        const { dispatch, showPopover } = this.props;
+
+        showPopover();
+        dispatch(setParticipantContextMenuOpen(true));
     }
 
     _onPopoverClose: () => void;
@@ -205,8 +187,9 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
      * @returns {void}
      */
     _onPopoverClose() {
-        const { dispatch } = this.props;
+        const { hidePopover, dispatch } = this.props;
 
+        hidePopover();
         batch(() => {
             dispatch(setParticipantContextMenuOpen(false));
             dispatch(renderConnectionStatus(false));

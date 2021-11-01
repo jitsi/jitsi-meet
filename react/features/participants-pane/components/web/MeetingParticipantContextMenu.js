@@ -260,10 +260,9 @@ class MeetingParticipantContextMenu extends Component<Props> {
      * @returns {void}
      */
     _onSendPrivateMessage() {
-        const { closeDrawer, dispatch, overflowDrawer } = this.props;
+        const { dispatch } = this.props;
 
         dispatch(openChatById(this._getCurrentParticipantId()));
-        overflowDrawer && closeDrawer();
     }
 
     _onVolumeChange: (number) => void;

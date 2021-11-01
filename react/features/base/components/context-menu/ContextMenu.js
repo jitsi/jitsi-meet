@@ -152,7 +152,9 @@ const ContextMenu = ({
             <Drawer
                 isOpen = { isDrawerOpen && _overflowDrawer }
                 onClose = { onDrawerClose }>
-                <div className = { styles.drawer }>
+                <div
+                    className = { styles.drawer }
+                    onClick = { onDrawerClose }>
                     {children}
                 </div>
             </Drawer>

@@ -5,6 +5,7 @@
 .popupmenu {
     background-color: $menuBG;
     border-radius: 3px;
+    list-style-type: none;
     min-width: 150px;
     text-align: left;
     padding: 0px;
@@ -36,6 +37,11 @@
         &.disabled {
             pointer-events: none;
         }
+    }
+
+    &__list {
+        margin: 0;
+        padding: 0;
     }
 
     &__text {
