@@ -236,7 +236,7 @@ ol.poll-result-list {
 
 
 .polls-pane-content {
-    height: calc(100% - 102px);
+    height: 100%;
     position: relative;
 }
 
@@ -306,6 +306,10 @@ ol.poll-result-list {
     color: #FFF;
     border-radius: 6px;
     padding: 10px 16px;
+}
+
+#polls-panel {
+    height: calc(100% - 102px);
 }
 
 .poll-container {
