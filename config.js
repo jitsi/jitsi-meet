@@ -217,7 +217,7 @@ var config = {
 
     // If set to true, disable H.264 video codec by stripping it out of the
     // SDP.
-    // disableH264: false,
+    disableH264: true,
 
     // Desktop sharing
 
