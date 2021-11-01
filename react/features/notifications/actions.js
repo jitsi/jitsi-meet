@@ -28,7 +28,7 @@ declare var APP: Object;
  * @param {string} type - Notification type.
  * @returns {number}
  */
-function getNotificationTimeout(type) {
+function getNotificationTimeout(type: ?string) {
     const { notificationTimeouts } = APP.store.getState()['features/base/config'];
 
     if (type === NOTIFICATION_TIMEOUT_TYPE.SHORT) {
@@ -37,9 +37,9 @@ function getNotificationTimeout(type) {
         return notificationTimeouts?.medium ?? NOTIFICATION_TIMEOUT.MEDIUM;
     } else if (type === NOTIFICATION_TIMEOUT_TYPE.LONG) {
         return notificationTimeouts?.long ?? NOTIFICATION_TIMEOUT.LONG;
-    } else if (type === NOTIFICATION_TIMEOUT_TYPE.STICKY) {
-        return NOTIFICATION_TIMEOUT.STICKY;
     }
+
+    return NOTIFICATION_TIMEOUT.STICKY;
 }
 
 /**
