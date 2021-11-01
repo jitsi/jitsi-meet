@@ -102,7 +102,7 @@ var config = {
     //
 
     // Enable unified plan implementation support on Chromium based browsers.
-    // enableUnifiedOnChrome: false,
+    enableUnifiedOnChrome: true,
 
     // Audio
 
@@ -200,7 +200,7 @@ var config = {
     // (no longer sent) until they are requested again. This is enabled by default. This must be enabled for screen
     // sharing to work as expected on Chrome. Disabling this might result in low resolution screenshare being sent
     // by the client.
-    enableLayerSuspension: false,
+    enableLayerSuspension: true,
 
     // Every participant after the Nth will start video muted.
     // startVideoMuted: 10,
