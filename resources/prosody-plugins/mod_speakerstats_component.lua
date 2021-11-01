@@ -151,7 +151,7 @@ function occupant_joined(event)
                 -- and skip focus if sneaked into the table
                 if values.nick ~= nil and values.nick ~= 'focus' then
                     local totalDominantSpeakerTime = values.totalDominantSpeakerTime;
-                    if totalDominantSpeakerTime > 0 or room:get_occupant_jid(jid) == nil then
+                    if totalDominantSpeakerTime > 0 or room:get_occupant_jid(jid) == nil or values:isDominantSpeaker() then
                         -- before sending we need to calculate current dominant speaker state
                         if values:isDominantSpeaker() then
                             local timeElapsed = math.floor(socket.gettime()*1000 - values._dominantSpeakerStart);
