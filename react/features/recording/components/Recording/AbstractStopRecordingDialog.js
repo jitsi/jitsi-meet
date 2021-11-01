@@ -1,12 +1,15 @@
 // @flow
 
 import { Component } from 'react';
+import { batch } from 'react-redux';
 
 import {
     createRecordingDialogEvent,
     sendAnalytics
 } from '../../../analytics';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
+import { updateLocalRecordingStatus } from '../../../base/participants';
+import { updateLocalRecordingData } from '../../actions';
 import { getActiveSession } from '../../functions';
 
 /**
@@ -24,6 +27,11 @@ export type Props = {
      * The redux representation of the recording session to be stopped.
      */
     _fileRecordingSession: Object,
+
+    /**
+     * The redux representation of the local recording to be stopped.
+     */
+    _localRecording: string,
 
     /**
      * The redux dispatch function.
@@ -67,12 +75,18 @@ export default class AbstractStopRecordingDialog<P: Props>
      */
     _onSubmit() {
         sendAnalytics(createRecordingDialogEvent('stop', 'confirm.button'));
+        if (this.props._localRecording) {
+            batch(() => {
+                this.props.dispatch(updateLocalRecordingData(false));
+                this.props.dispatch(updateLocalRecordingStatus(false));
+            });
+        } else {
+            const { _fileRecordingSession } = this.props;
 
-        const { _fileRecordingSession } = this.props;
-
-        if (_fileRecordingSession) {
-            this.props._conference.stopRecording(_fileRecordingSession.id);
-            this._toggleScreenshotCapture();
+            if (_fileRecordingSession) {
+                this.props._conference.stopRecording(_fileRecordingSession.id);
+                this._toggleScreenshotCapture();
+            }
         }
 
         return true;
@@ -99,6 +113,7 @@ export function _mapStateToProps(state: Object) {
     return {
         _conference: state['features/base/conference'].conference,
         _fileRecordingSession:
-            getActiveSession(state, JitsiRecordingConstants.mode.FILE)
+            getActiveSession(state, JitsiRecordingConstants.mode.FILE),
+        _localRecording: state['features/recording'].localVideoRecordingHasStarted
     };
 }

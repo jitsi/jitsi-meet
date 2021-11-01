@@ -475,3 +475,30 @@ export function getRaiseHandsQueue(stateful: Object | Function): Array<Object> {
 export function hasRaisedHand(participant: Object): boolean {
     return Boolean(participant && participant.raisedHandTimestamp);
 }
+
+/**
+ * Get the participants queue with raised hands.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @returns {Array<Object>}
+ */
+export function getLocalRecordingQueue(stateful: Object | Function): Array<Object> {
+    const { localRecordingQueue } = toState(stateful)['features/base/participants'];
+
+    return localRecordingQueue;
+}
+
+/**
+ * Returns whether the given participant has his hand raised or not.
+ *
+ * @param {Object} participant - The participant.
+ * @returns {boolean} - Whether participant has started local recoding or not.
+ */
+export function hasStartedRecording(participant: Object): boolean {
+    const { localVideoRecordingHasStarted } = participant;
+
+    return localVideoRecordingHasStarted || false;
+}
+

@@ -192,3 +192,28 @@ export const LOCAL_PARTICIPANT_RAISE_HAND = 'LOCAL_PARTICIPANT_RAISE_HAND';
  * }
  */
 export const RAISE_HAND_UPDATED = 'RAISE_HAND_UPDATED';
+
+/**
+ * Updates participants local recording status.
+ * {
+ *     type: LOCAL_PARTICIPANT_RECORDING_STATUS,
+ *     participant: {
+ *         id: string,
+ *         localVideoRecordingHasStarted: boolean
+ *     }
+ * }
+ */
+export const LOCAL_PARTICIPANT_RECORDING_STATUS = 'LOCAL_PARTICIPANT_RECORDING_STATUS';
+
+/**
+ * Updates participant in local recording queue.
+ * {
+ *     type: LOCAL_RECORDING_UPDATED,
+ *     participant: {
+ *         id: string,
+ *         localVideoRecordingStarted: boolean
+ *     }
+ * }
+ */
+export const LOCAL_RECORDING_UPDATED = 'LOCAL_RECORDING_UPDATED';
+

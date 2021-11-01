@@ -99,6 +99,12 @@ export const IOS_SCREENSHARING_ENABLED = 'ios.screensharing.enabled';
 export const ANDROID_SCREENSHARING_ENABLED = 'android.screensharing.enabled';
 
 /**
+ * Flag indicating if screen sharing should be enabled in android.
+ * Default: enabled (true).
+ */
+export const LOCAL_VIDEO_RECORDING = 'local.video.recording';
+
+/**
  * Flag indicating if speaker statistics should be enabled.
  * Default: enabled (true).
  */

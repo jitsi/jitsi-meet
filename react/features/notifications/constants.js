@@ -64,6 +64,13 @@ export const NOTIFICATION_ICON = {
 export const RAISE_HAND_NOTIFICATION_ID = 'RAISE_HAND_NOTIFICATION';
 
 /**
+ * The identifier local recording.
+ *
+ * @type {string}
+ */
+export const LOCAL_RECORDING_NOTIFICATION_ID = 'LOCAL_RECORDING_NOTIFICATION_ID';
+
+/**
  * Amount of participants beyond which no join notification will be emitted.
  */
 export const SILENT_JOIN_THRESHOLD = 30;

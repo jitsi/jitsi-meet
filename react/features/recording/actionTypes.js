@@ -11,6 +11,18 @@
 export const CLEAR_RECORDING_SESSIONS = 'CLEAR_RECORDING_SESSIONS';
 
 /**
+ * The type of Redux action which updates the current known state of a local recording
+ * session.
+ *
+ * {
+ *     type: LOCAL_RECORDING_SESSION_UPDATED,
+ *     sessionData: Object
+ * }
+ * @public
+ */
+export const LOCAL_RECORDING_SESSION_UPDATED = 'LOCAL_RECORDING_SESSION_UPDATED';
+
+/**
  * The type of Redux action which updates the current known state of a recording
  * session.
  *
