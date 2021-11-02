@@ -5,7 +5,7 @@ import {
     PARTICIPANT_KICKED,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED
-} from '../base/participants';
+} from '../base/participants/actionTypes';
 import { MiddlewareRegistry } from '../base/redux';
 
 import {
