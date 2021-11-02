@@ -21,6 +21,12 @@
     margin-bottom: 8px;
 }
 
+.poll-creator {
+    color: #C2C2C2;
+    font-weight: 600;
+    margin: 4px 0 16px 0;
+}
+
 .poll-answer-container {
     background: #3D3D3D;
     border-radius: 3px;
@@ -134,7 +140,7 @@ ol.poll-result-list {
 .poll-question {
     font-size: 16px;
     font-weight: 600;
-    margin-bottom: 16px;
+    line-height: 26px;
 }
 
 .poll-answer-voters {

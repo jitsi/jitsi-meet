@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { sendAnalytics, createPollEvent } from '../../analytics';
 import { getLocalParticipant, getParticipantById } from '../../base/participants';
+import { useBoundSelector } from '../../base/util/hooks';
 import { registerVote, setVoteChanging } from '../actions';
 import { COMMAND_ANSWER_POLL } from '../constants';
 import type { Poll } from '../types';
@@ -24,6 +25,7 @@ type InputProps = {
  **/
 export type AbstractProps = {
     checkBoxStates: Function,
+    creatorName: string,
     poll: Poll,
     setCheckbox: Function,
     skipAnswer: Function,
@@ -56,6 +58,7 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
 
         return new Array(poll.answers.length).fill(false);
     });
+    const participant = useBoundSelector(getParticipantById, poll.senderId);
 
     const setCheckbox = useCallback((index, state) => {
         const newCheckBoxStates = [ ...checkBoxStates ];
@@ -67,7 +70,7 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
 
     const dispatch = useDispatch();
 
-    const localParticipant = useSelector(state => getParticipantById(state, localId));
+    const localParticipant = useBoundSelector(getParticipantById, localId);
     const localName: string = localParticipant.name ? localParticipant.name : 'Fellow Jitster';
 
     const submitAnswer = useCallback(() => {
@@ -99,6 +102,7 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
 
     return (<Component
         checkBoxStates = { checkBoxStates }
+        creatorName = { participant ? participant.name : '' }
         poll = { poll }
         setCheckbox = { setCheckbox }
         skipAnswer = { skipAnswer }

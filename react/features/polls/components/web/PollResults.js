@@ -16,6 +16,7 @@ const PollResults = (props: AbstractProps) => {
     const {
         answers,
         changeVote,
+        creatorName,
         haveVoted,
         showDetails,
         question,
@@ -28,6 +29,9 @@ const PollResults = (props: AbstractProps) => {
             <div className = 'poll-header'>
                 <div className = 'poll-question'>
                     <strong>{ question }</strong>
+                </div>
+                <div className = 'poll-creator'>
+                    { t('polls.by', { name: creatorName }) }
                 </div>
             </div>
             <ol className = 'poll-result-list'>
