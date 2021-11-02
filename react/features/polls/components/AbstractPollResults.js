@@ -6,6 +6,8 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { sendAnalytics, createPollEvent } from '../../analytics';
+import { getParticipantById } from '../../base/participants/functions';
+import { useBoundSelector } from '../../base/util/hooks';
 import { setVoteChanging } from '../actions';
 import { getPoll } from '../functions';
 
@@ -33,6 +35,7 @@ export type AnswerInfo = {
 export type AbstractProps = {
     answers: Array<AnswerInfo>,
     changeVote: Function,
+    creatorName: string,
     showDetails: boolean,
     question: string,
     t: Function,
@@ -51,6 +54,7 @@ const AbstractPollResults = (Component: AbstractComponent<AbstractProps>) => (pr
     const { pollId } = props;
 
     const pollDetails = useSelector(getPoll(pollId));
+    const participant = useBoundSelector(getParticipantById, pollDetails.senderId);
 
     const [ showDetails, setShowDetails ] = useState(false);
     const toggleIsDetailed = useCallback(() => {
@@ -105,6 +109,7 @@ const AbstractPollResults = (Component: AbstractComponent<AbstractProps>) => (pr
         <Component
             answers = { answers }
             changeVote = { changeVote }
+            creatorName = { participant ? participant.name : '' }
             haveVoted = { pollDetails.lastVote !== null }
             question = { pollDetails.question }
             showDetails = { showDetails }
