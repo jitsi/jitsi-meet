@@ -100,7 +100,7 @@ function computeCameraVideoSize( // eslint-disable-line max-params
         // Avoid NaN values caused by division by 0.
         return [ 0, 0 ];
     }
-    const conferenceHasStarted = getRemoteTracks(APP.store.getState()['features/base/tracks']).length > 0;
+    const tracks = APP.store.getState()['features/base/tracks'];
     const aspectRatio = videoWidth / videoHeight;
     const videoSpaceRatio = videoSpaceWidth / videoSpaceHeight;
 
@@ -117,7 +117,7 @@ function computeCameraVideoSize( // eslint-disable-line max-params
             videoSpaceHeight,
             videoSpaceRatio < aspectRatio ? 'width' : 'height');
     case 'both': {
-        const maxZoomCoefficient = getMaxZoomCoefficient(videoHeight, conferenceHasStarted);
+        const maxZoomCoefficient = getMaxZoomCoefficient(videoHeight, aspectRatio, tracks);
 
         if (videoSpaceRatio === aspectRatio) {
             return [ videoSpaceWidth, videoSpaceHeight ];
@@ -160,12 +160,16 @@ function computeCameraVideoSize( // eslint-disable-line max-params
  * Returns a number of the max zoom coefficient, return 1 if the video stream is
  * standard definition or low definition or if the user is in the pre-conference stage
  *
- * @param videoHeight the original video height
- * @param conferenceHasStarted attribute to tell if the conference has started
+ * @param {number} videoHeight the original video height
+ * @param {number} aspectRatio - Aspect ratio of the video.
+ * @param {Track[]} tracks - List of all tracks.
  * @return number
  */
-function getMaxZoomCoefficient(videoHeight, conferenceHasStarted) {
-    if (videoHeight <= SD_VIDEO_HEIGHT || !conferenceHasStarted) {
+function getMaxZoomCoefficient(videoHeight, aspectRatio, tracks) {
+    const conferenceHasStarted = getRemoteTracks(tracks).length > 0;
+    const isMobileRemoteTrack = aspectRatio < 1 && conferenceHasStarted;
+
+    if ((videoHeight <= SD_VIDEO_HEIGHT && !isMobileRemoteTrack) || !conferenceHasStarted) {
         return 1;
     }
 
