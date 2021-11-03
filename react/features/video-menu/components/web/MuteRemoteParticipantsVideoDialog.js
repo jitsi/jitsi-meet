@@ -5,8 +5,9 @@ import React from 'react';
 import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-import AbstractMuteRemoteParticipantsVideoDialog
-    from '../AbstractMuteRemoteParticipantsVideoDialog';
+import AbstractMuteRemoteParticipantsVideoDialog, {
+    abstractMapStateToProps
+} from '../AbstractMuteRemoteParticipantsVideoDialog';
 
 /**
  * A React Component with the contents for a dialog that asks for confirmation
@@ -29,7 +30,10 @@ class MuteRemoteParticipantsVideoDialog extends AbstractMuteRemoteParticipantsVi
                 titleKey = 'dialog.muteParticipantsVideoTitle'
                 width = 'small'>
                 <div>
-                    { this.props.t('dialog.muteParticipantsVideoBody') }
+                    {this.props.t(this.props.isVideoModerationOn
+                        ? 'dialog.muteParticipantsVideoBodyModerationOn'
+                        : 'dialog.muteParticipantsVideoBody'
+                    ) }
                 </div>
             </Dialog>
         );
@@ -38,4 +42,4 @@ class MuteRemoteParticipantsVideoDialog extends AbstractMuteRemoteParticipantsVi
     _onSubmit: () => boolean;
 }
 
-export default translate(connect()(MuteRemoteParticipantsVideoDialog));
+export default translate(connect(abstractMapStateToProps)(MuteRemoteParticipantsVideoDialog));
