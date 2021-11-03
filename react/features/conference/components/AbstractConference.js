@@ -2,7 +2,14 @@
 
 import React, { Component } from 'react';
 
+import {
+    getLocalParticipantType,
+    getParticipantCount
+} from '../../base/participants';
+import { getRemoteTracks, isHdQualityEnabled } from '../../base/tracks';
 import { NotificationsContainer } from '../../notifications/components';
+import HdVideoAlert
+    from '../../notifications/components/web/HdVideoAlert';
 import { shouldDisplayTileView } from '../../video-layout';
 import { shouldDisplayNotifications } from '../functions';
 
@@ -33,7 +40,31 @@ export type AbstractProps = {
      * @protected
      * @type {boolean}
      */
-    _shouldDisplayTileView: boolean
+    _shouldDisplayTileView: boolean,
+
+    /**
+     * Whether or not the hd video feature is enabled.
+     *
+     * @protected
+     * @type {boolean}
+     */
+    _hdVideoEnabled: boolean,
+
+    /**
+     * Whether or not the local participant is a practitioner.
+     *
+     * @protected
+     * @type {boolean}
+     */
+    _isStaffMember: boolean,
+
+    /**
+     * Whether or not the conference has started.
+     *
+     * @protected
+     * @type {boolean}
+     */
+    _conferenceHasStarted: boolean
 };
 
 /**
@@ -62,6 +93,22 @@ export class AbstractConference<P: AbstractProps, S>
 
         return null;
     }
+
+    /**
+     * Renders the {@code HdVideoAlert}.
+     *
+     * @protected
+     * @returns {React$Element}
+     */
+    renderHdVideoAlert() {
+        if (this.props._hdVideoEnabled
+            && this.props._isStaffMember
+            && this.props._conferenceHasStarted) {
+            return <HdVideoAlert />;
+        }
+
+        return null;
+    }
 }
 
 /**
@@ -73,9 +120,15 @@ export class AbstractConference<P: AbstractProps, S>
  * @returns {AbstractProps}
  */
 export function abstractMapStateToProps(state: Object) {
+    const participantCount = getParticipantCount(state);
+    const remoteTracks = getRemoteTracks(state['features/base/tracks']);
+
     return {
         _notificationsVisible: shouldDisplayNotifications(state),
         _room: state['features/base/conference'].room,
-        _shouldDisplayTileView: shouldDisplayTileView(state)
+        _shouldDisplayTileView: shouldDisplayTileView(state),
+        _hdVideoEnabled: isHdQualityEnabled(state),
+        _isStaffMember: getLocalParticipantType(state) === 'StaffMember',
+        _conferenceHasStarted: participantCount > 1 && remoteTracks.length > 0
     };
 }

@@ -7,7 +7,8 @@ import {
     HIDE_NOTIFICATION,
     HIDE_RAISE_HAND_NOTIFICATIONS,
     SET_NOTIFICATIONS_ENABLED,
-    SHOW_NOTIFICATION
+    SHOW_NOTIFICATION,
+    SET_HD_VIDEO_ALERT_ENABLED
 } from './actionTypes';
 import { NOTIFICATION_TYPE_PRIORITIES } from './constants';
 
@@ -18,6 +19,7 @@ import { NOTIFICATION_TYPE_PRIORITIES } from './constants';
  */
 const DEFAULT_STATE = {
     enabled: true,
+    hdAlertEnabled: false,
     notifications: []
 };
 
@@ -68,6 +70,12 @@ ReducerRegistry.register('features/notifications',
                         timeout: action.timeout,
                         uid: action.uid
                     })
+            };
+
+        case SET_HD_VIDEO_ALERT_ENABLED:
+            return {
+                ...state,
+                hdAlertEnabled: action.hdAlertEnabled
             };
         }
 

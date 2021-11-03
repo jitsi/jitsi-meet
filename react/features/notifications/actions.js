@@ -10,6 +10,7 @@ import {
     CLEAR_NOTIFICATIONS,
     HIDE_NOTIFICATION,
     HIDE_RAISE_HAND_NOTIFICATIONS,
+    SET_HD_VIDEO_ALERT_ENABLED,
     SET_NOTIFICATIONS_ENABLED,
     SHOW_NOTIFICATION
 } from './actionTypes';
@@ -211,4 +212,20 @@ export function showParticipantJoinedNotification(displayName: string) {
     joinedParticipantsNames.push(displayName);
 
     return (dispatch: Dispatch<any>, getState: Function) => _throttledNotifyParticipantConnected(dispatch, getState);
+}
+
+/**
+ * Enable/disable the hd video alert.
+ *
+ * @param {boolean} hdAlertEnabled - Whether or not the alert should display.
+ * @returns {{
+ *     type: SET_HD_VIDEO_ALERT_ENABLED,
+ *     enabled: boolean
+ * }}
+ */
+export function setHdVideoAlertEnabled(hdAlertEnabled: boolean) {
+    return {
+        type: SET_HD_VIDEO_ALERT_ENABLED,
+        hdAlertEnabled
+    };
 }

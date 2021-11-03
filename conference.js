@@ -84,6 +84,7 @@ import {
 import {
     dominantSpeakerChanged,
     getLocalParticipant,
+    getLocalParticipantType,
     getNormalizedDisplayName,
     getParticipantById,
     localParticipantConnectionStatusChanged,
@@ -112,7 +113,8 @@ import {
     isUserInteractionRequiredForUnmute,
     replaceLocalTrack,
     trackAdded,
-    trackRemoved
+    trackRemoved,
+    isHdQualityEnabled
 } from './react/features/base/tracks';
 import { downloadJSON } from './react/features/base/util/downloadJSON';
 import { showDesktopPicker } from './react/features/desktop-picker';
@@ -138,6 +140,7 @@ import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/Au
 import { createPresenterEffect } from './react/features/stream-effects/presenter';
 import { createRnnoiseProcessor } from './react/features/stream-effects/rnnoise';
 import { endpointMessageReceived } from './react/features/subtitles';
+import { setPreferredVideoQuality } from './react/features/video-quality';
 import UIEvents from './service/UI/UIEvents';
 
 const logger = Logger.getLogger(__filename);
@@ -752,6 +755,17 @@ export default {
                 descriptionKey: 'notify.startSilentDescription',
                 titleKey: 'notify.startSilentTitle'
             }));
+        }
+
+        if (!JitsiMeetJS.util.browser.isFirefox()
+                && isHdQualityEnabled(APP.store.getState())
+                && getLocalParticipantType(APP.store.getState()) === 'StaffMember') {
+
+            // If the practitioner turns on the HD quality in Jane.
+            // We will still limit the quality to SD(360) at the beginning
+            // the practitioner can change the quality to HD(720) through hd quality alert
+            // or the video quality control modal.
+            APP.store.dispatch(setPreferredVideoQuality(360));
         }
 
         // XXX The API will take care of disconnecting from the XMPP

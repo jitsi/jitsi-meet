@@ -7,9 +7,9 @@ import { validateMinHeightForQualityLvl } from './functions';
 import logger from './logger';
 
 const DEFAULT_STATE = {
-    maxReceiverVideoQuality: VIDEO_QUALITY_LEVELS.ULTRA,
+    maxReceiverVideoQuality: VIDEO_QUALITY_LEVELS.HIGH,
     minHeightForQualityLvl: new Map(),
-    preferredVideoQuality: VIDEO_QUALITY_LEVELS.ULTRA
+    preferredVideoQuality: VIDEO_QUALITY_LEVELS.HIGH
 };
 
 DEFAULT_STATE.minHeightForQualityLvl.set(360, VIDEO_QUALITY_LEVELS.STANDARD);

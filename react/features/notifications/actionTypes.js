@@ -55,3 +55,14 @@ export const SET_NOTIFICATIONS_ENABLED = 'SET_NOTIFICATIONS_ENABLED';
  * }
  */
 export const HIDE_RAISE_HAND_NOTIFICATIONS = 'HIDE_RAISE_HAND_NOTIFICATIONS';
+
+/**
+ * The type of (redux) action which signals that hd video alert should be
+ * displayed.
+ *
+ * {
+ *     type: SET_HD_VIDEO_ALERT_ENABLED,
+ *     hdAlertEnabled: Boolean
+ * }
+ */
+export const SET_HD_VIDEO_ALERT_ENABLED = 'SET_HD_VIDEO_ALERT_ENABLED';

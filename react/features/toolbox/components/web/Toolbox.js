@@ -1,6 +1,7 @@
 /* eslint-disable */
 // @flow
 import React, { Component, Fragment } from 'react';
+
 import keyboardShortcut from '../../../../../modules/keyboardshortcut/keyboardshortcut';
 import {
     ACTION_SHORTCUT_TRIGGERED,
@@ -17,7 +18,8 @@ import JitsiMeetJS from '../../../base/lib-jitsi-meet';
 import {
     getLocalParticipant,
     haveParticipantWithScreenSharingFeature,
-    raiseHand
+    raiseHand,
+    getLocalParticipantType,
 } from '../../../base/participants';
 import { Platform } from '../../../base/react';
 import { connect } from '../../../base/redux';
@@ -243,6 +245,10 @@ type Props = {
      */
     toolbarButtons: Array<string>,
 
+    /**
+     * Whether or not the local participant is a practitioner.
+     */
+    _isStaffMember: boolean
 };
 
 declare var APP: Object;
@@ -1349,7 +1355,8 @@ function _mapStateToProps(state, ownProps) {
         _tileViewEnabled: shouldDisplayTileView(state),
         _toolbarButtons: toolbarButtons,
         _virtualSource: state['features/virtual-background'].virtualSource,
-        _visible: isToolboxVisible(state)
+        _visible: isToolboxVisible(state),
+        _isStaffMember: getLocalParticipantType(state) === 'StaffMember'
     };
 }
 
