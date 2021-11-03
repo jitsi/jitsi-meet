@@ -633,6 +633,7 @@
   "passwordSetRemotely": "défini par un autre participant",
   "passwordDigitsOnly": "Jusqu'à {{number}} chiffres",
   "polls": {
+    "by": "Par {{ name }}",
     "create": {
       "addOption": "Ajouter une option",
       "answerPlaceholder": "Option {{index}}",
