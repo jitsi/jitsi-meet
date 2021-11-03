@@ -60,7 +60,7 @@ export async function sendReactionsWebhook(state: Object, reactions: Array<?stri
     const localParticipant = getLocalParticipant(state);
 
     const headers = {
-        'Authorization': `Bearer ${jwt}`,
+        ...jwt ? { 'Authorization': `Bearer ${jwt}` } : {},
         'Content-Type': 'application/json'
     };
 
