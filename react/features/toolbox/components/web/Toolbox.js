@@ -1276,14 +1276,12 @@ class Toolbox extends Component<Props> {
                                 </ul>
                             </OverflowMenuButton>
                         )}
-
                         <HangupButton
                             customClass = 'hangup-button'
                             key = 'hangup-button'
                             visible = { isToolbarButtonEnabled('hangup', _toolbarButtons) } />
-
-                    <JaneHangupButton visible={_isJaneTestCall}
-                                      tooltipText="Finished testing? Click here."/>
+                        <JaneHangupButton visible={_isJaneTestCall}
+                            tooltipText={t("toolbar.finishedTesting")}/>
                     </div>
                 </div>
             </div>

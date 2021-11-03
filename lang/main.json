@@ -746,16 +746,32 @@
         "audioTrackError": "Could not create audio track.",
         "configuringDevices": "Configuring devices...",
         "begin": "Begin",
+        "admitClient": "Admit Client",
+        "returnToSchedule": "Return to my Schedule",
+        "returnToAccount": "Return to my account",
+        "clientIsWaiting": "Client is waiting",
         "lookGood": "It sounds like your microphone is working properly",
         "videoOnlyError": "Video error:",
         "videoTrackError": "Could not create video track.",
         "whenYouAreReady": "When you are ready to begin, click on the button below to admit your client into the video session.",
         "practitionerIsReady": "Your practitioner is ready to begin the session.",
         "waitClient": "Waiting for your client...",
-        "patientIsReady": "Your client is ready to begin the session.",
+        "patientIsReady": "Knock knock, your client is ready to begin.",
         "waitPractitioner": "Your practitioner will let you into the session when ready...",
         "testYourDevice": "Please keep your app or browser window open to stay on the call. You may test your audio and video while you wait.",
-        "authenticationExpired": "Your appointment booking has expired"
+        "keepOpen": "Please keep your app or browser window open to stay on the call.",
+        "youMayTest": "You may test your audio and video while you wait.",
+        "callWillBegin": "Your call will automatically begin momentarily.",
+        "authenticationExpired": "Your appointment booking has expired",
+        "minutes": "{{duration}} Minutes"
+    },
+    "preCallMessage": {
+        "sitBack": "Sit back, relax and take a moment for yourself.",
+        "WaitingforOthers": "Waiting for the other participant to join...",
+        "willBeginAt": "Your appointment will begin at {{time}}.",
+        "testing": "Testing your audio and video...",
+        "waitingForPractitioner": "Waiting for the practitioner...",
+        "hangUpToClose": "When you are done testing your audio and video, hang up to close this screen. Begin your online appointment from your upcoming appointments page."
     },
     "raisedHand": "Would like to speak",
     "recording": {
@@ -1024,7 +1040,10 @@
         "tileViewToggle": "Toggle tile view",
         "toggleCamera": "Toggle camera",
         "videomute": "Start / Stop camera",
-        "selectBackground": "Select background"
+        "selectBackground": "Select background",
+        "startvideoblur": "Blur my background",
+        "stopvideoblur": "Disable background blur",
+        "finishedTesting": "Finished testing? Click here."
     },
     "transcribing": {
         "ccButtonTooltip": "Start / Stop subtitles",
@@ -1133,6 +1152,7 @@
         "startMeeting": "Start meeting",
         "terms": "Terms",
         "title": "Secure, fully featured, and completely free video conferencing",
+        "welcomeToJaneVideoChat": "Welcome to Jane Video Chat",
         "logo":{
            "calendar":"Calendar logo",
            "microsoftLogo":"Microsoft logo",

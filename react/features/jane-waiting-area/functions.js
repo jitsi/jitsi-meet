@@ -153,9 +153,9 @@ export function getRemoteParticipantsStatuses(participantStatuses: Array<Object>
 
 export function updateParticipantReadyStatus(status: string): void {
     const { jwt } = window.APP.store.getState()['features/base/jwt'];
-    const jwtPayload = jwt && jwtDecode(jwt) ?? {};
+    const jwtPayload = (jwt && jwtDecode(jwt)) || {};
 
-    const updateParticipantStatusUrl = _.get(jwtPayload, 'context.update_participant_status_url') ?? '';
+    const updateParticipantStatusUrl = _.get(jwtPayload, 'context.update_participant_status_url') || '';
     const info = { status };
 
     return fetch(updateParticipantStatusUrl, {

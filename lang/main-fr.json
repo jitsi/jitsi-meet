@@ -362,15 +362,15 @@
     "none": "Rien",
     "uploadedImage": "Image téléversée {{index}}",
     "deleteImage": "Supprimer l'image",
-    "image1" : "Plage",
-    "image2" : "Mur blanc neutre",
-    "image3" : "Pièce vide blanche",
-    "image4" : "Lampadaire noir",
-    "image5" : "Montagne",
-    "image6" : "Forêt ",
-    "image7" : "Lever du soleil",
+    "image1": "Plage",
+    "image2": "Mur blanc neutre",
+    "image3": "Pièce vide blanche",
+    "image4": "Lampadaire noir",
+    "image5": "Montagne",
+    "image6": "Forêt ",
+    "image7": "Lever du soleil",
     "desktopShareError": "Impossible de créer le partage de bureau",
-    "desktopShare":"Partage de bureau"
+    "desktopShare": "Partage de bureau"
   },
   "feedback": {
     "average": "Moyen",
@@ -397,7 +397,7 @@
     "country": "Pays",
     "dialANumber": "Pour rejoindre votre réunion, composez l'un de ces numéros, puis saisissez le code confidentiel.",
     "dialInConferenceID": "PIN :",
-    "copyNumber":"Copier le numéro",
+    "copyNumber": "Copier le numéro",
     "dialInNotSupported": "Désolé, l'accès par téléphone n'est pas pris en charge pour l'instant.",
     "dialInNumber": "Composer :",
     "dialInSummaryError": "Erreur lors de la récupération des informations de numérotation. Veuillez réessayer plus tard.",
@@ -590,8 +590,8 @@
       "answerPlaceholder": "Option {{index}}",
       "create": "Créer un sondage",
       "cancel": "Annuler",
-      "pollOption" : "Option {{index}}",
-      "pollQuestion" : "Question du sondage",
+      "pollOption": "Option {{index}}",
+      "pollQuestion": "Question du sondage",
       "questionPlaceholder": "Poser une question",
       "removeOption": "Supprimer l'option",
       "send": "Envoyer"
@@ -666,7 +666,7 @@
     "premeeting": "Pré-séance",
     "showScreen": "Activer l'écran de pré-séance",
     "startWithPhone": "Commencez avec l'audio du téléphone",
-    "keyboardShortcuts" : "Activer les raccourcis clavier",
+    "keyboardShortcuts": "Activer les raccourcis clavier",
     "screenSharingError": "Erreur de partage d'écran:",
     "videoOnlyError": "Erreur vidéo:",
     "videoTrackError": "Impossible de créer une piste vidéo.",
@@ -692,6 +692,39 @@
     "setEmailInput": "Entrez une adresse e-mail",
     "setEmailLabel": "Définir votre courriel Gravatar",
     "title": "Profil"
+  },
+  "janeWaitingArea": {
+    "audioAndVideoError" : "Erreur audio et vidéo :",
+    "audioOnlyError" : "Erreur audio :",
+    "audioTrackError" : "Impossible de créer une piste audio.",
+    "configuringDevices" : "Configuration des périphériques...",
+    "begin" : "Commencer",
+    "admitClient": "Admettre le client",
+    "returnToSchedule" : "Retourner à mon planning",
+    "returnToAccount" : "Retourner à mon compte",
+    "clientIsWaiting": "le client attend",
+    "lookGood" : "Il semble que votre microphone fonctionne correctement",
+    "videoOnlyError" : "Erreur vidéo :",
+    "videoTrackError" : "Impossible de créer une piste vidéo.",
+    "whenYouAreReady" : "Lorsque vous êtes prêt à commencer, cliquez sur le bouton ci-dessous pour admettre votre client dans la session vidéo",
+    "practitionerIsReady" : "Votre praticien est prêt à commencer la session.",
+    "waitClient" : "En attente de votre client...",
+    "patientIsReady" : "Toc toc, votre client est prêt à commencer.",
+    "waitPractitioner" : "Votre praticien vous laissera entrer dans la session lorsqu'il sera prêt...",
+    "testYourDevice" : "Veuillez garder votre application ou la fenêtre de votre navigateur ouverte pour rester sur l'appel. Vous pouvez tester votre audio et vidéo pendant que vous attendez.",
+    "keepOpen" : "Veuillez garder votre fenêtre d'application ou de navigateur ouverte pour rester sur l'appel.",
+    "youMayTest" : "Vous pouvez tester votre audio et votre vidéo pendant que vous attendez",
+    "callWillBegin" : "Votre appel commencera automatiquement dans un instant.",
+    "authenticationExpired" : "Votre prise de rendez-vous a expiré",
+    "minutes": "{{duration}} Minutes"
+  },
+  "preCallMessage" : {
+    "sitBack" : "Asseyez-vous, détendez-vous et prenez un moment pour vous.",
+    "WaitingforOthers" : "En attendant que l'autre participant se joigne à nous...",
+    "willBeginAt" : "Votre rendez-vous commencera à {{time}}",
+    "testing" : "Test de votre audio et vidéo...",
+    "waitingForPractitioner" : "En attendant le praticien...",
+    "hangUpToClose" : "Quand vous aurez fini de tester votre audio et votre vidéo, Raccrochez pour fermer cet écran. Commencez votre rendez-vous en ligne à partir de votre page de rendez-vous à venir."
   },
   "raisedHand": "Aimerait prendre la parole",
   "recording": {
@@ -740,6 +773,38 @@
       "microsoftSignIn": "Se connecter avec Microsoft",
       "signedIn": "Accès aux événements du calendrier {{email}}. Cliquez sur le bouton se déconnecter ci-dessous pour arrêter l'accès aux événements du calendrier.",
       "title": "Calendrier"
+    },
+    "welcomepage": {
+      "accessibilityLabel": {
+        "join": "Touchez pour rejoindre",
+        "roomname": "Saisissez un nom de salle"
+      },
+      "appDescription": "Foncez tchater en vidéo avec toute le monde. En fait, vous pouvez inviter tout ceux que vous connaissez. {{app}} est une solution de visioconférence entièrement chiffrée et 100% libre que vous pouvez utiliser en permanence, chaque jours, et sans aucun compte requis.",
+      "audioVideoSwitch": {
+        "audio": "Voix",
+        "video": "Vidéo"
+      },
+      "calendar": "Calendrier",
+      "connectCalendarButton": "Connecter votre calendrier",
+      "connectCalendarText": "Connectez-vous à votre calendrier pour afficher toutes les réunions {{app}}. Ajoutez également les réunions de {{provider}} à votre calendrier et démarrez-les d'un simple clic.",
+      "enterRoomTitle": "Démarrer une nouvelle réunion",
+      "roomNameAllowedChars": "Le nom de la réunion ne doit contenir aucun de ces caractères : ?, &, :, ', \", %, #.",
+      "go": "Créer",
+      "goSmall": "Créer",
+      "join": "CRÉER / REJOINDRE",
+      "info": "Infos",
+      "privacy": "Confidentialité",
+      "recentList": "Récent",
+      "recentListDelete": "Supprimer",
+      "recentListEmpty": "Votre liste récente est actuellement vide. Discuter avec votre équipe et vous trouverez toutes vos réunions récentes ici.",
+      "reducedUIText": "Bienvenue sur {{app}} !",
+      "roomname": "Saisissez un nom de salle",
+      "roomnameHint": "Entrez le nom ou l'URL de la salle que vous souhaitez rejoindre. Vous pouvez faire un nom, laissez les gens que vous rencontrerez le savoir afin qu'ils entrent le même nom.",
+      "sendFeedback": "Envoyer votre avis",
+      "terms": "Termes",
+      "title": "Système de vidéoconférence sécurisé, riche en fonctionnalités et gratuit",
+      "getHelp": "Obtenir de l'aide",
+      "welcomeToJaneVideoChat": "Bienvenue à Jane Video Chat"
     },
     "devices": "Périphériques",
     "followMe": "Tout le monde me suit",
@@ -1030,13 +1095,13 @@
     "startMeeting": "Démarrer la conférence",
     "terms": "Termes",
     "title": "Système de vidéoconférence sécurisé, riche en fonctionnalités et gratuit",
-    "logo":{
-      "calendar":"Logo Calendar",
-      "microsoftLogo":"Logo Microsoft",
-      "logoDeepLinking":"Logo Jitsi meet",
-      "desktopPreviewThumbnail":"Miniature d'aperçu du bureau",
-      "googleLogo":"Logo Google",
-      "policyLogo":"Logo de la politique"
+    "logo": {
+      "calendar": "Logo Calendar",
+      "microsoftLogo": "Logo Microsoft",
+      "logoDeepLinking": "Logo Jitsi meet",
+      "desktopPreviewThumbnail": "Miniature d'aperçu du bureau",
+      "googleLogo": "Logo Google",
+      "policyLogo": "Logo de la politique"
     }
   },
   "lonelyMeetingExperience": {
