@@ -8,7 +8,7 @@ import { MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL } from '../constants';
 /**
  * Formatter string to display the message timestamp.
  */
-const TIMESTAMP_FORMAT = 'H:mm';
+const TIMESTAMP_FORMAT = 'hh:mm A';
 
 /**
  * The type of the React {@code Component} props of {@code AbstractChatMessage}.
