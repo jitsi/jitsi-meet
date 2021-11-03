@@ -226,7 +226,6 @@ class Conference extends AbstractConference<Props, *> {
                     onMouseMove = { this._onShowToolbar }
                     ref = { this._setBackground }>
                     <ConferenceInfo />
-                    <RefreshButton />
                     <Notice />
                     <div id = 'videospace'>
                         <LargeVideo />

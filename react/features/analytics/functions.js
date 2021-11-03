@@ -11,6 +11,7 @@ import JitsiMeetJS, {
     browser,
     isAnalyticsEnabled
 } from '../base/lib-jitsi-meet';
+import { getLocalParticipantType } from '../base/participants';
 import { getJitsiMeetGlobalNS, loadScript, parseURIString } from '../base/util';
 
 import { AmplitudeHandler, MatomoHandler } from './handlers';
@@ -188,6 +189,7 @@ export function initAnalytics({ getState }: { getState: Function }, handlers: Ar
 
     // Report if we are loaded in iframe
     permanentProperties.inIframe = _inIframe();
+    permanentProperties.participantType = getLocalParticipantType(state);
 
     // Report the tenant from the URL.
     permanentProperties.tenant = tenant || '/';
