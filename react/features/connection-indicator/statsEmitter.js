@@ -159,9 +159,11 @@ const statsEmitter = {
 
             if (localConnectionStrength !== modifiedLocalConnectionStrength) {
                 localConnectionStrength = modifiedLocalConnectionStrength;
-                sendAnalytics(createConnectionQualityChangedEvent(
-                    modifiedLocalConnectionStrength,
-                    modifiedLocalStats));
+                if (localConnectionStrength === 'poor') {
+                    sendAnalytics(createConnectionQualityChangedEvent(
+                        modifiedLocalConnectionStrength,
+                        modifiedLocalStats));
+                }
             }
         }
 
