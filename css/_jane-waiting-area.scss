@@ -1,0 +1,442 @@
+.jane-waiting-area {
+    &-full-page {
+        font-family: "ProximaNovaLtReg" !important;
+        background: $waitingAreaPageBackground;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+
+        .watermark {
+            position: absolute;
+        }
+    }
+
+    &-info-area-container {
+        position: absolute;
+        bottom: 48px;
+        width: 100%;
+        z-index: 2;
+    }
+
+    &-info-area {
+        margin: 0 auto;
+        text-align: center;
+        width: 480px;
+        border: solid 1px $waitingAreaInfoBoxBorder;
+        border-radius: 2px;
+        background: $waitingAreaInfoBoxBackground;
+        @media all and (max-width: 480px) {
+            width: 300px;
+        }
+    }
+
+    &-info {
+        display: flex;
+        flex-direction: row;
+    }
+
+    &-info-logo-wrapper {
+        padding: 20px 10px;
+    }
+
+    &-info-logo {
+        background-image: url($defaultWatermarkLink);
+        background-position: center;
+        width: 90px;
+        height: 60px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        z-index: $zindex2;
+    }
+
+    &-info-patient-waiting {
+        background: #5cb85c;
+        border-radius: 10px;
+        font-size: 10px;
+        color: $defaultColor;
+        max-width: 83px;
+        margin-top: 10px;
+        width: 85px;
+        display: inline-block;
+    }
+
+    &-info-text-wrapper {
+        display: flex;
+        flex-direction: column;
+        padding: 22px 20px 25px 0px;
+    }
+
+    &-info-title {
+        font-size: 18px;
+        text-align: left;
+        color: $waitingAreaInfoTitleColor;
+        @media all and (max-width: 480px) {
+            font-size: 14px;
+        }
+    }
+
+    &-info-title-msg {
+        font-size: 14px;
+        text-align: left;
+        color: $waitingAreaInfoMsgColor;
+        margin-top: 15px;
+        @media all and (max-width: 480px) {
+            font-size: 10px;
+        }
+    }
+
+    &-info-detail {
+        font-size: 14px;
+        text-align: left;
+        margin-top: 15px;
+        color: $waitingAreaInfoDetailColor;
+        font-family: ProximaNovaLtBold !important;
+        @media all and (max-width: 480px) {
+            font-size: 10px;
+            margin-top: 10px;
+
+        }
+    }
+
+    &-btn {
+        border-radius: 3px;
+        color: $defaultColor;
+        cursor: pointer;
+        display: inline-block;
+        font-size: 12px;
+        line-height: 22px;
+        padding: 5px 9px;
+        position: relative;
+        text-align: center;
+        min-width: 100px;
+        margin-top: 16px;
+
+        &--primary {
+            background: $janeBlue;
+        }
+
+        &--available {
+            background: rgb(110, 176, 5);
+            border: 1px solid rgb(110, 176, 5);
+        }
+
+        &--secondary {
+            background: #2A3A4B;
+            border: 1px solid #5E6D7A;
+        }
+
+        &--close {
+            margin-top: 16px;
+            background: #fff;
+            color: #333;
+            border: solid 1px #ccc;
+        }
+
+        &--text {
+            width: auto;
+            font-size: 13px;
+            margin: 0;
+            padding: 0;
+        }
+
+        &--disabled {
+            background: #DDDDDD;
+            border: 1px solid #DDDDDD;
+            color: $waitingAreaInfoDetailColor;
+            cursor: initial;
+
+            .jane-waiting-area-btn-icon {
+                & > svg {
+                    fill: #AFB6BC;
+                }
+            }
+
+            .jane-waiting-area-btn-options {
+                border-left: 1px solid #AFB6BC;
+            }
+        }
+    }
+
+    &-btn-options {
+        align-items: center;
+        border-left: 1px solid #fff;
+        display: flex;
+        height: 100%;
+        justify-content: center;
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 40px;
+    }
+
+    &-text-btns {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &-input-label {
+        color: #A4B8D1;
+        font-size: 13px;
+        line-height: 20px;
+        margin-top: 32px 0 8px 0;
+        text-align: center;
+        width: 100%;
+    }
+
+    &-checkbox {
+        border: 0;
+        height: 16px;
+        margin-right: 8px;
+        padding: 0;
+        width: 16px;
+    }
+
+    &-checkbox-container {
+        align-items: center;
+        color: #fff;
+        display: none;
+        font-size: 13px;
+        justify-content: center;
+        line-height: 20px;
+        margin-top: 16px;
+        width: 100%;
+    }
+}
+
+@mixin name-placeholder {
+    color: #fff;
+    font-weight: 300;
+    opacity: 0.6;
+}
+
+.jane-waiting-area-preview {
+    height: 100%;
+    position: absolute;
+    width: 100%;
+
+    &--no-video {
+        background: radial-gradient(50% 50% at 50% 50%, #5B6F80 0%, #365067 100%), #FFFFFF;
+        text-align: center;
+    }
+
+    &-ready-btn {
+        margin-bottom: 10px;
+    }
+
+    &-video {
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        width: 100%;
+    }
+
+    &-name {
+        color: #fff;
+        font-size: 19px;
+        line-height: 28px;
+
+        &--editable {
+            background: none;
+            border: 0;
+            border-bottom: 1px solid #D1DBE8;
+            margin: 24px 0 16px 0;
+            outline: none;
+            text-align: center;
+            width: 100%;
+
+            &::-webkit-input-placeholder {
+                @include name-placeholder;
+            }
+
+            &::-moz-placeholder {
+                @include name-placeholder;
+            }
+
+            &:-ms-input-placeholder {
+                @include name-placeholder;
+            }
+        }
+
+        &--text {
+            margin: 16px 0;
+            outline: none;
+        }
+    }
+
+    &-avatar.avatar {
+        background: #A4B8D1;
+        margin: 200px auto 0 auto;
+    }
+
+    &-btn-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 32px;
+        width: 100%;
+
+        & > div {
+            margin: 0 12px;
+        }
+
+        .settings-button-small-icon {
+            right: -8px;
+
+            &--hovered {
+                right: -10px;
+            }
+        }
+    }
+
+    &-overlay {
+        height: 100%;
+        position: absolute;
+        width: 100%;
+        z-index: 1;
+        background: linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3));
+    }
+
+    &-bottom-overlay {
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.9) 100%);
+        bottom: 0;
+        height: 50%;
+        position: absolute;
+        width: 100%;
+        z-index: 1;
+    }
+
+    &-status {
+        align-items: center;
+        bottom: 0;
+        color: #fff;
+        display: flex;
+        font-size: 13px;
+        min-height: 24px;
+        justify-content: center;
+        position: absolute;
+        text-align: center;
+        width: 100%;
+        z-index: 1;
+
+        &--warning {
+            background: rgba(241, 173, 51, 0.5)
+        }
+
+        &--ok {
+            background: rgba(49, 183, 106, 0.5);
+        }
+    }
+
+    &-icon {
+        background-position: center;
+        background-repeat: no-repeat;
+        display: inline-block;
+        height: 16px;
+        margin-right: 8px;
+        width: 16px;
+    }
+
+    &-error-desc {
+        margin-right: 4px;
+    }
+
+    .settings-button-container {
+        width: 49px;
+        margin: 0 8px;
+    }
+
+    &-dropdown-btns {
+        width: 320px;
+        padding: 8px 0;
+    }
+
+    &-dropdown-btn {
+        align-items: center;
+        color: #1C2025;
+        cursor: pointer;
+        display: flex;
+        height: 40px;
+        font-size: 15px;
+        line-height: 24px;
+        padding: 0 16px;
+
+        &:hover {
+            background-color: #DAEBFA;
+        }
+    }
+
+    &-dropdown-icon {
+        display: inline-block;
+        margin-right: 16px;
+
+        & > svg {
+            fill: #1C2025;
+        }
+    }
+
+    &-join-btn-container {
+        min-height: 64px;
+        border-top: solid 1px #ccc;
+    }
+
+}
+
+.jane-waiting-area-copy {
+    &-meeting {
+        cursor: pointer;
+        color: #fff;
+        font-size: 15px;
+        font-weight: 300;
+        line-height: 24px;
+        position: relative;
+    }
+
+    &-url {
+        max-width: 278px;
+        padding: 8px 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &-badge {
+        border-radius: 4px;
+        height: 100%;
+        line-height: 38px;
+        position: absolute;
+        padding-left: 10px;
+        text-align: left;
+        top: 0;
+        width: 100%;
+
+        &--hover {
+            background: #1C2025;
+        }
+
+        &--done {
+            background: #31B76A;
+        }
+    }
+
+    &-icon {
+        position: absolute;
+        right: 8px;
+        top: 8px;
+
+        &--white {
+            & > svg > path {
+                fill: #fff
+            }
+        }
+
+        &--light {
+            & > svg > path {
+                fill: #D1DBE8;
+            }
+        }
+    }
+
+    &-textarea {
+        position: absolute;
+        left: -9999px;
+    }
+}

@@ -1,4 +1,5 @@
 // @flow
+import jwtDecode from 'jwt-decode';
 import _ from 'lodash';
 
 import { getName } from '../../app/functions';
@@ -438,4 +439,31 @@ function safeStartCase(s = '') {
     return _.words(`${s}`.replace(/['\u2019]/g, '')).reduce(
         (result, word, index) => result + (index ? ' ' : '') + _.upperFirst(word)
         , '');
+}
+
+// eslint-disable-next-line require-jsdoc
+export function isJaneTestCall(state: Object) {
+    // Jane generates the following jwt context for all test calls:
+    // {
+    //   "context": {
+    //     "user": {
+    //       "id": "1-0",
+    //       "name": "Test User",
+    //       "email": "test@test.com",
+    //       "participant_type": "Patient",
+    //       "participant_id": 0
+    //     },
+    //   },
+    //   "aud": "jane-client",
+    //   "iss": "janeapp",
+    //   "sub": "videochat-jwt.jane.qa",
+    //   "room": "1TEST4f0314a2",
+    //  }
+    const { jwt } = state['features/base/jwt'];
+    const jwtPayload = (jwt && jwtDecode(jwt)) || {};
+    const participantId = _.get(jwtPayload, 'context.user.participant_id');
+    const videoChatSessionId = _.get(jwtPayload, 'context.video_chat_session_id');
+    const participantEmail = _.get(jwtPayload, 'context.user.email');
+
+    return participantId === 0 && videoChatSessionId === 0 && participantEmail === 'test@test.com';
 }

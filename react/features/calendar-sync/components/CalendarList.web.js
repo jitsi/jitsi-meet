@@ -9,7 +9,6 @@ import {
 } from '../../analytics';
 import { translate } from '../../base/i18n';
 import { Icon, IconPlusCalendar } from '../../base/icons';
-import { AbstractPage } from '../../base/react';
 import { connect } from '../../base/redux';
 import { openSettingsDialog, SETTINGS_TABS } from '../../settings';
 import { refreshCalendar } from '../actions';
@@ -59,7 +58,7 @@ type Props = {
 /**
  * Component to display a list of events from the user's calendar.
  */
-class CalendarList extends AbstractPage<Props> {
+class CalendarList extends React.Component<Props> {
     /**
      * Initializes a new {@code CalendarList} instance.
      *

@@ -92,6 +92,8 @@ import Separator from './Separator';
 import ShareDesktopButton from './ShareDesktopButton';
 import ToggleCameraButton from './ToggleCameraButton';
 import VideoSettingsButton from './VideoSettingsButton';
+import JaneHangupButton from '../JaneHangupButton';
+import { isJaneTestCall } from '../../../base/conference';
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
@@ -239,7 +241,7 @@ type Props = {
      * Invoked to obtain translated strings.
      */
     t: Function,
-
+    _isJaneTestCall: boolean,
     /**
      * Explicitly passed array with the buttons which this Toolbox should display.
      */
@@ -1216,7 +1218,8 @@ class Toolbox extends Component<Props> {
             _toolbarButtons,
             showDominantSpeakerName,
             t,
-            _reactionsEnabled
+            _reactionsEnabled,
+            _isJaneTestCall,
         } = this.props;
 
         const toolbarAccLabel = 'toolbar.accessibilityLabel.moreActionsMenu';
@@ -1278,6 +1281,9 @@ class Toolbox extends Component<Props> {
                             customClass = 'hangup-button'
                             key = 'hangup-button'
                             visible = { isToolbarButtonEnabled('hangup', _toolbarButtons) } />
+
+                    <JaneHangupButton visible={_isJaneTestCall}
+                                      tooltipText="Finished testing? Click here."/>
                     </div>
                 </div>
             </div>
@@ -1356,7 +1362,8 @@ function _mapStateToProps(state, ownProps) {
         _toolbarButtons: toolbarButtons,
         _virtualSource: state['features/virtual-background'].virtualSource,
         _visible: isToolboxVisible(state),
-        _isStaffMember: getLocalParticipantType(state) === 'StaffMember'
+        _isStaffMember: getLocalParticipantType(state) === 'StaffMember',
+        _isJaneTestCall: isJaneTestCall(state)
     };
 }
 

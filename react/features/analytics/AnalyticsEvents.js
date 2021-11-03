@@ -917,3 +917,13 @@ export function createConnectionQualityChangedEvent(strength, stats) {
 function removeTrackIdFromEventPropertyObject(event) {
     return event && _.isObject(event) && Object.values(event)[0];
 }
+
+// eslint-disable-next-line require-jsdoc
+export function createWaitingAreaParticipantStatusChangedEvent(status) {
+    return {
+        action: 'waiting.area.participant.status.changed',
+        attributes: {
+            status
+        }
+    };
+}

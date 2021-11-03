@@ -12,12 +12,11 @@ import { setColorAlpha } from '../../../base/util';
 import { Chat } from '../../../chat';
 import { Filmstrip } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
+import { JaneWaitingArea, isJaneWaitingAreaPageVisible } from '../../../jane-waiting-area';
 import { LargeVideo } from '../../../large-video';
-import { KnockingParticipantList, LobbyScreen } from '../../../lobby';
-import { getIsLobbyVisible } from '../../../lobby/functions';
+import { KnockingParticipantList } from '../../../lobby';
 import { ParticipantsPane } from '../../../participants-pane/components/web';
 import { getParticipantsPaneOpen } from '../../../participants-pane/functions';
-import { Prejoin, isPrejoinPageVisible, isPrejoinPageLoading } from '../../../prejoin';
 import { fullScreenChanged, showToolbox } from '../../../toolbox/actions.web';
 import { Toolbox } from '../../../toolbox/components/web';
 import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
@@ -30,7 +29,6 @@ import type { AbstractProps } from '../AbstractConference';
 
 import ConferenceInfo from './ConferenceInfo';
 import { default as Notice } from './Notice';
-import { default as RefreshButton } from './RefreshButton';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -91,17 +89,7 @@ type Props = AbstractProps & {
      * Name for this conference room.
      */
     _roomName: string,
-
-    /**
-     * If lobby page is visible or not.
-     */
-     _showLobby: boolean,
-
-    /**
-     * If prejoin page is visible or not.
-     */
-    _showPrejoin: boolean,
-
+    _showJaneWaitingArea: boolean,
     dispatch: Function,
     t: Function
 }
@@ -210,8 +198,7 @@ class Conference extends AbstractConference<Props, *> {
         const {
             _isParticipantsPaneVisible,
             _layoutClassName,
-            _showLobby,
-            _showPrejoin
+            _showJaneWaitingArea
         } = this.props;
 
         return (
@@ -236,16 +223,15 @@ class Conference extends AbstractConference<Props, *> {
                         <Filmstrip />
                     </div>
 
-                    { _showPrejoin || _showLobby || <Toolbox showDominantSpeakerName = { true } /> }
+                    { _showJaneWaitingArea || <Toolbox /> }
                     <Chat />
 
                     { this.renderNotificationsContainer() }
                     { this.renderHdVideoAlert() }
-
                     <CalleeInfoContainer />
 
-                    { _showPrejoin && <Prejoin />}
-                    { _showLobby && <LobbyScreen />}
+                    { _showJaneWaitingArea && <JaneWaitingArea />}
+
                 </div>
                 <ParticipantsPane />
             </div>
@@ -377,8 +363,7 @@ function _mapStateToProps(state) {
         _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state)],
         _mouseMoveCallbackInterval: mouseMoveCallbackInterval,
         _roomName: getConferenceNameForTitle(state),
-        _showLobby: getIsLobbyVisible(state),
-        _showPrejoin: isPrejoinPageVisible(state) || isPrejoinPageLoading(state)
+        _showJaneWaitingArea: isJaneWaitingAreaPageVisible(state)
     };
 }
 

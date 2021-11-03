@@ -19,6 +19,11 @@ import { connect } from '../../base/redux';
 import { AbstractVideoMuteButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
 import { getLocalVideoType, isLocalCameraTrackMuted } from '../../base/tracks';
+import {
+    isJaneWaitingAreaPageVisible,
+    isJaneWaitingAreaVideoDisabled,
+    isJaneWaitingAreaVideoMuted
+} from '../../jane-waiting-area/functions';
 import { isVideoMuteButtonDisabled } from '../functions';
 
 declare var APP: Object;
@@ -189,13 +194,21 @@ function _mapStateToProps(state): Object {
     const { enabled: audioOnly } = state['features/base/audio-only'];
     const tracks = state['features/base/tracks'];
     const enabledFlag = getFeatureFlag(state, VIDEO_MUTE_BUTTON_ENABLED, true);
+    let _videoMuted = isLocalCameraTrackMuted(tracks);
+    let _videoDisabled = isVideoMuteButtonDisabled(state);
+
+    if (isJaneWaitingAreaPageVisible(state)) {
+        _videoMuted = isJaneWaitingAreaVideoMuted(state);
+        _videoDisabled = isJaneWaitingAreaVideoDisabled(state);
+    }
 
     return {
         _audioOnly: Boolean(audioOnly),
-        _videoDisabled: isVideoMuteButtonDisabled(state),
+        _videoDisabled,
         _videoMediaType: getLocalVideoType(tracks),
-        _videoMuted: isLocalCameraTrackMuted(tracks),
+        _videoMuted,
         visible: enabledFlag
+
     };
 }
 

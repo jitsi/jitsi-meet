@@ -23,6 +23,18 @@ export function getCurrentMicDeviceId(state: Object) {
 }
 
 /**
+ * Returns the deviceId for the currently waiting area used microphone.
+ *
+ * @param {Object} state - The state of the application.
+ * @returns {void}
+ */
+export function getCurrentWaitingAreaMicDeviceId(state: Object) {
+    const { audioTrack } = state['features/jane-waiting-area'];
+
+    return audioTrack && audioTrack.deviceId;
+}
+
+/**
  * Returns the deviceId for the currently used speaker.
  *
  * @param {Object} state - The state of the application.

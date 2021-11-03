@@ -13,7 +13,12 @@ import { connect } from '../../base/redux';
 import { AbstractAudioMuteButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
 import { isLocalTrackMuted } from '../../base/tracks';
+import {
+    isJaneWaitingAreaAudioMuted,
+    isJaneWaitingAreaPageVisible
+} from '../../jane-waiting-area/functions';
 import { muteLocal } from '../../video-menu/actions';
+
 
 declare var APP: Object;
 
@@ -150,9 +155,17 @@ class AudioMuteButton extends AbstractAudioMuteButton<Props, *> {
  * }}
  */
 function _mapStateToProps(state): Object {
-    const _audioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
-    const _disabled = state['features/base/config'].startSilent;
     const enabledFlag = getFeatureFlag(state, AUDIO_MUTE_BUTTON_ENABLED, true);
+    let _audioMuted;
+    let _disabled;
+
+    if (isJaneWaitingAreaPageVisible(state)) {
+        _audioMuted = isJaneWaitingAreaAudioMuted(state);
+        _disabled = state['features/base/config'].startSilent;
+    } else {
+        _audioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
+        _disabled = state['features/base/config'].startSilent;
+    }
 
     return {
         _audioMuted,

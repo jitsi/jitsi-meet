@@ -47,7 +47,8 @@ import {
     onStartMutedPolicyChanged,
     p2pStatusChanged,
     sendLocalParticipant,
-    _conferenceWillJoin
+    _conferenceWillJoin,
+    isJaneTestCall
 } from './react/features/base/conference';
 import { getReplaceParticipant } from './react/features/base/config/functions';
 import {
@@ -123,14 +124,15 @@ import {
     maybeOpenFeedbackDialog,
     submitFeedback
 } from './react/features/feedback';
+import {
+    initJaneWaitingArea,
+    isJaneWaitingAreaPageEnabled,
+    updateParticipantReadyStatus
+} from './react/features/jane-waiting-area';
 import { isModerationNotificationDisplayed, showNotification } from './react/features/notifications';
 import { mediaPermissionPromptVisibilityChanged, toggleSlowGUMOverlay } from './react/features/overlay';
 import { suspendDetected } from './react/features/power-monitor';
 import {
-    initPrejoin,
-    isPrejoinPageEnabled,
-    isPrejoinPageVisible,
-    makePrecallTest,
     setJoiningInProgress
 } from './react/features/prejoin';
 import { disableReceiver, stopReceiver } from './react/features/remote-control';
@@ -807,7 +809,7 @@ export default {
             logger.warn('initial device list initialization failed', error);
         }
 
-        if (isPrejoinPageEnabled(APP.store.getState())) {
+        if (isJaneWaitingAreaPageEnabled(APP.store.getState())) {
             _connectionPromise = connect(roomName).then(c => {
                 // we want to initialize it early, in case of errors to be able
                 // to gather logs
@@ -815,12 +817,6 @@ export default {
 
                 return c;
             });
-
-            if (_onConnectionPromiseCreated) {
-                _onConnectionPromiseCreated();
-            }
-
-            APP.store.dispatch(makePrecallTest(this._getConferenceOptions()));
 
             const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(initialOptions);
             const tracks = await tryCreateLocalTracks;
@@ -830,15 +826,13 @@ export default {
             // they may remain as empty strings.
             this._initDeviceList(true);
 
-            if (isPrejoinPageVisible(APP.store.getState())) {
-                return APP.store.dispatch(initPrejoin(tracks, errors));
-            }
+            return APP.store.dispatch(initJaneWaitingArea(tracks, errors));
 
-            logger.debug('Prejoin screen no longer displayed at the time when tracks were created');
-
-            this._displayErrorsForCreateInitialLocalTracks(errors);
-
-            return this._setLocalAudioVideoStreams(tracks);
+            // logger.debug('Prejoin screen no longer displayed at the time when tracks were created');
+            //
+            // this._displayErrorsForCreateInitialLocalTracks(errors);
+            //
+            // return this._setLocalAudioVideoStreams(tracks);
         }
 
         const [ tracks, con ] = await this.createInitialLocalTracksAndConnect(roomName, initialOptions);
@@ -860,20 +854,12 @@ export default {
     },
 
     /**
-     * Joins conference after the tracks have been configured in the prejoin screen.
+     * Joins conference after the tracks have been configured in the JaneWaitingArea screen.
      *
      * @param {Object[]} tracks - An array with the configured tracks
      * @returns {void}
      */
-    async prejoinStart(tracks) {
-        if (!_connectionPromise) {
-            // The conference object isn't initialized yet. Wait for the promise to initialise.
-            await new Promise(resolve => {
-                _onConnectionPromiseCreated = resolve;
-            });
-            _onConnectionPromiseCreated = undefined;
-        }
-
+    async janeWaitingAreaStart(tracks) {
         let con;
 
         try {
@@ -2863,6 +2849,11 @@ export default {
         }
 
         APP.UI.removeAllListeners();
+
+        if (!isJaneTestCall(APP.store.getState())
+            && isJaneWaitingAreaPageEnabled(APP.store.getState())) {
+            updateParticipantReadyStatus('left');
+        }
 
         let requestFeedbackPromise;
 
