@@ -5,8 +5,9 @@ import React from 'react';
 import { ConfirmDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-import AbstractMuteRemoteParticipantsVideoDialog
-    from '../AbstractMuteRemoteParticipantsVideoDialog';
+import AbstractMuteRemoteParticipantsVideoDialog, {
+    abstractMapStateToProps
+} from '../AbstractMuteRemoteParticipantsVideoDialog';
 
 /**
  * Dialog to confirm a remote participant's video stop action.
@@ -21,7 +22,10 @@ class MuteRemoteParticipantsVideoDialog extends AbstractMuteRemoteParticipantsVi
     render() {
         return (
             <ConfirmDialog
-                contentKey = 'dialog.muteParticipantsVideoDialog'
+                contentKey = { this.props.isVideoModerationOn
+                    ? 'dialog.muteParticipantsVideoDialogModerationOn'
+                    : 'dialog.muteParticipantsVideoDialog'
+                }
                 onSubmit = { this._onSubmit } />
         );
     }
@@ -29,4 +33,4 @@ class MuteRemoteParticipantsVideoDialog extends AbstractMuteRemoteParticipantsVi
     _onSubmit: () => boolean;
 }
 
-export default translate(connect()(MuteRemoteParticipantsVideoDialog));
+export default translate(connect(abstractMapStateToProps)(MuteRemoteParticipantsVideoDialog));

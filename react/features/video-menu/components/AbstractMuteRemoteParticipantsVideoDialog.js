@@ -3,6 +3,7 @@
 import { Component } from 'react';
 
 import { rejectParticipantVideo } from '../../av-moderation/actions';
+import { isEnabledFromState } from '../../av-moderation/functions';
 import { MEDIA_TYPE } from '../../base/media';
 import { muteRemote } from '../actions';
 
@@ -16,6 +17,11 @@ export type Props = {
      * The Redux dispatch function.
      */
     dispatch: Function,
+
+    /**
+     * Whether or not video moderation is on.
+     */
+    isVideoModerationOn: boolean,
 
     /**
      * The ID of the remote participant to be muted.
@@ -64,4 +70,18 @@ export default class AbstractMuteRemoteParticipantsVideoDialog<P:Props = Props, 
 
         return true;
     }
+}
+
+/**
+ * Maps (parts of) the redux state to the associated
+ * {@code AbstractDialogContainer}'s props.
+ *
+ * @param {Object} state - The redux state.
+ * @private
+ * @returns {Object}
+ */
+export function abstractMapStateToProps(state: Object) {
+    return {
+        isVideoModerationOn: isEnabledFromState(MEDIA_TYPE.VIDEO, state)
+    };
 }
