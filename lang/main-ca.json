@@ -236,7 +236,7 @@
         "remoteControlDeniedMessage": "{{user}} ha rebutjat la petició de control remot!",
         "remoteControlErrorMessage": "S'ha produït un error en intentar sol·licitar a {{user}} permisos de control remot!",
         "remoteControlRequestMessage": "Voleu permetre a {{user}} de controlar remotament el vostre escriptori?",
-        "remoteControlShareScreenWarning": "Tingueu present que si pitgeu \"Permet\" compartireu la vostra pantalla!",
+        "remoteControlShareScreenWarning": "Tingueu present que si pitgeu \"Permet\"compartireu la vostra pantalla!",
         "remoteControlStopMessage": "La sessió de control remot ha finalitzat!",
         "remoteControlTitle": "Control d'escriptori remot",
         "Remove": "Suprimeix",
@@ -577,7 +577,7 @@
     },
     "startupoverlay": {
         "title": "{{app}} requereix usar el micròfon i la càmera.",
-        "policyText": " "
+        "policyText": ""
     },
     "suspendedoverlay": {
         "rejoinKeyTitle": "Torna a entrar",
@@ -782,5 +782,42 @@
     },
     "helpView": {
         "header": "Centre d'ajuda"
+    },
+    "lobby": {
+        "admit": "Acceptar",
+        "admitAll": "Acceptar Tots",
+        "knockingParticipantList": "Participants en espera",
+        "allow": "Permetre",
+        "backToKnockModeButton": "Sol·licitar entrada",
+        "dialogTitle": "Sala d’espera",
+        "disableDialogContent": "La sala d’espera està habilitada actualment. Aquesta funció garanteix que els participants no desitjats no puguin unir-se a la seva reunió. Vols deshabilitar-ho?",
+        "disableDialogSubmit": "Deshabilitat",
+        "emailField": "Introdueix el teu email",
+        "enableDialogPasswordField": "Estableix la contrasenya (opcional)",
+        "enableDialogSubmit": "Habilitat",
+        "enableDialogText": "La sala d’espera li permet protegir la seva reunió en permetre que les persones només entrin després d’una aprovació formal per part d’un moderador.",
+        "enterPasswordButton": "Introduir la contrasenya de la reunió",
+        "enterPasswordTitle": "Introdueixi la contrasenya per a unir-se a la reunió",
+        "errorMissingPassword": "Si us plau, Introdueixi la contrasenya de la reunió",
+        "invalidPassword": "Contrasenya errònia",
+        "joiningMessage": "T’uniràs a la reunió tan aviat com algú accepti la teva sol·licitud",
+        "joinWithPasswordMessage": "Intentant unir-se amb contrasenya, esperi ...",
+        "joinRejectedMessage": "Un moderador va rebutjar la seva sol·licitud per a unir-se.",
+        "joinTitle": "Unir-se a la reunió",
+        "joiningTitle": "Sol·licitar unir-se a la reunió...",
+        "joiningWithPasswordTitle": "Connectant-se a la reunió amb contrasenya...",
+        "knockButton": "Sol·licitar entrada a la reunió",
+        "knockTitle": "Algú vol unir-se a la reunió",
+        "nameField": "Introdueix el teu nom",
+        "notificationLobbyAccessDenied": "{{originParticipantName}} ha rebutjat l’entrada a la reunió de {{targetParticipantName}}",
+        "notificationLobbyAccessGranted": "{{originParticipantName}} ha acceptat l’entrada a la reunió de {{targetParticipantName}}",
+        "notificationLobbyDisabled": "La sala d’espera ha estat deshabilitada per {{originParticipantName}}",
+        "notificationLobbyEnabled": "La sala d’espera ha estat habilitada per {{originParticipantName}}",
+        "notificationTitle": "Sala d’espera",
+        "passwordField": "Introduir la contrasenya de la reunió",
+        "passwordJoinButton": "Unir-se",
+        "reject": "Rebutjar",
+        "rejectAll": "Rebutjar Tots",
+        "toggleLabel": "Habilitar sala d’espera"
     }
 }
