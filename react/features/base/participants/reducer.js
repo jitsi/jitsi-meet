@@ -20,6 +20,7 @@ declare var interfaceConfig: Object;
 
 /**
  * Participant object.
+ *
  * @typedef {Object} Participant
  * @property {string} id - Participant ID.
  * @property {string} name - Participant name.

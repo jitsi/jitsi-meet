@@ -11,7 +11,7 @@ const NAVBAR_BUTTON_SIZE = 24;
 export default {
 
     /**
-     * {@code Conference} style.
+     * {@code Conference} Style.
      */
     conference: fixAndroidViewClipping({
         alignSelf: 'stretch',

@@ -10,7 +10,7 @@ import {
 } from './sounds';
 
 /**
- * The payload name for the datachannel/endpoint reaction event
+ * The payload name for the datachannel/endpoint reaction event.
  */
 export const ENDPOINT_REACTION_NAME = 'endpoint-reaction';
 

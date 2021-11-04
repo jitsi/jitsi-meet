@@ -34,21 +34,21 @@ export type Props = AbstractButtonProps & {
  * An abstract remote video menu button which kicks the remote participant.
  */
 export default class AbstractGrantModeratorButton extends AbstractButton<Props, *> {
-  accessibilityLabel = 'toolbar.accessibilityLabel.grantModerator';
-  icon = IconCrown;
-  label = 'videothumbnail.grantModerator';
+    accessibilityLabel = 'toolbar.accessibilityLabel.grantModerator';
+    icon = IconCrown;
+    label = 'videothumbnail.grantModerator';
 
-  /**
+    /**
    * Handles clicking / pressing the button, and kicks the participant.
    *
    * @private
    * @returns {void}
    */
-  _handleClick() {
-      const { dispatch, participantID } = this.props;
+    _handleClick() {
+        const { dispatch, participantID } = this.props;
 
-      dispatch(openDialog(GrantModeratorDialog, { participantID }));
-  }
+        dispatch(openDialog(GrantModeratorDialog, { participantID }));
+    }
 }
 
 /**

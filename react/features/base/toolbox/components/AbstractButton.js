@@ -16,7 +16,7 @@ export type Props = {
 
     /**
      * Extra styles which will be applied in conjunction with `styles` or
-     * `toggledStyles` when the button is disabled;
+     * `toggledStyles` when the button is disabled;.
      */
     disabledStyles: ?Styles,
 

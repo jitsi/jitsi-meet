@@ -251,7 +251,7 @@ declare var APP: Object;
 /**
  * Implements the conference toolbox on React/Web.
  *
- * @extends Component
+ * @augments Component
  */
 class Toolbox extends Component<Props> {
     /**

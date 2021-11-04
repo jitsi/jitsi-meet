@@ -72,7 +72,7 @@ type Props = {
     showSlidingView?: boolean,
 
     /**
-     * The component's external style
+     * The component's external style.
      */
     style: Object
 };

@@ -38,7 +38,7 @@ class ShareDesktopButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.shareYourScreen';
     label = 'toolbar.startScreenSharing';
     icon = IconShareDesktop;
-    toggledLabel = 'toolbar.stopScreenSharing'
+    toggledLabel = 'toolbar.stopScreenSharing';
     tooltip = 'toolbar.accessibilityLabel.shareYourScreen';
 
     /**
@@ -61,10 +61,10 @@ class ShareDesktopButton extends AbstractButton<Props, *> {
     /**
      * Required by linter due to AbstractButton overwritten prop being writable.
      *
-     * @param {string} value - The icon value.
+     * @param {string} _value - The icon value.
      */
-    set tooltip(value) {
-        return value;
+    set tooltip(_value) {
+        // Unused.
     }
 
     /**

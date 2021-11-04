@@ -14,7 +14,7 @@ export type TestHintProps = {
 
     /**
      * The indicator which determines whether the test mode is enabled.
-     * {@link TestHint} components are rendered only if this flag is set to
+     * {@link TestHint} Components are rendered only if this flag is set to
      * {@code true}.
      */
     _testModeEnabled: boolean,

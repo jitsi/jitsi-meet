@@ -1,5 +1,6 @@
-/* eslint-disable react/no-multi-comp */
 // @flow
+
+/* eslint-disable react/no-multi-comp, react/jsx-no-bind */
 
 import React, { useRef } from 'react';
 

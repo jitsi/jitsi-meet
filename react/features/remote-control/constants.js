@@ -10,13 +10,14 @@ export const DISCO_REMOTE_CONTROL_FEATURE = 'http://jitsi.org/meet/remotecontrol
 
 /**
  * The remote control event.
+ *
  * @typedef {object} RemoteControlEvent
- * @property {EVENTS | REQUESTS} type - the type of the message
- * @property {number} x - avaibale for type === mousemove only. The new x
- * coordinate of the mouse
+ * @property {EVENTS | REQUESTS} type - The type of the message.
+ * @property {number} x - Avaibale for type === mousemove only. The new x
+ * coordinate of the mouse.
  * @property {number} y - For mousemove type - the new y
  * coordinate of the mouse and for mousescroll - represents the vertical
- * scrolling diff value
+ * scrolling diff value.
  * @property {number} button - 1(left), 2(middle) or 3 (right). Supported by
  * mousedown, mouseup and mousedblclick types.
  * @property {KEYS} key - Represents the key related to the event. Supported by
@@ -39,6 +40,7 @@ export const DISCO_REMOTE_CONTROL_FEATURE = 'http://jitsi.org/meet/remotecontrol
 
 /**
  * Types of remote-control events.
+ *
   * @readonly
   * @enum {string}
  */
@@ -58,6 +60,7 @@ export const EVENTS = {
 
 /**
  * Types of remote-control requests.
+ *
   * @readonly
   * @enum {string}
  */
@@ -67,6 +70,7 @@ export const REQUESTS = {
 
 /**
  * Actions for the remote control permission events.
+ *
  * @readonly
  * @enum {string}
  */

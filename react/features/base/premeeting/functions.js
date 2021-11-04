@@ -115,10 +115,8 @@ function _getLevel(thresholds, value, descending = true) {
 /**
  * Returns the connection details from the test results.
  *
- * @param {{
- *   fractionalLoss: number,
- *   throughput: number
- * }} testResults - The state of the app.
+ * @param {number} testResults.fractionalLoss - Factional loss.
+ * @param {number} testResults.throughput - Throughput.
  *
  * @returns {{
  *   connectionType: string,

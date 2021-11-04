@@ -12,7 +12,7 @@ import {
  *
  * {
  *     userId: Function[]
- * }
+ * }.
  */
 const subscribers = {};
 

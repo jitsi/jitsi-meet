@@ -25,7 +25,7 @@ type Props = {
 /**
  * Wrapper application for prejoin.
  *
- * @extends BaseApp
+ * @augments BaseApp
  */
 export default class PrejoinApp extends BaseApp<Props> {
     _init: Promise<*>;

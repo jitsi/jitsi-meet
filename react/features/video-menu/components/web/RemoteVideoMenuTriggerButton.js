@@ -141,7 +141,7 @@ type Props = {
  * React {@code Component} for displaying an icon associated with opening the
  * the {@code VideoMenu}.
  *
- * @extends {Component}
+ * @augments {Component}
  */
 class RemoteVideoMenuTriggerButton extends Component<Props> {
 

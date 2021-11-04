@@ -32,19 +32,19 @@ const PollsList = () => {
     }, [ polls ]);
 
     return (
-    <>
-        {listPolls.length === 0
+        <>
+            {listPolls.length === 0
             && <Text style = { chatStyles.noPollText } >
                 {t('polls.results.empty')}
             </Text>}
-        <FlatList
-            data = { listPolls }
-            extraData = { listPolls }
-            // eslint-disable-next-line react/jsx-no-bind
-            keyExtractor = { (item, index) => index.toString() }
-            ref = { flatlistRef }
-            renderItem = { renderItem } />
-    </>
+            <FlatList
+                data = { listPolls }
+                extraData = { listPolls }
+                // eslint-disable-next-line react/jsx-no-bind
+                keyExtractor = { (item, index) => index.toString() }
+                ref = { flatlistRef }
+                renderItem = { renderItem } />
+        </>
     );
 };
 

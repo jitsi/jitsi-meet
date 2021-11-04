@@ -35,7 +35,7 @@ const TERMS_URL = 'https://jitsi.org/meet/terms';
 type Props = {
 
     /**
-     * Redux dispatch action
+     * Redux dispatch action.
      */
     dispatch: Function,
 

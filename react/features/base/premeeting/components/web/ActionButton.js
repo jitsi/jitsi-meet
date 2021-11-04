@@ -53,27 +53,27 @@ type Props = {
     onOptionsClick?: Function,
 
     /**
-     * to navigate with the keyboard.
+     * To navigate with the keyboard.
      */
     tabIndex?: number,
 
     /**
-     * to give a role to the icon.
+     * To give a role to the icon.
      */
     role?: string,
 
     /**
-     * to give a aria-pressed to the icon.
+     * To give a aria-pressed to the icon.
      */
     ariaPressed?: boolean,
 
     /**
-     * The Label of the current element
+     * The Label of the current element.
      */
     ariaLabel?: string,
 
     /**
-     * The Label of the child element
+     * The Label of the child element.
      */
     ariaDropDownLabel?: string
 };

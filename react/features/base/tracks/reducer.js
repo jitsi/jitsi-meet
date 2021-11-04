@@ -114,7 +114,7 @@ function track(state, action) {
 }
 
 /**
- * Listen for actions that mutate (e.g. add, remove) local and remote tracks.
+ * Listen for actions that mutate (e.g. Add, remove) local and remote tracks.
  */
 ReducerRegistry.register('features/base/tracks', (state = [], action) => {
     switch (action.type) {
@@ -153,7 +153,7 @@ ReducerRegistry.register('features/base/tracks', (state = [], action) => {
 });
 
 /**
- * Listen for actions that mutate the no-src-data state, like the current notification id
+ * Listen for actions that mutate the no-src-data state, like the current notification id.
  */
 ReducerRegistry.register('features/base/no-src-data', (state = {}, action) => {
     switch (action.type) {

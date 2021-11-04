@@ -109,7 +109,7 @@ const DEFAULT_STATE = {
     premeetingBackground: '',
 
     /**
-     * Flag used to signal if the app should use a custom logo or not
+     * Flag used to signal if the app should use a custom logo or not.
      *
      * @public
      * @type {boolean}

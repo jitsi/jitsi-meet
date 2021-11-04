@@ -14,7 +14,7 @@ type Props = {
     src: Object,
 
     /**
-     * The component's external style
+     * The component's external style.
      */
     style: Object
 };
@@ -22,7 +22,7 @@ type Props = {
 /**
  * A component rendering aN IMAGE.
  *
- * @extends Component
+ * @augments Component
  */
 export default class ImageImpl extends Component<Props> {
     /**

@@ -34,26 +34,26 @@ type Props = {
      isWideScreen: boolean,
 
     /**
-     * The available player width
+     * The available player width.
      */
     playerHeight: number,
 
     /**
-     * The available player width
+     * The available player width.
      */
     playerWidth: number,
 
     /**
-     * The shared video url
+     * The shared video url.
      */
      videoUrl: string,
 }
 
-/**
+/** .
  * Implements a React {@link Component} which represents the large video (a.k.a.
- * the conference participant who is on the local stage) on Web/React.
+ * The conference participant who is on the local stage) on Web/React.
  *
- * @extends Component
+ * @augments Component
  */
 class SharedVideo extends Component<Props> {
     /**

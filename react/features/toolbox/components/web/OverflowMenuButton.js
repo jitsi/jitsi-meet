@@ -64,7 +64,7 @@ type Props = {
 /**
  * A React {@code Component} for opening or closing the {@code OverflowMenu}.
  *
- * @extends Component
+ * @augments Component
  */
 class OverflowMenuButton extends Component<Props> {
     /**

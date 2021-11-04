@@ -54,7 +54,7 @@ type Props = {
     t: Function,
 
     /**
-     * The id of the dropdown element
+     * The id of the dropdown element.
      */
     id: string
 };
@@ -63,7 +63,7 @@ type Props = {
  * React component for selecting a device from a select element. Wraps
  * AKDropdownMenu with device selection specific logic.
  *
- * @extends Component
+ * @augments Component
  */
 class DeviceSelector extends Component<Props> {
     /**

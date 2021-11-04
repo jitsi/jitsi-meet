@@ -12,7 +12,7 @@ import { getLocalVideoTrack } from '../../../tracks';
 export type Props = {
 
     /**
-     * Local participant id
+     * Local participant id.
      */
     _participantId: string,
 

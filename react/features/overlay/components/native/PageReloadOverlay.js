@@ -47,7 +47,7 @@ class PageReloadOverlay extends AbstractPageReloadOverlay<Props> {
         this._onReloadNow = this._onReloadNow.bind(this);
     }
 
-    _onCancel: () => void
+    _onCancel: () => void;
 
     /**
      * Handle clicking of the "Cancel" button. It will navigate back to the
@@ -62,7 +62,7 @@ class PageReloadOverlay extends AbstractPageReloadOverlay<Props> {
         this.props.dispatch(appNavigate(undefined));
     }
 
-    _onReloadNow: () => void
+    _onReloadNow: () => void;
 
     /**
      * Handle clicking on the "Reload Now" button. It will navigate to the same

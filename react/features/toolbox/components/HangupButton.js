@@ -24,7 +24,7 @@ type Props = AbstractButtonProps & {
 /**
  * Component that renders a toolbar button for leaving the current conference.
  *
- * @extends AbstractHangupButton
+ * @augments AbstractHangupButton
  */
 class HangupButton extends AbstractHangupButton<Props, *> {
     _hangup: Function;

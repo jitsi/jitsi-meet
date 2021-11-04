@@ -126,7 +126,7 @@ type State = AbstractState & {
  * Implements a React {@link Component} which displays the current connection
  * quality percentage and has a popover to show more detailed connection stats.
  *
- * @extends {Component}
+ * @augments {Component}
  */
 class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
     /**

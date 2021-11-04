@@ -25,7 +25,7 @@ import styles, { PLACEHOLDER_COLOR } from './styles';
 /**
  * A React Component for entering a key for starting a YouTube live stream.
  *
- * @extends Component
+ * @augments Component
  */
 class StreamKeyForm extends AbstractStreamKeyForm<Props> {
     /**
@@ -136,7 +136,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
         );
     }
 
-    _onInputChange: Object => void
+    _onInputChange: Object => void;
 
     _onOpenGooglePrivacyPolicy: () => void;
 
@@ -150,7 +150,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
         Linking.openURL(GOOGLE_PRIVACY_POLICY);
     }
 
-    _onOpenHelp: () => void
+    _onOpenHelp: () => void;
 
     /**
      * Opens the information link on how to manually locate a YouTube broadcast

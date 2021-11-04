@@ -37,7 +37,7 @@ export type Props = {
 /**
  * Abstract dialog to confirm a remote participant video ute action.
  *
- * @extends Component
+ * @augments Component
  */
 export default class AbstractMuteRemoteParticipantsVideoDialog<P:Props = Props, State=void>
     extends Component<P, State> {

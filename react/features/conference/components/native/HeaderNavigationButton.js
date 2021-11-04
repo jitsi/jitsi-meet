@@ -20,7 +20,7 @@ type Props = {
     src: Object,
 
     /**
-     * The component's external style
+     * The component's external style.
      */
     style: Object
 }

@@ -53,12 +53,12 @@ type Props = {
  * Implements a React {@link Component} which represents the filmstrip on
  * mobile/React Native.
  *
- * @extends Component
+ * @augments Component
  */
 class Filmstrip extends PureComponent<Props> {
     /**
      * Whether the local participant should be rendered separately from the
-     * remote participants i.e. outside of their {@link ScrollView}.
+     * remote participants ie outside of their {@link ScrollView}.
      */
     _separateLocalThumbnail: boolean;
 

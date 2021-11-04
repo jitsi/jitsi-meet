@@ -2,6 +2,7 @@
  * The constant for the event type 'track'.
  * TODO: keep these constants in a single place. Can we import them from
  * lib-jitsi-meet's AnalyticsEvents somehow?
+ *
  * @type {string}
  */
 const TYPE_TRACK = 'track';
@@ -10,6 +11,7 @@ const TYPE_TRACK = 'track';
  * The constant for the event type 'UI' (User Interaction).
  * TODO: keep these constants in a single place. Can we import them from
  * lib-jitsi-meet's AnalyticsEvents somehow?
+ *
  * @type {string}
  */
 const TYPE_UI = 'ui';

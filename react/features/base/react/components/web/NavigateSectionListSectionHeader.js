@@ -9,16 +9,16 @@ import Text from './Text';
 type Props = {
 
     /**
-     * A section containing the data to be rendered
+     * A section containing the data to be rendered.
      */
     section: Section
 }
 
 /**
  * Implements a React/Web {@link Component} that renders the section header of
- * the list
+ * the list.
  *
- * @extends Component
+ * @augments Component
  */
 export default class NavigateSectionListSectionHeader extends Component<Props> {
     /**

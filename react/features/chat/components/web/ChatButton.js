@@ -43,10 +43,10 @@ class ChatButton extends AbstractButton<Props, *> {
     /**
      * Required by linter due to AbstractButton overwritten prop being writable.
      *
-     * @param {string} value - The value.
+     * @param {string} _value - The value.
      */
-    set tooltip(value) {
-        return value;
+    set tooltip(_value) {
+        // Unused.
     }
 
     /**

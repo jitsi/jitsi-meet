@@ -15,12 +15,12 @@ import styles from './styles';
 type Props = {
 
     /**
-     * Media state for audio
+     * Media state for audio.
      */
     audioMediaState: MediaState,
 
     /**
-     * React children
+     * React children.
      */
     children?: Node,
 
@@ -65,7 +65,7 @@ type Props = {
     raisedHand: boolean,
 
     /**
-     * Media state for video
+     * Media state for video.
      */
     videoMediaState: MediaState
 }

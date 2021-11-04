@@ -52,9 +52,9 @@ class PageReloadOverlay extends AbstractPageReloadOverlay<Props> {
         );
     }
 
-    _renderButton: () => React$Element<*>
+    _renderButton: () => React$Element<*>;
 
-    _renderProgressBar: () => React$Element<*>
+    _renderProgressBar: () => React$Element<*>;
 }
 
 export default translate(connect(abstractMapStateToProps)(PageReloadOverlay));

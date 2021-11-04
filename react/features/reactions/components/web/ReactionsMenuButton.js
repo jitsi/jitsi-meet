@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
@@ -78,15 +78,9 @@ function ReactionsMenuButton({
     reactionsQueue,
     t
 }: Props) {
-
-    /**
-     * Toggles the reactions menu visibility.
-     *
-     * @returns {void}
-     */
-    function toggleReactionsMenu() {
+    const toggleReactionsMenu = useCallback(() => {
         dispatch(toggleReactionsMenuVisibility());
-    }
+    }, [ dispatch ]);
 
     const raiseHandButton = (<ToolbarButton
         accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }

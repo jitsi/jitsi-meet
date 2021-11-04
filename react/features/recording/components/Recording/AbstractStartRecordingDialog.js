@@ -42,7 +42,7 @@ type Props = {
     _fileRecordingsServiceEnabled: boolean,
 
     /**
-     * Whether to show the possibility to share file recording with other people (e.g. meeting participants), based on
+     * Whether to show the possibility to share file recording with other people (e.g. Meeting participants), based on
      * the actual implementation on the backend.
      */
     _fileRecordingsServiceSharingEnabled: boolean,
@@ -333,7 +333,7 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
      * @protected
      * @returns {React$Component}
      */
-    _renderDialogContent: () => React$Component<*>
+    _renderDialogContent: () => React$Component<*>;
 }
 
 /**

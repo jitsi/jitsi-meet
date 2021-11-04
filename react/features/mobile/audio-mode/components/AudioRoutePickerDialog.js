@@ -64,7 +64,7 @@ type RawDevice = {
     name: ?string,
 
     /**
-     * is this device selected?
+     * Is this device selected?
      */
     selected: boolean,
 

@@ -32,7 +32,7 @@ type Props = {
 /**
  * React Component for displaying a label when local recording is engaged.
  *
- * @extends Component
+ * @augments Component
  */
 class LocalRecordingLabel extends Component<Props> {
 

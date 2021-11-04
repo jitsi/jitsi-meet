@@ -57,7 +57,7 @@ type State = {
 /**
  * React {@code Component} for displaying and editing the conference password.
  *
- * @extends Component
+ * @augments Component
  */
 class PasswordForm extends Component<Props, State> {
     /**

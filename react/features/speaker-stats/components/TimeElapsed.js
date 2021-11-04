@@ -25,7 +25,7 @@ type Props = {
  * milliseconds into a more humanized form: "# hours, # minutes, # seconds".
  * With a time of 0, "0s" will be displayed.
  *
- * @extends Component
+ * @augments Component
  */
 class TimeElapsed extends Component<Props> {
     /**

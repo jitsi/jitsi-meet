@@ -16,7 +16,7 @@ type Props = {
     onValueChange: Function,
 
     /**
-     * The component's external style
+     * The component's external style.
      */
     style: Object
 };

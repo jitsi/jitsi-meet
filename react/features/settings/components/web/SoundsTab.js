@@ -54,7 +54,7 @@ export type Props = {
 /**
  * React {@code Component} for modifying the local user's sound settings.
  *
- * @extends Component
+ * @augments Component
  */
 class SoundsTab extends AbstractDialogTab<Props> {
     /**

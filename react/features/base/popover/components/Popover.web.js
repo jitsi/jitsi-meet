@@ -86,7 +86,7 @@ type State = {
  * Implements a React {@code Component} for showing an {@code InlineDialog} on
  * mouseenter of the trigger and contents, and hiding the dialog on mouseleave.
  *
- * @extends Component
+ * @augments Component
  */
 class Popover extends Component<Props, State> {
     /**

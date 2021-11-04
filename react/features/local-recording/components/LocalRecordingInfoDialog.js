@@ -75,7 +75,7 @@ type State = {
  * local recording. For users with moderator rights, this is also the "control
  * panel" for starting/stopping local recording on all clients.
  *
- * @extends Component
+ * @augments Component
  */
 class LocalRecordingInfoDialog extends Component<Props, State> {
 

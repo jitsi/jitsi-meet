@@ -23,7 +23,7 @@ type Props = {
     id?: string,
 
     /**
-     * Id of the icon container
+     * Id of the icon container.
      */
     containerId?: string,
 
@@ -48,57 +48,57 @@ type Props = {
     style?: Object,
 
     /**
-     * aria disabled flag for the Icon.
+     * Aria disabled flag for the Icon.
      */
     ariaDisabled?: boolean,
 
     /**
-     * aria label for the Icon.
+     * Aria label for the Icon.
      */
     ariaLabel?: string,
 
     /**
-     * whether the element has a popup
+     * Whether the element has a popup.
      */
     ariaHasPopup?: boolean,
 
     /**
-     * whether the element has a pressed
+     * Whether the element has a pressed.
      */
     ariaPressed?: boolean,
 
     /**
-     * id of description label
+     * Id of description label.
      */
     ariaDescribedBy?: string,
 
     /**
-     * whether the element popup is expanded
+     * Whether the element popup is expanded.
      */
     ariaExpanded?: boolean,
 
     /**
-     * The id of the element this button icon controls
+     * The id of the element this button icon controls.
      */
     ariaControls?: string,
 
       /**
-     * tabIndex  for the Icon.
+     * TabIndex  for the Icon.
      */
     tabIndex?: number,
 
      /**
-     * role for the Icon.
+     * Role for the Icon.
      */
     role?: string,
 
     /**
-     * keypress handler.
+     * Keypress handler.
      */
     onKeyPress?: Function,
 
     /**
-     * keydown handler.
+     * Keydown handler.
      */
     onKeyDown?: Function
 }

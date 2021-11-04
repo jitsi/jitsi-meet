@@ -101,7 +101,7 @@ class ConfirmDialog extends BaseSubmitDialog<Props, *> {
         );
     }
 
-    _renderHTML: string => Object | string
+    _renderHTML: string => Object | string;
 }
 
 export default translate(connect(_abstractMapStateToProps)(ConfirmDialog));

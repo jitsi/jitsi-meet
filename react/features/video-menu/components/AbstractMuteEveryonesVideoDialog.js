@@ -37,7 +37,7 @@ type State = {
  * An abstract Component with the contents for a dialog that asks for confirmation
  * from the user before disabling all remote participants cameras.
  *
- * @extends AbstractMuteRemoteParticipantsVideoDialog
+ * @augments AbstractMuteRemoteParticipantsVideoDialog
  */
 export default class AbstractMuteEveryonesVideoDialog<P: Props>
     extends AbstractMuteRemoteParticipantsVideoDialog<P, State> {

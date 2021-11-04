@@ -42,7 +42,7 @@ type Props = {
 /**
  * A React Component for adding a meeting URL to an existing calendar event.
  *
- * @extends Component
+ * @augments Component
  */
 class AddMeetingUrlButton extends Component<Props> {
     /**

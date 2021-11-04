@@ -38,32 +38,32 @@ type Props = {
     styles?: Object,
 
     /**
-     * aria label for the Icon.
+     * Aria label for the Icon.
      */
     ariaLabel?: string,
 
     /**
-     * whether the element has a popup
+     * Whether the element has a popup.
      */
     ariaHasPopup?: boolean,
 
     /**
-     * whether the element popup is expanded
+     * Whether the element popup is expanded.
      */
     ariaExpanded?: boolean,
 
     /**
-     * The id of the element this button icon controls
+     * The id of the element this button icon controls.
      */
     ariaControls?: string,
 
     /**
-     * keydown handler for icon.
+     * Keydown handler for icon.
      */
     onIconKeyDown?: Function,
 
     /**
-     * The ID of the icon button
+     * The ID of the icon button.
      */
     iconId: string
 };

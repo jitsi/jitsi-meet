@@ -34,7 +34,7 @@ export type Props = {
     _meetingName: string,
 
     /**
-     * The members only conference if any,
+     * The members only conference if any,.
      */
     _membersOnlyConference: Object,
 
@@ -69,7 +69,7 @@ export type Props = {
     dispatch: Function,
 
     /**
-     * Indicates whether the copy url button should be shown
+     * Indicates whether the copy url button should be shown.
      */
     showCopyUrlButton: boolean,
 
@@ -102,7 +102,7 @@ type State = {
     passwordJoinFailed: boolean,
 
     /**
-     * The state of the screen. One of {@code SCREEN_STATES[*]}
+     * The state of the screen. One of {@code SCREEN_STATES[*]}.
      */
     screenState: number
 }

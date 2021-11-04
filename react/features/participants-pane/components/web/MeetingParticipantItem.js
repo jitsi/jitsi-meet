@@ -113,7 +113,7 @@ type Props = {
     askUnmuteText: string,
 
     /**
-     * Is this item highlighted
+     * Is this item highlighted.
      */
     isHighlighted: boolean,
 
@@ -128,12 +128,12 @@ type Props = {
     muteParticipantButtonText: string,
 
     /**
-     * Callback for the activation of this item's context menu
+     * Callback for the activation of this item's context menu.
      */
     onContextMenu: Function,
 
     /**
-     * Callback for the mouse leaving this item
+     * Callback for the mouse leaving this item.
      */
     onLeave: Function,
 

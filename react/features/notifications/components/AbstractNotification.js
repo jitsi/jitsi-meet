@@ -101,7 +101,7 @@ export type Props = {
 /**
  * Abstract class for {@code Notification} component.
  *
- * @extends Component
+ * @augments Component
  */
 export default class AbstractNotification<P: Props> extends Component<P> {
     /**
@@ -127,7 +127,7 @@ export default class AbstractNotification<P: Props> extends Component<P> {
         this._onDismissed = this._onDismissed.bind(this);
     }
 
-    _getDescription: () => Array<string>
+    _getDescription: () => Array<string>;
 
     /**
      * Returns the description array to be displayed.
@@ -153,7 +153,7 @@ export default class AbstractNotification<P: Props> extends Component<P> {
         return descriptionArray;
     }
 
-    _getDescriptionKey: () => string
+    _getDescriptionKey: () => string;
 
     /**
      * Returns the description key that was used if any.

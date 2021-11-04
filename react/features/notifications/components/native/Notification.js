@@ -21,7 +21,7 @@ const DEFAULT_MAX_LINES = 1;
 /**
  * Implements a React {@link Component} to display a notification.
  *
- * @extends Component
+ * @augments Component
  */
 class Notification extends AbstractNotification<Props> {
     /**

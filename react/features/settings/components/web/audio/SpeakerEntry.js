@@ -51,7 +51,7 @@ type Props = {
  * Implements a React {@link Component} which displays an audio
  * output settings entry. The user can click and play a test sound.
  *
- * @extends Component
+ * @augments Component
  */
 export default class SpeakerEntry extends Component<Props> {
     /**

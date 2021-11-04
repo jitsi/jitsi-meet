@@ -17,7 +17,7 @@ import '../reducers';
 /**
  * Root app {@code Component} on Web/React.
  *
- * @extends AbstractApp
+ * @augments AbstractApp
  */
 export class App extends AbstractApp {
     /**

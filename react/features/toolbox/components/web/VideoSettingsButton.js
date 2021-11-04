@@ -37,7 +37,7 @@ type Props = {
     hasVideoTrack: boolean,
 
     /**
-     * If the button should be disabled
+     * If the button should be disabled.
      */
     isDisabled: boolean,
 
@@ -50,12 +50,12 @@ type Props = {
     visible: boolean,
 
     /**
-     * Used for translation
+     * Used for translation.
      */
     t: Function,
 
     /**
-     * Defines is popup is open
+     * Defines is popup is open.
      */
     isOpen: boolean
 };
@@ -175,5 +175,5 @@ const mapDispatchToProps = {
 
 export default translate(connect(
     mapStateToProps,
-    mapDispatchToProps,
+    mapDispatchToProps
 )(VideoSettingsButton));

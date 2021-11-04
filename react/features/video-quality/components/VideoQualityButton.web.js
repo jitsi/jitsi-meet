@@ -32,7 +32,7 @@ type Props = AbstractButtonProps & {
  * menu of the toolbar, including an icon showing the currently selected
  * max receive quality.
  *
- * @extends Component
+ * @augments Component
  */
 class VideoQualityButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.callQuality';

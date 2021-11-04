@@ -24,7 +24,7 @@ type Props = {
     openDrawerForParticipant: Function,
 
     /**
-     * Participant reference
+     * Participant reference.
      */
     participant: Object
 };

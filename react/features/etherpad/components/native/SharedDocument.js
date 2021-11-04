@@ -33,7 +33,7 @@ type Props = {
     _headerStyles: Object,
 
     /**
-     * Default prop for navigation between screen components(React Navigation)
+     * Default prop for navigation between screen components(React Navigation).
      */
     navigation: Object,
 
