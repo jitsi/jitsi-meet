@@ -11,7 +11,7 @@ var config = {
   desktopSharingChromeExtId: null,
   desktopSharingChromeSources: [ 'screen', 'window', 'tab' ],
   desktopSharingChromeMinExtVersion: '0.1',
-  channelLastN: 10,
+  channelLastN: {{ VIDEO_STREAM_LIMIT|default(-1, true) }},
   enableWelcomePage: true,
   enableUserRolesBasedOnToken: false,
   enableLipSync: false,
