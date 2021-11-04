@@ -14,7 +14,7 @@ import AbstractRecentList from './AbstractRecentList';
 import RecentListItemMenu from './RecentListItemMenu.native';
 
 /**
- * The type of the React {@code Component} props of {@link RecentList}
+ * The type of the React {@code Component} props of {@link RecentList}.
  */
 type Props = {
 

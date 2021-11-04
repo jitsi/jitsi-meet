@@ -68,7 +68,7 @@ class MessageContainer extends AbstractMessageContainer<Props> {
 
     _getMessagesGroupedBySender: () => Array<Array<Object>>;
 
-    _keyExtractor: Object => string
+    _keyExtractor: Object => string;
 
     /**
      * Key extractor for the flatlist.

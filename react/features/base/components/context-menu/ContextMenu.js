@@ -37,12 +37,12 @@ type Props = {
     isDrawerOpen: boolean,
 
     /**
-     * Target elements against which positioning calculations are made
+     * Target elements against which positioning calculations are made.
      */
     offsetTarget?: HTMLElement,
 
     /**
-     * Callback for click on an item in the menu
+     * Callback for click on an item in the menu.
      */
     onClick?: Function,
 
@@ -52,12 +52,12 @@ type Props = {
     onDrawerClose: Function,
 
     /**
-     * Callback for the mouse entering the component
+     * Callback for the mouse entering the component.
      */
     onMouseEnter?: Function,
 
     /**
-     * Callback for the mouse leaving the component
+     * Callback for the mouse leaving the component.
      */
     onMouseLeave: Function
 };

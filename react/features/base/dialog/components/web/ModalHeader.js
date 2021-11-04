@@ -77,11 +77,10 @@ const styles = theme => {
 
 
 /**
- * A default header for modal-dialog components
+ * A default header for modal-dialog components.
  *
- * @export
  * @class ModalHeader
- * @extends {React.Component<Props>}
+ * @augments {React.Component<Props>}
  */
 class ModalHeader extends React.Component<Props> {
     static defaultProps = {

@@ -13,7 +13,7 @@ import AbstractMuteRemoteParticipantsVideoDialog, {
  * A React Component with the contents for a dialog that asks for confirmation
  * from the user before disabling a remote participants camera.
  *
- * @extends Component
+ * @augments Component
  */
 class MuteRemoteParticipantsVideoDialog extends AbstractMuteRemoteParticipantsVideoDialog {
     /**

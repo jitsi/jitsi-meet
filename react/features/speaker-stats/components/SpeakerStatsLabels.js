@@ -18,7 +18,7 @@ type Props = {
 /**
  * React component for labeling speaker stats column items.
  *
- * @extends Component
+ * @augments Component
  */
 class SpeakerStatsLabels extends Component<Props> {
     /**

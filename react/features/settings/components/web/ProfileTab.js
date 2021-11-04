@@ -56,7 +56,7 @@ export type Props = {
 /**
  * React {@code Component} for modifying the local user's profile.
  *
- * @extends Component
+ * @augments Component
  */
 class ProfileTab extends AbstractDialogTab<Props> {
     static defaultProps = {

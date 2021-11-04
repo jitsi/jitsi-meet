@@ -29,7 +29,7 @@ import './styles';
 type Props = {
 
     /**
-     * {@link JitsiConference} that needs authentication - will hold a valid
+     * {@link JitsiConference} That needs authentication - will hold a valid
      * value in XMPP login + guest access mode.
      */
     _conference: Object,

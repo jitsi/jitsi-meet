@@ -81,7 +81,7 @@ const EMPTY_ARRAY = [];
  * Implements a React {@link PureComponent} which displays thumbnails in a two
  * dimensional grid.
  *
- * @extends PureComponent
+ * @augments PureComponent
  */
 class TileView extends PureComponent<Props> {
 

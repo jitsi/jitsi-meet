@@ -19,7 +19,7 @@ type Props = {
 /**
  * React {@code Component} for showing an audio muted icon with a tooltip.
  *
- * @extends Component
+ * @augments Component
  */
 class AudioMutedIndicator extends Component<Props> {
     /**

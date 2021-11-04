@@ -81,7 +81,7 @@ type State = {
  * Implements a React {@link Component} which displays a list of all
  * the audio input & output devices to choose from.
  *
- * @extends Component
+ * @augments Component
  */
 class AudioSettingsContent extends Component<Props, State> {
     _componentWasUnmounted: boolean;
@@ -313,7 +313,7 @@ class AudioSettingsContent extends Component<Props, State> {
                             role = 'radiogroup'
                             tabIndex = '-1'>
                             {this.state.audioTracks.map((data, i) =>
-                                this._renderMicrophoneEntry(data, i, this.state.audioTracks.length, t),
+                                this._renderMicrophoneEntry(data, i, this.state.audioTracks.length, t)
                             )}
                         </ul>
                     </div>
@@ -330,7 +330,7 @@ class AudioSettingsContent extends Component<Props, State> {
                                 role = 'radiogroup'
                                 tabIndex = '-1'>
                                 { outputDevices.map((data, i) =>
-                                    this._renderSpeakerEntry(data, i, outputDevices.length, t),
+                                    this._renderSpeakerEntry(data, i, outputDevices.length, t)
                                 )}
                             </ul>
                         </div>)

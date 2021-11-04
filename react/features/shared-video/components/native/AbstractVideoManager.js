@@ -27,7 +27,7 @@ function shouldSeekToPosition(newTime, previousTime) {
 export type Props = {
 
     /**
-     * The current coference
+     * The current coference.
      */
     _conference: Object,
 
@@ -39,12 +39,12 @@ export type Props = {
     _isOwner: boolean,
 
     /**
-     * The shared video owner id
+     * The shared video owner id.
      */
     _ownerId: string,
 
     /**
-     * The shared video status
+     * The shared video status.
      */
      _status: string,
 
@@ -55,7 +55,7 @@ export type Props = {
     _time: number,
 
     /**
-     * The video url
+     * The video url.
      */
      _videoUrl: string,
 
@@ -65,17 +65,17 @@ export type Props = {
      dispatch: Function,
 
     /**
-      * The player's height
+      * The player's height.
     */
     height: number,
 
     /**
-      * The video id
+      * The video id.
     */
     videoId: string,
 
     /**
-      * The player's width
+      * The player's width.
     */
     width: number
 }
@@ -206,33 +206,34 @@ class AbstractVideoManager extends PureComponent<Props> {
     }
 
     /**
-     * Seeks video to provided time
+     * Seeks video to provided time.
+     *
      * @param {number} time
      */
     seek: (time: number) => void;
 
     /**
-     * Indicates the playback state of the video
+     * Indicates the playback state of the video.
      */
     getPlaybackStatus: () => boolean;
 
     /**
-     * Plays video
+     * Plays video.
      */
     play: () => void;
 
     /**
-     * Pauses video
+     * Pauses video.
      */
     pause: () => void;
 
     /**
-     * Retrieves current time
+     * Retrieves current time.
      */
     getTime: () => number;
 
     /**
-     * Disposes current video player
+     * Disposes current video player.
      */
     dispose: () => void;
 }

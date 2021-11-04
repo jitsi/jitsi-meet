@@ -155,7 +155,7 @@ class StreamKeyPicker extends Component<Props, State> {
         Linking.openURL(YOUTUBE_LIVE_DASHBOARD_URL);
     }
 
-    _onStreamPick: string => Function
+    _onStreamPick: string => Function;
 
     /**
      * Callback to be invoked when the user picks a stream from the list.

@@ -33,7 +33,7 @@ const styles = theme => {
  * Implements a React {@link Component} which displays the current state of
  * conference recording.
  *
- * @extends {Component}
+ * @augments {Component}
  */
 class RecordingLabel extends AbstractRecordingLabel {
     /**
@@ -59,7 +59,7 @@ class RecordingLabel extends AbstractRecordingLabel {
         );
     }
 
-    _getLabelKey: () => ?string
+    _getLabelKey: () => ?string;
 }
 
 export default withStyles(styles)(translate(connect(_mapStateToProps)(RecordingLabel)));

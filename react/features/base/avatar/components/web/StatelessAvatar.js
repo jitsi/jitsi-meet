@@ -13,7 +13,7 @@ type Props = AbstractProps & {
     className?: string,
 
     /**
-     * The default avatar URL if we want to override the app bundled one (e.g. AlwaysOnTop)
+     * The default avatar URL if we want to override the app bundled one (e.g. AlwaysOnTop).
      */
     defaultAvatar?: string,
 
@@ -157,5 +157,5 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
         return '';
     }
 
-    _isIcon: (?string | ?Object) => boolean
+    _isIcon: (?string | ?Object) => boolean;
 }

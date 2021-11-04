@@ -15,6 +15,7 @@ export default class JitsiMeetLogStorage {
     constructor(getState) {
         /**
          * Counts each log entry, increases on every batch log entry stored.
+         *
          * @type {number}
          */
         this.counter = 1;

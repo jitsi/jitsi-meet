@@ -1,5 +1,5 @@
 /**
- * Thresholds for displaying toolbox buttons
+ * Thresholds for displaying toolbox buttons.
  */
 export const THRESHOLDS = [
     {

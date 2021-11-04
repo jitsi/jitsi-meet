@@ -26,7 +26,7 @@ type Props = {
  * Thumbnail badge showing that the participant is the dominant speaker in
  * the conference.
  *
- * @extends Component
+ * @augments Component
  */
 class DominantSpeakerIndicator extends Component<Props> {
     /**

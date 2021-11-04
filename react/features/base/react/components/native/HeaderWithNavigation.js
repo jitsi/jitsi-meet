@@ -23,7 +23,7 @@ type Props = {
     forwardLabelKey: ?string,
 
     /**
-     * The i18n key of the header label (title)
+     * The i18n key of the header label (title).
      */
     headerLabelKey: ?string,
 

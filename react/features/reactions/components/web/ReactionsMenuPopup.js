@@ -1,7 +1,7 @@
 // @flow
 
 import InlineDialog from '@atlaskit/inline-dialog';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { toggleReactionsMenuVisibility } from '../../actions.web';
@@ -32,15 +32,9 @@ function ReactionsMenuPopup({
     const isOpen = useSelector(state => getReactionsMenuVisibility(state));
 
     const dispatch = useDispatch();
-
-    /**
-     * Toggles reactions menu visibility.
-     *
-     * @returns {void}
-     */
-    function onClose() {
+    const onClose = useCallback(() => {
         dispatch(toggleReactionsMenuVisibility());
-    }
+    });
 
     return (
         <div className = 'reactions-menu-popup'>

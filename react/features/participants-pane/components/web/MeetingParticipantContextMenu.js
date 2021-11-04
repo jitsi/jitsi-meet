@@ -78,7 +78,7 @@ type Props = {
     _localVideoOwner: boolean,
 
     /**
-     * Participant reference
+     * Participant reference.
      */
     _participant: Object,
 
@@ -115,22 +115,22 @@ type Props = {
     muteAudio: Function,
 
     /**
-     * Target elements against which positioning calculations are made
+     * Target elements against which positioning calculations are made.
      */
     offsetTarget: HTMLElement,
 
     /**
-     * Callback for the mouse entering the component
+     * Callback for the mouse entering the component.
      */
     onEnter: Function,
 
     /**
-     * Callback for the mouse leaving the component
+     * Callback for the mouse leaving the component.
      */
     onLeave: Function,
 
     /**
-     * Callback for making a selection in the menu
+     * Callback for making a selection in the menu.
      */
     onSelect: Function,
 

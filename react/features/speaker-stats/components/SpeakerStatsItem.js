@@ -40,7 +40,7 @@ type Props = {
 /**
  * React component for display an individual user's speaker stats.
  *
- * @extends Component
+ * @augments Component
  */
 class SpeakerStatsItem extends Component<Props> {
     /**

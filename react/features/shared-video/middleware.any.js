@@ -80,7 +80,7 @@ MiddlewareRegistry.register(store => next => action => {
 
 /**
  * Set up state change listener to perform maintenance tasks when the conference
- * is left or failed, e.g. clear messages or close the chat modal if it's left
+ * is left or failed, e.g. Clear messages or close the chat modal if it's left
  * open.
  */
 StateListenerRegistry.register(

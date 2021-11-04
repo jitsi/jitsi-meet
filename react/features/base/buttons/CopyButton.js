@@ -1,5 +1,7 @@
 // @flow
 
+/* eslint-disable react/jsx-no-bind */
+
 import React, { useState } from 'react';
 
 import { Icon, IconCheck, IconCopy } from '../../base/icons';
@@ -9,32 +11,32 @@ import { copyText } from '../util';
 type Props = {
 
     /**
-     * Css class to apply on container
+     * Css class to apply on container.
      */
     className: string,
 
     /**
-     * The displayed text
+     * The displayed text.
      */
     displayedText: string,
 
     /**
-     * The text that needs to be copied (might differ from the displayedText)
+     * The text that needs to be copied (might differ from the displayedText).
      */
     textToCopy: string,
 
     /**
-     * The text displayed on mouse hover
+     * The text displayed on mouse hover.
      */
     textOnHover: string,
 
     /**
-     * The text displayed on copy success
+     * The text displayed on copy success.
      */
     textOnCopySuccess: string,
 
     /**
-     * The id of the button
+     * The id of the button.
      */
     id?: string,
 };

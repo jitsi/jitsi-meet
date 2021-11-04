@@ -27,7 +27,7 @@ export type Props = {
 
     /**
      * The details is an object containing more information about the connection
-     * failed (shard changes, was the computer suspended, etc.)
+     * failed (shard changes, was the computer suspended, etc.).
      */
     details: Object,
 

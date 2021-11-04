@@ -19,7 +19,7 @@ type State = {
 
     /**
      * String to show which {@code ExpandedLabel} to be shown. (Equals to the
-     * label IDs below.)
+     * label IDs below.).
      */
     visibleExpandedLabel: ?string
 }

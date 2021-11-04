@@ -97,7 +97,7 @@ type Props = AbstractProps & {
     _videoSsrc: number,
 
     /**
-     * Css class to apply on container
+     * Css class to apply on container.
      */
     className: string,
 
@@ -107,7 +107,7 @@ type Props = AbstractProps & {
     dispatch: Dispatch<any>,
 
     /**
-     * Optional param for passing existing connection stats on component instantiation
+     * Optional param for passing existing connection stats on component instantiation.
      */
     inheritedStats: Object,
 
@@ -132,7 +132,7 @@ type State = AbstractState & {
  * Implements a React {@link Component} which displays the current connection
  * quality percentage and has a popover to show more detailed connection stats.
  *
- * @extends {Component}
+ * @augments {Component}
  */
 class ConnectionIndicatorContent extends AbstractConnectionIndicator<Props, State> {
     /**

@@ -57,13 +57,13 @@ export type State = {
  * Implements a React {@link Component} which displays the current connection
  * quality.
  *
- * @extends {Component}
+ * @augments {Component}
  */
 class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
     /**
      * The timeout for automatically hiding the indicator.
      */
-    autoHideTimeout: ?TimeoutID
+    autoHideTimeout: ?TimeoutID;
 
     /**
      * Initializes a new {@code ConnectionIndicator} instance.

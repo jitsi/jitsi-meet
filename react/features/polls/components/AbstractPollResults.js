@@ -17,7 +17,7 @@ import { getPoll } from '../functions';
 type InputProps = {
 
     /**
-     * ID of the poll to display
+     * ID of the poll to display.
      */
     pollId: string,
 };

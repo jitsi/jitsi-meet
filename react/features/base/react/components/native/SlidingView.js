@@ -31,7 +31,7 @@ type Props = {
 
     /**
      * Position of the SlidingView: 'left', 'right', 'top', 'bottom'.
-     * later).
+     * Later).
      */
     position: string,
 

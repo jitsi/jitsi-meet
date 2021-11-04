@@ -60,6 +60,13 @@ const useStyles = makeStyles(theme => {
     };
 });
 
+type P = {
+    participantsCount: number,
+    showInviteButton: boolean,
+    overflowDrawer: boolean,
+    sortedParticipantIds: Array<string>
+};
+
 /**
  * Renders the MeetingParticipantList component.
  * NOTE: This component is not using useSelector on purpose. The child components MeetingParticipantItem
@@ -70,7 +77,7 @@ const useStyles = makeStyles(theme => {
  *
  * @returns {ReactNode} - The component.
  */
-function MeetingParticipants({ participantsCount, showInviteButton, overflowDrawer, sortedParticipantIds = [] }) {
+function MeetingParticipants({ participantsCount, showInviteButton, overflowDrawer, sortedParticipantIds = [] }: P) {
     const dispatch = useDispatch();
     const isMouseOverMenu = useRef(false);
 
@@ -83,7 +90,7 @@ function MeetingParticipants({ participantsCount, showInviteButton, overflowDraw
          * We are tracking mouse movement over the active participant item and
          * the context menu. Due to the order of enter/leave events, we need to
          * defer checking if the mouse is over the context menu with
-         * queueMicrotask
+         * queueMicrotask.
          */
         window.queueMicrotask(() => {
             if (isMouseOverMenu.current) {

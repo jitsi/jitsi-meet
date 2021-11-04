@@ -31,7 +31,7 @@ type Props = {
     _moderatedRoomServiceUrl: ?string,
 
     /**
-     * Whether the recent list is enabled
+     * Whether the recent list is enabled.
      */
     _recentListEnabled: Boolean,
 
@@ -228,7 +228,7 @@ export class AbstractWelcomePage extends Component<Props, *> {
         });
     }
 
-    _renderInsecureRoomNameWarning: () => React$Component<any>;;
+    _renderInsecureRoomNameWarning: () => React$Component<any>;
 
     /**
      * Renders the insecure room name warning if needed.

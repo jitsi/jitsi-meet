@@ -45,7 +45,7 @@ type State = {
  * Implements a React {@link Component} which displays an input slider for
  * adjusting the local volume of a remote participant.
  *
- * @extends Component
+ * @augments Component
  */
 class VolumeSlider extends Component<Props, State> {
     /**

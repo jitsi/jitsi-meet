@@ -53,6 +53,6 @@ class KickButton extends AbstractKickButton {
         );
     }
 
-    _handleClick: () => void
+    _handleClick: () => void;
 }
 export default translate(connect()(KickButton));

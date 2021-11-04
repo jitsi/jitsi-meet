@@ -79,9 +79,9 @@ export default class ExpandedLabel<P: Props> extends Component<P, State> {
      *
      * @returns {string}
      */
-    _getLabel: () => string
+    _getLabel: () => string;
 
-    _getColor: () => string
+    _getColor: () => string;
 
     /**
      * Defines the color of the expanded label. This function returns a default

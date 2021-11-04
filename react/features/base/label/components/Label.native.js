@@ -24,8 +24,8 @@ type Props = AbstractProps & {
 
     /**
      * Status of the label. This prop adds some additional styles based on its
-     * value. E.g. if status = off, it will render the label symbolising that
-     * the thing it displays (e.g. recording) is off.
+     * value. E.g. If status = off, it will render the label symbolising that
+     * the thing it displays (e.g. Recording) is off.
      */
     status: ('in_progress' | 'off' | 'on'),
 

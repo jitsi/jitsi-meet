@@ -8,7 +8,7 @@ import {
 } from './messageTypes';
 
 /**
- * WebWorker that does FLAC encoding using libflac.js
+ * WebWorker that does FLAC encoding using libflac.js.
  */
 
 self.FLAC_SCRIPT_LOCATION = '/libs/';
@@ -115,24 +115,28 @@ class Encoder {
 
     /**
      * Flac encoder instance ID. (As per libflac.js API).
+     *
      * @private
      */
     _encoderId = 0;
 
     /**
      * Sample rate.
+     *
      * @private
      */
     _sampleRate;
 
     /**
      * Bit depth (bits per sample).
+     *
      * @private
      */
     _bitDepth;
 
     /**
      * Buffer size.
+     *
      * @private
      */
     _bufferSize;
@@ -337,7 +341,7 @@ class Encoder {
      */
     _onMetadataAvailable = () => {
         // reserved for future use
-    }
+    };
 }
 
 

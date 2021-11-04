@@ -27,21 +27,21 @@ const PollsList = () => {
     const listPolls = Object.keys(polls);
 
     return (
-    <>
-        {listPolls.length === 0
-            ? <div className = 'pane-content'>
-                <Icon
-                    className = 'empty-pane-icon'
-                    src = { IconChatUnread } />
-                <span className = 'empty-pane-message'>{t('polls.results.empty')}</span>
-            </div>
-            : listPolls.map((id, index) => (
-                <PollItem
-                    key = { id }
-                    pollId = { id }
-                    ref = { listPolls.length - 1 === index ? pollListEndRef : null } />
-            ))}
-    </>
+        <>
+            {listPolls.length === 0
+                ? <div className = 'pane-content'>
+                    <Icon
+                        className = 'empty-pane-icon'
+                        src = { IconChatUnread } />
+                    <span className = 'empty-pane-message'>{t('polls.results.empty')}</span>
+                </div>
+                : listPolls.map((id, index) => (
+                    <PollItem
+                        key = { id }
+                        pollId = { id }
+                        ref = { listPolls.length - 1 === index ? pollListEndRef : null } />
+                ))}
+        </>
     );
 };
 

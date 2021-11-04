@@ -65,7 +65,7 @@ type Props = {
 
     /**
      * The custom no new-lines meeting invitation text for iOS default email.
-     * Needed because of this mailto: iOS issue: https://developer.apple.com/forums/thread/681023
+     * Needed because of this mailto: iOS issue: https://developer.apple.com/forums/thread/681023.
      */
     _invitationTextiOS: string,
 

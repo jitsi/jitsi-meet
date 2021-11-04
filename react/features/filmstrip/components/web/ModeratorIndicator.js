@@ -19,7 +19,7 @@ type Props = {
 /**
  * React {@code Component} for showing a moderator icon with a tooltip.
  *
- * @extends Component
+ * @augments Component
  */
 class ModeratorIndicator extends Component<Props> {
     /**

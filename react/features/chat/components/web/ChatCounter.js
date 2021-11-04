@@ -26,7 +26,7 @@ type Props = {
  * Implements a React {@link Component} which displays a count of the number of
  * unread chat messages.
  *
- * @extends Component
+ * @augments Component
  */
 class ChatCounter extends Component<Props> {
 

@@ -18,7 +18,7 @@ type Props = {
     children: string | React$Node,
 
     /**
-     * button id.
+     * Button id.
      */
     id?: string,
 
@@ -28,7 +28,7 @@ type Props = {
     isIconButton?: boolean,
 
     /**
-     * Click handler
+     * Click handler.
      */
     onClick: Function
 }

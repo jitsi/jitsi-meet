@@ -40,7 +40,7 @@ import styles, { PLACEHOLDER_TEXT_COLOR } from './styles';
 /**
  * The native container rendering the welcome page.
  *
- * @extends AbstractWelcomePage
+ * @augments AbstractWelcomePage
  */
 class WelcomePage extends AbstractWelcomePage {
     /**

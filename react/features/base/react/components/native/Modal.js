@@ -19,7 +19,7 @@ type Props = {
      * be an unnecessary duplication and probably an unmaintained list after a
      * while.
      *
-     * See list: https://facebook.github.io/react-native/docs/modal
+     * See list: https://facebook.github.io/react-native/docs/modal.
      */
 };
 

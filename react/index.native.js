@@ -31,7 +31,7 @@ type Props = {
  * the JS/JSX source code). So create a wrapper React Component (class) around
  * features/app's App instead.
  *
- * @extends Component
+ * @augments Component
  */
 class Root extends PureComponent<Props> {
     /**

@@ -30,7 +30,7 @@ export type Props = {
     onClick: Function,
 
     /**
-     * {@code AbstractToolbarButton} styles.
+     * {@code AbstractToolbarButton} Styles.
      */
     style?: Array<string> | Object,
 

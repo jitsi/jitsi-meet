@@ -16,7 +16,7 @@ type Props = {
 
 /**
  * Implements a React {@link Component} for slow gUM overlay. Shown when
- * a slow gUM promise resolution is detected
+ * a slow gUM promise resolution is detected.
  */
 export default class AbstractSlowGUMOverlay extends Component<Props> {
     /**

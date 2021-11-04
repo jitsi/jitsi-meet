@@ -89,7 +89,7 @@ type Props = AbstractProps & {
 /**
  * The native container rendering the app settings page.
  *
- * @extends AbstractSettingsView
+ * @augments AbstractSettingsView
  */
 class SettingsView extends AbstractSettingsView<Props, State> {
     _urlField: Object;

@@ -27,7 +27,7 @@ type Props = {
  * React component for displaying video. This component defers to lib-jitsi-meet
  * logic for rendering the video.
  *
- * @extends Component
+ * @augments Component
  */
 class VideoInputPreview extends Component<Props> {
     /**

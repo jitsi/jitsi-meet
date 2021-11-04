@@ -51,7 +51,7 @@ type Props = AbstractAppProps & {
 /**
  * Root app {@code Component} on mobile/React Native.
  *
- * @extends AbstractApp
+ * @augments AbstractApp
  */
 export class App extends AbstractApp {
     _init: Promise<*>;

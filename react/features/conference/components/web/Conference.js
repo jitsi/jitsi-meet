@@ -68,7 +68,7 @@ const LAYOUT_CLASSNAMES = {
 type Props = AbstractProps & {
 
     /**
-     * The alpha(opacity) of the background
+     * The alpha(opacity) of the background.
      */
     _backgroundAlpha: number,
 
@@ -84,7 +84,7 @@ type Props = AbstractProps & {
     _layoutClassName: string,
 
     /**
-     * The config specified interval for triggering mouseMoved iframe api events
+     * The config specified interval for triggering mouseMoved iframe api events.
      */
     _mouseMoveCallbackInterval: number,
 

@@ -17,7 +17,7 @@ const STATUSBAR_DARK = 'dark-content';
 const STATUSBAR_LIGHT = 'light-content';
 
 /**
- * The type of the React {@code Component} props of {@link Header}
+ * The type of the React {@code Component} props of {@link Header}.
  */
 type Props = {
 
@@ -27,7 +27,7 @@ type Props = {
     children: Node,
 
     /**
-     * The component's external style
+     * The component's external style.
      */
     style: Object,
 

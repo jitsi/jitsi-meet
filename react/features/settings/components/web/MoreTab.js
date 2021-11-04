@@ -107,7 +107,7 @@ type State = {
 /**
  * React {@code Component} for modifying language and moderator settings.
  *
- * @extends Component
+ * @augments Component
  */
 class MoreTab extends AbstractDialogTab<Props, State> {
     /**

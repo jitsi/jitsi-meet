@@ -77,7 +77,7 @@ type State = {
 /**
  * A React {@code Component} for displaying a dialog with tabs.
  *
- * @extends Component
+ * @augments Component
  */
 class DialogWithTabs extends Component<Props, State> {
     /**

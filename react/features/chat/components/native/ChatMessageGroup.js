@@ -48,7 +48,7 @@ export default class ChatMessageGroup extends Component<Props> {
         );
     }
 
-    _keyExtractor: Object => string
+    _keyExtractor: Object => string;
 
     /**
      * Key extractor for the flatlist.

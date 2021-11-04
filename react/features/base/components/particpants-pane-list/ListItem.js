@@ -14,7 +14,7 @@ type Props = {
     actions: React$Node,
 
     /**
-     * Icon to be displayed on the list item. (Avatar for participants)
+     * Icon to be displayed on the list item. (Avatar for participants).
      */
     icon: React$Node,
 

@@ -32,7 +32,7 @@ type Props = AudioSettingsEntryProps & {
     jitsiTrack: Object,
 
     /**
-     * The length of the microphone list
+     * The length of the microphone list.
      */
     length: number,
 

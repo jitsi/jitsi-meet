@@ -56,7 +56,7 @@ function _updateCriteria(state, { criteria }) {
     return _.assign(
         {},
         state,
-        { criteria },
+        { criteria }
     );
 }
 
@@ -98,7 +98,7 @@ function _updateStats(state, { stats }) {
         {
             stats: { ...finalStats },
             pendingReorder: false
-        },
+        }
     );
 }
 
@@ -114,6 +114,6 @@ function _initReorderStats(state) {
     return _.assign(
         {},
         state,
-        { pendingReorder: true },
+        { pendingReorder: true }
     );
 }

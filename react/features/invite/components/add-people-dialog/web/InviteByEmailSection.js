@@ -1,5 +1,7 @@
 // @flow
 
+/* eslint-disable react/jsx-no-bind */
+
 import React, { useState } from 'react';
 
 import { isIosMobileBrowser } from '../../../../base/environment/utils';

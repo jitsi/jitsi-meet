@@ -12,12 +12,12 @@ type Props = {
     askUnmuteText: string,
 
     /**
-     * Callback for the mouse leaving this item
+     * Callback for the mouse leaving this item.
      */
     lowerMenu: Function,
 
     /**
-     * Callback for the activation of this item's context menu
+     * Callback for the activation of this item's context menu.
      */
     toggleMenu: Function,
 

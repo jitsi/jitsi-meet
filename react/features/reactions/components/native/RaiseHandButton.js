@@ -41,7 +41,7 @@ type Props = AbstractButtonProps & {
     dispatch: Dispatch<any>,
 
     /**
-     * Used for translation
+     * Used for translation.
      */
     t: Function,
 

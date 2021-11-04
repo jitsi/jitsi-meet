@@ -14,7 +14,7 @@ declare var interfaceConfig: Object;
 type Props = {
 
     /**
-     * The alpha(opacity) of the background
+     * The alpha(opacity) of the background.
      */
     _backgroundAlpha: number,
 
@@ -45,14 +45,14 @@ type Props = {
     dispatch: Function
 }
 
-/**
+/** .
  * Implements a React {@link Component} which represents the large video (a.k.a.
- * the conference participant who is on the local stage) on Web/React.
+ * The conference participant who is on the local stage) on Web/React.
  *
- * @extends Component
+ * @augments Component
  */
 class LargeVideo extends Component<Props> {
-    _tappedTimeout: ?TimeoutID
+    _tappedTimeout: ?TimeoutID;
 
     /**
      * Constructor of the component.
@@ -126,7 +126,7 @@ class LargeVideo extends Component<Props> {
         );
     }
 
-    _clearTapTimeout: () => void
+    _clearTapTimeout: () => void;
 
     /**
      * Clears the '_tappedTimout'.
@@ -165,7 +165,7 @@ class LargeVideo extends Component<Props> {
         return styles;
     }
 
-    _onDoubleTap: () => void
+    _onDoubleTap: () => void;
 
     /**
      * Sets view to tile view on double tap.

@@ -39,8 +39,8 @@ type Props = AbstractProps & {
 /**
  * React {@code Component} responsible for displaying a label that indicates
  * the displayed video state of the current conference. {@code AudioOnlyLabel}
- * will display when the conference is in audio only mode. {@code HDVideoLabel}
- * will display if not in audio only mode and a high-definition large video is
+ * Will display when the conference is in audio only mode. {@code HDVideoLabel}
+ * Will display if not in audio only mode and a high-definition large video is
  * being displayed.
  */
 export class VideoQualityLabel extends AbstractVideoQualityLabel<Props> {

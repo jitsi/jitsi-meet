@@ -14,7 +14,7 @@ import AbstractRaisedHandIndicator, {
 /**
  * Thumbnail badge showing that the participant would like to speak.
  *
- * @extends Component
+ * @augments Component
  */
 class RaisedHandIndicator extends AbstractRaisedHandIndicator<Props> {
     /**

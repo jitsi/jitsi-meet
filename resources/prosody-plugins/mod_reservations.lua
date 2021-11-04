@@ -37,9 +37,7 @@
 --  Example config:
 --
 --    VirtualHost "jitmeet.example.com"
---        -- ....
 --        modules_enabled = {
---            -- ....
 --            "reservations";
 --        }
 --        reservations_api_prefix = "http://reservation.example.com"

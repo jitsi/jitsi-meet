@@ -50,8 +50,9 @@ const PollResults = (props: AbstractProps) => {
     );
 
     /**
-     * Render voters of and answer
-     * @param {AnswerInfo} answer - the answer info
+     * Render voters of and answer.
+     *
+     * @param {AnswerInfo} answer - The answer info.
      * @returns {React.Node}
      */
     const renderRow = useCallback((answer: AnswerInfo) => {

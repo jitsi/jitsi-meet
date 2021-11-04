@@ -22,17 +22,17 @@ import styles from './styles';
 type Props = AbstractProps & {
 
     /**
-     * Is this screen focused or not(React Navigation)
+     * Is this screen focused or not(React Navigation).
      */
     isChatScreenFocused: boolean,
 
     /**
-     * Default prop for navigating between screen components(React Navigation)
+     * Default prop for navigating between screen components(React Navigation).
      */
     navigation: Object,
 
     /**
-     * Default prop for navigating between screen components(React Navigation)
+     * Default prop for navigating between screen components(React Navigation).
      */
     route: Object
 };

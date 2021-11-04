@@ -9,7 +9,7 @@ export const ADD_PEOPLE_ENABLED = 'add-people.enabled';
 /**
  * Flag indicating if the SDK should not require the audio focus.
  * Used by apps that do not use Jitsi audio.
- * Default: disabled (false)
+ * Default: disabled (false).
  */
 export const AUDIO_FOCUS_DISABLED = 'audio-focus.disabled';
 
@@ -181,13 +181,13 @@ export const RESOLUTION = 'resolution';
 
 /**
  * Flag indicating if the security options button should be enabled.
- * Default: enabled (true)
+ * Default: enabled (true).
  */
 export const SECURITY_OPTIONS_ENABLED = 'security-options.enabled';
 
 /**
  * Flag indicating if server URL change is enabled.
- * Default: enabled (true)
+ * Default: enabled (true).
  */
 export const SERVER_URL_CHANGE_ENABLED = 'server-url-change.enabled';
 

@@ -10,17 +10,15 @@ import { DEFAULT_SERVER_URL } from './constants';
  * a precedence among the values specified by JWT, URL, settings,
  * and config.
  *
- * @param {Object|Function} stateful - The redux state object or
- * {@code getState} function.
+ * @param {Object|Function} stateful - The redux state object or {@code getState} function.
  * @param {string} propertyName - The name of the
  * configuration/preference/setting (property) to retrieve.
- * @param {{
- *     config: boolean,
- *     jwt: boolean,
- *     settings: boolean,
- *     urlParams: boolean
- * }} [sources] - A set/structure of {@code boolean} flags indicating the
- * configuration/preference/setting sources to consider/retrieve values from.
+ * @param {Object} sources - Flags indicating the configuration/preference/setting sources to
+ * consider/retrieve values from.
+ * @param {boolean} sources.config - Config.
+ * @param {boolean} jwt - JWT.
+ * @param {boolean} settings - Settings.
+ * @param {boolean} urlParams - URL parameters.
  * @returns {any}
  */
 export function getPropertyValue(

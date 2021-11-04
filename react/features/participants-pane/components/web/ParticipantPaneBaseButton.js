@@ -28,7 +28,7 @@ type Props = {
     id?: string,
 
     /**
-     * Click handler
+     * Click handler.
      */
     onClick: Function,
 

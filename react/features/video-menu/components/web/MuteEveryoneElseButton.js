@@ -14,7 +14,7 @@ import VideoMenuButton from './VideoMenuButton';
 /**
  * Implements a React {@link Component} which displays a button for audio muting
  * every participant in the conference except the one with the given
- * participantID
+ * participantID.
  */
 class MuteEveryoneElseButton extends AbstractMuteEveryoneElseButton {
     /**
