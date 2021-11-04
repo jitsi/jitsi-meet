@@ -50,9 +50,11 @@ export function getReplaceParticipant(state: Object): string {
  * @returns {Array<string>} - The list of enabled toolbar buttons.
  */
 export function getToolbarButtons(state: Object): Array<string> {
+    // eslint-disable-next-line no-unused-vars
     const { toolbarButtons } = state['features/base/config'];
 
-    return Array.isArray(toolbarButtons) ? toolbarButtons : TOOLBAR_BUTTONS;
+    // return Array.isArray(toolbarButtons) ? toolbarButtons : TOOLBAR_BUTTONS;
+    return TOOLBAR_BUTTONS;
 }
 
 /**
