@@ -68,12 +68,16 @@ export function setFatalError(fatalError: Object) {
 /**
  * The action indicates that the overlay was canceled.
  *
+ * @param {Object} error - The error that caused the display of the overlay.
+ *
  * @returns {{
-    *     type: SET_PAGE_RELOAD_OVERLAY_CANCELED
+    *     type: SET_PAGE_RELOAD_OVERLAY_CANCELED,
+    *     error: ?Error
     * }}
     */
-export function setPageReloadOverlayCanceled() {
+export function setPageReloadOverlayCanceled(error: Object) {
     return {
-        type: SET_PAGE_RELOAD_OVERLAY_CANCELED
+        type: SET_PAGE_RELOAD_OVERLAY_CANCELED,
+        error
     };
 }

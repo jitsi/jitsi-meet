@@ -58,8 +58,8 @@ class PageReloadOverlay extends AbstractPageReloadOverlay<Props> {
      */
     _onCancel() {
         clearInterval(this._interval);
+        this.props.dispatch(setPageReloadOverlayCanceled(this.props.error));
         this.props.dispatch(setFatalError(undefined));
-        this.props.dispatch(setPageReloadOverlayCanceled());
         this.props.dispatch(appNavigate(undefined));
     }
 

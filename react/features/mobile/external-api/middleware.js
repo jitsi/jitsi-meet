@@ -24,7 +24,10 @@ import {
     JITSI_CONNECTION_URL_KEY,
     getURLWithoutParams
 } from '../../base/connection';
-import { JitsiConferenceEvents, JitsiConnectionErrors } from '../../base/lib-jitsi-meet';
+import {
+    isFatalJitsiConferenceError,
+    isFatalJitsiConnectionError,
+    JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../base/media';
 import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
 import {
@@ -114,7 +117,7 @@ MiddlewareRegistry.register(store => next => action => {
         // counterpart of the External API (or at least not in the
         // fatality/finality semantics attributed to
         // conferenceFailed:/onConferenceFailed).
-        if (!error.recoverable && error.name !== JitsiConnectionErrors.CONNECTION_DROPPED_ERROR) {
+        if (!error.recoverable && !isFatalJitsiConnectionError(error) && !isFatalJitsiConferenceError(error)) {
             _sendConferenceEvent(store, /* action */ {
                 error: _toErrorString(error),
                 ...data
@@ -219,6 +222,7 @@ MiddlewareRegistry.register(store => next => action => {
             store,
             CONFERENCE_TERMINATED,
             /* data */ {
+                error: _toErrorString(action.error),
                 url: _normalizeUrl(store.getState()['features/base/connection'].locationURL)
             });
 
