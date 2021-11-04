@@ -11,7 +11,7 @@ import {
     SET_PREJOIN_DEVICE_ERRORS,
     SET_PREJOIN_DISPLAY_NAME_REQUIRED,
     SET_PREJOIN_PAGE_VISIBILITY,
-    SET_SKIP_PREJOIN,
+    SET_SKIP_PREJOIN_CHANGING,
     SET_SKIP_PREJOIN_RELOAD
 } from './actionTypes';
 
@@ -30,9 +30,9 @@ const DEFAULT_STATE = {
     name: '',
     rawError: '',
     showPrejoin: true,
+    skipPrejoinChanging: false,
     skipPrejoinOnReload: false,
-    showJoinByPhoneDialog: false,
-    userSelectedSkipPrejoin: false
+    showJoinByPhoneDialog: false
 };
 
 /**
@@ -59,10 +59,10 @@ ReducerRegistry.register(
                 ...state,
                 joiningInProgress: action.value
             };
-        case SET_SKIP_PREJOIN: {
+        case SET_SKIP_PREJOIN_CHANGING: {
             return {
                 ...state,
-                userSelectedSkipPrejoin: action.value
+                skipPrejoinChanging: action.value
             };
         }
 
