@@ -8,7 +8,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { getDialOutStatusUrl, getDialOutUrl, updateConfig } from '../base/config';
 import { browser, createLocalTrack } from '../base/lib-jitsi-meet';
 import { isVideoMutedByUser, MEDIA_TYPE } from '../base/media';
-import { updateSettings } from '../base/settings';
 import {
     createLocalTracksF,
     getLocalAudioTrack,
@@ -28,7 +27,7 @@ import {
     SET_DIALOUT_NUMBER,
     SET_DIALOUT_STATUS,
     SET_PREJOIN_DISPLAY_NAME_REQUIRED,
-    SET_SKIP_PREJOIN,
+    SET_SKIP_PREJOIN_CHANGING,
     SET_SKIP_PREJOIN_RELOAD,
     SET_JOIN_BY_PHONE_DIALOG_VISIBLITY,
     SET_PRECALL_TEST_RESULTS,
@@ -228,14 +227,9 @@ export function joinConference(options?: Object, ignoreJoiningInProgress: boolea
         }
 
         const state = getState();
-        const { userSelectedSkipPrejoin } = state['features/prejoin'];
         let localTracks = getLocalTracks(state['features/base/tracks']);
 
         options && dispatch(updateConfig(options));
-
-        userSelectedSkipPrejoin && dispatch(updateSettings({
-            userSelectedSkipPrejoin
-        }));
 
         // Do not signal audio/video tracks if the user joins muted.
         for (const track of localTracks) {
@@ -484,14 +478,15 @@ export function setDialOutNumber(value: string) {
 }
 
 /**
- * Sets the visibility of the prejoin page for future uses.
+ * Sets a flag which signals that the option to skip the prejoin
+ * page on join has been modified during this session.
  *
  * @param {boolean} value - The visibility value.
  * @returns {Object}
  */
-export function setSkipPrejoin(value: boolean) {
+export function setSkipPrejoinIsChanging(value: boolean) {
     return {
-        type: SET_SKIP_PREJOIN,
+        type: SET_SKIP_PREJOIN_CHANGING,
         value
     };
 }

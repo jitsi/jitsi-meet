@@ -15,9 +15,9 @@ export const PREJOIN_INITIALIZED = 'PREJOIN_INITIALIZED';
 export const SET_DEVICE_STATUS = 'SET_DEVICE_STATUS';
 
 /**
- * Action type to set the visibility of the prejoin page for the future.
+ * Action type to mark the fact that the 'skip prejoin' option was modified this session.
  */
-export const SET_SKIP_PREJOIN = 'SET_SKIP_PREJOIN';
+export const SET_SKIP_PREJOIN_CHANGING = 'SET_SKIP_PREJOIN_CHANGING';
 
 /**
  * Action type to set the visibility of the prejoin page when client is forcefully reloaded.

@@ -11,7 +11,7 @@ import { openDialog } from '../base/dialog';
 import { i18next } from '../base/i18n';
 import { updateSettings } from '../base/settings';
 import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../notifications';
-import { setPrejoinPageVisibility } from '../prejoin/actions';
+import { setPrejoinPageVisibility, setSkipPrejoinIsChanging } from '../prejoin/actions';
 import { setScreenshareFramerate } from '../screen-share/actions';
 
 import {
@@ -96,9 +96,12 @@ export function submitMoreTab(newState: Object): Function {
             if (showPrejoinPage && getState()['features/prejoin']?.showPrejoin) {
                 dispatch(setPrejoinPageVisibility(false));
             }
-            dispatch(updateSettings({
-                userSelectedSkipPrejoin: !showPrejoinPage
-            }));
+            batch(() => {
+                dispatch(setSkipPrejoinIsChanging(true));
+                dispatch(updateSettings({
+                    userSelectedSkipPrejoin: !showPrejoinPage
+                }));
+            });
         }
 
         if (newState.currentLanguage !== currentState.currentLanguage) {
