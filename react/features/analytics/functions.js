@@ -1,5 +1,8 @@
 // @flow
 
+import jwtDecode from 'jwt-decode';
+import _ from 'lodash';
+
 import { API_ID } from '../../../modules/API/constants';
 import { getName as getAppName } from '../app/functions';
 import {
@@ -11,10 +14,10 @@ import JitsiMeetJS, {
     browser,
     isAnalyticsEnabled
 } from '../base/lib-jitsi-meet';
-import { getLocalParticipantType } from '../base/participants';
+import { getLocalParticipantType, getLocalParticipantInfoFromJwt } from '../base/participants';
 import { getJitsiMeetGlobalNS, loadScript, parseURIString } from '../base/util';
 
-import { AmplitudeHandler, MatomoHandler } from './handlers';
+import { JaneHandler } from './handlers';
 import logger from './logger';
 
 /**
@@ -72,7 +75,13 @@ export async function createHandlers({ getState }: { getState: Function }) {
     const state = getState();
     const config = state['features/base/config'];
     const { locationURL } = state['features/base/connection'];
+    const { jwt } = state['features/base/jwt'];
+    const jwtPayload = (jwt && jwtDecode(jwt)) || {};
+    const participant = getLocalParticipantInfoFromJwt(state);
     const host = locationURL ? locationURL.host : '';
+    const janeEndpoint = _.get(jwtPayload, 'context.event_url');
+    const uid = _.get(jwtPayload, 'context.user.id');
+
     const {
         analytics: analyticsConfig = {},
         deploymentInfo
@@ -100,29 +109,21 @@ export async function createHandlers({ getState }: { getState: Function }) {
         subproduct: deploymentInfo && deploymentInfo.environment,
         user: user && user.id,
         version: JitsiMeetJS.version,
-        whiteListedEvents
+        whiteListedEvents,
+        janeEndpoint,
+        jwt,
+        participant,
+        uid
     };
     const handlers = [];
 
-    if (amplitudeAPPKey) {
+    if (janeEndpoint) {
         try {
-            const amplitude = new AmplitudeHandler(handlerConstructorOptions);
+            const janeVideoChatAnalytics = new JaneHandler(handlerConstructorOptions);
 
-            analytics.amplitudeIdentityProps = amplitude.getIdentityProps();
-
-            handlers.push(amplitude);
+            handlers.push(janeVideoChatAnalytics);
         } catch (e) {
-            logger.error('Failed to initialize Amplitude handler', e);
-        }
-    }
-
-    if (matomoEndpoint && matomoSiteID) {
-        try {
-            const matomo = new MatomoHandler(handlerConstructorOptions);
-
-            handlers.push(matomo);
-        } catch (e) {
-            logger.error('Failed to initialize Matomo handler', e);
+            logger.error('Failed to initialize Jane handler', e);
         }
     }
 
