@@ -1,0 +1,11 @@
+diff --git a/node_modules/eslint-plugin-flowtype/dist/configs/recommended.json b/node_modules/eslint-plugin-flowtype/dist/configs/recommended.json
+index 90a0d69..2ad7d68 100644
+--- a/node_modules/eslint-plugin-flowtype/dist/configs/recommended.json
++++ b/node_modules/eslint-plugin-flowtype/dist/configs/recommended.json
+@@ -1,5 +1,5 @@
+ {
+-  "parser": "@babel/eslint",
++  "parser": "@babel/eslint-parser",
+   "parserOptions": {
+     "babelOptions": {
+       "plugins": [
