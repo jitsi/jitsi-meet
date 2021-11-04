@@ -113,12 +113,7 @@ function getConfig(options = {}) {
                     // presets when lib-jitsi-meet, for example, is npm linked in
                     // jitsi-meet.
                     plugins: [
-                        require.resolve('@babel/plugin-transform-flow-strip-types'),
-                        require.resolve('@babel/plugin-proposal-class-properties'),
-                        require.resolve('@babel/plugin-proposal-export-default-from'),
-                        require.resolve('@babel/plugin-proposal-export-namespace-from'),
-                        require.resolve('@babel/plugin-proposal-nullish-coalescing-operator'),
-                        require.resolve('@babel/plugin-proposal-optional-chaining')
+                        require.resolve('@babel/plugin-proposal-export-default-from')
                     ],
                     presets: [
                         [
@@ -133,10 +128,10 @@ function getConfig(options = {}) {
                                 // done unnecessarily. For browsers not specified
                                 // here, the ES2015+ profile will be used.
                                 targets: {
-                                    chrome: 58,
-                                    electron: 2,
-                                    firefox: 54,
-                                    safari: 11
+                                    chrome: 80,
+                                    electron: 10,
+                                    firefox: 68,
+                                    safari: 14
                                 }
 
                             }
