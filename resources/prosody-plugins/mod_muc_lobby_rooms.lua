@@ -158,7 +158,8 @@ function filter_session(session)
     filters.add_filter(session, 'stanzas/out', filter_stanza, -1);
 end
 
-function attach_lobby_room(room)
+-- actor can be null if called from backend (another module using hook create-lobby-room)
+function attach_lobby_room(room, actor)
     local node = jid_split(room.jid);
     local lobby_room_jid = node .. '@' .. lobby_muc_component_config;
     if not lobby_muc_service.get_room_from_jid(lobby_room_jid) then
@@ -168,7 +169,7 @@ function attach_lobby_room(room)
         -- which can leave the room with no occupants and it will be destroyed and we want to
         -- avoid lobby destroy while it is enabled
         new_room:set_persistent(true);
-        module:log("info","Lobby room jid = %s created", lobby_room_jid);
+        module:log("info","Lobby room jid = %s created from:%s", lobby_room_jid, actor);
         new_room.main_room = room;
         room._data.lobbyroom = new_room.jid;
         room:save(true);
@@ -297,7 +298,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
         end
         local members_only = event.fields['muc#roomconfig_membersonly'] and true or nil;
         if members_only then
-            local lobby_created = attach_lobby_room(room);
+            local lobby_created = attach_lobby_room(room, actor);
             if lobby_created then
                 event.status_codes['104'] = true;
                 notify_lobby_enabled(room, actor, true);
