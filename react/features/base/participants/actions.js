@@ -510,7 +510,7 @@ export function participantKicked(kicker, kicked) {
                     getParticipantDisplayName(getState, kicker.getId())
             },
             titleKey: 'notify.kickParticipant'
-        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM)); // leave more time for this
+        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
     };
 }
 

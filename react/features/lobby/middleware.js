@@ -10,9 +10,9 @@ import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { isTestModeEnabled } from '../base/testing';
 import {
+    NOTIFICATION_TIMEOUT_TYPE,
     NOTIFICATION_TYPE,
-    showNotification,
-    NOTIFICATION_TIMEOUT_TYPE
+    showNotification
 } from '../notifications';
 import { shouldAutoKnock } from '../prejoin/functions';
 
