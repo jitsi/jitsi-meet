@@ -620,6 +620,7 @@
             "blockEveryoneMicCamera": "Kamera und Mikrofon von allen sperren",
             "invite": "Person einladen",
             "askUnmute": "Anfragen, Stummschaltung aufzuheben",
+            "moreModerationActions": "Weitere Moderationsoptionen",
             "mute": "Stummschalten",
             "muteAll": "Alle stummschalten",
             "muteEveryoneElse": "Alle anderen stummschalten",
@@ -627,11 +628,13 @@
             "stopVideo": "Kamera ausschalten",
             "unblockEveryoneMicCamera": "Kamera und Mikrofon von allen entsperren",
             "videoModeration": "Kamera einschalten"
-        }
+        },
+        "search": "Suche Anwesende"
     },
     "passwordSetRemotely": "von einer anderen Person gesetzt",
     "passwordDigitsOnly": "Bis zu {{number}} Ziffern",
     "polls": {
+        "by": "Von {{ name }}",
         "create": {
             "addOption": "Antwort hinzufügen",
             "answerPlaceholder": "Antwort {{index}}",
@@ -903,7 +906,7 @@
             "pip": "Bild-in-Bild-Modus ein-/ausschalten",
             "privateMessage": "Private Nachricht senden",
             "profile": "Profil bearbeiten",
-            "raiseHand": "Hand erheben / senken",
+            "raiseHand": "Hand heben",
             "reactionsMenu": "Interaktionsmenü öffnen / schließen",
             "recording": "Aufzeichnung ein-/ausschalten",
             "remoteMute": "Personen stummschalten",
@@ -980,7 +983,7 @@
         "pip": "Bild-in-Bild-Modus einschalten",
         "privateMessage": "Private Nachricht senden",
         "profile": "Profil bearbeiten",
-        "raiseHand": "Hand erheben / senken",
+        "raiseHand": "Hand heben",
         "raiseYourHand": "Melden",
         "reactionBoo": "Buhen senden",
         "reactionClap": "Klatschen senden",
@@ -1045,7 +1048,10 @@
         "pending": "{{displayName}} wurde eingeladen"
     },
     "videoStatus": {
+        "adjustFor": "Einstellen für:",
         "audioOnly": "AUD",
+        "bestPerformance": "Beste Leistung",
+        "highestQuality": "Höchste Qualität",
         "audioOnlyExpanded": "Sie befinden sich im Modus „Nur Audio“. Dieser Modus benötigt weniger Bandbreite, Sie sehen jedoch nicht die Videos der anderen.",
         "callQuality": "Videoqualität",
         "hd": "HD",
@@ -1056,6 +1062,7 @@
         "ld": "LD",
         "ldTooltip": "Video wird in niedriger Auflösung angezeigt",
         "lowDefinition": "Niedrige Auflösung",
+        "performanceSettings": "Qualitätseinstellungen",
         "sd": "SD",
         "sdTooltip": "Video wird in Standardauflösung angezeigt",
         "standardDefinition": "Standardauflösung"
