@@ -46,6 +46,11 @@ export default class NetworkInfoService extends EventEmitter {
      * @returns {void}
      */
     start() {
+        NetInfo.configure({
+            // By default iOS SDK pings Google every 60 seconds. Disable that!
+            // https://github.com/jitsi/jitsi-meet/issues/6474
+            reachabilityShouldRun: () => false
+        });
         this._subscription = NetInfo.addEventListener(netInfoState => {
             this.emit(ONLINE_STATE_CHANGED_EVENT, NetworkInfoService._convertNetInfoState(netInfoState));
         });
