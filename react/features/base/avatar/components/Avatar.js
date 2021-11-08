@@ -220,7 +220,7 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
         _customAvatarBackgrounds: state['features/dynamic-branding'].avatarBackgrounds,
         _initialsBase,
         _loadableAvatarUrl: _participant?.loadableAvatarUrl,
-        colorBase: !colorBase && _participant ? _participant.id : colorBase
+        colorBase
     };
 }
 
