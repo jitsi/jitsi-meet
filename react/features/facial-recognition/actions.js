@@ -9,8 +9,7 @@ import {
     SET_DETECTION_TIME_INTERVAL,
     SET_FACIAL_RECOGNITION_ALLOWED,
     START_FACIAL_RECOGNITION,
-    STOP_FACIAL_RECOGNITION,
-    UPDATE_CAMERA_TIME_TRACKER
+    STOP_FACIAL_RECOGNITION
 } from './actionTypes';
 import { sendDataToWorker } from './functions';
 import logger from './logger';
@@ -131,7 +130,6 @@ export function startFacialRecognition() {
         const { detectionTimeInterval } = state['features/facial-recognition'];
 
         sendDataToWorker(worker, imageCapture, detectionTimeInterval);
-        dispatch(updateCameraTimeTracker(false));
 
     };
 }
@@ -155,7 +153,7 @@ export function stopFacialRecognition() {
         worker.postMessage({
             id: 'CLEAR_TIMEOUT'
         });
-        dispatch(updateCameraTimeTracker(true));
+
         lastFacialExpression
         && dispatch(addFacialExpression(lastFacialExpression, duplicateConsecutiveExpressions + 1));
         duplicateConsecutiveExpressions = 0;
@@ -243,19 +241,5 @@ function setDetectionTimeInterval(time: number) {
     return {
         type: SET_DETECTION_TIME_INTERVAL,
         time
-    };
-}
-
-/**
- * Updates the camera time tracker with the current state of the camera.
- *
- * @param  {boolean} muted - The state of the camera.
- * @returns {Object}
- */
-function updateCameraTimeTracker(muted: boolean) {
-    return {
-        type: UPDATE_CAMERA_TIME_TRACKER,
-        muted,
-        lastCameraUpdate: new Date().getTime()
     };
 }

@@ -33,18 +33,6 @@ export const SET_FACIAL_RECOGNITION_ALLOWED = 'SET_FACIAL_RECOGNITION_ALLOWED';
 export const SET_DETECTION_TIME_INTERVAL = 'SET_DETECTION_TIME_INTERVAL';
 
 /**
- * Redux action type dispatched in order to update the cameraTimeTracker
-* with the latest state of the camera and the time of the last update.
- *
- * {
- *      type: SET_DETECTION_TIME_INTERVAL,
- *      muted: boolean,
- *      lastCameraUpdate: number
- * }
- */
-export const UPDATE_CAMERA_TIME_TRACKER = 'UPDATE_CAMERA_TIME_TRACKER';
-
-/**
  * Redux action type dispatched in order to set recognition active in the state.
  *
  * {

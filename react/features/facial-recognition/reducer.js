@@ -7,8 +7,7 @@ import {
     SET_DETECTION_TIME_INTERVAL,
     SET_FACIAL_RECOGNITION_ALLOWED,
     START_FACIAL_RECOGNITION,
-    STOP_FACIAL_RECOGNITION,
-    UPDATE_CAMERA_TIME_TRACKER
+    STOP_FACIAL_RECOGNITION
 } from './actionTypes';
 
 const defaultState = {
@@ -51,16 +50,6 @@ ReducerRegistry.register('features/facial-recognition', (state = defaultState, a
             detectionTimeInterval: action.time
         };
     }
-    case UPDATE_CAMERA_TIME_TRACKER: {
-        if (action.muted && state.cameraTimeTracker.lastCameraUpdate !== 0) {
-            state.cameraTimeTracker.cameraTime += action.lastCameraUpdate - state.cameraTimeTracker.lastCameraUpdate;
-        }
-        state.cameraTimeTracker.muted = action.muted;
-        state.cameraTimeTracker.lastCameraUpdate = action.lastCameraUpdate;
-
-        return state;
-    }
-
     case START_FACIAL_RECOGNITION: {
         return {
             ...state,
