@@ -57,7 +57,6 @@ MiddlewareRegistry.register(store => next => action => {
         // The devices list needs to be refreshed when no initial video permissions
         // were granted and a local video track is added by umuting the video.
         if (action.track.local) {
-            action.track.timestamp = Date.now() / 1000;
             store.dispatch(getAvailableDevices());
         }
 
