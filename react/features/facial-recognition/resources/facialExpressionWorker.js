@@ -37,12 +37,13 @@ onmessage = async function(message) {
             await faceapi.loadFaceExpressionModel('.');
             modelsLoaded = true;
         }
-
+        faceapi.tf.engine().startScope();
         const tensor = faceapi.tf.browser.fromPixels(message.data.imageData);
         const detections = await faceapi.detectSingleFace(
                 tensor,
                 new faceapi.TinyFaceDetectorOptions()
         ).withFaceExpressions();
+        faceapi.tf.engine().endScope();
         
         // The backend is set
         if (!backendSet) {
