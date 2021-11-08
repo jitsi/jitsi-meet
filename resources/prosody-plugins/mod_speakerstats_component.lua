@@ -45,7 +45,8 @@ function on_message(event)
             log("warn", "No room found %s", roomAddress);
             return false;
         end
-         if not room.speakerStats then
+        
+        if not room.speakerStats then
             log("warn", "No speakerStats found for %s", roomAddress);
             return false;
         end
@@ -231,7 +232,8 @@ function occupant_leaving(event)
     if is_healthcheck_room(room.jid) then
         return;
     end
-     if not room.speakerStats then
+
+    if not room.speakerStats then
         return;
     end
 
