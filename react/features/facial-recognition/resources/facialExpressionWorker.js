@@ -14,6 +14,19 @@ let backendSet = false;
  * A timer variable for set interval.
  */
 var timer;
+/**
+ * The duration of the set timeout
+ */
+let timeoutDuration = -1;
+/**
+ * Time used for detection interval when facial expressions worker uses webgl backend.
+ */
+const WEBGL_TIME_INTERVAL = 1000;
+
+/**
+ * Time used for detection interval when facial expression worker uses cpu backend.
+ */
+const CPU_TIME_INTERVAL = 6000;
 
 var window = {
     screen: {
@@ -24,7 +37,7 @@ var window = {
 };
 
 onmessage = async function(message) {
-    //Receives image data and a time period in ms with which will be set an timeout
+    //Receives image data
     if (message.data.id === 'SET_TIMEOUT') {
 
         if (message.data.imageData === null || message.data.imageData === undefined) {
@@ -37,7 +50,7 @@ onmessage = async function(message) {
             await faceapi.loadFaceExpressionModel('.');
             modelsLoaded = true;
         }
-        
+
         faceapi.tf.engine().startScope();
         const tensor = faceapi.tf.browser.fromPixels(message.data.imageData);
         const detections = await faceapi.detectSingleFace(
@@ -50,6 +63,11 @@ onmessage = async function(message) {
         if (!backendSet) {
             const backend = faceapi.tf.getBackend();
             if (backend !== undefined) {
+                if (backend === 'webgl') {
+                    timeoutDuration = WEBGL_TIME_INTERVAL;
+                } else if (backend === 'cpu') {
+                    timeoutDuration = CPU_TIME_INTERVAL;
+                }
                 postMessage({
                     type: 'tf-backend',
                     value: backend,
@@ -64,7 +82,7 @@ onmessage = async function(message) {
             facialExpression = detections.expressions.asSortedArray()[0].expression;
         }
 
-        if (message.data.time === -1) {
+        if (timeoutDuration === -1) {
                 postMessage({
                     type: 'facial-expression',
                     value: facialExpression
@@ -76,7 +94,7 @@ onmessage = async function(message) {
                 type: 'facial-expression',
                 value: facialExpression
             });
-        }, message.data.time)
+        }, timeoutDuration)
 
     } else if (message.data.id === 'CLEAR_TIMEOUT') {
         //Clear the timeout.

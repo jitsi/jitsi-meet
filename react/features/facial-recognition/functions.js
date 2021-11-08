@@ -54,13 +54,11 @@ export function sendFacialExpressionToServer(
  *
  * @param {Worker} worker - Facial expression worker.
  * @param {Object} imageCapture - Image capture that contains the current track.
- * @param {number} time - TimeoutTime.
  * @returns {Promise<void>}
  */
 export async function sendDataToWorker(
         worker: Worker,
-        imageCapture: Object,
-        time: number
+        imageCapture: Object
 ): Promise<void> {
     if (imageCapture === null || imageCapture === undefined) {
         return;
@@ -87,9 +85,6 @@ export async function sendDataToWorker(
 
     worker.postMessage({
         id: 'SET_TIMEOUT',
-        time,
         imageData
     });
-
-
 }

@@ -50,7 +50,7 @@ let duplicateConsecutiveExpressions = 0;
  * @returns {void}
  */
 export function loadWorker() {
-    return function(dispatch: Function, getState: Function) {
+    return function(dispatch: Function) {
         if (!window.Worker) {
             logger.warn('Browser does not support web workers');
 
@@ -59,7 +59,6 @@ export function loadWorker() {
         worker = new Worker('libs/facialExpressionWorker.js', { name: 'Facial Expression Worker' });
         worker.onmessage = function(e: Object) {
             const { type, value } = e.data;
-            const state = getState();
 
             // receives a message indicating what type of backend tfjs decided to use.
             // it is received after as a response to the first message sent to the worker.
@@ -85,9 +84,8 @@ export function loadWorker() {
                     duplicateConsecutiveExpressions = 0;
                 }
             }
-            const { detectionTimeInterval } = state['features/facial-recognition'];
 
-            sendDataToWorker(worker, imageCapture, detectionTimeInterval);
+            sendDataToWorker(worker, imageCapture);
         };
     };
 }
@@ -126,9 +124,7 @@ export function startFacialRecognition() {
         // $FlowFixMe
         imageCapture = new ImageCapture(firstVideoTrack);
 
-        const { detectionTimeInterval } = state['features/facial-recognition'];
-
-        sendDataToWorker(worker, imageCapture, detectionTimeInterval);
+        sendDataToWorker(worker, imageCapture);
 
     };
 }
