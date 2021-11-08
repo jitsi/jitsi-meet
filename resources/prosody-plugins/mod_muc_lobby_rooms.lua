@@ -105,7 +105,7 @@ function notify_lobby_access(room, actor, jid, display_name, granted)
 end
 
 function filter_stanza(stanza)
-    if not stanza.attr or not stanza.attr.from or not main_muc_service then
+    if not stanza.attr or not stanza.attr.from or not main_muc_service or not lobby_muc_service then
         return stanza;
     end
     -- Allow self-presence (code=110)
@@ -117,13 +117,32 @@ function filter_stanza(stanza)
                 return stanza;
             end
 
-            -- check is an owner, only owners can receive the presence
-            local room = main_muc_service.get_room_from_jid(jid_bare(node .. '@' .. main_muc_component_config));
-            if not room or room.get_affiliation(room, stanza.attr.to) == 'owner' then
+            local lobby_room_jid = jid_bare(stanza.attr.from);
+            local lobby_room = lobby_muc_service.get_room_from_jid(lobby_room_jid);
+            if not lobby_room then
+                module:log('warn', 'No lobby room found %s', lobby_room_jid);
                 return stanza;
             end
 
-            return nil;
+            local is_to_moderator = lobby_room:get_affiliation(stanza.attr.to) == 'owner';
+            local from_occupant = lobby_room:get_occupant_by_nick(stanza.attr.from);
+            if not from_occupant then
+                if is_to_moderator then
+                    return stanza;
+                end
+
+                module:log('warn', 'No lobby occupant found %s', stanza.attr.from);
+                return nil;
+            end
+
+            local from_real_jid;
+            for real_jid in from_occupant:each_session() do
+                from_real_jid = real_jid;
+            end
+
+            if is_to_moderator and lobby_room:get_affiliation(from_real_jid) ~= 'owner' then
+                return stanza;
+            end
         elseif stanza.name == 'iq' and stanza:get_child('query', DISCO_INFO_NS) then
             -- allow disco info from the lobby component
             return stanza;
@@ -139,7 +158,8 @@ function filter_session(session)
     filters.add_filter(session, 'stanzas/out', filter_stanza, -1);
 end
 
-function attach_lobby_room(room)
+-- actor can be null if called from backend (another module using hook create-lobby-room)
+function attach_lobby_room(room, actor)
     local node = jid_split(room.jid);
     local lobby_room_jid = node .. '@' .. lobby_muc_component_config;
     if not lobby_muc_service.get_room_from_jid(lobby_room_jid) then
@@ -149,7 +169,7 @@ function attach_lobby_room(room)
         -- which can leave the room with no occupants and it will be destroyed and we want to
         -- avoid lobby destroy while it is enabled
         new_room:set_persistent(true);
-        module:log("debug","Lobby room jid = %s created",lobby_room_jid);
+        module:log("info","Lobby room jid = %s created from:%s", lobby_room_jid, actor);
         new_room.main_room = room;
         room._data.lobbyroom = new_room.jid;
         room:save(true);
@@ -278,7 +298,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
         end
         local members_only = event.fields['muc#roomconfig_membersonly'] and true or nil;
         if members_only then
-            local lobby_created = attach_lobby_room(room);
+            local lobby_created = attach_lobby_room(room, actor);
             if lobby_created then
                 event.status_codes['104'] = true;
                 notify_lobby_enabled(room, actor, true);
@@ -382,7 +402,6 @@ end);
 function handle_create_lobby(event)
     local room = event.room;
     room:set_members_only(true);
-    module:log("info","Set room jid = %s as members only",room.jid);
     attach_lobby_room(room)
 end
 
