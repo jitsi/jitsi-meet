@@ -23,7 +23,7 @@ const WEBGL_TIME_INTERVAL = 1000;
 /**
  * Time used for detection interval when facial expression worker uses cpu backend.
  */
-const CPU_TIME_INTERVAL = 3000;
+const CPU_TIME_INTERVAL = 6000;
 
 /**
  * Object containing  a image capture of the local track.
