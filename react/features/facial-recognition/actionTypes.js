@@ -9,7 +9,6 @@
  *      duration: number
  * }
  */
-
 export const ADD_FACIAL_EXPRESSION = 'ADD_FACIAL_EXPRESSION';
 
 /**
@@ -20,7 +19,6 @@ export const ADD_FACIAL_EXPRESSION = 'ADD_FACIAL_EXPRESSION';
  *      allowed: boolean
  * }
  */
-
 export const SET_FACIAL_RECOGNITION_ALLOWED = 'SET_FACIAL_RECOGNITION_ALLOWED';
 
 /**
@@ -32,7 +30,6 @@ export const SET_FACIAL_RECOGNITION_ALLOWED = 'SET_FACIAL_RECOGNITION_ALLOWED';
  *      time: number
  * }
  */
-
 export const SET_DETECTION_TIME_INTERVAL = 'SET_DETECTION_TIME_INTERVAL';
 
 /**
@@ -45,7 +42,6 @@ export const SET_DETECTION_TIME_INTERVAL = 'SET_DETECTION_TIME_INTERVAL';
  *      lastCameraUpdate: number
  * }
  */
-
 export const UPDATE_CAMERA_TIME_TRACKER = 'UPDATE_CAMERA_TIME_TRACKER';
 
 /**
@@ -55,7 +51,6 @@ export const UPDATE_CAMERA_TIME_TRACKER = 'UPDATE_CAMERA_TIME_TRACKER';
  *      type: START_FACIAL_RECOGNITION
  * }
  */
-
 export const START_FACIAL_RECOGNITION = 'START_FACIAL_RECOGNITION';
 
 /**
@@ -65,5 +60,4 @@ export const START_FACIAL_RECOGNITION = 'START_FACIAL_RECOGNITION';
  *      type: STOP_FACIAL_RECOGNITION
  * }
  */
-
 export const STOP_FACIAL_RECOGNITION = 'STOP_FACIAL_RECOGNITION';
