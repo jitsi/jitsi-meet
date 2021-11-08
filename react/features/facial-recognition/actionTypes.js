@@ -12,16 +12,6 @@
 export const ADD_FACIAL_EXPRESSION = 'ADD_FACIAL_EXPRESSION';
 
 /**
- * Redux action type dispatched in order to toggle the permission of the facial recognition.
- *
- * {
- *      type: SET_FACIAL_RECOGNITION_ALLOWED,
- *      allowed: boolean
- * }
- */
-export const SET_FACIAL_RECOGNITION_ALLOWED = 'SET_FACIAL_RECOGNITION_ALLOWED';
-
-/**
  * Redux action type dispatched in order to set the time interval in which
  * the message to the facial expression worker will be sent.
  *

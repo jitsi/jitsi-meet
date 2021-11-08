@@ -1,6 +1,11 @@
 // @flow
 
-import { CONFERENCE_JOINED, CONFERENCE_WILL_LEAVE, getCurrentConference } from '../base/conference';
+import {
+    CONFERENCE_JOINED,
+    CONFERENCE_WILL_LEAVE,
+    getCurrentConference,
+    getIsConferenceJoined
+} from '../base/conference';
 import { getParticipantCount } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { TRACK_UPDATED, TRACK_ADDED, TRACK_REMOVED } from '../base/tracks';
@@ -11,7 +16,6 @@ import {
     changeTrack,
     loadWorker,
     resetTrack,
-    setFacialRecognitionAllowed,
     stopFacialRecognition,
     startFacialRecognition
 } from './actions';
@@ -19,29 +23,27 @@ import { sendFacialExpressionToParticipants, sendFacialExpressionToServer } from
 
 
 MiddlewareRegistry.register(store => next => action => {
-    switch (action.type) {
-    case CONFERENCE_JOINED: {
-        const { getState, dispatch } = store;
-        const { enableFacialRecognition } = getState()['features/base/config'];
+    const { enableFacialRecognition } = store.getState()['features/base/config'];
 
-        if (!enableFacialRecognition) {
-            return next(action);
-        }
+    if (!enableFacialRecognition) {
+        return next(action);
+    }
+
+    if (action.type === CONFERENCE_JOINED) {
+        const { dispatch } = store;
 
         dispatch(loadWorker());
-        dispatch(setFacialRecognitionAllowed(true));
         dispatch(startFacialRecognition());
 
         return next(action);
     }
 
+    if (!getIsConferenceJoined(store.getState())) {
+        return next(action);
+    }
+    switch (action.type) {
     case CONFERENCE_WILL_LEAVE : {
-        const { getState, dispatch } = store;
-        const { facialRecognitionAllowed } = getState()['features/facial-recognition'];
-
-        if (!facialRecognitionAllowed) {
-            return next(action);
-        }
+        const { dispatch } = store;
 
         dispatch(stopFacialRecognition());
 
@@ -49,12 +51,8 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case TRACK_UPDATED: {
-        const { getState, dispatch } = store;
-        const { facialRecognitionAllowed } = getState()['features/facial-recognition'];
+        const { dispatch } = store;
 
-        if (!facialRecognitionAllowed) {
-            return next(action);
-        }
         const { videoType, type } = action.track.jitsiTrack;
 
         if (videoType === 'camera') {
@@ -68,10 +66,7 @@ MiddlewareRegistry.register(store => next => action => {
                     dispatch(stopFacialRecognition());
                 } else {
                     dispatch(startFacialRecognition());
-                    // eslint-disable-next-line max-depth
-                    if (type === 'presenter') {
-                        changeTrack(action.track);
-                    }
+                    type === 'presenter' && changeTrack(action.track);
                 }
             }
         }
@@ -79,12 +74,7 @@ MiddlewareRegistry.register(store => next => action => {
         return next(action);
     }
     case TRACK_ADDED: {
-        const { getState, dispatch } = store;
-        const { facialRecognitionAllowed } = getState()['features/facial-recognition'];
-
-        if (!facialRecognitionAllowed) {
-            return next(action);
-        }
+        const { dispatch } = store;
         const { mediaType, videoType } = action.track;
 
         if (mediaType === 'presenter' && videoType === 'camera') {
@@ -96,12 +86,7 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case TRACK_REMOVED: {
-        const { getState, dispatch } = store;
-        const { facialRecognitionAllowed } = getState()['features/facial-recognition'];
-
-        if (!facialRecognitionAllowed) {
-            return next(action);
-        }
+        const { dispatch } = store;
         const { videoType } = action.track.jitsiTrack;
 
         if ([ 'camera', 'desktop' ].includes(videoType)) {
@@ -112,12 +97,8 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case VIRTUAL_BACKGROUND_TRACK_CHANGED: {
-        const { getState, dispatch } = store;
-        const { facialRecognitionAllowed } = getState()['features/facial-recognition'];
+        const { dispatch } = store;
 
-        if (!facialRecognitionAllowed) {
-            return next(action);
-        }
         dispatch(resetTrack());
 
         return next(action);

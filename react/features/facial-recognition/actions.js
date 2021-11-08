@@ -7,7 +7,6 @@ import './createImageBitmap';
 import {
     ADD_FACIAL_EXPRESSION,
     SET_DETECTION_TIME_INTERVAL,
-    SET_FACIAL_RECOGNITION_ALLOWED,
     START_FACIAL_RECOGNITION,
     STOP_FACIAL_RECOGNITION
 } from './actionTypes';
@@ -193,19 +192,6 @@ export function changeTrack(track: Object) {
 
     // $FlowFixMe
     imageCapture = new ImageCapture(firstVideoTrack);
-}
-
-/**
- * Sets if the facial recognition is allowed or not.
- *
- * @param  {boolean} allowed - The current state.
- * @returns {Object}
- */
-export function setFacialRecognitionAllowed(allowed: boolean) {
-    return {
-        type: SET_FACIAL_RECOGNITION_ALLOWED,
-        allowed
-    };
 }
 
 /**
