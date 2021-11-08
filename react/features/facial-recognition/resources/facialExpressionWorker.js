@@ -57,7 +57,6 @@ onmessage = async function(message) {
                 tensor,
                 new faceapi.TinyFaceDetectorOptions()
         ).withFaceExpressions();
-        faceapi.tf.engine().endScope();
         
         // The backend is set
         if (!backendSet) {
@@ -75,6 +74,7 @@ onmessage = async function(message) {
                 backendSet = true;
             }
         }
+        faceapi.tf.engine().endScope();
 
         let facialExpression;
 
