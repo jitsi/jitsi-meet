@@ -27,6 +27,7 @@ import {
     showPendingRecordingNotification,
     showRecordingError,
     showRecordingLimitNotification,
+    showRecordingWarning,
     showStartedRecordingNotification,
     showStoppedRecordingNotification,
     updateRecordingSessionData
@@ -262,10 +263,11 @@ function _showRecordingErrorNotification(recorderSession, dispatch) {
         }));
         break;
     case JitsiMeetJS.constants.recording.error.UNEXPECTED_REQUEST:
-        dispatch(showRecordingError({
-            titleKey: isStreamMode
+        dispatch(showRecordingWarning({
+            descriptionKey: isStreamMode
                 ? 'liveStreaming.sessionAlreadyActive'
-                : 'recording.sessionAlreadyActive'
+                : 'recording.sessionAlreadyActive',
+            titleKey: isStreamMode ? 'liveStreaming.inProgress' : 'recording.inProgress'
         }));
         break;
     default:
