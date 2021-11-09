@@ -56,7 +56,7 @@ export default class AbstractMuteVideoButton extends AbstractButton<Props, *> {
         const { dispatch, participantID } = this.props;
 
         sendAnalytics(createRemoteVideoMenuButtonEvent(
-            'mute.button',
+            'video.mute.button',
             {
                 'participant_id': participantID
             }));

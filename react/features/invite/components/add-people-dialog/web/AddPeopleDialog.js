@@ -142,11 +142,11 @@ function AddPeopleDialog({
      */
     useEffect(() => {
         sendAnalytics(createInviteDialogEvent(
-            'invite.dialog.opened', 'dialog'));
+            'opened', 'dialog'));
 
         return () => {
             sendAnalytics(createInviteDialogEvent(
-                'invite.dialog.closed', 'dialog'));
+                'closed', 'dialog'));
         };
     }, []);
 
