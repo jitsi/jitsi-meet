@@ -20,17 +20,14 @@ import {
     SILENT_JOIN_THRESHOLD
 } from './constants';
 
-declare var APP: Object;
-
 /**
  * Function that returns notification timeout value based on notification timeout type.
  *
  * @param {string} type - Notification type.
+ * @param {Object} notificationTimeouts - Config notification timeouts.
  * @returns {number}
  */
-function getNotificationTimeout(type: ?string) {
-    const { notificationTimeouts } = APP.store.getState()['features/base/config'];
-
+function getNotificationTimeout(type: ?string, notificationTimeouts: ?Object) {
     if (type === NOTIFICATION_TIMEOUT_TYPE.SHORT) {
         return notificationTimeouts?.short ?? NOTIFICATION_TIMEOUT.SHORT;
     } else if (type === NOTIFICATION_TIMEOUT_TYPE.MEDIUM) {
@@ -123,7 +120,7 @@ export function showErrorNotification(props: Object) {
  */
 export function showNotification(props: Object = {}, type: ?string) {
     return function(dispatch: Function, getState: Function) {
-        const { notifications } = getState()['features/base/config'];
+        const { notifications, notificationTimeouts } = getState()['features/base/config'];
         const enabledFlag = getFeatureFlag(getState(), NOTIFICATIONS_ENABLED, true);
 
         const shouldDisplay = enabledFlag
@@ -135,7 +132,7 @@ export function showNotification(props: Object = {}, type: ?string) {
             return dispatch({
                 type: SHOW_NOTIFICATION,
                 props,
-                timeout: getNotificationTimeout(type),
+                timeout: getNotificationTimeout(type, notificationTimeouts),
                 uid: props.uid || window.Date.now().toString()
             });
         }
@@ -150,10 +147,11 @@ export function showNotification(props: Object = {}, type: ?string) {
  * @returns {Object}
  */
 export function showWarningNotification(props: Object, type: ?string) {
+
     return showNotification({
         ...props,
         appearance: NOTIFICATION_TYPE.WARNING
-    }, getNotificationTimeout(type));
+    }, type);
 }
 
 /**

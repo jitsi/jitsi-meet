@@ -233,7 +233,7 @@ function _maybeSendLobbyNotification(origin, message, { dispatch, getState }) {
     dispatch(
         showNotification(
             notificationProps,
-            isTestModeEnabled(getState()) ? undefined : NOTIFICATION_TIMEOUT_TYPE.MEDIUM
+            isTestModeEnabled(getState()) ? NOTIFICATION_TIMEOUT_TYPE.STICKY : NOTIFICATION_TIMEOUT_TYPE.MEDIUM
         )
     );
 }
