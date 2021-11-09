@@ -10,7 +10,7 @@ import { createColorTokens } from './utils';
  * @param {Object} arg - The ui tokens.
  * @returns {Object}
  */
-export function createWebTheme({ font, colors, colorMap, shape, spacing, typography }: Object) {
+export function createWebTheme({ font, colors, colorMap, shape, spacing, typography, breakpoints }: Object) {
     return createMuiTheme({
         props: {
             // disable ripple effect on buttons globally
@@ -27,7 +27,8 @@ export function createWebTheme({ font, colors, colorMap, shape, spacing, typogra
         typography: {
             font,
             ...typography
-        }
+        },
+        breakpoints
     });
 }
 
@@ -45,4 +46,24 @@ export function formatCommonClasses(stylesObj: Object) {
     }
 
     return formatted;
+}
+
+/**
+ * Overwrites recursively values from object 2 into object 1 based on common keys.
+ * (Merges object2 into object1).
+ *
+ * @param {Object} obj1 - The object holding the merged values.
+ * @param {Object} obj2 - The object to compare to and take values from.
+ * @returns {void}
+ */
+export function overwriteRecurrsive(obj1: Object, obj2: Object) {
+    Object.keys(obj2).forEach(key => {
+        if (obj1.hasOwnProperty(key)) {
+            if (typeof obj1[key] === 'object') {
+                overwriteRecurrsive(obj1[key], obj2[key]);
+            } else {
+                obj1[key] = obj2[key];
+            }
+        }
+    });
 }

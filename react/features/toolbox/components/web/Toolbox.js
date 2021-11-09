@@ -1,5 +1,6 @@
 // @flow
 
+import { withStyles } from '@material-ui/core/styles';
 import React, { Component, Fragment } from 'react';
 
 import keyboardShortcut from '../../../../../modules/keyboardshortcut/keyboardshortcut';
@@ -225,6 +226,11 @@ type Props = {
     _virtualSource: Object,
 
     /**
+     * An object containing the CSS classes.
+     */
+    classes: Object,
+
+    /**
      * Invoked to active other features of the app.
      */
     dispatch: Function,
@@ -247,6 +253,17 @@ type Props = {
 };
 
 declare var APP: Object;
+
+const styles = theme => {
+    return {
+        overflowMenu: {
+            fontSize: 14,
+            listStyleType: 'none',
+            padding: '8px 0',
+            backgroundColor: theme.palette.ui03
+        }
+    };
+};
 
 /**
  * Implements the conference toolbox on React/Web.
@@ -1200,10 +1217,11 @@ class Toolbox extends Component<Props> {
         const {
             _isMobile,
             _overflowMenuVisible,
+            _reactionsEnabled,
             _toolbarButtons,
+            classes,
             showDominantSpeakerName,
-            t,
-            _reactionsEnabled
+            t
         } = this.props;
 
         const toolbarAccLabel = 'toolbar.accessibilityLabel.moreActionsMenu';
@@ -1240,7 +1258,7 @@ class Toolbox extends Component<Props> {
                                 }>
                                 <ul
                                     aria-label = { t(toolbarAccLabel) }
-                                    className = 'overflow-menu'
+                                    className = { classes.overflowMenu }
                                     id = 'overflow-menu'
                                     onKeyDown = { this._onEscKey }
                                     role = 'menu'>
@@ -1346,4 +1364,4 @@ function _mapStateToProps(state, ownProps) {
     };
 }
 
-export default translate(connect(_mapStateToProps)(Toolbox));
+export default translate(connect(_mapStateToProps)(withStyles(styles)(Toolbox)));
