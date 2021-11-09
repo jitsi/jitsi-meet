@@ -87,7 +87,7 @@ class AddMeetingUrlButton extends Component<Props> {
     _onClick() {
         const { calendarId, dispatch, eventId } = this.props;
 
-        sendAnalytics(createCalendarClickedEvent('calendar.add.url'));
+        sendAnalytics(createCalendarClickedEvent('add.url'));
 
         dispatch(updateCalendarEvent(eventId, calendarId));
     }

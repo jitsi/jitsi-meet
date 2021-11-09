@@ -102,7 +102,7 @@ export default class AbstractRecentList<P: Props> extends AbstractPage<P> {
     _onPress(url) {
         const { dispatch } = this.props;
 
-        sendAnalytics(createRecentClickedEvent('recent.meeting.tile'));
+        sendAnalytics(createRecentClickedEvent('meeting.tile'));
 
         dispatch(appNavigate(url));
     }
