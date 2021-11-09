@@ -12,9 +12,9 @@ import {
 } from '../../conference/components/native/ConferenceNavigatorScreenOptions';
 import { screen } from '../../conference/components/native/routes';
 import { HelpView } from '../../help';
-import { PrivacyView } from '../../privacy';
+import PrivacyView from '../../privacy/components/PrivacyView';
 import SettingsView from '../../settings/components/native/SettingsView';
-import { TermsView } from '../../terms';
+import TermsView from '../../terms/components/TermsView';
 
 import CustomDrawerContent from './CustomDrawerContent';
 import WelcomePage from './WelcomePage.native';

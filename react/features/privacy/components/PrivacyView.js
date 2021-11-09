@@ -1,12 +1,15 @@
 // @flow
 
 import React, { useEffect } from 'react';
+import { StatusBar } from 'react-native';
 
-import { JitsiScreenWebView } from '../../base/modal';
+import JitsiScreenWebView from '../../base/modal/components/JitsiScreenWebView';
+import BaseTheme from '../../base/ui/components/BaseTheme';
 import { screen } from '../../conference/components/native/routes';
-import { renderArrowBackButton } from '../../welcome';
+import { renderArrowBackButton } from '../../welcome/functions.native';
 
 import styles from './styles';
+
 
 type Props = {
 
@@ -27,14 +30,17 @@ const PrivacyView = ({ navigation }: Props) => {
         navigation.setOptions({
             headerLeft: () =>
                 renderArrowBackButton(() =>
-                    navigation.navigate(screen.welcome.main))
+                    navigation.jumpTo(screen.welcome.main))
         });
     });
 
     return (
-        <JitsiScreenWebView
-            source = { PRIVACY_URL }
-            style = { styles.privacyViewContainer } />
+        <>
+            <StatusBar backgroundColor = { BaseTheme.palette.screen01Header } />
+            <JitsiScreenWebView
+                source = { PRIVACY_URL }
+                style = { styles.privacyViewContainer } />
+        </>
     );
 };
 

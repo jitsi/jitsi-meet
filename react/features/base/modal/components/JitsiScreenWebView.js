@@ -3,7 +3,7 @@
 import React from 'react';
 import WebView from 'react-native-webview';
 
-import { JitsiScreen } from './';
+import JitsiScreen from './JitsiScreen';
 
 type Props = {
 

@@ -6,9 +6,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { StyleType } from '../../styles';
 
+import JitsiKeyboardAvoidingView from './JitsiKeyboardAvoidingView';
 import styles from './styles';
-
-import { JitsiKeyboardAvoidingView } from './';
 
 
 type Props = {

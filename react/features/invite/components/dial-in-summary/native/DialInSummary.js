@@ -7,11 +7,12 @@ import { type Dispatch } from 'redux';
 
 import { openDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
-import { JitsiScreen, setActiveModalId } from '../../../../base/modal';
+import { setActiveModalId } from '../../../../base/modal';
+import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
 import { screen } from '../../../../conference/components/native/routes';
-import { renderArrowBackButton } from '../../../../welcome';
+import { renderArrowBackButton } from '../../../../welcome/functions.native';
 import { getDialInfoPageURLForURIString } from '../../../functions';
 
 import DialInSummaryErrorDialog from './DialInSummaryErrorDialog';

@@ -18,8 +18,7 @@ import { isWelcomePageAppEnabled } from '../functions.native';
 
 import BlankPage from './BlankPage';
 import { rootNavigationRef } from './RootNavigationContainerRef';
-
-import { WelcomePageNavigationContainer } from './';
+import WelcomePageNavigationContainer from './WelcomePageNavigationContainer';
 
 const RootStack = createStackNavigator();
 

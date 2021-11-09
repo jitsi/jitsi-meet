@@ -5,6 +5,7 @@ import React from 'react';
 import {
     Animated,
     SafeAreaView,
+    StatusBar,
     TextInput,
     TouchableHighlight,
     TouchableOpacity,
@@ -24,6 +25,7 @@ import {
     destroyLocalDesktopTrackIfExists,
     destroyLocalTracks
 } from '../../base/tracks';
+import BaseTheme from '../../base/ui/components/BaseTheme';
 
 import {
     AbstractWelcomePage,
@@ -341,45 +343,48 @@ class WelcomePage extends AbstractWelcomePage<*> {
         const { _headerStyles, t } = this.props;
 
         return (
-            <LocalVideoTrackUnderlay style = { styles.welcomePage }>
-                <View style = { _headerStyles.page }>
-                    <SafeAreaView style = { styles.roomContainer } >
-                        <View style = { styles.joinControls } >
-                            <Text style = { styles.enterRoomText }>
-                                { t('welcomepage.roomname') }
-                            </Text>
-                            {/* // $FlowExpectedError*/}
-                            <TextInput
-                                accessibilityLabel = { t(roomnameAccLabel) }
-                                autoCapitalize = { 'none' }
-                                autoComplete = { 'off' }
-                                autoCorrect = { false }
-                                autoFocus = { false }
-                                onBlur = { this._onFieldBlur }
-                                onChangeText = { this._onRoomChange }
-                                onFocus = { this._onFieldFocus }
-                                onSubmitEditing = { this._onJoin }
-                                placeholder = { this.state.roomPlaceholder }
-                                placeholderTextColor = { PLACEHOLDER_TEXT_COLOR }
-                                returnKeyType = { 'go' }
-                                spellCheck = { false }
-                                style = { styles.textInput }
-                                underlineColorAndroid = 'transparent'
-                                value = { this.state.room } />
-                            {
+            <>
+                <StatusBar backgroundColor = { BaseTheme.palette.screen01Header } />
+                <LocalVideoTrackUnderlay style = { styles.welcomePage }>
+                    <View style = { _headerStyles.page }>
+                        <SafeAreaView style = { styles.roomContainer } >
+                            <View style = { styles.joinControls } >
+                                <Text style = { styles.enterRoomText }>
+                                    { t('welcomepage.roomname') }
+                                </Text>
+                                {/* // $FlowExpectedError*/}
+                                <TextInput
+                                    accessibilityLabel = { t(roomnameAccLabel) }
+                                    autoCapitalize = { 'none' }
+                                    autoComplete = { 'off' }
+                                    autoCorrect = { false }
+                                    autoFocus = { false }
+                                    onBlur = { this._onFieldBlur }
+                                    onChangeText = { this._onRoomChange }
+                                    onFocus = { this._onFieldFocus }
+                                    onSubmitEditing = { this._onJoin }
+                                    placeholder = { this.state.roomPlaceholder }
+                                    placeholderTextColor = { PLACEHOLDER_TEXT_COLOR }
+                                    returnKeyType = { 'go' }
+                                    spellCheck = { false }
+                                    style = { styles.textInput }
+                                    underlineColorAndroid = 'transparent'
+                                    value = { this.state.room } />
+                                {
 
-                                // $FlowExpectedError
-                                this._renderInsecureRoomNameWarning()
-                            }
-                            {
-                                this._renderHintBox()
-                            }
-                        </View>
-                    </SafeAreaView>
-                    {/* $FlowExpectedError*/}
-                    <WelcomePageLists disabled = { this.state._fieldFocused } />
-                </View>
-            </LocalVideoTrackUnderlay>
+                                    // $FlowExpectedError
+                                    this._renderInsecureRoomNameWarning()
+                                }
+                                {
+                                    this._renderHintBox()
+                                }
+                            </View>
+                        </SafeAreaView>
+                        {/* $FlowExpectedError*/}
+                        <WelcomePageLists disabled = { this.state._fieldFocused } />
+                    </View>
+                </LocalVideoTrackUnderlay>
+            </>
         );
     }
 

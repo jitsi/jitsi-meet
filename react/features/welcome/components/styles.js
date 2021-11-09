@@ -8,9 +8,9 @@ import BaseTheme from '../../base/ui/components/BaseTheme.native';
 
 export const PLACEHOLDER_TEXT_COLOR = 'rgba(255, 255, 255, 0.5)';
 
-export const DRAWER_AVATAR_SIZE = 100;
+export const DRAWER_AVATAR_SIZE = 104;
 
-const DRAWER_HEADER_HEIGHT = '58%';
+const DRAWER_HEADER_HEIGHT = 224;
 
 export const SWITCH_THUMB_COLOR = ColorPalette.blueHighlight;
 

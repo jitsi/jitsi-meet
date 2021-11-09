@@ -2,7 +2,7 @@
 import { isRoomValid } from '../base/conference';
 import { toState } from '../base/redux';
 import { ConferenceNavigationContainer } from '../conference';
-import { RootNavigationContainer } from '../welcome';
+import RootNavigationContainer from '../welcome/components/RootNavigationContainer';
 
 /**
  * Determines which route is to be rendered in order to depict a specific Redux

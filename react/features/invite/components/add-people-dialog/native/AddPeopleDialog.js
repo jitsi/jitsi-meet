@@ -20,7 +20,7 @@ import {
     IconSearch,
     IconShare
 } from '../../../../base/icons';
-import { JitsiScreen } from '../../../../base/modal';
+import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import {
     AvatarListItem,
     type Item

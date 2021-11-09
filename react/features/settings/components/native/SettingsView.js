@@ -10,10 +10,10 @@ import {
 import { Divider, Switch, TextInput, withTheme } from 'react-native-paper';
 
 import { translate } from '../../../base/i18n';
-import { JitsiScreen } from '../../../base/modal';
+import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { connect } from '../../../base/redux';
 import { screen } from '../../../conference/components/native/routes';
-import { renderArrowBackButton } from '../../../welcome';
+import { renderArrowBackButton } from '../../../welcome/functions.native';
 import { normalizeUserInputURL, isServerURLChangeEnabled } from '../../functions';
 import {
     AbstractSettingsView,
@@ -159,7 +159,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
         navigation.setOptions({
             headerLeft: () =>
                 renderArrowBackButton(() =>
-                    navigation.navigate(screen.welcome.main))
+                    navigation.jumpTo(screen.welcome.main))
         });
     }
 

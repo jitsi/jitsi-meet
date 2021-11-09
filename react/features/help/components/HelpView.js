@@ -1,13 +1,16 @@
 // @flow
 
 import React, { PureComponent } from 'react';
+import { StatusBar } from 'react-native';
 
-import { JitsiScreenWebView } from '../../base/modal';
+import JitsiScreenWebView from '../../base/modal/components/JitsiScreenWebView';
 import { connect } from '../../base/redux';
+import BaseTheme from '../../base/ui/components/BaseTheme';
 import { screen } from '../../conference/components/native/routes';
-import { renderArrowBackButton } from '../../welcome';
+import { renderArrowBackButton } from '../../welcome/functions.native';
 
 import styles from './styles';
+
 
 const DEFAULT_HELP_CENTRE_URL = 'https://web-cdn.jitsi.net/faq/meet-faq.html';
 
@@ -43,7 +46,7 @@ class HelpView extends PureComponent<Props> {
         navigation.setOptions({
             headerLeft: () =>
                 renderArrowBackButton(() =>
-                    navigation.navigate(screen.welcome.main))
+                    navigation.jumpTo(screen.welcome.main))
         });
     }
 
@@ -55,9 +58,12 @@ class HelpView extends PureComponent<Props> {
      */
     render() {
         return (
-            <JitsiScreenWebView
-                source = { this.props._url }
-                style = { styles.helpViewContainer } />
+            <>
+                <StatusBar backgroundColor = { BaseTheme.palette.screen01Header } />
+                <JitsiScreenWebView
+                    source = { this.props._url }
+                    style = { styles.helpViewContainer } />
+            </>
         );
     }
 }
