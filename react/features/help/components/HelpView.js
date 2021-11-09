@@ -1,11 +1,13 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-import WebView from 'react-native-webview';
 
-import { JitsiModal } from '../../base/modal';
+import JitsiScreenWebView from '../../base/modal/components/JitsiScreenWebView';
 import { connect } from '../../base/redux';
-import { HELP_VIEW_MODAL_ID } from '../constants';
+import { screen } from '../../conference/components/native/routes';
+import { renderArrowBackButton } from '../../welcome';
+
+import styles from './styles';
 
 const DEFAULT_HELP_CENTRE_URL = 'https://web-cdn.jitsi.net/faq/meet-faq.html';
 
@@ -14,13 +16,37 @@ type Props = {
     /**
      * The URL to display in the Help Centre.
      */
-    _url: string
+    _url: string,
+
+    /**
+     * Default prop for navigating between screen components(React Navigation)
+     */
+    navigation: Object
 }
 
 /**
  * Implements a page that renders the help content for the app.
  */
 class HelpView extends PureComponent<Props> {
+    /**
+     * Implements React's {@link Component#componentDidMount()}. Invoked
+     * immediately after mounting occurs.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidMount() {
+        const {
+            navigation
+        } = this.props;
+
+        navigation.setOptions({
+            headerLeft: () =>
+                renderArrowBackButton(() =>
+                    navigation.navigate(screen.welcome.main))
+        });
+    }
+
     /**
      * Implements {@code PureComponent#render()}.
      *
@@ -29,13 +55,9 @@ class HelpView extends PureComponent<Props> {
      */
     render() {
         return (
-            <JitsiModal
-                headerProps = {{
-                    headerLabelKey: 'helpView.header'
-                }}
-                modalId = { HELP_VIEW_MODAL_ID }>
-                <WebView source = {{ uri: this.props._url }} />
-            </JitsiModal>
+            <JitsiScreenWebView
+                source = { this.props._url }
+                style = { styles.helpViewContainer } />
         );
     }
 }

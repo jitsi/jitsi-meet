@@ -1,7 +1,12 @@
 // @flow
 
+import React from 'react';
+
 import { WELCOME_PAGE_ENABLED, getFeatureFlag } from '../base/flags';
+import { IconArrowBack } from '../base/icons';
 import { toState } from '../base/redux';
+import HeaderNavigationButton
+    from '../conference/components/native/HeaderNavigationButton';
 
 declare var APP: Object;
 
@@ -45,4 +50,20 @@ export function isWelcomePageUserEnabled(stateful: Function | Object) {
         typeof APP === 'undefined'
             ? true
             : toState(stateful)['features/base/config'].enableWelcomePage);
+}
+
+/**
+ * Render header arrow back button for navigation.
+ *
+ * @param {Function} onPress - Callback for when the button is pressed
+ * function.
+ * @returns {ReactElement}
+ */
+export function renderArrowBackButton(onPress: Function) {
+    return (
+        <HeaderNavigationButton
+            /* eslint-disable-next-line react/jsx-no-bind */
+            onPress = { onPress }
+            src = { IconArrowBack } />
+    );
 }

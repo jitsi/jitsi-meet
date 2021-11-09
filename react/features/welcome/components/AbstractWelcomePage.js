@@ -13,7 +13,7 @@ import { isRecentListEnabled } from '../../recent-list/functions';
 /**
  * {@code AbstractWelcomePage}'s React {@code Component} prop types.
  */
-type Props = {
+export type Props = {
 
     /**
      * Whether the calendar functionality is enabled or not.
@@ -56,7 +56,7 @@ type Props = {
  *
  * @abstract
  */
-export class AbstractWelcomePage extends Component<Props, *> {
+export class AbstractWelcomePage<P: Props> extends Component<P, *> {
     _mounted: ?boolean;
 
     /**
@@ -64,7 +64,7 @@ export class AbstractWelcomePage extends Component<Props, *> {
      *
      * @inheritdoc
      */
-    static getDerivedStateFromProps(props: Props, state: Object) {
+    static getDerivedStateFromProps(props: P, state: Object) {
         return {
             room: props._room || state.room
         };
@@ -99,7 +99,7 @@ export class AbstractWelcomePage extends Component<Props, *> {
      * @param {Props} props - The React {@code Component} props to initialize
      * the new {@code AbstractWelcomePage} instance with.
      */
-    constructor(props: Props) {
+    constructor(props: P) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.

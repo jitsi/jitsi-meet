@@ -8,8 +8,8 @@ import { Conference } from '../conference';
 import { getDeepLinkingPage } from '../deep-linking';
 import { UnsupportedDesktopBrowser } from '../unsupported-browser';
 import { isWelcomePageUserEnabled } from '../welcome';
-import { BlankPage, WelcomePage } from '../welcome/components';
-
+import BlankPage from '../welcome/components/BlankPage.web';
+import WelcomePage from '../welcome/components/WelcomePage.web';
 
 /**
  * Determines which route is to be rendered in order to depict a specific Redux

@@ -1,13 +1,19 @@
 // @flow
 
 import React from 'react';
-import { Alert, NativeModules, ScrollView, Text } from 'react-native';
+import {
+    Alert,
+    NativeModules,
+    ScrollView,
+    Text
+} from 'react-native';
 import { Divider, Switch, TextInput, withTheme } from 'react-native-paper';
 
 import { translate } from '../../../base/i18n';
-import { JitsiModal } from '../../../base/modal';
+import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { connect } from '../../../base/redux';
-import { SETTINGS_VIEW_ID } from '../../constants';
+import { screen } from '../../../conference/components/native/routes';
+import { renderArrowBackButton } from '../../../welcome';
 import { normalizeUserInputURL, isServerURLChangeEnabled } from '../../functions';
 import {
     AbstractSettingsView,
@@ -81,6 +87,11 @@ type Props = AbstractProps & {
     _serverURLChangeEnabled: boolean,
 
     /**
+     * Default prop for navigating between screen components(React Navigation)
+     */
+    navigation: Object,
+
+    /**
      * Theme used for styles.
      */
     theme: Object
@@ -134,6 +145,25 @@ class SettingsView extends AbstractSettingsView<Props, State> {
     }
 
     /**
+     * Implements React's {@link Component#componentDidMount()}. Invoked
+     * immediately after mounting occurs.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidMount() {
+        const {
+            navigation
+        } = this.props;
+
+        navigation.setOptions({
+            headerLeft: () =>
+                renderArrowBackButton(() =>
+                    navigation.navigate(screen.welcome.main))
+        });
+    }
+
+    /**
      * Implements React's {@link Component#render()}, renders the settings page.
      *
      * @inheritdoc
@@ -153,12 +183,9 @@ class SettingsView extends AbstractSettingsView<Props, State> {
         const { palette } = this.props.theme;
 
         return (
-            <JitsiModal
-                headerProps = {{
-                    headerLabelKey: 'settingsView.header'
-                }}
-                modalId = { SETTINGS_VIEW_ID }
-                onClose = { this._onClose }>
+            <JitsiScreen
+                hasTabNavigator = { false }
+                style = { styles.settingsViewContainer }>
                 <ScrollView>
                     <FormSectionAccordion
                         accordion = { false }
@@ -175,7 +202,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             textContentType = { 'name' } // iOS only
                             theme = {{
                                 colors: {
-                                    primary: palette.action01Active,
+                                    primary: palette.screen01Header,
                                     underlineColor: 'transparent'
                                 }
                             }}
@@ -194,7 +221,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             textContentType = { 'emailAddress' } // iOS only
                             theme = {{
                                 colors: {
-                                    primary: palette.action01Active,
+                                    primary: palette.screen01Header,
                                     underlineColor: 'transparent'
                                 }
                             }}
@@ -219,7 +246,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             textContentType = { 'URL' } // iOS only
                             theme = {{
                                 colors: {
-                                    primary: palette.action01Active,
+                                    primary: palette.screen01Header,
                                     underlineColor: 'transparent'
                                 }
                             }}
@@ -230,7 +257,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             <Switch
                                 onValueChange = { this._onStartAudioMutedChange }
                                 thumbColor = { THUMB_COLOR }
-                                trackColor = {{ true: palette.action01Active }}
+                                trackColor = {{ true: palette.screen01Header }}
                                 value = { startWithAudioMuted } />
                         </FormRow>
                         <Divider style = { styles.fieldSeparator } />
@@ -238,7 +265,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             <Switch
                                 onValueChange = { this._onStartVideoMutedChange }
                                 thumbColor = { THUMB_COLOR }
-                                trackColor = {{ true: palette.action01Active }}
+                                trackColor = {{ true: palette.screen01Header }}
                                 value = { startWithVideoMuted } />
                         </FormRow>
                     </FormSectionAccordion>
@@ -262,7 +289,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             <Switch
                                 onValueChange = { this._onDisableCallIntegration }
                                 thumbColor = { THUMB_COLOR }
-                                trackColor = {{ true: palette.action01Active }}
+                                trackColor = {{ true: palette.screen01Header }}
                                 value = { disableCallIntegration } />
                         </FormRow>
                         <Divider style = { styles.fieldSeparator } />
@@ -271,7 +298,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             <Switch
                                 onValueChange = { this._onDisableP2P }
                                 thumbColor = { THUMB_COLOR }
-                                trackColor = {{ true: palette.action01Active }}
+                                trackColor = {{ true: palette.screen01Header }}
                                 value = { disableP2P } />
                         </FormRow>
                         <Divider style = { styles.fieldSeparator } />
@@ -282,13 +309,13 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                                 <Switch
                                     onValueChange = { this._onDisableCrashReporting }
                                     thumbColor = { THUMB_COLOR }
-                                    trackColor = {{ true: palette.action01Active }}
+                                    trackColor = {{ true: palette.screen01Header }}
                                     value = { disableCrashReporting } />
                             </FormRow>
                         )}
                     </FormSectionAccordion>
                 </ScrollView>
-            </JitsiModal>
+            </JitsiScreen>
         );
     }
 

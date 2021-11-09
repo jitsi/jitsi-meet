@@ -22,7 +22,7 @@ type Props = {
     /**
      * The component's external style.
      */
-    style: Object
+    style?: Object
 }
 
 const HeaderNavigationButton = ({ onPress, src, style }: Props) => (

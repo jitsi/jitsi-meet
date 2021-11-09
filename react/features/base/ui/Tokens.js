@@ -51,6 +51,7 @@ export const colorMap = {
     ui03: 'surface04',
     ui04: 'surface05',
     ui05: 'surface06',
+    ui12: 'surface11',
 
     // Primary buttons
     action01: 'primary05',
@@ -129,6 +130,9 @@ export const colorMap = {
 
     // Text for bottom sheet items
     text04: 'surface12',
+
+    // Text for drawer menu displayed name
+    text05: 'surface06',
 
     // error messages
     textError: 'error06',

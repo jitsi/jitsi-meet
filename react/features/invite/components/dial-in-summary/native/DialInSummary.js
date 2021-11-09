@@ -7,10 +7,12 @@ import { type Dispatch } from 'redux';
 
 import { openDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
-import { JitsiModal, setActiveModalId } from '../../../../base/modal';
+import { setActiveModalId } from '../../../../base/modal';
+import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
-import { DIAL_IN_SUMMARY_VIEW_ID } from '../../../constants';
+import { screen } from '../../../../conference/components/native/routes';
+import { renderArrowBackButton } from '../../../../welcome';
 import { getDialInfoPageURLForURIString } from '../../../functions';
 
 import DialInSummaryErrorDialog from './DialInSummaryErrorDialog';
@@ -18,12 +20,17 @@ import styles, { INDICATOR_COLOR } from './styles';
 
 type Props = {
 
-    /**
-     * The URL to display the summary for.
-     */
-    _summaryUrl: ?string,
+    dispatch: Dispatch<any>,
 
-    dispatch: Dispatch<any>
+    /**
+     * Default prop for navigating between screen components(React Navigation)
+     */
+    navigation: Object,
+
+    /**
+     * Default prop for navigating between screen components(React Navigation)
+     */
+    route: Object
 };
 
 /**
@@ -45,28 +52,45 @@ class DialInSummary extends Component<Props> {
     }
 
     /**
+     * Implements React's {@link Component#componentDidMount()}. Invoked
+     * immediately after mounting occurs.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidMount() {
+        const {
+            navigation
+        } = this.props;
+
+        navigation.setOptions({
+            headerLeft: () =>
+                renderArrowBackButton(() =>
+                    navigation.navigate(screen.welcome.main))
+        });
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
      */
     render() {
-        const { _summaryUrl } = this.props;
+        const { route } = this.props;
+        const summaryUrl = route.params?.summaryUrl;
 
         return (
-            <JitsiModal
-                headerProps = {{
-                    headerLabelKey: 'info.label'
-                }}
-                modalId = { DIAL_IN_SUMMARY_VIEW_ID }
+            <JitsiScreen
+                hasTabNavigator = { false }
                 style = { styles.backDrop }>
                 <WebView
                     onError = { this._onError }
                     onShouldStartLoadWithRequest = { this._onNavigate }
                     renderLoading = { this._renderLoading }
-                    source = {{ uri: getDialInfoPageURLForURIString(_summaryUrl) }}
+                    source = {{ uri: getDialInfoPageURLForURIString(summaryUrl) }}
                     startInLoadingState = { true }
                     style = { styles.webView } />
-            </JitsiModal>
+            </JitsiScreen>
         );
     }
 
@@ -94,6 +118,8 @@ class DialInSummary extends Component<Props> {
      */
     _onNavigate(request) {
         const { url } = request;
+        const { route } = this.props;
+        const summaryUrl = route.params?.summaryUrl;
 
         if (url.startsWith('tel:')) {
             Linking.openURL(url);
@@ -101,7 +127,7 @@ class DialInSummary extends Component<Props> {
             this.props.dispatch(setActiveModalId());
         }
 
-        return url === getDialInfoPageURLForURIString(this.props._summaryUrl);
+        return url === getDialInfoPageURLForURIString(summaryUrl);
     }
 
     _renderLoading: () => React$Component<any>;
@@ -122,18 +148,4 @@ class DialInSummary extends Component<Props> {
     }
 }
 
-/**
- * Maps part of the Redux state to the props of this component.
- *
- * @param {Object} state - The Redux state.
- * @returns {{
- *      _summaryUrl: ?string
- * }}
- */
-function _mapStateToProps(state) {
-    return {
-        _summaryUrl: (state['features/base/modal'].modalProps || {}).summaryUrl
-    };
-}
-
-export default translate(connect(_mapStateToProps)(DialInSummary));
+export default translate(connect()(DialInSummary));

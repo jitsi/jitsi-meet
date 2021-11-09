@@ -39,7 +39,7 @@ export const useKeyboardHeight = () => {
  * @returns {number}.
  */
 export function getClientWidth(stateful: Object) {
-    const state = toState(stateful['features/base/responsive-ui']);
+    const state = toState(stateful)['features/base/responsive-ui'];
 
     return state.clientWidth;
 }
@@ -54,7 +54,7 @@ export function getClientWidth(stateful: Object) {
  * @returns {number}.
  */
 export function getClientHeight(stateful: Object) {
-    const state = toState(stateful['features/base/responsive-ui']);
+    const state = toState(stateful)['features/base/responsive-ui'];
 
     return state.clientHeight;
 }

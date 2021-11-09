@@ -1,4 +1,13 @@
 export const screen = {
+    blank: 'Blank',
+    welcome: {
+        main: 'Welcome',
+        settings: 'Settings',
+        terms: 'Terms',
+        privacy: 'Privacy',
+        help: 'Help'
+    },
+    dialInSummary: 'Dial-In Info',
     conference: {
         main: 'Conference',
         chat: 'Chat',

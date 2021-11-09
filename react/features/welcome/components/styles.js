@@ -1,14 +1,16 @@
 // @flow
 
-import { Dimensions, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { BoxModel, ColorPalette } from '../../base/styles';
+import BaseTheme from '../../base/ui/components/BaseTheme.native';
+
 
 export const PLACEHOLDER_TEXT_COLOR = 'rgba(255, 255, 255, 0.5)';
 
-export const SIDEBAR_AVATAR_SIZE = 100;
+export const DRAWER_AVATAR_SIZE = 100;
 
-const SIDEBAR_HEADER_HEIGHT = 150;
+const DRAWER_HEADER_HEIGHT = '58%';
 
 export const SWITCH_THUMB_COLOR = ColorPalette.blueHighlight;
 
@@ -17,7 +19,7 @@ export const SWITCH_UNDER_COLOR = 'rgba(0, 0, 0, 0.4)';
 /**
  * The default color of text on the WelcomePage.
  */
-const TEXT_COLOR = ColorPalette.white;
+const TEXT_COLOR = BaseTheme.palette.text01;
 
 /**
  * The styles of the React {@code Components} of the feature welcome including
@@ -37,7 +39,8 @@ export default {
      */
     audioVideoSwitchContainer: {
         alignItems: 'center',
-        flexDirection: 'row'
+        flexDirection: 'row',
+        marginRight: BaseTheme.spacing[2]
     },
 
     /**
@@ -55,8 +58,8 @@ export default {
      * Join button style.
      */
     button: {
-        backgroundColor: ColorPalette.blue,
-        borderColor: ColorPalette.blue,
+        backgroundColor: BaseTheme.palette.screen01Header,
+        borderColor: BaseTheme.palette.screen01Header,
         borderRadius: 4,
         borderWidth: 1,
         height: 30,
@@ -69,15 +72,24 @@ export default {
      */
     buttonText: {
         alignSelf: 'center',
-        color: ColorPalette.white,
+        color: BaseTheme.palette.text01,
         fontSize: 14
+    },
+
+    /**
+     * Drawer style.
+     */
+    drawerStyle: {
+        backgroundColor: BaseTheme.palette.ui12,
+        paddingBottom: BaseTheme.spacing[8],
+        width: '54%'
     },
 
     /**
      * The style of the display name label in the side bar.
      */
     displayName: {
-        color: ColorPalette.white,
+        color: BaseTheme.palette.text01,
         fontSize: 16,
         marginTop: BoxModel.margin,
         textAlign: 'center'
@@ -87,13 +99,6 @@ export default {
         color: TEXT_COLOR,
         fontSize: 18,
         marginBottom: BoxModel.margin
-    },
-
-    /**
-     * The welcome screen header style.
-     */
-    header: {
-        justifyContent: 'space-between'
     },
 
     /**
@@ -142,8 +147,8 @@ export default {
     },
 
     messageContainer: {
-        backgroundColor: ColorPalette.white,
-        borderColor: ColorPalette.white,
+        backgroundColor: BaseTheme.palette.ui12,
+        borderColor: BaseTheme.palette.field02,
         borderRadius: 4,
         borderWidth: 1,
         marginVertical: 5,
@@ -174,7 +179,7 @@ export default {
      */
     reducedUIContainer: {
         alignItems: 'center',
-        backgroundColor: ColorPalette.blue,
+        backgroundColor: BaseTheme.palette.screen01Header,
         flex: 1,
         justifyContent: 'center'
     },
@@ -193,63 +198,14 @@ export default {
     },
 
     /**
-     * Container of the side bar.
-     */
-    sideBar: {
-        width: 250,
-        height: Dimensions.get('window').height
-    },
-
-    /**
-     * The body of the side bar where the items are.
-     */
-    sideBarBody: {
-        backgroundColor: ColorPalette.white,
-        flex: 1
-    },
-
-    /**
      * The style of the side bar header.
      */
-    sideBarHeader: {
+    drawerHeader: {
         alignItems: 'center',
+        backgroundColor: BaseTheme.palette.screen01Header,
         flexDirection: 'column',
-        height: SIDEBAR_HEADER_HEIGHT,
-        justifyContent: 'center',
-        padding: BoxModel.padding
-    },
-
-    /**
-     * Style of the menu items in the side bar.
-     */
-    sideBarItem: {
-        padding: 13
-    },
-
-    /**
-     * The View inside the side bar buttons (icon + text).
-     */
-    sideBarItemButtonContainer: {
-        alignItems: 'center',
-        flexDirection: 'row',
-        justifyContent: 'flex-start'
-    },
-
-    /**
-     * The icon in the side bar item touchables.
-     */
-    sideBarItemIcon: {
-        color: ColorPalette.blueHighlight,
-        fontSize: 20,
-        marginRight: 15
-    },
-
-    /**
-     * The label of the side bar item touchables.
-     */
-    sideBarItemText: {
-        color: ColorPalette.black,
-        fontWeight: 'bold'
+        height: DRAWER_HEADER_HEIGHT,
+        justifyContent: 'center'
     },
 
     /**
@@ -264,7 +220,7 @@ export default {
      */
     textInput: {
         backgroundColor: 'transparent',
-        borderColor: ColorPalette.white,
+        borderColor: BaseTheme.palette.field02,
         borderRadius: 4,
         borderWidth: 1,
         color: TEXT_COLOR,
@@ -305,7 +261,7 @@ export default {
      * The style of the top-level container of {@code WelcomePage}.
      */
     welcomePage: {
-        backgroundColor: ColorPalette.blue,
+        backgroundColor: BaseTheme.palette.screen01Header,
         overflow: 'hidden'
     }
 };
