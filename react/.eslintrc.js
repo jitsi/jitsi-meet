@@ -9,5 +9,10 @@ module.exports = {
     'rules': {
         // XXX remove this eventually.
         'react/jsx-indent-props': 0
+    },
+    'settings': {
+        'react': {
+            'version': 'detect'
+        }
     }
 };
