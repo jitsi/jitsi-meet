@@ -87,10 +87,7 @@ export function loadWorker() {
                     lastFacialExpression = value;
                     duplicateConsecutiveExpressions = 0;
                 }
-                
             }
-
-            
         };
     };
 }
