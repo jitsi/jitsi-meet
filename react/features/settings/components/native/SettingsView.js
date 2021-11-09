@@ -10,7 +10,7 @@ import {
 import { Divider, Switch, TextInput, withTheme } from 'react-native-paper';
 
 import { translate } from '../../../base/i18n';
-import JitsiScreen from '../../../base/modal/components/JitsiScreen';
+import { JitsiScreen } from '../../../base/modal';
 import { connect } from '../../../base/redux';
 import { screen } from '../../../conference/components/native/routes';
 import { renderArrowBackButton } from '../../../welcome';
@@ -184,7 +184,6 @@ class SettingsView extends AbstractSettingsView<Props, State> {
 
         return (
             <JitsiScreen
-                hasTabNavigator = { false }
                 style = { styles.settingsViewContainer }>
                 <ScrollView>
                     <FormSectionAccordion

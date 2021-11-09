@@ -3,7 +3,7 @@
 import React from 'react';
 import WebView from 'react-native-webview';
 
-import JitsiScreen from './JitsiScreen';
+import { JitsiScreen } from './';
 
 type Props = {
 
@@ -20,7 +20,6 @@ type Props = {
 
 const JitsiScreenWebView = ({ source, style }: Props) => (
     <JitsiScreen
-        hasTabNavigator = { false }
         style = { style }>
         <WebView source = {{ uri: source }} />
     </JitsiScreen>

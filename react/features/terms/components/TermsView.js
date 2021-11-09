@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react';
 
-import JitsiScreenWebView from '../../base/modal/components/JitsiScreenWebView';
+import { JitsiScreenWebView } from '../../base/modal';
 import { screen } from '../../conference/components/native/routes';
 import { renderArrowBackButton } from '../../welcome';
 

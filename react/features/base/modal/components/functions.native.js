@@ -1,33 +1,6 @@
 // @flow
 
-import { useEffect, useState } from 'react';
-import { Keyboard } from 'react-native';
-
 import { toState } from '../../redux';
-
-export const useKeyboardHeight = () => {
-    const [ keyboardHeight, setKeyboardHeight ] = useState(0);
-
-    const onKeyboardDidShow = e => {
-        setKeyboardHeight(e.endCoordinates.height);
-    };
-
-    const onKeyboardDidHide = () => {
-        setKeyboardHeight(0);
-    };
-
-    useEffect(() => {
-        const keyboardShow = Keyboard.addListener('keyboardDidShow', onKeyboardDidShow);
-        const keyboardHide = Keyboard.addListener('keyboardDidHide', onKeyboardDidHide);
-
-        return () => {
-            keyboardShow.remove();
-            keyboardHide.remove();
-        };
-    }, []);
-
-    return keyboardHeight;
-};
 
 /**
  *

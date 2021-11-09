@@ -7,8 +7,7 @@ import { type Dispatch } from 'redux';
 
 import { openDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
-import { setActiveModalId } from '../../../../base/modal';
-import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
+import { JitsiScreen, setActiveModalId } from '../../../../base/modal';
 import { LoadingIndicator } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
 import { screen } from '../../../../conference/components/native/routes';
@@ -81,7 +80,6 @@ class DialInSummary extends Component<Props> {
 
         return (
             <JitsiScreen
-                hasTabNavigator = { false }
                 style = { styles.backDrop }>
                 <WebView
                     onError = { this._onError }

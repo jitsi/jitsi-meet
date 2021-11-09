@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n';
 import { Icon, IconEdit } from '../../../base/icons';
-import JitsiScreen from '../../../base/modal/components/JitsiScreen';
+import { JitsiScreen } from '../../../base/modal';
 import { LoadingIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import AbstractLobbyScreen, { _mapStateToProps } from '../AbstractLobbyScreen';
@@ -28,7 +28,6 @@ class LobbyScreen extends AbstractLobbyScreen {
 
         return (
             <JitsiScreen
-                hasTabNavigator = { false }
                 style = { styles.contentWrapper }>
                 <SafeAreaView>
                     <Text style = { styles.dialogTitle }>

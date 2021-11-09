@@ -2,7 +2,7 @@
 
 import React, { PureComponent } from 'react';
 
-import JitsiScreenWebView from '../../base/modal/components/JitsiScreenWebView';
+import { JitsiScreenWebView } from '../../base/modal';
 import { connect } from '../../base/redux';
 import { screen } from '../../conference/components/native/routes';
 import { renderArrowBackButton } from '../../welcome';

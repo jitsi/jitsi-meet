@@ -20,7 +20,7 @@ import {
     IconSearch,
     IconShare
 } from '../../../../base/icons';
-import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
+import { JitsiScreen } from '../../../../base/modal';
 import {
     AvatarListItem,
     type Item
@@ -210,7 +210,6 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         return (
             <JitsiScreen
                 footerComponent = { this._renderShareMeetingButton }
-                hasTabNavigator = { false }
                 style = { styles.addPeopleContainer }>
                 <ClearableInput
                     autoFocus = { false }

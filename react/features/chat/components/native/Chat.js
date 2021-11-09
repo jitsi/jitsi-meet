@@ -4,7 +4,7 @@ import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect } from 'react';
 
 import { translate } from '../../../base/i18n';
-import JitsiScreen from '../../../base/modal/components/JitsiScreen';
+import { JitsiScreen } from '../../../base/modal';
 import { connect } from '../../../base/redux';
 import { closeChat, openChat } from '../../actions.native';
 import AbstractChat, {
