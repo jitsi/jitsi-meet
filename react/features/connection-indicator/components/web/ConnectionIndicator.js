@@ -365,7 +365,7 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
     return {
         _connectionIndicatorInactiveDisabled:
         Boolean(state['features/base/config'].connectionIndicators?.inactiveDisabled),
-        _popoverDisabled: state['features/base/config'].disableConnectionIndicatorDetails,
+        _popoverDisabled: state['features/base/config'].connectionIndicators?.disableDetails,
         _connectionStatus: participant?.connectionStatus
     };
 }
