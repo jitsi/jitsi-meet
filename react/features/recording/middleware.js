@@ -261,6 +261,13 @@ function _showRecordingErrorNotification(recorderSession, dispatch) {
                 : 'recording.busyTitle'
         }));
         break;
+    case JitsiMeetJS.constants.recording.error.UNEXPECTED_REQUEST:
+        dispatch(showRecordingError({
+            titleKey: isStreamMode
+                ? 'liveStreaming.sessionAlreadyActive'
+                : 'recording.sessionAlreadyActive'
+        }));
+        break;
     default:
         dispatch(showRecordingError({
             descriptionKey: isStreamMode
