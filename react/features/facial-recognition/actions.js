@@ -74,7 +74,11 @@ export function loadWorker() {
             }
 
             // receives a message with the predicted facial expression.
-            if (type === 'facial-expression' && value) {
+            if (type === 'facial-expression') {
+                sendDataToWorker(worker, imageCapture);
+                if (!value) {
+                    return;
+                }
                 if (value === lastFacialExpression) {
                     duplicateConsecutiveExpressions++;
                 } else {
@@ -83,9 +87,10 @@ export function loadWorker() {
                     lastFacialExpression = value;
                     duplicateConsecutiveExpressions = 0;
                 }
+                
             }
 
-            sendDataToWorker(worker, imageCapture);
+            
         };
     };
 }

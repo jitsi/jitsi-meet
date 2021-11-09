@@ -1,4 +1,3 @@
-/* eslint-disable */
 self.importScripts('face-api-fix.js');
 self.importScripts('face-api.min.js');
 
@@ -83,18 +82,20 @@ onmessage = async function(message) {
         }
 
         if (timeoutDuration === -1) {
+            
                 postMessage({
                     type: 'facial-expression',
                     value: facialExpression
                 });
-                return;
+        } else {
+            timer = setTimeout(() =>{
+                postMessage({
+                    type: 'facial-expression',
+                    value: facialExpression
+                });
+            }, timeoutDuration);
         }
-        timer = setTimeout(() =>{
-            postMessage({
-                type: 'facial-expression',
-                value: facialExpression
-            });
-        }, timeoutDuration)
+        
 
     } else if (message.data.id === 'CLEAR_TIMEOUT') {
         //Clear the timeout.
