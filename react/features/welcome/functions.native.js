@@ -40,10 +40,8 @@ export function isWelcomePageAppEnabled(stateful: Function | Object) {
  * @returns {ReactElement}
  */
 export function renderArrowBackButton(onPress: Function) {
-
     return (
         <HeaderNavigationButton
-            /* eslint-disable-next-line react/jsx-no-bind */
             onPress = { onPress }
             src = { IconArrowBack } />
     );
