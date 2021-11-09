@@ -1,5 +1,4 @@
 export const screen = {
-    blank: 'Blank',
     welcome: {
         main: 'Welcome',
         settings: 'Settings',

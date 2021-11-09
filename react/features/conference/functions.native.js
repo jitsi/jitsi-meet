@@ -20,17 +20,3 @@ export function getDisablePolls(stateful: Object) {
     return state.disablePolls;
 }
 
-/**
- *
- * Returns true if a conference room is valid.
- *
- * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
- * {@code getState} function to be used to retrieve the state
- * features/base/config.
- * @returns {boolean}.
- */
-export function getRoom(stateful: Object) {
-    const state = toState(stateful)['features/base/conference'];
-
-    return state.room;
-}
