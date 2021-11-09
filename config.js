@@ -279,6 +279,7 @@ var config = {
     //     autoHide: true,
     //     autoHideTimeout: 5000,
     //     disabled: false,
+    //     disableDetails: false,
     //     inactiveDisabled: false
     // },
 
@@ -647,9 +648,6 @@ var config = {
 
     // Enables sending participants' emails (if available) to callstats and other analytics
     // enableEmailInStats: false,
-
-    // When true, disables the connection indicator popover.
-    // disableConnectionIndicatorDetails: false,
 
     // Controls the percentage of automatic feedback shown to participants when callstats is enabled.
     // The default value is 100%. If set to 0, no automatic feedback will be requested
