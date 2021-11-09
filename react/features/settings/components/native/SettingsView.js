@@ -87,7 +87,7 @@ type Props = AbstractProps & {
     _serverURLChangeEnabled: boolean,
 
     /**
-     * Default prop for navigating between screen components(React Navigation)
+     * Default prop for navigating between screen components(React Navigation).
      */
     navigation: Object,
 

@@ -19,7 +19,7 @@ type Props = {
     _url: string,
 
     /**
-     * Default prop for navigating between screen components(React Navigation)
+     * Default prop for navigating between screen components(React Navigation).
      */
     navigation: Object
 }

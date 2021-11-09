@@ -13,8 +13,20 @@ import { connect } from '../../base/redux';
 
 import styles, { DRAWER_AVATAR_SIZE } from './styles';
 
+type Props = {
 
-const CustomDrawerContent = props => (
+    /**
+     * Local participant name to be displayed.
+     */
+    displayName: string,
+
+    /**
+     * The ID of the local participant.
+     */
+    localParticipantId: string
+};
+
+const CustomDrawerContent = (props: Props) => (
     <ScrollView bounces = { false }>
         <View style = { styles.drawerHeader }>
             <Avatar

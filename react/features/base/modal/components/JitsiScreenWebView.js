@@ -8,12 +8,12 @@ import JitsiScreen from './JitsiScreen';
 type Props = {
 
     /**
-     * The URL to display
+     * The URL to display.
      */
     source: string,
 
     /**
-     * The component's external style
+     * The component's external style.
      */
     style: Object
 }
