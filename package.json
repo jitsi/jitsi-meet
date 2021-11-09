@@ -136,7 +136,7 @@
     "clean-css-cli": "4.3.0",
     "css-loader": "3.6.0",
     "eslint": "8.1.0",
-    "eslint-config-jitsi": "github:jitsi/eslint-config-jitsi#a19c9a76ca17e6f468ae5a8097001a6e7f0fee01",
+    "eslint-config-jitsi": "github:jitsi/eslint-config-jitsi#3.0.0",
     "eslint-plugin-flowtype": "8.0.3",
     "eslint-plugin-import": "2.25.2",
     "eslint-plugin-jsdoc": "37.0.3",
