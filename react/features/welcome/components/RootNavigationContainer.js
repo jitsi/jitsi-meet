@@ -10,8 +10,7 @@ import {
     dialInSummaryScreenOptions,
     drawerNavigatorScreenOptions,
     navigationContainerTheme
-}
-    from '../../conference/components/native/ConferenceNavigatorScreenOptions';
+} from '../../conference/components/native/ConferenceNavigatorScreenOptions';
 import { screen } from '../../conference/components/native/routes';
 import { DialInSummary } from '../../invite';
 import { isWelcomePageAppEnabled } from '../functions.native';

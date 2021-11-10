@@ -1,12 +1,11 @@
 // @flow
 
 import React, { useEffect } from 'react';
-import { StatusBar } from 'react-native';
 
-import JitsiScreenWebView from '../../base/modal/components/JitsiScreenWebView';
-import BaseTheme from '../../base/ui/components/BaseTheme';
-import { screen } from '../../conference/components/native/routes';
-import { renderArrowBackButton } from '../../welcome/functions.native';
+import JitsiScreenWebView from '../../../../base/modal/components/JitsiScreenWebView';
+import JitsiStatusBar from '../../../../base/modal/components/JitsiStatusBar';
+import { screen } from '../../../../conference/components/native/routes';
+import { renderArrowBackButton } from '../../../../welcome/functions.native';
 
 import styles from './styles';
 
@@ -36,7 +35,7 @@ const TermsView = ({ navigation }: Props) => {
 
     return (
         <>
-            <StatusBar backgroundColor = { BaseTheme.palette.screen01Header } />
+            <JitsiStatusBar />
             <JitsiScreenWebView
                 source = { TERMS_URL }
                 style = { styles.termsViewContainer } />

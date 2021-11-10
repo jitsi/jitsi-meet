@@ -38,7 +38,7 @@ export const conferenceModalPresentation = Platform.select({
 /**
  * Screen options and transition types.
  */
-export const screenOptions = {
+export const fullScreenOptions = {
     ...TransitionPresets.ModalTransition,
     gestureEnabled: false,
     headerShown: false
@@ -65,7 +65,7 @@ export const dialInSummaryScreenOptions = {
  */
 export const drawerNavigatorScreenOptions = {
     ...TransitionPresets.ModalTransition,
-    gestureEnabled: false,
+    gestureEnabled: true,
     headerShown: false
 };
 
@@ -103,7 +103,6 @@ export const welcomeScreenOptions = {
  */
 export const settingsScreenOptions = {
     ...drawerScreenOptions,
-    gestureEnabled: false,
     drawerIcon: ({ focused }) => (
         <Icon
             color = { focused ? BaseTheme.palette.screen01Header : BaseTheme.palette.field01Disabled }
@@ -120,7 +119,6 @@ export const settingsScreenOptions = {
  */
 export const termsAndPrivacyScreenOptions = {
     ...drawerScreenOptions,
-    gestureEnabled: false,
     drawerIcon: ({ focused }) => (
         <Icon
             color = { focused ? BaseTheme.palette.screen01Header : BaseTheme.palette.field01Disabled }
@@ -137,7 +135,6 @@ export const termsAndPrivacyScreenOptions = {
  */
 export const helpScreenOptions = {
     ...drawerScreenOptions,
-    gestureEnabled: false,
     drawerIcon: ({ focused }) => (
         <Icon
             color = { focused ? BaseTheme.palette.screen01Header : BaseTheme.palette.field01Disabled }
@@ -153,14 +150,14 @@ export const helpScreenOptions = {
  * Screen options for conference.
  */
 export const conferenceScreenOptions = {
-    ...screenOptions
+    ...fullScreenOptions
 };
 
 /**
  * Screen options for lobby modal.
  */
 export const lobbyScreenOptions = {
-    ...screenOptions
+    ...fullScreenOptions
 };
 
 /**

@@ -9,17 +9,17 @@ import {
 } from 'react-native';
 import { Divider, Switch, TextInput, withTheme } from 'react-native-paper';
 
-import { translate } from '../../../base/i18n';
-import JitsiScreen from '../../../base/modal/components/JitsiScreen';
-import { connect } from '../../../base/redux';
-import { screen } from '../../../conference/components/native/routes';
-import { renderArrowBackButton } from '../../../welcome/functions.native';
-import { normalizeUserInputURL, isServerURLChangeEnabled } from '../../functions';
+import { translate } from '../../../../base/i18n';
+import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
+import { connect } from '../../../../base/redux';
+import { screen } from '../../../../conference/components/native/routes';
 import {
     AbstractSettingsView,
     _mapStateToProps as _abstractMapStateToProps,
     type Props as AbstractProps
-} from '../AbstractSettingsView';
+} from '../../../../settings/components/AbstractSettingsView';
+import { normalizeUserInputURL, isServerURLChangeEnabled } from '../../../../settings/functions';
+import { renderArrowBackButton } from '../../../../welcome/functions.native';
 
 import FormRow from './FormRow';
 import FormSectionAccordion from './FormSectionAccordion';

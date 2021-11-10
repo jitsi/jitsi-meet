@@ -18,6 +18,7 @@ export const colors = {
     primary08: '#99BBF3',
     primary09: '#CCDDF9',
     primary10: '#17A0DB',
+    primary11: '#1081B2',
 
     surface00: '#111111',
     surface01: '#040404',
@@ -58,6 +59,9 @@ export const colorMap = {
 
     // Screen header
     screen01Header: 'primary10',
+
+    // Status bar
+    status01Bar: 'primary11',
 
     // Hover state for primary buttons
     action01Hover: 'primary06',

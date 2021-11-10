@@ -5,7 +5,6 @@ import React from 'react';
 import {
     Animated,
     SafeAreaView,
-    StatusBar,
     TextInput,
     TouchableHighlight,
     TouchableOpacity,
@@ -17,6 +16,7 @@ import { ColorSchemeRegistry } from '../../base/color-scheme';
 import { translate } from '../../base/i18n';
 import { Icon, IconMenu, IconWarning } from '../../base/icons';
 import { MEDIA_TYPE } from '../../base/media';
+import JitsiStatusBar from '../../base/modal/components/JitsiStatusBar';
 import { LoadingIndicator, Text } from '../../base/react';
 import { connect } from '../../base/redux';
 import { ColorPalette } from '../../base/styles';
@@ -25,7 +25,6 @@ import {
     destroyLocalDesktopTrackIfExists,
     destroyLocalTracks
 } from '../../base/tracks';
-import BaseTheme from '../../base/ui/components/BaseTheme';
 
 import {
     AbstractWelcomePage,
@@ -344,7 +343,7 @@ class WelcomePage extends AbstractWelcomePage<*> {
 
         return (
             <>
-                <StatusBar backgroundColor = { BaseTheme.palette.screen01Header } />
+                <JitsiStatusBar />
                 <LocalVideoTrackUnderlay style = { styles.welcomePage }>
                     <View style = { _headerStyles.page }>
                         <SafeAreaView style = { styles.roomContainer } >
