@@ -6,8 +6,7 @@ declare var APP: Object;
 import { v4 as uuidv4 } from 'uuid';
 
 import { getDialOutStatusUrl, getDialOutUrl, updateConfig } from '../base/config';
-import { isIosMobileBrowser } from '../base/environment/utils';
-import { createLocalTrack } from '../base/lib-jitsi-meet';
+import { browser, createLocalTrack } from '../base/lib-jitsi-meet';
 import { isVideoMutedByUser, MEDIA_TYPE } from '../base/media';
 import { updateSettings } from '../base/settings';
 import {
@@ -240,10 +239,10 @@ export function joinConference(options?: Object, ignoreJoiningInProgress: boolea
 
         // Do not signal audio/video tracks if the user joins muted.
         for (const track of localTracks) {
-            // Always add the audio track on mobile Safari because of a known issue where audio playout doesn't happen
+            // Always add the audio track on Safari because of a known issue where audio playout doesn't happen
             // if the user joins audio and video muted.
             if (track.muted
-                && !(isIosMobileBrowser() && track.jitsiTrack && track.jitsiTrack.getType() === MEDIA_TYPE.AUDIO)) {
+                && !(browser.isWebKitBased() && track.jitsiTrack && track.jitsiTrack.getType() === MEDIA_TYPE.AUDIO)) {
                 try {
                     await dispatch(replaceLocalTrack(track.jitsiTrack, null));
                 } catch (error) {
