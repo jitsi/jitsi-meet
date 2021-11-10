@@ -32,24 +32,23 @@ const styles = theme => {
                 fontWeight: 600
             },
 
-            '&-content': {
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                maxWidth: 292,
-                marginRight: 16,
-
-                '&.selected': {
-                    fontWeight: 600
-                }
-            },
-
             '&.clicked': {
                 background: theme.palette.success02
             },
 
             '& > div > svg > path': {
                 fill: theme.palette.text01
+            }
+        },
+        content: {
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            maxWidth: 292,
+            marginRight: 16,
+
+            '&.selected': {
+                fontWeight: 600
             }
         }
     };
@@ -177,7 +176,7 @@ function CopyButton({ classes, className, displayedText, textToCopy, textOnHover
         if (isClicked) {
             return (
                 <>
-                    <div className = { clsx(`${classes.copyButton}-content`, 'selected') }>
+                    <div className = { clsx(classes.content, 'selected') }>
                         <span role = { 'alert' }>{ textOnCopySuccess }</span>
                     </div>
                     <Icon src = { IconCheck } />

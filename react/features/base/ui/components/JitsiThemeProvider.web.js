@@ -5,7 +5,7 @@ import * as React from 'react';
 
 import { connect } from '../../../base/redux';
 
-import BaseTheme, { applyBrandingTheme } from './BaseTheme';
+import BaseTheme from './BaseTheme';
 
 type Props = {
 
@@ -37,8 +37,10 @@ function JitsiThemeProvider(props: Props) {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
+    const { muiBrandedTheme } = state['features/dynamic-branding'];
+
     return {
-        _theme: applyBrandingTheme(state) || BaseTheme
+        _theme: muiBrandedTheme || BaseTheme
     };
 }
 
