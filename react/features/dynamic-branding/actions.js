@@ -35,7 +35,7 @@ export function fetchCustomBrandingData() {
 
                     return dispatch(setDynamicBrandingData(res));
                 } catch (err) {
-                    logger.error('Error fetching branding data');
+                    logger.error('Error fetching branding data', err);
 
                     return dispatch(setDynamicBrandingFailed());
                 }
