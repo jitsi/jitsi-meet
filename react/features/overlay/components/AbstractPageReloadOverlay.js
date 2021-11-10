@@ -34,7 +34,7 @@ export type Props = {
     dispatch: Dispatch<any>,
 
     /**
-     * The error that caused the display of the overlay
+     * The error that caused the display of the overlay.
      */
     error: Error,
 

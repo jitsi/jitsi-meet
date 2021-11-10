@@ -17,7 +17,6 @@ import {
     getCurrentConference,
     isRoomValid
 } from '../../base/conference';
-import { LOAD_CONFIG_ERROR } from '../../base/config';
 import {
     CONNECTION_DISCONNECTED,
     JITSI_CONNECTION_CONFERENCE_KEY,
@@ -160,19 +159,6 @@ MiddlewareRegistry.register(store => next => action => {
     case ENTER_PICTURE_IN_PICTURE:
         sendEvent(store, type, /* data */ {});
         break;
-
-    case LOAD_CONFIG_ERROR: {
-        const { error, locationURL } = action;
-
-        sendEvent(
-            store,
-            CONFERENCE_TERMINATED,
-            /* data */ {
-                error: _toErrorString(error),
-                url: _normalizeUrl(locationURL)
-            });
-        break;
-    }
 
     case OPEN_CHAT:
     case CLOSE_CHAT: {
