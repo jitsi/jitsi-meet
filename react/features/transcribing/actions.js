@@ -74,7 +74,7 @@ export function showPendingTranscribingNotification() {
             descriptionKey: 'transcribing.pending',
             isDismissAllowed: false,
             titleKey: 'dialog.transcribing'
-        }));
+        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 
         if (notification) {
             dispatch(setPendingTranscribingNotificationUid(notification.uid));
@@ -140,5 +140,5 @@ export function showTranscribingError() {
     return showErrorNotification({
         descriptionKey: 'transcribing.error',
         titleKey: 'transcribing.failedToStart'
-    });
+    }, NOTIFICATION_TIMEOUT_TYPE.LONG);
 }

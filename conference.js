@@ -762,7 +762,7 @@ export default {
             APP.store.dispatch(showNotification({
                 descriptionKey: 'notify.startSilentDescription',
                 titleKey: 'notify.startSilentTitle'
-            }));
+            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
         }
 
         // XXX The API will take care of disconnecting from the XMPP

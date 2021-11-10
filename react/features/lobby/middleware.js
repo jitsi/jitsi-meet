@@ -149,7 +149,7 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
                 appearance: NOTIFICATION_TYPE.ERROR,
                 hideErrorSupportLink: true,
                 titleKey: 'lobby.joinRejectedMessage'
-            })
+            }, NOTIFICATION_TIMEOUT_TYPE.LONG)
         );
     }
 

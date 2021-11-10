@@ -98,7 +98,7 @@ export function showPendingRecordingNotification(streamType: string) {
         const notification = await dispatch(showNotification({
             isDismissAllowed: false,
             ...dialogProps
-        }));
+        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 
         if (notification) {
             dispatch(_setPendingRecordingNotificationUid(notification.uid, streamType));
@@ -113,7 +113,7 @@ export function showPendingRecordingNotification(streamType: string) {
  * @returns {showErrorNotification}
  */
 export function showRecordingError(props: Object) {
-    return showErrorNotification(props);
+    return showErrorNotification(props, NOTIFICATION_TIMEOUT_TYPE.LONG);
 }
 
 /**
@@ -214,7 +214,7 @@ export function showStartedRecordingNotification(
                 } catch (err) {
                     dispatch(showErrorNotification({
                         titleKey: 'recording.errorFetchingLink'
-                    }));
+                    }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 
                     return logger.error('Could not fetch recording link', err);
                 }

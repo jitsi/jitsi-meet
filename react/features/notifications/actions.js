@@ -102,13 +102,14 @@ export function setNotificationsEnabled(enabled: boolean) {
  * Queues an error notification for display.
  *
  * @param {Object} props - The props needed to show the notification component.
+ * @param {string} type - Notification type.
  * @returns {Object}
  */
-export function showErrorNotification(props: Object) {
+export function showErrorNotification(props: Object, type: ?string) {
     return showNotification({
         ...props,
         appearance: NOTIFICATION_TYPE.ERROR
-    });
+    }, type);
 }
 
 /**

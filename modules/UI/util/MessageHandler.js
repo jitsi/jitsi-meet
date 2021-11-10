@@ -1,6 +1,7 @@
 /* global APP */
 
 import {
+    NOTIFICATION_TIMEOUT_TYPE,
     showErrorNotification,
     showWarningNotification
 } from '../../../react/features/notifications';
@@ -46,7 +47,7 @@ const messageHandler = {
      * showErrorNotification action.
      */
     showError(props) {
-        APP.store.dispatch(showErrorNotification(props));
+        APP.store.dispatch(showErrorNotification(props, NOTIFICATION_TIMEOUT_TYPE.LONG));
     },
 
     /**
@@ -56,7 +57,7 @@ const messageHandler = {
      * showWarningNotification action.
      */
     showWarning(props) {
-        APP.store.dispatch(showWarningNotification(props));
+        APP.store.dispatch(showWarningNotification(props, NOTIFICATION_TIMEOUT_TYPE.LONG));
     }
 };
 

@@ -104,7 +104,7 @@ function _inviteRooms(rooms, conference, dispatch) {
                     dispatch(showErrorNotification({
                         descriptionKey: 'videoSIPGW.errorInvite',
                         titleKey: 'videoSIPGW.errorInviteTitle'
-                    }));
+                    }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 
                     return;
                 }
@@ -112,7 +112,7 @@ function _inviteRooms(rooms, conference, dispatch) {
                     dispatch(showWarningNotification({
                         titleKey: 'videoSIPGW.errorAlreadyInvited',
                         titleArguments: { displayName }
-                    }));
+                    }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 
                     return;
                 }
@@ -158,14 +158,14 @@ function _sessionStateChanged(
                 displayName: event.displayName
             },
             descriptionKey: 'videoSIPGW.errorInviteFailed'
-        });
+        }, NOTIFICATION_TIMEOUT_TYPE.LONG);
     }
     case JitsiSIPVideoGWStatus.STATE_OFF: {
         if (event.failureReason === JitsiSIPVideoGWStatus.STATUS_BUSY) {
             return showErrorNotification({
                 descriptionKey: 'videoSIPGW.busy',
                 titleKey: 'videoSIPGW.busyTitle'
-            });
+            }, NOTIFICATION_TIMEOUT_TYPE.LONG);
         } else if (event.failureReason) {
             logger.error(`Unknown sip videogw error ${event.newState} ${
                 event.failureReason}`);
