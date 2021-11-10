@@ -1,6 +1,6 @@
 /* global APP */
 import { jitsiLocalStorage } from '@jitsi/js-utils';
-import Logger from 'jitsi-meet-logger';
+import Logger from '@jitsi/logger';
 
 import {
     ACTION_SHORTCUT_PRESSED as PRESSED,

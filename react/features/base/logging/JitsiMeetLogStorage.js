@@ -2,7 +2,7 @@
 import { getCurrentConference } from '../conference';
 
 /**
- * Implements log storage interface from the jitsi-meet-logger lib. Captured
+ * Implements log storage interface from the @jitsi/logger lib. Captured
  * logs are sent to CallStats.
  */
 export default class JitsiMeetLogStorage {

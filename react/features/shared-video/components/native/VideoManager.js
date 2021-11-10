@@ -1,4 +1,4 @@
-import Logger from 'jitsi-meet-logger';
+import Logger from '@jitsi/logger';
 import React from 'react';
 import Video from 'react-native-video';
 
