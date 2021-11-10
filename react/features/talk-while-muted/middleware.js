@@ -53,8 +53,8 @@ MiddlewareRegistry.register(store => next => action => {
                     const forceMuted = isForceMuted(local, MEDIA_TYPE.AUDIO, state);
                     const notification = await dispatch(showNotification({
                         titleKey: 'toolbar.talkWhileMutedPopup',
-                        customActionNameKey: forceMuted ? 'notify.raiseHandAction' : 'notify.unmute',
-                        customActionHandler: () => dispatch(forceMuted ? raiseHand(true) : setAudioMuted(false))
+                        customActionNameKey: [ forceMuted ? 'notify.raiseHandAction' : 'notify.unmute' ],
+                        customActionHandler: [ () => dispatch(forceMuted ? raiseHand(true) : setAudioMuted(false)) ]
                     }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 
                     const { soundsTalkWhileMuted } = getState()['features/base/settings'];

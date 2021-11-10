@@ -94,8 +94,8 @@ async function _handleNoAudioSignalNotification({ dispatch, getState }, action) 
             // at the point of the implementation the showNotification function only supports doing that for
             // the description.
             // TODO Add support for arguments to showNotification title and customAction strings.
-            customActionNameKey = `Switch to ${formatDeviceLabel(activeDevice.deviceLabel)}`;
-            customActionHandler = () => {
+            customActionNameKey = [ `Switch to ${formatDeviceLabel(activeDevice.deviceLabel)}` ];
+            customActionHandler = [ () => {
                 // Select device callback
                 dispatch(
                         updateSettings({
@@ -105,7 +105,7 @@ async function _handleNoAudioSignalNotification({ dispatch, getState }, action) 
                 );
 
                 dispatch(setAudioInputDevice(activeDevice.deviceId));
-            };
+            } ];
         }
 
         const notification = await dispatch(showNotification({

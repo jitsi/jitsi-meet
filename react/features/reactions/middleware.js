@@ -4,9 +4,15 @@ import { batch } from 'react-redux';
 
 import { createReactionSoundsDisabledEvent, sendAnalytics } from '../analytics';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
-import { getParticipantCount } from '../base/participants';
+import { CONFERENCE_WILL_JOIN, setStartReactionsMuted } from '../base/conference';
+import {
+    getParticipantById,
+    getParticipantCount,
+    isLocalParticipantModerator
+} from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
-import { SETTINGS_UPDATED, updateSettings } from '../base/settings';
+import { SETTINGS_UPDATED } from '../base/settings/actionTypes';
+import { updateSettings } from '../base/settings/actions';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { getDisabledSounds } from '../base/sounds/functions.any';
 import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../notifications';
@@ -31,7 +37,8 @@ import {
     RAISE_HAND_SOUND_ID,
     REACTIONS,
     REACTION_SOUND,
-    SOUNDS_THRESHOLDS
+    SOUNDS_THRESHOLDS,
+    MUTE_REACTIONS_COMMAND
 } from './constants';
 import {
     getReactionMessageFromBuffer,
@@ -39,7 +46,10 @@ import {
     getReactionsWithId,
     sendReactionsWebhook
 } from './functions.any';
+import logger from './logger';
 import { RAISE_HAND_SOUND_FILE } from './sounds';
+
+import './subscriber';
 
 
 declare var APP: Object;
@@ -95,7 +105,15 @@ MiddlewareRegistry.register(store => next => action => {
 
         break;
     }
+    case CONFERENCE_WILL_JOIN: {
+        const { conference } = action;
 
+        conference.addCommandListener(
+            MUTE_REACTIONS_COMMAND, ({ attributes }, id) => {
+                _onMuteReactionsCommand(attributes, id, store);
+            });
+        break;
+    }
     case FLUSH_REACTION_BUFFER: {
         const state = getState();
         const { buffer } = state['features/reactions'];
@@ -163,12 +181,26 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case SHOW_SOUNDS_NOTIFICATION: {
+        const state = getState();
+        const isModerator = isLocalParticipantModerator(state);
+
+        const customActions = [ 'notify.reactionSounds' ];
+        const customFunctions = [ () => dispatch(updateSettings({
+            soundsReactions: false
+        })) ];
+
+        if (isModerator) {
+            customActions.push('notify.reactionSoundsForAll');
+            customFunctions.push(() => batch(() => {
+                dispatch(setStartReactionsMuted(true));
+                dispatch(updateSettings({ soundsReactions: false }));
+            }));
+        }
+
         dispatch(showNotification({
             titleKey: 'toolbar.disableReactionSounds',
-            customActionNameKey: 'notify.reactionSounds',
-            customActionHandler: () => dispatch(updateSettings({
-                soundsReactions: false
-            }))
+            customActionNameKey: customActions,
+            customActionHandler: customFunctions
         }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
         break;
     }
@@ -176,3 +208,51 @@ MiddlewareRegistry.register(store => next => action => {
 
     return next(action);
 });
+
+/**
+ * Notifies this instance about a "Mute Reaction Sounds" command received by the Jitsi
+ * conference.
+ *
+ * @param {Object} attributes - The attributes carried by the command.
+ * @param {string} id - The identifier of the participant who issuing the
+ * command. A notable idiosyncrasy to be mindful of here is that the command
+ * may be issued by the local participant.
+ * @param {Object} store - The redux store. Used to calculate and dispatch
+ * updates.
+ * @private
+ * @returns {void}
+ */
+function _onMuteReactionsCommand(attributes = {}, id, store) {
+    const state = store.getState();
+
+    // We require to know who issued the command because (1) only a
+    // moderator is allowed to send commands and (2) a command MUST be
+    // issued by a defined commander.
+    if (typeof id === 'undefined') {
+        return;
+    }
+
+    const participantSendingCommand = getParticipantById(state, id);
+
+    // The Command(s) API will send us our own commands and we don't want
+    // to act upon them.
+    if (participantSendingCommand.local) {
+        return;
+    }
+
+    if (participantSendingCommand.role !== 'moderator') {
+        logger.warn('Received mute-reactions command not from moderator');
+
+        return;
+    }
+
+    const oldState = Boolean(state['features/base/conference'].startReactionsMuted);
+    const newState = attributes.startReactionsMuted === 'true';
+
+    if (oldState !== newState) {
+        batch(() => {
+            store.dispatch(setStartReactionsMuted(newState));
+            store.dispatch(updateSettings({ soundsReactions: !newState }));
+        });
+    }
+}

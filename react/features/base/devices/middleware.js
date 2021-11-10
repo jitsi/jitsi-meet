@@ -2,7 +2,11 @@
 
 import UIEvents from '../../../../service/UI/UIEvents';
 import { processExternalDeviceRequest } from '../../device-selection';
-import { NOTIFICATION_TIMEOUT_TYPE, showNotification, showWarningNotification } from '../../notifications';
+import {
+    NOTIFICATION_TIMEOUT_TYPE,
+    showNotification,
+    showWarningNotification
+} from '../../notifications';
 import { replaceAudioTrackById, replaceVideoTrackById, setDeviceStatusWarning } from '../../prejoin/actions';
 import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
@@ -294,8 +298,8 @@ function _checkAndNotifyForNewDevice(store, newDevices, oldDevices) {
             dispatch(showNotification({
                 description,
                 titleKey,
-                customActionNameKey: 'notify.newDeviceAction',
-                customActionHandler: _useDevice.bind(undefined, store, devicesArray)
+                customActionNameKey: [ 'notify.newDeviceAction' ],
+                customActionHandler: [ _useDevice.bind(undefined, store, devicesArray) ]
             }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
         }
     });

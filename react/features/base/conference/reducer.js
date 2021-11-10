@@ -20,7 +20,8 @@ import {
     SET_PASSWORD,
     SET_PENDING_SUBJECT_CHANGE,
     SET_ROOM,
-    SET_START_MUTED_POLICY
+    SET_START_MUTED_POLICY,
+    SET_START_REACTIONS_MUTED
 } from './actionTypes';
 import { isRoomValid } from './functions';
 
@@ -76,6 +77,9 @@ ReducerRegistry.register(
 
         case SET_FOLLOW_ME:
             return set(state, 'followMeEnabled', action.enabled);
+
+        case SET_START_REACTIONS_MUTED:
+            return set(state, 'startReactionsMuted', action.muted);
 
         case SET_LOCATION_URL:
             return set(state, 'room', undefined);
