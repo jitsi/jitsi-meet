@@ -1,22 +1,27 @@
-self.importScripts('face-api-fix.js');
-self.importScripts('face-api.min.js');
+// @flow
+import './faceApiPatch';
+import * as faceapi from 'face-api.js';
 
 /**
  * A flag that indicates whether the tensorflow models were loaded or not.
  */
 let modelsLoaded = false;
+
 /**
  * A flag that indicates whether the tensorflow backend is set or not.
  */
 let backendSet = false;
+
 /**
  * A timer variable for set interval.
  */
-var timer;
+let timer;
+
 /**
- * The duration of the set timeout
+ * The duration of the set timeout.
  */
 let timeoutDuration = -1;
+
 /**
  * Time used for detection interval when facial expressions worker uses webgl backend.
  */
@@ -27,7 +32,8 @@ const WEBGL_TIME_INTERVAL = 1000;
  */
 const CPU_TIME_INTERVAL = 6000;
 
-var window = {
+// eslint-disable-next-line no-unused-vars
+const window = {
     screen: {
         width: 1280,
         height: 720
@@ -35,16 +41,17 @@ var window = {
 
 };
 
+
 onmessage = async function(message) {
-    //Receives image data
+    // Receives image data
     if (message.data.id === 'SET_TIMEOUT') {
 
         if (message.data.imageData === null || message.data.imageData === undefined) {
             return;
         }
-        
-        //the models are loaded
-        if(!modelsLoaded) {
+
+        // the models are loaded
+        if (!modelsLoaded) {
             await faceapi.loadTinyFaceDetectorModel('.');
             await faceapi.loadFaceExpressionModel('.');
             modelsLoaded = true;
@@ -56,20 +63,21 @@ onmessage = async function(message) {
                 tensor,
                 new faceapi.TinyFaceDetectorOptions()
         ).withFaceExpressions();
-        
+
         // The backend is set
         if (!backendSet) {
             const backend = faceapi.tf.getBackend();
+
             if (backend !== undefined) {
                 if (backend === 'webgl') {
                     timeoutDuration = WEBGL_TIME_INTERVAL;
                 } else if (backend === 'cpu') {
                     timeoutDuration = CPU_TIME_INTERVAL;
                 }
-                postMessage({
+                self.postMessage({
                     type: 'tf-backend',
-                    value: backend,
-                })
+                    value: backend
+                });
                 backendSet = true;
             }
         }
@@ -82,27 +90,27 @@ onmessage = async function(message) {
         }
 
         if (timeoutDuration === -1) {
-            
-                postMessage({
-                    type: 'facial-expression',
-                    value: facialExpression
-                });
+
+            self.postMessage({
+                type: 'facial-expression',
+                value: facialExpression
+            });
         } else {
-            timer = setTimeout(() =>{
-                postMessage({
+            timer = setTimeout(() => {
+                self.postMessage({
                     type: 'facial-expression',
                     value: facialExpression
                 });
             }, timeoutDuration);
         }
-        
+
 
     } else if (message.data.id === 'CLEAR_TIMEOUT') {
-        //Clear the timeout.
+        // Clear the timeout.
         if (timer) {
             clearTimeout(timer);
             timer = null;
         }
     }
-    
+
 };

@@ -29,7 +29,7 @@ clean:
 	rm -fr $(BUILD_DIR)
 
 .NOTPARALLEL:
-deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-libflac deploy-olm deploy-css deploy-local
+deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-libflac deploy-olm deploy-css deploy-local deploy-facial-expressions
 
 deploy-init:
 	rm -fr $(DEPLOY_DIR)
@@ -93,9 +93,11 @@ deploy-meet-models:
 		$(MEET_MODELS_DIR)/*.tflite \
 		$(DEPLOY_DIR)
 
-deploy-facial-model:
+deploy-facial-expressions:
 	cp \
 		$(FACIAL_MODELS_DIR)/* \
+		$(BUILD_DIR)/facial-expressions-worker.min.js \
+		$(BUILD_DIR)/facial-expressions-worker.min.map \
 		$(DEPLOY_DIR)
 
 deploy-css:
@@ -107,7 +109,7 @@ deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
 .NOTPARALLEL:
-dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-facial-model deploy-lib-jitsi-meet deploy-libflac deploy-olm
+dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-libflac deploy-olm deploy-facial-expressions
 	$(WEBPACK_DEV_SERVER)
 
 source-package:

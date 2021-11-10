@@ -56,7 +56,7 @@ export function loadWorker() {
 
             return;
         }
-        worker = new Worker('libs/facialExpressionWorker.js', { name: 'Facial Expression Worker' });
+        worker = new Worker('libs/facial-expressions-worker.min.js', { name: 'Facial Expression Worker' });
         worker.onmessage = function(e: Object) {
             const { type, value } = e.data;
 

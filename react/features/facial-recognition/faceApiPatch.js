@@ -37,7 +37,6 @@ function Storage () {
 	this.removeItem = function(id){ return delete _data[id]; };
 	this.setItem = function(id, val){ return _data[id] = String(val); };
 }
-// eslint-disable-next-line require-jsdoc
 class Document extends EventTarget {}
 
 self.document = new Document();
