@@ -8,7 +8,8 @@ import { Platform } from 'react-native';
 import {
     Icon,
     IconClose,
-    IconHelp, IconHome,
+    IconHelp,
+    IconHome,
     IconInfo,
     IconSettings
 } from '../../../base/icons';
