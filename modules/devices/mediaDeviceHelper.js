@@ -62,7 +62,7 @@ function getNewAudioInputDevice(newDevices, localAudio, newLabel) {
     const selectedAudioInputDeviceId = getUserSelectedMicDeviceId(APP.store.getState());
     const selectedAudioInputDevice = availableAudioInputDevices.find(
         d => d.deviceId === selectedAudioInputDeviceId);
-    const localAudioDeviceId = localAudio.getDeviceId();
+    const localAudioDeviceId = localAudio?.getDeviceId();
     const localAudioDevice = availableAudioInputDevices.find(
         d => d.deviceId === localAudioDeviceId);
 
@@ -114,7 +114,7 @@ function getNewVideoInputDevice(newDevices, localVideo, newLabel) {
     const selectedVideoInputDeviceId = getUserSelectedCameraDeviceId(APP.store.getState());
     const selectedVideoInputDevice = availableVideoInputDevices.find(
         d => d.deviceId === selectedVideoInputDeviceId);
-    const localVideoDeviceId = localVideo.getDeviceId();
+    const localVideoDeviceId = localVideo?.getDeviceId();
     const localVideoDevice = availableVideoInputDevices.find(
         d => d.deviceId === localVideoDeviceId);
 
