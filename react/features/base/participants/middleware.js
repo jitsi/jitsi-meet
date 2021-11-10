@@ -555,8 +555,8 @@ function _raiseHandUpdated({ dispatch, getState }, conference, participantId, ne
     }
 
     const action = shouldDisplayAllowAction ? {
-        customActionNameKey: 'notify.allowAction',
-        customActionHandler: () => dispatch(approveParticipant(participantId))
+        customActionNameKey: [ 'notify.allowAction' ],
+        customActionHandler: [ () => dispatch(approveParticipant(participantId)) ]
     } : {};
 
     if (raisedHandTimestamp) {

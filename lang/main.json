@@ -633,6 +633,7 @@
         "moderationToggleDescription": "by {{participantDisplayName}}",
         "raiseHandAction": "Raise hand",
         "reactionSounds": "Disable sounds",
+        "reactionSoundsForAll": "Disable sounds for all",
         "groupTitle": "Notifications",
         "videoUnmuteBlockedTitle": "Camera unmute blocked!",
         "videoUnmuteBlockedDescription": "Camera unmute operation has been temporarily blocked because of system limits."
@@ -660,7 +661,8 @@
             "stopEveryonesVideo": "Stop everyone's video",
             "stopVideo": "Stop video",
             "unblockEveryoneMicCamera": "Unblock everyone's mic and camera",
-            "videoModeration": "Start their video"
+            "videoModeration": "Start their video",
+            "moreModerationControls": "More moderation controls"
         },
         "search": "Search participants"
     },
@@ -855,6 +857,7 @@
         "sounds": "Sounds",
         "speakers": "Speakers",
         "startAudioMuted": "Everyone starts muted",
+        "startReactionsMuted": "Mute reaction sounds for everyone",
         "startVideoMuted": "Everyone starts hidden",
         "talkWhileMuted": "Talk while muted",
         "title": "Settings"

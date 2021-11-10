@@ -128,17 +128,17 @@ class Notification extends AbstractNotification<Props> {
             ];
 
         default:
-            if (this.props.customActionNameKey && this.props.customActionHandler) {
-                return [
-                    {
-                        content: this.props.t(this.props.customActionNameKey),
+            if (this.props.customActionNameKey?.length && this.props.customActionHandler?.length) {
+                return this.props.customActionNameKey.map((customAction: string, customActionIndex: number) => {
+                    return {
+                        content: this.props.t(customAction),
                         onClick: () => {
-                            if (this.props.customActionHandler()) {
+                            if (this.props.customActionHandler[customActionIndex]()) {
                                 this._onDismissed();
                             }
                         }
-                    }
-                ];
+                    };
+                });
             }
 
             return [];

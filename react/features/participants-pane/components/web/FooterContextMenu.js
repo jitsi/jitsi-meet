@@ -17,12 +17,17 @@ import {
 } from '../../../av-moderation/functions';
 import { ContextMenu, ContextMenuItemGroup } from '../../../base/components';
 import { openDialog } from '../../../base/dialog';
-import { IconCheck, IconVideoOff } from '../../../base/icons';
+import {
+    IconCheck,
+    IconHorizontalPoints,
+    IconVideoOff
+} from '../../../base/icons';
 import { MEDIA_TYPE } from '../../../base/media';
 import {
     getParticipantCount,
     isEveryoneModerator
 } from '../../../base/participants';
+import { openSettingsDialog, SETTINGS_TABS } from '../../../settings';
 import { MuteEveryonesVideoDialog } from '../../../video-menu/components';
 
 const useStyles = makeStyles(theme => {
@@ -95,6 +100,8 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: Props
     const muteAllVideo = useCallback(
         () => dispatch(openDialog(MuteEveryonesVideoDialog)), [ dispatch ]);
 
+    const openModeratorSettings = () => dispatch(openSettingsDialog(SETTINGS_TABS.MODERATOR));
+
     const actions = [
         {
             accessibilityLabel: t('participantsPane.actions.audioModeration'),
@@ -139,6 +146,14 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: Props
                     </div>
                 </ContextMenuItemGroup>
             )}
+            <ContextMenuItemGroup
+                actions = { [ {
+                    accessibilityLabel: t('participantsPane.actions.moreModerationControls'),
+                    id: 'participants-pane-open-moderation-control-settings',
+                    icon: IconHorizontalPoints,
+                    onClick: openModeratorSettings,
+                    text: t('participantsPane.actions.moreModerationControls')
+                } ] } />
         </ContextMenu>
     );
 };

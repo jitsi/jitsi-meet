@@ -15,9 +15,11 @@ import { SETTINGS_UPDATED } from './actionTypes';
  *         localFlipX: boolean,
  *         micDeviceId: string,
  *         serverURL: string,
+ *         soundsReactions: boolean,
  *         startAudioOnly: boolean,
  *         startWithAudioMuted: boolean,
- *         startWithVideoMuted: boolean
+ *         startWithVideoMuted: boolean,
+ *         startWithReactionsMuted: boolean
  *     }
  * }}
  */
