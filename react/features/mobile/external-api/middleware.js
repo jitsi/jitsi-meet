@@ -17,15 +17,16 @@ import {
     getCurrentConference,
     isRoomValid
 } from '../../base/conference';
-import { LOAD_CONFIG_ERROR } from '../../base/config';
 import {
     CONNECTION_DISCONNECTED,
-    CONNECTION_FAILED,
     JITSI_CONNECTION_CONFERENCE_KEY,
     JITSI_CONNECTION_URL_KEY,
     getURLWithoutParams
 } from '../../base/connection';
-import { JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
+import {
+    isFatalJitsiConferenceError,
+    isFatalJitsiConnectionError,
+    JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../base/media';
 import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
 import {
@@ -40,6 +41,7 @@ import { toggleScreensharing } from '../../base/tracks';
 import { OPEN_CHAT, CLOSE_CHAT } from '../../chat';
 import { openChat } from '../../chat/actions';
 import { sendMessage, setPrivateMessageRecipient, closeChat } from '../../chat/actions.any';
+import { SET_PAGE_RELOAD_OVERLAY_CANCELED } from '../../overlay/actionTypes';
 import { muteLocal } from '../../video-menu/actions';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 
@@ -114,7 +116,7 @@ MiddlewareRegistry.register(store => next => action => {
         // counterpart of the External API (or at least not in the
         // fatality/finality semantics attributed to
         // conferenceFailed:/onConferenceFailed).
-        if (!error.recoverable) {
+        if (!error.recoverable && !isFatalJitsiConnectionError(error) && !isFatalJitsiConferenceError(error)) {
             _sendConferenceEvent(store, /* action */ {
                 error: _toErrorString(error),
                 ...data
@@ -154,27 +156,9 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case CONNECTION_FAILED:
-        !action.error.recoverable
-            && _sendConferenceFailedOnConnectionError(store, action);
-        break;
-
     case ENTER_PICTURE_IN_PICTURE:
         sendEvent(store, type, /* data */ {});
         break;
-
-    case LOAD_CONFIG_ERROR: {
-        const { error, locationURL } = action;
-
-        sendEvent(
-            store,
-            CONFERENCE_TERMINATED,
-            /* data */ {
-                error: _toErrorString(error),
-                url: _normalizeUrl(locationURL)
-            });
-        break;
-    }
 
     case OPEN_CHAT:
     case CLOSE_CHAT: {
@@ -219,6 +203,16 @@ MiddlewareRegistry.register(store => next => action => {
             });
         break;
 
+    case SET_PAGE_RELOAD_OVERLAY_CANCELED:
+        sendEvent(
+            store,
+            CONFERENCE_TERMINATED,
+            /* data */ {
+                error: _toErrorString(action.error),
+                url: _normalizeUrl(store.getState()['features/base/connection'].locationURL)
+            });
+
+        break;
     case SET_VIDEO_MUTED:
         sendEvent(
             store,
@@ -549,36 +543,6 @@ function _sendConferenceEvent(
     }
 
     sendEvent(store, type_, data);
-}
-
-/**
- * Sends {@link CONFERENCE_TERMINATED} event when the {@link CONNECTION_FAILED}
- * occurs. It should be done only if the connection fails before the conference
- * instance is created. Otherwise the eventual failure event is supposed to be
- * emitted by the base/conference feature.
- *
- * @param {Store} store - The redux store.
- * @param {Action} action - The redux action.
- * @returns {void}
- */
-function _sendConferenceFailedOnConnectionError(store, action) {
-    const { locationURL } = store.getState()['features/base/connection'];
-    const { connection } = action;
-
-    locationURL
-        && forEachConference(
-            store,
-
-            // If there's any conference in the  base/conference state then the
-            // base/conference feature is supposed to emit a failure.
-            conference => conference.getConnection() !== connection)
-        && sendEvent(
-        store,
-        CONFERENCE_TERMINATED,
-        /* data */ {
-            url: _normalizeUrl(locationURL),
-            error: action.error.name
-        });
 }
 
 /**

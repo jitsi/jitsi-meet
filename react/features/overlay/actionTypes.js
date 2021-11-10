@@ -36,3 +36,14 @@ export const TOGGLE_SLOW_GUM_OVERLAY = 'TOGGLE_SLOW_GUM_OVERLAY';
  * @public
  */
 export const SET_FATAL_ERROR = 'SET_FATAL_ERROR';
+
+/**
+ * The type of the Redux action which signals that the overlay was canceled.
+ *
+ * {
+ *     type: export const SET_PAGE_RELOAD_OVERLAY_CANCELED
+ * }
+ * @public
+ */
+export const SET_PAGE_RELOAD_OVERLAY_CANCELED
+    = 'SET_PAGE_RELOAD_OVERLAY_CANCELED';

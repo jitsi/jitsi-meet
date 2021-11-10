@@ -3,6 +3,7 @@
 import {
     MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
     SET_FATAL_ERROR,
+    SET_PAGE_RELOAD_OVERLAY_CANCELED,
     TOGGLE_SLOW_GUM_OVERLAY
 } from './actionTypes';
 
@@ -61,5 +62,22 @@ export function setFatalError(fatalError: Object) {
     return {
         type: SET_FATAL_ERROR,
         fatalError
+    };
+}
+
+/**
+ * The action indicates that the overlay was canceled.
+ *
+ * @param {Object} error - The error that caused the display of the overlay.
+ *
+ * @returns {{
+    *     type: SET_PAGE_RELOAD_OVERLAY_CANCELED,
+    *     error: ?Error
+    * }}
+    */
+export function setPageReloadOverlayCanceled(error: Object) {
+    return {
+        type: SET_PAGE_RELOAD_OVERLAY_CANCELED,
+        error
     };
 }
