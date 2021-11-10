@@ -6,7 +6,6 @@ import { withStyles } from '@material-ui/styles';
 import React, { Component } from 'react';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
-import { NOTIFICATION_TIMEOUT } from '../../../../features/notifications';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import { hideNotification } from '../../actions';
@@ -31,12 +30,6 @@ type Props = {
      * notification at the top and the rest shown below it in order.
      */
     _notifications: Array<Object>,
-
-    /**
-     * The length, in milliseconds, to use as a default timeout for all
-     * dismissible timeouts that do not have a timeout specified.
-     */
-    autoDismissTimeout: number,
 
     /**
      * JSS classes object.
@@ -259,14 +252,14 @@ class NotificationsContainer extends Component<Props> {
      * @returns {void}
      */
     _updateTimeouts() {
-        const { _notifications, autoDismissTimeout } = this.props;
+        const { _notifications } = this.props;
 
         for (const notification of _notifications) {
-            if ((notification.timeout || typeof autoDismissTimeout === 'number')
+            if (notification.timeout
                     && notification.props.isDismissAllowed !== false
                     && !this._timeouts.has(notification.uid)) {
                 const {
-                    timeout = autoDismissTimeout,
+                    timeout,
                     uid
                 } = notification;
                 const timerID = setTimeout(() => {
@@ -289,15 +282,13 @@ class NotificationsContainer extends Component<Props> {
 function _mapStateToProps(state) {
     const { notifications } = state['features/notifications'];
     const { iAmSipGateway } = state['features/base/config'];
-    const { notificationTimeouts } = state['features/base/config'];
     const { isOpen: isChatOpen } = state['features/chat'];
     const _visible = areThereNotifications(state);
 
     return {
         _iAmSipGateway: Boolean(iAmSipGateway),
         _isChatOpen: isChatOpen,
-        _notifications: _visible ? notifications : [],
-        autoDismissTimeout: notificationTimeouts?.long ?? NOTIFICATION_TIMEOUT.LONG
+        _notifications: _visible ? notifications : []
     };
 }
 
