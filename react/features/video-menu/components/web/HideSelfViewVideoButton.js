@@ -2,13 +2,12 @@
 
 import React, { PureComponent } from 'react';
 
+import ContextMenuItem from '../../../base/components/context-menu/ContextMenuItem';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import { updateSettings } from '../../../base/settings';
 import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../../../notifications';
 import { openSettingsDialog, SETTINGS_TABS } from '../../../settings';
-
-import VideoMenuButton from './VideoMenuButton';
 
 /**
  * The type of the React {@code Component} props of {@link HideSelfViewVideoButton}.
@@ -24,6 +23,11 @@ type Props = {
      * The redux dispatch function.
      */
     dispatch: Function,
+
+    /**
+     * Button text class name.
+     */
+    className: string,
 
     /**
      * Click handler executed aside from the main action.
@@ -63,15 +67,18 @@ class HideSelfViewVideoButton extends PureComponent<Props> {
      */
     render() {
         const {
+            className,
             t
         } = this.props;
 
         return (
-            <VideoMenuButton
-                buttonText = { t('videothumbnail.hideSelfView') }
-                displayClass = 'hideselflink'
-                id = 'hideselfviewbutton'
-                onClick = { this._onClick } />
+            <ContextMenuItem
+                accessibilityLabel = { t('videothumbnail.hideSelfView') }
+                className = 'hideselflink'
+                id = 'hideselfviewButton'
+                onClick = { this._onClick }
+                text = { t('videothumbnail.hideSelfView') }
+                textClassName = { className } />
         );
     }
 

@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+import ContextMenuItem from '../../../base/components/context-menu/ContextMenuItem';
 import { translate } from '../../../base/i18n';
 import { IconCrown } from '../../../base/icons';
 import { connect } from '../../../base/redux';
@@ -9,8 +10,6 @@ import AbstractGrantModeratorButton, {
     _mapStateToProps,
     type Props
 } from '../AbstractGrantModeratorButton';
-
-import VideoMenuButton from './VideoMenuButton';
 
 declare var interfaceConfig: Object;
 
@@ -37,20 +36,20 @@ class GrantModeratorButton extends AbstractGrantModeratorButton {
      * @returns {ReactElement}
      */
     render() {
-        const { participantID, t, visible } = this.props;
+        const { t, visible } = this.props;
 
         if (!visible) {
             return null;
         }
 
         return (
-            <VideoMenuButton
-                buttonText = { t('videothumbnail.grantModerator') }
-                displayClass = 'grantmoderatorlink'
+            <ContextMenuItem
+                accessibilityLabel = { t('toolbar.accessibilityLabel.grantModerator') }
+                className = 'grantmoderatorlink'
                 icon = { IconCrown }
-                id = { `grantmoderatorlink_${participantID}` }
                 // eslint-disable-next-line react/jsx-handler-names
-                onClick = { this._handleClick } />
+                onClick = { this._handleClick }
+                text = { t('videothumbnail.grantModerator') } />
         );
     }
 

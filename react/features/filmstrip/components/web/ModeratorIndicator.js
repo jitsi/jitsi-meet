@@ -1,8 +1,8 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React from 'react';
 
-import { IconModerator } from '../../../base/icons';
+import { IconCrown } from '../../../base/icons';
 import { BaseIndicator } from '../../../base/react';
 
 /**
@@ -19,27 +19,14 @@ type Props = {
 /**
  * React {@code Component} for showing a moderator icon with a tooltip.
  *
- * @augments Component
+ * @returns {Component}
  */
-class ModeratorIndicator extends Component<Props> {
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    render() {
-        return (
-            <div className = 'moderator-icon right'>
-                <BaseIndicator
-                    className = 'focusindicator toolbar-icon'
-                    icon = { IconModerator }
-                    iconSize = { 13 }
-                    tooltipKey = 'videothumbnail.moderator'
-                    tooltipPosition = { this.props.tooltipPosition } />
-            </div>
-        );
-    }
-}
+const ModeratorIndicator = ({ tooltipPosition }: Props) => (
+    <BaseIndicator
+        icon = { IconCrown }
+        iconSize = { 15 }
+        tooltipKey = 'videothumbnail.moderator'
+        tooltipPosition = { tooltipPosition } />
+);
 
 export default ModeratorIndicator;

@@ -13,9 +13,6 @@ $hangupFontSize: 2em;
  */
 
 // Video layout.
-$thumbnailToolbarHeight: 22px;
-$thumbnailIndicatorBorder: 2px;
-$thumbnailIndicatorSize: $thumbnailToolbarHeight;
 $thumbnailVideoMargin: 2px;
 $thumbnailsBorder: 2px;
 $thumbnailVideoBorder: 2px;
@@ -56,19 +53,12 @@ $overflowMenuItemBackground: #36383C;
 /**
  * Video layout
  */
-$videoThumbnailHovered: rgba(22, 94, 204, .4);
-$videoThumbnailSelected: #165ECC;
 $participantNameColor: #fff;
-$thumbnailPictogramColor: #fff;
-$dominantSpeakerBg: #165ecc;
-$raiseHandBg: #F8AE1A;
 $audioLevelBg: #44A5FF;
-$connectionIndicatorBg: #165ecc;
 $audioLevelShadow: rgba(9, 36, 77, 0.9);
 $videoStateIndicatorColor: $defaultColor;
 $videoStateIndicatorBackground: $toolbarBackground;
 $videoStateIndicatorSize: 40px;
-$remoteVideoMenuIconMargin: initial;
 
 /**
  * Feedback Modal
@@ -102,7 +92,6 @@ $sidebarWidth: 315px;
  * Misc.
  */
 $borderRadius: 4px;
-$popoverMenuPadding: 13px;
 $happySoftwareBackground: transparent;
 $desktopAppDragBarHeight: 25px;
 $scrollHeight: 7px;
@@ -118,7 +107,6 @@ $toolbarBackgroundZ: 4;
 $labelsZ: 5;
 $subtitlesZ: 7;
 $popoverZ: 8;
-$zindex10: 10;
 $reloadZ: 20;
 $poweredByZ: 100;
 $ringingZ: 300;
