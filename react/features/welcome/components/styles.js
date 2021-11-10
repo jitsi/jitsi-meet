@@ -10,7 +10,7 @@ export const PLACEHOLDER_TEXT_COLOR = 'rgba(255, 255, 255, 0.5)';
 
 export const DRAWER_AVATAR_SIZE = 104;
 
-const DRAWER_HEADER_HEIGHT = 224;
+const DRAWER_HEADER_HEIGHT = 220;
 
 export const SWITCH_THUMB_COLOR = ColorPalette.blueHighlight;
 
@@ -81,7 +81,6 @@ export default {
      */
     drawerStyle: {
         backgroundColor: BaseTheme.palette.ui12,
-        paddingBottom: BaseTheme.spacing[8],
         width: '54%'
     },
 

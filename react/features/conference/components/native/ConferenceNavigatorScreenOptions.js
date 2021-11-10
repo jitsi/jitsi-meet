@@ -8,7 +8,7 @@ import { Platform } from 'react-native';
 import {
     Icon,
     IconClose,
-    IconHelp,
+    IconHelp, IconHome,
     IconInfo,
     IconSettings
 } from '../../../base/icons';
@@ -86,6 +86,12 @@ export const drawerScreenOptions = {
  */
 export const welcomeScreenOptions = {
     ...drawerScreenOptions,
+    drawerIcon: ({ focused }) => (
+        <Icon
+            color = { focused ? BaseTheme.palette.screen01Header : BaseTheme.palette.field01Disabled }
+            size = { 20 }
+            src = { IconHome } />
+    ),
     headerTitleStyle: {
         color: BaseTheme.palette.screen01Header
     }
@@ -97,9 +103,9 @@ export const welcomeScreenOptions = {
 export const settingsScreenOptions = {
     ...drawerScreenOptions,
     gestureEnabled: false,
-    drawerIcon: () => (
+    drawerIcon: ({ focused }) => (
         <Icon
-            color = { BaseTheme.palette.screen01Header }
+            color = { focused ? BaseTheme.palette.screen01Header : BaseTheme.palette.field01Disabled }
             size = { 20 }
             src = { IconSettings } />
     ),
@@ -114,9 +120,9 @@ export const settingsScreenOptions = {
 export const termsAndPrivacyScreenOptions = {
     ...drawerScreenOptions,
     gestureEnabled: false,
-    drawerIcon: () => (
+    drawerIcon: ({ focused }) => (
         <Icon
-            color = { BaseTheme.palette.screen01Header }
+            color = { focused ? BaseTheme.palette.screen01Header : BaseTheme.palette.field01Disabled }
             size = { 20 }
             src = { IconInfo } />
     ),
@@ -131,9 +137,9 @@ export const termsAndPrivacyScreenOptions = {
 export const helpScreenOptions = {
     ...drawerScreenOptions,
     gestureEnabled: false,
-    drawerIcon: () => (
+    drawerIcon: ({ focused }) => (
         <Icon
-            color = { BaseTheme.palette.screen01Header }
+            color = { focused ? BaseTheme.palette.screen01Header : BaseTheme.palette.field01Disabled }
             size = { 20 }
             src = { IconHelp } />
     ),

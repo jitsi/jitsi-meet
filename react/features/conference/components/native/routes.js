@@ -1,6 +1,6 @@
 export const screen = {
     welcome: {
-        main: 'Welcome',
+        main: 'Home',
         settings: 'Settings',
         terms: 'Terms',
         privacy: 'Privacy',
