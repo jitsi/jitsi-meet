@@ -1,5 +1,5 @@
-import rtcstatsInit from 'rtcstats/rtcstats';
-import traceInit from 'rtcstats/trace-ws';
+import rtcstatsInit from '@jitsi/rtcstats/rtcstats';
+import traceInit from '@jitsi/rtcstats/trace-ws';
 
 import {
     createRTCStatsTraceCloseEvent,
