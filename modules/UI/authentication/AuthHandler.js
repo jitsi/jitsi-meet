@@ -1,6 +1,6 @@
 // @flow
 
-import Logger from 'jitsi-meet-logger';
+import Logger from '@jitsi/logger';
 
 import { openConnection } from '../../../connection';
 import {

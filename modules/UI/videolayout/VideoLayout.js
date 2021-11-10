@@ -1,6 +1,6 @@
 /* global APP  */
 
-import Logger from 'jitsi-meet-logger';
+import Logger from '@jitsi/logger';
 
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media';
 import {

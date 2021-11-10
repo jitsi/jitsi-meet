@@ -1,8 +1,8 @@
 /* global APP, JitsiMeetJS, config, interfaceConfig */
 
 import { jitsiLocalStorage } from '@jitsi/js-utils';
+import Logger from '@jitsi/logger';
 import EventEmitter from 'events';
-import Logger from 'jitsi-meet-logger';
 
 import { openConnection } from './connection';
 import { ENDPOINT_TEXT_MESSAGE_NAME } from './modules/API/constants';

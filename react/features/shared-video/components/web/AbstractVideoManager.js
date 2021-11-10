@@ -1,6 +1,6 @@
 /* @flow */
 /* eslint-disable no-invalid-this */
-import Logger from 'jitsi-meet-logger';
+import Logger from '@jitsi/logger';
 import throttle from 'lodash/throttle';
 import { PureComponent } from 'react';
 

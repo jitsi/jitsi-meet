@@ -1,6 +1,6 @@
 /* @flow */
 
-import Logger from 'jitsi-meet-logger';
+import Logger from '@jitsi/logger';
 
 import { APP_WILL_MOUNT } from '../app';
 import { CONFERENCE_JOINED, getCurrentConference } from '../conference';
