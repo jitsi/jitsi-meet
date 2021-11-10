@@ -97,7 +97,7 @@ deploy-facial-expressions:
 	cp \
 		$(FACIAL_MODELS_DIR)/* \
 		$(BUILD_DIR)/facial-expressions-worker.min.js \
-		$(BUILD_DIR)/facial-expressions-worker.min.map \
+		$(BUILD_DIR)/facial-expressions-worker.min.js.map \
 		$(DEPLOY_DIR)
 
 deploy-css:
