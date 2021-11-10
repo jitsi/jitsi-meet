@@ -173,6 +173,9 @@ export const colorMap = {
     // Quaternary color for disabled actions
     icon04: 'surface14',
 
+    // Quinary color for disabled actions
+    icon05: 'surface04',
+
     // Error message
     iconError: 'error06',
 

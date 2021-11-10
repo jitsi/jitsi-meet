@@ -6,8 +6,8 @@ import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
-import { getFieldValue } from '../../base/react';
-import { isSpeakerStatsSearchDisabled } from '../functions';
+import { getFieldValue } from '../../../base/react';
+import { isSpeakerStatsSearchDisabled } from '../../functions';
 
 const useStyles = makeStyles(theme => {
     return {

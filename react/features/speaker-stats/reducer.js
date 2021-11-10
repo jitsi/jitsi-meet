@@ -17,6 +17,7 @@ import {
  */
 const INITIAL_STATE = {
     stats: {},
+    isOpen: false,
     pendingReorder: true,
     criteria: null
 };

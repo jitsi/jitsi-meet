@@ -2,9 +2,9 @@
 
 import React, { Component } from 'react';
 
-import { translate } from '../../base/i18n';
-import { Tooltip } from '../../base/tooltip';
-import { FACIAL_EXPRESSION_EMOJIS } from '../../facial-recognition/constants.js';
+import { translate } from '../../../base/i18n';
+import { Tooltip } from '../../../base/tooltip';
+import { FACIAL_EXPRESSION_EMOJIS } from '../../../facial-recognition/constants.js';
 
 /**
  * The type of the React {@code Component} props of {@link SpeakerStatsLabels}.
@@ -24,7 +24,7 @@ type Props = {
     /**
      * The function to translate human-readable text.
      */
-    t: Function,
+    t: Function
 };
 
 /**
@@ -57,7 +57,7 @@ class SpeakerStatsLabels extends Component<Props> {
                     }` }>
                     { t('speakerStats.speakerTime') }
                 </div>
-                {this.props.showFacialExpressions
+                { this.props.showFacialExpressions
                     && (this.props.reduceExpressions
                         ? Object.keys(FACIAL_EXPRESSION_EMOJIS)
                             .filter(expression => ![ 'angry', 'fearful', 'disgusted' ].includes(expression))
