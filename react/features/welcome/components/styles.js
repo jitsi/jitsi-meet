@@ -2,17 +2,17 @@
 
 import { StyleSheet } from 'react-native';
 
-import { BoxModel, ColorPalette } from '../../base/styles';
+import { BoxModel } from '../../base/styles';
 import BaseTheme from '../../base/ui/components/BaseTheme.native';
 
 
-export const PLACEHOLDER_TEXT_COLOR = 'rgba(255, 255, 255, 0.5)';
+export const PLACEHOLDER_TEXT_COLOR = BaseTheme.palette.text01;
 
 export const DRAWER_AVATAR_SIZE = 104;
 
 const DRAWER_HEADER_HEIGHT = 220;
 
-export const SWITCH_THUMB_COLOR = ColorPalette.blueHighlight;
+export const SWITCH_THUMB_COLOR = BaseTheme.palette.action04;
 
 export const SWITCH_UNDER_COLOR = 'rgba(0, 0, 0, 0.4)';
 
@@ -207,6 +207,13 @@ export default {
         justifyContent: 'center'
     },
 
+    drawerNavigationIcon: {
+        height: BaseTheme.spacing[6],
+        marginLeft: BaseTheme.spacing[1],
+        marginTop: BaseTheme.spacing[1],
+        width: BaseTheme.spacing[6]
+    },
+
     /**
      * The container of the label of the audio-video switch.
      */
@@ -246,13 +253,13 @@ export default {
     },
 
     insecureRoomNameWarningIcon: {
-        color: ColorPalette.warning,
+        color: BaseTheme.palette.warning03,
         fontSize: 24,
         marginRight: 10
     },
 
     insecureRoomNameWarningText: {
-        color: ColorPalette.warning,
+        color: BaseTheme.palette.warning03,
         flex: 1
     },
 

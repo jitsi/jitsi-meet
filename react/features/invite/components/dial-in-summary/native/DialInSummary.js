@@ -85,6 +85,7 @@ class DialInSummary extends Component<Props> {
                     onError = { this._onError }
                     onShouldStartLoadWithRequest = { this._onNavigate }
                     renderLoading = { this._renderLoading }
+                    setSupportMultipleWindows = { false }
                     source = {{ uri: getDialInfoPageURLForURIString(summaryUrl) }}
                     startInLoadingState = { true }
                     style = { styles.webView } />

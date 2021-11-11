@@ -1,7 +1,8 @@
 import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
-import { BoxModel, ColorPalette, fixAndroidViewClipping } from '../../../base/styles';
+import { BoxModel, fixAndroidViewClipping } from '../../../base/styles';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
-export const INSECURE_ROOM_NAME_LABEL_COLOR = ColorPalette.warning;
+export const INSECURE_ROOM_NAME_LABEL_COLOR = BaseTheme.palette.warning03;
 
 const NAVBAR_BUTTON_SIZE = 24;
 
@@ -15,7 +16,7 @@ export default {
      */
     conference: fixAndroidViewClipping({
         alignSelf: 'stretch',
-        backgroundColor: '#040404',
+        backgroundColor: BaseTheme.palette.uiBackground,
         flex: 1
     }),
 
@@ -23,8 +24,14 @@ export default {
         margin: 10
     },
 
-    headerNavigationButton: {
+    headerNavigationIcon: {
         marginLeft: 12
+    },
+
+    headerNavigationButton: {
+        height: BaseTheme.spacing[6],
+        marginTop: BaseTheme.spacing[3],
+        width: BaseTheme.spacing[6]
     },
 
     /**
@@ -45,17 +52,17 @@ export default {
     inviteButton: {
         iconStyle: {
             padding: 10,
-            color: ColorPalette.white,
+            color: BaseTheme.palette.icon01,
             fontSize: NAVBAR_BUTTON_SIZE
         },
-        underlayColor: ColorPalette.buttonUnderlay
+        underlayColor: BaseTheme.spacing.underlay01
     },
 
     lonelyButton: {
         alignItems: 'center',
         borderRadius: 24,
         flexDirection: 'row',
-        height: 48,
+        height: BaseTheme.spacing[6],
         justifyContent: 'space-around',
         paddingHorizontal: 12
     },
@@ -84,10 +91,10 @@ export default {
     pipButton: {
         iconStyle: {
             padding: 10,
-            color: ColorPalette.white,
+            color: BaseTheme.palette.icon01,
             fontSize: NAVBAR_BUTTON_SIZE
         },
-        underlayColor: ColorPalette.buttonUnderlay
+        underlayColor: BaseTheme.palette.underlay01
     },
 
     navBarSafeView: {
@@ -107,7 +114,7 @@ export default {
     },
 
     roomTimer: {
-        color: ColorPalette.white,
+        color: BaseTheme.palette.text01,
         fontSize: 12,
         fontWeight: '400',
         paddingHorizontal: 8
@@ -123,7 +130,7 @@ export default {
     },
 
     roomName: {
-        color: ColorPalette.white,
+        color: BaseTheme.palette.text01,
         fontSize: 14,
         fontWeight: '400'
     },

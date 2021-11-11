@@ -33,12 +33,14 @@ export const colors = {
     surface10: '#E0E0E0',
     surface11: '#FFF',
     surface12: '#AAAAAA',
+    surface13: '#495258',
 
     success04: '#189B55',
     success05: '#1EC26A',
 
     warning05: '#F8AE1A',
-    warning06: '#ED9E1B'
+    warning06: '#ED9E1B',
+    warning07: '#D77976'
 };
 
 // Mapping between the token used and the color
@@ -56,6 +58,7 @@ export const colorMap = {
 
     // Primary buttons
     action01: 'primary05',
+    action04: 'primary11',
 
     // Screen header
     screen01Header: 'primary10',
@@ -119,6 +122,9 @@ export const colorMap = {
 
     // Disabled state for danger buttons
     actionDangerDisabled: 'error03',
+
+    // Underlay color for buttons
+    underlay01: 'surface13',
 
     // Bottom sheet background
     bottomSheet: 'surface00',
@@ -224,7 +230,10 @@ export const colorMap = {
     warning01: 'warning05',
 
     // Color for indicating a raised hand
-    warning02: 'warning06'
+    warning02: 'warning06',
+
+    // Color for insecure room
+    warning03: 'warning07'
 };
 
 

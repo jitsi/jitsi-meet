@@ -123,8 +123,10 @@ class WelcomePage extends AbstractWelcomePage<*> {
                 <TouchableOpacity
                     /* eslint-disable-next-line react/jsx-no-bind */
                     onPress = { () =>
-                        navigation.dispatch(DrawerActions.openDrawer()) } >
+                        navigation.dispatch(DrawerActions.openDrawer()) }
+                    style = { styles.drawerNavigationIcon }>
                     <Icon
+                        size = { 20 }
                         src = { IconMenu }
                         style = { _headerStyles.headerButtonIcon } />
                 </TouchableOpacity>
