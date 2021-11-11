@@ -9,7 +9,7 @@ import { openChat } from '../../../chat/';
 import {
     _mapStateToProps as _abstractMapStateToProps,
     type Props as AbstractProps
-} from '../../../chat/components/PrivateMessageButton';
+} from '../../../chat/components/web/PrivateMessageButton';
 import { isButtonEnabled } from '../../../toolbox/functions.web';
 
 import VideoMenuButton from './VideoMenuButton';
