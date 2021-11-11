@@ -136,7 +136,7 @@ class MeetingParticipantList extends PureComponent<Props, State> {
         const { _localParticipant, _remoteParticipants } = this.props;
         const { searchString } = this.state;
         const participant = item === _localParticipant?.id ? _localParticipant : _remoteParticipants.get(item);
-        const displayName = participant?.name;
+        const displayName = participant?.name || '';
 
         if (displayName) {
             const names = normalizeAccents(displayName)
