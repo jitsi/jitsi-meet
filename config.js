@@ -227,7 +227,7 @@ var config = {
     // Recording
 
     // Whether to enable file recording or not.
-    // fileRecordingsEnabled: false,
+     fileRecordingsEnabled: true,
     // Enable the dropbox integration.
     // dropbox: {
     //     appKey: '<APP_KEY>' // Specify your app key here.
@@ -248,7 +248,7 @@ var config = {
     // fileRecordingsServiceSharingEnabled: false,
 
     // Whether to enable live streaming or not.
-    // liveStreamingEnabled: false,
+     liveStreamingEnabled: true,
 
     // Transcription (in interface_config,
     // subtitles and buttons can be configured)
@@ -471,7 +471,8 @@ var config = {
 
     // Enables calendar integration, depends on googleApiApplicationClientID
     // and microsoftApiApplicationClientID
-    // enableCalendarIntegration: false,
+     enableCalendarIntegration: true,
+     googleApiApplicationClientID: "454840451268-c9qqsqb11r2eb08gh1r67vrdd3bgko0e.apps.googleusercontent.com",
 
     // When 'true', it shows an intermediate page before joining, where the user can configure their devices.
     // prejoinPageEnabled: false,

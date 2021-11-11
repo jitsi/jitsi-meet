@@ -27,8 +27,8 @@ android {
 
     defaultConfig {
         applicationId 'crew.teamigroup.meet'
-        versionCode 13
-        versionName "2.1.4"
+        versionCode 15
+        versionName "2.1.6"
 
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion

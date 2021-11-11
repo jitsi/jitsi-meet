@@ -1,0 +1,11 @@
+{
+    "applinks": {
+        "apps": [],
+        "details": [
+           {
+          "appID": "CJMR3AP54Q.com.example.crewmeetpro",
+         "paths": [ "*" ]
+         }
+          ]
+    }
+}

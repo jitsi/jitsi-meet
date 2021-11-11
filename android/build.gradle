@@ -7,6 +7,7 @@ import org.gradle.util.VersionNumber
 buildscript {
     repositories {
         google()
+        mavenCentral()
         jcenter()
     }
     dependencies {
@@ -43,6 +44,7 @@ ext {
 allprojects {
     repositories {
         google()
+        mavenCentral()
         jcenter()
         // React Native (JS, Obj-C sources, Android binaries) is installed from npm.
         maven { url "$rootDir/../node_modules/react-native/android" }

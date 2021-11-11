@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:go.crewsa.net</string>
+		<string>applinks:crewmeetpro.page.link</string>
+	</array>
+	<key>com.apple.developer.siri</key>
+	<true/>
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.com.example.crewmeetpro.appgroup</string>
+	</array>
+</dict>
+</plist>
