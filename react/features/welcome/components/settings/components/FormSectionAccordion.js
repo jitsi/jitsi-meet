@@ -3,8 +3,8 @@
 import React, { useCallback, useState } from 'react';
 import { List } from 'react-native-paper';
 
-import { translate } from '../../../base/i18n';
-import { Icon, IconArrowDown, IconArrowUp } from '../../../base/icons';
+import { translate } from '../../../../base/i18n';
+import { Icon, IconArrowDown, IconArrowUp } from '../../../../base/icons';
 
 import styles from './styles';
 

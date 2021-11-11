@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { TouchableWithoutFeedback } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { Icon } from '../../../base/icons';
 
@@ -22,17 +22,18 @@ type Props = {
     /**
      * The component's external style.
      */
-    style: Object
+    style?: Object
 }
 
 const HeaderNavigationButton = ({ onPress, src, style }: Props) => (
-    <TouchableWithoutFeedback
-        onPress = { onPress } >
+    <TouchableOpacity
+        onPress = { onPress }
+        style = { styles.headerNavigationButton } >
         <Icon
             size = { 20 }
             src = { src }
-            style = { [ styles.headerNavigationButton, style ] } />
-    </TouchableWithoutFeedback>
+            style = { [ styles.headerNavigationIcon, style ] } />
+    </TouchableOpacity>
 );
 
 

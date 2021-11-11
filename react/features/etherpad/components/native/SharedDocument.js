@@ -89,7 +89,6 @@ class SharedDocument extends PureComponent<Props> {
         return (
             <JitsiScreen
                 addHeaderHeightValue = { true }
-                hasTabNavigator = { false }
                 style = { styles.sharedDocContainer }>
                 <WebView
                     renderLoading = { this._renderLoading }

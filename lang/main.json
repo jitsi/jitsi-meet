@@ -1140,6 +1140,12 @@
         "button": "Invite others",
         "youAreAlone": "You are the only one in the meeting"
     },
+    "termsView": {
+        "header": "Terms"
+    },
+    "privacyView": {
+        "header": "Privacy"
+    },
     "helpView": {
         "header": "Help center"
     },

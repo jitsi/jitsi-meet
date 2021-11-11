@@ -28,7 +28,6 @@ class LobbyScreen extends AbstractLobbyScreen {
 
         return (
             <JitsiScreen
-                hasTabNavigator = { false }
                 style = { styles.contentWrapper }>
                 <SafeAreaView>
                     <Text style = { styles.dialogTitle }>

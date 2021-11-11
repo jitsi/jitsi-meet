@@ -210,7 +210,6 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         return (
             <JitsiScreen
                 footerComponent = { this._renderShareMeetingButton }
-                hasTabNavigator = { false }
                 style = { styles.addPeopleContainer }>
                 <ClearableInput
                     autoFocus = { false }
