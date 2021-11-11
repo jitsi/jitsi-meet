@@ -35,6 +35,6 @@ export function notifyKickedOut(participant: Object, _: ?Function) { // eslint-d
             descriptionArguments: args,
             titleKey: 'dialog.kickTitle',
             titleArguments: args
-        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+        }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
     };
 }

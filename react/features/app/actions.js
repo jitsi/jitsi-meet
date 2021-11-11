@@ -328,7 +328,7 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
             dispatch(showNotification({
                 titleArguments: { appName: getName() },
                 titleKey: 'dialog.thankYou'
-            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
         }
 
         // if Welcome page is enabled redirect to welcome page after 3 sec, if

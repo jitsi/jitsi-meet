@@ -190,7 +190,7 @@ export function processPermissionRequestReply(participantId: string, event: Obje
                 descriptionArguments: { user: getParticipantDisplayName(state, participantId) },
                 descriptionKey,
                 titleKey: 'dialog.remoteControlTitle'
-            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
 
             if (permissionGranted) {
                 // the remote control permissions has been granted

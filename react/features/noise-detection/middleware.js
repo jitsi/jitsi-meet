@@ -41,7 +41,7 @@ MiddlewareRegistry.register(store => next => action => {
                 const notification = await dispatch(showNotification({
                     titleKey: 'toolbar.noisyAudioInputTitle',
                     descriptionKey: 'toolbar.noisyAudioInputDesc'
-                }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+                }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
 
                 dispatch(playSound(NOISY_AUDIO_INPUT_SOUND_ID));
 
