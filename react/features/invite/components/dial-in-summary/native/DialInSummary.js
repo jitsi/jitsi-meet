@@ -7,7 +7,6 @@ import { type Dispatch } from 'redux';
 
 import { openDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
-import { setActiveModalId } from '../../../../base/modal';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
@@ -101,7 +100,6 @@ class DialInSummary extends Component<Props> {
      * @returns {void}
      */
     _onError() {
-        this.props.dispatch(setActiveModalId());
         this.props.dispatch(openDialog(DialInSummaryErrorDialog));
     }
 
@@ -122,8 +120,6 @@ class DialInSummary extends Component<Props> {
 
         if (url.startsWith('tel:')) {
             Linking.openURL(url);
-
-            this.props.dispatch(setActiveModalId());
         }
 
         return url === getDialInfoPageURLForURIString(summaryUrl);
