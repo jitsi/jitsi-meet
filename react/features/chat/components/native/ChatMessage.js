@@ -12,8 +12,8 @@ import { type StyleType } from '../../../base/styles';
 import { MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL } from '../../constants';
 import { replaceNonUnicodeEmojis } from '../../functions';
 import AbstractChatMessage, { type Props as AbstractProps } from '../AbstractChatMessage';
-import PrivateMessageButton from '../PrivateMessageButton';
 
+import PrivateMessageButton from './PrivateMessageButton';
 import styles from './styles';
 
 type Props = AbstractProps & {
