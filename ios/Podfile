@@ -1,9 +1,9 @@
 platform :ios, '12.0'
-workspace 'jitsi-meet'
+workspace 'Jane Online Appointments'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 install! 'cocoapods', :deterministic_uuids => false
 
-target 'JitsiMeet' do
+target 'Jane Online Appointments' do
   project 'app/app.xcodeproj'
 
   pod 'Firebase/Analytics', '~> 6.33.0'
