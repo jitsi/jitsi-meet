@@ -147,6 +147,7 @@
     "metro-react-native-babel-preset": "0.56.0",
     "patch-package": "6.4.7",
     "sass": "1.26.8",
+    "react-native-cli": "^2.0.1",
     "string-replace-loader": "2.1.1",
     "style-loader": "0.19.0",
     "traverse": "0.6.6",
@@ -162,12 +163,13 @@
   },
   "license": "Apache-2.0",
   "scripts": {
+    "ios": "react-native run-ios",
+    "ios:sim:8": "node ./node_modules/react-native-cli run-ios --simulator='iPhone 8'",
     "lint": "eslint . && flow",
     "lint-fix": "eslint --fix .",
     "postinstall": "patch-package && jetify",
     "validate": "npm ls",
     "start": "make dev",
-    "ios": "react-native run-ios",
     "android": "react-native run-android"
   }
 }
