@@ -113,7 +113,6 @@
         return NO;
     }
 
-    NSURL *customAppURL = [NSURL URLWithString:@"itms-beta://"];
     NSURL *openUrl = url;
 
     if ([FIRUtilities appContainsRealServiceInfoPlist]) {
@@ -123,11 +122,6 @@
         if (firebaseUrl != nil) {
             openUrl = firebaseUrl;
         }
-    }
-
-    if ([[UIApplication sharedApplication] canOpenURL:customAppURL]) {
-      // Special link that includes the app's Apple ID
-      openUrl = [NSURL URLWithString:@"https://beta.itunes.apple.com/v1/app/1504560860"];
     }
 
     return [[JitsiMeet sharedInstance] application:app

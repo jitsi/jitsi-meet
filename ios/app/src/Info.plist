@@ -44,7 +44,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>FirebaseCrashlyticsCollectionEnabled</key>
 	<string>false</string>
 	<key>FirebaseScreenReportingEnabled</key>
@@ -80,6 +80,16 @@
 	<string>group.org.jitsi.meet.appgroup</string>
 	<key>RTCScreenSharingExtension</key>
 	<string>com.janeapp.videochat.qa.broadcast.extension</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>OpenSans-Light-webfont.ttf</string>
+		<string>OpenSans-Light-webfont.woff</string>
+		<string>ProximaNova-Light.otf</string>
+		<string>ProximaNova-Bold.otf</string>
+		<string>ProximaNova-Reg.otf</string>
+		<string>ProximaNova-Sbold.otf</string>
+		<string>ProximaNova-Thin.otf</string>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
@@ -105,15 +115,5 @@
 	<false/>
 	<key>firebase_crashlytics_collection_enabled</key>
 	<string>false</string>
-	<key>UIAppFonts</key>
-	<array>
-		<string>OpenSans-Light-webfont.ttf</string>
-		<string>OpenSans-Light-webfont.woff</string>
-		<string>ProximaNova-Light.otf</string>
-		<string>ProximaNova-Bold.otf</string>
-		<string>ProximaNova-Reg.otf</string>
-		<string>ProximaNova-Sbold.otf</string>
-		<string>ProximaNova-Thin.otf</string>
-	</array>
 </dict>
 </plist>
