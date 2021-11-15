@@ -370,3 +370,12 @@ export const typography = {
         letterSpacing: 0
     }
 };
+
+export const breakpoints = {
+    values: {
+        '0': 0,
+        '320': 320,
+        '400': 400,
+        '480': 480
+    }
+};

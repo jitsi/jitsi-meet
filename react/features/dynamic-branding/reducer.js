@@ -101,6 +101,14 @@ const DEFAULT_STATE = {
     logoImageUrl: '',
 
     /**
+     * The generated MUI branded theme based on the custom theme json.
+     *
+     * @public
+     * @type {boolean}
+     */
+    muiBrandedTheme: undefined,
+
+    /**
      * The lobby/prejoin background.
      *
      * @public
@@ -140,6 +148,7 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
             inviteDomain,
             logoClickUrl,
             logoImageUrl,
+            muiBrandedTheme,
             premeetingBackground,
             virtualBackgrounds
         } = action.value;
@@ -153,6 +162,7 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
             inviteDomain,
             logoClickUrl,
             logoImageUrl,
+            muiBrandedTheme,
             premeetingBackground,
             customizationFailed: false,
             customizationReady: true,

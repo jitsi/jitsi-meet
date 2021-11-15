@@ -1,8 +1,11 @@
 // @flow
 
+import { withStyles } from '@material-ui/styles';
+import clsx from 'clsx';
 import React, { useCallback } from 'react';
 
 import { Icon, IconArrowDown } from '../../../icons';
+import { withPixelLineHeight } from '../../../styles/functions.web';
 
 type Props = {
 
@@ -10,6 +13,11 @@ type Props = {
      * Text of the button.
      */
     children: React$Node,
+
+    /**
+     * An object containing the CSS classes.
+     */
+    classes: Object,
 
     /**
      * Text css class of the button.
@@ -79,12 +87,98 @@ type Props = {
 };
 
 /**
+ * Creates the styles for the component.
+ *
+ * @param {Object} theme - The current UI theme.
+ *
+ * @returns {Object}
+ */
+const styles = theme => {
+    return {
+        actionButton: {
+            ...withPixelLineHeight(theme.typography.bodyLongBold),
+            borderRadius: theme.shape.borderRadius,
+            boxSizing: 'border-box',
+            color: theme.palette.text01,
+            cursor: 'pointer',
+            display: 'inline-block',
+            marginBottom: '16px',
+            padding: '7px 16px',
+            position: 'relative',
+            textAlign: 'center',
+            width: '100%',
+
+            '&.primary': {
+                background: theme.palette.action01,
+                border: '1px solid #0376DA',
+
+                '&:hover': {
+                    backgroundColor: theme.palette.action01Hover
+                }
+            },
+
+            '&.secondary': {
+                background: theme.palette.action02,
+                border: '1px solid transparent'
+            },
+
+            '&.text': {
+                width: 'auto',
+                fontSize: '13px',
+                margin: '0',
+                padding: '0'
+            },
+
+            '&.disabled': {
+                background: theme.palette.action01Disabled,
+                border: '1px solid #5E6D7A',
+                color: '#AFB6BC',
+                cursor: 'initial',
+
+                '.icon': {
+                    '& > svg': {
+                        fill: '#AFB6BC'
+                    }
+                }
+            },
+
+
+            [theme.breakpoints.down('400')]: {
+                fontSize: 16,
+                marginBottom: 8,
+                padding: '11px 16px'
+            }
+        },
+        options: {
+            borderRadius: theme.shape.borderRadius / 2,
+            alignItems: 'center',
+            display: 'flex',
+            height: '100%',
+            justifyContent: 'center',
+            position: 'absolute',
+            right: 0,
+            top: 0,
+            width: 36,
+
+            '&:hover': {
+                backgroundColor: '#0262B6'
+            },
+
+            '& svg': {
+                pointerEvents: 'none'
+            }
+        }
+    };
+};
+
+/**
  * Button used for pre meeting actions.
  *
  * @returns {ReactElement}
  */
 function ActionButton({
     children,
+    classes,
     className = '',
     disabled,
     hasOptions,
@@ -115,11 +209,18 @@ function ActionButton({
         }
     }, [ onOptionsClick, disabled ]);
 
+    const containerClasses = clsx(
+        classes.actionButton,
+        className && className,
+        type,
+        disabled && 'disabled'
+    );
+
     return (
         <div
             aria-disabled = { disabled }
             aria-label = { ariaLabel }
-            className = { `action-btn ${className} ${type} ${disabled ? 'disabled' : ''}` }
+            className = { containerClasses }
             data-testid = { testId ? testId : undefined }
             onClick = { disabled ? undefined : onClick }
             onKeyPress = { onKeyPressHandler }
@@ -132,7 +233,7 @@ function ActionButton({
                       aria-haspopup = 'true'
                       aria-label = { ariaDropDownLabel }
                       aria-pressed = { ariaPressed }
-                      className = 'options'
+                      className = { classes.options }
                       data-testid = 'prejoin.joinOptions'
                       onClick = { disabled ? undefined : onOptionsClick }
                       onKeyPress = { onOptionsKeyPressHandler }
@@ -148,4 +249,4 @@ function ActionButton({
     );
 }
 
-export default ActionButton;
+export default withStyles(styles)(ActionButton);
