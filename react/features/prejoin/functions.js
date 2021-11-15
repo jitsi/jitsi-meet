@@ -170,8 +170,8 @@ export function isPrejoinPageVisible(state: Object): boolean {
  * @returns {boolean}
  */
 export function shouldAutoKnock(state: Object): boolean {
-    const { iAmRecorder, iAmSipGateway } = state['features/base/config'];
+    const { iAmRecorder, iAmSipGateway, autoKnockLobby } = state['features/base/config'];
 
-    return (isPrejoinPageEnabled(state) || (iAmRecorder && iAmSipGateway))
+    return (isPrejoinPageEnabled(state) || autoKnockLobby || (iAmRecorder && iAmSipGateway))
         && !state['features/lobby'].knocking;
 }

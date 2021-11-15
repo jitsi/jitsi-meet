@@ -18,6 +18,7 @@ export default [
     'analytics.rtcstatsEnabled',
     'audioLevelsInterval',
     'audioQuality',
+    'autoKnockLobby',
     'apiLogLevels',
     'avgRtpStatsN',
     'backgroundAlpha',

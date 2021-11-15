@@ -430,6 +430,9 @@ var config = {
     // Hides lobby button
     // hideLobbyButton: false,
 
+    // If Lobby is enabled starts knocking automatically.
+    // autoKnockLobby: false
+
     // Require users to always specify a display name.
     // requireDisplayName: true,
 
