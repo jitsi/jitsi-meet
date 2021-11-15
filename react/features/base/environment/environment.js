@@ -87,11 +87,14 @@ export function isSupportedBrowser() {
         return false;
     }
 
-    // Blacklists apply to desktop browsers only right now.
-    if (!isMobileBrowser() && _isCurrentBrowserInList(
-        interfaceConfig.UNSUPPORTED_BROWSERS || DEFAULT_UNSUPPORTED_BROWSERS
-    )) {
-        return false;
+    if (!isMobileBrowser()) {
+        if (!isSupportedDesktopBrowser()) {
+            return false;
+        }
+
+        if (_isCurrentBrowserInList(interfaceConfig.UNSUPPORTED_BROWSERS || DEFAULT_UNSUPPORTED_BROWSERS)) {
+            return false;
+        }
     }
 
     // We are intentionally allow mobile browsers because:
@@ -99,6 +102,19 @@ export function isSupportedBrowser() {
     // - if the URL points to a conference then deep-linking will take
     //   care of it.
     return isMobileBrowser() || JitsiMeetJS.isWebRtcSupported();
+}
+
+/**
+ * Returns whether or not the current desktop browser is supported.
+ *
+ * @returns {boolean}
+ */
+function isSupportedDesktopBrowser() {
+    if (browser.isSafari() && browser.getVersion().startsWith('13')) {
+        return false;
+    }
+
+    return true;
 }
 
 /**
