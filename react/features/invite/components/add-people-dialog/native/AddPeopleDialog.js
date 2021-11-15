@@ -48,7 +48,7 @@ type Props = AbstractProps & {
     _isVisible: boolean,
 
     /**
-     * Default prop for navigation between screen components(React Navigation)
+     * Default prop for navigation between screen components(React Navigation).
      */
     navigation: Object,
 
@@ -210,7 +210,6 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         return (
             <JitsiScreen
                 footerComponent = { this._renderShareMeetingButton }
-                hasTabNavigator = { false }
                 style = { styles.addPeopleContainer }>
                 <ClearableInput
                     autoFocus = { false }
@@ -290,11 +289,11 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         }
     }
 
-    _invite: Array<Object> => Promise<Array<Object>>
+    _invite: Array<Object> => Promise<Array<Object>>;
 
     _isAddDisabled: () => boolean;
 
-    _keyExtractor: Object => string
+    _keyExtractor: Object => string;
 
     /**
      * Key extractor for the flatlist.
@@ -307,7 +306,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         return item.type === INVITE_TYPES.USER ? item.id || item.user_id : item.number;
     }
 
-    _onClearField: () => void
+    _onClearField: () => void;
 
     /**
      * Callback to clear the text field.
@@ -323,7 +322,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         this._onTypeQuery('');
     }
 
-    _onInvite: () => void
+    _onInvite: () => void;
 
     /**
      * Invites the selected entries.
@@ -342,7 +341,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
             });
     }
 
-    _onPressItem: Item => Function
+    _onPressItem: Item => Function;
 
     /**
      * Function to prepare a callback for the onPress event of the touchable.
@@ -373,7 +372,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         };
     }
 
-    _onShareMeeting: () => void
+    _onShareMeeting: () => void;
 
     /**
      * Shows the system share sheet to share the meeting information.
@@ -389,7 +388,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         }
     }
 
-    _onTypeQuery: string => void
+    _onTypeQuery: string => void;
 
     /**
      * Handles the typing event of the text field on the dialog and performs the
@@ -434,7 +433,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
 
     _query: (string) => Promise<Array<Object>>;
 
-    _renderInvitedItem: Object => React$Element<any> | null
+    _renderInvitedItem: Object => React$Element<any> | null;
 
     /**
      * Renders a single item in the invited {@code FlatList}.
@@ -471,7 +470,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         );
     }
 
-    _renderItem: Object => React$Element<any> | null
+    _renderItem: Object => React$Element<any> | null;
 
     /**
      * Renders a single item in the search result {@code FlatList}.
@@ -526,7 +525,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         );
     }
 
-    _renderSeparator: () => React$Element<*> | null
+    _renderSeparator: () => React$Element<*> | null;
 
     /**
      * Renders the item separator.

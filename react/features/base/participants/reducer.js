@@ -20,6 +20,7 @@ declare var interfaceConfig: Object;
 
 /**
  * Participant object.
+ *
  * @typedef {Object} Participant
  * @property {string} id - Participant ID.
  * @property {string} name - Participant name.
@@ -276,6 +277,7 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
         }
 
         state.sortedRemoteParticipants.delete(id);
+        state.raisedHandsQueue = state.raisedHandsQueue.filter(pid => pid.id !== id);
 
         if (!state.everyoneIsModerator && !isParticipantModerator(oldParticipant)) {
             state.everyoneIsModerator = _isEveryoneModerator(state);

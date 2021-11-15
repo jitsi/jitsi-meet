@@ -47,14 +47,14 @@ function _getInitialState() {
         timeoutID: null,
 
         /**
-         * The array of reactions to animate
+         * The array of reactions to animate.
          *
          * @type {Array}
          */
         queue: [],
 
         /**
-         * Whether or not the disable reaction sounds notification was shown
+         * Whether or not the disable reaction sounds notification was shown.
          */
         notificationDisplayed: false
     };

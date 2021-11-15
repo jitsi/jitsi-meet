@@ -1,4 +1,4 @@
-/* global $, APP */
+/* global APP */
 
 import {
     NOTIFICATION_TIMEOUT,
@@ -8,44 +8,6 @@ import {
 } from '../../../react/features/notifications';
 
 const messageHandler = {
-    OK: 'dialog.OK',
-    CANCEL: 'dialog.Cancel',
-
-    /**
-     * Returns the formatted title string.
-     *
-     * @return the title string formatted as a div.
-     */
-    _getFormattedTitleString(titleKey) {
-        const $titleString = $('<h2>');
-
-        $titleString.addClass('aui-dialog2-header-main');
-        $titleString.attr('data-i18n', titleKey);
-
-        return $('<div>').append($titleString)
-            .html();
-    },
-
-    /**
-     * Returns the dialog css classes.
-     *
-     * @return the dialog css classes
-     */
-    _getDialogClasses(size = 'small') {
-        return {
-            box: '',
-            form: '',
-            prompt: `dialog aui-layer aui-dialog2 aui-dialog2-${size}`,
-            close: 'aui-hide',
-            fade: 'aui-blanket',
-            button: 'button-control',
-            message: 'aui-dialog2-content',
-            buttons: 'aui-dialog2-footer',
-            defaultButton: 'button-control_primary',
-            title: 'aui-dialog2-header'
-        };
-    },
-
     /**
      * Opens new popup window for given <tt>url</tt> centered over current
      * window.

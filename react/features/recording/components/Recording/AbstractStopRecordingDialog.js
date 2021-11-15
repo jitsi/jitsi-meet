@@ -35,7 +35,7 @@ export type Props = {
  * Abstract React Component for getting confirmation to stop a file recording
  * session in progress.
  *
- * @extends Component
+ * @augments Component
  */
 export default class AbstractStopRecordingDialog<P: Props>
     extends Component<P> {

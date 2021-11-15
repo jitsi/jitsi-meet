@@ -13,7 +13,7 @@ import { PollAnswer, PollResults } from '.';
 type Props = {
 
     /**
-     * Id of the poll
+     * Id of the poll.
      */
     pollId: string,
 

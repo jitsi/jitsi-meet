@@ -33,7 +33,7 @@ type Props = {
     _headerStyles: Object,
 
     /**
-     * Default prop for navigation between screen components(React Navigation)
+     * Default prop for navigation between screen components(React Navigation).
      */
     navigation: Object,
 
@@ -89,7 +89,6 @@ class SharedDocument extends PureComponent<Props> {
         return (
             <JitsiScreen
                 addHeaderHeightValue = { true }
-                hasTabNavigator = { false }
                 style = { styles.sharedDocContainer }>
                 <WebView
                     renderLoading = { this._renderLoading }

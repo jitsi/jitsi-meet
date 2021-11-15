@@ -501,6 +501,7 @@
         "expandedPending": "The live streaming is being started...",
         "failedToStart": "Live Streaming failed to start",
         "getStreamKeyManually": "We weren’t able to fetch any live streams. Try getting your live stream key from YouTube.",
+        "inProgress": "Recording or live streaming in progress",
         "invalidStreamKey": "Live stream key may be incorrect.",
         "off": "Live Streaming stopped",
         "offBy": "{{name}} stopped the live streaming",
@@ -508,6 +509,7 @@
         "onBy": "{{name}} started the live streaming",
         "pending": "Starting Live Stream...",
         "serviceName": "Live Streaming service",
+        "sessionAlreadyActive": "This session is already being recorded or live streamed.",
         "signedInAs": "You are currently signed in as:",
         "signIn": "Sign in with Google",
         "signInCTA": "Sign in or enter your live stream key from YouTube.",
@@ -760,6 +762,7 @@
         "expandedPending": "Recording is being started...",
         "failedToStart": "Recording failed to start",
         "fileSharingdescription": "Share recording with meeting participants",
+        "inProgress": "Recording or live streaming in progress",
         "linkGenerated": "We have generated a link to your recording.",
         "live": "LIVE",
         "loggedIn": "Logged in as {{userName}}",
@@ -772,6 +775,7 @@
         "serviceDescription": "Your recording will be saved by the recording service",
         "serviceDescriptionCloud": "Cloud recording",
         "serviceName": "Recording service",
+        "sessionAlreadyActive": "This session is already being recorded or live streamed.",
         "signIn": "Sign in",
         "signOut": "Sign out",
         "unavailable": "Oops! The {{serviceName}} is currently unavailable. We're working on resolving the issue. Please try again later.",
@@ -1135,6 +1139,12 @@
     "lonelyMeetingExperience": {
         "button": "Invite others",
         "youAreAlone": "You are the only one in the meeting"
+    },
+    "termsView": {
+        "header": "Terms"
+    },
+    "privacyView": {
+        "header": "Privacy"
     },
     "helpView": {
         "header": "Help center"

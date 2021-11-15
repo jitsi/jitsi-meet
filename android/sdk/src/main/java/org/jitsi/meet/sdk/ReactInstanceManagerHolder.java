@@ -190,6 +190,7 @@ class ReactInstanceManagerHolder {
                 new com.kevinresol.react_native_default_preference.RNDefaultPreferencePackage(),
                 new com.learnium.RNDeviceInfo.RNDeviceInfo(),
                 new com.swmansion.gesturehandler.react.RNGestureHandlerPackage(),
+                new org.linusu.RNGetRandomValuesPackage(),
                 new com.rnimmersive.RNImmersivePackage(),
                 new com.swmansion.rnscreens.RNScreensPackage(),
                 new com.zmxv.RNSound.RNSoundPackage(),

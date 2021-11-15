@@ -136,9 +136,7 @@ function _inviteRooms(rooms, conference, dispatch) {
  * Signals that a session we created has a change in its status.
  *
  * @param {string} event - The event describing the session state change.
- * @returns {{
- *     type: SHOW_NOTIFICATION
- * }}|null
+ * @returns {Object|null} - A notification action.
  * @private
  */
 function _sessionStateChanged(

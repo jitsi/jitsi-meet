@@ -60,6 +60,7 @@ export { default as IconFullScreen } from './full-screen.svg';
 export { default as IconGoogle } from './google.svg';
 export { default as IconHangup } from './hangup.svg';
 export { default as IconHelp } from './help.svg';
+export { default as IconHome } from './home.svg';
 export { default as IconHorizontalPoints } from './horizontal-points.svg';
 export { default as IconInfo } from './info.svg';
 export { default as IconInviteMore } from './user-plus.svg';

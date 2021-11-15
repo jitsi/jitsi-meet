@@ -37,7 +37,7 @@ type Props = {
 /**
  * Implements a React {@link Component} which displays a button for flipping the local viedo.
  *
- * @extends Component
+ * @augments Component
  */
 class FlipLocalVideoButton extends PureComponent<Props> {
     /**

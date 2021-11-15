@@ -18,7 +18,7 @@ type Props = {
 /**
  * A component that renders the description of the notification for old Jitsi Meet Electron clients.
  *
- * @extends AbstractApp
+ * @augments AbstractApp
  */
 export class OldElectronAPPNotificationDescription extends Component<Props> {
     /**

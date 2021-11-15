@@ -221,7 +221,7 @@ class CalendarList extends AbstractPage<Props> {
      * @returns {void}
      */
     _onOpenSettings() {
-        sendAnalytics(createCalendarClickedEvent('calendar.connect'));
+        sendAnalytics(createCalendarClickedEvent('connect'));
 
         this.props.dispatch(openSettingsDialog(SETTINGS_TABS.CALENDAR));
     }

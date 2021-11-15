@@ -8,7 +8,7 @@ import { Icon, IconArrowBack } from '../../../icons';
 import { connect } from '../../../redux';
 
 /**
- * The type of the React {@code Component} props of {@link BackButton}
+ * The type of the React {@code Component} props of {@link BackButton}.
  */
 type Props = {
 

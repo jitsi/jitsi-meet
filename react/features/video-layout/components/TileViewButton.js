@@ -35,7 +35,7 @@ type Props = AbstractButtonProps & {
 /**
  * Component that renders a toolbar button for toggling the tile layout view.
  *
- * @extends AbstractButton
+ * @augments AbstractButton
  */
 class TileViewButton<P: Props> extends AbstractButton<P, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.tileView';

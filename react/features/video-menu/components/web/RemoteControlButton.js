@@ -52,7 +52,7 @@ type Props = {
  * current state of remote control for a participant and can start or stop a
  * remote control session.
  *
- * @extends Component
+ * @augments Component
  */
 class RemoteControlButton extends Component<Props> {
     /**

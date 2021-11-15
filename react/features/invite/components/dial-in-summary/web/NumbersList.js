@@ -32,7 +32,7 @@ type Props = {
 /**
  * Displays a table with phone numbers to dial in to a conference.
  *
- * @extends Component
+ * @augments Component
  */
 class NumbersList extends Component<Props> {
     /**

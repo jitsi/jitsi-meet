@@ -9,7 +9,7 @@ declare var interfaceConfig: Object;
  * The live streaming help link to display. On web it comes from
  * interfaceConfig, but we don't have that on mobile.
  *
- * FIXME: This is in props now to prepare for the Redux-based interfaceConfig
+ * FIXME: This is in props now to prepare for the Redux-based interfaceConfig.
  */
 const LIVE_STREAMING_HELP_LINK = 'https://jitsi.org/live';
 
@@ -50,7 +50,7 @@ type State = {
  * An abstract React Component for entering a key for starting a YouTube live
  * stream.
  *
- * @extends Component
+ * @augments Component
  */
 export default class AbstractStreamKeyForm<P: Props>
     extends Component<P, State> {
@@ -104,7 +104,7 @@ export default class AbstractStreamKeyForm<P: Props>
         this._debouncedUpdateValidationErrorVisibility.cancel();
     }
 
-    _onInputChange: Object => void
+    _onInputChange: Object => void;
 
     /**
      * Callback invoked when the value of the input field has updated through

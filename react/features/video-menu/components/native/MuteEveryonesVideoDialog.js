@@ -27,7 +27,7 @@ type Props = AbstractProps & {
  * A React Component with the contents for a dialog that asks for confirmation
  * from the user before muting all remote participants.
  *
- * @extends AbstractMuteEveryonesVideoDialog
+ * @augments AbstractMuteEveryonesVideoDialog
  */
 class MuteEveryonesVideoDialog extends AbstractMuteEveryonesVideoDialog<Props> {
 

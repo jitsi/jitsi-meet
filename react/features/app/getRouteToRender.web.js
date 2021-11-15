@@ -7,9 +7,7 @@ import { toState } from '../base/redux';
 import { Conference } from '../conference';
 import { getDeepLinkingPage } from '../deep-linking';
 import { UnsupportedDesktopBrowser } from '../unsupported-browser';
-import { isWelcomePageUserEnabled } from '../welcome';
-import { BlankPage, WelcomePage } from '../welcome/components';
-
+import { BlankPage, isWelcomePageUserEnabled, WelcomePage } from '../welcome';
 
 /**
  * Determines which route is to be rendered in order to depict a specific Redux

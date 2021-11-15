@@ -6,7 +6,7 @@ import {
 } from './actionTypes';
 
 /**
- * Default State for 'features/transcription' feature
+ * Default State for 'features/transcription' feature.
  */
 const defaultState = {
     _transcriptMessages: new Map(),

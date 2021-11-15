@@ -74,7 +74,7 @@ type State = {
  * Implements a React {@link PureComponent} which displays the virtual
  * background preview.
  *
- * @extends PureComponent
+ * @augments PureComponent
  */
 class VirtualBackgroundPreview extends PureComponent<Props, State> {
     _componentWasUnmounted: boolean;

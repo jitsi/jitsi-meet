@@ -41,7 +41,7 @@ type Props = AbstractButtonProps & {
 /**
  * Component that renders a toolbar button for toggling audio mute.
  *
- * @extends AbstractAudioMuteButton
+ * @augments AbstractAudioMuteButton
  */
 class AudioMuteButton extends AbstractAudioMuteButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.mute';

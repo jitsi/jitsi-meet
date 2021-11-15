@@ -89,7 +89,7 @@ const styles = theme => {
 /**
  * React Component for showing short text in a circle.
  *
- * @extends Component
+ * @augments Component
  */
 class Label extends AbstractLabel<Props, *> {
     /**

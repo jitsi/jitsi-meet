@@ -1,6 +1,6 @@
 // @flow
 
-import uuid from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 import { getFeatureFlag, REACTIONS_ENABLED } from '../base/flags';
 import { getLocalParticipant } from '../base/participants';
@@ -39,7 +39,7 @@ export function getReactionsWithId(buffer: Array<string>) {
     return buffer.map<Object>(reaction => {
         return {
             reaction,
-            uid: uuid.v4()
+            uid: uuidv4()
         };
     });
 }

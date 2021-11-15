@@ -90,7 +90,7 @@ type Props = {
  * React Component for displaying an icon associated with opening the
  * the video menu for the local participant.
  *
- * @extends {Component}
+ * @augments {Component}
  */
 class LocalVideoMenuTriggerButton extends Component<Props> {
 

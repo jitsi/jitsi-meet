@@ -47,7 +47,7 @@ type Props = {
     visible: boolean,
 
     /**
-     * Defines is popup is open
+     * Defines is popup is open.
      */
     isOpen: boolean,
 };
@@ -159,5 +159,5 @@ const mapDispatchToProps = {
 
 export default translate(connect(
     mapStateToProps,
-    mapDispatchToProps,
+    mapDispatchToProps
 )(AudioSettingsButton));

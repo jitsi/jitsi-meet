@@ -53,7 +53,7 @@ let nextOnStageTimer = 0;
 
 /**
  * Represents "Follow Me" feature which enables a moderator to (partially)
- * control the user experience/interface (e.g. filmstrip visibility) of (other)
+ * control the user experience/interface (e.g. Filmstrip visibility) of (other)
  * non-moderator participant.
  */
 MiddlewareRegistry.register(store => next => action => {

@@ -22,7 +22,7 @@ type Props = {
     _dialInfoPageUrl: string,
 
     /**
-     * If multiple dial-in numbers are available
+     * If multiple dial-in numbers are available.
      */
     _hasMultipleNumbers: boolean;
 

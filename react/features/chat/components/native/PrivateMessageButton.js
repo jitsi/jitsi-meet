@@ -1,13 +1,13 @@
 // @flow
 
-import { CHAT_ENABLED, getFeatureFlag } from '../../base/flags';
-import { translate } from '../../base/i18n';
-import { IconMessage, IconReply } from '../../base/icons';
-import { getParticipantById } from '../../base/participants';
-import { connect } from '../../base/redux';
-import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
-import { navigate } from '../../conference/components/native/ConferenceNavigationContainerRef';
-import { screen } from '../../conference/components/native/routes';
+import { CHAT_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { translate } from '../../../base/i18n';
+import { IconMessage, IconReply } from '../../../base/icons';
+import { getParticipantById } from '../../../base/participants';
+import { connect } from '../../../base/redux';
+import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import { navigate } from '../../../conference/components/native/ConferenceNavigationContainerRef';
+import { screen } from '../../../conference/components/native/routes';
 
 export type Props = AbstractButtonProps & {
 
@@ -25,11 +25,6 @@ export type Props = AbstractButtonProps & {
      * Function to be used to translate i18n labels.
      */
     t: Function,
-
-    /**
-     * The Redux dispatch function.
-     */
-    dispatch: Function,
 
     /**
      * True if the polls feature is disabled.

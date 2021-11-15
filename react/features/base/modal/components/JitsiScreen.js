@@ -30,7 +30,7 @@ type Props = {
     /**
      * Is the screen rendering a tab navigator?
      */
-    hasTabNavigator: boolean,
+    hasTabNavigator?: boolean,
 
     /**
      * Additional style to be appended to the KeyboardAvoidingView containing the content of the modal.
@@ -42,7 +42,7 @@ const JitsiScreen = ({
     contentContainerStyle,
     children,
     footerComponent,
-    hasTabNavigator,
+    hasTabNavigator = false,
     style
 }: Props) => (
     <View

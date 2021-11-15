@@ -35,7 +35,7 @@ export class AudioMixerEffect {
     _originalTrack: Object;
 
     /**
-     * lib-jitsi-meet AudioMixer.
+     * Lib-jitsi-meet AudioMixer.
      */
     _audioMixer: Object;
 

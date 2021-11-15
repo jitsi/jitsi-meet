@@ -1,4 +1,4 @@
-import BaseTheme from '../../../base/ui/components/BaseTheme.native';
+import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
 export const ANDROID_UNDERLINE_COLOR = 'transparent';
 export const PLACEHOLDER_COLOR = BaseTheme.palette.action02Focus;
 export const THUMB_COLOR = BaseTheme.palette.field02;
@@ -9,6 +9,14 @@ const TEXT_SIZE = 14;
  * The styles of the native components of the feature {@code settings}.
  */
 export default {
+
+    /**
+     * Style for screen container.
+     */
+    settingsViewContainer: {
+        flex: 1
+    },
+
     /**
      * Standardized style for a field container {@code View}.
      */
@@ -80,7 +88,7 @@ export default {
     },
 
     formSectionTitleActive: {
-        color: BaseTheme.palette.section01Active
+        color: BaseTheme.palette.screen01Header
     },
 
     formSectionTitleInActive: {
@@ -93,7 +101,7 @@ export default {
     },
 
     sectionOpen: {
-        color: BaseTheme.palette.section01Active,
+        color: BaseTheme.palette.screen01Header,
         fontSize: 14
     },
 

@@ -36,8 +36,8 @@ StateListenerRegistry.register(
  * Subscribes to changes to the shared document (etherpad) visibility in the
  * user interface of the local participant.
  *
- * @param sharedDocumentVisible {Boolean} {true} if the shared document was
- * shown (as a result of the toggle) or {false} if it was hidden
+ * @param sharedDocumentVisible - {Boolean} {true} If the shared document was
+ * shown (as a result of the toggle) or {false} if it was hidden.
  */
 StateListenerRegistry.register(
     /* selector */ state => state['features/etherpad'].editing,

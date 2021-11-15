@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Text, TouchableHighlight } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -51,7 +51,7 @@ type Props = {
     styles: ReactionStyles,
 
     /**
-     * The reaction to be sent
+     * The reaction to be sent.
      */
     reaction: string,
 
@@ -72,16 +72,10 @@ function ReactionButton({
     t
 }: Props) {
     const dispatch = useDispatch();
-
-    /**
-     * Handles clicking / pressing the button.
-     *
-     * @returns {void}
-     */
-    function _onClick() {
+    const _onClick = useCallback(() => {
         dispatch(addReactionToBuffer(reaction));
         sendAnalytics(createReactionMenuEvent(reaction));
-    }
+    }, [ reaction ]);
 
     return (
         <TouchableHighlight

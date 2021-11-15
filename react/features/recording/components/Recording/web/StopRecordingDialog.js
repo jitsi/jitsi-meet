@@ -14,7 +14,7 @@ import AbstractStopRecordingDialog, {
  * React Component for getting confirmation to stop a file recording session in
  * progress.
  *
- * @extends Component
+ * @augments Component
  */
 class StopRecordingDialog extends AbstractStopRecordingDialog<Props> {
     /**
@@ -37,7 +37,7 @@ class StopRecordingDialog extends AbstractStopRecordingDialog<Props> {
         );
     }
 
-    _onSubmit: () => boolean
+    _onSubmit: () => boolean;
 }
 
 export default translate(connect(_mapStateToProps)(StopRecordingDialog));

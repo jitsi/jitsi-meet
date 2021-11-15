@@ -1,6 +1,6 @@
 /**
  * Types of messages that are passed between the main thread and the WebWorker
- * ({@code flacEncodeWorker})
+ * ({@code flacEncodeWorker}).
  */
 
 // Messages sent by the main thread

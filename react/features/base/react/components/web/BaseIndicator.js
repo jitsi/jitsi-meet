@@ -62,7 +62,7 @@ type Props = {
 /**
  * React {@code Component} for showing an icon with a tooltip.
  *
- * @extends Component
+ * @augments Component
  */
 class BaseIndicator extends Component<Props> {
     /**

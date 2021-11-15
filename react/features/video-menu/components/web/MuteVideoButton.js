@@ -61,7 +61,7 @@ class MuteVideoButton extends AbstractMuteVideoButton {
         );
     }
 
-    _handleClick: () => void
+    _handleClick: () => void;
 }
 
 export default translate(connect(_mapStateToProps)(MuteVideoButton));

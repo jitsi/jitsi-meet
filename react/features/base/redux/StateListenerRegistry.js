@@ -44,7 +44,7 @@ type Selector = (state: Object, prevSelection: any) => any;
 type RegistrationOptions = {
 
     /**
-     * @property {boolean} [deepEquals=false] - whether or not a deep equals check should be performed on the selection
+     * @property {boolean} [deepEquals=false] - Whether or not a deep equals check should be performed on the selection
      * returned by {@link Selector}.
      */
     deepEquals: ?boolean

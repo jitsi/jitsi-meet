@@ -12,7 +12,7 @@ import AbstractDialogContainer, {
  * need a separate container so we can handle multiple dialogs by showing them
  * simultaneously or queueing them.
  *
- * @extends AbstractDialogContainer
+ * @augments AbstractDialogContainer
  */
 class DialogContainer extends AbstractDialogContainer {
 

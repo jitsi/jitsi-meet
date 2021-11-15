@@ -1,13 +1,31 @@
+// @flow
+/* eslint-disable react/no-multi-comp */
+
 import { TransitionPresets } from '@react-navigation/stack';
 import React from 'react';
 import { Platform } from 'react-native';
 
-import { IconClose } from '../../../base/icons';
+import {
+    Icon,
+    IconClose,
+    IconHelp,
+    IconHome,
+    IconInfo,
+    IconSettings
+} from '../../../base/icons';
 import BaseTheme from '../../../base/ui/components/BaseTheme';
 
 import { goBack } from './ConferenceNavigationContainerRef';
 import HeaderNavigationButton from './HeaderNavigationButton';
 
+/**
+ * Navigation container theme.
+ */
+export const navigationContainerTheme = {
+    colors: {
+        background: BaseTheme.palette.ui12
+    }
+};
 
 /**
  * Default modal transition for the current platform.
@@ -20,24 +38,126 @@ export const conferenceModalPresentation = Platform.select({
 /**
  * Screen options and transition types.
  */
-export const screenOptions = {
+export const fullScreenOptions = {
     ...TransitionPresets.ModalTransition,
     gestureEnabled: false,
     headerShown: false
+};
+
+
+/**
+ * Dial-IN Info screen options and transition types.
+ */
+export const dialInSummaryScreenOptions = {
+    ...TransitionPresets.ModalTransition,
+    gestureEnabled: true,
+    headerShown: true,
+    headerStyle: {
+        backgroundColor: BaseTheme.palette.screen01Header
+    },
+    headerTitleStyle: {
+        color: BaseTheme.palette.text01
+    }
+};
+
+/**
+ * Drawer navigator screens options and transition types.
+ */
+export const drawerNavigatorScreenOptions = {
+    ...TransitionPresets.ModalTransition,
+    gestureEnabled: true,
+    headerShown: false
+};
+
+
+/**
+ * Drawer screen options and transition types.
+ */
+export const drawerScreenOptions = {
+    ...TransitionPresets.ModalTransition,
+    gestureEnabled: true,
+    headerShown: true,
+    headerStyle: {
+        backgroundColor: BaseTheme.palette.screen01Header
+    }
+};
+
+/**
+ * Screen options for welcome page.
+ */
+export const welcomeScreenOptions = {
+    ...drawerScreenOptions,
+    drawerIcon: ({ focused }) => (
+        <Icon
+            color = { focused ? BaseTheme.palette.screen01Header : BaseTheme.palette.field01Disabled }
+            size = { 20 }
+            src = { IconHome } />
+    ),
+    headerTitleStyle: {
+        color: BaseTheme.palette.screen01Header
+    }
+};
+
+/**
+ * Screen options for settings screen.
+ */
+export const settingsScreenOptions = {
+    ...drawerScreenOptions,
+    drawerIcon: ({ focused }) => (
+        <Icon
+            color = { focused ? BaseTheme.palette.screen01Header : BaseTheme.palette.field01Disabled }
+            size = { 20 }
+            src = { IconSettings } />
+    ),
+    headerTitleStyle: {
+        color: BaseTheme.palette.text01
+    }
+};
+
+/**
+ * Screen options for terms/privacy screens.
+ */
+export const termsAndPrivacyScreenOptions = {
+    ...drawerScreenOptions,
+    drawerIcon: ({ focused }) => (
+        <Icon
+            color = { focused ? BaseTheme.palette.screen01Header : BaseTheme.palette.field01Disabled }
+            size = { 20 }
+            src = { IconInfo } />
+    ),
+    headerTitleStyle: {
+        color: BaseTheme.palette.text01
+    }
+};
+
+/**
+ * Screen options for help screen.
+ */
+export const helpScreenOptions = {
+    ...drawerScreenOptions,
+    drawerIcon: ({ focused }) => (
+        <Icon
+            color = { focused ? BaseTheme.palette.screen01Header : BaseTheme.palette.field01Disabled }
+            size = { 20 }
+            src = { IconHelp } />
+    ),
+    headerTitleStyle: {
+        color: BaseTheme.palette.text01
+    }
 };
 
 /**
  * Screen options for conference.
  */
 export const conferenceScreenOptions = {
-    ...screenOptions
+    ...fullScreenOptions
 };
 
 /**
  * Screen options for lobby modal.
  */
 export const lobbyScreenOptions = {
-    ...screenOptions
+    ...fullScreenOptions
 };
 
 /**

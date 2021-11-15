@@ -27,7 +27,7 @@ const ICON_COLOR = {
 /**
  * Implements a React {@link Component} to display a notification.
  *
- * @extends Component
+ * @augments Component
  */
 class Notification extends AbstractNotification<Props> {
     /**
@@ -57,9 +57,9 @@ class Notification extends AbstractNotification<Props> {
         );
     }
 
-    _getDescription: () => Array<string>
+    _getDescription: () => Array<string>;
 
-    _getDescriptionKey: () => string
+    _getDescriptionKey: () => string;
 
     _onDismissed: () => void;
 
@@ -157,13 +157,13 @@ class Notification extends AbstractNotification<Props> {
         const secIconColor = ICON_COLOR[this.props.appearance];
         const iconSize = 'medium';
 
-        return <>
+        return (<>
             <div className = { `ribbon ${appearance}` } />
             <EditorInfoIcon
                 label = { appearance }
                 secondaryColor = { secIconColor }
                 size = { iconSize } />
-        </>;
+        </>);
     }
 }
 

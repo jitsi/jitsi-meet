@@ -64,5 +64,5 @@ ReducerRegistry.register(
         }
 
         return state;
-    },
+    }
 );

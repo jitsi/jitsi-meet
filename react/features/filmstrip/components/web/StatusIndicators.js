@@ -54,7 +54,7 @@ type Props = {
 /**
  * React {@code Component} for showing the status bar in a thumbnail.
  *
- * @extends Component
+ * @augments Component
  */
 class StatusIndicators extends Component<Props> {
     /**

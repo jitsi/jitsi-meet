@@ -42,7 +42,7 @@ type Props = {
     bannerCfg: Object,
 
     /**
-     * Conference data, if any
+     * Conference data, if any.
      */
     conference: Object,
 
@@ -68,7 +68,7 @@ type Props = {
 type State = {
 
     /**
-     * Keeps the current value of dont show again checkbox
+     * Keeps the current value of dont show again checkbox.
      */
     dontShowAgainChecked: boolean,
 
@@ -85,8 +85,9 @@ type State = {
 
 /**
  * Implements a React {@link PureComponent} which displays a banner having a link to the chrome extension.
+ *
  * @class ChromeExtensionBanner
- * @extends PureComponent
+ * @augments PureComponent
  */
 class ChromeExtensionBanner extends PureComponent<Props, State> {
     /**

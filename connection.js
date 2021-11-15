@@ -1,7 +1,7 @@
 /* global APP, JitsiMeetJS, config */
 
 import { jitsiLocalStorage } from '@jitsi/js-utils';
-import Logger from 'jitsi-meet-logger';
+import Logger from '@jitsi/logger';
 
 import { redirectToTokenAuthService } from './modules/UI/authentication/AuthHandler';
 import { LoginDialog } from './react/features/authentication/components';

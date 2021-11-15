@@ -25,7 +25,7 @@ type State = {
  * Implements a React {@code Component} for displaying a dialog with an field
  * for setting the local participant's display name.
  *
- * @extends Component
+ * @augments Component
  */
 class DisplayNamePrompt extends AbstractDisplayNamePrompt<State> {
     /**

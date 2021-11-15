@@ -12,7 +12,7 @@ import { isRecentListEnabled, toDisplayableList } from '../functions';
 import AbstractRecentList from './AbstractRecentList';
 
 /**
- * The type of the React {@code Component} props of {@link RecentList}
+ * The type of the React {@code Component} props of {@link RecentList}.
  */
 type Props = {
 

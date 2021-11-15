@@ -21,7 +21,7 @@ type Props = {
      * {{
      *     download: Number,
      *     upload: Number
-     * }}
+     * }}.
      */
     bandwidth: Object,
 
@@ -30,7 +30,7 @@ type Props = {
      * {{
      *     download: Number,
      *     upload: Number
-     * }}
+     * }}.
      */
     bitrate: Object,
 
@@ -74,7 +74,7 @@ type Props = {
      * Statistics related to frame rates for each ssrc.
      * {{
      *     [ ssrc ]: Number
-     * }}
+     * }}.
      */
     framerate: Object,
 
@@ -104,7 +104,7 @@ type Props = {
      * {{
      *     download: Number,
      *     upload: Number
-     * }}
+     * }}.
      */
     packetLoss: Object,
 
@@ -120,7 +120,7 @@ type Props = {
      *         height: Number,
      *         width: Number
      *     }
-     * }}
+     * }}.
      */
     resolution: Object,
 
@@ -166,7 +166,7 @@ function onClick(event) {
 /**
  * React {@code Component} for displaying connection statistics.
  *
- * @extends Component
+ * @augments Component
  */
 class ConnectionStatsTable extends Component<Props> {
     /**

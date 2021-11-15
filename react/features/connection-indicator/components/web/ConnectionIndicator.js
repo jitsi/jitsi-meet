@@ -70,6 +70,11 @@ type Props = AbstractProps & {
     _connectionIndicatorInactiveDisabled: boolean,
 
     /**
+     * Wether the indicator popover is disabled.
+     */
+    _popoverDisabled: boolean,
+
+    /**
      * Whether or not the component should ignore setting a visibility class for
      * hiding the component when the connection quality is not strong.
      */
@@ -121,7 +126,7 @@ type State = AbstractState & {
  * Implements a React {@link Component} which displays the current connection
  * quality percentage and has a popover to show more detailed connection stats.
  *
- * @extends {Component}
+ * @augments {Component}
  */
 class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
     /**
@@ -149,13 +154,13 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { iconSize, enableStatsDisplay, participantId, statsPopoverPosition } = this.props;
+        const { enableStatsDisplay, participantId, statsPopoverPosition } = this.props;
         const visibilityClass = this._getVisibilityClass();
         const rootClassNames = `indicator-container ${visibilityClass}`;
 
-        const colorClass = this._getConnectionColorClass();
-        const indicatorContainerClassNames
-            = `connection-indicator indicator ${colorClass}`;
+        if (this.props._popoverDisabled) {
+            return this._renderIndicator();
+        }
 
         return (
             <Popover
@@ -171,15 +176,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
                 paddedContent = { true }
                 position = { statsPopoverPosition }
                 visible = { this.state.popoverVisible }>
-                <div className = 'popover-trigger'>
-                    <div
-                        className = { indicatorContainerClassNames }
-                        style = {{ fontSize: iconSize }}>
-                        <div className = 'connection indicatoricon'>
-                            { this._renderIcon() }
-                        </div>
-                    </div>
-                </div>
+                { this._renderIndicator() }
             </Popover>
         );
     }
@@ -327,6 +324,30 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
     _onShowPopover() {
         this.setState({ popoverVisible: true });
     }
+
+
+    /**
+     * Creates a ReactElement for displaying the indicator (GSM bar).
+     *
+     * @returns {ReactElement}
+     */
+    _renderIndicator() {
+        const colorClass = this._getConnectionColorClass();
+        const indicatorContainerClassNames
+              = `connection-indicator indicator ${colorClass}`;
+
+        return (
+            <div className = 'popover-trigger'>
+                <div
+                    className = { indicatorContainerClassNames }
+                    style = {{ fontSize: this.props.iconSize }}>
+                    <div className = 'connection indicatoricon'>
+                        { this._renderIcon() }
+                    </div>
+                </div>
+            </div>
+        );
+    }
 }
 
 /**
@@ -344,6 +365,7 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
     return {
         _connectionIndicatorInactiveDisabled:
         Boolean(state['features/base/config'].connectionIndicators?.inactiveDisabled),
+        _popoverDisabled: state['features/base/config'].connectionIndicators?.disableDetails,
         _connectionStatus: participant?.connectionStatus
     };
 }

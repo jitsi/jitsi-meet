@@ -29,7 +29,7 @@ type Props = {
 /**
  * Root application component for incoming call.
  *
- * @extends BaseApp
+ * @augments BaseApp
  */
 export default class IncomingCallApp extends BaseApp<Props> {
     _init: Promise<*>;

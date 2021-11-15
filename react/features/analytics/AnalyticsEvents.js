@@ -2,6 +2,7 @@
  * The constant for the event type 'track'.
  * TODO: keep these constants in a single place. Can we import them from
  * lib-jitsi-meet's AnalyticsEvents somehow?
+ *
  * @type {string}
  */
 const TYPE_TRACK = 'track';
@@ -10,6 +11,7 @@ const TYPE_TRACK = 'track';
  * The constant for the event type 'UI' (User Interaction).
  * TODO: keep these constants in a single place. Can we import them from
  * lib-jitsi-meet's AnalyticsEvents somehow?
+ *
  * @type {string}
  */
 const TYPE_UI = 'ui';
@@ -143,7 +145,6 @@ export function createCalendarClickedEvent(eventName, attributes = {}) {
 export function createCalendarSelectedEvent(attributes = {}) {
     return {
         action: 'selected',
-        actionSubject: 'calendar.selected',
         attributes,
         source: 'calendar',
         type: TYPE_UI
@@ -159,8 +160,8 @@ export function createCalendarSelectedEvent(attributes = {}) {
  */
 export function createCalendarConnectedEvent(attributes = {}) {
     return {
-        action: 'calendar.connected',
-        actionSubject: 'calendar.connected',
+        action: 'connected',
+        actionSubject: 'calendar',
         attributes
     };
 }
@@ -212,7 +213,6 @@ export function createChromeExtensionBannerEvent(installPressed, attributes = {}
 export function createRecentSelectedEvent(attributes = {}) {
     return {
         action: 'selected',
-        actionSubject: 'recent.list.selected',
         attributes,
         source: 'recent.list',
         type: TYPE_UI
@@ -533,12 +533,11 @@ export function createRejoinedEvent({ url, lastConferenceDuration, timeSinceLeft
 export function createRemoteMuteConfirmedEvent(participantId, mediaType) {
     return {
         action: 'clicked',
-        actionSubject: 'remote.mute.dialog.confirm.button',
         attributes: {
             'participant_id': participantId,
             'media_type': mediaType
         },
-        source: 'remote.mute.dialog',
+        source: 'remote.mute.button',
         type: TYPE_UI
     };
 }
@@ -583,21 +582,6 @@ export function createRTCStatsTraceCloseEvent(closeEvent) {
 }
 
 /**
- * Creates an event indicating that an action related to video blur
- * occurred (e.g. It was started or stopped).
- *
- * @param {string} action - The action which occurred.
- * @returns {Object} The event in a format suitable for sending via
- * sendAnalytics.
- */
-export function createVideoBlurEvent(action) {
-    return {
-        action,
-        actionSubject: 'video.blur'
-    };
-}
-
-/**
  * Creates an event indicating that an action related to screen sharing
  * occurred (e.g. It was started or stopped).
  *
@@ -627,26 +611,6 @@ export function createScreenSharingIssueEvent(attributes) {
         action: 'screen.sharing.issue',
         attributes
     };
-}
-
-/**
- * The local participant failed to send a "selected endpoint" message to the
- * bridge.
- *
- * @param {Error} error - The error which caused the failure.
- * @returns {Object} The event in a format suitable for sending via
- * sendAnalytics.
- */
-export function createSelectParticipantFailedEvent(error) {
-    const event = {
-        action: 'select.participant.failed'
-    };
-
-    if (error) {
-        event.error = error.toString();
-    }
-
-    return event;
 }
 
 /**
@@ -686,7 +650,6 @@ export function createShortcutEvent(
         attributes = {}) {
     return {
         action,
-        actionSubject: 'keyboard.shortcut',
         actionSubjectId: shortcut,
         attributes,
         source: 'keyboard.shortcut',
@@ -822,24 +785,6 @@ export function createToolbarEvent(buttonName, attributes = {}) {
 }
 
 /**
- * Creates an event associated with reactions.
- *
- * @param {string} action - Event action.
- * @param {string} name - Event name.
- * @param {string} source - Event source.
- * @returns {Object} The event in a format suitable for sending via
- * sendAnalytics.
- */
-function createReactionEvent(action, name, source) {
-    return {
-        action,
-        actionSubject: name,
-        source: `reaction.${source}`,
-        type: TYPE_UI
-    };
-}
-
-/**
  * Creates an event associated with a reaction button being clicked/pressed.
  *
  * @param {string} buttonName - The identifier of the reaction button which was
@@ -848,7 +793,13 @@ function createReactionEvent(action, name, source) {
  * sendAnalytics.
  */
 export function createReactionMenuEvent(buttonName) {
-    return createReactionEvent('clicked', buttonName, 'button');
+    return {
+        action: 'clicked',
+        actionSubject: 'button',
+        source: 'reaction',
+        buttonName,
+        type: TYPE_UI
+    };
 }
 
 /**
@@ -858,7 +809,12 @@ export function createReactionMenuEvent(buttonName) {
  * sendAnalytics.
  */
 export function createReactionSoundsDisabledEvent() {
-    return createReactionEvent('disabled', 'sounds', 'settings');
+    return {
+        action: 'disabled',
+        actionSubject: 'sounds',
+        source: 'reaction.settings',
+        type: TYPE_UI
+    };
 }
 
 /**
@@ -925,6 +881,6 @@ export function createWelcomePageEvent(action, actionSubject, attributes = {}) {
  */
 export function createScreensharingCaptureTakenEvent() {
     return {
-        action: 'screen.sharing.capture'
+        action: 'screen.sharing.capture.taken'
     };
 }

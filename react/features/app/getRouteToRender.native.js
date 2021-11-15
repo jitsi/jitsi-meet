@@ -2,8 +2,7 @@
 import { isRoomValid } from '../base/conference';
 import { toState } from '../base/redux';
 import { ConferenceNavigationContainer } from '../conference';
-import { isWelcomePageAppEnabled } from '../welcome';
-import { BlankPage, WelcomePage } from '../welcome/components';
+import RootNavigationContainer from '../welcome/components/RootNavigationContainer';
 
 /**
  * Determines which route is to be rendered in order to depict a specific Redux
@@ -26,27 +25,17 @@ export function _getRouteToRender(stateful) {
  * @returns {Promise}
  */
 function _getMobileRoute(state) {
-    const route = _getEmptyRoute();
+    const route = {
+        component: null,
+        href: undefined
+    };
 
     if (isRoomValid(state['features/base/conference'].room)) {
         route.component = ConferenceNavigationContainer;
-    } else if (isWelcomePageAppEnabled(state)) {
-        route.component = WelcomePage;
     } else {
-        route.component = BlankPage;
+        route.component = RootNavigationContainer;
     }
 
     return Promise.resolve(route);
 }
 
-/**
- * Returns the default {@code Route}.
- *
- * @returns {Object}
- */
-function _getEmptyRoute() {
-    return {
-        component: BlankPage,
-        href: undefined
-    };
-}

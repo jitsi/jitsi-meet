@@ -37,82 +37,82 @@ type Props = AbstractVideoTrackProps & {
     eventHandlers?: {|
 
         /**
-         * onAbort event handler.
+         * OnAbort event handler.
          */
         onAbort?: ?Function,
 
         /**
-         * onCanPlay event handler.
+         * OnCanPlay event handler.
          */
         onCanPlay?: ?Function,
 
         /**
-         * onCanPlayThrough event handler.
+         * OnCanPlayThrough event handler.
          */
         onCanPlayThrough?: ?Function,
 
         /**
-         * onEmptied event handler.
+         * OnEmptied event handler.
          */
         onEmptied?: ?Function,
 
         /**
-         * onEnded event handler.
+         * OnEnded event handler.
          */
         onEnded?: ?Function,
 
         /**
-         * onError event handler.
+         * OnError event handler.
          */
         onError?: ?Function,
 
         /**
-         * onLoadedData event handler.
+         * OnLoadedData event handler.
          */
         onLoadedData?: ?Function,
 
         /**
-         * onLoadedMetadata event handler.
+         * OnLoadedMetadata event handler.
          */
         onLoadedMetadata?: ?Function,
 
         /**
-         * onLoadStart event handler.
+         * OnLoadStart event handler.
          */
         onLoadStart?: ?Function,
 
         /**
-         * onPause event handler.
+         * OnPause event handler.
          */
         onPause?: ?Function,
 
         /**
-         * onPlay event handler.
+         * OnPlay event handler.
          */
         onPlay?: ?Function,
 
         /**
-         * onPlaying event handler.
+         * OnPlaying event handler.
          */
         onPlaying?: ?Function,
 
         /**
-         * onRateChange event handler.
+         * OnRateChange event handler.
          */
         onRateChange?: ?Function,
 
         /**
-         * onStalled event handler.
+         * OnStalled event handler.
          */
         onStalled?: ?Function,
 
         /**
-         * onSuspend event handler.
+         * OnSuspend event handler.
          */
         onSuspend?: ?Function,
 
         /**
-         * onWaiting event handler.
+         * OnWaiting event handler.
          */
         onWaiting?: ?Function,
     |},
@@ -132,7 +132,7 @@ type Props = AbstractVideoTrackProps & {
  * Component that renders a video element for a passed in video track and
  * notifies the store when the video has started playing.
  *
- * @extends AbstractVideoTrack
+ * @augments AbstractVideoTrack
  */
 class VideoTrack extends AbstractVideoTrack<Props> {
     /**

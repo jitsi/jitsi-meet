@@ -34,7 +34,7 @@ type Props = {
  * React {@code Component} responsible for displaying a telephone number and
  * conference ID for dialing into a conference.
  *
- * @extends Component
+ * @augments Component
  */
 class DialInNumber extends Component<Props> {
 

@@ -49,7 +49,7 @@ PersistenceRegistry.register(STORE_NAME, {
 }, DEFAULT_STATE);
 
 /**
- * Listen for actions that mutate the prejoin state
+ * Listen for actions that mutate the prejoin state.
  */
 ReducerRegistry.register(
     'features/prejoin', (state = DEFAULT_STATE, action) => {
@@ -142,7 +142,7 @@ ReducerRegistry.register(
         default:
             return state;
         }
-    },
+    }
 );
 
 /**

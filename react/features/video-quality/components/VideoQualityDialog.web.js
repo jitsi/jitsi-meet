@@ -8,7 +8,7 @@ import VideoQualitySlider from './VideoQualitySlider';
  * Implements a React {@link Component} which displays the component
  * {@code VideoQualitySlider} in a dialog.
  *
- * @extends Component
+ * @augments Component
  */
 export default class VideoQualityDialog extends Component {
     /**

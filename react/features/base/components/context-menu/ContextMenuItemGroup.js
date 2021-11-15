@@ -54,7 +54,7 @@ type Props = {
     actions?: Array<Action>,
 
     /**
-     * The children of the component
+     * The children of the component.
      */
     children?: React$Node,
 };

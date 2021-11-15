@@ -6,6 +6,7 @@ import { reportError } from './helpers';
 
 /**
  * A list if keys to ignore when parsing.
+ *
  * @type {string[]}
  */
 const blacklist = [ '__proto__', 'constructor', 'prototype' ];

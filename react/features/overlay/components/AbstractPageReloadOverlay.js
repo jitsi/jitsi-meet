@@ -27,11 +27,16 @@ export type Props = {
 
     /**
      * The details is an object containing more information about the connection
-     * failed (shard changes, was the computer suspended, etc.)
+     * failed (shard changes, was the computer suspended, etc.).
      */
     details: Object,
 
     dispatch: Dispatch<any>,
+
+    /**
+     * The error that caused the display of the overlay.
+     */
+    error: Error,
 
     /**
      * The indicator which determines whether the reload was caused by network
@@ -273,6 +278,7 @@ export default class AbstractPageReloadOverlay<P: Props>
  * @protected
  * @returns {{
  *     details: Object,
+ *     error: ?Error,
  *     isNetworkFailure: boolean,
  *     reason: string
  * }}
@@ -284,6 +290,7 @@ export function abstractMapStateToProps(state: Object) {
 
     return {
         details: fatalError && fatalError.details,
+        error: fatalError,
         isNetworkFailure:
             fatalError === configError || fatalError === connectionError,
         reason: fatalError && (fatalError.message || fatalError.name)

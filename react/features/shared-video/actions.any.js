@@ -21,13 +21,12 @@ export function resetSharedVideoStatus() {
 /**
  * Updates the current known status of the shared video.
  *
- * @param {{
- *     muted: boolean,
- *     ownerId: string,
- *     status: string,
- *     time: number,
- *     videoUrl: string
- * }} options - The options.
+ * @param {Object} options - The options.
+ * @param {boolean} options.muted - Is video muted.
+ * @param {boolean} options.ownerId - Participant ID of the owner.
+ * @param {boolean} options.status - Sharing status.
+ * @param {boolean} options.time - Playback timestamp.
+ * @param {boolean} options.videoUrl - URL of the shared video.
  *
  * @returns {{
  *     type: SET_SHARED_VIDEO_STATUS,

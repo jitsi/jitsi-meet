@@ -11,7 +11,7 @@ const DEFAULT_STATE = {
 };
 
 /**
- * Listen for actions that mutate the billing-counter state
+ * Listen for actions that mutate the billing-counter state.
  */
 ReducerRegistry.register(
     'features/jaas', (state = DEFAULT_STATE, action) => {
@@ -24,5 +24,5 @@ ReducerRegistry.register(
         default:
             return state;
         }
-    },
+    }
 );

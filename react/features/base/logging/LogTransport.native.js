@@ -26,7 +26,7 @@ function stackToString(e) {
 }
 
 /**
- * Constructs a log transport object for use with jitsi-meet-logger.
+ * Constructs a log transport object for use with @jitsi/logger.
  *
  * @returns {Object} - The transport object.
  */

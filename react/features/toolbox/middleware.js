@@ -62,6 +62,8 @@ type DocumentElement = {
  * @returns {Object} The value returned by {@code next(action)}.
  */
 function _setFullScreen(next, action) {
+    const result = next(action);
+
     if (typeof APP === 'object') {
         const { fullScreen } = action;
 
@@ -78,25 +80,23 @@ function _setFullScreen(next, action) {
                 typeof documentElement.webkitRequestFullscreen === 'function') {
                 documentElement.webkitRequestFullscreen();
             }
-        } else {
-            /* eslint-disable no-lonely-if */
 
-            // $FlowFixMe
-            if (typeof document.exitFullscreen === 'function') {
-                document.exitFullscreen();
+            return result;
+        }
 
-            // $FlowFixMe
-            } else if (typeof document.mozCancelFullScreen === 'function') {
-                document.mozCancelFullScreen();
+        // $FlowFixMe
+        if (typeof document.exitFullscreen === 'function') {
+            document.exitFullscreen();
 
-            // $FlowFixMe
-            } else if (typeof document.webkitExitFullscreen === 'function') {
-                document.webkitExitFullscreen();
-            }
+        // $FlowFixMe
+        } else if (typeof document.mozCancelFullScreen === 'function') {
+            document.mozCancelFullScreen();
 
-            /* eslint-enable no-loney-if */
+        // $FlowFixMe
+        } else if (typeof document.webkitExitFullscreen === 'function') {
+            document.webkitExitFullscreen();
         }
     }
 
-    return next(action);
+    return result;
 }

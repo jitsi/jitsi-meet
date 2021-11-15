@@ -33,7 +33,7 @@ type State = {
  * Represents the always on top page.
  *
  * @class AlwaysOnTop
- * @extends Component
+ * @augments Component
  */
 export default class AlwaysOnTop extends Component<*, State> {
     _hovered: boolean;

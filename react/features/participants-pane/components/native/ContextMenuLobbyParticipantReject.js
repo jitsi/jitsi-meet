@@ -19,7 +19,7 @@ import styles from './styles';
 type Props = {
 
     /**
-     * Participant reference
+     * Participant reference.
      */
     participant: Object
 };

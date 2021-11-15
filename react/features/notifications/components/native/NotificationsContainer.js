@@ -34,7 +34,7 @@ type Props = {
  * automatic dismissmal after a notification is shown for a defined timeout
  * period.
  *
- * @extends {Component}
+ * @augments {Component}
  */
 class NotificationsContainer extends Component<Props> {
 

@@ -13,7 +13,7 @@ const DEFAULT_STATE = {
 };
 
 /**
- * Listen for actions that mutate the participants pane state
+ * Listen for actions that mutate the participants pane state.
  */
 ReducerRegistry.register(
     REDUCER_KEY, (state = DEFAULT_STATE, action) => {
@@ -43,5 +43,5 @@ ReducerRegistry.register(
         default:
             return state;
         }
-    },
+    }
 );

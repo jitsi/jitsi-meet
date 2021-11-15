@@ -21,7 +21,7 @@ type Props = {
     children: string | React$Node,
 
     /**
-     * Click handler
+     * Click handler.
      */
     onClick: Function,
 

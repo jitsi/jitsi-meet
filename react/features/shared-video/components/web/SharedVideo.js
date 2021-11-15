@@ -15,12 +15,12 @@ declare var interfaceConfig: Object;
 type Props = {
 
     /**
-     * The available client width
+     * The available client width.
      */
     clientHeight: number,
 
     /**
-     * The available client width
+     * The available client width.
      */
     clientWidth: number,
 
@@ -37,16 +37,16 @@ type Props = {
      isOwner: boolean,
 
     /**
-     * The shared video url
+     * The shared video url.
      */
      videoUrl: string,
 }
 
-/**
+/** .
  * Implements a React {@link Component} which represents the large video (a.k.a.
- * the conference participant who is on the local stage) on Web/React.
+ * The conference participant who is on the local stage) on Web/React.
  *
- * @extends Component
+ * @augments Component
  */
 class SharedVideo extends Component<Props> {
     /**

@@ -199,7 +199,7 @@ export function createLocalTracksF(options = {}, store) {
  *
  * @returns {Promise<JitsiLocalTrack>}
  *
- * @todo Refactor to not use APP
+ * @todo Refactor to not use APP.
  */
 export function createPrejoinTracks() {
     const errors = {};

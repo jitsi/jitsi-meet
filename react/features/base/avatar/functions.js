@@ -53,7 +53,7 @@ export function getInitials(s: ?string) {
     let initials = '';
 
     for (const w of words) {
-        (initials.length < 2) && (initials += w.substr(0, 1).toUpperCase());
+        (initials.length < 2) && (initials += String.fromCodePoint(w.codePointAt(0)).toUpperCase());
     }
 
     return initials;

@@ -13,7 +13,7 @@ import AbstractMuteEveryoneDialog, { abstractMapStateToProps, type Props }
  * A React Component with the contents for a dialog that asks for confirmation
  * from the user before muting all remote participants.
  *
- * @extends AbstractMuteEveryoneDialog
+ * @augments AbstractMuteEveryoneDialog
  */
 class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<Props> {
 

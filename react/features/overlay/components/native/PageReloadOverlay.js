@@ -9,7 +9,7 @@ import { ConfirmDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
-import { setFatalError } from '../../actions';
+import { setFatalError, setPageReloadOverlayCanceled } from '../../actions';
 import AbstractPageReloadOverlay, {
     abstractMapStateToProps,
     type Props as AbstractProps
@@ -47,7 +47,7 @@ class PageReloadOverlay extends AbstractPageReloadOverlay<Props> {
         this._onReloadNow = this._onReloadNow.bind(this);
     }
 
-    _onCancel: () => void
+    _onCancel: () => void;
 
     /**
      * Handle clicking of the "Cancel" button. It will navigate back to the
@@ -58,11 +58,12 @@ class PageReloadOverlay extends AbstractPageReloadOverlay<Props> {
      */
     _onCancel() {
         clearInterval(this._interval);
+        this.props.dispatch(setPageReloadOverlayCanceled(this.props.error));
         this.props.dispatch(setFatalError(undefined));
         this.props.dispatch(appNavigate(undefined));
     }
 
-    _onReloadNow: () => void
+    _onReloadNow: () => void;
 
     /**
      * Handle clicking on the "Reload Now" button. It will navigate to the same

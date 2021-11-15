@@ -51,7 +51,7 @@ type Props = {
  * and conference-wide (moderator) settings. This version is connected to
  * redux to get the current settings.
  *
- * @extends Component
+ * @augments Component
  */
 class SettingsDialog extends Component<Props> {
     /**

@@ -53,7 +53,7 @@ type Props = {
 /**
  * React component for showing a grid of DesktopSourcePreviews.
  *
- * @extends Component
+ * @augments Component
  */
 class DesktopPickerPane extends Component<Props> {
 

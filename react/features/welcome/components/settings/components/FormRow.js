@@ -3,12 +3,12 @@
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../../base/i18n';
 
 import styles, { ANDROID_UNDERLINE_COLOR, PLACEHOLDER_COLOR } from './styles';
 
 /**
- * The type of the React {@code Component} props of {@link FormRow}
+ * The type of the React {@code Component} props of {@link FormRow}.
  */
 type Props = {
 

@@ -35,7 +35,6 @@ const ParticipantsPane = () => {
 
     return (
         <JitsiScreen
-            hasTabNavigator = { false }
             style = { styles.participantsPane }>
             <ScrollView bounces = { false }>
                 <LobbyParticipantList />

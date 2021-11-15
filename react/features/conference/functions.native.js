@@ -15,7 +15,8 @@ export * from './functions.any';
  * @returns {boolean}.
  */
 export function getDisablePolls(stateful: Object) {
-    const state = toState(stateful['features/base/config']);
+    const state = toState(stateful)['features/base/config'];
 
     return state.disablePolls;
 }
+

@@ -38,12 +38,12 @@ type Props = {
     name?: string,
 
     /**
-     * Indicates whether the copy url button should be shown
+     * Indicates whether the copy url button should be shown.
      */
     showCopyUrlButton: boolean,
 
     /**
-     * Indicates whether the device status should be shown
+     * Indicates whether the device status should be shown.
      */
     showDeviceStatus: boolean,
 

@@ -78,7 +78,7 @@ type Props = AbstractProps & {
     _isParticipantsPaneOpen: boolean,
 
     /**
-     * The ID of the participant currently on stage (if any)
+     * The ID of the participant currently on stage (if any).
      */
     _largeVideoParticipantId: string,
 

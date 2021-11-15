@@ -40,7 +40,7 @@ export type AbstractProps = {
  * A container to hold video status labels, including recording status and
  * current large video quality.
  *
- * @extends Component
+ * @augments Component
  */
 export class AbstractConference<P: AbstractProps, S>
     extends Component<P, S> {

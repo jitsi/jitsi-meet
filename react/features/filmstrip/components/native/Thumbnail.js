@@ -132,7 +132,7 @@ type Props = {
     renderDisplayName: ?boolean,
 
     /**
-     * If true, it tells the thumbnail that it needs to behave differently. E.g. react differently to a single tap.
+     * If true, it tells the thumbnail that it needs to behave differently. E.g. React differently to a single tap.
      */
     tileView?: boolean
 };

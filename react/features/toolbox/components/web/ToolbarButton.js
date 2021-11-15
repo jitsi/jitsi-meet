@@ -25,7 +25,7 @@ export type Props = AbstractToolbarButtonProps & {
     tooltipPosition: string,
 
     /**
-     * keyDown handler
+     * KeyDown handler.
      */
     onKeyDown?: Function
 };
@@ -33,7 +33,7 @@ export type Props = AbstractToolbarButtonProps & {
 /**
  * Represents a button in the toolbar.
  *
- * @extends AbstractToolbarButton
+ * @augments AbstractToolbarButton
  */
 class ToolbarButton extends AbstractToolbarButton<Props> {
     /**

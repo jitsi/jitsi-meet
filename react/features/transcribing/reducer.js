@@ -21,7 +21,7 @@ function _getInitialState() {
     return {
         /**
          * Indicates whether there is currently an active transcriber in the
-         * room
+         * room.
          *
          * @type {boolean}
          */
@@ -29,7 +29,7 @@ function _getInitialState() {
 
         /**
          * Indicates whether the transcriber has been dialed into the room and
-         * we're currently awaiting successful joining or failure of joining
+         * we're currently awaiting successful joining or failure of joining.
          *
          * @type {boolean}
          */
@@ -42,14 +42,14 @@ function _getInitialState() {
         isTerminating: false,
 
         /**
-         * The JID of the active transcriber
+         * The JID of the active transcriber.
          *
          * @type { string }
          */
         transcriberJID: null,
 
         /**
-         * A list containing potential JID's of transcriber participants
+         * A list containing potential JID's of transcriber participants.
          *
          * @type { Array }
          */

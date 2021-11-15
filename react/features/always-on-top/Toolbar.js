@@ -30,7 +30,7 @@ type Props = {
 /**
  * Represents the toolbar in the Always On Top window.
  *
- * @extends Component
+ * @augments Component
  */
 export default class Toolbar extends Component<Props> {
     /**

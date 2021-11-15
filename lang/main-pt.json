@@ -268,12 +268,12 @@
         "muteEveryoneStartMuted": "A partir de agora, toda a gente começa a ficar calada",
         "muteParticipantBody": "Não poderá reativá-los, mas eles podem reativar-se a qualquer momento.",
         "muteParticipantButton": "Silenciar",
-        "muteParticipantDialog": "Tem a certeza de que quer silenciar este participante? Não poderá reativá-los, mas eles podem reativar-se a qualquer momento.",
         "muteParticipantsVideoDialog": "Tem a certeza de que quer desativar a câmara deste participante? Não poderá voltar a ativar a câmara, mas eles podem voltar a reativá-la a qualquer momento.",
-        "muteParticipantTitle": "Silenciar este participante?",
+        "muteParticipantsVideoDialogModerationOn": "Tem a certeza de que quer desligar a câmara deste participante? Não será capaz de voltar a ligar a câmara e eles também não.",
         "muteParticipantsVideoButton": "Parar vídeo",
         "muteParticipantsVideoTitle": "Desativar a câmara deste participante?",
         "muteParticipantsVideoBody": "Não poderá voltar a ligar a câmara, mas eles podem voltar a ligá-la a qualquer momento.",
+        "muteParticipantsVideoBodyModerationOn": "Não será capaz de voltar a ligar a câmara e eles também não.",
         "noDropboxToken": "Nenhum token do Dropbox válido",
         "Ok": "OK",
         "password": "Palavra-passe",
@@ -377,7 +377,7 @@
     },
     "virtualBackground": {
         "apply": "Aplicar",
-        "title": "Planos de Fundo virtuais",
+        "title": "Planos de fundo virtuais",
         "blur": "Desfocagem",
         "slightBlur": "Desfocagem ligeira",
         "removeBackground": "Remover imagem de fundo",
@@ -568,9 +568,9 @@
         "moderator": "É agora um moderador",
         "muted": "Você iniciou uma conversa com o microfone desativado.",
         "mutedTitle": "Você está silenciado!",
-        "mutedRemotelyTitle": "Foi silenciado pelo {{moderador}}",
+        "mutedRemotelyTitle": "Foi silenciado pelo {{participantDisplayName}}",
         "mutedRemotelyDescription": "Pode sempre voltar a ativar o microfone quando estiver pronto para falar. Silencie de volta quando estiver pronto para manter o barulho afastado da reunião.",
-        "videoMutedRemotelyTitle": "A sua câmara foi desligada pelo {{moderador}}.",
+        "videoMutedRemotelyTitle": "A sua câmara foi desligada pelo {{participantDisplayName}}.",
         "videoMutedRemotelyDescription": "Pode sempre ligá-la novamente.",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) removido por outro participante",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) definido por outro participante",
@@ -616,22 +616,25 @@
         "actions": {
             "allow": "Permitir aos participantes:",
             "allowVideo": "Permitir vídeo",
-            "audioModeration": "Eles próprios ativam o som",
+            "audioModeration": "Ativarem o microfone deles",
             "blockEveryoneMicCamera": "Bloquear o microfone e a câmara de todos",
             "invite": "Convidar alguém",
             "askUnmute": "Pedir para ligar o microfone",
+            "moreModerationActions": "Mais opções de moderação",
             "mute": "Silenciar",
             "muteAll": "Silenciar todos",
             "muteEveryoneElse": "Silenciar todos os outros",
             "stopEveryonesVideo": "Desligar a câmara de todos",
             "stopVideo": "Desligar a câmara",
             "unblockEveryoneMicCamera": "Desbloquear o microfone e a câmara de todos",
-            "videoModeration": "Ligar a câmara deles"
-        }
+            "videoModeration": "Ligarem a câmara deles"
+        },
+        "search": "Pesquisar participantes"
     },
     "passwordSetRemotely": "Definido por outro participante",
     "passwordDigitsOnly": "Até {{number}} dígitos",
     "polls": {
+        "by": "Por {{ name }}",
         "create": {
             "addOption": "Adicionar opção",
             "answerPlaceholder": "Opção {{index}}",
@@ -1045,7 +1048,10 @@
         "pending": "{{displayName}} foi convidado"
     },
     "videoStatus": {
+        "adjustFor": "Ajustar para:",
         "audioOnly": "AUD",
+        "bestPerformance": "Melhor desempenho",
+        "highestQuality": "Máxima qualidade",
         "audioOnlyExpanded": "Está em modo de baixa largura de banda. Neste modo, receberá apenas partilha de áudio e ecrã.",
         "callQuality": "Qualidade de vídeo",
         "hd": "HD",
@@ -1056,6 +1062,7 @@
         "ld": "LD",
         "ldTooltip": "Ver vídeo em baixa definição",
         "lowDefinition": "Baixa definição (LD)",
+        "performanceSettings": "Definições de desempenho",
         "sd": "SD",
         "sdTooltip": "Ver vídeo em definição padrão",
         "standardDefinition": "Definição padrão"

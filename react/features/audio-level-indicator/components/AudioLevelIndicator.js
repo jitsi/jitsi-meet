@@ -29,7 +29,7 @@ type Props = {
 /**
  * Creates a ReactElement responsible for drawing audio levels.
  *
- * @extends {Component}
+ * @augments {Component}
  */
 class AudioLevelIndicator extends Component<Props> {
     /**

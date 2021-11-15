@@ -43,7 +43,7 @@ class BackButtonRegistry {
         this._listeners = this._listeners.filter(f => f !== listener);
     }
 
-    onHardwareBackPress: () => boolean
+    onHardwareBackPress: () => boolean;
 
     /**
      * Callback for the back button press event.

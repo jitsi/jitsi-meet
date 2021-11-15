@@ -251,7 +251,7 @@ class ParticipantsPane extends Component<Props, State> {
         this.props.dispatch(close());
     }
 
-    _onDrawerClose: () => void
+    _onDrawerClose: () => void;
 
     /**
      * Callback for closing the drawer.

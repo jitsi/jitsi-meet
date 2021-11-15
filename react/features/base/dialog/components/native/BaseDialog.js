@@ -93,7 +93,7 @@ class BaseDialog<P: Props, S: State> extends AbstractDialog<P, S> {
      *
      * @returns {ReactElement}
      */
-    _renderContent: () => Object
+    _renderContent: () => Object;
 
     /**
      * Renders a specific {@code string} which may contain HTML.

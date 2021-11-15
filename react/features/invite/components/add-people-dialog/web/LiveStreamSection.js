@@ -1,5 +1,7 @@
 // @flow
 
+/* eslint-disable react/jsx-no-bind */
+
 import React, { useState } from 'react';
 
 import { translate } from '../../../../base/i18n';

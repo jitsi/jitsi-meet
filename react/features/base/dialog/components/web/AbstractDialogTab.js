@@ -27,7 +27,7 @@ export type Props = {
 /**
  * Abstract React {@code Component} for tabs of the DialogWithTabs component.
  *
- * @extends Component
+ * @augments Component
  */
 class AbstractDialogTab<P: Props, S: *> extends Component<P, S> {
     /**

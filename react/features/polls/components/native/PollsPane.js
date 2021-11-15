@@ -8,7 +8,6 @@ import { useSelector } from 'react-redux';
 
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { BUTTON_MODES } from '../../../chat/constants';
-import { screen } from '../../../conference/components/native/routes';
 import { getUnreadPollCount } from '../../functions';
 import AbstractPollsPane from '../AbstractPollsPane';
 import type { AbstractProps } from '../AbstractPollsPane';
@@ -31,7 +30,7 @@ const PollsPane = (props: AbstractProps) => {
 
     useEffect(() => {
         navigation.setOptions({
-            tabBarLabel: `${screen.conference.chatandpolls.tab.polls} ${nrUnreadPolls}`
+            tabBarLabel: `${t('chat.tabs.polls')} ${nrUnreadPolls}`
         });
     }, [ nrUnreadPolls ]);
 

@@ -63,7 +63,7 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
         );
     }
 
-    _isIcon: (?string | ?Object) => boolean
+    _isIcon: (?string | ?Object) => boolean;
 
     /**
      * Renders a badge representing the avatar status.

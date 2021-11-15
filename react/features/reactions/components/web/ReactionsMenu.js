@@ -1,5 +1,7 @@
 // @flow
 
+/* eslint-disable react/jsx-no-bind */
+
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 
@@ -22,7 +24,7 @@ import ReactionButton from './ReactionButton';
 type Props = {
 
     /**
-     * Docks the toolbox
+     * Docks the toolbox.
      */
     _dockToolbox: Function,
 
@@ -230,5 +232,5 @@ function mapDispatchToProps(dispatch) {
 
 export default translate(connect(
     mapStateToProps,
-    mapDispatchToProps,
+    mapDispatchToProps
 )(ReactionsMenu));

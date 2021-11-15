@@ -40,7 +40,7 @@ type Props = {
 /**
  * React {@code Component} for displaying an action in {@code VideoMenuButton}.
  *
- * @extends {Component}
+ * @augments {Component}
  */
 export default class VideoMenuButton extends Component<Props> {
     /**

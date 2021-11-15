@@ -19,7 +19,7 @@ type Props = AbstractButtonProps & {
 class FullscreenButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.fullScreen';
     label = 'toolbar.enterFullScreen';
-    toggledLabel = 'toolbar.exitFullScreen'
+    toggledLabel = 'toolbar.exitFullScreen';
 
     /**
      * Retrieves icon dynamically.
@@ -35,10 +35,10 @@ class FullscreenButton extends AbstractButton<Props, *> {
     /**
      * Required by linter due to AbstractButton overwritten prop being writable.
      *
-     * @param {string} value - The value.
+     * @param {string} _value - The value.
      */
-    set icon(value) {
-        return value;
+    set icon(_value) {
+        // Unused.
     }
 
     /**
@@ -55,10 +55,10 @@ class FullscreenButton extends AbstractButton<Props, *> {
     /**
      * Required by linter due to AbstractButton overwritten prop being writable.
      *
-     * @param {string} value - The value.
+     * @param {string} _value - The value.
      */
-    set tooltip(value) {
-        return value;
+    set tooltip(_value) {
+        // Unused.
     }
 
     /**

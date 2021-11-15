@@ -9,7 +9,8 @@ import {
     NOTIFICATION_TIMEOUT,
     hideNotification,
     showErrorNotification,
-    showNotification
+    showNotification,
+    showWarningNotification
 } from '../notifications';
 
 import {
@@ -113,6 +114,16 @@ export function showPendingRecordingNotification(streamType: string) {
  */
 export function showRecordingError(props: Object) {
     return showErrorNotification(props);
+}
+
+/**
+ * Signals that the recording warning notification should be shown.
+ *
+ * @param {Object} props - The Props needed to render the notification.
+ * @returns {showWarningNotification}
+ */
+export function showRecordingWarning(props: Object) {
+    return showWarningNotification(props);
 }
 
 /**

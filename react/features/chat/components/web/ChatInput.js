@@ -64,7 +64,7 @@ type State = {
 /**
  * Implements a React Component for drafting and submitting a chat message.
  *
- * @extends Component
+ * @augments Component
  */
 class ChatInput extends Component<Props, State> {
     _textArea: ?HTMLTextAreaElement;

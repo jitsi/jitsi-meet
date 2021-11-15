@@ -27,7 +27,7 @@ type Props = {
  * Implements a React {@link Component} which displays a dialog describing
  * registered keyboard shortcuts.
  *
- * @extends Component
+ * @augments Component
  */
 class KeyboardShortcutsDialog extends Component<Props> {
     /**

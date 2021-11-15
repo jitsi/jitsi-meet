@@ -250,7 +250,7 @@ function onClick(event) {
 /**
  * Implements a thumbnail.
  *
- * @extends Component
+ * @augments Component
  */
 class Thumbnail extends Component<Props, State> {
     /**
@@ -451,7 +451,7 @@ class Thumbnail extends Component<Props, State> {
         this._stopListeningForAudioUpdates(this.props._audioTrack);
     }
 
-    _clearDoubleClickTimeout: () => void
+    _clearDoubleClickTimeout: () => void;
 
     /**
      * Clears the first click timeout.

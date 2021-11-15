@@ -13,7 +13,7 @@ type Props = {
     accessibilityLabel: string,
 
     /**
-     * Component children
+     * Component children.
      */
     children: string,
 

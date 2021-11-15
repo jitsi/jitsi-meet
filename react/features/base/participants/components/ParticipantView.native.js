@@ -106,7 +106,7 @@ type Props = {
      * The test hint id which can be used to locate the {@code ParticipantView}
      * on the jitsi-meet-torture side. If not provided, the
      * {@code participantId} with the following format will be used:
-     * {@code `org.jitsi.meet.Participant#${participantId}`}
+     * {@code `org.jitsi.meet.Participant#${participantId}`}.
      */
     testHintId: ?string,
 
@@ -133,7 +133,7 @@ type Props = {
  * Implements a React Component which depicts a specific participant's avatar
  * and video.
  *
- * @extends Component
+ * @augments Component
  */
 class ParticipantView extends Component<Props> {
 

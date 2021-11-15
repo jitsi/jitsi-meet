@@ -74,7 +74,7 @@ type State = {
 /**
  * React {@code Component} for modifying calendar integration.
  *
- * @extends Component
+ * @augments Component
  */
 class CalendarTab extends Component<Props, State> {
     /**

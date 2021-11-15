@@ -5,7 +5,7 @@ import { Component } from 'react';
 /**
  * A React Component for adding a meeting URL to an existing calendar meeting.
  *
- * @extends Component
+ * @augments Component
  */
 class AddMeetingUrlButton extends Component<*> {
     /**

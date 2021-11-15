@@ -281,7 +281,7 @@ function _visitNode(node, callback) {
             const { console } = global;
 
             if (console) {
-                const loggerLevels = require('jitsi-meet-logger').levels;
+                const loggerLevels = require('@jitsi/logger').levels;
 
                 Object.keys(loggerLevels).forEach(key => {
                     const level = loggerLevels[key];

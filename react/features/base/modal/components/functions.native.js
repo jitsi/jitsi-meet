@@ -1,33 +1,6 @@
 // @flow
 
-import { useEffect, useState } from 'react';
-import { Keyboard } from 'react-native';
-
 import { toState } from '../../redux';
-
-export const useKeyboardHeight = () => {
-    const [ keyboardHeight, setKeyboardHeight ] = useState(0);
-
-    const onKeyboardDidShow = e => {
-        setKeyboardHeight(e.endCoordinates.height);
-    };
-
-    const onKeyboardDidHide = () => {
-        setKeyboardHeight(0);
-    };
-
-    useEffect(() => {
-        const keyboardShow = Keyboard.addListener('keyboardDidShow', onKeyboardDidShow);
-        const keyboardHide = Keyboard.addListener('keyboardDidHide', onKeyboardDidHide);
-
-        return () => {
-            keyboardShow.remove();
-            keyboardHide.remove();
-        };
-    }, []);
-
-    return keyboardHeight;
-};
 
 /**
  *
@@ -39,7 +12,7 @@ export const useKeyboardHeight = () => {
  * @returns {number}.
  */
 export function getClientWidth(stateful: Object) {
-    const state = toState(stateful['features/base/responsive-ui']);
+    const state = toState(stateful)['features/base/responsive-ui'];
 
     return state.clientWidth;
 }
@@ -54,7 +27,7 @@ export function getClientWidth(stateful: Object) {
  * @returns {number}.
  */
 export function getClientHeight(stateful: Object) {
-    const state = toState(stateful['features/base/responsive-ui']);
+    const state = toState(stateful)['features/base/responsive-ui'];
 
     return state.clientHeight;
 }

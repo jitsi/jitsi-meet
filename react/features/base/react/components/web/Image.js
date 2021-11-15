@@ -4,7 +4,7 @@ import React, { Component } from 'react';
  * Implements a React/Web {@link Component} for displaying image
  * in order to facilitate cross-platform source code.
  *
- * @extends Component
+ * @augments Component
  */
 export default class Image extends Component {
     /**

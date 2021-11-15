@@ -15,7 +15,7 @@ export const AVATAR_SIZE = 50;
 export default {
 
     /**
-     * The FlatList content container styles
+     * The FlatList content container styles.
      */
     contentContainer: {
         alignItems: 'center',

@@ -20,7 +20,7 @@ type Props = {
      * are the possible values:
      * 'conference.connectionEstablished'
      * 'conference.connectionInterrupted'
-     * 'conference.connectionRestored'
+     * 'conference.connectionRestored'.
      */
     _conferenceConnectionState: string,
 

@@ -134,7 +134,7 @@ type Props = {
  * Implements a React {@link Component} which represents the filmstrip on
  * Web/React.
  *
- * @extends Component
+ * @augments Component
  */
 class Filmstrip extends PureComponent <Props> {
 

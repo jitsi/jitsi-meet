@@ -10,18 +10,21 @@ export class OggAdapter extends RecordingAdapter {
 
     /**
      * Instance of MediaRecorder.
+     *
      * @private
      */
     _mediaRecorder = null;
 
     /**
      * Initialization promise.
+     *
      * @private
      */
     _initPromise = null;
 
     /**
      * The recorded audio file.
+     *
      * @private
      */
     _recordedData = null;

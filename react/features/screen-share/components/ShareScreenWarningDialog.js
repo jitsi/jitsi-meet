@@ -60,7 +60,8 @@ class ShareScreenWarningDialog extends Component<Props> {
 
     /**
      * Implements {@Component#render}.
-     *§
+     *§.
+     *
      * @inheritdoc
      */
     render() {

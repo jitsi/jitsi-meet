@@ -47,7 +47,7 @@ declare var interfaceConfig : Object;
 /**
  * Timeout for when to show the privacy notice after a private message was received.
  *
- * E.g. if this value is 20 secs (20000ms), then we show the privacy notice when sending a non private
+ * E.g. If this value is 20 secs (20000ms), then we show the privacy notice when sending a non private
  * message after we have received a private message in the last 20 seconds.
  */
 const PRIVACY_NOTICE_TIMEOUT = 20 * 1000;
@@ -168,7 +168,7 @@ MiddlewareRegistry.register(store => next => action => {
 
 /**
  * Set up state change listener to perform maintenance tasks when the conference
- * is left or failed, e.g. clear messages or close the chat modal if it's left
+ * is left or failed, e.g. Clear messages or close the chat modal if it's left
  * open.
  */
 StateListenerRegistry.register(
