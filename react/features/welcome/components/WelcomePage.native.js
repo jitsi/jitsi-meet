@@ -15,7 +15,6 @@ import {
     _mapStateToProps as _abstractMapStateToProps
 } from './AbstractWelcomePage';
 import WelcomePageScreen from './Screen';
-import jitsiLocalStorage from '../../../../modules/util/JitsiLocalStorage';
 
 const LAUNCHED_BEFORE_STORAGE_KEY = 'LAUNCHED_BEFORE';
 
@@ -35,12 +34,12 @@ class WelcomePage extends AbstractWelcomePage {
      */
     checkIsFirstTimeLoading() {
         try {
-            const launchedBefore = jitsiLocalStorage.getItem(LAUNCHED_BEFORE_STORAGE_KEY);
+            const launchedBefore = AsyncStorage.getItem(LAUNCHED_BEFORE_STORAGE_KEY);
 
             if (launchedBefore === 'true') {
                 this.props.dispatch(setScreen('done'));
             } else {
-                jitsiLocalStorage.setItem(LAUNCHED_BEFORE_STORAGE_KEY, 'true');
+                AsyncStorage.setItem(LAUNCHED_BEFORE_STORAGE_KEY, 'true');
                 this.props.dispatch(setScreen('stepOne'));
             }
         } catch (e) {

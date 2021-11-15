@@ -1,6 +1,6 @@
 // @flow
 import {
-    ColorPalette, deviceHasNotch,
+    ColorPalette, isIPhoneX,
     JaneWeb,
     sizeHelper
 } from '../../../base/styles';
@@ -12,7 +12,7 @@ const JANE_COLOR = ColorPalette.jane;
 const DARK_TEXT_COLOR = ColorPalette.janeDarkGrey;
 const INNER_CONTAINER_BACKGROUND = ColorPalette.janeLight;
 
-// Numbers below are from desgin mock up.
+// Numbers below are from design mock up.
 const UPPER_SECTION_HEIGHT = isPad ? 866 : 746;
 const LOWER_SECTION_HEIGHT = isPad ? 184 : 98;
 const INNER_UPPER_CONTAINER_HEIGHT = isPad ? 722 : 668;
@@ -26,32 +26,32 @@ const commonStyles = {
         flex: 1,
         paddingHorizontal: sizeHelper.getActualSizeW(23),
         width: '100%',
-        paddingBottom: isPad || deviceHasNotch() ? 0 : 10
+        paddingBottom: isPad || isIPhoneX() ? 0 : 10
     },
     bigText: {
         ...JaneWeb.boldFont,
         textAlign: 'center',
         color: DARK_TEXT_COLOR,
         marginBottom: sizeHelper.getActualSizeH(20),
-        fontSize: sizeHelper.getActualFontSize(28)
+        fontSize: sizeHelper.getActualSizeH(28)
     },
     regularText: {
         ...JaneWeb.mediumFont,
         color: DARK_TEXT_COLOR,
         textAlign: 'left',
         marginVertical: sizeHelper.getActualSizeH(28),
-        fontSize: sizeHelper.getActualFontSize(18)
+        fontSize: sizeHelper.getActualSizeH(18)
     },
     logo: {
         backgroundColor: JANE_COLOR,
         height: undefined,
         aspectRatio: 1437 / 1188,
-        width: sizeHelper.getActualFontSize(204)
+        width: sizeHelper.getActualSizeH(204)
     },
     logoBlue: {
         height: undefined,
         aspectRatio: 450 / 370,
-        width: sizeHelper.getActualFontSize(204)
+        width: sizeHelper.getActualSizeH(204)
     },
     mainContainer: {
         height: sizeHelper.getActualSizeH(UPPER_SECTION_HEIGHT),
@@ -163,7 +163,7 @@ const stepsScreenStyles = {
             ...commonStyles.regularText,
             textAlign: 'left',
             maxWidth: sizeHelper.getActualSizeW(320),
-            fontSize: sizeHelper.getActualFontSize(17)
+            fontSize: sizeHelper.getActualSizeH(17)
         },
         header: {
             ...commonStyles.bigText,
@@ -188,7 +188,7 @@ const stepsScreenStyles = {
             color: WHITE_COLOR,
             marginTop: sizeHelper.getActualSizeH(isPad ? 40 : 96),
             marginBottom: sizeHelper.getActualSizeH(30),
-            fontSize: sizeHelper.getActualFontSize(24)
+            fontSize: sizeHelper.getActualSizeH(24)
         }
     },
     noEmail: {
@@ -206,7 +206,7 @@ const stepsScreenStyles = {
         regularText: {
             ...commonStyles.regularText,
             marginVertical: undefined,
-            fontSize: sizeHelper.getActualFontSize(isPad ? 18 : 16),
+            fontSize: sizeHelper.getActualSizeH(isPad ? 18 : 16),
             maxWidth: sizeHelper.getActualSizeW(isPad ? 600 : 280)
         },
         boldText: {
@@ -214,7 +214,7 @@ const stepsScreenStyles = {
         },
         header: {
             ...commonStyles.bigText,
-            fontSize: sizeHelper.getActualFontSize(isPad ? 28 : 26)
+            fontSize: sizeHelper.getActualSizeH(isPad ? 28 : 26)
         },
         mobileScreen: {
             height: sizeHelper.getActualSizeH(180),
@@ -245,7 +245,7 @@ const stepsScreenStyles = {
             width: '100%',
             textAlign: 'left',
             marginVertical: sizeHelper.getActualSizeH(isPad ? 15 : 9),
-            fontSize: sizeHelper.getActualFontSize(18),
+            fontSize: sizeHelper.getActualSizeH(18),
             maxWidth: sizeHelper.getActualSizeW(371)
         },
         boldText: {

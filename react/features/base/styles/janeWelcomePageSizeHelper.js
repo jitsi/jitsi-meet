@@ -1,6 +1,5 @@
 // eslint-disable-next-line require-jsdoc
 import { Dimensions, PixelRatio } from 'react-native';
-import { deviceHasNotch } from './functions.native';
 const { height, width } = Dimensions.get('window');
 
 /**
@@ -9,17 +8,17 @@ const { height, width } = Dimensions.get('window');
  */
 export default class JaneWelcomePageSizeHelper {
     /**
-     * constructor
+     * Constructor.
      *
      * @param {Object}  options - Object.
      * @returns {void}
      */
     constructor(options) {
-        this.mockUpWidth = options.mockUpWidth || 0;
-        this.mockUpHeight = options.mockUpHeight || 0;
-        this.mockUpSafeAreaPadding = options.mockUpSafeAreaPadding || 0;
-        this.scaleWidthRatio = width / this.mockUpWidth;
-        this.scaleHeighthRatio = (height - this.mockUpSafeAreaPadding) / this.mockUpHeight;
+        this.designWidth = options.designWidth || 0;
+        this.designHeight = options.designHeight || 0;
+        this.designSafeAreaPadding = options.designSafeAreaPadding || 0;
+        this.scaleWidthRatio = width / this.designWidth;
+        this.scaleHeightRatio = (height - this.designSafeAreaPadding) / this.designHeight;
     }
 
     /**
@@ -47,21 +46,6 @@ export default class JaneWelcomePageSizeHelper {
             return 0;
         }
 
-        return PixelRatio.roundToNearestPixel(size * this.scaleHeighthRatio);
-    }
-
-    /**
-     * Calculate actual font size from the the design mockup mesaurements.
-     * Return the actual horizontal direction dp if the iphone has notch.
-     *
-     * @param {number}  size - Number.
-     * @returns {number}
-     */
-    getActualFontSize(size) {
-        if (!deviceHasNotch()) {
-            return this.getActualSizeH(size);
-        }
-
-        return this.getActualSizeW(size);
+        return PixelRatio.roundToNearestPixel(size * this.scaleHeightRatio);
     }
 }
