@@ -15,13 +15,6 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		443FAC8A751044E38C9EA7AB /* ProximaNova-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7E545339E87B44E4B8F93CD8 /* ProximaNova-Thin.otf */; };
-		4E90F9402632D1AB001102D4 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E90F93F2632D1AB001102D4 /* Atomic.swift */; };
-		4EB06024260E026600F524C5 /* ReplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4EC49B8625BED71300E76218 /* ReplayKit.framework */; };
-		4EB06027260E026600F524C5 /* SampleHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB06026260E026600F524C5 /* SampleHandler.swift */; };
-		4EB0602B260E026600F524C5 /* JOABroadcastExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 4EB06023260E026600F524C5 /* JOABroadcastExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		4EB0603C260E09D000F524C5 /* SocketConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB06039260E09D000F524C5 /* SocketConnection.swift */; };
-		4EB0603D260E09D000F524C5 /* DarwinNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB0603A260E09D000F524C5 /* DarwinNotificationCenter.swift */; };
-		4EB0603E260E09D000F524C5 /* SampleUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB0603B260E09D000F524C5 /* SampleUploader.swift */; };
 		53376CB74B944F44A6D0A187 /* ProximaNova-Reg.otf in Resources */ = {isa = PBXBuildFile; fileRef = 00702F4293D64B59A9731539 /* ProximaNova-Reg.otf */; };
 		5CC1393DFA294862AB59CE62 /* OpenSans-Light-webfont.svg in Resources */ = {isa = PBXBuildFile; fileRef = 41D7B16E683246C09137285D /* OpenSans-Light-webfont.svg */; };
 		6A63F383534145818B702D84 /* ProximaNova-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2A6A6C21EE2F4C7298D0E11D /* ProximaNova-Bold.otf */; };
@@ -35,16 +28,6 @@
 		DEA9F28A258A6EA800D4CD74 /* JitsiMeetSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DEA9F288258A6EA800D4CD74 /* JitsiMeetSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E484E90A2BA7452CBA8EC009 /* OpenSans-Light-webfont.woff in Resources */ = {isa = PBXBuildFile; fileRef = 9D10362D45AE444CAD45A026 /* OpenSans-Light-webfont.woff */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		4EB06029260E026600F524C5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4EB06022260E026600F524C5;
-			remoteInfo = "JitsiMeetBroadcast Extension";
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		0B26BE701EC5BC3C00EEFB41 /* Embed Frameworks */ = {
@@ -75,7 +58,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				4EB0602B260E026600F524C5 /* JOABroadcastExtension.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -102,7 +84,6 @@
 		3E0F4ED943C0B12BE77F6B45 /* Pods-JitsiMeet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.release.xcconfig"; path = "Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.release.xcconfig"; sourceTree = "<group>"; };
 		41D7B16E683246C09137285D /* OpenSans-Light-webfont.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Light-webfont.svg"; path = "../../fonts/OpenSans-Light-webfont.svg"; sourceTree = "<group>"; };
 		4E90F93F2632D1AB001102D4 /* Atomic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
-		4EB06023260E026600F524C5 /* JOABroadcastExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = JOABroadcastExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		4EB06026260E026600F524C5 /* SampleHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleHandler.swift; sourceTree = "<group>"; };
 		4EB06028260E026600F524C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4EB06032260E08CC00F524C5 /* extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = extension.entitlements; sourceTree = "<group>"; };
@@ -134,14 +115,6 @@
 				DE050389256E904600DEE3A5 /* WebRTC.xcframework in Frameworks */,
 				DEA9F289258A6EA800D4CD74 /* JitsiMeetSDK.framework in Frameworks */,
 				DC8F1B3090905E25319DC06E /* libPods-Jane Online Appointments.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4EB06020260E026600F524C5 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4EB06024260E026600F524C5 /* ReplayKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -232,7 +205,6 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* Jane Video.app */,
-				4EB06023260E026600F524C5 /* JOABroadcastExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -272,29 +244,11 @@
 			buildRules = (
 			);
 			dependencies = (
-				4EB0602A260E026600F524C5 /* PBXTargetDependency */,
 			);
 			name = "Jane Online Appointments";
 			productName = "Jane Online Appointments";
 			productReference = 13B07F961A680F5B00A75B9A /* Jane Video.app */;
 			productType = "com.apple.product-type.application";
-		};
-		4EB06022260E026600F524C5 /* JOABroadcastExtension */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 4EB0602C260E026700F524C5 /* Build configuration list for PBXNativeTarget "JOABroadcastExtension" */;
-			buildPhases = (
-				4EB0601F260E026600F524C5 /* Sources */,
-				4EB06020260E026600F524C5 /* Frameworks */,
-				4EB06021260E026600F524C5 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = JOABroadcastExtension;
-			productName = "JitsiMeetBroadcast Extension";
-			productReference = 4EB06023260E026600F524C5 /* JOABroadcastExtension.appex */;
-			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -318,9 +272,6 @@
 							};
 						};
 					};
-					4EB06022260E026600F524C5 = {
-						CreatedOnToolsVersion = 12.4;
-					};
 				};
 			};
 			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "app" */;
@@ -337,7 +288,6 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* Jane Online Appointments */,
-				4EB06022260E026600F524C5 /* JOABroadcastExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -358,13 +308,6 @@
 				53376CB74B944F44A6D0A187 /* ProximaNova-Reg.otf in Resources */,
 				B1E8C33997D4498698D52F05 /* ProximaNova-Sbold.otf in Resources */,
 				443FAC8A751044E38C9EA7AB /* ProximaNova-Thin.otf in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4EB06021260E026600F524C5 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -489,27 +432,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4EB0601F260E026600F524C5 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4EB0603C260E09D000F524C5 /* SocketConnection.swift in Sources */,
-				4EB0603E260E09D000F524C5 /* SampleUploader.swift in Sources */,
-				4EB0603D260E09D000F524C5 /* DarwinNotificationCenter.swift in Sources */,
-				4EB06027260E026600F524C5 /* SampleHandler.swift in Sources */,
-				4E90F9402632D1AB001102D4 /* Atomic.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		4EB0602A260E026600F524C5 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4EB06022260E026600F524C5 /* JOABroadcastExtension */;
-			targetProxy = 4EB06029260E026600F524C5 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		13B07FB11A68108700A75B9A /* LaunchScreen.xib */ = {
@@ -581,75 +504,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.janeapp.videochat.prod;
 				PRODUCT_NAME = "Jane Video";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-			};
-			name = Release;
-		};
-		4EB0602D260E026700F524C5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = "broadcast-extension/extension.entitlements";
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = G82747A532;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				INFOPLIST_FILE = "broadcast-extension/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.janeapp.videochat.qa.broadcast.extension;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		4EB0602E260E026700F524C5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = "broadcast-extension/extension.entitlements";
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = G82747A532;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				INFOPLIST_FILE = "broadcast-extension/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.janeapp.videochat.qa.broadcast.extension;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -775,15 +629,6 @@
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
 				13B07F951A680F5B00A75B9A /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		4EB0602C260E026700F524C5 /* Build configuration list for PBXNativeTarget "JOABroadcastExtension" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				4EB0602D260E026700F524C5 /* Debug */,
-				4EB0602E260E026700F524C5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

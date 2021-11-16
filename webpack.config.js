@@ -14,7 +14,7 @@ const cacheVersionNumber = Math.random().toString(36)
  * development with webpack-dev-server.
  */
 const devServerProxyTarget
-    = process.env.WEBPACK_DEV_SERVER_PROXY_TARGET || 'https://videochat.jane.qa';
+    = process.env.WEBPACK_DEV_SERVER_PROXY_TARGET || 'https://videochat-chrisw.jane.qa';
 
 const analyzeBundle = process.argv.indexOf('--analyze-bundle') !== -1;
 const detectCircularDeps = process.argv.indexOf('--detect-circular-deps') !== -1;
