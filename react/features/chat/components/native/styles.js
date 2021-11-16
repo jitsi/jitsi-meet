@@ -71,6 +71,10 @@ export default {
         flexDirection: 'row'
     },
 
+    messageContainer: {
+        flex: 1
+    },
+
     /**
      * Wrapper View for the entire block.
      */

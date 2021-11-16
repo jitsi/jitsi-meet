@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { FlatList, Text, View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { translate } from '../../../base/i18n';
@@ -55,7 +54,6 @@ class MessageContainer extends AbstractMessageContainer<Props> {
         return (
             <FlatList
                 ListEmptyComponent = { this._renderListEmptyComponent }
-                bounces = { false }
                 data = { data }
 
                 // Workaround for RN bug:
@@ -63,7 +61,8 @@ class MessageContainer extends AbstractMessageContainer<Props> {
                 inverted = { Boolean(data.length) }
                 keyExtractor = { this._keyExtractor }
                 keyboardShouldPersistTaps = 'always'
-                renderItem = { this._renderMessageGroup } />
+                renderItem = { this._renderMessageGroup }
+                style = { styles.messageContainer } />
         );
     }
 
@@ -111,11 +110,7 @@ class MessageContainer extends AbstractMessageContainer<Props> {
      * @returns {React$Element<*>}
      */
     _renderMessageGroup({ item: messages }) {
-        return (
-            <ScrollView>
-                <ChatMessageGroup messages = { messages } />
-            </ScrollView>
-        );
+        return <ChatMessageGroup messages = { messages } />;
     }
 }
 
