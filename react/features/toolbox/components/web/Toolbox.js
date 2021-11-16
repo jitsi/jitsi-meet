@@ -652,7 +652,7 @@ class Toolbox extends Component<Props> {
             group: 2
         };
 
-        const fullscreen = !_isMobile && {
+        const fullscreen = {
             key: 'fullscreen',
             Content: FullscreenButton,
             handleClick: this._onToolbarToggleFullScreen,
