@@ -10,7 +10,7 @@ import { createColorTokens } from './utils';
  * @param {Object} arg - The ui tokens.
  * @returns {Object}
  */
-export function createWebTheme({ font, colors, colorMap, shape, spacing, typography, breakpoints }: Object) {
+export function createWebTheme({ font, colors, colorMap, shape, spacing, typography }: Object) {
     return createMuiTheme({
         props: {
             // disable ripple effect on buttons globally
@@ -27,8 +27,7 @@ export function createWebTheme({ font, colors, colorMap, shape, spacing, typogra
         typography: {
             font,
             ...typography
-        },
-        breakpoints
+        }
     });
 }
 
@@ -47,4 +46,3 @@ export function formatCommonClasses(stylesObj: Object) {
 
     return formatted;
 }
-

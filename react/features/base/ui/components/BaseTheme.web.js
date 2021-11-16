@@ -1,6 +1,6 @@
 // @flow
 
-import { font, colors, colorMap, spacing, shape, typography, breakpoints } from '../Tokens';
+import { font, colors, colorMap, spacing, shape, typography } from '../Tokens';
 import { createWebTheme } from '../functions';
 
 export default createWebTheme({
@@ -10,5 +10,10 @@ export default createWebTheme({
     spacing,
     shape,
     typography,
-    breakpoints
+    breakpoints: {
+        values: {
+            '0': 0,
+            '480': 480
+        }
+    }
 });

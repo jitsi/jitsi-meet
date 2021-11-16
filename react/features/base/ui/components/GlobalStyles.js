@@ -15,7 +15,7 @@ import { formatCommonClasses } from '../functions';
 const useStyles = makeStyles(theme =>
     createStyles({
         '@global': {
-            ...formatCommonClasses(commonStyles(theme)),
+            ...formatCommonClasses(commonStyles),
             ...getGlobalStyles(theme)
         }
     })

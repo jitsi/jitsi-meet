@@ -2,66 +2,13 @@
 
 /* eslint-disable react/jsx-no-bind */
 
-import { withStyles } from '@material-ui/styles';
-import clsx from 'clsx';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { Icon, IconCheck, IconCopy } from '../../base/icons';
-import { withPixelLineHeight } from '../styles/functions.web';
 import { copyText } from '../util';
 
 
-const styles = theme => {
-    return {
-        copyButton: {
-            ...withPixelLineHeight(theme.typography.bodyLongRegular),
-            borderRadius: theme.shape.borderRadius,
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            padding: '8px 8px 8px 16px',
-            marginTop: 5,
-            width: 'calc(100% - 24px)',
-            height: 24,
-
-            background: theme.palette.action01,
-            cursor: 'pointer',
-
-            '&:hover': {
-                backgroundColor: theme.palette.action01Hover,
-                fontWeight: 600
-            },
-
-            '&.clicked': {
-                background: theme.palette.success02
-            },
-
-            '& > div > svg > path': {
-                fill: theme.palette.text01
-            }
-        },
-        content: {
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            maxWidth: 292,
-            marginRight: 16,
-
-            '&.selected': {
-                fontWeight: 600
-            }
-        }
-    };
-};
-
-let mounted;
-
 type Props = {
-
-    /**
-     * An object containing the CSS classes.
-     */
-     classes: Object,
 
     /**
      * Css class to apply on container.
@@ -99,17 +46,9 @@ type Props = {
  *
  * @returns {React$Element<any>}
  */
-function CopyButton({ classes, className, displayedText, textToCopy, textOnHover, textOnCopySuccess, id }: Props) {
+function CopyButton({ className, displayedText, textToCopy, textOnHover, textOnCopySuccess, id }: Props) {
     const [ isClicked, setIsClicked ] = useState(false);
     const [ isHovered, setIsHovered ] = useState(false);
-
-    useEffect(() => {
-        mounted = true;
-
-        return () => {
-            mounted = false;
-        };
-    }, []);
 
     /**
      * Click handler for the element.
@@ -125,10 +64,7 @@ function CopyButton({ classes, className, displayedText, textToCopy, textOnHover
             setIsClicked(true);
 
             setTimeout(() => {
-                // avoid: Can't perform a React state update on an unmounted component
-                if (mounted) {
-                    setIsClicked(false);
-                }
+                setIsClicked(false);
             }, 2500);
         }
     }
@@ -176,7 +112,7 @@ function CopyButton({ classes, className, displayedText, textToCopy, textOnHover
         if (isClicked) {
             return (
                 <>
-                    <div className = { clsx(classes.content, 'selected') }>
+                    <div className = 'copy-button-content selected'>
                         <span role = { 'alert' }>{ textOnCopySuccess }</span>
                     </div>
                     <Icon src = { IconCheck } />
@@ -186,8 +122,8 @@ function CopyButton({ classes, className, displayedText, textToCopy, textOnHover
 
         return (
             <>
-                <div className = { `${classes.copyButton}-content` }>
-                    { isHovered ? textOnHover : displayedText }
+                <div className = 'copy-button-content'>
+                    {isHovered ? textOnHover : displayedText}
                 </div>
                 <Icon src = { IconCopy } />
             </>
@@ -197,7 +133,7 @@ function CopyButton({ classes, className, displayedText, textToCopy, textOnHover
     return (
         <div
             aria-label = { textOnHover }
-            className = { clsx(className, classes.copyButton, isClicked ? ' clicked' : '') }
+            className = { `${className} copy-button${isClicked ? ' clicked' : ''}` }
             id = { id }
             onBlur = { onHoverOut }
             onClick = { onClick }
@@ -216,4 +152,4 @@ CopyButton.defaultProps = {
     className: ''
 };
 
-export default withStyles(styles)(CopyButton);
+export default CopyButton;
