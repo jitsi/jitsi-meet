@@ -6,7 +6,6 @@ import { FlatList } from 'react-native';
 import { MESSAGE_TYPE_LOCAL, MESSAGE_TYPE_REMOTE } from '../../constants';
 
 import ChatMessage from './ChatMessage';
-import styles from './styles';
 
 type Props = {
 
@@ -43,8 +42,7 @@ export default class ChatMessageGroup extends Component<Props> {
                 data = { this.props.messages }
                 inverted = { true }
                 keyExtractor = { this._keyExtractor }
-                renderItem = { this._renderMessage }
-                style = { styles.messageContainer } />
+                renderItem = { this._renderMessage } />
         );
     }
 
