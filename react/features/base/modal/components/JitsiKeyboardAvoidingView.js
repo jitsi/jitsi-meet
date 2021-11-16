@@ -3,8 +3,10 @@
 import { useHeaderHeight } from '@react-navigation/stack';
 import React, { useEffect, useState } from 'react';
 import {
+    Keyboard,
     KeyboardAvoidingView,
-    Platform
+    Platform,
+    TouchableWithoutFeedback
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -58,18 +60,22 @@ const JitsiKeyboardAvoidingView = (
     const androidVerticalOffset = headerHeight;
 
     return (
-        <KeyboardAvoidingView
-            behavior = { Platform.OS === 'ios' ? 'padding' : 'height' }
-            contentContainerStyle = { contentContainerStyle }
-            enabled = { true }
-            keyboardVerticalOffset = {
-                Platform.OS === 'ios'
-                    ? iosVerticalOffset
-                    : androidVerticalOffset
-            }
-            style = { style }>
-            { children }
-        </KeyboardAvoidingView>
+        <TouchableWithoutFeedback
+            /* eslint-disable-next-line react/jsx-handler-names */
+            onPress = { Keyboard.dismiss }>
+            <KeyboardAvoidingView
+                behavior = { Platform.OS === 'ios' ? 'padding' : 'height' }
+                contentContainerStyle = { contentContainerStyle }
+                enabled = { true }
+                keyboardVerticalOffset = {
+                    Platform.OS === 'ios'
+                        ? iosVerticalOffset
+                        : androidVerticalOffset
+                }
+                style = { style }>
+                { children }
+            </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
     );
 };
 
