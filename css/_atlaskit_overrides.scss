@@ -103,3 +103,20 @@ div.Tooltip {
     line-height: 14px;
     padding: 8px;
 }
+
+// make modal full screen on landscape orientation
+@media (max-height: 420px) {
+    .atlaskit-portal {
+        .css-1oc7v0j {
+            height: 100%;
+            padding: 0;
+            max-width: 100%;
+            top: 0;
+            width: 100%;
+
+            &> div {
+                height: 100%;
+            }
+        }
+    }
+}
