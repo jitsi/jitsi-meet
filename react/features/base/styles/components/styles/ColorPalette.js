@@ -4,6 +4,7 @@
 const BLACK = '#111111';
 
 const JANE_DARK_COLOR = '#009097';
+
 /**
  * The application's color palette.
  */

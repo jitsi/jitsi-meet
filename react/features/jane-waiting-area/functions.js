@@ -264,7 +264,7 @@ export function sendMessageToIosApp(message: Object) {
 
 export function isJaneWaitingAreaEnabled(state: Object): boolean {
     const { jwt } = state['features/base/jwt'];
-    const jwtPayload = jwt && jwtDecode(jwt) || null;
+    const jwtPayload = (jwt && jwtDecode(jwt)) || null;
     const janeWaitingAreaEnabled = _.get(jwtPayload, 'context.waiting_area_enabled') ?? false;
 
     return state['features/base/config'].janeWaitingAreaEnabled || janeWaitingAreaEnabled;

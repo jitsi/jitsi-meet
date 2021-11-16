@@ -28,6 +28,7 @@ import tutorialStyles from './styles';
 const WHITE_COLOR = ColorPalette.white;
 const JANE_COLOR = ColorPalette.jane;
 
+// $FlowFixMe[object literal]
 const isPad = Platform.isPad;
 
 const ENVELOPE_ICON_SIZE = sizeHelper.getActualSizeW(isPad ? 161 : 130);
@@ -279,7 +280,7 @@ const Done = (props: Props) => {
             style = { tutorialStyles.done.mainContainer }>
             <Image
                 source = { require('../../../../../images/jane-video-logo.png') }
-                style = { [ tutorialStyles.logo, tutorialStyles.done.logo ] } />
+                style = { tutorialStyles.logo } />
             <FixedScaleText
                 style = { tutorialStyles.done.header }>
                 {
@@ -428,7 +429,7 @@ const DefaultScreen = () => (<View
         style = { tutorialStyles.default.mainContainer }>
         <Image
             source = { require('../../../../../images/jane-video-logo.png') }
-            style = { [ tutorialStyles.logo, tutorialStyles.done.logo ] } />
+            style = { tutorialStyles.logo } />
     </View>
 </View>);
 

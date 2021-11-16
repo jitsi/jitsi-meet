@@ -8,11 +8,11 @@ import {
 } from '../../base/participants';
 import { getRemoteTracks, isHdQualityEnabled } from '../../base/tracks';
 import { NotificationsContainer } from '../../notifications/components';
+import { shouldDisplayTileView } from '../../video-layout';
+import { shouldDisplayNotifications } from '../functions';
 
 // import HdVideoAlert
 //     from '../../notifications/components/web/HdVideoAlert';
-import { shouldDisplayTileView } from '../../video-layout';
-import { shouldDisplayNotifications } from '../functions';
 
 /**
  * The type of the React {@code Component} props of {@link AbstractLabels}.

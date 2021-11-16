@@ -19,7 +19,6 @@ export function getFieldValue(fieldParameter: Object | string) {
 // eslint-disable-next-line require-jsdoc
 export function shouldShowPreCallMessage(state: Object) {
     const participantType = getLocalParticipantType(state);
-    const { remoteParticipantsStatuses } = state['features/jane-waiting-area'];
 
     if (isJaneWaitingAreaEnabled(state)) {
         return participantType !== 'StaffMember'

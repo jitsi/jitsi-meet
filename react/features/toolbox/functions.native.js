@@ -18,9 +18,10 @@ const WIDTH = {
  * but removed from the overflow menu, based on the width of the screen.
  *
  * @param {number} width - The width of the screen.
+ * @param {boolean} janeWaitingAreaEnabled - Whether or not jane waiting room is enabled..
  * @returns {Set}
  */
-export function getMovableButtons(width: number, janeWaitingAreaEnabled: boolean): Set<string> {
+export function getMovableButtons(width: number, janeWaitingAreaEnabled: boolean = false): Set<string> {
     let buttons = [];
 
     switch (true) {

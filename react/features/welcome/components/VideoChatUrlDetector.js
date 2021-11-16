@@ -1,6 +1,6 @@
 // @flow
 import { Clipboard } from 'react-native';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 
 import { appNavigate } from '../../app/actions';
 import { connect } from '../../base/redux';

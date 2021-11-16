@@ -3,8 +3,10 @@
 import _ from 'lodash';
 import React from 'react';
 import { View } from 'react-native';
-import { ColorPalette } from '../../base/styles/components/styles';
+
 import { sizeHelper } from '../../base/styles';
+import { ColorPalette } from '../../base/styles/components/styles';
+
 
 type Props = {
     count: number,

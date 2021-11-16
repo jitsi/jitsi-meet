@@ -24,7 +24,6 @@ import {
 import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
 import JaneWaitingArea from '../../../jane-waiting-area/components/native/JaneWaitingArea';
 import { LargeVideo } from '../../../large-video';
-import { KnockingParticipantList } from '../../../lobby';
 import { LobbyScreen } from '../../../lobby/components/native';
 import { getIsLobbyVisible } from '../../../lobby/functions';
 import { BackButtonRegistry } from '../../../mobile/back-button';
@@ -39,10 +38,12 @@ import {
 } from '../AbstractConference';
 import type { AbstractProps } from '../AbstractConference';
 
-import Labels from './Labels';
-import LonelyMeetingExperience from './LonelyMeetingExperience';
 import NavigationBar from './NavigationBar';
 import styles from './styles';
+
+// import Labels from './Labels';
+// import LonelyMeetingExperience from './LonelyMeetingExperience';
+// import { KnockingParticipantList } from '../../../lobby';
 
 
 // import LonelyMeetingExperience from './LonelyMeetingExperience';
@@ -280,7 +281,6 @@ class Conference extends AbstractConference<Props, *> {
             _largeVideoParticipantId,
             _reducedUI,
             _shouldDisplayTileView,
-            _toolboxVisible,
             _janeWaitingAreaEnabled,
             _isJaneTestCall
         } = this.props;

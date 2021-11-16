@@ -11,8 +11,8 @@ type Props = {
     content: React$Node,
     borderColor: string,
     textColor: string,
-    marginBottom: number,
-    size: number,
+    marginBottom?: number,
+    size?: number,
     onPress: Function
 };
 
