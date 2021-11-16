@@ -327,7 +327,7 @@ class Conference extends AbstractConference<Props, *> {
 
                     {/* <LonelyMeetingExperience />*/}
 
-                    {_janeWaitingAreaEnabled && <JaneWaitingArea />}
+                    {!_isJaneTestCall && _janeWaitingAreaEnabled && <JaneWaitingArea />}
                     { _shouldDisplayTileView || <><Filmstrip /><Toolbox /></> }
                 </View>
 
