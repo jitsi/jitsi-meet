@@ -17,7 +17,7 @@ import {
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
 
-import { TOGGLE_E2EE } from './actionTypes';
+import { SET_MEDIA_ENCRYPTION_KEY, TOGGLE_E2EE } from './actionTypes';
 import { setE2EEMaxMode, setEveryoneEnabledE2EE, setEveryoneSupportE2EE, toggleE2EE } from './actions';
 import { E2EE_OFF_SOUND_ID, E2EE_ON_SOUND_ID, MAX_MODE } from './constants';
 import { isMaxModeReached, isMaxModeThresholdReached } from './functions';
@@ -31,6 +31,8 @@ import { E2EE_OFF_SOUND_FILE, E2EE_ON_SOUND_FILE } from './sounds';
  * @returns {Function}
  */
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
+    const conference = getCurrentConference(getState);
+
     switch (action.type) {
     case APP_WILL_MOUNT:
         dispatch(registerSound(
@@ -179,8 +181,6 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     }
 
     case TOGGLE_E2EE: {
-        const conference = getCurrentConference(getState);
-
         if (conference && conference.isE2EEEnabled() !== action.enabled) {
             logger.debug(`E2EE will be ${action.enabled ? 'enabled' : 'disabled'}`);
             conference.toggleE2EE(action.enabled);
@@ -197,6 +197,36 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             const soundID = action.enabled ? E2EE_ON_SOUND_ID : E2EE_OFF_SOUND_ID;
 
             dispatch(playSound(soundID));
+        }
+
+        break;
+    }
+
+    case SET_MEDIA_ENCRYPTION_KEY: {
+        if (conference && conference.isE2EESupported()) {
+            const { exportedKey, index } = action.keyInfo;
+
+            if (exportedKey) {
+                window.crypto.subtle.importKey(
+                    'raw',
+                    new Uint8Array(exportedKey),
+                    'AES-GCM',
+                    false,
+                    [ 'encrypt', 'decrypt' ])
+                .then(
+                    encryptionKey => {
+                        conference.setMediaEncryptionKey({
+                            encryptionKey,
+                            index
+                        });
+                    })
+                .catch(error => logger.error('SET_MEDIA_ENCRYPTION_KEY error', error));
+            } else {
+                conference.setMediaEncryptionKey({
+                    encryptionKey: false,
+                    index
+                });
+            }
         }
 
         break;
@@ -228,6 +258,12 @@ StateListenerRegistry.register(
  */
 function _updateMaxMode(dispatch, getState) {
     const state = getState();
+
+    const { e2ee = {} } = state['features/base/config'];
+
+    if (e2ee.externallyManagedKey) {
+        return;
+    }
 
     if (isMaxModeThresholdReached(state)) {
         dispatch(setE2EEMaxMode(MAX_MODE.THRESHOLD_EXCEEDED));

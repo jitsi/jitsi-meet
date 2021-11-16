@@ -827,6 +827,10 @@ var config = {
     //
 
     // },
+    // e2ee: {
+    //   labels,
+    //   externallyManagedKey: false
+    // },
 
     // Options related to end-to-end (participant to participant) ping.
     // e2eping: {

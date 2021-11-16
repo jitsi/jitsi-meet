@@ -123,6 +123,7 @@ export default [
     'doNotFlipLocalVideo',
     'dropbox',
     'e2eeLabels',
+    'e2ee',
     'e2eping',
     'enableDisplayNameInStats',
     'enableEmailInStats',

@@ -50,6 +50,7 @@ const commands = {
     sendTones: 'send-tones',
     setFollowMe: 'set-follow-me',
     setLargeVideoParticipant: 'set-large-video-participant',
+    setMediaEncryptionKey: 'set-media-encryption-key',
     setParticipantVolume: 'set-participant-volume',
     setTileView: 'set-tile-view',
     setVideoQuality: 'set-video-quality',
@@ -63,6 +64,7 @@ const commands = {
     toggleCamera: 'toggle-camera',
     toggleCameraMirror: 'toggle-camera-mirror',
     toggleChat: 'toggle-chat',
+    toggleE2EE: 'toggle-e2ee',
     toggleFilmStrip: 'toggle-film-strip',
     toggleModeration: 'toggle-moderation',
     toggleRaiseHand: 'toggle-raise-hand',
@@ -1185,6 +1187,40 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      */
     stopRecording(mode) {
-        this.executeCommand('startRecording', mode);
+        this.executeCommand('stopRecording', mode);
+    }
+
+    /**
+     * Sets e2ee enabled/disabled.
+     *
+     * @param {boolean} enabled - The new value for e2ee enabled.
+     * @returns {void}
+     */
+    toggleE2EE(enabled) {
+        this.executeCommand('toggleE2EE', enabled);
+    }
+
+    /**
+     * Sets the key and keyIndex for e2ee.
+     *
+     * @param {Object} keyInfo - Json containing key information.
+     * @param {CryptoKey} [keyInfo.encryptionKey] - The encryption key.
+     * @param {number} [keyInfo.index] - The index of the encryption key.
+     * @returns {void}
+     */
+    async setMediaEncryptionKey(keyInfo) {
+        const { key, index } = keyInfo;
+
+        if (key) {
+            const exportedKey = await crypto.subtle.exportKey('raw', key);
+
+            this.executeCommand('setMediaEncryptionKey', JSON.stringify({
+                exportedKey: Array.from(new Uint8Array(exportedKey)),
+                index }));
+        } else {
+            this.executeCommand('setMediaEncryptionKey', JSON.stringify({
+                exportedKey: false,
+                index }));
+        }
     }
 }

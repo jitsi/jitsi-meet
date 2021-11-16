@@ -1,6 +1,11 @@
 // @flow
 
-import { SET_EVERYONE_ENABLED_E2EE, SET_EVERYONE_SUPPORT_E2EE, SET_MAX_MODE, TOGGLE_E2EE } from './actionTypes';
+import {
+    SET_EVERYONE_ENABLED_E2EE,
+    SET_EVERYONE_SUPPORT_E2EE,
+    SET_MAX_MODE,
+    SET_MEDIA_ENCRYPTION_KEY,
+    TOGGLE_E2EE } from './actionTypes';
 
 /**
  * Dispatches an action to enable / disable E2EE.
@@ -57,5 +62,23 @@ export function setE2EEMaxMode(maxMode: string) {
     return {
         type: SET_MAX_MODE,
         maxMode
+    };
+}
+
+/**
+ * Dispatches an action to set media encryption key.
+ *
+ * @param {Object} keyInfo - Json containing key information.
+ * @param {string} [keyInfo.encryptionKey] - The exported encryption key.
+ * @param {number} [keyInfo.index] - The index of the encryption key.
+ * @returns {{
+ *     type: SET_MEDIA_ENCRYPTION_KEY,
+ *     keyInfo: Object
+ * }}
+ */
+export function setMediaEncryptionKey(keyInfo: Object) {
+    return {
+        type: SET_MEDIA_ENCRYPTION_KEY,
+        keyInfo
     };
 }
