@@ -8,7 +8,7 @@ import { Dialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
 import { connect } from '../../../../base/redux';
-import { isDynamicBrandingDataLoaded } from '../../../../dynamic-branding/functions';
+import { isDynamicBrandingDataLoaded } from '../../../../dynamic-branding';
 import EmbedMeetingTrigger from '../../../../embed-meeting/components/EmbedMeetingTrigger';
 import { isVpaasMeeting } from '../../../../jaas/functions';
 import { getActiveSession } from '../../../../recording';
