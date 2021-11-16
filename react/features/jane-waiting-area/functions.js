@@ -153,10 +153,16 @@ export function getRemoteParticipantsStatuses(participantStatuses: Array<Object>
     return remoteParticipantStatuses;
 }
 
-export function updateParticipantReadyStatus(status: string): void {
-    const { jwt } = window.APP.store.getState()['features/base/jwt'];
-    const jwtPayload = (jwt && jwtDecode(jwt)) || {};
+export function updateParticipantReadyStatus(status: string, jwt: string = ''): void {
+    let jwtToken;
 
+    if (navigator.product === 'ReactNative') {
+        jwtToken = jwt;
+    } else {
+        jwtToken = window.APP.store.getState()['features/base/jwt'].jwt;
+    }
+
+    const jwtPayload = (jwtToken && jwtDecode(jwtToken)) || {};
     const updateParticipantStatusUrl = _.get(jwtPayload, 'context.update_participant_status_url') || '';
     const browserSessionId = getBrowserSessionId();
     const info = { status };
@@ -167,7 +173,7 @@ export function updateParticipantReadyStatus(status: string): void {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            'jwt': jwt,
+            'jwt': jwtToken,
             'info': info,
             'browser_session_id': browserSessionId
         })
@@ -254,4 +260,12 @@ export function hasRemoteParticipantInBeginStatus(remoteParticipantsStatuses: Ar
 
 export function sendMessageToIosApp(message: Object) {
     window.ReactNativeWebView.postMessage(JSON.stringify(message));
+}
+
+export function isJaneWaitingAreaEnabled(state: Object): boolean {
+    const { jwt } = state['features/base/jwt'];
+    const jwtPayload = jwt && jwtDecode(jwt) || null;
+    const janeWaitingAreaEnabled = _.get(jwtPayload, 'context.waiting_area_enabled') ?? false;
+
+    return state['features/base/config'].janeWaitingAreaEnabled || janeWaitingAreaEnabled;
 }

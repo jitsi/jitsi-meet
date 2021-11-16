@@ -3,21 +3,22 @@
 
 import React, { Component } from 'react';
 
-import { translate } from '../../base/i18n';
-import { Watermarks } from '../../base/react/components/web';
-import { connect } from '../../base/redux';
-import JaneHangupButton from '../../toolbox/components/JaneHangupButton';
-import AudioSettingsButton from '../../toolbox/components/web/AudioSettingsButton';
-import VideoSettingsButton from '../../toolbox/components/web/VideoSettingsButton';
+import { translate } from '../../../base/i18n';
+import { Watermarks } from '../../../base/react/components/web';
+import { connect } from '../../../base/redux';
+import JaneHangupButton from '../../../toolbox/components/JaneHangupButton';
+import AudioSettingsButton from '../../../toolbox/components/web/AudioSettingsButton';
+import VideoSettingsButton from '../../../toolbox/components/web/VideoSettingsButton';
 import {
     isDeviceStatusVisible,
     getJaneWaitingAreaPageDisplayName
-} from '../functions';
+} from '../../functions';
+import SocketConnection from '../SocketConnection';
 
-import SocketConnection from './SocketConnection.web';
 import Modal from './modal/Modal';
 import DeviceStatus from './preview/DeviceStatus';
 import Preview from './preview/Preview';
+
 
 type Props = {
     t: Function,

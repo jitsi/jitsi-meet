@@ -6,7 +6,7 @@ const { height, width } = Dimensions.get('window');
  * Size helper for Jane welcome page.
  * we need to re-calculate the dp size to adapt different iphone/ipads devices.
  */
-export default class JaneWelcomePageSizeHelper {
+export default class JaneWelcomePageSizeHelperNative {
     /**
      * Constructor.
      *

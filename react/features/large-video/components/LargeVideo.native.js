@@ -4,9 +4,13 @@ import React, { PureComponent } from 'react';
 
 import { ColorSchemeRegistry } from '../../base/color-scheme';
 import { ParticipantView, getParticipantById } from '../../base/participants';
+import PreCallMessage
+    from '../../base/react/components/native/PreCallMessage.js';
 import { connect } from '../../base/redux';
+import { DimensionsDetector } from '../../base/responsive-ui';
 import { StyleType } from '../../base/styles';
 import { isLocalVideoTrackDesktop } from '../../base/tracks/functions';
+
 
 import { AVATAR_SIZE } from './styles';
 
@@ -118,23 +122,25 @@ class LargeVideo extends PureComponent<Props, State> {
             useConnectivityInfoLabel
         } = this.state;
         const {
-            _disableVideo,
             _participantId,
             _styles,
             onClick
         } = this.props;
 
         return (
-            <ParticipantView
-                avatarSize = { avatarSize }
-                disableVideo = { _disableVideo }
-                onPress = { onClick }
-                participantId = { _participantId }
-                style = { _styles.largeVideo }
-                testHintId = 'org.jitsi.meet.LargeVideo'
-                useConnectivityInfoLabel = { useConnectivityInfoLabel }
-                zOrder = { 0 }
-                zoomEnabled = { true } />
+            <DimensionsDetector
+                onDimensionsChanged = { this._onDimensionsChanged }>
+                <ParticipantView
+                    avatarSize = { avatarSize }
+                    onPress = { onClick }
+                    participantId = { _participantId }
+                    style = { _styles.largeVideo }
+                    testHintId = 'org.jitsi.meet.LargeVideo'
+                    useConnectivityInfoLabel = { useConnectivityInfoLabel }
+                    zOrder = { 0 }
+                    zoomEnabled = { true } />
+                <PreCallMessage />
+            </DimensionsDetector>
         );
     }
 }

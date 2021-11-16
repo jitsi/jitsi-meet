@@ -42,3 +42,8 @@ export function doGetJSON(url, retry) {
 
     return fetchPromise;
 }
+
+// eslint-disable-next-line require-jsdoc
+export function sendBeaconToJane(leaveUrl, surveyUrl, data) {
+    navigator.sendBeacon(leaveUrl, data);
+}

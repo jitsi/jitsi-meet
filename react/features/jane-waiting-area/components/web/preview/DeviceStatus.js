@@ -2,14 +2,14 @@
 
 import React from 'react';
 
-import { translate } from '../../../base/i18n';
-import { Icon, IconCheck, IconExclamation } from '../../../base/icons';
-import { connect } from '../../../base/redux';
+import { translate } from '../../../../base/i18n';
+import { Icon, IconCheck, IconExclamation } from '../../../../base/icons';
+import { connect } from '../../../../base/redux';
 import {
     getDeviceStatusType,
     getDeviceStatusText,
     getRawError
-} from '../../functions';
+} from '../../../functions';
 
 export type Props = {
 

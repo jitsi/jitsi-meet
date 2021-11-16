@@ -138,7 +138,7 @@ function _getSupportedLocale() {
  * @param {Date | string} date - The date from jwt token.
  * @returns {number}
  */
-export function getTimeStamp(date: Date | string) {
+export function getTimeStamp(date) {
     return moment(date, 'YYYY-MM-DD HH:mm:ss')
         .valueOf();
 }

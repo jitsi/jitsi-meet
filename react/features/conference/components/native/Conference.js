@@ -4,7 +4,9 @@ import React from 'react';
 import { NativeModules, SafeAreaView, StatusBar, View, Clipboard } from 'react-native';
 
 import { appNavigate } from '../../../app/actions';
+import { isJaneTestCall } from '../../../base/conference/functions';
 import { PIP_ENABLED, FULLSCREEN_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { getLocalParticipantFromJwt, getLocalParticipantType } from '../../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
@@ -20,6 +22,7 @@ import {
     TileView
 } from '../../../filmstrip';
 import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
+import JaneWaitingArea from '../../../jane-waiting-area/components/native/JaneWaitingArea';
 import { LargeVideo } from '../../../large-video';
 import { KnockingParticipantList } from '../../../lobby';
 import { LobbyScreen } from '../../../lobby/components/native';
@@ -36,10 +39,13 @@ import {
 } from '../AbstractConference';
 import type { AbstractProps } from '../AbstractConference';
 
+import Labels from './Labels';
 import LonelyMeetingExperience from './LonelyMeetingExperience';
 import NavigationBar from './NavigationBar';
 import styles from './styles';
 
+
+// import LonelyMeetingExperience from './LonelyMeetingExperience';
 
 /**
  * The type of the React {@code Component} props of {@link Conference}.
@@ -108,7 +114,9 @@ type Props = AbstractProps & {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function
+    dispatch: Function,
+    _janeWaitingAreaEnabled: boolean,
+    _isJaneTestCall: boolean
 };
 
 /**
@@ -151,8 +159,10 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {void}
      */
     componentWillUnmount() {
+
         // Tear handling any hardware button presses for back navigation down.
         BackButtonRegistry.removeListener(this._onHardwareBackPress);
+
     }
 
     /**
@@ -269,7 +279,10 @@ class Conference extends AbstractConference<Props, *> {
             _isParticipantsPaneOpen,
             _largeVideoParticipantId,
             _reducedUI,
-            _shouldDisplayTileView
+            _shouldDisplayTileView,
+            _toolboxVisible,
+            _janeWaitingAreaEnabled,
+            _isJaneTestCall
         } = this.props;
 
         if (_reducedUI) {
@@ -312,8 +325,9 @@ class Conference extends AbstractConference<Props, *> {
                         <DisplayNameLabel participantId = { _largeVideoParticipantId } />
                     </Container> }
 
-                    <LonelyMeetingExperience />
+                    {/* <LonelyMeetingExperience />*/}
 
+                    {_janeWaitingAreaEnabled && <JaneWaitingArea />}
                     { _shouldDisplayTileView || <><Filmstrip /><Toolbox /></> }
                 </View>
 
@@ -322,12 +336,11 @@ class Conference extends AbstractConference<Props, *> {
                     style = { styles.navBarSafeView }>
                     <NavigationBar />
                     { this._renderNotificationsContainer() }
-                    <KnockingParticipantList />
+                    {/* <KnockingParticipantList />*/}
                 </SafeAreaView>
 
                 <TestConnectionInfo />
                 { this._renderConferenceNotification() }
-
                 { this._renderConferenceModals() }
 
                 {_shouldDisplayTileView && <Toolbox />}
@@ -426,6 +439,9 @@ function _mapStateToProps(state) {
     } = state['features/base/conference'];
     const { isOpen } = state['features/participants-pane'];
     const { aspectRatio, reducedUI } = state['features/base/responsive-ui'];
+    const {
+        janeWaitingAreaEnabled
+    } = state['features/jane-waiting-area'];
 
     // XXX There is a window of time between the successful establishment of the
     // XMPP connection and the subsequent commencement of joining the MUC during
@@ -438,6 +454,7 @@ function _mapStateToProps(state) {
     //   are leaving one.
     const connecting_
         = connecting || (connection && (!membersOnly && (joining || (!conference && !leaving))));
+    const { jwt } = state['features/base/jwt'];
 
     return {
         ...abstractMapStateToProps(state),
@@ -451,7 +468,12 @@ function _mapStateToProps(state) {
         _pictureInPictureEnabled: getFeatureFlag(state, PIP_ENABLED),
         _reducedUI: reducedUI,
         _showLobby: getIsLobbyVisible(state),
-        _toolboxVisible: isToolboxVisible(state)
+        _toolboxVisible: isToolboxVisible(state),
+        _janeWaitingAreaEnabled: janeWaitingAreaEnabled,
+        _jwt: jwt,
+        _participantType: getLocalParticipantType(state),
+        _participant: getLocalParticipantFromJwt(state),
+        _isJaneTestCall: isJaneTestCall(state)
     };
 }
 

@@ -58,6 +58,7 @@ const config = {
         https: true,
         host: '127.0.0.1',
         inline: true,
+        port: 8082,
         proxy: {
             '/': {
                 bypass: devServerProxyBypass,

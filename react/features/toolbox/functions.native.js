@@ -20,7 +20,7 @@ const WIDTH = {
  * @param {number} width - The width of the screen.
  * @returns {Set}
  */
-export function getMovableButtons(width: number): Set<string> {
+export function getMovableButtons(width: number, janeWaitingAreaEnabled: boolean): Set<string> {
     let buttons = [];
 
     switch (true) {
@@ -46,6 +46,10 @@ export function getMovableButtons(width: number): Set<string> {
     default: {
         buttons = [ 'chat' ];
     }
+    }
+
+    if (janeWaitingAreaEnabled) {
+        buttons = [];
     }
 
     return new Set(buttons);

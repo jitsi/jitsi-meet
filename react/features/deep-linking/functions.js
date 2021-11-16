@@ -3,7 +3,7 @@
 import { Platform } from '../base/react';
 import { URI_PROTOCOL_PATTERN } from '../base/util';
 import { isVpaasMeeting } from '../jaas/functions';
-import SocketConnection from '../jane-waiting-area/components/SocketConnection.web';
+import SocketConnection from '../jane-waiting-area/components/SocketConnection';
 import { isRNSocketWebView } from '../jane-waiting-area/functions';
 
 import {

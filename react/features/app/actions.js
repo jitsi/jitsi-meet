@@ -25,6 +25,7 @@ import {
     toURLString
 } from '../base/util';
 import { isVpaasMeeting } from '../jaas/functions';
+import { enableJaneWaitingArea, isJaneWaitingAreaEnabled } from '../jane-waiting-area';
 import { clearNotifications, showNotification } from '../notifications';
 import { setFatalError } from '../overlay';
 
@@ -145,7 +146,11 @@ export function appNavigate(uri: ?string) {
         // FIXME: unify with web, currently the connection and track creation happens in conference.js.
         if (room && navigator.product === 'ReactNative') {
             dispatch(createDesiredLocalTracks());
-            dispatch(connect());
+            if (isJaneWaitingAreaEnabled(getState())) {
+                dispatch(enableJaneWaitingArea(true));
+            } else {
+                dispatch(connect());
+            }
         }
     };
 }

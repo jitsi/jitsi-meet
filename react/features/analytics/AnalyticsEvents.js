@@ -948,3 +948,19 @@ export function createWaitingAreaModalEvent(action) {
         actionSubject: 'waiting.area.modal'
     };
 }
+
+/**
+ * Creates an event for an action on the waiting area page.
+ *
+ * @param {string} action - The action that the event represents.
+ * @param {boolean} attributes - Additional attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createWaitingAreaPageEvent(action, attributes = {}) {
+    return {
+        action,
+        attributes,
+        source: 'waiting.area'
+    };
+}

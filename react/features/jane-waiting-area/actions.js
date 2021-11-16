@@ -21,7 +21,9 @@ import {
     SET_JANE_WAITING_AREA_VIDEO_MUTED,
     CONNECT_JANE_SOCKET_SERVER,
     UPDATE_REMOTE_PARTICIPANT_STATUSES,
-    SET_JANE_WAITING_AREA_AUTH_STATE, ADD_CONNECTION_TO_JANE_WAITING_AREA
+    ADD_CONNECTION_TO_JANE_WAITING_AREA,
+    ENABLE_JANE_WAITING_AREA_PAGE,
+    SET_JANE_WAITING_AREA_AUTH_STATE
 } from './actionTypes';
 import {
     detectLegacyMobileApp,
@@ -149,6 +151,14 @@ export function setJaneWaitingAreaPageVisibility(value: boolean) {
     return {
         type: SET_JANE_WAITING_AREA_PAGE_VISIBILITY,
         value
+    };
+}
+
+// eslint-disable-next-line no-shadow,require-jsdoc
+export function enableJaneWaitingArea(janeWaitingAreaEnabled: ?boolean) {
+    return {
+        type: ENABLE_JANE_WAITING_AREA_PAGE,
+        janeWaitingAreaEnabled
     };
 }
 

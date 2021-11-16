@@ -1,7 +1,7 @@
 // @flow
 
-import React from 'react';
-import { View } from 'react-native';
+import React, { Component } from 'react';
+import { SafeAreaView, View } from 'react-native';
 
 import { getConferenceName } from '../../../base/conference';
 import { getFeatureFlag, CONFERENCE_TIMER_ENABLED, MEETING_NAME_ENABLED } from '../../../base/flags';
@@ -15,7 +15,7 @@ import { isToolboxVisible } from '../../../toolbox/functions.native';
 
 // eslint-disable-next-line no-unused-vars
 import Labels from './Labels';
-import styles from './styles';
+import styles, { NAVBAR_GRADIENT_COLORS } from './styles';
 
 
 type Props = {

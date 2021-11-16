@@ -6,18 +6,18 @@ import _ from 'lodash';
 import moment from 'moment';
 import React, { Component } from 'react';
 
-import { createWaitingAreaModalEvent, sendAnalytics } from '../../../analytics';
-import { getLocalizedDateFormatter, translate } from '../../../base/i18n';
-import { getLocalParticipantType } from '../../../base/participants/functions';
-import { connect } from '../../../base/redux';
-import { openURLInBrowser } from '../../../base/util';
+import { createWaitingAreaModalEvent, sendAnalytics } from '../../../../analytics';
+import { getLocalizedDateFormatter, translate } from '../../../../base/i18n';
+import { getLocalParticipantType } from '../../../../base/participants/functions';
+import { connect } from '../../../../base/redux';
+import { openURLInBrowser } from '../../../../base/util';
 import {
     joinConference as joinConferenceAction
-} from '../../actions';
+} from '../../../actions';
 import {
     checkLocalParticipantCanJoin,
     updateParticipantReadyStatus
-} from '../../functions';
+} from '../../../functions';
 import ActionButton from '../buttons/ActionButton';
 
 type Props = {

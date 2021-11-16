@@ -3,19 +3,24 @@
 import { useWindowDimensions, StatusBar, Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 
-import {
-    JANE_WELCOME_PAGE_DESIGN_HEIGHT,
-    JANE_WELCOME_PAGE_DESIGN_WIDTH,
-    JANE_WELCOME_PAGE_DESIGN_SAFE_AREA_VIEW_PADDING
-} from './functions.any';
-import JaneWelcomePageSizeHelper from './janeWelcomePageSizeHelper';
+import type { StyleType } from './functions.any';
+import JaneWelcomePageSizeHelperNative from './janeWelcomePageSizeHelper.native';
 
 export * from './functions.any';
+
+// $FlowFixMe[object literal]
+const isPad = Platform.isPad;
+
+export const JANE_WELCOME_PAGE_DESIGN_HEIGHT = isPad ? 1080 : 844;
+export const JANE_WELCOME_PAGE_DESIGN_WIDTH = isPad ? 811 : 390;
+
+// safe area view padding top + padding bottom from design mockup
+export const JANE_WELCOME_PAGE_DESIGN_SAFE_AREA_VIEW_PADDING = isPad ? 0 : isIPhoneX() ? 53 : getStatusBarHeight();
 
 /**
  * Initializes a new JaneWelcomePageSizeHelper instance here.
  */
-export const sizeHelper = new JaneWelcomePageSizeHelper({
+export const sizeHelper = new JaneWelcomePageSizeHelperNative({
     designWidth: JANE_WELCOME_PAGE_DESIGN_WIDTH,
     designHeight: JANE_WELCOME_PAGE_DESIGN_HEIGHT,
     designSafeAreaPadding: JANE_WELCOME_PAGE_DESIGN_SAFE_AREA_VIEW_PADDING

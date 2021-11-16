@@ -23,7 +23,10 @@ import {
     participantUpdated
 } from '../participants';
 import { getLocalTracks, replaceLocalTrack, trackAdded, trackRemoved } from '../tracks';
-import { getBackendSafeRoomName } from '../util';
+import {
+    getBackendSafeRoomName,
+    sendBeaconToJane
+} from '../util';
 
 import {
     AUTH_STATUS_CHANGED,
@@ -62,7 +65,6 @@ import {
     sendLocalParticipant
 } from './functions';
 import logger from './logger';
-import { Linking, Platform } from 'react-native';
 
 declare var APP: Object;
 
@@ -412,36 +414,26 @@ export function conferenceWillJoin(conference: Object) {
 export function conferenceWillLeave(conference: Object) {
 
     return (dispatch: Function, getState: Function) => {
-        const { jwt } = APP.store.getState()['features/base/jwt'];
-        const { conferenceStartedTime, start } = APP.store.getState()['features/base/conference'];
-        const isIos = Platform.OS === 'ios';
+        const state = getState();
+        const { conferenceStartedTime, start } = state['features/base/conference'];
+        const { jwt } = state['features/base/jwt'];
+        const isRN = navigator.product === 'ReactNative'
+
         if (jwt && conferenceStartedTime) {
             const jwtPayload = jwtDecode(jwt);
             const leaveUrl = jwtPayload.context.leave_url || null;
             const surveyUrl = jwtPayload.context.survey_url || null;
-            const room = jwtPayload.room || null;
             const obj = {
                 jwt,
                 // eslint-disable-next-line camelcase
-                started_at: isIos ? start: conferenceStartedTime
+                started_at: isRN ? start : conferenceStartedTime
             };
 
             const data = new Blob([ JSON.stringify(obj, null, 2) ], { type: 'text/plain; charset=UTF-8' });
-            // eslint-disable-next-line no-mixed-operators
 
+            // eslint-disable-next-line no-mixed-operators
             if (leaveUrl && surveyUrl) {
-                if (isIos) {
-                    Linking.openURL(surveyUrl).then(() => {
-                        sendBeaconRn(leaveUrl, data).then(r => {
-                            console.log(r, 'response');
-                        })
-                            .catch(e => {
-                                console.log(e, 'error');
-                            });
-                    });
-                } else {
-                    navigator.sendBeacon(leaveUrl, data);
-                }
+               sendBeaconToJane(leaveUrl, surveyUrl, data);
             }
         }
 
@@ -450,17 +442,6 @@ export function conferenceWillLeave(conference: Object) {
             conference
         });
     };
-}
-
-// eslint-disable-next-line require-jsdoc,no-unused-vars,no-empty-function
-function sendBeaconRn(url, data) {
-    return fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'text/plain; charset=UTF-8'
-        },
-        body: data
-    });
 }
 
 /**

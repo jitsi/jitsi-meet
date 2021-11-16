@@ -2,10 +2,10 @@
 
 import React from 'react';
 
-import { Avatar } from '../../../base/avatar';
-import { Video, isVideoMutedByUser } from '../../../base/media';
-import { connect } from '../../../base/redux';
-import { getLocalJitsiVideoTrack, getLocalVideoTrack } from '../../../base/tracks';
+import { Avatar } from '../../../../base/avatar';
+import { Video, isVideoMutedByUser } from '../../../../base/media';
+import { connect } from '../../../../base/redux';
+import { getLocalJitsiVideoTrack, getLocalVideoTrack } from '../../../../base/tracks';
 
 
 export type Props = {
