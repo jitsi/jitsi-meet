@@ -45,7 +45,7 @@ export default class JaneHandler extends AbstractHandler {
             'browser_session_id': this.browserSessionId
         };
 
-        if (navigator.product !== 'ReactNative') {
+        if (navigator.product === 'ReactNative') {
             permanentProperties.appVersion = getAppVersion();
         }
 
