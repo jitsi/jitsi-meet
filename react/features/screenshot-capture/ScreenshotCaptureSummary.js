@@ -6,7 +6,7 @@ import './createImageBitmap';
 
 import { createScreensharingCaptureTakenEvent, sendAnalytics } from '../analytics';
 import { getCurrentConference } from '../base/conference';
-import { extractFqnFromPath } from '../dynamic-branding/functions';
+import { extractFqnFromPath } from '../dynamic-branding';
 
 import {
     CLEAR_INTERVAL,

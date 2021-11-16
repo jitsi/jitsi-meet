@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { getFeatureFlag, REACTIONS_ENABLED } from '../base/flags';
 import { getLocalParticipant } from '../base/participants';
-import { extractFqnFromPath } from '../dynamic-branding/functions';
+import { extractFqnFromPath } from '../dynamic-branding';
 
 import { REACTIONS, SOUNDS_THRESHOLDS } from './constants';
 import logger from './logger';
