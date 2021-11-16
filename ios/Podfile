@@ -1,9 +1,9 @@
 platform :ios, '12.0'
-workspace 'Jane Online Appointments'
+workspace 'JaneOnlineAppointments'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 install! 'cocoapods', :deterministic_uuids => false
 
-target 'Jane Online Appointments' do
+target 'JaneOnlineAppointments' do
   project 'app/app.xcodeproj'
 end
 

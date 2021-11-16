@@ -31,7 +31,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
                BuildableName = "Jane Video.app"
-               BlueprintName = "Jane Online Appointments"
+               BlueprintName = "JaneOnlineAppointments"
                ReferencedContainer = "container:app.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -63,7 +63,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
             BuildableName = "Jane Video.app"
-            BlueprintName = "Jane Online Appointments"
+            BlueprintName = "JaneOnlineAppointments"
             ReferencedContainer = "container:app.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -81,7 +81,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
             BuildableName = "Jane Video.app"
-            BlueprintName = "Jane Online Appointments"
+            BlueprintName = "JaneOnlineAppointments"
             ReferencedContainer = "container:app.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
