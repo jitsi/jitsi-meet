@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { FlatList, Text, View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { translate } from '../../../base/i18n';
@@ -62,7 +61,7 @@ class MessageContainer extends AbstractMessageContainer<Props> {
                 // https://github.com/facebook/react-native/issues/21196
                 inverted = { Boolean(data.length) }
                 keyExtractor = { this._keyExtractor }
-                keyboardShouldPersistTaps = 'always'
+                keyboardShouldPersistTaps = 'handled'
                 renderItem = { this._renderMessageGroup } />
         );
     }
@@ -111,11 +110,7 @@ class MessageContainer extends AbstractMessageContainer<Props> {
      * @returns {React$Element<*>}
      */
     _renderMessageGroup({ item: messages }) {
-        return (
-            <ScrollView>
-                <ChatMessageGroup messages = { messages } />
-            </ScrollView>
-        );
+        return <ChatMessageGroup messages = { messages } />;
     }
 }
 
