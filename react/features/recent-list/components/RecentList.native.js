@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react';
+import { View } from 'react-native';
 import type { Dispatch } from 'redux';
 
 import { getDefaultURL } from '../../app/functions';
@@ -8,6 +9,7 @@ import { openDialog } from '../../base/dialog/actions';
 import { translate } from '../../base/i18n';
 import { NavigateSectionList, type Section } from '../../base/react';
 import { connect } from '../../base/redux';
+import styles from '../../welcome/components/styles';
 import { isRecentListEnabled, toDisplayableList } from '../functions';
 
 import AbstractRecentList from './AbstractRecentList';
@@ -82,13 +84,15 @@ class RecentList extends AbstractRecentList<Props> {
         const recentList = toDisplayableList(_recentList, t, _defaultServerURL);
 
         return (
-            <NavigateSectionList
-                disabled = { disabled }
-                onLongPress = { this._onLongPress }
-                onPress = { this._onPress }
-                renderListEmptyComponent
-                    = { this._getRenderListEmptyComponent() }
-                sections = { recentList } />
+            <View style = { disabled ? styles.recentListDisabled : styles.recentList }>
+                <NavigateSectionList
+                    disabled = { disabled }
+                    onLongPress = { this._onLongPress }
+                    onPress = { this._onPress }
+                    renderListEmptyComponent
+                        = { this._getRenderListEmptyComponent() }
+                    sections = { recentList } />
+            </View>
         );
     }
 

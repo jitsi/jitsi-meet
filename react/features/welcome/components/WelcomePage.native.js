@@ -19,21 +19,20 @@ import { MEDIA_TYPE } from '../../base/media';
 import JitsiStatusBar from '../../base/modal/components/JitsiStatusBar';
 import { LoadingIndicator, Text } from '../../base/react';
 import { connect } from '../../base/redux';
-import { ColorPalette } from '../../base/styles';
 import {
     createDesiredLocalTracks,
     destroyLocalDesktopTrackIfExists,
     destroyLocalTracks
 } from '../../base/tracks';
+import BaseTheme from '../../base/ui/components/BaseTheme.native';
 
 import {
     AbstractWelcomePage,
     _mapStateToProps as _abstractMapStateToProps,
     type Props as AbstractProps
 } from './AbstractWelcomePage';
-import LocalVideoTrackUnderlay from './LocalVideoTrackUnderlay';
 import VideoSwitch from './VideoSwitch';
-import WelcomePageLists from './WelcomePageLists';
+import WelcomePageTabs from './WelcomePageTabs';
 import styles, { PLACEHOLDER_TEXT_COLOR } from './styles';
 
 
@@ -328,7 +327,7 @@ class WelcomePage extends AbstractWelcomePage<*> {
                     { t('welcomepage.accessibilityLabel.join') }
                 onPress = { this._onJoin }
                 style = { styles.button }
-                underlayColor = { ColorPalette.white }>
+                underlayColor = { BaseTheme.palette.ui12 }>
                 { children }
             </TouchableHighlight>
         );
@@ -341,50 +340,48 @@ class WelcomePage extends AbstractWelcomePage<*> {
      */
     _renderFullUI() {
         const roomnameAccLabel = 'welcomepage.accessibilityLabel.roomname';
-        const { _headerStyles, t } = this.props;
+        const { t } = this.props;
 
         return (
             <>
                 <JitsiStatusBar />
-                <LocalVideoTrackUnderlay style = { styles.welcomePage }>
-                    <View style = { _headerStyles.page }>
-                        <SafeAreaView style = { styles.roomContainer } >
-                            <View style = { styles.joinControls } >
-                                <Text style = { styles.enterRoomText }>
-                                    { t('welcomepage.roomname') }
-                                </Text>
-                                {/* // $FlowExpectedError*/}
-                                <TextInput
-                                    accessibilityLabel = { t(roomnameAccLabel) }
-                                    autoCapitalize = { 'none' }
-                                    autoComplete = { 'off' }
-                                    autoCorrect = { false }
-                                    autoFocus = { false }
-                                    onBlur = { this._onFieldBlur }
-                                    onChangeText = { this._onRoomChange }
-                                    onFocus = { this._onFieldFocus }
-                                    onSubmitEditing = { this._onJoin }
-                                    placeholder = { this.state.roomPlaceholder }
-                                    placeholderTextColor = { PLACEHOLDER_TEXT_COLOR }
-                                    returnKeyType = { 'go' }
-                                    spellCheck = { false }
-                                    style = { styles.textInput }
-                                    underlineColorAndroid = 'transparent'
-                                    value = { this.state.room } />
-                                {
+                <View style = { styles.welcomePage }>
+                    <SafeAreaView style = { styles.roomContainer } >
+                        <View style = { styles.joinControls } >
+                            <Text style = { styles.enterRoomText }>
+                                { t('welcomepage.roomname') }
+                            </Text>
+                            {/* // $FlowExpectedError*/}
+                            <TextInput
+                                accessibilityLabel = { t(roomnameAccLabel) }
+                                autoCapitalize = { 'none' }
+                                autoComplete = { 'off' }
+                                autoCorrect = { false }
+                                autoFocus = { false }
+                                onBlur = { this._onFieldBlur }
+                                onChangeText = { this._onRoomChange }
+                                onFocus = { this._onFieldFocus }
+                                onSubmitEditing = { this._onJoin }
+                                placeholder = { this.state.roomPlaceholder }
+                                placeholderTextColor = { PLACEHOLDER_TEXT_COLOR }
+                                returnKeyType = { 'go' }
+                                spellCheck = { false }
+                                style = { styles.textInput }
+                                underlineColorAndroid = 'transparent'
+                                value = { this.state.room } />
+                            {
 
-                                    // $FlowExpectedError
-                                    this._renderInsecureRoomNameWarning()
-                                }
-                                {
-                                    this._renderHintBox()
-                                }
-                            </View>
-                        </SafeAreaView>
-                        {/* $FlowExpectedError*/}
-                        <WelcomePageLists disabled = { this.state._fieldFocused } />
-                    </View>
-                </LocalVideoTrackUnderlay>
+                                // $FlowExpectedError
+                                this._renderInsecureRoomNameWarning()
+                            }
+                            {
+                                this._renderHintBox()
+                            }
+                        </View>
+                    </SafeAreaView>
+                    {/* // $FlowExpectedError*/}
+                    <WelcomePageTabs disabled = { this.state._fieldFocused } />
+                </View>
             </>
         );
     }
