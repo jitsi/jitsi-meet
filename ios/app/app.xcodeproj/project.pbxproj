@@ -19,8 +19,8 @@
 		5CC1393DFA294862AB59CE62 /* OpenSans-Light-webfont.svg in Resources */ = {isa = PBXBuildFile; fileRef = 41D7B16E683246C09137285D /* OpenSans-Light-webfont.svg */; };
 		6A63F383534145818B702D84 /* ProximaNova-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2A6A6C21EE2F4C7298D0E11D /* ProximaNova-Bold.otf */; };
 		6FBF54DE72114B38B3E3D6E0 /* OpenSans-Light-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 39A351573097466DA5DA80AD /* OpenSans-Light-webfont.ttf */; };
+		877F5E355CDC2943EB9464C2 /* libPods-JaneOnlineAppointments.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 73254D920AC72B9B5D1A5CFC /* libPods-JaneOnlineAppointments.a */; };
 		B1E8C33997D4498698D52F05 /* ProximaNova-Sbold.otf in Resources */ = {isa = PBXBuildFile; fileRef = F653AD91A1CE42ACA21E3CDD /* ProximaNova-Sbold.otf */; };
-		DC8F1B3090905E25319DC06E /* libPods-Jane Online Appointments.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F5785E3FFAFD8660306EF091 /* libPods-Jane Online Appointments.a */; };
 		DE050389256E904600DEE3A5 /* WebRTC.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE050388256E904600DEE3A5 /* WebRTC.xcframework */; };
 		DE05038A256E904600DEE3A5 /* WebRTC.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DE050388256E904600DEE3A5 /* WebRTC.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DEA9F289258A6EA800D4CD74 /* JitsiMeetSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DEA9F288258A6EA800D4CD74 /* JitsiMeetSDK.framework */; };
@@ -82,6 +82,7 @@
 		39A351573097466DA5DA80AD /* OpenSans-Light-webfont.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Light-webfont.ttf"; path = "../../fonts/OpenSans-Light-webfont.ttf"; sourceTree = "<group>"; };
 		3E0F4ED943C0B12BE77F6B45 /* Pods-JitsiMeet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.release.xcconfig"; path = "Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.release.xcconfig"; sourceTree = "<group>"; };
 		41D7B16E683246C09137285D /* OpenSans-Light-webfont.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Light-webfont.svg"; path = "../../fonts/OpenSans-Light-webfont.svg"; sourceTree = "<group>"; };
+		487F0071108C07500E2BE784 /* Pods-JaneOnlineAppointments.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JaneOnlineAppointments.release.xcconfig"; path = "Target Support Files/Pods-JaneOnlineAppointments/Pods-JaneOnlineAppointments.release.xcconfig"; sourceTree = "<group>"; };
 		4E90F93F2632D1AB001102D4 /* Atomic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
 		4EB06026260E026600F524C5 /* SampleHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleHandler.swift; sourceTree = "<group>"; };
 		4EB06028260E026600F524C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -91,8 +92,10 @@
 		4EB0603B260E09D000F524C5 /* SampleUploader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SampleUploader.swift; sourceTree = "<group>"; };
 		4EC49B8625BED71300E76218 /* ReplayKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReplayKit.framework; path = System/Library/Frameworks/ReplayKit.framework; sourceTree = SDKROOT; };
 		531B4E47E7383CB4EADABB2E /* Pods-Jane Online Appointments.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Jane Online Appointments.release.xcconfig"; path = "Target Support Files/Pods-Jane Online Appointments/Pods-Jane Online Appointments.release.xcconfig"; sourceTree = "<group>"; };
+		73254D920AC72B9B5D1A5CFC /* libPods-JaneOnlineAppointments.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JaneOnlineAppointments.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		756FCE06C08D9B947653C98A /* Pods-JitsiMeet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.debug.xcconfig"; path = "Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.debug.xcconfig"; sourceTree = "<group>"; };
 		7E545339E87B44E4B8F93CD8 /* ProximaNova-Thin.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "ProximaNova-Thin.otf"; path = "../../fonts/ProximaNova-Thin.otf"; sourceTree = "<group>"; };
+		8E2B87D314B36CCE8616A90B /* Pods-JaneOnlineAppointments.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JaneOnlineAppointments.debug.xcconfig"; path = "Target Support Files/Pods-JaneOnlineAppointments/Pods-JaneOnlineAppointments.debug.xcconfig"; sourceTree = "<group>"; };
 		9D10362D45AE444CAD45A026 /* OpenSans-Light-webfont.woff */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Light-webfont.woff"; path = "../../fonts/OpenSans-Light-webfont.woff"; sourceTree = "<group>"; };
 		B3B083EB1D4955FF0069CEE7 /* app.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = app.entitlements; sourceTree = "<group>"; };
 		CACC72166A10497D853A028F /* ProximaNova-Light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "ProximaNova-Light.otf"; path = "../../fonts/ProximaNova-Light.otf"; sourceTree = "<group>"; };
@@ -100,7 +103,6 @@
 		DEA9F288258A6EA800D4CD74 /* JitsiMeetSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JitsiMeetSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DEFDBBDB25656E3B00344B23 /* WebRTC.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WebRTC.xcframework; path = "../../node_modules/react-native-webrtc/ios/WebRTC.xcframework"; sourceTree = "<group>"; };
 		EC108224151DEAC71FB60FAB /* Pods-Jane Online Appointments.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Jane Online Appointments.debug.xcconfig"; path = "Target Support Files/Pods-Jane Online Appointments/Pods-Jane Online Appointments.debug.xcconfig"; sourceTree = "<group>"; };
-		F5785E3FFAFD8660306EF091 /* libPods-Jane Online Appointments.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Jane Online Appointments.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F653AD91A1CE42ACA21E3CDD /* ProximaNova-Sbold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "ProximaNova-Sbold.otf"; path = "../../fonts/ProximaNova-Sbold.otf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -111,7 +113,7 @@
 			files = (
 				DE050389256E904600DEE3A5 /* WebRTC.xcframework in Frameworks */,
 				DEA9F289258A6EA800D4CD74 /* JitsiMeetSDK.framework in Frameworks */,
-				DC8F1B3090905E25319DC06E /* libPods-Jane Online Appointments.a in Frameworks */,
+				877F5E355CDC2943EB9464C2 /* libPods-JaneOnlineAppointments.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -127,7 +129,7 @@
 				DEFDBBDB25656E3B00344B23 /* WebRTC.xcframework */,
 				0BD6B4361EF82A6B00D1F4CD /* WebRTC.framework */,
 				4EC49B8625BED71300E76218 /* ReplayKit.framework */,
-				F5785E3FFAFD8660306EF091 /* libPods-Jane Online Appointments.a */,
+				73254D920AC72B9B5D1A5CFC /* libPods-JaneOnlineAppointments.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -211,6 +213,8 @@
 				3E0F4ED943C0B12BE77F6B45 /* Pods-JitsiMeet.release.xcconfig */,
 				EC108224151DEAC71FB60FAB /* Pods-Jane Online Appointments.debug.xcconfig */,
 				531B4E47E7383CB4EADABB2E /* Pods-Jane Online Appointments.release.xcconfig */,
+				8E2B87D314B36CCE8616A90B /* Pods-JaneOnlineAppointments.debug.xcconfig */,
+				487F0071108C07500E2BE784 /* Pods-JaneOnlineAppointments.release.xcconfig */,
 			);
 			name = Pods;
 			path = ../Pods;
@@ -352,7 +356,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Jane Online Appointments-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-JaneOnlineAppointments-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -442,14 +446,14 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EC108224151DEAC71FB60FAB /* Pods-Jane Online Appointments.debug.xcconfig */;
+			baseConfigurationReference = 8E2B87D314B36CCE8616A90B /* Pods-JaneOnlineAppointments.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconRelease;
 				CODE_SIGN_ENTITLEMENTS = app.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = G82747A532;
 				ENABLE_BITCODE = NO;
@@ -459,7 +463,7 @@
 					"@executable_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.5;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -473,14 +477,14 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 531B4E47E7383CB4EADABB2E /* Pods-Jane Online Appointments.release.xcconfig */;
+			baseConfigurationReference = 487F0071108C07500E2BE784 /* Pods-JaneOnlineAppointments.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconRelease;
 				CODE_SIGN_ENTITLEMENTS = app.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = G82747A532;
 				ENABLE_BITCODE = YES;
 				INFOPLIST_FILE = src/Info.plist;
@@ -489,7 +493,7 @@
 					"@executable_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.5;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

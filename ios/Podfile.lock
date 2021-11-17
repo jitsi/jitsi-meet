@@ -280,7 +280,7 @@ PODS:
     - React-Core
   - RNDefaultPreference (1.4.2):
     - React
-  - RNDeviceInfo (8.0.0):
+  - RNDeviceInfo (8.4.8):
     - React-Core
   - RNGoogleSignin (3.0.1):
     - GoogleSignIn (~> 5.0.0)
@@ -484,13 +484,13 @@ SPEC CHECKSUMS:
   ReactCommon: 18014e1d98dbeb9141e935cfe35fc93bd511ffb6
   RNCAsyncStorage: 8324611026e8dc3706f829953aa6e3899f581589
   RNDefaultPreference: 56a405ce61033ac77b95004dccd7ac54c2eb50d1
-  RNDeviceInfo: 72ded653ce636b3f03571e90bed99309a714944e
+  RNDeviceInfo: 417b2ef4456c13a9d50ad8c57895eea837b735a8
   RNGoogleSignin: 39336070b35fc4cea6a98cf111e00480317be0ae
   RNSound: c980916b596cc15c8dcd2f6ecd3b13c4881dbe20
   RNSVG: ce9d996113475209013317e48b05c21ee988d42e
   RNWatch: a5320c959c75e72845c07985f3e935e58998f1d3
   Yoga: 96b469c5e81ff51b917b92e8c3390642d4ded30c
 
-PODFILE CHECKSUM: bf605755180a7871a2164af20717db8cdc761e3a
+PODFILE CHECKSUM: 1d264a193eda031958694625d2b6d240f4adf526
 
 COCOAPODS: 1.10.1
