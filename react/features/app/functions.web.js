@@ -55,3 +55,12 @@ export function setBrowserSessionId() {
 export function getBrowserSessionId() {
     return window.sessionStorage.getItem('browser_session_id');
 }
+
+/**
+ * Returns web app version.
+ *
+ * @returns {string}
+ */
+export function getAppVersion() {
+    return getName();
+}
