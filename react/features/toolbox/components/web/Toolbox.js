@@ -820,7 +820,10 @@ class Toolbox extends Component<Props> {
         }
 
         Object.values(buttons).forEach((button: any) => {
-            if (this.props._buttonsWithNotifyClick.includes(button.key)) {
+            if (
+                typeof button === 'object'
+                && this.props._buttonsWithNotifyClick.includes(button.key)
+            ) {
                 button.handleClick = () => APP.API.notifyToolbarButtonClicked(button.key);
             }
         });
