@@ -42,6 +42,8 @@ export const colors = {
     warning06: '#ED9E1B',
     warning07: '#D77976',
 
+    disabled01: '#00000040',
+
     support01: '#FF9B42',
     support02: '#F96E57',
     support03: '#DF486F',
@@ -244,6 +246,12 @@ export const colorMap = {
 
     // Color for insecure room
     warning03: 'warning07',
+
+    // Color for disabled tab
+    tab01Disabled: 'disabled01',
+
+    // Color for disabled video switch
+    video01Disabled: 'disabled01',
 
     // Backgrounds for avatars
     support01: 'support01',

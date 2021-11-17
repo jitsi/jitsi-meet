@@ -5,7 +5,6 @@ import { StyleSheet } from 'react-native';
 import { BoxModel } from '../../base/styles';
 import BaseTheme from '../../base/ui/components/BaseTheme.native';
 
-
 export const PLACEHOLDER_TEXT_COLOR = BaseTheme.palette.text01;
 
 export const DRAWER_AVATAR_SIZE = 104;
@@ -14,7 +13,7 @@ const DRAWER_HEADER_HEIGHT = 220;
 
 export const SWITCH_THUMB_COLOR = BaseTheme.palette.action04;
 
-export const SWITCH_UNDER_COLOR = 'rgba(0, 0, 0, 0.4)';
+export const SWITCH_UNDER_COLOR = BaseTheme.palette.video01Disabled;
 
 /**
  * The default color of text on the WelcomePage.
@@ -267,7 +266,21 @@ export default {
      * The style of the top-level container of {@code WelcomePage}.
      */
     welcomePage: {
-        backgroundColor: BaseTheme.palette.screen01Header,
+        backgroundColor: BaseTheme.palette.uiBackground,
+        flex: 1,
+        overflow: 'hidden'
+    },
+
+    recentList: {
+        backgroundColor: BaseTheme.palette.uiBackground,
+        flex: 1,
+        overflow: 'hidden'
+    },
+
+    recentListDisabled: {
+        backgroundColor: BaseTheme.palette.uiBackground,
+        flex: 1,
+        opacity: 0.8,
         overflow: 'hidden'
     }
 };
