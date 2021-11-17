@@ -18,6 +18,8 @@ import SpeakerStatsSearch from './SpeakerStatsSearch';
 
 declare var interfaceConfig: Object;
 
+declare var APP;
+
 /**
  * The type of the React {@code Component} props of {@link SpeakerStats}.
  */
@@ -27,6 +29,23 @@ type Props = {
      * The display name for the local participant obtained from the redux store.
      */
     _localDisplayName: string,
+
+    /**
+     * The flag which shows if the facial recognition is enabled, obtained from the redux store.
+     * if enabled facial expressions are shown
+     */
+    _enableFacialRecognition: boolean,
+
+    /**
+     * The facial expressions for the local participant obtained from the redux store.
+     */
+    _localFacialExpressions: Array<Object>,
+
+    /**
+     * The flag which shows if all the facial expressions are shown or only 4
+     * if true show only 4, if false show all
+     */
+    _reduceExpressions: boolean,
 
     /**
      * The speaker paricipant stats.
@@ -51,7 +70,10 @@ type Props = {
     /**
      * The function to translate human-readable text.
      */
-    t: Function
+    t: Function,
+    stats: Object,
+
+    lastFacialExpression: string,
 };
 
 /**
@@ -111,10 +133,13 @@ class SpeakerStats extends Component<Props> {
             <Dialog
                 cancelKey = 'dialog.close'
                 submitDisabled = { true }
-                titleKey = 'speakerStats.speakerStats'>
+                titleKey = 'speakerStats.speakerStats'
+                width = { this.props._enableFacialRecognition ? 'large' : 'medium' }>
                 <div className = 'speaker-stats'>
                     <SpeakerStatsSearch onSearch = { this._onSearch } />
-                    <SpeakerStatsLabels />
+                    <SpeakerStatsLabels
+                        reduceExpressions = { this.props._reduceExpressions }
+                        showFacialExpressions = { this.props._enableFacialRecognition } />
                     { items }
                 </div>
             </Dialog>
@@ -139,14 +164,22 @@ class SpeakerStats extends Component<Props> {
         const isDominantSpeaker = statsModel.isDominantSpeaker();
         const dominantSpeakerTime = statsModel.getTotalDominantSpeakerTime();
         const hasLeft = statsModel.hasLeft();
+        let facialExpressions;
+
+        if (this.props._enableFacialRecognition) {
+            facialExpressions = statsModel.getFacialExpressions();
+        }
 
         return (
             <SpeakerStatsItem
                 displayName = { statsModel.getDisplayName() }
                 dominantSpeakerTime = { dominantSpeakerTime }
+                facialExpressions = { facialExpressions }
                 hasLeft = { hasLeft }
                 isDominantSpeaker = { isDominantSpeaker }
-                key = { userId } />
+                key = { userId }
+                reduceExpressions = { this.props._reduceExpressions }
+                showFacialExpressions = { this.props._enableFacialRecognition } />
         );
     }
 
@@ -195,6 +228,9 @@ class SpeakerStats extends Component<Props> {
                             ? `${this.props._localDisplayName} (${meString})`
                             : meString
                     );
+                    if (this.props._enableFacialRecognition) {
+                        stats[userId].setFacialExpressions(this.props._localFacialExpressions);
+                    }
                 }
 
                 if (!stats[userId].getDisplayName()) {
@@ -222,6 +258,10 @@ class SpeakerStats extends Component<Props> {
  */
 function _mapStateToProps(state) {
     const localParticipant = getLocalParticipant(state);
+    const { enableFacialRecognition } = state['features/base/config'];
+    const { facialExpressions: localFacialExpressions } = state['features/facial-recognition'];
+    const { cameraTimeTracker: localCameraTimeTracker } = state['features/facial-recognition'];
+    const { clientWidth } = state['features/base/responsive-ui'];
 
     return {
         /**
@@ -232,7 +272,11 @@ function _mapStateToProps(state) {
          */
         _localDisplayName: localParticipant && localParticipant.name,
         _stats: getSpeakerStats(state),
-        _criteria: getSearchCriteria(state)
+        _criteria: getSearchCriteria(state),
+        _enableFacialRecognition: enableFacialRecognition,
+        _localFacialExpressions: localFacialExpressions,
+        _localCameraTimeTracker: localCameraTimeTracker,
+        _reduceExpressions: clientWidth < 750
     };
 }
 

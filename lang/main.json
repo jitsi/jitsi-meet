@@ -862,7 +862,14 @@
         "name": "Name",
         "seconds": "{{count}}s",
         "speakerStats": "Speaker Stats",
-        "speakerTime": "Speaker Time"
+        "speakerTime": "Speaker Time",
+        "happy": "Happy",
+        "neutral": "Neutral",
+        "sad": "Sad",
+        "surprised": "Surprised",
+        "angry": "Angry",
+        "fearful": "Fearful",
+        "disgusted": "Disgusted"
     },
     "startupoverlay": {
         "policyText": " ",

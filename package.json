@@ -58,6 +58,7 @@
     "clipboard-copy": "4.0.1",
     "clsx": "1.1.1",
     "dropbox": "10.7.0",
+    "face-api.js": "0.22.2",
     "focus-visible": "5.1.0",
     "i18n-iso-countries": "6.8.0",
     "i18next": "17.0.6",
