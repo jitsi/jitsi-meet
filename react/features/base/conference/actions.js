@@ -415,18 +415,17 @@ export function conferenceWillLeave(conference: Object) {
 
     return (dispatch: Function, getState: Function) => {
         const state = getState();
-        const { conferenceStartedTime, start } = state['features/base/conference'];
+        const { start } = state['features/base/conference'];
         const { jwt } = state['features/base/jwt'];
-        const isRN = navigator.product === 'ReactNative'
 
-        if (jwt && conferenceStartedTime) {
+        if (jwt && start) {
             const jwtPayload = jwtDecode(jwt);
             const leaveUrl = jwtPayload.context.leave_url || null;
             const surveyUrl = jwtPayload.context.survey_url || null;
             const obj = {
                 jwt,
                 // eslint-disable-next-line camelcase
-                started_at: isRN ? start : conferenceStartedTime
+                started_at: start
             };
 
             const data = new Blob([ JSON.stringify(obj, null, 2) ], { type: 'text/plain; charset=UTF-8' });

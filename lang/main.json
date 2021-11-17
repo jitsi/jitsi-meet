@@ -765,7 +765,7 @@
         "authenticationExpired": "Your appointment booking has expired",
         "minutes": "{{duration}} Minutes",
         "errorTitleKey": "Waiting area error.",
-        "keepAppOpen": "Please keep your app open to stay on the call.",
+        "keepAppOpen": "Please keep your app open to stay on the call."
     },
     "preCallMessage": {
         "sitBack": "Sit back, relax and take a moment for yourself.",
