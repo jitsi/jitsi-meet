@@ -13,7 +13,7 @@ import {
 import { getToolbarButtons } from '../../../base/config';
 import { isToolbarButtonEnabled } from '../../../base/config/functions.web';
 import { openDialog, toggleDialog } from '../../../base/dialog';
-import { isMobileBrowser } from '../../../base/environment/utils';
+import { isIosMobileBrowser, isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet';
 import {
@@ -148,6 +148,11 @@ type Props = {
      * Whether or not the app is currently in full screen.
      */
     _fullScreen: boolean,
+
+    /**
+     * Whether or not the app is running in an ios mobile browser.
+     */
+    _isIosMobile: boolean,
 
     /**
      * Whether or not the app is running in mobile browser.
@@ -577,6 +582,7 @@ class Toolbox extends Component<Props> {
     _getAllButtons() {
         const {
             _feedbackConfigured,
+            _isIosMobile,
             _isMobile,
             _screenSharing
         } = this.props;
@@ -652,7 +658,7 @@ class Toolbox extends Component<Props> {
             group: 2
         };
 
-        const fullscreen = !_isMobile && {
+        const fullscreen = !_isIosMobile && {
             key: 'fullscreen',
             Content: FullscreenButton,
             handleClick: this._onToolbarToggleFullScreen,
@@ -1348,6 +1354,7 @@ function _mapStateToProps(state, ownProps) {
         _feedbackConfigured: Boolean(callStatsID),
         _fullScreen: fullScreen,
         _isProfileDisabled: Boolean(disableProfile),
+        _isIosMobile: isIosMobileBrowser(),
         _isMobile: isMobileBrowser(),
         _isVpaasMeeting: isVpaasMeeting(state),
         _localParticipantID: localParticipant?.id,
