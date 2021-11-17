@@ -60,6 +60,7 @@
     "dropbox": "10.7.0",
     "face-api.js": "0.22.2",
     "focus-visible": "5.1.0",
+    "grapheme-splitter": "1.0.4",
     "i18n-iso-countries": "6.8.0",
     "i18next": "17.0.6",
     "i18next-browser-languagedetector": "3.0.1",
