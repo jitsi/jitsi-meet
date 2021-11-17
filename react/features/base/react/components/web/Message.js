@@ -3,6 +3,9 @@
 import React, { Component } from 'react';
 import { toArray } from 'react-emoji-render';
 
+import GifMessage from '../../../../chat/components/web/GifMessage';
+import { isGifMessage } from '../../../../gifs/functions';
+
 import Linkify from './Linkify';
 
 type Props = {
@@ -44,16 +47,26 @@ class Message extends Component<Props> {
 
         const content = [];
 
-        for (const token of tokens) {
-            if (token.includes('://')) {
+        // check if the message is a GIF
+        if (isGifMessage(text)) {
+            const url = text.substring(4, text.length - 1);
 
-                // Bypass the emojification when urls are involved
-                content.push(token);
-            } else {
-                content.push(...toArray(token, { className: 'smiley' }));
+            content.push(<GifMessage
+                key = { url }
+                url = { url } />);
+        } else {
+            for (const token of tokens) {
+
+                if (token.includes('://')) {
+
+                    // Bypass the emojification when urls are involved
+                    content.push(token);
+                } else {
+                    content.push(...toArray(token, { className: 'smiley' }));
+                }
+
+                content.push(' ');
             }
-
-            content.push(' ');
         }
 
         content.forEach(token => {

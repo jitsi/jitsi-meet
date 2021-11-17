@@ -24,6 +24,8 @@ import {
     updateLastTrackVideoMediaEvent
 } from '../../../base/tracks';
 import { getVideoObjectPosition } from '../../../face-centering/functions';
+import { hideGif, showGif } from '../../../gifs/actions';
+import { getGifDisplayMode, getGifForParticipant } from '../../../gifs/functions';
 import { PresenceLabel } from '../../../presence-status';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
 import {
@@ -95,6 +97,11 @@ export type Props = {|
      * Indicates whether enlargement of tiles to fill the available space is disabled.
      */
     _disableTileEnlargement: boolean,
+
+    /**
+     * URL of GIF sent by this participant, null if there's none.
+     */
+    _gifSrc ?: string,
 
     /**
      * The height of the Thumbnail.
@@ -182,14 +189,14 @@ export type Props = {|
     _width: number,
 
     /**
+     * An object containing CSS classes.
+     */
+    classes: Object,
+
+    /**
      * The redux dispatch function.
      */
     dispatch: Function,
-
-    /**
-     * An object containing the CSS classes.
-     */
-    classes: Object,
 
     /**
      * The horizontal offset in px for the thumbnail. Used to center the thumbnails from the last row in tile view.
@@ -267,8 +274,12 @@ const defaultStyles = theme => {
             position: 'absolute',
             width: '100%',
             height: '100%',
-            zIndex: '9',
+            zIndex: 9,
             borderRadius: '4px'
+        },
+
+        borderIndicatorOnTop: {
+            zIndex: 11
         },
 
         activeSpeaker: {
@@ -280,6 +291,25 @@ const defaultStyles = theme => {
         raisedHand: {
             '& .raised-hand-border': {
                 boxShadow: `inset 0px 0px 0px 2px ${theme.palette.warning02} !important`
+            }
+        },
+
+        gif: {
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            zIndex: 11,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            overflow: 'hidden',
+            backgroundColor: theme.palette.ui02,
+
+            '& img': {
+                maxWidth: '100%',
+                maxHeight: '100%',
+                objectFit: 'contain',
+                flexGrow: '1'
             }
         }
     };
@@ -339,6 +369,8 @@ class Thumbnail extends Component<Props, State> {
         this._onTouchMove = this._onTouchMove.bind(this);
         this._showPopover = this._showPopover.bind(this);
         this._hidePopover = this._hidePopover.bind(this);
+        this._onGifMouseEnter = this._onGifMouseEnter.bind(this);
+        this._onGifMouseLeave = this._onGifMouseLeave.bind(this);
     }
 
     /**
@@ -741,6 +773,52 @@ class Thumbnail extends Component<Props, State> {
         return className;
     }
 
+    _onGifMouseEnter: () => void;
+
+    /**
+     * Keep showing the GIF for the current participant.
+     *
+     * @returns {void}
+     */
+    _onGifMouseEnter() {
+        const { dispatch, _participant: { id } } = this.props;
+
+        dispatch(showGif(id));
+    }
+
+    _onGifMouseLeave: () => void;
+
+    /**
+     * Keep showing the GIF for the current participant.
+     *
+     * @returns {void}
+     */
+    _onGifMouseLeave() {
+        const { dispatch, _participant: { id } } = this.props;
+
+        dispatch(hideGif(id));
+    }
+
+    /**
+     * Renders GIF.
+     *
+     * @returns {Component}
+     */
+    _renderGif() {
+        const { _gifSrc, classes } = this.props;
+
+        return _gifSrc && (
+            <div
+                className = { classes.gif }
+                onMouseEnter = { this._onGifMouseEnter }
+                onMouseLeave = { this._onGifMouseLeave }>
+                <img
+                    alt = 'GIF'
+                    src = { _gifSrc } />
+            </div>
+        );
+    }
+
     _onCanPlay: Object => void;
 
     /**
@@ -798,7 +876,8 @@ class Thumbnail extends Component<Props, State> {
             _localFlipX,
             _participant,
             _videoTrack,
-            classes
+            classes,
+            _gifSrc
         } = this.props;
         const { id } = _participant || {};
         const { isHovered, popoverVisible } = this.state;
@@ -850,9 +929,9 @@ class Thumbnail extends Component<Props, State> {
                     }
                 ) }
                 style = { styles.thumbnail }>
-                {local
+                {!_gifSrc && (local
                     ? <span id = 'localVideoWrapper'>{video}</span>
-                    : video}
+                    : video)}
                 <div className = { classes.containerBackground } />
                 <div
                     className = { clsx(classes.indicatorsContainer,
@@ -880,7 +959,7 @@ class Thumbnail extends Component<Props, State> {
                         local = { local }
                         participantId = { id } />
                 </div>
-                { this._renderAvatar(styles.avatar) }
+                {!_gifSrc && this._renderAvatar(styles.avatar) }
                 { !local && (
                     <div className = 'presence-label-container'>
                         <PresenceLabel
@@ -889,8 +968,15 @@ class Thumbnail extends Component<Props, State> {
                     </div>
                 )}
                 <ThumbnailAudioIndicator _audioTrack = { _audioTrack } />
-                <div className = { clsx(classes.borderIndicator, 'raised-hand-border') } />
-                <div className = { clsx(classes.borderIndicator, 'active-speaker-indicator') } />
+                {this._renderGif()}
+                <div
+                    className = { clsx(classes.borderIndicator,
+                    _gifSrc && classes.borderIndicatorOnTop,
+                    'raised-hand-border') } />
+                <div
+                    className = { clsx(classes.borderIndicator,
+                    _gifSrc && classes.borderIndicatorOnTop,
+                    'active-speaker-indicator') } />
             </span>
         );
     }
@@ -1003,6 +1089,9 @@ function _mapStateToProps(state, ownProps): Object {
     }
     }
 
+    const { gifUrl: gifSrc } = getGifForParticipant(state, id);
+    const mode = getGifDisplayMode(state);
+
     return {
         _audioTrack,
         _currentLayout,
@@ -1023,7 +1112,8 @@ function _mapStateToProps(state, ownProps): Object {
         _raisedHand: hasRaisedHand(participant),
         _videoObjectPosition: getVideoObjectPosition(state, participant?.id),
         _videoTrack,
-        ...size
+        ...size,
+        _gifSrc: mode === 'chat' ? null : gifSrc
     };
 }
 

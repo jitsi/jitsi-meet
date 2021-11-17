@@ -899,3 +899,15 @@ export function createBreakoutRoomsEvent(actionSubject) {
         source: 'breakout.rooms'
     };
 }
+
+/**
+ * Creates and event which indicates a GIF was sent.
+ *
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createGifSentEvent() {
+    return {
+        action: 'gif.sent'
+    };
+}

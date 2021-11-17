@@ -18,6 +18,9 @@ import {
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
+import { addGif } from '../gifs/actions';
+import { GIF_PREFIX } from '../gifs/constants';
+import { getGifDisplayMode, isGifMessage } from '../gifs/functions';
 import { NOTIFICATION_TIMEOUT_TYPE, showMessageNotification } from '../notifications';
 import { resetNbUnreadPollsMessages } from '../polls/actions';
 import { ADD_REACTION_MESSAGE } from '../reactions/actionTypes';
@@ -226,25 +229,21 @@ function _addChatMsgListener(conference, store) {
     conference.on(
         JitsiConferenceEvents.MESSAGE_RECEIVED,
         (id, message, timestamp) => {
-            _handleReceivedMessage(store, {
-                id,
+            _onConferenceMessageReceived(store, { id,
                 message,
-                privateMessage: false,
-                lobbyChat: false,
-                timestamp
-            });
+                timestamp,
+                privateMessage: false });
         }
     );
 
     conference.on(
         JitsiConferenceEvents.PRIVATE_MESSAGE_RECEIVED,
         (id, message, timestamp) => {
-            _handleReceivedMessage(store, {
+            _onConferenceMessageReceived(store, {
                 id,
                 message,
-                privateMessage: true,
-                lobbyChat: false,
-                timestamp
+                timestamp,
+                privateMessage: true
             });
         }
     );
@@ -281,6 +280,45 @@ function _addChatMsgListener(conference, store) {
         JitsiConferenceEvents.CONFERENCE_ERROR, (errorType, error) => {
             errorType === JitsiConferenceErrors.CHAT_ERROR && _handleChatError(store, error);
         });
+}
+
+/**
+ * Handles a received message.
+ *
+ * @param {Object} store - Redux store.
+ * @param {Object} message - The message object.
+ * @returns {void}
+ */
+function _onConferenceMessageReceived(store, { id, message, timestamp, privateMessage }) {
+    const isGif = isGifMessage(message);
+
+    if (isGif) {
+        _handleGifMessageReceived(store, id, message);
+        if (getGifDisplayMode(store.getState()) === 'tile') {
+            return;
+        }
+    }
+    _handleReceivedMessage(store, {
+        id,
+        message,
+        privateMessage,
+        lobbyChat: false,
+        timestamp
+    }, true, isGif);
+}
+
+/**
+ * Handles a received gif message.
+ *
+ * @param {Object} store - Redux store.
+ * @param {string} id - Id of the participant that sent the message.
+ * @param {string} message - The message sent.
+ * @returns {void}
+ */
+function _handleGifMessageReceived(store, id, message) {
+    const url = message.substring(GIF_PREFIX.length, message.length - 1);
+
+    store.dispatch(addGif(id, url));
 }
 
 /**

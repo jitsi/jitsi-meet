@@ -161,6 +161,7 @@ export default [
     'forceJVB121Ratio',
     'forceTurnRelay',
     'gatherStats',
+    'giphy',
     'googleApiApplicationClientID',
     'hiddenPremeetingButtons',
     'hideConferenceSubject',
