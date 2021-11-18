@@ -142,6 +142,10 @@ function getConfig(options = {}) {
                 },
                 test: /\.jsx?$/
             }, {
+                test: /\.(ts|tsx)$/,
+                use: 'ts-loader',
+                exclude: [ /node_modules/, /flow-typed/, /android/ ]
+            }, {
                 // TODO: get rid of this.
                 // Expose jquery as the globals $ and jQuery because it is expected
                 // to be available in such a form by lib-jitsi-meet.
@@ -220,7 +224,9 @@ function getConfig(options = {}) {
 
                 // Webpack defaults:
                 '.js',
-                '.json'
+                '.json',
+                '.ts',
+                '.tsx'
             ],
             fallback: {
                 // Provide some empty Node modules (required by AtlasKit, olm).
