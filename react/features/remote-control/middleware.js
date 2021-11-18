@@ -5,6 +5,7 @@ import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import { CONFERENCE_JOINED } from '../base/conference';
 import { PARTICIPANT_LEFT } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
+import { isRNSocketWebView } from '../jane-waiting-area';
 
 import {
     clearRequest, setReceiverTransport, setRemoteControlActive, stopController, stopReceiver
@@ -24,11 +25,13 @@ MiddlewareRegistry.register(store => next => async action => {
     case APP_WILL_MOUNT: {
         const { dispatch } = store;
 
-        dispatch(setReceiverTransport(new Transport({
-            backend: new PostMessageTransportBackend({
-                postisOptions: { scope: 'jitsi-remote-control' }
-            })
-        })));
+        if (!isRNSocketWebView(window.location)) {
+            dispatch(setReceiverTransport(new Transport({
+                backend: new PostMessageTransportBackend({
+                    postisOptions: { scope: 'jitsi-remote-control' }
+                })
+            })));
+        }
 
         break;
     }

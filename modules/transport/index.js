@@ -3,6 +3,7 @@
 import { PostMessageTransportBackend, Transport } from '@jitsi/js-utils/transport';
 
 import { getJitsiMeetGlobalNS } from '../../react/features/base/util';
+import { isRNSocketWebView } from '../../react/features/jane-waiting-area';
 import { API_ID } from '../API/constants';
 
 
@@ -35,7 +36,7 @@ let transport;
  * @returns {Transport}
  */
 export function getJitsiMeetTransport() {
-    if (!transport) {
+    if (!transport && !isRNSocketWebView(window.location)) {
         transport = new Transport({ backend: new PostMessageTransportBackend({ postisOptions }) });
     }
 

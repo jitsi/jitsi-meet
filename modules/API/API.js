@@ -42,6 +42,7 @@ import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox';
 import { toggleE2EE } from '../../react/features/e2ee/actions';
 import { setVolume } from '../../react/features/filmstrip';
 import { invite } from '../../react/features/invite';
+import { isRNSocketWebView } from '../../react/features/jane-waiting-area';
 import {
     selectParticipantInLargeVideo
 } from '../../react/features/large-video/actions.any';
@@ -680,7 +681,7 @@ class API {
      * @returns {void}
      */
     init() {
-        if (!shouldBeEnabled()) {
+        if (!shouldBeEnabled() || isRNSocketWebView(window.location)) {
             return;
         }
 

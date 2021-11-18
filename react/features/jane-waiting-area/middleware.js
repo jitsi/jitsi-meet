@@ -7,8 +7,6 @@ import { updateSettings } from '../base/settings';
 import { registerSound, unregisterSound } from '../base/sounds';
 
 import {
-    ADD_JANE_WAITING_AREA_AUDIO_TRACK,
-    ADD_JANE_WAITING_AREA_VIDEO_TRACK,
     JANE_WAITING_AREA_START_CONFERENCE
 } from './actionTypes';
 import {
@@ -39,33 +37,6 @@ MiddlewareRegistry.register(store => next => async action => {
     case APP_WILL_UNMOUNT:
         dispatch(unregisterSound(WAITING_AREA_NOTIFICATION_SOUND_ID));
         break;
-    case ADD_JANE_WAITING_AREA_AUDIO_TRACK: {
-        const { value: audioTrack } = action;
-
-        if (audioTrack) {
-            store.dispatch(
-                    updateSettings({
-                        micDeviceId: audioTrack.getDeviceId()
-                    })
-            );
-        }
-
-        break;
-    }
-
-    case ADD_JANE_WAITING_AREA_VIDEO_TRACK: {
-        const { value: videoTrack } = action;
-
-        if (videoTrack) {
-            store.dispatch(
-                    updateSettings({
-                        cameraDeviceId: videoTrack.getDeviceId()
-                    })
-            );
-        }
-
-        break;
-    }
 
     case JANE_WAITING_AREA_START_CONFERENCE: {
         const { getState } = store;
