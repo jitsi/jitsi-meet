@@ -14,7 +14,7 @@ import {
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
-import { PrivateMessageButton } from '../../../chat';
+import PrivateMessageButton from '../../../chat/components/native/PrivateMessageButton';
 import { hideRemoteVideoMenu } from '../../actions.native';
 import ConnectionStatusButton from '../native/ConnectionStatusButton';
 
