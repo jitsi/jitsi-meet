@@ -1,6 +1,6 @@
 # Facial Recognition and Facial Expression Models and Weights
 
-#### Tiny Face Detector
+### Tiny Face Detector
 
 It is a realtime face detector, more information can be found here https://github.com/justadudewhohacks/face-api.js/#tiny-face-detector.
 
@@ -8,7 +8,7 @@ It is a realtime face detector, more information can be found here https://githu
 
 It is a models that recognizes face expressions, more information can be found here https://github.com/justadudewhohacks/face-api.js/#face-expression-recognition-model.
 
-#### Usage
+### Usage
 
 Both models are loaded using face-api.js which is a JavaScript face recognition API for the browser and nodejs implemented on top of tensorflow.js core.
 
