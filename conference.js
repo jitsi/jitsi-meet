@@ -167,7 +167,7 @@ let _connectionPromise;
  * the resolve function to this variable and wait for the promise to resolve before we continue. The
  * _onConnectionPromiseCreated will be called once the _connectionPromise is created.
  */
-let _onConnectionPromiseCreated;
+// let _onConnectionPromiseCreated;
 
 /**
  * This promise is used for chaining mutePresenterVideo calls in order to avoid  calling GUM multiple times if it takes

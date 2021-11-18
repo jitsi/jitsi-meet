@@ -13,6 +13,8 @@ export * from './functions.any';
  */
 export function maybeShowSuboptimalExperienceNotification(dispatch, t) {
     if (isSuboptimalBrowser()) {
+        return;
+        // eslint-disable-next-line no-unreachable
         dispatch(
             showWarningNotification(
                 {

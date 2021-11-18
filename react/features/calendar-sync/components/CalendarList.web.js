@@ -27,7 +27,7 @@ type Props = {
      * The error object containing details about any error that has occurred
      * while interacting with calendar integration.
      */
-    _calendarError: ?Object,
+    _calendarError: any,
 
     /**
      * Whether or not a calendar may be connected for fetching calendar events.

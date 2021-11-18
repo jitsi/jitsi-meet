@@ -44,7 +44,6 @@ function Preview(props: Props) {
         name,
         showCameraPreview,
         videoTrack,
-        videoMuted,
         screensharing
     } = props;
 

@@ -24,6 +24,7 @@ type Props = {
  * @class RefreshButton
  */
 class RefreshButton extends Component<Props> {
+    reload: Function
 
     constructor(props) {
         super(props);
