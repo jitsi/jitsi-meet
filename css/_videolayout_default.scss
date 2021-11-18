@@ -206,13 +206,11 @@
     bottom: 90px;
     z-index: 100;
     width: 100%;
-
     .refreshButtonContainer {
         display: flex;
         padding: 10px;
         flex-direction: column;
         align-items: center;
-
         .refreshButton {
             background: #FFAB00;
             padding: 7px 10px;
