@@ -54,15 +54,15 @@ class MessageContainer extends AbstractMessageContainer<Props> {
         return (
             <FlatList
                 ListEmptyComponent = { this._renderListEmptyComponent }
+                bounces = { false }
                 data = { data }
 
                 // Workaround for RN bug:
                 // https://github.com/facebook/react-native/issues/21196
                 inverted = { Boolean(data.length) }
                 keyExtractor = { this._keyExtractor }
-                keyboardShouldPersistTaps = 'always'
-                renderItem = { this._renderMessageGroup }
-                style = { styles.messageContainer } />
+                keyboardShouldPersistTaps = 'handled'
+                renderItem = { this._renderMessageGroup } />
         );
     }
 

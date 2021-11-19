@@ -1,9 +1,11 @@
 // @flow
 
 import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
 import React from 'react';
 
 import { ACTION_TRIGGER } from '../../../participants-pane/constants';
+import { isMobileBrowser } from '../../environment/utils';
 import participantsPaneTheme from '../themes/participantsPaneTheme.json';
 
 type Props = {
@@ -12,6 +14,11 @@ type Props = {
      * List item actions.
      */
     actions: React$Node,
+
+    /**
+     * List item container class name.
+     */
+    className: string,
 
     /**
      * Icon to be displayed on the list item. (Avatar for participants).
@@ -44,9 +51,19 @@ type Props = {
     onClick: Function,
 
     /**
+     * Long press handler.
+     */
+    onLongPress: Function,
+
+    /**
      * Mouse leave handler.
      */
     onMouseLeave: Function,
+
+    /**
+     * Data test id.
+     */
+    testId?: string,
 
     /**
      * Text children to be displayed on the list item.
@@ -72,6 +89,7 @@ const useStyles = makeStyles(theme => {
             padding: `0 ${participantsPaneTheme.panePadding}px`,
             position: 'relative',
             boxShadow: 'inset 0px -1px 0px rgba(255, 255, 255, 0.15)',
+            minHeight: '40px',
 
             '&:hover': {
                 backgroundColor: theme.palette.action02Active,
@@ -161,24 +179,75 @@ const useStyles = makeStyles(theme => {
 
 const ListItem = ({
     actions,
+    className,
     icon,
     id,
     hideActions = false,
     indicators,
     isHighlighted,
     onClick,
+    onLongPress,
     onMouseLeave,
+    testId,
     textChildren,
     trigger
 }: Props) => {
     const styles = useStyles();
+    const _isMobile = isMobileBrowser();
+    let timeoutHandler;
+
+    /**
+     * Set calling long press handler after x milliseconds.
+     *
+     * @param {TouchEvent} e - Touch start event.
+     * @returns {void}
+     */
+    function _onTouchStart(e) {
+        const target = e.touches[0].target;
+
+        timeoutHandler = setTimeout(() => onLongPress(target), 600);
+    }
+
+    /**
+     * Cancel calling on long press after x milliseconds if the number of milliseconds is not reached
+     * before a touch move(drag), or just clears the timeout.
+     *
+     * @returns {void}
+     */
+    function _onTouchMove() {
+        clearTimeout(timeoutHandler);
+    }
+
+    /**
+     * Cancel calling on long press after x milliseconds if the number of milliseconds is not reached yet,
+     * or just clears the timeout.
+     *
+     * @returns {void}
+     */
+    function _onTouchEnd() {
+        clearTimeout(timeoutHandler);
+    }
 
     return (
         <div
-            className = { `list-item-container ${styles.container} ${isHighlighted ? styles.highlighted : ''}` }
+            className = { clsx('list-item-container',
+                styles.container,
+                isHighlighted && styles.highlighted,
+                className
+            ) }
+            data-testid = { testId }
             id = { id }
             onClick = { onClick }
-            onMouseLeave = { onMouseLeave }>
+            { ...(_isMobile
+                ? {
+                    onTouchEnd: _onTouchEnd,
+                    onTouchMove: _onTouchMove,
+                    onTouchStart: _onTouchStart
+                }
+                : {
+                    onMouseLeave
+                }
+            ) }>
             <div> {icon} </div>
             <div className = { styles.detailsContainer }>
                 <div className = { styles.name }>
@@ -186,17 +255,20 @@ const ListItem = ({
                 </div>
                 {indicators && (
                     <div
-                        className = { `indicators ${styles.indicators} ${
-                            isHighlighted || trigger === ACTION_TRIGGER.PERMANENT
-                                ? styles.indicatorsHidden : ''}` }>
+                        className = { clsx('indicators',
+                            styles.indicators,
+                            (isHighlighted || trigger === ACTION_TRIGGER.PERMANENT) && styles.indicatorsHidden
+                        ) }>
                         {indicators}
                     </div>
                 )}
                 {!hideActions && (
                     <div
-                        className = { `actions ${styles.actionsContainer} ${
-                            trigger === ACTION_TRIGGER.PERMANENT ? styles.actionsPermanent : ''} ${
-                            isHighlighted ? styles.actionsVisible : ''}` }>
+                        className = { clsx('actions',
+                            styles.actionsContainer,
+                            trigger === ACTION_TRIGGER.PERMANENT && styles.actionsPermanent,
+                            isHighlighted && styles.actionsVisible
+                        ) }>
                         {actions}
                     </div>
                 )}

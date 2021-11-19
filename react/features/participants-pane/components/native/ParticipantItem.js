@@ -17,7 +17,7 @@ type Props = {
     /**
      * Media state for audio.
      */
-    audioMediaState: MediaState,
+    audioMediaState?: MediaState,
 
     /**
      * React children.
@@ -47,7 +47,7 @@ type Props = {
     /**
      * True if the participant is local.
      */
-    local: boolean,
+    local?: boolean,
 
     /**
      * Callback to be invoked on pressing the participant item.
@@ -62,12 +62,12 @@ type Props = {
     /**
      * True if the participant have raised hand.
      */
-    raisedHand: boolean,
+    raisedHand?: boolean,
 
     /**
      * Media state for video.
      */
-    videoMediaState: MediaState
+    videoMediaState?: MediaState
 }
 
 /**
@@ -98,6 +98,7 @@ function ParticipantItem({
                 style = { styles.participantContent }>
                 <Avatar
                     className = 'participant-avatar'
+                    displayName = { displayName }
                     participantId = { participantID }
                     size = { 32 } />
                 <View style = { styles.participantDetailsContainer }>

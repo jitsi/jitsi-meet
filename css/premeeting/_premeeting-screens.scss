@@ -138,7 +138,6 @@
 
                 .toolbox-content-items {
                     background: transparent;
-                    border-radius: 0;
                     box-shadow: none;
                     display: flex;
                     justify-content: space-evenly;
@@ -168,6 +167,19 @@
             position: fixed;
             top: 0;
             width: $prejoinDefaultContentWidth;
+        }
+    }
+
+    // mobile phone landscape
+    @media (max-height: 420px) {
+        flex-direction: row;
+
+        div.content {
+            padding: 16px 16px 0 16px;
+        }
+
+        .con-status {
+            display: none;
         }
     }
 

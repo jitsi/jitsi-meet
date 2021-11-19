@@ -1,4 +1,5 @@
 // @flow
+
 import { loadConfig } from '../base/lib-jitsi-meet';
 
 /**

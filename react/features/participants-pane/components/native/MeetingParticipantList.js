@@ -9,6 +9,7 @@ import { Icon, IconInviteMore } from '../../../base/icons';
 import { getLocalParticipant, getParticipantCountWithFake, getRemoteParticipants } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { normalizeAccents } from '../../../base/util/strings';
+import { getBreakoutRooms, getCurrentRoomId } from '../../../breakout-rooms/functions';
 import { doInvitePeople } from '../../../invite/actions.native';
 import { shouldRenderInviteButton } from '../../functions';
 
@@ -18,6 +19,11 @@ import styles from './styles';
 
 
 type Props = {
+
+    /**
+     * Current breakout room, if we are in one.
+     */
+    _currentRoom: ?Object,
 
     /**
      * The local participant.
@@ -186,6 +192,7 @@ class MeetingParticipantList extends PureComponent<Props, State> {
      */
     render() {
         const {
+            _currentRoom,
             _localParticipant,
             _participantsCount,
             _showInviteButton,
@@ -197,8 +204,11 @@ class MeetingParticipantList extends PureComponent<Props, State> {
             <View
                 style = { styles.meetingListContainer }>
                 <Text style = { styles.meetingListDescription }>
-                    {t('participantsPane.headings.participantsList',
-                        { count: _participantsCount })}
+                    {_currentRoom?.name
+
+                        // $FlowExpectedError
+                        ? `${_currentRoom.name} (${_participantsCount})`
+                        : t('participantsPane.headings.participantsList', { count: _participantsCount })}
                 </Text>
                 {
                     _showInviteButton
@@ -241,8 +251,11 @@ function _mapStateToProps(state): Object {
     const { remoteParticipants } = state['features/filmstrip'];
     const _showInviteButton = shouldRenderInviteButton(state);
     const _remoteParticipants = getRemoteParticipants(state);
+    const currentRoomId = getCurrentRoomId(state);
+    const _currentRoom = getBreakoutRooms(state)[currentRoomId];
 
     return {
+        _currentRoom,
         _participantsCount,
         _remoteParticipants,
         _showInviteButton,

@@ -117,7 +117,8 @@ const SECTION_LIST_STYLES = {
      * The top level container style of the list.
      */
     container: {
-        flex: 1
+        flex: 1,
+        width: '100%'
     },
 
     list: {

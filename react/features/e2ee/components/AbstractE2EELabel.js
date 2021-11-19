@@ -27,8 +27,10 @@ export type Props = {
  * @returns {Props}
  */
 export function _mapStateToProps(state: Object) {
+    const { e2ee = {} } = state['features/base/config'];
+
     return {
-        _e2eeLabels: state['features/base/config'].e2eeLabels,
+        _e2eeLabels: e2ee.labels,
         _showLabel: state['features/e2ee'].everyoneEnabledE2EE
     };
 }

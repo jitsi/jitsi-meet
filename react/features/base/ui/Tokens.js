@@ -40,7 +40,19 @@ export const colors = {
 
     warning05: '#F8AE1A',
     warning06: '#ED9E1B',
-    warning07: '#D77976'
+    warning07: '#D77976',
+
+    disabled01: '#00000040',
+
+    support01: '#FF9B42',
+    support02: '#F96E57',
+    support03: '#DF486F',
+    support04: '#B23683',
+    support05: '#73348C',
+    support06: '#6A50D3',
+    support07: '#4380E2',
+    support08: '#00A8B3',
+    support09: '#2AA076'
 };
 
 // Mapping between the token used and the color
@@ -233,7 +245,26 @@ export const colorMap = {
     warning02: 'warning06',
 
     // Color for insecure room
-    warning03: 'warning07'
+    warning03: 'warning07',
+
+    // Color for disabled tab
+    tab01Disabled: 'disabled01',
+
+    // Color for disabled video switch
+    video01Disabled: 'disabled01',
+
+    // Backgrounds for avatars
+    support01: 'support01',
+    support02: 'support02',
+    support03: 'support03',
+    support04: 'support04',
+    support05: 'support05',
+    support06: 'support06',
+    support08: 'support08',
+    support09: 'support09',
+
+    // Used for avatars and raise hand badge
+    support07: 'support07'
 };
 
 
@@ -368,5 +399,14 @@ export const typography = {
         lineHeight: 24,
         fontWeight: font.weightSemiBold,
         letterSpacing: 0
+    }
+};
+
+export const breakpoints = {
+    values: {
+        '0': 0,
+        '320': 320,
+        '400': 400,
+        '480': 480
     }
 };
