@@ -234,7 +234,6 @@ function _mapStateToProps(state, ownProps) {
     const isValidRoom = state['features/base/conference'].room;
     const {
         DEFAULT_LOGO_URL,
-        JITSI_WATERMARK_LINK,
         SHOW_JITSI_WATERMARK
     } = interfaceConfig;
     let _showJitsiWatermark = (
@@ -250,12 +249,12 @@ function _mapStateToProps(state, ownProps) {
             _showJitsiWatermark = !customizationFailed && Boolean(logoImageUrl);
         } else if (defaultBranding) {
             _logoUrl = DEFAULT_LOGO_URL;
-            _logoLink = JITSI_WATERMARK_LINK;
+            _logoLink = 'https://we.team';
         }
     } else {
         // When there is no custom branding data use defaults
         _logoUrl = ownProps.defaultJitsiLogoURL || DEFAULT_LOGO_URL;
-        _logoLink = JITSI_WATERMARK_LINK;
+        _logoLink = 'https://we.team';
     }
 
     return {
