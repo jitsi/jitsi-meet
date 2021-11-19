@@ -8,13 +8,15 @@ import { Avatar } from '../../../base/avatar';
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, isDialogOpen } from '../../../base/dialog';
 import { KICK_OUT_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { translate } from '../../../base/i18n';
 import {
     getParticipantById,
     getParticipantDisplayName
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
-import { PrivateMessageButton } from '../../../chat';
+import { getBreakoutRooms, getCurrentRoomId } from '../../../breakout-rooms/functions';
+import PrivateMessageButton from '../../../chat/components/native/PrivateMessageButton';
 import { hideRemoteVideoMenu } from '../../actions.native';
 import ConnectionStatusButton from '../native/ConnectionStatusButton';
 
@@ -25,6 +27,7 @@ import MuteButton from './MuteButton';
 import MuteEveryoneElseButton from './MuteEveryoneElseButton';
 import MuteVideoButton from './MuteVideoButton';
 import PinButton from './PinButton';
+import SendToBreakoutRoom from './SendToBreakoutRoom';
 import styles from './styles';
 
 // import VolumeSlider from './VolumeSlider';
@@ -51,6 +54,11 @@ type Props = {
      * The color-schemed stylesheet of the BottomSheet.
      */
     _bottomSheetStyles: StyleType,
+
+    /**
+     * The id of the current room.
+     */
+    _currentRoomId: String,
 
     /**
      * Whether or not to display the kick button.
@@ -80,7 +88,17 @@ type Props = {
     /**
      * Display name of the participant retrieved from Redux.
      */
-    _participantDisplayName: string
+    _participantDisplayName: string,
+
+    /**
+     * Array containing the breakout rooms.
+     */
+    _rooms: Array<Object>,
+
+    /**
+     * Translation function.
+     */
+    t: Function
 }
 
 // eslint-disable-next-line prefer-const
@@ -113,7 +131,10 @@ class RemoteVideoMenu extends PureComponent<Props> {
             _disableRemoteMute,
             _disableGrantModerator,
             _isParticipantAvailable,
-            participantId
+            _rooms,
+            _currentRoomId,
+            participantId,
+            t
         } = this.props;
         const buttonProps = {
             afterClick: this._onCancel,
@@ -137,7 +158,18 @@ class RemoteVideoMenu extends PureComponent<Props> {
                 <PinButton { ...buttonProps } />
                 <PrivateMessageButton { ...buttonProps } />
                 <ConnectionStatusButton { ...buttonProps } />
-                {/* <Divider style = { styles.divider } />*/}
+                {_rooms.length > 1 && <>
+                    <Divider style = { styles.divider } />
+                    <View style = { styles.contextMenuItem }>
+                        <Text style = { styles.contextMenuItemText }>
+                            {t('breakoutRooms.actions.sendToBreakoutRoom')}
+                        </Text>
+                    </View>
+                    {_rooms.map(room => _currentRoomId !== room.id && (<SendToBreakoutRoom
+                        key = { room.id }
+                        room = { room }
+                        { ...buttonProps } />))}
+                </>}
                 {/* <VolumeSlider participantID = { participantId } />*/}
             </BottomSheet>
         );
@@ -201,19 +233,23 @@ function _mapStateToProps(state, ownProps) {
     const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
     const isParticipantAvailable = getParticipantById(state, participantId);
     let { disableKick } = remoteVideoMenu;
+    const _rooms = Object.values(getBreakoutRooms(state));
+    const _currentRoomId = getCurrentRoomId(state);
 
     disableKick = disableKick || !kickOutEnabled;
 
     return {
         _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
+        _currentRoomId,
         _disableKick: Boolean(disableKick),
         _disableRemoteMute: Boolean(disableRemoteMute),
         _isOpen: isDialogOpen(state, RemoteVideoMenu_),
         _isParticipantAvailable: Boolean(isParticipantAvailable),
-        _participantDisplayName: getParticipantDisplayName(state, participantId)
+        _participantDisplayName: getParticipantDisplayName(state, participantId),
+        _rooms
     };
 }
 
-RemoteVideoMenu_ = connect(_mapStateToProps)(RemoteVideoMenu);
+RemoteVideoMenu_ = translate(connect(_mapStateToProps)(RemoteVideoMenu));
 
 export default RemoteVideoMenu_;

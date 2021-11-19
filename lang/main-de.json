@@ -501,6 +501,7 @@
         "expandedPending": "Livestream wird gestartet …",
         "failedToStart": "Livestream konnte nicht gestartet werden",
         "getStreamKeyManually": "Wir waren nicht in der Lage, Livestreams abzurufen. Versuchen Sie, Ihren Livestream-Schlüssel von YouTube zu erhalten.",
+        "inProgress": "Livestreaming gestartet",
         "invalidStreamKey": "Der Livestream-Schlüssel ist u. U. falsch.",
         "off": "Livestream gestoppt",
         "offBy": "{{name}} stoppte den Livestream",
@@ -508,6 +509,7 @@
         "onBy": "{{name}} startete den Livestream",
         "pending": "Livestream wird gestartet …",
         "serviceName": "Livestreaming-Dienst",
+        "sessionAlreadyActive": "Diese Konferenz wird bereits als Livestream übertragen.",
         "signedInAs": "Sie sind derzeit angemeldet als:",
         "signIn": "Mit Google anmelden",
         "signInCTA": "Anmelden oder den Streamschlüssel des YouTube-Livestreams eingeben.",
@@ -760,6 +762,7 @@
         "expandedPending": "Aufzeichnung wird gestartet…",
         "failedToStart": "Die Aufnahme konnte nicht gestartet werden",
         "fileSharingdescription": "Aufzeichnung mit den Personen der Konferenz teilen",
+        "inProgress": "Aufzeichnung gestartet",
         "linkGenerated": "Link zur Aufzeichnung wurde generiert.",
         "live": "LIVE",
         "loggedIn": "Als {{userName}} angemeldet",
@@ -772,6 +775,7 @@
         "serviceDescription": "Ihre Aufzeichnung wird vom Aufzeichnungsdienst gespeichert",
         "serviceDescriptionCloud": "Cloud-Aufzeichnung",
         "serviceName": "Aufnahmedienst",
+        "sessionAlreadyActive": "Diese Konferenz wird bereits aufgezeichnet.",
         "signIn": "Anmelden",
         "signOut": "Abmelden",
         "unavailable": "Oh! Der {{serviceName}} ist aktuell nicht verfügbar. Wir arbeiten an der Behebung des Problems. Bitte versuchen Sie es später noch einmal.",
@@ -858,7 +862,14 @@
         "name": "Name",
         "seconds": "{{count}} Sek.",
         "speakerStats": "Sprechstatistik",
-        "speakerTime": "Sprechzeit"
+        "speakerTime": "Sprechzeit",
+        "happy": "Fröhlich",
+        "neutral": "Neutral",
+        "sad": "Traurig",
+        "surprised": "Überrascht",
+        "angry": "Sauer",
+        "fearful": "Ängstlich",
+        "disgusted": "Angeekelt"
     },
     "startupoverlay": {
         "policyText": " ",
@@ -1135,6 +1146,12 @@
     "lonelyMeetingExperience": {
         "button": "Andere einladen",
         "youAreAlone": "Nur Sie sind in dieser Konferenz"
+    },
+    "termsView": {
+        "header": "Nutzungsbedingungen"
+    },
+    "privacyView": {
+        "header": "Datenschutz"
     },
     "helpView": {
         "header": "Hilfecenter"

@@ -9,12 +9,18 @@ import { useSelector } from 'react-redux';
 import { getFieldValue } from '../../base/react';
 import { isSpeakerStatsSearchDisabled } from '../functions';
 
-const useStyles = makeStyles(() => {
+const useStyles = makeStyles(theme => {
     return {
         speakerStatsSearch: {
             position: 'absolute',
             right: '80px',
-            top: '8px'
+            top: '8px',
+
+            [theme.breakpoints.down('400')]: {
+                left: 20,
+                right: 0,
+                top: 42
+            }
         }
     };
 });

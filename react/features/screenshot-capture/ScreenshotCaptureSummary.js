@@ -6,6 +6,7 @@ import './createImageBitmap';
 
 import { createScreensharingCaptureTakenEvent, sendAnalytics } from '../analytics';
 import { getCurrentConference } from '../base/conference';
+import { extractFqnFromPath } from '../dynamic-branding';
 
 import {
     CLEAR_INTERVAL,
@@ -134,10 +135,11 @@ export default class ScreenshotCaptureSummary {
 
         const conference = getCurrentConference(this._state);
         const sessionId = conference.getMeetingUniqueId();
-        const { connection, timeEstablished } = this._state['features/base/connection'];
+        const { connection } = this._state['features/base/connection'];
         const jid = connection.getJid();
-        const timeLapseSeconds = timeEstablished && Math.floor((Date.now() - timeEstablished) / 1000);
+        const timestamp = Date.now();
         const { jwt } = this._state['features/base/jwt'];
+        const meetingFqn = extractFqnFromPath();
 
         this._storedImageData = imageData;
 
@@ -145,7 +147,8 @@ export default class ScreenshotCaptureSummary {
             jid,
             jwt,
             sessionId,
-            timeLapseSeconds
+            timestamp,
+            meetingFqn
         });
     }
 

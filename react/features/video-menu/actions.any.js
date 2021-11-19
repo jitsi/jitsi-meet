@@ -103,7 +103,7 @@ export function muteAllParticipants(exclude: Array<string>, mediaType: MEDIA_TYP
         const localId = getLocalParticipant(state).id;
 
         if (!exclude.includes(localId)) {
-            dispatch(muteLocal(true, mediaType, true));
+            dispatch(muteLocal(true, mediaType, mediaType !== MEDIA_TYPE.AUDIO));
         }
 
         getRemoteParticipants(state).forEach((p, id) => {

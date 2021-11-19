@@ -52,10 +52,12 @@ VirtualHost "jitmeet.example.com"
         "external_services";
         "conference_duration";
         "muc_lobby_rooms";
+        "muc_breakout_rooms";
         "av_moderation";
     }
     c2s_require_encryption = false
     lobby_muc = "lobby.jitmeet.example.com"
+    breakout_rooms_muc = "breakout.jitmeet.example.com"
     main_muc = "conference.jitmeet.example.com"
     -- muc_lobby_whitelist = { "recorder.jitmeet.example.com" } -- Here we can whitelist jibri to enter lobby enabled rooms
 
@@ -68,6 +70,18 @@ Component "conference.jitmeet.example.com" "muc"
         "polls";
         --"token_verification";
         "muc_rate_limit";
+    }
+    admins = { "focusUser@auth.jitmeet.example.com" }
+    muc_room_locking = false
+    muc_room_default_public_jids = true
+
+Component "breakout.jitmeet.example.com" "muc"
+    restrict_room_creation = true
+    storage = "memory"
+    modules_enabled = {
+        "muc_meeting_id";
+        "muc_domain_mapper";
+        --"token_verification";
     }
     admins = { "focusUser@auth.jitmeet.example.com" }
     muc_room_locking = false

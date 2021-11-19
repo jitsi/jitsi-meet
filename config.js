@@ -431,8 +431,11 @@ var config = {
     // hideLobbyButton: false,
 
     // If Lobby is enabled starts knocking automatically.
-    // autoKnockLobby: false
+    // autoKnockLobby: false,
 
+    // Hides add breakout room button
+    // hideAddRoomButton: false,
+  
     // Require users to always specify a display name.
     // requireDisplayName: true,
 
@@ -652,6 +655,9 @@ var config = {
     // Enables sending participants' emails (if available) to callstats and other analytics
     // enableEmailInStats: false,
 
+    // Enables detecting faces of participants and get their expression and send it to other participants
+    // enableFacialRecognition: true,
+
     // Controls the percentage of automatic feedback shown to participants when callstats is enabled.
     // The default value is 100%. If set to 0, no automatic feedback will be requested
     // feedbackPercentage: 100,
@@ -829,6 +835,10 @@ var config = {
     //     format: 'flac'
     //
 
+    // },
+    // e2ee: {
+    //   labels,
+    //   externallyManagedKey: false
     // },
 
     // Options related to end-to-end (participant to participant) ping.

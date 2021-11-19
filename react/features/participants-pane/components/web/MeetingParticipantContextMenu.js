@@ -1,10 +1,10 @@
 // @flow
+import { withStyles } from '@material-ui/styles';
 import React, { Component } from 'react';
 
 import { approveParticipant } from '../../../av-moderation/actions';
 import { Avatar } from '../../../base/avatar';
-import ContextMenu from '../../../base/components/context-menu/ContextMenu';
-import ContextMenuItemGroup from '../../../base/components/context-menu/ContextMenuItemGroup';
+import { ContextMenu, ContextMenuItemGroup } from '../../../base/components';
 import { isToolbarButtonEnabled } from '../../../base/config/functions.web';
 import { openDialog } from '../../../base/dialog';
 import { isIosMobileBrowser } from '../../../base/environment/utils';
@@ -16,6 +16,7 @@ import {
     IconMicDisabled,
     IconMicrophone,
     IconMuteEveryoneElse,
+    IconRingGroup,
     IconShareVideo,
     IconVideoOff
 } from '../../../base/icons';
@@ -28,6 +29,8 @@ import {
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { isParticipantAudioMuted, isParticipantVideoMuted } from '../../../base/tracks';
+import { sendParticipantToRoom } from '../../../breakout-rooms/actions';
+import { getBreakoutRooms, getCurrentRoomId } from '../../../breakout-rooms/functions';
 import { openChatById } from '../../../chat/actions';
 import { setVolume } from '../../../filmstrip/actions.web';
 import { GrantModeratorDialog, KickRemoteParticipantDialog, MuteEveryoneDialog } from '../../../video-menu';
@@ -41,6 +44,11 @@ type Props = {
      * Whether or not the participant is audio force muted.
      */
     _isAudioForceMuted: boolean,
+
+    /**
+     * The id of the current room.
+     */
+    _currentRoomId: String,
 
     /**
      * True if the local participant is moderator and false otherwise.
@@ -83,6 +91,11 @@ type Props = {
     _participant: Object,
 
     /**
+     * Rooms reference.
+     */
+    _rooms: Array<Object>,
+
+    /**
      * A value between 0 and 1 indicating the volume of the participant's
      * audio element.
      */
@@ -117,7 +130,7 @@ type Props = {
     /**
      * Target elements against which positioning calculations are made.
      */
-    offsetTarget: HTMLElement,
+    offsetTarget?: HTMLElement,
 
     /**
      * Callback for the mouse entering the component.
@@ -137,7 +150,7 @@ type Props = {
     /**
      * The ID of the participant.
      */
-    participantID: string,
+    participantID?: string,
 
     /**
      * True if an overflow drawer should be displayed.
@@ -148,6 +161,20 @@ type Props = {
      * The translate function.
      */
     t: Function
+};
+
+const styles = theme => {
+    return {
+        text: {
+            color: theme.palette.text02,
+            padding: '10px 16px',
+            height: '40px',
+            overflow: 'hidden',
+            display: 'flex',
+            alignItems: 'center',
+            boxSizing: 'border-box'
+        }
+    };
 };
 
 /**
@@ -170,6 +197,7 @@ class MeetingParticipantContextMenu extends Component<Props> {
         this._onMuteVideo = this._onMuteVideo.bind(this);
         this._onSendPrivateMessage = this._onSendPrivateMessage.bind(this);
         this._onStopSharedVideo = this._onStopSharedVideo.bind(this);
+        this._onSendToRoom = this._onSendToRoom.bind(this);
         this._onVolumeChange = this._onVolumeChange.bind(this);
         this._onAskToUnmute = this._onAskToUnmute.bind(this);
     }
@@ -265,6 +293,22 @@ class MeetingParticipantContextMenu extends Component<Props> {
         dispatch(openChatById(this._getCurrentParticipantId()));
     }
 
+    _onSendToRoom: (room: Object) => void;
+
+    /**
+     * Sends a participant to a room.
+     *
+     * @param {Object} room - The room that the participant should be moved to.
+     * @returns {void}
+     */
+    _onSendToRoom(room: Object) {
+        return () => {
+            const { _participant, dispatch } = this.props;
+
+            dispatch(sendParticipantToRoom(_participant.id, room.id));
+        };
+    }
+
     _onVolumeChange: (number) => void;
 
     /**
@@ -304,6 +348,7 @@ class MeetingParticipantContextMenu extends Component<Props> {
     render() {
         const {
             _isAudioForceMuted,
+            _currentRoomId,
             _isLocalModerator,
             _isChatButtonEnabled,
             _isParticipantModerator,
@@ -312,7 +357,9 @@ class MeetingParticipantContextMenu extends Component<Props> {
             _isVideoForceMuted,
             _localVideoOwner,
             _participant,
+            _rooms,
             _volume = 1,
+            classes,
             closeDrawer,
             drawerParticipant,
             offsetTarget,
@@ -391,6 +438,20 @@ class MeetingParticipantContextMenu extends Component<Props> {
             } : null
         ].filter(Boolean);
 
+        const breakoutRoomActions = _rooms.map(room => {
+            if (room.id !== _currentRoomId) {
+                return {
+                    accessibilityLabel: room.name || t('breakoutRooms.mainRoom'),
+                    icon: IconRingGroup,
+                    onClick: this._onSendToRoom(room),
+                    text: room.name || t('breakoutRooms.mainRoom')
+                };
+            }
+
+            return null;
+        }
+        ).filter(Boolean);
+
         const actions
             = _participant?.isFakeParticipant ? (
                 <>
@@ -406,6 +467,15 @@ class MeetingParticipantContextMenu extends Component<Props> {
                     }
 
                     <ContextMenuItemGroup actions = { moderatorActions2 } />
+
+                    {
+                        _isLocalModerator && _rooms.length > 1
+                            && <ContextMenuItemGroup actions = { breakoutRoomActions } >
+                                <div className = { classes && classes.text }>
+                                    {t('breakoutRooms.actions.sendToBreakoutRoom')}
+                                </div>
+                            </ContextMenuItemGroup>
+                    }
                     { showVolumeSlider
                         && <ContextMenuItemGroup>
                             <VolumeSlider
@@ -456,11 +526,13 @@ function _mapStateToProps(state, ownProps): Object {
     const participant = getParticipantByIdOrUndefined(state,
         overflowDrawer ? drawerParticipant?.participantID : participantID);
 
+    const _currentRoomId = getCurrentRoomId(state);
     const _isLocalModerator = isLocalParticipantModerator(state);
     const _isChatButtonEnabled = isToolbarButtonEnabled('chat', state);
     const _isParticipantVideoMuted = isParticipantVideoMuted(participant, state);
     const _isParticipantAudioMuted = isParticipantAudioMuted(participant, state);
     const _isParticipantModerator = isParticipantModerator(participant);
+    const _rooms = Object.values(getBreakoutRooms(state));
 
     const { participantsVolume } = state['features/filmstrip'];
     const id = participant?.id;
@@ -468,6 +540,7 @@ function _mapStateToProps(state, ownProps): Object {
 
     return {
         _isAudioForceMuted: isForceMuted(participant, MEDIA_TYPE.AUDIO, state),
+        _currentRoomId,
         _isLocalModerator,
         _isChatButtonEnabled,
         _isParticipantModerator,
@@ -476,8 +549,9 @@ function _mapStateToProps(state, ownProps): Object {
         _isVideoForceMuted: isForceMuted(participant, MEDIA_TYPE.VIDEO, state),
         _localVideoOwner: Boolean(ownerId === localParticipantId),
         _participant: participant,
+        _rooms,
         _volume: isLocal ? undefined : id ? participantsVolume[id] : undefined
     };
 }
 
-export default translate(connect(_mapStateToProps)(MeetingParticipantContextMenu));
+export default translate(connect(_mapStateToProps)(withStyles(styles)(MeetingParticipantContextMenu)));

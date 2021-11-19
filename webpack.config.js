@@ -383,6 +383,16 @@ module.exports = (_env, argv) => {
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'external_api')
             ],
             performance: getPerformanceHints(perfHintOptions, 35 * 1024)
+        }),
+        Object.assign({}, config, {
+            entry: {
+                'facial-expressions-worker': './react/features/facial-recognition/facialExpressionsWorker.js'
+            },
+            plugins: [
+                ...config.plugins,
+                ...getBundleAnalyzerPlugin(analyzeBundle, 'facial-expressions-worker')
+            ],
+            performance: getPerformanceHints(perfHintOptions, 1024 * 1024)
         })
     ];
 };
