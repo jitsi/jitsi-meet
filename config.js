@@ -656,7 +656,7 @@ var config = {
     // enableEmailInStats: false,
 
     // Enables detecting faces of participants and get their expression and send it to other participants
-    // enableFaceRecognition: true,
+    // enableFacialRecognition: true,
 
     // Controls the percentage of automatic feedback shown to participants when callstats is enabled.
     // The default value is 100%. If set to 0, no automatic feedback will be requested

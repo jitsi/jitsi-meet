@@ -129,6 +129,7 @@ export default [
     'enableDisplayNameInStats',
     'enableEmailInStats',
     'enableEncodedTransformSupport',
+    'enableFacialRecognition',
     'enableIceRestart',
     'enableInsecureRoomNameWarning',
     'enableLayerSuspension',
