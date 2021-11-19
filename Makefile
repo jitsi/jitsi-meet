@@ -52,6 +52,8 @@ deploy-appbundle:
 		$(OUTPUT_DIR)/analytics-ga.js \
 		$(BUILD_DIR)/analytics-ga.min.js \
 		$(BUILD_DIR)/analytics-ga.min.js.map \
+		$(BUILD_DIR)/facial-expressions-worker.min.js \
+		$(BUILD_DIR)/facial-expressions-worker.min.js.map \
 		$(DEPLOY_DIR)
 	cp \
 		$(BUILD_DIR)/close3.min.js \
@@ -96,8 +98,6 @@ deploy-meet-models:
 deploy-facial-expressions:
 	cp \
 		$(FACIAL_MODELS_DIR)/* \
-		$(BUILD_DIR)/facial-expressions-worker.min.js \
-		$(BUILD_DIR)/facial-expressions-worker.min.js.map \
 		$(DEPLOY_DIR)
 
 deploy-css:
