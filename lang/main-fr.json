@@ -39,6 +39,20 @@
   "audioOnly": {
     "audioOnly": "Bande passante faible"
   },
+  "breakoutRooms": {
+    "defaultName": "Salle annexe #{{index}}",
+    "mainRoom": "Salle principale",
+    "actions": {
+        "add": "Ajouter salle annexe",
+        "autoAssign": "Assigner automatqieuement aux salles annexes",
+        "close": "Fermer",
+        "join": "Rejoindre",
+        "leaveBreakoutRoom": "Quitter la salle annexe",
+        "more": "Plus",
+        "remove": "Supprimer",
+        "sendToBreakoutRoom": "Envoyer le participant dans:"
+    }
+  },
   "calendarSync": {
     "addMeetingURL": "Ajouter un lien de conférence",
     "confirmAddLink": "Voulez-vous ajouter un lien Jitsi à cet événement ?",
@@ -623,6 +637,7 @@
       "invite": "Inviter quelqu'un",
       "askUnmute": "Demander de réactiver le micro",
       "moreModerationActions": "Options de modération supplémentaires",
+      "moreParticipantOptions": "Options supplémentaires pour les participants",
       "mute": "Couper le micro",
       "muteAll": "Couper le micro de tout le monde",
       "muteEveryoneElse": "Couper le micro de tous les autres",
@@ -862,7 +877,14 @@
     "name": "Nom",
     "seconds": "{{count}}s",
     "speakerStats": "Statistiques de l'interlocuteur",
-    "speakerTime": "Temps de l'interlocuteur"
+    "speakerTime": "Temps de l'interlocuteur",
+    "happy": "Content",
+    "neutral": "Indifférent",
+    "sad": "Triste",
+    "surprised": "Surpris",
+    "angry": "En colère",
+    "fearful": "Effrayé",
+    "disgusted": "Dégoûté"
   },
   "startupoverlay": {
     "policyText": " ",
@@ -879,6 +901,7 @@
       "audioOnly": "Activer / Désactiver le mode voix uniquement",
       "audioRoute": "Sélectionner la source audio",
       "boo": "Hou",
+      "breakoutRoom": "Rejoindre/quitter une salle annexe",
       "callQuality": "Ajuster la qualité vidéo",
       "cc": "Activer / Désactiver les sous-titres",
       "chat": "Afficher / Masquer la discussion instantanée",
@@ -962,7 +985,9 @@
     "hangup": "Quitter",
     "help": "Aide",
     "invite": "Inviter des participants",
+    "joinBreakoutRoom": "Rejoindre salle annexe",
     "laugh": "Rire",
+    "leaveBreakoutRoom": "Quitter salle annexe",
     "like": "Approuver",
     "lobbyButtonDisable": "Désactiver le mode salle d'attente / contrôle des participant(e)s",
     "lobbyButtonEnable": "Activer le mode salle d'attente / contrôle des participant(e)s",
