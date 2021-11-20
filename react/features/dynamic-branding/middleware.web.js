@@ -5,7 +5,7 @@ import { MiddlewareRegistry } from '../base/redux';
 
 import { SET_DYNAMIC_BRANDING_DATA } from './actionTypes';
 import { fetchCustomBrandingData } from './actions';
-import { createMuiBrandingTheme } from './functions';
+import { createMuiBrandingTheme } from './functions.web';
 
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {

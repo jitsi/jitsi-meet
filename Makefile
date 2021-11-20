@@ -7,6 +7,7 @@ OLM_DIR = node_modules/@matrix-org/olm
 RNNOISE_WASM_DIR = node_modules/rnnoise-wasm/dist/
 TFLITE_WASM = react/features/stream-effects/virtual-background/vendor/tflite
 MEET_MODELS_DIR  = react/features/stream-effects/virtual-background/vendor/models/
+FACIAL_MODELS_DIR = react/features/facial-recognition/resources
 NODE_SASS = ./node_modules/.bin/sass
 NPM = npm
 OUTPUT_DIR = .
@@ -28,7 +29,7 @@ clean:
 	rm -fr $(BUILD_DIR)
 
 .NOTPARALLEL:
-deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-libflac deploy-olm deploy-css deploy-local
+deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-libflac deploy-olm deploy-css deploy-local deploy-facial-expressions
 
 deploy-init:
 	rm -fr $(DEPLOY_DIR)
@@ -51,6 +52,8 @@ deploy-appbundle:
 		$(OUTPUT_DIR)/analytics-ga.js \
 		$(BUILD_DIR)/analytics-ga.min.js \
 		$(BUILD_DIR)/analytics-ga.min.js.map \
+		$(BUILD_DIR)/facial-expressions-worker.min.js \
+		$(BUILD_DIR)/facial-expressions-worker.min.js.map \
 		$(DEPLOY_DIR)
 	cp \
 		$(BUILD_DIR)/close3.min.js \
@@ -92,6 +95,11 @@ deploy-meet-models:
 		$(MEET_MODELS_DIR)/*.tflite \
 		$(DEPLOY_DIR)
 
+deploy-facial-expressions:
+	cp \
+		$(FACIAL_MODELS_DIR)/* \
+		$(DEPLOY_DIR)
+
 deploy-css:
 	$(NODE_SASS) $(STYLES_MAIN) $(STYLES_BUNDLE) && \
 	$(CLEANCSS) --skip-rebase $(STYLES_BUNDLE) > $(STYLES_DESTINATION) ; \
@@ -101,7 +109,7 @@ deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
 .NOTPARALLEL:
-dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-libflac deploy-olm
+dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-libflac deploy-olm deploy-facial-expressions
 	$(WEBPACK_DEV_SERVER)
 
 source-package:

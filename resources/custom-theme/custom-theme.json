@@ -68,7 +68,16 @@
       "success01": "#1EC26A",
       "success02": "#1EC26A",
       "warning01": "#F8AE1A",
-      "warning02": "#ED9E1B"
+      "warning02": "#ED9E1B",
+      "support01": "#FF9B42",
+      "support02": "#F96E57",
+      "support03": "#DF486F",
+      "support04": "#B23683",
+      "support05": "#73348C",
+      "support06": "#6A50D3",
+      "support07": "#4380E2",
+      "support08": "#00A8B3",
+      "support09": "#2AA076"
    },
    "typography": {
       "font": {

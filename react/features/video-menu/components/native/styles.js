@@ -86,5 +86,19 @@ export default createStyleSheet({
     toggleLabel: {
         marginRight: BaseTheme.spacing[3],
         maxWidth: '70%'
+    },
+
+    contextMenuItem: {
+        alignItems: 'center',
+        display: 'flex',
+        flexDirection: 'row',
+        height: BaseTheme.spacing[7],
+        marginLeft: BaseTheme.spacing[3]
+    },
+
+    contextMenuItemText: {
+        ...BaseTheme.typography.bodyShortRegularLarge,
+        color: BaseTheme.palette.text01,
+        marginLeft: BaseTheme.spacing[4]
     }
 });

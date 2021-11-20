@@ -27,7 +27,10 @@
 
     .speaker-stats-item__status,
     .speaker-stats-item__name,
-    .speaker-stats-item__time {
+    .speaker-stats-item__time,
+    .speaker-stats-item__name_expressions_on,
+    .speaker-stats-item__time_expressions_on,
+    .speaker-stats-item__expression {
         display: inline-block;
         margin: 5px 0;
         vertical-align: middle;
@@ -41,9 +44,35 @@
     .speaker-stats-item__time {
         width: 55%;
     }
+    .speaker-stats-item__name_expressions_on {
+        width: 20%;
+    }
+    .speaker-stats-item__time_expressions_on {
+        width: 25%;
+    }
+
+    .speaker-stats-item__expression {
+        width: 7%;
+        text-align: center;
+    }
+
+    @media(max-width: 750px) {
+        .speaker-stats-item__name_expressions_on {
+            width: 25%;
+        }
+        .speaker-stats-item__time_expressions_on {
+            width: 30%;
+        }
+        .speaker-stats-item__expression {
+            width: 10%;
+        }
+    }
 
     .speaker-stats-item__name,
-    .speaker-stats-item__time {
+    .speaker-stats-item__time,
+    .speaker-stats-item__name_expressions_on,
+    .speaker-stats-item__time_expressions_on,
+    .speaker-stats-item__expression {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;

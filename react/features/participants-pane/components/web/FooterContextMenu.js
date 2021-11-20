@@ -15,8 +15,7 @@ import {
     isEnabled as isAvModerationEnabled,
     isSupported as isAvModerationSupported
 } from '../../../av-moderation/functions';
-import ContextMenu from '../../../base/components/context-menu/ContextMenu';
-import ContextMenuItemGroup from '../../../base/components/context-menu/ContextMenuItemGroup';
+import { ContextMenu, ContextMenuItemGroup } from '../../../base/components';
 import { openDialog } from '../../../base/dialog';
 import { IconCheck, IconVideoOff } from '../../../base/icons';
 import { MEDIA_TYPE } from '../../../base/media';

@@ -9,6 +9,8 @@ import { translate } from '../../../base/i18n';
 import { Icon, IconClose, IconHorizontalPoints } from '../../../base/icons';
 import { isLocalParticipantModerator } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+import { AddBreakoutRoomButton } from '../../../breakout-rooms/components/web/AddBreakoutRoomButton';
+import { RoomList } from '../../../breakout-rooms/components/web/RoomList';
 import { MuteEveryoneDialog } from '../../../video-menu/components/';
 import { close } from '../../actions';
 import { classList, findAncestorByClass, getParticipantsPaneOpen } from '../../functions';
@@ -24,9 +26,19 @@ import MeetingParticipants from './MeetingParticipants';
 type Props = {
 
     /**
+     * Whether there is backend support for Breakout Rooms.
+     */
+    _isBreakoutRoomsSupported: Boolean,
+
+    /**
      * Whether to display the context menu  as a drawer.
      */
     _overflowDrawer: boolean,
+
+    /**
+     * Should the add breakout room button be displayed?
+     */
+    _showAddRoomButton: boolean,
 
     /**
      * Is the participants pane open.
@@ -178,7 +190,9 @@ class ParticipantsPane extends Component<Props, State> {
      */
     render() {
         const {
+            _isBreakoutRoomsSupported,
             _paneOpen,
+            _showAddRoomButton,
             _showFooter,
             classes,
             t
@@ -211,6 +225,8 @@ class ParticipantsPane extends Component<Props, State> {
                         <LobbyParticipants />
                         <br className = { classes.antiCollapse } />
                         <MeetingParticipants />
+                        {_isBreakoutRoomsSupported && <RoomList />}
+                        {_showAddRoomButton && <AddBreakoutRoomButton />}
                     </div>
                     {_showFooter && (
                         <div className = { classes.footer }>
@@ -330,16 +346,21 @@ class ParticipantsPane extends Component<Props, State> {
  *
  * @param {Object} state - The redux state.
  * @protected
- * @returns {{
- *     _paneOpen: boolean,
- *     _showFooter: boolean
- * }}
+ * @returns {Props}
  */
 function _mapStateToProps(state: Object) {
     const isPaneOpen = getParticipantsPaneOpen(state);
+    const { hideAddRoomButton } = state['features/base/config'];
+    const { conference } = state['features/base/conference'];
+
+    // $FlowExpectedError
+    const _isBreakoutRoomsSupported = conference?.getBreakoutRooms()?.isSupported();
+    const _isLocalParticipantModerator = isLocalParticipantModerator(state);
 
     return {
+        _isBreakoutRoomsSupported,
         _paneOpen: isPaneOpen,
+        _showAddRoomButton: _isBreakoutRoomsSupported && !hideAddRoomButton && _isLocalParticipantModerator,
         _showFooter: isPaneOpen && isLocalParticipantModerator(state)
     };
 }

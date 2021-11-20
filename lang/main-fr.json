@@ -39,6 +39,20 @@
   "audioOnly": {
     "audioOnly": "Bande passante faible"
   },
+  "breakoutRooms": {
+    "defaultName": "Salle annexe #{{index}}",
+    "mainRoom": "Salle principale",
+    "actions": {
+        "add": "Ajouter salle annexe",
+        "autoAssign": "Assigner automatqieuement aux salles annexes",
+        "close": "Fermer",
+        "join": "Rejoindre",
+        "leaveBreakoutRoom": "Quitter la salle annexe",
+        "more": "Plus",
+        "remove": "Supprimer",
+        "sendToBreakoutRoom": "Envoyer le participant dans:"
+    }
+  },
   "calendarSync": {
     "addMeetingURL": "Ajouter un lien de conférence",
     "confirmAddLink": "Voulez-vous ajouter un lien Jitsi à cet événement ?",
@@ -268,12 +282,12 @@
     "muteEveryoneStartMuted": "Tout le monde démarre avec le micro coupé",
     "muteParticipantBody": "Vous ne pourrez plus réactiver son micro, mais il pourra l'activer par lui-même à tout moment.",
     "muteParticipantButton": "Couper le micro",
-    "muteParticipantDialog": "Êtes-vous sûr(e) de vouloir couper le micro de ce participant ? Seul le participant pourra ensuite réactiver son micro à tout moment.",
-    "muteParticipantsVideoDialog": "Êtes-vous sûr(e) de vouloir couper la caméra de ce participant ? Seul le participant pourra ensuite réactiver sa caméra à tout moment.",
-    "muteParticipantTitle": "Couper le micro de ce participant ?",
+    "muteParticipantsVideoDialog": "Êtes-vous sûr(e) de vouloir couper la caméra de ce participant ? Seul le participant pourra ensuite réactiver son micro à tout moment.",
+    "muteParticipantsVideoDialogModerationOn": "Êtes-vous sûr(e) de vouloir couper la caméra de ce participant ? Ni vous ni le participant ne pourront la réactiver ensuite ?",
     "muteParticipantsVideoButton": "Couper la caméra",
     "muteParticipantsVideoTitle": "Couper la caméra de ce participant?",
     "muteParticipantsVideoBody": "Vous ne pourrez pas rallumer la caméra, mais ils peuvent la rallumer à tout moment.",
+    "muteParticipantsVideoBodyModerationOn": "Ni vous ni le participant ne pourront rallumer la caméra.",
     "noDropboxToken": "Pas de jeton Dropbox valide",
     "Ok": "Ok",
     "password": "Mot de passe",
@@ -501,6 +515,7 @@
     "expandedPending": "La diffusion en direct a commencé ...",
     "failedToStart": "La diffusion n'a pas réussi à démarrer",
     "getStreamKeyManually": "Nous n'avons pas réussi à récupérer un flux de direct. Essayez d'obtenir votre clé de diffusion en direct sur YouTube.",
+    "inProgress": "Enregisrtement ou diffusion en cours",
     "invalidStreamKey": "La clé de diffusion en direct n'est peut-être pas correcte.",
     "off": "La diffusion en direct (streaming) a été arrêté",
     "offBy": "{{name}} a arrêté la diffusion en direct",
@@ -508,6 +523,7 @@
     "onBy": "{{name}} a démarré la diffusion en direct",
     "pending": "Lancement du direct ...",
     "serviceName": "Service de diffusion en direct",
+    "sessionAlreadyActive": "Cette session est déjà en cours d'enregistrement ou de diffusion.",
     "signedInAs": "Vous êtes connecté en tant que :",
     "signIn": "Se connecter avec Google",
     "signInCTA": "Connectez vous ou saisissez votre clé de diffusion Youtube.",
@@ -620,6 +636,8 @@
       "blockEveryoneMicCamera": "Bloquer tous les micros et caméras",
       "invite": "Inviter quelqu'un",
       "askUnmute": "Demander de réactiver le micro",
+      "moreModerationActions": "Options de modération supplémentaires",
+      "moreParticipantOptions": "Options supplémentaires pour les participants",
       "mute": "Couper le micro",
       "muteAll": "Couper le micro de tout le monde",
       "muteEveryoneElse": "Couper le micro de tous les autres",
@@ -759,6 +777,7 @@
     "expandedPending": "Démarrage de l'enregistrement ...",
     "failedToStart": "L'enregistrement n'a pas réussi à démarrer",
     "fileSharingdescription": "Partager l'enregistrement avec les participants de la réunion",
+    "inProgress": "Enregistrement ou diffusion en cours",
     "linkGenerated": "Nous avons généré un lien à votre enregistrement.",
     "live": "DIRECT",
     "loggedIn": "Connecté en tant que {{userName}}",
@@ -771,6 +790,7 @@
     "serviceDescription": "Votre enregistrement sera enregistré par le service dédié",
     "serviceDescriptionCloud": "Enregistrement Cloud",
     "serviceName": "Service d'enregistrement",
+    "sessionAlreadyActive": "Cette session est déjà en cours d'enregistrement ou de diffusion.",
     "signIn": "Se connecter",
     "signOut": "Se déconnecter",
     "unavailable": "Oups ! Le {{serviceName}} est actuellement indisponible. Nous tentons de résoudre le problème. Veuillez réessayer plus tard.",
@@ -857,7 +877,14 @@
     "name": "Nom",
     "seconds": "{{count}}s",
     "speakerStats": "Statistiques de l'interlocuteur",
-    "speakerTime": "Temps de l'interlocuteur"
+    "speakerTime": "Temps de l'interlocuteur",
+    "happy": "Content",
+    "neutral": "Indifférent",
+    "sad": "Triste",
+    "surprised": "Surpris",
+    "angry": "En colère",
+    "fearful": "Effrayé",
+    "disgusted": "Dégoûté"
   },
   "startupoverlay": {
     "policyText": " ",
@@ -874,6 +901,7 @@
       "audioOnly": "Activer / Désactiver le mode voix uniquement",
       "audioRoute": "Sélectionner la source audio",
       "boo": "Hou",
+      "breakoutRoom": "Rejoindre/quitter une salle annexe",
       "callQuality": "Ajuster la qualité vidéo",
       "cc": "Activer / Désactiver les sous-titres",
       "chat": "Afficher / Masquer la discussion instantanée",
@@ -957,7 +985,9 @@
     "hangup": "Quitter",
     "help": "Aide",
     "invite": "Inviter des participants",
+    "joinBreakoutRoom": "Rejoindre salle annexe",
     "laugh": "Rire",
+    "leaveBreakoutRoom": "Quitter salle annexe",
     "like": "Approuver",
     "lobbyButtonDisable": "Désactiver le mode salle d'attente / contrôle des participant(e)s",
     "lobbyButtonEnable": "Activer le mode salle d'attente / contrôle des participant(e)s",
@@ -1134,6 +1164,12 @@
   "lonelyMeetingExperience": {
     "button": "Inviter d'autres personnes",
     "youAreAlone": "Vous êtes le seul participant de la réunion"
+  },
+  "termsView": {
+    "header": "Conditions d'utilisation"
+  },
+  "privacyView": {
+    "header": "Confidentialité"
   },
   "helpView": {
     "header": "Centre d'aide"
