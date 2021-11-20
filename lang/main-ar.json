@@ -20,7 +20,7 @@
         "noResults": "لم يُعثَر على أي نتيجة بحث متطابقة",
         "outlookEmail": "بريد مايكروسوفت",
         "phoneNumbers": "أضف ارقام هواتف",
-        "searching": "يتم البحث",
+        "searching": "يبحث",
         "shareInvite": "شارك دعوةً للاجتماع",
         "shareLink": "شارك رابط الاجتماع لدعوة الأخرين",
         "shareStream": "شارك رابط البث المباشر للاجتماع",
@@ -38,6 +38,20 @@
     },
     "audioOnly": {
         "audioOnly": "معدل تبادل البيانات منخفض"
+    },
+    "breakoutRooms": {
+        "defaultName": "غرفة الاجتماعات الفرعية رقم {{index}}",
+        "mainRoom": "الغرفة الرئيسية",
+        "actions": {
+            "add": "أضف غرفة جانبية",
+            "autoAssign": "التخصيص التلقائي للغرف الجانبية",
+            "close": "أغلق",
+            "join": "انضم",
+            "leaveBreakoutRoom": "اترك الغرفة الجانبية",
+            "more": "أكثر",
+            "remove": "إزالة",
+            "sendToBreakoutRoom": "أرسل المشارك إلى:"
+        }
     },
     "calendarSync": {
         "addMeetingURL": "أضف رابطًا لاجتماع",
@@ -268,15 +282,15 @@
         "muteEveryoneStartMuted": "البدء مع كتم الجميع من الآن فصاعدًا",
         "muteParticipantBody": "لن تتكمن من إلغاء كتمهم، ولكن يمكنهم إلغاء كتم أنفسهم في أي وقت.",
         "muteParticipantButton": "كتم",
-        "muteParticipantDialog": "أمتأكد من رغبتك لهذا المشارك؟ لن تتمكن من إلغاء الكتم ولكن يمكنه إلغاء كتم أنفسهم في أي وقت.",
         "muteParticipantsVideoDialog": "هل أنت متأكد أنك تريد إيقاف تشغيل كاميرا هذا المشارك؟ لن تتمكن من إعادة تشغيل الكاميرا ، ولكن يمكنهم إعادة تشغيلها في أي وقت.",
-        "muteParticipantTitle": "أتريد كتم هذا المشارك؟",
+        "muteParticipantsVideoDialogModerationOn": "هل أنت متأكد أنك تريد إيقاف تشغيل كاميرا هذا المشارك؟ لن تكون قادرًا على إعادة تشغيل الكاميرا ولن يفعلوا ذلك أيضًا.",
         "muteParticipantsVideoButton": "وقف الكاميرا",
         "muteParticipantsVideoTitle": "تعطيل الكاميرا لهذا المشارك؟",
         "muteParticipantsVideoBody": "لن تتمكن من إعادة تشغيل الكاميرا ، ولكن يمكنهم إعادة تشغيلها في أي وقت.",
+        "muteParticipantsVideoBodyModerationOn": "لن تكون قادرًا على إعادة تشغيل الكاميرا ولن يفعلوا ذلك أيضًا.",
         "noDropboxToken": "لا يوجد رمز مميز صالح لـ Dropbox",
         "Ok": "تمام",
-        "password": "Password",
+        "password": "كلمه السر",
         "passwordLabel": "جعل عضو ما هذا الاجتماع مغلقًا. أدخل رجاءً $t(lockRoomPassword) للإنضمام.",
         "passwordNotSupported": "ضبط اجتماع $t(lockRoomPassword) غير مدعوم.",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) غير مدعوم",
@@ -318,7 +332,7 @@
         "sessionRestarted": "إعادة الاتصال من الجسر",
         "Share": "شارك",
         "shareAudio": "استمر",
-        "shareAudioTitle": "How to share audio",
+        "shareAudioTitle": "كيفية مشاركة الصوت",
         "shareAudioWarningTitle": "تحتاج إلى إيقاف مشاركة الشاشة قبل مشاركة الصوت",
         "shareAudioWarningH1": "إذا كنت تريد مشاركة الصوت فقط:",
         "shareAudioWarningD1": "تحتاج إلى إيقاف مشاركة الشاشة قبل مشاركة الصوت الخاص بك.",
@@ -501,6 +515,7 @@
         "expandedPending": "تبدأ عملية البث الحي...",
         "failedToStart": "فشلت عملية بدء البث الحي",
         "getStreamKeyManually": "لم نتمكن من الوصول إلى أي بث حي. جرب جلب مفتاح بث حي خاص بك من يوتيوب.",
+        "inProgress": "البث المباشر غير ممكّن على {{email}}. يرجى تمكين البث المباشر أو تسجيل الدخول إلى حساب مع تمكين البث المباشر.",
         "invalidStreamKey": "يحتمل كون مفتاح البث الحي غير صحيح.",
         "off": "أُوقِف البث الحي",
         "offBy": "أوقف {{name}} البث الحي",
@@ -508,6 +523,7 @@
         "onBy": "بدأ {{name}} بثًّا حيًّا",
         "pending": "بدء بثٍّ حيٍّ",
         "serviceName": "خدمة البث الحي",
+        "sessionAlreadyActive": "هذه الجلسة قيد التسجيل أو البث المباشر.",
         "signedInAs": "أنت مسجل حاليًا بصفة:",
         "signIn": "سجل الدخول عبر حساب غوغل",
         "signInCTA": "سجل الدخول أو أدخل مفتاح البث الحي الخاص بك من يوتيوب",
@@ -570,8 +586,8 @@
         "mutedTitle": "مكتوم!",
         "mutedRemotelyTitle": "كتم {{participantDisplayName}} الصوت لديك!",
         "mutedRemotelyDescription": "يمكنك إلغاء الكتم متى كنت جاهزًا للتحدث. اكتم الصوت بعد الانتهاء من التحدث لخفض الضجيج أثناء الاجتماع",
-        "videoMutedRemotelyTitle": "",
-        "videoMutedRemotelyDescription": "",
+        "videoMutedRemotelyTitle": "Your video has been turned off by {{participantDisplayName}}",
+        "videoMutedRemotelyDescription": "You can always turn it on again.",
         "passwordRemovedRemotely": "أزال أحد المشاركين {{participantDisplayName}}",
         "passwordSetRemotely": "ضبط أحد المشاركين $t(lockRoomPasswordUppercase)",
         "raisedHand": "يريد {{name}} التحدث",
@@ -590,20 +606,20 @@
         "oldElectronClientDescription1": "يبدو أنَّك تستعمل إصدارًا قديمًا من جيتسي يحوي ثغرة أمنية. تأكد رجاءً من أنَّك حدَّثته إلى ",
         "oldElectronClientDescription2": "أحدث إصدار",
         "oldElectronClientDescription3": " الآن!",
-        "moderationInEffectDescription": "Please raise hand if you want to speak.",
-        "moderationInEffectCSDescription": "Please raise hand if you want to share your screen.",
-        "moderationInEffectVideoDescription": "Please raise your hand if you want to start your camera.",
-        "moderationInEffectTitle": "Your microphone is muted by the moderator",
-        "moderationInEffectCSTitle": "Screen sharing is blocked by the moderator",
-        "moderationInEffectVideoTitle": "Your camera is blocked by the moderator",
-        "moderationRequestFromModerator": "The host would like you to unmute",
-        "moderationRequestFromParticipant": "Wants to speak",
-        "moderationStartedTitle": "Moderation started",
-        "moderationStoppedTitle": "Moderation stopped",
-        "moderationToggleDescription": "by {{participantDisplayName}}",
-        "raiseHandAction": "Raise hand",
-        "reactionSounds": "Disable sounds",
-        "groupTitle": "Notifications"
+        "moderationInEffectDescription": "من فضلك ارفع يدك إذا كنت تريد التحدث.",
+        "moderationInEffectCSDescription": "يرجى رفع اليد إذا كنت تريد مشاركة شاشتك.",
+        "moderationInEffectVideoDescription": "يرجى رفع يدك إذا كنت تريد بدء تشغيل الكاميرا.",
+        "moderationInEffectTitle": "تم كتم صوت الميكروفون الخاص بك بواسطة المشرف",
+        "moderationInEffectCSTitle": "تم حظر مشاركة الشاشة من قبل المشرف",
+        "moderationInEffectVideoTitle": "تم حظر الكاميرا الخاصة بك من قبل المشرف",
+        "moderationRequestFromModerator": "المضيف يريد منك إلغاء كتم الصوت",
+        "moderationRequestFromParticipant": "يريد التحدث",
+        "moderationStartedTitle": "بدأ الاشراف",
+        "moderationStoppedTitle": "توقف الاشراف",
+        "moderationToggleDescription": "من {{participantDisplayName}}",
+        "raiseHandAction": "رفع اليد",
+        "reactionSounds": "تعطيل الأصوات",
+        "groupTitle": "إشعارات"
     },
     "participantsPane": {
         "close": "غلق",
@@ -620,6 +636,8 @@
             "blockEveryoneMicCamera": "حظر ميكروفون وكاميرا الجميع",
             "invite": "قم بدعوة شخص ما",
             "askUnmute": "اطلب إعادة الصوت",
+            "moreModerationActions": "المزيد من خيارات الاشراف",
+            "moreParticipantOptions": "المزيد من خيارات المشاركين",
             "mute": "كتم الصوت",
             "muteAll": "كتم الكل",
             "muteEveryoneElse": "كتم صوت  الآخرين",
@@ -627,11 +645,13 @@
             "stopVideo": "أوقف الفيديو",
             "unblockEveryoneMicCamera": "قم بإلغاء حظر ميكروفون وكاميرا الجميع",
             "videoModeration": "ابدأ الفيديو الخاص بهم"
-        }
+        },
+        "search": "بحث"
     },
     "passwordSetRemotely": "ضبطها مشارك آخر",
     "passwordDigitsOnly": "حتى {{number}} عدد",
     "polls": {
+        "by": "من",
         "create": {
             "addOption": "إضافة خيار",
             "answerPlaceholder": "خيار {{index}}",
@@ -757,6 +777,7 @@
         "expandedPending": "بدء التسجيل...",
         "failedToStart": "فشل بدء التسجيل",
         "fileSharingdescription": "شارك التسجيل مع المشاركين للاجتماع",
+        "inProgress": "التسجيل أو البث المباشر قيد التقدم",
         "linkGenerated": "لقد أنشأنا رابطًا لتسجيلك.",
         "live": "مباشر",
         "loggedIn": "مُسجَّل باسم {{userName}}",
@@ -769,11 +790,12 @@
         "serviceDescription": "ستحفظ خدمة التسجيل الفيديو المستجل",
         "serviceDescriptionCloud": "تسجيل سحابي",
         "serviceName": "خدمة التسجيل",
+        "sessionAlreadyActive": "هذه الجلسة قيد التسجيل أو البث المباشر.",
         "signIn": "دخول",
         "signOut": "خروج",
         "unavailable": "عجبًا! {{serviceName}} غير متاحة حاليًا. نعمل على حل المشكلة. حاول مرة أخرى لاحقًا.",
         "unavailableTitle": "التسجيل غير متاح",
-        "uploadToCloud": "Upload to the cloud"
+        "uploadToCloud": "تحميل إلى السحابة"
     },
     "sectionList": {
         "pullToRefresh": "اسحب للتحديث"
@@ -855,7 +877,14 @@
         "name": "الاسم",
         "seconds": "{{count}}ثا",
         "speakerStats": "حالة المتحدث",
-        "speakerTime": "وقت المتحدث"
+        "speakerTime": "وقت المتحدث",
+        "happy": "سعيد",
+        "neutral": "حيادي",
+        "sad": "حزين",
+        "surprised": "مندهش",
+        "angry": "غاضب",
+        "fearful": "خائف",
+        "disgusted": "مشمئز"
     },
     "startupoverlay": {
         "policyText": " ",
@@ -872,10 +901,11 @@
             "audioOnly": "بدل الصوت فقط",
             "audioRoute": "اختر جهاز الصوت",
             "boo": "Boo",
+            "breakoutRoom": "الانضمام / مغادرة غرفة فرعية",
             "callQuality": "اضبط دقة الفيديو",
             "cc": "اظهِر/اخفِ الترجمة",
             "chat": "اظهِر/اخفِ نافذة الدردشة",
-            "clap": "Clap",
+            "clap": "تصفيق",
             "document": "اظهِر/اخفِ الملف المشارك",
             "download": "نزِّل التطبيق",
             "embedMeeting": "ضمِّن الاجتماع",
@@ -886,7 +916,7 @@
             "help": "مساعدة",
             "invite": "ادعُ آخرين",
             "kick": "اطرد مشاركًا",
-            "laugh": "Laugh",
+            "laugh": "يضحك",
             "like": "رفع الإبهام متمنيا النجاح",
             "lobbyButton": "فعِّل/عطِّل وضع غرفة الانتظار",
             "localRecording": "اظهِر/اخفِ التحكم بالتسجيل المحلي",
@@ -918,7 +948,7 @@
             "show": "اظهر على المنصة",
             "silence": "Silence",
             "speakerStats": "اظهِر/اخفِ حالة المتحدث",
-            "surprised": "Surprised",
+            "surprised": "مندهش",
             "tileView": "اظهِر/اخفِ عرض العنوان",
             "toggleCamera": "بدِّل الكاميرا",
             "toggleFilmstrip": "بدِّل وضع الشريط السينمائي (filmstrip)",
@@ -938,7 +968,7 @@
         "boo": "Boo",
         "callQuality": "اضبط دقة الفيديو",
         "chat": "افتح / أغلق الشاشة",
-        "clap": "Clap",
+        "clap": "تصفيق",
         "closeChat": "أغلق الدردشة",
         "closeReactionsMenu": "إغلاق قائمة ردود الفعل",
         "disableReactionSounds": "يمكنك تعطيل أصوات ردود الفعل لهذا الاجتماع",
@@ -955,7 +985,9 @@
         "hangup": "غادر",
         "help": "مساعدة",
         "invite": "ادعُ أحدًا",
+        "joinBreakoutRoom": "انضم إلى غرفة الجانبية",
         "laugh": "يضحك",
+        "leaveBreakoutRoom": "اترك إلى غرفة الجانبية",
         "like": "رفع الإبهام متمنيا النجاح",
         "lobbyButtonDisable": "عطِّل وضع غرفة الانتظار",
         "lobbyButtonEnable": "فعِّل وضع غرفة الانتظار",
@@ -994,7 +1026,7 @@
         "sharedvideo": "شارك فيديو يوتيوب",
         "shareRoom": "ادعُ أحدًا",
         "shortcuts": "اعرض الاختصارات",
-        "silence": "Silence",
+        "silence": "سكوت",
         "speakerStats": "حالة المتحدث",
         "startScreenSharing": "ابدأ بمشاركة الشاشة",
         "startSubtitles": "أظهر الترجمة",
@@ -1002,7 +1034,7 @@
         "stopScreenSharing": "أوقف مشاركة الشاشة",
         "stopSubtitles": "أخفِ الترجمة",
         "stopSharedVideo": "أوقف فيديو يوتيوب المشارك",
-        "surprised": "Surprised",
+        "surprised": "مندهش",
         "talkWhileMutedPopup": "أتحاول التحدث؟ المجهار مكتوم لديك.",
         "tileViewToggle": "بدِّل عنوان العرض",
         "toggleCamera": "بدِّل الكاميرا",
@@ -1033,7 +1065,7 @@
         "react-nativeGrantPermissions": "اختر <b><i>السماح</i></b> عندما يطلب المتصفح الأذونات.",
         "safariGrantPermissions": "اختر <b><i>تمام</i></b> عندما يطلب المتصفح الأذونات."
     },
-    "volumeSlider": "Volume slider",
+    "volumeSlider": "مستوى الصوت",
     "videoSIPGW": {
         "busy": "نعمل على تحرير الموارد. حاول مرة أخرى لاحقًا بعد بضعة دقائق.",
         "busyTitle": "خدمة الغرفة مشغولة حاليًا",
@@ -1045,7 +1077,10 @@
         "pending": "دعي {{displayName}} مسبقًا"
     },
     "videoStatus": {
+        "adjustFor": "ضبط ل:",
         "audioOnly": "صوت",
+        "bestPerformance": "أفضل أداء",
+        "highestQuality": "اعلى جودة",
         "audioOnlyExpanded": "أنت في وضع معدَّل البيانات المتبادلة  المنخفض. الصوت ومشاركة الشاشة هو المتاح فقط في هذا الوضع.",
         "callQuality": "جودة الفيديو",
         "hd": "دقة عالية",
@@ -1056,6 +1091,7 @@
         "ld": "دقة منخفضة",
         "ldTooltip": "عرض فيديو بدقة منخفضة",
         "lowDefinition": "دقة منخفضة",
+        "performanceSettings": "إعدادات الأداء",
         "sd": "دقة قياسية",
         "sdTooltip": "عرض فيديو بدقة قياسية",
         "standardDefinition": "دقة قياسية"
@@ -1128,6 +1164,12 @@
     "lonelyMeetingExperience": {
         "button": "ادعُ آخرين",
         "youAreAlone": "أنت بمفردك في الاجتماع"
+    },
+    "termsView": {
+        "header": "مصطلحات"
+    },
+    "privacyView": {
+        "header": "خصوصية"
     },
     "helpView": {
         "header": "مركز المساعدة"
