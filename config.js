@@ -435,7 +435,6 @@ var config = {
 
     // Hides add breakout room button
     // hideAddRoomButton: false,
-  
     // Require users to always specify a display name.
     // requireDisplayName: true,
 
