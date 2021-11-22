@@ -464,7 +464,7 @@
         "newDeviceAudioTitle": "S'ha detectat un aparell d'àudio nou",
         "newDeviceAction": "Usa"
     },
-"participantsPane": {
+    "participantsPane": {
         "close": "Tanca",
         "header": "Participants",
         "headings": {
@@ -657,7 +657,7 @@
             "toggleFilmstrip": "Activa o desactiva la tira"
         },
         "addPeople": "Afegeix persones a la trucada",
-	    "audioSettings": "Configuració d'àudio",
+        "audioSettings": "Configuració d'àudio",
         "videoSettings": "Configuració de vídeo",
         "audioOnlyOff": "Desactiva el mode de poc ample de banda",
         "audioOnlyOn": "Activa el mode de poc ample de banda",
@@ -767,7 +767,7 @@
         "standardDefinition": "Definició estàndard"
     },
     "videothumbnail": {
-	"connectionInfo": "Informació de connexió",
+        "connectionInfo": "Informació de connexió",
         "domute": "Silencia",
         "domuteVideo": "Desactiva la càmera",
         "domuteOthers": "Silencia a tots els altres participants",
