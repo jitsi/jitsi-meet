@@ -39,6 +39,20 @@
     "audioOnly": {
         "audioOnly": "Geringe Bandbreite"
     },
+    "breakoutRooms": {
+        "defaultName": "Breakout-Raum #{{index}}",
+        "mainRoom": "Hauptraum",
+        "actions": {
+            "add": "Breakout-Raum hinzufügen",
+            "autoAssign": "Automatisch auf Breakout-Räume verteilen",
+            "close": "Schließen",
+            "join": "Teilnehmen",
+            "leaveBreakoutRoom": "Breakout-Raum verlassen",
+            "more": "Mehr",
+            "remove": "Entfernen",
+            "sendToBreakoutRoom": "Anwesende in Breakout-Raum verschieben:"
+        }
+    },
     "calendarSync": {
         "addMeetingURL": "Konferenzlink hinzufügen",
         "confirmAddLink": "Möchten Sie einen Jitsi-Link zu diesem Termin hinzufügen?",
@@ -623,6 +637,7 @@
             "invite": "Person einladen",
             "askUnmute": "Anfragen, Stummschaltung aufzuheben",
             "moreModerationActions": "Weitere Moderationsoptionen",
+            "moreParticipantOptions": "Mehr Optionen für Anwesende",
             "mute": "Stummschalten",
             "muteAll": "Alle stummschalten",
             "muteEveryoneElse": "Alle anderen stummschalten",
@@ -886,6 +901,7 @@
             "audioOnly": "„Nur Audio“ ein-/ausschalten",
             "audioRoute": "Audiogerät auswählen",
             "boo": "Buhen",
+            "breakoutRoom": "Breakout-Räume betreten/verlassen",
             "callQuality": "Qualitätseinstellungen",
             "cc": "Untertitel ein-/ausschalten",
             "chat": "Chatfenster öffnen / schließen",
@@ -969,7 +985,9 @@
         "hangup": "Konferenz verlassen",
         "help": "Hilfe",
         "invite": "Personen einladen",
+        "joinBreakoutRoom": "In Breakout-Raum wechseln",
         "laugh": "Lachen",
+        "leaveBreakoutRoom": "Breakout-Raum verlassen",
         "like": "Daumen hoch",
         "lobbyButtonDisable": "Lobbymodus deaktivieren",
         "lobbyButtonEnable": "Lobbymodus aktivieren",
