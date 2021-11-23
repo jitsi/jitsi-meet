@@ -15,15 +15,10 @@ import { getName } from '../../app/functions';
 import { ColorSchemeRegistry } from '../../base/color-scheme';
 import { translate } from '../../base/i18n';
 import { Icon, IconMenu, IconWarning } from '../../base/icons';
-import { MEDIA_TYPE } from '../../base/media';
 import JitsiStatusBar from '../../base/modal/components/JitsiStatusBar';
 import { LoadingIndicator, Text } from '../../base/react';
 import { connect } from '../../base/redux';
-import {
-    createDesiredLocalTracks,
-    destroyLocalDesktopTrackIfExists,
-    destroyLocalTracks
-} from '../../base/tracks';
+import { destroyLocalTracks } from '../../base/tracks';
 import BaseTheme from '../../base/ui/components/BaseTheme.native';
 
 import {
@@ -135,19 +130,7 @@ class WelcomePage extends AbstractWelcomePage<*> {
                 <VideoSwitch />
         });
 
-        if (this.props._settings.startAudioOnly) {
-            dispatch(destroyLocalTracks());
-        } else {
-            dispatch(destroyLocalDesktopTrackIfExists());
-
-            // Make sure we don't request the permission for the camera from
-            // the start. We will, however, create a video track iff the user
-            // already granted the permission.
-            navigator.permissions.query({ name: 'camera' }).then(response => {
-                response === 'granted'
-                    && dispatch(createDesiredLocalTracks(MEDIA_TYPE.VIDEO));
-            });
-        }
+        dispatch(destroyLocalTracks());
     }
 
     /**
