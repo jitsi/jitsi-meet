@@ -12,13 +12,13 @@
         "disabled": "Você não pode convidar pessoas.",
         "failedToAdd": "Falha em adicionar participantes",
         "footerText": "Discagem está desativada.",
-        "googleEmail": "E-mail Google",
+        "googleEmail": "Email Google",
         "inviteMoreHeader": "Você é o único na reunião",
         "inviteMoreMailSubject": "Entre na reunião {{appName}}",
         "inviteMorePrompt": "Convide mais pessoas",
         "linkCopied": "Link copiado para a área de transferência",
         "noResults": "Nenhum resultado de busca correspondente",
-        "outlookEmail": "E-mail Outlook ",
+        "outlookEmail": "Email Outlook ",
         "phoneNumbers": "números de telefone",
         "searching": "Procurando...",
         "shareInvite": "Compartilhar convite da reunião",
@@ -27,7 +27,7 @@
         "sipAddresses": "endereços SIP",
         "telephone": "Telefone: {{number}}",
         "title": "Convide pessoas para sua reunião",
-        "yahooEmail": "E-mail Yahoo"
+        "yahooEmail": "Email Yahoo"
     },
     "audioDevices": {
         "bluetooth": "Bluetooth",
@@ -757,8 +757,8 @@
     "profile": {
         "avatar": "avatar",
         "setDisplayNameLabel": "Definir seu nome de exibição",
-        "setEmailInput": "Digite e-mail",
-        "setEmailLabel": "Definir seu e-mail de Gravatar",
+        "setEmailInput": "Digite email",
+        "setEmailLabel": "Definir seu email de Gravatar",
         "title": "Perfil"
     },
     "raisedHand": "Gostaria de falar",
@@ -855,7 +855,7 @@
         "disableCrashReportingWarning": "Tem certeza eue quer desabilitar o aviso de falha? A opção será habilitada após reiniciar o app.",
         "disableP2P": "Desativar modo ponto a ponto",
         "displayName": "Nome de exibição",
-        "email": "E-mail",
+        "email": "Email",
         "header": "Configurações",
         "profileSection": "Perfil",
         "serverURL": "URL do servidor",

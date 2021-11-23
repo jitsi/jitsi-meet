@@ -23,19 +23,19 @@
         "copyStream": "Kopiera livestreamlänk",
         "contacts": "Kontakter",
         "defaultEmail": "Din mailadress",
-        "googleEmail": "Google e-mail",
+        "googleEmail": "Google email",
         "inviteMoreHeader": "Du är enda deltagaren i mötet",
         "inviteMoreMailSubject": "Anslut till {{appName}} möte",
         "inviteMorePrompt": "Bjud in fler personer",
         "linkCopied": "Länk kopierad till utklipp",
-        "outlookEmail": "Outlook e-mail",
+        "outlookEmail": "Outlook email",
         "phoneNumbers": "telefonnummer",
         "searching": "Söker....",
         "shareInvite": "Dela mötes inbjudan",
         "shareLink": "Dela mötes inbjudan för att bjuda in fler",
         "shareStream": "Dela livestreamlänken",
         "sipAddresses": "sip-adress",
-        "yahooEmail": "Yahoo e-mail"
+        "yahooEmail": "Yahoo email"
     },
     "audioDevices": {
         "bluetooth": "Bluetooth",

@@ -756,7 +756,7 @@
   "profile": {
     "avatar": "avatar",
     "setDisplayNameLabel": "Choisissez un pseudo",
-    "setEmailInput": "Entrez une adresse e-mail",
+    "setEmailInput": "Entrez une adresse email",
     "setEmailLabel": "Définir votre courriel Gravatar",
     "title": "Profil"
   },
