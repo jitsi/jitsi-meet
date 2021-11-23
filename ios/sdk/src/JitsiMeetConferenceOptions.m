@@ -38,7 +38,6 @@ static NSString *const WelcomePageEnabledFeatureFlag = @"welcomepage.enabled";
         _room = nil;
         _token = nil;
 
-        _colorScheme = nil;
         _config = [[NSMutableDictionary alloc] init];
         _featureFlags = [[NSMutableDictionary alloc] init];
 
@@ -134,8 +133,6 @@ static NSString *const WelcomePageEnabledFeatureFlag = @"welcomepage.enabled";
         _room = builder.room;
         _token = builder.token;
 
-        _colorScheme = builder.colorScheme;
-
         _config = builder.config;
 
         _featureFlags = [NSDictionary dictionaryWithDictionary:builder.featureFlags];
@@ -160,10 +157,6 @@ static NSString *const WelcomePageEnabledFeatureFlag = @"welcomepage.enabled";
     NSMutableDictionary *props = [[NSMutableDictionary alloc] init];
 
     props[@"flags"] = [NSMutableDictionary dictionaryWithDictionary:_featureFlags];
-
-    if (_colorScheme != nil) {
-        props[@"colorScheme"] = self.colorScheme;
-    }
 
     NSMutableDictionary *urlProps = [[NSMutableDictionary alloc] init];
 

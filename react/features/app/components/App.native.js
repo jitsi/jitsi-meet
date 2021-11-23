@@ -3,7 +3,6 @@
 import React from 'react';
 import SplashScreen from 'react-native-splash-screen';
 
-import { setColorScheme } from '../../base/color-scheme';
 import { DialogContainer } from '../../base/dialog';
 import { updateFlags } from '../../base/flags/actions';
 import { CALL_INTEGRATION_ENABLED, SERVER_URL_CHANGE_ENABLED } from '../../base/flags/constants';
@@ -91,7 +90,6 @@ export class App extends AbstractApp {
             const { dispatch, getState } = this.state.store;
 
             // We set these early enough so then we avoid any unnecessary re-renders.
-            dispatch(setColorScheme(this.props.colorScheme));
             dispatch(updateFlags(this.props.flags));
 
             // Check if serverURL is configured externally and not allowed to change.
