@@ -416,6 +416,7 @@ export function getParticipantsCameraTrack(tracks, participantId) {
     return tracks.find(
         t => Boolean(t.jitsiTrack)
             && t.participantId === participantId
+            && t.mediaType === MEDIA_TYPE.VIDEO
             && (t.videoType === undefined || t.videoType === VIDEO_TYPE.CAMERA)
     );
 }
@@ -425,6 +426,7 @@ export function getParticipantsScreenTrack(tracks, participantId) {
     return tracks.find(
         t => Boolean(t.jitsiTrack)
             && t.participantId === participantId
+            && t.mediaType === MEDIA_TYPE.VIDEO
             && t.videoType === VIDEO_TYPE.DESKTOP
     );
 }
