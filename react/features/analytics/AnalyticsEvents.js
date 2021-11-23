@@ -884,3 +884,18 @@ export function createScreensharingCaptureTakenEvent() {
         action: 'screen.sharing.capture.taken'
     };
 }
+
+/**
+ * Creates an event for an action on breakout rooms.
+ *
+ * @param {string} actionSubject - The subject that was acted upon.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createBreakoutRoomsEvent(actionSubject) {
+    return {
+        action: 'clicked',
+        actionSubject: `${actionSubject}.button`,
+        source: 'breakout.rooms'
+    };
+}

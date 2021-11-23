@@ -5,6 +5,7 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
+import { createBreakoutRoomsEvent, sendAnalytics } from '../../../analytics';
 import ParticipantPaneBaseButton from '../../../participants-pane/components/web/ParticipantPaneBaseButton';
 import { moveToRoom } from '../../actions';
 
@@ -28,6 +29,7 @@ export const LeaveButton = () => {
     const styles = useStyles();
 
     const onLeave = useCallback(() => {
+        sendAnalytics(createBreakoutRoomsEvent('leave'));
         dispatch(moveToRoom());
     }, [ dispatch ]);
 

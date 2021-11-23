@@ -5,6 +5,7 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
+import { createBreakoutRoomsEvent, sendAnalytics } from '../../../analytics';
 import { QuickActionButton } from '../../../base/components';
 import { moveToRoom } from '../../actions';
 
@@ -31,6 +32,7 @@ const JoinActionButton = ({ room }: Props) => {
 
     const onJoinRoom = useCallback(e => {
         e.stopPropagation();
+        sendAnalytics(createBreakoutRoomsEvent('join'));
         dispatch(moveToRoom(room.jid));
     }, [ dispatch, room ]);
 
