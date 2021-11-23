@@ -19,18 +19,10 @@
 #import "JitsiMeetConferenceOptions+Private.h"
 #import "JitsiMeetUserInfo+Private.h"
 
-/**
- * Backwards compatibility: turn the boolean property into a feature flag.
- */
-static NSString *const WelcomePageEnabledFeatureFlag = @"welcomepage.enabled";
-
-
 @implementation JitsiMeetConferenceOptionsBuilder {
     NSMutableDictionary *_featureFlags;
     NSMutableDictionary *_config;
 }
-
-@dynamic welcomePageEnabled;
 
 - (instancetype)init {
     if (self = [super init]) {
@@ -95,34 +87,11 @@ static NSString *const WelcomePageEnabledFeatureFlag = @"welcomepage.enabled";
     _config[config] = value;
 }
 
-#pragma mark - Dynamic properties
-
-- (void)setWelcomePageEnabled:(BOOL)welcomePageEnabled {
-    [self setFeatureFlag:WelcomePageEnabledFeatureFlag
-               withBoolean:welcomePageEnabled];
-}
-
-- (BOOL)welcomePageEnabled {
-    NSNumber *n = _featureFlags[WelcomePageEnabledFeatureFlag];
-
-    return n != nil ? [n boolValue] : NO;
-}
-
 @end
 
 @implementation JitsiMeetConferenceOptions {
     NSDictionary *_featureFlags;
     NSDictionary *_config;
-}
-
-@dynamic welcomePageEnabled;
-
-#pragma mark - Dynamic properties
-
-- (BOOL)welcomePageEnabled {
-    NSNumber *n = _featureFlags[WelcomePageEnabledFeatureFlag];
-
-    return n != nil ? [n boolValue] : NO;
 }
 
 #pragma mark - Internal initializer

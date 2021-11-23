@@ -42,12 +42,6 @@
 @property (nonatomic, readonly, nonnull) NSDictionary *config;
 
 /**
- * Set to YES to enable the welcome page. Typically SDK users won't need this enabled
- * since the host application decides which meeting to join.
- */
-@property (nonatomic) BOOL welcomePageEnabled;
-
-/**
  * Information about the local user. It will be used in absence of a token.
  */
 @property (nonatomic, nullable) JitsiMeetUserInfo *userInfo;
@@ -77,8 +71,6 @@
 @property (nonatomic, copy, nullable, readonly) NSString *token;
 
 @property (nonatomic, readonly, nonnull) NSDictionary *featureFlags;
-
-@property (nonatomic, readonly) BOOL welcomePageEnabled;
 
 @property (nonatomic, nullable) JitsiMeetUserInfo *userInfo;
 
