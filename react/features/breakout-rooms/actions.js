@@ -4,6 +4,7 @@ import i18next from 'i18next';
 import _ from 'lodash';
 import type { Dispatch } from 'redux';
 
+import { createBreakoutRoomsEvent, sendAnalytics } from '../analytics';
 import {
     conferenceLeft,
     conferenceWillLeave,
@@ -36,6 +37,8 @@ export function createBreakoutRoom(name?: string) {
         const index = Object.keys(rooms).length;
         const subject = name || i18next.t('breakoutRooms.defaultName', { index });
 
+        sendAnalytics(createBreakoutRoomsEvent('create'));
+
         // $FlowExpectedError
         getCurrentConference(getState)?.getBreakoutRooms()
             ?.createBreakoutRoom(subject);
@@ -53,6 +56,8 @@ export function closeBreakoutRoom(roomId: string) {
         const rooms = getBreakoutRooms(getState);
         const room = rooms[roomId];
         const mainRoom = getMainRoom(getState);
+
+        sendAnalytics(createBreakoutRoomsEvent('close'));
 
         if (room && mainRoom) {
             Object.values(room.participants).forEach(p => {
@@ -72,6 +77,8 @@ export function closeBreakoutRoom(roomId: string) {
  */
 export function removeBreakoutRoom(breakoutRoomJid: string) {
     return (dispatch: Dispatch<any>, getState: Function) => {
+        sendAnalytics(createBreakoutRoomsEvent('remove'));
+
         // $FlowExpectedError
         getCurrentConference(getState)?.getBreakoutRooms()
             ?.removeBreakoutRoom(breakoutRoomJid);
@@ -89,6 +96,7 @@ export function autoAssignToBreakoutRooms() {
         const breakoutRooms = _.filter(rooms, (room: Object) => !room.isMainRoom);
 
         if (breakoutRooms) {
+            sendAnalytics(createBreakoutRoomsEvent('auto.assign'));
             const participantIds = Array.from(getRemoteParticipants(getState).keys());
             const length = Math.ceil(participantIds.length / breakoutRooms.length);
 

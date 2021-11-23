@@ -1,5 +1,6 @@
 // @flow
 
+import { createBreakoutRoomsEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
 import { IconRingGroup } from '../../../base/icons';
 import { isLocalParticipantModerator } from '../../../base/participants';
@@ -57,6 +58,7 @@ class SendToBreakoutRoom extends AbstractButton<Props, *> {
     _handleClick() {
         const { dispatch, participantID, room } = this.props;
 
+        sendAnalytics(createBreakoutRoomsEvent('send.participant.to.room'));
         dispatch(sendParticipantToRoom(participantID, room.id));
     }
 }

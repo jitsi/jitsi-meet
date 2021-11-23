@@ -2,6 +2,7 @@
 import { withStyles } from '@material-ui/styles';
 import React, { Component } from 'react';
 
+import { createBreakoutRoomsEvent, sendAnalytics } from '../../../analytics';
 import { approveParticipant } from '../../../av-moderation/actions';
 import { Avatar } from '../../../base/avatar';
 import { ContextMenu, ContextMenuItemGroup } from '../../../base/components';
@@ -305,6 +306,7 @@ class MeetingParticipantContextMenu extends Component<Props> {
         return () => {
             const { _participant, dispatch } = this.props;
 
+            sendAnalytics(createBreakoutRoomsEvent('send.participant.to.room'));
             dispatch(sendParticipantToRoom(_participant.id, room.id));
         };
     }

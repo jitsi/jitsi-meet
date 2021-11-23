@@ -6,6 +6,7 @@ import { TouchableOpacity } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { createBreakoutRoomsEvent, sendAnalytics } from '../../../analytics';
 import { hideDialog } from '../../../base/dialog/actions';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import {
@@ -32,6 +33,7 @@ const BreakoutRoomContextMenu = ({ room }: Props) => {
     const { t } = useTranslation();
 
     const onJoinRoom = useCallback(() => {
+        sendAnalytics(createBreakoutRoomsEvent('join'));
         dispatch(moveToRoom(room.jid));
         closeDialog();
     }, [ dispatch, room ]);
