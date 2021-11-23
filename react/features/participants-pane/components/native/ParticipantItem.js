@@ -101,12 +101,18 @@ function ParticipantItem({
                     displayName = { displayName }
                     participantId = { participantID }
                     size = { 32 } />
-                <View style = { styles.participantDetailsContainer }>
+                <View
+                    style = { [
+                        styles.participantDetailsContainer,
+                        raisedHand && styles.participantDetailsContainerRaisedHand
+                    ] }>
                     <View style = { styles.participantNameContainer }>
-                        <Text style = { styles.participantName }>
+                        <Text
+                            numberOfLines = { 1 }
+                            style = { styles.participantName }>
                             { displayName }
+                            {local && ` (${t('chat.you')})` }
                         </Text>
-                        { local ? <Text style = { styles.isLocal }>({t('chat.you')})</Text> : null }
                     </View>
                     {isModerator && !disableModeratorIndicator
                         && <Text style = { styles.moderatorLabel }>{t('videothumbnail.moderator')}</Text>
@@ -115,9 +121,7 @@ function ParticipantItem({
                 {
                     !isKnockingParticipant
                     && <>
-                        {
-                            raisedHand && <RaisedHandIndicator />
-                        }
+                        {raisedHand && <RaisedHandIndicator />}
                         <View style = { styles.participantStatesContainer }>
                             <View style = { styles.participantStateVideo }>{VideoStateIcons[videoMediaState]}</View>
                             <View>{AudioStateIcons[audioMediaState]}</View>

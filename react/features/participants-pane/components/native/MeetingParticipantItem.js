@@ -5,6 +5,7 @@ import React, { PureComponent } from 'react';
 import { translate } from '../../../base/i18n';
 import {
     getLocalParticipant,
+    getParticipantById,
     getParticipantDisplayName,
     hasRaisedHand,
     isParticipantModerator
@@ -178,6 +179,10 @@ function mapStateToProps(state, ownProps): Object {
     const audioMediaState = getParticipantAudioMediaState(participant, _isAudioMuted, state);
     const videoMediaState = getParticipantVideoMediaState(participant, _isVideoMuted, state);
     const { disableModeratorIndicator } = state['features/base/config'];
+    const raisedHand = hasRaisedHand(participant?.local
+        ? participant
+        : getParticipantById(state, participant.id)
+    );
 
     return {
         _audioMediaState: audioMediaState,
@@ -189,7 +194,7 @@ function mapStateToProps(state, ownProps): Object {
         _local: Boolean(participant?.local),
         _localVideoOwner: Boolean(ownerId === localParticipantId),
         _participantID: participant?.id,
-        _raisedHand: hasRaisedHand(participant),
+        _raisedHand: raisedHand,
         _videoMediaState: videoMediaState
     };
 }
