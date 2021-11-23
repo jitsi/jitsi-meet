@@ -14,7 +14,12 @@ import { isRoomValid, SET_ROOM } from '../conference';
 import { getLocalParticipant } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 import { getPropertyValue } from '../settings';
-import { isLocalVideoTrackDesktop, setTrackMuted, TRACK_ADDED } from '../tracks';
+import {
+    destroyLocalTracks,
+    isLocalVideoTrackDesktop,
+    setTrackMuted,
+    TRACK_ADDED
+} from '../tracks';
 
 import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from './actionTypes';
 import { setAudioMuted, setCameraFacingMode, setVideoMuted } from './actions';
@@ -216,6 +221,10 @@ function _setRoom({ dispatch, getState }, next, action) {
     logger.log(`Start audio only set to ${audioOnly.toString()}`);
 
     dispatch(setAudioOnly(audioOnly, false));
+
+    if (!roomIsValid) {
+        dispatch(destroyLocalTracks());
+    }
 
     return next(action);
 }

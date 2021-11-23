@@ -1,16 +1,14 @@
 // @flow
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { SafeAreaView, Text, View } from 'react-native';
 
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { translate } from '../../../base/i18n';
 import { LoadingIndicator } from '../../../base/react';
-import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 
 import OverlayFrame from './OverlayFrame';
-import styles from './styles';
+import styles, { TEXT_COLOR } from './styles';
 
 type Props = {
 
@@ -29,7 +27,7 @@ type Props = {
  * Implements an overlay to tell the user that there is an operation in progress in the background during connect
  * so then the app doesn't seem hung.
  */
-class LoadConfigOverlay extends Component<Props> {
+class LoadConfigOverlay extends PureComponent<Props> {
     /**
      * Determines whether this overlay needs to be rendered (according to a
      * specific redux state). Called by {@link OverlayContainer}.
@@ -49,25 +47,15 @@ class LoadConfigOverlay extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _styles } = this.props;
-
         return (
             <OverlayFrame>
-                <View
-                    style = { [
-                        styles.loadingOverlayWrapper,
-                        _styles.loadingOverlayWrapper
-                    ] }>
+                <View style = { styles.loadingOverlayWrapper }>
                     <SafeAreaView>
                         <LoadingIndicator
-                            color = { _styles.indicatorColor }
+                            color = { TEXT_COLOR }
                             size = 'large'
                             style = { styles.connectIndicator } />
-                        <Text
-                            style = { [
-                                styles.loadingOverlayText,
-                                _styles.loadingOverlayText
-                            ] }>
+                        <Text style = { styles.loadingOverlayText }>
                             { this.props.t('connectingOverlay.joiningRoom') }
                         </Text>
                     </SafeAreaView>
@@ -77,18 +65,5 @@ class LoadConfigOverlay extends Component<Props> {
     }
 }
 
-/**
- * Maps part of the Redux state to the props of this component.
- *
- * @param {Object} state - The Redux state.
- * @returns {{
- *     _styles: StyleType
- * }}
- */
-function _mapStateToProps(state) {
-    return {
-        _styles: ColorSchemeRegistry.get(state, 'LoadConfigOverlay')
-    };
-}
 
-export default translate(connect(_mapStateToProps)(LoadConfigOverlay));
+export default translate(LoadConfigOverlay);

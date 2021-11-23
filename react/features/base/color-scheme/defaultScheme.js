@@ -43,9 +43,6 @@ export default {
     'LargeVideo': {
         background: '#040404'
     },
-    'LoadConfigOverlay': {
-        background: 'rgb(249, 249, 249)'
-    },
     'Thumbnail': {
         activeParticipantHighlight: 'rgb(81, 214, 170)',
         activeParticipantTint: 'rgba(49, 183, 106, 0.3)',
