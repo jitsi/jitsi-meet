@@ -19,8 +19,6 @@ export const colors = {
     primary09: '#CCDDF9',
     primary10: '#17A0DB',
     primary11: '#1081B2',
-    primary12: '#0077E1',
-    primary13: '#263A4C',
 
     surface00: '#111111',
     surface01: '#040404',
@@ -36,17 +34,6 @@ export const colors = {
     surface11: '#FFF',
     surface12: '#AAAAAA',
     surface13: '#495258',
-    surface14: '#1C2025',
-    surface15: '#5E6D79',
-    surface16: '#D7E6F9',
-    surface17: '#FADBDB',
-    surface18: '#F1F2F6',
-    surface19: '#DBC5C8',
-    surface20: '#00030660',
-    surface21: '#F9F9F9',
-    surface22: '#2A3A4B',
-    surface23: '#5E6D7A',
-    surface24: '#A4B8D160',
 
     success04: '#189B55',
     success05: '#1EC26A',
@@ -54,8 +41,6 @@ export const colors = {
     warning05: '#F8AE1A',
     warning06: '#ED9E1B',
     warning07: '#D77976',
-    warning08: '#BA273A',
-    warning09: '#E12D2D',
 
     disabled01: '#00000040',
 
@@ -67,10 +52,7 @@ export const colors = {
     support06: '#6A50D3',
     support07: '#4380E2',
     support08: '#00A8B3',
-    support09: '#2AA076',
-    support10: '#31B76A30',
-
-    highlight01: '#51D6AA'
+    support09: '#2AA076'
 };
 
 // Mapping between the token used and the color
