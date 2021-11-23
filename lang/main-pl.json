@@ -724,7 +724,7 @@
     "profile": {
         "avatar": "awatar",
         "setDisplayNameLabel": "Podaj swoją wyświetlaną nazwę",
-        "setEmailInput": "Wprowadź adres e-mail",
+        "setEmailInput": "Wprowadź adres email",
         "setEmailLabel": "Ustaw adres poczty elektronicznej swojego Gravatara",
         "title": "Profil"
     },
@@ -822,7 +822,7 @@
         "disableCrashReporting": "Wyłącz raportowanie błędów",
         "disableCrashReportingWarning": "Czy na pewno chcesz wyłączyć raportowanie błędów? Ustawienie zacznie funkcjonować po restarcie aplikacji.",
         "displayName": "Wyświetlana nazwa",
-        "email": "E-mail",
+        "email": "Email",
         "header": "Ustawienia",
         "profileSection": "Profil",
         "serverURL": "Adres URL serwera",

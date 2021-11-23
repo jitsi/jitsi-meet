@@ -756,7 +756,7 @@
     "profile": {
         "avatar": "avatar",
         "setDisplayNameLabel": "Set your display name",
-        "setEmailInput": "Enter e-mail",
+        "setEmailInput": "Enter email",
         "setEmailLabel": "Set your gravatar email",
         "title": "Profile"
     },

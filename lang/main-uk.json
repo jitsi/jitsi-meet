@@ -598,8 +598,8 @@
     },
     "profile": {
         "setDisplayNameLabel": "Ім'я на екрані",
-        "setEmailInput": "Зазначте e-mail",
-        "setEmailLabel": "E-mail для Gravatar",
+        "setEmailInput": "Зазначте email",
+        "setEmailLabel": "Email для Gravatar",
         "title": "Профіль"
     },
     "raisedHand": "Бажає говорити",

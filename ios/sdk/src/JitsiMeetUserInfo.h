@@ -23,7 +23,7 @@
  */
 @property (nonatomic, copy, nullable) NSString *displayName;
 /**
- * User e-mail.
+ * User email.
  */
 @property (nonatomic, copy, nullable) NSString *email;
 /**
