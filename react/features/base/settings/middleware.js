@@ -118,7 +118,7 @@ function _maybeSetAudioOnly(
         { dispatch },
         { settings: { startAudioOnly } }) {
     if (typeof startAudioOnly === 'boolean') {
-        dispatch(setAudioOnly(startAudioOnly, true));
+        dispatch(setAudioOnly(startAudioOnly));
     }
 }
 
