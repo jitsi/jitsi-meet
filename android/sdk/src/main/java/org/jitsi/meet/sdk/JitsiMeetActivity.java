@@ -194,7 +194,6 @@ public class JitsiMeetActivity extends AppCompatActivity
 
     protected void onConferenceTerminated(HashMap<String, Object> extraData) {
         JitsiMeetLogger.i("Conference terminated: " + extraData);
-        finish();
     }
 
     protected void onConferenceWillJoin(HashMap<String, Object> extraData) {
@@ -215,6 +214,11 @@ public class JitsiMeetActivity extends AppCompatActivity
         } catch (Exception e) {
             JitsiMeetLogger.w("Invalid participant left extraData", e);
         }
+    }
+
+    protected void onReadyToClose() {
+        JitsiMeetLogger.i("SDK is ready to close");
+        finish();
     }
 
     // Activity lifecycle methods
@@ -297,6 +301,9 @@ public class JitsiMeetActivity extends AppCompatActivity
                     break;
                 case PARTICIPANT_LEFT:
                     onParticipantLeft(event.getData());
+                    break;
+                case READY_TO_CLOSE:
+                    onReadyToClose();
                     break;
             }
         }

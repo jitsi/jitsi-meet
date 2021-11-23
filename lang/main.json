@@ -39,6 +39,9 @@
     "audioOnly": {
         "audioOnly": "Low bandwidth"
     },
+    "blankPage": {
+        "meetingEnded": "Meeting ended."
+    },
     "breakoutRooms": {
         "defaultName": "Breakout room #{{index}}",
         "mainRoom": "Main room",

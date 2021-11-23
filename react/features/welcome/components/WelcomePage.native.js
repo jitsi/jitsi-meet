@@ -18,7 +18,6 @@ import { Icon, IconMenu, IconWarning } from '../../base/icons';
 import JitsiStatusBar from '../../base/modal/components/JitsiStatusBar';
 import { LoadingIndicator, Text } from '../../base/react';
 import { connect } from '../../base/redux';
-import { destroyLocalTracks } from '../../base/tracks';
 import BaseTheme from '../../base/ui/components/BaseTheme.native';
 
 import {
@@ -108,7 +107,6 @@ class WelcomePage extends AbstractWelcomePage<*> {
 
         const {
             _headerStyles,
-            dispatch,
             navigation
         } = this.props;
 
@@ -129,8 +127,6 @@ class WelcomePage extends AbstractWelcomePage<*> {
             headerRight: () =>
                 <VideoSwitch />
         });
-
-        dispatch(destroyLocalTracks());
     }
 
     /**
