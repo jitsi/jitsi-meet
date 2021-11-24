@@ -464,6 +464,32 @@
         "newDeviceAudioTitle": "S'ha detectat un aparell d'àudio nou",
         "newDeviceAction": "Usa"
     },
+    "participantsPane": {
+        "close": "Tanca",
+        "header": "Participants",
+        "headings": {
+            "lobby": "Sala d'espera ({{count}})",
+            "participantsList": "Participants de la reunió ({{count}})",
+            "waitingLobby": "Esperant al vestíbul ({{count}})"
+        },
+        "actions": {
+            "allow": "Permetre als assistents:",
+            "allowVideo": "Permet el vídeo",
+            "audioModeration": "Deixeu de silenciar ells mateixos",
+            "blockEveryoneMicCamera": "Bloqueja el micròfon i la càmera de tothom",
+            "invite": "Convida algú",
+            "askUnmute": "Demana que es deixi de silenciare",
+            "moreModerationActions": "Més opcions de moderació",
+            "mute": "Silenciar",
+            "muteAll": "Silencia tot",
+            "muteEveryoneElse": "Silencia a tots els altres",
+            "stopEveryonesVideo": "Atura el vídeo de tothom",
+            "stopVideo": "Atura el vídeo",
+            "unblockEveryoneMicCamera": "Desbloqueja el micròfon i la càmera de tothom",
+            "videoModeration": "Comença el seu vídeo"
+        },
+        "search": "Cerca participants"
+    },
     "passwordSetRemotely": "establerta per una altre participant",
     "passwordDigitsOnly": "Fins a {{number}} dígits",
     "poweredby": "funciona amb",
@@ -606,12 +632,17 @@
             "moreOptions": "Mostra més opcions",
             "mute": "Activa o desactiva el silenci de l'àudio",
             "muteEveryone": "Silencia tothom",
+            "muteEveryoneElse": "Silencia a tots els altres participants",
+            "muteEveryonesVideo": "Desactiva el vídeo de tothom",
+            "muteEveryoneElsesVideo": "Desactiva el vídeo a tots els altres participants",
+            "participants": "Participants",
             "pip": "Activa o desactiva el mode imatge en imatge",
             "privateMessage": "Envia un missatge privat",
             "profile": "Edita el perfil",
             "raiseHand": "Aixeca o abaixa la mà",
             "recording": "Activa o desactiva l'enregistrament",
             "remoteMute": "Silencia el participant",
+            "remoteVideoMute": "Desactiva la càmera del participant",
             "Settings": "Activa o desactiva la configuració",
             "sharedvideo": "Activa o desactiva la compartició de vídeo",
             "shareRoom": "Convida-hi algú",
@@ -626,6 +657,8 @@
             "toggleFilmstrip": "Activa o desactiva la tira"
         },
         "addPeople": "Afegeix persones a la trucada",
+        "audioSettings": "Configuració d'àudio",
+        "videoSettings": "Configuració de vídeo",
         "audioOnlyOff": "Desactiva el mode de poc ample de banda",
         "audioOnlyOn": "Activa el mode de poc ample de banda",
         "audioRoute": "Seleccioneu l'aparell de so",
@@ -734,13 +767,18 @@
         "standardDefinition": "Definició estàndard"
     },
     "videothumbnail": {
+        "connectionInfo": "Informació de connexió",
         "domute": "Silencia",
+        "domuteVideo": "Desactiva la càmera",
         "domuteOthers": "Silencia a tots els altres participants",
+        "domuteVideoOfOthers": "Desactiva la càmera de tots els altres",
         "flip": "Capgira",
+        "grantModerator": "Concedir drets de moderador",
         "kick": "Expulsa",
         "moderator": "Moderador",
         "mute": "El participant és silenciat",
         "muted": "Silenciat",
+        "videoMuted": "Càmera desactivada",
         "remoteControl": "Inicia o atura el control remot",
         "show": "Mostra-ho en l'escena",
         "videomute": "El participant ha aturat la càmera"
