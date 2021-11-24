@@ -197,6 +197,7 @@ function create_breakout_room(room_jid, subject)
         main_room._data.breakout_rooms = {};
     end
     main_room._data.breakout_rooms[breakout_room_jid] = subject;
+    main_room._data.breakout_rooms_active = true;
     -- Make room persistent - not to be destroyed - if all participants join breakout rooms.
     main_room:set_persistent(true);
     main_room:save(true);
@@ -300,7 +301,7 @@ function on_breakout_room_pre_create(event)
     local main_room, main_room_jid = get_main_room(breakout_room.jid);
 
     -- Only allow existent breakout rooms to be started.
-    -- Authorisation of breakout rooms is done by their random uuid suffix
+    -- Authorisation of breakout rooms is done by their random uuid name
     if main_room and main_room._data.breakout_rooms and main_room._data.breakout_rooms[breakout_room.jid] then
         breakout_room._data.subject = main_room._data.breakout_rooms[breakout_room.jid];
         breakout_room.save();
@@ -320,14 +321,16 @@ function on_occupant_joined(event)
 
     local main_room = get_main_room(room.jid);
 
-    if jid_node(event.occupant.jid) ~= 'focus' then
-        broadcast_breakout_rooms(room.jid);
-    end
+    if main_room._data.breakout_rooms_active then
+        if jid_node(event.occupant.jid) ~= 'focus' then
+            broadcast_breakout_rooms(room.jid);
+        end
 
-    -- Prevent closing all rooms if a participant has joined (see on_occupant_left).
-    if (main_room._data.is_close_all_scheduled) then
-        main_room._data.is_close_all_scheduled = false;
-        main_room:save();
+        -- Prevent closing all rooms if a participant has joined (see on_occupant_left).
+        if main_room._data.is_close_all_scheduled then
+            main_room._data.is_close_all_scheduled = false;
+            main_room:save();
+        end
     end
 end
 
@@ -367,17 +370,17 @@ function on_occupant_left(event)
 
     local main_room, main_room_jid = get_main_room(room.jid);
 
-    if jid_node(event.occupant.jid) ~= 'focus' then
+    if main_room._data.breakout_rooms_active and jid_node(event.occupant.jid) ~= 'focus' then
         broadcast_breakout_rooms(room.jid);
     end
 
     -- Close the conference if all left for good.
-    if not main_room._data.is_close_all_scheduled and not exist_occupants_in_rooms(main_room) then
+    if main_room._data.breakout_rooms_active and not main_room._data.is_close_all_scheduled and not exist_occupants_in_rooms(main_room) then
         main_room._data.is_close_all_scheduled = true;
         main_room:save(true);
         module:add_timer(ROOMS_TTL_IF_ALL_LEFT, function()
             if main_room._data.is_close_all_scheduled then
-                --module:log('info', 'Closing conference %s as all left for good.', main_room_jid);
+                module:log('info', 'Closing conference %s as all left for good.', main_room_jid);
                 main_room:set_persistent(false);
                 main_room:save(true);
                 main_room:destroy(main_room_jid, 'All occupants left.');
