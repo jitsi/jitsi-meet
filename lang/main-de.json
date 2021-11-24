@@ -39,6 +39,9 @@
     "audioOnly": {
         "audioOnly": "Geringe Bandbreite"
     },
+    "blankPage": {
+        "meetingEnded": "Konferenz beendet."
+    },
     "breakoutRooms": {
         "defaultName": "Breakout-Raum #{{index}}",
         "mainRoom": "Hauptraum",
