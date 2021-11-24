@@ -547,6 +547,7 @@ class Thumbnail extends Component<Props, State> {
 
         const { canPlayEventReceived } = this.state;
         const {
+            _currentLayout,
             _height,
             _isHidden,
             _isScreenSharing,
@@ -555,6 +556,8 @@ class Thumbnail extends Component<Props, State> {
             horizontalOffset,
             style
         } = this.props;
+
+        const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
 
         let styles: {
             avatar: Object,
@@ -578,7 +581,7 @@ class Thumbnail extends Component<Props, State> {
         if (!_isScreenSharing) {
             if (canPlayEventReceived || _participant.local) {
                 videoStyles = {
-                    objectFit: _height > 320 ? 'cover' : 'contain'
+                    objectFit: _height < 320 && tileViewActive ? 'contain' : 'cover'
                 };
             } else {
                 videoStyles = {
