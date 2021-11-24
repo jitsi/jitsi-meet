@@ -14,6 +14,8 @@ import {
     updateDropboxToken
 } from '../../../dropbox';
 import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification } from '../../../notifications';
+import { isScreenVideoShared } from '../../../screen-share';
+import { toggleScreenshotCaptureSummary } from '../../../screenshot-capture';
 import { toggleRequestingSubtitles } from '../../../subtitles';
 import { setSelectedRecordingService } from '../../actions';
 import { RECORDING_TYPES } from '../../constants';
@@ -56,6 +58,11 @@ type Props = {
      * The dropbox refresh token.
      */
     _rToken: string,
+
+    /**
+     * Whether or not the local participant is screensharing.
+     */
+    _screensharing: boolean,
 
     /**
      * Access token's expiration date as UNIX timestamp.
@@ -276,6 +283,7 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
             _conference,
             _isDropboxEnabled,
             _rToken,
+            _screensharing,
             _token,
             dispatch
         } = this.props;
@@ -315,6 +323,9 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
             createRecordingDialogEvent('start', 'confirm.button', attributes)
         );
 
+        if (_screensharing) {
+            dispatch(toggleScreenshotCaptureSummary(true));
+        }
         _conference.startRecording({
             mode: JitsiRecordingConstants.mode.FILE,
             appData
@@ -370,6 +381,7 @@ export function mapStateToProps(state: Object) {
         _fileRecordingsServiceSharingEnabled: fileRecordingsServiceSharingEnabled,
         _isDropboxEnabled: isDropboxEnabled(state),
         _rToken: state['features/dropbox'].rToken,
+        _screensharing: isScreenVideoShared(state),
         _tokenExpireDate: state['features/dropbox'].expireDate,
         _token: state['features/dropbox'].token
     };

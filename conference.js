@@ -71,7 +71,8 @@ import {
     JitsiMediaDevicesEvents,
     JitsiParticipantConnectionStatus,
     JitsiTrackErrors,
-    JitsiTrackEvents
+    JitsiTrackEvents,
+    JitsiRecordingConstants
 } from './react/features/base/lib-jitsi-meet';
 import {
     getStartWithAudioMuted,
@@ -140,6 +141,7 @@ import {
     setJoiningInProgress,
     setPrejoinPageVisibility
 } from './react/features/prejoin';
+import { getActiveSession } from './react/features/recording/functions';
 import { disableReceiver, stopReceiver } from './react/features/remote-control';
 import { setScreenAudioShareState, isScreenAudioShared } from './react/features/screen-share/';
 import { toggleScreenshotCaptureSummary } from './react/features/screenshot-capture';
@@ -1933,7 +1935,9 @@ export default {
             .then(() => {
                 this.videoSwitchInProgress = false;
                 if (config.enableScreenshotCapture) {
-                    APP.store.dispatch(toggleScreenshotCaptureSummary(true));
+                    if (getActiveSession(APP.store.getState(), JitsiRecordingConstants.mode.FILE)) {
+                        APP.store.dispatch(toggleScreenshotCaptureSummary(true));
+                    }
                 }
                 sendAnalytics(createScreenSharingEvent('started'));
                 logger.log('Screen sharing started');
