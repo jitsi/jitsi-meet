@@ -1,9 +1,8 @@
 /* global APP */
 
 import {
-    NOTIFICATION_TIMEOUT,
+    NOTIFICATION_TIMEOUT_TYPE,
     showErrorNotification,
-    showNotification,
     showWarningNotification
 } from '../../../react/features/notifications';
 
@@ -48,7 +47,7 @@ const messageHandler = {
      * showErrorNotification action.
      */
     showError(props) {
-        APP.store.dispatch(showErrorNotification(props));
+        APP.store.dispatch(showErrorNotification(props, NOTIFICATION_TIMEOUT_TYPE.LONG));
     },
 
     /**
@@ -58,35 +57,7 @@ const messageHandler = {
      * showWarningNotification action.
      */
     showWarning(props) {
-        APP.store.dispatch(showWarningNotification(props));
-    },
-
-    /**
-     * Displays a notification about participant action.
-     * @param displayName the display name of the participant that is
-     * associated with the notification.
-     * @param displayNameKey the key from the language file for the display
-     * name. Only used if displayName is not provided.
-     * @param cls css class for the notification
-     * @param messageKey the key from the language file for the text of the
-     * message.
-     * @param messageArguments object with the arguments for the message.
-     * @param optional configurations for the notification (e.g. timeout)
-     */
-    participantNotification( // eslint-disable-line max-params
-            displayName,
-            displayNameKey,
-            cls,
-            messageKey,
-            messageArguments,
-            timeout = NOTIFICATION_TIMEOUT) {
-        APP.store.dispatch(showNotification({
-            descriptionArguments: messageArguments,
-            descriptionKey: messageKey,
-            titleKey: displayNameKey,
-            title: displayName
-        },
-        timeout));
+        APP.store.dispatch(showWarningNotification(props, NOTIFICATION_TIMEOUT_TYPE.LONG));
     }
 };
 

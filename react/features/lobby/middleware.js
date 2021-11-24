@@ -9,7 +9,11 @@ import { getFirstLoadableAvatarUrl, getParticipantDisplayName } from '../base/pa
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { isTestModeEnabled } from '../base/testing';
-import { NOTIFICATION_TYPE, showNotification } from '../notifications';
+import {
+    NOTIFICATION_TIMEOUT_TYPE,
+    NOTIFICATION_TYPE,
+    showNotification
+} from '../notifications';
 import { shouldAutoKnock } from '../prejoin/functions';
 
 import { KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED } from './actionTypes';
@@ -66,10 +70,12 @@ StateListenerRegistry.register(
 
             conference.on(JitsiConferenceEvents.LOBBY_USER_JOINED, (id, name) => {
                 batch(() => {
-                    dispatch(participantIsKnockingOrUpdated({
-                        id,
-                        name
-                    }));
+                    dispatch(
+                        participantIsKnockingOrUpdated({
+                            id,
+                            name
+                        })
+                    );
                     dispatch(playSound(KNOCKING_PARTICIPANT_SOUND_ID));
                     if (typeof APP !== 'undefined') {
                         APP.API.notifyKnockingParticipant({
@@ -81,10 +87,12 @@ StateListenerRegistry.register(
             });
 
             conference.on(JitsiConferenceEvents.LOBBY_USER_UPDATED, (id, participant) => {
-                dispatch(participantIsKnockingOrUpdated({
-                    ...participant,
-                    id
-                }));
+                dispatch(
+                    participantIsKnockingOrUpdated({
+                        ...participant,
+                        id
+                    })
+                );
             });
 
             conference.on(JitsiConferenceEvents.LOBBY_USER_LEFT, id => {
@@ -98,7 +106,8 @@ StateListenerRegistry.register(
                 })
             );
         }
-    });
+    }
+);
 
 /**
  * Function to handle the conference failed event and navigate the user to the lobby screen
@@ -135,11 +144,13 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
     dispatch(hideLobbyScreen());
 
     if (error.name === JitsiConferenceErrors.CONFERENCE_ACCESS_DENIED) {
-        dispatch(showNotification({
-            appearance: NOTIFICATION_TYPE.ERROR,
-            hideErrorSupportLink: true,
-            titleKey: 'lobby.joinRejectedMessage'
-        }));
+        dispatch(
+            showNotification({
+                appearance: NOTIFICATION_TYPE.ERROR,
+                hideErrorSupportLink: true,
+                titleKey: 'lobby.joinRejectedMessage'
+            }, NOTIFICATION_TIMEOUT_TYPE.LONG)
+        );
     }
 
     return next(action);
@@ -174,10 +185,12 @@ function _findLoadableAvatarForKnockingParticipant(store, { id }) {
     if (!disableThirdPartyRequests && updatedParticipant && !updatedParticipant.loadableAvatarUrl) {
         getFirstLoadableAvatarUrl(updatedParticipant, store).then(loadableAvatarUrl => {
             if (loadableAvatarUrl) {
-                dispatch(participantIsKnockingOrUpdated({
-                    loadableAvatarUrl,
-                    id
-                }));
+                dispatch(
+                    participantIsKnockingOrUpdated({
+                        loadableAvatarUrl,
+                        id
+                    })
+                );
             }
         });
     }
@@ -217,5 +230,10 @@ function _maybeSendLobbyNotification(origin, message, { dispatch, getState }) {
         break;
     }
 
-    dispatch(showNotification(notificationProps, isTestModeEnabled(getState()) ? undefined : 5000));
+    dispatch(
+        showNotification(
+            notificationProps,
+            isTestModeEnabled(getState()) ? NOTIFICATION_TIMEOUT_TYPE.STICKY : NOTIFICATION_TIMEOUT_TYPE.MEDIUM
+        )
+    );
 }

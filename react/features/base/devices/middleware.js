@@ -2,7 +2,7 @@
 
 import UIEvents from '../../../../service/UI/UIEvents';
 import { processExternalDeviceRequest } from '../../device-selection';
-import { showNotification, showWarningNotification } from '../../notifications';
+import { NOTIFICATION_TIMEOUT_TYPE, showNotification, showWarningNotification } from '../../notifications';
 import { replaceAudioTrackById, replaceVideoTrackById, setDeviceStatusWarning } from '../../prejoin/actions';
 import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
@@ -49,8 +49,6 @@ const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
         [JitsiTrackErrors.TIMEOUT]: 'dialog.cameraTimeoutError'
     }
 };
-
-const WARNING_DISPLAY_TIMER = 4000;
 
 /**
  * A listener for device permissions changed reported from lib-jitsi-meet.
@@ -134,7 +132,7 @@ MiddlewareRegistry.register(store => next => action => {
             description: additionalCameraErrorMsg,
             descriptionKey: cameraErrorMsg,
             titleKey
-        }, WARNING_DISPLAY_TIMER));
+        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
 
         if (isPrejoinPageVisible(store.getState())) {
             store.dispatch(setDeviceStatusWarning(titleKey));
@@ -163,7 +161,7 @@ MiddlewareRegistry.register(store => next => action => {
             description: additionalMicErrorMsg,
             descriptionKey: micErrorMsg,
             titleKey
-        }, WARNING_DISPLAY_TIMER));
+        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
 
         if (isPrejoinPageVisible(store.getState())) {
             store.dispatch(setDeviceStatusWarning(titleKey));
@@ -298,7 +296,7 @@ function _checkAndNotifyForNewDevice(store, newDevices, oldDevices) {
                 titleKey,
                 customActionNameKey: 'notify.newDeviceAction',
                 customActionHandler: _useDevice.bind(undefined, store, devicesArray)
-            }));
+            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
         }
     });
 }

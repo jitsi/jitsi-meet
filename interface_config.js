@@ -225,13 +225,6 @@ var interfaceConfig = {
      */
     // ANDROID_APP_PACKAGE: 'org.jitsi.meet',
 
-    /**
-     * Override the behavior of some notifications to remain displayed until
-     * explicitly dismissed through a user action. The value is how long, in
-     * milliseconds, those notifications should remain displayed.
-     */
-    // ENFORCE_NOTIFICATION_AUTO_DISMISS_TIMEOUT: 15000,
-
     // List of undocumented settings
     /**
      INDICATOR_FONT_SIZES

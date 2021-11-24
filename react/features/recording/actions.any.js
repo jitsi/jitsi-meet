@@ -6,7 +6,7 @@ import { getLocalParticipant, getParticipantDisplayName } from '../base/particip
 import { copyText } from '../base/util/helpers';
 import { getVpaasTenant, isVpaasMeeting } from '../jaas/functions';
 import {
-    NOTIFICATION_TIMEOUT,
+    NOTIFICATION_TIMEOUT_TYPE,
     hideNotification,
     showErrorNotification,
     showNotification,
@@ -98,7 +98,7 @@ export function showPendingRecordingNotification(streamType: string) {
         const notification = await dispatch(showNotification({
             isDismissAllowed: false,
             ...dialogProps
-        }));
+        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
 
         if (notification) {
             dispatch(_setPendingRecordingNotificationUid(notification.uid, streamType));
@@ -113,7 +113,7 @@ export function showPendingRecordingNotification(streamType: string) {
  * @returns {showErrorNotification}
  */
 export function showRecordingError(props: Object) {
-    return showErrorNotification(props);
+    return showErrorNotification(props, NOTIFICATION_TIMEOUT_TYPE.LONG);
 }
 
 /**
@@ -149,7 +149,7 @@ export function showStoppedRecordingNotification(streamType: string, participant
         titleKey: 'dialog.recording'
     };
 
-    return showNotification(dialogProps, NOTIFICATION_TIMEOUT);
+    return showNotification(dialogProps, NOTIFICATION_TIMEOUT_TYPE.SHORT);
 }
 
 /**
@@ -214,14 +214,14 @@ export function showStartedRecordingNotification(
                 } catch (err) {
                     dispatch(showErrorNotification({
                         titleKey: 'recording.errorFetchingLink'
-                    }));
+                    }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
 
                     return logger.error('Could not fetch recording link', err);
                 }
             }
         }
 
-        dispatch(showNotification(dialogProps, NOTIFICATION_TIMEOUT));
+        dispatch(showNotification(dialogProps, NOTIFICATION_TIMEOUT_TYPE.SHORT));
     };
 }
 

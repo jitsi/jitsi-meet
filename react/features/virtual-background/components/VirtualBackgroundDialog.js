@@ -16,7 +16,7 @@ import { connect } from '../../base/redux';
 import { updateSettings } from '../../base/settings';
 import { Tooltip } from '../../base/tooltip';
 import { getLocalVideoTrack } from '../../base/tracks';
-import { showErrorNotification } from '../../notifications';
+import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification } from '../../notifications';
 import { toggleBackgroundEffect, virtualBackgroundTrackChanged } from '../actions';
 import { IMAGES, BACKGROUNDS_LIMIT, VIRTUAL_BACKGROUND_TYPE, type Image } from '../constants';
 import { toDataURL } from '../functions';
@@ -219,7 +219,7 @@ function VirtualBackground({
             if (!isCancelled) {
                 dispatch(showErrorNotification({
                     titleKey: 'virtualBackground.desktopShareError'
-                }));
+                }, NOTIFICATION_TIMEOUT_TYPE.LONG));
                 logger.error('Could not create desktop share as a virtual background!');
             }
 

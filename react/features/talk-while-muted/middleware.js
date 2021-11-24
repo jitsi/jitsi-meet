@@ -8,6 +8,7 @@ import { getLocalParticipant, raiseHand } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import {
+    NOTIFICATION_TIMEOUT_TYPE,
     hideNotification,
     showNotification
 } from '../notifications';
@@ -50,7 +51,7 @@ MiddlewareRegistry.register(store => next => action => {
                     titleKey: 'toolbar.talkWhileMutedPopup',
                     customActionNameKey: forceMuted ? 'notify.raiseHandAction' : 'notify.unmute',
                     customActionHandler: () => dispatch(forceMuted ? raiseHand(true) : setAudioMuted(false))
-                }));
+                }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 
                 const { soundsTalkWhileMuted } = getState()['features/base/settings'];
 

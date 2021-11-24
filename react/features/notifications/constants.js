@@ -3,7 +3,22 @@
 /**
  * The standard time when auto-disappearing notifications should disappear.
  */
-export const NOTIFICATION_TIMEOUT = 2500;
+export const NOTIFICATION_TIMEOUT = {
+    SHORT: 2500,
+    MEDIUM: 5000,
+    LONG: 10000,
+    STICKY: false
+};
+
+/**
+ * Notification timeout type.
+ */
+export const NOTIFICATION_TIMEOUT_TYPE = {
+    SHORT: 'short',
+    MEDIUM: 'medium',
+    LONG: 'long',
+    STICKY: 'sticky'
+};
 
 /**
  * The set of possible notification types.

@@ -9,7 +9,7 @@ import { MiddlewareRegistry } from '../base/redux';
 import { SETTINGS_UPDATED, updateSettings } from '../base/settings';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { getDisabledSounds } from '../base/sounds/functions.any';
-import { NOTIFICATION_TIMEOUT, showNotification } from '../notifications';
+import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../notifications';
 
 import {
     ADD_REACTION_BUFFER,
@@ -169,7 +169,7 @@ MiddlewareRegistry.register(store => next => action => {
             customActionHandler: () => dispatch(updateSettings({
                 soundsReactions: false
             }))
-        }, NOTIFICATION_TIMEOUT));
+        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
         break;
     }
     }

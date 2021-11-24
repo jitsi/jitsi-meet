@@ -13,7 +13,7 @@ import {
     getNewAccessToken,
     updateDropboxToken
 } from '../../../dropbox';
-import { showErrorNotification } from '../../../notifications';
+import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification } from '../../../notifications';
 import { toggleRequestingSubtitles } from '../../../subtitles';
 import { setSelectedRecordingService } from '../../actions';
 import { RECORDING_TYPES } from '../../constants';
@@ -298,7 +298,7 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
             } else {
                 dispatch(showErrorNotification({
                     titleKey: 'dialog.noDropboxToken'
-                }));
+                }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 
                 return;
             }

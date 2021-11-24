@@ -1,5 +1,6 @@
 // @flow
 
+import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications';
 import { showWarningNotification } from '../../notifications/actions';
 import { timeout } from '../../virtual-background/functions';
 import logger from '../../virtual-background/logger';
@@ -62,13 +63,13 @@ export async function createVirtualBackgroundEffect(virtualBackground: Object, d
                 logger.error('Failed to download tflite model!');
                 dispatch(showWarningNotification({
                     titleKey: 'virtualBackground.backgroundEffectError'
-                }));
+                }, NOTIFICATION_TIMEOUT_TYPE.LONG));
             } else {
                 logger.error('Looks like WebAssembly is disabled or not supported on this browser');
                 dispatch(showWarningNotification({
                     titleKey: 'virtualBackground.webAssemblyWarning',
                     description: 'WebAssembly disabled or not supported by this browser'
-                }));
+                }, NOTIFICATION_TIMEOUT_TYPE.LONG));
             }
 
             return;

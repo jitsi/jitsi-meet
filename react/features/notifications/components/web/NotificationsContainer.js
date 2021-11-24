@@ -13,8 +13,6 @@ import { areThereNotifications } from '../../functions';
 
 import Notification from './Notification';
 
-declare var interfaceConfig: Object;
-
 type Props = {
 
     /**
@@ -32,12 +30,6 @@ type Props = {
      * notification at the top and the rest shown below it in order.
      */
     _notifications: Array<Object>,
-
-    /**
-     * The length, in milliseconds, to use as a default timeout for all
-     * dismissible timeouts that do not have a timeout specified.
-     */
-    autoDismissTimeout: number,
 
     /**
      * JSS classes object.
@@ -260,14 +252,14 @@ class NotificationsContainer extends Component<Props> {
      * @returns {void}
      */
     _updateTimeouts() {
-        const { _notifications, autoDismissTimeout } = this.props;
+        const { _notifications } = this.props;
 
         for (const notification of _notifications) {
-            if ((notification.timeout || typeof autoDismissTimeout === 'number')
+            if (notification.timeout
                     && notification.props.isDismissAllowed !== false
                     && !this._timeouts.has(notification.uid)) {
                 const {
-                    timeout = autoDismissTimeout,
+                    timeout,
                     uid
                 } = notification;
                 const timerID = setTimeout(() => {
@@ -296,8 +288,7 @@ function _mapStateToProps(state) {
     return {
         _iAmSipGateway: Boolean(iAmSipGateway),
         _isChatOpen: isChatOpen,
-        _notifications: _visible ? notifications : [],
-        autoDismissTimeout: interfaceConfig.ENFORCE_NOTIFICATION_AUTO_DISMISS_TIMEOUT
+        _notifications: _visible ? notifications : []
     };
 }
 

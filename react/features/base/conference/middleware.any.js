@@ -9,7 +9,7 @@ import {
 } from '../../analytics';
 import { reloadNow } from '../../app/actions';
 import { openDisplayNamePrompt } from '../../display-name';
-import { showErrorNotification } from '../../notifications';
+import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification } from '../../notifications';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED, connectionDisconnected } from '../connection';
 import { validateJwt } from '../jwt';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
@@ -129,7 +129,7 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
         dispatch(showErrorNotification({
             description: reason,
             titleKey: 'dialog.sessTerminated'
-        }));
+        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 
         break;
     }
@@ -138,7 +138,7 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
             dispatch(showErrorNotification({
                 description: 'Restart initiated because of a bridge failure',
                 titleKey: 'dialog.sessionRestarted'
-            }));
+            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
         }
 
         break;
@@ -151,7 +151,7 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
             descriptionArguments: { msg },
             descriptionKey: msg ? 'dialog.connectErrorWithMsg' : 'dialog.connectError',
             titleKey: 'connection.CONNFAIL'
-        }));
+        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 
         break;
     }
