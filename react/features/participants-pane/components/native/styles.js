@@ -140,7 +140,11 @@ export default {
     participantDetailsContainer: {
         display: 'flex',
         flexDirection: 'column',
-        width: '100%'
+        width: '73%'
+    },
+
+    participantDetailsContainerRaisedHand: {
+        width: '65%'
     },
 
     participantNameContainer: {
@@ -161,12 +165,6 @@ export default {
         alignSelf: 'flex-start',
         paddingLeft: BaseTheme.spacing[3],
         paddingTop: BaseTheme.spacing[1]
-    },
-
-    isLocal: {
-        alignSelf: 'center',
-        color: BaseTheme.palette.text01,
-        marginLeft: BaseTheme.spacing[1]
     },
 
     participantsPane: {
@@ -190,8 +188,9 @@ export default {
         backgroundColor: BaseTheme.palette.warning02,
         borderRadius: BaseTheme.shape.borderRadius / 2,
         height: BaseTheme.spacing[4],
-        marginLeft: BaseTheme.spacing[2],
-        width: BaseTheme.spacing[4]
+        width: BaseTheme.spacing[4],
+        marginLeft: 'auto',
+        marginRight: BaseTheme.spacing[2]
     },
 
     raisedHandIcon: {
