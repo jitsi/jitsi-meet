@@ -54,10 +54,7 @@ MiddlewareRegistry.register(store => next => action => {
                 action.participant.id
             );
 
-            if (typeof interfaceConfig === 'object'
-                && participant
-                && !participant.local
-                && !action.participant.isReplaced) {
+            if (participant && !participant.local && !action.participant.isReplaced) {
                 store.dispatch(showNotification({
                     descriptionKey: 'notify.disconnected',
                     titleKey: 'notify.somebody',
