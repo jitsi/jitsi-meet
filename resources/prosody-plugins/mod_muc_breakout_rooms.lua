@@ -173,7 +173,7 @@ function broadcast_breakout_rooms(room_jid)
             end
         end
 
-        for breakout_room_jid, breakout_room in pairs(main_room._data.breakout_rooms or {}) do
+        for breakout_room_jid in pairs(main_room._data.breakout_rooms or {}) do
             local room = breakout_rooms_muc_service.get_room_from_jid(breakout_room_jid);
             if room then
                 for _, occupant in room:each_occupant() do
@@ -348,7 +348,7 @@ function exist_occupants_in_rooms(main_room)
     if exist_occupants_in_room(main_room) then
         return true;
     end
-    for breakout_room_jid, breakout_room in pairs(main_room._data.breakout_rooms or {}) do
+    for breakout_room_jid in pairs(main_room._data.breakout_rooms or {}) do
         local room = breakout_rooms_muc_service.get_room_from_jid(breakout_room_jid);
         if exist_occupants_in_room(room) then
             return true;
@@ -395,7 +395,7 @@ function on_main_room_destroyed(event)
 
     local message = 'Conference ended.';
 
-    for breakout_room_jid, breakout_room in pairs(main_room._data.breakout_rooms or {}) do
+    for breakout_room_jid in pairs(main_room._data.breakout_rooms or {}) do
         destroy_breakout_room(breakout_room_jid, message)
     end
 end
