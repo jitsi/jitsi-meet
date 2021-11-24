@@ -6,9 +6,14 @@ import { IconMessage, IconReply } from '../../../base/icons';
 import { getParticipantById } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-import { openChat } from '../../actions';
+import { openChat, handleChallengeResponseInitialized } from '../../actions';
 
 export type Props = AbstractButtonProps & {
+
+    /**
+     * True if the message is a challenge-response message.
+     */
+    isChallengeResponse: boolean,
 
     /**
      * The ID of the participant that the message is to be sent.
@@ -52,9 +57,14 @@ class PrivateMessageButton extends AbstractButton<Props, any> {
      * @returns {void}
      */
     _handleClick() {
-        const { _participant, dispatch } = this.props;
+        const { _participant, participantID, dispatch, isChallengeResponse } = this.props;
 
-        dispatch(openChat(_participant));
+        if (isChallengeResponse) {
+            dispatch(handleChallengeResponseInitialized(participantID));
+        } else {
+
+            dispatch(openChat(_participant));
+        }
     }
 
     /**

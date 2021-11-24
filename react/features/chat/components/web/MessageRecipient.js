@@ -38,9 +38,17 @@ class MessageRecipient extends AbstractMessageRecipient<Props> {
      * @returns {void}
      */
     _onKeyPress(e) {
-        if (this.props._onRemovePrivateMessageRecipient && (e.key === ' ' || e.key === 'Enter')) {
+        if (
+            (this.props._onRemovePrivateMessageRecipient || this.props._onHideChallengeResponseRecipient)
+                     && (e.key === ' ' || e.key === 'Enter')
+        ) {
             e.preventDefault();
-            this.props._onRemovePrivateMessageRecipient();
+
+            if (this.props._challengeResponseIsActive && this.props._onHideChallengeResponseRecipient) {
+                this.props._onHideChallengeResponseRecipient();
+            } else if (this.props._onRemovePrivateMessageRecipient) {
+                this.props._onRemovePrivateMessageRecipient();
+            }
         }
     }
 
@@ -50,9 +58,10 @@ class MessageRecipient extends AbstractMessageRecipient<Props> {
      * @inheritdoc
      */
     render() {
-        const { _privateMessageRecipient } = this.props;
+        const { _privateMessageRecipient, _challengeResponseIsActive,
+            _challengeResponseRecipient, _visible } = this.props;
 
-        if (!_privateMessageRecipient) {
+        if ((!_privateMessageRecipient && !_challengeResponseIsActive) || !_visible) {
             return null;
         }
 
@@ -60,16 +69,18 @@ class MessageRecipient extends AbstractMessageRecipient<Props> {
 
         return (
             <div
+                className = { _challengeResponseIsActive ? 'challenge-response-recipient' : '' }
                 id = 'chat-recipient'
                 role = 'alert'>
                 <span>
-                    { t('chat.messageTo', {
-                        recipient: _privateMessageRecipient
+                    { t(_challengeResponseIsActive ? 'chat.challengeResponseMessageTo' : 'chat.messageTo', {
+                        recipient: _challengeResponseIsActive ? _challengeResponseRecipient : _privateMessageRecipient
                     }) }
                 </span>
                 <div
                     aria-label = { t('dialog.close') }
-                    onClick = { this.props._onRemovePrivateMessageRecipient }
+                    onClick = { _challengeResponseIsActive
+                        ? this.props._onHideChallengeResponseRecipient : this.props._onRemovePrivateMessageRecipient }
                     onKeyPress = { this._onKeyPress }
                     role = 'button'
                     tabIndex = { 0 }>

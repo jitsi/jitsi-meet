@@ -8,6 +8,7 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { reloadNow } from '../../app/actions';
+import { removeChallengeResponseParticipant } from '../../chat/actions.any';
 import { openDisplayNamePrompt } from '../../display-name';
 import { showErrorNotification } from '../../notifications';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED, connectionDisconnected } from '../connection';
@@ -203,6 +204,7 @@ function _conferenceJoined({ dispatch, getState }, next, action) {
     const { pendingSubjectChange } = getState()['features/base/conference'];
     const { requireDisplayName } = getState()['features/base/config'];
 
+    dispatch(removeChallengeResponseParticipant(true));
     pendingSubjectChange && dispatch(setSubject(pendingSubjectChange));
 
     // FIXME: Very dirty solution. This will work on web only.

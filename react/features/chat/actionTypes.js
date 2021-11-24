@@ -74,3 +74,32 @@ export const SET_PRIVATE_MESSAGE_RECIPIENT = 'SET_PRIVATE_MESSAGE_RECIPIENT';
  * }
  */
 export const SET_IS_POLL_TAB_FOCUSED = 'SET_IS_POLL_TAB_FOCUSED';
+
+/**
+ * The type of action which sets the current recipient for lobby messages.
+ *
+ * {
+ *     participant: Object,
+ *     type: SET_CHALLENGE_RESPONSE_RECIPIENT
+ * }
+ */
+export const SET_CHALLENGE_RESPONSE_RECIPIENT = 'SET_CHALLENGE_RESPONSE_RECIPIENT';
+
+/**
+ * The type of action sets the state of lobby messaging status.
+ *
+ * {
+ *     type: SET_CHALLENGE_RESPONSE_ACTIVE_STATE
+ *     payload: boolean
+ * }
+ */
+export const SET_CHALLENGE_RESPONSE_ACTIVE_STATE = 'SET_CHALLENGE_RESPONSE_ACTIVE_STATE';
+
+/**
+ * The type of action removes the lobby messaging from with participant.
+ *
+ * {
+ *     type: REMOVE_CHALLENGE_RESPONSE_PARTICIPANT
+ * }
+ */
+export const REMOVE_CHALLENGE_RESPONSE_PARTICIPANT = 'REMOVE_CHALLENGE_RESPONSE_PARTICIPANT';

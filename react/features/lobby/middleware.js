@@ -9,6 +9,7 @@ import { getFirstLoadableAvatarUrl, getParticipantDisplayName } from '../base/pa
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { isTestModeEnabled } from '../base/testing';
+import { removeChallengeResponseParticipant } from '../chat/actions.any';
 import { NOTIFICATION_TYPE, showNotification } from '../notifications';
 import { shouldAutoKnock } from '../prejoin/functions';
 
@@ -20,8 +21,10 @@ import {
     participantIsKnockingOrUpdated,
     setLobbyModeEnabled,
     startKnocking,
-    setPasswordJoinFailed
+    setPasswordJoinFailed,
+    setChallengeResponseListener
 } from './actions';
+import { updateLobbyParticipantOnModeratorLeave } from './actions.any';
 import { KNOCKING_PARTICIPANT_SOUND_ID } from './constants';
 import { KNOCKING_PARTICIPANT_FILE } from './sounds';
 
@@ -62,6 +65,9 @@ StateListenerRegistry.register(
         if (conference && !previousConference) {
             conference.on(JitsiConferenceEvents.MEMBERS_ONLY_CHANGED, enabled => {
                 dispatch(setLobbyModeEnabled(enabled));
+                if (enabled) {
+                    dispatch(setChallengeResponseListener());
+                }
             });
 
             conference.on(JitsiConferenceEvents.LOBBY_USER_JOINED, (id, name) => {
@@ -88,7 +94,11 @@ StateListenerRegistry.register(
             });
 
             conference.on(JitsiConferenceEvents.LOBBY_USER_LEFT, id => {
-                dispatch(knockingParticipantLeft(id));
+                batch(() => {
+                    dispatch(knockingParticipantLeft(id));
+                    dispatch(removeChallengeResponseParticipant());
+                    dispatch(updateLobbyParticipantOnModeratorLeave(id));
+                });
             });
 
             conference.on(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED, (origin, sender) =>

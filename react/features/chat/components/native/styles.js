@@ -156,6 +156,19 @@ ColorSchemeRegistry.register('Chat', {
         flex: 1
     },
 
+    challengeResponseNotice: {
+        color: schemeColor('challengeResponseBackground'),
+        fontSize: 11,
+        marginTop: 6
+    },
+
+    challengeResponseRecipientContainer: {
+        alignItems: 'center',
+        backgroundColor: schemeColor('challengeResponseBackground'),
+        flexDirection: 'row',
+        padding: BoxModel.padding
+    },
+
     /**
      * The text node for the display name.
      */

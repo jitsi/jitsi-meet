@@ -11,7 +11,7 @@ import { type StyleType } from '../../../base/styles';
 import {
     setParams
 } from '../../../conference/components/native/ConferenceNavigationContainerRef';
-import { setPrivateMessageRecipient } from '../../actions.any';
+import { setPrivateMessageRecipient, setChallengeResponseActiveState } from '../../actions.any';
 import AbstractMessageRecipient, {
     type Props as AbstractProps
 } from '../AbstractMessageRecipient';
@@ -32,6 +32,16 @@ type Props = AbstractProps & {
      * The participant object set for private messaging.
      */
     privateMessageRecipient: Object,
+
+    /**
+     * Is lobby messaging active.
+     */
+    challengeResponseIsActive: boolean,
+
+    /**
+     * The participant string for challenge-response messaging.
+     */
+    challengeResponseRecipient: Object,
 };
 
 /**
@@ -48,6 +58,7 @@ class MessageRecipient extends AbstractMessageRecipient<Props> {
         super(props);
 
         this._onResetPrivateMessageRecipient = this._onResetPrivateMessageRecipient.bind(this);
+        this._onResetChallengeResponseMessageRecipient = this._onResetChallengeResponseMessageRecipient.bind(this);
     }
 
     _onResetPrivateMessageRecipient: () => void;
@@ -67,6 +78,19 @@ class MessageRecipient extends AbstractMessageRecipient<Props> {
         });
     }
 
+    _onResetChallengeResponseMessageRecipient: () => void;
+
+    /**
+     * Resets private message recipient from state.
+     *
+     * @returns {void}
+     */
+    _onResetChallengeResponseMessageRecipient() {
+        const { dispatch } = this.props;
+
+        dispatch(setChallengeResponseActiveState(false));
+    }
+
     /**
      * Implements {@code PureComponent#render}.
      *
@@ -74,7 +98,26 @@ class MessageRecipient extends AbstractMessageRecipient<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _styles, privateMessageRecipient, t } = this.props;
+        const { _styles, privateMessageRecipient, t,
+            challengeResponseIsActive, challengeResponseRecipient } = this.props;
+
+        if (challengeResponseIsActive) {
+            return (
+                <View style = { _styles.challengeResponseRecipientContainer }>
+                    <Text style = { _styles.messageRecipientText }>
+                        { t('chat.challengeResponseMessageTo', {
+                            recipient: challengeResponseRecipient.name
+                        }) }
+                    </Text>
+                    <TouchableHighlight
+                        onPress = { this._onResetChallengeResponseMessageRecipient }>
+                        <Icon
+                            src = { IconCancelSelection }
+                            style = { _styles.messageRecipientCancelIcon } />
+                    </TouchableHighlight>
+                </View>
+            );
+        }
 
         if (!privateMessageRecipient) {
             return null;
@@ -105,8 +148,12 @@ class MessageRecipient extends AbstractMessageRecipient<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
+    const { challengeResponseRecipient, challengeResponseIsActive } = state['features/chat'];
+
     return {
-        _styles: ColorSchemeRegistry.get(state, 'Chat')
+        _styles: ColorSchemeRegistry.get(state, 'Chat'),
+        challengeResponseIsActive,
+        challengeResponseRecipient
     };
 }
 

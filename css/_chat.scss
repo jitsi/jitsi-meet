@@ -85,6 +85,10 @@
             fill: white;
         }
     }
+
+    &.challenge-response-recipient {
+        background-color: $chatChallengeResponseMessageBackgroundColor;
+    }
 }
 
 
@@ -455,6 +459,9 @@
             &.privatemessage {
                 background-color: $chatPrivateMessageBackgroundColor;
             }
+            &.challengeresponsemessage {
+                background-color: $chatChallengeResponseMessageBackgroundColor;
+            }
         }
 
         .display-name {
@@ -493,7 +500,9 @@
                 flex-direction: column;
                 justify-content: center;
                 padding: 5px;
-
+                &.challengeresponsemessageactions {
+                    border-left-color: $chatChallengeResponseActionSeparatorColor;
+                }
                 .toolbox-icon {
                     cursor: pointer;
                 }
@@ -510,6 +519,9 @@
 
         &.privatemessage {
             background-color: $chatPrivateMessageBackgroundColor;
+        }
+        &.challengeresponsemessage {
+            background-color: $chatChallengeResponseMessageBackgroundColor;
         }
     }
 }

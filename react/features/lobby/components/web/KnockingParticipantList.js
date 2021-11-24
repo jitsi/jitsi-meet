@@ -4,6 +4,7 @@ import React from 'react';
 
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
+import { handleChallengeResponseInitialized } from '../../../chat/actions.any';
 import NotificationWithParticipants from '../../../notifications/components/web/NotificationWithParticipants';
 import { approveKnockingParticipant, rejectKnockingParticipant } from '../../actions';
 import AbstractKnockingParticipantList, {
@@ -29,7 +30,9 @@ class KnockingParticipantList extends AbstractKnockingParticipantList<Props> {
      * @inheritdoc
      */
     render() {
-        const { _participants, _visible, t } = this.props;
+        const { _participants, _visible, _challengeResponseIsActive,
+            _challengeResponseRecipient, _lobbyLocalId, _enableChallengeResponseInLobby, t }
+            = this.props;
 
         if (!_visible) {
             return null;
@@ -42,7 +45,12 @@ class KnockingParticipantList extends AbstractKnockingParticipantList<Props> {
                 </div>
                 <NotificationWithParticipants
                     approveButtonText = { t('lobby.allow') }
+                    challengeResponseIsActive = { _challengeResponseIsActive }
+                    challengeResponseRecipient = { _challengeResponseRecipient }
+                    enableChallengeResponseInLobby = { _enableChallengeResponseInLobby }
+                    lobbyLocalId = { _lobbyLocalId }
                     onApprove = { approveKnockingParticipant }
+                    onHandleChallengeResponseInitialized = { handleChallengeResponseInitialized }
                     onReject = { rejectKnockingParticipant }
                     participants = { _participants }
                     rejectButtonText = { t('lobby.reject') }

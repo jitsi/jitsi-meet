@@ -32,7 +32,7 @@ type Props = {
 
     /**
      * The flag which shows if the facial recognition is enabled, obtained from the redux store.
-     * if enabled facial expressions are shown
+     * If enabled facial expressions are shown.
      */
     _enableFacialRecognition: boolean,
 
@@ -43,7 +43,7 @@ type Props = {
 
     /**
      * The flag which shows if all the facial expressions are shown or only 4
-     * if true show only 4, if false show all
+     * if true show only 4, if false show all.
      */
     _reduceExpressions: boolean,
 

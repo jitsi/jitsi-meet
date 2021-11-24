@@ -39,6 +39,17 @@ export type Props = {
     showTimestamp: boolean,
 
     /**
+     * Whether current participant is currently knocking in the lobby room.
+     */
+    knocking: boolean,
+
+    /**
+     * Whether or not the time at which the message was sent should be
+     * displayed.
+     */
+    showTimestamp: boolean,
+
+    /**
      * Invoked to receive translated strings.
      */
     t: Function
@@ -82,6 +93,19 @@ export default class AbstractChatMessage<P: Props> extends PureComponent<P> {
         const { message, t } = this.props;
 
         return t('chat.privateNotice', {
+            recipient: message.messageType === MESSAGE_TYPE_LOCAL ? message.recipient : t('chat.you')
+        });
+    }
+
+    /**
+     * Returns the message that is displayed as a notice for challenge response messages.
+     *
+     * @returns {string}
+     */
+    _getLobbyNoticeMessage() {
+        const { message, t } = this.props;
+
+        return t('chat.challengeResponseNotice', {
             recipient: message.messageType === MESSAGE_TYPE_LOCAL ? message.recipient : t('chat.you')
         });
     }

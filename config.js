@@ -433,6 +433,9 @@ var config = {
     // If Lobby is enabled starts knocking automatically.
     // autoKnockLobby: false,
 
+    // Enable challenge response in lobby room
+    //  enableChallengeResponseInLobby: true,
+
     // Hides add breakout room button
     // hideAddRoomButton: false,
 

@@ -123,6 +123,7 @@ import {
     maybeOpenFeedbackDialog,
     submitFeedback
 } from './react/features/feedback';
+import { maybeSetChallengeResponseMessageListener } from './react/features/lobby/actions.any';
 import { isModerationNotificationDisplayed, showNotification } from './react/features/notifications';
 import { mediaPermissionPromptVisibilityChanged, toggleSlowGUMOverlay } from './react/features/overlay';
 import { suspendDetected } from './react/features/power-monitor';
@@ -2122,6 +2123,10 @@ export default {
         room.on(JitsiConferenceEvents.USER_ROLE_CHANGED, (id, role) => {
             if (this.isLocalId(id)) {
                 logger.info(`My role changed, new role: ${role}`);
+
+                if (role === 'moderator') {
+                    APP.store.dispatch(maybeSetChallengeResponseMessageListener());
+                }
 
                 APP.store.dispatch(localParticipantRoleChanged(role));
                 APP.API.notifyUserRoleChanged(id, role);

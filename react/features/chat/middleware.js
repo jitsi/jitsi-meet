@@ -1,4 +1,5 @@
 // @flow
+import { type Dispatch } from 'redux';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import {
@@ -34,6 +35,7 @@ import { closeChat } from './actions.any';
 import { ChatPrivacyDialog } from './components';
 import {
     INCOMING_MSG_SOUND_ID,
+    CHALLENGE_RESPONSE_MESSAGE,
     MESSAGE_TYPE_ERROR,
     MESSAGE_TYPE_LOCAL,
     MESSAGE_TYPE_REMOTE
@@ -121,7 +123,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     case SEND_MESSAGE: {
         const state = store.getState();
-        const { conference } = state['features/base/conference'];
+        const conference = getCurrentConference(state);
 
         if (conference) {
             // There may be cases when we intend to send a private message but we forget to set the
@@ -136,13 +138,20 @@ MiddlewareRegistry.register(store => next => action => {
             } else {
                 // Sending the message if privacy notice doesn't need to be shown.
 
-                const { privateMessageRecipient } = state['features/chat'];
+                const { privateMessageRecipient, challengeResponseIsActive, challengeResponseRecipient }
+                    = state['features/chat'];
 
                 if (typeof APP !== 'undefined') {
                     APP.API.notifySendingChatMessage(action.message, Boolean(privateMessageRecipient));
                 }
 
-                if (privateMessageRecipient) {
+                if (challengeResponseIsActive && challengeResponseRecipient) {
+                    conference.sendPrivateLobbyMessage(challengeResponseRecipient.id, {
+                        type: CHALLENGE_RESPONSE_MESSAGE,
+                        message: action.message
+                    });
+                    _persistSentPrivateMessage(store, challengeResponseRecipient.id, action.message, true);
+                } else if (privateMessageRecipient) {
                     conference.sendPrivateTextMessage(privateMessageRecipient.id, action.message);
                     _persistSentPrivateMessage(store, privateMessageRecipient.id, action.message);
                 } else {
@@ -158,7 +167,8 @@ MiddlewareRegistry.register(store => next => action => {
             id: localParticipant.id,
             message: action.message,
             privateMessage: false,
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            challengeResponse: false
         }, false, true);
     }
     }
@@ -219,6 +229,7 @@ function _addChatMsgListener(conference, store) {
                 id,
                 message,
                 privateMessage: false,
+                challengeResponse: false,
                 timestamp
             });
         }
@@ -231,6 +242,7 @@ function _addChatMsgListener(conference, store) {
                 id,
                 message,
                 privateMessage: true,
+                challengeResponse: false,
                 timestamp
             });
         }
@@ -257,6 +269,7 @@ function _addChatMsgListener(conference, store) {
                         id: _id,
                         message: getReactionMessageFromBuffer(eventData.reactions),
                         privateMessage: false,
+                        challengeResponse: false,
                         timestamp: eventData.timestamp
                     }, false, true);
                 }
@@ -287,6 +300,48 @@ function _handleChatError({ dispatch }, error) {
 }
 
 /**
+ * Function to handle an incoming chat message from lobby room.
+ *
+ * @param {string} message - The message received.
+ * @param {string} participantId - The participant id.
+ * @returns {Function}
+ */
+export function handleChallengeResponseMessageReceived(message: string, participantId: string) {
+    return async (dispatch: Dispatch<any>, getState: Function) => {
+        _handleReceivedMessage({ dispatch,
+            getState }, { id: participantId,
+            message,
+            privateMessage: false,
+            challengeResponse: true,
+            timestamp: Date.now() });
+    };
+}
+
+
+/**
+ * Function to get challenge-response user display name.
+ *
+ * @param {Store} state - The Redux store.
+ * @param {string} id - The knocking participant id.
+ * @returns {string}
+ */
+function getChallengeResponseDisplayName(state, id) {
+    const { knockingParticipants } = state['features/lobby'];
+    const { challengeResponseRecipient } = state['features/chat'];
+
+    if (id === challengeResponseRecipient.id) {
+        return challengeResponseRecipient.name;
+    }
+
+    const knockingParticipant = knockingParticipants.find(p => p.id === id);
+
+    if (knockingParticipant) {
+        return knockingParticipant.name;
+    }
+
+}
+
+/**
  * Function to handle an incoming chat message.
  *
  * @param {Store} store - The Redux store.
@@ -296,7 +351,7 @@ function _handleChatError({ dispatch }, error) {
  * @returns {void}
  */
 function _handleReceivedMessage({ dispatch, getState },
-        { id, message, privateMessage, timestamp },
+        { id, message, privateMessage, timestamp, challengeResponse },
         shouldPlaySound = true,
         isReaction = false
 ) {
@@ -314,7 +369,9 @@ function _handleReceivedMessage({ dispatch, getState },
     // backfilled for a participant that has left the conference.
     const participant = getParticipantById(state, id) || {};
     const localParticipant = getLocalParticipant(getState);
-    const displayName = getParticipantDisplayName(state, id);
+    const displayName = challengeResponse
+        ? getChallengeResponseDisplayName(state, id)
+        : getParticipantDisplayName(state, id);
     const hasRead = participant.local || isChatOpen;
     const timestampToDate = timestamp ? new Date(timestamp) : new Date();
     const millisecondsTimestamp = timestampToDate.getTime();
@@ -326,6 +383,7 @@ function _handleReceivedMessage({ dispatch, getState },
         messageType: participant.local ? MESSAGE_TYPE_LOCAL : MESSAGE_TYPE_REMOTE,
         message,
         privateMessage,
+        challengeResponse,
         recipient: getParticipantDisplayName(state, localParticipant.id),
         timestamp: millisecondsTimestamp,
         isReaction
@@ -359,11 +417,14 @@ function _handleReceivedMessage({ dispatch, getState },
  * @param {Store} store - The Redux store.
  * @param {string} recipientID - The ID of the recipient the private message was sent to.
  * @param {string} message - The sent message.
+ * @param {boolean} isLobbyPrivateMessage - Is a lobby message.
  * @returns {void}
  */
-function _persistSentPrivateMessage({ dispatch, getState }, recipientID, message) {
-    const localParticipant = getLocalParticipant(getState);
-    const displayName = getParticipantDisplayName(getState, localParticipant.id);
+function _persistSentPrivateMessage({ dispatch, getState }, recipientID, message, isLobbyPrivateMessage = false) {
+    const state = getState();
+    const localParticipant = getLocalParticipant(state);
+    const displayName = getParticipantDisplayName(state, localParticipant.id);
+    const { challengeResponseRecipient } = state['features/chat'];
 
     dispatch(addMessage({
         displayName,
@@ -371,8 +432,11 @@ function _persistSentPrivateMessage({ dispatch, getState }, recipientID, message
         id: localParticipant.id,
         messageType: MESSAGE_TYPE_LOCAL,
         message,
-        privateMessage: true,
-        recipient: getParticipantDisplayName(getState, recipientID),
+        privateMessage: !isLobbyPrivateMessage,
+        challengeResponse: isLobbyPrivateMessage,
+        recipient: isLobbyPrivateMessage
+            ? challengeResponseRecipient && challengeResponseRecipient.name
+            : getParticipantDisplayName(getState, recipientID),
         timestamp: Date.now()
     }));
 }

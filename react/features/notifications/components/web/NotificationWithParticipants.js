@@ -3,6 +3,7 @@
 import React from 'react';
 
 import { Avatar } from '../../../base/avatar';
+import { Icon, IconChat } from '../../../base/icons';
 import { HIDDEN_EMAILS } from '../../../lobby/constants';
 
 import NotificationButton from './NotificationButton';
@@ -18,6 +19,11 @@ type Props = {
      * Callback used when clicking the ok/approve button.
      */
     onApprove: Function,
+
+    /**
+     * Callback used for handling lobby message initialized.
+     */
+    onHandleChallengeResponseInitialized: Function,
 
     /**
      * Callback used when clicking the reject button.
@@ -38,7 +44,27 @@ type Props = {
     /**
      * String prefix used for button `test-id`.
      */
-     testIdPrefix: string
+     testIdPrefix: string,
+
+    /**
+     * Checks the state of current lobby messaging.
+    */
+    challengeResponseIsActive: boolean,
+
+    /**
+     * The current challenge-response recipient.
+     */
+     challengeResponseRecipient: ?Object,
+
+    /**
+     * The lobby local id of the current moderator.
+     */
+     lobbyLocalId: string,
+
+    /**
+     * Config setting for enabling challenge-response feature.
+     */
+     enableChallengeResponseInLobby: boolean
 }
 
 /**
@@ -53,7 +79,12 @@ export default function({
     onReject,
     participants,
     testIdPrefix,
-    rejectButtonText
+    rejectButtonText,
+    challengeResponseIsActive,
+    onHandleChallengeResponseInitialized,
+    challengeResponseRecipient,
+    lobbyLocalId,
+    enableChallengeResponseInLobby
 }: Props): React$Element<'ul'> {
     return (
         <ul className = 'knocking-participants-container'>
@@ -94,6 +125,26 @@ export default function({
                         testId = { `${testIdPrefix}.reject` }>
                         { rejectButtonText }
                     </NotificationButton>}
+                    {
+                        ((!challengeResponseIsActive && (!p.chattingWithModerator
+                            || p.chattingWithModerator === lobbyLocalId))
+                            || (challengeResponseIsActive && challengeResponseRecipient
+                                && p.id !== challengeResponseRecipient.id
+                                    && (!p.chattingWithModerator || p.chattingWithModerator === lobbyLocalId)))
+                                        && enableChallengeResponseInLobby
+                            ? (
+                                <NotificationButton
+                                    action = { onHandleChallengeResponseInitialized }
+                                    className = 'borderLess'
+                                    id = 'chat-button'
+                                    participant = { p }
+                                    testId = { `${testIdPrefix}.chat` }>
+                                    <Icon
+                                        className = 'icon'
+                                        size = { 14 }
+                                        src = { IconChat } />
+                                </NotificationButton>
+                            ) : null}
                 </li>
             )) }
         </ul>);

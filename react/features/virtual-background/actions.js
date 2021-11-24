@@ -72,7 +72,7 @@ export function backgroundEnabled(backgroundEffectEnabled: boolean) {
     };
 }
 
-/**
+/** ...................................................................................................
  * Signals if the local track was changed due to a changes of the virtual background.
  *
  * @returns {{

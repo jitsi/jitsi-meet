@@ -30,6 +30,12 @@ export const MESSAGE_TYPE_REMOTE = 'remote';
 
 export const SMALL_WIDTH_THRESHOLD = 580;
 
+
+/**
+ * Lobby message type.
+ */
+export const CHALLENGE_RESPONSE_MESSAGE = 'CHALLENGE_RESPONSE_MESSAGE';
+
 /**
  * The modes of the buttons of the chat and polls tabs.
  */

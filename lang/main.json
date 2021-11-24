@@ -72,6 +72,8 @@
         "today": "Today"
     },
     "chat": {
+        "challengeResponseNotice": "Challenge-response message to {{recipient}}",
+        "challengeResponseMessageTo": "Challenge-response message to {{recipient}}",
         "enter": "Enter room",
         "error": "Error: your message was not sent. Reason: {{error}}",
         "fieldPlaceHolder": "Type your message here",
@@ -1180,6 +1182,8 @@
         "knockingParticipantList": "Knocking participant list",
         "allow": "Allow",
         "backToKnockModeButton": "Ask to join",
+        "challengeResponseStartedNotification": "{{moderator}} started a challenge-response chat with {{attendee}}",
+        "challengeResponseStartedTitle": "{{moderator}} has started a challenge-response chat with you.",
         "dialogTitle": "Lobby mode",
         "disableDialogContent": "Lobby mode is currently enabled. This feature ensures that unwanted participants can't join your meeting. Do you want to disable it?",
         "disableDialogSubmit": "Disable",

@@ -1,4 +1,9 @@
 // @flow
+import { type Dispatch } from 'redux';
+
+import { getCurrentConference } from '../base/conference';
+import { getLocalParticipant } from '../base/participants';
+import { CHALLENGE_RESPONSE_INITIALIZED } from '../lobby/constants';
 
 import {
     ADD_MESSAGE,
@@ -6,7 +11,10 @@ import {
     CLOSE_CHAT,
     SEND_MESSAGE,
     SET_PRIVATE_MESSAGE_RECIPIENT,
-    SET_IS_POLL_TAB_FOCUSED
+    SET_IS_POLL_TAB_FOCUSED,
+    SET_CHALLENGE_RESPONSE_RECIPIENT,
+    REMOVE_CHALLENGE_RESPONSE_PARTICIPANT,
+    SET_CHALLENGE_RESPONSE_ACTIVE_STATE
 } from './actionTypes';
 
 /**
@@ -112,5 +120,116 @@ export function setIsPollsTabFocused(isPollsTabFocused: boolean) {
     return {
         isPollsTabFocused,
         type: SET_IS_POLL_TAB_FOCUSED
+    };
+}
+
+/**
+ * Initiates the sending of messages between a moderator and a lobby attendee.
+ *
+ * @param {Object} challengeResponseInititializedInfo - The information about the attendee and the moderator
+ * that is going to chat.
+ *
+ * @returns {Function}
+ */
+export function onChallengeResponseInitialized(challengeResponseInititializedInfo: Object) {
+    return async (dispatch: Dispatch<any>, getState: Function) => {
+        const state = getState();
+        const conference = getCurrentConference(state);
+
+        const lobbyLocalId = conference.getLobbyLocalId();
+
+        if (!lobbyLocalId) {
+            return;
+        }
+
+        if (challengeResponseInititializedInfo.moderator.id === lobbyLocalId) {
+            dispatch({
+                type: SET_CHALLENGE_RESPONSE_RECIPIENT,
+                participant: challengeResponseInititializedInfo.attendee,
+                open: true
+            });
+        }
+
+        if (challengeResponseInititializedInfo.attendee.id === lobbyLocalId) {
+            return dispatch({
+                type: SET_CHALLENGE_RESPONSE_RECIPIENT,
+                participant: challengeResponseInititializedInfo.moderator,
+                open: false
+            });
+        }
+    };
+}
+
+/**
+ * Sets the lobby room's chat active state.
+ *
+ * @param {boolean} value - The active state.
+ *
+ * @returns {Object}
+ */
+export function setChallengeResponseActiveState(value: boolean) {
+    return {
+        type: SET_CHALLENGE_RESPONSE_ACTIVE_STATE,
+        payload: value
+    };
+}
+
+/** ...................
+ * Removes lobby type messages.
+ *
+ *  @param {boolean} removeChallengeResponses - The participant to remove
+ * If not specified, it will delete all lobby messages.
+ *
+ * @returns {Object}
+ */
+export function removeChallengeResponseParticipant(removeChallengeResponses: ?boolean) {
+    return {
+        type: REMOVE_CHALLENGE_RESPONSE_PARTICIPANT,
+        removeChallengeResponses
+    };
+}
+
+/** .........
+ * Handles initial setup of lobby message between
+ * Moderator and participant.
+ *
+ * @param {string} participantId - The participant id.
+ *
+ * @returns {Object}
+ */
+export function handleChallengeResponseInitialized(participantId: string) {
+    return async (dispatch: Dispatch<any>, getState: Function) => {
+        const state = getState();
+        const conference = state['features/base/conference'].conference;
+        const { knockingParticipants } = state['features/lobby'];
+        const { challengeResponseRecipient } = state['features/chat'];
+        const me = getLocalParticipant(state);
+        const lobbyLocalId = conference.getLobbyLocalId();
+
+
+        if (challengeResponseRecipient && challengeResponseRecipient.id === participantId) {
+            return dispatch(setChallengeResponseActiveState(true));
+        }
+
+        const attendee = knockingParticipants.find(p => p.id === participantId);
+
+        if (attendee && attendee.chattingWithModerator === lobbyLocalId) {
+            return dispatch({
+                type: SET_CHALLENGE_RESPONSE_RECIPIENT,
+                participant: attendee,
+                open: true
+            });
+        }
+
+        if (!attendee) {
+            return;
+        }
+
+        return conference.sendLobbyMessage({ type: CHALLENGE_RESPONSE_INITIALIZED,
+            moderator: {
+                ...me,
+                id: lobbyLocalId
+            },
+            attendee });
     };
 }

@@ -155,8 +155,11 @@ function filter_stanza(stanza)
             if is_to_moderator and lobby_room:get_affiliation(from_real_jid) ~= 'owner' then
                 return stanza;
             end
-        elseif stanza.name == 'iq' and stanza:get_child('query', DISCO_INFO_NS) then
+        elseif stanza.name == 'iq' then
             -- allow disco info from the lobby component
+            return stanza;
+        elseif stanza.name == 'message' then
+            -- allow messages in lobby room
             return stanza;
         end
 

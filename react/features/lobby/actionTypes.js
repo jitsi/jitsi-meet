@@ -29,3 +29,13 @@ export const SET_LOBBY_VISIBILITY = 'TOGGLE_LOBBY_VISIBILITY';
  * Action type to set the password join failed status.
  */
 export const SET_PASSWORD_JOIN_FAILED = 'SET_PASSWORD_JOIN_FAILED';
+
+/**
+ * Action type to set a challenge-response participant's state to chatting
+ */
+export const SET_CHALLENGE_RESPONSE_PARTICIPANT_IS_CHATTING = 'SET_CHALLENGE_RESPONSE_PARTICIPANT_IS_CHATTING';
+
+/**
+ * Action type to remove chattingWithModerator field
+ */
+export const REMOVE_CHALLENGE_RESPONSETING_WITH_MODERATOR = 'REMOVE_CHALLENGE_RESPONSETING_WITH_MODERATOR';

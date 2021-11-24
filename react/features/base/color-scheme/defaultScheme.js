@@ -15,6 +15,7 @@ export default {
         text: 'rgb(28, 32, 37)'
     },
     'Chat': {
+        challengeResponseBackground: 'rgb(3, 118, 218)',
         displayName: 'rgb(94, 109, 121)',
         localMsgBackground: 'rgb(215, 230, 249)',
         privateMsgBackground: 'rgb(250, 219, 219)',

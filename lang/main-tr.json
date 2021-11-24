@@ -65,6 +65,8 @@
         "today": "Bugün"
     },
     "chat": {
+        "challengeResponseNotice": "{{recipient}} için soru-cevap mesajı",
+        "challengeResponseMessageTo": "{{recipient}} adlı kişiye soru cevap mesajı",
         "enter": "Odaya gir",
         "error": "Hata: Mesajınız gönderilmedi. Neden: {{error}}",
         "fieldPlaceHolder": "Mesajınızı buraya yazın",
@@ -1166,6 +1168,8 @@
         "admit": "Kabul et",
         "allow": "İzin ver",
         "admitAll": "Hepsini kabul et",
+        "challengeResponseStartedNotification": "{{moderator}} {{attendee}} adlı kişiyle soru-cevap mesajlaşması başlattı",
+        "challengeResponseStartedTitle": "{{moderator}} sizinle soru-cevap mesajlaşması başlattı",
         "knockingParticipantList": "Kapıyı çalan katılımcı listesi",
         "backToKnockModeButton": "Parola yok, bunun yerine katılmayı isteyin",
         "dialogTitle": "Lobi modu",

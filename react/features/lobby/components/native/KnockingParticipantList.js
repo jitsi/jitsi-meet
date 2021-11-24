@@ -5,6 +5,7 @@ import { ScrollView, Text, View, TouchableOpacity } from 'react-native';
 
 import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n';
+import { Icon, IconChat } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { HIDDEN_EMAILS } from '../../constants';
 import AbstractKnockingParticipantList, {
@@ -24,7 +25,8 @@ class KnockingParticipantList extends AbstractKnockingParticipantList {
      * @inheritdoc
      */
     render() {
-        const { _participants, _visible, t } = this.props;
+        const { _participants, _visible, _challengeResponseIsActive,
+            _challengeResponseRecipient, _lobbyLocalId, _enableChallengeResponseInLobby, t } = this.props;
 
         if (!_visible) {
             return null;
@@ -71,6 +73,25 @@ class KnockingParticipantList extends AbstractKnockingParticipantList {
                                 { t('lobby.reject') }
                             </Text>
                         </TouchableOpacity>
+                        { ((!_challengeResponseIsActive && (!p.chattingWithModerator
+                            || p.chattingWithModerator === _lobbyLocalId))
+                            || (_challengeResponseIsActive && _challengeResponseRecipient
+                                && p.id !== _challengeResponseRecipient.id
+                                    && (!p.chattingWithModerator || p.chattingWithModerator === _lobbyLocalId)))
+                                        && _enableChallengeResponseInLobby
+                            ? (
+                                <TouchableOpacity
+                                    onPress = { this._onInitializeChallengeResponseChat(p.id) }
+                                    style = { [
+                                        styles.knockingParticipantListButton,
+                                        styles.knockingParticipantListSecondaryButton
+                                    ] }>
+                                    <Icon
+                                        className = 'icon'
+                                        size = { 14 }
+                                        src = { IconChat } />
+                                </TouchableOpacity>
+                            ) : null}
                     </View>
                 )) }
             </ScrollView>
@@ -78,6 +99,7 @@ class KnockingParticipantList extends AbstractKnockingParticipantList {
     }
 
     _onRespondToParticipant: (string, boolean) => Function;
+    _onInitializeChallengeResponseChat: (string) => Function;
 }
 
 /**

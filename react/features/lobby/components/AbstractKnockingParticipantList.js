@@ -3,6 +3,9 @@
 import { PureComponent } from 'react';
 
 import { isLocalParticipantModerator } from '../../base/participants';
+import { handleChallengeResponseInitialized } from '../../chat/actions.any';
+import { navigate } from '../../conference/components/native/ConferenceNavigationContainerRef';
+import { screen } from '../../conference/components/native/routes';
 import { setKnockingParticipantApproval } from '../actions';
 import { getKnockingParticipants, getLobbyEnabled } from '../functions';
 
@@ -26,7 +29,32 @@ export type Props = {
     /**
      * Function to be used to translate i18n labels.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * Checks the state of current lobby messaging.
+     */
+     _challengeResponseIsActive: boolean,
+
+    /**
+     * The current challenge-response recipient.
+     */
+     _challengeResponseRecipient: Object,
+
+    /**
+     * The lobby local id of the current moderator.
+     */
+     _lobbyLocalId: string,
+
+    /**
+     * Config setting for enabling challenge-response feature.
+     */
+     _enableChallengeResponseInLobby: boolean,
+
+     /**
+      * True if the polls feature is disabled.
+      */
+     _isPollsDisabled: boolean
 };
 
 /**
@@ -42,6 +70,7 @@ export default class AbstractKnockingParticipantList<P: Props = Props> extends P
         super(props);
 
         this._onRespondToParticipant = this._onRespondToParticipant.bind(this);
+        this._onInitializeChallengeResponseChat = this._onInitializeChallengeResponseChat.bind(this);
     }
 
     _onRespondToParticipant: (string, boolean) => Function;
@@ -58,6 +87,24 @@ export default class AbstractKnockingParticipantList<P: Props = Props> extends P
             this.props.dispatch(setKnockingParticipantApproval(id, approve));
         };
     }
+
+    _onInitializeChallengeResponseChat: (string) => Function;
+
+    /**
+     * Function that constructs a callback for the challenge response chat button.
+     *
+     * @param {string} id - The id of the knocking participant.
+     * @returns {Function}
+     */
+    _onInitializeChallengeResponseChat(id) {
+        return () => {
+            this.props.dispatch(handleChallengeResponseInitialized(id));
+            this.props._isPollsDisabled
+                ? navigate(screen.conference.chat)
+                : navigate(screen.conference.chatandpolls.main);
+
+        };
+    }
 }
 
 /**
@@ -69,10 +116,19 @@ export default class AbstractKnockingParticipantList<P: Props = Props> extends P
 export function mapStateToProps(state: Object): $Shape<Props> {
     const lobbyEnabled = getLobbyEnabled(state);
     const knockingParticipants = getKnockingParticipants(state);
+    const { challengeResponseIsActive, challengeResponseRecipient } = state['features/chat'];
+    const { conference } = state['features/base/conference'];
+    const { enableChallengeResponseInLobby = true } = state['features/base/config'];
+    const { disablePolls } = state['features/base/config'];
 
     return {
         _participants: knockingParticipants,
         _visible: lobbyEnabled && isLocalParticipantModerator(state)
-          && Boolean(knockingParticipants && knockingParticipants.length)
+          && Boolean(knockingParticipants && knockingParticipants.length),
+        _challengeResponseIsActive: challengeResponseIsActive,
+        _challengeResponseRecipient: challengeResponseRecipient,
+        _lobbyLocalId: conference && conference.getLobbyLocalId(),
+        _enableChallengeResponseInLobby: enableChallengeResponseInLobby,
+        _isPollsDisabled: disablePolls
     };
 }

@@ -82,6 +82,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
                                 { replaceNonUnicodeEmojis(this._getMessageText()) }
                             </Linkify>
                             { this._renderPrivateNotice() }
+                            { this._renderChallengeResponseNotice() }
                         </View>
                         { this._renderPrivateReplyButton() }
                     </View>
@@ -90,6 +91,8 @@ class ChatMessage extends AbstractChatMessage<Props> {
             </View>
         );
     }
+
+    _getLobbyNoticeMessage: () => string;
 
     _getFormattedTimestamp: () => string;
 
@@ -155,21 +158,41 @@ class ChatMessage extends AbstractChatMessage<Props> {
     }
 
     /**
+     * Renders the message challenge response notice, if necessary.
+     *
+     * @returns {React$Element<*> | null}
+     */
+    _renderChallengeResponseNotice() {
+        const { _styles, message } = this.props;
+
+        if (!message.challengeResponse) {
+            return null;
+        }
+
+        return (
+            <Text style = { _styles.challengeResponseNotice }>
+                { this._getLobbyNoticeMessage() }
+            </Text>
+        );
+    }
+
+    /**
      * Renders the private reply button, if necessary.
      *
      * @returns {React$Element<*> | null}
      */
     _renderPrivateReplyButton() {
-        const { _styles, message } = this.props;
-        const { messageType, privateMessage } = message;
+        const { _styles, message, knocking } = this.props;
+        const { messageType, privateMessage, challengeResponse } = message;
 
-        if (!privateMessage || messageType === MESSAGE_TYPE_LOCAL) {
+        if (!(privateMessage || challengeResponse) || messageType === MESSAGE_TYPE_LOCAL || knocking) {
             return null;
         }
 
         return (
             <View style = { _styles.replyContainer }>
                 <PrivateMessageButton
+                    isChallengeResponse = { challengeResponse }
                     participantID = { message.id }
                     reply = { true }
                     showLabel = { false }
@@ -204,7 +227,8 @@ class ChatMessage extends AbstractChatMessage<Props> {
  */
 function _mapStateToProps(state) {
     return {
-        _styles: ColorSchemeRegistry.get(state, 'Chat')
+        _styles: ColorSchemeRegistry.get(state, 'Chat'),
+        knocking: state['features/lobby'].knocking
     };
 }
 
