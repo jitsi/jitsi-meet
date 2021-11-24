@@ -71,7 +71,7 @@ class TileViewButton<P: Props> extends AbstractButton<P, *> {
         logger.debug(`Tile view ${value ? 'enable' : 'disable'}`);
         batch(() => {
             dispatch(setTileView(value));
-            dispatch(setOverflowMenuVisible(false));
+            navigator.product !== 'ReactNative' && dispatch(setOverflowMenuVisible(false));
         });
 
     }
