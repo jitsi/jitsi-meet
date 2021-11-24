@@ -28,17 +28,14 @@ if not have_async then
     return;
 end
 
-local jid_bare = require 'util.jid'.bare;
 local jid_node = require 'util.jid'.node;
 local jid_host = require 'util.jid'.host;
-local jid_resource = require 'util.jid'.resource;
 local jid_split = require 'util.jid'.split;
 local json = require 'util.json';
 local st = require 'util.stanza';
 local uuid_gen = require 'util.uuid'.generate;
 
 local util = module:require 'util';
-local get_room_from_jid = util.get_room_from_jid;
 local is_healthcheck_room = util.is_healthcheck_room;
 
 local BREAKOUT_ROOMS_IDENTITY_TYPE = 'breakout_rooms';
@@ -69,7 +66,7 @@ local main_rooms_map = {};
 -- Utility functions
 
 function get_main_room_jid(room_jid)
-    local node, host = jid_split(room_jid);
+    local _, host = jid_split(room_jid);
 
 	return
         host == main_muc_component_config
@@ -338,7 +335,7 @@ function exist_occupants_in_room(room)
     if not room then
         return false;
     end
-    for occupant_jid, occupant in room:each_occupant() do
+    for _, occupant in room:each_occupant() do
         if jid_node(occupant.jid) ~= 'focus' then
             return true;
         end
@@ -468,7 +465,7 @@ function process_breakout_rooms_muc_loaded(breakout_rooms_muc, host_module)
 
     host_module:hook("muc-config-form", function(event)
         local room = event.room;
-        local main_room, main_room_jid = get_main_room(room.jid);
+        local _, main_room_jid = get_main_room(room.jid);
 
         -- Breakout room matadata.
         table.insert(event.form, {
@@ -500,7 +497,7 @@ function process_breakout_rooms_muc_loaded(breakout_rooms_muc, host_module)
 
     -- we base affiliations (roles) in breakout rooms muc component to be based on the roles in the main muc
     room_mt.get_affiliation = function(room, jid)
-        local main_room, main_room_jid = get_main_room(room.jid);
+        local main_room, _ = get_main_room(room.jid);
 
         if not main_room then
             module:log('error', 'No main room(%s) for %s!', room.jid, jid);
