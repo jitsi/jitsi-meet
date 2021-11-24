@@ -487,6 +487,11 @@ function process_breakout_rooms_muc_loaded(breakout_rooms_muc, host_module)
     room_mt.get_members_only = function(room)
         local main_room = get_main_room(room.jid);
 
+        if not main_room then
+            module:log('error', 'No main room (%s)!', room.jid);
+            return false;
+        end
+
         return main_room.get_members_only(main_room)
     end
 
