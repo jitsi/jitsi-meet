@@ -20,11 +20,12 @@ StateListenerRegistry.register(
                 dispatch(moveToRoom(roomId));
             });
 
-            conference.on(JitsiConferenceEvents.BREAKOUT_ROOMS_UPDATED, rooms => {
+            conference.on(JitsiConferenceEvents.BREAKOUT_ROOMS_UPDATED, ({ rooms, roomCounter }) => {
                 logger.debug('Room list updated');
                 dispatch({
                     type: UPDATE_BREAKOUT_ROOMS,
-                    rooms
+                    rooms,
+                    roomCounter
                 });
             });
         }
