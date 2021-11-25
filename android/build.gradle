@@ -115,22 +115,17 @@ allprojects {
                 from android.sourceSets.main.java.source
             }
 
-            println 'I was here'
-
             publishing.publications {
                 aarArchive(MavenPublication) {
                     groupId rootProject.ext.moduleGroupId
                     artifactId project.name
                     version project.version
 
-                    println "I was here221${project}"
-  
                     artifact("${project.buildDir}/outputs/aar/${project.name}-release.aar") {
                         extension "aar"
                     }
                     artifact(jitsiAndroidSourcesJar)
                     pom.withXml {
-
                         def pomXml = asNode()
                         pomXml.appendNode('name', project.name)
                         pomXml.appendNode('description', json.description)
@@ -150,9 +145,6 @@ allprojects {
                             // (third-party) React Native modules we utilize can
                             // depend not on a specific react-native release but
                             // a wider range.
-
-                            println 'I was here11'
-
                             if (artifactId == 'react-native') {
                                 def versionNumber = VersionNumber.parse(version)
                                 version = "${versionNumber.major}.${versionNumber.minor}"

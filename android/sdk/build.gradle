@@ -29,10 +29,6 @@ android {
             }
         }
     }
-
-    lintOptions {
-        abortOnError false
-    }
 }
 
 dependencies {
@@ -224,10 +220,6 @@ publishing {
                     if (artifactId.startsWith('react-native-')) {
                         groupId = rootProject.ext.moduleGroupId
                     }
-
-                    println "here groupId ${groupId}"
-                    println "here artifactId ${artifactId}"
-                    println "here it.moduleVersion ${it.moduleVersion}"
 
                     def dependency = dependencies.appendNode('dependency')
                     dependency.appendNode('groupId', groupId)
