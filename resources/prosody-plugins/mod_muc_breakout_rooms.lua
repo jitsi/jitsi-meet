@@ -11,11 +11,6 @@
 -- Component "breakout.jitmeet.example.com" "muc"
 --     restrict_room_creation = true
 --     storage = "memory"
---     modules_enabled = {
---         "muc_meeting_id";
---         "muc_domain_mapper";
---         --"token_verification";
---     }
 --     admins = { "focusUser@auth.jitmeet.example.com" }
 --     muc_room_locking = false
 --     muc_room_default_public_jids = true
@@ -161,6 +156,7 @@ function broadcast_breakout_rooms(room_jid)
         local json_msg = json.encode({
             type = BREAKOUT_ROOMS_IDENTITY_TYPE,
             event = JSON_TYPE_UPDATE_BREAKOUT_ROOMS,
+            roomCounter = main_room._data.breakout_rooms_counter,
             rooms = rooms
         });
 
@@ -192,7 +188,9 @@ function create_breakout_room(room_jid, subject)
 
     if not main_room._data.breakout_rooms then
         main_room._data.breakout_rooms = {};
+        main_room._data.breakout_rooms_counter = 0;
     end
+    main_room._data.breakout_rooms_counter = main_room._data.breakout_rooms_counter + 1;
     main_room._data.breakout_rooms[breakout_room_jid] = subject;
     main_room._data.breakout_rooms_active = true;
     -- Make room persistent - not to be destroyed - if all participants join breakout rooms.
