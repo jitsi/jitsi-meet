@@ -114,6 +114,7 @@ RCT_EXPORT_METHOD(setProviderConfiguration:(NSDictionary *)dictionary) {
     DDLogInfo(@"[RNCallKit][setProviderConfiguration:] dictionary = %@", dictionary);
 
     if (![JMCallKitProxy isProviderConfigured]) {
+        JMCallKitProxy.enabled = true;
         [self configureProviderFromDictionary:dictionary];
     }
 

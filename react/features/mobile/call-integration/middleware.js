@@ -116,13 +116,14 @@ function _appWillMount({ dispatch, getState }, next, action) {
         _onPerformEndCallAction
     };
 
-    const subscriptions
-        = CallIntegration.registerSubscriptions(context, delegate);
+    if (isCallIntegrationEnabled(getState)) {
+        const subscriptions = CallIntegration.registerSubscriptions(context, delegate);
 
-    subscriptions && dispatch({
-        type: _SET_CALL_INTEGRATION_SUBSCRIPTIONS,
-        subscriptions
-    });
+        subscriptions && dispatch({
+            type: _SET_CALL_INTEGRATION_SUBSCRIPTIONS,
+            subscriptions
+        });
+    }
 
     return result;
 }
