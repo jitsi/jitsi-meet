@@ -255,7 +255,7 @@ class Conference extends AbstractConference<Props, *> {
             _largeVideoParticipantId,
             _reducedUI,
             _shouldDisplayTileView,
-            _toolboxVisible,
+            _toolboxVisible
         } = this.props;
 
         if (_reducedUI) {
