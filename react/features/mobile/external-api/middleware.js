@@ -34,7 +34,7 @@ import {
     getRemoteParticipants,
     getLocalParticipant
 } from '../../base/participants';
-import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';
+import { MiddlewareRegistry, StateListenerRegistry, toState } from '../../base/redux';
 import { toggleScreensharing } from '../../base/tracks';
 import { OPEN_CHAT, CLOSE_CHAT } from '../../chat';
 import { openChat } from '../../chat/actions';
@@ -93,6 +93,7 @@ const eventEmitter = new NativeEventEmitter(ExternalAPI);
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
+    const oldAudioMuted = toState(store)['features/base/media'].audio.muted;
     const result = next(action);
     const { type } = action;
 
@@ -198,12 +199,14 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case SET_AUDIO_MUTED:
-        sendEvent(
-            store,
-            'AUDIO_MUTED_CHANGED',
-            /* data */ {
-                muted: action.muted
-            });
+        if (action.muted !== oldAudioMuted) {
+            sendEvent(
+                store,
+                'AUDIO_MUTED_CHANGED',
+                /* data */ {
+                    muted: action.muted
+                });
+        }
         break;
 
     case SET_PAGE_RELOAD_OVERLAY_CANCELED:
