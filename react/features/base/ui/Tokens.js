@@ -34,6 +34,7 @@ export const colors = {
     surface11: '#FFF',
     surface12: '#AAAAAA',
     surface13: '#495258',
+    surface14: '#555555',
 
     success04: '#189B55',
     success05: '#1EC26A',
@@ -67,6 +68,7 @@ export const colorMap = {
     ui04: 'surface05',
     ui05: 'surface06',
     ui12: 'surface11',
+    ui13: 'surface14',
 
     // Primary buttons
     action01: 'primary05',
@@ -167,6 +169,9 @@ export const colorMap = {
 
     // Tertiary color for disabled actions
     icon03: 'surface07',
+
+    // Quaternary color for disabled actions
+    icon04: 'surface14',
 
     // Error message
     iconError: 'error06',
