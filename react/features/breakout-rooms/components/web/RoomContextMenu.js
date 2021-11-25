@@ -56,7 +56,7 @@ export const RoomContextMenu = ({
 
     const onJoinRoom = useCallback(() => {
         sendAnalytics(createBreakoutRoomsEvent('join'));
-        dispatch(moveToRoom(room.id));
+        dispatch(moveToRoom(room.jid));
     }, [ dispatch, room ]);
 
     const onRemoveBreakoutRoom = useCallback(() => {
