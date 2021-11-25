@@ -6,6 +6,17 @@ export const INSECURE_ROOM_NAME_LABEL_COLOR = BaseTheme.palette.warning03;
 
 const NAVBAR_BUTTON_SIZE = 24;
 
+
+/**
+ * The styles of the safe area view that contains the navigation bar.
+ */
+const navBarSafeView = {
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: 0
+};
+
 /**
  * The styles of the feature conference.
  */
@@ -107,12 +118,13 @@ export default {
         underlayColor: BaseTheme.spacing.underlay01
     },
 
-    navBarSafeView: {
-        backgroundColor: BaseTheme.palette.uiBackground,
-        left: 0,
-        position: 'absolute',
-        right: 0,
-        top: 0
+    navBarSafeViewColor: {
+        ...navBarSafeView,
+        backgroundColor: BaseTheme.palette.uiBackground
+    },
+
+    navBarSafeViewTransparent: {
+        ...navBarSafeView
     },
 
     navBarWrapper: {
