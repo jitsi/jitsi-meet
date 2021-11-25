@@ -43,16 +43,21 @@ export default {
     },
 
     inviteButtonContainer: {
+        borderRadius: 3,
+        height: BaseTheme.spacing[7],
         position: 'absolute',
+        marginTop: BaseTheme.spacing[1],
+        marginRight: BaseTheme.spacing[1],
         top: 0,
         right: 0,
-        zIndex: 1
+        zIndex: 1,
+        width: BaseTheme.spacing[7]
     },
 
     inviteButton: {
         iconStyle: {
-            padding: 10,
             color: BaseTheme.palette.icon01,
+            padding: 12,
             fontSize: NAVBAR_BUTTON_SIZE
         },
         underlayColor: BaseTheme.spacing.underlay01
@@ -82,22 +87,28 @@ export default {
     },
 
     pipButtonContainer: {
+        borderRadius: 3,
+        height: BaseTheme.spacing[7],
         position: 'absolute',
+        marginTop: BaseTheme.spacing[1],
+        marginLeft: BaseTheme.spacing[1],
         top: 0,
         left: 0,
-        zIndex: 1
+        zIndex: 1,
+        width: BaseTheme.spacing[7]
     },
 
     pipButton: {
         iconStyle: {
-            padding: 10,
             color: BaseTheme.palette.icon01,
+            padding: 12,
             fontSize: NAVBAR_BUTTON_SIZE
         },
-        underlayColor: BaseTheme.palette.underlay01
+        underlayColor: BaseTheme.spacing.underlay01
     },
 
     navBarSafeView: {
+        backgroundColor: BaseTheme.palette.uiBackground,
         left: 0,
         position: 'absolute',
         right: 0,
@@ -108,9 +119,8 @@ export default {
         alignItems: 'center',
         flex: 1,
         flexDirection: 'row',
-        height: 44,
-        justifyContent: 'center',
-        paddingHorizontal: 14
+        height: BaseTheme.spacing[8],
+        justifyContent: 'center'
     },
 
     roomTimer: {
@@ -121,9 +131,8 @@ export default {
     },
 
     roomTimerView: {
-        backgroundColor: 'rgba(0,0,0,0.8)',
-        borderBottomRightRadius: 3,
-        borderTopRightRadius: 3,
+        backgroundColor: BaseTheme.palette.action02,
+        borderRadius: 3,
         height: 28,
         justifyContent: 'center',
         minWidth: 50
@@ -142,7 +151,8 @@ export default {
         flexShrink: 1,
         height: 28,
         justifyContent: 'center',
-        paddingHorizontal: 10
+        paddingHorizontal: 10,
+        maxWidth: 168
     },
 
     roomNameWrapper: {
