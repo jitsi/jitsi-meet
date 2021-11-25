@@ -199,6 +199,7 @@ export default [
     'testing',
     'toolbarButtons',
     'toolbarConfig',
+    'transcribingEnabled',
     'useHostPageLocalStorage',
     'useTurnUdp',
     'videoQuality',
