@@ -3,6 +3,7 @@
 import { ReducerRegistry } from '../base/redux';
 
 import {
+    _RESET_BREAKOUT_ROOMS,
     _UPDATE_ROOM_COUNTER,
     UPDATE_BREAKOUT_ROOMS
 } from './actionTypes';
@@ -31,6 +32,9 @@ ReducerRegistry.register(FEATURE_KEY, (state = DEFAULT_STATE, action) => {
             roomCounter,
             rooms
         };
+    }
+    case _RESET_BREAKOUT_ROOMS: {
+        return DEFAULT_STATE;
     }
     }
 

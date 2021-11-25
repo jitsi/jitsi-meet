@@ -47,7 +47,8 @@ export const RoomList = () => {
                             room = { room }>
                             {!_overflowDrawer && <>
                                 <JoinActionButton room = { room } />
-                                {isLocalModerator && <RoomActionEllipsis onClick = { toggleMenu(room) } />}
+                                {isLocalModerator && !room.isMainRoom
+                                    && <RoomActionEllipsis onClick = { toggleMenu(room) } />}
                             </>}
                         </CollapsibleRoom>
                     </React.Fragment>

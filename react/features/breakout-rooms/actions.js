@@ -15,7 +15,7 @@ import { setAudioMuted, setVideoMuted } from '../base/media';
 import { getRemoteParticipants } from '../base/participants';
 import { clearNotifications } from '../notifications';
 
-import { _UPDATE_ROOM_COUNTER } from './actionTypes';
+import { _RESET_BREAKOUT_ROOMS, _UPDATE_ROOM_COUNTER } from './actionTypes';
 import { FEATURE_KEY } from './constants';
 import {
     getBreakoutRooms,
@@ -174,6 +174,10 @@ export function moveToRoom(roomId?: string) {
             // $FlowExpectedError
             _roomId.domain = domainParts.join('@');
         }
+
+        dispatch({
+            type: _RESET_BREAKOUT_ROOMS
+        });
 
         if (navigator.product === 'ReactNative') {
             const conference = getCurrentConference(getState);
