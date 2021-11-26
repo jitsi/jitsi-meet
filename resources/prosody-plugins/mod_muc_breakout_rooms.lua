@@ -263,9 +263,11 @@ function on_message(event)
         -- Check if the participant is in any breakout room.
         for breakout_room_jid in pairs(room._data.breakout_rooms or {}) do
             local breakout_room = breakout_rooms_muc_service.get_room_from_jid(breakout_room_jid);
-            occupant = breakout_room:get_occupant_by_real_jid(from);
-            if occupant then
-                break;
+            if breakout_room then
+                occupant = breakout_room:get_occupant_by_real_jid(from);
+                if occupant then
+                    break;
+                end
             end
         end
         if not occupant then
