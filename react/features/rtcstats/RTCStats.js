@@ -105,7 +105,6 @@ class RTCStats {
         this.trace && this.trace.statsEntry('facialExpression', null, facialExpressionData);
     }
 
-
     /**
      * Connect to the rtcstats server instance. Stats (data obtained from getstats) won't be send until the
      * connect successfully initializes, however calls to GUM are recorded in an internal buffer even if not
