@@ -34,7 +34,7 @@ import {
     getRemoteParticipants,
     getLocalParticipant
 } from '../../base/participants';
-import { MiddlewareRegistry, StateListenerRegistry, toState } from '../../base/redux';
+import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';
 import { toggleScreensharing } from '../../base/tracks';
 import { OPEN_CHAT, CLOSE_CHAT } from '../../chat';
 import { openChat } from '../../chat/actions';
@@ -93,7 +93,7 @@ const eventEmitter = new NativeEventEmitter(ExternalAPI);
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
-    const oldAudioMuted = toState(store)['features/base/media'].audio.muted;
+    const oldAudioMuted = store.getState()['features/base/media'].audio.muted;
     const result = next(action);
     const { type } = action;
 
