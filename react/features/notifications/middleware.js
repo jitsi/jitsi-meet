@@ -17,12 +17,11 @@ import {
     clearNotifications,
     hideRaiseHandNotifications,
     showNotification,
-    showParticipantJoinedNotification
+    showParticipantJoinedNotification,
+    showParticipantLeftNotification
 } from './actions';
 import { NOTIFICATION_TIMEOUT_TYPE } from './constants';
 import { joinLeaveNotificationsDisabled } from './functions';
-
-declare var interfaceConfig: Object;
 
 /**
  * Middleware that captures actions to display notifications.
@@ -49,17 +48,17 @@ MiddlewareRegistry.register(store => next => action => {
     }
     case PARTICIPANT_LEFT: {
         if (!joinLeaveNotificationsDisabled()) {
+            const { dispatch, getState } = store;
+            const state = getState();
             const participant = getParticipantById(
                 store.getState(),
                 action.participant.id
             );
 
             if (participant && !participant.local && !action.participant.isReplaced) {
-                store.dispatch(showNotification({
-                    descriptionKey: 'notify.disconnected',
-                    titleKey: 'notify.somebody',
-                    title: participant.name
-                }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+                dispatch(showParticipantLeftNotification(
+                    getParticipantDisplayName(state, participant.id)
+                ));
             }
         }
 

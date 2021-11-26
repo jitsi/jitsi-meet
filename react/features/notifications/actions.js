@@ -17,7 +17,8 @@ import {
     NOTIFICATION_TIMEOUT_TYPE,
     NOTIFICATION_TIMEOUT,
     NOTIFICATION_TYPE,
-    SILENT_JOIN_THRESHOLD
+    SILENT_JOIN_THRESHOLD,
+    SILENT_LEFT_THRESHOLD
 } from './constants';
 
 /**
@@ -220,6 +221,70 @@ const _throttledNotifyParticipantConnected = throttle((dispatch: Dispatch<any>, 
 }, 2000, { leading: false });
 
 /**
+ * An array of names of participants that have left the conference. The array
+ * is replaced with an empty array as notifications are displayed.
+ *
+ * @private
+ * @type {string[]}
+ */
+let leftParticipantsNames = [];
+
+/**
+ * A throttled internal function that takes the internal list of participant
+ * names, {@code leftParticipantsNames}, and triggers the display of a
+ * notification informing of their leaving.
+ *
+ * @private
+ * @type {Function}
+ */
+const _throttledNotifyParticipantLeft = throttle((dispatch: Dispatch<any>, getState: Function) => {
+    const participantCount = getParticipantCount(getState());
+
+    // Skip left notifications altogether for large meetings.
+    if (participantCount > SILENT_LEFT_THRESHOLD) {
+        leftParticipantsNames = [];
+
+        return;
+    }
+
+    const leftParticipantsCount = leftParticipantsNames.length;
+
+    let notificationProps;
+
+    if (leftParticipantsCount >= 3) {
+        notificationProps = {
+            titleArguments: {
+                name: leftParticipantsNames[0]
+            },
+            titleKey: 'notify.leftThreePlusMembers'
+        };
+    } else if (leftParticipantsCount === 2) {
+        notificationProps = {
+            titleArguments: {
+                first: leftParticipantsNames[0],
+                second: leftParticipantsNames[1]
+            },
+            titleKey: 'notify.leftTwoMembers'
+        };
+    } else if (leftParticipantsCount) {
+        notificationProps = {
+            titleArguments: {
+                name: leftParticipantsNames[0]
+            },
+            titleKey: 'notify.leftOneMember'
+        };
+    }
+
+    if (notificationProps) {
+        dispatch(
+            showNotification(notificationProps, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+    }
+
+    leftParticipantsNames = [];
+
+}, 2000, { leading: false });
+
+/**
  * Queues the display of a notification of a participant having connected to
  * the meeting. The notifications are batched so that quick consecutive
  * connection events are shown in one notification.
@@ -228,7 +293,21 @@ const _throttledNotifyParticipantConnected = throttle((dispatch: Dispatch<any>, 
  * @returns {Function}
  */
 export function showParticipantJoinedNotification(displayName: string) {
-    joinedParticipantsNames.push(displayName);
+    leftParticipantsNames.push(displayName);
 
     return (dispatch: Dispatch<any>, getState: Function) => _throttledNotifyParticipantConnected(dispatch, getState);
+}
+
+/**
+ * Queues the display of a notification of a participant having left to
+ * the meeting. The notifications are batched so that quick consecutive
+ * connection events are shown in one notification.
+ *
+ * @param {string} displayName - The name of the participant that left.
+ * @returns {Function}
+ */
+export function showParticipantLeftNotification(displayName: string) {
+    joinedParticipantsNames.push(displayName);
+
+    return (dispatch: Dispatch<any>, getState: Function) => _throttledNotifyParticipantLeft(dispatch, getState);
 }

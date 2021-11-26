@@ -1,5 +1,6 @@
 // @flow
 
+import i18n from 'i18next';
 import { batch } from 'react-redux';
 
 import UIEvents from '../../../../service/UI/UIEvents';
@@ -555,9 +556,23 @@ function _raiseHandUpdated({ dispatch, getState }, conference, participantId, ne
     } : {};
 
     if (raisedHandTimestamp) {
+        let notificationTitle;
+        const participantName = getParticipantDisplayName(state, participantId);
+        const { raisedHandsQueue } = state['features/base/participants'];
+
+        if (raisedHandsQueue.length > 1) {
+            const raisedHandLenght = raisedHandsQueue.length - 1;
+
+            notificationTitle = i18n.t('notify.raisedHands', {
+                participantName,
+                raisedHandLenght
+            });
+        } else {
+            notificationTitle = participantName;
+        }
         dispatch(showNotification({
             titleKey: 'notify.somebody',
-            title: getParticipantDisplayName(state, participantId),
+            title: notificationTitle,
             descriptionKey: 'notify.raisedHand',
             raiseHandNotification: true,
             concatText: true,

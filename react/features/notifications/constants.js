@@ -50,3 +50,8 @@ export const NOTIFICATION_TYPE_PRIORITIES = {
  * Amount of participants beyond which no join notification will be emitted.
  */
 export const SILENT_JOIN_THRESHOLD = 30;
+
+/**
+ * Amount of participants beyond which no left notification will be emitted.
+ */
+export const SILENT_LEFT_THRESHOLD = 30;
