@@ -170,8 +170,8 @@
   },
   "license": "Apache-2.0",
   "scripts": {
-    "lint": "eslint . && flow",
-    "lint-fix": "eslint --fix .",
+    "lint": "eslint  --max-warnings 0 . && flow",
+    "lint-fix": "eslint  --max-warnings 0 --fix .",
     "postinstall": "patch-package && jetify",
     "validate": "npm ls",
     "start": "make dev",
