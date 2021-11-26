@@ -4,6 +4,7 @@ import React from 'react';
 import {
     Alert,
     NativeModules,
+    Platform,
     ScrollView,
     Text
 } from 'react-native';
@@ -283,15 +284,19 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                         accordion = { true }
                         expandable = { true }
                         label = 'settingsView.advanced'>
-                        <FormRow
-                            label = 'settingsView.disableCallIntegration'>
-                            <Switch
-                                onValueChange = { this._onDisableCallIntegration }
-                                thumbColor = { THUMB_COLOR }
-                                trackColor = {{ true: palette.screen01Header }}
-                                value = { disableCallIntegration } />
-                        </FormRow>
-                        <Divider style = { styles.fieldSeparator } />
+                        { Platform.OS === 'android' && (
+                            <>
+                                <FormRow
+                                    label = 'settingsView.disableCallIntegration'>
+                                    <Switch
+                                        onValueChange = { this._onDisableCallIntegration }
+                                        thumbColor = { THUMB_COLOR }
+                                        trackColor = {{ true: palette.screen01Header }}
+                                        value = { disableCallIntegration } />
+                                </FormRow>
+                                <Divider style = { styles.fieldSeparator } />
+                            </>
+                        )}
                         <FormRow
                             label = 'settingsView.disableP2P'>
                             <Switch
