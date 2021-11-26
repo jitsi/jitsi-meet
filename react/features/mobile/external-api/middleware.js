@@ -93,6 +93,7 @@ const eventEmitter = new NativeEventEmitter(ExternalAPI);
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
+    const oldAudioMuted = store.getState()['features/base/media'].audio.muted;
     const result = next(action);
     const { type } = action;
 
@@ -198,12 +199,14 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case SET_AUDIO_MUTED:
-        sendEvent(
-            store,
-            'AUDIO_MUTED_CHANGED',
-            /* data */ {
-                muted: action.muted
-            });
+        if (action.muted !== oldAudioMuted) {
+            sendEvent(
+                store,
+                'AUDIO_MUTED_CHANGED',
+                /* data */ {
+                    muted: action.muted
+                });
+        }
         break;
 
     case SET_PAGE_RELOAD_OVERLAY_CANCELED:
