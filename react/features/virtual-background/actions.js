@@ -77,7 +77,7 @@ export function backgroundEnabled(backgroundEffectEnabled: boolean) {
  *
  * @returns {{
  *    type: VIRTUAL_BACKGROUND_TRACK_CHANGED
- *}}.
+ * }}
  */
 export function virtualBackgroundTrackChanged() {
     return {
