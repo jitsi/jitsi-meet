@@ -1122,6 +1122,7 @@ function _mapStateToProps(state, ownProps): Object {
     let _isMobilePortrait = false;
     const {
         startSilent,
+        defaultLocalDisplayName,
         disableLocalVideoFlip,
         iAmRecorder,
         iAmSipGateway
@@ -1178,7 +1179,7 @@ function _mapStateToProps(state, ownProps): Object {
         _connectionIndicatorDisabled: _isMobile
             || Boolean(state['features/base/config'].connectionIndicators?.disabled),
         _currentLayout,
-        _defaultLocalDisplayName: interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME,
+        _defaultLocalDisplayName: defaultLocalDisplayName,
         _disableLocalVideoFlip: Boolean(disableLocalVideoFlip),
         _isHidden: isLocal && iAmRecorder && !iAmSipGateway,
         _isAudioOnly: Boolean(state['features/base/audio-only'].enabled),
