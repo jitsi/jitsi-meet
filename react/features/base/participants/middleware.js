@@ -28,9 +28,9 @@ import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
 import { playSound, registerSound, unregisterSound } from '../sounds';
 
 import {
-    DOMINANT_SPEAKER_CHANGED,
     GRANT_MODERATOR,
     KICK_PARTICIPANT,
+    LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED,
     LOCAL_PARTICIPANT_RAISE_HAND,
     MUTE_REMOTE_PARTICIPANT,
     PARTICIPANT_DISPLAY_NAME_CHANGED,
@@ -92,17 +92,13 @@ MiddlewareRegistry.register(store => next => action => {
         store.dispatch(localParticipantIdChanged(action.conference.myUserId()));
         break;
 
-    case DOMINANT_SPEAKER_CHANGED: {
-        // Lower hand through xmpp when local participant becomes dominant speaker.
-        const { id } = action.participant;
+    case LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED: {
         const state = store.getState();
         const participant = getLocalParticipant(state);
-        const isLocal = participant && participant.id === id;
 
-        if (isLocal && hasRaisedHand(participant) && !getDisableRemoveRaisedHandOnFocus(state)) {
+        if (action.level > 0.009 && hasRaisedHand(participant) && !getDisableRemoveRaisedHandOnFocus(state)) {
             store.dispatch(raiseHand(false));
         }
-
         break;
     }
 

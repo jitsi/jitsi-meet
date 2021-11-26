@@ -90,6 +90,7 @@ import {
     dominantSpeakerChanged,
     getLocalParticipant,
     getNormalizedDisplayName,
+    localParticipantAudioLevelChanged,
     localParticipantConnectionStatusChanged,
     localParticipantRoleChanged,
     participantConnectionStatusChanged,
@@ -2127,6 +2128,10 @@ export default {
         room.on(JitsiConferenceEvents.TRACK_AUDIO_LEVEL_CHANGED, (id, lvl) => {
             const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
             let newLvl = lvl;
+
+            if (this.isLocalId(id)) {
+                APP.store.dispatch(localParticipantAudioLevelChanged(lvl));
+            }
 
             if (this.isLocalId(id) && localAudio?.isMuted()) {
                 newLvl = 0;
