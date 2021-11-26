@@ -26,15 +26,18 @@ export const DISCO_REMOTE_CONTROL_FEATURE = 'http://jitsi.org/meet/remotecontrol
  * Supported by keydown and keyup types.
  * @property {PERMISSIONS_ACTIONS} action - Supported by type === permissions.
  * Represents the action related to the permissions event.
+ */
+
+/**
+ * Optional properties. Supported for permissions event for action === request.
  *
- * Optional properties. Supported for permissions event for action === request:
  * @property {string} userId - The user id of the participant that has sent the
  * request.
  * @property {string} userJID - The full JID in the MUC of the user that has
  * sent the request.
- * @property {string} displayName - the displayName of the participant that has
+ * @property {string} displayName - The displayName of the participant that has
  * sent the request.
- * @property {boolean} screenSharing - true if the SS is started for the local
+ * @property {boolean} screenSharing - True if the SS is started for the local
  * participant and false if not.
  */
 
