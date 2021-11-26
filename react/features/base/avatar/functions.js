@@ -16,7 +16,7 @@ const AVATAR_COLORS = [
     '#2AA076',
     '#00A8B3'
 ];
-const wordSplitRegex = (/\s+|\.+|_+|;+|-+|,+|\|+|\/+|\\+/);
+const wordSplitRegex = (/\s+|\.+|_+|;+|-+|,+|\|+|\/+|\\+|"+|'+|\(+|\)+|#+|&+/);
 const splitter = new GraphemeSplitter();
 
 /**
@@ -68,7 +68,7 @@ function getFirstGraphemeUpper(word) {
 export function getInitials(s: ?string) {
     // We don't want to use the domain part of an email address, if it is one
     const initialsBasis = _.split(s, '@')[0];
-    const [ firstWord, secondWord ] = initialsBasis.split(wordSplitRegex);
+    const [ firstWord, secondWord ] = initialsBasis.split(wordSplitRegex).filter(Boolean);
 
     return getFirstGraphemeUpper(firstWord) + getFirstGraphemeUpper(secondWord);
 }
