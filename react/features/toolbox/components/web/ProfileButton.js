@@ -15,6 +15,11 @@ import ProfileButtonAvatar from './ProfileButtonAvatar';
 type Props = AbstractButtonProps & {
 
     /**
+     * Default displayed name for local participant.
+     */
+    _defaultLocalDisplayName: string,
+
+    /**
      * The redux representation of the local participant.
      */
      _localParticipant: Object,
@@ -43,13 +48,16 @@ class ProfileButton extends AbstractButton<Props, *> {
      * Retrieves the label.
      */
     get label() {
-        const { _localParticipant } = this.props;
+        const {
+            _defaultLocalDisplayName,
+            _localParticipant
+        } = this.props;
         let displayName;
 
-        if (_localParticipant && _localParticipant.name) {
+        if (_localParticipant?.name) {
             displayName = _localParticipant.name;
         } else {
-            displayName = interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME;
+            displayName = _defaultLocalDisplayName;
         }
 
         return displayName;
@@ -119,7 +127,10 @@ class ProfileButton extends AbstractButton<Props, *> {
  * @returns {Object}
  */
 const mapStateToProps = state => {
+    const { defaultLocalDisplayName } = state['features/base/config'];
+
     return {
+        _defaultLocalDisplayName: defaultLocalDisplayName,
         _localParticipant: getLocalParticipant(state),
         _unclickable: !interfaceConfig.SETTINGS_SECTIONS.includes('profile'),
         customClass: 'profile-button-avatar'

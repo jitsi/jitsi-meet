@@ -466,6 +466,12 @@ var config = {
     // when the toolbar is shown on mouse movements
     // disable1On1Mode: null | false | true,
 
+    // Default local name to be displayed
+    // defaultLocalDisplayName: 'me',
+
+    // Default remote name to be displayed
+    // defaultRemoteDisplayName: 'Fellow Jitster',
+
     // Default language for the user interface.
     // defaultLanguage: 'en',
 

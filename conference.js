@@ -86,7 +86,6 @@ import {
     dominantSpeakerChanged,
     getLocalParticipant,
     getNormalizedDisplayName,
-    getParticipantById,
     localParticipantConnectionStatusChanged,
     localParticipantRoleChanged,
     participantConnectionStatusChanged,
@@ -233,17 +232,6 @@ function sendData(command, value) {
 
     room.removeCommand(command);
     room.sendCommand(command, { value });
-}
-
-/**
- * Get user nickname by user id.
- * @param {string} id user id
- * @returns {string?} user nickname or undefined if user is unknown.
- */
-function getDisplayName(id) {
-    const participant = getParticipantById(APP.store.getState(), id);
-
-    return participant && participant.name;
 }
 
 /**
@@ -1219,14 +1207,6 @@ export default {
     },
 
     /**
-     * Obtains the local display name.
-     * @returns {string|undefined}
-     */
-    getLocalDisplayName() {
-        return getDisplayName(this.getMyUserId());
-    },
-
-    /**
      * Finds JitsiParticipant for given id.
      *
      * @param {string} id participant's identifier(MUC nickname).
@@ -1236,29 +1216,6 @@ export default {
      */
     getParticipantById(id) {
         return room ? room.getParticipantById(id) : null;
-    },
-
-    /**
-     * Gets the display name foe the <tt>JitsiParticipant</tt> identified by
-     * the given <tt>id</tt>.
-     *
-     * @param id {string} the participant's id(MUC nickname/JVB endpoint id)
-     *
-     * @return {string} the participant's display name or the default string if
-     * absent.
-     */
-    getParticipantDisplayName(id) {
-        const displayName = getDisplayName(id);
-
-        if (displayName) {
-            return displayName;
-        }
-        if (APP.conference.isLocalId(id)) {
-            return APP.translation.generateTranslationHTML(
-                    interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME);
-        }
-
-        return interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
     },
 
     getMyUserId() {
@@ -2222,6 +2179,10 @@ export default {
             (id, displayName) => {
                 const formattedDisplayName
                     = getNormalizedDisplayName(displayName);
+                const state = APP.store.getState();
+                const {
+                    defaultRemoteDisplayName
+                } = state['features/base/config'];
 
                 APP.store.dispatch(participantUpdated({
                     conference: room,
@@ -2233,7 +2194,7 @@ export default {
                     formattedDisplayName:
                         appendSuffix(
                             formattedDisplayName
-                                || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME)
+                                || defaultRemoteDisplayName)
                 });
             }
         );
