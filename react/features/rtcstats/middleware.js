@@ -109,12 +109,10 @@ MiddlewareRegistry.register(store => next => action => {
         if (canSendRtcstatsData(state)) {
             const { duration, facialExpression } = action;
 
-            // sendFacialExpressionToParticipants(conference, action.facialExpression, action.duration);
             RTCStats.sendFacialExpressionData({
                 duration,
                 facialExpression
             });
-
         }
         break;
     }
