@@ -258,10 +258,22 @@ function on_message(event)
     -- check that the participant requesting is a moderator and is an occupant in the room
     local from = event.stanza.attr.from;
     local occupant = room:get_occupant_by_real_jid(from);
+
     if not occupant then
-        log('warn', 'No occupant %s found for %s', from, room.jid);
-        return false;
+        -- Check if the participant is in any breakout room.
+        for breakout_room_jid in pairs(room._data.breakout_rooms or {}) do
+            local breakout_room = breakout_rooms_muc_service.get_room_from_jid(breakout_room_jid);
+            occupant = breakout_room:get_occupant_by_real_jid(from);
+            if occupant then
+                break;
+            end
+        end
+        if not occupant then
+            log('warn', 'No occupant %s found for %s', from, room.jid);
+            return false;
+        end
     end
+
     if occupant.role ~= 'moderator' then
         log('warn', 'Occupant %s is not moderator and not allowed this operation for %s', from, room.jid);
         return false;
