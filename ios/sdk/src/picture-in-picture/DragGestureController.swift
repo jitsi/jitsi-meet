@@ -17,14 +17,14 @@
 import UIKit
 
 final class DragGestureController {
-
     var insets: UIEdgeInsets = UIEdgeInsets.zero
+    var currentPosition: PiPViewCoordinator.Position? = nil
 
     private var frameBeforeDragging: CGRect = CGRect.zero
     private weak var view: UIView?
     private lazy var panGesture: UIPanGestureRecognizer = {
-        return UIPanGestureRecognizer(target: self,
-                                      action: #selector(handlePan(gesture:)))
+        UIPanGestureRecognizer(target: self,
+                               action: #selector(handlePan(gesture:)))
     }()
 
     func startDragListener(inView view: UIView) {
@@ -40,7 +40,7 @@ final class DragGestureController {
     }
 
     @objc private func handlePan(gesture: UIPanGestureRecognizer) {
-        guard let view = self.view else { return }
+        guard let view = view else { return }
 
         let translation = gesture.translation(in: view.superview)
         let velocity = gesture.velocity(in: view.superview)
@@ -65,7 +65,7 @@ final class DragGestureController {
             let velocityMagnitude = magnitude(vector: velocity)
             let animationDuration = 0.5
             let initialSpringVelocity =
-                velocityMagnitude / distanceMagnitude / CGFloat(animationDuration)
+                    velocityMagnitude / distanceMagnitude / CGFloat(animationDuration)
 
             frame.origin = CGPoint(x: finalPos.x, y: finalPos.y)
 
@@ -75,8 +75,7 @@ final class DragGestureController {
                            initialSpringVelocity: initialSpringVelocity,
                            options: .curveLinear,
                            animations: {
-                            view.frame = frame
-            }, completion: nil)
+                view.frame = frame })
 
         default:
             break
@@ -85,9 +84,11 @@ final class DragGestureController {
 
     private func calculateFinalPosition() -> CGPoint {
         guard
-            let view = self.view,
+            let view = view,
             let bounds = view.superview?.frame
-            else { return CGPoint.zero }
+        else {
+            return CGPoint.zero
+        }
 
         let currentSize = view.frame.size
         let adjustedBounds = bounds.inset(by: insets)
@@ -109,19 +110,26 @@ final class DragGestureController {
             goUp = location.y < bounds.midY
         }
 
-        let finalPosX: CGFloat =
-            goLeft
-                ? adjustedBounds.origin.x
-                : bounds.size.width - insets.right  - currentSize.width
-        let finalPosY: CGFloat =
-            goUp
-                ? adjustedBounds.origin.y
-                : bounds.size.height - insets.bottom - currentSize.height
+        if (goLeft && goUp) {
+            currentPosition = .upperLeftCorner
+        }
 
-        return CGPoint(x: finalPosX, y: finalPosY)
+        if (!goLeft && goUp) {
+            currentPosition = .upperRightCorner
+        }
+
+        if (!goLeft && !goUp) {
+            currentPosition = .lowerRightCorner
+        }
+
+        if (goLeft && !goUp) {
+            currentPosition = .lowerLeftCorner
+        }
+        
+        return currentPosition!.getOriginIn(bounds: adjustedBounds, size: currentSize)
     }
 
     private func magnitude(vector: CGPoint) -> CGFloat {
-        return sqrt(pow(vector.x, 2) + pow(vector.y, 2))
+        sqrt(pow(vector.x, 2) + pow(vector.y, 2))
     }
 }
