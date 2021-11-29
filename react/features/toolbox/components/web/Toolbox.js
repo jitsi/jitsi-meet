@@ -10,7 +10,8 @@ import {
     createToolbarEvent,
     sendAnalytics
 } from '../../../analytics';
-import { getToolbarButtons, isToolbarButtonEnabled } from '../../../base/config';
+import { getToolbarButtons } from '../../../base/config';
+import { isToolbarButtonEnabled } from '../../../base/config/functions.web';
 import { openDialog, toggleDialog } from '../../../base/dialog';
 import { isIosMobileBrowser, isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';

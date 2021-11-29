@@ -36,6 +36,11 @@ type Props = {
     dominantSpeakerTime: number,
 
     /**
+     * The id of the user.
+     */
+    participantId: string,
+
+    /**
      * True if the participant is no longer in the meeting.
      */
     hasLeft: boolean,
@@ -68,7 +73,7 @@ const SpeakerStatsItem = (props: Props) => {
     return (
         <div
             className = { rowDisplayClass }
-            key = { props.displayName } >
+            key = { props.participantId } >
             <div className = 'speaker-stats-item__status'>
                 <span className = { speakerStatusClass } />
             </div>

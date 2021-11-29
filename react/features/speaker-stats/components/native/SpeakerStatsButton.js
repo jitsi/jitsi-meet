@@ -1,6 +1,7 @@
 // @flow
 
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
+import { getFeatureFlag, SPEAKERSTATS_ENABLED } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import { navigate } from '../../../conference/components/native/ConferenceNavigationContainerRef';
@@ -25,4 +26,23 @@ class SpeakerStatsButton extends AbstractSpeakerStatsButton {
     }
 }
 
-export default translate(connect()(SpeakerStatsButton));
+/**
+ * Maps (parts of) the redux state to the associated props for the
+ * {@code SpeakerStatsButton} component.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {{
+ *     visible: boolean
+ * }}
+ */
+function _mapStateToProps(state): Object {
+    const enabled = getFeatureFlag(state, SPEAKERSTATS_ENABLED, true);
+
+    return {
+        visible: enabled
+    };
+}
+
+
+export default translate(connect(_mapStateToProps)(SpeakerStatsButton));

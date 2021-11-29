@@ -99,10 +99,10 @@ export const IOS_SCREENSHARING_ENABLED = 'ios.screensharing.enabled';
 export const ANDROID_SCREENSHARING_ENABLED = 'android.screensharing.enabled';
 
 /**
- * Flag indicating if speaker statistics should be enabled in android.
+ * Flag indicating if speaker statistics should be enabled.
  * Default: enabled (true).
  */
-export const ANDROID_SPEAKERSTATS_ENABLED = 'android.speakerstats.enabled';
+export const SPEAKERSTATS_ENABLED = 'speakerstats.enabled';
 
 /**
  * Flag indicating if kickout is enabled.
