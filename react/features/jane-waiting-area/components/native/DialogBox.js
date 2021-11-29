@@ -173,10 +173,16 @@ class DialogBox extends Component<DialogBoxProps> {
     _getStartTimeAndEndTime() {
         const { jwtPayload } = this.props;
         const startAt = _.get(jwtPayload, 'context.start_at') ?? '';
-        const endAt = _.get(jwtPayload, 'context.end_at') ?? '';
+        let endAt = _.get(jwtPayload, 'context.end_at') ?? '';
+        const treatmentDuration = Number(_.get(jwtPayload, 'context.treatment_duration'));
 
         if (!startAt || !endAt) {
             return null;
+        }
+
+        if (treatmentDuration) {
+            endAt = getLocalizedDateFormatter(startAt)
+                .valueOf() + (treatmentDuration * 1000);
         }
 
         return (<Text style = { styles.msgText }>
