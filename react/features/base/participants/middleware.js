@@ -561,11 +561,11 @@ function _raiseHandUpdated({ dispatch, getState }, conference, participantId, ne
         const { raisedHandsQueue } = state['features/base/participants'];
 
         if (raisedHandsQueue.length > 1) {
-            const raisedHandLenght = raisedHandsQueue.length - 1;
+            const raisedHands = raisedHandsQueue.length - 1;
 
             notificationTitle = i18n.t('notify.raisedHands', {
                 participantName,
-                raisedHandLenght
+                raisedHands
             });
         } else {
             notificationTitle = participantName;
