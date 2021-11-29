@@ -58,8 +58,11 @@ export function isToolboxVisible(state: Object) {
  * @returns {boolean}
  */
 export function isAudioSettingsButtonDisabled(state: Object) {
-    return (!hasAvailableDevices(state, 'audioInput')
-          && !hasAvailableDevices(state, 'audioOutput'))
+    const { audio } = state['features/base/media'];
+
+    return !(hasAvailableDevices(state, 'audioInput')
+          && hasAvailableDevices(state, 'audioOutput')
+          && audio?.available)
           || state['features/base/config'].startSilent;
 }
 
@@ -80,7 +83,9 @@ export function isVideoSettingsButtonDisabled(state: Object) {
  * @returns {boolean}
  */
 export function isVideoMuteButtonDisabled(state: Object) {
-    return !hasAvailableDevices(state, 'videoInput');
+    const { video } = state['features/base/media'];
+
+    return !(hasAvailableDevices(state, 'videoInput') && video?.available);
 }
 
 /**

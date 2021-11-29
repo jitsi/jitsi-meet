@@ -76,6 +76,8 @@ import {
 import {
     getStartWithAudioMuted,
     getStartWithVideoMuted,
+    isAudioMuted,
+    isVideoMuted,
     isVideoMutedByUser,
     MEDIA_TYPE,
     setAudioAvailable,
@@ -2256,6 +2258,25 @@ export default {
         room.on(JitsiConferenceEvents.SUSPEND_DETECTED, () => {
             APP.store.dispatch(suspendDetected());
         });
+
+        room.on(
+            JitsiConferenceEvents.AUDIO_UNMUTE_PERMISSIONS_CHANGED,
+            disableAudioMuteChange => {
+                const muted = isAudioMuted(APP.store.getState());
+
+                if (!disableAudioMuteChange || (disableAudioMuteChange && muted)) {
+                    APP.store.dispatch(setAudioAvailable(!disableAudioMuteChange));
+                }
+            });
+        room.on(
+            JitsiConferenceEvents.VIDEO_UNMUTE_PERMISSIONS_CHANGED,
+            disableVideoMuteChange => {
+                const muted = isVideoMuted(APP.store.getState());
+
+                if (!disableVideoMuteChange || (disableVideoMuteChange && muted)) {
+                    APP.store.dispatch(setVideoAvailable(!disableVideoMuteChange));
+                }
+            });
 
         APP.UI.addListener(UIEvents.AUDIO_MUTED, muted => {
             this.muteAudio(muted);

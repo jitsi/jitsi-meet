@@ -10,7 +10,15 @@ import { endpointMessageReceived } from '../../subtitles';
 import { getReplaceParticipant } from '../config/functions';
 import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
-import { MEDIA_TYPE, setAudioMuted, setVideoMuted } from '../media';
+import {
+    MEDIA_TYPE,
+    isAudioMuted,
+    isVideoMuted,
+    setAudioAvailable,
+    setAudioMuted,
+    setVideoAvailable,
+    setVideoMuted
+} from '../media';
 import {
     dominantSpeakerChanged,
     getNormalizedDisplayName,
@@ -143,6 +151,25 @@ function _addConferenceListeners(conference, dispatch, state) {
                         || (videoMuted && trackType === MEDIA_TYPE.VIDEO)) {
                     dispatch(replaceLocalTrack(track.jitsiTrack, null, conference));
                 }
+            }
+        });
+
+    conference.on(
+        JitsiConferenceEvents.AUDIO_UNMUTE_PERMISSIONS_CHANGED,
+        disableAudioMuteChange => {
+            const muted = isAudioMuted(state);
+
+            if (!disableAudioMuteChange || (disableAudioMuteChange && muted)) {
+                APP.store.dispatch(setAudioAvailable(!disableAudioMuteChange));
+            }
+        });
+    conference.on(
+        JitsiConferenceEvents.VIDEO_UNMUTE_PERMISSIONS_CHANGED,
+        disableVideoMuteChange => {
+            const muted = isVideoMuted(state);
+
+            if (!disableVideoMuteChange || (disableVideoMuteChange && muted)) {
+                APP.store.dispatch(setVideoAvailable(!disableVideoMuteChange));
             }
         });
 
