@@ -177,7 +177,6 @@ public class PiPViewCoordinator {
     open func configureExitPiPButton(target: Any,
                                      action: Selector) -> UIButton {
         let buttonImage = UIImage.init(named: "image-resize",
-                // Need to get image from original coordinator code.
                 in: Bundle(for: type(of: self)),
                 compatibleWith: nil)
         let button = UIButton(type: .custom)
