@@ -37,16 +37,6 @@ export function isDisplayNameRequired(state: Object): boolean {
 }
 
 /**
- * Selector for determining if the display name from prejoin page is read only.
- *
- * @param {Object} state - The state of the app.
- * @returns {boolean}
- */
-export function isPrejoinNameReadOnly(state: Object): boolean {
-    return Boolean(state['features/base/jwt']?.user?.name);
-}
-
-/**
  * Selector for determining if the user has chosen to skip prejoin page.
  *
  * @param {Object} state - The state of the app.
