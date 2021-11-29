@@ -21,6 +21,11 @@ type Props = {
     dominantSpeakerTime: number,
 
     /**
+     * The id of the user.
+     */
+    participantId: string,
+
+    /**
      * True if the participant is no longer in the meeting.
      */
     hasLeft: boolean,
@@ -41,7 +46,7 @@ const SpeakerStatsItem = (props: Props) => {
 
     return (
         <View
-            key = { props.displayName + props.dominantSpeakerTime }
+            key = { props.participantId }
             style = { style.speakerStatsItemContainer }>
             <View style = { style.speakerStatsItemStatus }>
                 <View style = { [ style.speakerStatsItemStatusDot, { backgroundColor: dotColor } ] } />

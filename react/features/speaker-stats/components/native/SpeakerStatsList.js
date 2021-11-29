@@ -13,7 +13,7 @@ import SpeakerStatsItem from './SpeakerStatsItem';
  * @returns {React$Element<any>}
  */
 const SpeakerStatsList = () => {
-    const items = abstractSpeakerStatsList(SpeakerStatsItem, false);
+    const items = abstractSpeakerStatsList(SpeakerStatsItem);
 
     return (
         <View>

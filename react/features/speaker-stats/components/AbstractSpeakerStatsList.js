@@ -14,17 +14,17 @@ import {
  * Component that renders the list of speaker stats.
  *
  * @param {Function} speakerStatsItem - React element tu use when rendering.
- * @param {boolean} [isWeb=false] - Is for web in browser.
  * @returns {Function}
  */
-const abstractSpeakerStatsList = (speakerStatsItem: Function, isWeb: boolean = true): Function[] => {
+const abstractSpeakerStatsList = (speakerStatsItem: Function): Function[] => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const conference = useSelector(state => state['features/base/conference'].conference);
+    const speakerStats = useSelector(state => state['features/speaker-stats'].stats);
     const localParticipant = useSelector(getLocalParticipant);
-    const { enableFacialRecognition } = isWeb ? useSelector(state => state['features/base/config']) : {};
-    const { facialExpressions: localFacialExpressions } = isWeb
-        ? useSelector(state => state['features/facial-recognition']) : {};
+    const { enableFacialRecognition } = useSelector(state => state['features/base/config']) || {};
+    const { facialExpressions: localFacialExpressions } = useSelector(
+        state => state['features/facial-recognition']) || {};
 
     /**
      * Update the internal state with the latest speaker stats.
@@ -62,21 +62,22 @@ const abstractSpeakerStatsList = (speakerStatsItem: Function, isWeb: boolean = t
     });
 
     const updateStats = useCallback(
-        () => dispatch(initUpdateStats(
-            () => getLocalSpeakerStats())), [ dispatch, initUpdateStats() ]);
+        () => dispatch(initUpdateStats(getLocalSpeakerStats)),
+        [ dispatch, initUpdateStats ]);
 
     useEffect(() => {
-        const updateInterval = setInterval(() => updateStats(), SPEAKER_STATS_RELOAD_INTERVAL);
+        const intervalId = setInterval(() => {
+            updateStats();
+        }, SPEAKER_STATS_RELOAD_INTERVAL);
 
-        return () => {
-            clearInterval(updateInterval);
-        };
-    }, [ dispatch, conference ]);
+        return () => clearInterval(intervalId);
+    }, []);
 
-    const userIds = Object.keys(getLocalSpeakerStats());
+    const localSpeakerStats = Object.keys(speakerStats).length === 0 ? getLocalSpeakerStats() : speakerStats;
+    const userIds = Object.keys(localSpeakerStats);
 
     return userIds.map(userId => {
-        const statsModel = getLocalSpeakerStats()[userId];
+        const statsModel = localSpeakerStats[userId];
 
         if (!statsModel || statsModel.hidden) {
             return null;
@@ -85,6 +86,7 @@ const abstractSpeakerStatsList = (speakerStatsItem: Function, isWeb: boolean = t
 
         props.isDominantSpeaker = statsModel.isDominantSpeaker();
         props.dominantSpeakerTime = statsModel.getTotalDominantSpeakerTime();
+        props.participantId = userId;
         props.hasLeft = statsModel.hasLeft();
         if (enableFacialRecognition) {
             props.facialExpressions = statsModel.getFacialExpressions();
