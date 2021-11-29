@@ -67,6 +67,11 @@ public class PiPViewCoordinator {
         self.view = view
         // Required because otherwise the view will not rotate correctly.
         view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+
+        // Otherwise the enter/exit pip animation looks odd
+        // when pip window is bottom left, top left or top right,
+        // because the jitsi view content does not animate, but jumps to the new size immediately.
+        view.clipsToBounds = true
     }
 
     /// Configure the view to be always on top of all the contents
