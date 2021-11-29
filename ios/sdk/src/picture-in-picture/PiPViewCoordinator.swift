@@ -19,25 +19,15 @@ import UIKit
 public typealias AnimationCompletion = (Bool) -> Void
 
 public protocol PiPViewCoordinatorDelegate: class {
-    
+
     func exitPictureInPicture()
 }
 
 /// Coordinates the view state of a specified view to allow
 /// to be presented in full screen or in a custom Picture in Picture mode.
 /// This object will also provide the drag and tap interactions of the view
-/// when is presented in Picure in Picture mode.
+/// when is presented in Picture in Picture mode.
 public class PiPViewCoordinator {
-
-    /// Limits the boundaries of view position on screen when minimized
-    public var dragBoundInsets: UIEdgeInsets = UIEdgeInsets(top: 25,
-                                                            left: 5,
-                                                            bottom: 5,
-                                                            right: 5) {
-        didSet {
-            dragController.insets = dragBoundInsets
-        }
-    }
 
     public enum Position {
         case lowerRightCorner
@@ -45,17 +35,26 @@ public class PiPViewCoordinator {
         case lowerLeftCorner
         case upperLeftCorner
     }
-    
-    public var initialPositionInSuperview = Position.lowerRightCorner
-    
+
+    /// Limits the boundaries of view position on screen when minimized
+    public var dragBoundInsets: UIEdgeInsets = UIEdgeInsets(top: 25,
+            left: 5,
+            bottom: 5,
+            right: 5) {
+        didSet {
+            dragController.insets = dragBoundInsets
+        }
+    }
+
+    private let initialPositionInSuperView: Position = .lowerRightCorner
+
     // Unused. Remove on the next major release.
     @available(*, deprecated, message: "The PiP window size is now fixed to 150px.")
     public var c: CGFloat = 0.0
-    
+
     public weak var delegate: PiPViewCoordinatorDelegate?
 
     private(set) var isInPiP: Bool = false // true if view is in PiP mode
-
     private(set) var view: UIView
     private var currentBounds: CGRect = CGRect.zero
 
@@ -66,6 +65,8 @@ public class PiPViewCoordinator {
 
     public init(withView view: UIView) {
         self.view = view
+        // Required because otherwise the view will not rotate correctly.
+        view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
     }
 
     /// Configure the view to be always on top of all the contents
@@ -73,8 +74,10 @@ public class PiPViewCoordinator {
     /// If a parentView is not provided it will try to use the main window
     public func configureAsStickyView(withParentView parentView: UIView? = nil) {
         guard
-            let parentView = parentView ?? UIApplication.shared.keyWindow
-            else { return }
+                let parentView = parentView ?? UIApplication.shared.keyWindow
+                else {
+            return
+        }
 
         parentView.addSubview(view)
         currentBounds = parentView.bounds
@@ -109,14 +112,19 @@ public class PiPViewCoordinator {
     /// around screen, and add a button of top of the view to be able to exit mode
     public func enterPictureInPicture() {
         isInPiP = true
+        // Resizing is done by hand when in pip.
+        view.autoresizingMask = []
+
         animateViewChange()
         dragController.startDragListener(inView: view)
         dragController.insets = dragBoundInsets
 
         // add single tap gesture recognition for displaying exit PiP UI
         let exitSelector = #selector(toggleExitPiP)
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self,
-                                                          action: exitSelector)
+        let tapGestureRecognizer = UITapGestureRecognizer(
+                target: self,
+                action: exitSelector
+        )
         self.tapGestureRecognizer = tapGestureRecognizer
         view.addGestureRecognizer(tapGestureRecognizer)
     }
@@ -125,6 +133,9 @@ public class PiPViewCoordinator {
     /// exit pip button, and disable the drag gesture
     @objc public func exitPictureInPicture() {
         isInPiP = false
+        // Enable autoresizing again, which got disabled for pip.
+        view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+
         animateViewChange()
         dragController.stopDragListener()
 
@@ -136,7 +147,7 @@ public class PiPViewCoordinator {
         let exitSelector = #selector(toggleExitPiP)
         tapGestureRecognizer?.removeTarget(self, action: exitSelector)
         tapGestureRecognizer = nil
-        
+
         delegate?.exitPictureInPicture()
     }
 
@@ -144,6 +155,12 @@ public class PiPViewCoordinator {
     /// screen size changes
     public func resetBounds(bounds: CGRect) {
         currentBounds = bounds
+
+        // Is required because otherwise the pip window is buggy when rotating the device.
+        // When not in pip then autoresize will do the job.
+        if (isInPiP) {
+            view.frame = changeViewRect()
+        }
     }
 
     /// Stop the dragging gesture of the root view
@@ -155,8 +172,9 @@ public class PiPViewCoordinator {
     open func configureExitPiPButton(target: Any,
                                      action: Selector) -> UIButton {
         let buttonImage = UIImage.init(named: "image-resize",
-                                       in: Bundle(for: type(of: self)),
-                                       compatibleWith: nil)
+                // Need to get image from original coordinator code.
+                in: Bundle(for: type(of: self)),
+                compatibleWith: nil)
         let button = UIButton(type: .custom)
         let size: CGSize = CGSize(width: 44, height: 44)
         button.setImage(buttonImage, for: .normal)
@@ -169,13 +187,14 @@ public class PiPViewCoordinator {
     }
 
     // MARK: - Interactions
-
     @objc private func toggleExitPiP() {
         if exitPiPButton == nil {
             // show button
             let exitSelector = #selector(exitPictureInPicture)
-            let button = configureExitPiPButton(target: self,
-                                                action: exitSelector)
+            let button = configureExitPiPButton(
+                    target: self,
+                    action: exitSelector
+            )
             view.addSubview(button)
             exitPiPButton = button
 
@@ -186,51 +205,53 @@ public class PiPViewCoordinator {
         }
     }
 
-    // MARK: - Size calculation
-
-    private func animateViewChange() {
+    func animateViewChange() {
         UIView.animate(withDuration: 0.25) {
             self.view.frame = self.changeViewRect()
-            self.view.setNeedsLayout()
         }
     }
 
     private func changeViewRect() -> CGRect {
         let bounds = currentBounds
 
-        guard isInPiP else {
+        if !isInPiP {
             return bounds
         }
 
         // resize to suggested ratio and position to the bottom right
         let adjustedBounds = bounds.inset(by: dragBoundInsets)
         let size = CGSize(width: 150, height: 150)
-        let origin = initialPositionFor(pipSize: size, bounds: adjustedBounds)
+        let origin = getOriginFor(
+                position: dragController.currentPosition ?? initialPositionInSuperView,
+                inBounds: adjustedBounds,
+                withSize: size
+        )
         return CGRect(x: origin.x, y: origin.y, width: size.width, height: size.height)
-    }
-    
-    private func initialPositionFor(pipSize size: CGSize, bounds: CGRect) -> CGPoint {
-        switch initialPositionInSuperview {
-        case .lowerLeftCorner:
-            return CGPoint(x: bounds.minX, y: bounds.maxY - size.height)
-        case .lowerRightCorner:
-            return CGPoint(x: bounds.maxX - size.width, y: bounds.maxY - size.height)
-        case .upperLeftCorner:
-            return CGPoint(x: bounds.minX, y: bounds.minY)
-        case .upperRightCorner:
-            return CGPoint(x: bounds.maxX - size.width, y: bounds.minY)
-        }
     }
 
     // MARK: - Animation helpers
-
     private func animateTransition(animations: @escaping () -> Void,
                                    completion: AnimationCompletion?) {
-        UIView.animate(withDuration: 0.1,
-                       delay: 0,
-                       options: .beginFromCurrentState,
-                       animations: animations,
-                       completion: completion)
+        UIView.animate(
+                withDuration: 0.1,
+                delay: 0,
+                options: .beginFromCurrentState,
+                animations: animations,
+                completion: completion
+        )
     }
 
+}
+
+func getOriginFor(position: PiPViewCoordinator.Position, inBounds bounds: CGRect, withSize size: CGSize) -> CGPoint {
+    switch position {
+    case .lowerLeftCorner:
+        return CGPoint(x: bounds.minX, y: bounds.maxY - size.height)
+    case .lowerRightCorner:
+        return CGPoint(x: bounds.maxX - size.width, y: bounds.maxY - size.height)
+    case .upperLeftCorner:
+        return CGPoint(x: bounds.minX, y: bounds.minY)
+    case .upperRightCorner:
+        return CGPoint(x: bounds.maxX - size.width, y: bounds.minY)
+    }
 }
