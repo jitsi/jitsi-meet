@@ -1334,6 +1334,10 @@ export default {
         VideoLayout.initLargeVideo();
         VideoLayout.resizeVideoArea();
 
+        // Destroy old tracks.
+        APP.store.dispatch(destroyLocalTracks());
+        this._localTracksInitialized = false;
+
         this.roomName = roomName;
 
         const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks();
