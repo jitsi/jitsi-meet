@@ -3,6 +3,8 @@
 import GraphemeSplitter from 'grapheme-splitter';
 import _ from 'lodash';
 
+import { GRAVATAR_BASE_URL } from './constants';
+
 const AVATAR_COLORS = [
     '#6A50D3',
     '#FF9B42',
@@ -69,4 +71,14 @@ export function getInitials(s: ?string) {
     const [ firstWord, secondWord ] = initialsBasis.split(wordSplitRegex);
 
     return getFirstGraphemeUpper(firstWord) + getFirstGraphemeUpper(secondWord);
+}
+
+/**
+ * Checks if the passed URL is pointing to the gravatar service.
+ *
+ * @param {string} url - The URL.
+ * @returns {void}
+ */
+export function isGravatarURL(url: string = '') {
+    return url.startsWith(GRAVATAR_BASE_URL);
 }
