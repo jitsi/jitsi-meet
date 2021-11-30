@@ -572,6 +572,8 @@
     "notify": {
         "allowAction": "Erlauben",
         "allowedUnmute": "Sie können die Stummschaltung aufheben, Ihre Kamera einschalten oder Ihren Bildschirm teilen.",
+        "audioUnmuteBlockedTitle": "Stummschaltung kann nicht aufgehoben werden!",
+        "audioUnmuteBlockedDescription": "Díe Stummschaltung kann aus Überlastungsschutzgründen temporär nicht aufgehoben werden.",
         "connectedOneMember": "{{name}} nimmt am Meeting teil",
         "connectedThreePlusMembers": "{{name}} und {{count}} andere Personen nehmen am Meeting teil",
         "connectedTwoMembers": "{{first}} und {{second}} nehmen am Meeting teil",
@@ -622,7 +624,9 @@
         "moderationToggleDescription": "von {{participantDisplayName}}",
         "raiseHandAction": "Melden",
         "reactionSounds": "Interaktionstöne deaktivieren",
-        "groupTitle": "Benachrichtigungen"
+        "groupTitle": "Benachrichtigungen",
+        "videoUnmuteBlockedTitle": "Kamera kann nicht aktiviert werden!",
+        "videoUnmuteBlockedDescription": "Die Kamera kann aus Überlastungsschutzgründen temporär nicht eingeschaltet werden."
     },
     "participantsPane": {
         "close": "Schließen",
