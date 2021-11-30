@@ -3,7 +3,11 @@
 import { batch } from 'react-redux';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
-import { CONFERENCE_FAILED, CONFERENCE_JOINED } from '../base/conference';
+import {
+    CONFERENCE_FAILED,
+    CONFERENCE_JOINED,
+    conferenceWillJoin
+} from '../base/conference';
 import { JitsiConferenceErrors, JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { getFirstLoadableAvatarUrl, getParticipantDisplayName } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
@@ -121,7 +125,8 @@ StateListenerRegistry.register(
 function _conferenceFailed({ dispatch, getState }, next, action) {
     const { error } = action;
     const state = getState();
-    const nonFirstFailure = Boolean(state['features/base/conference'].membersOnly);
+    const { membersOnly } = state['features/base/conference'];
+    const nonFirstFailure = Boolean(membersOnly);
 
     if (error.name === JitsiConferenceErrors.MEMBERS_ONLY_ERROR) {
         if (typeof error.recoverable === 'undefined') {
@@ -134,6 +139,11 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
 
         if (shouldAutoKnock(state)) {
             dispatch(startKnocking());
+        }
+
+        // In case of wrong password we need to be in the right state if in the meantime someone allows us to join
+        if (nonFirstFailure) {
+            dispatch(conferenceWillJoin(membersOnly));
         }
 
         dispatch(setPasswordJoinFailed(nonFirstFailure));
