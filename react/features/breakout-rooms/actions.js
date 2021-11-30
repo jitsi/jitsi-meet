@@ -199,7 +199,7 @@ export function moveToRoom(roomId?: string) {
             dispatch(setAudioMuted(audio.muted));
             dispatch(setVideoMuted(video.muted));
         } else {
-            APP.conference.leaveRoom()
+            APP.conference.leaveRoom(false /* doDisconnect */)
                 .finally(() => APP.conference.joinRoom(_roomId));
         }
     };
