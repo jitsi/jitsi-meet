@@ -82,8 +82,10 @@ import {
     MEDIA_TYPE,
     setAudioAvailable,
     setAudioMuted,
+    setAudioUnmutePermissions,
     setVideoAvailable,
-    setVideoMuted
+    setVideoMuted,
+    setVideoUnmutePermissions
 } from './react/features/base/media';
 import {
     dominantSpeakerChanged,
@@ -2264,8 +2266,9 @@ export default {
             disableAudioMuteChange => {
                 const muted = isAudioMuted(APP.store.getState());
 
+                // Disable the mute button only if its muted.
                 if (!disableAudioMuteChange || (disableAudioMuteChange && muted)) {
-                    APP.store.dispatch(setAudioAvailable(!disableAudioMuteChange));
+                    APP.store.dispatch(setAudioUnmutePermissions(disableAudioMuteChange));
                 }
             });
         room.on(
@@ -2273,8 +2276,9 @@ export default {
             disableVideoMuteChange => {
                 const muted = isVideoMuted(APP.store.getState());
 
+                // Disable the mute button only if its muted.
                 if (!disableVideoMuteChange || (disableVideoMuteChange && muted)) {
-                    APP.store.dispatch(setVideoAvailable(!disableVideoMuteChange));
+                    APP.store.dispatch(setVideoUnmutePermissions(disableVideoMuteChange));
                 }
             });
 

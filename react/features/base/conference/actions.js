@@ -14,10 +14,10 @@ import {
     MEDIA_TYPE,
     isAudioMuted,
     isVideoMuted,
-    setAudioAvailable,
     setAudioMuted,
-    setVideoAvailable,
-    setVideoMuted
+    setAudioUnmutePermissions,
+    setVideoMuted,
+    setVideoUnmutePermissions
 } from '../media';
 import {
     dominantSpeakerChanged,
@@ -159,8 +159,9 @@ function _addConferenceListeners(conference, dispatch, state) {
         disableAudioMuteChange => {
             const muted = isAudioMuted(state);
 
+            // Disable the mute button only if its muted.
             if (!disableAudioMuteChange || (disableAudioMuteChange && muted)) {
-                APP.store.dispatch(setAudioAvailable(!disableAudioMuteChange));
+                APP.store.dispatch(setAudioUnmutePermissions(disableAudioMuteChange));
             }
         });
     conference.on(
@@ -168,8 +169,9 @@ function _addConferenceListeners(conference, dispatch, state) {
         disableVideoMuteChange => {
             const muted = isVideoMuted(state);
 
+            // Disable the mute button only if its muted.
             if (!disableVideoMuteChange || (disableVideoMuteChange && muted)) {
-                APP.store.dispatch(setVideoAvailable(!disableVideoMuteChange));
+                APP.store.dispatch(setVideoUnmutePermissions(disableVideoMuteChange));
             }
         });
 
