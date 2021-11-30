@@ -18,7 +18,8 @@ type Props = AbstractButtonProps & {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function
+    dispatch: Function,
+    isJaneTestCall: boolean
 };
 
 /**
@@ -31,7 +32,7 @@ class HangupButton extends AbstractHangupButton<Props, *> {
 
     accessibilityLabel = 'toolbar.accessibilityLabel.hangup';
     label = 'toolbar.hangup';
-    tooltip = 'toolbar.hangup';
+    tooltip;
 
     /**
      * Initializes a new HangupButton instance.
@@ -42,6 +43,7 @@ class HangupButton extends AbstractHangupButton<Props, *> {
     constructor(props: Props) {
         super(props);
 
+        this.tooltip = props.isJaneTestCall ? 'toolbar.finishedTesting' : 'toolbar.hangup';
         this._hangup = _.once(() => {
             sendAnalytics(createToolbarEvent('hangup'));
 
