@@ -1,11 +1,13 @@
 // @flow
 
+import { getJitsiMeetTransport } from '../../../modules/transport';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     DATA_CHANNEL_OPENED,
     KICKED_OUT
 } from '../base/conference';
+import { SET_CONFIG } from '../base/config';
 import { NOTIFY_CAMERA_ERROR, NOTIFY_MIC_ERROR } from '../base/devices';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import {
@@ -170,6 +172,22 @@ MiddlewareRegistry.register(store => next => action => {
     case PARTICIPANT_ROLE_CHANGED:
         APP.API.notifyUserRoleChanged(action.participant.id, action.participant.role);
         break;
+
+    case SET_CONFIG: {
+        const state = store.getState();
+        const { disableBeforeUnloadHandlers = false } = state['features/base/config'];
+
+        /**
+         * Disposing the API when the user closes the page.
+         */
+        window.addEventListener(disableBeforeUnloadHandlers ? 'unload' : 'beforeunload', () => {
+            APP.API.notifyConferenceLeft(APP.conference.roomName);
+            APP.API.dispose();
+            getJitsiMeetTransport().dispose();
+        });
+
+        break;
+    }
 
     case SET_FILMSTRIP_VISIBLE:
         APP.API.notifyFilmstripDisplayChanged(action.visible);
