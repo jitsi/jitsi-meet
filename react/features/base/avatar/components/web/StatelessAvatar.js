@@ -3,6 +3,7 @@
 import React from 'react';
 
 import { Icon } from '../../../icons';
+import { isGravatarURL } from '../../functions';
 import AbstractStatelessAvatar, { type Props as AbstractProps } from '../AbstractStatelessAvatar';
 
 type Props = AbstractProps & {
@@ -66,6 +67,7 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
                     <img
                         alt = 'avatar'
                         className = { this._getAvatarClassName() }
+                        crossOrigin = { isGravatarURL(url) ? '' : undefined }
                         data-testid = { this.props.testId }
                         id = { this.props.id }
                         onError = { this.props.onAvatarLoadError }

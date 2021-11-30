@@ -1,6 +1,8 @@
 
 // @flow
 
+import { isGravatarURL } from '../avatar';
+
 import { isIconUrl } from './functions';
 
 /**
@@ -17,6 +19,9 @@ export function preloadImage(src: string | Object): Promise<string> {
     return new Promise((resolve, reject) => {
         const image = document.createElement('img');
 
+        if (isGravatarURL(src)) {
+            image.setAttribute('crossOrigin', '');
+        }
         image.onload = () => resolve(src);
         image.onerror = reject;
 

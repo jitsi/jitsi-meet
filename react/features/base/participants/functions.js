@@ -3,6 +3,7 @@
 import { getGravatarURL } from '@jitsi/js-utils/avatar';
 import type { Store } from 'redux';
 
+import { GRAVATAR_BASE_URL } from '../avatar';
 import { JitsiParticipantConnectionStatus } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, shouldRenderVideoTrack } from '../media';
 import { toState } from '../redux';
@@ -34,7 +35,7 @@ const AVATAR_CHECKER_FUNCTIONS = [
         if (participant && participant.email) {
             // TODO: remove once libravatar has deployed their new scaled up infra. -saghul
             const gravatarBaseURL
-                = store.getState()['features/base/config'].gravatarBaseURL ?? 'https://www.gravatar.com/avatar/';
+                = store.getState()['features/base/config'].gravatarBaseURL ?? GRAVATAR_BASE_URL;
 
             return getGravatarURL(participant.email, gravatarBaseURL);
         }
