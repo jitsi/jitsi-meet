@@ -64,7 +64,7 @@ StateListenerRegistry.register(
  * lastn state and dispatching additional actions.
  */
 StateListenerRegistry.register(
-    /* selector */ state => state['features/base/lastn'].lastN,
+    /* selector */ state => state['features/base/lastn'].appliedLastN,
     /* listener */ (lastN, store) => {
         _updateReceiverVideoConstraints(store);
     });
@@ -187,7 +187,7 @@ function _updateReceiverVideoConstraints({ getState }) {
     if (!conference) {
         return;
     }
-    const { lastN } = state['features/base/lastn'];
+    const { appliedLastN: lastN } = state['features/base/lastn'];
     const { maxReceiverVideoQuality, preferredVideoQuality } = state['features/video-quality'];
     const { participantId: largeVideoParticipantId } = state['features/large-video'];
     const maxFrameHeight = Math.min(maxReceiverVideoQuality, preferredVideoQuality);

@@ -20,7 +20,8 @@ import {
 import { MiddlewareRegistry } from '../redux';
 import { isLocalVideoTrackDesktop } from '../tracks/functions';
 
-import { setLastN } from './actions';
+import { SET_CONFIG_LAST_N } from './actionTypes';
+import { setAppliedLastN } from './actions';
 import { limitLastN } from './functions';
 import logger from './logger';
 
@@ -31,7 +32,7 @@ import logger from './logger';
  * @private
  * @returns {void}
  */
-const _updateLastN = debounce(({ dispatch, getState }) => {
+const _updateAppliedLastN = debounce(({ dispatch, getState }) => {
     const state = getState();
     const { conference } = state['features/base/conference'];
 
@@ -45,7 +46,7 @@ const _updateLastN = debounce(({ dispatch, getState }) => {
     const { appState } = state['features/background'] || {};
     const { enabled: filmStripEnabled } = state['features/filmstrip'];
     const config = state['features/base/config'];
-    const { lastNLimits, lastN } = state['features/base/lastn'];
+    const { lastNLimits, configLastN } = state['features/base/lastn'];
     const participantCount = getParticipantCount(state);
 
     // Select the lastN value based on the following preference order.
@@ -53,17 +54,17 @@ const _updateLastN = debounce(({ dispatch, getState }) => {
     // 2. The last-n value from 'startLastN' if it is specified in config.js
     // 3. The last-n value from 'channelLastN' if specified in config.js.
     // 4. -1 as the default value.
-    let lastNSelected = lastN || (config.startLastN ?? (config.channelLastN ?? -1));
+    let newAppliedLastN = configLastN || (config.startLastN ?? (config.channelLastN ?? -1));
 
     // Apply last N limit based on the # of participants and config settings.
     const limitedLastN = limitLastN(participantCount, lastNLimits);
 
     if (limitedLastN !== undefined) {
-        lastNSelected = lastNSelected === -1 ? limitedLastN : Math.min(limitedLastN, lastNSelected);
+        newAppliedLastN = newAppliedLastN === -1 ? limitedLastN : Math.min(limitedLastN, newAppliedLastN);
     }
 
     if (typeof appState !== 'undefined' && appState !== 'active') {
-        lastNSelected = isLocalVideoTrackDesktop(state) ? 1 : 0;
+        newAppliedLastN = isLocalVideoTrackDesktop(state) ? 1 : 0;
     } else if (audioOnly) {
         const { remoteScreenShares, tileViewEnabled } = state['features/video-layout'];
         const largeVideoParticipantId = state['features/large-video'].participantId;
@@ -74,15 +75,15 @@ const _updateLastN = debounce(({ dispatch, getState }) => {
         // view since we make an exception only for screenshare when in audio-only mode. If the user unpins
         // the screenshare, lastN will be set to 0 here. It will be set to 1 if screenshare has been auto pinned.
         if (!tileViewEnabled && largeVideoParticipant && !largeVideoParticipant.local) {
-            lastNSelected = (remoteScreenShares || []).includes(largeVideoParticipantId) ? 1 : 0;
+            newAppliedLastN = (remoteScreenShares || []).includes(largeVideoParticipantId) ? 1 : 0;
         } else {
-            lastNSelected = 0;
+            newAppliedLastN = 0;
         }
     } else if (!filmStripEnabled) {
-        lastNSelected = 1;
+        newAppliedLastN = 1;
     }
 
-    dispatch(setLastN(lastNSelected));
+    dispatch(setAppliedLastN(newAppliedLastN));
 }, 1000); /* Don't send this more often than once a second. */
 
 
@@ -100,7 +101,8 @@ MiddlewareRegistry.register(store => next => action => {
     case SET_AUDIO_ONLY:
     case SET_FILMSTRIP_ENABLED:
     case SET_TILE_VIEW:
-        _updateLastN(store);
+    case SET_CONFIG_LAST_N:
+        _updateAppliedLastN(store);
         break;
     }
 

@@ -7,7 +7,7 @@ import type { Dispatch } from 'redux';
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { setAudioOnly } from '../../base/audio-only';
 import { translate } from '../../base/i18n';
-import { setLastN, getLastNForQualityLevel } from '../../base/lastn';
+import { setConfigLastN, getLastNForQualityLevel } from '../../base/lastn';
 import { connect } from '../../base/redux';
 import { withPixelLineHeight } from '../../base/styles/functions.web';
 import { setPreferredVideoQuality } from '../actions';
@@ -354,7 +354,7 @@ class VideoQualitySlider extends Component<Props> {
         const lastN = getLastNForQualityLevel(qualityLevel, _channelLastN);
 
         // Set the lastN for the conference.
-        this.props.dispatch(setLastN(lastN));
+        this.props.dispatch(setConfigLastN(lastN));
     }
 }
 

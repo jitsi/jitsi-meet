@@ -3,19 +3,27 @@ import {
 } from '../config';
 import { ReducerRegistry, set } from '../redux';
 
-import { SET_LAST_N } from './actionTypes';
+import { SET_APPLIED_LAST_N, SET_CONFIG_LAST_N } from './actionTypes';
 import { validateLastNLimits } from './functions';
 
 ReducerRegistry.register('features/base/lastn', (state = { }, action) => {
     switch (action.type) {
     case SET_CONFIG:
         return _setConfig(state, action);
-    case SET_LAST_N: {
-        const { lastN } = action;
+    case SET_APPLIED_LAST_N: {
+        const { appliedLastN } = action;
 
         return {
             ...state,
-            lastN
+            appliedLastN
+        };
+    }
+    case SET_CONFIG_LAST_N: {
+        const { configLastN } = action;
+
+        return {
+            ...state,
+            configLastN
         };
     }
     }
