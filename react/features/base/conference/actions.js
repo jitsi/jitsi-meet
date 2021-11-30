@@ -10,7 +10,15 @@ import { endpointMessageReceived } from '../../subtitles';
 import { getReplaceParticipant } from '../config/functions';
 import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
-import { MEDIA_TYPE, setAudioMuted, setVideoMuted } from '../media';
+import {
+    MEDIA_TYPE,
+    isAudioMuted,
+    isVideoMuted,
+    setAudioMuted,
+    setAudioUnmutePermissions,
+    setVideoMuted,
+    setVideoUnmutePermissions
+} from '../media';
 import {
     dominantSpeakerChanged,
     getNormalizedDisplayName,
@@ -143,6 +151,27 @@ function _addConferenceListeners(conference, dispatch, state) {
                         || (videoMuted && trackType === MEDIA_TYPE.VIDEO)) {
                     dispatch(replaceLocalTrack(track.jitsiTrack, null, conference));
                 }
+            }
+        });
+
+    conference.on(
+        JitsiConferenceEvents.AUDIO_UNMUTE_PERMISSIONS_CHANGED,
+        disableAudioMuteChange => {
+            const muted = isAudioMuted(state);
+
+            // Disable the mute button only if its muted.
+            if (!disableAudioMuteChange || (disableAudioMuteChange && muted)) {
+                APP.store.dispatch(setAudioUnmutePermissions(disableAudioMuteChange));
+            }
+        });
+    conference.on(
+        JitsiConferenceEvents.VIDEO_UNMUTE_PERMISSIONS_CHANGED,
+        disableVideoMuteChange => {
+            const muted = isVideoMuted(state);
+
+            // Disable the mute button only if its muted.
+            if (!disableVideoMuteChange || (disableVideoMuteChange && muted)) {
+                APP.store.dispatch(setVideoUnmutePermissions(disableVideoMuteChange));
             }
         });
 

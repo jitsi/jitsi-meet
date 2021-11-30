@@ -572,6 +572,8 @@
     "notify": {
         "allowAction": "Allow",
         "allowedUnmute": "You can unmute your microphone, start your camera or share your screen.",
+        "audioUnmuteBlockedTitle": "Mic unmute blocked!",
+        "audioUnmuteBlockedDescription": "Mic unmute operation has been temporarily blocked because of system limits.",
         "connectedOneMember": "{{name}} joined the meeting",
         "connectedThreePlusMembers": "{{name}} and many others joined the meeting",
         "connectedTwoMembers": "{{first}} and {{second}} joined the meeting",
@@ -622,7 +624,9 @@
         "moderationToggleDescription": "by {{participantDisplayName}}",
         "raiseHandAction": "Raise hand",
         "reactionSounds": "Disable sounds",
-        "groupTitle": "Notifications"
+        "groupTitle": "Notifications",
+        "videoUnmuteBlockedTitle": "Camera unmute blocked!",
+        "videoUnmuteBlockedDescription": "Camera unmute operation has been temporarily blocked because of system limits."
     },
     "participantsPane": {
         "close": "Close",
