@@ -251,7 +251,6 @@
         "muteEveryoneTitle": "Rendre mut tot lo monde ?",
         "muteParticipantBody": "Poiretz pas lo tornar activar lo microfòn, mai eles pòdon o far quand vòlon.",
         "muteParticipantButton": "Copar lo son",
-        "muteParticipantTitle": "Copar lo micro als participants ?",
         "Ok": "D'acòrdi",
         "passwordLabel": "Aquesta conferéncia es estada barrada per un participant. Mercés de dintrar lo $t(lockRoomPassword) per la rejónher.",
         "passwordNotSupported": "Ajustar un $t(lockRoomPassword) a una conferéncia es pas suportat.",
@@ -626,7 +625,11 @@
         "allowedUnmute": "Vos podètz restablir lo son del microfòn, aviar la camèra e partejar l’ecran.",
         "screenShareNoAudio": " La casa Partejar l’àudio es pas estada marcada a l’ecran de seleccion de la fenèstra.",
         "moderationInEffectCSDescription": "Volgatz levar la man se volètz partejar vòstre ecran.",
-        "moderationInEffectVideoDescription": "Volgatz levar la man se volètz aviar vòstra camèra."
+        "moderationInEffectVideoDescription": "Volgatz levar la man se volètz aviar vòstra camèra.",
+        "audioUnmuteBlockedTitle": "Restabliment del son del microfòn blocat !",
+        "videoUnmuteBlockedTitle": "Restabliment de la camèra blocat !",
+        "audioUnmuteBlockedDescription": "Las operacion de restabliment del son microfòn son estadas blocadas pel moment a causa de limitas sistèma.",
+        "videoUnmuteBlockedDescription": "Las operacion de restabliment de la camèra son estadas blocadas pel moment a causa de limitas sistèma."
     },
     "passwordDigitsOnly": "Fins a {{number}} chifras",
     "passwordSetRemotely": "causit per qualqu'un mai",
@@ -1211,5 +1214,8 @@
     },
     "termsView": {
         "header": "Acòrds"
+    },
+    "blankPage": {
+        "meetingEnded": "Conferéncia acabada."
     }
 }
