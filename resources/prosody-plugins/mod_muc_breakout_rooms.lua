@@ -31,6 +31,7 @@ local st = require 'util.stanza';
 local uuid_gen = require 'util.uuid'.generate;
 
 local util = module:require 'util';
+local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local is_healthcheck_room = util.is_healthcheck_room;
 
 local BREAKOUT_ROOMS_IDENTITY_TYPE = 'breakout_rooms';
@@ -94,12 +95,13 @@ function get_participants(room)
     local participants = {};
 
     if room then
-        for nick, occupant in room:each_occupant() do
+        for room_nick, occupant in room:each_occupant() do
             -- Filter focus as we keep it as a hidden participant
             if jid_node(occupant.jid) ~= 'focus' then
                 local display_name = occupant:get_presence():get_child_text(
                     'nick', 'http://jabber.org/protocol/nick');
-                participants[nick] = {
+                local real_nick = internal_room_jid_match_rewrite(room_nick);
+                participants[real_nick] = {
                     jid = occupant.jid,
                     role = occupant.role,
                     displayName = display_name
@@ -125,12 +127,13 @@ function broadcast_breakout_rooms(room_jid)
         main_room._data.is_broadcast_breakout_scheduled = false;
         main_room:save(true);
 
-        local main_room_node = jid_node(main_room_jid)
+        local real_jid = internal_room_jid_match_rewrite(main_room_jid);
+        local real_node = jid_node(real_jid);
         local rooms = {
-            [main_room_node] = {
+            [real_node] = {
                 isMainRoom = true,
-                id = main_room_node,
-                jid = main_room_jid,
+                id = real_node,
+                jid = real_jid,
                 name = main_room._data.subject,
                 participants = get_participants(main_room)
             };
