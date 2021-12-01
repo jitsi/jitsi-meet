@@ -146,7 +146,7 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
             _updateParticipantProperty(state, pinnedParticipant, 'pinned', false);
         }
 
-        if (_updateParticipantProperty(state, id, 'pinned', true)) {
+        if (id && _updateParticipantProperty(state, id, 'pinned', true)) {
             return {
                 ...state,
                 pinnedParticipant: id
@@ -503,7 +503,9 @@ function _updateParticipantProperty(state, id, property, value) {
         remote.set(id, set(remote.get(id), property, value));
 
         return true;
-    } else if (local?.id === id) {
+    } else if (local?.id === id || local?.id === 'local') {
+        // The local participant's ID can chance from something to "local" when
+        // not in a conference.
         state.local = set(local, property, value);
 
         return true;
