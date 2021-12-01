@@ -13,6 +13,7 @@ import {
     TRACK_ADDED,
     TRACK_REMOVED
 } from '../base/tracks';
+import { TOGGLE_DOCUMENT_EDITING } from '../etherpad/actionTypes';
 
 import { selectParticipantInLargeVideo } from './actions';
 import logger from './logger';
@@ -47,6 +48,7 @@ MiddlewareRegistry.register(store => next => action => {
     case PARTICIPANT_JOINED:
     case PARTICIPANT_LEFT:
     case PIN_PARTICIPANT:
+    case TOGGLE_DOCUMENT_EDITING:
     case TRACK_ADDED:
     case TRACK_REMOVED:
         store.dispatch(selectParticipantInLargeVideo());
