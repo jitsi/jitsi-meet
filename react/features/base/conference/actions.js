@@ -161,7 +161,7 @@ function _addConferenceListeners(conference, dispatch, state) {
 
             // Disable the mute button only if its muted.
             if (!disableAudioMuteChange || (disableAudioMuteChange && muted)) {
-                APP.store.dispatch(setAudioUnmutePermissions(disableAudioMuteChange));
+                dispatch(setAudioUnmutePermissions(disableAudioMuteChange));
             }
         });
     conference.on(
@@ -171,7 +171,7 @@ function _addConferenceListeners(conference, dispatch, state) {
 
             // Disable the mute button only if its muted.
             if (!disableVideoMuteChange || (disableVideoMuteChange && muted)) {
-                APP.store.dispatch(setVideoUnmutePermissions(disableVideoMuteChange));
+                dispatch(setVideoUnmutePermissions(disableVideoMuteChange));
             }
         });
 
