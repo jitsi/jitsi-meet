@@ -7,7 +7,6 @@ import {
     getCurrentConference
 } from '../base/conference';
 import { hideDialog, isDialogOpen } from '../base/dialog';
-import { setActiveModalId } from '../base/modal';
 import { pinParticipant } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { SET_REDUCED_UI } from '../base/responsive-ui';
@@ -79,8 +78,5 @@ StateListenerRegistry.register(
                 // dialog we might have open.
                 dispatch(hideDialog());
             }
-
-            // We want to close all modals.
-            dispatch(setActiveModalId());
         }
     });

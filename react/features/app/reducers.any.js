@@ -16,7 +16,6 @@ import '../base/lastn/reducer';
 import '../base/lib-jitsi-meet/reducer';
 import '../base/logging/reducer';
 import '../base/media/reducer';
-import '../base/modal/reducer';
 import '../base/net-info/reducer';
 import '../base/participants/reducer';
 import '../base/responsive-ui/reducer';
