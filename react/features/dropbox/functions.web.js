@@ -2,8 +2,6 @@
 
 import { Dropbox, DropboxAuth } from 'dropbox';
 
-import { getJitsiMeetGlobalNS } from '../base/util';
-
 /**
  * Executes the oauth flow.
  *
@@ -12,18 +10,22 @@ import { getJitsiMeetGlobalNS } from '../base/util';
  */
 function authorize(authUrl: string): Promise<string> {
     const windowName = `oauth${Date.now()}`;
-    const gloabalNS = getJitsiMeetGlobalNS();
-
-    gloabalNS.oauthCallbacks = gloabalNS.oauthCallbacks || {};
 
     return new Promise(resolve => {
-        const popup = window.open(authUrl, windowName);
-
-        gloabalNS.oauthCallbacks[windowName] = url => {
-            popup.close();
-            delete gloabalNS.oauthCallbacks.windowName;
-            resolve(url);
+        // eslint-disable-next-line prefer-const
+        let popup;
+        const handleAuth = ({ data }) => {
+            if (data && data.type === 'dropbox-login' && data.windowName === windowName) {
+                if (popup) {
+                    popup.close();
+                }
+                window.removeEventListener('message', handleAuth);
+                resolve(data.url);
+            }
         };
+
+        window.addEventListener('message', handleAuth);
+        popup = window.open(authUrl, windowName);
     });
 }
 
