@@ -995,6 +995,9 @@ var config = {
     // If true, tile view will not be enabled automatically when the participants count threshold is reached.
     // disableTileView: true,
 
+    // If true, the tiles will be displayed contained within the available space rather than enlarged to cover it.
+    // disableTileEnlargement: true,
+
     // Controls the visibility and behavior of the top header conference info labels.
     // If a label's id is not in any of the 2 arrays, it will not be visible at all on the header.
     // conferenceInfo: {

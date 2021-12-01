@@ -115,6 +115,11 @@ export type Props = {|
     _disableLocalVideoFlip: boolean,
 
     /**
+     * Indicates whether enlargement of tiles to fill the available space is disabled.
+     */
+    _disableTileEnlargement: boolean,
+
+    /**
      * The display mode of the thumbnail.
      */
     _displayMode: number,
@@ -548,6 +553,7 @@ class Thumbnail extends Component<Props, State> {
         const { canPlayEventReceived } = this.state;
         const {
             _currentLayout,
+            _disableTileEnlargement,
             _height,
             _isHidden,
             _isScreenSharing,
@@ -581,7 +587,7 @@ class Thumbnail extends Component<Props, State> {
         if (!_isScreenSharing) {
             if (canPlayEventReceived || _participant.local) {
                 videoStyles = {
-                    objectFit: _height < 320 && tileViewActive ? 'contain' : 'cover'
+                    objectFit: (_height < 320 && tileViewActive) || _disableTileEnlargement ? 'contain' : 'cover'
                 };
             } else {
                 videoStyles = {
@@ -1124,6 +1130,7 @@ function _mapStateToProps(state, ownProps): Object {
         startSilent,
         defaultLocalDisplayName,
         disableLocalVideoFlip,
+        disableTileEnlargement,
         iAmRecorder,
         iAmSipGateway
     } = state['features/base/config'];
@@ -1181,6 +1188,7 @@ function _mapStateToProps(state, ownProps): Object {
         _currentLayout,
         _defaultLocalDisplayName: defaultLocalDisplayName,
         _disableLocalVideoFlip: Boolean(disableLocalVideoFlip),
+        _disableTileEnlargement: Boolean(disableTileEnlargement),
         _isHidden: isLocal && iAmRecorder && !iAmSipGateway,
         _isAudioOnly: Boolean(state['features/base/audio-only'].enabled),
         _isCurrentlyOnLargeVideo: state['features/large-video']?.participantId === id,

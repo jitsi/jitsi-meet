@@ -122,6 +122,7 @@ export default [
     'disableSimulcast',
     'disableThirdPartyRequests',
     'disableTileView',
+    'disableTileEnlargement',
     'displayJids',
     'doNotStoreRoom',
     'doNotFlipLocalVideo',
