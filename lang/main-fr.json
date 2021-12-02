@@ -39,12 +39,15 @@
   "audioOnly": {
     "audioOnly": "Bande passante faible"
   },
+  "blankPage": {
+     "meetingEnded": "Réunion terminée."
+  },
   "breakoutRooms": {
     "defaultName": "Salle annexe #{{index}}",
     "mainRoom": "Salle principale",
     "actions": {
         "add": "Ajouter salle annexe",
-        "autoAssign": "Assigner automatqieuement aux salles annexes",
+        "autoAssign": "Assigner automatiquement aux salles annexes",
         "close": "Fermer",
         "join": "Rejoindre",
         "leaveBreakoutRoom": "Quitter la salle annexe",
@@ -569,6 +572,8 @@
   "notify": {
     "allowAction": "Permettre",
     "allowedUnmute": "Vous pouvez réactiver votre écran, votre caméra ou partager votre écran.",
+    "audioUnmuteBlockedTitle": "Rétablissement du son bloqué !",
+    "audioUnmuteBlockedDescription": "Le rétablissement du son a été bloqué temporairement en raison de limites système.",
     "connectedOneMember": "{{name}} a rejoint la réunion",
     "connectedThreePlusMembers": "{{name}} et {{count}} autres personnes ont rejoint la réunion",
     "connectedTwoMembers": "{{first}} et {{second}} ont rejoint la réunion",
@@ -619,7 +624,9 @@
     "moderationToggleDescription": "par {{participantDisplayName}}",
     "raiseHandAction": "Lever la main",
     "reactionSounds": "Bloquer les réactions sonores",
-    "groupTitle": "Notifications"
+    "groupTitle": "Notifications",
+    "videoUnmuteBlockedTitle": "Rétablissement de la caméra bloqué !",
+    "videoUnmuteBlockedDescription": "Le rétablissement de la vidéo a été bloqué temporairement en raison de limites système."
   },
   "participantsPane": {
     "close": "Fermer",
@@ -951,7 +958,7 @@
       "surprised": "Surpris",
       "tileView": "Activer / Désactiver la vue mosaïque",
       "toggleCamera": "Changer de caméra",
-      "toggleFilmstrip": "Basculer de pellicule",
+      "toggleFilmstrip": "Afficher ou masquer les vignettes vidéo",
       "videomute": "Activer / Couper la vidéo",
       "videoblur": "Activer / désactiver le floutage",
       "selectBackground": "Selectionner un arrière-plan",
