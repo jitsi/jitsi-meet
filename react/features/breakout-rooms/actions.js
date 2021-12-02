@@ -184,20 +184,21 @@ export function moveToRoom(roomId?: string) {
             const { audio, video } = getState()['features/base/media'];
 
             dispatch(conferenceWillLeave(conference));
+
             conference.leave()
-            .catch(error => {
-                logger.warn(
-                    'JitsiConference.leave() rejected with:',
-                    error);
+                .catch(error => {
+                    logger.warn('JitsiConference.leave() rejected with:', error);
 
-                dispatch(conferenceLeft(conference));
-            });
-            dispatch(clearNotifications());
+                    dispatch(conferenceLeft(conference));
+                })
+                .then(() => {
+                    dispatch(clearNotifications());
 
-            // dispatch(setRoom(_roomId));
-            dispatch(createConference(_roomId));
-            dispatch(setAudioMuted(audio.muted));
-            dispatch(setVideoMuted(video.muted));
+                    // dispatch(setRoom(_roomId));
+                    dispatch(createConference(_roomId));
+                    dispatch(setAudioMuted(audio.muted));
+                    dispatch(setVideoMuted(video.muted));
+                });
         } else {
             APP.conference.leaveRoom(false /* doDisconnect */)
                 .finally(() => APP.conference.joinRoom(_roomId));
