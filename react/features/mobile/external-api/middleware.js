@@ -126,7 +126,6 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case CONFERENCE_LEFT:
-    case CONFERENCE_WILL_JOIN:
         _sendConferenceEvent(store, action);
         break;
 
@@ -600,11 +599,6 @@ function _swallowEvent(store, action, data) {
     switch (action.type) {
     case CONFERENCE_LEFT:
         return _swallowConferenceLeft(store, action, data);
-    case CONFERENCE_WILL_JOIN:
-        // CONFERENCE_WILL_JOIN is dispatched to the external API on SET_ROOM,
-        // before the connection is created, so we need to swallow the original
-        // one emitted by base/conference.
-        return true;
 
     default:
         return false;
