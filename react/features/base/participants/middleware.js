@@ -7,7 +7,11 @@ import UIEvents from '../../../../service/UI/UIEvents';
 import { approveParticipant } from '../../av-moderation/actions';
 import { toggleE2EE } from '../../e2ee/actions';
 import { MAX_MODE } from '../../e2ee/constants';
-import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../../notifications';
+import {
+    NOTIFICATION_TIMEOUT_TYPE,
+    RAISE_HAND_NOTIFICATION_ID,
+    showNotification
+} from '../../notifications';
 import { isForceMuted } from '../../participants-pane/functions';
 import { CALLING, INVITED } from '../../presence-status';
 import { RAISE_HAND_SOUND_ID } from '../../reactions/constants';
@@ -47,8 +51,7 @@ import {
 import {
     LOCAL_PARTICIPANT_DEFAULT_ID,
     PARTICIPANT_JOINED_SOUND_ID,
-    PARTICIPANT_LEFT_SOUND_ID,
-    RAISE_HAND_NOTIFICATION_ID
+    PARTICIPANT_LEFT_SOUND_ID
 } from './constants';
 import {
     getFirstLoadableAvatarUrl,

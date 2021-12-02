@@ -55,3 +55,10 @@ export const SILENT_JOIN_THRESHOLD = 30;
  * Amount of participants beyond which no left notification will be emitted.
  */
 export const SILENT_LEFT_THRESHOLD = 30;
+
+/**
+ * The identifier of the raise hand notification.
+ *
+ * @type {string}
+ */
+export const RAISE_HAND_NOTIFICATION_ID = 'RAISE_HAND_NOTIFICATION';
