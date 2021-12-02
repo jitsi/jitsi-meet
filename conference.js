@@ -2942,7 +2942,7 @@ export default {
      * @param {boolean} doDisconnect - Wether leaving the room should also terminate the connection.
      * @returns {Promise}
      */
-    leaveRoom(doDisconnect = true) {
+    async leaveRoom(doDisconnect = true) {
         APP.store.dispatch(conferenceWillLeave(room));
 
         if (room && room.isJoined()) {
