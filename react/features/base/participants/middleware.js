@@ -1,12 +1,17 @@
 // @flow
 
+import i18n from 'i18next';
 import { batch } from 'react-redux';
 
 import UIEvents from '../../../../service/UI/UIEvents';
 import { approveParticipant } from '../../av-moderation/actions';
 import { toggleE2EE } from '../../e2ee/actions';
 import { MAX_MODE } from '../../e2ee/constants';
-import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../../notifications';
+import {
+    NOTIFICATION_TIMEOUT_TYPE,
+    RAISE_HAND_NOTIFICATION_ID,
+    showNotification
+} from '../../notifications';
 import { isForceMuted } from '../../participants-pane/functions';
 import { CALLING, INVITED } from '../../presence-status';
 import { RAISE_HAND_SOUND_ID } from '../../reactions/constants';
@@ -555,12 +560,27 @@ function _raiseHandUpdated({ dispatch, getState }, conference, participantId, ne
     } : {};
 
     if (raisedHandTimestamp) {
+        let notificationTitle;
+        const participantName = getParticipantDisplayName(state, participantId);
+        const { raisedHandsQueue } = state['features/base/participants'];
+
+        if (raisedHandsQueue.length > 1) {
+            const raisedHands = raisedHandsQueue.length - 1;
+
+            notificationTitle = i18n.t('notify.raisedHands', {
+                participantName,
+                raisedHands
+            });
+        } else {
+            notificationTitle = participantName;
+        }
         dispatch(showNotification({
             titleKey: 'notify.somebody',
-            title: getParticipantDisplayName(state, participantId),
+            title: notificationTitle,
             descriptionKey: 'notify.raisedHand',
             raiseHandNotification: true,
             concatText: true,
+            uid: RAISE_HAND_NOTIFICATION_ID,
             ...action
         }, shouldDisplayAllowAction ? NOTIFICATION_TIMEOUT_TYPE.MEDIUM : NOTIFICATION_TIMEOUT_TYPE.SHORT));
         dispatch(playSound(RAISE_HAND_SOUND_ID));
