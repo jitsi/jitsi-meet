@@ -61,6 +61,13 @@ export const PARTICIPANT_JOINED_SOUND_ID = 'PARTICIPANT_JOINED_SOUND';
 export const PARTICIPANT_LEFT_SOUND_ID = 'PARTICIPANT_LEFT_SOUND';
 
 /**
+ * The identifier of the raise hand notification.
+ *
+ * @type {string}
+ */
+export const RAISE_HAND_NOTIFICATION_ID = 'RAISE_HAND_NOTIFICATION';
+
+/**
  * The set of possible XMPP MUC roles for conference participants.
  *
  * @enum {string}

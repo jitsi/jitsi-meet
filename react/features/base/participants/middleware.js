@@ -47,7 +47,8 @@ import {
 import {
     LOCAL_PARTICIPANT_DEFAULT_ID,
     PARTICIPANT_JOINED_SOUND_ID,
-    PARTICIPANT_LEFT_SOUND_ID
+    PARTICIPANT_LEFT_SOUND_ID,
+    RAISE_HAND_NOTIFICATION_ID
 } from './constants';
 import {
     getFirstLoadableAvatarUrl,
@@ -576,6 +577,7 @@ function _raiseHandUpdated({ dispatch, getState }, conference, participantId, ne
             descriptionKey: 'notify.raisedHand',
             raiseHandNotification: true,
             concatText: true,
+            uid: RAISE_HAND_NOTIFICATION_ID,
             ...action
         }, shouldDisplayAllowAction ? NOTIFICATION_TIMEOUT_TYPE.MEDIUM : NOTIFICATION_TIMEOUT_TYPE.SHORT));
         dispatch(playSound(RAISE_HAND_SOUND_ID));
