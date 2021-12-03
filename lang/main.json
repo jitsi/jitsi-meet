@@ -54,6 +54,11 @@
             "more": "More",
             "remove": "Remove",
             "sendToBreakoutRoom": "Send participant to:"
+        },
+        "notifications": {
+            "joinedTitle": "Breakout Rooms",
+            "joined": "Joining the \"{{name}}\" breakout room",
+            "joinedMainRoom": "Joining the main room"
         }
     },
     "calendarSync": {
