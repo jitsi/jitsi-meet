@@ -54,6 +54,11 @@
             "more": "Mehr",
             "remove": "Entfernen",
             "sendToBreakoutRoom": "Anwesende in Breakout-Raum verschieben:"
+        },
+        "notifications": {
+            "joinedTitle": "Breakout-Räume",
+            "joined": "Breakout-Raum \"{{name}}\" betreten",
+            "joinedMainRoom": "Hauptraum betreten"
         }
     },
     "calendarSync": {
@@ -585,6 +590,9 @@
         "invitedThreePlusMembers": "{{name}} und {{count}} andere wurden eingeladen",
         "invitedTwoMembers": "{{first}} und {{second}} wurden eingeladen",
         "kickParticipant": "{{kicked}} wurde von {{kicker}} ausgewiesen",
+        "leftOneMember": "{{name}} hat die Konferenz verlassen",
+        "leftThreePlusMembers": "{{name}} und Weitere haben die Konferenz verlassen",
+        "leftTwoMembers": "{{first}} und {{second}} haben die Konferenz verlassen",
         "me": "Ich",
         "moderator": "Moderationsrechte vergeben!",
         "muted": "Der Konferenz wurde stumm beigetreten.",
@@ -596,6 +604,7 @@
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) von einer anderen Person entfernt",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) von einer anderen Person gesetzt",
         "raisedHand": "{{name}} möchte sprechen.",
+        "raisedHands": "{{participantName}} und {{raisedHands}} weitere möchten sprechen",
         "screenShareNoAudio": "Die Option \"Audio freigeben\" wurde bei der Auswahl des Fensters nicht ausgewählt.",
         "screenShareNoAudioTitle": "Share audio was not checked",
         "somebody": "Jemand",
@@ -624,6 +633,7 @@
         "moderationToggleDescription": "von {{participantDisplayName}}",
         "raiseHandAction": "Melden",
         "reactionSounds": "Interaktionstöne deaktivieren",
+        "reactionSoundsForAll": "Interaktionstöne für alle deaktivieren",
         "groupTitle": "Benachrichtigungen",
         "videoUnmuteBlockedTitle": "Kamera kann nicht aktiviert werden!",
         "videoUnmuteBlockedDescription": "Die Kamera kann aus Überlastungsschutzgründen temporär nicht eingeschaltet werden."
@@ -846,6 +856,7 @@
         "sounds": "Hinweistöne",
         "speakers": "Lautsprecher",
         "startAudioMuted": "Alle Personen treten stummgeschaltet bei",
+        "startReactionsMuted": "Interaktionstöne für alle deaktivieren",
         "startVideoMuted": "Alle Personen treten ohne Video bei",
         "talkWhileMuted": "Wenn bei Stummschaltung gesprochen wird",
         "title": "Einstellungen"
