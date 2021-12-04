@@ -54,6 +54,11 @@
         "more": "Plus",
         "remove": "Supprimer",
         "sendToBreakoutRoom": "Envoyer le participant dans:"
+    },
+    "notifications": {
+        "joinedTitle": "Salles annexes",
+        "joined": "Entrée en salle annexe \"{{name}}\"",
+        "joinedMainRoom": "Retour à la salle principalem"
     }
   },
   "calendarSync": {
@@ -585,6 +590,9 @@
     "invitedThreePlusMembers": "{{name}} et {{count}} autres ont été invités",
     "invitedTwoMembers": "{{first}} et {{second}} ont été invités",
     "kickParticipant": "{{kicked}} a été expulsé par {{kicker}}",
+    "leftOneMember": "{{name}} a quitté la réunion",
+    "leftThreePlusMembers": "{{name}} et beaucoup d'autres ont quitté la réunion",
+    "leftTwoMembers": "{{first}} et {{second}} ont quitté la réunion",
     "me": "Moi",
     "moderator": "Droits modérateur accordés !",
     "muted": "Vous avez commencé la conversation en muet.",
@@ -596,6 +604,7 @@
     "passwordRemovedRemotely": "Le $t(lockRoomPassword) a été supprimé par un autre participant",
     "passwordSetRemotely": "Un $t(lockRoomPassword) a été défini par un autre participant",
     "raisedHand": "{{name}} aimerait prendre la parole.",
+    "raisedHands": "{{participantName}} et {{raisedHands}} autres personnes",    
     "screenShareNoAudio": " La case Partager l'audio n'a pas été cochée dans l'écran de sélection de la fenêtre.",
     "screenShareNoAudioTitle": "La case Partager l'audio n'a pas été cochée",
     "somebody": "Quelqu'un",
@@ -624,6 +633,7 @@
     "moderationToggleDescription": "par {{participantDisplayName}}",
     "raiseHandAction": "Lever la main",
     "reactionSounds": "Bloquer les réactions sonores",
+    "reactionSoundsForAll": "Bloquer les réactions sonores pour tous",    
     "groupTitle": "Notifications",
     "videoUnmuteBlockedTitle": "Rétablissement de la caméra bloqué !",
     "videoUnmuteBlockedDescription": "Le rétablissement de la vidéo a été bloqué temporairement en raison de limites système."
@@ -651,7 +661,8 @@
       "stopEveryonesVideo": "Couper toutes les caméras",
       "stopVideo": "Couper la vidéo",
       "unblockEveryoneMicCamera": "Débloquer tous les micros et caméras",
-      "videoModeration": "Démarrer leur vidéo"
+      "videoModeration": "Démarrer leur vidéo",
+      "moreModerationControls": "Options de modération supplémentaires"      
     },
     "search": "Rechercher des participants"
   },
@@ -846,6 +857,7 @@
     "sounds": "Sons",
     "speakers": "Haut-parleurs",
     "startAudioMuted": "Tout le monde commence en muet",
+    "startReactionsMuted": "Tout le monde commence avec les réactions sonores bloquées",    
     "startVideoMuted": "Tout le monde commence sans vidéo",
     "talkWhileMuted": "vous parlez en étant muet",
     "title": "Paramètres"
