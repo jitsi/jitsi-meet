@@ -1,4 +1,4 @@
-import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
+import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../../notifications';
 import { set } from '../redux';
 
 import {
@@ -478,7 +478,7 @@ export function participantMutedUs(participant, track) {
             titleArguments: {
                 participantDisplayName: getParticipantDisplayName(getState, participant.getId())
             }
-        }));
+        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
     };
 }
 
@@ -510,7 +510,7 @@ export function participantKicked(kicker, kicked) {
                     getParticipantDisplayName(getState, kicker.getId())
             },
             titleKey: 'notify.kickParticipant'
-        }, NOTIFICATION_TIMEOUT * 2)); // leave more time for this
+        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
     };
 }
 

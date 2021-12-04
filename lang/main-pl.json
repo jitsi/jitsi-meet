@@ -211,7 +211,7 @@
         "dismiss": "Odrzuć",
         "displayNameRequired": "Cześć! Jak się nazywasz?",
         "done": "Zrobione",
-        "e2eeDescription": "Szyfrowanie End-to-End jest aktualnie w fazie EKSPERYMENTALNEJ. Proszę mieć na uwadze fakt, że szyfrowanie end-to-end wyłączy oferowane przez serwer usługi takie jak: nagrywanie, streaming na żywo i dołączanie uczestników przez telefon. Proszę mieć również na uwadze fakt, że takie spotkanie zadziałą tylko dla uczestników korzystających z przeglądarek wspierających wstawiane strumienie.",
+        "e2eeDescription": "Szyfrowanie End-to-End jest aktualnie w fazie EKSPERYMENTALNEJ. Proszę mieć na uwadze fakt, że szyfrowanie end-to-end wyłączy oferowane przez serwer usługi takie jak: nagrywanie, streaming na żywo i dołączanie uczestników przez telefon. Proszę mieć również na uwadze fakt, że takie spotkanie będą działać tylko dla uczestników korzystających z przeglądarek wspierających wstawiane strumienie.",
         "e2eeLabel": "Klucz E2EE",
         "e2eeWarning": "UWAGA: Niektórzy uczestnicy tego spotkania nie mają włączonej obsługi szyfrowania E2EE. Jeśli włączysz tą funkcję ci uczestnicy nie będą mieli z tobą kontaktu.",
         "enterDisplayName": "Wpisz tutaj swoje imię",
@@ -724,7 +724,7 @@
     "profile": {
         "avatar": "awatar",
         "setDisplayNameLabel": "Podaj swoją wyświetlaną nazwę",
-        "setEmailInput": "Wprowadź adres e-mail",
+        "setEmailInput": "Wprowadź adres email",
         "setEmailLabel": "Ustaw adres poczty elektronicznej swojego Gravatara",
         "title": "Profil"
     },
@@ -767,7 +767,7 @@
         "pullToRefresh": "Przeciągnij, aby odświeżyć"
     },
     "security": {
-        "about": "Możesz dodać a $t(lockRoomPassword) do spotkania. Uczestnicy będą musieli wprowadzić $t(lockRoomPassword) zanim zostaną dołączeni do spotkania.",
+        "about": "Możesz dodać $t(lockRoomPassword) do spotkania. Uczestnicy będą musieli wprowadzić $t(lockRoomPassword) przed dołączeniem do spotkania.",
         "aboutReadOnly": "Uczestnicy posiadający uprawnienia do moderacji mogą ustawić $t(lockRoomPassword) do spotkania. Uczestnicy będą musieli wprowadzić $t(lockRoomPassword) zanim zostaną dołączeni do spotkania.",
         "insecureRoomNameWarning": "Nazwa pokoju nie jest bezpieczna. Niepowołaniu uczestnicy mogą dołączyć do spotkania. Proszę rozważyć ustawienie hasła spotkania używając przycisku Opcje zabezpieczeń.",
         "securityOptions": "Opcje zabezpieczeń"
@@ -822,7 +822,7 @@
         "disableCrashReporting": "Wyłącz raportowanie błędów",
         "disableCrashReportingWarning": "Czy na pewno chcesz wyłączyć raportowanie błędów? Ustawienie zacznie funkcjonować po restarcie aplikacji.",
         "displayName": "Wyświetlana nazwa",
-        "email": "E-mail",
+        "email": "Email",
         "header": "Ustawienia",
         "profileSection": "Profil",
         "serverURL": "Adres URL serwera",
@@ -901,7 +901,7 @@
             "shareaudio": "Udostępnij audio",
             "sharedvideo": "Przełącz udostępnianie obrazu na YouTube",
             "shareRoom": "Zaproś kogoś",
-            "shareYourScreen": "Przełączanie podziału ekranu",
+            "shareYourScreen": "Przełączanie udostępniania ekranu",
             "shortcuts": "Przełączanie skrótów klawiszowych",
             "show": "Pokaż na scenie",
             "silence": "Cisza",

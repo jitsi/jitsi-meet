@@ -9,6 +9,7 @@ import { getConferenceOptions } from '../../base/conference/functions';
 import { setConfig } from '../../base/config';
 import { DialogContainer } from '../../base/dialog';
 import { createPrejoinTracks } from '../../base/tracks';
+import GlobalStyles from '../../base/ui/components/GlobalStyles';
 import JitsiThemeProvider from '../../base/ui/components/JitsiThemeProvider';
 import { initPrejoin, makePrecallTest } from '../actions';
 
@@ -79,6 +80,7 @@ export default class PrejoinApp extends BaseApp<Props> {
         return (
             <JitsiThemeProvider>
                 <AtlasKitThemeProvider mode = 'dark'>
+                    <GlobalStyles />
                     { super._createMainElement(component, props) }
                 </AtlasKitThemeProvider>
             </JitsiThemeProvider>

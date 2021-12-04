@@ -254,7 +254,8 @@ class Conference extends AbstractConference<Props, *> {
             _connecting,
             _largeVideoParticipantId,
             _reducedUI,
-            _shouldDisplayTileView
+            _shouldDisplayTileView,
+            _toolboxVisible
         } = this.props;
 
         if (_reducedUI) {
@@ -304,7 +305,10 @@ class Conference extends AbstractConference<Props, *> {
 
                 <SafeAreaView
                     pointerEvents = 'box-none'
-                    style = { styles.navBarSafeView }>
+                    style = {
+                        _toolboxVisible
+                            ? styles.navBarSafeViewColor
+                            : styles.navBarSafeViewTransparent }>
                     <NavigationBar />
                     { this._renderNotificationsContainer() }
                     <KnockingParticipantList />

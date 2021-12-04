@@ -82,6 +82,7 @@ Component "breakout.jitmeet.example.com" "muc"
         "muc_meeting_id";
         "muc_domain_mapper";
         --"token_verification";
+        "muc_rate_limit";
     }
     admins = { "focusUser@auth.jitmeet.example.com" }
     muc_room_locking = false
@@ -121,3 +122,6 @@ Component "lobby.jitmeet.example.com" "muc"
     restrict_room_creation = true
     muc_room_locking = false
     muc_room_default_public_jids = true
+    modules_enabled = {
+        "muc_rate_limit";
+    }

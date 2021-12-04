@@ -25,7 +25,7 @@ import {
     toURLString
 } from '../base/util';
 import { isVpaasMeeting } from '../jaas/functions';
-import { clearNotifications, showNotification } from '../notifications';
+import { NOTIFICATION_TIMEOUT_TYPE, clearNotifications, showNotification } from '../notifications';
 import { setFatalError } from '../overlay';
 
 import {
@@ -328,7 +328,7 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
             dispatch(showNotification({
                 titleArguments: { appName: getName() },
                 titleKey: 'dialog.thankYou'
-            }));
+            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
         }
 
         // if Welcome page is enabled redirect to welcome page after 3 sec, if

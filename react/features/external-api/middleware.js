@@ -1,11 +1,13 @@
 // @flow
 
+import { getJitsiMeetTransport } from '../../../modules/transport';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     DATA_CHANNEL_OPENED,
     KICKED_OUT
 } from '../base/conference';
+import { SET_CONFIG } from '../base/config';
 import { NOTIFY_CAMERA_ERROR, NOTIFY_MIC_ERROR } from '../base/devices';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import {
@@ -27,7 +29,6 @@ import { SET_FILMSTRIP_VISIBLE } from '../filmstrip';
 import './subscriber';
 
 declare var APP: Object;
-declare var interfaceConfig: Object;
 
 /**
  * The middleware of the feature {@code external-api}.
@@ -86,6 +87,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     case CONFERENCE_JOINED: {
         const state = store.getState();
+        const { defaultLocalDisplayName } = state['features/base/config'];
         const { room } = state['features/base/conference'];
         const { loadableAvatarUrl, name, id } = getLocalParticipant(state);
 
@@ -96,7 +98,7 @@ MiddlewareRegistry.register(store => next => action => {
                 displayName: name,
                 formattedDisplayName: appendSuffix(
                     name,
-                    interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME
+                    defaultLocalDisplayName
                 ),
                 avatarURL: loadableAvatarUrl
             }
@@ -149,6 +151,8 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case PARTICIPANT_JOINED: {
+        const state = store.getState();
+        const { defaultRemoteDisplayName } = state['features/base/config'];
         const { participant } = action;
         const { id, local, name } = participant;
 
@@ -158,7 +162,7 @@ MiddlewareRegistry.register(store => next => action => {
             APP.API.notifyUserJoined(id, {
                 displayName: name,
                 formattedDisplayName: appendSuffix(
-                    name || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME)
+                    name || defaultRemoteDisplayName)
             });
         }
 
@@ -168,6 +172,22 @@ MiddlewareRegistry.register(store => next => action => {
     case PARTICIPANT_ROLE_CHANGED:
         APP.API.notifyUserRoleChanged(action.participant.id, action.participant.role);
         break;
+
+    case SET_CONFIG: {
+        const state = store.getState();
+        const { disableBeforeUnloadHandlers = false } = state['features/base/config'];
+
+        /**
+         * Disposing the API when the user closes the page.
+         */
+        window.addEventListener(disableBeforeUnloadHandlers ? 'unload' : 'beforeunload', () => {
+            APP.API.notifyConferenceLeft(APP.conference.roomName);
+            APP.API.dispose();
+            getJitsiMeetTransport().dispose();
+        });
+
+        break;
+    }
 
     case SET_FILMSTRIP_VISIBLE:
         APP.API.notifyFilmstripDisplayChanged(action.visible);

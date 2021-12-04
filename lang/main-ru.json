@@ -614,8 +614,8 @@
     },
     "profile": {
         "setDisplayNameLabel": "Отображаемое имя",
-        "setEmailInput": "Введите e-mail",
-        "setEmailLabel": "E-mail для Gravatar",
+        "setEmailInput": "Введите email",
+        "setEmailLabel": "Email для Gravatar",
         "title": "Профиль"
     },
     "raisedHand": "Хочет говорить",

@@ -479,8 +479,8 @@
     },
     "profile": {
         "setDisplayNameLabel": "Introduceți numele care va fi afișat",
-        "setEmailInput": "Introduceți adresa de e-mail",
-        "setEmailLabel": "Setați adresa de e-mail gravatar",
+        "setEmailInput": "Introduceți adresa de email",
+        "setEmailLabel": "Setați adresa de email gravatar",
         "title": "Profil"
     },
     "recording": {

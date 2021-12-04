@@ -39,6 +39,9 @@
     "audioOnly": {
         "audioOnly": "Low bandwidth"
     },
+    "blankPage": {
+        "meetingEnded": "Meeting ended."
+    },
     "breakoutRooms": {
         "defaultName": "Breakout room #{{index}}",
         "mainRoom": "Main room",
@@ -51,6 +54,11 @@
             "more": "More",
             "remove": "Remove",
             "sendToBreakoutRoom": "Send participant to:"
+        },
+        "notifications": {
+            "joinedTitle": "Breakout Rooms",
+            "joined": "Joining the \"{{name}}\" breakout room",
+            "joinedMainRoom": "Joining the main room"
         }
     },
     "calendarSync": {
@@ -571,6 +579,8 @@
     "notify": {
         "allowAction": "Allow",
         "allowedUnmute": "You can unmute your microphone, start your camera or share your screen.",
+        "audioUnmuteBlockedTitle": "Mic unmute blocked!",
+        "audioUnmuteBlockedDescription": "Mic unmute operation has been temporarily blocked because of system limits.",
         "connectedOneMember": "{{name}} joined the meeting",
         "connectedThreePlusMembers": "{{name}} and many others joined the meeting",
         "connectedTwoMembers": "{{first}} and {{second}} joined the meeting",
@@ -582,6 +592,9 @@
         "invitedThreePlusMembers": "{{name}} and {{count}} others have been invited",
         "invitedTwoMembers": "{{first}} and {{second}} have been invited",
         "kickParticipant": "{{kicked}} was kicked by {{kicker}}",
+        "leftOneMember": "{{name}} left the meeting",
+        "leftThreePlusMembers": "{{name}} and many others left the meeting",
+        "leftTwoMembers": "{{first}} and {{second}} left the meeting",
         "me": "Me",
         "moderator": "You're now a moderator",
         "muted": "You have started the conversation muted.",
@@ -593,6 +606,7 @@
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) removed by another participant",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) set by another participant",
         "raisedHand": "Would like to speak.",
+        "raisedHands": "{{participantName}} and {{raisedHands}} more people",
         "screenShareNoAudio": " Share audio box was not checked in the window selection screen.",
         "screenShareNoAudioTitle": "Couldn't share system audio!",
         "somebody": "Somebody",
@@ -621,7 +635,10 @@
         "moderationToggleDescription": "by {{participantDisplayName}}",
         "raiseHandAction": "Raise hand",
         "reactionSounds": "Disable sounds",
-        "groupTitle": "Notifications"
+        "reactionSoundsForAll": "Disable sounds for all",
+        "groupTitle": "Notifications",
+        "videoUnmuteBlockedTitle": "Camera unmute blocked!",
+        "videoUnmuteBlockedDescription": "Camera unmute operation has been temporarily blocked because of system limits."
     },
     "participantsPane": {
         "close": "Close",
@@ -646,7 +663,8 @@
             "stopEveryonesVideo": "Stop everyone's video",
             "stopVideo": "Stop video",
             "unblockEveryoneMicCamera": "Unblock everyone's mic and camera",
-            "videoModeration": "Start their video"
+            "videoModeration": "Start their video",
+            "moreModerationControls": "More moderation controls"
         },
         "search": "Search participants"
     },
@@ -758,7 +776,7 @@
     "profile": {
         "avatar": "avatar",
         "setDisplayNameLabel": "Set your display name",
-        "setEmailInput": "Enter e-mail",
+        "setEmailInput": "Enter email",
         "setEmailLabel": "Set your gravatar email",
         "title": "Profile"
     },
@@ -841,6 +859,7 @@
         "sounds": "Sounds",
         "speakers": "Speakers",
         "startAudioMuted": "Everyone starts muted",
+        "startReactionsMuted": "Mute reaction sounds for everyone",
         "startVideoMuted": "Everyone starts hidden",
         "talkWhileMuted": "Talk while muted",
         "title": "Settings"

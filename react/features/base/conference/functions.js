@@ -386,7 +386,7 @@ function _reportError(msg, err) {
 
 /**
  * Sends a representation of the local participant such as her avatar (URL),
- * e-mail address, and display name to (the remote participants of) a specific
+ * email address, and display name to (the remote participants of) a specific
  * conference.
  *
  * @param {Function|Object} stateful - The redux store, state, or

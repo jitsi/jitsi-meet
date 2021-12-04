@@ -17,6 +17,7 @@ import {
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import {
+    NOTIFICATION_TIMEOUT_TYPE,
     hideNotification,
     showNotification
 } from '../notifications';
@@ -97,16 +98,16 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         }
 
         dispatch(showNotification({
-            customActionNameKey: 'notify.raiseHandAction',
-            customActionHandler: () => batch(() => {
+            customActionNameKey: [ 'notify.raiseHandAction' ],
+            customActionHandler: [ () => batch(() => {
                 dispatch(raiseHand(true));
                 dispatch(hideNotification(uid));
-            }),
+            }) ],
             descriptionKey,
             sticky: true,
             titleKey,
             uid
-        }));
+        }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
 
         break;
     }
@@ -220,9 +221,9 @@ StateListenerRegistry.register(
                     dispatch(showNotification({
                         titleKey: 'notify.hostAskedUnmute',
                         sticky: true,
-                        customActionNameKey: 'notify.unmute',
-                        customActionHandler: () => dispatch(muteLocal(false, MEDIA_TYPE.AUDIO))
-                    }));
+                        customActionNameKey: [ 'notify.unmute' ],
+                        customActionHandler: [ () => dispatch(muteLocal(false, MEDIA_TYPE.AUDIO)) ]
+                    }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
                     dispatch(playSound(ASKED_TO_UNMUTE_SOUND_ID));
                 }
             });

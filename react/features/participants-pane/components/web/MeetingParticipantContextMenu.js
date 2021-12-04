@@ -2,6 +2,7 @@
 import { withStyles } from '@material-ui/styles';
 import React, { Component } from 'react';
 
+import { createBreakoutRoomsEvent, sendAnalytics } from '../../../analytics';
 import { approveParticipant } from '../../../av-moderation/actions';
 import { Avatar } from '../../../base/avatar';
 import { ContextMenu, ContextMenuItemGroup } from '../../../base/components';
@@ -33,6 +34,7 @@ import { sendParticipantToRoom } from '../../../breakout-rooms/actions';
 import { getBreakoutRooms, getCurrentRoomId } from '../../../breakout-rooms/functions';
 import { openChatById } from '../../../chat/actions';
 import { setVolume } from '../../../filmstrip/actions.web';
+import { stopSharedVideo } from '../../../shared-video/actions.any';
 import { GrantModeratorDialog, KickRemoteParticipantDialog, MuteEveryoneDialog } from '../../../video-menu';
 import { VolumeSlider } from '../../../video-menu/components/web';
 import MuteRemoteParticipantsVideoDialog from '../../../video-menu/components/web/MuteRemoteParticipantsVideoDialog';
@@ -249,9 +251,10 @@ class MeetingParticipantContextMenu extends Component<Props> {
      * @returns {void}
      */
     _onStopSharedVideo() {
-        const { dispatch } = this.props;
+        const { dispatch, onSelect } = this.props;
 
-        dispatch(this._onStopSharedVideo());
+        onSelect(true);
+        dispatch(stopSharedVideo());
     }
 
     _onMuteEveryoneElse: () => void;
@@ -305,6 +308,7 @@ class MeetingParticipantContextMenu extends Component<Props> {
         return () => {
             const { _participant, dispatch } = this.props;
 
+            sendAnalytics(createBreakoutRoomsEvent('send.participant.to.room'));
             dispatch(sendParticipantToRoom(_participant.id, room.id));
         };
     }

@@ -553,7 +553,7 @@
     },
     "profile": {
         "setDisplayNameLabel": "Nastavte si meno",
-        "setEmailInput": "Zadajte e-mail",
+        "setEmailInput": "Zadajte email",
         "setEmailLabel": "Nastavte si email vašeho gravataru",
         "title": "Profil"
     },
@@ -634,7 +634,7 @@
         "disableCrashReporting": "Vypnúť oznamovanie pádov",
         "disableCrashReportingWarning": "Naozak chcete vypnúť oznamovanie pádov? Nastavenie bude aktívne po reštartovaní aplikácie.",
         "displayName": "Ukázať",
-        "email": "E-mail",
+        "email": "Email",
         "header": "Nastavenia",
         "profileSection": "Profil",
         "serverURL": "Adresa URL servera",
@@ -884,7 +884,7 @@
         "dialogTitle": "Čakáreň",
         "disableDialogContent": "Čakáreň je zapnutá. Táto funkcia zabezpečuje, že do konferencie nemôžu vstúpiť neželaní účastníci. Chcete ju vypnúť?",
         "disableDialogSubmit": "Vypnúť",
-        "emailField": "Zadajte vašu e-mailovú adresu",
+        "emailField": "Zadajte vašu emailovú adresu",
         "enableDialogPasswordField": "Nastaviť heslo (voliteľné)",
         "enableDialogSubmit": "Zapnúť",
         "enableDialogText": "Čakáreň umožňuje zabezpečiť konferenciu tým, že účastníci môžu do konferencie vstúpiť len po schválení moderátorom.",

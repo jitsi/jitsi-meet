@@ -57,7 +57,7 @@ import {
 import SecurityDialogButton from '../../../security/components/security-dialog/SecurityDialogButton';
 import { SettingsButton } from '../../../settings';
 import { SharedVideoButton } from '../../../shared-video/components';
-import { SpeakerStatsButton } from '../../../speaker-stats';
+import { SpeakerStatsButton } from '../../../speaker-stats/components/web';
 import {
     ClosedCaptionButton
 } from '../../../subtitles';
@@ -67,8 +67,7 @@ import {
     toggleTileView
 } from '../../../video-layout';
 import { VideoQualityDialog, VideoQualityButton } from '../../../video-quality/components';
-import { VideoBackgroundButton } from '../../../virtual-background';
-import { toggleBackgroundEffect } from '../../../virtual-background/actions';
+import { VideoBackgroundButton, toggleBackgroundEffect } from '../../../virtual-background';
 import { VIRTUAL_BACKGROUND_TYPE } from '../../../virtual-background/constants';
 import {
     setFullScreen,

@@ -514,7 +514,7 @@
     },
     "profile": {
         "setDisplayNameLabel": "Nhập tên hiển thị của bạn",
-        "setEmailInput": "Nhập địa chỉ e-mail",
+        "setEmailInput": "Nhập địa chỉ email",
         "setEmailLabel": "Nhập địa chỉ Gravatar thư điện tử của bạn",
         "title": "Hồ sơ"
     },

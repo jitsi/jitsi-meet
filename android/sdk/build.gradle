@@ -217,7 +217,7 @@ publishing {
                     def groupId = it.moduleGroup
                     def artifactId = it.moduleName
 
-                    if (artifactId.startsWith('react-native-') && groupId.equals('jitsi-meet')) {
+                    if (artifactId.startsWith('react-native-')) {
                         groupId = rootProject.ext.moduleGroupId
                     }
 

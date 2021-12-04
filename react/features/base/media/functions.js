@@ -89,6 +89,16 @@ export function getStartWithVideoMuted(stateful: Object | Function) {
 }
 
 /**
+ * Determines whether video is currently muted.
+ *
+ * @param {Function|Object} stateful - The redux store, state, or {@code getState} function.
+ * @returns {boolean}
+ */
+export function isVideoMuted(stateful: Function | Object) {
+    return Boolean(toState(stateful)['features/base/media'].video.muted);
+}
+
+/**
  * Determines whether video is currently muted by the user authority.
  *
  * @param {Function|Object} stateful - The redux store, state, or

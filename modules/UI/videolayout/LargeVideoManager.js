@@ -14,7 +14,10 @@ import {
     JitsiParticipantConnectionStatus
 } from '../../../react/features/base/lib-jitsi-meet';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media';
-import { getParticipantById } from '../../../react/features/base/participants';
+import {
+    getParticipantById,
+    getParticipantDisplayName
+} from '../../../react/features/base/participants';
 import { getTrackByMediaTypeAndParticipant } from '../../../react/features/base/tracks';
 import { CHAT_SIZE } from '../../../react/features/chat';
 import {
@@ -314,10 +317,12 @@ export default class LargeVideoManager {
      * @private
      */
     updateParticipantConnStatusIndication(id, messageKey) {
+        const state = APP.store.getState();
+
         if (messageKey) {
             // Get user's display name
             const displayName
-                = APP.conference.getParticipantDisplayName(id);
+                = getParticipantDisplayName(state, id);
 
             this._setRemoteConnectionMessage(
                 messageKey,

@@ -17,12 +17,11 @@ import {
     clearNotifications,
     hideRaiseHandNotifications,
     showNotification,
-    showParticipantJoinedNotification
+    showParticipantJoinedNotification,
+    showParticipantLeftNotification
 } from './actions';
-import { NOTIFICATION_TIMEOUT } from './constants';
+import { NOTIFICATION_TIMEOUT_TYPE } from './constants';
 import { joinLeaveNotificationsDisabled } from './functions';
-
-declare var interfaceConfig: Object;
 
 /**
  * Middleware that captures actions to display notifications.
@@ -49,20 +48,17 @@ MiddlewareRegistry.register(store => next => action => {
     }
     case PARTICIPANT_LEFT: {
         if (!joinLeaveNotificationsDisabled()) {
+            const { dispatch, getState } = store;
+            const state = getState();
             const participant = getParticipantById(
                 store.getState(),
                 action.participant.id
             );
 
-            if (typeof interfaceConfig === 'object'
-                && participant
-                && !participant.local
-                && !action.participant.isReplaced) {
-                store.dispatch(showNotification({
-                    descriptionKey: 'notify.disconnected',
-                    titleKey: 'notify.somebody',
-                    title: participant.name
-                }, NOTIFICATION_TIMEOUT));
+            if (participant && !participant.local && !action.participant.isReplaced) {
+                dispatch(showParticipantLeftNotification(
+                    getParticipantDisplayName(state, participant.id)
+                ));
             }
         }
 
@@ -79,7 +75,7 @@ MiddlewareRegistry.register(store => next => action => {
         const { id, role } = action.participant;
         const localParticipant = getLocalParticipant(state);
 
-        if (localParticipant.id !== id) {
+        if (localParticipant?.id !== id) {
             return next(action);
         }
 
@@ -91,7 +87,7 @@ MiddlewareRegistry.register(store => next => action => {
             store.dispatch(showNotification({
                 titleKey: 'notify.moderator'
             },
-            NOTIFICATION_TIMEOUT));
+            NOTIFICATION_TIMEOUT_TYPE.SHORT));
         }
 
         return next(action);

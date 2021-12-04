@@ -10,7 +10,15 @@ import { endpointMessageReceived } from '../../subtitles';
 import { getReplaceParticipant } from '../config/functions';
 import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
-import { MEDIA_TYPE, setAudioMuted, setVideoMuted } from '../media';
+import {
+    MEDIA_TYPE,
+    isAudioMuted,
+    isVideoMuted,
+    setAudioMuted,
+    setAudioUnmutePermissions,
+    setVideoMuted,
+    setVideoUnmutePermissions
+} from '../media';
 import {
     dominantSpeakerChanged,
     getNormalizedDisplayName,
@@ -45,7 +53,8 @@ import {
     SET_PASSWORD_FAILED,
     SET_ROOM,
     SET_PENDING_SUBJECT_CHANGE,
-    SET_START_MUTED_POLICY
+    SET_START_MUTED_POLICY,
+    SET_START_REACTIONS_MUTED
 } from './actionTypes';
 import {
     AVATAR_URL_COMMAND,
@@ -143,6 +152,27 @@ function _addConferenceListeners(conference, dispatch, state) {
                         || (videoMuted && trackType === MEDIA_TYPE.VIDEO)) {
                     dispatch(replaceLocalTrack(track.jitsiTrack, null, conference));
                 }
+            }
+        });
+
+    conference.on(
+        JitsiConferenceEvents.AUDIO_UNMUTE_PERMISSIONS_CHANGED,
+        disableAudioMuteChange => {
+            const muted = isAudioMuted(state);
+
+            // Disable the mute button only if its muted.
+            if (!disableAudioMuteChange || (disableAudioMuteChange && muted)) {
+                dispatch(setAudioUnmutePermissions(disableAudioMuteChange));
+            }
+        });
+    conference.on(
+        JitsiConferenceEvents.VIDEO_UNMUTE_PERMISSIONS_CHANGED,
+        disableVideoMuteChange => {
+            const muted = isVideoMuted(state);
+
+            // Disable the mute button only if its muted.
+            if (!disableVideoMuteChange || (disableVideoMuteChange && muted)) {
+                dispatch(setVideoUnmutePermissions(disableVideoMuteChange));
             }
         });
 
@@ -637,6 +667,22 @@ export function setFollowMe(enabled: boolean) {
     return {
         type: SET_FOLLOW_ME,
         enabled
+    };
+}
+
+/**
+ * Enables or disables the Mute reaction sounds feature.
+ *
+ * @param {boolean} muted - Whether or not reaction sounds should be muted for all participants.
+ * @returns {{
+ *     type: SET_START_REACTIONS_MUTED,
+ *     muted: boolean
+ * }}
+ */
+export function setStartReactionsMuted(muted: boolean) {
+    return {
+        type: SET_START_REACTIONS_MUTED,
+        muted
     };
 }
 

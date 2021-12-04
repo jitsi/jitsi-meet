@@ -5,7 +5,7 @@ import { CONFERENCE_JOINED } from '../base/conference';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
-import { hideNotification, showNotification } from '../notifications';
+import { NOTIFICATION_TIMEOUT_TYPE, hideNotification, showNotification } from '../notifications';
 
 import { setNoisyAudioInputNotificationUid } from './actions';
 import { NOISY_AUDIO_INPUT_SOUND_ID } from './constants';
@@ -41,7 +41,7 @@ MiddlewareRegistry.register(store => next => action => {
                 const notification = await dispatch(showNotification({
                     titleKey: 'toolbar.noisyAudioInputTitle',
                     descriptionKey: 'toolbar.noisyAudioInputDesc'
-                }));
+                }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
 
                 dispatch(playSound(NOISY_AUDIO_INPUT_SOUND_ID));
 

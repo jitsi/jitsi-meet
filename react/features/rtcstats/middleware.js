@@ -7,6 +7,7 @@ import { CONFERENCE_UNIQUE_ID_SET, getConferenceOptions, getRoomName } from '../
 import { LIB_WILL_INIT } from '../base/lib-jitsi-meet';
 import { DOMINANT_SPEAKER_CHANGED, getLocalParticipant } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
+import { ADD_FACIAL_EXPRESSION } from '../facial-recognition/actionTypes';
 
 import RTCStats from './RTCStats';
 import { canSendRtcstatsData, isRtcstatsEnabled } from './functions';
@@ -101,6 +102,17 @@ MiddlewareRegistry.register(store => next => action => {
 
             RTCStats.sendDominantSpeakerData({ dominantSpeakerEndpoint: id,
                 previousSpeakers });
+        }
+        break;
+    }
+    case ADD_FACIAL_EXPRESSION: {
+        if (canSendRtcstatsData(state)) {
+            const { duration, facialExpression } = action;
+
+            RTCStats.sendFacialExpressionData({
+                duration,
+                facialExpression
+            });
         }
         break;
     }

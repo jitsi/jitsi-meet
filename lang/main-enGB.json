@@ -480,8 +480,8 @@
     },
     "profile": {
         "setDisplayNameLabel": "Set your display name",
-        "setEmailInput": "Enter e-mail",
-        "setEmailLabel": "Set your Gravatar e-mail",
+        "setEmailInput": "Enter email",
+        "setEmailLabel": "Set your Gravatar email",
         "title": "Profile"
     },
     "recording": {

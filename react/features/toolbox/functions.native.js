@@ -6,6 +6,8 @@ import { getParticipantCountWithFake } from '../base/participants';
 import { toState } from '../base/redux';
 import { isLocalVideoTrackDesktop } from '../base/tracks';
 
+export * from './functions.any';
+
 const WIDTH = {
     FIT_9_ICONS: 560,
     FIT_8_ICONS: 500,
@@ -78,5 +80,7 @@ export function isToolboxVisible(stateful: Object | Function) {
  * @returns {boolean}
  */
 export function isVideoMuteButtonDisabled(state: Object) {
-    return !hasAvailableDevices(state, 'videoInput') || isLocalVideoTrackDesktop(state);
+    const { video } = state['features/base/media'];
+
+    return !hasAvailableDevices(state, 'videoInput') || video?.blocked || isLocalVideoTrackDesktop(state);
 }

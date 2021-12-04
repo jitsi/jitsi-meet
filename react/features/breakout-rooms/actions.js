@@ -4,6 +4,7 @@ import i18next from 'i18next';
 import _ from 'lodash';
 import type { Dispatch } from 'redux';
 
+import { createBreakoutRoomsEvent, sendAnalytics } from '../analytics';
 import {
     conferenceLeft,
     conferenceWillLeave,
@@ -12,8 +13,14 @@ import {
 } from '../base/conference';
 import { setAudioMuted, setVideoMuted } from '../base/media';
 import { getRemoteParticipants } from '../base/participants';
-import { clearNotifications } from '../notifications';
+import {
+    NOTIFICATION_TIMEOUT_TYPE,
+    clearNotifications,
+    showNotification
+} from '../notifications';
 
+import { _RESET_BREAKOUT_ROOMS, _UPDATE_ROOM_COUNTER } from './actionTypes';
+import { FEATURE_KEY } from './constants';
 import {
     getBreakoutRooms,
     getMainRoom
@@ -30,14 +37,19 @@ declare var APP: Object;
  */
 export function createBreakoutRoom(name?: string) {
     return (dispatch: Dispatch<any>, getState: Function) => {
-        const rooms = getBreakoutRooms(getState);
+        const state = getState();
+        let { roomCounter } = state[FEATURE_KEY];
+        const subject = name || i18next.t('breakoutRooms.defaultName', { index: ++roomCounter });
 
-        // TODO: remove this once we add UI to customize the name.
-        const index = Object.keys(rooms).length;
-        const subject = name || i18next.t('breakoutRooms.defaultName', { index });
+        sendAnalytics(createBreakoutRoomsEvent('create'));
+
+        dispatch({
+            type: _UPDATE_ROOM_COUNTER,
+            roomCounter
+        });
 
         // $FlowExpectedError
-        getCurrentConference(getState)?.getBreakoutRooms()
+        getCurrentConference(state)?.getBreakoutRooms()
             ?.createBreakoutRoom(subject);
     };
 }
@@ -53,6 +65,8 @@ export function closeBreakoutRoom(roomId: string) {
         const rooms = getBreakoutRooms(getState);
         const room = rooms[roomId];
         const mainRoom = getMainRoom(getState);
+
+        sendAnalytics(createBreakoutRoomsEvent('close'));
 
         if (room && mainRoom) {
             Object.values(room.participants).forEach(p => {
@@ -72,6 +86,8 @@ export function closeBreakoutRoom(roomId: string) {
  */
 export function removeBreakoutRoom(breakoutRoomJid: string) {
     return (dispatch: Dispatch<any>, getState: Function) => {
+        sendAnalytics(createBreakoutRoomsEvent('remove'));
+
         // $FlowExpectedError
         getCurrentConference(getState)?.getBreakoutRooms()
             ?.removeBreakoutRoom(breakoutRoomJid);
@@ -89,6 +105,7 @@ export function autoAssignToBreakoutRooms() {
         const breakoutRooms = _.filter(rooms, (room: Object) => !room.isMainRoom);
 
         if (breakoutRooms) {
+            sendAnalytics(createBreakoutRoomsEvent('auto.assign'));
             const participantIds = Array.from(getRemoteParticipants(getState).keys());
             const length = Math.ceil(participantIds.length / breakoutRooms.length);
 
@@ -142,8 +159,9 @@ export function sendParticipantToRoom(participantId: string, roomId: string) {
  * @returns {Function}
  */
 export function moveToRoom(roomId?: string) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
-        let _roomId = roomId || getMainRoom(getState)?.id;
+    return async (dispatch: Dispatch<any>, getState: Function) => {
+        const mainRoomId = getMainRoom(getState)?.id;
+        let _roomId = roomId || mainRoomId;
 
         // Check if we got a full JID.
         // $FlowExpectedError
@@ -162,19 +180,36 @@ export function moveToRoom(roomId?: string) {
             _roomId.domain = domainParts.join('@');
         }
 
+        // $FlowExpectedError
+        const roomIdStr = _roomId?.toString();
+        const goToMainRoom = roomIdStr === mainRoomId;
+        const rooms = getBreakoutRooms(getState);
+        const targetRoom = rooms[roomIdStr];
+
+        if (!targetRoom) {
+            logger.warn(`Unknown room: ${targetRoom}`);
+
+            return;
+        }
+
+        dispatch({
+            type: _RESET_BREAKOUT_ROOMS
+        });
+
         if (navigator.product === 'ReactNative') {
             const conference = getCurrentConference(getState);
             const { audio, video } = getState()['features/base/media'];
 
             dispatch(conferenceWillLeave(conference));
-            conference.leave()
-            .catch(error => {
-                logger.warn(
-                    'JitsiConference.leave() rejected with:',
-                    error);
+
+            try {
+                await conference.leave();
+            } catch (error) {
+                logger.warn('JitsiConference.leave() rejected with:', error);
 
                 dispatch(conferenceLeft(conference));
-            });
+            }
+
             dispatch(clearNotifications());
 
             // dispatch(setRoom(_roomId));
@@ -182,8 +217,32 @@ export function moveToRoom(roomId?: string) {
             dispatch(setAudioMuted(audio.muted));
             dispatch(setVideoMuted(video.muted));
         } else {
-            APP.conference.leaveRoom()
-                .finally(() => APP.conference.joinRoom(_roomId));
+            try {
+                APP.conference.leaveRoom(false /* doDisconnect */);
+            } catch (error) {
+                logger.warn('APP.conference.leaveRoom() rejected with:', error);
+
+                // TODO: revisit why we don't dispatch CONFERENCE_LEFT here.
+            }
+
+            APP.conference.joinRoom(_roomId);
+        }
+
+        if (goToMainRoom) {
+            dispatch(showNotification({
+                titleKey: 'breakoutRooms.notifications.joinedTitle',
+                descriptionKey: 'breakoutRooms.notifications.joinedMainRoom',
+                concatText: true,
+                maxLines: 2
+            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+        } else {
+            dispatch(showNotification({
+                titleKey: 'breakoutRooms.notifications.joinedTitle',
+                descriptionKey: 'breakoutRooms.notifications.joined',
+                descriptionArguments: { name: targetRoom.name },
+                concatText: true,
+                maxLines: 2
+            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
         }
     };
 }

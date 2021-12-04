@@ -4,7 +4,7 @@ import React from 'react';
 
 import { APP_WILL_MOUNT } from '../base/app';
 import { MiddlewareRegistry } from '../base/redux';
-import { showErrorNotification } from '../notifications';
+import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification } from '../notifications';
 
 import { OldElectronAPPNotificationDescription } from './components';
 import { isOldJitsiMeetElectronApp } from './functions';
@@ -36,7 +36,7 @@ function _appWillMount(store, next, action) {
         dispatch(showErrorNotification({
             titleKey: 'notify.OldElectronAPPTitle',
             description: <OldElectronAPPNotificationDescription />
-        }));
+        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
     }
 
     return next(action);

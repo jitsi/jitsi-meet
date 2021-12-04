@@ -375,6 +375,13 @@ var config = {
     //    resizeDesktopForPresenter: false
     // },
 
+    // Notification timeouts
+    // notificationTimeouts: {
+    //     short: 2500,
+    //     medium: 5000,
+    //     long: 10000
+    // },
+
     // // Options for the recording limit notification.
     // recordingLimit: {
     //
@@ -392,6 +399,9 @@ var config = {
 
     // Disables or enables RTX (RFC 4588) (defaults to false).
     // disableRtx: false,
+
+    // Moves all Jitsi Meet 'beforeunload' logic (cleanup, leaving, disconnecting, etc) to the 'unload' event.
+    // disableBeforeUnloadHandlers: true,
 
     // Disables or enables TCC support in this client (default: enabled).
     // enableTcc: true,
@@ -461,6 +471,12 @@ var config = {
     // Setting this to null, will also disable showing the remote videos
     // when the toolbar is shown on mouse movements
     // disable1On1Mode: null | false | true,
+
+    // Default local name to be displayed
+    // defaultLocalDisplayName: 'me',
+
+    // Default remote name to be displayed
+    // defaultRemoteDisplayName: 'Fellow Jitster',
 
     // Default language for the user interface.
     // defaultLanguage: 'en',
@@ -743,7 +759,7 @@ var config = {
         // module connects to the provided rtcstatsEndpoint and sends statistics regarding
         // PeerConnection states along with getStats metrics polled at the specified
         // interval.
-        // rtcstatsEnabled: true,
+        // rtcstatsEnabled: false,
 
         // In order to enable rtcstats one needs to provide a endpoint url.
         // rtcstatsEndpoint: wss://rtcstats-server-pilot.jitsi.net/,
@@ -981,6 +997,9 @@ var config = {
 
     // If true, tile view will not be enabled automatically when the participants count threshold is reached.
     // disableTileView: true,
+
+    // If true, the tiles will be displayed contained within the available space rather than enlarged to cover it.
+    // disableTileEnlargement: true,
 
     // Controls the visibility and behavior of the top header conference info labels.
     // If a label's id is not in any of the 2 arrays, it will not be visible at all on the header.

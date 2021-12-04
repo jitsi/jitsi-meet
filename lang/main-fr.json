@@ -39,18 +39,26 @@
   "audioOnly": {
     "audioOnly": "Bande passante faible"
   },
+  "blankPage": {
+     "meetingEnded": "Réunion terminée."
+  },
   "breakoutRooms": {
     "defaultName": "Salle annexe #{{index}}",
     "mainRoom": "Salle principale",
     "actions": {
         "add": "Ajouter salle annexe",
-        "autoAssign": "Assigner automatqieuement aux salles annexes",
+        "autoAssign": "Assigner automatiquement aux salles annexes",
         "close": "Fermer",
         "join": "Rejoindre",
         "leaveBreakoutRoom": "Quitter la salle annexe",
         "more": "Plus",
         "remove": "Supprimer",
         "sendToBreakoutRoom": "Envoyer le participant dans:"
+    },
+    "notifications": {
+        "joinedTitle": "Salles annexes",
+        "joined": "Entrée en salle annexe \"{{name}}\"",
+        "joinedMainRoom": "Retour à la salle principalem"
     }
   },
   "calendarSync": {
@@ -569,6 +577,8 @@
   "notify": {
     "allowAction": "Permettre",
     "allowedUnmute": "Vous pouvez réactiver votre écran, votre caméra ou partager votre écran.",
+    "audioUnmuteBlockedTitle": "Rétablissement du son bloqué !",
+    "audioUnmuteBlockedDescription": "Le rétablissement du son a été bloqué temporairement en raison de limites système.",
     "connectedOneMember": "{{name}} a rejoint la réunion",
     "connectedThreePlusMembers": "{{name}} et {{count}} autres personnes ont rejoint la réunion",
     "connectedTwoMembers": "{{first}} et {{second}} ont rejoint la réunion",
@@ -580,6 +590,9 @@
     "invitedThreePlusMembers": "{{name}} et {{count}} autres ont été invités",
     "invitedTwoMembers": "{{first}} et {{second}} ont été invités",
     "kickParticipant": "{{kicked}} a été expulsé par {{kicker}}",
+    "leftOneMember": "{{name}} a quitté la réunion",
+    "leftThreePlusMembers": "{{name}} et beaucoup d'autres ont quitté la réunion",
+    "leftTwoMembers": "{{first}} et {{second}} ont quitté la réunion",
     "me": "Moi",
     "moderator": "Droits modérateur accordés !",
     "muted": "Vous avez commencé la conversation en muet.",
@@ -591,6 +604,7 @@
     "passwordRemovedRemotely": "Le $t(lockRoomPassword) a été supprimé par un autre participant",
     "passwordSetRemotely": "Un $t(lockRoomPassword) a été défini par un autre participant",
     "raisedHand": "{{name}} aimerait prendre la parole.",
+    "raisedHands": "{{participantName}} et {{raisedHands}} autres personnes",    
     "screenShareNoAudio": " La case Partager l'audio n'a pas été cochée dans l'écran de sélection de la fenêtre.",
     "screenShareNoAudioTitle": "La case Partager l'audio n'a pas été cochée",
     "somebody": "Quelqu'un",
@@ -619,7 +633,10 @@
     "moderationToggleDescription": "par {{participantDisplayName}}",
     "raiseHandAction": "Lever la main",
     "reactionSounds": "Bloquer les réactions sonores",
-    "groupTitle": "Notifications"
+    "reactionSoundsForAll": "Bloquer les réactions sonores pour tous",    
+    "groupTitle": "Notifications",
+    "videoUnmuteBlockedTitle": "Rétablissement de la caméra bloqué !",
+    "videoUnmuteBlockedDescription": "Le rétablissement de la vidéo a été bloqué temporairement en raison de limites système."
   },
   "participantsPane": {
     "close": "Fermer",
@@ -644,7 +661,8 @@
       "stopEveryonesVideo": "Couper toutes les caméras",
       "stopVideo": "Couper la vidéo",
       "unblockEveryoneMicCamera": "Débloquer tous les micros et caméras",
-      "videoModeration": "Démarrer leur vidéo"
+      "videoModeration": "Démarrer leur vidéo",
+      "moreModerationControls": "Options de modération supplémentaires"      
     },
     "search": "Rechercher des participants"
   },
@@ -756,7 +774,7 @@
   "profile": {
     "avatar": "avatar",
     "setDisplayNameLabel": "Choisissez un pseudo",
-    "setEmailInput": "Entrez une adresse e-mail",
+    "setEmailInput": "Entrez une adresse email",
     "setEmailLabel": "Définir votre courriel Gravatar",
     "title": "Profil"
   },
@@ -839,6 +857,7 @@
     "sounds": "Sons",
     "speakers": "Haut-parleurs",
     "startAudioMuted": "Tout le monde commence en muet",
+    "startReactionsMuted": "Tout le monde commence avec les réactions sonores bloquées",    
     "startVideoMuted": "Tout le monde commence sans vidéo",
     "talkWhileMuted": "vous parlez en étant muet",
     "title": "Paramètres"
@@ -951,7 +970,7 @@
       "surprised": "Surpris",
       "tileView": "Activer / Désactiver la vue mosaïque",
       "toggleCamera": "Changer de caméra",
-      "toggleFilmstrip": "Basculer de pellicule",
+      "toggleFilmstrip": "Afficher ou masquer les vignettes vidéo",
       "videomute": "Activer / Couper la vidéo",
       "videoblur": "Activer / désactiver le floutage",
       "selectBackground": "Selectionner un arrière-plan",

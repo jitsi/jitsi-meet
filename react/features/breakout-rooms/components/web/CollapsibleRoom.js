@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
 import { ListItem } from '../../../base/components';
 import { Icon, IconArrowDown, IconArrowUp } from '../../../base/icons';
@@ -88,6 +89,7 @@ export const CollapsibleRoom = ({
     const raiseMenu = useCallback(target => {
         onRaiseMenu(target);
     }, [ onRaiseMenu ]);
+    const { defaultRemoteDisplayName } = useSelector(state => state['features/base/config']);
 
     const arrow = (<div className = { styles.arrowContainer }>
         <Icon
@@ -116,7 +118,7 @@ export const CollapsibleRoom = ({
             {!collapsed && room?.participants
                 && Object.values(room?.participants || {}).map((p: Object) => (
                     <ParticipantItem
-                        displayName = { p.displayName }
+                        displayName = { p.displayName || defaultRemoteDisplayName }
                         key = { p.jid }
                         local = { false }
                         participantID = { p.jid } />

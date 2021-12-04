@@ -3,6 +3,7 @@
 import { getGravatarURL } from '@jitsi/js-utils/avatar';
 import type { Store } from 'redux';
 
+import { GRAVATAR_BASE_URL } from '../avatar';
 import { JitsiParticipantConnectionStatus } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, shouldRenderVideoTrack } from '../media';
 import { toState } from '../redux';
@@ -16,7 +17,6 @@ import {
 } from './constants';
 import { preloadImage } from './preloadImage';
 
-declare var interfaceConfig: Object;
 
 /**
  * Temp structures for avatar urls to be checked/preloaded.
@@ -35,7 +35,7 @@ const AVATAR_CHECKER_FUNCTIONS = [
         if (participant && participant.email) {
             // TODO: remove once libravatar has deployed their new scaled up infra. -saghul
             const gravatarBaseURL
-                = store.getState()['features/base/config'].gravatarBaseURL ?? 'https://www.gravatar.com/avatar/';
+                = store.getState()['features/base/config'].gravatarBaseURL ?? GRAVATAR_BASE_URL;
 
             return getGravatarURL(participant.email, gravatarBaseURL);
         }
@@ -198,9 +198,6 @@ export function getParticipantCountWithFake(stateful: Object | Function) {
 /**
  * Returns participant's display name.
  *
- * FIXME: Remove the hardcoded strings once interfaceConfig is stored in redux
- * and merge with a similarly named method in {@code conference.js}.
- *
  * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state.
  * @param {string} id - The ID of the participant's display name to retrieve.
@@ -210,6 +207,10 @@ export function getParticipantDisplayName(
         stateful: Object | Function,
         id: string) {
     const participant = getParticipantById(stateful, id);
+    const {
+        defaultLocalDisplayName,
+        defaultRemoteDisplayName
+    } = toState(stateful)['features/base/config'];
 
     if (participant) {
         if (participant.name) {
@@ -217,15 +218,11 @@ export function getParticipantDisplayName(
         }
 
         if (participant.local) {
-            return typeof interfaceConfig === 'object'
-                ? interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME
-                : 'me';
+            return defaultLocalDisplayName;
         }
     }
 
-    return typeof interfaceConfig === 'object'
-        ? interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME
-        : 'Fellow Jitster';
+    return defaultRemoteDisplayName;
 }
 
 /**

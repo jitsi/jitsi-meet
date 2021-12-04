@@ -115,6 +115,11 @@ export type Props = {|
     _disableLocalVideoFlip: boolean,
 
     /**
+     * Indicates whether enlargement of tiles to fill the available space is disabled.
+     */
+    _disableTileEnlargement: boolean,
+
+    /**
      * The display mode of the thumbnail.
      */
     _displayMode: number,
@@ -547,6 +552,8 @@ class Thumbnail extends Component<Props, State> {
 
         const { canPlayEventReceived } = this.state;
         const {
+            _currentLayout,
+            _disableTileEnlargement,
             _height,
             _isHidden,
             _isScreenSharing,
@@ -555,6 +562,8 @@ class Thumbnail extends Component<Props, State> {
             horizontalOffset,
             style
         } = this.props;
+
+        const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
 
         let styles: {
             avatar: Object,
@@ -578,7 +587,7 @@ class Thumbnail extends Component<Props, State> {
         if (!_isScreenSharing) {
             if (canPlayEventReceived || _participant.local) {
                 videoStyles = {
-                    objectFit: _height > 320 ? 'cover' : 'contain'
+                    objectFit: (_height < 320 && tileViewActive) || _disableTileEnlargement ? 'contain' : 'cover'
                 };
             } else {
                 videoStyles = {
@@ -1119,7 +1128,9 @@ function _mapStateToProps(state, ownProps): Object {
     let _isMobilePortrait = false;
     const {
         startSilent,
+        defaultLocalDisplayName,
         disableLocalVideoFlip,
+        disableTileEnlargement,
         iAmRecorder,
         iAmSipGateway
     } = state['features/base/config'];
@@ -1175,8 +1186,9 @@ function _mapStateToProps(state, ownProps): Object {
         _connectionIndicatorDisabled: _isMobile
             || Boolean(state['features/base/config'].connectionIndicators?.disabled),
         _currentLayout,
-        _defaultLocalDisplayName: interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME,
+        _defaultLocalDisplayName: defaultLocalDisplayName,
         _disableLocalVideoFlip: Boolean(disableLocalVideoFlip),
+        _disableTileEnlargement: Boolean(disableTileEnlargement),
         _isHidden: isLocal && iAmRecorder && !iAmSipGateway,
         _isAudioOnly: Boolean(state['features/base/audio-only'].enabled),
         _isCurrentlyOnLargeVideo: state['features/large-video']?.participantId === id,

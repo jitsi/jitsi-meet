@@ -4,6 +4,7 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { createBreakoutRoomsEvent, sendAnalytics } from '../../../analytics';
 import { ContextMenu, ContextMenuItemGroup } from '../../../base/components';
 import {
     IconClose,
@@ -54,7 +55,8 @@ export const RoomContextMenu = ({
     const _overflowDrawer = useSelector(showOverflowDrawer);
 
     const onJoinRoom = useCallback(() => {
-        dispatch(moveToRoom(room.id));
+        sendAnalytics(createBreakoutRoomsEvent('join'));
+        dispatch(moveToRoom(room.jid));
     }, [ dispatch, room ]);
 
     const onRemoveBreakoutRoom = useCallback(() => {

@@ -14,10 +14,31 @@ import {
     SHOW_NOTIFICATION
 } from './actionTypes';
 import {
+    NOTIFICATION_TIMEOUT_TYPE,
     NOTIFICATION_TIMEOUT,
     NOTIFICATION_TYPE,
-    SILENT_JOIN_THRESHOLD
+    SILENT_JOIN_THRESHOLD,
+    SILENT_LEFT_THRESHOLD
 } from './constants';
+
+/**
+ * Function that returns notification timeout value based on notification timeout type.
+ *
+ * @param {string} type - Notification type.
+ * @param {Object} notificationTimeouts - Config notification timeouts.
+ * @returns {number}
+ */
+function getNotificationTimeout(type: ?string, notificationTimeouts: ?Object) {
+    if (type === NOTIFICATION_TIMEOUT_TYPE.SHORT) {
+        return notificationTimeouts?.short ?? NOTIFICATION_TIMEOUT.SHORT;
+    } else if (type === NOTIFICATION_TIMEOUT_TYPE.MEDIUM) {
+        return notificationTimeouts?.medium ?? NOTIFICATION_TIMEOUT.MEDIUM;
+    } else if (type === NOTIFICATION_TIMEOUT_TYPE.LONG) {
+        return notificationTimeouts?.long ?? NOTIFICATION_TIMEOUT.LONG;
+    }
+
+    return NOTIFICATION_TIMEOUT.STICKY;
+}
 
 /**
  * Clears (removes) all the notifications.
@@ -82,26 +103,26 @@ export function setNotificationsEnabled(enabled: boolean) {
  * Queues an error notification for display.
  *
  * @param {Object} props - The props needed to show the notification component.
+ * @param {string} type - Notification type.
  * @returns {Object}
  */
-export function showErrorNotification(props: Object) {
+export function showErrorNotification(props: Object, type: ?string) {
     return showNotification({
         ...props,
         appearance: NOTIFICATION_TYPE.ERROR
-    });
+    }, type);
 }
 
 /**
  * Queues a notification for display.
  *
  * @param {Object} props - The props needed to show the notification component.
- * @param {number} timeout - How long the notification should display before
- * automatically being hidden.
+ * @param {string} type - Notification type.
  * @returns {Function}
  */
-export function showNotification(props: Object = {}, timeout: ?number) {
+export function showNotification(props: Object = {}, type: ?string) {
     return function(dispatch: Function, getState: Function) {
-        const { notifications } = getState()['features/base/config'];
+        const { notifications, notificationTimeouts } = getState()['features/base/config'];
         const enabledFlag = getFeatureFlag(getState(), NOTIFICATIONS_ENABLED, true);
 
         const shouldDisplay = enabledFlag
@@ -113,7 +134,7 @@ export function showNotification(props: Object = {}, timeout: ?number) {
             return dispatch({
                 type: SHOW_NOTIFICATION,
                 props,
-                timeout,
+                timeout: getNotificationTimeout(type, notificationTimeouts),
                 uid: props.uid || window.Date.now().toString()
             });
         }
@@ -124,15 +145,15 @@ export function showNotification(props: Object = {}, timeout: ?number) {
  * Queues a warning notification for display.
  *
  * @param {Object} props - The props needed to show the notification component.
- * @param {number} timeout - How long the notification should display before
- * automatically being hidden.
+ * @param {string} type - Notification type.
  * @returns {Object}
  */
-export function showWarningNotification(props: Object, timeout: ?number) {
+export function showWarningNotification(props: Object, type: ?string) {
+
     return showNotification({
         ...props,
         appearance: NOTIFICATION_TYPE.WARNING
-    }, timeout);
+    }, type);
 }
 
 /**
@@ -192,10 +213,74 @@ const _throttledNotifyParticipantConnected = throttle((dispatch: Dispatch<any>, 
 
     if (notificationProps) {
         dispatch(
-            showNotification(notificationProps, NOTIFICATION_TIMEOUT));
+            showNotification(notificationProps, NOTIFICATION_TIMEOUT_TYPE.SHORT));
     }
 
     joinedParticipantsNames = [];
+
+}, 2000, { leading: false });
+
+/**
+ * An array of names of participants that have left the conference. The array
+ * is replaced with an empty array as notifications are displayed.
+ *
+ * @private
+ * @type {string[]}
+ */
+let leftParticipantsNames = [];
+
+/**
+ * A throttled internal function that takes the internal list of participant
+ * names, {@code leftParticipantsNames}, and triggers the display of a
+ * notification informing of their leaving.
+ *
+ * @private
+ * @type {Function}
+ */
+const _throttledNotifyParticipantLeft = throttle((dispatch: Dispatch<any>, getState: Function) => {
+    const participantCount = getParticipantCount(getState());
+
+    // Skip left notifications altogether for large meetings.
+    if (participantCount > SILENT_LEFT_THRESHOLD) {
+        leftParticipantsNames = [];
+
+        return;
+    }
+
+    const leftParticipantsCount = leftParticipantsNames.length;
+
+    let notificationProps;
+
+    if (leftParticipantsCount >= 3) {
+        notificationProps = {
+            titleArguments: {
+                name: leftParticipantsNames[0]
+            },
+            titleKey: 'notify.leftThreePlusMembers'
+        };
+    } else if (leftParticipantsCount === 2) {
+        notificationProps = {
+            titleArguments: {
+                first: leftParticipantsNames[0],
+                second: leftParticipantsNames[1]
+            },
+            titleKey: 'notify.leftTwoMembers'
+        };
+    } else if (leftParticipantsCount) {
+        notificationProps = {
+            titleArguments: {
+                name: leftParticipantsNames[0]
+            },
+            titleKey: 'notify.leftOneMember'
+        };
+    }
+
+    if (notificationProps) {
+        dispatch(
+            showNotification(notificationProps, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+    }
+
+    leftParticipantsNames = [];
 
 }, 2000, { leading: false });
 
@@ -208,7 +293,21 @@ const _throttledNotifyParticipantConnected = throttle((dispatch: Dispatch<any>, 
  * @returns {Function}
  */
 export function showParticipantJoinedNotification(displayName: string) {
-    joinedParticipantsNames.push(displayName);
+    leftParticipantsNames.push(displayName);
 
     return (dispatch: Dispatch<any>, getState: Function) => _throttledNotifyParticipantConnected(dispatch, getState);
+}
+
+/**
+ * Queues the display of a notification of a participant having left to
+ * the meeting. The notifications are batched so that quick consecutive
+ * connection events are shown in one notification.
+ *
+ * @param {string} displayName - The name of the participant that left.
+ * @returns {Function}
+ */
+export function showParticipantLeftNotification(displayName: string) {
+    joinedParticipantsNames.push(displayName);
+
+    return (dispatch: Dispatch<any>, getState: Function) => _throttledNotifyParticipantLeft(dispatch, getState);
 }

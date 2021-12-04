@@ -488,8 +488,8 @@
     },
     "profile": {
         "setDisplayNameLabel": "Якое адлюстроўваецца імя",
-        "setEmailInput": "Калі ласка, увядзіце e-mail",
-        "setEmailLabel": "E-mail для Gravatar",
+        "setEmailInput": "Калі ласка, увядзіце email",
+        "setEmailLabel": "Email для Gravatar",
         "title": "Профіль"
     },
     "raisedHand": "Хоча гаварыць",
@@ -558,7 +558,7 @@
         "disableCallIntegration": "Адключыць убудаваную інтэграцыю выклікаў",
         "disableP2P": "Адключыць рэжым Peer-To-Peer",
         "displayName": "Якое адлюстроўваецца імя",
-        "email": "E-mail",
+        "email": "Email",
         "header": "Налады",
         "profileSection": "Профіль",
         "serverURL": "Адрас сервера",

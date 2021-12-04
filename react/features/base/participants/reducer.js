@@ -16,8 +16,6 @@ import {
 import { LOCAL_PARTICIPANT_DEFAULT_ID, PARTICIPANT_ROLE } from './constants';
 import { isParticipantModerator } from './functions';
 
-declare var interfaceConfig: Object;
-
 /**
  * Participant object.
  *
@@ -109,7 +107,10 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
             if (speaker !== local?.id) {
                 const remoteParticipant = state.remote.get(speaker);
 
-                remoteParticipant && sortedSpeakersList.push([ speaker, _getDisplayName(remoteParticipant.name) ]);
+                remoteParticipant
+                && sortedSpeakersList.push(
+                    [ speaker, _getDisplayName(state, remoteParticipant.name) ]
+                );
             }
         }
 
@@ -145,7 +146,7 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
             _updateParticipantProperty(state, pinnedParticipant, 'pinned', false);
         }
 
-        if (_updateParticipantProperty(state, id, 'pinned', true)) {
+        if (id && _updateParticipantProperty(state, id, 'pinned', true)) {
             return {
                 ...state,
                 pinnedParticipant: id
@@ -240,7 +241,7 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
         state.remote.set(id, participant);
 
         // Insert the new participant.
-        const displayName = _getDisplayName(name);
+        const displayName = _getDisplayName(state, name);
         const sortedRemoteParticipants = Array.from(state.sortedRemoteParticipants);
 
         sortedRemoteParticipants.push([ id, displayName ]);
@@ -336,7 +337,8 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
             const remoteParticipant = state.remote.get(participant);
 
             if (remoteParticipant) {
-                const displayName = _getDisplayName(remoteParticipant.name);
+                const displayName
+                    = _getDisplayName(state, remoteParticipant.name);
 
                 sortedSharesList.push([ participant, displayName ]);
             }
@@ -356,12 +358,14 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
 /**
  * Returns the participant's display name, default string if display name is not set on the participant.
  *
+ * @param {Object} state - The local participant redux state.
  * @param {string} name - The display name of the participant.
  * @returns {string}
  */
-function _getDisplayName(name) {
-    return name
-        ?? (typeof interfaceConfig === 'object' ? interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME : 'Fellow Jitser');
+function _getDisplayName(state: Object, name: string): string {
+    const config = state['features/base/config'];
+
+    return name ?? (config?.defaultRemoteDisplayName || 'Fellow Jitster');
 }
 
 /**
@@ -499,7 +503,9 @@ function _updateParticipantProperty(state, id, property, value) {
         remote.set(id, set(remote.get(id), property, value));
 
         return true;
-    } else if (local?.id === id) {
+    } else if (local?.id === id || local?.id === 'local') {
+        // The local participant's ID can chance from something to "local" when
+        // not in a conference.
         state.local = set(local, property, value);
 
         return true;

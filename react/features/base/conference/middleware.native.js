@@ -41,6 +41,7 @@ function _toggleScreenSharing(enabled, store) {
         }
     } else {
         dispatch(destroyLocalDesktopTrackIfExists());
+        setPictureInPictureDisabled(false);
     }
 }
 

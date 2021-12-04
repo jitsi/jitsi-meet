@@ -79,17 +79,6 @@ export function normalizeUserInputURL(url: string) {
 }
 
 /**
- * Used for web. Returns whether or not only Device Selection is configured to
- * display as a setting.
- *
- * @returns {boolean}
- */
-export function shouldShowOnlyDeviceSelection() {
-    return interfaceConfig.SETTINGS_SECTIONS.length === 1
-        && isSettingEnabled('devices');
-}
-
-/**
  * Returns the properties for the "More" tab from settings dialog from Redux
  * state.
  *
@@ -101,32 +90,50 @@ export function getMoreTabProps(stateful: Object | Function) {
     const state = toState(stateful);
     const framerate = state['features/screen-share'].captureFrameRate ?? SS_DEFAULT_FRAME_RATE;
     const language = i18next.language || DEFAULT_LANGUAGE;
-    const {
-        conference,
-        followMeEnabled,
-        startAudioMutedPolicy,
-        startVideoMutedPolicy
-    } = state['features/base/conference'];
-    const followMeActive = isFollowMeActive(state);
     const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
-
-    // The settings sections to display.
-    const showModeratorSettings = Boolean(
-        conference
-            && configuredTabs.includes('moderator')
-            && isLocalParticipantModerator(state));
 
     return {
         currentFramerate: framerate,
         currentLanguage: language,
         desktopShareFramerates: SS_SUPPORTED_FRAMERATES,
-        followMeActive: Boolean(conference && followMeActive),
-        followMeEnabled: Boolean(conference && followMeEnabled),
         languages: LANGUAGES,
         showLanguageSettings: configuredTabs.includes('language'),
-        showModeratorSettings,
-        showPrejoinSettings: state['features/base/config'].prejoinPageEnabled,
         showPrejoinPage: !state['features/base/settings'].userSelectedSkipPrejoin,
+        showPrejoinSettings: state['features/base/config'].prejoinPageEnabled
+    };
+}
+
+/**
+ * Returns the properties for the "More" tab from settings dialog from Redux
+ * state.
+ *
+ * @param {(Function|Object)} stateful -The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {Object} - The properties for the "More" tab from settings dialog.
+ */
+export function getModeratorTabProps(stateful: Object | Function) {
+    const state = toState(stateful);
+    const {
+        conference,
+        followMeEnabled,
+        startAudioMutedPolicy,
+        startVideoMutedPolicy,
+        startReactionsMuted
+    } = state['features/base/conference'];
+    const followMeActive = isFollowMeActive(state);
+    const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
+
+    const showModeratorSettings = Boolean(
+        conference
+        && configuredTabs.includes('moderator')
+        && isLocalParticipantModerator(state));
+
+    // The settings sections to display.
+    return {
+        showModeratorSettings,
+        followMeActive: Boolean(conference && followMeActive),
+        followMeEnabled: Boolean(conference && followMeEnabled),
+        startReactionsMuted: Boolean(conference && startReactionsMuted),
         startAudioMuted: Boolean(conference && startAudioMutedPolicy),
         startVideoMuted: Boolean(conference && startVideoMutedPolicy)
     };
@@ -178,6 +185,7 @@ export function getSoundsTabProps(stateful: Object | Function) {
         soundsReactions
     } = state['features/base/settings'];
     const enableReactions = isReactionsEnabled(state);
+    const moderatorMutedSoundsReactions = state['features/base/conference'].startReactionsMuted ?? false;
 
     return {
         soundsIncomingMessage,
@@ -185,7 +193,8 @@ export function getSoundsTabProps(stateful: Object | Function) {
         soundsParticipantLeft,
         soundsTalkWhileMuted,
         soundsReactions,
-        enableReactions
+        enableReactions,
+        moderatorMutedSoundsReactions
     };
 }
 

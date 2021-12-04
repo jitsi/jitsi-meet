@@ -5,6 +5,8 @@ import { hasAvailableDevices } from '../base/devices';
 
 import { TOOLBAR_TIMEOUT } from './constants';
 
+export * from './functions.any';
+
 /**
  * Helper for getting the height of the toolbox.
  *
@@ -58,8 +60,9 @@ export function isToolboxVisible(state: Object) {
  * @returns {boolean}
  */
 export function isAudioSettingsButtonDisabled(state: Object) {
-    return (!hasAvailableDevices(state, 'audioInput')
-          && !hasAvailableDevices(state, 'audioOutput'))
+
+    return !(hasAvailableDevices(state, 'audioInput')
+          && hasAvailableDevices(state, 'audioOutput'))
           || state['features/base/config'].startSilent;
 }
 
@@ -80,7 +83,9 @@ export function isVideoSettingsButtonDisabled(state: Object) {
  * @returns {boolean}
  */
 export function isVideoMuteButtonDisabled(state: Object) {
-    return !hasAvailableDevices(state, 'videoInput');
+    const { video } = state['features/base/media'];
+
+    return !hasAvailableDevices(state, 'videoInput') || video?.blocked;
 }
 
 /**

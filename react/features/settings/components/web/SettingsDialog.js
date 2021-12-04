@@ -11,11 +11,22 @@ import {
     getDeviceSelectionDialogProps,
     submitDeviceSelectionTab
 } from '../../../device-selection';
-import { submitMoreTab, submitProfileTab, submitSoundsTab } from '../../actions';
+import {
+    submitModeratorTab,
+    submitMoreTab,
+    submitProfileTab,
+    submitSoundsTab
+} from '../../actions';
 import { SETTINGS_TABS } from '../../constants';
-import { getMoreTabProps, getProfileTabProps, getSoundsTabProps } from '../../functions';
+import {
+    getModeratorTabProps,
+    getMoreTabProps,
+    getProfileTabProps,
+    getSoundsTabProps
+} from '../../functions';
 
 import CalendarTab from './CalendarTab';
+import ModeratorTab from './ModeratorTab';
 import MoreTab from './MoreTab';
 import ProfileTab from './ProfileTab';
 import SoundsTab from './SoundsTab';
@@ -131,7 +142,9 @@ function _mapStateToProps(state) {
     // The settings sections to display.
     const showDeviceSettings = configuredTabs.includes('devices');
     const moreTabProps = getMoreTabProps(state);
-    const { showModeratorSettings, showLanguageSettings, showPrejoinSettings } = moreTabProps;
+    const moderatorTabProps = getModeratorTabProps(state);
+    const { showModeratorSettings } = moderatorTabProps;
+    const { showLanguageSettings, showPrejoinSettings } = moreTabProps;
     const showProfileSettings
         = configuredTabs.includes('profile') && !state['features/base/config'].disableProfile;
     const showCalendarSettings
@@ -176,6 +189,28 @@ function _mapStateToProps(state) {
         });
     }
 
+    if (showModeratorSettings) {
+        tabs.push({
+            name: SETTINGS_TABS.MODERATOR,
+            component: ModeratorTab,
+            label: 'settings.moderator',
+            props: moderatorTabProps,
+            propsUpdateFunction: (tabState, newProps) => {
+                // Updates tab props, keeping users selection
+
+                return {
+                    ...newProps,
+                    followMeEnabled: tabState.followMeEnabled,
+                    startAudioMuted: tabState.startAudioMuted,
+                    startVideoMuted: tabState.startVideoMuted,
+                    startReactionsMuted: tabState.startReactionsMuted
+                };
+            },
+            styles: 'settings-pane moderator-pane',
+            submit: submitModeratorTab
+        });
+    }
+
     if (showCalendarSettings) {
         tabs.push({
             name: SETTINGS_TABS.CALENDAR,
@@ -196,7 +231,7 @@ function _mapStateToProps(state) {
         });
     }
 
-    if (showModeratorSettings || showLanguageSettings || showPrejoinSettings) {
+    if (showLanguageSettings || showPrejoinSettings) {
         tabs.push({
             name: SETTINGS_TABS.MORE,
             component: MoreTab,
@@ -209,10 +244,7 @@ function _mapStateToProps(state) {
                     ...newProps,
                     currentFramerate: tabState.currentFramerate,
                     currentLanguage: tabState.currentLanguage,
-                    followMeEnabled: tabState.followMeEnabled,
-                    showPrejoinPage: tabState.showPrejoinPage,
-                    startAudioMuted: tabState.startAudioMuted,
-                    startVideoMuted: tabState.startVideoMuted
+                    showPrejoinPage: tabState.showPrejoinPage
                 };
             },
             styles: 'settings-pane more-pane',

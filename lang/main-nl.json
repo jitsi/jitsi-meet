@@ -7,11 +7,11 @@
         "copyStream": "Link naar livestream kopiëren",
         "countryNotSupported": "Deze bestemming wordt nog niet ondersteund.",
         "countryReminder": "Belt u buiten de Verenigde Staten? Vergeet dan niet met de landcode te beginnen.",
-        "defaultEmail": "Uw Standaard E-mail",
+        "defaultEmail": "Uw Standaard Email",
         "disabled": "U kunt geen personen uitnodigen.",
         "failedToAdd": "Het toevoegen van deelnemers is mislukt",
         "footerText": "Uitgaande oproepen zijn uitgeschakeld.",
-        "googleEmail": "Google E-mail",
+        "googleEmail": "Google Email",
         "inviteMoreHeader": "U bent de enige in de vergadering",
         "inviteMoreMailSubject": "Deelnemen aan {{appName}}-vergadering",
         "inviteMorePrompt": "Nodig meer personen uit",
@@ -21,7 +21,7 @@
         "loadingPeople": "Personen om uit te nodigen aan het zoeken",
         "noResults": "Geen resultaten die overeenkomen met de zoekopdracht",
         "noValidNumbers": "Voer een telefoonnummer in",
-        "outlookEmail": "Outlook E-mail",
+        "outlookEmail": "Outlook Email",
         "searchNumbers": "Telefoonnummers toevoegen",
         "searchPeople": "Personen zoeken",
         "searchPeopleAndNumbers": "Personen zoeken of hun telefoonnummers toevoegen",
@@ -30,7 +30,7 @@
         "shareStream": "Deel de link naar de livestream",
         "telephone": "Telefoon: {{number}}",
         "title": "Personen uitnodigen voor deze vergadering",
-        "yahooEmail": "Yahoo E-mail"
+        "yahooEmail": "Yahoo Email"
     },
     "audioDevices": {
         "bluetooth": "Bluetooth",
@@ -586,8 +586,8 @@
     },
     "profile": {
         "setDisplayNameLabel": "Uw weergavenaam instellen",
-        "setEmailInput": "Voer e-mailadres in",
-        "setEmailLabel": "Uw Gravatar e-mail instellen",
+        "setEmailInput": "Voer emailadres in",
+        "setEmailLabel": "Uw Gravatar email instellen",
         "title": "Profiel"
     },
     "raisedHand": "Zou graag willen spreken",
@@ -931,7 +931,7 @@
         "dialogTitle": "Lobby-modus",
         "disableDialogContent": "Lobby-modus is momenteel ingeschakeld. Deze functie zorgt ervoor dat ongewenste deelnemers niet aan uw vergadering kunnen deelnemen. Wilt u het uitschakelen?",
         "disableDialogSubmit": "Uitschakelen",
-        "emailField": "Voer uw e-mailadres in",
+        "emailField": "Voer uw emailadres in",
         "enableDialogPasswordField": "Stel wachtwoord in (optioneel)",
         "enableDialogSubmit": "Inschakelen",
         "enableDialogText": "Met de lobby-modus kunt u uw vergadering beveiligen, door deelnemers alleen toe te laten na een formele goedkeuring van een moderator.",

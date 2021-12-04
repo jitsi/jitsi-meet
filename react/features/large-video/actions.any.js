@@ -28,6 +28,12 @@ import {
 export function selectParticipantInLargeVideo(participant: ?string) {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
+
+        // Keep Etherpad open.
+        if (state['features/etherpad'].editing) {
+            return;
+        }
+
         const participantId = participant ?? _electParticipantInLargeVideo(state);
         const largeVideo = state['features/large-video'];
         const remoteScreenShares = state['features/video-layout'].remoteScreenShares;

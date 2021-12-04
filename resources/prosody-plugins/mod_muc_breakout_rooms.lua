@@ -11,11 +11,6 @@
 -- Component "breakout.jitmeet.example.com" "muc"
 --     restrict_room_creation = true
 --     storage = "memory"
---     modules_enabled = {
---         "muc_meeting_id";
---         "muc_domain_mapper";
---         --"token_verification";
---     }
 --     admins = { "focusUser@auth.jitmeet.example.com" }
 --     muc_room_locking = false
 --     muc_room_default_public_jids = true
@@ -28,17 +23,15 @@ if not have_async then
     return;
 end
 
-local jid_bare = require 'util.jid'.bare;
 local jid_node = require 'util.jid'.node;
 local jid_host = require 'util.jid'.host;
-local jid_resource = require 'util.jid'.resource;
 local jid_split = require 'util.jid'.split;
 local json = require 'util.json';
 local st = require 'util.stanza';
 local uuid_gen = require 'util.uuid'.generate;
 
 local util = module:require 'util';
-local get_room_from_jid = util.get_room_from_jid;
+local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local is_healthcheck_room = util.is_healthcheck_room;
 
 local BREAKOUT_ROOMS_IDENTITY_TYPE = 'breakout_rooms';
@@ -69,7 +62,7 @@ local main_rooms_map = {};
 -- Utility functions
 
 function get_main_room_jid(room_jid)
-    local node, host = jid_split(room_jid);
+    local _, host = jid_split(room_jid);
 
 	return
         host == main_muc_component_config
@@ -102,12 +95,13 @@ function get_participants(room)
     local participants = {};
 
     if room then
-        for nick, occupant in room:each_occupant() do
+        for room_nick, occupant in room:each_occupant() do
             -- Filter focus as we keep it as a hidden participant
             if jid_node(occupant.jid) ~= 'focus' then
                 local display_name = occupant:get_presence():get_child_text(
                     'nick', 'http://jabber.org/protocol/nick');
-                participants[nick] = {
+                local real_nick = internal_room_jid_match_rewrite(room_nick);
+                participants[real_nick] = {
                     jid = occupant.jid,
                     role = occupant.role,
                     displayName = display_name
@@ -133,12 +127,13 @@ function broadcast_breakout_rooms(room_jid)
         main_room._data.is_broadcast_breakout_scheduled = false;
         main_room:save(true);
 
-        local main_room_node = jid_node(main_room_jid)
+        local real_jid = internal_room_jid_match_rewrite(main_room_jid);
+        local real_node = jid_node(real_jid);
         local rooms = {
-            [main_room_node] = {
+            [real_node] = {
                 isMainRoom = true,
-                id = main_room_node,
-                jid = main_room_jid,
+                id = real_node,
+                jid = real_jid,
                 name = main_room._data.subject,
                 participants = get_participants(main_room)
             };
@@ -164,6 +159,7 @@ function broadcast_breakout_rooms(room_jid)
         local json_msg = json.encode({
             type = BREAKOUT_ROOMS_IDENTITY_TYPE,
             event = JSON_TYPE_UPDATE_BREAKOUT_ROOMS,
+            roomCounter = main_room._data.breakout_rooms_counter,
             rooms = rooms
         });
 
@@ -173,7 +169,7 @@ function broadcast_breakout_rooms(room_jid)
             end
         end
 
-        for breakout_room_jid, breakout_room in pairs(main_room._data.breakout_rooms or {}) do
+        for breakout_room_jid in pairs(main_room._data.breakout_rooms or {}) do
             local room = breakout_rooms_muc_service.get_room_from_jid(breakout_room_jid);
             if room then
                 for _, occupant in room:each_occupant() do
@@ -195,8 +191,11 @@ function create_breakout_room(room_jid, subject)
 
     if not main_room._data.breakout_rooms then
         main_room._data.breakout_rooms = {};
+        main_room._data.breakout_rooms_counter = 0;
     end
+    main_room._data.breakout_rooms_counter = main_room._data.breakout_rooms_counter + 1;
     main_room._data.breakout_rooms[breakout_room_jid] = subject;
+    main_room._data.breakout_rooms_active = true;
     -- Make room persistent - not to be destroyed - if all participants join breakout rooms.
     main_room:set_persistent(true);
     main_room:save(true);
@@ -262,10 +261,24 @@ function on_message(event)
     -- check that the participant requesting is a moderator and is an occupant in the room
     local from = event.stanza.attr.from;
     local occupant = room:get_occupant_by_real_jid(from);
+
     if not occupant then
-        log('warn', 'No occupant %s found for %s', from, room.jid);
-        return false;
+        -- Check if the participant is in any breakout room.
+        for breakout_room_jid in pairs(room._data.breakout_rooms or {}) do
+            local breakout_room = breakout_rooms_muc_service.get_room_from_jid(breakout_room_jid);
+            if breakout_room then
+                occupant = breakout_room:get_occupant_by_real_jid(from);
+                if occupant then
+                    break;
+                end
+            end
+        end
+        if not occupant then
+            log('warn', 'No occupant %s found for %s', from, room.jid);
+            return false;
+        end
     end
+
     if occupant.role ~= 'moderator' then
         log('warn', 'Occupant %s is not moderator and not allowed this operation for %s', from, room.jid);
         return false;
@@ -300,7 +313,7 @@ function on_breakout_room_pre_create(event)
     local main_room, main_room_jid = get_main_room(breakout_room.jid);
 
     -- Only allow existent breakout rooms to be started.
-    -- Authorisation of breakout rooms is done by their random uuid suffix
+    -- Authorisation of breakout rooms is done by their random uuid name
     if main_room and main_room._data.breakout_rooms and main_room._data.breakout_rooms[breakout_room.jid] then
         breakout_room._data.subject = main_room._data.breakout_rooms[breakout_room.jid];
         breakout_room.save();
@@ -320,14 +333,16 @@ function on_occupant_joined(event)
 
     local main_room = get_main_room(room.jid);
 
-    if jid_node(event.occupant.jid) ~= 'focus' then
-        broadcast_breakout_rooms(room.jid);
-    end
+    if main_room._data.breakout_rooms_active then
+        if jid_node(event.occupant.jid) ~= 'focus' then
+            broadcast_breakout_rooms(room.jid);
+        end
 
-    -- Prevent closing all rooms if a participant has joined (see on_occupant_left).
-    if (main_room._data.is_close_all_scheduled) then
-        main_room._data.is_close_all_scheduled = false;
-        main_room:save();
+        -- Prevent closing all rooms if a participant has joined (see on_occupant_left).
+        if main_room._data.is_close_all_scheduled then
+            main_room._data.is_close_all_scheduled = false;
+            main_room:save();
+        end
     end
 end
 
@@ -335,7 +350,7 @@ function exist_occupants_in_room(room)
     if not room then
         return false;
     end
-    for occupant_jid, occupant in room:each_occupant() do
+    for _, occupant in room:each_occupant() do
         if jid_node(occupant.jid) ~= 'focus' then
             return true;
         end
@@ -348,7 +363,7 @@ function exist_occupants_in_rooms(main_room)
     if exist_occupants_in_room(main_room) then
         return true;
     end
-    for breakout_room_jid, breakout_room in pairs(main_room._data.breakout_rooms or {}) do
+    for breakout_room_jid in pairs(main_room._data.breakout_rooms or {}) do
         local room = breakout_rooms_muc_service.get_room_from_jid(breakout_room_jid);
         if exist_occupants_in_room(room) then
             return true;
@@ -367,17 +382,17 @@ function on_occupant_left(event)
 
     local main_room, main_room_jid = get_main_room(room.jid);
 
-    if jid_node(event.occupant.jid) ~= 'focus' then
+    if main_room._data.breakout_rooms_active and jid_node(event.occupant.jid) ~= 'focus' then
         broadcast_breakout_rooms(room.jid);
     end
 
     -- Close the conference if all left for good.
-    if not main_room._data.is_close_all_scheduled and not exist_occupants_in_rooms(main_room) then
+    if main_room._data.breakout_rooms_active and not main_room._data.is_close_all_scheduled and not exist_occupants_in_rooms(main_room) then
         main_room._data.is_close_all_scheduled = true;
         main_room:save(true);
         module:add_timer(ROOMS_TTL_IF_ALL_LEFT, function()
             if main_room._data.is_close_all_scheduled then
-                --module:log('info', 'Closing conference %s as all left for good.', main_room_jid);
+                module:log('info', 'Closing conference %s as all left for good.', main_room_jid);
                 main_room:set_persistent(false);
                 main_room:save(true);
                 main_room:destroy(main_room_jid, 'All occupants left.');
@@ -395,7 +410,7 @@ function on_main_room_destroyed(event)
 
     local message = 'Conference ended.';
 
-    for breakout_room_jid, breakout_room in pairs(main_room._data.breakout_rooms or {}) do
+    for breakout_room_jid in pairs(main_room._data.breakout_rooms or {}) do
         destroy_breakout_room(breakout_room_jid, message)
     end
 end
@@ -465,7 +480,7 @@ function process_breakout_rooms_muc_loaded(breakout_rooms_muc, host_module)
 
     host_module:hook("muc-config-form", function(event)
         local room = event.room;
-        local main_room, main_room_jid = get_main_room(room.jid);
+        local _, main_room_jid = get_main_room(room.jid);
 
         -- Breakout room matadata.
         table.insert(event.form, {
@@ -487,12 +502,17 @@ function process_breakout_rooms_muc_loaded(breakout_rooms_muc, host_module)
     room_mt.get_members_only = function(room)
         local main_room = get_main_room(room.jid);
 
+        if not main_room then
+            module:log('error', 'No main room (%s)!', room.jid);
+            return false;
+        end
+
         return main_room.get_members_only(main_room)
     end
 
     -- we base affiliations (roles) in breakout rooms muc component to be based on the roles in the main muc
     room_mt.get_affiliation = function(room, jid)
-        local main_room, main_room_jid = get_main_room(room.jid);
+        local main_room, _ = get_main_room(room.jid);
 
         if not main_room then
             module:log('error', 'No main room(%s) for %s!', room.jid, jid);

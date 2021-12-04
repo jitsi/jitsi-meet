@@ -42,12 +42,18 @@ export default {
         marginRight: BaseTheme.spacing[2]
     },
 
+    blankPageText: {
+        color: TEXT_COLOR,
+        fontSize: 18
+    },
+
     /**
      * View that is rendered when there is no welcome page.
      */
     blankPageWrapper: {
         ...StyleSheet.absoluteFillObject,
         alignItems: 'center',
+        backgroundColor: BaseTheme.palette.uiBackground,
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'center'

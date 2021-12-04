@@ -1,6 +1,6 @@
 import { isSuboptimalBrowser } from '../base/environment';
 import { translateToHTML } from '../base/i18n';
-import { showWarningNotification } from '../notifications';
+import { NOTIFICATION_TIMEOUT_TYPE, showWarningNotification } from '../notifications';
 
 export * from './functions.any';
 
@@ -24,7 +24,7 @@ export function maybeShowSuboptimalExperienceNotification(dispatch, t) {
                             recommendedBrowserPageLink: `${window.location.origin}/static/recommendedBrowsers.html`
                         }
                     )
-                }
+                }, NOTIFICATION_TIMEOUT_TYPE.LONG
             )
         );
     }

@@ -20,6 +20,7 @@ import { getFeatureFlag, MEETING_PASSWORD_ENABLED } from '../../../../base/flags
 import { translate } from '../../../../base/i18n';
 import { isLocalParticipantModerator } from '../../../../base/participants';
 import { StyleType } from '../../../../base/styles';
+import { isInBreakoutRoom } from '../../../../breakout-rooms/functions';
 import { toggleLobbyMode } from '../../../../lobby/actions.any';
 import LobbyModeSwitch
     from '../../../../lobby/components/native/LobbyModeSwitch';
@@ -430,7 +431,7 @@ function _mapStateToProps(state: Object): Object {
         _isModerator: isLocalParticipantModerator(state),
         _lobbyEnabled: lobbyEnabled,
         _lobbyModeSwitchVisible:
-            lobbySupported && isLocalParticipantModerator(state) && !hideLobbyButton,
+            lobbySupported && isLocalParticipantModerator(state) && !hideLobbyButton && !isInBreakoutRoom(state),
         _locked: locked,
         _lockedConference: Boolean(conference && locked),
         _password: password,
