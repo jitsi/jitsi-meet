@@ -204,12 +204,8 @@ function _updateReceiverVideoConstraints({ getState }) {
         ...sourceNameSignaling ? { selectedSources: [] } : { selectedEndpoints: [] }
     };
 
-    let largeVideoSourceName;
-    let participantIdToTrackSourceName;
-    let visibleRemoteTrackSourceNames;
-
     if (sourceNameSignaling) {
-        participantIdToTrackSourceName = tracks.reduce((acc, { jitsiTrack, participantId }) => {
+        const participantIdToTrackSourceName = tracks.reduce((acc, { jitsiTrack, participantId }) => {
             const local = jitsiTrack.isLocal();
             const isVideo = jitsiTrack && jitsiTrack.type === 'video';
 
@@ -224,12 +220,14 @@ function _updateReceiverVideoConstraints({ getState }) {
             return acc;
         }, {});
 
+        let visibleRemoteTrackSourceNames;
+
         if (visibleRemoteParticipants?.size) {
             visibleRemoteTrackSourceNames = [ ...visibleRemoteParticipants ].map(participantId =>
                 participantIdToTrackSourceName[participantId]);
         }
 
-        largeVideoSourceName = participantIdToTrackSourceName[largeVideoParticipantId];
+        const largeVideoSourceName = participantIdToTrackSourceName[largeVideoParticipantId];
 
         // Tile view.
         if (shouldDisplayTileView(state)) {
