@@ -411,9 +411,10 @@ export function getTrackSourceNameByMediaTypeAndParticipant(
         tracks,
         mediaType,
         participantId) {
-    const track = tracks.find(
-    t => Boolean(t.jitsiTrack) && t.participantId === participantId && t.mediaType === mediaType
-    );
+    const track = getTrackByMediaTypeAndParticipant(
+        tracks,
+        mediaType,
+        participantId);
 
     return track?.jitsiTrack?.getSourceName();
 }
