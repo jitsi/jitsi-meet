@@ -4,11 +4,6 @@ var config = {
     // Connection
     //
 
-    flags: {
-        // Enables source names in the signaling.
-        // sourceNameSignaling: false,
-    },
-
     hosts: {
         // XMPP domain.
         domain: 'jitsi-meet.example.com',
@@ -77,6 +72,12 @@ var config = {
         // This takes a value between 0 and 100 which determines the probability for
         // the callstats to be enabled.
         // callStatsThreshold: 5 // enable callstats for 5% of the users.
+    },
+
+    // Feature Flags.
+    flags: {
+        // Enables source names in the signaling.
+        // sourceNameSignaling: false,
     },
 
     // Disables moderator indicators.
