@@ -4,6 +4,11 @@ var config = {
     // Connection
     //
 
+    flags: {
+        // Enables source names in the signaling.
+        // sourceNameSignaling: false,
+    },
+
     hosts: {
         // XMPP domain.
         domain: 'jitsi-meet.example.com',
