@@ -238,11 +238,11 @@ function _updateReceiverVideoConstraints({ getState }) {
 
             // Prioritize screenshare in tile view.
             if (remoteScreenShares?.length) {
-                const remoteScreenSharesSourceNames = remoteScreenShares.map(remoteScreenShare =>
+                const remoteScreenShareSourceNames = remoteScreenShares.map(remoteScreenShare =>
                     getTrackSourceNameByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, remoteScreenShare)
                 );
 
-                receiverConstraints.selectedSources = remoteScreenSharesSourceNames;
+                receiverConstraints.selectedSources = remoteScreenShareSourceNames;
             }
 
         // Stage view.
