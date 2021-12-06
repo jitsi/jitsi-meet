@@ -6,7 +6,7 @@ import { _handleParticipantError } from '../base/conference';
 import { MEDIA_TYPE } from '../base/media';
 import { getParticipantCount } from '../base/participants';
 import { StateListenerRegistry } from '../base/redux';
-import { getTrackByMediaTypeAndParticipant } from '../base/tracks';
+import { getTrackSourceNameByMediaTypeAndParticipant } from '../base/tracks';
 import { reportError } from '../base/util';
 import { shouldDisplayTileView } from '../video-layout';
 
@@ -211,8 +211,7 @@ function _updateReceiverVideoConstraints({ getState }) {
 
         if (visibleRemoteParticipants?.size) {
             visibleRemoteTrackSourceNames = [ ...visibleRemoteParticipants ].reduce((acc, participantId) => {
-                const track = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
-                const sourceName = track?.jitsiTrack?.getSourceName?.();
+                const sourceName = getTrackSourceNameByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
 
                 if (sourceName) {
                     acc.push(sourceName);
@@ -222,10 +221,10 @@ function _updateReceiverVideoConstraints({ getState }) {
             }, []);
         }
 
-        const largeVideoSourceName = getTrackByMediaTypeAndParticipant(
+        const largeVideoSourceName = getTrackSourceNameByMediaTypeAndParticipant(
             tracks, MEDIA_TYPE.VIDEO,
             largeVideoParticipantId
-        )?.jitsiTrack?.getSourceName?.();
+        );
 
         // Tile view.
         if (shouldDisplayTileView(state)) {
@@ -239,11 +238,9 @@ function _updateReceiverVideoConstraints({ getState }) {
 
             // Prioritize screenshare in tile view.
             if (remoteScreenShares?.length) {
-                const remoteScreenSharesSourceNames = remoteScreenShares.map(remoteScreenShare => {
-                    const track = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, remoteScreenShare);
-
-                    return track?.jitsiTrack?.getSourceName?.();
-                });
+                const remoteScreenSharesSourceNames = remoteScreenShares.map(remoteScreenShare =>
+                    getTrackSourceNameByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, remoteScreenShare)
+                );
 
                 receiverConstraints.selectedSources = remoteScreenSharesSourceNames;
             }

@@ -400,6 +400,25 @@ export function getTrackByMediaTypeAndParticipant(
 }
 
 /**
+ * Returns track source name of specified media type for specified participant id.
+ *
+ * @param {Track[]} tracks - List of all tracks.
+ * @param {MEDIA_TYPE} mediaType - Media type.
+ * @param {string} participantId - Participant ID.
+ * @returns {(string|undefined)}
+ */
+export function getTrackSourceNameByMediaTypeAndParticipant(
+        tracks,
+        mediaType,
+        participantId) {
+    const track = tracks.find(
+    t => Boolean(t.jitsiTrack) && t.participantId === participantId && t.mediaType === mediaType
+    );
+
+    return track?.jitsiTrack?.getSourceName();
+}
+
+/**
  * Returns the track if any which corresponds to a specific instance
  * of JitsiLocalTrack or JitsiRemoteTrack.
  *
