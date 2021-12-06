@@ -245,7 +245,12 @@ function _updateReceiverVideoConstraints({ getState }) {
             });
 
             // Prioritize screenshare in tile view.
-            remoteScreenShares?.length && (receiverConstraints.selectedSources = remoteScreenShares);
+            if (remoteScreenShares?.length) {
+                const remoteScreenSharesSourceNames = remoteScreenShares.map(remoteScreenShare =>
+                    participantIdToTrackSourceName[remoteScreenShare]);
+
+                receiverConstraints.selectedSources = remoteScreenSharesSourceNames;
+            }
 
         // Stage view.
         } else {
