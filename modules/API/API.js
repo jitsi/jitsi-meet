@@ -1470,12 +1470,14 @@ class API {
      * available.
      *
      * @param {string} link - The recording download link.
+     * @param {number} ttl - The recording download link time to live.
      * @returns {void}
      */
-    notifyRecordingLinkAvailable(link: string) {
+    notifyRecordingLinkAvailable(link: string, ttl: number) {
         this._sendEvent({
             name: 'recording-link-available',
-            link
+            link,
+            ttl
         });
     }
 
