@@ -223,8 +223,13 @@ function _updateReceiverVideoConstraints({ getState }) {
         let visibleRemoteTrackSourceNames;
 
         if (visibleRemoteParticipants?.size) {
-            visibleRemoteTrackSourceNames = [ ...visibleRemoteParticipants ].map(participantId =>
-                participantIdToTrackSourceName[participantId]);
+            visibleRemoteTrackSourceNames = [ ...visibleRemoteParticipants ].reduce((acc, participantId) => {
+                if (participantIdToTrackSourceName[participantId]) {
+                    acc.push(participantIdToTrackSourceName[participantId]);
+                }
+
+                return acc;
+            }, []);
         }
 
         const largeVideoSourceName = participantIdToTrackSourceName[largeVideoParticipantId];
