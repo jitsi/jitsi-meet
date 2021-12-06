@@ -3,7 +3,7 @@
 import jwtDecode from 'jwt-decode';
 import _ from 'lodash';
 import moment from 'moment';
-import React, { Component } from 'react';
+import React, { Component, useCallback, useEffect, useState } from 'react';
 import { Image, Linking, Text, View, Clipboard } from 'react-native';
 import { WebView } from 'react-native-webview';
 
@@ -17,8 +17,9 @@ import {
     setJaneWaitingAreaAuthState,
     updateRemoteParticipantsStatuses
 } from '../../actions';
+import { POLL_INTERVAL, MAX_TIMEOUT_SEC } from '../../constants';
 import {
-    checkLocalParticipantCanJoin,
+    checkLocalParticipantCanJoin, checkRoomStatus, getRemoteParticipantsStatuses,
     updateParticipantReadyStatus
 } from '../../functions';
 
@@ -51,7 +52,9 @@ type DialogBoxProps = {
 type SocketWebViewProps = {
     onError: Function,
     onMessageUpdate: Function,
-    locationURL: string
+    locationURL: string,
+    startPolling: Function,
+    stopPolling: Function
 }
 
 const getWebViewUrl = (locationURL: any) => {
@@ -62,19 +65,65 @@ const getWebViewUrl = (locationURL: any) => {
     return uri;
 };
 
+let webViewTimer;
+
 const SocketWebView = (props: SocketWebViewProps) => {
+    const [ loading, setLoading ] = useState(false);
+    const [ time, setTime ] = useState(0);
+
+    const clearTimer = () => {
+        setTime(0);
+        webViewTimer && clearInterval(webViewTimer);
+        props.stopPolling();
+    };
+
+    useEffect(() => {
+        if (loading) {
+            webViewTimer = setInterval(() => {
+                setTime(prevTime => prevTime + 1);
+            }, 1000);
+        } else {
+            clearTimer();
+        }
+    }, [ loading ]);
+
+    useEffect(() => {
+        if (time === MAX_TIMEOUT_SEC) {
+            clearTimer();
+            props.startPolling();
+        }
+    }, [ time ]);
+
+    useEffect(() => () => {
+        clearTimer();
+    }, []);
+
     const injectedJavascript = `(function() {
           window.postMessage = function(data) {
             window.ReactNativeWebView.postMessage(data);
           };
         })()`;
 
+    const onLoadStart = useCallback(() => {
+        setLoading(true);
+    });
+
+    const onLoadEnd = useCallback(() => {
+        setLoading(false);
+    });
+
     return (<View
         style = { styles.socketView }>
         <WebView
+            allowFileAccessFromFileURLs = { true }
+            allowUniversalAccessFromFileURLs = { true }
             injectedJavaScript = { injectedJavascript }
+            mixedContentMode = { 'always' }
             onError = { props.onError }
+            onLoadEnd = { onLoadEnd }
+            onLoadStart = { onLoadStart }
             onMessage = { props.onMessageUpdate }
+            originWhitelist = { [ '*' ] }
             source = {{ uri: getWebViewUrl(props.locationURL) }}
             startInLoadingState = { false } />
     </View>);
@@ -87,6 +136,9 @@ class DialogBox extends Component<DialogBoxProps> {
     _return: Function;
     _onMessageUpdate: Function;
     _admitClient: Function;
+    _startPolling: Function;
+    _stopPolling: Function;
+    _poller: any
 
     constructor(props) {
         super(props);
@@ -95,6 +147,9 @@ class DialogBox extends Component<DialogBoxProps> {
         this._webviewOnError = this._webviewOnError.bind(this);
         this._return = this._return.bind(this);
         this._onMessageUpdate = this._onMessageUpdate.bind(this);
+        this._startPolling = this._startPolling.bind(this);
+        this._stopPolling = this._stopPolling.bind(this);
+        this._poller = null;
     }
 
     componentDidMount() {
@@ -104,8 +159,42 @@ class DialogBox extends Component<DialogBoxProps> {
         sendAnalytics(
             createWaitingAreaPageEvent('loaded', undefined));
         updateParticipantReadyStatus('waiting', jwt);
+        this.fetchRoomStatus();
     }
 
+    async fetchRoomStatus() {
+        const { jwt, participantType, updateRemoteParticipantsStatusesAction } = this.props;
+
+        try {
+            const response = await checkRoomStatus(jwt);
+            const remoteParticipantsStatuses
+                = getRemoteParticipantsStatuses(response.participant_statuses, participantType);
+
+            updateRemoteParticipantsStatusesAction(remoteParticipantsStatuses);
+        } catch (error) {
+            sendAnalytics(
+                createWaitingAreaPageEvent('fetch.room.status.failed', {
+                    error
+                })
+            );
+
+            // We'll handle the error in the Conference component.
+            this._joinConference();
+        }
+    }
+
+    _startPolling() {
+        sendAnalytics(createWaitingAreaModalEvent('polling.started'));
+        this._poller = setInterval(this.fetchRoomStatus.bind(this), POLL_INTERVAL);
+    }
+
+    _stopPolling() {
+        if (this._poller) {
+            clearInterval(this._poller);
+            sendAnalytics(createWaitingAreaModalEvent('polling.stopped'));
+            this._poller = null;
+        }
+    }
 
     _webviewOnError(error) {
         try {
@@ -139,6 +228,7 @@ class DialogBox extends Component<DialogBoxProps> {
         const { updateRemoteParticipantsStatusesAction } = this.props;
 
         updateRemoteParticipantsStatusesAction([]);
+        this._stopPolling();
     }
 
     _joinConference() {
@@ -361,7 +451,9 @@ class DialogBox extends Component<DialogBoxProps> {
             <SocketWebView
                 locationURL = { locationURL }
                 onError = { this._webviewOnError }
-                onMessageUpdate = { this._onMessageUpdate } />
+                onMessageUpdate = { this._onMessageUpdate }
+                startPolling = { this._startPolling }
+                stopPolling = { this._stopPolling } />
         </View>);
 
     }
