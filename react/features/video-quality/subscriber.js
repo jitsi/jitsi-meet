@@ -3,8 +3,10 @@
 import debounce from 'lodash/debounce';
 
 import { _handleParticipantError } from '../base/conference';
+import { MEDIA_TYPE } from '../base/media';
 import { getParticipantCount } from '../base/participants';
 import { StateListenerRegistry } from '../base/redux';
+import { getTrackByMediaTypeAndParticipant } from '../base/tracks';
 import { reportError } from '../base/util';
 import { shouldDisplayTileView } from '../video-layout';
 
@@ -205,34 +207,25 @@ function _updateReceiverVideoConstraints({ getState }) {
     };
 
     if (sourceNameSignaling) {
-        const participantIdToTrackSourceName = tracks.reduce((acc, { jitsiTrack, participantId }) => {
-            const local = jitsiTrack.isLocal();
-            const isVideo = jitsiTrack && jitsiTrack.type === 'video';
-
-            if (!local && isVideo) {
-                const sourceName = jitsiTrack.getSourceName && jitsiTrack.getSourceName();
-
-                if (sourceName) {
-                    acc[participantId] = sourceName;
-                }
-            }
-
-            return acc;
-        }, {});
-
         let visibleRemoteTrackSourceNames;
 
         if (visibleRemoteParticipants?.size) {
             visibleRemoteTrackSourceNames = [ ...visibleRemoteParticipants ].reduce((acc, participantId) => {
-                if (participantIdToTrackSourceName[participantId]) {
-                    acc.push(participantIdToTrackSourceName[participantId]);
+                const track = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
+                const sourceName = track?.jitsiTrack?.getSourceName?.();
+
+                if (sourceName) {
+                    acc.push(sourceName);
                 }
 
                 return acc;
             }, []);
         }
 
-        const largeVideoSourceName = participantIdToTrackSourceName[largeVideoParticipantId];
+        const largeVideoSourceName = getTrackByMediaTypeAndParticipant(
+            tracks, MEDIA_TYPE.VIDEO,
+            largeVideoParticipantId
+        )?.jitsiTrack?.getSourceName?.();
 
         // Tile view.
         if (shouldDisplayTileView(state)) {
@@ -246,8 +239,11 @@ function _updateReceiverVideoConstraints({ getState }) {
 
             // Prioritize screenshare in tile view.
             if (remoteScreenShares?.length) {
-                const remoteScreenSharesSourceNames = remoteScreenShares.map(remoteScreenShare =>
-                    participantIdToTrackSourceName[remoteScreenShare]);
+                const remoteScreenSharesSourceNames = remoteScreenShares.map(remoteScreenShare => {
+                    const track = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, remoteScreenShare);
+
+                    return track?.jitsiTrack?.getSourceName?.();
+                });
 
                 receiverConstraints.selectedSources = remoteScreenSharesSourceNames;
             }
@@ -258,7 +254,7 @@ function _updateReceiverVideoConstraints({ getState }) {
                 return;
             }
 
-            if (!visibleRemoteTrackSourceNames?.length) {
+            if (visibleRemoteTrackSourceNames?.length) {
                 visibleRemoteTrackSourceNames.forEach(sourceName => {
                     receiverConstraints.constraints[sourceName] = { 'maxHeight': VIDEO_QUALITY_LEVELS.LOW };
                 });
