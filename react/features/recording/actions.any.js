@@ -198,10 +198,11 @@ export function showStartedRecordingNotification(
                 const tenant = getVpaasTenant(state);
 
                 try {
-                    const link = await getRecordingLink(recordingSharingUrl, sessionId, region, tenant);
+                    const response = await getRecordingLink(recordingSharingUrl, sessionId, region, tenant);
+                    const { url: link, urlExpirationTimeMillis: ttl } = response;
 
                     if (typeof APP === 'object') {
-                        APP.API.notifyRecordingLinkAvailable(link);
+                        APP.API.notifyRecordingLinkAvailable(link, ttl);
                     }
 
                     // add the option to copy recording link
