@@ -8,7 +8,7 @@ export const PERCENTAGE_LOWER_BOUND = 5;
 /**
  * Number of milliseconds that represent how often screenshots should be taken.
  */
-export const POLL_INTERVAL = 2000;
+export const POLL_INTERVAL = 4000;
 
 /**
  * SET_INTERVAL constant is used to set interval and it is set in
