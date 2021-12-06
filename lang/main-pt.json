@@ -39,6 +39,28 @@
     "audioOnly": {
         "audioOnly": "Largura de banda baixa"
     },
+    "blankPage": {
+        "meetingEnded": "A reunião terminou."
+    },
+    "breakoutRooms": {
+        "defaultName": "Salas simultâneas #{{index}}",
+        "mainRoom": "Sala principal",
+        "actions": {
+            "add": "Adicionar salas simultâneas",
+            "autoAssign": "Atribuição automática de salas simultâneas",
+            "close": "Fechar",
+            "join": "Entrar na sala",
+            "leaveBreakoutRoom": "Sair da sala",
+            "more": "Mais",
+            "remove": "Eliminar sala",
+            "sendToBreakoutRoom": "Enviar participante para:"
+        },
+        "notifications": {
+            "joinedTitle": "Salas simultâneas",
+            "joined": "Entrada do \"{{name}}\" na sala",
+            "joinedMainRoom": "Entrada na sala principal"
+        }
+    },
     "calendarSync": {
         "addMeetingURL": "Adicionar um link da reunião",
         "confirmAddLink": "Gostaria de adicionar um link do Jitsi a esse evento?",
@@ -501,6 +523,7 @@
         "expandedPending": "Iniciando a transmissão em direto...",
         "failedToStart": "Falha ao iniciar a transmissão em direto",
         "getStreamKeyManually": "Não conseguimos buscar nenhuma transmissão em direto. Tente obter sua chave de transmissão em direto no YouTube.",
+        "inProgress": "Gravação ou transmissão em direto em curso",
         "invalidStreamKey": "A senha para transmissão em direto pode estar incorreta.",
         "off": "Transmissão em direto encerrada",
         "offBy": "{{name}} parou a transmissão em direto",
@@ -508,6 +531,7 @@
         "onBy": "{{name}} iniciou a transmissão em direto",
         "pending": "Iniciando Transmissão em Direto...",
         "serviceName": "Serviço de Transmissão em Direto",
+        "sessionAlreadyActive": "Esta sessão já está a ser gravada ou transmitida em direto.",
         "signedInAs": "Você está conectado como:",
         "signIn": "Faça login no Google",
         "signInCTA": "Faça login ou insira sua chave de transmissão em Direto do YouTube.",
@@ -553,6 +577,8 @@
     "notify": {
         "allowAction": "Permitir",
         "allowedUnmute": "Pode ligar o seu microfone, ligar a sua câmara ou partilhar o seu ecrã.",
+        "audioUnmuteBlockedTitle": "Ligar microfone bloqueado!",
+        "audioUnmuteBlockedDescription": "A operação de ligar o microfone foi temporariamente bloqueada devido aos limites do sistema.",
         "connectedOneMember": "{{name}} entrou na reunião",
         "connectedThreePlusMembers": "{{name}} e muitos outros entraram na reunião",
         "connectedTwoMembers": "{{first}} e {{second}} entraram na reunião",
@@ -564,6 +590,9 @@
         "invitedThreePlusMembers": "{{name}} e {{count}} outros foram convidados",
         "invitedTwoMembers": "{{first}} e {{second}} foram convidados",
         "kickParticipant": "{{kicked}} foi expulso por {{kicker}}",
+        "leftOneMember": "{{name}} deixou a reunião",
+        "leftThreePlusMembers": "{{name}} e muitos outros deixaram a reunião",
+        "leftTwoMembers": "{{first}} e {{second}} deixaram a reunião",
         "me": "Eu",
         "moderator": "É agora um moderador",
         "muted": "Você iniciou uma conversa com o microfone desativado.",
@@ -575,6 +604,7 @@
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) removido por outro participante",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) definido por outro participante",
         "raisedHand": "Gostaria de falar.",
+        "raisedHands": "{{participantName}} e mais {{raisedHands}} pessoas",
         "screenShareNoAudio": " A caixa de compartilhar áudio não foi marcada no ecrã de seleção da janela.",
         "screenShareNoAudioTitle": "Não foi possível partilhar o áudio do sistema!",
         "somebody": "Alguém",
@@ -603,7 +633,10 @@
         "moderationToggleDescription": "pelo {{participantDisplayName}}",
         "raiseHandAction": "Levantar a mão",
         "reactionSounds": "Desactivar sons",
-        "groupTitle": "Notificações"
+        "reactionSoundsForAll": "Desativar sons para todos",
+        "groupTitle": "Notificações",
+        "videoUnmuteBlockedTitle": "Ligar câmara bloqueada!",
+        "videoUnmuteBlockedDescription": "A operação de ligar a câmara foi temporariamente bloqueada devido aos limites do sistema."
     },
     "participantsPane": {
         "close": "Fechar",
@@ -621,13 +654,15 @@
             "invite": "Convidar alguém",
             "askUnmute": "Pedir para ligar o microfone",
             "moreModerationActions": "Mais opções de moderação",
+            "moreParticipantOptions": "Mais opções de participantes",
             "mute": "Silenciar",
             "muteAll": "Silenciar todos",
             "muteEveryoneElse": "Silenciar todos os outros",
             "stopEveryonesVideo": "Desligar a câmara de todos",
             "stopVideo": "Desligar a câmara",
             "unblockEveryoneMicCamera": "Desbloquear o microfone e a câmara de todos",
-            "videoModeration": "Ligarem a câmara deles"
+            "videoModeration": "Ligarem a câmara deles",
+            "moreModerationControls": "Mais controlos de moderação"
         },
         "search": "Pesquisar participantes"
     },
@@ -760,6 +795,7 @@
         "expandedPending": "Iniciando gravação...",
         "failedToStart": "Falha ao iniciar a gravação",
         "fileSharingdescription": "Compartilhar gravação com participantes da reunião",
+        "inProgress": "Gravação ou transmissão em direto em curso",
         "linkGenerated": "Gerámos um link para a sua gravação.",
         "live": "DIRETO",
         "loggedIn": "Conectado como {{userName}}",
@@ -772,6 +808,7 @@
         "serviceDescription": "Sua gravação será salva pelo serviço de gravação",
         "serviceDescriptionCloud": "Gravação na nuvem",
         "serviceName": "Serviço de gravação",
+        "sessionAlreadyActive": "Esta sessão já está a ser gravada ou transmitida em direto.",
         "signIn": "Entrar",
         "signOut": "Sair",
         "unavailable": "Oops! O {{serviceName}} está indisponível. Estamos trabalhando para resolver o problema. Por favor, tente mais tarde.",
@@ -820,6 +857,7 @@
         "sounds": "Sons",
         "speakers": "Participantes",
         "startAudioMuted": "Todos começam com microfone desligado",
+        "startReactionsMuted": "Sons de reação silenciados para todos",
         "startVideoMuted": "Todos começam com câmara desligada",
         "talkWhileMuted": "Se fala e está com microfone desligado",
         "title": "Definições"
@@ -858,7 +896,14 @@
         "name": "Nome",
         "seconds": "{{count}}s",
         "speakerStats": "Estatísticas dos Participantes",
-        "speakerTime": "Tempo do Participante"
+        "speakerTime": "Tempo do Participante",
+        "happy": "Feliz",
+        "neutral": "Neutro",
+        "sad": "Triste",
+        "surprised": "Surpreendido",
+        "angry": "Zangado",
+        "fearful": "Temeroso",
+        "disgusted": "Desgostoso"
     },
     "startupoverlay": {
         "policyText": " ",
@@ -875,6 +920,7 @@
             "audioOnly": "Mudar para apenas áudio",
             "audioRoute": "Selecionar o dispositivo de som",
             "boo": "Vaia",
+            "breakoutRoom": "Entrar/Sair salas instantâneas",
             "callQuality": "Gerir a qualidade do vídeo",
             "cc": "Mudar legendas",
             "chat": "Abrir / Fechar chat",
@@ -958,7 +1004,9 @@
         "hangup": "Sair da reunião",
         "help": "Ajuda",
         "invite": "Convidar pessoas",
+        "joinBreakoutRoom": "Entrar na sala",
         "laugh": "Risos",
+        "leaveBreakoutRoom": "Sair da sala",
         "like": "Aprovado",
         "lobbyButtonDisable": "Desativar sala de espera",
         "lobbyButtonEnable": "Ativar sala de espera",
@@ -1135,6 +1183,12 @@
     "lonelyMeetingExperience": {
         "button": "Convidar outros",
         "youAreAlone": "É o único na reunião"
+    },
+    "termsView": {
+        "header": "Termos"
+    },
+    "privacyView": {
+        "header": "Privacidade"
     },
     "helpView": {
         "header": "Centro de ajuda"
