@@ -38,14 +38,19 @@ const ConferenceStack = createStackNavigator();
 
 const ConferenceNavigationContainer = () => {
     const isPollsDisabled = useSelector(getDisablePolls);
-    const ChatScreen
-        = isPollsDisabled
-            ? Chat
-            : ChatAndPolls;
-    const chatScreenName
-        = isPollsDisabled
-            ? screen.conference.chat
-            : screen.conference.chatandpolls.main;
+    let ChatScreen;
+    let chatScreenName;
+    let chatTitleString;
+
+    if (isPollsDisabled) {
+        ChatScreen = Chat;
+        chatScreenName = screen.conference.chat;
+        chatTitleString = 'chat.title';
+    } else {
+        ChatScreen = ChatAndPolls;
+        chatScreenName = screen.conference.chatandpolls.main;
+        chatTitleString = 'chat.titleWithPolls';
+    }
     const { t } = useTranslation();
 
     return (
@@ -66,7 +71,7 @@ const ConferenceNavigationContainer = () => {
                         name = { chatScreenName }
                         options = {{
                             ...chatScreenOptions,
-                            title: t('chat.title')
+                            title: t(chatTitleString)
                         }} />
                     <ConferenceStack.Screen
                         component = { ParticipantsPane }
