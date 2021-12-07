@@ -26,8 +26,13 @@ import './subscriber.any';
  * Listens for changes in the number of participants to calculate the dimensions of the tile view grid and the tiles.
  */
 StateListenerRegistry.register(
-    /* selector */ getParticipantCountWithFake,
-    /* listener */ (numberOfParticipants, store) => {
+    /* selector */ state => {
+        return {
+            numberOfParticipants: getParticipantCountWithFake(state),
+            disableSelfView: state['features/base/settings'].disableSelfView
+        };
+    },
+    /* listener */ (currentState, store) => {
         const state = store.getState();
 
         if (shouldDisplayTileView(state)) {
@@ -38,6 +43,8 @@ StateListenerRegistry.register(
                 store.dispatch(setTileViewDimensions(gridDimensions));
             }
         }
+    }, {
+        deepEquals: true
     });
 
 /**
