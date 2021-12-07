@@ -57,7 +57,7 @@ export function loadWorker() {
             return;
         }
         let baseUrl = '';
-        const app: Object = document.querySelector('script[src*="app"]');
+        const app: Object = document.querySelector('script[src*="app.bundle.min.js"]');
 
         if (app) {
             const idx = app.src.lastIndexOf('/');
