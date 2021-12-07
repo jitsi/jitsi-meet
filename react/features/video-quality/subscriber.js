@@ -196,6 +196,7 @@ function _updateReceiverVideoConstraints({ getState }) {
     const { remoteScreenShares } = state['features/video-layout'];
     const { visibleRemoteParticipants } = state['features/filmstrip'];
     const { flags: { sourceNameSignaling } } = state['features/base/config'];
+    const { local: { id: localParticipantId } } = state['features/base/participants'];
     const tracks = state['features/base/tracks'];
 
     const receiverConstraints = {
@@ -208,6 +209,7 @@ function _updateReceiverVideoConstraints({ getState }) {
 
     if (sourceNameSignaling) {
         let visibleRemoteTrackSourceNames;
+        let largeVideoSourceName;
 
         if (visibleRemoteParticipants?.size) {
             visibleRemoteTrackSourceNames = [ ...visibleRemoteParticipants ].reduce((acc, participantId) => {
@@ -221,10 +223,12 @@ function _updateReceiverVideoConstraints({ getState }) {
             }, []);
         }
 
-        const largeVideoSourceName = getTrackSourceNameByMediaTypeAndParticipant(
-            tracks, MEDIA_TYPE.VIDEO,
-            largeVideoParticipantId
-        );
+        if (localParticipantId !== largeVideoParticipantId) {
+            largeVideoSourceName = getTrackSourceNameByMediaTypeAndParticipant(
+                tracks, MEDIA_TYPE.VIDEO,
+                largeVideoParticipantId
+            );
+        }
 
         // Tile view.
         if (shouldDisplayTileView(state)) {
