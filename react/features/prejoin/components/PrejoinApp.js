@@ -54,7 +54,9 @@ export default class PrejoinApp extends BaseApp<Props> {
             const { startWithAudioMuted, startWithVideoMuted } = store.getState()['features/base/settings'];
 
             dispatch(setConfig({
-                prejoinPageEnabled: true,
+                prejoinConfig: {
+                    enabled: true
+                },
                 startWithAudioMuted,
                 startWithVideoMuted
             }));

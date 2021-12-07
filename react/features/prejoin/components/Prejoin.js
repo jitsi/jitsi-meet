@@ -60,6 +60,11 @@ type Props = {
     updateSettings: Function,
 
     /**
+     * The prejoin config.
+     */
+    prejoinConfig?: Object,
+
+    /**
      * Whether the name input should be read only or not.
      */
     readOnlyName: boolean,
@@ -139,6 +144,7 @@ class Prejoin extends Component<Props, State> {
         this._onJoinConferenceWithoutAudioKeyPress = this._onJoinConferenceWithoutAudioKeyPress.bind(this);
         this._showDialogKeyPress = this._showDialogKeyPress.bind(this);
         this._onJoinKeyPress = this._onJoinKeyPress.bind(this);
+        this._getExtraJoinButtons = this._getExtraJoinButtons.bind(this);
     }
     _onJoinButtonClick: () => void;
 
@@ -277,6 +283,40 @@ class Prejoin extends Component<Props, State> {
         }
     }
 
+    _getExtraJoinButtons: () => Object;
+
+    /**
+     * Gets the list of extra join buttons.
+     *
+     * @returns {Object} - The list of extra buttons.
+     */
+    _getExtraJoinButtons() {
+        const { joinConferenceWithoutAudio, t } = this.props;
+
+        const noAudio = {
+            key: 'no-audio',
+            dataTestId: 'prejoin.joinWithoutAudio',
+            icon: IconVolumeOff,
+            label: t('prejoin.joinWithoutAudio'),
+            onButtonClick: joinConferenceWithoutAudio,
+            onKeyPressed: this._onJoinConferenceWithoutAudioKeyPress
+        };
+
+        const byPhone = {
+            key: 'by-phone',
+            dataTestId: 'prejoin.joinByPhone',
+            icon: IconPhone,
+            label: t('prejoin.joinAudioByPhone'),
+            onButtonClick: this._showDialog,
+            onKeyPressed: this._showDialogKeyPress
+        };
+
+        return {
+            noAudio,
+            byPhone
+        };
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -290,15 +330,25 @@ class Prejoin extends Component<Props, State> {
             joinConference,
             joinConferenceWithoutAudio,
             name,
+            prejoinConfig,
             readOnlyName,
             showCameraPreview,
             showDialog,
             t,
             videoTrack
         } = this.props;
+        const { _closeDialog, _onDropdownClose, _onJoinButtonClick, _onJoinKeyPress,
+            _onOptionsClick, _setName } = this;
 
-        const { _closeDialog, _onDropdownClose, _onJoinButtonClick, _onJoinKeyPress, _showDialogKeyPress,
-            _onJoinConferenceWithoutAudioKeyPress, _onOptionsClick, _setName, _showDialog } = this;
+        const extraJoinButtons = this._getExtraJoinButtons();
+        let extraButtonsToRender = Object.values(extraJoinButtons).filter((val: Object) =>
+            !(prejoinConfig?.hideExtraJoinButtons || []).includes(val.key)
+        );
+
+        if (!hasJoinByPhoneButton) {
+            extraButtonsToRender = extraButtonsToRender.filter((btn: Object) => btn.key !== 'by-phone');
+        }
+        const hasExtraJoinButtons = Boolean(extraButtonsToRender.length);
         const { showJoinByPhoneButtons, showError } = this.state;
 
         return (
@@ -327,19 +377,12 @@ class Prejoin extends Component<Props, State> {
 
                     <div className = 'prejoin-preview-dropdown-container'>
                         <InlineDialog
-                            content = { <div className = 'prejoin-preview-dropdown-btns'>
-                                <DropdownButton
-                                    dataTestId = 'prejoin.joinWithoutAudio'
-                                    icon = { IconVolumeOff }
-                                    label = { t('prejoin.joinWithoutAudio') }
-                                    onButtonClick = { joinConferenceWithoutAudio }
-                                    onKeyPressed = { _onJoinConferenceWithoutAudioKeyPress } />
-                                {hasJoinByPhoneButton && <DropdownButton
-                                    dataTestId = 'prejoin.joinByPhone'
-                                    icon = { IconPhone }
-                                    label = { t('prejoin.joinAudioByPhone') }
-                                    onButtonClick = { _showDialog }
-                                    onKeyPressed = { _showDialogKeyPress } />}
+                            content = { hasExtraJoinButtons && <div className = 'prejoin-preview-dropdown-btns'>
+                                {extraButtonsToRender.map(({ key, ...rest }: Object) => (
+                                    <DropdownButton
+                                        key = { key }
+                                        { ...rest } />
+                                ))}
                             </div> }
                             isOpen = { showJoinByPhoneButtons }
                             onClose = { _onDropdownClose }>
@@ -348,7 +391,7 @@ class Prejoin extends Component<Props, State> {
                                 ariaDropDownLabel = { t('prejoin.joinWithoutAudio') }
                                 ariaLabel = { t('prejoin.joinMeeting') }
                                 ariaPressed = { showJoinByPhoneButtons }
-                                hasOptions = { true }
+                                hasOptions = { hasExtraJoinButtons }
                                 onClick = { _onJoinButtonClick }
                                 onKeyPress = { _onJoinKeyPress }
                                 onOptionsClick = { _onOptionsClick }
@@ -390,7 +433,8 @@ function mapStateToProps(state): Object {
         hasJoinByPhoneButton: isJoinByPhoneButtonVisible(state),
         readOnlyName: isNameReadOnly(state),
         showCameraPreview: !isVideoMutedByUser(state),
-        videoTrack: getLocalJitsiVideoTrack(state)
+        videoTrack: getLocalJitsiVideoTrack(state),
+        prejoinConfig: state['features/base/config'].prejoinConfig
     };
 }
 
