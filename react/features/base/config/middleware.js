@@ -125,6 +125,12 @@ function _setConfig({ dispatch, getState }, next, action) {
         }));
     }
 
+    if (action.config.disableSelfView) {
+        dispatch(updateSettings({
+            disableSelfView: true
+        }));
+    }
+
     dispatch(updateConfig(config));
 
     // FIXME On Web we rely on the global 'config' variable which gets altered
