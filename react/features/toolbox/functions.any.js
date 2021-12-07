@@ -7,7 +7,7 @@
  * @returns {boolean}
  */
 export function isAudioMuteButtonDisabled(state: Object) {
-    const { audio } = state['features/base/media'];
+    const { available, muted, unmuteBlocked } = state['features/base/media'].audio;
 
-    return !(audio?.available && !audio?.blocked);
+    return !available || (muted && unmuteBlocked);
 }

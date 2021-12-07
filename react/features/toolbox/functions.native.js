@@ -80,7 +80,9 @@ export function isToolboxVisible(stateful: Object | Function) {
  * @returns {boolean}
  */
 export function isVideoMuteButtonDisabled(state: Object) {
-    const { video } = state['features/base/media'];
+    const { muted, unmuteBlocked } = state['features/base/media'].video;
 
-    return !hasAvailableDevices(state, 'videoInput') || video?.blocked || isLocalVideoTrackDesktop(state);
+    return !hasAvailableDevices(state, 'videoInput')
+        || (unmuteBlocked && Boolean(muted))
+        || isLocalVideoTrackDesktop(state);
 }
