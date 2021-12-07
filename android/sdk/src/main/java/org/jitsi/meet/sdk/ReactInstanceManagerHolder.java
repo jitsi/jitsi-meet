@@ -180,6 +180,7 @@ class ReactInstanceManagerHolder {
                 new com.calendarevents.CalendarEventsPackage(),
                 new com.corbt.keepawake.KCKeepAwakePackage(),
                 new com.facebook.react.shell.MainReactPackage(),
+                new com.reactnativecommunity.clipboard.ClipboardPackage(),
                 new com.reactnativecommunity.netinfo.NetInfoPackage(),
                 new com.oblador.performance.PerformancePackage(),
                 new com.reactnativecommunity.slider.ReactSliderPackage(),
