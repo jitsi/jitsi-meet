@@ -53,7 +53,6 @@ onmessage = async function(message) {
 
     // Receives image data
     if (message.data.id === 'SET_TIMEOUT') {
-
         if (!message.data.imageData || !modelsURL) {
             self.postMessage({
                 type: 'facial-expression',
@@ -67,7 +66,6 @@ onmessage = async function(message) {
             await faceapi.loadFaceExpressionModel(modelsURL);
             modelsLoaded = true;
         }
-
         faceapi.tf.engine().startScope();
         const tensor = faceapi.tf.browser.fromPixels(message.data.imageData);
         const detections = await faceapi.detectSingleFace(
@@ -93,21 +91,17 @@ onmessage = async function(message) {
             }
         }
         faceapi.tf.engine().endScope();
-
         let facialExpression;
 
         if (detections) {
             facialExpression = detections.expressions.asSortedArray()[0].expression;
         }
-
         timer = setTimeout(() => {
             self.postMessage({
                 type: 'facial-expression',
                 value: facialExpression
             });
         }, timeoutDuration);
-
-
     } else if (message.data.id === 'CLEAR_TIMEOUT') {
         // Clear the timeout.
         if (timer) {
@@ -115,5 +109,4 @@ onmessage = async function(message) {
             timer = null;
         }
     }
-
 };

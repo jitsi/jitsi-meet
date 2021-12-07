@@ -60,7 +60,6 @@ export function loadWorker() {
         const app: Object = document.querySelector('script[src*="app"]');
 
         if (app) {
-
             const idx = app.src.lastIndexOf('/');
 
             baseUrl = `${app.src.substring(0, idx)}/`;
