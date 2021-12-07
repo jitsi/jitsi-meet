@@ -218,7 +218,7 @@ export function moveToRoom(roomId?: string) {
             dispatch(setVideoMuted(video.muted));
         } else {
             try {
-                APP.conference.leaveRoom(false /* doDisconnect */);
+                await APP.conference.leaveRoom(false /* doDisconnect */);
             } catch (error) {
                 logger.warn('APP.conference.leaveRoom() rejected with:', error);
 
