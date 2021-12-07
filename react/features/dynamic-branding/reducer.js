@@ -85,6 +85,15 @@ const DEFAULT_STATE = {
     inviteDomain: '',
 
     /**
+     * An object containing the mapping between the language and url where the translation
+     * bundle is hosted.
+     *
+     * @public
+     * @type {Object}
+     */
+    labels: null,
+
+    /**
      * The custom url used when the user clicks the logo.
      *
      * @public
@@ -146,6 +155,7 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
             defaultBranding,
             didPageUrl,
             inviteDomain,
+            labels,
             logoClickUrl,
             logoImageUrl,
             muiBrandedTheme,
@@ -160,6 +170,7 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
             defaultBranding,
             didPageUrl,
             inviteDomain,
+            labels,
             logoClickUrl,
             logoImageUrl,
             muiBrandedTheme,
