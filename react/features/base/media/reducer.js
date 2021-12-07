@@ -35,7 +35,7 @@ import { CAMERA_FACING_MODE } from './constants';
  */
 export const _AUDIO_INITIAL_MEDIA_STATE = {
     available: true,
-    blocked: false,
+    unmuteBlocked: false,
     muted: false
 };
 
@@ -65,7 +65,7 @@ function _audio(state = _AUDIO_INITIAL_MEDIA_STATE, action) {
     case SET_AUDIO_UNMUTE_PERMISSIONS:
         return {
             ...state,
-            blocked: action.blocked
+            unmuteBlocked: action.blocked
         };
 
     default:
@@ -92,7 +92,7 @@ function _audio(state = _AUDIO_INITIAL_MEDIA_STATE, action) {
  */
 export const _VIDEO_INITIAL_MEDIA_STATE = {
     available: true,
-    blocked: false,
+    unmuteBlocked: false,
     facingMode: CAMERA_FACING_MODE.USER,
     muted: 0,
 
@@ -139,7 +139,7 @@ function _video(state = _VIDEO_INITIAL_MEDIA_STATE, action) {
     case SET_VIDEO_UNMUTE_PERMISSIONS:
         return {
             ...state,
-            blocked: action.blocked
+            unmuteBlocked: action.blocked
         };
 
     case STORE_VIDEO_TRANSFORM:

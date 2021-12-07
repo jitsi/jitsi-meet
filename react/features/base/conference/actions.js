@@ -12,8 +12,6 @@ import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import {
     MEDIA_TYPE,
-    isAudioMuted,
-    isVideoMuted,
     setAudioMuted,
     setAudioUnmutePermissions,
     setVideoMuted,
@@ -158,22 +156,12 @@ function _addConferenceListeners(conference, dispatch, state) {
     conference.on(
         JitsiConferenceEvents.AUDIO_UNMUTE_PERMISSIONS_CHANGED,
         disableAudioMuteChange => {
-            const muted = isAudioMuted(state);
-
-            // Disable the mute button only if its muted.
-            if (!disableAudioMuteChange || (disableAudioMuteChange && muted)) {
-                dispatch(setAudioUnmutePermissions(disableAudioMuteChange));
-            }
+            dispatch(setAudioUnmutePermissions(disableAudioMuteChange));
         });
     conference.on(
         JitsiConferenceEvents.VIDEO_UNMUTE_PERMISSIONS_CHANGED,
         disableVideoMuteChange => {
-            const muted = isVideoMuted(state);
-
-            // Disable the mute button only if its muted.
-            if (!disableVideoMuteChange || (disableVideoMuteChange && muted)) {
-                dispatch(setVideoUnmutePermissions(disableVideoMuteChange));
-            }
+            dispatch(setVideoUnmutePermissions(disableVideoMuteChange));
         });
 
     // Dispatches into features/base/tracks follow:
