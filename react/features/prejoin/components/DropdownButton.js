@@ -59,7 +59,7 @@ const styles = theme => {
             display: 'flex',
             height: 40,
             fontSize: 15,
-            lineHeight: 24,
+            lineHeight: '24px',
             padding: '0 16px',
             backgroundColor: theme.palette.field02,
 

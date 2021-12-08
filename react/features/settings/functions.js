@@ -99,7 +99,7 @@ export function getMoreTabProps(stateful: Object | Function) {
         languages: LANGUAGES,
         showLanguageSettings: configuredTabs.includes('language'),
         showPrejoinPage: !state['features/base/settings'].userSelectedSkipPrejoin,
-        showPrejoinSettings: state['features/base/config'].prejoinPageEnabled
+        showPrejoinSettings: state['features/base/config'].prejoinConfig?.enabled
     };
 }
 

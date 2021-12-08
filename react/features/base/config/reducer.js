@@ -282,6 +282,13 @@ function _translateLegacyConfig(oldValue: Object) {
         };
     }
 
+    newValue.prejoinConfig = oldValue.prejoinConfig || {};
+    if (oldValue.hasOwnProperty('prejoinPageEnabled')
+        && !newValue.prejoinConfig.hasOwnProperty('enabled')
+    ) {
+        newValue.prejoinConfig.enabled = oldValue.prejoinPageEnabled;
+    }
+
     newValue.disabledSounds = newValue.disabledSounds || [];
 
     if (oldValue.disableJoinLeaveSounds) {

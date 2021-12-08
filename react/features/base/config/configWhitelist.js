@@ -183,6 +183,7 @@ export default [
     'pcStatsInterval',
     'preferH264',
     'preferredCodec',
+    'prejoinConfig',
     'prejoinPageEnabled',
     'requireDisplayName',
     'remoteVideoMenu',
