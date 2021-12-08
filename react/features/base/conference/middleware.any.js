@@ -133,7 +133,7 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
         }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 
         if (TRIGGER_READY_TO_CLOSE_REASONS.includes(reason)) {
-            if (typeof API === undefined) {
+            if (typeof APP === undefined) {
                 dispatch(readyToClose());
             } else {
                 APP.API.notifyReadyToClose();
