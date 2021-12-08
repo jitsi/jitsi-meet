@@ -72,7 +72,7 @@ const useStyles = makeStyles(theme => {
             padding: '10px 16px',
 
             '&.focused': {
-                border: `3px solid ${theme.palette.field01Focus}`
+                outline: `3px solid ${theme.palette.field01Focus}`
             }
         },
         clearButton: {
