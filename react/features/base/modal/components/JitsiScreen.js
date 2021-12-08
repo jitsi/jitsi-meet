@@ -28,6 +28,11 @@ type Props = {
     footerComponent?: Function,
 
     /**
+     * Is a text input rendered at the bottom of the screen?
+     */
+    hasBottomTextInput?: boolean,
+
+    /**
      * Is the screen rendering a tab navigator?
      */
     hasTabNavigator?: boolean,
@@ -43,12 +48,14 @@ const JitsiScreen = ({
     children,
     footerComponent,
     hasTabNavigator = false,
+    hasBottomTextInput = false,
     style
 }: Props) => (
     <View
         style = { styles.jitsiScreenContainer }>
         <JitsiKeyboardAvoidingView
             contentContainerStyle = { contentContainerStyle }
+            hasBottomTextInput = { hasBottomTextInput }
             hasTabNavigator = { hasTabNavigator }
             style = { style }>
             <SafeAreaView
