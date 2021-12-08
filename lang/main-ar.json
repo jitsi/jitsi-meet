@@ -39,6 +39,9 @@
     "audioOnly": {
         "audioOnly": "معدل تبادل البيانات منخفض"
     },
+    "blankPage": {
+        "meetingEnded": "انتهى الاجتماع."
+    },
     "breakoutRooms": {
         "defaultName": "غرفة الاجتماعات الفرعية رقم {{index}}",
         "mainRoom": "الغرفة الرئيسية",
@@ -51,6 +54,11 @@
             "more": "أكثر",
             "remove": "إزالة",
             "sendToBreakoutRoom": "أرسل المشارك إلى:"
+        },
+        "notifications": {
+            "joinedTitle": "غرف جانبية",
+            "joined": " الغرفة الجانبيةالانضمام إلى\"{{name}}\"",
+            "joinedMainRoom": "الانضمام للغرفة الرئيسية"
         }
     },
     "calendarSync": {
@@ -175,7 +183,7 @@
         "tryAgainButton": "جرب مرة أخرى في تطبيق الحاسوب"
     },
     "defaultLink": "{{url}} مثلًا",
-    "defaultNickname": "محمد عمر مثلًا",
+    "defaultNickname": "محمد علي مثلًا",
     "deviceError": {
         "cameraError": "فشل الوصول إلى كاميرتك",
         "cameraPermission": "خطأ في تحصيل إذن استخدام كاميرتك",
@@ -569,6 +577,8 @@
     "notify": {
         "allowAction": "يسمح",
         "allowedUnmute": "يمكنك إعادة صوت الميكروفون و بدء تشغيل الكاميرا أو مشاركة شاشتك.",
+        "audioUnmuteBlockedTitle": "تم حظر إعادة صوت الميكروفون!",
+        "audioUnmuteBlockedDescription": "تم حظر عملية إلغاء كتم صوت الميكروفون مؤقتًا بسبب قيود النظام.",
         "connectedOneMember": "انضم {{name}} للاجتماع",
         "connectedThreePlusMembers": "انضم {{name}} وعدد {{count}} غيره إلى الاجتماع",
         "connectedTwoMembers": "انضم {{first}} و {{second}} إلى الاجتماع",
@@ -580,6 +590,9 @@
         "invitedThreePlusMembers": "دُعِي {{name}} وعدد {{count}} آخرين",
         "invitedTwoMembers": "دُعِي {{first}} و {{second}}",
         "kickParticipant": "طرد {{kicked}} المشارك {{kicker}}",
+        "leftOneMember": "{{name}} غادر الاجتماع",
+        "leftThreePlusMembers": "غادر {{name}} والعديد من الأشخاص الآخرين الاجتماع",
+        "leftTwoMembers": "غادر {{first}} و {{second}} الاجتماع",
         "me": "أنا",
         "moderator": "مُنحَت صلاحية رئيس الجلسة!",
         "muted": "بدأ المحادثة مكتوب الصوت.",
@@ -591,6 +604,7 @@
         "passwordRemovedRemotely": "أزال أحد المشاركين {{participantDisplayName}}",
         "passwordSetRemotely": "ضبط أحد المشاركين $t(lockRoomPasswordUppercase)",
         "raisedHand": "يريد {{name}} التحدث",
+        "raisedHands": "{{participantName}} و {{raisedHands}}المزيد من الناس",
         "screenShareNoAudio": "لم يتم تحديد مربع مشاركة الصوت في شاشة تحديد النافذة.",
         "screenShareNoAudioTitle": "تعذرت مشاركة صوت النظام!",
         "somebody": "شخص ما",
@@ -619,7 +633,10 @@
         "moderationToggleDescription": "من {{participantDisplayName}}",
         "raiseHandAction": "رفع اليد",
         "reactionSounds": "تعطيل الأصوات",
-        "groupTitle": "إشعارات"
+        "reactionSoundsForAll": "تعطيل الأصوات للجميع",
+        "groupTitle": "إشعارات",
+        "videoUnmuteBlockedTitle": "تم حظر إعادة الكاميرا!",
+        "videoUnmuteBlockedDescription": "تم حظر عملية إلغاء كتم الكاميرا مؤقتًا بسبب قيود النظام."
     },
     "participantsPane": {
         "close": "غلق",
@@ -644,7 +661,8 @@
             "stopEveryonesVideo": "أوقف فيديو الجميع",
             "stopVideo": "أوقف الفيديو",
             "unblockEveryoneMicCamera": "قم بإلغاء حظر ميكروفون وكاميرا الجميع",
-            "videoModeration": "ابدأ الفيديو الخاص بهم"
+            "videoModeration": "ابدأ الفيديو الخاص بهم",
+            "moreModerationControls": "المزيد من ضوابط الاشراف"
         },
         "search": "بحث"
     },
@@ -839,6 +857,7 @@
         "sounds": "اصوات",
         "speakers": "المذياع (مكبر الصوت)",
         "startAudioMuted": "بدء الجميع مكتومي الصوت",
+        "startReactionsMuted": "كتم رد فعل الصوت للجميع",
         "startVideoMuted": "بدء الجميع دون فيديو",
         "talkWhileMuted": "تحدث أثناء كتم الصوت",
         "title": "الإعدادات"
@@ -1155,7 +1174,7 @@
         "logo": {
             "calendar": "شعار التقويم",
             "microsoftLogo": "شعار مايكروسوفت",
-            "logoDeepLinking": "شعار jitsi",
+            "logoDeepLinking": "شعار جيتسي",
             "desktopPreviewThumbnail": "صورة مصغرة لمعاينة سطح المكتب",
             "googleLogo": "شعار كوكل",
             "policyLogo": "شعار السياسة"
