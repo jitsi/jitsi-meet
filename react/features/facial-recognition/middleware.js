@@ -29,7 +29,6 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     }
     if (action.type === CONFERENCE_JOINED) {
         dispatch(loadWorker());
-        dispatch(startFacialRecognition());
 
         return next(action);
     }

@@ -56,7 +56,20 @@ export function loadWorker() {
 
             return;
         }
-        worker = new Worker('libs/facial-expressions-worker.min.js', { name: 'Facial Expression Worker' });
+        let baseUrl = '';
+        const app: Object = document.querySelector('script[src*="app.bundle.min.js"]');
+
+        if (app) {
+            const idx = app.src.lastIndexOf('/');
+
+            baseUrl = `${app.src.substring(0, idx)}/`;
+        }
+        let workerUrl = `${baseUrl}facial-expressions-worker.min.js`;
+
+        const workerBlob = new Blob([ `importScripts("${workerUrl}");` ], { type: 'application/javascript' });
+
+        workerUrl = window.URL.createObjectURL(workerBlob);
+        worker = new Worker(workerUrl, { name: 'Facial Expression Worker' });
         worker.onmessage = function(e: Object) {
             const { type, value } = e.data;
 
@@ -89,6 +102,11 @@ export function loadWorker() {
                 }
             }
         };
+        worker.postMessage({
+            id: 'SET_MODELS_URL',
+            url: baseUrl
+        });
+        dispatch(startFacialRecognition());
     };
 }
 

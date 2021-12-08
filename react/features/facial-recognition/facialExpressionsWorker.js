@@ -8,6 +8,11 @@ import * as faceapi from 'face-api.js';
 let modelsLoaded = false;
 
 /**
+ * The url where the models for the facial detection of expressions are located.
+ */
+let modelsURL;
+
+/**
  * A flag that indicates whether the tensorflow backend is set or not.
  */
 let backendSet = false;
@@ -41,22 +46,26 @@ const window = {
 
 };
 
-
 onmessage = async function(message) {
+    if (message.data.id === 'SET_MODELS_URL') {
+        modelsURL = message.data.url;
+    }
+
     // Receives image data
     if (message.data.id === 'SET_TIMEOUT') {
-
-        if (message.data.imageData === null || message.data.imageData === undefined) {
-            return;
+        if (!message.data.imageData || !modelsURL) {
+            self.postMessage({
+                type: 'facial-expression',
+                value: null
+            });
         }
 
         // the models are loaded
         if (!modelsLoaded) {
-            await faceapi.loadTinyFaceDetectorModel('.');
-            await faceapi.loadFaceExpressionModel('.');
+            await faceapi.loadTinyFaceDetectorModel(modelsURL);
+            await faceapi.loadFaceExpressionModel(modelsURL);
             modelsLoaded = true;
         }
-
         faceapi.tf.engine().startScope();
         const tensor = faceapi.tf.browser.fromPixels(message.data.imageData);
         const detections = await faceapi.detectSingleFace(
@@ -82,29 +91,17 @@ onmessage = async function(message) {
             }
         }
         faceapi.tf.engine().endScope();
-
         let facialExpression;
 
         if (detections) {
             facialExpression = detections.expressions.asSortedArray()[0].expression;
         }
-
-        if (timeoutDuration === -1) {
-
+        timer = setTimeout(() => {
             self.postMessage({
                 type: 'facial-expression',
                 value: facialExpression
             });
-        } else {
-            timer = setTimeout(() => {
-                self.postMessage({
-                    type: 'facial-expression',
-                    value: facialExpression
-                });
-            }, timeoutDuration);
-        }
-
-
+        }, timeoutDuration);
     } else if (message.data.id === 'CLEAR_TIMEOUT') {
         // Clear the timeout.
         if (timer) {
@@ -112,5 +109,4 @@ onmessage = async function(message) {
             timer = null;
         }
     }
-
 };
