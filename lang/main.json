@@ -180,7 +180,8 @@
         "joinInApp": "Join this meeting using the app",
         "launchWebButton": "Launch in web",
         "title": "Launching your meeting in {{app}}...",
-        "tryAgainButton": "Try again in desktop"
+        "tryAgainButton": "Try again in desktop",
+        "unsupportedBrowser": "It looks like you're using a browser we don't support."
     },
     "defaultLink": "e.g. {{url}}",
     "defaultNickname": "ex. Jane Pink",
