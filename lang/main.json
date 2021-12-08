@@ -418,6 +418,7 @@
         "desktopShareError": "Could not create desktop share",
         "desktopShare":"Desktop share",
         "webAssemblyWarning": "WebAssembly not supported",
+        "webAssemblyWarningDescription": "WebAssembly disabled or not supported by this browser",
         "backgroundEffectError": "Failed to apply background effect."
     },
     "feedback": {
