@@ -86,9 +86,13 @@ function Util.new(module)
         return nil;
     end
 
+    -- Set defaults for signature algorithm
     if self.signatureAlgorithm == nil then
-        module:log("error", "'signature_algorithm' must not be empty");
-        return nil;
+        if self.asapKeyServer ~= nil then
+            self.signatureAlgorithm = "RS256"
+        elseif self.appSecret ~= nil then
+            self.signatureAlgorithm = "HS256"
+        end
     end
 
     --array of accepted issuers: by default only includes our appId
