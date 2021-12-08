@@ -1079,7 +1079,7 @@
         "title": "Delade dokument"
     },
     "e2ee": {
-        "labelToolTip": "jud- och videokommunikation för detta samtal är krypterad från dator till dator"
+        "labelToolTip": "Ljud- och videokommunikation för detta samtal är krypterad från dator till dator"
     },
     "embedMeeting": {
         "title": "Bädda in möte"
@@ -1165,8 +1165,8 @@
             "send": "Skicka"
         },
         "answer": {
-            "skip": "Skicka",
-            "submit": "Skippa"
+            "skip": "Skippa",
+            "submit": "Skicka"
         },
         "results": {
             "vote": "Rösta",
