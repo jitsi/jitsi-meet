@@ -1,5 +1,6 @@
 // @flow
 
+import { readyToClose } from '../../../features/mobile/external-api/actions';
 import {
     ACTION_PINNED,
     ACTION_UNPINNED,
@@ -40,6 +41,7 @@ import {
     createConference,
     setSubject
 } from './actions';
+import { TRIGGER_READY_TO_CLOSE_REASONS } from './constants';
 import {
     _addLocalTracksToConference,
     _removeLocalTracksFromConference,
@@ -129,6 +131,14 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
             description: reason,
             titleKey: 'dialog.sessTerminated'
         }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+
+        if (TRIGGER_READY_TO_CLOSE_REASONS.includes(reason)) {
+            if (typeof APP === undefined) {
+                dispatch(readyToClose());
+            } else {
+                APP.API.notifyReadyToClose();
+            }
+        }
 
         break;
     }
