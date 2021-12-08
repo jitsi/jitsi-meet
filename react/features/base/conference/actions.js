@@ -501,7 +501,7 @@ export function checkIfCanJoin() {
         const { authRequired, password }
             = getState()['features/base/conference'];
 
-        const replaceParticipant = getReplaceParticipant(APP.store.getState());
+        const replaceParticipant = getReplaceParticipant(getState());
 
         authRequired && dispatch(_conferenceWillJoin(authRequired));
         authRequired && authRequired.join(password, replaceParticipant);
