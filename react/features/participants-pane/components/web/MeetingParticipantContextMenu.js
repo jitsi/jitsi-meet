@@ -306,8 +306,9 @@ class MeetingParticipantContextMenu extends Component<Props> {
      */
     _onSendToRoom(room: Object) {
         return () => {
-            const { _participant, dispatch } = this.props;
+            const { _participant, dispatch, onSelect } = this.props;
 
+            onSelect(true);
             sendAnalytics(createBreakoutRoomsEvent('send.participant.to.room'));
             dispatch(sendParticipantToRoom(_participant.id, room.id));
         };
