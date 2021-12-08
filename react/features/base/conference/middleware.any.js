@@ -40,6 +40,7 @@ import {
     createConference,
     setSubject
 } from './actions';
+import { TRIGGER_READY_TO_CLOSE_REASONS } from './constants';
 import {
     _addLocalTracksToConference,
     _removeLocalTracksFromConference,
@@ -129,6 +130,10 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
             description: reason,
             titleKey: 'dialog.sessTerminated'
         }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+
+        if (typeof APP !== undefined && TRIGGER_READY_TO_CLOSE_REASONS.includes(reason)) {
+            APP.API.notifyReadyToClose();
+        }
 
         break;
     }
