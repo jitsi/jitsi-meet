@@ -603,11 +603,10 @@ function _raiseHandUpdated({ dispatch, getState }, conference, participantId, ne
             titleKey: 'notify.somebody',
             title: notificationTitle,
             descriptionKey: 'notify.raisedHand',
-            raiseHandNotification: true,
             concatText: true,
             uid: RAISE_HAND_NOTIFICATION_ID,
             ...action
-        }, shouldDisplayAllowAction ? NOTIFICATION_TIMEOUT_TYPE.MEDIUM : NOTIFICATION_TIMEOUT_TYPE.SHORT));
+        }, shouldDisplayAllowAction ? NOTIFICATION_TIMEOUT_TYPE.MEDIUM : NOTIFICATION_TIMEOUT_TYPE.LONG));
         dispatch(playSound(RAISE_HAND_SOUND_ID));
     }
 }

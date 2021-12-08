@@ -259,9 +259,8 @@ class NotificationsContainer extends Component<Props> {
         const { _notifications } = this.props;
 
         for (const notification of _notifications) {
-            if (notification.timeout
-                    && notification.props.isDismissAllowed !== false
-                    && !this._timeouts.has(notification.uid)) {
+            if (!this._timeouts.has(notification.uid)) {
+
                 const {
                     timeout,
                     uid

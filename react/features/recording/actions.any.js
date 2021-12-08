@@ -96,7 +96,6 @@ export function showPendingRecordingNotification(streamType: string) {
             titleKey: 'dialog.recording'
         };
         const notification = await dispatch(showNotification({
-            isDismissAllowed: false,
             ...dialogProps
         }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
 
@@ -172,7 +171,6 @@ export function showStartedRecordingNotification(
         let dialogProps = {
             descriptionKey: participantName ? 'liveStreaming.onBy' : 'liveStreaming.on',
             descriptionArguments: { name: participantName },
-            isDismissAllowed: true,
             titleKey: 'dialog.liveStreaming'
         };
 
@@ -185,7 +183,6 @@ export function showStartedRecordingNotification(
                 customActionNameKey: undefined,
                 descriptionKey: participantName ? 'recording.onBy' : 'recording.on',
                 descriptionArguments: { name: participantName },
-                isDismissAllowed: true,
                 titleKey: 'dialog.recording'
             };
 
@@ -210,7 +207,6 @@ export function showStartedRecordingNotification(
                     dialogProps.customActionHandler = [ () => copyText(link) ];
                     dialogProps.titleKey = 'recording.on';
                     dialogProps.descriptionKey = 'recording.linkGenerated';
-                    dialogProps.isDismissAllowed = false;
                 } catch (err) {
                     dispatch(showErrorNotification({
                         titleKey: 'recording.errorFetchingLink'

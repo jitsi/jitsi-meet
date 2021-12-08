@@ -15,12 +15,15 @@ import { PARTICIPANTS_PANE_OPEN } from '../participants-pane/actionTypes';
 
 import {
     clearNotifications,
-    hideRaiseHandNotifications,
     showNotification,
     showParticipantJoinedNotification,
-    showParticipantLeftNotification
+    showParticipantLeftNotification,
+    hideNotification
 } from './actions';
-import { NOTIFICATION_TIMEOUT_TYPE } from './constants';
+import {
+    NOTIFICATION_TIMEOUT_TYPE,
+    RAISE_HAND_NOTIFICATION_ID
+} from './constants';
 import { joinLeaveNotificationsDisabled } from './functions';
 
 /**
@@ -93,7 +96,7 @@ MiddlewareRegistry.register(store => next => action => {
         return next(action);
     }
     case PARTICIPANTS_PANE_OPEN: {
-        store.dispatch(hideRaiseHandNotifications());
+        store.dispatch(hideNotification(RAISE_HAND_NOTIFICATION_ID));
         break;
     }
     }
