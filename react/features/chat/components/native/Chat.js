@@ -53,6 +53,7 @@ class Chat extends AbstractChat<Props> {
 
         return (
             <JitsiScreen
+                hasBottomTextInput = { true }
                 hasTabNavigator = { true }
                 style = { styles.chatContainer }>
                 <MessageContainer messages = { _messages } />

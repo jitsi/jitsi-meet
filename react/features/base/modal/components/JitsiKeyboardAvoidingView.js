@@ -4,7 +4,8 @@ import { useHeaderHeight } from '@react-navigation/stack';
 import React, { useEffect, useState } from 'react';
 import {
     KeyboardAvoidingView,
-    Platform
+    Platform,
+    StatusBar
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -23,6 +24,11 @@ type Props = {
     contentContainerStyle?: StyleType,
 
     /**
+     * Is a text input rendered at the bottom of the screen?
+     */
+    hasBottomTextInput: boolean,
+
+    /**
      * Is the screen rendering a tab navigator?
      */
     hasTabNavigator: boolean,
@@ -38,6 +44,7 @@ const JitsiKeyboardAvoidingView = (
             children,
             contentContainerStyle,
             hasTabNavigator,
+            hasBottomTextInput,
             style
         }: Props) => {
     const headerHeight = useHeaderHeight();
@@ -54,8 +61,10 @@ const JitsiKeyboardAvoidingView = (
     const tabNavigatorPadding
         = hasTabNavigator ? headerHeight : 0;
     const noNotchDevicePadding = bottomPadding || 10;
-    const iosVerticalOffset = headerHeight + noNotchDevicePadding + tabNavigatorPadding;
-    const androidVerticalOffset = headerHeight;
+    const iosVerticalOffset
+        = headerHeight + noNotchDevicePadding + tabNavigatorPadding;
+    const androidVerticalOffset = hasBottomTextInput
+        ? headerHeight + StatusBar.currentHeight : headerHeight;
 
     return (
         <KeyboardAvoidingView
