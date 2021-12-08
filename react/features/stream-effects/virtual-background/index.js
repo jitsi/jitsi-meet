@@ -74,6 +74,12 @@ export async function createVirtualBackgroundEffect(virtualBackground: Object, d
 
             return;
         }
+    } else if (isWasmDisabled) {
+        dispatch(showWarningNotification({
+            titleKey: 'virtualBackground.backgroundEffectError'
+        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+
+        return;
     }
 
     const modelBufferOffset = tflite._getModelBufferMemoryOffset();
