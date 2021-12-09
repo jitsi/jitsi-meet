@@ -14,8 +14,6 @@ import {
     updateDropboxToken
 } from '../../../dropbox';
 import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification } from '../../../notifications';
-import { isScreenVideoShared } from '../../../screen-share';
-import { toggleScreenshotCaptureSummary } from '../../../screenshot-capture';
 import { toggleRequestingSubtitles } from '../../../subtitles';
 import { setSelectedRecordingService } from '../../actions';
 import { RECORDING_TYPES } from '../../constants';
@@ -63,6 +61,11 @@ type Props = {
      * Whether or not the local participant is screensharing.
      */
     _screensharing: boolean,
+
+    /**
+     * Whether or not the screenshot capture feature is enabled.
+     */
+    _screenshotCaptureEnabled: boolean,
 
     /**
      * Access token's expiration date as UNIX timestamp.
@@ -135,6 +138,7 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
         this._onSelectedRecordingServiceChanged
             = this._onSelectedRecordingServiceChanged.bind(this);
         this._onSharingSettingChanged = this._onSharingSettingChanged.bind(this);
+        this._toggleScreenshotCapture = this._toggleScreenshotCapture.bind(this);
 
         let selectedRecordingService;
 
@@ -283,7 +287,6 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
             _conference,
             _isDropboxEnabled,
             _rToken,
-            _screensharing,
             _token,
             dispatch
         } = this.props;
@@ -323,9 +326,7 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
             createRecordingDialogEvent('start', 'confirm.button', attributes)
         );
 
-        if (_screensharing) {
-            dispatch(toggleScreenshotCaptureSummary(true));
-        }
+        this._toggleScreenshotCapture();
         _conference.startRecording({
             mode: JitsiRecordingConstants.mode.FILE,
             appData
@@ -337,6 +338,11 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
 
         return true;
     }
+
+    /**
+     * To be overwritten by web component.
+     */
+    _toggleScreenshotCapture:() => void;
 
     /**
      * Renders the platform specific dialog content.
@@ -381,7 +387,6 @@ export function mapStateToProps(state: Object) {
         _fileRecordingsServiceSharingEnabled: fileRecordingsServiceSharingEnabled,
         _isDropboxEnabled: isDropboxEnabled(state),
         _rToken: state['features/dropbox'].rToken,
-        _screensharing: isScreenVideoShared(state),
         _tokenExpireDate: state['features/dropbox'].expireDate,
         _token: state['features/dropbox'].token
     };
