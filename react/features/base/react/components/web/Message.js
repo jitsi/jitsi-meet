@@ -1,6 +1,6 @@
 // @flow
 
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import { toArray } from 'react-emoji-render';
 
 import Linkify from './Linkify';
@@ -10,20 +10,20 @@ type Props = {
     /**
      * The body of the message.
      */
-    text: string | Array
+    text: string
 };
 
 /**
  * Renders the content of a chat message.
  */
-class Message extends PureComponent<Props> {
+class Message extends Component<Props> {
     /**
      * Initializes a new {@code Message} instance.
      *
      * @param {Props} props - The props of the component.
      * @inheritdoc
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         // Bind event handlers so they are only bound once for every instance
@@ -40,7 +40,8 @@ class Message extends PureComponent<Props> {
         const message = [];
 
         // Tokenize the text in order to avoid emoji substitution for URLs
-        const tokens = Array.isArray(text) ? text : text.split(' ');
+        const tokens = text ? text.split() : [];
+
         const content = [];
 
         for (const token of tokens) {
@@ -65,6 +66,8 @@ class Message extends PureComponent<Props> {
 
         return message;
     }
+
+    _processMessage: () => Array<string>;
 
     /**
      * Implements React's {@link Component#render()}.

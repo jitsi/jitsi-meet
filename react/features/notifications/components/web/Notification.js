@@ -76,7 +76,7 @@ class Notification extends AbstractNotification<Props> {
      * @returns {ReactElement}
      */
     _renderDescription() {
-        const description = this._getDescription();
+        const description = this._getDescription().join(' ');
 
         // the id is used for testing the UI
         return (
