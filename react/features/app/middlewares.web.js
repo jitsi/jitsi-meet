@@ -8,6 +8,7 @@ import '../external-api/middleware';
 import '../keyboard-shortcuts/middleware';
 import '../local-recording/middleware';
 import '../no-audio-signal/middleware';
+import '../notifications/middleware';
 import '../noise-detection/middleware';
 import '../old-client-notification/middleware';
 import '../power-monitor/middleware';
