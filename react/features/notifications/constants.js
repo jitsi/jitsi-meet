@@ -47,6 +47,16 @@ export const NOTIFICATION_TYPE_PRIORITIES = {
 };
 
 /**
+ * The set of possible notification icons.
+ *
+ * @enum {string}
+ */
+export const NOTIFICATION_ICON = {
+    ...NOTIFICATION_TYPE,
+    MESSAGE: 'message'
+};
+
+/**
  * The identifier of the raise hand notification.
  *
  * @type {string}

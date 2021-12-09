@@ -5,6 +5,7 @@ import { Text, TouchableOpacity, View } from 'react-native';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconClose } from '../../../base/icons';
+import { replaceNonUnicodeEmojis } from '../../../chat/functions';
 import AbstractNotification, {
     type Props
 } from '../AbstractNotification';
@@ -81,7 +82,7 @@ class Notification extends AbstractNotification<Props> {
                     key = { index }
                     numberOfLines = { maxLines }
                     style = { styles.contentText }>
-                    { line }
+                    { replaceNonUnicodeEmojis(line) }
                 </Text>
             ));
         }

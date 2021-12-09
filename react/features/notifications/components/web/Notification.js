@@ -1,12 +1,17 @@
 // @flow
 
 import Flag from '@atlaskit/flag';
+import EditorErrorIcon from '@atlaskit/icon/glyph/editor/error';
 import EditorInfoIcon from '@atlaskit/icon/glyph/editor/info';
+import EditorSuccessIcon from '@atlaskit/icon/glyph/editor/success';
+import EditorWarningIcon from '@atlaskit/icon/glyph/editor/warning';
+import QuestionsIcon from '@atlaskit/icon/glyph/questions';
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
+import Message from '../../../base/react/components/web/Message';
 import { colors } from '../../../base/ui/Tokens';
-import { NOTIFICATION_TYPE } from '../../constants';
+import { NOTIFICATION_ICON, NOTIFICATION_TYPE } from '../../constants';
 import AbstractNotification, {
     type Props
 } from '../AbstractNotification';
@@ -76,7 +81,7 @@ class Notification extends AbstractNotification<Props> {
         // the id is used for testing the UI
         return (
             <p data-testid = { this._getDescriptionKey() } >
-                { description }
+                <Message text = { description } />
             </p>
         );
     }
@@ -146,6 +151,35 @@ class Notification extends AbstractNotification<Props> {
     }
 
     /**
+     * Returns the Icon type component to be used, based on icon or appearance.
+     *
+     * @returns {ReactElement}
+     */
+    _getIcon() {
+        let ReactComponent;
+
+        switch (this.props.icon || this.props.appearance) {
+        case NOTIFICATION_ICON.ERROR:
+            ReactComponent = EditorErrorIcon;
+            break;
+        case NOTIFICATION_ICON.WARNING:
+            ReactComponent = EditorWarningIcon;
+            break;
+        case NOTIFICATION_ICON.SUCCESS:
+            ReactComponent = EditorSuccessIcon;
+            break;
+        case NOTIFICATION_ICON.MESSAGE:
+            ReactComponent = QuestionsIcon;
+            break;
+        default:
+            ReactComponent = EditorInfoIcon;
+            break;
+        }
+
+        return ReactComponent;
+    }
+
+    /**
      * Creates an icon component depending on the configured notification
      * appearance.
      *
@@ -153,17 +187,18 @@ class Notification extends AbstractNotification<Props> {
      * @returns {ReactElement}
      */
     _mapAppearanceToIcon() {
-        const appearance = this.props.appearance;
-        const secIconColor = ICON_COLOR[this.props.appearance];
+        const { appearance, icon } = this.props;
+        const secIconColor = ICON_COLOR[appearance];
         const iconSize = 'medium';
+        const Icon = this._getIcon();
 
-        return (<>
+        return (<div className = { icon }>
             <div className = { `ribbon ${appearance}` } />
-            <EditorInfoIcon
+            <Icon
                 label = { appearance }
                 secondaryColor = { secIconColor }
                 size = { iconSize } />
-        </>);
+        </div>);
     }
 }
 

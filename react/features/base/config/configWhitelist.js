@@ -132,6 +132,7 @@ export default [
     'e2ee',
     'e2eping',
     'enableDisplayNameInStats',
+    'enableChatNotifications',
     'enableEmailInStats',
     'enableEncodedTransformSupport',
     'enableFacialRecognition',

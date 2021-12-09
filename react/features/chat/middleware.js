@@ -17,6 +17,7 @@ import {
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
+import { NOTIFICATION_TIMEOUT_TYPE, showMessageNotification } from '../notifications';
 import { resetNbUnreadPollsMessages } from '../polls/actions';
 import { ADD_REACTION_MESSAGE } from '../reactions/actionTypes';
 import { pushReactions } from '../reactions/actions.any';
@@ -303,7 +304,7 @@ function _handleReceivedMessage({ dispatch, getState },
     // Logic for all platforms:
     const state = getState();
     const { isOpen: isChatOpen } = state['features/chat'];
-    const { iAmRecorder } = state['features/base/config'];
+    const { defaultRemoteDisplayName, enableChatNotifications, iAmRecorder } = state['features/base/config'];
     const { soundsIncomingMessage: soundEnabled } = state['features/base/settings'];
 
     if (soundEnabled && shouldPlaySound && !isChatOpen) {
@@ -318,6 +319,8 @@ function _handleReceivedMessage({ dispatch, getState },
     const hasRead = participant.local || isChatOpen;
     const timestampToDate = timestamp ? new Date(timestamp) : new Date();
     const millisecondsTimestamp = timestampToDate.getTime();
+    const participantDisplayName = displayName || defaultRemoteDisplayName;
+    const shouldShowNotification = enableChatNotifications && !participant.local && !isChatOpen && !isReaction;
 
     dispatch(addMessage({
         displayName,
@@ -330,6 +333,13 @@ function _handleReceivedMessage({ dispatch, getState },
         timestamp: millisecondsTimestamp,
         isReaction
     }));
+
+    if (shouldShowNotification) {
+        dispatch(showMessageNotification({
+            title: participantDisplayName,
+            description: message
+        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+    }
 
     if (typeof APP !== 'undefined') {
         // Logic for web only:
@@ -345,7 +355,6 @@ function _handleReceivedMessage({ dispatch, getState },
         if (!iAmRecorder) {
             dispatch(showToolbox(4000));
         }
-
     }
 }
 

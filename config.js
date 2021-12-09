@@ -680,6 +680,9 @@ var config = {
     // Enables sending participants' emails (if available) to callstats and other analytics
     // enableEmailInStats: false,
 
+    // Enables non-persistent notifications for chat messages when the chat window is closed
+    // enableChatNotifications: false,
+
     // Enables detecting faces of participants and get their expression and send it to other participants
     // enableFacialRecognition: true,
 

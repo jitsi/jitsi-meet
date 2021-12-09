@@ -56,6 +56,12 @@ export type Props = {
     hideErrorSupportLink: boolean,
 
     /**
+     * The type of icon to be displayed. If not passed in, the appearance
+     * type will be used.
+     */
+    icon?: String,
+
+    /**
      * Whether or not the dismiss button should be displayed.
      */
     isDismissAllowed: boolean,
