@@ -7,7 +7,6 @@ import {
     sendAnalytics
 } from '../../../analytics';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
-import { toggleScreenshotCaptureSummary } from '../../../screenshot-capture';
 import { getActiveSession } from '../../functions';
 
 /**
@@ -55,6 +54,7 @@ export default class AbstractStopRecordingDialog<P: Props>
 
         // Bind event handler so it is only bound once for every instance.
         this._onSubmit = this._onSubmit.bind(this);
+        this._toggleScreenshotCapture = this._toggleScreenshotCapture.bind(this);
     }
 
     _onSubmit: () => boolean;
@@ -72,11 +72,16 @@ export default class AbstractStopRecordingDialog<P: Props>
 
         if (_fileRecordingSession) {
             this.props._conference.stopRecording(_fileRecordingSession.id);
-            this.props.dispatch(toggleScreenshotCaptureSummary(false));
+            this._toggleScreenshotCapture();
         }
 
         return true;
     }
+
+    /**
+     * To be overwritten by web component.
+     */
+    _toggleScreenshotCapture: () => void;
 }
 
 /**
