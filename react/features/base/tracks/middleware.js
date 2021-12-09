@@ -210,17 +210,17 @@ MiddlewareRegistry.register(store => next => action => {
 
 /**
  * Set up state change listener to perform maintenance tasks when the conference
- * is left or failed, remove all remote tracks from the store.
+ * is left or failed, remove all tracks from the store.
  */
 StateListenerRegistry.register(
     state => getCurrentConference(state),
     (conference, { dispatch, getState }, prevConference) => {
         if (prevConference && !conference) {
-            // Clear all remote tracks.
-            const remoteTracks = getState()['features/base/tracks'].filter(t => !t.local);
+            // Clear all tracks.
+            const tracks = getState()['features/base/tracks'];
 
             batch(() => {
-                for (const track of remoteTracks) {
+                for (const track of tracks) {
                     dispatch(trackRemoved(track.jitsiTrack));
                 }
             });
