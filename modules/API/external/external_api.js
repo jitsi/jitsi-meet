@@ -565,6 +565,11 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
 
                 // Since this is internal event we don't need to emit it to the consumer of the API.
                 return true;
+            case 'video-mute-status-changed':
+                if (this._onStageParticipant && this._myUserID === this._onStageParticipant) {
+                    this.emit('largeVideoChanged');
+                }
+                break;
             }
 
             const eventName = events[name];
