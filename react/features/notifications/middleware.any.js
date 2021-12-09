@@ -1,6 +1,6 @@
 /* @flow */
 
-import { CONFERENCE_JOINED, getCurrentConference } from '../base/conference';
+import { getCurrentConference } from '../base/conference';
 import {
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
@@ -12,7 +12,6 @@ import {
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { PARTICIPANTS_PANE_OPEN } from '../participants-pane/actionTypes';
-import { openSettingsDialog, SETTINGS_TABS } from '../settings';
 
 import {
     clearNotifications,
@@ -32,21 +31,6 @@ import { joinLeaveNotificationsDisabled } from './functions';
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case CONFERENCE_JOINED: {
-        const { dispatch, getState } = store;
-        const { disableSelfView } = getState()['features/base/settings'];
-
-        if (disableSelfView) {
-            dispatch(showNotification({
-                titleKey: 'notify.selfViewTitle',
-                customActionNameKey: [ 'settings.title' ],
-                customActionHandler: [ () =>
-                    dispatch(openSettingsDialog(SETTINGS_TABS.PROFILE))
-                ]
-            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
-        }
-        break;
-    }
     case PARTICIPANT_JOINED: {
         const result = next(action);
         const { participant: p } = action;
