@@ -203,7 +203,7 @@ function _updateReceiverVideoConstraints({ getState }) {
         constraints: {},
         defaultConstraints: { 'maxHeight': VIDEO_QUALITY_LEVELS.NONE },
         lastN,
-        ...sourceNameSignaling ? { prioritizedSources: [] } : { onStageEndpoints: [] },
+        ...sourceNameSignaling ? { onStageSources: [] } : { onStageEndpoints: [] },
         ...sourceNameSignaling ? { selectedSources: [] } : { selectedEndpoints: [] }
     };
 
@@ -263,7 +263,7 @@ function _updateReceiverVideoConstraints({ getState }) {
 
             if (largeVideoSourceName) {
                 receiverConstraints.constraints[largeVideoSourceName] = { 'maxHeight': maxFrameHeight };
-                receiverConstraints.prioritizedSources = [ largeVideoSourceName ];
+                receiverConstraints.onStageSources = [ largeVideoSourceName ];
             }
         }
 
