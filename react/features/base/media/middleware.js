@@ -94,7 +94,7 @@ MiddlewareRegistry.register(store => next => action => {
             store.dispatch(showWarningNotification({
                 descriptionKey: 'notify.audioUnmuteBlockedDescription',
                 titleKey: 'notify.audioUnmuteBlockedTitle'
-            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
         }
         break;
     }
@@ -119,7 +119,7 @@ MiddlewareRegistry.register(store => next => action => {
             store.dispatch(showWarningNotification({
                 descriptionKey: 'notify.videoUnmuteBlockedDescription',
                 titleKey: 'notify.videoUnmuteBlockedTitle'
-            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
         }
         break;
     }
