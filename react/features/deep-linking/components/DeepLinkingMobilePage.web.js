@@ -163,13 +163,19 @@ class DeepLinkingMobilePage extends Component<Props> {
                     </a>
                     {
                         isSupportedMobileBrowser()
-                            && <a
-                                onClick = { this._onLaunchWeb }
-                                target = '_top'>
-                                <button className = { downloadButtonClassName }>
-                                    { t(`${_TNS}.launchWebButton`) }
-                                </button>
-                            </a>
+                            ? (
+                                <a
+                                    onClick = { this._onLaunchWeb }
+                                    target = '_top'>
+                                    <button className = { downloadButtonClassName }>
+                                        { t(`${_TNS}.launchWebButton`) }
+                                    </button>
+                                </a>
+                            ) : (
+                                <b>
+                                    { t(`${_TNS}.unsupportedBrowser`) }
+                                </b>
+                            )
                     }
                     { renderPromotionalFooter() }
                     <DialInSummary
