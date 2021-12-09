@@ -292,6 +292,29 @@
     "documentSharing": {
         "title": "Document compartit"
     },
+    "virtualBackground": {
+        "apply": "Aplicar",
+        "title": "Fons Virtuals",
+        "blur": "Difuminos",
+        "slightBlur": "Lleu Difuminos",
+        "removeBackground": "Elimina el Fons",
+        "addBackground": "Afegeix fons",
+        "pleaseWait": "Si us plau, espereu...",
+        "none": "Cap",
+        "uploadedImage": "Imatge carregada {{index}}",
+        "deleteImage": "Esborra la imatge",
+        "image1" : "Platja",
+        "image2" : "Paret blanca neutra",
+        "image3" : "Habitació blanca buida",
+        "image4" : "Llum de peu negre",
+        "image5" : "Muntanya",
+        "image6" : "Bosc ",
+        "image7" : "Sortida del sol",
+        "desktopShareError": "No s'ha pogut crear l'escriptori compartit",
+        "desktopShare":"Compartir escriptori",
+        "webAssemblyWarning": "no compatible",
+        "backgroundEffectError": "No s'ha pogut aplicar l'efecte de fons."
+    },
     "feedback": {
         "average": "Mitjana",
         "bad": "Dolenta",
@@ -654,6 +677,9 @@
             "toggleCamera": "Activa o desactiva la càmera",
             "videomute": "Activa o desactiva el vídeo",
             "videoblur": "Activa o desactiva el difuminat",
+            "selectBackground": "Seleccioneu Fons",
+            "expand": "Ampliar",
+            "collapse": "Col·lapse",
             "toggleFilmstrip": "Activa o desactiva la tira"
         },
         "addPeople": "Afegeix persones a la trucada",
