@@ -40,7 +40,7 @@ class Message extends Component<Props> {
         const message = [];
 
         // Tokenize the text in order to avoid emoji substitution for URLs
-        const tokens = text ? text.split() : [];
+        const tokens = text ? text.split(' ') : [];
 
         const content = [];
 

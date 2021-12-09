@@ -49,9 +49,7 @@ const EMOJI_REGEXP_ARRAY: Array<Array<Object>> = [];
         }
 
         // Add slack-type emojis
-        const emojiEscapedValues = [ escapeRegexp(`:${key}:`) ];
-
-        const emojiRegexp = `\\B(${emojiEscapedValues.join('|')})\\B`;
+        const emojiRegexp = `\\B(${escapeRegexp(`:${key}:`)})\\B`;
 
         EMOJI_REGEXP_ARRAY.push([ new RegExp(emojiRegexp, 'g'), value ]);
     }
