@@ -188,12 +188,19 @@ export function createLocalTracksA(options = {}) {
 }
 
 /**
- * Calls JitsiLocalTrack#dispose() on all local tracks ignoring errors when
+ * Calls JitsiLocalTrack#dispose() on the given track or on all local tracks (if none are passed) ignoring errors if
  * track is already disposed. After that signals tracks to be removed.
  *
+ * @param {JitsiLocalTrack|null} [track] - The local track that needs to be destroyed.
  * @returns {Function}
  */
-export function destroyLocalTracks() {
+export function destroyLocalTracks(track = null) {
+    if (track) {
+        return dispatch => {
+            dispatch(_disposeAndRemoveTracks([ track ]));
+        };
+    }
+
     return (dispatch, getState) => {
         // First wait until any getUserMedia in progress is settled and then get
         // rid of all local tracks.
