@@ -21,6 +21,7 @@ export const screen = {
                 polls: 'Polls'
             }
         },
+        security: 'Security Options',
         speakerStats: 'Speaker Stats',
         participants: 'Participants',
         invite: 'Invite',

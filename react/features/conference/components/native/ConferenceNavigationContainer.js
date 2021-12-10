@@ -13,6 +13,8 @@ import AddPeopleDialog
     from '../../../invite/components/add-people-dialog/native/AddPeopleDialog';
 import LobbyScreen from '../../../lobby/components/native/LobbyScreen';
 import { ParticipantsPane } from '../../../participants-pane/components/native';
+import SecurityDialog
+    from '../../../security/components/security-dialog/native/SecurityDialog';
 import SpeakerStats
     from '../../../speaker-stats/components/native/SpeakerStats';
 import { getDisablePolls } from '../../functions';
@@ -28,6 +30,7 @@ import {
     lobbyScreenOptions,
     navigationContainerTheme,
     participantsScreenOptions,
+    securityScreenOptions,
     sharedDocumentScreenOptions,
     speakerStatsScreenOptions
 } from './ConferenceNavigatorScreenOptions';
@@ -81,10 +84,18 @@ const ConferenceNavigationContainer = () => {
                             title: t('participantsPane.header')
                         }} />
                     <ConferenceStack.Screen
+                        component = { SecurityDialog }
+                        name = { screen.conference.security }
+                        options = {{
+                            ...securityScreenOptions,
+                            title: t('security.header')
+                        }} />
+                    <ConferenceStack.Screen
                         component = { SpeakerStats }
                         name = { screen.conference.speakerStats }
                         options = {{
-                            ...speakerStatsScreenOptions
+                            ...speakerStatsScreenOptions,
+                            title: t('speakerStats.speakerStats')
                         }} />
                     <ConferenceStack.Screen
                         component = { LobbyScreen }

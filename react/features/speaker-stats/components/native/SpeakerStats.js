@@ -15,7 +15,6 @@ import style from './styles';
  */
 const SpeakerStats = () => (
     <JitsiScreen
-        hasTabNavigator = { false }
         style = { style.speakerStatsContainer }>
         <SpeakerStatsLabels />
         <SpeakerStatsList />

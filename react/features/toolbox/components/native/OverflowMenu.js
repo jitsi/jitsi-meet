@@ -13,7 +13,8 @@ import { ParticipantsPaneButton } from '../../../participants-pane/components/na
 import { ReactionMenu } from '../../../reactions/components';
 import { isReactionsEnabled } from '../../../reactions/functions.any';
 import { LiveStreamButton, RecordButton } from '../../../recording';
-import SecurityDialogButton from '../../../security/components/security-dialog/SecurityDialogButton';
+import SecurityDialogButton
+    from '../../../security/components/security-dialog/native/SecurityDialogButton';
 import { SharedVideoButton } from '../../../shared-video/components';
 import SpeakerStatsButton from '../../../speaker-stats/components/native/SpeakerStatsButton';
 import { ClosedCaptionButton } from '../../../subtitles';
