@@ -1333,18 +1333,19 @@ export default {
     /**
      * Used by the Breakout Rooms feature to join a breakout room or go back to the main room.
      */
-    async joinRoom(roomName) {
+    async joinRoom(roomName, options) {
         // Reset VideoLayout. It's destroyed in features/video-layout/middleware.web.js so re-initialize it.
         VideoLayout.initLargeVideo();
         VideoLayout.resizeVideoArea();
 
-        // Destroy old tracks.
-        APP.store.dispatch(destroyLocalTracks());
+        // Restore initial state.
         this._localTracksInitialized = false;
+        this.isSharingScreen = false;
+        this.localPresenterVideo = null;
 
         this.roomName = roomName;
 
-        const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks();
+        const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(options);
         const localTracks = await tryCreateLocalTracks;
 
         this._displayErrorsForCreateInitialLocalTracks(errors);
