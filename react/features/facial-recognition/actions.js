@@ -6,22 +6,19 @@ import './createImageBitmap';
 
 import {
     ADD_FACIAL_EXPRESSION,
+    ADD_TO_FACIAL_EXPRESSIONS_BUFFER,
+    CLEAR_FACIAL_EXPRESSIONS_BUFFER,
     SET_DETECTION_TIME_INTERVAL,
     START_FACIAL_RECOGNITION,
     STOP_FACIAL_RECOGNITION
 } from './actionTypes';
-import { sendDataToWorker } from './functions';
+import {
+    CPU_TIME_INTERVAL,
+    WEBGL_TIME_INTERVAL,
+    WEBHOOK_SEND_TIME_INTERVAL
+} from './constants';
+import { sendDataToWorker, sendFacialExpressionsWebhook } from './functions';
 import logger from './logger';
-
-/**
- * Time used for detection interval when facial expressions worker uses webgl backend.
- */
-const WEBGL_TIME_INTERVAL = 1000;
-
-/**
- * Time used for detection interval when facial expression worker uses cpu backend.
- */
-const CPU_TIME_INTERVAL = 6000;
 
 /**
  * Object containing  a image capture of the local track.
@@ -39,10 +36,20 @@ let worker;
 let lastFacialExpression;
 
 /**
+ * The last facial expression timestamp.
+ */
+let lastFacialExpressionTimestamp;
+
+/**
  * How many duplicate consecutive expression occurred.
  * If a expression that is not the same as the last one it is reset to 0.
  */
 let duplicateConsecutiveExpressions = 0;
+
+/**
+ * Variable that keeps the interval for sending expressions to webhook.
+ */
+let sendInterval;
 
 /**
  * Loads the worker that predicts the facial expression.
@@ -95,9 +102,17 @@ export function loadWorker() {
                 if (value === lastFacialExpression) {
                     duplicateConsecutiveExpressions++;
                 } else {
-                    lastFacialExpression
-                    && dispatch(addFacialExpression(lastFacialExpression, duplicateConsecutiveExpressions + 1));
+                    if (lastFacialExpression && lastFacialExpressionTimestamp) {
+                        dispatch(
+                        addFacialExpression(
+                            lastFacialExpression,
+                            duplicateConsecutiveExpressions + 1,
+                            lastFacialExpressionTimestamp
+                        )
+                        );
+                    }
                     lastFacialExpression = value;
+                    lastFacialExpressionTimestamp = Date.now();
                     duplicateConsecutiveExpressions = 0;
                 }
             }
@@ -143,9 +158,15 @@ export function startFacialRecognition() {
 
         // $FlowFixMe
         imageCapture = new ImageCapture(firstVideoTrack);
-
         sendDataToWorker(worker, imageCapture);
+        sendInterval = setInterval(async () => {
+            const result = await sendFacialExpressionsWebhook(getState());
 
+            if (result) {
+                dispatch(clearFacialExpressionBuffer());
+            }
+        }
+        , WEBHOOK_SEND_TIME_INTERVAL);
     };
 }
 
@@ -169,9 +190,21 @@ export function stopFacialRecognition() {
             id: 'CLEAR_TIMEOUT'
         });
 
-        lastFacialExpression
-        && dispatch(addFacialExpression(lastFacialExpression, duplicateConsecutiveExpressions + 1));
+        if (lastFacialExpression && lastFacialExpressionTimestamp) {
+            dispatch(
+                        addFacialExpression(
+                            lastFacialExpression,
+                            duplicateConsecutiveExpressions + 1,
+                            lastFacialExpressionTimestamp
+                        )
+            );
+        }
         duplicateConsecutiveExpressions = 0;
+
+        if (sendInterval) {
+            clearInterval(sendInterval);
+            sendInterval = null;
+        }
         dispatch({ type: STOP_FACIAL_RECOGNITION });
         logger.log('Stop face recognition');
     };
@@ -215,9 +248,10 @@ export function changeTrack(track: Object) {
  *
  * @param  {string} facialExpression - Facial expression to be added.
  * @param  {number} duration - Duration in seconds of the facial expression.
+ * @param  {number} timestamp - Duration in seconds of the facial expression.
  * @returns {Object}
  */
-function addFacialExpression(facialExpression: string, duration: number) {
+function addFacialExpression(facialExpression: string, duration: number, timestamp: number) {
     return function(dispatch: Function, getState: Function) {
         const { detectionTimeInterval } = getState()['features/facial-recognition'];
         let finalDuration = duration;
@@ -228,7 +262,8 @@ function addFacialExpression(facialExpression: string, duration: number) {
         dispatch({
             type: ADD_FACIAL_EXPRESSION,
             facialExpression,
-            duration: finalDuration
+            duration: finalDuration,
+            timestamp
         });
     };
 }
@@ -243,5 +278,29 @@ function setDetectionTimeInterval(time: number) {
     return {
         type: SET_DETECTION_TIME_INTERVAL,
         time
+    };
+}
+
+/**
+ * Adds a facial expression with its timestamp to the facial expression buffer.
+ *
+ * @param  {Object} facialExpression - Object containing facial expression string and its timestamp.
+ * @returns {Object}
+ */
+export function addToFacialExpressionsBuffer(facialExpression: Object) {
+    return {
+        type: ADD_TO_FACIAL_EXPRESSIONS_BUFFER,
+        facialExpression
+    };
+}
+
+/**
+ * Clears the facial expressions array in the state.
+ *
+ * @returns {Object}
+ */
+function clearFacialExpressionBuffer() {
+    return {
+        type: CLEAR_FACIAL_EXPRESSIONS_BUFFER
     };
 }
