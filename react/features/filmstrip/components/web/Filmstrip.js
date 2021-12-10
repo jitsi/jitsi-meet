@@ -249,11 +249,11 @@ class Filmstrip extends PureComponent <Props> {
      * @returns {Object}
      */
     _calculateIndices(startIndex, stopIndex) {
-        const { _currentLayout, _iAmRecorder, _thumbnailsReordered } = this.props;
+        const { _currentLayout, _iAmRecorder, _thumbnailsReordered, _disableSelfView } = this.props;
         let start = startIndex;
         let stop = stopIndex;
 
-        if (_thumbnailsReordered) {
+        if (_thumbnailsReordered && !_disableSelfView) {
             // In tile view, the indices needs to be offset by 1 because the first thumbnail is that of the local
             // endpoint. The remote participants start from index 1.
             if (!_iAmRecorder && _currentLayout === LAYOUTS.TILE_VIEW) {
