@@ -180,7 +180,8 @@
         "joinInApp": "Mit der App am Meeting teilnehmen",
         "launchWebButton": "Im Web öffnen",
         "title": "Die Konferenz wird in {{app}} geöffnet …",
-        "tryAgainButton": "Erneut mit der nativen Applikation versuchen"
+        "tryAgainButton": "Erneut mit der nativen Applikation versuchen",
+        "unsupportedBrowser": "Sie verwenden einen Browser, der noch nicht unterstützt wird."
     },
     "defaultLink": "Bsp.: {{url}}",
     "defaultNickname": "Z. B. Jane Pink",
@@ -418,7 +419,8 @@
         "desktopShareError": "Desktop konnte nicht freigegeben werden",
         "desktopShare": "Desktopfreigabe",
         "webAssemblyWarning": "WebAssembly wird nicht unterstützt",
-        "backgroundEffectError": "Failed to apply background effect."
+        "webAssemblyWarningDescription": "WebAssembly ist deaktiviert oder wird in diesem Browser nicht unterstützt",
+        "backgroundEffectError": "Hintergrund konnte nicht aktiviert werden."
     },
     "feedback": {
         "average": "Durchschnittlich",
@@ -607,6 +609,7 @@
         "raisedHands": "{{participantName}} und {{raisedHands}} weitere möchten sprechen",
         "screenShareNoAudio": "Die Option \"Audio freigeben\" wurde bei der Auswahl des Fensters nicht ausgewählt.",
         "screenShareNoAudioTitle": "Share audio was not checked",
+        "selfViewTitle": "Sie können die eigene Ansicht immer in den Einstellungen reaktivieren",
         "somebody": "Jemand",
         "startSilentTitle": "Sie sind ohne Audioausgabe beigetreten!",
         "startSilentDescription": "Treten Sie dem Meeting noch einmal bei, um Ihr Audio zu aktivieren",
@@ -635,8 +638,8 @@
         "reactionSounds": "Interaktionstöne deaktivieren",
         "reactionSoundsForAll": "Interaktionstöne für alle deaktivieren",
         "groupTitle": "Benachrichtigungen",
-        "videoUnmuteBlockedTitle": "Kamera kann nicht aktiviert werden!",
-        "videoUnmuteBlockedDescription": "Die Kamera kann aus Überlastungsschutzgründen temporär nicht eingeschaltet werden."
+        "videoUnmuteBlockedTitle": "Kamera und Bildschirmfreigabe kann nicht aktiviert werden!",
+        "videoUnmuteBlockedDescription": "Die Kamera und Bildschirmfreigabe kann aus Überlastungsschutzgründen temporär nicht eingeschaltet werden."
     },
     "participantsPane": {
         "close": "Schließen",
@@ -661,7 +664,8 @@
             "stopEveryonesVideo": "Alle Kameras ausschalten",
             "stopVideo": "Kamera ausschalten",
             "unblockEveryoneMicCamera": "Kamera und Mikrofon von allen entsperren",
-            "videoModeration": "Kamera einschalten"
+            "videoModeration": "Kamera einschalten",
+            "moreModerationControls": "Weitere Moderationsoptionen"
         },
         "search": "Suche Anwesende"
     },
@@ -820,8 +824,8 @@
     "security": {
         "about": "Sie können Ihre Konferenz mit einem Passwort sichern. Teilnehmer müssen dieses eingeben, bevor sie an der Sitzung teilnehmen dürfen.",
         "aboutReadOnly": "Mit Moderationsrechten kann die Konferenz mit einem Passwort gesichert werden. Personen müssen dieses eingeben, bevor sie an der Sitzung teilnehmen dürfen.",
-        "insecureRoomNameWarning": "Der Raumname ist unsicher. Unerwünschte Teilnehmer könnten Ihrer Konferenz beitreten",
-        "securityOptions": "Sicherheitsoptionen"
+        "header": "Sicherheitsoptionen",
+        "insecureRoomNameWarning": "Der Raumname ist unsicher. Unerwünschte Teilnehmer könnten Ihrer Konferenz beitreten"
     },
     "settings": {
         "calendar": {
@@ -889,20 +893,20 @@
     },
     "speaker": "Sprecher/-in",
     "speakerStats": {
-        "search": "Suche",
+        "angry": "Sauer",
+        "disgusted": "Angeekelt",
+        "fearful": "Ängstlich",
+        "happy": "Fröhlich",
         "hours": "{{count}} Std. ",
         "minutes": "{{count}} Min. ",
         "name": "Name",
-        "seconds": "{{count}} Sek.",
-        "speakerStats": "Sprechstatistik",
-        "speakerTime": "Sprechzeit",
-        "happy": "Fröhlich",
         "neutral": "Neutral",
         "sad": "Traurig",
-        "surprised": "Überrascht",
-        "angry": "Sauer",
-        "fearful": "Ängstlich",
-        "disgusted": "Angeekelt"
+        "search": "Suche",
+        "seconds": "{{count}} Sek.",
+        "speakerTime": "Sprechzeit",
+        "speakerStats": "Sprechstatistik",
+        "surprised": "Überrascht"
     },
     "startupoverlay": {
         "policyText": " ",
@@ -1122,6 +1126,7 @@
         "domuteVideoOfOthers": "Alle anderen Kameras auschalten",
         "flip": "Spiegeln",
         "grantModerator": "Moderationsrechte vergeben",
+        "hideSelfView": "Eigene Ansicht ausblenden",
         "kick": "Hinauswerfen",
         "moderator": "Moderation",
         "mute": "Person ist stumm geschaltet",
