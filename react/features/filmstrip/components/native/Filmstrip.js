@@ -176,7 +176,9 @@ class Filmstrip extends PureComponent<Props> {
      * @returns {void}
      */
     _onViewableItemsChanged({ viewableItems = [] }) {
-        if (!this._separateLocalThumbnail && viewableItems[0]?.index === 0) {
+        const { _disableSelfView } = this.props;
+
+        if (!this._separateLocalThumbnail && !_disableSelfView && viewableItems[0]?.index === 0) {
             // Skip the local thumbnail.
             viewableItems.shift();
         }
@@ -189,7 +191,7 @@ class Filmstrip extends PureComponent<Props> {
         let startIndex = viewableItems[0].index;
         let endIndex = viewableItems[viewableItems.length - 1].index;
 
-        if (!this._separateLocalThumbnail) {
+        if (!this._separateLocalThumbnail && !_disableSelfView) {
             // We are off by one in the remote participants array.
             startIndex -= 1;
             endIndex -= 1;

@@ -152,7 +152,9 @@ class TileView extends PureComponent<Props> {
      * @returns {void}
      */
     _onViewableItemsChanged({ viewableItems = [] }: { viewableItems: Array<Object> }) {
-        if (viewableItems[0]?.index === 0) {
+        const { _disableSelfView } = this.props;
+
+        if (viewableItems[0]?.index === 0 && !_disableSelfView) {
             // Skip the local thumbnail.
             viewableItems.shift();
         }
@@ -163,8 +165,8 @@ class TileView extends PureComponent<Props> {
         }
 
         // We are off by one in the remote participants array.
-        const startIndex = viewableItems[0].index - 1;
-        const endIndex = viewableItems[viewableItems.length - 1].index - 1;
+        const startIndex = viewableItems[0].index - (_disableSelfView ? 0 : 1);
+        const endIndex = viewableItems[viewableItems.length - 1].index - (_disableSelfView ? 0 : 1);
 
         this.props.dispatch(setVisibleRemoteParticipants(startIndex, endIndex));
     }
