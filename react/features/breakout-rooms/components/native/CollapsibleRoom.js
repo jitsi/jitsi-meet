@@ -65,7 +65,7 @@ export const CollapsibleRoom = ({ room }: Props) => {
                 horizontal = { false }
                 keyExtractor = { _keyExtractor }
                 // eslint-disable-next-line react/jsx-no-bind
-                renderItem = { item => <BreakoutRoomParticipantItem item = { item } /> }
+                renderItem = { ({ item: participant }) => <BreakoutRoomParticipantItem item = { participant } /> }
                 showsHorizontalScrollIndicator = { false }
                 windowSize = { 2 } />}
         </View>
