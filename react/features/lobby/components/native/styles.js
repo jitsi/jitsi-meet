@@ -1,12 +1,12 @@
 // @flow
 
-import { ColorPalette } from '../../../base/styles';
+import BaseTheme from '../../../base/ui/components/BaseTheme';
 
-const SECONDARY_COLOR = '#B8C7E0';
+const SECONDARY_COLOR = BaseTheme.palette.border04;
 
-export const ENABLED_THUMB_COLOR = ColorPalette.blueHighlight;
-export const ENABLED_TRACK_COLOR = ColorPalette.blue;
-export const DISABLED_THUMB_COLOR = ColorPalette.darkGrey;
+export const ENABLED_THUMB_COLOR = BaseTheme.palette.action04;
+export const ENABLED_TRACK_COLOR = BaseTheme.palette.screen01Header;
+export const DISABLED_THUMB_COLOR = BaseTheme.palette.icon04;
 
 export default {
     button: {
@@ -61,7 +61,7 @@ export default {
     },
 
     fieldError: {
-        color: ColorPalette.warning,
+        color: BaseTheme.palette.warning07,
         fontSize: 10
     },
 
@@ -165,7 +165,7 @@ export default {
 
     lobbySwitchContainer: {
         flexDirection: 'column',
-        marginTop: 16
+        marginTop: BaseTheme.spacing[2]
     },
 
     lobbySwitchIcon: {

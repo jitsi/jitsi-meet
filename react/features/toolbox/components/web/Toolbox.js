@@ -54,7 +54,7 @@ import {
     ShareAudioButton,
     startScreenShareFlow
 } from '../../../screen-share/';
-import SecurityDialogButton from '../../../security/components/security-dialog/SecurityDialogButton';
+import SecurityDialogButton from '../../../security/components/security-dialog/web/SecurityDialogButton';
 import { SettingsButton } from '../../../settings';
 import { SharedVideoButton } from '../../../shared-video/components';
 import { SpeakerStatsButton } from '../../../speaker-stats/components/web';

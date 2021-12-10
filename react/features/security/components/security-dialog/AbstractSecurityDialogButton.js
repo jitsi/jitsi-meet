@@ -9,15 +9,11 @@ import {
     MEETING_PASSWORD_ENABLED,
     SECURITY_OPTIONS_ENABLED
 } from '../../../base/flags';
-import { translate } from '../../../base/i18n';
 import { IconSecurityOff, IconSecurityOn } from '../../../base/icons';
 import { isLocalParticipantModerator } from '../../../base/participants';
-import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-import { toggleSecurityDialog } from '../../actions';
 
-
-type Props = AbstractButtonProps & {
+export type Props = AbstractButtonProps & {
 
     /**
      * Whether the shared document is being edited or not.
@@ -32,9 +28,10 @@ type Props = AbstractButtonProps & {
 
 
 /**
- * Implements an {@link AbstractButton} to open the security dialog.
+ * Implements an {@link AbstractButton} to open the security dialog/screen.
  */
-class SecurityDialogButton extends AbstractButton<Props, *> {
+export default class AbstractSecurityDialogButton<P: Props, S:*>
+    extends AbstractButton<P, S> {
     accessibilityLabel = 'toolbar.accessibilityLabel.security';
     icon = IconSecurityOff;
     label = 'toolbar.security';
@@ -42,13 +39,24 @@ class SecurityDialogButton extends AbstractButton<Props, *> {
     tooltip = 'toolbar.security';
 
     /**
-     * Handles clicking / pressing the button, and opens / closes the appropriate dialog.
+     * Helper function to be implemented by subclasses, which should be used
+     * to handle the security button being clicked / pressed.
+     *
+     * @protected
+     * @returns {void}
+     */
+    _handleClickSecurityButton() {
+        // To be implemented by subclass.
+    }
+
+    /**
+     * Handles clicking / pressing the button.
      *
      * @private
      * @returns {void}
      */
     _handleClick() {
-        const { _locked, dispatch, handleClick } = this.props;
+        const { _locked, handleClick } = this.props;
 
         if (handleClick) {
             handleClick();
@@ -57,7 +65,7 @@ class SecurityDialogButton extends AbstractButton<Props, *> {
         }
 
         sendAnalytics(createToolbarEvent('toggle.security', { enable: !_locked }));
-        dispatch(toggleSecurityDialog());
+        this._handleClickSecurityButton();
     }
 
     /**
@@ -77,7 +85,7 @@ class SecurityDialogButton extends AbstractButton<Props, *> {
  * @param {Object} state - The redux store/state.
  * @returns {Props}
  */
-function mapStateToProps(state: Object) {
+export function _mapStateToProps(state: Object) {
     const { conference } = state['features/base/conference'];
     const { hideLobbyButton } = state['features/base/config'];
     const { locked } = state['features/base/conference'];
@@ -93,5 +101,3 @@ function mapStateToProps(state: Object) {
         visible: enabledFlag || (enabledLobbyModeFlag || enabledMeetingPassFlag)
     };
 }
-
-export default translate(connect(mapStateToProps)(SecurityDialogButton));

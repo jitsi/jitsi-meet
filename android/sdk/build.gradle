@@ -68,6 +68,7 @@ dependencies {
     implementation project(':react-native-async-storage')
     implementation project(':react-native-background-timer')
     implementation project(':react-native-calendar-events')
+    implementation project(':react-native-community_clipboard')
     implementation project(':react-native-community_netinfo')
     implementation project(':react-native-default-preference')
     implementation project(':react-native-gesture-handler')

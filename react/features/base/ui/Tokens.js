@@ -19,6 +19,7 @@ export const colors = {
     primary09: '#CCDDF9',
     primary10: '#17A0DB',
     primary11: '#1081B2',
+    primary12: '#B8C7E0',
 
     surface00: '#111111',
     surface01: '#040404',
@@ -158,6 +159,9 @@ export const colorMap = {
     // Text for drawer menu displayed name
     text05: 'surface06',
 
+    // Text for saved input values
+    text06: 'surface03',
+
     // error messages
     textError: 'error06',
 
@@ -225,6 +229,8 @@ export const colorMap = {
 
     // Line separators
     border03: 'surface04',
+
+    border04: 'primary12',
 
     // Color for error border & message
     borderError: 'error06',

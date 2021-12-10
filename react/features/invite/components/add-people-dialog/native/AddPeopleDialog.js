@@ -147,8 +147,8 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                 <TouchableRipple
                     disabled = { this._isAddDisabled() }
                     rippleColor = { palette.screen01Header } >
-                    <Text
-                        style = { styles.headerSendInvite }>{ t('inviteDialog.send') }
+                    <Text style = { styles.headerSendInvite }>
+                        { t('inviteDialog.send') }
                     </Text>
                 </TouchableRipple>
             )
@@ -171,9 +171,8 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                     disabled = { this._isAddDisabled() }
                     onPress = { this._onInvite }
                     rippleColor = { palette.screen01Header } >
-                    <Text
-                        /* eslint-disable-next-line react-native/no-inline-styles */
-                        style = { styles.headerSendInvite }>{ t('inviteDialog.send') }
+                    <Text style = { styles.headerSendInvite }>
+                        { t('inviteDialog.send') }
                     </Text>
                 </TouchableRipple>
             )

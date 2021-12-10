@@ -77,7 +77,7 @@ function SecurityDialog({
         <Dialog
             hideCancelButton = { true }
             submitDisabled = { true }
-            titleKey = 'security.securityOptions'
+            titleKey = 'security.header'
             width = { 'small' }>
             <div className = 'security-dialog'>
                 <LobbySection />

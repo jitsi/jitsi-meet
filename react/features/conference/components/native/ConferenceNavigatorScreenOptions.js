@@ -223,6 +223,13 @@ export const speakerStatsScreenOptions = {
 };
 
 /**
+ * Screen options for security options modal.
+ */
+export const securityScreenOptions = {
+    ...presentationScreenOptions
+};
+
+/**
  * Screen options for shared document.
  */
 export const sharedDocumentScreenOptions = {
