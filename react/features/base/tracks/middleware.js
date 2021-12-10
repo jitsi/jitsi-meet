@@ -31,6 +31,7 @@ import {
 } from './actionTypes';
 import {
     createLocalTracksA,
+    destroyLocalTracks,
     showNoDataFromSourceVideoError,
     toggleScreensharing,
     trackRemoved,
@@ -217,10 +218,11 @@ StateListenerRegistry.register(
     (conference, { dispatch, getState }, prevConference) => {
         if (prevConference && !conference) {
             // Clear all tracks.
-            const tracks = getState()['features/base/tracks'];
+            const remoteTracks = getState()['features/base/tracks'].filter(t => !t.local);
 
             batch(() => {
-                for (const track of tracks) {
+                dispatch(destroyLocalTracks());
+                for (const track of remoteTracks) {
                     dispatch(trackRemoved(track.jitsiTrack));
                 }
             });
