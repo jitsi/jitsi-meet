@@ -17,12 +17,12 @@ import {
     setVideoMuted
 } from '../base/media';
 import { getRemoteParticipants } from '../base/participants';
-import { createDesiredLocalTracks } from '../base/tracks/actions';
 import {
     getLocalTracks,
     isLocalCameraTrackMuted,
     isLocalTrackMuted
 } from '../base/tracks';
+import { createDesiredLocalTracks } from '../base/tracks/actions';
 import {
     NOTIFICATION_TIMEOUT_TYPE,
     clearNotifications,
