@@ -29,8 +29,8 @@ export function showContextMenuReject(participant: Object) {
  * @param {string} participantID - The selected meeting participant id.
  * @returns {Function}
  */
-export function showConnectionStatus(participantID: string) {
-    return openDialog(ConnectionStatusComponent, { participantID });
+export function showConnectionStatus(options) {
+    return openDialog(ConnectionStatusComponent, options);
 }
 
 /**
@@ -39,8 +39,8 @@ export function showConnectionStatus(participantID: string) {
  * @param {string} participantId - The ID of the selected meeting participant.
  * @returns {Function}
  */
-export function showContextMenuDetails(participantId: string) {
-    return openDialog(RemoteVideoMenu, { participantId });
+export function showContextMenuDetails(options) {
+    return openDialog(RemoteVideoMenu, options);
 }
 
 /**

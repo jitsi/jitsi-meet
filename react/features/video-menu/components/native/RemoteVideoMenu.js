@@ -76,6 +76,11 @@ type Props = {
     _disableGrantModerator: Boolean,
 
     /**
+     * Connection stats passed from the previous component.
+     */
+    _initialStats: Object,
+
+    /**
      * True if the menu is currently open, false otherwise.
      */
     _isOpen: boolean,
@@ -130,6 +135,7 @@ class RemoteVideoMenu extends PureComponent<Props> {
             _disableKick,
             _disableRemoteMute,
             _disableGrantModerator,
+            _initialStats,
             _isParticipantAvailable,
             _rooms,
             _currentRoomId,
@@ -157,7 +163,9 @@ class RemoteVideoMenu extends PureComponent<Props> {
                 { !_disableGrantModerator && <GrantModeratorButton { ...buttonProps } /> }
                 <PinButton { ...buttonProps } />
                 <PrivateMessageButton { ...buttonProps } />
-                <ConnectionStatusButton { ...buttonProps } />
+                <ConnectionStatusButton
+                    initialStats = { _initialStats }
+                    { ...buttonProps } />
                 {_rooms.length > 1 && <>
                     <Divider style = { styles.divider } />
                     <View style = { styles.contextMenuItem }>
@@ -229,7 +237,7 @@ class RemoteVideoMenu extends PureComponent<Props> {
  */
 function _mapStateToProps(state, ownProps) {
     const kickOutEnabled = getFeatureFlag(state, KICK_OUT_ENABLED, true);
-    const { participantId } = ownProps;
+    const { initialStats, participantId } = ownProps;
     const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
     const isParticipantAvailable = getParticipantById(state, participantId);
     let { disableKick } = remoteVideoMenu;
@@ -243,6 +251,7 @@ function _mapStateToProps(state, ownProps) {
         _currentRoomId,
         _disableKick: Boolean(disableKick),
         _disableRemoteMute: Boolean(disableRemoteMute),
+        _initialStats: initialStats,
         _isOpen: isDialogOpen(state, RemoteVideoMenu_),
         _isParticipantAvailable: Boolean(isParticipantAvailable),
         _participantDisplayName: getParticipantDisplayName(state, participantId),

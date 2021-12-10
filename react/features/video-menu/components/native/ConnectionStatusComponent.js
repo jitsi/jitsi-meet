@@ -37,6 +37,11 @@ export type Props = {
     dispatch: Function,
 
     /**
+     * Connection stats passed from the previous component.
+     */
+    initialStats: Object,
+
+    /**
      * The ID of the participant that this button is supposed to pin.
      */
     participantID: string,
@@ -114,6 +119,8 @@ class ConnectionStatusComponent extends Component<Props, State> {
             codecString: 'N/A',
             connectionString: 'N/A'
         };
+
+        this.state = this._buildState(this.props.initialStats);
     }
 
     /**
@@ -228,6 +235,17 @@ class ConnectionStatusComponent extends Component<Props, State> {
         }
     }
 
+    /**
+     * Stop listening for stat updates.
+     *
+     * @inheritdoc
+     * returns {void}
+     */
+    componentWillUnmount() {
+        statsEmitter.unsubscribeToClientStats(
+            this.props.participantID, this._onStatsUpdated);
+    }
+
     _onStatsUpdated: Object => void;
 
     /**
@@ -252,7 +270,7 @@ class ConnectionStatusComponent extends Component<Props, State> {
      * @private
      * @returns {State}
      */
-    _buildState(stats) {
+    _buildState(stats = {}) {
         const { download: downloadBitrate, upload: uploadBitrate } = this._extractBitrate(stats) ?? {};
 
         const { download: downloadPacketLost, upload: uploadPacketLost } = this._extractPacketLost(stats) ?? {};

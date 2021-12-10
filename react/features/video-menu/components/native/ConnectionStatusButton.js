@@ -16,6 +16,11 @@ export type Props = AbstractButtonProps & {
     dispatch: Function,
 
     /**
+     * Connection stats passed from the previous component.
+     */
+    initialStats: Object,
+
+    /**
      * The ID of the participant that this button is supposed to pin.
      */
     participantID: string,
@@ -40,9 +45,10 @@ class ConnectionStatusButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { dispatch, participantID } = this.props;
+        const { dispatch, participantID, initialStats } = this.props;
 
         dispatch(openDialog(ConnectionStatusComponent, {
+            initialStats,
             participantID
         }));
     }

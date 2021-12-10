@@ -21,6 +21,7 @@ import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 import { ConnectionIndicator } from '../../../connection-indicator';
+import statsEmitter from '../../../connection-indicator/statsEmitter';
 import { DisplayNameLabel } from '../../../display-name';
 import {
     showConnectionStatus,
@@ -145,9 +146,16 @@ type Props = {
 };
 
 /**
+ * The type of the React {@code Component} state of {@link Thumbnail}.
+ */
+ type State = {
+     stats: Object
+ }
+
+/**
  * React component for video thumbnail.
  */
-class Thumbnail extends PureComponent<Props> {
+class Thumbnail extends PureComponent<Props, State> {
 
     /**
      * Creates new Thumbnail component.
@@ -160,6 +168,48 @@ class Thumbnail extends PureComponent<Props> {
 
         this._onClick = this._onClick.bind(this);
         this._onThumbnailLongPress = this._onThumbnailLongPress.bind(this);
+        this._onStatsUpdated = this._onStatsUpdated.bind(this);
+
+        this.state = {
+            stats: {}
+        };
+    }
+
+    /**
+     * Starts listening for stat updates.
+     *
+     * @inheritdoc
+     * returns {void}
+     */
+    componentDidMount() {
+        statsEmitter.subscribeToClientStats(
+            this.props.participantID, this._onStatsUpdated);
+    }
+
+    /**
+     * Updates which user's stats are being listened to.
+     *
+     * @inheritdoc
+     * returns {void}
+     */
+    componentDidUpdate(prevProps: Props) {
+        if (prevProps.participantID !== this.props.participantID) {
+            prevProps.participantID && statsEmitter.unsubscribeToClientStats(
+                prevProps.participantID, this._onStatsUpdated);
+            this.props.participantID && statsEmitter.subscribeToClientStats(
+                this.props.participantID, this._onStatsUpdated);
+        }
+    }
+
+    /**
+     * Stop listening for stat updates.
+     *
+     * @inheritdoc
+     * returns {void}
+     */
+    componentWillUnmount() {
+        this.props.participantID && statsEmitter.unsubscribeToClientStats(
+            this.props.participantID, this._onStatsUpdated);
     }
 
     _onClick: () => void;
@@ -188,6 +238,7 @@ class Thumbnail extends PureComponent<Props> {
      */
     _onThumbnailLongPress() {
         const { _participantId, _local, _isFakeParticipant, _localVideoOwner, dispatch } = this.props;
+        const { stats } = this.state;
 
         if (_isFakeParticipant && _localVideoOwner) {
             dispatch(showSharedVideoMenu(_participantId));
@@ -195,11 +246,34 @@ class Thumbnail extends PureComponent<Props> {
 
         if (!_isFakeParticipant) {
             if (_local) {
-                dispatch(showConnectionStatus(_participantId));
+                dispatch(showConnectionStatus({
+                    initialStats: stats,
+                    participantId: _participantId
+                }));
             } else {
-                dispatch(showContextMenuDetails(_participantId));
+                dispatch(showContextMenuDetails({
+                    initialStats: stats,
+                    participantId: _participantId
+                }));
             }
         }
+    }
+
+    _onStatsUpdated: Object => void;
+
+    /**
+     * Callback invoked when new connection stats associated with the passed in
+     * user ID are available. Will update the component's display of current
+     * statistics.
+     *
+     * @param {Object} stats - Connection stats from the library.
+     * @private
+     * @returns {void}
+     */
+    _onStatsUpdated(stats = {}) {
+        this.setState({
+            stats
+        });
     }
 
     /**
