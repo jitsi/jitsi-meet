@@ -13,6 +13,7 @@ import {
     showWarningNotification
 } from '../../notifications';
 import { isForceMuted } from '../../participants-pane/functions';
+import { isScreenMediaShared } from '../../screen-share';
 import { SET_AUDIO_ONLY, setAudioOnly } from '../audio-only';
 import { isRoomValid, SET_ROOM } from '../conference';
 import { getLocalParticipant } from '../participants';
@@ -114,8 +115,9 @@ MiddlewareRegistry.register(store => next => action => {
         const state = store.getState();
         const tracks = state['features/base/tracks'];
         const isVideoMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO);
+        const isMediaShared = isScreenMediaShared(state);
 
-        if (blocked && isVideoMuted) {
+        if (blocked && isVideoMuted && !isMediaShared) {
             store.dispatch(showWarningNotification({
                 descriptionKey: 'notify.videoUnmuteBlockedDescription',
                 titleKey: 'notify.videoUnmuteBlockedTitle'
