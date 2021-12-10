@@ -17,8 +17,8 @@ import {
     setVideoMuted
 } from '../base/media';
 import { getRemoteParticipants } from '../base/participants';
-import { createDesiredLocalTracks } from '../base/tracks/actions';
 import {
+    createDesiredLocalTracks,
     getLocalTracks,
     isLocalCameraTrackMuted,
     isLocalTrackMuted
