@@ -13,6 +13,7 @@ import {
 } from '../base/conference';
 import { setAudioMuted, setVideoMuted } from '../base/media';
 import { getRemoteParticipants } from '../base/participants';
+import { createDesiredLocalTracks } from '../base/tracks/actions';
 import {
     NOTIFICATION_TIMEOUT_TYPE,
     clearNotifications,
@@ -216,6 +217,7 @@ export function moveToRoom(roomId?: string) {
             dispatch(createConference(_roomId));
             dispatch(setAudioMuted(audio.muted));
             dispatch(setVideoMuted(video.muted));
+            dispatch(createDesiredLocalTracks());
         } else {
             try {
                 await APP.conference.leaveRoom(false /* doDisconnect */);
