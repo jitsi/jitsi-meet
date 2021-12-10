@@ -304,7 +304,7 @@ function _handleReceivedMessage({ dispatch, getState },
     // Logic for all platforms:
     const state = getState();
     const { isOpen: isChatOpen } = state['features/chat'];
-    const { defaultRemoteDisplayName, enableChatNotifications, iAmRecorder } = state['features/base/config'];
+    const { enableChatNotifications, iAmRecorder } = state['features/base/config'];
     const { soundsIncomingMessage: soundEnabled } = state['features/base/settings'];
 
     if (soundEnabled && shouldPlaySound && !isChatOpen) {
@@ -319,8 +319,7 @@ function _handleReceivedMessage({ dispatch, getState },
     const hasRead = participant.local || isChatOpen;
     const timestampToDate = timestamp ? new Date(timestamp) : new Date();
     const millisecondsTimestamp = timestampToDate.getTime();
-    const participantDisplayName = displayName || defaultRemoteDisplayName;
-    const shouldShowNotification = enableChatNotifications && !participant.local && !isChatOpen && !isReaction;
+    const shouldShowNotification = enableChatNotifications && !hasRead && !isReaction;
 
     dispatch(addMessage({
         displayName,
@@ -336,7 +335,7 @@ function _handleReceivedMessage({ dispatch, getState },
 
     if (shouldShowNotification) {
         dispatch(showMessageNotification({
-            title: participantDisplayName,
+            title: displayName,
             description: message
         }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
     }

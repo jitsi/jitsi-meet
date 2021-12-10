@@ -156,27 +156,27 @@ class Notification extends AbstractNotification<Props> {
      * @returns {ReactElement}
      */
     _getIcon() {
-        let ReactComponent;
+        let Icon;
 
         switch (this.props.icon || this.props.appearance) {
         case NOTIFICATION_ICON.ERROR:
-            ReactComponent = EditorErrorIcon;
+            Icon = EditorErrorIcon;
             break;
         case NOTIFICATION_ICON.WARNING:
-            ReactComponent = EditorWarningIcon;
+            Icon = EditorWarningIcon;
             break;
         case NOTIFICATION_ICON.SUCCESS:
-            ReactComponent = EditorSuccessIcon;
+            Icon = EditorSuccessIcon;
             break;
         case NOTIFICATION_ICON.MESSAGE:
-            ReactComponent = QuestionsIcon;
+            Icon = QuestionsIcon;
             break;
         default:
-            ReactComponent = EditorInfoIcon;
+            Icon = EditorInfoIcon;
             break;
         }
 
-        return ReactComponent;
+        return Icon;
     }
 
     /**

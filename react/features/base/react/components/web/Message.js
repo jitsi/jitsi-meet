@@ -33,7 +33,7 @@ class Message extends Component<Props> {
     /**
      * Parses and builds the message tokens to include emojis and urls.
      *
-     * @returns {ReactElement}
+     * @returns {Array<string|ReactElement>}
      */
     _processMessage() {
         const { text } = this.props;
@@ -67,7 +67,7 @@ class Message extends Component<Props> {
         return message;
     }
 
-    _processMessage: () => Array<string>;
+    _processMessage: () => Array<string | React$Element<*>>;
 
     /**
      * Implements React's {@link Component#render()}.

@@ -27,7 +27,7 @@ const ASCII_EMOTICON_REGEXP_ARRAY: Array<Array<Object>> = [];
  * on web too once we drop support for browsers that don't support
  * unicode emoji rendering.
  */
-const EMOJI_REGEXP_ARRAY: Array<Array<Object>> = [];
+const SLACK_EMOJI_REGEXP_ARRAY: Array<Array<Object>> = [];
 
 (function() {
     for (const [ key, value ] of Object.entries(aliases)) {
@@ -51,7 +51,7 @@ const EMOJI_REGEXP_ARRAY: Array<Array<Object>> = [];
         // Add slack-type emojis
         const emojiRegexp = `\\B(${escapeRegexp(`:${key}:`)})\\B`;
 
-        EMOJI_REGEXP_ARRAY.push([ new RegExp(emojiRegexp, 'g'), value ]);
+        SLACK_EMOJI_REGEXP_ARRAY.push([ new RegExp(emojiRegexp, 'g'), value ]);
     }
 })();
 
@@ -65,7 +65,7 @@ const EMOJI_REGEXP_ARRAY: Array<Array<Object>> = [];
 export function replaceNonUnicodeEmojis(message: string) {
     let replacedMessage = message;
 
-    for (const [ regexp, replaceValue ] of EMOJI_REGEXP_ARRAY) {
+    for (const [ regexp, replaceValue ] of SLACK_EMOJI_REGEXP_ARRAY) {
         replacedMessage = replacedMessage.replace(regexp, replaceValue);
     }
 
