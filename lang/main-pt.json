@@ -638,8 +638,8 @@
         "reactionSounds": "Desactivar sons",
         "reactionSoundsForAll": "Desativar sons para todos",
         "groupTitle": "Notificações",
-        "videoUnmuteBlockedTitle": "Ligar câmara bloqueada!",
-        "videoUnmuteBlockedDescription": "A operação de ligar a câmara foi temporariamente bloqueada devido aos limites do sistema."
+        "videoUnmuteBlockedTitle": "Está bloqueado ligar a câmara e partilhar o ambiente de trabalho!",
+        "videoUnmuteBlockedDescription": "A operação de ligar a câmara e partilhar o ambiente de trabalho foi temporariamente bloqueada devido aos limites do sistema."
     },
     "participantsPane": {
         "close": "Fechar",
