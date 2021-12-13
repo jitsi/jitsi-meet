@@ -54,6 +54,11 @@ export type Props = {
     readOnlyName: boolean,
 
     /**
+     * Whether to hide the email input in the profile settings.
+     */
+    hideEmailInSettings?: boolean,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function
