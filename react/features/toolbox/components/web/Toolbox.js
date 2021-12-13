@@ -42,7 +42,7 @@ import { ParticipantsPaneButton } from '../../../participants-pane/components/we
 import { getParticipantsPaneOpen } from '../../../participants-pane/functions';
 import { addReactionToBuffer } from '../../../reactions/actions.any';
 import { ReactionsMenuButton } from '../../../reactions/components';
-import { REACTIONS } from '../../../reactions/constants';
+import { REACTIONS, REACTIONS_MENU_HEIGHT } from '../../../reactions/constants';
 import { isReactionsEnabled } from '../../../reactions/functions.any';
 import {
     LiveStreamButton,
@@ -75,7 +75,7 @@ import {
     setToolbarHovered,
     showToolbox
 } from '../../actions';
-import { THRESHOLDS, NOT_APPLICABLE } from '../../constants';
+import { THRESHOLDS, NOT_APPLICABLE, DRAWER_MAX_HEIGHT } from '../../constants';
 import { isToolboxVisible } from '../../functions';
 import DownloadButton from '../DownloadButton';
 import HangupButton from '../HangupButton';
@@ -264,7 +264,9 @@ const styles = theme => {
             fontSize: 14,
             listStyleType: 'none',
             padding: '8px 0',
-            backgroundColor: theme.palette.ui03
+            backgroundColor: theme.palette.ui03,
+            overflowY: 'auto',
+            height: `calc(${DRAWER_MAX_HEIGHT} - ${REACTIONS_MENU_HEIGHT}px - 16px)`
         }
     };
 };
