@@ -55,6 +55,13 @@ function SpeakerStatsSearch({ onSearch }: Props) {
     }, []);
     const disableSpeakerStatsSearch = useSelector(isSpeakerStatsSearchDisabled);
 
+    const preventDismiss = useCallback((evt: KeyboardEvent) => {
+        if (evt.key === 'Enter') {
+            evt.preventDefault();
+        }
+    });
+
+
     if (disableSpeakerStatsSearch) {
         return null;
     }
@@ -67,6 +74,7 @@ function SpeakerStatsSearch({ onSearch }: Props) {
                 compact = { true }
                 name = 'speakerStatsSearch'
                 onChange = { onChange }
+                onKeyPress = { preventDismiss }
                 placeholder = { t('speakerStats.search') }
                 shouldFitContainer = { false }
                 type = 'text'

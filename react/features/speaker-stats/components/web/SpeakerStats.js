@@ -66,6 +66,16 @@ class SpeakerStats extends Component<Props> {
     }
 
     /**
+     * Resets the search criteria when component will unmount.
+     *
+     * @private
+     * @returns {void}
+     */
+    componentWillUnmount() {
+        this._onSearch();
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
