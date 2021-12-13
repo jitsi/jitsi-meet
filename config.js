@@ -80,6 +80,9 @@ var config = {
     // Disables the reactions feature.
     // disableReactions: true,
 
+    // Disables the reactions moderation feature.
+    // disableReactionsModeration: false,
+
     // Disables polls feature.
     // disablePolls: false,
 

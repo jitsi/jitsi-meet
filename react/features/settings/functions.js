@@ -120,6 +120,7 @@ export function getModeratorTabProps(stateful: Object | Function) {
         startVideoMutedPolicy,
         startReactionsMuted
     } = state['features/base/conference'];
+    const { disableReactionsModeration } = state['features/base/config'];
     const followMeActive = isFollowMeActive(state);
     const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
 
@@ -131,6 +132,7 @@ export function getModeratorTabProps(stateful: Object | Function) {
     // The settings sections to display.
     return {
         showModeratorSettings,
+        disableReactionsModeration: Boolean(disableReactionsModeration),
         followMeActive: Boolean(conference && followMeActive),
         followMeEnabled: Boolean(conference && followMeEnabled),
         startReactionsMuted: Boolean(conference && startReactionsMuted),
