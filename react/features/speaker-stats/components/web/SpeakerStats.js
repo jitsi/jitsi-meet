@@ -7,7 +7,7 @@ import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import { escapeRegexp } from '../../../base/util';
-import { initSearch } from '../../actions';
+import { initSearch, resetSearchCriteria } from '../../actions';
 
 import SpeakerStatsLabels from './SpeakerStatsLabels';
 import SpeakerStatsList from './SpeakerStatsList';
@@ -63,6 +63,16 @@ class SpeakerStats extends Component<Props> {
 
         // Bind event handlers so they are only bound once per instance.
         this._onSearch = this._onSearch.bind(this);
+    }
+
+    /**
+     * Resets the search criteria when component will unmount.
+     *
+     * @private
+     * @returns {void}
+     */
+    componentWillUnmount() {
+        this.props.dispatch(resetSearchCriteria());
     }
 
     /**
