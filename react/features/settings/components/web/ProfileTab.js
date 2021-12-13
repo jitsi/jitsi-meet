@@ -54,6 +54,11 @@ export type Props = {
     readOnlyName: boolean,
 
     /**
+     * Whether to hide the email input in the profile settings.
+     */
+    hideEmailInSettings?: boolean,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -137,6 +142,7 @@ class ProfileTab extends AbstractDialogTab<Props> {
             displayName,
             disableSelfView,
             email,
+            hideEmailInSettings,
             readOnlyName,
             t
         } = this.props;
@@ -157,7 +163,7 @@ class ProfileTab extends AbstractDialogTab<Props> {
                             type = 'text'
                             value = { displayName } />
                     </div>
-                    <div className = 'profile-edit-field'>
+                    {!hideEmailInSettings && <div className = 'profile-edit-field'>
                         <FieldTextStateless
                             compact = { true }
                             id = 'setEmail'
@@ -167,7 +173,7 @@ class ProfileTab extends AbstractDialogTab<Props> {
                             shouldFitContainer = { true }
                             type = 'text'
                             value = { email } />
-                    </div>
+                    </div>}
                 </div>
                 <br />
                 <Checkbox
