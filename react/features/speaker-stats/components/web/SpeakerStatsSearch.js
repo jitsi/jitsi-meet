@@ -58,7 +58,7 @@ function SpeakerStatsSearch({ onSearch }: Props) {
         if (evt.key === 'Enter') {
             evt.preventDefault();
         }
-    });
+    }, []);
 
     if (disableSpeakerStatsSearch) {
         return null;
