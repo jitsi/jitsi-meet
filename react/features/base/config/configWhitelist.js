@@ -108,6 +108,7 @@ export default [
     'disablePolls',
     'disableProfile',
     'disableReactions',
+    'disableReactionsModeration',
     'disableRecordAudioNotification',
     'disableRemoteControl',
     'disableRemoteMute',

@@ -670,15 +670,17 @@ export function setFollowMe(enabled: boolean) {
  * Enables or disables the Mute reaction sounds feature.
  *
  * @param {boolean} muted - Whether or not reaction sounds should be muted for all participants.
+ * @param {boolean} updateBackend - Whether or not the moderator should notify all participants for the new setting.
  * @returns {{
  *     type: SET_START_REACTIONS_MUTED,
  *     muted: boolean
  * }}
  */
-export function setStartReactionsMuted(muted: boolean) {
+export function setStartReactionsMuted(muted: boolean, updateBackend: boolean = false) {
     return {
         type: SET_START_REACTIONS_MUTED,
-        muted
+        muted,
+        updateBackend
     };
 }
 
