@@ -7,7 +7,7 @@ import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import { escapeRegexp } from '../../../base/util';
-import { initSearch } from '../../actions';
+import { initSearch, resetSearchCriteria } from '../../actions';
 
 import SpeakerStatsLabels from './SpeakerStatsLabels';
 import SpeakerStatsList from './SpeakerStatsList';
@@ -72,7 +72,7 @@ class SpeakerStats extends Component<Props> {
      * @returns {void}
      */
     componentWillUnmount() {
-        this._onSearch();
+        this.props.dispatch(resetSearchCriteria());
     }
 
     /**

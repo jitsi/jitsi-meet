@@ -7,7 +7,8 @@ import { ReducerRegistry } from '../base/redux';
 import {
     INIT_SEARCH,
     UPDATE_STATS,
-    INIT_REORDER_STATS
+    INIT_REORDER_STATS,
+    RESET_SEARCH_CRITERIA
 } from './actionTypes';
 
 /**
@@ -30,6 +31,8 @@ ReducerRegistry.register('features/speaker-stats', (state = _getInitialState(), 
         return _updateStats(state, action);
     case INIT_REORDER_STATS:
         return _initReorderStats(state);
+    case RESET_SEARCH_CRITERIA:
+        return _updateCriteria(state, { criteria: null });
     }
 
     return state;
