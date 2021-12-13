@@ -2,6 +2,7 @@
 
 /* eslint-disable react/jsx-no-bind */
 
+import { withStyles } from '@material-ui/styles';
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 
@@ -17,7 +18,7 @@ import { connect } from '../../../base/redux';
 import { dockToolbox } from '../../../toolbox/actions.web';
 import { addReactionToBuffer } from '../../actions.any';
 import { toggleReactionsMenuVisibility } from '../../actions.web';
-import { REACTIONS } from '../../constants';
+import { REACTIONS, REACTIONS_MENU_HEIGHT } from '../../constants';
 
 import ReactionButton from './ReactionButton';
 
@@ -44,6 +45,11 @@ type Props = {
     _raisedHand: boolean,
 
     /**
+     * An object containing the CSS classes.
+     */
+    classes: Object,
+
+    /**
      * The Redux Dispatch function.
      */
     dispatch: Function,
@@ -60,6 +66,21 @@ type Props = {
 };
 
 declare var APP: Object;
+
+const styles = theme => {
+    return {
+        overflow: {
+            width: 'auto',
+            paddingBottom: 'max(env(safe-area-inset-bottom, 0), 16px)',
+            backgroundColor: theme.palette.ui01,
+            boxShadow: 'none',
+            borderRadius: 0,
+            position: 'relative',
+            boxSizing: 'border-box',
+            height: `${REACTIONS_MENU_HEIGHT}px`
+        }
+    };
+};
 
 /**
  * Implements the reactions menu.
@@ -172,10 +193,10 @@ class ReactionsMenu extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { _raisedHand, t, overflowMenu, _isMobile } = this.props;
+        const { _raisedHand, t, overflowMenu, _isMobile, classes } = this.props;
 
         return (
-            <div className = { `reactions-menu ${overflowMenu ? 'overflow' : ''}` }>
+            <div className = { `reactions-menu ${overflowMenu ? `overflow ${classes.overflow}` : ''}` }>
                 <div className = 'reactions-row'>
                     { this._getReactionButtons() }
                 </div>
@@ -233,4 +254,4 @@ function mapDispatchToProps(dispatch) {
 export default translate(connect(
     mapStateToProps,
     mapDispatchToProps
-)(ReactionsMenu));
+)(withStyles(styles)(ReactionsMenu)));

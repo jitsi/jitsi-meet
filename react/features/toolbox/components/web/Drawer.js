@@ -3,6 +3,8 @@
 import { makeStyles } from '@material-ui/core';
 import React, { useCallback } from 'react';
 
+import { DRAWER_MAX_HEIGHT } from '../../constants';
+
 
 type Props = {
 
@@ -25,7 +27,8 @@ type Props = {
 const useStyles = makeStyles(theme => {
     return {
         drawer: {
-            backgroundColor: theme.palette.ui02
+            backgroundColor: theme.palette.ui02,
+            maxHeight: `calc(${DRAWER_MAX_HEIGHT})`
         }
     };
 });

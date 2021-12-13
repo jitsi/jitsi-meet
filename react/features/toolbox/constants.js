@@ -31,3 +31,5 @@ export const THRESHOLDS = [
 export const NOT_APPLICABLE = 'N/A';
 
 export const TOOLBAR_TIMEOUT = 4000;
+
+export const DRAWER_MAX_HEIGHT = '80vh - 64px';
