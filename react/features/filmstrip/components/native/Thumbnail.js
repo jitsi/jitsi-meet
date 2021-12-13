@@ -23,7 +23,6 @@ import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 import { ConnectionIndicator } from '../../../connection-indicator';
 import { DisplayNameLabel } from '../../../display-name';
 import {
-    showConnectionStatus,
     showContextMenuDetails,
     showSharedVideoMenu
 } from '../../../participants-pane/actions.native';
@@ -194,11 +193,7 @@ class Thumbnail extends PureComponent<Props> {
         }
 
         if (!_isFakeParticipant) {
-            if (_local) {
-                dispatch(showConnectionStatus(_participantId));
-            } else {
-                dispatch(showContextMenuDetails(_participantId));
-            }
+            dispatch(showContextMenuDetails(_participantId, _local));
         }
     }
 

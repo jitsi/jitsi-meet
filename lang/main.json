@@ -1001,6 +1001,7 @@
             "remoteVideoMute": "Disable camera of participant",
             "security": "Security options",
             "selectBackground": "Select Background",
+            "selfView": "Toggle self view",
             "shareRoom": "Invite someone",
             "shareYourScreen": "Start / Stop sharing your screen",
             "shareaudio": "Share audio",
@@ -1168,6 +1169,7 @@
         "remoteControl": "Start / Stop remote control",
         "screenSharing": "Participant is sharing their screen",
         "show": "Show on stage",
+        "showSelfView": "Show self view",
         "videoMuted": "Camera disabled",
         "videomute": "Participant has stopped the camera"
     },
