@@ -98,6 +98,10 @@ export function getMoreTabProps(stateful: Object | Function) {
         desktopShareFramerates: SS_SUPPORTED_FRAMERATES,
         languages: LANGUAGES,
         showLanguageSettings: configuredTabs.includes('language'),
+        showChatNotifications: state['features/base/settings'].userSelectedChatNotifications,
+
+        // TODO: refactor config.notifications and use that instead to cover all types
+        showNotificationsSettings: state['features/base/config'].enableChatNotifications,
         showPrejoinPage: !state['features/base/settings'].userSelectedSkipPrejoin,
         showPrejoinSettings: state['features/base/config'].prejoinConfig?.enabled
     };

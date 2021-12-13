@@ -46,6 +46,11 @@ export type Props = {
     languages: Array<string>,
 
     /**
+     * Whether or not to display the chat notifications.
+     */
+    showChatNotifications: boolean,
+
+    /**
      * Whether or not to display the language select dropdown.
      */
     showLanguageSettings: boolean,
@@ -54,6 +59,11 @@ export type Props = {
      * Whether or not to display moderator-only settings.
      */
     showModeratorSettings: boolean,
+
+    /**
+     * Whether or not to display notifications settings.
+     */
+    showNotificationsSettings: boolean,
 
     /**
      * Whether or not to display the prejoin settings section.
@@ -112,6 +122,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
         this._onFramerateItemSelect = this._onFramerateItemSelect.bind(this);
         this._onLanguageDropdownOpenChange = this._onLanguageDropdownOpenChange.bind(this);
         this._onLanguageItemSelect = this._onLanguageItemSelect.bind(this);
+        this._onShowChatNotificationsChanged = this._onShowChatNotificationsChanged.bind(this);
         this._onShowPrejoinPageChanged = this._onShowPrejoinPageChanged.bind(this);
         this._onKeyboardShortcutEnableChanged = this._onKeyboardShortcutEnableChanged.bind(this);
     }
@@ -208,6 +219,20 @@ class MoreTab extends AbstractDialogTab<Props, State> {
     }
 
     _onKeyboardShortcutEnableChanged: (Object) => void;
+
+    /**
+     * Callback invoked to select if the chat message
+     * notifications should be shown.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onShowChatNotificationsChanged({ target: { checked } }) {
+        super._onChange({ showChatNotifications: checked });
+    }
+
+    _onShowChatNotificationsChanged: (Object) => void;
 
     /**
      * Callback invoked to select if global keyboard shortcuts
@@ -380,6 +405,31 @@ class MoreTab extends AbstractDialogTab<Props, State> {
     }
 
     /**
+     * Returns the React Element for modifying notification settings.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderNotificationsSettings() {
+        const { t, showChatNotifications } = this.props;
+
+        return (
+            <div
+                className = 'settings-sub-pane-element'
+                key = 'notifications'>
+                <h2 className = 'mock-atlaskit-label'>
+                    { t('notify.displayNotifications') }
+                </h2>
+                <Checkbox
+                    isChecked = { showChatNotifications }
+                    label = { t('notify.chatMessages') }
+                    name = 'show-chat-notifications'
+                    onChange = { this._onShowChatNotificationsChanged } />
+            </div>
+        );
+    }
+
+    /**
      * Returns the React element that needs to be displayed on the right half of the more tabs.
      *
      * @private
@@ -404,13 +454,14 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      * @returns {ReactElement}
      */
     _renderSettingsLeft() {
-        const { showPrejoinSettings } = this.props;
+        const { showNotificationsSettings, showPrejoinSettings } = this.props;
 
         return (
             <div
                 className = 'settings-sub-pane left'
                 key = 'settings-sub-pane-left'>
                 { showPrejoinSettings && this._renderPrejoinScreenSettings() }
+                { showNotificationsSettings && this._renderNotificationsSettings() }
                 { this._renderKeyboardShortcutCheckbox() }
             </div>
         );

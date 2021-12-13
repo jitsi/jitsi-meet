@@ -101,6 +101,14 @@ export function submitMoreTab(newState: Object): Function {
             }));
         }
 
+        const showChatNotifications = newState.showChatNotifications;
+
+        if (showChatNotifications !== currentState.showChatNotifications) {
+            dispatch(updateSettings({
+                userSelectedChatNotifications: showChatNotifications
+            }));
+        }
+
         if (newState.currentLanguage !== currentState.currentLanguage) {
             i18next.changeLanguage(newState.currentLanguage);
         }

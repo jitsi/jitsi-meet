@@ -305,7 +305,7 @@ function _handleReceivedMessage({ dispatch, getState },
     const state = getState();
     const { isOpen: isChatOpen } = state['features/chat'];
     const { enableChatNotifications, iAmRecorder } = state['features/base/config'];
-    const { soundsIncomingMessage: soundEnabled } = state['features/base/settings'];
+    const { soundsIncomingMessage: soundEnabled, userSelectedChatNotifications } = state['features/base/settings'];
 
     if (soundEnabled && shouldPlaySound && !isChatOpen) {
         dispatch(playSound(INCOMING_MSG_SOUND_ID));
@@ -319,7 +319,7 @@ function _handleReceivedMessage({ dispatch, getState },
     const hasRead = participant.local || isChatOpen;
     const timestampToDate = timestamp ? new Date(timestamp) : new Date();
     const millisecondsTimestamp = timestampToDate.getTime();
-    const shouldShowNotification = enableChatNotifications && !hasRead && !isReaction;
+    const shouldShowNotification = enableChatNotifications && userSelectedChatNotifications && !hasRead && !isReaction;
 
     dispatch(addMessage({
         displayName,
