@@ -484,6 +484,9 @@ var config = {
     // Disables profile and the edit of all fields from the profile settings (display name and email)
     // disableProfile: false,
 
+    // Hides the email section under profile settings.
+    // hideEmailInSettings: false,
+
     // Whether or not some features are checked based on token.
     // enableFeaturesBasedOnToken: false,
 

@@ -155,6 +155,7 @@ export function getProfileTabProps(stateful: Object | Function) {
         authLogin,
         conference
     } = state['features/base/conference'];
+    const { hideEmailInSettings } = state['features/base/config'];
     const localParticipant = getLocalParticipant(state);
     const { disableSelfView } = state['features/base/settings'];
 
@@ -164,7 +165,8 @@ export function getProfileTabProps(stateful: Object | Function) {
         displayName: localParticipant.name,
         disableSelfView: Boolean(disableSelfView),
         email: localParticipant.email,
-        readOnlyName: isNameReadOnly(state)
+        readOnlyName: isNameReadOnly(state),
+        hideEmailInSettings
     };
 }
 

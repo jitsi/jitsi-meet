@@ -165,6 +165,7 @@ export default [
     'hideConferenceTimer',
     'hiddenDomain',
     'hideAddRoomButton',
+    'hideEmailInSettings',
     'hideLobbyButton',
     'hosts',
     'iAmRecorder',
