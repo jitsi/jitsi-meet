@@ -39,24 +39,6 @@ class VideoQualityButton extends AbstractButton<Props, *> {
     label = 'videoStatus.performanceSettings';
     tooltip = 'videoStatus.performanceSettings';
     icon = IconGauge;
-
-
-    /**
-     * Handles clicking / pressing the button.
-     *
-     * @override
-     * @protected
-     * @returns {void}
-     */
-    _handleClick() {
-        const { handleClick } = this.props;
-
-        if (handleClick) {
-            handleClick();
-
-            return;
-        }
-    }
 }
 
 export default translate(VideoQualityButton);

@@ -16,7 +16,7 @@ import {
     setVideoMuted
 } from '../../base/media';
 import { connect } from '../../base/redux';
-import { AbstractVideoMuteButton } from '../../base/toolbox/components';
+import { AbstractButton, AbstractVideoMuteButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
 import { getLocalVideoType, isLocalCameraTrackMuted } from '../../base/tracks';
 import { isVideoMuteButtonDisabled } from '../functions';
@@ -146,7 +146,7 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
                 ACTION_SHORTCUT_TRIGGERED,
                 { enable: !this._isVideoMuted() }));
 
-        super._handleClick();
+        AbstractButton.prototype._onClick.call(this);
     }
 
     /**
