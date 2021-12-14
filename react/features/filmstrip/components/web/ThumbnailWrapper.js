@@ -3,8 +3,8 @@ import React, { Component } from 'react';
 import { shouldComponentUpdate } from 'react-window';
 
 import { connect } from '../../../base/redux';
+import { shouldHideSelfView } from '../../../base/settings/functions.any';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
-import { getDisableSelfView } from '../../functions.any';
 
 import Thumbnail from './Thumbnail';
 
@@ -111,7 +111,7 @@ function _mapStateToProps(state, ownProps) {
     const { remoteParticipants } = state['features/filmstrip'];
     const remoteParticipantsLength = remoteParticipants.length;
     const { testing = {} } = state['features/base/config'];
-    const disableSelfView = getDisableSelfView(state);
+    const disableSelfView = shouldHideSelfView(state);
     const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
 
     if (_currentLayout === LAYOUTS.TILE_VIEW) {

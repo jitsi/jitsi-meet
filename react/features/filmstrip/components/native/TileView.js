@@ -10,8 +10,8 @@ import type { Dispatch } from 'redux';
 
 import { getLocalParticipant, getParticipantCountWithFake } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+import { shouldHideSelfView } from '../../../base/settings/functions.any';
 import { setVisibleRemoteParticipants } from '../../actions.web';
-import { getDisableSelfView } from '../../functions.any';
 
 import Thumbnail from './Thumbnail';
 import styles from './styles';
@@ -275,7 +275,7 @@ class TileView extends PureComponent<Props> {
 function _mapStateToProps(state) {
     const responsiveUi = state['features/base/responsive-ui'];
     const { remoteParticipants, tileViewDimensions } = state['features/filmstrip'];
-    const disableSelfView = getDisableSelfView(state);
+    const disableSelfView = shouldHideSelfView(state);
     const { height } = tileViewDimensions.thumbnailSize;
     const { columns } = tileViewDimensions;
 

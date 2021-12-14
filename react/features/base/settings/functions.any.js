@@ -1,12 +1,13 @@
 // @flow
 import { CONFIG_WHITELIST } from '../config';
+import { getParticipantCount } from '../participants';
 import { toState } from '../redux';
 import { parseURLParams } from '../util';
 
 import { DEFAULT_SERVER_URL } from './constants';
 
 /**
- * Returns the effective value of a configuration/preference/setting by applying
+ * Returns the eff  ective value of a configuration/preference/setting by applying
  * a precedence among the values specified by JWT, URL, settings,
  * and config.
  *
@@ -255,4 +256,15 @@ function _getUserSelectedDeviceId(options) {
 export function shouldHideShareAudioHelper(state: Object): boolean {
 
     return state['features/base/settings'].hideShareAudioHelper;
+}
+
+/**
+ * Gets the disable self view flag.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {boolean}
+ */
+export function shouldHideSelfView(state: Object) {
+    return getParticipantCount(state) === 1 ? false
+        : state['features/base/config'].disableSelfView || state['features/base/settings'].disableSelfView;
 }

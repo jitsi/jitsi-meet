@@ -2,6 +2,7 @@
 import type { Dispatch } from 'redux';
 
 import { getLocalParticipant, getParticipantById, pinParticipant } from '../base/participants';
+import { shouldHideSelfView } from '../base/settings/functions.any';
 
 import {
     SET_HORIZONTAL_VIEW_DIMENSIONS,
@@ -23,7 +24,6 @@ import {
     calculateThumbnailSizeForTileView,
     calculateThumbnailSizeForVerticalView
 } from './functions';
-import { getDisableSelfView } from './functions.any';
 
 export * from './actions.any';
 
@@ -79,7 +79,7 @@ export function setVerticalViewDimensions() {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
         const { clientHeight = 0, clientWidth = 0 } = state['features/base/responsive-ui'];
-        const disableSelfView = getDisableSelfView(state);
+        const disableSelfView = shouldHideSelfView(state);
         const thumbnails = calculateThumbnailSizeForVerticalView(clientWidth);
 
         dispatch({
@@ -107,7 +107,7 @@ export function setHorizontalViewDimensions() {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
         const { clientHeight = 0, clientWidth = 0 } = state['features/base/responsive-ui'];
-        const disableSelfView = getDisableSelfView(state);
+        const disableSelfView = shouldHideSelfView(state);
         const thumbnails = calculateThumbnailSizeForHorizontalView(clientHeight);
 
         dispatch({
