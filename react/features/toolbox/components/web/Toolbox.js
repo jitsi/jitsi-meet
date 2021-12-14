@@ -1,6 +1,7 @@
 // @flow
 
 import { withStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import React, { Component, Fragment } from 'react';
 
 import keyboardShortcut from '../../../../../modules/keyboardshortcut/keyboardshortcut';
@@ -180,6 +181,11 @@ type Props = {
     _localVideo: Object,
 
     /**
+     *Whether or not the overflow menu is displayed in a drawer drawer.
+     */
+    _overflowDrawer: boolean,
+
+    /**
      * Whether or not the overflow menu is visible.
      */
     _overflowMenuVisible: boolean,
@@ -264,7 +270,10 @@ const styles = theme => {
             fontSize: 14,
             listStyleType: 'none',
             padding: '8px 0',
-            backgroundColor: theme.palette.ui03,
+            backgroundColor: theme.palette.ui03
+        },
+
+        overflowMenuDrawer: {
             overflowY: 'auto',
             height: `calc(${DRAWER_MAX_HEIGHT} - ${REACTIONS_MENU_HEIGHT}px - 16px)`
         }
@@ -1226,6 +1235,7 @@ class Toolbox extends Component<Props> {
     _renderToolboxContent() {
         const {
             _isMobile,
+            _overflowDrawer,
             _overflowMenuVisible,
             _reactionsEnabled,
             _toolbarButtons,
@@ -1268,7 +1278,9 @@ class Toolbox extends Component<Props> {
                                 }>
                                 <ul
                                     aria-label = { t(toolbarAccLabel) }
-                                    className = { classes.overflowMenu }
+                                    className = { clsx(classes.overflowMenu,
+                                        _overflowDrawer && classes.overflowMenuDrawer)
+                                    }
                                     id = 'overflow-menu'
                                     onKeyDown = { this._onEscKey }
                                     role = 'menu'>
@@ -1320,7 +1332,8 @@ function _mapStateToProps(state, ownProps) {
     } = state['features/base/config'];
     const {
         fullScreen,
-        overflowMenuVisible
+        overflowMenuVisible,
+        overflowDrawer
     } = state['features/toolbox'];
     const localParticipant = getLocalParticipant(state);
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
@@ -1364,6 +1377,7 @@ function _mapStateToProps(state, ownProps) {
         _localParticipantID: localParticipant?.id,
         _localVideo: localVideo,
         _overflowMenuVisible: overflowMenuVisible,
+        _overflowDrawer: overflowDrawer,
         _participantsPaneOpen: getParticipantsPaneOpen(state),
         _raisedHand: hasRaisedHand(localParticipant),
         _reactionsEnabled: isReactionsEnabled(state),
