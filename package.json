@@ -150,6 +150,7 @@
     "circular-dependency-plugin": "5.2.0",
     "clean-css-cli": "4.3.0",
     "css-loader": "3.6.0",
+    "detox": "19.4.3",
     "eslint": "8.1.0",
     "eslint-plugin-flowtype": "8.0.3",
     "eslint-plugin-import": "2.25.2",
@@ -158,6 +159,7 @@
     "eslint-plugin-react-native": "3.11.0",
     "expose-loader": "3.0.0",
     "imports-loader": "0.7.1",
+    "jest": "27.4.5",
     "jetifier": "1.6.4",
     "metro-react-native-babel-preset": "0.66.2",
     "patch-package": "6.4.7",
@@ -184,6 +186,10 @@
     "lint-fix": "eslint  --max-warnings 0 --fix .",
     "postinstall": "patch-package && jetify",
     "validate": "npm ls",
-    "start": "make dev"
+    "start": "make dev",
+    "e2e:build-android": "detox build --configuration android",
+    "e2e:build-ios": "detox build --configuration ios",
+    "e2e:run-android": "detox test --configuration android",
+    "e2e:run-ios": "detox test --configuration ios"
   }
 }

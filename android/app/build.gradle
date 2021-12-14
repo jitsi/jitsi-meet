@@ -31,6 +31,11 @@ android {
         ndk {
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
         }
+
+        // This will later be used to control the test apk build type
+        testBuildType 'release'
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        missingDimensionStrategy 'detox', 'full'
     }
 
     signingConfigs {
@@ -48,10 +53,17 @@ android {
             buildConfigField "boolean", "LIBRE_BUILD", "${rootProject.ext.libreBuild}"
         }
         release {
-            // Uncomment the following line for singing a test release build.
-            //signingConfig signingConfigs.debug
+            // Sign release builds with a dummy debug cert. This needs to be overridden for a real release, obviously.
+            signingConfig signingConfigs.debug
+
             minifyEnabled true
+
+            // Typical pro-guard definitions
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-release.pro'
+
+            // Detox-specific additions to pro-guard
+            proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
+
             buildConfigField "boolean", "GOOGLE_SERVICES_ENABLED", "${googleServicesEnabled}"
             buildConfigField "boolean", "LIBRE_BUILD", "${rootProject.ext.libreBuild}"
         }
@@ -98,6 +110,11 @@ dependencies {
     }
 
     implementation project(':sdk')
+
+    //Detox dependency
+    androidTestImplementation(project(path: ":detox")) {
+        exclude group: 'com.genymotion.api'
+    }
 }
 
 gradle.projectsEvaluated {

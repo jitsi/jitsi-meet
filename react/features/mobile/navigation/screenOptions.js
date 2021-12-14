@@ -17,6 +17,7 @@ import BaseTheme from '../../base/ui/components/BaseTheme.native';
 
 import HeaderNavigationButton from './components/HeaderNavigationButton';
 import { goBack } from './components/conference/ConferenceNavigationContainerRef';
+import { screen } from './routes';
 
 
 /**
@@ -76,6 +77,7 @@ export const drawerNavigatorScreenOptions = {
  */
 export const drawerScreenOptions = {
     ...TransitionPresets.ModalTransition,
+
     gestureEnabled: true,
     headerShown: true,
     headerStyle: {
@@ -121,6 +123,7 @@ export const welcomeScreenOptions = {
  */
 export const settingsScreenOptions = {
     ...drawerScreenOptions,
+    drawerLabel: screen.welcome.settings,
     drawerIcon: ({ focused }) => (
         <Icon
             color = { focused ? BaseTheme.palette.screen01Header : BaseTheme.palette.icon02 }

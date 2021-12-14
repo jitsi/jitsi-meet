@@ -50,7 +50,8 @@ const HeaderNavigationButton
                     src ? (
                         <TouchableOpacity
                             onPress = { onPress }
-                            style = { styles.headerNavigationButton }>
+                            style = { styles.headerNavigationButton }
+                            testID = 'header-back-nav-btn'>
                             <Icon
                                 size = { 20 }
                                 src = { src }
@@ -60,7 +61,8 @@ const HeaderNavigationButton
                         <TouchableRipple
                             disabled = { disabled }
                             onPress = { onPress }
-                            rippleColor = { BaseTheme.palette.screen01Header }>
+                            rippleColor = { BaseTheme.palette.screen01Header }
+                            testID = 'header-back-nav-btn'>
                             <Text
                                 style = {
                                     twoActions

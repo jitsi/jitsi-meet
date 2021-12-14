@@ -111,7 +111,8 @@ class WelcomePage extends AbstractWelcomePage<*> {
                     onPress = { () =>
                         navigation.dispatch(DrawerActions.openDrawer())
                     }
-                    style = { styles.drawerNavigationIcon }>
+                    style = { styles.drawerNavigationIcon }
+                    testID = { 'toggle-drawer-button' }>
                     <Icon
                         size = { 24 }
                         src = { IconMenu }
@@ -304,7 +305,8 @@ class WelcomePage extends AbstractWelcomePage<*> {
             );
         } else {
             children = (
-                <Text style = { styles.buttonText }>
+                <Text
+                    style = { styles.buttonText }>
                     { this.props.t('welcomepage.join') }
                 </Text>
             );
@@ -316,6 +318,7 @@ class WelcomePage extends AbstractWelcomePage<*> {
                     { t('welcomepage.accessibilityLabel.join') }
                 onPress = { this._onJoin }
                 style = { styles.button }
+                testID = { 'join-room-button' }
                 underlayColor = { BaseTheme.palette.ui12 }>
                 { children }
             </TouchableHighlight>
@@ -334,7 +337,9 @@ class WelcomePage extends AbstractWelcomePage<*> {
         return (
             <>
                 <JitsiStatusBar />
-                <View style = { styles.welcomePage }>
+                <View
+                    style = { styles.welcomePage }
+                    testID = 'welcome-screen'>
                     <SafeAreaView style = { styles.roomContainer } >
                         <View style = { styles.joinControls } >
                             <Text style = { styles.enterRoomText }>
@@ -356,6 +361,7 @@ class WelcomePage extends AbstractWelcomePage<*> {
                                 returnKeyType = { 'go' }
                                 spellCheck = { false }
                                 style = { styles.textInput }
+                                testID = { 'room-name-input' }
                                 underlineColorAndroid = 'transparent'
                                 value = { this.state.room } />
                             {

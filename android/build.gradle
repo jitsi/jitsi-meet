@@ -9,7 +9,9 @@ buildscript {
         google()
         mavenCentral()
     }
+
     dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
         classpath 'com.android.tools.build:gradle:4.2.2'
         classpath 'com.google.gms:google-services:4.3.10'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.1'
@@ -24,7 +26,7 @@ ext {
     supportLibVersion = "28.0.0"
     ndkVersion = "21.4.7075529"
 
-    // The Maven artifact groupdId of the third-party react-native modules which
+    // The Maven artifact groupId of the third-party react-native modules which
     // Jitsi Meet SDK for Android depends on and which are not available in
     // third-party Maven repositories so we have to deploy to a Maven repository
     // of ours.
@@ -45,8 +47,10 @@ allprojects {
     repositories {
         // React Native (JS, Obj-C sources, Android binaries) is installed from npm.
         maven { url "$rootDir/../node_modules/react-native/android" }
+
         // Android JSC is installed from npm.
         maven { url("$rootDir/../node_modules/jsc-android/dist") }
+
         mavenCentral {
             // We don't want to fetch react-native from Maven Central as there are
             // older versions over there.
@@ -56,6 +60,9 @@ allprojects {
         }
         google()
         maven { url 'https://www.jitpack.io' }
+
+        // All of Detox' artifacts are provided via the npm module
+        maven { url "$rootDir/../node_modules/detox/Detox-android" }
     }
 
     // Make sure we use the react-native version in node_modules and not the one
@@ -64,7 +71,7 @@ allprojects {
         resolutionStrategy {
             eachDependency { DependencyResolveDetails details ->
                 if (details.requested.group == 'com.facebook.react'
-                        && details.requested.name == 'react-native') {
+                    && details.requested.name == 'react-native') {
                     def file = new File("$rootDir/../node_modules/react-native/package.json")
                     def version = new JsonSlurper().parseText(file.text).version
                     details.useVersion version
@@ -176,8 +183,8 @@ allprojects {
 subprojects { subproject ->
     afterEvaluate{
         if ((subproject.plugins.hasPlugin('android')
-                    || subproject.plugins.hasPlugin('android-library'))
-                && rootProject.ext.has('buildToolsVersion')) {
+            || subproject.plugins.hasPlugin('android-library'))
+            && rootProject.ext.has('buildToolsVersion')) {
             android {
                 buildToolsVersion rootProject.ext.buildToolsVersion
             }

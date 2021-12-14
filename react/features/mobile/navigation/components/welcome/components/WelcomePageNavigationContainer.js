@@ -32,7 +32,8 @@ const WelcomePageNavigationContainer = () => {
         <DrawerStack.Navigator
             /* eslint-disable-next-line react/jsx-no-bind */
             drawerContent = { props => <CustomDrawerContent { ...props } /> }
-            screenOptions = { drawerContentOptions }>
+            screenOptions = { drawerContentOptions }
+            testID = 'drawer-navigator'>
             <DrawerStack.Screen
                 component = { WelcomePage }
                 name = { screen.welcome.main }
@@ -40,10 +41,7 @@ const WelcomePageNavigationContainer = () => {
             <DrawerStack.Screen
                 component = { SettingsView }
                 name = { screen.welcome.settings }
-                options = {{
-                    ...settingsScreenOptions,
-                    title: t('settingsView.header')
-                }} />
+                options = { settingsScreenOptions } />
             <DrawerStack.Screen
                 component = { TermsView }
                 name = { screen.welcome.terms }

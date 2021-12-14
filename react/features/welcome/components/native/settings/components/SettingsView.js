@@ -214,6 +214,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             placeholder = 'John Doe'
                             spellCheck = { false }
                             style = { styles.textInputContainer }
+                            testID = 'display-name-input'
                             textContentType = { 'name' } // iOS only
                             theme = { textInputTheme }
                             value = { displayName } />
