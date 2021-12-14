@@ -244,6 +244,7 @@ function _mapStateToProps(state) {
                     ...newProps,
                     currentFramerate: tabState.currentFramerate,
                     currentLanguage: tabState.currentLanguage,
+                    hideSelfView: tabState.hideSelfView,
                     showPrejoinPage: tabState.showPrejoinPage
                 };
             },

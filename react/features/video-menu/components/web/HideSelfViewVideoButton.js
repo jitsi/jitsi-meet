@@ -4,8 +4,7 @@ import React, { PureComponent } from 'react';
 
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-import { updateSettings } from '../../../base/settings';
-import { shouldHideSelfView } from '../../../base/settings/functions.any';
+import { getHideSelfView, updateSettings } from '../../../base/settings';
 import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../../../notifications';
 import { openSettingsDialog, SETTINGS_TABS } from '../../../settings';
 
@@ -112,7 +111,7 @@ class HideSelfViewVideoButton extends PureComponent<Props> {
  */
 function _mapStateToProps(state) {
     return {
-        disableSelfView: Boolean(shouldHideSelfView(state))
+        disableSelfView: Boolean(getHideSelfView(state))
     };
 }
 

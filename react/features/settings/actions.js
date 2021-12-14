@@ -110,6 +110,10 @@ export function submitMoreTab(newState: Object): Function {
 
             dispatch(setScreenshareFramerate(frameRate));
         }
+
+        if (newState.hideSelfView !== currentState.hideSelfView) {
+            dispatch(updateSettings({ disableSelfView: newState.hideSelfView }));
+        }
     };
 }
 

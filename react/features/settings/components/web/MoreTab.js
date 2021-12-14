@@ -66,6 +66,11 @@ export type Props = {
     showPrejoinPage: boolean,
 
     /**
+     * Whether or not to hide self-view screen.
+     */
+    hideSelfView: boolean,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -114,6 +119,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
         this._onLanguageItemSelect = this._onLanguageItemSelect.bind(this);
         this._onShowPrejoinPageChanged = this._onShowPrejoinPageChanged.bind(this);
         this._onKeyboardShortcutEnableChanged = this._onKeyboardShortcutEnableChanged.bind(this);
+        this._onHideSelfViewChanged = this._onHideSelfViewChanged.bind(this);
     }
 
     /**
@@ -222,6 +228,19 @@ class MoreTab extends AbstractDialogTab<Props, State> {
         super._onChange({ keyboardShortcutEnable: checked });
     }
 
+    _onHideSelfViewChanged: (Object) => void;
+
+    /**
+     * Callback invoked to select if hide self view should be enabled.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onHideSelfViewChanged({ target: { checked } }) {
+        super._onChange({ hideSelfView: checked });
+    }
+
     /**
      * Returns the React Element for the desktop share frame rate dropdown.
      *
@@ -296,6 +315,31 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                     label = { t('prejoin.keyboardShortcuts') }
                     name = 'enable-keyboard-shortcuts'
                     onChange = { this._onKeyboardShortcutEnableChanged } />
+            </div>
+        );
+    }
+
+    /**
+     * Returns the React Element for self view setting.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderSelfViewCheckbox() {
+        const { hideSelfView, t } = this.props;
+
+        return (
+            <div
+                className = 'settings-sub-pane-element'
+                key = 'selfview'>
+                <h2 className = 'mock-atlaskit-label'>
+                    { t('settings.selfView') }
+                </h2>
+                <Checkbox
+                    isChecked = { hideSelfView }
+                    label = { t('videothumbnail.hideSelfView') }
+                    name = 'hide-self-view'
+                    onChange = { this._onHideSelfViewChanged } />
             </div>
         );
     }
@@ -412,6 +456,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                 key = 'settings-sub-pane-left'>
                 { showPrejoinSettings && this._renderPrejoinScreenSettings() }
                 { this._renderKeyboardShortcutCheckbox() }
+                { this._renderSelfViewCheckbox() }
             </div>
         );
     }
