@@ -13,7 +13,7 @@ export type Props = {
     ...$Exact<AbstractDialogTabProps>,
 
     /**
-     *
+     * If set hides the reactions moderation setting.
      */
     disableReactionsModeration: boolean,
 
