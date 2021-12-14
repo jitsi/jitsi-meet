@@ -51,7 +51,7 @@ export type Props = {
     languages: Array<string>,
 
     /**
-     * The types of notifications that can be configured and their specific visibility
+     * The types of notifications that can be configured and their specific visibility.
      */
     notifications: Object,
 
