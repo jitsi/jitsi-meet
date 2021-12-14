@@ -194,13 +194,14 @@ MiddlewareRegistry.register(store => next => action => {
     case SHOW_SOUNDS_NOTIFICATION: {
         const state = getState();
         const isModerator = isLocalParticipantModerator(state);
+        const { disableReactionsModeration } = state['features/base/config'];
 
         const customActions = [ 'notify.reactionSounds' ];
         const customFunctions = [ () => dispatch(updateSettings({
             soundsReactions: false
         })) ];
 
-        if (isModerator) {
+        if (isModerator && !disableReactionsModeration) {
             customActions.push('notify.reactionSoundsForAll');
             customFunctions.push(() => batch(() => {
                 dispatch(setStartReactionsMuted(true));
