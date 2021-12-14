@@ -21,7 +21,6 @@ const DEFAULT_STATE = {
     disableCallIntegration: undefined,
     disableCrashReporting: undefined,
     disableP2P: undefined,
-    disableSelfView: false,
     displayName: undefined,
     email: undefined,
     localFlipX: true,

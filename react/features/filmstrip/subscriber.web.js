@@ -30,7 +30,7 @@ StateListenerRegistry.register(
     /* selector */ state => {
         return {
             numberOfParticipants: getParticipantCountWithFake(state),
-            disableSelfView: state['features/base/settings'].disableSelfView
+            disableSelfView: state['features/base/config'].disableSelfView
         };
     },
     /* listener */ (currentState, store) => {
