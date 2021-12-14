@@ -90,7 +90,7 @@ export function updateRemoteParticipantsOnLeave(store: Object, participantId: ?s
  * @returns {boolean}
  */
 export function getDisableSelfView(state: Object) {
-    const { disableSelfView } = state['features/base/settings'];
+    const { disableSelfView } = state['features/base/config'];
     const participantsCount = getParticipantCount(state);
 
     return participantsCount === 1 ? false : disableSelfView;

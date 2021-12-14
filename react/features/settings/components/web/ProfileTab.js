@@ -175,12 +175,6 @@ class ProfileTab extends AbstractDialogTab<Props> {
                             value = { email } />
                     </div>}
                 </div>
-                <br />
-                <Checkbox
-                    isChecked = { disableSelfView }
-                    label = { t('videothumbnail.hideSelfView') }
-                    name = 'disableSelfView'
-                    onChange = { this._onChange } />
                 { authEnabled && this._renderAuth() }
             </div>
         );

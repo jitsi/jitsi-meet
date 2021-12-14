@@ -132,7 +132,6 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
             : (
                 <VideoMenu id = 'localVideoMenu'>
                     <FlipLocalVideoButton onClick = { hidePopover } />
-                    <HideSelfViewVideoButton onClick = { hidePopover } />
                     { isMobileBrowser()
                             && <ConnectionStatusButton participantId = { _localParticipantId } />
                     }
