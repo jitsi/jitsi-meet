@@ -208,7 +208,7 @@ function _updateReceiverVideoConstraints({ getState }) {
     };
 
     if (sourceNameSignaling) {
-        let visibleRemoteTrackSourceNames;
+        let visibleRemoteTrackSourceNames = [];
         let largeVideoSourceName;
 
         if (visibleRemoteParticipants?.size) {
