@@ -36,6 +36,7 @@ export const colors = {
     surface12: '#AAAAAA',
     surface13: '#495258',
     surface14: '#555555',
+    surface15: '#FFFFFF25',
 
     success04: '#189B55',
     success05: '#1EC26A',
@@ -54,7 +55,9 @@ export const colors = {
     support06: '#6A50D3',
     support07: '#4380E2',
     support08: '#00A8B3',
-    support09: '#2AA076'
+    support09: '#2AA076',
+
+    transparent: '#00000000'
 };
 
 // Mapping between the token used and the color
@@ -70,6 +73,7 @@ export const colorMap = {
     ui05: 'surface06',
     ui12: 'surface11',
     ui13: 'surface14',
+    ui14: 'transparent',
 
     // Primary buttons
     action01: 'primary05',
@@ -141,6 +145,8 @@ export const colorMap = {
     // Underlay color for buttons
     underlay01: 'surface13',
 
+    underlay02: 'surface15',
+
     // Bottom sheet background
     bottomSheet: 'surface00',
 
@@ -196,8 +202,14 @@ export const colorMap = {
     // Disabled background for input fields
     field01Disabled: 'surface05',
 
+    // Transparent field
+    field01Transparent: 'transparent',
+
     // Background for high-contrast input fields
     field02: 'surface11',
+
+    // Color for dialog placeholders
+    field03: 'surface12',
 
     // Color for the section divider
     dividerColor: 'surface12',

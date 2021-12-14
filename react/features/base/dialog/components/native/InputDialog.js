@@ -16,6 +16,7 @@ import {
     inputDialog as styles
 } from './styles';
 
+
 type Props = BaseProps & {
 
     /**
@@ -83,19 +84,22 @@ class InputDialog extends BaseDialog<Props, State> {
      * @inheritdoc
      */
     _renderContent() {
-        const { _dialogStyles, messageKey, okDisabled, t } = this.props;
+        const {
+            _dialogStyles,
+            messageKey,
+            okDisabled,
+            t
+        } = this.props;
 
         return (
-            <View>
+            <>
                 <View
-                    style = { [
-                        brandedDialog.mainWrapper,
-                        styles.fieldWrapper
-                    ] }>
+                    style = { brandedDialog.mainWrapper }>
                     <Text style = { _dialogStyles.fieldLabel }>
                         { t(this.props.contentKey) }
                     </Text>
                     <TextInput
+                        autoCompleteType = 'off'
                         autoFocus = { true }
                         onChangeText = { this._onChangeText }
                         style = { _dialogStyles.field }
@@ -124,7 +128,7 @@ class InputDialog extends BaseDialog<Props, State> {
                         </Text>
                     </TouchableOpacity>
                 </View>
-            </View>
+            </>
         );
     }
 

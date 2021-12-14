@@ -4,23 +4,22 @@ import { StyleSheet } from 'react-native';
 
 import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
 import { ColorSchemeRegistry, schemeColor } from '../../../color-scheme';
-import { BoxModel, ColorPalette } from '../../../styles';
 import { PREFERRED_DIALOG_SIZE } from '../../constants';
 
-const BORDER_RADIUS = 5;
+const BORDER_RADIUS = BaseTheme.spacing[1];
 
-export const FIELD_UNDERLINE = ColorPalette.transparent;
+export const FIELD_UNDERLINE = BaseTheme.palette.ui14;
 
 /**
  * NOTE: These Material guidelines based values are currently only used in
  * dialogs (and related) but later on it would be nice to export it into a base
  * Material feature.
  */
-export const MD_FONT_SIZE = 16;
-export const MD_ITEM_HEIGHT = 48;
-export const MD_ITEM_MARGIN_PADDING = 16;
+export const MD_FONT_SIZE = BaseTheme.spacing[3];
+export const MD_ITEM_HEIGHT = BaseTheme.spacing[7];
+export const MD_ITEM_MARGIN_PADDING = BaseTheme.spacing[3];
 
-export const PLACEHOLDER_COLOR = ColorPalette.lightGrey;
+export const PLACEHOLDER_COLOR = BaseTheme.palette.field03;
 
 /**
  * The React {@code Component} styles of {@code BottomSheet}. These have
@@ -29,12 +28,12 @@ export const PLACEHOLDER_COLOR = ColorPalette.lightGrey;
  */
 export const bottomSheetStyles = {
     sheetAreaCover: {
-        backgroundColor: ColorPalette.transparent,
+        backgroundColor: BaseTheme.palette.ui14,
         flex: 1
     },
 
     scrollView: {
-        paddingHorizontal: 0
+        paddingHorizontal: BaseTheme.spacing[0]
     },
 
     /**
@@ -81,12 +80,12 @@ export const brandedDialog = {
     },
 
     closeWrapper: {
-        padding: BoxModel.padding
+        padding: BaseTheme.spacing[2]
     },
 
     dialogTitle: {
         fontWeight: 'bold',
-        paddingLeft: BoxModel.padding * 2
+        paddingLeft: BaseTheme.spacing[2]
     },
 
     headerWrapper: {
@@ -97,11 +96,7 @@ export const brandedDialog = {
 
     mainWrapper: {
         alignSelf: 'stretch',
-        padding: BoxModel.padding * 2,
-
-        // The added bottom padding is to compensate the empty space around the
-        // close icon.
-        paddingBottom: BoxModel.padding * 3
+        padding: BaseTheme.spacing[2]
     },
 
     overlay: {
@@ -110,11 +105,7 @@ export const brandedDialog = {
         backgroundColor: 'rgba(127, 127, 127, 0.6)',
         flexDirection: 'row',
         justifyContent: 'center',
-        padding: 30
-    },
-
-    overlayTouchable: {
-        ...StyleSheet.absoluteFillObject
+        padding: BaseTheme.spacing[5]
     }
 };
 
@@ -128,7 +119,7 @@ const brandedDialogText = {
 };
 
 const brandedDialogLabelStyle = {
-    color: ColorPalette.white,
+    color: BaseTheme.palette.ui12,
     flexShrink: 1,
     fontSize: MD_FONT_SIZE,
     opacity: 0.90
@@ -141,24 +132,24 @@ const brandedDialogItemContainerStyle = {
 };
 
 const brandedDialogIconStyle = {
-    color: ColorPalette.white,
+    color: BaseTheme.palette.ui12,
     fontSize: 24
 };
 
 export const inputDialog = {
     bottomField: {
-        marginBottom: 0
+        marginBottom: BaseTheme.spacing[0]
     },
 
     fieldWrapper: {
         ...brandedDialog.mainWrapper,
-        paddingBottom: BoxModel.padding * 2
+        paddingBottom: BaseTheme.spacing[3]
     },
 
     formMessage: {
         alignSelf: 'flex-start',
         fontStyle: 'italic',
-        margin: BoxModel.margin
+        margin: BaseTheme.spacing[2]
     }
 };
 
@@ -182,7 +173,7 @@ ColorSchemeRegistry.register('BottomSheet', {
          */
         labelStyle: {
             ...brandedDialogLabelStyle,
-            marginLeft: 16
+            marginLeft: BaseTheme.spacing[3]
         },
 
         /**
@@ -196,7 +187,7 @@ ColorSchemeRegistry.register('BottomSheet', {
         /**
          * Additional style that is not directly used as a style object.
          */
-        underlayColor: ColorPalette.toggled
+        underlayColor: BaseTheme.palette.underlay02
     },
 
     /**
@@ -204,8 +195,8 @@ ColorSchemeRegistry.register('BottomSheet', {
      */
     sheet: {
         backgroundColor: BaseTheme.palette.ui02,
-        borderTopLeftRadius: 16,
-        borderTopRightRadius: 16
+        borderTopLeftRadius: BaseTheme.spacing[3],
+        borderTopRightRadius: BaseTheme.spacing[3]
     },
 
     /**
@@ -230,7 +221,7 @@ ColorSchemeRegistry.register('Dialog', {
     button: {
         backgroundColor: schemeColor('buttonBackground'),
         flex: 1,
-        padding: BoxModel.padding * 1.5
+        padding: BaseTheme.spacing[3]
     },
 
     /**
@@ -276,7 +267,7 @@ ColorSchemeRegistry.register('Dialog', {
         ...brandedDialogText,
         borderBottomWidth: 1,
         borderColor: schemeColor('border'),
-        margin: BoxModel.margin,
+        margin: BaseTheme.spacing[2],
         textAlign: 'left'
     },
 
@@ -285,7 +276,7 @@ ColorSchemeRegistry.register('Dialog', {
      */
     fieldLabel: {
         ...brandedDialogText,
-        margin: BoxModel.margin,
+        margin: BaseTheme.spacing[2],
         textAlign: 'left'
     },
 
@@ -308,13 +299,13 @@ ColorSchemeRegistry.register('SecurityDialog', {
         borderColor: schemeColor('border'),
         color: schemeColor('text'),
         fontSize: 14,
-        paddingBottom: 8
+        paddingBottom: BaseTheme.spacing[2]
     },
 
     text: {
         color: schemeColor('text'),
         fontSize: 14,
-        marginTop: 8
+        marginTop: BaseTheme.spacing[2]
     },
 
     title: {
