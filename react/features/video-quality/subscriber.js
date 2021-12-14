@@ -208,19 +208,17 @@ function _updateReceiverVideoConstraints({ getState }) {
     };
 
     if (sourceNameSignaling) {
-        let visibleRemoteTrackSourceNames = [];
+        const visibleRemoteTrackSourceNames = [];
         let largeVideoSourceName;
 
         if (visibleRemoteParticipants?.size) {
-            visibleRemoteTrackSourceNames = [ ...visibleRemoteParticipants ].reduce((acc, participantId) => {
+            visibleRemoteParticipants.forEach(participantId => {
                 const sourceName = getTrackSourceNameByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
 
                 if (sourceName) {
-                    acc.push(sourceName);
+                    visibleRemoteTrackSourceNames.push(sourceName);
                 }
-
-                return acc;
-            }, []);
+            });
         }
 
         if (localParticipantId !== largeVideoParticipantId) {
