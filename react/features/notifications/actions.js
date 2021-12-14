@@ -14,6 +14,7 @@ import {
     SHOW_NOTIFICATION
 } from './actionTypes';
 import {
+    NOTIFICATION_ICON,
     NOTIFICATION_TIMEOUT_TYPE,
     NOTIFICATION_TIMEOUT,
     NOTIFICATION_TYPE,
@@ -153,6 +154,23 @@ export function showWarningNotification(props: Object, type: ?string) {
     return showNotification({
         ...props,
         appearance: NOTIFICATION_TYPE.WARNING
+    }, type);
+}
+
+/**
+ * Queues a message notification for display.
+ *
+ * @param {Object} props - The props needed to show the notification component.
+ * @param {string} type - Notification type.
+ * @returns {Object}
+ */
+export function showMessageNotification(props: Object, type: ?string) {
+    return showNotification({
+        ...props,
+        concatText: true,
+        titleKey: 'notify.chatMessages',
+        appearance: NOTIFICATION_TYPE.NORMAL,
+        icon: NOTIFICATION_ICON.MESSAGE
     }, type);
 }
 
