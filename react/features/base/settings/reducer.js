@@ -42,7 +42,7 @@ const DEFAULT_STATE = {
     userSelectedAudioOutputDeviceLabel: undefined,
     userSelectedCameraDeviceLabel: undefined,
     userSelectedMicDeviceLabel: undefined,
-    userSelectedChatNotifications: undefined,
+    userSelectedChatNotifications: true,
     userSelectedSkipPrejoin: undefined
 };
 
