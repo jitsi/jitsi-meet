@@ -19,7 +19,6 @@ import { renderConnectionStatus } from '../../actions.web';
 
 import ConnectionStatusButton from './ConnectionStatusButton';
 import FlipLocalVideoButton from './FlipLocalVideoButton';
-import HideSelfViewVideoButton from './HideSelfViewVideoButton';
 import VideoMenu from './VideoMenu';
 
 
