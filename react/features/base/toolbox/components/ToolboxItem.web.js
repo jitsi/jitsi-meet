@@ -6,9 +6,9 @@ import { Icon } from '../../icons';
 import { Tooltip } from '../../tooltip';
 
 import AbstractToolboxItem from './AbstractToolboxItem';
-import type { Props as AbastractToolboxItemProps } from './AbstractToolboxItem';
+import type { Props as AbstractToolboxItemProps } from './AbstractToolboxItem';
 
-type Props = AbastractToolboxItemProps & {
+type Props = AbstractToolboxItemProps & {
 
     /**
     * On key down handler.
