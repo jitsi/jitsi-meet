@@ -1153,6 +1153,9 @@ var config = {
     //     'notify.connectedOneMember', // show when a participant joined
     //     'notify.connectedTwoMembers', // show when two participants joined simultaneously
     //     'notify.connectedThreePlusMembers', // show when more than 2 participants joined simultaneously
+    //     'notify.leftOneMember', // show when a participant left
+    //     'notify.leftTwoMembers', // show when two participants left simultaneously
+    //     'notify.leftThreePlusMembers', // show when more than 2 participants left simultaneously
     //     'notify.grantedTo', // shown when moderator rights were granted to a participant
     //     'notify.invitedOneMember', // shown when 1 participant has been invited
     //     'notify.invitedThreePlusMembers', // shown when 3+ participants have been invited
