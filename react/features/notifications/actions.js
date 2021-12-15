@@ -293,7 +293,7 @@ const _throttledNotifyParticipantLeft = throttle((dispatch: Dispatch<any>, getSt
  * @returns {Function}
  */
 export function showParticipantJoinedNotification(displayName: string) {
-    leftParticipantsNames.push(displayName);
+    joinedParticipantsNames.push(displayName);
 
     return (dispatch: Dispatch<any>, getState: Function) => _throttledNotifyParticipantConnected(dispatch, getState);
 }
@@ -307,7 +307,7 @@ export function showParticipantJoinedNotification(displayName: string) {
  * @returns {Function}
  */
 export function showParticipantLeftNotification(displayName: string) {
-    joinedParticipantsNames.push(displayName);
+    leftParticipantsNames.push(displayName);
 
     return (dispatch: Dispatch<any>, getState: Function) => _throttledNotifyParticipantLeft(dispatch, getState);
 }
