@@ -1031,10 +1031,10 @@ var config = {
     // },
 
     // Hides the conference subject
-    // hideConferenceSubject: true,
+    // hideConferenceSubject: false,
 
     // Hides the conference timer.
-    // hideConferenceTimer: true,
+    // hideConferenceTimer: false,
 
     // Hides the recording label
     // hideRecordingLabel: false,
