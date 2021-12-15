@@ -17,6 +17,7 @@ import '../prejoin/middleware';
 import '../remote-control/middleware';
 import '../screen-share/middleware';
 import '../shared-video/middleware';
+import '../settings/middleware';
 import '../talk-while-muted/middleware';
 import '../virtual-background/middleware';
 import '../facial-recognition/middleware';

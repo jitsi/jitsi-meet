@@ -12,6 +12,7 @@ import {
 import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
 import { setParticipantContextMenuOpen } from '../../../base/responsive-ui/actions';
+import { getHideSelfView } from '../../../base/settings';
 import { getLocalVideoTrack } from '../../../base/tracks';
 import ConnectionIndicatorContent from '../../../connection-indicator/components/web/ConnectionIndicatorContent';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
@@ -21,7 +22,6 @@ import ConnectionStatusButton from './ConnectionStatusButton';
 import FlipLocalVideoButton from './FlipLocalVideoButton';
 import HideSelfViewVideoButton from './HideSelfViewVideoButton';
 import VideoMenu from './VideoMenu';
-
 
 /**
  * The type of the React {@code Component} props of
@@ -77,6 +77,11 @@ type Props = {
     _showConnectionInfo: boolean,
 
     /**
+     * Whether to render the hide self view button.
+     */
+    _showHideSelfViewButton: boolean,
+
+    /**
      * Shows/hides the local video flip button.
      */
     _showLocalVideoFlipButton: boolean,
@@ -119,8 +124,9 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
         const {
             _localParticipantId,
             _menuPosition,
-            _showConnectionInfo,
             _overflowDrawer,
+            _showConnectionInfo,
+            _showHideSelfViewButton,
             _showLocalVideoFlipButton,
             hidePopover,
             popoverVisible,
@@ -132,7 +138,7 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
             : (
                 <VideoMenu id = 'localVideoMenu'>
                     <FlipLocalVideoButton onClick = { hidePopover } />
-                    <HideSelfViewVideoButton onClick = { hidePopover } />
+                    { _showHideSelfViewButton && <HideSelfViewVideoButton onClick = { hidePopover } /> }
                     { isMobileBrowser()
                             && <ConnectionStatusButton participantId = { _localParticipantId } />
                     }
@@ -233,6 +239,7 @@ function _mapStateToProps(state) {
     return {
         _menuPosition,
         _showLocalVideoFlipButton: !disableLocalVideoFlip && videoTrack?.videoType !== 'desktop',
+        _showHideSelfViewButton: !getHideSelfView(state),
         _overflowDrawer: overflowDrawer,
         _localParticipantId: localParticipant.id,
         _showConnectionInfo: showConnectionInfo

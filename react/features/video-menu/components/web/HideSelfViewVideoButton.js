@@ -5,8 +5,6 @@ import React, { PureComponent } from 'react';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import { getHideSelfView, updateSettings } from '../../../base/settings';
-import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../../../notifications';
-import { openSettingsDialog, SETTINGS_TABS } from '../../../settings';
 
 import VideoMenuButton from './VideoMenuButton';
 
@@ -90,15 +88,6 @@ class HideSelfViewVideoButton extends PureComponent<Props> {
         dispatch(updateSettings({
             disableSelfView: !disableSelfView
         }));
-        if (!disableSelfView) {
-            dispatch(showNotification({
-                titleKey: 'notify.selfViewTitle',
-                customActionNameKey: [ 'settings.title' ],
-                customActionHandler: [ () =>
-                    dispatch(openSettingsDialog(SETTINGS_TABS.PROFILE))
-                ]
-            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
-        }
     }
 }
 
