@@ -7,7 +7,7 @@ import _ from 'lodash';
 import { parseURLParams } from '../util';
 
 import CONFIG_WHITELIST from './configWhitelist';
-import { _CONFIG_STORE_PREFIX } from './constants';
+import { _CONFIG_STORE_PREFIX, FEATURE_FLAGS } from './constants';
 import INTERFACE_CONFIG_WHITELIST from './interfaceConfigWhitelist';
 import logger from './logger';
 
@@ -47,6 +47,16 @@ export function createFakeConfig(baseURL: string) {
  */
 export function getMeetingRegion(state: Object) {
     return state['features/base/config']?.deploymentInfo?.region || '';
+}
+
+/**
+ * Selector used to get the sourceNameSignaling feature flag.
+ *
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+export function getSourceNameSignalingFeatureFlag(state: Object) {
+    return getFeatureFlag(state, FEATURE_FLAGS.SOURCE_NAME_SIGNALING);
 }
 
 /**
