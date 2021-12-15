@@ -233,7 +233,9 @@ export function moveToRoom(roomId?: string) {
             const isVideoMuted = isLocalCameraTrackMuted(localTracks);
 
             try {
-                await APP.conference.leaveRoom(false /* doDisconnect */);
+                // all places we fire notifyConferenceLeft we pass the room name from APP.conference
+                await APP.conference.leaveRoom(false /* doDisconnect */).then(
+                    () => APP.API.notifyConferenceLeft(APP.conference.roomName));
             } catch (error) {
                 logger.warn('APP.conference.leaveRoom() rejected with:', error);
 
