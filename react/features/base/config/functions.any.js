@@ -50,13 +50,13 @@ export function getMeetingRegion(state: Object) {
 }
 
 /**
- * Selector used to get feature flags.
+ * Selector used to get a feature flag.
  *
  * @param {Object} state - The global state.
  * @param {string} featureFlag - The name of the feature flag.
  * @returns {boolean}
  */
-export function getFeatureFlags(state: Object, featureFlag) {
+export function getFeatureFlag(state: Object, featureFlag) {
     const featureFlags = state['features/base/config']?.flags || {};
 
     return Boolean(featureFlags[featureFlag]);
