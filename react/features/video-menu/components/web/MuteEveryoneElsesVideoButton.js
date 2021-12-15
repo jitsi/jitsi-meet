@@ -2,14 +2,13 @@
 
 import React from 'react';
 
+import ContextMenuItem from '../../../base/components/context-menu/ContextMenuItem';
 import { translate } from '../../../base/i18n';
 import { IconMuteVideoEveryoneElse } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import AbstractMuteEveryoneElsesVideoButton, {
     type Props
 } from '../AbstractMuteEveryoneElsesVideoButton';
-
-import VideoMenuButton from './VideoMenuButton';
 
 /**
  * Implements a React {@link Component} which displays a button for audio muting
@@ -35,16 +34,15 @@ class MuteEveryoneElsesVideoButton extends AbstractMuteEveryoneElsesVideoButton 
      * @returns {ReactElement}
      */
     render() {
-        const { participantID, t } = this.props;
+        const { t } = this.props;
 
         return (
-            <VideoMenuButton
-                buttonText = { t('videothumbnail.domuteVideoOfOthers') }
-                displayClass = { 'mutelink' }
+            <ContextMenuItem
+                accessibilityLabel = { t('toolbar.accessibilityLabel.muteEveryoneElsesVideoStream') }
                 icon = { IconMuteVideoEveryoneElse }
-                id = { `mutelink_${participantID}` }
                 // eslint-disable-next-line react/jsx-handler-names
-                onClick = { this._handleClick } />
+                onClick = { this._handleClick }
+                text = { t('videothumbnail.domuteVideoOfOthers') } />
         );
     }
 

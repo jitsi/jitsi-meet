@@ -24,6 +24,11 @@ type Props = {
     _horizontalOffset: number,
 
     /**
+     * Whether or not there is a pinned participant.
+     */
+    _isAnyParticipantPinned: boolean,
+
+    /**
      * The ID of the participant associated with the Thumbnail.
      */
     _participantID: ?string,
@@ -75,7 +80,7 @@ class ThumbnailWrapper extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _participantID, style, _horizontalOffset = 0, _disableSelfView } = this.props;
+        const { _participantID, style, _horizontalOffset = 0, _isAnyParticipantPinned, _disableSelfView } = this.props;
 
         if (typeof _participantID !== 'string') {
             return null;
@@ -91,6 +96,7 @@ class ThumbnailWrapper extends Component<Props> {
 
         return (
             <Thumbnail
+                _isAnyParticipantPinned = { _isAnyParticipantPinned }
                 horizontalOffset = { _horizontalOffset }
                 key = { `remote_${_participantID}` }
                 participantID = { _participantID }
@@ -109,6 +115,7 @@ class ThumbnailWrapper extends Component<Props> {
 function _mapStateToProps(state, ownProps) {
     const _currentLayout = getCurrentLayout(state);
     const { remoteParticipants } = state['features/filmstrip'];
+    const { remote, local } = state['features/base/participants'];
     const remoteParticipantsLength = remoteParticipants.length;
     const { testing = {} } = state['features/base/config'];
     const disableSelfView = getDisableSelfView(state);
@@ -160,8 +167,11 @@ function _mapStateToProps(state, ownProps) {
         return {};
     }
 
+    const _isAnyParticipantPinned = Boolean([ ...remote ].find(([ , value ]) => value?.pinned) || local?.pinned);
+
     return {
-        _participantID: remoteParticipants[index]
+        _participantID: remoteParticipants[index],
+        _isAnyParticipantPinned
     };
 }
 
