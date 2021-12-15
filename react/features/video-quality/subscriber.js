@@ -3,8 +3,9 @@
 import debounce from 'lodash/debounce';
 
 import { _handleParticipantError } from '../base/conference';
+import { FEATURE_FLAGS, getFeatureFlags } from '../base/config';
 import { MEDIA_TYPE } from '../base/media';
-import { getParticipantCount } from '../base/participants';
+import { getLocalParticipant, getParticipantCount } from '../base/participants';
 import { StateListenerRegistry } from '../base/redux';
 import { getTrackSourceNameByMediaTypeAndParticipant } from '../base/tracks';
 import { reportError } from '../base/util';
@@ -195,9 +196,9 @@ function _updateReceiverVideoConstraints({ getState }) {
     const maxFrameHeight = Math.min(maxReceiverVideoQuality, preferredVideoQuality);
     const { remoteScreenShares } = state['features/video-layout'];
     const { visibleRemoteParticipants } = state['features/filmstrip'];
-    const { flags: { sourceNameSignaling } } = state['features/base/config'];
-    const { local: { id: localParticipantId } } = state['features/base/participants'];
     const tracks = state['features/base/tracks'];
+    const sourceNameSignaling = getFeatureFlags(state, FEATURE_FLAGS.SOURCE_NAME_SIGNALING);
+    const localParticipantId = getLocalParticipant(state).id;
 
     const receiverConstraints = {
         constraints: {},

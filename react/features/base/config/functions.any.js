@@ -50,6 +50,19 @@ export function getMeetingRegion(state: Object) {
 }
 
 /**
+ * Selector used to get feature flags.
+ *
+ * @param {Object} state - The global state.
+ * @param {string} featureFlag - The name of the feature flag.
+ * @returns {boolean}
+ */
+export function getFeatureFlags(state: Object, featureFlag) {
+    const featureFlags = state['features/base/config']?.flags || {};
+
+    return Boolean(featureFlags[featureFlag]);
+}
+
+/**
  * Selector used to get the disableRemoveRaisedHandOnFocus.
  *
  * @param {Object} state - The global state.
