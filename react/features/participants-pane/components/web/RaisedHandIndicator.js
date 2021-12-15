@@ -8,7 +8,7 @@ import { Icon, IconRaisedHandHollow } from '../../../base/icons';
 const useStyles = makeStyles(theme => {
     return {
         indicator: {
-            backgroundColor: theme.palette.warning02,
+            backgroundColor: theme.palette.warning01,
             borderRadius: `${theme.shape.borderRadius / 2}px`,
             height: '24px',
             width: '24px'
