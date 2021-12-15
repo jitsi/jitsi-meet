@@ -93,11 +93,14 @@ export function getMoreTabProps(stateful: Object | Function) {
     const language = i18next.language || DEFAULT_LANGUAGE;
     const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
 
+    // when self view is controlled by the config we hide the settings
+    const { disableSelfView, disableSelfViewSettings } = state['features/base/config'];
+
     return {
         currentFramerate: framerate,
         currentLanguage: language,
         desktopShareFramerates: SS_SUPPORTED_FRAMERATES,
-        disableHideSelfView: state['features/base/config'].disableSelfViewSettings,
+        disableHideSelfView: disableSelfViewSettings || disableSelfView,
         hideSelfView: getHideSelfView(state),
         languages: LANGUAGES,
         showLanguageSettings: configuredTabs.includes('language'),

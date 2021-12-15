@@ -7,7 +7,7 @@ import { parseURLParams } from '../util';
 import { DEFAULT_SERVER_URL } from './constants';
 
 /**
- * Returns the eff  ective value of a configuration/preference/setting by applying
+ * Returns the effective value of a configuration/preference/setting by applying
  * a precedence among the values specified by JWT, URL, settings,
  * and config.
  *
