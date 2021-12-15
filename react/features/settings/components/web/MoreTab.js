@@ -36,6 +36,11 @@ export type Props = {
     desktopShareFramerates: Array<number>,
 
     /**
+     * Whether to show hide self view setting.
+     */
+    disableHideSelfView: boolean,
+
+    /**
      * Whether or not follow me is currently active (enabled by some other participant).
      */
     followMeActive: boolean,
@@ -448,7 +453,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      * @returns {ReactElement}
      */
     _renderSettingsLeft() {
-        const { showPrejoinSettings } = this.props;
+        const { disableHideSelfView, showPrejoinSettings } = this.props;
 
         return (
             <div
@@ -456,7 +461,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                 key = 'settings-sub-pane-left'>
                 { showPrejoinSettings && this._renderPrejoinScreenSettings() }
                 { this._renderKeyboardShortcutCheckbox() }
-                { this._renderSelfViewCheckbox() }
+                { !disableHideSelfView && this._renderSelfViewCheckbox() }
             </div>
         );
     }

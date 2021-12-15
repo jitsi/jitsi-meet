@@ -215,10 +215,11 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
 function _mapStateToProps(state) {
     const currentLayout = getCurrentLayout(state);
     const localParticipant = getLocalParticipant(state);
-    const { disableLocalVideoFlip } = state['features/base/config'];
+    const { disableLocalVideoFlip, disableSelfViewSettings } = state['features/base/config'];
     const videoTrack = getLocalVideoTrack(state['features/base/tracks']);
     const { overflowDrawer } = state['features/toolbox'];
     const { showConnectionInfo } = state['features/base/connection'];
+    const showHideSelfViewButton = !disableSelfViewSettings && !getHideSelfView(state);
 
     let _menuPosition;
 
@@ -239,7 +240,7 @@ function _mapStateToProps(state) {
     return {
         _menuPosition,
         _showLocalVideoFlipButton: !disableLocalVideoFlip && videoTrack?.videoType !== 'desktop',
-        _showHideSelfViewButton: !getHideSelfView(state),
+        _showHideSelfViewButton: showHideSelfViewButton,
         _overflowDrawer: overflowDrawer,
         _localParticipantId: localParticipant.id,
         _showConnectionInfo: showConnectionInfo

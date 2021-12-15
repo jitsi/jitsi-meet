@@ -97,6 +97,7 @@ export function getMoreTabProps(stateful: Object | Function) {
         currentFramerate: framerate,
         currentLanguage: language,
         desktopShareFramerates: SS_SUPPORTED_FRAMERATES,
+        disableHideSelfView: state['features/base/config'].disableSelfViewSettings,
         hideSelfView: getHideSelfView(state),
         languages: LANGUAGES,
         showLanguageSettings: configuredTabs.includes('language'),

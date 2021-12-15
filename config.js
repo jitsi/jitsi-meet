@@ -89,6 +89,9 @@ var config = {
     // Disables self-view tile. (hides it from tile view and from filmstrip)
     // disableSelfView: false,
 
+    // Disables self-view settings in UI
+    // disableSelfViewSettings: false,
+
     // Disables ICE/UDP by filtering out local and remote UDP candidates in
     // signalling.
     // webrtcIceUdpDisable: false,
