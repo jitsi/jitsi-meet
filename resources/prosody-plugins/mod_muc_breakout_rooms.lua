@@ -114,7 +114,7 @@ function get_participants(room)
 end
 
 function broadcast_breakout_rooms(room_jid)
-    local main_room, main_room_jid = get_main_room(room_jid);
+    local main_room = get_main_room(room_jid);
 
     if not main_room or main_room._data.is_broadcast_breakout_scheduled then
         return;
@@ -125,6 +125,11 @@ function broadcast_breakout_rooms(room_jid)
     main_room:save(true);
     module:add_timer(BROADCAST_ROOMS_INTERVAL, function()
         local main_room, main_room_jid = get_main_room(room_jid);
+
+        if not main_room then
+            return;
+        end
+
         main_room._data.is_broadcast_breakout_scheduled = false;
         main_room:save(true);
 
@@ -395,7 +400,7 @@ function on_occupant_left(event)
             -- we need to look up again the room as till the timer is fired, the room maybe already destroyed/recreated
             -- and we will have the old instance
             local main_room, main_room_jid = get_main_room(room_jid);
-            if main_room._data.is_close_all_scheduled then
+            if main_room and main_room._data.is_close_all_scheduled then
                 module:log('info', 'Closing conference %s as all left for good.', main_room_jid);
                 main_room:set_persistent(false);
                 main_room:destroy(nil, 'All occupants left.');
