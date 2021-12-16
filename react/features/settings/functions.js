@@ -92,7 +92,7 @@ export function getNotificationsMap(stateful: Object | Function) {
     const { userSelectedNotifications } = state['features/base/settings'];
 
     return Object.keys(userSelectedNotifications)
-        .filter(key => !notifications || (notifications && notifications.hasOwnProperty(key)))
+        .filter(key => !notifications || (notifications && notifications.includes(key)))
         .reduce((notificationsMap, key) => {
             return {
                 ...notificationsMap,
