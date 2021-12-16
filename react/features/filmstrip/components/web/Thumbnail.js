@@ -479,17 +479,18 @@ class Thumbnail extends Component<Props, State> {
         }
 
         let videoStyles = null;
+        const doNotStretchVideo = (_height < 320 && tileViewActive)
+            || _disableTileEnlargement
+            || _isScreenSharing;
 
-        if (!_isScreenSharing) {
-            if (canPlayEventReceived || _participant.local) {
-                videoStyles = {
-                    objectFit: (_height < 320 && tileViewActive) || _disableTileEnlargement ? 'contain' : 'cover'
-                };
-            } else {
-                videoStyles = {
-                    display: 'none'
-                };
-            }
+        if (canPlayEventReceived || _participant.local) {
+            videoStyles = {
+                objectFit: doNotStretchVideo ? 'contain' : 'cover'
+            };
+        } else {
+            videoStyles = {
+                display: 'none'
+            };
         }
 
         styles = {
