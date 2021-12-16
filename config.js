@@ -689,9 +689,6 @@ var config = {
     //     collectIP: true //enables the collection localIP address
     // },
 
-    // Enables non-persistent notifications for chat messages when the chat window is closed
-    // enableChatNotifications: false,
-
     // Enables sending participants' display names to callstats
     // enableDisplayNameInStats: false,
 

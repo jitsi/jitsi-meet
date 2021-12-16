@@ -88,17 +88,11 @@ export function normalizeUserInputURL(url: string) {
  */
 export function getNotificationsMap(stateful: Object | Function) {
     const state = toState(stateful);
-    const { enableChatNotifications, notifications } = state['features/base/config'];
+    const { notifications } = state['features/base/config'];
     const { userSelectedNotifications } = state['features/base/settings'];
 
     return Object.keys(userSelectedNotifications)
-        .filter(key => {
-            const shouldShowNotification = !notifications || (notifications && notifications.hasOwnProperty(key));
-
-            return key === 'notify.chatMessages'
-                ? shouldShowNotification && enableChatNotifications
-                : shouldShowNotification;
-        })
+        .filter(key => !notifications || (notifications && notifications.hasOwnProperty(key)))
         .reduce((notificationsMap, key) => {
             return {
                 ...notificationsMap,
