@@ -9,6 +9,7 @@ import {
     isLocalParticipantModerator
 } from '../base/participants';
 import { toState } from '../base/redux';
+import { getHideSelfView } from '../base/settings';
 import { parseStandardURIString } from '../base/util';
 import { isFollowMeActive } from '../follow-me';
 import { isReactionsEnabled } from '../reactions/functions.any';
@@ -92,10 +93,15 @@ export function getMoreTabProps(stateful: Object | Function) {
     const language = i18next.language || DEFAULT_LANGUAGE;
     const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
 
+    // when self view is controlled by the config we hide the settings
+    const { disableSelfView, disableSelfViewSettings } = state['features/base/config'];
+
     return {
         currentFramerate: framerate,
         currentLanguage: language,
         desktopShareFramerates: SS_SUPPORTED_FRAMERATES,
+        disableHideSelfView: disableSelfViewSettings || disableSelfView,
+        hideSelfView: getHideSelfView(state),
         languages: LANGUAGES,
         showLanguageSettings: configuredTabs.includes('language'),
         showPrejoinPage: !state['features/base/settings'].userSelectedSkipPrejoin,
@@ -159,13 +165,11 @@ export function getProfileTabProps(stateful: Object | Function) {
     } = state['features/base/conference'];
     const { hideEmailInSettings } = state['features/base/config'];
     const localParticipant = getLocalParticipant(state);
-    const { disableSelfView } = state['features/base/settings'];
 
     return {
         authEnabled: Boolean(conference && authEnabled),
         authLogin,
         displayName: localParticipant.name,
-        disableSelfView: Boolean(disableSelfView),
         email: localParticipant.email,
         readOnlyName: isNameReadOnly(state),
         hideEmailInSettings

@@ -5,9 +5,7 @@ import React, { PureComponent } from 'react';
 import ContextMenuItem from '../../../base/components/context-menu/ContextMenuItem';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-import { updateSettings } from '../../../base/settings';
-import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../../../notifications';
-import { openSettingsDialog, SETTINGS_TABS } from '../../../settings';
+import { getHideSelfView, updateSettings } from '../../../base/settings';
 
 /**
  * The type of the React {@code Component} props of {@link HideSelfViewVideoButton}.
@@ -97,15 +95,6 @@ class HideSelfViewVideoButton extends PureComponent<Props> {
         dispatch(updateSettings({
             disableSelfView: !disableSelfView
         }));
-        if (!disableSelfView) {
-            dispatch(showNotification({
-                titleKey: 'notify.selfViewTitle',
-                customActionNameKey: [ 'settings.title' ],
-                customActionHandler: [ () =>
-                    dispatch(openSettingsDialog(SETTINGS_TABS.PROFILE))
-                ]
-            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
-        }
     }
 }
 
@@ -117,10 +106,8 @@ class HideSelfViewVideoButton extends PureComponent<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
-    const { disableSelfView } = state['features/base/config'];
-
     return {
-        disableSelfView: Boolean(disableSelfView)
+        disableSelfView: Boolean(getHideSelfView(state))
     };
 }
 

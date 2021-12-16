@@ -115,6 +115,7 @@ export default [
     'disableResponsiveTiles',
     'disableRtx',
     'disableSelfView',
+    'disableSelfViewSettings',
     'disableScreensharingVirtualBackground',
     'disableShortcuts',
     'disableShowMoreStats',

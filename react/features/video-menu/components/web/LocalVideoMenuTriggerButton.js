@@ -15,6 +15,7 @@ import {
 import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
 import { setParticipantContextMenuOpen } from '../../../base/responsive-ui/actions';
+import { getHideSelfView } from '../../../base/settings';
 import { getLocalVideoTrack } from '../../../base/tracks';
 import ConnectionIndicatorContent from '../../../connection-indicator/components/web/ConnectionIndicatorContent';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
@@ -83,6 +84,11 @@ type Props = {
     _showConnectionInfo: boolean,
 
     /**
+     * Whether to render the hide self view button.
+     */
+    _showHideSelfViewButton: boolean,
+
+    /**
      * Shows/hides the local video flip button.
      */
     _showLocalVideoFlipButton: boolean,
@@ -148,8 +154,9 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
         const {
             _localParticipantId,
             _menuPosition,
-            _showConnectionInfo,
             _overflowDrawer,
+            _showConnectionInfo,
+            _showHideSelfViewButton,
             _showLocalVideoFlipButton,
             buttonVisible,
             classes,
@@ -169,9 +176,11 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
                         <FlipLocalVideoButton
                             className = { _overflowDrawer ? classes.flipText : '' }
                             onClick = { hidePopover } />
-                        <HideSelfViewVideoButton
-                            className = { _overflowDrawer ? classes.flipText : '' }
-                            onClick = { hidePopover } />
+                        { _showHideSelfViewButton
+                            && <HideSelfViewVideoButton
+                                className = { _overflowDrawer ? classes.flipText : '' }
+                                onClick = { hidePopover } />
+                        }
                         { isMobileBrowser()
                                     && <ConnectionStatusButton participantId = { _localParticipantId } />
                         }
@@ -249,10 +258,11 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
 function _mapStateToProps(state) {
     const currentLayout = getCurrentLayout(state);
     const localParticipant = getLocalParticipant(state);
-    const { disableLocalVideoFlip } = state['features/base/config'];
+    const { disableLocalVideoFlip, disableSelfViewSettings } = state['features/base/config'];
     const videoTrack = getLocalVideoTrack(state['features/base/tracks']);
     const { overflowDrawer } = state['features/toolbox'];
     const { showConnectionInfo } = state['features/base/connection'];
+    const showHideSelfViewButton = !disableSelfViewSettings && !getHideSelfView(state);
 
     let _menuPosition;
 
@@ -273,6 +283,7 @@ function _mapStateToProps(state) {
     return {
         _menuPosition,
         _showLocalVideoFlipButton: !disableLocalVideoFlip && videoTrack?.videoType !== 'desktop',
+        _showHideSelfViewButton: showHideSelfViewButton,
         _overflowDrawer: overflowDrawer,
         _localParticipantId: localParticipant.id,
         _showConnectionInfo: showConnectionInfo
