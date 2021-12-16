@@ -124,6 +124,7 @@ function broadcast_breakout_rooms(room_jid)
     main_room._data.is_broadcast_breakout_scheduled = true;
     main_room:save(true);
     module:add_timer(BROADCAST_ROOMS_INTERVAL, function()
+        local main_room, main_room_jid = get_main_room(room_jid);
         main_room._data.is_broadcast_breakout_scheduled = false;
         main_room:save(true);
 
@@ -374,16 +375,16 @@ function exist_occupants_in_rooms(main_room)
 end
 
 function on_occupant_left(event)
-    local room = event.room;
+    local room_jid = event.room.jid;
 
-    if is_healthcheck_room(room.jid) then
+    if is_healthcheck_room(room_jid) then
         return;
     end
 
-    local main_room, main_room_jid = get_main_room(room.jid);
+    local main_room = get_main_room(room_jid);
 
     if main_room._data.breakout_rooms_active and jid_node(event.occupant.jid) ~= 'focus' then
-        broadcast_breakout_rooms(room.jid);
+        broadcast_breakout_rooms(room_jid);
     end
 
     -- Close the conference if all left for good.
@@ -391,11 +392,13 @@ function on_occupant_left(event)
         main_room._data.is_close_all_scheduled = true;
         main_room:save(true);
         module:add_timer(ROOMS_TTL_IF_ALL_LEFT, function()
+            -- we need to look up again the room as till the timer is fired, the room maybe already destroyed/recreated
+            -- and we will have the old instance
+            local main_room, main_room_jid = get_main_room(room_jid);
             if main_room._data.is_close_all_scheduled then
                 module:log('info', 'Closing conference %s as all left for good.', main_room_jid);
                 main_room:set_persistent(false);
-                main_room:save(true);
-                main_room:destroy(main_room_jid, 'All occupants left.');
+                main_room:destroy(nil, 'All occupants left.');
             end
         end)
     end
