@@ -39,7 +39,7 @@ export function setTileViewDimensions(dimensions: Object) {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
         const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
-        const { disableResponsiveTiles } = state['features/base/config'];
+        const { disableResponsiveTiles, disableTileEnlargement } = state['features/base/config'];
         const {
             height,
             width
@@ -47,7 +47,8 @@ export function setTileViewDimensions(dimensions: Object) {
             ...dimensions,
             clientWidth,
             clientHeight,
-            disableResponsiveTiles
+            disableResponsiveTiles,
+            disableTileEnlargement
         });
         const { columns, rows } = dimensions;
         const thumbnailsTotalHeight = rows * (TILE_VERTICAL_MARGIN + height);

@@ -47,6 +47,21 @@ export const TWO_COLUMN_BREAKPOINT = 1000;
 export const ASPECT_RATIO_BREAKPOINT = 500;
 
 /**
+ * Minimum height of tile for small screens.
+ */
+export const TILE_MIN_HEIGHT_SMALL = 150;
+
+/**
+ * Minimum height of tile for large screens.
+ */
+export const TILE_MIN_HEIGHT_LARGE = 200;
+
+/**
+ * Aspect ratio for portrait tiles. (height / width).
+ */
+export const TILE_PORTRAIT_ASPECT_RATIO = 1.3;
+
+/**
  * The default number of columns for tile view.
  */
 export const DEFAULT_MAX_COLUMNS = 5;
