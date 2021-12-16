@@ -74,6 +74,12 @@ var config = {
         // callStatsThreshold: 5 // enable callstats for 5% of the users.
     },
 
+    // Feature Flags.
+    flags: {
+        // Enables source names in the signaling.
+        // sourceNameSignaling: false,
+    },
+
     // Disables moderator indicators.
     // disableModeratorIndicator: false,
 
