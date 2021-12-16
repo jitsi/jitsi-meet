@@ -176,6 +176,7 @@ export default [
     'inviteAppName',
     'liveStreamingEnabled',
     'localRecording',
+    'localSubject',
     'maxFullResolutionParticipants',
     'mouseMoveCallbackInterval',
     'notifications',
