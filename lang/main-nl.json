@@ -73,9 +73,17 @@
             "titleWithPolls": "Voer een bijnaam in om chat te gebruiken"
         },
         "privateNotice": "Privébericht aan {{recipient}}",
-        "title": "Chat",
-        "titleWithPolls": "Chat",
-        "you": "u"
+        "message": "Bericht",
+        "messageAccessibleTitle": "{{user}} zegt:",
+        "messageAccessibleTitleMe": "ik zeg:",
+        "smileysPanel": "Smiley paneel",
+        "tabs": {
+            "chat": "Gesprek",
+            "polls": "Peilingen"
+        },
+        "title": "Gesprek",
+        "titleWithPolls": "Gesprek",
+        "you": "U"
     },
     "chromeExtensionBanner": {
         "installExtensionText": "Installeer de extensie voor Google Calendar en Office 365 integratie",
@@ -526,6 +534,35 @@
     },
     "passwordSetRemotely": "ingesteld door een andere deelnemer",
     "passwordDigitsOnly": "Maximaal {{number}} cijfers",
+    "polls": {
+        "by": "Door {{ name }}",
+        "create": {
+            "addOption": "Voeg optie toe",
+            "answerPlaceholder": "Optie {{index}}",
+            "create": "Creeër een peiling",
+            "cancel": "Annuleer",
+            "pollOption" : "Peiling optie {{index}}",
+            "pollQuestion" : "Peiling vraag",
+            "questionPlaceholder": "Stel een vraag",
+            "removeOption": "Verwijder optie",
+            "send": "Verstuur"
+        },
+        "answer": {
+            "skip": "Sla over",
+            "submit": "Verzend"
+        },
+        "results": {
+            "vote": "Stem",
+            "changeVote": "Verander stem",
+            "empty": "Er zijn nog geen peilingen in deze vergadering. Start hier een peiling!",
+            "hideDetailedResults": "Verberg details",
+            "showDetailedResults": "Toon details"
+        },
+        "notification": {
+            "title": "Een nieuwe peiling is aangemaakt in deze vergadering",
+            "description": "Open het peilingen tabblad om te stemmen"
+        }
+    },
     "poweredby": "mogelijk gemaakt door",
     "prejoin": {
         "audioAndVideoError": "Audio- en videofout:",
