@@ -101,6 +101,17 @@ export function submitMoreTab(newState: Object): Function {
             });
         }
 
+        const enabledNotifications = newState.enabledNotifications;
+
+        if (enabledNotifications !== currentState.enabledNotifications) {
+            dispatch(updateSettings({
+                userSelectedNotifications: {
+                    ...getState()['features/base/settings'].userSelectedNotifications,
+                    ...enabledNotifications
+                }
+            }));
+        }
+
         if (newState.currentLanguage !== currentState.currentLanguage) {
             i18next.changeLanguage(newState.currentLanguage);
         }

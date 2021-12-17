@@ -1161,6 +1161,7 @@ var config = {
     //     'lobby.joinRejectedMessage', // shown when while in a lobby, user's request to join is rejected
     //     'lobby.notificationTitle', // shown when lobby is toggled and when join requests are allowed / denied
     //     'localRecording.localRecording', // shown when a local recording is started
+    //     'notify.chatMessages', // shown when receiving chat messages while the chat window is closed
     //     'notify.disconnected', // shown when a participant has left
     //     'notify.connectedOneMember', // show when a participant joined
     //     'notify.connectedTwoMembers', // show when two participants joined simultaneously
