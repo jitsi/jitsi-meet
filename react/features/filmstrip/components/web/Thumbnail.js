@@ -230,7 +230,7 @@ const defaultStyles = theme => {
                 marginRight: '4px'
             },
 
-            '&:not(.top-indicators) > *:last-child': {
+            '&:not(.top-indicators) > span:last-child': {
                 marginRight: '6px'
             }
         },

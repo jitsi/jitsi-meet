@@ -63,6 +63,7 @@ const ThumbnailBottomIndicators = ({
     const styles = useStyles();
     const _allowEditing = !useSelector(isNameReadOnly);
     const _defaultLocalDisplayName = interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME;
+    const _showDisplayName = useSelector(state => !state['features/base/config'].hideDisplayName);
 
     return (<div className = { className }>
         <StatusIndicators
@@ -70,14 +71,18 @@ const ThumbnailBottomIndicators = ({
             moderator = { true }
             participantID = { participantId }
             screenshare = { currentLayout === LAYOUTS.TILE_VIEW } />
-        <span className = { styles.nameContainer }>
-            <DisplayName
-                allowEditing = { local ? _allowEditing : false }
-                currentLayout = { currentLayout }
-                displayNameSuffix = { local ? _defaultLocalDisplayName : '' }
-                elementID = { local ? 'localDisplayName' : `participant_${participantId}_name` }
-                participantID = { participantId } />
-        </span>
+        {
+            _showDisplayName && (
+                <span className = { styles.nameContainer }>
+                    <DisplayName
+                        allowEditing = { local ? _allowEditing : false }
+                        currentLayout = { currentLayout }
+                        displayNameSuffix = { local ? _defaultLocalDisplayName : '' }
+                        elementID = { local ? 'localDisplayName' : `participant_${participantId}_name` }
+                        participantID = { participantId } />
+                </span>
+            )
+        }
     </div>);
 };
 
