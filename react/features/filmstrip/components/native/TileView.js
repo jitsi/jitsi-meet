@@ -3,9 +3,10 @@
 import React, { PureComponent } from 'react';
 import {
     FlatList,
-    TouchableWithoutFeedback,
-    View
+    SafeAreaView,
+    TouchableWithoutFeedback
 } from 'react-native';
+import { withSafeAreaInsets } from 'react-native-safe-area-context';
 import type { Dispatch } from 'redux';
 
 import { getLocalParticipant, getParticipantCountWithFake } from '../../../base/participants';
@@ -72,6 +73,11 @@ type Props = {
     dispatch: Dispatch<any>,
 
     /**
+     * Object containing the safe area insets.
+     */
+    insets: Object,
+
+    /**
      * Callback to invoke when tile view is tapped.
      */
     onClick: Function
@@ -126,7 +132,8 @@ class TileView extends PureComponent<Props> {
             ...styles.flatListTileView
         };
         this._contentContainerStyles = {
-            ...styles.contentContainer
+            ...styles.contentContainer,
+            paddingBottom: this.props.insets?.bottom || 0
         };
     }
 
@@ -194,13 +201,14 @@ class TileView extends PureComponent<Props> {
             this._contentContainerStyles = {
                 ...styles.contentContainer,
                 minHeight: _height,
-                minWidth: _width
+                minWidth: _width,
+                paddingBottom: this.props.insets?.bottom || 0
             };
         }
 
         return (
             <TouchableWithoutFeedback onPress = { onClick }>
-                <View style = { styles.flatListContainer }>
+                <SafeAreaView style = { styles.flatListContainer }>
                     <FlatList
                         bounces = { false }
                         contentContainerStyle = { this._contentContainerStyles }
@@ -217,7 +225,7 @@ class TileView extends PureComponent<Props> {
                         style = { this._flatListStyles }
                         viewabilityConfig = { this._viewabilityConfig }
                         windowSize = { 2 } />
-                </View>
+                </SafeAreaView>
             </TouchableWithoutFeedback>
         );
     }
@@ -269,10 +277,11 @@ class TileView extends PureComponent<Props> {
  * Maps (parts of) the redux state to the associated {@code TileView}'s props.
  *
  * @param {Object} state - The redux state.
+ * @param {Object} ownProps - Component props.
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state, ownProps) {
     const responsiveUi = state['features/base/responsive-ui'];
     const { remoteParticipants, tileViewDimensions } = state['features/filmstrip'];
     const disableSelfView = shouldHideSelfView(state);
@@ -283,13 +292,14 @@ function _mapStateToProps(state) {
         _aspectRatio: responsiveUi.aspectRatio,
         _columns: columns,
         _disableSelfView: disableSelfView,
-        _height: responsiveUi.clientHeight,
+        _height: responsiveUi.clientHeight - (ownProps.insets?.top || 0),
+        _insets: ownProps.insets,
         _localParticipant: getLocalParticipant(state),
         _participantCount: getParticipantCountWithFake(state),
         _remoteParticipants: remoteParticipants,
         _thumbnailHeight: height,
-        _width: responsiveUi.clientWidth
+        _width: responsiveUi.clientWidth - (ownProps.insets?.right || 0) - (ownProps.insets?.left || 0)
     };
 }
 
-export default connect(_mapStateToProps)(TileView);
+export default withSafeAreaInsets(connect(_mapStateToProps)(TileView));
