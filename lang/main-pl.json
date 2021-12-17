@@ -39,6 +39,28 @@
     "audioOnly": {
         "audioOnly": "Niska przepustowość"
     },
+    "blankPage": {
+        "meetingEnded": "Spotkanie zakończone."
+    },
+    "breakoutRooms": {
+        "defaultName": "Pokój podgrupy #{{index}}",
+        "mainRoom": "Główny pokój",
+        "actions": {
+            "add": "Dodaj pokój podgrupy",
+            "autoAssign": "Automatycznie przypisuj do pokoi podgrup",
+            "close": "Blisko",
+            "join": "Dołącz",
+            "leaveBreakoutRoom": "Opuść pokój spotkań",
+            "more": "Więcej",
+            "remove": "Usuń",
+            "sendToBreakoutRoom": "Wyślij uczestnika do:"
+        },
+        "notifications": {
+            "joinedTitle": "Pokoje podgrup",
+            "joined": "Dołączanie do pokoju podgrup \"{{name}}\" ",
+            "joinedMainRoom": "Dołączanie do głównego pokoju"
+        }
+    },
     "calendarSync": {
         "addMeetingURL": "Dodaj odnośnik do spotkania",
         "confirmAddLink": "Czy chcesz dodać odnośnik Jitsi do tego wydarzenia?",
@@ -206,14 +228,16 @@
         "connectErrorWithMsg": "Upsss! Coś poszło nie tak i nie możemy podłączyć się do tej konferencji: {{msg}}",
         "connecting": "Nawiązywanie połączenia",
         "contactSupport": "Skontaktuj się ze wsparciem",
-        "copy": "Kopiuj",
         "copied": "Skopiowano",
+        "copy": "Kopiuj",
         "dismiss": "Odrzuć",
         "displayNameRequired": "Cześć! Jak się nazywasz?",
         "done": "Zrobione",
         "e2eeDescription": "Szyfrowanie End-to-End jest aktualnie w fazie EKSPERYMENTALNEJ. Proszę mieć na uwadze fakt, że szyfrowanie end-to-end wyłączy oferowane przez serwer usługi takie jak: nagrywanie, streaming na żywo i dołączanie uczestników przez telefon. Proszę mieć również na uwadze fakt, że takie spotkanie będą działać tylko dla uczestników korzystających z przeglądarek wspierających wstawiane strumienie.",
-        "e2eeLabel": "Klucz E2EE",
+        "e2eeLabel": "Włącz szyfrowanie E2EE",
+        "e2eeDisabledDueToMaxModeDescription": "Nie można włączyć szyfrowania End-to-End z powodu dużej liczby uczestników konferencji.",
         "e2eeWarning": "UWAGA: Niektórzy uczestnicy tego spotkania nie mają włączonej obsługi szyfrowania E2EE. Jeśli włączysz tą funkcję ci uczestnicy nie będą mieli z tobą kontaktu.",
+        "e2eeWillDisableDueToMaxModeDescription": "UWAGA: Szyfrowanie typu end-to-end zostanie automatycznie wyłączone, jeśli do konferencji dołączy więcej uczestników.",
         "enterDisplayName": "Wpisz tutaj swoje imię",
         "embedMeeting": "Osadź spotkanie",
         "error": "Błąd",
@@ -249,25 +273,29 @@
         "micPermissionDeniedError": "Nie udzieliłeś pozwolenia na użycie twojego mikrofonu. Nadal możesz uczestniczyc w konferencji ale inni nie będą cię słyszeli. Użyj przycisku kamera aby to naprawić.",
         "micTimeoutError": "Nie udało się uruchomić źródła dźwięku. Przekroczono limit czasu",
         "micUnknownError": "Z nieznanej przyczyny nie można użyć mikrofonu.",
+        "moderationAudioLabel": "Zezwalaj uczestnikom na wyłączanie wyciszenia",
+        "moderationVideoLabel": "Zezwalaj uczestnikom na rozpoczęcie wideo",
         "muteEveryoneElseDialog": "Gdy wyciszysz wszystkich nie będziesz miał możliwości wyłączyć ich wyciszenia, ale oni będą mogli samodzielnie wyłączyć wyciszenie w dowolnym momencie.",
         "muteEveryoneElseTitle": "Wyciszyć wszystkich za wyjątkiem {{whom}}?",
-        "muteEveryoneElsesVideoDialog": "Po dezaktywacji kamery nie można jej ponownie aktywować, ale uczestnicy mogą to zmienić samodzielnie w dowolnym momencie.",
-        "muteEveryoneElsesVideoTitle": "Wyłączyć kamerę wszystkim oprócz {{whom}}?",
-        "muteEveryonesVideoDialog": "Czy na pewno chcesz wyłączyć kamery wszystkich uczestników? Nie możesz ponownie włączyć kamer, ale uczestnicy mogą to zmienić samodzielnie w dowolnym momencie.",
+        "muteEveryoneDialog": "Uczestnicy mogą w dowolnym momencie wyłączyć wyciszenie.",
+        "muteEveryoneDialogModerationOn": "Uczestnicy mogą w każdej chwili wysłać prośbę o zabranie głosu.",
+        "muteEveryoneTitle": "Wyciszyć wszystkich?",
+        "muteEveryoneElsesVideoDialog": "Po wyłączeniu kamery nie będzie można go ponownie włączyć, ale można go ponownie włączyć w dowolnym momencie.",
+		"muteEveryoneElsesVideoTitle": "Wyłączyć kamerę wszystkim oprócz {{whom}}?",
+        "muteEveryonesVideoDialog": "Uczestnicy mogą w każdej chwili włączyć swoje wideo.",
+        "muteEveryonesVideoDialogModerationOn": "Uczestnicy mogą w dowolnym momencie wysłać prośbę o włączenie ich wideo.",
         "muteEveryonesVideoDialogOk": "Wyłącz",
         "muteEveryonesVideoTitle": "Wyłączyć kamery pozostałych uczestników?",
-        "muteEveryoneDialog": "Czy na pewno wyciszyć wszystkich? Nie będziesz miał możliwości wyłączyć ich wyciszenia, ale oni będą mogli samodzielnie wyłączyć wyciszenie w dowolnym momencie.",
-        "muteEveryoneTitle": "Wyciszyć wszystkich?",
         "muteEveryoneSelf": "siebie",
         "muteEveryoneStartMuted": "Od tego momentu wszyscy są wyciszeni",
         "muteParticipantBody": "Nie możesz wyłączyć ich wyciszenia, ale oni mogą samodzielnie wyłączyć wyciszenie w dowolnym momencie.",
         "muteParticipantButton": "Wycisz",
-        "muteParticipantDialog": "Czy na pewno wyciszyć tego uczestnika? Nie będziesz mógł wyłączyć wyciszenia uczestników, ale oni mogą samodzielnie wyłączyć wyciszenie w dowolnym momencie.",
         "muteParticipantsVideoDialog": "Czy na pewno chcesz wyłączyć kamerę tego uczestnika? Nie będziesz mógł ponownie włączyć jego kamery, ale będzie on mógł samodzielnie włączyć kamerę w dowolnym momencie.",
-        "muteParticipantTitle": "Wyciszyć tego uczestnika?",
+        "muteParticipantsVideoDialogModerationOn": "Czy na pewno chcesz wyłączyć kamerę tego uczestnika? Nie będziesz w stanie ponownie włączyć aparatu i oni też nie.",
         "muteParticipantsVideoButton": "Wyłącz kamerę",
         "muteParticipantsVideoTitle": "Wyłączyć kamerę tego uczestnika?",
         "muteParticipantsVideoBody": "Nie będziesz mógł włączyć jego kamery ponownie, ale uczestnik samodzielnie może włączyć kamerę w dowolnym momencie.",
+        "muteParticipantsVideoBodyModerationOn": "Nie będziesz w stanie ponownie włączyć kamery i oni też nie.",
         "noDropboxToken": "Brak poprawnego tokenu Dropbox",
         "Ok": "OK",
         "password": "$t(lockRoomPasswordUppercase)",
@@ -329,6 +357,7 @@
         "shareScreenWarningH1": "Kiedy chcesz udostępniać wyłącznie swój ekran:",
         "shareScreenWarningD1": "musisz zatrzymać udostępnianie dźwięku przed udostępnieniem ekranu.",
         "shareScreenWarningD2": "musisz zatrzymać udostępnianie dźwięku, rozpocząć udostępnianie ekranu i zaznaczyć opcję \"udostępnij dźwięk\".",
+        "sharedVideoLinkPlaceholder": "Link do YouTube lub bezpośredni link do wideo",
         "stopLiveStreaming": "Zatrzymaj transmisję na żywo",
         "stopRecording": "Zatrzymaj nagrywanie",
         "stopRecordingWarning": "Naprawdę chcesz zatrzymać nagrywanie?",
@@ -388,7 +417,9 @@
         "image7": "Wschód słońca",
         "desktopShareError": "Nie można udostępnić pulpitu",
         "desktopShare": "Udostępnianie pulpitu",
-        "webAssemblyWarning": "WebAssembly nie jest obsługiwany"
+        "webAssemblyWarning": "WebAssembly nie jest obsługiwany",
+        "webAssemblyWarningDescription": "WebAssembly wyłączony lub nieobsługiwany przez tę przeglądarkę",
+        "backgroundEffectError": "Nie udało się zastosować efektu tła."
     },
     "feedback": {
         "average": "Średnio",
@@ -606,19 +637,25 @@
         },
         "actions": {
             "allow": "Zezwól uczestnikom na:",
+            "allowVideo": "Zezwól na wideo",
+            "audioModeration": "Wyłącz wyciszenie",
             "blockEveryoneMicCamera": "Zablokuj wszystkim kamerę i mikrofon",
             "invite": "Zaproś",
             "askUnmute": "Poproś o wyłączenie wyciszenia",
+            "moreModerationActions": "Więcej opcji moderatora",
+            "moreParticipantOptions": "Więcej opcji dla uczestników",
             "mute": "Wycisz",
             "muteAll": "Wycisz wszystkich",
             "muteEveryoneElse": "Wycisz pozostałych",
-            "startModeration": "Wyłącz wyciszenie lub rozpocznij wideo",
             "stopEveryonesVideo": "Wyłącz wszystkie kamery",
             "stopVideo": "Wyłącz kamerę",
-            "unblockEveryoneMicCamera": "Odblokuj wszystkim kamerę i mikrofon"
-        }
+            "unblockEveryoneMicCamera": "Odblokuj wszystkim kamerę i mikrofon",
+            "videoModeration": "Włącz kamerę",
+            "moreModerationControls": "Więcej kontroli moderacji"
+        },
+		"search": "Wyszukaj uczestników"
     },
-    "passwordSetRemotely": "wybrane przez innego uczestnika",
+    "passwordSetRemotely": "Ustawione przez innego uczestnika",
     "passwordDigitsOnly": "Do {{number}} cyfr",
     "polls": {
         "create": {
