@@ -51,9 +51,9 @@ export type Props = {
     languages: Array<string>,
 
     /**
-     * The types of notifications that can be configured and their specific visibility.
+     * The types of enabled notifications that can be configured and their specific visibility.
      */
-    notifications: Object,
+    enabledNotifications: Object,
 
     /**
      * Whether or not to display the language select dropdown.
@@ -132,7 +132,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
         this._onFramerateItemSelect = this._onFramerateItemSelect.bind(this);
         this._onLanguageDropdownOpenChange = this._onLanguageDropdownOpenChange.bind(this);
         this._onLanguageItemSelect = this._onLanguageItemSelect.bind(this);
-        this._onNotificationsChanged = this._onNotificationsChanged.bind(this);
+        this._onEnabledNotificationsChanged = this._onEnabledNotificationsChanged.bind(this);
         this._onShowPrejoinPageChanged = this._onShowPrejoinPageChanged.bind(this);
         this._onKeyboardShortcutEnableChanged = this._onKeyboardShortcutEnableChanged.bind(this);
         this._onHideSelfViewChanged = this._onHideSelfViewChanged.bind(this);
@@ -240,16 +240,16 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      *
      * @returns {void}
      */
-    _onNotificationsChanged({ target: { checked } }, type) {
+    _onEnabledNotificationsChanged({ target: { checked } }, type) {
         super._onChange({
-            notifications: {
-                ...this.props.notifications,
+            enabledNotifications: {
+                ...this.props.enabledNotifications,
                 [type]: checked
             }
         });
     }
 
-    _onNotificationsChanged: (Object, string) => void;
+    _onEnabledNotificationsChanged: (Object, string) => void;
 
     /**
      * Callback invoked to select if global keyboard shortcuts
@@ -460,13 +460,13 @@ class MoreTab extends AbstractDialogTab<Props, State> {
     }
 
     /**
-     * Returns the React Element for modifying notifications settings.
+     * Returns the React Element for modifying the enabled notifications settings.
      *
      * @private
      * @returns {ReactElement}
      */
     _renderNotificationsSettings() {
-        const { t, notifications } = this.props;
+        const { t, enabledNotifications } = this.props;
 
         return (
             <div
@@ -476,14 +476,14 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                     { t('notify.displayNotifications') }
                 </h2>
                 {
-                    Object.keys(notifications).map(key => (
+                    Object.keys(enabledNotifications).map(key => (
                         <Checkbox
-                            isChecked = { notifications[key] }
+                            isChecked = { enabledNotifications[key] }
                             key = { key }
                             label = { t(key) }
                             name = { `show-${key}` }
                             /* eslint-disable-next-line react/jsx-no-bind */
-                            onChange = { e => this._onNotificationsChanged(e, key) } />
+                            onChange = { e => this._onEnabledNotificationsChanged(e, key) } />
                     ))
                 }
             </div>

@@ -92,7 +92,7 @@ export function getNotificationsMap(stateful: Object | Function) {
     const { userSelectedNotifications } = state['features/base/settings'];
 
     return Object.keys(userSelectedNotifications)
-        .filter(key => !notifications || (notifications && notifications.includes(key)))
+        .filter(key => !notifications || notifications.includes(key))
         .reduce((notificationsMap, key) => {
             return {
                 ...notificationsMap,
@@ -114,7 +114,7 @@ export function getMoreTabProps(stateful: Object | Function) {
     const framerate = state['features/screen-share'].captureFrameRate ?? SS_DEFAULT_FRAME_RATE;
     const language = i18next.language || DEFAULT_LANGUAGE;
     const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
-    const notifications = getNotificationsMap(stateful);
+    const enabledNotifications = getNotificationsMap(stateful);
 
     // when self view is controlled by the config we hide the settings
     const { disableSelfView, disableSelfViewSettings } = state['features/base/config'];
@@ -127,8 +127,8 @@ export function getMoreTabProps(stateful: Object | Function) {
         hideSelfView: getHideSelfView(state),
         languages: LANGUAGES,
         showLanguageSettings: configuredTabs.includes('language'),
-        notifications,
-        showNotificationsSettings: Object.keys(notifications).length > 0,
+        enabledNotifications,
+        showNotificationsSettings: Object.keys(enabledNotifications).length > 0,
         showPrejoinPage: !state['features/base/settings'].userSelectedSkipPrejoin,
         showPrejoinSettings: state['features/base/config'].prejoinConfig?.enabled
     };

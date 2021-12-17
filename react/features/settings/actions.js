@@ -101,13 +101,13 @@ export function submitMoreTab(newState: Object): Function {
             });
         }
 
-        const notifications = newState.notifications;
+        const enabledNotifications = newState.enabledNotifications;
 
-        if (notifications !== currentState.notifications) {
+        if (enabledNotifications !== currentState.enabledNotifications) {
             dispatch(updateSettings({
                 userSelectedNotifications: {
                     ...getState()['features/base/settings'].userSelectedNotifications,
-                    ...notifications
+                    ...enabledNotifications
                 }
             }));
         }

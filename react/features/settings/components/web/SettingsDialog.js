@@ -246,7 +246,7 @@ function _mapStateToProps(state) {
                     currentLanguage: tabState.currentLanguage,
                     hideSelfView: tabState.hideSelfView,
                     showPrejoinPage: tabState.showPrejoinPage,
-                    notifications: tabState.notifications
+                    enabledNotifications: tabState.enabledNotifications
                 };
             },
             styles: 'settings-pane more-pane',
