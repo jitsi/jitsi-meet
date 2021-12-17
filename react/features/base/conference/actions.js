@@ -41,6 +41,7 @@ import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
+    CONFERENCE_LOCAL_SUBJECT_CHANGED,
     CONFERENCE_SUBJECT_CHANGED,
     CONFERENCE_TIMESTAMP_CHANGED,
     CONFERENCE_UNIQUE_ID_SET,
@@ -792,7 +793,7 @@ export function setStartMutedPolicy(
 }
 
 /**
- * Changing conference subject.
+ * Sets the conference subject.
  *
  * @param {string} subject - The new subject.
  * @returns {void}
@@ -809,5 +810,21 @@ export function setSubject(subject: string) {
                 subject
             });
         }
+    };
+}
+
+/**
+ * Sets the conference local subject.
+ *
+ * @param {string} localSubject - The new local subject.
+ * @returns {{
+ *     type: CONFERENCE_LOCAL_SUBJECT_CHANGED,
+ *     localSubject: string
+ * }}
+ */
+export function setLocalSubject(localSubject: string) {
+    return {
+        type: CONFERENCE_LOCAL_SUBJECT_CHANGED,
+        localSubject
     };
 }

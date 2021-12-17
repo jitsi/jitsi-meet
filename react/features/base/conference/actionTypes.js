@@ -43,6 +43,16 @@ export const CONFERENCE_JOINED = 'CONFERENCE_JOINED';
 export const CONFERENCE_LEFT = 'CONFERENCE_LEFT';
 
 /**
+ * The type of (redux) action, which indicates conference local subject changes.
+ *
+ * {
+ *     type: CONFERENCE_LOCAL_SUBJECT_CHANGED
+ *     subject: string
+ * }
+ */
+ export const CONFERENCE_LOCAL_SUBJECT_CHANGED = 'CONFERENCE_LOCAL_SUBJECT_CHANGED';
+
+ /**
  * The type of (redux) action, which indicates conference subject changes.
  *
  * {

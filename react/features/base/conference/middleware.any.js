@@ -39,6 +39,7 @@ import {
     conferenceFailed,
     conferenceWillLeave,
     createConference,
+    setLocalSubject,
     setSubject
 } from './actions';
 import { TRIGGER_READY_TO_CLOSE_REASONS } from './constants';
@@ -484,11 +485,12 @@ function _sendTones({ getState }, next, action) {
  */
 function _setRoom({ dispatch, getState }, next, action) {
     const state = getState();
-    const { subject } = state['features/base/config'];
+    const { localSubject, subject } = state['features/base/config'];
     const { room } = action;
 
     if (room) {
         // Set the stored subject.
+        dispatch(setLocalSubject(localSubject));
         dispatch(setSubject(subject));
     }
 
