@@ -11,12 +11,17 @@ import { isIconUrl } from './functions';
  * @param {string | Object} src - Source of the avatar.
  * @returns {Promise}
  */
-export function preloadImage(src: string | Object): Promise<string> {
+export function preloadImage(src: string | Object): Promise<Object> {
     if (isIconUrl(src)) {
         return Promise.resolve(src);
     }
 
     return new Promise((resolve, reject) => {
-        Image.prefetch(src).then(() => resolve(src), reject);
+        Image.prefetch(src).then(
+            () => resolve({
+                src,
+                isUsingCORS: false
+            }),
+            reject);
     });
 }

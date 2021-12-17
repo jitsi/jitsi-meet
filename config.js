@@ -543,6 +543,9 @@ var config = {
     // Document should be focused for this option to work
     // enableAutomaticUrlCopy: false,
 
+    // Array with avatar URL prefixes that need to use CORS.
+    // corsAvatarURLs: [ 'https://www.gravatar.com/avatar/' ],
+
     // Base URL for a Gravatar-compatible service. Defaults to libravatar.
     // gravatarBaseURL: 'https://seccdn.libravatar.org/avatar/',
 
