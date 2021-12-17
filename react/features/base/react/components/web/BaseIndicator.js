@@ -28,6 +28,11 @@ type Props = {
     iconClassName: string,
 
     /**
+     * The color of the icon.
+     */
+    iconColor: ?string,
+
+    /**
      * Id of the icon to be rendered.
      */
     iconId?: string,
@@ -81,6 +86,7 @@ const BaseIndicator = ({
     className = '',
     icon,
     iconClassName,
+    iconColor,
     iconId,
     iconSize,
     id = '',
@@ -105,6 +111,7 @@ const BaseIndicator = ({
                     id = { id }>
                     <Icon
                         className = { iconClassName }
+                        color = { iconColor }
                         id = { iconId }
                         src = { icon }
                         style = { style } />

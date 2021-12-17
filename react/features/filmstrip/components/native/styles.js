@@ -2,6 +2,7 @@
 
 import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
 import { ColorPalette } from '../../../base/styles';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import { SMALL_THUMBNAIL_SIZE } from '../../constants';
 
 /**
@@ -147,6 +148,11 @@ export default {
 
     thumbnailTopRightIndicatorContainer: {
         right: 0
+    },
+
+    thumbnailRaisedHand: {
+        borderWidth: 2,
+        borderColor: BaseTheme.palette.warning02
     }
 };
 
