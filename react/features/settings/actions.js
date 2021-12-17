@@ -87,11 +87,9 @@ export function submitMoreTab(newState: Object): Function {
         const showPrejoinPage = newState.showPrejoinPage;
 
         if (showPrejoinPage !== currentState.showPrejoinPage) {
-            batch(() => {
-                dispatch(updateSettings({
-                    userSelectedSkipPrejoin: !showPrejoinPage
-                }));
-            });
+            dispatch(updateSettings({
+                userSelectedSkipPrejoin: !showPrejoinPage
+            }));
         }
 
         const enabledNotifications = newState.enabledNotifications;
