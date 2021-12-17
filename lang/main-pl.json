@@ -180,7 +180,8 @@
         "joinInApp": "Dołącz do spotkania używając aplikacji",
         "launchWebButton": "Uruchom przez przeglądarkę",
         "title": "Trwa uruchamianie Twojego spotkania w {{app}}…",
-        "tryAgainButton": "Spróbuj ponownie w aplikacji stacjonarnej"
+        "tryAgainButton": "Spróbuj ponownie w aplikacji stacjonarnej",
+        "unsupportedBrowser": "Wygląda na to, że używasz przeglądarki, której nie wspieramy."
     },
     "defaultLink": "np. {{url}}",
     "defaultNickname": "np. Jan Kowalski",
@@ -524,6 +525,7 @@
         "expandedPending": "Transmisja na żywo rozpoczyna się…",
         "failedToStart": "Transmitowanie na żywo nie uruchomiło się",
         "getStreamKeyManually": "Nie byliśmy w stanie pobrać żadnych transmisji na żywo. Spróbuj uzyskać klucz do transmisji na żywo z YouTube.",
+		"inProgress": "Trwa nagrywanie lub transmisja na żywo",
         "invalidStreamKey": "Klucz transmisji na żywo może być nieprawidłowy.",
         "off": "Transmitowanie na żywo zostało zatrzymane",
         "offBy": "{{name}} zatrzymał transmisję na żywo",
@@ -531,6 +533,7 @@
         "onBy": "{{name}} rozpoczął transmisję na żywo",
         "pending": "Start strumieniowania live…",
         "serviceName": "Usługa transmisji na żywo",
+		"sessionAlreadyActive": "Ta sesja jest już nagrywana lub transmitowana na żywo.",
         "signedInAs": "Jesteś obecnie zalogowany jako:",
         "signIn": "Zaloguj się z Google",
         "signInCTA": "Zaloguj się lub wpisz swój klucz do transmisji na żywo YouTube.",
@@ -574,18 +577,24 @@
     "lockRoomPasswordUppercase": "Hasło",
     "me": "to ja",
     "notify": {
+        "allowAction": "Zezwól",
+        "allowedUnmute": "Możesz wyłączyć wyciszenie mikrofonu, uruchomić aparat lub udostępnić ekran.",
+        "audioUnmuteBlockedTitle": "Zablokowano wyciszenie mikrofonu!",
+        "audioUnmuteBlockedDescription": "Operacja wyłączania wyciszenia mikrofonu została tymczasowo zablokowana z powodu ograniczeń systemu.",
         "connectedOneMember": "{{name}} dołączył do spotkania",
         "connectedThreePlusMembers": "{{name}} i {{count}} innych osób dołączyło do spotkania",
         "connectedTwoMembers": "{{first}} i {{second}} dołączyli do spotkania",
         "disconnected": "Rozłączono",
         "focus": "Fokus konferencji",
         "focusFail": "{{component}} jest niedostępny - ponowienie w ciągu {{ms}} sec",
-        "grantedTo": "Prawa moderatora przyznane dla {{to}}!",
         "hostAskedUnmute": "Gospodarz prosi Cię o wyłączenie wyciszenia",
         "invitedOneMember": "{{name}} został zaproszony",
         "invitedThreePlusMembers": "{{name}} i {{count}} innych osób zostało zaproszone",
         "invitedTwoMembers": "{{first}} i {{second}} zostali zaproszeni",
         "kickParticipant": "{{kicked}} został usunięty przez {{kicker}}",
+        "leftOneMember": "{{name}} opuścił spotkanie",
+        "leftThreePlusMembers": "{{name}} i wielu innych opuściło spotkanie",
+        "leftTwoMembers": "{{first}} i {{second}} opuścił spotkanie",
         "me": "To ja",
         "moderator": "Prawa moderatora przydzielone!",
         "muted": "Rozpoczęto wyciszenie konwersacji.",
@@ -597,8 +606,10 @@
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) usunięte przez innego uczestnika",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) ustawiony przez innego uczestnika",
         "raisedHand": "{{name}} chce mówić.",
+		"raisedHands": "{{participantName}} i {{raisedHands}} więcej osób",
         "screenShareNoAudio": "Opcja \"Udostępnij dźwięk\" nie została zaznaczona podczas wyboru okna.",
         "screenShareNoAudioTitle": "Nie można udostępnić dźwięku",
+		"selfViewTitle": "Zawsze możesz odkryć autopodgląd w ustawieniach",
         "somebody": "Ktoś",
         "startSilentTitle": "Dołączyłeś bez wyjścia dźwiękowego!",
         "startSilentDescription": "Ponownie dołącz do spotkania, aby włączyć dźwięk",
@@ -625,7 +636,10 @@
         "moderationToggleDescription": "przez {{participantDisplayName}}",
         "raiseHandAction": "Podnieś rękę",
         "reactionSounds": "Wyłącz dźwięki",
-        "groupTitle": "Powiadomienia"
+		"reactionSoundsForAll": "Wyłącz dźwięki dla wszystkich",
+        "groupTitle": "Powiadomienia",
+        "videoUnmuteBlockedTitle": "Wyłączenie wyciszenia kamery i udostępnianie pulpitu zablokowane!",
+        "videoUnmuteBlockedDescription": "Operacje wyłączania wyciszenia kamery i udostępniania pulpitu zostały tymczasowo zablokowane z powodu ograniczeń systemu."
     },
     "participantsPane": {
         "close": "Zamknij",
@@ -658,6 +672,7 @@
     "passwordSetRemotely": "Ustawione przez innego uczestnika",
     "passwordDigitsOnly": "Do {{number}} cyfr",
     "polls": {
+		"by": "Przez {{ name }}",
         "create": {
             "addOption": "Dodaj opcję",
             "answerPlaceholder": "Opcja {{index}}",
@@ -725,6 +740,7 @@
         "errorDialOutFailed": "Nie udało się wybrać numeru. Połączenie nieudane",
         "errorDialOutStatus": "Błąd podczas uzyskiwania stanu połączenia",
         "errorMissingName": "Podaj imię, aby dołączyć do spotkania",
+		"errorNoPermissions": "Musisz włączyć dostęp do mikrofonu i kamery",
         "errorStatusCode": "Błąd wybierania, kod statusu: {{status}}",
         "errorValidation": "Weryfikacja numeru zakończona niepowodzeniem",
         "iWantToDialIn": "Chcę się wdzwonić",
@@ -782,6 +798,7 @@
         "expandedPending": "Nagrywanie się rozpoczyna…",
         "failedToStart": "Nagrywanie nie jest możliwe",
         "fileSharingdescription": "Udostępnij nagranie uczestnikom spotkania",
+		"inProgress": "Trwa nagrywanie lub transmisja na żywo",
         "linkGenerated": "Wygenerowano link do nagrania.",
         "live": "NA ŻYWO",
         "loggedIn": "Zalogowano jako {{userName}}",
@@ -794,6 +811,7 @@
         "serviceDescription": "Twoje nagranie zostanie zapisane przez usługę nagrywania",
         "serviceDescriptionCloud": "Nagrywanie w chmurze",
         "serviceName": "Usługa nagrywania",
+        "sessionAlreadyActive": "Ta sesja jest już nagrywana lub transmitowana na żywo.",
         "signIn": "Zaloguj się",
         "signOut": "Wyloguj się",
         "unavailable": "Ups! {{serviceName}} w tej chwili niedostępny. Próbujemy rozwiązać ten problem. Spróbuj ponownie później.",
@@ -806,8 +824,8 @@
     "security": {
         "about": "Możesz dodać $t(lockRoomPassword) do spotkania. Uczestnicy będą musieli wprowadzić $t(lockRoomPassword) przed dołączeniem do spotkania.",
         "aboutReadOnly": "Uczestnicy posiadający uprawnienia do moderacji mogą ustawić $t(lockRoomPassword) do spotkania. Uczestnicy będą musieli wprowadzić $t(lockRoomPassword) zanim zostaną dołączeni do spotkania.",
-        "insecureRoomNameWarning": "Nazwa pokoju nie jest bezpieczna. Niepowołaniu uczestnicy mogą dołączyć do spotkania. Proszę rozważyć ustawienie hasła spotkania używając przycisku Opcje zabezpieczeń.",
-        "securityOptions": "Opcje zabezpieczeń"
+		"header": "Opcje zabezpieczeń",
+        "insecureRoomNameWarning": "Nazwa pokoju nie jest bezpieczna. Niepowołaniu uczestnicy mogą dołączyć do spotkania. Proszę rozważyć ustawienie hasła spotkania używając przycisku Opcje zabezpieczeń."
     },
     "settings": {
         "calendar": {
@@ -827,7 +845,6 @@
         "language": "Język",
         "loggedIn": "Zalogowano jako {{name}}",
         "microphones": "Mikrofony",
-        "sounds": "Dźwięki",
         "moderator": "Moderacja",
         "more": "Więcej",
         "name": "Nazwa",
@@ -840,8 +857,11 @@
         "selectAudioOutput": "Wyjście audio",
         "selectCamera": "Kamera",
         "selectMic": "Mikrofon",
+		"selfView": "Widok własny",
+        "sounds": "Dźwięki",
         "speakers": "Głośniki",
         "startAudioMuted": "Wycisz wszystkich dołączających",
+        "startReactionsMuted": "Wycisz dźwięki reakcji dla wszystkich",
         "startVideoMuted": "Ukryj wszystkich dołączających",
         "talkWhileMuted": "Jesteś wyciszony",
         "title": "Ustawienia"
@@ -874,13 +894,20 @@
     },
     "speaker": "Mówca",
     "speakerStats": {
-        "search": "Wyszukaj",
+        "angry": "Zły",
+        "disgusted": "Oburzony",
+        "fearful": "Przerażony",
+        "happy": "Szczęśliwy",
         "hours": "{{count}} godz.",
         "minutes": "{{count}} min.",
         "name": "Nazwa",
+        "neutral": "Neutralny",
+        "sad": "Smutny",
+        "search": "Wyszukaj",
         "seconds": "{{count}} sek.",
+        "speakerTime": "Czas mówcy",
         "speakerStats": "Statystyki mówców",
-        "speakerTime": "Czas mówcy"
+        "surprised": "Zdziwiony"
     },
     "startupoverlay": {
         "policyText": " ",
@@ -897,6 +924,7 @@
             "audioOnly": "Przełączanie tylko audio",
             "audioRoute": "Wybierz urządzenie dźwiękowe",
             "boo": "Buczenie",
+			"breakoutRoom": "Dołącz/opuść pokój podgrupy",
             "callQuality": "Zarządzanie jakością obrazu",
             "cc": "Przełączanie napisów",
             "chat": "Przełączanie okna rozmowy",
@@ -980,7 +1008,9 @@
         "hangup": "Opuść spotkanie",
         "help": "Pomoc",
         "invite": "Zaproś uczestników",
+		"joinBreakoutRoom": "Dołącz do pokoju podgrupy",
         "laugh": "Śmiech",
+		"leaveBreakoutRoom": "Opuść pokój spotkań",
         "like": "Kciuk w górę",
         "lobbyButtonDisable": "Wyłącz tryb lobby",
         "lobbyButtonEnable": "Włącz tryb lobby",
@@ -1070,7 +1100,10 @@
         "pending": "{{displayName}} został zaproszony"
     },
     "videoStatus": {
+        "adjustFor": "Dostosuj do:",
         "audioOnly": "DŹW",
+        "bestPerformance": "Najlepsza wydajność",
+        "highestQuality": "Najwyższa jakość",
         "audioOnlyExpanded": "Jesteś w trybie słabego łącza. W tym trybie będziesz otrzymywać tylko dźwięk i udostępnianie ekranu.",
         "callQuality": "Jakość obrazu",
         "hd": "HD",
@@ -1081,6 +1114,7 @@
         "ld": "LD",
         "ldTooltip": "Podgląd obrazu w niskiej rozdzielczości",
         "lowDefinition": "Niska rozdzielczość",
+		"performanceSettings": "Ustawienia wydajności",
         "sd": "SD",
         "sdTooltip": "Podgląd obrazu w standardowej rozdzielczości",
         "standardDefinition": "Standardowa rozdzielczość"
@@ -1093,14 +1127,15 @@
         "domuteVideoOfOthers": "Wyłącz kamerę pozostałym",
         "flip": "Odwrócenie",
         "grantModerator": "Przyznaj prawa moderatora",
+        "hideSelfView": "Ukryj widok własny",
         "kick": "Wyrzuć",
         "moderator": "Moderator",
         "mute": "Uczestnik ma wyciszone audio",
         "muted": "Wyciszony",
+		"videoMuted": "Kamera wyłączona",
         "remoteControl": "Kontrola zdalna",
         "show": "Pokaż na scenie",
-        "videomute": "Uczestnik zatrzymał kamerę",
-        "videoMuted": "Kamera wyłączona"
+        "videomute": "Uczestnik zatrzymał kamerę"
     },
     "welcomepage": {
         "addMeetingName": "Dodaj nazwę spotkania",
