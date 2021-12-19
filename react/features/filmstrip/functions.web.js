@@ -195,6 +195,13 @@ export function calculateThumbnailSizeForTileView({
     const viewHeight = clientHeight - (minVisibleRows * TILE_VERTICAL_MARGIN) - TILE_VIEW_GRID_VERTICAL_MARGIN;
     const initialWidth = viewWidth / columns;
     const initialHeight = viewHeight / minVisibleRows;
+
+    if (rows === 1) { // #10201
+        return {
+            height: initialHeight,
+            width: initialWidth
+        }
+    }
     const aspectRatioHeight = initialWidth / aspectRatio;
     const noScrollHeight = (clientHeight / rows) - TILE_VERTICAL_MARGIN;
     const scrollInitialWidth = (viewWidth - SCROLL_SIZE) / columns;
@@ -216,8 +223,8 @@ export function calculateThumbnailSizeForTileView({
 
 
     return {
-        height: initialHeight,
-        width: initialWidth
+        height,
+        width
     };
 }
 
