@@ -180,7 +180,8 @@
     "joinInApp": "Rejoindre la réunion en utilisant l'application",
     "launchWebButton": "Lancer dans le navigateur",
     "title": "Lancement de votre réunion dans {{app}} en cours ...",
-    "tryAgainButton": "Réessayez sur le bureau"
+    "tryAgainButton": "Réessayez sur le bureau",
+    "unsupportedBrowser": "Il semble que vous utilisez un navigateur non supporté."
   },
   "defaultLink": "ex. {{url}}",
   "defaultNickname": "ex. Jean Dupont",
@@ -418,6 +419,7 @@
     "desktopShareError": "Impossible de créer le partage de bureau",
     "desktopShare":"Partage de bureau",
     "webAssemblyWarning": "WebAssembly non supporté",
+    "webAssemblyWarningDescription": "WebAssembly invalidé ou non supporté par ce navigateur",
     "backgroundEffectError": "Erreur dans l'application de l'effet d'arrière-plan."
   },
   "feedback": {
@@ -579,10 +581,12 @@
     "allowedUnmute": "Vous pouvez réactiver votre écran, votre caméra ou partager votre écran.",
     "audioUnmuteBlockedTitle": "Rétablissement du son bloqué !",
     "audioUnmuteBlockedDescription": "Le rétablissement du son a été bloqué temporairement en raison de limites système.",
+    "chatMessages": "Messages de chat",
     "connectedOneMember": "{{name}} a rejoint la réunion",
     "connectedThreePlusMembers": "{{name}} et {{count}} autres personnes ont rejoint la réunion",
     "connectedTwoMembers": "{{first}} et {{second}} ont rejoint la réunion",
     "disconnected": "déconnecté",
+    "displayNotifications": "Afficher les notifications pour",
     "focus": "Focus de conférence",
     "focusFail": "{{component}} n'est pas disponible - réessayez dans {{ms}} sec",
     "hostAskedUnmute": "Le modérateur souhaite vous donner la parole",
@@ -607,6 +611,7 @@
     "raisedHands": "{{participantName}} et {{raisedHands}} autres personnes",    
     "screenShareNoAudio": " La case Partager l'audio n'a pas été cochée dans l'écran de sélection de la fenêtre.",
     "screenShareNoAudioTitle": "La case Partager l'audio n'a pas été cochée",
+    "selfViewTitle": "Vous pouvez toujours rétablir l'affichage de votre propre vidéo dans les paramètres",
     "somebody": "Quelqu'un",
     "startSilentTitle": "Vous avez rejoint sans sortie audio !",
     "startSilentDescription": "Rejoignez la réunion de nouveau pour activer l'audio",
@@ -779,6 +784,7 @@
     "title": "Profil"
   },
   "raisedHand": "Aimerait prendre la parole",
+  "raisedHandsLabel": "Nombre de mains levées",
   "recording": {
     "limitNotificationDescriptionWeb": "En raison d'une forte demande, votre enregistrement sera limité à {{limit}} min. Pour des enregistrements illimités, essayez <a href={{url}} rel='noopener noreferrer' target='_blank'> {{app}} </a>.",
     "limitNotificationDescriptionNative": "En raison d'une forte demande, votre enregistrement sera limité à {{limit}} min. Pour des enregistrements illimités, essayez <3> {{app}} </3>.",
@@ -821,8 +827,8 @@
   "security": {
     "about": "Vous pouvez ajouter un mot de passe à votre réunion. Les participants devront fournir le mot de passe avant de pouvoir rejoindre la réunion.",
     "aboutReadOnly": "Les modérateurs peuvent ajouter un mot de passe à la réunion. Les participants devront fournir le mot de passe avant de pouvoir rejoindre la réunion.",
-    "insecureRoomNameWarning": "Le nom de la salle est peu sûr. Des participants non désirés peuvent rejoindre votre réunion. Pensez à sécuriser votre réunion en cliquant sur le bouton de sécurité.",
-    "securityOptions": "Options de sécurité"
+    "header": "Options de sécurité",
+    "insecureRoomNameWarning": "Le nom de la salle est peu sûr. Des participants non désirés peuvent rejoindre votre réunion. Pensez à sécuriser votre réunion en cliquant sur le bouton de sécurité."
   },
   "settings": {
     "calendar": {
@@ -854,6 +860,7 @@
     "selectAudioOutput": "Sortie audio",
     "selectCamera": "Caméra",
     "selectMic": "Microphone",
+    "selfView": "Affichage de votre propre vidéo",
     "sounds": "Sons",
     "speakers": "Haut-parleurs",
     "startAudioMuted": "Tout le monde commence en muet",
@@ -946,8 +953,8 @@
       "mute": "Activer / Désactiver l'audio",
       "muteEveryone": "Couper le micro de tout le monde",
       "muteEveryoneElse": "Couper le micro de tous les autres",
-      "muteEveryonesVideo": "Couper la caméra de tout le monde",
-      "muteEveryoneElsesVideo": "Couper la caméra de tout les autres",
+      "muteEveryonesVideoStream": "Couper la caméra de tout le monde",
+      "muteEveryoneElsesVideoStream": "Couper la caméra de tous les autres",
       "participants": "Participants",
       "pip": "Activer / Désactiver le mode Picture in Picture",
       "privateMessage": "Envoyer un message privé",
@@ -1123,6 +1130,7 @@
     "domuteVideoOfOthers": "Couper la caméra des autres",
     "flip": "Balancer",
     "grantModerator": "Donner des droits de modérateur",
+    "hideSelfView": "Cacher l'affichage de votre propre vidéo",
     "kick": "Exclure",
     "moderator": "Modérateur",
     "mute": "Un participant a coupé son micro",
