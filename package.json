@@ -158,6 +158,7 @@
     "eslint-plugin-react": "7.26.1",
     "eslint-plugin-react-native": "3.11.0",
     "expose-loader": "3.0.0",
+    "flow-bin": "0.104.0",
     "imports-loader": "0.7.1",
     "jest": "27.4.5",
     "jetifier": "1.6.4",
