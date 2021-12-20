@@ -30,7 +30,10 @@ import {
     TILE_VERTICAL_MARGIN,
     TILE_VIEW_GRID_HORIZONTAL_MARGIN,
     TILE_VIEW_GRID_VERTICAL_MARGIN,
-    VERTICAL_FILMSTRIP_MIN_HORIZONTAL_MARGIN
+    VERTICAL_FILMSTRIP_MIN_HORIZONTAL_MARGIN,
+    TILE_MIN_HEIGHT_LARGE,
+    TILE_MIN_HEIGHT_SMALL,
+    TILE_PORTRAIT_ASPECT_RATIO
 } from './constants';
 
 export * from './functions.any';
@@ -183,7 +186,8 @@ export function calculateThumbnailSizeForTileView({
     rows,
     clientWidth,
     clientHeight,
-    disableResponsiveTiles
+    disableResponsiveTiles,
+    disableTileEnlargement
 }: Object) {
     let aspectRatio = TILE_ASPECT_RATIO;
 
@@ -191,6 +195,7 @@ export function calculateThumbnailSizeForTileView({
         aspectRatio = SQUARE_TILE_ASPECT_RATIO;
     }
 
+    const minHeight = clientWidth < ASPECT_RATIO_BREAKPOINT ? TILE_MIN_HEIGHT_SMALL : TILE_MIN_HEIGHT_LARGE;
     const viewWidth = clientWidth - (columns * TILE_HORIZONTAL_MARGIN) - TILE_VIEW_GRID_HORIZONTAL_MARGIN;
     const viewHeight = clientHeight - (minVisibleRows * TILE_VERTICAL_MARGIN) - TILE_VIEW_GRID_VERTICAL_MARGIN;
     const initialWidth = viewWidth / columns;
@@ -212,13 +217,54 @@ export function calculateThumbnailSizeForTileView({
         // window.
         height = Math.floor(Math.max(Math.min(scrollAspectRatioHeight, initialHeight), noScrollHeight));
         width = Math.floor(aspectRatio * height);
+
+        return {
+            height,
+            width
+        };
     }
 
+    if (disableTileEnlargement) {
+        return {
+            height,
+            width
+        };
+    }
+
+    if (initialHeight > noScrollHeight) {
+        height = Math.max(height, viewHeight / rows, minHeight);
+        width = Math.max(width, initialWidth);
+    } else {
+        height = Math.max(initialHeight, minHeight);
+        width = initialWidth;
+    }
+
+    if (height > width) {
+        const heightFromWidth = TILE_PORTRAIT_ASPECT_RATIO * width;
+
+        if (height > heightFromWidth && heightFromWidth < minHeight) {
+            return {
+                height,
+                width: height / TILE_PORTRAIT_ASPECT_RATIO
+            };
+        }
+
+        return {
+            height: Math.min(height, heightFromWidth),
+            width
+        };
+    } else if (height < width) {
+        return {
+            height,
+            width: Math.min(width, aspectRatio * height)
+        };
+    }
 
     return {
-        height: initialHeight,
-        width: initialWidth
+        height,
+        width
     };
+
 }
 
 /**

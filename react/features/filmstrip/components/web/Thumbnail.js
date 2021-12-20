@@ -469,12 +469,17 @@ class Thumbnail extends Component<Props, State> {
             _isHidden,
             _isScreenSharing,
             _participant,
+            _videoTrack,
             _width,
             horizontalOffset,
             style
         } = this.props;
 
+
         const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
+        const jitsiVideoTrack = _videoTrack?.jitsiTrack;
+        const track = jitsiVideoTrack?.track;
+        const isPortraitVideo = ((track && track.getSettings()?.aspectRatio) || 1) < 1;
 
         let styles: {
             avatar: Object,
@@ -494,7 +499,7 @@ class Thumbnail extends Component<Props, State> {
         }
 
         let videoStyles = null;
-        const doNotStretchVideo = (_height < 320 && tileViewActive)
+        const doNotStretchVideo = (isPortraitVideo && tileViewActive)
             || _disableTileEnlargement
             || _isScreenSharing;
 
