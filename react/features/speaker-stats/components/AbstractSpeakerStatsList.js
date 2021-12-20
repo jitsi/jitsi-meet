@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getLocalParticipant } from '../../base/participants';
 import { initUpdateStats } from '../actions';
 import {
+    REDUCE_EXPRESSIONS_THRESHOLD,
     SPEAKER_STATS_RELOAD_INTERVAL
 } from '../constants';
 
@@ -94,7 +95,7 @@ const abstractSpeakerStatsList = (speakerStatsItem: Function): Function[] => {
             props.facialExpressions = statsModel.getFacialExpressions();
         }
         props.showFacialExpressions = enableFacialRecognition;
-        props.reduceExpressions = clientWidth < 750;
+        props.reduceExpressions = clientWidth < REDUCE_EXPRESSIONS_THRESHOLD;
         props.displayName = statsModel.getDisplayName() || defaultRemoteDisplayName;
         props.t = t;
 
