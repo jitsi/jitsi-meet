@@ -102,10 +102,13 @@
     },
     "connectionindicator": {
         "address": "Адрес:",
+        "audio_ssrc": "Аудио SSRC:",
         "bandwidth": "Средняя скорость:",
         "bitrate": "Битрейт:",
         "bridgeCount": "Количество серверов: ",
+        "codecs": "Кодеки (A/V): ",
         "connectedTo": "Подключен к:",
+        "e2e_rtt": "E2E RTT:",
         "framerate": "Частота кадров:",
         "less": "Краткая информация",
         "localaddress_0": "Локальный адрес:",
@@ -114,6 +117,7 @@
         "localport_0": "Локальный порт:",
         "localport_1": "Локальных порта:",
         "localport_2": "Локальных портов:",
+        "maxEnabledResolution": "Максимальное разрешение",
         "more": "Подробная информация",
         "packetloss": "Потери пакетов:",
         "quality": {
@@ -130,10 +134,13 @@
         "remoteport_1": "Удаленных порта:",
         "remoteport_2": "Удаленных портов:",
         "resolution": "Разрешение:",
+        "savelogs": "Сохранить логи",
+        "participant_id": "id участника:",
         "status": "Связь:",
         "transport_0": "Метод отправки:",
         "transport_1": "Метода отправки:",
-        "transport_2": "Методов отправки:"
+        "transport_2": "Методов отправки:",
+        "video_ssrc": "Видео SSRC:"
     },
     "dateUtils": {
         "earlier": "Ранее",
@@ -559,6 +566,30 @@
         "suboptimalExperienceTitle": "Предупреждение браузера",
         "unmute": "Включить микрофон"
     },
+    "participantsPane": {
+        "close": "Закрыть",
+        "header": "Участники",
+        "headings": {
+            "lobby": "Лобби ({{count}})",
+            "participantsList": "Список участников ({{count}})",
+            "waitingLobby": "Ожидают в лобби ({{count}})"
+        },
+        "actions": {
+            "allow": "Разрешить",
+            "allowVideo": "Разрешить видео",
+            "audioModeration": "Разрешить выключить микрофон",
+            "blockEveryoneMicCamera": "Заблокировать у всех микрофон и камеру",
+            "invite": "Пригласить",
+            "askUnmute": "Попросить разрешение включить микрофон",
+            "mute": "Выключить звук",
+            "muteAll": "Выключить звук у всех",
+            "muteEveryoneElse": "Выключить микрофон у остальных",
+            "stopEveryonesVideo": "Выключить у всех камеру",
+            "stopVideo": "Остановить видео",
+            "unblockEveryoneMicCamera": "Разблокировать у всех микрофон и камеру",
+            "videoModeration": "Разрешить видео"
+        }
+    },
     "passwordDigitsOnly": "До {{number}} цифр",
     "passwordSetRemotely": "установлен другим участником",
     "poweredby": "работает на",
@@ -744,7 +775,7 @@
             "hangup": "Завершить звонок",
             "help": "Справка",
             "invite": "Пригласить",
-            "kick": "Выкинуть участника",
+            "kick": "Отключить участника",
             "lobbyButton": "Вкл/Выкл режим лобби",
             "localRecording": "Вкл/Выкл кнопки записи",
             "lockRoom": "Установить пароль",
@@ -887,17 +918,21 @@
         "standardDefinition": "Стандартное качество (SD)"
     },
     "videothumbnail": {
+        "connectionInfo": "Информация о соединении",
         "domute": "Выключить звук",
-        "domuteOthers": "Выключить остальных",
+        "domuteVideo": "Выключить видео",
+        "domuteOthers": "Выключить звук остальным",
+        "domuteVideoOfOthers": "Выключить видео остальным",
         "flip": "Отразить",
         "grantModerator": "Сделать модератором",
-        "kick": "Выкинуть",
+        "kick": "Отключить",
         "moderator": "Модератор",
         "mute": "Без звука",
         "muted": "Звук выключен",
+        "videoMuted": "Камера выключена",
         "remoteControl": "Начать / Остановить дистанционный контроль",
         "show": "Показать крупным планом",
-        "videomute": "Участник отключил камеру"
+        "videomute": "Участник выключил камеру"
     },
     "welcomepage": {
         "accessibilityLabel": {
