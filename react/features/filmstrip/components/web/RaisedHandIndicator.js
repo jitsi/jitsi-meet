@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { IconRaisedHand } from '../../../base/icons';
 import { getParticipantById, hasRaisedHand } from '../../../base/participants';
 import { BaseIndicator } from '../../../base/react';
+import BaseTheme from '../../../base/ui/components/BaseTheme';
 
 /**
  * The type of the React {@code Component} props of {@link RaisedHandIndicator}.
@@ -33,7 +34,7 @@ type Props = {
 const useStyles = makeStyles(theme => {
     return {
         raisedHandIndicator: {
-            backgroundColor: theme.palette.warning01,
+            backgroundColor: theme.palette.warning02,
             padding: '2px',
             zIndex: 3,
             display: 'inline-block',
@@ -65,6 +66,7 @@ const RaisedHandIndicator = ({
         <div className = { styles.raisedHandIndicator }>
             <BaseIndicator
                 icon = { IconRaisedHand }
+                iconColor = { BaseTheme.palette.uiBackground }
                 iconSize = { `${iconSize}px` }
                 tooltipKey = 'raisedHand'
                 tooltipPosition = { tooltipPosition } />

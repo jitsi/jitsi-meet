@@ -27,6 +27,11 @@ type Props = {
     icon: string,
 
     /**
+     * Size of icon.
+     */
+    iconSize: ?number,
+
+    /**
      * Additional style to be applied to the icon element.
      */
     iconStyle: StyleType
@@ -43,7 +48,7 @@ export default class BaseIndicator extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { highlight, icon, iconStyle, backgroundColor } = this.props;
+        const { highlight, icon, iconStyle, backgroundColor, iconSize } = this.props;
         const highlightedIndicator = { ...styles.highlightedIndicator };
 
         if (backgroundColor) {
@@ -55,6 +60,7 @@ export default class BaseIndicator extends Component<Props> {
                 style = { [ BASE_INDICATOR,
                     highlight ? highlightedIndicator : null ] }>
                 <Icon
+                    size = { iconSize }
                     src = { icon }
                     style = { [
                         styles.indicator,
