@@ -490,6 +490,9 @@ var config = {
     // Default remote name to be displayed
     // defaultRemoteDisplayName: 'Fellow Jitster',
 
+    // Hides the display name from the participant thumbnail
+    // hideDisplayName: false
+
     // Default language for the user interface.
     // defaultLanguage: 'en',
 

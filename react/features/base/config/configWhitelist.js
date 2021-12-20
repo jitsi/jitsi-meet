@@ -162,6 +162,7 @@ export default [
     'googleApiApplicationClientID',
     'hiddenPremeetingButtons',
     'hideConferenceSubject',
+    'hideDisplayName',
     'hideRecordingLabel',
     'hideParticipantsStats',
     'hideConferenceTimer',
