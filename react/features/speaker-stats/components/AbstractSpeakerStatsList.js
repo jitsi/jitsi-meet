@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getLocalParticipant } from '../../base/participants';
 import { initUpdateStats } from '../actions';
 import {
+    REDUCE_EXPRESSIONS_THRESHOLD,
     SPEAKER_STATS_RELOAD_INTERVAL
 } from '../constants';
 
@@ -22,6 +23,7 @@ const abstractSpeakerStatsList = (speakerStatsItem: Function): Function[] => {
     const conference = useSelector(state => state['features/base/conference'].conference);
     const speakerStats = useSelector(state => state['features/speaker-stats'].stats);
     const localParticipant = useSelector(getLocalParticipant);
+    const { clientWidth } = useSelector(state => state['features/base/responsive-ui']);
     const { defaultRemoteDisplayName, enableFacialRecognition } = useSelector(
         state => state['features/base/config']) || {};
     const { facialExpressions: localFacialExpressions } = useSelector(
@@ -93,6 +95,7 @@ const abstractSpeakerStatsList = (speakerStatsItem: Function): Function[] => {
             props.facialExpressions = statsModel.getFacialExpressions();
         }
         props.showFacialExpressions = enableFacialRecognition;
+        props.reduceExpressions = clientWidth < REDUCE_EXPRESSIONS_THRESHOLD;
         props.displayName = statsModel.getDisplayName() || defaultRemoteDisplayName;
         props.t = t;
 
