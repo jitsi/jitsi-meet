@@ -18,6 +18,7 @@ import { getConferenceInfo } from '../functions';
 import ConferenceInfoContainer from './ConferenceInfoContainer';
 import InsecureRoomNameLabel from './InsecureRoomNameLabel';
 import ParticipantsCount from './ParticipantsCount';
+import RaisedHandsCountLabel from './RaisedHandsCountLabel';
 import SubjectText from './SubjectText';
 
 /**
@@ -65,6 +66,10 @@ const COMPONENTS = [
     {
         Component: LocalRecordingLabel,
         id: 'local-recording'
+    },
+    {
+        Component: RaisedHandsCountLabel,
+        id: 'raised-hands-count'
     },
     {
         Component: TranscribingLabel,
@@ -115,7 +120,9 @@ class ConferenceInfo extends Component<Props> {
         }
 
         return (
-            <ConferenceInfoContainer visible = { this.props._visible } >
+            <ConferenceInfoContainer
+                id = 'autoHide'
+                visible = { this.props._visible }>
                 {
                     COMPONENTS
                         .filter(comp => autoHide.includes(comp.id))
@@ -142,7 +149,9 @@ class ConferenceInfo extends Component<Props> {
         }
 
         return (
-            <ConferenceInfoContainer visible = { true } >
+            <ConferenceInfoContainer
+                id = 'alwaysVisible'
+                visible = { true } >
                 {
                     COMPONENTS
                         .filter(comp => alwaysVisible.includes(comp.id))

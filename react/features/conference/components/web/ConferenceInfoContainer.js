@@ -2,21 +2,30 @@
 
 import React from 'react';
 
+import { isAlwaysOnTitleBarEmpty } from '../functions.web';
+
 type Props = {
 
     /**
      * The children components.
      */
-     children: React$Node,
+    children: React$Node,
 
-     /**
-      * Whether this conference info container should be visible or not.
-      */
-     visible: boolean
+    /**
+     * Id of the component.
+     */
+    id?: string,
+
+    /**
+    * Whether this conference info container should be visible or not.
+    */
+    visible: boolean
 }
 
-export default ({ visible, children }: Props) => (
-    <div className = { `subject${visible ? ' visible' : ''}` }>
+export default ({ visible, children, id }: Props) => (
+    <div
+        className = { `subject${isAlwaysOnTitleBarEmpty() ? '' : ' with-always-on'}${visible ? ' visible' : ''}` }
+        id = { id }>
         <div className = { 'subject-info-container' }>
             {children}
         </div>

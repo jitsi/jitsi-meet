@@ -784,6 +784,7 @@
         "title": "Profile"
     },
     "raisedHand": "Would like to speak",
+    "raisedHandsLabel": "Number of raised hands",
     "recording": {
         "limitNotificationDescriptionWeb": "Due to high demand your recording will be limited to {{limit}} min. For unlimited recordings try <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "limitNotificationDescriptionNative": "Due to high demand your recording will be limited to {{limit}} min. For unlimited recordings try <3>{{app}}</3>.",
