@@ -382,8 +382,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
         if not affiliation or affiliation == 'none' then
             local reply = st.error_reply(stanza, 'auth', 'registration-required'):up();
             reply.tags[1].attr.code = '407';
-            reply:tag('x', {xmlns = MUC_NS}):up();
-            reply:tag('lobbyroom'):text(room._data.lobbyroom);
+            reply:tag('lobbyroom'):text(room._data.lobbyroom):up();
             event.origin.send(reply:tag('x', {xmlns = MUC_NS}));
             return true;
         end
