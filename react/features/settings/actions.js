@@ -10,7 +10,6 @@ import {
 import { openDialog } from '../base/dialog';
 import { i18next } from '../base/i18n';
 import { updateSettings } from '../base/settings';
-import { setPrejoinPageVisibility, setSkipPrejoinIsChanging } from '../prejoin/actions';
 import { setScreenshareFramerate } from '../screen-share/actions';
 
 import {
@@ -88,17 +87,9 @@ export function submitMoreTab(newState: Object): Function {
         const showPrejoinPage = newState.showPrejoinPage;
 
         if (showPrejoinPage !== currentState.showPrejoinPage) {
-            // The 'showPrejoin' flag starts as 'true' on every new session.
-            // This prevents displaying the prejoin page when the user re-enables it.
-            if (showPrejoinPage && getState()['features/prejoin']?.showPrejoin) {
-                dispatch(setPrejoinPageVisibility(false));
-            }
-            batch(() => {
-                dispatch(setSkipPrejoinIsChanging(true));
-                dispatch(updateSettings({
-                    userSelectedSkipPrejoin: !showPrejoinPage
-                }));
-            });
+            dispatch(updateSettings({
+                userSelectedSkipPrejoin: !showPrejoinPage
+            }));
         }
 
         const enabledNotifications = newState.enabledNotifications;

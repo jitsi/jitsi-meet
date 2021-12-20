@@ -27,7 +27,6 @@ import {
     SET_DIALOUT_NUMBER,
     SET_DIALOUT_STATUS,
     SET_PREJOIN_DISPLAY_NAME_REQUIRED,
-    SET_SKIP_PREJOIN_CHANGING,
     SET_SKIP_PREJOIN_RELOAD,
     SET_JOIN_BY_PHONE_DIALOG_VISIBLITY,
     SET_PRECALL_TEST_RESULTS,
@@ -473,20 +472,6 @@ export function setPrejoinDisplayNameRequired() {
 export function setDialOutNumber(value: string) {
     return {
         type: SET_DIALOUT_NUMBER,
-        value
-    };
-}
-
-/**
- * Sets a flag which signals that the option to skip the prejoin
- * page on join has been modified during this session.
- *
- * @param {boolean} value - The visibility value.
- * @returns {Object}
- */
-export function setSkipPrejoinIsChanging(value: boolean) {
-    return {
-        type: SET_SKIP_PREJOIN_CHANGING,
         value
     };
 }
