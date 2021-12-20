@@ -384,7 +384,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
             reply.tags[1].attr.code = '407';
             reply:tag('lobbyroom'):text(room._data.lobbyroom):up():up();
 
-            -- Drop this tag at some point (when all mobile clients and jigasi are updated), as this violates the rfc
+            -- TODO: Drop this tag at some point (when all mobile clients and jigasi are updated), as this violates the rfc
             reply:tag('lobbyroom'):text(room._data.lobbyroom):up();
 
             event.origin.send(reply:tag('x', {xmlns = MUC_NS}));
