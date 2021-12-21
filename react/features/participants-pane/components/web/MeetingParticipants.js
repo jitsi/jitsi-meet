@@ -1,7 +1,7 @@
 // @flow
 
 import { makeStyles } from '@material-ui/styles';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
@@ -45,8 +45,10 @@ const useStyles = makeStyles(theme => {
 type Props = {
     currentRoom: ?Object,
     participantsCount: number,
-    showInviteButton: boolean,
     overflowDrawer: boolean,
+    searchString: string,
+    setSearchString: Function,
+    showInviteButton: boolean,
     sortedParticipantIds: Array<string>
 };
 
@@ -64,11 +66,12 @@ function MeetingParticipants({
     currentRoom,
     overflowDrawer,
     participantsCount,
+    searchString,
+    setSearchString,
     showInviteButton,
     sortedParticipantIds = []
 }: Props) {
     const dispatch = useDispatch();
-    const [ searchString, setSearchString ] = useState('');
     const { t } = useTranslation();
 
     const [ lowerMenu, , toggleMenu, menuEnter, menuLeave, raiseContext ] = useContextMenu();
