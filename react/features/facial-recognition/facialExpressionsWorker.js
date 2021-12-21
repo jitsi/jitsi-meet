@@ -37,7 +37,6 @@ const WEBGL_TIME_INTERVAL = 1000;
  */
 const CPU_TIME_INTERVAL = 6000;
 
-// eslint-disable-next-line no-unused-vars
 const window = {
     screen: {
         width: 1280,
@@ -47,8 +46,11 @@ const window = {
 };
 
 onmessage = async function(message) {
-    if (message.data.id === 'SET_MODELS_URL') {
+    if (message.data.id === 'INIT_WORKER') {
         modelsURL = message.data.url;
+        if (message.data.windowScreenSize) {
+            window.screen = message.data.windowScreenSize;
+        }
     }
 
     // Receives image data

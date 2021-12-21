@@ -118,8 +118,12 @@ export function loadWorker() {
             }
         };
         worker.postMessage({
-            id: 'SET_MODELS_URL',
-            url: baseUrl
+            id: 'INIT_WORKER',
+            url: baseUrl,
+            windowScreenSize: window.screen ? {
+                width: window.screen.width,
+                height: window.screen.height
+            } : undefined
         });
         dispatch(startFacialRecognition());
     };
