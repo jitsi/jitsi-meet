@@ -1,3 +1,50 @@
-<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M16 6C16 3.79086 14.2091 2 12 2C9.79086 2 8 3.79086 8 6V12C8 13.8666 9.27853 15.4346 11.0076 15.8759C11.0026 15.9166 11 15.958 11 16V17.917C8.16229 17.441 6 14.973 6 12C6 11.4477 5.55228 11 5 11C4.44772 11 4 11.4477 4 12C4 16.0796 7.05369 19.446 11 19.9381V21C11 21.5523 11.4477 22 12 22C12.5523 22 13 21.5523 13 21V19.9381C16.9463 19.446 20 16.0796 20 12C20 11.4477 19.5523 11 19 11C18.4477 11 18 11.4477 18 12C18 14.973 15.8377 17.441 13 17.917V16C13 15.958 12.9974 15.9166 12.9924 15.8759C14.7215 15.4346 16 13.8666 16 12V6ZM12 4C10.8954 4 10 4.89543 10 6V12C10 13.1046 10.8954 14 12 14C13.1046 14 14 13.1046 14 12V6C14 4.89543 13.1046 4 12 4Z" />
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="24"
+   height="24"
+   viewBox="0 0 24 24"
+   version="1.1"
+   id="svg8594"
+   sodipodi:docname="microphone-empty.svg"
+   inkscape:version="1.1.1 (c3084ef, 2021-09-22)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs8598" />
+  <sodipodi:namedview
+     id="namedview8596"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="14.643003"
+     inkscape:cx="17.721775"
+     inkscape:cy="15.263263"
+     inkscape:window-width="1280"
+     inkscape:window-height="725"
+     inkscape:window-x="52"
+     inkscape:window-y="54"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg8594" />
+  <path
+     fill-rule="evenodd"
+     clip-rule="evenodd"
+     d="M16 6C16 3.79086 14.2091 2 12 2C9.79086 2 8 3.79086 8 6V12C8 13.8666 9.27853 15.4346 11.0076 15.8759C11.0026 15.9166 11 15.958 11 16V17.917C8.16229 17.441 6 14.973 6 12C6 11.4477 5.55228 11 5 11C4.44772 11 4 11.4477 4 12C4 16.0796 7.05369 19.446 11 19.9381V21C11 21.5523 11.4477 22 12 22C12.5523 22 13 21.5523 13 21V19.9381C16.9463 19.446 20 16.0796 20 12C20 11.4477 19.5523 11 19 11C18.4477 11 18 11.4477 18 12C18 14.973 15.8377 17.441 13 17.917V16C13 15.958 12.9974 15.9166 12.9924 15.8759C14.7215 15.4346 16 13.8666 16 12V6ZM12 4C10.8954 4 10 4.89543 10 6V12C10 13.1046 10.8954 14 12 14C13.1046 14 14 13.1046 14 12V6C14 4.89543 13.1046 4 12 4Z"
+     id="path8592" />
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-weight:normal;font-size:6.66667px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none"
+     x="2.7999728"
+     y="24.038784"
+     id="text9988"><tspan
+       sodipodi:role="line"
+       id="tspan9986"
+       x="2.7999728"
+       y="24.038784"
+       style="font-size:6.66667px">Audio</tspan></text>
 </svg>

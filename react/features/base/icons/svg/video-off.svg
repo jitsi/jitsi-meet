@@ -1,3 +1,50 @@
-<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M6.21892 4.99996H6.19791L3.11278 1.91484C2.78191 1.58396 2.24554 1.58388 1.91477 1.91465C1.584 2.24542 1.58409 2.78179 1.91496 3.11266L3.80226 4.99996H3.33341C2.41294 4.99996 1.66675 5.74615 1.66675 6.66663V13.3333C1.66675 14.2538 2.41294 15 3.33341 15H12.5001C12.8673 15 13.2068 14.8812 13.4823 14.68L16.8874 18.0851C17.2183 18.416 17.7546 18.416 18.0854 18.0853C18.4162 17.7545 18.4161 17.2181 18.0852 16.8873L14.1667 12.9688V12.9478L12.5001 11.2811V11.3021L7.86457 6.66663H7.88559L6.21892 4.99996ZM12.5001 8.88547V8.33329V6.66663H10.2812L8.61457 4.99996H12.5001C13.4206 4.99996 14.1667 5.74615 14.1667 6.66663V7.38091L17.0866 5.71241C17.4862 5.48407 17.9953 5.6229 18.2236 6.02249C18.2956 6.14841 18.3334 6.29092 18.3334 6.43594V13.564C18.3334 13.8767 18.1612 14.1492 17.9064 14.2917L14.5104 10.8958L16.6667 12.128V7.87193L14.1667 9.3005V10.5521L12.5001 8.88547ZM3.33341 6.66663H5.46892L12.1356 13.3333H3.33341V6.66663Z" />
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="20"
+   height="20"
+   viewBox="0 0 20 20"
+   version="1.1"
+   id="svg12"
+   sodipodi:docname="video-off.svg"
+   inkscape:version="1.1.1 (c3084ef, 2021-09-22)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs16" />
+  <sodipodi:namedview
+     id="namedview14"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="17.571604"
+     inkscape:cx="18.751846"
+     inkscape:cy="14.426686"
+     inkscape:window-width="1280"
+     inkscape:window-height="725"
+     inkscape:window-x="0"
+     inkscape:window-y="23"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg12" />
+  <path
+     fill-rule="evenodd"
+     clip-rule="evenodd"
+     d="M6.21892 4.99996H6.19791L3.11278 1.91484C2.78191 1.58396 2.24554 1.58388 1.91477 1.91465C1.584 2.24542 1.58409 2.78179 1.91496 3.11266L3.80226 4.99996H3.33341C2.41294 4.99996 1.66675 5.74615 1.66675 6.66663V13.3333C1.66675 14.2538 2.41294 15 3.33341 15H12.5001C12.8673 15 13.2068 14.8812 13.4823 14.68L16.8874 18.0851C17.2183 18.416 17.7546 18.416 18.0854 18.0853C18.4162 17.7545 18.4161 17.2181 18.0852 16.8873L14.1667 12.9688V12.9478L12.5001 11.2811V11.3021L7.86457 6.66663H7.88559L6.21892 4.99996ZM12.5001 8.88547V8.33329V6.66663H10.2812L8.61457 4.99996H12.5001C13.4206 4.99996 14.1667 5.74615 14.1667 6.66663V7.38091L17.0866 5.71241C17.4862 5.48407 17.9953 5.6229 18.2236 6.02249C18.2956 6.14841 18.3334 6.29092 18.3334 6.43594V13.564C18.3334 13.8767 18.1612 14.1492 17.9064 14.2917L14.5104 10.8958L16.6667 12.128V7.87193L14.1667 9.3005V10.5521L12.5001 8.88547ZM3.33341 6.66663H5.46892L12.1356 13.3333H3.33341V6.66663Z"
+     id="path10" />
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-weight:normal;font-size:6.66667px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none"
+     x="0.68292016"
+     y="20.032322"
+     id="text2528"><tspan
+       sodipodi:role="line"
+       id="tspan2526"
+       x="0.68292016"
+       y="20.032322"
+       style="font-size:6.66667px">Video</tspan></text>
 </svg>
