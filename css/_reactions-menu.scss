@@ -8,12 +8,6 @@
 	padding: 16px;
 
 	&.overflow {
-		width: auto;
-		padding-bottom: max(env(safe-area-inset-bottom, 0), 16px);
-		background-color: #141414;
-		box-shadow: none;
-		border-radius: 0;
-		position: relative;
 
 		.toolbox-icon {
 			width: 48px;

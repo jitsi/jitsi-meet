@@ -95,11 +95,13 @@ export const VideoStateIcons = {
     [MEDIA_STATE.FORCE_MUTED]: (
         <Icon
             color = '#E04757'
+            id = 'videoMuted'
             size = { 16 }
             src = { IconCameraEmptyDisabled } />
     ),
     [MEDIA_STATE.MUTED]: (
         <Icon
+            id = 'videoMuted'
             size = { 16 }
             src = { IconCameraEmptyDisabled } />
     ),

@@ -15,7 +15,7 @@ type Props = {
     /**
      * Color of the icon (if not provided by the style object).
      */
-    color?: string,
+    color?: ?string,
 
     /**
      * Id prop (mainly for autotests).
@@ -35,7 +35,7 @@ type Props = {
     /**
      * The size of the icon (if not provided by the style object).
      */
-    size?: number | string,
+    size?: ?number | string,
 
     /**
      * The preloaded icon component to render.

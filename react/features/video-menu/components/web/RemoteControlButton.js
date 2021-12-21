@@ -6,10 +6,9 @@ import {
     createRemoteVideoMenuButtonEvent,
     sendAnalytics
 } from '../../../analytics';
+import ContextMenuItem from '../../../base/components/context-menu/ContextMenuItem';
 import { translate } from '../../../base/i18n';
 import { IconRemoteControlStart, IconRemoteControlStop } from '../../../base/icons';
-
-import VideoMenuButton from './VideoMenuButton';
 
 // TODO: Move these enums into the store after further reactification of the
 // non-react RemoteVideo component.
@@ -76,19 +75,18 @@ class RemoteControlButton extends Component<Props> {
      */
     render() {
         const {
-            participantID,
             remoteControlState,
             t
         } = this.props;
 
-        let className, icon;
+        let disabled = false, icon;
 
         switch (remoteControlState) {
         case REMOTE_CONTROL_MENU_STATES.NOT_STARTED:
             icon = IconRemoteControlStart;
             break;
         case REMOTE_CONTROL_MENU_STATES.REQUESTING:
-            className = ' disabled';
+            disabled = true;
             icon = IconRemoteControlStart;
             break;
         case REMOTE_CONTROL_MENU_STATES.STARTED:
@@ -102,12 +100,13 @@ class RemoteControlButton extends Component<Props> {
         }
 
         return (
-            <VideoMenuButton
-                buttonText = { t('videothumbnail.remoteControl') }
-                displayClass = { className }
+            <ContextMenuItem
+                accessibilityLabel = { t('videothumbnail.remoteControl') }
+                className = 'kicklink'
+                disabled = { disabled }
                 icon = { icon }
-                id = { `remoteControl_${participantID}` }
-                onClick = { this._onClick } />
+                onClick = { this._onClick }
+                text = { t('videothumbnail.remoteControl') } />
         );
     }
 

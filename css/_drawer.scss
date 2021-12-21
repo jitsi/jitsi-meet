@@ -24,10 +24,9 @@
 }
 
 .drawer-menu {
-    max-height: calc(80vh - 64px);
     background: #242528;
     border-radius: 16px 16px 0 0;
-    overflow-y: scroll;
+    overflow-y: auto;
     margin-bottom: env(safe-area-inset-bottom, 0);
     width: 100%;
 
@@ -41,15 +40,6 @@
         svg {
             fill: none;
         }
-    }
-
-    .popupmenu {
-        margin: auto;
-        width: 100%;
-    }
-
-    .popupmenu__item {
-        height: 48px;
     }
 
     &#{&} .overflow-menu {

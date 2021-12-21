@@ -8,10 +8,9 @@ import { translate } from '../../../base/i18n';
 import { Icon, IconInviteMore } from '../../../base/icons';
 import { getLocalParticipant, getParticipantCountWithFake, getRemoteParticipants } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { normalizeAccents } from '../../../base/util/strings';
 import { getBreakoutRooms, getCurrentRoomId } from '../../../breakout-rooms/functions';
 import { doInvitePeople } from '../../../invite/actions.native';
-import { shouldRenderInviteButton } from '../../functions';
+import { participantMatchesSearch, shouldRenderInviteButton } from '../../functions';
 
 import ClearableInput from './ClearableInput';
 import MeetingParticipantItem from './MeetingParticipantItem';
@@ -56,6 +55,16 @@ type Props = {
     dispatch: Function,
 
     /**
+     * Participants search string.
+     */
+    searchString: string,
+
+    /**
+     * Function to update the search string.
+     */
+    setSearchString: Function,
+
+    /**
      * Translation function.
      */
     t: Function,
@@ -66,14 +75,10 @@ type Props = {
     theme: Object
 }
 
-type State = {
-    searchString: string
-};
-
 /**
  *  The meeting participant list component.
  */
-class MeetingParticipantList extends PureComponent<Props, State> {
+class MeetingParticipantList extends PureComponent<Props> {
 
     /**
      * Creates new MeetingParticipantList instance.
@@ -82,10 +87,6 @@ class MeetingParticipantList extends PureComponent<Props, State> {
      */
     constructor(props: Props) {
         super(props);
-
-        this.state = {
-            searchString: ''
-        };
 
         this._keyExtractor = this._keyExtractor.bind(this);
         this._onInvite = this._onInvite.bind(this);
@@ -139,27 +140,10 @@ class MeetingParticipantList extends PureComponent<Props, State> {
      * @returns {ReactElement}
      */
     _renderParticipant({ item/* , index, separators */ }) {
-        const { _localParticipant, _remoteParticipants } = this.props;
-        const { searchString } = this.state;
+        const { _localParticipant, _remoteParticipants, searchString } = this.props;
         const participant = item === _localParticipant?.id ? _localParticipant : _remoteParticipants.get(item);
-        const displayName = participant?.name || '';
 
-        if (displayName) {
-            const names = normalizeAccents(displayName)
-                .toLowerCase()
-                .split(' ');
-            const lowerCaseSearch = normalizeAccents(searchString).toLowerCase();
-
-            for (const name of names) {
-                if (lowerCaseSearch === '' || name.startsWith(lowerCaseSearch)) {
-                    return (
-                        <MeetingParticipantItem
-                            key = { item }
-                            participant = { participant } />
-                    );
-                }
-            }
-        } else if (displayName === '' && searchString === '') {
+        if (participantMatchesSearch(participant, searchString)) {
             return (
                 <MeetingParticipantItem
                     key = { item }
@@ -179,9 +163,7 @@ class MeetingParticipantList extends PureComponent<Props, State> {
      * @returns {void}
      */
     _onSearchStringChange(text: string) {
-        this.setState({
-            searchString: text
-        });
+        this.props.setSearchString(text);
     }
 
     /**

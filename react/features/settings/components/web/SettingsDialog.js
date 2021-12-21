@@ -31,7 +31,6 @@ import MoreTab from './MoreTab';
 import ProfileTab from './ProfileTab';
 import SoundsTab from './SoundsTab';
 
-declare var APP: Object;
 declare var interfaceConfig: Object;
 
 /**
@@ -144,7 +143,8 @@ function _mapStateToProps(state) {
     const moreTabProps = getMoreTabProps(state);
     const moderatorTabProps = getModeratorTabProps(state);
     const { showModeratorSettings } = moderatorTabProps;
-    const { showLanguageSettings, showPrejoinSettings } = moreTabProps;
+    const { showLanguageSettings, showNotificationsSettings, showPrejoinSettings } = moreTabProps;
+    const showMoreTab = showLanguageSettings || showNotificationsSettings || showPrejoinSettings;
     const showProfileSettings
         = configuredTabs.includes('profile') && !state['features/base/config'].disableProfile;
     const showCalendarSettings
@@ -231,7 +231,7 @@ function _mapStateToProps(state) {
         });
     }
 
-    if (showLanguageSettings || showPrejoinSettings) {
+    if (showMoreTab) {
         tabs.push({
             name: SETTINGS_TABS.MORE,
             component: MoreTab,
@@ -244,7 +244,9 @@ function _mapStateToProps(state) {
                     ...newProps,
                     currentFramerate: tabState.currentFramerate,
                     currentLanguage: tabState.currentLanguage,
-                    showPrejoinPage: tabState.showPrejoinPage
+                    hideSelfView: tabState.hideSelfView,
+                    showPrejoinPage: tabState.showPrejoinPage,
+                    enabledNotifications: tabState.enabledNotifications
                 };
             },
             styles: 'settings-pane more-pane',

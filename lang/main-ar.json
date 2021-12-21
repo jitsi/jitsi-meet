@@ -57,7 +57,7 @@
         },
         "notifications": {
             "joinedTitle": "غرف جانبية",
-            "joined": " الغرفة الجانبيةالانضمام إلى\"{{name}}\"",
+            "joined": " الغرفة الجانبيةالانضمام إلى {{index}}",
             "joinedMainRoom": "الانضمام للغرفة الرئيسية"
         }
     },
@@ -180,7 +180,8 @@
         "joinInApp": "انضم للاجتماع عبر تطبيق الجوال",
         "launchWebButton": "افتح تطبيق الويب",
         "title": "قيد عقد اجتماعك في {{app}}...",
-        "tryAgainButton": "جرب مرة أخرى في تطبيق الحاسوب"
+        "tryAgainButton": "جرب مرة أخرى في تطبيق الحاسوب",
+        "unsupportedBrowser": "يبدو أنك تستخدم متصفحًا لا ندعمه."
     },
     "defaultLink": "{{url}} مثلًا",
     "defaultNickname": "محمد علي مثلًا",
@@ -418,6 +419,7 @@
         "desktopShareError": "تعذر إنشاء مشاركة سطح المكتب",
         "desktopShare": "مشاركة سطح المكتب",
         "webAssemblyWarning": "WebAssembly غير مدعوم",
+        "webAssemblyWarningDescription": "تم تعطيل WebAssembly أو عدم دعمه بواسطة هذا المستعرض",
         "backgroundEffectError": "فشل تطبيق تأثير الخلفية."
     },
     "feedback": {
@@ -607,6 +609,7 @@
         "raisedHands": "{{participantName}} و {{raisedHands}}المزيد من الناس",
         "screenShareNoAudio": "لم يتم تحديد مربع مشاركة الصوت في شاشة تحديد النافذة.",
         "screenShareNoAudioTitle": "تعذرت مشاركة صوت النظام!",
+        "selfViewTitle": "يمكنك دائمًا إلغاء إخفاء العرض الذاتي من الإعدادات",
         "somebody": "شخص ما",
         "startSilentTitle": "انضممت دون مخرج للصوت!",
         "startSilentDescription": "أنضم مجدَّدًا للاجتماع لتفعيل الصوت",
@@ -821,8 +824,8 @@
     "security": {
         "about": "يمكنك إضافة $t(lockRoomPassword) إلى الاجتماع. سيتوجب على المشاركين إدخال $t(lockRoomPassword) قبل السماح لهم بالانضمام إلى الاجتماع.",
         "aboutReadOnly": "المشاركون بصفة رئيس الجلسة يمكنهم إضافة $t(lockRoomPassword) إلى الاجتماع. سيتوجب على المشاركين إدخال $t(lockRoomPassword) قبل السماح لهم بالانضمام إلى الاجتماع.",
-        "insecureRoomNameWarning": "اسم الغرفة غير آمن، فقد ينضم عبره مشاركون غرباء إلى الاجتماع. ننصحك بتأمين الاجتماع عبر  وسائل الحماية التي يوفرها زر الحماية.",
-        "securityOptions": "خيارات الحماية"
+        "header": "خيارات الأمان",
+        "insecureRoomNameWarning": "اسم الغرفة غير آمن، فقد ينضم عبره مشاركون غرباء إلى الاجتماع. ننصحك بتأمين الاجتماع عبر  وسائل الحماية التي يوفرها زر الحماية."
     },
     "settings": {
         "calendar": {
@@ -890,20 +893,20 @@
     },
     "speaker": "المتحدث",
     "speakerStats": {
-        "search": "بحث",
+        "angry": "غاضب",
+        "disgusted": "مشمئز",
+        "fearful": "خائف",
+        "happy": "سعيد",
         "hours": "{{count}}س",
         "minutes": "{{count}}د",
         "name": "الاسم",
-        "seconds": "{{count}}ثا",
-        "speakerStats": "حالة المتحدث",
-        "speakerTime": "وقت المتحدث",
-        "happy": "سعيد",
         "neutral": "حيادي",
         "sad": "حزين",
-        "surprised": "مندهش",
-        "angry": "غاضب",
-        "fearful": "خائف",
-        "disgusted": "مشمئز"
+        "search": "بحث",
+        "seconds": "{{count}}ثا",
+        "speakerTime": "وقت المتحدث",
+        "speakerStats": "حالة المتحدث",
+        "surprised": "مندهش"
     },
     "startupoverlay": {
         "policyText": " ",
@@ -1123,6 +1126,7 @@
         "domuteVideoOfOthers": "تعطيل الكاميرا للآخرين",
         "flip": "قلب",
         "grantModerator": "امنح صلاحيات رئيس الجلسة",
+        "hideSelfView": "إخفاء المنظر الذاتي",
         "kick": "طرد خارجًا",
         "moderator": "رئيس الجلسة",
         "mute": "المشارك مكتوم الصوت",

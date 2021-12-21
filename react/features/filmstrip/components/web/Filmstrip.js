@@ -14,6 +14,7 @@ import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
 import { Icon, IconMenuDown, IconMenuUp } from '../../../base/icons';
 import { connect } from '../../../base/redux';
+import { shouldHideSelfView } from '../../../base/settings/functions.any';
 import { showToolbox } from '../../../toolbox/actions.web';
 import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';
 import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
@@ -26,7 +27,6 @@ import {
     TOOLBAR_HEIGHT_MOBILE
 } from '../../constants';
 import { shouldRemoteVideosBeVisible } from '../../functions';
-import { getDisableSelfView } from '../../functions.any';
 
 import AudioTracksContainer from './AudioTracksContainer';
 import Thumbnail from './Thumbnail';
@@ -580,7 +580,7 @@ function _mapStateToProps(state) {
         thumbnailSize: tileViewThumbnailSize
     } = state['features/filmstrip'].tileViewDimensions;
     const _currentLayout = getCurrentLayout(state);
-    const disableSelfView = getDisableSelfView(state);
+    const disableSelfView = shouldHideSelfView(state);
 
     const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
     const availableSpace = clientHeight - filmstripHeight;

@@ -10,8 +10,6 @@ import {
 import { openDialog } from '../base/dialog';
 import { i18next } from '../base/i18n';
 import { updateSettings } from '../base/settings';
-import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../notifications';
-import { setPrejoinPageVisibility } from '../prejoin/actions';
 import { setScreenshareFramerate } from '../screen-share/actions';
 
 import {
@@ -25,8 +23,6 @@ import {
     getProfileTabProps,
     getSoundsTabProps
 } from './functions';
-
-import { SETTINGS_TABS } from '.';
 
 declare var APP: Object;
 
@@ -91,13 +87,19 @@ export function submitMoreTab(newState: Object): Function {
         const showPrejoinPage = newState.showPrejoinPage;
 
         if (showPrejoinPage !== currentState.showPrejoinPage) {
-            // The 'showPrejoin' flag starts as 'true' on every new session.
-            // This prevents displaying the prejoin page when the user re-enables it.
-            if (showPrejoinPage && getState()['features/prejoin']?.showPrejoin) {
-                dispatch(setPrejoinPageVisibility(false));
-            }
             dispatch(updateSettings({
                 userSelectedSkipPrejoin: !showPrejoinPage
+            }));
+        }
+
+        const enabledNotifications = newState.enabledNotifications;
+
+        if (enabledNotifications !== currentState.enabledNotifications) {
+            dispatch(updateSettings({
+                userSelectedNotifications: {
+                    ...getState()['features/base/settings'].userSelectedNotifications,
+                    ...enabledNotifications
+                }
             }));
         }
 
@@ -109,6 +111,10 @@ export function submitMoreTab(newState: Object): Function {
             const frameRate = parseInt(newState.currentFramerate, 10);
 
             dispatch(setScreenshareFramerate(frameRate));
+        }
+
+        if (newState.hideSelfView !== currentState.hideSelfView) {
+            dispatch(updateSettings({ disableSelfView: newState.hideSelfView }));
         }
     };
 }
@@ -129,7 +135,8 @@ export function submitModeratorTab(newState: Object): Function {
 
         if (newState.startReactionsMuted !== currentState.startReactionsMuted) {
             batch(() => {
-                dispatch(setStartReactionsMuted(newState.startReactionsMuted));
+                // updating settings we want to update and backend (notify the rest of the participants)
+                dispatch(setStartReactionsMuted(newState.startReactionsMuted, true));
                 dispatch(updateSettings({ soundsReactions: !newState.startReactionsMuted }));
             });
         }
@@ -158,19 +165,6 @@ export function submitProfileTab(newState: Object): Function {
 
         if (newState.email !== currentState.email) {
             APP.conference.changeLocalEmail(newState.email);
-        }
-
-        if (newState.disableSelfView !== currentState.disableSelfView) {
-            dispatch(updateSettings({ disableSelfView: newState.disableSelfView }));
-            if (newState.disableSelfView) {
-                dispatch(showNotification({
-                    titleKey: 'notify.selfViewTitle',
-                    customActionNameKey: [ 'settings.title' ],
-                    customActionHandler: [ () =>
-                        dispatch(openSettingsDialog(SETTINGS_TABS.PROFILE))
-                    ]
-                }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
-            }
         }
     };
 }

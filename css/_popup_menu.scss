@@ -2,122 +2,18 @@
 * Initialize
 **/
 
-.popupmenu {
-    background-color: $menuBG;
-    border-radius: 3px;
-    list-style-type: none;
-    min-width: 150px;
-    text-align: left;
-    padding: 0px;
-    white-space: nowrap;
+.popupmenu__contents {
+    .popupmenu__volume-slider {
+            &::-webkit-slider-runnable-track {
+                background-color: $popupSliderColor;
+            }
 
-    &__item {
-        list-style-type: none;
-        height: 35px;
-    }
+            &::-moz-range-track {
+                background-color: $popupSliderColor;
+            }
 
-    // Link Appearance
-    &__link,
-    &__contents {
-        display: block;
-        box-sizing: border-box;
-        text-decoration: none;
-        height: 100%;
-        font-size: 9pt;
-        width: 100%;
-        cursor: pointer;
-        padding: 0 5px;
-        color: $popupMenuColor;
-
-        &:hover {
-            background-color: $popupMenuHoverBackground;
-            color: $popupMenuHoverColor;
-        }
-
-        &.disabled {
-            pointer-events: none;
-        }
-    }
-
-    &__list {
-        margin: 0;
-        padding: 0;
-    }
-
-    &__text {
-        display: inline-block;
-        margin-left: 8px;
-        vertical-align: middle;
-    }
-
-    &__link {
-        i {
-            cursor: pointer;
-        }
-    }
-
-    &__contents {
-        display: flex;
-
-        /**
-         * Positioning styles on the slider and its container are used to make
-         * the container fit the popup width, by removing the slider from the
-         * page flow, and then making the slider fit the container.
-         */
-        .popupmenu__slider_container {
-            position: relative;
-            width: 100%;
-
-            .popupmenu__slider {
-                position: absolute;
-                top: 50%;
-                transform: translate(0, -50%);
-                width: 100%;
-
-                &::-webkit-slider-runnable-track {
-                    background-color: $popupSliderColor;
-                }
-
-                &::-moz-range-track {
-                    background-color: $popupSliderColor;
-                }
-
-                &::-ms-fill-lower {
-                    background-color: $popupSliderColor;
-                }
+            &::-ms-fill-lower {
+                background-color: $popupSliderColor;
             }
         }
-    }
-
-    &__icon {
-        vertical-align: middle;
-        position: relative;
-        display: inline-block;
-        min-width: 20px;
-        height: 100%;
-        padding-right: 10px;
-
-        > * {
-            @include absoluteAligning();
-        }
-    }
-
-    .icon-kick,
-    .icon-play,
-    .icon-stop {
-        font-size: 8pt;
-    }
-}
-
-/**
- * Override reset css styling modifying all lists and set negative margin to
- * reduce the visibility of padding on AtlasKit
- * InlineDialogs.
- */
-ul.popupmenu {
-    margin: -16px -24px;
-}
-
-span.localvideomenu:hover ul.popupmenu, span.remotevideomenu:hover ul.popupmenu, ul.popupmenu:hover {
-    display:block !important;
 }

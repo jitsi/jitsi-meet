@@ -8,7 +8,7 @@ import styles from './styles';
 export const RaisedHandIndicator = () => (
     <View style = { styles.raisedHandIndicator }>
         <Icon
-            size = { 15 }
+            size = { 16 }
             src = { IconRaisedHandHollow }
             style = { styles.raisedHandIcon } />
     </View>

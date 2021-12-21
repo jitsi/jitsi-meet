@@ -1,6 +1,7 @@
 // @flow
 
 import '../authentication/middleware';
+import '../base/i18n/middleware';
 import '../base/devices/middleware';
 import '../dynamic-branding/middleware';
 import '../e2ee/middleware';
@@ -16,6 +17,7 @@ import '../prejoin/middleware';
 import '../remote-control/middleware';
 import '../screen-share/middleware';
 import '../shared-video/middleware';
+import '../settings/middleware';
 import '../talk-while-muted/middleware';
 import '../virtual-background/middleware';
 import '../facial-recognition/middleware';
