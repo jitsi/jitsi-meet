@@ -39,3 +39,21 @@ export const START_FACIAL_RECOGNITION = 'START_FACIAL_RECOGNITION';
  * }
  */
 export const STOP_FACIAL_RECOGNITION = 'STOP_FACIAL_RECOGNITION';
+
+/**
+ * Redux action type dispatched in order to clear the facial expressions buffer in the state.
+ *
+ * {
+ *      type: CLEAR_FACIAL_EXPRESSIONS_BUFFER
+ * }
+*/
+export const CLEAR_FACIAL_EXPRESSIONS_BUFFER = 'CLEAR_FACIAL_EXPRESSIONS_BUFFER';
+
+/**
+ * Redux action type dispatched in order to add a expression to the facial expressions buffer.
+ *
+ * {
+ *      type: ADD_TO_FACIAL_EXPRESSIONS_BUFFER 
+ * }
+*/
+export const ADD_TO_FACIAL_EXPRESSIONS_BUFFER = 'ADD_TO_FACIAL_EXPRESSIONS_BUFFER ';
