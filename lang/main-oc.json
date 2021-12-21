@@ -392,7 +392,7 @@
         "answer": "Uèi",
         "audioCallTitle": "Sonada entranta",
         "decline": "Regetar",
-        "productLabel": "de Jitsi Meet estant",
+        "productLabel": "de  estant",
         "videoCallTitle": "Sonada vidèo entranta"
     },
     "info": {
@@ -593,7 +593,7 @@
         "newDeviceAudioTitle": "Nòu periferic àudio detectat",
         "newDeviceCameraTitle": "Nòva camèra detectada",
         "OldElectronAPPTitle": "Problèma de seguretat !",
-        "oldElectronClientDescription1": "Sembla qu’utilizatz una version anciana del client Jitsi Meet qu’es conegut per conténer de problèmas de seguretat. Mercés de vos assegurar de metre a jorn ",
+        "oldElectronClientDescription1": "Sembla qu’utilizatz una version anciana del client  qu’es conegut per conténer de problèmas de seguretat. Mercés de vos assegurar de metre a jorn ",
         "oldElectronClientDescription2": "darrièra compilacion",
         "oldElectronClientDescription3": " ara !",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) tirat per un autre participant",
@@ -1083,7 +1083,7 @@
         "getHelp": "Obténer d’ajuda",
         "go": "Crear",
         "goSmall": "Crear",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "",
         "info": "Infor",
         "jitsiOnMobile": "Jitsi sus mobil –telecargatz nòstra aplicacion e començatz de conferéncias de pertot",
         "join": "CREAR / REJÓNHER",
@@ -1109,7 +1109,7 @@
             "policyLogo": "Logotipe de la politica",
             "calendar": "Logotipe Calendar",
             "microsoftLogo": "Logotipe Microsoft",
-            "logoDeepLinking": "Logotipe Jitsi meet",
+            "logoDeepLinking": "Logotipe ",
             "desktopPreviewThumbnail": "Vinheta d'apercebut del burèu",
             "googleLogo": "Logotipe Google"
         }

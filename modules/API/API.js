@@ -78,9 +78,12 @@ import { getJitsiMeetTransport } from '../transport';
 
 import { API_ID, ENDPOINT_TEXT_MESSAGE_NAME } from './constants';
 
+import i18next from 'i18next';
+
 const logger = Logger.getLogger(__filename);
 
 declare var APP: Object;
+declare var interfaceConfig: Object;
 
 /**
  * List of the available commands.
@@ -670,12 +673,61 @@ function initCommands() {
             });
             break;
         }
+        case 'get-speaker-stats':
+            console.log("API - get-speaker-stats");
+            console.log("API - speaker stats", APP.conference.getSpeakerStats());
+            
+            const stats = createSpeakerStats(APP.conference.getSpeakerStats());
+            console.log("API - get-speaker-stats", stats);
+
+            callback(stats);
+            break;
         default:
             return false;
         }
 
         return true;
     });
+}
+
+function createSpeakerStats(stats) {
+    const userIds = Object.keys(stats);
+    const speakerStats = userIds.map(userId => {
+        const userStats = createSpeakerStatsItem(stats[userId]);
+
+        return {
+            ...userStats, userId
+        };
+    });
+    return speakerStats
+}
+
+function createSpeakerStatsItem(statsModel) {
+    if (!statsModel) {
+        return null;
+    }
+
+    const localParticipant = getLocalParticipant(APP.store.getState());
+    const localDisplayName = localParticipant && localParticipant.name;
+
+    const isDominantSpeaker = statsModel.isDominantSpeaker();
+    const dominantSpeakerTime = statsModel.getTotalDominantSpeakerTime();
+    const hasLeft = statsModel.hasLeft();
+
+    let displayName;
+
+    if (statsModel.isLocalStats()) {
+        const meString = i18next.t('me');
+
+        displayName = localDisplayName;
+        displayName = displayName ? `${displayName} (${meString})` : meString;
+    } else {
+        displayName = statsModel.getDisplayName() || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
+    }
+
+    return {
+        displayName, dominantSpeakerTime, hasLeft, isDominantSpeaker
+    };
 }
 
 /**
@@ -1547,6 +1599,19 @@ class API {
         if (this._enabled) {
             this._enabled = false;
         }
+    }
+
+    /**
+     * Send notification to external application
+     *
+     *@param {Object} props - Notification object.
+     * @returns {void}
+     */
+    notifyExternal(props: Object = {}) {
+        this._sendEvent({
+            name: 'notification-raised',
+            props
+        });
     }
 }
 

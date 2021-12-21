@@ -88,7 +88,7 @@ class LargeVideo extends Component<Props> {
                 <SharedVideo />
                 <div id = 'etherpad' />
 
-                <Watermarks />
+                {!interfaceConfig.hideWatermarks && <Watermarks />}
 
                 <div
                     id = 'dominantSpeaker'

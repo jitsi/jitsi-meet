@@ -434,7 +434,7 @@
         "answer": "Antworten",
         "audioCallTitle": "Eingehender Anruf",
         "decline": "OK",
-        "productLabel": "von Jitsi Meet",
+        "productLabel": "von ",
         "videoCallTitle": "Eingehender Videoanruf"
     },
     "info": {
@@ -1149,7 +1149,7 @@
         "getHelp": "Hilfe",
         "go": "Los",
         "goSmall": "Los",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "",
         "headerSubtitle": "Sichere und hochqualitative Meetings",
         "info": "Einwahlinformationen",
         "join": "ERSTELLEN / BEITRETEN",
@@ -1173,7 +1173,7 @@
         "logo":{
            "calendar":"Kalender Logo",
            "microsoftLogo":"Microsoft Logo",
-           "logoDeepLinking":"Jitsi Meet Logo",
+           "logoDeepLinking":" Logo",
            "desktopPreviewThumbnail":"Desktop-Vorschau Thumbnail",
            "googleLogo":"Google Logo",
            "policyLogo":"Richtlinienlogo"

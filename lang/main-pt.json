@@ -434,7 +434,7 @@
         "answer": "Responder",
         "audioCallTitle": "Chamada recebida",
         "decline": "Recusar",
-        "productLabel": "do Jitsi Meet",
+        "productLabel": "do ",
         "videoCallTitle": "Chamada de vídeo recebida"
     },
     "info": {
@@ -617,7 +617,7 @@
         "newDeviceAudioTitle": "Novo dispositivo de áudio detetado",
         "newDeviceAction": "Usar",
         "OldElectronAPPTitle": "Vulnerabilidade de segurança!",
-        "oldElectronClientDescription1": "Parece estar a utilizar uma versão antiga do cliente Jitsi Meet que tem vulnerabilidades de segurança conhecidas. Por favor, certifique-se de que actualiza a nossa ",
+        "oldElectronClientDescription1": "Parece estar a utilizar uma versão antiga do cliente  que tem vulnerabilidades de segurança conhecidas. Por favor, certifique-se de que actualiza a nossa ",
         "oldElectronClientDescription2": "compilação mais recente",
         "oldElectronClientDescription3": " agora!",
         "moderationInEffectDescription": "Por favor, levantem a mão se quiserem falar.",
@@ -1150,7 +1150,7 @@
         "getHelp": "Obter ajuda",
         "go": "IR",
         "goSmall": "IR",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "",
         "headerSubtitle": "Reuniões com segurança e alta qualidade",
         "info": "Informações",
         "join": "CRIAR / ENTRAR",
@@ -1174,7 +1174,7 @@
         "logo":{
             "calendar": "Logo do Calendário",
             "microsoftLogo": "Logo da Microsoft",
-            "logoDeepLinking": "Logo do Jitsi Meet",
+            "logoDeepLinking": "Logo do ",
             "desktopPreviewThumbnail": "Miniatura de Visualização do Desktop",
             "googleLogo": "Logo do Google",
             "policyLogo": "Logo da Política de Privacidade"

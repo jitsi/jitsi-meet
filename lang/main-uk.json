@@ -348,7 +348,7 @@
         "answer": "Відповідь",
         "audioCallTitle": "Вхідний виклик",
         "decline": "Відхилити",
-        "productLabel": "з Jitsi Meet",
+        "productLabel": "з ",
         "videoCallTitle": "Вхідний відеовиклик"
     },
     "info": {
@@ -510,7 +510,7 @@
     "me": "я",
     "notify": {
         "OldElectronAPPTitle": "Уразливість в системі безпеки!",
-        "oldElectronClientDescription1": "Схоже, ви використовуєте стару версію клієнта Jitsi Meet, яка має відомі уразливості в системі безпеки. Переконайтеся, що ви оновились до нашої",
+        "oldElectronClientDescription1": "Схоже, ви використовуєте стару версію клієнта , яка має відомі уразливості в системі безпеки. Переконайтеся, що ви оновились до нашої",
         "oldElectronClientDescription2": "останньої версії",
         "oldElectronClientDescription3": " зараз!",
         "connectedOneMember": "{{name}} приєднався до конференції",

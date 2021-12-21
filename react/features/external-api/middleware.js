@@ -9,7 +9,7 @@ import {
 } from '../base/conference';
 import { SET_CONFIG } from '../base/config';
 import { NOTIFY_CAMERA_ERROR, NOTIFY_MIC_ERROR } from '../base/devices';
-import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
+import { JitsiRecordingConstants, JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import {
     DOMINANT_SPEAKER_CHANGED,
     PARTICIPANT_KICKED,
@@ -20,6 +20,7 @@ import {
     getLocalParticipant,
     getParticipantById
 } from '../base/participants';
+import { getActiveSession } from '../../features/recording/functions';
 import { MiddlewareRegistry } from '../base/redux';
 import { getBaseUrl } from '../base/util';
 import { appendSuffix } from '../display-name';
@@ -89,18 +90,30 @@ MiddlewareRegistry.register(store => next => action => {
         const state = store.getState();
         const { defaultLocalDisplayName } = state['features/base/config'];
         const { room } = state['features/base/conference'];
-        const { loadableAvatarUrl, name, id } = getLocalParticipant(state);
+        const localParticipant = getLocalParticipant(state);
+        console.log("LOCAL PARTICIPANT", localParticipant);
+        const { loadableAvatarUrl, name, id, email } = localParticipant;
+
+        const activeSession = getActiveSession(state, JitsiRecordingConstants.mode.FILE);
+        
+        const isRecordingOn = Boolean(activeSession);
+        const recordingStatusString = isRecordingOn ? 
+            activeSession.status === JitsiRecordingConstants.status.ON ? "ON" : 
+                activeSession.status === JitsiRecordingConstants.status.PENDING ? "PENDING" : "OFF" 
+            : "OFF";
 
         APP.API.notifyConferenceJoined(
             room,
             id,
             {
                 displayName: name,
+                email,
                 formattedDisplayName: appendSuffix(
                     name,
                     defaultLocalDisplayName
                 ),
-                avatarURL: loadableAvatarUrl
+                avatarURL: loadableAvatarUrl,
+                recordingStatus: recordingStatusString
             }
         );
         break;

@@ -434,7 +434,7 @@
         "answer": "接通",
         "audioCallTitle": "來電",
         "decline": "拒接",
-        "productLabel": "來自 Jitsi Meet",
+        "productLabel": "來自 ",
         "videoCallTitle": "視訊來電"
     },
     "info": {
@@ -617,7 +617,7 @@
         "newDeviceAudioTitle": "偵測到新的音效裝置",
         "newDeviceAction": "使用",
         "OldElectronAPPTitle": "安全漏洞！",
-        "oldElectronClientDescription1": "您似乎正在使用 Jitsi Meet 客戶端的舊版本，其有已知的安全漏洞。請更新到",
+        "oldElectronClientDescription1": "您似乎正在使用  客戶端的舊版本，其有已知的安全漏洞。請更新到",
         "oldElectronClientDescription2": "最新版本",
         "oldElectronClientDescription3": "！",
         "moderationInEffectDescription": "若要說話，請舉手",
@@ -1150,7 +1150,7 @@
         "getHelp": "取得協助",
         "go": "開始",
         "goSmall": "開始",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "",
         "headerSubtitle": "安全且高品質的會議",
         "info": "資訊",
         "join": "建立 / 加入",
@@ -1174,7 +1174,7 @@
         "logo":{
             "calendar":"行事曆圖示",
             "microsoftLogo":"Microsoft 商標",
-            "logoDeepLinking":"Jitsi meet 商標",
+            "logoDeepLinking":" 商標",
             "desktopPreviewThumbnail":"桌面分享縮圖",
             "googleLogo":"Google 商標",
             "policyLogo":"政策圖示"

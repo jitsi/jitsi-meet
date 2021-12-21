@@ -428,7 +428,7 @@
         "answer": "Cevapla",
         "audioCallTitle": "Gelen sesli arama",
         "decline": "Reddet",
-        "productLabel": "Jitsi Meet'den",
+        "productLabel": "'den",
         "videoCallTitle": "Gelen görüntülü arama"
     },
     "info": {
@@ -605,7 +605,7 @@
         "newDeviceAudioTitle": "Yeni ses aygıtı algılandı",
         "newDeviceAction": "Kullan",
         "OldElectronAPPTitle": "Güvenlik açığı!",
-        "oldElectronClientDescription1": "Güvenlik açıkları bilinen Jitsi Meet istemcisinin eski bir sürümünü kullanıyor görünüyorsunuz. Lütfen güncellediğinizden emin olun.",
+        "oldElectronClientDescription1": "Güvenlik açıkları bilinen  istemcisinin eski bir sürümünü kullanıyor görünüyorsunuz. Lütfen güncellediğinizden emin olun.",
         "oldElectronClientDescription2": "son yapı",
         "oldElectronClientDescription3": " şimdi!",
         "moderationInEffectDescription": "Konuşmak isterseniz lütfen el kaldırın.",
@@ -1119,7 +1119,7 @@
         "roomNameAllowedChars": "Toplantı adı şu karakterlerden hiçbirini içermemelidir: ?, &, :, ', \", %, #.",
         "go": "GİT",
         "goSmall": "GİT",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "",
         "headerSubtitle": "Güvenli ve yüksek kaliteli toplantılar",
         "join": "KATIL",
         "jitsiOnMobile": "Mobil'de Jitsi – uygulamalarımızı indirin ve her yerden bir toplantı başlatın",
@@ -1142,7 +1142,7 @@
         "logo":{
             "calendar":"Takvim logo",
             "microsoftLogo":"Microsoft logo",
-            "logoDeepLinking":"Jitsi meet logo",
+            "logoDeepLinking":" logo",
             "desktopPreviewThumbnail":"Masaüstü önizleme küçük resmi",
             "googleLogo":"Google Logo",
             "policyLogo":"Politika logo"

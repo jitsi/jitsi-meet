@@ -413,7 +413,7 @@
         "answer": "Odgovori",
         "audioCallTitle": "Dohodni klic",
         "decline": "Zavrni",
-        "productLabel": "iz Jitsi Meet",
+        "productLabel": "iz ",
         "videoCallTitle": "Dohodni video klic"
     },
     "info": {
@@ -588,7 +588,7 @@
         "newDeviceAudioTitle": "Zaznana je bila nova zvočna naprava",
         "newDeviceAction": "Uporabi",
         "OldElectronAPPTitle": "Varnostna ranljivost!",
-        "oldElectronClientDescription1": "Uporabljate staro verzijo aplikacije Jitsi Meet, ki ima varnostne ranljivosti. Prosimo, naložite si ",
+        "oldElectronClientDescription1": "Uporabljate staro verzijo aplikacije , ki ima varnostne ranljivosti. Prosimo, naložite si ",
         "oldElectronClientDescription2": "zadnjo verzijo.",
         "oldElectronClientDescription3": " zdaj!",
         "moderationInEffectDescription": "Dvignite roko, če želite govoriti.",
@@ -1096,7 +1096,7 @@
         "getHelp": "Pridobi pomoč",
         "go": "POJDI",
         "goSmall": "POJDI",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "",
         "headerSubtitle": "Varni in kvalitetni sestanki",
         "info": "Informacije",
         "join": "PRIDRUŽI SE",
@@ -1120,7 +1120,7 @@
         "logo": {
             "calendar": "Logo koledarja",
             "microsoftLogo": "Microsoft logo",
-            "logoDeepLinking": "Jitsi meet logo",
+            "logoDeepLinking": " logo",
             "desktopPreviewThumbnail": "Sličica deljenja zaslona",
             "googleLogo": "Google Logo",
             "policyLogo": "Logo politike"

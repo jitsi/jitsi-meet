@@ -54,5 +54,11 @@ export default [
     'UNSUPPORTED_BROWSERS',
     'VERTICAL_FILMSTRIP',
     'VIDEO_LAYOUT_FIT',
-    'VIDEO_QUALITY_LABEL_DISABLED'
+    'VIDEO_QUALITY_LABEL_DISABLED',
+    'filmStripOnly',
+    'hideToolbar',
+    'hideWatermarks',
+    'hideInviteMore',
+    'hideChat',
+    'hideNotifications'
 ];

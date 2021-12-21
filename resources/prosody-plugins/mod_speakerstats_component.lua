@@ -23,6 +23,9 @@ end
 
 log("info", "Starting speakerstats for %s", muc_component_host);
 
+local requestURL = module:get_option_string("speakerstats_post_url"); 
+log("info", "Post speakerstats url: %s", requestURL);
+
 local function is_admin(jid)
     return um_is_admin(jid, module.host);
 end

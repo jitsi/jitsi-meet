@@ -412,7 +412,7 @@
         "answer": "Rispondi",
         "audioCallTitle": "Chiamata in arrivo",
         "decline": "Chiudi",
-        "productLabel": "da Jitsi Meet",
+        "productLabel": "da ",
         "videoCallTitle": "Videochiamata in arrivo"
     },
     "info": {
@@ -587,7 +587,7 @@
         "newDeviceAudioTitle": "Trovata nuova origine audio",
         "newDeviceAction": "OK, usala",
         "OldElectronAPPTitle": "Falla di sicurezza!",
-        "oldElectronClientDescription1": "Sembri stare usando una versione obsoleta del client Jitsi Meet che ha dei problemi di sicurezza noti. Assicurati di aggiornarla presso il nostro ",
+        "oldElectronClientDescription1": "Sembri stare usando una versione obsoleta del client  che ha dei problemi di sicurezza noti. Assicurati di aggiornarla presso il nostro ",
         "oldElectronClientDescription2": "ultima build",
         "oldElectronClientDescription3": " ora!",
         "moderationInEffectDescription": "Alza la mano, se vuoi prender la parola, per favore.",
@@ -1095,7 +1095,7 @@
         "getHelp": "Trova aiuto",
         "go": "VAI",
         "goSmall": "VAI",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "",
         "headerSubtitle": "Riunioni sicure e di alta qualità",
         "info": "Informazioni chiamata",
         "join": "CREA / UNISCITI",
@@ -1119,7 +1119,7 @@
         "logo":{
            "calendar":"Logo calendario",
            "microsoftLogo":"Logo Microsoft",
-           "logoDeepLinking":"Logo Jitsi meet",
+           "logoDeepLinking":"Logo ",
            "desktopPreviewThumbnail":"Icona anteprima desktop",
            "googleLogo":"Logo Google",
            "policyLogo":"Logo normativa"

@@ -380,7 +380,7 @@
         "answer": "Përgjigjuni",
         "audioCallTitle": "Thirrje ardhëse",
         "decline": "Hidhe tej",
-        "productLabel": "nga Jitsi Meet",
+        "productLabel": "nga ",
         "videoCallTitle": "Thirrje ardhëse me video"
     },
     "info": {
@@ -550,7 +550,7 @@
         "newDeviceAudioTitle": "U pikas pajisje audio e re",
         "newDeviceAction": "Përdore",
         "OldElectronAPPTitle": "Cenueshmëri sigurie!",
-        "oldElectronClientDescription1": "Duket se përdorni një version të vjetër të klientit Jitsi Meet, i cili përmban cenueshmëri të ditura sigurie. Ju lutemi, siguroni përditësimin e tij me ",
+        "oldElectronClientDescription1": "Duket se përdorni një version të vjetër të klientit , i cili përmban cenueshmëri të ditura sigurie. Ju lutemi, siguroni përditësimin e tij me ",
         "oldElectronClientDescription2": "montimin tonë më të ri",
         "oldElectronClientDescription3": " që tani!",
         "moderationInEffectDescription": "Ju lutemi, nëse doni të flisni, ngrini dorën",
@@ -985,7 +985,7 @@
         "getHelp": "Merrni ndihmë",
         "go": "SHKO",
         "goSmall": "SHKO",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "",
         "headerSubtitle": "Takime me siguri dhe me cilësi të lartë",
         "info": "Hollësi për dial-in",
         "join": "KRIJONI / MERRNI PJESË",
@@ -1009,7 +1009,7 @@
         "logo":{
            "calendar":"Stemë Calendar-i",
            "microsoftLogo":"Stemë Microsoft-i",
-           "logoDeepLinking":"Stemë Jitsi Meet",
+           "logoDeepLinking":"Stemë ",
            "desktopPreviewThumbnail":"Miniaturë paraparjeje në desktop",
            "googleLogo":"Stemë Google",
            "policyLogo":"Stemë Policy"

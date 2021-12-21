@@ -368,7 +368,7 @@
         "answer": "Erantzun",
         "audioCallTitle": "Sarrerako deia",
         "decline": "Baztertu",
-        "productLabel": "Jitsi Meet-etik",
+        "productLabel": "-etik",
         "videoCallTitle": "Bideo-deia sartzen"
     },
     "info": {
@@ -536,7 +536,7 @@
         "newDeviceAudioTitle": "Audio-gailu berria hauteman da",
         "newDeviceAction": "Erabilera",
         "OldElectronAPPTitle": "Zaharkitutako aplikazioa",
-        "oldElectronClientDescription1": "Segurtasun arazoak dituen Jitsi Meet aplikazioa erabiltzen arai zara. Eguneratu ezazu",
+        "oldElectronClientDescription1": "Segurtasun arazoak dituen  aplikazioa erabiltzen arai zara. Eguneratu ezazu",
         "oldElectronClientDescription2": "bertsio berriagora",
         "oldElectronClientDescription3": "ORAIN!",
         "groupTitle": "Jakinarazpenak"
@@ -946,7 +946,7 @@
         "getHelp": "Lortu laguntza",
         "go": "JOAN",
         "goSmall": "JOAN",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "",
         "headerSubtitle": "Secure and high quality meetings",
         "info": "Informazioa",
         "join": "SORTU / SARTU",
@@ -970,7 +970,7 @@
         "logo": {
             "calendar": "Egutegiaren logoa",
             "microsoftLogo": "Microsoften logo",
-            "logoDeepLinking": "Jitsi meeten logo",
+            "logoDeepLinking": "en logo",
             "desktopPreviewThumbnail": "Aurrebistaren iruditxoa",
             "googleLogo": "Googleren logoa",
             "policyLogo": "Politikaren logoa"

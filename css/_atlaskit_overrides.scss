@@ -29,7 +29,8 @@
  * the video thumbnail while obscuring as little as possible.
  */
 .videocontainer__toptoolbar > div > div {
-    background: none;
+    background: none !important;
+    background-color: transparent !important;
 }
 
 

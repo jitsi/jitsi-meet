@@ -294,8 +294,21 @@
 #alwaysOnTop .displayname,
 .videocontainer .displayname,
 .videocontainer .editdisplayname {
-    font-weight: 100;
+    display: inline-block;
+    position: absolute;
+    left: 10%;
+    width: 80%;
+    bottom: 0;
+    @include transform(translateY(-40%));
     color: $participantNameColor;
+    text-align: center;
+    text-overflow: ellipsis;
+    font-size: 12px;
+    font-weight: 100;
+    overflow: hidden;
+    white-space: nowrap;
+    line-height: $thumbnailToolbarHeight;
+    z-index: $zindex2;
 }
 
 #alwaysOnTop .displayname {
@@ -325,6 +338,7 @@
 .videocontainer .displayname {
     pointer-events: none;
     padding: 0 3px 0 3px;
+    background: rgba(0,0,0,.6);
 }
 
 .videocontainer .editdisplayname {
@@ -666,7 +680,7 @@
     }
 
     .displayNameContainer {
-        visibility: hidden;
+        visibility: visible;
     }
 
     .videocontainer__hoverOverlay {
@@ -702,7 +716,7 @@
     }
 
     .displayNameContainer {
-        visibility: hidden;
+        visibility: visible;
     }
 
     .videocontainer__hoverOverlay {

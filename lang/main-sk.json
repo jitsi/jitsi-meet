@@ -496,7 +496,7 @@
         "newDeviceAudioTitle": "Bolo zistené nové audio zariadenie",
         "newDeviceAction": "Použiť",
         "OldElectronAPPTitle": "Bezpečnostná hrozba!",
-        "oldElectronClientDescription1": "Používate starú verziu klienta Jitsi Meet, ktorá má známe zraniteľnosti. Aktualizujte na ",
+        "oldElectronClientDescription1": "Používate starú verziu klienta , ktorá má známe zraniteľnosti. Aktualizujte na ",
         "oldElectronClientDescription2": "najnovšiu verziu",
         "oldElectronClientDescription3": " teraz!"
     },
