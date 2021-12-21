@@ -2,6 +2,7 @@
 import { getLocalParticipant } from '../base/participants';
 import { extractFqnFromPath } from '../dynamic-branding';
 
+import { SET_TIMEOUT } from './constants';
 import logger from './logger';
 
 /**
@@ -120,7 +121,6 @@ export async function sendDataToWorker(
     if (imageCapture === null || imageCapture === undefined) {
         return;
     }
-
     let imageBitmap;
 
     try {
@@ -141,7 +141,7 @@ export async function sendDataToWorker(
     const imageData = context.getImageData(0, 0, imageBitmap.width, imageBitmap.height);
 
     worker.postMessage({
-        id: 'SET_TIMEOUT',
+        type: SET_TIMEOUT,
         imageData
     });
 }
