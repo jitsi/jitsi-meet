@@ -320,7 +320,10 @@ function _handleReceivedMessage({ dispatch, getState },
     const hasRead = participant.local || isChatOpen;
     const timestampToDate = timestamp ? new Date(timestamp) : new Date();
     const millisecondsTimestamp = timestampToDate.getTime();
-    const shouldShowNotification = userSelectedNotifications['notify.chatMessages'] && !hasRead && !isReaction;
+
+    // skip message notifications on join (the messages having timestamp - coming from the history)
+    const shouldShowNotification = userSelectedNotifications['notify.chatMessages']
+        && !hasRead && !isReaction && !timestamp;
 
     dispatch(addMessage({
         displayName,
