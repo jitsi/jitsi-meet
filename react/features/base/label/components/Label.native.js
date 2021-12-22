@@ -23,6 +23,11 @@ const STATUS_OFF = 'off';
 type Props = AbstractProps & {
 
     /**
+     * Color for the icon.
+     */
+    iconColor?: ?string,
+
+    /**
      * Status of the label. This prop adds some additional styles based on its
      * value. E.g. If status = off, it will render the label symbolising that
      * the thing it displays (e.g. Recording) is off.
@@ -32,7 +37,12 @@ type Props = AbstractProps & {
     /**
      * Style of the label.
      */
-    style?: ?StyleType
+    style?: ?StyleType,
+
+    /**
+     * Custom styles for the text.
+     */
+    textStyle?: ?StyleType
 };
 
 type State = {
@@ -91,7 +101,7 @@ export default class Label extends AbstractLabel<Props, State> {
      * @inheritdoc
      */
     render() {
-        const { icon, text, status, style } = this.props;
+        const { icon, text, status, style, iconColor, textStyle } = this.props;
 
         let extraStyle = null;
 
@@ -113,9 +123,10 @@ export default class Label extends AbstractLabel<Props, State> {
                     extraStyle
                 ] }>
                 { icon && <Icon
+                    color = { iconColor }
                     size = '18'
                     src = { icon } /> }
-                { text && <Text style = { styles.labelText }>
+                { text && <Text style = { [ styles.labelText, textStyle ] }>
                     { text }
                 </Text>}
             </Animated.View>
