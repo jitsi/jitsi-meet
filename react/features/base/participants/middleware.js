@@ -289,6 +289,12 @@ StateListenerRegistry.register(
                     })),
                 'raisedHand': (participant, value) =>
                     _raiseHandUpdated(store, conference, participant.getId(), value),
+                'region': (participant, value) =>
+                    store.dispatch(participantUpdated({
+                        conference,
+                        id: participant.getId(),
+                        region: value
+                    })),
                 'remoteControlSessionStatus': (participant, value) =>
                     store.dispatch(participantUpdated({
                         conference,
