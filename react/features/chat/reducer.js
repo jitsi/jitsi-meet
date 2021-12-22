@@ -10,6 +10,7 @@ import {
     SET_PRIVATE_MESSAGE_RECIPIENT,
     SET_IS_POLL_TAB_FOCUSED
 } from './actionTypes';
+import { v4 as uuidv4 } from 'uuid';
 
 const DEFAULT_STATE = {
     isOpen: false,
@@ -29,6 +30,7 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
             error: action.error,
             id: action.id,
             isReaction: action.isReaction,
+            messageId: uuidv4(),
             messageType: action.messageType,
             message: action.message,
             privateMessage: action.privateMessage,
