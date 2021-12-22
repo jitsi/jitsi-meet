@@ -314,7 +314,7 @@ function _handleReceivedMessage({ dispatch, getState },
     // Provide a default for for the case when a message is being
     // backfilled for a participant that has left the conference.
     const participant = getParticipantById(state, id) || {};
-console.error('receiveeeed from', id, 'breakout:', APP.store.getState()["features/breakout-rooms"]);
+
     const localParticipant = getLocalParticipant(getState);
     const displayName = getParticipantDisplayName(state, id);
     const hasRead = participant.local || isChatOpen;

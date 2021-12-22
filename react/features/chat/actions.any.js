@@ -4,6 +4,7 @@ import {
     ADD_MESSAGE,
     CLEAR_MESSAGES,
     CLOSE_CHAT,
+    EDIT_MESSAGE,
     SEND_MESSAGE,
     SET_PRIVATE_MESSAGE_RECIPIENT,
     SET_IS_POLL_TAB_FOCUSED
@@ -38,6 +39,23 @@ export function addMessage(messageDetails: Object) {
     return {
         type: ADD_MESSAGE,
         ...messageDetails
+    };
+}
+
+/**
+ * Edits an existing chat message.
+ *
+ * @param {Object} message - The chat message to edit/override. The messages will be matched from the state
+ * comparing the messageId.
+ * @returns {{
+ *     type: EDIT_MESSAGE,
+ *     message: Object
+ * }}
+ */
+export function editMessage(message: Object) {
+    return {
+        type: EDIT_MESSAGE,
+        message
     };
 }
 
