@@ -1,17 +1,21 @@
 // @flow
 
+import { withStyles } from '@material-ui/styles';
 import React, { Component } from 'react';
 import { batch } from 'react-redux';
 
+import ContextMenu from '../../../base/components/context-menu/ContextMenu';
+import ContextMenuItemGroup from '../../../base/components/context-menu/ContextMenuItemGroup';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
-import { Icon, IconMenuThumb } from '../../../base/icons';
+import { Icon, IconHorizontalPoints } from '../../../base/icons';
 import {
     getLocalParticipant
 } from '../../../base/participants';
 import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
 import { setParticipantContextMenuOpen } from '../../../base/responsive-ui/actions';
+import { getHideSelfView } from '../../../base/settings';
 import { getLocalVideoTrack } from '../../../base/tracks';
 import ConnectionIndicatorContent from '../../../connection-indicator/components/web/ConnectionIndicatorContent';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
@@ -20,8 +24,6 @@ import { renderConnectionStatus } from '../../actions.web';
 import ConnectionStatusButton from './ConnectionStatusButton';
 import FlipLocalVideoButton from './FlipLocalVideoButton';
 import HideSelfViewVideoButton from './HideSelfViewVideoButton';
-import VideoMenu from './VideoMenu';
-
 
 /**
  * The type of the React {@code Component} props of
@@ -30,29 +32,34 @@ import VideoMenu from './VideoMenu';
 type Props = {
 
     /**
-     * The redux dispatch function.
+     * Whether or not the button should be visible.
      */
-     dispatch: Function,
+    buttonVisible: boolean,
 
     /**
-     * Gets a ref to the current component instance.
+     * An object containing the CSS classes.
      */
-     getRef: Function,
+    classes: Object,
+
+    /**
+     * The redux dispatch function.
+     */
+    dispatch: Function,
 
     /**
      * Hides popover.
      */
-     hidePopover: Function,
+    hidePopover: Function,
 
     /**
      * Whether the popover is visible or not.
      */
-     popoverVisible: boolean,
+    popoverVisible: boolean,
 
     /**
      * Shows popover.
      */
-     showPopover: Function,
+    showPopover: Function,
 
     /**
      * The id of the local participant.
@@ -77,6 +84,11 @@ type Props = {
     _showConnectionInfo: boolean,
 
     /**
+     * Whether to render the hide self view button.
+     */
+    _showHideSelfViewButton: boolean,
+
+    /**
      * Shows/hides the local video flip button.
      */
     _showLocalVideoFlipButton: boolean,
@@ -85,6 +97,29 @@ type Props = {
      * Invoked to obtain translated strings.
      */
     t: Function
+};
+
+const styles = theme => {
+    return {
+        triggerButton: {
+            backgroundColor: theme.palette.action01,
+            padding: '3px',
+            display: 'inline-block',
+            borderRadius: '4px'
+        },
+
+        contextMenu: {
+            position: 'relative',
+            marginTop: 0,
+            right: 'auto',
+            padding: '0',
+            minWidth: '200px'
+        },
+
+        flipText: {
+            marginLeft: '36px'
+        }
+    };
 };
 
 /**
@@ -119,9 +154,12 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
         const {
             _localParticipantId,
             _menuPosition,
-            _showConnectionInfo,
             _overflowDrawer,
+            _showConnectionInfo,
+            _showHideSelfViewButton,
             _showLocalVideoFlipButton,
+            buttonVisible,
+            classes,
             hidePopover,
             popoverVisible,
             t
@@ -130,13 +168,24 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
         const content = _showConnectionInfo
             ? <ConnectionIndicatorContent participantId = { _localParticipantId } />
             : (
-                <VideoMenu id = 'localVideoMenu'>
-                    <FlipLocalVideoButton onClick = { hidePopover } />
-                    <HideSelfViewVideoButton onClick = { hidePopover } />
-                    { isMobileBrowser()
-                            && <ConnectionStatusButton participantId = { _localParticipantId } />
-                    }
-                </VideoMenu>
+                <ContextMenu
+                    className = { classes.contextMenu }
+                    hidden = { false }
+                    inDrawer = { _overflowDrawer }>
+                    <ContextMenuItemGroup>
+                        <FlipLocalVideoButton
+                            className = { _overflowDrawer ? classes.flipText : '' }
+                            onClick = { hidePopover } />
+                        { _showHideSelfViewButton
+                            && <HideSelfViewVideoButton
+                                className = { _overflowDrawer ? classes.flipText : '' }
+                                onClick = { hidePopover } />
+                        }
+                        { isMobileBrowser()
+                                    && <ConnectionStatusButton participantId = { _localParticipantId } />
+                        }
+                    </ContextMenuItemGroup>
+                </ContextMenu>
             );
 
         return (
@@ -149,14 +198,14 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
                     overflowDrawer = { _overflowDrawer }
                     position = { _menuPosition }
                     visible = { popoverVisible }>
-                    {!_overflowDrawer && (
+                    {!_overflowDrawer && buttonVisible && (
                         <span
-                            className = 'popover-trigger local-video-menu-trigger'>
+                            className = { classes.triggerButton }
+                            role = 'button'>
                             {!isMobileBrowser() && <Icon
                                 ariaLabel = { t('dialog.localUserControls') }
-                                role = 'button'
-                                size = '1.4em'
-                                src = { IconMenuThumb }
+                                size = { 18 }
+                                src = { IconHorizontalPoints }
                                 tabIndex = { 0 }
                                 title = { t('dialog.localUserControls') } />
                             }
@@ -209,10 +258,11 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
 function _mapStateToProps(state) {
     const currentLayout = getCurrentLayout(state);
     const localParticipant = getLocalParticipant(state);
-    const { disableLocalVideoFlip } = state['features/base/config'];
+    const { disableLocalVideoFlip, disableSelfViewSettings } = state['features/base/config'];
     const videoTrack = getLocalVideoTrack(state['features/base/tracks']);
     const { overflowDrawer } = state['features/toolbox'];
     const { showConnectionInfo } = state['features/base/connection'];
+    const showHideSelfViewButton = !disableSelfViewSettings && !getHideSelfView(state);
 
     let _menuPosition;
 
@@ -221,10 +271,10 @@ function _mapStateToProps(state) {
         _menuPosition = 'left-start';
         break;
     case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
-        _menuPosition = 'left-end';
+        _menuPosition = 'left-start';
         break;
     case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW:
-        _menuPosition = 'top';
+        _menuPosition = 'top-start';
         break;
     default:
         _menuPosition = 'auto';
@@ -233,10 +283,11 @@ function _mapStateToProps(state) {
     return {
         _menuPosition,
         _showLocalVideoFlipButton: !disableLocalVideoFlip && videoTrack?.videoType !== 'desktop',
+        _showHideSelfViewButton: showHideSelfViewButton,
         _overflowDrawer: overflowDrawer,
         _localParticipantId: localParticipant.id,
         _showConnectionInfo: showConnectionInfo
     };
 }
 
-export default translate(connect(_mapStateToProps)(LocalVideoMenuTriggerButton));
+export default translate(connect(_mapStateToProps)(withStyles(styles)(LocalVideoMenuTriggerButton)));

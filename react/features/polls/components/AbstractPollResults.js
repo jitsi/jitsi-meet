@@ -72,10 +72,10 @@ const AbstractPollResults = (Component: AbstractComponent<AbstractProps>) => (pr
             }
         }
 
-        const totalVoters = voterSet.size;
+        const totalVotes = pollDetails.answers.reduce((sum, { voters: { size } }) => sum + size, 0);
 
         return pollDetails.answers.map(answer => {
-            const percentage = totalVoters === 0 ? 0 : Math.round(answer.voters.size / totalVoters * 100);
+            const percentage = totalVotes === 0 ? 0 : Math.round(answer.voters.size / totalVotes * 100);
 
             let voters = null;
 

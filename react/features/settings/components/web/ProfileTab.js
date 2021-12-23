@@ -1,7 +1,6 @@
 // @flow
 
 import Button from '@atlaskit/button/standard-button';
-import Checkbox from '@atlaskit/checkbox';
 import { FieldTextStateless } from '@atlaskit/field-text';
 import React from 'react';
 
@@ -34,11 +33,6 @@ export type Props = {
     authLogin: string,
 
     /**
-     * Whether or not to hide the self view.
-     */
-    disableSelfView: boolean,
-
-    /**
      * The display name to display for the local participant.
      */
     displayName: string,
@@ -52,6 +46,11 @@ export type Props = {
      * If the display name is read only.
      */
     readOnlyName: boolean,
+
+    /**
+     * Whether to hide the email input in the profile settings.
+     */
+    hideEmailInSettings?: boolean,
 
     /**
      * Invoked to obtain translated strings.
@@ -83,7 +82,6 @@ class ProfileTab extends AbstractDialogTab<Props> {
         this._onAuthToggle = this._onAuthToggle.bind(this);
         this._onDisplayNameChange = this._onDisplayNameChange.bind(this);
         this._onEmailChange = this._onEmailChange.bind(this);
-        this._onChange = this._onChange.bind(this);
     }
 
     _onDisplayNameChange: (Object) => void;
@@ -112,19 +110,6 @@ class ProfileTab extends AbstractDialogTab<Props> {
         super._onChange({ email: value });
     }
 
-    _onChange: (Object) => void;
-
-    /**
-     * Changes the disable self view state.
-     *
-     * @param {Object} e - The key event to handle.
-     *
-     * @returns {void}
-     */
-    _onChange({ target }) {
-        super._onChange({ disableSelfView: target.checked });
-    }
-
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -135,8 +120,8 @@ class ProfileTab extends AbstractDialogTab<Props> {
         const {
             authEnabled,
             displayName,
-            disableSelfView,
             email,
+            hideEmailInSettings,
             readOnlyName,
             t
         } = this.props;
@@ -157,7 +142,7 @@ class ProfileTab extends AbstractDialogTab<Props> {
                             type = 'text'
                             value = { displayName } />
                     </div>
-                    <div className = 'profile-edit-field'>
+                    {!hideEmailInSettings && <div className = 'profile-edit-field'>
                         <FieldTextStateless
                             compact = { true }
                             id = 'setEmail'
@@ -167,14 +152,8 @@ class ProfileTab extends AbstractDialogTab<Props> {
                             shouldFitContainer = { true }
                             type = 'text'
                             value = { email } />
-                    </div>
+                    </div>}
                 </div>
-                <br />
-                <Checkbox
-                    isChecked = { disableSelfView }
-                    label = { t('videothumbnail.hideSelfView') }
-                    name = 'disableSelfView'
-                    onChange = { this._onChange } />
                 { authEnabled && this._renderAuth() }
             </div>
         );

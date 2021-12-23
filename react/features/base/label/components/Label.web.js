@@ -35,6 +35,11 @@ type Props = AbstractProps & {
     id: string,
 
     /**
+     * Color for the icon.
+     */
+    iconColor?: string,
+
+    /**
      * Click handler if any.
      */
     onClick?: Function,
@@ -103,6 +108,7 @@ class Label extends AbstractLabel<Props, *> {
             className,
             color,
             icon,
+            iconColor,
             id,
             onClick,
             text
@@ -120,6 +126,7 @@ class Label extends AbstractLabel<Props, *> {
                 id = { id }
                 onClick = { onClick }>
                 { icon && <Icon
+                    color = { iconColor }
                     size = '16'
                     src = { icon } /> }
                 { text && <span className = { icon && classes.withIcon }>{text}</span> }

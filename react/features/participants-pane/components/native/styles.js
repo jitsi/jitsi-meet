@@ -195,7 +195,8 @@ export default {
 
     raisedHandIcon: {
         ...flexContent,
-        top: BaseTheme.spacing[1]
+        top: BaseTheme.spacing[1],
+        color: BaseTheme.palette.uiBackground
     },
 
     lobbyListContainer: {

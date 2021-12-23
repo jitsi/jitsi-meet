@@ -1,5 +1,4 @@
 /* @flow */
-import clsx from 'clsx';
 import React, { Component } from 'react';
 
 import { Drawer, JitsiPortal, DialogPortal } from '../../../toolbox/components/web';
@@ -61,11 +60,6 @@ type Props = {
     position: string,
 
     /**
-     * Whether the content show have some padding.
-     */
-    paddedContent: ?boolean,
-
-    /**
      * Whether the popover is visible or not.
      */
     visible: boolean
@@ -79,7 +73,7 @@ type State = {
     /**
      * The style to apply to the context menu in order to position it correctly.
      */
-     contextMenuStyle: Object
+    contextMenuStyle: Object
 };
 
 /**
@@ -364,15 +358,11 @@ class Popover extends Component<Props, State> {
      * @returns {ReactElement}
      */
     _renderContent() {
-        const { content, paddedContent } = this.props;
-        const className = clsx(
-            'popover popupmenu',
-            paddedContent && 'padded-content'
-        );
+        const { content } = this.props;
 
         return (
             <div
-                className = { className }
+                className = 'popover'
                 onKeyDown = { this._onEscKey }>
                 { content }
                 {!isMobileBrowser() && (

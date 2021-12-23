@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 
 import { openDialog } from '../../../base/dialog';
 import { Icon, IconArrowDown, IconArrowUp } from '../../../base/icons';
+import { participantMatchesSearch } from '../../../participants-pane/functions';
 
 import BreakoutRoomContextMenu from './BreakoutRoomContextMenu';
 import BreakoutRoomParticipantItem from './BreakoutRoomParticipantItem';
@@ -17,7 +18,12 @@ type Props = {
     /**
      * Room to display.
      */
-    room: Object
+    room: Object,
+
+    /**
+     * Participants search string.
+     */
+    searchString: string
 }
 
 /**
@@ -31,7 +37,7 @@ function _keyExtractor(item: Object) {
 }
 
 
-export const CollapsibleRoom = ({ room }: Props) => {
+export const CollapsibleRoom = ({ room, searchString }: Props) => {
     const dispatch = useDispatch();
     const [ collapsed, setCollapsed ] = useState(false);
     const { t } = useTranslation();
@@ -65,7 +71,8 @@ export const CollapsibleRoom = ({ room }: Props) => {
                 horizontal = { false }
                 keyExtractor = { _keyExtractor }
                 // eslint-disable-next-line react/jsx-no-bind
-                renderItem = { ({ item: participant }) => <BreakoutRoomParticipantItem item = { participant } /> }
+                renderItem = { ({ item: participant }) => participantMatchesSearch(participant, searchString)
+                    && <BreakoutRoomParticipantItem item = { participant } /> }
                 showsHorizontalScrollIndicator = { false }
                 windowSize = { 2 } />}
         </View>

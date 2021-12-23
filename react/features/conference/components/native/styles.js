@@ -2,7 +2,7 @@ import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
 import { BoxModel, fixAndroidViewClipping } from '../../../base/styles';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
-export const INSECURE_ROOM_NAME_LABEL_COLOR = BaseTheme.palette.warning03;
+export const INSECURE_ROOM_NAME_LABEL_COLOR = BaseTheme.palette.actionDanger;
 
 const NAVBAR_BUTTON_SIZE = 24;
 

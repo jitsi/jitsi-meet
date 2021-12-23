@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
 import { Button } from 'react-native-paper';
@@ -36,6 +36,7 @@ import styles from './styles';
  */
 const ParticipantsPane = () => {
     const dispatch = useDispatch();
+    const [ searchString, setSearchString ] = useState('');
     const openMoreMenu = useCallback(() => dispatch(openDialog(ContextMenuMore)), [ dispatch ]);
     const isLocalModerator = useSelector(isLocalParticipantModerator);
     const muteAll = useCallback(() => dispatch(openDialog(MuteEveryoneDialog)),
@@ -59,7 +60,9 @@ const ParticipantsPane = () => {
             style = { styles.participantsPane }>
             <ScrollView bounces = { false }>
                 <LobbyParticipantList />
-                <MeetingParticipantList />
+                <MeetingParticipantList
+                    searchString = { searchString }
+                    setSearchString = { setSearchString } />
                 {!inBreakoutRoom
                     && isLocalModerator
                     && participantsCount > 2
@@ -69,7 +72,8 @@ const ParticipantsPane = () => {
                 {_isBreakoutRoomsSupported
                     && rooms.map(room => (<CollapsibleRoom
                         key = { room.id }
-                        room = { room } />))}
+                        room = { room }
+                        searchString = { searchString } />))}
                 {_isBreakoutRoomsSupported && !hideAddRoomButton && isLocalModerator
                     && <AddBreakoutRoomButton />}
             </ScrollView>

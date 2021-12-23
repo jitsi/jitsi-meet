@@ -29,7 +29,7 @@ export type Props = AbstractButtonProps & {
  * An abstract remote video menu button which disables the camera of all the other participants.
  */
 export default class AbstractMuteEveryoneElsesVideoButton extends AbstractButton<Props, *> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.muteEveryoneElsesVideo';
+    accessibilityLabel = 'toolbar.accessibilityLabel.muteEveryoneElsesVideoStream';
     icon = IconMuteVideoEveryone;
     label = 'videothumbnail.domuteVideoOfOthers';
 

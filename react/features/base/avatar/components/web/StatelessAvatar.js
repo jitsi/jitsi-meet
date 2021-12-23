@@ -3,7 +3,6 @@
 import React from 'react';
 
 import { Icon } from '../../../icons';
-import { isGravatarURL } from '../../functions';
 import AbstractStatelessAvatar, { type Props as AbstractProps } from '../AbstractStatelessAvatar';
 
 type Props = AbstractProps & {
@@ -31,7 +30,12 @@ type Props = AbstractProps & {
     /**
      * TestId of the element, if any.
      */
-    testId?: string
+    testId?: string,
+
+    /**
+     * Indicates whether to load the avatar using CORS or not.
+     */
+    useCORS?: ?boolean
 };
 
 /**
@@ -39,13 +43,25 @@ type Props = AbstractProps & {
  * props.
  */
 export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
+
+    /**
+     * Instantiates a new {@code Component}.
+     *
+     * @inheritdoc
+     */
+    constructor(props: Props) {
+        super(props);
+
+        this._onAvatarLoadError = this._onAvatarLoadError.bind(this);
+    }
+
     /**
      * Implements {@code Component#render}.
      *
      * @inheritdoc
      */
     render() {
-        const { initials, url } = this.props;
+        const { initials, url, useCORS } = this.props;
 
         if (this._isIcon(url)) {
             return (
@@ -67,10 +83,10 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
                     <img
                         alt = 'avatar'
                         className = { this._getAvatarClassName() }
-                        crossOrigin = { isGravatarURL(url) ? '' : undefined }
+                        crossOrigin = { useCORS ? '' : undefined }
                         data-testid = { this.props.testId }
                         id = { this.props.id }
-                        onError = { this.props.onAvatarLoadError }
+                        onError = { this._onAvatarLoadError }
                         src = { url }
                         style = { this._getAvatarStyle() } />
                 </div>
@@ -160,4 +176,19 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
     }
 
     _isIcon: (?string | ?Object) => boolean;
+
+    _onAvatarLoadError: () => void;
+
+    /**
+     * Handles avatar load errors.
+     *
+     * @returns {void}
+     */
+    _onAvatarLoadError() {
+        const { onAvatarLoadError, onAvatarLoadErrorParams } = this.props;
+
+        if (typeof onAvatarLoadError === 'function') {
+            onAvatarLoadError(onAvatarLoadErrorParams);
+        }
+    }
 }

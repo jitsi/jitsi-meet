@@ -21,6 +21,7 @@ import {
     getCurrentConference,
     sendTones,
     setFollowMe,
+    setLocalSubject,
     setPassword,
     setSubject
 } from '../../react/features/base/conference';
@@ -135,6 +136,10 @@ function initCommands() {
         'display-name': displayName => {
             sendAnalytics(createApiEvent('display.name.changed'));
             APP.conference.changeLocalDisplayName(displayName);
+        },
+        'local-subject': localSubject => {
+            sendAnalytics(createApiEvent('local.subject.changed'));
+            APP.store.dispatch(setLocalSubject(localSubject));
         },
         'mute-everyone': mediaType => {
             const muteMediaType = mediaType ? mediaType : MEDIA_TYPE.AUDIO;

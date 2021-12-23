@@ -86,6 +86,10 @@ const useStyles = theme => {
                 color: theme.palette.field01
             },
 
+            '& div.message > span': {
+                color: theme.palette.link01Active
+            },
+
             '& .ribbon': {
                 width: '4px',
                 height: 'calc(100% - 16px)',
