@@ -1,3 +1,63 @@
-<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M15.5834 20.1959C16.0896 20.1959 16.5 19.7854 16.5 19.2792V14.6666H19.25C19.7563 14.6666 20.1667 14.2562 20.1667 13.75V2.74998C20.1667 2.24372 19.7563 1.83331 19.25 1.83331H2.75004C2.24378 1.83331 1.83337 2.24372 1.83337 2.74998V13.75C1.83337 14.2562 2.24378 14.6666 2.75004 14.6666H10.5927L14.8761 19.8623C15.0502 20.0735 15.3096 20.1959 15.5834 20.1959ZM3.66671 3.66665H18.3334V12.8333H14.6667V16.7262L11.4573 12.8333H3.66671V3.66665Z" />
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.0"
+   width="64.000000pt"
+   height="64.000000pt"
+   viewBox="0 0 64.000000 64.000000"
+   preserveAspectRatio="xMidYMid meet"
+   id="svg5367"
+   sodipodi:docname="chat.svg"
+   inkscape:version="1.1.1 (c3084ef, 2021-09-22)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs5371" />
+  <sodipodi:namedview
+     id="namedview5369"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="pt"
+     showgrid="false"
+     inkscape:zoom="5.8242188"
+     inkscape:cx="78.036217"
+     inkscape:cy="44.555332"
+     inkscape:window-width="1280"
+     inkscape:window-height="725"
+     inkscape:window-x="30"
+     inkscape:window-y="38"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg5367" />
+  <metadata
+     id="metadata5359">
+Created by potrace 1.16, written by Peter Selinger 2001-2019
+</metadata>
+  <g
+     transform="translate(0.000000,64.000000) scale(0.100000,-0.100000)"
+     fill="#000000"
+     stroke="none"
+     id="g5365">
+    <path
+       d="M0 320 l0 -320 320 0 320 0 0 320 0 320 -320 0 -320 0 0 -320z m500 55 l0 -125 -35 0 -35 0 0 -55 c0 -41 -4 -55 -14 -55 -8 0 -36 25 -61 55 l-47 55 -84 0 -84 0 0 125 0 125 180 0 180 0 0 -125z"
+       id="path5361" />
+    <path
+       d="M170 375 l0 -95 80 0 c78 0 81 -1 110 -32 l29 -33 1 33 c0 31 2 32 40 32 l40 0 0 95 0 95 -150 0 -150 0 0 -95z"
+       id="path5363" />
+  </g>
+  <text
+     xml:space="preserve"
+     style="font-size:15px;line-height:1.25;font-family:sans-serif;word-spacing:0px;fill:#ffffff;stroke-width:0.75"
+     x="15.066397"
+     y="62.841045"
+     id="text6057"><tspan
+       sodipodi:role="line"
+       id="tspan6055"
+       style="font-size:15px;fill:#ffffff;stroke-width:0.75"
+       x="15.066397"
+       y="62.841045">Chat</tspan></text>
 </svg>

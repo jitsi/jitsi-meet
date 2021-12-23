@@ -1,3 +1,63 @@
-<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M13.75 5.5H3.66668C2.65415 5.5 1.83334 6.32081 1.83334 7.33333V14.6667C1.83334 15.6792 2.65415 16.5 3.66668 16.5H13.75C14.7625 16.5 15.5833 15.6792 15.5833 14.6667V13.881L18.7952 15.7163C18.9337 15.7955 19.0905 15.8371 19.25 15.8371C19.7563 15.8371 20.1667 15.4267 20.1667 14.9204V7.07958C20.1667 6.92006 20.125 6.76329 20.0459 6.62479C19.7947 6.18523 19.2348 6.03252 18.7952 6.28369L15.5833 8.11905V7.33333C15.5833 6.32081 14.7625 5.5 13.75 5.5ZM13.75 9.16667V12.8333V14.6667H3.66668V7.33333H13.75V9.16667ZM18.3333 13.3408L15.5833 11.7694V10.2306L18.3333 8.65916V13.3408Z" />
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.0"
+   width="64.000000pt"
+   height="64.000000pt"
+   viewBox="0 0 64.000000 64.000000"
+   preserveAspectRatio="xMidYMid meet"
+   id="svg1933"
+   sodipodi:docname="camera-empty.svg"
+   inkscape:version="1.1.1 (c3084ef, 2021-09-22)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1937" />
+  <sodipodi:namedview
+     id="namedview1935"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="pt"
+     showgrid="false"
+     inkscape:zoom="5.8242188"
+     inkscape:cx="36.142186"
+     inkscape:cy="42.666666"
+     inkscape:window-width="1280"
+     inkscape:window-height="725"
+     inkscape:window-x="0"
+     inkscape:window-y="23"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg1933" />
+  <metadata
+     id="metadata1925">
+Created by potrace 1.16, written by Peter Selinger 2001-2019
+</metadata>
+  <g
+     transform="translate(0.000000,64.000000) scale(0.100000,-0.100000)"
+     fill="#000000"
+     stroke="none"
+     id="g1931">
+    <path
+       d="M0 320 l0 -320 320 0 320 0 0 320 0 320 -320 0 -320 0 0 -320z m415 114 c11 -21 11 -21 45 -4 19 10 38 16 42 13 5 -2 8 -44 8 -93 0 -49 -3 -91 -8 -93 -4 -3 -23 3 -42 13 -34 17 -34 17 -45 -4 -10 -19 -20 -21 -115 -24 -158 -4 -150 -10 -150 107 0 70 4 101 13 105 6 2 64 4 127 3 106 -2 115 -4 125 -23z"
+       id="path1927" />
+    <path
+       d="M180 350 l0 -70 100 0 100 0 0 70 0 70 -100 0 -100 0 0 -70z"
+       id="path1929" />
+  </g>
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-weight:normal;font-size:15px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.75"
+     x="11.975856"
+     y="60.008045"
+     id="text4053"><tspan
+       sodipodi:role="line"
+       id="tspan4051"
+       style="font-size:15px;fill:#ffffff;stroke-width:0.75"
+       x="11.975856"
+       y="60.008045">Video</tspan></text>
 </svg>
