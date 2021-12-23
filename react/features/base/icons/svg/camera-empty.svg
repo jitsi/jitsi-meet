@@ -24,27 +24,28 @@
      inkscape:pagecheckerboard="0"
      showgrid="false"
      inkscape:zoom="22.590909"
-     inkscape:cx="21.402415"
+     inkscape:cx="9.9376258"
      inkscape:cy="12.460765"
      inkscape:window-width="1280"
      inkscape:window-height="725"
      inkscape:window-x="24"
-     inkscape:window-y="27"
+     inkscape:window-y="23"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg30803" />
   <path
      clip-rule="evenodd"
-     d="M13.75 5.5H3.667c-1.013 0-1.834.82-1.834 1.833v7.334c0 1.012.821 1.833 1.834 1.833H13.75c1.012 0 1.833-.82 1.833-1.833v-.786l3.212 1.835a.916.916 0 001.372-.796V7.08a.917.917 0 00-1.372-.796l-3.212 1.835v-.786c0-1.012-.82-1.833-1.833-1.833zm0 3.667v5.5H3.667V7.333H13.75v1.834zm4.583 4.174l-2.75-1.572v-1.538l2.75-1.572v4.682z"
+     d="M 13.75,3.6408451 H 3.667 c -1.013,0 -1.834,0.82 -1.834,1.833 v 7.3340009 c 0,1.012 0.821,1.833 1.834,1.833 H 13.75 c 1.012,0 1.833,-0.82 1.833,-1.833 v -0.786 l 3.212,1.835 a 0.916,0.916 0 0 0 1.372,-0.796 V 5.2208451 a 0.917,0.917 0 0 0 -1.372,-0.796 l -3.212,1.835 v -0.786 c 0,-1.012 -0.82,-1.833 -1.833,-1.833 z m 0,3.667 V 12.807846 H 3.667 V 5.4738451 H 13.75 Z m 4.583,4.1740009 -2.75,-1.5720005 V 8.3718451 l 2.75,-1.572 z"
      id="path30801"
      style="fill:#ffffff" />
   <text
      xml:space="preserve"
-     style="font-style:normal;font-weight:normal;font-size:6.66667px;line-height:1.25;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none"
-     x="1.8591549"
-     y="21.867201"
+     style="font-style:normal;font-weight:normal;font-size:8px;line-height:1.25;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none"
+     x="-0.088531181"
+     y="21.822935"
      id="text33115"><tspan
        sodipodi:role="line"
        id="tspan33113"
-       x="1.8591549"
-       y="21.867201">Video</tspan></text>
+       x="-0.088531181"
+       y="21.822935"
+       style="font-size:8px;fill:#ffffff">Video</tspan></text>
 </svg>

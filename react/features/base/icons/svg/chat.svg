@@ -23,9 +23,9 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      showgrid="false"
-     inkscape:zoom="22.590909"
-     inkscape:cx="19.587525"
-     inkscape:cy="6.1750503"
+     inkscape:zoom="15.974185"
+     inkscape:cx="18.874202"
+     inkscape:cy="9.734456"
      inkscape:window-width="1280"
      inkscape:window-height="725"
      inkscape:window-x="0"
@@ -35,17 +35,18 @@
   <path
      fill-rule="evenodd"
      clip-rule="evenodd"
-     d="m 15.096475,17.230105 c 0.457311,0 0.828075,-0.372897 0.828075,-0.832727 v -4.190066 h 2.484407 c 0.457401,0 0.828165,-0.372805 0.828165,-0.832635 V 1.3823068 c 0,-0.45988438 -0.370764,-0.83269899 -0.828165,-0.83269899 H 3.5025547 c -0.4573656,0 -0.8281384,0.37281461 -0.8281384,0.83269899 v 9.9923702 c 0,0.45983 0.3707728,0.832635 0.8281384,0.832635 h 7.0852193 l 3.869712,4.719752 c 0.157285,0.191853 0.391632,0.303041 0.638989,0.303041 z M 4.3306932,2.2150059 H 17.580881 v 8.3269451 h -3.312572 v 3.536293 L 11.368872,10.541951 H 4.3306932 Z"
+     d="m 14.971272,16.541494 c 0.443483,0 0.803037,-0.361701 0.803037,-0.807726 v -4.064265 h 2.409285 c 0.443571,0 0.803124,-0.361612 0.803124,-0.807636 V 1.1695032 c 0,-0.44607701 -0.359553,-0.8076984 -0.803124,-0.8076984 H 3.7279182 c -0.4435362,0 -0.8030979,0.36162139 -0.8030979,0.8076984 v 9.6923638 c 0,0.446024 0.3595617,0.807636 0.8030979,0.807636 h 6.8709828 l 3.752703,4.578048 c 0.152529,0.186093 0.37979,0.293943 0.619668,0.293943 z M 4.5310162,1.9772017 H 17.380557 v 8.0769403 h -3.21241 v 3.430121 L 11.356381,10.054142 H 4.5310162 Z"
      id="path36867"
-     style="fill:#ffffff;stroke-width:0.905905" />
+     style="fill:#ffffff;stroke-width:0.87861" />
   <text
      xml:space="preserve"
-     style="font-style:normal;font-weight:normal;font-size:6.66667px;line-height:1.25;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none"
-     x="3.1871226"
+     style="font-style:normal;font-weight:normal;font-size:8px;line-height:1.25;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none"
+     x="1.3716935"
      y="21.513079"
      id="text38435"><tspan
        sodipodi:role="line"
        id="tspan38433"
-       x="3.1871226"
-       y="21.513079">Chat</tspan></text>
+       x="1.3716935"
+       y="21.513079"
+       style="font-size:8px;fill:#ffffff">Chat</tspan></text>
 </svg>
