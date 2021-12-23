@@ -1,6 +1,6 @@
 .subject {
     color: #fff;
-    transition: opacity .3s ease-in;
+    transition: opacity .6s ease-in-out;
     z-index: $zindex3;
     margin-top: 20px;
     opacity: 0;
@@ -11,14 +11,14 @@
 
     &#autoHide.with-always-on {
         overflow: hidden;
-        animation: hideSubject forwards .3s ease-out;
+        animation: hideSubject forwards .6s ease-out;
 
         & > .subject-info-container {
             justify-content: flex-start;
         }
 
         &.visible {
-            animation: showSubject forwards .3s ease-out;
+            animation: showSubject forwards .6s ease-out;
         }
     }
 }
