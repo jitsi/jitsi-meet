@@ -213,7 +213,7 @@ end
 function destroy_breakout_room(room_jid, message)
     local main_room, main_room_jid = get_main_room(room_jid);
 
-    if room_jid == main_room_jid then
+    if room_jid == main_room_jid or not main_room then
         return;
     end
 
@@ -339,7 +339,7 @@ function on_occupant_joined(event)
 
     local main_room = get_main_room(room.jid);
 
-    if main_room._data.breakout_rooms_active then
+    if main_room and main_room._data.breakout_rooms_active then
         if jid_node(event.occupant.jid) ~= 'focus' then
             broadcast_breakout_rooms(room.jid);
         end
@@ -387,6 +387,10 @@ function on_occupant_left(event)
     end
 
     local main_room = get_main_room(room_jid);
+
+    if not main_room then
+        return;
+    end
 
     if main_room._data.breakout_rooms_active and jid_node(event.occupant.jid) ~= 'focus' then
         broadcast_breakout_rooms(room_jid);
@@ -477,7 +481,7 @@ function process_breakout_rooms_muc_loaded(breakout_rooms_muc, host_module)
         event.formdata['muc#roominfo_breakout_main_room'] = main_room_jid;
 
         -- If the main room has a lobby, make it so this breakout room also uses it.
-        if (main_room._data.lobbyroom and main_room:get_members_only()) then
+        if (main_room and main_room._data.lobbyroom and main_room:get_members_only()) then
             table.insert(event.form, {
                 name = 'muc#roominfo_lobbyroom';
                 label = 'Lobby room jid';
