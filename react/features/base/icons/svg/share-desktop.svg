@@ -24,8 +24,8 @@
      inkscape:pagecheckerboard="0"
      showgrid="false"
      inkscape:zoom="22.590909"
-     inkscape:cx="23.482897"
-     inkscape:cy="9.0523139"
+     inkscape:cx="9.4507043"
+     inkscape:cy="12.593561"
      inkscape:window-width="1280"
      inkscape:window-height="725"
      inkscape:window-x="0"
@@ -37,10 +37,10 @@
      clip-rule="evenodd"
      d="M 4.3926651,0.58098587 H 17.784505 c 0.924492,0 1.673946,0.76796113 1.673946,1.71528873 V 12.587997 c 0,0.947403 -0.749454,1.715354 -1.673946,1.715354 h -2.510966 c 0.4622,0 0.836928,0.383976 0.836928,0.857584 0,0.473701 -0.374728,0.857677 -0.836928,0.857677 H 6.9036309 c -0.4622551,0 -0.8369916,-0.383976 -0.8369916,-0.857677 0,-0.473608 0.3747365,-0.857584 0.8369916,-0.857584 H 4.3926651 c -0.9245102,0 -1.6739832,-0.767951 -1.6739832,-1.715354 V 2.2962746 c 0,-0.9473276 0.749473,-1.71528873 1.6739832,-1.71528873 z m 0,1.71528873 V 12.587997 H 17.784505 V 2.2962746 Z m 7.5328889,3.4305866 c -3.4240358,0 -5.0219231,1.5008834 -5.0219231,6.0035528 C 8.7297878,8.0853558 11.925554,8.2997991 11.925554,8.2997991 v 1.191972 c 0,0.393051 0.444395,0.6108619 0.743063,0.364234 L 15.66945,7.3775648 c 0.226808,-0.1872822 0.226808,-0.5412342 0,-0.7284879 L 12.668617,4.1706549 C 12.369949,3.9239991 11.925554,4.1418287 11.925554,4.53488 Z"
      id="path34383"
-     style="fill:#000000;stroke-width:0.924277" />
+     style="fill:#ffffff;stroke-width:0.924277" />
   <text
      xml:space="preserve"
-     style="font-style:normal;font-weight:normal;font-size:6.66667px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none"
+     style="font-style:normal;font-weight:normal;font-size:6.66667px;line-height:1.25;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none"
      x="1.3279674"
      y="21.645874"
      id="text34565"><tspan
@@ -48,5 +48,5 @@
        id="tspan34563"
        x="1.3279674"
        y="21.645874"
-       style="font-size:6.66667px">Share</tspan></text>
+       style="font-size:6.66667px;fill:#ffffff">Share</tspan></text>
 </svg>
