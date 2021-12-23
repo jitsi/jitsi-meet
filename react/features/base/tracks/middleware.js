@@ -216,7 +216,10 @@ MiddlewareRegistry.register(store => next => action => {
 StateListenerRegistry.register(
     state => getCurrentConference(state),
     (conference, { dispatch, getState }, prevConference) => {
-        if (prevConference && !conference) {
+
+        // conference keep flipping while we are authenticating, skip clearing while we are in that process
+        if (prevConference && !conference && !getState()['features/base/conference'].authRequired) {
+
             // Clear all tracks.
             const remoteTracks = getState()['features/base/tracks'].filter(t => !t.local);
 
