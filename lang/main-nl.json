@@ -849,17 +849,21 @@
         "pending": "{{displayName}} is uitgenodigd"
     },
     "videoStatus": {
+        "adjustFor": "Aanpassen voor:",
         "audioOnly": "AUD",
         "audioOnlyExpanded": "U bent in lage bandbreedte-modus. In deze modus ontvangt u alleen audio en schermdeling.",
+        "bestPerformance": "Beste prestatie",
         "callQuality": "Videokwaliteit",
         "hd": "HD",
         "hdTooltip": "U bekijkt video in hoge resolutie",
         "highDefinition": "Hoge resolutie",
+        "highestQuality": "Hoogste kwaliteit",
         "labelTooiltipNoVideo": "Geen video",
         "labelTooltipAudioOnly": "Lage bandbreedte-modus ingeschakeld",
         "ld": "LD",
         "ldTooltip": "U bekijkt video in lage resolutie",
         "lowDefinition": "Lage resolutie",
+        "performanceSettings": "Prestatie instellingen",
         "sd": "SD",
         "sdTooltip": "U bekijkt video in standaard resolutie",
         "standardDefinition": "Standaard resolutie"

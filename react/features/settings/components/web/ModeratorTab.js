@@ -13,6 +13,11 @@ export type Props = {
     ...$Exact<AbstractDialogTabProps>,
 
     /**
+     * If set hides the reactions moderation setting.
+     */
+    disableReactionsModeration: boolean,
+
+    /**
      * Whether or not follow me is currently active (enabled by some other participant).
      */
     followMeActive: boolean,
@@ -142,6 +147,7 @@ class ModeratorTab extends AbstractDialogTab<Props> {
      */
     _renderModeratorSettings() {
         const {
+            disableReactionsModeration,
             followMeActive,
             followMeEnabled,
             startAudioMuted,
@@ -171,11 +177,12 @@ class ModeratorTab extends AbstractDialogTab<Props> {
                         label = { t('settings.followMe') }
                         name = 'follow-me'
                         onChange = { this._onFollowMeEnabledChanged } />
-                    <Checkbox
-                        isChecked = { startReactionsMuted }
-                        label = { t('settings.startReactionsMuted') }
-                        name = 'start-reactions-muted'
-                        onChange = { this._onStartReactionsMutedChanged } />
+                    { !disableReactionsModeration
+                        && <Checkbox
+                            isChecked = { startReactionsMuted }
+                            label = { t('settings.startReactionsMuted') }
+                            name = 'start-reactions-muted'
+                            onChange = { this._onStartReactionsMutedChanged } /> }
                 </div>
             </div>
         );

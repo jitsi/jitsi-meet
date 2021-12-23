@@ -193,12 +193,15 @@ function _findLoadableAvatarForKnockingParticipant(store, { id }) {
     const { disableThirdPartyRequests } = getState()['features/base/config'];
 
     if (!disableThirdPartyRequests && updatedParticipant && !updatedParticipant.loadableAvatarUrl) {
-        getFirstLoadableAvatarUrl(updatedParticipant, store).then(loadableAvatarUrl => {
-            if (loadableAvatarUrl) {
+        getFirstLoadableAvatarUrl(updatedParticipant, store).then(result => {
+            if (result) {
+                const { isUsingCORS, src } = result;
+
                 dispatch(
                     participantIsKnockingOrUpdated({
-                        loadableAvatarUrl,
-                        id
+                        loadableAvatarUrl: src,
+                        id,
+                        isUsingCORS
                     })
                 );
             }

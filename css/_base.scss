@@ -6,6 +6,10 @@
 * {
     -webkit-user-select: none;
     user-select: none;
+
+    // Firefox only
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, .5) transparent;
 }
 
 input,

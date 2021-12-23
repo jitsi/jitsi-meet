@@ -14,6 +14,7 @@ import {
     SHOW_NOTIFICATION
 } from './actionTypes';
 import {
+    NOTIFICATION_ICON,
     NOTIFICATION_TIMEOUT_TYPE,
     NOTIFICATION_TIMEOUT,
     NOTIFICATION_TYPE,
@@ -157,6 +158,23 @@ export function showWarningNotification(props: Object, type: ?string) {
 }
 
 /**
+ * Queues a message notification for display.
+ *
+ * @param {Object} props - The props needed to show the notification component.
+ * @param {string} type - Notification type.
+ * @returns {Object}
+ */
+export function showMessageNotification(props: Object, type: ?string) {
+    return showNotification({
+        ...props,
+        concatText: true,
+        titleKey: 'notify.chatMessages',
+        appearance: NOTIFICATION_TYPE.NORMAL,
+        icon: NOTIFICATION_ICON.MESSAGE
+    }, type);
+}
+
+/**
  * An array of names of participants that have joined the conference. The array
  * is replaced with an empty array as notifications are displayed.
  *
@@ -293,7 +311,7 @@ const _throttledNotifyParticipantLeft = throttle((dispatch: Dispatch<any>, getSt
  * @returns {Function}
  */
 export function showParticipantJoinedNotification(displayName: string) {
-    leftParticipantsNames.push(displayName);
+    joinedParticipantsNames.push(displayName);
 
     return (dispatch: Dispatch<any>, getState: Function) => _throttledNotifyParticipantConnected(dispatch, getState);
 }
@@ -307,7 +325,7 @@ export function showParticipantJoinedNotification(displayName: string) {
  * @returns {Function}
  */
 export function showParticipantLeftNotification(displayName: string) {
-    joinedParticipantsNames.push(displayName);
+    leftParticipantsNames.push(displayName);
 
     return (dispatch: Dispatch<any>, getState: Function) => _throttledNotifyParticipantLeft(dispatch, getState);
 }

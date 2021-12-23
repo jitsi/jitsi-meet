@@ -62,23 +62,24 @@ const BreakoutRoomContextMenu = ({ room }: Props) => {
                 <Text style = { styles.contextMenuItemText }>{t('breakoutRooms.actions.join')}</Text>
             </TouchableOpacity>
             {!room?.isMainRoom && isLocalModerator
-                && !(room?.participants && Object.keys(room.participants).length > 0)
-                ? <TouchableOpacity
-                    onPress = { onRemoveBreakoutRoom }
-                    style = { styles.contextMenuItem }>
-                    <Icon
-                        size = { 24 }
-                        src = { IconClose } />
-                    <Text style = { styles.contextMenuItemText }>{t('breakoutRooms.actions.remove')}</Text>
-                </TouchableOpacity>
-                : <TouchableOpacity
-                    onPress = { onCloseBreakoutRoom }
-                    style = { styles.contextMenuItem }>
-                    <Icon
-                        size = { 24 }
-                        src = { IconClose } />
-                    <Text style = { styles.contextMenuItemText }>{t('breakoutRooms.actions.close')}</Text>
-                </TouchableOpacity>
+                && (room?.participants && Object.keys(room.participants).length > 0
+                    ? <TouchableOpacity
+                        onPress = { onCloseBreakoutRoom }
+                        style = { styles.contextMenuItem }>
+                        <Icon
+                            size = { 24 }
+                            src = { IconClose } />
+                        <Text style = { styles.contextMenuItemText }>{t('breakoutRooms.actions.close')}</Text>
+                    </TouchableOpacity>
+                    : <TouchableOpacity
+                        onPress = { onRemoveBreakoutRoom }
+                        style = { styles.contextMenuItem }>
+                        <Icon
+                            size = { 24 }
+                            src = { IconClose } />
+                        <Text style = { styles.contextMenuItemText }>{t('breakoutRooms.actions.remove')}</Text>
+                    </TouchableOpacity>
+                )
             }
         </BottomSheet>
     );

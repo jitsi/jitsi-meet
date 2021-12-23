@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 
 import { Icon, IconRaisedHandHollow } from '../../../base/icons';
+import BaseTheme from '../../../base/ui/components/BaseTheme';
 
 const useStyles = makeStyles(theme => {
     return {
@@ -22,7 +23,8 @@ export const RaisedHandIndicator = () => {
     return (
         <div className = { styles.indicator }>
             <Icon
-                size = { 15 }
+                color = { BaseTheme.palette.uiBackground }
+                size = { 16 }
                 src = { IconRaisedHandHollow } />
         </div>
     );

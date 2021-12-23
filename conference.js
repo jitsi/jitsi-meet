@@ -135,7 +135,6 @@ import { mediaPermissionPromptVisibilityChanged, toggleSlowGUMOverlay } from './
 import { suspendDetected } from './react/features/power-monitor';
 import {
     initPrejoin,
-    isPrejoinPageEnabled,
     isPrejoinPageVisible,
     makePrecallTest,
     setJoiningInProgress,
@@ -797,7 +796,7 @@ export default {
             logger.warn('initial device list initialization failed', error);
         }
 
-        if (isPrejoinPageEnabled(APP.store.getState())) {
+        if (isPrejoinPageVisible(APP.store.getState())) {
             _connectionPromise = connect(roomName).then(c => {
                 // we want to initialize it early, in case of errors to be able
                 // to gather logs

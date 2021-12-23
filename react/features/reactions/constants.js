@@ -10,6 +10,11 @@ import {
 } from './sounds';
 
 /**
+ * Reactions menu height on mobile web (px).
+ */
+export const REACTIONS_MENU_HEIGHT = 144;
+
+/**
  * The payload name for the datachannel/endpoint reaction event.
  */
 export const ENDPOINT_REACTION_NAME = 'endpoint-reaction';

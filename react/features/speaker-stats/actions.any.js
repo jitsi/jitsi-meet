@@ -4,7 +4,8 @@ import {
     INIT_SEARCH,
     INIT_UPDATE_STATS,
     UPDATE_STATS,
-    INIT_REORDER_STATS
+    INIT_REORDER_STATS,
+    RESET_SEARCH_CRITERIA
 } from './actionTypes';
 
 /**
@@ -54,5 +55,16 @@ export function updateStats(stats: Object) {
 export function initReorderStats() {
     return {
         type: INIT_REORDER_STATS
+    };
+}
+
+/**
+ * Resets the search criteria.
+ *
+ * @returns {Object}
+ */
+export function resetSearchCriteria() {
+    return {
+        type: RESET_SEARCH_CRITERIA
     };
 }

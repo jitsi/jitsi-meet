@@ -43,7 +43,7 @@
         "meetingEnded": "A reunião terminou."
     },
     "breakoutRooms": {
-        "defaultName": "Salas simultâneas #{{index}}",
+        "defaultName": "Sala #{{index}}",
         "mainRoom": "Sala principal",
         "actions": {
             "add": "Adicionar salas simultâneas",
@@ -57,7 +57,7 @@
         },
         "notifications": {
             "joinedTitle": "Salas simultâneas",
-            "joined": "Entrada do \"{{name}}\" na sala",
+            "joined": "Entrada na sala \"{{name}}\"",
             "joinedMainRoom": "Entrada na sala principal"
         }
     },
@@ -180,7 +180,8 @@
         "joinInApp": "Participe nesta reunião utilizando a aplicação",
         "launchWebButton": "Iniciar na web",
         "title": "A iniciar a sua reunião na {{app}}...",
-        "tryAgainButton": "Tente novamente no desktop"
+        "tryAgainButton": "Tente novamente no desktop",
+        "unsupportedBrowser": "Parece que está a usar um browser que não suportamos."
     },
     "defaultLink": "ex.: {{url}}",
     "defaultNickname": "ex.: João Pedro",
@@ -418,6 +419,7 @@
         "desktopShareError": "Não foi possível partilhar a área de trabalho",
         "desktopShare":"Partilhar área de trabalho",
         "webAssemblyWarning": "WebAssembly não suportado",
+        "webAssemblyWarningDescription": "WebAssembly desactivado ou não suportado por este navegador",
         "backgroundEffectError": "Falha ao aplicar efeito de fundo."
     },
     "feedback": {
@@ -468,7 +470,7 @@
         "noPassword": "Nenhum",
         "noRoom": "Não foi especificado nenhuma sala para ligar.",
         "numbers": "Números para entrar por chamada telefónica",
-        "password": "$t(lockRoomPasswordUppercase):",
+        "password": "$t(lockRoomPasswordUppercase): ",
         "sip": "Endereços SIP",
         "title": "Partilhar",
         "tooltip": "Partilhar link e acesso telefónico para esta reunião",
@@ -607,6 +609,7 @@
         "raisedHands": "{{participantName}} e mais {{raisedHands}} pessoas",
         "screenShareNoAudio": " A caixa de compartilhar áudio não foi marcada no ecrã de seleção da janela.",
         "screenShareNoAudioTitle": "Não foi possível partilhar o áudio do sistema!",
+        "selfViewTitle": "Pode sempre reexibir a autovisualização a partir das definições",
         "somebody": "Alguém",
         "startSilentTitle": "Você entrou sem saída de áudio!",
         "startSilentDescription": "Volte à reunião para habilitar o áudio",
@@ -635,8 +638,8 @@
         "reactionSounds": "Desactivar sons",
         "reactionSoundsForAll": "Desativar sons para todos",
         "groupTitle": "Notificações",
-        "videoUnmuteBlockedTitle": "Ligar câmara bloqueada!",
-        "videoUnmuteBlockedDescription": "A operação de ligar a câmara foi temporariamente bloqueada devido aos limites do sistema."
+        "videoUnmuteBlockedTitle": "Está bloqueado ligar a câmara e partilhar o ambiente de trabalho!",
+        "videoUnmuteBlockedDescription": "A operação de ligar a câmara e partilhar o ambiente de trabalho foi temporariamente bloqueada devido aos limites do sistema."
     },
     "participantsPane": {
         "close": "Fechar",
@@ -821,8 +824,8 @@
     "security": {
         "about": "Pode adicionar uma $t(lockRoomPassword) à sua reunião. Os participantes terão de fornecer a $t(lockRoomPassword) antes de serem autorizados a participar na reunião.",
         "aboutReadOnly": "Os participantes moderadores podem acrescentar uma $t(lockRoomPassword) à reunião. Os participantes terão de fornecer a $t(lockRoomPassword) antes de serem autorizados a participar na reunião.",
-        "insecureRoomNameWarning": "O nome da sala é inseguro. Participantes indesejados podem juntar-se à sua conferência. Considere proteger a sua reunião utilizando o botão de segurança.",
-        "securityOptions": "Opções de segurança"
+        "header": "Opções de segurança",
+        "insecureRoomNameWarning": "O nome da sala é inseguro. Participantes indesejados podem juntar-se à sua conferência. Considere proteger a sua reunião utilizando o botão de segurança."
     },
     "settings": {
         "calendar": {
@@ -890,20 +893,20 @@
     },
     "speaker": "Participante",
     "speakerStats": {
-        "search": "Pesquisar",
+        "angry": "Zangado",
+        "disgusted": "Desgostoso",
+        "fearful": "Temeroso",
+        "happy": "Feliz",
         "hours": "{{count}}h",
         "minutes": "{{count}}m",
         "name": "Nome",
-        "seconds": "{{count}}s",
-        "speakerStats": "Estatísticas dos Participantes",
-        "speakerTime": "Tempo do Participante",
-        "happy": "Feliz",
         "neutral": "Neutro",
         "sad": "Triste",
-        "surprised": "Surpreendido",
-        "angry": "Zangado",
-        "fearful": "Temeroso",
-        "disgusted": "Desgostoso"
+        "search": "Pesquisar",
+        "seconds": "{{count}}s",
+        "speakerTime": "Tempo do Participante",
+        "speakerStats": "Estatísticas dos Participantes",
+        "surprised": "Surpreendido"
     },
     "startupoverlay": {
         "policyText": " ",
@@ -946,8 +949,8 @@
             "mute": "Ativar / Desativar microfone",
             "muteEveryone": "Silenciar a todos",
             "muteEveryoneElse": "Silenciar todos os outros",
-            "muteEveryonesVideo": "Desativar o vídeo de todos",
-            "muteEveryoneElsesVideo": "Desativar o vídeo de todos os outros",
+            "muteEveryonesVideo": "Parar o vídeo de todos",
+            "muteEveryoneElsesVideo": "Parar o vídeo de todos os outros",
             "participants": "Participantes",
             "pip": "Mudar para o modo Picture-in-Picture",
             "privateMessage": "Enviar mensagem privada",
@@ -1123,6 +1126,7 @@
         "domuteVideoOfOthers": "Desactivar a câmara de todos os outros",
         "flip": "Inverter",
         "grantModerator": "Conceder direitos de moderador",
+        "hideSelfView": "Ocultar a autovisualização",
         "kick": "Expulsar",
         "moderator": "Moderador",
         "mute": "Participante está sem som",

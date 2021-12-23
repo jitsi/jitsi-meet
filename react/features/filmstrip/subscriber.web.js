@@ -4,6 +4,7 @@ import { isMobileBrowser } from '../base/environment/utils';
 import { getParticipantCountWithFake } from '../base/participants';
 import { StateListenerRegistry, equals } from '../base/redux';
 import { clientResized } from '../base/responsive-ui';
+import { shouldHideSelfView } from '../base/settings';
 import { setFilmstripVisible } from '../filmstrip/actions';
 import { getParticipantsPaneOpen } from '../participants-pane/functions';
 import { setOverflowDrawer } from '../toolbox/actions.web';
@@ -30,7 +31,7 @@ StateListenerRegistry.register(
     /* selector */ state => {
         return {
             numberOfParticipants: getParticipantCountWithFake(state),
-            disableSelfView: state['features/base/settings'].disableSelfView
+            disableSelfView: shouldHideSelfView(state)
         };
     },
     /* listener */ (currentState, store) => {

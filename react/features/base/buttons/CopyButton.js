@@ -45,7 +45,7 @@ const styles = theme => {
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
             maxWidth: 292,
-            marginRight: 16,
+            marginRight: theme.spacing(3),
 
             '&.selected': {
                 fontWeight: 600
@@ -186,8 +186,8 @@ function CopyButton({ classes, className, displayedText, textToCopy, textOnHover
 
         return (
             <>
-                <div className = { `${classes.copyButton}-content` }>
-                    { isHovered ? textOnHover : displayedText }
+                <div className = { clsx(classes.content) }>
+                    <span> { isHovered ? textOnHover : displayedText } </span>
                 </div>
                 <Icon src = { IconCopy } />
             </>

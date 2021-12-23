@@ -4,7 +4,11 @@ import { batch } from 'react-redux';
 
 import { createReactionSoundsDisabledEvent, sendAnalytics } from '../analytics';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
-import { CONFERENCE_WILL_JOIN, setStartReactionsMuted } from '../base/conference';
+import {
+    CONFERENCE_WILL_JOIN,
+    SET_START_REACTIONS_MUTED,
+    setStartReactionsMuted
+} from '../base/conference';
 import {
     getParticipantById,
     getParticipantCount,
@@ -48,11 +52,6 @@ import {
 } from './functions.any';
 import logger from './logger';
 import { RAISE_HAND_SOUND_FILE } from './sounds';
-
-import './subscriber';
-
-
-declare var APP: Object;
 
 /**
  * Middleware which intercepts Reactions actions to handle changes to the
@@ -171,6 +170,18 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
+    // Settings changed for mute reactions in the meeting
+    case SET_START_REACTIONS_MUTED: {
+        const state = getState();
+        const { conference } = state['features/base/conference'];
+        const { muted, updateBackend } = action;
+
+        if (conference && isLocalParticipantModerator(state) && updateBackend) {
+            conference.sendCommand(MUTE_REACTIONS_COMMAND, { attributes: { startReactionsMuted: Boolean(muted) } });
+        }
+        break;
+    }
+
     case SETTINGS_UPDATED: {
         const { soundsReactions } = getState()['features/base/settings'];
 
@@ -183,13 +194,14 @@ MiddlewareRegistry.register(store => next => action => {
     case SHOW_SOUNDS_NOTIFICATION: {
         const state = getState();
         const isModerator = isLocalParticipantModerator(state);
+        const { disableReactionsModeration } = state['features/base/config'];
 
         const customActions = [ 'notify.reactionSounds' ];
         const customFunctions = [ () => dispatch(updateSettings({
             soundsReactions: false
         })) ];
 
-        if (isModerator) {
+        if (isModerator && !disableReactionsModeration) {
             customActions.push('notify.reactionSoundsForAll');
             customFunctions.push(() => batch(() => {
                 dispatch(setStartReactionsMuted(true));

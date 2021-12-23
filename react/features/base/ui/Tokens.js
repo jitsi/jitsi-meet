@@ -41,8 +41,7 @@ export const colors = {
     success05: '#1EC26A',
 
     warning05: '#F8AE1A',
-    warning06: '#ED9E1B',
-    warning07: '#D77976',
+    warning06: '#FFD600',
 
     disabled01: '#00000040',
 
@@ -257,9 +256,6 @@ export const colorMap = {
 
     // Color for indicating a raised hand
     warning02: 'warning06',
-
-    // Color for insecure room
-    warning03: 'warning07',
 
     // Color for disabled tab
     tab01Disabled: 'disabled01',

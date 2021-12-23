@@ -2,11 +2,10 @@
 
 import React, { PureComponent } from 'react';
 
+import ContextMenuItem from '../../../base/components/context-menu/ContextMenuItem';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import { updateSettings } from '../../../base/settings';
-
-import VideoMenuButton from './VideoMenuButton';
 
 /**
  * The type of the React {@code Component} props of {@link FlipLocalVideoButton}.
@@ -17,6 +16,11 @@ type Props = {
      * The current local flip x status.
      */
     _localFlipX: boolean,
+
+    /**
+     * Button text class name.
+     */
+    className: string,
 
     /**
      * The redux dispatch function.
@@ -61,15 +65,18 @@ class FlipLocalVideoButton extends PureComponent<Props> {
      */
     render() {
         const {
+            className,
             t
         } = this.props;
 
         return (
-            <VideoMenuButton
-                buttonText = { t('videothumbnail.flip') }
-                displayClass = 'fliplink'
+            <ContextMenuItem
+                accessibilityLabel = { t('videothumbnail.flip') }
+                className = 'fliplink'
                 id = 'flipLocalVideoButton'
-                onClick = { this._onClick } />
+                onClick = { this._onClick }
+                text = { t('videothumbnail.flip') }
+                textClassName = { className } />
         );
     }
 

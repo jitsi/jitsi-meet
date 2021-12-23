@@ -3,7 +3,7 @@
 import { getGravatarURL } from '@jitsi/js-utils/avatar';
 import type { Store } from 'redux';
 
-import { GRAVATAR_BASE_URL } from '../avatar';
+import { GRAVATAR_BASE_URL, isCORSAvatarURL } from '../avatar';
 import { JitsiParticipantConnectionStatus } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, shouldRenderVideoTrack } from '../media';
 import { toState } from '../redux';
@@ -56,7 +56,7 @@ export function getFirstLoadableAvatarUrl(participant: Object, store: Store<any,
     const deferred = createDeferred();
     const fullPromise = deferred.promise
         .then(() => _getFirstLoadableAvatarUrl(participant, store))
-        .then(src => {
+        .then(result => {
 
             if (AVATAR_QUEUE.length) {
                 const next = AVATAR_QUEUE.shift();
@@ -64,7 +64,7 @@ export function getFirstLoadableAvatarUrl(participant: Object, store: Store<any,
                 next.resolve();
             }
 
-            return src;
+            return result;
         });
 
     if (AVATAR_QUEUE.length) {
@@ -432,18 +432,33 @@ async function _getFirstLoadableAvatarUrl(participant, store) {
 
         if (url !== null) {
             if (AVATAR_CHECKED_URLS.has(url)) {
-                if (AVATAR_CHECKED_URLS.get(url)) {
-                    return url;
+                const { isLoadable, isUsingCORS } = AVATAR_CHECKED_URLS.get(url) || {};
+
+                if (isLoadable) {
+                    return {
+                        isUsingCORS,
+                        src: url
+                    };
                 }
             } else {
                 try {
-                    const finalUrl = await preloadImage(url);
+                    const { corsAvatarURLs } = store.getState()['features/base/config'];
+                    const { isUsingCORS, src } = await preloadImage(url, isCORSAvatarURL(url, corsAvatarURLs));
 
-                    AVATAR_CHECKED_URLS.set(finalUrl, true);
+                    AVATAR_CHECKED_URLS.set(src, {
+                        isLoadable: true,
+                        isUsingCORS
+                    });
 
-                    return finalUrl;
+                    return {
+                        isUsingCORS,
+                        src
+                    };
                 } catch (e) {
-                    AVATAR_CHECKED_URLS.set(url, false);
+                    AVATAR_CHECKED_URLS.set(url, {
+                        isLoadable: false,
+                        isUsingCORS: false
+                    });
                 }
             }
         }

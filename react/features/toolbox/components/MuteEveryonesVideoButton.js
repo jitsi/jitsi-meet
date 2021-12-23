@@ -27,7 +27,7 @@ type Props = AbstractButtonProps & {
  * every participant (except the local one).
  */
 class MuteEveryonesVideoButton extends AbstractButton<Props, *> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.muteEveryonesVideo';
+    accessibilityLabel = 'toolbar.accessibilityLabel.muteEveryonesVideoStream';
     icon = IconMuteVideoEveryone;
     label = 'toolbar.muteEveryonesVideo';
     tooltip = 'toolbar.muteEveryonesVideo';

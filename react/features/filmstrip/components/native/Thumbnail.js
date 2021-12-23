@@ -14,7 +14,8 @@ import {
     isEveryoneModerator,
     pinParticipant,
     getParticipantByIdOrUndefined,
-    getLocalParticipant
+    getLocalParticipant,
+    hasRaisedHand
 } from '../../../base/participants';
 import { Container } from '../../../base/react';
 import { connect } from '../../../base/redux';
@@ -83,6 +84,11 @@ type Props = {
      * Indicates whether the participant is pinned or not.
      */
     _pinned: boolean,
+
+    /**
+     * Whether or not the participant has the hand raised.
+     */
+    _raisedHand: boolean,
 
     /**
      * Whether to show the dominant speaker indicator or not.
@@ -267,6 +273,7 @@ class Thumbnail extends PureComponent<Props> {
             _participantId: participantId,
             _participantInLargeVideo: participantInLargeVideo,
             _pinned,
+            _raisedHand,
             _styles,
             disableTint,
             height,
@@ -289,7 +296,8 @@ class Thumbnail extends PureComponent<Props> {
                 style = { [
                     styles.thumbnail,
                     _pinned && !tileView ? _styles.thumbnailPinned : null,
-                    styleOverrides
+                    styleOverrides,
+                    _raisedHand ? styles.thumbnailRaisedHand : null
                 ] }
                 touchFeedback = { false }>
                 <ParticipantView
@@ -354,6 +362,7 @@ function _mapStateToProps(state, ownProps) {
         _participantInLargeVideo: participantInLargeVideo,
         _participantId: id,
         _pinned: participant?.pinned,
+        _raisedHand: hasRaisedHand(participant),
         _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,
         _renderModeratorIndicator: renderModeratorIndicator,
         _styles: ColorSchemeRegistry.get(state, 'Thumbnail'),
