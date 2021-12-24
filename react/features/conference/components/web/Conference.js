@@ -261,11 +261,11 @@ class Conference extends AbstractConference<Props, *> {
                     { !hideToolbar && (_showPrejoin || _showLobby || <Toolbox showDominantSpeakerName = { true } />)}
                     { !hideChat && (filmstripOnly || <Chat />)}
 
-                    {!hideNotifications && _notificationsVisible && (_overflowDrawer
+                    {!hideNotifications ? _notificationsVisible && (_overflowDrawer
                         ? <JitsiPortal className = 'notification-portal'>
                             {this.renderNotificationsContainer({ portal: true })}
                         </JitsiPortal>
-                        : this.renderNotificationsContainer())
+                        : this.renderNotificationsContainer()) : null
                     }
 
                     <CalleeInfoContainer />
