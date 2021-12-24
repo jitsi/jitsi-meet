@@ -1,3 +1,6 @@
+local json = require "util.json";
+local http = require "net.http";
+
 -- invite will perform the trigger for external call invites.
 -- This trigger is left unimplemented. The implementation is expected
 -- to be specific to the deployment.
