@@ -675,6 +675,7 @@
             "askUnmute": "Ask to unmute",
             "audioModeration": "Unmute themselves",
             "blockEveryoneMicCamera": "Block everyone's mic and camera",
+            "breakoutRoomsVisible": "See breakout rooms",
             "invite": "Invite Someone",
             "moreModerationActions": "More moderation options",
             "moreModerationControls": "More moderation controls",

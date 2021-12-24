@@ -65,6 +65,21 @@ export function createBreakoutRoom(name?: string) {
 }
 
 /**
+ * Action to set the publishing state of the breakout rooms.
+ *
+ * @param {boolean} published - Whether to publish the breakout rooms to the participants.
+ * @returns {Function}
+ */
+export function publishBreakoutRooms(published: boolean) {
+    return (dispatch: Dispatch<any>, getState: Function) => {
+
+        // $FlowExpectedError
+        getCurrentConference(getState)?.getBreakoutRooms()
+            ?.publish(published);
+    };
+}
+
+/**
  * Action to close a room and send participants to the main room.
  *
  * @param {string} roomId - The id of the room to close.

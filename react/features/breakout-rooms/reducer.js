@@ -11,7 +11,8 @@ import { FEATURE_KEY } from './constants';
 
 const DEFAULT_STATE = {
     rooms: {},
-    roomCounter: 0
+    roomCounter: 0,
+    published: true
 };
 
 /**
@@ -25,12 +26,13 @@ ReducerRegistry.register(FEATURE_KEY, (state = DEFAULT_STATE, action) => {
             roomCounter: action.roomCounter
         };
     case UPDATE_BREAKOUT_ROOMS: {
-        const { roomCounter, rooms } = action;
+        const { roomCounter, rooms, published } = action;
 
         return {
             ...state,
             roomCounter,
-            rooms
+            rooms,
+            published
         };
     }
     case _RESET_BREAKOUT_ROOMS: {

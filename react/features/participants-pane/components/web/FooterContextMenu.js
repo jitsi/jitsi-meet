@@ -16,6 +16,7 @@ import {
     isSupported as isAvModerationSupported
 } from '../../../av-moderation/functions';
 import { ContextMenu, ContextMenuItemGroup } from '../../../base/components';
+import { getCurrentConference } from '../../../base/conference';
 import { openDialog } from '../../../base/dialog';
 import {
     IconCheck,
@@ -27,6 +28,9 @@ import {
     getParticipantCount,
     isEveryoneModerator
 } from '../../../base/participants';
+import { publishBreakoutRooms } from '../../../breakout-rooms/actions';
+import { BREAKOUT_ROOMS_PUBLISH_FEATURE } from '../../../breakout-rooms/constants';
+import { breakoutRoomsPublished } from '../../../breakout-rooms/functions';
 import {
     SETTINGS_TABS,
     openSettingsDialog,
@@ -89,10 +93,16 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: Props
     const participantCount = useSelector(getParticipantCount);
     const isAudioModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.AUDIO));
     const isVideoModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.VIDEO));
+    const published = useSelector(breakoutRoomsPublished);
+    const conference = useSelector(getCurrentConference);
+    const isPublishBreakoutRoomsSupported
+            = conference?.getBreakoutRooms().isFeatureSupported(BREAKOUT_ROOMS_PUBLISH_FEATURE);
 
     const { t } = useTranslation();
 
     const disableAudioModeration = useCallback(() => dispatch(requestDisableAudioModeration()), [ dispatch ]);
+    const toggleBreakoutRoomPublishStatus = useCallback(
+        () => dispatch(publishBreakoutRooms(!published)), [ dispatch, published ]);
 
     const disableVideoModeration = useCallback(() => dispatch(requestDisableVideoModeration()), [ dispatch ]);
 
@@ -128,6 +138,21 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: Props
             text: t('participantsPane.actions.videoModeration')
         }
     ];
+
+    if (isPublishBreakoutRoomsSupported) {
+        actions.unshift(
+            {
+                accessibilityLabel: t('participantsPane.actions.breakoutRoomsVisible'),
+                className: published ? '' : classes.indentedLabel,
+                id: published
+                    ? 'participants-pane-context-menu-unpublish-breakout-rooms'
+                    : 'participants-pane-context-menu-publish-breakout-rooms',
+                icon: published && IconCheck,
+                onClick: toggleBreakoutRoomPublishStatus,
+                text: t('participantsPane.actions.breakoutRoomsVisible')
+            }
+        );
+    }
 
     return (
         <ContextMenu

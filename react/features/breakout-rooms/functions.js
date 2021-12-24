@@ -57,3 +57,13 @@ export const isInBreakoutRoom = (stateful: Function | Object) => {
     return conference?.getBreakoutRooms()
         ?.isBreakoutRoom();
 };
+
+/**
+ * Determines whether breakout rooms are published to the participants.
+ *
+ * @param {Function|Object} stateful - The redux store, the redux
+ * {@code getState} function, or the redux state itself.
+ * @returns {boolean}
+ */
+export const breakoutRoomsPublished = (stateful: Function | Object) =>
+    toState(stateful)[FEATURE_KEY].published;
