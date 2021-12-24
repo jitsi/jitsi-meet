@@ -158,7 +158,8 @@
         "joinInApp": "Rejónher la conferéncia en utilizant l’aplicacion",
         "launchWebButton": "Lançar del navigador",
         "title": "Aviada de vòstra conferéncia dins {{app}}…",
-        "tryAgainButton": "Tornar ensajar del burèu"
+        "tryAgainButton": "Tornar ensajar del burèu",
+        "unsupportedBrowser": "Sembla qu’utilizatz un navigador que prenèm pas en carga."
     },
     "defaultLink": "ex. {{url}}",
     "defaultNickname": "ex. Joan Delpuèch",
@@ -421,7 +422,7 @@
         "noPassword": "Pas cap",
         "noRoom": "Cap de sala pas donada per la jónher.",
         "numbers": "Sonar de numèros",
-        "password": "$t(lockRoomPasswordUppercase) :",
+        "password": "$t(lockRoomPasswordUppercase): ",
         "title": "Partejar",
         "tooltip": "Partejar lo ligam e las informacions d’aquesta conferéncia",
         "copyNumber": "Copiar lo numèro",
@@ -627,9 +628,17 @@
         "moderationInEffectCSDescription": "Volgatz levar la man se volètz partejar vòstre ecran.",
         "moderationInEffectVideoDescription": "Volgatz levar la man se volètz aviar vòstra camèra.",
         "audioUnmuteBlockedTitle": "Restabliment del son del microfòn blocat !",
-        "videoUnmuteBlockedTitle": "Restabliment de la camèra blocat !",
+        "videoUnmuteBlockedTitle": "Restabliment de la camèra e del partiment de burèu blocat  !",
         "audioUnmuteBlockedDescription": "Las operacion de restabliment del son microfòn son estadas blocadas pel moment a causa de limitas sistèma.",
-        "videoUnmuteBlockedDescription": "Las operacion de restabliment de la camèra son estadas blocadas pel moment a causa de limitas sistèma."
+        "videoUnmuteBlockedDescription": "Las operacion de restabliment de la camèra e del partiment del burèu son estadas blocadas pel moment a causa de limitas sistèma.",
+        "chatMessages": "Messatges del chat",
+        "displayNotifications": "Afichar las notificacions per",
+        "leftOneMember": "{{name}} a quitat la conferéncia",
+        "leftThreePlusMembers": "{{name}} e un molon d’autres an quitat la conferéncia",
+        "leftTwoMembers": "{{first}} e {{second}} an quitat la conferéncia",
+        "raisedHands": "{{participantName}} e {{raisedHands}} autres",
+        "selfViewTitle": "Podètz totjorn quitar d’amagar vòstra pròpria vista a partir dels paramètres",
+        "reactionSoundsForAll": "Desactivar los sons per totes"
     },
     "passwordDigitsOnly": "Fins a {{number}} chifras",
     "passwordSetRemotely": "causit per qualqu'un mai",
@@ -758,7 +767,7 @@
         "about": "Podètz ajustar un $t(lockRoomPassword) per rejónher una conferéncia. Los participants deuràn fornir lo $t(lockRoomPassword) abans d’obténer l’autorizacion de dintrar dins la conferéncia.",
         "aboutReadOnly": "Los participants que son moderators pòdon ajustar un $t(lockRoomPassword) a la conferéncia. Los participants deuràn fornir lo $t(lockRoomPassword) abans d’aver l’autorizacion de rejónher la conferéncia.",
         "insecureRoomNameWarning": "Lo nom de la sala es pas segur. De monde indesirables poirián rejónher vòstra conferéncia.",
-        "securityOptions": "Opcions de seguretat"
+        "header": "Opcions de seguretat"
     },
     "settings": {
         "calendar": {
@@ -795,7 +804,9 @@
         "talkWhileMuted": "Parlar en mut",
         "desktopShareHighFpsWarning": "Una frequéncia d’imatge mai nauta pel partiment burèu pòt afectar la benda passanta. Devètz reaviar lo partiment d’ecran per aplicar los paramètres novèls.",
         "desktopShareWarning": "Devètz reaviar lo partiment d’ecran per prendre en compte las modificacions.",
-        "incomingMessage": "Messatge dintrant"
+        "incomingMessage": "Messatge dintrant",
+        "selfView": "Vista de se",
+        "startReactionsMuted": "Començan totes amb las reaccions sonòras amudidas"
     },
     "settingsView": {
         "advanced": "Avançat",
@@ -898,7 +909,6 @@
             "clap": "Picar de las mans",
             "laugh": "Rire",
             "like": "Levar lo det gròs",
-            "muteEveryonesVideo": "Copar la vidèo del monde",
             "muteEveryoneElsesVideo": "Copar la vidèo de los demai",
             "participants": "Participants",
             "remoteVideoMute": "Copar la camèra del participant",
@@ -910,7 +920,9 @@
             "collapse": "Plegar",
             "muteEveryoneElse": "Copar lo microfòn dels autres",
             "reactionsMenu": "Dobrir / Tampar lo menú de reaccions",
-            "breakoutRoom": "Rejónher/quitar la sala de reünion"
+            "breakoutRoom": "Rejónher/quitar la sala de reünion",
+            "muteEveryoneElsesVideoStream": "Arrestar la vidèo de totes los autres",
+            "muteEveryonesVideoStream": "Arrestar la vidèo de tot lo monde"
         },
         "addPeople": "Ajustar de monde a vòstra sonada",
         "audioOnlyOff": "Desactivar lo mòde connexion febla",
@@ -1064,7 +1076,8 @@
         "videomute": "Lo participant a arrestat la camèra",
         "domuteVideo": "Desactivar la camèra",
         "domuteVideoOfOthers": "Desactivar la camèra dels demai",
-        "videoMuted": "Camèra desactivada"
+        "videoMuted": "Camèra desactivada",
+        "hideSelfView": "Amagar pròpria vista"
     },
     "welcomepage": {
         "accessibilityLabel": {
@@ -1135,7 +1148,8 @@
         "image6": "Forèst ",
         "desktopShareError": "Creacion impossibla d’un partiment de burèu",
         "desktopShare": "Partiment de burèu",
-        "webAssemblyWarning": "WebAssembly pas pres en carga"
+        "webAssemblyWarning": "WebAssembly pas pres en carga",
+        "webAssemblyWarningDescription": "WebAssembly es desactivat o pas pres en carga per aqueste navigador"
     },
     "participantsPane": {
         "headings": {
@@ -1160,7 +1174,8 @@
             "videoModeration": "Aviar lor vidèo",
             "allowVideo": "Autorizar la vidèo",
             "moreModerationActions": "Mai d’opcions de moderacion",
-            "moreParticipantOptions": "Mai d’opcions de participant"
+            "moreParticipantOptions": "Mai d’opcions de participant",
+            "moreModerationControls": "Opcions de moderacion suplementàrias"
         },
         "search": "Cercar participants"
     },
@@ -1207,7 +1222,12 @@
             "autoAssign": "Atribucion auto a las salas de reünion"
         },
         "defaultName": "Sala de reünion #{{index}}",
-        "mainRoom": "Sala principala"
+        "mainRoom": "Sala principala",
+        "notifications": {
+            "joinedMainRoom": "Retorn a la sala principala",
+            "joinedTitle": "Salas suplementàrias",
+            "joined": "Dintrada a la sala suplementària « {{name}} »"
+        }
     },
     "privacyView": {
         "header": "Confidencialitat"
@@ -1217,5 +1237,6 @@
     },
     "blankPage": {
         "meetingEnded": "Conferéncia acabada."
-    }
+    },
+    "raisedHandsLabel": "Nombre de mans levadas"
 }
