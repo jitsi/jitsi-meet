@@ -15,12 +15,16 @@ import {
     isEnabled as isAvModerationEnabled,
     isSupported as isAvModerationSupported
 } from '../../../av-moderation/functions';
+import { getCurrentConference } from '../../../base/conference/functions';
 import { hideSheet, openDialog } from '../../../base/dialog/actions';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import Icon from '../../../base/icons/components/Icon';
 import { IconCheck, IconVideoOff } from '../../../base/icons/svg';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { getParticipantCount, isEveryoneModerator } from '../../../base/participants/functions';
+import { publishBreakoutRooms } from '../../../breakout-rooms/actions';
+import { BREAKOUT_ROOMS_PUBLISH_FEATURE } from '../../../breakout-rooms/constants';
+import { breakoutRoomsPublished } from '../../../breakout-rooms/functions';
 import MuteEveryonesVideoDialog
     from '../../../video-menu/components/native/MuteEveryonesVideoDialog';
 
@@ -40,12 +44,19 @@ export const ContextMenuMore = () => {
 
     const isAudioModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.AUDIO));
     const isVideoModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.VIDEO));
+    const published = useSelector(breakoutRoomsPublished);
+    const conference = useSelector(getCurrentConference);
+    const isPublishBreakoutRoomsSupported
+            = conference?.getBreakoutRooms().isFeatureSupported(BREAKOUT_ROOMS_PUBLISH_FEATURE);
 
     const disableAudioModeration = useCallback(() => dispatch(requestDisableAudioModeration()), [ dispatch ]);
     const disableVideoModeration = useCallback(() => dispatch(requestDisableVideoModeration()), [ dispatch ]);
 
     const enableAudioModeration = useCallback(() => dispatch(requestEnableAudioModeration()), [ dispatch ]);
     const enableVideoModeration = useCallback(() => dispatch(requestEnableVideoModeration()), [ dispatch ]);
+
+    const toggleBreakoutRoomPublishStatus = useCallback(
+        () => dispatch(publishBreakoutRooms(!published)), [ dispatch, published ]);
 
     return (
         <BottomSheet
@@ -65,6 +76,26 @@ export const ContextMenuMore = () => {
                 <View style = { styles.contextMenuItem as ViewStyle }>
                     <Text style = { styles.contextMenuItemText }>{t('participantsPane.actions.allow')}</Text>
                 </View>
+                {isPublishBreakoutRoomsSupported
+                    && (published
+                        ? <TouchableOpacity
+                            onPress = { toggleBreakoutRoomPublishStatus }
+                            style = { styles.contextMenuItem }>
+                            <Icon
+                                size = { 24 }
+                                src = { IconCheck } />
+                            <Text style = { styles.contextMenuItemText }>
+                                {t('participantsPane.actions.breakoutRoomsVisible')}
+                            </Text>
+                        </TouchableOpacity>
+                        : <TouchableOpacity
+                            onPress = { toggleBreakoutRoomPublishStatus }
+                            style = { styles.contextMenuItem }>
+                            <Text style = { styles.contextMenuItemTextNoIcon }>
+                                {t('participantsPane.actions.breakoutRoomsVisible')}
+                            </Text>
+                        </TouchableOpacity>)
+                }
                 {isAudioModerationEnabled
                     ? <TouchableOpacity
                         onPress = { disableAudioModeration }

@@ -14,6 +14,7 @@ import {
     isEnabled as isAvModerationEnabled,
     isSupported as isAvModerationSupported
 } from '../../../av-moderation/functions';
+import { getCurrentConference } from '../../../base/conference/functions';
 import { openDialog } from '../../../base/dialog/actions';
 import {
     IconCheck,
@@ -28,7 +29,9 @@ import {
 import { withPixelLineHeight } from '../../../base/styles/functions.web';
 import ContextMenu from '../../../base/ui/components/web/ContextMenu';
 import ContextMenuItemGroup from '../../../base/ui/components/web/ContextMenuItemGroup';
-import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
+import { publishBreakoutRooms } from '../../../breakout-rooms/actions';
+import { BREAKOUT_ROOMS_PUBLISH_FEATURE } from '../../../breakout-rooms/constants';
+import { breakoutRoomsPublished, isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { openSettingsDialog } from '../../../settings/actions.web';
 import { SETTINGS_TABS } from '../../../settings/constants';
 import { shouldShowModeratorSettings } from '../../../settings/functions.web';
@@ -91,10 +94,16 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: IProp
     const isAudioModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.AUDIO));
     const isVideoModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.VIDEO));
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
+    const published = useSelector(breakoutRoomsPublished);
+    const conference = useSelector(getCurrentConference);
+    const isPublishBreakoutRoomsSupported
+            = conference?.getBreakoutRooms().isFeatureSupported(BREAKOUT_ROOMS_PUBLISH_FEATURE);
 
     const { t } = useTranslation();
 
     const disableAudioModeration = useCallback(() => dispatch(requestDisableAudioModeration()), [ dispatch ]);
+    const toggleBreakoutRoomPublishStatus = useCallback(
+        () => dispatch(publishBreakoutRooms(!published)), [ dispatch, published ]);
 
     const disableVideoModeration = useCallback(() => dispatch(requestDisableVideoModeration()), [ dispatch ]);
 
@@ -130,6 +139,21 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: IProp
             text: t('participantsPane.actions.videoModeration')
         }
     ];
+
+    if (isPublishBreakoutRoomsSupported) {
+        actions.unshift(
+            {
+                accessibilityLabel: t('participantsPane.actions.breakoutRoomsVisible'),
+                className: published ? '' : classes.indentedLabel,
+                id: published
+                    ? 'participants-pane-context-menu-unpublish-breakout-rooms'
+                    : 'participants-pane-context-menu-publish-breakout-rooms',
+                icon: published && IconCheck,
+                onClick: toggleBreakoutRoomPublishStatus,
+                text: t('participantsPane.actions.breakoutRoomsVisible')
+            }
+        );
+    }
 
     return (
         <ContextMenu
