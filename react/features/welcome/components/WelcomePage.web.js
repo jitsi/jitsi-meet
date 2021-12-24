@@ -184,7 +184,7 @@ class WelcomePage extends AbstractWelcomePage {
                 className = { `welcome ${contentClassName} ${footerClassName}` }
                 id = 'welcome_page'>
                 <div className = 'welcome-watermark'>
-                    {/* <Watermarks defaultJitsiLogoURL = { DEFAULT_WELCOME_PAGE_LOGO_URL } /> */}
+                    <Watermarks defaultJitsiLogoURL = { DEFAULT_WELCOME_PAGE_LOGO_URL } />
                 </div>
 
                 <div className = 'header'>
