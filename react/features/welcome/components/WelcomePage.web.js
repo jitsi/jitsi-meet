@@ -352,8 +352,8 @@ class WelcomePage extends AbstractWelcomePage {
             <div className = 'welcome-footer-centered'>
                 <div className = 'welcome-footer-padded'>
                     <div className = 'welcome-footer-row-block welcome-footer--row-1'>
-                        <div className = 'welcome-footer-row-1-text'>{t('welcomepage.jitsiOnMobile')}</div>
-                        <a
+                        {/* <div className = 'welcome-footer-row-1-text'>{t('welcomepage.jitsiOnMobile')}</div> */}
+                        {/* <a
                             className = 'welcome-badge'
                             href = { MOBILE_DOWNLOAD_LINK_IOS }>
                             <img
@@ -373,7 +373,7 @@ class WelcomePage extends AbstractWelcomePage {
                             <img
                                 alt = { t('welcomepage.mobileDownLoadLinkFDroid') }
                                 src = './images/f-droid-badge.png' />
-                        </a>
+                        </a> */}
                     </div>
                 </div>
             </div>
