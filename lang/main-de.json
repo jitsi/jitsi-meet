@@ -581,10 +581,12 @@
         "allowedUnmute": "Sie können die Stummschaltung aufheben, Ihre Kamera einschalten oder Ihren Bildschirm teilen.",
         "audioUnmuteBlockedTitle": "Stummschaltung kann nicht aufgehoben werden!",
         "audioUnmuteBlockedDescription": "Díe Stummschaltung kann aus Überlastungsschutzgründen temporär nicht aufgehoben werden.",
+        "chatMessages": "Chatnachrichten",
         "connectedOneMember": "{{name}} nimmt am Meeting teil",
         "connectedThreePlusMembers": "{{name}} und {{count}} andere Personen nehmen am Meeting teil",
         "connectedTwoMembers": "{{first}} und {{second}} nehmen am Meeting teil",
         "disconnected": "getrennt",
+        "displayNotifications": "Benachrichtigungen anzeigen für",
         "focus": "Konferenzleitung",
         "focusFail": "{{component}} ist im Moment nicht verfügbar – wiederholen in {{ms}} Sekunden",
         "hostAskedUnmute": "Die Moderation bittet Sie, das Mikrofon zu aktivieren",
@@ -782,6 +784,7 @@
         "title": "Profil"
     },
     "raisedHand": "Ich möchte sprechen",
+    "raisedHandsLabel": "Anzahl gehobener Hände",
     "recording": {
         "limitNotificationDescriptionWeb": "Wegen hoher Nachfrage ist Ihre Aufnahme auf {{limit}} Min. begrenzt. Für unlimitierte Aufnahmen nutzen Sie bitte <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "limitNotificationDescriptionNative": "Wegen hoher Nachfrage ist Ihre Aufnahme auf {{limit}} Min. begrenzt. Für unlimitierte Aufnahmen nutzen Sie bitte <3>{{app}}</3>.",
@@ -857,6 +860,7 @@
         "selectAudioOutput": "Audioausgabe",
         "selectCamera": "Kamera",
         "selectMic": "Mikrofon",
+        "selfView": "Eigene Ansicht",
         "sounds": "Hinweistöne",
         "speakers": "Lautsprecher",
         "startAudioMuted": "Alle Personen treten stummgeschaltet bei",
