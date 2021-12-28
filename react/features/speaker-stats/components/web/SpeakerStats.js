@@ -7,11 +7,12 @@ import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import { escapeRegexp } from '../../../base/util';
-import { initSearch, resetSearchCriteria } from '../../actions';
+import { initSearch, resetSearchCriteria, toggleFacialExpressions } from '../../actions';
 
 import SpeakerStatsLabels from './SpeakerStatsLabels';
 import SpeakerStatsList from './SpeakerStatsList';
 import SpeakerStatsSearch from './SpeakerStatsSearch';
+import ToggleFacialExpressionsButton from './ToggleFacialExpressionsButton';
 
 /**
  * The type of the React {@code Component} props of {@link SpeakerStats}.
@@ -20,12 +21,17 @@ type Props = {
 
     /**
      * The flag which shows if the facial recognition is enabled, obtained from the redux store.
-     * If enabled facial expressions are shown.
+     * If enabled facial expressions can be expanded.
+     */
+    _enableFacialRecognition: boolean,
+
+    /**
+     * The flag which shows if the facial expressions are displayed or not.
      */
     _showFacialExpressions: boolean,
 
     /**
-     * True if the client width is les than 750.
+     * True if the client width is less than 750.
      */
     _reduceExpressions: boolean,
 
@@ -63,6 +69,7 @@ class SpeakerStats extends Component<Props> {
 
         // Bind event handlers so they are only bound once per instance.
         this._onSearch = this._onSearch.bind(this);
+        this._onToggleFacialExpressions = this._onToggleFacialExpressions.bind(this);
     }
 
     /**
@@ -90,6 +97,11 @@ class SpeakerStats extends Component<Props> {
                 width = { this.props._showFacialExpressions ? 'large' : 'medium' }>
                 <div className = 'speaker-stats'>
                     <SpeakerStatsSearch onSearch = { this._onSearch } />
+                    { this.props._enableFacialRecognition
+                    && <ToggleFacialExpressionsButton
+                        onClick = { this._onToggleFacialExpressions }
+                        showFacialExpressions = { this.props._showFacialExpressions } />
+                    }
                     <SpeakerStatsLabels
                         reduceExpressions = { this.props._reduceExpressions }
                         showFacialExpressions = { this.props._showFacialExpressions ?? false } />
@@ -111,6 +123,14 @@ class SpeakerStats extends Component<Props> {
     _onSearch(criteria = '') {
         this.props.dispatch(initSearch(escapeRegexp(criteria)));
     }
+
+    _onToggleFacialExpressions: () => void;
+
+    /**
+     */
+    _onToggleFacialExpressions() {
+        this.props.dispatch(toggleFacialExpressions());
+    }
 }
 
 /**
@@ -125,6 +145,7 @@ class SpeakerStats extends Component<Props> {
  */
 function _mapStateToProps(state) {
     const { enableFacialRecognition } = state['features/base/config'];
+    const { showFacialExpressions } = state['features/speaker-stats'];
     const { clientWidth } = state['features/base/responsive-ui'];
 
     return {
@@ -134,7 +155,8 @@ function _mapStateToProps(state) {
          * @private
          * @type {string|undefined}
          */
-        _showFacialExpressions: enableFacialRecognition,
+        _enableFacialRecognition: enableFacialRecognition,
+        _showFacialExpressions: showFacialExpressions,
         _reduceExpressions: clientWidth < 750
     };
 }
