@@ -170,3 +170,24 @@ export function filterBySearchCriteria(state: Object, stats: ?Object) {
 
     return filteredStats;
 }
+
+/**
+ * Reset the hidden speaker stats.
+ *
+ * @param {Object} state - The redux state.
+ * @param {Object | undefined} stats - The unfiltered stats.
+ *
+ * @returns {Object} - Speaker stats.
+ * @public
+ */
+export function resetHiddenStats(state: Object, stats: ?Object) {
+    const resetStats = _.cloneDeep(stats ?? getSpeakerStats(state));
+
+    for (const id in resetStats) {
+        if (resetStats[id].hidden) {
+            resetStats[id].hidden = false;
+        }
+    }
+
+    return resetStats;
+}

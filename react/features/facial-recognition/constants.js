@@ -6,9 +6,12 @@ export const FACIAL_EXPRESSION_EMOJIS = {
     sad: '🙁',
     surprised: '😮',
     angry: '😠',
-    fearful: '😨',
-    disgusted: '🤢'
+    fearful: '😨'
+
+    // disgusted: '🤢'
 };
+
+export const FACIAL_EXPRESSIONS = [ 'happy', 'neutral', 'sad', 'surprised', 'angry', 'fearful' ];
 
 /**
  * Time used for detection interval when facial expressions worker uses webgl backend.

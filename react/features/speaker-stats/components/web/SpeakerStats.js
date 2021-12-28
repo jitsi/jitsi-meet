@@ -1,142 +1,116 @@
 // @flow
 
-import React, { Component } from 'react';
-import type { Dispatch } from 'redux';
+import { makeStyles } from '@material-ui/core/styles';
+import React, { useCallback, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { Dialog } from '../../../base/dialog';
-import { translate } from '../../../base/i18n';
-import { connect } from '../../../base/redux';
 import { escapeRegexp } from '../../../base/util';
-import { initSearch, resetSearchCriteria } from '../../actions';
+import { resetSearchCriteria, toggleFacialExpressions, initSearch } from '../../actions';
+import {
+    DISPLAY_SWITCH_BREAKPOINT,
+    MOBILE_BREAKPOINT,
+    RESIZE_SEARCH_SWITCH_CONTAINER_BREAKPOINT
+} from '../../constants';
 
+import FacialExpressionsSwitch from './FacialExpressionsSwitch';
 import SpeakerStatsLabels from './SpeakerStatsLabels';
 import SpeakerStatsList from './SpeakerStatsList';
 import SpeakerStatsSearch from './SpeakerStatsSearch';
 
-/**
- * The type of the React {@code Component} props of {@link SpeakerStats}.
- */
-type Props = {
+const useStyles = makeStyles(theme => {
+    return {
+        separator: {
+            position: 'absolute',
+            width: '100%',
+            height: 1,
+            left: 0,
+            backgroundColor: theme.palette.border02
+        },
+        searchSwitchContainer: {
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            width: '100%'
+        },
+        searchSwitchContainerExpressionsOn: {
+            width: '58.5%',
+            [theme.breakpoints.down(RESIZE_SEARCH_SWITCH_CONTAINER_BREAKPOINT)]: {
+                width: '100%'
+            }
+        },
+        searchContainer: {
+            width: '50%'
+        },
+        searchContainerFullWidth: {
+            width: '100%'
+        }
+    };
+});
 
-    /**
-     * The flag which shows if the facial recognition is enabled, obtained from the redux store.
-     * If enabled facial expressions are shown.
-     */
-    _showFacialExpressions: boolean,
+const SpeakerStats = () => {
+    const { enableDisplayFacialExpressions } = useSelector(state => state['features/base/config']);
+    const { showFacialExpressions } = useSelector(state => state['features/speaker-stats']);
+    const { clientWidth } = useSelector(state => state['features/base/responsive-ui']);
+    const displaySwitch = enableDisplayFacialExpressions && clientWidth > DISPLAY_SWITCH_BREAKPOINT;
+    const displayLabels = clientWidth > MOBILE_BREAKPOINT;
+    const dispatch = useDispatch();
+    const classes = useStyles();
 
-    /**
-     * True if the client width is les than 750.
-     */
-    _reduceExpressions: boolean,
+    const onToggleFacialExpressions = useCallback(() =>
+        dispatch(toggleFacialExpressions())
+    , [ dispatch ]);
 
-    /**
-     * The search criteria.
-     */
-    _criteria: string | null,
+    const onSearch = useCallback((criteria = '') => {
+        dispatch(initSearch(escapeRegexp(criteria)));
+    }
+    , [ dispatch ]);
 
-    /**
-     * Redux store dispatch method.
-     */
-    dispatch: Dispatch<any>,
+    useEffect(() => {
+        showFacialExpressions && !displaySwitch && dispatch(toggleFacialExpressions());
+    }, [ clientWidth ]);
+    useEffect(() => () => dispatch(resetSearchCriteria()), []);
 
-    /**
-     * The function to translate human-readable text.
-     */
-    t: Function
+    return (
+        <Dialog
+            cancelKey = 'dialog.close'
+            hideCancelButton = { true }
+            submitDisabled = { true }
+            titleKey = 'speakerStats.speakerStats'
+            width = { showFacialExpressions ? '664px' : 'small' }>
+            <div className = 'speaker-stats'>
+                <div
+                    className = {
+                        `${classes.searchSwitchContainer}
+                        ${showFacialExpressions ? classes.searchSwitchContainerExpressionsOn : ''}`
+                    }>
+                    <div
+                        className = {
+                            displaySwitch
+                                ? classes.searchContainer
+                                : classes.searchContainerFullWidth }>
+                        <SpeakerStatsSearch
+                            onSearch = { onSearch } />
+                    </div>
+
+                    { displaySwitch
+                    && <FacialExpressionsSwitch
+                        onChange = { onToggleFacialExpressions }
+                        showFacialExpressions = { showFacialExpressions } />
+                    }
+                </div>
+                { displayLabels && (
+                    <>
+                        <SpeakerStatsLabels
+                            showFacialExpressions = { showFacialExpressions ?? false } />
+                        <div className = { classes.separator } />
+                    </>
+                )}
+                <SpeakerStatsList />
+            </div>
+        </Dialog>
+
+    );
 };
 
-/**
- * React component for displaying a list of speaker stats.
- *
- * @augments Component
- */
-class SpeakerStats extends Component<Props> {
-
-    /**
-     * Initializes a new SpeakerStats instance.
-     *
-     * @param {Object} props - The read-only React Component props with which
-     * the new instance is to be initialized.
-     */
-    constructor(props) {
-        super(props);
-
-        // Bind event handlers so they are only bound once per instance.
-        this._onSearch = this._onSearch.bind(this);
-    }
-
-    /**
-     * Resets the search criteria when component will unmount.
-     *
-     * @private
-     * @returns {void}
-     */
-    componentWillUnmount() {
-        this.props.dispatch(resetSearchCriteria());
-    }
-
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    render() {
-        return (
-            <Dialog
-                cancelKey = 'dialog.close'
-                submitDisabled = { true }
-                titleKey = 'speakerStats.speakerStats'
-                width = { this.props._showFacialExpressions ? 'large' : 'medium' }>
-                <div className = 'speaker-stats'>
-                    <SpeakerStatsSearch onSearch = { this._onSearch } />
-                    <SpeakerStatsLabels
-                        reduceExpressions = { this.props._reduceExpressions }
-                        showFacialExpressions = { this.props._showFacialExpressions ?? false } />
-                    <SpeakerStatsList />
-                </div>
-            </Dialog>
-        );
-    }
-
-    _onSearch: () => void;
-
-    /**
-     * Search the existing participants by name.
-     *
-     * @returns {void}
-     * @param {string} criteria - The search parameter.
-     * @protected
-     */
-    _onSearch(criteria = '') {
-        this.props.dispatch(initSearch(escapeRegexp(criteria)));
-    }
-}
-
-/**
- * Maps (parts of) the redux state to the associated SpeakerStats's props.
- *
- * @param {Object} state - The redux state.
- * @private
- * @returns {{
- *     _showFacialExpressions: ?boolean,
- *     _reduceExpressions: boolean,
- * }}
- */
-function _mapStateToProps(state) {
-    const { enableFacialRecognition } = state['features/base/config'];
-    const { clientWidth } = state['features/base/responsive-ui'];
-
-    return {
-        /**
-         * The local display name.
-         *
-         * @private
-         * @type {string|undefined}
-         */
-        _showFacialExpressions: enableFacialRecognition,
-        _reduceExpressions: clientWidth < 750
-    };
-}
-
-export default translate(connect(_mapStateToProps)(SpeakerStats));
+export default SpeakerStats;

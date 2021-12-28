@@ -4,51 +4,58 @@ export default {
     speakerStatsContainer: {
         flexDirection: 'column',
         flex: 1,
-        height: 'auto'
+        height: 'auto',
+        paddingHorizontal: BaseTheme.spacing[3],
+        backgroundColor: BaseTheme.palette.ui02
     },
     speakerStatsItemContainer: {
         flexDirection: 'row',
         alignSelf: 'stretch',
-        height: 24
+        height: BaseTheme.spacing[9],
+        alignItems: 'center'
     },
-    speakerStatsItemStatus: {
+    speakerStatsAvatar: {
+        width: BaseTheme.spacing[5],
+        height: BaseTheme.spacing[5],
+        marginRight: BaseTheme.spacing[3]
+    },
+    speakerStatsNameTime: {
+        flexDirection: 'row',
         flex: 1,
-        alignSelf: 'stretch'
+        justifyContent: 'space-between',
+        alignItems: 'center'
     },
-    speakerStatsItemStatusDot: {
-        width: 5,
-        height: 5,
-        marginLeft: 7,
-        marginTop: 8,
-        padding: 3,
-        borderRadius: 10,
-        borderWidth: 0
+    speakerStatsText: {
+        ...BaseTheme.typography.bodyShortRegularLarge,
+        color: BaseTheme.palette.text01
     },
-    speakerStatsItemName: {
-        flex: 8,
-        alignSelf: 'stretch'
+    speakerStatsTime: {
+        paddingHorizontal: 4,
+        paddingVertical: 2,
+        borderRadius: 4
     },
-    speakerStatsItemTime: {
-        flex: 12,
-        alignSelf: 'stretch'
+    speakerStatsDominant: {
+        backgroundColor: BaseTheme.palette.success02
     },
-    speakerStatsLabelContainer: {
-        marginTop: BaseTheme.spacing[2],
-        marginBottom: BaseTheme.spacing[1],
-        flexDirection: 'row'
+    speakerStatsLeft: {
+        color: BaseTheme.palette.text03
     },
-    dummyElement: {
-        flex: 1,
-        alignSelf: 'stretch'
-    },
-    speakerName: {
-        flex: 8,
-        alignSelf: 'stretch'
-    },
-    speakerTime: {
-        flex: 12,
-        alignSelf: 'stretch'
+    speakerStatsSearch: {
+        wrapper: {
+            marginLeft: 0,
+            marginRight: 0,
+            marginTop: BaseTheme.spacing[3],
+            marginBottom: BaseTheme.spacing[3],
+            flexDirection: 'row',
+            alignItems: 'center'
+        },
+        input: {
+            textAlign: 'left'
+        },
+        searchIcon: {
+            width: 10,
+            height: 20,
+            marginLeft: BaseTheme.spacing[3]
+        }
     }
-
-
 };
