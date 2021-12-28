@@ -30,7 +30,7 @@
  */
  .toolbox-button-wth-dialog > div:nth-child(2) {
     background: $menuBG;
-    max-height: calc(100vh - #{$newToolbarSizeWithPadding} - 46px);
+    max-height: calc(100vh - #{$newToolbarSizeWithPadding} - 28px); /* 46 */
     margin-bottom: 4px;
     padding: 0;
     overflow-y: auto;
