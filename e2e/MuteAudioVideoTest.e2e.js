@@ -3,8 +3,18 @@
 describe('Jitsi Meet App', () => {
     beforeAll(async () => {
         await device.launchApp({
-            newInstance: true
+            newInstance: true,
+            permissions: {
+                camera: 'YES',
+                microphone: 'YES'
+            }
         });
+
+        await device.setURLBlacklist([
+            '.*meet\.jit\.si.*',
+            '.*api2\.amplitude\.com.*'
+        ]);
+
         true;
     });
 
@@ -19,11 +29,7 @@ describe('Jitsi Meet App', () => {
         await element(by.id('room-name-input')).tap();
         await element(by.id('room-name-input')).typeText(roomName);
         await element(by.id('join-room-button')).tap();
-        await waitFor(element(by.id('navigation-bar')))
-            .toBeVisible()
-            .withTimeout(2000);
-        try {
-            await expect(element(by.text('"Jitsi Meet" Would Like to Access the Microphone'))).toBeVisible();
-        } catch (e) {}
+        await expect(element(by.id('audio-mute-button'))).toBeVisible();
+        await element(by.id('audio-mute-button')).tap();
     });
 });
