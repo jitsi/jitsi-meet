@@ -5,7 +5,8 @@ import {
     INIT_UPDATE_STATS,
     UPDATE_STATS,
     INIT_REORDER_STATS,
-    RESET_SEARCH_CRITERIA
+    RESET_SEARCH_CRITERIA,
+    TOGGLE_FACIAL_EXPRESSIONS
 } from './actionTypes';
 
 /**
@@ -66,5 +67,16 @@ export function initReorderStats() {
 export function resetSearchCriteria() {
     return {
         type: RESET_SEARCH_CRITERIA
+    };
+}
+
+/**
+ * Toggles the facial expressions grid.
+ *
+ * @returns {Object}
+ */
+export function toggleFacialExpressions() {
+    return {
+        type: TOGGLE_FACIAL_EXPRESSIONS
     };
 }
