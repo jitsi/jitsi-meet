@@ -7,9 +7,9 @@
 
     .toolbox-icon {
         cursor: pointer;
-        padding: 7px;
-        width: 22px;
-        height : 22px;
+        padding: 13px; /* 7px; */
+        width: 40px; /* 22px; */
+        height : 40px; /* 22px; */
 
         &.toggled {
             background: none;
