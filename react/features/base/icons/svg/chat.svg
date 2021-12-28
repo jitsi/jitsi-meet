@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   width="22"
-   height="22"
-   viewBox="0 0 22 22"
+   width="40"
+   height="40"
+   viewBox="0 0 40 40"
    fill="none"
    version="1.1"
    id="svg36869"
@@ -23,30 +23,31 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      showgrid="false"
-     inkscape:zoom="15.974185"
-     inkscape:cx="18.874202"
-     inkscape:cy="9.734456"
+     inkscape:zoom="11.295455"
+     inkscape:cx="18.901408"
+     inkscape:cy="16.77666"
      inkscape:window-width="1280"
      inkscape:window-height="725"
      inkscape:window-x="0"
      inkscape:window-y="23"
      inkscape:window-maximized="0"
-     inkscape:current-layer="svg36869" />
+     inkscape:current-layer="svg36869"
+     width="40px" />
   <path
      fill-rule="evenodd"
      clip-rule="evenodd"
-     d="m 14.971272,16.541494 c 0.443483,0 0.803037,-0.361701 0.803037,-0.807726 v -4.064265 h 2.409285 c 0.443571,0 0.803124,-0.361612 0.803124,-0.807636 V 1.1695032 c 0,-0.44607701 -0.359553,-0.8076984 -0.803124,-0.8076984 H 3.7279182 c -0.4435362,0 -0.8030979,0.36162139 -0.8030979,0.8076984 v 9.6923638 c 0,0.446024 0.3595617,0.807636 0.8030979,0.807636 h 6.8709828 l 3.752703,4.578048 c 0.152529,0.186093 0.37979,0.293943 0.619668,0.293943 z M 4.5310162,1.9772017 H 17.380557 v 8.0769403 h -3.21241 v 3.430121 L 11.356381,10.054142 H 4.5310162 Z"
+     d="m 26.923003,25.9258 c 0.766147,0 1.3873,-0.57149 1.3873,-1.276211 v -6.42156 h 4.162204 c 0.766298,0 1.387451,-0.571349 1.387451,-1.27607 V 1.6379727 c 0,-0.70480422 -0.621153,-1.27616788 -1.387451,-1.27616788 H 7.4993489 c -0.7662386,0 -1.3874059,0.57136366 -1.3874059,1.27616788 V 16.951959 c 0,0.704721 0.6211673,1.27607 1.3874059,1.27607 H 19.369436 l 6.483049,7.233339 c 0.263504,0.294028 0.656112,0.464432 1.070518,0.464432 z M 8.8867551,2.9141406 H 31.085206 V 15.67575 H 25.53555 v 5.419608 L 20.678034,15.67575 H 8.8867551 Z"
      id="path36867"
-     style="fill:#ffffff;stroke-width:0.87861" />
+     style="fill:#ffffff;stroke-width:1.45159" />
   <text
      xml:space="preserve"
-     style="font-style:normal;font-weight:normal;font-size:8px;line-height:1.25;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none"
-     x="1.3716935"
-     y="21.513079"
+     style="font-style:normal;font-weight:normal;font-size:10.6667px;line-height:1.25;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none"
+     x="3.6735046"
+     y="39.573444"
      id="text38435"><tspan
        sodipodi:role="line"
        id="tspan38433"
-       x="1.3716935"
-       y="21.513079"
-       style="font-size:8px;fill:#ffffff">Chat</tspan></text>
+       x="3.6735046"
+       y="39.573444"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10.6667px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#ffffff">CHAT</tspan></text>
 </svg>

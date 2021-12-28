@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
    fill="none"
-   height="22"
-   width="22"
-   viewBox="0 0 22 22"
+   height="40"
+   width="40"
+   viewBox="0 0 40 40"
    version="1.1"
    id="svg30803"
    sodipodi:docname="camera-empty.svg"
@@ -23,29 +23,30 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      showgrid="false"
-     inkscape:zoom="22.590909"
-     inkscape:cx="9.9376258"
-     inkscape:cy="12.460765"
+     inkscape:zoom="9.8341677"
+     inkscape:cx="18.252688"
+     inkscape:cy="18.151002"
      inkscape:window-width="1280"
      inkscape:window-height="725"
-     inkscape:window-x="24"
+     inkscape:window-x="0"
      inkscape:window-y="23"
      inkscape:window-maximized="0"
-     inkscape:current-layer="svg30803" />
+     inkscape:current-layer="svg30803"
+     width="40px" />
   <path
      clip-rule="evenodd"
-     d="M 13.75,3.6408451 H 3.667 c -1.013,0 -1.834,0.82 -1.834,1.833 v 7.3340009 c 0,1.012 0.821,1.833 1.834,1.833 H 13.75 c 1.012,0 1.833,-0.82 1.833,-1.833 v -0.786 l 3.212,1.835 a 0.916,0.916 0 0 0 1.372,-0.796 V 5.2208451 a 0.917,0.917 0 0 0 -1.372,-0.796 l -3.212,1.835 v -0.786 c 0,-1.012 -0.82,-1.833 -1.833,-1.833 z m 0,3.667 V 12.807846 H 3.667 V 5.4738451 H 13.75 Z m 4.583,4.1740009 -2.75,-1.5720005 V 8.3718451 l 2.75,-1.572 z"
+     d="M 25.47435,0.38688391 H 7.4502023 c -1.8108164,0 -3.2784177,1.86607449 -3.2784177,4.17135929 V 21.248232 c 0,2.30301 1.4676013,4.17136 3.2784177,4.17136 H 25.47435 c 1.809029,0 3.27663,-1.866074 3.27663,-4.17136 v -1.7887 l 5.7417,4.17591 a 1.6374213,2.0845416 0 0 0 2.452556,-1.811457 V 3.9824907 A 1.6392089,2.0868174 0 0 0 34.49268,2.1710332 l -5.7417,4.1759105 V 4.5582432 c 0,-2.3030092 -1.465814,-4.17135929 -3.27663,-4.17135929 z m 0,8.34499399 V 21.248232 H 7.4502023 V 4.5582432 H 25.47435 Z M 33.666819,18.230653 28.75098,14.65325 v -3.500027 l 4.915839,-3.5774009 z"
      id="path30801"
-     style="fill:#ffffff" />
+     style="fill:#ffffff;stroke-width:2.01692" />
   <text
      xml:space="preserve"
-     style="font-style:normal;font-weight:normal;font-size:8px;line-height:1.25;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none"
-     x="-0.088531181"
-     y="21.822935"
+     style="font-style:normal;font-weight:normal;font-size:10.6667px;line-height:1.25;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none"
+     x="0.52158654"
+     y="39.414661"
      id="text33115"><tspan
        sodipodi:role="line"
        id="tspan33113"
-       x="-0.088531181"
-       y="21.822935"
-       style="font-size:8px;fill:#ffffff">Video</tspan></text>
+       x="0.52158654"
+       y="39.414661"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:10.6667px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#ffffff">VIDEO</tspan></text>
 </svg>

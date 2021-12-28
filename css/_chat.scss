@@ -549,8 +549,8 @@
 .mobile-browser .chat-dialog-header .jitsi-icon {
     display: grid;
     place-items: center;
-    height: 48px;
-    width: 48px;
+    height: 88px; /* 48px; */
+    width: 88px; /* 48px; */
     background: #36383C;
     border-radius: 3px;
 }
