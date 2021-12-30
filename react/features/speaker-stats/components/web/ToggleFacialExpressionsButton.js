@@ -21,7 +21,11 @@ const useStyles = makeStyles(theme => {
             },
             padding: '12px',
             borderRadius: '6px',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            [theme.breakpoints.down('400')]: {
+                top: '24px',
+                right: '84px'
+            }
         },
         arrowRight: {
             transform: 'rotate(-90deg)'
