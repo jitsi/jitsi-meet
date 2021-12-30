@@ -1,6 +1,7 @@
 // @flow
 import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import {
     Icon,
@@ -32,7 +33,7 @@ const useStyles = makeStyles(theme => {
 });
 
 /**
- * The type of the React {@code Component} props of {@link SpeakerStatsSearch}.
+ * The type of the React {@code Component} props of {@link ToggleFacialExpressionsButton}.
  */
 type Props = {
 
@@ -49,9 +50,13 @@ type Props = {
 };
 
 /**
+ * React component for toggling facial expressions grid.
+ *
+ * @returns {React$Element<any>}
  */
 export default function ToggleFacialExpressionsButton({ onClick, showFacialExpressions }: Props) {
     const classes = useStyles();
+    const { t } = useTranslation();
 
     const onClickCallback = React.useCallback(() => {
         onClick();
@@ -59,7 +64,7 @@ export default function ToggleFacialExpressionsButton({ onClick, showFacialExpre
 
     return (
         <Tooltip
-            content = { `${showFacialExpressions ? 'Hide' : 'Show'} facial expressions` }
+            content = { t(`speakerStats.${showFacialExpressions ? 'hide' : 'show'}FacialExpressions`) }
             position = { 'top' } >
             <div
                 className = { classes.expandButton }

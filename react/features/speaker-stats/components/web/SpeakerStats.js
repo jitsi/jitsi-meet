@@ -127,6 +127,10 @@ class SpeakerStats extends Component<Props> {
     _onToggleFacialExpressions: () => void;
 
     /**
+     * Toggle the facial expressions grid from speaker stats.
+     *
+     * @returns {void}
+     * @protected
      */
     _onToggleFacialExpressions() {
         this.props.dispatch(toggleFacialExpressions());
