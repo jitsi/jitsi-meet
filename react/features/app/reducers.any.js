@@ -51,5 +51,6 @@ import '../subtitles/reducer';
 import '../screen-share/reducer';
 import '../toolbox/reducer';
 import '../transcribing/reducer';
+import '../video-effect-filters/reducer';
 import '../video-layout/reducer';
 import '../videosipgw/reducer';

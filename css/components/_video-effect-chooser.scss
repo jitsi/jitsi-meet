@@ -1,0 +1,41 @@
+/**
+ * Disable the default webkit styles for range inputs (sliders).
+ */
+input[type=range]{
+    -webkit-appearance: none;
+    background: none;
+}
+
+/**
+ * Disable the default focus styles for webkit range inputs (sliders).
+ */
+input[type=range]:focus {
+    outline: none;
+}
+
+/**
+ * Include the mixin for a range input style.
+ */
+@include slider {
+    background: $sliderTrackBackground;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    height: 6px;
+    width: 100%;
+}
+
+/**
+ * Include the mixin for a range input thumb style.
+ */
+@include slider-thumb {
+    -webkit-appearance: none;
+    background: white;
+    border: 1px solid $sliderThumbBackground;
+    border-radius: 50%;
+    box-shadow: 0px 0px 1px $sliderThumbBackground;
+    cursor: pointer;
+    height: 14px;
+    margin-top: -4px;
+    width: 14px;
+}

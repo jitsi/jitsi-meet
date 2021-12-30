@@ -393,6 +393,23 @@ module.exports = (_env, argv) => {
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'facial-expressions-worker')
             ],
             performance: getPerformanceHints(perfHintOptions, 1024 * 1024)
-        })
+        }),
+        
+        Object.assign({}, config, {
+			entry: {
+				'video-effect-filters': './react/features/stream-effects/video-effect-filters/index.js'
+			},
+			plugins: [
+                ...config.plugins,
+                ...getBundleAnalyzerPlugin(analyzeBundle, 'video-effect-filters')
+            ],
+			output: Object.assign({}, config.output, {
+				library: [ 'JitsiMeetJS', 'app', 'effects' ],
+				libraryTarget: 'window',
+				filename: '[name].min.js',
+				sourceMapFilename: '[name].min.map'
+			}),
+			performance: getPerformanceHints(1 * 1024 * 1024)
+		})
     ];
 };

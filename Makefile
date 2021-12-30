@@ -54,6 +54,8 @@ deploy-appbundle:
 		$(BUILD_DIR)/analytics-ga.min.js.map \
 		$(BUILD_DIR)/facial-expressions-worker.min.js \
 		$(BUILD_DIR)/facial-expressions-worker.min.js.map \
+		$(BUILD_DIR)/video-effect-filters.min.js \
+		$(BUILD_DIR)/video-effect-filters.min.map \
 		$(DEPLOY_DIR)
 	cp \
 		$(BUILD_DIR)/close3.min.js \

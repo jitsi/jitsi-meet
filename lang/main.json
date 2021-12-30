@@ -976,6 +976,7 @@
             "toggleFilmstrip": "Toggle filmstrip",
             "videomute": "Start / Stop camera",
             "videoblur": "Toggle video blur",
+            "videoEffectFilters": "Select effect filters",
             "selectBackground": "Select Background",
             "expand": "Expand",
             "collapse": "Collapse"
@@ -1060,6 +1061,7 @@
         "talkWhileMutedPopup": "Trying to speak? You are muted.",
         "tileViewToggle": "Toggle tile view",
         "toggleCamera": "Toggle camera",
+        "videoEffectFilters" : "Choose effect filter",
         "videomute": "Start / Stop camera",
         "selectBackground": "Select background"
     },
@@ -1105,6 +1107,7 @@
         "highestQuality": "Highest quality",
         "audioOnlyExpanded": "You are in low bandwidth mode. In this mode you will receive only audio and screen sharing.",
         "callQuality": "Video Quality",
+        "effectFilter": "Video Effect Filters",
         "hd": "HD",
         "hdTooltip": "Viewing high definition video",
         "highDefinition": "High definition",

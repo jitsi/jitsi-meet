@@ -66,6 +66,7 @@ import {
     shouldDisplayTileView,
     toggleTileView
 } from '../../../video-layout';
+import { VideoEffectFiltersMenuButton } from '../../../video-effect-filters';
 import { VideoQualityDialog, VideoQualityButton } from '../../../video-quality/components';
 import { VideoBackgroundButton, toggleBackgroundEffect } from '../../../virtual-background';
 import { VIRTUAL_BACKGROUND_TYPE } from '../../../virtual-background/constants';
@@ -480,7 +481,7 @@ class Toolbox extends Component<Props> {
     _doOpenVideoQuality() {
         this.props.dispatch(openDialog(VideoQualityDialog));
     }
-
+    
     /**
      * Dispatches an action to toggle the display of chat.
      *
@@ -724,6 +725,12 @@ class Toolbox extends Component<Props> {
             Content: SharedDocumentButton,
             group: 3
         };
+        
+        const videoEffectFilters = !_screenSharing && {
+            key: 'video-effect-filters',
+            Content: VideoEffectFiltersMenuButton,
+            group: 3
+        };
 
         const virtualBackground = !_screenSharing && {
             key: 'select-background',
@@ -796,6 +803,7 @@ class Toolbox extends Component<Props> {
             shareVideo,
             shareAudio,
             etherpad,
+            videoEffectFilters,
             virtualBackground,
             speakerStats,
             settings,
@@ -1213,7 +1221,8 @@ class Toolbox extends Component<Props> {
      * @returns {boolean}
      */
     _isProfileVisible() {
-        return !this.props._isProfileDisabled;
+
+        return !this.props._isProfileDisabled;s
     }
 
     /**
@@ -1285,6 +1294,7 @@ class Toolbox extends Component<Props> {
                                     })}
                                 </ul>
                             </OverflowMenuButton>
+                            
                         )}
 
                         <HangupButton

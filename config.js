@@ -628,6 +628,7 @@ var config = {
     //    'tileview',
     //    'toggle-camera',
     //    'videoquality',
+    //    'video-effect-filters',
     //    '__end'
     // ],
 

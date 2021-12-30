@@ -1,6 +1,8 @@
 // @flow
 
 import { createVirtualBackgroundEffect } from '../../stream-effects/virtual-background';
+import { getVideoEffectFiltersInstance } from '../../video-effect-filters';
+import { BUNNY_EARS_ENABLED } from '../../video-effect-filters/actionTypes'
 
 import logger from './logger';
 
@@ -22,6 +24,14 @@ export default function loadEffects(store: Object): Promise<any> {
                 return Promise.resolve();
             })
         : Promise.resolve();
+	const videoEffectFiltersPromise = state['features/video-effect-filters'].currentVideoEffectFilter == BUNNY_EARS_ENABLED
+		? getVideoEffectFiltersInstance()
+			.catch(error => {
+				logger.error('Failed to obtain the video effect filter instance with error: ', error);
+			
+				return Promise.resolve();
+			})
+		: Promise.resolve();
 
-    return Promise.all([ backgroundPromise ]);
+    return Promise.all([ backgroundPromise, videoEffectFiltersPromise ]);
 }
