@@ -408,7 +408,7 @@ end
 --  @return message string, or generic error message if invalid payload.
 function RoomReservation:parse_error_message_from_response(response_body)
     local data = json.decode(response_body);
-    if data ~= nil and data.message ~= nil then
+    if data ~= nil and type(data) == "table" and data.message ~= nil then
         module:log("debug", "Invalid error response body. Will use generic error message.");
         return data.message;
     else
@@ -546,29 +546,25 @@ end);
 
 --- Forget reservation details once room destroyed so query is repeated if room re-created
 local function room_destroyed(event)
-    local res;
     local room = event.room
 
     if not is_healthcheck_room(room.jid) then
-        res = reservations[room.jid]
 
         -- drop reservation data for this room
         reservations[room.jid] = nil
 
-        if res then  -- just in case event triggered more than once?
-            module:log("info", "Dropped reservation data for destroyed room %s", room.jid);
+        module:log("info", "Dropped reservation data for destroyed room %s", room.jid);
 
-            local conflict_id = res.meta.conflict_id
-            if conflict_id then
-                local url = api_prefix..'/conference/'..conflict_id;
-                local http_options = {
-                    method = 'DELETE';
-                    headers = http_headers;
-                }
+        local conflict_id = room.jid -- This is same as reservations[room.jid].meta.conflict_id + @your.domain
+        if conflict_id then
+            local url = api_prefix..'/conference/'..conflict_id;
+            local http_options = {
+                method = 'DELETE';
+                headers = http_headers;
+            }
 
-                module:log("debug", "Sending DELETE /conference/%s", conflict_id);
-                async_http_request(url, http_options);
-            end
+            module:log("debug", "Sending DELETE /conference/%s", conflict_id);
+            async_http_request(url, http_options);
         end
     end
 end
