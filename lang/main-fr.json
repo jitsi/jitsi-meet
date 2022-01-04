@@ -654,7 +654,7 @@
     "actions": {
       "allow": "Autoriser les participants à:",
       "allowVideo": "permettre la vidéo",
-      "audioModeration": "réouvrir leur micro",
+      "audioModeration": "Rouvrir leur micro",
       "blockEveryoneMicCamera": "Bloquer tous les micros et caméras",
       "invite": "Inviter quelqu'un",
       "askUnmute": "Demander de réactiver le micro",
