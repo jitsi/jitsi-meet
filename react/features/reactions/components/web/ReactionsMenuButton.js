@@ -4,16 +4,15 @@ import React, { useCallback } from 'react';
 
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
-import { IconArrowUp, IconRaisedHand } from '../../../base/icons';
-import { getLocalParticipant, hasRaisedHand } from '../../../base/participants';
+import { IconArrowUp } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { ToolboxButtonWithIcon } from '../../../base/toolbox/components';
-import ToolbarButton from '../../../toolbox/components/web/ToolbarButton';
 import { toggleReactionsMenuVisibility } from '../../actions.web';
 import { type ReactionEmojiProps } from '../../constants';
 import { getReactionsQueue, isReactionsEnabled } from '../../functions.any';
 import { getReactionsMenuVisibility } from '../../functions.web';
 
+import RaiseHandButton from './RaiseHandButton';
 import ReactionEmoji from './ReactionEmoji';
 import ReactionsMenuPopup from './ReactionsMenuPopup';
 
@@ -23,6 +22,11 @@ type Props = {
      * Whether or not reactions are enabled.
      */
     _reactionsEnabled: Boolean,
+
+    /**
+     * The button's key.
+     */
+     buttonKey?: string,
 
     /**
      * Redux dispatch function.
@@ -45,9 +49,10 @@ type Props = {
     isMobile: boolean,
 
     /**
-     * Whether or not the local participant's hand is raised.
+     * Notify mode for `toolbarButtonClicked` event -
+     * whether to only notify or to also prevent button click routine.
      */
-    raisedHand: boolean,
+    notifyMode?: string,
 
     /**
      * The array of reactions to be displayed.
@@ -70,11 +75,12 @@ declare var APP: Object;
  */
 function ReactionsMenuButton({
     _reactionsEnabled,
+    buttonKey,
     dispatch,
     handleClick,
     isOpen,
     isMobile,
-    raisedHand,
+    notifyMode,
     reactionsQueue,
     t
 }: Props) {
@@ -82,30 +88,31 @@ function ReactionsMenuButton({
         dispatch(toggleReactionsMenuVisibility());
     }, [ dispatch ]);
 
-    const raiseHandButton = (<ToolbarButton
-        accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
-        icon = { IconRaisedHand }
-        key = 'raise-hand'
-        onClick = { handleClick }
-        toggled = { raisedHand }
-        tooltip = { t('toolbar.raiseHand') } />);
-
     return (
         <div className = 'reactions-menu-popup-container'>
             <ReactionsMenuPopup>
-                {!_reactionsEnabled || isMobile ? raiseHandButton
+                {!_reactionsEnabled || isMobile ? (
+                    <RaiseHandButton
+                        buttonKey = { buttonKey }
+                        handleClick = { handleClick }
+                        notifyMode = { notifyMode } />)
                     : (
                         <ToolboxButtonWithIcon
                             ariaControls = 'reactions-menu-dialog'
                             ariaExpanded = { isOpen }
                             ariaHasPopup = { true }
                             ariaLabel = { t('toolbar.accessibilityLabel.reactionsMenu') }
+                            buttonKey = { buttonKey }
                             icon = { IconArrowUp }
                             iconDisabled = { false }
                             iconId = 'reactions-menu-button'
                             iconTooltip = { t(`toolbar.${isOpen ? 'closeReactionsMenu' : 'openReactionsMenu'}`) }
+                            notifyMode = { notifyMode }
                             onIconClick = { toggleReactionsMenu }>
-                            {raiseHandButton}
+                            <RaiseHandButton
+                                buttonKey = { buttonKey }
+                                handleClick = { handleClick }
+                                notifyMode = { notifyMode } />
                         </ToolboxButtonWithIcon>
                     )}
             </ReactionsMenuPopup>
@@ -125,14 +132,11 @@ function ReactionsMenuButton({
  * @returns {Object}
  */
 function mapStateToProps(state) {
-    const localParticipant = getLocalParticipant(state);
-
     return {
         _reactionsEnabled: isReactionsEnabled(state),
         isOpen: getReactionsMenuVisibility(state),
         isMobile: isMobileBrowser(),
-        reactionsQueue: getReactionsQueue(state),
-        raisedHand: hasRaisedHand(localParticipant)
+        reactionsQueue: getReactionsQueue(state)
     };
 }
 

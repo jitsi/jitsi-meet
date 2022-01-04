@@ -23,14 +23,6 @@ export default class AbstractAudioMuteButton<P: Props, S: *>
      * @returns {void}
      */
     _handleClick() {
-        const { handleClick } = this.props;
-
-        if (handleClick) {
-            handleClick();
-
-            return;
-        }
-
         this._setAudioMuted(!this._isAudioMuted());
     }
 

@@ -36,13 +36,7 @@ class LocalRecording extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { dispatch, handleClick } = this.props;
-
-        if (handleClick) {
-            handleClick();
-
-            return;
-        }
+        const { dispatch } = this.props;
 
         sendAnalytics(createToolbarEvent('local.recording'));
         dispatch(openDialog(LocalRecordingInfoDialog));

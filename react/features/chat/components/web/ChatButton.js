@@ -50,22 +50,6 @@ class ChatButton extends AbstractButton<Props, *> {
     }
 
     /**
-     * Handles clicking / pressing the button, and opens the appropriate dialog.
-     *
-     * @protected
-     * @returns {void}
-     */
-    _handleClick() {
-        const { handleClick } = this.props;
-
-        if (handleClick) {
-            handleClick();
-
-            return;
-        }
-    }
-
-    /**
      * Indicates whether this button is in toggled state or not.
      *
      * @override

@@ -32,13 +32,7 @@ class DownloadButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { _downloadAppsUrl, handleClick } = this.props;
-
-        if (handleClick) {
-            handleClick();
-
-            return;
-        }
+        const { _downloadAppsUrl } = this.props;
 
         sendAnalytics(createToolbarEvent('download.pressed'));
         openURLInBrowser(_downloadAppsUrl);

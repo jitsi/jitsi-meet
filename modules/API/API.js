@@ -1521,12 +1521,14 @@ class API {
      * Notify external application ( if API is enabled) that a toolbar button was clicked.
      *
      * @param {string} key - The key of the toolbar button.
+     * @param {boolean} preventExecution - Whether execution of the button click was prevented or not.
      * @returns {void}
      */
-    notifyToolbarButtonClicked(key: string) {
+    notifyToolbarButtonClicked(key: string, preventExecution: boolean) {
         this._sendEvent({
             name: 'toolbar-button-clicked',
-            key
+            key,
+            preventExecution
         });
     }
 
