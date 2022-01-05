@@ -5,7 +5,8 @@ import { IconShareDesktop } from '../../../base/icons';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-import { isScreenMediaShared, isScreenVideoShared } from '../../../screen-share';
+import { isScreenVideoShared } from '../../../screen-share';
+import { isDesktopShareButtonDisabled } from '../../functions';
 
 type Props = AbstractButtonProps & {
 
@@ -97,15 +98,8 @@ class ShareDesktopButton extends AbstractButton<Props, *> {
  * @returns {Object}
  */
 const mapStateToProps = state => {
-    const { muted, unmuteBlocked } = state['features/base/media'].video;
-    const videoOrShareInProgress = isScreenMediaShared(state) || !muted;
-
-    // Disable the screenshare button if the video sender limit is reached and there is no video or media share in
-    // progress.
-    let desktopSharingEnabled = JitsiMeetJS.isDesktopSharingEnabled()
-        && !(unmuteBlocked && !videoOrShareInProgress);
+    let desktopSharingEnabled = JitsiMeetJS.isDesktopSharingEnabled();
     const { enableFeaturesBasedOnToken } = state['features/base/config'];
-
     let desktopSharingDisabledTooltipKey;
 
     if (enableFeaturesBasedOnToken) {
@@ -114,6 +108,10 @@ const mapStateToProps = state => {
         desktopSharingEnabled = state['features/base/participants'].haveParticipantWithScreenSharingFeature;
         desktopSharingDisabledTooltipKey = 'dialog.shareYourScreenDisabled';
     }
+
+    // Disable the screenshare button if the video sender limit is reached and there is no video or media share in
+    // progress.
+    desktopSharingEnabled = desktopSharingEnabled && !isDesktopShareButtonDisabled(state);
 
     return {
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,

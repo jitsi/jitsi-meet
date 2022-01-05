@@ -1,7 +1,7 @@
 // @flow
-
 import { getToolbarButtons } from '../base/config';
 import { hasAvailableDevices } from '../base/devices';
+import { isScreenMediaShared } from '../screen-share/functions';
 
 import { TOOLBAR_TIMEOUT } from './constants';
 
@@ -64,6 +64,19 @@ export function isAudioSettingsButtonDisabled(state: Object) {
     return !(hasAvailableDevices(state, 'audioInput')
           && hasAvailableDevices(state, 'audioOutput'))
           || state['features/base/config'].startSilent;
+}
+
+/**
+ * Indicates if the desktop share button is disabled or not.
+ *
+ * @param {Object} state - The state from the Redux store.
+ * @returns {boolean}
+ */
+export function isDesktopShareButtonDisabled(state: Object) {
+    const { muted, unmuteBlocked } = state['features/base/media'].video;
+    const videoOrShareInProgress = !muted || isScreenMediaShared(state);
+
+    return unmuteBlocked && !videoOrShareInProgress;
 }
 
 /**
