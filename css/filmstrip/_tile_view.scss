@@ -2,21 +2,13 @@
  * CSS styles that are specific to the filmstrip that shows the thumbnail tiles.
  */
 .tile-view {
-    /**
-     * Add a border around the active speaker to make the thumbnail easier to
-     * see.
-     */
-    .active-speaker {
-        box-shadow: 0 0 5px 3px $videoThumbnailSelected
-    }
 
-    #filmstripRemoteVideos {
+    .remote-videos {
         align-items: center;
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
-        height: 100vh;
-        width: 100vw;
+        overscroll-behavior: contain;
     }
 
     .filmstrip__videos .videocontainer {
@@ -34,6 +26,10 @@
          */
         height: 100% !important;
         width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: margin-bottom .3s ease-in;
     }
 
     .filmstrip {
@@ -42,10 +38,32 @@
         height: 100%;
         justify-content: center;
         left: 0;
-        position: fixed;
+        position: absolute;
         top: 0;
         width: 100%;
-        z-index: $filmstripVideosZ
+
+        @media (min-width: 581px) {
+            &.shift-right {
+                margin-left: $sidebarWidth;
+                width: calc(100% - #{$sidebarWidth});
+
+                .remote-videos {
+                    width: calc(100vw - #{$sidebarWidth});
+                }
+            }
+        }
+
+        &.collapse {
+            #remoteVideos {
+                height: calc(100% - #{$newToolbarSizeMobile}) !important;
+                margin-bottom: $newToolbarSizeMobile;
+            }
+
+            .remote-videos {
+                // !important is needed here as overflow is set via element.style in a FixedSizeGrid.
+                overflow: hidden auto !important;
+            }
+        }
     }
 
     /**
@@ -56,58 +74,43 @@
         display: block;
     }
 
-    #filmstripRemoteVideos {
+    .remote-videos {
         box-sizing: border-box;
+
 
         /**
-         * Allow vertical scrolling of the thumbnails.
-         */
-        overflow-x: hidden;
-        overflow-y: auto;
-    }
-
-    /**
-     * The size of the thumbnails should be set with javascript, based on
-     * desired column count and window width. The rows are created using flex
-     * and allowing the thumbnails to wrap.
-     */
-    #filmstripRemoteVideosContainer {
-        align-content: center;
-        align-items: center;
-        box-sizing: border-box;
-        display: flex;
-        flex-wrap: wrap;
-        height: 100vh;
-        justify-content: center;
-        padding: 100px 0;
-
-        .videocontainer {
-            border: 0;
+        * The size of the thumbnails should be set with javascript, based on
+        * desired column count and window width. The rows are created using flex
+        * and allowing the thumbnails to wrap.
+        */
+        & > div {
+            align-content: center;
+            align-items: center;
             box-sizing: border-box;
-            display: block;
-            margin: 5px;
+            display: flex;
+            margin-top: auto;
+            margin-bottom: auto;
+            justify-content: center;
+            position: absolute;
+
+            .videocontainer {
+                border: 0;
+                box-sizing: border-box;
+                display: block;
+                margin: 2px;
+            }
         }
-
-        video {
-            object-fit: contain;
-        }
     }
+}
 
-    .has-overflow#filmstripRemoteVideosContainer {
-        align-content: baseline;
-    }
-
-    .has-overflow .videocontainer {
-        align-self: baseline;
-    }
-
+.shift-right .remote-videos > div {
     /**
-     * Firefox flex acts a little differently. To make sure the bottom row of
-     * thumbnails is not overlapped by the horizontal toolbar, margin is added
-     * to the local thumbnail to keep it from the bottom of the screen. It is
-     * assumed the local thumbnail will always be on the bottom row.
+     * Max-width corresponding to the ASPECT_RATIO_BREAKPOINT from features/filmstrip/constants,
+     * from which we subtract the chat size.
      */
-    .has-overflow #localVideoContainer {
-        margin-bottom: 100px !important;
+    @media only screen and (max-width: calc(500px + #{$sidebarWidth})) {
+        video {
+            object-fit: cover;
+        }
     }
 }

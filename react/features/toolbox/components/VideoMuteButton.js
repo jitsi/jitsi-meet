@@ -1,5 +1,6 @@
 // @flow
 
+import UIEvents from '../../../../service/UI/UIEvents';
 import {
     ACTION_SHORTCUT_TRIGGERED,
     VIDEO_MUTE,
@@ -8,16 +9,17 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { setAudioOnly } from '../../base/audio-only';
+import { getFeatureFlag, VIDEO_MUTE_BUTTON_ENABLED } from '../../base/flags';
 import { translate } from '../../base/i18n';
 import {
     VIDEO_MUTISM_AUTHORITY,
     setVideoMuted
 } from '../../base/media';
 import { connect } from '../../base/redux';
-import { AbstractVideoMuteButton } from '../../base/toolbox';
-import type { AbstractButtonProps } from '../../base/toolbox';
-import { getLocalVideoType, isLocalVideoTrackMuted } from '../../base/tracks';
-import UIEvents from '../../../../service/UI/UIEvents';
+import { AbstractButton, AbstractVideoMuteButton } from '../../base/toolbox/components';
+import type { AbstractButtonProps } from '../../base/toolbox/components';
+import { getLocalVideoType, isLocalCameraTrackMuted } from '../../base/tracks';
+import { isVideoMuteButtonDisabled } from '../functions';
 
 declare var APP: Object;
 
@@ -42,6 +44,11 @@ type Props = AbstractButtonProps & {
     _videoMuted: boolean,
 
     /**
+     * Whether video button is disabled or not.
+     */
+    _videoDisabled: boolean,
+
+    /**
      * The redux {@code dispatch} function.
      */
     dispatch: Function
@@ -50,7 +57,7 @@ type Props = AbstractButtonProps & {
 /**
  * Component that renders a toolbar button for toggling video mute.
  *
- * @extends AbstractVideoMuteButton
+ * @augments AbstractVideoMuteButton
  */
 class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.videomute';
@@ -97,7 +104,18 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
     }
 
     /**
-     * Indicates if video is currently muted ot nor.
+     * Indicates if video is currently disabled or not.
+     *
+     * @override
+     * @protected
+     * @returns {boolean}
+     */
+    _isDisabled() {
+        return this.props._videoDisabled;
+    }
+
+    /**
+     * Indicates if video is currently muted or not.
      *
      * @override
      * @protected
@@ -117,13 +135,18 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
      * @returns {void}
      */
     _onKeyboardShortcut() {
+        // Ignore keyboard shortcuts if the video button is disabled.
+        if (this._isDisabled()) {
+            return;
+        }
+
         sendAnalytics(
             createShortcutEvent(
                 VIDEO_MUTE,
                 ACTION_SHORTCUT_TRIGGERED,
                 { enable: !this._isVideoMuted() }));
 
-        super._handleClick();
+        AbstractButton.prototype._onClick.call(this);
     }
 
     /**
@@ -170,11 +193,14 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
 function _mapStateToProps(state): Object {
     const { enabled: audioOnly } = state['features/base/audio-only'];
     const tracks = state['features/base/tracks'];
+    const enabledFlag = getFeatureFlag(state, VIDEO_MUTE_BUTTON_ENABLED, true);
 
     return {
         _audioOnly: Boolean(audioOnly),
+        _videoDisabled: isVideoMuteButtonDisabled(state),
         _videoMediaType: getLocalVideoType(tracks),
-        _videoMuted: isLocalVideoTrackMuted(tracks)
+        _videoMuted: isLocalCameraTrackMuted(tracks),
+        visible: enabledFlag
     };
 }
 

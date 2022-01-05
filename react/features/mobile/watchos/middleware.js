@@ -3,8 +3,7 @@
 import { Platform } from 'react-native';
 import * as watch from 'react-native-watch-connectivity';
 
-import { appNavigate } from '../../app';
-
+import { appNavigate } from '../../app/actions';
 import { APP_WILL_MOUNT } from '../../base/app';
 import { CONFERENCE_JOINED } from '../../base/conference';
 import { getCurrentConferenceUrl } from '../../base/connection';
@@ -99,7 +98,7 @@ function _appWillMount({ dispatch, getState }) {
 
         switch (command) {
         case CMD_HANG_UP:
-            if (typeof getCurrentConferenceUrl(getState()) !== undefined) {
+            if (typeof getCurrentConferenceUrl(getState()) !== 'undefined') {
                 dispatch(appNavigate(undefined));
             }
             break;

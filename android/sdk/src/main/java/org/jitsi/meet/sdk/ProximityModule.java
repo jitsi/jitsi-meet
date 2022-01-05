@@ -1,5 +1,5 @@
 /*
- * Copyright @ 2017-present Atlassian Pty Ltd
+ * Copyright @ 2017-present 8x8, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,20 +33,9 @@ import com.facebook.react.module.annotations.ReactModule;
  * is used with the conference audio-only mode.
  */
 @ReactModule(name = ProximityModule.NAME)
-class ProximityModule
-    extends ReactContextBaseJavaModule {
+class ProximityModule extends ReactContextBaseJavaModule {
 
     public static final String NAME = "Proximity";
-
-    /**
-     * This type of wake lock (the one activated by the proximity sensor) has
-     * been available for a while, but the constant was only exported in API
-     * level 21 (Android Marshmallow) so make no assumptions and use its value
-     * directly.
-     *
-     * TODO: Remove when we bump the API level to 21.
-     */
-    private static final int PROXIMITY_SCREEN_OFF_WAKE_LOCK = 32;
 
     /**
      * {@link WakeLock} instance.
@@ -71,7 +60,7 @@ class ProximityModule
         try {
             wakeLock
                 = powerManager.newWakeLock(
-                        PROXIMITY_SCREEN_OFF_WAKE_LOCK,
+                        PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,
                         "jitsi:"+NAME);
         } catch (Throwable ignored) {
             wakeLock = null;

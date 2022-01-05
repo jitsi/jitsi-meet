@@ -41,7 +41,8 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
             elementAfter,
             onClick,
             showLabel,
-            styles
+            styles,
+            toggled
         } = this.props;
 
         let children = this._renderIcon();
@@ -72,6 +73,8 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
         return (
             <TouchableHighlight
                 accessibilityLabel = { this.accessibilityLabel }
+                accessibilityRole = 'button'
+                accessibilityState = {{ 'selected': toggled }}
                 disabled = { disabled }
                 onPress = { onClick }
                 style = { style }

@@ -5,7 +5,6 @@ import React from 'react';
 import { Dialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import { connect } from '../../../../base/redux';
-
 import AbstractStopLiveStreamDialog, {
     _mapStateToProps
 } from '../AbstractStopLiveStreamDialog';
@@ -14,7 +13,7 @@ import AbstractStopLiveStreamDialog, {
  * A React Component for confirming the participant wishes to stop the currently
  * active live stream of the conference.
  *
- * @extends Component
+ * @augments Component
  */
 class StopLiveStreamDialog extends AbstractStopLiveStreamDialog {
 

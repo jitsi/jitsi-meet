@@ -8,7 +8,7 @@ import { translate } from '../../../i18n';
 import { connect } from '../../../redux';
 
 /**
- * The type of the React {@code Component} props of {@link HeaderLabel}
+ * The type of the React {@code Component} props of {@link HeaderLabel}.
  */
 type Props = {
 

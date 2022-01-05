@@ -1,1 +1,1 @@
-export { default as SpeakerStats } from './SpeakerStats';
+export * from './_';

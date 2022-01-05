@@ -1,19 +1,26 @@
 /* global APP, JitsiMeetJS, config */
 
-import AuthHandler from './modules/UI/authentication/AuthHandler';
-import jitsiLocalStorage from './modules/util/JitsiLocalStorage';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
+import Logger from '@jitsi/logger';
 
+import { redirectToTokenAuthService } from './modules/UI/authentication/AuthHandler';
+import { LoginDialog } from './react/features/authentication/components';
+import { isTokenAuthEnabled } from './react/features/authentication/functions';
 import {
     connectionEstablished,
     connectionFailed
-} from './react/features/base/connection';
+} from './react/features/base/connection/actions';
+import { openDialog } from './react/features/base/dialog/actions';
+import { setJWT } from './react/features/base/jwt';
 import {
     isFatalJitsiConnectionError,
     JitsiConnectionErrors,
     JitsiConnectionEvents
 } from './react/features/base/lib-jitsi-meet';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import { getCustomerDetails } from './react/features/jaas/actions.any';
+import { isVpaasMeeting, getJaasJWT } from './react/features/jaas/functions';
+import { setPrejoinDisplayNameRequired } from './react/features/prejoin/actions';
+const logger = Logger.getLogger(__filename);
 
 /**
  * The feature announced so we can distinguish jibri participants.
@@ -78,9 +85,20 @@ function checkForAttachParametersAndConnect(id, password, connection) {
  * @returns {Promise<JitsiConnection>} connection if
  * everything is ok, else error.
  */
-function connect(id, password, roomName) {
+export async function connect(id, password, roomName) {
     const connectionConfig = Object.assign({}, config);
-    const { issuer, jwt } = APP.store.getState()['features/base/jwt'];
+    const state = APP.store.getState();
+    let { jwt } = state['features/base/jwt'];
+    const { iAmRecorder, iAmSipGateway } = state['features/base/config'];
+
+    if (!iAmRecorder && !iAmSipGateway && isVpaasMeeting(state)) {
+        await APP.store.dispatch(getCustomerDetails());
+
+        if (!jwt) {
+            jwt = await getJaasJWT(state);
+            APP.store.dispatch(setJWT(jwt));
+        }
+    }
 
     // Use Websocket URL for the web app if configured. Note that there is no 'isWeb' check, because there's assumption
     // that this code executes only on web browsers/electron. This needs to be changed when mobile and web are unified.
@@ -88,15 +106,13 @@ function connect(id, password, roomName) {
 
     serviceUrl += `?room=${roomName}`;
 
-    // FIXME Remove deprecated 'bosh' option assignment at some point(LJM will be accepting only 'serviceUrl' option
-    //  in future). It's included for the time being for Jitsi Meet and lib-jitsi-meet versions interoperability.
-    connectionConfig.serviceUrl = connectionConfig.bosh = serviceUrl;
+    connectionConfig.serviceUrl = serviceUrl;
 
-    const connection
-        = new JitsiMeetJS.JitsiConnection(
-            null,
-            jwt && issuer && issuer !== 'anonymous' ? jwt : undefined,
-            connectionConfig);
+    if (connectionConfig.websocketKeepAliveUrl) {
+        connectionConfig.websocketKeepAliveUrl += `?room=${roomName}`;
+    }
+
+    const connection = new JitsiMeetJS.JitsiConnection(null, jwt, connectionConfig);
 
     if (config.iAmRecorder) {
         connection.addFeature(DISCO_JIBRI_FEATURE);
@@ -112,6 +128,10 @@ function connect(id, password, roomName) {
         connection.addEventListener(
             JitsiConnectionEvents.CONNECTION_FAILED,
             connectionFailedHandler);
+        connection.addEventListener(
+            JitsiConnectionEvents.DISPLAY_NAME_REQUIRED,
+            displayNameRequiredHandler
+        );
 
         /* eslint-disable max-params */
         /**
@@ -165,6 +185,14 @@ function connect(id, password, roomName) {
             reject(err);
         }
 
+        /**
+         * Marks the display name for the prejoin screen as required.
+         * This can happen if a user tries to join a room with lobby enabled.
+         */
+        function displayNameRequiredHandler() {
+            APP.store.dispatch(setPrejoinDisplayNameRequired());
+        }
+
         checkForAttachParametersAndConnect(id, password, connection);
     });
 }
@@ -197,14 +225,41 @@ export function openConnection({ id, password, retry, roomName }) {
 
     return connect(id, password, roomName).catch(err => {
         if (retry) {
-            const { issuer, jwt } = APP.store.getState()['features/base/jwt'];
+            const { jwt } = APP.store.getState()['features/base/jwt'];
 
-            if (err === JitsiConnectionErrors.PASSWORD_REQUIRED
-                    && (!jwt || issuer === 'anonymous')) {
-                return AuthHandler.requestAuth(roomName, connect);
+            if (err === JitsiConnectionErrors.PASSWORD_REQUIRED && !jwt) {
+                return requestAuth(roomName);
             }
         }
 
         throw err;
+    });
+}
+
+/**
+ * Show Authentication Dialog and try to connect with new credentials.
+ * If failed to connect because of PASSWORD_REQUIRED error
+ * then ask for password again.
+ * @param {string} [roomName] name of the conference room
+ *
+ * @returns {Promise<JitsiConnection>}
+ */
+function requestAuth(roomName) {
+    const config = APP.store.getState()['features/base/config'];
+
+    if (isTokenAuthEnabled(config)) {
+        // This Promise never resolves as user gets redirected to another URL
+        return new Promise(() => redirectToTokenAuthService(roomName));
+    }
+
+    return new Promise(resolve => {
+        const onSuccess = connection => {
+            resolve(connection);
+        };
+
+        APP.store.dispatch(
+            openDialog(LoginDialog, { onSuccess,
+                roomName })
+        );
     });
 }

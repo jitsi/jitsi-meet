@@ -53,7 +53,8 @@
         "noMessagesMessage": "Encara no hi ha cap missatge en aquesta reunió. Comenceu una conversa aquí!",
         "nickname": {
             "popover": "Trieu un sobrenom",
-            "title": "Introduïu un sobrenom per a usar el xat"
+            "title": "Introduïu un sobrenom per a usar el xat",
+            "titleWithPolls": "Introduïu un sobrenom per a usar el xat"
         },
         "privateNotice": "Missatge privat per a {{recipient}}",
         "title": "Xat",
@@ -466,7 +467,7 @@
         "busy": "Ocupat",
         "calling": "S'està trucant...",
         "connected": "Connectat",
-        "connecting": "Està connectant...",
+        "connecting": "Està connectant…",
         "connecting2": "Està connectant*...",
         "disconnected": "Desconnectat",
         "expired": "Ha expirat",
@@ -771,6 +772,5 @@
     },
     "lonelyMeetingExperience": {
         "button": "Convideu altres persones",
-        "youAreAlone": "Sou l'únic participant de la reunió"
-    }
+        "youAreAlone": "Sou l'únic participant de la reunió"    }
 }

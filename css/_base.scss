@@ -6,6 +6,10 @@
 * {
     -webkit-user-select: none;
     user-select: none;
+
+    // Firefox only
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, .5) transparent;
 }
 
 input,
@@ -17,6 +21,7 @@ textarea {
 html {
     height: 100%;
     width: 100%;
+    overflow: hidden;
 }
 
 body {
@@ -28,28 +33,41 @@ body {
     overflow: hidden;
     color: $defaultColor;
     background: $defaultBackground;
-    &.filmstrip-only {
-        background: transparent;
+}
+
+/**
+ * This will hide the focus indicator if an element receives focus via the mouse,
+ * but it will still show up on keyboard focus, thus preserving accessibility.
+ */
+.js-focus-visible :focus:not(.focus-visible) {
+  outline: none;
+}
+
+/**
+ * AtlasKit sets a default margin on the rendered modals, so
+ * when the shift-right class is set when the chat opens, we
+ * pad the modal container in order for the modals to be centered
+ * while also taking the chat size into consideration.
+*/
+@media (min-width: 581px) {
+    .shift-right .atlaskit-portal > div:not(.Tooltip) {
+        padding-left: $sidebarWidth;
     }
 }
 
-.jitsi-icon svg {
-    fill: white;
+.jitsi-icon {
+    &-default svg {
+        fill: white;
+    }
+}
+
+.disabled .jitsi-icon svg {
+    fill: #929292;
 }
 
 .jitsi-icon.gray svg {
     fill: #5E6D7A;
     cursor: pointer;
-}
-
-/**
- * AtlasKitThemeProvider sets a background color on an app-wrapping div, thereby
- * preventing transparency in filmstrip-only mode. The selector chosen to
- * override this behavior is specific to where the AtlasKitThemeProvider might
- * be placed within the app hierarchy.
- */
-.filmstrip-only #react > .ckAJgx {
-    background: transparent;
 }
 
 p {
@@ -115,8 +133,9 @@ form {
 .leftwatermark {
     left: 32px;
     top: 32px;
-    background-image: url($defaultWatermarkLink);
     background-position: center left;
+    background-repeat: no-repeat;
+    background-size: contain;
 }
 
 .rightwatermark {

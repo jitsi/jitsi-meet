@@ -3,7 +3,7 @@
 import { Component } from 'react';
 import type { Dispatch } from 'redux';
 
-import { getDefaultURL } from '../../app';
+import { getDefaultURL } from '../../app/functions';
 import { updateSettings } from '../../base/settings';
 
 /**
@@ -67,6 +67,8 @@ export class AbstractSettingsView<P: Props, S: *> extends Component<P, S> {
             = this._onStartAudioMutedChange.bind(this);
         this._onStartVideoMutedChange
             = this._onStartVideoMutedChange.bind(this);
+        this._onStartReactionsMutedChange
+            = this._onStartReactionsMutedChange.bind(this);
     }
 
     _onChangeDisplayName: (string) => void;
@@ -143,6 +145,22 @@ export class AbstractSettingsView<P: Props, S: *> extends Component<P, S> {
     _onStartVideoMutedChange(newValue) {
         this._updateSettings({
             startWithVideoMuted: newValue
+        });
+    }
+
+    _onStartReactionsMutedChange: (boolean) => void;
+
+    /**
+     * Handles the start reactions muted change event.
+     *
+     * @param {boolean} newValue - The new value for the start reactions muted
+     * option.
+     * @protected
+     * @returns {void}
+     */
+    _onStartReactionsMutedChange(newValue) {
+        this._updateSettings({
+            startWithReactionsMuted: newValue
         });
     }
 

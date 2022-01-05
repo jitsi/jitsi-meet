@@ -1,10 +1,12 @@
 local get_room_from_jid = module:require "util".get_room_from_jid;
 local room_jid_match_rewrite = module:require "util".room_jid_match_rewrite;
+local is_healthcheck_room = module:require "util".is_healthcheck_room;
 local jid_resource = require "util.jid".resource;
 local ext_events = module:require "ext_events"
 local st = require "util.stanza";
 local socket = require "socket";
 local json = require "util.json";
+local um_is_admin = require "core.usermanager".is_admin;
 
 -- we use async to detect Prosody 0.10 and earlier
 local have_async = pcall(require, "util.async");
@@ -20,6 +22,10 @@ if muc_component_host == nil then
 end
 
 log("info", "Starting speakerstats for %s", muc_component_host);
+
+local function is_admin(jid)
+    return um_is_admin(jid, module.host);
+end
 
 -- receives messages from client currently connected to the room
 -- clients indicates their own dominant speaker events
@@ -37,6 +43,11 @@ function on_message(event)
 
         if not room then
             log("warn", "No room found %s", roomAddress);
+            return false;
+        end
+        
+        if not room.speakerStats then
+            log("warn", "No speakerStats found for %s", roomAddress);
             return false;
         end
 
@@ -66,6 +77,32 @@ function on_message(event)
         room.speakerStats['dominantSpeakerId'] = occupant.jid;
     end
 
+    local facialExpression = event.stanza:get_child('facialExpression', 'http://jitsi.org/jitmeet');
+
+    if facialExpression then
+        local roomAddress = facialExpression.attr.room;
+        local room = get_room_from_jid(room_jid_match_rewrite(roomAddress));
+
+        if not room then
+            log("warn", "No room found %s", roomAddress);
+            return false;
+        end
+         if not room.speakerStats then
+            log("warn", "No speakerStats found for %s", roomAddress);
+            return false;
+        end
+        local from = event.stanza.attr.from;
+
+        local occupant = room:get_occupant_by_real_jid(from);
+        if not occupant then
+            log("warn", "No occupant %s found for %s", from, roomAddress);
+            return false;
+        end
+        local facialExpressions = room.speakerStats[occupant.jid].facialExpressions;
+        facialExpressions[facialExpression.attr.expression] = 
+            facialExpressions[facialExpression.attr.expression] + tonumber(facialExpression.attr.duration);
+    end
+
     return true
 end
 
@@ -80,6 +117,15 @@ function new_SpeakerStats(nick, context_user)
         nick = nick;
         context_user = context_user;
         displayName = nil;
+        facialExpressions = {
+            happy = 0,
+            neutral = 0,
+            surprised = 0,
+            angry = 0,
+            fearful = 0,
+            disgusted = 0,
+            sad = 0
+        };
     }, SpeakerStats);
 end
 
@@ -87,8 +133,7 @@ end
 -- saves start time if it is new dominat speaker
 -- or calculates and accumulates time of speaking
 function SpeakerStats:setDominantSpeaker(isNowDominantSpeaker)
-    log("debug",
-        "set isDominant %s for %s", tostring(isNowDominantSpeaker), self.nick);
+    -- log("debug", "set isDominant %s for %s", tostring(isNowDominantSpeaker), self.nick);
 
     if not self:isDominantSpeaker() and isNowDominantSpeaker then
         self._dominantSpeakerStart = socket.gettime()*1000;
@@ -111,12 +156,22 @@ end
 -- create speakerStats for the room
 function room_created(event)
     local room = event.room;
+
+    if is_healthcheck_room(room.jid) then
+        return;
+    end
+
     room.speakerStats = {};
 end
 
 -- Create SpeakerStats object for the joined user
 function occupant_joined(event)
-    local room = event.room;
+    local occupant, room = event.occupant, event.room;
+
+    if is_healthcheck_room(room.jid) or is_admin(occupant.bare_jid) then
+        return;
+    end
+
     local occupant = event.occupant;
 
     local nick = jid_resource(occupant.nick);
@@ -130,37 +185,38 @@ function occupant_joined(event)
                 -- skip reporting those without a nick('dominantSpeakerId')
                 -- and skip focus if sneaked into the table
                 if values.nick ~= nil and values.nick ~= 'focus' then
-                    local resultSpeakerStats = {};
-                    local totalDominantSpeakerTime
-                        = values.totalDominantSpeakerTime;
+                    local totalDominantSpeakerTime = values.totalDominantSpeakerTime;
+                    local facialExpressions = values.facialExpressions;
+                    if totalDominantSpeakerTime > 0 or room:get_occupant_jid(jid) == nil or values:isDominantSpeaker()
+                        or get_participant_expressions_count(facialExpressions) > 0 then
+                        -- before sending we need to calculate current dominant speaker state
+                        if values:isDominantSpeaker() then
+                            local timeElapsed = math.floor(socket.gettime()*1000 - values._dominantSpeakerStart);
+                            totalDominantSpeakerTime = totalDominantSpeakerTime + timeElapsed;
+                        end
 
-                    -- before sending we need to calculate current dominant speaker
-                    -- state
-                    if values:isDominantSpeaker() then
-                        local timeElapsed = math.floor(
-                            socket.gettime()*1000 - values._dominantSpeakerStart);
-                        totalDominantSpeakerTime = totalDominantSpeakerTime
-                            + timeElapsed;
+                        users_json[values.nick] =  {
+                            displayName = values.displayName,
+                            totalDominantSpeakerTime = totalDominantSpeakerTime,
+                            facialExpressions = facialExpressions
+                        };
                     end
-
-                    resultSpeakerStats.displayName = values.displayName;
-                    resultSpeakerStats.totalDominantSpeakerTime
-                        = totalDominantSpeakerTime;
-                    users_json[values.nick] = resultSpeakerStats;
                 end
             end
 
-            local body_json = {};
-            body_json.type = 'speakerstats';
-            body_json.users = users_json;
+            if next(users_json) ~= nil then
+                local body_json = {};
+                body_json.type = 'speakerstats';
+                body_json.users = users_json;
 
-            local stanza = st.message({
-                from = module.host;
-                to = occupant.jid; })
-            :tag("json-message", {xmlns='http://jitsi.org/jitmeet'})
-            :text(json.encode(body_json)):up();
+                local stanza = st.message({
+                    from = module.host;
+                    to = occupant.jid; })
+                :tag("json-message", {xmlns='http://jitsi.org/jitmeet'})
+                :text(json.encode(body_json)):up();
 
-            room:route_stanza(stanza);
+                room:route_stanza(stanza);
+            end
         end
 
         local context_user = event.origin and event.origin.jitsi_meet_context_user or nil;
@@ -172,6 +228,15 @@ end
 -- display name
 function occupant_leaving(event)
     local room = event.room;
+
+    if is_healthcheck_room(room.jid) then
+        return;
+    end
+
+    if not room.speakerStats then
+        return;
+    end
+
     local occupant = event.occupant;
 
     local speakerStatsForOccupant = room.speakerStats[occupant.jid];
@@ -188,6 +253,10 @@ end
 -- Conference ended, send speaker stats
 function room_destroyed(event)
     local room = event.room;
+
+    if is_healthcheck_room(room.jid) then
+        return;
+    end
 
     ext_events.speaker_stats(room, room.speakerStats);
 end
@@ -214,4 +283,13 @@ if prosody.hosts[muc_component_host] == nil then
     prosody.events.add_handler("host-activated", process_host);
 else
     process_host(muc_component_host);
+end
+
+function get_participant_expressions_count(facialExpressions)
+    local count = 0;
+    for expression, value in pairs(facialExpressions) do
+        count = count + value;
+    end
+
+    return count;
 end

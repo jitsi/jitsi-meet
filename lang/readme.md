@@ -1,23 +1,27 @@
-Jitsi Meet Translation
-==========================
+# Jitsi Meet Translation
+
 Jitsi Meet uses [i18next](http://i18next.com) library for translation.
 i18next uses separate json files for each language.
 
 
-Translating Jitsi Meet
-======================
-The translation of Jitsi Meet is integrated with Pootle. You can translate Jitsi Meet via our Pootle user interface on
-[http://translate.jitsi.org](http://translate.jitsi.org).
+## Translating Jitsi Meet
 
-**WARNING: Please don't create or edit manually the language files! Please use our Pootle user interface!**
+The translation of Jitsi Meet is handled editing manually the language files.
 
-Development
-===========
-If you want to add new functionality for Jitsi Meet and you have texts that need to be translated please use our translation module.
-It is located in modules/translation. You must add key and value in main.json file in English for each translatable text.
+You can use the `update-translation.js` script as follows to help you with that:
+
+```js
+cd lang
+node update-translation.js main-es.json
+```
+
+That will cause the `main-es.json` file to be updated with all the missing keys set as empty
+strings. All that's missing is for you to fill in the blanks!
+
+## Development
+
+If you want to add new functionality for Jitsi Meet and you have texts that need to be translated you must add key and value in main.json file in English for each translatable text.
 Than you can use the key to get the translated text for the current language.
-
-**WARNING: Please don't change the other language files except main.json! They must be updated and translated via our Pootle user interface!**
 
 You can add translatable text in the HTML:
 
@@ -49,7 +53,3 @@ You can add translatable text in the HTML:
 For the available values of ``options`` parameter for the above methods of translation module see [i18next documentation](http://i18next.com/pages/doc_features).
 
 **Note:** It is useful to add attributes in the HTML for persistent HTML elements because when the language is changed the text will be automatically translated.
-
-
-
-

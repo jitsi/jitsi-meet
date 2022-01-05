@@ -3,10 +3,9 @@
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
-import { CircularLabel } from '../../../base/label';
+import { Label } from '../../../base/label';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { connect } from '../../../base/redux';
-
 import AbstractRecordingLabel, {
     _mapStateToProps
 } from '../AbstractRecordingLabel';
@@ -17,7 +16,7 @@ import styles from './styles';
  * Implements a React {@link Component} which displays the current state of
  * conference recording.
  *
- * @extends {Component}
+ * @augments {Component}
  */
 class RecordingLabel extends AbstractRecordingLabel {
 
@@ -53,14 +52,14 @@ class RecordingLabel extends AbstractRecordingLabel {
         }
 
         return (
-            <CircularLabel
-                label = { this.props.t(this._getLabelKey()) }
+            <Label
                 status = { status }
-                style = { indicatorStyle } />
+                style = { indicatorStyle }
+                text = { this.props.t(this._getLabelKey()) } />
         );
     }
 
-    _getLabelKey: () => ?string
+    _getLabelKey: () => ?string;
 }
 
 export default translate(connect(_mapStateToProps)(RecordingLabel));

@@ -2,6 +2,7 @@
  * The constant for the event type 'track'.
  * TODO: keep these constants in a single place. Can we import them from
  * lib-jitsi-meet's AnalyticsEvents somehow?
+ *
  * @type {string}
  */
 const TYPE_TRACK = 'track';
@@ -10,6 +11,7 @@ const TYPE_TRACK = 'track';
  * The constant for the event type 'UI' (User Interaction).
  * TODO: keep these constants in a single place. Can we import them from
  * lib-jitsi-meet's AnalyticsEvents somehow?
+ *
  * @type {string}
  */
 const TYPE_UI = 'ui';
@@ -143,7 +145,6 @@ export function createCalendarClickedEvent(eventName, attributes = {}) {
 export function createCalendarSelectedEvent(attributes = {}) {
     return {
         action: 'selected',
-        actionSubject: 'calendar.selected',
         attributes,
         source: 'calendar',
         type: TYPE_UI
@@ -159,8 +160,8 @@ export function createCalendarSelectedEvent(attributes = {}) {
  */
 export function createCalendarConnectedEvent(attributes = {}) {
     return {
-        action: 'calendar.connected',
-        actionSubject: 'calendar.connected',
+        action: 'connected',
+        actionSubject: 'calendar',
         attributes
     };
 }
@@ -185,7 +186,7 @@ export function createRecentClickedEvent(eventName, attributes = {}) {
 }
 
 /**
- * Creates an event which indicate an action occured in the chrome extension banner.
+ * Creates an event which indicate an action occurred in the chrome extension banner.
  *
  * @param {boolean} installPressed - Whether the user pressed install or `x` - cancel.
  * @param {Object} attributes - Attributes to attach to the event.
@@ -212,7 +213,6 @@ export function createChromeExtensionBannerEvent(installPressed, attributes = {}
 export function createRecentSelectedEvent(attributes = {}) {
     return {
         action: 'selected',
-        actionSubject: 'recent.list.selected',
         attributes,
         source: 'recent.list',
         type: TYPE_UI
@@ -254,6 +254,20 @@ export function createDeviceChangedEvent(mediaType, deviceType) {
             'device_type': deviceType,
             'media_type': mediaType
         }
+    };
+}
+
+/**
+ * Creates an event indicating that an action related to E2EE occurred.
+ *
+ * @param {string} action - The action which occurred.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createE2EEEvent(action) {
+    return {
+        action,
+        actionSubject: 'e2ee'
     };
 }
 
@@ -363,6 +377,28 @@ export function createPinnedEvent(action, participantId, attributes) {
 }
 
 /**
+ * Creates a poll event.
+ * The following events will be created:
+ * - poll.created
+ * - poll.vote.checked
+ * - poll.vote.sent
+ * - poll.vote.skipped
+ * - poll.vote.detailsViewed
+ * - poll.vote.changed
+ * - poll.option.added
+ * - poll.option.moved
+ * - poll.option.removed.
+ *
+ * @param {string} action - The action.
+ * @returns {Object}
+ */
+export function createPollEvent(action) {
+    return {
+        action: `poll.${action}`
+    };
+}
+
+/**
  * Creates an event which indicates that a button in the profile panel was
  * clicked.
  *
@@ -446,7 +482,7 @@ export function createLocalTracksDurationEvent(duration) {
 
 /**
  * Creates an event which indicates that an action related to recording has
- * occured.
+ * occurred.
  *
  * @param {string} action - The action (e.g. 'start' or 'stop').
  * @param {string} type - The recording type (e.g. 'file' or 'live').
@@ -490,17 +526,18 @@ export function createRejoinedEvent({ url, lastConferenceDuration, timeSinceLeft
  *
  * @param {string} participantId - The ID of the participant that was remotely
  * muted.
+ * @param {string} mediaType - The media type of the channel to mute.
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createRemoteMuteConfirmedEvent(participantId) {
+export function createRemoteMuteConfirmedEvent(participantId, mediaType) {
     return {
         action: 'clicked',
-        actionSubject: 'remote.mute.dialog.confirm.button',
         attributes: {
-            'participant_id': participantId
+            'participant_id': participantId,
+            'media_type': mediaType
         },
-        source: 'remote.mute.dialog',
+        source: 'remote.mute.button',
         type: TYPE_UI
     };
 }
@@ -525,18 +562,23 @@ export function createRemoteVideoMenuButtonEvent(buttonName, attributes) {
 }
 
 /**
- * Creates an event indicating that an action related to video blur
- * occurred (e.g. It was started or stopped).
+ * The rtcstats websocket onclose event. We send this to amplitude in order
+ * to detect trace ws prematurely closing.
  *
- * @param {string} action - The action which occurred.
+ * @param {Object} closeEvent - The event with which the websocket closed.
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createVideoBlurEvent(action) {
-    return {
-        action,
-        actionSubject: 'video.blur'
+export function createRTCStatsTraceCloseEvent(closeEvent) {
+    const event = {
+        action: 'trace.onclose',
+        source: 'rtcstats'
     };
+
+    event.code = closeEvent.code;
+    event.reason = closeEvent.reason;
+
+    return event;
 }
 
 /**
@@ -544,34 +586,31 @@ export function createVideoBlurEvent(action) {
  * occurred (e.g. It was started or stopped).
  *
  * @param {string} action - The action which occurred.
+ * @param {number?} value - The screenshare duration in seconds.
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createScreenSharingEvent(action) {
+export function createScreenSharingEvent(action, value = null) {
     return {
         action,
-        actionSubject: 'screen.sharing'
+        actionSubject: 'screen.sharing',
+        attributes: {
+            value
+        }
     };
 }
 
 /**
- * The local participant failed to send a "selected endpoint" message to the
- * bridge.
+ * Creates an event which indicates the screen sharing video is not displayed when it needs to be displayed.
  *
- * @param {Error} error - The error which caused the failure.
- * @returns {Object} The event in a format suitable for sending via
- * sendAnalytics.
+ * @param {Object} attributes - Additional information that describes the issue.
+ * @returns {Object} The event in a format suitable for sending via sendAnalytics.
  */
-export function createSelectParticipantFailedEvent(error) {
-    const event = {
-        action: 'select.participant.failed'
+export function createScreenSharingIssueEvent(attributes) {
+    return {
+        action: 'screen.sharing.issue',
+        attributes
     };
-
-    if (error) {
-        event.error = error.toString();
-    }
-
-    return event;
 }
 
 /**
@@ -611,7 +650,6 @@ export function createShortcutEvent(
         attributes = {}) {
     return {
         action,
-        actionSubject: 'keyboard.shortcut',
         actionSubjectId: shortcut,
         attributes,
         source: 'keyboard.shortcut',
@@ -648,6 +686,36 @@ export function createStartSilentEvent() {
 }
 
 /**
+ * Creates an event which indicates that HTMLAudioElement.play has failed.
+ *
+ * @param {sting} elementID - The ID of the HTMLAudioElement.
+ * @returns {Object} The event in a format suitable for sending via sendAnalytics.
+ */
+export function createAudioPlayErrorEvent(elementID) {
+    return {
+        action: 'audio.play.error',
+        attributes: {
+            elementID
+        }
+    };
+}
+
+/**
+ * Creates an event which indicates that HTMLAudioElement.play has succeded after a prior failure.
+ *
+ * @param {sting} elementID - The ID of the HTMLAudioElement.
+ * @returns {Object} The event in a format suitable for sending via sendAnalytics.
+ */
+export function createAudioPlaySuccessEvent(elementID) {
+    return {
+        action: 'audio.play.success',
+        attributes: {
+            elementID
+        }
+    };
+}
+
+/**
  * Creates an event which indicates the "start muted" configuration.
  *
  * @param {string} source - The source of the configuration, 'local' or
@@ -671,21 +739,6 @@ export function createStartMutedConfigurationEvent(
             'audio_mute': audioMute,
             'video_mute': videoMute
         }
-    };
-}
-
-/**
- * Creates an event which indicates the delay for switching between simulcast
- * streams.
- *
- * @param {Object} attributes - Attributes to attach to the event.
- * @returns {Object} The event in a format suitable for sending via
- * sendAnalytics.
- */
-export function createStreamSwitchDelayEvent(attributes) {
-    return {
-        action: 'stream.switch.delay',
-        attributes
     };
 }
 
@@ -732,6 +785,39 @@ export function createToolbarEvent(buttonName, attributes = {}) {
 }
 
 /**
+ * Creates an event associated with a reaction button being clicked/pressed.
+ *
+ * @param {string} buttonName - The identifier of the reaction button which was
+ * clicked/pressed.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createReactionMenuEvent(buttonName) {
+    return {
+        action: 'clicked',
+        actionSubject: 'button',
+        source: 'reaction',
+        buttonName,
+        type: TYPE_UI
+    };
+}
+
+/**
+ * Creates an event associated with disabling of reaction sounds.
+ *
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createReactionSoundsDisabledEvent() {
+    return {
+        action: 'disabled',
+        actionSubject: 'sounds',
+        source: 'reaction.settings',
+        type: TYPE_UI
+    };
+}
+
+/**
  * Creates an event which indicates that a local track was muted.
  *
  * @param {string} mediaType - The track's media type ('audio' or 'video').
@@ -754,6 +840,22 @@ export function createTrackMutedEvent(mediaType, reason, muted = true) {
 }
 
 /**
+ * Creates an event for joining a vpaas conference.
+ *
+ * @param {string} tenant - The conference tenant.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createVpaasConferenceJoinedEvent(tenant) {
+    return {
+        action: 'vpaas.conference.joined',
+        attributes: {
+            tenant
+        }
+    };
+}
+
+/**
  * Creates an event for an action on the welcome page.
  *
  * @param {string} action - The action that the event represents.
@@ -768,5 +870,32 @@ export function createWelcomePageEvent(action, actionSubject, attributes = {}) {
         actionSubject,
         attributes,
         source: 'welcomePage'
+    };
+}
+
+/**
+ * Creates an event which indicates a screenshot of the screensharing has been taken.
+ *
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createScreensharingCaptureTakenEvent() {
+    return {
+        action: 'screen.sharing.capture.taken'
+    };
+}
+
+/**
+ * Creates an event for an action on breakout rooms.
+ *
+ * @param {string} actionSubject - The subject that was acted upon.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createBreakoutRoomsEvent(actionSubject) {
+    return {
+        action: 'clicked',
+        actionSubject: `${actionSubject}.button`,
+        source: 'breakout.rooms'
     };
 }

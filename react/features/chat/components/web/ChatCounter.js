@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 
 import { connect } from '../../../base/redux';
-
+import { getUnreadPollCount } from '../../../polls/functions';
 import { getUnreadCount } from '../../functions';
 
 /**
@@ -14,14 +14,19 @@ type Props = {
     /**
      * The value of to display as a count.
      */
-    _count: number
+    _count: number,
+
+    /**
+     * True if the chat window should be rendered.
+     */
+    _isOpen: boolean
 };
 
 /**
  * Implements a React {@link Component} which displays a count of the number of
  * unread chat messages.
  *
- * @extends Component
+ * @augments Component
  */
 class ChatCounter extends Component<Props> {
 
@@ -34,8 +39,12 @@ class ChatCounter extends Component<Props> {
     render() {
         return (
             <span className = 'badge-round'>
+
                 <span>
-                    { this.props._count || null }
+                    {
+                        !this.props._isOpen
+                        && (this.props._count || null)
+                    }
                 </span>
             </span>
         );
@@ -53,8 +62,13 @@ class ChatCounter extends Component<Props> {
  * }}
  */
 function _mapStateToProps(state) {
+    const { isOpen } = state['features/chat'];
+
     return {
-        _count: getUnreadCount(state)
+
+        _count: getUnreadCount(state) + getUnreadPollCount(state),
+        _isOpen: isOpen
+
     };
 }
 

@@ -37,11 +37,10 @@ case "$1" in
             APP_SECRET=$RET
 
             # Revert prosody config
-            sed -i 's/plugin_paths/--plugin_paths/g' $PROSODY_HOST_CONFIG
             sed -i 's/authentication = "token"/authentication = "anonymous"/g' $PROSODY_HOST_CONFIG
             sed -i "s/ app_id=\"$APP_ID\"/ --app_id=\"example_app_id\"/g" $PROSODY_HOST_CONFIG
             sed -i "s/ app_secret=\"$APP_SECRET\"/ --app_secret=\"example_app_secret\"/g" $PROSODY_HOST_CONFIG
-            sed -i 's/ -- "token_verification"/   "token_verification"/g' $PROSODY_HOST_CONFIG
+            sed -i '/^\s*"token_verification"/ s/"token_verification"/-- "token_verification"/' $PROSODY_HOST_CONFIG
 
             if [ -x "/etc/init.d/prosody" ]; then
                 invoke-rc.d prosody restart || true

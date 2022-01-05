@@ -3,7 +3,7 @@
 declare var interfaceConfig: Object;
 
 /**
- * Tells wether presence status should be displayed.
+ * Tells whether presence status should be displayed.
  *
  * @returns {boolean}
  */

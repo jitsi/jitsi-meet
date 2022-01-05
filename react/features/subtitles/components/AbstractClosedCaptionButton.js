@@ -1,8 +1,10 @@
 // @flow
 
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
-import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox';
-
+import { isLocalParticipantModerator } from '../../base/participants';
+import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
+import { maybeShowPremiumFeatureDialog } from '../../jaas/actions';
+import { FEATURES } from '../../jaas/constants';
 import { toggleRequestingSubtitles } from '../actions';
 
 export type AbstractProps = AbstractButtonProps & {
@@ -35,7 +37,7 @@ export class AbstractClosedCaptionButton
      * @protected
      * @returns {void}
      */
-    _handleClick() {
+    async _handleClick() {
         const { _requestingSubtitles, dispatch } = this.props;
 
         sendAnalytics(createToolbarEvent('transcribing.ccButton',
@@ -43,7 +45,12 @@ export class AbstractClosedCaptionButton
                 'requesting_subtitles': Boolean(_requestingSubtitles)
             }));
 
-        dispatch(toggleRequestingSubtitles());
+
+        const dialogShown = await dispatch(maybeShowPremiumFeatureDialog(FEATURES.RECORDING));
+
+        if (!dialogShown) {
+            dispatch(toggleRequestingSubtitles());
+        }
     }
 
     /**
@@ -85,7 +92,12 @@ export class AbstractClosedCaptionButton
 export function _abstractMapStateToProps(state: Object, ownProps: Object) {
     const { _requestingSubtitles } = state['features/subtitles'];
     const { transcribingEnabled } = state['features/base/config'];
-    const { visible = Boolean(transcribingEnabled) } = ownProps;
+    const { isTranscribing } = state['features/transcribing'];
+
+    // if the participant is moderator, it can enable transcriptions and if
+    // transcriptions are already started for the meeting, guests can just show them
+    const { visible = Boolean(transcribingEnabled
+        && (isLocalParticipantModerator(state) || isTranscribing)) } = ownProps;
 
     return {
         _requestingSubtitles,

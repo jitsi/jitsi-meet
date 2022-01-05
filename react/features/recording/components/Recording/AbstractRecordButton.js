@@ -4,18 +4,17 @@ import {
     createToolbarEvent,
     sendAnalytics
 } from '../../../analytics';
-
 import { openDialog } from '../../../base/dialog';
+import { IconToggleRecording } from '../../../base/icons';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import {
     getLocalParticipant,
     isLocalParticipantModerator
 } from '../../../base/participants';
-import {
-    AbstractButton,
-    type AbstractButtonProps
-} from '../../../base/toolbox';
-
+import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
+import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
+import { FEATURES } from '../../../jaas/constants';
 import { getActiveSession } from '../../functions';
 
 import { StartRecordingDialog, StopRecordingDialog } from './_';
@@ -27,9 +26,19 @@ import { StartRecordingDialog, StopRecordingDialog } from './_';
 export type Props = AbstractButtonProps & {
 
     /**
+     * True if the button needs to be disabled.
+     */
+    _disabled: Boolean,
+
+    /**
      * True if there is a running active recording, false otherwise.
      */
     _isRecordingRunning: boolean,
+
+    /**
+     * The tooltip to display when hovering over the button.
+     */
+    _tooltip: ?String,
 
     /**
      * The redux {@code dispatch} function.
@@ -45,11 +54,21 @@ export type Props = AbstractButtonProps & {
 /**
  * An abstract implementation of a button for starting and stopping recording.
  */
-export default class AbstractRecordButton<P: Props>
-    extends AbstractButton<P, *> {
+export default class AbstractRecordButton<P: Props> extends AbstractButton<P, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.recording';
+    icon = IconToggleRecording;
     label = 'dialog.startRecording';
     toggledLabel = 'dialog.stopRecording';
+
+    /**
+     * Returns the tooltip that should be displayed when the button is disabled.
+     *
+     * @private
+     * @returns {string}
+     */
+    _getTooltip() {
+        return this.props._tooltip || '';
+    }
 
     /**
      * Handles clicking / pressing the button.
@@ -58,7 +77,7 @@ export default class AbstractRecordButton<P: Props>
      * @protected
      * @returns {void}
      */
-    _handleClick() {
+    async _handleClick() {
         const { _isRecordingRunning, dispatch } = this.props;
 
         sendAnalytics(createToolbarEvent(
@@ -68,9 +87,13 @@ export default class AbstractRecordButton<P: Props>
                 type: JitsiRecordingConstants.mode.FILE
             }));
 
-        dispatch(openDialog(
-            _isRecordingRunning ? StopRecordingDialog : StartRecordingDialog
-        ));
+        const dialogShown = await dispatch(maybeShowPremiumFeatureDialog(FEATURES.RECORDING));
+
+        if (!dialogShown) {
+            dispatch(openDialog(
+                _isRecordingRunning ? StopRecordingDialog : StartRecordingDialog
+            ));
+        }
     }
 
     /**
@@ -82,7 +105,7 @@ export default class AbstractRecordButton<P: Props>
      * @returns {boolean}
      */
     _isDisabled() {
-        return false;
+        return this.props._disabled;
     }
 
     /**
@@ -105,17 +128,18 @@ export default class AbstractRecordButton<P: Props>
  * @param {Props} ownProps - The own props of the Component.
  * @private
  * @returns {{
+ *     _disabled: boolean,
  *     _isRecordingRunning: boolean,
- *     disabledByFeatures: boolean,
  *     visible: boolean
  * }}
  */
 export function _mapStateToProps(state: Object, ownProps: Props): Object {
     let { visible } = ownProps;
 
-    // a button can be disabled/enabled only if enableFeaturesBasedOnToken
-    // is on
-    let disabledByFeatures;
+    // a button can be disabled/enabled if enableFeaturesBasedOnToken
+    // is on or if the livestreaming is running.
+    let _disabled;
+    let _tooltip = '';
 
     if (typeof visible === 'undefined') {
         // If the containing component provides the visible prop, that is one
@@ -128,19 +152,35 @@ export function _mapStateToProps(state: Object, ownProps: Props): Object {
         } = state['features/base/config'];
         const { features = {} } = getLocalParticipant(state);
 
-        visible = isModerator
-            && fileRecordingsEnabled;
+        visible = isModerator && fileRecordingsEnabled;
 
         if (enableFeaturesBasedOnToken) {
             visible = visible && String(features.recording) === 'true';
-            disabledByFeatures = String(features.recording) === 'disabled';
+            _disabled = String(features.recording) === 'disabled';
+            if (!visible && !_disabled) {
+                _disabled = true;
+                visible = true;
+                _tooltip = 'dialog.recordingDisabledTooltip';
+            }
         }
     }
 
+    // disable the button if the livestreaming is running.
+    if (getActiveSession(state, JitsiRecordingConstants.mode.STREAM)) {
+        _disabled = true;
+        _tooltip = 'dialog.recordingDisabledBecauseOfActiveLiveStreamingTooltip';
+    }
+
+    // disable the button if we are in a breakout room.
+    if (isInBreakoutRoom(state)) {
+        _disabled = true;
+        visible = false;
+    }
+
     return {
-        _isRecordingRunning:
-            Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE)),
-        disabledByFeatures,
+        _disabled,
+        _isRecordingRunning: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE)),
+        _tooltip,
         visible
     };
 }

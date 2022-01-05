@@ -1,6 +1,5 @@
 /*
- * Copyright @ 2018-present 8x8, Inc.
- * Copyright @ 2017-2018 Atlassian Pty Ltd
+ * Copyright @ 2017-present 8x8, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +14,10 @@
  * limitations under the License.
  */
 
-#import <JitsiMeet/JitsiMeetView.h>
-#import <JitsiMeet/JitsiMeetViewDelegate.h>
-#import <JitsiMeet/JitsiMeetConferenceOptions.h>
-#import <JitsiMeet/JitsiMeetLogger.h>
-#import <JitsiMeet/JitsiMeetBaseLogHandler.h>
+@import UIKit;
+@import Foundation;
 
+#import <JitsiMeetSDK/JitsiMeetConferenceOptions.h>
 
 @interface JitsiMeet : NSObject
 
@@ -62,6 +59,20 @@
 
 #pragma mark - Utility methods
 
+/**
+ * Once  the react native bridge is destroyed you are responsible for reinstantiating it back. Use this method to do so.
+ */
+- (void)instantiateReactNativeBridge;
+
+/**
+ * Helper method to destroy the react native bridge, cleaning up resources in the process. Once the react native bridge is destroyed you are responsible for reinstantiating it back using `instantiateReactNativeBridge` method.
+ */
+- (void)destroyReactNativeBridge;
+
 - (JitsiMeetConferenceOptions *_Nonnull)getInitialConferenceOptions;
+
+- (BOOL)isCrashReportingDisabled;
+
+- (void)showSplashScreen:(UIView * _Nonnull) rootView;
 
 @end

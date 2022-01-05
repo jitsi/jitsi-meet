@@ -2,18 +2,24 @@
 
 import type { Dispatch } from 'redux';
 
+import { showModeratedNotification } from '../../av-moderation/actions';
+import { shouldShowModeratedNotification } from '../../av-moderation/functions';
+import { isModerationNotificationDisplayed } from '../../notifications';
+
 import {
     SET_AUDIO_MUTED,
     SET_AUDIO_AVAILABLE,
+    SET_AUDIO_UNMUTE_PERMISSIONS,
     SET_CAMERA_FACING_MODE,
     SET_VIDEO_AVAILABLE,
     SET_VIDEO_MUTED,
+    SET_VIDEO_UNMUTE_PERMISSIONS,
     STORE_VIDEO_TRANSFORM,
     TOGGLE_CAMERA_FACING_MODE
 } from './actionTypes';
 import {
-    CAMERA_FACING_MODE,
     MEDIA_TYPE,
+    type MediaType,
     VIDEO_MUTISM_AUTHORITY
 } from './constants';
 
@@ -56,6 +62,19 @@ export function setAudioMuted(muted: boolean, ensureTrack: boolean = false) {
 }
 
 /**
+ * Action to disable/enable the audio mute icon.
+ *
+ * @param {boolean} blocked - True if the audio mute icon needs to be disabled.
+ * @returns {Function}
+ */
+export function setAudioUnmutePermissions(blocked: boolean) {
+    return {
+        type: SET_AUDIO_UNMUTE_PERMISSIONS,
+        blocked
+    };
+}
+
+/**
  * Action to set the facing mode of the local camera.
  *
  * @param {CAMERA_FACING_MODE} cameraFacingMode - The camera facing mode to set.
@@ -64,7 +83,7 @@ export function setAudioMuted(muted: boolean, ensureTrack: boolean = false) {
  *     cameraFacingMode: CAMERA_FACING_MODE
  * }}
  */
-export function setCameraFacingMode(cameraFacingMode: CAMERA_FACING_MODE) {
+export function setCameraFacingMode(cameraFacingMode: string) {
     return {
         type: SET_CAMERA_FACING_MODE,
         cameraFacingMode
@@ -102,11 +121,22 @@ export function setVideoAvailable(available: boolean) {
  */
 export function setVideoMuted(
         muted: boolean,
-        mediaType: MEDIA_TYPE = MEDIA_TYPE.VIDEO,
+        mediaType: MediaType = MEDIA_TYPE.VIDEO,
         authority: number = VIDEO_MUTISM_AUTHORITY.USER,
         ensureTrack: boolean = false) {
     return (dispatch: Dispatch<any>, getState: Function) => {
-        const oldValue = getState()['features/base/media'].video.muted;
+        const state = getState();
+
+        // check for A/V Moderation when trying to unmute
+        if (!muted && shouldShowModeratedNotification(MEDIA_TYPE.VIDEO, state)) {
+            if (!isModerationNotificationDisplayed(MEDIA_TYPE.VIDEO, state)) {
+                ensureTrack && dispatch(showModeratedNotification(MEDIA_TYPE.VIDEO));
+            }
+
+            return;
+        }
+
+        const oldValue = state['features/base/media'].video.muted;
 
         // eslint-disable-next-line no-bitwise
         const newValue = muted ? oldValue | authority : oldValue & ~authority;
@@ -118,6 +148,19 @@ export function setVideoMuted(
             ensureTrack,
             muted: newValue
         });
+    };
+}
+
+/**
+ * Action to disable/enable the video mute icon.
+ *
+ * @param {boolean} blocked - True if the video mute icon needs to be disabled.
+ * @returns {Function}
+ */
+export function setVideoUnmutePermissions(blocked: boolean) {
+    return {
+        type: SET_VIDEO_UNMUTE_PERMISSIONS,
+        blocked
     };
 }
 

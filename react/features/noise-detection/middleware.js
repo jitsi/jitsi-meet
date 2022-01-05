@@ -5,7 +5,7 @@ import { CONFERENCE_JOINED } from '../base/conference';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
-import { hideNotification, showNotification } from '../notifications';
+import { NOTIFICATION_TIMEOUT_TYPE, hideNotification, showNotification } from '../notifications';
 
 import { setNoisyAudioInputNotificationUid } from './actions';
 import { NOISY_AUDIO_INPUT_SOUND_ID } from './constants';
@@ -37,17 +37,18 @@ MiddlewareRegistry.register(store => next => action => {
                 }
             });
         conference.on(
-            JitsiConferenceEvents.NOISY_MIC, () => {
-                const notification = showNotification({
+            JitsiConferenceEvents.NOISY_MIC, async () => {
+                const notification = await dispatch(showNotification({
                     titleKey: 'toolbar.noisyAudioInputTitle',
                     descriptionKey: 'toolbar.noisyAudioInputDesc'
-                });
+                }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
 
-                dispatch(notification);
                 dispatch(playSound(NOISY_AUDIO_INPUT_SOUND_ID));
 
-                // we store the last notification id so we can hide it if the mic is muted
-                dispatch(setNoisyAudioInputNotificationUid(notification.uid));
+                if (notification) {
+                    // we store the last notification id so we can hide it if the mic is muted
+                    dispatch(setNoisyAudioInputNotificationUid(notification.uid));
+                }
             });
         break;
     }

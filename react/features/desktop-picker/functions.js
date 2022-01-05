@@ -51,7 +51,7 @@ export function obtainDesktopSources(types, options = {}) {
  *
  * @param {Array} sources - DesktopCapturerSources.
  * @private
- * @returns {Object} An object with the sources split into seperate arrays based
+ * @returns {Object} An object with the sources split into separate arrays based
  * on source type.
  */
 function _seperateSourcesByType(sources = []) {

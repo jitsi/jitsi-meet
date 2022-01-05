@@ -1,7 +1,8 @@
 /* @flow */
 
-import { i18next } from '../../base/i18n';
+import Bourne from '@hapi/bourne';
 
+import { i18next } from '../../base/i18n';
 import logger from '../logger';
 import {
     FlacAdapter,
@@ -98,12 +99,12 @@ type RecordingStats = {
     isRecording: boolean,
 
     /**
-     * Total recorded bytes. (Reserved for future use.)
+     * Total recorded bytes. (Reserved for future use.).
      */
     recordedBytes: number,
 
     /**
-     * Total recording duration. (Reserved for future use.)
+     * Total recording duration. (Reserved for future use.).
      */
     recordedLength: number
 }
@@ -428,7 +429,7 @@ class RecordingController {
                     id: member.getId(),
                     displayName: member.getDisplayName(),
                     recordingStats:
-                        JSON.parse(member.getProperty(PROPERTY_STATS) || '{}'),
+                        Bourne.parse(member.getProperty(PROPERTY_STATS) || '{}'),
                     isSelf: false
                 };
             });

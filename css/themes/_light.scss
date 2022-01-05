@@ -41,7 +41,6 @@ $overlayButtonBg: #0074E0;
 * Color variables
 **/
 $defaultBackground: #474747;
-$filmstripOnlyOverlayBg: #000;
 $reloadProgressBarBg: #0074E0;
 
 /**
@@ -59,10 +58,6 @@ $dialogErrorText: #344563;
 **/
 $inlayColorBg: lighten($defaultBackground, 20%);
 $inlayBorderColor: lighten($baseLight, 10%);
-$inlayIconBg: #000;
-$inlayIconColor: #fff;
-$inlayFilmstripOnlyColor: #474747;
-$inlayFilmstripOnlyBg: #fff;
 
 // Main controls
 $placeHolderColor: #a7a7a7;
@@ -80,11 +75,7 @@ $errorColor: #c61600;
 $feedbackCancelFontColor: #333;
 
 // Popover colors
-$popoverBg: initial;
 $popoverFontColor: #ffffff !important;
-$popupMenuColor: #ffffff !important;
-$popupMenuHoverColor: #ffffff !important;
-$popupMenuHoverBackground: rgba(255, 255, 255, 0.1);
 $popupSliderColor: #0376da;
 
 // Toolbar
@@ -112,4 +103,4 @@ $selectActiveItemBg: darken($controlBackground, 20%);
 /**
  * TODO: Replace by themed component.
  */
-$videoQualityActive: #4C9AFF;
+$videoQualityActive: #57A0ff;

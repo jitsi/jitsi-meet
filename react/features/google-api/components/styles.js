@@ -4,7 +4,7 @@ import { ColorPalette, createStyleSheet } from '../../base/styles';
 
 /**
  * For styling explanations, see:
- * https://developers.google.com/identity/branding-guidelines
+ * https://developers.google.com/identity/branding-guidelines.
  */
 const BUTTON_HEIGHT = 40;
 

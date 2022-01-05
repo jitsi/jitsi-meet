@@ -11,7 +11,7 @@ const hints = [
 ];
 
 /**
- * Get a random hint meessage from hint array.
+ * Get a random hint message from hint array.
  *
  * @return {string} the hint message.
  */

@@ -4,15 +4,15 @@ import React from 'react';
 import { View } from 'react-native';
 
 import { connect } from '../../../redux';
-
 import AbstractVideoTrack from '../AbstractVideoTrack';
 import type { Props } from '../AbstractVideoTrack';
+
 import styles from './styles';
 
 /**
  * Component that renders video element for a specified video track.
  *
- * @extends AbstractVideoTrack
+ * @augments AbstractVideoTrack
  */
 class VideoTrack extends AbstractVideoTrack<Props> {
     /**

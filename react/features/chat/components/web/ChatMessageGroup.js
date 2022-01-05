@@ -1,6 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
+
 import ChatMessage from './ChatMessage';
 
 type Props = {
@@ -20,7 +21,7 @@ type Props = {
  * Displays a list of chat messages. Will show only the display name for the
  * first chat message and the timestamp for the last chat message.
  *
- * @extends React.Component
+ * @augments React.Component
  */
 class ChatMessageGroup extends Component<Props> {
     static defaultProps = {

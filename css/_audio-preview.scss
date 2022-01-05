@@ -1,0 +1,183 @@
+.audio-preview {
+    display: inline-block;
+
+    &-content {
+        background: $menuBG;
+        border-radius: 3px;
+        font-size: 14px;
+        line-height: 24px;
+        max-height: 456px;
+        overflow: auto;
+        width: 300px;
+        &-ul {
+            margin:0;
+            padding:0;
+            list-style-type: none;
+        }
+    }
+
+    &-header {
+        color: #fff;
+        align-items: center;
+        display: flex;
+        margin-top: 8px;
+        padding: 8px 16px;
+
+        &-icon {
+            display: inline-block;
+
+            svg {
+                fill: #fff;
+            }
+        }
+
+        &--bordered {
+            border-bottom: 1px solid #4C4D50;
+        }
+
+        &-text {
+            margin-left: 12px;
+        }
+    }
+
+    &-entry {
+        align-items: center;
+        color: #fff;
+        cursor: pointer;
+        display: flex;
+        padding: 8px 0;
+        margin-left: 48px;
+
+        &--selected {
+            background: #131519;
+            cursor: initial;
+            margin-left: 0;
+            padding-left: 18px;
+        }
+
+        &-text {
+            color: #fff;
+            display: inline-block;
+            line-height: 24px;
+            text-overflow: ellipsis;
+            max-width: 213px;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+    }
+
+    &-speaker {
+        position: relative;
+
+        &-ul {
+            margin:0;
+            padding:0;
+            list-style-type: none;
+        }
+
+        &:hover, &:focus-within, &:focus {
+            .audio-preview-entry {
+                background: #36383C;
+                margin-left: 0;
+                padding-left: 48px;
+
+                &--selected {
+                    padding-left: 18px;
+                    background: $newToolbarBackgroundColor;
+                }
+            }
+
+            .audio-preview-test-button {
+                display: inline-block;
+            }
+
+            .audio-preview-entry-text {
+                max-width: 178px;
+            }
+        }
+
+        &:last-child {
+            padding-bottom: 8px;
+        }
+
+        .audio-preview-entry-text {
+            max-width: 238px;
+        }
+    }
+
+    &-microphone {
+        position: relative;
+
+        &:hover {
+            .audio-preview-entry {
+                background: #36383C;
+                margin-left: 0;
+                padding-left: 48px;
+
+                &--selected {
+                    background: $newToolbarBackgroundColor;
+                    padding-left: 18px;
+                }
+            }
+        }
+
+        .audio-preview-entry-text {
+            max-width: 178px;
+        }
+    }
+
+    &-icon {
+        border-radius: 50%;
+        display: inline-block;
+        width: 14px;
+
+        & svg {
+            fill: #1C2025;
+        }
+
+        &--check {
+            background: #31B76A;
+            margin-right: 16px;
+        }
+
+        &--exclamation {
+            margin-left: 6px;
+            & svg {
+                fill: #E54B4B;
+            }
+        }
+    }
+
+    &-hr {
+        border-top: 1px solid #4C4D50;
+        border-bottom: 0;
+    }
+
+    &-test-button {
+        display: none;
+        background: #FFF;
+        border: 1px solid #D1DBE8;
+        border-radius: 3px;
+        color: #1C2025;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.8rem;
+        line-height: 24px;
+        padding: 2px 8px;
+        position: absolute;
+        right: 16px;
+        top: 5px;
+    }
+
+    &-meter-mic {
+        position: absolute;
+        right: 16px;
+        top: 14px;
+    }
+
+    // Override @atlaskit/InlineDialog container which is made with styled components
+    & > div:nth-child(2) {
+        outline: none;
+        padding: 0;
+    }
+}

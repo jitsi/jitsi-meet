@@ -1,5 +1,8 @@
+import logger from '../logger';
+
 import AbstractHandler from './AbstractHandler';
-import { amplitude, fixDeviceID } from './amplitude';
+import { fixDeviceID } from './amplitude/fixDeviceID';
+import amplitude from './amplitude/lib';
 
 /**
  * Analytics handler for Amplitude.
@@ -15,23 +18,36 @@ export default class AmplitudeHandler extends AbstractHandler {
     constructor(options) {
         super(options);
 
-        const { amplitudeAPPKey, host, user } = options;
-
-        if (!amplitudeAPPKey) {
-            throw new Error('Failed to initialize Amplitude handler, no APP key');
-        }
+        const { amplitudeAPPKey, user } = options;
 
         this._enabled = true;
 
-        this._amplitudeOptions = {
-            host
+        const onError = e => {
+            logger.error('Error initializing Amplitude', e);
+            this._enabled = false;
         };
 
-        amplitude.getInstance(this._amplitudeOptions).init(amplitudeAPPKey, undefined, { includeReferrer: true });
-        fixDeviceID(amplitude.getInstance(this._amplitudeOptions));
+        if (navigator.product === 'ReactNative') {
+            amplitude.getInstance().init(amplitudeAPPKey);
+            fixDeviceID(amplitude.getInstance()).then(() => {
+                amplitude.getInstance().getDeviceId()
+                    .then(deviceId => {
+                        this._deviceId = deviceId;
+                    });
+            });
+        } else {
+            const amplitudeOptions = {
+                includeReferrer: true,
+                onError
+            };
+
+            amplitude.getInstance().init(amplitudeAPPKey, undefined, amplitudeOptions);
+            fixDeviceID(amplitude.getInstance());
+        }
 
         if (user) {
-            amplitude.getInstance(this._amplitudeOptions).setUserId(user);
+            this._userId = user;
+            amplitude.getInstance().setUserId(user);
         }
     }
 
@@ -43,8 +59,7 @@ export default class AmplitudeHandler extends AbstractHandler {
      */
     setUserProperties(userProps) {
         if (this._enabled) {
-            amplitude.getInstance(this._amplitudeOptions)
-                .setUserProperties(userProps);
+            amplitude.getInstance().setUserProperties(userProps);
         }
     }
 
@@ -61,8 +76,26 @@ export default class AmplitudeHandler extends AbstractHandler {
             return;
         }
 
-        amplitude.getInstance(this._amplitudeOptions).logEvent(
-            this._extractName(event),
-            event);
+        amplitude.getInstance().logEvent(this._extractName(event), event);
+    }
+
+    /**
+     * Return amplitude identity information.
+     *
+     * @returns {Object}
+     */
+    getIdentityProps() {
+        if (navigator.product === 'ReactNative') {
+            return {
+                deviceId: this._deviceId,
+                userId: this._userId
+            };
+        }
+
+        return {
+            sessionId: amplitude.getInstance().getSessionId(),
+            deviceId: amplitude.getInstance().options.deviceId,
+            userId: amplitude.getInstance().options.userId
+        };
     }
 }

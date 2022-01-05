@@ -1,23 +1,39 @@
 // @flow
 
-import { generateRoomWithoutSeparator } from 'js-utils/random';
+import { generateRoomWithoutSeparator } from '@jitsi/js-utils/random';
 import { Component } from 'react';
 import type { Dispatch } from 'redux';
 
 import { createWelcomePageEvent, sendAnalytics } from '../../analytics';
-import { appNavigate } from '../../app';
+import { appNavigate } from '../../app/actions';
+import isInsecureRoomName from '../../base/util/isInsecureRoomName';
 import { isCalendarEnabled } from '../../calendar-sync';
-import { isRoomValid } from '../../base/conference';
+import { isRecentListEnabled } from '../../recent-list/functions';
 
 /**
  * {@code AbstractWelcomePage}'s React {@code Component} prop types.
  */
-type Props = {
+export type Props = {
 
     /**
      * Whether the calendar functionality is enabled or not.
      */
     _calendarEnabled: boolean,
+
+    /**
+     * Whether the insecure room name functionality is enabled or not.
+     */
+    _enableInsecureRoomNameWarning: boolean,
+
+    /**
+     * URL for the moderated rooms microservice, if available.
+     */
+    _moderatedRoomServiceUrl: ?string,
+
+    /**
+     * Whether the recent list is enabled.
+     */
+    _recentListEnabled: Boolean,
 
     /**
      * Room name to join to.
@@ -40,7 +56,7 @@ type Props = {
  *
  * @abstract
  */
-export class AbstractWelcomePage extends Component<Props, *> {
+export class AbstractWelcomePage<P: Props> extends Component<P, *> {
     _mounted: ?boolean;
 
     /**
@@ -48,7 +64,7 @@ export class AbstractWelcomePage extends Component<Props, *> {
      *
      * @inheritdoc
      */
-    static getDerivedStateFromProps(props: Props, state: Object) {
+    static getDerivedStateFromProps(props: P, state: Object) {
         return {
             room: props._room || state.room
         };
@@ -64,12 +80,13 @@ export class AbstractWelcomePage extends Component<Props, *> {
      * @property {string} room - Room name.
      * @property {string} roomPlaceholder - Room placeholder that's used as a
      * placeholder for input.
-     * @property {nubmer|null} updateTimeoutId - Identifier of the timeout
+     * @property {number|null} updateTimeoutId - Identifier of the timeout
      * updating the generated room name.
      */
     state = {
         animateTimeoutId: undefined,
         generatedRoomname: '',
+        insecureRoomName: false,
         joining: false,
         room: '',
         roomPlaceholder: '',
@@ -82,7 +99,7 @@ export class AbstractWelcomePage extends Component<Props, *> {
      * @param {Props} props - The React {@code Component} props to initialize
      * the new {@code AbstractWelcomePage} instance with.
      */
-    constructor(props: Props) {
+    constructor(props: P) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
@@ -90,6 +107,7 @@ export class AbstractWelcomePage extends Component<Props, *> {
             = this._animateRoomnameChanging.bind(this);
         this._onJoin = this._onJoin.bind(this);
         this._onRoomChange = this._onRoomChange.bind(this);
+        this._renderInsecureRoomNameWarning = this._renderInsecureRoomNameWarning.bind(this);
         this._updateRoomname = this._updateRoomname.bind(this);
     }
 
@@ -156,16 +174,11 @@ export class AbstractWelcomePage extends Component<Props, *> {
     }
 
     /**
-     * Determines whether the 'Join' button is (to be) disabled i.e. There's no
-     * valid room name typed into the respective text input field.
+     * Renders the insecure room name warning.
      *
-     * @protected
-     * @returns {boolean} If the 'Join' button is (to be) disabled, true;
-     * otherwise, false.
+     * @returns {ReactElement}
      */
-    _isJoinDisabled() {
-        return this.state.joining || !isRoomValid(this.state.room);
-    }
+    _doRenderInsecureRoomNameWarning: () => React$Component<any>;
 
     _onJoin: () => void;
 
@@ -209,7 +222,25 @@ export class AbstractWelcomePage extends Component<Props, *> {
      * @returns {void}
      */
     _onRoomChange(value: string) {
-        this.setState({ room: value });
+        this.setState({
+            room: value,
+            insecureRoomName: this.props._enableInsecureRoomNameWarning && value && isInsecureRoomName(value)
+        });
+    }
+
+    _renderInsecureRoomNameWarning: () => React$Component<any>;
+
+    /**
+     * Renders the insecure room name warning if needed.
+     *
+     * @returns {ReactElement}
+     */
+    _renderInsecureRoomNameWarning() {
+        if (this.props._enableInsecureRoomNameWarning && this.state.insecureRoomName) {
+            return this._doRenderInsecureRoomNameWarning();
+        }
+
+        return null;
     }
 
     _updateRoomname: () => void;
@@ -243,15 +274,14 @@ export class AbstractWelcomePage extends Component<Props, *> {
  *
  * @param {Object} state - The redux state.
  * @protected
- * @returns {{
- *     _calendarEnabled: boolean,
- *     _room: string,
- *     _settings: Object
- * }}
+ * @returns {Props}
  */
 export function _mapStateToProps(state: Object) {
     return {
         _calendarEnabled: isCalendarEnabled(state),
+        _enableInsecureRoomNameWarning: state['features/base/config'].enableInsecureRoomNameWarning || false,
+        _moderatedRoomServiceUrl: state['features/base/config'].moderatedRoomServiceUrl,
+        _recentListEnabled: isRecentListEnabled(),
         _room: state['features/base/conference'].room,
         _settings: state['features/base/settings']
     };

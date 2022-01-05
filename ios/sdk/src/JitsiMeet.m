@@ -22,14 +22,16 @@
 #import "JitsiMeetView+Private.h"
 #import "RCTBridgeWrapper.h"
 #import "ReactUtils.h"
+#import "RNSplashScreen.h"
+#import "ScheenshareEventEmiter.h"
 
 #import <RNGoogleSignin/RNGoogleSignin.h>
 #import <WebRTC/RTCLogging.h>
 
-
 @implementation JitsiMeet {
     RCTBridgeWrapper *_bridgeWrapper;
     NSDictionary *_launchOptions;
+    ScheenshareEventEmiter *_screenshareEventEmiter;
 }
 
 #pragma mak - This class is a singleton
@@ -47,8 +49,11 @@
 
 - (instancetype)init {
     if (self = [super init]) {
-        // Initialize the on and only bridge for interfacing with React Native.
+        // Initialize the one and only bridge for interfacing with React Native.
         _bridgeWrapper = [[RCTBridgeWrapper alloc] init];
+        
+        // Initialize the listener for handling start/stop screensharing notifications.
+        _screenshareEventEmiter = [[ScheenshareEventEmiter alloc] init];
 
         // Register a fatal error handler for React.
         registerReactFatalErrorHandler();
@@ -107,11 +112,24 @@
     JitsiMeetConferenceOptions *conferenceOptions = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
         builder.room = [url absoluteString];
     }];
-    
+
     return [JitsiMeetView setPropsInViews:[conferenceOptions asProps]];
 }
 
 #pragma mark - Utility methods
+
+- (void)instantiateReactNativeBridge {
+    if (_bridgeWrapper != nil) {
+        return;
+    };
+    
+    _bridgeWrapper = [[RCTBridgeWrapper alloc] init];
+}
+
+- (void)destroyReactNativeBridge {
+    [_bridgeWrapper invalidate];
+    _bridgeWrapper = nil;
+}
 
 - (JitsiMeetConferenceOptions *)getInitialConferenceOptions {
     if (_launchOptions[UIApplicationLaunchOptionsURLKey]) {
@@ -130,6 +148,11 @@
     }
 
     return nil;
+}
+
+- (BOOL)isCrashReportingDisabled {
+    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"jitsi-default-preferences"];
+    return [userDefaults stringForKey:@"isCrashReportingDisabled"];
 }
 
 - (JitsiMeetConferenceOptions *)optionsFromUserActivity:(NSUserActivity *)userActivity {
@@ -178,6 +201,10 @@
     return nil;
 }
 
+- (void)showSplashScreen:(UIView*)rootView {
+    [RNSplashScreen showSplash:@"LaunchScreen" inRootView:rootView];
+}
+
 #pragma mark - Property getter / setters
 
 - (NSArray<NSString *> *)universalLinkDomains {
@@ -201,6 +228,10 @@
 
 - (RCTBridge *)getReactBridge {
     return _bridgeWrapper.bridge;
+}
+
+- (ExternalAPI *)getExternalAPI {
+    return [_bridgeWrapper.bridge moduleForClass:ExternalAPI.class];
 }
 
 @end

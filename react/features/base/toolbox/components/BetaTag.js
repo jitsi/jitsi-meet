@@ -6,13 +6,17 @@ import { translate } from '../../i18n';
 import { Container, Text } from '../../react';
 
 type Props = {
+
+    /**
+     * Invoked to obtain translated strings.
+     */
     t: Function
 };
 
 /**
  * Creates a ReactElement for showing a ToolboxItem is for a beta feature.
  *
- * @extends {Component}
+ * @augments {Component}
  */
 class BetaTag extends Component<Props> {
 

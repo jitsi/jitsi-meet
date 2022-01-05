@@ -6,13 +6,15 @@ import {
     createShortcutEvent,
     sendAnalytics
 } from '../../analytics';
+import { getFeatureFlag, AUDIO_MUTE_BUTTON_ENABLED } from '../../base/flags';
 import { translate } from '../../base/i18n';
 import { MEDIA_TYPE } from '../../base/media';
 import { connect } from '../../base/redux';
-import { AbstractAudioMuteButton } from '../../base/toolbox';
-import type { AbstractButtonProps } from '../../base/toolbox';
+import { AbstractAudioMuteButton, AbstractButton } from '../../base/toolbox/components';
+import type { AbstractButtonProps } from '../../base/toolbox/components';
 import { isLocalTrackMuted } from '../../base/tracks';
-import { muteLocal } from '../../remote-video-menu/actions';
+import { muteLocal } from '../../video-menu/actions';
+import { isAudioMuteButtonDisabled } from '../functions';
 
 declare var APP: Object;
 
@@ -40,7 +42,7 @@ type Props = AbstractButtonProps & {
 /**
  * Component that renders a toolbar button for toggling audio mute.
  *
- * @extends AbstractAudioMuteButton
+ * @augments AbstractAudioMuteButton
  */
 class AudioMuteButton extends AbstractAudioMuteButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.mute';
@@ -87,7 +89,7 @@ class AudioMuteButton extends AbstractAudioMuteButton<Props, *> {
     }
 
     /**
-     * Indicates if audio is currently muted ot nor.
+     * Indicates if audio is currently muted or not.
      *
      * @override
      * @protected
@@ -107,13 +109,18 @@ class AudioMuteButton extends AbstractAudioMuteButton<Props, *> {
      * @returns {void}
      */
     _onKeyboardShortcut() {
+        // Ignore keyboard shortcuts if the audio button is disabled.
+        if (this._isDisabled()) {
+            return;
+        }
+
         sendAnalytics(
             createShortcutEvent(
                 AUDIO_MUTE,
                 ACTION_SHORTCUT_TRIGGERED,
                 { enable: !this._isAudioMuted() }));
 
-        super._handleClick();
+        AbstractButton.prototype._onClick.call(this);
     }
 
     /**
@@ -124,7 +131,7 @@ class AudioMuteButton extends AbstractAudioMuteButton<Props, *> {
      * @returns {void}
      */
     _setAudioMuted(audioMuted: boolean) {
-        this.props.dispatch(muteLocal(audioMuted));
+        this.props.dispatch(muteLocal(audioMuted, MEDIA_TYPE.AUDIO));
     }
 
     /**
@@ -144,15 +151,19 @@ class AudioMuteButton extends AbstractAudioMuteButton<Props, *> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _audioMuted: boolean
+ *     _audioMuted: boolean,
+ *     _disabled: boolean
  * }}
  */
 function _mapStateToProps(state): Object {
-    const tracks = state['features/base/tracks'];
+    const _audioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
+    const _disabled = state['features/base/config'].startSilent || isAudioMuteButtonDisabled(state);
+    const enabledFlag = getFeatureFlag(state, AUDIO_MUTE_BUTTON_ENABLED, true);
 
     return {
-        _audioMuted: isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO),
-        _disabled: state['features/base/config'].startSilent
+        _audioMuted,
+        _disabled,
+        visible: enabledFlag
     };
 }
 

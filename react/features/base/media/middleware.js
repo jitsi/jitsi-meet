@@ -8,20 +8,38 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { APP_STATE_CHANGED } from '../../mobile/background';
-
+import {
+    NOTIFICATION_TIMEOUT_TYPE,
+    showWarningNotification
+} from '../../notifications';
+import { isForceMuted } from '../../participants-pane/functions';
+import { isScreenMediaShared } from '../../screen-share/functions';
 import { SET_AUDIO_ONLY, setAudioOnly } from '../audio-only';
 import { isRoomValid, SET_ROOM } from '../conference';
-import JitsiMeetJS from '../lib-jitsi-meet';
+import { getLocalParticipant } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 import { getPropertyValue } from '../settings';
-import { setTrackMuted, TRACK_ADDED } from '../tracks';
+import {
+    destroyLocalTracks,
+    isLocalTrackMuted,
+    isLocalVideoTrackDesktop,
+    setTrackMuted,
+    TRACK_ADDED
+} from '../tracks';
 
+import {
+    SET_AUDIO_MUTED,
+    SET_AUDIO_UNMUTE_PERMISSIONS,
+    SET_VIDEO_MUTED,
+    SET_VIDEO_UNMUTE_PERMISSIONS
+} from './actionTypes';
 import { setAudioMuted, setCameraFacingMode, setVideoMuted } from './actions';
 import {
     CAMERA_FACING_MODE,
     MEDIA_TYPE,
     VIDEO_MUTISM_AUTHORITY
 } from './constants';
+import { getStartWithAudioMuted, getStartWithVideoMuted } from './functions';
 import logger from './logger';
 import {
     _AUDIO_INITIAL_MEDIA_STATE,
@@ -56,6 +74,57 @@ MiddlewareRegistry.register(store => next => action => {
 
         return result;
     }
+
+    case SET_AUDIO_MUTED: {
+        const state = store.getState();
+        const participant = getLocalParticipant(state);
+
+        if (!action.muted && isForceMuted(participant, MEDIA_TYPE.AUDIO, state)) {
+            return;
+        }
+        break;
+    }
+
+    case SET_AUDIO_UNMUTE_PERMISSIONS: {
+        const { blocked } = action;
+        const state = store.getState();
+        const tracks = state['features/base/tracks'];
+        const isAudioMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
+
+        if (blocked && isAudioMuted) {
+            store.dispatch(showWarningNotification({
+                descriptionKey: 'notify.audioUnmuteBlockedDescription',
+                titleKey: 'notify.audioUnmuteBlockedTitle'
+            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+        }
+        break;
+    }
+
+    case SET_VIDEO_MUTED: {
+        const state = store.getState();
+        const participant = getLocalParticipant(state);
+
+        if (!action.muted && isForceMuted(participant, MEDIA_TYPE.VIDEO, state)) {
+            return;
+        }
+        break;
+    }
+
+    case SET_VIDEO_UNMUTE_PERMISSIONS: {
+        const { blocked } = action;
+        const state = store.getState();
+        const tracks = state['features/base/tracks'];
+        const isVideoMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO);
+        const isMediaShared = isScreenMediaShared(state);
+
+        if (blocked && isVideoMuted && !isMediaShared) {
+            store.dispatch(showWarningNotification({
+                descriptionKey: 'notify.videoUnmuteBlockedDescription',
+                titleKey: 'notify.videoUnmuteBlockedTitle'
+            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+        }
+        break;
+    }
     }
 
     return next(action);
@@ -73,13 +142,15 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _appStateChanged({ dispatch }, next, action) {
-    const { appState } = action;
-    const mute = appState !== 'active'; // Note that 'background' and 'inactive' are treated equal.
+function _appStateChanged({ dispatch, getState }, next, action) {
+    if (navigator.product === 'ReactNative') {
+        const { appState } = action;
+        const mute = appState !== 'active' && !isLocalVideoTrackDesktop(getState());
 
-    sendAnalytics(createTrackMutedEvent('video', 'background mode', mute));
+        sendAnalytics(createTrackMutedEvent('video', 'background mode', mute));
 
-    dispatch(setVideoMuted(mute, MEDIA_TYPE.VIDEO, VIDEO_MUTISM_AUTHORITY.BACKGROUND));
+        dispatch(setVideoMuted(mute, MEDIA_TYPE.VIDEO, VIDEO_MUTISM_AUTHORITY.BACKGROUND));
+    }
 
     return next(action);
 }
@@ -134,37 +205,8 @@ function _setRoom({ dispatch, getState }, next, action) {
     const state = getState();
     const { room } = action;
     const roomIsValid = isRoomValid(room);
-
-    // XXX The configurations/preferences/settings startWithAudioMuted,
-    // startWithVideoMuted, and startAudioOnly were introduced for
-    // conferences/meetings. So it makes sense for these to not be considered
-    // outside of conferences/meetings (e.g. WelcomePage). Later on, though, we
-    // introduced a "Video <-> Voice" toggle on the WelcomePage which utilizes
-    // startAudioOnly outside of conferences/meetings so that particular
-    // configuration/preference/setting employs slightly exclusive logic.
-    const mutedSources = {
-        // We have startWithAudioMuted and startWithVideoMuted here:
-        config: true,
-        settings: true,
-
-        // XXX We've already overwritten base/config with urlParams. However,
-        // settings are more important than the server-side config.
-        // Consequently, we need to read from urlParams anyway:
-        urlParams: true,
-
-        // We don't have startWithAudioMuted and startWithVideoMuted here:
-        jwt: false
-    };
-    const audioMuted
-        = roomIsValid
-            ? Boolean(
-                getPropertyValue(state, 'startWithAudioMuted', mutedSources))
-            : _AUDIO_INITIAL_MEDIA_STATE.muted;
-    const videoMuted
-        = roomIsValid
-            ? Boolean(
-                getPropertyValue(state, 'startWithVideoMuted', mutedSources))
-            : _VIDEO_INITIAL_MEDIA_STATE.muted;
+    const audioMuted = roomIsValid ? getStartWithAudioMuted(state) : _AUDIO_INITIAL_MEDIA_STATE.muted;
+    const videoMuted = roomIsValid ? getStartWithVideoMuted(state) : _VIDEO_INITIAL_MEDIA_STATE.muted;
 
     sendAnalytics(
         createStartMutedConfigurationEvent('local', audioMuted, videoMuted));
@@ -189,46 +231,42 @@ function _setRoom({ dispatch, getState }, next, action) {
     // XXX After the introduction of the "Video <-> Voice" toggle on the
     // WelcomePage, startAudioOnly is utilized even outside of
     // conferences/meetings.
-    let audioOnly;
+    const audioOnly
+        = Boolean(
+            getPropertyValue(
+                state,
+                'startAudioOnly',
+                /* sources */ {
+                    // FIXME Practically, base/config is (really) correct
+                    // only if roomIsValid. At the time of this writing,
+                    // base/config is overwritten by URL params which leaves
+                    // base/config incorrect on the WelcomePage after
+                    // leaving a conference which explicitly overwrites
+                    // base/config with URL params.
+                    config: roomIsValid,
 
-    if (JitsiMeetJS.mediaDevices.supportsVideo()) {
-        audioOnly
-            = Boolean(
-                getPropertyValue(
-                    state,
-                    'startAudioOnly',
-                    /* sources */ {
-                        // FIXME Practically, base/config is (really) correct
-                        // only if roomIsValid. At the time of this writing,
-                        // base/config is overwritten by URL params which leaves
-                        // base/config incorrect on the WelcomePage after
-                        // leaving a conference which explicitly overwrites
-                        // base/config with URL params.
-                        config: roomIsValid,
+                    // XXX We've already overwritten base/config with
+                    // urlParams if roomIsValid. However, settings are more
+                    // important than the server-side config. Consequently,
+                    // we need to read from urlParams anyway. We also
+                    // probably want to read from urlParams when
+                    // !roomIsValid.
+                    urlParams: true,
 
-                        // XXX We've already overwritten base/config with
-                        // urlParams if roomIsValid. However, settings are more
-                        // important than the server-side config. Consequently,
-                        // we need to read from urlParams anyway. We also
-                        // probably want to read from urlParams when
-                        // !roomIsValid.
-                        urlParams: true,
-
-                        // The following don't have complications around whether
-                        // they are defined or not:
-                        jwt: false,
-                        settings: true
-                    }));
-    } else {
-        // Default to audio-only if the (execution) environment does not
-        // support (sending and/or receiving) video.
-        audioOnly = true;
-    }
+                    // The following don't have complications around whether
+                    // they are defined or not:
+                    jwt: false,
+                    settings: true
+                }));
 
     sendAnalytics(createStartAudioOnlyEvent(audioOnly));
     logger.log(`Start audio only set to ${audioOnly.toString()}`);
 
     dispatch(setAudioOnly(audioOnly, false));
+
+    if (!roomIsValid) {
+        dispatch(destroyLocalTracks());
+    }
 
     return next(action);
 }

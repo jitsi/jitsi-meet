@@ -1,5 +1,6 @@
 // @flow
 
+import UIEvents from '../../../service/UI/UIEvents';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
@@ -10,13 +11,12 @@ import { hideDialog } from '../base/dialog';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../base/redux';
 import {
-    NOTIFICATION_TIMEOUT,
+    NOTIFICATION_TIMEOUT_TYPE,
     showNotification
 } from '../notifications';
-import UIEvents from '../../../service/UI/UIEvents';
 
 import { _openPasswordRequiredPrompt } from './actions';
-import { PasswordRequiredPrompt, RoomLockPrompt } from './components';
+import { PasswordRequiredPrompt } from './components';
 import { LOCKED_REMOTELY } from './constants';
 import logger from './logger';
 
@@ -54,12 +54,12 @@ MiddlewareRegistry.register(store => next => action => {
             store.dispatch(
                 showNotification({
                     titleKey: 'notify.passwordSetRemotely'
-                }, NOTIFICATION_TIMEOUT));
+                }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
         } else if (previousLockedState === LOCKED_REMOTELY && !currentLockedState) {
             store.dispatch(
                 showNotification({
                     titleKey: 'notify.passwordRemovedRemotely'
-                }, NOTIFICATION_TIMEOUT));
+                }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
         }
 
         return result;
@@ -85,7 +85,6 @@ MiddlewareRegistry.register(store => next => action => {
  */
 function _conferenceJoined({ dispatch }, next, action) {
     dispatch(hideDialog(PasswordRequiredPrompt));
-    dispatch(hideDialog(RoomLockPrompt));
 
     return next(action);
 }
@@ -116,7 +115,6 @@ function _conferenceFailed({ dispatch }, next, action) {
         }
     } else {
         dispatch(hideDialog(PasswordRequiredPrompt));
-        dispatch(hideDialog(RoomLockPrompt));
     }
 
     return next(action);

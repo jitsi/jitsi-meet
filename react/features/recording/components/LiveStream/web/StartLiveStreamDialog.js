@@ -6,7 +6,6 @@ import React from 'react';
 import { Dialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import { connect } from '../../../../base/redux';
-
 import {
     GOOGLE_API_STATES,
     GoogleSignInButton,
@@ -17,14 +16,13 @@ import {
     signIn,
     updateProfile
 } from '../../../../google-api';
-
 import AbstractStartLiveStreamDialog, {
     _mapStateToProps as _abstractMapStateToProps,
     type Props as AbstractProps
 } from '../AbstractStartLiveStreamDialog';
 
-import StreamKeyPicker from './StreamKeyPicker';
 import StreamKeyForm from './StreamKeyForm';
+import StreamKeyPicker from './StreamKeyPicker';
 
 type Props = AbstractProps & {
 
@@ -39,7 +37,7 @@ type Props = AbstractProps & {
  * A React Component for requesting a YouTube stream key to use for live
  * streaming of the current conference.
  *
- * @extends Component
+ * @augments Component
  */
 class StartLiveStreamDialog
     extends AbstractStartLiveStreamDialog<Props> {
@@ -343,7 +341,7 @@ class StartLiveStreamDialog
         );
     }
 
-    _setStateIfMounted: Object => void
+    _setStateIfMounted: Object => void;
 
     /**
      * Returns the error message to display for the current error state.

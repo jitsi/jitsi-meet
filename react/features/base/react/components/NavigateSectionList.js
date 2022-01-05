@@ -4,13 +4,14 @@ import React, { Component } from 'react';
 
 // TODO: Maybe try to make all NavigateSectionList components to work for both
 // mobile and web, and move them to NavigateSectionList component.
+import type { Section } from '../Types';
+
 import {
     NavigateSectionListEmptyComponent,
     NavigateSectionListItem,
     NavigateSectionListSectionHeader,
     SectionList
 } from './_';
-import type { Section } from '../Types';
 
 type Props = {
 
@@ -18,6 +19,11 @@ type Props = {
      * Indicates if the list is disabled or not.
      */
     disabled: boolean,
+
+    /**
+     * Function to be invoked when an item is long pressed. The item is passed.
+     */
+    onLongPress: Function,
 
     /**
      * Function to be invoked when an item is pressed. The item's URL is passed.
@@ -41,15 +47,9 @@ type Props = {
     renderListEmptyComponent: Function,
 
     /**
-     * An array of sections
+     * An array of sections.
      */
-    sections: Array<Section>,
-
-    /**
-     * Optional array of on-slide actions this list should support. For details
-     * see https://github.com/dancormier/react-native-swipeout.
-     */
-    slideActions?: Array<Object>
+    sections: Array<Section>
 };
 
 /**
@@ -82,11 +82,11 @@ class NavigateSectionList extends Component<Props> {
     constructor(props: Props) {
         super(props);
         this._getItemKey = this._getItemKey.bind(this);
+        this._onLongPress = this._onLongPress.bind(this);
         this._onPress = this._onPress.bind(this);
         this._onRefresh = this._onRefresh.bind(this);
         this._renderItem = this._renderItem.bind(this);
-        this._renderListEmptyComponent
-            = this._renderListEmptyComponent.bind(this);
+        this._renderListEmptyComponent = this._renderListEmptyComponent.bind(this);
         this._renderSectionHeader = this._renderSectionHeader.bind(this);
     }
 
@@ -128,6 +128,25 @@ class NavigateSectionList extends Component<Props> {
      */
     _getItemKey(item, index) {
         return `${index}-${item.key}`;
+    }
+
+    _onLongPress: string => Function;
+
+    /**
+     * Returns a function that is used in the onLongPress callback of the items.
+     *
+     * @param {Object} item - The item that was long-pressed.
+     * @private
+     * @returns {Function}
+     */
+    _onLongPress(item) {
+        const { disabled, onLongPress } = this.props;
+
+        if (!disabled && typeof onLongPress === 'function') {
+            return () => onLongPress(item);
+        }
+
+        return null;
     }
 
     _onPress: string => Function;
@@ -209,10 +228,10 @@ class NavigateSectionList extends Component<Props> {
             <NavigateSectionListItem
                 item = { item }
                 key = { key }
+                onLongPress = { url ? this._onLongPress(item) : undefined }
                 onPress = { url ? this._onPress(url) : undefined }
                 secondaryAction = {
-                    url ? undefined : this._onSecondaryAction(id) }
-                slideActions = { this.props.slideActions } />
+                    url ? undefined : this._onSecondaryAction(id) } />
         );
     }
 

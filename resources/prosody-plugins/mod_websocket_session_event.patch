@@ -1,0 +1,19 @@
+# HG changeset patch
+# User Matthew Wild <mwild1@gmail.com>
+# Date 1579882890 0
+# Node ID 37936c72846d77bb4b23c4987ccc9dc8805fe67c
+# Parent  b9a054ad38e72c0480534c06a7b4397c048d122a
+mod_websocket: Fire event on session creation (thanks Aaron van Meerten)
+
+diff -r b9a054ad38e7 -r 37936c72846d plugins/mod_websocket.lua
+--- a/plugins/mod_websocket.lua	Thu Jan 23 21:59:13 2020 +0000
++++ b/plugins/mod_websocket.lua	Fri Jan 24 16:21:30 2020 +0000
+@@ -305,6 +305,8 @@
+ 	response.headers.sec_webSocket_accept = base64(sha1(request.headers.sec_websocket_key .. "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"));
+ 	response.headers.sec_webSocket_protocol = "xmpp";
+
++	module:fire_event("websocket-session", { session = session, request = request });
++
+ 	session.log("debug", "Sending WebSocket handshake");
+
+ 	return "";

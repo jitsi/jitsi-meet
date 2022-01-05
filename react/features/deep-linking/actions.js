@@ -2,7 +2,7 @@
 
 import type { Dispatch } from 'redux';
 
-import { appNavigate } from '../app';
+import { appNavigate } from '../app/actions';
 
 import { OPEN_DESKTOP_APP, OPEN_WEB_APP } from './actionTypes';
 

@@ -2,10 +2,11 @@
 
 import type { Dispatch } from 'redux';
 
-import { getFeatureFlag, INVITE_ENABLED } from '../base/flags';
+import { getFeatureFlag, ADD_PEOPLE_ENABLED } from '../base/flags';
+import { navigate } from '../conference/components/native/ConferenceNavigationContainerRef';
+import { screen } from '../conference/components/native/routes';
 import { beginShareRoom } from '../share-room';
 
-import { setAddPeopleDialogVisible } from './actions.any';
 import { isAddPeopleEnabled, isDialOutEnabled } from './functions';
 
 export * from './actions.any';
@@ -19,11 +20,11 @@ export * from './actions.any';
 export function doInvitePeople() {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
-        const addPeopleEnabled = getFeatureFlag(state, INVITE_ENABLED, true)
+        const addPeopleEnabled = getFeatureFlag(state, ADD_PEOPLE_ENABLED, true)
             && (isAddPeopleEnabled(state) || isDialOutEnabled(state));
 
         if (addPeopleEnabled) {
-            return dispatch(setAddPeopleDialogVisible(true));
+            return navigate(screen.conference.invite);
         }
 
         return dispatch(beginShareRoom());

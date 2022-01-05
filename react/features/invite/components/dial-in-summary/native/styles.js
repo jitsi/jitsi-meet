@@ -4,7 +4,14 @@ import { ColorPalette } from '../../../../base/styles';
 
 export const INDICATOR_COLOR = ColorPalette.lightGrey;
 
+const WV_BACKGROUND = 'rgb(71, 71, 71)';
+
 export default {
+
+    backDrop: {
+        backgroundColor: WV_BACKGROUND,
+        flex: 1
+    },
 
     indicatorWrapper: {
         alignItems: 'center',
@@ -14,11 +21,7 @@ export default {
     },
 
     webView: {
+        backgroundColor: WV_BACKGROUND,
         flex: 1
-    },
-
-    webViewWrapper: {
-        flex: 1,
-        flexDirection: 'column'
     }
 };

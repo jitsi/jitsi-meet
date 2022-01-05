@@ -17,6 +17,9 @@ set -e
 # for details, see http://www.debian.org/doc/debian-policy/ or
 # the debian-policy package
 
+function generateRandomPassword() {
+    cat /dev/urandom | tr -dc 'a-zA-Z0-9' | head -c 16
+}
 
 case "$1" in
     configure)
@@ -32,7 +35,7 @@ case "$1" in
             db_input critical jitsi-videobridge/jvb-hostname || true
             db_go
         fi
-        JVB_HOSTNAME="$RET"
+        JVB_HOSTNAME=$(echo "$RET" | xargs echo -n)
 
         db_get jitsi-videobridge/jvbsecret
         if [ -z "$RET" ] ; then
@@ -51,26 +54,17 @@ case "$1" in
         db_get jicofo/jicofo-authpassword
         if [ -z "$RET" ] ; then
             # if password is missing generate it, and store it
-            JICOFO_AUTH_PASSWORD=`head -c 8 /dev/urandom | tr '\0-\377' 'a-zA-Z0-9a-zA-Z0-9a-zA-Z0-9a-zA-Z0-9@@@@####'`
+            JICOFO_AUTH_PASSWORD=`generateRandomPassword`
             db_set jicofo/jicofo-authpassword "$JICOFO_AUTH_PASSWORD"
         else
             JICOFO_AUTH_PASSWORD="$RET"
-        fi
-
-        db_get jicofo/jicofosecret
-        if [ -z "$RET" ] ; then
-            # if secret is missing generate it, and store it
-            JICOFO_SECRET=`head -c 8 /dev/urandom | tr '\0-\377' 'a-zA-Z0-9a-zA-Z0-9a-zA-Z0-9a-zA-Z0-9@@@@####'`
-            db_set jicofo/jicofosecret "$JICOFO_SECRET"
-        else
-            JICOFO_SECRET="$RET"
         fi
 
         JICOFO_AUTH_DOMAIN="auth.$JVB_HOSTNAME"
 
         # detect dpkg-reconfigure, just delete old links
         db_get jitsi-meet-prosody/jvb-hostname
-        JVB_HOSTNAME_OLD=$RET
+        JVB_HOSTNAME_OLD=$(echo "$RET" | xargs echo -n)
         if [ -n "$RET" ] && [ ! "$JVB_HOSTNAME_OLD" = "$JVB_HOSTNAME" ] ; then
             rm -f /etc/prosody/conf.d/$JVB_HOSTNAME_OLD.cfg.lua
             rm -f /etc/prosody/certs/$JVB_HOSTNAME_OLD.key
@@ -83,7 +77,7 @@ case "$1" in
         db_get jitsi-meet-prosody/turn-secret
         if [ -z "$RET" ] ; then
             # 8-chars random secret used for the turnserver
-            TURN_SECRET=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1`
+            TURN_SECRET=`generateRandomPassword`
             db_set jitsi-meet-prosody/turn-secret "$TURN_SECRET"
         else
             TURN_SECRET="$RET"
@@ -104,7 +98,6 @@ case "$1" in
             mkdir -p /etc/prosody/conf.d/
             cp /usr/share/jitsi-meet-prosody/prosody.cfg.lua-jvb.example $PROSODY_HOST_CONFIG
             sed -i "s/jitmeet.example.com/$JVB_HOSTNAME/g" $PROSODY_HOST_CONFIG
-            sed -i "s/focusSecret/$JICOFO_SECRET/g" $PROSODY_HOST_CONFIG
             sed -i "s/focusUser/$JICOFO_AUTH_USER/g" $PROSODY_HOST_CONFIG
             sed -i "s/__turnSecret__/$TURN_SECRET/g" $PROSODY_HOST_CONFIG
             if [ ! -f /etc/prosody/conf.d/$JVB_HOSTNAME.cfg.lua ]; then
@@ -132,12 +125,49 @@ case "$1" in
 
         # Check whether prosody config has the internal muc, if not add it,
         # as we are migrating configs
-        if [ -f $PROSODY_HOST_CONFIG ] && ! grep -q "internal.auth.$JVB_HOSTNAME" $PROSODY_HOST_CONFIG; then
-            echo -e "\nComponent \"internal.auth.$JVB_HOSTNAME\" \"muc\"" >> $PROSODY_HOST_CONFIG
-            echo -e "    storage = \"null\"" >> $PROSODY_HOST_CONFIG
+        if [ -f $PROSODY_HOST_CONFIG ] && ! grep -q "internal.$JICOFO_AUTH_DOMAIN" $PROSODY_HOST_CONFIG; then
+            echo -e "\nComponent \"internal.$JICOFO_AUTH_DOMAIN\" \"muc\"" >> $PROSODY_HOST_CONFIG
+            echo -e "    storage = \"memory\"" >> $PROSODY_HOST_CONFIG
             echo -e "    modules_enabled = { \"ping\"; }" >> $PROSODY_HOST_CONFIG
-            echo -e "    admins = { \"focusUser@auth.jitmeet.example.com\", \"jvb@auth.jitmeet.example.com\" }" >> $PROSODY_HOST_CONFIG
+            echo -e "    admins = { \"$JICOFO_AUTH_USER@$JICOFO_AUTH_DOMAIN\", \"jvb@$JICOFO_AUTH_DOMAIN\" }" >> $PROSODY_HOST_CONFIG
+            echo -e "    muc_room_locking = false" >> $PROSODY_HOST_CONFIG
+            echo -e "    muc_room_default_public_jids = true" >> $PROSODY_HOST_CONFIG
         fi
+
+        # Convert the old focus component config to the new one.
+        # Old:
+        # Component "focus.jitmeet.example.com"
+        #     component_secret = "focusSecret"
+        # New:
+        # Component "focus.jitmeet.example.com" "client_proxy"
+        #    target_address = "focus@auth.jitmeet.example.com"
+        if grep -q "Component \"focus.$JVB_HOSTNAME\"" $PROSODY_HOST_CONFIG && ! grep "Component \"focus.$JVB_HOSTNAME\" \"client_proxy\"" $PROSODY_HOST_CONFIG ;then
+            sed -i "s/Component \"focus.$JVB_HOSTNAME\"/Component \"focus.$JVB_HOSTNAME\" \"client_proxy\"\n    target_address = \"$JICOFO_AUTH_USER@$JICOFO_AUTH_DOMAIN\"/g" $PROSODY_HOST_CONFIG
+            PROSODY_CONFIG_PRESENT="false"
+        fi
+
+        # Old versions of jitsi-meet-prosody come with the extra plugin path commented out (https://github.com/jitsi/jitsi-meet/commit/e11d4d3101e5228bf956a69a9e8da73d0aee7949)
+        # Make sure it is uncommented, as it contains required modules.
+        if grep -q -- '--plugin_paths = { "/usr/share/jitsi-meet/prosody-plugins/" }' $PROSODY_HOST_CONFIG ;then
+            sed -i 's#--plugin_paths = { "/usr/share/jitsi-meet/prosody-plugins/" }#plugin_paths = { "/usr/share/jitsi-meet/prosody-plugins/" }#g' $PROSODY_HOST_CONFIG
+            PROSODY_CONFIG_PRESENT="false"
+        fi
+
+        # Updates main muc component
+        MAIN_MUC_PATTERN="Component \"conference.$JVB_HOSTNAME\" \"muc\""
+        if ! grep -A 2 -- "${MAIN_MUC_PATTERN}" $PROSODY_HOST_CONFIG | grep -q "restrict_room_creation" ;then
+            sed -i "s/${MAIN_MUC_PATTERN}/${MAIN_MUC_PATTERN}\n    restrict_room_creation = true/g" $PROSODY_HOST_CONFIG
+            PROSODY_CONFIG_PRESENT="false"
+        fi
+
+        if ! grep -q -- 'unlimited_jids' $PROSODY_HOST_CONFIG ;then
+            sed -i "1s/^/unlimited_jids = { \"$JICOFO_AUTH_USER@$JICOFO_AUTH_DOMAIN\", \"jvb@$JICOFO_AUTH_DOMAIN\" }\n/" $PROSODY_HOST_CONFIG
+            sed -i "s/VirtualHost \"$JICOFO_AUTH_DOMAIN\"/VirtualHost \"$JICOFO_AUTH_DOMAIN\"\n    modules_enabled = { \"limits_exception\"; }/g" $PROSODY_HOST_CONFIG
+            PROSODY_CONFIG_PRESENT="false"
+        fi
+
+        # Make sure the focus@auth user's roster includes the proxy component (this is idempotent)
+        prosodyctl mod_roster_command subscribe focus.$JVB_HOSTNAME $JICOFO_AUTH_USER@$JICOFO_AUTH_DOMAIN
 
         if [ ! -f /var/lib/prosody/$JVB_HOSTNAME.crt ]; then
             # prosodyctl takes care for the permissions
@@ -148,14 +178,13 @@ case "$1" in
             ln -sf /var/lib/prosody/$JVB_HOSTNAME.crt /etc/prosody/certs/$JVB_HOSTNAME.crt
         fi
 
-        PR11_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'prosody-0.11' 2>/dev/null | awk '{print $3}' || true)"
+        PRTRUNK_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'prosody-trunk' 2>/dev/null | awk '{print $3}' || true)"
         PR10_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'prosody-0.10' 2>/dev/null | awk '{print $3}' || true)"
         PR_VER_INSTALLED=$(dpkg-query -f='${Version}\n' --show prosody  2>/dev/null || true)
-        if [ "$PR11_INSTALL_CHECK" = "installed" ] \
-            || [ "$PR11_INSTALL_CHECK" = "unpacked" ] \
-            || dpkg --compare-versions "$PR_VER_INSTALLED" gt "0.11" ; then
+        if [ "$PRTRUNK_INSTALL_CHECK" = "installed" ] \
+            || [ "$PRTRUNK_INSTALL_CHECK" = "unpacked" ] ; then
             if [ -f $PROSODY_HOST_CONFIG ]; then
-                sed -i 's/storage = \"null\"/storage = \"memory\"/g' $PROSODY_HOST_CONFIG
+                sed -i 's/storage = \"memory\"/storage = \"null\"/g' $PROSODY_HOST_CONFIG
 
                 # trigger a restart
                 PROSODY_CONFIG_PRESENT="false"
@@ -168,7 +197,7 @@ case "$1" in
             # if the version is 0.10.X (>0.10 and <0.11)
             if [ -f $PROSODY_HOST_CONFIG ] \
                 && dpkg --compare-versions "$PR_VER_INSTALLED" lt "0.11" ; then
-                sed -i 's/storage = \"null\"/storage = \"none\"/g' $PROSODY_HOST_CONFIG
+                sed -i 's/storage = \"memory\"/storage = \"none\"/g' $PROSODY_HOST_CONFIG
 
                 # trigger a restart
                 PROSODY_CONFIG_PRESENT="false"

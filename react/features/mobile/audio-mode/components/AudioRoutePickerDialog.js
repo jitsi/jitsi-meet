@@ -64,7 +64,7 @@ type RawDevice = {
     name: ?string,
 
     /**
-     * is this device selected?
+     * Is this device selected?
      */
     selected: boolean,
 
@@ -176,6 +176,13 @@ class AudioRoutePickerDialog extends Component<Props, State> {
 
         for (const device of devices) {
             const infoMap = deviceInfoMap[device.type];
+
+            // Skip devices with unknown type.
+            if (!infoMap) {
+                // eslint-disable-next-line no-continue
+                continue;
+            }
+
             const text = device.type === 'BLUETOOTH' && device.name ? device.name : infoMap.text;
 
             if (infoMap) {

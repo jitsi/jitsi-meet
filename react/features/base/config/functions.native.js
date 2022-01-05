@@ -2,6 +2,8 @@
 
 import { NativeModules } from 'react-native';
 
+import { getFeatureFlag, REPLACE_PARTICIPANT } from '../flags';
+
 export * from './functions.any';
 
 /**
@@ -13,9 +15,19 @@ export * from './functions.any';
 export function _cleanupConfig(config: Object) {
     config.analytics.scriptURLs = [];
     if (NativeModules.AppInfo.LIBRE_BUILD) {
-        delete config.analytics.amplitudeAPPKey;
-        delete config.analytics.googleAnalyticsTrackingId;
+        delete config.analytics?.amplitudeAPPKey;
+        delete config.analytics?.googleAnalyticsTrackingId;
         delete config.callStatsID;
         delete config.callStatsSecret;
     }
+}
+
+/**
+ * Returns the replaceParticipant config.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {boolean}
+ */
+export function getReplaceParticipant(state: Object): string {
+    return getFeatureFlag(state, REPLACE_PARTICIPANT, false);
 }

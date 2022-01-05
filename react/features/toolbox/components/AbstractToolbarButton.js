@@ -30,7 +30,7 @@ export type Props = {
     onClick: Function,
 
     /**
-     * {@code AbstractToolbarButton} styles.
+     * {@code AbstractToolbarButton} Styles.
      */
     style?: Array<string> | Object,
 
@@ -50,7 +50,7 @@ export type Props = {
  *
  * @abstract
  */
-export default class AbstractToolbarButton<P: Props> extends Component<P> {
+export default class AbstractToolbarButton<P: Props, State=void> extends Component<P, State> {
     /**
      * Initializes a new {@code AbstractToolbarButton} instance.
      *

@@ -3,11 +3,11 @@
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 import { MiddlewareRegistry } from '../redux';
 
+import NetworkInfoService from './NetworkInfoService';
 import { _storeNetworkInfoCleanup, setNetworkInfo } from './actions';
 import { STORE_NAME } from './constants';
 import { ONLINE_STATE_CHANGED_EVENT } from './events';
 import logger from './logger';
-import NetworkInfoService from './NetworkInfoService';
 import type { NetworkInfo } from './types';
 
 /**

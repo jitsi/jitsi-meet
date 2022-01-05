@@ -1,6 +1,6 @@
 // @flow
 
-import Button from '@atlaskit/button';
+import Button from '@atlaskit/button/standard-button';
 import Spinner from '@atlaskit/spinner';
 import React, { Component } from 'react';
 
@@ -15,7 +15,6 @@ import {
     signIn
 } from '../../../calendar-sync';
 import { GoogleSignInButton } from '../../../google-api';
-
 import logger from '../../logger';
 
 declare var interfaceConfig: Object;
@@ -75,7 +74,7 @@ type State = {
 /**
  * React {@code Component} for modifying calendar integration.
  *
- * @extends Component
+ * @augments Component
  */
 class CalendarTab extends Component<Props, State> {
     /**

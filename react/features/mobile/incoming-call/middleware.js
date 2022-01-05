@@ -1,7 +1,6 @@
 // @flow
 
 import { MiddlewareRegistry } from '../../base/redux';
-
 import { sendEvent } from '../external-api';
 
 import { INCOMING_CALL_ANSWERED, INCOMING_CALL_DECLINED } from './actionTypes';

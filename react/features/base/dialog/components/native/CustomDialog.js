@@ -1,7 +1,6 @@
 // @flow
 
 import { connect } from '../../../redux';
-
 import { _abstractMapStateToProps } from '../../functions';
 
 import BaseDialog, { type Props } from './BaseDialog';

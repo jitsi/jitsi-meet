@@ -7,7 +7,6 @@ import { _abstractMapStateToProps } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import { connect } from '../../../../base/redux';
 import { StyleType } from '../../../../base/styles';
-
 import {
     GOOGLE_API_STATES,
     GOOGLE_SCOPE_YOUTUBE,
@@ -15,7 +14,6 @@ import {
     GoogleSignInButton,
     setGoogleAPIState
 } from '../../../../google-api';
-
 import logger from '../../../logger';
 
 import styles from './styles';
@@ -60,7 +58,7 @@ type Props = {
 /**
  * Class to render a google sign in form, or a google stream picker dialog.
  *
- * @extends Component
+ * @augments Component
  */
 class GoogleSigninForm extends Component<Props> {
     /**
@@ -144,7 +142,7 @@ class GoogleSigninForm extends Component<Props> {
         );
     }
 
-    _logGoogleError: Object => void
+    _logGoogleError: Object => void;
 
     /**
      * A helper function to log developer related errors.
@@ -159,7 +157,7 @@ class GoogleSigninForm extends Component<Props> {
         logger.error('Google API error. Possible cause: bad config.', error);
     }
 
-    _onGoogleButtonPress: () => void
+    _onGoogleButtonPress: () => void;
 
     /**
      * Callback to be invoked when the user presses the Google button,
@@ -179,7 +177,7 @@ class GoogleSigninForm extends Component<Props> {
         }
     }
 
-    _onSignIn: () => void
+    _onSignIn: () => void;
 
     /**
      * Initiates a sign in if the user is not signed in yet.
@@ -193,7 +191,7 @@ class GoogleSigninForm extends Component<Props> {
         }, this._logGoogleError);
     }
 
-    _onSignOut: () => void
+    _onSignOut: () => void;
 
     /**
      * Initiates a sign out if the user is signed in.

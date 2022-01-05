@@ -9,11 +9,34 @@ platform :ios do
     # Make sure we are on a clean tree
     ensure_git_status_clean
 
+    # Connect to Apple Store Connect
+    app_store_connect_api_key(
+      key_id: ENV["ASC_KEY_ID"],
+      issuer_id: ENV["ASC_ISSUER_ID"],
+      key_content: ENV["ASC_KEY_CONTENT"],
+      duration: 1200,
+      in_house: false
+    )
+
     # Set the app identifier
     update_app_identifier(
       xcodeproj: "app/app.xcodeproj",
       plist_path: "src/Info.plist",
       app_identifier: "com.atlassian.JitsiMeet.ios"
+    )
+
+    # Set the broadcast extension identifier
+    update_app_identifier(
+      xcodeproj: "app/app.xcodeproj",
+      plist_path: "broadcast-extension/Info.plist",
+      app_identifier: "com.atlassian.JitsiMeet.ios.broadcast"
+    )
+    update_info_plist(
+      xcodeproj: "app/app.xcodeproj",
+      plist_path: "src/Info.plist",
+      block: proc do |plist|
+        plist["RTCScreenSharingExtension"] = "com.atlassian.JitsiMeet.ios.broadcast"
+      end
     )
 
     # Set the (watch) app identifier
@@ -54,7 +77,7 @@ platform :ios do
 
     # Actually build the app
     build_app(
-        scheme: "jitsi-meet",
+        scheme: "JitsiMeet",
         include_bitcode: true,
         include_symbols: true,
         export_xcargs: "-allowProvisioningUpdates"
@@ -66,6 +89,9 @@ platform :ios do
       beta_app_feedback_email: ENV["JITSI_REVIEW_EMAIL"],
       beta_app_review_info: {
         contact_email: ENV["JITSI_REVIEW_EMAIL"],
+        contact_first_name: ENV["JITSI_REVIEW_NAME"],
+        contact_last_name: ENV["JITSI_REVIEW_SURNAME"],
+        contact_phone: ENV["JITSI_REVIEW_PHONE"],
         demo_account_name: ENV["JITSI_DEMO_ACCOUNT"],
         demo_account_password: ENV["JITSI_DEMO_PASSWORD"],
       },
@@ -80,5 +106,21 @@ platform :ios do
     # Cleanup
     clean_build_artifacts
     reset_git_repo(skip_clean: true)
+  end
+
+  lane :refresh_dsyms do
+    # Connect to Apple Store Connect
+    app_store_connect_api_key(
+      key_id: ENV["ASC_KEY_ID"],
+      issuer_id: ENV["ASC_ISSUER_ID"],
+      key_content: ENV["ASC_KEY_CONTENT"],
+      duration: 1200,
+      in_house: false
+    )
+
+    # Upload dSYMs to Crashlytics
+    download_dsyms(min_version: ENV["DSYMS_MIN_VERSION"])  # Download dSYM files from iTC
+    upload_symbols_to_crashlytics                          # Upload them to Crashlytics
+    clean_build_artifacts                                  # Delete the local dSYM files
   end
 end

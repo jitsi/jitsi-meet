@@ -5,7 +5,6 @@
  *     type: SETTINGS_UPDATED,
  *     settings: {
  *         audioOutputDeviceId: string,
- *         avatarID: string,
  *         avatarURL: string,
  *         cameraDeviceId: string,
  *         displayName: string,
@@ -15,7 +14,8 @@
  *         serverURL: string,
  *         startAudioOnly: boolean,
  *         startWithAudioMuted: boolean,
- *         startWithVideoMuted: boolean
+ *         startWithVideoMuted: boolean,
+ *         startWithReactionsMuted: boolean
  *     }
  * }
  */

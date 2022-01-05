@@ -4,23 +4,20 @@ import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import React from 'react';
 
 import { DialogContainer } from '../../base/dialog';
+import GlobalStyles from '../../base/ui/components/GlobalStyles';
+import JitsiThemeProvider from '../../base/ui/components/JitsiThemeProvider';
 import { ChromeExtensionBanner } from '../../chrome-extension-banner';
-import '../../base/user-interaction';
-import '../../chat';
-import '../../external-api';
-import '../../no-audio-signal';
-import '../../noise-detection';
-import '../../power-monitor';
-import '../../room-lock';
-import '../../talk-while-muted';
-import '../../video-layout';
 
 import { AbstractApp } from './AbstractApp';
+
+// Register middlewares and reducers.
+import '../middlewares';
+import '../reducers';
 
 /**
  * Root app {@code Component} on Web/React.
  *
- * @extends AbstractApp
+ * @augments AbstractApp
  */
 export class App extends AbstractApp {
     /**
@@ -31,10 +28,13 @@ export class App extends AbstractApp {
      */
     _createMainElement(component, props) {
         return (
-            <AtlasKitThemeProvider mode = 'dark'>
-                <ChromeExtensionBanner />
-                { super._createMainElement(component, props) }
-            </AtlasKitThemeProvider>
+            <JitsiThemeProvider>
+                <AtlasKitThemeProvider mode = 'dark'>
+                    <GlobalStyles />
+                    <ChromeExtensionBanner />
+                    { super._createMainElement(component, props) }
+                </AtlasKitThemeProvider>
+            </JitsiThemeProvider>
         );
     }
 
@@ -45,9 +45,11 @@ export class App extends AbstractApp {
      */
     _renderDialogContainer() {
         return (
-            <AtlasKitThemeProvider mode = 'dark'>
-                <DialogContainer />
-            </AtlasKitThemeProvider>
+            <JitsiThemeProvider>
+                <AtlasKitThemeProvider mode = 'dark'>
+                    <DialogContainer />
+                </AtlasKitThemeProvider>
+            </JitsiThemeProvider>
         );
     }
 }

@@ -87,6 +87,7 @@
 # Rule to avoid build errors related to SVGs.
 -keep public class com.horcrux.svg.** {*;}
 
-# Hermes
--keep class com.facebook.hermes.unicode.** { *; }
-
+# https://github.com/facebook/fresco/issues/2638
+-keep public class com.facebook.imageutils.** {
+   public *;
+}

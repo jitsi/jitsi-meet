@@ -10,6 +10,7 @@ export default class JitsiMeetInMemoryLogStorage {
     constructor() {
         /**
          * Array of the log entries to keep.
+         *
          * @type {array}
          */
         this.logs = [];

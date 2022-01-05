@@ -8,7 +8,7 @@ import {
 } from './messageTypes';
 
 /**
- * WebWorker that does FLAC encoding using libflac.js
+ * WebWorker that does FLAC encoding using libflac.js.
  */
 
 self.FLAC_SCRIPT_LOCATION = '/libs/';
@@ -115,24 +115,28 @@ class Encoder {
 
     /**
      * Flac encoder instance ID. (As per libflac.js API).
+     *
      * @private
      */
     _encoderId = 0;
 
     /**
      * Sample rate.
+     *
      * @private
      */
     _sampleRate;
 
     /**
      * Bit depth (bits per sample).
+     *
      * @private
      */
     _bitDepth;
 
     /**
      * Buffer size.
+     *
      * @private
      */
     _bufferSize;
@@ -185,7 +189,7 @@ class Encoder {
 
             FLAC_COMPRESSION_LEVEL,
 
-            // Pass 0 in becuase of unknown total samples,
+            // Pass 0 in because of unknown total samples,
             0,
 
             // checksum, FIXME: double-check whether this is necessary
@@ -207,7 +211,7 @@ class Encoder {
         );
 
         if (initResult !== 0) {
-            throw new Error('Failed to initalise libflac encoder.');
+            throw new Error('Failed to initialise libflac encoder.');
         }
 
         this._state = EncoderState.WORKING;
@@ -337,7 +341,7 @@ class Encoder {
      */
     _onMetadataAvailable = () => {
         // reserved for future use
-    }
+    };
 }
 
 

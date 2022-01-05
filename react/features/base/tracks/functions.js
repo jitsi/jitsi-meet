@@ -1,7 +1,9 @@
 /* global APP */
 
+import { isMobileBrowser } from '../environment/utils';
 import JitsiMeetJS, { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
-import { MEDIA_TYPE } from '../media';
+import { MEDIA_TYPE, VIDEO_TYPE, setAudioMuted } from '../media';
+import { toState } from '../redux';
 import {
     getUserSelectedCameraDeviceId,
     getUserSelectedMicDeviceId
@@ -9,6 +11,60 @@ import {
 
 import loadEffects from './loadEffects';
 import logger from './logger';
+
+/**
+ * Returns root tracks state.
+ *
+ * @param {Object} state - Global state.
+ * @returns {Object} Tracks state.
+ */
+export const getTrackState = state => state['features/base/tracks'];
+
+/**
+ * Checks if the passed media type is muted for the participant.
+ *
+ * @param {Object} participant - Participant reference.
+ * @param {MEDIA_TYPE} mediaType - Media type.
+ * @param {Object} state - Global state.
+ * @returns {boolean} - Is the media type muted for the participant.
+ */
+export function isParticipantMediaMuted(participant, mediaType, state) {
+    if (!participant) {
+        return false;
+    }
+
+    const tracks = getTrackState(state);
+
+    if (participant?.local) {
+        return isLocalTrackMuted(tracks, mediaType);
+    } else if (!participant?.isFakeParticipant) {
+        return isRemoteTrackMuted(tracks, mediaType, participant.id);
+    }
+
+    return true;
+}
+
+/**
+ * Checks if the participant is audio muted.
+ *
+ * @param {Object} participant - Participant reference.
+ * @param {Object} state - Global state.
+ * @returns {boolean} - Is audio muted for the participant.
+ */
+export function isParticipantAudioMuted(participant, state) {
+    return isParticipantMediaMuted(participant, MEDIA_TYPE.AUDIO, state);
+}
+
+/**
+ * Checks if the participant is video muted.
+ *
+ * @param {Object} participant - Participant reference.
+ * @param {Object} state - Global state.
+ * @returns {boolean} - Is video muted for the participant.
+ */
+export function isParticipantVideoMuted(participant, state) {
+    return isParticipantMediaMuted(participant, MEDIA_TYPE.VIDEO, state);
+}
 
 /**
  * Creates a local video track for presenter. The constraints are computed based
@@ -62,15 +118,26 @@ export async function createLocalPresenterTrack(options, desktopHeight) {
  * and/or 'video'.
  * @param {string|null} [options.micDeviceId] - Microphone device id or
  * {@code undefined} to use app's settings.
- * @param {boolean} [firePermissionPromptIsShownEvent] - Whether lib-jitsi-meet
+ * @param {number|undefined} [oprions.timeout] - A timeout for JitsiMeetJS.createLocalTracks used to create the tracks.
+ * @param {boolean} [options.firePermissionPromptIsShownEvent] - Whether lib-jitsi-meet
  * should check for a {@code getUserMedia} permission prompt and fire a
+ * corresponding event.
+ * @param {boolean} [options.fireSlowPromiseEvent] - Whether lib-jitsi-meet
+ * should check for a slow {@code getUserMedia} request and fire a
  * corresponding event.
  * @param {Object} store - The redux store in the context of which the function
  * is to execute and from which state such as {@code config} is to be retrieved.
  * @returns {Promise<JitsiLocalTrack[]>}
  */
-export function createLocalTracksF(options = {}, firePermissionPromptIsShownEvent, store) {
+export function createLocalTracksF(options = {}, store) {
     let { cameraDeviceId, micDeviceId } = options;
+    const {
+        desktopSharingSourceDevice,
+        desktopSharingSources,
+        firePermissionPromptIsShownEvent,
+        fireSlowPromiseEvent,
+        timeout
+    } = options;
 
     if (typeof APP !== 'undefined') {
         // TODO The app's settings should go in the redux store and then the
@@ -104,27 +171,118 @@ export function createLocalTracksF(options = {}, firePermissionPromptIsShownEven
                 {
                     cameraDeviceId,
                     constraints,
-                    desktopSharingExtensionExternalInstallation:
-                        options.desktopSharingExtensionExternalInstallation,
                     desktopSharingFrameRate,
-                    desktopSharingSourceDevice:
-                        options.desktopSharingSourceDevice,
-                    desktopSharingSources: options.desktopSharingSources,
+                    desktopSharingSourceDevice,
+                    desktopSharingSources,
 
                     // Copy array to avoid mutations inside library.
                     devices: options.devices.slice(0),
                     effects,
                     firefox_fake_device, // eslint-disable-line camelcase
+                    firePermissionPromptIsShownEvent,
+                    fireSlowPromiseEvent,
                     micDeviceId,
-                    resolution
-                },
-                firePermissionPromptIsShownEvent)
+                    resolution,
+                    timeout
+                })
             .catch(err => {
                 logger.error('Failed to create local tracks', options.devices, err);
 
                 return Promise.reject(err);
             });
         }));
+}
+
+/**
+ * Returns an object containing a promise which resolves with the created tracks &
+ * the errors resulting from that process.
+ *
+ * @returns {Promise<JitsiLocalTrack>}
+ *
+ * @todo Refactor to not use APP.
+ */
+export function createPrejoinTracks() {
+    const errors = {};
+    const initialDevices = [ 'audio' ];
+    const requestedAudio = true;
+    let requestedVideo = false;
+    const { startAudioOnly, startWithAudioMuted, startWithVideoMuted } = APP.store.getState()['features/base/settings'];
+
+    // Always get a handle on the audio input device so that we have statistics even if the user joins the
+    // conference muted. Previous implementation would only acquire the handle when the user first unmuted,
+    // which would results in statistics ( such as "No audio input" or "Are you trying to speak?") being available
+    // only after that point.
+    if (startWithAudioMuted) {
+        APP.store.dispatch(setAudioMuted(true));
+    }
+
+    if (!startWithVideoMuted && !startAudioOnly) {
+        initialDevices.push('video');
+        requestedVideo = true;
+    }
+
+    let tryCreateLocalTracks;
+
+    if (!requestedAudio && !requestedVideo) {
+        // Resolve with no tracks
+        tryCreateLocalTracks = Promise.resolve([]);
+    } else {
+        tryCreateLocalTracks = createLocalTracksF({
+            devices: initialDevices,
+            firePermissionPromptIsShownEvent: true
+        })
+                .catch(err => {
+                    if (requestedAudio && requestedVideo) {
+
+                        // Try audio only...
+                        errors.audioAndVideoError = err;
+
+                        return (
+                            createLocalTracksF({
+                                devices: [ 'audio' ],
+                                firePermissionPromptIsShownEvent: true
+                            }));
+                    } else if (requestedAudio && !requestedVideo) {
+                        errors.audioOnlyError = err;
+
+                        return [];
+                    } else if (requestedVideo && !requestedAudio) {
+                        errors.videoOnlyError = err;
+
+                        return [];
+                    }
+                    logger.error('Should never happen');
+                })
+                .catch(err => {
+                    // Log this just in case...
+                    if (!requestedAudio) {
+                        logger.error('The impossible just happened', err);
+                    }
+                    errors.audioOnlyError = err;
+
+                    // Try video only...
+                    return requestedVideo
+                        ? createLocalTracksF({
+                            devices: [ 'video' ],
+                            firePermissionPromptIsShownEvent: true
+                        })
+                        : [];
+                })
+                .catch(err => {
+                    // Log this just in case...
+                    if (!requestedVideo) {
+                        logger.error('The impossible just happened', err);
+                    }
+                    errors.videoOnlyError = err;
+
+                    return [];
+                });
+    }
+
+    return {
+        tryCreateLocalTracks,
+        errors
+    };
 }
 
 /**
@@ -201,6 +359,30 @@ export function getLocalVideoType(tracks) {
 }
 
 /**
+ * Returns the stored local video track.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {Object}
+ */
+export function getLocalJitsiVideoTrack(state) {
+    const track = getLocalVideoTrack(getTrackState(state));
+
+    return track?.jitsiTrack;
+}
+
+/**
+ * Returns the stored local audio track.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {Object}
+ */
+export function getLocalJitsiAudioTrack(state) {
+    const track = getLocalAudioTrack(getTrackState(state));
+
+    return track?.jitsiTrack;
+}
+
+/**
  * Returns track of specified media type for specified participant id.
  *
  * @param {Track[]} tracks - List of all tracks.
@@ -213,8 +395,28 @@ export function getTrackByMediaTypeAndParticipant(
         mediaType,
         participantId) {
     return tracks.find(
-        t => t.participantId === participantId && t.mediaType === mediaType
+        t => Boolean(t.jitsiTrack) && t.participantId === participantId && t.mediaType === mediaType
     );
+}
+
+/**
+ * Returns track source name of specified media type for specified participant id.
+ *
+ * @param {Track[]} tracks - List of all tracks.
+ * @param {MEDIA_TYPE} mediaType - Media type.
+ * @param {string} participantId - Participant ID.
+ * @returns {(string|undefined)}
+ */
+export function getTrackSourceNameByMediaTypeAndParticipant(
+        tracks,
+        mediaType,
+        participantId) {
+    const track = getTrackByMediaTypeAndParticipant(
+        tracks,
+        mediaType,
+        participantId);
+
+    return track?.jitsiTrack?.getSourceName();
 }
 
 /**
@@ -241,12 +443,12 @@ export function getTracksByMediaType(tracks, mediaType) {
 }
 
 /**
- * Checks if the local video track in the given set of tracks is muted.
+ * Checks if the local video camera track in the given set of tracks is muted.
  *
  * @param {Track[]} tracks - List of all tracks.
  * @returns {Track[]}
  */
-export function isLocalVideoTrackMuted(tracks) {
+export function isLocalCameraTrackMuted(tracks) {
     const presenterTrack = getLocalTrack(tracks, MEDIA_TYPE.PRESENTER);
     const videoTrack = getLocalTrack(tracks, MEDIA_TYPE.VIDEO);
 
@@ -277,6 +479,19 @@ export function isLocalTrackMuted(tracks, mediaType) {
 
     return !track || track.muted;
 }
+
+/**
+ * Checks if the local video track is of type DESKtOP.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {boolean}
+ */
+export function isLocalVideoTrackDesktop(state) {
+    const videoTrack = getLocalVideoTrack(getTrackState(state));
+
+    return videoTrack && videoTrack.videoType === VIDEO_TYPE.DESKTOP;
+}
+
 
 /**
  * Returns true if the remote track of the given media type and the given
@@ -335,4 +550,17 @@ export function setTrackMuted(track, muted) {
             logger.error(`set track ${f} failed`, error);
         }
     });
+}
+
+/**
+ * Determines whether toggle camera should be enabled or not.
+ *
+ * @param {Function|Object} stateful - The redux store or {@code getState} function.
+ * @returns {boolean} - Whether toggle camera should be enabled.
+ */
+export function isToggleCameraEnabled(stateful) {
+    const state = toState(stateful);
+    const { videoInput } = state['features/base/devices'].availableDevices;
+
+    return isMobileBrowser() && videoInput.length > 1;
 }

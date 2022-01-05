@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 
 import { BackButtonRegistry } from '../../../../mobile/back-button';
-
 import { type StyleType } from '../../../styles';
 
 import styles from './slidingviewstyles';
@@ -32,7 +31,7 @@ type Props = {
 
     /**
      * Position of the SlidingView: 'left', 'right', 'top', 'bottom'.
-     * later).
+     * Later).
      */
     position: string,
 

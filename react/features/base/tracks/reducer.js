@@ -8,15 +8,18 @@ import {
     TRACK_CREATE_ERROR,
     TRACK_NO_DATA_FROM_SOURCE,
     TRACK_REMOVED,
+    TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT,
     TRACK_UPDATED,
     TRACK_WILL_CREATE
 } from './actionTypes';
 
 /**
- * @typedef {Object} Track
- * @property {(JitsiLocalTrack|JitsiRemoteTrack)} [jitsiTrack] - The associated
+ * Track type.
+ *
+ * @typedef {object} Track
+ * @property {JitsiLocalTrack|JitsiRemoteTrack} jitsiTrack - The associated
  * {@code JitsiTrack} instance. Optional for local tracks if those are still
- * being created (i.e. {@code getUserMedia} is still in progress).
+ * being created (ie {@code getUserMedia} is still in progress).
  * @property {Promise} [gumProcess] - If a local track is still being created,
  * it will have no {@code JitsiTrack}, but a {@code gumProcess} set to a
  * {@code Promise} with and extra {@code cancel()}.
@@ -40,6 +43,7 @@ import {
  * @param {Track|undefined} state - Track to be modified.
  * @param {Object} action - Action object.
  * @param {string} action.type - Type of action.
+ * @param {string} action.name - Name of last media event.
  * @param {string} action.newValue - New participant ID value (in this
  * particular case).
  * @param {string} action.oldValue - Old participant ID value (in this
@@ -77,6 +81,20 @@ function track(state, action) {
         }
         break;
     }
+    case TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT: {
+        const t = action.track;
+
+        if (state.jitsiTrack === t) {
+            if (state.lastMediaEvent !== action.name) {
+
+                return {
+                    ...state,
+                    lastMediaEvent: action.name
+                };
+            }
+        }
+        break;
+    }
     case TRACK_NO_DATA_FROM_SOURCE: {
         const t = action.track;
 
@@ -98,12 +116,13 @@ function track(state, action) {
 }
 
 /**
- * Listen for actions that mutate (e.g. add, remove) local and remote tracks.
+ * Listen for actions that mutate (e.g. Add, remove) local and remote tracks.
  */
 ReducerRegistry.register('features/base/tracks', (state = [], action) => {
     switch (action.type) {
     case PARTICIPANT_ID_CHANGED:
     case TRACK_NO_DATA_FROM_SOURCE:
+    case TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT:
     case TRACK_UPDATED:
         return state.map(t => track(t, action));
 
@@ -136,7 +155,7 @@ ReducerRegistry.register('features/base/tracks', (state = [], action) => {
 });
 
 /**
- * Listen for actions that mutate the no-src-data state, like the current notification id
+ * Listen for actions that mutate the no-src-data state, like the current notification id.
  */
 ReducerRegistry.register('features/base/no-src-data', (state = {}, action) => {
     switch (action.type) {

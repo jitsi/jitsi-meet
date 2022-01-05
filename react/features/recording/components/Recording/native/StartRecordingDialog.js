@@ -2,10 +2,9 @@
 
 import React from 'react';
 
-import { translate } from '../../../../base/i18n';
 import { CustomSubmitDialog } from '../../../../base/dialog';
+import { translate } from '../../../../base/i18n';
 import { connect } from '../../../../base/redux';
-
 import AbstractStartRecordingDialog, {
     mapStateToProps
 } from '../AbstractStartRecordingDialog';
@@ -15,7 +14,7 @@ import StartRecordingDialogContent from '../StartRecordingDialogContent';
  * React Component for getting confirmation to start a file recording session in
  * progress.
  *
- * @extends Component
+ * @augments Component
  */
 class StartRecordingDialog extends AbstractStartRecordingDialog {
     /**
@@ -67,7 +66,7 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
     }
 
     _areIntegrationsEnabled: () => boolean;
-    _onSubmit: () => boolean
+    _onSubmit: () => boolean;
     _onSelectedRecordingServiceChanged: (string) => void;
     _onSharingSettingChanged: () => void;
 }

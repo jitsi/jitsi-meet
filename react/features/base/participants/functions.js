@@ -1,10 +1,12 @@
 // @flow
-import { getGravatarURL } from 'js-utils/avatar';
 
-import { toState } from '../redux';
+import { getGravatarURL } from '@jitsi/js-utils/avatar';
+import type { Store } from 'redux';
 
+import { GRAVATAR_BASE_URL, isCORSAvatarURL } from '../avatar';
 import { JitsiParticipantConnectionStatus } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, shouldRenderVideoTrack } from '../media';
+import { toState } from '../redux';
 import { getTrackByMediaTypeAndParticipant } from '../tracks';
 import { createDeferred } from '../util';
 
@@ -15,39 +17,46 @@ import {
 } from './constants';
 import { preloadImage } from './preloadImage';
 
-declare var config: Object;
-declare var interfaceConfig: Object;
 
 /**
  * Temp structures for avatar urls to be checked/preloaded.
  */
 const AVATAR_QUEUE = [];
 const AVATAR_CHECKED_URLS = new Map();
-/* eslint-disable arrow-body-style */
+/* eslint-disable arrow-body-style, no-unused-vars */
 const AVATAR_CHECKER_FUNCTIONS = [
-    participant => {
+    (participant, _) => {
         return participant && participant.isJigasi ? JIGASI_PARTICIPANT_ICON : null;
     },
-    participant => {
+    (participant, _) => {
         return participant && participant.avatarURL ? participant.avatarURL : null;
     },
-    participant => {
-        return participant && participant.email ? getGravatarURL(participant.email) : null;
+    (participant, store) => {
+        if (participant && participant.email) {
+            // TODO: remove once libravatar has deployed their new scaled up infra. -saghul
+            const gravatarBaseURL
+                = store.getState()['features/base/config'].gravatarBaseURL ?? GRAVATAR_BASE_URL;
+
+            return getGravatarURL(participant.email, gravatarBaseURL);
+        }
+
+        return null;
     }
 ];
-/* eslint-enable arrow-body-style */
+/* eslint-enable arrow-body-style, no-unused-vars */
 
 /**
  * Resolves the first loadable avatar URL for a participant.
  *
  * @param {Object} participant - The participant to resolve avatars for.
+ * @param {Store} store - Redux store.
  * @returns {Promise}
  */
-export function getFirstLoadableAvatarUrl(participant: Object) {
+export function getFirstLoadableAvatarUrl(participant: Object, store: Store<any, any>) {
     const deferred = createDeferred();
     const fullPromise = deferred.promise
-        .then(() => _getFirstLoadableAvatarUrl(participant))
-        .then(src => {
+        .then(() => _getFirstLoadableAvatarUrl(participant, store))
+        .then(result => {
 
             if (AVATAR_QUEUE.length) {
                 const next = AVATAR_QUEUE.shift();
@@ -55,7 +64,7 @@ export function getFirstLoadableAvatarUrl(participant: Object) {
                 next.resolve();
             }
 
-            return src;
+            return result;
         });
 
     if (AVATAR_QUEUE.length) {
@@ -70,16 +79,15 @@ export function getFirstLoadableAvatarUrl(participant: Object) {
 /**
  * Returns local participant from Redux state.
  *
- * @param {(Function|Object|Participant[])} stateful - The redux state
- * features/base/participants, the (whole) redux state, or redux's
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state
  * features/base/participants.
  * @returns {(Participant|undefined)}
  */
 export function getLocalParticipant(stateful: Object | Function) {
-    const participants = _getAllParticipants(stateful);
+    const state = toState(stateful)['features/base/participants'];
 
-    return participants.find(p => p.local);
+    return state.local;
 }
 
 /**
@@ -100,8 +108,7 @@ export function getNormalizedDisplayName(name: string) {
 /**
  * Returns participant by ID from Redux state.
  *
- * @param {(Function|Object|Participant[])} stateful - The redux state
- * features/base/participants, the (whole) redux state, or redux's
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state
  * features/base/participants.
  * @param {string} id - The ID of the participant to retrieve.
@@ -110,44 +117,86 @@ export function getNormalizedDisplayName(name: string) {
  */
 export function getParticipantById(
         stateful: Object | Function, id: string): ?Object {
-    const participants = _getAllParticipants(stateful);
+    const state = toState(stateful)['features/base/participants'];
+    const { local, remote } = state;
 
-    return participants.find(p => p.id === id);
+    return remote.get(id) || (local?.id === id ? local : undefined);
+}
+
+/**
+ * Returns the participant with the ID matching the passed ID or the local participant if the ID is
+ * undefined.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @param {string|undefined} [participantID] - An optional partipantID argument.
+ * @returns {Participant|undefined}
+ */
+export function getParticipantByIdOrUndefined(stateful: Object | Function, participantID: ?string) {
+    return participantID ? getParticipantById(stateful, participantID) : getLocalParticipant(stateful);
 }
 
 /**
  * Returns a count of the known participants in the passed in redux state,
  * excluding any fake participants.
  *
- * @param {(Function|Object|Participant[])} stateful - The redux state
- * features/base/participants, the (whole) redux state, or redux's
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state
  * features/base/participants.
  * @returns {number}
  */
 export function getParticipantCount(stateful: Object | Function) {
-    return getParticipants(stateful).length;
+    const state = toState(stateful)['features/base/participants'];
+    const { local, remote, fakeParticipants } = state;
+
+    return remote.size - fakeParticipants.size + (local ? 1 : 0);
+}
+
+/**
+ * Returns the Map with fake participants.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @returns {Map<string, Participant>} - The Map with fake participants.
+ */
+export function getFakeParticipants(stateful: Object | Function) {
+    return toState(stateful)['features/base/participants'].fakeParticipants;
+}
+
+/**
+ * Returns a count of the known remote participants in the passed in redux state.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @returns {number}
+ */
+export function getRemoteParticipantCount(stateful: Object | Function) {
+    const state = toState(stateful)['features/base/participants'];
+
+    return state.remote.size;
 }
 
 /**
  * Returns a count of the known participants in the passed in redux state,
  * including fake participants.
  *
- * @param {(Function|Object|Participant[])} stateful - The redux state
- * features/base/participants, the (whole) redux state, or redux's
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state
  * features/base/participants.
  * @returns {number}
  */
 export function getParticipantCountWithFake(stateful: Object | Function) {
-    return _getAllParticipants(stateful).length;
+    const state = toState(stateful)['features/base/participants'];
+    const { local, remote } = state;
+
+    return remote.size + (local ? 1 : 0);
 }
 
 /**
  * Returns participant's display name.
- *
- * FIXME: Remove the hardcoded strings once interfaceConfig is stored in redux
- * and merge with a similarly named method in {@code conference.js}.
  *
  * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state.
@@ -158,6 +207,10 @@ export function getParticipantDisplayName(
         stateful: Object | Function,
         id: string) {
     const participant = getParticipantById(stateful, id);
+    const {
+        defaultLocalDisplayName,
+        defaultRemoteDisplayName
+    } = toState(stateful)['features/base/config'];
 
     if (participant) {
         if (participant.name) {
@@ -165,15 +218,11 @@ export function getParticipantDisplayName(
         }
 
         if (participant.local) {
-            return typeof interfaceConfig === 'object'
-                ? interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME
-                : 'me';
+            return defaultLocalDisplayName;
         }
     }
 
-    return typeof interfaceConfig === 'object'
-        ? interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME
-        : 'Fellow Jitster';
+    return defaultRemoteDisplayName;
 }
 
 /**
@@ -199,47 +248,84 @@ export function getParticipantPresenceStatus(
 }
 
 /**
- * Selectors for getting all known participants with fake participants filtered
- * out.
+ * Returns true if there is at least 1 participant with screen sharing feature and false otherwise.
  *
- * @param {(Function|Object|Participant[])} stateful - The redux state
- * features/base/participants, the (whole) redux state, or redux's
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {boolean}
+ */
+export function haveParticipantWithScreenSharingFeature(stateful: Object | Function) {
+    return toState(stateful)['features/base/participants'].haveParticipantWithScreenSharingFeature;
+}
+
+/**
+ * Selectors for getting all remote participants.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state
  * features/base/participants.
- * @returns {Participant[]}
+ * @returns {Map<string, Object>}
  */
-export function getParticipants(stateful: Object | Function) {
-    return _getAllParticipants(stateful).filter(p => !p.isFakeParticipant);
+export function getRemoteParticipants(stateful: Object | Function) {
+    return toState(stateful)['features/base/participants'].remote;
+}
+
+/**
+ * Selectors for the getting the remote participants in the order that they are displayed in the filmstrip.
+ *
+@param {(Function|Object)} stateful - The (whole) redux state, or redux's {@code getState} function to be used to
+ * retrieve the state features/filmstrip.
+ * @returns {Array<string>}
+ */
+export function getRemoteParticipantsSorted(stateful: Object | Function) {
+    return toState(stateful)['features/filmstrip'].remoteParticipants;
 }
 
 /**
  * Returns the participant which has its pinned state set to truthy.
  *
- * @param {(Function|Object|Participant[])} stateful - The redux state
- * features/base/participants, the (whole) redux state, or redux's
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state
  * features/base/participants.
  * @returns {(Participant|undefined)}
  */
 export function getPinnedParticipant(stateful: Object | Function) {
-    return _getAllParticipants(stateful).find(p => p.pinned);
+    const state = toState(stateful)['features/base/participants'];
+    const { pinnedParticipant } = state;
+
+    if (!pinnedParticipant) {
+        return undefined;
+    }
+
+    return getParticipantById(stateful, pinnedParticipant);
 }
 
 /**
- * Returns array of participants from Redux state.
+ * Returns true if the participant is a moderator.
  *
- * @param {(Function|Object|Participant[])} stateful - The redux state
- * features/base/participants, the (whole) redux state, or redux's
- * {@code getState} function to be used to retrieve the state
- * features/base/participants.
- * @private
- * @returns {Participant[]}
+ * @param {string} participant - Participant object.
+ * @returns {boolean}
  */
-function _getAllParticipants(stateful) {
-    return (
-        Array.isArray(stateful)
-            ? stateful
-            : toState(stateful)['features/base/participants'] || []);
+export function isParticipantModerator(participant: Object) {
+    return participant?.role === PARTICIPANT_ROLE.MODERATOR;
+}
+
+/**
+ * Returns the dominant speaker participant.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state or redux's
+ * {@code getState} function to be used to retrieve the state features/base/participants.
+ * @returns {Participant} - The participant from the redux store.
+ */
+export function getDominantSpeakerParticipant(stateful: Object | Function) {
+    const state = toState(stateful)['features/base/participants'];
+    const { dominantSpeaker } = state;
+
+    if (!dominantSpeaker) {
+        return undefined;
+    }
+
+    return getParticipantById(stateful, dominantSpeaker);
 }
 
 /**
@@ -250,15 +336,9 @@ function _getAllParticipants(stateful) {
  * @returns {boolean}
  */
 export function isEveryoneModerator(stateful: Object | Function) {
-    const participants = _getAllParticipants(stateful);
+    const state = toState(stateful)['features/base/participants'];
 
-    for (const participant of participants) {
-        if (participant.role !== PARTICIPANT_ROLE.MODERATOR) {
-            return false;
-        }
-    }
-
-    return true;
+    return state.everyoneIsModerator === true;
 }
 
 /**
@@ -268,7 +348,7 @@ export function isEveryoneModerator(stateful: Object | Function) {
  * @returns {boolean}
  */
 export function isIconUrl(icon: ?string | ?Object) {
-    return Boolean(icon) && typeof icon === 'object';
+    return Boolean(icon) && (typeof icon === 'object' || typeof icon === 'function');
 }
 
 /**
@@ -277,24 +357,18 @@ export function isIconUrl(icon: ?string | ?Object) {
  *
  * @param {Object|Function} stateful - Object or function that can be resolved
  * to the Redux state.
- * @param {?boolean} ignoreToken - When true we ignore the token check.
  * @returns {boolean}
  */
-export function isLocalParticipantModerator(
-        stateful: Object | Function,
-        ignoreToken: ?boolean = false) {
-    const state = toState(stateful);
-    const localParticipant = getLocalParticipant(state);
+export function isLocalParticipantModerator(stateful: Object | Function) {
+    const state = toState(stateful)['features/base/participants'];
 
-    if (!localParticipant) {
+    const { local } = state;
+
+    if (!local) {
         return false;
     }
 
-    return (
-        localParticipant.role === PARTICIPANT_ROLE.MODERATOR
-        && (ignoreToken
-                || !state['features/base/config'].enableUserRolesBasedOnToken
-                || !state['features/base/jwt'].isGuest));
+    return isParticipantModerator(local);
 }
 
 /**
@@ -337,10 +411,10 @@ export function shouldRenderParticipantVideo(stateful: Object | Function, id: st
     }
 
     /* Last, check if the participant is sharing their screen and they are on stage. */
-    const screenShares = state['features/video-layout'].screenShares || [];
+    const remoteScreenShares = state['features/video-layout'].remoteScreenShares || [];
     const largeVideoParticipantId = state['features/large-video'].participantId;
     const participantIsInLargeVideoWithScreen
-        = participant.id === largeVideoParticipantId && screenShares.includes(participant.id);
+        = participant.id === largeVideoParticipantId && remoteScreenShares.includes(participant.id);
 
     return participantIsInLargeVideoWithScreen;
 }
@@ -349,30 +423,70 @@ export function shouldRenderParticipantVideo(stateful: Object | Function, id: st
  * Resolves the first loadable avatar URL for a participant.
  *
  * @param {Object} participant - The participant to resolve avatars for.
+ * @param {Store} store - Redux store.
  * @returns {?string}
  */
-async function _getFirstLoadableAvatarUrl(participant) {
+async function _getFirstLoadableAvatarUrl(participant, store) {
     for (let i = 0; i < AVATAR_CHECKER_FUNCTIONS.length; i++) {
-        const url = AVATAR_CHECKER_FUNCTIONS[i](participant);
+        const url = AVATAR_CHECKER_FUNCTIONS[i](participant, store);
 
-        if (url) {
+        if (url !== null) {
             if (AVATAR_CHECKED_URLS.has(url)) {
-                if (AVATAR_CHECKED_URLS.get(url)) {
-                    return url;
+                const { isLoadable, isUsingCORS } = AVATAR_CHECKED_URLS.get(url) || {};
+
+                if (isLoadable) {
+                    return {
+                        isUsingCORS,
+                        src: url
+                    };
                 }
             } else {
                 try {
-                    const finalUrl = await preloadImage(url);
+                    const { corsAvatarURLs } = store.getState()['features/base/config'];
+                    const { isUsingCORS, src } = await preloadImage(url, isCORSAvatarURL(url, corsAvatarURLs));
 
-                    AVATAR_CHECKED_URLS.set(finalUrl, true);
+                    AVATAR_CHECKED_URLS.set(src, {
+                        isLoadable: true,
+                        isUsingCORS
+                    });
 
-                    return finalUrl;
+                    return {
+                        isUsingCORS,
+                        src
+                    };
                 } catch (e) {
-                    AVATAR_CHECKED_URLS.set(url, false);
+                    AVATAR_CHECKED_URLS.set(url, {
+                        isLoadable: false,
+                        isUsingCORS: false
+                    });
                 }
             }
         }
     }
 
     return undefined;
+}
+
+/**
+ * Get the participants queue with raised hands.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @returns {Array<Object>}
+ */
+export function getRaiseHandsQueue(stateful: Object | Function): Array<Object> {
+    const { raisedHandsQueue } = toState(stateful)['features/base/participants'];
+
+    return raisedHandsQueue;
+}
+
+/**
+ * Returns whether the given participant has his hand raised or not.
+ *
+ * @param {Object} participant - The participant.
+ * @returns {boolean} - Whether participant has raise hand or not.
+ */
+export function hasRaisedHand(participant: Object): boolean {
+    return Boolean(participant && participant.raisedHandTimestamp);
 }

@@ -71,7 +71,7 @@ type State = {
  * Displays a page listing numbers for dialing into a conference and pin to
  * the a specific conference.
  *
- * @extends Component
+ * @augments Component
  */
 class DialInSummary extends Component<Props, State> {
     state = {

@@ -1,26 +1,39 @@
 /* global APP */
 
-import { CONFERENCE_JOINED } from '../conference';
-import { processExternalDeviceRequest } from '../../device-selection';
-import { MiddlewareRegistry } from '../redux';
 import UIEvents from '../../../../service/UI/UIEvents';
-import { JitsiTrackErrors } from '../lib-jitsi-meet';
-
+import { processExternalDeviceRequest } from '../../device-selection';
 import {
-    removePendingDeviceRequests,
-    setAudioInputDevice,
-    setVideoInputDevice
-} from './actions';
+    NOTIFICATION_TIMEOUT_TYPE,
+    showNotification,
+    showWarningNotification
+} from '../../notifications';
+import { replaceAudioTrackById, replaceVideoTrackById, setDeviceStatusWarning } from '../../prejoin/actions';
+import { isPrejoinPageVisible } from '../../prejoin/functions';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
+import JitsiMeetJS, { JitsiMediaDevicesEvents, JitsiTrackErrors } from '../lib-jitsi-meet';
+import { MiddlewareRegistry } from '../redux';
+import { updateSettings } from '../settings';
+
 import {
     CHECK_AND_NOTIFY_FOR_NEW_DEVICE,
     NOTIFY_CAMERA_ERROR,
     NOTIFY_MIC_ERROR,
     SET_AUDIO_INPUT_DEVICE,
-    SET_VIDEO_INPUT_DEVICE
+    SET_VIDEO_INPUT_DEVICE,
+    UPDATE_DEVICE_LIST
 } from './actionTypes';
-import { showNotification, showWarningNotification } from '../../notifications';
-import { updateSettings } from '../settings';
-import { formatDeviceLabel, setAudioOutputDeviceId } from './functions';
+import {
+    devicePermissionsChanged,
+    removePendingDeviceRequests,
+    setAudioInputDevice,
+    setVideoInputDevice
+} from './actions';
+import {
+    areDeviceLabelsInitialized,
+    formatDeviceLabel,
+    groupDevicesByKind,
+    setAudioOutputDeviceId
+} from './functions';
 import logger from './logger';
 
 const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
@@ -28,16 +41,41 @@ const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
         [JitsiTrackErrors.CONSTRAINT_FAILED]: 'dialog.micConstraintFailedError',
         [JitsiTrackErrors.GENERAL]: 'dialog.micUnknownError',
         [JitsiTrackErrors.NOT_FOUND]: 'dialog.micNotFoundError',
-        [JitsiTrackErrors.PERMISSION_DENIED]: 'dialog.micPermissionDeniedError'
+        [JitsiTrackErrors.PERMISSION_DENIED]: 'dialog.micPermissionDeniedError',
+        [JitsiTrackErrors.TIMEOUT]: 'dialog.micTimeoutError'
     },
     camera: {
         [JitsiTrackErrors.CONSTRAINT_FAILED]: 'dialog.cameraConstraintFailedError',
         [JitsiTrackErrors.GENERAL]: 'dialog.cameraUnknownError',
         [JitsiTrackErrors.NOT_FOUND]: 'dialog.cameraNotFoundError',
         [JitsiTrackErrors.PERMISSION_DENIED]: 'dialog.cameraPermissionDeniedError',
-        [JitsiTrackErrors.UNSUPPORTED_RESOLUTION]: 'dialog.cameraUnsupportedResolutionError'
+        [JitsiTrackErrors.UNSUPPORTED_RESOLUTION]: 'dialog.cameraUnsupportedResolutionError',
+        [JitsiTrackErrors.TIMEOUT]: 'dialog.cameraTimeoutError'
     }
 };
+
+/**
+ * A listener for device permissions changed reported from lib-jitsi-meet.
+ */
+let permissionsListener;
+
+/**
+ * Logs the current device list.
+ *
+ * @param {Object} deviceList - Whatever is returned by {@link groupDevicesByKind}.
+ * @returns {string}
+ */
+function logDeviceList(deviceList) {
+    const devicesToStr = list => list.map(device => `\t\t${device.label}[${device.deviceId}]`).join('\n');
+    const audioInputs = devicesToStr(deviceList.audioInput);
+    const audioOutputs = devicesToStr(deviceList.audioOutput);
+    const videoInputs = devicesToStr(deviceList.videoInput);
+
+    logger.debug('Device list updated:\n'
+        + `audioInput:\n${audioInputs}\n`
+        + `audioOutput:\n${audioOutputs}\n`
+        + `videoInput:\n${videoInputs}`);
+}
 
 /**
  * Implements the middleware of the feature base/devices.
@@ -48,8 +86,36 @@ const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
 // eslint-disable-next-line no-unused-vars
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case CONFERENCE_JOINED:
-        return _conferenceJoined(store, next, action);
+    case APP_WILL_MOUNT: {
+        const _permissionsListener = permissions => {
+            store.dispatch(devicePermissionsChanged(permissions));
+        };
+        const { mediaDevices } = JitsiMeetJS;
+
+        permissionsListener = _permissionsListener;
+        mediaDevices.addEventListener(JitsiMediaDevicesEvents.PERMISSIONS_CHANGED, permissionsListener);
+        Promise.all([
+            mediaDevices.isDevicePermissionGranted('audio'),
+            mediaDevices.isDevicePermissionGranted('video')
+        ])
+        .then(results => {
+            _permissionsListener({
+                audio: results[0],
+                video: results[1]
+            });
+        })
+        .catch(() => {
+            // Ignore errors.
+        });
+        break;
+    }
+    case APP_WILL_UNMOUNT:
+        if (typeof permissionsListener === 'function') {
+            JitsiMeetJS.mediaDevices.removeEventListener(
+                JitsiMediaDevicesEvents.PERMISSIONS_CHANGED, permissionsListener);
+            permissionsListener = undefined;
+        }
+        break;
     case NOTIFY_CAMERA_ERROR: {
         if (typeof APP !== 'object' || !action.error) {
             break;
@@ -63,13 +129,18 @@ MiddlewareRegistry.register(store => next => action => {
             || JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP
                 .camera[JitsiTrackErrors.GENERAL];
         const additionalCameraErrorMsg = cameraJitsiTrackErrorMsg ? null : message;
+        const titleKey = name === JitsiTrackErrors.PERMISSION_DENIED
+            ? 'deviceError.cameraPermission' : 'deviceError.cameraError';
 
         store.dispatch(showWarningNotification({
             description: additionalCameraErrorMsg,
             descriptionKey: cameraErrorMsg,
-            titleKey: name === JitsiTrackErrors.PERMISSION_DENIED
-                ? 'deviceError.cameraPermission' : 'deviceError.cameraError'
-        }));
+            titleKey
+        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+
+        if (isPrejoinPageVisible(store.getState())) {
+            store.dispatch(setDeviceStatusWarning(titleKey));
+        }
 
         break;
     }
@@ -86,22 +157,41 @@ MiddlewareRegistry.register(store => next => action => {
             || JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP
                 .microphone[JitsiTrackErrors.GENERAL];
         const additionalMicErrorMsg = micJitsiTrackErrorMsg ? null : message;
+        const titleKey = name === JitsiTrackErrors.PERMISSION_DENIED
+            ? 'deviceError.microphonePermission'
+            : 'deviceError.microphoneError';
 
         store.dispatch(showWarningNotification({
             description: additionalMicErrorMsg,
             descriptionKey: micErrorMsg,
-            titleKey: name === JitsiTrackErrors.PERMISSION_DENIED
-                ? 'deviceError.microphonePermission'
-                : 'deviceError.microphoneError'
-        }));
+            titleKey
+        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+
+        if (isPrejoinPageVisible(store.getState())) {
+            store.dispatch(setDeviceStatusWarning(titleKey));
+        }
 
         break;
     }
     case SET_AUDIO_INPUT_DEVICE:
-        APP.UI.emitEvent(UIEvents.AUDIO_DEVICE_CHANGED, action.deviceId);
+        if (isPrejoinPageVisible(store.getState())) {
+            store.dispatch(replaceAudioTrackById(action.deviceId));
+        } else {
+            APP.UI.emitEvent(UIEvents.AUDIO_DEVICE_CHANGED, action.deviceId);
+        }
         break;
     case SET_VIDEO_INPUT_DEVICE:
-        APP.UI.emitEvent(UIEvents.VIDEO_DEVICE_CHANGED, action.deviceId);
+        if (isPrejoinPageVisible(store.getState())) {
+            store.dispatch(replaceVideoTrackById(action.deviceId));
+        } else {
+            APP.UI.emitEvent(UIEvents.VIDEO_DEVICE_CHANGED, action.deviceId);
+        }
+        break;
+    case UPDATE_DEVICE_LIST:
+        logDeviceList(groupDevicesByKind(action.devices));
+        if (areDeviceLabelsInitialized(store.getState())) {
+            return _processPendingRequests(store, next, action);
+        }
         break;
     case CHECK_AND_NOTIFY_FOR_NEW_DEVICE:
         _checkAndNotifyForNewDevice(store, action.newDevices, action.oldDevices);
@@ -110,7 +200,6 @@ MiddlewareRegistry.register(store => next => action => {
 
     return next(action);
 });
-
 
 /**
  * Does extra sync up on properties that may need to be updated after the
@@ -125,10 +214,14 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _conferenceJoined({ dispatch, getState }, next, action) {
+function _processPendingRequests({ dispatch, getState }, next, action) {
     const result = next(action);
     const state = getState();
     const { pendingRequests } = state['features/base/devices'];
+
+    if (!pendingRequests || pendingRequests.length === 0) {
+        return result;
+    }
 
     pendingRequests.forEach(request => {
         processExternalDeviceRequest(
@@ -201,13 +294,14 @@ function _checkAndNotifyForNewDevice(store, newDevices, oldDevices) {
             break;
         }
         }
-
-        dispatch(showNotification({
-            description,
-            titleKey,
-            customActionNameKey: 'notify.newDeviceAction',
-            customActionHandler: _useDevice.bind(undefined, store, devicesArray)
-        }));
+        if (!isPrejoinPageVisible(store.getState())) {
+            dispatch(showNotification({
+                description,
+                titleKey,
+                customActionNameKey: [ 'notify.newDeviceAction' ],
+                customActionHandler: [ _useDevice.bind(undefined, store, devicesArray) ]
+            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+        }
     });
 }
 

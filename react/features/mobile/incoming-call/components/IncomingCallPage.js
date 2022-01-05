@@ -2,7 +2,6 @@
 
 import React, { Component } from 'react';
 import { Image, Text, View } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
 
 import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n';
@@ -10,11 +9,7 @@ import { connect } from '../../../base/redux';
 
 import AnswerButton from './AnswerButton';
 import DeclineButton from './DeclineButton';
-import styles, {
-    AVATAR_BORDER_GRADIENT,
-    BACKGROUND_OVERLAY_GRADIENT,
-    CALLER_AVATAR_SIZE
-} from './styles';
+import styles, { CALLER_AVATAR_SIZE } from './styles';
 
 /**
  * The type of React {@code Component} props of {@link IncomingCallPage}.
@@ -66,9 +61,6 @@ class IncomingCallPage extends Component<Props> {
                         source = {{ uri: this.props._callerAvatarURL }}
                         style = { styles.backgroundAvatarImage } />
                 </View>
-                <LinearGradient
-                    colors = { BACKGROUND_OVERLAY_GRADIENT }
-                    style = { styles.backgroundOverlayGradient } />
                 <Text style = { styles.title }>
                     { callTitle }
                 </Text>
@@ -124,9 +116,6 @@ class IncomingCallPage extends Component<Props> {
     _renderCallerAvatar() {
         return (
             <View style = { styles.avatarContainer }>
-                <LinearGradient
-                    colors = { AVATAR_BORDER_GRADIENT }
-                    style = { styles.avatarBorder } />
                 <View style = { styles.avatar }>
                     <Avatar
                         size = { CALLER_AVATAR_SIZE }

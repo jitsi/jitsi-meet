@@ -1,0 +1,85 @@
+@media only screen and (max-width: $verySmallScreen) {
+    .welcome {
+        display: block;
+
+        #enter_room {
+            position: relative;
+            height: 42px;
+
+            .welcome-page-button {
+            font-size: 16px;
+            left: 0;
+            position: absolute;
+            top: 68px;
+            text-align: center;
+            width: 100%;
+            }
+        }
+
+        .header {
+            background-color: #002637;
+
+            #enter_room {
+                .enter-room-input-container {
+                    padding-right: 0;
+                }
+
+                .warning-without-link,
+                .warning-with-link {
+                    top: 120px;
+                }
+            }
+        }
+
+        .welcome-tabs {
+            display: none;
+        }
+
+        .header-text-title {
+            text-align: center;
+        }
+
+        .welcome-cards-container {
+            padding: 0;
+        }
+
+        &.without-content {
+            .header {
+            height: 100%;
+            }
+        }
+
+        #moderated-meetings {
+            display: none;
+        }
+
+        .welcome-footer-row-block {
+            display: block;
+        }
+        .welcome-badge {
+            margin-right: 16px;
+        }
+
+        .welcome-footer {
+            display: none;
+        }
+    }
+}
+
+.desktop-browser {
+    &.shift-right {
+
+        @media only screen and (max-width: $verySmallScreen + $sidebarWidth) {
+
+            #videoResolutionLabel {
+                display: none;
+            }
+            .vertical-filmstrip .filmstrip {
+                display: none;
+            }
+            .chrome-extension-banner {
+                display: none;
+            }
+        }
+    }
+}

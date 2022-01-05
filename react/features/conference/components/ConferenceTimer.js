@@ -2,10 +2,10 @@
 
 import { Component } from 'react';
 
-import { connect } from '../../base/redux';
-import { getLocalizedDurationFormatter } from '../../base/i18n';
-import { getConferenceTimestamp } from '../../base/conference/functions';
 import { renderConferenceTimer } from '../';
+import { getConferenceTimestamp } from '../../base/conference/functions';
+import { getLocalizedDurationFormatter } from '../../base/i18n';
+import { connect } from '../../base/redux';
 
 /**
  * The type of the React {@code Component} props of {@link ConferenceTimer}.
@@ -16,6 +16,11 @@ type Props = {
      * The UTC timestamp representing the time when first participant joined.
      */
     _startTimestamp: ?number,
+
+    /**
+     * Style to be applied to the rendered text.
+     */
+    textStyle: ?Object,
 
     /**
      * The redux {@code dispatch} function.
@@ -38,7 +43,7 @@ type State = {
  * ConferenceTimer react component.
  *
  * @class ConferenceTimer
- * @extends Component
+ * @augments Component
  */
 class ConferenceTimer extends Component<Props, State> {
 
@@ -89,13 +94,13 @@ class ConferenceTimer extends Component<Props, State> {
      */
     render() {
         const { timerValue } = this.state;
-        const { _startTimestamp } = this.props;
+        const { _startTimestamp, textStyle } = this.props;
 
         if (!_startTimestamp) {
             return null;
         }
 
-        return renderConferenceTimer(timerValue);
+        return renderConferenceTimer(timerValue, textStyle);
     }
 
     /**
@@ -107,7 +112,6 @@ class ConferenceTimer extends Component<Props, State> {
      * @returns {void}
      */
     _setStateFromUTC(refValueUTC, currentValueUTC) {
-
         if (!refValueUTC || !currentValueUTC) {
             return;
         }
@@ -132,10 +136,10 @@ class ConferenceTimer extends Component<Props, State> {
      */
     _startTimer() {
         if (!this._interval) {
-            this._setStateFromUTC(this.props._startTimestamp, (new Date()).getTime());
+            this._setStateFromUTC(this.props._startTimestamp, new Date().getTime());
 
             this._interval = setInterval(() => {
-                this._setStateFromUTC(this.props._startTimestamp, (new Date()).getTime());
+                this._setStateFromUTC(this.props._startTimestamp, new Date().getTime());
             }, 1000);
         }
     }

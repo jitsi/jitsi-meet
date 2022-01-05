@@ -3,4 +3,4 @@
  *
  * @type {string}
  */
-export const NOISY_AUDIO_INPUT_SOUND_ID = 'NOISY_AUDIO_INPUT_SOUND_ID';
+export const NOISY_AUDIO_INPUT_SOUND_ID = 'NOISY_AUDIO_INPUT_SOUND';

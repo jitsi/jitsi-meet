@@ -1,10 +1,11 @@
 // @flow
 
+import { Transport } from '../../../modules/transport';
+
 import {
     SET_TRANSPORT,
     SUSPEND_DETECTED
 } from './actionTypes';
-import { Transport } from '../../../modules/transport';
 
 /**
  * Signals that suspend was detected.

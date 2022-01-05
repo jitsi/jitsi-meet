@@ -24,7 +24,7 @@ type Props = {
  * Implements a React {@link Component} which depicts the establishment of a
  * call with a specific remote callee if there is such a remote callee.
  *
- * @extends Component
+ * @augments Component
  */
 class CalleeInfoContainer extends Component<Props> {
     /**

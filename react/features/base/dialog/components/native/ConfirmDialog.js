@@ -6,7 +6,6 @@ import { Text, TouchableOpacity } from 'react-native';
 import { translate } from '../../../i18n';
 import { connect } from '../../../redux';
 import { StyleType } from '../../../styles';
-
 import { _abstractMapStateToProps } from '../../functions';
 
 import { type Props as BaseProps } from './BaseDialog';
@@ -28,6 +27,12 @@ type Props = BaseProps & {
      * {@code translate(string, Object)} for more details.
      */
     contentKey: string | { key: string, params: Object},
+
+    /**
+     * The handler for the event when clicking the 'confirmNo' button.
+     * Defaults to onCancel if absent.
+     */
+    onDecline?: Function,
 
     t: Function
 }
@@ -56,11 +61,11 @@ class ConfirmDialog extends BaseSubmitDialog<Props, *> {
      * @inheritdoc
      */
     _renderAdditionalButtons() {
-        const { _dialogStyles, cancelKey, t } = this.props;
+        const { _dialogStyles, cancelKey, onDecline, t } = this.props;
 
         return (
             <TouchableOpacity
-                onPress = { this._onCancel }
+                onPress = { onDecline || this._onCancel }
                 style = { [
                     _dialogStyles.button,
                     brandedDialog.buttonFarLeft,
@@ -96,7 +101,7 @@ class ConfirmDialog extends BaseSubmitDialog<Props, *> {
         );
     }
 
-    _renderHTML: string => Object | string
+    _renderHTML: string => Object | string;
 }
 
 export default translate(connect(_abstractMapStateToProps)(ConfirmDialog));

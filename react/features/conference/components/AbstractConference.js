@@ -3,9 +3,8 @@
 import React, { Component } from 'react';
 
 import { NotificationsContainer } from '../../notifications/components';
-
-import { shouldDisplayNotifications } from '../functions';
 import { shouldDisplayTileView } from '../../video-layout';
+import { shouldDisplayNotifications } from '../functions';
 
 /**
  * The type of the React {@code Component} props of {@link AbstractLabels}.
@@ -41,7 +40,7 @@ export type AbstractProps = {
  * A container to hold video status labels, including recording status and
  * current large video quality.
  *
- * @extends Component
+ * @augments Component
  */
 export class AbstractConference<P: AbstractProps, S>
     extends Component<P, S> {

@@ -1,19 +1,21 @@
 // @flow
 
+import Bourne from '@hapi/bourne';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import _ from 'lodash';
 
+import { parseURLParams } from '../util';
+
 import CONFIG_WHITELIST from './configWhitelist';
-import { _CONFIG_STORE_PREFIX } from './constants';
+import { _CONFIG_STORE_PREFIX, FEATURE_FLAGS } from './constants';
 import INTERFACE_CONFIG_WHITELIST from './interfaceConfigWhitelist';
-import parseURLParams from './parseURLParams';
 import logger from './logger';
 
-// XXX The functions getRoomName and parseURLParams are split out of
-// functions.js because they are bundled in both app.bundle and
+// XXX The function getRoomName is split out of
+// functions.js because it is bundled in both app.bundle and
 // do_external_connect, webpack 1 does not support tree shaking, and we don't
 // want all functions to be bundled in do_external_connect.
 export { default as getRoomName } from './getRoomName';
-export { parseURLParams };
 
 /**
  * Create a "fake" configuration object for the given base URL. This is used in case the config
@@ -31,14 +33,64 @@ export function createFakeConfig(baseURL: string) {
             muc: `conference.${url.hostname}`
         },
         bosh: `${baseURL}http-bind`,
-        clientNode: 'https://jitsi.org/jitsi-meet',
         p2p: {
             enabled: true
         }
     };
 }
 
-/* eslint-disable max-params, no-shadow */
+/**
+ * Selector used to get the meeting region.
+ *
+ * @param {Object} state - The global state.
+ * @returns {string}
+ */
+export function getMeetingRegion(state: Object) {
+    return state['features/base/config']?.deploymentInfo?.region || '';
+}
+
+/**
+ * Selector used to get the sourceNameSignaling feature flag.
+ *
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+export function getSourceNameSignalingFeatureFlag(state: Object) {
+    return getFeatureFlag(state, FEATURE_FLAGS.SOURCE_NAME_SIGNALING);
+}
+
+/**
+ * Selector used to get a feature flag.
+ *
+ * @param {Object} state - The global state.
+ * @param {string} featureFlag - The name of the feature flag.
+ * @returns {boolean}
+ */
+export function getFeatureFlag(state: Object, featureFlag: string) {
+    const featureFlags = state['features/base/config']?.flags || {};
+
+    return Boolean(featureFlags[featureFlag]);
+}
+
+/**
+ * Selector used to get the disableRemoveRaisedHandOnFocus.
+ *
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+export function getDisableRemoveRaisedHandOnFocus(state: Object) {
+    return state['features/base/config']?.disableRemoveRaisedHandOnFocus || false;
+}
+
+/**
+ * Selector used to get the endpoint used for fetching the recording.
+ *
+ * @param {Object} state - The global state.
+ * @returns {string}
+ */
+export function getRecordingSharingUrl(state: Object) {
+    return state['features/base/config'].recordingSharingUrl;
+}
 
 /**
  * Overrides JSON properties in {@code config} and
@@ -81,7 +133,7 @@ export function overrideConfigJSON(
         }
         if (configObj) {
             const configJSON
-                = _getWhitelistedJSON(configName, json[configName]);
+                = getWhitelistedJSON(configName, json[configName]);
 
             if (!_.isEmpty(configJSON)) {
                 logger.info(
@@ -110,11 +162,10 @@ export function overrideConfigJSON(
  * @param {string} configName - The config name, one of config,
  * interfaceConfig, loggingConfig.
  * @param {Object} configJSON - The object with keys and values to override.
- * @private
  * @returns {Object} - The result object only with the keys
  * that are whitelisted.
  */
-function _getWhitelistedJSON(configName, configJSON) {
+export function getWhitelistedJSON(configName: string, configJSON: Object): Object {
     if (configName === 'interfaceConfig') {
         return _.pick(configJSON, INTERFACE_CONFIG_WHITELIST);
     } else if (configName === 'config') {
@@ -123,6 +174,18 @@ function _getWhitelistedJSON(configName, configJSON) {
 
     return configJSON;
 }
+
+/**
+ * Selector for determining if the display name is read only.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {boolean}
+ */
+export function isNameReadOnly(state: Object): boolean {
+    return state['features/base/config'].disableProfile
+        || state['features/base/config'].readOnlyName;
+}
+
 
 /**
  * Restores a Jitsi Meet config.js from {@code localStorage} if it was
@@ -136,22 +199,16 @@ function _getWhitelistedJSON(configName, configJSON) {
  * otherwise, {@code undefined}.
  */
 export function restoreConfig(baseURL: string): ?Object {
-    let storage;
     const key = `${_CONFIG_STORE_PREFIX}/${baseURL}`;
+    const config = jitsiLocalStorage.getItem(key);
 
-    try {
-        // XXX Even reading the property localStorage of window may throw an
-        // error (which is user agent-specific behavior).
-        storage = window.localStorage;
-
-        const config = storage.getItem(key);
-
-        if (config) {
-            return JSON.parse(config) || undefined;
+    if (config) {
+        try {
+            return Bourne.parse(config) || undefined;
+        } catch (e) {
+            // Somehow incorrect data ended up in the storage. Clean it up.
+            jitsiLocalStorage.removeItem(key);
         }
-    } catch (e) {
-        // Somehow incorrect data ended up in the storage. Clean it up.
-        storage && storage.removeItem(key);
     }
 
     return undefined;

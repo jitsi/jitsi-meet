@@ -6,11 +6,12 @@ import {
     SectionList as ReactNativeSectionList
 } from 'react-native';
 
-import styles from './styles';
 import type { Section } from '../../Types';
 
+import styles from './styles';
+
 /**
- * The type of the React {@code Component} props of {@link SectionList}
+ * The type of the React {@code Component} props of {@link SectionList}.
  */
 type Props = {
 
@@ -29,7 +30,7 @@ type Props = {
 
     /**
     *
-    * Functions that defines what happens when the list is pulled for refresh
+    * Functions that defines what happens when the list is pulled for refresh.
     */
     onRefresh: Function,
 
@@ -53,7 +54,7 @@ type Props = {
     renderSectionHeader: Object,
 
     /**
-     * An array of sections
+     * An array of sections.
      */
     sections: Array<Section>
 };
@@ -61,9 +62,9 @@ type Props = {
 /**
  * Implements a React Native {@link Component} that wraps the React Native
  * SectionList component in a SafeAreaView so that it renders the sectionlist
- * within the safe area of the device
+ * within the safe area of the device.
  *
- * @extends Component
+ * @augments Component
  */
 export default class SectionList extends Component<Props> {
     /**

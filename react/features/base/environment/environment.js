@@ -1,6 +1,8 @@
 // @flow
 
 import JitsiMeetJS from '../lib-jitsi-meet';
+import Platform from '../react/Platform';
+
 import { isMobileBrowser } from './utils';
 
 const { browser } = JitsiMeetJS.util;
@@ -9,7 +11,8 @@ const DEFAULT_OPTIMAL_BROWSERS = [
     'chrome',
     'electron',
     'firefox',
-    'nwjs'
+    'nwjs',
+    'safari'
 ];
 
 const DEFAULT_UNSUPPORTED_BROWSERS = [];
@@ -36,6 +39,24 @@ declare var interfaceConfig: Object;
 export function isBrowsersOptimal(browserName: string) {
     return (interfaceConfig.OPTIMAL_BROWSERS || DEFAULT_OPTIMAL_BROWSERS)
         .includes(browserName);
+}
+
+/**
+ * Returns whether or not the current OS is Mac.
+ *
+ * @returns {boolean}
+ */
+export function isMacOS() {
+    return Platform.OS === 'macos';
+}
+
+/**
+ * Returns whether or not the current OS is Windows.
+ *
+ * @returns {boolean}
+ */
+export function isWindows() {
+    return Platform.OS === 'windows';
 }
 
 /**
@@ -73,11 +94,18 @@ export function isSupportedBrowser() {
         return false;
     }
 
-    // We are intentionally allow mobile browsers because:
-    // - the WelcomePage is mobile ready;
-    // - if the URL points to a conference then deep-linking will take
-    //   care of it.
-    return isMobileBrowser() || JitsiMeetJS.isWebRtcSupported();
+    return isMobileBrowser() ? isSupportedMobileBrowser() : JitsiMeetJS.isWebRtcSupported();
+}
+
+/**
+ * Returns whether or not the current environment is a supported
+ * browser on a mobile device.
+ *
+ * @returns {boolean}
+ */
+export function isSupportedMobileBrowser() {
+    return (Platform.OS === 'android' && browser.isSupportedAndroidBrowser())
+        || (Platform.OS === 'ios' && browser.isSupportedIOSBrowser());
 }
 
 /**

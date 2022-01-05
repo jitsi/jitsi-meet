@@ -4,8 +4,10 @@ import React, { Component } from 'react';
 
 import {
     getLocalizedDateFormatter,
-    getLocalizedDurationFormatter
+    getLocalizedDurationFormatter,
+    translate
 } from '../../../i18n';
+import { Icon, IconTrash } from '../../../icons';
 
 import Container from './Container';
 import Text from './Text';
@@ -38,9 +40,14 @@ type Props = {
     meetings: Array<Object>,
 
     /**
-     * Defines what happens when  an item in the section list is clicked
+     * Handler for deleting an item.
      */
-    onItemClick: Function
+    onItemDelete?: Function,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
 };
 
 /**
@@ -51,7 +58,7 @@ type Props = {
  * @returns {string}
  */
 function _toDateString(date) {
-    return getLocalizedDateFormatter(date).format('MMM Do, YYYY');
+    return getLocalizedDateFormatter(date).format('ll');
 }
 
 
@@ -77,9 +84,9 @@ function _toTimeString(times) {
  * Implements a React/Web {@link Component} for displaying a list with
  * meetings.
  *
- * @extends Component
+ * @augments Component
  */
-export default class MeetingsList extends Component<Props> {
+class MeetingsList extends Component<Props> {
     /**
      * Constructor of the MeetingsList component.
      *
@@ -98,15 +105,18 @@ export default class MeetingsList extends Component<Props> {
      * @returns {React.ReactNode}
      */
     render() {
-        const { listEmptyComponent, meetings } = this.props;
+        const { listEmptyComponent, meetings, t } = this.props;
 
         /**
-         * If there are no recent meetings we don't want to display anything
+         * If there are no recent meetings we don't want to display anything.
          */
         if (meetings) {
             return (
                 <Container
-                    className = 'meetings-list'>
+                    aria-label = { t('welcomepage.recentList') }
+                    className = 'meetings-list'
+                    role = 'menu'
+                    tabIndex = '-1'>
                     {
                         meetings.length === 0
                             ? listEmptyComponent
@@ -138,6 +148,69 @@ export default class MeetingsList extends Component<Props> {
         return null;
     }
 
+    _onKeyPress: string => Function;
+
+    /**
+     * Returns a function that is used in the onPress callback of the items.
+     *
+     * @param {string} url - The URL of the item to navigate to.
+     * @private
+     * @returns {Function}
+     */
+    _onKeyPress(url) {
+        const { disabled, onPress } = this.props;
+
+        if (!disabled && url && typeof onPress === 'function') {
+            return e => {
+                if (e.key === ' ' || e.key === 'Enter') {
+                    onPress(url);
+                }
+            };
+        }
+
+        return null;
+    }
+
+    _onDelete: Object => Function;
+
+    /**
+     * Returns a function that is used on the onDelete callback.
+     *
+     * @param {Object} item - The item to be deleted.
+     * @private
+     * @returns {Function}
+     */
+    _onDelete(item) {
+        const { onItemDelete } = this.props;
+
+        return evt => {
+            evt.stopPropagation();
+
+            onItemDelete && onItemDelete(item);
+        };
+    }
+
+    _onDeleteKeyPress: Object => Function;
+
+    /**
+     * Returns a function that is used on the onDelete keypress callback.
+     *
+     * @param {Object} item - The item to be deleted.
+     * @private
+     * @returns {Function}
+     */
+    _onDeleteKeyPress(item) {
+        const { onItemDelete } = this.props;
+
+        return e => {
+            if (onItemDelete && (e.key === ' ' || e.key === 'Enter')) {
+                e.preventDefault();
+                e.stopPropagation();
+                onItemDelete(item);
+            }
+        };
+    }
+
     _renderItem: (Object, number) => React$Node;
 
     /**
@@ -156,22 +229,27 @@ export default class MeetingsList extends Component<Props> {
             title,
             url
         } = meeting;
-        const { hideURL = false } = this.props;
+        const { hideURL = false, onItemDelete, t } = this.props;
         const onPress = this._onPress(url);
+        const onKeyPress = this._onKeyPress(url);
         const rootClassName
             = `item ${
                 onPress ? 'with-click-handler' : 'without-click-handler'}`;
 
         return (
             <Container
+                aria-label = { title }
                 className = { rootClassName }
                 key = { index }
-                onClick = { onPress }>
+                onClick = { onPress }
+                onKeyPress = { onKeyPress }
+                role = 'menuitem'
+                tabIndex = { 0 }>
                 <Container className = 'left-column'>
-                    <Text className = 'date'>
+                    <Text className = 'title'>
                         { _toDateString(date) }
                     </Text>
-                    <Text>
+                    <Text className = 'subtitle'>
                         { _toTimeString(time) }
                     </Text>
                 </Container>
@@ -187,15 +265,26 @@ export default class MeetingsList extends Component<Props> {
                     }
                     {
                         typeof duration === 'number' ? (
-                            <Text>
+                            <Text className = 'subtitle'>
                                 { getLocalizedDurationFormatter(duration) }
                             </Text>) : null
                     }
                 </Container>
                 <Container className = 'actions'>
                     { elementAfter || null }
+
+                    { onItemDelete && <Icon
+                        ariaLabel = { t('welcomepage.recentListDelete') }
+                        className = 'delete-meeting'
+                        onClick = { this._onDelete(meeting) }
+                        onKeyPress = { this._onDeleteKeyPress(meeting) }
+                        role = 'button'
+                        src = { IconTrash }
+                        tabIndex = { 0 } />}
                 </Container>
             </Container>
         );
     }
 }
+
+export default translate(MeetingsList);

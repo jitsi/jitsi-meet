@@ -1,0 +1,91 @@
+.drawer-portal {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: $drawerZ;
+    border-radius: 16px 16px 0 0;
+
+    &.notification-portal {
+        z-index: $dropdownZ;
+    }
+}
+
+.drawer-portal::after {
+    content: '';
+    background-color: $participantsPaneBgColor;
+    margin-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.drawer-menu-container {
+    height: 100vh;
+    display: flex;
+    align-items: flex-end;
+}
+
+.drawer-menu {
+    background: #242528;
+    border-radius: 16px 16px 0 0;
+    overflow-y: auto;
+    margin-bottom: env(safe-area-inset-bottom, 0);
+    width: 100%;
+
+    .drawer-toggle {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 44px;
+        cursor: pointer;
+
+        svg {
+            fill: none;
+        }
+    }
+
+    &#{&} .overflow-menu {
+        margin: auto;
+        font-size: 1.2em;
+        list-style-type: none;
+        padding: 0;
+        height: calc(80vh - 144px - 64px);
+        overflow-y: auto;
+
+        .overflow-menu-item {
+            box-sizing: border-box;
+            height: 48px;
+            padding: 12px 16px;
+
+            align-items: center;
+            color: $overflowMenuItemColor;
+            cursor: pointer;
+            display: flex;
+            font-size: 16px;
+
+            div {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+            }
+
+            &.unclickable {
+                cursor: default;
+            }
+            @media (hover: hover) and (pointer: fine) {
+                &.unclickable:hover {
+                    background: inherit;
+                }
+            }
+            &.disabled {
+                cursor: initial;
+                color: #3b475c;
+            }
+        }
+
+        .profile-text {
+            max-width: 100%;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+    }
+}

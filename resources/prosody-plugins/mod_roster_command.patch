@@ -1,0 +1,47 @@
+# HG changeset patch
+# User Boris Grozev <boris@jitsi.org>
+# Date 1609874100 21600
+#      Tue Jan 05 13:15:00 2021 -0600
+# Node ID f646babfc401494ff33f2126ef6c4df541ebf846
+# Parent  456b9f608fcf9667cfba1bd7bf9eba2151af50d0
+mod_roster_command: Fix subscription when the "user JID" is a bare domain.
+
+Do not attempt to update the roster when the user is bare domain (e.g. a
+component), since they don't have rosters and the attempt results in an error:
+
+$ prosodyctl mod_roster_command subscribe proxy.example.com contact@example.com
+xxxxxxxxxxFailed to execute command: Error: /usr/lib/prosody/core/rostermanager.lua:104: attempt to concatenate local 'username' (a nil value)
+stack traceback:
+	/usr/lib/prosody/core/rostermanager.lua:104: in function 'load_roster'
+	/usr/lib/prosody/core/rostermanager.lua:305: in function 'set_contact_pending_out'
+	mod_roster_command.lua:44: in function 'subscribe'
+
+diff -r 456b9f608fcf -r f646babfc401 mod_roster_command/mod_roster_command.lua
+--- a/mod_roster_command/mod_roster_command.lua	Tue Jan 05 13:49:50 2021 +0000
++++ b/mod_roster_command/mod_roster_command.lua	Tue Jan 05 13:15:00 2021 -0600
+@@ -40,8 +40,10 @@
+ 		storagemanager.initialize_host(user_host);
+ 		usermanager.initialize_host(user_host);
+ 	end
+-	-- Update user's roster to say subscription request is pending...
+-	rostermanager.set_contact_pending_out(user_username, user_host, contact_jid);
++	-- Update user's roster to say subscription request is pending. Bare hosts (e.g. components) don't have rosters.
++    if user_username ~= nil then
++	    rostermanager.set_contact_pending_out(user_username, user_host, contact_jid);
++    end
+ 	if hosts[contact_host] then
+ 		if contact_host ~= user_host and hosts[contact_host].users.name == "null" then
+ 			storagemanager.initialize_host(contact_host);
+@@ -51,8 +53,10 @@
+ 		rostermanager.set_contact_pending_in(contact_username, contact_host, user_jid);
+ 		-- Update contact's roster to say subscription request approved...
+ 		rostermanager.subscribed(contact_username, contact_host, user_jid);
+-		-- Update user's roster to say subscription request approved...
+-		rostermanager.process_inbound_subscription_approval(user_username, user_host, contact_jid);
++		-- Update user's roster to say subscription request approved. Bare hosts (e.g. components) don't have rosters.
++        if user_username ~= nil then
++		    rostermanager.process_inbound_subscription_approval(user_username, user_host, contact_jid);
++        end
+ 	end
+ end
+ 

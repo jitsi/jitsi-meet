@@ -43,6 +43,16 @@ export const CONFERENCE_JOINED = 'CONFERENCE_JOINED';
 export const CONFERENCE_LEFT = 'CONFERENCE_LEFT';
 
 /**
+ * The type of (redux) action, which indicates conference local subject changes.
+ *
+ * {
+ *     type: CONFERENCE_LOCAL_SUBJECT_CHANGED
+ *     subject: string
+ * }
+ */
+ export const CONFERENCE_LOCAL_SUBJECT_CHANGED = 'CONFERENCE_LOCAL_SUBJECT_CHANGED';
+
+ /**
  * The type of (redux) action, which indicates conference subject changes.
  *
  * {
@@ -61,6 +71,16 @@ export const CONFERENCE_SUBJECT_CHANGED = 'CONFERENCE_SUBJECT_CHANGED';
 * }
 */
 export const CONFERENCE_TIMESTAMP_CHANGED = 'CONFERENCE_TIMESTAMP_CHANGED';
+
+/**
+ * The type of (redux) action which signals that an uuid for a conference has been set.
+ *
+ * {
+ *     type: CONFERENCE_UNIQUE_ID_SET,
+ *     conference: JitsiConference
+ * }
+ */
+export const CONFERENCE_UNIQUE_ID_SET = 'CONFERENCE_UNIQUE_ID_SET';
 
 /**
  * The type of (redux) action which signals that a specific conference will be
@@ -118,6 +138,17 @@ export const KICKED_OUT = 'KICKED_OUT';
 export const LOCK_STATE_CHANGED = 'LOCK_STATE_CHANGED';
 
 /**
+ * The type of (redux) action which signals that a system (non-participant) message has been received.
+ *
+ * {
+ *     type: NON_PARTICIPANT_MESSAGE_RECEIVED,
+ *     id: String,
+ *     json: Object
+ * }
+ */
+export const NON_PARTICIPANT_MESSAGE_RECEIVED = 'NON_PARTICIPANT_MESSAGE_RECEIVED';
+
+/**
  * The type of (redux) action which sets the peer2peer flag for the current
  * conference.
  *
@@ -141,18 +172,6 @@ export const P2P_STATUS_CHANGED = 'P2P_STATUS_CHANGED';
 export const SEND_TONES = 'SEND_TONES';
 
 /**
- * The type of (redux) action which sets the desktop sharing enabled flag for
- * the current conference.
- *
- * {
- *     type: SET_DESKTOP_SHARING_ENABLED,
- *     desktopSharingEnabled: boolean
- * }
- */
-export const SET_DESKTOP_SHARING_ENABLED
-    = 'SET_DESKTOP_SHARING_ENABLED';
-
-/**
  * The type of (redux) action which updates the current known status of the
  * Follow Me feature.
  *
@@ -164,17 +183,15 @@ export const SET_DESKTOP_SHARING_ENABLED
 export const SET_FOLLOW_ME = 'SET_FOLLOW_ME';
 
 /**
- * The type of (redux) action which sets the maximum video height that should be
- * received from remote participants, even if the user prefers a larger video
- * height.
+ * The type of (redux) action which updates the current known status of the
+ * Mute Reactions Sound feature.
  *
  * {
- *     type: SET_MAX_RECEIVER_VIDEO_QUALITY,
- *     maxReceiverVideoQuality: number
+ *     type: SET_START_REACTIONS_MUTED,
+ *     enabled: boolean
  * }
  */
-export const SET_MAX_RECEIVER_VIDEO_QUALITY
-    = 'SET_MAX_RECEIVER_VIDEO_QUALITY';
+export const SET_START_REACTIONS_MUTED = 'SET_START_REACTIONS_MUTED';
 
 /**
  * The type of (redux) action which sets the password to join or lock a specific
@@ -211,18 +228,6 @@ export const SET_PASSWORD_FAILED = 'SET_PASSWORD_FAILED';
 export const SET_PENDING_SUBJECT_CHANGE = 'SET_PENDING_SUBJECT_CHANGE';
 
 /**
- * The type of (redux) action which sets the preferred maximum video height that
- * should be received from remote participants.
- *
- * {
- *     type: SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
- *     preferredReceiverVideoQuality: number
- * }
- */
-export const SET_PREFERRED_RECEIVER_VIDEO_QUALITY
-    = 'SET_PREFERRED_RECEIVER_VIDEO_QUALITY';
-
-/**
  * The type of (redux) action which sets the name of the room of the
  * conference to be joined.
  *
@@ -232,17 +237,6 @@ export const SET_PREFERRED_RECEIVER_VIDEO_QUALITY
  * }
  */
 export const SET_ROOM = 'SET_ROOM';
-
-/**
- * The type of (redux) action, which indicates if a SIP gateway is enabled on
- * the server.
- *
- * {
- *     type: SET_SIP_GATEWAY_ENABLED
- *     isSIPGatewayEnabled: boolean
- * }
- */
-export const SET_SIP_GATEWAY_ENABLED = 'SET_SIP_GATEWAY_ENABLED';
 
 /**
  * The type of (redux) action which updates the current known status of the

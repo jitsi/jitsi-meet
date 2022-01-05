@@ -6,7 +6,6 @@ import { translate } from '../../base/i18n';
 import { getParticipantById } from '../../base/participants';
 import { Text } from '../../base/react';
 import { connect } from '../../base/redux';
-
 import { STATUS_TO_I18N_KEY } from '../constants';
 import { presenceStatusDisabled } from '../functions';
 
@@ -52,7 +51,7 @@ type Props = {
  * React {@code Component} for displaying the current presence status of a
  * participant.
  *
- * @extends Component
+ * @augments Component
  */
 class PresenceLabel extends Component<Props> {
     /**

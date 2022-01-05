@@ -1,13 +1,34 @@
 // @flow
 
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import type { Dispatch } from 'redux';
 
 import { addKnownDomains } from '../known-domains';
 import { parseURIString } from '../util';
 
-import { CONFIG_WILL_LOAD, LOAD_CONFIG_ERROR, SET_CONFIG } from './actionTypes';
+import {
+    CONFIG_WILL_LOAD,
+    LOAD_CONFIG_ERROR,
+    SET_CONFIG,
+    UPDATE_CONFIG,
+    OVERWRITE_CONFIG
+} from './actionTypes';
 import { _CONFIG_STORE_PREFIX } from './constants';
 import { setConfigFromURLParams } from './functions';
+
+
+/**
+ * Updates the config with new options.
+ *
+ * @param {Object} config - The new options (to add).
+ * @returns {Function}
+ */
+export function updateConfig(config: Object) {
+    return {
+        type: UPDATE_CONFIG,
+        config
+    };
+}
 
 /**
  * Signals that the configuration (commonly known in Jitsi Meet as config.js)
@@ -49,6 +70,22 @@ export function loadConfigError(error: Error, locationURL: URL) {
         type: LOAD_CONFIG_ERROR,
         error,
         locationURL
+    };
+}
+
+/**
+ * Overwrites some config values.
+ *
+ * @param {Object} config - The new options (to overwrite).
+ * @returns {{
+ *     type: OVERWRITE_CONFIG,
+ *     config: Object
+ * }}
+ */
+export function overwriteConfig(config: Object) {
+    return {
+        type: OVERWRITE_CONFIG,
+        config
     };
 }
 
@@ -109,11 +146,8 @@ export function storeConfig(baseURL: string, config: Object) {
         let b = false;
 
         try {
-            if (typeof window.config === 'undefined'
-                    || window.config !== config) {
-                window.localStorage.setItem(
-                    `${_CONFIG_STORE_PREFIX}/${baseURL}`,
-                    JSON.stringify(config));
+            if (typeof window.config === 'undefined' || window.config !== config) {
+                jitsiLocalStorage.setItem(`${_CONFIG_STORE_PREFIX}/${baseURL}`, JSON.stringify(config));
                 b = true;
             }
         } catch (e) {

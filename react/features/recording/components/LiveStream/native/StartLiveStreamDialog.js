@@ -7,10 +7,7 @@ import { CustomSubmitDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import { connect } from '../../../../base/redux';
 import { googleApi } from '../../../../google-api';
-
-
 import { setLiveStreamKey } from '../../../actions';
-
 import AbstractStartLiveStreamDialog,
 { _mapStateToProps, type Props } from '../AbstractStartLiveStreamDialog';
 
@@ -70,7 +67,7 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<Props> {
 
     _onSubmit: () => boolean;
 
-    _onStreamKeyChange: string => void
+    _onStreamKeyChange: string => void;
 
     _onStreamKeyChangeNative: string => void;
 
@@ -91,7 +88,7 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<Props> {
         this._onStreamKeyChange(streamKey);
     }
 
-    _onStreamKeyPick: string => void
+    _onStreamKeyPick: string => void;
 
     /**
      * Callback to be invoked when the user selects a stream from the picker.
@@ -106,7 +103,7 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<Props> {
         });
     }
 
-    _onUserChanged: Object => void
+    _onUserChanged: Object => void;
 
     /**
      * A callback to be invoked when an authenticated user changes, so
@@ -115,7 +112,7 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<Props> {
      * TODO: Handle errors by showing some indication to the user.
      *
      * @private
-     * @param {Object} response - The retreived signin response.
+     * @param {Object} response - The retrieved signin response.
      * @returns {void}
      */
     _onUserChanged(response) {

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<restrictions xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Server URL configuration -->
+    <restriction
+        android:defaultValue="https://meet.jit.si"
+        android:description="@string/restriction_server_url_description"
+        android:key="SERVER_URL"
+        android:restrictionType="string"
+        android:title="@string/restriction_server_url_title"/>
+</restrictions>

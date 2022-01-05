@@ -1,5 +1,5 @@
 /*
- * Copyright @ 2017-present Atlassian Pty Ltd
+ * Copyright @ 2017-present 8x8, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@
 
 #import <React/RCTBridgeModule.h>
 #import <React/RCTLog.h>
+
+#import "InfoPlistUtil.h"
 
 @interface AppInfo : NSObject<RCTBridgeModule>
 @end
@@ -67,13 +69,15 @@ RCT_EXPORT_MODULE();
         buildNumber = @"";
     }
 
+    BOOL isGoogleServiceEnabled = [InfoPlistUtil containsRealServiceInfoPlistInBundle:[NSBundle mainBundle]];
+    
     return @{
         @"calendarEnabled": [NSNumber numberWithBool:calendarEnabled],
         @"buildNumber": buildNumber,
         @"name": name,
         @"sdkBundlePath": sdkBundlePath,
-        @"version": version
+        @"version": version,
+        @"GOOGLE_SERVICES_ENABLED": [NSNumber numberWithBool:isGoogleServiceEnabled]
     };
 };
-
 @end

@@ -22,43 +22,9 @@ type Props = {
 };
 
 /**
- * The type of the React {@code Component} state of {@link OverlayFrame}.
- */
-type State = {
-
-    /**
-     * Whether or not the application is currently displaying in filmstrip only
-     * mode.
-     */
-    filmstripOnly: boolean
-};
-
-/**
  * Implements a React {@link Component} for the frame of the overlays.
  */
-export default class OverlayFrame extends Component<Props, State> {
-    /**
-     * Initializes a new AbstractOverlay instance.
-     *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
-     * @public
-     */
-    constructor(props: Props) {
-        super(props);
-
-        this.state = {
-            /**
-             * Indicates whether the filmstrip only mode is enabled or not.
-             *
-             * @type {boolean}
-             */
-            filmstripOnly:
-                typeof interfaceConfig !== 'undefined'
-                    && interfaceConfig.filmStripOnly
-        };
-    }
-
+export default class OverlayFrame extends Component<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -66,20 +32,11 @@ export default class OverlayFrame extends Component<Props, State> {
      * @returns {ReactElement|null}
      */
     render() {
-        let containerClass = this.props.isLightOverlay
-            ? 'overlay__container-light' : 'overlay__container';
-        let contentClass = 'overlay__content';
-
-        if (this.state.filmstripOnly) {
-            containerClass += ' filmstrip-only';
-            contentClass += ' filmstrip-only';
-        }
-
         return (
             <div
-                className = { containerClass }
+                className = { this.props.isLightOverlay ? 'overlay__container-light' : 'overlay__container' }
                 id = 'overlay'>
-                <div className = { contentClass }>
+                <div className = { 'overlay__content' }>
                     {
                         this.props.children
                     }

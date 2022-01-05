@@ -1,17 +1,14 @@
 // @flow
 
-import React from 'react';
-import { KeyboardAvoidingView, SafeAreaView } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
+import React, { useEffect } from 'react';
 
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { translate } from '../../../base/i18n';
-import { HeaderWithNavigation, SlidingView } from '../../../base/react';
+import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { connect } from '../../../base/redux';
-import { StyleType } from '../../../base/styles';
-
+import { closeChat, openChat } from '../../actions.native';
 import AbstractChat, {
-    _mapDispatchToProps,
-    _mapStateToProps as _abstractMapStateToProps,
+    _mapStateToProps,
     type Props as AbstractProps
 } from '../AbstractChat';
 
@@ -20,12 +17,23 @@ import MessageContainer from './MessageContainer';
 import MessageRecipient from './MessageRecipient';
 import styles from './styles';
 
+
 type Props = AbstractProps & {
 
     /**
-     * The color-schemed stylesheet of the feature.
+     * Is this screen focused or not(React Navigation).
      */
-    _styles: StyleType
+    isChatScreenFocused: boolean,
+
+    /**
+     * Default prop for navigating between screen components(React Navigation).
+     */
+    navigation: Object,
+
+    /**
+     * Default prop for navigating between screen components(React Navigation).
+     */
+    route: Object
 };
 
 /**
@@ -33,16 +41,6 @@ type Props = AbstractProps & {
  * the mobile client.
  */
 class Chat extends AbstractChat<Props> {
-    /**
-     * Instantiates a new instance.
-     *
-     * @inheritdoc
-     */
-    constructor(props: Props) {
-        super(props);
-
-        this._onClose = this._onClose.bind(this);
-    }
 
     /**
      * Implements React's {@link Component#render()}.
@@ -50,58 +48,52 @@ class Chat extends AbstractChat<Props> {
      * @inheritdoc
      */
     render() {
-        const { _styles } = this.props;
+        const { _messages, route } = this.props;
+        const privateMessageRecipient = route.params?.privateMessageRecipient;
 
         return (
-            <SlidingView
-                onHide = { this._onClose }
-                position = 'bottom'
-                show = { this.props._isOpen } >
-                <KeyboardAvoidingView
-                    behavior = 'padding'
-                    style = { styles.chatContainer }>
-                    <HeaderWithNavigation
-                        headerLabelKey = 'chat.title'
-                        onPressBack = { this._onClose } />
-                    <SafeAreaView style = { _styles.backdrop }>
-                        <MessageContainer messages = { this.props._messages } />
-                        <MessageRecipient />
-                        <ChatInputBar onSend = { this.props._onSendMessage } />
-                    </SafeAreaView>
-                </KeyboardAvoidingView>
-            </SlidingView>
+            <JitsiScreen
+                hasBottomTextInput = { true }
+                hasTabNavigator = { true }
+                style = { styles.chatContainer }>
+                <MessageContainer messages = { _messages } />
+                <MessageRecipient privateMessageRecipient = { privateMessageRecipient } />
+                <ChatInputBar onSend = { this._onSendMessage } />
+            </JitsiScreen>
         );
     }
 
-    _onClose: () => boolean
-
-    /**
-     * Closes the chat window.
-     *
-     * @returns {boolean}
-     */
-    _onClose() {
-        if (this.props._isOpen) {
-            this.props._onToggleChat();
-
-            return true;
-        }
-
-        return false;
-    }
+    _onSendMessage: (string) => void;
 }
 
-/**
- * Maps part of the redux state to the props of this component.
- *
- * @param {Object} state - The Redux state.
- * @returns {Props}
- */
-function _mapStateToProps(state) {
-    return {
-        ..._abstractMapStateToProps(state),
-        _styles: ColorSchemeRegistry.get(state, 'Chat')
-    };
-}
+export default translate(connect(_mapStateToProps)(props => {
+    const {
+        _nbUnreadMessages,
+        dispatch,
+        navigation,
+        route,
+        t
+    } = props;
+    const isChatScreenFocused = useIsFocused();
+    const privateMessageRecipient = route.params?.privateMessageRecipient;
 
-export default translate(connect(_mapStateToProps, _mapDispatchToProps)(Chat));
+    const nrUnreadMessages
+        = !isChatScreenFocused && _nbUnreadMessages > 0
+            ? `(${_nbUnreadMessages})` : '';
+
+    useEffect(() => {
+        dispatch(openChat(privateMessageRecipient));
+
+        navigation.setOptions({
+            tabBarLabel: `${t('chat.tabs.chat')} ${nrUnreadMessages}`
+        });
+
+        return () => dispatch(closeChat());
+    }, [ nrUnreadMessages ]);
+
+    return (
+        <Chat
+            { ...props }
+            isChatScreenFocused = { isChatScreenFocused } />
+    );
+}));
