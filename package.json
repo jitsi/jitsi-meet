@@ -108,7 +108,7 @@
     "react-native-tab-view": "2.16.0",
     "react-native-url-polyfill": "1.3.0",
     "react-native-video": "5.2.0",
-    "react-native-watch-connectivity": "0.4.3",
+    "react-native-watch-connectivity": "1.0.4",
     "react-native-webrtc": "1.94.1",
     "react-native-webview": "11.0.2",
     "react-native-youtube-iframe": "2.1.1",
