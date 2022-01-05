@@ -88,7 +88,7 @@
     "react-native": "github:jitsi/react-native#891986ec5ecaef65d1c8a7fe472f86cf84fe7551",
     "react-native-background-timer": "2.4.1",
     "react-native-calendar-events": "2.2.0",
-    "react-native-callstats": "3.70.1",
+    "react-native-callstats": "3.73.7",
     "react-native-collapsible": "1.5.1",
     "react-native-default-preference": "1.4.2",
     "react-native-device-info": "8.0.0",
