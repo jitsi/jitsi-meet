@@ -288,8 +288,8 @@ PODS:
     - React-Core
   - react-native-keep-awake (4.0.0):
     - React
-  - react-native-netinfo (4.1.5):
-    - React
+  - react-native-netinfo (7.1.7):
+    - React-Core
   - react-native-performance (2.0.0):
     - React-Core
   - react-native-safe-area-context (3.3.2):
@@ -615,7 +615,7 @@ SPEC CHECKSUMS:
   react-native-calendar-events: 82dc6c915653a1a8a266e43fdbbfdb3b1022ca99
   react-native-get-random-values: 237bffb1c7e05fb142092681531810a29ba53015
   react-native-keep-awake: afad8a51dfef9fe9655a6344771be32c8596d774
-  react-native-netinfo: 0e563248a4b9a99c33ec29bd03c2d50767db22a6
+  react-native-netinfo: 27f287f2d191693f3b9d01a4273137fcf91c3b5d
   react-native-performance: 6bd6cfac80594775fb782405fceaaf206becf53b
   react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
   react-native-slider: e99fc201cefe81270fc9d81714a7a0f5e566b168
