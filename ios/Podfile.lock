@@ -367,8 +367,8 @@ PODS:
     - React-Core
   - RNCMaskedView (0.2.6):
     - React-Core
-  - RNDefaultPreference (1.4.2):
-    - React
+  - RNDefaultPreference (1.4.3):
+    - React-Core
   - RNDeviceInfo (8.0.0):
     - React-Core
   - RNGestureHandler (1.10.3):
@@ -636,7 +636,7 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: ea6b5c280997b2b32a587793163b1f10e580c4f7
   RNCClipboard: 41d8d918092ae8e676f18adada19104fa3e68495
   RNCMaskedView: c298b644a10c0c142055b3ae24d83879ecb13ccd
-  RNDefaultPreference: 1f8133ec0bc0f9453cdada578564ba1ef551fb44
+  RNDefaultPreference: 326860d42a681bfd7338c8f6d061cf58745bd860
   RNDeviceInfo: 87d2d175c760f6bcf58acd036f887e8b2392802c
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNGoogleSignin: c4381751eefd73c552b923ba347a9bfc6f18771c
