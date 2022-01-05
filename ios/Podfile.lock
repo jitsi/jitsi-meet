@@ -361,7 +361,7 @@ PODS:
     - React-jsi (= 0.61.5-jitsi.2)
     - ReactCommon/jscallinvoker (= 0.61.5-jitsi.2)
     - ReactCommon/turbomodule/core (= 0.61.5-jitsi.2)
-  - RNCAsyncStorage (1.15.5):
+  - RNCAsyncStorage (1.15.14):
     - React-Core
   - RNCClipboard (1.5.1):
     - React-Core
@@ -633,7 +633,7 @@ SPEC CHECKSUMS:
   React-RCTText: 4f1b99f228278d2a5e9008eced8dc9c974c4a270
   React-RCTVibration: c1041024893fdfdb8371e7c720c437751b711676
   ReactCommon: 18014e1d98dbeb9141e935cfe35fc93bd511ffb6
-  RNCAsyncStorage: 56a3355a10b5d660c48c6e37325ac85ebfd09885
+  RNCAsyncStorage: ea6b5c280997b2b32a587793163b1f10e580c4f7
   RNCClipboard: 41d8d918092ae8e676f18adada19104fa3e68495
   RNCMaskedView: c298b644a10c0c142055b3ae24d83879ecb13ccd
   RNDefaultPreference: 1f8133ec0bc0f9453cdada578564ba1ef551fb44
