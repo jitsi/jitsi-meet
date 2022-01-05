@@ -1,7 +1,7 @@
 PODS:
-  - Amplitude (8.2.0)
-  - amplitude-react-native (2.3.3):
-    - Amplitude (= 8.2.0)
+  - Amplitude (8.7.1)
+  - amplitude-react-native (2.7.0):
+    - Amplitude (= 8.7.1)
     - React-Core
   - AppAuth (1.4.0):
     - AppAuth/Core (= 1.4.0)
@@ -576,8 +576,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  Amplitude: 263118b9e691e73a1c864b05bb08a3aff3636d16
-  amplitude-react-native: 9369759dc6d01590aeb6261f714d53beaebc7e6f
+  Amplitude: 834c7332dfb9640a751e21c13efb22a07c0c12d4
+  amplitude-react-native: 0ed8cab759aafaa94961b82122bf56297da607ad
   AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   CocoaLumberjack: 2f44e60eb91c176d471fdba43b9e3eae6a721947
