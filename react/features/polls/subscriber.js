@@ -83,7 +83,7 @@ StateListenerRegistry.register(
                         appearance: NOTIFICATION_TYPE.NORMAL,
                         titleKey: 'polls.notification.title',
                         descriptionKey: 'polls.notification.description'
-                    }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+                    }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
                     break;
 
                 }
