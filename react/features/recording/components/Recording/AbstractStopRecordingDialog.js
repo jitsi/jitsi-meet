@@ -78,10 +78,16 @@ export default class AbstractStopRecordingDialog<P: Props>
         return true;
     }
 
-    /**
-     * To be overwritten by web component.
-     */
     _toggleScreenshotCapture: () => void;
+
+    /**
+     * Toggles screenshot capture feature.
+     *
+     * @returns {void}
+     */
+    _toggleScreenshotCapture() {
+        // To be implemented by subclass.
+    }
 }
 
 /**
