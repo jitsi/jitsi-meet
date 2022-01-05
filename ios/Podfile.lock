@@ -296,10 +296,10 @@ PODS:
     - React-Core
   - react-native-splash-screen (3.3.0):
     - React-Core
-  - react-native-video (5.1.1):
+  - react-native-video (5.2.0):
     - React-Core
-    - react-native-video/Video (= 5.1.1)
-  - react-native-video/Video (5.1.1):
+    - react-native-video/Video (= 5.2.0)
+  - react-native-video/Video (5.2.0):
     - React-Core
   - react-native-webrtc (1.94.1):
     - React-Core
@@ -619,7 +619,7 @@ SPEC CHECKSUMS:
   react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
   react-native-slider: 6e9b86e76cce4b9e35b3403193a6432ed07e0c81
   react-native-splash-screen: 4312f786b13a81b5169ef346d76d33bc0c6dc457
-  react-native-video: 0bb76b6d6b77da3009611586c7dbf817b947f30e
+  react-native-video: a4c2635d0802f983594b7057e1bce8f442f0ad28
   react-native-webrtc: 2f20515f3ebb9dbf1f2aad638cc7573396cf948f
   react-native-webview: dfd7202ff115c44d3ea401c2f36122fb3ac79f07
   React-RCTActionSheet: bcbc311dc3b47bc8efb2737ff0940239a45789a9
