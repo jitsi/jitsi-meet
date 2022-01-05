@@ -282,7 +282,7 @@ PODS:
   - React-jsinspector (0.61.5-jitsi.2)
   - react-native-background-timer (2.4.1):
     - React-Core
-  - react-native-get-random-values (1.7.0):
+  - react-native-get-random-values (1.7.2):
     - React-Core
   - react-native-keep-awake (4.0.0):
     - React
@@ -612,7 +612,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 67106691c60030ec888d7cbbc4f48a3168e27a02
   React-jsinspector: 92ceee6c66dc19886289b52436ade7e020b89602
   react-native-background-timer: 17ea5e06803401a379ebf1f20505b793ac44d0fe
-  react-native-get-random-values: 237bffb1c7e05fb142092681531810a29ba53015
+  react-native-get-random-values: 30b3f74ca34e30e2e480de48e4add2706a40ac8f
   react-native-keep-awake: afad8a51dfef9fe9655a6344771be32c8596d774
   react-native-netinfo: 27f287f2d191693f3b9d01a4273137fcf91c3b5d
   react-native-performance: 6bd6cfac80594775fb782405fceaaf206becf53b
