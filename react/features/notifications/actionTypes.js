@@ -45,3 +45,17 @@ export const SHOW_NOTIFICATION = 'SHOW_NOTIFICATION';
  * }
  */
 export const SET_NOTIFICATIONS_ENABLED = 'SET_NOTIFICATIONS_ENABLED';
+
+/**
+ * The type of (redux) action which signals that a notification component should
+ * reset the timeout.
+ *
+ * {
+ *     type: RESET_NOTIFICATION_TIMEOUT,
+ *     component: ReactComponent,
+ *     props: Object,
+ *     timeout: number,
+ *     uid: string
+ * }
+ */
+export const RESET_NOTIFICATION_TIMEOUT = 'RESET_NOTIFICATION_TIMEOUT';

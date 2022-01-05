@@ -6,6 +6,7 @@ import {
     PARTICIPANT_LEFT,
     PARTICIPANT_ROLE,
     PARTICIPANT_UPDATED,
+    RAISE_HAND_UPDATED,
     getParticipantById,
     getParticipantDisplayName,
     getLocalParticipant
@@ -15,10 +16,11 @@ import { PARTICIPANTS_PANE_OPEN } from '../participants-pane/actionTypes';
 
 import {
     clearNotifications,
+    hideNotification,
     showNotification,
     showParticipantJoinedNotification,
     showParticipantLeftNotification,
-    hideNotification
+    updateNotificationTimeout
 } from './actions';
 import {
     NOTIFICATION_TIMEOUT_TYPE,
@@ -34,6 +36,16 @@ import { joinLeaveNotificationsDisabled } from './functions';
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
+        // case RAISE_HAND_UPDATED : {
+        //     const state = store.getState();
+        //     const { notifications } = state['features/notifications'];
+        //     const raiseHandNotification = notifications.find(notification => notification.uid === RAISE_HAND_NOTIFICATION_ID);
+        //     if(raiseHandNotification){
+        //         store.dispatch(updateNotificationTimeout(raiseHandNotification.uid, raiseHandNotification.timeout));
+
+        //     }
+        //     return next(action);
+        // }
     case PARTICIPANT_JOINED: {
         const result = next(action);
         const { participant: p } = action;

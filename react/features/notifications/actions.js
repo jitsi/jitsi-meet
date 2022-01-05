@@ -10,7 +10,8 @@ import {
     CLEAR_NOTIFICATIONS,
     HIDE_NOTIFICATION,
     SET_NOTIFICATIONS_ENABLED,
-    SHOW_NOTIFICATION
+    SHOW_NOTIFICATION,
+    RESET_NOTIFICATION_TIMEOUT
 } from './actionTypes';
 import {
     NOTIFICATION_ICON,
@@ -67,6 +68,24 @@ export function hideNotification(uid: string) {
     return {
         type: HIDE_NOTIFICATION,
         uid
+    };
+}
+
+/**
+ * Removes the notification with the passed in id.
+ *
+ * @param {string} uid - The unique identifier for the notification to be
+ * removed.
+ * @returns {{
+ *     type: RESET_NOTIFICATION_TIMEOUT,
+ *     uid: string
+ * }}
+ */
+export function updateNotificationTimeout(uid: string, timeout: number) {
+    return {
+        type: RESET_NOTIFICATION_TIMEOUT,
+        uid,
+        timeout
     };
 }
 

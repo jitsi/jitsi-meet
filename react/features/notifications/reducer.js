@@ -6,7 +6,8 @@ import {
     CLEAR_NOTIFICATIONS,
     HIDE_NOTIFICATION,
     SET_NOTIFICATIONS_ENABLED,
-    SHOW_NOTIFICATION
+    SHOW_NOTIFICATION,
+    RESET_NOTIFICATION_TIMEOUT
 } from './actionTypes';
 import { NOTIFICATION_TYPE_PRIORITIES } from './constants';
 
@@ -60,10 +61,28 @@ ReducerRegistry.register('features/notifications',
                         uid: action.uid
                     })
             };
+
+        case RESET_NOTIFICATION_TIMEOUT:
+        return {
+            ...state,
+            notifications: _resetNotificationTimeout(state.notifications, {
+                timeout: action.timeout,
+                uid: action.uid
+            })
+        };
         }
 
         return state;
     });
+
+    function _resetNotificationTimeout( notifications, notification) {
+        const notificationsCopy = notifications;
+        const notificationIndex = notificationsCopy.findIndex(notif => notif.uid === notification.uid);
+        
+        //notificationsCopy[notificationIndex].timeout = false;
+         notificationsCopy[notificationIndex].timeout = notification.timeout;
+        return notificationsCopy
+    }
 
 /**
  * Creates a new notification queue with the passed in notification placed at

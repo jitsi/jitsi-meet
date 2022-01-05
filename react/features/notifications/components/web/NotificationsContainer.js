@@ -161,7 +161,8 @@ class NotificationsContainer extends Component<Props> {
      *
      * @inheritdoc
      */
-    componentDidUpdate() {
+    componentDidUpdate(prevProps) {
+        console.log(prevProps, this.props)
         this._updateTimeouts();
     }
 
@@ -259,7 +260,7 @@ class NotificationsContainer extends Component<Props> {
         const { _notifications } = this.props;
 
         for (const notification of _notifications) {
-            if (!this._timeouts.has(notification.uid)) {
+            if (!this._timeouts.has(notification.uid) && notification.timeout) {
 
                 const {
                     timeout,
