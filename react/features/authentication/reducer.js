@@ -1,4 +1,4 @@
-/* @flow */
+// @flow
 
 import { assign, ReducerRegistry } from '../base/redux';
 
@@ -10,6 +10,14 @@ import {
     WAIT_FOR_OWNER
 } from './actionTypes';
 
+/**
+ * Listens for actions which change the state of the authentication feature.
+ *
+ * @param {Object} state - The Redux state of the authentication feature.
+ * @param {Object} action - Action object.
+ * @param {string} action.type - Type of action.
+ * @returns {Object}
+ */
 ReducerRegistry.register('features/authentication', (state = {}, action) => {
     switch (action.type) {
     case CANCEL_LOGIN:

@@ -21,20 +21,20 @@ type Props = BaseProps & {
 }
 
 /**
- * Abstract dialog to submit something. E.g. a confirmation or a form.
+ * Abstract dialog to submit something. E.g. A confirmation or a form.
  */
 class BaseSubmitDialog<P: Props, S: *> extends BaseDialog<P, S> {
     /**
      * Returns the title key of the submit button.
      *
-     * NOTE: Please do not change this, this should be consistent accross the
-     * application. This method is here to be able to be overriden ONLY by the
+     * NOTE: Please do not change this, this should be consistent across the
+     * application. This method is here to be able to be overridden ONLY by the
      * {@code ConfirmDialog}.
      *
      * @returns {string}
      */
     _getSubmitButtonKey() {
-        return 'dialog.Ok';
+        return this.props.okKey || 'dialog.Ok';
     }
 
     /**
@@ -84,16 +84,16 @@ class BaseSubmitDialog<P: Props, S: *> extends BaseDialog<P, S> {
 
     _onSubmit: () => boolean;
 
-    _renderHTML: string => Object | string
+    _renderHTML: string => Object | string;
 
-    /**
+    /** .
      * Renders the actual content of the dialog defining what is about to be
-     * submitted. E.g. a simple confirmation (text, properly wrapped) or a
+     * submitted. E.g. A simple confirmation (text, properly wrapped) or a
      * complex form.
      *
      * @returns {Object}
      */
-    _renderSubmittable: () => Object
+    _renderSubmittable: () => Object;
 }
 
 export default BaseSubmitDialog;

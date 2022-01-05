@@ -33,6 +33,10 @@
     return self;
 }
 
+- (void)invalidate {
+    [_bridge invalidate];
+}
+
 #pragma mark helper methods for getting the packager URL
 
 #if DEBUG

@@ -2,8 +2,9 @@
 
 import md5 from 'js-md5';
 
-import { setCalendarEvents } from './actions';
 import { APP_LINK_SCHEME, parseURIString } from '../base/util';
+
+import { setCalendarEvents } from './actions';
 import { MAX_LIST_LENGTH } from './constants';
 
 const ALLDAY_EVENT_LENGTH = 23 * 60 * 60 * 1000;
@@ -72,7 +73,7 @@ export function _updateCalendarEntries(events: Array<Object>) {
 
                 // XXX Eventually, given that the URL and the title are the
                 // same, what sets one event apart from another is the start
-                // time of the day (note the use of toTimeString() bellow)! The
+                // time of the day (note the use of toTimeString() below)! The
                 // day itself is not important because we don't want multiple
                 // occurrences of a recurring event or repetitions of an even
                 // from multiple calendars.

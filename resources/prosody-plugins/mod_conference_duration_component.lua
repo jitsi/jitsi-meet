@@ -28,7 +28,7 @@ function occupant_joined(event)
     if participant_count > 1 then
 
         if room.created_timestamp == nil then
-            room.created_timestamp = os.time(os.date("!*t")) * 1000; -- Lua provides UTC time in seconds, so convert to milliseconds
+            room.created_timestamp = os.time() * 1000; -- Lua provides UTC time in seconds, so convert to milliseconds
         end
 
         local body_json = {};

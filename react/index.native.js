@@ -1,23 +1,18 @@
 // @flow
 
-// FIXME The bundler-related (and the browser-related) polyfills were born at
-// the very early days of prototyping the execution of lib-jitsi-meet on
-// react-native. Today, the feature base/lib-jitsi-meet should not be
-// responsible for such polyfills because it is not the only feature relying on
-// them. Additionally, the polyfills are usually necessary earlier than the
-// execution of base/lib-jitsi-meet (which is understandable given that the
-// polyfills are globals). The remaining problem to be solved here is where to
-// collect the polyfills' files.
-import './features/base/lib-jitsi-meet/native/polyfills-bundler';
+// Apply all necessary polyfills as early as possible to make sure anything imported henceforth
+// sees them.
+import 'react-native-get-random-values';
+import './features/mobile/polyfills';
 
 import React, { PureComponent } from 'react';
 import { AppRegistry } from 'react-native';
 
-import { App } from './features/app';
-import { IncomingCallApp } from './features/mobile/incoming-call';
-
-// It's crucial that the native loggers are created ASAP, not to lose any data.
+import { App } from './features/app/components';
 import { _initLogging } from './features/base/logging/functions';
+import JitsiThemePaperProvider
+    from './features/base/ui/components/JitsiThemeProvider';
+import { IncomingCallApp } from './features/mobile/incoming-call';
 
 declare var __DEV__;
 
@@ -37,7 +32,7 @@ type Props = {
  * the JS/JSX source code). So create a wrapper React Component (class) around
  * features/app's App instead.
  *
- * @extends Component
+ * @augments Component
  */
 class Root extends PureComponent<Props> {
     /**
@@ -48,8 +43,10 @@ class Root extends PureComponent<Props> {
      */
     render() {
         return (
-            <App
-                { ...this.props } />
+            <JitsiThemePaperProvider>
+                <App
+                    { ...this.props } />
+            </JitsiThemePaperProvider>
         );
     }
 }

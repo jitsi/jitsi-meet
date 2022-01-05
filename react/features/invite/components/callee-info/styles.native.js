@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import { ColorPalette, createStyleSheet } from '../../../base/styles';
 
 export default createStyleSheet({
-    // XXX The names bellow were preserved for the purposes of compatibility
+    // XXX The names below were preserved for the purposes of compatibility
     // with the existing CSS class names on Web.
 
     /**

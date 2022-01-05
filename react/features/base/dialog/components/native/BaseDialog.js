@@ -2,6 +2,7 @@
 
 import React from 'react';
 import {
+    KeyboardAvoidingView,
     Text,
     TouchableOpacity,
     TouchableWithoutFeedback,
@@ -10,11 +11,11 @@ import {
 
 import { Icon, IconClose } from '../../../icons';
 import { StyleType } from '../../../styles';
-
 import AbstractDialog, {
     type Props as AbstractProps,
     type State
 } from '../AbstractDialog';
+
 import { brandedDialog as styles } from './styles';
 
 export type Props = AbstractProps & {
@@ -49,31 +50,36 @@ class BaseDialog<P: Props, S: State> extends AbstractDialog<P, S> {
      * @returns {ReactElement}
      */
     render() {
-        const { _dialogStyles, style } = this.props;
+        const { _dialogStyles, style, t, titleKey } = this.props;
 
         return (
             <TouchableWithoutFeedback>
-                <View
+                <KeyboardAvoidingView
+                    behavior = 'height'
                     style = { [
-                        styles.overlay,
-                        style
+                        styles.overlay
                     ] }>
                     <View
                         pointerEvents = 'box-none'
                         style = { [
                             _dialogStyles.dialog,
-                            this.props.style
+                            style
                         ] }>
-                        <TouchableOpacity
-                            onPress = { this._onCancel }
-                            style = { styles.closeWrapper }>
-                            <Icon
-                                src = { IconClose }
-                                style = { _dialogStyles.closeStyle } />
-                        </TouchableOpacity>
+                        <View style = { styles.headerWrapper }>
+                            <Text style = { styles.dialogTitle }>
+                                { titleKey ? t(titleKey) : ' ' }
+                            </Text>
+                            <TouchableOpacity
+                                onPress = { this._onCancel }
+                                style = { styles.closeWrapper }>
+                                <Icon
+                                    src = { IconClose }
+                                    style = { _dialogStyles.closeStyle } />
+                            </TouchableOpacity>
+                        </View>
                         { this._renderContent() }
                     </View>
-                </View>
+                </KeyboardAvoidingView>
             </TouchableWithoutFeedback>
         );
     }
@@ -87,7 +93,7 @@ class BaseDialog<P: Props, S: State> extends AbstractDialog<P, S> {
      *
      * @returns {ReactElement}
      */
-    _renderContent: () => Object
+    _renderContent: () => Object;
 
     /**
      * Renders a specific {@code string} which may contain HTML.

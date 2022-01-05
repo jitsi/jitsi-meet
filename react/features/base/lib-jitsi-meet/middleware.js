@@ -2,12 +2,13 @@
 
 import { SET_CONFIG } from '../config';
 import { setLoggingConfig } from '../logging';
+import { SET_NETWORK_INFO } from '../net-info';
 import { PARTICIPANT_LEFT } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 
 import JitsiMeetJS from './_';
-import { disposeLib, initLib } from './actions';
 import { LIB_WILL_INIT } from './actionTypes';
+import { disposeLib, initLib } from './actions';
 
 declare var APP: Object;
 
@@ -29,6 +30,12 @@ MiddlewareRegistry.register(store => next => action => {
         if (typeof APP !== 'undefined') {
             _setErrorHandlers();
         }
+        break;
+
+    case SET_NETWORK_INFO:
+        JitsiMeetJS.setNetworkInfo({
+            isOnline: action.isOnline
+        });
         break;
 
     case PARTICIPANT_LEFT:
@@ -97,8 +104,10 @@ function _setErrorHandlers() {
 
         // eslint-disable-next-line max-params
         window.onerror = (message, source, lineno, colno, error) => {
-            JitsiMeetJS.getGlobalOnErrorHandler(
-                message, source, lineno, colno, error);
+            const errMsg = message || (error && error.message);
+            const stack = error && error.stack;
+
+            JitsiMeetJS.getGlobalOnErrorHandler(errMsg, source, lineno, colno, stack);
 
             if (oldOnErrorHandler) {
                 oldOnErrorHandler(message, source, lineno, colno, error);
@@ -108,8 +117,14 @@ function _setErrorHandlers() {
         const oldOnUnhandledRejection = window.onunhandledrejection;
 
         window.onunhandledrejection = function(event) {
-            JitsiMeetJS.getGlobalOnErrorHandler(
-                null, null, null, null, event.reason);
+            let message = event.reason;
+            let stack = 'n/a';
+
+            if (event.reason instanceof Error) {
+                ({ message, stack } = event.reason);
+            }
+
+            JitsiMeetJS.getGlobalOnErrorHandler(message, null, null, null, stack);
 
             if (oldOnUnhandledRejection) {
                 oldOnUnhandledRejection(event);

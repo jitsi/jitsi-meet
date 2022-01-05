@@ -1,0 +1,62 @@
+.settings-button-container {
+    position: relative;
+
+    .toolbox-icon {
+        align-items: center;
+        border-radius: 3px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+
+        &.disabled, .disabled & {
+            cursor: initial;
+            color: #929292;
+            background-color: #36383c;
+
+            &:hover {
+                background-color: #36383c;
+            }
+        }
+    }
+}
+
+.settings-button-small-icon {
+    background: #36383C;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 0px 0px 1px rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    cursor: pointer;
+    padding: 4px;
+    position: absolute;
+    right: -4px;
+    top: -3px;
+
+   &:hover {
+        background: #F2F3F4;
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 0px 0px 1px rgba(0, 0, 0, 0.1);
+
+        &> svg {
+            fill: #000;
+        }
+
+        &.settings-button-small-icon--disabled {
+            background: #36383C;
+
+            &> svg {
+               fill: #929292;
+           }
+        }
+    }
+
+    &> svg {
+        fill: #fff;
+    }
+
+    &--disabled {
+        background-color: #36383c;
+        cursor: default;
+
+        &> svg {
+            fill: #929292;
+        }
+    }
+}

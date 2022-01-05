@@ -24,7 +24,7 @@ type Props = {
  * Displays an error message stating no room name was specified to fetch dial-in
  * numbers for.
  *
- * @extends Component
+ * @augments Component
  */
 class NoRoomError extends Component<Props> {
     /**

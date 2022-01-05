@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Jitsi Meet</string>
+    <string name="restriction_server_url_description">URL of Jitsi Meet server instance to connect to</string>
+    <string name="restriction_server_url_title">Server URL</string>
 </resources>

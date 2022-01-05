@@ -4,12 +4,7 @@ import React, { Fragment } from 'react';
 
 import { BaseApp } from '../../base/app';
 import { toURLString } from '../../base/util';
-import '../../follow-me';
 import { OverlayContainer } from '../../overlay';
-
-import '../../base/lastn'; // Register lastN middleware
-import '../../rejoin'; // Enable rejoin analytics
-
 import { appNavigate } from '../actions';
 import { getDefaultURL } from '../functions';
 
@@ -78,7 +73,7 @@ export class AbstractApp extends BaseApp<Props, *> {
     }
 
     /**
-     * Creates an extra {@link ReactElement}s to be added (unconditionaly)
+     * Creates an extra {@link ReactElement}s to be added (unconditionally)
      * alongside the main element.
      *
      * @abstract

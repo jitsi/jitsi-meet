@@ -24,11 +24,6 @@ Type: password
 _Description: Jicofo user password:
  The secret used to connect to xmpp server as jicofo user.
 
-Template: jicofo/jicofosecret
-Type: password
-_Description: Jicofo Component secret:
- The secret used to connect to xmpp server as component
-
 Template: jitsi-meet-prosody/turn-secret
 Type: string
 _Description: The turn server secret

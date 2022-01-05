@@ -1,7 +1,9 @@
+// @flow
+
+import { DrawerActions } from '@react-navigation/native';
 import React from 'react';
 import {
     Animated,
-    Keyboard,
     SafeAreaView,
     TextInput,
     TouchableHighlight,
@@ -9,60 +11,86 @@ import {
     View
 } from 'react-native';
 
-import { getName } from '../../app';
-
+import { getName } from '../../app/functions';
 import { ColorSchemeRegistry } from '../../base/color-scheme';
 import { translate } from '../../base/i18n';
-import { Icon, IconMenu } from '../../base/icons';
-import { MEDIA_TYPE } from '../../base/media';
-import { Header, LoadingIndicator, Text } from '../../base/react';
+import { Icon, IconMenu, IconWarning } from '../../base/icons';
+import JitsiStatusBar from '../../base/modal/components/JitsiStatusBar';
+import { LoadingIndicator, Text } from '../../base/react';
 import { connect } from '../../base/redux';
-import { ColorPalette } from '../../base/styles';
-import {
-    createDesiredLocalTracks,
-    destroyLocalTracks
-} from '../../base/tracks';
-import { DialInSummary } from '../../invite';
-import { SettingsView } from '../../settings';
-
-import { setSideBarVisible } from '../actions';
+import BaseTheme from '../../base/ui/components/BaseTheme.native';
 
 import {
     AbstractWelcomePage,
-    _mapStateToProps as _abstractMapStateToProps
+    _mapStateToProps as _abstractMapStateToProps,
+    type Props as AbstractProps
 } from './AbstractWelcomePage';
-import LocalVideoTrackUnderlay from './LocalVideoTrackUnderlay';
-import styles, { PLACEHOLDER_TEXT_COLOR } from './styles';
 import VideoSwitch from './VideoSwitch';
-import WelcomePageLists from './WelcomePageLists';
-import WelcomePageSideBar from './WelcomePageSideBar';
+import WelcomePageTabs from './WelcomePageTabs';
+import styles, { PLACEHOLDER_TEXT_COLOR } from './styles';
+
+
+type Props = AbstractProps & {
+
+    /**
+     * The color schemed style of the Header component.
+     */
+    _headerStyles: Object,
+
+    /**
+     * Default prop for navigating between screen components(React Navigation).
+     */
+    navigation: Object,
+
+    /**
+     * Default prop for navigating between screen components(React Navigation).
+     */
+    route: Object,
+
+    /**
+     * The translate function.
+     */
+    t: Function
+};
 
 /**
  * The native container rendering the welcome page.
  *
- * @extends AbstractWelcomePage
+ * @augments AbstractWelcomePage
  */
-class WelcomePage extends AbstractWelcomePage {
+class WelcomePage extends AbstractWelcomePage<*> {
     /**
      * Constructor of the Component.
      *
      * @inheritdoc
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
+        // $FlowExpectedError
         this.state._fieldFocused = false;
+
+        // $FlowExpectedError
         this.state.hintBoxAnimation = new Animated.Value(0);
 
         // Bind event handlers so they are only bound once per instance.
         this._onFieldFocusChange = this._onFieldFocusChange.bind(this);
-        this._onShowSideBar = this._onShowSideBar.bind(this);
         this._renderHintBox = this._renderHintBox.bind(this);
 
         // Specially bind functions to avoid function definition on render.
         this._onFieldBlur = this._onFieldFocusChange.bind(this, false);
         this._onFieldFocus = this._onFieldFocusChange.bind(this, true);
     }
+
+    _onFieldBlur: () => void;
+
+    _onFieldFocus: () => void;
+
+    _onJoin: () => void;
+
+    _onRoomChange: (string) => void;
+
+    _updateRoomname: () => void;
 
     /**
      * Implements React's {@link Component#componentDidMount()}. Invoked
@@ -75,19 +103,30 @@ class WelcomePage extends AbstractWelcomePage {
     componentDidMount() {
         super.componentDidMount();
 
-        const { dispatch } = this.props;
+        this._updateRoomname();
 
-        if (this.props._settings.startAudioOnly) {
-            dispatch(destroyLocalTracks());
-        } else {
-            // Make sure we don't request the permission for the camera from
-            // the start. We will, however, create a video track iff the user
-            // already granted the permission.
-            navigator.permissions.query({ name: 'camera' }).then(response => {
-                response === 'granted'
-                    && dispatch(createDesiredLocalTracks(MEDIA_TYPE.VIDEO));
-            });
-        }
+        const {
+            _headerStyles,
+            navigation
+        } = this.props;
+
+        navigation.setOptions({
+            headerLeft: () => (
+                <TouchableOpacity
+                    /* eslint-disable-next-line react/jsx-no-bind */
+                    onPress = { () =>
+                        navigation.dispatch(DrawerActions.openDrawer()) }
+                    style = { styles.drawerNavigationIcon }>
+                    <Icon
+                        size = { 20 }
+                        src = { IconMenu }
+                        style = { _headerStyles.headerButtonIcon } />
+                </TouchableOpacity>
+            ),
+            // eslint-disable-next-line react/no-multi-comp
+            headerRight: () =>
+                <VideoSwitch />
+        });
     }
 
     /**
@@ -117,6 +156,28 @@ class WelcomePage extends AbstractWelcomePage {
     }
 
     /**
+     * Renders the insecure room name warning.
+     *
+     * @inheritdoc
+     */
+    _doRenderInsecureRoomNameWarning() {
+        return (
+            <View
+                style = { [
+                    styles.messageContainer,
+                    styles.insecureRoomNameWarningContainer
+                ] }>
+                <Icon
+                    src = { IconWarning }
+                    style = { styles.insecureRoomNameWarningIcon } />
+                <Text style = { styles.insecureRoomNameWarningText }>
+                    { this.props.t('security.insecureRoomNameWarning') }
+                </Text>
+            </View>
+        );
+    }
+
+    /**
      * Constructs a style array to handle the hint box animation.
      *
      * @private
@@ -124,12 +185,16 @@ class WelcomePage extends AbstractWelcomePage {
      */
     _getHintBoxStyle() {
         return [
+            styles.messageContainer,
             styles.hintContainer,
             {
+                // $FlowExpectedError
                 opacity: this.state.hintBoxAnimation
             }
         ];
     }
+
+    _onFieldFocusChange: (boolean) => void;
 
     /**
      * Callback for when the room field's focus changes so the hint box
@@ -140,35 +205,42 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {void}
      */
     _onFieldFocusChange(focused) {
-        focused
-            && this.setState({
-                _fieldFocused: true
+        if (focused) {
+            // Stop placeholder animation.
+            // $FlowExpectedError
+            this._clearTimeouts();
+            this.setState({
+                _fieldFocused: true,
+                roomPlaceholder: ''
             });
+        } else {
+            // Restart room placeholder animation.
+            this._updateRoomname();
+        }
 
         Animated.timing(
+
+            // $FlowExpectedError
             this.state.hintBoxAnimation,
+
+            // $FlowExpectedError
             {
                 duration: 300,
                 toValue: focused ? 1 : 0
             })
             .start(animationState =>
+
+                // $FlowExpectedError
                 animationState.finished
-                    && !focused
+
+                // $FlowExpectedError
+                && !focused
                     && this.setState({
                         _fieldFocused: false
                     }));
     }
 
-    /**
-     * Toggles the side bar.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onShowSideBar() {
-        Keyboard.dismiss();
-        this.props.dispatch(setSideBarVisible(true));
-    }
+    _renderHintBox: () => React$Element<any>;
 
     /**
      * Renders the hint box if necessary.
@@ -177,9 +249,10 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {React$Node}
      */
     _renderHintBox() {
-        if (this.state._fieldFocused) {
-            const { t } = this.props;
+        const { t } = this.props;
 
+        // $FlowExpectedError
+        if (this.state._fieldFocused) {
             return (
                 <Animated.View style = { this._getHintBoxStyle() }>
                     <View style = { styles.hintTextContainer } >
@@ -227,20 +300,13 @@ class WelcomePage extends AbstractWelcomePage {
             );
         }
 
-
-        const buttonDisabled = this._isJoinDisabled();
-
         return (
             <TouchableHighlight
                 accessibilityLabel =
                     { t('welcomepage.accessibilityLabel.join') }
-                disabled = { buttonDisabled }
                 onPress = { this._onJoin }
-                style = { [
-                    styles.button,
-                    buttonDisabled ? styles.buttonDisabled : null
-                ] }
-                underlayColor = { ColorPalette.white }>
+                style = { styles.button }
+                underlayColor = { BaseTheme.palette.ui12 }>
                 { children }
             </TouchableHighlight>
         );
@@ -253,50 +319,49 @@ class WelcomePage extends AbstractWelcomePage {
      */
     _renderFullUI() {
         const roomnameAccLabel = 'welcomepage.accessibilityLabel.roomname';
-        const { _headerStyles, t } = this.props;
+        const { t } = this.props;
 
         return (
-            <LocalVideoTrackUnderlay style = { styles.welcomePage }>
-                <View style = { _headerStyles.page }>
-                    <Header style = { styles.header }>
-                        <TouchableOpacity onPress = { this._onShowSideBar } >
-                            <Icon
-                                src = { IconMenu }
-                                style = { _headerStyles.headerButtonIcon } />
-                        </TouchableOpacity>
-                        <VideoSwitch />
-                    </Header>
+            <>
+                <JitsiStatusBar />
+                <View style = { styles.welcomePage }>
                     <SafeAreaView style = { styles.roomContainer } >
                         <View style = { styles.joinControls } >
+                            <Text style = { styles.enterRoomText }>
+                                { t('welcomepage.roomname') }
+                            </Text>
+                            {/* // $FlowExpectedError*/}
                             <TextInput
                                 accessibilityLabel = { t(roomnameAccLabel) }
-                                autoCapitalize = 'none'
-                                autoComplete = 'off'
+                                autoCapitalize = { 'none' }
+                                autoComplete = { 'off' }
                                 autoCorrect = { false }
                                 autoFocus = { false }
                                 onBlur = { this._onFieldBlur }
                                 onChangeText = { this._onRoomChange }
                                 onFocus = { this._onFieldFocus }
                                 onSubmitEditing = { this._onJoin }
-                                placeholder = { t('welcomepage.roomname') }
-                                placeholderTextColor = {
-                                    PLACEHOLDER_TEXT_COLOR
-                                }
+                                placeholder = { this.state.roomPlaceholder }
+                                placeholderTextColor = { PLACEHOLDER_TEXT_COLOR }
                                 returnKeyType = { 'go' }
+                                spellCheck = { false }
                                 style = { styles.textInput }
                                 underlineColorAndroid = 'transparent'
                                 value = { this.state.room } />
+                            {
+
+                                // $FlowExpectedError
+                                this._renderInsecureRoomNameWarning()
+                            }
                             {
                                 this._renderHintBox()
                             }
                         </View>
                     </SafeAreaView>
-                    <WelcomePageLists disabled = { this.state._fieldFocused } />
-                    <SettingsView />
-                    <DialInSummary />
+                    {/* // $FlowExpectedError*/}
+                    <WelcomePageTabs disabled = { this.state._fieldFocused } />
                 </View>
-                <WelcomePageSideBar />
-            </LocalVideoTrackUnderlay>
+            </>
         );
     }
 

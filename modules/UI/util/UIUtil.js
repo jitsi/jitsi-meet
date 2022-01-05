@@ -6,13 +6,6 @@
 const UIUtil = {
 
     /**
-     * Returns the available video width.
-     */
-    getAvailableVideoWidth() {
-        return window.innerWidth;
-    },
-
-    /**
      * Escapes the given text.
      */
     escapeHtml(unsafeText) {
@@ -27,12 +20,15 @@ const UIUtil = {
      */
     prependChild(container, newChild) {
         const firstChild = container.childNodes[0];
+        let result;
 
         if (firstChild) {
-            container.insertBefore(newChild, firstChild);
+            result = container.insertBefore(newChild, firstChild);
         } else {
-            container.appendChild(newChild);
+            result = container.appendChild(newChild);
         }
+
+        return result;
     },
 
     /**
@@ -41,7 +37,7 @@ const UIUtil = {
      * @param {string} url - The redirect URL.
      * NOTE: Currently used to redirect to 3rd party location for
      * authentication. In most cases redirectWithStoredParams action must be
-     * used instead of this method in order to preserve curent URL params.
+     * used instead of this method in order to preserve current URL params.
      */
     redirect(url) {
         window.location.href = url;

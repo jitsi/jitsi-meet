@@ -13,7 +13,7 @@ export type Item = {
     avatar: ?string,
 
     /**
-     * the color base of the avatar
+     * The color base of the avatar.
      */
     colorBase: string,
 
@@ -28,46 +28,46 @@ export type Item = {
     id: Object | string,
 
     /**
-     * Item title
+     * Item title.
      */
     title: string,
 
     /**
-     * Item url
+     * Item url.
      */
     url: string,
 
     /**
-     * lines[0] - date
+     * Lines[0] - date
      * lines[1] - duration
-     * lines[2] - server name
+     * lines[2] - server name.
      */
     lines: Array<string>
 }
 
 /**
- * web implementation of section data for NavigateSectionList
+ * Web implementation of section data for NavigateSectionList.
  */
 export type Section = {
 
     /**
-     * section title
+     * Section title.
      */
     title: string,
 
     /**
-     * unique key for the section
+     * Unique key for the section.
      */
     key?: string,
 
     /**
-     * Array of items in the section
+     * Array of items in the section.
      */
     data: $ReadOnlyArray<Item>,
 
     /**
      * Optional properties added only to fix some flow errors thrown by React
-     * SectionList
+     * SectionList.
      */
     ItemSeparatorComponent?: ?ComponentType<any>,
 
@@ -78,12 +78,12 @@ export type Section = {
 }
 
 /**
- * native implementation of section data for NavigateSectionList
+ * Native implementation of section data for NavigateSectionList.
  *
  * When react-native's SectionList component parses through an array of sections
  * it passes the section nested within the section property of another object
  * to the renderSection method (on web for our own implementation of SectionList
- * this nesting is not implemented as there is no need for nesting)
+ * this nesting is not implemented as there is no need for nesting).
  */
 export type SetionListSection = {
     section: Section

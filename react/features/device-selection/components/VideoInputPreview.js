@@ -27,7 +27,7 @@ type Props = {
  * React component for displaying video. This component defers to lib-jitsi-meet
  * logic for rendering the video.
  *
- * @extends Component
+ * @augments Component
  */
 class VideoInputPreview extends Component<Props> {
     /**
@@ -45,6 +45,7 @@ class VideoInputPreview extends Component<Props> {
             <div className = { className }>
                 <Video
                     className = 'video-input-preview-display flipVideoX'
+                    playsinline = { true }
                     videoTrack = {{ jitsiTrack: this.props.track }} />
                 <div className = 'video-input-preview-error'>
                     { error || '' }

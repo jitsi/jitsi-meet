@@ -2,12 +2,12 @@
 
 import { Share } from 'react-native';
 
-import { getName } from '../app';
+import { getName } from '../app/functions';
 import { MiddlewareRegistry } from '../base/redux';
 import { getShareInfoText } from '../invite';
 
-import { endShareRoom } from './actions';
 import { BEGIN_SHARE_ROOM } from './actionTypes';
+import { endShareRoom } from './actions';
 import logger from './logger';
 
 /**

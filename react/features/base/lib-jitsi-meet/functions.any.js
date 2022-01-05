@@ -1,6 +1,7 @@
 // @flow
 
 import { toState } from '../redux';
+
 import JitsiMeetJS from './_';
 
 const JitsiConferenceErrors = JitsiMeetJS.errors.conference;
@@ -12,9 +13,12 @@ const JitsiConnectionErrors = JitsiMeetJS.errors.connection;
  * @param {string} type - The media type of track being created. Expected values
  * are "video" or "audio".
  * @param {string} deviceId - The id of the target media source.
+ * @param {number} [timeout] - A timeout for the JitsiMeetJS.createLocalTracks function call.
+ * @param {Object} additionalOptions - Extra options to be passed to lib-jitsi-meet's {@code createLocalTracks}.
+ *
  * @returns {Promise<JitsiLocalTrack>}
  */
-export function createLocalTrack(type: string, deviceId: string) {
+export function createLocalTrack(type: string, deviceId: string, timeout: ?number, additionalOptions: ?Object) {
     return (
         JitsiMeetJS.createLocalTracks({
             cameraDeviceId: deviceId,
@@ -23,7 +27,9 @@ export function createLocalTrack(type: string, deviceId: string) {
             // eslint-disable-next-line camelcase
             firefox_fake_device:
                 window.config && window.config.firefox_fake_device,
-            micDeviceId: deviceId
+            micDeviceId: deviceId,
+            timeout,
+            ...additionalOptions
         })
             .then(([ jitsiLocalTrack ]) => jitsiLocalTrack));
 }
@@ -39,7 +45,7 @@ export function createLocalTrack(type: string, deviceId: string) {
 export function isAnalyticsEnabled(stateful: Function | Object) {
     const { disableThirdPartyRequests, analytics = {} } = toState(stateful)['features/base/config'];
 
-    return !disableThirdPartyRequests && !analytics.disabled;
+    return !(disableThirdPartyRequests || analytics.disabled);
 }
 
 /**
@@ -64,6 +70,7 @@ export function isFatalJitsiConferenceError(error: Object | string) {
     return (
         error === JitsiConferenceErrors.FOCUS_DISCONNECTED
             || error === JitsiConferenceErrors.FOCUS_LEFT
+            || error === JitsiConferenceErrors.ICE_FAILED
             || error === JitsiConferenceErrors.OFFER_ANSWER_FAILED
             || error === JitsiConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE);
 }

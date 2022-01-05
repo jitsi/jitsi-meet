@@ -13,7 +13,6 @@ import { _abstractMapStateToProps } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import { connect } from '../../../../base/redux';
 import { StyleType } from '../../../../base/styles';
-
 import { YOUTUBE_LIVE_DASHBOARD_URL } from '../constants';
 
 import styles, { ACTIVE_OPACITY, TOUCHABLE_UNDERLAY } from './styles';
@@ -156,7 +155,7 @@ class StreamKeyPicker extends Component<Props, State> {
         Linking.openURL(YOUTUBE_LIVE_DASHBOARD_URL);
     }
 
-    _onStreamPick: string => Function
+    _onStreamPick: string => Function;
 
     /**
      * Callback to be invoked when the user picks a stream from the list.

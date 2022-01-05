@@ -43,8 +43,19 @@ export const SET_CONFIG = 'SET_CONFIG';
  * and the passed object.
  *
  * {
- *     type: _UPDATE_CONFIG,
+ *     type: UPDATE_CONFIG,
  *     config: Object
  * }
  */
-export const _UPDATE_CONFIG = '_UPDATE_CONFIG';
+export const UPDATE_CONFIG = 'UPDATE_CONFIG';
+
+/**
+ * The redux action which overwrites configurations represented by the feature
+ * base/config. The passed on config values overwrite the current values for given props.
+ *
+ * {
+ *     type: OVERWRITE_CONFIG,
+ *     config: Object
+ * }
+ */
+export const OVERWRITE_CONFIG = 'OVERWRITE_CONFIG';

@@ -31,18 +31,26 @@ case "$1" in
 
     purge)
         db_get jitsi-meet-prosody/jvb-hostname
-        JVB_HOSTNAME=$RET
+        JVB_HOSTNAME=$(echo "$RET" | xargs echo -n)
         if [ -n "$RET" ]; then
             rm -f /etc/prosody/conf.avail/$JVB_HOSTNAME.cfg.lua
             rm -f /etc/prosody/conf.d/$JVB_HOSTNAME.cfg.lua
 
+            JICOFO_AUTH_DOMAIN="auth.$JVB_HOSTNAME"
             # clean up generated certificates
             rm -f /etc/prosody/certs/$JVB_HOSTNAME.crt
             rm -f /etc/prosody/certs/$JVB_HOSTNAME.key
-            rm -f /etc/prosody/certs/auth.$JVB_HOSTNAME.crt
-            rm -f /etc/prosody/certs/auth.$JVB_HOSTNAME.key
-            rm -rf /var/lib/prosody/auth.$JVB_HOSTNAME.*
+            rm -f /etc/prosody/certs/$JICOFO_AUTH_DOMAIN.crt
+            rm -f /etc/prosody/certs/$JICOFO_AUTH_DOMAIN.key
+            rm -rf /var/lib/prosody/$JICOFO_AUTH_DOMAIN.*
             rm -rf /var/lib/prosody/$JVB_HOSTNAME.*
+
+            # clean created users, replace '.' with '%2e', replace '-' with '%2d'
+            rm -rf /var/lib/prosody/`echo $JICOFO_AUTH_DOMAIN | sed -e "s/\./%2e/g"| sed -e "s/-/%2d/g"`
+
+            # clean the prosody cert from the trust store
+            rm -rf /usr/local/share/ca-certificates/$JICOFO_AUTH_DOMAIN.*
+            update-ca-certificates -f
         fi
 
         # Clear the debconf variable

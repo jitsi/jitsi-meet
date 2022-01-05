@@ -99,6 +99,7 @@ public abstract class BaseReactView<ListenerT>
      * The listener (e.g. {@link JitsiMeetViewListener}) instance for reporting
      * events occurring in Jitsi Meet.
      */
+    @Deprecated
     private ListenerT listener;
 
     /**
@@ -167,6 +168,7 @@ public abstract class BaseReactView<ListenerT>
      *
      * @return The listener set on this {@code BaseReactView}.
      */
+    @Deprecated
     public ListenerT getListener() {
         return listener;
     }
@@ -179,8 +181,10 @@ public abstract class BaseReactView<ListenerT>
      * @param data - The details of the event associated with/specific to the
      * specified {@code name}.
      */
+    @Deprecated
     protected abstract void onExternalAPIEvent(String name, ReadableMap data);
 
+    @Deprecated
     protected void onExternalAPIEvent(
             Map<String, Method> listenerMethods,
             String name, ReadableMap data) {
@@ -215,6 +219,7 @@ public abstract class BaseReactView<ListenerT>
      *
      * @param listener The listener to set on this {@code BaseReactView}.
      */
+    @Deprecated
     public void setListener(ListenerT listener) {
         this.listener = listener;
     }

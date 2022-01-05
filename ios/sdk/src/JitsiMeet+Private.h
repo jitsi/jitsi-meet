@@ -16,11 +16,13 @@
 
 #import <React/RCTBridge.h>
 
+#import "ExternalAPI.h"
 #import "JitsiMeet.h"
 
 @interface JitsiMeet ()
 
 - (NSDictionary *)getDefaultProps;
 - (RCTBridge *)getReactBridge;
+- (ExternalAPI *)getExternalAPI;
 
 @end

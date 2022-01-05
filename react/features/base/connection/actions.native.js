@@ -3,11 +3,8 @@
 import _ from 'lodash';
 import type { Dispatch } from 'redux';
 
-import {
-    conferenceLeft,
-    conferenceWillLeave,
-    getCurrentConference
-} from '../conference';
+import { conferenceLeft, conferenceWillLeave } from '../conference/actions';
+import { getCurrentConference } from '../conference/functions';
 import JitsiMeetJS, { JitsiConnectionEvents } from '../lib-jitsi-meet';
 import {
     getBackendSafeRoomName,
@@ -83,12 +80,8 @@ export function connect(id: ?string, password: ?string) {
         const state = getState();
         const options = _constructOptions(state);
         const { locationURL } = state['features/base/connection'];
-        const { issuer, jwt } = state['features/base/jwt'];
-        const connection
-            = new JitsiMeetJS.JitsiConnection(
-                options.appId,
-                jwt && issuer && issuer !== 'anonymous' ? jwt : undefined,
-                options);
+        const { jwt } = state['features/base/jwt'];
+        const connection = new JitsiMeetJS.JitsiConnection(options.appId, jwt, options);
 
         connection[JITSI_CONNECTION_URL_KEY] = locationURL;
 
@@ -113,13 +106,12 @@ export function connect(id: ?string, password: ?string) {
          * Dispatches {@code CONNECTION_DISCONNECTED} action when connection is
          * disconnected.
          *
-         * @param {string} message - Disconnect reason.
          * @private
          * @returns {void}
          */
-        function _onConnectionDisconnected(message: string) {
+        function _onConnectionDisconnected() {
             unsubscribe();
-            dispatch(_connectionDisconnected(connection, message));
+            dispatch(connectionDisconnected(connection));
         }
 
         /**
@@ -187,19 +179,16 @@ export function connect(id: ?string, password: ?string) {
  *
  * @param {JitsiConnection} connection - The {@code JitsiConnection} which
  * disconnected.
- * @param {string} message - Error message.
  * @private
  * @returns {{
  *     type: CONNECTION_DISCONNECTED,
- *     connection: JitsiConnection,
- *     message: string
+ *     connection: JitsiConnection
  * }}
  */
-function _connectionDisconnected(connection: Object, message: string) {
+export function connectionDisconnected(connection: Object) {
     return {
         type: CONNECTION_DISCONNECTED,
-        connection,
-        message
+        connection
     };
 }
 
@@ -286,10 +275,17 @@ function _constructOptions(state) {
     // redux store.
     const options = _.cloneDeep(state['features/base/config']);
 
-    // Normalize the BOSH URL.
-    let { bosh } = options;
+    let { bosh, websocket } = options;
 
-    if (bosh) {
+    // TESTING: Only enable WebSocket for some percentage of users.
+    if (websocket) {
+        if ((Math.random() * 100) >= (options?.testing?.mobileXmppWsThreshold ?? 0)) {
+            websocket = undefined;
+        }
+    }
+
+    // Normalize the BOSH URL.
+    if (bosh && !websocket) {
         const { locationURL } = state['features/base/connection'];
 
         if (bosh.startsWith('//')) {
@@ -306,14 +302,24 @@ function _constructOptions(state) {
             // eslint-disable-next-line max-len
             bosh = `${protocol}//${host}${contextRoot || '/'}${bosh.substr(1)}`;
         }
+    }
 
-        // Append room to the URL's search.
-        const { room } = state['features/base/conference'];
+    // WebSocket is preferred over BOSH.
+    const serviceUrl = websocket || bosh;
 
-        room && (bosh += `?room=${getBackendSafeRoomName(room)}`);
+    logger.log(`Using service URL ${serviceUrl}`);
 
-        // FIXME Remove deprecated 'bosh' option assignment at some point.
-        options.serviceUrl = options.bosh = bosh;
+    // Append room to the URL's search.
+    const { room } = state['features/base/conference'];
+
+    if (serviceUrl && room) {
+        const roomName = getBackendSafeRoomName(room);
+
+        options.serviceUrl = `${serviceUrl}?room=${roomName}`;
+
+        if (options.websocketKeepAliveUrl) {
+            options.websocketKeepAliveUrl += `?room=${roomName}`;
+        }
     }
 
     return options;
@@ -378,7 +384,7 @@ export function disconnect() {
 }
 
 /**
- * Sets the location URL of the application, connecton, conference, etc.
+ * Sets the location URL of the application, connection, conference, etc.
  *
  * @param {URL} [locationURL] - The location URL of the application,
  * connection, conference, etc.

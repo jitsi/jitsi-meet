@@ -1,11 +1,11 @@
 // @flow
 
+import UIEvents from '../../../service/UI/UIEvents';
 import { getCurrentConference } from '../base/conference';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
-import UIEvents from '../../../service/UI/UIEvents';
 
 import { TOGGLE_DOCUMENT_EDITING } from './actionTypes';
-import { setDocumentEditingState, setDocumentUrl } from './actions';
+import { setDocumentUrl } from './actions';
 
 declare var APP: Object;
 
@@ -22,11 +22,7 @@ const ETHERPAD_COMMAND = 'etherpad';
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     switch (action.type) {
     case TOGGLE_DOCUMENT_EDITING: {
-        if (typeof APP === 'undefined') {
-            const { editing } = getState()['features/etherpad'];
-
-            dispatch(setDocumentEditingState(!editing));
-        } else {
+        if (typeof APP !== 'undefined') {
             APP.UI.emitEvent(UIEvents.ETHERPAD_CLICKED);
         }
         break;
@@ -38,7 +34,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
 /**
  * Set up state change listener to perform maintenance tasks when the conference
- * is left or failed, e.g. clear messages or close the chat modal if it's left
+ * is left or failed, e.g. Clear messages or close the chat modal if it's left
  * open.
  */
 StateListenerRegistry.register(

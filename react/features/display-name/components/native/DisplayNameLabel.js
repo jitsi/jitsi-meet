@@ -5,6 +5,7 @@ import { Text, View } from 'react-native';
 
 import {
     getLocalParticipant,
+    getParticipantById,
     getParticipantDisplayName,
     shouldRenderParticipantVideo
 } from '../../../base/participants';
@@ -65,13 +66,16 @@ class DisplayNameLabel extends Component<Props> {
 function _mapStateToProps(state: Object, ownProps: Props) {
     const { participantId } = ownProps;
     const localParticipant = getLocalParticipant(state);
+    const participant = getParticipantById(state, participantId);
+    const isFakeParticipant = participant && participant.isFakeParticipant;
 
     // Currently we only render the display name if it's not the local
     // participant and there is no video rendered for
     // them.
     const _render = Boolean(participantId)
-        && localParticipant.id !== participantId
-        && !shouldRenderParticipantVideo(state, participantId);
+        && localParticipant?.id !== participantId
+        && !shouldRenderParticipantVideo(state, participantId)
+        && !isFakeParticipant;
 
     return {
         _participantName:

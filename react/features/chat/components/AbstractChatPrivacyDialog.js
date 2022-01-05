@@ -2,8 +2,8 @@
 
 import { PureComponent } from 'react';
 
-import { sendMessage, setPrivateMessageRecipient } from '../actions';
 import { getParticipantById } from '../../base/participants';
+import { sendMessage, setPrivateMessageRecipient } from '../actions';
 
 type Props = {
 
@@ -33,7 +33,7 @@ type Props = {
     _onSetMessageRecipient: Function,
 
     /**
-     * The participant retreived from Redux by the participanrID prop.
+     * The participant retrieved from Redux by the participanrID prop.
      */
     _participant: Object
 };

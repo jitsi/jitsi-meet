@@ -1,0 +1,23 @@
+.notification-appear, .notification-enter {
+    opacity: 0;
+    position: relative;
+    left: -200px;
+    transition: all .2s !important; // !important needed to overwrite atlaskit default style
+
+    &-active {
+        opacity: 1;
+        left: 0;
+    }
+}
+
+.notification-exit {
+    opacity: 1;
+    position: relative;
+    left: 0;
+    transition: all .2s !important; // !important needed to overwrite atlaskit default style
+
+    &-active {
+        opacity: 0;
+        left: -200px;
+    }
+}

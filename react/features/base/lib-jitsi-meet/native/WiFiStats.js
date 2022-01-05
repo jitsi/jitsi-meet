@@ -1,4 +1,5 @@
 import { NativeModules } from 'react-native';
+
 import { getJitsiMeetGlobalNS } from '../../util';
 
 /**

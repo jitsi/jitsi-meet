@@ -117,7 +117,8 @@ const SECTION_LIST_STYLES = {
      * The top level container style of the list.
      */
     container: {
-        flex: 1
+        flex: 1,
+        width: '100%'
     },
 
     list: {
@@ -206,6 +207,11 @@ const SECTION_LIST_STYLES = {
 export const TINTED_VIEW_DEFAULT = {
     backgroundColor: ColorPalette.appBackground,
     opacity: 0.8
+};
+
+export const BASE_INDICATOR = {
+    alignItems: 'center',
+    justifyContent: 'center'
 };
 
 /**

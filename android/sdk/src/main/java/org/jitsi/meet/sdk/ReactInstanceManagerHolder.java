@@ -20,21 +20,20 @@ import android.app.Activity;
 
 import androidx.annotation.Nullable;
 
-import com.facebook.hermes.reactexecutor.HermesExecutorFactory;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;
-import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.common.LifecycleState;
 import com.facebook.react.devsupport.DevInternalSettings;
+import com.facebook.react.jscexecutor.JSCExecutorFactory;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.uimanager.ViewManager;
-import com.facebook.soloader.SoLoader;
-
 import com.oney.WebRTCModule.RTCVideoViewManager;
 import com.oney.WebRTCModule.WebRTCModule;
 
+import org.devio.rn.splashscreen.SplashScreenModule;
 import org.webrtc.SoftwareVideoDecoderFactory;
 import org.webrtc.SoftwareVideoEncoderFactory;
 import org.webrtc.audio.AudioDeviceModule;
@@ -68,6 +67,7 @@ class ReactInstanceManagerHolder {
                 new JavaScriptSandboxModule(reactContext),
                 new LocaleDetector(reactContext),
                 new LogBridgeModule(reactContext),
+                new SplashScreenModule(reactContext),
                 new PictureInPictureModule(reactContext),
                 new ProximityModule(reactContext),
                 new WiFiStatsModule(reactContext),
@@ -89,14 +89,6 @@ class ReactInstanceManagerHolder {
         options.setVideoEncoderFactory(new SoftwareVideoEncoderFactory());
 
         nativeModules.add(new WebRTCModule(reactContext, options));
-
-        try {
-            Class<?> amplitudeModuleClass = Class.forName("org.jitsi.meet.sdk.AmplitudeModule");
-            Constructor constructor = amplitudeModuleClass.getConstructor(ReactApplicationContext.class);
-            nativeModules.add((NativeModule)constructor.newInstance(reactContext));
-        } catch (Exception e) {
-            // Ignore any error, the module is not compiled when LIBRE_BUILD is enabled.
-        }
 
         return nativeModules;
     }
@@ -181,21 +173,30 @@ class ReactInstanceManagerHolder {
             return;
         }
 
-        SoLoader.init(activity, /* native exopackage */ false);
-
         List<ReactPackage> packages
             = new ArrayList<>(Arrays.asList(
-                new com.BV.LinearGradient.LinearGradientPackage(),
+                new com.reactnativecommunity.asyncstorage.AsyncStoragePackage(),
+                new com.ocetnik.timer.BackgroundTimerPackage(),
                 new com.calendarevents.CalendarEventsPackage(),
                 new com.corbt.keepawake.KCKeepAwakePackage(),
                 new com.facebook.react.shell.MainReactPackage(),
-                new com.horcrux.svg.SvgPackage(),
-                new com.ocetnik.timer.BackgroundTimerPackage(),
-                new com.reactnativecommunity.asyncstorage.AsyncStoragePackage(),
+                new com.reactnativecommunity.clipboard.ClipboardPackage(),
                 new com.reactnativecommunity.netinfo.NetInfoPackage(),
+                new com.oblador.performance.PerformancePackage(),
+                new com.reactnativecommunity.slider.ReactSliderPackage(),
+                new com.brentvatne.react.ReactVideoPackage(),
+                new com.swmansion.reanimated.ReanimatedPackage(),
+                new org.reactnative.maskedview.RNCMaskedViewPackage(),
                 new com.reactnativecommunity.webview.RNCWebViewPackage(),
+                new com.kevinresol.react_native_default_preference.RNDefaultPreferencePackage(),
+                new com.learnium.RNDeviceInfo.RNDeviceInfo(),
+                new com.swmansion.gesturehandler.react.RNGestureHandlerPackage(),
+                new org.linusu.RNGetRandomValuesPackage(),
                 new com.rnimmersive.RNImmersivePackage(),
+                new com.swmansion.rnscreens.RNScreensPackage(),
                 new com.zmxv.RNSound.RNSoundPackage(),
+                new com.th3rdwave.safeareacontext.SafeAreaContextPackage(),
+                new com.horcrux.svg.SvgPackage(),
                 new ReactPackageAdapter() {
                     @Override
                     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
@@ -207,6 +208,16 @@ class ReactInstanceManagerHolder {
                     }
                 }));
 
+        // AmplitudeReactNativePackage
+        try {
+            Class<?> amplitudePackageClass = Class.forName("com.amplitude.reactnative.AmplitudeReactNativePackage");
+            Constructor constructor = amplitudePackageClass.getConstructor();
+            packages.add((ReactPackage)constructor.newInstance());
+        } catch (Exception e) {
+            // Ignore any error, the module is not compiled when LIBRE_BUILD is enabled.
+        }
+
+        // RNGoogleSigninPackage
         try {
             Class<?> googlePackageClass = Class.forName("co.apptailor.googlesignin.RNGoogleSigninPackage");
             Constructor constructor = googlePackageClass.getConstructor();
@@ -215,8 +226,9 @@ class ReactInstanceManagerHolder {
             // Ignore any error, the module is not compiled when LIBRE_BUILD is enabled.
         }
 
-        // Use the Hermes JavaScript engine.
-        HermesExecutorFactory jsFactory = new HermesExecutorFactory();
+        // Keep on using JSC, the jury is out on Hermes.
+        JSCExecutorFactory jsFactory
+            = new JSCExecutorFactory("", "");
 
         reactInstanceManager
             = ReactInstanceManager.builder()

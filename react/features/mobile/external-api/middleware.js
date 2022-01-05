@@ -1,5 +1,11 @@
 // @flow
 
+import debounce from 'lodash/debounce';
+import { NativeEventEmitter, NativeModules } from 'react-native';
+
+import { ENDPOINT_TEXT_MESSAGE_NAME } from '../../../../modules/API/constants';
+import { appNavigate } from '../../app/actions';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app/actionTypes';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
@@ -8,26 +14,76 @@ import {
     JITSI_CONFERENCE_URL_KEY,
     SET_ROOM,
     forEachConference,
+    getCurrentConference,
     isRoomValid
 } from '../../base/conference';
-import { LOAD_CONFIG_ERROR } from '../../base/config';
 import {
     CONNECTION_DISCONNECTED,
-    CONNECTION_FAILED,
     JITSI_CONNECTION_CONFERENCE_KEY,
     JITSI_CONNECTION_URL_KEY,
     getURLWithoutParams
 } from '../../base/connection';
-import { MiddlewareRegistry } from '../../base/redux';
+import {
+    JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
+import { MEDIA_TYPE } from '../../base/media';
+import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
+import {
+    PARTICIPANT_JOINED,
+    PARTICIPANT_LEFT,
+    getParticipantById,
+    getRemoteParticipants,
+    getLocalParticipant
+} from '../../base/participants';
+import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';
+import { toggleScreensharing } from '../../base/tracks';
+import { OPEN_CHAT, CLOSE_CHAT } from '../../chat';
+import { openChat } from '../../chat/actions';
+import { sendMessage, setPrivateMessageRecipient, closeChat } from '../../chat/actions.any';
+import { SET_PAGE_RELOAD_OVERLAY_CANCELED } from '../../overlay/actionTypes';
+import { muteLocal } from '../../video-menu/actions';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 
+import { READY_TO_CLOSE } from './actionTypes';
+import { setParticipantsWithScreenShare } from './actions';
 import { sendEvent } from './functions';
+import logger from './logger';
+
+/**
+ * Event which will be emitted on the native side when a chat message is received
+ * through the channel.
+ */
+const CHAT_MESSAGE_RECEIVED = 'CHAT_MESSAGE_RECEIVED';
+
+/**
+ * Event which will be emitted on the native side when the chat dialog is displayed/closed.
+ */
+const CHAT_TOGGLED = 'CHAT_TOGGLED';
 
 /**
  * Event which will be emitted on the native side to indicate the conference
  * has ended either by user request or because an error was produced.
  */
 const CONFERENCE_TERMINATED = 'CONFERENCE_TERMINATED';
+
+/**
+ * Event which will be emitted on the native side to indicate a message was received
+ * through the channel.
+ */
+const ENDPOINT_TEXT_MESSAGE_RECEIVED = 'ENDPOINT_TEXT_MESSAGE_RECEIVED';
+
+/**
+ * Event which will be emitted on the native side to indicate a participant togggles
+ * the screen share.
+ */
+const SCREEN_SHARE_TOGGLED = 'SCREEN_SHARE_TOGGLED';
+
+/**
+ * Event which will be emitted on the native side with the participant info array.
+ */
+const PARTICIPANTS_INFO_RETRIEVED = 'PARTICIPANTS_INFO_RETRIEVED';
+
+const { ExternalAPI } = NativeModules;
+const eventEmitter = new NativeEventEmitter(ExternalAPI);
 
 /**
  * Middleware that captures Redux actions and uses the ExternalAPI module to
@@ -37,10 +93,17 @@ const CONFERENCE_TERMINATED = 'CONFERENCE_TERMINATED';
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
+    const oldAudioMuted = store.getState()['features/base/media'].audio.muted;
     const result = next(action);
     const { type } = action;
 
     switch (type) {
+    case APP_WILL_MOUNT:
+        _registerForNativeEvents(store);
+        break;
+    case APP_WILL_UNMOUNT:
+        _unregisterForNativeEvents();
+        break;
     case CONFERENCE_FAILED: {
         const { error, ...data } = action;
 
@@ -62,10 +125,13 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case CONFERENCE_JOINED:
     case CONFERENCE_LEFT:
-    case CONFERENCE_WILL_JOIN:
         _sendConferenceEvent(store, action);
+        break;
+
+    case CONFERENCE_JOINED:
+        _sendConferenceEvent(store, action);
+        _registerForEndpointTextMessages(store);
         break;
 
     case CONNECTION_DISCONNECTED: {
@@ -89,35 +155,301 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case CONNECTION_FAILED:
-        !action.error.recoverable
-            && _sendConferenceFailedOnConnectionError(store, action);
-        break;
-
     case ENTER_PICTURE_IN_PICTURE:
         sendEvent(store, type, /* data */ {});
         break;
 
-    case LOAD_CONFIG_ERROR: {
-        const { error, locationURL } = action;
-
+    case OPEN_CHAT:
+    case CLOSE_CHAT: {
         sendEvent(
             store,
-            CONFERENCE_TERMINATED,
+            CHAT_TOGGLED,
             /* data */ {
-                error: _toErrorString(error),
-                url: _normalizeUrl(locationURL)
+                isOpen: action.type === OPEN_CHAT
             });
         break;
     }
 
+    case PARTICIPANT_JOINED:
+    case PARTICIPANT_LEFT: {
+        // Skip these events while not in a conference. SDK users can still retrieve them.
+        const { conference } = store.getState()['features/base/conference'];
+
+        if (!conference) {
+            break;
+        }
+
+        const { participant } = action;
+
+        sendEvent(
+            store,
+            action.type,
+            _participantToParticipantInfo(participant) /* data */
+        );
+        break;
+    }
+
+    case READY_TO_CLOSE:
+        sendEvent(store, type, /* data */ {});
+        break;
+
     case SET_ROOM:
         _maybeTriggerEarlyConferenceWillJoin(store, action);
+        break;
+
+    case SET_AUDIO_MUTED:
+        if (action.muted !== oldAudioMuted) {
+            sendEvent(
+                store,
+                'AUDIO_MUTED_CHANGED',
+                /* data */ {
+                    muted: action.muted
+                });
+        }
+        break;
+
+    case SET_PAGE_RELOAD_OVERLAY_CANCELED:
+        sendEvent(
+            store,
+            CONFERENCE_TERMINATED,
+            /* data */ {
+                error: _toErrorString(action.error),
+                url: _normalizeUrl(store.getState()['features/base/connection'].locationURL)
+            });
+
+        break;
+    case SET_VIDEO_MUTED:
+        sendEvent(
+            store,
+            'VIDEO_MUTED_CHANGED',
+            /* data */ {
+                muted: action.muted
+            });
         break;
     }
 
     return result;
 });
+
+/**
+ * Listen for changes to the known media tracks and look
+ * for updates to screen shares for emitting native events.
+ * The listener is debounced to avoid state thrashing that might occur,
+ * especially when switching in or out of p2p.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => state['features/base/tracks'],
+    /* listener */ debounce((tracks, store) => {
+        const oldScreenShares = store.getState()['features/mobile/external-api'].screenShares || [];
+        const newScreenShares = tracks
+            .filter(track => track.mediaType === 'video' && track.videoType === 'desktop')
+            .map(track => track.participantId);
+
+        oldScreenShares.forEach(participantId => {
+            if (!newScreenShares.includes(participantId)) {
+                sendEvent(
+                    store,
+                    SCREEN_SHARE_TOGGLED,
+                    /* data */ {
+                        participantId,
+                        sharing: false
+                    });
+            }
+        });
+
+        newScreenShares.forEach(participantId => {
+            if (!oldScreenShares.includes(participantId)) {
+                sendEvent(
+                    store,
+                    SCREEN_SHARE_TOGGLED,
+                    /* data */ {
+                        participantId,
+                        sharing: true
+                    });
+            }
+        });
+
+        store.dispatch(setParticipantsWithScreenShare(newScreenShares));
+
+    }, 100));
+
+/**
+ * Returns a participant info object based on the passed participant object from redux.
+ *
+ * @param {Participant} participant - The participant object from the redux store.
+ * @returns {Object} - The participant info object.
+ */
+function _participantToParticipantInfo(participant) {
+    return {
+        isLocal: participant.local,
+        email: participant.email,
+        name: participant.name,
+        participantId: participant.id,
+        displayName: participant.displayName,
+        avatarUrl: participant.avatarURL,
+        role: participant.role
+    };
+}
+
+/**
+ * Registers for events sent from the native side via NativeEventEmitter.
+ *
+ * @param {Store} store - The redux store.
+ * @private
+ * @returns {void}
+ */
+function _registerForNativeEvents(store) {
+    const { getState, dispatch } = store;
+
+    eventEmitter.addListener(ExternalAPI.HANG_UP, () => {
+        dispatch(appNavigate(undefined));
+    });
+
+    eventEmitter.addListener(ExternalAPI.SET_AUDIO_MUTED, ({ muted }) => {
+        dispatch(muteLocal(muted, MEDIA_TYPE.AUDIO));
+    });
+
+    eventEmitter.addListener(ExternalAPI.SET_VIDEO_MUTED, ({ muted }) => {
+        dispatch(muteLocal(muted, MEDIA_TYPE.VIDEO));
+    });
+
+    eventEmitter.addListener(ExternalAPI.SEND_ENDPOINT_TEXT_MESSAGE, ({ to, message }) => {
+        const conference = getCurrentConference(getState());
+
+        try {
+            conference && conference.sendEndpointMessage(to, {
+                name: ENDPOINT_TEXT_MESSAGE_NAME,
+                text: message
+            });
+        } catch (error) {
+            logger.warn('Cannot send endpointMessage', error);
+        }
+    });
+
+    eventEmitter.addListener(ExternalAPI.TOGGLE_SCREEN_SHARE, ({ enabled }) => {
+        dispatch(toggleScreensharing(enabled));
+    });
+
+    eventEmitter.addListener(ExternalAPI.RETRIEVE_PARTICIPANTS_INFO, ({ requestId }) => {
+
+        const participantsInfo = [];
+        const remoteParticipants = getRemoteParticipants(store);
+        const localParticipant = getLocalParticipant(store);
+
+        participantsInfo.push(_participantToParticipantInfo(localParticipant));
+        remoteParticipants.forEach(participant => {
+            if (!participant.isFakeParticipant) {
+                participantsInfo.push(_participantToParticipantInfo(participant));
+            }
+        });
+
+        sendEvent(
+            store,
+            PARTICIPANTS_INFO_RETRIEVED,
+            /* data */ {
+                participantsInfo,
+                requestId
+            });
+    });
+
+    eventEmitter.addListener(ExternalAPI.OPEN_CHAT, ({ to }) => {
+        const participant = getParticipantById(store, to);
+
+        dispatch(openChat(participant));
+    });
+
+    eventEmitter.addListener(ExternalAPI.CLOSE_CHAT, () => {
+        dispatch(closeChat());
+    });
+
+    eventEmitter.addListener(ExternalAPI.SEND_CHAT_MESSAGE, ({ message, to }) => {
+        const participant = getParticipantById(store, to);
+
+        if (participant) {
+            dispatch(setPrivateMessageRecipient(participant));
+        }
+
+        dispatch(sendMessage(message));
+    });
+
+}
+
+/**
+ * Unregister for events sent from the native side via NativeEventEmitter.
+ *
+ * @private
+ * @returns {void}
+ */
+function _unregisterForNativeEvents() {
+    eventEmitter.removeAllListeners(ExternalAPI.HANG_UP);
+    eventEmitter.removeAllListeners(ExternalAPI.SET_AUDIO_MUTED);
+    eventEmitter.removeAllListeners(ExternalAPI.SET_VIDEO_MUTED);
+    eventEmitter.removeAllListeners(ExternalAPI.SEND_ENDPOINT_TEXT_MESSAGE);
+    eventEmitter.removeAllListeners(ExternalAPI.TOGGLE_SCREEN_SHARE);
+    eventEmitter.removeAllListeners(ExternalAPI.RETRIEVE_PARTICIPANTS_INFO);
+    eventEmitter.removeAllListeners(ExternalAPI.OPEN_CHAT);
+    eventEmitter.removeAllListeners(ExternalAPI.CLOSE_CHAT);
+    eventEmitter.removeAllListeners(ExternalAPI.SEND_CHAT_MESSAGE);
+}
+
+/**
+ * Registers for endpoint messages sent on conference data channel.
+ *
+ * @param {Store} store - The redux store.
+ * @private
+ * @returns {void}
+ */
+function _registerForEndpointTextMessages(store) {
+    const conference = getCurrentConference(store.getState());
+
+    conference && conference.on(
+        JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
+        (...args) => {
+            if (args && args.length >= 2) {
+                const [ sender, eventData ] = args;
+
+                if (eventData.name === ENDPOINT_TEXT_MESSAGE_NAME) {
+                    sendEvent(
+                        store,
+                        ENDPOINT_TEXT_MESSAGE_RECEIVED,
+                        /* data */ {
+                            message: eventData.text,
+                            senderId: sender._id
+                        });
+                }
+            }
+        });
+
+    conference.on(
+        JitsiConferenceEvents.MESSAGE_RECEIVED,
+            (id, message, timestamp) => {
+                sendEvent(
+                    store,
+                    CHAT_MESSAGE_RECEIVED,
+                    /* data */ {
+                        senderId: id,
+                        message,
+                        isPrivate: false,
+                        timestamp
+                    });
+            }
+    );
+
+    conference.on(
+        JitsiConferenceEvents.PRIVATE_MESSAGE_RECEIVED,
+            (id, message, timestamp) => {
+                sendEvent(
+                    store,
+                    CHAT_MESSAGE_RECEIVED,
+                    /* data */ {
+                        senderId: id,
+                        message,
+                        isPrivate: true,
+                        timestamp
+                    });
+            }
+    );
+}
 
 /**
  * Returns a {@code String} representation of a specific error {@code Object}.
@@ -219,36 +551,6 @@ function _sendConferenceEvent(
 }
 
 /**
- * Sends {@link CONFERENCE_TERMINATED} event when the {@link CONNECTION_FAILED}
- * occurs. It should be done only if the connection fails before the conference
- * instance is created. Otherwise the eventual failure event is supposed to be
- * emitted by the base/conference feature.
- *
- * @param {Store} store - The redux store.
- * @param {Action} action - The redux action.
- * @returns {void}
- */
-function _sendConferenceFailedOnConnectionError(store, action) {
-    const { locationURL } = store.getState()['features/base/connection'];
-    const { connection } = action;
-
-    locationURL
-        && forEachConference(
-            store,
-
-            // If there's any conference in the  base/conference state then the
-            // base/conference feature is supposed to emit a failure.
-            conference => conference.getConnection() !== connection)
-        && sendEvent(
-        store,
-        CONFERENCE_TERMINATED,
-        /* data */ {
-            url: _normalizeUrl(locationURL),
-            error: action.error.name
-        });
-}
-
-/**
  * Determines whether to not send a {@code CONFERENCE_LEFT} event to the native
  * counterpart of the External API.
  *
@@ -297,11 +599,6 @@ function _swallowEvent(store, action, data) {
     switch (action.type) {
     case CONFERENCE_LEFT:
         return _swallowConferenceLeft(store, action, data);
-    case CONFERENCE_WILL_JOIN:
-        // CONFERENCE_WILL_JOIN is dispatched to the external API on SET_ROOM,
-        // before the connection is created, so we need to swallow the original
-        // one emitted by base/conference.
-        return true;
 
     default:
         return false;

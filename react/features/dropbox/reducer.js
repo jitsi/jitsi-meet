@@ -1,7 +1,6 @@
 // @flow
 
-import { ReducerRegistry } from '../base/redux';
-import { PersistenceRegistry } from '../base/storage';
+import { PersistenceRegistry, ReducerRegistry } from '../base/redux';
 
 import { UPDATE_DROPBOX_TOKEN } from './actionTypes';
 
@@ -20,7 +19,9 @@ ReducerRegistry.register(STORE_NAME, (state = {}, action) => {
     case UPDATE_DROPBOX_TOKEN:
         return {
             ...state,
-            token: action.token
+            token: action.token,
+            rToken: action.rToken,
+            expireDate: action.expireDate
         };
     default:
         return state;

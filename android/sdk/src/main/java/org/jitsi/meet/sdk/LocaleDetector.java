@@ -47,7 +47,7 @@ class LocaleDetector extends ReactContextBaseJavaModule {
     public Map<String, Object> getConstants() {
         Context context = getReactApplicationContext();
         HashMap<String,Object> constants = new HashMap<>();
-        constants.put("locale", context.getResources().getConfiguration().locale.toString());
+        constants.put("locale", context.getResources().getConfiguration().locale.toLanguageTag());
         return constants;
     }
 

@@ -7,6 +7,7 @@ import {
 import {
     ADD_PENDING_DEVICE_REQUEST,
     CHECK_AND_NOTIFY_FOR_NEW_DEVICE,
+    DEVICE_PERMISSIONS_CHANGED,
     NOTIFY_CAMERA_ERROR,
     NOTIFY_MIC_ERROR,
     REMOVE_PENDING_DEVICE_REQUESTS,
@@ -17,6 +18,7 @@ import {
 import {
     areDeviceLabelsInitialized,
     getDeviceIdByLabel,
+    getDeviceLabelById,
     getDevicesFromURL,
     setAudioOutputDeviceId
 } from './functions';
@@ -217,6 +219,39 @@ export function setAudioInputDevice(deviceId) {
 }
 
 /**
+ * Sets the audio input device id and updates the settings
+ * so they are persisted across sessions.
+ *
+ * @param {string} deviceId - The id of the new audio input device.
+ * @returns {Function}
+ */
+export function setAudioInputDeviceAndUpdateSettings(deviceId) {
+    return function(dispatch, getState) {
+        const deviceLabel = getDeviceLabelById(getState(), deviceId, 'audioInput');
+
+        dispatch(setAudioInputDevice(deviceId));
+        dispatch(updateSettings({
+            userSelectedMicDeviceId: deviceId,
+            userSelectedMicDeviceLabel: deviceLabel
+        }));
+    };
+}
+
+/**
+ * Updates the output device id.
+ *
+ * @param {string} deviceId - The id of the new output device.
+ * @returns {Function}
+ */
+export function setAudioOutputDevice(deviceId) {
+    return function(dispatch, getState) {
+        const deviceLabel = getDeviceLabelById(getState(), deviceId, 'audioOutput');
+
+        return setAudioOutputDeviceId(deviceId, dispatch, true, deviceLabel);
+    };
+}
+
+/**
  * Signals to update the currently used video input device.
  *
  * @param {string} deviceId - The id of the new video input device.
@@ -229,6 +264,25 @@ export function setVideoInputDevice(deviceId) {
     return {
         type: SET_VIDEO_INPUT_DEVICE,
         deviceId
+    };
+}
+
+/**
+ * Sets the video input device id and updates the settings
+ * so they are persisted across sessions.
+ *
+ * @param {string} deviceId - The id of the new video input device.
+ * @returns {Function}
+ */
+export function setVideoInputDeviceAndUpdateSettings(deviceId) {
+    return function(dispatch, getState) {
+        const deviceLabel = getDeviceLabelById(getState(), deviceId, 'videoInput');
+
+        dispatch(setVideoInputDevice(deviceId));
+        dispatch(updateSettings({
+            userSelectedCameraDeviceId: deviceId,
+            userSelectedCameraDeviceLabel: deviceLabel
+        }));
     };
 }
 
@@ -265,5 +319,21 @@ export function checkAndNotifyForNewDevice(newDevices, oldDevices) {
         type: CHECK_AND_NOTIFY_FOR_NEW_DEVICE,
         newDevices,
         oldDevices
+    };
+}
+
+/**
+ * Signals that the device permissions have changed.
+ *
+ * @param {Object} permissions - Object with the permissions.
+ * @returns {{
+ *      type: DEVICE_PERMISSIONS_CHANGED,
+ *      permissions: Object
+ * }}
+ */
+export function devicePermissionsChanged(permissions) {
+    return {
+        type: DEVICE_PERMISSIONS_CHANGED,
+        permissions
     };
 }

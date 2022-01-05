@@ -6,6 +6,10 @@ export const INDICATOR_COLOR = ColorPalette.lightGrey;
 
 export default {
 
+    headerArrowBack: {
+        marginLeft: 12
+    },
+
     indicatorWrapper: {
         alignItems: 'center',
         backgroundColor: ColorPalette.white,
@@ -13,12 +17,11 @@ export default {
         justifyContent: 'center'
     },
 
-    webView: {
+    sharedDocContainer: {
         flex: 1
     },
 
-    webViewWrapper: {
-        flex: 1,
-        flexDirection: 'column'
+    webView: {
+        backgroundColor: 'rgb(242, 242, 242)'
     }
 };

@@ -1,2 +1,0 @@
-import './middleware';
-import './reducer';

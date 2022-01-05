@@ -4,7 +4,6 @@ import React from 'react';
 
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-
 import AbstractPageReloadOverlay, {
     abstractMapStateToProps,
     type Props
@@ -30,12 +29,20 @@ class PageReloadOverlay extends AbstractPageReloadOverlay<Props> {
 
         return (
             <OverlayFrame isLightOverlay = { isNetworkFailure }>
-                <div className = 'inlay'>
+                <div
+                    aria-describedby = 'reload_overlay_text'
+                    aria-labelledby = 'reload_overlay_title'
+                    className = 'inlay'
+                    role = 'dialog'>
                     <span
-                        className = 'reload_overlay_title'>
+                        className = 'reload_overlay_title'
+                        id = 'reload_overlay_title'
+                        role = 'heading'>
                         { t(title) }
                     </span>
-                    <span className = 'reload_overlay_text'>
+                    <span
+                        className = 'reload_overlay_text'
+                        id = 'reload_overlay_text'>
                         { t(message, { seconds: timeLeft }) }
                     </span>
                     { this._renderProgressBar() }
@@ -45,9 +52,9 @@ class PageReloadOverlay extends AbstractPageReloadOverlay<Props> {
         );
     }
 
-    _renderButton: () => React$Element<*>
+    _renderButton: () => React$Element<*>;
 
-    _renderProgressBar: () => React$Element<*>
+    _renderProgressBar: () => React$Element<*>;
 }
 
 export default translate(connect(abstractMapStateToProps)(PageReloadOverlay));

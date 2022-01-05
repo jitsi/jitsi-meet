@@ -33,7 +33,7 @@ case "$1" in
     ;;
     purge)
         db_get jitsi-meet/jvb-hostname
-        JVB_HOSTNAME=$RET
+        JVB_HOSTNAME=$(echo "$RET" | xargs echo -n)
         if [ -n "$RET" ]; then
             rm -f /etc/jitsi/meet/$JVB_HOSTNAME-config.js
             rm -f /etc/nginx/sites-available/$JVB_HOSTNAME.conf

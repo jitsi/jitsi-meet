@@ -5,27 +5,30 @@ import React from 'react';
 import {
     ActivityIndicator,
     FlatList,
-    KeyboardAvoidingView,
-    Platform,
-    SafeAreaView,
-    TextInput,
     TouchableOpacity,
     View
 } from 'react-native';
+import { Text, TouchableRipple, withTheme } from 'react-native-paper';
 
 import { AlertDialog, openDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
-import { Icon, IconCancelSelection, IconCheck, IconClose, IconPhone, IconSearch } from '../../../../base/icons';
+import {
+    Icon,
+    IconCancelSelection,
+    IconCheck,
+    IconPhone,
+    IconSearch,
+    IconShare
+} from '../../../../base/icons';
+import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import {
     AvatarListItem,
-    HeaderWithNavigation,
-    SlidingView,
     type Item
 } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
-
-import { setAddPeopleDialogVisible } from '../../../actions.native';
-
+import ClearableInput from '../../../../participants-pane/components/native/ClearableInput';
+import { beginShareRoom } from '../../../../share-room';
+import { INVITE_TYPES } from '../../../constants';
 import AbstractAddPeopleDialog, {
     type Props as AbstractProps,
     type State as AbstractState,
@@ -45,12 +48,27 @@ type Props = AbstractProps & {
     _isVisible: boolean,
 
     /**
+     * Default prop for navigation between screen components(React Navigation).
+     */
+    navigation: Object,
+
+    /**
      * Function used to translate i18n labels.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * Theme used for styles.
+     */
+    theme: Object
 };
 
 type State = AbstractState & {
+
+    /**
+     * Boolean to show if an extra padding needs to be added to the bottom bar.
+     */
+    bottomPadding: boolean,
 
     /**
      * State variable to keep track of the search field value.
@@ -79,16 +97,12 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
     defaultState = {
         addToCallError: false,
         addToCallInProgress: false,
+        bottomPadding: false,
         fieldValue: '',
         inviteItems: [],
         searchInprogress: false,
         selectableItems: []
     };
-
-    /**
-     * Ref of the search field.
-     */
-    inputFieldRef: ?TextInput;
 
     /**
      * TimeoutID to delay the search for the time the user is probably typing.
@@ -110,11 +124,35 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         this._renderItem = this._renderItem.bind(this);
         this._renderSeparator = this._renderSeparator.bind(this);
         this._onClearField = this._onClearField.bind(this);
-        this._onCloseAddPeopleDialog = this._onCloseAddPeopleDialog.bind(this);
         this._onInvite = this._onInvite.bind(this);
         this._onPressItem = this._onPressItem.bind(this);
+        this._onShareMeeting = this._onShareMeeting.bind(this);
         this._onTypeQuery = this._onTypeQuery.bind(this);
-        this._setFieldRef = this._setFieldRef.bind(this);
+        this._renderShareMeetingButton = this._renderShareMeetingButton.bind(this);
+    }
+
+    /**
+     * Implements React's {@link Component#componentDidMount()}. Invoked
+     * immediately after this component is mounted.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidMount() {
+        const { navigation, t, theme } = this.props;
+        const { palette } = theme;
+
+        navigation.setOptions({
+            headerRight: () => (
+                <TouchableRipple
+                    disabled = { this._isAddDisabled() }
+                    rippleColor = { palette.screen01Header } >
+                    <Text style = { styles.headerSendInvite }>
+                        { t('inviteDialog.send') }
+                    </Text>
+                </TouchableRipple>
+            )
+        });
     }
 
     /**
@@ -123,6 +161,23 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
      * @inheritdoc
      */
     componentDidUpdate(prevProps) {
+        const { navigation, t, theme } = this.props;
+        const { palette } = theme;
+
+        navigation.setOptions({
+            // eslint-disable-next-line react/no-multi-comp
+            headerRight: () => (
+                <TouchableRipple
+                    disabled = { this._isAddDisabled() }
+                    onPress = { this._onInvite }
+                    rippleColor = { palette.screen01Header } >
+                    <Text style = { styles.headerSendInvite }>
+                        { t('inviteDialog.send') }
+                    </Text>
+                </TouchableRipple>
+            )
+        });
+
         if (prevProps._isVisible !== this.props._isVisible) {
             // Clear state
             this._clearState();
@@ -140,6 +195,8 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
             _dialOutEnabled
         } = this.props;
         const { inviteItems, selectableItems } = this.state;
+        const { theme } = this.props;
+        const { palette } = theme;
 
         let placeholderKey = 'searchPlaceholder';
 
@@ -150,64 +207,48 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         }
 
         return (
-            <SlidingView
-                onHide = { this._onCloseAddPeopleDialog }
-                position = 'bottom'
-                show = { this.props._isVisible } >
-                <HeaderWithNavigation
-                    forwardDisabled = { this._isAddDisabled() }
-                    forwardLabelKey = 'inviteDialog.send'
-                    headerLabelKey = 'inviteDialog.header'
-                    onPressBack = { this._onCloseAddPeopleDialog }
-                    onPressForward = { this._onInvite } />
-                <KeyboardAvoidingView
-                    behavior = 'padding'
-                    style = { styles.avoidingView }>
-                    <SafeAreaView style = { styles.dialogWrapper }>
-                        <View
-                            style = { styles.searchFieldWrapper }>
-                            <View style = { styles.searchIconWrapper }>
-                                { this.state.searchInprogress
-                                    ? <ActivityIndicator
-                                        color = { DARK_GREY }
-                                        size = 'small' />
-                                    : <Icon
-                                        src = { IconSearch }
-                                        style = { styles.searchIcon } />}
-                            </View>
-                            <TextInput
-                                autoCorrect = { false }
-                                autoFocus = { true }
-                                clearButtonMode = 'always' // iOS only
-                                onChangeText = { this._onTypeQuery }
-                                placeholder = {
-                                    this.props.t(`inviteDialog.${placeholderKey}`)
-                                }
-                                ref = { this._setFieldRef }
-                                style = { styles.searchField }
-                                value = { this.state.fieldValue } />
-                            { this._renderAndroidClearButton() }
-                        </View>
-                        { Boolean(inviteItems.length) && <View style = { styles.invitedList }>
-                            <FlatList
-                                data = { inviteItems }
-                                horizontal = { true }
-                                keyExtractor = { this._keyExtractor }
-                                keyboardShouldPersistTaps = 'always'
-                                renderItem = { this._renderInvitedItem } />
-                        </View> }
-                        <View style = { styles.resultList }>
-                            <FlatList
-                                ItemSeparatorComponent = { this._renderSeparator }
-                                data = { selectableItems }
-                                extraData = { inviteItems }
-                                keyExtractor = { this._keyExtractor }
-                                keyboardShouldPersistTaps = 'always'
-                                renderItem = { this._renderItem } />
-                        </View>
-                    </SafeAreaView>
-                </KeyboardAvoidingView>
-            </SlidingView>
+            <JitsiScreen
+                footerComponent = { this._renderShareMeetingButton }
+                style = { styles.addPeopleContainer }>
+                <ClearableInput
+                    autoFocus = { false }
+                    customStyles = {{
+                        wrapper: styles.searchFieldWrapper,
+                        input: styles.searchField,
+                        clearButton: styles.clearButton,
+                        clearIcon: styles.clearIcon
+                    }}
+                    onChange = { this._onTypeQuery }
+                    placeholder = { this.props.t(`inviteDialog.${placeholderKey}`) }
+                    placeholderColor = { palette.text04 }
+                    prefixComponent = { <View style = { styles.searchIconWrapper }>
+                        {this.state.searchInprogress
+                            ? <ActivityIndicator
+                                color = { DARK_GREY }
+                                size = 'small' />
+                            : <Icon
+                                src = { IconSearch }
+                                style = { styles.searchIcon } />}
+                    </View> }
+                    value = { this.state.fieldValue } />
+                { Boolean(inviteItems.length) && <View style = { styles.invitedList }>
+                    <FlatList
+                        data = { inviteItems }
+                        horizontal = { true }
+                        keyExtractor = { this._keyExtractor }
+                        keyboardShouldPersistTaps = 'always'
+                        renderItem = { this._renderInvitedItem } />
+                </View> }
+                <View style = { styles.resultList }>
+                    <FlatList
+                        ItemSeparatorComponent = { this._renderSeparator }
+                        data = { selectableItems }
+                        extraData = { inviteItems }
+                        keyExtractor = { this._keyExtractor }
+                        keyboardShouldPersistTaps = 'always'
+                        renderItem = { this._renderItem } />
+                </View>
+            </JitsiScreen>
         );
     }
 
@@ -230,13 +271,13 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         const { item } = flatListItem;
 
         switch (item.type) {
-        case 'phone':
+        case INVITE_TYPES.PHONE:
             return {
                 avatar: IconPhone,
                 key: item.number,
                 title: item.number
             };
-        case 'user':
+        case INVITE_TYPES.USER:
             return {
                 avatar: item.avatar,
                 key: item.id || item.user_id,
@@ -247,11 +288,11 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         }
     }
 
-    _invite: Array<Object> => Promise<Array<Object>>
+    _invite: Array<Object> => Promise<Array<Object>>;
 
     _isAddDisabled: () => boolean;
 
-    _keyExtractor: Object => string
+    _keyExtractor: Object => string;
 
     /**
      * Key extractor for the flatlist.
@@ -261,10 +302,10 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
      * @returns {string}
      */
     _keyExtractor(item) {
-        return item.type === 'user' ? item.id || item.user_id : item.number;
+        return item.type === INVITE_TYPES.USER ? item.id || item.user_id : item.number;
     }
 
-    _onClearField: () => void
+    _onClearField: () => void;
 
     /**
      * Callback to clear the text field.
@@ -280,24 +321,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         this._onTypeQuery('');
     }
 
-    _onCloseAddPeopleDialog: () => boolean
-
-    /**
-     * Closes the dialog.
-     *
-     * @returns {boolean}
-     */
-    _onCloseAddPeopleDialog() {
-        if (this.props._isVisible) {
-            this.props.dispatch(setAddPeopleDialogVisible(false));
-
-            return true;
-        }
-
-        return false;
-    }
-
-    _onInvite: () => void
+    _onInvite: () => void;
 
     /**
      * Invites the selected entries.
@@ -312,16 +336,14 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                         inviteItems: invitesLeftToSend
                     });
                     this._showFailedInviteAlert();
-                } else {
-                    this._onCloseAddPeopleDialog();
                 }
             });
     }
 
-    _onPressItem: Item => Function
+    _onPressItem: Item => Function;
 
     /**
-     * Function to preapre a callback for the onPress event of the touchable.
+     * Function to prepare a callback for the onPress event of the touchable.
      *
      * @param {Item} item - The item on which onPress was invoked.
      * @returns {Function}
@@ -329,7 +351,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
     _onPressItem(item) {
         return () => {
             const { inviteItems } = this.state;
-            const finderKey = item.type === 'phone' ? 'number' : 'user_id';
+            const finderKey = item.type === INVITE_TYPES.PHONE ? 'number' : 'user_id';
 
             if (inviteItems.find(
                     _.matchesProperty(finderKey, item[finderKey]))) {
@@ -349,7 +371,23 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         };
     }
 
-    _onTypeQuery: string => void
+    _onShareMeeting: () => void;
+
+    /**
+     * Shows the system share sheet to share the meeting information.
+     *
+     * @returns {void}
+     */
+    _onShareMeeting() {
+        if (this.state.inviteItems.length > 0) {
+            // The use probably intended to invite people.
+            this._onInvite();
+        } else {
+            this.props.dispatch(beginShareRoom());
+        }
+    }
+
+    _onTypeQuery: string => void;
 
     /**
      * Handles the typing event of the text field on the dialog and performs the
@@ -388,40 +426,13 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         .finally(() => {
             this.setState({
                 searchInprogress: false
-            }, () => {
-                this.inputFieldRef && this.inputFieldRef.focus();
             });
         });
     }
 
     _query: (string) => Promise<Array<Object>>;
 
-    /**
-     * Renders a button to clear the text field on Android.
-     *
-     * NOTE: For the best platform experience we use the native solution on iOS.
-     *
-     * @returns {React#Element<*>}
-     */
-    _renderAndroidClearButton() {
-        if (Platform.OS !== 'android' || !this.state.fieldValue.length) {
-            return null;
-        }
-
-        return (
-            <TouchableOpacity
-                onPress = { this._onClearField }
-                style = { styles.clearButton }>
-                <View style = { styles.clearIconContainer }>
-                    <Icon
-                        src = { IconClose }
-                        style = { styles.clearIcon } />
-                </View>
-            </TouchableOpacity>
-        );
-    }
-
-    _renderInvitedItem: Object => React$Element<any> | null
+    _renderInvitedItem: Object => React$Element<any> | null;
 
     /**
      * Renders a single item in the invited {@code FlatList}.
@@ -458,7 +469,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         );
     }
 
-    _renderItem: Object => React$Element<any> | null
+    _renderItem: Object => React$Element<any> | null;
 
     /**
      * Renders a single item in the search result {@code FlatList}.
@@ -479,10 +490,10 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         }
 
         switch (item.type) {
-        case 'phone':
+        case INVITE_TYPES.PHONE:
             selected = inviteItems.find(_.matchesProperty('number', item.number));
             break;
-        case 'user':
+        case INVITE_TYPES.USER:
             selected = item.id
                 ? inviteItems.find(_.matchesProperty('id', item.id))
                 : inviteItems.find(_.matchesProperty('user_id', item.user_id));
@@ -513,7 +524,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         );
     }
 
-    _renderSeparator: () => React$Element<*> | null
+    _renderSeparator: () => React$Element<*> | null;
 
     /**
      * Renders the item separator.
@@ -526,16 +537,29 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         );
     }
 
-    _setFieldRef: ?TextInput => void
+    _renderShareMeetingButton: () => React$Element<any>;
 
     /**
-     * Sets a reference to the input field for later use.
+     * Renders a button to share the meeting info.
      *
-     * @param {?TextInput} input - The reference to the input field.
-     * @returns {void}
+     * @returns {React#Element<*>}
      */
-    _setFieldRef(input) {
-        this.inputFieldRef = input;
+    _renderShareMeetingButton() {
+
+        return (
+            <View
+                style = { [
+                    styles.bottomBar,
+                    this.state.bottomPadding ? styles.extraBarPadding : null
+                ] }>
+                <TouchableOpacity
+                    onPress = { this._onShareMeeting }>
+                    <Icon
+                        src = { IconShare }
+                        style = { styles.shareIcon } />
+                </TouchableOpacity>
+            </View>
+        );
     }
 
     /**
@@ -566,9 +590,8 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
  */
 function _mapStateToProps(state: Object) {
     return {
-        ..._abstractMapStateToProps(state),
-        _isVisible: state['features/invite'].inviteDialogVisible
+        ..._abstractMapStateToProps(state)
     };
 }
 
-export default translate(connect(_mapStateToProps)(AddPeopleDialog));
+export default translate(connect(_mapStateToProps)(withTheme(AddPeopleDialog)));

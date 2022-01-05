@@ -11,7 +11,7 @@ const { LogBridge } = NativeModules;
 /**
  * Returns the stack trace for a given @code {Error} object.
  *
- * @param {Errror} e - The rrror.
+ * @param {Error} e - The error.
  * @returns {string} - The stack trace.
  */
 function stackToString(e) {
@@ -26,7 +26,7 @@ function stackToString(e) {
 }
 
 /**
- * Constructs a log transport object for use with jitsi-meet-logger.
+ * Constructs a log transport object for use with @jitsi/logger.
  *
  * @returns {Object} - The transport object.
  */

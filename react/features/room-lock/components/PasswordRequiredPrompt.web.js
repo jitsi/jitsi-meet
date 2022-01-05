@@ -8,7 +8,6 @@ import { setPassword } from '../../base/conference';
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
-
 import { _cancelPasswordRequiredPrompt } from '../actions';
 
 /**
@@ -105,7 +104,7 @@ class PasswordRequiredPrompt extends Component<Props, State> {
                     name = 'lockKey'
                     onChange = { this._onPasswordChanged }
                     shouldFitContainer = { true }
-                    type = 'text'
+                    type = 'password'
                     value = { this.state.password } />
             </div>
         );

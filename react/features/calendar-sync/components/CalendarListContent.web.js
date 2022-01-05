@@ -2,12 +2,12 @@
 
 import React, { Component } from 'react';
 
-import { appNavigate } from '../../app';
 import {
     createCalendarClickedEvent,
     createCalendarSelectedEvent,
     sendAnalytics
 } from '../../analytics';
+import { appNavigate } from '../../app/actions';
 import { MeetingsList } from '../../base/react';
 import { connect } from '../../base/redux';
 
@@ -109,7 +109,7 @@ class CalendarListContent extends Component<Props> {
     _onJoinPress(event, url) {
         event.stopPropagation();
 
-        this._onPress(url, 'calendar.meeting.join');
+        this._onPress(url, 'meeting.join');
     }
 
     _onPress: (string, ?string) => Function;
@@ -123,7 +123,7 @@ class CalendarListContent extends Component<Props> {
      * associated with this action.
      * @returns {void}
      */
-    _onPress(url, analyticsEventName = 'calendar.meeting.tile') {
+    _onPress(url, analyticsEventName = 'meeting.tile') {
         sendAnalytics(createCalendarClickedEvent(analyticsEventName));
 
         this.props.dispatch(appNavigate(url));

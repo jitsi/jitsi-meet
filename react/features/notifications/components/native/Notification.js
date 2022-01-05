@@ -5,7 +5,7 @@ import { Text, TouchableOpacity, View } from 'react-native';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconClose } from '../../../base/icons';
-
+import { replaceNonUnicodeEmojis } from '../../../chat/functions';
 import AbstractNotification, {
     type Props
 } from '../AbstractNotification';
@@ -13,9 +13,16 @@ import AbstractNotification, {
 import styles from './styles';
 
 /**
+ * Default value for the maxLines prop.
+ *
+ * @type {number}
+ */
+const DEFAULT_MAX_LINES = 1;
+
+/**
  * Implements a React {@link Component} to display a notification.
  *
- * @extends Component
+ * @augments Component
  */
 class Notification extends AbstractNotification<Props> {
     /**
@@ -25,9 +32,7 @@ class Notification extends AbstractNotification<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const {
-            isDismissAllowed
-        } = this.props;
+        const { isDismissAllowed } = this.props;
 
         return (
             <View
@@ -62,24 +67,29 @@ class Notification extends AbstractNotification<Props> {
      * @private
      */
     _renderContent() {
-        const { t, title, titleArguments, titleKey } = this.props;
+        const { maxLines = DEFAULT_MAX_LINES, t, title, titleArguments, titleKey, concatText } = this.props;
         const titleText = title || (titleKey && t(titleKey, titleArguments));
         const description = this._getDescription();
+        const titleConcat = [];
+
+        if (concatText) {
+            titleConcat.push(titleText);
+        }
 
         if (description && description.length) {
-            return description.map((line, index) => (
+            return [ ...titleConcat, ...description ].map((line, index) => (
                 <Text
                     key = { index }
-                    numberOfLines = { 1 }
+                    numberOfLines = { maxLines }
                     style = { styles.contentText }>
-                    { line }
+                    { replaceNonUnicodeEmojis(line) }
                 </Text>
             ));
         }
 
         return (
             <Text
-                numberOfLines = { 1 }
+                numberOfLines = { maxLines }
                 style = { styles.contentText } >
                 { titleText }
             </Text>

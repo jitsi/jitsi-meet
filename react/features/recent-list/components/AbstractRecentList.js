@@ -8,7 +8,7 @@ import {
     createRecentSelectedEvent,
     sendAnalytics
 } from '../../analytics';
-import { appNavigate } from '../../app';
+import { appNavigate } from '../../app/actions';
 import {
     AbstractPage,
     Container,
@@ -18,7 +18,7 @@ import {
 import styles from './styles';
 
 /**
- * The type of the React {@code Component} props of {@link AbstractRecentList}
+ * The type of the React {@code Component} props of {@link AbstractRecentList}.
  */
 type Props = {
 
@@ -71,13 +71,18 @@ export default class AbstractRecentList<P: Props> extends AbstractPage<P> {
      */
     _getRenderListEmptyComponent() {
         const { t } = this.props;
+        const descriptionId = 'meetings-list-empty-description';
 
         return (
             <Container
+                aria-describedby = { descriptionId }
+                aria-label = { t('welcomepage.recentList') }
                 className = 'meetings-list-empty'
+                role = 'region'
                 style = { styles.emptyListContainer }>
                 <Text
                     className = 'description'
+                    id = { descriptionId }
                     style = { styles.emptyListText }>
                     { t('welcomepage.recentListEmpty') }
                 </Text>
@@ -97,7 +102,7 @@ export default class AbstractRecentList<P: Props> extends AbstractPage<P> {
     _onPress(url) {
         const { dispatch } = this.props;
 
-        sendAnalytics(createRecentClickedEvent('recent.meeting.tile'));
+        sendAnalytics(createRecentClickedEvent('meeting.tile'));
 
         dispatch(appNavigate(url));
     }

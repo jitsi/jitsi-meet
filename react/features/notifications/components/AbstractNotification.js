@@ -13,14 +13,19 @@ export type Props = {
     appearance: string,
 
     /**
+     * Whether or not the title and description should be concatenated.
+     */
+    concatText?: boolean,
+
+    /**
      * Callback invoked when the custom button is clicked.
      */
-    customActionHandler: Function,
+    customActionHandler: Function[],
 
     /**
      * The text to display as button in the notification for the custom action.
      */
-    customActionNameKey: string,
+    customActionNameKey: string[],
 
     /**
      * The text to display in the body of the notification. If not passed
@@ -51,9 +56,20 @@ export type Props = {
     hideErrorSupportLink: boolean,
 
     /**
+     * The type of icon to be displayed. If not passed in, the appearance
+     * type will be used.
+     */
+    icon?: String,
+
+    /**
      * Whether or not the dismiss button should be displayed.
      */
     isDismissAllowed: boolean,
+
+    /**
+     * Maximum lines of the description.
+     */
+    maxLines: ?number,
 
     /**
      * Callback invoked when the user clicks to dismiss the notification.
@@ -85,13 +101,13 @@ export type Props = {
     /**
      * The unique identifier for the notification.
      */
-    uid: number
+    uid: string
 };
 
 /**
  * Abstract class for {@code Notification} component.
  *
- * @extends Component
+ * @augments Component
  */
 export default class AbstractNotification<P: Props> extends Component<P> {
     /**
@@ -117,7 +133,7 @@ export default class AbstractNotification<P: Props> extends Component<P> {
         this._onDismissed = this._onDismissed.bind(this);
     }
 
-    _getDescription: () => Array<string>
+    _getDescription: () => Array<string>;
 
     /**
      * Returns the description array to be displayed.
@@ -141,6 +157,18 @@ export default class AbstractNotification<P: Props> extends Component<P> {
         description && descriptionArray.push(description);
 
         return descriptionArray;
+    }
+
+    _getDescriptionKey: () => string;
+
+    /**
+     * Returns the description key that was used if any.
+     *
+     * @protected
+     * @returns {string}
+     */
+    _getDescriptionKey() {
+        return this.props.descriptionKey;
     }
 
     _onDismissed: () => void;

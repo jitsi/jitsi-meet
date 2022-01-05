@@ -4,7 +4,6 @@ import Tabs from '@atlaskit/tabs';
 import React, { Component } from 'react';
 
 import { translate } from '../../../i18n/functions';
-
 import logger from '../../logger';
 
 import StatelessDialog from './StatelessDialog';
@@ -78,7 +77,7 @@ type State = {
 /**
  * A React {@code Component} for displaying a dialog with tabs.
  *
- * @extends Component
+ * @augments Component
  */
 class DialogWithTabs extends Component<Props, State> {
     /**

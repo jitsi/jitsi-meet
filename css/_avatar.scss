@@ -1,7 +1,7 @@
 .avatar {
     background-color: #AAA;
     border-radius: 50%;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 1);
     font-weight: 100;
     object-fit: cover;
 
@@ -20,25 +20,9 @@
     }
 }
 
-.avatar-foreign {
-    align-items: center;
-    bottom: 0;
-    display: flex;
-    font-size: 40pt;
-    justify-content: center;
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
-}
-
 .avatar-svg {
     height: 100%;
     width: 100%;
-}
-
-.defaultAvatar {
-    opacity: 0.6
 }
 
 .avatar-badge {

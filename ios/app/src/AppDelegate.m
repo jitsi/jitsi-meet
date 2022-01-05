@@ -18,25 +18,15 @@
 #import "AppDelegate.h"
 #import "FIRUtilities.h"
 #import "Types.h"
+#import "ViewController.h"
 
-@import Crashlytics;
-@import Fabric;
 @import Firebase;
-@import JitsiMeet;
-
+@import JitsiMeetSDK;
 
 @implementation AppDelegate
 
 -             (BOOL)application:(UIApplication *)application
   didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-
-    // Initialize Crashlytics and Firebase if a valid GoogleService-Info.plist file was provided.
-    if ([FIRUtilities appContainsRealServiceInfoPlist]) {
-        NSLog(@"Enablign Crashlytics and Firebase");
-        [FIRApp configure];
-        [Fabric with:@[[Crashlytics class]]];
-    }
-
     JitsiMeet *jitsiMeet = [JitsiMeet sharedInstance];
 
     jitsiMeet.conferenceActivityType = JitsiMeetConferenceActivityType;
@@ -44,8 +34,10 @@
     jitsiMeet.universalLinkDomains = @[@"meet.jit.si", @"alpha.jitsi.net", @"beta.meet.jit.si"];
 
     jitsiMeet.defaultConferenceOptions = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
+        [builder setFeatureFlag:@"welcomepage.enabled" withBoolean:YES];
+        [builder setFeatureFlag:@"resolution" withValue:@(360)];
+        [builder setFeatureFlag:@"ios.screensharing.enabled" withBoolean:YES];
         builder.serverURL = [NSURL URLWithString:@"https://meet.jit.si"];
-        builder.welcomePageEnabled = YES;
 
         // Apple rejected our app because they claim requiring a
         // Dropbox account for recording is not acceptable.
@@ -54,9 +46,27 @@
 #endif
     }];
 
-    [jitsiMeet application:application didFinishLaunchingWithOptions:launchOptions];
+  [jitsiMeet application:application didFinishLaunchingWithOptions:launchOptions];
+
+    // Initialize Crashlytics and Firebase if a valid GoogleService-Info.plist file was provided.
+  if ([FIRUtilities appContainsRealServiceInfoPlist]) {
+        NSLog(@"Enabling Firebase");
+        [FIRApp configure];
+        // Crashlytics defaults to disabled with the FirebaseCrashlyticsCollectionEnabled Info.plist key.
+        [[FIRCrashlytics crashlytics] setCrashlyticsCollectionEnabled:![jitsiMeet isCrashReportingDisabled]];
+    }
+
+    ViewController *rootController = (ViewController *)self.window.rootViewController;
+    [jitsiMeet showSplashScreen:rootController.view];
 
     return YES;
+}
+
+- (void) applicationWillTerminate:(UIApplication *)application {
+    NSLog(@"Application will terminate!");
+    // Try to leave the current meeting graceefully.
+    ViewController *rootController = (ViewController *)self.window.rootViewController;
+    [rootController terminate];
 }
 
 #pragma mark Linking delegate methods

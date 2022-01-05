@@ -1,9 +1,10 @@
 // @flow
 
 import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
-import { BoxModel, ColorPalette } from '../../../base/styles';
+import { BoxModel } from '../../../base/styles';
+import BaseTheme from '../../../base/ui/components/BaseTheme';
 
-const BUTTON_SIZE = 50;
+const BUTTON_SIZE = 48;
 
 // Toolbox, toolbar:
 
@@ -11,17 +12,14 @@ const BUTTON_SIZE = 50;
  * The style of toolbar buttons.
  */
 const toolbarButton = {
-    backgroundColor: schemeColor('button'),
-    borderRadius: BUTTON_SIZE / 2,
+    borderRadius: 3,
     borderWidth: 0,
     flex: 0,
     flexDirection: 'row',
     height: BUTTON_SIZE,
     justifyContent: 'center',
-
-    // XXX We probably tested BoxModel.margin and discovered it to be too small
-    // for our taste.
-    marginHorizontal: 7,
+    marginHorizontal: 6,
+    marginTop: 6,
     width: BUTTON_SIZE
 };
 
@@ -30,37 +28,50 @@ const toolbarButton = {
  */
 const toolbarButtonIcon = {
     alignSelf: 'center',
-    color: ColorPalette.darkGrey,
-    fontSize: 22
+    color: BaseTheme.palette.icon04,
+    fontSize: 24
 };
 
-/**
- * The style of toolbar buttons which display white icons.
- */
-const whiteToolbarButton = {
-    ...toolbarButton,
-    backgroundColor: schemeColor('buttonToggled')
-};
 
 /**
  * The icon style of toolbar buttons which display white icons.
  */
 const whiteToolbarButtonIcon = {
     ...toolbarButtonIcon,
-    color: ColorPalette.white
+    color: BaseTheme.palette.icon01
+};
+
+/**
+ * The style of reaction buttons.
+ */
+const reactionButton = {
+    ...toolbarButton,
+    backgroundColor: 'transparent',
+    alignItems: 'center',
+    marginTop: 0,
+    marginHorizontal: 0
+};
+
+/**
+ * The style of the emoji on the reaction buttons.
+ */
+const reactionEmoji = {
+    fontSize: 20,
+    color: BaseTheme.palette.icon01
+};
+
+const reactionMenu = {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: BaseTheme.palette.bottomSheet,
+    padding: 16
 };
 
 /**
  * The Toolbox and toolbar related styles.
  */
 const styles = {
-
-    expandMenuContainer: {
-        alignItems: 'center',
-        borderTopLeftRadius: 16,
-        borderTopRightRadius: 16,
-        flexDirection: 'column'
-    },
 
     sheetGestureRecognizer: {
         alignItems: 'stretch',
@@ -70,21 +81,28 @@ const styles = {
     /**
      * The style of the toolbar.
      */
-    toolbar: {
+    toolbox: {
         alignItems: 'center',
+        backgroundColor: BaseTheme.palette.uiBackground,
+        borderTopLeftRadius: 3,
+        borderTopRightRadius: 3,
         flexDirection: 'row',
         flexGrow: 0,
-        justifyContent: 'center',
-        marginBottom: BoxModel.margin / 2,
-        paddingHorizontal: BoxModel.margin
+        justifyContent: 'space-between',
+        paddingHorizontal: BoxModel.margin,
+        paddingVertical: 8
     },
 
     /**
-     * The style of the root/top-level {@link Container} of {@link Toolbox}.
+     * The style of the root/top-level container of {@link Toolbox}.
      */
-    toolbox: {
+    toolboxContainer: {
         flexDirection: 'column',
-        flexGrow: 0
+        flexGrow: 0,
+        width: '100%',
+        maxWidth: 580,
+        marginLeft: 'auto',
+        marginRight: 'auto'
     }
 };
 
@@ -110,14 +128,8 @@ ColorSchemeRegistry.register('Toolbox', {
         }
     },
 
-    /**
-     * Overrides to the standard styles that we apply to the chat button, as
-     * that behaves slightly differently to other buttons.
-     */
-    chatButtonOverride: {
-        toggled: {
-            backgroundColor: ColorPalette.blue
-        }
+    backgroundToggle: {
+        backgroundColor: BaseTheme.palette.ui13
     },
 
     hangupButtonStyles: {
@@ -126,7 +138,68 @@ ColorSchemeRegistry.register('Toolbox', {
             ...toolbarButton,
             backgroundColor: schemeColor('hangup')
         },
-        underlayColor: ColorPalette.buttonUnderlay
+        underlayColor: BaseTheme.palette.underlay01
+    },
+
+    reactionDialog: {
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'transparent'
+    },
+
+    overflowReactionMenu: reactionMenu,
+
+    reactionMenu: {
+        ...reactionMenu,
+        borderRadius: 3,
+        width: 360
+    },
+
+    reactionRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '100%',
+        marginBottom: 16
+    },
+
+    reactionButton: {
+        style: reactionButton,
+        underlayColor: BaseTheme.palette.ui13,
+        emoji: reactionEmoji
+    },
+
+    raiseHandButton: {
+        style: {
+            ...reactionButton,
+            backgroundColor: BaseTheme.palette.ui13,
+            width: '100%',
+            borderRadius: 6
+        },
+        underlayColor: BaseTheme.palette.ui13,
+        emoji: reactionEmoji,
+        text: {
+            color: BaseTheme.palette.text01,
+            fontWeight: '600',
+            marginLeft: 8,
+            lineHeight: 24
+        },
+        container: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center'
+        }
+    },
+
+    emojiAnimation: {
+        color: BaseTheme.palette.icon01,
+        position: 'absolute',
+        zIndex: 1001,
+        elevation: 2,
+        fontSize: 20,
+        left: '50%',
+        top: '100%'
     },
 
     /**
@@ -135,9 +208,7 @@ ColorSchemeRegistry.register('Toolbox', {
     toggledButtonStyles: {
         iconStyle: whiteToolbarButtonIcon,
         style: {
-            ...whiteToolbarButton,
-            borderColor: schemeColor('buttonToggledBorder'),
-            borderWidth: 1
+            ...toolbarButton
         }
     }
 });

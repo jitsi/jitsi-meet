@@ -1,0 +1,43 @@
+.embed-meeting {
+    &-dialog {
+        display: flex;
+        flex-direction: column;
+    }
+
+    &-copy {
+        color: white;
+        font-size: 15px;
+        margin-left: auto;
+        margin-top: 16px;
+        width: auto;
+    }
+
+    &-code {
+        background: transparent;
+        border: 1px solid #A4B8D1;
+        color: white;
+        font-size: 15px;
+        height: 165px;
+        line-height: 24px;
+        padding: 8px;
+        width: 100%;
+        resize: vertical;
+    }
+
+    &-trigger {
+        display: flex;
+        align-items: center;
+        padding: 8px 8px 8px 16px;
+        margin-top: 24px;
+        width: calc(100% - 24px);
+        height: 24px;
+        background: #2A3A4B;
+        border: 1px solid #5E6D7A;
+        border-radius: 4px;
+        cursor: pointer;
+
+        .jitsi-icon {
+            margin-right: 20px;
+        }
+    }
+}

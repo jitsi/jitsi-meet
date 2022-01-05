@@ -1,11 +1,12 @@
 // @flow
 
-import { StateListenerRegistry } from '../base/redux';
 import { getCurrentConference } from '../base/conference';
 import {
     getPinnedParticipant,
     isLocalParticipantModerator
 } from '../base/participants';
+import { StateListenerRegistry } from '../base/redux';
+import { shouldDisplayTileView } from '../video-layout/functions';
 
 import { FOLLOW_ME_COMMAND } from './constants';
 
@@ -35,8 +36,8 @@ StateListenerRegistry.register(
  * Subscribes to changes to the shared document (etherpad) visibility in the
  * user interface of the local participant.
  *
- * @param sharedDocumentVisible {Boolean} {true} if the shared document was
- * shown (as a result of the toggle) or {false} if it was hidden
+ * @param sharedDocumentVisible - {Boolean} {true} If the shared document was
+ * shown (as a result of the toggle) or {false} if it was hidden.
  */
 StateListenerRegistry.register(
     /* selector */ state => state['features/etherpad'].editing,
@@ -72,7 +73,7 @@ function _getFollowMeState(state) {
         filmstripVisible: state['features/filmstrip'].visible,
         nextOnStage: pinnedParticipant && pinnedParticipant.id,
         sharedDocumentVisible: state['features/etherpad'].editing,
-        tileViewEnabled: state['features/video-layout'].tileViewEnabled
+        tileViewEnabled: shouldDisplayTileView(state)
     };
 }
 

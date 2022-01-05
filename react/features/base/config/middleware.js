@@ -1,11 +1,16 @@
 // @flow
 
+import { jitsiLocalStorage } from '@jitsi/js-utils';
+
 import { APP_WILL_MOUNT } from '../app';
+import { getFeatureFlag } from '../flags/functions';
 import { addKnownDomains } from '../known-domains';
 import { MiddlewareRegistry } from '../redux';
+import { updateSettings } from '../settings';
 import { parseURIString } from '../util';
 
-import { _UPDATE_CONFIG, SET_CONFIG } from './actionTypes';
+import { SET_CONFIG, OVERWRITE_CONFIG } from './actionTypes';
+import { updateConfig } from './actions';
 import { _CONFIG_STORE_PREFIX } from './constants';
 
 /**
@@ -22,6 +27,9 @@ MiddlewareRegistry.register(store => next => action => {
 
     case SET_CONFIG:
         return _setConfig(store, next, action);
+
+    case OVERWRITE_CONFIG:
+        return _updateSettings(store, next, action);
     }
 
     return next(action);
@@ -51,31 +59,28 @@ function _appWillMount(store, next, action) {
     // consequently, the feature known-domains, it's possible for the feature
     // base/config to know of domains which the feature known-domains is yet to
     // discover.
-    const { localStorage } = window;
 
-    if (localStorage) {
-        const prefix = `${_CONFIG_STORE_PREFIX}/`;
-        const knownDomains = [];
+    const prefix = `${_CONFIG_STORE_PREFIX}/`;
+    const knownDomains = [];
 
-        for (let i = 0; /* localStorage.key(i) */; ++i) {
-            const key = localStorage.key(i);
+    for (let i = 0; /* localStorage.key(i) */; ++i) {
+        const key = jitsiLocalStorage.key(i);
 
-            if (key) {
-                let baseURL;
+        if (key) {
+            let baseURL;
 
-                if (key.startsWith(prefix)
-                        && (baseURL = key.substring(prefix.length))) {
-                    const uri = parseURIString(baseURL);
-                    let host;
+            if (key.startsWith(prefix)
+                    && (baseURL = key.substring(prefix.length))) {
+                const uri = parseURIString(baseURL);
+                let host;
 
-                    uri && (host = uri.host) && knownDomains.push(host);
-                }
-            } else {
-                break;
+                uri && (host = uri.host) && knownDomains.push(host);
             }
+        } else {
+            break;
         }
-        knownDomains.length && store.dispatch(addKnownDomains(knownDomains));
     }
+    knownDomains.length && store.dispatch(addKnownDomains(knownDomains));
 
     return result;
 }
@@ -108,10 +113,19 @@ function _setConfig({ dispatch, getState }, next, action) {
         config.p2p = { enabled: !settings.disableP2P };
     }
 
-    dispatch({
-        type: _UPDATE_CONFIG,
-        config
-    });
+    const resolutionFlag = getFeatureFlag(state, 'resolution');
+
+    if (typeof resolutionFlag !== 'undefined') {
+        config.resolution = resolutionFlag;
+    }
+
+    if (action.config.doNotFlipLocalVideo === true) {
+        dispatch(updateSettings({
+            localFlipX: false
+        }));
+    }
+
+    dispatch(updateConfig(config));
 
     // FIXME On Web we rely on the global 'config' variable which gets altered
     // multiple times, before it makes it to the reducer. At some point it may
@@ -123,4 +137,28 @@ function _setConfig({ dispatch, getState }, next, action) {
     }
 
     return result;
+}
+
+/**
+ * Updates settings based on some config values.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} in the specified {@code store}.
+ * @param {Action} action - The redux action which is being {@code dispatch}ed
+ * in the specified {@code store}.
+ * @private
+ * @returns {*} The return value of {@code next(action)}.
+ */
+function _updateSettings({ dispatch }, next, action) {
+    const { config: { doNotFlipLocalVideo } } = action;
+
+    if (doNotFlipLocalVideo === true) {
+        dispatch(updateSettings({
+            localFlipX: false
+        }));
+    }
+
+    return next(action);
 }

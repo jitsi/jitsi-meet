@@ -1,6 +1,7 @@
 /* @flow */
 
-import jitsiLocalStorage from '../../../../modules/util/JitsiLocalStorage';
+import Bourne from '@hapi/bourne';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 
 import logger from '../logger';
 
@@ -71,13 +72,13 @@ type SegmentInfo = {
 
     /**
      * The length of gap before this segment, in milliseconds.
-     * mull if unknown.
+     * Mull if unknown.
      */
     gapBefore?: ?number,
 
     /**
      * The duration of this segment, in milliseconds.
-     * null if unknown or the segment is not finished.
+     * Null if unknown or the segment is not finished.
      */
     duration?: ?number,
 
@@ -88,8 +89,8 @@ type SegmentInfo = {
 
     /**
      * The end time, in milliseconds.
-     * null if unknown, the segment is not finished, or the recording is
-     * interrupted (e.g. browser reload).
+     * Null if unknown, the segment is not finished, or the recording is
+     * interrupted (e.g. Browser reload).
      */
     end?: ?number
 };
@@ -121,7 +122,7 @@ type SessionInfo = {
 }
 
 /**
- * {@code localStorage} key.
+ * {@code localStorage} Key.
  */
 const LOCAL_STORAGE_KEY = 'localRecordingMetadataVersion1';
 
@@ -129,7 +130,7 @@ const LOCAL_STORAGE_KEY = 'localRecordingMetadataVersion1';
  * SessionManager manages the metadata of each segment during each local
  * recording session.
  *
- * A segment is a continous portion of recording done using the same adapter
+ * A segment is a continuous portion of recording done using the same adapter
  * on the same microphone device.
  *
  * Browser refreshes, switching of microphone will cause new segments to be
@@ -163,7 +164,7 @@ class SessionManager {
 
         if (dataStr !== null) {
             try {
-                const dataObject = JSON.parse(dataStr);
+                const dataObject = Bourne.parse(dataStr);
 
                 this._sessionsMetadata = dataObject;
             } catch (e) {

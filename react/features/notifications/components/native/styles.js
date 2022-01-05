@@ -40,7 +40,7 @@ export default {
     notification: {
         backgroundColor: '#768898',
         flexDirection: 'row',
-        height: 48,
+        minHeight: 48,
         marginTop: 0.5 * BoxModel.margin
     },
 

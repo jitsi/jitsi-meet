@@ -1,7 +1,7 @@
 // @flow
 
-import { ReducerRegistry, set } from '../base/redux';
 import { Transport } from '../../../modules/transport';
+import { ReducerRegistry, set } from '../base/redux';
 
 import {
     SET_TRANSPORT,

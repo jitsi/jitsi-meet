@@ -1,0 +1,56 @@
+.security {
+    &-dialog {
+        color: #fff;
+        font-size: 15px;
+        line-height: 24px;
+
+        &.password-section {
+            display: flex;
+            flex-direction: column;
+
+            .description {
+                font-size: 13px;
+            }
+
+            .password {
+                align-items: center;
+                display: flex;
+                justify-content: space-between;
+                margin-top: 15px;
+
+                &-actions {
+                    a {
+                        cursor: pointer;
+                        text-decoration: none;
+                        font-size: 14px;
+                        color: #6FB1EA;
+                    }
+
+                    & > :first-child:not(:last-child) {	
+                        margin-right: 24px;	
+                    }
+                }
+            }
+        }
+
+        .separator-line {
+            margin: 24px 0 24px -20px;
+            padding: 0 20px;
+            width: 100%;
+            height: 1px;
+            background: #5E6D7A;
+
+            &:last-child {
+                display: none;
+            }
+        }
+    }
+}
+
+.new-toolbox .toolbox-content .toolbox-icon.toggled.security-toolbar-button {
+    border-width: 0;
+
+    &:not(:hover) {
+        background: unset;
+    }
+}

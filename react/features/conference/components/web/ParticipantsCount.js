@@ -4,9 +4,13 @@ import React, { PureComponent } from 'react';
 import type { Dispatch } from 'redux';
 
 import { openDialog } from '../../../base/dialog';
+import { IconUserGroups } from '../../../base/icons';
+import { Label } from '../../../base/label';
+import { COLORS } from '../../../base/label/constants';
 import { getParticipantCount } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { SpeakerStats } from '../../../speaker-stats';
+
 
 /**
  * The type of the React {@code Component} props of {@link ParticipantsCount}.
@@ -16,7 +20,7 @@ type Props = {
     /**
      * Number of the conference participants.
      */
-    count: string,
+    count: number,
 
     /**
      * Conference data.
@@ -69,15 +73,18 @@ class ParticipantsCount extends PureComponent<Props> {
      * @returns {ReactElement}
      */
     render() {
+        const { count } = this.props;
+
+        if (count <= 2) {
+            return null;
+        }
+
         return (
-            <div
-                className = 'participants-count'
-                onClick = { this._onClick }>
-                <span className = 'participants-count-number'>
-                    {this.props.count}
-                </span>
-                <span className = 'participants-count-icon' />
-            </div>
+            <Label
+                color = { COLORS.white }
+                icon = { IconUserGroups }
+                onClick = { this._onClick }
+                text = { count } />
         );
     }
 }

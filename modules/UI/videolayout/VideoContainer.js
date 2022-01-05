@@ -5,19 +5,28 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { browser } from '../../../react/features/base/lib-jitsi-meet';
-import { ORIENTATION, LargeVideoBackground } from '../../../react/features/large-video';
+import { isTestModeEnabled } from '../../../react/features/base/testing';
+import { ORIENTATION, LargeVideoBackground, updateLastLargeVideoMediaEvent } from '../../../react/features/large-video';
 import { LAYOUTS, getCurrentLayout } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
+import UIUtil from '../util/UIUtil';
 
 import Filmstrip from './Filmstrip';
 import LargeContainer from './LargeContainer';
-import UIEvents from '../../../service/UI/UIEvents';
-import UIUtil from '../util/UIUtil';
 
 // FIXME should be 'video'
 export const VIDEO_CONTAINER_TYPE = 'camera';
 
 const FADE_DURATION_MS = 300;
+
+/**
+ * List of container events that we are going to process, will be added as listener to the
+ * container for every event in the list. The latest event will be stored in redux.
+ */
+const containerEvents = [
+    'abort', 'canplay', 'canplaythrough', 'emptied', 'ended', 'error', 'loadeddata', 'loadedmetadata', 'loadstart',
+    'pause', 'play', 'playing', 'ratechange', 'stalled', 'suspend', 'waiting'
+];
 
 /**
  * Returns an array of the video dimensions, so that it keeps it's aspect
@@ -36,7 +45,7 @@ function computeDesktopVideoSize( // eslint-disable-line max-params
         videoSpaceWidth,
         videoSpaceHeight) {
     if (videoWidth === 0 || videoHeight === 0 || videoSpaceWidth === 0 || videoSpaceHeight === 0) {
-        // Avoid NaN values caused by devision by 0.
+        // Avoid NaN values caused by division by 0.
         return [ 0, 0 ];
     }
 
@@ -84,19 +93,26 @@ function computeCameraVideoSize( // eslint-disable-line max-params
         videoSpaceHeight,
         videoLayoutFit) {
     if (videoWidth === 0 || videoHeight === 0 || videoSpaceWidth === 0 || videoSpaceHeight === 0) {
-        // Avoid NaN values caused by devision by 0.
+        // Avoid NaN values caused by division by 0.
         return [ 0, 0 ];
     }
 
     const aspectRatio = videoWidth / videoHeight;
+    const videoSpaceRatio = videoSpaceWidth / videoSpaceHeight;
 
     switch (videoLayoutFit) {
     case 'height':
         return [ videoSpaceHeight * aspectRatio, videoSpaceHeight ];
     case 'width':
         return [ videoSpaceWidth, videoSpaceWidth / aspectRatio ];
+    case 'nocrop':
+        return computeCameraVideoSize(
+            videoWidth,
+            videoHeight,
+            videoSpaceWidth,
+            videoSpaceHeight,
+            videoSpaceRatio < aspectRatio ? 'width' : 'height');
     case 'both': {
-        const videoSpaceRatio = videoSpaceWidth / videoSpaceHeight;
         const maxZoomCoefficient = interfaceConfig.MAXIMUM_ZOOMING_COEFFICIENT
             || Infinity;
 
@@ -177,16 +193,13 @@ export class VideoContainer extends LargeContainer {
      * Creates new VideoContainer instance.
      * @param resizeContainer {Function} function that takes care of the size
      * of the video container.
-     * @param emitter {EventEmitter} the event emitter that will be used by
-     * this instance.
      */
-    constructor(resizeContainer, emitter) {
+    constructor(resizeContainer) {
         super();
         this.stream = null;
         this.userId = null;
         this.videoType = null;
         this.localFlipX = true;
-        this.emitter = emitter;
         this.resizeContainer = resizeContainer;
 
         /**
@@ -223,14 +236,6 @@ export class VideoContainer extends LargeContainer {
 
         this.$remotePresenceMessage = $('#remotePresenceMessage');
 
-        /**
-         * Indicates whether or not the video stream attached to the video
-         * element has started(which means that there is any image rendered
-         * even if the video is stalled).
-         * @type {boolean}
-         */
-        this.wasVideoRendered = false;
-
         this.$wrapper = $('#largeVideoWrapper');
 
         /**
@@ -239,17 +244,12 @@ export class VideoContainer extends LargeContainer {
          * video anyway.
          */
         this.$wrapperParent = this.$wrapper.parent();
-
         this.avatarHeight = $('#dominantSpeakerAvatarContainer').height();
-
-        const onPlayingCallback = function(event) {
+        this.$video[0].onplaying = function(event) {
             if (typeof resizeContainer === 'function') {
                 resizeContainer(event);
             }
-            this.wasVideoRendered = true;
-        }.bind(this);
-
-        this.$video[0].onplaying = onPlayingCallback;
+        };
 
         /**
          * A Set of functions to invoke when the video element resizes.
@@ -259,6 +259,14 @@ export class VideoContainer extends LargeContainer {
         this._resizeListeners = new Set();
 
         this.$video[0].onresize = this._onResize.bind(this);
+
+        if (isTestModeEnabled(APP.store.getState())) {
+            const cb = name => APP.store.dispatch(updateLastLargeVideoMediaEvent(name));
+
+            containerEvents.forEach(event => {
+                this.$video[0].addEventListener(event, cb.bind(this, event));
+            });
+        }
     }
 
     /**
@@ -406,7 +414,7 @@ export class VideoContainer extends LargeContainer {
         const [ width, height ] = this._getVideoSize(containerWidth, containerHeight);
 
         if (width === 0 || height === 0) {
-            // We don't need to set 0 for width or height since the visibility is controled by the visibility css prop
+            // We don't need to set 0 for width or height since the visibility is controlled by the visibility css prop
             // on the largeVideoElementsContainer. Also if the width/height of the video element is 0 the attached
             // stream won't be played. Normally if we attach a new stream we won't resize the video element until the
             // stream has been played. But setting width/height to 0 will prevent the video from playing.
@@ -473,10 +481,6 @@ export class VideoContainer extends LargeContainer {
             return;
         }
 
-        // The stream has changed, so the image will be lost on detach
-        this.wasVideoRendered = false;
-
-
         // detach old stream
         if (this.stream) {
             this.stream.detach(this.$video[0]);
@@ -491,16 +495,17 @@ export class VideoContainer extends LargeContainer {
 
         stream.attach(this.$video[0]);
 
-        const flipX = stream.isLocal() && this.localFlipX;
+        // Ensure large video gets play() called on it when a new stream is attached to it. This is necessary in the
+        // case of Safari as autoplay doesn't kick-in automatically on Safari 15 and newer versions.
+        browser.isWebKitBased() && this.$video[0].play();
+
+        const flipX = stream.isLocal() && this.localFlipX && !this.isScreenSharing();
 
         this.$video.css({
             transform: flipX ? 'scaleX(-1)' : 'none'
         });
 
         this._updateBackground();
-
-        // Reset the large video background depending on the stream.
-        this.setLargeVideoBackground(this.avatarDisplayed);
     }
 
     /**
@@ -533,18 +538,9 @@ export class VideoContainer extends LargeContainer {
      * @param {boolean} show
      */
     showAvatar(show) {
-        // TO FIX: Video background need to be black, so that we don't have a
-        // flickering effect when scrolling between videos and have the screen
-        // move to grey before going back to video. Avatars though can have the
-        // default background set.
-        // In order to fix this code we need to introduce video background or
-        // find a workaround for the video flickering.
-        this.setLargeVideoBackground(show);
-
         this.$avatar.css('visibility', show ? 'visible' : 'hidden');
         this.avatarDisplayed = show;
 
-        this.emitter.emit(UIEvents.LARGE_VIDEO_AVATAR_VISIBLE, show);
         APP.API.notifyLargeVideoVisibilityChanged(show);
     }
 
@@ -597,21 +593,6 @@ export class VideoContainer extends LargeContainer {
     }
 
     /**
-     * Sets the large video container background depending on the container
-     * type and the parameter indicating if an avatar is currently shown on
-     * large.
-     *
-     * @param {boolean} isAvatar - Indicates if the avatar is currently shown
-     * on the large video.
-     * @returns {void}
-     */
-    setLargeVideoBackground(isAvatar) {
-        $('#largeVideoContainer').css('background',
-            this.videoType === VIDEO_CONTAINER_TYPE && !isAvatar
-                ? '#000' : interfaceConfig.DEFAULT_BACKGROUND);
-    }
-
-    /**
      * Callback invoked when the video element changes dimensions.
      *
      * @private
@@ -635,7 +616,7 @@ export class VideoContainer extends LargeContainer {
         // explicitly disabled.
         if (interfaceConfig.DISABLE_VIDEO_BACKGROUND
                 || browser.isFirefox()
-                || browser.isSafariWithWebrtc()) {
+                || browser.isWebKitBased()) {
             return;
         }
 

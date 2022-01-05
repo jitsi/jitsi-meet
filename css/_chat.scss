@@ -1,41 +1,48 @@
 #sideToolbarContainer {
-    background-color: $newToolbarBackgroundColor;
+    background-color: $chatBackgroundColor;
     box-sizing: border-box;
     color: #FFF;
-    display: flex;
-    flex-direction: column;
-    /**
-     * Make the sidebar flush with the top of the toolbar. Take the size of
-     * the toolbar and subtract from 100%.
-     */
-    height: calc(100% - #{$newToolbarSizeWithPadding});
-    left: -$sidebarWidth;
-    overflow: hidden;
+    height: 100%;
     position: absolute;
     top: 0;
-    transition: left 0.5s;
     width: $sidebarWidth;
     z-index: $sideToolbarContainerZ;
 
-    /**
-     * The sidebar (chat) is off-screen when hidden. Move it flush to the left
-     * side of the window when it should be visible.
-     */
-    &.slideInExt {
-        left: 0;
+    @media (max-width: 580px) {
+        width: 100%;
     }
+}
+
+.chat-panel {
+    display: flex;
+    flex-direction: column;
+    // extract header + tabs height
+    height: calc(100% - 102px);
+}
+
+.chat-panel-no-tabs {
+    // extract header height
+    height: calc(100% - 70px);
 }
 
 #chatconversation {
     box-sizing: border-box;
     flex: 1;
     font-size: 10pt;
+    // extract message input height
+    height: calc(100% - 68px);
     line-height: 20px;
     overflow: auto;
     padding: 16px;
     text-align: left;
-    width: $sidebarWidth;
     word-wrap: break-word;
+
+    display: flex;
+    flex-direction: column;
+
+    & > :first-child {
+        margin-top: auto;
+    }
 
     a {
         display: block;
@@ -56,28 +63,6 @@
     a:active {
         color: black;
     }
-
-    &::-webkit-scrollbar {
-        background: #06a5df;
-        width: 7px;
-    }
-
-    &::-webkit-scrollbar-button {
-        display: none;
-    }
-
-    &::-webkit-scrollbar-track {
-        background: black;
-    }
-
-    &::-webkit-scrollbar-track-piece {
-        background: black;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background: #06a5df;
-        border-radius: 4px;
-    }
 }
 
 #chat-recipient {
@@ -97,46 +82,108 @@
     div {
         svg {
             cursor: pointer;
-            fill: white
+            fill: white;
         }
     }
 }
 
+
 .chat-header {
-    background-color: $chatHeaderBackgroundColor;
     height: 70px;
     position: relative;
     width: 100%;
     z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    padding: 16px;
+    align-items: center;
+    box-sizing: border-box;
+    color: #fff;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 32px;
 
-    .chat-close {
-        align-items: center;
-        bottom: 8px;
-        color: white;
+    .jitsi-icon {
         cursor: pointer;
-        display: flex;
-        font-size: 18px;
-        height: 40px;
-        justify-content: center;
-        line-height: 15px;
-        padding: 4px;
-        position: absolute;
-        right: 5px;
-        width: 40px;
+    }
+}
 
-        &:hover {
-            color: rgba(255, 255, 255, 0.8);
+.chat-input-container {
+    padding: 0 16px 16px;
+
+    &.populated {
+        #chat-input {
+            .send-button {
+                background: #1B67EC;
+                cursor: pointer;
+                margin-left: 0.3rem;
+
+                @media (hover: hover) and (pointer: fine) {
+                    &:hover {
+                        background: #3D82FB;
+                    }
+                }
+
+                &:active {
+                    background: #0852D4;
+                }
+
+                path {
+                    fill: #fff;
+                }
+            }
         }
     }
 }
 
 #chat-input {
-    border-top: 1px solid $chatInputSeparatorColor;
+    border: 1px solid $chatInputSeparatorColor;
     display: flex;
-    padding: 5px 10px;
+    padding: 4px;
+    border-radius: 3px;
+
+    &:focus-within {
+        border: 1px solid #619CF4;
+    }
 
     * {
         background-color: transparent;
+    }
+}
+
+.send-button-container {
+    display: flex;
+    align-items: center;
+}
+
+.send-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: 40px;
+    border-radius: 3px;
+
+    path {
+        fill: $chatInputSeparatorColor;
+    }
+}
+
+.smiley-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px;
+    width: 38px;
+    margin: 2px;
+    border-radius: 3px;
+}
+
+#chat-input .smiley-button {
+    @media (hover: hover) and (pointer: fine) {
+        &:hover {
+            background-color: #484A4F;
+        }
     }
 }
 
@@ -149,30 +196,96 @@
 }
 
 #usermsg {
+    -ms-overflow-style: none;
     border: 0px none;
     border-radius:0;
     box-shadow: none;
     color: white;
-    font-size: 15px;
+    font-size: 14px;
     padding: 10px;
     overflow-y: auto;
     resize: none;
+    scrollbar-width: none;
     width: 100%;
     word-break: break-word;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
 }
 
 #usermsg:hover {
     border: 0px none;
     box-shadow: none;
 }
+#usermsg:focus,
+#usermsg:active {
+    border-bottom: 1px solid white;
+    padding-bottom: 8px;
+ }
 
 #nickname {
     text-align: center;
     color: #9d9d9d;
-    font-size: 18px;
-    margin-top: 30px;
-    left: 5px;
-    right: 5px;
+    font-size: 16px;
+    margin: auto 0;
+    padding: 0 16px;
+
+    #nickname-title {
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    label[for="nickinput"] {
+        > div > span {
+            color: #B8C7E0;
+        }
+    }
+    input {
+        height: 40px;
+    }
+
+    label {
+        line-height: 24px;
+    }
+
+    .enter-chat {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 16px;
+        height: 40px;
+        background: #1B67EC;
+        border-radius: 3px;
+        color: #fff;
+        cursor: pointer;
+
+        &.disabled {
+            color: #AFB6BC;
+            background: #11336E;
+            pointer-events: none;
+        }
+    }
+}
+
+.mobile-browser {
+    #nickname {
+        input {
+            height: 48px;
+        }
+
+        .enter-chat {
+            height: 48px;
+        }
+    }
+
+    #usermsg {
+        font-size: 16px;
+    }
+
+    .chatmessage .usermessage {
+        font-size: 16px;
+    }
 }
 
 .sideToolbarContainer {
@@ -182,13 +295,26 @@
     }
 
     .display-name {
-        font-size: 13px;
-        font-weight: bold;
+        font-size: 12px;
+        font-weight: 600;
         margin-bottom: 5px;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
     }
+}
+
+.sr-only {
+    border: 0 !important;
+    clip: rect(1px, 1px, 1px, 1px) !important;
+    clip-path: inset(50%) !important;
+    height: 1px !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    position: absolute !important;
+    width: 1px !important;
+    white-space: nowrap !important;
 }
 
 .chatmessage {
@@ -207,6 +333,7 @@
 
     .usermessage {
         white-space: pre-wrap;
+        font-size: 14px;
     }
 
     &.error {
@@ -229,14 +356,14 @@
     }
 
     .messagecontent {
-        margin: 5px 10px;
+        margin: 8px;
         max-width: 100%;
         overflow: hidden;
     }
 }
 
-.smiley {
-    font-size: 14pt;
+.timestamp {
+    color: #757575;
 }
 
 #smileys {
@@ -267,10 +394,12 @@
     box-sizing: border-box;
     background-color: rgba(0, 0, 0, .6) !important;
     height: auto;
-    max-height: 0;
+    display: none;
     overflow: hidden;
     position: absolute;
-    width: $sidebarWidth;
+    width: calc(#{$sidebarWidth} - 32px);
+    margin-bottom: 5px;
+    margin-left: -5px;
 
     /**
      * CSS transitions do not apply for auto dimensions. So to produce the css
@@ -281,13 +410,13 @@
     transition: max-height 0.3s;
 
     &.show-smileys {
+        display: flex;
         max-height: 500%;
     }
 
     #smileysContainer {
-        background-color: $newToolbarBackgroundColor;
-        border-bottom: 1px solid;
-        border-top: 1px solid;
+        background-color: $chatBackgroundColor;
+        border-top: 1px solid $chatInputSeparatorColor;
     }
 }
 
@@ -297,7 +426,7 @@
 
 .smileyContainer {
     width: 40px;
-    height: 36px;
+    height: 40px;
     display: inline-block;
     text-align: center;
 }
@@ -383,4 +512,83 @@
             background-color: $chatPrivateMessageBackgroundColor;
         }
     }
+}
+
+.chat-dialog {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin-top: -5px; // Margin set by atlaskit.
+
+    &-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 16px;
+        width: calc(100% - 32px);
+        box-sizing: border-box;
+        color: #fff;
+        font-weight: 600;
+        font-size: 24px;
+        line-height: 32px;
+
+        .jitsi-icon {
+            cursor: pointer;
+        }
+    }
+
+    #chatconversation {
+        width: 100%;
+    }
+}
+
+
+/**
+ * Make header close button more easily tappable on mobile.
+ */
+.mobile-browser .chat-dialog-header .jitsi-icon {
+    display: grid;
+    place-items: center;
+    height: 48px;
+    width: 48px;
+    background: #36383C;
+    border-radius: 3px;
+}
+
+.chat-tabs-container {
+    width: 100%;
+    border-bottom: thin solid #292929;
+    display: flex;
+    justify-content: space-around;
+}
+
+.chat-tab {
+    font-size: 1.2em;
+    padding-bottom: 0.5em;
+    width: 50%;
+    text-align: center;
+    color: #8B8B8B;
+    cursor: pointer;
+}
+
+.chat-tab-focus {
+    border-bottom-style: solid;
+    color: #FFF;
+}
+
+.chat-tab-title {
+    margin-right: 8px;
+}
+
+.chat-tab-badge {
+    background-color: #165ecc;
+    border-radius: 50%;
+    box-sizing: border-box;
+    font-weight: 700;
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    padding: 0 4px;
+    color: #FFF;
 }

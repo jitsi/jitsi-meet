@@ -6,11 +6,23 @@
  * {
  *     type: DOMINANT_SPEAKER_CHANGED,
  *     participant: {
- *         id: string
+ *         conference: JitsiConference,
+ *         id: string,
+ *         previousSpeakers: Array<string>
  *     }
  * }
  */
 export const DOMINANT_SPEAKER_CHANGED = 'DOMINANT_SPEAKER_CHANGED';
+
+/**
+ * Create an action for granting moderator to a participant.
+ *
+ * {
+ *     type: GRANT_MODERATOR,
+ *     id: string
+ * }
+ */
+export const GRANT_MODERATOR = 'GRANT_MODERATOR';
 
 /**
  * Create an action for removing a participant from the conference.
@@ -56,6 +68,19 @@ export const PARTICIPANT_DISPLAY_NAME_CHANGED
  * }
  */
 export const PARTICIPANT_ID_CHANGED = 'PARTICIPANT_ID_CHANGED';
+
+/**
+ * Action to signal that participant role has changed. e.
+ *
+ * {
+ *     type: PARTICIPANT_ROLE_CHANGED,
+ *     participant: {
+ *         id: string
+ *     }
+ *     role: string
+ * }
+ */
+export const PARTICIPANT_ROLE_CHANGED = 'PARTICIPANT_ROLE_CHANGED';
 
 /**
  * Action to signal that a participant has joined.
@@ -148,3 +173,22 @@ export const HIDDEN_PARTICIPANT_LEFT = 'HIDDEN_PARTICIPANT_LEFT';
  */
 export const SET_LOADABLE_AVATAR_URL = 'SET_LOADABLE_AVATAR_URL';
 
+/**
+ * Raises hand for the local participant.
+ * {
+ *     type: LOCAL_PARTICIPANT_RAISE_HAND
+ * }
+ */
+export const LOCAL_PARTICIPANT_RAISE_HAND = 'LOCAL_PARTICIPANT_RAISE_HAND';
+
+/**
+ * Updates participant in raise hand queue.
+ * {
+ *     type: RAISE_HAND_UPDATED,
+ *     participant: {
+ *         id: string,
+ *         raiseHand: boolean
+ *     }
+ * }
+ */
+export const RAISE_HAND_UPDATED = 'RAISE_HAND_UPDATED';

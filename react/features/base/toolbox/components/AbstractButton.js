@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 
+import { NOTIFY_CLICK_MODE } from '../../../toolbox/constants';
 import { combineStyles } from '../../styles';
 
 import type { Styles } from './AbstractToolboxItem';
@@ -15,10 +16,26 @@ export type Props = {
     afterClick: ?Function,
 
     /**
+     * The button's key.
+     */
+    buttonKey?: string,
+
+    /**
      * Extra styles which will be applied in conjunction with `styles` or
-     * `toggledStyles` when the button is disabled;
+     * `toggledStyles` when the button is disabled;.
      */
     disabledStyles: ?Styles,
+
+    /**
+     * External handler for click action.
+     */
+     handleClick?: Function,
+
+    /**
+     * Notify mode for `toolbarButtonClicked` event -
+     * whether to only notify or to also prevent button click routine.
+     */
+    notifyMode?: string,
 
     /**
      * Whether to show the label or not.
@@ -45,6 +62,8 @@ export type Props = {
      */
     visible: boolean
 };
+
+declare var APP: Object;
 
 /**
  * Default style for disabled buttons.
@@ -127,6 +146,17 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
 
         // Bind event handlers so they are only bound once per instance.
         this._onClick = this._onClick.bind(this);
+    }
+
+    /**
+     * Helper function to be implemented by subclasses, which should be used
+     * to handle a key being down.
+     *
+     * @protected
+     * @returns {void}
+     */
+    _onKeyDown() {
+        // To be implemented by subclass.
     }
 
     /**
@@ -230,29 +260,46 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
 
     /**
      * Helper function to be implemented by subclasses, which must return a
-     * {@code boolean} value indicating if this button is toggled or not.
+     * {@code boolean} value indicating if this button is toggled or not or
+     * undefined if the button is not toggleable.
      *
      * @protected
-     * @returns {boolean}
+     * @returns {?boolean}
      */
     _isToggled() {
-        return false;
+        return undefined;
     }
 
     _onClick: (*) => void;
 
     /**
-     * Handles clicking / pressing the button, and toggles the audio mute state
-     * accordingly.
+     * Handles clicking / pressing the button.
      *
+     * @param {Object} e - Event.
      * @private
      * @returns {void}
      */
-    _onClick() {
-        const { afterClick } = this.props;
+    _onClick(e) {
+        const { afterClick, handleClick, notifyMode, buttonKey } = this.props;
 
-        this._handleClick();
-        afterClick && afterClick();
+        if (typeof APP !== 'undefined' && notifyMode) {
+            APP.API.notifyToolbarButtonClicked(
+                buttonKey, notifyMode === NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY
+            );
+        }
+
+        if (notifyMode !== NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY) {
+            if (handleClick) {
+                handleClick();
+            }
+
+            this._handleClick();
+        }
+
+        afterClick && afterClick(e);
+
+        // blur after click to release focus from button to allow PTT.
+        e?.currentTarget?.blur && e.currentTarget.blur();
     }
 
     /**
@@ -278,6 +325,7 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
             <ToolboxItem
                 disabled = { this._isDisabled() }
                 onClick = { this._onClick }
+                onKeyDown = { this._onKeyDown }
                 { ...props } />
         );
     }

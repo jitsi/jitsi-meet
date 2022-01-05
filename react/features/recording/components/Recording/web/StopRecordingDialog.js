@@ -2,10 +2,10 @@
 
 import React from 'react';
 
-import { translate } from '../../../../base/i18n';
 import { Dialog } from '../../../../base/dialog';
+import { translate } from '../../../../base/i18n';
 import { connect } from '../../../../base/redux';
-
+import { toggleScreenshotCaptureSummary } from '../../../../screenshot-capture';
 import AbstractStopRecordingDialog, {
     type Props,
     _mapStateToProps
@@ -15,7 +15,7 @@ import AbstractStopRecordingDialog, {
  * React Component for getting confirmation to stop a file recording session in
  * progress.
  *
- * @extends Component
+ * @augments Component
  */
 class StopRecordingDialog extends AbstractStopRecordingDialog<Props> {
     /**
@@ -38,7 +38,16 @@ class StopRecordingDialog extends AbstractStopRecordingDialog<Props> {
         );
     }
 
-    _onSubmit: () => boolean
+    _onSubmit: () => boolean;
+
+    /**
+     * Toggles screenshot capture.
+     *
+     * @returns {void}
+     */
+    _toggleScreenshotCapture() {
+        this.props.dispatch(toggleScreenshotCaptureSummary(false));
+    }
 }
 
 export default translate(connect(_mapStateToProps)(StopRecordingDialog));

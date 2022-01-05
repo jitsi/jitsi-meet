@@ -2,7 +2,7 @@
 import { getCurrentConference } from '../conference';
 
 /**
- * Implements log storage interface from the jitsi-meet-logger lib. Captured
+ * Implements log storage interface from the @jitsi/logger lib. Captured
  * logs are sent to CallStats.
  */
 export default class JitsiMeetLogStorage {
@@ -15,6 +15,7 @@ export default class JitsiMeetLogStorage {
     constructor(getState) {
         /**
          * Counts each log entry, increases on every batch log entry stored.
+         *
          * @type {number}
          */
         this.counter = 1;

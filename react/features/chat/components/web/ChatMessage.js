@@ -1,18 +1,13 @@
 // @flow
 
 import React from 'react';
-import { toArray } from 'react-emoji-render';
-
 
 import { translate } from '../../../base/i18n';
-import { Linkify } from '../../../base/react';
-
+import Message from '../../../base/react/components/web/Message';
 import { MESSAGE_TYPE_LOCAL } from '../../constants';
+import AbstractChatMessage, { type Props } from '../AbstractChatMessage';
 
-import AbstractChatMessage, {
-    type Props
-} from '../AbstractChatMessage';
-import PrivateMessageButton from '../PrivateMessageButton';
+import PrivateMessageButton from './PrivateMessageButton';
 
 /**
  * Renders a single chat message.
@@ -25,28 +20,24 @@ class ChatMessage extends AbstractChatMessage<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { message } = this.props;
-        const processedMessage = [];
-
-        // content is an array of text and emoji components
-        const content = toArray(this._getMessageText(), { className: 'smiley' });
-
-        content.forEach(i => {
-            if (typeof i === 'string') {
-                processedMessage.push(<Linkify key = { i }>{ i }</Linkify>);
-            } else {
-                processedMessage.push(i);
-            }
-        });
+        const { message, t } = this.props;
 
         return (
-            <div className = 'chatmessage-wrapper'>
+            <div
+                className = 'chatmessage-wrapper'
+                tabIndex = { -1 }>
                 <div className = { `chatmessage ${message.privateMessage ? 'privatemessage' : ''}` }>
                     <div className = 'replywrapper'>
                         <div className = 'messagecontent'>
                             { this.props.showDisplayName && this._renderDisplayName() }
                             <div className = 'usermessage'>
-                                { processedMessage }
+                                <span className = 'sr-only'>
+                                    { this.props.message.displayName === this.props.message.recipient
+                                        ? t('chat.messageAccessibleTitleMe')
+                                        : t('chat.messageAccessibleTitle',
+                                        { user: this.props.message.displayName }) }
+                                </span>
+                                <Message text = { this._getMessageText() } />
                             </div>
                             { message.privateMessage && this._renderPrivateNotice() }
                         </div>
@@ -79,7 +70,9 @@ class ChatMessage extends AbstractChatMessage<Props> {
      */
     _renderDisplayName() {
         return (
-            <div className = 'display-name'>
+            <div
+                aria-hidden = { true }
+                className = 'display-name'>
                 { this.props.message.displayName }
             </div>
         );

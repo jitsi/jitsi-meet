@@ -1,6 +1,7 @@
 // @flow
 
 import { assign, ReducerRegistry } from '../../base/redux';
+
 import { SET_CONFERENCE_TIMESTAMP, SET_SESSION_ID, SET_WATCH_REACHABLE } from './actionTypes';
 
 const INITIAL_STATE = {

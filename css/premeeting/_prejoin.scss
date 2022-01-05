@@ -1,0 +1,65 @@
+.prejoin {
+    &-input-area {
+        width: 100%;
+    }
+
+    &-error {
+        background-color: #E04757;
+        border-radius: 6px;
+        box-sizing: border-box;
+        color: white;
+        font-size: 12px;
+        line-height: 16px;
+        margin-bottom: 16px;
+        margin-top: -8px;
+        padding: 4px;
+        text-align: center;
+        width: 100%;
+    }
+}
+
+.prejoin-preview {
+    &-dropdown-btns {
+        padding: 8px 0;
+    }
+  
+    &-dropdown-btn {
+        align-items: center;
+        color: #1C2025;
+        cursor: pointer;
+        display: flex;
+        height: 40px;
+        font-size: 15px;
+        line-height: 24px;
+        padding: 0 16px;
+  
+        &:hover {
+            background-color: #DAEBFA;
+        }
+    }
+  
+    &-dropdown-icon {
+        display: inline-block;
+        margin-right: 16px;
+  
+        & > svg {
+            fill:  #1C2025;
+        }
+    }
+  
+    &-dropdown-container {
+        position: relative;
+        width: 100%;
+  
+        /**
+        * Override default InlineDialog behaviour, since it does not play nicely with relative widths
+        */
+        & > div:nth-child(2) {
+            background: #fff;
+            padding: 0;
+            position: absolute !important;
+            width: 100%;
+        }
+    }
+  }
+  

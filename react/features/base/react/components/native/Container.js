@@ -22,7 +22,7 @@ type Props = AbstractProps & {
 /**
  * Represents a container of React Native/mobile {@link Component} children.
  *
- * @extends AbstractContainer
+ * @augments AbstractContainer
  */
 export default class Container<P: Props> extends AbstractContainer<P> {
     /**

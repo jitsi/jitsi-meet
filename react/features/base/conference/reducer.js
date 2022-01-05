@@ -1,43 +1,40 @@
 // @flow
 
+import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../room-lock';
 import { CONNECTION_WILL_CONNECT, SET_LOCATION_URL } from '../connection';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import { assign, ReducerRegistry, set } from '../redux';
-import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../room-lock';
 
 import {
     AUTH_STATUS_CHANGED,
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
+    CONFERENCE_LOCAL_SUBJECT_CHANGED,
     CONFERENCE_SUBJECT_CHANGED,
     CONFERENCE_TIMESTAMP_CHANGED,
     CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE,
     LOCK_STATE_CHANGED,
     P2P_STATUS_CHANGED,
-    SET_DESKTOP_SHARING_ENABLED,
     SET_FOLLOW_ME,
-    SET_MAX_RECEIVER_VIDEO_QUALITY,
     SET_PASSWORD,
     SET_PENDING_SUBJECT_CHANGE,
-    SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
     SET_ROOM,
-    SET_SIP_GATEWAY_ENABLED,
-    SET_START_MUTED_POLICY
+    SET_START_MUTED_POLICY,
+    SET_START_REACTIONS_MUTED
 } from './actionTypes';
-import { VIDEO_QUALITY_LEVELS } from './constants';
 import { isRoomValid } from './functions';
 
 const DEFAULT_STATE = {
     conference: undefined,
+    e2eeSupported: undefined,
     joining: undefined,
     leaving: undefined,
     locked: undefined,
-    maxReceiverVideoQuality: VIDEO_QUALITY_LEVELS.HIGH,
+    membersOnly: undefined,
     password: undefined,
-    passwordRequired: undefined,
-    preferredReceiverVideoQuality: VIDEO_QUALITY_LEVELS.HIGH
+    passwordRequired: undefined
 };
 
 /**
@@ -60,6 +57,9 @@ ReducerRegistry.register(
         case CONFERENCE_SUBJECT_CHANGED:
             return set(state, 'subject', action.subject);
 
+        case CONFERENCE_LOCAL_SUBJECT_CHANGED:
+            return set(state, 'localSubject', action.localSubject);
+
         case CONFERENCE_TIMESTAMP_CHANGED:
             return set(state, 'conferenceTimestamp', action.conferenceTimestamp);
 
@@ -79,20 +79,14 @@ ReducerRegistry.register(
         case P2P_STATUS_CHANGED:
             return _p2pStatusChanged(state, action);
 
-        case SET_DESKTOP_SHARING_ENABLED:
-            return _setDesktopSharingEnabled(state, action);
-
         case SET_FOLLOW_ME:
             return set(state, 'followMeEnabled', action.enabled);
 
+        case SET_START_REACTIONS_MUTED:
+            return set(state, 'startReactionsMuted', action.muted);
+
         case SET_LOCATION_URL:
             return set(state, 'room', undefined);
-
-        case SET_MAX_RECEIVER_VIDEO_QUALITY:
-            return set(
-                state,
-                'maxReceiverVideoQuality',
-                action.maxReceiverVideoQuality);
 
         case SET_PASSWORD:
             return _setPassword(state, action);
@@ -100,17 +94,8 @@ ReducerRegistry.register(
         case SET_PENDING_SUBJECT_CHANGE:
             return set(state, 'pendingSubjectChange', action.subject);
 
-        case SET_PREFERRED_RECEIVER_VIDEO_QUALITY:
-            return set(
-                state,
-                'preferredReceiverVideoQuality',
-                action.preferredReceiverVideoQuality);
-
         case SET_ROOM:
             return _setRoom(state, action);
-
-        case SET_SIP_GATEWAY_ENABLED:
-            return _setSIPGatewayEnabled(state, action);
 
         case SET_START_MUTED_POLICY:
             return {
@@ -160,11 +145,17 @@ function _conferenceFailed(state, { conference, error }) {
     }
 
     let authRequired;
+    let membersOnly;
     let passwordRequired;
 
     switch (error.name) {
     case JitsiConferenceErrors.AUTHENTICATION_REQUIRED:
         authRequired = conference;
+        break;
+
+    case JitsiConferenceErrors.CONFERENCE_ACCESS_DENIED:
+    case JitsiConferenceErrors.MEMBERS_ONLY_ERROR:
+        membersOnly = conference;
         break;
 
     case JitsiConferenceErrors.PASSWORD_REQUIRED:
@@ -175,6 +166,7 @@ function _conferenceFailed(state, { conference, error }) {
     return assign(state, {
         authRequired,
         conference: undefined,
+        e2eeSupported: undefined,
         error,
         joining: undefined,
         leaving: undefined,
@@ -187,6 +179,7 @@ function _conferenceFailed(state, { conference, error }) {
          * @type {string}
          */
         locked: passwordRequired ? LOCKED_REMOTELY : undefined,
+        membersOnly,
         password: undefined,
 
         /**
@@ -226,7 +219,11 @@ function _conferenceJoined(state, { conference }) {
          * @type {JitsiConference}
          */
         conference,
+
+        e2eeSupported: conference.isE2EESupported(),
+
         joining: undefined,
+        membersOnly: undefined,
         leaving: undefined,
 
         /**
@@ -347,21 +344,6 @@ function _p2pStatusChanged(state, action) {
 }
 
 /**
- * Reduces a specific Redux action SET_DESKTOP_SHARING_ENABLED of the feature
- * base/conference.
- *
- * @param {Object} state - The Redux state of the feature base/conference.
- * @param {Action} action - The Redux action SET_DESKTOP_SHARING_ENABLED to
- * reduce.
- * @private
- * @returns {Object} The new state of the feature base/conference after the
- * reduction of the specified action.
- */
-function _setDesktopSharingEnabled(state, action) {
-    return set(state, 'desktopSharingEnabled', action.desktopSharingEnabled);
-}
-
-/**
  * Reduces a specific Redux action SET_PASSWORD of the feature base/conference.
  *
  * @param {Object} state - The Redux state of the feature base/conference.
@@ -373,34 +355,30 @@ function _setDesktopSharingEnabled(state, action) {
 function _setPassword(state, { conference, method, password }) {
     switch (method) {
     case conference.join:
-        if (state.passwordRequired === conference) {
-            return assign(state, {
-                // XXX 1. The JitsiConference which transitions away from
-                // passwordRequired MUST remain in the redux state
-                // features/base/conference until it transitions into
-                // conference; otherwise, there is a span of time during which
-                // the redux state does not even know that there is a
-                // JitsiConference whatsoever.
-                //
-                // 2. The redux action setPassword will attempt to join the
-                // JitsiConference so joining is an appropriate transitional
-                // redux state.
-                //
-                // 3. The redux action setPassword will perform the same check
-                // before it proceeds with the re-join.
-                joining: state.conference ? state.joining : conference,
-                locked: LOCKED_REMOTELY,
+        return assign(state, {
+            // 1. The JitsiConference which transitions away from
+            // passwordRequired MUST remain in the redux state
+            // features/base/conference until it transitions into
+            // conference; otherwise, there is a span of time during which
+            // the redux state does not even know that there is a
+            // JitsiConference whatsoever.
+            //
+            // 2. The redux action setPassword will attempt to join the
+            // JitsiConference so joining is an appropriate transitional
+            // redux state.
+            //
+            // 3. The redux action setPassword will perform the same check
+            // before it proceeds with the re-join.
+            joining: state.conference ? state.joining : conference,
+            locked: LOCKED_REMOTELY,
 
-                /**
-                 * The password with which the conference is to be joined.
-                 *
-                 * @type {string}
-                 */
-                password,
-                passwordRequired: undefined
-            });
-        }
-        break;
+            /**
+             * The password with which the conference is to be joined.
+             *
+             * @type {string}
+             */
+            password
+        });
 
     case conference.lock:
         return assign(state, {
@@ -442,16 +420,3 @@ function _setRoom(state, action) {
     });
 }
 
-/**
- * Reduces a specific Redux action SET_SIP_GATEWAY_ENABLED of the feature
- * base/conference.
- *
- * @param {Object} state - The Redux state of the feature base/conference.
- * @param {Action} action - The Redux action SET_SIP_GATEWAY_ENABLED to reduce.
- * @private
- * @returns {Object} The new state of the feature base/conference after the
- * reduction of the specified action.
- */
-function _setSIPGatewayEnabled(state, action) {
-    return set(state, 'isSIPGatewayEnabled', action.isSIPGatewayEnabled);
-}

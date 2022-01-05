@@ -3,7 +3,6 @@
 import React from 'react';
 
 import { MESSAGE_TYPE_REMOTE } from '../../constants';
-
 import AbstractMessageContainer, { type Props }
     from '../AbstractMessageContainer';
 
@@ -12,7 +11,7 @@ import ChatMessageGroup from './ChatMessageGroup';
 /**
  * Displays all received chat messages, grouped by sender.
  *
- * @extends AbstractMessageContainer
+ * @augments AbstractMessageContainer
  */
 export default class MessageContainer extends AbstractMessageContainer<Props> {
     /**
@@ -71,9 +70,12 @@ export default class MessageContainer extends AbstractMessageContainer<Props> {
 
         return (
             <div
+                aria-labelledby = 'chat-header'
                 id = 'chatconversation'
                 onScroll = { this._onChatScroll }
-                ref = { this._messageListRef }>
+                ref = { this._messageListRef }
+                role = 'log'
+                tabIndex = { 0 }>
                 { messages }
                 <div ref = { this._messagesListEndRef } />
             </div>

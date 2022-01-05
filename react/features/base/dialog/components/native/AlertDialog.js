@@ -5,7 +5,6 @@ import { Text } from 'react-native';
 
 import { translate } from '../../../i18n';
 import { connect } from '../../../redux';
-
 import { _abstractMapStateToProps } from '../../functions';
 
 import { type Props as AbstractProps } from './BaseDialog';
@@ -46,7 +45,7 @@ class AlertDialog extends BaseSubmitDialog<Props, *> {
         );
     }
 
-    _renderHTML: string => Object | string
+    _renderHTML: string => Object | string;
 }
 
 export default translate(connect(_abstractMapStateToProps)(AlertDialog));

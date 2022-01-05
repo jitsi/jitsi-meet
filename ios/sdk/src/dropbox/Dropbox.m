@@ -63,11 +63,14 @@ RCT_EXPORT_METHOD(authorize:(RCTPromiseResolveBlock)resolve
     currentReject = reject;
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        [DBClientsManager authorizeFromController:[UIApplication sharedApplication]
-                                       controller:[[self class] topMostController]
-                                          openURL:^(NSURL *url) {
-                                              [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
-                                          }];
+        DBScopeRequest *scopeRequest = [[DBScopeRequest alloc] initWithScopeType:DBScopeTypeUser
+                                                                          scopes:@[]
+                                                            includeGrantedScopes:NO];
+        [DBClientsManager authorizeFromControllerV2:[UIApplication sharedApplication]
+                                         controller:[[self class] topMostController]
+                              loadingStatusDelegate:nil
+                                            openURL:^(NSURL *url) { [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil]; }
+                                       scopeRequest:scopeRequest];
     });
 }
 
@@ -128,25 +131,31 @@ RCT_EXPORT_METHOD(getSpaceUsage: (NSString *)token
     if (currentReject == nil || currentResolve == nil) {
         return NO;
     }
-    DBOAuthResult *authResult = [DBClientsManager handleRedirectURL:url];
-    if (authResult) {
-        if ([authResult isSuccess]) {
-            currentResolve(authResult.accessToken.accessToken);
-        } else {
-            NSString *msg;
-            if ([authResult isError]) {
-                msg = [NSString stringWithFormat:@"%@, error type: %zd",[authResult errorDescription], [authResult errorType]];
+    
+    BOOL canHandle = [DBClientsManager handleRedirectURL:url completion:^(DBOAuthResult *authResult) {
+        if (authResult) {
+            if ([authResult isSuccess]) {
+                NSInteger msTimestamp = authResult.accessToken.tokenExpirationTimestamp * 1000;
+                NSDictionary *authInfo = @{@"token": authResult.accessToken.accessToken,
+                                           @"rToken": authResult.accessToken.refreshToken,
+                                           @"expireDate": @(msTimestamp)
+                };
+                currentResolve(authInfo);
             } else {
-                msg = @"OAuth canceled!";
+                NSString *msg;
+                if ([authResult isError]) {
+                    msg = [NSString stringWithFormat:@"%@, error type: %zd", [authResult errorDescription], [authResult errorType]];
+                } else {
+                    msg = @"OAuth canceled!";
+                }
+                currentReject(@"authorize", msg, nil);
             }
-            currentReject(@"authorize", msg, nil);
+            currentResolve = nil;
+            currentReject = nil;
         }
-        currentResolve = nil;
-        currentReject = nil;
-
-        return YES;
-    }
-    return NO;
+    }];
+    
+    return canHandle;
 }
 
 + (UIViewController *)topMostController {

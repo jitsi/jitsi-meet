@@ -1,5 +1,6 @@
 // @flow
 
+import { parseURLParams } from './parseURLParams';
 import { normalizeNFKC } from './strings';
 
 /**
@@ -44,17 +45,18 @@ const _URI_PATH_PATTERN = '([^?#]*)';
 export const URI_PROTOCOL_PATTERN = '^([a-z][a-z0-9\\.\\+-]*:)';
 
 /**
- * Excludes/removes certain characters from a specific room (name) which are
- * incompatible with Jitsi Meet on the client and/or server sides.
+ * Excludes/removes certain characters from a specific path part which are
+ * incompatible with Jitsi Meet on the client and/or server sides. The main
+ * use case for this method is to clean up the room name and the tenant.
  *
- * @param {?string} room - The room (name) to fix.
+ * @param {?string} pathPart - The path part to fix.
  * @private
  * @returns {?string}
  */
-function _fixRoom(room: ?string) {
-    return room
-        ? room.replace(new RegExp(_ROOM_EXCLUDE_PATTERN, 'g'), '')
-        : room;
+function _fixPathPart(pathPart: ?string) {
+    return pathPart
+        ? pathPart.replace(new RegExp(_ROOM_EXCLUDE_PATTERN, 'g'), '')
+        : pathPart;
 }
 
 /**
@@ -96,6 +98,24 @@ function _fixURIStringScheme(uri: string) {
     }
 
     return uri;
+}
+
+/**
+ * Converts a path to a backend-safe format, by splitting the path '/' processing each part.
+ * Properly lowercased and url encoded.
+ *
+ * @param {string?} path - The path to convert.
+ * @returns {string?}
+ */
+export function getBackendSafePath(path: ?string): ?string {
+    if (!path) {
+        return path;
+    }
+
+    return path
+        .split('/')
+        .map(getBackendSafeRoomName)
+        .join('/');
 }
 
 /**
@@ -316,6 +336,11 @@ export function parseURIString(uri: ?string) {
 
     const obj = parseStandardURIString(_fixURIStringScheme(uri));
 
+    // XXX While the components/segments of pathname are URI encoded, Jitsi Meet
+    // on the client and/or server sides still don't support certain characters.
+    obj.pathname = obj.pathname.split('/').map(pathPart => _fixPathPart(pathPart))
+        .join('/');
+
     // Add the properties that are specific to a Jitsi Meet resource (location)
     // such as contextRoot, room:
 
@@ -325,24 +350,14 @@ export function parseURIString(uri: ?string) {
     // The room (name) is the last component/segment of pathname.
     const { pathname } = obj;
 
-    // XXX While the components/segments of pathname are URI encoded, Jitsi Meet
-    // on the client and/or server sides still don't support certain characters.
     const contextRootEndIndex = pathname.lastIndexOf('/');
-    let room = pathname.substring(contextRootEndIndex + 1) || undefined;
 
-    if (room) {
-        const fixedRoom = _fixRoom(room);
+    obj.room = pathname.substring(contextRootEndIndex + 1) || undefined;
 
-        if (fixedRoom !== room) {
-            room = fixedRoom;
-
-            // XXX Drive fixedRoom into pathname (because room is derived from
-            // pathname).
-            obj.pathname
-                = pathname.substring(0, contextRootEndIndex + 1) + (room || '');
-        }
+    if (contextRootEndIndex > 1) {
+        // The part of the pathname from the beginning to the room name is the tenant.
+        obj.tenant = pathname.substring(1, contextRootEndIndex);
     }
-    obj.room = room;
 
     return obj;
 }
@@ -527,7 +542,7 @@ export function urlObjectToString(o: Object): ?string {
 
     let { hash } = url;
 
-    for (const urlPrefix of [ 'config', 'interfaceConfig', 'devices', 'userInfo' ]) {
+    for (const urlPrefix of [ 'config', 'interfaceConfig', 'devices', 'userInfo', 'appData' ]) {
         const urlParamsArray
             = _objectToURLParamsArray(
                 o[`${urlPrefix}Overwrite`]
@@ -550,4 +565,35 @@ export function urlObjectToString(o: Object): ?string {
     url.hash = hash;
 
     return url.toString() || undefined;
+}
+
+/**
+ * Adds hash params to URL.
+ *
+ * @param {URL} url - The URL.
+ * @param {Object} hashParamsToAdd - A map with the parameters to be set.
+ * @returns {URL} - The new URL.
+ */
+export function addHashParamsToURL(url: URL, hashParamsToAdd: Object = {}) {
+    const params = parseURLParams(url);
+    const urlParamsArray = _objectToURLParamsArray({
+        ...params,
+        ...hashParamsToAdd
+    });
+
+    if (urlParamsArray.length) {
+        url.hash = `#${urlParamsArray.join('&')}`;
+    }
+
+    return url;
+}
+
+/**
+ * Returns the decoded URI.
+ *
+ * @param {string} uri - The URI to decode.
+ * @returns {string}
+ */
+export function getDecodedURI(uri: string) {
+    return decodeURI(uri.replace(/^https?:\/\//i, ''));
 }

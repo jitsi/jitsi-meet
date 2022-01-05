@@ -17,7 +17,7 @@ export type AudioElement = {
 };
 
 /**
- * {@code AbstractAudio} component's property types.
+ * {@code AbstractAudio} Component's property types.
  */
 type Props = {
 

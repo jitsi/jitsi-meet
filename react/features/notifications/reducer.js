@@ -5,6 +5,7 @@ import { ReducerRegistry } from '../base/redux';
 import {
     CLEAR_NOTIFICATIONS,
     HIDE_NOTIFICATION,
+    HIDE_RAISE_HAND_NOTIFICATIONS,
     SET_NOTIFICATIONS_ENABLED,
     SHOW_NOTIFICATION
 } from './actionTypes';
@@ -41,6 +42,14 @@ ReducerRegistry.register('features/notifications',
                 ...state,
                 notifications: state.notifications.filter(
                     notification => notification.uid !== action.uid)
+            };
+
+        case HIDE_RAISE_HAND_NOTIFICATIONS:
+            return {
+                ...state,
+                notifications: state.notifications.filter(
+                    notification => !notification.props.raiseHandNotification
+                )
             };
 
         case SET_NOTIFICATIONS_ENABLED:
