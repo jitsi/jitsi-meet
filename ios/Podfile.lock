@@ -280,8 +280,8 @@ PODS:
     - React-cxxreact (= 0.61.5-jitsi.2)
     - React-jsi (= 0.61.5-jitsi.2)
   - React-jsinspector (0.61.5-jitsi.2)
-  - react-native-background-timer (2.4.0):
-    - React
+  - react-native-background-timer (2.4.1):
+    - React-Core
   - react-native-calendar-events (2.0.0):
     - React
   - react-native-get-random-values (1.7.0):
@@ -611,7 +611,7 @@ SPEC CHECKSUMS:
   React-jsi: ddb471a56185e4007835a1bba0882ecb5ce3dc0e
   React-jsiexecutor: 67106691c60030ec888d7cbbc4f48a3168e27a02
   React-jsinspector: 92ceee6c66dc19886289b52436ade7e020b89602
-  react-native-background-timer: 029c606b3fd6dd476b153e177c518b6ade4c169f
+  react-native-background-timer: 17ea5e06803401a379ebf1f20505b793ac44d0fe
   react-native-calendar-events: 82dc6c915653a1a8a266e43fdbbfdb3b1022ca99
   react-native-get-random-values: 237bffb1c7e05fb142092681531810a29ba53015
   react-native-keep-awake: afad8a51dfef9fe9655a6344771be32c8596d774
