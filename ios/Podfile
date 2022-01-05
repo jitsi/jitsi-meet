@@ -73,7 +73,7 @@ target 'JitsiMeetSDK' do
   pod 'RNDefaultPreference', :path => '../node_modules/react-native-default-preference'
   pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
   pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
-  pod 'RNGoogleSignin', :path => '../node_modules/@react-native-community/google-signin'
+  pod 'RNGoogleSignin', :path => '../node_modules/@react-native-google-signin/google-signin'
   pod 'RNReanimated', :path => '../node_modules/react-native-reanimated'
   pod 'RNScreens', :path => '../node_modules/react-native-screens'
   pod 'RNSound', :path => '../node_modules/react-native-sound'

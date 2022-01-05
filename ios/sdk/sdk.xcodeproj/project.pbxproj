@@ -408,7 +408,7 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-JitsiMeetSDK/Pods-JitsiMeetSDK-resources.sh",
 				"${PODS_ROOT}/Amplitude/Sources/Resources/ComodoRsaDomainValidationCA.der",
-				"${PODS_ROOT}/GoogleSignIn/Resources/GoogleSignIn.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/GoogleSignIn/GoogleSignIn.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
