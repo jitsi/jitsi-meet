@@ -106,7 +106,7 @@
     "react-native-svg": "12.1.0",
     "react-native-svg-transformer": "1.0.0",
     "react-native-tab-view": "2.16.0",
-    "react-native-url-polyfill": "1.2.0",
+    "react-native-url-polyfill": "1.3.0",
     "react-native-video": "5.1.1",
     "react-native-watch-connectivity": "0.4.3",
     "react-native-webrtc": "1.94.1",
