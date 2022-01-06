@@ -329,6 +329,7 @@ export function computeDisplayModeFromInput(input: Object) {
 export function getDisplayModeInput(props: Object, state: Object) {
     const {
         _currentLayout,
+        _hasOnlyScreenStream,
         _isAudioOnly,
         _isCurrentlyOnLargeVideo,
         _isScreenSharing,
@@ -349,6 +350,7 @@ export function getDisplayModeInput(props: Object, state: Object) {
         videoStream: Boolean(_videoTrack),
         isRemoteParticipant: !_participant?.isFakeParticipant && !_participant?.local,
         isScreenSharing: _isScreenSharing,
+        hasOnlyScreenStream: _hasOnlyScreenStream,
         videoStreamMuted: _videoTrack ? _videoTrack.muted : 'no stream'
     };
 }

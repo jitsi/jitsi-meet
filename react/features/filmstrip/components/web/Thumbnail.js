@@ -17,8 +17,8 @@ import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { isTestModeEnabled } from '../../../base/testing';
 import {
-    getLocalAudioTrack,
-    getLocalVideoTrack,
+    getLocalAudioTrack, getLocalCameraTrack, getLocalScreenTrack,
+    getLocalVideoTrack, getParticipantsCameraTrack, getParticipantsScreenTrack,
     getTrackByMediaTypeAndParticipant,
     updateLastTrackVideoMediaEvent
 } from '../../../base/tracks';
@@ -903,8 +903,9 @@ function _mapStateToProps(state, ownProps): Object {
     const id = participant?.id;
     const isLocal = participant?.local ?? true;
     const tracks = state['features/base/tracks'];
-    const _videoTrack = isLocal
-        ? getLocalVideoTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantID);
+    const _cameraTrack = isLocal ? getLocalCameraTrack(tracks) : getParticipantsCameraTrack(tracks, participantID);
+    const _screenTrack = isLocal ? getLocalScreenTrack(tracks) : getParticipantsScreenTrack(tracks, participantID);
+    const _videoTrack = _cameraTrack || _screenTrack;
     const _audioTrack = isLocal
         ? getLocalAudioTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, participantID);
     const _currentLayout = getCurrentLayout(state);
