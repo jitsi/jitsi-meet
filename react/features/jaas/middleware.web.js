@@ -1,11 +1,12 @@
 import { redirectToStaticPage } from '../app/actions';
+import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
 import {
     JitsiConferenceErrors,
     JitsiConferenceEvents
 } from '../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../base/redux';
 
-import { SET_DETAILS, CONFERENCE_JOINED } from './actionTypes';
+import { SET_DETAILS } from './actionTypes';
 import { STATUSES } from './constants';
 import logger from './logger';
 
@@ -35,8 +36,8 @@ MiddlewareRegistry.register(store => next => async action => {
 });
 
 /** .........
- * Registers listener for {@link JitsiConferenceEvents.CONFERENCE_ERROR} that
- * will log the error message if the error type is {@link JitsiConferenceErrors.SETTINGS_ERROR}
+ * Registers listener for {@link JitsiConferenceEvents.CONFERENCE_ERROR} that will
+ * log the error message if the error type is {@link JitsiConferenceErrors.SETTINGS_ERROR} .
  *
  * @param {JitsiConference} conference - The conference instance on which the
  * new event listener will be registered.
