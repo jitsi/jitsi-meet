@@ -11,7 +11,7 @@ import { VideoQualityExpandedLabel, VideoQualityLabel } from '../../../video-qua
 import InsecureRoomNameExpandedLabel from './InsecureRoomNameExpandedLabel';
 import styles from './styles';
 
-import { InsecureRoomNameLabel } from '.';
+import { InsecureRoomNameLabel } from './';
 
 type Props = {}
 

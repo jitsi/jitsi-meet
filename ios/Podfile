@@ -1,6 +1,9 @@
+require_relative '../node_modules/react-native/scripts/react_native_pods'
+require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+
 platform :ios, '12.0'
 workspace 'jitsi-meet'
-require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+
 install! 'cocoapods', :deterministic_uuids => false
 
 target 'JitsiMeet' do
@@ -17,76 +20,14 @@ target 'JitsiMeetSDK' do
   # React Native and its dependencies
   #
 
-  pod 'FBLazyVector', :path => '../node_modules/react-native/Libraries/FBLazyVector/'
-  pod 'FBReactNativeSpec', :path => '../node_modules/react-native/Libraries/FBReactNativeSpec/'
-  pod 'RCTRequired', :path => '../node_modules/react-native/Libraries/RCTRequired/'
-  pod 'RCTTypeSafety', :path => '../node_modules/react-native/Libraries/TypeSafety/'
-  pod 'React', :path => '../node_modules/react-native/'
-  pod 'ReactCommon', :path => '../node_modules/react-native/ReactCommon', :subspecs => [
-    'turbomodule'
-  ]
-  pod 'React-Core', :path => '../node_modules/react-native/', :subspecs => [
-    'CoreModulesHeaders',
-    'DevSupport',
-    'RCTWebSocket'
-  ], :modular_headers => true
-  pod 'React-CoreModules', :path => '../node_modules/react-native/React/CoreModules'
-  pod 'React-RCTActionSheet', :path => '../node_modules/react-native/Libraries/ActionSheetIOS'
-  pod 'React-RCTAnimation', :path => '../node_modules/react-native/Libraries/NativeAnimation'
-  pod 'React-RCTBlob', :path => '../node_modules/react-native/Libraries/Blob'
-  pod 'React-RCTImage', :path => '../node_modules/react-native/Libraries/Image'
-  pod 'React-RCTLinking', :path => '../node_modules/react-native/Libraries/LinkingIOS'
-  pod 'React-RCTNetwork', :path => '../node_modules/react-native/Libraries/Network'
-  pod 'React-RCTSettings', :path => '../node_modules/react-native/Libraries/Settings'
-  pod 'React-RCTText', :path => '../node_modules/react-native/Libraries/Text'
-  pod 'React-RCTVibration', :path => '../node_modules/react-native/Libraries/Vibration'
-
-  pod 'React-cxxreact', :path => '../node_modules/react-native/ReactCommon/cxxreact'
-  pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi'
-  pod 'React-jsiexecutor', :path => '../node_modules/react-native/ReactCommon/jsiexecutor'
-  pod 'React-jsinspector', :path => '../node_modules/react-native/ReactCommon/jsinspector'
-  pod 'Yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
-
-  pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
-  pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
-  pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
-
-  # React Native plugins
-  #
-
-  pod 'amplitude-react-native', :path => '../node_modules/@amplitude/react-native'
-  pod 'react-native-background-timer', :path => '../node_modules/react-native-background-timer'
-  pod 'react-native-get-random-values', :path => '../node_modules/react-native-get-random-values'
-  pod 'react-native-keep-awake', :path => '../node_modules/react-native-keep-awake'
-  pod 'react-native-netinfo', :path => '../node_modules/@react-native-community/netinfo'
-  pod 'react-native-performance', :path => '../node_modules/react-native-performance/ios'
-  pod 'react-native-safe-area-context', :path => '../node_modules/react-native-safe-area-context'
-  pod 'react-native-slider', :path => '../node_modules/@react-native-community/slider'
-  pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
-  pod 'react-native-video', :path => '../node_modules/react-native-video/react-native-video.podspec'
-  pod 'react-native-webview', :path => '../node_modules/react-native-webview'
-  pod 'react-native-webrtc', :path => '../node_modules/react-native-webrtc'
-  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-async-storage/async-storage'
-  pod 'RNCalendarEvents', :path => '../node_modules/react-native-calendar-events'
-  pod 'RNCClipboard', :path => '../node_modules/@react-native-community/clipboard'
-  pod 'RNCMaskedView', :path => '../node_modules/@react-native-masked-view/masked-view'
-  pod 'RNDefaultPreference', :path => '../node_modules/react-native-default-preference'
-  pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
-  pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
-  pod 'RNGoogleSignin', :path => '../node_modules/@react-native-google-signin/google-signin'
-  pod 'RNReanimated', :path => '../node_modules/react-native-reanimated'
-  pod 'RNScreens', :path => '../node_modules/react-native-screens'
-  pod 'RNSound', :path => '../node_modules/react-native-sound'
-  pod 'RNSVG', :path => '../node_modules/react-native-svg'
-  pod 'RNWatch', :path => '../node_modules/react-native-watch-connectivity'
+  config = use_native_modules!
+  use_react_native!(:path => config["reactNativePath"])
 
   # Native pod dependencies
   #
 
   pod 'CocoaLumberjack', '~>3.5.3'
   pod 'ObjectiveDropboxOfficial', '~>6.1.0'
-
-  use_native_modules!
 end
 
 post_install do |installer|

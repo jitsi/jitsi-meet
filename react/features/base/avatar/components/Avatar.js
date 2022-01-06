@@ -6,7 +6,7 @@ import { getParticipantById } from '../../participants';
 import { connect } from '../../redux';
 import { getAvatarColor, getInitials, isCORSAvatarURL } from '../functions';
 
-import { StatelessAvatar } from '.';
+import { StatelessAvatar } from './';
 
 export type Props = {
 
