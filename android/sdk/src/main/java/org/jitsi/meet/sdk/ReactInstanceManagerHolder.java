@@ -177,7 +177,7 @@ class ReactInstanceManagerHolder {
             = new ArrayList<>(Arrays.asList(
                 new com.reactnativecommunity.asyncstorage.AsyncStoragePackage(),
                 new com.ocetnik.timer.BackgroundTimerPackage(),
-                new com.calendarevents.CalendarEventsPackage(),
+                new com.calendarevents.RNCalendarEventsPackage(),
                 new com.corbt.keepawake.KCKeepAwakePackage(),
                 new com.facebook.react.shell.MainReactPackage(),
                 new com.reactnativecommunity.clipboard.ClipboardPackage(),
@@ -219,7 +219,7 @@ class ReactInstanceManagerHolder {
 
         // RNGoogleSigninPackage
         try {
-            Class<?> googlePackageClass = Class.forName("co.apptailor.googlesignin.RNGoogleSigninPackage");
+            Class<?> googlePackageClass = Class.forName("com.reactnativegooglesignin.RNGoogleSigninPackage");
             Constructor constructor = googlePackageClass.getConstructor();
             packages.add((ReactPackage)constructor.newInstance());
         } catch (Exception e) {
