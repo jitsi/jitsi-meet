@@ -18,10 +18,7 @@ import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { isTestModeEnabled } from '../../../base/testing';
 import {
     getLocalAudioTrack,
-    getLocalCameraTrack,
-    getLocalScreenTrack,
-    getParticipantsCameraTrack,
-    getParticipantsScreenTrack,
+    getLocalVideoTrack,
     getTrackByMediaTypeAndParticipant,
     updateLastTrackVideoMediaEvent
 } from '../../../base/tracks';
