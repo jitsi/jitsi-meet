@@ -45,7 +45,7 @@ type State = {
  */
 export default class BaseApp extends Component<*, State> {
     /**
-     * {{promise, resolve, reject}}
+     * The deferred for the initialisation {{promise, resolve, reject}}.
      */
     _init: Object;
 
