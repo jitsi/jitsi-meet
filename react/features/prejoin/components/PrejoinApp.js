@@ -36,10 +36,9 @@ export default class PrejoinApp extends BaseApp<Props> {
      *
      * @returns {void}
      */
-    componentDidMount() {
-        super.componentDidMount();
+    async componentDidMount() {
+        await super.componentDidMount();
 
-        this._init.then(async () => {
             const { store } = this.state;
             const { dispatch } = store;
             const { styleType } = this.props;
@@ -69,7 +68,6 @@ export default class PrejoinApp extends BaseApp<Props> {
                 dispatch(initPrejoin(tracks, errors));
                 dispatch(makePrecallTest(getConferenceOptions(store.getState())));
             });
-        });
     }
 
     /**

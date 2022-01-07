@@ -50,6 +50,7 @@ CallIntegration && MiddlewareRegistry.register(store => next => action => {
         return _setCallKitSubscriptions(store, next, action);
 
     case APP_WILL_MOUNT:
+        console.log("XXX APP_WILL_MOUNT");
         return _appWillMount(store, next, action);
 
     case APP_WILL_UNMOUNT:
