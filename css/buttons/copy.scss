@@ -7,12 +7,12 @@
     width: calc(100% - 24px);
     height: 24px;
 
-    background: #0376DA;
+    background: #00ae31;
     border-radius: 4px;
     cursor: pointer;
 
     &:hover {
-        background: #278ADF;
+        background: #00ae31;
         font-weight: 600;
     }
 
@@ -29,7 +29,7 @@
     }
 
     &.clicked {
-        background: #31B76A;
+        background: #95e932;
     }
 
     & > div > svg > path {
