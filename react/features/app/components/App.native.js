@@ -81,40 +81,45 @@ export class App extends AbstractApp {
      *
      * @returns {void}
      */
-    componentDidMount() {
-        super.componentDidMount();
+    async componentDidMount() {
+        await super.componentDidMount();
 
         SplashScreen.hide();
+    }
 
-        this._init.then(() => {
-            const { dispatch, getState } = this.state.store;
+    /**
+     * Initializes feature flags and updates settings.
+     *
+     * @returns {void}
+     */
+    _extraInit() {
+        const { dispatch, getState } = this.state.store;
 
-            // We set these early enough so then we avoid any unnecessary re-renders.
-            dispatch(updateFlags(this.props.flags));
+        // We set these early enough so then we avoid any unnecessary re-renders.
+        dispatch(updateFlags(this.props.flags));
 
-            // Check if serverURL is configured externally and not allowed to change.
-            const serverURLChangeEnabled = getFeatureFlag(getState(), SERVER_URL_CHANGE_ENABLED, true);
+        // Check if serverURL is configured externally and not allowed to change.
+        const serverURLChangeEnabled = getFeatureFlag(getState(), SERVER_URL_CHANGE_ENABLED, true);
 
-            if (!serverURLChangeEnabled) {
-                // As serverURL is provided externally, so we push it to settings.
-                if (typeof this.props.url !== 'undefined') {
-                    const { serverURL } = this.props.url;
+        if (!serverURLChangeEnabled) {
+            // As serverURL is provided externally, so we push it to settings.
+            if (typeof this.props.url !== 'undefined') {
+                const { serverURL } = this.props.url;
 
-                    if (typeof serverURL !== 'undefined') {
-                        dispatch(updateSettings({ serverURL }));
-                    }
+                if (typeof serverURL !== 'undefined') {
+                    dispatch(updateSettings({ serverURL }));
                 }
             }
+        }
 
-            dispatch(updateSettings(this.props.userInfo || {}));
+        dispatch(updateSettings(this.props.userInfo || {}));
 
-            // Update settings with feature-flag.
-            const callIntegrationEnabled = this.props.flags[CALL_INTEGRATION_ENABLED];
+        // Update settings with feature-flag.
+        const callIntegrationEnabled = this.props.flags[CALL_INTEGRATION_ENABLED];
 
-            if (typeof callIntegrationEnabled !== 'undefined') {
-                dispatch(updateSettings({ disableCallIntegration: !callIntegrationEnabled }));
-            }
-        });
+        if (typeof callIntegrationEnabled !== 'undefined') {
+            dispatch(updateSettings({ disableCallIntegration: !callIntegrationEnabled }));
+        }
     }
 
     /**

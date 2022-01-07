@@ -16,6 +16,7 @@ import {
     StateListenerRegistry
 } from '../../redux';
 import { SoundCollection } from '../../sounds';
+import { createDeferred } from '../../util';
 import { appWillMount, appWillUnmount } from '../actions';
 import logger from '../logger';
 
@@ -43,7 +44,10 @@ type State = {
  * @abstract
  */
 export default class BaseApp extends Component<*, State> {
-    _init: Promise<*>;
+    /**
+     * The deferred for the initialisation {{promise, resolve, reject}}.
+     */
+    _init: Object;
 
     /**
      * Initializes a new {@code BaseApp} instance.
@@ -64,8 +68,8 @@ export default class BaseApp extends Component<*, State> {
      * Initializes the app.
      *
      * @inheritdoc
-     */
-    componentDidMount() {
+    */
+    async componentDidMount() {
         /**
          * Make the mobile {@code BaseApp} wait until the {@code AsyncStorage}
          * implementation of {@code Storage} initializes fully.
@@ -74,21 +78,28 @@ export default class BaseApp extends Component<*, State> {
          * @see {@link #_initStorage}
          * @type {Promise}
          */
-        this._init = this._initStorage()
-            .catch(err => {
-                /* BaseApp should always initialize! */
-                logger.error(err);
-            })
-            .then(() => new Promise(resolve => {
+        this._init = createDeferred();
+
+        try {
+            await this._initStorage();
+
+            const setStatePromise = new Promise(resolve => {
                 this.setState({
                     store: this._createStore()
                 }, resolve);
-            }))
-            .then(() => this.state.store.dispatch(appWillMount(this)))
-            .catch(err => {
-                /* BaseApp should always initialize! */
-                logger.error(err);
             });
+
+            await setStatePromise;
+
+            await this._extraInit();
+        } catch (err) {
+            /* BaseApp should always initialize! */
+            logger.error(err);
+        }
+
+        this.state.store.dispatch(appWillMount(this));
+
+        this._init.resolve();
     }
 
     /**
@@ -125,6 +136,15 @@ export default class BaseApp extends Component<*, State> {
         const _initializing = jitsiLocalStorage.getItem('_initializing');
 
         return _initializing || Promise.resolve();
+    }
+
+    /**
+     * Extra initialisation that subclasses might require.
+     *
+     * @returns {void}
+     */
+    _extraInit() {
+        // To be implemented by subclass.
     }
 
     /**
