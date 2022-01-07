@@ -1,15 +1,16 @@
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 const baseButton = {
-    height: BaseTheme.spacing[6],
-    marginTop: BaseTheme.spacing[2],
+    borderRadius: BaseTheme.shape.borderRadius,
+    height: BaseTheme.spacing[7],
+    marginTop: BaseTheme.spacing[3],
     marginLeft: BaseTheme.spacing[3],
     marginRight: BaseTheme.spacing[3]
 };
 
 const baseLabel = {
     fontSize: 15,
-    lineHeight: 24,
+    lineHeight: 30,
     textTransform: 'capitalize'
 };
 
