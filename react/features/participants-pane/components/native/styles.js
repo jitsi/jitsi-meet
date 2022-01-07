@@ -240,13 +240,16 @@ export default {
 
     inviteButton: {
         backgroundColor: BaseTheme.palette.action01,
+        borderRadius: BaseTheme.shape.borderRadius,
+        height: BaseTheme.spacing[7],
         marginBottom: BaseTheme.spacing[4],
         marginLeft: BaseTheme.spacing[3],
         marginRight: BaseTheme.spacing[3]
     },
 
     inviteLabel: {
-        ...BaseTheme.typography.labelButtonLarge,
+        fontSize: 15,
+        lineHeight: 30,
         textTransform: 'capitalize'
     },
 
@@ -330,7 +333,7 @@ export default {
         borderStyle: 'solid',
         borderColor: BaseTheme.palette.border02,
         backgroundColor: BaseTheme.palette.uiBackground,
-        borderRadius: 6,
+        borderRadius: BaseTheme.shape.borderRadius,
         marginLeft: BaseTheme.spacing[3],
         marginRight: BaseTheme.spacing[3]
     },
