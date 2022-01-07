@@ -8,7 +8,7 @@ import { combineStyles } from '../../styles';
 import type { Styles } from './AbstractToolboxItem';
 import ToolboxItem from './ToolboxItem';
 
-export type Props = {
+export type Props = {|
 
     /**
      * Function to be called after the click handler has been processed.
@@ -21,6 +21,12 @@ export type Props = {
     buttonKey?: string,
 
     /**
+     * An extra class name to be added at the end of the element's class name
+     * in order to enable custom styling.
+     */
+    customClass?: string,
+
+    /**
      * Extra styles which will be applied in conjunction with `styles` or
      * `toggledStyles` when the button is disabled;.
      */
@@ -29,7 +35,7 @@ export type Props = {
     /**
      * External handler for click action.
      */
-     handleClick?: Function,
+    handleClick?: Function,
 
     /**
      * Notify mode for `toolbarButtonClicked` event -
@@ -61,7 +67,7 @@ export type Props = {
      * Whether this button is visible or not.
      */
     visible: boolean
-};
+|};
 
 declare var APP: Object;
 
@@ -312,7 +318,6 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
         const props = {
             ...this.props,
             accessibilityLabel: this.accessibilityLabel,
-            disabled: this._isDisabled(),
             elementAfter: this._getElementAfter(),
             icon: this._getIcon(),
             label: this._getLabel(),

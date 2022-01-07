@@ -17,7 +17,7 @@ export type MediaType = 'audio' | 'video' | 'presenter';
  *
  * @enum {string}
  */
-export const MEDIA_TYPE: { AUDIO: MediaType, PRESENTER: MediaType, VIDEO: MediaType} = {
+export const MEDIA_TYPE = {
     AUDIO: 'audio',
     PRESENTER: 'presenter',
     VIDEO: 'video'

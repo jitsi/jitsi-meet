@@ -86,7 +86,7 @@ export type Props = {
     /**
      * True if the item is toggled, false otherwise.
      */
-    toggled: boolean,
+    toggled: ?boolean,
 
     /**
      * The text to display in the tooltip. Used only on web.

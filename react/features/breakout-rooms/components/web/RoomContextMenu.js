@@ -17,14 +17,14 @@ import { closeBreakoutRoom, moveToRoom, removeBreakoutRoom } from '../../actions
 type Props = {
 
     /**
-         * Room reference.
-         */
+     * Room reference.
+     */
     entity: Object,
 
     /**
      * Target elements against which positioning calculations are made.
      */
-    offsetTarget: HTMLElement,
+    offsetTarget: ?HTMLElement,
 
     /**
      * Callback for the mouse entering the component.

@@ -1,6 +1,6 @@
 // @flow
 
-import type { ComponentType, Element } from 'react';
+import type { ComponentType } from 'react';
 
 /**
  * Item data for <tt>NavigateSectionList</tt>.
@@ -73,7 +73,7 @@ export type Section = {
 
     keyExtractor?: (item: Object) => string,
 
-    renderItem?: ?(info: Object) => ?Element<any>
+    renderItem?: ?(info: Object) => null | React$Element<any>
 
 }
 

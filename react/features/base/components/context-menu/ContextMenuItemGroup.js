@@ -2,14 +2,15 @@
 import { makeStyles } from '@material-ui/core';
 import React from 'react';
 
-import ContextMenuItem, { type Props as Action } from './ContextMenuItem';
+import ContextMenuItem from './ContextMenuItem';
+
 
 type Props = {
 
     /**
      * List of actions in this group.
      */
-    actions?: Array<Action>,
+    actions?: Array<Object>,
 
     /**
      * The children of the component.

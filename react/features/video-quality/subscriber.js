@@ -200,15 +200,16 @@ function _updateReceiverVideoConstraints({ getState }) {
     const sourceNameSignaling = getSourceNameSignalingFeatureFlag(state);
     const localParticipantId = getLocalParticipant(state).id;
 
-    const receiverConstraints = {
-        constraints: {},
-        defaultConstraints: { 'maxHeight': VIDEO_QUALITY_LEVELS.NONE },
-        lastN,
-        ...sourceNameSignaling ? { onStageSources: [] } : { onStageEndpoints: [] },
-        ...sourceNameSignaling ? { selectedSources: [] } : { selectedEndpoints: [] }
-    };
+    let receiverConstraints;
 
     if (sourceNameSignaling) {
+        receiverConstraints = {
+            constraints: {},
+            defaultConstraints: { 'maxHeight': VIDEO_QUALITY_LEVELS.NONE },
+            lastN,
+            onStageSources: [],
+            selectedSources: []
+        };
         const visibleRemoteTrackSourceNames = [];
         let largeVideoSourceName;
 
@@ -267,6 +268,14 @@ function _updateReceiverVideoConstraints({ getState }) {
         }
 
     } else {
+        receiverConstraints = {
+            constraints: {},
+            defaultConstraints: { 'maxHeight': VIDEO_QUALITY_LEVELS.NONE },
+            lastN,
+            onStageEndpoints: [],
+            selectedEndpoints: []
+        };
+
         // Tile view.
         // eslint-disable-next-line no-lonely-if
         if (shouldDisplayTileView(state)) {
