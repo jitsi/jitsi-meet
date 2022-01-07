@@ -226,7 +226,8 @@ class WelcomePage extends AbstractWelcomePage<*> {
             // $FlowExpectedError
             {
                 duration: 300,
-                toValue: focused ? 1 : 0
+                toValue: focused ? 1 : 0,
+                useNativeDriver: true
             })
             .start(animationState =>
 
