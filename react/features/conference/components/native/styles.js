@@ -41,7 +41,7 @@ export default {
 
     headerNavigationButton: {
         height: BaseTheme.spacing[6],
-        marginTop: BaseTheme.spacing[3],
+        marginTop: 20,
         width: BaseTheme.spacing[6]
     },
 
