@@ -117,11 +117,10 @@ export default {
      */
     textInputContainer: {
         flex: 1,
-        height: 40,
-        paddingBottom: 8,
-        paddingTop: 2,
-        paddingLeft: 16,
-        paddingRight: 16
+        height: BaseTheme.spacing[7],
+        marginBottom: BaseTheme.spacing[3],
+        marginHorizontal: BaseTheme.spacing[3],
+        marginTop: BaseTheme.spacing[2]
     },
 
     /**
