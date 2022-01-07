@@ -44,12 +44,10 @@ type State = {
  * @abstract
  */
 export default class BaseApp extends Component<*, State> {
-    _init: Promise<*>;
-
     /**
-     * 
+     * {{promise, resolve, reject}}
      */
-    _extraInit: Promise<*>;
+    _init: Object;
 
     /**
      * Initializes a new {@code BaseApp} instance.
@@ -91,14 +89,14 @@ export default class BaseApp extends Component<*, State> {
                 }, resolve);
             });
 
-           await setStatePromise;
+            await setStatePromise;
 
-           await this._extraInit();
+            await this._extraInit();
         } catch (err) {
             /* BaseApp should always initialize! */
             logger.error(err);
         }
-      
+
         this.state.store.dispatch(appWillMount(this));
 
         this._init.resolve();
@@ -138,6 +136,15 @@ export default class BaseApp extends Component<*, State> {
         const _initializing = jitsiLocalStorage.getItem('_initializing');
 
         return _initializing || Promise.resolve();
+    }
+
+    /**
+     * Extra initialisation that subclasses might require.
+     *
+     * @returns {void}
+     */
+    _extraInit() {
+        // To be implemented by subclass.
     }
 
     /**

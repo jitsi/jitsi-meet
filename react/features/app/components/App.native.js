@@ -87,9 +87,12 @@ export class App extends AbstractApp {
         SplashScreen.hide();
     }
 
+    /**
+     * Initializes feature flags and updates settings.
+     *
+     * @returns {void}
+     */
     _extraInit() {
-        console.log("XXX updated flags1");
-
         const { dispatch, getState } = this.state.store;
 
         // We set these early enough so then we avoid any unnecessary re-renders.
@@ -117,8 +120,6 @@ export class App extends AbstractApp {
         if (typeof callIntegrationEnabled !== 'undefined') {
             dispatch(updateSettings({ disableCallIntegration: !callIntegrationEnabled }));
         }
-
-        console.log("XXX updated flags2");
     }
 
     /**
