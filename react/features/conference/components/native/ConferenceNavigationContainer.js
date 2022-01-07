@@ -64,7 +64,9 @@ const ConferenceNavigationContainer = () => {
                 theme = { navigationContainerTheme }>
                 <ConferenceStack.Navigator
                     initialRouteName = { screen.conference.main }
-                    mode = 'modal'>
+                    screenOptions = {{
+                        presentation: 'modal'
+                    }}>
                     <ConferenceStack.Screen
                         component = { Conference }
                         name = { screen.conference.main }

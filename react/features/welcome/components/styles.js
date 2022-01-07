@@ -82,14 +82,6 @@ export default {
     },
 
     /**
-     * Drawer style.
-     */
-    drawerStyle: {
-        backgroundColor: BaseTheme.palette.ui12,
-        width: '54%'
-    },
-
-    /**
      * The style of the display name label in the side bar.
      */
     displayName: {

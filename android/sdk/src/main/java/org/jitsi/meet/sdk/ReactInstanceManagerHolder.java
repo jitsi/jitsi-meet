@@ -181,6 +181,7 @@ class ReactInstanceManagerHolder {
                 new com.facebook.react.shell.MainReactPackage(),
                 new com.reactnativecommunity.clipboard.ClipboardPackage(),
                 new com.reactnativecommunity.netinfo.NetInfoPackage(),
+                new com.reactnativepagerview.PagerViewPackage(),
                 new com.oblador.performance.PerformancePackage(),
                 new com.reactnativecommunity.slider.ReactSliderPackage(),
                 new com.brentvatne.react.ReactVideoPackage(),

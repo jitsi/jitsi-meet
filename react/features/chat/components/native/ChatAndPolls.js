@@ -27,7 +27,7 @@ const ChatAndPolls = () => {
                 height: clientHeight,
                 width: clientWidth
             }}
-            tabBarOptions = {{
+            screenOptions = {{
                 ...chatTabBarOptions
             }}>
             <ChatTab.Screen
