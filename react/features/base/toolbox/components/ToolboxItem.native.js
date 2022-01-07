@@ -74,7 +74,7 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
             <TouchableHighlight
                 accessibilityLabel = { this.accessibilityLabel }
                 accessibilityRole = 'button'
-                accessibilityState = {{ 'selected': toggled }}
+                accessibilityState = {{ 'selected': Boolean(toggled) }}
                 disabled = { disabled }
                 onPress = { onClick }
                 style = { style }
