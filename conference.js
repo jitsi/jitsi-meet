@@ -796,6 +796,20 @@ export default {
             logger.warn('initial device list initialization failed', error);
         }
 
+        const handleStartAudioMuted = (options, tracks) => {
+            if (options.startWithAudioMuted) {
+                // Always add the track on Safari because of a known issue where audio playout doesn't happen
+                // if the user joins audio and video muted, i.e., if there is no local media capture.
+                if (browser.isWebKitBased()) {
+                    this.muteAudio(true, true);
+                } else {
+                    return tracks.filter(track => track.getType() !== MEDIA_TYPE.AUDIO);
+                }
+            }
+
+            return tracks;
+        };
+
         if (isPrejoinPageVisible(APP.store.getState())) {
             _connectionPromise = connect(roomName).then(c => {
                 // we want to initialize it early, in case of errors to be able
@@ -827,25 +841,14 @@ export default {
 
             this._displayErrorsForCreateInitialLocalTracks(errors);
 
-            return this._setLocalAudioVideoStreams(tracks);
+            return this._setLocalAudioVideoStreams(handleStartAudioMuted(initialOptions, tracks));
         }
 
         const [ tracks, con ] = await this.createInitialLocalTracksAndConnect(roomName, initialOptions);
-        let localTracks = tracks;
 
         this._initDeviceList(true);
 
-        if (initialOptions.startWithAudioMuted) {
-            // Always add the track on Safari because of a known issue where audio playout doesn't happen
-            // if the user joins audio and video muted, i.e., if there is no local media capture.
-            if (browser.isWebKitBased()) {
-                this.muteAudio(true, true);
-            } else {
-                localTracks = localTracks.filter(track => track.getType() !== MEDIA_TYPE.AUDIO);
-            }
-        }
-
-        return this.startConference(con, localTracks);
+        return this.startConference(con, handleStartAudioMuted(initialOptions, tracks));
     },
 
     /**
