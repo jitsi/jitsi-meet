@@ -19,7 +19,7 @@ import TermsView from '../components/terms/components/TermsView';
 import CustomDrawerContent from './CustomDrawerContent';
 import WelcomePage from './WelcomePage.native';
 import { drawerContentOptions } from './constants';
-import styles from './styles';
+
 
 const DrawerStack = createDrawerNavigator();
 
@@ -31,8 +31,7 @@ const WelcomePageNavigationContainer = () => {
         <DrawerStack.Navigator
             /* eslint-disable-next-line react/jsx-no-bind */
             drawerContent = { props => <CustomDrawerContent { ...props } /> }
-            drawerContentOptions = { drawerContentOptions }
-            drawerStyle = { styles.drawerStyle }>
+            screenOptions = { drawerContentOptions }>
             <DrawerStack.Screen
                 component = { WelcomePage }
                 name = { screen.welcome.main }
