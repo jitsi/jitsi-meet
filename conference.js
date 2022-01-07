@@ -841,7 +841,21 @@ export default {
 
             this._displayErrorsForCreateInitialLocalTracks(errors);
 
-            return this._setLocalAudioVideoStreams(handleStartAudioMuted(initialOptions, tracks));
+            let localTracks = handleStartAudioMuted(initialOptions, tracks);
+
+            // in case where gum is slow and resolves after the startAudio/VideoMuted coming from jicofo, we can be
+            // join unmuted even though jicofo had instruct us to mute, so let's respect that before passing the tracks
+            if (!browser.isWebKitBased()) {
+                if (room?.isStartAudioMuted()) {
+                    localTracks = localTracks.filter(track => track.getType() !== MEDIA_TYPE.AUDIO);
+                }
+            }
+
+            if (room?.isStartVideoMuted()) {
+                localTracks = localTracks.filter(track => track.getType() !== MEDIA_TYPE.VIDEO);
+            }
+
+            return this._setLocalAudioVideoStreams(localTracks);
         }
 
         const [ tracks, con ] = await this.createInitialLocalTracksAndConnect(roomName, initialOptions);
