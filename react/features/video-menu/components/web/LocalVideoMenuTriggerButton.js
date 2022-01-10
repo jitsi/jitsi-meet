@@ -173,9 +173,11 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
                     hidden = { false }
                     inDrawer = { _overflowDrawer }>
                     <ContextMenuItemGroup>
-                        <FlipLocalVideoButton
-                            className = { _overflowDrawer ? classes.flipText : '' }
-                            onClick = { hidePopover } />
+                        { _showLocalVideoFlipButton
+                            && <FlipLocalVideoButton
+                                className = { _overflowDrawer ? classes.flipText : '' }
+                                onClick = { hidePopover } />
+                        }
                         { _showHideSelfViewButton
                             && <HideSelfViewVideoButton
                                 className = { _overflowDrawer ? classes.flipText : '' }
@@ -189,7 +191,7 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
             );
 
         return (
-            isMobileBrowser() || _showLocalVideoFlipButton
+            isMobileBrowser() || _showLocalVideoFlipButton || _showHideSelfViewButton
                 ? <Popover
                     content = { content }
                     id = 'local-video-menu-trigger'
