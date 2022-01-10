@@ -190,11 +190,24 @@ export default class MicrophoneEntry extends Component<Props, State> {
      * @inheritdoc
      */
     render() {
-        const { deviceId, children, hasError, index, isSelected, length, jitsiTrack, listHeaderId, measureAudioLevels } = this.props;
+        const {
+            deviceId,
+            children,
+            hasError,
+            index,
+            isSelected,
+            length,
+            jitsiTrack,
+            listHeaderId,
+            measureAudioLevels
+        } = this.props;
 
         const deviceTextId: string = `choose_microphone${deviceId}`;
 
         const labelledby: string = `${listHeaderId} ${deviceTextId} `;
+
+        const className = `audio-preview-microphone ${measureAudioLevels
+            ? 'audio-preview-microphone--withmeter' : 'audio-preview-microphone--nometer'}`;
 
         return (
             <li
@@ -202,7 +215,7 @@ export default class MicrophoneEntry extends Component<Props, State> {
                 aria-labelledby = { labelledby }
                 aria-posinset = { index }
                 aria-setsize = { length }
-                className = 'audio-preview-microphone'
+                className = { className }
                 onClick = { this._onClick }
                 onKeyPress = { this._onKeyPress }
                 role = 'radio'
