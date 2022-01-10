@@ -173,10 +173,10 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
                     hidden = { false }
                     inDrawer = { _overflowDrawer }>
                     <ContextMenuItemGroup>
-                        {_showLocalVideoFlipButton &&
-                            < FlipLocalVideoButton
-                                className = {_overflowDrawer ? classes.flipText : ''}
-                                onClick = {hidePopover} />
+                        { _showLocalVideoFlipButton
+                            && <FlipLocalVideoButton
+                                className = { _overflowDrawer ? classes.flipText : '' }
+                                onClick = { hidePopover } />
                         }
                         { _showHideSelfViewButton
                             && <HideSelfViewVideoButton
