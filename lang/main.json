@@ -213,7 +213,7 @@
         "cameraNotSendingData": "We are unable to access your camera. Please check if another application is using this device, select another device from the settings menu or try to reload the application.",
         "cameraNotSendingDataTitle": "Unable to access camera",
         "cameraPermissionDeniedError": "You have not granted permission to use your camera. You can still join the conference but others won't see you. Use the camera button in the address bar to fix this.",
-        "cameraTimeoutError": "Could not start video source. Timeout occured!",
+        "cameraTimeoutError": "Could not start video source. Timeout occurred!",
         "cameraUnknownError": "Cannot use camera for an unknown reason.",
         "cameraUnsupportedResolutionError": "Your camera does not support required video resolution.",
         "Cancel": "Cancel",
