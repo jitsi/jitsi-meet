@@ -53,7 +53,10 @@ type Props = AbstractAppProps & {
  * @augments AbstractApp
  */
 export class App extends AbstractApp {
-    _init: Promise<*>;
+    /**
+     * The deferred for the initialisation {{promise, resolve, reject}}.
+     */
+    _init: Object;
 
     /**
      * Initializes a new {@code App} instance.
