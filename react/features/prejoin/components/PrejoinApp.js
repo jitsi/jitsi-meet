@@ -29,7 +29,10 @@ type Props = {
  * @augments BaseApp
  */
 export default class PrejoinApp extends BaseApp<Props> {
-    _init: Promise<*>;
+    /**
+     * The deferred for the initialisation {{promise, resolve, reject}}.
+     */
+    _init: Object;
 
     /**
      * Navigates to {@link Prejoin} upon mount.

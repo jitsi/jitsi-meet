@@ -31,7 +31,10 @@ export type Props = {
  * @abstract
  */
 export class AbstractApp extends BaseApp<Props, *> {
-    _init: Promise<*>;
+    /**
+     * The deferred for the initialisation {{promise, resolve, reject}}.
+     */
+    _init: Object;
 
     /**
      * Initializes the app.
@@ -57,7 +60,7 @@ export class AbstractApp extends BaseApp<Props, *> {
         const previousTimestamp = prevProps.timestamp;
         const currentTimestamp = this.props.timestamp;
 
-        await this._init;
+        await this._init.promise;
 
         // Deal with URL changes.
 
