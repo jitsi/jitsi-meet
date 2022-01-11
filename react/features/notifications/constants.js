@@ -57,6 +57,13 @@ export const NOTIFICATION_ICON = {
 };
 
 /**
+ * The identifier of the lobby notification.
+ *
+ * @type {string}
+ */
+export const LOBBY_NOTIFICATION_ID = 'LOBBY_NOTIFICATION';
+
+/**
  * The identifier of the raise hand notification.
  *
  * @type {string}

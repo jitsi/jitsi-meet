@@ -1,5 +1,6 @@
 // @flow
 
+import i18n from 'i18next';
 import { batch } from 'react-redux';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
@@ -14,10 +15,14 @@ import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { isTestModeEnabled } from '../base/testing';
 import {
+    LOBBY_NOTIFICATION_ID,
     NOTIFICATION_TIMEOUT_TYPE,
     NOTIFICATION_TYPE,
+    hideNotification,
     showNotification
 } from '../notifications';
+import { open as openParticipantsPane } from '../participants-pane/actions';
+import { getParticipantsPaneOpen } from '../participants-pane/functions';
 import { shouldAutoKnock } from '../prejoin/functions';
 
 import { KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED } from './actionTypes';
@@ -31,6 +36,7 @@ import {
     setPasswordJoinFailed
 } from './actions';
 import { KNOCKING_PARTICIPANT_SOUND_ID } from './constants';
+import { getKnockingParticipants } from './functions';
 import { KNOCKING_PARTICIPANT_FILE } from './sounds';
 
 declare var APP: Object;
@@ -81,6 +87,33 @@ StateListenerRegistry.register(
                         })
                     );
                     dispatch(playSound(KNOCKING_PARTICIPANT_SOUND_ID));
+                    let notificationTitle;
+                    const knockingParticipants = getKnockingParticipants(getState());
+                    const isParticipantsPaneVisible = getParticipantsPaneOpen(getState());
+
+                    if (knockingParticipants.length > 1) {
+                        notificationTitle = knockingParticipants[1].name;
+                        const moreParticipants = knockingParticipants.length - 1;
+
+                        notificationTitle = i18n.t('notify.participantsJoined', {
+                            participantName: knockingParticipants[0].name,
+                            moreParticipants
+                        });
+                    } else {
+                        notificationTitle = knockingParticipants[0].name;
+                    }
+                    if (!isParticipantsPaneVisible) {
+                        dispatch(showNotification({
+                            title: notificationTitle,
+                            descriptionKey: 'notify.wouldLikeToJoin',
+                            uid: LOBBY_NOTIFICATION_ID,
+                            customActionNameKey: [ 'notify.openParticipantsPane' ],
+                            customActionHandler: [ () => {
+                                dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
+                                dispatch(openParticipantsPane());
+                            } ]
+                        }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+                    }
                     if (typeof APP !== 'undefined') {
                         APP.API.notifyKnockingParticipant({
                             id,
