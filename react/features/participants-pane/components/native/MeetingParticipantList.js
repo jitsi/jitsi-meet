@@ -1,7 +1,7 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-import { FlatList, Text, View } from 'react-native';
+import { FlatList } from 'react-native';
 import { Button, withTheme } from 'react-native-paper';
 
 import { translate } from '../../../base/i18n';
@@ -13,6 +13,7 @@ import { doInvitePeople } from '../../../invite/actions.native';
 import { participantMatchesSearch, shouldRenderInviteButton } from '../../functions';
 
 import ClearableInput from './ClearableInput';
+import CollapsibleList from './CollapsibleList';
 import MeetingParticipantItem from './MeetingParticipantItem';
 import styles from './styles';
 
@@ -181,17 +182,19 @@ class MeetingParticipantList extends PureComponent<Props> {
             _sortedRemoteParticipants,
             t
         } = this.props;
+        const title = _currentRoom?.name
+
+            // $FlowExpectedError
+            ? `${_currentRoom.name} (${_participantsCount})`
+            : t('participantsPane.headings.participantsList',
+                { count: _participantsCount });
+        const containerStyle
+            = _participantsCount > 3 && styles.meetingListContainer;
 
         return (
-            <View
-                style = { styles.meetingListContainer }>
-                <Text style = { styles.meetingListDescription }>
-                    {_currentRoom?.name
-
-                        // $FlowExpectedError
-                        ? `${_currentRoom.name} (${_participantsCount})`
-                        : t('participantsPane.headings.participantsList', { count: _participantsCount })}
-                </Text>
+            <CollapsibleList
+                containerStyle = { containerStyle }
+                title = { title } >
                 {
                     _showInviteButton
                     && <Button
@@ -212,11 +215,10 @@ class MeetingParticipantList extends PureComponent<Props> {
                     horizontal = { false }
                     keyExtractor = { this._keyExtractor }
                     renderItem = { this._renderParticipant }
-                    scrollEnabled = { false }
+                    scrollEnabled = { true }
                     showsHorizontalScrollIndicator = { false }
-                    style = { styles.meetingList }
                     windowSize = { 2 } />
-            </View>
+            </CollapsibleList>
         );
     }
 }

@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 
-import { createBreakoutRoom } from '../../actions';
+import { createBreakoutRoom } from '../../../../../breakout-rooms/actions';
 
 import styles from './styles';
 

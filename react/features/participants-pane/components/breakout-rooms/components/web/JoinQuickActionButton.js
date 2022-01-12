@@ -5,9 +5,9 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
-import { createBreakoutRoomsEvent, sendAnalytics } from '../../../analytics';
-import { QuickActionButton } from '../../../base/components';
-import { moveToRoom } from '../../actions';
+import { createBreakoutRoomsEvent, sendAnalytics } from '../../../../../analytics';
+import { QuickActionButton } from '../../../../../base/components';
+import { moveToRoom } from '../../../../../breakout-rooms/actions';
 
 type Props = {
 

@@ -6,11 +6,11 @@ import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
-import { ListItem } from '../../../base/components';
-import { Icon, IconArrowDown, IconArrowUp } from '../../../base/icons';
-import ParticipantItem from '../../../participants-pane/components/web/ParticipantItem';
-import { ACTION_TRIGGER } from '../../../participants-pane/constants';
-import { participantMatchesSearch } from '../../../participants-pane/functions';
+import { ListItem } from '../../../../../base/components';
+import { Icon, IconArrowDown, IconArrowUp } from '../../../../../base/icons';
+import { ACTION_TRIGGER } from '../../../../constants';
+import { participantMatchesSearch } from '../../../../functions';
+import ParticipantItem from '../../../web/ParticipantItem';
 
 type Props = {
 

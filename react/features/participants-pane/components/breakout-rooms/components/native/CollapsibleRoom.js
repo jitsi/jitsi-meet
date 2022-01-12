@@ -1,17 +1,17 @@
 // @flow
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlatList, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { openDialog } from '../../../base/dialog';
-import { Icon, IconArrowDown, IconArrowUp } from '../../../base/icons';
-import { participantMatchesSearch } from '../../../participants-pane/functions';
+import { openDialog } from '../../../../../base/dialog';
+import { participantMatchesSearch } from '../../../../functions';
+import CollapsibleList from '../../../native/CollapsibleList';
+import styles from '../../../native/styles';
 
 import BreakoutRoomContextMenu from './BreakoutRoomContextMenu';
 import BreakoutRoomParticipantItem from './BreakoutRoomParticipantItem';
-import styles from './styles';
 
 type Props = {
 
@@ -39,33 +39,23 @@ function _keyExtractor(item: Object) {
 
 export const CollapsibleRoom = ({ room, searchString }: Props) => {
     const dispatch = useDispatch();
-    const [ collapsed, setCollapsed ] = useState(false);
     const { t } = useTranslation();
-    const _toggleCollapsed = useCallback(() => {
-        setCollapsed(!collapsed);
-    }, [ collapsed ]);
     const _openContextMenu = useCallback(() => {
         dispatch(openDialog(BreakoutRoomContextMenu, { room }));
     }, [ room ]);
+    const roomParticipantsNr = Object.values(room.participants || {}).length;
+    const title
+        = `${room.name
+    || t('breakoutRooms.mainRoom')} (${roomParticipantsNr})`;
+    const containerStyle
+        = roomParticipantsNr > 3 && styles.collapsibleRoomContainer;
 
     return (
-        <View>
-            <TouchableOpacity
-                onLongPress = { _openContextMenu }
-                onPress = { _toggleCollapsed }
-                style = { styles.collapsibleRoom }>
-                <TouchableOpacity
-                    onPress = { _toggleCollapsed }
-                    style = { styles.arrowIcon }>
-                    <Icon
-                        size = { 18 }
-                        src = { collapsed ? IconArrowDown : IconArrowUp } />
-                </TouchableOpacity>
-                <Text style = { styles.roomName }>
-                    {`${room.name || t('breakoutRooms.mainRoom')} (${Object.values(room.participants || {}).length})`}
-                </Text>
-            </TouchableOpacity>
-            {!collapsed && <FlatList
+        <CollapsibleList
+            containerStyle = { containerStyle }
+            onLongPress = { _openContextMenu }
+            title = { title }>
+            <FlatList
                 bounces = { false }
                 data = { Object.values(room.participants || {}) }
                 horizontal = { false }
@@ -73,8 +63,9 @@ export const CollapsibleRoom = ({ room, searchString }: Props) => {
                 // eslint-disable-next-line react/jsx-no-bind
                 renderItem = { ({ item: participant }) => participantMatchesSearch(participant, searchString)
                     && <BreakoutRoomParticipantItem item = { participant } /> }
+                scrollEnabled = { true }
                 showsHorizontalScrollIndicator = { false }
-                windowSize = { 2 } />}
-        </View>
+                windowSize = { 2 } />
+        </CollapsibleList>
     );
 };

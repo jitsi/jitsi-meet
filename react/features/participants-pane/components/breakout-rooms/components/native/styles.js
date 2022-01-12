@@ -1,4 +1,4 @@
-import BaseTheme from '../../../base/ui/components/BaseTheme.native';
+import BaseTheme from '../../../../../base/ui/components/BaseTheme';
 
 const baseButton = {
     borderRadius: BaseTheme.shape.borderRadius,
@@ -36,6 +36,16 @@ export default {
         alignItems: 'center'
     },
 
+    collapsibleList: {
+        alignItems: 'center',
+        borderRadius: BaseTheme.shape.borderRadius,
+        display: 'flex',
+        flexDirection: 'row',
+        height: BaseTheme.spacing[7],
+        marginHorizontal: BaseTheme.spacing[3],
+        marginTop: BaseTheme.spacing[3]
+    },
+
     arrowIcon: {
         backgroundColor: BaseTheme.palette.ui03,
         height: BaseTheme.spacing[5],
@@ -47,6 +57,13 @@ export default {
     },
 
     roomName: {
+        fontSize: 15,
+        color: BaseTheme.palette.text01,
+        fontWeight: 'bold',
+        marginLeft: BaseTheme.spacing[2]
+    },
+
+    listTile: {
         fontSize: 15,
         color: BaseTheme.palette.text01,
         fontWeight: 'bold',

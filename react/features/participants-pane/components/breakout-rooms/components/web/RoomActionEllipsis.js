@@ -4,8 +4,8 @@ import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { QuickActionButton } from '../../../base/components';
-import { Icon, IconHorizontalPoints } from '../../../base/icons';
+import { QuickActionButton } from '../../../../../base/components';
+import { Icon, IconHorizontalPoints } from '../../../../../base/icons';
 
 type Props = {
 

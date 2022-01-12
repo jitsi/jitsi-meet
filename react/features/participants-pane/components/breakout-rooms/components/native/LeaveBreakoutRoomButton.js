@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { Button } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 
-import { createBreakoutRoomsEvent, sendAnalytics } from '../../../analytics';
-import { moveToRoom } from '../../actions';
+import { createBreakoutRoomsEvent, sendAnalytics } from '../../../../../analytics';
+import { moveToRoom } from '../../../../../breakout-rooms/actions';
 
 import styles from './styles';
 

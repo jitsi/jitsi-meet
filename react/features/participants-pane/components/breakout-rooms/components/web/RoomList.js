@@ -3,11 +3,11 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 
-import useContextMenu from '../../../base/components/context-menu/useContextMenu';
-import { getParticipantCount, isLocalParticipantModerator } from '../../../base/participants';
-import { equals } from '../../../base/redux';
-import { showOverflowDrawer } from '../../../toolbox/functions.web';
-import { getBreakoutRooms, isInBreakoutRoom, getCurrentRoomId } from '../../functions';
+import useContextMenu from '../../../../../base/components/context-menu/useContextMenu';
+import { getParticipantCount, isLocalParticipantModerator } from '../../../../../base/participants';
+import { equals } from '../../../../../base/redux';
+import { getBreakoutRooms, isInBreakoutRoom, getCurrentRoomId } from '../../../../../breakout-rooms/functions';
+import { showOverflowDrawer } from '../../../../../toolbox/functions';
 
 import { AutoAssignButton } from './AutoAssignButton';
 import { CollapsibleRoom } from './CollapsibleRoom';

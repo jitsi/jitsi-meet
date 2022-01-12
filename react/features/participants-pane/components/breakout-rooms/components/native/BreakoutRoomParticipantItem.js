@@ -3,8 +3,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { isParticipantModerator } from '../../../base/participants';
-import ParticipantItem from '../../../participants-pane/components/native/ParticipantItem';
+import { isParticipantModerator } from '../../../../../base/participants';
+import ParticipantItem from '../../../native/ParticipantItem';
 
 type Props = {
 

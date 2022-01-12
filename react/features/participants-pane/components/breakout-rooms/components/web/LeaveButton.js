@@ -5,15 +5,16 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
-import ParticipantPaneBaseButton from '../../../participants-pane/components/web/ParticipantPaneBaseButton';
-import { autoAssignToBreakoutRooms } from '../../actions';
+import { createBreakoutRoomsEvent, sendAnalytics } from '../../../../../analytics';
+import { moveToRoom } from '../../../../../breakout-rooms/actions';
+import ParticipantPaneBaseButton from '../../../web/ParticipantPaneBaseButton';
 
 const useStyles = makeStyles(theme => {
     return {
         button: {
-            color: theme.palette.link01,
-            width: '100%',
+            color: theme.palette.textError,
             backgroundColor: 'transparent',
+            width: '100%',
 
             '&:hover': {
                 backgroundColor: 'transparent'
@@ -22,21 +23,22 @@ const useStyles = makeStyles(theme => {
     };
 });
 
-export const AutoAssignButton = () => {
+export const LeaveButton = () => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const styles = useStyles();
 
-    const onAutoAssign = useCallback(() => {
-        dispatch(autoAssignToBreakoutRooms());
+    const onLeave = useCallback(() => {
+        sendAnalytics(createBreakoutRoomsEvent('leave'));
+        dispatch(moveToRoom());
     }, [ dispatch ]);
 
     return (
         <ParticipantPaneBaseButton
-            accessibilityLabel = { t('breakoutRooms.actions.autoAssign') }
+            accessibilityLabel = { t('breakoutRooms.actions.leaveBreakoutRoom') }
             className = { styles.button }
-            onClick = { onAutoAssign }>
-            {t('breakoutRooms.actions.autoAssign')}
+            onClick = { onLeave }>
+            {t('breakoutRooms.actions.leaveBreakoutRoom')}
         </ParticipantPaneBaseButton>
     );
 };
