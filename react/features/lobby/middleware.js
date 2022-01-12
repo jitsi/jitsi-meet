@@ -14,8 +14,10 @@ import { getFirstLoadableAvatarUrl, getParticipantDisplayName } from '../base/pa
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { isTestModeEnabled } from '../base/testing';
+import { approveKnockingParticipant, rejectKnockingParticipant } from '../lobby/actions';
 import {
     LOBBY_NOTIFICATION_ID,
+    NOTIFICATION_ICON,
     NOTIFICATION_TIMEOUT_TYPE,
     NOTIFICATION_TYPE,
     hideNotification,
@@ -88,30 +90,48 @@ StateListenerRegistry.register(
                     );
                     dispatch(playSound(KNOCKING_PARTICIPANT_SOUND_ID));
                     let notificationTitle;
+                    let customActionNameKey;
+                    let customActionHandler;
+                    let descriptionKey;
+                    let icon;
+
                     const knockingParticipants = getKnockingParticipants(getState());
                     const isParticipantsPaneVisible = getParticipantsPaneOpen(getState());
+                    const firstParticipant = knockingParticipants[0];
 
                     if (knockingParticipants.length > 1) {
-                        notificationTitle = knockingParticipants[1].name;
-                        const moreParticipants = knockingParticipants.length - 1;
-
+                        descriptionKey = 'notify.participantsWantToJoin';
                         notificationTitle = i18n.t('notify.participantsJoined', {
-                            participantName: knockingParticipants[0].name,
-                            moreParticipants
+                            joinedParticipants: knockingParticipants.length
                         });
+                        icon = NOTIFICATION_ICON.PARTICIPANTS;
+                        customActionNameKey = [ 'notify.viewLobby' ];
+                        customActionHandler = [ () => {
+                            dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
+                            dispatch(openParticipantsPane());
+                        } ];
                     } else {
-                        notificationTitle = knockingParticipants[0].name;
+                        descriptionKey = 'notify.participantWantsToJoin';
+                        notificationTitle = firstParticipant.name;
+                        icon = NOTIFICATION_ICON.PARTICIPANT;
+                        customActionNameKey = [ 'lobby.admit', 'lobby.reject' ];
+                        customActionHandler = [ () => {
+                            dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
+                            dispatch(approveKnockingParticipant(firstParticipant.id));
+                        },
+                        () => {
+                            dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
+                            dispatch(rejectKnockingParticipant(firstParticipant.id));
+                        } ];
                     }
                     if (!isParticipantsPaneVisible) {
                         dispatch(showNotification({
                             title: notificationTitle,
-                            descriptionKey: 'notify.wouldLikeToJoin',
+                            descriptionKey,
                             uid: LOBBY_NOTIFICATION_ID,
-                            customActionNameKey: [ 'notify.openParticipantsPane' ],
-                            customActionHandler: [ () => {
-                                dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
-                                dispatch(openParticipantsPane());
-                            } ]
+                            customActionNameKey,
+                            customActionHandler,
+                            icon
                         }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
                     }
                     if (typeof APP !== 'undefined') {

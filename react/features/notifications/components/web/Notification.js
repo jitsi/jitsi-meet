@@ -5,6 +5,8 @@ import EditorErrorIcon from '@atlaskit/icon/glyph/editor/error';
 import EditorInfoIcon from '@atlaskit/icon/glyph/editor/info';
 import EditorSuccessIcon from '@atlaskit/icon/glyph/editor/success';
 import EditorWarningIcon from '@atlaskit/icon/glyph/editor/warning';
+import PeopleIcon from '@atlaskit/icon/glyph/people';
+import PersonIcon from '@atlaskit/icon/glyph/person';
 import QuestionsIcon from '@atlaskit/icon/glyph/questions';
 import React from 'react';
 
@@ -170,6 +172,12 @@ class Notification extends AbstractNotification<Props> {
             break;
         case NOTIFICATION_ICON.MESSAGE:
             Icon = QuestionsIcon;
+            break;
+        case NOTIFICATION_ICON.PARTICIPANT:
+            Icon = PersonIcon;
+            break;
+        case NOTIFICATION_ICON.PARTICIPANTS:
+            Icon = PeopleIcon;
             break;
         default:
             Icon = EditorInfoIcon;

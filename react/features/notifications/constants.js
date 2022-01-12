@@ -53,7 +53,9 @@ export const NOTIFICATION_TYPE_PRIORITIES = {
  */
 export const NOTIFICATION_ICON = {
     ...NOTIFICATION_TYPE,
-    MESSAGE: 'message'
+    MESSAGE: 'message',
+    PARTICIPANT: 'participant',
+    PARTICIPANTS: 'participants'
 };
 
 /**
