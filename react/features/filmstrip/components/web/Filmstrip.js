@@ -208,7 +208,7 @@ class Filmstrip extends PureComponent <Props> {
 
         let toolbar = null;
 
-        if (this.props._isFilmstripButtonEnabled) {
+        if (!this.props._iAmRecorder && this.props._isFilmstripButtonEnabled) {
             toolbar = this._renderToggleButton();
         }
 
