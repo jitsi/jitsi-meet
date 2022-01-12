@@ -1137,6 +1137,7 @@
         "muted": "Muted",
         "videoMuted": "Camera disabled",
         "remoteControl": "Start / Stop remote control",
+        "screenSharing": "Participant is sharing their screen",
         "show": "Show on stage",
         "videomute": "Participant has stopped the camera"
     },
