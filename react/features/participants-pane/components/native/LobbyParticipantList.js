@@ -54,6 +54,10 @@ const LobbyParticipantList = ({ theme }: Props) => {
             }
         </View>
     );
+
+    // Regarding the fact that we have 3 sections, we apply
+    // a certain height percentage for every section in order for all to fit
+    // inside the participants pane container
     const style = participants.length > 1 && styles.lobbyListContent;
 
     return (
