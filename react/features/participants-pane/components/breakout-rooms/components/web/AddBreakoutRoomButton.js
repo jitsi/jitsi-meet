@@ -5,8 +5,8 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
-import ParticipantPaneBaseButton from '../../../participants-pane/components/web/ParticipantPaneBaseButton';
-import { createBreakoutRoom } from '../../actions';
+import { createBreakoutRoom } from '../../../../../breakout-rooms/actions';
+import ParticipantPaneBaseButton from '../../../web/ParticipantPaneBaseButton';
 
 const useStyles = makeStyles(() => {
     return {

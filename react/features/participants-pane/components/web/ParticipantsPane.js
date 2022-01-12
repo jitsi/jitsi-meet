@@ -9,11 +9,11 @@ import { translate } from '../../../base/i18n';
 import { Icon, IconClose, IconHorizontalPoints } from '../../../base/icons';
 import { isLocalParticipantModerator } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { AddBreakoutRoomButton } from '../../../breakout-rooms/components/web/AddBreakoutRoomButton';
-import { RoomList } from '../../../breakout-rooms/components/web/RoomList';
 import { MuteEveryoneDialog } from '../../../video-menu/components/';
 import { close } from '../../actions';
 import { classList, findAncestorByClass, getParticipantsPaneOpen } from '../../functions';
+import { AddBreakoutRoomButton } from '../breakout-rooms/components/web/AddBreakoutRoomButton';
+import { RoomList } from '../breakout-rooms/components/web/RoomList';
 
 import FooterButton from './FooterButton';
 import { FooterContextMenu } from './FooterContextMenu';

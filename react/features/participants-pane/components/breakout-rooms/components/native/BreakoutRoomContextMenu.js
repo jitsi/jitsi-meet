@@ -6,17 +6,17 @@ import { TouchableOpacity } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { createBreakoutRoomsEvent, sendAnalytics } from '../../../analytics';
-import { hideDialog } from '../../../base/dialog/actions';
-import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
+import { createBreakoutRoomsEvent, sendAnalytics } from '../../../../../analytics';
+import { hideDialog } from '../../../../../base/dialog/actions';
+import BottomSheet from '../../../../../base/dialog/components/native/BottomSheet';
 import {
     Icon,
     IconClose,
     IconRingGroup
-} from '../../../base/icons';
-import { isLocalParticipantModerator } from '../../../base/participants';
-import styles from '../../../participants-pane/components/native/styles';
-import { closeBreakoutRoom, moveToRoom, removeBreakoutRoom } from '../../actions';
+} from '../../../../../base/icons';
+import { isLocalParticipantModerator } from '../../../../../base/participants';
+import { closeBreakoutRoom, moveToRoom, removeBreakoutRoom } from '../../../../../breakout-rooms/actions';
+import styles from '../../../native/styles';
 
 type Props = {
 

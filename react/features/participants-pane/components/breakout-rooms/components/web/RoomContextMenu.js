@@ -4,15 +4,15 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { createBreakoutRoomsEvent, sendAnalytics } from '../../../analytics';
-import { ContextMenu, ContextMenuItemGroup } from '../../../base/components';
+import { createBreakoutRoomsEvent, sendAnalytics } from '../../../../../analytics';
+import { ContextMenu, ContextMenuItemGroup } from '../../../../../base/components';
 import {
     IconClose,
     IconRingGroup
-} from '../../../base/icons';
-import { isLocalParticipantModerator } from '../../../base/participants';
-import { showOverflowDrawer } from '../../../toolbox/functions.web';
-import { closeBreakoutRoom, moveToRoom, removeBreakoutRoom } from '../../actions';
+} from '../../../../../base/icons';
+import { isLocalParticipantModerator } from '../../../../../base/participants';
+import { closeBreakoutRoom, moveToRoom, removeBreakoutRoom } from '../../../../../breakout-rooms/actions';
+import { showOverflowDrawer } from '../../../../../toolbox/functions';
 
 type Props = {
 

@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 
-import { autoAssignToBreakoutRooms } from '../../actions';
+import { autoAssignToBreakoutRooms } from '../../../../../breakout-rooms/actions';
 
 import styles from './styles';
 
