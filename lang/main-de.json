@@ -1137,6 +1137,7 @@
         "muted": "Stummgeschaltet",
         "videoMuted": "Kamera ausgeschaltet",
         "remoteControl": "Fernsteuerung",
+        "screenSharing": "Person teilt den Bildschirm",
         "show": "Im Vordergrund anzeigen",
         "videomute": "Person hat die Kamera angehalten"
     },
