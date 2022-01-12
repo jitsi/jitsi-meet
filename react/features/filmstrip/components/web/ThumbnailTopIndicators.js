@@ -109,7 +109,7 @@ const ThumbnailTopIndicators = ({
                     iconSize = { _indicatorIconSize }
                     participantId = { participantId }
                     tooltipPosition = { getIndicatorsTooltipPosition(currentLayout) } />
-                {currentLayout === LAYOUTS.TILE_VIEW && (
+                {currentLayout !== LAYOUTS.TILE_VIEW && (
                     <div className = { clsx(indicatorsClassName, 'top-indicators') }>
                         <StatusIndicators
                             participantID = { participantId }
