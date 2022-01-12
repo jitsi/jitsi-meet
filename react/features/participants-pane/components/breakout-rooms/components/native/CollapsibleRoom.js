@@ -47,6 +47,10 @@ export const CollapsibleRoom = ({ room, searchString }: Props) => {
     const title
         = `${room.name
     || t('breakoutRooms.mainRoom')} (${roomParticipantsNr})`;
+
+    // Regarding the fact that we have 3 sections, we apply
+    // a certain height percentage for every section in order for all to fit
+    // inside the participants pane container
     const containerStyle
         = roomParticipantsNr > 3 && styles.collapsibleRoomContainer;
 

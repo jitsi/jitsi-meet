@@ -188,6 +188,10 @@ class MeetingParticipantList extends PureComponent<Props> {
             ? `${_currentRoom.name} (${_participantsCount})`
             : t('participantsPane.headings.participantsList',
                 { count: _participantsCount });
+
+        // Regarding the fact that we have 3 sections, we apply
+        // a certain height percentage for every section in order for all to fit
+        // inside the participants pane container
         const containerStyle
             = _participantsCount > 3 && styles.meetingListContainer;
 
