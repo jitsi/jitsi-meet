@@ -2,16 +2,22 @@
 
 import debounce from 'lodash/debounce';
 import { Component } from 'react';
+import { getLiveStreaming } from './functions';
 
-declare var interfaceConfig: Object;
 
-/**
- * The live streaming help link to display. On web it comes from
- * interfaceConfig, but we don't have that on mobile.
- *
- * FIXME: This is in props now to prepare for the Redux-based interfaceConfig.
- */
-const LIVE_STREAMING_HELP_LINK = 'https://jitsi.org/live';
+export type LiveStreaming = {
+    helpLink: string, // Documentation reference for the live streaming feature.
+    termsLink: string, // Terms link
+    dataPrivacyLink: string, // Data privacy link
+    validatorRegExpString: string // RegExp string that validates the stream key input field
+}
+
+export type LiveStreamingProps = {
+    helpURL: string,
+    termsURL: string,
+    dataPrivacyURL: string,
+    streamLinkRegexp: RegExp
+}
 
 /**
  * The props of the component.
@@ -31,7 +37,12 @@ export type Props = {
     /**
      * The stream key value to display as having been entered so far.
      */
-    value: string
+    value: string,
+
+    /**
+     * The live streaming dialog properties.
+     */
+    _liveStreaming: LiveStreamingProps
 };
 
 /**
@@ -54,7 +65,7 @@ type State = {
  */
 export default class AbstractStreamKeyForm<P: Props>
     extends Component<P, State> {
-    helpURL: string;
+
     _debouncedUpdateValidationErrorVisibility: Function;
 
     /**
@@ -69,10 +80,6 @@ export default class AbstractStreamKeyForm<P: Props>
             showValidationError: Boolean(this.props.value)
                 && !this._validateStreamKey(this.props.value)
         };
-
-        this.helpURL = (typeof interfaceConfig !== 'undefined'
-            && interfaceConfig.LIVE_STREAMING_HELP_LINK)
-            || LIVE_STREAMING_HELP_LINK;
 
         this._debouncedUpdateValidationErrorVisibility = debounce(
             this._updateValidationErrorVisibility.bind(this),
@@ -150,9 +157,22 @@ export default class AbstractStreamKeyForm<P: Props>
      */
     _validateStreamKey(streamKey = '') {
         const trimmedKey = streamKey.trim();
-        const fourGroupsDashSeparated = /^(?:[a-zA-Z0-9]{4}(?:-(?!$)|$)){4}/;
-        const match = fourGroupsDashSeparated.exec(trimmedKey);
+        const match = this.props._liveStreaming?.streamLinkRegexp.exec(trimmedKey);
 
         return Boolean(match);
     }
+}
+
+/**
+ * Maps part of the Redux state to the component's props.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {{
+ *     _liveStreaming: LiveStreamingProps
+ * }}
+ */
+export function _mapStateToProps(state: Object) {
+    return {
+        _liveStreaming: getLiveStreaming(state)
+    };
 }

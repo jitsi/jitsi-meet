@@ -10,7 +10,6 @@ import { StyleType } from '../../../../base/styles';
 import AbstractStreamKeyForm, {
     type Props as AbstractProps
 } from '../AbstractStreamKeyForm';
-import { GOOGLE_PRIVACY_POLICY, YOUTUBE_TERMS_URL } from '../constants';
 
 type Props = AbstractProps & {
 
@@ -21,6 +20,7 @@ type Props = AbstractProps & {
 };
 
 import styles, { PLACEHOLDER_COLOR } from './styles';
+import { getLiveStreaming } from '../functions';
 
 /**
  * A React Component for entering a key for starting a YouTube live stream.
@@ -148,7 +148,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
      * @returns {void}
      */
     _onOpenGooglePrivacyPolicy() {
-        Linking.openURL(GOOGLE_PRIVACY_POLICY);
+        Linking.openURL(this.props._liveStreaming.dataPrivacyURL);
     }
 
     _onOpenHelp: () => void;
@@ -161,7 +161,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
      * @returns {void}
      */
     _onOpenHelp() {
-        const { helpURL } = this;
+        const helpURL = this.props._liveStreaming.helpURL;
 
         if (typeof helpURL === 'string') {
             Linking.openURL(helpURL);
@@ -177,8 +177,25 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
      * @returns {void}
      */
     _onOpenYoutubeTerms() {
-        Linking.openURL(YOUTUBE_TERMS_URL);
+        Linking.openURL(this.props._liveStreaming.termsURL);
     }
 }
 
-export default translate(connect(_abstractMapStateToProps)(StreamKeyForm));
+/**
+ * Maps (parts of) the redux state to the associated props for the
+ * {@code StreamKeyForm} component.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {{
+ *    _liveStreaming: LiveStreamingProps
+ * }}
+ */
+function _mapStateToProps(state: Object) {
+    return {
+        ..._abstractMapStateToProps(state),
+        _liveStreaming: getLiveStreaming(state)
+    };
+}
+
+export default translate(connect(_mapStateToProps)(StreamKeyForm));

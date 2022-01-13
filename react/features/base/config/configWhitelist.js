@@ -183,6 +183,7 @@ export default [
     'iceTransportPolicy',
     'ignoreStartMuted',
     'inviteAppName',
+    'liveStreaming',
     'liveStreamingEnabled',
     'localRecording',
     'localSubject',

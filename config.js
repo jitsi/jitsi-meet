@@ -310,6 +310,18 @@ var config = {
     // Whether to enable live streaming or not.
     // liveStreamingEnabled: false,
 
+    // Customize the Live Streaming dialog. Can be modified for a non-YouTube provider.
+    // liveStreaming: {
+    //    // Terms link
+    //    termsLink: 'https://www.youtube.com/t/terms',
+    //    // Data privacy link
+    //    dataPrivacyLink: 'https://policies.google.com/privacy',
+    //    // RegExp string that validates the stream key input field
+    //    validatorRegExpString: '^(?:[a-zA-Z0-9]{4}(?:-(?!$)|$)){4}',
+    //    // Documentation reference for the live streaming feature.
+    //    helpLink: 'https://jitsi.org/live'
+    // },
+
     // Local recording configuration.
     // localRecording: {
     //     // Whether to disable local recording or not.
