@@ -58,7 +58,8 @@ MiddlewareRegistry.register(store => next => action => {
     case CLEAR_NOTIFICATIONS: {
         if (navigator.product !== 'ReactNative') {
             timers.forEach(timer => {
-                const timeout = timer.get(uid);
+                const timeout = timers.get(timer.uid);
+
                 clearTimeout(timeout);
             });
             timers.clear();
