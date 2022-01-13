@@ -4,9 +4,11 @@ import { FieldTextStateless as TextField } from '@atlaskit/field-text';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { getFieldValue } from '../../../base/react';
+import { escapeRegexp } from '../../../base/util';
+import { initSearch } from '../../actions';
 import { isSpeakerStatsSearchDisabled } from '../../functions';
 
 const useStyles = makeStyles(() => {
@@ -26,32 +28,20 @@ const useStyles = makeStyles(() => {
 });
 
 /**
- * The type of the React {@code Component} props of {@link SpeakerStatsSearch}.
- */
-type Props = {
-
-    /**
-     * The function to initiate the change in the speaker stats table.
-     */
-    onSearch: Function,
-
-};
-
-/**
  * React component for display an individual user's speaker stats.
  *
  * @returns {React$Element<any>}
  */
-function SpeakerStatsSearch({ onSearch }: Props) {
+function SpeakerStatsSearch() {
     const classes = useStyles();
     const { t } = useTranslation();
     const [ searchValue, setSearchValue ] = useState<string>('');
+    const dispatch = useDispatch();
     const onChange = useCallback((evt: Event) => {
         const value = getFieldValue(evt);
 
         setSearchValue(value);
-
-        onSearch && onSearch(value);
+        dispatch(initSearch(escapeRegexp(value)));
     }, []);
     const disableSpeakerStatsSearch = useSelector(isSpeakerStatsSearchDisabled);
     const preventDismiss = useCallback((evt: KeyboardEvent) => {
