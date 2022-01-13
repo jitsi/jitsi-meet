@@ -1,5 +1,6 @@
 // @flow
 
+import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -12,12 +13,25 @@ import SpeakerStatsLabels from './SpeakerStatsLabels';
 import SpeakerStatsList from './SpeakerStatsList';
 import SpeakerStatsSearch from './SpeakerStatsSearch';
 
+const useStyles = makeStyles(() => {
+    return {
+        separator: {
+            position: 'absolute',
+            width: '100%',
+            height: 1,
+            left: 0,
+            backgroundColor: '#666666'
+        }
+    };
+});
+
 const SpeakerStats = () => {
     const { enableFacialRecognition } = useSelector(state => state['features/base/config']);
     const { showFacialExpressions } = useSelector(state => state['features/speaker-stats']);
     const { clientWidth } = useSelector(state => state['features/base/responsive-ui']);
     const reduceExpressions = clientWidth < REDUCE_EXPRESSIONS_THRESHOLD;
     const dispatch = useDispatch();
+    const classes = useStyles();
 
     const onToggleFacialExpressions = useCallback(() =>
         dispatch(toggleFacialExpressions())
@@ -41,7 +55,7 @@ const SpeakerStats = () => {
                 <SpeakerStatsLabels
                     reduceExpressions = { reduceExpressions }
                     showFacialExpressions = { showFacialExpressions ?? false } />
-                <div className = 'separator-line' />
+                <div className = { classes.separator } />
                 <SpeakerStatsList />
             </div>
         </Dialog>
