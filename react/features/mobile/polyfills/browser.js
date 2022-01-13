@@ -7,33 +7,6 @@ import 'react-native-url-polyfill/auto'; // Complete URL polyfill.
 import Storage from './Storage';
 
 /**
- * Gets the first common prototype of two specified Objects (treating the
- * objects themselves as prototypes as well).
- *
- * @param {Object} a - The first prototype chain to climb in search of a common
- * prototype.
- * @param {Object} b - The second prototype chain to climb in search of a common
- * prototype.
- * @returns {Object|undefined} - The first common prototype of a and b.
- */
-function _getCommonPrototype(a, b) {
-    // Allow the arguments to be prototypes themselves.
-    if (a === b) {
-        return a;
-    }
-
-    let p;
-
-    if (((p = Object.getPrototypeOf(a)) && (p = _getCommonPrototype(b, p)))
-            || ((p = Object.getPrototypeOf(b))
-                && (p = _getCommonPrototype(a, p)))) {
-        return p;
-    }
-
-    return undefined;
-}
-
-/**
  * Implements an absolute minimum of the common logic of
  * {@code Document.querySelector} and {@code Element.querySelector}. Implements
  * the most simple of selectors necessary to satisfy the call sites at the time
@@ -260,79 +233,6 @@ function _visitNode(node, callback) {
 
                         return children;
                     }
-                });
-            }
-        }
-
-        // FIXME There is a weird infinite loop related to console.log and
-        // Document and/or Element at the time of this writing. Work around it
-        // by patching Node and/or overriding console.log.
-        const documentPrototype = Object.getPrototypeOf(document);
-        const nodePrototype
-            = _getCommonPrototype(documentPrototype, elementPrototype);
-
-        if (nodePrototype
-
-                // XXX The intention was to find Node from which Document and
-                // Element extend. If for whatever reason we've reached Object,
-                // then it doesn't sound like what expected.
-                && nodePrototype !== Object.getPrototypeOf({})) {
-            // Override console.log.
-            const { console } = global;
-
-            if (console) {
-                const loggerLevels = require('@jitsi/logger').levels;
-
-                Object.keys(loggerLevels).forEach(key => {
-                    const level = loggerLevels[key];
-                    const consoleLog = console[level];
-
-                    /* eslint-disable prefer-rest-params */
-
-                    if (typeof consoleLog === 'function') {
-                        console[level] = function(...args) {
-                            // XXX If console's disableYellowBox is truthy, then
-                            // react-native will not automatically display the
-                            // yellow box for the warn level. However, it will
-                            // still display the red box for the error level.
-                            // But I disable the yellow box when I don't want to
-                            // have react-native automatically show me the
-                            // console's output just like in the Release build
-                            // configuration. Because I didn't find a way to
-                            // disable the red box, downgrade the error level to
-                            // warn. The red box will still be displayed but not
-                            // for the error level.
-                            if (console.disableYellowBox && level === 'error') {
-                                console.warn(...args);
-
-                                return;
-                            }
-
-                            const { length } = args;
-
-                            for (let i = 0; i < length; ++i) {
-                                let arg = args[i];
-
-                                if (arg
-                                        && typeof arg !== 'string'
-
-                                        // Limit the console.log override to
-                                        // Node (instances).
-                                        && nodePrototype.isPrototypeOf(arg)) {
-                                    const toString = arg.toString;
-
-                                    if (toString) {
-                                        arg = toString.call(arg);
-                                    }
-                                }
-                                args[i] = arg;
-                            }
-
-                            consoleLog.apply(this, args);
-                        };
-                    }
-
-                    /* eslint-enable prefer-rest-params */
                 });
             }
         }
