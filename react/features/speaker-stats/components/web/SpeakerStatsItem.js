@@ -1,8 +1,19 @@
 /* @flow */
 
+import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
 
 import TimeElapsed from './TimeElapsed';
+
+const useStyles = makeStyles(() => {
+    return {
+        speakerStatsItem: {
+            height: 48,
+            padding: '8px 0px'
+        }
+
+    };
+});
 
 /**
  * The type of the React {@code Component} props of {@link SpeakerStatsItem}.
@@ -63,34 +74,26 @@ const SpeakerStatsItem = (props: Props) => {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    const hasLeftClass = props.hasLeft ? 'status-user-left' : '';
-    const rowDisplayClass = `speaker-stats-item ${hasLeftClass}`;
 
-    const dotClass = props.isDominantSpeaker
-        ? 'status-active' : 'status-inactive';
-    const speakerStatusClass = `speaker-stats-item__status-dot ${dotClass}`;
+    const classes = useStyles();
+    const hasLeftClass = props.hasLeft ? 'status-user-left' : '';
+    const rowDisplayClass = `speaker-stats-row ${hasLeftClass} ${classes.speakerStatsItem}`;
 
     return (
         <div
             className = { rowDisplayClass }
             key = { props.participantId } >
-            <div className = 'speaker-stats-item__status'>
-                <span className = { speakerStatusClass } />
-            </div>
-            <div
-                aria-label = { props.t('speakerStats.speakerStats') }
-                className = { `speaker-stats-item__name${
-                    props.showFacialExpressions ? '_expressions_on' : ''
-                }` }>
-                { props.displayName }
-            </div>
-            <div
-                aria-label = { props.t('speakerStats.speakerTime') }
-                className = { `speaker-stats-item__time${
-                    props.showFacialExpressions ? '_expressions_on' : ''
-                }` }>
-                <TimeElapsed
-                    time = { props.dominantSpeakerTime } />
+            <div className = 'speaker-stats-item__avatar' />
+            <div className = 'speaker-stats-item__name-time'>
+                <div
+                    aria-label = { props.t('speakerStats.speakerStats') }>
+                    { props.displayName }
+                </div>
+                <div
+                    aria-label = { props.t('speakerStats.speakerTime') }>
+                    <TimeElapsed
+                        time = { props.dominantSpeakerTime } />
+                </div>
             </div>
             { props.showFacialExpressions
             && (

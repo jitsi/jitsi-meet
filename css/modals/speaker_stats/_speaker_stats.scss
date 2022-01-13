@@ -4,90 +4,24 @@
     width: 100%;
     font-weight: 500;
 
-    .speaker-stats-item__status-dot {
-        position: relative;
-        display: block;
-        width: 9px;
-        height: 9px;
-        border-radius: 50%;
-        margin: 0 auto;
+    .speaker-stats-row{
+        display: flex;
+        align-items: center;
 
-        &.status-active {
-            background: green;
+        .status-user-left {
+            color: $placeHolderColor;
         }
 
-        &.status-inactive {
-            background: gray;
+        .speaker-stats-item__avatar {
+            width: 32px;
+            margin-right: 16px;
+        }
+    
+        .speaker-stats-item__name-time{
+            width: 352px;
+            display: flex;
+            justify-content: space-between;
         }
     }
-
-    .status-user-left {
-        color: $placeHolderColor;
-    }
-
-    .speaker-stats-item__status,
-    .speaker-stats-item__name,
-    .speaker-stats-item__time,
-    .speaker-stats-item__name_expressions_on,
-    .speaker-stats-item__time_expressions_on,
-    .speaker-stats-item__expression {
-        display: inline-block;
-        margin: 5px 0;
-        vertical-align: middle;
-    }
-    .speaker-stats-item__status {
-        width: 5%;
-    }
-    .speaker-stats-item__name {
-        width: 40%;
-    }
-    .speaker-stats-item__time {
-        width: 55%;
-    }
-    .speaker-stats-item__name_expressions_on {
-        width: 20%;
-    }
-    .speaker-stats-item__time_expressions_on {
-        width: 18%;
-    }
-
-    .speaker-stats-item__expression {
-        width: 7%;
-        text-align: center;
-    }
-
-    @media (max-width: 750px) {
-        .speaker-stats-item__name_expressions_on {
-            width: 25%;
-        }
-        
-        .speaker-stats-item__expression {
-            width: 8%;
-        }
-    }
-
-    @media (max-width: 750px) and (min-width: 400px) {
-        .speaker-stats-item__time_expressions_on {
-            width: 25%;
-        }
-    }
-
-    @media (max-width: 400px) {
-        .speaker-stats-item__time_expressions_on {
-            width: 30%;
-        }
-        .speaker-stats-item__expression {
-            width: 10%;
-        }
-    }
-
-    .speaker-stats-item__name,
-    .speaker-stats-item__time,
-    .speaker-stats-item__name_expressions_on,
-    .speaker-stats-item__time_expressions_on,
-    .speaker-stats-item__expression {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
+    
 }
