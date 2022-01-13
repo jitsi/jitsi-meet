@@ -89,51 +89,55 @@ StateListenerRegistry.register(
                         })
                     );
                     dispatch(playSound(KNOCKING_PARTICIPANT_SOUND_ID));
-                    let notificationTitle;
-                    let customActionNameKey;
-                    let customActionHandler;
-                    let descriptionKey;
-                    let icon;
 
-                    const knockingParticipants = getKnockingParticipants(getState());
-                    const isParticipantsPaneVisible = getParticipantsPaneOpen(getState());
-                    const firstParticipant = knockingParticipants[0];
+                    if (navigator.product !== 'ReactNative') {
+                        let notificationTitle;
+                        let customActionNameKey;
+                        let customActionHandler;
+                        let descriptionKey;
+                        let icon;
 
-                    if (knockingParticipants.length > 1) {
-                        descriptionKey = 'notify.participantsWantToJoin';
-                        notificationTitle = i18n.t('notify.participantsJoined', {
-                            joinedParticipants: knockingParticipants.length
-                        });
-                        icon = NOTIFICATION_ICON.PARTICIPANTS;
-                        customActionNameKey = [ 'notify.viewLobby' ];
-                        customActionHandler = [ () => {
-                            dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
-                            dispatch(openParticipantsPane());
-                        } ];
-                    } else {
-                        descriptionKey = 'notify.participantWantsToJoin';
-                        notificationTitle = firstParticipant.name;
-                        icon = NOTIFICATION_ICON.PARTICIPANT;
-                        customActionNameKey = [ 'lobby.admit', 'lobby.reject' ];
-                        customActionHandler = [ () => {
-                            dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
-                            dispatch(approveKnockingParticipant(firstParticipant.id));
-                        },
-                        () => {
-                            dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
-                            dispatch(rejectKnockingParticipant(firstParticipant.id));
-                        } ];
+                        const knockingParticipants = getKnockingParticipants(getState());
+                        const isParticipantsPaneVisible = getParticipantsPaneOpen(getState());
+                        const firstParticipant = knockingParticipants[0];
+
+                        if (knockingParticipants.length > 1) {
+                            descriptionKey = 'notify.participantsWantToJoin';
+                            notificationTitle = i18n.t('notify.participantsJoined', {
+                                joinedParticipants: knockingParticipants.length
+                            });
+                            icon = NOTIFICATION_ICON.PARTICIPANTS;
+                            customActionNameKey = [ 'notify.viewLobby' ];
+                            customActionHandler = [ () => {
+                                dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
+                                dispatch(openParticipantsPane());
+                            } ];
+                        } else {
+                            descriptionKey = 'notify.participantWantsToJoin';
+                            notificationTitle = firstParticipant.name;
+                            icon = NOTIFICATION_ICON.PARTICIPANT;
+                            customActionNameKey = [ 'lobby.admit', 'lobby.reject' ];
+                            customActionHandler = [ () => {
+                                dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
+                                dispatch(approveKnockingParticipant(firstParticipant.id));
+                            },
+                            () => {
+                                dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
+                                dispatch(rejectKnockingParticipant(firstParticipant.id));
+                            } ];
+                        }
+                        if (!isParticipantsPaneVisible) {
+                            dispatch(showNotification({
+                                title: notificationTitle,
+                                descriptionKey,
+                                uid: LOBBY_NOTIFICATION_ID,
+                                customActionNameKey,
+                                customActionHandler,
+                                icon
+                            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+                        }
                     }
-                    if (!isParticipantsPaneVisible) {
-                        dispatch(showNotification({
-                            title: notificationTitle,
-                            descriptionKey,
-                            uid: LOBBY_NOTIFICATION_ID,
-                            customActionNameKey,
-                            customActionHandler,
-                            icon
-                        }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
-                    }
+
                     if (typeof APP !== 'undefined') {
                         APP.API.notifyKnockingParticipant({
                             id,

@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import React, { PureComponent } from 'react';
 import { ScrollView, Text, View, TouchableOpacity } from 'react-native';
 
 import { Avatar } from '../../../base/avatar';
@@ -14,9 +14,47 @@ import { getKnockingParticipants, getLobbyEnabled } from '../../functions';
 import styles from './styles';
 
 /**
+ * Props type of the component.
+ */
+export type Props = {
+
+    /**
+     * The list of participants.
+     */
+    _participants: Array<Object>,
+
+    /**
+     * True if the list should be rendered.
+     */
+    _visible: boolean,
+
+    /**
+     * The Redux Dispatch function.
+     */
+    dispatch: Function,
+
+    /**
+     * Function to be used to translate i18n labels.
+     */
+    t: Function
+};
+
+/**
  * Component to render a list for the actively knocking participants.
  */
-class KnockingParticipantList {
+class KnockingParticipantList extends PureComponent<Props> {
+    /**
+     * Instantiates a new component.
+     *
+     * @param {Object} props - The read-only properties with which the new
+     * instance is to be initialized.
+     */
+    constructor(props: Props) {
+        super(props);
+
+        this._onRespondToParticipant = this._onRespondToParticipant.bind(this);
+    }
+
     /**
      * Implements {@code PureComponent#render}.
      *
@@ -75,6 +113,8 @@ class KnockingParticipantList {
             </ScrollView>
         );
     }
+
+    _onRespondToParticipant: (string, boolean) => Function;
 
     /**
      * Function that constructs a callback for the response handler button.
