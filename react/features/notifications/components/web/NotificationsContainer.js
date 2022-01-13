@@ -153,7 +153,7 @@ class NotificationsContainer extends Component<Props> {
      * @inheritdoc
      */
     componentDidMount() {
-        this._updateTimeouts();
+        // this._updateTimeouts();
     }
 
     /**
@@ -161,9 +161,8 @@ class NotificationsContainer extends Component<Props> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps) {
-        console.log(prevProps, this.props)
-        this._updateTimeouts();
+    componentDidUpdate() {
+        // this._updateTimeouts();
     }
 
     /**
