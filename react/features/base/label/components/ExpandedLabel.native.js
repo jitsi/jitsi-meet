@@ -11,7 +11,12 @@ export type Props = {
      * The position of the parent element (from right to left) to display the
      * arrow.
      */
-    parentPosition: number
+    parentPosition: number,
+
+    /**
+     * Custom styles.
+     */
+    style: ?Object
 };
 
 type State = {
@@ -61,7 +66,10 @@ export default class ExpandedLabel<P: Props> extends Component<P, State> {
     render() {
         return (
             <Animated.View
-                style = { [ styles.expandedLabelContainer, { opacity: this.state.opacityAnimation } ] }>
+                style = { [ styles.expandedLabelContainer,
+                    this.props.style,
+                    { opacity: this.state.opacityAnimation }
+                ] }>
                 <View
                     style = { [ styles.expandedLabelTextContainer,
                         { backgroundColor: this._getColor() || DEFAULT_COLOR } ] }>

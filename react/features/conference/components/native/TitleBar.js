@@ -7,6 +7,7 @@ import { getConferenceName, getConferenceTimestamp } from '../../../base/confere
 import { getFeatureFlag, CONFERENCE_TIMER_ENABLED, MEETING_NAME_ENABLED } from '../../../base/flags';
 import { connect } from '../../../base/redux';
 import InviteButton from '../../../invite/components/add-people-dialog/native/InviteButton';
+import AudioDeviceToggleButton from '../../../mobile/audio-mode/components/AudioDeviceToggleButton';
 import { PictureInPictureButton } from '../../../mobile/picture-in-picture';
 import { isToolboxVisible } from '../../../toolbox/functions.native';
 import ConferenceTimer from '../ConferenceTimer';
@@ -16,6 +17,12 @@ import styles from './styles';
 
 
 type Props = {
+
+    /**
+     * Creates a function to be invoked when the onPress of the touchables are
+     * triggered.
+     */
+    _createOnPress: Function,
 
     /**
      * Whether displaying the current conference timer is enabled or not.
@@ -45,23 +52,24 @@ type Props = {
  * @param {Props} props - The React props passed to this component.
  * @returns {React.Node}
  */
-const NavigationBar = (props: Props) => {
-    if (!props._visible) {
-        return null;
-    }
-
-    return (
+const TitleBar = (props: Props) => (<>
+    {props._visible && <View
+        pointerEvents = 'box-none'
+        style = { styles.titleBarWrapper }>
+        <View style = { styles.pipButtonContainer }>
+            <PictureInPictureButton styles = { styles.pipButton } />
+        </View>
         <View
             pointerEvents = 'box-none'
-            style = { styles.navBarWrapper }>
-            <View style = { styles.pipButtonContainer }>
-                <PictureInPictureButton styles = { styles.pipButton } />
-            </View>
-            <View
-                pointerEvents = 'box-none'
-                style = { styles.roomNameWrapper }>
-                {
-                    props._meetingNameEnabled
+            style = { styles.roomNameWrapper }>
+            {
+                props._conferenceTimerEnabled
+                    && <View style = { styles.roomTimerView }>
+                        <ConferenceTimer textStyle = { styles.roomTimer } />
+                    </View>
+            }
+            {
+                props._meetingNameEnabled
                         && <View style = { styles.roomNameView }>
                             <Text
                                 numberOfLines = { 1 }
@@ -69,21 +77,18 @@ const NavigationBar = (props: Props) => {
                                 { props._meetingName }
                             </Text>
                         </View>
-                }
-                {
-                    props._conferenceTimerEnabled
-                            && <View style = { styles.roomTimerView }>
-                                <ConferenceTimer textStyle = { styles.roomTimer } />
-                            </View>
-                }
-                <Labels />
-            </View>
-            <View style = { styles.inviteButtonContainer }>
-                <InviteButton styles = { styles.inviteButton } />
-            </View>
+            }
+            {/* eslint-disable-next-line react/jsx-no-bind */}
+            <Labels createOnPress = { props._createOnPress } />
         </View>
-    );
-};
+        <View style = { styles.titleBarButtonContainer }>
+            <AudioDeviceToggleButton styles = { styles.inviteButton } />
+        </View>
+        <View style = { styles.titleBarButtonContainer }>
+            <InviteButton styles = { styles.inviteButton } />
+        </View>
+    </View>}
+</>);
 
 /**
  * Maps part of the Redux store to the props of this component.
@@ -105,4 +110,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default connect(_mapStateToProps)(NavigationBar);
+export default connect(_mapStateToProps)(TitleBar);
