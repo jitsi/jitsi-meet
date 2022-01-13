@@ -56,35 +56,41 @@ MiddlewareRegistry.register(store => next => action => {
 
     switch (action.type) {
     case CLEAR_NOTIFICATIONS: {
-        timers.forEach(timer => {
-            clearTimeout(timer.uid);
-        });
-        timers.clear();
+        if (navigator.product !== 'ReactNative') {
+            timers.forEach(timer => {
+                clearTimeout(timer.uid);
+            });
+            timers.clear();
+        }
         break;
     }
     case SHOW_NOTIFICATION: {
-        const { dispatch, getState } = store;
-        const state = getState();
-        const _visible = areThereNotifications(state);
-        const { notifications } = state['features/notifications'];
-        const _notifications = _visible ? notifications : [];
+        if (navigator.product !== 'ReactNative') {
+            const { dispatch, getState } = store;
+            const state = getState();
+            const _visible = areThereNotifications(state);
+            const { notifications } = state['features/notifications'];
+            const _notifications = _visible ? notifications : [];
 
-        for (const notification of _notifications) {
-            if (!timers.has(notification.uid) && notification.timeout) {
-                createTimeoutId(notification, dispatch);
-            } else {
+            for (const notification of _notifications) {
+                if (!timers.has(notification.uid) && notification.timeout) {
+                    createTimeoutId(notification, dispatch);
+                } else {
 
-                const timer = timers.get(notification.uid);
+                    const timer = timers.get(notification.uid);
 
-                clearTimeout(timer);
-                timers.delete(notification.uid);
-                createTimeoutId(notification, dispatch);
+                    clearTimeout(timer);
+                    timers.delete(notification.uid);
+                    createTimeoutId(notification, dispatch);
+                }
             }
         }
         break;
     }
     case HIDE_NOTIFICATION: {
-        timers.clear();
+        if (navigator.product !== 'ReactNative') {
+            timers.clear();
+        }
         break;
     }
     case PARTICIPANT_JOINED: {

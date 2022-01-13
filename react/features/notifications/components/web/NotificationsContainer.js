@@ -153,7 +153,9 @@ class NotificationsContainer extends Component<Props> {
      * @inheritdoc
      */
     componentDidMount() {
-        // this._updateTimeouts();
+        if (navigator.product === 'ReactNative') {
+            this._updateTimeouts();
+        }
     }
 
     /**
@@ -162,7 +164,9 @@ class NotificationsContainer extends Component<Props> {
      * @inheritdoc
      */
     componentDidUpdate() {
-        // this._updateTimeouts();
+        if (navigator.product === 'ReactNative') {
+            this._updateTimeouts();
+        }
     }
 
     /**
