@@ -1,7 +1,7 @@
 .subject {
     color: #fff;
     transition: opacity .6s ease-in-out;
-    z-index: $zindex3;
+    z-index: $toolbarZ + 2;
     margin-top: 20px;
     opacity: 0;
 

@@ -26,6 +26,7 @@ import {
     isTrackStreamingStatusInactive,
     isTrackStreamingStatusInterrupted
 } from '../../../react/features/connection-indicator/functions';
+import { FILMSTRIP_BREAKPOINT, isFilmstripResizable } from '../../../react/features/filmstrip';
 import {
     updateKnownLargeVideoResolution
 } from '../../../react/features/large-video/actions';
@@ -401,7 +402,9 @@ export default class LargeVideoManager {
         let widthToUse = this.preferredWidth || window.innerWidth;
         const state = APP.store.getState();
         const { isOpen } = state['features/chat'];
+        const { width: filmstripWidth, visible } = state['features/filmstrip'];
         const isParticipantsPaneOpen = getParticipantsPaneOpen(state);
+        const resizableFilmstrip = isFilmstripResizable(state);
 
         if (isParticipantsPaneOpen) {
             widthToUse -= theme.participantsPaneWidth;
@@ -413,6 +416,10 @@ export default class LargeVideoManager {
              * by subtracting the default width of the chat.
              */
             widthToUse -= CHAT_SIZE;
+        }
+
+        if (resizableFilmstrip && visible && filmstripWidth.current >= FILMSTRIP_BREAKPOINT) {
+            widthToUse -= filmstripWidth.current;
         }
 
         this.width = widthToUse;

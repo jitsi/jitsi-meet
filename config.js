@@ -1256,6 +1256,13 @@ var config = {
     // Prevent the filmstrip from autohiding when screen width is under a certain threshold
     // disableFilmstripAutohiding: false,
 
+    // filmstrip: {
+    //     // Disables user resizable filmstrip. Also, allows configuration of the filmstrip
+    //     // (width, tiles aspect ratios) through the interfaceConfig options.
+    //     disableResizable: false,
+    // }
+
+
     // Specifies whether the chat emoticons are disabled or not
     // disableChatSmileys: false,
 

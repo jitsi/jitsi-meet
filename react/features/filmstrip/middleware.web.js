@@ -10,12 +10,16 @@ import {
     LAYOUTS
 } from '../video-layout';
 
+import { SET_USER_FILMSTRIP_WIDTH } from './actionTypes';
 import {
+    setFilmstripWidth,
     setHorizontalViewDimensions,
     setTileViewDimensions,
     setVerticalViewDimensions
 } from './actions';
+import { DEFAULT_FILMSTRIP_WIDTH, MIN_STAGE_VIEW_WIDTH } from './constants';
 import { updateRemoteParticipants, updateRemoteParticipantsOnLeave } from './functions';
+import { isFilmstripResizable } from './functions.web';
 import './subscriber';
 
 /**
@@ -53,6 +57,22 @@ MiddlewareRegistry.register(store => next => action => {
             store.dispatch(setVerticalViewDimensions());
             break;
         }
+
+        if (isFilmstripResizable(state)) {
+            const { width: filmstripWidth } = state['features/filmstrip'];
+            const { clientWidth } = action;
+            let width;
+
+            if (filmstripWidth.current > clientWidth - MIN_STAGE_VIEW_WIDTH) {
+                width = Math.max(clientWidth - MIN_STAGE_VIEW_WIDTH, DEFAULT_FILMSTRIP_WIDTH);
+            } else {
+                width = Math.min(clientWidth - MIN_STAGE_VIEW_WIDTH, filmstripWidth.userSet);
+            }
+
+            if (width !== filmstripWidth.current) {
+                store.dispatch(setFilmstripWidth(width));
+            }
+        }
         break;
     }
     case PARTICIPANT_JOINED: {
@@ -65,6 +85,9 @@ MiddlewareRegistry.register(store => next => action => {
             VideoLayout.onLocalFlipXChanged();
         }
         break;
+    }
+    case SET_USER_FILMSTRIP_WIDTH: {
+        VideoLayout.refreshLayout();
     }
     }
 

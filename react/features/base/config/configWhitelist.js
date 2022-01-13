@@ -154,6 +154,7 @@ export default [
     'failICE',
     'feedbackPercentage',
     'fileRecordingsEnabled',
+    'filmstrip',
     'firefox_fake_device',
     'forceJVB121Ratio',
     'forceTurnRelay',

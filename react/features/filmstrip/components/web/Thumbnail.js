@@ -28,10 +28,15 @@ import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
 import {
     DISPLAY_MODE_TO_CLASS_NAME,
     DISPLAY_VIDEO,
-    VIDEO_TEST_EVENTS,
-    SHOW_TOOLBAR_CONTEXT_MENU_AFTER
+    SHOW_TOOLBAR_CONTEXT_MENU_AFTER,
+    VIDEO_TEST_EVENTS
 } from '../../constants';
-import { isVideoPlayable, computeDisplayModeFromInput, getDisplayModeInput } from '../../functions';
+import {
+    computeDisplayModeFromInput,
+    getDisplayModeInput,
+    isVideoPlayable,
+    showGridInVerticalView
+} from '../../functions';
 
 import ThumbnailAudioIndicator from './ThumbnailAudioIndicator';
 import ThumbnailBottomIndicators from './ThumbnailBottomIndicators';
@@ -479,7 +484,6 @@ class Thumbnail extends Component<Props, State> {
             horizontalOffset,
             style
         } = this.props;
-
 
         const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
         const jitsiVideoTrack = _videoTrack?.jitsiTrack;
@@ -949,18 +953,29 @@ function _mapStateToProps(state, ownProps): Object {
             },
             verticalViewDimensions = {
                 local: {},
-                remote: {}
+                remote: {},
+                gridView: {}
             }
         } = state['features/filmstrip'];
+        const _verticalViewGrid = showGridInVerticalView(state);
         const { local, remote }
             = _currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW
                 ? verticalViewDimensions : horizontalViewDimensions;
-        const { width, height } = isLocal ? local : remote;
+        const { width, height } = (isLocal ? local : remote) ?? {};
 
         size = {
             _width: width,
             _height: height
         };
+
+        if (_verticalViewGrid) {
+            const { width: _width, height: _height } = verticalViewDimensions.gridView.thumbnailSize;
+
+            size = {
+                _width,
+                _height
+            };
+        }
 
         _isMobilePortrait = _isMobile && state['features/base/responsive-ui'].aspectRatio === ASPECT_RATIO_NARROW;
 

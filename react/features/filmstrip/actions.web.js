@@ -3,26 +3,32 @@ import type { Dispatch } from 'redux';
 
 import { getLocalParticipant, getParticipantById, pinParticipant } from '../base/participants';
 import { shouldHideSelfView } from '../base/settings/functions.any';
+import { getTileViewGridDimensions } from '../video-layout';
 
 import {
+    SET_FILMSTRIP_WIDTH,
     SET_HORIZONTAL_VIEW_DIMENSIONS,
     SET_TILE_VIEW_DIMENSIONS,
+    SET_USER_FILMSTRIP_WIDTH,
     SET_VERTICAL_VIEW_DIMENSIONS,
     SET_VOLUME
 } from './actionTypes';
 import {
     HORIZONTAL_FILMSTRIP_MARGIN,
     SCROLL_SIZE,
-    STAGE_VIEW_THUMBNAIL_HORIZONTAL_BORDER,
     STAGE_VIEW_THUMBNAIL_VERTICAL_BORDER,
     TILE_HORIZONTAL_MARGIN,
+    TILE_VERTICAL_CONTAINER_HORIZONTAL_MARGIN,
     TILE_VERTICAL_MARGIN,
     VERTICAL_FILMSTRIP_VERTICAL_MARGIN
 } from './constants';
 import {
     calculateThumbnailSizeForHorizontalView,
     calculateThumbnailSizeForTileView,
-    calculateThumbnailSizeForVerticalView
+    calculateThumbnailSizeForVerticalView,
+    calculateThumbnailSizeForResizableVerticalView,
+    isFilmstripResizable,
+    showGridInVerticalView
 } from './functions';
 
 export * from './actions.any';
@@ -80,21 +86,65 @@ export function setVerticalViewDimensions() {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
         const { clientHeight = 0, clientWidth = 0 } = state['features/base/responsive-ui'];
+        const { width: filmstripWidth } = state['features/filmstrip'];
         const disableSelfView = shouldHideSelfView(state);
-        const thumbnails = calculateThumbnailSizeForVerticalView(clientWidth);
+        const resizableFilmstrip = isFilmstripResizable(state);
+        const _verticalViewGrid = showGridInVerticalView(state);
+
+        let gridView = {};
+        let thumbnails = {};
+        let filmstripDimensions = {};
+
+        // grid view in the vertical filmstrip
+        if (_verticalViewGrid) {
+            const dimensions = getTileViewGridDimensions(state, filmstripWidth.current);
+            const {
+                height,
+                width
+            } = calculateThumbnailSizeForTileView({
+                ...dimensions,
+                clientWidth: filmstripWidth.current,
+                clientHeight,
+                disableResponsiveTiles: false,
+                disableTileEnlargement: false,
+                isVerticalFilmstrip: true
+            });
+            const { columns, rows } = dimensions;
+            const thumbnailsTotalHeight = rows * (TILE_VERTICAL_MARGIN + height);
+            const hasScroll = clientHeight < thumbnailsTotalHeight;
+            const widthOfFilmstrip = (columns * (TILE_HORIZONTAL_MARGIN + width)) + (hasScroll ? SCROLL_SIZE : 0);
+            const filmstripHeight = Math.min(clientHeight, thumbnailsTotalHeight);
+
+            gridView = {
+                gridDimensions: dimensions,
+                thumbnailSize: {
+                    height,
+                    width
+                }
+            };
+
+            filmstripDimensions = {
+                height: filmstripHeight,
+                width: widthOfFilmstrip
+            };
+        } else {
+            thumbnails = resizableFilmstrip
+                ? calculateThumbnailSizeForResizableVerticalView(clientWidth, filmstripWidth.current)
+                : calculateThumbnailSizeForVerticalView(clientWidth);
+        }
 
         dispatch({
             type: SET_VERTICAL_VIEW_DIMENSIONS,
             dimensions: {
                 ...thumbnails,
-                remoteVideosContainer: {
+                remoteVideosContainer: _verticalViewGrid ? filmstripDimensions : {
                     width: thumbnails?.local?.width
-                        + TILE_HORIZONTAL_MARGIN + STAGE_VIEW_THUMBNAIL_HORIZONTAL_BORDER + SCROLL_SIZE,
+                        + TILE_VERTICAL_CONTAINER_HORIZONTAL_MARGIN + SCROLL_SIZE,
                     height: clientHeight - (disableSelfView ? 0 : thumbnails?.local?.height)
                         - VERTICAL_FILMSTRIP_VERTICAL_MARGIN
-                }
+                },
+                gridView
             }
-
         });
     };
 }
@@ -161,5 +211,37 @@ export function setVolume(participantId: string, volume: number) {
         type: SET_VOLUME,
         participantId,
         volume
+    };
+}
+
+/**
+ * Sets the filmstrip's width.
+ *
+ * @param {number} width - The new width of the filmstrip.
+ * @returns {{
+ *      type: SET_FILMSTRIP_WIDTH,
+ *      width: number
+ * }}
+ */
+export function setFilmstripWidth(width: number) {
+    return {
+        type: SET_FILMSTRIP_WIDTH,
+        width
+    };
+}
+
+/**
+ * Sets the filmstrip's width and the user preferred width.
+ *
+ * @param {number} width - The new width of the filmstrip.
+ * @returns {{
+ *      type: SET_USER_FILMSTRIP_WIDTH,
+ *      width: number
+ * }}
+ */
+export function setUserFilmstripWidth(width: number) {
+    return {
+        type: SET_USER_FILMSTRIP_WIDTH,
+        width
     };
 }

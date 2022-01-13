@@ -59,9 +59,10 @@ export function getCurrentLayout(state: Object) {
  * returned will be between 1 and 7, inclusive.
  *
  * @param {Object} state - The redux store state.
+ * @param {number} width - Custom width to use for calculation.
  * @returns {number}
  */
-export function getMaxColumnCount(state: Object) {
+export function getMaxColumnCount(state: Object, width: ?number) {
     const configuredMax = (typeof interfaceConfig === 'undefined'
         ? DEFAULT_MAX_COLUMNS
         : interfaceConfig.TILE_VIEW_MAX_COLUMNS) || DEFAULT_MAX_COLUMNS;
@@ -69,20 +70,21 @@ export function getMaxColumnCount(state: Object) {
 
     if (!disableResponsiveTiles) {
         const { clientWidth } = state['features/base/responsive-ui'];
+        const widthToUse = width || clientWidth;
         const participantCount = getParticipantCount(state);
 
         // If there are just two participants in a conference, enforce single-column view for mobile size.
-        if (participantCount === 2 && clientWidth < ASPECT_RATIO_BREAKPOINT) {
+        if (participantCount === 2 && widthToUse < ASPECT_RATIO_BREAKPOINT) {
             return Math.min(1, Math.max(configuredMax, 1));
         }
 
         // Enforce single column view at very small screen widths.
-        if (clientWidth < SINGLE_COLUMN_BREAKPOINT) {
+        if (widthToUse < SINGLE_COLUMN_BREAKPOINT) {
             return Math.min(1, Math.max(configuredMax, 1));
         }
 
         // Enforce two column view below breakpoint.
-        if (clientWidth < TWO_COLUMN_BREAKPOINT) {
+        if (widthToUse < TWO_COLUMN_BREAKPOINT) {
             return Math.min(2, Math.max(configuredMax, 1));
         }
     }
@@ -96,11 +98,12 @@ export function getMaxColumnCount(state: Object) {
  * which rows will be added but no more columns.
  *
  * @param {Object} state - The redux store state.
+ * @param {number} width - Custom width to use for calculation.
  * @returns {Object} An object is return with the desired number of columns,
  * rows, and visible rows (the rest should overflow) for the tile view layout.
  */
-export function getTileViewGridDimensions(state: Object) {
-    const maxColumns = getMaxColumnCount(state);
+export function getTileViewGridDimensions(state: Object, width: ?number) {
+    const maxColumns = getMaxColumnCount(state, width);
 
     // When in tile view mode, we must discount ourselves (the local participant) because our
     // tile is not visible.

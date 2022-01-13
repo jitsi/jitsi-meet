@@ -5,6 +5,7 @@ import { shouldComponentUpdate } from 'react-window';
 import { connect } from '../../../base/redux';
 import { shouldHideSelfView } from '../../../base/settings/functions.any';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
+import { showGridInVerticalView } from '../../functions';
 
 import Thumbnail from './Thumbnail';
 
@@ -120,10 +121,14 @@ function _mapStateToProps(state, ownProps) {
     const { testing = {} } = state['features/base/config'];
     const disableSelfView = shouldHideSelfView(state);
     const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
+    const _verticalViewGrid = showGridInVerticalView(state);
 
-    if (_currentLayout === LAYOUTS.TILE_VIEW) {
+    if (_currentLayout === LAYOUTS.TILE_VIEW || _verticalViewGrid) {
         const { columnIndex, rowIndex } = ownProps;
-        const { gridDimensions = {}, thumbnailSize } = state['features/filmstrip'].tileViewDimensions;
+        const { gridDimensions: dimensions = {}, thumbnailSize: size } = state['features/filmstrip'].tileViewDimensions;
+        const { gridView } = state['features/filmstrip'].verticalViewDimensions;
+        const gridDimensions = _verticalViewGrid ? gridView.gridDimensions : dimensions;
+        const thumbnailSize = _verticalViewGrid ? gridView.thumbnailSize : size;
         const { columns, rows } = gridDimensions;
         const index = (rowIndex * columns) + columnIndex;
         let horizontalOffset;
