@@ -44,7 +44,7 @@ const SpeakerStats = () => {
             cancelKey = 'dialog.close'
             submitDisabled = { true }
             titleKey = 'speakerStats.speakerStats'
-            width = { showFacialExpressions ? 'large' : 'small' }>
+            width = { showFacialExpressions ? '664px' : 'small' }>
             <div className = 'speaker-stats'>
                 <SpeakerStatsSearch />
                 { enableFacialRecognition
