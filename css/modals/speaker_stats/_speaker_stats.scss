@@ -2,26 +2,45 @@
     list-style: none;
     padding: 30px 0 0 0;
     width: 100%;
-    font-weight: 500;
-
-    .speaker-stats-row{
+    font-weight: 600;
+    
+    .row{
         display: flex;
         align-items: center;
 
         .status-user-left {
             color: $placeHolderColor;
         }
-
-        .speaker-stats-item__avatar {
+        .avatar {
             width: 32px;
             margin-right: 16px;
         }
     
-        .speaker-stats-item__name-time{
+        .name-time {
             width: 304px;
             display: flex;
             justify-content: space-between;
+            
         }
+        .name-time_expressions-on {
+            width: 240px;
+        }
+        .expressions {
+            width: 300px;
+            display: flex;
+            justify-content: space-between;
+
+            .expression {
+                width: 30px;
+                text-align: center;
+            }
+        }
+
+        
+    }
+    .text-large{
+        font-size: 14px;
+        font-weight: 400;
     }
     
 }

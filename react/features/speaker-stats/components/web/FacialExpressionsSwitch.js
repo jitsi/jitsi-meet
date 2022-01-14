@@ -9,15 +9,14 @@ import { Switch } from '../../../base/react';
 
 const useStyles = makeStyles(() => {
     return {
-        facialExpressionsSwitchContainer: {
+        switchContainer: {
             position: 'absolute',
             top: 90,
             left: 226,
             display: 'flex',
             alignItems: 'center'
         },
-        facialExpressionsSwitchLabel: {
-            width: 100,
+        switchLabel: {
             marginRight: 10
         }
     };
@@ -51,9 +50,9 @@ export default function FacialExpressionsSwitch({ onChange, showFacialExpression
     // const { t } = useTranslation();
 
     return (
-        <div className = { classes.facialExpressionsSwitchContainer } >
+        <div className = { classes.switchContainer } >
             <label
-                className = { classes.facialExpressionsSwitchLabel }
+                className = { `text-large ${classes.switchLabel}` }
                 htmlFor = 'facial-expressions-switch'>
                 Display Emotions
             </label>

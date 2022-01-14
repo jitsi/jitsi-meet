@@ -6,8 +6,9 @@ export const FACIAL_EXPRESSION_EMOJIS = {
     sad: '🙁',
     surprised: '😮',
     angry: '😠',
-    fearful: '😨',
-    disgusted: '🤢'
+    fearful: '😨'
+
+    // disgusted: '🤢'
 };
 
 /**
