@@ -80,13 +80,6 @@ function _visitNode(node, callback) {
         global.addEventListener = () => {};
     }
 
-    // Promise.allSettled is supported from RN 0.63 onwards, use a polyfill for that.
-    // Invokes its shim method to shim Promise.allSettled if it is unavailable or noncompliant.
-    //
-    // Required by:
-    // lib-jitsi-meet/JitsiConference.js
-    require('promise.allsettled').shim();
-
     // removeEventListener
     //
     // Required by:
@@ -284,22 +277,14 @@ function _visitNode(node, callback) {
 
     // Performance API
 
-    // RN 0.61 does not provide performance.now(), and react-native-performance
-    // requires it.
-    const now = () => Date.now();
-
-    if (!global.performance) {
-        global.performance = {};
-    }
-
-    if (!global.performance.now) {
-        global.performance.now = now;
-    }
+    // RN only provides the now() method, since the polyfill refers the global
+    // performance object itself we extract it here to avoid infinite recursion.
+    const performanceNow = global.performance.now;
 
     const perf = require('react-native-performance');
 
     global.performance = perf.default;
-    global.performance.now = now;
+    global.performance.now = performanceNow;
     global.PerformanceObserver = perf.PerformanceObserver;
 
     // CallStats

@@ -7,12 +7,12 @@ import org.gradle.util.VersionNumber
 buildscript {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.2'
-        classpath 'com.google.gms:google-services:4.3.4'
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.4.1'
+        classpath 'com.android.tools.build:gradle:4.2.2'
+        classpath 'com.google.gms:google-services:4.3.10'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.1'
     }
 }
 
@@ -22,6 +22,7 @@ ext {
     minSdkVersion    = 23
     targetSdkVersion = 31
     supportLibVersion = "28.0.0"
+    ndkVersion = "21.4.7075529"
 
     // The Maven artifact groupdId of the third-party react-native modules which
     // Jitsi Meet SDK for Android depends on and which are not available in
@@ -42,13 +43,20 @@ ext {
 
 allprojects {
     repositories {
+        mavenCentral()
         google()
-        jcenter()
-        maven { url 'https://www.jitpack.io' }
         // React Native (JS, Obj-C sources, Android binaries) is installed from npm.
         maven { url "$rootDir/../node_modules/react-native/android" }
         // Android JSC is installed from npm.
         maven { url("$rootDir/../node_modules/jsc-android/dist") }
+        maven { url 'https://www.jitpack.io' }
+        // https://github.com/react-native-video/react-native-video/issues/2454
+        //noinspection JcenterRepositoryObsolete
+        jcenter() {
+            content {
+                includeModule("com.yqritc", "android-scalablevideoview")
+            }
+        }
     }
 
     // Make sure we use the react-native version in node_modules and not the one

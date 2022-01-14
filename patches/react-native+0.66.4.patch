@@ -1,8 +1,8 @@
 diff --git a/node_modules/react-native/React/CoreModules/RCTTiming.mm b/node_modules/react-native/React/CoreModules/RCTTiming.mm
-index 7517771..5af8bdc 100644
+index 70f0543..d43a4be 100644
 --- a/node_modules/react-native/React/CoreModules/RCTTiming.mm
 +++ b/node_modules/react-native/React/CoreModules/RCTTiming.mm
-@@ -148,6 +148,11 @@ - (void)setup
+@@ -146,6 +146,11 @@ - (void)setup
                                                   name:name
                                                 object:nil];
    }
@@ -12,12 +12,12 @@ index 7517771..5af8bdc 100644
 +                                               name:UIDeviceProximityStateDidChangeNotification
 +                                             object:nil];
  }
-
+ 
  - (void)dealloc
-@@ -184,6 +189,16 @@ - (void)appDidMoveToForeground
+@@ -182,6 +187,16 @@ - (void)appDidMoveToForeground
    [self startTimers];
  }
-
+ 
 +- (void)proximityChanged
 +{
 +  BOOL isClose = [UIDevice currentDevice].proximityState;
