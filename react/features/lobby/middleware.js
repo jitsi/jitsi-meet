@@ -90,53 +90,53 @@ StateListenerRegistry.register(
                     );
                     dispatch(playSound(KNOCKING_PARTICIPANT_SOUND_ID));
 
-                    if (navigator.product !== 'ReactNative') {
-                        let notificationTitle;
-                        let customActionNameKey;
-                        let customActionHandler;
-                        let descriptionKey;
-                        let icon;
+                    const isParticipantsPaneVisible = getParticipantsPaneOpen(getState());
 
-                        const knockingParticipants = getKnockingParticipants(getState());
-                        const isParticipantsPaneVisible = getParticipantsPaneOpen(getState());
-                        const firstParticipant = knockingParticipants[0];
-
-                        if (knockingParticipants.length > 1) {
-                            descriptionKey = 'notify.participantsWantToJoin';
-                            notificationTitle = i18n.t('notify.participantsJoined', {
-                                joinedParticipants: knockingParticipants.length
-                            });
-                            icon = NOTIFICATION_ICON.PARTICIPANTS;
-                            customActionNameKey = [ 'notify.viewLobby' ];
-                            customActionHandler = [ () => {
-                                dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
-                                dispatch(openParticipantsPane());
-                            } ];
-                        } else {
-                            descriptionKey = 'notify.participantWantsToJoin';
-                            notificationTitle = firstParticipant.name;
-                            icon = NOTIFICATION_ICON.PARTICIPANT;
-                            customActionNameKey = [ 'lobby.admit', 'lobby.reject' ];
-                            customActionHandler = [ () => {
-                                dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
-                                dispatch(approveKnockingParticipant(firstParticipant.id));
-                            },
-                            () => {
-                                dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
-                                dispatch(rejectKnockingParticipant(firstParticipant.id));
-                            } ];
-                        }
-                        if (!isParticipantsPaneVisible) {
-                            dispatch(showNotification({
-                                title: notificationTitle,
-                                descriptionKey,
-                                uid: LOBBY_NOTIFICATION_ID,
-                                customActionNameKey,
-                                customActionHandler,
-                                icon
-                            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
-                        }
+                    if (navigator.product === 'ReactNative' || isParticipantsPaneVisible) {
+                        return;
                     }
+                    let notificationTitle;
+                    let customActionNameKey;
+                    let customActionHandler;
+                    let descriptionKey;
+                    let icon;
+
+                    const knockingParticipants = getKnockingParticipants(getState());
+                    const firstParticipant = knockingParticipants[0];
+
+                    if (knockingParticipants.length > 1) {
+                        descriptionKey = 'notify.participantsWantToJoin';
+                        notificationTitle = i18n.t('notify.waitingParticipants', {
+                            waitingParticipants: knockingParticipants.length
+                        });
+                        icon = NOTIFICATION_ICON.PARTICIPANTS;
+                        customActionNameKey = [ 'notify.viewLobby' ];
+                        customActionHandler = [ () => batch(() => {
+                            dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
+                            dispatch(openParticipantsPane());
+                        }) ];
+                    } else {
+                        descriptionKey = 'notify.participantWantsToJoin';
+                        notificationTitle = firstParticipant.name;
+                        icon = NOTIFICATION_ICON.PARTICIPANT;
+                        customActionNameKey = [ 'lobby.admit', 'lobby.reject' ];
+                        customActionHandler = [ () => batch(() => {
+                            dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
+                            dispatch(approveKnockingParticipant(firstParticipant.id));
+                        }),
+                        () => batch(() => {
+                            dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
+                            dispatch(rejectKnockingParticipant(firstParticipant.id));
+                        }) ];
+                    }
+                    dispatch(showNotification({
+                        title: notificationTitle,
+                        descriptionKey,
+                        uid: LOBBY_NOTIFICATION_ID,
+                        customActionNameKey,
+                        customActionHandler,
+                        icon
+                    }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
 
                     if (typeof APP !== 'undefined') {
                         APP.API.notifyKnockingParticipant({
