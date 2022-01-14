@@ -4,10 +4,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
 
 import { Avatar } from '../../../base/avatar';
+import { FACIAL_EXPRESSIONS } from '../../../facial-recognition/constants.js';
 
 import TimeElapsed from './TimeElapsed';
 
-const useStyles = makeStyles(() => {
+const useStyles = makeStyles(theme => {
     return {
         item: {
             height: 48
@@ -17,6 +18,16 @@ const useStyles = makeStyles(() => {
         },
         expressions: {
             paddingLeft: 29
+        },
+        placeholderColor: {
+            color: theme.palette.text03
+        },
+        time: {
+            padding: '2px 4px',
+            borderRadius: '4px'
+        },
+        dominant: {
+            backgroundColor: theme.palette.success02
         }
 
     };
@@ -83,12 +94,33 @@ const SpeakerStatsItem = (props: Props) => {
      */
 
     const classes = useStyles();
-    const hasLeftClass = props.hasLeft ? 'status-user-left' : '';
+    const hasLeftClass = props.hasLeft ? classes.placeholderColor : '';
     const rowDisplayClass = `row ${hasLeftClass} ${classes.item}`;
     const expressionClass = 'expression';
     const nameTimeClass = `name-time${
         props.showFacialExpressions ? ' name-time_expressions-on' : ''
     }`;
+    const timeClass = `${classes.time} ${props.isDominantSpeaker ? classes.dominant : ''}`;
+
+
+    const FacialExpressions = () => (
+        props.reduceExpressions
+            ? FACIAL_EXPRESSIONS
+                .filter(expression => ![ 'angry', 'fearful', 'disgusted' ].includes(expression))
+            : FACIAL_EXPRESSIONS).map(
+            expression => (
+                <div
+                    aria-label = { props.t(`speakerStats.${expression}`) }
+                    className = {
+                        `${expressionClass} ${
+                            props.facialExpressions[expression] === 0 ? classes.placeholderColor : ''
+                        }`
+                    }
+                    key = { expression }>
+                    { props.facialExpressions[expression] }
+                </div>
+            )
+    );
 
     return (
         <div
@@ -106,7 +138,8 @@ const SpeakerStatsItem = (props: Props) => {
                     { props.displayName }
                 </div>
                 <div
-                    aria-label = { props.t('speakerStats.speakerTime') }>
+                    aria-label = { props.t('speakerStats.speakerTime') }
+                    className = { timeClass }>
                     <TimeElapsed
                         time = { props.dominantSpeakerTime } />
                 </div>
@@ -114,44 +147,7 @@ const SpeakerStatsItem = (props: Props) => {
             { props.showFacialExpressions
             && (
                 <div className = { `expressions ${classes.expressions}` }>
-                    <div
-                        aria-label = { 'Happy' }
-                        className = { expressionClass }>
-                        { props.facialExpressions.happy }
-                    </div>
-                    <div
-                        aria-label = { 'Neutral' }
-                        className = { expressionClass }>
-                        { props.facialExpressions.neutral }
-                    </div>
-                    <div
-                        aria-label = { 'Sad' }
-                        className = { expressionClass }>
-                        { props.facialExpressions.sad }
-                    </div>
-                    <div
-                        aria-label = { 'Surprised' }
-                        className = { expressionClass }>
-                        { props.facialExpressions.surprised }
-                    </div>
-                    { !props.reduceExpressions && (
-                        <>
-                            <div
-                                aria-label = { 'Angry' }
-                                className = { expressionClass }>
-                                { props.facialExpressions.angry }
-                            </div>
-                            <div
-                                aria-label = { 'Fearful' }
-                                className = { expressionClass }>
-                                { props.facialExpressions.fearful }
-                            </div>
-                            {/* <div
-                                aria-label = { 'Disgusted' }>
-                                { props.facialExpressions.disgusted }
-                            </div> */}
-                        </>
-                    )}
+                    <FacialExpressions />
                 </div>
             )
             }
