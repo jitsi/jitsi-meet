@@ -1,12 +1,4 @@
 /**
- * Rotate the hide filmstrip icon so it points towards the right edge
- * of the screen.
- */
-.vertical-filmstrip .filmstrip__toolbar {
-    transform: rotate(-90deg);
-}
-
-/**
  * Overrides for video containers that should not be centered aligned to avoid=
  * clashing with the filmstrip.
  */
