@@ -177,8 +177,6 @@
     "lint-fix": "eslint  --max-warnings 0 --fix .",
     "postinstall": "patch-package && jetify",
     "validate": "npm ls",
-    "start": "make dev",
-    "ios": "react-native run-ios",
-    "android": "react-native run-android"
+    "start": "make dev"
   }
 }
