@@ -3,6 +3,7 @@ apply plugin: 'maven-publish'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
+    ndkVersion rootProject.ext.ndkVersion
 
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
@@ -34,8 +35,14 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.fragment:fragment:1.2.5'
+    // https://github.com/facebook/react-native/issues/31572
+    // We can update past 1.4.0 on RN 0.68
+    implementation ('androidx.appcompat:appcompat:1.3.1') {
+        version {
+            strictly '1.3.1'
+        }
+    }
+    implementation 'androidx.fragment:fragment:1.4.0'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
