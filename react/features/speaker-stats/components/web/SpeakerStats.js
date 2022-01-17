@@ -14,14 +14,14 @@ import SpeakerStatsLabels from './SpeakerStatsLabels';
 import SpeakerStatsList from './SpeakerStatsList';
 import SpeakerStatsSearch from './SpeakerStatsSearch';
 
-const useStyles = makeStyles(() => {
+const useStyles = makeStyles(theme => {
     return {
         separator: {
             position: 'absolute',
             width: '100%',
             height: 1,
             left: 0,
-            backgroundColor: '#666666'
+            backgroundColor: theme.palette.border02
         }
     };
 });
