@@ -397,7 +397,7 @@ function VirtualBackground({
                         showLabel = { previewIsLoaded }
                         storedImages = { storedImages } />}
                     <div
-                        className = 'virtual-background-dialog'
+                        className = { `virtual-background-dialog${previewIsLoaded ? '' : ' dialog-margin-top'}` }
                         role = 'radiogroup'
                         tabIndex = '-1'>
                         <Tooltip
