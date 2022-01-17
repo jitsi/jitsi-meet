@@ -9,7 +9,7 @@ import { FACIAL_EXPRESSION_EMOJIS } from '../../../facial-recognition/constants.
 const useStyles = makeStyles(() => {
     return {
         labels: {
-            padding: '7px 0px',
+            padding: '22px 0 7px 0',
             height: 20
         },
         emojis: {

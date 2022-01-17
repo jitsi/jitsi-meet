@@ -22,6 +22,20 @@ const useStyles = makeStyles(theme => {
             height: 1,
             left: 0,
             backgroundColor: theme.palette.border02
+        },
+        speakerStatsDialog: {
+            '& > div': {
+
+            }
+        },
+        searchSwitchContainer: {
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            width: '100%'
+        },
+        searchSwitchContainerExpressionsOn: {
+            width: '58.5%'
         }
     };
 });
@@ -48,16 +62,25 @@ const SpeakerStats = () => {
     return (
         <Dialog
             cancelKey = 'dialog.close'
+            hideCancelButton = { true }
+            id = 'speaker-stats-dialog'
             submitDisabled = { true }
             titleKey = 'speakerStats.speakerStats'
             width = { showFacialExpressions ? '664px' : 'small' }>
             <div className = 'speaker-stats'>
-                <SpeakerStatsSearch onSearch = { onSearch } />
-                { enableFacialRecognition
+                <div
+                    className = {
+                        `${classes.searchSwitchContainer}
+                        ${showFacialExpressions ? classes.searchSwitchContainerExpressionsOn : ''}`
+                    }>
+                    <SpeakerStatsSearch onSearch = { onSearch } />
+                    { enableFacialRecognition
                     && <FacialExpressionsSwitch
                         onChange = { onToggleFacialExpressions }
                         showFacialExpressions = { showFacialExpressions } />
-                }
+                    }
+                </div>
+
                 <SpeakerStatsLabels
                     reduceExpressions = { reduceExpressions }
                     showFacialExpressions = { showFacialExpressions ?? false } />
