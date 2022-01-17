@@ -1,8 +1,8 @@
 .speaker-stats {
     list-style: none;
-    padding: 30px 0 0 0;
-    width: 100%;
+    width: calc(100% + 16px);
     font-weight: 600;
+    margin: 0 -8px;
 
     .row{
         display: flex;
@@ -13,17 +13,17 @@
         }
     
         .name-time {
-            width: 304px;
+            width: calc(100% - 48px);
             display: flex;
             justify-content: space-between;
             align-items: center;
             
         }
         .name-time_expressions-on {
-            width: 240px;
+            width: calc(49% - 48px);
         }
         .expressions {
-            width: 300px;
+            width: 51%;
             display: flex;
             justify-content: space-between;
 
@@ -35,9 +35,9 @@
 
         
     }
-    .text-large{
-        font-size: 14px;
-        font-weight: 400;
-    }
     
+}
+.text-large{
+    font-size: 14px;
+    font-weight: 400;
 }
