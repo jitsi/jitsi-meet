@@ -81,10 +81,6 @@ const abstractSpeakerStatsList = (speakerStatsItem: Function): Function[] => {
 
     return userIds.map(userId => {
         const statsModel = localSpeakerStats[userId];
-
-        if (!statsModel || statsModel.hidden) {
-            return null;
-        }
         const props = {};
 
         props.isDominantSpeaker = statsModel.isDominantSpeaker();
@@ -94,6 +90,7 @@ const abstractSpeakerStatsList = (speakerStatsItem: Function): Function[] => {
         if (showFacialExpressions) {
             props.facialExpressions = statsModel.getFacialExpressions();
         }
+        props.hidden = statsModel.hidden;
         props.showFacialExpressions = showFacialExpressions;
         props.reduceExpressions = clientWidth < REDUCE_EXPRESSIONS_THRESHOLD;
         props.displayName = statsModel.getDisplayName() || defaultRemoteDisplayName;
