@@ -279,7 +279,7 @@
         "remoteControlDeniedMessage": "{{user}} hodhi poshtë kërkesën tuaj për kontroll së largëti!",
         "remoteControlErrorMessage": "Ndodhi një gabim teksa provohej të kërkohej leje kontrolli së largëti nga {{user}}!",
         "remoteControlRequestMessage": "Do ta lejoni {{user}} të kontrollojë së largëti desktopin tuaj?",
-        "remoteControlShareScreenWarning": "Kini parasysh se, nëse shtypni \“Lejoje\”, ai do të shohë ekranin tuaj!",
+        "remoteControlShareScreenWarning": "Kini parasysh se, nëse shtypni “Lejoje”, ai do të shohë ekranin tuaj!",
         "remoteControlStopMessage": "Sesioni me kontroll së largëti dështoi!",
         "remoteControlTitle": "Kontroll desktopi së largëti",
         "Remove": "Hiqe",
