@@ -75,6 +75,11 @@ type Props = {
     hasLeft: boolean,
 
     /**
+     * True if the participant is not shown in speaker stats.
+     */
+    hidden: boolean,
+
+    /**
      * True if the participant is currently the dominant speaker.
      */
     isDominantSpeaker: boolean,
@@ -121,6 +126,10 @@ const SpeakerStatsItem = (props: Props) => {
                 </div>
             )
     );
+
+    if (props.hidden) {
+        return <div key = { props.participantId } />;
+    }
 
     return (
         <div
