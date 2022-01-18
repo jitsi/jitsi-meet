@@ -52,6 +52,7 @@ const styles = theme => {
     return {
         container: {
             minHeight: '40px',
+            minWidth: '120px',
             width: '100%',
             boxSizing: 'border-box',
             cursor: 'pointer',
