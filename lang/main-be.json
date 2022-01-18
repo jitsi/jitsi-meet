@@ -20,9 +20,9 @@
     "audioDevices": {
         "bluetooth": "Bluetooth",
         "headphones": "Навушнікі",
+        "none": "Не выяўленыя гукавыя прылады",
         "phone": "Тэлефон",
-        "speaker": "Калонка",
-        "none": "Не выяўленыя гукавыя прылады"
+        "speaker": "Калонка"
     },
     "audioOnly": {
         "audioOnly": "Не нагружае канал"
@@ -48,23 +48,23 @@
     "chat": {
         "error": "Памылка: Ваша паведамленне не было адпраўлена. Прычына: {{error}}",
         "fieldPlaceHolder": "Калі ласка, увядзіце тут ваша паведамленне",
-        "messagebox": "Калі ласка, увядзіце паведамленне",
         "messageTo": "Асабістае паведамленне карыстальнiку {{recipient}}",
-        "noMessagesMessage": "У канферэнцыі пакуль няма ніякіх паведамленняў. Пачніце размову!",
+        "messagebox": "Калі ласка, увядзіце паведамленне",
         "nickname": {
             "popover": "Калі ласка, пазначце імя",
             "title": "Калі ласка, увядзіце імя для выкарыстання чата",
             "titleWithPolls": "Калі ласка, увядзіце імя для выкарыстання чата"
         },
+        "noMessagesMessage": "У канферэнцыі пакуль няма ніякіх паведамленняў. Пачніце размову!",
         "privateNotice": "Асабістае паведамленне карыстальнiку {{recipient}}",
         "title": "Чат",
         "titleWithPolls": "Чат",
         "you": "Вы"
     },
     "chromeExtensionBanner": {
-        "installExtensionText": "Усталюйце пашырэнне для інтэграцыі календара Google і Office 365",
         "buttonText": "Усталюйце пашырэнне Chrome",
-        "dontShowAgain": "Не паказваць зноў"
+        "dontShowAgain": "Не паказваць зноў",
+        "installExtensionText": "Усталюйце пашырэнне для інтэграцыі календара Google і Office 365"
     },
     "connectingOverlay": {
         "joiningRoom": "Спрабуем далучыцца да вашай канферэнцыі …"
@@ -149,7 +149,21 @@
         "selectADevice": "Выбар прылады",
         "testAudio": "Пратэсціраваць гук"
     },
+    "dialOut": {
+        "statusMessage": "цяпер {{status}}"
+    },
     "dialog": {
+        "Back": "Назад",
+        "Cancel": "Адмена",
+        "IamHost": "Я гаспадар",
+        "Ok": "Добра",
+        "Remove": "Выдаліць",
+        "Share": "Падзяліцца",
+        "Submit": "Адправіць",
+        "WaitForHostMsg": "Канферэнцыя <b>{{room}}</b> яшчэ не пачалася. Калі вы з'яўляецеся гаспадаром, калі ласка, падтвердіце сапраўднасць. У адваротным выпадку, калі ласка, пачакайце з'яўлення гаспадара.",
+        "WaitForHostMsgWOk": "Канферэнцыя <b>{{room}}</b> яшчэ не пачалася. Калі Вы арганізатар, калі ласка, націсніце Ok для аўтэнтыфікацыі. У адваротным выпадку, дачакайцеся арганізатара.",
+        "WaitingForHost": "Чакаем арганізатара …",
+        "Yes": "Так",
         "accessibilityLabel": {
             "liveStreaming": "Трансляцыя"
         },
@@ -157,7 +171,6 @@
         "alreadySharedVideoMsg": "Іншы ўдзельнік ужо падзяліўся спасылкай на відэа. Дадзеная канферэнцыя дазваляе адначасова дзяліцца толькі адным відэа.",
         "alreadySharedVideoTitle": "Дапушчаецца паказ толькі аднаго відэа",
         "applicationWindow": "Акно прыкладання",
-        "Back": "Назад",
         "cameraConstraintFailedError": "Камера не адказвае вызначаным патрабаванням.",
         "cameraNotFoundError": "Камера не выяўлена.",
         "cameraNotSendingData": "Памылка доступу да камеры. Калі ласка, праверце, ці не выкарыстоўвае камеру якая-небудзь іншая праграма. Вы можаце таксама выбраць іншую прыладу з меню налад або паспрабаваць перазапусціць праграму.",
@@ -165,7 +178,6 @@
         "cameraPermissionDeniedError": "Няма доступу да камеры. Вы можаце ўдзельнічаць у сустрэчы, але іншыя не будуць вас бачыць. Выкарыстоўвайце значок камеры ў адрасным радку браўзера, каб ліквідаваць праблему.",
         "cameraUnknownError": "Невядомая памылка выкарыстання камеры.",
         "cameraUnsupportedResolutionError": "Ваша камера не падтрымлівае неабходны дазвол відэа.",
-        "Cancel": "Адмена",
         "close": "Зачыніць",
         "conferenceDisconnectMsg": "Варта праверыць інтэрнэт-злучэнне. Спроба аднаўлення сувязі праз {{seconds}} с.",
         "conferenceDisconnectTitle": "Вы адключаныя.",
@@ -188,11 +200,10 @@
         "externalInstallationTitle": "Патрабуецца пашырэнне",
         "goToStore": "Перайсці да інтэрнэт-крамы",
         "gracefulShutdown": "тэхнічныя работы. Калі ласка, паспрабуйце пазней.",
-        "IamHost": "Я гаспадар",
-        "incorrectRoomLockPassword": "Няправільны пароль",
         "incorrectPassword": "Памылка імя карыстальніка або пароля",
-        "inlineInstallationMsg": "Вам неабходна ўсталяваць нашу праграму для сумеснага выкарыстання працоўнага стала.",
+        "incorrectRoomLockPassword": "Няправільны пароль",
         "inlineInstallExtension": "Усталяваць",
+        "inlineInstallationMsg": "Вам неабходна ўсталяваць нашу праграму для сумеснага выкарыстання працоўнага стала.",
         "internalError": "Што-та пайшло не так. Памылка: {{error}}",
         "internalErrorTitle": "Унутраная памылка",
         "kickMessage": "Вы можаце звязацца з {{participantDisplayName}} для атрымання больш падрабязнай інфармацыі.",
@@ -216,17 +227,16 @@
         "micNotSendingDataTitle": "Ваш мікрафон адключаны сістэмнымі наладамі",
         "micPermissionDeniedError": "Няма доступу да мікрафону. Вы можаце ўдзельнічаць у сустрэчы, але іншыя не будуць вас чуць. Выкарыстоўвайце значок камеры ў адрасным радку браўзера, каб ліквідаваць праблему.",
         "micUnknownError": "Невядомая памылка выкарыстання мікрафона.",
+        "muteEveryoneDialog": "Вы ўпэўненыя, што жадаеце адключыць гук ва ўсіх? Вы не зможаце ўключыць яго, але яны змогуць уключыць гук у сябе ў любы час.",
         "muteEveryoneElseDialog": "Адключыўшы гук, Вы не зможаце ўключыць яго, але яны змогуць уключыць гук у сябе ў любы час.",
         "muteEveryoneElseTitle": "Адключыць усіх, акрамя {{whom}}?",
-        "muteEveryoneDialog": "Вы ўпэўненыя, што жадаеце адключыць гук ва ўсіх? Вы не зможаце ўключыць яго, але яны змогуць уключыць гук у сябе ў любы час.",
-        "muteEveryoneTitle": "Заглушыць ўсіх?",
         "muteEveryoneSelf": "сябе",
         "muteEveryoneStartMuted": "Усе будуць заглушаныя з гэтага моманту",
+        "muteEveryoneTitle": "Заглушыць ўсіх?",
         "muteParticipantBody": "Вы не можаце ўключыць ім гук, але яны могуць зрабіць гэта самі ў любы момант.",
         "muteParticipantButton": "Выключыць гук",
         "muteParticipantDialog": "Вы ўпэўненыя, што жадаеце адключыць мікрафон у дадзенага карыстальніка? Вы не зможаце адмяніць гэтае дзеянне, аднак ён зможа сам зноў уключыць мікрафон у любы момант.",
         "muteParticipantTitle": "прыглушыць гэтага ўдзельніка?",
-        "Ok": "Добра",
         "passwordLabel": "Сустрэча была заблакаваная ўдзельнікам. Калі ласка, увядзіце $t(lockRoomPassword), каб далучыцца.",
         "passwordNotSupported": "Усталяванне $t(lockRoomPassword) для канферэнцыі не падтрымліваецца.",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) не падтрымліваецца",
@@ -244,7 +254,6 @@
         "remoteControlShareScreenWarning": "Калі націснеце \" Дазволіць \", то падзяліцеся сваім экранам!",
         "remoteControlStopMessage": "Сесія аддаленага кіравання завершана!",
         "remoteControlTitle": "Выдаленае кіраванне працоўным сталом",
-        "Remove": "Выдаліць",
         "removePassword": "Прыбраць $t(lockRoomPassword)",
         "removeSharedVideoMsg": "Ці ўпэўнены, што хочаце прыбраць відэа, якім падзяліліся?",
         "removeSharedVideoTitle": "Прыбраць відэа",
@@ -263,7 +272,6 @@
         "sendPrivateMessageTitle": "Адаслаць асабістае паведамленне?",
         "serviceUnavailable": "Служба недаступная",
         "sessTerminated": "Сувязь перарвана",
-        "Share": "Падзяліцца",
         "shareVideoLinkError": "Калі ласка, падайце дакладную спасылку на YouTube.",
         "shareVideoTitle": "Падзяліцца відэа",
         "shareYourScreen": "Паказаць экран",
@@ -277,7 +285,6 @@
         "stopRecordingWarning": "Ці ўпэўнены, што хочаце спыніць запіс?",
         "stopStreamingWarning": "Ці ўпэўнены, што хочаце спыніць трансляцыю?",
         "streamKey": "Ключ трансляцыі",
-        "Submit": "Адправіць",
         "thankYou": "Дзякуй, што карыстаецеся {{appName}}!",
         "token": "токен",
         "tokenAuthFailed": "Выбачайце, вам не дазволена далучыцца да гэтага сеансу сувязі.",
@@ -285,14 +292,7 @@
         "transcribing": "Расшыфроўка",
         "unlockRoom": "Прыбраць $t(lockRoomPassword)",
         "userPassword": "пароль карыстальніка",
-        "WaitForHostMsg": "Канферэнцыя <b>{{room}}</b> яшчэ не пачалася. Калі вы з'яўляецеся гаспадаром, калі ласка, падтвердіце сапраўднасць. У адваротным выпадку, калі ласка, пачакайце з'яўлення гаспадара.",
-        "WaitForHostMsgWOk": "Канферэнцыя <b>{{room}}</b> яшчэ не пачалася. Калі Вы арганізатар, калі ласка, націсніце Ok для аўтэнтыфікацыі. У адваротным выпадку, дачакайцеся арганізатара.",
-        "WaitingForHost": "Чакаем арганізатара …",
-        "Yes": "Так",
         "yourEntireScreen": "Увесь экран"
-    },
-    "dialOut": {
-        "statusMessage": "цяпер {{status}}"
     },
     "documentSharing": {
         "title": "Агульны Дакумент"
@@ -305,6 +305,9 @@
         "rateExperience": "Ацэнка якасці сувязі",
         "veryBad": "Вельмі дрэнна",
         "veryGood": "Вельмі добра"
+    },
+    "helpView": {
+        "header": "Цэнтар дапамогi"
     },
     "incomingCall": {
         "answer": "Адказ",
@@ -332,6 +335,7 @@
         "inviteURLFirstPartGeneral": "Вас запрашаюць далучыцца да канферэнцыі.",
         "inviteURLFirstPartPersonal": "{{name}} запрашае Вас далучыцца да канферэнцыі. \n",
         "inviteURLSecondPart": "\nДалучыцца да канферэнцыі: \n {{url}} \n",
+        "label": "Інфармацыя пра канферэнцыю",
         "liveStreamURL": "Трансляцыя:",
         "moreNumbers": "Больш нумароў",
         "noNumbers": "Няма нумароў для набору.",
@@ -340,8 +344,13 @@
         "numbers": "Нумары для набору",
         "password": "$t(lockRoomPasswordUppercase):",
         "title": "Падзяліцца",
-        "tooltip": "Падзяліцеся спасылкай і нумарам для падлучэння да гэтай канферэнцыі",
-        "label": "Інфармацыя пра канферэнцыю"
+        "tooltip": "Падзяліцеся спасылкай і нумарам для падлучэння да гэтай канферэнцыі"
+    },
+    "inlineDialogFailure": {
+        "msg": "Невялікая замінка.",
+        "retry": "Паспрабаваць зноў",
+        "support": "Падтрымка",
+        "supportMsg": "Калі гэта працягнецца, звяжыцеся з"
     },
     "inviteDialog": {
         "alertText": "Не ўдалося запрасіць некаторых удзельнікаў.",
@@ -350,12 +359,6 @@
         "searchPeopleOnlyPlaceholder": "Пошук удзельнікаў",
         "searchPlaceholder": "Удзельнік або нумар тэлефона",
         "send": "Даслаць"
-    },
-    "inlineDialogFailure": {
-        "msg": "Невялікая замінка.",
-        "retry": "Паспрабаваць зноў",
-        "support": "Падтрымка",
-        "supportMsg": "Калі гэта працягнецца, звяжыцеся з"
     },
     "keyboardShortcuts": {
         "focusLocal": "Фокус на ваша відэа",
@@ -389,6 +392,7 @@
         "expandedPending": "Пачынаецца прамая трансляцыя ..",
         "failedToStart": "Памылка трансляцыі відэа",
         "getStreamKeyManually": "Прамыя трансляцыi не знойдзены. Паспрабуйце атрымаць ключ прамой трансляцыі ад YouTube.",
+        "googlePrivacyPolicy": "Палітыка прыватнасці Google",
         "invalidStreamKey": "Падобнs ключ прамой трансляцыі з'яўляецца памылковым.",
         "off": "Трансляцыя спынена",
         "offBy": "{{name}} спыніў прамую трансляцыю",
@@ -396,15 +400,14 @@
         "onBy": "{{name}} пачаў прамую трансляцыю",
         "pending": "Пачынаем трансляцыю …",
         "serviceName": "Служба трансляцыі",
-        "signedInAs": "У цяперашні час вы ўвайшлі ў сістэму як:",
         "signIn": "Увайсці праз Google",
         "signInCTA": "Увайдзiце або ўвядзіце свой ключ трансляцыі YouTube.",
         "signOut": "Выхад",
+        "signedInAs": "У цяперашні час вы ўвайшлі ў сістэму як:",
         "start": "Пачаць трансляцыю",
         "streamIdHelp": "Што гэта?",
         "unavailableTitle": "Трансляцыя недаступная",
-        "youtubeTerms": "YouTube ўмовы паслуг",
-        "googlePrivacyPolicy": "Палітыка прыватнасці Google"
+        "youtubeTerms": "YouTube ўмовы паслуг"
     },
     "localRecording": {
         "clientState": {
@@ -437,6 +440,10 @@
     },
     "lockRoomPassword": "пароль",
     "lockRoomPasswordUppercase": "Пароль",
+    "lonelyMeetingExperience": {
+        "button": "Запрашайце іншых",
+        "youAreAlone": "Вы адзіны ў гэтай канферэнцыі"
+    },
     "me": "я",
     "notify": {
         "connectedOneMember": "{{name}} далучыўся да канферэнцыі",
@@ -453,24 +460,24 @@
         "me": "Я",
         "moderator": "Атрыманыя правы мадэратара!",
         "muted": "Вы пачалі размову без гуку.",
-        "mutedTitle": "Вы без гуку!",
-        "mutedRemotelyTitle": "{{participantDisplayName}} адключыў Вам мікрафон!",
         "mutedRemotelyDescription": "Вы заўсёды можаце ўключыць мікрафон, калі будзеце гатовыя гаварыць. Адключыце яго, калі скончыце, каб не трансляваць шумы ў канферэнцыю.",
+        "mutedRemotelyTitle": "{{participantDisplayName}} адключыў Вам мікрафон!",
+        "mutedTitle": "Вы без гуку!",
+        "newDeviceAction": "Выкарыстоўваць",
+        "newDeviceAudioTitle": "Выяўлена новае аўдыёпрылада",
+        "newDeviceCameraTitle": "Выяўлена новая камера",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) выдалены іншым удзельнікам",
         "passwordSetRemotely": "Іншы ўдзельнік ўсталяваў $t(lockRoomPasswordUppercase)",
         "raisedHand": "{{name}} хацеў бы выступіць.",
         "somebody": "Хтосьці",
-        "startSilentTitle": "У вас адсутнічае гук!",
         "startSilentDescription": "Перазайдзiце ў канферэнцыю, каб уключыць гук",
+        "startSilentTitle": "У вас адсутнічае гук!",
         "suboptimalBrowserWarning": "На жаль, ваш браўзэр не цалкам падтрымлівае дадзеную сістэму вэб-канференцый. Мы працуем над праблемай, аднак, пакуль рэкамендуем вам скарыстацца <a href='{{recommendedBrowserPageLink}}' target='_blank'> наступнымі браўзэрамі</a >.",
         "suboptimalExperienceTitle": "Папярэджанне браўзэра",
-        "unmute": "Уключыць мікрафон",
-        "newDeviceCameraTitle": "Выяўлена новая камера",
-        "newDeviceAudioTitle": "Выяўлена новае аўдыёпрылада",
-        "newDeviceAction": "Выкарыстоўваць"
+        "unmute": "Уключыць мікрафон"
     },
-    "passwordSetRemotely": "устаноўлены іншым удзельнікам",
     "passwordDigitsOnly": "Да {{number}} лічбаў",
+    "passwordSetRemotely": "устаноўлены іншым удзельнікам",
     "poweredby": "працуе на",
     "presenceStatus": {
         "busy": "Заняты",
@@ -590,7 +597,9 @@
         "title": "Відэасувязь перапынена. Прычына: гэты кампутар перайшоў у рэжым сну."
     },
     "toolbar": {
+        "Settings": "Налады",
         "accessibilityLabel": {
+            "Settings": "",
             "audioOnly": "Укл/Выкл толькі гук",
             "audioRoute": "Выбраць аўдыёпрылады",
             "callQuality": "Якасць сувязі",
@@ -617,18 +626,17 @@
             "raiseHand": "Падняць руку",
             "recording": "Укл/Выкл запіс",
             "remoteMute": "Адключыць ўдзельніку мікрафон",
-            "Settings": "",
-            "sharedvideo": "Укл/Выкл YouTube - трансляцыю",
             "shareRoom": "Адправіць запрашэнне",
             "shareYourScreen": "Укл/Выкл дэманстрацыю экрана",
+            "sharedvideo": "Укл/Выкл YouTube - трансляцыю",
             "shortcuts": "Укл/Выкл значкі",
             "show": "Паказаць буйным планам",
             "speakerStats": "Укл/Выкл статыстыку",
             "tileView": "Укл/Выкл плітку",
             "toggleCamera": "Укл/Выкл камеру",
             "toggleFilmstrip": "",
-            "videomute": "Укл/Выкл відэа",
-            "videoblur": "Укл. / Выкл. Размыццё фону"
+            "videoblur": "Укл. / Выкл. Размыццё фону",
+            "videomute": "Укл/Выкл відэа"
         },
         "addPeople": "Дадаць людзей да вашага сеансу сувязі",
         "audioOnlyOff": "Адключыць рэжым эканоміі пропускной здольнасці",
@@ -656,35 +664,34 @@
         "moreOptions": "Больш варыянтаў",
         "mute": "Мікрафон (Ўкл./Выкл.)",
         "muteEveryone": "Заглушыць усіх",
-        "noAudioSignalTitle": "Ад вашага мікрафона не ідзе гукавы сігнал!",
         "noAudioSignalDesc": "Калі вы адмыслова не адключалі мікрафон у сістэмных наладах, падумайце аб тым, каб памяняць яго.",
         "noAudioSignalDescSuggestion": "Калі вы адмыслова не адключалі мікрафон у сістэмных наладах, вы можаце паспрабаваць выкарыстоўваць наступную прыладу.",
         "noAudioSignalDialInDesc": "Вы таксама можаце набраць з дапамогай:",
         "noAudioSignalDialInLinkDesc": "Нумары для набору",
-        "noisyAudioInputTitle": "Здаецца, ваш мікрафон шумеў!",
+        "noAudioSignalTitle": "Ад вашага мікрафона не ідзе гукавы сігнал!",
         "noisyAudioInputDesc": "Здаецца, ваш мікрафон выдае шум, калі ласка, падумайце аб выключэнні гуку або змене прылады.",
+        "noisyAudioInputTitle": "Здаецца, ваш мікрафон шумеў!",
         "openChat": "Адкрыць чат",
         "pip": "Укл рэжым Малюначак-у-малюначку",
         "privateMessage": "Адаслаць асабістае паведамленне",
         "profile": "Рэдагаваць профіль",
         "raiseHand": "Хачу гаварыць",
         "raiseYourHand": "Падняць руку",
-        "Settings": "Налады",
-        "sharedvideo": "Відэа YouTube",
         "shareRoom": "Адправіць запрашэнне",
+        "sharedvideo": "Відэа YouTube",
         "shortcuts": "Камбінацыі клавіш",
         "speakerStats": "Статыстыка",
         "startScreenSharing": "Пачаць трансляцыю з экрана",
         "startSubtitles": "Уключыць субтытры",
+        "startvideoblur": "размыць фон на відэа",
         "stopScreenSharing": "Спыніць трансляцыю з экрана",
-        "stopSubtitles": "Адключыць субтытры",
         "stopSharedVideo": "Спыніць відэа на YouTube",
+        "stopSubtitles": "Адключыць субтытры",
+        "stopvideoblur": "Адключыць размыццё фону",
         "talkWhileMutedPopup": "Спрабуеце казаць? У вас адключаны гук.",
         "tileViewToggle": "Укл/Выкл плітку",
         "toggleCamera": "Укл/Выкл камеру",
-        "videomute": "Камера",
-        "startvideoblur": "размыць фон на відэа",
-        "stopvideoblur": "Адключыць размыццё фону"
+        "videomute": "Камера"
     },
     "transcribing": {
         "ccButtonTooltip": "Укл. / Выкл. Субтытры",
@@ -765,27 +772,20 @@
         "connectCalendarText": "Падлучыце каляндар, каб убачыць усе вашыя канферэнцыі ў {{app}}. Акрамя таго, дадаўшы {{provider}} канферэнцыi ў каляндар, вы зможаце запускаць іх адным пстрычкай мышкі.",
         "enterRoomTitle": "Пачаць новую відэаканферэнцыю",
         "getHelp": "Атрымаць дапамогу",
-        "roomNameAllowedChars": "Назва канферэнцыі не павінна ўтрымліваць наступныя сімвалы:?, &,:, ', \",%, #.",
         "go": "ОК",
         "goSmall": "ОК",
-        "join": "СТВАРЫЦЬ/далучыць",
         "info": "Інфа",
+        "join": "СТВАРЫЦЬ/далучыць",
         "privacy": "Прыватнасць",
         "recentList": "Нядаўнія",
         "recentListDelete": "Выдаліць",
         "recentListEmpty": "Зараз ваш спіс нядаўна праведзеных канферэнцый пусты. Па меры вашага карыстання сэрвісам ён будзе папаўняцца.",
         "reducedUIText": "Сардэчна запрашаем у {{app}}!",
+        "roomNameAllowedChars": "Назва канферэнцыі не павінна ўтрымліваць наступныя сімвалы:?, &,:, ', \",%, #.",
         "roomname": "Пакажыце назву пакоя",
         "roomnameHint": "Пакажыце назву пакоя ці яго адрас. Можаце самі стварыць назву і перадаць яе будучым удзельнікам сустрэчы, каб яны выкарыстоўвалі менавіта яго.",
         "sendFeedback": "Зваротная сувязь",
         "terms": "Умовы",
         "title": "Абароненая, поўнафункцыянальная і цалкам бясплатная сістэма відэаканферэнцый"
-    },
-    "lonelyMeetingExperience": {
-        "button": "Запрашайце іншых",
-        "youAreAlone": "Вы адзіны ў гэтай канферэнцыі"
-    },
-    "helpView": {
-        "header": "Цэнтар дапамогi"
     }
 }

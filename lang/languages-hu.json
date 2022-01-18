@@ -1,15 +1,17 @@
 {
-    "en": "Angol",
     "af": "Afrikaans",
     "bg": "Bolgár",
     "ca": "Katalán",
     "cs": "Cseh",
+    "da": "Dán",
     "de": "Német",
     "el": "Görög",
+    "en": "Angol",
     "enGB": "Angol (Egyesült Királyság)",
     "eo": "Eszperantó",
     "es": "Spanyol",
     "esUS": "Spanyol (Latin-Amerika)",
+    "et": "Észt",
     "fi": "Finn",
     "fr": "Francia",
     "frCA": "Francia (kanadai)",
@@ -29,7 +31,5 @@
     "tr": "Török",
     "vi": "Vietnámi",
     "zhCN": "Kínai (Kína)",
-    "zhTW": "Kínai (Tajvan)",
-    "et": "Észt",
-    "da": "Dán"
+    "zhTW": "Kínai (Tajvan)"
 }

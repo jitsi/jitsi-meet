@@ -35,9 +35,9 @@
     "audioDevices": {
         "bluetooth": "Bluetooth",
         "headphones": "Slúchadlá",
+        "none": "Žiadne zvukové zariadenia",
         "phone": "Telefón",
-        "speaker": "Reproduktor",
-        "none": "Žiadne zvukové zariadenia"
+        "speaker": "Reproduktor"
     },
     "audioOnly": {
         "audioOnly": "Iba zvuk"
@@ -63,23 +63,23 @@
     "chat": {
         "error": "Chyba: vaša správa \"{{originalText}}\" nebola poslaná. Dôvod: {{error}}",
         "fieldPlaceHolder": "Zadajte sem vašu správu",
-        "messagebox": "Napíšte správu",
         "messageTo": "Súkromná správa pre {{recipient}}",
-        "noMessagesMessage": "V tejto konferencii ešte nie je žiadna správa. Začnite tu vašu diskusiu!",
+        "messagebox": "Napíšte správu",
         "nickname": {
             "popover": "Zvoľte meno",
             "title": "Zadajte vašu prezývku",
             "titleWithPolls": "Zadajte vašu prezývku"
         },
+        "noMessagesMessage": "V tejto konferencii ešte nie je žiadna správa. Začnite tu vašu diskusiu!",
         "privateNotice": "Súkromná správa pre {{recipient}}",
         "title": "Chat",
         "titleWithPolls": "Chat",
         "you": "Vy"
     },
     "chromeExtensionBanner": {
-        "installExtensionText": "Nainštalujte rozšírenie pre integráciu s Google Calendar a Office 365",
         "buttonText": "Inštalovať Chrome rozšírenie",
-        "dontShowAgain": "Upozornenie viac nezobrazovať"
+        "dontShowAgain": "Upozornenie viac nezobrazovať",
+        "installExtensionText": "Nainštalujte rozšírenie pre integráciu s Google Calendar a Office 365"
     },
     "connectingOverlay": {
         "joiningRoom": "Pripájanie do konferencie..."
@@ -163,7 +163,21 @@
         "selectADevice": "Vybrať zariadenie",
         "testAudio": "Vyskúšať zvuk"
     },
+    "dialOut": {
+        "statusMessage": "je teraz {{status}}"
+    },
     "dialog": {
+        "Back": "Späť",
+        "Cancel": "Zrušiť",
+        "IamHost": "Ja som hostiteľ",
+        "Ok": "Ok",
+        "Remove": "Odstrániť",
+        "Share": "Zdieľať",
+        "Submit": "OK",
+        "WaitForHostMsg": "Konferencia <b>{{room}}</b> sa ešte nezačala. Autorizujte sa prosím ak ste hostiteľ. V opačnom prípade čakajte na hostiteľa.",
+        "WaitForHostMsgWOk": "Konferencia <b>{{room}}</b> sa ešte nezačala. Ak ste hostiteľ autorizujte sa stlačením Ok. V opačnom prípade čakajte na hostiteľa.",
+        "WaitingForHost": "Čakám na hostiteľa ...",
+        "Yes": "Áno",
         "accessibilityLabel": {
             "liveStreaming": "Živé vysielanie"
         },
@@ -172,7 +186,6 @@
         "alreadySharedVideoMsg": "Iný účastník už zdieľa video. Pri tejto konferencií môže zdieľať video iba jeden účastník.",
         "alreadySharedVideoTitle": "Je možné zdieľať iba jedno video",
         "applicationWindow": "Okno aplikácie",
-        "Back": "Späť",
         "cameraConstraintFailedError": "Vaša kamera nespĺňa potrebné požiadavky.",
         "cameraNotFoundError": "Kamera nebola nájdená.",
         "cameraNotSendingData": "Kamera nie je dostupná. Skontrolujte či iná aplikácia používa kameru, vyberte inú kameru v nastaveniach alebo znovu spustite aplikáciu.",
@@ -180,7 +193,6 @@
         "cameraPermissionDeniedError": "Nebolo udelené oprávnenie používať kameru. Napriek tomu sa môže zúčastniť na konferencií, ale ostatní účastníci vás nebudu vidieť. Pre pridelenie oprávnenia môžete použiť ikonu kamery na adresnej lište.",
         "cameraUnknownError": "Z neznámeho dôvodu sa kamera nedá použiť.",
         "cameraUnsupportedResolutionError": "Kamera nepodporuje požadované rozlíšenie.",
-        "Cancel": "Zrušiť",
         "close": "Zatvoriť",
         "conferenceDisconnectMsg": "Skontrolujte prípadne vaše sieťové pripojenie. Pripájam znovu o {{seconds}} sekúnd...",
         "conferenceDisconnectTitle": "Vaše spojenie bolo prerušené.",
@@ -200,17 +212,16 @@
         "e2eeDescription": "Koncové šifrovanie (End-to-End Encryption, E2EE) je momentálne EXPERIMENTÁLNE. Zapnutie koncového šifrovania znemožní použitie serverových služieb ako: nahrávanie, živé vysielanie a účasť cez telefón. Do konferencie je možné vstúpiť len s prehliadačom, ktorý podporuje vložiteľné prúdy (insertable streams).",
         "e2eeLabel": "E2EE kľúč",
         "e2eeNoKey": "žiadny",
-        "e2eeToggleSet": "Nastaviť kľúč",
         "e2eeSet": "Nastaviť",
+        "e2eeToggleSet": "Nastaviť kľúč",
         "e2eeWarning": "VAROVANIE: NIektorí účastníci nemajú podporu pre koncové šifrovanie. Ak ho zapnete, nebudú Vás vidieť ani počuť.",
         "enterDisplayName": "Prosím zadajte sem vaše meno",
         "error": "Chyba",
         "gracefulShutdown": "Služba je momentálne vypnutá pre údržbu. Skúste to neskor.",
         "grantModeratorDialog": "Chcete naozaj tohoto účastníka urobiť moderatorom?",
         "grantModeratorTitle": "Urobiť moderatorom",
-        "IamHost": "Ja som hostiteľ",
-        "incorrectRoomLockPassword": "Nesprávne heslo",
         "incorrectPassword": "Používateľské meno alebo heslo je nesprávne",
+        "incorrectRoomLockPassword": "Nesprávne heslo",
         "internalError": "Ups! Niečo nefunguje. Vyskytla sa nasledujúca chyba: {{error}}",
         "internalErrorTitle": "Interná chyba",
         "kickMessage": "Pre podrobnosti sa môžete spojiť s {{participantDisplayName}}.",
@@ -235,17 +246,16 @@
         "micNotSendingDataTitle": "Mikrofón je stlmený vašimi systémovými nastaveniami.",
         "micPermissionDeniedError": "Nebolo udelené oprávnenie používať mikrofón. Napriek tomu sa môže zúčastniť na konferencií, ale ostatní účastníci vás nebudú počuť. Pre pridelenie oprávnenia môžete použiť ikonu kamery na adresnej lište.",
         "micUnknownError": "Mikrofón sa nedá použiť z neznámeho dôvodu.",
+        "muteEveryoneDialog": "Chcete naozaj všetkým vypnúť mikrofón. Keď všetkým vypnete mikrofóny, nedokážete ich späť zapnúť. Účastníci si ale môžu zapnúť mikrofóny sami.",
         "muteEveryoneElseDialog": "Keď všetkým vypnete mikrofóny, nedokážete ich späť zapnúť. Účastníci si ale môžu zapnúť mikrofóny sami.",
         "muteEveryoneElseTitle": "Vypnúť mikrofón všetkým okrem {{whom}}?",
-        "muteEveryoneDialog": "Chcete naozaj všetkým vypnúť mikrofón. Keď všetkým vypnete mikrofóny, nedokážete ich späť zapnúť. Účastníci si ale môžu zapnúť mikrofóny sami.",
-        "muteEveryoneTitle": "Všetkým vypnúť mikrofón?",
         "muteEveryoneSelf": "seba samého",
         "muteEveryoneStartMuted": "Všetci odteraz začínajú s vypnutým mikrofónom",
+        "muteEveryoneTitle": "Všetkým vypnúť mikrofón?",
         "muteParticipantBody": "Nedokážete zapnúť vypnuté mikrofóny ostatných účastníkov, ale každý účastník si vie sám zapnúť mikrofón.",
         "muteParticipantButton": "Vypnúť mikrofón",
         "muteParticipantDialog": "Chcete naozaj tomuto účastníkovi vypnúť mikrofón? Keď vypnete mikrofón, nedokážete späť zapnúť mikrofón tohto účastníka. Účastníci si ale dokážu zapnúť mikrofóny sami.",
         "muteParticipantTitle": "Vypnúť účastníkovi mikrofón?",
-        "Ok": "Ok",
         "passwordLabel": "$t(lockRoomPasswordUppercase)",
         "passwordNotSupported": "$t(lockRoomPasswordUppercase) nie je podporované.",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) nie je podporované",
@@ -265,7 +275,6 @@
         "remoteControlShareScreenWarning": "Pozor, keď povolíte požiadavku budete zdielať vašu obrazovku!",
         "remoteControlStopMessage": "Vzdialené ovládanie bolo ukončené.",
         "remoteControlTitle": "Vzdialené ovládanie",
-        "Remove": "Odstrániť",
         "removePassword": "$t(lockRoomPasswordUppercase) odstránené",
         "removeSharedVideoMsg": "Naozaj chcete odstrániť zdieľané video?",
         "removeSharedVideoTitle": "Odstrániť zdieľané video",
@@ -282,7 +291,6 @@
         "sendPrivateMessageTitle": "Súkromne poslať?",
         "serviceUnavailable": "Služba nedostupná",
         "sessTerminated": "Volanie ukončené",
-        "Share": "Zdieľať",
         "shareVideoLinkError": "Prosím, zadajte správny Youtube odkaz.",
         "shareVideoTitle": "Zdieľať video",
         "shareYourScreen": "Zdielať obrazovku",
@@ -296,7 +304,6 @@
         "stopRecordingWarning": "Chcete zastaviť záznam?",
         "stopStreamingWarning": "Chcete zastaviť priamy prenos?",
         "streamKey": "Kľúč živého vysielania",
-        "Submit": "OK",
         "thankYou": "Ďakujeme za používanie {{appName}}!",
         "token": "token",
         "tokenAuthFailed": "Prepáčte, nie ste oprávnený zúčastniť tejto sa konferencie.",
@@ -304,14 +311,7 @@
         "transcribing": "",
         "unlockRoom": "Odstrániť $t(lockRoomPassword)",
         "userPassword": "heslo",
-        "WaitForHostMsg": "Konferencia <b>{{room}}</b> sa ešte nezačala. Autorizujte sa prosím ak ste hostiteľ. V opačnom prípade čakajte na hostiteľa.",
-        "WaitForHostMsgWOk": "Konferencia <b>{{room}}</b> sa ešte nezačala. Ak ste hostiteľ autorizujte sa stlačením Ok. V opačnom prípade čakajte na hostiteľa.",
-        "WaitingForHost": "Čakám na hostiteľa ...",
-        "Yes": "Áno",
         "yourEntireScreen": "Celú obrazovku"
-    },
-    "dialOut": {
-        "statusMessage": "je teraz {{status}}"
     },
     "documentSharing": {
         "title": "Zdieľaný dokument"
@@ -330,6 +330,9 @@
         "rateExperience": "Ohodnoťte dojem",
         "veryBad": "Veľmi zlý",
         "veryGood": "Veľmi dobrý"
+    },
+    "helpView": {
+        "header": "Centrum pomoci"
     },
     "incomingCall": {
         "answer": "Odpovedať",
@@ -357,6 +360,7 @@
         "inviteURLFirstPartGeneral": "Ste pozvaný do konferencie.",
         "inviteURLFirstPartPersonal": "{{name}} vás pozýva do konferencie.\n",
         "inviteURLSecondPart": "\nVstúpiť do konferencie:\n{{url}}\n",
+        "label": "Informácie o stretnutí",
         "liveStreamURL": "Živý prenos:",
         "moreNumbers": "Ďalšie telefónne čísla",
         "noNumbers": "Žiadne pripojovacie telefónne čísla.",
@@ -365,8 +369,13 @@
         "numbers": "Pripojovacie čísla",
         "password": "$t(lockRoomPasswordUppercase):",
         "title": "Zdieľať",
-        "tooltip": "Zdieľať odkaz a informácie o vytáčaní pre toto stretnutie",
-        "label": "Informácie o stretnutí"
+        "tooltip": "Zdieľať odkaz a informácie o vytáčaní pre toto stretnutie"
+    },
+    "inlineDialogFailure": {
+        "msg": "Vyskytla sa chyba.",
+        "retry": "Skúsiť znovu",
+        "support": "Podpora",
+        "supportMsg": "Pokiaľ sa chyba zopakuje, spojte sa s"
     },
     "inviteDialog": {
         "alertText": "Nepodarilo sa pozvať niektorych účastníkov.",
@@ -375,12 +384,6 @@
         "searchPeopleOnlyPlaceholder": "Hľadať účastníkov",
         "searchPlaceholder": "Účastník alebo telefónne číslo",
         "send": "Poslať"
-    },
-    "inlineDialogFailure": {
-        "msg": "Vyskytla sa chyba.",
-        "retry": "Skúsiť znovu",
-        "support": "Podpora",
-        "supportMsg": "Pokiaľ sa chyba zopakuje, spojte sa s"
     },
     "keyboardShortcuts": {
         "focusLocal": "Zamerať sa na vaše video",
@@ -400,8 +403,6 @@
         "videoQuality": "Nastavenie kvality volania"
     },
     "liveStreaming": {
-        "limitNotificationDescriptionWeb": "Živé vysielanie je obmedzené na {{limit}} minút. Pre neobmedzené vysielanie skúste <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
-        "limitNotificationDescriptionNative": "Živé vysielanie je obmedzené na {{limit}} minút. Pre neobmedzené vysielanie skúste {{app}}.",
         "busy": "Chystajú sa zdroje pre vysielanie. Skúste znova za pár minút.",
         "busyTitle": "Všetky vysielacie inštancie sú obsadené",
         "changeSignIn": "Prepnúť konto",
@@ -416,22 +417,57 @@
         "expandedPending": "Spúšťa živé vysielanie...",
         "failedToStart": "Nepodarilo sa spustiť živé vysielanie",
         "getStreamKeyManually": "Nepodarilo sa získať žiadne živé vysielania. Skúste získať kľúč pre živé vysielanie z YouTube.",
+        "googlePrivacyPolicy": "Pravidlá ochrany súkromia Google",
         "invalidStreamKey": "Kľúč pre živé vysielanie je nesprávny.",
+        "limitNotificationDescriptionNative": "Živé vysielanie je obmedzené na {{limit}} minút. Pre neobmedzené vysielanie skúste {{app}}.",
+        "limitNotificationDescriptionWeb": "Živé vysielanie je obmedzené na {{limit}} minút. Pre neobmedzené vysielanie skúste <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "off": "Živé vysielanie ukončené",
         "offBy": "{{name}} ukončil živé vysielanie",
         "on": "Živé vysielanie",
         "onBy": "{{name}} začal živé vysielanie",
         "pending": "Spúšťa sa živé vysielanie...",
         "serviceName": "Služba pre živé vysielanie",
-        "signedInAs": "Ste prihlásený ako:",
         "signIn": "Prihlásiť sa pomocou Google",
         "signInCTA": "Prihláste sa, alebo zadajte váš YouTube klúč pre živé vysielanie.",
         "signOut": "Odhlásiť",
+        "signedInAs": "Ste prihlásený ako:",
         "start": "Začať živé vysielanie",
         "streamIdHelp": "Čo je to?",
         "unavailableTitle": "Živé vysielanie nie je k dispozícií",
-        "youtubeTerms": "Podmienky poskytovania služby YouTube",
-        "googlePrivacyPolicy": "Pravidlá ochrany súkromia Google"
+        "youtubeTerms": "Podmienky poskytovania služby YouTube"
+    },
+    "lobby": {
+        "allow": "Povoliť",
+        "backToKnockModeButton": "Žiadne heslo, požiadať o vstup",
+        "dialogTitle": "Čakáreň",
+        "disableDialogContent": "Čakáreň je zapnutá. Táto funkcia zabezpečuje, že do konferencie nemôžu vstúpiť neželaní účastníci. Chcete ju vypnúť?",
+        "disableDialogSubmit": "Vypnúť",
+        "emailField": "Zadajte vašu emailovú adresu",
+        "enableDialogPasswordField": "Nastaviť heslo (voliteľné)",
+        "enableDialogSubmit": "Zapnúť",
+        "enableDialogText": "Čakáreň umožňuje zabezpečiť konferenciu tým, že účastníci môžu do konferencie vstúpiť len po schválení moderátorom.",
+        "enterPasswordButton": "Zadať heslo do konferencie",
+        "enterPasswordTitle": "Zadajte heslo pre vstup do konferencie",
+        "invalidPassword": "Nesprávne heslo",
+        "joinRejectedMessage": "Vaša žiadosť bola zamietnutá moderátorom.",
+        "joinTitle": "Vstup do konferencie",
+        "joinWithPasswordMessage": "Vstupujem s heslom...",
+        "joiningMessage": "Vstúpite do konferencie, keď niekto schváli vašu žiadosť",
+        "joiningTitle": "Žiadam o vstup do konferencie...",
+        "joiningWithPasswordTitle": "Vstupujem s heslom...",
+        "knockButton": "Požiadať o vstup",
+        "knockTitle": "Niekto žiada o vstup do konferencie",
+        "knockingParticipantList": "Zoznam čakajúcich účastníkov",
+        "nameField": "Zadajte vaše meno",
+        "notificationLobbyAccessDenied": "Žiadosť {{targetParticipantName}} o vstup bola zamietnutá účastníkom {{originParticipantName}}",
+        "notificationLobbyAccessGranted": "Žiadosť {{targetParticipantName}} o vstup bola povolená účastníkom {{originParticipantName}}",
+        "notificationLobbyDisabled": "Účastník {{originParticipantName}} vypol čakáreň",
+        "notificationLobbyEnabled": "Účastník {{originParticipantName}} zapol čakáreň",
+        "notificationTitle": "Čakáreň",
+        "passwordField": "Zadajte heslo do konferencie",
+        "passwordJoinButton": "Vstúpiť",
+        "reject": "Odmietnuť",
+        "toggleLabel": "Zapnúť čakáreň"
     },
     "localRecording": {
         "clientState": {
@@ -464,8 +500,13 @@
     },
     "lockRoomPassword": "heslo",
     "lockRoomPasswordUppercase": "Heslo",
+    "lonelyMeetingExperience": {
+        "button": "Pozvať ďalších",
+        "youAreAlone": "Ste sám v tejto konferencii"
+    },
     "me": "ja",
     "notify": {
+        "OldElectronAPPTitle": "Bezpečnostná hrozba!",
         "connectedOneMember": "{{name}} sa pripojil",
         "connectedThreePlusMembers": "{{name}} a {{count}} ďalších osôb sa pripojilo",
         "connectedTwoMembers": "{{first}} a {{second}} sa pripojili",
@@ -480,28 +521,27 @@
         "me": "Ja",
         "moderator": "Boli vám udelené práva moderátora!",
         "muted": "Začali ste rozhovor s vypnutým mikrofónom.",
-        "mutedTitle": "Boli ste stíšený!",
-        "mutedRemotelyTitle": "{{participantDisplayName}} vám vypol mikrofón",
         "mutedRemotelyDescription": "Kedykoľvek môžete stíšenie zrušiť, keď ste prichystaný rozprávať. Keď skončite môžete sa znova stíšiť, aby ste znížili hluk na stretnutí.",
+        "mutedRemotelyTitle": "{{participantDisplayName}} vám vypol mikrofón",
+        "mutedTitle": "Boli ste stíšený!",
+        "newDeviceAction": "Použiť",
+        "newDeviceAudioTitle": "Bolo zistené nové audio zariadenie",
+        "newDeviceCameraTitle": "Bola zistená nová kamera",
+        "oldElectronClientDescription1": "Používate starú verziu klienta Jitsi Meet, ktorá má známe zraniteľnosti. Aktualizujte na ",
+        "oldElectronClientDescription2": "najnovšiu verziu",
+        "oldElectronClientDescription3": " teraz!",
         "passwordRemovedRemotely": "Iný účastník odstránil $t(lockRoomPassword)",
         "passwordSetRemotely": "Iný účastník nastavil $t(lockRoomPassword)",
         "raisedHand": "{{name}} chce hovoriť",
         "somebody": "Niekto",
-        "startSilentTitle": "Pripojili ste sa bez zvukového výstupu!",
         "startSilentDescription": "Pripojte sa k stretnutiu ešte raz, aby ste aktivovali zvuk.",
+        "startSilentTitle": "Pripojili ste sa bez zvukového výstupu!",
         "suboptimalBrowserWarning": "Obávame sa, že dojem z tohto stretnutia nebude až taký dobrý. Hladáme spôsob ako to zlepšiť, ale dovtedy prosím skúste jeden z <a href='{{recommendedBrowserPageLink}}' target='_blank'>plne podporovaných prehliadačov</a>.",
         "suboptimalExperienceTitle": "Prehliadačové varovanie",
-        "unmute": "Zapnúť mikrofón",
-        "newDeviceCameraTitle": "Bola zistená nová kamera",
-        "newDeviceAudioTitle": "Bolo zistené nové audio zariadenie",
-        "newDeviceAction": "Použiť",
-        "OldElectronAPPTitle": "Bezpečnostná hrozba!",
-        "oldElectronClientDescription1": "Používate starú verziu klienta Jitsi Meet, ktorá má známe zraniteľnosti. Aktualizujte na ",
-        "oldElectronClientDescription2": "najnovšiu verziu",
-        "oldElectronClientDescription3": " teraz!"
+        "unmute": "Zapnúť mikrofón"
     },
-    "passwordSetRemotely": "nastavené iným účastníkom",
     "passwordDigitsOnly": "až {{number}} číslic",
+    "passwordSetRemotely": "nastavené iným účastníkom",
     "poweredby": "založené na",
     "prejoin": {
         "audioAndVideoError": "Chyba zvuku a videa:",
@@ -509,6 +549,7 @@
         "audioTrackError": "Nemôžem vytvoriť zvukovú stopu.",
         "callMe": "Zavolať mi",
         "callMeAtNumber": "Zavolajte mi na toto číslo:",
+        "calling": "Volanie",
         "configuringDevices": "Konfigurácia zariedení...",
         "connectedWithAudioQ": "Ste pripojení so zvukom?",
         "copyAndShare": "Kopírovať a zdieľať odkaz",
@@ -523,16 +564,15 @@
         "errorStatusCode": "Chyba volania von, kód: {{status}}",
         "errorValidation": "Overenie čísla zlyhalo",
         "iWantToDialIn": "Chcem volať dnu",
+        "initiated": "Hovor začatý",
         "joinAudioByPhone": "Vstúpiť so zvukom cez telefón",
         "joinMeeting": "Vstúpiť do konferencie",
         "joinWithoutAudio": "Vstúpiť bez zvuku",
-        "initiated": "Hovor začatý",
         "linkCopied": "Odkaz skopírovaný do schránky",
         "lookGood": "Váš mikrofón funguje správne",
         "or": "alebo",
-        "calling": "Volanie",
-        "startWithPhone": "Začať so zvukom cez telefón",
         "screenSharingError": "Chyba pri zdieľaní obrazovky:",
+        "startWithPhone": "Začať so zvukom cez telefón",
         "videoOnlyError": "Chyba videa:",
         "videoTrackError": "Nemôžem vytvoriť video stopu.",
         "viewAllNumbers": "zobraziť všetky čísla"
@@ -559,8 +599,6 @@
     },
     "raisedHand": "Chcel by som hovoriť",
     "recording": {
-        "limitNotificationDescriptionWeb": "Nahrávanie je obmedzené na {{limit}} minút. Pre neobmedzené nahrávanie skúste <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
-        "limitNotificationDescriptionNative": "Nahrávanie je obmedzené na {{limit}} minút. Pre neobmedzené nahrávanie skúste <3>{{app}}</3>.",
         "authDropboxText": "Nahrať na Dropbox",
         "availableSpace": "Dostupná kapacita {{spaceLeft}} MB (ca. {{duration}} minút nahrávania)",
         "beta": "BETA",
@@ -572,6 +610,8 @@
         "expandedPending": "Začína sa nahrávanie...",
         "failedToStart": "Nepodarilo sa začať nahrávanie",
         "fileSharingdescription": "Nahrávku zdielať s účastníkmi stretnutia",
+        "limitNotificationDescriptionNative": "Nahrávanie je obmedzené na {{limit}} minút. Pre neobmedzené nahrávanie skúste <3>{{app}}</3>.",
+        "limitNotificationDescriptionWeb": "Nahrávanie je obmedzené na {{limit}} minút. Pre neobmedzené nahrávanie skúste <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "live": "LIVE",
         "loggedIn": "Prihlásený ako {{userName}}",
         "off": "Nahrávanie zastavené",
@@ -623,16 +663,16 @@
     },
     "settingsView": {
         "advanced": "Rozšírené",
-        "alertOk": "OK",
         "alertCancel": "Zrušiť",
+        "alertOk": "OK",
         "alertTitle": "Upozornenie",
         "alertURLText": "Zadaná serverová URL je neplatná",
         "buildInfoSection": "informácie o kompilácií",
         "conferenceSection": "Konferencia",
         "disableCallIntegration": "Deaktivovať integráciu s natívnymi volaniami",
-        "disableP2P": "Deaktivovať mód s koncovými zariadeniami",
         "disableCrashReporting": "Vypnúť oznamovanie pádov",
         "disableCrashReportingWarning": "Naozak chcete vypnúť oznamovanie pádov? Nastavenie bude aktívne po reštartovaní aplikácie.",
+        "disableP2P": "Deaktivovať mód s koncovými zariadeniami",
         "displayName": "Ukázať",
         "email": "Email",
         "header": "Nastavenia",
@@ -666,7 +706,9 @@
         "title": "Konferencia sa prerušila lebo váš počítač bol uspaný."
     },
     "toolbar": {
+        "Settings": "Nastavenia",
         "accessibilityLabel": {
+            "Settings": "Nastavenia zapnúť/vypnúť",
             "audioOnly": "Zapnúť/vypnúť iba zvukový prenos",
             "audioRoute": "Vybrať zvukové zariadenie",
             "callQuality": "Spravovať kvalitu videa",
@@ -697,18 +739,17 @@
             "recording": "Nahrávanie zapnúť/vypnúť",
             "remoteMute": "Účastníka stlmiť",
             "security": "Nastavenie zabezpečenia",
-            "Settings": "Nastavenia zapnúť/vypnúť",
-            "sharedvideo": "Zdieľanie YouTube videa zapnúť/vypnúť",
             "shareRoom": "Pozvať osobu",
             "shareYourScreen": "Zdieľanie obrazovky zapnúť/vypnúť",
+            "sharedvideo": "Zdieľanie YouTube videa zapnúť/vypnúť",
             "shortcuts": "Klávesové skratky zobraziť/skryť",
             "show": "V popredí zobraziť",
             "speakerStats": "Štatistiky rečníka zobraziť/skryť",
             "tileView": "Prepnúť dlaždicové zobrazenie",
             "toggleCamera": "Zmeniť kameru",
             "toggleFilmstrip": "Zapnúť/vypnúť video náhľady",
-            "videomute": "„Video odpojiť“ zapnúť/vypnúť",
-            "videoblur": "Rozmazanie pozadia zapnúť/vypnúť"
+            "videoblur": "Rozmazanie pozadia zapnúť/vypnúť",
+            "videomute": "„Video odpojiť“ zapnúť/vypnúť"
         },
         "addPeople": "Pridať účastníka do konferencie",
         "audioOnlyOff": "Mód „Iba zvuk“ deaktivovať",
@@ -739,13 +780,13 @@
         "moreOptions": "Viac možností",
         "mute": "Vypnúť / Zapnúť mikrofón",
         "muteEveryone": "Všetkých stlmiť",
-        "noAudioSignalTitle": "Neprichádza žiaden vstup z vašeho mikrofónu!",
         "noAudioSignalDesc": "Pokiaľ ste zámerne nestlmili váš mikrofón v systémových nastaveniach alebo hardvéri, pouvažujte nad prepnutím zariadenia.",
         "noAudioSignalDescSuggestion": "Pokiaľ ste zámerne nestlmili váš mikrofón v systémových nastaveniach alebo hardvéri, pouvažujte nad prepnutím na odporúčané zariadenie.",
         "noAudioSignalDialInDesc": "Môže zavolať pomocou:",
         "noAudioSignalDialInLinkDesc": "Pripojovacie telefónne čísla",
-        "noisyAudioInputTitle": "Váš mikrofón vyzerá byť zašumený!",
+        "noAudioSignalTitle": "Neprichádza žiaden vstup z vašeho mikrofónu!",
         "noisyAudioInputDesc": "Vyzerá, že váš mikrofón je zašumený, skúste ho vypnuť, alebo zmeňte zariadenie.",
+        "noisyAudioInputTitle": "Váš mikrofón vyzerá byť zašumený!",
         "openChat": "Otvoriť chat",
         "pip": "Zapnuť obraz-v-obraze",
         "privateMessage": "Poslať súkromnú správu",
@@ -753,23 +794,22 @@
         "raiseHand": "Prihlásiť / Odhlásiť sa o slovo",
         "raiseYourHand": "Prihlásiť sa o slovo",
         "security": "Nastavenie zabezpečenia",
-        "Settings": "Nastavenia",
-        "sharedvideo": "Zdielať YouTube video",
+        "selectBackground": "Vybrať pozadie",
         "shareRoom": "Pozvať niekoho",
+        "sharedvideo": "Zdielať YouTube video",
         "shortcuts": "Ukázať klávesové skratky",
         "speakerStats": "Štatistiky rečníka",
         "startScreenSharing": "Začať zdieľanie obrazovky",
         "startSubtitles": "Začať titulky",
+        "startvideoblur": "Rozmazať pozadie",
         "stopScreenSharing": "Ukončiť zdieľanie obrazovky",
-        "stopSubtitles": "Ukončiť titulky",
         "stopSharedVideo": "Ukončiť zdielané YouTube video",
+        "stopSubtitles": "Ukončiť titulky",
+        "stopvideoblur": "Ukončiť rozmazanie pozadia",
         "talkWhileMutedPopup": "Skúšate hovoriť? Ste stlmený.",
         "tileViewToggle": "Prepnúť dlaždicové zobrazenie",
         "toggleCamera": "Zmeniť kameru",
-        "videomute": "Vypnúť / Zapnúť kameru",
-        "startvideoblur": "Rozmazať pozadie",
-        "stopvideoblur": "Ukončiť rozmazanie pozadia",
-        "selectBackground": "Vybrať pozadie"
+        "videomute": "Vypnúť / Zapnúť kameru"
     },
     "transcribing": {
         "ccButtonTooltip": "titulky vypnuť/zapnúť",
@@ -826,6 +866,7 @@
     "videothumbnail": {
         "domute": "Vypnúť mikrofón",
         "domuteOthers": "Vypnúť mikrofóny ostatným",
+        "domuteVideoOfOthers": "Vypnúť kamery ostatným",
         "flip": "Prevrátiť",
         "grantModerator": "Urobiť moderátorom",
         "kick": "Odstrániť",
@@ -834,9 +875,8 @@
         "muted": "Vypnutý mikrofón",
         "remoteControl": "Vzdialené ovládanie",
         "show": "Ukázať v popredí",
-        "videomute": "Účastník vypol kameru",
         "videoMuted": "Vypnutá kamera",
-        "domuteVideoOfOthers": "Vypnúť kamery ostatným"
+        "videomute": "Účastník vypol kameru"
     },
     "welcomepage": {
         "accessibilityLabel": {
@@ -869,45 +909,5 @@
         "sendFeedback": "Odoslať spätnú väzbu",
         "terms": "Podmienky používania",
         "title": "Zabezpečené, plnohodnotné a úplne bezplatné videokonferencie"
-    },
-    "lonelyMeetingExperience": {
-        "button": "Pozvať ďalších",
-        "youAreAlone": "Ste sám v tejto konferencii"
-    },
-    "helpView": {
-        "header": "Centrum pomoci"
-    },
-    "lobby": {
-        "knockingParticipantList": "Zoznam čakajúcich účastníkov",
-        "allow": "Povoliť",
-        "backToKnockModeButton": "Žiadne heslo, požiadať o vstup",
-        "dialogTitle": "Čakáreň",
-        "disableDialogContent": "Čakáreň je zapnutá. Táto funkcia zabezpečuje, že do konferencie nemôžu vstúpiť neželaní účastníci. Chcete ju vypnúť?",
-        "disableDialogSubmit": "Vypnúť",
-        "emailField": "Zadajte vašu emailovú adresu",
-        "enableDialogPasswordField": "Nastaviť heslo (voliteľné)",
-        "enableDialogSubmit": "Zapnúť",
-        "enableDialogText": "Čakáreň umožňuje zabezpečiť konferenciu tým, že účastníci môžu do konferencie vstúpiť len po schválení moderátorom.",
-        "enterPasswordButton": "Zadať heslo do konferencie",
-        "enterPasswordTitle": "Zadajte heslo pre vstup do konferencie",
-        "invalidPassword": "Nesprávne heslo",
-        "joiningMessage": "Vstúpite do konferencie, keď niekto schváli vašu žiadosť",
-        "joinWithPasswordMessage": "Vstupujem s heslom...",
-        "joinRejectedMessage": "Vaša žiadosť bola zamietnutá moderátorom.",
-        "joinTitle": "Vstup do konferencie",
-        "joiningTitle": "Žiadam o vstup do konferencie...",
-        "joiningWithPasswordTitle": "Vstupujem s heslom...",
-        "knockButton": "Požiadať o vstup",
-        "knockTitle": "Niekto žiada o vstup do konferencie",
-        "nameField": "Zadajte vaše meno",
-        "notificationLobbyAccessDenied": "Žiadosť {{targetParticipantName}} o vstup bola zamietnutá účastníkom {{originParticipantName}}",
-        "notificationLobbyAccessGranted": "Žiadosť {{targetParticipantName}} o vstup bola povolená účastníkom {{originParticipantName}}",
-        "notificationLobbyDisabled": "Účastník {{originParticipantName}} vypol čakáreň",
-        "notificationLobbyEnabled": "Účastník {{originParticipantName}} zapol čakáreň",
-        "notificationTitle": "Čakáreň",
-        "passwordField": "Zadajte heslo do konferencie",
-        "passwordJoinButton": "Vstúpiť",
-        "reject": "Odmietnuť",
-        "toggleLabel": "Zapnúť čakáreň"
     }
 }

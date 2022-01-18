@@ -20,9 +20,9 @@
     "audioDevices": {
         "bluetooth": "Bluetooth",
         "headphones": "Căști",
+        "none": "",
         "phone": "Telefon",
-        "speaker": "Difuzor",
-        "none": ""
+        "speaker": "Difuzor"
     },
     "audioOnly": {
         "audioOnly": "Doar audio"
@@ -47,19 +47,24 @@
     },
     "chat": {
         "error": "Eroare: mesajul dumneavoastră \"{{originalText}}\" nu a fost trimis. Motiv: {{error}}",
+        "fieldPlaceHolder": "",
+        "messageTo": "",
         "messagebox": "Scrieți mesajul",
         "nickname": {
             "popover": "Alegeți un pseudonim",
             "title": "Introduceți un pseudonim pentru a conversa",
             "titleWithPolls": "Introduceți un pseudonim pentru a conversa"
         },
+        "noMessagesMessage": "",
+        "privateNotice": "",
         "title": "Apel video",
         "titleWithPolls": "Apel video",
-        "you": "",
-        "privateNotice": "",
-        "noMessagesMessage": "",
-        "messageTo": "",
-        "fieldPlaceHolder": ""
+        "you": ""
+    },
+    "chromeExtensionBanner": {
+        "buttonText": "",
+        "dontShowAgain": "",
+        "installExtensionText": ""
     },
     "connectingOverlay": {
         "joiningRoom": "Sunteți conectat la conversația dumneavoastră ..."
@@ -74,11 +79,11 @@
         "DISCONNECTED": "Deconectat",
         "DISCONNECTING": "Se deconectează",
         "ERROR": "Eroare",
-        "RECONNECTING": "A apărut o eroare de rețea. Reconectare...",
-        "LOW_BANDWIDTH": "",
-        "GOT_SESSION_ID": "",
+        "FETCH_SESSION_ID": "",
         "GET_SESSION_ID_ERROR": "",
-        "FETCH_SESSION_ID": ""
+        "GOT_SESSION_ID": "",
+        "LOW_BANDWIDTH": "",
+        "RECONNECTING": "A apărut o eroare de rețea. Reconectare..."
     },
     "connectionindicator": {
         "address": "Adresă:",
@@ -86,6 +91,7 @@
         "bitrate": "Bitrate:",
         "bridgeCount": "Numărul de servere: ",
         "connectedTo": "Conectat la:",
+        "e2e_rtt": "",
         "framerate": "Rată cadre:",
         "less": "Arătați mai puțin",
         "localaddress": "Adresă locala:",
@@ -109,8 +115,7 @@
         "status": "Conexiune:",
         "transport": "Mod Transport:",
         "transport_plural": "Moduri Transport:",
-        "turn": " (turn)",
-        "e2e_rtt": ""
+        "turn": " (turn)"
     },
     "dateUtils": {
         "earlier": "Mai devreme",
@@ -130,6 +135,7 @@
         "tryAgainButton": "Încercați din nou pe desktop"
     },
     "defaultLink": "e.g. {{url}}",
+    "defaultNickname": "",
     "deviceError": {
         "cameraError": "Accesul la cameră nu este permis",
         "cameraPermission": "Eroare în obținerea accesului la cameră",
@@ -142,7 +148,21 @@
         "selectADevice": "Alegeți un dispozitiv",
         "testAudio": "Redați un sunet"
     },
+    "dialOut": {
+        "statusMessage": "Este {{status}}"
+    },
     "dialog": {
+        "Back": "Înapoi",
+        "Cancel": "Anulare",
+        "IamHost": "Eu sunt moderatorul",
+        "Ok": "Ok",
+        "Remove": "Eliminați",
+        "Share": "Partajare",
+        "Submit": "Trimiteți",
+        "WaitForHostMsg": "Conferința {{room}} nu a început. Daca sunteți moderatorul conferinței, vă rugăm să vă autentificați. Dacă nu, așteptați ca moderatorul să înceapă conferința.",
+        "WaitForHostMsgWOk": "Conferința {{room}} nu a început. Daca sunteți moderatorul, apăsați butonul OK pentru autentificare. Dacă nu, așteptați ca moderatorul să înceapă conferința.",
+        "WaitingForHost": "Așteptare moderator conferință ...",
+        "Yes": "Da",
         "accessibilityLabel": {
             "liveStreaming": "Transmitere live"
         },
@@ -150,7 +170,6 @@
         "alreadySharedVideoMsg": "Un alt membru partajează deja un videoclip. Este permisă partajarea unui singur videoclip per apel video.",
         "alreadySharedVideoTitle": "Doar un singur videoclip per apel video",
         "applicationWindow": "Fereastra aplicației",
-        "Back": "Înapoi",
         "cameraConstraintFailedError": "Camera dumneavoastră nu îndeplinește unele dintre restricțiile impuse.",
         "cameraNotFoundError": "Camera nu a fost găsită.",
         "cameraNotSendingData": "Nu am reușit să vă accesăm camera. Vă rugăm să verificați daca o altă aplicație folosește dispozitivul, selectați un alt dispozitiv din meniul de setări și reîncărcați aplicația.",
@@ -158,7 +177,6 @@
         "cameraPermissionDeniedError": "Nu ați acordat permisiunea pentru accesul la cameră. Puteți să vă alăturați apelului video, dar ceilalți participanți nu vă vor putea vedea. Folosiți butonul camerei localizat în bara de adrese pentru remediere.",
         "cameraUnknownError": "Camera nu poate fi folosită din motive necunoscute.",
         "cameraUnsupportedResolutionError": "Camera dumneavoastră nu suportă rezoluția video necesara.",
-        "Cancel": "Anulare",
         "close": "Închidere",
         "conferenceDisconnectMsg": "Vă rugam să verificați conexiunea la rețea. Reconectare în {{seconds}} sec...",
         "conferenceDisconnectTitle": "Ați fost deconectat.",
@@ -181,11 +199,10 @@
         "externalInstallationTitle": "Extensie necesară",
         "goToStore": "Accesați magazinul virtual",
         "gracefulShutdown": "Serviciile noastre sunt indisponibile pentru întreținere. Vă rugam încercați mai tărziu.",
-        "IamHost": "Eu sunt moderatorul",
-        "incorrectRoomLockPassword": "",
         "incorrectPassword": "Nume de utilizator sau parolă incorecte",
-        "inlineInstallationMsg": "Este necesară instalarea extensiei pentru partajare video.",
+        "incorrectRoomLockPassword": "",
         "inlineInstallExtension": "Începeți instalarea",
+        "inlineInstallationMsg": "Este necesară instalarea extensiei pentru partajare video.",
         "internalError": "Ups! Ceva nu a funcționat corespunzător. A apărut următoarea eroare: {{error}}",
         "internalErrorTitle": "Eroare interna",
         "kickMessage": "Ouch! Ați fost eliminat din apelul video!",
@@ -209,11 +226,16 @@
         "micNotSendingDataTitle": "Nu putem să vă accesăm microfonul",
         "micPermissionDeniedError": "Nu ați acordat permisiunea pentru accesul la microfon. Puteți să vă alăturați apelului video, dar ceilalți participanți nu vă vor putea auzi. Folosiți butonul camerei localizat în bara de adrese pentru remediere.",
         "micUnknownError": "Microfonul nu poate fi folosită din motive necunoscute.",
+        "muteEveryoneDialog": "",
+        "muteEveryoneElseDialog": "",
+        "muteEveryoneElseTitle": "",
+        "muteEveryoneSelf": "",
+        "muteEveryoneStartMuted": "",
+        "muteEveryoneTitle": "",
         "muteParticipantBody": "Nu veți putea să dezactivați microfonul, dar ceilalți pot dezactiva oricând microfonul.",
         "muteParticipantButton": "Dezactivare microfon",
         "muteParticipantDialog": "Sunteți sigur că doriți să dezactivați microfonul pentru acest participant? Nu veți putea să dezactivați microfonul, dar ceilalți pot dezactiva oricând microfonul.",
         "muteParticipantTitle": "Comutați pe silențios acest membru?",
-        "Ok": "Ok",
         "passwordLabel": "Parolă",
         "passwordNotSupported": "Setarea unei parole pentru acest apel video nu este suportată.",
         "passwordNotSupportedTitle": "Parola nu este suportată",
@@ -231,21 +253,24 @@
         "remoteControlShareScreenWarning": "Rețineți că apăsând butonul \"Permiteți\" veți partaja ecranul dumneavoastră!",
         "remoteControlStopMessage": "Sesiunea de acces la distanță s-a încheiat!",
         "remoteControlTitle": "Acces desktop la distanță",
-        "Remove": "Eliminați",
         "removePassword": "Eliminați parola",
         "removeSharedVideoMsg": "Sunteți sigur că doriți să încheiați sesiunea de partajare a videoclipului?",
         "removeSharedVideoTitle": "Eliminați partajarea videoclipului",
         "reservationError": "Eroare a sistemului de rezervare",
         "reservationErrorMsg": "Cod de eroare: {{code}}, mesaj: {{msg}}",
         "retry": "Reincercati",
+        "screenSharingAudio": "",
         "screenSharingFailedToInstall": "Oops! Extensia de partajare a ecranului nu s-a instalat.",
         "screenSharingFailedToInstallTitle": "Extensia de partajare a ecranului nu s-a instalat",
         "screenSharingFirefoxPermissionDeniedError": "Ceva nu a funcționat corespunzător în timp ce încercăm să accesăm ecranul dumneavoastră. Vă rugam să vă asigurați că ne-ați permis accesul. ",
         "screenSharingFirefoxPermissionDeniedTitle": "Ups! Nu am reușit să inițiem accesarea ecranului!",
         "screenSharingPermissionDeniedError": "Ups! Ceva nu a funcționat corespunzător cu permisiunea de extindere a ecranului. Vă rugam să reîncărcați pagina și să încercați din nou.",
+        "sendPrivateMessage": "",
+        "sendPrivateMessageCancel": "",
+        "sendPrivateMessageOk": "",
+        "sendPrivateMessageTitle": "",
         "serviceUnavailable": "Serviciu indisponibil",
         "sessTerminated": "Apel încheiat",
-        "Share": "Partajare",
         "shareVideoLinkError": "Vă rugam să furnizați un link You Tube corect.",
         "shareVideoTitle": "Partajare video",
         "shareYourScreen": "Partajare ecran",
@@ -259,7 +284,6 @@
         "stopRecordingWarning": "Sunteți sigur că vreți să încheiați înregistrarea?",
         "stopStreamingWarning": "Sunteți sigur că vreți să încheiați transmiterea live?",
         "streamKey": "Cheie transmitere live",
-        "Submit": "Trimiteți",
         "thankYou": "Vă mulțumim că utilizați {{appName}}!",
         "token": "token",
         "tokenAuthFailed": "Ne pare rău, nu aveți permisiune pentru a participa la acest apel.",
@@ -267,25 +291,10 @@
         "transcribing": "Copiere",
         "unlockRoom": "Eliminați parola pentru apel video",
         "userPassword": "Parolă utilizator",
-        "WaitForHostMsg": "Conferința {{room}} nu a început. Daca sunteți moderatorul conferinței, vă rugăm să vă autentificați. Dacă nu, așteptați ca moderatorul să înceapă conferința.",
-        "WaitForHostMsgWOk": "Conferința {{room}} nu a început. Daca sunteți moderatorul, apăsați butonul OK pentru autentificare. Dacă nu, așteptați ca moderatorul să înceapă conferința.",
-        "WaitingForHost": "Așteptare moderator conferință ...",
-        "Yes": "Da",
-        "yourEntireScreen": "Întregul ecran",
-        "sendPrivateMessageTitle": "",
-        "sendPrivateMessageOk": "",
-        "sendPrivateMessageCancel": "",
-        "sendPrivateMessage": "",
-        "screenSharingAudio": "",
-        "muteEveryoneStartMuted": "",
-        "muteEveryoneSelf": "",
-        "muteEveryoneTitle": "",
-        "muteEveryoneDialog": "",
-        "muteEveryoneElseTitle": "",
-        "muteEveryoneElseDialog": ""
+        "yourEntireScreen": "Întregul ecran"
     },
-    "dialOut": {
-        "statusMessage": "Este {{status}}"
+    "documentSharing": {
+        "title": ""
     },
     "feedback": {
         "average": "Medie",
@@ -322,6 +331,7 @@
         "inviteURLFirstPartGeneral": "Ați fost invitat pentru a participa la apelul video.",
         "inviteURLFirstPartPersonal": "{{name}} v-a invitat pentru a participa la apelul video.\n",
         "inviteURLSecondPart": "\nParticipati la apelul video:\n{{url}}\n",
+        "label": "Informații apel video",
         "liveStreamURL": "Transmitere live:",
         "moreNumbers": "Mai multe cifre",
         "noNumbers": "Niciun număr de apelat.",
@@ -330,8 +340,13 @@
         "numbers": "Numere apelare",
         "password": "Parolă:",
         "title": "Transmitere",
-        "tooltip": "Transmiteți linkul și informațiile de apelare pentru acest apel video",
-        "label": "Informații apel video"
+        "tooltip": "Transmiteți linkul și informațiile de apelare pentru acest apel video"
+    },
+    "inlineDialogFailure": {
+        "msg": "A avut loc o eroare.",
+        "retry": "Încercați din nou",
+        "support": "Ajutor",
+        "supportMsg": "Daca situația se repetă, apelați"
     },
     "inviteDialog": {
         "alertText": "Încercarea de a invita anumiți participanți a eșuat.",
@@ -340,12 +355,6 @@
         "searchPeopleOnlyPlaceholder": "Căutare participanți",
         "searchPlaceholder": "Participant sau număr de telefon",
         "send": "Trimiteți"
-    },
-    "inlineDialogFailure": {
-        "msg": "A avut loc o eroare.",
-        "retry": "Încercați din nou",
-        "support": "Ajutor",
-        "supportMsg": "Daca situația se repetă, apelați"
     },
     "keyboardShortcuts": {
         "focusLocal": "Focusați pe imaginea dumneavoastră",
@@ -379,21 +388,21 @@
         "expandedPending": "Transmiterea a început...",
         "failedToStart": "Începerea transmiterii live a eșuat ",
         "getStreamKeyManually": "Nu am reușit să preluăm fluxurile live. Încercați să obțineți cheia fluxului video YouTube.",
+        "googlePrivacyPolicy": "Politica de confidențialitate Google",
         "invalidStreamKey": "Cheia fluxului video poate fi incorectă.",
         "off": "Transmitere live încheiată",
+        "offBy": "",
         "on": "Transmitere live",
+        "onBy": "",
         "pending": "Inițiere transmitere live...",
         "serviceName": "Serviciu de transmitere live",
-        "signedInAs": "Sunteți conectat ca:",
         "signIn": "Conectați-vă cu Google",
         "signInCTA": "Conectați-vă sau introduceți cheia YouTube pentru distribuire video.",
         "signOut": "Deconectare",
+        "signedInAs": "Sunteți conectat ca:",
         "start": "Începeți o transmitere live",
         "streamIdHelp": "Ce înseamnă acest lucru?",
         "unavailableTitle": "Transmitere live indisponibilă",
-        "onBy": "",
-        "offBy": "",
-        "googlePrivacyPolicy": "Politica de confidențialitate Google",
         "youtubeTerms": "Termeni și condiții Youtube"
     },
     "localRecording": {
@@ -443,25 +452,25 @@
         "me": "Eu",
         "moderator": "Drepturi de moderator acordate!",
         "muted": "Ați început conversația în modul silențios.",
-        "mutedTitle": "Sunteți în modul silențios!",
-        "mutedRemotelyTitle": "Ați fost comutat pe silențios de {{participantDisplayName}}!",
         "mutedRemotelyDescription": "",
+        "mutedRemotelyTitle": "Ați fost comutat pe silențios de {{participantDisplayName}}!",
+        "mutedTitle": "Sunteți în modul silențios!",
+        "newDeviceAction": "Utilizați",
+        "newDeviceAudioTitle": "A fost detectat un dispozitiv audio nou",
+        "newDeviceCameraTitle": "A fost detectată o cameră noua",
         "passwordRemovedRemotely": "",
         "passwordSetRemotely": "",
         "raisedHand": "{{name}} dorește să vorbească.",
         "somebody": "Cineva",
-        "startSilentTitle": "",
         "startSilentDescription": "",
+        "startSilentTitle": "",
+        "suboptimalBrowserWarning": "Folosind acest browser nu veți beneficia de cea mai bună experiență pentru aceste apeluri video. În timp ce lucrăm la asta, vă recomandăm să folosiți unul din <a href='{{recommendedBrowserPageLink}}' target='_blank'>browser-ele suportate</a>.",
         "suboptimalExperienceDescription": "Hmm... se pare că experiența avută cu {{appName}} nu a decurs prea bine. Încercăm să îmbunătățim acest lucru, până atunci vă rugăm să folosiți unul dintre browserele suportate.",
         "suboptimalExperienceTitle": "Avertisment browser",
-        "unmute": "",
-        "newDeviceCameraTitle": "A fost detectată o cameră noua",
-        "newDeviceAudioTitle": "A fost detectat un dispozitiv audio nou",
-        "newDeviceAction": "Utilizați",
-        "suboptimalBrowserWarning": "Folosind acest browser nu veți beneficia de cea mai bună experiență pentru aceste apeluri video. În timp ce lucrăm la asta, vă recomandăm să folosiți unul din <a href='{{recommendedBrowserPageLink}}' target='_blank'>browser-ele suportate</a>."
+        "unmute": ""
     },
-    "passwordSetRemotely": "Setată de un alt membru",
     "passwordDigitsOnly": "Până la {{number}} cifre",
+    "passwordSetRemotely": "Setată de un alt membru",
     "poweredby": "cu sprijinul",
     "presenceStatus": {
         "busy": "Ocupat",
@@ -483,6 +492,7 @@
         "setEmailLabel": "Setați adresa de email gravatar",
         "title": "Profil"
     },
+    "raisedHand": "Ar dori să vorbească",
     "recording": {
         "authDropboxText": "Încarcați în Dropbox",
         "availableSpace": "Spațiu disponibil: {{spaceLeft}} MB (approximately {{duration}} minute înregistrare)",
@@ -498,7 +508,9 @@
         "live": "LIVE",
         "loggedIn": "Conectat ca {{userName}}",
         "off": "Înregistrarea s-a încheiat",
+        "offBy": "{{name}} a oprit înregistrarea",
         "on": "Înregistrare",
+        "onBy": "{{name}} a pornit înregistrarea",
         "pending": "Se pregătește înregistrarea apelului video...",
         "rec": "REC",
         "serviceDescription": "Înregistrarea dumneavoastră va fi salvată de serviciul înregistrare",
@@ -506,9 +518,7 @@
         "signIn": "Conectare",
         "signOut": "Deconectare",
         "unavailable": "Oops! Serviciul {{serviceName}} este indisponibil momentan. Se lucrează la remedierea acestei probleme. Vă rugam să încercați mai tărziu.",
-        "unavailableTitle": "Înregistrare indisponibilă",
-        "onBy": "{{name}} a pornit înregistrarea",
-        "offBy": "{{name}} a oprit înregistrarea"
+        "unavailableTitle": "Înregistrare indisponibilă"
     },
     "sectionList": {
         "pullToRefresh": "Trageți pentru a reîmprospătă"
@@ -525,6 +535,7 @@
         "followMe": "Toată lumea mă urmărește",
         "language": "Limba",
         "loggedIn": "Conectat cu {{name}}",
+        "microphones": "Microfoane",
         "moderator": "Moderator",
         "more": "Mai mult",
         "name": "Name",
@@ -532,30 +543,29 @@
         "selectAudioOutput": "Sursa externă audio",
         "selectCamera": "Cameră",
         "selectMic": "Microfon",
+        "speakers": "Difuzoare",
         "startAudioMuted": "Toată lumea începe cu sunetul dezactivat",
         "startVideoMuted": "Toată lumea începe cu fară video",
-        "title": "Setări",
-        "speakers": "Difuzoare",
-        "microphones": "Microfoane"
+        "title": "Setări"
     },
     "settingsView": {
+        "advanced": "Avansat",
         "alertOk": "OK",
         "alertTitle": "Avertisment",
         "alertURLText": "Serverul URL introdus este invalid",
         "buildInfoSection": "Informații versiune",
         "conferenceSection": "Conferință",
+        "disableCallIntegration": "Dezactivează integrarea cu apelurile native",
+        "disableP2P": "Dezactivează modul Peer-To-Peer",
         "displayName": "Nume afișat",
         "email": "Email",
         "header": "Setări",
         "profileSection": "Profil",
         "serverURL": "Server URL",
+        "showAdvanced": "Arată setările avansate",
         "startWithAudioMuted": "Începeți cu sunetul dezactivat",
         "startWithVideoMuted": "Începeți cu video dezactivat",
-        "version": "Version",
-        "showAdvanced": "Arată setările avansate",
-        "disableP2P": "Dezactivează modul Peer-To-Peer",
-        "disableCallIntegration": "Dezactivează integrarea cu apelurile native",
-        "advanced": "Avansat"
+        "version": "Version"
     },
     "share": {
         "dialInfoText": "\n\n=====\n\nVreti doar să apelați telefonic?\n\n{{defaultDialInNumber}}Faceți click pe acest link pentru a vizualiza numerele pentru apelare în acest apel video\n{{dialInfoPageUrl}}",
@@ -580,44 +590,45 @@
         "title": "Apelul dumneavoastră video s-a întrerupt deoarece computerul a trecut în modul Repaus."
     },
     "toolbar": {
+        "Settings": "Setări",
         "accessibilityLabel": {
+            "Settings": "Comutați la setări",
             "audioOnly": "Comutați doar audio",
             "audioRoute": "Selectați dispozitivul pentru sunet",
             "callQuality": "Gestionați calitatea apelului",
             "cc": "Comutați subtitrările",
             "chat": "Comutați ferestrele apelului video",
             "document": "Comutați documentele partajate",
+            "download": "Descarcă aplicațiile noastre",
             "feedback": "Lăsați-ne feedback",
             "fullScreen": "Comutați la ecran complet",
             "hangup": "Părăsiți apelul",
+            "help": "Ajutor",
             "invite": "Adaugați persoane",
             "kick": "Eliminați participant",
             "localRecording": "Comutați la panoul de control video",
             "lockRoom": "Comutați la parola de întâlnire",
             "moreActions": "Afișați meniul cu acțiuni suplimentare",
             "moreActionsMenu": "Meniu acțiuni suplimentare",
+            "moreOptions": "Arată mai multe opțiuni",
             "mute": "Activați / dezactivați sunet",
+            "muteEveryone": "Oprește microfonul tuturor",
             "pip": "Comutați la modul Picture-in-Picture",
+            "privateMessage": "Trimite un mesaj privat",
             "profile": "Editați profilul",
             "raiseHand": "Comutați la mână rîdicată",
             "recording": "Activați/dezactivați înregistrare",
             "remoteMute": "Comutare mod silențios participant",
-            "Settings": "Comutați la setări",
-            "sharedvideo": "Comutați partajarea video YouTube",
             "shareRoom": "Adăugați persoane",
             "shareYourScreen": "Activați / dezactivați partajarea ecranului",
+            "sharedvideo": "Comutați partajarea video YouTube",
             "shortcuts": "Activați / dezactivați comenzi rapide",
             "show": "",
             "speakerStats": "Afișați/ascundeți parametrii difuzorului",
             "tileView": "Afișați/ascundeți miniatura video",
             "toggleCamera": "Afișați / ascundeți camera",
-            "videomute": "Activați / dezactivați înregistrarea",
             "videoblur": "",
-            "privateMessage": "Trimite un mesaj privat",
-            "muteEveryone": "Oprește microfonul tuturor",
-            "moreOptions": "Arată mai multe opțiuni",
-            "help": "Ajutor",
-            "download": "Descarcă aplicațiile noastre"
+            "videomute": "Activați / dezactivați înregistrarea"
         },
         "addPeople": "Adăugați persoane în apel",
         "audioOnlyOff": "Dezactivați modul 'doar audio'",
@@ -646,22 +657,21 @@
         "profile": "Editați profilul",
         "raiseHand": "Ridicați / Coborâți mâna",
         "raiseYourHand": "Ridicați mâna",
-        "Settings": "Setări",
-        "sharedvideo": "Partajați un video YouTube",
         "shareRoom": "Adăugați persoane",
+        "sharedvideo": "Partajați un video YouTube",
         "shortcuts": "Vizualizare comenzi rapide",
         "speakerStats": "Parametrii difuzorului",
         "startScreenSharing": "Inițiere partajare ecran",
         "startSubtitles": "Inițiere subtitrări",
+        "startvideoblur": "",
         "stopScreenSharing": "Încheiere partajare ecran",
-        "stopSubtitles": "Acundere subtitrări",
         "stopSharedVideo": "Oprire video YouTube",
+        "stopSubtitles": "Acundere subtitrări",
+        "stopvideoblur": "",
         "talkWhileMutedPopup": "Încercați să vorbiți? Microfonul este dezactivat.",
         "tileViewToggle": "Afișați / ascundeți miniatura video",
         "toggleCamera": "Afișați / ascundeți camera",
-        "videomute": "Porniți / Opriți camera",
-        "startvideoblur": "",
-        "stopvideoblur": ""
+        "videomute": "Porniți / Opriți camera"
     },
     "transcribing": {
         "ccButtonTooltip": "Afișați / Ascundeți subtitrări",
@@ -738,8 +748,8 @@
         "connectCalendarText": "",
         "enterRoomTitle": "Inițiați un nou apel video",
         "go": "ÎNCEPEȚI",
-        "join": "ACCESARE",
         "info": "Informații",
+        "join": "ACCESARE",
         "privacy": "Confidențialitate",
         "recentList": "Recent",
         "recentListDelete": "Ștergeți",
@@ -750,15 +760,5 @@
         "sendFeedback": "Lăsați-ne feedback",
         "terms": "Termeni",
         "title": "Video-conferință securizată, cu multiple funcționalități și complet gratuită"
-    },
-    "documentSharing": {
-        "title": ""
-    },
-    "defaultNickname": "",
-    "chromeExtensionBanner": {
-        "dontShowAgain": "",
-        "buttonText": "",
-        "installExtensionText": ""
-    },
-    "raisedHand": "Ar dori să vorbească"
+    }
 }
