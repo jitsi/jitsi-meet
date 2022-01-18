@@ -69,6 +69,7 @@ target 'JitsiMeetSDK' do
   pod 'RNDefaultPreference', :path => '../node_modules/react-native-default-preference'
   pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
   pod 'react-native-video', :path => '../node_modules/react-native-video/react-native-video.podspec'
+  pod 'react-native-version-check', :path => '../node_modules/react-native-version-check'
 
   # Native pod dependencies
   #

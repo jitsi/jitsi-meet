@@ -19,6 +19,7 @@ import {
     ColorPalette,
     sizeHelper
 } from '../../../base/styles';
+import { UpdateModal } from '../../../update-modal/component/native/UpdateModal';
 import { setScreen } from '../../actions';
 import { Indicator } from '../Indicator';
 import VideoChatUrlDetector from '../VideoChatUrlDetector';
@@ -485,6 +486,7 @@ const TutorialLayout = (props: TutorialLayoutProps) => (<SafeAreaView style = { 
         getStepScreen(props.screenName)
     }
     <VideoChatUrlDetector />
+    <UpdateModal />
 </SafeAreaView>);
 
 export default TutorialLayout;

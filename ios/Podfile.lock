@@ -213,6 +213,8 @@ PODS:
     - React
   - react-native-splash-screen (3.2.0):
     - React
+  - react-native-version-check (3.4.2):
+    - React
   - react-native-video (5.2.0):
     - React-Core
     - react-native-video/Video (= 5.2.0)
@@ -322,6 +324,7 @@ DEPENDENCIES:
   - react-native-performance (from `../node_modules/react-native-performance/ios`)
   - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
+  - react-native-version-check (from `../node_modules/react-native-version-check`)
   - react-native-video (from `../node_modules/react-native-video/react-native-video.podspec`)
   - react-native-webrtc (from `../node_modules/react-native-webrtc`)
   - react-native-webview (from `../node_modules/react-native-webview`)
@@ -397,6 +400,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/slider"
   react-native-splash-screen:
     :path: "../node_modules/react-native-splash-screen"
+  react-native-version-check:
+    :path: "../node_modules/react-native-version-check"
   react-native-video:
     :path: "../node_modules/react-native-video/react-native-video.podspec"
   react-native-webrtc:
@@ -469,6 +474,7 @@ SPEC CHECKSUMS:
   react-native-performance: 8edfa2bbc9a2af4a02f01d342118e413a95145e0
   react-native-slider: b733e17fdd31186707146debf1f04b5d94aa1a93
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
+  react-native-version-check: 9f9332ff4552fb00e0bd15b097a8d302b2b8413b
   react-native-video: 77ce22be7abff9e373527ca10106a99dea3ba56c
   react-native-webrtc: 41526e4060dac373c18676f866962d4180ee47b9
   react-native-webview: b2542d6fd424bcc3e3b2ec5f854f0abb4ec86c87
@@ -491,6 +497,6 @@ SPEC CHECKSUMS:
   RNWatch: a5320c959c75e72845c07985f3e935e58998f1d3
   Yoga: 96b469c5e81ff51b917b92e8c3390642d4ded30c
 
-PODFILE CHECKSUM: 1d264a193eda031958694625d2b6d240f4adf526
+PODFILE CHECKSUM: d2b0de77cae3e685e0cbf2ed9e94bef9efb042b6
 
 COCOAPODS: 1.10.1
