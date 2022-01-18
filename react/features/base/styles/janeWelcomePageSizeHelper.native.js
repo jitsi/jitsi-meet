@@ -27,7 +27,7 @@ export default class JaneWelcomePageSizeHelperNative {
      * @param {number}  size - Number.
      * @returns {number}
      */
-    getActualSizeW(size) {
+    getDpByWidth(size) {
         if (!size) {
             return 0;
         }
@@ -41,7 +41,7 @@ export default class JaneWelcomePageSizeHelperNative {
      * @param {number}  size - Number.
      * @returns {number}
      */
-    getActualSizeH(size) {
+    getDpByHeight(size) {
         if (!size) {
             return 0;
         }

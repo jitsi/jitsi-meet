@@ -20,10 +20,10 @@ const styles = {
         width: '100%'
     },
     indicator: {
-        width: sizeHelper.getActualSizeH(11),
-        height: sizeHelper.getActualSizeH(11),
+        width: sizeHelper.getDpByHeight(11),
+        height: sizeHelper.getDpByHeight(11),
         backgroundColor: ColorPalette.jane,
-        marginRight: sizeHelper.getActualSizeW(7),
+        marginRight: sizeHelper.getDpByWidth(7),
         borderRadius: 40
     }
 };

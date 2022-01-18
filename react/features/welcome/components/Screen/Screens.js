@@ -13,7 +13,7 @@ import type { Dispatch } from 'redux';
 
 import { translate } from '../../../base/i18n';
 import { Platform } from '../../../base/react';
-import { JaneButton, FixedScaleText } from '../../../base/react/components/native';
+import { JaneButton, WelcomeScreenText } from '../../../base/react/components/native';
 import { connect } from '../../../base/redux';
 import {
     ColorPalette,
@@ -31,11 +31,11 @@ const JANE_COLOR = ColorPalette.jane;
 // $FlowFixMe[object literal]
 const isPad = Platform.isPad;
 
-const ENVELOPE_ICON_SIZE = sizeHelper.getActualSizeW(isPad ? 161 : 130);
+const ENVELOPE_ICON_SIZE = sizeHelper.getDpByWidth(isPad ? 161 : 130);
 
 const VIDEO_PLAYER_DIMESIONS = {
-    width: sizeHelper.getActualSizeW(isPad ? 511 : 291),
-    height: sizeHelper.getActualSizeW(isPad ? 288 : 164)
+    width: sizeHelper.getDpByWidth(isPad ? 511 : 291),
+    height: sizeHelper.getDpByWidth(isPad ? 288 : 164)
 };
 
 // eslint-disable-next-line max-len
@@ -64,18 +64,18 @@ const StepOne = (props: Props) => {
                 <Image
                     source = { require('../../../../../images/jane-video-logo-blue.png') }
                     style = { tutorialStyles.stepOne.logo } />
-                <FixedScaleText
+                <WelcomeScreenText
                     style = { tutorialStyles.stepOne.header }>
                     {
                         t('welcomepage.gotAppInstalled')
                     }
-                </FixedScaleText>
-                <FixedScaleText
+                </WelcomeScreenText>
+                <WelcomeScreenText
                     style = { tutorialStyles.stepOne.messageText } >
                     {
                         t('welcomepage.howToJoin')
                     }
-                </FixedScaleText>
+                </WelcomeScreenText>
                 <JaneButton
                     borderColor = { JANE_COLOR }
                     content = { t('welcomepage.confirmNext') }
@@ -115,12 +115,12 @@ const StepTwo = (props: Props) => {
                 <Image
                     source = { require('../../../../../images/jane-video-logo-blue.png') }
                     style = { tutorialStyles.stepTwo.logo } />
-                <FixedScaleText
+                <WelcomeScreenText
                     style = { tutorialStyles.stepTwo.header }>
                     {
                         t('welcomepage.watchGuidedTour')
                     }
-                </FixedScaleText>
+                </WelcomeScreenText>
                 <Video
                     controls = { true }
                     ignoreSilentSwitch = 'ignore'
@@ -171,12 +171,12 @@ const StepThree = (props: Props) => {
                     color = { JANE_COLOR }
                     icon = { faEnvelope }
                     size = { ENVELOPE_ICON_SIZE } />
-                <FixedScaleText
+                <WelcomeScreenText
                     style = { tutorialStyles.stepThree.header }>
                     {
                         t('welcomepage.doYouHaveAccess')
                     }
-                </FixedScaleText>
+                </WelcomeScreenText>
                 <JaneButton
                     borderColor = { JANE_COLOR }
                     content = { t('welcomepage.confirmYes') }
@@ -221,16 +221,16 @@ const StepFour = (props: Props) => {
         <View
             style = { tutorialStyles.stepFour.mainContainer }>
             <View style = { tutorialStyles.stepFour.innerUpperContainer }>
-                <FixedScaleText
+                <WelcomeScreenText
                     style = { tutorialStyles.stepFour.header }>
                     {
                         t('welcomepage.youWillBeEmailed')
                     }
-                </FixedScaleText>
+                </WelcomeScreenText>
                 <Image
                     source = { require('../../../../../images/patient-email-mobile-screen.png') }
                     style = { tutorialStyles.stepFour.mobileScreen } />
-                <FixedScaleText
+                <WelcomeScreenText
                     style = { tutorialStyles.stepFour.message }>
                     {
                         t('welcomepage.youWillBeEmailedBefore')
@@ -239,13 +239,13 @@ const StepFour = (props: Props) => {
                     {
                         t('welcomepage.checkYourEmail')
                     }
-                </FixedScaleText>
+                </WelcomeScreenText>
             </View>
             <View style = { tutorialStyles.stepFour.innerLowerContainer }>
                 <JaneButton
                     borderColor = { JANE_COLOR }
                     content = { t('welcomepage.confirmNext') }
-                    marginBottom = { sizeHelper.getActualSizeH(36) }
+                    marginBottom = { sizeHelper.getDpByHeight(36) }
                     onPress = { redirectTo('done') }
                     textColor = { JANE_COLOR } />
                 <Indicator
@@ -281,12 +281,12 @@ const Done = (props: Props) => {
             <Image
                 source = { require('../../../../../images/jane-video-logo.png') }
                 style = { tutorialStyles.logo } />
-            <FixedScaleText
+            <WelcomeScreenText
                 style = { tutorialStyles.done.header }>
                 {
                     t('welcomepage.allSet')
                 }
-            </FixedScaleText>
+            </WelcomeScreenText>
             <JaneButton
                 borderColor = { WHITE_COLOR }
                 content = { t('welcomepage.remindMe') }
@@ -316,7 +316,7 @@ const NoEmail = (props: Props) => {
         <View
             style = { tutorialStyles.noEmail.mainContainer }>
             <View style = { tutorialStyles.noEmail.innerUpperContainer }>
-                <FixedScaleText
+                <WelcomeScreenText
                     style = { [ tutorialStyles.bigText, tutorialStyles.noEmail.header ] }>
                     {
                         t('welcomepage.noEmail')
@@ -325,11 +325,11 @@ const NoEmail = (props: Props) => {
                     {
                         t('welcomepage.signInToJoin')
                     }
-                </FixedScaleText>
+                </WelcomeScreenText>
                 <Image
                     source = { require('../../../../../images/upcoming-appoiment-email.png') }
                     style = { tutorialStyles.noEmail.mobileScreen } />
-                <FixedScaleText
+                <WelcomeScreenText
                     style = { tutorialStyles.noEmail.regularText }>
                     {
                         t('welcomepage.loginToJoin')
@@ -339,15 +339,15 @@ const NoEmail = (props: Props) => {
                         t('welcomepage.somethingLike')
                     }
                     {'\n'}
-                    <FixedScaleText
+                    <WelcomeScreenText
                         style = { [ tutorialStyles.noEmail.regularText, tutorialStyles.noEmail.boldText ] }>
                         clinicnamehere.janeapp.com
-                    </FixedScaleText>
+                    </WelcomeScreenText>
                     {'\n'} {'\n'}
                     {
                         t('welcomepage.willIncludeDirectLink')
                     }
-                </FixedScaleText>
+                </WelcomeScreenText>
             </View>
             <View style = { tutorialStyles.noEmail.innerLowerContainer }>
                 <JaneButton
@@ -386,26 +386,26 @@ const Staff = (props: Props) => {
         <View
             style = { tutorialStyles.staff.mainContainer }>
             <View style = { tutorialStyles.staff.innerUpperContainer }>
-                <FixedScaleText
+                <WelcomeScreenText
                     style = { tutorialStyles.bigText }>
                     {
                         t('welcomepage.joinAsStaffMember')
                     }
-                </FixedScaleText>
-                <FixedScaleText
+                </WelcomeScreenText>
+                <WelcomeScreenText
                     style = { tutorialStyles.staff.lightText } >
                     {
 
                         t('welcomepage.firstStep')
                     }
-                </FixedScaleText>
-                <FixedScaleText
+                </WelcomeScreenText>
+                <WelcomeScreenText
                     style = { tutorialStyles.staff.lightText }>
                     {
 
                         t('welcomepage.secondStep')
                     }
-                </FixedScaleText>
+                </WelcomeScreenText>
                 <Image
                     source = { require('../../../../../images/staff-mobile-screen.png') }
                     style = { tutorialStyles.staff.mobileScreen } />

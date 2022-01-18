@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import { Image, Linking, Text, View, Clipboard } from 'react-native';
 import { WebView } from 'react-native-webview';
 
-import { createWaitingAreaPageEvent, sendAnalytics } from '../../../analytics';
+import { createWaitingAreaModalEvent, createWaitingAreaPageEvent, sendAnalytics } from '../../../analytics';
 import { connect as startConference } from '../../../base/connection';
 import { getLocalizedDateFormatter, translate } from '../../../base/i18n';
 import { getLocalParticipantFromJwt, getLocalParticipantType } from '../../../base/participants';
@@ -86,10 +86,12 @@ class DialogBox extends Component<DialogBoxProps> {
     _webviewOnError: Function;
     _return: Function;
     _onMessageUpdate: Function;
+    _admitClient: Function;
 
     constructor(props) {
         super(props);
         this._joinConference = this._joinConference.bind(this);
+        this._admitClient = this._admitClient.bind(this);
         this._webviewOnError = this._webviewOnError.bind(this);
         this._return = this._return.bind(this);
         this._onMessageUpdate = this._onMessageUpdate.bind(this);
@@ -121,11 +123,15 @@ class DialogBox extends Component<DialogBoxProps> {
         const { localParticipantCanJoin, participantType } = this.props;
 
         if (prevProps.localParticipantCanJoin !== localParticipantCanJoin
-            && participantType === 'Patient'
             && localParticipantCanJoin) {
-            setTimeout(() => {
-                this._joinConference();
-            }, 1000);
+            if (participantType === 'Patient') {
+                setTimeout(() => {
+                    this._joinConference();
+                }, 2000);
+            }
+            if (participantType === 'StaffMember') {
+                sendAnalytics(createWaitingAreaModalEvent('admit.button.enabled'));
+            }
         }
     }
 
@@ -141,6 +147,11 @@ class DialogBox extends Component<DialogBoxProps> {
         updateParticipantReadyStatus('joined', jwt);
         enableJaneWaitingAreaAction(false);
         startConferenceAction();
+    }
+
+    _admitClient() {
+        sendAnalytics(createWaitingAreaModalEvent('admit.button.clicked'));
+        this._joinConference();
     }
 
     _getStartDate() {
@@ -320,7 +331,7 @@ class DialogBox extends Component<DialogBoxProps> {
                         && <ActionButton
                             containerStyle = { styles.joinButtonContainer }
                             disabled = { !localParticipantCanJoin }
-                            onPress = { this._joinConference }
+                            onPress = { this._admitClient }
                             title = { this._getBtnText() }
                             titleStyle = { styles.joinButtonText } />
                         }
