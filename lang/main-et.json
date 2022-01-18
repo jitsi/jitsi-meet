@@ -20,9 +20,9 @@
     "audioDevices": {
         "bluetooth": "Bluetooth",
         "headphones": "Kõrvaklapid",
+        "none": "Heli vahendid pole kättesaadavad",
         "phone": "Telefon",
-        "speaker": "Kõlar",
-        "none": "Heli vahendid pole kättesaadavad"
+        "speaker": "Kõlar"
     },
     "audioOnly": {
         "audioOnly": "Ainult heli"
@@ -48,23 +48,23 @@
     "chat": {
         "error": "Viga: sõnumi \"{{originalText}}\" saatmine ebaõnnestus. Põhjus: {{error}}",
         "fieldPlaceHolder": "Sisesta oma sõnum siia",
-        "messagebox": "Sisesta sõnum",
         "messageTo": "Privaatsõnum kasutajale {{recipient}}",
-        "noMessagesMessage": "Kirjavahetust pole veel alustatud. Alusta kirjavahetust siin!",
+        "messagebox": "Sisesta sõnum",
         "nickname": {
             "popover": "Sisesta nimi",
             "title": "Sisesta nimi, et kõnega alustada",
             "titleWithPolls": "Sisesta nimi, et kõnega alustada"
         },
+        "noMessagesMessage": "Kirjavahetust pole veel alustatud. Alusta kirjavahetust siin!",
         "privateNotice": "Privaatsõnum kasutajale {{recipient}}",
         "title": "Kõne",
         "titleWithPolls": "Kõne",
         "you": "you"
     },
     "chromeExtensionBanner": {
-        "installExtensionText": "Paigalda Google Kalendri laiendus ja Office 365 integratsioon",
         "buttonText": "Paigalda Chrome'i laiendus",
-        "dontShowAgain": "Ära rohkem näita"
+        "dontShowAgain": "Ära rohkem näita",
+        "installExtensionText": "Paigalda Google Kalendri laiendus ja Office 365 integratsioon"
     },
     "connectingOverlay": {
         "joiningRoom": "Kõnega ühendamine…"
@@ -144,7 +144,21 @@
         "selectADevice": "Vali seade",
         "testAudio": "Mängi testimiseks heli"
     },
+    "dialOut": {
+        "statusMessage": "on staatusega {{status}}"
+    },
     "dialog": {
+        "Back": "Tagasi",
+        "Cancel": "Tühista",
+        "IamHost": "Mina olen võõrustaja",
+        "Ok": "Jah",
+        "Remove": "Eemalda",
+        "Share": "Jaga",
+        "Submit": "Esita",
+        "WaitForHostMsg": "Kõne <b>{{room}}</b> ei ole veel alanud. Autendi ennast, kui oled võõrustaja. Külalisena oota, kuni võõrustaja saabub.",
+        "WaitForHostMsgWOk": "Kõne <b>{{room}}</b> ei ole veel alanud. Kui oled võõrustaja, vajuta OK, et ennast autentida. Külalisena oota, kuni võõrustaja saabub.",
+        "WaitingForHost": "Võõrustaja ootamine…",
+        "Yes": "Jah",
         "accessibilityLabel": {
             "liveStreaming": "Otseülekanne"
         },
@@ -152,7 +166,6 @@
         "alreadySharedVideoMsg": "Teine kasutaja jagab videot. Selles kõnes on ainult ühe video jagamine korraga lubatud.",
         "alreadySharedVideoTitle": "Korraga on lubatud ainult ühe video jagamine.",
         "applicationWindow": "Rakenduse aken",
-        "Back": "Tagasi",
         "cameraConstraintFailedError": "Kaamera ei vasta teatud piirangutele.",
         "cameraNotFoundError": "Kaamerat ei leitud.",
         "cameraNotSendingData": "Ei saa ühendust kaameraga. Kontrolli, kas vahend on mõne teise rakenduse poolt kasutusel, vali menüüst teine vahend või värskenda rakendust.",
@@ -160,7 +173,6 @@
         "cameraPermissionDeniedError": "Kaamera kasutamine on keelatud. Kõnega on võimalik ühineda ilma kaamerata. Kaamera kasutamiseks vajuta aadressiribal kaamera nupule.",
         "cameraUnknownError": "Kaamerat ei saa kasutada! Põhjus teadmata.",
         "cameraUnsupportedResolutionError": "Kaamera ei toeta nõutud resolutsiooni.",
-        "Cancel": "Tühista",
         "close": "Sulge",
         "conferenceDisconnectMsg": "Kontrolli võrguühendust. Taasühendamine {{seconds}}…",
         "conferenceDisconnectTitle": "Ühendus on katkenud.",
@@ -183,11 +195,10 @@
         "externalInstallationTitle": "Laiendus on kohustuslik",
         "goToStore": "Mine veebipoodi",
         "gracefulShutdown": "Rakendus on hoolduseks ajutiselt maas. Proovi hiljem uuesti!",
-        "IamHost": "Mina olen võõrustaja",
-        "incorrectRoomLockPassword": "Vale parool",
         "incorrectPassword": "Vale kasutajanimi või parool",
-        "inlineInstallationMsg": "Töölauale tuleb paigaldada jagamise laiendus.",
+        "incorrectRoomLockPassword": "Vale parool",
         "inlineInstallExtension": "Paiglada kohe",
+        "inlineInstallationMsg": "Töölauale tuleb paigaldada jagamise laiendus.",
         "internalError": "Oih, midagi läks valesti! Veateate: {{error}}.",
         "internalErrorTitle": "Sisemine viga",
         "kickMessage": "Oih, oled kõnest eemaldatud!",
@@ -211,17 +222,16 @@
         "micNotSendingDataTitle": "Mikrofon pole kättesaadav.",
         "micPermissionDeniedError": "Mikrofoni kasutamine on keelatud. Kõnega on võimalik ühineda, aga teised Sind ei kuule. Mikrofoni kasutamiseks vajuta aadressiribal mikrofoni nupule.",
         "micUnknownError": "Mikrofoni ei saa kasutada. Põhjus teadmata.",
+        "muteEveryoneDialog": "Oled kindel, et soovid kõikide teiste mikrofonid vaigistada? Neid saab tagasi sisse lülitada ainult kasutaja ise.",
         "muteEveryoneElseDialog": "Peale mikrofoni vaigistamist saab ainult kasutaja ise oma mikrofoni tagasi sisse lülitada.",
         "muteEveryoneElseTitle": "Vaigista kõikide teiste mikrofonid, välja arvatud {{whom}}?",
-        "muteEveryoneDialog": "Oled kindel, et soovid kõikide teiste mikrofonid vaigistada? Neid saab tagasi sisse lülitada ainult kasutaja ise.",
-        "muteEveryoneTitle": "Vaigista kõik?",
         "muteEveryoneSelf": "Sina ise",
         "muteEveryoneStartMuted": "Edaspidi alustavad kõik välja lülitatud mikrofonidega",
+        "muteEveryoneTitle": "Vaigista kõik?",
         "muteParticipantBody": "Teiste kasutajate mikrofoni ei saa sisse lülitada. Kasutaja saab ise otsutada, kas mikrofon on sees või väljas.",
         "muteParticipantButton": "Lülita mikrofon välja",
         "muteParticipantDialog": "Oled kindel, et soovid kasutaja mikrofoni välja lülitada? Seda saab ainult kasutaja ise sisse tagasi lülitada.",
         "muteParticipantTitle": "Lülita kasutaja mikrofon välja?",
-        "Ok": "Jah",
         "passwordLabel": "Parool",
         "passwordNotSupported": "Kõnele ei saa parooli määrata.",
         "passwordNotSupportedTitle": "Parooli lisamine pole toetatud",
@@ -239,7 +249,6 @@
         "remoteControlShareScreenWarning": "Kui vajutad nupule \"Luba\", siis jagad oma ekraani.",
         "remoteControlStopMessage": "Kaugjuhtimise sessioon on lõppenud!",
         "remoteControlTitle": "Kaugjuhtimine",
-        "Remove": "Eemalda",
         "removePassword": "Eemalda parool",
         "removeSharedVideoMsg": "Oled kindel, et soovid oma jagatud video eemaldada?",
         "removeSharedVideoTitle": "Eemalda jagatud video",
@@ -257,7 +266,6 @@
         "sendPrivateMessageTitle": "Saada privaatselt?",
         "serviceUnavailable": "Teenus pole kättesaadav",
         "sessTerminated": "Kõne lõpetatud",
-        "Share": "Jaga",
         "shareVideoLinkError": "Sisesta korrektne Youtube’i link.",
         "shareVideoTitle": "Jaga videot",
         "shareYourScreen": "Jaga ekraani",
@@ -271,7 +279,6 @@
         "stopRecordingWarning": "Oled kindel, et soovid salvestamist lõpetada?",
         "stopStreamingWarning": "Oled kindel, et soovid otseülekannet lõpetada?",
         "streamKey": "Otseülekande võti",
-        "Submit": "Esita",
         "thankYou": "Aitäh, et kasutasid rakendust {{appName}}!",
         "token": "token",
         "tokenAuthFailed": "Kahjuks ei ole kõnega ühinemine lubatud.",
@@ -279,14 +286,7 @@
         "transcribing": "Transkribeerimine",
         "unlockRoom": "Eemalda kõne parool",
         "userPassword": "kasutaja parool",
-        "WaitForHostMsg": "Kõne <b>{{room}}</b> ei ole veel alanud. Autendi ennast, kui oled võõrustaja. Külalisena oota, kuni võõrustaja saabub.",
-        "WaitForHostMsgWOk": "Kõne <b>{{room}}</b> ei ole veel alanud. Kui oled võõrustaja, vajuta OK, et ennast autentida. Külalisena oota, kuni võõrustaja saabub.",
-        "WaitingForHost": "Võõrustaja ootamine…",
-        "Yes": "Jah",
         "yourEntireScreen": "Täisekraan"
-    },
-    "dialOut": {
-        "statusMessage": "on staatusega {{status}}"
     },
     "documentSharing": {
         "title": "Jagatud dokument"
@@ -326,6 +326,7 @@
         "inviteURLFirstPartGeneral": "Oled kõnesse kutsutud.",
         "inviteURLFirstPartPersonal": "{{name}} kutsub Sind kõnesse.\n",
         "inviteURLSecondPart": "\nÜhine kõnega:\n{{url}}\n",
+        "label": "Kõne info",
         "liveStreamURL": "Otseülekanne:",
         "moreNumbers": "Rohkem numbreid",
         "noNumbers": "Sissehelistamise numbrid puuduvad.",
@@ -334,8 +335,13 @@
         "numbers": "Sissehelistamise numbrid",
         "password": "Parool:",
         "title": "Jaga",
-        "tooltip": "Jaga linki ja helista, et kõnega ühineda",
-        "label": "Kõne info"
+        "tooltip": "Jaga linki ja helista, et kõnega ühineda"
+    },
+    "inlineDialogFailure": {
+        "msg": "Midagi läks valesti.",
+        "retry": "Proovi uuesti",
+        "support": "Kasutajatugi",
+        "supportMsg": "Kui see juhtub uuesti, võta ühendust"
     },
     "inviteDialog": {
         "alertText": "Osade kasutajate kutsumine ebaõnnestus.",
@@ -344,12 +350,6 @@
         "searchPeopleOnlyPlaceholder": "Otsi kasutajaid",
         "searchPlaceholder": "Kasutaja telefoninumber",
         "send": "Saada"
-    },
-    "inlineDialogFailure": {
-        "msg": "Midagi läks valesti.",
-        "retry": "Proovi uuesti",
-        "support": "Kasutajatugi",
-        "supportMsg": "Kui see juhtub uuesti, võta ühendust"
     },
     "keyboardShortcuts": {
         "focusLocal": "Keskendu videole",
@@ -390,10 +390,10 @@
         "onBy": "{{name}} alustas otseülekandega",
         "pending": "Otseülekande alustamine…",
         "serviceName": "Otseülekande teenus",
-        "signedInAs": "Oled sisse logitud kasutajana:",
         "signIn": "Google’ga sisselogimine",
         "signInCTA": "Logi sisse või sisesta otseülekande võti YouTube’st.",
         "signOut": "Logi välja",
+        "signedInAs": "Oled sisse logitud kasutajana:",
         "start": "Alusta otseülekannet.",
         "streamIdHelp": "Mis see on?",
         "unavailableTitle": "Otseülekanne pole kättesaadav."
@@ -429,6 +429,10 @@
     },
     "lockRoomPassword": "parool",
     "lockRoomPasswordUppercase": "Parool",
+    "lonelyMeetingExperience": {
+        "button": "Kutsu teisi",
+        "youAreAlone": "Asud hetkel ruumis üksi"
+    },
     "me": "mina",
     "notify": {
         "connectedOneMember": "{{name}} ühines kõnega",
@@ -445,24 +449,24 @@
         "me": "Mina",
         "moderator": "Moderaatori õigused jagatud!",
         "muted": "Alustasid kõnet väljalülitatud mikrofoniga.",
-        "mutedTitle": "Mikrofon on välja lülitatud!",
-        "mutedRemotelyTitle": "Sinu mikrofon lülitati välja kasutaja {{participantDisplayName}} poolt!",
         "mutedRemotelyDescription": "Saad alati oma mikrofoni sisse lülitada, kui soovid rääkida. Lülita mikrofon peale rääkimist uuesti välja liigse müra ja kaja vältimiseks.",
+        "mutedRemotelyTitle": "Sinu mikrofon lülitati välja kasutaja {{participantDisplayName}} poolt!",
+        "mutedTitle": "Mikrofon on välja lülitatud!",
+        "newDeviceAction": "Kasuta",
+        "newDeviceAudioTitle": "Leitud uus heliseadeldis",
+        "newDeviceCameraTitle": "Leitud uus kaamera",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) eemaldatud teise kasutaja poolt",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) lisatud teise kasutaja poolt",
         "raisedHand": "{{name}} soovib rääkida.",
         "somebody": "Keegi",
-        "startSilentTitle": "Ühinesid ilma mikrofonita!",
         "startSilentDescription": "Mikrofoni kasutamiseks ühine kõnega uuesti",
+        "startSilentTitle": "Ühinesid ilma mikrofonita!",
         "suboptimalExperienceDescription": "Rakenduse {{appName}}  parima kvaliteedi tagamiseks palun kasuta <a href='{{recommendedBrowserPageLink}}' target='_blank'>ühte nendest veebilehitsejatest</a>.",
         "suboptimalExperienceTitle": "Veebilehitseja hoiatus",
-        "unmute": "Lülita mikrofon sisse",
-        "newDeviceCameraTitle": "Leitud uus kaamera",
-        "newDeviceAudioTitle": "Leitud uus heliseadeldis",
-        "newDeviceAction": "Kasuta"
+        "unmute": "Lülita mikrofon sisse"
     },
-    "passwordSetRemotely": "määratud teise kasutaja poolt",
     "passwordDigitsOnly": "Kuni {{number}} tähemärki",
+    "passwordSetRemotely": "määratud teise kasutaja poolt",
     "poweredby": "teieni toodud",
     "presenceStatus": {
         "busy": "Hõivatud",
@@ -580,7 +584,9 @@
         "title": "Kõne katkestati, sest arvuti läks magama."
     },
     "toolbar": {
+        "Settings": "Seaded",
         "accessibilityLabel": {
+            "Settings": "Seadistused",
             "audioOnly": "Kasuta ainult heli",
             "audioRoute": "Vali heli vahend",
             "callQuality": "Halda kõne kvaliteeti",
@@ -607,17 +613,16 @@
             "raiseHand": "Käe tõstmine",
             "recording": "Salvestamine",
             "remoteMute": "Lülita kasutaja mikrofon välja",
-            "Settings": "Seadistused",
-            "sharedvideo": "Kasuta YouTube’i video jagamist",
             "shareRoom": "Kutsu",
             "shareYourScreen": "Jaga ekraani",
+            "sharedvideo": "Kasuta YouTube’i video jagamist",
             "shortcuts": "Kasuta kiirvalikuid",
             "show": "Näita laval",
             "speakerStats": "Kõnelejate statistika",
             "tileView": "Paneelvaade",
             "toggleCamera": "Kasuta kaamerat",
-            "videomute": "Video väljalülitamine",
-            "videoblur": "Video hägustamine"
+            "videoblur": "Video hägustamine",
+            "videomute": "Video väljalülitamine"
         },
         "addPeople": "Lisa kõnesse inimesi",
         "audioOnlyOff": "Lülita “ainult heli” valik välja",
@@ -645,35 +650,34 @@
         "moreOptions": "Rohkem valikuid",
         "mute": "Mikrofon sisse/välja",
         "muteEveryone": "Vaigista kõikide mikrofonid",
-        "noAudioSignalTitle": "Mikrofon ei püüa sisendit kinni!",
         "noAudioSignalDesc": "Kui Sa ei lülitanud mikrofoni seadistustest tahtlikult välja, kaalu seadme vahetamist.",
         "noAudioSignalDescSuggestion": "Kui Sa ei lülitanud mikrofoni seadistustest tahtlikult välja, kaalu seadme vahetamist.",
         "noAudioSignalDialInDesc": "Võid sisse helistada valides:",
         "noAudioSignalDialInLinkDesc": "Sissehelistamise numbrid",
-        "noisyAudioInputTitle": "Mikrofonis on müra! Tundub, et läbi mikrofoni kostub palju helisid. Kaalu mikrofoni välja lülitamist või seadme vahetamist.",
+        "noAudioSignalTitle": "Mikrofon ei püüa sisendit kinni!",
         "noisyAudioInputDesc": "Tundub, et läbi mikrofoni kostub palju helisid. Kaalu mikrofoni välja lülitamist või seadme vahetamist.",
+        "noisyAudioInputTitle": "Mikrofonis on müra! Tundub, et läbi mikrofoni kostub palju helisid. Kaalu mikrofoni välja lülitamist või seadme vahetamist.",
         "openChat": "Ava vestlus",
         "pip": "Ava pilt-pildis vaade",
         "privateMessage": "Saada privaatsõnum",
         "profile": "Muuda profiili",
         "raiseHand": "Tõsta/langeta kätt",
         "raiseYourHand": "Tõsta kätt",
-        "Settings": "Seaded",
-        "sharedvideo": "Jaga YouTube’i videot",
         "shareRoom": "Kutsu",
+        "sharedvideo": "Jaga YouTube’i videot",
         "shortcuts": "Vaata kiirvalikuid",
         "speakerStats": "Kõneleja andmed",
         "startScreenSharing": "Alust ekraani jagamist",
         "startSubtitles": "Alusta subtiitrite näitamist",
+        "startvideoblur": "Tausta hägustamine",
         "stopScreenSharing": "Lõpeta ekraani jagamine",
-        "stopSubtitles": "Lõpeta subtiitrite näitamine",
         "stopSharedVideo": "Lõpeta YouTube’i video",
+        "stopSubtitles": "Lõpeta subtiitrite näitamine",
+        "stopvideoblur": "Lülita tausta hägustamine välja",
         "talkWhileMutedPopup": "Soovid rääkida? Mikrofon on välja lülitatud.",
         "tileViewToggle": "Näita paneelvaadet",
         "toggleCamera": "Kasuta kaamerat",
-        "videomute": "Kaamera sisse/välja",
-        "startvideoblur": "Tausta hägustamine",
-        "stopvideoblur": "Lülita tausta hägustamine välja"
+        "videomute": "Kaamera sisse/välja"
     },
     "transcribing": {
         "ccButtonTooltip": "Subtiitrid sisse/välja",
@@ -753,24 +757,20 @@
         "connectCalendarButton": "Ühenda kalender",
         "connectCalendarText": "Ühenda oma kalender, et kõiki kohtumisi näha rakenduses {{app}}. Lisa {{provider}} kohtumised kalendrisse ja alusta kõnesid ühe klikiga.",
         "enterRoomTitle": "Alusta uut kõnet",
-        "roomNameAllowedChars": "Televastuvõtu nimi ei tohi sisaldada sümboleid: ?, &, :, ', \", %, #.",
         "go": "Mine",
         "goSmall": "Mine",
-        "join": "Ühine",
         "info": "Info",
+        "join": "Ühine",
         "privacy": "Privaatsus",
         "recentList": "Hiljutised",
         "recentListDelete": "Kustuta",
         "recentListEmpty": "Hiljutiste valikute nimekiri on tühi. Vestle kasutajatega ja leia oma hiljutised kõned siit.",
         "reducedUIText": "Tere tulemast rakendusse {{app}}!",
+        "roomNameAllowedChars": "Televastuvõtu nimi ei tohi sisaldada sümboleid: ?, &, :, ', \", %, #.",
         "roomname": "Sisesta ruumi nimi",
         "roomnameHint": "Sisesta ruumi nimi või link, millega soovid ühinega. Võid nime välja mõelda, aga anna osalejatele sellest teada, et nad saaksid ruumiga ühineda.",
         "sendFeedback": "Saada tagasiside",
         "terms": "Tingimused",
         "title": "Turvaline, võimalusi täis ja tasuta keskkond videokõnede jaoks."
-    },
-    "lonelyMeetingExperience": {
-        "button": "Kutsu teisi",
-        "youAreAlone": "Asud hetkel ruumis üksi"
     }
 }

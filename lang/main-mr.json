@@ -20,9 +20,9 @@
     "audioDevices": {
         "bluetooth": "ब्लूटुथ",
         "headphones": "हेडफोन",
+        "none": "कोणतेही ऑडिओ डिव्हाइस उपलब्ध नाहीत",
         "phone": "फोन",
-        "speaker": "स्पीकर",
-        "none": "कोणतेही ऑडिओ डिव्हाइस उपलब्ध नाहीत"
+        "speaker": "स्पीकर"
     },
     "audioOnly": {
         "audioOnly": "कमी बँडविड्थ"
@@ -48,23 +48,23 @@
     "chat": {
         "error": "Error: तुमचा संदेश पाठविला गेला नाही. कारणः {{error}}",
         "fieldPlaceHolder": "आपला संदेश येथे टाइप करा",
-        "messagebox": "एक संदेश टाइप करा",
         "messageTo": "यांना खाजगी संदेश {{recipient}}",
-        "noMessagesMessage": "अद्याप मीटिंगमध्ये कोणतेही संदेश नाहीत. येथे संभाषण सुरू करा!",
+        "messagebox": "एक संदेश टाइप करा",
         "nickname": {
             "popover": "टोपणनाव निवडा",
             "title": "चॅट वापरण्यासाठी टोपणनाव प्रविष्ट करा",
             "titleWithPolls": "चॅट वापरण्यासाठी टोपणनाव प्रविष्ट करा"
         },
+        "noMessagesMessage": "अद्याप मीटिंगमध्ये कोणतेही संदेश नाहीत. येथे संभाषण सुरू करा!",
         "privateNotice": "यांना खाजगी संदेश{{recipient}}",
         "title": "गप्पा",
         "titleWithPolls": "गप्पा",
         "you": "आपण"
     },
     "chromeExtensionBanner": {
-        "installExtensionText": "Google कॅलेंडर आणि ऑफिस 365 एकत्रिकरणासाठी विस्तार स्थापित करा",
         "buttonText": "Chrome विस्तार स्थापित करा",
-        "dontShowAgain": "मला हे पुन्हा दर्शवू नका"
+        "dontShowAgain": "मला हे पुन्हा दर्शवू नका",
+        "installExtensionText": "Google कॅलेंडर आणि ऑफिस 365 एकत्रिकरणासाठी विस्तार स्थापित करा"
     },
     "connectingOverlay": {
         "joiningRoom": "आपल्याला आपल्या संमेलनात कनेक्ट करीत आहे ..."
@@ -144,7 +144,21 @@
         "selectADevice": "एक डिव्हाइस निवडा",
         "testAudio": "चाचणी आवाज प्ले करा"
     },
+    "dialOut": {
+        "statusMessage": "आता आहे {{status}}"
+    },
     "dialog": {
+        "Back": "Back",
+        "Cancel": "रद्द करा",
+        "IamHost": "मी यजमान आहे",
+        "Ok": "Ok",
+        "Remove": "काढा",
+        "Share": "सामायिक करा",
+        "Submit": "प्रस्तुत करणे",
+        "WaitForHostMsg": "परिषद <b>{{room}}</b>अद्याप सुरू झाले नाही. आपण होस्ट असल्यास कृपया अधिकृत करा. अन्यथा, कृपया होस्ट येण्याची प्रतीक्षा करा.",
+        "WaitForHostMsgWOk": "परिषद <b>{{room}}</b> अद्याप सुरू झाले नाही. आपण होस्ट असल्यास कृपया प्रमाणीकरणासाठी ओके दाबा. अन्यथा, कृपया होस्ट येण्याची प्रतीक्षा करा.",
+        "WaitingForHost": " होस्टची प्रतीक्षा करीत आहे ...",
+        "Yes": "होय",
         "accessibilityLabel": {
             "liveStreaming": "थेट प्रसारण"
         },
@@ -152,7 +166,6 @@
         "alreadySharedVideoMsg": "दुसरा सहभागी आधीपासूनच व्हिडिओ सामायिक करीत आहे. ही परिषद एका वेळी फक्त एकच सामायिक व्हिडिओ परवानगी देते.",
         "alreadySharedVideoTitle": "एकावेळी फक्त सामायिक केलेला व्हिडिओ अनुमत आहे",
         "applicationWindow": "अनुप्रयोग विंडो",
-        "Back": "Back",
         "cameraConstraintFailedError": "आपला कॅमेरा काही आवश्यक मर्यादा पूर्ण करीत नाही.",
         "cameraNotFoundError": "कॅमेरा आढळला नाही.",
         "cameraNotSendingData": "आम्ही आपल्या कॅमेर्‍यावर प्रवेश करण्यात अक्षम आहोत. कृपया एखादा दुसरा अनुप्रयोग हे डिव्हाइस वापरत आहे की नाही ते तपासा, सेटिंग्ज मेनूमधून दुसरे डिव्हाइस निवडा किंवा अनुप्रयोग रीलोड करण्याचा प्रयत्न करा.",
@@ -160,7 +173,6 @@
         "cameraPermissionDeniedError": "आपल्याला आपला कॅमेरा वापरण्याची परवानगी नाही. आपण अद्याप परिषदेत सामील होऊ शकता परंतु इतर आपल्याला पाहणार नाहीत. हे निश्चित करण्यासाठी अ‍ॅड्रेस बारमधील कॅमेरा बटण वापरा.",
         "cameraUnknownError": "अज्ञात कारणासाठी कॅमेरा वापरू शकत नाही.",
         "cameraUnsupportedResolutionError": "आपला कॅमेरा आवश्यक व्हिडिओ रिझोल्यूशनला समर्थन देत नाही.",
-        "Cancel": "रद्द करा",
         "close": "बंद",
         "conferenceDisconnectMsg": "आपण आपले नेटवर्क कनेक्शन तपासू शकता. सेकंदात पुन्हा कनेक्ट करत आहे {{seconds}}..",
         "conferenceDisconnectTitle": "आपण डिस्कनेक्ट झाला आहात.",
@@ -185,11 +197,10 @@
         "externalInstallationTitle": "विस्तार आवश्यक",
         "goToStore": "वेब स्टोअरवर जा",
         "gracefulShutdown": "आमची सेवा सध्या देखभालीसाठी बंद आहे. कृपया पुन्हा प्रयत्न करा.",
-        "IamHost": "मी यजमान आहे",
-        "incorrectRoomLockPassword": "चुकीचा संकेतशब्द",
         "incorrectPassword": "वापरकर्त्याचे नाव अथवा पासवर्ड चुकीचा",
-        "inlineInstallationMsg": "आपल्याला आमचा डेस्कटॉप सामायिकरण विस्तार स्थापित करणे आवश्यक आहे.",
+        "incorrectRoomLockPassword": "चुकीचा संकेतशब्द",
         "inlineInstallExtension": "स्थापित करा",
+        "inlineInstallationMsg": "आपल्याला आमचा डेस्कटॉप सामायिकरण विस्तार स्थापित करणे आवश्यक आहे.",
         "internalError": "अरेरे! काहीतरी चूक झाली. पुढील त्रुटी आली:{{error}}",
         "internalErrorTitle": "अंतर्गत त्रुटी",
         "kickMessage": "अधिक तपशीलांसाठी आपण {{participantDisplayName}} वर संपर्क साधू शकता.",
@@ -213,17 +224,16 @@
         "micNotSendingDataTitle": "आपले माइक आपल्या सिस्टम सेटिंग्जद्वारे निःशब्द केले आहे",
         "micPermissionDeniedError": "आपल्याला आपला मायक्रोफोन वापरण्याची परवानगी नाही. आपण अद्याप परिषदेत सामील होऊ शकता परंतु इतर आपले ऐकणार नाहीत. हे निश्चित करण्यासाठी अ‍ॅड्रेस बारमधील कॅमेरा बटण वापरा.",
         "micUnknownError": "Cannot use microphone for an unknown reason.",
+        "muteEveryoneDialog": "आपली खात्री आहे की आपण प्रत्येकाला निःशब्द करू इच्छिता? आपण त्यांना सशब्द करण्यास सक्षम राहणार नाही परंतु ते कधीही स्वत: ला सशब्द करू शकतात.",
         "muteEveryoneElseDialog": "एकदा नि: शब्द झाल्यास आपण त्यांना ध्वनीमुद्रित करण्यास सक्षम राहणार नाही परंतु ते कधीही स्वत: ला सशब्द करू शकतात.",
         "muteEveryoneElseTitle": "सोडून सर्वांना नि: शब्द करा{{whom}}?",
-        "muteEveryoneDialog": "आपली खात्री आहे की आपण प्रत्येकाला निःशब्द करू इच्छिता? आपण त्यांना सशब्द करण्यास सक्षम राहणार नाही परंतु ते कधीही स्वत: ला सशब्द करू शकतात.",
-        "muteEveryoneTitle": "सर्वांना नि: शब्द करा?",
         "muteEveryoneSelf": "तू स्वतः",
         "muteEveryoneStartMuted": "आतापासून प्रत्येकजण निःशब्द होऊ लागतो",
+        "muteEveryoneTitle": "सर्वांना नि: शब्द करा?",
         "muteParticipantBody": "आपण त्यांना सशब्द करण्यास सक्षम राहणार नाही परंतु ते कधीही स्वत: ला सशब्द करू शकतात.",
         "muteParticipantButton": "नि: शब्द करा",
         "muteParticipantDialog": "आपली खात्री आहे की आपण या सहभागीस नि: शब्द करू इच्छिता? आपण त्यांना सशब्द करण्यास सक्षम राहणार नाही परंतु ते कधीही स्वत: ला सशब्द करू शकतात.",
         "muteParticipantTitle": "हा सहभागी नि: शब्द करायचा?",
-        "Ok": "Ok",
         "passwordLabel": "संमेलनास एका सहभागीने लॉक केले आहे. कृपया सामील होण्यासाठी $t(lockRoomPassword) प्रविष्ट करा.",
         "passwordNotSupported": "मीटिंग सेट करणे $t(lockRoomPassword) समर्थित नाही..",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) समर्थित नाही",
@@ -241,7 +251,6 @@
         "remoteControlShareScreenWarning": "लक्षात ठेवा की आपण  \"Allow\" दाबल्यास आपण आपली स्क्रीन सामायिक कराल!",
         "remoteControlStopMessage": "रिमोट कंट्रोल सत्र संपले!",
         "remoteControlTitle": "दूरस्थ डेस्कटॉप नियंत्रण",
-        "Remove": "काढा",
         "removePassword": "काढा $t(lockRoomPassword)",
         "removeSharedVideoMsg": " आपली खात्री आहे की आपण आपला सामायिक केलेला व्हिडिओ काढू इच्छिता?",
         "removeSharedVideoTitle": "सामायिक केलेला व्हिडिओ काढा",
@@ -260,7 +269,6 @@
         "sendPrivateMessageTitle": "खाजगी पाठवायचे?",
         "serviceUnavailable": "सेवा अनुपलब्ध",
         "sessTerminated": "कॉल संपुष्टात आला",
-        "Share": "सामायिक करा",
         "shareVideoLinkError": "कृपया योग्य YouTube दुवा प्रदान करा.",
         "shareVideoTitle": "एक व्हिडिओ सामायिक करा",
         "shareYourScreen": "आपली स्क्रीन सामायिक करा",
@@ -274,7 +282,6 @@
         "stopRecordingWarning": "आपली खात्री आहे की आपण रेकॉर्डिंग थांबवू इच्छिता?",
         "stopStreamingWarning": "आपणास खात्री आहे की आपण थेट प्रवाह थांबवू इच्छिता?",
         "streamKey": "थेट प्रवाह की",
-        "Submit": "प्रस्तुत करणे",
         "thankYou": "वापरल्याबद्दल धन्यवाद {{appName}}!",
         "token": "टोकन",
         "tokenAuthFailed": "क्षमस्व, आपणास या कॉलमध्ये सामील होण्याची परवानगी नाही.",
@@ -282,14 +289,7 @@
         "transcribing": "लिप्यंतरण",
         "unlockRoom": "मीटिंग काढा $t(lockRoomPassword)",
         "userPassword": "user password",
-        "WaitForHostMsg": "परिषद <b>{{room}}</b>अद्याप सुरू झाले नाही. आपण होस्ट असल्यास कृपया अधिकृत करा. अन्यथा, कृपया होस्ट येण्याची प्रतीक्षा करा.",
-        "WaitForHostMsgWOk": "परिषद <b>{{room}}</b> अद्याप सुरू झाले नाही. आपण होस्ट असल्यास कृपया प्रमाणीकरणासाठी ओके दाबा. अन्यथा, कृपया होस्ट येण्याची प्रतीक्षा करा.",
-        "WaitingForHost": " होस्टची प्रतीक्षा करीत आहे ...",
-        "Yes": "होय",
         "yourEntireScreen": "आपली संपूर्ण स्क्रीन"
-    },
-    "dialOut": {
-        "statusMessage": "आता आहे {{status}}"
     },
     "documentSharing": {
         "title": "सामायिक दस्तऐवज"
@@ -305,6 +305,9 @@
         "rateExperience": "आपल्या भेटीचा अनुभव रेट करा",
         "veryBad": "फार वाईट",
         "veryGood": "खुप छान"
+    },
+    "helpView": {
+        "header": "मदत केंद्र"
     },
     "incomingCall": {
         "answer": "उत्तर",
@@ -332,6 +335,7 @@
         "inviteURLFirstPartGeneral": " आपल्याला बैठकीत सामील होण्यासाठी आमंत्रित केले आहे.",
         "inviteURLFirstPartPersonal": "{{name}} आपल्याला मीटिंगसाठी आमंत्रित करीत आहे.\n",
         "inviteURLSecondPart": "\nसभेमध्ये सामील व्हा:\n{{url}}\n",
+        "label": "संमेलनाची माहिती",
         "liveStreamURL": "थेट प्रसारण:",
         "moreNumbers": "अधिक संख्या",
         "noNumbers": "डायल-इन नंबर नाहीत.",
@@ -340,8 +344,13 @@
         "numbers": "डायल-इन क्रमांक",
         "password": "$t(lockRoomPasswordUppercase):",
         "title": "सामायिक करा",
-        "tooltip": "या संमेलनासाठी दुवा आणि डायल-इन माहिती सामायिक करा",
-        "label": "संमेलनाची माहिती"
+        "tooltip": "या संमेलनासाठी दुवा आणि डायल-इन माहिती सामायिक करा"
+    },
+    "inlineDialogFailure": {
+        "msg": "आम्ही जरा अडखळलो.",
+        "retry": "पुन्हा प्रयत्न करा",
+        "support": "आधार",
+        "supportMsg": "हे असेच होत राहिल्यास संपर्क साधा"
     },
     "inviteDialog": {
         "alertText": "काही सहभागींना आमंत्रित करण्यात अयशस्वी.",
@@ -350,12 +359,6 @@
         "searchPeopleOnlyPlaceholder": "सहभागींचा शोध घ्या",
         "searchPlaceholder": "सहभागी किंवा फोन नंबर",
         "send": "पाठवा"
-    },
-    "inlineDialogFailure": {
-        "msg": "आम्ही जरा अडखळलो.",
-        "retry": "पुन्हा प्रयत्न करा",
-        "support": "आधार",
-        "supportMsg": "हे असेच होत राहिल्यास संपर्क साधा"
     },
     "keyboardShortcuts": {
         "focusLocal": "आपल्या व्हिडिओवर लक्ष द्या",
@@ -389,6 +392,7 @@
         "expandedPending": "थेट प्रवाह सुरू केला जात आहे ",
         "failedToStart": "थेट प्रवाह सुरू करण्यात अयशस्वी",
         "getStreamKeyManually": "आम्ही कोणतेही थेट प्रवाह आणण्यात सक्षम नाही. YouTube वरून आपली थेट प्रवाह की मिळवण्याचा प्रयत्न करा.",
+        "googlePrivacyPolicy": "Google गोपनीयता धोरण",
         "invalidStreamKey": "थेट प्रवाह की चुकीची असू शकते.",
         "off": "थेट प्रवाह थांबला",
         "offBy": "{{name}} थेट प्रवाह थांबविला",
@@ -396,15 +400,14 @@
         "onBy": "{{name}} थेट प्रवाह सुरू केला",
         "pending": "थेट प्रवाह सुरू करत आहे ...",
         "serviceName": "थेट प्रवाह सेवा",
-        "signedInAs": "आपण सध्या म्हणून साइन इन केले आहे:",
         "signIn": "Google सह साइन इन करा",
         "signInCTA": "YouTube वरून साइन इन करा किंवा आपली थेट प्रवाह की प्रविष्ट करा.",
         "signOut": "साइन आउट करा",
+        "signedInAs": "आपण सध्या म्हणून साइन इन केले आहे:",
         "start": "थेट प्रवाह सुरू करा",
         "streamIdHelp": "हे काय आहे?",
         "unavailableTitle": "थेट प्रवाह अनुपलब्ध",
-        "youtubeTerms": "YouTube सेवा अटी",
-        "googlePrivacyPolicy": "Google गोपनीयता धोरण"
+        "youtubeTerms": "YouTube सेवा अटी"
     },
     "localRecording": {
         "clientState": {
@@ -437,8 +440,13 @@
     },
     "lockRoomPassword": "संकेतशब्द",
     "lockRoomPasswordUppercase": "संकेतशब्द",
-       "me": "मी",
+    "lonelyMeetingExperience": {
+        "button": "इतरांना आमंत्रित करा",
+        "youAreAlone": "आपण सभेत एकटाच आहात"
+    },
+    "me": "मी",
     "notify": {
+        "OldElectronAPPTitle": "सुरक्षा असुरक्षा!",
         "connectedOneMember": "{{name}} बैठकीत सामील झाले",
         "connectedThreePlusMembers": "{{name}} आणि {{count}} इतर बैठकीत सामील झाले",
         "connectedTwoMembers": "{{first}} आणि {{second}} बैठकीत सामील झाले",
@@ -453,36 +461,35 @@
         "me": "Me",
         "moderator": "नियंत्रक अधिकार मंजूर!",
         "muted": "आपण संभाषण निःशब्द केले आहे.",
-        "mutedTitle": "आपण निःशब्द आहात!",
-        "mutedRemotelyTitle": "आपण द्वारे निःशब्द केले गेले आहे {{participantDisplayName}}!",
         "mutedRemotelyDescription": "आपण बोलण्यास तयार असता तेव्हा आपण नेहमी सशब्द करू शकता. आपण संमेलनापासून आवाज दूर ठेवण्यासाठी पूर्ण झाल्यावर परत नि: शब्द करा.",
+        "mutedRemotelyTitle": "आपण द्वारे निःशब्द केले गेले आहे {{participantDisplayName}}!",
+        "mutedTitle": "आपण निःशब्द आहात!",
+        "newDeviceAction": "वापरा",
+        "newDeviceAudioTitle": "नवीन ऑडिओ डिव्हाइस आढळले",
+        "newDeviceCameraTitle": "नवीन कॅमेरा आढळला",
+        "oldElectronClientDescription1": "आपण सुरक्षा असुरक्षा ज्ञात असलेल्या जितसी मीट क्लायंटची जुनी आवृत्ती वापरत असल्याचे दिसून येत आहे. कृपया आमच्याकडे आपण अद्यतनित असल्याची खात्री करा",
+        "oldElectronClientDescription2": "नवीनतम बिल्ड",
+        "oldElectronClientDescription3": " आता!",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) दुसर्‍या सहभागीने काढले",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) दुसर्‍या सहभागीने सेट केलेले",
         "raisedHand": "{{name}} बोलायला आवडेल.",
         "somebody": "कुणीतरी",
-        "startSilentTitle": "आपण ऑडिओ आउटपुटसह सामील झालात!",
         "startSilentDescription": "ऑडिओ सक्षम करण्यासाठी संमेलनात पुन्हा सामील व्हा",
+        "startSilentTitle": "आपण ऑडिओ आउटपुटसह सामील झालात!",
         "suboptimalBrowserWarning": " आम्हाला भीती वाटते की येथे आपल्या भेटीचा अनुभव इतका उत्कृष्ट होणार नाही. आम्ही यामध्ये सुधारणा करण्याचे मार्ग शोधत आहोत, परंतु तोपर्यंत कृपया त्यापैकी एक वापरून पहा <a href='static/recommendedBrowsers.html' target='_blank'>fully supported browsers</a>.",
         "suboptimalExperienceTitle": "ब्राउझर चेतावणी",
-        "unmute": "सशब्द करा",
-        "newDeviceCameraTitle": "नवीन कॅमेरा आढळला",
-        "newDeviceAudioTitle": "नवीन ऑडिओ डिव्हाइस आढळले",
-        "newDeviceAction": "वापरा",
-        "OldElectronAPPTitle": "सुरक्षा असुरक्षा!",
-        "oldElectronClientDescription1": "आपण सुरक्षा असुरक्षा ज्ञात असलेल्या जितसी मीट क्लायंटची जुनी आवृत्ती वापरत असल्याचे दिसून येत आहे. कृपया आमच्याकडे आपण अद्यतनित असल्याची खात्री करा",
-        "oldElectronClientDescription2": "नवीनतम बिल्ड",
-        "oldElectronClientDescription3": " आता!"
+        "unmute": "सशब्द करा"
     },
-    "passwordSetRemotely": "दुसर्‍या सहभागीने सेट केलेले",
     "passwordDigitsOnly": " पर्यंत {{number}} अंक",
+    "passwordSetRemotely": "दुसर्‍या सहभागीने सेट केलेले",
     "poweredby": "द्वारा समर्थित",
     "prejoin": {
-       
         "audioAndVideoError": "ऑडिओ आणि व्हिडिओ त्रुटी:",
         "audioOnlyError": "ऑडिओ त्रुटी:",
         "audioTrackError": "ऑडिओ ट्रॅक तयार करू शकलो नाही.",
         "callMe": "मला कॉल करा",
         "callMeAtNumber": "मला या नंबरवर कॉल करा:",
+        "calling": "कॉल करीत आहे",
         "configuringDevices": "डिव्हाइस कॉन्फिगर करीत आहे ...",
         "connectedWithAudioQ": "आपण ऑडिओशी कनेक्ट आहात?",
         "copyAndShare": "मीटिंगचा दुवा कॉपी आणि सामायिक करा",
@@ -490,16 +497,15 @@
         "dialInPin": "संमेलनात डायल करा आणि पिन कोड प्रविष्ट करा:",
         "dialing": "डायल करत आहे",
         "iWantToDialIn": "मला डायल करायचे आहे",
+        "initiated": "कॉल सुरू झाला",
         "joinAudioByPhone": "फोन ऑडिओसह सामील व्हा",
         "joinMeeting": "बैठकीत सामील व्हा",
         "joinWithoutAudio": "ऑडिओशिवाय सामील व्हा",
-        "initiated": "कॉल सुरू झाला",
         "linkCopied": "क्लिपबोर्डवर दुवा कॉपी केला",
         "lookGood": "स्पीकर आणि मायक्रोफोन चांगले दिसतात",
         "or": "किंवा",
-        "calling": "कॉल करीत आहे",
-        "startWithPhone": "फोन ऑडिओसह प्रारंभ करा",
         "screenSharingError": "स्क्रीन सामायिकरण त्रुटी:",
+        "startWithPhone": "फोन ऑडिओसह प्रारंभ करा",
         "videoOnlyError": "व्हिडिओ त्रुटी:",
         "videoTrackError": "व्हिडिओ ट्रॅक तयार करू शकलो नाही.",
         "viewAllNumbers": "सर्व संख्या पहा"
@@ -594,7 +600,7 @@
         "header": "सेटिंग्ज",
         "profileSection": "प्रोफाइल",
         "serverURL": "सर्व्हर URL",
-        "showAdvanced":"प्रगत सेटिंग्ज दर्शवा",
+        "showAdvanced": "प्रगत सेटिंग्ज दर्शवा",
         "startWithAudioMuted": "ऑडिओ नि: शब्द सह प्रारंभ करा",
         "startWithVideoMuted": "निःशब्द व्हिडिओसह प्रारंभ करा",
         "version": "आवृत्ती"
@@ -622,65 +628,63 @@
         "title": "आपला व्हिडिओ कॉल व्यत्यय आला कारण हा संगणक झोपायला गेला."
     },
     "toolbar": {
-        "accessibilityLabel": {
-       
-        },
+        "Settings": "सेटिंग्ज",
+        "accessibilityLabel": {},
         "addPeople": "आपल्या कॉलमध्ये लोकांना जोडा",
-"audioOnlyOff": "कमी बँडविड्थ मोड अक्षम करा",
-"audioOnlyOn": "कमी बँडविड्थ मोड सक्षम करा",
-"audioRoute": "ध्वनी यंत्र निवडा",
-"authenticate": "प्रमाणित करा",
-"callQuality": "व्हिडिओ गुणवत्ता व्यवस्थापित करा",
-"chat": "गप्पा / बंद करा उघडा",
-"closeChat": "गप्पा बंद करा",
-"documentClose": "सामायिक दस्तऐवज बंद करा",
-"documentOpen": "सामायिक दस्तऐवज उघडा",
-"download": "आमचे अ‍ॅप्स डाउनलोड करा",
-"e2ee": "एंड-टू-एंड एनक्रिप्शन",
-"enterFullScreen": "पूर्ण स्क्रीन पहा",
-"enterTileView": "टाइल दृश्य प्रविष्ट करा",
-"exitFullScreen": "पूर्ण स्क्रीनमधून बाहेर पडा",
-"exitTileView": "बाहेर पडा टाइल दृश्य",
-"feedback": "अभिप्राय द्या",
-"hangup": "सोडा",
-"help": "मदत करा",
-"invite": "लोकांना आमंत्रित करा",
-"login": "लॉगिन",
-"logout": "बाहेर पडणे",
-"lowerYourHand": "बाहेर पडणे",
-"moreActions": "अधिक क्रिया",
-"moreOptions": "अधिक पर्याय",
-"mute": "नि: शब्द / सशब्द करा",
-"muteEveryone": "सर्वांना नि: शब्द करा",
-"noAudioSignalTitle": "आपल्या माइकवरून कोणतेही इनपुट येत नाही!",
-"noAudioSignalDesc": "आपण सिस्टम सेटिंग्ज किंवा हार्डवेअरवरून हेतुपुरस्सर नि: शब्द न केल्यास, डिव्हाइस बदलण्याचा विचार करा.",
-"noAudioSignalDescSuggestion": "आपण सिस्टम सेटिंग्ज किंवा हार्डवेअरवरून हेतुपुरस्सर नि: शब्द न केल्यास, सूचित डिव्हाइसवर स्विच करण्याचा विचार करा.",
-"noAudioSignalDialInDesc": "आपण हे वापरून डायल-इन देखील करू शकता:",
-"noAudioSignalDialInLinkDesc": "डायल-इन क्रमांक",
-"noisyAudioInputTitle": "आपला मायक्रोफोन गोंगाट करणारा दिसत आहे!",
-"noisyAudioInputDesc": "आपला मायक्रोफोन आवाज देत असल्यासारखे दिसत आहे, कृपया डिव्हाइस नि: शब्द करणे किंवा बदलणे याचा विचार करा.",
-"openChat": "खुली गप्पा",
-"pip": "पिक्चर-इन-पिक्चर मोड प्रविष्ट करा",
-"privateMessage": "खाजगी संदेश पाठवा",
-"profile": "आपले प्रोफाइल संपादित करा",
-"raiseHand": "हात वर करा / कमी करा",
-"raiseYourHand": "तुझा हात वर कर",
-"Settings": "सेटिंग्ज",
-"sharedvideo": "एक YouTube व्हिडिओ सामायिक करा",
-"shareRoom": "एखाद्यास आमंत्रित करा",
-"shortcuts": "शॉर्टकट पहा",
-"speakerStats": "स्पीकर आकडेवारी",
-"startScreenSharing": "स्क्रीन सामायिकरण प्रारंभ करा",
-"startSubtitles": "उपशीर्षके प्रारंभ करा",
-"stopScreenSharing": "स्क्रीन सामायिकरण थांबवा",
-"stopSubtitles": "उपशीर्षके थांबवा",
-"stopSharedVideo": "YouTube व्हिडिओ थांबवा",
-"talkWhileMutedPopup": "बोलण्याचा प्रयत्न करीत आहात? आपण निःशब्द आहात.",
-"tileViewToggle": "टाइल दृश्य टॉगल करा",
-"toggleCamera": "टॉगल कॅमेरा",
-"videomute": "कॅमेरा प्रारंभ / थांबवा",
-"startvideoblur": "माझी पार्श्वभूमी अस्पष्ट करा",
-"stopvideoblur": "पार्श्वभूमी डाग अक्षम करा"
+        "audioOnlyOff": "कमी बँडविड्थ मोड अक्षम करा",
+        "audioOnlyOn": "कमी बँडविड्थ मोड सक्षम करा",
+        "audioRoute": "ध्वनी यंत्र निवडा",
+        "authenticate": "प्रमाणित करा",
+        "callQuality": "व्हिडिओ गुणवत्ता व्यवस्थापित करा",
+        "chat": "गप्पा / बंद करा उघडा",
+        "closeChat": "गप्पा बंद करा",
+        "documentClose": "सामायिक दस्तऐवज बंद करा",
+        "documentOpen": "सामायिक दस्तऐवज उघडा",
+        "download": "आमचे अ‍ॅप्स डाउनलोड करा",
+        "e2ee": "एंड-टू-एंड एनक्रिप्शन",
+        "enterFullScreen": "पूर्ण स्क्रीन पहा",
+        "enterTileView": "टाइल दृश्य प्रविष्ट करा",
+        "exitFullScreen": "पूर्ण स्क्रीनमधून बाहेर पडा",
+        "exitTileView": "बाहेर पडा टाइल दृश्य",
+        "feedback": "अभिप्राय द्या",
+        "hangup": "सोडा",
+        "help": "मदत करा",
+        "invite": "लोकांना आमंत्रित करा",
+        "login": "लॉगिन",
+        "logout": "बाहेर पडणे",
+        "lowerYourHand": "बाहेर पडणे",
+        "moreActions": "अधिक क्रिया",
+        "moreOptions": "अधिक पर्याय",
+        "mute": "नि: शब्द / सशब्द करा",
+        "muteEveryone": "सर्वांना नि: शब्द करा",
+        "noAudioSignalDesc": "आपण सिस्टम सेटिंग्ज किंवा हार्डवेअरवरून हेतुपुरस्सर नि: शब्द न केल्यास, डिव्हाइस बदलण्याचा विचार करा.",
+        "noAudioSignalDescSuggestion": "आपण सिस्टम सेटिंग्ज किंवा हार्डवेअरवरून हेतुपुरस्सर नि: शब्द न केल्यास, सूचित डिव्हाइसवर स्विच करण्याचा विचार करा.",
+        "noAudioSignalDialInDesc": "आपण हे वापरून डायल-इन देखील करू शकता:",
+        "noAudioSignalDialInLinkDesc": "डायल-इन क्रमांक",
+        "noAudioSignalTitle": "आपल्या माइकवरून कोणतेही इनपुट येत नाही!",
+        "noisyAudioInputDesc": "आपला मायक्रोफोन आवाज देत असल्यासारखे दिसत आहे, कृपया डिव्हाइस नि: शब्द करणे किंवा बदलणे याचा विचार करा.",
+        "noisyAudioInputTitle": "आपला मायक्रोफोन गोंगाट करणारा दिसत आहे!",
+        "openChat": "खुली गप्पा",
+        "pip": "पिक्चर-इन-पिक्चर मोड प्रविष्ट करा",
+        "privateMessage": "खाजगी संदेश पाठवा",
+        "profile": "आपले प्रोफाइल संपादित करा",
+        "raiseHand": "हात वर करा / कमी करा",
+        "raiseYourHand": "तुझा हात वर कर",
+        "shareRoom": "एखाद्यास आमंत्रित करा",
+        "sharedvideo": "एक YouTube व्हिडिओ सामायिक करा",
+        "shortcuts": "शॉर्टकट पहा",
+        "speakerStats": "स्पीकर आकडेवारी",
+        "startScreenSharing": "स्क्रीन सामायिकरण प्रारंभ करा",
+        "startSubtitles": "उपशीर्षके प्रारंभ करा",
+        "startvideoblur": "माझी पार्श्वभूमी अस्पष्ट करा",
+        "stopScreenSharing": "स्क्रीन सामायिकरण थांबवा",
+        "stopSharedVideo": "YouTube व्हिडिओ थांबवा",
+        "stopSubtitles": "उपशीर्षके थांबवा",
+        "stopvideoblur": "पार्श्वभूमी डाग अक्षम करा",
+        "talkWhileMutedPopup": "बोलण्याचा प्रयत्न करीत आहात? आपण निःशब्द आहात.",
+        "tileViewToggle": "टाइल दृश्य टॉगल करा",
+        "toggleCamera": "टॉगल कॅमेरा",
+        "videomute": "कॅमेरा प्रारंभ / थांबवा"
     },
     "transcribing": {
         "ccButtonTooltip": "उपशीर्षके प्रारंभ / थांबवा",
@@ -764,54 +768,20 @@
         "connectCalendarText": "आपली सर्व सभा {{app}} in मध्ये पाहण्यासाठी कॅलेंडर कनेक्ट करा. तसेच, आपल्या कॅलेंडरमध्ये {{provider}} संमेलने जोडा आणि एका क्लिकने त्या प्रारंभ करा.",
         "enterRoomTitle": "नवीन बैठक सुरू करा",
         "getHelp": "Get help",
-        "roomNameAllowedChars": "संमेलनाच्या नावात यापैकी कोणतेही वर्ण नसावेत: ?, &, :, ', \", %, #.",
         "go": "GO",
         "goSmall": "GO",
-        "join": "तयार करा / सामील व्हा",
         "info": "माहिती",
+        "join": "तयार करा / सामील व्हा",
         "privacy": "गोपनीयता",
         "recentList": "अलीकडील",
         "recentListDelete": "हटवा",
         "recentListEmpty": "आपली अलीकडील यादी सध्या रिक्त आहे. आपल्या कार्यसंघाशी गप्पा मारा आणि आपल्याला आपल्या सर्व अलीकडील संमेलने येथे आढळतील.",
         "reducedUIText": "{{App}} वर आपले स्वागत आहे!",
+        "roomNameAllowedChars": "संमेलनाच्या नावात यापैकी कोणतेही वर्ण नसावेत: ?, &, :, ', \", %, #.",
         "roomname": "Enter room name",
         "roomnameHint": "आपण सामील होऊ इच्छित असलेल्या खोलीचे नाव किंवा URL प्रविष्ट करा. आपण नाव लिहू शकता, आपण ज्यांना भेटत आहात त्या लोकांना हे कळू द्या जेणेकरुन ते समान नाव प्रविष्ट करा.",
         "sendFeedback": "अभिप्राय पाठवा",
         "terms": "अटी",
         "title": "सुरक्षित, पूर्णपणे वैशिष्ट्यीकृत आणि पूर्णपणे विनामूल्य व्हिडिओ कॉन्फरन्सिंग"
-    },
-    "lonelyMeetingExperience": {
-        "button": "इतरांना आमंत्रित करा",
-        "youAreAlone": "आपण सभेत एकटाच आहात"
-    },
-    "helpView": {
-        "header": "मदत केंद्र"
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

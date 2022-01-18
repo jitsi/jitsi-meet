@@ -20,9 +20,9 @@
     "audioDevices": {
         "bluetooth": "Bluetooth",
         "headphones": "Headphones",
+        "none": "",
         "phone": "Phone",
-        "speaker": "Speaker",
-        "none": ""
+        "speaker": "Speaker"
     },
     "audioOnly": {
         "audioOnly": "Audio only"
@@ -47,19 +47,24 @@
     },
     "chat": {
         "error": "Error: your message \"{{originalText}}\" was not sent. Reason: {{error}}",
+        "fieldPlaceHolder": "",
+        "messageTo": "",
         "messagebox": "Type a message",
         "nickname": {
             "popover": "Choose a nickname",
             "title": "Enter a nickname to use chat",
             "titleWithPolls": "Enter a nickname to use chat"
         },
+        "noMessagesMessage": "",
+        "privateNotice": "",
         "title": "Chat",
         "titleWithPolls": "Chat",
-        "you": "",
-        "privateNotice": "",
-        "noMessagesMessage": "",
-        "messageTo": "",
-        "fieldPlaceHolder": ""
+        "you": ""
+    },
+    "chromeExtensionBanner": {
+        "buttonText": "",
+        "dontShowAgain": "",
+        "installExtensionText": ""
     },
     "connectingOverlay": {
         "joiningRoom": "Connecting you to your meeting…"
@@ -74,11 +79,11 @@
         "DISCONNECTED": "Disconnected",
         "DISCONNECTING": "Disconnecting",
         "ERROR": "Error",
-        "RECONNECTING": "A network problem occurred. Reconnecting...",
-        "LOW_BANDWIDTH": "",
-        "GOT_SESSION_ID": "",
+        "FETCH_SESSION_ID": "",
         "GET_SESSION_ID_ERROR": "",
-        "FETCH_SESSION_ID": ""
+        "GOT_SESSION_ID": "",
+        "LOW_BANDWIDTH": "",
+        "RECONNECTING": "A network problem occurred. Reconnecting..."
     },
     "connectionindicator": {
         "address": "Address:",
@@ -87,6 +92,7 @@
         "bridgeCount": "Server count: ",
         "codecs": "Codecs (A/V): ",
         "connectedTo": "Connected to:",
+        "e2e_rtt": "",
         "framerate": "Frame rate:",
         "less": "Show less",
         "localaddress": "Local address:",
@@ -110,8 +116,7 @@
         "status": "Connection:",
         "transport": "Transport:",
         "transport_plural": "Transports:",
-        "turn": " (turn)",
-        "e2e_rtt": ""
+        "turn": " (turn)"
     },
     "dateUtils": {
         "earlier": "Earlier",
@@ -131,6 +136,7 @@
         "tryAgainButton": "Try again in desktop"
     },
     "defaultLink": "e.g. {{url}}",
+    "defaultNickname": "",
     "deviceError": {
         "cameraError": "Failed to access your camera",
         "cameraPermission": "Error obtaining camera permission",
@@ -143,7 +149,21 @@
         "selectADevice": "Select a device",
         "testAudio": "Play a test sound"
     },
+    "dialOut": {
+        "statusMessage": "is now {{status}}"
+    },
     "dialog": {
+        "Back": "Back",
+        "Cancel": "Cancel",
+        "IamHost": "I am the host",
+        "Ok": "Ok",
+        "Remove": "Remove",
+        "Share": "Share",
+        "Submit": "Submit",
+        "WaitForHostMsg": "The conference <b>{{room}}</b> has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
+        "WaitForHostMsgWOk": "The conference <b>{{room}}</b> has not yet started. If you are the host then please press Ok to authenticate. Otherwise, please wait for the host to arrive.",
+        "WaitingForHost": "Waiting for the host …",
+        "Yes": "Yes",
         "accessibilityLabel": {
             "liveStreaming": "Live Stream"
         },
@@ -151,7 +171,6 @@
         "alreadySharedVideoMsg": "Another member is already sharing a video. This conference allows only one shared video at a time.",
         "alreadySharedVideoTitle": "Only one shared video is allowed at a time",
         "applicationWindow": "Application window",
-        "Back": "Back",
         "cameraConstraintFailedError": "Your camera does not satisfy some of the required constraints.",
         "cameraNotFoundError": "Camera was not found.",
         "cameraNotSendingData": "We are unable to access your camera. Please check if another application is using this device, select another device from the settings menu or try to reload the application.",
@@ -159,7 +178,6 @@
         "cameraPermissionDeniedError": "You have not granted permission to use your camera. You can still join the conference but others won't see you. Use the camera button in the address bar to fix this.",
         "cameraUnknownError": "Cannot use camera for an unknown reason.",
         "cameraUnsupportedResolutionError": "Your camera does not support required video resolution.",
-        "Cancel": "Cancel",
         "close": "Close",
         "conferenceDisconnectMsg": "You may want to check your network connection. Reconnecting in {{seconds}} sec…",
         "conferenceDisconnectTitle": "You have been disconnected.",
@@ -182,11 +200,10 @@
         "externalInstallationTitle": "Extension required",
         "goToStore": "Go to the webstore",
         "gracefulShutdown": "Our service is currently down for maintenance. Please try again later.",
-        "IamHost": "I am the host",
-        "incorrectRoomLockPassword": "",
         "incorrectPassword": "Incorrect username or password",
-        "inlineInstallationMsg": "You need to install our desktop sharing extension.",
+        "incorrectRoomLockPassword": "",
         "inlineInstallExtension": "Install now",
+        "inlineInstallationMsg": "You need to install our desktop sharing extension.",
         "internalError": "Oops! Something went wrong. The following error occurred: {{error}}",
         "internalErrorTitle": "Internal error",
         "kickMessage": "Ouch! You have been kicked out of the meet!",
@@ -210,11 +227,16 @@
         "micNotSendingDataTitle": "Unable to access microphone",
         "micPermissionDeniedError": "You have not granted permission to use your microphone. You can still join the conference but others won't hear you. Use the camera button in the address bar to fix this.",
         "micUnknownError": "Cannot use microphone for an unknown reason.",
+        "muteEveryoneDialog": "",
+        "muteEveryoneElseDialog": "",
+        "muteEveryoneElseTitle": "",
+        "muteEveryoneSelf": "",
+        "muteEveryoneStartMuted": "",
+        "muteEveryoneTitle": "",
         "muteParticipantBody": "You won't be able to unmute them, but they can unmute themselves at any time.",
         "muteParticipantButton": "Mute",
         "muteParticipantDialog": "Are you sure you want to mute this participant? You won't be able to unmute them, but they can unmute themselves at any time.",
         "muteParticipantTitle": "Mute this member?",
-        "Ok": "Ok",
         "passwordLabel": "Password",
         "passwordNotSupported": "Setting a meeting password is not supported.",
         "passwordNotSupportedTitle": "Password not supported",
@@ -232,21 +254,24 @@
         "remoteControlShareScreenWarning": "Note that if you press \"Allow\" you will share your screen!",
         "remoteControlStopMessage": "The remote control session ended!",
         "remoteControlTitle": "Remote desktop control",
-        "Remove": "Remove",
         "removePassword": "Remove password",
         "removeSharedVideoMsg": "Are you sure you would like to remove your shared video?",
         "removeSharedVideoTitle": "Remove shared video",
         "reservationError": "Reservation system error",
         "reservationErrorMsg": "Error code: {{code}}, message: {{msg}}",
         "retry": "Retry",
+        "screenSharingAudio": "",
         "screenSharingFailedToInstall": "Oops! Your screen sharing extension failed to install.",
         "screenSharingFailedToInstallTitle": "Screen sharing extension failed to install",
         "screenSharingFirefoxPermissionDeniedError": "Something went wrong while we were trying to share your screen. Please make sure that you have given us permission to do so. ",
         "screenSharingFirefoxPermissionDeniedTitle": "Oops! We weren’t able to start screen sharing!",
         "screenSharingPermissionDeniedError": "Oops! Something went wrong with your screen sharing extension permissions. Please reload and try again.",
+        "sendPrivateMessage": "",
+        "sendPrivateMessageCancel": "",
+        "sendPrivateMessageOk": "",
+        "sendPrivateMessageTitle": "",
         "serviceUnavailable": "Service unavailable",
         "sessTerminated": "Call terminated",
-        "Share": "Share",
         "shareVideoLinkError": "Please provide a correct youtube link.",
         "shareVideoTitle": "Share a video",
         "shareYourScreen": "Share your screen",
@@ -260,7 +285,6 @@
         "stopRecordingWarning": "Are you sure you would like to stop the recording?",
         "stopStreamingWarning": "Are you sure you would like to stop the live streaming?",
         "streamKey": "Live stream key",
-        "Submit": "Submit",
         "thankYou": "Thank you for using {{appName}}!",
         "token": "token",
         "tokenAuthFailed": "Sorry, you're not allowed to join this call.",
@@ -268,25 +292,10 @@
         "transcribing": "Transcribing",
         "unlockRoom": "Remove meeting password",
         "userPassword": "user password",
-        "WaitForHostMsg": "The conference <b>{{room}}</b> has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
-        "WaitForHostMsgWOk": "The conference <b>{{room}}</b> has not yet started. If you are the host then please press Ok to authenticate. Otherwise, please wait for the host to arrive.",
-        "WaitingForHost": "Waiting for the host …",
-        "Yes": "Yes",
-        "yourEntireScreen": "Your entire screen",
-        "sendPrivateMessageTitle": "",
-        "sendPrivateMessageOk": "",
-        "sendPrivateMessageCancel": "",
-        "sendPrivateMessage": "",
-        "screenSharingAudio": "",
-        "muteEveryoneStartMuted": "",
-        "muteEveryoneSelf": "",
-        "muteEveryoneTitle": "",
-        "muteEveryoneDialog": "",
-        "muteEveryoneElseTitle": "",
-        "muteEveryoneElseDialog": ""
+        "yourEntireScreen": "Your entire screen"
     },
-    "dialOut": {
-        "statusMessage": "is now {{status}}"
+    "documentSharing": {
+        "title": ""
     },
     "feedback": {
         "average": "Average",
@@ -323,6 +332,7 @@
         "inviteURLFirstPartGeneral": "You are invited to join a meeting.",
         "inviteURLFirstPartPersonal": "{{name}} is inviting you to a meeting.\n",
         "inviteURLSecondPart": "\nJoin the meeting:\n{{url}}\n",
+        "label": "Meeting info",
         "liveStreamURL": "Live stream:",
         "moreNumbers": "More numbers",
         "noNumbers": "No dial-in numbers.",
@@ -331,8 +341,13 @@
         "numbers": "Dial-in Numbers",
         "password": "Password:",
         "title": "Share",
-        "tooltip": "Share link and dial-in info for this meeting",
-        "label": "Meeting info"
+        "tooltip": "Share link and dial-in info for this meeting"
+    },
+    "inlineDialogFailure": {
+        "msg": "We stumbled a bit.",
+        "retry": "Try again",
+        "support": "Support",
+        "supportMsg": "If this keeps happening, reach out to"
     },
     "inviteDialog": {
         "alertText": "Failed to invite some participants.",
@@ -341,12 +356,6 @@
         "searchPeopleOnlyPlaceholder": "Search for participants",
         "searchPlaceholder": "Participant or phone number",
         "send": "Send"
-    },
-    "inlineDialogFailure": {
-        "msg": "We stumbled a bit.",
-        "retry": "Try again",
-        "support": "Support",
-        "supportMsg": "If this keeps happening, reach out to"
     },
     "keyboardShortcuts": {
         "focusLocal": "Focus on your video",
@@ -380,21 +389,21 @@
         "expandedPending": "The live streaming is being started…",
         "failedToStart": "Live Streaming failed to start",
         "getStreamKeyManually": "We weren’t able to fetch any live streams. Try getting your live stream key from YouTube.",
+        "googlePrivacyPolicy": "Google Privacy Policy",
         "invalidStreamKey": "Live stream key may be incorrect.",
         "off": "Live Streaming stopped",
+        "offBy": "",
         "on": "Live Streaming started",
+        "onBy": "",
         "pending": "Starting Live Stream…",
         "serviceName": "Live Streaming service",
-        "signedInAs": "You are currently signed in as:",
         "signIn": "Sign in with Google",
         "signInCTA": "Sign in or enter your live stream key from YouTube.",
         "signOut": "Sign out",
+        "signedInAs": "You are currently signed in as:",
         "start": "Start a live stream",
         "streamIdHelp": "What's this?",
         "unavailableTitle": "Live Streaming unavailable",
-        "onBy": "",
-        "offBy": "",
-        "googlePrivacyPolicy": "Google Privacy Policy",
         "youtubeTerms": "YouTube terms of services"
     },
     "localRecording": {
@@ -444,25 +453,25 @@
         "me": "Me",
         "moderator": "Moderator rights granted!",
         "muted": "You have started the conversation muted.",
-        "mutedTitle": "You're muted!",
-        "mutedRemotelyTitle": "You have been muted by {{participantDisplayName}}!",
         "mutedRemotelyDescription": "You can always unmute when you're ready to speak. Mute back when you're done to keep noise away from the meeting.",
+        "mutedRemotelyTitle": "You have been muted by {{participantDisplayName}}!",
+        "mutedTitle": "You're muted!",
+        "newDeviceAction": "Use",
+        "newDeviceAudioTitle": "New audio device detected",
+        "newDeviceCameraTitle": "New camera detected",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) removed by another participant",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) set by another participant",
         "raisedHand": "{{name}} would like to speak.",
         "somebody": "Somebody",
-        "startSilentTitle": "You joined with no audio output!",
         "startSilentDescription": "Rejoin the meeting to enable audio",
+        "startSilentTitle": "You joined with no audio output!",
+        "suboptimalBrowserWarning": "We are afraid your meeting experience isn't going to be that great here. We are looking for ways to improve this, but until then please try using one of the <a href='{{recommendedBrowserPageLink}}' target='_blank'>fully supported browsers</a>.",
         "suboptimalExperienceDescription": "Eer... we are afraid your experience with {{appName}} isn't going to be that great here. We are looking for ways to improve this but, until then, please try using one of the <a href='{{recommendedBrowserPageLink}}' target='_blank'>fully supported browsers</a>.",
         "suboptimalExperienceTitle": "Browser Warning",
-        "unmute": "Unmute",
-        "newDeviceCameraTitle": "New camera detected",
-        "newDeviceAudioTitle": "New audio device detected",
-        "newDeviceAction": "Use",
-        "suboptimalBrowserWarning": "We are afraid your meeting experience isn't going to be that great here. We are looking for ways to improve this, but until then please try using one of the <a href='{{recommendedBrowserPageLink}}' target='_blank'>fully supported browsers</a>."
+        "unmute": "Unmute"
     },
-    "passwordSetRemotely": "set by another member",
     "passwordDigitsOnly": "Up to {{number}} digits",
+    "passwordSetRemotely": "set by another member",
     "poweredby": "powered by",
     "presenceStatus": {
         "busy": "Busy",
@@ -484,6 +493,7 @@
         "setEmailLabel": "Set your Gravatar email",
         "title": "Profile"
     },
+    "raisedHand": "Would like to speak",
     "recording": {
         "authDropboxText": "Upload to Dropbox",
         "availableSpace": "Available space: {{spaceLeft}} MB (approximately {{duration}} minutes of recording)",
@@ -499,7 +509,9 @@
         "live": "LIVE",
         "loggedIn": "Logged in as {{userName}}",
         "off": "Recording stopped",
+        "offBy": "{{name}} stopped the recording",
         "on": "Recording started",
+        "onBy": "{{name}} started the recording",
         "pending": "Preparing to record the meeting…",
         "rec": "REC",
         "serviceDescription": "Your recording will be saved by the recording service",
@@ -507,9 +519,7 @@
         "signIn": "Sign in",
         "signOut": "Sign out",
         "unavailable": "Oops! The {{serviceName}} is currently unavailable. We're working on resolving the issue. Please try again later.",
-        "unavailableTitle": "Recording unavailable",
-        "onBy": "{{name}} started the recording",
-        "offBy": "{{name}} stopped the recording"
+        "unavailableTitle": "Recording unavailable"
     },
     "sectionList": {
         "pullToRefresh": "Pull to refresh"
@@ -526,6 +536,7 @@
         "followMe": "Everyone follows me",
         "language": "Language",
         "loggedIn": "Logged in as {{name}}",
+        "microphones": "Microphones",
         "moderator": "Moderator",
         "more": "More",
         "name": "Name",
@@ -533,30 +544,29 @@
         "selectAudioOutput": "Audio output",
         "selectCamera": "Camera",
         "selectMic": "Microphone",
+        "speakers": "Speakers",
         "startAudioMuted": "Everyone starts muted",
         "startVideoMuted": "Everyone starts hidden",
-        "title": "Settings",
-        "speakers": "Speakers",
-        "microphones": "Microphones"
+        "title": "Settings"
     },
     "settingsView": {
+        "advanced": "Advanced",
         "alertOk": "OK",
         "alertTitle": "Warning",
         "alertURLText": "The entered server URL is invalid",
         "buildInfoSection": "Build Information",
         "conferenceSection": "Conference",
+        "disableCallIntegration": "Disable native call integration",
+        "disableP2P": "Disable Peer-To-Peer mode",
         "displayName": "Display name",
         "email": "Email",
         "header": "Settings",
         "profileSection": "Profile",
         "serverURL": "Server URL",
+        "showAdvanced": "Show advanced settings",
         "startWithAudioMuted": "Start with audio muted",
         "startWithVideoMuted": "Start with video muted",
-        "version": "Version",
-        "showAdvanced": "Show advanced settings",
-        "disableP2P": "Disable Peer-To-Peer mode",
-        "disableCallIntegration": "Disable native call integration",
-        "advanced": "Advanced"
+        "version": "Version"
     },
     "share": {
         "dialInfoText": "\n\n=====\n\nJust want to dial in on your phone?\n\n{{defaultDialInNumber}}Click this link to see the dial in phone numbers for this meeting\n{{dialInfoPageUrl}}",
@@ -581,44 +591,45 @@
         "title": "Your video call was interrupted because this computer went to sleep."
     },
     "toolbar": {
+        "Settings": "Settings",
         "accessibilityLabel": {
+            "Settings": "Toggle settings",
             "audioOnly": "Toggle audio only",
             "audioRoute": "Select the sound device",
             "callQuality": "Manage call quality",
             "cc": "Toggle subtitles",
             "chat": "Toggle chat window",
             "document": "Toggle shared document",
+            "download": "Download our apps",
             "feedback": "Leave feedback",
             "fullScreen": "Toggle full screen",
             "hangup": "Leave the call",
+            "help": "Help",
             "invite": "Invite people",
             "kick": "Kick participant",
             "localRecording": "Toggle local recording controls",
             "lockRoom": "Toggle meeting password",
             "moreActions": "Toggle more actions menu",
             "moreActionsMenu": "More actions menu",
+            "moreOptions": "Show more options",
             "mute": "Toggle mute audio",
+            "muteEveryone": "Mute everyone",
             "pip": "Toggle Picture-in-Picture mode",
+            "privateMessage": "Send private message",
             "profile": "Edit your profile",
             "raiseHand": "Toggle raise hand",
             "recording": "Toggle recording",
             "remoteMute": "Mute participant",
-            "Settings": "Toggle settings",
-            "sharedvideo": "Toggle YouTube video sharing",
             "shareRoom": "Invite someone",
             "shareYourScreen": "Toggle screenshare",
+            "sharedvideo": "Toggle YouTube video sharing",
             "shortcuts": "Toggle shortcuts",
             "show": "Show on stage",
             "speakerStats": "Toggle speaker statistics",
             "tileView": "Toggle tile view",
             "toggleCamera": "Toggle camera",
-            "videomute": "Toggle mute video",
             "videoblur": "",
-            "privateMessage": "Send private message",
-            "muteEveryone": "Mute everyone",
-            "moreOptions": "Show more options",
-            "help": "Help",
-            "download": "Download our apps"
+            "videomute": "Toggle mute video"
         },
         "addPeople": "Add people to your call",
         "audioOnlyOff": "Disable audio only mode",
@@ -647,22 +658,21 @@
         "profile": "Edit your profile",
         "raiseHand": "Raise / Lower your hand",
         "raiseYourHand": "Raise your hand",
-        "Settings": "Settings",
-        "sharedvideo": "Share a YouTube video",
         "shareRoom": "Invite someone",
+        "sharedvideo": "Share a YouTube video",
         "shortcuts": "View shortcuts",
         "speakerStats": "Speaker stats",
         "startScreenSharing": "Start screen sharing",
         "startSubtitles": "Start subtitles",
+        "startvideoblur": "",
         "stopScreenSharing": "Stop screen sharing",
-        "stopSubtitles": "Stop subtitles",
         "stopSharedVideo": "Stop YouTube video",
+        "stopSubtitles": "Stop subtitles",
+        "stopvideoblur": "",
         "talkWhileMutedPopup": "Trying to speak? You are muted.",
         "tileViewToggle": "Toggle tile view",
         "toggleCamera": "Toggle camera",
-        "videomute": "Start / Stop camera",
-        "startvideoblur": "",
-        "stopvideoblur": ""
+        "videomute": "Start / Stop camera"
     },
     "transcribing": {
         "ccButtonTooltip": "Start / Stop subtitles",
@@ -739,8 +749,8 @@
         "connectCalendarText": "",
         "enterRoomTitle": "Start a new meeting",
         "go": "GO",
-        "join": "JOIN",
         "info": "Info",
+        "join": "JOIN",
         "privacy": "Privacy",
         "recentList": "Recent",
         "recentListDelete": "Delete",
@@ -751,15 +761,5 @@
         "sendFeedback": "Send feedback",
         "terms": "Terms",
         "title": "Secure, fully featured, and completely free video conferencing"
-    },
-    "documentSharing": {
-        "title": ""
-    },
-    "defaultNickname": "",
-    "chromeExtensionBanner": {
-        "dontShowAgain": "",
-        "buttonText": "",
-        "installExtensionText": ""
-    },
-    "raisedHand": "Would like to speak"
+    }
 }
