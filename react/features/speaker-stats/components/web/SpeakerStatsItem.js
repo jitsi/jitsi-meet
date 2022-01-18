@@ -50,11 +50,6 @@ type Props = {
     facialExpressions: Object,
 
     /**
-     * True if the client width is les than 750.
-     */
-    reduceExpressions: boolean,
-
-    /**
      * True if the facial recognition is not disabled.
      */
     showFacialExpressions: boolean,
@@ -108,11 +103,7 @@ const SpeakerStatsItem = (props: Props) => {
     const timeClass = `${classes.time} ${props.isDominantSpeaker ? classes.dominant : ''}`;
 
 
-    const FacialExpressions = () => (
-        props.reduceExpressions
-            ? FACIAL_EXPRESSIONS
-                .filter(expression => ![ 'angry', 'fearful', 'disgusted' ].includes(expression))
-            : FACIAL_EXPRESSIONS).map(
+    const FacialExpressions = () => FACIAL_EXPRESSIONS.map(
             expression => (
                 <div
                     aria-label = { props.t(`speakerStats.${expression}`) }
