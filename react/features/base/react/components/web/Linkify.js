@@ -3,6 +3,7 @@
 import punycode from 'punycode';
 import React, { Component } from 'react';
 import ReactLinkify from 'react-linkify';
+import { LinkPreview } from '@dhaiwat10/react-link-preview';
 
 type Props = {
 
@@ -40,13 +41,34 @@ export default class Linkify extends Component<Props> {
      */
     _componentDecorator(decoratedHref: string, decoratedText: string, key: number) {
         return (
-            <a
-                href = { decoratedHref }
-                key = { key }
-                rel = 'noopener noreferrer'
-                target = '_blank'>
-                { punycode.toASCII(decoratedText) }
-            </a>
+            <>
+            <LinkPreview
+                url={decoratedHref}
+                height={200}
+                width={200}
+                showLoader={true}
+                openInNewTab={true}
+                imageHeight={100}
+                descriptionLength={15}
+                textAlign="center"
+                borderRadius={5}
+                fallback={(value) => {
+                    return(
+                        <p>{value}</p>
+                    )
+                }}
+                secondaryTextColor="SteelBlue"
+            />
+            <p>
+                {
+                    decoratedText.split(" ").map((word) => {
+                        return word.includes("://") ?
+                        (<a href={word}></a>) :
+                        (<span>{word}</span>)
+                    })
+                }
+            </p>
+            </>
         );
     }
 }
