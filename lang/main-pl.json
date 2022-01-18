@@ -911,8 +911,8 @@
     },
     "startupoverlay": {
         "policyText": " ",
-        "genericTitle": "Spotkanie potrzebuje używać Twojego mikrofonu i kiamery.",
-        "title": "{{app}} potrzebuje używać Twojego mikrofonu i kiamery."
+        "genericTitle": "Spotkanie potrzebuje używać Twojego mikrofonu i kamery.",
+        "title": "{{app}} potrzebuje używać Twojego mikrofonu i kamery."
     },
     "suspendedoverlay": {
         "rejoinKeyTitle": "Dołącz ponownie",
