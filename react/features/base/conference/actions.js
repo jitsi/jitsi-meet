@@ -96,6 +96,9 @@ function _addConferenceListeners(conference, dispatch, state) {
     // Dispatches into features/base/conference follow:
 
     conference.on(
+        JitsiConferenceEvents.AUTH_STATUS_CHANGED,
+        (authEnabled, authLogin) => dispatch(authStatusChanged(authEnabled, authLogin)));
+    conference.on(
         JitsiConferenceEvents.CONFERENCE_FAILED,
         (...args) => dispatch(conferenceFailed(conference, ...args)));
     conference.on(
