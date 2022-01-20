@@ -14,6 +14,8 @@ jobs:
     - run: npm install
     - name: Check git status
       run: git status
+    - name: Normalize lang files to ensure sorted
+      run: npm run lang-sort
     - name: Check git diff
       run: git diff
     - name: Check if the git repository is clean
