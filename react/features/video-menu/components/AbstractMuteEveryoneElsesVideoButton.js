@@ -5,7 +5,7 @@ import { openDialog } from '../../base/dialog';
 import { IconMuteVideoEveryone } from '../../base/icons';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 
-import { MuteEveryonesVideoDialog } from '.';
+import { MuteEveryonesVideoDialog } from './';
 
 export type Props = AbstractButtonProps & {
 
