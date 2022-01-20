@@ -41,5 +41,12 @@ post_install do |installer|
       config.build_settings['SUPPORTS_MACCATALYST'] = 'NO'
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
     end
+    # https://github.com/facebook/react-native/issues/32351#issuecomment-939157955
+    case target.name
+    when 'RCT-Folly'
+      target.build_configurations.each do |config|
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '9.0'
+      end
+    end
   end
 end
