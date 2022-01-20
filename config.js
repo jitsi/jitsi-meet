@@ -458,6 +458,9 @@ var config = {
     // If Lobby is enabled starts knocking automatically.
     // autoKnockLobby: false,
 
+    // Enable lobby chat.
+    // enableLobbyChat: true,
+
     // Hides add breakout room button
     // hideAddRoomButton: false,
 

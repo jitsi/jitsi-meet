@@ -4,6 +4,7 @@ import React from 'react';
 
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
+import { handleLobbyChatInitialized } from '../../../chat/actions.any';
 import NotificationWithParticipants from '../../../notifications/components/web/NotificationWithParticipants';
 import { approveKnockingParticipant, rejectKnockingParticipant } from '../../actions';
 import AbstractKnockingParticipantList, {
@@ -29,7 +30,9 @@ class KnockingParticipantList extends AbstractKnockingParticipantList<Props> {
      * @inheritdoc
      */
     render() {
-        const { _participants, _visible, t } = this.props;
+        const { _participants, _visible, _isLobbyChatActive,
+            _lobbyMessageRecipient, _lobbyLocalId, _enableLobbyChat, t }
+            = this.props;
 
         if (!_visible) {
             return null;
@@ -42,7 +45,12 @@ class KnockingParticipantList extends AbstractKnockingParticipantList<Props> {
                 </div>
                 <NotificationWithParticipants
                     approveButtonText = { t('lobby.allow') }
+                    enableLobbyChat = { _enableLobbyChat }
+                    isLobbyChatActive = { _isLobbyChatActive }
+                    lobbyLocalId = { _lobbyLocalId }
+                    lobbyMessageRecipient = { _lobbyMessageRecipient }
                     onApprove = { approveKnockingParticipant }
+                    onHandleLobbyChatInitialized = { handleLobbyChatInitialized }
                     onReject = { rejectKnockingParticipant }
                     participants = { _participants }
                     rejectButtonText = { t('lobby.reject') }

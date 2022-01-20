@@ -141,6 +141,7 @@ export default [
     'enableInsecureRoomNameWarning',
     'enableLayerSuspension',
     'enableLipSync',
+    'enableLobbyChat',
     'enableOpusRed',
     'enableRemb',
     'enableSaveLogs',

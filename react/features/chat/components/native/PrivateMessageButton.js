@@ -6,10 +6,21 @@ import { IconMessage, IconReply } from '../../../base/icons';
 import { getParticipantById } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import { handleLobbyChatInitialized } from '../../../chat/actions.any';
 import { navigate } from '../../../conference/components/native/ConferenceNavigationContainerRef';
 import { screen } from '../../../conference/components/native/routes';
 
 export type Props = AbstractButtonProps & {
+
+    /**
+     * True if message is a lobby chat message.
+     */
+    isLobbyMessage: boolean,
+
+    /**
+     * The Redux Dispatch function.
+     */
+    dispatch: Function,
 
     /**
      * The ID of the participant that the message is to be sent.
@@ -53,6 +64,9 @@ class PrivateMessageButton extends AbstractButton<Props, any> {
      * @returns {void}
      */
     _handleClick() {
+        if (this.props.isLobbyMessage) {
+            this.props.dispatch(handleLobbyChatInitialized(this.props.participantID));
+        }
         this.props._isPollsDisabled
             ? navigate(screen.conference.chat, {
                 privateMessageRecipient: this.props._participant
@@ -88,12 +102,13 @@ class PrivateMessageButton extends AbstractButton<Props, any> {
 export function _mapStateToProps(state: Object, ownProps: Props): $Shape<Props> {
     const enabled = getFeatureFlag(state, CHAT_ENABLED, true);
     const { disablePolls } = state['features/base/config'];
-    const { visible = enabled } = ownProps;
+    const { visible = enabled, isLobbyMessage } = ownProps;
 
     return {
         _isPollsDisabled: disablePolls,
         _participant: getParticipantById(state, ownProps.participantID),
-        visible
+        visible,
+        isLobbyMessage
     };
 }
 

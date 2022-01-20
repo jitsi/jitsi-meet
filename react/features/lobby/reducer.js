@@ -6,8 +6,10 @@ import { ReducerRegistry } from '../base/redux';
 import {
     KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED,
     KNOCKING_PARTICIPANT_LEFT,
+    REMOVE_LOBBY_CHAT_WITH_MODERATOR,
     SET_KNOCKING_STATE,
     SET_LOBBY_MODE_ENABLED,
+    SET_LOBBY_PARTICIPANT_CHAT_STATE,
     SET_LOBBY_VISIBILITY,
     SET_PASSWORD_JOIN_FAILED
 } from './actionTypes';
@@ -69,6 +71,34 @@ ReducerRegistry.register('features/lobby', (state = DEFAULT_STATE, action) => {
         return {
             ...state,
             passwordJoinFailed: action.failed
+        };
+    case SET_LOBBY_PARTICIPANT_CHAT_STATE:
+        return {
+            ...state,
+            knockingParticipants: state.knockingParticipants.map(participant => {
+                if (participant.id === action.participant.id) {
+                    return {
+                        ...participant,
+                        chattingWithModerator: action.moderator.id
+                    };
+                }
+
+                return participant;
+            })
+        };
+    case REMOVE_LOBBY_CHAT_WITH_MODERATOR:
+        return {
+            ...state,
+            knockingParticipants: state.knockingParticipants.map(participant => {
+                if (participant.chattingWithModerator === action.moderatorId) {
+                    return {
+                        ...participant,
+                        chattingWithModerator: undefined
+                    };
+                }
+
+                return participant;
+            })
         };
     }
 

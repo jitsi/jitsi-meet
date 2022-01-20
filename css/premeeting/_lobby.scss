@@ -12,6 +12,17 @@
             margin: 8px;
         }
 
+        .lobby-chat-container {
+            background-color: $chatBackgroundColor;
+            width: 100%;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            margin: 24px 0;
+            border-radius: 5px;
+        }
+
         .joining-message {
             color: white;
             margin: 24px auto;
@@ -61,6 +72,10 @@
     &.toolbox-visible {
         // Same as toolbox subject position
         top: 120px;
+    }
+
+    &.avoid-chat {
+        left: 315px;
     }
 
     .title {

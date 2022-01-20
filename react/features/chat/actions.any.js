@@ -1,4 +1,9 @@
 // @flow
+import { type Dispatch } from 'redux';
+
+import { getCurrentConference } from '../base/conference';
+import { getLocalParticipant } from '../base/participants';
+import { LOBBY_CHAT_INITIALIZED } from '../lobby/constants';
 
 import {
     ADD_MESSAGE,
@@ -7,7 +12,10 @@ import {
     EDIT_MESSAGE,
     SEND_MESSAGE,
     SET_PRIVATE_MESSAGE_RECIPIENT,
-    SET_IS_POLL_TAB_FOCUSED
+    SET_IS_POLL_TAB_FOCUSED,
+    SET_LOBBY_CHAT_RECIPIENT,
+    REMOVE_LOBBY_CHAT_PARTICIPANT,
+    SET_LOBBY_CHAT_ACTIVE_STATE
 } from './actionTypes';
 
 /**
@@ -130,5 +138,124 @@ export function setIsPollsTabFocused(isPollsTabFocused: boolean) {
     return {
         isPollsTabFocused,
         type: SET_IS_POLL_TAB_FOCUSED
+    };
+}
+
+
+/**
+ * Initiates the sending of messages between a moderator and a lobby attendee.
+ *
+ * @param {Object} lobbyChatInititializedInfo - The information about the attendee and the moderator
+ * that is going to chat.
+ *
+ * @returns {Function}
+ */
+export function onLobbyChatInitialized(lobbyChatInititializedInfo: Object) {
+    return async (dispatch: Dispatch<any>, getState: Function) => {
+        const state = getState();
+        const conference = getCurrentConference(state);
+
+        const lobbyLocalId = conference.getLobbyLocalId();
+
+        if (!lobbyLocalId) {
+            return;
+        }
+
+        if (lobbyChatInititializedInfo.moderator.id === lobbyLocalId) {
+            dispatch({
+                type: SET_LOBBY_CHAT_RECIPIENT,
+                participant: lobbyChatInititializedInfo.attendee,
+                open: true
+            });
+        }
+
+        if (lobbyChatInititializedInfo.attendee.id === lobbyLocalId) {
+            return dispatch({
+                type: SET_LOBBY_CHAT_RECIPIENT,
+                participant: lobbyChatInititializedInfo.moderator,
+                open: false
+            });
+        }
+    };
+}
+
+/**
+ * Sets the lobby room's chat active state.
+ *
+ * @param {boolean} value - The active state.
+ *
+ * @returns {Object}
+ */
+export function setLobbyChatActiveState(value: boolean) {
+    return {
+        type: SET_LOBBY_CHAT_ACTIVE_STATE,
+        payload: value
+    };
+}
+
+/** ...................
+ * Removes lobby type messages.
+ *
+ *  @param {boolean} removeLobbyChatMessages - The participant to remove
+ * If not specified, it will delete all lobby messages.
+ *
+ * @returns {Object}
+ */
+export function removeLobbyChatParticipant(removeLobbyChatMessages: ?boolean) {
+    return {
+        type: REMOVE_LOBBY_CHAT_PARTICIPANT,
+        removeLobbyChatMessages
+    };
+}
+
+/** .........
+ * Handles initial setup of lobby message between
+ * Moderator and participant.
+ *
+ * @param {string} participantId - The participant id.
+ *
+ * @returns {Object}
+ */
+export function handleLobbyChatInitialized(participantId: string) {
+    return async (dispatch: Dispatch<any>, getState: Function) => {
+        const state = getState();
+        const conference = state['features/base/conference'].conference;
+        const { knockingParticipants } = state['features/lobby'];
+        const { lobbyMessageRecipient } = state['features/chat'];
+        const me = getLocalParticipant(state);
+        const lobbyLocalId = conference.getLobbyLocalId();
+
+
+        if (lobbyMessageRecipient && lobbyMessageRecipient.id === participantId) {
+            return dispatch(setLobbyChatActiveState(true));
+        }
+
+        const attendee = knockingParticipants.find(p => p.id === participantId);
+
+        if (attendee && attendee.chattingWithModerator === lobbyLocalId) {
+            return dispatch({
+                type: SET_LOBBY_CHAT_RECIPIENT,
+                participant: attendee,
+                open: true
+            });
+        }
+
+        if (!attendee) {
+            return;
+        }
+
+        const payload = { type: LOBBY_CHAT_INITIALIZED,
+            moderator: {
+                ...me,
+                name: 'Moderator',
+                id: lobbyLocalId
+            },
+            attendee };
+
+        // notify attendee privately.
+        conference.sendPrivateLobbyMessage(attendee.id, payload);
+
+        // notify other moderators.
+        return conference.sendLobbyMessage(payload);
     };
 }

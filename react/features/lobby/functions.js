@@ -39,3 +39,40 @@ export function getIsLobbyVisible(state: any) {
 export function getKnockingParticipantsById(state: any) {
     return getKnockingParticipants(state).map(participant => participant.id);
 }
+
+
+/**
+ * Function that handles the visibility of the lobby chat message icon.
+ *
+ * @param {Object} info - Show lobby chat icon options.
+ * @returns {boolean}
+ */
+export function showLobbyChatIcon(
+        info: Object
+) {
+    const { participant,
+        lobbyLocalId,
+        isLobbyChatActive,
+        lobbyChatRecipient,
+        enableLobbyChat } = info;
+
+    if (!enableLobbyChat) {
+        return false;
+    }
+
+    if (!isLobbyChatActive
+    && (!participant.chattingWithModerator
+    || participant.chattingWithModerator === lobbyLocalId)
+    ) {
+        return true;
+    }
+
+    if (isLobbyChatActive && lobbyChatRecipient
+    && participant.id !== lobbyChatRecipient.id
+        && (!participant.chattingWithModerator
+            || participant.chattingWithModerator === lobbyLocalId)) {
+        return true;
+    }
+
+    return false;
+}

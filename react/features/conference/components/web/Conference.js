@@ -73,6 +73,11 @@ type Props = AbstractProps & {
     _backgroundAlpha: number,
 
     /**
+     * If the chat pane is open or not.
+     */
+     _isChatOpen: boolean,
+
+    /**
      * If participants pane is visible or not.
      */
     _isParticipantsPaneVisible: boolean,
@@ -243,7 +248,9 @@ class Conference extends AbstractConference<Props, *> {
                         onTouchStart = { this._onVidespaceTouchStart }>
                         <LargeVideo />
                         {!_isParticipantsPaneVisible
-                         && <div id = 'notification-participant-list'>
+                         && <div
+                             className = { this.props._isChatOpen ? 'avoid-chat' : '' }
+                             id = 'notification-participant-list'>
                              <KnockingParticipantList />
                          </div>}
                         <Filmstrip />
@@ -397,10 +404,12 @@ class Conference extends AbstractConference<Props, *> {
 function _mapStateToProps(state) {
     const { backgroundAlpha, mouseMoveCallbackInterval } = state['features/base/config'];
     const { overflowDrawer } = state['features/toolbox'];
+    const { isOpen } = state['features/chat'];
 
     return {
         ...abstractMapStateToProps(state),
         _backgroundAlpha: backgroundAlpha,
+        _isChatOpen: isOpen,
         _isParticipantsPaneVisible: getParticipantsPaneOpen(state),
         _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state)],
         _mouseMoveCallbackInterval: mouseMoveCallbackInterval,

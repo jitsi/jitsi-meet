@@ -5,8 +5,10 @@ import { ScrollView, Text, View, TouchableOpacity } from 'react-native';
 
 import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n';
+import { Icon, IconChat } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { HIDDEN_EMAILS } from '../../constants';
+import { showLobbyChatIcon } from '../../functions';
 import AbstractKnockingParticipantList, {
     mapStateToProps as abstractMapStateToProps,
     type Props
@@ -24,7 +26,8 @@ class KnockingParticipantList extends AbstractKnockingParticipantList {
      * @inheritdoc
      */
     render() {
-        const { _participants, _visible, t } = this.props;
+        const { _participants, _visible, _isLobbyChatActive,
+            _lobbyMessageRecipient, _lobbyLocalId, _enableLobbyChat, t } = this.props;
 
         if (!_visible) {
             return null;
@@ -71,6 +74,28 @@ class KnockingParticipantList extends AbstractKnockingParticipantList {
                                 { t('lobby.reject') }
                             </Text>
                         </TouchableOpacity>
+                        { showLobbyChatIcon(
+                            {
+                                participant: p,
+                                lobbyLocalId: _lobbyLocalId,
+                                isLobbyChatActive: _isLobbyChatActive,
+                                lobbyChatRecipient: _lobbyMessageRecipient,
+                                enableLobbyChat: _enableLobbyChat
+                            }
+                        )
+                            ? (
+                                <TouchableOpacity
+                                    onPress = { this._onInitializeLobbyChat(p.id) }
+                                    style = { [
+                                        styles.knockingParticipantListButton,
+                                        styles.knockingParticipantListSecondaryButton
+                                    ] }>
+                                    <Icon
+                                        className = 'icon'
+                                        size = { 14 }
+                                        src = { IconChat } />
+                                </TouchableOpacity>
+                            ) : null}
                     </View>
                 )) }
             </ScrollView>
@@ -78,6 +103,7 @@ class KnockingParticipantList extends AbstractKnockingParticipantList {
     }
 
     _onRespondToParticipant: (string, boolean) => Function;
+    _onInitializeLobbyChat: (string) => Function;
 }
 
 /**

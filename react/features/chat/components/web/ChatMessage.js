@@ -4,6 +4,7 @@ import React from 'react';
 
 import { translate } from '../../../base/i18n';
 import Message from '../../../base/react/components/web/Message';
+import { connect } from '../../../base/redux';
 import { MESSAGE_TYPE_LOCAL } from '../../constants';
 import AbstractChatMessage, { type Props } from '../AbstractChatMessage';
 
@@ -20,13 +21,15 @@ class ChatMessage extends AbstractChatMessage<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { message, t } = this.props;
+        const { message, t, knocking } = this.props;
 
         return (
             <div
                 className = 'chatmessage-wrapper'
                 tabIndex = { -1 }>
-                <div className = { `chatmessage ${message.privateMessage ? 'privatemessage' : ''}` }>
+                <div
+                    className = { `chatmessage ${message.privateMessage ? 'privatemessage' : ''} ${
+                        message.lobbyChat ? 'lobbymessage' : ''}` }>
                     <div className = 'replywrapper'>
                         <div className = 'messagecontent'>
                             { this.props.showDisplayName && this._renderDisplayName() }
@@ -40,11 +43,16 @@ class ChatMessage extends AbstractChatMessage<Props> {
                                 <Message text = { this._getMessageText() } />
                             </div>
                             { message.privateMessage && this._renderPrivateNotice() }
+                            { message.lobbyChat && this._renderLobbyNotice() }
                         </div>
-                        { message.privateMessage && message.messageType !== MESSAGE_TYPE_LOCAL
+                        { (message.privateMessage || (message.lobbyChat && !knocking))
+                            && message.messageType !== MESSAGE_TYPE_LOCAL
                             && (
-                                <div className = 'messageactions'>
+                                <div
+                                    className = { `messageactions ${
+                                        message.lobbyChat ? 'lobbychatmessageactions' : ''}` }>
                                     <PrivateMessageButton
+                                        isLobbyMessage = { message.lobbyChat }
                                         participantID = { message.id }
                                         reply = { true }
                                         showLabel = { false } />
@@ -62,6 +70,8 @@ class ChatMessage extends AbstractChatMessage<Props> {
     _getMessageText: () => string;
 
     _getPrivateNoticeMessage: () => string;
+
+    _getLobbyNoticeMessage: () => string;
 
     /**
      * Renders the display name of the sender.
@@ -92,6 +102,19 @@ class ChatMessage extends AbstractChatMessage<Props> {
     }
 
     /**
+     * Renders the lobby message privacy notice.
+     *
+     * @returns {React$Element<*>}
+     */
+    _renderLobbyNotice() {
+        return (
+            <div className = 'privatemessagenotice'>
+                { this._getLobbyNoticeMessage() }
+            </div>
+        );
+    }
+
+    /**
      * Renders the time at which the message was sent.
      *
      * @returns {React$Element<*>}
@@ -105,4 +128,18 @@ class ChatMessage extends AbstractChatMessage<Props> {
     }
 }
 
-export default translate(ChatMessage);
+/**
+ * Maps part of the Redux store to the props of this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {Props}
+ */
+function _mapStateToProps(state: Object): $Shape<Props> {
+    const { knocking } = state['features/lobby'];
+
+    return {
+        knocking
+    };
+}
+
+export default translate(connect(_mapStateToProps)(ChatMessage));

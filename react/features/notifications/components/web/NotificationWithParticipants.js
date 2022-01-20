@@ -3,7 +3,9 @@
 import React from 'react';
 
 import { Avatar } from '../../../base/avatar';
+import { Icon, IconChat } from '../../../base/icons';
 import { HIDDEN_EMAILS } from '../../../lobby/constants';
+import { showLobbyChatIcon } from '../../../lobby/functions';
 
 import NotificationButton from './NotificationButton';
 
@@ -18,6 +20,11 @@ type Props = {
      * Callback used when clicking the ok/approve button.
      */
     onApprove: Function,
+
+    /**
+     * Callback used for handling lobby message initialized.
+     */
+     onHandleLobbyChatInitialized: Function,
 
     /**
      * Callback used when clicking the reject button.
@@ -38,7 +45,27 @@ type Props = {
     /**
      * String prefix used for button `test-id`.
      */
-     testIdPrefix: string
+     testIdPrefix: string,
+
+    /**
+     * Checks the state of current lobby messaging.
+    */
+    isLobbyChatActive: boolean,
+
+    /**
+     * The current lobby chat recipient.
+     */
+     lobbyMessageRecipient: ?Object,
+
+    /**
+     * The lobby local id of the current moderator.
+     */
+     lobbyLocalId: string,
+
+    /**
+     * Config setting for enabling lobby chat feature.
+     */
+     enableLobbyChat: boolean
 }
 
 /**
@@ -53,7 +80,12 @@ export default function({
     onReject,
     participants,
     testIdPrefix,
-    rejectButtonText
+    rejectButtonText,
+    isLobbyChatActive,
+    onHandleLobbyChatInitialized,
+    lobbyMessageRecipient,
+    lobbyLocalId,
+    enableLobbyChat
 }: Props): React$Element<'ul'> {
     return (
         <ul className = 'knocking-participants-container'>
@@ -94,6 +126,27 @@ export default function({
                         testId = { `${testIdPrefix}.reject` }>
                         { rejectButtonText }
                     </NotificationButton>}
+                    {
+                        showLobbyChatIcon({
+                            participant: p,
+                            lobbyLocalId,
+                            isLobbyChatActive,
+                            lobbyChatRecipient: lobbyMessageRecipient,
+                            enableLobbyChat
+                        })
+                            ? (
+                                <NotificationButton
+                                    action = { onHandleLobbyChatInitialized }
+                                    className = 'borderLess'
+                                    id = 'chat-button'
+                                    participant = { p }
+                                    testId = { `${testIdPrefix}.chat` }>
+                                    <Icon
+                                        className = 'icon'
+                                        size = { 14 }
+                                        src = { IconChat } />
+                                </NotificationButton>
+                            ) : null}
                 </li>
             )) }
         </ul>);

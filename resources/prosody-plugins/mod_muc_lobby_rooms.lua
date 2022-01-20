@@ -158,6 +158,20 @@ function filter_stanza(stanza)
         elseif stanza.name == 'iq' and stanza:get_child('query', DISCO_INFO_NS) then
             -- allow disco info from the lobby component
             return stanza;
+        elseif stanza.name == 'message' then
+            -- allow non groupchat messages
+            if stanza.attr.type ~= "groupchat" then
+                return stanza;
+            end
+            -- allow messages to moderator
+            local lobby_room_jid = jid_bare(stanza.attr.from);
+            local lobby_room = lobby_muc_service.get_room_from_jid(lobby_room_jid);
+            local is_to_moderator = lobby_room:get_affiliation(stanza.attr.to) == 'owner';
+
+            if is_to_moderator then
+                return stanza;
+            end
+            return nil;
         end
 
         return nil;

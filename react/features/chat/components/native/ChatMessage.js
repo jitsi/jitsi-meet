@@ -36,7 +36,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
     render() {
         const { _styles, message } = this.props;
         const localMessage = message.messageType === MESSAGE_TYPE_LOCAL;
-        const { privateMessage } = message;
+        const { privateMessage, lobbyChat } = message;
 
         // Style arrays that need to be updated in various scenarios, such as
         // error messages or others.
@@ -71,6 +71,10 @@ class ChatMessage extends AbstractChatMessage<Props> {
             messageBubbleStyle.push(_styles.privateMessageBubble);
         }
 
+        if (lobbyChat) {
+            messageBubbleStyle.push(_styles.lobbyMessageBubble);
+        }
+
         return (
             <View style = { styles.messageWrapper } >
                 { this._renderAvatar() }
@@ -82,6 +86,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
                                 { replaceNonUnicodeEmojis(this._getMessageText()) }
                             </Linkify>
                             { this._renderPrivateNotice() }
+                            { this._renderLobbyChatNotice() }
                         </View>
                         { this._renderPrivateReplyButton() }
                     </View>
@@ -92,6 +97,8 @@ class ChatMessage extends AbstractChatMessage<Props> {
     }
 
     _getFormattedTimestamp: () => string;
+
+    _getLobbyNoticeMessage: () => string;
 
     _getMessageText: () => string;
 
@@ -155,21 +162,41 @@ class ChatMessage extends AbstractChatMessage<Props> {
     }
 
     /**
+     * Renders the message lobby chat notice, if necessary.
+     *
+     * @returns {React$Element<*> | null}
+     */
+    _renderLobbyChatNotice() {
+        const { _styles, message } = this.props;
+
+        if (!message.lobbyChat) {
+            return null;
+        }
+
+        return (
+            <Text style = { _styles.lobbyMsgNotice }>
+                { this._getLobbyNoticeMessage() }
+            </Text>
+        );
+    }
+
+    /**
      * Renders the private reply button, if necessary.
      *
      * @returns {React$Element<*> | null}
      */
     _renderPrivateReplyButton() {
-        const { _styles, message } = this.props;
-        const { messageType, privateMessage } = message;
+        const { _styles, message, knocking } = this.props;
+        const { messageType, privateMessage, lobbyChat } = message;
 
-        if (!privateMessage || messageType === MESSAGE_TYPE_LOCAL) {
+        if (!(privateMessage || lobbyChat) || messageType === MESSAGE_TYPE_LOCAL || knocking) {
             return null;
         }
 
         return (
             <View style = { _styles.replyContainer }>
                 <PrivateMessageButton
+                    isLobbyMessage = { lobbyChat }
                     participantID = { message.id }
                     reply = { true }
                     showLabel = { false }
@@ -204,7 +231,8 @@ class ChatMessage extends AbstractChatMessage<Props> {
  */
 function _mapStateToProps(state) {
     return {
-        _styles: ColorSchemeRegistry.get(state, 'Chat')
+        _styles: ColorSchemeRegistry.get(state, 'Chat'),
+        knocking: state['features/lobby'].knocking
     };
 }
 

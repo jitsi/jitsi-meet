@@ -11,7 +11,10 @@ import {
     EDIT_MESSAGE,
     OPEN_CHAT,
     SET_PRIVATE_MESSAGE_RECIPIENT,
-    SET_IS_POLL_TAB_FOCUSED
+    SET_IS_POLL_TAB_FOCUSED,
+    SET_LOBBY_CHAT_RECIPIENT,
+    SET_LOBBY_CHAT_ACTIVE_STATE,
+    REMOVE_LOBBY_CHAT_PARTICIPANT
 } from './actionTypes';
 
 const DEFAULT_STATE = {
@@ -21,7 +24,9 @@ const DEFAULT_STATE = {
     lastReadPoll: undefined,
     messages: [],
     nbUnreadMessages: 0,
-    privateMessageRecipient: undefined
+    privateMessageRecipient: undefined,
+    lobbyMessageRecipient: undefined,
+    isLobbyChatActive: false
 };
 
 ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
@@ -36,6 +41,7 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
             messageType: action.messageType,
             message: action.message,
             privateMessage: action.privateMessage,
+            lobbyChat: action.lobbyChat,
             recipient: action.recipient,
             timestamp: action.timestamp
         };
@@ -110,7 +116,8 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
             isOpen: false,
             lastReadMessage: state.messages[
                 navigator.product === 'ReactNative' ? 0 : state.messages.length - 1],
-            privateMessageRecipient: action.participant
+            privateMessageRecipient: action.participant,
+            isLobbyChatActive: false
         };
 
     case SET_IS_POLL_TAB_FOCUSED: {
@@ -119,6 +126,36 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
             isPollsTabFocused: action.isPollsTabFocused,
             nbUnreadMessages: 0
         }; }
+
+    case SET_LOBBY_CHAT_RECIPIENT:
+        return {
+            ...state,
+            isLobbyChatActive: true,
+            lobbyMessageRecipient: action.participant,
+            privateMessageRecipient: undefined,
+            isOpen: action.open
+        };
+    case SET_LOBBY_CHAT_ACTIVE_STATE:
+        return {
+            ...state,
+            isLobbyChatActive: action.payload,
+            isOpen: action.payload || state.isOpen,
+            privateMessageRecipient: undefined
+        };
+    case REMOVE_LOBBY_CHAT_PARTICIPANT:
+        return {
+            ...state,
+            messages: state.messages.filter(m => {
+                if (action.removeLobbyChatMessages) {
+                    return !m.lobbyChat;
+                }
+
+                return true;
+            }),
+            isOpen: state.isOpen && state.isLobbyChatActive ? false : state.isOpen,
+            isLobbyChatActive: false,
+            lobbyMessageRecipient: undefined
+        };
     }
 
     return state;

@@ -16,6 +16,14 @@ export default {
         paddingVertical: 8
     },
 
+    lobbyChatWrapper: {
+        alignItems: 'stretch',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyItems: 'center',
+        height: '100%'
+    },
+
     contentWrapper: {
         alignItems: 'center',
         display: 'flex',
