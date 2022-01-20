@@ -41,64 +41,6 @@
     }
 }
 
-#notification-participant-list {
-    background-color: $newToolbarBackgroundColor;
-    border: 1px solid rgba(255, 255, 255, .4);
-    border-radius: 8px;
-    left: 0;
-    margin: 20px;
-    max-height: 600px;
-    overflow: hidden;
-    overflow-y: auto;
-    position: fixed;
-    top: 30px;
-    z-index: $toolbarZ + 1;
-
-    &:empty {
-        border: none;
-    }
-
-    &.toolbox-visible {
-        // Same as toolbox subject position
-        top: 120px;
-    }
-
-    .title {
-        background-color: rgba(0, 0, 0, .2);
-        font-size: 1.2em;
-        padding: 15px
-    }
-
-    button {
-        align-self: stretch;
-        margin-bottom: 8px 0;
-        padding: 12px;
-        transition: .2s transform ease;
-
-        &:disabled {
-            opacity: .5;
-        }
-
-        &:hover {
-            transform: scale(1.05);
-
-            &:disabled {
-                transform: none;
-            }
-        }
-
-        &.borderLess {
-            background-color: transparent;
-            border-width: 0;
-        }
-
-        &.primary {
-            background-color: rgb(3, 118, 218);
-            border-width: 0;
-        }
-    }
-}
-
 .knocking-participants-container {
     list-style-type: none;
     padding: 0 15px 15px 15px;

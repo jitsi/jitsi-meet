@@ -1,23 +1,60 @@
 // @flow
 
-import React from 'react';
+import React, { PureComponent } from 'react';
 import { ScrollView, Text, View, TouchableOpacity } from 'react-native';
 
 import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n';
+import { isLocalParticipantModerator } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+import { setKnockingParticipantApproval } from '../../actions';
 import { HIDDEN_EMAILS } from '../../constants';
-import AbstractKnockingParticipantList, {
-    mapStateToProps as abstractMapStateToProps,
-    type Props
-} from '../AbstractKnockingParticipantList';
+import { getKnockingParticipants, getLobbyEnabled } from '../../functions';
 
 import styles from './styles';
 
 /**
+ * Props type of the component.
+ */
+export type Props = {
+
+    /**
+     * The list of participants.
+     */
+    _participants: Array<Object>,
+
+    /**
+     * True if the list should be rendered.
+     */
+    _visible: boolean,
+
+    /**
+     * The Redux Dispatch function.
+     */
+    dispatch: Function,
+
+    /**
+     * Function to be used to translate i18n labels.
+     */
+    t: Function
+};
+
+/**
  * Component to render a list for the actively knocking participants.
  */
-class KnockingParticipantList extends AbstractKnockingParticipantList {
+class KnockingParticipantList extends PureComponent<Props> {
+    /**
+     * Instantiates a new component.
+     *
+     * @param {Object} props - The read-only properties with which the new
+     * instance is to be initialized.
+     */
+    constructor(props: Props) {
+        super(props);
+
+        this._onRespondToParticipant = this._onRespondToParticipant.bind(this);
+    }
+
     /**
      * Implements {@code PureComponent#render}.
      *
@@ -78,6 +115,19 @@ class KnockingParticipantList extends AbstractKnockingParticipantList {
     }
 
     _onRespondToParticipant: (string, boolean) => Function;
+
+    /**
+     * Function that constructs a callback for the response handler button.
+     *
+     * @param {string} id - The id of the knocking participant.
+     * @param {boolean} approve - The response for the knocking.
+     * @returns {Function}
+     */
+    _onRespondToParticipant(id, approve) {
+        return () => {
+            this.props.dispatch(setKnockingParticipantApproval(id, approve));
+        };
+    }
 }
 
 /**
@@ -86,14 +136,15 @@ class KnockingParticipantList extends AbstractKnockingParticipantList {
  * @param {Object} state - The Redux state.
  * @returns {Props}
  */
-function _mapStateToProps(state: Object): $Shape<Props> {
-    const abstractProps = abstractMapStateToProps(state);
+function _mapStateToProps(state): Object {
+    const lobbyEnabled = getLobbyEnabled(state);
+    const knockingParticipants = getKnockingParticipants(state);
 
     return {
-        ...abstractProps,
+        _visible: lobbyEnabled && isLocalParticipantModerator(state),
 
         // On mobile we only show a portion of the list for screen real estate reasons
-        _participants: abstractProps._participants.slice(0, 2)
+        _participants: knockingParticipants.slice(0, 2)
     };
 }
 

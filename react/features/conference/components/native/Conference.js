@@ -20,7 +20,7 @@ import {
 } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
-import { KnockingParticipantList } from '../../../lobby';
+import { KnockingParticipantList } from '../../../lobby/components/native';
 import { getIsLobbyVisible } from '../../../lobby/functions';
 import { BackButtonRegistry } from '../../../mobile/back-button';
 import { Captions } from '../../../subtitles';
