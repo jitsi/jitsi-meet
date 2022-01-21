@@ -5,11 +5,28 @@ import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
+import { IconSearch, Icon } from '../../../base/icons';
 import { getFieldValue } from '../../../base/react';
+import { MOBILE_BREAKPOINT } from '../../constants';
 import { isSpeakerStatsSearchDisabled } from '../../functions';
 
 const useStyles = makeStyles(theme => {
     return {
+        speakerStatsSearchContainer: {
+            position: 'relative'
+        },
+        searchIcon: {
+            display: 'none',
+            [theme.breakpoints.down(MOBILE_BREAKPOINT)]: {
+                display: 'block',
+                position: 'absolute',
+                color: theme.palette.text03,
+                left: 16,
+                top: 13,
+                width: 20,
+                height: 20
+            }
+        },
         speakerStatsSearch: {
             backgroundColor: theme.palette.field01,
             border: '1px solid',
@@ -23,6 +40,13 @@ const useStyles = makeStyles(theme => {
                 color: theme.palette.text03,
                 fontSize: 14,
                 fontWeight: 400
+            },
+            [theme.breakpoints.down(MOBILE_BREAKPOINT)]: {
+                height: 48,
+                padding: '13px 16px 13px 44px',
+                '&::placeholder': {
+                    fontSize: 16
+                }
             }
         }
     };
@@ -69,17 +93,24 @@ function SpeakerStatsSearch({ onSearch }: Props) {
     }
 
     return (
-        <input
-            autoComplete = 'off'
-            autoFocus = { false }
-            className = { classes.speakerStatsSearch }
-            id = 'speaker-stats-search'
-            name = 'speakerStatsSearch'
-            onChange = { onChange }
-            onKeyPress = { preventDismiss }
-            placeholder = { t('speakerStats.search') }
-            tabIndex = { 0 }
-            value = { searchValue } />
+        <div className = { classes.speakerStatsSearchContainer }>
+            <Icon
+                className = { classes.searchIcon }
+                color = '#858585'
+                src = { IconSearch } />
+
+            <input
+                autoComplete = 'off'
+                autoFocus = { false }
+                className = { classes.speakerStatsSearch }
+                id = 'speaker-stats-search'
+                name = 'speakerStatsSearch'
+                onChange = { onChange }
+                onKeyPress = { preventDismiss }
+                placeholder = { t('speakerStats.search') }
+                tabIndex = { 0 }
+                value = { searchValue } />
+        </div>
     );
 }
 

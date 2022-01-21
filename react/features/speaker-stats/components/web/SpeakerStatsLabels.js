@@ -13,9 +13,10 @@ const useStyles = makeStyles(() => {
             height: 20
         },
         emojis: {
-            paddingLeft: 27
+            paddingLeft: 27,
+            fontSize: 14,
+            fontWeight: 400
         }
-
     };
 });
 
@@ -37,7 +38,7 @@ const SpeakerStatsLabels = (props: Props) => {
     const FacialExpressionsLabels = () => Object.keys(FACIAL_EXPRESSION_EMOJIS).map(
             expression => (
                 <div
-                    className = 'expression text-large'
+                    className = 'expression'
                     key = { expression }>
                     <Tooltip
                         content = { t(`speakerStats.${expression}`) }

@@ -7,6 +7,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Dialog } from '../../../base/dialog';
 import { escapeRegexp } from '../../../base/util';
 import { resetSearchCriteria, toggleFacialExpressions, initSearch } from '../../actions';
+import {
+    DISPLAY_SWITCH_BREAKPOINT,
+    MOBILE_BREAKPOINT,
+    RESIZE_SEARCH_SWITCH_CONTAINER_BREAKPOINT
+} from '../../constants';
 
 import FacialExpressionsSwitch from './FacialExpressionsSwitch';
 import SpeakerStatsLabels from './SpeakerStatsLabels';
@@ -22,11 +27,6 @@ const useStyles = makeStyles(theme => {
             left: 0,
             backgroundColor: theme.palette.border02
         },
-        speakerStatsDialog: {
-            '& > div': {
-
-            }
-        },
         searchSwitchContainer: {
             display: 'flex',
             justifyContent: 'space-between',
@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => {
         },
         searchSwitchContainerExpressionsOn: {
             width: '58.5%',
-            [theme.breakpoints.down('750')]: {
+            [theme.breakpoints.down(RESIZE_SEARCH_SWITCH_CONTAINER_BREAKPOINT)]: {
                 width: '100%'
             }
         },
@@ -52,7 +52,8 @@ const SpeakerStats = () => {
     const { enableDisplayFacialExpressions } = useSelector(state => state['features/base/config']);
     const { showFacialExpressions } = useSelector(state => state['features/speaker-stats']);
     const { clientWidth } = useSelector(state => state['features/base/responsive-ui']);
-    const displaySwitch = enableDisplayFacialExpressions && clientWidth > 600;
+    const displaySwitch = enableDisplayFacialExpressions && clientWidth > DISPLAY_SWITCH_BREAKPOINT;
+    const displayLabels = clientWidth > MOBILE_BREAKPOINT;
     const dispatch = useDispatch();
     const classes = useStyles();
 
@@ -68,7 +69,6 @@ const SpeakerStats = () => {
     useEffect(() => {
         showFacialExpressions && !displaySwitch && dispatch(toggleFacialExpressions());
     }, [ clientWidth ]);
-
     useEffect(() => () => dispatch(resetSearchCriteria()), []);
 
     return (
@@ -100,10 +100,13 @@ const SpeakerStats = () => {
                         showFacialExpressions = { showFacialExpressions } />
                     }
                 </div>
-
-                <SpeakerStatsLabels
-                    showFacialExpressions = { showFacialExpressions ?? false } />
-                <div className = { classes.separator } />
+                { displayLabels && (
+                    <>
+                        <SpeakerStatsLabels
+                            showFacialExpressions = { showFacialExpressions ?? false } />
+                        <div className = { classes.separator } />
+                    </>
+                )}
                 <SpeakerStatsList />
             </div>
         </Dialog>
