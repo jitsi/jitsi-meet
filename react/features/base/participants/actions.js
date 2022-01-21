@@ -7,6 +7,7 @@ import {
     HIDDEN_PARTICIPANT_LEFT,
     GRANT_MODERATOR,
     KICK_PARTICIPANT,
+    LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED,
     LOCAL_PARTICIPANT_RAISE_HAND,
     MUTE_REMOTE_PARTICIPANT,
     PARTICIPANT_ID_CHANGED,
@@ -590,5 +591,21 @@ export function raiseHandUpdateQueue(participant) {
     return {
         type: RAISE_HAND_UPDATED,
         participant
+    };
+}
+
+/**
+ * Notifies if the local participant audio level has changed.
+ *
+ * @param {number} level - The audio level.
+ * @returns {{
+ *      type: LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED,
+ *      level: number
+ * }}
+ */
+export function localParticipantAudioLevelChanged(level) {
+    return {
+        type: LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED,
+        level
     };
 }
