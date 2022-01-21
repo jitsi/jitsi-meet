@@ -10,6 +10,7 @@ import { NOTIFY_CLICK_MODE } from '../../../../toolbox/constants';
 
 import PasswordForm from './PasswordForm';
 
+const DIGITS_ONLY = /^\d+$/;
 const KEY = 'add-passcode';
 
 type Props = {
@@ -97,6 +98,10 @@ function PasswordSection({
      * @returns {void}
      */
     function onPasswordSubmit(enteredPassword) {
+        if (enteredPassword && passwordNumberOfDigits && !DIGITS_ONLY.test(enteredPassword)) {
+            // Don't set the password.
+            return;
+        }
         setPassword(conference, conference.lock, enteredPassword);
     }
 
@@ -142,7 +147,7 @@ function PasswordSection({
      */
     function onPasswordSave() {
         if (formRef.current) {
-            const { value } = formRef.current.querySelector('form > input');
+            const { value } = formRef.current.querySelector('div > input');
 
             if (value) {
                 onPasswordSubmit(value);
