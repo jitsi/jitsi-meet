@@ -8,7 +8,11 @@ PersistenceRegistry.register('features/screnshot-capture', true, {
     capturesEnabled: false
 });
 
-ReducerRegistry.register('features/screenshot-capture', (state = {}, action) => {
+const DEFAULT_STATE = {
+    capturesEnabled: false
+};
+
+ReducerRegistry.register('features/screenshot-capture', (state = DEFAULT_STATE, action) => {
     switch (action.type) {
     case SET_SCREENSHOT_CAPTURE: {
         return {
