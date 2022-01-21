@@ -642,6 +642,8 @@
         "oldElectronClientDescription1": "Sembla qu’utilizatz una version anciana del client Jitsi Meet qu’es conegut per conténer de problèmas de seguretat. Mercés de vos assegurar de metre a jorn ",
         "oldElectronClientDescription2": "darrièra compilacion",
         "oldElectronClientDescription3": " ara !",
+        "participantWantsToJoin": "Vòl rejónher la reünion",
+        "participantsWantToJoin": "Vòlon rejónher la reünion",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) tirat per un autre participant",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) definit per un autre participant",
         "raiseHandAction": "Levar la man",
@@ -661,7 +663,9 @@
         "videoMutedRemotelyDescription": "La podètz totjorn tornar activar.",
         "videoMutedRemotelyTitle": "{{participantDisplayName}} a copat vòstra vidèo",
         "videoUnmuteBlockedDescription": "Las operacion de restabliment de la camèra e del partiment del burèu son estadas blocadas pel moment a causa de limitas sistèma.",
-        "videoUnmuteBlockedTitle": "Restabliment de la camèra e del partiment de burèu blocat  !"
+        "videoUnmuteBlockedTitle": "Restabliment de la camèra e del partiment de burèu blocat  !",
+        "viewLobby": "Veire sala d’espèra",
+        "waitingParticipants": "{{waitingParticipants}} personas"
     },
     "participantsPane": {
         "actions": {
@@ -983,7 +987,6 @@
             "mute": "Copar lo son",
             "muteEveryone": "Rendre mut tot lo monde",
             "muteEveryoneElse": "Copar lo microfòn dels autres",
-            "muteEveryoneElsesVideo": "Copar la vidèo de los demai",
             "muteEveryoneElsesVideoStream": "Arrestar la vidèo de totes los autres",
             "muteEveryonesVideoStream": "Arrestar la vidèo de tot lo monde",
             "participants": "Participants",
@@ -1162,6 +1165,7 @@
         "mute": "Un participant a copat son micro",
         "muted": "Mut",
         "remoteControl": "Contraròtle alonhat",
+        "screenSharing": "Lo participant es a partejar son ecran",
         "show": "Mostrar davant",
         "videoMuted": "Camèra desactivada",
         "videomute": "Lo participant a arrestat la camèra"
