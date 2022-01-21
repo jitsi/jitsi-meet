@@ -476,7 +476,9 @@ function initCommands() {
                 return;
             }
 
-            if (isScreenVideoShared(APP.store.getState())) {
+            const enableScreenshotCapture = state['features/base/config'].enableScreenshotCapture;
+
+            if (enableScreenshotCapture && isScreenVideoShared(state)) {
                 APP.store.dispatch(toggleScreenshotCaptureSummary(true));
             }
             conference.startRecording(recordingConfig);
@@ -507,7 +509,9 @@ function initCommands() {
             const activeSession = getActiveSession(state, mode);
 
             if (activeSession && activeSession.id) {
-                APP.store.dispatch(toggleScreenshotCaptureSummary(false));
+                if (state['features/base/config'].enableScreenshotCapture) {
+                    APP.store.dispatch(toggleScreenshotCaptureSummary(false));
+                }
                 conference.stopRecording(activeSession.id);
             } else {
                 logger.error('No recording or streaming session found');
