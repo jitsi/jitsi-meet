@@ -661,7 +661,11 @@
         "videoMutedRemotelyDescription": "La podètz totjorn tornar activar.",
         "videoMutedRemotelyTitle": "{{participantDisplayName}} a copat vòstra vidèo",
         "videoUnmuteBlockedDescription": "Las operacion de restabliment de la camèra e del partiment del burèu son estadas blocadas pel moment a causa de limitas sistèma.",
-        "videoUnmuteBlockedTitle": "Restabliment de la camèra e del partiment de burèu blocat  !"
+        "videoUnmuteBlockedTitle": "Restabliment de la camèra e del partiment de burèu blocat  !",
+        "participantWantsToJoin": "Vòl rejónher la reünion",
+        "viewLobby": "Veire sala d’espèra",
+        "participantsWantToJoin": "Vòlon rejónher la reünion",
+        "waitingParticipants": "{{waitingParticipants}} personas"
     },
     "participantsPane": {
         "actions": {
@@ -983,7 +987,6 @@
             "mute": "Copar lo son",
             "muteEveryone": "Rendre mut tot lo monde",
             "muteEveryoneElse": "Copar lo microfòn dels autres",
-            "muteEveryoneElsesVideo": "Copar la vidèo de los demai",
             "muteEveryoneElsesVideoStream": "Arrestar la vidèo de totes los autres",
             "muteEveryonesVideoStream": "Arrestar la vidèo de tot lo monde",
             "participants": "Participants",
@@ -1164,7 +1167,8 @@
         "remoteControl": "Contraròtle alonhat",
         "show": "Mostrar davant",
         "videoMuted": "Camèra desactivada",
-        "videomute": "Lo participant a arrestat la camèra"
+        "videomute": "Lo participant a arrestat la camèra",
+        "screenSharing": "Lo participant es a partejar son ecran"
     },
     "virtualBackground": {
         "addBackground": "Apondre un rèireplan",
