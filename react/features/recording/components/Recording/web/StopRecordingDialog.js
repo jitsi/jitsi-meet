@@ -8,7 +8,7 @@ import { connect } from '../../../../base/redux';
 import { toggleScreenshotCaptureSummary } from '../../../../screenshot-capture';
 import AbstractStopRecordingDialog, {
     type Props,
-    _mapStateToProps
+    _mapStateToProps as abstractMapStateToProps
 } from '../AbstractStopRecordingDialog';
 
 /**
@@ -46,8 +46,25 @@ class StopRecordingDialog extends AbstractStopRecordingDialog<Props> {
      * @returns {void}
      */
     _toggleScreenshotCapture() {
-        this.props.dispatch(toggleScreenshotCaptureSummary(false));
+        const { dispatch, _screenshotCaptureEnabled } = this.props;
+
+        if (_screenshotCaptureEnabled) {
+            dispatch(toggleScreenshotCaptureSummary(false));
+        }
     }
+}
+
+/**
+ * Maps redux state to component props.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {Object}
+ */
+function _mapStateToProps(state) {
+    return {
+        ...abstractMapStateToProps(state),
+        _screenshotCaptureEnabled: state['features/base/config'].enableScreenshotCapture
+    };
 }
 
 export default translate(connect(_mapStateToProps)(StopRecordingDialog));
