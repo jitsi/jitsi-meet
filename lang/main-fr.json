@@ -642,6 +642,8 @@
         "oldElectronClientDescription1": "Vous semblez utiliser une ancienne version du client Jitsi Meet qui présente des failles de sécurité connues. Veuillez vous assurer de mettre à jour vers notre ",
         "oldElectronClientDescription2": "dernière build",
         "oldElectronClientDescription3": " rapidement !",
+        "participantWantsToJoin": "souhaite rejoindre la réunion",
+        "participantsWantToJoin": "souhaitent rejoindre la réunion",
         "passwordRemovedRemotely": "Le $t(lockRoomPassword) a été supprimé par un autre participant",
         "passwordSetRemotely": "Un $t(lockRoomPassword) a été défini par un autre participant",
         "raiseHandAction": "Lever la main",
@@ -661,7 +663,9 @@
         "videoMutedRemotelyDescription": "Vous pouvez toujours la réactiver.",
         "videoMutedRemotelyTitle": "Votre caméra a été coupée par {{participantDisplayName}}!",
         "videoUnmuteBlockedDescription": "Le rétablissement de la vidéo a été bloqué temporairement en raison de limites système.",
-        "videoUnmuteBlockedTitle": "Rétablissement de la caméra bloqué !"
+        "videoUnmuteBlockedTitle": "Rétablissement de la caméra bloqué !",
+        "viewLobby": "Voir la salle d'attente",
+        "waitingParticipants": "{{waitingParticipants}} personnes"
     },
     "participantsPane": {
         "actions": {
@@ -1161,6 +1165,7 @@
         "mute": "Un participant a coupé son micro",
         "muted": "Muet",
         "remoteControl": "Démarrer / Arrêter le contrôle à distance",
+        "screenSharing": "Cette personne partage son écran",
         "show": "Afficher en premier plan",
         "videoMuted": "Caméra coupée",
         "videomute": "Le participant a arrêté la caméra"
