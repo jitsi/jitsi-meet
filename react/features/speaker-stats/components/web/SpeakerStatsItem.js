@@ -2,7 +2,8 @@
 
 import React from 'react';
 
-import { Avatar } from '../../../base/avatar';
+import { Avatar, StatelessAvatar } from '../../../base/avatar';
+import { getInitials } from '../../../base/avatar/functions';
 import { FACIAL_EXPRESSIONS } from '../../../facial-recognition/constants.js';
 
 import TimeElapsed from './TimeElapsed';
@@ -71,7 +72,7 @@ const SpeakerStatsItem = (props: Props) => {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    const hasLeftClass = props.hasLeft ? props.styles.placeholderColor : '';
+    const hasLeftClass = props.hasLeft ? props.styles.hasLeft : '';
     const rowDisplayClass = `row ${hasLeftClass} ${props.styles.item}`;
     const expressionClass = 'expression';
     const nameTimeClass = `name-time${
@@ -86,7 +87,7 @@ const SpeakerStatsItem = (props: Props) => {
                     aria-label = { props.t(`speakerStats.${expression}`) }
                     className = {
                         `${expressionClass} ${
-                            props.facialExpressions[expression] === 0 ? props.styles.placeholderColor : ''
+                            props.facialExpressions[expression] === 0 ? props.styles.hasLeft : ''
                         }`
                     }
                     key = { expression }>
@@ -100,9 +101,19 @@ const SpeakerStatsItem = (props: Props) => {
             className = { rowDisplayClass }
             key = { props.participantId } >
             <div className = { `avatar ${props.styles.avatar}` }>
-                <Avatar
-                    className = 'userAvatar'
-                    participantId = { props.participantId } />
+                {
+                    props.hasLeft ? (
+                        <StatelessAvatar
+                            className = 'userAvatar'
+                            color = { '#525252' }
+                            id = 'avatar'
+                            initials = { getInitials(props.displayName) } />
+                    ) : (
+                        <Avatar
+                            className = 'userAvatar'
+                            participantId = { props.participantId } />
+                    )
+                }
             </div>
             <div className = { nameTimeClass }>
                 <div
