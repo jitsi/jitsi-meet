@@ -1,5 +1,6 @@
 // @flow
 
+import { makeStyles } from '@material-ui/core/styles';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,9 +15,10 @@ import {
  * Component that renders the list of speaker stats.
  *
  * @param {Function} speakerStatsItem - React element tu use when rendering.
+ * @param {Object} itemStyles - Styles for the speaker stats item.
  * @returns {Function}
  */
-const abstractSpeakerStatsList = (speakerStatsItem: Function): Function[] => {
+const abstractSpeakerStatsList = (speakerStatsItem: Function, itemStyles?: Object): Function[] => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const conference = useSelector(state => state['features/base/conference'].conference);
@@ -76,7 +78,7 @@ const abstractSpeakerStatsList = (speakerStatsItem: Function): Function[] => {
     }, []);
 
     const localSpeakerStats = Object.keys(speakerStats).length === 0 ? getLocalSpeakerStats() : speakerStats;
-    const userIds = Object.keys(localSpeakerStats);
+    const userIds = Object.keys(localSpeakerStats).filter(id => localSpeakerStats[id] && !localSpeakerStats[id].hidden);
 
     return userIds.map(userId => {
         const statsModel = localSpeakerStats[userId];
@@ -92,6 +94,9 @@ const abstractSpeakerStatsList = (speakerStatsItem: Function): Function[] => {
         props.hidden = statsModel.hidden;
         props.showFacialExpressions = showFacialExpressions;
         props.displayName = statsModel.getDisplayName() || defaultRemoteDisplayName;
+        if (itemStyles) {
+            props.styles = itemStyles;
+        }
         props.t = t;
 
         return speakerStatsItem(props);
