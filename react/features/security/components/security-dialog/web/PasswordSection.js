@@ -142,7 +142,7 @@ function PasswordSection({
      */
     function onPasswordSave() {
         if (formRef.current) {
-            const { value } = formRef.current.querySelector('form > input');
+            const { value } = formRef.current.querySelector('div > input');
 
             if (value) {
                 onPasswordSubmit(value);
