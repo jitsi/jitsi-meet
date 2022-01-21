@@ -1166,9 +1166,9 @@
         "muted": "Mut",
         "remoteControl": "Contraròtle alonhat",
         "show": "Mostrar davant",
+        "screenSharing": "Lo participant es a partejar son ecran",        
         "videoMuted": "Camèra desactivada",
-        "videomute": "Lo participant a arrestat la camèra",
-        "screenSharing": "Lo participant es a partejar son ecran"
+        "videomute": "Lo participant a arrestat la camèra"
     },
     "virtualBackground": {
         "addBackground": "Apondre un rèireplan",
