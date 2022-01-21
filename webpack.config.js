@@ -249,7 +249,6 @@ function getDevServerConfig() {
                 warnings: false
             }
         },
-        https: true,
         host: '127.0.0.1',
         hot: true,
         proxy: {
@@ -262,6 +261,7 @@ function getDevServerConfig() {
                 }
             }
         },
+        server: 'https',
         static: {
             directory: process.cwd()
         }
