@@ -649,6 +649,8 @@
         "raisedHands": "{{participantName}} e {{raisedHands}} autres",
         "reactionSounds": "Desactivar los sons",
         "reactionSoundsForAll": "Desactivar los sons per totes",
+        "participantWantsToJoin": "Vòl rejónher la reünion",
+        "participantsWantToJoin": "Vòlon rejónher la reünion",        
         "screenShareNoAudio": " La casa Partejar l’àudio es pas estada marcada a l’ecran de seleccion de la fenèstra.",
         "screenShareNoAudioTitle": "Partiment impossible de l’àudio del sistèma !",
         "selfViewTitle": "Podètz totjorn quitar d’amagar vòstra pròpria vista a partir dels paramètres",
@@ -663,8 +665,6 @@
         "videoUnmuteBlockedDescription": "Las operacion de restabliment de la camèra e del partiment del burèu son estadas blocadas pel moment a causa de limitas sistèma.",
         "videoUnmuteBlockedTitle": "Restabliment de la camèra e del partiment de burèu blocat  !",
         "viewLobby": "Veire sala d’espèra",
-        "participantWantsToJoin": "Vòl rejónher la reünion",
-        "participantsWantToJoin": "Vòlon rejónher la reünion",
         "waitingParticipants": "{{waitingParticipants}} personas"
     },
     "participantsPane": {
