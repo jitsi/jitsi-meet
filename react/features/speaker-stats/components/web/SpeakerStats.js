@@ -31,17 +31,25 @@ const useStyles = makeStyles(theme => {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            width: '100%'
+            width: '100%',
         },
         searchSwitchContainerExpressionsOn: {
             width: '58.5%'
+        },
+        searchContainer: {
+            width: '50%'
+        },
+        searchContainerFullWidth: {
+            width: '100%'
         }
     };
 });
 
 const SpeakerStats = () => {
-    const { enableFacialRecognition } = useSelector(state => state['features/base/config']);
+    const { enableDisplayFacialExpressions } = useSelector(state => state['features/base/config']);
     const { showFacialExpressions } = useSelector(state => state['features/speaker-stats']);
+    const { clientWidth } = useSelector(state => state['features/base/responsive-ui']);
+    const displaySwitch = enableDisplayFacialExpressions && clientWidth > 520;
     const dispatch = useDispatch();
     const classes = useStyles();
 
@@ -70,8 +78,16 @@ const SpeakerStats = () => {
                         `${classes.searchSwitchContainer}
                         ${showFacialExpressions ? classes.searchSwitchContainerExpressionsOn : ''}`
                     }>
-                    <SpeakerStatsSearch onSearch = { onSearch } />
-                    { enableFacialRecognition
+                    <div
+                        className = {
+                            displaySwitch
+                                ? classes.searchContainer
+                                : classes.searchContainerFullWidth }>
+                        <SpeakerStatsSearch
+                            onSearch = { onSearch } />
+                    </div>
+
+                    { displaySwitch
                     && <FacialExpressionsSwitch
                         onChange = { onToggleFacialExpressions }
                         showFacialExpressions = { showFacialExpressions } />

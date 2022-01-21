@@ -24,7 +24,7 @@ const abstractSpeakerStatsList = (speakerStatsItem: Function): Function[] => {
     const localParticipant = useSelector(getLocalParticipant);
     const { defaultRemoteDisplayName } = useSelector(
         state => state['features/base/config']) || {};
-    const { enableFacialRecognition } = useSelector(state => state['features/base/config']) || {};
+    const { enableDisplayFacialExpressions } = useSelector(state => state['features/base/config']) || {};
     const { facialExpressions: localFacialExpressions } = useSelector(
         state => state['features/facial-recognition']) || {};
 
@@ -47,7 +47,7 @@ const abstractSpeakerStatsList = (speakerStatsItem: Function): Function[] => {
                             ? `${localParticipant.name} (${meString})`
                             : meString
                     );
-                    if (enableFacialRecognition) {
+                    if (enableDisplayFacialExpressions) {
                         stats[userId].setFacialExpressions(localFacialExpressions);
                     }
                 }
