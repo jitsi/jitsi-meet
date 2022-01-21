@@ -31,10 +31,13 @@ const useStyles = makeStyles(theme => {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            width: '100%',
+            width: '100%'
         },
         searchSwitchContainerExpressionsOn: {
-            width: '58.5%'
+            width: '58.5%',
+            [theme.breakpoints.down('750')]: {
+                width: '100%'
+            }
         },
         searchContainer: {
             width: '50%'
@@ -49,7 +52,7 @@ const SpeakerStats = () => {
     const { enableDisplayFacialExpressions } = useSelector(state => state['features/base/config']);
     const { showFacialExpressions } = useSelector(state => state['features/speaker-stats']);
     const { clientWidth } = useSelector(state => state['features/base/responsive-ui']);
-    const displaySwitch = enableDisplayFacialExpressions && clientWidth > 520;
+    const displaySwitch = enableDisplayFacialExpressions && clientWidth > 600;
     const dispatch = useDispatch();
     const classes = useStyles();
 
@@ -61,6 +64,10 @@ const SpeakerStats = () => {
         dispatch(initSearch(escapeRegexp(criteria)));
     }
     , [ dispatch ]);
+
+    useEffect(() => {
+        showFacialExpressions && !displaySwitch && dispatch(toggleFacialExpressions());
+    }, [ clientWidth ]);
 
     useEffect(() => () => dispatch(resetSearchCriteria()), []);
 
