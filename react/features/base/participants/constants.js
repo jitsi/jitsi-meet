@@ -76,4 +76,4 @@ export const PARTICIPANT_ROLE = {
  *
  * @type {string}
  */
-export const LOWER_HAND_AUDIO_LEVEL = 0.6;
+export const LOWER_HAND_AUDIO_LEVEL = 0.2;
