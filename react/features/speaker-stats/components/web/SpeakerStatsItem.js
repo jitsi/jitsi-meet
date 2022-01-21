@@ -118,7 +118,7 @@ const SpeakerStatsItem = (props: Props) => {
             <div className = { nameTimeClass }>
                 <div
                     aria-label = { props.t('speakerStats.speakerStats') }
-                    className = 'text-large'>
+                    className = { props.styles.displayName }>
                     { props.displayName }
                 </div>
                 <div
@@ -133,8 +133,7 @@ const SpeakerStatsItem = (props: Props) => {
                 <div className = { `expressions ${props.styles.expressions}` }>
                     <FacialExpressions />
                 </div>
-            )
-            }
+            )}
         </div>
     );
 };
