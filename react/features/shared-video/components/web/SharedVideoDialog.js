@@ -26,7 +26,8 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
 
         this.state = {
             value: '',
-            okDisabled: true
+            okDisabled: true,
+            error: false
         };
 
         this._onChange = this._onChange.bind(this);
@@ -58,7 +59,15 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
      * @returns {boolean}
      */
     _onSubmitValue() {
-        return super._onSetVideoLink(this.state.value);
+        const result = super._onSetVideoLink(this.state.value);
+
+        if (!result) {
+            this.setState({
+                error: true
+            });
+        }
+
+        return result;
     }
 
     /**
@@ -68,6 +77,7 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
      */
     render() {
         const { t } = this.props;
+        const { error } = this.state;
 
         return (
             <Dialog
@@ -81,6 +91,7 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
                     autoFocus = { true }
                     className = 'input-control'
                     compact = { false }
+                    isInvalid = { error }
                     label = { t('dialog.videoLink') }
                     name = 'sharedVideoUrl'
                     onChange = { this._onChange }
@@ -88,6 +99,7 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
                     shouldFitContainer = { true }
                     type = 'text'
                     value = { this.state.value } />
+                { error && <span className = 'shared-video-dialog-error'>{ t('dialog.sharedVideoDialogError') }</span> }
             </Dialog>
         );
     }

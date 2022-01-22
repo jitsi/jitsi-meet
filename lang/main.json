@@ -365,6 +365,7 @@
         "shareVideoTitle": "Share video",
         "shareYourScreen": "Share your screen",
         "shareYourScreenDisabled": "Screen sharing disabled.",
+        "sharedVideoDialogError": "Error: Invalid URL",
         "sharedVideoLinkPlaceholder": "YouTube link or direct video link",
         "startLiveStreaming": "Start live stream",
         "startRecording": "Start recording",
