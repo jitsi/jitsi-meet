@@ -20,6 +20,10 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
     constructor(props) {
         super(props);
 
+        this.state = {
+            error: false
+        };
+
         this._onSubmitValue = this._onSubmitValue.bind(this);
     }
 
@@ -32,7 +36,13 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
      * @returns {boolean}
      */
     _onSubmitValue(value) {
-        return super._onSetVideoLink(value);
+        const result = super._onSetVideoLink(value);
+
+        if (!result) {
+            this.setState({ error: true });
+        }
+
+        return result;
     }
 
     /**
@@ -42,10 +52,12 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
      */
     render() {
         const { t } = this.props;
+        const { error } = this.state;
 
         return (
             <InputDialog
                 contentKey = 'dialog.shareVideoTitle'
+                messageKey = { error ? 'dialog.sharedVideoDialogError' : undefined }
                 onSubmit = { this._onSubmitValue }
                 textInputProps = {{
                     autoCapitalize: 'none',
