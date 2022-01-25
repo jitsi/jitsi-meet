@@ -84,7 +84,6 @@ function Toolbox(props: Props) {
                 style = { styles.toolbox }>
                 <AudioMuteButton
                     styles = { buttonStylesBorderless }
-                    testID = 'audio-mute-button'
                     toggledStyles = { toggledButtonStyles } />
                 <VideoMuteButton
                     styles = { buttonStylesBorderless }
