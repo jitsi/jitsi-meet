@@ -2,6 +2,7 @@ import { DOMParser } from '@xmldom/xmldom';
 import { Platform } from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
 
+import 'promise.allsettled/auto'; // Promise.allSettled.
 import 'react-native-url-polyfill/auto'; // Complete URL polyfill.
 
 import Storage from './Storage';
