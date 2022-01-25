@@ -4,7 +4,6 @@ import React from 'react';
 
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 
-import SpeakerStatsLabels from './SpeakerStatsLabels';
 import SpeakerStatsList from './SpeakerStatsList';
 import style from './styles';
 
@@ -16,7 +15,6 @@ import style from './styles';
 const SpeakerStats = () => (
     <JitsiScreen
         style = { style.speakerStatsContainer }>
-        <SpeakerStatsLabels />
         <SpeakerStatsList />
     </JitsiScreen>
 );

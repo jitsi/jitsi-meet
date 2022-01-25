@@ -4,50 +4,39 @@ export default {
     speakerStatsContainer: {
         flexDirection: 'column',
         flex: 1,
-        height: 'auto'
+        height: 'auto',
+        paddingHorizontal: 16,
+        backgroundColor: BaseTheme.palette.ui02
     },
     speakerStatsItemContainer: {
         flexDirection: 'row',
         alignSelf: 'stretch',
-        height: 24
+        height: 64,
+        alignItems: 'center'
     },
-    speakerStatsItemStatus: {
+    speakerStatsAvatar: {
+        width: 32,
+        height: 32,
+        marginRight: 16
+    },
+    speakerStatsNameTime: {
+        flexDirection: 'row',
         flex: 1,
-        alignSelf: 'stretch'
+        justifyContent: 'space-between',
+        alignItems: 'center'
     },
-    speakerStatsItemStatusDot: {
-        width: 5,
-        height: 5,
-        marginLeft: 7,
-        marginTop: 8,
-        padding: 3,
-        borderRadius: 10,
-        borderWidth: 0
+    speakerStatsText: {
+        fontSize: 16,
+        fontWeight: '400',
+        color: BaseTheme.palette.text01
     },
-    speakerStatsItemName: {
-        flex: 8,
-        alignSelf: 'stretch'
+    speakerStatsTime: {
+        paddingHorizontal: 4,
+        paddingVertical: 2,
+        borderRadius: 4
     },
-    speakerStatsItemTime: {
-        flex: 12,
-        alignSelf: 'stretch'
-    },
-    speakerStatsLabelContainer: {
-        marginTop: BaseTheme.spacing[2],
-        marginBottom: BaseTheme.spacing[1],
-        flexDirection: 'row'
-    },
-    dummyElement: {
-        flex: 1,
-        alignSelf: 'stretch'
-    },
-    speakerName: {
-        flex: 8,
-        alignSelf: 'stretch'
-    },
-    speakerTime: {
-        flex: 12,
-        alignSelf: 'stretch'
+    speakerStatsDominant: {
+        backgroundColor: BaseTheme.palette.success02
     }
 
 
