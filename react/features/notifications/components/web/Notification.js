@@ -144,7 +144,7 @@ class Notification extends AbstractNotification<Props> {
                                 this._onDismissed();
                             }
                         },
-                        testId: this.props.customActionNameKey[customActionIndex]
+                        testId: customAction
                     };
                 });
             }
