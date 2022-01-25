@@ -186,6 +186,15 @@ export function isNameReadOnly(state: Object): boolean {
         || state['features/base/config'].readOnlyName;
 }
 
+/**
+ * Selector for determining if the display name is visible.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {boolean}
+ */
+export function isDisplayNameVisible(state: Object): boolean {
+    return !state['features/base/config'].hideDisplayName;
+}
 
 /**
  * Restores a Jitsi Meet config.js from {@code localStorage} if it was

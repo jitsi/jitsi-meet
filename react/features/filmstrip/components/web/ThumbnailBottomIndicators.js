@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { isNameReadOnly } from '../../../base/config/functions.any';
+import { isDisplayNameVisible, isNameReadOnly } from '../../../base/config/functions.any';
 import DisplayName from '../../../display-name/components/web/DisplayName';
 import { LAYOUTS } from '../../../video-layout';
 
@@ -63,7 +63,7 @@ const ThumbnailBottomIndicators = ({
     const styles = useStyles();
     const _allowEditing = !useSelector(isNameReadOnly);
     const _defaultLocalDisplayName = interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME;
-    const _showDisplayName = useSelector(state => !state['features/base/config'].hideDisplayName);
+    const _showDisplayName = useSelector(isDisplayNameVisible);
 
     return (<div className = { className }>
         <StatusIndicators
