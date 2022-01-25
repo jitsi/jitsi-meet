@@ -4,21 +4,22 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
+import WelcomePage from '../../../../../welcome/components/WelcomePage';
+import HelpView from '../../../../../welcome/components/native/HelpView';
+import PrivacyView from '../../../../../welcome/components/native/PrivacyView';
+import TermsView from '../../../../../welcome/components/native/TermsView';
+import SettingsView
+    from '../../../../../welcome/components/native/settings/components/SettingsView';
+import { screen } from '../../../routes';
 import {
+    drawerContentOptions,
     helpScreenOptions,
     settingsScreenOptions,
     termsAndPrivacyScreenOptions,
     welcomeScreenOptions
-} from '../../conference/components/native/ConferenceNavigatorScreenOptions';
-import { screen } from '../../conference/components/native/routes';
-import HelpView from '../components/help/components/HelpView';
-import PrivacyView from '../components/privacy/components/PrivacyView';
-import SettingsView from '../components/settings/components/SettingsView';
-import TermsView from '../components/terms/components/TermsView';
+} from '../../../screenOptions';
 
 import CustomDrawerContent from './CustomDrawerContent';
-import WelcomePage from './WelcomePage.native';
-import { drawerContentOptions } from './constants';
 
 
 const DrawerStack = createDrawerNavigator();

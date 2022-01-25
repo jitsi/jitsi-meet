@@ -153,16 +153,6 @@ export default {
     },
 
     /**
-     * The style of the top-level container/{@code View} of
-     * {@code LocalVideoTrackUnderlay}.
-     */
-    localVideoTrackUnderlay: {
-        alignSelf: 'stretch',
-        backgroundColor: 'transparent',
-        flex: 1
-    },
-
-    /**
      * Top-level screen style.
      */
     page: {
@@ -280,5 +270,12 @@ export default {
         flex: 1,
         opacity: 0.8,
         overflow: 'hidden'
+    },
+
+    /**
+     * Style for screen container.
+     */
+    screenContainer: {
+        flex: 1
     }
 };

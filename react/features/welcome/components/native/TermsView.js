@@ -2,12 +2,12 @@
 
 import React, { useEffect } from 'react';
 
-import JitsiScreenWebView from '../../../../base/modal/components/JitsiScreenWebView';
-import JitsiStatusBar from '../../../../base/modal/components/JitsiStatusBar';
-import { screen } from '../../../../conference/components/native/routes';
-import { renderArrowBackButton } from '../../../../welcome/functions.native';
-
-import styles from './styles';
+import JitsiScreenWebView from '../../../base/modal/components/JitsiScreenWebView';
+import JitsiStatusBar from '../../../base/modal/components/JitsiStatusBar';
+import { renderArrowBackButton }
+    from '../../../mobile/navigation/components/welcome/functions';
+import { screen } from '../../../mobile/navigation/routes';
+import styles from '../styles';
 
 
 type Props = {
@@ -38,7 +38,7 @@ const TermsView = ({ navigation }: Props) => {
             <JitsiStatusBar />
             <JitsiScreenWebView
                 source = { TERMS_URL }
-                style = { styles.termsViewContainer } />
+                style = { styles.screenContainer } />
         </>
     );
 };

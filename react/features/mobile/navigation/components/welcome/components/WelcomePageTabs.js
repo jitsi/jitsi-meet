@@ -4,14 +4,14 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 
-import { CalendarList, isCalendarEnabled } from '../../calendar-sync';
-import { screen } from '../../conference/components/native/routes';
-import { RecentList } from '../../recent-list';
+import { CalendarList, isCalendarEnabled } from '../../../../../calendar-sync';
+import { RecentList } from '../../../../../recent-list';
 import {
     calendarListTabBarOptions,
     recentListTabBarOptions,
     tabBarOptions
-} from '../constants';
+} from '../../../../../welcome/constants';
+import { screen } from '../../../routes';
 
 const WelcomePage = createBottomTabNavigator();
 

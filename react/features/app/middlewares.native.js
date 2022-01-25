@@ -8,6 +8,7 @@ import '../mobile/call-integration/middleware';
 import '../mobile/external-api/middleware';
 import '../mobile/full-screen/middleware';
 import '../mobile/incoming-call/middleware';
+import '../mobile/navigation/middleware';
 import '../mobile/permissions/middleware';
 import '../mobile/proximity/middleware';
 import '../mobile/wake-lock/middleware';

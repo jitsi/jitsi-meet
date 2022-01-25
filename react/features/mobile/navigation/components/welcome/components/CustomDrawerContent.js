@@ -5,13 +5,12 @@ import React from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Avatar } from '../../base/avatar';
+import { Avatar } from '../../../../../base/avatar';
 import {
     getLocalParticipant, getParticipantDisplayName
-} from '../../base/participants';
-import { connect } from '../../base/redux';
-
-import styles, { DRAWER_AVATAR_SIZE } from './styles';
+} from '../../../../../base/participants';
+import { connect } from '../../../../../base/redux';
+import styles, { DRAWER_AVATAR_SIZE } from '../../../../../welcome/components/styles';
 
 type Props = {
 

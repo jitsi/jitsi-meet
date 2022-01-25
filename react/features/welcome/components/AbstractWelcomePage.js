@@ -60,17 +60,6 @@ export class AbstractWelcomePage<P: Props> extends Component<P, *> {
     _mounted: ?boolean;
 
     /**
-     * Implements React's {@link Component#getDerivedStateFromProps()}.
-     *
-     * @inheritdoc
-     */
-    static getDerivedStateFromProps(props: P, state: Object) {
-        return {
-            room: props._room || state.room
-        };
-    }
-
-    /**
      * Save room name into component's local state.
      *
      * @type {Object}

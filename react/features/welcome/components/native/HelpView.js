@@ -2,14 +2,13 @@
 
 import React, { PureComponent } from 'react';
 
-import JitsiScreenWebView from '../../../../base/modal/components/JitsiScreenWebView';
-import JitsiStatusBar from '../../../../base/modal/components/JitsiStatusBar';
-import { connect } from '../../../../base/redux';
-import { screen } from '../../../../conference/components/native/routes';
-import { renderArrowBackButton } from '../../../../welcome/functions.native';
-
-
-import styles from './styles';
+import JitsiScreenWebView from '../../../base/modal/components/JitsiScreenWebView';
+import JitsiStatusBar from '../../../base/modal/components/JitsiStatusBar';
+import { connect } from '../../../base/redux';
+import { renderArrowBackButton }
+    from '../../../mobile/navigation/components/welcome/functions';
+import { screen } from '../../../mobile/navigation/routes';
+import styles from '../styles';
 
 
 const DEFAULT_HELP_CENTRE_URL = 'https://web-cdn.jitsi.net/faq/meet-faq.html';
@@ -62,7 +61,7 @@ class HelpView extends PureComponent<Props> {
                 <JitsiStatusBar />
                 <JitsiScreenWebView
                     source = { this.props._url }
-                    style = { styles.helpViewContainer } />
+                    style = { styles.screenContainer } />
             </>
         );
     }

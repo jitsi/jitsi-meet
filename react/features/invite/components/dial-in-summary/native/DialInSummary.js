@@ -10,8 +10,9 @@ import { translate } from '../../../../base/i18n';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
-import { screen } from '../../../../conference/components/native/routes';
-import { renderArrowBackButton } from '../../../../welcome/functions.native';
+import { renderArrowBackButton }
+    from '../../../../mobile/navigation/components/welcome/functions';
+import { screen } from '../../../../mobile/navigation/routes';
 import { getDialInfoPageURLForURIString } from '../../../functions';
 
 import DialInSummaryErrorDialog from './DialInSummaryErrorDialog';

@@ -7,16 +7,16 @@ import { useSelector } from 'react-redux';
 import {
     getClientHeight,
     getClientWidth
-} from '../../../base/modal/components/functions.native';
-import { Chat } from '../../../chat';
-import { chatTabBarOptions } from '../../../conference/components/native/ConferenceNavigatorScreenOptions';
-import { screen } from '../../../conference/components/native/routes';
-import { PollsPane } from '../../../polls/components';
+} from '../../../../../base/modal/components/functions.native';
+import { Chat } from '../../../../../chat';
+import { PollsPane } from '../../../../../polls/components';
+import { screen } from '../../../routes';
+import { chatTabBarOptions } from '../../../screenOptions';
 
 const ChatTab = createMaterialTopTabNavigator();
 
 
-const ChatAndPolls = () => {
+const ChatAndPollsNavigationContainer = () => {
     const clientHeight = useSelector(getClientHeight);
     const clientWidth = useSelector(getClientWidth);
 
@@ -40,4 +40,4 @@ const ChatAndPolls = () => {
     );
 };
 
-export default ChatAndPolls;
+export default ChatAndPollsNavigationContainer;

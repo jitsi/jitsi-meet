@@ -1,4 +1,4 @@
-import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
+import BaseTheme from '../../../../../base/ui/components/BaseTheme';
 export const ANDROID_UNDERLINE_COLOR = 'transparent';
 export const PLACEHOLDER_COLOR = BaseTheme.palette.action02Focus;
 export const THUMB_COLOR = BaseTheme.palette.field02;
