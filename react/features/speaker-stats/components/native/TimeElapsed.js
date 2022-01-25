@@ -12,6 +12,11 @@ import { createLocalizedTime } from '../timeFunctions';
 type Props = {
 
     /**
+     * Style for text.
+     */
+    style: Object,
+
+    /**
      * The function to translate human-readable text.
      */
     t: Function,
@@ -37,11 +42,11 @@ class TimeElapsed extends PureComponent<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { time, t } = this.props;
+        const { style, time, t } = this.props;
         const timeElapsed = createLocalizedTime(time, t);
 
         return (
-            <Text>
+            <Text style = { style }>
                 { timeElapsed }
             </Text>
         );
