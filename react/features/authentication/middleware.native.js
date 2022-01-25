@@ -19,6 +19,7 @@ import { MiddlewareRegistry } from '../base/redux';
 import {
     CANCEL_LOGIN,
     STOP_WAIT_FOR_OWNER,
+    UPGRADE_ROLE_FINISHED,
     WAIT_FOR_OWNER
 } from './actionTypes';
 import {
@@ -122,6 +123,15 @@ MiddlewareRegistry.register(store => next => action => {
         _clearExistingWaitForOwnerTimeout(store);
         store.dispatch(hideDialog(WaitForOwnerDialog));
         break;
+
+    case UPGRADE_ROLE_FINISHED: {
+        const { error, progress } = action;
+
+        if (!error && progress === 1) {
+            _hideLoginDialog(store);
+        }
+        break;
+    }
 
     case WAIT_FOR_OWNER: {
         _clearExistingWaitForOwnerTimeout(store);
