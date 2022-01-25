@@ -45,7 +45,8 @@ export default {
         wrapper: {
             marginLeft: 0,
             marginRight: 0,
-            marginVertical: BaseTheme.spacing[3],
+            marginTop: BaseTheme.spacing[3],
+            marginBottom: BaseTheme.spacing[3],
             flexDirection: 'row',
             alignItems: 'center'
         },
