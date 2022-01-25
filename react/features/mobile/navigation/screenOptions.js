@@ -93,7 +93,8 @@ export const drawerContentOptions = {
     },
     drawerStyle: {
         backgroundColor: BaseTheme.palette.ui12,
-        width: '54%'
+        maxWidth: 400,
+        width: '75%'
     }
 };
 
