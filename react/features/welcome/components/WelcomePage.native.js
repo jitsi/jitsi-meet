@@ -18,7 +18,9 @@ import { Icon, IconMenu, IconWarning } from '../../base/icons';
 import JitsiStatusBar from '../../base/modal/components/JitsiStatusBar';
 import { LoadingIndicator, Text } from '../../base/react';
 import { connect } from '../../base/redux';
-import BaseTheme from '../../base/ui/components/BaseTheme.native';
+import BaseTheme from '../../base/ui/components/BaseTheme';
+import WelcomePageTabs
+    from '../../mobile/navigation/components/welcome/components/WelcomePageTabs';
 
 import {
     AbstractWelcomePage,
@@ -26,7 +28,6 @@ import {
     type Props as AbstractProps
 } from './AbstractWelcomePage';
 import VideoSwitch from './VideoSwitch';
-import WelcomePageTabs from './WelcomePageTabs';
 import styles, { PLACEHOLDER_TEXT_COLOR } from './styles';
 
 
@@ -41,11 +42,6 @@ type Props = AbstractProps & {
      * Default prop for navigating between screen components(React Navigation).
      */
     navigation: Object,
-
-    /**
-     * Default prop for navigating between screen components(React Navigation).
-     */
-    route: Object,
 
     /**
      * The translate function.
@@ -103,8 +99,6 @@ class WelcomePage extends AbstractWelcomePage<*> {
     componentDidMount() {
         super.componentDidMount();
 
-        this._updateRoomname();
-
         const {
             _headerStyles,
             navigation
@@ -115,7 +109,8 @@ class WelcomePage extends AbstractWelcomePage<*> {
                 <TouchableOpacity
                     /* eslint-disable-next-line react/jsx-no-bind */
                     onPress = { () =>
-                        navigation.dispatch(DrawerActions.openDrawer()) }
+                        navigation.dispatch(DrawerActions.openDrawer())
+                    }
                     style = { styles.drawerNavigationIcon }>
                     <Icon
                         size = { 20 }
@@ -126,6 +121,20 @@ class WelcomePage extends AbstractWelcomePage<*> {
             // eslint-disable-next-line react/no-multi-comp
             headerRight: () =>
                 <VideoSwitch />
+        });
+
+        navigation.addListener('focus', () => {
+            this._updateRoomname();
+        });
+
+        navigation.addListener('blur', () => {
+            this._clearTimeouts();
+
+            this.setState({
+                generatedRoomname: '',
+                insecureRoomName: false,
+                room: ''
+            });
         });
     }
 

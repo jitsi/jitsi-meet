@@ -50,7 +50,7 @@ function _connectionEstablished(store, next, action) {
     // In the Web app we explicitly do not want to display the hash and
     // query/search URL params. Unfortunately, window.location and, more
     // importantly, its params are used not only in jitsi-meet but also in
-    // lib-jitsi-meet. Consequenlty, the time to remove the params is
+    // lib-jitsi-meet. Consequently, the time to remove the params is
     // determined by when no one needs them anymore.
     const { history, location } = window;
 

@@ -4,8 +4,7 @@ import React from 'react';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { Icon } from '../../../base/icons';
-
-import styles from './styles';
+import styles from '../../../conference/components/native/styles';
 
 type Props = {
 

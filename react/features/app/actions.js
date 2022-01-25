@@ -34,7 +34,6 @@ import {
 } from './functions';
 import logger from './logger';
 
-declare var APP: Object;
 declare var interfaceConfig: Object;
 
 

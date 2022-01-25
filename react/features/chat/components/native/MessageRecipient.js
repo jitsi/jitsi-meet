@@ -10,7 +10,7 @@ import { connect } from '../../../base/redux';
 import { type StyleType } from '../../../base/styles';
 import {
     setParams
-} from '../../../conference/components/native/ConferenceNavigationContainerRef';
+} from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { setPrivateMessageRecipient } from '../../actions.any';
 import AbstractMessageRecipient, {
     type Props as AbstractProps

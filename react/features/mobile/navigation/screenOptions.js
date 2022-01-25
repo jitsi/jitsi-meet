@@ -12,11 +12,11 @@ import {
     IconHome,
     IconInfo,
     IconSettings
-} from '../../../base/icons';
-import BaseTheme from '../../../base/ui/components/BaseTheme';
+} from '../../base/icons';
+import BaseTheme from '../../base/ui/components/BaseTheme';
 
-import { goBack } from './ConferenceNavigationContainerRef';
-import HeaderNavigationButton from './HeaderNavigationButton';
+import HeaderNavigationButton from './components/HeaderNavigationButton';
+import { goBack } from './components/conference/ConferenceNavigationContainerRef';
 
 /**
  * Navigation container theme.
@@ -79,6 +79,21 @@ export const drawerScreenOptions = {
     headerShown: true,
     headerStyle: {
         backgroundColor: BaseTheme.palette.screen01Header
+    }
+};
+
+/**
+ * Drawer content options.
+ */
+export const drawerContentOptions = {
+    drawerActiveBackgroundColor: BaseTheme.palette.ui12,
+    drawerActiveTintColor: BaseTheme.palette.screen01Header,
+    drawerLabelStyle: {
+        marginLeft: BaseTheme.spacing[2]
+    },
+    drawerStyle: {
+        backgroundColor: BaseTheme.palette.ui12,
+        width: '54%'
     }
 };
 

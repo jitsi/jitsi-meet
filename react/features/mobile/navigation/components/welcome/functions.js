@@ -2,10 +2,10 @@
 
 import React from 'react';
 
-import { getFeatureFlag, WELCOME_PAGE_ENABLED } from '../base/flags';
-import { IconArrowBack } from '../base/icons';
+import { getFeatureFlag, WELCOME_PAGE_ENABLED } from '../../../../base/flags';
+import { IconArrowBack } from '../../../../base/icons';
 import HeaderNavigationButton
-    from '../conference/components/native/HeaderNavigationButton';
+    from '../HeaderNavigationButton';
 
 /**
  * Determines whether the {@code WelcomePage} is enabled by the app itself

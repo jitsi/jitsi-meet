@@ -1,5 +1,5 @@
 export const screen = {
-    root: 'Root',
+    root: 'Main root',
     welcome: {
         main: 'Home',
         tabs: {
@@ -13,6 +13,7 @@ export const screen = {
     },
     dialInSummary: 'Dial-In Info',
     conference: {
+        root: 'Conference root',
         main: 'Conference',
         chat: 'Chat',
         chatandpolls: {

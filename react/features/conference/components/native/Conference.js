@@ -23,6 +23,9 @@ import { LargeVideo } from '../../../large-video';
 import { KnockingParticipantList } from '../../../lobby/components/native';
 import { getIsLobbyVisible } from '../../../lobby/functions';
 import { BackButtonRegistry } from '../../../mobile/back-button';
+import { navigate }
+    from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+import { screen } from '../../../mobile/navigation/routes';
 import { Captions } from '../../../subtitles';
 import { setToolboxVisible } from '../../../toolbox/actions';
 import { Toolbox } from '../../../toolbox/components/native';
@@ -34,12 +37,10 @@ import {
 import type { AbstractProps } from '../AbstractConference';
 
 import AlwaysOnLabels from './AlwaysOnLabels';
-import { navigate } from './ConferenceNavigationContainerRef';
 import ExpandedLabelPopup from './ExpandedLabelPopup';
 import LonelyMeetingExperience from './LonelyMeetingExperience';
 import TitleBar from './TitleBar';
 import { EXPANDED_LABEL_TIMEOUT } from './constants';
-import { screen } from './routes';
 import styles from './styles';
 
 
