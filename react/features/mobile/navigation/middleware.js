@@ -38,7 +38,7 @@ function _setRoom(store, next, action) {
 
     if (!oldRoom && newRoom) {
         navigateRoot(screen.conference.root);
-    } else if (oldRoom && !newRoom) {
+    } else if (!newRoom) {
         navigateRoot(screen.root);
     }
 
