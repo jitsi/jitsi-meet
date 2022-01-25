@@ -73,9 +73,15 @@ type Props = {
 function SpeakerStatsSearch({ onSearch }: Props) {
     const classes = useStyles();
     const { t } = useTranslation();
-
     const disableSpeakerStatsSearch = useSelector(isSpeakerStatsSearchDisabled);
     const [ searchValue, setSearchValue ] = useState<string>('');
+
+    /**
+     * Callback for the onChange event of the field.
+     *
+     * @param {Object} evt - The static event.
+     * @returns {void}
+     */
     const onChange = useCallback((evt: Event) => {
         const value = getFieldValue(evt);
 
