@@ -109,8 +109,12 @@ export function getTileViewGridDimensions(state: Object) {
     const numberOfParticipants = getParticipantCountWithFake(state)
         - (iAmRecorder ? 1 : 0)
         - (disableSelfView ? 1 : 0);
+    const isWeb = navigator.product !== 'ReactNative';
 
-    const columnsToMaintainASquare = Math.ceil(Math.sqrt(numberOfParticipants));
+    // When there are 3 participants in the call we want them to be placed on a single row unless the maxColumn setting
+    // is lower.
+    const columnsToMaintainASquare
+        = isWeb && numberOfParticipants === 3 ? 3 : Math.ceil(Math.sqrt(numberOfParticipants));
     const columns = Math.min(columnsToMaintainASquare, maxColumns);
     const rows = Math.ceil(numberOfParticipants / columns);
     const minVisibleRows = Math.min(maxColumns, rows);
