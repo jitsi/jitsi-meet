@@ -28,8 +28,8 @@ import {
     isEveryoneModerator
 } from '../../../base/participants';
 import {
-    openSettingsDialog,
     SETTINGS_TABS,
+    openSettingsDialog,
     shouldShowModeratorSettings
 } from '../../../settings';
 import { MuteEveryonesVideoDialog } from '../../../video-menu/components';
