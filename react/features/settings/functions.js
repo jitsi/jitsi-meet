@@ -153,16 +153,11 @@ export function getModeratorTabProps(stateful: Object | Function) {
     } = state['features/base/conference'];
     const { disableReactionsModeration } = state['features/base/config'];
     const followMeActive = isFollowMeActive(state);
-    const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
-
-    const showModeratorSettings = Boolean(
-        conference
-        && configuredTabs.includes('moderator')
-        && isLocalParticipantModerator(state));
+    const showModeratorSettings = shouldShowModeratorSettings(state);
 
     // The settings sections to display.
     return {
-        showModeratorSettings,
+        showModeratorSettings: Boolean(conference && showModeratorSettings),
         disableReactionsModeration: Boolean(disableReactionsModeration),
         followMeActive: Boolean(conference && followMeActive),
         followMeEnabled: Boolean(conference && followMeEnabled),
@@ -170,6 +165,21 @@ export function getModeratorTabProps(stateful: Object | Function) {
         startAudioMuted: Boolean(conference && startAudioMutedPolicy),
         startVideoMuted: Boolean(conference && startVideoMutedPolicy)
     };
+}
+
+/**
+ * Returns true if moderator tab in settings should be visible/accessible.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {boolean} True to indicate that moderator tab should be visible, false otherwise.
+ */
+export function shouldShowModeratorSettings(stateful: Object | Function) {
+    const state = toState(stateful);
+
+    return Boolean(
+        isSettingEnabled('moderator')
+        && isLocalParticipantModerator(state));
 }
 
 /**
