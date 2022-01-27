@@ -23,18 +23,27 @@ type Props = {
     /**
      * Renders the lists disabled.
      */
-    disabled: boolean
+    disabled: boolean,
+
+    /**
+     * Callback to be invoked when pressing the list container.
+     */
+    onListContainerPress?: Function
 };
 
-const WelcomePageTabs = ({ disabled }: Props) => {
+const WelcomePageTabs = ({ disabled, onListContainerPress }: Props) => {
     const RecentListScreen = useCallback(() =>
-        <RecentList disabled = { disabled } />
+        (<RecentList
+            disabled = { disabled }
+            onListContainerPress = { onListContainerPress } />)
     );
 
     const calendarEnabled = useSelector(isCalendarEnabled);
 
     const CalendarListScreen = useCallback(() =>
-        <CalendarList disabled = { disabled } />
+        (<CalendarList
+            disabled = { disabled }
+            onListContainerPress = { onListContainerPress } />)
     );
 
     return (
