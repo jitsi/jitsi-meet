@@ -1,7 +1,12 @@
 // @flow
 
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import {
+    Text,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View
+} from 'react-native';
 
 import { translate } from '../../base/i18n';
 import { AbstractPage } from '../../base/react';
@@ -26,6 +31,11 @@ type Props = {
      * Indicates if the list is disabled or not.
      */
     disabled: boolean,
+
+    /**
+     * Callback to be invoked when pressing the list container.
+     */
+    onListContainerPress?: boolean,
 
     /**
      * The translate function.
@@ -71,20 +81,23 @@ class CalendarList extends AbstractPage<Props> {
      * @inheritdoc
      */
     render() {
-        const { disabled } = this.props;
+        const { disabled, onListContainerPress } = this.props;
 
         return (
             CalendarListContent
-                ? <View
-                    style = {
-                        disabled
-                            ? styles.calendarSyncDisabled
-                            : styles.calendarSync }>
-                    <CalendarListContent
-                        disabled = { disabled }
-                        listEmptyComponent
-                            = { this._getRenderListEmptyComponent() } />
-                </View>
+                ? <TouchableWithoutFeedback
+                    onPress = { onListContainerPress }>
+                    <View
+                        style = {
+                            disabled
+                                ? styles.calendarSyncDisabled
+                                : styles.calendarSync }>
+                        <CalendarListContent
+                            disabled = { disabled }
+                            listEmptyComponent
+                                = { this._getRenderListEmptyComponent() } />
+                    </View>
+                </TouchableWithoutFeedback>
                 : null
         );
     }

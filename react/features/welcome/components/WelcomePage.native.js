@@ -369,7 +369,9 @@ class WelcomePage extends AbstractWelcomePage<*> {
                         </View>
                     </SafeAreaView>
                     {/* // $FlowExpectedError*/}
-                    <WelcomePageTabs disabled = { this.state._fieldFocused } />
+                    <WelcomePageTabs
+                        disabled = { this.state._fieldFocused }
+                        onListContainerPress = { this._onFieldBlur } />
                 </View>
             </>
         );
