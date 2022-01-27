@@ -5,8 +5,8 @@ import React from 'react';
 import { Dialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import { connect } from '../../../../base/redux';
-import { isScreenVideoShared } from '../../../../screen-share';
 import { toggleScreenshotCaptureSummary } from '../../../../screenshot-capture';
+import { isScreenshotCaptureEnabled } from '../../../../screenshot-capture/functions';
 import AbstractStartRecordingDialog, {
     mapStateToProps as abstractMapStateToProps
 } from '../AbstractStartRecordingDialog';
@@ -72,9 +72,9 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
      * @returns {void}
      */
     _toggleScreenshotCapture() {
-        const { dispatch, _screensharing, _screenshotCaptureEnabled } = this.props;
+        const { dispatch, _screenshotCaptureEnabled } = this.props;
 
-        if (_screenshotCaptureEnabled && _screensharing) {
+        if (_screenshotCaptureEnabled) {
             dispatch(toggleScreenshotCaptureSummary(true));
         }
     }
@@ -94,8 +94,7 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
 function mapStateToProps(state) {
     return {
         ...abstractMapStateToProps(state),
-        _screensharing: isScreenVideoShared(state),
-        _screenshotCaptureEnabled: state['features/base/config'].enableScreenshotCapture
+        _screenshotCaptureEnabled: isScreenshotCaptureEnabled(state, true, false)
     };
 }
 
