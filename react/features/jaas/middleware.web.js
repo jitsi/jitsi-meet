@@ -23,7 +23,7 @@ MiddlewareRegistry.register(store => next => async action => {
 
         if (store.getState()['features/base/config'].iAmRecorder) {
             // We don't register anything on web if we are in iAmRecorder mode
-            return;
+            return next(action);
         }
 
         conference.on(
