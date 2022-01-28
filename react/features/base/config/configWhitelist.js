@@ -162,6 +162,7 @@ export default [
     'hiddenPremeetingButtons',
     'hideConferenceSubject',
     'hideDisplayName',
+    'hideDominantSpeakerBadge',
     'hideRecordingLabel',
     'hideParticipantsStats',
     'hideConferenceTimer',

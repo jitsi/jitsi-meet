@@ -221,6 +221,11 @@ type Props = {
     _sharingVideo: boolean,
 
     /**
+     * Whether or not to show dominant speaker badge.
+     */
+    _showDominantSpeakerBadge: boolean,
+
+    /**
      * Whether or not the tile view is enabled.
      */
     _tileViewEnabled: boolean,
@@ -249,11 +254,6 @@ type Props = {
      * Invoked to active other features of the app.
      */
     dispatch: Function,
-
-    /**
-     * If the dominant speaker name should be displayed or not.
-     */
-    showDominantSpeakerName?: boolean,
 
     /**
      * Invoked to obtain translated strings.
@@ -1258,8 +1258,8 @@ class Toolbox extends Component<Props> {
             _overflowMenuVisible,
             _reactionsEnabled,
             _toolbarButtons,
+            _showDominantSpeakerBadge,
             classes,
-            showDominantSpeakerName,
             t
         } = this.props;
 
@@ -1278,7 +1278,7 @@ class Toolbox extends Component<Props> {
                         onMouseOver: this._onMouseOver
                     }) }>
 
-                    { showDominantSpeakerName && <DominantSpeakerName /> }
+                    { _showDominantSpeakerBadge && <DominantSpeakerName /> }
 
                     <div className = 'toolbox-content-items'>
                         {mainMenuButtons.map(({ Content, key, ...rest }) => Content !== Separator && (
@@ -1349,6 +1349,7 @@ function _mapStateToProps(state, ownProps) {
         callStatsID,
         disableProfile,
         enableFeaturesBasedOnToken,
+        hideDominantSpeakerBadge,
         buttonsWithNotifyClick
     } = state['features/base/config'];
     const {
@@ -1404,6 +1405,7 @@ function _mapStateToProps(state, ownProps) {
         _raisedHand: hasRaisedHand(localParticipant),
         _reactionsEnabled: isReactionsEnabled(state),
         _screenSharing: isScreenVideoShared(state),
+        _showDominantSpeakerBadge: !hideDominantSpeakerBadge,
         _tileViewEnabled: shouldDisplayTileView(state),
         _toolbarButtons: toolbarButtons,
         _virtualSource: state['features/virtual-background'].virtualSource,
