@@ -2,6 +2,7 @@
     "addPeople": {
         "add": "Uitnodigen",
         "addContacts": "Nodig uw contacten uit",
+        "contacts": "contacten",
         "copyInvite": "Uitnodiging voor vergadering kopiëren",
         "copyLink": "Link naar vergadering kopiëren",
         "copyStream": "Link naar livestream kopiëren",
@@ -16,15 +17,11 @@
         "inviteMoreMailSubject": "Deelnemen aan {{appName}}-vergadering",
         "inviteMorePrompt": "Nodig meer personen uit",
         "linkCopied": "Link gekopieerd naar klembord",
-        "loading": "Personen en telefoonnummers aan het zoeken",
-        "loadingNumber": "Telefoonnummer aan het valideren",
-        "loadingPeople": "Personen om uit te nodigen aan het zoeken",
         "noResults": "Geen resultaten die overeenkomen met de zoekopdracht",
-        "noValidNumbers": "Voer een telefoonnummer in",
         "outlookEmail": "Outlook e-mail",
+        "phoneNumbers": "telefoonnummers",
+        "searching": "Zoeken...",
         "searchNumbers": "Telefoonnummers toevoegen",
-        "searchPeople": "Personen zoeken",
-        "searchPeopleAndNumbers": "Personen zoeken of hun telefoonnummers toevoegen",
         "shareInvite": "Uitnodiging voor vergadering delen",
         "shareLink": "Deel de link naar de vergadering om anderen uit te nodigen",
         "shareStream": "Deel de link naar de livestream",
@@ -41,6 +38,9 @@
     },
     "audioOnly": {
         "audioOnly": "Lage bandbreedte"
+    },
+    "blankPage": {
+        "meetingEnded": "Vergadering beëindigd."
     },
     "calendarSync": {
         "addMeetingURL": "Een link naar een vergadering toevoegen",
@@ -87,6 +87,7 @@
     },
     "chromeExtensionBanner": {
         "buttonText": "Installeer Chrome Extensie",
+        "close": "Sluiten",
         "dontShowAgain": "Laat me dit niet meer zien",
         "installExtensionText": "Installeer de extensie voor Google Calendar en Office 365 integratie"
     },
@@ -160,7 +161,8 @@
         "joinInApp": "Deelnemen aan deze vergadering met de app",
         "launchWebButton": "Starten in web",
         "title": "Uw vergadering wordt gestart in {{app}}...",
-        "tryAgainButton": "Opnieuw proberen in desktop"
+        "tryAgainButton": "Opnieuw proberen in desktop",
+        "unsupportedBrowser": "Het lijkt erop dat u een browser gebruikt die wij niet ondersteunen."
     },
     "defaultLink": "bijv. {{url}}",
     "defaultNickname": "bijv. Jannie Roze",
@@ -458,6 +460,8 @@
         "youtubeTerms": "Servicevoorwaarden YouTube"
     },
     "lobby": {
+        "admit": "Toelaten",
+        "admitAll": "Allen toelaten",
         "allow": "Toestaan",
         "backToKnockModeButton": "Geen wachtwoord, vraag om deel te mogen nemen",
         "dialogTitle": "Lobby-modus",
@@ -469,6 +473,7 @@
         "enableDialogText": "Met de lobby-modus kunt u uw vergadering beveiligen, door deelnemers alleen toe te laten na een formele goedkeuring van een moderator.",
         "enterPasswordButton": "Voer wachtwoord voor vergadering in",
         "enterPasswordTitle": "Voer wachtwoord in om deel te nemen aan vergadering",
+        "errorMissingPassword": "Voer alstublieft het wachtwoord van de vergadering in",
         "invalidPassword": "Ongeldig wachtwoord",
         "joinRejectedMessage": "Uw verzoek tot deelname is afgewezen door een moderator.",
         "joinTitle": "Deelnemen aan vergadering",
@@ -488,6 +493,7 @@
         "passwordField": "Voer wachtwoord voor vergadering in",
         "passwordJoinButton": "Deelnemen",
         "reject": "Afwijzen",
+        "rejectAll": "Allen afwijzen",
         "toggleLabel": "Lobby inschakelen"
     },
     "localRecording": {
@@ -536,7 +542,6 @@
         "displayNotifications": "Toon meldingen voor",
         "focus": "Focus van vergadering",
         "focusFail": "{{component}} niet beschikbaar - probeer over {{ms}} sec. opnieuw",
-        "grantedTo": "Moderatorrechten verleend aan {{to}}!",
         "invitedOneMember": "{{name}} is uitgenodigd",
         "invitedThreePlusMembers": "{{name}} en {{count}} anderen zijn uitgenodigd",
         "invitedTwoMembers": "{{first}} en {{second}} zijn uitgenodigd",
@@ -804,8 +809,6 @@
             "mute": "Audio dempen in- of uitschakelen",
             "muteEveryone": "Iedereen dempen",
             "muteEveryoneElse": "Alle anderen dempen",
-            "muteEveryoneElsesVideo": "Alle andere camera's uitschakelen",
-            "muteEveryonesVideo": "Alle camera's uitschakelen",
             "pip": "Picture-in-Picture-modus in- of uitschakelen",
             "privateMessage": "Verstuur privébericht",
             "profile": "Uw profiel bewerken",
@@ -836,6 +839,8 @@
         "callQuality": "Videokwaliteit beheren",
         "chat": "Chat openen / sluiten",
         "closeChat": "Chat sluiten",
+        "closeReactionsMenu": "Reactiemenu sluiten",
+        "disableReactionSounds": "U kunt reactiegeluiden uitschakelen voor deze vergadering",
         "documentClose": "Gedeeld document sluiten",
         "documentOpen": "Gedeeld document openen",
         "download": "Download onze apps",
@@ -884,7 +889,6 @@
         "stopScreenSharing": "Schermdeling stoppen",
         "stopSharedVideo": "Video stoppen",
         "stopSubtitles": "Ondertiteling stoppen",
-        "stopvideoblur": "Achtergrond vervagen uitschakelen",
         "talkWhileMutedPopup": "Probeert u te spreken? U bent gedempt.",
         "tileViewToggle": "Tegelweergave in- of uitschakelen",
         "toggleCamera": "Camera wisselen",
