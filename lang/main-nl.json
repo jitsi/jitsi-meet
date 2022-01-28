@@ -602,9 +602,9 @@
         "audioDeviceProblem": "Er is een probleem met uw microfoon",
         "audioOnlyError": "Audiofout:",
         "audioTrackError": "Kon audiotrack niet aanmaken.",
-        "calling": "Bellen",
         "callMe": "Bel me",
         "callMeAtNumber": "Bel me op dit nummer:",
+        "calling": "Bellen",
         "configuringDevices": "Apparaten instellen...",
         "connectedWithAudioQ": "Bent u verbonden met audio?",
         "connection": {
