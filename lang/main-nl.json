@@ -533,6 +533,9 @@
     "me": "ik",
     "notify": {
         "OldElectronAPPTitle": "Beveiligingskwetsbaarheid!",
+        "allowAction": "Toestaan",
+        "allowedUnmute": "U kunt het dempen van uw microfoon opheffen, uw camera starten of uw scherm delen.",
+        "audioUnmuteBlockedTitle": "Dempen opheffen is geblokkeerd!",
         "chatMessages": "Chatberichten",
         "connectedOneMember": "{{name}} neemt nu deel aan de vergadering",
         "connectedThreePlusMembers": "{{name}} en {{count}} anderen nemen nu deel aan de vergadering",
@@ -545,6 +548,9 @@
         "invitedThreePlusMembers": "{{name}} en {{count}} anderen zijn uitgenodigd",
         "invitedTwoMembers": "{{first}} en {{second}} zijn uitgenodigd",
         "kickParticipant": "{{kicked}} is verwijderd door {{kicker}}",
+        "leftOneMember": "{{name}} heeft de vergadering verlaten",
+		"leftThreePlusMembers": "{{name}} en vele anderen hebben de vergadering verlaten",
+		"leftTwoMembers": "{{first}} en {{second}} hebben de vergadering verlaten",
         "me": "Ik",
         "moderator": "Moderatorrechten verleend!",
         "muted": "U hebt het gesprek gedempt gestart.",
@@ -559,6 +565,7 @@
         "oldElectronClientDescription3": "!",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) verwijderd door een andere deelnemer",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) ingesteld door een ander deelnemer",
+        "raiseHandAction": "Hand opsteken",
         "raisedHand": "{{name}} zou graag willen spreken.",
         "somebody": "Iemand",
         "startSilentDescription": "Neem opnieuw aan de vergadering deel om audio in te schakelen",
@@ -688,6 +695,9 @@
         "rejected": "Geweigerd",
         "ringing": "Gaat over..."
     },
+	"privacyView": 	{
+		"header": "Privacy"
+	},
     "profile": {
         "setDisplayNameLabel": "Uw weergavenaam instellen",
         "setEmailInput": "Voer e-mailadres in",
@@ -746,6 +756,8 @@
         "desktopShareWarning": "U moet het schermdelen opnieuw beginnen om de nieuwe instellingen toe te passen.",
         "devices": "Apparaten",
         "followMe": "Iedereen volgt mij",
+        "framesPerSecond": "beelden per seconde",
+        "incomingMessage": "Binnenkomend bericht",
         "language": "Taal",
         "loggedIn": "Aangemeld als {{name}}",
         "microphones": "Microfoons",
