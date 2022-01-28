@@ -568,7 +568,36 @@
         "suboptimalExperienceTitle": "Browserwaarschuwing",
         "unmute": "Dempen opheffen",
         "videoMutedRemotelyDescription": "U kan hem ten alle tijden weer aanzetten.",
-        "videoMutedRemotelyTitle": "Uw camera is uitgezet door {{participantDisplayName}}!"
+        "videoMutedRemotelyTitle": "Uw camera is uitgezet door {{participantDisplayName}}!",
+        "viewLobby": "Lobby bekijken"
+    },
+    "participantsPane": {
+        "actions": {
+            "allow": "Sta deelnemers toe:",
+            "allowVideo": "Video toestaan",
+            "askUnmute": "Vragen om dempen op te heffen",
+            "audioModeration": "Voor henzelf dempen opheffen",
+            "blockEveryoneMicCamera": "Blokkeer microfoon en camera van allen",
+            "invite": "Iemand uitnodigen",
+            "moreModerationActions": "Meer moderatoropties",
+            "moreModerationControls": "Meer moderatorinstellingen",
+            "moreParticipantOptions": "Meer deelnemeropties",
+            "mute": "Dempen",
+            "muteAll": "Allen dempen",
+            "muteEveryoneElse": "Alle anderen dempen",
+            "stopEveryonesVideo": "Camera's van iedereen uitzetten",
+            "stopVideo": "Camera uitzetten",
+            "unblockEveryoneMicCamera": "Deblokkeer microfoon en camera van allen",
+            "videoModeration": "Hun camera aanzetten"
+        },
+        "close": "Sluiten",
+        "header": "Deelnemers",
+        "headings": {
+            "lobby": "Lobby ({{count}})",
+            "participantsList": "Deelnemers aan vergadering ({{count}})",
+            "waitingLobby": "In de lobby aan het wachten ({{count}})"
+        },
+        "search": "Zoek deelnemers"
     },
     "passwordDigitsOnly": "Maximaal {{number}} cijfers",
     "passwordSetRemotely": "ingesteld door een andere deelnemer",
