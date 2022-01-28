@@ -1,7 +1,16 @@
 // @flow
 import { hideDialog } from '../base/dialog';
 
-import { RemoteVideoMenu, SharedVideoMenu } from './components/native';
+import { RemoteVideoMenu, SharedVideoMenu, LocalVideoMenu } from './components/native';
+
+/**
+ * Hides the local video menu.
+ *
+ * @returns {Function}
+ */
+export function hideLocalVideoMenu() {
+    return hideDialog(LocalVideoMenu);
+}
 
 /**
  * Hides the remote video menu.
