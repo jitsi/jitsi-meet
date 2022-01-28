@@ -41,6 +41,24 @@
     "blankPage": {
         "meetingEnded": "Vergadering beëindigd."
     },
+   "breakoutRooms": {
+        "actions": {
+            "add": "Aparta vergaderruimte toevoegen",
+            "close": "Sluiten",
+            "join": "Deelnemen",
+            "leaveBreakoutRoom": "Verlaat aparte vergaderruimte",
+            "more": "Meer",
+            "remove": "Verwijderen",
+            "sendToBreakoutRoom": "Stuur deelnemer naar:"
+        },
+        "defaultName": "Aparte vergaderruimte #{{index}}",
+        "mainRoom": "Hoofdruimte",
+        "notifications": {
+            "joined": "Aparte vergaderruimte \"{{name}}\" binnentreden",
+            "joinedMainRoom": "Hoofdruimte binnentreden",
+            "joinedTitle": "Aparte vergaderruimtes"
+        }
+    },
     "calendarSync": {
         "addMeetingURL": "Een link naar een vergadering toevoegen",
         "confirmAddLink": "Wilt u een Jitsi-link aan deze afspraak toevoegen?",
@@ -827,6 +845,7 @@
             "Settings": "Instellingen in- of uitschakelen",
             "audioOnly": "Alleen audio in- of uitschakelen",
             "audioRoute": "Het afspeelapparaat selecteren",
+            "breakoutRoom": "Neem deel aan/verlaat aparte vergaderruimte",
             "callQuality": "Videokwaliteit beheren",
             "cc": "Ondertiteling in- of uitschakelen",
             "chat": "Chatvenster in- of uitschakelen",
@@ -894,6 +913,8 @@
         "hangup": "Verlaten",
         "help": "Hulp",
         "invite": "Personen uitnodigen",
+        "joinBreakoutRoom": "Deelnemen aan aparte vergaderruimte",
+        "leaveBreakoutRoom": "Aparte vergaderruimte verlaten",
         "lobbyButtonDisable": "Schakel lobby-modus uit",
         "lobbyButtonEnable": "Schakel lobby-modus in",
         "login": "Aanmelden",
