@@ -41,7 +41,7 @@
     "blankPage": {
         "meetingEnded": "Vergadering beëindigd."
     },
-   "breakoutRooms": {
+    "breakoutRooms": {
         "actions": {
             "add": "Aparta vergaderruimte toevoegen",
             "close": "Sluiten",
