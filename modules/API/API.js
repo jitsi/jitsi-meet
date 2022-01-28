@@ -67,9 +67,10 @@ import { toggleLobbyMode, setKnockingParticipantApproval } from '../../react/fea
 import { isForceMuted } from '../../react/features/participants-pane/functions';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession } from '../../react/features/recording/functions';
-import { isScreenAudioSupported, isScreenVideoShared } from '../../react/features/screen-share';
+import { isScreenAudioSupported } from '../../react/features/screen-share';
 import { startScreenShareFlow, startAudioScreenShareFlow } from '../../react/features/screen-share/actions';
 import { toggleScreenshotCaptureSummary } from '../../react/features/screenshot-capture';
+import { isScreenshotCaptureEnabled } from '../../react/features/screenshot-capture/functions';
 import { playSharedVideo, stopSharedVideo } from '../../react/features/shared-video/actions.any';
 import { extractYoutubeIdOrURL } from '../../react/features/shared-video/functions';
 import { toggleTileView, setTileView } from '../../react/features/video-layout';
@@ -481,9 +482,7 @@ function initCommands() {
                 return;
             }
 
-            const enableScreenshotCapture = state['features/base/config'].enableScreenshotCapture;
-
-            if (enableScreenshotCapture && isScreenVideoShared(state)) {
+            if (isScreenshotCaptureEnabled(state, true, false)) {
                 APP.store.dispatch(toggleScreenshotCaptureSummary(true));
             }
             conference.startRecording(recordingConfig);
@@ -514,9 +513,7 @@ function initCommands() {
             const activeSession = getActiveSession(state, mode);
 
             if (activeSession && activeSession.id) {
-                if (state['features/base/config'].enableScreenshotCapture) {
-                    APP.store.dispatch(toggleScreenshotCaptureSummary(false));
-                }
+                APP.store.dispatch(toggleScreenshotCaptureSummary(false));
                 conference.stopRecording(activeSession.id);
             } else {
                 logger.error('No recording or streaming session found');

@@ -36,8 +36,6 @@ export function toggleScreenshotCaptureSummary(enabled: boolean) {
         const state = getState();
 
         if (state['features/screenshot-capture'].capturesEnabled !== enabled) {
-            const { jitsiTrack } = getLocalVideoTrack(state['features/base/tracks']);
-
             if (!screenshotSummary) {
                 try {
                     screenshotSummary = await createScreenshotCaptureSummary(state);
@@ -48,6 +46,8 @@ export function toggleScreenshotCaptureSummary(enabled: boolean) {
 
             if (enabled) {
                 try {
+                    const { jitsiTrack } = getLocalVideoTrack(state['features/base/tracks']);
+
                     await screenshotSummary.start(jitsiTrack);
                     dispatch(setScreenshotCapture(enabled));
                 } catch {

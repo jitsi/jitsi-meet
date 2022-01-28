@@ -71,8 +71,7 @@ import {
     JitsiMediaDevicesEvents,
     JitsiParticipantConnectionStatus,
     JitsiTrackErrors,
-    JitsiTrackEvents,
-    JitsiRecordingConstants
+    JitsiTrackEvents
 } from './react/features/base/lib-jitsi-meet';
 import {
     getStartWithAudioMuted,
@@ -141,10 +140,10 @@ import {
     setJoiningInProgress,
     setPrejoinPageVisibility
 } from './react/features/prejoin';
-import { getActiveSession } from './react/features/recording/functions';
 import { disableReceiver, stopReceiver } from './react/features/remote-control';
 import { setScreenAudioShareState, isScreenAudioShared } from './react/features/screen-share/';
 import { toggleScreenshotCaptureSummary } from './react/features/screenshot-capture';
+import { isScreenshotCaptureEnabled } from './react/features/screenshot-capture/functions';
 import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
 import { createPresenterEffect } from './react/features/stream-effects/presenter';
 import { createRnnoiseProcessor } from './react/features/stream-effects/rnnoise';
@@ -1572,9 +1571,7 @@ export default {
 
         this._stopProxyConnection();
 
-        if (config.enableScreenshotCapture) {
-            APP.store.dispatch(toggleScreenshotCaptureSummary(false));
-        }
+        APP.store.dispatch(toggleScreenshotCaptureSummary(false));
         const tracks = APP.store.getState()['features/base/tracks'];
         const duration = getLocalVideoTrack(tracks)?.jitsiTrack.getDuration() ?? 0;
 
@@ -1953,10 +1950,8 @@ export default {
             })
             .then(() => {
                 this.videoSwitchInProgress = false;
-                if (config.enableScreenshotCapture) {
-                    if (getActiveSession(APP.store.getState(), JitsiRecordingConstants.mode.FILE)) {
-                        APP.store.dispatch(toggleScreenshotCaptureSummary(true));
-                    }
+                if (isScreenshotCaptureEnabled(APP.store.getState(), false, true)) {
+                    APP.store.dispatch(toggleScreenshotCaptureSummary(true));
                 }
                 sendAnalytics(createScreenSharingEvent('started'));
                 logger.log('Screen sharing started');

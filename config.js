@@ -98,6 +98,17 @@ var config = {
     // Disables self-view settings in UI
     // disableSelfViewSettings: false,
 
+    // screenshotCapture : {
+    //      Enables the screensharing capture feature.
+    //      enabled: false,
+    //
+    //      The mode for the screenshot capture feature.
+    //      Can be either 'recording' - screensharing screenshots are taken
+    //      only when the recording is also on,
+    //      or 'always' - screensharing screenshots are always taken.
+    //      mode: 'recording'
+    // }
+
     // Disables ICE/UDP by filtering out local and remote UDP candidates in
     // signalling.
     // webrtcIceUdpDisable: false,
