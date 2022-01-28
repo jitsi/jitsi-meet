@@ -26,21 +26,25 @@ export function showContextMenuReject(participant: Object) {
 /**
  * Displays the connection status for the local meeting participant.
  *
- * @param {string} participantID - The selected meeting participant id.
+ * @param {Object} options - Options for displaying the ConnectionStatus dialog.
+ * @param {boolean} options.participantId - The selected meeting participant id.
+ * @param {Object} options.initialStats - The initial rtcstats to be displayed.
  * @returns {Function}
  */
-export function showConnectionStatus(participantID: string) {
-    return openDialog(ConnectionStatusComponent, { participantID });
+export function showConnectionStatus(options: Object) {
+    return openDialog(ConnectionStatusComponent, options);
 }
 
 /**
  * Displays the context menu for the selected meeting participant.
  *
- * @param {string} participantId - The ID of the selected meeting participant.
+ * @param {Object} options - Options for displaying the RemoteVideoMenu dialog.
+ * @param {boolean} options.participantId - The selected meeting participant id.
+ * @param {Object} options.initialStats - The initial rtcstats to be displayed.
  * @returns {Function}
  */
-export function showContextMenuDetails(participantId: string) {
-    return openDialog(RemoteVideoMenu, { participantId });
+export function showContextMenuDetails(options: Object) {
+    return openDialog(RemoteVideoMenu, options);
 }
 
 /**

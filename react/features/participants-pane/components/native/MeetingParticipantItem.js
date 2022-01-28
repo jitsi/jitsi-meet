@@ -121,9 +121,9 @@ class MeetingParticipantItem extends PureComponent<Props> {
             dispatch(showSharedVideoMenu(_participantID));
         } else if (!_isFakeParticipant) {
             if (_local) {
-                dispatch(showConnectionStatus(_participantID));
+                dispatch(showConnectionStatus({ participantId: _participantID }));
             } else {
-                dispatch(showContextMenuDetails(_participantID));
+                dispatch(showContextMenuDetails({ participantId: _participantID }));
             }
         } // else no-op
     }
