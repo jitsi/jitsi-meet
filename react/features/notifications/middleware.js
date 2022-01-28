@@ -52,6 +52,13 @@ const createTimeoutId = (notification, dispatch) => {
     timers.set(uid, timerID);
 };
 
+const getNotifications = state => {
+    const _visible = areThereNotifications(state);
+    const { notifications } = state['features/notifications'];
+
+    return _visible ? notifications : [];
+};
+
 MiddlewareRegistry.register(store => next => action => {
 
     const { dispatch, getState } = store;
@@ -60,9 +67,7 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CLEAR_NOTIFICATIONS: {
         if (navigator.product !== 'ReactNative') {
-            const _visible = areThereNotifications(state);
-            const { notifications } = state['features/notifications'];
-            const _notifications = _visible ? notifications : [];
+            const _notifications = getNotifications(state);
 
             for (const notification of _notifications) {
                 if (timers.has(notification.uid)) {
@@ -78,9 +83,7 @@ MiddlewareRegistry.register(store => next => action => {
     }
     case SHOW_NOTIFICATION: {
         if (navigator.product !== 'ReactNative') {
-            const _visible = areThereNotifications(state);
-            const { notifications } = state['features/notifications'];
-            const _notifications = _visible ? notifications : [];
+            const _notifications = getNotifications(state);
 
             for (const notification of _notifications) {
                 if (timers.has(notification.uid)) {
