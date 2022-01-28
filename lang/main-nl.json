@@ -549,8 +549,8 @@
         "invitedTwoMembers": "{{first}} en {{second}} zijn uitgenodigd",
         "kickParticipant": "{{kicked}} is verwijderd door {{kicker}}",
         "leftOneMember": "{{name}} heeft de vergadering verlaten",
-		"leftThreePlusMembers": "{{name}} en vele anderen hebben de vergadering verlaten",
-		"leftTwoMembers": "{{first}} en {{second}} hebben de vergadering verlaten",
+        "leftThreePlusMembers": "{{name}} en vele anderen hebben de vergadering verlaten",
+        "leftTwoMembers": "{{first}} en {{second}} hebben de vergadering verlaten",
         "me": "Ik",
         "moderator": "Moderatorrechten verleend!",
         "muted": "U hebt het gesprek gedempt gestart.",
@@ -695,9 +695,9 @@
         "rejected": "Geweigerd",
         "ringing": "Gaat over..."
     },
-	"privacyView": 	{
-		"header": "Privacy"
-	},
+    "privacyView": 	{
+        "header": "Privacy"
+    },
     "profile": {
         "setDisplayNameLabel": "Uw weergavenaam instellen",
         "setEmailInput": "Voer e-mailadres in",
