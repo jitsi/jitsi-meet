@@ -506,7 +506,10 @@ var config = {
     // defaultRemoteDisplayName: 'Fellow Jitster',
 
     // Hides the display name from the participant thumbnail
-    // hideDisplayName: false
+    // hideDisplayName: false,
+
+    // Hides the dominant speaker name badge that hovers above the toolbox
+    // hideDominantSpeakerBadge: false,
 
     // Default language for the user interface.
     // defaultLanguage: 'en',

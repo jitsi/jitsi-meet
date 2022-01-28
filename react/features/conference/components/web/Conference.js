@@ -238,7 +238,7 @@ class Conference extends AbstractConference<Props, *> {
                         <Filmstrip />
                     </div>
 
-                    { _showPrejoin || _showLobby || <Toolbox showDominantSpeakerName = { true } /> }
+                    { _showPrejoin || _showLobby || <Toolbox /> }
                     <Chat />
 
                     {_notificationsVisible && (_overflowDrawer
