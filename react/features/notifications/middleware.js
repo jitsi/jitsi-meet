@@ -11,13 +11,13 @@ import {
     getLocalParticipant
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
+import { PARTICIPANTS_PANE_OPEN } from '../participants-pane/actionTypes';
+
 import {
     CLEAR_NOTIFICATIONS,
     HIDE_NOTIFICATION,
     SHOW_NOTIFICATION
-} from '../notifications/actionTypes';
-import { PARTICIPANTS_PANE_OPEN } from '../participants-pane/actionTypes';
-
+} from './actionTypes';
 import {
     clearNotifications,
     hideNotification,
@@ -54,11 +54,12 @@ const createTimeoutId = (notification, dispatch) => {
 
 MiddlewareRegistry.register(store => next => action => {
 
+    const { dispatch, getState } = store;
+    const state = getState();
+
     switch (action.type) {
     case CLEAR_NOTIFICATIONS: {
         if (navigator.product !== 'ReactNative') {
-            const { getState } = store;
-            const state = getState();
             const _visible = areThereNotifications(state);
             const { notifications } = state['features/notifications'];
             const _notifications = _visible ? notifications : [];
@@ -77,38 +78,36 @@ MiddlewareRegistry.register(store => next => action => {
     }
     case SHOW_NOTIFICATION: {
         if (navigator.product !== 'ReactNative') {
-            const { dispatch, getState } = store;
-            const state = getState();
             const _visible = areThereNotifications(state);
             const { notifications } = state['features/notifications'];
             const _notifications = _visible ? notifications : [];
 
             for (const notification of _notifications) {
-                if (!timers.has(notification.uid) && notification.timeout) {
-                    createTimeoutId(notification, dispatch);
-                } else {
+                if (timers.has(notification.uid)) {
 
-                    const timer = timers.get(notification.uid);
+                    const timer = timers.get(action.uid);
 
                     clearTimeout(timer);
                     timers.delete(notification.uid);
                     createTimeoutId(notification, dispatch);
+                } else {
+                    createTimeoutId(notification, dispatch);
                 }
             }
+
+            return next(action);
         }
         break;
     }
     case HIDE_NOTIFICATION: {
         if (navigator.product !== 'ReactNative') {
-            timers.clear();
+            timers.delete(action.uid);
         }
         break;
     }
     case PARTICIPANT_JOINED: {
         const result = next(action);
         const { participant: p } = action;
-        const { dispatch, getState } = store;
-        const state = getState();
         const { conference } = state['features/base/conference'];
 
         if (conference && !p.local && !joinLeaveNotificationsDisabled() && !p.isReplacing) {
@@ -121,8 +120,6 @@ MiddlewareRegistry.register(store => next => action => {
     }
     case PARTICIPANT_LEFT: {
         if (!joinLeaveNotificationsDisabled()) {
-            const { dispatch, getState } = store;
-            const state = getState();
             const participant = getParticipantById(
                 store.getState(),
                 action.participant.id
@@ -138,7 +135,6 @@ MiddlewareRegistry.register(store => next => action => {
         return next(action);
     }
     case PARTICIPANT_UPDATED: {
-        const state = store.getState();
         const { disableModeratorIndicator } = state['features/base/config'];
 
         if (disableModeratorIndicator) {

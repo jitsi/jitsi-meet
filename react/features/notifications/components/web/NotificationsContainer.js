@@ -148,28 +148,6 @@ class NotificationsContainer extends Component<Props> {
     }
 
     /**
-     * Sets a timeout for each notification, where applicable.
-     *
-     * @inheritdoc
-     */
-    componentDidMount() {
-        if (navigator.product === 'ReactNative') {
-            this._updateTimeouts();
-        }
-    }
-
-    /**
-     * Sets a timeout for each notification, where applicable.
-     *
-     * @inheritdoc
-     */
-    componentDidUpdate() {
-        if (navigator.product === 'ReactNative') {
-            this._updateTimeouts();
-        }
-    }
-
-    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -252,30 +230,6 @@ class NotificationsContainer extends Component<Props> {
                 </CSSTransition>
             );
         });
-    }
-
-    /**
-     * Updates the timeouts for every notification.
-     *
-     * @returns {void}
-     */
-    _updateTimeouts() {
-        const { _notifications } = this.props;
-
-        for (const notification of _notifications) {
-            if (!this._timeouts.has(notification.uid) && notification.timeout) {
-
-                const {
-                    timeout,
-                    uid
-                } = notification;
-                const timerID = setTimeout(() => {
-                    this._onDismissed(uid);
-                }, timeout);
-
-                this._timeouts.set(uid, timerID);
-            }
-        }
     }
 }
 
