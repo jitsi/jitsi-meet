@@ -31,13 +31,6 @@ import {
 } from './constants';
 import { areThereNotifications, joinLeaveNotificationsDisabled } from './functions';
 
-/**
- * Middleware that captures actions to display notifications.
- *
- * @param {Store} store - The redux store.
- * @returns {Function}
- */
-
 const timers = new Map();
 
 const createTimeoutId = (notification, dispatch) => {
@@ -59,6 +52,12 @@ const getNotifications = state => {
     return _visible ? notifications : [];
 };
 
+/**
+ * Middleware that captures actions to display notifications.
+ *
+ * @param {Store} store - The redux store.
+ * @returns {Function}
+ */
 MiddlewareRegistry.register(store => next => action => {
 
     const { dispatch, getState } = store;
@@ -104,6 +103,10 @@ MiddlewareRegistry.register(store => next => action => {
     }
     case HIDE_NOTIFICATION: {
         if (navigator.product !== 'ReactNative') {
+
+            const timer = timers.get(action.uid);
+
+            clearTimeout(timer);
             timers.delete(action.uid);
         }
         break;
