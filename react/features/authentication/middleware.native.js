@@ -62,10 +62,15 @@ MiddlewareRegistry.register(store => next => action => {
             // Go back to the app's entry point.
             _hideLoginDialog(store);
 
-            // FIXME Like cancelWaitForOwner, dispatch conferenceLeft to notify
-            // the external-api.
+            const { authRequired, conference } = getState()['features/base/conference'];
 
-            dispatch(appNavigate(undefined));
+            // Only end the meeting if we are not already inside and trying to upgrade.
+            if (authRequired && !conference) {
+                // FIXME Like cancelWaitForOwner, dispatch conferenceLeft to notify
+                // the external-api.
+
+                dispatch(appNavigate(undefined));
+            }
         }
         break;
     }

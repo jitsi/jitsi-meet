@@ -40,16 +40,23 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
 
     case CANCEL_LOGIN: {
+        const { dispatch, getState } = store;
+
         if (!isDialogOpen(store, WaitForOwnerDialog)) {
             if (_isWaitingForOwner(store)) {
-                store.dispatch(openWaitForOwnerDialog());
+                dispatch(openWaitForOwnerDialog());
 
                 return next(action);
             }
 
-            store.dispatch(hideLoginDialog());
+            dispatch(hideLoginDialog());
 
-            store.dispatch(maybeRedirectToWelcomePage());
+            const { authRequired, conference } = getState()['features/base/conference'];
+
+            // Only end the meeting if we are not already inside and trying to upgrade.
+            if (authRequired && !conference) {
+                dispatch(maybeRedirectToWelcomePage());
+            }
         }
         break;
     }
