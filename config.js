@@ -1205,7 +1205,6 @@ var config = {
     //     'liveStreaming.unavailableTitle', // shown when livestreaming service is not reachable
     //     'lobby.joinRejectedMessage', // shown when while in a lobby, user's request to join is rejected
     //     'lobby.notificationTitle', // shown when lobby is toggled and when join requests are allowed / denied
-    //     'notify.participantWantsToJoin', // shown when lobby is enabled and participant requests to join meeting
     //     'localRecording.localRecording', // shown when a local recording is started
     //     'notify.chatMessages', // shown when receiving chat messages while the chat window is closed
     //     'notify.disconnected', // shown when a participant has left
@@ -1229,6 +1228,7 @@ var config = {
     //     'notify.mutedTitle', // shown when user has been muted upon joining,
     //     'notify.newDeviceAudioTitle', // prompts the user to use a newly detected audio device
     //     'notify.newDeviceCameraTitle', // prompts the user to use a newly detected camera
+    //     'notify.participantWantsToJoin', // shown when lobby is enabled and participant requests to join meeting
     //     'notify.passwordRemovedRemotely', // shown when a password has been removed remotely
     //     'notify.passwordSetRemotely', // shown when a password has been set remotely
     //     'notify.raisedHand', // shown when a partcipant used raise hand,
