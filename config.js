@@ -1205,6 +1205,7 @@ var config = {
     //     'liveStreaming.unavailableTitle', // shown when livestreaming service is not reachable
     //     'lobby.joinRejectedMessage', // shown when while in a lobby, user's request to join is rejected
     //     'lobby.notificationTitle', // shown when lobby is toggled and when join requests are allowed / denied
+    //     'notify.participantWantsToJoin', // shown when lobby is enabled and participant requests to join meeting
     //     'localRecording.localRecording', // shown when a local recording is started
     //     'notify.chatMessages', // shown when receiving chat messages while the chat window is closed
     //     'notify.disconnected', // shown when a participant has left
