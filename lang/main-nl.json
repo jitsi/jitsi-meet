@@ -43,7 +43,7 @@
     },
     "breakoutRooms": {
         "actions": {
-            "add": "Aparta vergaderruimte toevoegen",
+            "add": "Aparte vergaderruimte toevoegen",
             "close": "Sluiten",
             "join": "Deelnemen",
             "leaveBreakoutRoom": "Verlaat aparte vergaderruimte",
