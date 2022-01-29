@@ -620,7 +620,7 @@
             "allow": "Sta deelnemers toe:",
             "allowVideo": "Video toestaan",
             "askUnmute": "Vragen om dempen op te heffen",
-            "audioModeration": "Voor henzelf dempen opheffen",
+            "audioModeration": "Voor henzelf dempen op te heffen",
             "blockEveryoneMicCamera": "Blokkeer microfoon en camera van allen",
             "invite": "Iemand uitnodigen",
             "moreModerationActions": "Meer moderatoropties",
@@ -632,7 +632,7 @@
             "stopEveryonesVideo": "Camera's van iedereen uitzetten",
             "stopVideo": "Camera uitzetten",
             "unblockEveryoneMicCamera": "Deblokkeer microfoon en camera van allen",
-            "videoModeration": "Hun camera aanzetten"
+            "videoModeration": "Hun camera aan te zetten"
         },
         "close": "Sluiten",
         "header": "Deelnemers",
