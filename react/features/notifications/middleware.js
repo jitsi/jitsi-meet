@@ -31,8 +31,20 @@ import {
 } from './constants';
 import { areThereNotifications, joinLeaveNotificationsDisabled } from './functions';
 
+/**
+ * Map of timers.
+ *
+ * @type {Map}
+ */
 const timers = new Map();
 
+/**
+ * Function that creates a timeout id for specific notification.
+ *
+ * @param {Object} notification - Notification for which we want to create a timeout.
+ * @param {Function} dispatch - The Redux dispatch function.
+ * @returns {void}
+ */
 const createTimeoutId = (notification, dispatch) => {
     const {
         timeout,
@@ -45,6 +57,12 @@ const createTimeoutId = (notification, dispatch) => {
     timers.set(uid, timerID);
 };
 
+/**
+ * Returns notifications state.
+ *
+ * @param {Object} state - Global state.
+ * @returns {Array<Object>} - Notifications state.
+ */
 const getNotifications = state => {
     const _visible = areThereNotifications(state);
     const { notifications } = state['features/notifications'];
@@ -82,19 +100,16 @@ MiddlewareRegistry.register(store => next => action => {
     }
     case SHOW_NOTIFICATION: {
         if (navigator.product !== 'ReactNative') {
-            const _notifications = getNotifications(state);
+            if (timers.has(action.uid)) {
 
-            for (const notification of _notifications) {
-                if (timers.has(notification.uid)) {
+                const timer = timers.get(action.uid);
 
-                    const timer = timers.get(action.uid);
+                clearTimeout(timer);
+                timers.delete(action.uid);
+                createTimeoutId(action, dispatch);
 
-                    clearTimeout(timer);
-                    timers.delete(notification.uid);
-                    createTimeoutId(notification, dispatch);
-                } else {
-                    createTimeoutId(notification, dispatch);
-                }
+            } else {
+                createTimeoutId(action, dispatch);
             }
 
             return next(action);
