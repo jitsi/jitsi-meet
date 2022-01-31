@@ -57,7 +57,16 @@ exports.config = {
         maxInstances: 5,
         //
         browserName: 'chrome',
-        acceptInsecureCerts: true
+        acceptInsecureCerts: true,
+        "goog:chromeOptions": {
+            // args: ['incognito'],
+            prefs: {
+           "hardware.audio_capture_enabled": true,
+           "hardware.video_capture_enabled": true,
+           "hardware.audio_capture_allowed_urls": ["https://localhost:8080"],
+           "hardware.video_capture_allowed_urls": ["https://localhost:8080"]
+            }
+        }
         // If outputDir is provided WebdriverIO can capture driver session logs
         // it is possible to configure which logTypes to include/exclude.
         // excludeDriverLogs: ['*'], // pass '*' to exclude all driver session logs
