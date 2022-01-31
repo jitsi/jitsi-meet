@@ -204,6 +204,8 @@ case "$1" in
             fi
         fi
 
+        CERT_ADDED_TO_TRUST="false"
+
         if [ ! -f /var/lib/prosody/$JICOFO_AUTH_DOMAIN.crt ]; then
             # prosodyctl takes care for the permissions
             # echo for using all default values
@@ -220,6 +222,8 @@ case "$1" in
             # store not get re-generated with latest changes
             update-ca-certificates -f
 
+            CERT_ADDED_TO_TRUST="true"
+
             # don't fail on systems with custom config ($PROSODY_HOST_CONFIG is missing)
             if [ -f $PROSODY_HOST_CONFIG ]; then
                 # now let's add the ssl cert for the auth. domain (we use # as a sed delimiter cause filepaths are confused with default / delimiter)
@@ -232,6 +236,11 @@ case "$1" in
 
         if [ "$PROSODY_CONFIG_PRESENT" = "false" ]; then
             invoke-rc.d prosody restart || true
+
+            # In case we had updated the certificates and restarted prosody, let's restart and the bridge if possible
+            if [ -d /run/systemd/system ] && [ "$CERT_ADDED_TO_TRUST" = "true" ]; then
+                systemctl restart jitsi-videobridge2.service >/dev/null || true
+            fi
         fi
     ;;
 
