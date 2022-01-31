@@ -132,7 +132,6 @@ export default {
     },
 
     alwaysOnTitleBar: {
-        padding: 4,
         paddingRight: 0,
         borderRadius: 6,
         backgroundColor: 'rgba(0, 0, 0, .5)',
@@ -141,7 +140,11 @@ export default {
         alignSelf: 'flex-start',
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: BaseTheme.spacing[2]
+        marginTop: BaseTheme.spacing[2],
+
+        '&:not(:empty)': {
+            padding: 4
+        }
     },
 
     expandedLabelWrapper: {
