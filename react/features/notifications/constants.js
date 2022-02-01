@@ -66,6 +66,13 @@ export const NOTIFICATION_ICON = {
 export const LOBBY_NOTIFICATION_ID = 'LOBBY_NOTIFICATION';
 
 /**
+ * The identifier local recording.
+ *
+ * @type {string}
+ */
+export const LOCAL_RECORDING_NOTIFICATION_ID = 'LOCAL_RECORDING_NOTIFICATION_ID';
+
+/**
  * The identifier of the raise hand notification.
  *
  * @type {string}

@@ -2,6 +2,7 @@ import { ReducerRegistry } from '../base/redux';
 
 import {
     CLEAR_RECORDING_SESSIONS,
+    LOCAL_RECORDING_SESSION_UPDATED,
     RECORDING_SESSION_UPDATED,
     SET_PENDING_RECORDING_NOTIFICATION_UID,
     SET_SELECTED_RECORDING_SERVICE,
@@ -30,6 +31,12 @@ ReducerRegistry.register(STORE_NAME,
             return {
                 ...state,
                 sessionDatas: []
+            };
+
+        case LOCAL_RECORDING_SESSION_UPDATED:
+            return {
+                ...state,
+                localVideoRecordingHasStarted: action.localVideoRecordingHasStarted
             };
 
         case RECORDING_SESSION_UPDATED:

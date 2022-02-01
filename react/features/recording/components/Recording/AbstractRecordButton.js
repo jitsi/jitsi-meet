@@ -7,10 +7,7 @@ import {
 import { openDialog } from '../../../base/dialog';
 import { IconToggleRecording } from '../../../base/icons';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
-import {
-    getLocalParticipant,
-    isLocalParticipantModerator
-} from '../../../base/participants';
+import { getLocalParticipant } from '../../../base/participants';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
@@ -145,17 +142,10 @@ export function _mapStateToProps(state: Object, ownProps: Props): Object {
         // If the containing component provides the visible prop, that is one
         // above all, but if not, the button should be autonomus and decide on
         // its own to be visible or not.
-        const isModerator = isLocalParticipantModerator(state);
-        const {
-            enableFeaturesBasedOnToken,
-            fileRecordingsEnabled
-        } = state['features/base/config'];
+        const { enableFeaturesBasedOnToken } = state['features/base/config'];
         const { features = {} } = getLocalParticipant(state);
 
-        visible = isModerator && fileRecordingsEnabled;
-
         if (enableFeaturesBasedOnToken) {
-            visible = visible && String(features.recording) === 'true';
             _disabled = String(features.recording) === 'disabled';
             if (!visible && !_disabled) {
                 _disabled = true;
@@ -179,8 +169,8 @@ export function _mapStateToProps(state: Object, ownProps: Props): Object {
 
     return {
         _disabled,
-        _isRecordingRunning: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE)),
-        _tooltip,
+        _isRecordingRunning: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE))
+            || state['features/recording'].localVideoRecordingHasStarted || false,        _tooltip,
         visible
     };
 }

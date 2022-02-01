@@ -8,6 +8,7 @@ import { approveParticipant } from '../../av-moderation/actions';
 import { toggleE2EE } from '../../e2ee/actions';
 import { MAX_MODE } from '../../e2ee/constants';
 import {
+    LOCAL_RECORDING_NOTIFICATION_ID,
     NOTIFICATION_TIMEOUT_TYPE,
     RAISE_HAND_NOTIFICATION_ID,
     showNotification
@@ -15,6 +16,10 @@ import {
 import { isForceMuted } from '../../participants-pane/functions';
 import { CALLING, INVITED } from '../../presence-status';
 import { RAISE_HAND_SOUND_ID } from '../../reactions/constants';
+import {
+    RECORDING_OFF_SOUND_ID,
+    RECORDING_ON_SOUND_ID
+} from '../../recording/constants';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 import {
     CONFERENCE_WILL_JOIN,
@@ -33,6 +38,8 @@ import {
     KICK_PARTICIPANT,
     LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED,
     LOCAL_PARTICIPANT_RAISE_HAND,
+    LOCAL_PARTICIPANT_RECORDING_STATUS,
+    LOCAL_RECORDING_UPDATED,
     MUTE_REMOTE_PARTICIPANT,
     PARTICIPANT_DISPLAY_NAME_CHANGED,
     PARTICIPANT_JOINED,
@@ -44,6 +51,7 @@ import {
     localParticipantIdChanged,
     localParticipantJoined,
     localParticipantLeft,
+    localRecordingUpdateQueue,
     participantLeft,
     participantUpdated,
     raiseHand,
@@ -60,6 +68,7 @@ import {
     getDominantSpeakerParticipant,
     getFirstLoadableAvatarUrl,
     getLocalParticipant,
+    getLocalRecordingQueue,
     getParticipantById,
     getParticipantCount,
     getParticipantDisplayName,
@@ -167,6 +176,34 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
+    case LOCAL_PARTICIPANT_RECORDING_STATUS: {
+        const { localVideoRecordingStarted } = action;
+        const localId = getLocalParticipant(store.getState())?.id;
+
+        store.dispatch(participantUpdated({
+            // XXX Only the local participant is allowed to update without
+            // stating the JitsiConference instance (i.e. participant property
+            // `conference` for a remote participant) because the local
+            // participant is uniquely identified by the very fact that there is
+            // only one local participant.
+
+            id: localId,
+            local: true,
+            localVideoRecordingStarted
+        }));
+
+        store.dispatch(localRecordingUpdateQueue({
+            id: localId,
+            localVideoRecordingStarted
+        }));
+
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyLocalRecordingUpdated(localId, localVideoRecordingStarted);
+        }
+
+        break;
+    }
+
     case MUTE_REMOTE_PARTICIPANT: {
         const { conference } = store.getState()['features/base/conference'];
 
@@ -200,6 +237,24 @@ MiddlewareRegistry.register(store => next => action => {
 
             // sort the queue before adding to store.
             queue = queue.sort(({ raisedHandTimestamp: a }, { raisedHandTimestamp: b }) => a - b);
+        } else {
+            // no need to sort on remove value.
+            queue = queue.filter(({ id }) => id !== participant.id);
+        }
+
+        action.queue = queue;
+        break;
+    }
+
+    case LOCAL_RECORDING_UPDATED: {
+        const { participant } = action;
+        let queue = getLocalRecordingQueue(store.getState()) || [];
+
+        if (participant.localVideoRecordingHasStarted) {
+            queue.push({
+                id: participant.id,
+                localVideoRecordingStarted: participant.localVideoRecordingHasStarted
+            });
         } else {
             // no need to sort on remove value.
             queue = queue.filter(({ id }) => id !== participant.id);
@@ -300,12 +355,16 @@ StateListenerRegistry.register(
                         id: participant.getId(),
                         isJigasi: value
                     })),
-                'features_screen-sharing': (participant, value) => // eslint-disable-line no-unused-vars
+                /* eslint-disable no-unused-vars */
+                'features_screen-sharing': (participant, value) =>
                     store.dispatch(participantUpdated({
                         conference,
                         id: participant.getId(),
                         features: { 'screen-sharing': true }
                     })),
+                /* eslint-enable no-unused-vars */
+                'localVideoRecordingStarted': (participant, value) =>
+                _localRecordingUpdated(store, conference, participant.getId(), value),
                 'raisedHand': (participant, value) =>
                     _raiseHandUpdated(store, conference, participant.getId(), value),
                 'region': (participant, value) =>
@@ -482,19 +541,28 @@ function _maybePlaySounds({ getState, dispatch }, action) {
  */
 function _participantJoinedOrUpdated(store, next, action) {
     const { dispatch, getState } = store;
-    const { participant: { avatarURL, email, id, local, name, raisedHandTimestamp } } = action;
-
+    const {
+        participant: {
+            avatarURL,
+            email,
+            id,
+            local,
+            name,
+            raisedHandTimestamp,
+            localVideoRecordingStarted
+        }
+    } = action;
     // Send an external update of the local participant's raised hand state
     // if a new raised hand state is defined in the action.
-    if (typeof raisedHandTimestamp !== 'undefined') {
+    if (typeof localVideoRecordingStarted !== 'undefined') {
 
         if (local) {
             const { conference } = getState()['features/base/conference'];
-            const rHand = parseInt(raisedHandTimestamp, 10);
 
             // Send raisedHand signalling only if there is a change
-            if (conference && rHand !== getLocalParticipant(getState()).raisedHandTimestamp) {
-                conference.setLocalParticipantProperty('raisedHand', rHand);
+            if (conference
+                && localVideoRecordingStarted !== getLocalParticipant(getState()).localVideoRecordingStarted) {
+                conference.setLocalParticipantProperty('localVideoRecordingStarted', localVideoRecordingStarted);
             }
         }
     }
@@ -612,6 +680,57 @@ function _raiseHandUpdated({ dispatch, getState }, conference, participantId, ne
 }
 
 /**
+ * Handles a local recording status update.
+ *
+ * @param {Function} dispatch - The Redux dispatch function.
+ * @param {Object} conference - The conference for which we got an update.
+ * @param {string} participantId - The ID of the participant from which we got an update.
+ * @param {boolean} newValue - The new value of the local recording status.
+ * @returns {void}
+ */
+function _localRecordingUpdated({ dispatch, getState }, conference, participantId, newValue) {
+
+    const state = getState();
+
+    dispatch(participantUpdated({
+        conference,
+        id: participantId,
+        localVideoRecordingStarted: newValue
+    }));
+
+    if (typeof APP !== 'undefined') {
+        APP.API.notifyLocalRecordingUpdated(participantId, newValue);
+    }
+
+    let notificationTitle;
+    const participantName = getParticipantDisplayName(state, participantId);
+    const { localRecordingQueue } = state['features/base/participants'];
+
+    if (localRecordingQueue.length > 1) {
+        const localRecordings = localRecordingQueue.length - 1;
+
+        notificationTitle = i18n.t('notify.raisedHands', {
+            participantName,
+            localRecordings
+        });
+    } else {
+        notificationTitle = participantName;
+    }
+    dispatch(showNotification({
+        titleKey: 'notify.somebody',
+        title: notificationTitle,
+        titleArguments: {
+            name: participantName[0]
+        },
+        descriptionKey: newValue ? 'notify.localRecordingStarted' : 'notify.localRecordingStopped',
+        raiseHandNotification: true,
+        concatText: true,
+        uid: LOCAL_RECORDING_NOTIFICATION_ID
+    }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+    dispatch(playSound(newValue ? RECORDING_ON_SOUND_ID : RECORDING_OFF_SOUND_ID));
+}
+
+/**
  * Registers sounds related with the participants feature.
  *
  * @param {Store} store - The redux store.
@@ -619,8 +738,7 @@ function _raiseHandUpdated({ dispatch, getState }, conference, participantId, ne
  * @returns {void}
  */
 function _registerSounds({ dispatch }) {
-    dispatch(
-        registerSound(PARTICIPANT_JOINED_SOUND_ID, PARTICIPANT_JOINED_FILE));
+    dispatch(registerSound(PARTICIPANT_JOINED_SOUND_ID, PARTICIPANT_JOINED_FILE));
     dispatch(registerSound(PARTICIPANT_LEFT_SOUND_ID, PARTICIPANT_LEFT_FILE));
 }
 
