@@ -365,6 +365,7 @@
         "shareVideoTitle": "شارك فيديو",
         "shareYourScreen": "شارك شاشتك",
         "shareYourScreenDisabled": "مشاركة الشاشة مُعطَّلة",
+        "sharedVideoDialogError": "",
         "sharedVideoLinkPlaceholder": "رابط اليوتيوب او رابط الفيديو المباشر",
         "startLiveStreaming": "ابدأ بثًا حيًا",
         "startRecording": "ابدأ التسجيل",
@@ -642,6 +643,8 @@
         "oldElectronClientDescription1": "يبدو أنَّك تستعمل إصدارًا قديمًا من جيتسي يحوي ثغرة أمنية. تأكد رجاءً من أنَّك حدَّثته إلى ",
         "oldElectronClientDescription2": "أحدث إصدار",
         "oldElectronClientDescription3": " الآن!",
+        "participantWantsToJoin": "يريد الانضمام إلى الاجتماع",
+        "participantsWantToJoin": "يريد الانضمام إلى الاجتماع",
         "passwordRemovedRemotely": "أزال أحد المشاركين {{participantDisplayName}}",
         "passwordSetRemotely": "ضبط أحد المشاركين $t(lockRoomPasswordUppercase)",
         "raiseHandAction": "رفع اليد",
@@ -661,7 +664,9 @@
         "videoMutedRemotelyDescription": "You can always turn it on again.",
         "videoMutedRemotelyTitle": "Your video has been turned off by {{participantDisplayName}}",
         "videoUnmuteBlockedDescription": "تم حظر عملية إلغاء كتم الكاميرا مؤقتًا بسبب قيود النظام.",
-        "videoUnmuteBlockedTitle": "تم حظر إعادة الكاميرا!"
+        "videoUnmuteBlockedTitle": "تم حظر إعادة الكاميرا!",
+        "viewLobby": "مشاهدة اللوبي",
+        "waitingParticipants": "{{waitingParticipants}} اشخاص"
     },
     "participantsPane": {
         "actions": {
@@ -807,6 +812,7 @@
         "title": "الملف الشخصي"
     },
     "raisedHand": "يرد التحدث",
+    "raisedHandsLabel": "عدد الأيدي المرفوعة",
     "recording": {
         "authDropboxText": "رفع إلى Dropbox",
         "availableSpace": "المساحة المتاحة: {{spaceLeft}} ميغابايت (ما يقارب {{duration}} دقيقة تسجيل).",
@@ -995,6 +1001,7 @@
             "remoteVideoMute": "تعطيل كاميرا المشارك",
             "security": "خيارات الحماية",
             "selectBackground": "اختر الخلفية",
+            "selfView": "تبديل الواجهة الذاتية",
             "shareRoom": "ادعُ أحدًا",
             "shareYourScreen": "بدِّل وضع مشاركة الشاشة",
             "shareaudio": "مشاركة الصوت",
@@ -1160,7 +1167,9 @@
         "mute": "المشارك مكتوم الصوت",
         "muted": "مكتوم",
         "remoteControl": "بدء / إيقاف التحكم البعيد",
+        "screenSharing": "المشارك يشارك شاشته",
         "show": "أظهر على المنصة",
+        "showSelfView": "إظهار الواجهة الذاتية",
         "videoMuted": "الكاميرا معطلة",
         "videomute": "أوقف المشارك الكاميرا"
     },
