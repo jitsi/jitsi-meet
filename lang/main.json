@@ -928,7 +928,6 @@
         "angry": "Angry",
         "disgusted": "Disgusted",
         "fearful": "Fearful",
-        "hideFacialExpressions": "Hide facial expressions",
         "happy": "Happy",
         "hours": "{{count}}h",
         "minutes": "{{count}}m",
