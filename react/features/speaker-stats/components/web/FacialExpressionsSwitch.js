@@ -7,46 +7,14 @@ import React from 'react';
 import { Switch } from '../../../base/react';
 
 
-const useStyles = makeStyles(theme => {
+const useStyles = makeStyles(() => {
     return {
         switchContainer: {
             position: 'absolute',
             top: 90,
             left: 226,
             display: 'flex',
-            alignItems: 'center',
-
-            '& svg': {
-                display: 'none'
-
-            },
-            '& div > label': {
-                width: 32,
-                height: 20,
-                backgroundColor: '#484A4F',
-                '&:not([data-checked]):hover': {
-                    backgroundColor: '#484A4F'
-                },
-                '&[data-checked]': {
-                    backgroundColor: theme.palette.action01,
-                    '&:hover': {
-                        backgroundColor: theme.palette.action01
-                    },
-                    '&::before': {
-                        margin: '0 0 1.5px -3px',
-                        backgroundColor: theme.palette.text01
-                    }
-                },
-                '&:focus-within': {
-                    border: 'none'
-                },
-                '&::before': {
-                    width: 14,
-                    height: 14,
-                    margin: '0 0 1.5px 1.5px',
-                    backgroundColor: theme.palette.text01
-                }
-            }
+            alignItems: 'center'
         },
         switchLabel: {
             marginRight: 10
@@ -91,7 +59,6 @@ export default function FacialExpressionsSwitch({ onChange, showFacialExpression
             <Switch
                 id = 'facial-expressions-switch'
                 onValueChange = { onChange }
-                trackColor = {{ false: 'blue' }}
                 value = { showFacialExpressions } />
         </div>
     );

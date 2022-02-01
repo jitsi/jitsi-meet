@@ -1,5 +1,6 @@
 /* @flow */
 
+import { FieldTextStateless as TextField } from '@atlaskit/field-text';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,20 +9,18 @@ import { useSelector } from 'react-redux';
 import { getFieldValue } from '../../../base/react';
 import { isSpeakerStatsSearchDisabled } from '../../functions';
 
-const useStyles = makeStyles(theme => {
+const useStyles = makeStyles(() => {
     return {
         speakerStatsSearch: {
             position: 'absolute',
             left: 20,
-            top: 85,
-            backgroundColor: theme.palette.field01,
-            border: '1px solid',
-            borderRadius: 6,
-            borderColor: theme.palette.border02,
-            color: theme.palette.text01,
-            padding: '10px 16px',
-            width: 183,
-            height: 40
+            top: 60
+
+            // [theme.breakpoints.down('400')]: {
+            //     left: 20,
+            //     right: 0,
+            //     top: 42
+            // }
         }
     };
 });
@@ -67,17 +66,19 @@ function SpeakerStatsSearch({ onSearch }: Props) {
     }
 
     return (
-        <input
-            autoComplete = 'off'
-            autoFocus = { false }
-            className = { classes.speakerStatsSearch }
-            id = 'speaker-stats-search'
-            name = 'speakerStatsSearch'
-            onChange = { onChange }
-            onKeyPress = { preventDismiss }
-            placeholder = { t('speakerStats.search') }
-            tabIndex = { 0 }
-            value = { searchValue } />
+        <div className = { classes.speakerStatsSearch }>
+            <TextField
+                autoComplete = 'off'
+                autoFocus = { false }
+                id = 'speaker-stats-search'
+                name = 'speakerStatsSearch'
+                onChange = { onChange }
+                onKeyPress = { preventDismiss }
+                placeholder = { t('speakerStats.search') }
+                shouldFitContainer = { false }
+                type = 'text'
+                value = { searchValue } />
+        </div>
     );
 }
 
