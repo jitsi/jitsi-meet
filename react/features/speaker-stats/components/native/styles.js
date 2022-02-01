@@ -11,12 +11,12 @@ export default {
     speakerStatsItemContainer: {
         flexDirection: 'row',
         alignSelf: 'stretch',
-        height: BaseTheme.spacing[9],
+        height: 64,
         alignItems: 'center'
     },
     speakerStatsAvatar: {
-        width: BaseTheme.spacing[5],
-        height: BaseTheme.spacing[5],
+        width: 32,
+        height: 32,
         marginRight: BaseTheme.spacing[3]
     },
     speakerStatsNameTime: {
@@ -26,7 +26,8 @@ export default {
         alignItems: 'center'
     },
     speakerStatsText: {
-        ...BaseTheme.typography.bodyShortRegularLarge,
+        fontSize: 16,
+        fontWeight: '400',
         color: BaseTheme.palette.text01
     },
     speakerStatsTime: {

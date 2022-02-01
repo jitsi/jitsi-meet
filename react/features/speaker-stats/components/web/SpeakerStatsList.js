@@ -11,16 +11,18 @@ import SpeakerStatsItem from './SpeakerStatsItem';
 const useStyles = makeStyles(theme => {
     return {
         list: {
-            marginTop: `${theme.spacing(3)}px`
+            marginTop: 15
         },
         item: {
-            height: `${theme.spacing(7)}px`,
+            height: 48,
             [theme.breakpoints.down(MOBILE_BREAKPOINT)]: {
-                height: `${theme.spacing(8)}px`
+                height: 64,
+                fontSize: 16,
+                fontWeight: 400
             }
         },
         avatar: {
-            height: `${theme.spacing(5)}px`
+            height: 32
         },
         expressions: {
             paddingLeft: 29
@@ -29,21 +31,18 @@ const useStyles = makeStyles(theme => {
             color: theme.palette.text03
         },
         displayName: {
-            ...theme.typography.bodyShortRegular,
-            lineHeight: `${theme.typography.bodyShortRegular.lineHeight}px`,
+            fontSize: 14,
+            fontWeight: 400,
             [theme.breakpoints.down(MOBILE_BREAKPOINT)]: {
-                ...theme.typography.bodyShortRegularLarge,
-                lineHeight: `${theme.typography.bodyShortRegular.lineHeightLarge}px`
+                fontSize: 16
             }
         },
         time: {
             padding: '2px 4px',
             borderRadius: '4px',
-            ...theme.typography.labelBold,
-            lineHeight: `${theme.typography.labelBold.lineHeight}px`,
             [theme.breakpoints.down(MOBILE_BREAKPOINT)]: {
-                ...theme.typography.bodyShortRegularLarge,
-                lineHeight: `${theme.typography.bodyShortRegular.lineHeightLarge}px`
+                fontSize: 16,
+                fontWeight: 400
             }
         },
         dominant: {

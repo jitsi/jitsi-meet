@@ -7,7 +7,6 @@ import { useSelector } from 'react-redux';
 
 import { IconSearch, Icon } from '../../../base/icons';
 import { getFieldValue } from '../../../base/react';
-import BaseTheme from '../../../base/ui/components/BaseTheme';
 import { MOBILE_BREAKPOINT } from '../../constants';
 import { isSpeakerStatsSearchDisabled } from '../../functions';
 
@@ -39,15 +38,14 @@ const useStyles = makeStyles(theme => {
             height: 40,
             '&::placeholder': {
                 color: theme.palette.text03,
-                ...theme.typography.bodyShortRegular,
-                lineHeight: `${theme.typography.bodyShortRegular.lineHeight}px`
+                fontSize: 14,
+                fontWeight: 400
             },
             [theme.breakpoints.down(MOBILE_BREAKPOINT)]: {
                 height: 48,
                 padding: '13px 16px 13px 44px',
                 '&::placeholder': {
-                    ...theme.typography.bodyShortRegularLarge,
-                    lineHeight: `${theme.typography.bodyShortRegular.lineHeightLarge}px`
+                    fontSize: 16
                 }
             }
         }
@@ -65,6 +63,7 @@ type Props = {
     onSearch: Function,
 
 };
+
 
 /**
  * React component for display an individual user's speaker stats.
@@ -103,8 +102,9 @@ function SpeakerStatsSearch({ onSearch }: Props) {
         <div className = { classes.speakerStatsSearchContainer }>
             <Icon
                 className = { classes.searchIcon }
-                color = { BaseTheme.palette.surface07 }
+                color = '#858585'
                 src = { IconSearch } />
+
             <input
                 autoComplete = 'off'
                 autoFocus = { false }

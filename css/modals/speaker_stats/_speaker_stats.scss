@@ -1,5 +1,6 @@
 .speaker-stats {
     list-style: none;
+    font-weight: 600;
     .row{
         display: flex;
         align-items: center;
@@ -27,4 +28,5 @@
             }
         }
     }
+    
 }
