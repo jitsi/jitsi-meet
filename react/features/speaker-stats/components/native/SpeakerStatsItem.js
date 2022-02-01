@@ -60,15 +60,14 @@ const SpeakerStatsItem = (props: Props) =>
                 }
             </View>
             <View style = { style.speakerStatsNameTime } >
-                <Text style = { [ style.speakerStatsText, props.hasLeft && style.speakerStatsLeft ] }>
+                <Text style = { style.speakerStatsText }>
                     {props.displayName}
                 </Text>
                 <TimeElapsed
                     style = { [
                         style.speakerStatsText,
                         style.speakerStatsTime,
-                        props.isDominantSpeaker && style.speakerStatsDominant,
-                        props.hasLeft && style.speakerStatsLeft
+                        props.isDominantSpeaker && style.speakerStatsDominant
                     ] }
                     time = { props.dominantSpeakerTime } />
             </View>

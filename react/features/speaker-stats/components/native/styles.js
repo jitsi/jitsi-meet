@@ -5,7 +5,7 @@ export default {
         flexDirection: 'column',
         flex: 1,
         height: 'auto',
-        paddingHorizontal: BaseTheme.spacing[3],
+        paddingHorizontal: 16,
         backgroundColor: BaseTheme.palette.ui02
     },
     speakerStatsItemContainer: {
@@ -17,7 +17,7 @@ export default {
     speakerStatsAvatar: {
         width: 32,
         height: 32,
-        marginRight: BaseTheme.spacing[3]
+        marginRight: 16
     },
     speakerStatsNameTime: {
         flexDirection: 'row',
@@ -37,25 +37,7 @@ export default {
     },
     speakerStatsDominant: {
         backgroundColor: BaseTheme.palette.success02
-    },
-    speakerStatsLeft: {
-        color: BaseTheme.palette.text03
-    },
-    speakerStatsSearch: {
-        wrapper: {
-            marginLeft: 0,
-            marginRight: 0,
-            marginVertical: BaseTheme.spacing[3],
-            flexDirection: 'row',
-            alignItems: 'center'
-        },
-        input: {
-            textAlign: 'left'
-        },
-        searchIcon: {
-            width: 10,
-            height: 20,
-            marginLeft: BaseTheme.spacing[3]
-        }
     }
+
+
 };
