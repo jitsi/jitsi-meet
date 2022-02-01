@@ -49,9 +49,7 @@ const useStyles = makeStyles(theme => {
             }
         },
         switchLabel: {
-            marginRight: 10,
-            fontSize: 14,
-            fontWeight: 400
+            marginRight: 10
         }
     };
 });
@@ -85,7 +83,7 @@ export default function FacialExpressionsSwitch({ onChange, showFacialExpression
     return (
         <div className = { classes.switchContainer } >
             <label
-                className = { classes.switchLabel }
+                className = { `text-large ${classes.switchLabel}` }
                 htmlFor = 'facial-expressions-switch'>
                 { t('speakerStats.displayEmotions')}
             </label>

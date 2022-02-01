@@ -3,7 +3,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
 
-import { MOBILE_BREAKPOINT } from '../../constants';
 import abstractSpeakerStatsList from '../AbstractSpeakerStatsList';
 
 import SpeakerStatsItem from './SpeakerStatsItem';
@@ -14,12 +13,7 @@ const useStyles = makeStyles(theme => {
             marginTop: 15
         },
         item: {
-            height: 48,
-            [theme.breakpoints.down(MOBILE_BREAKPOINT)]: {
-                height: 64,
-                fontSize: 16,
-                fontWeight: 400
-            }
+            height: 48
         },
         avatar: {
             height: 32
@@ -30,20 +24,9 @@ const useStyles = makeStyles(theme => {
         hasLeft: {
             color: theme.palette.text03
         },
-        displayName: {
-            fontSize: 14,
-            fontWeight: 400,
-            [theme.breakpoints.down(MOBILE_BREAKPOINT)]: {
-                fontSize: 16
-            }
-        },
         time: {
             padding: '2px 4px',
-            borderRadius: '4px',
-            [theme.breakpoints.down(MOBILE_BREAKPOINT)]: {
-                fontSize: 16,
-                fontWeight: 400
-            }
+            borderRadius: '4px'
         },
         dominant: {
             backgroundColor: theme.palette.success02
@@ -66,5 +49,6 @@ const SpeakerStatsList = () => {
         </div>
     );
 };
+
 
 export default SpeakerStatsList;
