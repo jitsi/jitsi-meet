@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Tooltip } from '../../../base/tooltip';
 import { FACIAL_EXPRESSION_EMOJIS } from '../../../facial-recognition/constants.js';
 
-const useStyles = makeStyles(() => {
+const useStyles = makeStyles(theme => {
     return {
         labels: {
             padding: '22px 0 7px 0',
@@ -14,8 +14,8 @@ const useStyles = makeStyles(() => {
         },
         emojis: {
             paddingLeft: 27,
-            fontSize: 14,
-            fontWeight: 400
+            ...theme.typography.bodyShortRegularLarge,
+            lineHeight: `${theme.typography.bodyShortRegular.lineHeightLarge}px`
         }
     };
 });
@@ -34,7 +34,6 @@ type Props = {
 const SpeakerStatsLabels = (props: Props) => {
     const { t } = useTranslation();
     const classes = useStyles();
-
     const FacialExpressionsLabels = () => Object.keys(FACIAL_EXPRESSION_EMOJIS).map(
             expression => (
                 <div
@@ -67,13 +66,11 @@ const SpeakerStatsLabels = (props: Props) => {
                     { t('speakerStats.speakerTime') }
                 </div>
             </div>
-
             {
                 props.showFacialExpressions
                 && <div className = { `expressions ${classes.emojis}` }>
                     <FacialExpressionsLabels />
                 </div>
-
             }
         </div>
     );

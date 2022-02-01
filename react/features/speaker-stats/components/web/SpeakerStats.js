@@ -75,7 +75,6 @@ const SpeakerStats = () => {
         <Dialog
             cancelKey = 'dialog.close'
             hideCancelButton = { true }
-            id = 'speaker-stats-dialog'
             submitDisabled = { true }
             titleKey = 'speakerStats.speakerStats'
             width = { showFacialExpressions ? '664px' : 'small' }>
