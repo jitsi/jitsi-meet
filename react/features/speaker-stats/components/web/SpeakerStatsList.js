@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => {
         expressions: {
             paddingLeft: 29
         },
-        hasLeft: {
+        placeholderColor: {
             color: theme.palette.text03
         },
         time: {
