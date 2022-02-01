@@ -1,11 +1,37 @@
 /* @flow */
 
+import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
 
 import { Avatar } from '../../../base/avatar';
 import { FACIAL_EXPRESSIONS } from '../../../facial-recognition/constants.js';
 
 import TimeElapsed from './TimeElapsed';
+
+const useStyles = makeStyles(theme => {
+    return {
+        item: {
+            height: 48
+        },
+        avatar: {
+            height: 32
+        },
+        expressions: {
+            paddingLeft: 29
+        },
+        placeholderColor: {
+            color: theme.palette.text03
+        },
+        time: {
+            padding: '2px 4px',
+            borderRadius: '4px'
+        },
+        dominant: {
+            backgroundColor: theme.palette.success02
+        }
+
+    };
+});
 
 /**
  * The type of the React {@code Component} props of {@link SpeakerStatsItem}.
@@ -54,15 +80,10 @@ type Props = {
     isDominantSpeaker: boolean,
 
     /**
-     * Styles for the item.
-     */
-    styles: Object,
-
-    /**
      * Invoked to obtain translated strings.
      */
     t: Function
-}
+};
 
 const SpeakerStatsItem = (props: Props) => {
     /**
@@ -71,13 +92,15 @@ const SpeakerStatsItem = (props: Props) => {
      * @inheritdoc
      * @returns {ReactElement}
      */
-    const hasLeftClass = props.hasLeft ? props.styles.placeholderColor : '';
-    const rowDisplayClass = `row ${hasLeftClass} ${props.styles.item}`;
+
+    const classes = useStyles();
+    const hasLeftClass = props.hasLeft ? classes.placeholderColor : '';
+    const rowDisplayClass = `row ${hasLeftClass} ${classes.item}`;
     const expressionClass = 'expression';
     const nameTimeClass = `name-time${
         props.showFacialExpressions ? ' name-time_expressions-on' : ''
     }`;
-    const timeClass = `${props.styles.time} ${props.isDominantSpeaker ? props.styles.dominant : ''}`;
+    const timeClass = `${classes.time} ${props.isDominantSpeaker ? classes.dominant : ''}`;
 
 
     const FacialExpressions = () => FACIAL_EXPRESSIONS.map(
@@ -86,7 +109,7 @@ const SpeakerStatsItem = (props: Props) => {
                     aria-label = { props.t(`speakerStats.${expression}`) }
                     className = {
                         `${expressionClass} ${
-                            props.facialExpressions[expression] === 0 ? props.styles.placeholderColor : ''
+                            props.facialExpressions[expression] === 0 ? classes.placeholderColor : ''
                         }`
                     }
                     key = { expression }>
@@ -95,11 +118,15 @@ const SpeakerStatsItem = (props: Props) => {
             )
     );
 
+    if (props.hidden) {
+        return <div key = { props.participantId } />;
+    }
+
     return (
         <div
             className = { rowDisplayClass }
             key = { props.participantId } >
-            <div className = { `avatar ${props.styles.avatar}` }>
+            <div className = { `avatar ${classes.avatar}` }>
                 <Avatar
                     className = 'userAvatar'
                     participantId = { props.participantId } />
@@ -119,7 +146,7 @@ const SpeakerStatsItem = (props: Props) => {
             </div>
             { props.showFacialExpressions
             && (
-                <div className = { `expressions ${props.styles.expressions}` }>
+                <div className = { `expressions ${classes.expressions}` }>
                     <FacialExpressions />
                 </div>
             )
