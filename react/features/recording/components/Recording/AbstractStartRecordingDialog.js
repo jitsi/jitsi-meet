@@ -85,7 +85,12 @@ type Props = {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * Is the dialog visible?
+     */
+    visible: boolean
 }
 
 type State = {
@@ -118,7 +123,12 @@ type State = {
     /**
      * The display name of the user's Dropbox account.
      */
-    userName: ?string
+    userName: ?string,
+
+    /**
+     * Is the dialog visible?
+     */
+    visible: boolean
 };
 
 /**
@@ -134,6 +144,7 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
         super(props);
 
         // Bind event handler so it is only bound once for every instance.
+        this._onCancel = this._onCancel.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
         this._onSelectedRecordingServiceChanged
             = this._onSelectedRecordingServiceChanged.bind(this);
@@ -157,7 +168,8 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
             userName: undefined,
             sharingEnabled: true,
             spaceLeft: undefined,
-            selectedRecordingService
+            selectedRecordingService,
+            visible: this.props.visible
         };
     }
 
@@ -182,6 +194,22 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
     componentDidUpdate(prevProps: Props) {
         if (this.props._token !== prevProps._token) {
             this._onTokenUpdated();
+        }
+    }
+
+    _onCancel: () => boolean;
+
+    /**
+     * Callback to hide the dialog.
+     *
+     * @private
+     * @returns {boolean}
+     */
+    _onCancel() {
+        if (this.state.visible) {
+            this.setState({
+                visible: !this.state.visible
+            });
         }
     }
 
@@ -292,6 +320,12 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
         } = this.props;
         let appData;
         const attributes = {};
+
+        if (this.state.visible) {
+            this.setState({
+                visible: !this.state.visible
+            });
+        }
 
         if (_isDropboxEnabled && this.state.selectedRecordingService === RECORDING_TYPES.DROPBOX) {
             if (_token) {

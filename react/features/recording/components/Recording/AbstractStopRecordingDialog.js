@@ -57,6 +57,7 @@ export default class AbstractStopRecordingDialog<P: Props>
         this._toggleScreenshotCapture = this._toggleScreenshotCapture.bind(this);
     }
 
+
     _onSubmit: () => boolean;
 
     /**

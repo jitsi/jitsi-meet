@@ -24,6 +24,7 @@ export const screen = {
             }
         },
         security: 'Security Options',
+        recording: 'Recording',
         speakerStats: 'Speaker Stats',
         participants: 'Participants',
         invite: 'Invite',

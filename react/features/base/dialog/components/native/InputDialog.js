@@ -1,22 +1,21 @@
 // @flow
 
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text } from 'react-native';
+import Dialog from 'react-native-dialog';
 
 import { translate } from '../../../i18n';
 import { connect } from '../../../redux';
 import { StyleType } from '../../../styles';
 import { _abstractMapStateToProps } from '../../functions';
-import { type State as AbstractState } from '../AbstractDialog';
+import AbstractDialog, {
+    type Props as AbstractProps,
+    type State as AbstractState
+} from '../AbstractDialog';
 
-import BaseDialog, { type Props as BaseProps } from './BaseDialog';
-import {
-    FIELD_UNDERLINE,
-    brandedDialog,
-    inputDialog as styles
-} from './styles';
+import { FIELD_UNDERLINE, inputDialog as styles } from './styles';
 
-type Props = BaseProps & {
+type Props = AbstractProps & {
 
     /**
      * The color-schemed stylesheet of the feature.
@@ -24,7 +23,7 @@ type Props = BaseProps & {
     _dialogStyles: StyleType,
 
     /**
-     * The untranslated i18n key for the field label on the dialog.
+     * The untranslated i18n key for the dialog content.
      */
     contentKey: string,
 
@@ -38,9 +37,20 @@ type Props = BaseProps & {
      */
     messageKey?: string,
 
+    /**
+     * The translate function.
+     */
     t: Function,
 
+    /**
+     * Props for the text input.
+     */
     textInputProps: ?Object,
+
+    /**
+     * The untranslated i18n key for the dialog title.
+     */
+    titleKey?: string,
 
     /**
      * Validating of the input.
@@ -48,8 +58,7 @@ type Props = BaseProps & {
     validateInput: ?Function
 }
 
-type State = {
-    ...AbstractState,
+type State = AbstractState & {
 
     /**
      * The current value of the field.
@@ -60,7 +69,7 @@ type State = {
 /**
  * Implements a single field input dialog component.
  */
-class InputDialog extends BaseDialog<Props, State> {
+class InputDialog<P: Props, S: State> extends AbstractDialog<P, S> {
     /**
      * Instantiates a new {@code InputDialog}.
      *
@@ -71,7 +80,8 @@ class InputDialog extends BaseDialog<Props, State> {
 
         this.state = {
             fieldValue: props.initialValue,
-            submitting: false
+            submitting: false,
+            visible: true
         };
 
         this._onChangeText = this._onChangeText.bind(this);
@@ -79,52 +89,61 @@ class InputDialog extends BaseDialog<Props, State> {
     }
 
     /**
-     * Implements {@code BaseDialog._renderContent}.
+     * Implements {@code Component#render}.
      *
      * @inheritdoc
      */
-    _renderContent() {
-        const { _dialogStyles, messageKey, okDisabled, t } = this.props;
+    render() {
+        const {
+            _dialogStyles,
+            contentKey,
+            messageKey,
+            t,
+            titleKey
+        } = this.props;
+        const { visible } = this.state;
 
         return (
             <View>
-                <View
-                    style = { [
-                        brandedDialog.mainWrapper,
-                        styles.fieldWrapper
-                    ] }>
-                    <Text style = { _dialogStyles.fieldLabel }>
-                        { t(this.props.contentKey) }
-                    </Text>
-                    <TextInput
+                <Dialog.Container
+                    onBackdropPress = { this._onCancel }
+                    visible = { visible }>
+                    {
+                        titleKey && (
+                            <Dialog.Title>
+                                { t(titleKey) }
+                            </Dialog.Title>
+                        )
+                    }
+                    {
+                        contentKey && (
+                            <Text
+                                style = { styles.content }>
+                                { t(contentKey) }
+                            </Text>
+                        )
+                    }
+                    <Dialog.Input
                         autoFocus = { true }
                         onChangeText = { this._onChangeText }
-                        style = { _dialogStyles.field }
                         underlineColorAndroid = { FIELD_UNDERLINE }
-                        value = { this.state.fieldValue }
+                        value = { this.state.inputField }
                         { ...this.props.textInputProps } />
-                    { messageKey && (<Text
-                        style = { [
-                            styles.formMessage,
-                            _dialogStyles.text
-                        ] }>
-                        { t(messageKey) }
-                    </Text>) }
-                </View>
-                <View style = { brandedDialog.buttonWrapper }>
-                    <TouchableOpacity
-                        disabled = { okDisabled }
-                        onPress = { this._onSubmitValue }
-                        style = { [
-                            _dialogStyles.button,
-                            brandedDialog.buttonFarLeft,
-                            brandedDialog.buttonFarRight
-                        ] }>
-                        <Text style = { _dialogStyles.buttonLabel }>
-                            { t('dialog.Ok') }
-                        </Text>
-                    </TouchableOpacity>
-                </View>
+                    {
+                        messageKey && (
+                            <Text
+                                style = { [
+                                    styles.formMessage,
+                                    _dialogStyles.text
+                                ] }>
+                                { t(messageKey) }
+                            </Text>
+                        )
+                    }
+                    <Dialog.Button
+                        label = { t('dialog.Ok') }
+                        onPress = { this._onSubmitValue } />
+                </Dialog.Container>
             </View>
         );
     }
@@ -142,7 +161,7 @@ class InputDialog extends BaseDialog<Props, State> {
     _onChangeText(fieldValue) {
 
         if (this.props.validateInput
-                && !this.props.validateInput(fieldValue)) {
+            && !this.props.validateInput(fieldValue)) {
             return;
         }
 

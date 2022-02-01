@@ -1,107 +1,171 @@
 // @flow
 
 import React from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import { View } from 'react-native';
+import Dialog from 'react-native-dialog';
+import { Text } from 'react-native-paper';
 
 import { translate } from '../../../i18n';
 import { connect } from '../../../redux';
-import { StyleType } from '../../../styles';
-import { _abstractMapStateToProps } from '../../functions';
 
-import { type Props as BaseProps } from './BaseDialog';
-import BaseSubmitDialog from './BaseSubmitDialog';
-import { brandedDialog } from './styles';
+import BaseDialog, { type Props as BaseProps } from './BaseDialog';
+import styles from './styles';
 
+
+/**
+ * The type of the React {@code Component} props of
+ * {@link ConfirmDialog}.
+ */
 type Props = BaseProps & {
 
     /**
-     * The color-schemed stylesheet of the feature.
+     * The React {@code Component} children which represents the dialog's body.
      */
-    _dialogStyles: StyleType,
+    children: ?React$Node,
 
     /**
-     * Untranslated i18n key of the content to be displayed.
-     *
-     * NOTE: This dialog also adds support to Object type keys that will be
-     * translated using the provided params. See i18n function
-     * {@code translate(string, Object)} for more details.
+     * Dialog description key for translations.
      */
-    contentKey: string | { key: string, params: Object},
+    descriptionKey?: string,
 
     /**
-     * The handler for the event when clicking the 'confirmNo' button.
-     * Defaults to onCancel if absent.
+     * The i18n key of the text label for the cancel button.
      */
-    onDecline?: Function,
+    cancelLabel: string,
 
+    /**
+     * The i18n key of the text label for the confirm button.
+     */
+    confirmLabel: string,
+
+    /**
+     * Callback to invoke when cancel button is clicked/pressed.
+     */
+    onCancel: Function,
+
+    /**
+     * Callback to invoke when submit button is clicked/pressed.
+     */
+    onSubmit: Function,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
     t: Function
-}
+};
 
 /**
- * Implements a confirm dialog component.
+ * React Component for getting confirmation to stop a file recording session in
+ * progress.
+ *
+ * @augments Component
  */
-class ConfirmDialog extends BaseSubmitDialog<Props, *> {
+class ConfirmDialog<P: Props> extends BaseDialog<Props> {
     /**
-     * Returns the title key of the submit button.
+     * Initializes a new {@code ConfirmDialog} instance.
      *
-     * @returns {string}
+     * @inheritdoc
      */
-    _getSubmitButtonKey() {
-        return this.props.okKey || 'dialog.confirmYes';
+    constructor(props: P) {
+        super(props);
+
+        this.state = {
+            visible: true
+        };
+
+        // Bind event handler so it is only bound once for every instance.
+        this._onCancel = this._onCancel.bind(this);
+        this._onConfirm = this._onConfirm.bind(this);
     }
 
     _onCancel: () => void;
 
     /**
-     * Renders the 'No' button.
+     * Callback to cancel button.
      *
-     * NOTE: The {@code ConfirmDialog} is the only dialog right now that
-     * renders 2 buttons, mainly for clarity.
-     *
-     * @inheritdoc
+     * @private
+     * @returns {void}
      */
-    _renderAdditionalButtons() {
-        const { _dialogStyles, cancelKey, onDecline, t } = this.props;
+    _onCancel() {
+        const { onCancel } = this.props;
+
+        onCancel && onCancel();
+
+        this.setState({
+            visible: !this.state.visible
+        });
+    }
+
+    _onConfirm: () => void;
+
+    /**
+     * Callback for the confirm button.
+     *
+     * @private
+     * @returns {void}.
+     */
+    _onConfirm() {
+        const { onSubmit } = this.props;
+
+        onSubmit && onSubmit();
+
+        this.setState({
+            visible: !this.state.visible
+        });
+    }
+
+    /**
+     * Renders the dialog description.
+     *
+     * @returns {React$Component}
+     */
+    _renderDescription() {
+        const { children, descriptionKey, t } = this.props;
+        const description
+            = typeof descriptionKey === 'string'
+                ? t(descriptionKey)
+                : this._renderHTML(
+                    t(descriptionKey?.key, descriptionKey?.params)
+                );
 
         return (
-            <TouchableOpacity
-                onPress = { onDecline || this._onCancel }
-                style = { [
-                    _dialogStyles.button,
-                    brandedDialog.buttonFarLeft,
-                    _dialogStyles.buttonSeparator
-                ] }>
-                <Text style = { _dialogStyles.buttonLabel }>
-                    { t(cancelKey || 'dialog.confirmNo') }
+            <>
+                <Text style = { styles.dialogDescription }>
+                    { description }
                 </Text>
-            </TouchableOpacity>
+                <Text style = { styles.dialogDescription }>
+                    { children }
+                </Text>
+            </>
         );
     }
 
     /**
-     * Implements {@code BaseSubmitDialog._renderSubmittable}.
+     * Implements {@code Component#render}.
      *
      * @inheritdoc
      */
-    _renderSubmittable() {
-        if (this.props.children) {
-            return this.props.children;
-        }
-
-        const { _dialogStyles, contentKey, t } = this.props;
-        const content
-            = typeof contentKey === 'string'
-                ? t(contentKey)
-                : this._renderHTML(t(contentKey.key, contentKey.params));
+    render() {
+        const { cancelLabel, confirmLabel, t } = this.props;
+        const { visible } = this.state;
 
         return (
-            <Text style = { _dialogStyles.text }>
-                { content }
-            </Text>
+            <View>
+                <Dialog.Container
+                    visible = { visible }>
+                    { this._renderDescription() }
+                    <Dialog.Button
+                        label = { t(cancelLabel || 'dialog.confirmNo') }
+                        onPress = { this._onCancel }
+                        style = { styles.dialogButton } />
+                    <Dialog.Button
+                        label = { t(confirmLabel || 'dialog.confirmYes') }
+                        onPress = { this._onConfirm }
+                        style = { styles.dialogButton } />
+                </Dialog.Container>
+            </View>
         );
     }
-
-    _renderHTML: string => Object | string;
 }
 
-export default translate(connect(_abstractMapStateToProps)(ConfirmDialog));
+export default translate(connect()(ConfirmDialog));

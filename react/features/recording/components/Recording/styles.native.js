@@ -10,6 +10,20 @@ export const JITSI_LOGO = require('../../../../../images/jitsiLogo_square.png');
 // XXX The "standard" {@code BoxModel.padding} has been deemed insufficient in
 // the special case(s) of the recording feature below.
 const _PADDING = BoxModel.padding * 1.5;
+const recordingDialogDescription = {
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'left',
+    padding: BoxModel.padding
+};
+
+
+export default {
+    title: {
+        ...recordingDialogDescription
+    }
+};
+
 
 /**
  * Color schemed styles for the @{code StartRecordingDialogContent} component.
@@ -56,11 +70,7 @@ ColorSchemeRegistry.register('StartRecordingDialogContent', {
     },
 
     title: {
-        flex: 1,
-        fontSize: 16,
-        fontWeight: 'bold',
-        textAlign: 'left',
-        paddingLeft: BoxModel.padding
+        ...recordingDialogDescription
     },
 
     text: {

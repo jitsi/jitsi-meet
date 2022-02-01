@@ -43,7 +43,7 @@ import { getUnreadCount } from './functions';
 import { INCOMING_MSG_SOUND_FILE } from './sounds';
 
 declare var APP: Object;
-declare var interfaceConfig : Object;
+
 
 /**
  * Timeout for when to show the privacy notice after a private message was received.

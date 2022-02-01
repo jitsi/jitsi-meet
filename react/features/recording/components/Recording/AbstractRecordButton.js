@@ -15,9 +15,11 @@ import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/
 import { isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
 import { FEATURES } from '../../../jaas/constants';
+import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+import { screen } from '../../../mobile/navigation/routes';
 import { getActiveSession } from '../../functions';
 
-import { StartRecordingDialog, StopRecordingDialog } from './_';
+import { StopRecordingDialog } from './_';
 
 /**
  * The type of the React {@code Component} props of
@@ -86,13 +88,14 @@ export default class AbstractRecordButton<P: Props> extends AbstractButton<P, *>
                 'is_recording': _isRecordingRunning,
                 type: JitsiRecordingConstants.mode.FILE
             }));
-
         const dialogShown = await dispatch(maybeShowPremiumFeatureDialog(FEATURES.RECORDING));
 
         if (!dialogShown) {
-            dispatch(openDialog(
-                _isRecordingRunning ? StopRecordingDialog : StartRecordingDialog
-            ));
+            if (_isRecordingRunning) {
+                dispatch(openDialog(StopRecordingDialog));
+            } else {
+                navigate(screen.conference.recording);
+            }
         }
     }
 

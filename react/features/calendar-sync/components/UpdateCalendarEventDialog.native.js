@@ -17,12 +17,7 @@ type Props = {
     /**
      * The ID of the event to be updated.
      */
-    eventId: string,
-
-    /**
-     * Function to translate i18n labels.
-     */
-    t: Function
+    eventId: string
 };
 
 /**
@@ -49,7 +44,7 @@ class UpdateCalendarEventDialog extends Component<Props> {
     render() {
         return (
             <ConfirmDialog
-                contentKey = 'calendarSync.confirmAddLink'
+                descriptionKey = 'calendarSync.confirmAddLink'
                 onSubmit = { this._onSubmit } />
         );
     }

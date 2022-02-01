@@ -55,7 +55,7 @@ class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<Props> {
     render() {
         return (
             <ConfirmDialog
-                okKey = 'dialog.muteParticipantButton'
+                confirmLabel = 'dialog.muteParticipantButton'
                 onSubmit = { this._onSubmit } >
                 <Text style = { this.props._dialogStyles.text }>
                     { `${this.props.title} \n\n ${this.state.content}` }

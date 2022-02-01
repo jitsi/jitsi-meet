@@ -56,6 +56,18 @@ export const bottomSheetStyles = {
     }
 };
 
+export default {
+
+    dialogButton: {
+        ...BaseTheme.typography.labelButton
+    },
+
+    dialogDescription: {
+        ...BaseTheme.typography.bodyShortRegular,
+        padding: BoxModel.padding
+    }
+};
+
 export const brandedDialog = {
 
     /**
@@ -150,6 +162,12 @@ export const inputDialog = {
         marginBottom: 0
     },
 
+    content: {
+        alignSelf: 'flex-start',
+        marginHorizontal: BaseTheme.spacing[4],
+        marginBottom: BaseTheme.spacing[4]
+    },
+
     fieldWrapper: {
         ...brandedDialog.mainWrapper,
         paddingBottom: BoxModel.padding * 2
@@ -158,7 +176,7 @@ export const inputDialog = {
     formMessage: {
         alignSelf: 'flex-start',
         fontStyle: 'italic',
-        margin: BoxModel.margin
+        marginLeft: BaseTheme.spacing[4]
     }
 };
 

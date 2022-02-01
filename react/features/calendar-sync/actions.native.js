@@ -6,9 +6,8 @@ import { getDefaultURL } from '../app/functions';
 import { openDialog } from '../base/dialog';
 
 import { refreshCalendar } from './actions';
-import {
-    UpdateCalendarEventDialog
-} from './components';
+import UpdateCalendarEventDialog
+    from './components/UpdateCalendarEventDialog.native';
 import { addLinkToCalendarEntry } from './functions.native';
 
 export * from './actions.any';
