@@ -9,6 +9,10 @@ import { extractFqnFromPath } from '../dynamic-branding';
 import { RECORDING_STATUS_PRIORITIES, RECORDING_TYPES } from './constants';
 import logger from './logger';
 
+let recorder;
+let recordingData = [];
+let recorderStream;
+
 /**
  * Searches in the passed in redux state for an active recording session of the
  * passed in mode.
@@ -183,14 +187,14 @@ export function getRecordButtonProps(state: Object): ?string {
 /**
  * Returns the resource id.
  *
- * @param {Object | string} recorder - A participant or it's resource.
+ * @param {Object | string} remoteRecorder - A participant or it's resource.
  * @returns {string|undefined}
  */
-export function getResourceId(recorder: string | Object) {
-    if (recorder) {
-        return typeof recorder === 'string'
-            ? recorder
-            : recorder.getId();
+export function getResourceId(remoteRecorder: string | Object) {
+    if (remoteRecorder) {
+        return typeof remoteRecorder === 'string'
+            ? remoteRecorder
+            : remoteRecorder.getId();
     }
 }
 
@@ -240,4 +244,134 @@ export async function sendMeetingHighlight(state: Object) {
     }
 
     return false;
+}
+
+/**
+ * Starts a local recording.
+ *
+ * @returns {void}
+ */
+export async function startLocalRecording() {
+    let gdmStream, gumStream;
+
+    recordingData = [];
+
+    try {
+        // $FlowFixMe
+        gumStream = await navigator.mediaDevices.getUserMedia({ video: false,
+            audio: true });
+
+        // $FlowFixMe
+        gdmStream = await navigator.mediaDevices.getDisplayMedia({ video: { displaySurface: 'browser' },
+            audio: { channelCount: 2 },
+            preferCurrentTab: true
+        });
+
+    } catch (e) {
+        console.error('Capture failure', e);
+
+        return;
+    }
+
+    recorderStream = gumStream ? mixer(gumStream, gdmStream) : gdmStream;
+
+    // $FlowFixMe
+    recorder = new MediaRecorder(recorderStream, { mimeType: 'video/webm' });
+
+    recorder.ondataavailable = e => {
+        if (e.data && e.data.size > 0) {
+            recordingData.push(e.data);
+        }
+
+        recorderStream.getTracks().forEach(track => track.stop());
+        gumStream.getTracks().forEach(track => track.stop());
+        gdmStream.getTracks().forEach(track => track.stop());
+
+    };
+
+    recorderStream.addEventListener('inactive', () => {
+        console.log('Capture stream inactive');
+        stopLocalRecording();
+    });
+
+    recorder.start();
+}
+
+/**
+ * Mixes multiple audio tracks and the first video track it finds.
+ *
+ * @param {Object} stream1 - Stream to mix.
+ * @param {Object} stream2 - Stream to mix.
+ *
+ * @returns {Object}
+ * */
+function mixer(stream1, stream2) {
+    const ctx = new AudioContext();
+    const dest = ctx.createMediaStreamDestination();
+
+    if (stream1.getAudioTracks().length > 0) {
+        ctx.createMediaStreamSource(stream1).connect(dest);
+    }
+
+    if (stream2.getAudioTracks().length > 0) {
+        ctx.createMediaStreamSource(stream2).connect(dest);
+    }
+
+    let tracks = dest.stream.getTracks();
+
+    tracks = tracks.concat(stream1.getVideoTracks()).concat(stream2.getVideoTracks());
+
+    // $FlowFixMe
+    return new MediaStream(tracks);
+
+}
+
+/**
+ * Returns a filename based ono the Jitsi room name in the URL and timestamp.
+ *
+ * @returns {string}
+ * */
+function getFilename() {
+    const now = new Date();
+    const timestamp = now.toISOString();
+    const room = new RegExp(/(^.+)\s\|/).exec(document.title);
+
+    if (room && room[1] !== '') {
+        return `${room[1]}_${timestamp}`;
+    }
+
+    return `recording_${timestamp}`;
+}
+
+/**
+ * Stops local recording.
+ *
+ * @returns {void}
+ * */
+export function stopLocalRecording() {
+    recorder.stop();
+}
+
+/**
+ * Saves local recording to file.
+ *
+ * @returns {void}
+ * */
+export function saveRecording() {
+    const blob = new Blob(recordingData, { type: 'video/webm' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+
+    a.style.display = 'none';
+    a.href = url;
+    a.download = `${getFilename()}.webm`;
+
+    // $FlowFixMe
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+        // $FlowFixMe
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }, 100);
 }

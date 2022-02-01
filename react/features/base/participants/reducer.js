@@ -7,6 +7,7 @@ import { ReducerRegistry, set } from '../redux';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
+    LOCAL_RECORDING_UPDATED,
     PARTICIPANT_ID_CHANGED,
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
@@ -64,6 +65,7 @@ const DEFAULT_STATE = {
     localScreenShare: undefined,
     pinnedParticipant: undefined,
     raisedHandsQueue: [],
+    localRecordingQueue: [],
     remote: new Map(),
     sortedRemoteFakeScreenShareParticipants: new Map(),
     sortedRemoteParticipants: new Map(),
@@ -312,6 +314,7 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
 
         state.sortedRemoteParticipants.delete(id);
         state.raisedHandsQueue = state.raisedHandsQueue.filter(pid => pid.id !== id);
+        state.localRecordingQueue = state.localRecordingQueue.filter(pid => pid.id !== id);
 
         if (!state.everyoneIsModerator && !isParticipantModerator(oldParticipant)) {
             state.everyoneIsModerator = _isEveryoneModerator(state);
@@ -365,6 +368,12 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
         return {
             ...state,
             raisedHandsQueue: action.queue
+        };
+    }
+    case LOCAL_RECORDING_UPDATED: {
+        return {
+            ...state,
+            localRecordingQueue: action.queue
         };
     }
     case SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED: {

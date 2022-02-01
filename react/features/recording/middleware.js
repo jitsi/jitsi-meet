@@ -6,12 +6,17 @@ import {
     sendAnalytics
 } from '../analytics';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
-import { CONFERENCE_JOIN_IN_PROGRESS, getCurrentConference } from '../base/conference';
+import {
+    CONFERENCE_JOIN_IN_PROGRESS,
+    getCurrentConference
+} from '../base/conference';
 import JitsiMeetJS, {
     JitsiConferenceEvents,
     JitsiRecordingConstants
 } from '../base/lib-jitsi-meet';
-import { getParticipantDisplayName } from '../base/participants';
+import {
+    getParticipantDisplayName
+} from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import {
     playSound,
@@ -19,8 +24,15 @@ import {
     stopSound,
     unregisterSound
 } from '../base/sounds';
+import {
+    NOTIFICATION_TIMEOUT_TYPE,
+    showNotification
+} from '../notifications';
 
-import { RECORDING_SESSION_UPDATED } from './actionTypes';
+import {
+    LOCAL_RECORDING_SESSION_UPDATED,
+    RECORDING_SESSION_UPDATED
+} from './actionTypes';
 import {
     clearRecordingSessions,
     hidePendingRecordingNotification,
@@ -38,7 +50,13 @@ import {
     RECORDING_OFF_SOUND_ID,
     RECORDING_ON_SOUND_ID
 } from './constants';
-import { getSessionById, getResourceId } from './functions';
+import {
+    getSessionById,
+    getResourceId,
+    startLocalRecording,
+    stopLocalRecording,
+    saveRecording
+} from './functions';
 import {
     LIVE_STREAMING_OFF_SOUND_FILE,
     LIVE_STREAMING_ON_SOUND_FILE,
@@ -47,7 +65,6 @@ import {
 } from './sounds';
 
 declare var APP: Object;
-declare var interfaceConfig: Object;
 
 /**
  * StateListenerRegistry provides a reliable way to detect the leaving of a
@@ -123,6 +140,28 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         break;
     }
 
+    case LOCAL_RECORDING_SESSION_UPDATED: {
+        const { localVideoRecordingHasStarted } = getState()['features/recording'] || false;
+
+        if (localVideoRecordingHasStarted) {
+            startLocalRecording().then(() => {
+                const dialogProps = {
+                    descriptionKey: 'recording.on',
+                    isDismissAllowed: true,
+                    titleKey: 'dialog.recording'
+                };
+
+                dispatch(showNotification(dialogProps, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+            });
+        } else {
+            stopLocalRecording();
+            setTimeout(() => {
+                saveRecording();
+            }, 1000);
+        }
+        break;
+    }
+
     case RECORDING_SESSION_UPDATED: {
         // When in recorder mode no notifications are shown
         // or extra sounds are also not desired
@@ -139,16 +178,16 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
         const updatedSessionData
             = getSessionById(getState(), action.sessionData.id);
-        const { initiator, mode, terminator } = updatedSessionData;
+        const { initiator, mode, terminator, status } = updatedSessionData;
         const { PENDING, OFF, ON } = JitsiRecordingConstants.status;
 
-        if (updatedSessionData.status === PENDING
+        if (status === PENDING
             && (!oldSessionData || oldSessionData.status !== PENDING)) {
             dispatch(showPendingRecordingNotification(mode));
-        } else if (updatedSessionData.status !== PENDING) {
+        } else if (status !== PENDING) {
             dispatch(hidePendingRecordingNotification(mode));
 
-            if (updatedSessionData.status === ON
+            if (status === ON
                 && (!oldSessionData || oldSessionData.status !== ON)) {
                 if (typeof recordingLimit === 'object') {
                     // Show notification with additional information to the initiator.
@@ -174,7 +213,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 if (typeof APP !== 'undefined') {
                     APP.API.notifyRecordingStatusChanged(true, mode);
                 }
-            } else if (updatedSessionData.status === OFF
+            } else if (status === OFF
                 && (!oldSessionData || oldSessionData.status !== OFF)) {
                 if (terminator) {
                     dispatch(

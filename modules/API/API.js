@@ -1545,6 +1545,21 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that user updated local recording.
+     *
+     * @param {string} id - User id.
+     * @param {boolean} localVideoRecordingHasStarted - Whether user has started local recording.
+     * @returns {void}
+     */
+    notifyLocalRecordingUpdated(id: string, localVideoRecordingHasStarted: boolean) {
+        this._sendEvent({
+            name: 'local-recording',
+            localVideoRecordingHasStarted,
+            id
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) that recording has started or stopped.
      *
      * @param {boolean} on - True if recording is on, false otherwise.

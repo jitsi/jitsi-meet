@@ -142,7 +142,8 @@ export function _mapStateToProps(state: Object): Object {
 
     return {
         _disabled,
-        _isRecordingRunning: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE)),
+        _isRecordingRunning: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE))
+            || state['features/recording'].localVideoRecordingHasStarted || false,
         _tooltip,
         visible
     };

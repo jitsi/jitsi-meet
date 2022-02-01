@@ -1,12 +1,15 @@
+
 // @flow
 
 import { Component } from 'react';
+import { batch } from 'react-redux';
 
 import {
     createRecordingDialogEvent,
     sendAnalytics
 } from '../../../analytics';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
+import { updateLocalRecordingStatus } from '../../../base/participants';
 import {
     getDropboxData,
     isEnabled as isDropboxEnabled,
@@ -15,7 +18,10 @@ import {
 } from '../../../dropbox';
 import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification } from '../../../notifications';
 import { toggleRequestingSubtitles } from '../../../subtitles';
-import { setSelectedRecordingService } from '../../actions';
+import {
+    setSelectedRecordingService,
+    updateLocalRecordingData
+} from '../../actions';
 import { RECORDING_TYPES } from '../../constants';
 
 export type Props = {
@@ -293,62 +299,75 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
         let appData;
         const attributes = {};
 
-        if (_isDropboxEnabled && this.state.selectedRecordingService === RECORDING_TYPES.DROPBOX) {
-            if (_token) {
-                appData = JSON.stringify({
-                    'file_recording_metadata': {
-                        'upload_credentials': {
-                            'service_name': RECORDING_TYPES.DROPBOX,
-                            'token': _token,
-                            'r_token': _rToken,
-                            'app_key': _appKey
+        switch (this.state.selectedRecordingService) {
+        case RECORDING_TYPES.DROPBOX: {
+            if (_isDropboxEnabled) {
+                if (_token) {
+                    appData = JSON.stringify({
+                        'file_recording_metadata': {
+                            'upload_credentials': {
+                                'service_name': RECORDING_TYPES.DROPBOX,
+                                'token': _token,
+                                'r_token': _rToken,
+                                'app_key': _appKey
+                            }
                         }
-                    }
-                });
-                attributes.type = RECORDING_TYPES.DROPBOX;
-            } else {
-                dispatch(showErrorNotification({
-                    titleKey: 'dialog.noDropboxToken'
-                }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+                    });
+                    attributes.type = RECORDING_TYPES.DROPBOX;
+                } else {
+                    dispatch(showErrorNotification({
+                        titleKey: 'dialog.noDropboxToken'
+                    }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 
-                return;
+                    return;
+                }
             }
-        } else {
+
+            break;
+        }
+        case RECORDING_TYPES.JITSI_REC_SERVICE: {
             appData = JSON.stringify({
                 'file_recording_metadata': {
                     'share': this.state.sharingEnabled
                 }
             });
             attributes.type = RECORDING_TYPES.JITSI_REC_SERVICE;
+
+            break;
+        }
+        case RECORDING_TYPES.LOCAL: {
+            batch(() => {
+                dispatch(updateLocalRecordingData(true));
+                dispatch(updateLocalRecordingStatus(true));
+            });
+
+            return true;
+        }
         }
 
-        sendAnalytics(
-            createRecordingDialogEvent('start', 'confirm.button', attributes)
-        );
+        if (appData !== undefined) {
+            sendAnalytics(
+                createRecordingDialogEvent('start', 'confirm.button', attributes)
+            );
 
-        this._toggleScreenshotCapture();
-        _conference.startRecording({
-            mode: JitsiRecordingConstants.mode.FILE,
-            appData
-        });
+            this._toggleScreenshotCapture();
+            _conference.startRecording({
+                mode: JitsiRecordingConstants.mode.FILE,
+                appData
+            });
 
-        if (_autoCaptionOnRecord) {
-            dispatch(toggleRequestingSubtitles());
+            if (_autoCaptionOnRecord) {
+                dispatch(toggleRequestingSubtitles());
+            }
+
+            return true;
         }
-
-        return true;
     }
-
-    _toggleScreenshotCapture:() => void;
 
     /**
-     * Toggles screenshot capture feature.
-     *
-     * @returns {void}
+     * To be overwritten by web component.
      */
-    _toggleScreenshotCapture() {
-        // To be implemented by subclass.
-    }
+    _toggleScreenshotCapture:() => void;
 
     /**
      * Renders the platform specific dialog content.
