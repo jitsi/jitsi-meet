@@ -5,8 +5,7 @@ import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { Dialog } from '../../../base/dialog';
-import { escapeRegexp } from '../../../base/util';
-import { resetSearchCriteria, toggleFacialExpressions, initSearch } from '../../actions';
+import { resetSearchCriteria, toggleFacialExpressions } from '../../actions';
 import { REDUCE_EXPRESSIONS_THRESHOLD } from '../../constants';
 
 import FacialExpressionsSwitch from './FacialExpressionsSwitch';
@@ -38,11 +37,6 @@ const SpeakerStats = () => {
         dispatch(toggleFacialExpressions())
     , [ dispatch ]);
 
-    const onSearch = useCallback((criteria = '') => {
-        dispatch(initSearch(escapeRegexp(criteria)));
-    }
-    , [ dispatch ]);
-
     useEffect(() => () => dispatch(resetSearchCriteria()), []);
 
     return (
@@ -52,7 +46,7 @@ const SpeakerStats = () => {
             titleKey = 'speakerStats.speakerStats'
             width = { showFacialExpressions ? '664px' : 'small' }>
             <div className = 'speaker-stats'>
-                <SpeakerStatsSearch onSearch = { onSearch } />
+                <SpeakerStatsSearch />
                 { enableFacialRecognition
                     && <FacialExpressionsSwitch
                         onChange = { onToggleFacialExpressions }
