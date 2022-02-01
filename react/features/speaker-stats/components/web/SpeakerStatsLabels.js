@@ -8,12 +8,8 @@ import { FACIAL_EXPRESSION_EMOJIS } from '../../../facial-recognition/constants.
 
 const useStyles = makeStyles(() => {
     return {
-        labels: {
-            padding: '7px 0px',
-            height: 20
-        },
-        emojis: {
-            paddingLeft: 27
+        speakerStatsLabels: {
+            padding: '7px 0px'
         }
 
     };
@@ -46,12 +42,15 @@ const SpeakerStatsLabels = (props: Props) => {
             : Object.keys(FACIAL_EXPRESSION_EMOJIS)).map(
             expression => (
                 <div
-                    className = 'expression text-large'
+                    className = 'speaker-stats-item__expression'
                     key = { expression }>
                     <Tooltip
                         content = { t(`speakerStats.${expression}`) }
                         position = { 'top' } >
-                        <div>
+                        <div
+                            // eslint-disable-next-line react-native/no-inline-styles
+                            style = {{ fontSize: 17 }}>
+
                             { FACIAL_EXPRESSION_EMOJIS[expression] }
                         </div>
 
@@ -59,15 +58,12 @@ const SpeakerStatsLabels = (props: Props) => {
                 </div>
             )
     );
-    const nameTimeClass = `name-time${
-        props.showFacialExpressions ? ' name-time_expressions-on' : ''
-    }`;
 
     return (
-        <div className = { `row ${classes.labels}` }>
-            <div className = 'avatar' />
+        <div className = { `speaker-stats-row ${classes.speakerStatsLabels}` }>
+            <div className = 'speaker-stats-item__avatar' />
 
-            <div className = { nameTimeClass }>
+            <div className = 'speaker-stats-item__name-time'>
                 <div>
                     { t('speakerStats.name') }
                 </div>
@@ -78,10 +74,7 @@ const SpeakerStatsLabels = (props: Props) => {
 
             {
                 props.showFacialExpressions
-                && <div className = { `expressions ${classes.emojis}` }>
-                    <FacialExpressionsLabels />
-                </div>
-
+                && <FacialExpressionsLabels />
             }
         </div>
     );

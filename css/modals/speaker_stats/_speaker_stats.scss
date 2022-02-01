@@ -2,45 +2,26 @@
     list-style: none;
     padding: 30px 0 0 0;
     width: 100%;
-    font-weight: 600;
-    
-    .row{
+    font-weight: 500;
+
+    .speaker-stats-row{
         display: flex;
         align-items: center;
 
         .status-user-left {
             color: $placeHolderColor;
         }
-        .avatar {
+
+        .speaker-stats-item__avatar {
             width: 32px;
             margin-right: 16px;
         }
     
-        .name-time {
+        .speaker-stats-item__name-time{
             width: 304px;
             display: flex;
             justify-content: space-between;
-            
         }
-        .name-time_expressions-on {
-            width: 240px;
-        }
-        .expressions {
-            width: 300px;
-            display: flex;
-            justify-content: space-between;
-
-            .expression {
-                width: 30px;
-                text-align: center;
-            }
-        }
-
-        
-    }
-    .text-large{
-        font-size: 14px;
-        font-weight: 400;
     }
     
 }
