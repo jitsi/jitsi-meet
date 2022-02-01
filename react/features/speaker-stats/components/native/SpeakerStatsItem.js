@@ -5,6 +5,7 @@ import { View, Text } from 'react-native';
 
 import { Avatar, StatelessAvatar } from '../../../base/avatar';
 import { getInitials } from '../../../base/avatar/functions';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 import TimeElapsed from './TimeElapsed';
 import style from './styles';
@@ -47,15 +48,15 @@ const SpeakerStatsItem = (props: Props) =>
                     props.hasLeft ? (
                         <StatelessAvatar
                             className = 'userAvatar'
-                            color = { '#525252' }
+                            color = { BaseTheme.palette.ui05 }
                             id = 'avatar'
                             initials = { getInitials(props.displayName) }
-                            size = { 32 } />
+                            size = { BaseTheme.spacing[5] } />
                     ) : (
                         <Avatar
                             className = 'userAvatar'
                             participantId = { props.participantId }
-                            size = { 32 } />
+                            size = { BaseTheme.spacing[5] } />
                     )
                 }
             </View>
@@ -73,7 +74,6 @@ const SpeakerStatsItem = (props: Props) =>
                     time = { props.dominantSpeakerTime } />
             </View>
         </View>
-    )
-;
+    );
 
 export default SpeakerStatsItem;

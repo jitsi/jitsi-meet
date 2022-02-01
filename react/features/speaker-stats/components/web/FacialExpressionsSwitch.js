@@ -11,20 +11,18 @@ const useStyles = makeStyles(theme => {
         switchContainer: {
             display: 'flex',
             alignItems: 'center',
-
             '& svg': {
                 display: 'none'
 
             },
-
             '& div': {
                 width: 38,
                 '& > label': {
                     width: 32,
                     height: 20,
-                    backgroundColor: '#484A4F',
+                    backgroundColor: theme.palette.ui05,
                     '&:not([data-checked]):hover': {
-                        backgroundColor: '#484A4F'
+                        backgroundColor: theme.palette.ui05
                     },
                     '&[data-checked]': {
                         backgroundColor: theme.palette.action01,
@@ -50,8 +48,8 @@ const useStyles = makeStyles(theme => {
         },
         switchLabel: {
             marginRight: 10,
-            fontSize: 14,
-            fontWeight: 400
+            ...theme.typography.bodyShortRegular,
+            lineHeight: `${theme.typography.bodyShortRegular.lineHeight}px`
         }
     };
 });

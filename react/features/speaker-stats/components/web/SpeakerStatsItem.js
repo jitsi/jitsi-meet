@@ -4,6 +4,7 @@ import React from 'react';
 
 import { Avatar, StatelessAvatar } from '../../../base/avatar';
 import { getInitials } from '../../../base/avatar/functions';
+import BaseTheme from '../../../base/ui/components/BaseTheme';
 import { FACIAL_EXPRESSIONS } from '../../../facial-recognition/constants.js';
 
 import TimeElapsed from './TimeElapsed';
@@ -105,7 +106,7 @@ const SpeakerStatsItem = (props: Props) => {
                     props.hasLeft ? (
                         <StatelessAvatar
                             className = 'userAvatar'
-                            color = { '#525252' }
+                            color = { BaseTheme.palette.ui04 }
                             id = 'avatar'
                             initials = { getInitials(props.displayName) } />
                     ) : (
