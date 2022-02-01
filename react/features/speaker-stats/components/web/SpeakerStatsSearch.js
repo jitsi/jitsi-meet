@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => {
             borderColor: theme.palette.border02,
             color: theme.palette.text01,
             padding: '10px 16px',
-            width: '100%',
+            width: 183,
             height: 40,
             '&::placeholder': {
                 color: theme.palette.text03,
