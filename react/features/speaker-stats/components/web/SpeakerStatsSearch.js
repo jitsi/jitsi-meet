@@ -11,6 +11,9 @@ import { isSpeakerStatsSearchDisabled } from '../../functions';
 const useStyles = makeStyles(theme => {
     return {
         speakerStatsSearch: {
+            position: 'absolute',
+            left: 20,
+            top: 85,
             backgroundColor: theme.palette.field01,
             border: '1px solid',
             borderRadius: 6,
@@ -18,12 +21,7 @@ const useStyles = makeStyles(theme => {
             color: theme.palette.text01,
             padding: '10px 16px',
             width: 183,
-            height: 40,
-            '&::placeholder': {
-                color: theme.palette.text03,
-                fontSize: 14,
-                fontWeight: 400
-            }
+            height: 40
         }
     };
 });
