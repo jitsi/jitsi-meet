@@ -74,6 +74,7 @@ const commands = {
     toggleE2EE: 'toggle-e2ee',
     toggleFilmStrip: 'toggle-film-strip',
     toggleModeration: 'toggle-moderation',
+    toggleParticipantsPane: 'toggle-participants-pane',
     toggleRaiseHand: 'toggle-raise-hand',
     toggleShareAudio: 'toggle-share-audio',
     toggleShareScreen: 'toggle-share-screen',
@@ -943,6 +944,18 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             name: 'is-participant-force-muted',
             participantId,
             mediaType
+        });
+    }
+
+    /**
+     * Returns whether the participants pane is open.
+     *
+     * @returns {Promise} - Resolves with true if the participants pane is open
+     * and with false if not.
+     */
+    isParticipantsPaneOpen() {
+        return this._transport.sendRequest({
+            name: 'is-participants-pane-open'
         });
     }
 
