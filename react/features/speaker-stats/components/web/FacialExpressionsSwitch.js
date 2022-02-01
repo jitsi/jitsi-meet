@@ -1,7 +1,8 @@
 // @flow
 import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+
+// import { useTranslation } from 'react-i18next';
 
 import { Switch } from '../../../base/react';
 
@@ -80,14 +81,15 @@ type Props = {
  */
 export default function FacialExpressionsSwitch({ onChange, showFacialExpressions }: Props) {
     const classes = useStyles();
-    const { t } = useTranslation();
+
+    // const { t } = useTranslation();
 
     return (
         <div className = { classes.switchContainer } >
             <label
                 className = { `text-large ${classes.switchLabel}` }
                 htmlFor = 'facial-expressions-switch'>
-                { t('speakerStats.displayEmotions')}
+                Display Emotions
             </label>
             <Switch
                 id = 'facial-expressions-switch'
