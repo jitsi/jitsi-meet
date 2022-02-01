@@ -73,7 +73,11 @@ import {
     resizeLargeVideo
 } from '../../react/features/large-video/actions.web';
 import { toggleLobbyMode, setKnockingParticipantApproval } from '../../react/features/lobby/actions';
-import { isForceMuted } from '../../react/features/participants-pane/functions';
+import {
+    close as closeParticipantsPane,
+    open as openParticipantsPane
+} from '../../react/features/participants-pane/actions';
+import { getParticipantsPaneOpen, isForceMuted } from '../../react/features/participants-pane/functions';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession } from '../../react/features/recording/functions';
 import { isScreenAudioSupported } from '../../react/features/screen-share';
@@ -316,6 +320,12 @@ function initCommands() {
             } else {
                 APP.store.dispatch(disable());
             }
+        },
+        'toggle-participants-pane': enabled => {
+            const toggleParticipantsPane = enabled
+                ? openParticipantsPane : closeParticipantsPane;
+
+            APP.store.dispatch(toggleParticipantsPane());
         },
         'toggle-raise-hand': () => {
             const localParticipant = getLocalParticipant(APP.store.getState());
@@ -688,6 +698,10 @@ function initCommands() {
             const participant = getParticipantById(state, participantId);
 
             callback(isForceMuted(participant, type, state));
+            break;
+        }
+        case 'is-participants-pane-open': {
+            callback(getParticipantsPaneOpen(APP.store.getState()));
             break;
         }
         case 'is-video-muted':
