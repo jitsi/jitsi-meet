@@ -21,10 +21,10 @@ const abstractSpeakerStatsList = (speakerStatsItem: Function): Function[] => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const conference = useSelector(state => state['features/base/conference'].conference);
-    const { stats: speakerStats, showFacialExpressions } = useSelector(state => state['features/speaker-stats']);
+    const speakerStats = useSelector(state => state['features/speaker-stats'].stats);
     const localParticipant = useSelector(getLocalParticipant);
     const { clientWidth } = useSelector(state => state['features/base/responsive-ui']);
-    const { defaultRemoteDisplayName } = useSelector(
+    const { defaultRemoteDisplayName, enableFacialRecognition } = useSelector(
         state => state['features/base/config']) || {};
     const { facialExpressions: localFacialExpressions } = useSelector(
         state => state['features/facial-recognition']) || {};
@@ -48,7 +48,7 @@ const abstractSpeakerStatsList = (speakerStatsItem: Function): Function[] => {
                             ? `${localParticipant.name} (${meString})`
                             : meString
                     );
-                    if (showFacialExpressions) {
+                    if (enableFacialRecognition) {
                         stats[userId].setFacialExpressions(localFacialExpressions);
                     }
                 }
@@ -91,10 +91,10 @@ const abstractSpeakerStatsList = (speakerStatsItem: Function): Function[] => {
         props.dominantSpeakerTime = statsModel.getTotalDominantSpeakerTime();
         props.participantId = userId;
         props.hasLeft = statsModel.hasLeft();
-        if (showFacialExpressions) {
+        if (enableFacialRecognition) {
             props.facialExpressions = statsModel.getFacialExpressions();
         }
-        props.showFacialExpressions = showFacialExpressions;
+        props.showFacialExpressions = enableFacialRecognition;
         props.reduceExpressions = clientWidth < REDUCE_EXPRESSIONS_THRESHOLD;
         props.displayName = statsModel.getDisplayName() || defaultRemoteDisplayName;
         props.t = t;
