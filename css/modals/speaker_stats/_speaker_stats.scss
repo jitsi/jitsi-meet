@@ -56,23 +56,10 @@
         text-align: center;
     }
 
-    @media (max-width: 750px) {
+    @media(max-width: 750px) {
         .speaker-stats-item__name_expressions_on {
             width: 25%;
         }
-        
-        .speaker-stats-item__expression {
-            width: 8%;
-        }
-    }
-
-    @media (max-width: 750px) and (min-width: 400px) {
-        .speaker-stats-item__time_expressions_on {
-            width: 25%;
-        }
-    }
-
-    @media (max-width: 400px) {
         .speaker-stats-item__time_expressions_on {
             width: 30%;
         }
