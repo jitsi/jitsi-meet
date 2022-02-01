@@ -36,7 +36,6 @@ import {
     DOMINANT_SPEAKER_CHANGED,
     GRANT_MODERATOR,
     KICK_PARTICIPANT,
-    LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED,
     LOCAL_PARTICIPANT_RAISE_HAND,
     LOCAL_PARTICIPANT_RECORDING_STATUS,
     LOCAL_RECORDING_UPDATED,
@@ -54,18 +53,15 @@ import {
     localRecordingUpdateQueue,
     participantLeft,
     participantUpdated,
-    raiseHand,
     raiseHandUpdateQueue,
     setLoadableAvatarUrl
 } from './actions';
 import {
     LOCAL_PARTICIPANT_DEFAULT_ID,
-    LOWER_HAND_AUDIO_LEVEL,
     PARTICIPANT_JOINED_SOUND_ID,
     PARTICIPANT_LEFT_SOUND_ID
 } from './constants';
 import {
-    getDominantSpeakerParticipant,
     getFirstLoadableAvatarUrl,
     getLocalParticipant,
     getLocalRecordingQueue,
@@ -74,10 +70,11 @@ import {
     getParticipantDisplayName,
     getRaiseHandsQueue,
     getRemoteParticipants,
-    hasRaisedHand,
     isLocalParticipantModerator
 } from './functions';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
+
+import { hasRaisedHand, raiseHand } from '.';
 
 declare var APP: Object;
 
@@ -115,22 +112,6 @@ MiddlewareRegistry.register(store => next => action => {
             store.dispatch(raiseHand(false));
         }
 
-        break;
-    }
-
-    case LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED: {
-        const state = store.getState();
-        const participant = getDominantSpeakerParticipant(state);
-
-        if (
-            participant
-            && participant.local
-            && hasRaisedHand(participant)
-            && action.level > LOWER_HAND_AUDIO_LEVEL
-            && !getDisableRemoveRaisedHandOnFocus(state)
-        ) {
-            store.dispatch(raiseHand(false));
-        }
         break;
     }
 
@@ -364,15 +345,9 @@ StateListenerRegistry.register(
                     })),
                 /* eslint-enable no-unused-vars */
                 'localVideoRecordingStarted': (participant, value) =>
-                _localRecordingUpdated(store, conference, participant.getId(), value),
+                    _localRecordingUpdated(store, conference, participant.getId(), value),
                 'raisedHand': (participant, value) =>
                     _raiseHandUpdated(store, conference, participant.getId(), value),
-                'region': (participant, value) =>
-                    store.dispatch(participantUpdated({
-                        conference,
-                        id: participant.getId(),
-                        region: value
-                    })),
                 'remoteControlSessionStatus': (participant, value) =>
                     store.dispatch(participantUpdated({
                         conference,
@@ -552,7 +527,23 @@ function _participantJoinedOrUpdated(store, next, action) {
             localVideoRecordingStarted
         }
     } = action;
+
     // Send an external update of the local participant's raised hand state
+    // if a new raised hand state is defined in the action.
+    if (typeof raisedHandTimestamp !== 'undefined') {
+
+        if (local) {
+            const { conference } = getState()['features/base/conference'];
+            const rHand = parseInt(raisedHandTimestamp, 10);
+
+            // Send raisedHand signalling only if there is a change
+            if (conference && rHand !== getLocalParticipant(getState()).raisedHandTimestamp) {
+                conference.setLocalParticipantProperty('raisedHand', rHand);
+            }
+        }
+    }
+
+    // Send an external update of the local participant's local recording state
     // if a new raised hand state is defined in the action.
     if (typeof localVideoRecordingStarted !== 'undefined') {
 
@@ -581,8 +572,8 @@ function _participantJoinedOrUpdated(store, next, action) {
             const updatedParticipant = getParticipantById(getState(), participantId);
 
             getFirstLoadableAvatarUrl(updatedParticipant, store)
-                .then(urlData => {
-                    dispatch(setLoadableAvatarUrl(participantId, urlData?.src, urlData?.isUsingCORS));
+                .then(url => {
+                    dispatch(setLoadableAvatarUrl(participantId, url));
                 });
         }
     }

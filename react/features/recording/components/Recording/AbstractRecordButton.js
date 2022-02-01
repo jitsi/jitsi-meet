@@ -75,7 +75,13 @@ export default class AbstractRecordButton<P: Props> extends AbstractButton<P, *>
      * @returns {void}
      */
     async _handleClick() {
-        const { _isRecordingRunning, dispatch } = this.props;
+        const { _isRecordingRunning, dispatch, handleClick } = this.props;
+
+        if (handleClick) {
+            handleClick();
+
+            return;
+        }
 
         sendAnalytics(createToolbarEvent(
             'recording.button',
@@ -170,7 +176,8 @@ export function _mapStateToProps(state: Object, ownProps: Props): Object {
     return {
         _disabled,
         _isRecordingRunning: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE))
-            || state['features/recording'].localVideoRecordingHasStarted || false,        _tooltip,
+            || state['features/recording'].localVideoRecordingHasStarted || false,
+        _tooltip,
         visible
     };
 }
