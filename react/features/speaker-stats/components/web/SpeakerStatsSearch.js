@@ -9,18 +9,18 @@ import { useSelector } from 'react-redux';
 import { getFieldValue } from '../../../base/react';
 import { isSpeakerStatsSearchDisabled } from '../../functions';
 
-const useStyles = makeStyles(() => {
+const useStyles = makeStyles(theme => {
     return {
         speakerStatsSearch: {
             position: 'absolute',
-            left: 20,
-            top: 60
+            right: '80px',
+            top: '8px',
 
-            // [theme.breakpoints.down('400')]: {
-            //     left: 20,
-            //     right: 0,
-            //     top: 42
-            // }
+            [theme.breakpoints.down('400')]: {
+                left: 20,
+                right: 0,
+                top: 42
+            }
         }
     };
 });
@@ -69,6 +69,7 @@ function SpeakerStatsSearch({ onSearch }: Props) {
             <TextField
                 autoComplete = 'off'
                 autoFocus = { false }
+                compact = { true }
                 name = 'speakerStatsSearch'
                 onChange = { onChange }
                 onKeyPress = { preventDismiss }

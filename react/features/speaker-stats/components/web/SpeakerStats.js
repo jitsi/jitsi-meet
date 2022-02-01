@@ -9,10 +9,10 @@ import { connect } from '../../../base/redux';
 import { escapeRegexp } from '../../../base/util';
 import { initSearch, resetSearchCriteria, toggleFacialExpressions } from '../../actions';
 
-import FacialExpressionsSwitch from './FacialExpressionsSwitch';
 import SpeakerStatsLabels from './SpeakerStatsLabels';
 import SpeakerStatsList from './SpeakerStatsList';
 import SpeakerStatsSearch from './SpeakerStatsSearch';
+import ToggleFacialExpressionsButton from './ToggleFacialExpressionsButton';
 
 /**
  * The type of the React {@code Component} props of {@link SpeakerStats}.
@@ -94,18 +94,17 @@ class SpeakerStats extends Component<Props> {
                 cancelKey = 'dialog.close'
                 submitDisabled = { true }
                 titleKey = 'speakerStats.speakerStats'
-                width = { this.props._showFacialExpressions ? 'large' : 'small' }>
+                width = { this.props._showFacialExpressions ? 'large' : 'medium' }>
                 <div className = 'speaker-stats'>
                     <SpeakerStatsSearch onSearch = { this._onSearch } />
                     { this.props._enableFacialRecognition
-                    && <FacialExpressionsSwitch
-                        onChange = { this._onToggleFacialExpressions }
+                    && <ToggleFacialExpressionsButton
+                        onClick = { this._onToggleFacialExpressions }
                         showFacialExpressions = { this.props._showFacialExpressions } />
                     }
                     <SpeakerStatsLabels
                         reduceExpressions = { this.props._reduceExpressions }
                         showFacialExpressions = { this.props._showFacialExpressions ?? false } />
-                    <div className = 'separator-line' />
                     <SpeakerStatsList />
                 </div>
             </Dialog>
