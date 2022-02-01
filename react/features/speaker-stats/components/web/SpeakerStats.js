@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Dialog } from '../../../base/dialog';
 import { escapeRegexp } from '../../../base/util';
 import { resetSearchCriteria, toggleFacialExpressions, initSearch } from '../../actions';
+import { REDUCE_EXPRESSIONS_THRESHOLD } from '../../constants';
 
 import FacialExpressionsSwitch from './FacialExpressionsSwitch';
 import SpeakerStatsLabels from './SpeakerStatsLabels';
@@ -42,6 +43,8 @@ const useStyles = makeStyles(theme => {
 const SpeakerStats = () => {
     const { enableFacialRecognition } = useSelector(state => state['features/base/config']);
     const { showFacialExpressions } = useSelector(state => state['features/speaker-stats']);
+    const { clientWidth } = useSelector(state => state['features/base/responsive-ui']);
+    const reduceExpressions = clientWidth < REDUCE_EXPRESSIONS_THRESHOLD;
     const dispatch = useDispatch();
     const classes = useStyles();
 
@@ -79,6 +82,7 @@ const SpeakerStats = () => {
                 </div>
 
                 <SpeakerStatsLabels
+                    reduceExpressions = { reduceExpressions }
                     showFacialExpressions = { showFacialExpressions ?? false } />
                 <div className = { classes.separator } />
                 <SpeakerStatsList />

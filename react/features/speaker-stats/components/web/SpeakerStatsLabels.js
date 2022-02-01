@@ -25,6 +25,11 @@ const useStyles = makeStyles(() => {
 type Props = {
 
     /**
+     * True if the client width is les than 750.
+     */
+    reduceExpressions: boolean,
+
+    /**
      * True if the facial recognition is not disabled.
      */
     showFacialExpressions: boolean,
@@ -34,7 +39,11 @@ const SpeakerStatsLabels = (props: Props) => {
     const { t } = useTranslation();
     const classes = useStyles();
 
-    const FacialExpressionsLabels = () => Object.keys(FACIAL_EXPRESSION_EMOJIS).map(
+    const FacialExpressionsLabels = () => (
+        props.reduceExpressions
+            ? Object.keys(FACIAL_EXPRESSION_EMOJIS)
+                .filter(expression => ![ 'angry', 'fearful', 'disgusted' ].includes(expression))
+            : Object.keys(FACIAL_EXPRESSION_EMOJIS)).map(
             expression => (
                 <div
                     className = 'expression text-large'
