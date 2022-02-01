@@ -3,8 +3,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
 
-import { Avatar } from '../../../base/avatar';
-
 import TimeElapsed from './TimeElapsed';
 
 const useStyles = makeStyles(() => {
@@ -12,9 +10,6 @@ const useStyles = makeStyles(() => {
         speakerStatsItem: {
             height: 48,
             padding: '8px 0px'
-        },
-        speakerStatsAvatar: {
-            height: 32
         }
 
     };
@@ -88,11 +83,7 @@ const SpeakerStatsItem = (props: Props) => {
         <div
             className = { rowDisplayClass }
             key = { props.participantId } >
-            <div className = { `speaker-stats-item__avatar ${classes.speakerStatsAvatar}` }>
-                <Avatar
-                    className = 'userAvatar'
-                    participantId = { props.participantId } />
-            </div>
+            <div className = 'speaker-stats-item__avatar' />
             <div className = 'speaker-stats-item__name-time'>
                 <div
                     aria-label = { props.t('speakerStats.speakerStats') }>
