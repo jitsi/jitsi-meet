@@ -1141,8 +1141,11 @@ export default {
         return room.getParticipants();
     },
 
+    /**
+     * Used by Jibri to detect when it's alone and the meeting should be terminated.
+     */
     get membersCount() {
-        return room.getParticipants().length + 1;
+        return room.getParticipants().filter(p => !p.isHidden()).length + 1;
     },
 
     /**
