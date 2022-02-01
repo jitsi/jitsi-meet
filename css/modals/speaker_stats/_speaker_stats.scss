@@ -3,10 +3,14 @@
     padding: 30px 0 0 0;
     width: 100%;
     font-weight: 600;
-
+    
     .row{
         display: flex;
         align-items: center;
+
+        .status-user-left {
+            color: $placeHolderColor;
+        }
         .avatar {
             width: 32px;
             margin-right: 16px;
@@ -16,7 +20,6 @@
             width: 304px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
             
         }
         .name-time_expressions-on {
