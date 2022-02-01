@@ -10,6 +10,7 @@ import { getFeatureFlag } from '../../base/flags/functions';
 import { Platform } from '../../base/react';
 import { DimensionsDetector, clientResized } from '../../base/responsive-ui';
 import { updateSettings } from '../../base/settings';
+import { _getRouteToRender } from '../getRouteToRender.native';
 import logger from '../logger';
 
 import { AbstractApp } from './AbstractApp';
@@ -95,8 +96,12 @@ export class App extends AbstractApp {
      *
      * @returns {void}
      */
-    _extraInit() {
+    async _extraInit() {
         const { dispatch, getState } = this.state.store;
+        const route = await _getRouteToRender();
+
+        // We need the root navigator to be set early.
+        await this._navigate(route);
 
         // We set these early enough so then we avoid any unnecessary re-renders.
         dispatch(updateFlags(this.props.flags));
