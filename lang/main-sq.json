@@ -32,9 +32,9 @@
     "audioDevices": {
         "bluetooth": "Bluetooth",
         "headphones": "Kufje",
-        "none": "S’ka pajisje audio"
+        "none": "S’ka pajisje audio",
         "phone": "Telefon",
-        "speaker": "Altoparlant",
+        "speaker": "Altoparlant"
     },
     "audioOnly": {
         "audioOnly": "Gjerësi e ulët bande"
@@ -90,7 +90,7 @@
         "messagebox": "Shtypni një mesazh",
         "nickname": {
             "popover": "Zgjidhni një nofkë",
-            "title": "Që të përdorni fjalosjen, jepni një nofkë"
+            "title": "Që të përdorni fjalosjen, jepni një nofkë",
             "titleWithPolls": "Që të përdorni fjalosjen dhe pyetësorë, jepni një nofkë"
         },
         "noMessagesMessage": "Te takimi s’ka ende mesazhe. Nisni një bisedë këtu!",
@@ -106,7 +106,7 @@
     },
     "chromeExtensionBanner": {
         "buttonText": "Instaloni Zgjerimin për Chrome",
-        "close": "Mbylle"
+        "close": "Mbylle",
         "dontShowAgain": "Mos ma shfaq sërish këtë",
         "installExtensionText": "Instaloni zgjerimin për integrim të Google Calendar-it dhe Office 365-s",
     },
@@ -180,8 +180,8 @@
         "joinInApp": "Merrni pjesë në këtë takim duke përdorur aplikacionin",
         "launchWebButton": "Nise në web",
         "title": "Po niset takimi juaj në {{app}}…",
-        "tryAgainButton": "Riprovoni në desktop"
-        "unsupportedBrowser": "Duket se përdorni një shfletues që nuk e mbulojmë."
+        "tryAgainButton": "Riprovoni në desktop",
+        "unsupportedBrowser": "Duket se përdorni një shfletues që s’e mbulojmë."
     },
     "defaultLink": "p.sh., {{url}}",
     "defaultNickname": "p.sh., Ndrikulla",
@@ -318,7 +318,7 @@
         "permissionCameraRequiredError": "Leja mbi kamerën është e domosdoshme për të marrë pjesë në konferenca me video. Ju lutemi, akordojeni që nga Rregullimet",
         "permissionErrorTitle": "Leje e domosdoshme",
         "permissionMicRequiredError": "Leja mbi mikrofonin është e domosdoshme për të marrë pjesë në konferenca me audio. Ju lutemi, akordojeni që nga Rregullimet",
-        "popupError": "Shfletuesi juaj i bllkon dritaret flluskë prej këtij sajti. Ju lutemi, aktivizoni flluskat te rregullimet e sigurisë të shfletuesit tuaj dhe riprovoni.",
+        "popupError": "Shfletuesi juaj i bllokon dritaret flluskë prej këtij sajti. Ju lutemi, aktivizoni flluskat te rregullimet e sigurisë të shfletuesit tuaj dhe riprovoni.",
         "popupErrorTitle": "Flluska u bllokua",
         "readMore": "më tepër",
         "recording": "Regjistrim",
@@ -388,7 +388,7 @@
         "viewUpgradeOptions": "Shihni mundësi përmirësimi",
         "viewUpgradeOptionsContent": "Që të përfitoni përdorim të pakufizuar veçorish me pagesë, të tilla si regjistrimi, transcriptime, RTMP Streaming & etj, duhet të përmirësoni planin tuaj.",
         "viewUpgradeOptionsTitle": "Zbuluat një veçori me pagesë!",
-        "yourEntireScreen": "Krejt ekranin tuaj",
+        "yourEntireScreen": "Krejt ekranin tuaj"
     },
     "documentSharing": {
         "title": "Dokument i Ndarë"
@@ -451,10 +451,10 @@
         "noPassword": "Asnjë",
         "noRoom": "S’u dha dhomë për të cilën të formësohet numri.",
         "numbers": "Numra Për T’u Përdorur",
-        "password": "$t(lockRoomPasswordUppercase):",
+        "password": "$t(lockRoomPasswordUppercase): ",
         "sip": "Adresë SIP",
         "title": "Ndani me të tjerë",
-        "tooltip": "Ndani me të tjerë lidhje dhe hollësi numrash për këtë takim",
+        "tooltip": "Ndani me të tjerë lidhje dhe hollësi numrash për këtë takim"
     },
     "inlineDialogFailure": {
         "msg": "Ngecëm pak.",
@@ -522,18 +522,18 @@
         "start": "Nisni një transmetim të drejtpërdrejtë",
         "streamIdHelp": "Ç’është?",
         "unavailableTitle": "Transmetim i Drejtpërdrejtë jo i passhëm",
-        "youtubeTerms": "Kushte shërbimi YouTube",
+        "youtubeTerms": "Kushte shërbimi YouTube"
     },
     "lobby": {
         "admit": "Pranoje",
-        "admitAll": "Pranoji krejt",
+        "admitAll": "Pranoji të tërë",
         "allow": "Lejoje",
         "backToKnockModeButton": "Kërkoji të marrë pjesë",
         "dialogTitle": "Mënyra holl",
         "disableDialogContent": "Mënyra holl është aktualisht e aktivizuar. Kjo veçori siguron që pjesëmarrës të padëshiruar të mos mund të hyjnë në takimin tuaj. Doni të çaktivizohet?",
         "disableDialogSubmit": "Çaktivizoje",
         "emailField": "Jepni adresën tuaj email",
-        "enableDialogPasswordField": "Caktoni fjalëkalim (opsionale)",
+        "enableDialogPasswordField": "Caktoni fjalëkalim (në daçi)",
         "enableDialogSubmit": "Aktivizoje",
         "enableDialogText": "Mënyra holl ju lejon të mbroni takimin tuaj duke u lejuar hyrje njerëzve vetëm pas një miratimi formal nga një moderator.",
         "enterPasswordButton": "Jepni fjalëkalim takimi",
@@ -558,7 +558,7 @@
         "passwordField": "Jepni fjalëkalim takimi",
         "passwordJoinButton": "Hyni",
         "reject": "Hidhe poshtë",
-        "rejectAll": "Hidhi poshtë krejt",
+        "rejectAll": "Hidhi poshtë të tërë",
         "toggleLabel": "Aktivizoni hollin"
     },
     "localRecording": {
@@ -638,11 +638,11 @@
         "mutedRemotelyTitle": "Jeni heshtuar nga {{moderator}}",
         "mutedTitle": "U heshtuat!",
         "newDeviceAction": "Përdore",
-        "newDeviceAudioTitle": "U pikas pajisje e re audio",
-        "newDeviceCameraTitle": "U pikas kamera e re",
+        "newDeviceAudioTitle": "U pikas pajisje audio e re",
+        "newDeviceCameraTitle": "U pikas kamerë e re",
         "oldElectronClientDescription1": "Duket se përdorni një version të vjetër të klientit Jitsi Meet, i cili ka cenueshmëri sigurie që njihen. Ju lutemi, siguroni përditësimin me ",
         "oldElectronClientDescription2": "montimin tonë më të ri",
-        "oldElectronClientDescription3": " tani!",
+        "oldElectronClientDescription3": " që tani!",
         "participantWantsToJoin": "Dëshiron të hyjë në takim",
         "participantsWantToJoin": "Dëshirojnë të hyjnë në takim",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) u hoq nga një tjetër pjesëmarrës",
@@ -652,7 +652,7 @@
         "raisedHands": "{{participantName}} dhe {{raisedHands}} persona të tjerë",
         "reactionSounds": "Çaktivizo tingujt",
         "reactionSoundsForAll": "Çaktivizoji tingujt për të tërë",
-        "screenShareNoAudio": "Kutizës për ndarje audioje me të tjerë nuk i është vënë shenjë te skena e përzgjedhjes së dritares.",
+        "screenShareNoAudio": "Kutizës për ndarje audioje me të tjerë s’i është vënë shenjë te skena e përzgjedhjes së dritares.",
         "screenShareNoAudioTitle": "S’u nda dot me të tjerë audioja e sistemit!",
         "selfViewTitle": "Mundeni përherë të hiqni fshehjen e pamjes së vetes, që nga rregullimet",
         "somebody": "Dikush",
@@ -856,7 +856,7 @@
         "about": "Takimit tuaj mund t’i shtoni një $t(lockRoomPassword). Pjesëmarrësve do t’u duhet të japin $t(lockRoomPassword) përpara se të lejohen të marrin pjesë në takim.",
         "aboutReadOnly": "Pjesëmarrësit moderatorë mund t’i shtojnë takimit një $t(lockRoomPassword). Pjesëmarrësve do t’u duhet të japin $t(lockRoomPassword) përpara se të lejohen të marrin pjesë në takim.",
         "header": "Mundësi Sigurie",
-        "insecureRoomNameWarning": "Emri i dhomës s’është pa rrezik. Pjesëmarrës të padëshiruar munden të marrin pjesë në konferencën tuaj. Shihni mundësinë e bërjes të sigurt të takimit tuaj, duke përdorur butonin e sigurisë.",
+        "insecureRoomNameWarning": "Emri i dhomës s’është pa rrezik. Pjesëmarrës të padëshiruar munden të marrin pjesë në konferencën tuaj. Shihni mundësinë e bërjes të sigurt të takimit tuaj, duke përdorur butonin e sigurisë."
     },
     "settings": {
         "calendar": {
@@ -938,7 +938,7 @@
         "search": "Kërko",
         "seconds": "{{count}}s",
         "speakerStats": "Statistika Folësi",
-        "speakerTime": "Kohë Folësi"
+        "speakerTime": "Kohë Folësi",
         "surprised": "I befasuar"
     },
     "startupoverlay": {
@@ -957,22 +957,22 @@
     "toolbar": {
         "Settings": "Rregullime",
         "accessibilityLabel": {
-            "Settings": "Shfaq/fshih rregullimet",
-            "audioOnly": "Hap/mbyll vetëm audion",
+            "Settings": "Shfaq/Fshih rregullimet",
+            "audioOnly": "Hap/Mbyll vetëm audion",
             "audioRoute": "Përzgjidhni pajisje zëri",
             "boo": "Ya",
-            "breakoutRoom": "Hyni/dilni nga dhomë aneks konsultimesh",
+            "breakoutRoom": "Hyni/Dilni nga dhomë aneks konsultimesh",
             "callQuality": "Administroni cilësi videoje",
-            "cc": "Shfaq/fshih titra",
+            "cc": "Shfaq/Fshih titra",
             "chat": "Hapni / Mbyllni fjalosje",
             "clap": "Duartrokitje",
             "collapse": "Tkurre",
-            "document": "Shfaq/fshih dokument të ndarë",
+            "document": "Shfaq/Fshih dokument të ndarë",
             "download": "Shkarkoni aplikacionet tona",
-            "embedMeeting": "Trupëzoni takim",
+            "embedMeeting": "Trupëzoni takimin",
             "expand": "Zgjeroje",
             "feedback": "Lini përshtypje",
-            "fullScreen": "Kalo/dil nga mënyra “Sa krejt ekrani”",
+            "fullScreen": "Kalo/Dil nga mënyra “Sa krejt ekrani”",
             "grantModerator": "Akordoji të Drejta Moderatori",
             "hangup": "Braktiseni takimin",
             "help": "Ndihmë",
@@ -980,11 +980,11 @@
             "kick": "Përzëre pjesëmarrësin",
             "laugh": "E qeshur",
             "like": "Thumbs Up",
-            "lobbyButton": "Aktivizo/çaktivizoni mënyrën holl",
-            "localRecording": "Shfaq/fshih kontrolle regjistrimi vendor",
-            "lockRoom": "Aktivizo/çaktivizo fjalëkalim takimi",
+            "lobbyButton": "Aktivizo/Çaktivizoni mënyrën holl",
+            "localRecording": "Shfaq/Fshih kontrolle regjistrimi vendor",
+            "lockRoom": "Aktivizo/Çaktivizo fjalëkalim takimi",
             "moreActions": "Më tepër veprime",
-            "moreActionsMenu": "Menu për më tepër veprime",
+            "moreActionsMenu": "Menu “Më tepër veprime”",
             "moreOptions": "Shfaq më tepër mundësi",
             "mute": "Heshtoje / Çheshtoje",
             "muteEveryone": "Heshto gjithkënd",
@@ -1007,7 +1007,7 @@
             "shareYourScreen": "Nisni / Ndalni tregimin e ekranit tuaj",
             "shareaudio": "Ndani audio me të tjerë",
             "sharedvideo": "Aktivizo/Çaktivizo ndarje videoje me të tjerë",
-            "shortcuts": "Shfaq/fshih shkurtore",
+            "shortcuts": "Shfaq/Fshih shkurtore",
             "show": "Shfaqe në skenë",
             "silence": "Heshtje",
             "speakerStats": "Shfaq/Fshih statistika folësi",
@@ -1101,7 +1101,7 @@
         "videomute": "Nisni / Ndalni kamerën"
     },
     "transcribing": {
-        "ccButtonTooltip": "Ndal / Nisi titrat",
+        "ccButtonTooltip": "Ndali / Nisi titrat",
         "error": "Transkriptimi dështoi. Ju lutemi, riprovoni.",
         "expandedLabel": "Transkriptimi aktualisht është aktiv",
         "failedToStart": "S’u arrit të nisej transkriptim",
@@ -1181,7 +1181,7 @@
         "blur": "Turbulloje",
         "deleteImage": "Fshije figurën",
         "desktopShare": "Tregim desktopi",
-        "desktopShareError": "S’u krijua dot tregim ekrani",
+        "desktopShareError": "S’u krijua dot tregim desktopi",
         "image1": "Plazh",
         "image2": "Mur i bardhë asnjanës",
         "image3": "Dhomë e bardhë e zbrazët",
@@ -1192,7 +1192,7 @@
         "none": "Asnjë",
         "pleaseWait": "Ju lutemi, pritni…",
         "removeBackground": "Hiqe sfondin",
-        "slightBlur": "Turbullim i Lehtë",
+        "slightBlur": "Turbullim Paksa",
         "title": "Sfonde virtualë",
         "uploadedImage": "Ngarkoi figurën {{index}}",
         "webAssemblyWarning": "Nuk mbulohet WebAssembly",
@@ -1245,6 +1245,6 @@
         "sendFeedback": "Dërgoni përshtypje",
         "startMeeting": "Nisni takim",
         "terms": "Kushte",
-        "title": "Konferenca video të parrezik, me të gjitha veçoritë dhe plotësisht të lira",
+        "title": "Konferenca video të parrezik, me të gjitha veçoritë dhe plotësisht të lira"
     }
 }
