@@ -47,7 +47,7 @@ type Props = {
     renderListEmptyComponent: Function,
 
     /**
-     * An array of sections
+     * An array of sections.
      */
     sections: Array<Section>
 };

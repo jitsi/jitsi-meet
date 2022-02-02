@@ -8,12 +8,31 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { APP_STATE_CHANGED } from '../../mobile/background';
+import {
+    NOTIFICATION_TIMEOUT_TYPE,
+    showWarningNotification
+} from '../../notifications';
+import { isForceMuted } from '../../participants-pane/functions';
+import { isScreenMediaShared } from '../../screen-share/functions';
 import { SET_AUDIO_ONLY, setAudioOnly } from '../audio-only';
 import { isRoomValid, SET_ROOM } from '../conference';
+import { getLocalParticipant } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 import { getPropertyValue } from '../settings';
-import { isLocalVideoTrackDesktop, setTrackMuted, TRACK_ADDED } from '../tracks';
+import {
+    destroyLocalTracks,
+    isLocalTrackMuted,
+    isLocalVideoTrackDesktop,
+    setTrackMuted,
+    TRACK_ADDED
+} from '../tracks';
 
+import {
+    SET_AUDIO_MUTED,
+    SET_AUDIO_UNMUTE_PERMISSIONS,
+    SET_VIDEO_MUTED,
+    SET_VIDEO_UNMUTE_PERMISSIONS
+} from './actionTypes';
 import { setAudioMuted, setCameraFacingMode, setVideoMuted } from './actions';
 import {
     CAMERA_FACING_MODE,
@@ -54,6 +73,57 @@ MiddlewareRegistry.register(store => next => action => {
             && _syncTrackMutedState(store, track);
 
         return result;
+    }
+
+    case SET_AUDIO_MUTED: {
+        const state = store.getState();
+        const participant = getLocalParticipant(state);
+
+        if (!action.muted && isForceMuted(participant, MEDIA_TYPE.AUDIO, state)) {
+            return;
+        }
+        break;
+    }
+
+    case SET_AUDIO_UNMUTE_PERMISSIONS: {
+        const { blocked } = action;
+        const state = store.getState();
+        const tracks = state['features/base/tracks'];
+        const isAudioMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
+
+        if (blocked && isAudioMuted) {
+            store.dispatch(showWarningNotification({
+                descriptionKey: 'notify.audioUnmuteBlockedDescription',
+                titleKey: 'notify.audioUnmuteBlockedTitle'
+            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+        }
+        break;
+    }
+
+    case SET_VIDEO_MUTED: {
+        const state = store.getState();
+        const participant = getLocalParticipant(state);
+
+        if (!action.muted && isForceMuted(participant, MEDIA_TYPE.VIDEO, state)) {
+            return;
+        }
+        break;
+    }
+
+    case SET_VIDEO_UNMUTE_PERMISSIONS: {
+        const { blocked } = action;
+        const state = store.getState();
+        const tracks = state['features/base/tracks'];
+        const isVideoMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO);
+        const isMediaShared = isScreenMediaShared(state);
+
+        if (blocked && isVideoMuted && !isMediaShared) {
+            store.dispatch(showWarningNotification({
+                descriptionKey: 'notify.videoUnmuteBlockedDescription',
+                titleKey: 'notify.videoUnmuteBlockedTitle'
+            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+        }
+        break;
     }
     }
 
@@ -193,6 +263,10 @@ function _setRoom({ dispatch, getState }, next, action) {
     logger.log(`Start audio only set to ${audioOnly.toString()}`);
 
     dispatch(setAudioOnly(audioOnly, false));
+
+    if (!roomIsValid) {
+        dispatch(destroyLocalTracks());
+    }
 
     return next(action);
 }

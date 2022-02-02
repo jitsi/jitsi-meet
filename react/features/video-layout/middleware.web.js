@@ -15,8 +15,6 @@ import { PARTICIPANTS_PANE_CLOSE, PARTICIPANTS_PANE_OPEN } from '../participants
 
 import './middleware.any';
 
-declare var APP: Object;
-
 /**
  * Middleware which intercepts actions and updates the legacy component
  * {@code VideoLayout} as needed. The purpose of this middleware is to redux-ify

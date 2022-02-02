@@ -1,10 +1,13 @@
 // @flow
 
+import { batch } from 'react-redux';
+
 import UIEvents from '../../../../service/UI/UIEvents';
 import { showModeratedNotification } from '../../av-moderation/actions';
 import { shouldShowModeratedNotification } from '../../av-moderation/functions';
-import { hideNotification } from '../../notifications';
+import { hideNotification, isModerationNotificationDisplayed } from '../../notifications';
 import { isPrejoinPageVisible } from '../../prejoin/functions';
+import { getCurrentConference } from '../conference/functions';
 import { getAvailableDevices } from '../devices/actions';
 import {
     CAMERA_FACING_MODE,
@@ -14,9 +17,10 @@ import {
     SET_VIDEO_MUTED,
     VIDEO_MUTISM_AUTHORITY,
     TOGGLE_CAMERA_FACING_MODE,
-    toggleCameraFacingMode
+    toggleCameraFacingMode,
+    VIDEO_TYPE
 } from '../media';
-import { MiddlewareRegistry } from '../redux';
+import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
 
 import {
     TRACK_ADDED,
@@ -27,7 +31,10 @@ import {
 } from './actionTypes';
 import {
     createLocalTracksA,
+    destroyLocalTracks,
     showNoDataFromSourceVideoError,
+    toggleScreensharing,
+    trackRemoved,
     trackNoDataFromSourceNotificationInfoChanged
 } from './actions';
 import {
@@ -137,19 +144,25 @@ MiddlewareRegistry.register(store => next => action => {
 
     case TOGGLE_SCREENSHARING:
         if (typeof APP === 'object') {
-
             // check for A/V Moderation when trying to start screen sharing
-            if (action.enabled && shouldShowModeratedNotification(MEDIA_TYPE.VIDEO, store.getState())) {
-                store.dispatch(showModeratedNotification(MEDIA_TYPE.PRESENTER));
+            if ((action.enabled || action.enabled === undefined)
+                && shouldShowModeratedNotification(MEDIA_TYPE.VIDEO, store.getState())) {
+                if (!isModerationNotificationDisplayed(MEDIA_TYPE.PRESENTER, store.getState())) {
+                    store.dispatch(showModeratedNotification(MEDIA_TYPE.PRESENTER));
+                }
 
                 return;
             }
 
-            APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING, action.audioOnly);
+            const { enabled, audioOnly, ignoreDidHaveVideo } = action;
+
+            APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING, { enabled,
+                audioOnly,
+                ignoreDidHaveVideo });
         }
         break;
 
-    case TRACK_UPDATED:
+    case TRACK_UPDATED: {
         // TODO Remove the following calls to APP.UI once components interested
         // in track mute changes are moved into React and/or redux.
         if (typeof APP !== 'undefined') {
@@ -168,8 +181,10 @@ MiddlewareRegistry.register(store => next => action => {
                 // Do not change the video mute state for local presenter tracks.
                 if (jitsiTrack.type === MEDIA_TYPE.PRESENTER) {
                     APP.conference.mutePresenter(muted);
-                } else if (jitsiTrack.isLocal()) {
+                } else if (jitsiTrack.isLocal() && !(jitsiTrack.videoType === VIDEO_TYPE.DESKTOP)) {
                     APP.conference.setVideoMuteStatus();
+                } else if (jitsiTrack.isLocal() && muted && jitsiTrack.videoType === VIDEO_TYPE.DESKTOP) {
+                    store.dispatch(toggleScreensharing(false, false, true));
                 } else {
                     APP.UI.setVideoMuted(participantID);
                 }
@@ -181,11 +196,41 @@ MiddlewareRegistry.register(store => next => action => {
 
             return result;
         }
+        const { jitsiTrack } = action.track;
 
+        if (jitsiTrack.isMuted()
+            && jitsiTrack.type === MEDIA_TYPE.VIDEO && jitsiTrack.videoType === VIDEO_TYPE.DESKTOP) {
+            store.dispatch(toggleScreensharing(false));
+        }
+        break;
+    }
     }
 
     return next(action);
 });
+
+/**
+ * Set up state change listener to perform maintenance tasks when the conference
+ * is left or failed, remove all tracks from the store.
+ */
+StateListenerRegistry.register(
+    state => getCurrentConference(state),
+    (conference, { dispatch, getState }, prevConference) => {
+
+        // conference keep flipping while we are authenticating, skip clearing while we are in that process
+        if (prevConference && !conference && !getState()['features/base/conference'].authRequired) {
+
+            // Clear all tracks.
+            const remoteTracks = getState()['features/base/tracks'].filter(t => !t.local);
+
+            batch(() => {
+                dispatch(destroyLocalTracks());
+                for (const track of remoteTracks) {
+                    dispatch(trackRemoved(track.jitsiTrack));
+                }
+            });
+        }
+    });
 
 /**
  * Handles no data from source errors.

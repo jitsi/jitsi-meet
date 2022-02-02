@@ -2,6 +2,7 @@
 import _ from 'lodash';
 
 import { PREJOIN_INITIALIZED } from '../../prejoin/actionTypes';
+import { setPrejoinPageVisibility } from '../../prejoin/actions';
 import { APP_WILL_MOUNT } from '../app';
 import { setAudioOnly } from '../audio-only';
 import { SET_LOCATION_URL } from '../connection/actionTypes'; // minimize imports to avoid circular imports
@@ -29,6 +30,7 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case APP_WILL_MOUNT:
         _initializeCallIntegration(store);
+        _initializeShowPrejoin(store);
         break;
     case PREJOIN_INITIALIZED: {
         _maybeUpdateDisplayName(store);
@@ -47,6 +49,21 @@ MiddlewareRegistry.register(store => next => action => {
 
     return result;
 });
+
+/**
+ * Overwrites the showPrejoin flag based on cached used selection for showing prejoin screen.
+ *
+ * @param {Store} store - The redux store.
+ * @private
+ * @returns {void}
+ */
+function _initializeShowPrejoin({ dispatch, getState }) {
+    const { userSelectedSkipPrejoin } = getState()['features/base/settings'];
+
+    if (userSelectedSkipPrejoin) {
+        dispatch(setPrejoinPageVisibility(false));
+    }
+}
 
 /**
  * Initializes the audio device handler based on the `disableCallIntegration` setting.
@@ -118,7 +135,7 @@ function _maybeSetAudioOnly(
         { dispatch },
         { settings: { startAudioOnly } }) {
     if (typeof startAudioOnly === 'boolean') {
-        dispatch(setAudioOnly(startAudioOnly, true));
+        dispatch(setAudioOnly(startAudioOnly));
     }
 }
 

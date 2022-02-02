@@ -20,6 +20,7 @@
 #import <React/RCTLog.h>
 #import <WebRTC/WebRTC.h>
 
+#import "JitsiAudioSession+Private.h"
 #import "LogUtils.h"
 
 
@@ -113,7 +114,7 @@ RCT_EXPORT_MODULE();
         isSpeakerOn = NO;
         isEarpieceOn = NO;
 
-        RTCAudioSession *session = [RTCAudioSession sharedInstance];
+        RTCAudioSession *session = JitsiAudioSession.rtcAudioSession;
         [session addDelegate:self];
     }
 
@@ -125,12 +126,19 @@ RCT_EXPORT_MODULE();
     return _workerQueue;
 }
 
+- (BOOL)setConfigWithoutLock:(RTCAudioSessionConfiguration *)config
+                       error:(NSError * _Nullable *)outError {
+    RTCAudioSession *session = JitsiAudioSession.rtcAudioSession;
+
+    return [session setConfiguration:config error:outError];
+}
+
 - (BOOL)setConfig:(RTCAudioSessionConfiguration *)config
             error:(NSError * _Nullable *)outError {
 
-    RTCAudioSession *session = [RTCAudioSession sharedInstance];
+    RTCAudioSession *session = JitsiAudioSession.rtcAudioSession;
     [session lockForConfiguration];
-    BOOL success = [session setConfiguration:config error:outError];
+    BOOL success = [self setConfigWithoutLock:config error:outError];
     [session unlockForConfiguration];
 
     return success;
@@ -171,7 +179,7 @@ RCT_EXPORT_METHOD(setAudioDevice:(NSString *)device
                   reject:(RCTPromiseRejectBlock)reject) {
     DDLogInfo(@"[AudioMode] Selected device: %@", device);
     
-    RTCAudioSession *session = [RTCAudioSession sharedInstance];
+    RTCAudioSession *session = JitsiAudioSession.rtcAudioSession;
     [session lockForConfiguration];
     BOOL success;
     NSError *error = nil;
@@ -196,7 +204,7 @@ RCT_EXPORT_METHOD(setAudioDevice:(NSString *)device
                 break;
             }
         }
-        
+
         if (port != nil) {
             // First remove the override if we are going to select a different device.
             if (isSpeakerOn) {
@@ -206,11 +214,11 @@ RCT_EXPORT_METHOD(setAudioDevice:(NSString *)device
             // Special case for the earpiece.
             if ([port.portType isEqualToString:AVAudioSessionPortBuiltInMic]) {
                 forceEarpiece = YES;
-                [self setConfig:earpieceConfig error:nil];
+                [self setConfigWithoutLock:earpieceConfig error:nil];
             } else if (isEarpieceOn) {
                 // Reset the config.
                 RTCAudioSessionConfiguration *config = [self configForMode:activeMode];
-                [self setConfig:config error:nil];
+                [self setConfigWithoutLock:config error:nil];
             }
 
             // Select our preferred input.
@@ -266,7 +274,7 @@ RCT_EXPORT_METHOD(updateDeviceList) {
             RTCAudioSessionConfiguration *config = [self configForMode:self->activeMode];
             [self setConfig:config error:nil];
             if (self->forceSpeaker && !self->isSpeakerOn) {
-                RTCAudioSession *session = [RTCAudioSession sharedInstance];
+                RTCAudioSession *session = JitsiAudioSession.rtcAudioSession;
                 [session lockForConfiguration];
                 [session overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
                 [session unlockForConfiguration];

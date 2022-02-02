@@ -5,16 +5,16 @@ import React, { Component } from 'react';
 import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
 import { setColorAlpha } from '../../base/util';
-import { fetchCustomBrandingData } from '../../dynamic-branding';
 import { SharedVideo } from '../../shared-video/components/web';
 import { Captions } from '../../subtitles/';
+import { setTileView } from '../../video-layout/actions';
 
 declare var interfaceConfig: Object;
 
 type Props = {
 
     /**
-     * The alpha(opacity) of the background
+     * The alpha(opacity) of the background.
      */
     _backgroundAlpha: number,
 
@@ -29,11 +29,6 @@ type Props = {
      _customBackgroundImageUrl: string,
 
     /**
-     * Fetches the branding data.
-     */
-    _fetchCustomBrandingData: Function,
-
-    /**
      * Prop that indicates whether the chat is open.
      */
     _isChatOpen: boolean,
@@ -42,23 +37,33 @@ type Props = {
      * Used to determine the value of the autoplay attribute of the underlying
      * video element.
      */
-    _noAutoPlayVideo: boolean
+    _noAutoPlayVideo: boolean,
+
+    /**
+     * The Redux dispatch function.
+     */
+    dispatch: Function
 }
 
-/**
+/** .
  * Implements a React {@link Component} which represents the large video (a.k.a.
- * the conference participant who is on the local stage) on Web/React.
+ * The conference participant who is on the local stage) on Web/React.
  *
- * @extends Component
+ * @augments Component
  */
 class LargeVideo extends Component<Props> {
+    _tappedTimeout: ?TimeoutID;
+
     /**
-     * Implements React's {@link Component#componentDidMount}.
+     * Constructor of the component.
      *
      * @inheritdoc
      */
-    componentDidMount() {
-        this.props._fetchCustomBrandingData();
+    constructor(props) {
+        super(props);
+
+        this._clearTapTimeout = this._clearTapTimeout.bind(this);
+        this._onDoubleTap = this._onDoubleTap.bind(this);
     }
 
     /**
@@ -85,7 +90,9 @@ class LargeVideo extends Component<Props> {
 
                 <Watermarks />
 
-                <div id = 'dominantSpeaker'>
+                <div
+                    id = 'dominantSpeaker'
+                    onTouchEnd = { this._onDoubleTap }>
                     <div className = 'dynamic-shadow' />
                     <div id = 'dominantSpeakerAvatarContainer' />
                 </div>
@@ -104,6 +111,7 @@ class LargeVideo extends Component<Props> {
                       */}
                     <div
                         id = 'largeVideoWrapper'
+                        onTouchEnd = { this._onDoubleTap }
                         role = 'figure' >
                         <video
                             autoPlay = { !_noAutoPlayVideo }
@@ -116,6 +124,19 @@ class LargeVideo extends Component<Props> {
                     || <Captions /> }
             </div>
         );
+    }
+
+    _clearTapTimeout: () => void;
+
+    /**
+     * Clears the '_tappedTimout'.
+     *
+     * @private
+     * @returns {void}
+     */
+    _clearTapTimeout() {
+        clearTimeout(this._tappedTimeout);
+        this._tappedTimeout = undefined;
     }
 
     /**
@@ -143,6 +164,27 @@ class LargeVideo extends Component<Props> {
 
         return styles;
     }
+
+    _onDoubleTap: () => void;
+
+    /**
+     * Sets view to tile view on double tap.
+     *
+     * @param {Object} e - The event.
+     * @private
+     * @returns {void}
+     */
+    _onDoubleTap(e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        if (this._tappedTimeout) {
+            this._clearTapTimeout();
+            this.props.dispatch(setTileView(true));
+        } else {
+            this._tappedTimeout = setTimeout(this._clearTapTimeout, 300);
+        }
+    }
 }
 
 
@@ -167,8 +209,4 @@ function _mapStateToProps(state) {
     };
 }
 
-const _mapDispatchToProps = {
-    _fetchCustomBrandingData: fetchCustomBrandingData
-};
-
-export default connect(_mapStateToProps, _mapDispatchToProps)(LargeVideo);
+export default connect(_mapStateToProps)(LargeVideo);

@@ -98,14 +98,21 @@ function computeCameraVideoSize( // eslint-disable-line max-params
     }
 
     const aspectRatio = videoWidth / videoHeight;
+    const videoSpaceRatio = videoSpaceWidth / videoSpaceHeight;
 
     switch (videoLayoutFit) {
     case 'height':
         return [ videoSpaceHeight * aspectRatio, videoSpaceHeight ];
     case 'width':
         return [ videoSpaceWidth, videoSpaceWidth / aspectRatio ];
+    case 'nocrop':
+        return computeCameraVideoSize(
+            videoWidth,
+            videoHeight,
+            videoSpaceWidth,
+            videoSpaceHeight,
+            videoSpaceRatio < aspectRatio ? 'width' : 'height');
     case 'both': {
-        const videoSpaceRatio = videoSpaceWidth / videoSpaceHeight;
         const maxZoomCoefficient = interfaceConfig.MAXIMUM_ZOOMING_COEFFICIENT
             || Infinity;
 
@@ -487,6 +494,10 @@ export class VideoContainer extends LargeContainer {
         }
 
         stream.attach(this.$video[0]);
+
+        // Ensure large video gets play() called on it when a new stream is attached to it. This is necessary in the
+        // case of Safari as autoplay doesn't kick-in automatically on Safari 15 and newer versions.
+        browser.isWebKitBased() && this.$video[0].play();
 
         const flipX = stream.isLocal() && this.localFlipX && !this.isScreenSharing();
 

@@ -1,12 +1,4 @@
 /**
- * Rotate the hide filmstrip icon so it points towards the right edge
- * of the screen.
- */
-.vertical-filmstrip .filmstrip__toolbar {
-    transform: rotate(-90deg);
-}
-
-/**
  * Overrides for video containers that should not be centered aligned to avoid=
  * clashing with the filmstrip.
  */
@@ -19,70 +11,8 @@
  * Overrides for small videos in vertical filmstrip mode.
  */
 .vertical-filmstrip .filmstrip__videos .videocontainer {
-    /**
-     * Move status icons to the bottom right of the thumbnail.
-     */
-    .videocontainer__toolbar {
-        /**
-         * FIXME: disable pointer to allow any elements moved below to still
-         * be clickable. The real fix would to make sure those moved elements
-         * are actually part of the toolbar instead of positioning being faked.
-         */
-        pointer-events: none;
-        text-align: right;
-
-        > div {
-            pointer-events: none;
-        }
-
-        .right {
-            float: none;
-            margin: auto;
-        }
-
-        .toolbar-icon {
-            pointer-events: all;
-        }
-    }
-
-    /**
-     * Apply hardware acceleration to prevent flickering on scroll. The
-     * selectors are specific to icon wrappers to prevent fixed position dialogs
-     * and tooltips from getting a new location context due to translate3d.
-     */
-    .connection-indicator,
-    .local-video-menu-trigger,
-    .remote-video-menu-trigger,
-    .indicator-icon-container {
-        transform: translate3d(0, 0, 0);
-    }
-
-    .indicator-icon-container {
-        display: inline-block;
-    }
-
-    .indicator-container {
-        float: none;
-    }
-
-    /**
-     * Move the remote video menu trigger to the bottom left of the video
-     * thumbnail.
-     */
-    .localvideomenu,
-    .remotevideomenu,
-    .local-video-menu-trigger,
-    .remote-video-menu-trigger {
-        bottom: 0;
-        left: 0;
-        top: auto;
-        right: auto;
-    }
-
-    .local-video-menu-trigger,
-    .remote-video-menu-trigger {
-        margin-bottom: 3px;
-        margin-left: $remoteVideoMenuIconMargin;
+    .self-view-mobile-portrait video {
+        object-fit: contain;
     }
 }
 
@@ -111,4 +41,12 @@
         transition: 1.2s ease-in-out;
         transition-delay: 0.1s;
     }
+}
+
+/**
+ * Overrides for self view when in portrait mode on mobile.
+ * This is done in order to keep the aspect ratio.
+ */
+.vertical-filmstrip .self-view-mobile-portrait #localVideo_container {
+    object-fit: contain;
 }

@@ -34,7 +34,7 @@ type Props = BaseProps & {
     initialValue?: ?string,
 
     /**
-     * A message key to be shown for the user (e.g. an error that is defined after submitting the form).
+     * A message key to be shown for the user (e.g. An error that is defined after submitting the form).
      */
     messageKey?: string,
 
@@ -70,7 +70,8 @@ class InputDialog extends BaseDialog<Props, State> {
         super(props);
 
         this.state = {
-            fieldValue: props.initialValue
+            fieldValue: props.initialValue,
+            submitting: false
         };
 
         this._onChangeText = this._onChangeText.bind(this);

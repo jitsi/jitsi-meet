@@ -5,8 +5,10 @@ import React from 'react';
 import { Dialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import { connect } from '../../../../base/redux';
+import { toggleScreenshotCaptureSummary } from '../../../../screenshot-capture';
+import { isScreenshotCaptureEnabled } from '../../../../screenshot-capture/functions';
 import AbstractStartRecordingDialog, {
-    mapStateToProps
+    mapStateToProps as abstractMapStateToProps
 } from '../AbstractStartRecordingDialog';
 import StartRecordingDialogContent from '../StartRecordingDialogContent';
 
@@ -14,7 +16,7 @@ import StartRecordingDialogContent from '../StartRecordingDialogContent';
  * React Component for getting confirmation to start a file recording session in
  * progress.
  *
- * @extends Component
+ * @augments Component
  */
 class StartRecordingDialog extends AbstractStartRecordingDialog {
     /**
@@ -64,10 +66,36 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
         );
     }
 
+    /**
+     * Toggles screenshot capture feature.
+     *
+     * @returns {void}
+     */
+    _toggleScreenshotCapture() {
+        const { dispatch, _screenshotCaptureEnabled } = this.props;
+
+        if (_screenshotCaptureEnabled) {
+            dispatch(toggleScreenshotCaptureSummary(true));
+        }
+    }
+
     _areIntegrationsEnabled: () => boolean;
     _onSubmit: () => boolean;
     _onSelectedRecordingServiceChanged: (string) => void;
     _onSharingSettingChanged: () => void;
+}
+
+/**
+ * Maps redux state to component props.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {Object}
+ */
+function mapStateToProps(state) {
+    return {
+        ...abstractMapStateToProps(state),
+        _screenshotCaptureEnabled: isScreenshotCaptureEnabled(state, true, false)
+    };
 }
 
 export default translate(connect(mapStateToProps)(StartRecordingDialog));

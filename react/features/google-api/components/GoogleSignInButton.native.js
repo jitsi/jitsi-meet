@@ -22,7 +22,7 @@ const GOOGLE_BRAND_IMAGE = require('../../../../images/btn_google_signin_dark_no
 /**
  * A React Component showing a button to sign in with Google.
  *
- * @extends Component
+ * @augments Component
  */
 class GoogleSignInButton extends AbstractGoogleSignInButton {
 

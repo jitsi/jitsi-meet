@@ -84,7 +84,7 @@ function _toTimeString(times) {
  * Implements a React/Web {@link Component} for displaying a list with
  * meetings.
  *
- * @extends Component
+ * @augments Component
  */
 class MeetingsList extends Component<Props> {
     /**
@@ -108,7 +108,7 @@ class MeetingsList extends Component<Props> {
         const { listEmptyComponent, meetings, t } = this.props;
 
         /**
-         * If there are no recent meetings we don't want to display anything
+         * If there are no recent meetings we don't want to display anything.
          */
         if (meetings) {
             return (

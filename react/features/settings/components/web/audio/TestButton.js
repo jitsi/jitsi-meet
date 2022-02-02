@@ -10,7 +10,7 @@ type Props = {
     onClick: Function,
 
     /**
-     * keypress handler for the button.
+     * Keypress handler for the button.
      */
     onKeyPress: Function,
 };

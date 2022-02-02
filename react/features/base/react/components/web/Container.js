@@ -6,7 +6,7 @@ import type { Props } from '../AbstractContainer';
 /**
  * Represents a container of React/Web {@link Component} children with a style.
  *
- * @extends AbstractContainer
+ * @augments AbstractContainer
  */
 export default class Container<P: Props> extends AbstractContainer<P> {
     /**

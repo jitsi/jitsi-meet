@@ -30,3 +30,15 @@ export const SET_ASPECT_RATIO = 'SET_ASPECT_RATIO';
  * @public
  */
 export const SET_REDUCED_UI = 'SET_REDUCED_UI';
+
+/**
+ * The type of (redux) action which tells whether a local or remote participant
+ * context menu is open.
+ *
+ * {
+ *     type: SET_CONTEXT_MENU_OPEN,
+ *     showConnectionInfo: boolean
+ * }
+ */
+export const SET_CONTEXT_MENU_OPEN = 'SET_CONTEXT_MENU_OPEN';
+

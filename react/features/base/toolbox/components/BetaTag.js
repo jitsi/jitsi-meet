@@ -16,7 +16,7 @@ type Props = {
 /**
  * Creates a ReactElement for showing a ToolboxItem is for a beta feature.
  *
- * @extends {Component}
+ * @augments {Component}
  */
 class BetaTag extends Component<Props> {
 

@@ -3,6 +3,7 @@
 module:set_global();
 
 local formdecode = require "util.http".formdecode;
+local urlencode = require "util.http".urlencode;
 
 -- Extract the following parameters from the URL and set them in the session:
 -- * previd: for session resumption
@@ -18,8 +19,8 @@ function init_session(event)
         session.previd = query and params.previd or nil;
 
         -- The room name and optional prefix from the web query
-        session.jitsi_web_query_room = params.room;
-        session.jitsi_web_query_prefix = params.prefix or "";
+        session.jitsi_web_query_room = urlencode(params.room);
+        session.jitsi_web_query_prefix = urlencode(params.prefix) or "";
     end
 end
 

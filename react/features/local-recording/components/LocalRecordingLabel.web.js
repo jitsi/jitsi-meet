@@ -14,20 +14,25 @@ import { Tooltip } from '../../base/tooltip';
 type Props = {
 
     /**
+     * Whether this is the Jibri recorder participant.
+     */
+     _iAmRecorder: boolean,
+
+     /**
+      * Whether local recording is engaged or not.
+      */
+     _isEngaged: boolean,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function,
-
-    /**
-     * Whether local recording is engaged or not.
-     */
-    isEngaged: boolean
 };
 
 /**
  * React Component for displaying a label when local recording is engaged.
  *
- * @extends Component
+ * @augments Component
  */
 class LocalRecordingLabel extends Component<Props> {
 
@@ -38,7 +43,7 @@ class LocalRecordingLabel extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        if (!this.props.isEngaged) {
+        if (!this.props._isEngaged || this.props._iAmRecorder) {
             return null;
         }
 
@@ -66,9 +71,11 @@ class LocalRecordingLabel extends Component<Props> {
  */
 function _mapStateToProps(state) {
     const { isEngaged } = state['features/local-recording'];
+    const { iAmRecorder } = state['features/base/config'];
 
     return {
-        isEngaged
+        _isEngaged: isEngaged,
+        _iAmRecorder: iAmRecorder
     };
 }
 

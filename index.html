@@ -9,6 +9,7 @@
 
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
     <link rel="stylesheet" href="css/all.css">
+    <!--#include virtual="fonts.html"-->
     <link rel="manifest" id="manifest-placeholder">
 
     <script>
@@ -25,8 +26,16 @@
                 Component: JitsiMeetJS.app.entryPoints.APP
             })
 
+            const inIframe = () => {
+                try {
+                    return window.self !== window.top;
+                } catch (e) {
+                    return true;
+                }
+            };
+
             const isElectron = navigator.userAgent.includes('Electron');
-            const shouldRegisterWorker = !isElectron && 'serviceWorker' in navigator;
+            const shouldRegisterWorker = !isElectron && !inIframe() && 'serviceWorker' in navigator;
 
             if (shouldRegisterWorker) {
                 navigator.serviceWorker

@@ -82,7 +82,7 @@ public class MainActivity extends JitsiMeetActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         JitsiMeet.showSplashScreen(this);
-        super.onCreate(savedInstanceState);
+        super.onCreate(null);
     }
 
     @Override
@@ -150,8 +150,8 @@ public class MainActivity extends JitsiMeetActivity {
         // Set default options
         JitsiMeetConferenceOptions defaultOptions
             = new JitsiMeetConferenceOptions.Builder()
-            .setWelcomePageEnabled(true)
             .setServerURL(buildURL(defaultURL))
+            .setFeatureFlag("welcomepage.enabled", true)
             .setFeatureFlag("call-integration.enabled", false)
             .setFeatureFlag("resolution", 360)
             .setFeatureFlag("server-url-change.enabled", !configurationByRestrictions)
@@ -180,11 +180,6 @@ public class MainActivity extends JitsiMeetActivity {
                 }
             }
         }
-    }
-
-    @Override
-    protected void onConferenceTerminated(HashMap<String, Object> extraData) {
-        Log.d(TAG, "Conference terminated: " + extraData);
     }
 
     // Activity lifecycle method overrides

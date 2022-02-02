@@ -9,7 +9,7 @@ import OverlayFrame from './OverlayFrame';
 
 /**
  * Implements a React {@link Component} for slow gUM overlay. Shown when
- * a slow gUM promise resolution is detected
+ * a slow gUM promise resolution is detected.
  */
 class SlowGUMOverlay extends AbstractSlowGUMOverlay {
     /**

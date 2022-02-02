@@ -1,5 +1,5 @@
 /**
- * Abstract implementation of analytics handler
+ * Abstract implementation of analytics handler.
  */
 export default class AbstractHandler {
     /**

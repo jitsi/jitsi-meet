@@ -1,6 +1,7 @@
 // @flow
 
 import { JitsiTrackEvents } from '../base/lib-jitsi-meet';
+import { updateSettings } from '../base/settings';
 
 import { toggleBackgroundEffect } from './actions';
 let filterSupport;
@@ -33,7 +34,7 @@ export const blobToData = (blob: Blob): Promise<string> =>
     new Promise(resolve => {
         const reader = new FileReader();
 
-        reader.onloadend = () => resolve(reader.result.toString());
+        reader.onloadend = () => resolve(reader.result?.toString());
         reader.readAsDataURL(blob);
     });
 
@@ -110,5 +111,32 @@ export function localTrackStopped(dispatch: Function, desktopTrack: Object, curr
     desktopTrack
     && desktopTrack.on(JitsiTrackEvents.LOCAL_TRACK_STOPPED, () => {
         dispatch(toggleBackgroundEffect(noneOptions, currentLocalTrack));
+
+        // Set x scale to default value.
+        dispatch(updateSettings({
+            localFlipX: true
+        }));
+    });
+}
+
+/**
+ * Creating a wrapper for promises on a specific time interval.
+ *
+ * @param {number} milliseconds - The number of milliseconds to wait the specified
+ * {@code promise} to settle before automatically rejecting the returned
+ * {@code Promise}.
+ * @param {Promise} promise - The {@code Promise} for which automatic rejecting
+ * after the specified timeout is to be implemented.
+ * @returns {Promise}
+ */
+export function timeout(milliseconds: number, promise: Promise<*>): Promise<Object> {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            reject(new Error('408'));
+
+            return;
+        }, milliseconds);
+
+        promise.then(resolve, reject);
     });
 }

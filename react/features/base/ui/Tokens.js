@@ -17,7 +17,11 @@ export const colors = {
     primary07: '#669AEC',
     primary08: '#99BBF3',
     primary09: '#CCDDF9',
+    primary10: '#17A0DB',
+    primary11: '#1081B2',
+    primary12: '#B8C7E0',
 
+    surface00: '#111111',
     surface01: '#040404',
     surface02: '#141414',
     surface03: '#292929',
@@ -29,11 +33,27 @@ export const colors = {
     surface09: '#C2C2C2',
     surface10: '#E0E0E0',
     surface11: '#FFF',
+    surface12: '#AAAAAA',
+    surface13: '#495258',
+    surface14: '#555555',
 
     success04: '#189B55',
     success05: '#1EC26A',
 
-    warning05: '#F8AE1A'
+    warning05: '#F8AE1A',
+    warning06: '#FFD600',
+
+    disabled01: '#00000040',
+
+    support01: '#FF9B42',
+    support02: '#F96E57',
+    support03: '#DF486F',
+    support04: '#B23683',
+    support05: '#73348C',
+    support06: '#6A50D3',
+    support07: '#4380E2',
+    support08: '#00A8B3',
+    support09: '#2AA076'
 };
 
 // Mapping between the token used and the color
@@ -47,9 +67,18 @@ export const colorMap = {
     ui03: 'surface04',
     ui04: 'surface05',
     ui05: 'surface06',
+    ui12: 'surface11',
+    ui13: 'surface14',
 
     // Primary buttons
     action01: 'primary05',
+    action04: 'primary11',
+
+    // Screen header
+    screen01Header: 'primary10',
+
+    // Status bar
+    status01Bar: 'primary11',
 
     // Hover state for primary buttons
     action01Hover: 'primary06',
@@ -108,6 +137,12 @@ export const colorMap = {
     // Disabled state for danger buttons
     actionDangerDisabled: 'error03',
 
+    // Underlay color for buttons
+    underlay01: 'surface13',
+
+    // Bottom sheet background
+    bottomSheet: 'surface00',
+
     // Primary text – default color for body copy & headers
     text01: 'surface11',
 
@@ -116,6 +151,15 @@ export const colorMap = {
 
     // Tertiary text with low contrast – placeholders, disabled actions, label for disabled buttons
     text03: 'surface07',
+
+    // Text for bottom sheet items
+    text04: 'surface12',
+
+    // Text for drawer menu displayed name
+    text05: 'surface06',
+
+    // Text for saved input values
+    text06: 'surface03',
 
     // error messages
     textError: 'error06',
@@ -128,6 +172,12 @@ export const colorMap = {
 
     // Tertiary color for disabled actions
     icon03: 'surface07',
+
+    // Quaternary color for disabled actions
+    icon04: 'surface14',
+
+    // Quinary color for disabled actions
+    icon05: 'surface04',
 
     // Error message
     iconError: 'error06',
@@ -147,6 +197,9 @@ export const colorMap = {
 
     // Background for high-contrast input fields
     field02: 'surface11',
+
+    // Color for the section divider
+    dividerColor: 'surface12',
 
     // Background for high-contrast input fields on hover
     field02Hover: 'primary09',
@@ -176,6 +229,8 @@ export const colorMap = {
     // Line separators
     border03: 'surface04',
 
+    border04: 'primary12',
+
     // Color for error border & message
     borderError: 'error06',
 
@@ -197,20 +252,44 @@ export const colorMap = {
     success02: 'success05',
 
     // Color for warning messages applied to icons, borders & backgrounds
-    warning01: 'warning05'
+    warning01: 'warning05',
+
+    // Color for indicating a raised hand
+    warning02: 'warning06',
+
+    // Color for disabled tab
+    tab01Disabled: 'disabled01',
+
+    // Color for disabled video switch
+    video01Disabled: 'disabled01',
+
+    // Backgrounds for avatars
+    support01: 'support01',
+    support02: 'support02',
+    support03: 'support03',
+    support04: 'support04',
+    support05: 'support05',
+    support06: 'support06',
+    support08: 'support08',
+    support09: 'support09',
+
+    // Used for avatars and raise hand badge
+    support07: 'support07'
 };
 
 
 export const font = {
-    weightRegular: 400,
-    weightSemiBold: 600
+    weightRegular: '400',
+    weightSemiBold: '600'
 };
 
 export const shape = {
-    borderRadius: 6
+    borderRadius: 6,
+    boxShadow: 'inset 0px -1px 0px rgba(255, 255, 255, 0.15)'
 };
 
-export const spacing = [ 0, 4, 8, 16, 24, 32, 40, 48, 56 ];
+export const spacing
+    = [ 0, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128 ];
 
 export const typography = {
     labelRegular: {
@@ -330,5 +409,14 @@ export const typography = {
         lineHeight: 24,
         fontWeight: font.weightSemiBold,
         letterSpacing: 0
+    }
+};
+
+export const breakpoints = {
+    values: {
+        '0': 0,
+        '320': 320,
+        '400': 400,
+        '480': 480
     }
 };

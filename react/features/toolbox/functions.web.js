@@ -1,71 +1,11 @@
 // @flow
-
 import { getToolbarButtons } from '../base/config';
 import { hasAvailableDevices } from '../base/devices';
+import { isScreenMediaShared } from '../screen-share/functions';
 
-const WIDTH = {
-    FIT_9_ICONS: 520,
-    FIT_8_ICONS: 470,
-    FIT_7_ICONS: 420,
-    FIT_6_ICONS: 370,
-    FIT_5_ICONS: 320,
-    FIT_4_ICONS: 280
-};
+import { TOOLBAR_TIMEOUT } from './constants';
 
-/**
- * Returns a set of button names to be displayed in the toolbox, based on the screen width and platform.
- *
- * @param {number} width - The width of the screen.
- * @param {number} isMobile - The device is a mobile one.
- * @returns {Set} The button set.
- */
-export function getToolbarAdditionalButtons(width: number, isMobile: boolean): Set<string> {
-    let buttons = [];
-
-    switch (true) {
-    case width >= WIDTH.FIT_9_ICONS: {
-        buttons = isMobile
-            ? [ 'chat', 'raisehand', 'tileview', 'participants-pane', 'overflow' ]
-            : [ 'desktop', 'chat', 'raisehand', 'tileview', 'participants-pane', 'overflow' ];
-        break;
-    }
-
-    case width >= WIDTH.FIT_8_ICONS: {
-        buttons = [ 'desktop', 'chat', 'raisehand', 'participants-pane', 'overflow' ];
-        break;
-    }
-
-    case width >= WIDTH.FIT_7_ICONS: {
-        buttons = [ 'desktop', 'chat', 'participants-pane', 'overflow' ];
-        break;
-    }
-
-    case width >= WIDTH.FIT_6_ICONS: {
-        buttons = [ 'chat', 'participants-pane', 'overflow' ];
-        break;
-    }
-
-    case width >= WIDTH.FIT_5_ICONS: {
-        buttons = [ 'chat', 'overflow' ];
-        break;
-    }
-
-    case width >= WIDTH.FIT_4_ICONS: {
-        buttons = isMobile
-            ? [ 'chat', 'overflow' ]
-            : [ 'overflow' ];
-        break;
-    }
-
-    default: {
-        buttons = isMobile
-            ? [ 'chat', 'overflow' ]
-            : [];
-    }
-    }
-
-    return new Set(buttons);
-}
+export * from './functions.any';
 
 /**
  * Helper for getting the height of the toolbox.
@@ -96,14 +36,14 @@ export function isButtonEnabled(name: string, state: Object) {
 /**
  * Indicates if the toolbox is visible or not.
  *
- * @param {string} state - The state from the Redux store.
+ * @param {Object} state - The state from the Redux store.
  * @returns {boolean} - True to indicate that the toolbox is visible, false -
  * otherwise.
  */
 export function isToolboxVisible(state: Object) {
-    const { iAmSipGateway } = state['features/base/config'];
+    const { iAmSipGateway, toolbarConfig } = state['features/base/config'];
+    const { alwaysVisible } = toolbarConfig || {};
     const {
-        alwaysVisible,
         timeoutID,
         visible
     } = state['features/toolbox'];
@@ -116,19 +56,33 @@ export function isToolboxVisible(state: Object) {
 /**
  * Indicates if the audio settings button is disabled or not.
  *
- * @param {string} state - The state from the Redux store.
+ * @param {Object} state - The state from the Redux store.
  * @returns {boolean}
  */
 export function isAudioSettingsButtonDisabled(state: Object) {
-    return (!hasAvailableDevices(state, 'audioInput')
-          && !hasAvailableDevices(state, 'audioOutput'))
+
+    return !(hasAvailableDevices(state, 'audioInput')
+          && hasAvailableDevices(state, 'audioOutput'))
           || state['features/base/config'].startSilent;
+}
+
+/**
+ * Indicates if the desktop share button is disabled or not.
+ *
+ * @param {Object} state - The state from the Redux store.
+ * @returns {boolean}
+ */
+export function isDesktopShareButtonDisabled(state: Object) {
+    const { muted, unmuteBlocked } = state['features/base/media'].video;
+    const videoOrShareInProgress = !muted || isScreenMediaShared(state);
+
+    return unmuteBlocked && !videoOrShareInProgress;
 }
 
 /**
  * Indicates if the video settings button is disabled or not.
  *
- * @param {string} state - The state from the Redux store.
+ * @param {Object} state - The state from the Redux store.
  * @returns {boolean}
  */
 export function isVideoSettingsButtonDisabled(state: Object) {
@@ -138,9 +92,44 @@ export function isVideoSettingsButtonDisabled(state: Object) {
 /**
  * Indicates if the video mute button is disabled or not.
  *
- * @param {string} state - The state from the Redux store.
+ * @param {Object} state - The state from the Redux store.
  * @returns {boolean}
  */
 export function isVideoMuteButtonDisabled(state: Object) {
-    return !hasAvailableDevices(state, 'videoInput');
+    const { muted, unmuteBlocked } = state['features/base/media'].video;
+
+    return !hasAvailableDevices(state, 'videoInput') || (unmuteBlocked && Boolean(muted));
+}
+
+/**
+ * If an overflow drawer should be displayed or not.
+ * This is usually done for mobile devices or on narrow screens.
+ *
+ * @param {Object} state - The state from the Redux store.
+ * @returns {boolean}
+ */
+export function showOverflowDrawer(state: Object) {
+    return state['features/toolbox'].overflowDrawer;
+}
+
+/**
+ * Indicates whether the toolbox is enabled or not.
+ *
+ * @param {Object} state - The state from the Redux store.
+ * @returns {boolean}
+ */
+export function isToolboxEnabled(state: Object) {
+    return state['features/toolbox'].enabled;
+}
+
+/**
+ * Returns the toolbar timeout from config or the default value.
+ *
+ * @param {Object} state - The state from the Redux store.
+ * @returns {number} - Toolbar timeout in miliseconds.
+ */
+export function getToolbarTimeout(state: Object) {
+    const { toolbarConfig: { timeout } } = state['features/base/config'];
+
+    return timeout || TOOLBAR_TIMEOUT;
 }

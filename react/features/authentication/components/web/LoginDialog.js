@@ -21,7 +21,7 @@ import {
 type Props = {
 
     /**
-     * {@link JitsiConference} that needs authentication - will hold a valid
+     * {@link JitsiConference} That needs authentication - will hold a valid
      * value in XMPP login + guest access mode.
      */
     _conference: Object,
@@ -124,15 +124,8 @@ class LoginDialog extends Component<Props, State> {
      */
     _onCancelLogin() {
         const { dispatch } = this.props;
-        const cancelButton = document.getElementById('modal-dialog-cancel-button');
 
-        if (cancelButton) {
-            cancelButton.onclick = () => {
-                dispatch(cancelLogin());
-            };
-        }
-
-        return false;
+        dispatch(cancelLogin());
     }
 
     _onLogin: () => void;
@@ -252,6 +245,7 @@ class LoginDialog extends Component<Props, State> {
 
         return (
             <Dialog
+                disableBlanketClickDismiss = { true }
                 hideCloseIconButton = { true }
                 okDisabled = {
                     connecting
@@ -305,7 +299,7 @@ function mapStateToProps(state) {
         progress,
         thenableWithCancel
     } = state['features/authentication'];
-    const { authRequired } = state['features/base/conference'];
+    const { authRequired, conference } = state['features/base/conference'];
     const { hosts: configHosts } = state['features/base/config'];
     const {
         connecting,
@@ -313,7 +307,7 @@ function mapStateToProps(state) {
     } = state['features/base/connection'];
 
     return {
-        _conference: authRequired,
+        _conference: authRequired || conference,
         _configHosts: configHosts,
         _connecting: connecting || thenableWithCancel,
         _error: connectionError || authenticateAndUpgradeRoleError,

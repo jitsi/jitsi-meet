@@ -9,7 +9,8 @@ const WV_BACKGROUND = 'rgb(71, 71, 71)';
 export default {
 
     backDrop: {
-        backgroundColor: WV_BACKGROUND
+        backgroundColor: WV_BACKGROUND,
+        flex: 1
     },
 
     indicatorWrapper: {

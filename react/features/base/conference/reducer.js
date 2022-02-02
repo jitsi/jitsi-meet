@@ -10,6 +10,7 @@ import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
+    CONFERENCE_LOCAL_SUBJECT_CHANGED,
     CONFERENCE_SUBJECT_CHANGED,
     CONFERENCE_TIMESTAMP_CHANGED,
     CONFERENCE_WILL_JOIN,
@@ -20,7 +21,8 @@ import {
     SET_PASSWORD,
     SET_PENDING_SUBJECT_CHANGE,
     SET_ROOM,
-    SET_START_MUTED_POLICY
+    SET_START_MUTED_POLICY,
+    SET_START_REACTIONS_MUTED
 } from './actionTypes';
 import { isRoomValid } from './functions';
 
@@ -55,6 +57,9 @@ ReducerRegistry.register(
         case CONFERENCE_SUBJECT_CHANGED:
             return set(state, 'subject', action.subject);
 
+        case CONFERENCE_LOCAL_SUBJECT_CHANGED:
+            return set(state, 'localSubject', action.localSubject);
+
         case CONFERENCE_TIMESTAMP_CHANGED:
             return set(state, 'conferenceTimestamp', action.conferenceTimestamp);
 
@@ -76,6 +81,9 @@ ReducerRegistry.register(
 
         case SET_FOLLOW_ME:
             return set(state, 'followMeEnabled', action.enabled);
+
+        case SET_START_REACTIONS_MUTED:
+            return set(state, 'startReactionsMuted', action.muted);
 
         case SET_LOCATION_URL:
             return set(state, 'room', undefined);

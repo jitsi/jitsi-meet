@@ -26,11 +26,9 @@ import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.common.LifecycleState;
-import com.facebook.react.devsupport.DevInternalSettings;
 import com.facebook.react.jscexecutor.JSCExecutorFactory;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.uimanager.ViewManager;
-import com.facebook.soloader.SoLoader;
 import com.oney.WebRTCModule.RTCVideoViewManager;
 import com.oney.WebRTCModule.WebRTCModule;
 
@@ -174,22 +172,31 @@ class ReactInstanceManagerHolder {
             return;
         }
 
-        SoLoader.init(activity, /* native exopackage */ false);
-
         List<ReactPackage> packages
             = new ArrayList<>(Arrays.asList(
-                new com.calendarevents.CalendarEventsPackage(),
+                new com.reactnativecommunity.asyncstorage.AsyncStoragePackage(),
+                new com.ocetnik.timer.BackgroundTimerPackage(),
+                new com.calendarevents.RNCalendarEventsPackage(),
                 new com.corbt.keepawake.KCKeepAwakePackage(),
                 new com.facebook.react.shell.MainReactPackage(),
-                new com.horcrux.svg.SvgPackage(),
+                new com.reactnativecommunity.clipboard.ClipboardPackage(),
+                new com.reactnativecommunity.netinfo.NetInfoPackage(),
+                new com.reactnativepagerview.PagerViewPackage(),
+                new com.oblador.performance.PerformancePackage(),
+                new com.reactnativecommunity.slider.ReactSliderPackage(),
+                new com.brentvatne.react.ReactVideoPackage(),
+                new com.swmansion.reanimated.ReanimatedPackage(),
+                new org.reactnative.maskedview.RNCMaskedViewPackage(),
+                new com.reactnativecommunity.webview.RNCWebViewPackage(),
                 new com.kevinresol.react_native_default_preference.RNDefaultPreferencePackage(),
                 new com.learnium.RNDeviceInfo.RNDeviceInfo(),
-                new com.ocetnik.timer.BackgroundTimerPackage(),
-                new com.reactnativecommunity.asyncstorage.AsyncStoragePackage(),
-                new com.reactnativecommunity.netinfo.NetInfoPackage(),
-                new com.reactnativecommunity.webview.RNCWebViewPackage(),
+                new com.swmansion.gesturehandler.react.RNGestureHandlerPackage(),
+                new org.linusu.RNGetRandomValuesPackage(),
                 new com.rnimmersive.RNImmersivePackage(),
+                new com.swmansion.rnscreens.RNScreensPackage(),
                 new com.zmxv.RNSound.RNSoundPackage(),
+                new com.th3rdwave.safeareacontext.SafeAreaContextPackage(),
+                new com.horcrux.svg.SvgPackage(),
                 new ReactPackageAdapter() {
                     @Override
                     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
@@ -201,8 +208,18 @@ class ReactInstanceManagerHolder {
                     }
                 }));
 
+        // AmplitudeReactNativePackage
         try {
-            Class<?> googlePackageClass = Class.forName("co.apptailor.googlesignin.RNGoogleSigninPackage");
+            Class<?> amplitudePackageClass = Class.forName("com.amplitude.reactnative.AmplitudeReactNativePackage");
+            Constructor constructor = amplitudePackageClass.getConstructor();
+            packages.add((ReactPackage)constructor.newInstance());
+        } catch (Exception e) {
+            // Ignore any error, the module is not compiled when LIBRE_BUILD is enabled.
+        }
+
+        // RNGoogleSigninPackage
+        try {
+            Class<?> googlePackageClass = Class.forName("com.reactnativegooglesignin.RNGoogleSigninPackage");
             Constructor constructor = googlePackageClass.getConstructor();
             packages.add((ReactPackage)constructor.newInstance());
         } catch (Exception e) {
@@ -224,13 +241,6 @@ class ReactInstanceManagerHolder {
                 .setUseDeveloperSupport(BuildConfig.DEBUG)
                 .setInitialLifecycleState(LifecycleState.RESUMED)
                 .build();
-
-        // Disable delta updates on Android, they have caused trouble.
-        DevInternalSettings devSettings
-            = (DevInternalSettings)reactInstanceManager.getDevSupportManager().getDevSettings();
-        if (devSettings != null) {
-            devSettings.setBundleDeltasEnabled(false);
-        }
 
         // Register our uncaught exception handler.
         JitsiMeetUncaughtExceptionHandler.register();

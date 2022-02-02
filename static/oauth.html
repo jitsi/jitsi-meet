@@ -8,17 +8,11 @@
     <script>
         (function() {
             var windowName = window.name;
-            var parentWindow = window.opener;
-            if (parentWindow
-                && parentWindow.JitsiMeetJS
-                && parentWindow.JitsiMeetJS.app) {
-                var globalNS = parentWindow.JitsiMeetJS.app;
-                if (globalNS.oauthCallbacks
-                    && typeof globalNS.oauthCallbacks[windowName]
-                        === 'function') {
-                    globalNS.oauthCallbacks[windowName](window.location.href);
-                }
-            }
+            window.opener && window.opener.postMessage({
+                type: 'dropbox-login',
+                windowName,
+                url: window.location.href
+            }, window.location.origin);
         })();
     </script>
 </head>

@@ -31,21 +31,22 @@ export type Props = {
  * @abstract
  */
 export class AbstractApp extends BaseApp<Props, *> {
-    _init: Promise<*>;
+    /**
+     * The deferred for the initialisation {{promise, resolve, reject}}.
+     */
+    _init: Object;
 
     /**
      * Initializes the app.
      *
      * @inheritdoc
      */
-    componentDidMount() {
-        super.componentDidMount();
+    async componentDidMount() {
+        await super.componentDidMount();
 
-        this._init.then(() => {
-            // If a URL was explicitly specified to this React Component, then
-            // open it; otherwise, use a default.
-            this._openURL(toURLString(this.props.url) || this._getDefaultURL());
-        });
+        // If a URL was explicitly specified to this React Component, then
+        // open it; otherwise, use a default.
+        this._openURL(toURLString(this.props.url) || this._getDefaultURL());
     }
 
     /**
@@ -53,23 +54,23 @@ export class AbstractApp extends BaseApp<Props, *> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: Props) {
+    async componentDidUpdate(prevProps: Props) {
         const previousUrl = toURLString(prevProps.url);
         const currentUrl = toURLString(this.props.url);
         const previousTimestamp = prevProps.timestamp;
         const currentTimestamp = this.props.timestamp;
 
-        this._init.then(() => {
-            // Deal with URL changes.
+        await this._init.promise;
 
-            if (previousUrl !== currentUrl
+        // Deal with URL changes.
 
-                    // XXX Refer to the implementation of loadURLObject: in
-                    // ios/sdk/src/JitsiMeetView.m for further information.
-                    || previousTimestamp !== currentTimestamp) {
-                this._openURL(currentUrl || this._getDefaultURL());
-            }
-        });
+        if (previousUrl !== currentUrl
+
+            // XXX Refer to the implementation of loadURLObject: in
+            // ios/sdk/src/JitsiMeetView.m for further information.
+            || previousTimestamp !== currentTimestamp) {
+            this._openURL(currentUrl || this._getDefaultURL());
+        }
     }
 
     /**

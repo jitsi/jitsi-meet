@@ -1,6 +1,6 @@
 /* global $, APP */
 /* eslint-disable no-unused-vars */
-import Logger from 'jitsi-meet-logger';
+import Logger from '@jitsi/logger';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
@@ -8,19 +8,22 @@ import { Provider } from 'react-redux';
 
 import { createScreenSharingIssueEvent, sendAnalytics } from '../../../react/features/analytics';
 import { Avatar } from '../../../react/features/base/avatar';
+import theme from '../../../react/features/base/components/themes/participantsPaneTheme.json';
 import { i18next } from '../../../react/features/base/i18n';
 import {
     JitsiParticipantConnectionStatus
 } from '../../../react/features/base/lib-jitsi-meet';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media';
-import { getParticipantById } from '../../../react/features/base/participants';
+import {
+    getParticipantById,
+    getParticipantDisplayName
+} from '../../../react/features/base/participants';
 import { getTrackByMediaTypeAndParticipant } from '../../../react/features/base/tracks';
 import { CHAT_SIZE } from '../../../react/features/chat';
 import {
     updateKnownLargeVideoResolution
 } from '../../../react/features/large-video/actions';
 import { getParticipantsPaneOpen } from '../../../react/features/participants-pane/functions';
-import theme from '../../../react/features/participants-pane/theme.json';
 import { PresenceLabel } from '../../../react/features/presence-status';
 import { shouldDisplayTileView } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
@@ -314,10 +317,12 @@ export default class LargeVideoManager {
      * @private
      */
     updateParticipantConnStatusIndication(id, messageKey) {
+        const state = APP.store.getState();
+
         if (messageKey) {
             // Get user's display name
             const displayName
-                = APP.conference.getParticipantDisplayName(id);
+                = getParticipantDisplayName(state, id);
 
             this._setRemoteConnectionMessage(
                 messageKey,

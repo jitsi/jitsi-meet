@@ -1,11 +1,12 @@
 // @flow
 
 import React from 'react';
+import { Text } from 'react-native';
 
 import { ConfirmDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-import AbstractGrantModeratorDialog
+import AbstractGrantModeratorDialog, { abstractMapStateToProps }
     from '../AbstractGrantModeratorDialog';
 
 /**
@@ -22,11 +23,15 @@ class GrantModeratorDialog extends AbstractGrantModeratorDialog {
         return (
             <ConfirmDialog
                 contentKey = 'dialog.grantModeratorDialog'
-                onSubmit = { this._onSubmit } />
+                onSubmit = { this._onSubmit }>
+                <Text>
+                    {`${this.props.t('dialog.grantModeratorDialog', { participantName: this.props.participantName })}`}
+                </Text>
+            </ConfirmDialog>
         );
     }
 
     _onSubmit: () => boolean;
 }
 
-export default translate(connect()(GrantModeratorDialog));
+export default translate(connect(abstractMapStateToProps)(GrantModeratorDialog));

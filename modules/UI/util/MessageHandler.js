@@ -1,51 +1,12 @@
-/* global $, APP */
+/* global APP */
 
 import {
-    NOTIFICATION_TIMEOUT,
+    NOTIFICATION_TIMEOUT_TYPE,
     showErrorNotification,
-    showNotification,
     showWarningNotification
 } from '../../../react/features/notifications';
 
 const messageHandler = {
-    OK: 'dialog.OK',
-    CANCEL: 'dialog.Cancel',
-
-    /**
-     * Returns the formatted title string.
-     *
-     * @return the title string formatted as a div.
-     */
-    _getFormattedTitleString(titleKey) {
-        const $titleString = $('<h2>');
-
-        $titleString.addClass('aui-dialog2-header-main');
-        $titleString.attr('data-i18n', titleKey);
-
-        return $('<div>').append($titleString)
-            .html();
-    },
-
-    /**
-     * Returns the dialog css classes.
-     *
-     * @return the dialog css classes
-     */
-    _getDialogClasses(size = 'small') {
-        return {
-            box: '',
-            form: '',
-            prompt: `dialog aui-layer aui-dialog2 aui-dialog2-${size}`,
-            close: 'aui-hide',
-            fade: 'aui-blanket',
-            button: 'button-control',
-            message: 'aui-dialog2-content',
-            buttons: 'aui-dialog2-footer',
-            defaultButton: 'button-control_primary',
-            title: 'aui-dialog2-header'
-        };
-    },
-
     /**
      * Opens new popup window for given <tt>url</tt> centered over current
      * window.
@@ -86,7 +47,7 @@ const messageHandler = {
      * showErrorNotification action.
      */
     showError(props) {
-        APP.store.dispatch(showErrorNotification(props));
+        APP.store.dispatch(showErrorNotification(props, NOTIFICATION_TIMEOUT_TYPE.LONG));
     },
 
     /**
@@ -96,35 +57,7 @@ const messageHandler = {
      * showWarningNotification action.
      */
     showWarning(props) {
-        APP.store.dispatch(showWarningNotification(props));
-    },
-
-    /**
-     * Displays a notification about participant action.
-     * @param displayName the display name of the participant that is
-     * associated with the notification.
-     * @param displayNameKey the key from the language file for the display
-     * name. Only used if displayName is not provided.
-     * @param cls css class for the notification
-     * @param messageKey the key from the language file for the text of the
-     * message.
-     * @param messageArguments object with the arguments for the message.
-     * @param optional configurations for the notification (e.g. timeout)
-     */
-    participantNotification( // eslint-disable-line max-params
-            displayName,
-            displayNameKey,
-            cls,
-            messageKey,
-            messageArguments,
-            timeout = NOTIFICATION_TIMEOUT) {
-        APP.store.dispatch(showNotification({
-            descriptionArguments: messageArguments,
-            descriptionKey: messageKey,
-            titleKey: displayNameKey,
-            title: displayName
-        },
-        timeout));
+        APP.store.dispatch(showWarningNotification(props, NOTIFICATION_TIMEOUT_TYPE.LONG));
     }
 };
 

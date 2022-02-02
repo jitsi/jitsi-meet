@@ -2,6 +2,7 @@
 
 import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
 import { BoxModel, ColorPalette } from '../../../base/styles';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 const BUBBLE_RADIUS = 8;
 
@@ -40,7 +41,7 @@ export default {
         alignSelf: 'center',
         flex: 1,
         padding: BoxModel.padding,
-        paddingTop: '10%'
+        paddingTop: '8%'
     },
 
     /**
@@ -68,10 +69,6 @@ export default {
         alignItems: 'center',
         borderRadius: BUBBLE_RADIUS,
         flexDirection: 'row'
-    },
-
-    messageContainer: {
-        flex: 1
     },
 
     /**
@@ -124,6 +121,29 @@ export default {
     timeText: {
         color: 'rgb(164, 184, 209)',
         fontSize: 13
+    },
+
+    chatContainer: {
+        flex: 1
+    },
+
+    tabContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center'
+    },
+
+    tabLeftButton: {
+        flex: 1,
+        borderTopLeftRadius: 0,
+        borderTopRightRadius: 0,
+        borderBottomLeftRadius: 0
+    },
+
+    tabRightButton: {
+        flex: 1,
+        borderTopLeftRadius: 0,
+        borderTopRightRadius: 0,
+        borderBottomRightRadius: 0
     }
 };
 
@@ -145,7 +165,7 @@ ColorSchemeRegistry.register('Chat', {
     },
 
     emptyComponentText: {
-        color: schemeColor('displayName'),
+        color: BaseTheme.palette.ui05,
         textAlign: 'center'
     },
 

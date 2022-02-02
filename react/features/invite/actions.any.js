@@ -3,7 +3,7 @@
 import type { Dispatch } from 'redux';
 
 import { getInviteURL } from '../base/connection';
-import { getLocalParticipant, getParticipants } from '../base/participants';
+import { getLocalParticipant, getParticipantCount } from '../base/participants';
 import { inviteVideoRooms } from '../videosipgw';
 
 import {
@@ -71,14 +71,14 @@ export function invite(
             dispatch: Dispatch<any>,
             getState: Function): Promise<Array<Object>> => {
         const state = getState();
-        const participants = getParticipants(state);
+        const participantsCount = getParticipantCount(state);
         const { calleeInfoVisible } = state['features/invite'];
 
         if (showCalleeInfo
                 && !calleeInfoVisible
                 && invitees.length === 1
                 && invitees[0].type === INVITE_TYPES.USER
-                && participants.length === 1) {
+                && participantsCount === 1) {
             dispatch(setCalleeInfoVisible(true, invitees[0]));
         }
 

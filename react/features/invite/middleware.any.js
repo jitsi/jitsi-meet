@@ -6,8 +6,9 @@ import {
 } from '../base/conference';
 import {
     getLocalParticipant,
+    getParticipantCount,
     getParticipantPresenceStatus,
-    getParticipants,
+    getRemoteParticipants,
     PARTICIPANT_JOINED,
     PARTICIPANT_JOINED_SOUND_ID,
     PARTICIPANT_LEFT,
@@ -167,13 +168,19 @@ function _maybeHideCalleeInfo(action, store) {
     if (!state['features/invite'].calleeInfoVisible) {
         return;
     }
-    const participants = getParticipants(state);
-    const numberOfPoltergeists
-        = participants.filter(p => p.botType === 'poltergeist').length;
-    const numberOfRealParticipants = participants.length - numberOfPoltergeists;
+    const participants = getRemoteParticipants(state);
+    const participantCount = getParticipantCount(state);
+    let numberOfPoltergeists = 0;
+
+    participants.forEach(p => {
+        if (p.botType === 'poltergeist') {
+            numberOfPoltergeists++;
+        }
+    });
+    const numberOfRealParticipants = participantCount - numberOfPoltergeists;
 
     if ((numberOfPoltergeists > 1 || numberOfRealParticipants > 1)
-        || (action.type === PARTICIPANT_LEFT && participants.length === 1)) {
+        || (action.type === PARTICIPANT_LEFT && participantCount === 1)) {
         store.dispatch(setCalleeInfoVisible(false));
     }
 }

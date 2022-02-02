@@ -3,6 +3,7 @@
 import InlineDialog from '@atlaskit/inline-dialog';
 import React from 'react';
 
+import { areAudioLevelsEnabled } from '../../../../base/config/functions';
 import {
     getAudioInputDeviceData,
     getAudioOutputDeviceData,
@@ -10,6 +11,7 @@ import {
     setAudioOutputDevice as setAudioOutputDeviceAction
 } from '../../../../base/devices';
 import { connect } from '../../../../base/redux';
+import { SMALL_MOBILE_WIDTH } from '../../../../base/responsive-ui/constants';
 import {
     getCurrentMicDeviceId,
     getCurrentOutputDeviceId
@@ -36,6 +38,11 @@ type Props = AudioSettingsContentProps & {
     * Callback executed when the popup closes.
     */
     onClose: Function,
+
+    /**
+     * The popup placement enum value.
+     */
+    popupPlacement: string
 }
 
 /**
@@ -52,7 +59,9 @@ function AudioSettingsPopup({
     setAudioInputDevice,
     setAudioOutputDevice,
     onClose,
-    outputDevices
+    outputDevices,
+    popupPlacement,
+    measureAudioLevels
 }: Props) {
     return (
         <div className = 'audio-preview'>
@@ -60,13 +69,14 @@ function AudioSettingsPopup({
                 content = { <AudioSettingsContent
                     currentMicDeviceId = { currentMicDeviceId }
                     currentOutputDeviceId = { currentOutputDeviceId }
+                    measureAudioLevels = { measureAudioLevels }
                     microphoneDevices = { microphoneDevices }
                     outputDevices = { outputDevices }
                     setAudioInputDevice = { setAudioInputDevice }
                     setAudioOutputDevice = { setAudioOutputDevice } /> }
                 isOpen = { isOpen }
                 onClose = { onClose }
-                placement = 'top-start'>
+                placement = { popupPlacement }>
                 {children}
             </InlineDialog>
         </div>
@@ -80,12 +90,16 @@ function AudioSettingsPopup({
  * @returns {Object}
  */
 function mapStateToProps(state) {
+    const { clientWidth } = state['features/base/responsive-ui'];
+
     return {
+        popupPlacement: clientWidth <= SMALL_MOBILE_WIDTH ? 'auto' : 'top-start',
         currentMicDeviceId: getCurrentMicDeviceId(state),
         currentOutputDeviceId: getCurrentOutputDeviceId(state),
         isOpen: getAudioSettingsVisibility(state),
         microphoneDevices: getAudioInputDeviceData(state),
-        outputDevices: getAudioOutputDeviceData(state)
+        outputDevices: getAudioOutputDeviceData(state),
+        measureAudioLevels: areAudioLevelsEnabled(state)
     };
 }
 

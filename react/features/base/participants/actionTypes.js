@@ -6,7 +6,9 @@
  * {
  *     type: DOMINANT_SPEAKER_CHANGED,
  *     participant: {
- *         id: string
+ *         conference: JitsiConference,
+ *         id: string,
+ *         previousSpeakers: Array<string>
  *     }
  * }
  */
@@ -178,3 +180,24 @@ export const SET_LOADABLE_AVATAR_URL = 'SET_LOADABLE_AVATAR_URL';
  * }
  */
 export const LOCAL_PARTICIPANT_RAISE_HAND = 'LOCAL_PARTICIPANT_RAISE_HAND';
+
+/**
+ * Updates participant in raise hand queue.
+ * {
+ *     type: RAISE_HAND_UPDATED,
+ *     participant: {
+ *         id: string,
+ *         raiseHand: boolean
+ *     }
+ * }
+ */
+export const RAISE_HAND_UPDATED = 'RAISE_HAND_UPDATED';
+
+/**
+ * The type of Redux action which notifies that the local participant has changed the audio levels.
+ * {
+ *     type: LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED
+ *     level: number
+ * }
+ */
+export const LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED = 'LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED'

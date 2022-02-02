@@ -8,6 +8,7 @@ import {
     SET_FULL_SCREEN
 } from './actionTypes';
 
+
 declare var APP: Object;
 
 /**
@@ -18,6 +19,7 @@ declare var APP: Object;
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
+
     switch (action.type) {
     case CLEAR_TOOLBOX_TIMEOUT: {
         const { timeoutID } = store.getState()['features/toolbox'];
@@ -60,6 +62,8 @@ type DocumentElement = {
  * @returns {Object} The value returned by {@code next(action)}.
  */
 function _setFullScreen(next, action) {
+    const result = next(action);
+
     if (typeof APP === 'object') {
         const { fullScreen } = action;
 
@@ -76,25 +80,24 @@ function _setFullScreen(next, action) {
                 typeof documentElement.webkitRequestFullscreen === 'function') {
                 documentElement.webkitRequestFullscreen();
             }
-        } else {
-            /* eslint-disable no-lonely-if */
 
-            // $FlowFixMe
-            if (typeof document.exitFullscreen === 'function') {
-                document.exitFullscreen();
+            return result;
+        }
 
-            // $FlowFixMe
-            } else if (typeof document.mozCancelFullScreen === 'function') {
-                document.mozCancelFullScreen();
+        if (typeof document.exitFullscreen === 'function') {
+            document.exitFullscreen();
 
-            // $FlowFixMe
-            } else if (typeof document.webkitExitFullscreen === 'function') {
-                document.webkitExitFullscreen();
-            }
+        // $FlowExpectedError
+        } else if (typeof document.mozCancelFullScreen === 'function') {
+            // $FlowExpectedError
+            document.mozCancelFullScreen();
 
-            /* eslint-enable no-loney-if */
+        // $FlowExpectedError
+        } else if (typeof document.webkitExitFullscreen === 'function') {
+            // $FlowExpectedError
+            document.webkitExitFullscreen();
         }
     }
 
-    return next(action);
+    return result;
 }

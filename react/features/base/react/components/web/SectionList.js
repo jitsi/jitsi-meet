@@ -20,22 +20,22 @@ type Props = {
     keyExtractor: Function,
 
     /**
-     * Returns a React component that renders each Item in the list
+     * Returns a React component that renders each Item in the list.
      */
     renderItem: Function,
 
     /**
-     * Returns a React component that renders the header for every section
+     * Returns a React component that renders the header for every section.
      */
     renderSectionHeader: Function,
 
     /**
-     * An array of sections
+     * An array of sections.
      */
     sections: Array<Section>,
 
     /**
-     * defines what happens when  an item in the section list is clicked
+     * Defines what happens when  an item in the section list is clicked.
      */
     onItemClick: Function
 };
@@ -45,7 +45,7 @@ type Props = {
  * sections similar to React Native's {@code SectionList} in order to
  * facilitate cross-platform source code.
  *
- * @extends Component
+ * @augments Component
  */
 export default class SectionList extends Component<Props> {
     /**
@@ -63,7 +63,7 @@ export default class SectionList extends Component<Props> {
         } = this.props;
 
         /**
-         * If there are no recent items we don't want to display anything
+         * If there are no recent items we don't want to display anything.
          */
         if (sections) {
             return (

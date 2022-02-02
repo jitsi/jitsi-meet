@@ -1,19 +1,26 @@
 // @flow
 
+import { v4 as uuidv4 } from 'uuid';
+
 import { ReducerRegistry } from '../base/redux';
 
 import {
     ADD_MESSAGE,
     CLEAR_MESSAGES,
     CLOSE_CHAT,
+    EDIT_MESSAGE,
     OPEN_CHAT,
-    SET_PRIVATE_MESSAGE_RECIPIENT
+    SET_PRIVATE_MESSAGE_RECIPIENT,
+    SET_IS_POLL_TAB_FOCUSED
 } from './actionTypes';
 
 const DEFAULT_STATE = {
     isOpen: false,
+    isPollsTabFocused: false,
     lastReadMessage: undefined,
+    lastReadPoll: undefined,
     messages: [],
+    nbUnreadMessages: 0,
     privateMessageRecipient: undefined
 };
 
@@ -24,6 +31,8 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
             displayName: action.displayName,
             error: action.error,
             id: action.id,
+            isReaction: action.isReaction,
+            messageId: uuidv4(),
             messageType: action.messageType,
             message: action.message,
             privateMessage: action.privateMessage,
@@ -46,6 +55,7 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
             ...state,
             lastReadMessage:
                 action.hasRead ? newMessage : state.lastReadMessage,
+            nbUnreadMessages: state.isPollsTabFocused ? state.nbUnreadMessages + 1 : state.nbUnreadMessages,
             messages
         };
     }
@@ -56,6 +66,30 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
             lastReadMessage: undefined,
             messages: []
         };
+
+    case EDIT_MESSAGE: {
+        let found = false;
+        const newMessage = action.message;
+        const messages = state.messages.map(m => {
+            if (m.messageId === newMessage.messageId) {
+                found = true;
+
+                return newMessage;
+            }
+
+            return m;
+        });
+
+        // no change
+        if (!found) {
+            return state;
+        }
+
+        return {
+            ...state,
+            messages
+        };
+    }
 
     case SET_PRIVATE_MESSAGE_RECIPIENT:
         return {
@@ -78,6 +112,13 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
                 navigator.product === 'ReactNative' ? 0 : state.messages.length - 1],
             privateMessageRecipient: action.participant
         };
+
+    case SET_IS_POLL_TAB_FOCUSED: {
+        return {
+            ...state,
+            isPollsTabFocused: action.isPollsTabFocused,
+            nbUnreadMessages: 0
+        }; }
     }
 
     return state;

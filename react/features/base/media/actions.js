@@ -4,13 +4,16 @@ import type { Dispatch } from 'redux';
 
 import { showModeratedNotification } from '../../av-moderation/actions';
 import { shouldShowModeratedNotification } from '../../av-moderation/functions';
+import { isModerationNotificationDisplayed } from '../../notifications';
 
 import {
     SET_AUDIO_MUTED,
     SET_AUDIO_AVAILABLE,
+    SET_AUDIO_UNMUTE_PERMISSIONS,
     SET_CAMERA_FACING_MODE,
     SET_VIDEO_AVAILABLE,
     SET_VIDEO_MUTED,
+    SET_VIDEO_UNMUTE_PERMISSIONS,
     STORE_VIDEO_TRANSFORM,
     TOGGLE_CAMERA_FACING_MODE
 } from './actionTypes';
@@ -55,6 +58,19 @@ export function setAudioMuted(muted: boolean, ensureTrack: boolean = false) {
         type: SET_AUDIO_MUTED,
         ensureTrack,
         muted
+    };
+}
+
+/**
+ * Action to disable/enable the audio mute icon.
+ *
+ * @param {boolean} blocked - True if the audio mute icon needs to be disabled.
+ * @returns {Function}
+ */
+export function setAudioUnmutePermissions(blocked: boolean) {
+    return {
+        type: SET_AUDIO_UNMUTE_PERMISSIONS,
+        blocked
     };
 }
 
@@ -113,7 +129,9 @@ export function setVideoMuted(
 
         // check for A/V Moderation when trying to unmute
         if (!muted && shouldShowModeratedNotification(MEDIA_TYPE.VIDEO, state)) {
-            ensureTrack && dispatch(showModeratedNotification(MEDIA_TYPE.VIDEO));
+            if (!isModerationNotificationDisplayed(MEDIA_TYPE.VIDEO, state)) {
+                ensureTrack && dispatch(showModeratedNotification(MEDIA_TYPE.VIDEO));
+            }
 
             return;
         }
@@ -130,6 +148,19 @@ export function setVideoMuted(
             ensureTrack,
             muted: newValue
         });
+    };
+}
+
+/**
+ * Action to disable/enable the video mute icon.
+ *
+ * @param {boolean} blocked - True if the video mute icon needs to be disabled.
+ * @returns {Function}
+ */
+export function setVideoUnmutePermissions(blocked: boolean) {
+    return {
+        type: SET_VIDEO_UNMUTE_PERMISSIONS,
+        blocked
     };
 }
 

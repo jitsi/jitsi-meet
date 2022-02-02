@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 
-import { YoutubeLargeVideo } from '../../../shared-video/components';
+import { SharedVideo } from '../../../shared-video/components/native';
 import { Avatar } from '../../avatar';
 import { translate } from '../../i18n';
 import { JitsiParticipantConnectionStatus } from '../../lib-jitsi-meet';
@@ -106,7 +106,7 @@ type Props = {
      * The test hint id which can be used to locate the {@code ParticipantView}
      * on the jitsi-meet-torture side. If not provided, the
      * {@code participantId} with the following format will be used:
-     * {@code `org.jitsi.meet.Participant#${participantId}`}
+     * {@code `org.jitsi.meet.Participant#${participantId}`}.
      */
     testHintId: ?string,
 
@@ -133,7 +133,7 @@ type Props = {
  * Implements a React Component which depicts a specific participant's avatar
  * and video.
  *
- * @extends Component
+ * @augments Component
  */
 class ParticipantView extends Component<Props> {
 
@@ -208,11 +208,11 @@ class ParticipantView extends Component<Props> {
                 ? this.props.testHintId
                 : `org.jitsi.meet.Participant#${this.props.participantId}`;
 
-        const renderYoutubeLargeVideo = _isFakeParticipant && !disableVideo;
+        const renderSharedVideo = _isFakeParticipant && !disableVideo;
 
         return (
             <Container
-                onClick = { renderVideo || renderYoutubeLargeVideo ? undefined : onPress }
+                onClick = { renderVideo || renderSharedVideo ? undefined : onPress }
                 style = {{
                     ...styles.participantView,
                     ...this.props.style
@@ -221,10 +221,10 @@ class ParticipantView extends Component<Props> {
 
                 <TestHint
                     id = { testHintId }
-                    onPress = { renderYoutubeLargeVideo ? undefined : onPress }
+                    onPress = { renderSharedVideo ? undefined : onPress }
                     value = '' />
 
-                { renderYoutubeLargeVideo && <YoutubeLargeVideo youtubeId = { this.props.participantId } /> }
+                { renderSharedVideo && <SharedVideo /> }
 
                 { !_isFakeParticipant && renderVideo
                     && <VideoTrack
@@ -234,7 +234,7 @@ class ParticipantView extends Component<Props> {
                         zOrder = { this.props.zOrder }
                         zoomEnabled = { this.props.zoomEnabled } /> }
 
-                { !renderYoutubeLargeVideo && !renderVideo
+                { !renderSharedVideo && !renderVideo
                     && <View style = { styles.avatarContainer }>
                         <Avatar
                             participantId = { this.props.participantId }

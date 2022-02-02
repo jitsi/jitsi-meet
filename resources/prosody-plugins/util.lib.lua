@@ -267,13 +267,19 @@ end
 --- retry @param retry number of times
 -- @param url endpoint to be called
 -- @param retry nr of retries, if retry is
+-- @param auth_token value to be passed as auth Bearer 
 -- nil there will be no retries
 -- @returns result of the http call or nil if
 -- the external call failed after the last retry
-function http_get_with_retry(url, retry)
+function http_get_with_retry(url, retry, auth_token)
     local content, code;
     local timeout_occurred;
     local wait, done = async.waiter();
+    local request_headers = http_headers or {}
+    if auth_token ~= nil then
+        request_headers['Authorization'] = 'Bearer ' .. auth_token
+    end
+
     local function cb(content_, code_, response_, request_)
         if timeout_occurred == nil then
             code = code_;
@@ -281,7 +287,7 @@ function http_get_with_retry(url, retry)
                 module:log("debug", "External call was successful, content %s", content_);
                 content = content_
             else
-                module:log("warn", "Error on public key request: Code %s, Content %s",
+                module:log("warn", "Error on GET request: Code %s, Content %s",
                     code_, content_);
             end
             done();
@@ -292,7 +298,7 @@ function http_get_with_retry(url, retry)
 
     local function call_http()
         return http.request(url, {
-            headers = http_headers or {},
+            headers = request_headers,
             method = "GET"
         }, cb);
     end
@@ -326,7 +332,7 @@ function http_get_with_retry(url, retry)
     timer.add_task(http_timeout, cancel);
     wait();
 
-    return content;
+    return content, code;
 end
 
 -- Checks whether there is status in the <x node

@@ -181,13 +181,13 @@ export function initAnalytics({ getState }: { getState: Function }, handlers: Ar
     permanentProperties.appName = getAppName();
 
     // Report if user is using websocket
-    permanentProperties.websocket = navigator.product !== 'ReactNative' && typeof config.websocket === 'string';
+    permanentProperties.websocket = typeof config.websocket === 'string';
 
     // Report if user is using the external API
     permanentProperties.externalApi = typeof API_ID === 'number';
 
     // Report if we are loaded in iframe
-    permanentProperties.inIframe = _inIframe();
+    permanentProperties.inIframe = inIframe();
 
     // Report the tenant from the URL.
     permanentProperties.tenant = tenant || '/';
@@ -227,7 +227,7 @@ export function initAnalytics({ getState }: { getState: Function }, handlers: Ar
  * @returns {boolean} Returns {@code true} if loaded in iframe.
  * @private
  */
-function _inIframe() {
+export function inIframe() {
     if (navigator.product === 'ReactNative') {
         return false;
     }

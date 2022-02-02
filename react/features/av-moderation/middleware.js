@@ -1,28 +1,40 @@
 // @flow
 import { batch } from 'react-redux';
 
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import { getConferenceState } from '../base/conference';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../base/media';
 import {
-    getParticipantDisplayName,
+    getLocalParticipant,
+    getRemoteParticipants,
+    hasRaisedHand,
     isLocalParticipantModerator,
+    isParticipantModerator,
     PARTICIPANT_UPDATED,
     raiseHand
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
+import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import {
+    NOTIFICATION_TIMEOUT_TYPE,
     hideNotification,
-    NOTIFICATION_TIMEOUT,
     showNotification
 } from '../notifications';
+import { muteLocal } from '../video-menu/actions.any';
 
 import {
     DISABLE_MODERATION,
     ENABLE_MODERATION,
+    LOCAL_PARTICIPANT_APPROVED,
     LOCAL_PARTICIPANT_MODERATION_NOTIFICATION,
-    REQUEST_DISABLE_MODERATION,
-    REQUEST_ENABLE_MODERATION
+    LOCAL_PARTICIPANT_REJECTED,
+    PARTICIPANT_APPROVED,
+    PARTICIPANT_REJECTED,
+    REQUEST_DISABLE_AUDIO_MODERATION,
+    REQUEST_DISABLE_VIDEO_MODERATION,
+    REQUEST_ENABLE_AUDIO_MODERATION,
+    REQUEST_ENABLE_VIDEO_MODERATION
 } from './actionTypes';
 import {
     disableModeration,
@@ -31,40 +43,35 @@ import {
     enableModeration,
     localParticipantApproved,
     participantApproved,
-    participantPendingAudio
+    participantPendingAudio,
+    localParticipantRejected,
+    participantRejected
 } from './actions';
+import {
+    ASKED_TO_UNMUTE_SOUND_ID, AUDIO_MODERATION_NOTIFICATION_ID,
+    CS_MODERATION_NOTIFICATION_ID,
+    VIDEO_MODERATION_NOTIFICATION_ID
+} from './constants';
 import {
     isEnabledFromState,
     isParticipantApproved,
     isParticipantPending
 } from './functions';
+import { ASKED_TO_UNMUTE_FILE } from './sounds';
 
-const VIDEO_MODERATION_NOTIFICATION_ID = 'video-moderation';
-const AUDIO_MODERATION_NOTIFICATION_ID = 'audio-moderation';
-const CS_MODERATION_NOTIFICATION_ID = 'video-moderation';
+declare var APP: Object;
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
-    const { actor, mediaType, type } = action;
+    const { type } = action;
+    const { conference } = getConferenceState(getState());
 
     switch (type) {
-    case DISABLE_MODERATION:
-    case ENABLE_MODERATION: {
-        // Audio & video moderation are both enabled at the same time.
-        // Avoid displaying 2 different notifications.
-        if (mediaType === MEDIA_TYPE.VIDEO) {
-            const titleKey = type === ENABLE_MODERATION
-                ? 'notify.moderationStartedTitle'
-                : 'notify.moderationStoppedTitle';
-
-            dispatch(showNotification({
-                descriptionKey: actor ? 'notify.moderationToggleDescription' : undefined,
-                descriptionArguments: actor ? {
-                    participantDisplayName: getParticipantDisplayName(getState, actor.getId())
-                } : undefined,
-                titleKey
-            }, NOTIFICATION_TIMEOUT));
-        }
-
+    case APP_WILL_MOUNT: {
+        dispatch(registerSound(ASKED_TO_UNMUTE_SOUND_ID, ASKED_TO_UNMUTE_FILE));
+        break;
+    }
+    case APP_WILL_UNMOUNT: {
+        dispatch(unregisterSound(ASKED_TO_UNMUTE_SOUND_ID));
         break;
     }
     case LOCAL_PARTICIPANT_MODERATION_NOTIFICATION: {
@@ -75,69 +82,120 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         switch (action.mediaType) {
         case MEDIA_TYPE.AUDIO: {
             titleKey = 'notify.moderationInEffectTitle';
-            descriptionKey = 'notify.moderationInEffectDescription';
             uid = AUDIO_MODERATION_NOTIFICATION_ID;
             break;
         }
         case MEDIA_TYPE.VIDEO: {
             titleKey = 'notify.moderationInEffectVideoTitle';
-            descriptionKey = 'notify.moderationInEffectVideoDescription';
             uid = VIDEO_MODERATION_NOTIFICATION_ID;
             break;
         }
         case MEDIA_TYPE.PRESENTER: {
             titleKey = 'notify.moderationInEffectCSTitle';
-            descriptionKey = 'notify.moderationInEffectCSDescription';
             uid = CS_MODERATION_NOTIFICATION_ID;
             break;
         }
         }
 
         dispatch(showNotification({
-            customActionNameKey: 'notify.raiseHandAction',
-            customActionHandler: () => batch(() => {
+            customActionNameKey: [ 'notify.raiseHandAction' ],
+            customActionHandler: [ () => batch(() => {
                 dispatch(raiseHand(true));
                 dispatch(hideNotification(uid));
-            }),
+            }) ],
             descriptionKey,
             sticky: true,
             titleKey,
             uid
-        }));
+        }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
 
         break;
     }
-    case REQUEST_DISABLE_MODERATION: {
-        const { conference } = getConferenceState(getState());
-
+    case REQUEST_DISABLE_AUDIO_MODERATION: {
         conference.disableAVModeration(MEDIA_TYPE.AUDIO);
+        break;
+    }
+    case REQUEST_DISABLE_VIDEO_MODERATION: {
         conference.disableAVModeration(MEDIA_TYPE.VIDEO);
         break;
     }
-    case REQUEST_ENABLE_MODERATION: {
-        const { conference } = getConferenceState(getState());
-
+    case REQUEST_ENABLE_AUDIO_MODERATION: {
         conference.enableAVModeration(MEDIA_TYPE.AUDIO);
+        break;
+    }
+    case REQUEST_ENABLE_VIDEO_MODERATION: {
         conference.enableAVModeration(MEDIA_TYPE.VIDEO);
         break;
     }
     case PARTICIPANT_UPDATED: {
         const state = getState();
         const audioModerationEnabled = isEnabledFromState(MEDIA_TYPE.AUDIO, state);
+        const participant = action.participant;
 
-        // this is handled only by moderators
-        if (audioModerationEnabled && isLocalParticipantModerator(state)) {
-            const { participant: { id, raisedHand } } = action;
+        if (participant && audioModerationEnabled) {
+            if (isLocalParticipantModerator(state)) {
 
-            if (raisedHand) {
-                // if participant raises hand show notification
-                !isParticipantApproved(id, MEDIA_TYPE.AUDIO)(state) && dispatch(participantPendingAudio(id));
-            } else {
-                // if participant lowers hand hide notification
-                isParticipantPending(id, MEDIA_TYPE.AUDIO)(state) && dispatch(dismissPendingAudioParticipant(id));
+                // this is handled only by moderators
+                if (hasRaisedHand(participant)) {
+                    // if participant raises hand show notification
+                    !isParticipantApproved(participant.id, MEDIA_TYPE.AUDIO)(state)
+                    && dispatch(participantPendingAudio(participant));
+                } else {
+                    // if participant lowers hand hide notification
+                    isParticipantPending(participant, MEDIA_TYPE.AUDIO)(state)
+                    && dispatch(dismissPendingAudioParticipant(participant));
+                }
+            } else if (participant.id === getLocalParticipant(state).id
+                && /* the new role */ isParticipantModerator(participant)) {
+
+                // this is the granted moderator case
+                getRemoteParticipants(state).forEach(p => {
+                    hasRaisedHand(p) && !isParticipantApproved(p.id, MEDIA_TYPE.AUDIO)(state)
+                        && dispatch(participantPendingAudio(p));
+                });
             }
         }
 
+        break;
+    }
+    case ENABLE_MODERATION: {
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyModerationChanged(action.mediaType, true);
+        }
+        break;
+    }
+    case DISABLE_MODERATION: {
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyModerationChanged(action.mediaType, false);
+        }
+        break;
+    }
+    case LOCAL_PARTICIPANT_APPROVED: {
+        if (typeof APP !== 'undefined') {
+            const local = getLocalParticipant(getState());
+
+            APP.API.notifyParticipantApproved(local.id, action.mediaType);
+        }
+        break;
+    }
+    case PARTICIPANT_APPROVED: {
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyParticipantApproved(action.id, action.mediaType);
+        }
+        break;
+    }
+    case LOCAL_PARTICIPANT_REJECTED: {
+        if (typeof APP !== 'undefined') {
+            const local = getLocalParticipant(getState());
+
+            APP.API.notifyParticipantRejected(local.id, action.mediaType);
+        }
+        break;
+    }
+    case PARTICIPANT_REJECTED: {
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyParticipantRejected(action.id, action.mediaType);
+        }
         break;
     }
     }
@@ -159,13 +217,19 @@ StateListenerRegistry.register(
 
                 // Audio & video moderation are both enabled at the same time.
                 // Avoid displaying 2 different notifications.
-                if (mediaType === MEDIA_TYPE.VIDEO) {
+                if (mediaType === MEDIA_TYPE.AUDIO) {
                     dispatch(showNotification({
-                        titleKey: 'notify.unmute',
-                        descriptionKey: 'notify.hostAskedUnmute',
-                        sticky: true
-                    }));
+                        titleKey: 'notify.hostAskedUnmute',
+                        sticky: true,
+                        customActionNameKey: [ 'notify.unmute' ],
+                        customActionHandler: [ () => dispatch(muteLocal(false, MEDIA_TYPE.AUDIO)) ]
+                    }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+                    dispatch(playSound(ASKED_TO_UNMUTE_SOUND_ID));
                 }
+            });
+
+            conference.on(JitsiConferenceEvents.AV_MODERATION_REJECTED, ({ mediaType }) => {
+                dispatch(localParticipantRejected(mediaType));
             });
 
             conference.on(JitsiConferenceEvents.AV_MODERATION_CHANGED, ({ enabled, mediaType, actor }) => {
@@ -185,6 +249,15 @@ StateListenerRegistry.register(
                         // remove from pending list
                         dispatch(dismissPendingParticipant(id, mediaType));
                     });
+                });
+
+            // this is received by moderators
+            conference.on(
+                JitsiConferenceEvents.AV_MODERATION_PARTICIPANT_REJECTED,
+                ({ participant, mediaType }) => {
+                    const { _id: id } = participant;
+
+                    dispatch(participantRejected(id, mediaType));
                 });
         }
     });

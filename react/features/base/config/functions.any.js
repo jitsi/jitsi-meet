@@ -7,7 +7,7 @@ import _ from 'lodash';
 import { parseURLParams } from '../util';
 
 import CONFIG_WHITELIST from './configWhitelist';
-import { _CONFIG_STORE_PREFIX } from './constants';
+import { _CONFIG_STORE_PREFIX, FEATURE_FLAGS } from './constants';
 import INTERFACE_CONFIG_WHITELIST from './interfaceConfigWhitelist';
 import logger from './logger';
 
@@ -33,7 +33,6 @@ export function createFakeConfig(baseURL: string) {
             muc: `conference.${url.hostname}`
         },
         bosh: `${baseURL}http-bind`,
-        clientNode: 'https://jitsi.org/jitsi-meet',
         p2p: {
             enabled: true
         }
@@ -51,6 +50,39 @@ export function getMeetingRegion(state: Object) {
 }
 
 /**
+ * Selector used to get the sourceNameSignaling feature flag.
+ *
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+export function getSourceNameSignalingFeatureFlag(state: Object) {
+    return getFeatureFlag(state, FEATURE_FLAGS.SOURCE_NAME_SIGNALING);
+}
+
+/**
+ * Selector used to get a feature flag.
+ *
+ * @param {Object} state - The global state.
+ * @param {string} featureFlag - The name of the feature flag.
+ * @returns {boolean}
+ */
+export function getFeatureFlag(state: Object, featureFlag: string) {
+    const featureFlags = state['features/base/config']?.flags || {};
+
+    return Boolean(featureFlags[featureFlag]);
+}
+
+/**
+ * Selector used to get the disableRemoveRaisedHandOnFocus.
+ *
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+export function getDisableRemoveRaisedHandOnFocus(state: Object) {
+    return state['features/base/config']?.disableRemoveRaisedHandOnFocus || false;
+}
+
+/**
  * Selector used to get the endpoint used for fetching the recording.
  *
  * @param {Object} state - The global state.
@@ -59,8 +91,6 @@ export function getMeetingRegion(state: Object) {
 export function getRecordingSharingUrl(state: Object) {
     return state['features/base/config'].recordingSharingUrl;
 }
-
-/* eslint-disable max-params, no-shadow */
 
 /**
  * Overrides JSON properties in {@code config} and
@@ -143,6 +173,27 @@ export function getWhitelistedJSON(configName: string, configJSON: Object): Obje
     }
 
     return configJSON;
+}
+
+/**
+ * Selector for determining if the display name is read only.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {boolean}
+ */
+export function isNameReadOnly(state: Object): boolean {
+    return state['features/base/config'].disableProfile
+        || state['features/base/config'].readOnlyName;
+}
+
+/**
+ * Selector for determining if the display name is visible.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {boolean}
+ */
+export function isDisplayNameVisible(state: Object): boolean {
+    return !state['features/base/config'].hideDisplayName;
 }
 
 /**

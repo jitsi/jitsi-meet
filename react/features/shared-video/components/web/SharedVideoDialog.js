@@ -7,8 +7,6 @@ import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { getFieldValue } from '../../../base/react';
 import { connect } from '../../../base/redux';
-import { defaultSharedVideoLink } from '../../constants';
-import { getYoutubeId } from '../../functions';
 import AbstractSharedVideoDialog from '../AbstractSharedVideoDialog';
 
 /**
@@ -28,7 +26,8 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
 
         this.state = {
             value: '',
-            okDisabled: true
+            okDisabled: true,
+            error: false
         };
 
         this._onChange = this._onChange.bind(this);
@@ -60,7 +59,15 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
      * @returns {boolean}
      */
     _onSubmitValue() {
-        return this._onSetVideoLink(this.state.value);
+        const result = super._onSetVideoLink(this.state.value);
+
+        if (!result) {
+            this.setState({
+                error: true
+            });
+        }
+
+        return result;
     }
 
     /**
@@ -70,6 +77,7 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
      */
     render() {
         const { t } = this.props;
+        const { error } = this.state;
 
         return (
             <Dialog
@@ -83,38 +91,17 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
                     autoFocus = { true }
                     className = 'input-control'
                     compact = { false }
+                    isInvalid = { error }
                     label = { t('dialog.videoLink') }
                     name = 'sharedVideoUrl'
                     onChange = { this._onChange }
-                    placeholder = { defaultSharedVideoLink }
+                    placeholder = { t('dialog.sharedVideoLinkPlaceholder') }
                     shouldFitContainer = { true }
                     type = 'text'
                     value = { this.state.value } />
+                { error && <span className = 'shared-video-dialog-error'>{ t('dialog.sharedVideoDialogError') }</span> }
             </Dialog>
         );
-    }
-
-    /**
-     * Validates the entered video link by extracting the id and dispatches it.
-     *
-     * It returns a boolean to comply the Dialog behaviour:
-     *     {@code true} - the dialog should be closed.
-     *     {@code false} - the dialog should be left open.
-     *
-    * @param {string} link - The entered video link.
-     * @returns {boolean}
-     */
-    _onSetVideoLink(link: string) {
-        if (!link || !link.trim()) {
-            return false;
-        }
-
-        const youtubeId = getYoutubeId(link);
-        const { onPostSubmit } = this.props;
-
-        onPostSubmit(youtubeId || link);
-
-        return true;
     }
 
     _onChange: Object => void;

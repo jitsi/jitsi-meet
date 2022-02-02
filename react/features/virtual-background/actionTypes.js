@@ -23,3 +23,13 @@ export const BACKGROUND_ENABLED = 'BACKGROUND_ENABLED';
  * }}
  */
 export const SET_VIRTUAL_BACKGROUND = 'SET_VIRTUAL_BACKGROUND';
+
+/**
+ * The type which signals if the local track was changed due to a changes of the virtual background.
+ *
+ * @returns {{
+ *     type: VIRTUAL_BACKGROUND_TRACK_CHANGED
+ *}}
+ */
+
+export const VIRTUAL_BACKGROUND_TRACK_CHANGED = 'VIRTUAL_BACKGROUND_TRACK_CHANGED';

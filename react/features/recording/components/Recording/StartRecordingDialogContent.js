@@ -21,8 +21,8 @@ import {
 } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ColorPalette, StyleType } from '../../../base/styles';
-import { isVpaasMeeting } from '../../../billing-counter/functions';
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox';
+import { isVpaasMeeting } from '../../../jaas/functions';
 import { RECORDING_TYPES } from '../../constants';
 import { getRecordingDurationEstimation } from '../../functions';
 
@@ -52,7 +52,7 @@ type Props = {
     fileRecordingsServiceEnabled: boolean,
 
     /**
-     * Whether to show the possibility to share file recording with other people (e.g. meeting participants), based on
+     * Whether to show the possibility to share file recording with other people (e.g. Meeting participants), based on
      * the actual implementation on the backend.
      */
     fileRecordingsServiceSharingEnabled: boolean,
@@ -117,7 +117,7 @@ type Props = {
 /**
  * React Component for getting confirmation to start a file recording session.
  *
- * @extends Component
+ * @augments Component
  */
 class StartRecordingDialogContent extends Component<Props> {
     /**

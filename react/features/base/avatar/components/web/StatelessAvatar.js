@@ -2,7 +2,6 @@
 
 import React from 'react';
 
-import { translate } from '../../../../base/i18n';
 import { Icon } from '../../../icons';
 import AbstractStatelessAvatar, { type Props as AbstractProps } from '../AbstractStatelessAvatar';
 
@@ -14,7 +13,7 @@ type Props = AbstractProps & {
     className?: string,
 
     /**
-     * The default avatar URL if we want to override the app bundled one (e.g. AlwaysOnTop)
+     * The default avatar URL if we want to override the app bundled one (e.g. AlwaysOnTop).
      */
     defaultAvatar?: string,
 
@@ -34,23 +33,35 @@ type Props = AbstractProps & {
     testId?: string,
 
     /**
-     * Invoked to obtain translated strings.
+     * Indicates whether to load the avatar using CORS or not.
      */
-    t: Function
+    useCORS?: ?boolean
 };
 
 /**
  * Implements a stateless avatar component that renders an avatar purely from what gets passed through
  * props.
  */
-class StatelessAvatar extends AbstractStatelessAvatar<Props> {
+export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
+
+    /**
+     * Instantiates a new {@code Component}.
+     *
+     * @inheritdoc
+     */
+    constructor(props: Props) {
+        super(props);
+
+        this._onAvatarLoadError = this._onAvatarLoadError.bind(this);
+    }
+
     /**
      * Implements {@code Component#render}.
      *
      * @inheritdoc
      */
     render() {
-        const { initials, url } = this.props;
+        const { initials, url, useCORS } = this.props;
 
         if (this._isIcon(url)) {
             return (
@@ -70,11 +81,12 @@ class StatelessAvatar extends AbstractStatelessAvatar<Props> {
             return (
                 <div className = { this._getBadgeClassName() }>
                     <img
-                        alt = { this.props.t('profile.avatar') }
+                        alt = 'avatar'
                         className = { this._getAvatarClassName() }
+                        crossOrigin = { useCORS ? '' : undefined }
                         data-testid = { this.props.testId }
                         id = { this.props.id }
-                        onError = { this.props.onAvatarLoadError }
+                        onError = { this._onAvatarLoadError }
                         src = { url }
                         style = { this._getAvatarStyle() } />
                 </div>
@@ -111,7 +123,7 @@ class StatelessAvatar extends AbstractStatelessAvatar<Props> {
         return (
             <div className = { this._getBadgeClassName() }>
                 <img
-                    alt = { this.props.t('profile.avatar') }
+                    alt = 'avatar'
                     className = { this._getAvatarClassName('defaultAvatar') }
                     data-testid = { this.props.testId }
                     id = { this.props.id }
@@ -131,7 +143,7 @@ class StatelessAvatar extends AbstractStatelessAvatar<Props> {
         const { size } = this.props;
 
         return {
-            backgroundColor: color || undefined,
+            background: color || undefined,
             fontSize: size ? size * 0.5 : '180%',
             height: size || '100%',
             width: size || '100%'
@@ -163,7 +175,20 @@ class StatelessAvatar extends AbstractStatelessAvatar<Props> {
         return '';
     }
 
-    _isIcon: (?string | ?Object) => boolean
-}
+    _isIcon: (?string | ?Object) => boolean;
 
-export default translate(StatelessAvatar);
+    _onAvatarLoadError: () => void;
+
+    /**
+     * Handles avatar load errors.
+     *
+     * @returns {void}
+     */
+    _onAvatarLoadError() {
+        const { onAvatarLoadError, onAvatarLoadErrorParams } = this.props;
+
+        if (typeof onAvatarLoadError === 'function') {
+            onAvatarLoadError(onAvatarLoadErrorParams);
+        }
+    }
+}

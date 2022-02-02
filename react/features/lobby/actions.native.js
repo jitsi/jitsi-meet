@@ -1,25 +1,19 @@
 // @flow
 
-import { openDialog } from '../base/dialog';
+import { type Dispatch } from 'redux';
 
-import { DisableLobbyModeDialog, EnableLobbyModeDialog } from './components/native';
+import { appNavigate } from '../app/actions';
 
-export * from './actions.web';
-
-/**
- * Action to show the dialog to disable lobby mode.
- *
- * @returns {showNotification}
- */
-export function showDisableLobbyModeDialog() {
-    return openDialog(DisableLobbyModeDialog);
-}
+export * from './actions.any';
 
 /**
- * Action to show the dialog to enable lobby mode.
+ * Cancels the ongoing knocking and abandons the join flow.
  *
- * @returns {showNotification}
+ * @returns {Function}
  */
-export function showEnableLobbyModeDialog() {
-    return openDialog(EnableLobbyModeDialog);
+export function cancelKnocking() {
+    return async (dispatch: Dispatch<any>) => {
+        dispatch(appNavigate(undefined));
+    };
 }
+

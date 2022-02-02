@@ -7,7 +7,7 @@ import { IconHelp } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 import { openURLInBrowser } from '../../base/util';
-import { isVpaasMeeting } from '../../billing-counter/functions';
+import { isVpaasMeeting } from '../../jaas/functions';
 
 type Props = AbstractButtonProps & {
 
@@ -24,6 +24,7 @@ class HelpButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.help';
     icon = IconHelp;
     label = 'toolbar.help';
+    tooltip = 'toolbar.help';
 
     /**
      * Handles clicking / pressing the button, and opens a new window with the user documentation.
@@ -32,8 +33,10 @@ class HelpButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
+        const { _userDocumentationURL } = this.props;
+
         sendAnalytics(createToolbarEvent('help.pressed'));
-        openURLInBrowser(this.props._userDocumentationURL);
+        openURLInBrowser(_userDocumentationURL);
     }
 }
 

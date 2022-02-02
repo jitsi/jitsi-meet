@@ -10,9 +10,16 @@ jobs:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v1
       with:
-        node-version: '12.x'
+        node-version: '16.x'
     - run: npm install
+    - name: Check git status
+      run: git status
+    - name: Normalize lang files to ensure sorted
+      run: npm run lang-sort
+    - name: Check git diff
+      run: git diff
     - name: Check if the git repository is clean
       run: exit $( git status --porcelain --untracked-files=no | head -255 | wc -l )
     - run: npm run lint
+    - run: for file in lang/*.json; do npx --yes jsonlint -q $file || exit 1; done
     - run: make

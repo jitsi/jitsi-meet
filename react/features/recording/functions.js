@@ -65,7 +65,7 @@ export async function getRecordingLink(url: string, recordingSessionId: string, 
     });
     const json = await res.json();
 
-    return res.ok ? json.url : Promise.reject(json);
+    return res.ok ? json : Promise.reject(json);
 }
 
 /**

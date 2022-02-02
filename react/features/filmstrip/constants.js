@@ -1,6 +1,7 @@
 // @flow
 
 import { BoxModel } from '../base/styles';
+import { LAYOUTS } from '../video-layout/constants';
 
 /**
  * The size (height and width) of the small (not tile view) thumbnails.
@@ -46,6 +47,21 @@ export const TWO_COLUMN_BREAKPOINT = 1000;
 export const ASPECT_RATIO_BREAKPOINT = 500;
 
 /**
+ * Minimum height of tile for small screens.
+ */
+export const TILE_MIN_HEIGHT_SMALL = 150;
+
+/**
+ * Minimum height of tile for large screens.
+ */
+export const TILE_MIN_HEIGHT_LARGE = 200;
+
+/**
+ * Aspect ratio for portrait tiles. (height / width).
+ */
+export const TILE_PORTRAIT_ASPECT_RATIO = 1.3;
+
+/**
  * The default number of columns for tile view.
  */
 export const DEFAULT_MAX_COLUMNS = 5;
@@ -81,6 +97,7 @@ export const VIDEO_TEST_EVENTS = [
 
 /**
  * Display mode constant used when video is being displayed on the small video.
+ *
  * @type {number}
  * @constant
  */
@@ -89,59 +106,21 @@ export const DISPLAY_VIDEO = 0;
 /**
  * Display mode constant used when the user's avatar is being displayed on
  * the small video.
+ *
  * @type {number}
  * @constant
  */
 export const DISPLAY_AVATAR = 1;
 
 /**
- * Display mode constant used when neither video nor avatar is being displayed
- * on the small video. And we just show the display name.
- * @type {number}
- * @constant
- */
-export const DISPLAY_BLACKNESS_WITH_NAME = 2;
-
-/**
- * Display mode constant used when video is displayed and display name
- * at the same time.
- * @type {number}
- * @constant
- */
-export const DISPLAY_VIDEO_WITH_NAME = 3;
-
-/**
- * Display mode constant used when neither video nor avatar is being displayed
- * on the small video. And we just show the display name.
- * @type {number}
- * @constant
- */
-export const DISPLAY_AVATAR_WITH_NAME = 4;
-
-/**
  * Maps the display modes to class name that will be applied on the thumbnail container.
+ *
  * @type {Array<string>}
  * @constant
  */
 export const DISPLAY_MODE_TO_CLASS_NAME = [
     'display-video',
-    'display-avatar-only',
-    'display-name-on-black',
-    'display-name-on-video',
-    'display-avatar-with-name'
-];
-
-/**
- * Maps the display modes to string.
- * @type {Array<string>}
- * @constant
- */
-export const DISPLAY_MODE_TO_STRING = [
-    'video',
-    'avatar',
-    'blackness-with-name',
-    'video-with-name',
-    'avatar-with-name'
+    'display-avatar-only'
 ];
 
 /**
@@ -159,9 +138,28 @@ export const TILE_VERTICAL_MARGIN = 4;
 export const TILE_HORIZONTAL_MARGIN = 4;
 
 /**
+ * The vertical margin of the tile grid container.
+ *
+ * @type {number}
+ */
+export const TILE_VIEW_GRID_VERTICAL_MARGIN = 12;
+
+/**
+ * The horizontal margin of the tile grid container.
+ *
+ * @type {number}
+ */
+export const TILE_VIEW_GRID_HORIZONTAL_MARGIN = 12;
+
+/**
  * The height of the whole toolbar.
  */
 export const TOOLBAR_HEIGHT = 72;
+
+/**
+ * The height of the whole toolbar.
+ */
+export const TOOLBAR_HEIGHT_MOBILE = 60;
 
 /**
  * The size of the horizontal border of a thumbnail.
@@ -208,3 +206,39 @@ export const VERTICAL_FILMSTRIP_MIN_HORIZONTAL_MARGIN = 10;
  * @type {number}
  */
 export const HORIZONTAL_FILMSTRIP_MARGIN = 39;
+
+/**
+ * Sets after how many ms to show the thumbnail context menu on long touch on mobile.
+ *
+ * @type {number}
+ */
+export const SHOW_TOOLBAR_CONTEXT_MENU_AFTER = 600;
+
+/**
+ * The margin for each side of the tile view. Taken away from the available
+ * height and width for the tile container to display in.
+ *
+ * NOTE: Mobile specific.
+ *
+ * @private
+ * @type {number}
+ */
+export const TILE_MARGIN = 10;
+
+/**
+ * The popover position for the connection stats table.
+ */
+export const STATS_POPOVER_POSITION = {
+    [LAYOUTS.TILE_VIEW]: 'right-start',
+    [LAYOUTS.VERTICAL_FILMSTRIP_VIEW]: 'left-start',
+    [LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW]: 'top-end'
+};
+
+/**
+ * The tooltip position for the indicators on the thumbnail.
+ */
+export const INDICATORS_TOOLTIP_POSITION = {
+    [LAYOUTS.TILE_VIEW]: 'right',
+    [LAYOUTS.VERTICAL_FILMSTRIP_VIEW]: 'left',
+    [LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW]: 'top'
+};

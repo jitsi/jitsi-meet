@@ -34,6 +34,16 @@ export const CLEAR_MESSAGES = 'CLEAR_MESSAGES';
 export const CLOSE_CHAT = 'CLOSE_CHAT';
 
 /**
+ * The type of the action which signals to edit chat message.
+ *
+ * {
+ *     type: EDIT_MESSAGE,
+ *     message: Object
+ * }
+ */
+export const EDIT_MESSAGE = 'EDIT_MESSAGE';
+
+/**
  * The type of the action which signals to display the chat panel.
  *
  * {
@@ -64,3 +74,13 @@ export const SEND_MESSAGE = 'SEND_MESSAGE';
  * }
  */
 export const SET_PRIVATE_MESSAGE_RECIPIENT = 'SET_PRIVATE_MESSAGE_RECIPIENT';
+
+/**
+ * The type of action which signals the update a _isPollsTabFocused.
+ *
+ * {
+ *     isPollsTabFocused: boolean,
+ *     type: SET_PRIVATE_MESSAGE_RECIPIENT
+ * }
+ */
+export const SET_IS_POLL_TAB_FOCUSED = 'SET_IS_POLL_TAB_FOCUSED';

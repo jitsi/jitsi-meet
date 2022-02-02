@@ -29,7 +29,7 @@ import './styles';
 type Props = {
 
     /**
-     * {@link JitsiConference} that needs authentication - will hold a valid
+     * {@link JitsiConference} That needs authentication - will hold a valid
      * value in XMPP login + guest access mode.
      */
     _conference: Object,
@@ -167,6 +167,7 @@ class LoginDialog extends Component<Props, State> {
                         onChangeText = { this._onUsernameChange }
                         placeholder = { 'user@domain.com' }
                         placeholderTextColor = { PLACEHOLDER_COLOR }
+                        spellCheck = { false }
                         style = { _dialogStyles.field }
                         underlineColorAndroid = { FIELD_UNDERLINE }
                         value = { this.state.username } />
@@ -336,7 +337,7 @@ function _mapStateToProps(state) {
         progress,
         thenableWithCancel
     } = state['features/authentication'];
-    const { authRequired } = state['features/base/conference'];
+    const { authRequired, conference } = state['features/base/conference'];
     const { hosts: configHosts } = state['features/base/config'];
     const {
         connecting,
@@ -345,7 +346,7 @@ function _mapStateToProps(state) {
 
     return {
         ..._abstractMapStateToProps(state),
-        _conference: authRequired,
+        _conference: authRequired || conference,
         _configHosts: configHosts,
         _connecting: Boolean(connecting) || Boolean(thenableWithCancel),
         _error: connectionError || authenticateAndUpgradeRoleError,

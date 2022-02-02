@@ -76,9 +76,15 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.2.0'
+    // https://github.com/facebook/react-native/issues/31572
+    // We can update past 1.4.0 on RN 0.68
+    implementation ('androidx.appcompat:appcompat:1.3.1') {
+        version {
+            strictly '1.3.1'
+        }
+    }
 
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 
     if (!rootProject.ext.libreBuild) {
         implementation 'com.google.android.gms:play-services-auth:16.0.1'
@@ -109,6 +115,7 @@ gradle.projectsEvaluated {
         def dropboxActivity = """
           <activity
               android:configChanges="keyboard|orientation"
+              android:exported="true"
               android:launchMode="singleTask"
               android:name="com.dropbox.core.android.AuthActivity">
             <intent-filter>

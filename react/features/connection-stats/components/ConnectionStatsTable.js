@@ -1,7 +1,10 @@
 /* @flow */
 
+import { withStyles } from '@material-ui/styles';
 import React, { Component } from 'react';
 
+import { isMobileBrowser } from '../../../features/base/environment/utils';
+import ContextMenu from '../../base/components/context-menu/ContextMenu';
 import { translate } from '../../base/i18n';
 
 /**
@@ -20,7 +23,7 @@ type Props = {
      * {{
      *     download: Number,
      *     upload: Number
-     * }}
+     * }}.
      */
     bandwidth: Object,
 
@@ -29,7 +32,7 @@ type Props = {
      * {{
      *     download: Number,
      *     upload: Number
-     * }}
+     * }}.
      */
     bitrate: Object,
 
@@ -38,6 +41,11 @@ type Props = {
      * conference.
      */
     bridgeCount: number,
+
+    /**
+     * An object containing the CSS classes.
+     */
+    classes: Object,
 
     /**
      * Audio/video codecs in use for the connection.
@@ -60,6 +68,11 @@ type Props = {
     enableSaveLogs: boolean,
 
     /**
+     * Whether or not should display the "Show More" link.
+     */
+    disableShowMoreStats: boolean,
+
+    /**
      * The endpoint id of this client.
      */
     participantId: string,
@@ -68,7 +81,7 @@ type Props = {
      * Statistics related to frame rates for each ssrc.
      * {{
      *     [ ssrc ]: Number
-     * }}
+     * }}.
      */
     framerate: Object,
 
@@ -98,7 +111,7 @@ type Props = {
      * {{
      *     download: Number,
      *     upload: Number
-     * }}
+     * }}.
      */
     packetLoss: Object,
 
@@ -114,7 +127,7 @@ type Props = {
      *         height: Number,
      *         width: Number
      *     }
-     * }}
+     * }}.
      */
     resolution: Object,
 
@@ -157,10 +170,24 @@ function onClick(event) {
     event.stopPropagation();
 }
 
+const styles = theme => {
+    return {
+        contextMenu: {
+            position: 'relative',
+            marginTop: 0,
+            right: 'auto',
+            padding: `${theme.spacing(2)}px ${theme.spacing(1)}px`,
+            marginLeft: '4px',
+            marginRight: '4px',
+            marginBottom: '4px'
+        }
+    };
+};
+
 /**
  * React {@code Component} for displaying connection statistics.
  *
- * @extends Component
+ * @augments Component
  */
 class ConnectionStatsTable extends Component<Props> {
     /**
@@ -170,19 +197,25 @@ class ConnectionStatsTable extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { isLocalVideo, enableSaveLogs } = this.props;
+        const { isLocalVideo, enableSaveLogs, disableShowMoreStats, classes } = this.props;
+        const className = isMobileBrowser() ? 'connection-info connection-info__mobile' : 'connection-info';
 
         return (
-            <div
-                className = 'connection-info'
-                onClick = { onClick }>
-                { this._renderStatistics() }
-                <div className = 'connection-actions'>
-                    { isLocalVideo && enableSaveLogs ? this._renderSaveLogs() : null}
-                    { this._renderShowMoreLink() }
+            <ContextMenu
+                className = { classes.contextMenu }
+                hidden = { false }
+                inDrawer = { true }>
+                <div
+                    className = { className }
+                    onClick = { onClick }>
+                    { this._renderStatistics() }
+                    <div className = 'connection-actions'>
+                        { isLocalVideo && enableSaveLogs ? this._renderSaveLogs() : null}
+                        { !disableShowMoreStats && this._renderShowMoreLink() }
+                    </div>
+                    { this.props.shouldShowMore ? this._renderAdditionalStats() : null }
                 </div>
-                { this.props.shouldShowMore ? this._renderAdditionalStats() : null }
-            </div>
+            </ContextMenu>
         );
     }
 
@@ -832,4 +865,4 @@ function getStringFromArray(array) {
     return res;
 }
 
-export default translate(ConnectionStatsTable);
+export default translate(withStyles(styles)(ConnectionStatsTable));

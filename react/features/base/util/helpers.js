@@ -185,3 +185,19 @@ function parseShorthandColor(color) {
 
     return [ r, g, b ];
 }
+
+/**
+ * Sorts an object by a sort function, same functionality as array.sort().
+ *
+ * @param {Object} object - The data object.
+ * @param {Function} callback - The sort function.
+ * @returns {void}
+ */
+export function objectSort(object: Object, callback: Function) {
+    return Object.entries(object)
+        .sort(([ , a ], [ , b ]) => callback(a, b))
+        .reduce((row, [ key, value ]) => {
+            return { ...row,
+                [key]: value };
+        }, {});
+}

@@ -11,6 +11,7 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { Dialog } from '../../base/dialog';
+import { isMobileBrowser } from '../../base/environment/utils';
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
 import { cancelFeedback, submitFeedback } from '../actions';
@@ -24,8 +25,6 @@ const scoreAnimationClass
 /**
  * The scores to display for selecting. The score is the index in the array and
  * the value of the index is a translation key used for display in the dialog.
- *
- * @types {string[]}
  */
 const SCORES = [
     'feedback.veryBad',
@@ -34,6 +33,10 @@ const SCORES = [
     'feedback.good',
     'feedback.veryGood'
 ];
+
+type Scrollable = {
+    scroll: Function
+}
 
 /**
  * The type of the React {@code Component} props of {@link FeedbackDialog}.
@@ -104,7 +107,7 @@ type State = {
  * conference quality, write a message describing the experience, and submit
  * the feedback.
  *
- * @extends Component
+ * @augments Component
  */
 class FeedbackDialog extends Component<Props, State> {
     /**
@@ -170,6 +173,12 @@ class FeedbackDialog extends Component<Props, State> {
         this._onScoreContainerMouseLeave
             = this._onScoreContainerMouseLeave.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
+
+        // On some mobile browsers opening Feedback dialog scrolls down the whole content because of the keyboard.
+        // By scrolling to the top we prevent hiding the feedback stars so the user knows those exist.
+        this._onScrollTop = (node: ?Scrollable) => {
+            node && node.scroll && node.scroll(0, 0);
+        };
     }
 
     /**
@@ -222,9 +231,11 @@ class FeedbackDialog extends Component<Props, State> {
                         key = { index }
                         onClick = { config._onClick }
                         onKeyPress = { config._onKeyPres }
-                        onMouseOver = { config._onMouseOver }
                         role = 'button'
-                        tabIndex = { 0 }>
+                        tabIndex = { 0 }
+                        { ...(isMobileBrowser() ? {} : {
+                            onMouseOver: config._onMouseOver
+                        }) }>
                         { isFilled
                             ? <StarFilledIcon
                                 label = 'star-filled'
@@ -241,6 +252,7 @@ class FeedbackDialog extends Component<Props, State> {
             <Dialog
                 okKey = 'dialog.Submit'
                 onCancel = { this._onCancel }
+                onDialogRef = { this._onScrollTop }
                 onSubmit = { this._onSubmit }
                 titleKey = 'feedback.rateExperience'>
                 <div className = 'feedback-dialog'>
@@ -361,6 +373,8 @@ class FeedbackDialog extends Component<Props, State> {
 
         return true;
     }
+
+    _onScrollTop: (node: ?Scrollable) => void;
 }
 
 /**

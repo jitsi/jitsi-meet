@@ -1,6 +1,5 @@
 // @flow
 
-import type { PanResponderInstance } from 'PanResponder';
 import React, { Component } from 'react';
 import { PanResponder, PixelRatio, View } from 'react-native';
 import { type Dispatch } from 'redux';
@@ -119,12 +118,12 @@ class VideoTransform extends Component<Props, State> {
     /**
      * The gesture handler object.
      */
-    gestureHandlers: PanResponderInstance;
+    gestureHandlers: Object;
 
     /**
      * The initial distance of the fingers on pinch start.
      */
-    initialDistance: number;
+    initialDistance: ?number;
 
     /**
      * The initial position of the finger on touch start.
@@ -272,7 +271,7 @@ class VideoTransform extends Component<Props, State> {
         };
     }
 
-    _didMove: Object => boolean
+    _didMove: Object => boolean;
 
     /**
      * Determines if there was large enough movement to be handled.
@@ -315,7 +314,7 @@ class VideoTransform extends Component<Props, State> {
         return Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
     }
 
-    _getTouchPosition: Object => Object
+    _getTouchPosition: Object => Object;
 
     /**
      * Calculates the position of the touch event.
@@ -331,7 +330,7 @@ class VideoTransform extends Component<Props, State> {
         };
     }
 
-    _getTransformStyle: () => Object
+    _getTransformStyle: () => Object;
 
     /**
      * Generates a transform style object to be used on the component.
@@ -460,7 +459,7 @@ class VideoTransform extends Component<Props, State> {
         }
     }
 
-    _onGesture: (string, ?Object | number) => void
+    _onGesture: (string, ?Object | number) => void;
 
     /**
      * Handles gestures and converts them to transforms.
@@ -515,7 +514,7 @@ class VideoTransform extends Component<Props, State> {
         this.lastTap = 0;
     }
 
-    _onLayout: Object => void
+    _onLayout: Object => void;
 
     /**
      * Callback for the onLayout of the component.
@@ -535,7 +534,7 @@ class VideoTransform extends Component<Props, State> {
         });
     }
 
-    _onMoveShouldSetPanResponder: (Object, Object) => boolean
+    _onMoveShouldSetPanResponder: (Object, Object) => boolean;
 
     /**
      * Function to decide whether the responder should respond to a move event.
@@ -551,7 +550,7 @@ class VideoTransform extends Component<Props, State> {
                 || gestureState.numberActiveTouches === 2);
     }
 
-    _onPanResponderGrant: (Object, Object) => void
+    _onPanResponderGrant: (Object, Object) => void;
 
     /**
      * Calculates the initial touch distance.
@@ -571,7 +570,7 @@ class VideoTransform extends Component<Props, State> {
         }
     }
 
-    _onPanResponderMove: (Object, Object) => void
+    _onPanResponderMove: (Object, Object) => void;
 
     /**
      * Handles the PanResponder move (touch move) event.
@@ -615,7 +614,7 @@ class VideoTransform extends Component<Props, State> {
         }
     }
 
-    _onPanResponderRelease: () => void
+    _onPanResponderRelease: () => void;
 
     /**
      * Handles the PanResponder gesture end event.
@@ -628,10 +627,13 @@ class VideoTransform extends Component<Props, State> {
             this._onGesture('press');
         }
         delete this.initialDistance;
-        delete this.initialPosition;
+        this.initialPosition = {
+            x: 0,
+            y: 0
+        };
     }
 
-    _onStartShouldSetPanResponder: () => boolean
+    _onStartShouldSetPanResponder: () => boolean;
 
     /**
      * Function to decide whether the responder should respond to a start

@@ -21,6 +21,11 @@ type Props = {
     dispatch: Dispatch<any>,
 
     /**
+     * Whether the polls feature is enabled or not.
+     */
+    isPollsEnabled: boolean,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -40,7 +45,7 @@ type State = {
 /**
  * React Component for requesting the local participant to set a display name.
  *
- * @extends Component
+ * @augments Component
  */
 class DisplayNameForm extends Component<Props, State> {
     state = {
@@ -69,7 +74,7 @@ class DisplayNameForm extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { t } = this.props;
+        const { isPollsEnabled, t } = this.props;
 
         return (
             <div id = 'nickname'>
@@ -80,7 +85,7 @@ class DisplayNameForm extends Component<Props, State> {
                         autoFocus = { true }
                         compact = { true }
                         id = 'nickinput'
-                        label = { t('chat.nickname.title') }
+                        label = { t(isPollsEnabled ? 'chat.nickname.titleWithPolls' : 'chat.nickname.title') }
                         onChange = { this._onDisplayNameChange }
                         placeholder = { t('chat.nickname.popover') }
                         shouldFitContainer = { true }

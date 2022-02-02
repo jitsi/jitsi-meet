@@ -43,7 +43,7 @@ type Props = {
     children?: React$Node,
 
     /**
-     * item containing data to be rendered
+     * Item containing data to be rendered.
      */
     item: Item,
 

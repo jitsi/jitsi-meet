@@ -1,0 +1,42 @@
+.lobby-screen {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 26px;
+
+    &-content {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+
+        .spinner {
+            margin: 8px;
+        }
+
+        .joining-message {
+            color: white;
+            margin: 24px auto;
+            text-align: center;
+        }
+    }
+}
+
+#lobby-section {
+    display: flex;
+    flex-direction: column;
+
+    .description {
+        font-size: 13px;
+    }
+
+    .control-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-top: 15px;
+
+        label {
+            font-size: 14px;
+            font-weight: bold;
+        }
+    }
+}

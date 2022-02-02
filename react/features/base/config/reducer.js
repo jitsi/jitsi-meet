@@ -2,6 +2,7 @@
 
 import _ from 'lodash';
 
+import { CONFERENCE_INFO } from '../../conference/components/constants';
 import { equals, ReducerRegistry } from '../redux';
 
 import {
@@ -56,6 +57,17 @@ const INITIAL_RN_STATE = {
     }
 };
 
+/**
+ * Mapping between old configs controlling the conference info headers visibility and the
+ * new configs. Needed in order to keep backwards compatibility.
+ */
+const CONFERENCE_HEADER_MAPPING = {
+    hideConferenceTimer: [ 'conference-timer' ],
+    hideConferenceSubject: [ 'subject' ],
+    hideParticipantsStats: [ 'participants-count' ],
+    hideRecordingLabel: [ 'recording', 'local-recording' ]
+};
+
 ReducerRegistry.register('features/base/config', (state = _getInitialState(), action) => {
     switch (action.type) {
     case UPDATE_CONFIG:
@@ -66,11 +78,11 @@ ReducerRegistry.register('features/base/config', (state = _getInitialState(), ac
             error: undefined,
 
             /**
-                * The URL of the location associated with/configured by this
-                * configuration.
-                *
-                * @type URL
-                */
+            * The URL of the location associated with/configured by this
+            * configuration.
+            *
+            * @type URL
+            */
             locationURL: action.locationURL
         };
 
@@ -84,11 +96,11 @@ ReducerRegistry.register('features/base/config', (state = _getInitialState(), ac
         if (state.locationURL === action.locationURL) {
             return {
                 /**
-                    * The {@link Error} which prevented the loading of the
-                    * configuration of the associated {@code locationURL}.
-                    *
-                    * @type Error
-                    */
+                * The {@link Error} which prevented the loading of the
+                * configuration of the associated {@code locationURL}.
+                *
+                * @type Error
+                */
                 error: action.error
             };
         }
@@ -173,6 +185,27 @@ function _setConfig(state, { config }) {
 }
 
 /**
+ * Processes the conferenceInfo object against the defaults.
+ *
+ * @param {Object} config - The old config.
+ * @returns {Object} The processed conferenceInfo object.
+ */
+function _getConferenceInfo(config) {
+    const { conferenceInfo } = config;
+
+    if (conferenceInfo) {
+        return {
+            alwaysVisible: conferenceInfo.alwaysVisible ?? [ ...CONFERENCE_INFO.alwaysVisible ],
+            autoHide: conferenceInfo.autoHide ?? [ ...CONFERENCE_INFO.autoHide ]
+        };
+    }
+
+    return {
+        ...CONFERENCE_INFO
+    };
+}
+
+/**
  * Constructs a new config {@code Object}, if necessary, out of a specific
  * config {@code Object} which is in the latest format supported by jitsi-meet.
  * Such a translation from an old config format to a new/the latest config
@@ -194,12 +227,123 @@ function _translateLegacyConfig(oldValue: Object) {
         newValue.toolbarButtons = interfaceConfig.TOOLBAR_BUTTONS;
     }
 
+    if (!oldValue.toolbarConfig) {
+        oldValue.toolbarConfig = {};
+    }
+
+    if (typeof oldValue.toolbarConfig.alwaysVisible !== 'boolean'
+        && typeof interfaceConfig === 'object'
+        && typeof interfaceConfig.TOOLBAR_ALWAYS_VISIBLE === 'boolean') {
+        newValue.toolbarConfig.alwaysVisible = interfaceConfig.TOOLBAR_ALWAYS_VISIBLE;
+    }
+
+    if (typeof oldValue.toolbarConfig.initialTimeout !== 'number'
+        && typeof interfaceConfig === 'object'
+        && typeof interfaceConfig.INITIAL_TOOLBAR_TIMEOUT === 'number') {
+        newValue.toolbarConfig.initialTimeout = interfaceConfig.INITIAL_TOOLBAR_TIMEOUT;
+    }
+
+    if (typeof oldValue.toolbarConfig.timeout !== 'number'
+        && typeof interfaceConfig === 'object'
+        && typeof interfaceConfig.TOOLBAR_TIMEOUT === 'number') {
+        newValue.toolbarConfig.timeout = interfaceConfig.TOOLBAR_TIMEOUT;
+    }
+
+    const filteredConferenceInfo = Object.keys(CONFERENCE_HEADER_MAPPING).filter(key => oldValue[key]);
+
+    if (filteredConferenceInfo.length) {
+        newValue.conferenceInfo = _getConferenceInfo(oldValue);
+
+        filteredConferenceInfo.forEach(key => {
+            // hideRecordingLabel does not mean not render it at all, but autoHide it
+            if (key === 'hideRecordingLabel') {
+                newValue.conferenceInfo.alwaysVisible
+                    = newValue.conferenceInfo.alwaysVisible.filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
+                newValue.conferenceInfo.autoHide
+                    = _.union(newValue.conferenceInfo.autoHide, CONFERENCE_HEADER_MAPPING[key]);
+            } else {
+                newValue.conferenceInfo.alwaysVisible
+                    = newValue.conferenceInfo.alwaysVisible.filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
+                newValue.conferenceInfo.autoHide
+                    = newValue.conferenceInfo.autoHide.filter(c => !CONFERENCE_HEADER_MAPPING[key].includes(c));
+            }
+        });
+    }
+
+    if (!oldValue.connectionIndicators
+            && typeof interfaceConfig === 'object'
+            && (interfaceConfig.hasOwnProperty('CONNECTION_INDICATOR_DISABLED')
+                || interfaceConfig.hasOwnProperty('CONNECTION_INDICATOR_AUTO_HIDE_ENABLED')
+                || interfaceConfig.hasOwnProperty('CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT'))) {
+        newValue.connectionIndicators = {
+            disabled: interfaceConfig.CONNECTION_INDICATOR_DISABLED,
+            autoHide: interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_ENABLED,
+            autoHideTimeout: interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT
+        };
+    }
+
+    newValue.prejoinConfig = oldValue.prejoinConfig || {};
+    if (oldValue.hasOwnProperty('prejoinPageEnabled')
+        && !newValue.prejoinConfig.hasOwnProperty('enabled')
+    ) {
+        newValue.prejoinConfig.enabled = oldValue.prejoinPageEnabled;
+    }
+
+    newValue.disabledSounds = newValue.disabledSounds || [];
+
+    if (oldValue.disableJoinLeaveSounds) {
+        newValue.disabledSounds.unshift('PARTICIPANT_LEFT_SOUND', 'PARTICIPANT_JOINED_SOUND');
+    }
+
+    if (oldValue.disableRecordAudioNotification) {
+        newValue.disabledSounds.unshift(
+            'RECORDING_ON_SOUND',
+            'RECORDING_OFF_SOUND',
+            'LIVE_STREAMING_ON_SOUND',
+            'LIVE_STREAMING_OFF_SOUND'
+        );
+    }
+
+    if (oldValue.disableIncomingMessageSound) {
+        newValue.disabledSounds.unshift('INCOMING_MSG_SOUND');
+    }
+
     if (oldValue.stereo || oldValue.opusMaxAverageBitrate) {
         newValue.audioQuality = {
             opusMaxAverageBitrate: oldValue.audioQuality?.opusMaxAverageBitrate ?? oldValue.opusMaxAverageBitrate,
             stereo: oldValue.audioQuality?.stereo ?? oldValue.stereo
         };
     }
+
+    if (oldValue.disableModeratorIndicator === undefined
+        && typeof interfaceConfig === 'object'
+        && interfaceConfig.hasOwnProperty('DISABLE_FOCUS_INDICATOR')) {
+        newValue.disableModeratorIndicator = interfaceConfig.DISABLE_FOCUS_INDICATOR;
+    }
+
+    newValue.e2ee = newValue.e2ee || {};
+
+    if (oldValue.e2eeLabels) {
+        newValue.e2ee.e2eeLabels = oldValue.e2eeLabels;
+    }
+
+    if (oldValue.defaultLocalDisplayName === undefined
+        && typeof interfaceConfig === 'object'
+        && interfaceConfig.hasOwnProperty('DEFAULT_LOCAL_DISPLAY_NAME')) {
+        newValue.defaultLocalDisplayName = interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME;
+    }
+
+    newValue.defaultLocalDisplayName
+        = newValue.defaultLocalDisplayName || 'me';
+
+    if (oldValue.defaultRemoteDisplayName === undefined
+        && typeof interfaceConfig === 'object'
+        && interfaceConfig.hasOwnProperty('DEFAULT_REMOTE_DISPLAY_NAME')) {
+        newValue.defaultRemoteDisplayName = interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
+    }
+
+    newValue.defaultRemoteDisplayName
+        = newValue.defaultRemoteDisplayName || 'Fellow Jitster';
 
     return newValue;
 }

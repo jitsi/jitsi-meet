@@ -1,5 +1,6 @@
 // @flow
 
+import { isNameReadOnly } from '../base/config';
 import { SERVER_URL_CHANGE_ENABLED, getFeatureFlag } from '../base/flags';
 import { i18next, DEFAULT_LANGUAGE, LANGUAGES } from '../base/i18n';
 import { createLocalTrack } from '../base/lib-jitsi-meet/functions';
@@ -8,8 +9,12 @@ import {
     isLocalParticipantModerator
 } from '../base/participants';
 import { toState } from '../base/redux';
+import { getHideSelfView } from '../base/settings';
 import { parseStandardURIString } from '../base/util';
 import { isFollowMeActive } from '../follow-me';
+import { isReactionsEnabled } from '../reactions/functions.any';
+
+import { SS_DEFAULT_FRAME_RATE, SS_SUPPORTED_FRAMERATES } from './constants';
 
 declare var interfaceConfig: Object;
 
@@ -75,14 +80,25 @@ export function normalizeUserInputURL(url: string) {
 }
 
 /**
- * Used for web. Returns whether or not only Device Selection is configured to
- * display as a setting.
+ * Returns the notification types and their user selected configuration.
  *
- * @returns {boolean}
+ * @param {(Function|Object)} stateful -The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {Object} - The section of notifications to be configured.
  */
-export function shouldShowOnlyDeviceSelection() {
-    return interfaceConfig.SETTINGS_SECTIONS.length === 1
-        && isSettingEnabled('devices');
+export function getNotificationsMap(stateful: Object | Function) {
+    const state = toState(stateful);
+    const { notifications } = state['features/base/config'];
+    const { userSelectedNotifications } = state['features/base/settings'];
+
+    return Object.keys(userSelectedNotifications)
+        .filter(key => !notifications || notifications.includes(key))
+        .reduce((notificationsMap, key) => {
+            return {
+                ...notificationsMap,
+                [key]: userSelectedNotifications[key]
+            };
+        }, {});
 }
 
 /**
@@ -95,34 +111,75 @@ export function shouldShowOnlyDeviceSelection() {
  */
 export function getMoreTabProps(stateful: Object | Function) {
     const state = toState(stateful);
+    const framerate = state['features/screen-share'].captureFrameRate ?? SS_DEFAULT_FRAME_RATE;
     const language = i18next.language || DEFAULT_LANGUAGE;
+    const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
+    const enabledNotifications = getNotificationsMap(stateful);
+
+    // when self view is controlled by the config we hide the settings
+    const { disableSelfView, disableSelfViewSettings } = state['features/base/config'];
+
+    return {
+        currentFramerate: framerate,
+        currentLanguage: language,
+        desktopShareFramerates: SS_SUPPORTED_FRAMERATES,
+        disableHideSelfView: disableSelfViewSettings || disableSelfView,
+        hideSelfView: getHideSelfView(state),
+        languages: LANGUAGES,
+        showLanguageSettings: configuredTabs.includes('language'),
+        enabledNotifications,
+        showNotificationsSettings: Object.keys(enabledNotifications).length > 0,
+        showPrejoinPage: !state['features/base/settings'].userSelectedSkipPrejoin,
+        showPrejoinSettings: state['features/base/config'].prejoinConfig?.enabled
+    };
+}
+
+/**
+ * Returns the properties for the "More" tab from settings dialog from Redux
+ * state.
+ *
+ * @param {(Function|Object)} stateful -The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {Object} - The properties for the "More" tab from settings dialog.
+ */
+export function getModeratorTabProps(stateful: Object | Function) {
+    const state = toState(stateful);
     const {
         conference,
         followMeEnabled,
         startAudioMutedPolicy,
-        startVideoMutedPolicy
+        startVideoMutedPolicy,
+        startReactionsMuted
     } = state['features/base/conference'];
+    const { disableReactionsModeration } = state['features/base/config'];
     const followMeActive = isFollowMeActive(state);
-    const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
+    const showModeratorSettings = shouldShowModeratorSettings(state);
 
     // The settings sections to display.
-    const showModeratorSettings = Boolean(
-        conference
-            && configuredTabs.includes('moderator')
-            && isLocalParticipantModerator(state));
-
     return {
-        currentLanguage: language,
+        showModeratorSettings: Boolean(conference && showModeratorSettings),
+        disableReactionsModeration: Boolean(disableReactionsModeration),
         followMeActive: Boolean(conference && followMeActive),
         followMeEnabled: Boolean(conference && followMeEnabled),
-        languages: LANGUAGES,
-        showLanguageSettings: configuredTabs.includes('language'),
-        showModeratorSettings,
-        showPrejoinSettings: state['features/base/config'].prejoinPageEnabled,
-        showPrejoinPage: !state['features/base/settings'].userSelectedSkipPrejoin,
+        startReactionsMuted: Boolean(conference && startReactionsMuted),
         startAudioMuted: Boolean(conference && startAudioMutedPolicy),
         startVideoMuted: Boolean(conference && startVideoMutedPolicy)
     };
+}
+
+/**
+ * Returns true if moderator tab in settings should be visible/accessible.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {boolean} True to indicate that moderator tab should be visible, false otherwise.
+ */
+export function shouldShowModeratorSettings(stateful: Object | Function) {
+    const state = toState(stateful);
+
+    return Boolean(
+        isSettingEnabled('moderator')
+        && isLocalParticipantModerator(state));
 }
 
 /**
@@ -141,13 +198,48 @@ export function getProfileTabProps(stateful: Object | Function) {
         authLogin,
         conference
     } = state['features/base/conference'];
+    const { hideEmailInSettings } = state['features/base/config'];
     const localParticipant = getLocalParticipant(state);
 
     return {
         authEnabled: Boolean(conference && authEnabled),
         authLogin,
         displayName: localParticipant.name,
-        email: localParticipant.email
+        email: localParticipant.email,
+        readOnlyName: isNameReadOnly(state),
+        hideEmailInSettings
+    };
+}
+
+/**
+ * Returns the properties for the "Sounds" tab from settings dialog from Redux
+ * state.
+ *
+ * @param {(Function|Object)} stateful -The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {Object} - The properties for the "Sounds" tab from settings
+ * dialog.
+ */
+export function getSoundsTabProps(stateful: Object | Function) {
+    const state = toState(stateful);
+    const {
+        soundsIncomingMessage,
+        soundsParticipantJoined,
+        soundsParticipantLeft,
+        soundsTalkWhileMuted,
+        soundsReactions
+    } = state['features/base/settings'];
+    const enableReactions = isReactionsEnabled(state);
+    const moderatorMutedSoundsReactions = state['features/base/conference'].startReactionsMuted ?? false;
+
+    return {
+        soundsIncomingMessage,
+        soundsParticipantJoined,
+        soundsParticipantLeft,
+        soundsTalkWhileMuted,
+        soundsReactions,
+        enableReactions,
+        moderatorMutedSoundsReactions
     };
 }
 

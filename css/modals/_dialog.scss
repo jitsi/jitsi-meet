@@ -122,9 +122,6 @@
         margin-bottom: 8px;
     }
 }
-.modal-dialog-footer {
-    font-size: $modalButtonFontSize;
-}
 
 /**
  * Styling inline dialog errors.
@@ -142,4 +139,13 @@
         display: block;
         margin: 16px auto 0 auto;
     }
+}
+
+/**
+ * Styling shared video dialog errors.
+ */
+.shared-video-dialog-error {
+    color: #E04757;
+    margin-top: 2px;
+    display: block;
 }

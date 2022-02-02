@@ -6,11 +6,8 @@
 }
 
 .horizontal-filmstrip .filmstrip {
-    bottom: 0;
-    right: 0;
     padding: 10px 5px;
     @extend %align-right;
-    transition: bottom .3s;
     z-index: $filmstripVideosZ;
     box-sizing: border-box;
     width: 100%;
@@ -58,11 +55,13 @@
         }
 
         &.hidden {
-            bottom: calc(-196px - #{$newToolbarSizeWithPadding});
+            bottom: calc(-196px - #{$newToolbarSizeWithPadding} + 50px);
         }
     }
 
     .remote-videos {
+        overscroll-behavior: contain;
+
         & > div {
             transition: opacity 1s;
             position: absolute;
