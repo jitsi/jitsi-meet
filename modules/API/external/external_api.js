@@ -27,17 +27,21 @@ const ALWAYS_ON_TOP_FILENAMES = [
  * commands expected by jitsi-meet.
  */
 const commands = {
+    addBreakoutRoom: 'add-breakout-room',
     answerKnockingParticipant: 'answer-knocking-participant',
     approveVideo: 'approve-video',
     askToUnmute: 'ask-to-unmute',
+    autoAssignToBreakoutRooms: 'auto-assign-to-breakout-rooms',
     avatarUrl: 'avatar-url',
     cancelPrivateChat: 'cancel-private-chat',
+    closeBreakoutRoom: 'close-breakout-room',
     displayName: 'display-name',
     e2eeKey: 'e2ee-key',
     email: 'email',
     toggleLobby: 'toggle-lobby',
     hangup: 'video-hangup',
     initiatePrivateChat: 'initiate-private-chat',
+    joinBreakoutRoom: 'join-breakout-room',
     localSubject: 'local-subject',
     kickParticipant: 'kick-participant',
     muteEveryone: 'mute-everyone',
@@ -45,9 +49,11 @@ const commands = {
     password: 'password',
     pinParticipant: 'pin-participant',
     rejectParticipant: 'reject-participant',
+    removeBreakoutRoom: 'remove-breakout-room',
     resizeLargeVideo: 'resize-large-video',
     sendChatMessage: 'send-chat-message',
     sendEndpointTextMessage: 'send-endpoint-text-message',
+    sendParticipantToRoom: 'send-participant-to-room',
     sendTones: 'send-tones',
     setFollowMe: 'set-follow-me',
     setLargeVideoParticipant: 'set-large-video-participant',
@@ -1038,6 +1044,17 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     isVideoMuted() {
         return this._transport.sendRequest({
             name: 'is-video-muted'
+        });
+    }
+
+    /**
+     * Returns the list of breakout rooms.
+     *
+     * @returns {Promise} Resolves with the list of breakout rooms.
+     */
+    listBreakoutRooms() {
+        return this._transport.sendRequest({
+            name: 'list-breakout-rooms'
         });
     }
 
