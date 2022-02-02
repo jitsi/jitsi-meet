@@ -548,7 +548,7 @@
         "joiningWithPasswordTitle": "Po hyhet me fjalëkalim…",
         "knockButton": "Kërko të Hyhet",
         "knockTitle": "Dikush dëshiron të hyjë në takim",
-BESNIK        "knockingParticipantList": "Knocking participant list",
+        "knockingParticipantList": "Listë pjesëmarrësish që duan të hyjnë",
         "nameField": "Jepni emrin tuaj",
         "notificationLobbyAccessDenied": "Hyrja e {{targetParticipantName}} është hedhur poshtë nga {{originParticipantName}}",
         "notificationLobbyAccessGranted": "{{targetParticipantName}} është lejuar të hyjë nga {{originParticipantName}}",
