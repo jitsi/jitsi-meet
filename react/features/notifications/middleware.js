@@ -101,13 +101,11 @@ MiddlewareRegistry.register(store => next => action => {
     case SHOW_NOTIFICATION: {
         if (navigator.product !== 'ReactNative') {
             if (timers.has(action.uid)) {
-
                 const timer = timers.get(action.uid);
 
                 clearTimeout(timer);
                 timers.delete(action.uid);
                 createTimeoutId(action, dispatch);
-
             } else {
                 createTimeoutId(action, dispatch);
             }
@@ -118,7 +116,6 @@ MiddlewareRegistry.register(store => next => action => {
     }
     case HIDE_NOTIFICATION: {
         if (navigator.product !== 'ReactNative') {
-
             const timer = timers.get(action.uid);
 
             clearTimeout(timer);
