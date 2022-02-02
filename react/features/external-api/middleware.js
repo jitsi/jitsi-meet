@@ -88,7 +88,9 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_JOINED: {
         const state = store.getState();
         const { defaultLocalDisplayName } = state['features/base/config'];
+        const { room } = state['features/base/conference'];
         const { loadableAvatarUrl, name, id } = getLocalParticipant(state);
+        const breakoutRoom = APP.conference.roomName.toString() !== room.toLowerCase();
 
         // we use APP.conference.roomName as we do not update state['features/base/conference'].room when
         // moving between rooms in case of breakout rooms and it stays always with the name of the main room
@@ -101,7 +103,8 @@ MiddlewareRegistry.register(store => next => action => {
                     name,
                     defaultLocalDisplayName
                 ),
-                avatarURL: loadableAvatarUrl
+                avatarURL: loadableAvatarUrl,
+                breakoutRoom
             }
         );
         break;

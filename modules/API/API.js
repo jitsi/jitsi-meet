@@ -1148,8 +1148,8 @@ class API {
      *
      * @param {string} roomName - The room name.
      * @param {string} id - The id of the local user.
-     * @param {Object} props - The display name and avatar URL of the local
-     * user.
+     * @param {Object} props - The display name, the avatar URL of the local
+     * user and the type of the room.
      * @returns {void}
      */
     notifyConferenceJoined(roomName: string, id: string, props: Object) {
