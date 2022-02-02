@@ -32,7 +32,8 @@ import {
     ICON_INFO,
     ICON_USERS,
     JITSI_LOGO,
-    TRACK_COLOR
+    TRACK_COLOR,
+    LOCAL_RECORDING
 } from './styles';
 
 type Props = {
@@ -140,6 +141,20 @@ class StartRecordingDialogContent extends Component<Props> {
         this._onSignOut = this._onSignOut.bind(this);
         this._onDropboxSwitchChange = this._onDropboxSwitchChange.bind(this);
         this._onRecordingServiceSwitchChange = this._onRecordingServiceSwitchChange.bind(this);
+        this._onLocalRecordingSwitchChange = this._onLocalRecordingSwitchChange.bind(this);
+    }
+
+    /**
+     * Implements the Component's componentDidMount method.
+     *
+     * @inheritdoc
+     */
+    componentDidMount() {
+        if (this._renderNoIntegrationsContent() === null
+            && this._renderIntegrationsContent() === null
+            && this._renderFileSharingContent() === null) {
+            this._onLocalRecordingSwitchChange();
+        }
     }
 
     /**
@@ -159,6 +174,7 @@ class StartRecordingDialogContent extends Component<Props> {
                 { this._renderFileSharingContent() }
                 { this._renderUploadToTheCloudInfo() }
                 { this._renderIntegrationsContent() }
+                { this._renderLocalRecordingContent() }
             </Container>
         );
     }
@@ -263,10 +279,10 @@ class StartRecordingDialogContent extends Component<Props> {
      */
     _renderNoIntegrationsContent() {
 
-        // show the non integrations part only if fileRecordingsServiceEnabled
-        // is enabled or when there are no integrations enabled
-        if (!(this.props.fileRecordingsServiceEnabled
-            || !this.props.integrationsEnabled)) {
+        // hide the non integrations part only if fileRecordingsServiceEnabled
+        // is disabled or when there are integrations enabled
+        if (!this.props.fileRecordingsServiceEnabled
+            || this.props.integrationsEnabled) {
             return null;
         }
 
@@ -407,6 +423,7 @@ class StartRecordingDialogContent extends Component<Props> {
 
     _onDropboxSwitchChange: () => void;
     _onRecordingServiceSwitchChange: () => void;
+    _onLocalRecordingSwitchChange: () => void;
 
     /**
      * Handler for onValueChange events from the Switch component.
@@ -456,6 +473,26 @@ class StartRecordingDialogContent extends Component<Props> {
         if (!isTokenValid) {
             this._onSignIn();
         }
+    }
+
+    /**
+     * Handler for onValueChange events from the Switch component.
+     *
+     * @returns {void}
+     */
+    _onLocalRecordingSwitchChange() {
+        const {
+            onChange,
+            selectedRecordingService
+        } = this.props;
+
+        // act like group, cannot toggle off
+        if (selectedRecordingService
+            === RECORDING_TYPES.LOCAL) {
+            return;
+        }
+
+        onChange(RECORDING_TYPES.LOCAL);
     }
 
     /**
@@ -535,6 +572,51 @@ class StartRecordingDialogContent extends Component<Props> {
     _onSignOut() {
         sendAnalytics(createRecordingDialogEvent('start', 'signOut.button'));
         this.props.dispatch(updateDropboxToken());
+    }
+
+    _renderLocalRecordingContent: () => void;
+
+    /**
+     * Renders the content for local recordings.
+     *
+     * @protected
+     * @returns {React$Component}
+     */
+    _renderLocalRecordingContent() {
+        const { _styles: styles, isValidating, t, _dialogStyles } = this.props;
+
+        return (
+            <Container>
+                <Container
+                    className = 'recording-header recording-header-line'
+                    style = { styles.header }>
+                    <Container
+                        className = 'recording-icon-container'>
+                        <Image
+                            className = 'recording-icon'
+                            src = { LOCAL_RECORDING }
+                            style = { styles.recordingIcon } />
+                    </Container>
+                    <Text
+                        className = 'recording-title'
+                        style = {{
+                            ..._dialogStyles.text,
+                            ...styles.title
+                        }}>
+                        { t('recording.saveLocalRecording') }
+                    </Text>
+                    <Switch
+                        className = 'recording-switch'
+                        disabled = { isValidating }
+                        onValueChange = { this._onLocalRecordingSwitchChange }
+                        style = { styles.switch }
+                        trackColor = {{ false: TRACK_COLOR }}
+                        value = { this.props.selectedRecordingService
+                        === RECORDING_TYPES.LOCAL } />
+                </Container>
+            </Container>
+
+        );
     }
 }
 
