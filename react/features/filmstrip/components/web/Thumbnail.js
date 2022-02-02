@@ -2,6 +2,7 @@
 
 import { withStyles } from '@material-ui/styles';
 import clsx from 'clsx';
+import debounce from 'lodash/debounce';
 import React, { Component } from 'react';
 
 import { createScreenSharingIssueEvent, sendAnalytics } from '../../../analytics';
@@ -316,6 +317,10 @@ class Thumbnail extends Component<Props, State> {
         this._onCanPlay = this._onCanPlay.bind(this);
         this._onClick = this._onClick.bind(this);
         this._onMouseEnter = this._onMouseEnter.bind(this);
+        this._onMouseMove = debounce(this._onMouseMove.bind(this), 100, {
+            leading: true,
+            trailing: false
+        });
         this._onMouseLeave = this._onMouseLeave.bind(this);
         this._onTestingEvent = this._onTestingEvent.bind(this);
         this._onTouchStart = this._onTouchStart.bind(this);
@@ -561,6 +566,20 @@ class Thumbnail extends Component<Props, State> {
         this.setState({ isHovered: true });
     }
 
+    /**
+     * Mouse move handler.
+     *
+     * @returns {void}
+     */
+    _onMouseMove() {
+        if (!this.state.isHovered) {
+            // Workaround for the use case where the layout changes (for example the participant pane is closed)
+            // and as a result the mouse appears on top of the thumbnail. In these use cases the mouse enter
+            // event on the thumbnail is not triggered in Chrome.
+            this.setState({ isHovered: true });
+        }
+    }
+
     _onMouseLeave: () => void;
 
     /**
@@ -634,6 +653,7 @@ class Thumbnail extends Component<Props, State> {
                 onClick = { this._onClick }
                 { ...(_isMobile ? {} : {
                     onMouseEnter: this._onMouseEnter,
+                    onMouseMove: this._onMouseMove,
                     onMouseLeave: this._onMouseLeave
                 }) }
                 style = { styles.thumbnail }>
@@ -810,6 +830,7 @@ class Thumbnail extends Component<Props, State> {
                     : {
                         onClick: this._onClick,
                         onMouseEnter: this._onMouseEnter,
+                        onMouseMove: this._onMouseMove,
                         onMouseLeave: this._onMouseLeave
                     }
                 ) }
