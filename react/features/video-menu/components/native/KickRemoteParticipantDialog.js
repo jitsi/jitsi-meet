@@ -25,7 +25,8 @@ class KickRemoteParticipantDialog extends AbstractKickRemoteParticipantDialog {
                 confirmLabel = 'dialog.kickParticipantButton'
                 descriptionKey = 'dialog.kickParticipantDialog'
                 isConfirmDestructive = { true }
-                onSubmit = { this._onSubmit } />
+                onSubmit = { this._onSubmit }
+                title = 'dialog.kickParticipantTitle' />
         );
     }
 

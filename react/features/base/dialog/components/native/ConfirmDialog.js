@@ -3,7 +3,6 @@
 import React from 'react';
 import { Platform, View } from 'react-native';
 import Dialog from 'react-native-dialog';
-import { Text } from 'react-native-paper';
 
 import { translate } from '../../../i18n';
 import { connect } from '../../../redux';
@@ -25,9 +24,9 @@ type Props = {
     cancelLabel: string,
 
     /**
-     * The React {@code Component} children which represents the dialog's body.
+     * The React {@code Component} content.
      */
-    children?: string,
+    content?: React$Node,
 
     /**
      * The i18n key of the text label for the confirm button.
@@ -77,7 +76,7 @@ class ConfirmDialog extends AbstractDialog<Props> {
      * @returns {React$Component}
      */
     _renderDescription() {
-        const { children, descriptionKey, t } = this.props;
+        const { content, descriptionKey, t } = this.props;
         const description
             = typeof descriptionKey === 'string'
                 ? t(descriptionKey)
@@ -86,16 +85,19 @@ class ConfirmDialog extends AbstractDialog<Props> {
                 );
 
         return (
-            <View style = { styles.dialogDescriptionContainer }>
-                <Text>
+            <>
+                <Dialog.Description
+                    style = { styles.dialogDescription }>
                     { description }
-                </Text>
+                </Dialog.Description>
                 {
-                    children && <View>
-                        { children }
-                    </View>
+                    content
+                    && <Dialog.Description
+                        style = { styles.dialogDescription }>
+                        { content }
+                    </Dialog.Description>
                 }
-            </View>
+            </>
         );
     }
 

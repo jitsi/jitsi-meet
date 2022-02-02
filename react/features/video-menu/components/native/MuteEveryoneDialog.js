@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { Text, View, Switch } from 'react-native';
-import { Divider } from 'react-native-paper';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { ConfirmDialog } from '../../../base/dialog';
@@ -32,6 +31,25 @@ type Props = AbstractProps & {
 class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<Props> {
 
     /**
+     * Renders the dialog content.
+     *
+     * @returns {React$Component}
+     */
+    _renderContent() {
+        return (
+            this.props.exclude.length === 0
+                && <View style = { styles.toggleContainer }>
+                    <Text style = { styles.toggleLabel }>
+                        {this.props.t('dialog.moderationAudioLabel')}
+                    </Text>
+                    <Switch
+                        onValueChange = { this._onToggleModeration }
+                        value = { !this.state.audioModerationEnabled } />
+                </View>
+        );
+    }
+
+    /**
      * Toggles advanced moderation switch.
      *
      * @returns {void}
@@ -56,24 +74,10 @@ class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<Props> {
         return (
             <ConfirmDialog
                 confirmLabel = 'dialog.muteParticipantButton'
+                content = { this._renderContent() }
                 descriptionKey = { this.state.content }
                 onSubmit = { this._onSubmit }
-                title = { this.props.title }>
-                {
-                    this.props.exclude.length === 0 && <>
-                        <Divider style = { styles.dividerWithSpacing } />
-                        <View style = { styles.toggleContainer }>
-                            <Text
-                                style = { styles.toggleLabel }>
-                                {this.props.t('dialog.moderationAudioLabel')}
-                            </Text>
-                            <Switch
-                                onValueChange = { this._onToggleModeration }
-                                value = { !this.state.audioModerationEnabled } />
-                        </View>
-                    </>
-                }
-            </ConfirmDialog>
+                title = { this.props.title } />
         );
     }
 

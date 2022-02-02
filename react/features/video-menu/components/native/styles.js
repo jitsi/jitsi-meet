@@ -75,6 +75,9 @@ export default createStyleSheet({
     },
 
     toggleContainer: {
+        color: 'unset',
+        backgroundColor: 'unset',
+        textColor: 'unset',
         display: 'flex',
         alignItems: 'center',
         flexDirection: 'row',
@@ -85,7 +88,8 @@ export default createStyleSheet({
 
     toggleLabel: {
         ...BaseTheme.typography.bodyShortRegular,
-        maxWidth: '70%'
+        maxWidth: '70%',
+        marginLeft: BaseTheme.spacing[1]
     },
 
     contextMenuItem: {

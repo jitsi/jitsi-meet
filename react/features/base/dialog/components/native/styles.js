@@ -68,9 +68,12 @@ export default {
     },
 
     dialogDescriptionContainer: {
-        ...BaseTheme.typography.bodyShortRegular,
-        marginHorizontal: BaseTheme.spacing[3],
-        marginBottom: BaseTheme.spacing[3]
+        ...BaseTheme.typography.bodyShortRegular
+    },
+
+    dialogDescription: {
+        marginHorizontal: BaseTheme.spacing[1],
+        marginBottom: BaseTheme.spacing[2]
     }
 };
 
