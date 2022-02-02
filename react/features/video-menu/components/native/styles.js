@@ -78,13 +78,13 @@ export default createStyleSheet({
         display: 'flex',
         alignItems: 'center',
         flexDirection: 'row',
-        justifyContent: 'center',
-        width: '100%',
-        overflow: 'hidden'
+        justifyContent: 'space-between',
+        overflow: 'hidden',
+        width: '100%'
     },
 
     toggleLabel: {
-        marginRight: BaseTheme.spacing[3],
+        ...BaseTheme.typography.bodyShortRegular,
         maxWidth: '70%'
     },
 

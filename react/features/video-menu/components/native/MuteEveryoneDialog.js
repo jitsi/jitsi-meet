@@ -55,26 +55,24 @@ class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<Props> {
     render() {
         return (
             <ConfirmDialog
-                okKey = 'dialog.muteParticipantButton'
-                onSubmit = { this._onSubmit } >
-                <Text style = { this.props._dialogStyles.text }>
-                    { `${this.props.title} \n\n ${this.state.content}` }
-                </Text>
-                {this.props.exclude.length === 0 && <>
-                    <Divider style = { styles.dividerWithSpacing } />
-                    <View style = { styles.toggleContainer }>
-                        <Text
-                            style = {{
-                                ...this.props._dialogStyles.text,
-                                ...styles.toggleLabel
-                            }}>
-                            {this.props.t('dialog.moderationAudioLabel')}
-                        </Text>
-                        <Switch
-                            onValueChange = { this._onToggleModeration }
-                            value = { !this.state.audioModerationEnabled } />
-                    </View>
-                </>}
+                confirmLabel = 'dialog.muteParticipantButton'
+                descriptionKey = { this.state.content }
+                onSubmit = { this._onSubmit }
+                title = { this.props.title }>
+                {
+                    this.props.exclude.length === 0 && <>
+                        <Divider style = { styles.dividerWithSpacing } />
+                        <View style = { styles.toggleContainer }>
+                            <Text
+                                style = { styles.toggleLabel }>
+                                {this.props.t('dialog.moderationAudioLabel')}
+                            </Text>
+                            <Switch
+                                onValueChange = { this._onToggleModeration }
+                                value = { !this.state.audioModerationEnabled } />
+                        </View>
+                    </>
+                }
             </ConfirmDialog>
         );
     }

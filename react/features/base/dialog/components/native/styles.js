@@ -56,6 +56,24 @@ export const bottomSheetStyles = {
     }
 };
 
+export default {
+
+    dialogButton: {
+        ...BaseTheme.typography.labelButton
+    },
+
+    destructiveDialogButton: {
+        ...BaseTheme.typography.labelButton,
+        color: BaseTheme.palette.actionDanger
+    },
+
+    dialogDescriptionContainer: {
+        ...BaseTheme.typography.bodyShortRegular,
+        marginHorizontal: BaseTheme.spacing[3],
+        marginBottom: BaseTheme.spacing[3]
+    }
+};
+
 export const brandedDialog = {
 
     /**

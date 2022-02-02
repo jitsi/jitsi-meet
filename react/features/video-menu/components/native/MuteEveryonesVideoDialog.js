@@ -55,17 +55,15 @@ class MuteEveryonesVideoDialog extends AbstractMuteEveryonesVideoDialog<Props> {
     render() {
         return (
             <ConfirmDialog
-                okKey = 'dialog.muteEveryonesVideoDialogOk'
-                onSubmit = { this._onSubmit } >
-                <Text style = { this.props._dialogStyles.text }>
-                    { `${this.props.title} \n\n ${this.state.content}` }
-                </Text>
+                confirmLabel = 'dialog.muteEveryonesVideoDialogOk'
+                descriptionKey = { this.state.content }
+                onSubmit = { this._onSubmit }
+                title = { this.props.title }>
                 {this.props.exclude.length === 0 && <>
                     <Divider style = { styles.dividerWithSpacing } />
                     <View style = { styles.toggleContainer }>
                         <Text
-                            style = {{ ...this.props._dialogStyles.text,
-                                ...styles.toggleLabel }}>
+                            style = { styles.toggleLabel }>
                             {this.props.t('dialog.moderationVideoLabel')}
                         </Text>
                         <Switch

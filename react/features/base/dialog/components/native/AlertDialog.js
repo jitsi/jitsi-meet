@@ -6,6 +6,7 @@ import { Text } from 'react-native';
 import { translate } from '../../../i18n';
 import { connect } from '../../../redux';
 import { _abstractMapStateToProps } from '../../functions';
+import { renderHTML } from '../functions.native';
 
 import { type Props as AbstractProps } from './BaseDialog';
 import BaseSubmitDialog from './BaseSubmitDialog';
@@ -36,7 +37,7 @@ class AlertDialog extends BaseSubmitDialog<Props, *> {
         const content
             = typeof contentKey === 'string'
                 ? t(contentKey)
-                : this._renderHTML(t(contentKey.key, contentKey.params));
+                : renderHTML(t(contentKey.key, contentKey.params));
 
         return (
             <Text style = { _dialogStyles.text }>
@@ -44,8 +45,6 @@ class AlertDialog extends BaseSubmitDialog<Props, *> {
             </Text>
         );
     }
-
-    _renderHTML: string => Object | string;
 }
 
 export default translate(connect(_abstractMapStateToProps)(AlertDialog));
