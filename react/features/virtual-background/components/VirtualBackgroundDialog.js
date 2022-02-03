@@ -97,7 +97,7 @@ function _mapStateToProps(state): Object {
 
     return {
         _localFlipX: Boolean(localFlipX),
-        _images: (hasBrandingImages && dynamicBrandingImages || brandingImages) || IMAGES,
+        _images: (hasBrandingImages && dynamicBrandingImages) || (hasBrandingImages && brandingImages) || IMAGES,
         _virtualBackground: state['features/virtual-background'],
         _selectedThumbnail: state['features/virtual-background'].selectedThumbnail,
         _showUploadButton: !(hasBrandingImages || state['features/base/config'].disableAddingBackgroundImages),
