@@ -86,7 +86,6 @@ export default createStyleSheet({
     },
 
     toggleLabel: {
-        ...BaseTheme.typography.bodyShortRegular,
         // eslint-disable-next-line new-cap
         color: PlatformColor('secondaryLabel'),
         maxWidth: '70%'

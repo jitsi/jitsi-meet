@@ -68,11 +68,13 @@ export default {
     },
 
     dialogDescription: {
+        ...BaseTheme.typography.bodyShortRegular,
         marginHorizontal: BaseTheme.spacing[3],
         marginBottom: BaseTheme.spacing[3]
     },
 
     dialogDescriptionContent: {
+        ...BaseTheme.typography.bodyShortRegular,
         marginLeft: BaseTheme.spacing[3],
         marginBottom: BaseTheme.spacing[3]
     }
