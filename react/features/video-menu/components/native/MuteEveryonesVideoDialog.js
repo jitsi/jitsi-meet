@@ -1,7 +1,8 @@
 // @flow
 
 import React from 'react';
-import { Switch, Text, View } from 'react-native';
+import Dialog from 'react-native-dialog';
+import { Divider } from 'react-native-paper';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { ConfirmDialog } from '../../../base/dialog';
@@ -31,21 +32,17 @@ type Props = AbstractProps & {
 class MuteEveryonesVideoDialog extends AbstractMuteEveryonesVideoDialog<Props> {
 
     /**
-     * Renders the dialog content.
+     * Renders the dialog switch.
      *
      * @returns {React$Component}
      */
-    _renderContent() {
+    _renderSwitch() {
         return (
             this.props.exclude.length === 0
-            && <View style = { styles.toggleContainer }>
-                <Text style = { styles.toggleLabel }>
-                    {this.props.t('dialog.moderationVideoLabel')}
-                </Text>
-                <Switch
-                    onValueChange = { this._onToggleModeration }
-                    value = { !this.state.moderationEnabled } />
-            </View>
+            && <Dialog.Switch
+                label = { this.props.t('dialog.moderationVideoLabel') }
+                onValueChange = { this._onToggleModeration }
+                value = { !this.state.moderationEnabled } />
         );
     }
 
@@ -74,10 +71,12 @@ class MuteEveryonesVideoDialog extends AbstractMuteEveryonesVideoDialog<Props> {
         return (
             <ConfirmDialog
                 confirmLabel = 'dialog.muteEveryonesVideoDialogOk'
-                content = { this._renderContent() }
                 descriptionKey = { this.state.content }
                 onSubmit = { this._onSubmit }
-                title = { this.props.title } />
+                title = { this.props.title }>
+                <Divider style = { styles.dividerDialog } />
+                { this._renderSwitch() }
+            </ConfirmDialog>
         );
     }
 

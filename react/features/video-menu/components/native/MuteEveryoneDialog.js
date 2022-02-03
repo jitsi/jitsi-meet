@@ -1,7 +1,8 @@
 // @flow
 
 import React from 'react';
-import { Text, View, Switch } from 'react-native';
+import Dialog from 'react-native-dialog';
+import { Divider } from 'react-native-paper';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { ConfirmDialog } from '../../../base/dialog';
@@ -13,6 +14,7 @@ import AbstractMuteEveryoneDialog, {
     type Props as AbstractProps } from '../AbstractMuteEveryoneDialog';
 
 import styles from './styles';
+
 
 type Props = AbstractProps & {
 
@@ -31,21 +33,17 @@ type Props = AbstractProps & {
 class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<Props> {
 
     /**
-     * Renders the dialog content.
+     * Renders the dialog switch.
      *
      * @returns {React$Component}
      */
-    _renderContent() {
+    _renderSwitch() {
         return (
             this.props.exclude.length === 0
-                && <View style = { styles.toggleContainer }>
-                    <Text style = { styles.toggleLabel }>
-                        { this.props.t('dialog.moderationAudioLabel') }
-                    </Text>
-                    <Switch
-                        onValueChange = { this._onToggleModeration }
-                        value = { !this.state.audioModerationEnabled } />
-                </View>
+            && <Dialog.Switch
+                label = { this.props.t('dialog.moderationAudioLabel') }
+                onValueChange = { this._onToggleModeration }
+                value = { !this.state.audioModerationEnabled } />
         );
     }
 
@@ -74,10 +72,12 @@ class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<Props> {
         return (
             <ConfirmDialog
                 confirmLabel = 'dialog.muteParticipantButton'
-                content = { this._renderContent() }
                 descriptionKey = { this.state.content }
                 onSubmit = { this._onSubmit }
-                title = { this.props.title } />
+                title = { this.props.title } >
+                <Divider style = { styles.dividerDialog } />
+                { this._renderSwitch() }
+            </ConfirmDialog>
         );
     }
 

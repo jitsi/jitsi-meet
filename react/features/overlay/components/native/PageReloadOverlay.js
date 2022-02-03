@@ -75,18 +75,18 @@ class PageReloadOverlay extends AbstractPageReloadOverlay<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { message, timeLeft, title } = this.state;
         const { t } = this.props;
+        const { message, timeLeft, title } = this.state;
 
         return (
             <OverlayFrame>
                 <ConfirmDialog
                     cancelLabel = 'dialog.Cancel'
                     confirmLabel = 'dialog.rejoinNow'
-                    content =
-                        { `${t(title)} ${t(message, { seconds: timeLeft })}` }
+                    descriptionKey = { `${t(message, { seconds: timeLeft })}` }
                     onCancel = { this._onCancel }
-                    onSubmit = { this._onReloadNow } />
+                    onSubmit = { this._onReloadNow }
+                    title = { title } />
             </OverlayFrame>
         );
     }

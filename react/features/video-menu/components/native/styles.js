@@ -71,24 +71,10 @@ export default createStyleSheet({
         backgroundColor: BaseTheme.palette.dividerColor
     },
 
-    dividerWithSpacing: {
-        backgroundColor: BaseTheme.palette.dividerColor,
-        marginVertical: BaseTheme.spacing[3]
-    },
-
-    toggleContainer: {
-        display: 'flex',
-        alignItems: 'center',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        overflow: 'hidden',
-        width: '100%'
-    },
-
-    toggleLabel: {
+    dividerDialog: {
         // eslint-disable-next-line new-cap
-        color: PlatformColor('secondaryLabel'),
-        maxWidth: '70%'
+        backgroundColor: PlatformColor('separator'),
+        marginBottom: BaseTheme.spacing[3]
     },
 
     contextMenuItem: {

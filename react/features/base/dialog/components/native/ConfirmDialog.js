@@ -24,9 +24,9 @@ type Props = {
     cancelLabel: string,
 
     /**
-     * The React {@code Component} content.
+     * The React {@code Component} children.
      */
-    content?: React$Node,
+    children?: React$Node,
 
     /**
      * The i18n key of the text label for the confirm button.
@@ -76,7 +76,7 @@ class ConfirmDialog extends AbstractDialog<Props> {
      * @returns {React$Component}
      */
     _renderDescription() {
-        const { content, descriptionKey, t } = this.props;
+        const { descriptionKey, t } = this.props;
         const description
             = typeof descriptionKey === 'string'
                 ? t(descriptionKey)
@@ -85,19 +85,9 @@ class ConfirmDialog extends AbstractDialog<Props> {
                 );
 
         return (
-            <>
-                <Dialog.Description
-                    style = { styles.dialogDescription }>
-                    { description }
-                </Dialog.Description>
-                {
-                    content
-                    && <Dialog.Description
-                        style = { styles.dialogDescriptionContent }>
-                        { content }
-                    </Dialog.Description>
-                }
-            </>
+            <Dialog.Description>
+                { description }
+            </Dialog.Description>
         );
     }
 
@@ -109,6 +99,7 @@ class ConfirmDialog extends AbstractDialog<Props> {
     render() {
         const {
             cancelLabel,
+            children,
             confirmLabel,
             isConfirmDestructive,
             t,
@@ -152,6 +143,7 @@ class ConfirmDialog extends AbstractDialog<Props> {
                         </Dialog.Title>
                     }
                     { this._renderDescription() }
+                    { children }
                     <Dialog.Button
                         label = { t(rightLabel) }
                         onPress = { rightOnPress }
