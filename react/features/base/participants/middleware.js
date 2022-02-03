@@ -603,7 +603,6 @@ function _raiseHandUpdated({ dispatch, getState }, conference, participantId, ne
             titleKey: 'notify.somebody',
             title: notificationTitle,
             descriptionKey: 'notify.raisedHand',
-            raiseHandNotification: true,
             concatText: true,
             uid: RAISE_HAND_NOTIFICATION_ID,
             ...action
