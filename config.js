@@ -1055,6 +1055,10 @@ var config = {
     // Disables using screensharing as virtual background.
     // disableScreensharingVirtualBackground: false,
 
+    // A list of images that can be used as video backgrounds.
+    // When this field is present, the default images will be replaced with those provided.
+    // virtualBackgrounds: ['https://example.com/img.jpg'],
+
     // Sets the background transparency level. '0' is fully transparent, '1' is opaque.
     // backgroundAlpha: 1,
 

@@ -91,12 +91,13 @@ const onError = event => {
  */
 function _mapStateToProps(state): Object {
     const { localFlipX } = state['features/base/settings'];
+    const brandingImages = state['features/base/config'].virtualBackgrounds;
     const dynamicBrandingImages = state['features/dynamic-branding'].virtualBackgrounds;
-    const hasBrandingImages = Boolean(dynamicBrandingImages.length);
+    const hasBrandingImages = Boolean(dynamicBrandingImages.length) || Boolean(brandingImages.length);
 
     return {
         _localFlipX: Boolean(localFlipX),
-        _images: (hasBrandingImages && dynamicBrandingImages) || IMAGES,
+        _images: (hasBrandingImages && dynamicBrandingImages || brandingImages) || IMAGES,
         _virtualBackground: state['features/virtual-background'],
         _selectedThumbnail: state['features/virtual-background'].selectedThumbnail,
         _showUploadButton: !(hasBrandingImages || state['features/base/config'].disableAddingBackgroundImages),
