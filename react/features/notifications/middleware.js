@@ -111,8 +111,6 @@ MiddlewareRegistry.register(store => next => action => {
             }
 
             createTimeoutId(action, dispatch);
-
-            return next(action);
         }
         break;
     }
