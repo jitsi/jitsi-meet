@@ -739,23 +739,23 @@
         "configuringDevices": "Po formësohen pajisjet…",
         "connectedWithAudioQ": "Jeni lidhur me audio?",
         "connection": {
-           "good": "Lidhja juaj internet duket mirë!",
-           "nonOptimal": "Lidhja juaj internet s’është optimale",
-           "poor": "Keni lidhje të dobët internet"
+            "good": "Lidhja juaj internet duket mirë!",
+            "nonOptimal": "Lidhja juaj internet s’është optimale",
+            "poor": "Keni lidhje të dobët internet"
         },
         "connectionDetails": {
-          "audioClipping": "Presim që audioja juaj do të shformohet.",
-          "audioHighQuality": "Presim që audioja juaj të jetë në cilësi të shkëlqyer.",
-          "audioLowNoVideo": "Presim që audioja juaj të jetë në cilësi të ulët dhe s’do të ketë video.",
-          "goodQuality": "Shkëlqyeshëm! Cilësia e medias tuaj do të jetë shumë e mirë.",
-          "noMediaConnectivity": "S’gjetëm dot rrugë për të vendosur lidhje media për këtë provë. Zakonisht kjo shkaktohet nga një firewall ose NAT.",
-          "noVideo": "Presim që cilësia e videos për ju të jetë për të vënë kujën.",
-          "undetectable": "Nëse s’bëni dot ende thirrje në shfletues, rekomandojmë të siguroheni se altoparlantët, mikrofoni dhe kamera juaj janë ujdisur si duhet, se i keni akorduar shfletuesit tuaja të drejta të përdorë mikrofonin dhe kamerën tuaj, dhe se versioni i shfletuesit tuaj është i përditësuar. Nëse keni ende probleme me thirrje, duhet të lidheni me zhvilluesin e aplikacionit web.",
-          "veryPoorConnection": "Presim që cilësia e thirrjes te ju të jetë për të vënë kujën",
-          "videoFreezing": "Presim që videoja te ju të ngrijë, të bëhet e zezë dhe të shfaqet tërë piksela.",
-          "videoHighQuality": "Presim që videoja te ju të ketë cilësi të mirë.",
-          "videoLowQuality": "Presim që videoja te ju të ketë cilësi të ulët, për sa i takon shpejtësisë së kuadrove dhe qartësisë.",
-          "videoTearing": "Presim që videoja te ju të jetë plot piksela, ose të ketë sajesa pamore."
+            "audioClipping": "Presim që audioja juaj do të shformohet.",
+            "audioHighQuality": "Presim që audioja juaj të jetë në cilësi të shkëlqyer.",
+            "audioLowNoVideo": "Presim që audioja juaj të jetë në cilësi të ulët dhe s’do të ketë video.",
+            "goodQuality": "Shkëlqyeshëm! Cilësia e medias tuaj do të jetë shumë e mirë.",
+            "noMediaConnectivity": "S’gjetëm dot rrugë për të vendosur lidhje media për këtë provë. Zakonisht kjo shkaktohet nga një firewall ose NAT.",
+            "noVideo": "Presim që cilësia e videos për ju të jetë për të vënë kujën.",
+            "undetectable": "Nëse s’bëni dot ende thirrje në shfletues, rekomandojmë të siguroheni se altoparlantët, mikrofoni dhe kamera juaj janë ujdisur si duhet, se i keni akorduar shfletuesit tuaja të drejta të përdorë mikrofonin dhe kamerën tuaj, dhe se versioni i shfletuesit tuaj është i përditësuar. Nëse keni ende probleme me thirrje, duhet të lidheni me zhvilluesin e aplikacionit web.",
+            "veryPoorConnection": "Presim që cilësia e thirrjes te ju të jetë për të vënë kujën",
+            "videoFreezing": "Presim që videoja te ju të ngrijë, të bëhet e zezë dhe të shfaqet tërë piksela.",
+            "videoHighQuality": "Presim që videoja te ju të ketë cilësi të mirë.",
+            "videoLowQuality": "Presim që videoja te ju të ketë cilësi të ulët, për sa i takon shpejtësisë së kuadrove dhe qartësisë.",
+            "videoTearing": "Presim që videoja te ju të jetë plot piksela, ose të ketë sajesa pamore."
         },
         "copyAndShare": "Kopjoni & dhe jepuni të tjerëve lidhje takimi",
         "dialInMeeting": "Bjerini numrin të takimit",
