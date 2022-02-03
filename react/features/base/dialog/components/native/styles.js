@@ -162,15 +162,11 @@ export const inputDialog = {
         marginBottom: 0
     },
 
-    fieldWrapper: {
-        ...brandedDialog.mainWrapper,
-        paddingBottom: BoxModel.padding * 2
-    },
-
     formMessage: {
         alignSelf: 'flex-start',
         fontStyle: 'italic',
-        margin: BoxModel.margin
+        fontWeight: 'bold',
+        marginTop: BaseTheme.spacing[3]
     }
 };
 
