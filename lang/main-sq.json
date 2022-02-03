@@ -1230,9 +1230,9 @@
             "microsoftLogo": "Stemë Microsoft-i",
             "policyLogo": "Stemë Rregullash"
         },
-        "mobileDownLoadLinkIos": "Shkarkoni aplikacionin për celular me iOS",
         "mobileDownLoadLinkAndroid": "Shkarkoni aplikacionin për celular me Android",
         "mobileDownLoadLinkFDroid": "Shkarkoni aplikacionin për celular me F-Droid",
+        "mobileDownLoadLinkIos": "Shkarkoni aplikacionin për celular me iOS",
         "moderatedMessage": "Ose <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">rezervoni një URL takimi</a> paraprakisht, kur jeni i vetmi moderator.",
         "privacy": "Privatësi",
         "recentList": "Së fundi",
