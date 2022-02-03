@@ -93,7 +93,7 @@ class ConfirmDialog extends AbstractDialog<Props> {
                 {
                     content
                     && <Dialog.Description
-                        style = { styles.dialogDescription }>
+                        style = { styles.dialogDescriptionContent }>
                         { content }
                     </Dialog.Description>
                 }

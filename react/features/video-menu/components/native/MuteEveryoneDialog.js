@@ -40,7 +40,7 @@ class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<Props> {
             this.props.exclude.length === 0
                 && <View style = { styles.toggleContainer }>
                     <Text style = { styles.toggleLabel }>
-                        {this.props.t('dialog.moderationAudioLabel')}
+                        { this.props.t('dialog.moderationAudioLabel') }
                     </Text>
                     <Switch
                         onValueChange = { this._onToggleModeration }

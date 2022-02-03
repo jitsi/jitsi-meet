@@ -1,5 +1,7 @@
 // @flow
 
+import { PlatformColor } from 'react-native';
+
 import {
     MD_FONT_SIZE,
     MD_ITEM_HEIGHT,
@@ -75,9 +77,6 @@ export default createStyleSheet({
     },
 
     toggleContainer: {
-        color: 'unset',
-        backgroundColor: 'unset',
-        textColor: 'unset',
         display: 'flex',
         alignItems: 'center',
         flexDirection: 'row',
@@ -88,8 +87,9 @@ export default createStyleSheet({
 
     toggleLabel: {
         ...BaseTheme.typography.bodyShortRegular,
-        maxWidth: '70%',
-        marginLeft: BaseTheme.spacing[1]
+        // eslint-disable-next-line new-cap
+        color: PlatformColor('secondaryLabel'),
+        maxWidth: '70%'
     },
 
     contextMenuItem: {

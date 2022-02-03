@@ -67,13 +67,14 @@ export default {
         color: BaseTheme.palette.actionDanger
     },
 
-    dialogDescriptionContainer: {
-        ...BaseTheme.typography.bodyShortRegular
+    dialogDescription: {
+        marginHorizontal: BaseTheme.spacing[3],
+        marginBottom: BaseTheme.spacing[3]
     },
 
-    dialogDescription: {
-        marginHorizontal: BaseTheme.spacing[1],
-        marginBottom: BaseTheme.spacing[2]
+    dialogDescriptionContent: {
+        marginLeft: BaseTheme.spacing[3],
+        marginBottom: BaseTheme.spacing[3]
     }
 };
 

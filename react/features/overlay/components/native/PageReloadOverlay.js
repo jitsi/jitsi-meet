@@ -1,29 +1,19 @@
 // @flow
 
 import React from 'react';
-import { Text } from 'react-native';
 
 import { appNavigate, reloadNow } from '../../../app/actions';
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { ConfirmDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-import { StyleType } from '../../../base/styles';
 import { setFatalError, setPageReloadOverlayCanceled } from '../../actions';
 import AbstractPageReloadOverlay, {
     abstractMapStateToProps,
-    type Props as AbstractProps
+    type Props
 } from '../AbstractPageReloadOverlay';
 
 import OverlayFrame from './OverlayFrame';
 
-type Props = AbstractProps & {
-
-    /**
-     * The color-schemed stylesheet of the base/dialog feature.
-     */
-    _dialogStyles: StyleType
-}
 
 /**
  * Implements a React Component for page reload overlay. Shown before the
@@ -85,38 +75,21 @@ class PageReloadOverlay extends AbstractPageReloadOverlay<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _dialogStyles, t } = this.props;
         const { message, timeLeft, title } = this.state;
+        const { t } = this.props;
 
         return (
             <OverlayFrame>
                 <ConfirmDialog
                     cancelLabel = 'dialog.Cancel'
                     confirmLabel = 'dialog.rejoinNow'
-                    onCancel = { this._onCancel }
-                    onSubmit = { this._onReloadNow }>
-                    <Text style = { _dialogStyles.text }>
+                    content =
                         { `${t(title)} ${t(message, { seconds: timeLeft })}` }
-                    </Text>
-                </ConfirmDialog>
+                    onCancel = { this._onCancel }
+                    onSubmit = { this._onReloadNow } />
             </OverlayFrame>
         );
     }
 }
 
-/**
- * Maps part of the Redux state to the props of this component.
- *
- * @param {Object} state - The Redux state.
- * @returns {{
- *     _dialogStyles: StyleType
- * }}
- */
-function _mapStateToProps(state) {
-    return {
-        ...abstractMapStateToProps(state),
-        _dialogStyles: ColorSchemeRegistry.get(state, 'Dialog')
-    };
-}
-
-export default translate(connect(_mapStateToProps)(PageReloadOverlay));
+export default translate(connect(abstractMapStateToProps)(PageReloadOverlay));
