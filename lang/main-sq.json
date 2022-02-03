@@ -424,7 +424,7 @@
         "addPassword": "Shtoni $t(lockRoomPassword)",
         "cancelPassword": "Anulo $t(lockRoomPassword)",
         "conferenceURL": "Lidhje:",
-        "copyNumber":"Kopjoje numrin",
+        "copyNumber": "Kopjoje numrin",
         "country": "Vend",
         "dialANumber": "Për të marrë pjesë në takimin tuaj, formoni një nga këta numra dhe mandej jepni PIN-in.",
         "dialInConferenceID": "PIN:",
