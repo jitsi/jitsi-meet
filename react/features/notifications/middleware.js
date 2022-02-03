@@ -108,10 +108,9 @@ MiddlewareRegistry.register(store => next => action => {
 
                 clearTimeout(timer);
                 timers.delete(action.uid);
-                createTimeoutId(action, dispatch);
-            } else {
-                createTimeoutId(action, dispatch);
             }
+
+            createTimeoutId(action, dispatch);
 
             return next(action);
         }
