@@ -72,7 +72,6 @@ export function showPendingTranscribingNotification() {
     return async (dispatch: Function) => {
         const notification = await dispatch(showNotification({
             descriptionKey: 'transcribing.pending',
-            isDismissAllowed: false,
             titleKey: 'dialog.transcribing'
         }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 

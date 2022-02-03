@@ -45,13 +45,3 @@ export const SHOW_NOTIFICATION = 'SHOW_NOTIFICATION';
  * }
  */
 export const SET_NOTIFICATIONS_ENABLED = 'SET_NOTIFICATIONS_ENABLED';
-
-/**
- * The type of (redux) action which signals that raise hand notifications
- * should be dismissed.
- *
- * {
- *     type: HIDE_RAISE_HAND_NOTIFICATIONS
- * }
- */
-export const HIDE_RAISE_HAND_NOTIFICATIONS = 'HIDE_RAISE_HAND_NOTIFICATIONS';
