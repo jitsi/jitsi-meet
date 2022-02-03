@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { Text, View, Switch } from 'react-native';
+import Dialog from 'react-native-dialog';
 import { Divider } from 'react-native-paper';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
@@ -14,6 +14,7 @@ import AbstractMuteEveryoneDialog, {
     type Props as AbstractProps } from '../AbstractMuteEveryoneDialog';
 
 import styles from './styles';
+
 
 type Props = AbstractProps & {
 
@@ -30,6 +31,21 @@ type Props = AbstractProps & {
  * @augments AbstractMuteEveryoneDialog
  */
 class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<Props> {
+
+    /**
+     * Renders the dialog switch.
+     *
+     * @returns {React$Component}
+     */
+    _renderSwitch() {
+        return (
+            this.props.exclude.length === 0
+            && <Dialog.Switch
+                label = { this.props.t('dialog.moderationAudioLabel') }
+                onValueChange = { this._onToggleModeration }
+                value = { !this.state.audioModerationEnabled } />
+        );
+    }
 
     /**
      * Toggles advanced moderation switch.
@@ -55,26 +71,12 @@ class MuteEveryoneDialog extends AbstractMuteEveryoneDialog<Props> {
     render() {
         return (
             <ConfirmDialog
-                okKey = 'dialog.muteParticipantButton'
-                onSubmit = { this._onSubmit } >
-                <Text style = { this.props._dialogStyles.text }>
-                    { `${this.props.title} \n\n ${this.state.content}` }
-                </Text>
-                {this.props.exclude.length === 0 && <>
-                    <Divider style = { styles.dividerWithSpacing } />
-                    <View style = { styles.toggleContainer }>
-                        <Text
-                            style = {{
-                                ...this.props._dialogStyles.text,
-                                ...styles.toggleLabel
-                            }}>
-                            {this.props.t('dialog.moderationAudioLabel')}
-                        </Text>
-                        <Switch
-                            onValueChange = { this._onToggleModeration }
-                            value = { !this.state.audioModerationEnabled } />
-                    </View>
-                </>}
+                confirmLabel = 'dialog.muteParticipantButton'
+                descriptionKey = { this.state.content }
+                onSubmit = { this._onSubmit }
+                title = { this.props.title } >
+                <Divider style = { styles.dividerDialog } />
+                { this._renderSwitch() }
             </ConfirmDialog>
         );
     }

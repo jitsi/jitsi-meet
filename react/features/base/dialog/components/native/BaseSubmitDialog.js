@@ -84,8 +84,6 @@ class BaseSubmitDialog<P: Props, S: *> extends BaseDialog<P, S> {
 
     _onSubmit: () => boolean;
 
-    _renderHTML: string => Object | string;
-
     /** .
      * Renders the actual content of the dialog defining what is about to be
      * submitted. E.g. A simple confirmation (text, properly wrapped) or a

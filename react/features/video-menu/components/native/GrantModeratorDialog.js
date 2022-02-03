@@ -1,7 +1,6 @@
 // @flow
 
 import React from 'react';
-import { Text } from 'react-native';
 
 import { ConfirmDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
@@ -22,12 +21,11 @@ class GrantModeratorDialog extends AbstractGrantModeratorDialog {
     render() {
         return (
             <ConfirmDialog
-                contentKey = 'dialog.grantModeratorDialog'
-                onSubmit = { this._onSubmit }>
-                <Text>
-                    {`${this.props.t('dialog.grantModeratorDialog', { participantName: this.props.participantName })}`}
-                </Text>
-            </ConfirmDialog>
+                descriptionKey = {
+                    `${this.props.t('dialog.grantModeratorDialog',
+                        { participantName: this.props.participantName })}`
+                }
+                onSubmit = { this._onSubmit } />
         );
     }
 
