@@ -50,11 +50,14 @@ const createTimeoutId = (notification, dispatch) => {
         timeout,
         uid
     } = notification;
-    const timerID = setTimeout(() => {
-        dispatch(hideNotification(uid));
-    }, timeout);
 
-    timers.set(uid, timerID);
+    if (timeout) {
+        const timerID = setTimeout(() => {
+            dispatch(hideNotification(uid));
+        }, timeout);
+
+        timers.set(uid, timerID);
+    }
 };
 
 /**
