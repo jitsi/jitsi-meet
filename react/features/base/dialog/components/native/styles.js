@@ -20,8 +20,6 @@ export const MD_FONT_SIZE = 16;
 export const MD_ITEM_HEIGHT = 48;
 export const MD_ITEM_MARGIN_PADDING = 16;
 
-export const PLACEHOLDER_COLOR = ColorPalette.lightGrey;
-
 /**
  * The React {@code Component} styles of {@code BottomSheet}. These have
  * been implemented as per the Material Design guidelines:
@@ -158,10 +156,6 @@ const brandedDialogIconStyle = {
 };
 
 export const inputDialog = {
-    bottomField: {
-        marginBottom: 0
-    },
-
     formMessage: {
         alignSelf: 'flex-start',
         fontStyle: 'italic',
