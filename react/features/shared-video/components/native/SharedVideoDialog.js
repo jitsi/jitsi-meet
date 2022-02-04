@@ -5,7 +5,6 @@ import React from 'react';
 import { InputDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import AbstractSharedVideoDialog from '../AbstractSharedVideoDialog';
 
 /**
@@ -61,8 +60,7 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
                 textInputProps = {{
                     autoCapitalize: 'none',
                     autoCorrect: false,
-                    placeholder: t('dialog.sharedVideoLinkPlaceholder'),
-                    placeholderTextColor: BaseTheme.palette.text03
+                    placeholder: t('dialog.sharedVideoLinkPlaceholder')
                 }}
                 titleKey = 'dialog.shareVideoTitle' />
         );

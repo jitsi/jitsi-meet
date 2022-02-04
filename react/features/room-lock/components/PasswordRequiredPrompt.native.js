@@ -1,12 +1,10 @@
 // @flow
 
 import React, { Component } from 'react';
-import Dialog from 'react-native-dialog';
 import type { Dispatch } from 'redux';
 
 import { setPassword } from '../../base/conference';
 import { InputDialog } from '../../base/dialog';
-import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
 import { _cancelPasswordRequiredPrompt } from '../actions';
 
@@ -30,12 +28,7 @@ type Props = {
     /**
      * The redux dispatch function.
      */
-    dispatch: Dispatch<any>,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
+    dispatch: Dispatch<any>
 };
 
 type State = {
@@ -99,6 +92,7 @@ class PasswordRequiredPrompt extends Component<Props, State> {
 
         return (
             <InputDialog
+                descriptionKey = 'dialog.passwordLabel'
                 initialValue = { password }
                 messageKey = { password ? 'dialog.incorrectRoomLockPassword' : undefined }
                 onCancel = { this._onCancel }
@@ -106,11 +100,7 @@ class PasswordRequiredPrompt extends Component<Props, State> {
                 textInputProps = {{
                     secureTextEntry: true
                 }}
-                titleKey = 'dialog.password'>
-                <Dialog.Description>
-                    { this.props.t('dialog.passwordLabel') }
-                </Dialog.Description>
-            </InputDialog>
+                titleKey = 'dialog.password' />
         );
     }
 
@@ -151,7 +141,7 @@ class PasswordRequiredPrompt extends Component<Props, State> {
 }
 
 /**
- * Maps part of the Redux state to the props of this component.
+ * Maps part of the Redux state to the props of this component.å
  *
  * @param {Object} state - The Redux state.
  * @returns {Props}
@@ -162,4 +152,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default translate(connect(_mapStateToProps)(PasswordRequiredPrompt));
+export default connect(_mapStateToProps)(PasswordRequiredPrompt);

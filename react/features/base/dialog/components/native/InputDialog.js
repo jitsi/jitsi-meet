@@ -17,9 +17,9 @@ import { FIELD_UNDERLINE, inputDialog as styles } from './styles';
 type Props = AbstractProps & {
 
     /**
-     * The children of the component.
+     * The dialog descriptionKey.
      */
-    children: React$Node,
+    descriptionKey: string,
 
     /**
      * An optional initial value to initiate the field with.
@@ -88,7 +88,7 @@ class InputDialog<P: Props, S: State> extends AbstractDialog<P, S> {
      */
     render() {
         const {
-            children,
+            descriptionKey,
             messageKey,
             t,
             titleKey
@@ -106,7 +106,13 @@ class InputDialog<P: Props, S: State> extends AbstractDialog<P, S> {
                             </Dialog.Title>
                         )
                     }
-                    { children }
+                    {
+                        descriptionKey && (
+                            <Dialog.Description>
+                                { t(descriptionKey) }
+                            </Dialog.Description>
+                        )
+                    }
                     <Dialog.Input
                         autoFocus = { true }
                         onChangeText = { this._onChangeText }
@@ -140,9 +146,7 @@ class InputDialog<P: Props, S: State> extends AbstractDialog<P, S> {
      * @returns {void}
      */
     _onChangeText(fieldValue) {
-
-        if (this.props.validateInput
-            && !this.props.validateInput(fieldValue)) {
+        if (this.props.validateInput && !this.props.validateInput(fieldValue)) {
             return;
         }
 
