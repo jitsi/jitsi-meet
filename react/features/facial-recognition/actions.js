@@ -13,8 +13,10 @@ import {
     STOP_FACIAL_RECOGNITION
 } from './actionTypes';
 import {
-    CPU_TIME_INTERVAL,
-    WEBGL_TIME_INTERVAL,
+    CLEAR_TIMEOUT,
+    FACIAL_EXPRESSION_MESSAGE,
+    INIT_WORKER,
+    INTERVAL_MESSAGE,
     WEBHOOK_SEND_TIME_INTERVAL
 } from './constants';
 import { sendDataToWorker, sendFacialExpressionsWebhook } from './functions';
@@ -82,19 +84,12 @@ export function loadWorker() {
 
             // receives a message indicating what type of backend tfjs decided to use.
             // it is received after as a response to the first message sent to the worker.
-            if (type === 'tf-backend' && value) {
-                let detectionTimeInterval = -1;
-
-                if (value === 'webgl') {
-                    detectionTimeInterval = WEBGL_TIME_INTERVAL;
-                } else if (value === 'cpu') {
-                    detectionTimeInterval = CPU_TIME_INTERVAL;
-                }
-                dispatch(setDetectionTimeInterval(detectionTimeInterval));
+            if (type === INTERVAL_MESSAGE) {
+                value && dispatch(setDetectionTimeInterval(value));
             }
 
             // receives a message with the predicted facial expression.
-            if (type === 'facial-expression') {
+            if (type === FACIAL_EXPRESSION_MESSAGE) {
                 sendDataToWorker(worker, imageCapture);
                 if (!value) {
                     return;
@@ -118,8 +113,12 @@ export function loadWorker() {
             }
         };
         worker.postMessage({
-            id: 'SET_MODELS_URL',
-            url: baseUrl
+            type: INIT_WORKER,
+            url: baseUrl,
+            windowScreenSize: window.screen ? {
+                width: window.screen.width,
+                height: window.screen.height
+            } : undefined
         });
         dispatch(startFacialRecognition());
     };
@@ -187,7 +186,7 @@ export function stopFacialRecognition() {
         }
         imageCapture = null;
         worker.postMessage({
-            id: 'CLEAR_TIMEOUT'
+            type: CLEAR_TIMEOUT
         });
 
         if (lastFacialExpression && lastFacialExpressionTimestamp) {
