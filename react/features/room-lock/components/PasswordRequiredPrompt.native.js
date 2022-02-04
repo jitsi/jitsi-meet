@@ -141,7 +141,7 @@ class PasswordRequiredPrompt extends Component<Props, State> {
 }
 
 /**
- * Maps part of the Redux state to the props of this component.å
+ * Maps part of the Redux state to the props of this component.
  *
  * @param {Object} state - The Redux state.
  * @returns {Props}
