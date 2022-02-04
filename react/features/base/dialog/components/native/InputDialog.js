@@ -99,13 +99,9 @@ class InputDialog<P: Props, S: State> extends AbstractDialog<P, S> {
                 <Dialog.Container
                     onBackdropPress = { this._onCancel }
                     visible = { true }>
-                    {
-                        titleKey && (
-                            <Dialog.Title>
-                                { t(titleKey) }
-                            </Dialog.Title>
-                        )
-                    }
+                    <Dialog.Title>
+                        { t(titleKey) }
+                    </Dialog.Title>
                     {
                         descriptionKey && (
                             <Dialog.Description>
