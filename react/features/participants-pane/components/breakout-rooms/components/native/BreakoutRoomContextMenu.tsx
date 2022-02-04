@@ -6,12 +6,14 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { createBreakoutRoomsEvent } from '../../../../../analytics/AnalyticsEvents';
 import { sendAnalytics } from '../../../../../analytics/functions';
-import { hideSheet } from '../../../../../base/dialog/actions';
+import { getCurrentConference } from '../../../../../base/conference/functions';
+import { hideSheet, openDialog } from '../../../../../base/dialog/actions';
 import BottomSheet from '../../../../../base/dialog/components/native/BottomSheet';
 import Icon from '../../../../../base/icons/components/Icon';
 import { IconCloseLarge, IconRingGroup } from '../../../../../base/icons/svg';
 import { isLocalParticipantModerator } from '../../../../../base/participants/functions';
 import { closeBreakoutRoom, moveToRoom, removeBreakoutRoom } from '../../../../../breakout-rooms/actions';
+import { BREAKOUT_ROOMS_RENAME_FEATURE } from '../../../../../breakout-rooms/constants';
 import { getBreakoutRoomsConfig } from '../../../../../breakout-rooms/functions';
 import { IRoom } from '../../../../../breakout-rooms/types';
 import styles from '../../../native/styles';
@@ -28,6 +30,9 @@ const BreakoutRoomContextMenu = ({ room }: IProps) => {
     const dispatch = useDispatch();
     const isLocalModerator = useSelector(isLocalParticipantModerator);
     const { hideJoinRoomButton } = useSelector(getBreakoutRoomsConfig);
+    const conference = useSelector(getCurrentConference);
+    const isRenameBreakoutRoomsSupported
+            = conference?.getBreakoutRooms().isFeatureSupported(BREAKOUT_ROOMS_RENAME_FEATURE);
     const { t } = useTranslation();
 
     const onJoinRoom = useCallback(() => {
@@ -39,6 +44,13 @@ const BreakoutRoomContextMenu = ({ room }: IProps) => {
     const onRemoveBreakoutRoom = useCallback(() => {
         dispatch(removeBreakoutRoom(room.jid));
         dispatch(hideSheet());
+    }, [ dispatch, room ]);
+
+    const onRenameBreakoutRoom = useCallback(() => {
+        dispatch(openDialog(BreakoutRoomNamePrompt, {
+            breakoutRoomJid: room.jid,
+            initialRoomName: room.name
+        }));
     }, [ dispatch, room ]);
 
     const onCloseBreakoutRoom = useCallback(() => {
@@ -61,6 +73,16 @@ const BreakoutRoomContextMenu = ({ room }: IProps) => {
                         <Text style = { styles.contextMenuItemText }>{t('breakoutRooms.actions.join')}</Text>
                     </TouchableOpacity>
                 )
+            }
+            {!room?.isMainRoom && isLocalModerator && isRenameBreakoutRoomsSupported
+                && <TouchableOpacity
+                    onPress = { onRenameBreakoutRoom }
+                    style = { styles.contextMenuItem }>
+                    <Icon
+                        size = { 24 }
+                        src = { IconEdit } />
+                    <Text style = { styles.contextMenuItemText }>{t('breakoutRooms.actions.rename')}</Text>
+                </TouchableOpacity>
             }
             {!room?.isMainRoom && isLocalModerator
                 && (room?.participants && Object.keys(room.participants).length > 0
