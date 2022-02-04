@@ -145,6 +145,11 @@ type Props = {
     _dialog: boolean,
 
     /**
+     * Whether or not the toolbox is disabled. It is for recorders.
+     */
+    _disabled: boolean,
+
+    /**
      * Whether or not call feedback can be sent.
      */
     _feedbackConfigured: boolean,
@@ -447,6 +452,10 @@ class Toolbox extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
+        if (this.props._disabled) {
+            return null;
+        }
+
         const { _chatOpen, _visible, _toolbarButtons } = this.props;
         const rootClassNames = `new-toolbox ${_visible ? 'visible' : ''} ${
             _toolbarButtons.length ? '' : 'no-buttons'} ${_chatOpen ? 'shift-right' : ''}`;
@@ -1346,11 +1355,13 @@ function _mapStateToProps(state, ownProps) {
     const { conference } = state['features/base/conference'];
     let desktopSharingEnabled = JitsiMeetJS.isDesktopSharingEnabled();
     const {
+        buttonsWithNotifyClick,
         callStatsID,
         disableProfile,
         enableFeaturesBasedOnToken,
         hideDominantSpeakerBadge,
-        buttonsWithNotifyClick
+        iAmRecorder,
+        iAmSipGateway
     } = state['features/base/config'];
     const {
         fullScreen,
@@ -1391,6 +1402,7 @@ function _mapStateToProps(state, ownProps) {
         _desktopSharingButtonDisabled: isDesktopShareButtonDisabled(state),
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,
         _dialog: Boolean(state['features/base/dialog'].component),
+        _disabled: Boolean(iAmRecorder || iAmSipGateway),
         _feedbackConfigured: Boolean(callStatsID),
         _fullScreen: fullScreen,
         _isProfileDisabled: Boolean(disableProfile),

@@ -31,15 +31,13 @@ type Props = {
 
     /**
      * Is the video shared by the local user.
-     *
-     * @private
      */
-     isOwner: boolean,
+    isOwner: boolean,
 
     /**
      * The shared video url.
      */
-     videoUrl: string,
+    videoUrl: string,
 }
 
 /** .
