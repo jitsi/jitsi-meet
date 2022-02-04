@@ -6,13 +6,19 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { createBreakoutRoomsEvent, sendAnalytics } from '../../../../../analytics';
 import { ContextMenu, ContextMenuItemGroup } from '../../../../../base/components';
+import { getCurrentConference } from '../../../../../base/conference';
+import { openDialog } from '../../../../../base/dialog';
 import {
     IconClose,
+    IconEdit,
     IconRingGroup
 } from '../../../../../base/icons';
 import { isLocalParticipantModerator } from '../../../../../base/participants';
 import { closeBreakoutRoom, moveToRoom, removeBreakoutRoom } from '../../../../../breakout-rooms/actions';
+import { BREAKOUT_ROOMS_RENAME_FEATURE } from '../../../../../breakout-rooms/constants';
 import { showOverflowDrawer } from '../../../../../toolbox/functions';
+
+import BreakoutRoomNamePrompt from './BreakoutRoomNamePrompt';
 
 type Props = {
 
@@ -52,6 +58,9 @@ export const RoomContextMenu = ({
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const isLocalModerator = useSelector(isLocalParticipantModerator);
+    const conference = useSelector(getCurrentConference);
+    const isRenameBreakoutRoomsSupported
+            = conference?.getBreakoutRooms().isFeatureSupported(BREAKOUT_ROOMS_RENAME_FEATURE);
     const _overflowDrawer = useSelector(showOverflowDrawer);
 
     const onJoinRoom = useCallback(() => {
@@ -61,6 +70,13 @@ export const RoomContextMenu = ({
 
     const onRemoveBreakoutRoom = useCallback(() => {
         dispatch(removeBreakoutRoom(room.jid));
+    }, [ dispatch, room ]);
+
+    const onRenameBreakoutRoom = useCallback(() => {
+        dispatch(openDialog(BreakoutRoomNamePrompt, {
+            breakoutRoomJid: room.jid,
+            initialRoomName: room.name
+        }));
     }, [ dispatch, room ]);
 
     const onCloseBreakoutRoom = useCallback(() => {
@@ -75,6 +91,13 @@ export const RoomContextMenu = ({
             icon: IconRingGroup,
             onClick: onJoinRoom,
             text: t('breakoutRooms.actions.join')
+        } : null,
+        !room?.isMainRoom && isLocalModerator && isRenameBreakoutRoomsSupported ? {
+            accessibilityLabel: t('breakoutRooms.actions.rename'),
+            icon: IconEdit,
+            id: `rename-room-${room?.id}`,
+            onClick: onRenameBreakoutRoom,
+            text: t('breakoutRooms.actions.rename')
         } : null,
         !room?.isMainRoom && isLocalModerator ? {
             accessibilityLabel: isRoomEmpty ? t('breakoutRooms.actions.remove') : t('breakoutRooms.actions.close'),
