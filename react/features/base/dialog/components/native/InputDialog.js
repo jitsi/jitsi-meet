@@ -12,7 +12,7 @@ import AbstractDialog, {
     type State as AbstractState
 } from '../AbstractDialog';
 
-import { FIELD_UNDERLINE, inputDialog as styles } from './styles';
+import { inputDialog as styles } from './styles';
 
 type Props = AbstractProps & {
 
@@ -99,13 +99,9 @@ class InputDialog<P: Props, S: State> extends AbstractDialog<P, S> {
                 <Dialog.Container
                     onBackdropPress = { this._onCancel }
                     visible = { true }>
-                    {
-                        titleKey && (
-                            <Dialog.Title>
-                                { t(titleKey) }
-                            </Dialog.Title>
-                        )
-                    }
+                    <Dialog.Title>
+                        { t(titleKey) }
+                    </Dialog.Title>
                     {
                         descriptionKey && (
                             <Dialog.Description>
@@ -116,7 +112,6 @@ class InputDialog<P: Props, S: State> extends AbstractDialog<P, S> {
                     <Dialog.Input
                         autoFocus = { true }
                         onChangeText = { this._onChangeText }
-                        underlineColorAndroid = { FIELD_UNDERLINE }
                         value = { this.state.fieldValue }
                         { ...this.props.textInputProps } />
                     {
