@@ -1,6 +1,6 @@
 // @flow
 import './faceApiPatch';
-import * as faceapi from 'face-api.js';
+import * as faceapi from '@vladmandic/face-api';
 
 import {
     CLEAR_TIMEOUT,
