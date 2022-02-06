@@ -1,7 +1,6 @@
 import { ReducerRegistry } from '../base/redux';
 
-import { 
-	BLUR_ENABLED,
+import {
 	BUNNY_EARS_ENABLED, 
 	FRAMED_FACE_GREY_ENABLED,
 	FRAMED_FACE_RED_ENABLED,
@@ -12,12 +11,6 @@ import {
 ReducerRegistry.register('features/video-effect-filters', (state = {}, action) => {
 
     switch (action.type) {
-	case BLUR_ENABLED: {
-	return {
-	    ...state,
-	    currentVideoEffectFilter: BLUR_ENABLED
-	};
-    }
     case BUNNY_EARS_ENABLED: {
 	return {
 	    ...state,

@@ -5,7 +5,6 @@ import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
 
 import {
-	BLUR_ENABLED,
 	BUNNY_EARS_ENABLED, 
 	FRAMED_FACE_GREY_ENABLED,
 	FRAMED_FACE_RED_ENABLED,
@@ -104,14 +103,6 @@ class VideoEffectFilterChooser extends Component<Props> {
 							onChange = {this.onRadioValueChange}
 						/>
 						Framed Face - Yellow
-					</label><br/>
-					<label className="video-effect-filters-label">
-						<input type="radio" className="video-effect-filters-radio"
-							value = {BLUR_ENABLED}
-							checked = {_selectedVideoEffectFilter === BLUR_ENABLED}
-							onChange = {this.onRadioValueChange}
-						/>
-						Background blur
 					</label><br/>
 					<label className="video-effect-filters-label">
 						<input type="radio" className="video-effect-filters-radio"

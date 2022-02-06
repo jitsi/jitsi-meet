@@ -1,12 +1,6 @@
 
 /**
 * Redux action type that represents that the local participant enabled
-* the background blur effect filter.
-*/
-export const BLUR_ENABLED = 'BLUR_ENABLED';
-
-/**
-* Redux action type that represents that the local participant enabled
 * the bunny ears effect filter.
 */
 export const BUNNY_EARS_ENABLED = 'BUNNY_EARS_ENABLED';

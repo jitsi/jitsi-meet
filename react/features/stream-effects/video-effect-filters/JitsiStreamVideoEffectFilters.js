@@ -1,7 +1,5 @@
 // @flow
 
-import * as StackBlur from 'stackblur-canvas';
-
 import {
     CLEAR_TIMEOUT,
     TIMEOUT_TICK,
@@ -10,7 +8,6 @@ import {
 } from './TimerWorker';
 
 import {
-	BLUR_ENABLED,
 	BUNNY_EARS_ENABLED, 
 	FRAMED_FACE_GREY_ENABLED,
 	FRAMED_FACE_RED_ENABLED,
@@ -128,72 +125,47 @@ export default class JitsiStreamVideoEffectFilters {
         );
 		
 		if (this._segmentationData) {
-            
-            if (this._selectedVideoEffectFilter == BLUR_ENABLED) {
-				// blur effect
 				
-				const blurData = new ImageData(currentFrame.data.slice(), currentFrame.width, currentFrame.height);
-
-				StackBlur.imageDataRGB(blurData, 0, 0, currentFrame.width, currentFrame.height, 12);
-
-				for (let x = 0; x < this._outputCanvasElement.width; x++) {
-					for (let y = 0; y < this._outputCanvasElement.height; y++) {
-						const n = (y * this._outputCanvasElement.width) + x;
-
-						if (this._segmentationData.data[n] === 0) {
-							currentFrame.data[n * 4] = blurData.data[n * 4];
-							currentFrame.data[(n * 4) + 1] = blurData.data[(n * 4) + 1];
-							currentFrame.data[(n * 4) + 2] = blurData.data[(n * 4) + 2];
-							currentFrame.data[(n * 4) + 3] = blurData.data[(n * 4) + 3];
-						}
-					}
-				}
+			// First, draw raw input image on screen 
+			this._outputCanvasElementContext.drawImage(this._inputVideoElement, 0, 0); 
+			
+			// Only add an effect if a face has been identified 
+			if (this._segmentationData.allPoses[0]) {
 				
-				this._outputCanvasElementContext.putImageData(currentFrame, 0, 0);
+				var xNose = this._segmentationData.allPoses[0].keypoints[0].position.x;
+				var yNose = this._segmentationData.allPoses[0].keypoints[0].position.y;
+				var yLeftEye = this._segmentationData.allPoses[0].keypoints[1].position.y;
+				var yRightEye = this._segmentationData.allPoses[0].keypoints[2].position.y;
+				var xLeftEar = this._segmentationData.allPoses[0].keypoints[3].position.x;
+				var xRightEar = this._segmentationData.allPoses[0].keypoints[4].position.x;
 				
-			} else {
-				// Video-effect-filter (anything but blur effect)
+				var yDiffNoseEye = yNose - (Math.min(yLeftEye, yRightEye));
+				var xDiffEars = Math.abs(xRightEar - xLeftEar);
 				
-				// First, draw raw input image on screen 
-				this._outputCanvasElementContext.drawImage(this._inputVideoElement, 0, 0); 
-				
-				// Only add an effect if a face has been identified 
-				if (this._segmentationData.allPoses[0]) {
+				var posY;
+				var scale;
 					
-					var xNose = this._segmentationData.allPoses[0].keypoints[0].position.x;
-					var yNose = this._segmentationData.allPoses[0].keypoints[0].position.y;
-					var yLeftEye = this._segmentationData.allPoses[0].keypoints[1].position.y;
-					var yRightEye = this._segmentationData.allPoses[0].keypoints[2].position.y;
-					var xLeftEar = this._segmentationData.allPoses[0].keypoints[3].position.x;
-					var xRightEar = this._segmentationData.allPoses[0].keypoints[4].position.x;
-					
-					var yDiffNoseEye = yNose - (Math.min(yLeftEye, yRightEye));
-					var xDiffEars = Math.abs(xRightEar - xLeftEar);
-					
-					var posY;
-					var scale;
-						
-					switch (this._selectedVideoEffectFilter) {
-						case BUNNY_EARS_ENABLED:
-							scale = xDiffEars * 1.9 / this._effectImage.height;
-							posY = yNose - this._effectImage.height * scale;
-							posY = posY - 2.4 * yDiffNoseEye;
-							break;
-						case FRAMED_FACE_GREY_ENABLED:
-						case FRAMED_FACE_RED_ENABLED:
-						case FRAMED_FACE_YELLOW_ENABLED:
-							scale = xDiffEars * 1.5 / this._effectImage.width;
-							posY = yNose - this._effectImage.height / 2 * scale;
-							posY = posY - 0.5 * yDiffNoseEye;
-							break;
-					}	
-					
-					var posX = xNose - (this._effectImage.width / 2) * scale; 
-					 
-					// Draw effect image onto the raw image
-					this._outputCanvasElementContext.drawImage(this._effectImage, posX, posY, this._effectImage.width * scale, this._effectImage.height * scale);
-				}
+				switch (this._selectedVideoEffectFilter) {
+					case BUNNY_EARS_ENABLED:
+						scale = xDiffEars * 1.9 / this._effectImage.height;
+						posY = yNose - this._effectImage.height * scale;
+						posY = posY - 2.4 * yDiffNoseEye;
+						break;
+					case FRAMED_FACE_GREY_ENABLED:
+					case FRAMED_FACE_RED_ENABLED:
+					case FRAMED_FACE_YELLOW_ENABLED:
+						scale = xDiffEars * 1.5 / this._effectImage.width;
+						posY = yNose - this._effectImage.height / 2 * scale;
+						posY = posY - 0.5 * yDiffNoseEye;
+						break;
+				}	
+				
+				var posX = xNose - (this._effectImage.width / 2) * scale; 
+				 
+				// Draw effect image onto the raw image
+				this._outputCanvasElementContext.drawImage(this._effectImage, posX, posY, this._effectImage.width * scale, this._effectImage.height * scale);
 			}
+			
             
         } else  {
 			// This will be called only before the first segmentation has taken place

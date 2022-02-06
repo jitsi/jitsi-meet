@@ -3,7 +3,6 @@
 import { getLocalVideoTrack } from '../../features/base/tracks';
 
 import { 
-	BLUR_ENABLED,
 	BUNNY_EARS_ENABLED, 
 	FRAMED_FACE_GREY_ENABLED,
 	FRAMED_FACE_RED_ENABLED,
@@ -29,9 +28,6 @@ export function setVideoEffectFilter(selectedVideoEffectFilter) {
 	    let actionToDispatch;
 	    
 	    switch(selectedVideoEffectFilter) {
-			case BLUR_ENABLED:
-				actionToDispatch = blurEnabled();
-				break;
 			case BUNNY_EARS_ENABLED:
 				actionToDispatch = bunnyEarsEnabled();
 				break;
@@ -74,16 +70,6 @@ export function setVideoEffectFilter(selectedVideoEffectFilter) {
 	
 	// The selected effect is already selected, resolve Promise
 	return Promise.resolve();
-    };
-}
-
-/**
-* Action creator that signals that the local participant has enabled 
-* the background blur video effect filter.
-*/
-function blurEnabled() {
-    return {
-	    type: BLUR_ENABLED
     };
 }
 
