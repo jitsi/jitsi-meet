@@ -15,11 +15,6 @@ export const PREJOIN_INITIALIZED = 'PREJOIN_INITIALIZED';
 export const SET_DEVICE_STATUS = 'SET_DEVICE_STATUS';
 
 /**
- * Action type to set the visibility of the prejoin page for the future.
- */
-export const SET_SKIP_PREJOIN = 'SET_SKIP_PREJOIN';
-
-/**
  * Action type to set the visibility of the prejoin page when client is forcefully reloaded.
  */
 export const SET_SKIP_PREJOIN_RELOAD = 'SET_SKIP_PREJOIN_RELOAD';

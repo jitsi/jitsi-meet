@@ -5,12 +5,11 @@ import React from 'react';
 import AbstractPollsPane from '../AbstractPollsPane';
 import type { AbstractProps } from '../AbstractPollsPane';
 
+import PollCreate from './PollCreate';
 import PollsList from './PollsList';
 
-import { PollCreate } from '.';
 
 const PollsPane = (props: AbstractProps) => {
-
     const { createMode, onCreate, setCreateMode, t } = props;
 
     return createMode

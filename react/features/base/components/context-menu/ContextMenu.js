@@ -19,7 +19,7 @@ type Props = {
     /**
      * Class name for context menu. Used to overwrite default styles.
      */
-    className?: string,
+    className?: ?string,
 
     /**
      * The entity for which the context menu is displayed.
@@ -32,9 +32,14 @@ type Props = {
     hidden?: boolean,
 
     /**
+     * Whether or not the menu is already in a drawer.
+     */
+    inDrawer?: ?boolean,
+
+    /**
      * Whether or not drawer should be open.
      */
-    isDrawerOpen: boolean,
+    isDrawerOpen?: boolean,
 
     /**
      * Target elements against which positioning calculations are made.
@@ -49,7 +54,7 @@ type Props = {
     /**
      * Callback for drawer close.
      */
-    onDrawerClose: Function,
+    onDrawerClose?: Function,
 
     /**
      * Callback for the mouse entering the component.
@@ -59,7 +64,7 @@ type Props = {
     /**
      * Callback for the mouse leaving the component.
      */
-    onMouseLeave: Function
+    onMouseLeave?: Function
 };
 
 const useStyles = makeStyles(theme => {
@@ -106,6 +111,7 @@ const ContextMenu = ({
     className,
     entity,
     hidden,
+    inDrawer,
     isDrawerOpen,
     offsetTarget,
     onClick,
@@ -146,6 +152,14 @@ const ContextMenu = ({
             setIsHidden(hidden);
         }
     }, [ hidden ]);
+
+    if (_overflowDrawer && inDrawer) {
+        return (<div
+            className = { styles.drawer }
+            onClick = { onDrawerClose }>
+            {children}
+        </div>);
+    }
 
     return _overflowDrawer
         ? <JitsiPortal>

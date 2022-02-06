@@ -9,11 +9,11 @@ import { getParticipantCount } from '../base/participants/functions';
 import {
     CLEAR_NOTIFICATIONS,
     HIDE_NOTIFICATION,
-    HIDE_RAISE_HAND_NOTIFICATIONS,
     SET_NOTIFICATIONS_ENABLED,
     SHOW_NOTIFICATION
 } from './actionTypes';
 import {
+    NOTIFICATION_ICON,
     NOTIFICATION_TIMEOUT_TYPE,
     NOTIFICATION_TIMEOUT,
     NOTIFICATION_TYPE,
@@ -67,19 +67,6 @@ export function hideNotification(uid: string) {
     return {
         type: HIDE_NOTIFICATION,
         uid
-    };
-}
-
-/**
- * Removes the raise hand notifications.
- *
- * @returns {{
- *     type: HIDE_RAISE_HAND_NOTIFICATIONS
- * }}
- */
-export function hideRaiseHandNotifications() {
-    return {
-        type: HIDE_RAISE_HAND_NOTIFICATIONS
     };
 }
 
@@ -153,6 +140,23 @@ export function showWarningNotification(props: Object, type: ?string) {
     return showNotification({
         ...props,
         appearance: NOTIFICATION_TYPE.WARNING
+    }, type);
+}
+
+/**
+ * Queues a message notification for display.
+ *
+ * @param {Object} props - The props needed to show the notification component.
+ * @param {string} type - Notification type.
+ * @returns {Object}
+ */
+export function showMessageNotification(props: Object, type: ?string) {
+    return showNotification({
+        ...props,
+        concatText: true,
+        titleKey: 'notify.chatMessages',
+        appearance: NOTIFICATION_TYPE.NORMAL,
+        icon: NOTIFICATION_ICON.MESSAGE
     }, type);
 }
 
@@ -293,7 +297,7 @@ const _throttledNotifyParticipantLeft = throttle((dispatch: Dispatch<any>, getSt
  * @returns {Function}
  */
 export function showParticipantJoinedNotification(displayName: string) {
-    leftParticipantsNames.push(displayName);
+    joinedParticipantsNames.push(displayName);
 
     return (dispatch: Dispatch<any>, getState: Function) => _throttledNotifyParticipantConnected(dispatch, getState);
 }
@@ -307,7 +311,7 @@ export function showParticipantJoinedNotification(displayName: string) {
  * @returns {Function}
  */
 export function showParticipantLeftNotification(displayName: string) {
-    joinedParticipantsNames.push(displayName);
+    leftParticipantsNames.push(displayName);
 
     return (dispatch: Dispatch<any>, getState: Function) => _throttledNotifyParticipantLeft(dispatch, getState);
 }

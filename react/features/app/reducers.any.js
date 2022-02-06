@@ -53,4 +53,5 @@ import '../toolbox/reducer';
 import '../transcribing/reducer';
 import '../video-effect-filters/reducer';
 import '../video-layout/reducer';
+import '../video-quality/reducer';
 import '../videosipgw/reducer';

@@ -82,14 +82,6 @@ export default {
     },
 
     /**
-     * Drawer style.
-     */
-    drawerStyle: {
-        backgroundColor: BaseTheme.palette.ui12,
-        width: '54%'
-    },
-
-    /**
      * The style of the display name label in the side bar.
      */
     displayName: {
@@ -158,16 +150,6 @@ export default {
         marginVertical: 5,
         paddingHorizontal: BoxModel.padding,
         paddingVertical: 2 * BoxModel.padding
-    },
-
-    /**
-     * The style of the top-level container/{@code View} of
-     * {@code LocalVideoTrackUnderlay}.
-     */
-    localVideoTrackUnderlay: {
-        alignSelf: 'stretch',
-        backgroundColor: 'transparent',
-        flex: 1
     },
 
     /**
@@ -288,5 +270,12 @@ export default {
         flex: 1,
         opacity: 0.8,
         overflow: 'hidden'
+    },
+
+    /**
+     * Style for screen container.
+     */
+    screenContainer: {
+        flex: 1
     }
 };

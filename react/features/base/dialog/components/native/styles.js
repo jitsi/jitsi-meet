@@ -20,8 +20,6 @@ export const MD_FONT_SIZE = 16;
 export const MD_ITEM_HEIGHT = 48;
 export const MD_ITEM_MARGIN_PADDING = 16;
 
-export const PLACEHOLDER_COLOR = ColorPalette.lightGrey;
-
 /**
  * The React {@code Component} styles of {@code BottomSheet}. These have
  * been implemented as per the Material Design guidelines:
@@ -53,6 +51,18 @@ export const bottomSheetStyles = {
 
     sheetItemContainer: {
         flex: -1
+    }
+};
+
+export default {
+
+    dialogButton: {
+        ...BaseTheme.typography.labelButton
+    },
+
+    destructiveDialogButton: {
+        ...BaseTheme.typography.labelButton,
+        color: BaseTheme.palette.actionDanger
     }
 };
 
@@ -146,19 +156,11 @@ const brandedDialogIconStyle = {
 };
 
 export const inputDialog = {
-    bottomField: {
-        marginBottom: 0
-    },
-
-    fieldWrapper: {
-        ...brandedDialog.mainWrapper,
-        paddingBottom: BoxModel.padding * 2
-    },
-
     formMessage: {
         alignSelf: 'flex-start',
         fontStyle: 'italic',
-        margin: BoxModel.margin
+        fontWeight: 'bold',
+        marginTop: BaseTheme.spacing[3]
     }
 };
 

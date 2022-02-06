@@ -19,11 +19,11 @@ export const THRESHOLDS = [
         order: [ 'microphone', 'camera', 'chat', 'participants' ]
     },
     {
-        width: 320,
+        width: 225,
         order: [ 'microphone', 'camera', 'chat' ]
     },
     {
-        width: 270,
+        width: 200,
         order: [ 'microphone', 'camera' ]
     }
 ];
@@ -31,3 +31,10 @@ export const THRESHOLDS = [
 export const NOT_APPLICABLE = 'N/A';
 
 export const TOOLBAR_TIMEOUT = 4000;
+
+export const DRAWER_MAX_HEIGHT = '80vh - 64px';
+
+export const NOTIFY_CLICK_MODE = {
+    ONLY_NOTIFY: 'ONLY_NOTIFY',
+    PREVENT_AND_NOTIFY: 'PREVENT_AND_NOTIFY'
+};

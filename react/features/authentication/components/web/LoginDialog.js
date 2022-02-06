@@ -299,7 +299,7 @@ function mapStateToProps(state) {
         progress,
         thenableWithCancel
     } = state['features/authentication'];
-    const { authRequired } = state['features/base/conference'];
+    const { authRequired, conference } = state['features/base/conference'];
     const { hosts: configHosts } = state['features/base/config'];
     const {
         connecting,
@@ -307,7 +307,7 @@ function mapStateToProps(state) {
     } = state['features/base/connection'];
 
     return {
-        _conference: authRequired,
+        _conference: authRequired || conference,
         _configHosts: configHosts,
         _connecting: connecting || thenableWithCancel,
         _error: connectionError || authenticateAndUpgradeRoleError,

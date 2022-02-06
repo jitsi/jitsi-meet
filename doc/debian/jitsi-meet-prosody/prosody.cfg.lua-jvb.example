@@ -124,4 +124,5 @@ Component "lobby.jitmeet.example.com" "muc"
     muc_room_default_public_jids = true
     modules_enabled = {
         "muc_rate_limit";
+        "polls";
     }

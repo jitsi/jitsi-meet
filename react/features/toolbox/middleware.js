@@ -84,16 +84,17 @@ function _setFullScreen(next, action) {
             return result;
         }
 
-        // $FlowFixMe
         if (typeof document.exitFullscreen === 'function') {
             document.exitFullscreen();
 
-        // $FlowFixMe
+        // $FlowExpectedError
         } else if (typeof document.mozCancelFullScreen === 'function') {
+            // $FlowExpectedError
             document.mozCancelFullScreen();
 
-        // $FlowFixMe
+        // $FlowExpectedError
         } else if (typeof document.webkitExitFullscreen === 'function') {
+            // $FlowExpectedError
             document.webkitExitFullscreen();
         }
     }

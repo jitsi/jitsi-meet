@@ -84,6 +84,9 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
         const { local } = state;
 
         if (local) {
+            if (action.newValue === 'local' && state.raisedHandsQueue.find(pid => pid.id === local.id)) {
+                state.raisedHandsQueue = state.raisedHandsQueue.filter(pid => pid.id !== local.id);
+            }
             state.local = {
                 ...local,
                 id: action.newValue

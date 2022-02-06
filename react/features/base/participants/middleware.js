@@ -31,6 +31,7 @@ import {
     DOMINANT_SPEAKER_CHANGED,
     GRANT_MODERATOR,
     KICK_PARTICIPANT,
+    LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED,
     LOCAL_PARTICIPANT_RAISE_HAND,
     MUTE_REMOTE_PARTICIPANT,
     PARTICIPANT_DISPLAY_NAME_CHANGED,
@@ -45,15 +46,18 @@ import {
     localParticipantLeft,
     participantLeft,
     participantUpdated,
+    raiseHand,
     raiseHandUpdateQueue,
     setLoadableAvatarUrl
 } from './actions';
 import {
     LOCAL_PARTICIPANT_DEFAULT_ID,
+    LOWER_HAND_AUDIO_LEVEL,
     PARTICIPANT_JOINED_SOUND_ID,
     PARTICIPANT_LEFT_SOUND_ID
 } from './constants';
 import {
+    getDominantSpeakerParticipant,
     getFirstLoadableAvatarUrl,
     getLocalParticipant,
     getParticipantById,
@@ -61,11 +65,10 @@ import {
     getParticipantDisplayName,
     getRaiseHandsQueue,
     getRemoteParticipants,
+    hasRaisedHand,
     isLocalParticipantModerator
 } from './functions';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
-
-import { hasRaisedHand, raiseHand } from '.';
 
 declare var APP: Object;
 
@@ -103,6 +106,22 @@ MiddlewareRegistry.register(store => next => action => {
             store.dispatch(raiseHand(false));
         }
 
+        break;
+    }
+
+    case LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED: {
+        const state = store.getState();
+        const participant = getDominantSpeakerParticipant(state);
+
+        if (
+            participant
+            && participant.local
+            && hasRaisedHand(participant)
+            && action.level > LOWER_HAND_AUDIO_LEVEL
+            && !getDisableRemoveRaisedHandOnFocus(state)
+        ) {
+            store.dispatch(raiseHand(false));
+        }
         break;
     }
 
@@ -289,6 +308,12 @@ StateListenerRegistry.register(
                     })),
                 'raisedHand': (participant, value) =>
                     _raiseHandUpdated(store, conference, participant.getId(), value),
+                'region': (participant, value) =>
+                    store.dispatch(participantUpdated({
+                        conference,
+                        id: participant.getId(),
+                        region: value
+                    })),
                 'remoteControlSessionStatus': (participant, value) =>
                     store.dispatch(participantUpdated({
                         conference,
@@ -488,8 +513,8 @@ function _participantJoinedOrUpdated(store, next, action) {
             const updatedParticipant = getParticipantById(getState(), participantId);
 
             getFirstLoadableAvatarUrl(updatedParticipant, store)
-                .then(url => {
-                    dispatch(setLoadableAvatarUrl(participantId, url));
+                .then(urlData => {
+                    dispatch(setLoadableAvatarUrl(participantId, urlData?.src, urlData?.isUsingCORS));
                 });
         }
     }
@@ -578,7 +603,6 @@ function _raiseHandUpdated({ dispatch, getState }, conference, participantId, ne
             titleKey: 'notify.somebody',
             title: notificationTitle,
             descriptionKey: 'notify.raisedHand',
-            raiseHandNotification: true,
             concatText: true,
             uid: RAISE_HAND_NOTIFICATION_ID,
             ...action

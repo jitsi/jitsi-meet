@@ -10,7 +10,7 @@ import {
 } from '../../base/participants';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 
-import { GrantModeratorDialog } from '.';
+import { GrantModeratorDialog } from './';
 
 export type Props = AbstractButtonProps & {
 

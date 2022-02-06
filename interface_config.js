@@ -26,7 +26,7 @@ var interfaceConfig = {
 
     CLOSE_PAGE_GUEST_HINT: false, // A html text to be shown to guests on the close page, false disables it
 
-    DEFAULT_BACKGROUND: '#474747',
+    DEFAULT_BACKGROUND: '#040404',
     DEFAULT_LOGO_URL: 'images/watermark.svg',
     DEFAULT_WELCOME_PAGE_LOGO_URL: 'images/watermark.svg',
 
@@ -91,7 +91,7 @@ var interfaceConfig = {
 
     LANG_DETECTION: true, // Allow i18n to detect the system language
     LIVE_STREAMING_HELP_LINK: 'https://jitsi.org/live', // Documentation reference for the live streaming feature.
-    LOCAL_THUMBNAIL_RATIO: 16 / 9, // 16:9
+    LOCAL_THUMBNAIL_RATIO: 1, // 1:1
 
     /**
      * Maximum coefficient of the ratio of the large video to the visible area

@@ -4,8 +4,8 @@ import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { getFeatureFlag, SPEAKERSTATS_ENABLED } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-import { navigate } from '../../../conference/components/native/ConferenceNavigationContainerRef';
-import { screen } from '../../../conference/components/native/routes';
+import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+import { screen } from '../../../mobile/navigation/routes';
 import AbstractSpeakerStatsButton from '../AbstractSpeakerStatsButton';
 
 /**

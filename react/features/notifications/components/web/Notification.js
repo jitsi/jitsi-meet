@@ -1,12 +1,19 @@
 // @flow
 
 import Flag from '@atlaskit/flag';
+import EditorErrorIcon from '@atlaskit/icon/glyph/editor/error';
 import EditorInfoIcon from '@atlaskit/icon/glyph/editor/info';
-import React from 'react';
+import EditorSuccessIcon from '@atlaskit/icon/glyph/editor/success';
+import EditorWarningIcon from '@atlaskit/icon/glyph/editor/warning';
+import PeopleIcon from '@atlaskit/icon/glyph/people';
+import PersonIcon from '@atlaskit/icon/glyph/person';
+import QuestionsIcon from '@atlaskit/icon/glyph/questions';
+import React, { isValidElement } from 'react';
 
 import { translate } from '../../../base/i18n';
+import Message from '../../../base/react/components/web/Message';
 import { colors } from '../../../base/ui/Tokens';
-import { NOTIFICATION_TYPE } from '../../constants';
+import { NOTIFICATION_ICON, NOTIFICATION_TYPE } from '../../constants';
 import AbstractNotification, {
     type Props
 } from '../AbstractNotification';
@@ -73,10 +80,17 @@ class Notification extends AbstractNotification<Props> {
     _renderDescription() {
         const description = this._getDescription();
 
+        // Keeping in mind that:
+        // - Notifications that use the `translateToHtml` function get an element-based description array with one entry
+        // - Message notifications receive string-based description arrays that might need additional parsing
+        // We look for ready-to-render elements, and if present, we roll with them
+        // Otherwise, we use the Message component that accepts a string `text` prop
+        const shouldRenderHtml = description.length === 1 && isValidElement(description[0]);
+
         // the id is used for testing the UI
         return (
             <p data-testid = { this._getDescriptionKey() } >
-                { description }
+                { shouldRenderHtml ? description : <Message text = { description.join(' ') } /> }
             </p>
         );
     }
@@ -136,13 +150,49 @@ class Notification extends AbstractNotification<Props> {
                             if (this.props.customActionHandler[customActionIndex]()) {
                                 this._onDismissed();
                             }
-                        }
+                        },
+                        testId: customAction
                     };
                 });
             }
 
             return [];
         }
+    }
+
+    /**
+     * Returns the Icon type component to be used, based on icon or appearance.
+     *
+     * @returns {ReactElement}
+     */
+    _getIcon() {
+        let Icon;
+
+        switch (this.props.icon || this.props.appearance) {
+        case NOTIFICATION_ICON.ERROR:
+            Icon = EditorErrorIcon;
+            break;
+        case NOTIFICATION_ICON.WARNING:
+            Icon = EditorWarningIcon;
+            break;
+        case NOTIFICATION_ICON.SUCCESS:
+            Icon = EditorSuccessIcon;
+            break;
+        case NOTIFICATION_ICON.MESSAGE:
+            Icon = QuestionsIcon;
+            break;
+        case NOTIFICATION_ICON.PARTICIPANT:
+            Icon = PersonIcon;
+            break;
+        case NOTIFICATION_ICON.PARTICIPANTS:
+            Icon = PeopleIcon;
+            break;
+        default:
+            Icon = EditorInfoIcon;
+            break;
+        }
+
+        return Icon;
     }
 
     /**
@@ -153,17 +203,18 @@ class Notification extends AbstractNotification<Props> {
      * @returns {ReactElement}
      */
     _mapAppearanceToIcon() {
-        const appearance = this.props.appearance;
-        const secIconColor = ICON_COLOR[this.props.appearance];
+        const { appearance, icon } = this.props;
+        const secIconColor = ICON_COLOR[appearance];
         const iconSize = 'medium';
+        const Icon = this._getIcon();
 
-        return (<>
+        return (<div className = { icon }>
             <div className = { `ribbon ${appearance}` } />
-            <EditorInfoIcon
+            <Icon
                 label = { appearance }
                 secondaryColor = { secIconColor }
                 size = { iconSize } />
-        </>);
+        </div>);
     }
 }
 

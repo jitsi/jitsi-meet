@@ -1,10 +1,24 @@
 /* @flow */
+import { makeStyles } from '@material-ui/core/styles';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 
-import React, { Component } from 'react';
-
-import { translate } from '../../../base/i18n';
 import { Tooltip } from '../../../base/tooltip';
 import { FACIAL_EXPRESSION_EMOJIS } from '../../../facial-recognition/constants.js';
+
+const useStyles = makeStyles(theme => {
+    return {
+        labels: {
+            padding: '22px 0 7px 0',
+            height: 20
+        },
+        emojis: {
+            paddingLeft: 27,
+            ...theme.typography.bodyShortRegularLarge,
+            lineHeight: `${theme.typography.bodyShortRegular.lineHeightLarge}px`
+        }
+    };
+});
 
 /**
  * The type of the React {@code Component} props of {@link SpeakerStatsLabels}.
@@ -12,79 +26,54 @@ import { FACIAL_EXPRESSION_EMOJIS } from '../../../facial-recognition/constants.
 type Props = {
 
     /**
-     * True if the client width is les than 750.
-     */
-    reduceExpressions: boolean,
-
-    /**
      * True if the facial recognition is not disabled.
      */
     showFacialExpressions: boolean,
-
-    /**
-     * The function to translate human-readable text.
-     */
-    t: Function
 };
 
-/**
- * React component for labeling speaker stats column items.
- *
- * @augments Component
- */
-class SpeakerStatsLabels extends Component<Props> {
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    render() {
-        const { t } = this.props;
-
-        return (
-            <div className = 'speaker-stats-item__labels'>
-                <div className = 'speaker-stats-item__status' />
+const SpeakerStatsLabels = (props: Props) => {
+    const { t } = useTranslation();
+    const classes = useStyles();
+    const FacialExpressionsLabels = () => Object.keys(FACIAL_EXPRESSION_EMOJIS).map(
+            expression => (
                 <div
-                    className = { `speaker-stats-item__name${
-                        this.props.showFacialExpressions ? '_expressions_on' : ''
-                    }` }>
-                    { t('speakerStats.name') }
-                </div>
-                <div
-                    className = { `speaker-stats-item__time${
-                        this.props.showFacialExpressions ? '_expressions_on' : ''
-                    }` }>
-                    { t('speakerStats.speakerTime') }
-                </div>
-                { this.props.showFacialExpressions
-                    && (this.props.reduceExpressions
-                        ? Object.keys(FACIAL_EXPRESSION_EMOJIS)
-                            .filter(expression => ![ 'angry', 'fearful', 'disgusted' ].includes(expression))
-                        : Object.keys(FACIAL_EXPRESSION_EMOJIS)
-                    ).map(
-                    expression => (
-                        <div
-                            className = 'speaker-stats-item__expression'
-                            key = { expression }>
-                            <Tooltip
-                                content = { t(`speakerStats.${expression}`) }
-                                position = { 'top' } >
-                                <div
-                                    // eslint-disable-next-line react-native/no-inline-styles
-                                    style = {{ fontSize: 17 }}>
-
-                                    { FACIAL_EXPRESSION_EMOJIS[expression] }
-                                </div>
-
-                            </Tooltip>
+                    className = 'expression'
+                    key = { expression }>
+                    <Tooltip
+                        content = { t(`speakerStats.${expression}`) }
+                        position = { 'top' } >
+                        <div>
+                            { FACIAL_EXPRESSION_EMOJIS[expression] }
                         </div>
 
-                    ))
-                }
-            </div>
-        );
-    }
-}
+                    </Tooltip>
+                </div>
+            )
+    );
+    const nameTimeClass = `name-time${
+        props.showFacialExpressions ? ' name-time_expressions-on' : ''
+    }`;
 
-export default translate(SpeakerStatsLabels);
+    return (
+        <div className = { `row ${classes.labels}` }>
+            <div className = 'avatar' />
+
+            <div className = { nameTimeClass }>
+                <div>
+                    { t('speakerStats.name') }
+                </div>
+                <div>
+                    { t('speakerStats.speakerTime') }
+                </div>
+            </div>
+            {
+                props.showFacialExpressions
+                && <div className = { `expressions ${classes.emojis}` }>
+                    <FacialExpressionsLabels />
+                </div>
+            }
+        </div>
+    );
+};
+
+export default SpeakerStatsLabels;

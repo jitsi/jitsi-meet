@@ -5,7 +5,6 @@ import React, { Component } from 'react';
 
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
-import { IconHorizontalPoints } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { ReactionEmoji, ReactionsMenu } from '../../../reactions/components';
 import { type ReactionEmojiProps } from '../../../reactions/constants';
@@ -13,7 +12,7 @@ import { getReactionsQueue } from '../../../reactions/functions.any';
 
 import Drawer from './Drawer';
 import JitsiPortal from './JitsiPortal';
-import ToolbarButton from './ToolbarButton';
+import OverflowToggleButton from './OverflowToggleButton';
 
 /**
  * The type of the React {@code Component} props of {@link OverflowMenuButton}.
@@ -78,8 +77,8 @@ class OverflowMenuButton extends Component<Props> {
 
         // Bind event handlers so they are only bound once per instance.
         this._onCloseDialog = this._onCloseDialog.bind(this);
-        this._onToggleDialogVisibility
-            = this._onToggleDialogVisibility.bind(this);
+        this._toggleDialogVisibility
+            = this._toggleDialogVisibility.bind(this);
         this._onEscClick = this._onEscClick.bind(this);
     }
 
@@ -113,7 +112,10 @@ class OverflowMenuButton extends Component<Props> {
                 {
                     overflowDrawer ? (
                         <>
-                            {this._renderToolbarButton()}
+                            <OverflowToggleButton
+                                handleClick = { this._toggleDialogVisibility }
+                                isOpen = { isOpen }
+                                onKeyDown = { this._onEscClick } />
                             <JitsiPortal>
                                 <Drawer
                                     isOpen = { isOpen }
@@ -136,35 +138,14 @@ class OverflowMenuButton extends Component<Props> {
                             isOpen = { isOpen }
                             onClose = { this._onCloseDialog }
                             placement = 'top-end'>
-                            {this._renderToolbarButton()}
+                            <OverflowToggleButton
+                                handleClick = { this._toggleDialogVisibility }
+                                isOpen = { isOpen }
+                                onKeyDown = { this._onEscClick } />
                         </InlineDialog>
                     )
                 }
             </div>
-        );
-    }
-
-    _renderToolbarButton: () => React$Node;
-
-    /**
-     * Renders the actual toolbar overflow menu button.
-     *
-     * @returns {ReactElement}
-     */
-    _renderToolbarButton() {
-        const { ariaControls, isOpen, t } = this.props;
-
-        return (
-            <ToolbarButton
-                accessibilityLabel =
-                    { t('toolbar.accessibilityLabel.moreActions') }
-                aria-controls = { ariaControls }
-                aria-haspopup = 'true'
-                icon = { IconHorizontalPoints }
-                onClick = { this._onToggleDialogVisibility }
-                onKeyDown = { this._onEscClick }
-                toggled = { isOpen }
-                tooltip = { t('toolbar.moreActions') } />
         );
     }
 
@@ -181,7 +162,7 @@ class OverflowMenuButton extends Component<Props> {
         this.props.onVisibilityChange(false);
     }
 
-    _onToggleDialogVisibility: () => void;
+    _toggleDialogVisibility: () => void;
 
     /**
      * Callback invoked to signal that an event has occurred that should change
@@ -190,7 +171,7 @@ class OverflowMenuButton extends Component<Props> {
      * @private
      * @returns {void}
      */
-    _onToggleDialogVisibility() {
+    _toggleDialogVisibility() {
         sendAnalytics(createToolbarEvent('overflow'));
 
         this.props.onVisibilityChange(!this.props.isOpen);

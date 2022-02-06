@@ -9,7 +9,7 @@ import {
     showNotification
 } from '../notifications';
 
-import { receiveAnswer, receivePoll } from './actions';
+import { clearPolls, receiveAnswer, receivePoll } from './actions';
 import { COMMAND_NEW_POLL, COMMAND_ANSWER_POLL, COMMAND_OLD_POLLS } from './constants';
 import type { Answer, Poll } from './types';
 
@@ -83,7 +83,7 @@ StateListenerRegistry.register(
                         appearance: NOTIFICATION_TYPE.NORMAL,
                         titleKey: 'polls.notification.title',
                         descriptionKey: 'polls.notification.description'
-                    }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
+                    }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
                     break;
 
                 }
@@ -122,6 +122,9 @@ StateListenerRegistry.register(
 
             conference.on(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED, receiveMessage);
             conference.on(JitsiConferenceEvents.NON_PARTICIPANT_MESSAGE_RECEIVED, receiveMessage);
+
+            // clean old polls
+            store.dispatch(clearPolls());
         }
     }
 );

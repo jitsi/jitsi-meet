@@ -21,12 +21,13 @@ import { connect } from '../../../../base/redux';
 import { StyleType } from '../../../../base/styles';
 import BaseTheme from '../../../../base/ui/components/BaseTheme';
 import { isInBreakoutRoom } from '../../../../breakout-rooms/functions';
-import { goBack } from '../../../../conference/components/native/ConferenceNavigationContainerRef';
-import HeaderNavigationButton
-    from '../../../../conference/components/native/HeaderNavigationButton';
 import { toggleLobbyMode } from '../../../../lobby/actions.any';
 import LobbyModeSwitch
     from '../../../../lobby/components/native/LobbyModeSwitch';
+import HeaderNavigationButton
+    from '../../../../mobile/navigation/components/HeaderNavigationButton';
+import { goBack }
+    from '../../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../../../room-lock';
 import {
     endRoomLockRequest,

@@ -30,13 +30,7 @@ export type MediaState = 'DominantSpeaker' | 'Muted' | 'ForceMuted' | 'Unmuted' 
 /**
  * Enum of possible participant media states.
  */
-export const MEDIA_STATE: {
-    DOMINANT_SPEAKER: MediaState,
-    MUTED: MediaState,
-    FORCE_MUTED: MediaState,
-    UNMUTED: MediaState,
-    NONE: MediaState,
-} = {
+export const MEDIA_STATE = {
     DOMINANT_SPEAKER: 'DominantSpeaker',
     MUTED: 'Muted',
     FORCE_MUTED: 'ForceMuted',
@@ -92,14 +86,17 @@ export const AudioStateIcons: {[MediaState]: React$Element<any> | null} = {
  * Icon mapping for possible participant video states.
  */
 export const VideoStateIcons = {
+    [MEDIA_STATE.DOMINANT_SPEAKER]: null,
     [MEDIA_STATE.FORCE_MUTED]: (
         <Icon
             color = '#E04757'
+            id = 'videoMuted'
             size = { 16 }
             src = { IconCameraEmptyDisabled } />
     ),
     [MEDIA_STATE.MUTED]: (
         <Icon
+            id = 'videoMuted'
             size = { 16 }
             src = { IconCameraEmptyDisabled } />
     ),

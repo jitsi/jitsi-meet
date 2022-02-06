@@ -17,6 +17,7 @@ import {
     getRaiseHandsQueue
 } from '../base/participants/functions';
 import { toState } from '../base/redux';
+import { normalizeAccents } from '../base/util/strings';
 import { isInBreakoutRoom } from '../breakout-rooms/functions';
 
 import { QUICK_ACTION_BUTTON, REDUCER_KEY, MEDIA_STATE } from './constants';
@@ -224,13 +225,14 @@ export function getSortedParticipantIds(stateful: Object | Function): Array<stri
     }
 
     const dominant = [];
+    const dominantId = dominantSpeaker?.id;
     const local = remoteRaisedHandParticipants.has(id) ? [] : [ id ];
 
-    // Remove dominant speaker.
-    if (dominantSpeaker && dominantSpeaker.id !== id) {
-        remoteRaisedHandParticipants.delete(dominantSpeaker.id);
-        reorderedParticipants.delete(dominantSpeaker.id);
-        dominant.push(dominantSpeaker.id);
+    // In case dominat speaker has raised hand, keep the order in the raised hand queue.
+    // In case they don't have raised hand, goes first in the participants list.
+    if (dominantId && dominantId !== id && !remoteRaisedHandParticipants.has(dominantId)) {
+        reorderedParticipants.delete(dominantId);
+        dominant.push(dominantId);
     }
 
     // Move self and participants with raised hand to the top of the list.
@@ -242,3 +244,28 @@ export function getSortedParticipantIds(stateful: Object | Function): Array<stri
     ];
 }
 
+/**
+ * Checks if a participant matches the search string.
+ *
+ * @param {Object} participant - The participant to be checked.
+ * @param {string} searchString - The participants search string.
+ * @returns {boolean}
+ */
+export function participantMatchesSearch(participant: Object, searchString: string) {
+    if (searchString === '') {
+        return true;
+    }
+
+    const names = normalizeAccents(participant?.name || participant?.displayName || '')
+        .toLowerCase()
+        .split(' ');
+    const lowerCaseSearchString = searchString.toLowerCase();
+
+    for (const name of names) {
+        if (name.startsWith(lowerCaseSearchString)) {
+            return true;
+        }
+    }
+
+    return false;
+}

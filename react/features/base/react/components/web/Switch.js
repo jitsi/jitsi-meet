@@ -3,7 +3,7 @@
 import Toggle from '@atlaskit/toggle';
 import React, { Component } from 'react';
 
-type Props = {
+type Props = {|
 
     /**
      * ID of the toggle.
@@ -29,7 +29,7 @@ type Props = {
      * The current value.
      */
     value: boolean
-};
+|};
 
 /**
  * Renders a boolean input.

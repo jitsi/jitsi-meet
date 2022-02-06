@@ -26,7 +26,6 @@ import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.common.LifecycleState;
-import com.facebook.react.devsupport.DevInternalSettings;
 import com.facebook.react.jscexecutor.JSCExecutorFactory;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.uimanager.ViewManager;
@@ -177,11 +176,12 @@ class ReactInstanceManagerHolder {
             = new ArrayList<>(Arrays.asList(
                 new com.reactnativecommunity.asyncstorage.AsyncStoragePackage(),
                 new com.ocetnik.timer.BackgroundTimerPackage(),
-                new com.calendarevents.CalendarEventsPackage(),
+                new com.calendarevents.RNCalendarEventsPackage(),
                 new com.corbt.keepawake.KCKeepAwakePackage(),
                 new com.facebook.react.shell.MainReactPackage(),
                 new com.reactnativecommunity.clipboard.ClipboardPackage(),
                 new com.reactnativecommunity.netinfo.NetInfoPackage(),
+                new com.reactnativepagerview.PagerViewPackage(),
                 new com.oblador.performance.PerformancePackage(),
                 new com.reactnativecommunity.slider.ReactSliderPackage(),
                 new com.brentvatne.react.ReactVideoPackage(),
@@ -219,7 +219,7 @@ class ReactInstanceManagerHolder {
 
         // RNGoogleSigninPackage
         try {
-            Class<?> googlePackageClass = Class.forName("co.apptailor.googlesignin.RNGoogleSigninPackage");
+            Class<?> googlePackageClass = Class.forName("com.reactnativegooglesignin.RNGoogleSigninPackage");
             Constructor constructor = googlePackageClass.getConstructor();
             packages.add((ReactPackage)constructor.newInstance());
         } catch (Exception e) {
@@ -241,13 +241,6 @@ class ReactInstanceManagerHolder {
                 .setUseDeveloperSupport(BuildConfig.DEBUG)
                 .setInitialLifecycleState(LifecycleState.RESUMED)
                 .build();
-
-        // Disable delta updates on Android, they have caused trouble.
-        DevInternalSettings devSettings
-            = (DevInternalSettings)reactInstanceManager.getDevSupportManager().getDevSettings();
-        if (devSettings != null) {
-            devSettings.setBundleDeltasEnabled(false);
-        }
 
         // Register our uncaught exception handler.
         JitsiMeetUncaughtExceptionHandler.register();

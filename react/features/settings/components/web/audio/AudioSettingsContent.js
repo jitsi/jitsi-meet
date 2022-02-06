@@ -40,6 +40,11 @@ export type Props = {
     */
     currentOutputDeviceId: string,
 
+    /**
+    * Used to decide whether to measure audio levels for microphone devices.
+    */
+    measureAudioLevels: boolean,
+
    /**
     * Used to set a new microphone as the current one.
     */
@@ -179,6 +184,7 @@ class AudioSettingsContent extends Component<Props, State> {
                 key = { `me-${index}` }
                 length = { length }
                 listHeaderId = { this.microphoneHeaderId }
+                measureAudioLevels = { this.props.measureAudioLevels }
                 onClick = { this._onMicrophoneEntryClick }>
                 {label}
             </MicrophoneEntry>

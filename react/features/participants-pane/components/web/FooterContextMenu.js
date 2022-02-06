@@ -27,7 +27,11 @@ import {
     getParticipantCount,
     isEveryoneModerator
 } from '../../../base/participants';
-import { openSettingsDialog, SETTINGS_TABS } from '../../../settings';
+import {
+    SETTINGS_TABS,
+    openSettingsDialog,
+    shouldShowModeratorSettings
+} from '../../../settings';
 import { MuteEveryonesVideoDialog } from '../../../video-menu/components';
 
 const useStyles = makeStyles(theme => {
@@ -81,6 +85,7 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: Props
     const dispatch = useDispatch();
     const isModerationSupported = useSelector(isAvModerationSupported());
     const allModerators = useSelector(isEveryoneModerator);
+    const isModeratorSettingsTabEnabled = useSelector(shouldShowModeratorSettings);
     const participantCount = useSelector(getParticipantCount);
     const isAudioModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.AUDIO));
     const isVideoModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.VIDEO));
@@ -146,14 +151,16 @@ export const FooterContextMenu = ({ isOpen, onDrawerClose, onMouseLeave }: Props
                     </div>
                 </ContextMenuItemGroup>
             )}
-            <ContextMenuItemGroup
-                actions = { [ {
-                    accessibilityLabel: t('participantsPane.actions.moreModerationControls'),
-                    id: 'participants-pane-open-moderation-control-settings',
-                    icon: IconHorizontalPoints,
-                    onClick: openModeratorSettings,
-                    text: t('participantsPane.actions.moreModerationControls')
-                } ] } />
+            {isModeratorSettingsTabEnabled && (
+                <ContextMenuItemGroup
+                    actions = { [ {
+                        accessibilityLabel: t('participantsPane.actions.moreModerationControls'),
+                        id: 'participants-pane-open-moderation-control-settings',
+                        icon: IconHorizontalPoints,
+                        onClick: openModeratorSettings,
+                        text: t('participantsPane.actions.moreModerationControls')
+                    } ] } />
+            )}
         </ContextMenu>
     );
 };

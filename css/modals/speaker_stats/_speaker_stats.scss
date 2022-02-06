@@ -1,80 +1,30 @@
 .speaker-stats {
     list-style: none;
-    padding: 0;
-    width: 100%;
-    font-weight: 500;
-
-    .speaker-stats-item__status-dot {
-        position: relative;
-        display: block;
-        width: 9px;
-        height: 9px;
-        border-radius: 50%;
-        margin: 0 auto;
-
-        &.status-active {
-            background: green;
+    .row{
+        display: flex;
+        align-items: center;
+        .avatar {
+            width: 32px;
+            margin-right: 16px;
         }
-
-        &.status-inactive {
-            background: gray;
+        .name-time {
+            width: calc(100% - 48px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            
         }
-    }
-
-    .status-user-left {
-        color: $placeHolderColor;
-    }
-
-    .speaker-stats-item__status,
-    .speaker-stats-item__name,
-    .speaker-stats-item__time,
-    .speaker-stats-item__name_expressions_on,
-    .speaker-stats-item__time_expressions_on,
-    .speaker-stats-item__expression {
-        display: inline-block;
-        margin: 5px 0;
-        vertical-align: middle;
-    }
-    .speaker-stats-item__status {
-        width: 5%;
-    }
-    .speaker-stats-item__name {
-        width: 40%;
-    }
-    .speaker-stats-item__time {
-        width: 55%;
-    }
-    .speaker-stats-item__name_expressions_on {
-        width: 20%;
-    }
-    .speaker-stats-item__time_expressions_on {
-        width: 25%;
-    }
-
-    .speaker-stats-item__expression {
-        width: 7%;
-        text-align: center;
-    }
-
-    @media(max-width: 750px) {
-        .speaker-stats-item__name_expressions_on {
-            width: 25%;
+        .name-time_expressions-on {
+            width: calc(47% - 48px);
         }
-        .speaker-stats-item__time_expressions_on {
-            width: 30%;
+        .expressions {
+            width: calc(53% - 29px);
+            display: flex;
+            justify-content: space-between;
+            .expression {
+                width: 30px;
+                text-align: center;
+            }
         }
-        .speaker-stats-item__expression {
-            width: 10%;
-        }
-    }
-
-    .speaker-stats-item__name,
-    .speaker-stats-item__time,
-    .speaker-stats-item__name_expressions_on,
-    .speaker-stats-item__time_expressions_on,
-    .speaker-stats-item__expression {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
     }
 }

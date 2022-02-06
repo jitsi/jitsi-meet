@@ -36,6 +36,11 @@ export type Props = {
     desktopShareFramerates: Array<number>,
 
     /**
+     * Whether to show hide self view setting.
+     */
+    disableHideSelfView: boolean,
+
+    /**
      * Whether or not follow me is currently active (enabled by some other participant).
      */
     followMeActive: boolean,
@@ -44,6 +49,11 @@ export type Props = {
      * All available languages to display in the language select dropdown.
      */
     languages: Array<string>,
+
+    /**
+     * The types of enabled notifications that can be configured and their specific visibility.
+     */
+    enabledNotifications: Object,
 
     /**
      * Whether or not to display the language select dropdown.
@@ -56,6 +66,11 @@ export type Props = {
     showModeratorSettings: boolean,
 
     /**
+     * Whether or not to display notifications settings.
+     */
+    showNotificationsSettings: boolean,
+
+    /**
      * Whether or not to display the prejoin settings section.
      */
     showPrejoinSettings: boolean,
@@ -64,6 +79,11 @@ export type Props = {
      * Whether or not to show prejoin screen.
      */
     showPrejoinPage: boolean,
+
+    /**
+     * Whether or not to hide self-view screen.
+     */
+    hideSelfView: boolean,
 
     /**
      * Invoked to obtain translated strings.
@@ -112,8 +132,10 @@ class MoreTab extends AbstractDialogTab<Props, State> {
         this._onFramerateItemSelect = this._onFramerateItemSelect.bind(this);
         this._onLanguageDropdownOpenChange = this._onLanguageDropdownOpenChange.bind(this);
         this._onLanguageItemSelect = this._onLanguageItemSelect.bind(this);
+        this._onEnabledNotificationsChanged = this._onEnabledNotificationsChanged.bind(this);
         this._onShowPrejoinPageChanged = this._onShowPrejoinPageChanged.bind(this);
         this._onKeyboardShortcutEnableChanged = this._onKeyboardShortcutEnableChanged.bind(this);
+        this._onHideSelfViewChanged = this._onHideSelfViewChanged.bind(this);
     }
 
     /**
@@ -210,6 +232,26 @@ class MoreTab extends AbstractDialogTab<Props, State> {
     _onKeyboardShortcutEnableChanged: (Object) => void;
 
     /**
+     * Callback invoked to select if the given type of
+     * notifications should be shown.
+     *
+     * @param {Object} e - The key event to handle.
+     * @param {string} type - The type of the notification.
+     *
+     * @returns {void}
+     */
+    _onEnabledNotificationsChanged({ target: { checked } }, type) {
+        super._onChange({
+            enabledNotifications: {
+                ...this.props.enabledNotifications,
+                [type]: checked
+            }
+        });
+    }
+
+    _onEnabledNotificationsChanged: (Object, string) => void;
+
+    /**
      * Callback invoked to select if global keyboard shortcuts
      * should be enabled.
      *
@@ -220,6 +262,19 @@ class MoreTab extends AbstractDialogTab<Props, State> {
     _onKeyboardShortcutEnableChanged({ target: { checked } }) {
         keyboardShortcut.enable(checked);
         super._onChange({ keyboardShortcutEnable: checked });
+    }
+
+    _onHideSelfViewChanged: (Object) => void;
+
+    /**
+     * Callback invoked to select if hide self view should be enabled.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onHideSelfViewChanged({ target: { checked } }) {
+        super._onChange({ hideSelfView: checked });
     }
 
     /**
@@ -296,6 +351,31 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                     label = { t('prejoin.keyboardShortcuts') }
                     name = 'enable-keyboard-shortcuts'
                     onChange = { this._onKeyboardShortcutEnableChanged } />
+            </div>
+        );
+    }
+
+    /**
+     * Returns the React Element for self view setting.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderSelfViewCheckbox() {
+        const { hideSelfView, t } = this.props;
+
+        return (
+            <div
+                className = 'settings-sub-pane-element'
+                key = 'selfview'>
+                <h2 className = 'mock-atlaskit-label'>
+                    { t('settings.selfView') }
+                </h2>
+                <Checkbox
+                    isChecked = { hideSelfView }
+                    label = { t('videothumbnail.hideSelfView') }
+                    name = 'hide-self-view'
+                    onChange = { this._onHideSelfViewChanged } />
             </div>
         );
     }
@@ -380,6 +460,37 @@ class MoreTab extends AbstractDialogTab<Props, State> {
     }
 
     /**
+     * Returns the React Element for modifying the enabled notifications settings.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderNotificationsSettings() {
+        const { t, enabledNotifications } = this.props;
+
+        return (
+            <div
+                className = 'settings-sub-pane-element'
+                key = 'notifications'>
+                <h2 className = 'mock-atlaskit-label'>
+                    { t('notify.displayNotifications') }
+                </h2>
+                {
+                    Object.keys(enabledNotifications).map(key => (
+                        <Checkbox
+                            isChecked = { enabledNotifications[key] }
+                            key = { key }
+                            label = { t(key) }
+                            name = { `show-${key}` }
+                            /* eslint-disable-next-line react/jsx-no-bind */
+                            onChange = { e => this._onEnabledNotificationsChanged(e, key) } />
+                    ))
+                }
+            </div>
+        );
+    }
+
+    /**
      * Returns the React element that needs to be displayed on the right half of the more tabs.
      *
      * @private
@@ -404,14 +515,16 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      * @returns {ReactElement}
      */
     _renderSettingsLeft() {
-        const { showPrejoinSettings } = this.props;
+        const { disableHideSelfView, showNotificationsSettings, showPrejoinSettings } = this.props;
 
         return (
             <div
                 className = 'settings-sub-pane left'
                 key = 'settings-sub-pane-left'>
                 { showPrejoinSettings && this._renderPrejoinScreenSettings() }
+                { showNotificationsSettings && this._renderNotificationsSettings() }
                 { this._renderKeyboardShortcutCheckbox() }
+                { !disableHideSelfView && this._renderSelfViewCheckbox() }
             </div>
         );
     }

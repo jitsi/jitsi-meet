@@ -104,7 +104,7 @@ class NotificationsContainer extends Component<Props> {
             if (notification !== previousNotification) {
                 this._clearNotificationDismissTimeout();
 
-                if (notification && notification.timeout && notification.props.isDismissAllowed !== false) {
+                if (notification && notification.timeout) {
                     const {
                         timeout,
                         uid

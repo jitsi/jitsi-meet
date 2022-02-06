@@ -80,11 +80,10 @@ function _getWebWelcomePageRoute(state) {
         }
     } else {
         // Web: if the welcome page is disabled, go directly to a random room.
+        const url = new URL(window.location.href);
 
-        let href = window.location.href;
-
-        href.endsWith('/') || (href += '/');
-        route.href = href + generateRoomWithoutSeparator();
+        url.pathname += generateRoomWithoutSeparator();
+        route.href = url.href;
     }
 
     return Promise.resolve(route);

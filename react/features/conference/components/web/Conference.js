@@ -14,10 +14,9 @@ import { Chat } from '../../../chat';
 import { Filmstrip } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
-import { KnockingParticipantList, LobbyScreen } from '../../../lobby';
+import { LobbyScreen } from '../../../lobby';
 import { getIsLobbyVisible } from '../../../lobby/functions';
 import { ParticipantsPane } from '../../../participants-pane/components/web';
-import { getParticipantsPaneOpen } from '../../../participants-pane/functions';
 import { Prejoin, isPrejoinPageVisible } from '../../../prejoin';
 import { toggleToolboxVisible } from '../../../toolbox/actions.any';
 import { fullScreenChanged, showToolbox } from '../../../toolbox/actions.web';
@@ -71,11 +70,6 @@ type Props = AbstractProps & {
      * The alpha(opacity) of the background.
      */
     _backgroundAlpha: number,
-
-    /**
-     * If participants pane is visible or not.
-     */
-    _isParticipantsPaneVisible: boolean,
 
     /**
      * The CSS class to apply to the root of {@link Conference} to modify the
@@ -216,7 +210,6 @@ class Conference extends AbstractConference<Props, *> {
      */
     render() {
         const {
-            _isParticipantsPaneVisible,
             _layoutClassName,
             _notificationsVisible,
             _overflowDrawer,
@@ -242,14 +235,10 @@ class Conference extends AbstractConference<Props, *> {
                         id = 'videospace'
                         onTouchStart = { this._onVidespaceTouchStart }>
                         <LargeVideo />
-                        {!_isParticipantsPaneVisible
-                         && <div id = 'notification-participant-list'>
-                             <KnockingParticipantList />
-                         </div>}
                         <Filmstrip />
                     </div>
 
-                    { _showPrejoin || _showLobby || <Toolbox showDominantSpeakerName = { true } /> }
+                    { _showPrejoin || _showLobby || <Toolbox /> }
                     <Chat />
 
                     {_notificationsVisible && (_overflowDrawer
@@ -401,7 +390,6 @@ function _mapStateToProps(state) {
     return {
         ...abstractMapStateToProps(state),
         _backgroundAlpha: backgroundAlpha,
-        _isParticipantsPaneVisible: getParticipantsPaneOpen(state),
         _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state)],
         _mouseMoveCallbackInterval: mouseMoveCallbackInterval,
         _overflowDrawer: overflowDrawer,

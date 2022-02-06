@@ -20,9 +20,9 @@
     "audioDevices": {
         "bluetooth": "Bluetooth",
         "headphones": "Austiņas",
+        "none": "Audio ierīces nav atrastas",
         "phone": "Telefons",
-        "speaker": "Skaļrunis",
-        "none": "Audio ierīces nav atrastas"
+        "speaker": "Skaļrunis"
     },
     "audioOnly": {
         "audioOnly": "Maza tīkla kapacitāte (tikai skaņa)"
@@ -48,23 +48,23 @@
     "chat": {
         "error": "Ķibele: Jūsu ziņa netika nosūtīta. Cēlonis: {{error}}",
         "fieldPlaceHolder": "Rakstiet ziņu šeit",
-        "messagebox": "Rakstiet ziņu",
         "messageTo": "Privāta ziņa lietotājam {{recipient}}",
-        "noMessagesMessage": "Sapulcē pagaidām nav nevienas ziņas. Uzsāciet saraksti!",
+        "messagebox": "Rakstiet ziņu",
         "nickname": {
             "popover": "Izvēlieties vārdu",
             "title": "Ierakstiet vārdu izmantošanai tērziņā",
             "titleWithPolls": "Ierakstiet vārdu izmantošanai tērziņā"
         },
+        "noMessagesMessage": "Sapulcē pagaidām nav nevienas ziņas. Uzsāciet saraksti!",
         "privateNotice": "Privāta ziņa/paziņojums lietotājam {{recipient}}",
         "title": "Tērzēšana",
         "titleWithPolls": "Tērzēšana",
         "you": "mans vārds"
     },
     "chromeExtensionBanner": {
-        "installExtensionText": "Instalēt spraudni Google kalendāra un Office 365 integrācijai",
         "buttonText": "Instalēt Chromium (Chrome) spraudni",
-        "dontShowAgain": "Šo man vairs nerādīt"
+        "dontShowAgain": "Šo man vairs nerādīt",
+        "installExtensionText": "Instalēt spraudni Google kalendāra un Office 365 integrācijai"
     },
     "connectingOverlay": {
         "joiningRoom": "Notiek pieslēgšanās Jūsu sapulcei..."
@@ -90,7 +90,6 @@
         "bitrate": "Bitreits:",
         "bridgeCount": "Serveru skaits:",
         "connectedTo": "Pieslēdzies pie:",
-        "framerate": "Kadri sekundē:",
         "e2e_rtt": "E2E RTT:",
         "framerate": "Kadru ātrums/skaits:",
         "less": "Tikai kodolīga informācija",
@@ -145,7 +144,21 @@
         "selectADevice": "Ierīces izvēle",
         "testAudio": "Notestēt skaņu"
     },
+    "dialOut": {
+        "statusMessage": "tagad {{status}}"
+    },
     "dialog": {
+        "Back": "Atpakaļ",
+        "Cancel": "Atcelt",
+        "IamHost": "Esmu rīkotājs",
+        "Ok": "Jā, gribu",
+        "Remove": "Noņemt",
+        "Share": "Kopīgot",
+        "Submit": "ОК",
+        "WaitForHostMsg": "Sapulce <b>{{room}}</b> vēl nav sākusies. Ja esat sapulces rīkotājs, lūdzu autorizējaties. Ja nē, sagaidiet rīkotāju.",
+        "WaitForHostMsgWOk": "Sapulce <b>{{room}}</b> vēl nav sākusies. Ja esat sapulces rīkotājs, lūdzu nospiediet |Ok|, lai autentificētos. Ja nē, sagaidiet rīkotāju.",
+        "WaitingForHost": "Gaidām rīkotāju...",
+        "Yes": "Jā",
         "accessibilityLabel": {
             "liveStreaming": "Tiešraide/ēters"
         },
@@ -153,7 +166,6 @@
         "alreadySharedVideoMsg": "Cits dalībnieks jau kopīgojis saiti uz videoklipu. Šī sapulce ļauj koplietot tikai vienu video vienlaikus.",
         "alreadySharedVideoTitle": "Atļauts tikai viens koplietošanas videoklips",
         "applicationWindow": "Lietotnes logs",
-        "Back": "Atpakaļ",
         "cameraConstraintFailedError": "Kamera neatbilst noteiktajām prasībām.",
         "cameraNotFoundError": "Kamera nav atrasta.",
         "cameraNotSendingData": "Piekļuvē kamerai kļūme. Lūdzu, pārbaudiet, vai kameru neizmanto kāda cita lietotne. Iestatījumu izvēlnē varat arī izvēlēties citu ierīci vai mēģināt restartēt programmu.",
@@ -161,7 +173,6 @@
         "cameraPermissionDeniedError": "Nav piekļuves kamerai. Jūs varat piedalīties sapulcē, bet citi jūs neredzēs. Lai novērstu ķibeli, izmantojiet kameras ikonu pārlūka adreses joslā.",
         "cameraUnknownError": "Nezināma kameras izmantošanas ķibele.",
         "cameraUnsupportedResolutionError": "Jūsu kamera neatbalsta nepieciešamo video izšķirtspēju.",
-        "Cancel": "Atcelt",
         "close": "Aizvērt",
         "conferenceDisconnectMsg": "Jāpārbauda interneta savienojums. Nākamaie mēģinājums atjaunot savienojumu notiks pēc {{seconds}} sek.",
         "conferenceDisconnectTitle": "Jūs esat atslēgts/atspējots.",
@@ -184,11 +195,10 @@
         "externalInstallationTitle": "Nepieciešams spraudnis",
         "goToStore": "Pāriet uz internet-veikalu",
         "gracefulShutdown": "Norisinās tehniskie darbi. Lūdzu, mēģiniet vēlāk.",
-        "IamHost": "Esmu rīkotājs",
-        "incorrectRoomLockPassword": "Nepareiza parole",
         "incorrectPassword": "Lietotāja vārda vai paroles kļūda",
-        "inlineInstallationMsg": "Lai darbvirsmu koplietotu, Jums jāinstalē spraudnis.",
+        "incorrectRoomLockPassword": "Nepareiza parole",
         "inlineInstallExtension": "Instalēt",
+        "inlineInstallationMsg": "Lai darbvirsmu koplietotu, Jums jāinstalē spraudnis.",
         "internalError": "Kaut kas misējās. Kļūme: {{error}}",
         "internalErrorTitle": "Iekšējā kļūda",
         "kickMessage": "Varat sazināties ar {{participantDisplayName}}, lai iegūtu plašāku informāciju.",
@@ -216,7 +226,6 @@
         "muteParticipantButton": "Izslēgt skaņu / noklusināt dalībnieku",
         "muteParticipantDialog": "Tiešām vēlaties izslēgt šī dalībnieka mikrofonu? Jūs nevarēsiet atsaukt šo darbību, bet viņš varēs ieslēgt mikrofonu jebkurā laikā.",
         "muteParticipantTitle": "Noklusināt šo dalībnieku?",
-        "Ok": "Jā, gribu",
         "passwordLabel": "$t(lockRoomPasswordUppercase)",
         "passwordNotSupported": "$t(lockRoomPassword) iestatīšana sapulcei nav iespējama / netiek atbalstīta.",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) nav iespējama",
@@ -234,7 +243,6 @@
         "remoteControlShareScreenWarning": "Noklikšķinot uz \"Atļaut\", Jūs kopīgosiet savu ekrānu!",
         "remoteControlStopMessage": "Tālvadības (attālās vadības) sesija ir beigusies!",
         "remoteControlTitle": "Darbvirsmas tālvadība (attālā darbvirsmas pārvaldība)",
-        "Remove": "Noņemt",
         "removePassword": "Noņemt $t(lockRoomPassword)",
         "removeSharedVideoMsg": "Tiešām vēlaties noņemt video, kuru pašreiz kopīgojat?",
         "removeSharedVideoTitle": "Noņemt kopīgoto video",
@@ -252,8 +260,7 @@
         "sendPrivateMessageTitle": "Vēlaties nosūtīt privātu ziņu?",
         "serviceUnavailable": "Pakalpojums nepieejams",
         "sessTerminated": "Sesija beigusies",
-        "Share": "Kopīgot",
-        "shareVideoLinkError": "Lūdzu, norādiet derīgu Youtube saiti.",
+        "shareVideoLinkError": "Lūdzu, norādiet derīgu saiti.",
         "shareVideoTitle": "Kopīgot video",
         "shareYourScreen": "Kopīgot ekrānu",
         "shareYourScreenDisabled": "Ekrāna kopīgošana izslēgta",
@@ -266,7 +273,6 @@
         "stopRecordingWarning": "Tiešām vēlaties beigt ierakstu?",
         "stopStreamingWarning": "Tiešām vēlaties beigt tiešraidi?",
         "streamKey": "Tiešraides atslēga",
-        "Submit": "ОК",
         "thankYou": "Super, ka izmantojat {{appName}}!",
         "token": "tokens/marķieris",
         "tokenAuthFailed": "Atvainojiet, jums nav atļauts pievienoties šai sesijai (sapulces telpai).",
@@ -274,14 +280,7 @@
         "transcribing": "Notiek transkripcija/pārrakstīšana",
         "unlockRoom": "Noņemt $t(lockRoomPassword)",
         "userPassword": "lietotāja parole",
-        "WaitForHostMsg": "Sapulce <b>{{room}}</b> vēl nav sākusies. Ja esat sapulces rīkotājs, lūdzu autorizējaties. Ja nē, sagaidiet rīkotāju.",
-        "WaitForHostMsgWOk": "Sapulce <b>{{room}}</b> vēl nav sākusies. Ja esat sapulces rīkotājs, lūdzu nospiediet |Ok|, lai autentificētos. Ja nē, sagaidiet rīkotāju.",
-        "WaitingForHost": "Gaidām rīkotāju...",
-        "Yes": "Jā",
         "yourEntireScreen": "Visu Jūsu ekrānu"
-    },
-    "dialOut": {
-        "statusMessage": "tagad {{status}}"
     },
     "documentSharing": {
         "title": "Kopīgots dokuments"
@@ -321,6 +320,7 @@
         "inviteURLFirstPartGeneral": "Jūs tiekat aicināti pievienoties sapulcei.",
         "inviteURLFirstPartPersonal": "{{name}} aicina Jūs pievienoties sapulcei. \n",
         "inviteURLSecondPart": "\nPievienoties sapucei:\n{{url}}\n",
+        "label": "Sapulces informācija",
         "liveStreamURL": "Tiešraides URL:",
         "moreNumbers": "Vairāk iezvana numuru",
         "noNumbers": "Nav iezvana #.",
@@ -329,8 +329,13 @@
         "numbers": "Iezvana numuri",
         "password": "$t(lockRoomPasswordUppercase):",
         "title": "Kopīgot",
-        "tooltip": "Kopīgot šīs sapulces saiti un iezvana # informāciju",
-        "label": "Sapulces informācija"
+        "tooltip": "Kopīgot šīs sapulces saiti un iezvana # informāciju"
+    },
+    "inlineDialogFailure": {
+        "msg": "Neliels misēklis.",
+        "retry": "Pamēģināt vēlreiz",
+        "support": "Atbalsts",
+        "supportMsg": "Ja tas atkārtojas/turpinās, sazinieties ar"
     },
     "inviteDialog": {
         "alertText": "Neizdevās uzaicināt dažus dalībniekus.",
@@ -339,12 +344,6 @@
         "searchPeopleOnlyPlaceholder": "Dalībnieku meklēšana",
         "searchPlaceholder": "Dalībnieks vai tālruņa numurs",
         "send": "Nosūtīt"
-    },
-    "inlineDialogFailure": {
-        "msg": "Neliels misēklis.",
-        "retry": "Pamēģināt vēlreiz",
-        "support": "Atbalsts",
-        "supportMsg": "Ja tas atkārtojas/turpinās, sazinieties ar"
     },
     "keyboardShortcuts": {
         "focusLocal": "Skats (fokuss) uz savu video",
@@ -385,10 +384,10 @@
         "onBy": "{{name}} ieslēdza tiešraidi",
         "pending": "Sākam tiešraidi...",
         "serviceName": "Tiešsaistes pakalpojums",
-        "signedInAs": "Pašlaik esat sistēmā ierakstījies kā:",
         "signIn": "Ierakstīties ar Google kontu",
         "signInCTA": "Ierakstieties vai ievadiet savu YouTube tiešraides atslēgu.",
         "signOut": "Izrakstīties",
+        "signedInAs": "Pašlaik esat sistēmā ierakstījies kā:",
         "start": "Sākt tiešraidi",
         "streamIdHelp": "Kas tas?",
         "unavailableTitle": "Tiešraide nav pieejama"
@@ -440,24 +439,24 @@
         "me": "Es",
         "moderator": "Pieškirtas moderatora tiesības!",
         "muted": "Jūs pievienojāties sapulcei noklusināti (ar izslēgtu skaņu).",
-        "mutedTitle": "Jūs esat nedzirdami!",
-        "mutedRemotelyTitle": "{{participantDisplayName}} izslēdza Jūsu mikrofonu!",
         "mutedRemotelyDescription": "Jūs vienmēr varat ieslēgt mikrofonu, kad esat gatavs runāt. Izslēdziet to, kad esat beidzis, lai sapulcē neradītu fona troksni.",
+        "mutedRemotelyTitle": "{{participantDisplayName}} izslēdza Jūsu mikrofonu!",
+        "mutedTitle": "Jūs esat nedzirdami!",
+        "newDeviceAction": "Izmantot",
+        "newDeviceAudioTitle": "Pamanīta jauna audio ierīce",
+        "newDeviceCameraTitle": "Pamanīta jauna kamera",
         "passwordRemovedRemotely": "Kāds dalībnieks noņēma $t(lockRoomPasswordUppercase).",
         "passwordSetRemotely": "Kāds dalībnieks iestatīja $t(lockRoomPasswordUppercase).",
         "raisedHand": "{{name}} vēlas izteikties/uzstāties (pacēlis roku).",
         "somebody": "Kāds",
-        "startSilentTitle": "Jūs esiet nedzirdams!",
         "startSilentDescription": "Lai ieslēgtu skaņu, pieslēdzieties sapulcei par jaunu",
+        "startSilentTitle": "Jūs esiet nedzirdams!",
         "suboptimalBrowserWarning": "Diemžēl jūsu pārlūks pilnībā neatbalsta šo virtuālo sapulču sistēmu. Pie tā tiek strādāts, bet šobrīd tiek ieteikts izmantot <a href='{{recommendedBrowserPageLink}}' target='_blank'> šos pārlūkus</a>.",
         "suboptimalExperienceTitle": "Diemžēl jūsu pārlūks, iespējams, var pienācīgi nestrādāt ar {{appName}}. Pie tā tiek strādāts, bet šobrīd tiek ieteikts izmantot kādu no <a href='{{recommendedBrowserPageLink}} 'target='_blank'>pilnībā atbalstītajiem pārlūkiem</a>.",
-        "unmute": "Ieslēgt skaņu/mikrofonu",
-        "newDeviceCameraTitle": "Pamanīta jauna kamera",
-        "newDeviceAudioTitle": "Pamanīta jauna audio ierīce",
-        "newDeviceAction": "Izmantot"
+        "unmute": "Ieslēgt skaņu/mikrofonu"
     },
-    "passwordSetRemotely": "iestatījis kāds cits dalībnieks",
     "passwordDigitsOnly": "Līdz {{number}} cipariem",
+    "passwordSetRemotely": "iestatījis kāds cits dalībnieks",
     "poweredby": "griežas uz",
     "presenceStatus": {
         "busy": "Aizņemts",
@@ -577,7 +576,9 @@
         "title": "Video sapulce tika pārtraukta, jo šis dators pārgāja snaudas režīmā."
     },
     "toolbar": {
+        "Settings": "Iestatījumi",
         "accessibilityLabel": {
+            "Settings": "Iestatījumu izvēlne (iesl./izsl.)",
             "audioOnly": "Tikai skaņa (iesl./izsl.)",
             "audioRoute": "Izvēlieties audio ierīci",
             "callQuality": "Video kvalitātes vadība",
@@ -602,18 +603,17 @@
             "raiseHand": "Pacelt/nolaist roku",
             "recording": "Ieraksts (iesl./izsl.)",
             "remoteMute": "Atslēgt dalībnieka mikrofonu",
-            "Settings": "Iestatījumu izvēlne (iesl./izsl.)",
-            "sharedvideo": "Pārslēgt Youtube video kopīgošanu (iesl./izsl.)",
             "shareRoom": "Nosūtīt uzaicinājumu",
             "shareYourScreen": "Ekrāna kopīgošana (iesl./izsl.)",
+            "sharedvideo": "Pārslēgt video kopīgošanu (iesl./izsl.)",
             "shortcuts": "Īstaustiņi (iesl./izsl.)",
             "show": "Rādīt tuvplānā",
             "speakerStats": "Statistika (iesl./izsl.)",
             "tileView": "Videoflīzas(videosiena) (iesl./izsl.)",
             "toggleCamera": "Kamera (iesl./izsl.)",
             "toggleFilmstrip": "Pārslēgt filmstrip-u",
-            "videomute": "Video (iesl./izsl.)",
-            "videoblur": "Fona izpludināšana - bokeh (iesl./izsl.)"
+            "videoblur": "Fona izpludināšana - bokeh (iesl./izsl.)",
+            "videomute": "Video (iesl./izsl.)"
         },
         "addPeople": "Pievienot cilvēkus savai sesijai/zvanam",
         "audioOnlyOff": "Atspējot kanāla/trafika taupības režīmu",
@@ -641,33 +641,32 @@
         "moreOptions": "Vairāk izvēļu",
         "mute": "Noklusināt/apskaņot (mikrofons (iesl./izsl.))",
         "muteEveryone": "Noklusināt visus dalībniekus",
-        "noAudioSignalTitle": "No jūsu mikrofona nenāk skaņas signāls!",
         "noAudioSignalDesc": "Ja esat speciāli atspējojis mikrofonu sistēmas vai aparatūras iestatījumos, apsveriet tā iespējošanu.",
         "noAudioSignalDescSuggestion": "Ja esat speciāli atspējojis mikrofonu sistēmas vai aparatūras iestatījumos, apsveriet šīs ierīces izmantošanu:",
-        "noisyAudioInputTitle": "Jūsu mikrofons ir trokšņains",
+        "noAudioSignalTitle": "No jūsu mikrofona nenāk skaņas signāls!",
         "noisyAudioInputDesc": "Izklausās, ka Jūsu mikrofons rada trokšņus. Lūdzu apsveriet tā atslēgšanu vai audio ierīces nomaiņu",
+        "noisyAudioInputTitle": "Jūsu mikrofons ir trokšņains",
         "openChat": "Atvērt tērzētavu",
         "pip": "Iesl. attēls attēlā (PIP) režīmu",
         "privateMessage": "Nosūtīt privātu ziņu",
         "profile": "Rediģēt profilu",
         "raiseHand": "Vēlos runāt (pacelt/nolaist roku)",
         "raiseYourHand": "Pacelt roku",
-        "Settings": "Iestatījumi",
-        "sharedvideo": "Sākt kopīgot YouTube video",
         "shareRoom": "Nosūtīt uzaicinājumu",
+        "sharedvideo": "Sākt kopīgot video",
         "shortcuts": "Īstaustiņi (taustiņu kombinācijas)",
         "speakerStats": "Statistika",
         "startScreenSharing": "Sākt ekrāna kopīgošanu",
         "startSubtitles": "Ieslēgt subtitrus",
+        "startvideoblur": "Kameras fona izpludināšanu ieslēgt",
         "stopScreenSharing": "Beigt ekrāna kopīgošanu",
+        "stopSharedVideo": "Beigt kopīgot video",
         "stopSubtitles": "Izslēgt subtitrus",
-        "stopSharedVideo": "Beigt kopīgot YouTube video",
+        "stopvideoblur": "Kameras fona izpludināšanu izslēgt",
         "talkWhileMutedPopup": "Cenšaties runāt? Jums atlsēgta skaņa.",
         "tileViewToggle": "Pārslēgt videoflīzes režīmu",
         "toggleCamera": "Pārslēgt kameru",
-        "videomute": "Kamera iesl./izsl.",
-        "startvideoblur": "Kameras fona izpludināšanu ieslēgt",
-        "stopvideoblur": "Kameras fona izpludināšanu izslēgt"
+        "videomute": "Kamera iesl./izsl."
     },
     "transcribing": {
         "ccButtonTooltip": "Iesl./izsl. subtitrus",
@@ -746,16 +745,16 @@
         "connectCalendarButton": "Piesaistīt kalendāru",
         "connectCalendarText": "Piesaistiet kalendāru, lai redzētu visas jūsu sapulces {{app}}. Turklāt, pievienojot {{provider}} sapulces kalendāram, varat tās sarīkot ar vienu peles klikšķi.",
         "enterRoomTitle": "Sākt jaunu vituālo video sapulci",
-        "roomNameAllowedChars": "Sapulču nosaukumā nedrīkst ietvert šādas rakstuzīmes: ?, &, :, ', \", %, #.",
         "go": "ОК/Aiziet",
         "goSmall": "ОК/aiziet",
-        "join": "IZVEIDOT / PIEVIENOTIES",
         "info": "Info",
+        "join": "IZVEIDOT / PIEVIENOTIES",
         "privacy": "Privātums",
         "recentList": "Nesenās",
         "recentListDelete": "Dzēst",
         "recentListEmpty": "Šobrīd jūsu nesen apmeklēto sapulču saraksts ir tukšs. Taču tā kā izmantojat šo pakalpojumu, tas ar laiku papildināsies.",
         "reducedUIText": "Laipni lūgti {{app}}!",
+        "roomNameAllowedChars": "Sapulču nosaukumā nedrīkst ietvert šādas rakstuzīmes: ?, &, :, ', \", %, #.",
         "roomname": "Norādiet sapulces telpas nosaukumu",
         "roomnameHint": "Norādiet sapulces telpas nosaukumu vai adresi. Jūs varat izveidot sapulces telpu ar Jūsu izvēlētu nosaukumu un nodot to potenciālajiem sapulces dalībniekiem, lai viņi izmantotu tieši šo.",
         "sendFeedback": "Atsauksmēm",

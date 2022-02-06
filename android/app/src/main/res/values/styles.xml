@@ -3,5 +3,6 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="android:navigationBarColor">@color/colorPrimaryDark</item>
-    </style>
+        <item name="android:windowDisablePreview">true</item>
+   </style>
 </resources>

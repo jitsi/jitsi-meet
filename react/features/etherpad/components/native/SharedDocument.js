@@ -10,9 +10,9 @@ import { IconArrowBack } from '../../../base/icons';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
-import { goBack } from '../../../conference/components/native/ConferenceNavigationContainerRef';
 import HeaderNavigationButton
-    from '../../../conference/components/native/HeaderNavigationButton';
+    from '../../../mobile/navigation/components/HeaderNavigationButton';
+import { goBack } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { getSharedDocumentUrl } from '../../functions';
 
 import styles, { INDICATOR_COLOR } from './styles';

@@ -4,13 +4,11 @@ import { FlatList } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
+import PollItem from './PollItem';
 import { chatStyles } from './styles';
-
-import { PollItem } from '.';
 
 
 const PollsList = () => {
-
     const polls = useSelector(state => state['features/polls'].polls);
     const { t } = useTranslation();
     const listPolls = Object.keys(polls);

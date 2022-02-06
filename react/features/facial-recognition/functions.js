@@ -1,4 +1,8 @@
 // @flow
+import { getLocalParticipant } from '../base/participants';
+import { extractFqnFromPath } from '../dynamic-branding';
+
+import { SET_TIMEOUT } from './constants';
 import logger from './logger';
 
 /**
@@ -50,6 +54,60 @@ export function sendFacialExpressionToServer(
 }
 
 /**
+ * Sends facial expression to backend.
+ *
+ * @param  {Object} state - Redux state.
+ * @returns {boolean} - True if sent, false otherwise.
+ */
+export async function sendFacialExpressionsWebhook(state: Object) {
+    const { webhookProxyUrl: url } = state['features/base/config'];
+    const { conference } = state['features/base/conference'];
+    const { jwt } = state['features/base/jwt'];
+    const { connection } = state['features/base/connection'];
+    const jid = connection.getJid();
+    const localParticipant = getLocalParticipant(state);
+    const { facialExpressionsBuffer } = state['features/facial-recognition'];
+
+    if (facialExpressionsBuffer.length === 0) {
+        return false;
+    }
+
+    const headers = {
+        ...jwt ? { 'Authorization': `Bearer ${jwt}` } : {},
+        'Content-Type': 'application/json'
+    };
+
+    const reqBody = {
+        meetingFqn: extractFqnFromPath(),
+        sessionId: conference.sessionId,
+        submitted: Date.now(),
+        emotions: facialExpressionsBuffer,
+        participantId: localParticipant.jwtId,
+        participantName: localParticipant.name,
+        participantJid: jid
+    };
+
+    if (url) {
+        try {
+            const res = await fetch(`${url}/emotions`, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify(reqBody)
+            });
+
+            if (res.ok) {
+                return true;
+            }
+            logger.error('Status error:', res.status);
+        } catch (err) {
+            logger.error('Could not send request', err);
+        }
+    }
+
+    return false;
+}
+
+/**
  * Sends the image data a canvas from the track in the image capture to the facial expression worker.
  *
  * @param {Worker} worker - Facial expression worker.
@@ -63,7 +121,6 @@ export async function sendDataToWorker(
     if (imageCapture === null || imageCapture === undefined) {
         return;
     }
-
     let imageBitmap;
 
     try {
@@ -84,7 +141,7 @@ export async function sendDataToWorker(
     const imageData = context.getImageData(0, 0, imageBitmap.width, imageBitmap.height);
 
     worker.postMessage({
-        id: 'SET_TIMEOUT',
+        type: SET_TIMEOUT,
         imageData
     });
 }

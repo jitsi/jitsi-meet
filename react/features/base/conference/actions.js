@@ -41,6 +41,7 @@ import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
+    CONFERENCE_LOCAL_SUBJECT_CHANGED,
     CONFERENCE_SUBJECT_CHANGED,
     CONFERENCE_TIMESTAMP_CHANGED,
     CONFERENCE_UNIQUE_ID_SET,
@@ -94,6 +95,9 @@ function _addConferenceListeners(conference, dispatch, state) {
 
     // Dispatches into features/base/conference follow:
 
+    conference.on(
+        JitsiConferenceEvents.AUTH_STATUS_CHANGED,
+        (authEnabled, authLogin) => dispatch(authStatusChanged(authEnabled, authLogin)));
     conference.on(
         JitsiConferenceEvents.CONFERENCE_FAILED,
         (...args) => dispatch(conferenceFailed(conference, ...args)));
@@ -670,15 +674,17 @@ export function setFollowMe(enabled: boolean) {
  * Enables or disables the Mute reaction sounds feature.
  *
  * @param {boolean} muted - Whether or not reaction sounds should be muted for all participants.
+ * @param {boolean} updateBackend - Whether or not the moderator should notify all participants for the new setting.
  * @returns {{
  *     type: SET_START_REACTIONS_MUTED,
  *     muted: boolean
  * }}
  */
-export function setStartReactionsMuted(muted: boolean) {
+export function setStartReactionsMuted(muted: boolean, updateBackend: boolean = false) {
     return {
         type: SET_START_REACTIONS_MUTED,
-        muted
+        muted,
+        updateBackend
     };
 }
 
@@ -790,7 +796,7 @@ export function setStartMutedPolicy(
 }
 
 /**
- * Changing conference subject.
+ * Sets the conference subject.
  *
  * @param {string} subject - The new subject.
  * @returns {void}
@@ -807,5 +813,21 @@ export function setSubject(subject: string) {
                 subject
             });
         }
+    };
+}
+
+/**
+ * Sets the conference local subject.
+ *
+ * @param {string} localSubject - The new local subject.
+ * @returns {{
+ *     type: CONFERENCE_LOCAL_SUBJECT_CHANGED,
+ *     localSubject: string
+ * }}
+ */
+export function setLocalSubject(localSubject: string) {
+    return {
+        type: CONFERENCE_LOCAL_SUBJECT_CHANGED,
+        localSubject
     };
 }

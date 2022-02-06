@@ -17,8 +17,7 @@
     #dominantSpeaker,
     #filmstripLocalVideoThumbnail,
     #largeVideoElementsContainer,
-    #sharedVideo,
-    .filmstrip__toolbar {
+    #sharedVideo {
         display: none;
     }
 
@@ -34,17 +33,5 @@
     #remoteConnectionMessage,
     #remotePresenceMessage {
         display: none !important;
-    }
-
-    /**
-     * Thumbnail popover menus can overlap other thumbnails. Setting an auto
-     * z-index will allow AtlasKit InlineDialog's large z-index to be
-     * respected and thereby display over elements in other thumbnails,
-     * specifically the various status icons.
-     */
-    .remotevideomenu,
-    .localvideomenu,
-    .videocontainer__toptoolbar {
-        z-index: auto;
     }
 }

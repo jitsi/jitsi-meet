@@ -13,7 +13,7 @@ import {
     showWarningNotification
 } from '../../notifications';
 import { isForceMuted } from '../../participants-pane/functions';
-import { isScreenMediaShared } from '../../screen-share';
+import { isScreenMediaShared } from '../../screen-share/functions';
 import { SET_AUDIO_ONLY, setAudioOnly } from '../audio-only';
 import { isRoomValid, SET_ROOM } from '../conference';
 import { getLocalParticipant } from '../participants';

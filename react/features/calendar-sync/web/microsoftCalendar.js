@@ -3,6 +3,7 @@
 import { Client } from '@microsoft/microsoft-graph-client';
 import base64js from 'base64-js';
 import type { Dispatch } from 'redux';
+import { v4 as uuidV4 } from 'uuid';
 import { findWindows } from 'windows-iana';
 
 import { createDeferred } from '../../../../modules/util/helpers';
@@ -153,8 +154,8 @@ export const microsoftCalendarApi = {
             const signInDeferred = createDeferred();
 
             const guids = {
-                authState: generateGuid(),
-                authNonce: generateGuid()
+                authState: uuidV4(),
+                authNonce: uuidV4()
             };
 
             dispatch(setCalendarAPIAuthState(guids));
@@ -337,21 +338,6 @@ function formatCalendarEntry(entry) {
         startDate: entry.start.dateTime,
         title: entry.subject
     };
-}
-
-/**
- * Generate a guid to be used for verifying token validity.
- *
- * @private
- * @returns {string} The generated string.
- */
-function generateGuid() {
-    const buf = new Uint16Array(8);
-
-    window.crypto.getRandomValues(buf);
-
-    return `${s4(buf[0])}${s4(buf[1])}-${s4(buf[2])}-${s4(buf[3])}-${
-        s4(buf[4])}-${s4(buf[5])}${s4(buf[6])}${s4(buf[7])}`;
 }
 
 /**
@@ -580,24 +566,6 @@ function requestCalendarEvents( // eslint-disable-line max-params
                 calendarId
             };
         }));
-}
-
-/**
- * Converts the passed in number to a string and ensure it is at least 4
- * characters in length, prepending 0's as needed.
- *
- * @param {number} num - The number to pad and convert to a string.
- * @private
- * @returns {string} - The number converted to a string.
- */
-function s4(num) {
-    let ret = num.toString(16);
-
-    while (ret.length < 4) {
-        ret = `0${ret}`;
-    }
-
-    return ret;
 }
 
 /**

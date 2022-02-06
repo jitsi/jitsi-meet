@@ -1,11 +1,14 @@
 // @flow
 
+import { v4 as uuidv4 } from 'uuid';
+
 import { ReducerRegistry } from '../base/redux';
 
 import {
     ADD_MESSAGE,
     CLEAR_MESSAGES,
     CLOSE_CHAT,
+    EDIT_MESSAGE,
     OPEN_CHAT,
     SET_PRIVATE_MESSAGE_RECIPIENT,
     SET_IS_POLL_TAB_FOCUSED
@@ -29,6 +32,7 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
             error: action.error,
             id: action.id,
             isReaction: action.isReaction,
+            messageId: uuidv4(),
             messageType: action.messageType,
             message: action.message,
             privateMessage: action.privateMessage,
@@ -62,6 +66,30 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
             lastReadMessage: undefined,
             messages: []
         };
+
+    case EDIT_MESSAGE: {
+        let found = false;
+        const newMessage = action.message;
+        const messages = state.messages.map(m => {
+            if (m.messageId === newMessage.messageId) {
+                found = true;
+
+                return newMessage;
+            }
+
+            return m;
+        });
+
+        // no change
+        if (!found) {
+            return state;
+        }
+
+        return {
+            ...state,
+            messages
+        };
+    }
 
     case SET_PRIVATE_MESSAGE_RECIPIENT:
         return {

@@ -10,7 +10,7 @@ import { getFeatureFlag, AUDIO_MUTE_BUTTON_ENABLED } from '../../base/flags';
 import { translate } from '../../base/i18n';
 import { MEDIA_TYPE } from '../../base/media';
 import { connect } from '../../base/redux';
-import { AbstractAudioMuteButton } from '../../base/toolbox/components';
+import { AbstractAudioMuteButton, AbstractButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
 import { isLocalTrackMuted } from '../../base/tracks';
 import { muteLocal } from '../../video-menu/actions';
@@ -120,7 +120,7 @@ class AudioMuteButton extends AbstractAudioMuteButton<Props, *> {
                 ACTION_SHORTCUT_TRIGGERED,
                 { enable: !this._isAudioMuted() }));
 
-        super._handleClick();
+        AbstractButton.prototype._onClick.call(this);
     }
 
     /**

@@ -34,6 +34,16 @@ export const CLEAR_MESSAGES = 'CLEAR_MESSAGES';
 export const CLOSE_CHAT = 'CLOSE_CHAT';
 
 /**
+ * The type of the action which signals to edit chat message.
+ *
+ * {
+ *     type: EDIT_MESSAGE,
+ *     message: Object
+ * }
+ */
+export const EDIT_MESSAGE = 'EDIT_MESSAGE';
+
+/**
  * The type of the action which signals to display the chat panel.
  *
  * {

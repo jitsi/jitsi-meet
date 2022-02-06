@@ -125,9 +125,9 @@ function _setConfig({ dispatch, getState }, next, action) {
         }));
     }
 
-    if (action.config.disableSelfView) {
+    if (action.config.disableSelfView !== undefined) {
         dispatch(updateSettings({
-            disableSelfView: true
+            disableSelfView: action.config.disableSelfView
         }));
     }
 

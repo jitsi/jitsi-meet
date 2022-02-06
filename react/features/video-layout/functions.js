@@ -8,6 +8,7 @@ import {
     pinParticipant,
     getParticipantCountWithFake
 } from '../base/participants';
+import { shouldHideSelfView } from '../base/settings/functions.any';
 import {
     ASPECT_RATIO_BREAKPOINT,
     DEFAULT_MAX_COLUMNS,
@@ -15,7 +16,6 @@ import {
     SINGLE_COLUMN_BREAKPOINT,
     TWO_COLUMN_BREAKPOINT
 } from '../filmstrip/constants';
-import { getDisableSelfView } from '../filmstrip/functions.any';
 import { isVideoPlaying } from '../shared-video/functions';
 
 import { LAYOUTS } from './constants';
@@ -105,12 +105,16 @@ export function getTileViewGridDimensions(state: Object) {
     // When in tile view mode, we must discount ourselves (the local participant) because our
     // tile is not visible.
     const { iAmRecorder } = state['features/base/config'];
-    const disableSelfView = getDisableSelfView(state);
+    const disableSelfView = shouldHideSelfView(state);
     const numberOfParticipants = getParticipantCountWithFake(state)
         - (iAmRecorder ? 1 : 0)
         - (disableSelfView ? 1 : 0);
+    const isWeb = navigator.product !== 'ReactNative';
 
-    const columnsToMaintainASquare = Math.ceil(Math.sqrt(numberOfParticipants));
+    // When there are 3 participants in the call we want them to be placed on a single row unless the maxColumn setting
+    // is lower.
+    const columnsToMaintainASquare
+        = isWeb && numberOfParticipants === 3 ? 3 : Math.ceil(Math.sqrt(numberOfParticipants));
     const columns = Math.min(columnsToMaintainASquare, maxColumns);
     const rows = Math.ceil(numberOfParticipants / columns);
     const minVisibleRows = Math.min(maxColumns, rows);

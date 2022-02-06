@@ -1,5 +1,7 @@
 /* @flow */
 
+import { withStyles } from '@material-ui/styles';
+import clsx from 'clsx';
 import React, { Component } from 'react';
 
 import { translate } from '../../../base/i18n';
@@ -10,6 +12,11 @@ import { VOLUME_SLIDER_SCALE } from '../../constants';
  * The type of the React {@code Component} props of {@link VolumeSlider}.
  */
 type Props = {
+
+    /**
+     * An object containing the CSS classes.
+     */
+    classes: Object,
 
     /**
      * The value of the audio slider should display at when the component first
@@ -41,6 +48,44 @@ type State = {
     volumeLevel: number
 };
 
+const styles = theme => {
+    return {
+        container: {
+            minHeight: '40px',
+            minWidth: '180px',
+            width: '100%',
+            boxSizing: 'border-box',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            padding: '0 5px',
+
+            '&:hover': {
+                backgroundColor: theme.palette.ui04
+            }
+        },
+
+        icon: {
+            minWidth: '20px',
+            padding: '5px',
+            position: 'relative'
+        },
+
+        sliderContainer: {
+            position: 'relative',
+            width: '100%',
+            paddingRight: '5px'
+        },
+
+        slider: {
+            position: 'absolute',
+            width: '100%',
+            top: '50%',
+            transform: 'translate(0, -50%)'
+        }
+    };
+};
+
 /**
  * Implements a React {@link Component} which displays an input slider for
  * adjusting the local volume of a remote participant.
@@ -66,35 +111,48 @@ class VolumeSlider extends Component<Props, State> {
     }
 
     /**
+     * Click handler.
+     *
+     * @param {MouseEvent} e - Click event.
+     * @returns {void}
+     */
+    _onClick(e) {
+        e.stopPropagation();
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
      * @returns {ReactElement}
      */
     render() {
+        const { classes } = this.props;
+
         return (
-            <li
+            <div
                 aria-label = { this.props.t('volumeSlider') }
-                className = 'popupmenu__item'>
-                <div className = 'popupmenu__contents'>
-                    <span className = 'popupmenu__icon'>
-                        <Icon src = { IconVolume } />
-                    </span>
-                    <div className = 'popupmenu__slider_container'>
-                        <input
-                            aria-valuemax = { VOLUME_SLIDER_SCALE }
-                            aria-valuemin = { 0 }
-                            aria-valuenow = { this.state.volumeLevel }
-                            className = 'popupmenu__slider'
-                            max = { VOLUME_SLIDER_SCALE }
-                            min = { 0 }
-                            onChange = { this._onVolumeChange }
-                            tabIndex = { 0 }
-                            type = 'range'
-                            value = { this.state.volumeLevel } />
-                    </div>
+                className = { clsx('popupmenu__contents', classes.container) }
+                onClick = { this._onClick }>
+                <span className = { classes.icon }>
+                    <Icon
+                        size = { 22 }
+                        src = { IconVolume } />
+                </span>
+                <div className = { classes.sliderContainer }>
+                    <input
+                        aria-valuemax = { VOLUME_SLIDER_SCALE }
+                        aria-valuemin = { 0 }
+                        aria-valuenow = { this.state.volumeLevel }
+                        className = { clsx('popupmenu__volume-slider', classes.slider) }
+                        max = { VOLUME_SLIDER_SCALE }
+                        min = { 0 }
+                        onChange = { this._onVolumeChange }
+                        tabIndex = { 0 }
+                        type = 'range'
+                        value = { this.state.volumeLevel } />
                 </div>
-            </li>
+            </div>
         );
     }
 
@@ -116,4 +174,4 @@ class VolumeSlider extends Component<Props, State> {
     }
 }
 
-export default translate(VolumeSlider);
+export default translate(withStyles(styles)(VolumeSlider));

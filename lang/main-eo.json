@@ -20,9 +20,9 @@
     "audioDevices": {
         "bluetooth": "Bludento",
         "headphones": "Kapaŭskultiloj",
+        "none": "Neniu disponebla sonaparato",
         "phone": "Telefono",
-        "speaker": "Parolanto",
-        "none": "Neniu disponebla sonaparato"
+        "speaker": "Parolanto"
     },
     "audioOnly": {
         "audioOnly": "Malalta rapideco de retkonekto"
@@ -48,23 +48,23 @@
     "chat": {
         "error": "Eraro: via mesaĝo “{{originalText}}” ne estis sendita. Kialo: {{error}}",
         "fieldPlaceHolder": "Tajpu vian mesaĝon ĉi tien",
-        "messagebox": "Tajpu mesaĝon",
         "messageTo": "Privata mesaĝo al {{recipient}}",
-        "noMessagesMessage": "Ankoraŭ ne estas mesaĝoj en la kunveno. Komencu konversation ĉi tie!",
+        "messagebox": "Tajpu mesaĝon",
         "nickname": {
             "popover": "Elektu kaŝnomon",
             "title": "Elektu kaŝnomon por uzi la babilejon",
             "titleWithPolls": "Elektu kaŝnomon por uzi la babilejon"
         },
+        "noMessagesMessage": "Ankoraŭ ne estas mesaĝoj en la kunveno. Komencu konversation ĉi tie!",
         "privateNotice": "Privata mesaĝo al {{recipient}}",
         "title": "Babilejo",
         "titleWithPolls": "Babilejo",
         "you": "vi"
     },
     "chromeExtensionBanner": {
-        "installExtensionText": "Instali la kromprogramon por integrigo de Google Calendar kaj Office 365",
         "buttonText": "Instali kromprogramon por Chrome",
-        "dontShowAgain": "Ne plu montru tion al mi"
+        "dontShowAgain": "Ne plu montru tion al mi",
+        "installExtensionText": "Instali la kromprogramon por integrigo de Google Calendar kaj Office 365"
     },
     "connectingOverlay": {
         "joiningRoom": "Konektiĝo al via kunveno…"
@@ -144,7 +144,21 @@
         "selectADevice": "Elektu aparaton",
         "testAudio": "Ludi testan sonon"
     },
+    "dialOut": {
+        "statusMessage": "nun estas {{status}}"
+    },
     "dialog": {
+        "Back": "Reen",
+        "Cancel": "Nuligi",
+        "IamHost": "Mi estas la gastiganto",
+        "Ok": "Bone",
+        "Remove": "Forigi",
+        "Share": "Kundividi",
+        "Submit": "Sendi",
+        "WaitForHostMsg": "La kunveno <b>{{room}}</b> ankoraŭ ne komencis. Se vi estas la gastiganto, bonvolu aŭtentiĝi. Alikaze atendu, ĝis la gastiganto venos.",
+        "WaitForHostMsgWOk": "La kunveno <b>{{room}}</b> ankoraŭ ne komencis. Se vi estas la gastiganto, bonvolu puŝi “Bone” por aŭtentiĝi. Alikaze atendu, ĝis la gastiganto venos.",
+        "WaitingForHost": "Atendo de la gastiga komputilo…",
+        "Yes": "Jes",
         "accessibilityLabel": {
             "liveStreaming": "Tuja elsendfluo"
         },
@@ -152,7 +166,6 @@
         "alreadySharedVideoMsg": "Alia partoprenanto jam kundividas videon. Ĉi tiu kunveno permesas nur unu kundividata video samtempe.",
         "alreadySharedVideoTitle": "Nur unu video estas permesata samtempe.",
         "applicationWindow": "Programa fenestro",
-        "Back": "Reen",
         "cameraConstraintFailedError": "Via kamerao ne plenumas kelkajn neprajn postulojn.",
         "cameraNotFoundError": "Kamerao ne trovita.",
         "cameraNotSendingData": "Via kamerao ne atingeblas al ni. Bonvolu kontroli, ĉu alia programo jam uzas la aparaton, elekti alian de la agorda menuo, aŭ provu ĝisdatigi la programon.",
@@ -160,7 +173,6 @@
         "cameraPermissionDeniedError": "Vi ne permesis uzi vian kameraon. Vi povas aliĝi al la kunveno, sed aliaj ne povos vin vidi. Vi povas tion ŝanĝi per la kameraa butono en la adresbreto.",
         "cameraUnknownError": "Ne eblas uzi la kameraon, pro kialo nekonata.",
         "cameraUnsupportedResolutionError": "Via kamerao ne subtenas la bezonatan distingivon.",
-        "Cancel": "Nuligi",
         "close": "Fermi",
         "conferenceDisconnectMsg": "Eble kontrolu vian retkonekton. Rekonekto post {{seconds}} sekundoj…",
         "conferenceDisconnectTitle": "Vi malkonektiĝis.",
@@ -187,11 +199,10 @@
         "externalInstallationTitle": "Kromprogramo bezonata",
         "goToStore": "Iri al la retvendejo",
         "gracefulShutdown": "Nia servo nun estas eksterreta pro prizorgado. Bonvolu reprovi poste.",
-        "IamHost": "Mi estas la gastiganto",
-        "incorrectRoomLockPassword": "",
         "incorrectPassword": "Malĝusta pasvorto aŭ uzantnomo",
-        "inlineInstallationMsg": "Vi devas instali nian ekranvidadan kromprogramon.",
+        "incorrectRoomLockPassword": "",
         "inlineInstallExtension": "Instali nun",
+        "inlineInstallationMsg": "Vi devas instali nian ekranvidadan kromprogramon.",
         "internalError": "Oj! La jena eraro okazis: {{error}}",
         "internalErrorTitle": "Interna eraro",
         "kickMessage": "Vi povas kontakti {{participantDisplayName}} por pli da detaloj.",
@@ -215,17 +226,16 @@
         "micNotSendingDataTitle": "Via mikrofono estas silentigita en viaj sistemagordoj",
         "micPermissionDeniedError": "Vi ne permesis uzi vian mikrofonon. Vi povas aliĝi al la kunveno, sed aliaj ne povos vin aŭdi. Vi povas tion ŝanĝi per la kameraa butono en la adresbreto.",
         "micUnknownError": "Ne eblas uzi mikrofonon pro kialo nekonata.",
+        "muteEveryoneDialog": "Ĉu vi certe volas silentigi ĉiujn? Vi ne povos malsilentigi ilin, sed ili mem povos malsilentigi sin iam ajn.",
         "muteEveryoneElseDialog": "Silentiginte lin aŭ ŝin, vi ne povos malsilentigi la uzanton, sed li aŭ ŝi mem povos malsilentigi sin iam ajn.",
         "muteEveryoneElseTitle": "Silentigi ĉiujn krom {{whom}}?",
-        "muteEveryoneDialog": "Ĉu vi certe volas silentigi ĉiujn? Vi ne povos malsilentigi ilin, sed ili mem povos malsilentigi sin iam ajn.",
-        "muteEveryoneTitle": "Silentigi ĉiujn?",
         "muteEveryoneSelf": "vin",
         "muteEveryoneStartMuted": "Ĉiuj estas dekomence silentigitaj ekde nun",
+        "muteEveryoneTitle": "Silentigi ĉiujn?",
         "muteParticipantBody": "Vi ne povos lin aŭ ŝin malsilentigi, sed li aŭ ŝi povas malsilentigi sin iam ajn.",
         "muteParticipantButton": "Silentigi",
         "muteParticipantDialog": "Ĉu vi certe volas silentigi ĉi tiun partoprenanton? Vi ne povos malsilentigi lin aŭ ŝin, sed li aŭ ŝi mem povos malsilentigi sin iam ajn.",
         "muteParticipantTitle": "Ĉu silentigi ĉi tiun partoprenanton?",
-        "Ok": "Bone",
         "passwordLabel": "La kunvenon ŝlosis partoprenanto. Bonvolu entajpi $t(lockRoomPassword) por aliĝi.",
         "passwordNotSupported": "Agordo de kunvena pasvorto ne estas subtenata",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) ne subtenata",
@@ -243,7 +253,6 @@
         "remoteControlShareScreenWarning": "Sciu, ke se vi premos “Permesi”, vi kunhavigos vian ekranon!",
         "remoteControlStopMessage": "Telerega seanco finita!",
         "remoteControlTitle": "Labortabla telerego",
-        "Remove": "Forigi",
         "removePassword": "Forigi $t(lockRoomPassword)",
         "removeSharedVideoMsg": "Ĉu vi vere volas forigi vian kunhavatan videon?",
         "removeSharedVideoTitle": "Forigi kunhavatan videon",
@@ -262,8 +271,7 @@
         "sendPrivateMessageTitle": "Sendi private?",
         "serviceUnavailable": "Servo ne disponeblas",
         "sessTerminated": "Voko finita",
-        "Share": "Kundividi",
-        "shareVideoLinkError": "Bonvolu doni ĝustan ligilon de YouTube",
+        "shareVideoLinkError": "Bonvolu doni ĝustan ligilon",
         "shareVideoTitle": "Kundividi videon",
         "shareYourScreen": "Kundividi vian ekranon",
         "shareYourScreenDisabled": "Kundividado de ekrano malŝaltita.",
@@ -276,7 +284,6 @@
         "stopRecordingWarning": "Ĉu vi certe volas fini la registradon?",
         "stopStreamingWarning": "Ĉu vi certe volas fini la tujan elsendfluon?",
         "streamKey": "Ŝlosilo de tuja elsendfluo",
-        "Submit": "Sendi",
         "thankYou": "Dankon ke vi uzas {{appName}}!",
         "token": "ĵetono",
         "tokenAuthFailed": "Pardonu, vi ne rajtas aliĝi al ĉi tiu voko.",
@@ -284,14 +291,7 @@
         "transcribing": "transskribado",
         "unlockRoom": "Forigi la $t(lockRoomPassword)n de la ĉambro",
         "userPassword": "uzantopasvorto",
-        "WaitForHostMsg": "La kunveno <b>{{room}}</b> ankoraŭ ne komencis. Se vi estas la gastiganto, bonvolu aŭtentiĝi. Alikaze atendu, ĝis la gastiganto venos.",
-        "WaitForHostMsgWOk": "La kunveno <b>{{room}}</b> ankoraŭ ne komencis. Se vi estas la gastiganto, bonvolu puŝi “Bone” por aŭtentiĝi. Alikaze atendu, ĝis la gastiganto venos.",
-        "WaitingForHost": "Atendo de la gastiga komputilo…",
-        "Yes": "Jes",
         "yourEntireScreen": "Via tuta ekrano"
-    },
-    "dialOut": {
-        "statusMessage": "nun estas {{status}}"
     },
     "documentSharing": {
         "title": "Kundividita dokumento"
@@ -307,6 +307,9 @@
         "rateExperience": "Bonvolu priskribi vian sperton.",
         "veryBad": "Tre malbona",
         "veryGood": "Tre bona"
+    },
+    "helpView": {
+        "header": "Helpejo"
     },
     "incomingCall": {
         "answer": "Respondi",
@@ -334,6 +337,7 @@
         "inviteURLFirstPartGeneral": "Vi estas invitita al kunveno.",
         "inviteURLFirstPartPersonal": "{{name}} invitas vin al kunveno.\n",
         "inviteURLSecondPart": "\nAliĝi al la kunveno:\n{{url}}\n",
+        "label": "Informoj pri la kunveno",
         "liveStreamURL": "Tuja elsendfluo:",
         "moreNumbers": "Pli da numeroj",
         "noNumbers": "Neniu numero por voki.",
@@ -342,8 +346,13 @@
         "numbers": "Telefonnumeroj",
         "password": "$t(lockRoomPasswordUppercase):",
         "title": "Kundividi",
-        "tooltip": "Kundividi ligilon kaj telefonnumeron por ĉi tiu kunveno",
-        "label": "Informoj pri la kunveno"
+        "tooltip": "Kundividi ligilon kaj telefonnumeron por ĉi tiu kunveno"
+    },
+    "inlineDialogFailure": {
+        "msg": "Ni iom stumblis.",
+        "retry": "Provi denove",
+        "support": "Subteno",
+        "supportMsg": "Se tio daŭre okazas, kontaktu"
     },
     "inviteDialog": {
         "alertText": "La invito de kelkaj partoprenantoj malsukcesis.",
@@ -352,12 +361,6 @@
         "searchPeopleOnlyPlaceholder": "Serĉi partoprenantojn",
         "searchPlaceholder": "Partoprenanto aŭ telefonnumero",
         "send": "Sendi"
-    },
-    "inlineDialogFailure": {
-        "msg": "Ni iom stumblis.",
-        "retry": "Provi denove",
-        "support": "Subteno",
-        "supportMsg": "Se tio daŭre okazas, kontaktu"
     },
     "keyboardShortcuts": {
         "focusLocal": "Fokusigi vian propran videon",
@@ -391,6 +394,7 @@
         "expandedPending": "La tuja elsendfluo nun startas…",
         "failedToStart": "Tuja elsendfluo malsukcesis komenci",
         "getStreamKeyManually": "Ni ne povis trovi tujajn elsendfluojn. Provu trovi vian ŝlosilon de tuja YouTube-elsendfluo.",
+        "googlePrivacyPolicy": "Privatecpolitiko de Google",
         "invalidStreamKey": "La ŝlosilo de tuja elsendfluo povas esti malĝusta.",
         "off": "Tuja elsendfluo finiĝis",
         "offBy": "{{name}} ĉesigis la tujan elsendfluon",
@@ -398,15 +402,14 @@
         "onBy": "{{name}} komencis la tujan elsendfluon",
         "pending": "Startigo de tuja elsendfluo…",
         "serviceName": "Servoj de tuja elsendado",
-        "signedInAs": "Vi nun estas ensalutinta kiel:",
         "signIn": "Ensaluti kun Google",
         "signInCTA": "Ensalutu aŭ entajpu vian ŝlosilon tuja elsendado el YouTube.",
         "signOut": "Elsaluti",
+        "signedInAs": "Vi nun estas ensalutinta kiel:",
         "start": "Komenci tujan elsendfluon",
         "streamIdHelp": "Kio estas tio?",
         "unavailableTitle": "Tuja elsendfluo ne disponeblas",
-        "youtubeTerms": "Uzkondiĉoj de YouTube",
-        "googlePrivacyPolicy": "Privatecpolitiko de Google"
+        "youtubeTerms": "Uzkondiĉoj de YouTube"
     },
     "localRecording": {
         "clientState": {
@@ -439,8 +442,13 @@
     },
     "lockRoomPassword": "Pasvorto",
     "lockRoomPasswordUppercase": "Pasvorto",
+    "lonelyMeetingExperience": {
+        "button": "Inviti aliajn",
+        "youAreAlone": "Vi estas la sola en la kunveno"
+    },
     "me": "mi",
     "notify": {
+        "OldElectronAPPTitle": "Sekurec-vundeblo!",
         "connectedOneMember": "{{name}} aliĝis al la kunveno",
         "connectedThreePlusMembers": "{{name}} kaj {{count}} aliaj aliĝis al la kunveno",
         "connectedTwoMembers": "{{first}} kaj {{second}} aliĝis al la kunveno",
@@ -455,28 +463,27 @@
         "me": "Mi",
         "moderator": "Kunvenestraj rajtoj donitaj!",
         "muted": "Vi komencis la interparolon silente.",
-        "mutedTitle": "Vi estas silentigita!",
-        "mutedRemotelyTitle": "Vi estis silentigita de {{participantDisplayName}}!",
         "mutedRemotelyDescription": "Vi ĉiam povas malsilentiĝi, kiam vi estas preta paroli. Resilentiĝu, kiam vi finis, post eviti bruon en la kunveno.",
+        "mutedRemotelyTitle": "Vi estis silentigita de {{participantDisplayName}}!",
+        "mutedTitle": "Vi estas silentigita!",
+        "newDeviceAction": "Uzi",
+        "newDeviceAudioTitle": "Nova aparato detektita",
+        "newDeviceCameraTitle": "Nova kamerao detektita",
+        "oldElectronClientDescription1": "Ŝajnas, ke vi uzas malnovan version de la kliento de Jitsi Meet, kiu havas konatajn sekurec-vundeblojn. Bonvolu ĝisdatigi al nia ",
+        "oldElectronClientDescription2": "plej nova versio",
+        "oldElectronClientDescription3": " nun!",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) forigita de alia partoprenanto",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) difinita de alia partoprenanto",
         "raisedHand": "{{name}} ŝatus paroli.",
         "somebody": "Iu",
-        "startSilentTitle": "Vi envenis sen sona eligo!",
         "startSilentDescription": "Aliĝu denove al la kunveno por ŝalti sonon",
+        "startSilentTitle": "Vi envenis sen sona eligo!",
         "suboptimalBrowserWarning": "N timas, ke vi ne havos bonegan sperton ĉi tie. Ni klopodas plibonigi tion, sed dume bonvolu provi uzi unu el la <a href='static/recommendedBrowsers.html' target='_blank'>plene subtenataj retumiloj</a>.",
         "suboptimalExperienceTitle": "Atentigo pri la retumilo",
-        "unmute": "Malsilentigi",
-        "newDeviceCameraTitle": "Nova kamerao detektita",
-        "newDeviceAudioTitle": "Nova aparato detektita",
-        "newDeviceAction": "Uzi",
-        "OldElectronAPPTitle": "Sekurec-vundeblo!",
-        "oldElectronClientDescription1": "Ŝajnas, ke vi uzas malnovan version de la kliento de Jitsi Meet, kiu havas konatajn sekurec-vundeblojn. Bonvolu ĝisdatigi al nia ",
-        "oldElectronClientDescription2": "plej nova versio",
-        "oldElectronClientDescription3": " nun!"
+        "unmute": "Malsilentigi"
     },
-    "passwordSetRemotely": "agordita de alia partoprenanto",
     "passwordDigitsOnly": "Ĝis {{number}} ciferoj",
+    "passwordSetRemotely": "agordita de alia partoprenanto",
     "poweredby": "pelata de",
     "presenceStatus": {
         "busy": "Okupata",
@@ -596,7 +603,9 @@
         "title": "Via vidvoko estis interrompita, ĉar la komputilo ekdormis."
     },
     "toolbar": {
+        "Settings": "Agordoj",
         "accessibilityLabel": {
+            "Settings": "Baskuligi agordojn",
             "audioOnly": "Baskuligi nur-sonan reĝimon",
             "audioRoute": "Elekti la sonaparaton",
             "callQuality": "Agordi vidkvaliton",
@@ -624,18 +633,17 @@
             "raiseHand": "Baskuligi manlevon",
             "recording": "Baskuligi registradon",
             "remoteMute": "Silentigi partoprenanton",
-            "Settings": "Baskuligi agordojn",
-            "sharedvideo": "Baskuligi kundividadon de videoj el YouTube",
             "shareRoom": "Inviti iun",
             "shareYourScreen": "Baskuligi kundividadon de ekrano",
+            "sharedvideo": "Baskuligi kundividadon de videoj",
             "shortcuts": "Baskuligi fulmklavojn",
             "show": "Montri sur scenejo",
             "speakerStats": "Baskuligi statistikojn pri parolanto",
             "tileView": "Baskuligi kahelan vidon",
             "toggleCamera": "Baskuligi kameraon",
             "toggleFilmstrip": "Baskuligi filmbendon",
-            "videomute": "Silentigi/malsilentigi videon",
-            "videoblur": "Baskuligi malnetigon de video"
+            "videoblur": "Baskuligi malnetigon de video",
+            "videomute": "Silentigi/malsilentigi videon"
         },
         "addPeople": "Aldoni homojn al via voko",
         "audioOnlyOff": "Malŝalti malalt-trafikan reĝimon",
@@ -664,35 +672,34 @@
         "moreOptions": "Pli da ebloj",
         "mute": "Silentigi/Malsilentigi",
         "muteEveryone": "Silentigi ĉiujn",
-        "noAudioSignalTitle": "Ne estas signalo el via mikrofono!",
         "noAudioSignalDesc": "Se vi ne intence silentigis ĝin per viaj sistemaj agordoj aŭ fizike, konsideru transŝalti al alia aparato.",
         "noAudioSignalDescSuggestion": "Se vi ne intence silentigis ĝin per viaj sistemaj agordoj aŭ fizike, konsideru transŝalti al la proponata aparato.",
         "noAudioSignalDialInDesc": "Vi povas ankaŭ telefoni per:",
         "noAudioSignalDialInLinkDesc": "Telefonnumeroj:",
-        "noisyAudioInputTitle": "Via mikrofono ŝajnas brua!",
+        "noAudioSignalTitle": "Ne estas signalo el via mikrofono!",
         "noisyAudioInputDesc": "Ŝajnas, ke via mikrofono faras bruon, bonvolu pripensi silentigi ĝin aŭ ŝanĝi aparaton.",
+        "noisyAudioInputTitle": "Via mikrofono ŝajnas brua!",
         "openChat": "Malfermi la babilejon",
         "pip": "Eniri reĝimon “bildo en bildo”",
         "privateMessage": "Sendi privatan mesaĝon",
         "profile": "Redakti vian profilon",
         "raiseHand": "Levi / Mallevi vian manon",
         "raiseYourHand": "Levi vian manon",
-        "Settings": "Agordoj",
-        "sharedvideo": "Kundividi videon el YouTube",
         "shareRoom": "Inviti iun",
+        "sharedvideo": "Kundividi videon",
         "shortcuts": "Vidi fulmklavojn",
         "speakerStats": "Statistikoj pri parolintoj",
         "startScreenSharing": "Komenci dividadon de ekrano",
         "startSubtitles": "Komenci subtekstojn",
+        "startvideoblur": "Malnetigi mian fonon",
         "stopScreenSharing": "Ĉesigi dividadon de ekrano",
+        "stopSharedVideo": "Haltigi videon",
         "stopSubtitles": "Ĉesigi subtekstojn",
-        "stopSharedVideo": "Haltigi videon el YouTube",
+        "stopvideoblur": "Ĉesigi malnetigon de fono",
         "talkWhileMutedPopup": "Ĉu vi provas paroli? Vi estas silentigita.",
         "tileViewToggle": "Baskuligi titolan vidon",
         "toggleCamera": "Baskuligi kameraon",
-        "videomute": "Ŝalti / Malŝalti kameraon",
-        "startvideoblur": "Malnetigi mian fonon",
-        "stopvideoblur": "Ĉesigi malnetigon de fono"
+        "videomute": "Ŝalti / Malŝalti kameraon"
     },
     "transcribing": {
         "ccButtonTooltip": "Komenci / Ĉesigi subtekstojn",
@@ -776,27 +783,20 @@
         "connectCalendarText": "Konektu vian kalendaron por vidi ĉiujn viajn kunvenojn en {{app}}. Plie, vi povas aldoni viajn {{provider}}-kunvenojn al via kalendaro kaj lanĉi ilin per unu klako.",
         "enterRoomTitle": "Komencu novan kunvenon",
         "getHelp": "Ricevi helpo",
-        "roomNameAllowedChars": "La nomo de la kunveno ne povas enhavi la jenajn signojn: ?, &, :, ', \", %, #.",
         "go": "EK",
         "goSmall": "EK",
-        "join": "KREI / ALIĜI",
         "info": "Informoj",
+        "join": "KREI / ALIĜI",
         "privacy": "Privateco",
         "recentList": "Lastaj",
         "recentListDelete": "Forigi",
         "recentListEmpty": "Via listo de lastaj kunvenoj estas malplena. Babilu kun via teamo kaj vi trovos ĉi tie ĉiujn viajn lastajn kunvenojn.",
         "reducedUIText": "Bonvenon all {{app}}!",
+        "roomNameAllowedChars": "La nomo de la kunveno ne povas enhavi la jenajn signojn: ?, &, :, ', \", %, #.",
         "roomname": "Entajpu nomon de ĉambro",
         "roomnameHint": "Entajpu la nomon aŭ URL de la ĉambro, al kiu vi volas aliĝi. Vi povas elpensi nomon, nur sciigu ĝin al la aliaj homoj, kiujn vi renkontos, por ke ili entajpu la saman nomon.",
         "sendFeedback": "Sendi retrokuplon",
         "terms": "Uzkondiĉoj",
         "title": "Sekuraj, multfunkciaj kaj plene senpagaj video-konferencoj"
-    },
-    "lonelyMeetingExperience": {
-        "button": "Inviti aliajn",
-        "youAreAlone": "Vi estas la sola en la kunveno"
-    },
-    "helpView": {
-        "header": "Helpejo"
     }
 }

@@ -25,9 +25,11 @@ class RaisedHandIndicator extends AbstractRaisedHandIndicator<Props> {
     _renderIndicator() {
         return (
             <BaseIndicator
-                backgroundColor = { BaseTheme.palette.warning01 }
+                backgroundColor = { BaseTheme.palette.warning02 }
                 highlight = { true }
-                icon = { IconRaisedHand } />
+                icon = { IconRaisedHand }
+                iconSize = { 16 }
+                iconStyle = {{ color: BaseTheme.palette.uiBackground }} />
         );
     }
 }

@@ -85,9 +85,7 @@ class PasswordForm extends Component<Props, State> {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
-        this._onEnteredPasswordChange
-            = this._onEnteredPasswordChange.bind(this);
-        this._onPasswordSubmit = this._onPasswordSubmit.bind(this);
+        this._onEnteredPasswordChange = this._onEnteredPasswordChange.bind(this);
         this._onKeyPress = this._onKeyPress.bind(this);
     }
 
@@ -122,31 +120,28 @@ class PasswordForm extends Component<Props, State> {
      */
     _renderPasswordField() {
         if (this.props.editEnabled) {
-            let digitPattern, placeHolderText;
+            let placeHolderText;
 
             if (this.props.passwordNumberOfDigits) {
                 placeHolderText = this.props.t('passwordDigitsOnly', {
                     number: this.props.passwordNumberOfDigits });
-                digitPattern = '\\d*';
             }
 
             return (
-                <form
-                    className = 'info-password-form'
-                    onKeyPress = { this._onKeyPress }
-                    onSubmit = { this._onPasswordSubmit }>
+                <div
+                    className = 'info-password-form'>
                     <input
                         aria-label = { this.props.t('info.addPassword') }
                         autoFocus = { true }
                         className = 'info-password-input'
                         maxLength = { this.props.passwordNumberOfDigits }
                         onChange = { this._onEnteredPasswordChange }
-                        pattern = { digitPattern }
+                        onKeyPress = { this._onKeyPress }
                         placeholder = { placeHolderText }
                         spellCheck = { 'false' }
                         type = 'text'
                         value = { this.state.enteredPassword } />
-                </form>
+                </div>
             );
         } else if (this.props.locked === LOCKED_LOCALLY) {
             return (
@@ -182,23 +177,6 @@ class PasswordForm extends Component<Props, State> {
         this.setState({ enteredPassword: event.target.value });
     }
 
-    _onPasswordSubmit: (Object) => void;
-
-    /**
-     * Invokes the passed in onSubmit callback to notify the parent that a
-     * password submission has been attempted.
-     *
-     * @param {Object} event - DOM Event for form submission.
-     * @private
-     * @returns {void}
-     */
-    _onPasswordSubmit(event) {
-        event.preventDefault();
-        event.stopPropagation();
-
-        this.props.onSubmit(this.state.enteredPassword);
-    }
-
     _onKeyPress: (Object) => void;
 
     /**
@@ -211,7 +189,10 @@ class PasswordForm extends Component<Props, State> {
      */
     _onKeyPress(event) {
         if (event.key === 'Enter') {
+            event.preventDefault();
             event.stopPropagation();
+
+            this.props.onSubmit(this.state.enteredPassword);
         }
     }
 }

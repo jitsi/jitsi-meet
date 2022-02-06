@@ -7,7 +7,9 @@ import { ReducerRegistry } from '../base/redux';
 import {
     INIT_SEARCH,
     UPDATE_STATS,
-    INIT_REORDER_STATS
+    INIT_REORDER_STATS,
+    RESET_SEARCH_CRITERIA,
+    TOGGLE_FACIAL_EXPRESSIONS
 } from './actionTypes';
 
 /**
@@ -19,7 +21,8 @@ const INITIAL_STATE = {
     stats: {},
     isOpen: false,
     pendingReorder: true,
-    criteria: null
+    criteria: null,
+    showFacialExpressions: false
 };
 
 ReducerRegistry.register('features/speaker-stats', (state = _getInitialState(), action) => {
@@ -30,6 +33,14 @@ ReducerRegistry.register('features/speaker-stats', (state = _getInitialState(), 
         return _updateStats(state, action);
     case INIT_REORDER_STATS:
         return _initReorderStats(state);
+    case RESET_SEARCH_CRITERIA:
+        return _updateCriteria(state, { criteria: null });
+    case TOGGLE_FACIAL_EXPRESSIONS: {
+        return {
+            ...state,
+            showFacialExpressions: !state.showFacialExpressions
+        };
+    }
     }
 
     return state;
