@@ -25,19 +25,6 @@ export const TOUCHABLE_UNDERLAY = ColorPalette.lightGrey;
  * The styles of the React {@code Components} of LiveStream.
  */
 export default createStyleSheet({
-    betaTag: {
-        backgroundColor: ColorPalette.darkGrey,
-        borderRadius: 2,
-        marginLeft: 16,
-        opacity: 0.90,
-        paddingLeft: 6,
-        paddingRight: 6
-    },
-
-    betaTagText: {
-        color: ColorPalette.white,
-        fontWeight: 'bold'
-    },
 
     /**
      * Generic component to wrap form sections into achieving a unified look.
