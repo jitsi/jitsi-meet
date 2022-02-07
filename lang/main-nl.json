@@ -701,6 +701,7 @@
         "errorDialOutFailed": "Kon niet bellen. Oproep is mislukt",
         "errorDialOutStatus": "Fout bij ophalen belstatus",
         "errorMissingName": "Voer alstublieft uw naam in om deel te nemen aan de vergadering",
+        "errorNoPermissions": "U moet toegang tot uw microfoon en camera inschakelen",
         "errorStatusCode": "Fout bij bellen, statuscode: {{status}}",
         "errorValidation": "Nummervalidatie mislukt",
         "iWantToDialIn": "Ik wil inbellen",
