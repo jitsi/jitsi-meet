@@ -392,7 +392,7 @@ module.exports = (_env, argv) => {
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'facial-expressions-worker')
             ],
-            performance: getPerformanceHints(perfHintOptions, 1024 * 1024)
+            performance: getPerformanceHints(perfHintOptions, 1024 * 1024 * 1.5)
         })
     ];
 };

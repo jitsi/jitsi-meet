@@ -2,20 +2,20 @@
 
 ### Tiny Face Detector
 
-It is a realtime face detector, more information can be found here https://github.com/justadudewhohacks/face-api.js/#tiny-face-detector.
+It is a realtime face detector.
 
 ### Face Expression Recognition Model
 
-It is a models that recognizes face expressions, more information can be found here https://github.com/justadudewhohacks/face-api.js/#face-expression-recognition-model.
+It is a models that recognizes facial expressions.
 
 ### Usage
 
-Both models are loaded using face-api.js which is a JavaScript face recognition API for the browser and nodejs implemented on top of tensorflow.js core.
+Both models are loaded using face-api which is as AI-powered Face Detection & Rotation Tracking, Face Description & Recognition, Age & Gender & Emotion Prediction for Browser and NodeJS using TensorFlow/JS.
 
 Depending on the browser and hardware acceleration available the tensorflow.js will use a webgl backend of a cpu backend.
 
 ## LICENSE
 
-The models were both downloaded from the face-api.js repository, https://github.com/justadudewhohacks/face-api.js/, and they can be found in this folder https://github.com/justadudewhohacks/face-api.js/tree/master/weights.
+The models were both downloaded from the face-api repository, https://github.com/vladmandic/face-api , and they can be found in this folder https://github.com/vladmandic/face-api/tree/master/model.
 
-The repository has a MIT License. More information can be found here https://github.com/justadudewhohacks/face-api.js/blob/master/LICENSE.
+The repository has a MIT License. More information can be found here https://github.com/vladmandic/face-api/blob/master/LICENSE.
