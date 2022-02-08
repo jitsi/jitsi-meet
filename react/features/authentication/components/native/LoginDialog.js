@@ -1,7 +1,7 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import { Platform, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import Dialog from 'react-native-dialog';
 import { connect as reduxConnect } from 'react-redux';
 import type { Dispatch } from 'redux';
@@ -142,26 +142,6 @@ class LoginDialog extends Component<Props, State> {
             _connecting: connecting,
             t
         } = this.props;
-        let rightKey;
-        let leftKey;
-        let rightOnPress;
-        let leftOnPress;
-        let rightDisabled;
-        let leftDisabled;
-
-        if (Platform.OS === 'android') {
-            rightKey = 'dialog.Ok';
-            rightOnPress = () => this._onLogin();
-            rightDisabled = connecting;
-            leftKey = 'dialog.Cancel';
-            leftOnPress = () => this._onCancel();
-        } else {
-            rightKey = 'dialog.Cancel';
-            rightOnPress = () => this._onCancel();
-            leftKey = 'dialog.Ok';
-            leftOnPress = () => this._onLogin();
-            leftDisabled = connecting;
-        }
 
         return (
             <View>
@@ -187,13 +167,12 @@ class LoginDialog extends Component<Props, State> {
                         { this._renderMessage() }
                     </Dialog.Description>
                     <Dialog.Button
-                        disabled = { rightDisabled }
-                        label = { t(rightKey) }
-                        onPress = { rightOnPress } />
+                        label = { t('dialog.Cancel') }
+                        onPress = { this._onCancel } />
                     <Dialog.Button
-                        disabled = { leftDisabled }
-                        label = { t(leftKey) }
-                        onPress = { leftOnPress } />
+                        disabled = { connecting }
+                        label = { t('dialog.Ok') }
+                        onPress = { this._onLogin } />
                 </Dialog.Container>
             </View>
         );

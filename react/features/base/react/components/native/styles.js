@@ -1,6 +1,7 @@
 // @flow
 
 import { BoxModel, ColorPalette } from '../../../styles';
+import BaseTheme from '../../../ui/components/BaseTheme.native';
 
 const OVERLAY_FONT_COLOR = 'rgba(255, 255, 255, 0.6)';
 const SECONDARY_ACTION_BUTTON_SIZE = 30;
@@ -130,7 +131,8 @@ const SECTION_LIST_STYLES = {
         alignItems: 'center',
         flex: 1,
         flexDirection: 'row',
-        padding: 5
+        marginHorizontal: BaseTheme.spacing[3],
+        marginVertical: BaseTheme.spacing[2]
     },
 
     listItemDetails: {
@@ -162,7 +164,8 @@ const SECTION_LIST_STYLES = {
     listSectionText: {
         color: OVERLAY_FONT_COLOR,
         fontSize: 14,
-        fontWeight: 'normal'
+        fontWeight: 'normal',
+        marginLeft: BaseTheme.spacing[2]
     },
 
     pullToRefresh: {

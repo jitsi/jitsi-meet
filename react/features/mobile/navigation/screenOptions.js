@@ -1,9 +1,10 @@
 // @flow
-/* eslint-disable react/no-multi-comp */
 
 import { TransitionPresets } from '@react-navigation/stack';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Platform } from 'react-native';
+import { Text, TouchableRipple } from 'react-native-paper';
 
 import {
     Icon,
@@ -13,10 +14,19 @@ import {
     IconInfo,
     IconSettings
 } from '../../base/icons';
-import BaseTheme from '../../base/ui/components/BaseTheme';
+import BaseTheme from '../../base/ui/components/BaseTheme.native';
 
 import HeaderNavigationButton from './components/HeaderNavigationButton';
 import { goBack } from './components/conference/ConferenceNavigationContainerRef';
+
+
+/**
+ * Close button text color.
+ */
+export const closeTextColor = {
+    color: BaseTheme.palette.text01,
+    marginLeft: BaseTheme.spacing[3]
+};
 
 /**
  * Navigation container theme.
@@ -196,11 +206,28 @@ export const chatTabBarOptions = {
 export const presentationScreenOptions = {
     ...conferenceModalPresentation,
     headerBackTitleVisible: false,
-    headerLeft: () => (
-        <HeaderNavigationButton
-            onPress = { goBack }
-            src = { IconClose } />
-    ),
+    headerLeft: () => {
+        const { t } = useTranslation();
+
+        if (Platform.OS === 'ios') {
+            return (
+                <TouchableRipple
+                    onPress = { goBack }
+                    rippleColor = { BaseTheme.palette.screen01Header }>
+                    <Text style = { closeTextColor }>
+                        { t('dialog.close') }
+                    </Text>
+                </TouchableRipple>
+            );
+        }
+
+        return (
+            <HeaderNavigationButton
+                onPress = { goBack }
+                src = { IconClose } />
+        );
+
+    },
     headerStatusBarHeight: 0,
     headerStyle: {
         backgroundColor: BaseTheme.palette.screen01Header
