@@ -55,7 +55,6 @@ export const bottomSheetStyles = {
 };
 
 export default {
-
     dialogButton: {
         ...BaseTheme.typography.labelButton
     },
@@ -76,10 +75,6 @@ export const brandedDialog = {
         fontWeight: 'bold'
     },
 
-    buttonFarLeft: {
-        borderBottomLeftRadius: BORDER_RADIUS
-    },
-
     buttonFarRight: {
         borderBottomRightRadius: BORDER_RADIUS
     },
@@ -90,21 +85,6 @@ export const brandedDialog = {
         flexDirection: 'row'
     },
 
-    closeWrapper: {
-        padding: BoxModel.padding
-    },
-
-    dialogTitle: {
-        fontWeight: 'bold',
-        paddingLeft: BoxModel.padding * 2
-    },
-
-    headerWrapper: {
-        alignItems: 'center',
-        flexDirection: 'row',
-        justifyContent: 'space-between'
-    },
-
     mainWrapper: {
         alignSelf: 'stretch',
         padding: BoxModel.padding * 2,
@@ -112,15 +92,6 @@ export const brandedDialog = {
         // The added bottom padding is to compensate the empty space around the
         // close icon.
         paddingBottom: BoxModel.padding * 3
-    },
-
-    overlay: {
-        ...StyleSheet.absoluteFillObject,
-        alignItems: 'center',
-        backgroundColor: 'rgba(127, 127, 127, 0.6)',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        padding: 30
     },
 
     overlayTouchable: {

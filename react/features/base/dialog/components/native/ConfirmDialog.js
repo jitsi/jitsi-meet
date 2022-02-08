@@ -135,8 +135,7 @@ class ConfirmDialog extends AbstractDialog<Props> {
 
         return (
             <View>
-                <Dialog.Container
-                    visible = { true }>
+                <Dialog.Container visible = { true }>
                     {
                         title && <Dialog.Title>
                             { t(title) }

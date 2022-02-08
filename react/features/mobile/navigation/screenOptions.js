@@ -246,6 +246,20 @@ export const securityScreenOptions = {
 };
 
 /**
+ * Screen options for recording modal.
+ */
+export const recordingScreenOptions = {
+    ...presentationScreenOptions
+};
+
+/**
+ * Screen options for live stream modal.
+ */
+export const liveStreamScreenOptions = {
+    ...presentationScreenOptions
+};
+
+/**
  * Screen options for shared document.
  */
 export const sharedDocumentScreenOptions = {

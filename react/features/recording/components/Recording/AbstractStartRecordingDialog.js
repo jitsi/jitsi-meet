@@ -18,7 +18,7 @@ import { toggleRequestingSubtitles } from '../../../subtitles';
 import { setSelectedRecordingService } from '../../actions';
 import { RECORDING_TYPES } from '../../constants';
 
-type Props = {
+export type Props = {
 
     /**
      * Requests subtitles when recording is turned on.
