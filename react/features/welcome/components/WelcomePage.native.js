@@ -113,7 +113,7 @@ class WelcomePage extends AbstractWelcomePage<*> {
                     }
                     style = { styles.drawerNavigationIcon }>
                     <Icon
-                        size = { 20 }
+                        size = { 24 }
                         src = { IconMenu }
                         style = { _headerStyles.headerButtonIcon } />
                 </TouchableOpacity>

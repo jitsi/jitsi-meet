@@ -97,7 +97,6 @@ class InputDialog<P: Props, S: State> extends AbstractDialog<P, S> {
         return (
             <View>
                 <Dialog.Container
-                    onBackdropPress = { this._onCancel }
                     visible = { true }>
                     <Dialog.Title>
                         { t(titleKey) }
@@ -122,6 +121,9 @@ class InputDialog<P: Props, S: State> extends AbstractDialog<P, S> {
                             </Dialog.Description>
                         )
                     }
+                    <Dialog.Button
+                        label = { t('dialog.Cancel') }
+                        onPress = { this._onCancel } />
                     <Dialog.Button
                         label = { t('dialog.Ok') }
                         onPress = { this._onSubmitValue } />

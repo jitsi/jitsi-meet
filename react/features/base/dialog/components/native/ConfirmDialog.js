@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { Platform, View } from 'react-native';
+import { View } from 'react-native';
 import Dialog from 'react-native-dialog';
 
 import { translate } from '../../../i18n';
@@ -110,29 +110,6 @@ class ConfirmDialog extends AbstractDialog<Props> {
             = isConfirmDestructive
                 ? styles.destructiveDialogButton : styles.dialogButton;
 
-        let rightLabel;
-        let leftLabel;
-        let rightOnPress;
-        let leftOnPress;
-        let rightStyle;
-        let leftStyle;
-
-        if (Platform.OS === 'android') {
-            rightLabel = confirmLabel || 'dialog.confirmYes';
-            rightOnPress = () => this._onSubmit();
-            rightStyle = dialogButtonStyle;
-            leftLabel = cancelLabel || 'dialog.confirmNo';
-            leftOnPress = () => this._onCancel();
-            leftStyle = styles.dialogButton;
-        } else {
-            rightLabel = cancelLabel || 'dialog.confirmNo';
-            rightOnPress = () => this._onCancel();
-            rightStyle = styles.dialogButton;
-            leftLabel = confirmLabel || 'dialog.confirmYes';
-            leftOnPress = () => this._onSubmit();
-            leftStyle = dialogButtonStyle;
-        }
-
         return (
             <View>
                 <Dialog.Container visible = { true }>
@@ -144,13 +121,13 @@ class ConfirmDialog extends AbstractDialog<Props> {
                     { this._renderDescription() }
                     { children }
                     <Dialog.Button
-                        label = { t(rightLabel) }
-                        onPress = { rightOnPress }
-                        style = { rightStyle } />
+                        label = { cancelLabel || t('dialog.confirmNo') }
+                        onPress = { this._onCancel }
+                        style = { styles.dialogButton } />
                     <Dialog.Button
-                        label = { t(leftLabel) }
-                        onPress = { leftOnPress }
-                        style = { leftStyle } />
+                        label = { confirmLabel || t('dialog.confirmYes') }
+                        onPress = { this._onSubmit }
+                        style = { dialogButtonStyle } />
                 </Dialog.Container>
             </View>
         );

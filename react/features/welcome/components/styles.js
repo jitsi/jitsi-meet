@@ -39,7 +39,7 @@ export default {
     audioVideoSwitchContainer: {
         alignItems: 'center',
         flexDirection: 'row',
-        marginRight: BaseTheme.spacing[2]
+        marginRight: BaseTheme.spacing[3]
     },
 
     blankPageText: {
@@ -180,7 +180,8 @@ export default {
      */
     roomContainer: {
         alignSelf: 'stretch',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        marginHorizontal: BaseTheme.spacing[2]
     },
 
     /**
@@ -196,8 +197,7 @@ export default {
 
     drawerNavigationIcon: {
         height: BaseTheme.spacing[6],
-        marginLeft: BaseTheme.spacing[1],
-        marginTop: BaseTheme.spacing[1],
+        marginLeft: BaseTheme.spacing[3],
         width: BaseTheme.spacing[6]
     },
 
