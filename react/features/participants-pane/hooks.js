@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { handleLobbyChatInitialized } from '../chat/actions.any';
 import { approveKnockingParticipant, rejectKnockingParticipant } from '../lobby/actions';
 
 /**
@@ -23,7 +24,11 @@ export function useLobbyActions(participant, closeDrawer) {
         useCallback(() => {
             dispatch(rejectKnockingParticipant(participant && participant.participantID));
             closeDrawer && closeDrawer();
-        }, [ dispatch, closeDrawer ])
+        }, [ dispatch, closeDrawer ]),
+
+        useCallback(() => {
+            dispatch(handleLobbyChatInitialized(participant && participant.participantID));
+        }, [ dispatch ])
     ];
 }
 

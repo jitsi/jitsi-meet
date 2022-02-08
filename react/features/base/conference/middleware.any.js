@@ -9,6 +9,7 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { reloadNow } from '../../app/actions';
+import { removeLobbyChatParticipant } from '../../chat/actions.any';
 import { openDisplayNamePrompt } from '../../display-name';
 import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification } from '../../notifications';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED, connectionDisconnected } from '../connection';
@@ -211,6 +212,8 @@ function _conferenceJoined({ dispatch, getState }, next, action) {
     const { conference } = action;
     const { pendingSubjectChange } = getState()['features/base/conference'];
     const { requireDisplayName, disableBeforeUnloadHandlers = false } = getState()['features/base/config'];
+
+    dispatch(removeLobbyChatParticipant(true));
 
     pendingSubjectChange && dispatch(setSubject(pendingSubjectChange));
 

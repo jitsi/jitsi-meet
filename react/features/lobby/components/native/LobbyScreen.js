@@ -6,10 +6,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n';
-import { Icon, IconEdit } from '../../../base/icons';
+import { Icon, IconClose, IconEdit } from '../../../base/icons';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
+import ChatInputBar from '../../../chat/components/native/ChatInputBar';
+import MessageContainer from '../../../chat/components/native/MessageContainer';
 import AbstractLobbyScreen, { _mapStateToProps } from '../AbstractLobbyScreen';
 
 import styles from './styles';
@@ -28,16 +30,21 @@ class LobbyScreen extends AbstractLobbyScreen {
 
         return (
             <JitsiScreen
-                style = { styles.contentWrapper }>
-                <SafeAreaView>
-                    <Text style = { styles.dialogTitle }>
-                        { t(this._getScreenTitleKey()) }
-                    </Text>
-                    <Text style = { styles.secondaryText }>
-                        { _meetingName }
-                    </Text>
-                    { this._renderContent() }
-                </SafeAreaView>
+                style = { this.props._isLobbyChatActive && this.state.isChatOpen
+                    ? styles.lobbyChatWrapper
+                    : styles.contentWrapper }>
+                {this.props._isLobbyChatActive && this.state.isChatOpen
+                    ? this._renderLobbyChat()
+                    : <SafeAreaView>
+                        <Text style = { styles.dialogTitle }>
+                            { t(this._getScreenTitleKey(), { moderator: this.props._lobbyMessageRecipient }) }
+                        </Text>
+
+                        <Text style = { styles.secondaryText }>
+                            { _meetingName }
+                        </Text>
+                        { this._renderContent()}
+                    </SafeAreaView> }
             </JitsiScreen>
         );
     }
@@ -62,7 +69,37 @@ class LobbyScreen extends AbstractLobbyScreen {
 
     _onSwitchToPasswordMode: () => void;
 
+    _onSendMessage: () => void;
+
+    _onToggleChat: () => void;
+
     _renderContent: () => React$Element<*>;
+
+    /**
+     * Renders the lobby chat.
+     *
+     * @inheritdoc
+     */
+    _renderLobbyChat() {
+        const { t } = this.props;
+
+        return (
+            <>
+                <View style = { styles.lobbyChatHeader }>
+                    <Text style = { styles.lobbyChatTitle }>
+                        { t(this._getScreenTitleKey(), { moderator: this.props._lobbyMessageRecipient }) }
+                    </Text>
+                    <TouchableOpacity onPress = { this._onToggleChat }>
+                        <Icon
+                            src = { IconClose }
+                            style = { styles.lobbyChatCloseButton } />
+                    </TouchableOpacity>
+                </View>
+                <MessageContainer messages = { this.props._lobbyChatMessages } />
+                <ChatInputBar onSend = { this._onSendMessage } />
+            </>
+        );
+    }
 
     /**
      * Renders the joining (waiting) fragment of the screen.
@@ -210,7 +247,7 @@ class LobbyScreen extends AbstractLobbyScreen {
      * @inheritdoc
      */
     _renderStandardButtons() {
-        const { _knocking, _renderPassword, t } = this.props;
+        const { _knocking, _renderPassword, _isLobbyChatActive, t } = this.props;
 
         return (
             <>
@@ -225,6 +262,16 @@ class LobbyScreen extends AbstractLobbyScreen {
                         { t('lobby.knockButton') }
                     </Text>
                 </TouchableOpacity> }
+                { _knocking && _isLobbyChatActive && <TouchableOpacity
+                    onPress = { this._onToggleChat }
+                    style = { [
+                        styles.button,
+                        styles.secondaryButton
+                    ] }>
+                    <Text>
+                        { t('toolbar.openChat') }
+                    </Text>
+                </TouchableOpacity>}
                 { _renderPassword && <TouchableOpacity
                     onPress = { this._onSwitchToPasswordMode }
                     style = { [

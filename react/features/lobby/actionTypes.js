@@ -29,3 +29,13 @@ export const SET_LOBBY_VISIBILITY = 'TOGGLE_LOBBY_VISIBILITY';
  * Action type to set the password join failed status.
  */
 export const SET_PASSWORD_JOIN_FAILED = 'SET_PASSWORD_JOIN_FAILED';
+
+/**
+ * Action type to set a lobby chat participant's state to chatting
+ */
+ export const SET_LOBBY_PARTICIPANT_CHAT_STATE = 'SET_LOBBY_PARTICIPANT_CHAT_STATE';
+
+ /**
+  * Action type to remove chattingWithModerator field
+  */
+ export const REMOVE_LOBBY_CHAT_WITH_MODERATOR = 'REMOVE_LOBBY_CHAT_WITH_MODERATOR';

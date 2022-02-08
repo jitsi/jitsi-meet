@@ -473,6 +473,9 @@ var config = {
     // If Lobby is enabled starts knocking automatically.
     // autoKnockLobby: false,
 
+    // Enable lobby chat.
+    // enableLobbyChat: true,
+
     // DEPRECATED! Use `breakoutRooms.hideAddRoomButton` instead.
     // Hides add breakout room button
     // hideAddRoomButton: false,

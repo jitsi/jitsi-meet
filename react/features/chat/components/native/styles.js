@@ -170,6 +170,23 @@ ColorSchemeRegistry.register('Chat', {
         textAlign: 'center'
     },
 
+    lobbyMessageBubble: {
+        backgroundColor: schemeColor('lobbyMsgBackground')
+    },
+
+    lobbyMsgNotice: {
+        color: schemeColor('lobbyMsgNotice'),
+        fontSize: 11,
+        marginTop: 6
+    },
+
+    lobbyMessageRecipientContainer: {
+        alignItems: 'center',
+        backgroundColor: schemeColor('lobbyMsgBackground'),
+        flexDirection: 'row',
+        padding: BoxModel.padding
+    },
+
     localMessageBubble: {
         backgroundColor: schemeColor('localMsgBackground'),
         borderTopRightRadius: 0

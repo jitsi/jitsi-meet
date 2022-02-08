@@ -12,6 +12,32 @@ export default {
         paddingVertical: BaseTheme.spacing[2]
     },
 
+    lobbyChatWrapper: {
+        backgroundColor: BaseTheme.palette.ui01,
+        alignItems: 'stretch',
+        flexDirection: 'column',
+        justifyItems: 'center',
+        height: '100%'
+    },
+
+    lobbyChatHeader: {
+        flexDirection: 'row',
+        padding: 20
+    },
+
+    lobbyChatTitle: {
+        color: '#fff',
+        fontSize: 20,
+        fontWeight: 'bold',
+        flexShrink: 1
+    },
+
+    lobbyChatCloseButton: {
+        fontSize: 20,
+        marginLeft: 20,
+        color: '#fff'
+    },
+
     contentWrapper: {
         alignItems: 'center',
         display: 'flex',
