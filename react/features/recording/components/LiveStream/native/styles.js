@@ -5,6 +5,7 @@ import {
     ColorPalette,
     createStyleSheet
 } from '../../../../base/styles';
+import BaseTheme from '../../../../base/ui/components/BaseTheme';
 
 /**
  * Opacity of the TouchableHighlight.
@@ -57,10 +58,23 @@ export default createStyleSheet({
     },
 
     /**
-     * Wrapper for the StartLiveStreamDialog form.
+     * Label for the button that starts live stream.
      */
-    startDialogWrapper: {
-        flexDirection: 'column'
+    startLiveStreamLabel: {
+        color: BaseTheme.palette.text01,
+        marginRight: 12
+    },
+
+    /**
+     * Container for the live stream screen.
+     */
+    startLiveStreamContainer: {
+        display: 'flex',
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        marginHorizontal: BaseTheme.spacing[2],
+        marginTop: BaseTheme.spacing[3]
     },
 
     /**

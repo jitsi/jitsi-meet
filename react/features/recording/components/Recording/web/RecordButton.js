@@ -1,12 +1,37 @@
 // @flow
 
 import { getToolbarButtons } from '../../../../base/config';
+import { openDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import { connect } from '../../../../base/redux';
 import AbstractRecordButton, {
     _mapStateToProps as _abstractMapStateToProps,
     type Props
 } from '../AbstractRecordButton';
+
+import { StartRecordingDialog, StopRecordingDialog } from './index';
+
+
+/**
+ * Button for opening a dialog where a recording session can be started.
+ */
+class RecordingButton extends AbstractRecordButton<Props> {
+
+    /**
+     * Handles clicking / pressing the button.
+     *
+     * @override
+     * @protected
+     * @returns {void}
+     */
+    _onHandleClick() {
+        const { _isRecordingRunning, dispatch } = this.props;
+
+        dispatch(openDialog(
+            _isRecordingRunning ? StopRecordingDialog : StartRecordingDialog
+        ));
+    }
+}
 
 /**
  * Maps (parts of) the redux state to the associated props for the
@@ -37,4 +62,4 @@ export function _mapStateToProps(state: Object, ownProps: Props): Object {
     };
 }
 
-export default translate(connect(_mapStateToProps)(AbstractRecordButton));
+export default translate(connect(_mapStateToProps)(RecordingButton));

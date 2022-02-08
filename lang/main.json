@@ -367,6 +367,7 @@
         "shareYourScreenDisabled": "Screen sharing disabled.",
         "sharedVideoDialogError": "Error: Invalid URL",
         "sharedVideoLinkPlaceholder": "YouTube link or direct video link",
+        "start": "Start ",
         "startLiveStreaming": "Start live stream",
         "startRecording": "Start recording",
         "startRemoteControlErrorMessage": "An error occurred while trying to start the remote control session!",

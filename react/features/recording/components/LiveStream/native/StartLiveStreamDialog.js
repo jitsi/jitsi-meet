@@ -1,12 +1,15 @@
 // @flow
 
 import React from 'react';
-import { View } from 'react-native';
+import { Text, TouchableRipple } from 'react-native-paper';
 
-import { CustomSubmitDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
+import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import { connect } from '../../../../base/redux';
+import BaseTheme from '../../../../base/ui/components/BaseTheme';
 import { googleApi } from '../../../../google-api';
+import { goBack }
+    from '../../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { setLiveStreamKey } from '../../../actions';
 import AbstractStartLiveStreamDialog,
 { _mapStateToProps, type Props } from '../AbstractStartLiveStreamDialog';
@@ -30,10 +33,45 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<Props> {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
+        this._onOkPress = this._onOkPress.bind(this);
         this._onStreamKeyChangeNative
             = this._onStreamKeyChangeNative.bind(this);
         this._onStreamKeyPick = this._onStreamKeyPick.bind(this);
         this._onUserChanged = this._onUserChanged.bind(this);
+    }
+
+    /**
+     * Implements React's {@link Component#componentDidMount()}. Invoked
+     * immediately after this component is mounted.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidMount() {
+        const { navigation, t } = this.props;
+
+        navigation.setOptions({
+            headerRight: () => (
+                <TouchableRipple
+                    onPress = { this._onOkPress }
+                    rippleColor = { BaseTheme.palette.screen01Header } >
+                    <Text style = { styles.startLiveStreamLabel }>
+                        { t('dialog.start') }
+                    </Text>
+                </TouchableRipple>
+            )
+        });
+    }
+
+    _onOkPress: () => void;
+
+    /**
+     * Starts live stream session and goes back to the previous screen.
+     *
+     * @returns {void}
+     */
+    _onOkPress() {
+        this._onSubmit() && goBack();
     }
 
     /**
@@ -43,23 +81,18 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<Props> {
      */
     render() {
         return (
-            <CustomSubmitDialog
-                okKey = 'dialog.startLiveStreaming'
-                onCancel = { this._onCancel }
-                onSubmit = { this._onSubmit } >
-                <View style = { styles.startDialogWrapper }>
-                    <GoogleSigninForm
-                        onUserChanged = { this._onUserChanged } />
-                    <StreamKeyPicker
-                        broadcasts = { this.state.broadcasts }
-                        onChange = { this._onStreamKeyPick } />
-                    <StreamKeyForm
-                        onChange = { this._onStreamKeyChangeNative }
-                        value = {
-                            this.state.streamKey || this.props._streamKey
-                        } />
-                </View>
-            </CustomSubmitDialog>
+            <JitsiScreen style = { styles.startLiveStreamContainer }>
+                <GoogleSigninForm
+                    onUserChanged = { this._onUserChanged } />
+                <StreamKeyPicker
+                    broadcasts = { this.state.broadcasts }
+                    onChange = { this._onStreamKeyPick } />
+                <StreamKeyForm
+                    onChange = { this._onStreamKeyChangeNative }
+                    value = {
+                        this.state.streamKey || this.props._streamKey
+                    } />
+            </JitsiScreen>
         );
     }
 

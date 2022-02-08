@@ -15,6 +15,9 @@ import AddPeopleDialog
     from '../../../../../invite/components/add-people-dialog/native/AddPeopleDialog';
 import LobbyScreen from '../../../../../lobby/components/native/LobbyScreen';
 import { ParticipantsPane } from '../../../../../participants-pane/components/native';
+import { StartLiveStreamDialog } from '../../../../../recording';
+import { StartRecordingDialog }
+    from '../../../../../recording/components/Recording/native';
 import SecurityDialog
     from '../../../../../security/components/security-dialog/native/SecurityDialog';
 import SpeakerStats
@@ -24,9 +27,11 @@ import {
     chatScreenOptions,
     conferenceScreenOptions,
     inviteScreenOptions,
+    liveStreamScreenOptions,
     lobbyScreenOptions,
     navigationContainerTheme,
     participantsScreenOptions,
+    recordingScreenOptions,
     securityScreenOptions,
     sharedDocumentScreenOptions,
     speakerStatsScreenOptions
@@ -92,6 +97,18 @@ const ConferenceNavigationContainer = () => {
                         options = {{
                             ...securityScreenOptions,
                             title: t('security.header')
+                        }} />
+                    <ConferenceStack.Screen
+                        component = { StartRecordingDialog }
+                        name = { screen.conference.recording }
+                        options = {{
+                            ...recordingScreenOptions
+                        }} />
+                    <ConferenceStack.Screen
+                        component = { StartLiveStreamDialog }
+                        name = { screen.conference.liveStream }
+                        options = {{
+                            ...liveStreamScreenOptions
                         }} />
                     <ConferenceStack.Screen
                         component = { SpeakerStats }

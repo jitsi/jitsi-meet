@@ -4,7 +4,6 @@ import {
     createToolbarEvent,
     sendAnalytics
 } from '../../../analytics';
-import { openDialog } from '../../../base/dialog';
 import { IconToggleRecording } from '../../../base/icons';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import {
@@ -17,7 +16,6 @@ import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
 import { FEATURES } from '../../../jaas/constants';
 import { getActiveSession } from '../../functions';
 
-import { StartRecordingDialog, StopRecordingDialog } from './_';
 
 /**
  * The type of the React {@code Component} props of
@@ -71,6 +69,17 @@ export default class AbstractRecordButton<P: Props> extends AbstractButton<P, *>
     }
 
     /**
+     * Helper function to be implemented by subclasses, which should be used
+     * to handle the start recoding button being clicked / pressed.
+     *
+     * @protected
+     * @returns {void}
+     */
+    _onHandleClick() {
+        // To be implemented by subclass.
+    }
+
+    /**
      * Handles clicking / pressing the button.
      *
      * @override
@@ -86,13 +95,10 @@ export default class AbstractRecordButton<P: Props> extends AbstractButton<P, *>
                 'is_recording': _isRecordingRunning,
                 type: JitsiRecordingConstants.mode.FILE
             }));
-
         const dialogShown = await dispatch(maybeShowPremiumFeatureDialog(FEATURES.RECORDING));
 
         if (!dialogShown) {
-            dispatch(openDialog(
-                _isRecordingRunning ? StopRecordingDialog : StartRecordingDialog
-            ));
+            this._onHandleClick();
         }
     }
 
