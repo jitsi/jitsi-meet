@@ -239,6 +239,18 @@ function is_feature_allowed(session, feature)
     end
 end
 
+-- Utility function to check whether the user should be hidden.
+function is_user_hidden(session)
+    local context_user = session.jitsi_meet_context_user
+    if (context_user ~= nil
+        and (context_user['moderator'] == "true" or context_user['moderator'] == true)
+        and (context_user['hidden'] == "true" or context_user['hidden'] == true)) then
+        return true;
+    else
+        return false;
+    end
+end
+
 --- Extracts the subdomain and room name from internal jid node [foo]room1
 -- @return subdomain(optional, if extracted or nil), the room name
 function extract_subdomain(room_node)
@@ -356,6 +368,7 @@ end
 return {
     extract_subdomain = extract_subdomain;
     is_feature_allowed = is_feature_allowed;
+    is_user_hidden = is_user_hidden;
     is_healthcheck_room = is_healthcheck_room;
     get_room_from_jid = get_room_from_jid;
     get_room_by_name_and_subdomain = get_room_by_name_and_subdomain;

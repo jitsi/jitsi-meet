@@ -104,11 +104,11 @@ function _onFollowMeCommand(attributes = {}, id, store) {
 
     // The Command(s) API will send us our own commands and we don't want
     // to act upon them.
-    if (participantSendingCommand.local) {
+    if (participantSendingCommand?.local) {
         return;
     }
 
-    if (participantSendingCommand.role !== 'moderator') {
+    if (participantSendingCommand && participantSendingCommand.role !== 'moderator') {
         logger.warn('Received follow-me command not from moderator');
 
         return;

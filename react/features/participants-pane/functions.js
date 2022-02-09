@@ -210,6 +210,7 @@ export const shouldRenderInviteButton = (state: Object) => {
  * @returns {Array<string>}
  */
 export function getSortedParticipantIds(stateful: Object | Function): Array<string> {
+    const { conference } = stateful['features/base/conference'];
     const { id } = getLocalParticipant(stateful);
     const remoteParticipants = getRemoteParticipantsSorted(stateful);
     const reorderedParticipants = new Set(remoteParticipants);
@@ -226,13 +227,18 @@ export function getSortedParticipantIds(stateful: Object | Function): Array<stri
 
     const dominant = [];
     const dominantId = dominantSpeaker?.id;
-    const local = remoteRaisedHandParticipants.has(id) ? [] : [ id ];
+    let local = remoteRaisedHandParticipants.has(id) ? [] : [ id ];
 
     // In case dominat speaker has raised hand, keep the order in the raised hand queue.
     // In case they don't have raised hand, goes first in the participants list.
     if (dominantId && dominantId !== id && !remoteRaisedHandParticipants.has(dominantId)) {
         reorderedParticipants.delete(dominantId);
         dominant.push(dominantId);
+    }
+
+    if (conference.isHidden()) {
+        local = [];
+        remoteRaisedHandParticipants.delete(id);
     }
 
     // Move self and participants with raised hand to the top of the list.

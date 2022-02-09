@@ -265,6 +265,12 @@ export function shouldHideShareAudioHelper(state: Object): boolean {
  * @returns {boolean}
  */
 export function shouldHideSelfView(state: Object) {
+    const { conference } = state['features/base/conference'];
+
+    if (conference?.isHidden()) {
+        return true;
+    }
+
     return getParticipantCount(state) === 1 ? false : getHideSelfView(state);
 }
 

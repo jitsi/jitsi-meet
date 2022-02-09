@@ -148,6 +148,7 @@ import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/Au
 import { createPresenterEffect } from './react/features/stream-effects/presenter';
 import { createRnnoiseProcessor } from './react/features/stream-effects/rnnoise';
 import { endpointMessageReceived } from './react/features/subtitles';
+import { muteLocal } from './react/features/video-menu/actions.any';
 import UIEvents from './service/UI/UIEvents';
 
 const logger = Logger.getLogger(__filename);
@@ -2600,13 +2601,21 @@ export default {
      * @returns {void}
      */
     _onConferenceJoined() {
+        const { dispatch } = APP.store;
+
         APP.UI.initConference();
 
         if (!config.disableShortcuts) {
             APP.keyboardshortcut.init();
         }
 
-        APP.store.dispatch(conferenceJoined(room));
+        dispatch(conferenceJoined(room));
+        if (room.isHidden()) {
+            dispatch(muteLocal(true, MEDIA_TYPE.AUDIO));
+            dispatch(muteLocal(true, MEDIA_TYPE.VIDEO));
+            dispatch(setAudioUnmutePermissions(true));
+            dispatch(setVideoUnmutePermissions(true));
+        }
     },
 
     /**
