@@ -3,14 +3,20 @@
 import React from 'react';
 import type { Dispatch } from 'redux';
 
+import { getSourceNameSignalingFeatureFlag } from '../../../base/config';
 import { translate } from '../../../base/i18n';
-import { JitsiParticipantConnectionStatus } from '../../../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../../base/media';
 import { getLocalParticipant, getParticipantById } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 import { ConnectionStatsTable } from '../../../connection-stats';
 import { saveLogs } from '../../actions';
+import {
+    isParticipantConnectionStatusInactive,
+    isParticipantConnectionStatusInterrupted,
+    isTrackStreamingStatusInactive,
+    isTrackStreamingStatusInterrupted
+} from '../../functions';
 import AbstractConnectionIndicator, {
     INDICATOR_DISPLAY_THRESHOLD,
     type Props as AbstractProps,
@@ -217,12 +223,14 @@ class ConnectionIndicatorContent extends AbstractConnectionIndicator<Props, Stat
     _getConnectionStatusTip() {
         let tipKey;
 
-        switch (this.props._connectionStatus) {
-        case JitsiParticipantConnectionStatus.INTERRUPTED:
+        const { _isConnectionStatusInactive, _isConnectionStatusInterrupted } = this.props;
+
+        switch (true) {
+        case _isConnectionStatusInterrupted:
             tipKey = 'connectionindicator.quality.lost';
             break;
 
-        case JitsiParticipantConnectionStatus.INACTIVE:
+        case _isConnectionStatusInactive:
             tipKey = 'connectionindicator.quality.inactive';
             break;
 
@@ -310,17 +318,29 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
     const conference = state['features/base/conference'].conference;
     const participant
         = participantId ? getParticipantById(state, participantId) : getLocalParticipant(state);
+    const firstVideoTrack = getTrackByMediaTypeAndParticipant(
+        state['features/base/tracks'], MEDIA_TYPE.VIDEO, participantId);
+    const sourceNameSignalingEnabled = getSourceNameSignalingFeatureFlag(state);
+
+    const _isConnectionStatusInactive = sourceNameSignalingEnabled
+        ? isTrackStreamingStatusInactive(firstVideoTrack)
+        : isParticipantConnectionStatusInactive(participant);
+
+    const _isConnectionStatusInterrupted = sourceNameSignalingEnabled
+        ? isTrackStreamingStatusInterrupted(firstVideoTrack)
+        : isParticipantConnectionStatusInterrupted(participant);
+
     const props = {
         _connectionStatus: participant?.connectionStatus,
         _enableSaveLogs: state['features/base/config'].enableSaveLogs,
         _disableShowMoreStats: state['features/base/config'].disableShowMoreStats,
         _isLocalVideo: participant?.local,
-        _region: participant?.region
+        _region: participant?.region,
+        _isConnectionStatusInactive,
+        _isConnectionStatusInterrupted
     };
 
     if (conference) {
-        const firstVideoTrack = getTrackByMediaTypeAndParticipant(
-            state['features/base/tracks'], MEDIA_TYPE.VIDEO, participantId);
         const firstAudioTrack = getTrackByMediaTypeAndParticipant(
             state['features/base/tracks'], MEDIA_TYPE.AUDIO, participantId);
 

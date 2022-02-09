@@ -554,6 +554,26 @@ export function trackVideoTypeChanged(track, videoType) {
 }
 
 /**
+ * Create an action for when track streaming status changes.
+ *
+ * @param {(JitsiRemoteTrack)} track - JitsiTrack instance.
+ * @param {string} streamingStatus - The new streaming status of the track.
+ * @returns {{
+ *     type: TRACK_UPDATED,
+ *     track: Track
+ * }}
+ */
+export function trackStreamingStatusChanged(track, streamingStatus) {
+    return {
+        type: TRACK_UPDATED,
+        track: {
+            jitsiTrack: track,
+            streamingStatus
+        }
+    };
+}
+
+/**
  * Signals passed tracks to be added.
  *
  * @param {(JitsiLocalTrack|JitsiRemoteTrack)[]} tracks - List of tracks.

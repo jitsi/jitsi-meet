@@ -9,10 +9,8 @@ import { Provider } from 'react-redux';
 import { createScreenSharingIssueEvent, sendAnalytics } from '../../../react/features/analytics';
 import { Avatar } from '../../../react/features/base/avatar';
 import theme from '../../../react/features/base/components/themes/participantsPaneTheme.json';
+import { getSourceNameSignalingFeatureFlag } from '../../../react/features/base/config';
 import { i18next } from '../../../react/features/base/i18n';
-import {
-    JitsiParticipantConnectionStatus
-} from '../../../react/features/base/lib-jitsi-meet';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media';
 import {
     getParticipantById,
@@ -20,6 +18,14 @@ import {
 } from '../../../react/features/base/participants';
 import { getTrackByMediaTypeAndParticipant } from '../../../react/features/base/tracks';
 import { CHAT_SIZE } from '../../../react/features/chat';
+import {
+    isParticipantConnectionStatusActive,
+    isParticipantConnectionStatusInactive,
+    isParticipantConnectionStatusInterrupted,
+    isTrackStreamingStatusActive,
+    isTrackStreamingStatusInactive,
+    isTrackStreamingStatusInterrupted
+} from '../../../react/features/connection-indicator/functions';
 import {
     updateKnownLargeVideoResolution
 } from '../../../react/features/large-video/actions';
@@ -226,8 +232,20 @@ export default class LargeVideoManager {
             const state = APP.store.getState();
             const participant = getParticipantById(state, id);
             const connectionStatus = participant?.connectionStatus;
-            const isVideoRenderable = !isVideoMuted
-                && (APP.conference.isLocalId(id) || connectionStatus === JitsiParticipantConnectionStatus.ACTIVE);
+
+            let isVideoRenderable;
+
+            if (getSourceNameSignalingFeatureFlag(state)) {
+                const videoTrack = getTrackByMediaTypeAndParticipant(
+                    state['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
+
+                isVideoRenderable = !isVideoMuted
+                    && (APP.conference.isLocalId(id) || isTrackStreamingStatusActive(videoTrack));
+            } else {
+                isVideoRenderable = !isVideoMuted
+                    && (APP.conference.isLocalId(id) || isParticipantConnectionStatusActive(participant));
+            }
+
             const isAudioOnly = APP.conference.isAudioOnly();
             const showAvatar
                 = isVideoContainer
@@ -278,8 +296,16 @@ export default class LargeVideoManager {
                 this.updateLargeVideoAudioLevel(0);
             }
 
-            const messageKey
-                = connectionStatus === JitsiParticipantConnectionStatus.INACTIVE ? 'connection.LOW_BANDWIDTH' : null;
+            let messageKey;
+
+            if (getSourceNameSignalingFeatureFlag(state)) {
+                const videoTrack = getTrackByMediaTypeAndParticipant(
+                    state['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
+
+                messageKey = isTrackStreamingStatusInactive(videoTrack) ? 'connection.LOW_BANDWIDTH' : null;
+            } else {
+                messageKey = isParticipantConnectionStatusInactive(participant) ? 'connection.LOW_BANDWIDTH' : null;
+            }
 
             // Do not show connection status message in the audio only mode,
             // because it's based on the video playback status.
@@ -505,13 +531,22 @@ export default class LargeVideoManager {
     showRemoteConnectionMessage(show) {
         if (typeof show !== 'boolean') {
             const participant = getParticipantById(APP.store.getState(), this.id);
-            const connStatus = participant?.connectionStatus;
+            const state = APP.store.getState();
 
-            // eslint-disable-next-line no-param-reassign
-            show = !APP.conference.isLocalId(this.id)
-                && (connStatus === JitsiParticipantConnectionStatus.INTERRUPTED
-                    || connStatus
-                        === JitsiParticipantConnectionStatus.INACTIVE);
+            if (getSourceNameSignalingFeatureFlag(state)) {
+                const videoTrack = getTrackByMediaTypeAndParticipant(
+                    state['features/base/tracks'], MEDIA_TYPE.VIDEO, this.id);
+
+                // eslint-disable-next-line no-param-reassign
+                show = !APP.conference.isLocalId(this.id)
+                    && (isTrackStreamingStatusInterrupted(videoTrack)
+                        || isTrackStreamingStatusInactive(videoTrack));
+            } else {
+                // eslint-disable-next-line no-param-reassign
+                show = !APP.conference.isLocalId(this.id)
+                    && (isParticipantConnectionStatusInterrupted(participant)
+                        || isParticipantConnectionStatusInactive(participant));
+            }
         }
 
         if (show) {
