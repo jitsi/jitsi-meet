@@ -964,3 +964,19 @@ export function createWaitingAreaPageEvent(action, attributes = {}) {
         source: 'waiting.area'
     };
 }
+
+/**
+ * Creates an event which indicates if the app is in the foreground or background.
+ *
+ * @param {string} action - The action that the event represents.
+ * @param {boolean} attributes - Additional attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createAppStateChangedEvent(action, attributes = {}) {
+    return {
+        action,
+        attributes,
+        source: 'app.state.changed'
+    };
+}
