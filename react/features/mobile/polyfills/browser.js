@@ -441,12 +441,12 @@ function _visitNode(node, callback) {
     // Required by:
     // - lib-jitsi-meet
     // - Strophe
-    if (Platform.OS === 'android') {
+    //if (Platform.OS === 'android') {
         global.clearTimeout = BackgroundTimer.clearTimeout.bind(BackgroundTimer);
         global.clearInterval = BackgroundTimer.clearInterval.bind(BackgroundTimer);
         global.setInterval = BackgroundTimer.setInterval.bind(BackgroundTimer);
         global.setTimeout = (fn, ms = 0) => BackgroundTimer.setTimeout(fn, ms);
-    }
+    //}
 
     // localStorage
     if (typeof global.localStorage === 'undefined') {
