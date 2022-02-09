@@ -40,12 +40,22 @@ const _URI_PATH_PATTERN = '([^?#]*)';
  * "videochat-ca2.janeapp.com",
  * "videochat.janeapp.com.au",
  * "videochat.janeapp.co.uk";
+ * 'videochat-chrisw.jane.qa',
+ * 'jitsi2.jane.qa',
+ * 'conference-pod-cac1-j1.janeapp.net',
+ * 'conference-pod-usw2-j2.janeapp.net',
+ * 'conference-pod-euw2-j3.janeapp.net',
+ * 'conference-pod-apse2-j4.janeapp.net',
+ * 'video-conference-ca.janeapp.net',
+ * 'video-conference-us.janeapp.net',
+ * 'video-conference-uk.janeapp.net',
+ * 'video-conference-au.janeapp.net',
+ * 'video-conference.jane.qa'
  *
  * @private
  * @type {string}
  */
-// eslint-disable-next-line max-len,no-useless-escape
-const _JANE_UNIVERSAL_LINK_DOMAINS = /videochat(?:\-(?:(?:ca2?|us)\.janeapp\.com|jwt|chrisw\.jane\.qa)|\.janeapp\.co(?:m\.au|\.uk))/;
+const _JANE_UNIVERSAL_LINK_DOMAINS_PATTERN = '([a-z0-9]+[.])*(jane|janeapp).(qa|com|com.au|co.uk|net)';
 
 /**
  * The {@link RegExp} pattern of the protocol of a URI.
@@ -614,16 +624,15 @@ export function getDecodedURI(uri: string) {
 }
 
 /**
- * Checks whether a url param matches the _JANE_UNIVERSAL_LINK_DOMAINS regex expression.
+ * Checks whether a url param matches the _JANE_UNIVERSAL_LINK_DOMAINS_PATTERN regex pattern.
  *
  * @param {string} url - The video chat url
  * function.
- * @returns {boolean} If a url matches the _JANE_UNIVERSAL_LINK_DOMAINS regex expression return
+ * @returns {boolean} If a url matches the _JANE_UNIVERSAL_LINK_DOMAINS_PATTERN regex pattern.
  * {@code true}; otherwise, {@code false}.
  */
 export function isJaneVideoChatLink(url: string) {
-
-    const regExp = new RegExp(_JANE_UNIVERSAL_LINK_DOMAINS);
+    const regExp = new RegExp(_JANE_UNIVERSAL_LINK_DOMAINS_PATTERN);
 
     return regExp.exec(url) && url.includes('?jwt=');
 

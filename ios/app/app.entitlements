@@ -12,6 +12,16 @@
 		<string>applinks:videochat.janeapp.com.au</string>
 		<string>applinks:videochat.janeapp.co.uk</string>
 		<string>applinks:videochat-chrisw.jane.qa</string>
+		<string>applinks:jitsi2.jane.qa</string>
+		<string>applinks:conference-pod-cac1-j1.janeapp.net</string>
+		<string>applinks:conference-pod-usw2-j2.janeapp.net</string>
+		<string>applinks:conference-pod-euw2-j3.janeapp.net</string>
+		<string>applinks:conference-pod-apse2-j4.janeapp.net</string>
+		<string>applinks:video-conference-ca.janeapp.net</string>
+		<string>applinks:video-conference-us.janeapp.net</string>
+		<string>applinks:video-conference-uk.janeapp.net</string>
+		<string>applinks:video-conference-au.janeapp.net</string>
+		<string>applinks:video-conference.jane.qa</string>
 	</array>
 	<key>com.apple.developer.siri</key>
 	<true/>
