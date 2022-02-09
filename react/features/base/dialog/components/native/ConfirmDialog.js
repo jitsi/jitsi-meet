@@ -121,11 +121,11 @@ class ConfirmDialog extends AbstractDialog<Props> {
                     { this._renderDescription() }
                     { children }
                     <Dialog.Button
-                        label = { cancelLabel || t('dialog.confirmNo') }
+                        label = { t(cancelLabel || 'dialog.confirmNo') }
                         onPress = { this._onCancel }
                         style = { styles.dialogButton } />
                     <Dialog.Button
-                        label = { confirmLabel || t('dialog.confirmYes') }
+                        label = { t(confirmLabel || 'dialog.confirmYes') }
                         onPress = { this._onSubmit }
                         style = { dialogButtonStyle } />
                 </Dialog.Container>
