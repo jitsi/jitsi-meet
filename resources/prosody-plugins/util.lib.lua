@@ -243,7 +243,6 @@ end
 function is_user_hidden(session)
     local context_user = session.jitsi_meet_context_user
     if (context_user ~= nil
-        and (context_user['moderator'] == "true" or context_user['moderator'] == true)
         and (context_user['hidden'] == "true" or context_user['hidden'] == true)) then
         return true;
     else
