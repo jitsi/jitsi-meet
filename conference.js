@@ -373,7 +373,6 @@ class ConferenceConnector {
             break;
 
         case JitsiConferenceErrors.CONFERENCE_MAX_USERS:
-            connection.disconnect();
             APP.UI.notifyMaxUsersLimitReached();
             break;
 
