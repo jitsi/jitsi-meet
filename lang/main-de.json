@@ -365,7 +365,9 @@
         "shareVideoTitle": "Video teilen",
         "shareYourScreen": "Bildschirmfreigabe ein-/ausschalten",
         "shareYourScreenDisabled": "Bildschirmfreigabe deaktiviert.",
+        "sharedVideoDialogError": "Fehler: Ungültige URL",
         "sharedVideoLinkPlaceholder": "YouTube-URL oder direkte Video-URL",
+        "start": "Starte ",
         "startLiveStreaming": "Livestream starten",
         "startRecording": "Aufnahme starten",
         "startRemoteControlErrorMessage": "Beim Versuch, die Fernsteuerung zu starten, ist ein Fehler aufgetreten!",
@@ -642,6 +644,8 @@
         "oldElectronClientDescription1": "Sie scheinen eine alte Version des Jitsi-Meet-Clients zu nutzen. Diese hat bekannte Schwachstellen. Bitte aktualisieren Sie auf unsere ",
         "oldElectronClientDescription2": "aktuelle Version",
         "oldElectronClientDescription3": "!",
+        "participantWantsToJoin": "Möchte an der Konferenz teilnehmen",
+        "participantsWantToJoin": "Möchten an der Konferenz teilnehmen",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) von einer anderen Person entfernt",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) von einer anderen Person gesetzt",
         "raiseHandAction": "Melden",
@@ -661,7 +665,9 @@
         "videoMutedRemotelyDescription": "Sie können sie jederzeit wieder einschalten.",
         "videoMutedRemotelyTitle": "Ihre Kamera wurde von {{participantDisplayName}} ausgeschaltet!",
         "videoUnmuteBlockedDescription": "Die Kamera und Bildschirmfreigabe kann aus Überlastungsschutzgründen temporär nicht eingeschaltet werden.",
-        "videoUnmuteBlockedTitle": "Kamera und Bildschirmfreigabe kann nicht aktiviert werden!"
+        "videoUnmuteBlockedTitle": "Kamera und Bildschirmfreigabe kann nicht aktiviert werden!",
+        "viewLobby": "Lobby ansehen",
+        "waitingParticipants": "{{waitingParticipants}} Personen"
     },
     "participantsPane": {
         "actions": {
@@ -922,6 +928,7 @@
     "speakerStats": {
         "angry": "Sauer",
         "disgusted": "Angeekelt",
+        "displayEmotions": "Emotionen anzeigen",
         "fearful": "Ängstlich",
         "happy": "Fröhlich",
         "hours": "{{count}} Std. ",
@@ -996,6 +1003,7 @@
             "remoteVideoMute": "Kamera von dieser Person ausschalten",
             "security": "Sicherheitsoptionen",
             "selectBackground": "Hintergrund auswählen",
+            "selfView": "Eigene Ansicht ein-/ausschalten",
             "shareRoom": "Person einladen",
             "shareYourScreen": "Bildschirmfreigabe ein-/ausschalten",
             "shareaudio": "Audio teilen",
@@ -1163,6 +1171,7 @@
         "remoteControl": "Fernsteuerung",
         "screenSharing": "Person teilt den Bildschirm",
         "show": "Im Vordergrund anzeigen",
+        "showSelfView": "Eigene Ansicht anzeigen",
         "videoMuted": "Kamera ausgeschaltet",
         "videomute": "Person hat die Kamera angehalten"
     },
