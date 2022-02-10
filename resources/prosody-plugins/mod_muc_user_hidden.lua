@@ -1,5 +1,5 @@
---This module adds is_hidden tag when the user from jwt is moderator and when
---jwt contains `hidden` flag set to true, or removes it in case it was
+--This module adds is_hidden tag when jwt contains `hidden`
+--flag set to true, or removes it in case it was
 --added maliciously from client sent presence.
 --The module must be enabled under the muc component.
 local is_user_hidden = module:require "util".is_user_hidden;
