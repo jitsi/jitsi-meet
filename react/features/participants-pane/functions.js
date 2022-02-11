@@ -236,7 +236,7 @@ export function getSortedParticipantIds(stateful: Object | Function): Array<stri
         dominant.push(dominantId);
     }
 
-    if (conference.isHidden()) {
+    if (conference?.isHidden()) {
         local = [];
         remoteRaisedHandParticipants.delete(id);
     }
