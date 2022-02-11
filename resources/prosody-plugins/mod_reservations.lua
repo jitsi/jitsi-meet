@@ -32,6 +32,8 @@
 --      * set "reservations_api_should_retry_for_code" to a function that takes an HTTP response code and
 --        returns true if API call should be retried. By default, retries are done for 5XX
 --        responses. Timeouts are never retried, and HTTP call failures are always retried.
+--      * reservation_api_use_jwt_property to detemine a property of JWT claim to use for reservations.
+--        supportted: no, id, email (default is no)
 --
 --
 --  Example config:
@@ -52,6 +54,7 @@
 --        reservations_api_should_retry_for_code = function (code)
 --            return code >= 500 or code == 408
 --        end
+--        reservation_api_use_jwt_property = "email";
 --
 
 
@@ -71,6 +74,8 @@ local api_headers = module:get_option("reservations_api_headers");
 local api_timeout = module:get_option("reservations_api_timeout", 20);
 local api_retry_count = tonumber(module:get_option("reservations_api_retry_count", 3));
 local api_retry_delay = tonumber(module:get_option("reservations_api_retry_delay", 3));
+
+local api_use_jwt_property = module:get_option("reservation_api_use_jwt_property", "no");
 
 
 -- Option for user to control HTTP response codes that will result in a retry.
@@ -476,19 +481,23 @@ local reservations = {}
 
 local function get_or_create_reservations(room_jid, creator_jid)
     local user_email_from_jwt;
+    local user_id_from_jwt;
     local lsessions = prosody.full_sessions[creator_jid] or nil;
     if (lsessions) then
-	local usercontext = lsessions.jitsi_meet_context_user;
-	if (usercontext) then
-		user_email_from_jwt = usercontext.email;
-	end
+	    local usercontext = lsessions.jitsi_meet_context_user;
+	    if (usercontext) then
+		        user_email_from_jwt = usercontext.email;
+                user_id_from_jwt = usercontext.id;
+	        end
     end
     if reservations[room_jid] == nil then
-        module:log("debug", "Creating new reservation data for %si -> %s", room_jid, user_email_from_jwt);
-    	if (user_email_from_jwt) then
-            	reservations[room_jid] = newRoomReservation(room_jid, user_email_from_jwt);
+        module:log("debug", "Creating new reservation data for %si -> %s", room_jid, user_email_from_jwt, user_id_from_jwt);
+        if (api_use_jwt_property == "email") and user_email_from_jwt then
+            reservations[room_jid] = newRoomReservation(room_jid, user_email_from_jwt);
+        elseif (api_use_jwt_property == "id") and user_id_from_jwt then
+            reservations[room_jid] = newRoomReservation(room_jid, user_id_from_jwt);
     	else
-    	        reservations[room_jid] = newRoomReservation(room_jid, creator_jid);
+    	    reservations[room_jid] = newRoomReservation(room_jid, creator_jid);
     	end
     end
 
