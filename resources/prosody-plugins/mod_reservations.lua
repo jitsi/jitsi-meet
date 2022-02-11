@@ -192,6 +192,7 @@ local STATUS = {
 local RoomReservation = {};
 RoomReservation.__index = RoomReservation;
 
+
 function newRoomReservation(room_jid, creator_jid)
     return setmetatable({
         room_jid = room_jid;
@@ -474,9 +475,21 @@ end
 local reservations = {}
 
 local function get_or_create_reservations(room_jid, creator_jid)
+    local user_email_from_jwt;
+    local lsessions = prosody.full_sessions[creator_jid] or nil;
+    if (lsessions) then
+	local usercontext = lsessions.jitsi_meet_context_user;
+	if (usercontext) then
+		user_email_from_jwt = usercontext.email;
+	end
+    end
     if reservations[room_jid] == nil then
-        module:log("debug", "Creating new reservation data for %s", room_jid);
-        reservations[room_jid] = newRoomReservation(room_jid, creator_jid);
+        module:log("debug", "Creating new reservation data for %si -> %s", room_jid, user_email_from_jwt);
+    	if (user_email_from_jwt) then
+            	reservations[room_jid] = newRoomReservation(room_jid, user_email_from_jwt);
+    	else
+    	        reservations[room_jid] = newRoomReservation(room_jid, creator_jid);
+    	end
     end
 
     return reservations[room_jid];
