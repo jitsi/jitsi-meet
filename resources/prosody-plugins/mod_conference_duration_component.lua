@@ -3,6 +3,7 @@ local socket = require "socket";
 local json = require "util.json";
 local ext_events = module:require "ext_events";
 local it = require "util.iterators";
+local process_host_module = module:require 'util'.process_host_module;
 
 -- we use async to detect Prosody 0.10 and earlier
 local have_async = pcall(require, "util.async");
@@ -48,19 +49,10 @@ end
 
 -- executed on every host added internally in prosody, including components
 function process_host(host)
-    if host == muc_component_host then -- the conference muc component
-        module:log("info", "Hook to muc events on %s", host);
+    module:log("info", "Hook to muc events on %s", host);
 
-       local muc_module = module:context(host)
-       muc_module:hook("muc-occupant-joined", occupant_joined, -1);
-    end
+   local muc_module = module:context(host)
+   muc_module:hook("muc-occupant-joined", occupant_joined, -1);
 end
 
-if prosody.hosts[muc_component_host] == nil then
-    module:log("info", "No muc component found, will listen for it: %s", muc_component_host);
-
-    -- when a host or component is added
-    prosody.events.add_handler("host-activated", process_host);
-else
-    process_host(muc_component_host);
-end
+process_host_module(muc_component_host, process_host);

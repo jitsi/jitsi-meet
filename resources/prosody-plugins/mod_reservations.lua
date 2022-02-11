@@ -62,9 +62,11 @@ local st = require "util.stanza";
 local timer = require 'util.timer';
 local datetime = require 'util.datetime';
 
-local get_room_from_jid = module:require "util".get_room_from_jid;
-local is_healthcheck_room = module:require "util".is_healthcheck_room;
-local room_jid_match_rewrite = module:require "util".room_jid_match_rewrite;
+local util = module:require 'util';
+local get_room_from_jid = util.get_room_from_jid;
+local is_healthcheck_room = util.is_healthcheck_room;
+local process_host_module = util.process_host_module;
+local room_jid_match_rewrite = util.room_jid_match_rewrite;
 
 local api_prefix = module:get_option("reservations_api_prefix");
 local api_headers = module:get_option("reservations_api_headers");
@@ -575,15 +577,8 @@ end
 
 
 function process_host(host)
-    if host == muc_component_host then -- the conference muc component
-        module:log("info", "Hook to muc events on %s", host);
-        module:context(host):hook("muc-room-destroyed", room_destroyed, -1);
-    end
+    module:log("info", "Hook to muc events on %s", host);
+    module:context(host):hook("muc-room-destroyed", room_destroyed, -1);
 end
 
-if prosody.hosts[muc_component_host] == nil then
-    module:log("info", "No muc component found, will listen for it: %s", muc_component_host)
-    prosody.events.add_handler("host-activated", process_host);
-else
-    process_host(muc_component_host);
-end
+process_host_module(muc_component_host, process_host);

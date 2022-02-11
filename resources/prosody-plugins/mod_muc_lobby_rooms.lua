@@ -43,6 +43,7 @@ local util = module:require "util";
 local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local is_healthcheck_room = util.is_healthcheck_room;
 local presence_check_status = util.presence_check_status;
+local process_host_module = util.process_host_module;
 
 local main_muc_component_config = module:get_option_string('main_muc');
 if main_muc_component_config == nil then
@@ -205,24 +206,6 @@ function destroy_lobby_room(room, newjid, message)
     end
 end
 
--- process a host module directly if loaded or hooks to wait for its load
-function process_host_module(name, callback)
-    local function process_host(host)
-        if host == name then
-            callback(module:context(host), host);
-        end
-    end
-
-    if prosody.hosts[name] == nil then
-        module:log('debug', 'No host/component found, will wait for it: %s', name)
-
-        -- when a host or component is added
-        prosody.events.add_handler('host-activated', process_host);
-    else
-        process_host(name);
-    end
-end
-
 -- operates on already loaded lobby muc module
 function process_lobby_muc_loaded(lobby_muc, host_module)
     module:log('debug', 'Lobby muc loaded');
@@ -280,7 +263,8 @@ function process_lobby_muc_loaded(lobby_muc, host_module)
 end
 
 -- process or waits to process the lobby muc component
-process_host_module(lobby_muc_component_config, function(host_module, host)
+process_host_module(lobby_muc_component_config, function(host)
+    local host_module = module:context(host);
     -- lobby muc component created
     module:log('info', 'Lobby component loaded %s', host);
 
@@ -298,7 +282,8 @@ process_host_module(lobby_muc_component_config, function(host_module, host)
 end);
 
 -- process or waits to process the main muc component
-process_host_module(main_muc_component_config, function(host_module, host)
+process_host_module(main_muc_component_config, function(host)
+    local host_module = module:context(host);
     main_muc_service = prosody.hosts[host].modules.muc;
 
     -- hooks when lobby is enabled to create its room, only done here or by admin

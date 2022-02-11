@@ -1,6 +1,9 @@
-local get_room_from_jid = module:require "util".get_room_from_jid;
-local room_jid_match_rewrite = module:require "util".room_jid_match_rewrite;
-local is_healthcheck_room = module:require "util".is_healthcheck_room;
+local util = module:require 'util';
+local get_room_from_jid = util.get_room_from_jid;
+local is_healthcheck_room = util.is_healthcheck_room;
+local room_jid_match_rewrite = util.room_jid_match_rewrite;
+local process_host_module = util.process_host_module;
+
 local jid_resource = require "util.jid".resource;
 local ext_events = module:require "ext_events"
 local st = require "util.stanza";
@@ -265,25 +268,16 @@ module:hook("message/host", on_message);
 
 -- executed on every host added internally in prosody, including components
 function process_host(host)
-    if host == muc_component_host then -- the conference muc component
-        module:log("info","Hook to muc events on %s", host);
+    module:log("info","Hook to muc events on %s", host);
 
-        local muc_module = module:context(host);
-        muc_module:hook("muc-room-created", room_created, -1);
-        muc_module:hook("muc-occupant-joined", occupant_joined, -1);
-        muc_module:hook("muc-occupant-pre-leave", occupant_leaving, -1);
-        muc_module:hook("muc-room-destroyed", room_destroyed, -1);
-    end
+    local muc_module = module:context(host);
+    muc_module:hook("muc-room-created", room_created, -1);
+    muc_module:hook("muc-occupant-joined", occupant_joined, -1);
+    muc_module:hook("muc-occupant-pre-leave", occupant_leaving, -1);
+    muc_module:hook("muc-room-destroyed", room_destroyed, -1);
 end
 
-if prosody.hosts[muc_component_host] == nil then
-    module:log("info","No muc component found, will listen for it: %s", muc_component_host)
-
-    -- when a host or component is added
-    prosody.events.add_handler("host-activated", process_host);
-else
-    process_host(muc_component_host);
-end
+process_host_module(muc_component_host, process_host);
 
 function get_participant_expressions_count(facialExpressions)
     local count = 0;

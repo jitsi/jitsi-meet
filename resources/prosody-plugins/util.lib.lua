@@ -364,6 +364,24 @@ function presence_check_status(muc_x, status)
     return false;
 end
 
+-- process a host module directly if loaded or hooks to wait for its load
+function process_host_module(name, callback)
+    local function process_host(host)
+        if host == name then
+            callback(host);
+        end
+    end
+
+    if prosody.hosts[name] == nil then
+        module:log('debug', 'No host/component found, will wait for it: %s', name)
+
+        -- when a host or component is added
+        prosody.events.add_handler('host-activated', process_host);
+    else
+        process_host(name);
+    end
+end
+
 return {
     extract_subdomain = extract_subdomain;
     is_feature_allowed = is_feature_allowed;
@@ -373,6 +391,7 @@ return {
     get_room_by_name_and_subdomain = get_room_by_name_and_subdomain;
     async_handler_wrapper = async_handler_wrapper;
     presence_check_status = presence_check_status;
+    process_host_module = process_host_module;
     room_jid_match_rewrite = room_jid_match_rewrite;
     room_jid_split_subdomain = room_jid_split_subdomain;
     internal_room_jid_match_rewrite = internal_room_jid_match_rewrite;
