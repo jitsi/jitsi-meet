@@ -8,7 +8,7 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import { Text, TouchableRipple, withTheme } from 'react-native-paper';
+import { withTheme } from 'react-native-paper';
 
 import { AlertDialog, openDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
@@ -26,6 +26,8 @@ import {
     type Item
 } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
+import HeaderNavigationButton
+    from '../../../../mobile/navigation/components/HeaderNavigationButton';
 import ClearableInput from '../../../../participants-pane/components/native/ClearableInput';
 import { beginShareRoom } from '../../../../share-room';
 import { INVITE_TYPES } from '../../../constants';
@@ -139,18 +141,14 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
      * @returns {void}
      */
     componentDidMount() {
-        const { navigation, t, theme } = this.props;
-        const { palette } = theme;
+        const { navigation, t } = this.props;
 
         navigation.setOptions({
             headerRight: () => (
-                <TouchableRipple
+                <HeaderNavigationButton
                     disabled = { this._isAddDisabled() }
-                    rippleColor = { palette.screen01Header } >
-                    <Text style = { styles.headerSendInvite }>
-                        { t('inviteDialog.send') }
-                    </Text>
-                </TouchableRipple>
+                    label = { t('inviteDialog.send') }
+                    twoActions = { true } />
             )
         });
     }
@@ -161,20 +159,16 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
      * @inheritdoc
      */
     componentDidUpdate(prevProps) {
-        const { navigation, t, theme } = this.props;
-        const { palette } = theme;
+        const { navigation, t } = this.props;
 
         navigation.setOptions({
             // eslint-disable-next-line react/no-multi-comp
             headerRight: () => (
-                <TouchableRipple
+                <HeaderNavigationButton
                     disabled = { this._isAddDisabled() }
+                    label = { t('inviteDialog.send') }
                     onPress = { this._onInvite }
-                    rippleColor = { palette.screen01Header } >
-                    <Text style = { styles.headerSendInvite }>
-                        { t('inviteDialog.send') }
-                    </Text>
-                </TouchableRipple>
+                    twoActions = { true } />
             )
         });
 

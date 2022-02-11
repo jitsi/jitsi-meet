@@ -58,14 +58,6 @@ export default createStyleSheet({
     },
 
     /**
-     * Label for the button that starts live stream.
-     */
-    startLiveStreamLabel: {
-        color: BaseTheme.palette.text01,
-        marginRight: 12
-    },
-
-    /**
      * Container for the live stream screen.
      */
     startLiveStreamContainer: {
