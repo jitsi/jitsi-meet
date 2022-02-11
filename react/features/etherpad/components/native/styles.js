@@ -5,11 +5,6 @@ import { ColorPalette } from '../../../base/styles';
 export const INDICATOR_COLOR = ColorPalette.lightGrey;
 
 export default {
-
-    headerArrowBack: {
-        marginLeft: 12
-    },
-
     indicatorWrapper: {
         alignItems: 'center',
         backgroundColor: ColorPalette.white,

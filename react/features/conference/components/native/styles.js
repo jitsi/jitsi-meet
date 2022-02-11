@@ -5,6 +5,7 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 export const INSECURE_ROOM_NAME_LABEL_COLOR = BaseTheme.palette.actionDanger;
 
 const TITLE_BAR_BUTTON_SIZE = 24;
+const HEADER_ACTION_BUTTON_SIZE = 17;
 
 
 /**
@@ -36,13 +37,26 @@ export default {
     },
 
     headerNavigationIcon: {
-        marginLeft: 12
+        marginLeft: 14
     },
 
     headerNavigationButton: {
         height: BaseTheme.spacing[6],
         marginTop: 20,
         width: BaseTheme.spacing[6]
+    },
+
+    headerNavigationText: {
+        color: BaseTheme.palette.text01,
+        fontSize: HEADER_ACTION_BUTTON_SIZE,
+        marginHorizontal: BaseTheme.spacing[3]
+    },
+
+    headerNavigationTextBold: {
+        ...BaseTheme.typography.labelButton,
+        color: BaseTheme.palette.text01,
+        fontSize: HEADER_ACTION_BUTTON_SIZE,
+        marginHorizontal: BaseTheme.spacing[3]
     },
 
     /**

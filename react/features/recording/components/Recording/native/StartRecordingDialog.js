@@ -1,12 +1,12 @@
 // @flow
 
 import React from 'react';
-import { Text, TouchableRipple } from 'react-native-paper';
 
 import { translate } from '../../../../base/i18n';
 import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import { connect } from '../../../../base/redux';
-import BaseTheme from '../../../../base/ui/components/BaseTheme';
+import HeaderNavigationButton
+    from '../../../../mobile/navigation/components/HeaderNavigationButton';
 import { goBack } from
     '../../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import AbstractStartRecordingDialog, {
@@ -32,7 +32,7 @@ class StartRecordingDialog extends AbstractStartRecordingDialog<Props> {
     constructor(props: Props) {
         super(props);
 
-        this._onOkPress = this._onOkPress.bind(this);
+        this._onStartPress = this._onStartPress.bind(this);
     }
 
     /**
@@ -55,36 +55,33 @@ class StartRecordingDialog extends AbstractStartRecordingDialog<Props> {
             isValidating
         } = this.state;
 
-        // disable ok button id recording service is shown only, when
+        // disable start button id recording service is shown only, when
         // validating dropbox token, if that is not enabled we either always
-        // show the ok button or if just dropbox is enabled ok is available
+        // show the start button or if just dropbox is enabled start is available
         // when there is token
-        const isOkDisabled
+        const isStartDisabled
             = _fileRecordingsServiceEnabled ? isValidating
                 : _isDropboxEnabled ? !isTokenValid : false;
 
         navigation.setOptions({
             headerRight: () => (
-                <TouchableRipple
-                    disabled = { isOkDisabled }
-                    onPress = { this._onOkPress }
-                    rippleColor = { BaseTheme.palette.screen01Header } >
-                    <Text style = { styles.startRecordingLabel }>
-                        { t('dialog.start') }
-                    </Text>
-                </TouchableRipple>
+                <HeaderNavigationButton
+                    disabled = { isStartDisabled }
+                    label = { t('dialog.start') }
+                    onPress = { this._onStartPress }
+                    twoActions = { true } />
             )
         });
     }
 
-    _onOkPress: () => void;
+    _onStartPress: () => void;
 
     /**
      * Starts recording session and goes back to the previous screen.
      *
      * @returns {void}
      */
-    _onOkPress() {
+    _onStartPress() {
         this._onSubmit() && goBack();
     }
 

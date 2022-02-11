@@ -72,8 +72,7 @@ class SharedDocument extends PureComponent<Props> {
             headerLeft: () => (
                 <HeaderNavigationButton
                     onPress = { goBack }
-                    src = { IconArrowBack }
-                    style = { styles.headerArrowBack } />
+                    src = { IconArrowBack } />
             )
         });
     }
