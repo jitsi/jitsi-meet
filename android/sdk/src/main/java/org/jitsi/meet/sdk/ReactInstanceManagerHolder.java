@@ -241,8 +241,5 @@ class ReactInstanceManagerHolder {
                 .setUseDeveloperSupport(BuildConfig.DEBUG)
                 .setInitialLifecycleState(LifecycleState.RESUMED)
                 .build();
-
-        // Register our uncaught exception handler.
-        JitsiMeetUncaughtExceptionHandler.register();
     }
 }

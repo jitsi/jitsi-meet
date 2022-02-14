@@ -22,7 +22,7 @@ import androidx.startup.Initializer;
 
 import com.facebook.soloader.SoLoader;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class JitsiInitializer implements Initializer<Boolean> {
@@ -31,12 +31,15 @@ public class JitsiInitializer implements Initializer<Boolean> {
     @Override
     public Boolean create(@NonNull Context context) {
         SoLoader.init(context, /* native exopackage */ false);
+
+        // Register our uncaught exception handler.
+        JitsiMeetUncaughtExceptionHandler.register();
         return true;
     }
 
     @NonNull
     @Override
     public List<Class<? extends Initializer<?>>> dependencies() {
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 }
