@@ -30,6 +30,20 @@ export const getMainRoom = (stateful: Function | Object) => {
 };
 
 /**
+ * Returns the room by Jid.
+ *
+ * @param {Function|Object} stateful - The redux store, the redux
+ * {@code getState} function, or the redux state itself.
+ * @param {string} roomJid - The jid of the room.
+ * @returns {Object|undefined} The main room object, or undefined.
+ */
+export const getRoomByJid = (stateful: Function | Object, roomJid: string): Object => {
+    const rooms = getBreakoutRooms(stateful);
+
+    return _.find(rooms, (room: Object) => room.jid === roomJid);
+};
+
+/**
  * Returns the id of the current room.
  *
  * @param {Function|Object} stateful - The redux store, the redux

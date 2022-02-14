@@ -33,7 +33,8 @@ import { _RESET_BREAKOUT_ROOMS, _UPDATE_ROOM_COUNTER } from './actionTypes';
 import { FEATURE_KEY } from './constants';
 import {
     getBreakoutRooms,
-    getMainRoom
+    getMainRoom,
+    getRoomByJid
 } from './functions';
 import logger from './logger';
 
@@ -97,6 +98,17 @@ export function closeBreakoutRoom(roomId: string) {
 export function removeBreakoutRoom(breakoutRoomJid: string) {
     return (dispatch: Dispatch<any>, getState: Function) => {
         sendAnalytics(createBreakoutRoomsEvent('remove'));
+        const room = getRoomByJid(getState, breakoutRoomJid);
+
+        if (!room) {
+            logger.error('The room to remove was not found.');
+
+            return;
+        }
+
+        if (Object.keys(room.participants).length > 0) {
+            dispatch(closeBreakoutRoom(room.id));
+        }
 
         // $FlowExpectedError
         getCurrentConference(getState)?.getBreakoutRooms()
