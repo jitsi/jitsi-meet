@@ -117,6 +117,11 @@ type Props = {
     isHighlighted: boolean,
 
     /**
+     * Whether or not the local participant is in a breakout room.
+     */
+    isInBreakoutRoom: boolean,
+
+    /**
      * Callback used to open a confirmation dialog for audio muting.
      */
     muteAudio: Function,
@@ -189,6 +194,7 @@ function MeetingParticipantItem({
     _videoMediaState,
     askUnmuteText,
     isHighlighted,
+    isInBreakoutRoom,
     muteAudio,
     muteParticipantButtonText,
     onContextMenu,
@@ -261,13 +267,15 @@ function MeetingParticipantItem({
 
             {!overflowDrawer && !_participant?.isFakeParticipant
                 && <>
-                    <ParticipantQuickAction
-                        askUnmuteText = { askToUnmuteText }
-                        buttonType = { _quickActionButtonType }
-                        muteAudio = { muteAudio }
-                        muteParticipantButtonText = { muteParticipantButtonText }
-                        participantID = { _participantID }
-                        participantName = { _displayName } />
+                    {!isInBreakoutRoom && (
+                        <ParticipantQuickAction
+                            askUnmuteText = { askToUnmuteText }
+                            buttonType = { _quickActionButtonType }
+                            muteAudio = { muteAudio }
+                            muteParticipantButtonText = { muteParticipantButtonText }
+                            participantID = { _participantID }
+                            participantName = { _displayName } />
+                    )}
                     <ParticipantActionEllipsis
                         accessibilityLabel = { participantActionEllipsisLabel }
                         onClick = { onContextMenu } />
