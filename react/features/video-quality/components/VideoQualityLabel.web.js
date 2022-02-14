@@ -64,7 +64,7 @@ export class VideoQualityLabel extends AbstractVideoQualityLabel<Props> {
             return null;
         }
 
-        let className, icon, labelContent, onClick, tooltipKey;
+        let className, icon, labelContent, tooltipKey;
 
         if (_audioOnly) {
             className = 'audio-only';
@@ -73,10 +73,10 @@ export class VideoQualityLabel extends AbstractVideoQualityLabel<Props> {
         } else {
             className = 'current-video-quality';
             icon = IconGauge;
-            onClick = () => dispatch(openDialog(VideoQualityDialog));
             tooltipKey = 'videoStatus.performanceSettings';
         }
 
+        const onClick = () => dispatch(openDialog(VideoQualityDialog));
 
         return (
             <Tooltip
@@ -86,6 +86,7 @@ export class VideoQualityLabel extends AbstractVideoQualityLabel<Props> {
                     className = { className }
                     icon = { icon }
                     id = 'videoResolutionLabel'
+                    // eslint-disable-next-line react/jsx-no-bind
                     onClick = { onClick }
                     text = { labelContent } />
             </Tooltip>
