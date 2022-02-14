@@ -16,6 +16,7 @@
 package org.jitsi.meet.sdk;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.startup.Initializer;
@@ -30,6 +31,8 @@ public class JitsiInitializer implements Initializer<Boolean> {
     @NonNull
     @Override
     public Boolean create(@NonNull Context context) {
+        Log.d(this.getClass().getCanonicalName(), "create");
+
         SoLoader.init(context, /* native exopackage */ false);
 
         // Register our uncaught exception handler.

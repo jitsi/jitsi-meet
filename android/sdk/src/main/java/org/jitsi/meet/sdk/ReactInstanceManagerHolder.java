@@ -17,6 +17,8 @@
 package org.jitsi.meet.sdk;
 
 import android.app.Activity;
+import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -99,6 +101,69 @@ class ReactInstanceManagerHolder {
         );
     }
 
+    static List<ReactPackage> getReactNativePackages() {
+        List<ReactPackage> packages
+            = new ArrayList<>(Arrays.asList(
+            new com.reactnativecommunity.asyncstorage.AsyncStoragePackage(),
+            new com.ocetnik.timer.BackgroundTimerPackage(),
+            new com.calendarevents.RNCalendarEventsPackage(),
+            new com.corbt.keepawake.KCKeepAwakePackage(),
+            new com.facebook.react.shell.MainReactPackage(),
+            new com.reactnativecommunity.clipboard.ClipboardPackage(),
+            new com.reactnativecommunity.netinfo.NetInfoPackage(),
+            new com.reactnativepagerview.PagerViewPackage(),
+            new com.oblador.performance.PerformancePackage(),
+            new com.reactnativecommunity.slider.ReactSliderPackage(),
+            new com.brentvatne.react.ReactVideoPackage(),
+            new com.swmansion.reanimated.ReanimatedPackage(),
+            new org.reactnative.maskedview.RNCMaskedViewPackage(),
+            new com.reactnativecommunity.webview.RNCWebViewPackage(),
+            new com.kevinresol.react_native_default_preference.RNDefaultPreferencePackage(),
+            new com.learnium.RNDeviceInfo.RNDeviceInfo(),
+            new com.swmansion.gesturehandler.react.RNGestureHandlerPackage(),
+            new org.linusu.RNGetRandomValuesPackage(),
+            new com.rnimmersive.RNImmersivePackage(),
+            new com.swmansion.rnscreens.RNScreensPackage(),
+            new com.zmxv.RNSound.RNSoundPackage(),
+            new com.th3rdwave.safeareacontext.SafeAreaContextPackage(),
+            new com.horcrux.svg.SvgPackage(),
+            new ReactPackageAdapter() {
+                @Override
+                public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
+                    return ReactInstanceManagerHolder.createNativeModules(reactContext);
+                }
+                @Override
+                public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
+                    return ReactInstanceManagerHolder.createViewManagers(reactContext);
+                }
+            }));
+
+        // AmplitudeReactNativePackage
+        try {
+            Class<?> amplitudePackageClass = Class.forName("com.amplitude.reactnative.AmplitudeReactNativePackage");
+            Constructor constructor = amplitudePackageClass.getConstructor();
+            packages.add((ReactPackage)constructor.newInstance());
+        } catch (Exception e) {
+            // Ignore any error, the module is not compiled when LIBRE_BUILD is enabled.
+        }
+
+        // RNGoogleSignInPackage
+        try {
+            Class<?> googlePackageClass = Class.forName("com.reactnativegooglesignin.RNGoogleSigninPackage");
+            Constructor constructor = googlePackageClass.getConstructor();
+            packages.add((ReactPackage)constructor.newInstance());
+        } catch (Exception e) {
+            // Ignore any error, the module is not compiled when LIBRE_BUILD is enabled.
+        }
+
+        return packages;
+    }
+
+    static JSCExecutorFactory getReactNativeJSFactory() {
+        // Keep on using JSC, the jury is out on Hermes.
+        return new JSCExecutorFactory("", "");
+    }
+
     /**
      * Helper function to send an event to JavaScript.
      *
@@ -165,6 +230,35 @@ class ReactInstanceManagerHolder {
      * time. All {@code ReactRootView} instances will be tied to the one and
      * only {@code ReactInstanceManager}.
      *
+     * This method is only meant to be called when integrating with {@code JitsiReactNativeHost}.
+     *
+     * @param app {@code Application} current running Application.
+     */
+    static void initReactInstanceManager(Application app) {
+        if (reactInstanceManager != null) {
+            return;
+        }
+
+        Log.d(ReactInstanceManagerHolder.class.getCanonicalName(), "initializing RN with Application");
+
+        reactInstanceManager
+            = ReactInstanceManager.builder()
+                .setApplication(app)
+                .setBundleAssetName("index.android.bundle")
+                .setJSMainModulePath("index.android")
+                .setJavaScriptExecutorFactory(getReactNativeJSFactory())
+                .addPackages(getReactNativePackages())
+                .setUseDeveloperSupport(BuildConfig.DEBUG)
+                .setInitialLifecycleState(LifecycleState.BEFORE_CREATE)
+                .build();
+    }
+
+    /**
+     * Internal method to initialize the React Native instance manager. We
+     * create a single instance in order to load the JavaScript bundle a single
+     * time. All {@code ReactRootView} instances will be tied to the one and
+     * only {@code ReactInstanceManager}.
+     *
      * @param activity {@code Activity} current running Activity.
      */
     static void initReactInstanceManager(Activity activity) {
@@ -172,63 +266,7 @@ class ReactInstanceManagerHolder {
             return;
         }
 
-        List<ReactPackage> packages
-            = new ArrayList<>(Arrays.asList(
-                new com.reactnativecommunity.asyncstorage.AsyncStoragePackage(),
-                new com.ocetnik.timer.BackgroundTimerPackage(),
-                new com.calendarevents.RNCalendarEventsPackage(),
-                new com.corbt.keepawake.KCKeepAwakePackage(),
-                new com.facebook.react.shell.MainReactPackage(),
-                new com.reactnativecommunity.clipboard.ClipboardPackage(),
-                new com.reactnativecommunity.netinfo.NetInfoPackage(),
-                new com.reactnativepagerview.PagerViewPackage(),
-                new com.oblador.performance.PerformancePackage(),
-                new com.reactnativecommunity.slider.ReactSliderPackage(),
-                new com.brentvatne.react.ReactVideoPackage(),
-                new com.swmansion.reanimated.ReanimatedPackage(),
-                new org.reactnative.maskedview.RNCMaskedViewPackage(),
-                new com.reactnativecommunity.webview.RNCWebViewPackage(),
-                new com.kevinresol.react_native_default_preference.RNDefaultPreferencePackage(),
-                new com.learnium.RNDeviceInfo.RNDeviceInfo(),
-                new com.swmansion.gesturehandler.react.RNGestureHandlerPackage(),
-                new org.linusu.RNGetRandomValuesPackage(),
-                new com.rnimmersive.RNImmersivePackage(),
-                new com.swmansion.rnscreens.RNScreensPackage(),
-                new com.zmxv.RNSound.RNSoundPackage(),
-                new com.th3rdwave.safeareacontext.SafeAreaContextPackage(),
-                new com.horcrux.svg.SvgPackage(),
-                new ReactPackageAdapter() {
-                    @Override
-                    public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
-                        return ReactInstanceManagerHolder.createNativeModules(reactContext);
-                    }
-                    @Override
-                    public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
-                        return ReactInstanceManagerHolder.createViewManagers(reactContext);
-                    }
-                }));
-
-        // AmplitudeReactNativePackage
-        try {
-            Class<?> amplitudePackageClass = Class.forName("com.amplitude.reactnative.AmplitudeReactNativePackage");
-            Constructor constructor = amplitudePackageClass.getConstructor();
-            packages.add((ReactPackage)constructor.newInstance());
-        } catch (Exception e) {
-            // Ignore any error, the module is not compiled when LIBRE_BUILD is enabled.
-        }
-
-        // RNGoogleSigninPackage
-        try {
-            Class<?> googlePackageClass = Class.forName("com.reactnativegooglesignin.RNGoogleSigninPackage");
-            Constructor constructor = googlePackageClass.getConstructor();
-            packages.add((ReactPackage)constructor.newInstance());
-        } catch (Exception e) {
-            // Ignore any error, the module is not compiled when LIBRE_BUILD is enabled.
-        }
-
-        // Keep on using JSC, the jury is out on Hermes.
-        JSCExecutorFactory jsFactory
-            = new JSCExecutorFactory("", "");
+        Log.d(ReactInstanceManagerHolder.class.getCanonicalName(), "initializing RN with Activity");
 
         reactInstanceManager
             = ReactInstanceManager.builder()
@@ -236,8 +274,8 @@ class ReactInstanceManagerHolder {
                 .setCurrentActivity(activity)
                 .setBundleAssetName("index.android.bundle")
                 .setJSMainModulePath("index.android")
-                .setJavaScriptExecutorFactory(jsFactory)
-                .addPackages(packages)
+                .setJavaScriptExecutorFactory(getReactNativeJSFactory())
+                .addPackages(getReactNativePackages())
                 .setUseDeveloperSupport(BuildConfig.DEBUG)
                 .setInitialLifecycleState(LifecycleState.RESUMED)
                 .build();
