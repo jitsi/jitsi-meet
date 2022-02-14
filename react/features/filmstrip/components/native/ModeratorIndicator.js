@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import { IconModerator } from '../../../base/icons';
+import { IconCrown } from '../../../base/icons';
 import { BaseIndicator } from '../../../base/react';
 
 /**
@@ -16,9 +16,7 @@ export default class ModeratorIndicator extends Component<{}> {
      */
     render() {
         return (
-            <BaseIndicator
-                highlight = { false }
-                icon = { IconModerator } />
+            <BaseIndicator icon = { IconCrown } />
         );
     }
 }

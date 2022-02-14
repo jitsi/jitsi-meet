@@ -11,8 +11,13 @@ export default {
         paddingVertical: 4
     },
 
+    displayNamePadding: {
+        padding: 2
+    },
+
     displayNameText: {
         color: ColorPalette.white,
-        fontSize: 14
+        fontSize: 14,
+        fontWeight: 'bold'
     }
 };
