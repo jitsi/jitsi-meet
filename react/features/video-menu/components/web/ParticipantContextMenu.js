@@ -12,7 +12,7 @@ import { isIosMobileBrowser, isMobileBrowser } from '../../../base/environment/u
 import { IconShareVideo } from '../../../base/icons';
 import { MEDIA_TYPE } from '../../../base/media';
 import { getLocalParticipant, PARTICIPANT_ROLE } from '../../../base/participants';
-import { getBreakoutRooms, getCurrentRoomId } from '../../../breakout-rooms/functions';
+import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { setVolume } from '../../../filmstrip/actions.web';
 import { isForceMuted } from '../../../participants-pane/functions';
 import { requestRemoteControl, stopController } from '../../../remote-control';
@@ -139,6 +139,7 @@ const ParticipantContextMenu = ({
     const { participantsVolume } = useSelector(state => state['features/filmstrip']);
     const _volume = (participant?.local ?? true ? undefined
         : participant?.id ? participantsVolume[participant?.id] : undefined) || 1;
+    const isBreakoutRoom = useSelector(isInBreakoutRoom);
 
     const _currentRoomId = useSelector(getCurrentRoomId);
     const _rooms = Object.values(useSelector(getBreakoutRooms));
@@ -209,7 +210,7 @@ const ParticipantContextMenu = ({
             );
         }
 
-        if (!disableGrantModerator) {
+        if (!disableGrantModerator && !isBreakoutRoom) {
             buttons2.push(
                 <GrantModeratorButton
                     key = 'grant-moderator'
