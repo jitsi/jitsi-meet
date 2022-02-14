@@ -7,3 +7,7 @@ export const CONNECTOR_INDICATOR_COLORS = [
     ColorPalette.Y200,
     ColorPalette.green
 ];
+
+export const iconStyle = {
+    fontSize: 14
+};

@@ -1,7 +1,6 @@
 // @flow
 
 import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
-import { ColorPalette } from '../../../base/styles';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import { SMALL_THUMBNAIL_SIZE } from '../../constants';
 
@@ -9,6 +8,13 @@ import { SMALL_THUMBNAIL_SIZE } from '../../constants';
  * Size for the Avatar.
  */
 export const AVATAR_SIZE = 50;
+
+const indicatorContainer = {
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    borderRadius: 4,
+    margin: 2,
+    padding: 2
+};
 
 /**
  * The styles of the feature filmstrip.
@@ -28,11 +34,7 @@ export default {
      * The display name container.
      */
     displayNameContainer: {
-        alignSelf: 'center',
-        bottom: 0,
-        flex: 1,
-        margin: 4,
-        position: 'absolute'
+        padding: 2
     },
 
     /**
@@ -96,21 +98,15 @@ export default {
         flexDirection: 'row'
     },
 
-    moderatorIndicatorContainer: {
-        bottom: 4,
-        position: 'absolute',
-        right: 4
-    },
-
     /**
      * The style of a participant's Thumbnail which renders either the video or
      * the avatar of the associated participant.
      */
     thumbnail: {
         alignItems: 'stretch',
-        backgroundColor: ColorPalette.appBackground,
+        backgroundColor: BaseTheme.palette.ui02,
         borderColor: '#424242',
-        borderRadius: 3,
+        borderRadius: 4,
         borderStyle: 'solid',
         borderWidth: 1,
         flex: 1,
@@ -124,35 +120,51 @@ export default {
         width: SMALL_THUMBNAIL_SIZE
     },
 
+    indicatorContainer,
+
     /**
      * The thumbnails indicator container.
      */
     thumbnailIndicatorContainer: {
-        alignSelf: 'stretch',
+        alignSelf: 'center',
         bottom: 4,
         flex: 1,
         flexDirection: 'row',
         left: 4,
-        position: 'absolute'
+        position: 'absolute',
+        maxWidth: '95%',
+        overflow: 'hidden',
+        ...indicatorContainer
     },
 
     thumbnailTopIndicatorContainer: {
         padding: 4,
         position: 'absolute',
-        top: 0
+        top: 0,
+        flexDirection: 'row'
     },
 
     thumbnailTopLeftIndicatorContainer: {
         left: 0
     },
 
-    thumbnailTopRightIndicatorContainer: {
-        right: 0
+    raisedHandIndicator: {
+        ...indicatorContainer,
+        backgroundColor: BaseTheme.palette.warning02
+    },
+
+    raisedHandIcon: {
+        color: BaseTheme.palette.uiBackground
     },
 
     thumbnailRaisedHand: {
         borderWidth: 2,
         borderColor: BaseTheme.palette.warning02
+    },
+
+    thumbnailDominantSpeaker: {
+        borderWidth: 4,
+        borderColor: BaseTheme.palette.action01Hover
     }
 };
 
@@ -166,13 +178,6 @@ ColorSchemeRegistry.register('Thumbnail', {
      */
     activeThumbnailTint: {
         backgroundColor: schemeColor('activeParticipantTint')
-    },
-
-    /**
-     * Coloring if the thumbnail background.
-     */
-    participantViewStyle: {
-        backgroundColor: schemeColor('background')
     },
 
     /**

@@ -3,22 +3,15 @@
 import { ColorPalette } from '../../../styles';
 
 export default {
-    /**
-     * Highlighted indicator additional style.
-     */
-    highlightedIndicator: {
-        backgroundColor: ColorPalette.blue,
-        borderRadius: 4,
-        padding: 2
-    },
 
     /**
      * Base indicator style.
      */
     indicator: {
         backgroundColor: ColorPalette.transparent,
+        padding: 2,
         color: ColorPalette.white,
-        fontSize: 12,
+        fontSize: 16,
         textShadowColor: ColorPalette.black,
         textShadowOffset: {
             height: -1,

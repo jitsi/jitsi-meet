@@ -16,9 +16,7 @@ export default class AudioMutedIndicator extends Component<{}> {
      */
     render() {
         return (
-            <BaseIndicator
-                highlight = { false }
-                icon = { IconMicDisabled } />
+            <BaseIndicator icon = { IconMicDisabled } />
         );
     }
 }
