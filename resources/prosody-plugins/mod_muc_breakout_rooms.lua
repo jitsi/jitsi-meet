@@ -35,12 +35,15 @@ local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 local is_healthcheck_room = util.is_healthcheck_room;
 
 local BREAKOUT_ROOMS_IDENTITY_TYPE = 'breakout_rooms';
+-- Available breakout room functionality
+local PUBLISH_FEATURE = 'http://jitsi.org/protocol/breakout_rooms#publish';
 -- only send at most this often updates on breakout rooms to avoid flooding.
 local BROADCAST_ROOMS_INTERVAL = .3;
 -- close conference after this amount of seconds if all leave.
 local ROOMS_TTL_IF_ALL_LEFT = 5;
 local JSON_TYPE_ADD_BREAKOUT_ROOM = 'features/breakout-rooms/add';
 local JSON_TYPE_MOVE_TO_ROOM_REQUEST = 'features/breakout-rooms/move-to-room';
+local JSON_TYPE_PUBLISH_BREAKOUT_ROOMS = 'features/breakout-rooms/publish';
 local JSON_TYPE_REMOVE_BREAKOUT_ROOM = 'features/breakout-rooms/remove';
 local JSON_TYPE_UPDATE_BREAKOUT_ROOMS = 'features/breakout-rooms/update';
 
@@ -144,6 +147,15 @@ function broadcast_breakout_rooms(room_jid)
                 participants = get_participants(main_room)
             };
         }
+        local published = main_room._data.breakout_rooms_published ~= false;
+        local msg = {
+            type = BREAKOUT_ROOMS_IDENTITY_TYPE,
+            event = JSON_TYPE_UPDATE_BREAKOUT_ROOMS,
+            roomCounter = main_room._data.breakout_rooms_counter,
+            published = published,
+            rooms = rooms
+        };
+        local unpublished_json_msg = json.encode(msg);
 
         for breakout_room_jid, subject in pairs(main_room._data.breakout_rooms or {}) do
             local breakout_room = breakout_rooms_muc_service.get_room_from_jid(breakout_room_jid);
@@ -162,16 +174,11 @@ function broadcast_breakout_rooms(room_jid)
             end
         end
 
-        local json_msg = json.encode({
-            type = BREAKOUT_ROOMS_IDENTITY_TYPE,
-            event = JSON_TYPE_UPDATE_BREAKOUT_ROOMS,
-            roomCounter = main_room._data.breakout_rooms_counter,
-            rooms = rooms
-        });
+        local json_msg = json.encode(msg);
 
         for _, occupant in main_room:each_occupant() do
             if jid_node(occupant.jid) ~= 'focus' then
-                send_json_msg(occupant.jid, json_msg)
+                send_json_msg(occupant.jid, (published or occupant.role == "moderator") and json_msg or unpublished_json_msg);
             end
         end
 
@@ -180,7 +187,7 @@ function broadcast_breakout_rooms(room_jid)
             if room then
                 for _, occupant in room:each_occupant() do
                     if jid_node(occupant.jid) ~= 'focus' then
-                        send_json_msg(occupant.jid, json_msg)
+                        send_json_msg(occupant.jid, (published or occupant.role == "moderator") and json_msg or unpublished_json_msg);
                     end
                 end
             end
@@ -235,6 +242,12 @@ function destroy_breakout_room(room_jid, message)
 end
 
 
+function set_published_state(main_room, published)
+    main_room._data.breakout_rooms_published = published;
+    main_room:save(true);
+    broadcast_breakout_rooms(main_room.jid);
+end
+
 -- Handling events
 
 function on_message(event)
@@ -259,7 +272,7 @@ function on_message(event)
     local room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
 
     if not room then
-        module:log('warn', 'No room found found for %s/%s',
+        module:log('warn', 'No room found for %s/%s',
                 session.jitsi_web_query_prefix, session.jitsi_web_query_room);
         return false;
     end
@@ -295,6 +308,16 @@ function on_message(event)
         return true;
     elseif message.attr.type == JSON_TYPE_REMOVE_BREAKOUT_ROOM then
         destroy_breakout_room(message.attr.breakoutRoomJid);
+        return true;
+    elseif message.attr.type == JSON_TYPE_PUBLISH_BREAKOUT_ROOMS then
+        local main_room = get_main_room(room.jid);
+
+        if not main_room then
+            log('warn', 'Main room for %s not found', room.jid);
+            return false;
+        end
+
+        set_published_state(main_room, message.attr.published == "true");
         return true;
     elseif message.attr.type == JSON_TYPE_MOVE_TO_ROOM_REQUEST then
         local participant_jid = message.attr.participantJid;
@@ -455,6 +478,15 @@ function process_breakout_rooms_muc_loaded(breakout_rooms_muc, host_module)
 
     -- Advertise the breakout rooms component so clients can pick up the address and use it
     module:add_identity('component', BREAKOUT_ROOMS_IDENTITY_TYPE, breakout_rooms_muc_component_config);
+
+    -- Tag the disco#info response with available features of breakout rooms.
+    host_module:hook('host-disco-info-node', function (event)
+        local session, reply, node = event.origin, event.reply, event.node;
+        if node == BREAKOUT_ROOMS_IDENTITY_TYPE and session.jitsi_web_query_room then
+            reply:tag('feature', { var = PUBLISH_FEATURE }):up();
+        end
+        event.exists = true;
+    end);
 
     breakout_rooms_muc_service = breakout_rooms_muc;
     module:log("info", "Hook to muc events on %s", breakout_rooms_muc_component_config);
