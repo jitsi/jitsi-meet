@@ -13,6 +13,10 @@ export function extractFqnFromPath() {
     const parts = window.location.pathname.split('/');
     const len = parts.length;
 
+    if (parts.length === 2) {
+        return `/${parts[1]}`;
+    }
+
     return parts.length > 2 ? `${parts[len - 2]}/${parts[len - 1]}` : '';
 }
 
