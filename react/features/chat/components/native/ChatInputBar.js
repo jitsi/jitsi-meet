@@ -7,6 +7,7 @@ import { translate } from '../../../base/i18n';
 import { Icon, IconChatSend } from '../../../base/icons';
 
 import styles from './styles';
+import BaseTheme from "../../../base/ui/components/BaseTheme";
 
 type Props = {
 
@@ -82,7 +83,9 @@ class ChatInputBar extends Component<Props, State> {
                     onFocus = { this._onFocused(true) }
                     onSubmitEditing = { this._onSubmit }
                     placeholder = { this.props.t('chat.fieldPlaceHolder') }
+                    placeholderTextColor = { BaseTheme.palette.text03 }
                     returnKeyType = 'send'
+                    selectionColor = { BaseTheme.palette.text03 }
                     style = { styles.inputField }
                     value = { this.state.message } />
                 {

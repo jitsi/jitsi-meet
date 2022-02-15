@@ -4,9 +4,8 @@ import BaseTheme from '../../../base/ui/components/BaseTheme';
 
 const SECONDARY_COLOR = BaseTheme.palette.border04;
 
-export const ENABLED_THUMB_COLOR = BaseTheme.palette.field01;
 export const ENABLED_TRACK_COLOR = BaseTheme.palette.lobbySwitch01Active;
-export const DISABLED_THUMB_COLOR = BaseTheme.palette.icon03;
+export const THUMB_COLOR = BaseTheme.palette.field02;
 
 export default {
     button: {

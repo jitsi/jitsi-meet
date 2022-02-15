@@ -185,7 +185,7 @@ export const chatTabBarOptions = {
     tabBarLabelStyle: {
         fontSize: BaseTheme.typography.labelRegular.fontSize
     },
-    tabBarInactiveTintColor: BaseTheme.palette.field02Disabled,
+    tabBarInactiveTintColor: BaseTheme.palette.text01,
     tabBarIndicatorStyle: {
         backgroundColor: BaseTheme.palette.screen01Header
     }

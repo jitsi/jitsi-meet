@@ -10,6 +10,7 @@ import AbstractPollAnswer from '../AbstractPollAnswer';
 import type { AbstractProps } from '../AbstractPollAnswer';
 
 import { chatStyles, dialogStyles } from './styles';
+import BaseTheme from "../../../base/ui/components/BaseTheme";
 
 
 const PollAnswer = (props: AbstractProps) => {
@@ -38,21 +39,26 @@ const PollAnswer = (props: AbstractProps) => {
                             /* eslint-disable react/jsx-no-bind */
                             onValueChange = { state => setCheckbox(index, state) }
                             value = { checkBoxStates[index] } />
-                        <Text>{answer.name}</Text>
+                        <Text style = { chatStyles.switchLabel }>{answer.name}</Text>
                     </View>
                 ))}
             </View>
             <View style = { chatStyles.buttonRow }>
                 <Button
-                    color = '#3D3D3D'
+                    color = { BaseTheme.palette.action02 }
                     mode = { BUTTON_MODES.CONTAINED }
                     onPress = { changingVote ? skipChangeVote : skipAnswer }
                     style = { chatStyles.pollCreateButton } >
                     {t('polls.answer.skip')}
                 </Button>
                 <Button
-                    color = '#17a0db'
+                    color = { BaseTheme.palette.screen01Header }
                     disabled = { isSubmitAnswerDisabled(checkBoxStates) }
+                    labelStyle = {
+                        isSubmitAnswerDisabled(checkBoxStates)
+                            ? chatStyles.pollSendDisabledLabel
+                            : chatStyles.pollSendLabel
+                    }
                     mode = { BUTTON_MODES.CONTAINED }
                     onPress = { submitAnswer }
                     style = { chatStyles.pollCreateButton } >

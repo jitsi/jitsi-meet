@@ -8,6 +8,7 @@ import {
     getClientHeight,
     getClientWidth
 } from '../../../../../base/modal/components/functions.native';
+import BaseTheme from '../../../../../base/ui/components/BaseTheme.native';
 import { Chat } from '../../../../../chat';
 import { PollsPane } from '../../../../../polls/components';
 import { screen } from '../../../routes';
@@ -28,7 +29,10 @@ const ChatAndPollsNavigationContainer = () => {
                 width: clientWidth
             }}
             screenOptions = {{
-                ...chatTabBarOptions
+                ...chatTabBarOptions,
+                tabBarStyle: {
+                    backgroundColor: BaseTheme.palette.ui01
+                }
             }}>
             <ChatTab.Screen
                 component = { Chat }

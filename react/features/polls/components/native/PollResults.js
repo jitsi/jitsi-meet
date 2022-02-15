@@ -65,7 +65,11 @@ const PollResults = (props: AbstractProps) => {
                     { voters && voterCount > 0
                     && <View style = { resultsStyles.voters }>
                         {voters.map(({ id, name: voterName }) =>
-                            <Text key = { id }>{ voterName }</Text>
+                            (<Text
+                                key = { id }
+                                style = { resultsStyles.voter }>
+                                { voterName }
+                            </Text>)
                         )}
                     </View>}
                 </View>
