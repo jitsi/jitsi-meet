@@ -8,8 +8,8 @@ import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
 export default {
 
     securityDialogContainer: {
-        flex: 1,
-        marginTop: BaseTheme.spacing[4]
+        backgroundColor: BaseTheme.palette.ui01,
+        flex: 1
     },
 
     headerCloseButton: {
@@ -18,7 +18,8 @@ export default {
 
     lobbyModeContainer: {
         borderBottomColor: BaseTheme.palette.border01,
-        borderBottomWidth: 1
+        borderBottomWidth: 1,
+        marginTop: BaseTheme.spacing[4]
     },
 
     lobbyModeContent: {
@@ -26,7 +27,12 @@ export default {
         marginBottom: BaseTheme.spacing[4]
     },
 
+    lobbyModeText: {
+        color: BaseTheme.palette.text01
+    },
+
     lobbyModeLabel: {
+        color: BaseTheme.palette.text01,
         fontWeight: 'bold',
         marginTop: BaseTheme.spacing[2]
     },
@@ -43,6 +49,10 @@ export default {
         marginTop: BaseTheme.spacing[4]
     },
 
+    passwordContainerText: {
+        color: BaseTheme.palette.text01
+    },
+
     passwordContainerControls: {
         alignItems: 'center',
         flexDirection: 'row',
@@ -56,17 +66,19 @@ export default {
     },
 
     savedPasswordLabel: {
+        color: BaseTheme.palette.text01,
         fontWeight: 'bold'
     },
 
     savedPassword: {
-        color: BaseTheme.palette.text06
+        color: BaseTheme.palette.text01
     },
 
     passwordInput: {
         borderColor: BaseTheme.palette.action03Active,
         borderRadius: BaseTheme.spacing[1],
         borderWidth: 2,
+        color: BaseTheme.palette.text01,
         height: BaseTheme.spacing[6],
         marginTop: BaseTheme.spacing[2],
         paddingLeft: BaseTheme.spacing[1],
@@ -87,12 +99,12 @@ export default {
     },
 
     passwordSetRemotelyText: {
-        color: BaseTheme.palette.text06,
+        color: BaseTheme.palette.text01,
         marginTop: 22
     },
 
     passwordSetRemotelyTextDisabled: {
-        color: BaseTheme.palette.text03,
+        color: BaseTheme.palette.text02,
         marginTop: 22
     }
 };
