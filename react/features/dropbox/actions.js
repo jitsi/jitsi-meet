@@ -1,5 +1,5 @@
 // @flow
-import { UPDATE_DROPBOX_TOKEN } from './actionTypes';
+import { UPDATE_DROPBOX_TOKEN } from './actionTypes.ts';
 import { _authorizeDropbox } from './functions';
 import logger from './logger';
 

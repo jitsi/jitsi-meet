@@ -2,7 +2,7 @@
 
 import { ReducerRegistry } from '../base/redux';
 
-import { OPEN_WEB_APP } from './actionTypes';
+import { OPEN_WEB_APP } from './actionTypes.ts';
 
 ReducerRegistry.register('features/deep-linking', (state = {}, action) => {
     switch (action.type) {

@@ -8,7 +8,7 @@ import {
     SET_RECEIVER_ENABLED,
     SET_RECEIVER_TRANSPORT,
     SET_REQUESTED_PARTICIPANT
-} from './actionTypes';
+} from './actionTypes.ts';
 
 /**
  * The default state.

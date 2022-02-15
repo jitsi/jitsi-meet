@@ -2,7 +2,7 @@
 
 import { ReducerRegistry } from '../base/redux';
 
-import { RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS, SET_DISABLE_BUTTON } from './actionTypes';
+import { RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS, SET_DISABLE_BUTTON } from './actionTypes.ts';
 
 const initialState = {};
 

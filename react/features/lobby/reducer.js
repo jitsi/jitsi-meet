@@ -12,7 +12,7 @@ import {
     SET_LOBBY_PARTICIPANT_CHAT_STATE,
     SET_LOBBY_VISIBILITY,
     SET_PASSWORD_JOIN_FAILED
-} from './actionTypes';
+} from './actionTypes.ts';
 
 const DEFAULT_STATE = {
     knocking: false,

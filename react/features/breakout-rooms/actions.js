@@ -29,7 +29,7 @@ import {
     showNotification
 } from '../notifications';
 
-import { _RESET_BREAKOUT_ROOMS, _UPDATE_ROOM_COUNTER } from './actionTypes';
+import { _RESET_BREAKOUT_ROOMS, _UPDATE_ROOM_COUNTER } from './actionTypes.ts';
 import { FEATURE_KEY } from './constants';
 import {
     getBreakoutRooms,

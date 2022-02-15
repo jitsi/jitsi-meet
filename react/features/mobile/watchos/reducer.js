@@ -2,7 +2,7 @@
 
 import { assign, ReducerRegistry } from '../../base/redux';
 
-import { SET_CONFERENCE_TIMESTAMP, SET_SESSION_ID, SET_WATCH_REACHABLE } from './actionTypes';
+import { SET_CONFERENCE_TIMESTAMP, SET_SESSION_ID, SET_WATCH_REACHABLE } from './actionTypes.ts';
 
 const INITIAL_STATE = {
     sessionID: new Date().getTime()

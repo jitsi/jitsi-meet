@@ -2,7 +2,7 @@
 
 import type { Dispatch } from 'redux';
 
-import { SET_MAX_RECEIVER_VIDEO_QUALITY, SET_PREFERRED_VIDEO_QUALITY } from './actionTypes';
+import { SET_MAX_RECEIVER_VIDEO_QUALITY, SET_PREFERRED_VIDEO_QUALITY } from './actionTypes.ts';
 import { VIDEO_QUALITY_LEVELS } from './constants';
 import logger from './logger';
 

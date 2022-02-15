@@ -1,4 +1,4 @@
-import { SETTINGS_UPDATED } from './actionTypes';
+import { SETTINGS_UPDATED } from './actionTypes.ts';
 
 /**
  * Create an action for when the settings are updated.

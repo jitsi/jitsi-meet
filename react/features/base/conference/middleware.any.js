@@ -38,7 +38,7 @@ import {
     SEND_TONES,
     SET_PENDING_SUBJECT_CHANGE,
     SET_ROOM
-} from './actionTypes';
+} from './actionTypes.ts';
 import {
     conferenceFailed,
     conferenceWillLeave,

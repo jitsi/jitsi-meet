@@ -8,7 +8,7 @@ import {
     RECEIVE_POLL,
     REGISTER_VOTE,
     RETRACT_VOTE
-} from './actionTypes';
+} from './actionTypes.ts';
 import type { Answer, Poll } from './types';
 
 /**

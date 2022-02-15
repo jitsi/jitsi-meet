@@ -3,7 +3,7 @@
 import { hideDialog, openDialog } from '../base/dialog';
 import { MiddlewareRegistry } from '../base/redux';
 
-import { BEGIN_ADD_PEOPLE, HIDE_ADD_PEOPLE_DIALOG } from './actionTypes';
+import { BEGIN_ADD_PEOPLE, HIDE_ADD_PEOPLE_DIALOG } from './actionTypes.ts';
 import { AddPeopleDialog } from './components';
 import './middleware.any';
 

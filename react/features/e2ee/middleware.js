@@ -17,7 +17,7 @@ import {
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
 
-import { SET_MEDIA_ENCRYPTION_KEY, TOGGLE_E2EE } from './actionTypes';
+import { SET_MEDIA_ENCRYPTION_KEY, TOGGLE_E2EE } from './actionTypes.ts';
 import { setE2EEMaxMode, setEveryoneEnabledE2EE, setEveryoneSupportE2EE, toggleE2EE } from './actions';
 import { E2EE_OFF_SOUND_ID, E2EE_ON_SOUND_ID, MAX_MODE } from './constants';
 import { isMaxModeReached, isMaxModeThresholdReached } from './functions';

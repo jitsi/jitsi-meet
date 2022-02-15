@@ -2,7 +2,7 @@ import { ReducerRegistry } from '../base/redux';
 
 import {
     SET_DETAILS
-} from './actionTypes';
+} from './actionTypes.ts';
 import { STATUSES } from './constants';
 
 const DEFAULT_STATE = {

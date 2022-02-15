@@ -5,7 +5,7 @@ import type { Dispatch } from 'redux';
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 import { getParticipantById } from '../base/participants/functions';
 
-import { OPEN_CHAT } from './actionTypes';
+import { OPEN_CHAT } from './actionTypes.ts';
 import { closeChat } from './actions.any';
 
 export * from './actions.any';

@@ -2,7 +2,7 @@
 
 import { ReducerRegistry } from '../../base/redux';
 
-import { SCREEN_SHARE_PARTICIPANTS_UPDATED } from './actionTypes';
+import { SCREEN_SHARE_PARTICIPANTS_UPDATED } from './actionTypes.ts';
 
 const DEFAULT_STATE = {
     screenShares: []

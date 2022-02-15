@@ -17,7 +17,7 @@ import {
     SET_VIDEO_UNMUTE_PERMISSIONS,
     STORE_VIDEO_TRANSFORM,
     TOGGLE_CAMERA_FACING_MODE
-} from './actionTypes';
+} from './actionTypes.ts';
 import {
     MEDIA_TYPE,
     type MediaType,

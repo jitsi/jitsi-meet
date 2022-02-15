@@ -1,6 +1,6 @@
 /* @flow */
 
-import { SET_CONNECTION_STATE } from './actionTypes';
+import { SET_CONNECTION_STATE } from './actionTypes.ts';
 
 // eslint-disable-next-line jsdoc/require-description-complete-sentence
 /**

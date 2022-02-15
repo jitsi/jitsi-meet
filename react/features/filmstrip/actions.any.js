@@ -5,7 +5,7 @@ import {
     SET_FILMSTRIP_VISIBLE,
     SET_REMOTE_PARTICIPANTS,
     SET_VISIBLE_REMOTE_PARTICIPANTS
-} from './actionTypes';
+} from './actionTypes.ts';
 
 /**
  * Sets whether the filmstrip is enabled.

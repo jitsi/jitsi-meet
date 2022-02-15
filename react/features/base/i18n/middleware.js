@@ -1,9 +1,9 @@
 // @flow
 
-import { SET_DYNAMIC_BRANDING_DATA } from '../../dynamic-branding/actionTypes';
+import { SET_DYNAMIC_BRANDING_DATA } from '../../dynamic-branding/actionTypes.ts';
 import { MiddlewareRegistry } from '../redux';
 
-import { I18NEXT_INITIALIZED, LANGUAGE_CHANGED } from './actionTypes';
+import { I18NEXT_INITIALIZED, LANGUAGE_CHANGED } from './actionTypes.ts';
 import { changeLanguageBundle } from './functions';
 import i18next from './i18next';
 import logger from './logger';

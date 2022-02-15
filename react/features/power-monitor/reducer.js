@@ -6,7 +6,7 @@ import { ReducerRegistry, set } from '../base/redux';
 import {
     SET_TRANSPORT,
     SUSPEND_DETECTED
-} from './actionTypes';
+} from './actionTypes.ts';
 
 /**
  * Reduces the redux actions of the feature power monitor.

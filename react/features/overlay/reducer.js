@@ -7,7 +7,7 @@ import {
     MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
     SET_FATAL_ERROR,
     TOGGLE_SLOW_GUM_OVERLAY
-} from './actionTypes';
+} from './actionTypes.ts';
 
 /**
  * Reduces the redux actions of the feature overlay.

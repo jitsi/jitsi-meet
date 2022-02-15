@@ -1,6 +1,6 @@
 // @flow
 
-import { OPEN_CHAT } from './actionTypes';
+import { OPEN_CHAT } from './actionTypes.ts';
 
 export * from './actions.any';
 

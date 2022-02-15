@@ -11,7 +11,7 @@ import {
     HIDE_NOTIFICATION,
     SET_NOTIFICATIONS_ENABLED,
     SHOW_NOTIFICATION
-} from './actionTypes';
+} from './actionTypes.ts';
 import {
     NOTIFICATION_ICON,
     NOTIFICATION_TIMEOUT_TYPE,

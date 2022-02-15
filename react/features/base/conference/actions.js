@@ -62,7 +62,7 @@ import {
     SET_PENDING_SUBJECT_CHANGE,
     SET_START_MUTED_POLICY,
     SET_START_REACTIONS_MUTED
-} from './actionTypes';
+} from './actionTypes.ts';
 import {
     AVATAR_URL_COMMAND,
     EMAIL_COMMAND,

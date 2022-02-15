@@ -7,7 +7,7 @@ import {
     SET_PENDING_RECORDING_NOTIFICATION_UID,
     SET_SELECTED_RECORDING_SERVICE,
     SET_STREAM_KEY
-} from './actionTypes';
+} from './actionTypes.ts';
 
 const DEFAULT_STATE = {
     disableHighlightMeetingMoment: false,

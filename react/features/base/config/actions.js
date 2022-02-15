@@ -12,7 +12,7 @@ import {
     SET_CONFIG,
     UPDATE_CONFIG,
     OVERWRITE_CONFIG
-} from './actionTypes';
+} from './actionTypes.ts';
 import { _CONFIG_STORE_PREFIX } from './constants';
 import { setConfigFromURLParams } from './functions';
 

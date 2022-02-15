@@ -5,7 +5,7 @@ import type { Dispatch } from 'redux';
 import UIEvents from '../../../../service/UI/UIEvents';
 import { createAudioOnlyChangedEvent, sendAnalytics } from '../../analytics';
 
-import { SET_AUDIO_ONLY } from './actionTypes';
+import { SET_AUDIO_ONLY } from './actionTypes.ts';
 import logger from './logger';
 
 

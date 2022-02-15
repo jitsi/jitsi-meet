@@ -2,7 +2,7 @@
 
 import { MiddlewareRegistry } from '../../base/redux';
 
-import { CLIENT_RESIZED } from './actionTypes';
+import { CLIENT_RESIZED } from './actionTypes.ts';
 import { setAspectRatio, setReducedUI } from './actions';
 
 

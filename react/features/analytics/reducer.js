@@ -2,7 +2,7 @@
 
 import { ReducerRegistry } from '../base/redux';
 
-import { UPDATE_LOCAL_TRACKS_DURATION } from './actionTypes';
+import { UPDATE_LOCAL_TRACKS_DURATION } from './actionTypes.ts';
 
 /**
  * Initial state.

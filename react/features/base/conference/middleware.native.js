@@ -4,7 +4,7 @@ import { setPictureInPictureDisabled } from '../../mobile/picture-in-picture/fun
 import { setAudioOnly } from '../audio-only';
 import JitsiMeetJS from '../lib-jitsi-meet';
 import { MiddlewareRegistry } from '../redux';
-import { TOGGLE_SCREENSHARING } from '../tracks/actionTypes';
+import { TOGGLE_SCREENSHARING } from '../tracks/actionTypes.ts';
 import { destroyLocalDesktopTrackIfExists, replaceLocalTrack } from '../tracks/actions';
 import { getLocalVideoTrack, isLocalVideoTrackDesktop } from '../tracks/functions';
 

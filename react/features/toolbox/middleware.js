@@ -6,7 +6,7 @@ import {
     CLEAR_TOOLBOX_TIMEOUT,
     SET_TOOLBOX_TIMEOUT,
     SET_FULL_SCREEN
-} from './actionTypes';
+} from './actionTypes.ts';
 
 
 declare var APP: Object;

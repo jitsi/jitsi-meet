@@ -11,13 +11,13 @@ import {
     getLocalParticipant
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
-import { PARTICIPANTS_PANE_OPEN } from '../participants-pane/actionTypes';
+import { PARTICIPANTS_PANE_OPEN } from '../participants-pane/actionTypes.ts';
 
 import {
     CLEAR_NOTIFICATIONS,
     HIDE_NOTIFICATION,
     SHOW_NOTIFICATION
-} from './actionTypes';
+} from './actionTypes.ts';
 import {
     clearNotifications,
     hideNotification,

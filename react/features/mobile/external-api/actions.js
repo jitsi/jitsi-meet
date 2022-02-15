@@ -3,7 +3,7 @@
 import {
     READY_TO_CLOSE,
     SCREEN_SHARE_PARTICIPANTS_UPDATED
-} from './actionTypes';
+} from './actionTypes.ts';
 
 /**
  * Creates a (redux) action which signals that the SDK is ready to be closed.

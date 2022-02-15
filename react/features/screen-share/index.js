@@ -1,6 +1,6 @@
 
 export * from './actions';
-export * from './actionTypes';
+export * from './actionTypes.ts';
 export * from './components';
 export * from './functions';
 

@@ -5,7 +5,7 @@ import { ReducerRegistry } from '../base/redux';
 import {
     SET_AUDIO_SETTINGS_VISIBILITY,
     SET_VIDEO_SETTINGS_VISIBILITY
-} from './actionTypes';
+} from './actionTypes.ts';
 
 ReducerRegistry.register('features/settings', (state = {}, action) => {
     switch (action.type) {

@@ -20,7 +20,7 @@ import {
     unregisterSound
 } from '../base/sounds';
 
-import { RECORDING_SESSION_UPDATED } from './actionTypes';
+import { RECORDING_SESSION_UPDATED } from './actionTypes.ts';
 import {
     clearRecordingSessions,
     hidePendingRecordingNotification,

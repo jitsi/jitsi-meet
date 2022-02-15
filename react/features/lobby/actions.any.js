@@ -24,7 +24,7 @@ import {
     SET_LOBBY_VISIBILITY,
     SET_LOBBY_PARTICIPANT_CHAT_STATE,
     REMOVE_LOBBY_CHAT_WITH_MODERATOR
-} from './actionTypes';
+} from './actionTypes.ts';
 import { LOBBY_CHAT_INITIALIZED, MODERATOR_IN_CHAT_WITH_LEFT } from './constants';
 import { getKnockingParticipants, getLobbyEnabled } from './functions';
 
@@ -219,7 +219,6 @@ export function startKnocking() {
         sendLocalParticipant(state, membersOnly);
 
         membersOnly.joinLobby(localParticipant.name, localParticipant.email);
-        dispatch(setLobbyMessageListener());
         dispatch(setKnockingState(true));
     };
 }

@@ -2,7 +2,7 @@
 
 import { PersistenceRegistry, ReducerRegistry } from '../base/redux';
 
-import { BACKGROUND_ENABLED, SET_VIRTUAL_BACKGROUND } from './actionTypes';
+import { BACKGROUND_ENABLED, SET_VIRTUAL_BACKGROUND } from './actionTypes.ts';
 import { VIRTUAL_BACKGROUND_TYPE } from './constants';
 
 const STORE_NAME = 'features/virtual-background';

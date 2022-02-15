@@ -13,7 +13,7 @@ import {
     SET_OVERFLOW_MENU_VISIBLE,
     SET_TOOLBAR_HOVERED,
     SET_TOOLBOX_TIMEOUT
-} from './actionTypes';
+} from './actionTypes.ts';
 import { setToolboxVisible } from './actions';
 import { getToolbarTimeout } from './functions';
 

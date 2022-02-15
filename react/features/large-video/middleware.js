@@ -13,7 +13,7 @@ import {
     TRACK_ADDED,
     TRACK_REMOVED
 } from '../base/tracks';
-import { TOGGLE_DOCUMENT_EDITING } from '../etherpad/actionTypes';
+import { TOGGLE_DOCUMENT_EDITING } from '../etherpad/actionTypes.ts';
 
 import { selectParticipantInLargeVideo } from './actions';
 import logger from './logger';

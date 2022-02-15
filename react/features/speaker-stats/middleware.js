@@ -5,14 +5,14 @@ import {
     PARTICIPANT_KICKED,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED
-} from '../base/participants/actionTypes';
+} from '../base/participants/actionTypes.ts';
 import { MiddlewareRegistry } from '../base/redux';
 
 import {
     INIT_SEARCH,
     INIT_UPDATE_STATS,
     RESET_SEARCH_CRITERIA
-} from './actionTypes';
+} from './actionTypes.ts';
 import { initReorderStats, updateStats } from './actions';
 import { filterBySearchCriteria, getSortedSpeakerStats, getPendingReorder, resetHiddenStats } from './functions';
 

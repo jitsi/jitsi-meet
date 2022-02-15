@@ -6,7 +6,7 @@ import { getName } from '../app/functions';
 import { MiddlewareRegistry } from '../base/redux';
 import { getShareInfoText } from '../invite';
 
-import { BEGIN_SHARE_ROOM } from './actionTypes';
+import { BEGIN_SHARE_ROOM } from './actionTypes.ts';
 import { endShareRoom } from './actions';
 import logger from './logger';
 

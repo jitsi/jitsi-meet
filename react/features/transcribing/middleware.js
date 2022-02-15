@@ -9,7 +9,7 @@ import {
 } from './../base/participants';
 import {
     _TRANSCRIBER_LEFT
-} from './actionTypes';
+} from './actionTypes.ts';
 import {
     hidePendingTranscribingNotification,
     potentialTranscriberJoined,

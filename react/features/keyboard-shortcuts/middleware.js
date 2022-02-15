@@ -2,7 +2,7 @@
 
 import { MiddlewareRegistry } from '../base/redux';
 
-import { OPEN_KEYBOARD_SHORTCUTS_DIALOG } from './actionTypes';
+import { OPEN_KEYBOARD_SHORTCUTS_DIALOG } from './actionTypes.ts';
 
 declare var APP: Object;
 

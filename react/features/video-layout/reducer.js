@@ -6,7 +6,7 @@ import {
     FAKE_SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
     SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
     SET_TILE_VIEW
-} from './actionTypes';
+} from './actionTypes.ts';
 
 const DEFAULT_STATE = {
     remoteScreenShares: [],

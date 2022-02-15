@@ -1,6 +1,6 @@
 // @flow
 
-import { SET_DETAILS } from './actionTypes';
+import { SET_DETAILS } from './actionTypes.ts';
 import { getVpaasTenant, sendGetDetailsRequest } from './functions';
 import logger from './logger';
 

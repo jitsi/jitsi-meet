@@ -1,6 +1,6 @@
 // @flow
 
-import { ADD_KNOWN_DOMAINS } from './actionTypes';
+import { ADD_KNOWN_DOMAINS } from './actionTypes.ts';
 
 /**
  * Creates a (redux) action to add known domains to the list of domains known to

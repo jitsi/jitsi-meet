@@ -13,7 +13,7 @@ import {
     SET_CALENDAR_INTEGRATION,
     SET_CALENDAR_PROFILE_EMAIL,
     SET_LOADING_CALENDAR_EVENTS
-} from './actionTypes';
+} from './actionTypes.ts';
 import { refreshCalendar, setCalendarEvents } from './actions';
 import { _getCalendarIntegration, isCalendarEnabled } from './functions';
 import logger from './logger';

@@ -2,7 +2,7 @@
 
 import { equals, ReducerRegistry } from '../redux';
 
-import { SET_JWT } from './actionTypes';
+import { SET_JWT } from './actionTypes.ts';
 
 /**
  * Reduces redux actions which affect the JSON Web Token (JWT) stored in the

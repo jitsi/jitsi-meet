@@ -20,8 +20,13 @@ import {
     SET_PENDING_RECORDING_NOTIFICATION_UID,
     SET_SELECTED_RECORDING_SERVICE,
     SET_STREAM_KEY
-} from './actionTypes';
-import { getRecordingLink, getResourceId, isSavingRecordingOnDropbox, sendMeetingHighlight } from './functions';
+} from './actionTypes.ts';
+import {
+    getRecordingLink,
+    getResourceId,
+    isSavingRecordingOnDropbox,
+    sendMeetingHighlight
+} from './functions';
 import logger from './logger';
 
 declare var APP: Object;

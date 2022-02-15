@@ -5,7 +5,7 @@ import { MiddlewareRegistry } from '../base/redux';
 import {
     ENDPOINT_MESSAGE_RECEIVED,
     TOGGLE_REQUESTING_SUBTITLES
-} from './actionTypes';
+} from './actionTypes.ts';
 import {
     removeTranscriptMessage,
     updateTranscriptMessage

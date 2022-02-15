@@ -1,6 +1,6 @@
 // @flow
 
-import { SET_NETWORK_INFO, _STORE_NETWORK_INFO_CLEANUP } from './actionTypes';
+import { SET_NETWORK_INFO, _STORE_NETWORK_INFO_CLEANUP } from './actionTypes.ts';
 import type { NetworkInfo } from './types';
 
 /**

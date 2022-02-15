@@ -28,7 +28,7 @@ import { open as openParticipantsPane } from '../participants-pane/actions';
 import { getParticipantsPaneOpen } from '../participants-pane/functions';
 import { shouldAutoKnock } from '../prejoin/functions';
 
-import { KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED, KNOCKING_PARTICIPANT_LEFT } from './actionTypes';
+import { KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED, KNOCKING_PARTICIPANT_LEFT } from './actionTypes.ts';
 import {
     hideLobbyScreen,
     knockingParticipantLeft,

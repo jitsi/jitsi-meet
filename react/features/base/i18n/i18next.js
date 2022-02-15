@@ -10,7 +10,7 @@ import _ from 'lodash';
 import LANGUAGES_RESOURCES from '../../../../lang/languages.json';
 import MAIN_RESOURCES from '../../../../lang/main.json';
 
-import { I18NEXT_INITIALIZED, LANGUAGE_CHANGED } from './actionTypes';
+import { I18NEXT_INITIALIZED, LANGUAGE_CHANGED } from './actionTypes.ts';
 import languageDetector from './languageDetector';
 
 /**

@@ -2,7 +2,7 @@
 
 import { ReducerRegistry } from '../redux';
 
-import { SET_AUDIO_ONLY } from './actionTypes';
+import { SET_AUDIO_ONLY } from './actionTypes.ts';
 
 
 const DEFAULT_STATE = {

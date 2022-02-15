@@ -16,7 +16,7 @@ import {
 import {
     SIP_GW_AVAILABILITY_CHANGED,
     SIP_GW_INVITE_ROOMS
-} from './actionTypes';
+} from './actionTypes.ts';
 import logger from './logger';
 
 /**

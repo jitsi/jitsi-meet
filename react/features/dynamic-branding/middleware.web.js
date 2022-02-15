@@ -3,7 +3,7 @@
 import { APP_WILL_MOUNT } from '../base/app';
 import { MiddlewareRegistry } from '../base/redux';
 
-import { SET_DYNAMIC_BRANDING_DATA } from './actionTypes';
+import { SET_DYNAMIC_BRANDING_DATA } from './actionTypes.ts';
 import { fetchCustomBrandingData } from './actions';
 import { createMuiBrandingTheme } from './functions.web';
 

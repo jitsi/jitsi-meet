@@ -1,6 +1,6 @@
 // @flow
 
-import { _SET_APP_STATE_LISTENER, APP_STATE_CHANGED } from './actionTypes';
+import { _SET_APP_STATE_LISTENER, APP_STATE_CHANGED } from './actionTypes.ts';
 
 /**
  * Sets the listener to be used with React Native's AppState API.

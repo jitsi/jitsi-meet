@@ -4,7 +4,7 @@ import _ from 'lodash';
 
 import { ReducerRegistry } from '../redux';
 
-import { UPDATE_FLAGS } from './actionTypes';
+import { UPDATE_FLAGS } from './actionTypes.ts';
 
 /**
  * Default state value for the feature flags.

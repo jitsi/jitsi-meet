@@ -2,7 +2,7 @@
 
 import { equals, ReducerRegistry, set } from '../redux';
 
-import { SET_LOG_COLLECTOR, SET_LOGGING_CONFIG } from './actionTypes';
+import { SET_LOG_COLLECTOR, SET_LOGGING_CONFIG } from './actionTypes.ts';
 
 // eslint-disable-next-line
 const LOGGING_CONFIG = require('../../../../logging_config.js');

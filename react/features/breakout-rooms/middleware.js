@@ -5,7 +5,7 @@ import { getParticipantById } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { editMessage, MESSAGE_TYPE_REMOTE } from '../chat';
 
-import { UPDATE_BREAKOUT_ROOMS } from './actionTypes';
+import { UPDATE_BREAKOUT_ROOMS } from './actionTypes.ts';
 import { moveToRoom } from './actions';
 import { getBreakoutRooms } from './functions';
 import logger from './logger';

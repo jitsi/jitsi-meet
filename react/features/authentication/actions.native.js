@@ -7,7 +7,7 @@ import { conferenceLeft } from '../base/conference/actions';
 import { connectionFailed } from '../base/connection/actions.native';
 import { set } from '../base/redux';
 
-import { CANCEL_LOGIN } from './actionTypes';
+import { CANCEL_LOGIN } from './actionTypes.ts';
 import { stopWaitForOwner } from './actions.any';
 
 export * from './actions.any';

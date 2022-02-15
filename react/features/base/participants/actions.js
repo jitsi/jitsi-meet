@@ -18,7 +18,7 @@ import {
     PIN_PARTICIPANT,
     SET_LOADABLE_AVATAR_URL,
     RAISE_HAND_UPDATED
-} from './actionTypes';
+} from './actionTypes.ts';
 import {
     DISCO_REMOTE_CONTROL_FEATURE
 } from './constants';

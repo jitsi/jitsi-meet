@@ -6,7 +6,7 @@ import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 import { MEDIA_TYPE } from '../base/media';
 import { getTrackByMediaTypeAndParticipant } from '../base/tracks';
 
-import { UPDATE_LAST_LARGE_VIDEO_MEDIA_EVENT } from './actionTypes';
+import { UPDATE_LAST_LARGE_VIDEO_MEDIA_EVENT } from './actionTypes.ts';
 
 export * from './actions.any';
 

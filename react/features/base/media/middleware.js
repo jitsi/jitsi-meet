@@ -34,13 +34,8 @@ import {
     SET_SCREENSHARE_MUTED,
     SET_VIDEO_MUTED,
     SET_VIDEO_UNMUTE_PERMISSIONS
-} from './actionTypes';
-import {
-    setAudioMuted,
-    setCameraFacingMode,
-    setScreenshareMuted,
-    setVideoMuted
-} from './actions';
+} from './actionTypes.ts';
+import { setAudioMuted, setCameraFacingMode, setScreenshareMuted, setVideoMuted } from './actions';
 import {
     CAMERA_FACING_MODE,
     MEDIA_TYPE,

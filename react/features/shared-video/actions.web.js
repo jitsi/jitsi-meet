@@ -1,6 +1,6 @@
 // @flow
 
-import { SET_DISABLE_BUTTON } from './actionTypes';
+import { SET_DISABLE_BUTTON } from './actionTypes.ts';
 
 export * from './actions.any';
 

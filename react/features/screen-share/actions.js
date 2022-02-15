@@ -10,7 +10,7 @@ import {
     SET_SCREEN_AUDIO_SHARE_STATE,
     SET_SCREENSHARE_CAPTURE_FRAME_RATE,
     SET_SCREENSHARE_TRACKS
-} from './actionTypes';
+} from './actionTypes.ts';
 import { ShareAudioDialog } from './components';
 import ShareMediaWarningDialog from './components/ShareScreenWarningDialog';
 import { isAudioOnlySharing, isScreenVideoShared } from './functions';

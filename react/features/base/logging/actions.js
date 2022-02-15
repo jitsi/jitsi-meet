@@ -1,6 +1,6 @@
 /* @flow */
 
-import { SET_LOG_COLLECTOR, SET_LOGGING_CONFIG } from './actionTypes';
+import { SET_LOG_COLLECTOR, SET_LOGGING_CONFIG } from './actionTypes.ts';
 
 /**
  * Stores a {@code Logger.LogCollector} instance which will be uploading logs

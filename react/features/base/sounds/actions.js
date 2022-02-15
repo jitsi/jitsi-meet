@@ -9,7 +9,7 @@ import {
     REGISTER_SOUND,
     STOP_SOUND,
     UNREGISTER_SOUND
-} from './actionTypes';
+} from './actionTypes.ts';
 import { getSoundsPath } from './functions';
 import { getDisabledSounds } from './functions.any';
 

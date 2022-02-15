@@ -6,7 +6,7 @@ import {
     LIB_DID_DISPOSE,
     LIB_DID_INIT,
     LIB_INIT_ERROR
-} from './actionTypes';
+} from './actionTypes.ts';
 
 /**
  * The default/initial redux state of the feature base/lib-jitsi-meet.

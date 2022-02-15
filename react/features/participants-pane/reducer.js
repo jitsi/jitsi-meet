@@ -4,7 +4,7 @@ import {
     PARTICIPANTS_PANE_CLOSE,
     PARTICIPANTS_PANE_OPEN,
     SET_VOLUME
-} from './actionTypes';
+} from './actionTypes.ts';
 import { REDUCER_KEY } from './constants';
 
 const DEFAULT_STATE = {

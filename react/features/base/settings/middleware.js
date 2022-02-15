@@ -1,17 +1,17 @@
 // @flow
 import _ from 'lodash';
 
-import { PREJOIN_INITIALIZED } from '../../prejoin/actionTypes';
+import { PREJOIN_INITIALIZED } from '../../prejoin/actionTypes.ts';
 import { setPrejoinPageVisibility } from '../../prejoin/actions';
 import { APP_WILL_MOUNT } from '../app';
 import { setAudioOnly } from '../audio-only';
-import { SET_LOCATION_URL } from '../connection/actionTypes'; // minimize imports to avoid circular imports
+import { SET_LOCATION_URL } from '../connection/actionTypes.ts'; // minimize imports to avoid circular imports
 import { getJwtName } from '../jwt/functions';
 import { getLocalParticipant, participantUpdated } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 import { parseURLParams } from '../util';
 
-import { SETTINGS_UPDATED } from './actionTypes';
+import { SETTINGS_UPDATED } from './actionTypes.ts';
 import { updateSettings } from './actions';
 import { handleCallIntegrationChange, handleCrashReportingChange } from './functions';
 

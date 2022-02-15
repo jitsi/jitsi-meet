@@ -5,7 +5,7 @@ import {
     SET_FATAL_ERROR,
     SET_PAGE_RELOAD_OVERLAY_CANCELED,
     TOGGLE_SLOW_GUM_OVERLAY
-} from './actionTypes';
+} from './actionTypes.ts';
 
 /**
  * Signals that the prompt for media permission is visible or not.

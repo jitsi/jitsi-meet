@@ -2,7 +2,7 @@
 
 import { ReducerRegistry, set } from '../base/redux';
 
-import { SET_NOISY_AUDIO_INPUT_NOTIFICATION_UID } from './actionTypes';
+import { SET_NOISY_AUDIO_INPUT_NOTIFICATION_UID } from './actionTypes.ts';
 
 /**
  * Reduces the redux actions of noise detection feature.

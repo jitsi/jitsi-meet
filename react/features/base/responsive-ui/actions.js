@@ -7,7 +7,7 @@ import { CHAT_SIZE } from '../../chat/constants';
 import { getParticipantsPaneOpen } from '../../participants-pane/functions';
 import theme from '../components/themes/participantsPaneTheme.json';
 
-import { CLIENT_RESIZED, SET_ASPECT_RATIO, SET_CONTEXT_MENU_OPEN, SET_REDUCED_UI } from './actionTypes';
+import { CLIENT_RESIZED, SET_ASPECT_RATIO, SET_CONTEXT_MENU_OPEN, SET_REDUCED_UI } from './actionTypes.ts';
 import { ASPECT_RATIO_NARROW, ASPECT_RATIO_WIDE } from './constants';
 
 /**

@@ -4,7 +4,7 @@ import {
     SET_DOCUMENT_EDITING_STATUS,
     SET_DOCUMENT_URL,
     TOGGLE_DOCUMENT_EDITING
-} from './actionTypes';
+} from './actionTypes.ts';
 
 /**
  * Dispatches an action to set whether document editing has started or stopped.

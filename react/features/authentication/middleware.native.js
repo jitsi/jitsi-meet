@@ -21,7 +21,7 @@ import {
     STOP_WAIT_FOR_OWNER,
     UPGRADE_ROLE_FINISHED,
     WAIT_FOR_OWNER
-} from './actionTypes';
+} from './actionTypes.ts';
 import {
     openLoginDialog,
     openWaitForOwnerDialog,

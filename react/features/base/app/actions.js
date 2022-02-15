@@ -2,7 +2,7 @@
 
 import type { Dispatch } from 'redux';
 
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes.ts';
 
 declare var APP;
 

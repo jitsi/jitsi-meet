@@ -2,7 +2,7 @@
 
 import { ReducerRegistry } from '../redux';
 
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes.ts';
 
 ReducerRegistry.register('features/base/app', (state = {}, action) => {
     switch (action.type) {

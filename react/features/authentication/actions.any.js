@@ -9,7 +9,7 @@ import {
     STOP_WAIT_FOR_OWNER,
     UPGRADE_ROLE_FINISHED,
     UPGRADE_ROLE_STARTED, WAIT_FOR_OWNER
-} from './actionTypes';
+} from './actionTypes.ts';
 import { LoginDialog, WaitForOwnerDialog } from './components';
 import logger from './logger';
 

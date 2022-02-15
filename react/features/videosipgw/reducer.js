@@ -1,6 +1,6 @@
 import { ReducerRegistry } from '../base/redux';
 
-import { SIP_GW_AVAILABILITY_CHANGED } from './actionTypes';
+import { SIP_GW_AVAILABILITY_CHANGED } from './actionTypes.ts';
 
 ReducerRegistry.register(
     'features/videosipgw', (state = [], action) => {

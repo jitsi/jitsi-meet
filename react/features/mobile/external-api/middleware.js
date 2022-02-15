@@ -5,7 +5,7 @@ import { NativeEventEmitter, NativeModules } from 'react-native';
 
 import { ENDPOINT_TEXT_MESSAGE_NAME } from '../../../../modules/API/constants';
 import { appNavigate } from '../../app/actions';
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app/actionTypes';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app/actionTypes.ts';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
@@ -26,7 +26,7 @@ import {
 import {
     JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../base/media';
-import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
+import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes.ts';
 import {
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
@@ -39,11 +39,11 @@ import { toggleScreensharing } from '../../base/tracks';
 import { OPEN_CHAT, CLOSE_CHAT } from '../../chat';
 import { openChat } from '../../chat/actions';
 import { sendMessage, setPrivateMessageRecipient, closeChat } from '../../chat/actions.any';
-import { SET_PAGE_RELOAD_OVERLAY_CANCELED } from '../../overlay/actionTypes';
+import { SET_PAGE_RELOAD_OVERLAY_CANCELED } from '../../overlay/actionTypes.ts';
 import { muteLocal } from '../../video-menu/actions';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 
-import { READY_TO_CLOSE } from './actionTypes';
+import { READY_TO_CLOSE } from './actionTypes.ts';
 import { setParticipantsWithScreenShare } from './actions';
 import { sendEvent } from './functions';
 import logger from './logger';

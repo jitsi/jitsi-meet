@@ -9,7 +9,7 @@ import { FULLSCREEN_ENABLED, getFeatureFlag } from '../../base/flags';
 import { Platform } from '../../base/react';
 import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';
 
-import { _SET_IMMERSIVE_LISTENER } from './actionTypes';
+import { _SET_IMMERSIVE_LISTENER } from './actionTypes.ts';
 import { _setImmersiveListener as _setImmersiveListenerA } from './actions';
 
 /**

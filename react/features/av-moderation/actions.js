@@ -19,7 +19,7 @@ import {
     REQUEST_ENABLE_VIDEO_MODERATION,
     LOCAL_PARTICIPANT_REJECTED,
     PARTICIPANT_REJECTED
-} from './actionTypes';
+} from './actionTypes.ts';
 import { isEnabledFromState } from './functions';
 
 /**

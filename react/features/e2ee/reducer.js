@@ -7,7 +7,7 @@ import {
     SET_EVERYONE_SUPPORT_E2EE,
     SET_MAX_MODE,
     TOGGLE_E2EE
-} from './actionTypes';
+} from './actionTypes.ts';
 import { MAX_MODE } from './constants';
 
 const DEFAULT_STATE = {

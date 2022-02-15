@@ -23,7 +23,7 @@ import { GIF_PREFIX } from '../gifs/constants';
 import { getGifDisplayMode, isGifMessage } from '../gifs/functions';
 import { NOTIFICATION_TIMEOUT_TYPE, showMessageNotification } from '../notifications';
 import { resetNbUnreadPollsMessages } from '../polls/actions';
-import { ADD_REACTION_MESSAGE } from '../reactions/actionTypes';
+import { ADD_REACTION_MESSAGE } from '../reactions/actionTypes.ts';
 import { pushReactions } from '../reactions/actions.any';
 import { ENDPOINT_REACTION_NAME } from '../reactions/constants';
 import { getReactionMessageFromBuffer, isReactionsEnabled } from '../reactions/functions.any';
@@ -33,7 +33,7 @@ import {
 } from '../toolbox/actions';
 
 
-import { ADD_MESSAGE, SEND_MESSAGE, OPEN_CHAT, CLOSE_CHAT, SET_IS_POLL_TAB_FOCUSED } from './actionTypes';
+import { ADD_MESSAGE, SEND_MESSAGE, OPEN_CHAT, CLOSE_CHAT, SET_IS_POLL_TAB_FOCUSED } from './actionTypes.ts';
 import { addMessage, clearMessages } from './actions';
 import { closeChat } from './actions.any';
 import { ChatPrivacyDialog } from './components';

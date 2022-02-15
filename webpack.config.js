@@ -182,6 +182,10 @@ function getConfig(options = {}) {
                         expandProps: 'start'
                     }
                 } ]
+            }, {
+                test: /\.tsx?$/,
+                exclude: /node_modules/,
+                loader: 'ts-loader'
             } ]
         },
         node: {
@@ -220,7 +224,11 @@ function getConfig(options = {}) {
 
                 // Webpack defaults:
                 '.js',
-                '.json'
+                '.json',
+
+                // Typescript:
+                '.tsx',
+                '.ts'
             ],
             fallback: {
                 // Provide some empty Node modules (required by AtlasKit, olm).

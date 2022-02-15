@@ -16,4 +16,4 @@ react/features/face-landmarks/resources/*
 !.eslintrc.js
 
 # Not worth it.
-actionTypes.js
+actionTypes.ts

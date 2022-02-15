@@ -12,7 +12,7 @@ import {
 import { MiddlewareRegistry } from '../base/redux';
 import { destroyLocalTracks } from '../base/tracks';
 
-import { SUSPEND_DETECTED } from './actionTypes';
+import { SUSPEND_DETECTED } from './actionTypes.ts';
 import {
     setTransport,
     suspendDetected

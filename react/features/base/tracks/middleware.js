@@ -36,7 +36,7 @@ import {
     TRACK_REMOVED,
     TRACK_STOPPED,
     TRACK_UPDATED
-} from './actionTypes';
+} from './actionTypes.ts';
 import {
     createLocalTracksA,
     destroyLocalTracks,

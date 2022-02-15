@@ -11,7 +11,7 @@ import {
     TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT,
     TRACK_UPDATED,
     TRACK_WILL_CREATE
-} from './actionTypes';
+} from './actionTypes.ts';
 
 /**
  * Track type.

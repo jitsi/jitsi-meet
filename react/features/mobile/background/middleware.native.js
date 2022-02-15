@@ -6,7 +6,7 @@ import type { Dispatch } from 'redux';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app';
 import { MiddlewareRegistry } from '../../base/redux';
 
-import { _SET_APP_STATE_LISTENER } from './actionTypes';
+import { _SET_APP_STATE_LISTENER } from './actionTypes.ts';
 import {
     _setAppStateListener as _setAppStateListenerA,
     appStateChanged

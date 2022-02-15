@@ -14,7 +14,7 @@ import { isTestModeEnabled } from '../testing';
 import buildExternalApiLogTransport from './ExternalApiLogTransport';
 import JitsiMeetInMemoryLogStorage from './JitsiMeetInMemoryLogStorage';
 import JitsiMeetLogStorage from './JitsiMeetLogStorage';
-import { SET_LOGGING_CONFIG } from './actionTypes';
+import { SET_LOGGING_CONFIG } from './actionTypes.ts';
 import { setLogCollector } from './actions';
 
 declare var APP: Object;

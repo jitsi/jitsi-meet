@@ -15,7 +15,7 @@ import {
     isLocalParticipantModerator
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
-import { SETTINGS_UPDATED } from '../base/settings/actionTypes';
+import { SETTINGS_UPDATED } from '../base/settings/actionTypes.ts';
 import { updateSettings } from '../base/settings/actions';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { getDisabledSounds } from '../base/sounds/functions.any';
@@ -27,7 +27,7 @@ import {
     SEND_REACTIONS,
     PUSH_REACTIONS,
     SHOW_SOUNDS_NOTIFICATION
-} from './actionTypes';
+} from './actionTypes.ts';
 import { displayReactionSoundsNotification } from './actions';
 import {
     addReactionsToChat,

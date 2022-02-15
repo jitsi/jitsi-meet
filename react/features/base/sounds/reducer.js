@@ -8,7 +8,7 @@ import {
     _REMOVE_AUDIO_ELEMENT,
     REGISTER_SOUND,
     UNREGISTER_SOUND
-} from './actionTypes';
+} from './actionTypes.ts';
 import logger from './logger';
 
 /**

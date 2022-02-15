@@ -34,7 +34,7 @@ import {
 import {
     SET_CALLEE_INFO_VISIBLE,
     UPDATE_DIAL_IN_NUMBERS_FAILED
-} from './actionTypes';
+} from './actionTypes.ts';
 import {
     invite,
     removePendingInviteRequests,

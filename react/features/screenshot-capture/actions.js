@@ -3,7 +3,7 @@
 import { getLocalVideoTrack } from '../../features/base/tracks';
 
 
-import { SET_SCREENSHOT_CAPTURE } from './actionTypes';
+import { SET_SCREENSHOT_CAPTURE } from './actionTypes.ts';
 import { createScreenshotCaptureSummary } from './functions';
 import logger from './logger';
 

@@ -7,7 +7,7 @@ import {
     SET_AUDIO_INPUT_DEVICE,
     SET_VIDEO_INPUT_DEVICE,
     UPDATE_DEVICE_LIST
-} from './actionTypes';
+} from './actionTypes.ts';
 import { groupDevicesByKind } from './functions';
 import logger from './logger';
 

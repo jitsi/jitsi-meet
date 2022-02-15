@@ -11,7 +11,7 @@ import {
     LOAD_CONFIG_ERROR,
     SET_CONFIG,
     OVERWRITE_CONFIG
-} from './actionTypes';
+} from './actionTypes.ts';
 import { _cleanupConfig } from './functions';
 
 declare var interfaceConfig: Object;

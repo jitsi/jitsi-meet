@@ -3,7 +3,7 @@
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 import { ReducerRegistry } from '../redux';
 
-import { USER_INTERACTION_RECEIVED } from './actionTypes';
+import { USER_INTERACTION_RECEIVED } from './actionTypes.ts';
 
 ReducerRegistry.register('features/base/user-interaction', (state = {}, action) => {
     switch (action.type) {

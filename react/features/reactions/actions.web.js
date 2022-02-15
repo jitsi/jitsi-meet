@@ -3,7 +3,7 @@
 import {
     SHOW_SOUNDS_NOTIFICATION,
     TOGGLE_REACTIONS_VISIBLE
-} from './actionTypes';
+} from './actionTypes.ts';
 
 /**
  * Toggles the visibility of the reactions menu.

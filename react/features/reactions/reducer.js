@@ -8,7 +8,7 @@ import {
     ADD_REACTION_BUFFER,
     FLUSH_REACTION_BUFFER,
     SHOW_SOUNDS_NOTIFICATION
-} from './actionTypes';
+} from './actionTypes.ts';
 
 /**
  * Returns initial state for reactions' part of Redux store.

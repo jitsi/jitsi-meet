@@ -3,7 +3,7 @@ import { ReducerRegistry } from '../base/redux';
 import {
     REMOVE_TRANSCRIPT_MESSAGE, TOGGLE_REQUESTING_SUBTITLES,
     UPDATE_TRANSCRIPT_MESSAGE
-} from './actionTypes';
+} from './actionTypes.ts';
 
 /**
  * Default State for 'features/transcription' feature.

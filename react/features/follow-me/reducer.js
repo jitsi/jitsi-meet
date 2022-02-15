@@ -5,7 +5,7 @@ import { ReducerRegistry, set } from '../base/redux';
 import {
     SET_FOLLOW_ME_MODERATOR,
     SET_FOLLOW_ME_STATE
-} from './actionTypes';
+} from './actionTypes.ts';
 
 /**
  * Listen for actions that contain the Follow Me feature active state, so that it can be stored.

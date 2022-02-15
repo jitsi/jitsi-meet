@@ -2,7 +2,7 @@
 
 import { PersistenceRegistry, ReducerRegistry } from '../base/redux';
 
-import { UPDATE_DROPBOX_TOKEN } from './actionTypes';
+import { UPDATE_DROPBOX_TOKEN } from './actionTypes.ts';
 
 /**
  * The redux subtree of this feature.

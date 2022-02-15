@@ -8,7 +8,7 @@ import {
     UPGRADE_ROLE_FINISHED,
     UPGRADE_ROLE_STARTED,
     WAIT_FOR_OWNER
-} from './actionTypes';
+} from './actionTypes.ts';
 
 /**
  * Listens for actions which change the state of the authentication feature.
