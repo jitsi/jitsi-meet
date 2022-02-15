@@ -650,7 +650,7 @@
             "waitingLobby": "Esperando en el vestíbulo ({{count}})"
         }
     },
-    "passwordDigitsOnly": "Hasta {{number]] cifras",
+    "passwordDigitsOnly": "Hasta {{number}} cifras",
     "passwordSetRemotely": "Definida por otro participante",
     "polls": {
         "answer": {
