@@ -67,6 +67,8 @@ type Props = {
     onMouseLeave?: Function
 };
 
+const MAX_HEIGHT = 400;
+
 const useStyles = makeStyles(theme => {
     return {
         contextMenu: {
@@ -80,7 +82,9 @@ const useStyles = makeStyles(theme => {
             position: 'absolute',
             right: `${participantsPaneTheme.panePadding}px`,
             top: 0,
-            zIndex: 2
+            zIndex: 2,
+            maxHeight: `${MAX_HEIGHT}px`,
+            overflowY: 'auto'
         },
 
         contextMenuHidden: {
@@ -136,8 +140,9 @@ const ContextMenu = ({
             const { current: container } = containerRef;
             const { offsetTop, offsetParent: { offsetHeight, scrollTop } } = offsetTarget;
             const outerHeight = getComputedOuterHeight(container);
+            const height = Math.min(MAX_HEIGHT, outerHeight);
 
-            container.style.top = offsetTop + outerHeight > offsetHeight + scrollTop
+            container.style.top = offsetTop + height > offsetHeight + scrollTop
                 ? `${offsetTop - outerHeight}`
                 : `${offsetTop}`;
 
