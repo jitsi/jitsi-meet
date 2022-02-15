@@ -815,6 +815,9 @@ var config = {
         // The Google Analytics Tracking ID:
         // googleAnalyticsTrackingId: 'your-tracking-id-UA-123456-1'
 
+        // The Azure AppInsights Instrumentation Key:
+        // appInsightsInstrumentationKey: 'your-app-insights-instrumentation-key',
+
         // Matomo configuration:
         // matomoEndpoint: 'https://your-matomo-endpoint/',
         // matomoSiteID: '42',

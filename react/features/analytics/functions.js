@@ -13,7 +13,7 @@ import JitsiMeetJS, {
 } from '../base/lib-jitsi-meet';
 import { getJitsiMeetGlobalNS, loadScript, parseURIString } from '../base/util';
 
-import { AmplitudeHandler, MatomoHandler } from './handlers';
+import { AmplitudeHandler, AppInsightsHandler, MatomoHandler } from './handlers';
 import logger from './logger';
 
 /**
@@ -81,6 +81,7 @@ export async function createHandlers({ getState }: { getState: Function }) {
         blackListedEvents,
         scriptURLs,
         googleAnalyticsTrackingId,
+        appInsightsInstrumentationKey,
         matomoEndpoint,
         matomoSiteID,
         whiteListedEvents
@@ -91,6 +92,7 @@ export async function createHandlers({ getState }: { getState: Function }) {
         blackListedEvents,
         envType: (deploymentInfo && deploymentInfo.envType) || 'dev',
         googleAnalyticsTrackingId,
+        appInsightsInstrumentationKey,
         matomoEndpoint,
         matomoSiteID,
         group,
@@ -102,6 +104,17 @@ export async function createHandlers({ getState }: { getState: Function }) {
         whiteListedEvents
     };
     const handlers = [];
+
+    if (appInsightsInstrumentationKey) {
+        try {
+            const appInsights = new AppInsightsHandler(handlerConstructorOptions);
+            
+            handlers.push(appInsights);
+
+        } catch (e) {
+            logger.error('Failed to initialize AppInsights handler', e);
+        }
+    }
 
     if (amplitudeAPPKey) {
         try {
