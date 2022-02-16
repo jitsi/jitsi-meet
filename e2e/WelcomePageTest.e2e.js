@@ -30,7 +30,7 @@ describe('Jitsi Meet App', () => {
 
         await element(by.id('toggle-drawer-button')).tap();
         await waitFor(element(by.id('drawer-navigator'))).toBeVisible();
-        await element(by.label(screen.welcome.settings)).tap();
+        await element(by.text(screen.welcome.settings)).tap();
         await waitFor(element(by.id('display-name-input'))).toBeVisible();
         await element(by.id('display-name-input')).typeText(displayName);
         await element(by.id('header-back-nav-btn')).tap();
@@ -42,11 +42,10 @@ describe('Jitsi Meet App', () => {
     it('Mute audio/video', async () => {
         const roomName = uuidv4();
 
-        // Helps the app to move forward with the test execution
-        // when it navigates to the conference room
-        await device.disableSynchronization();
-
         await expect(element(by.id('room-name-input'))).toBeVisible();
+        // Helps the app to move forward with the test execution
+        // when it navigates to the conference room on Android
+        await device.disableSynchronization();
         await element(by.id('room-name-input')).tap();
         await element(by.id('room-name-input')).typeText(roomName);
         await element(by.id('join-room-button')).tap();
