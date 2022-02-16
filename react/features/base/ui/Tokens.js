@@ -36,6 +36,7 @@ export const colors = {
     surface12: '#AAAAAA',
     surface13: '#495258',
     surface14: '#555555',
+    surface15: '#474747',
 
     success04: '#189B55',
     success05: '#1EC26A',
@@ -69,6 +70,7 @@ export const colorMap = {
     ui05: 'surface06',
     ui12: 'surface11',
     ui13: 'surface14',
+    ui14: 'surface15',
 
     // Primary buttons
     action01: 'primary05',
@@ -200,6 +202,9 @@ export const colorMap = {
 
     // Color for the section divider
     dividerColor: 'surface12',
+
+    // Color for indicator
+    indicatorColor: 'surface12',
 
     // Background for high-contrast input fields on hover
     field02Hover: 'primary09',
