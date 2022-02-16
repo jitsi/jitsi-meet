@@ -6,7 +6,7 @@ export default {
         flex: 1,
         height: 'auto',
         paddingHorizontal: BaseTheme.spacing[3],
-        backgroundColor: BaseTheme.palette.ui02
+        backgroundColor: BaseTheme.palette.ui01
     },
     speakerStatsItemContainer: {
         flexDirection: 'row',
