@@ -44,7 +44,7 @@ describe('Jitsi Meet App', () => {
 
         await expect(element(by.id('room-name-input'))).toBeVisible();
         // Helps the app to move forward with the test execution
-        // when it navigates to the conference room on Android
+        // when it navigates to the conference room
         await device.disableSynchronization();
         await element(by.id('room-name-input')).tap();
         await element(by.id('room-name-input')).typeText(roomName);
