@@ -102,16 +102,29 @@ function _onFollowMeCommand(attributes = {}, id, store) {
 
     const participantSendingCommand = getParticipantById(state, id);
 
-    // The Command(s) API will send us our own commands and we don't want
-    // to act upon them.
-    if (participantSendingCommand.local) {
-        return;
-    }
+    if (participantSendingCommand) {
+        // The Command(s) API will send us our own commands and we don't want
+        // to act upon them.
+        if (participantSendingCommand.local) {
+            return;
+        }
 
-    if (participantSendingCommand.role !== 'moderator') {
-        logger.warn('Received follow-me command not from moderator');
+        if (participantSendingCommand.role !== 'moderator') {
+            logger.warn('Received follow-me command not from moderator');
 
-        return;
+            return;
+        }
+    } else {
+        const { iAmRecorder } = state['features/base/config'];
+        const { conference } = state['features/base/conference'];
+        const participant = conference.getParticipantById(id);
+
+        if (!iAmRecorder || !participant || participant.getRole() !== 'moderator'
+            || !participant.isHiddenFromRecorder()) {
+            logger.warn('Something went wrong with follow-me command');
+
+            return;
+        }
     }
 
     if (!isFollowMeActive(state)) {

@@ -220,7 +220,15 @@ function _addConferenceListeners(conference, dispatch, state) {
 
     conference.on(
         JitsiConferenceEvents.USER_JOINED,
-        (id, user) => commonUserJoinedHandling({ dispatch }, conference, user));
+        (id, user) => {
+            const { iAmRecorder } = state['features/base/config'];
+
+            if (iAmRecorder && user.isHiddenFromRecorder()) {
+                return;
+            }
+
+            commonUserJoinedHandling({ dispatch }, conference, user);
+        });
     conference.on(
         JitsiConferenceEvents.USER_LEFT,
         (id, user) => commonUserLeftHandling({ dispatch }, conference, user));
