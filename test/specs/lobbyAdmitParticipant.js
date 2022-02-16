@@ -5,17 +5,29 @@ import openParticipantsPane from "../helpers/openParticipantsPane"
 
 describe('Activate lobby and admit participant', () => {
     it('should open jitsi-meet app, enable lobby and admit participant', async () => {
+        let roomName;
+        const capabilities = await browser.requestedCapabilities;
+        switch(capabilities.browserName) {
+            case 'chrome':
+            roomName = 'ChromeRoomNameTest'
+              break;
+            case 'firefox':
+            roomName = 'FirefoxRoomNameTest'
+              break;
+            default:
+              roomName = 'SafariRoomNameTest'
+          }
         await openSession({
             moderator: true,
             name: 'Participant 1',
             url: 'https://localhost:8080',
-            roomName: 'RoomNameTest'
+            roomName
         });
         await openSession({
             moderator: false,
             name: 'Participant 2',
             url: 'https://localhost:8080',
-            roomName: 'RoomNameTest'
+            roomName
         });
 
         const handles = await browser.getWindowHandles()

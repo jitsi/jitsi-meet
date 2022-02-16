@@ -9,7 +9,7 @@ if(participant.moderator){
     await enterRoomBtn.click();
     const prejoinTextInput = await $('.prejoin-input-area input');
     await prejoinTextInput.setValue(participant.name);
-    await browser.keys("\uE007");
+    await browser.keys("\uE007"); //TODO change this
     await prejoinTextInput.setValue('');
     const video = await $('#largeVideo');
     await video.moveTo();

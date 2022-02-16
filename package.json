@@ -331,6 +331,7 @@
         "@wdio/cli": "^7.16.13",
         "@wdio/local-runner": "^7.16.13",
         "@wdio/mocha-framework": "^7.16.13",
+        "@wdio/selenium-standalone-service": "^7.16.14",
         "@wdio/spec-reporter": "^7.16.13",
         "babel-loader": "8.2.3",
         "babel-plugin-optional-require": "0.3.1",
