@@ -261,7 +261,7 @@ function Util:process_and_verify_token(session, acceptedIssuers)
         pubKey = session.public_key;
     elseif self.asapKeyServer and session.auth_token ~= nil then
         local dotFirst = session.auth_token:find("%.");
-        if not dotFirst then return nil, "Invalid token" end
+        if not dotFirst then return false, "not-allowed", "Invalid token" end
         local header, err = json_safe.decode(basexx.from_url64(session.auth_token:sub(1,dotFirst-1)));
         if err then
             return false, "not-allowed", "bad token format";
