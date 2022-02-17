@@ -20,11 +20,17 @@ import SpeakerStatsSearch from './SpeakerStatsSearch';
 
 const useStyles = makeStyles(theme => {
     return {
+        footer: {
+            display: 'none !important'
+        },
+        labelsContainer: {
+            position: 'relative'
+        },
         separator: {
             position: 'absolute',
-            width: '100%',
+            width: 'calc(100% + 48px)',
             height: 1,
-            left: 0,
+            left: -24,
             backgroundColor: theme.palette.border02
         },
         searchSwitchContainer: {
@@ -74,6 +80,7 @@ const SpeakerStats = () => {
     return (
         <Dialog
             cancelKey = 'dialog.close'
+            classes = {{ footer: classes.footer }}
             hideCancelButton = { true }
             submitDisabled = { true }
             titleKey = 'speakerStats.speakerStats'
@@ -100,11 +107,11 @@ const SpeakerStats = () => {
                     }
                 </div>
                 { displayLabels && (
-                    <>
+                    <div className = { classes.labelsContainer }>
                         <SpeakerStatsLabels
                             showFacialExpressions = { showFacialExpressions ?? false } />
                         <div className = { classes.separator } />
-                    </>
+                    </div>
                 )}
                 <SpeakerStatsList />
             </div>
