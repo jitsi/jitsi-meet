@@ -60,7 +60,7 @@ export default {
     },
 
     inputField: {
-        color: 'rgb(28, 32, 37)',
+        color: BaseTheme.palette.text01,
         flex: 1,
         height: 48
     },
@@ -95,7 +95,7 @@ export default {
     },
 
     sendButtonIcon: {
-        color: ColorPalette.darkGrey,
+        color: BaseTheme.palette.icon01,
         fontSize: 22
     },
 
@@ -124,6 +124,7 @@ export default {
     },
 
     chatContainer: {
+        backgroundColor: BaseTheme.palette.ui01,
         flex: 1
     },
 
@@ -165,7 +166,7 @@ ColorSchemeRegistry.register('Chat', {
     },
 
     emptyComponentText: {
-        color: BaseTheme.palette.ui05,
+        color: BaseTheme.palette.text03,
         textAlign: 'center'
     },
 

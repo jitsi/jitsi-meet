@@ -11,6 +11,7 @@ export const ICON_SIZE = 15;
 export default {
 
     addPeopleContainer: {
+        backgroundColor: BaseTheme.palette.ui01,
         flex: 1
     },
 
@@ -75,7 +76,7 @@ export default {
     },
 
     itemText: {
-        color: DARK_GREY,
+        color: BaseTheme.palette.text01,
         fontSize: 14,
         fontWeight: 'normal'
     },
@@ -104,14 +105,14 @@ export default {
     },
 
     selectedIcon: {
-        color: DARK_GREY,
+        color: BaseTheme.palette.icon01,
         fontSize: 20,
         marginRight: BoxModel.margin,
         padding: 2
     },
 
     separator: {
-        borderBottomColor: LIGHT_GREY,
+        borderBottomColor: BaseTheme.palette.dividerColor,
         borderBottomWidth: 1,
         marginLeft: 85
     },
@@ -146,7 +147,7 @@ export default {
     },
 
     unselectIcon: {
-        color: LIGHT_GREY,
+        color: BaseTheme.palette.ui01,
         fontSize: 16,
         left: AVATAR_SIZE / -3,
         position: 'relative',

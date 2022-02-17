@@ -1,11 +1,7 @@
 // @flow
 
-import {
-    BoxModel,
-    ColorPalette,
-    createStyleSheet
-} from '../../../../base/styles';
-import BaseTheme from '../../../../base/ui/components/BaseTheme';
+import { BoxModel, createStyleSheet } from '../../../../base/styles';
+import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
 
 /**
  * Opacity of the TouchableHighlight.
@@ -15,12 +11,12 @@ export const ACTIVE_OPACITY = 0.3;
 /**
  * Color for the key input field placeholder.
  */
-export const PLACEHOLDER_COLOR = ColorPalette.lightGrey;
+export const PLACEHOLDER_COLOR = BaseTheme.palette.text03;
 
 /**
  * Underlay of the TouchableHighlight.
  */
-export const TOUCHABLE_UNDERLAY = ColorPalette.lightGrey;
+export const TOUCHABLE_UNDERLAY = BaseTheme.palette.action03Focus;
 
 /**
  * The styles of the React {@code Components} of LiveStream.
@@ -61,12 +57,13 @@ export default createStyleSheet({
      * Container for the live stream screen.
      */
     startLiveStreamContainer: {
+        backgroundColor: BaseTheme.palette.ui01,
         display: 'flex',
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'center',
-        marginHorizontal: BaseTheme.spacing[2],
-        marginTop: BaseTheme.spacing[3]
+        paddingHorizontal: BaseTheme.spacing[2],
+        paddingTop: BaseTheme.spacing[3]
     },
 
     /**
@@ -81,8 +78,9 @@ export default createStyleSheet({
      */
     streamKeyInput: {
         alignSelf: 'stretch',
-        borderColor: ColorPalette.lightGrey,
+        borderColor: BaseTheme.palette.border02,
         borderBottomWidth: 1,
+        color: BaseTheme.palette.text01,
         fontSize: 14,
         height: 40,
         marginBottom: 5,
@@ -125,14 +123,14 @@ export default createStyleSheet({
      * Additional style for the selected item.
      */
     streamKeyPickerItemHighlight: {
-        backgroundColor: ColorPalette.darkGrey
+        backgroundColor: BaseTheme.palette.ui13
     },
 
     /**
      * Overall wrapper for the picker.
      */
     streamKeyPickerWrapper: {
-        borderColor: ColorPalette.lightGrey,
+        borderColor: BaseTheme.palette.dividerColor,
         borderRadius: 3,
         borderWidth: 1,
         flexDirection: 'column'
@@ -146,6 +144,7 @@ export default createStyleSheet({
     },
 
     text: {
+        color: BaseTheme.palette.text01,
         fontSize: 14,
         textAlign: 'left'
     },
@@ -154,6 +153,6 @@ export default createStyleSheet({
      * A different colored text to indicate information needing attention.
      */
     warningText: {
-        color: ColorPalette.Y200
+        color: BaseTheme.palette.warning02
     }
 });

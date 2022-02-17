@@ -4,16 +4,15 @@ import BaseTheme from '../../../base/ui/components/BaseTheme';
 
 const SECONDARY_COLOR = BaseTheme.palette.border04;
 
-export const ENABLED_THUMB_COLOR = BaseTheme.palette.action04;
-export const ENABLED_TRACK_COLOR = BaseTheme.palette.screen01Header;
-export const DISABLED_THUMB_COLOR = BaseTheme.palette.icon04;
+export const ENABLED_TRACK_COLOR = BaseTheme.palette.lobbySwitch01Active;
+export const THUMB_COLOR = BaseTheme.palette.field02;
 
 export default {
     button: {
         alignItems: 'center',
         borderRadius: 4,
-        marginVertical: 4,
-        paddingVertical: 8
+        marginVertical: BaseTheme.spacing[1],
+        paddingVertical: BaseTheme.spacing[2]
     },
 
     contentWrapper: {
@@ -33,7 +32,7 @@ export default {
         fontSize: 18,
         fontWeight: 'bold',
         margin: 'auto',
-        marginVertical: 24,
+        marginVertical: BaseTheme.spacing[3],
         textAlign: 'center'
     },
 

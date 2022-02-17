@@ -20,13 +20,13 @@ import {
     Text
 } from '../../../base/react';
 import { connect } from '../../../base/redux';
-import { ColorPalette, StyleType } from '../../../base/styles';
+import { StyleType } from '../../../base/styles';
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox';
 import { isVpaasMeeting } from '../../../jaas/functions';
 import { RECORDING_TYPES } from '../../constants';
 import { getRecordingDurationEstimation } from '../../functions';
 
-import { DROPBOX_LOGO, ICON_CLOUD, JITSI_LOGO } from './styles';
+import { DROPBOX_LOGO, ICON_CLOUD, JITSI_LOGO, TRACK_COLOR } from './styles';
 
 type Props = {
 
@@ -206,7 +206,7 @@ class StartRecordingDialogContent extends Component<Props> {
                     onValueChange
                         = { onSharingSettingChanged }
                     style = { styles.switch }
-                    trackColor = {{ false: ColorPalette.lightGrey }}
+                    trackColor = {{ false: TRACK_COLOR }}
                     value = { sharingSetting } />
             </Container>
         );
@@ -236,7 +236,7 @@ class StartRecordingDialogContent extends Component<Props> {
                         disabled = { isValidating }
                         onValueChange = { this._onRecordingServiceSwitchChange }
                         style = { styles.switch }
-                        trackColor = {{ false: ColorPalette.lightGrey }}
+                        trackColor = {{ false: TRACK_COLOR }}
                         value = { this.props.selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE } />
                 ) : null;
 
@@ -317,7 +317,7 @@ class StartRecordingDialogContent extends Component<Props> {
                     disabled = { isValidating }
                     onValueChange = { this._onDropboxSwitchChange }
                     style = { styles.switch }
-                    trackColor = {{ false: ColorPalette.lightGrey }}
+                    trackColor = {{ false: TRACK_COLOR }}
                     value = { this.props.selectedRecordingService
                         === RECORDING_TYPES.DROPBOX } />
             );
@@ -434,12 +434,20 @@ class StartRecordingDialogContent extends Component<Props> {
                     className = 'logged-in-panel'
                     style = { styles.loggedIn }>
                     <Container>
-                        <Text style = { styles.text }>
+                        <Text
+                            style = { [
+                                styles.text,
+                                styles.recordingText
+                            ] }>
                             { t('recording.loggedIn', { userName }) }
                         </Text>
                     </Container>
                     <Container>
-                        <Text style = { styles.text }>
+                        <Text
+                            style = { [
+                                styles.text,
+                                styles.recordingText
+                            ] }>
                             {
                                 t('recording.availableSpace', {
                                     spaceLeft,

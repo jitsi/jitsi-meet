@@ -31,10 +31,14 @@ const PollsList = () => {
 
     return (
         <>
-            {listPolls.length === 0
+            {
+                listPolls.length === 0
             && <Text style = { chatStyles.noPollText } >
-                {t('polls.results.empty')}
-            </Text>}
+                {
+                    t('polls.results.empty')
+                }
+            </Text>
+            }
             <FlatList
                 data = { listPolls }
                 extraData = { listPolls }

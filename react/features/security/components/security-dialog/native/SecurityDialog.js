@@ -186,7 +186,7 @@ class SecurityDialog extends PureComponent<Props, State> {
         return (
             <View style = { styles.lobbyModeContainer }>
                 <View style = { styles.lobbyModeContent } >
-                    <Text>
+                    <Text style = { styles.lobbyModeText }>
                         { t('lobby.enableDialogText') }
                     </Text>
                     <View style = { styles.lobbyModeSection }>
@@ -229,7 +229,7 @@ class SecurityDialog extends PureComponent<Props, State> {
                 <>
                     <TouchableRipple
                         onPress = { this._onCancel }
-                        rippleColor = { BaseTheme.palette.field02 } >
+                        rippleColor = { BaseTheme.palette.ui01 } >
                         <Text style = { styles.passwordSetupButton }>
                             { t('dialog.Remove') }
                         </Text>
@@ -238,7 +238,7 @@ class SecurityDialog extends PureComponent<Props, State> {
                         _password
                         && <TouchableRipple
                             onPress = { this._onCopy }
-                            rippleColor = { BaseTheme.palette.field02 } >
+                            rippleColor = { BaseTheme.palette.ui01 } >
                             <Text style = { styles.passwordSetupButton }>
                                 { t('dialog.copy') }
                             </Text>
@@ -251,14 +251,14 @@ class SecurityDialog extends PureComponent<Props, State> {
                 <>
                     <TouchableRipple
                         onPress = { this._onCancel }
-                        rippleColor = { BaseTheme.palette.field02 } >
+                        rippleColor = { BaseTheme.palette.ui01 } >
                         <Text style = { styles.passwordSetupButton }>
                             { t('dialog.Cancel') }
                         </Text>
                     </TouchableRipple>
                     <TouchableRipple
                         onPress = { this._onSubmit }
-                        rippleColor = { BaseTheme.palette.field02 } >
+                        rippleColor = { BaseTheme.palette.ui01 } >
                         <Text style = { styles.passwordSetupButton }>
                             { t('dialog.add') }
                         </Text>
@@ -270,7 +270,7 @@ class SecurityDialog extends PureComponent<Props, State> {
                 <TouchableRipple
                     disabled = { !_isModerator }
                     onPress = { this._onAddPassword }
-                    rippleColor = { BaseTheme.palette.field02 } >
+                    rippleColor = { BaseTheme.palette.ui01 } >
                     <Text style = { styles.passwordSetupButton }>
                         { t('info.addPassword') }
                     </Text>
@@ -287,7 +287,7 @@ class SecurityDialog extends PureComponent<Props, State> {
                         </Text>
                         <TouchableRipple
                             onPress = { this._onCancel }
-                            rippleColor = { BaseTheme.palette.field02 } >
+                            rippleColor = { BaseTheme.palette.ui01 } >
                             <Text style = { styles.passwordSetupButton }>
                                 { t('dialog.Remove') }
                             </Text>
@@ -303,7 +303,7 @@ class SecurityDialog extends PureComponent<Props, State> {
                         <TouchableRipple
                             disabled = { !_isModerator }
                             onPress = { this._onAddPassword }
-                            rippleColor = { BaseTheme.palette.field02 } >
+                            rippleColor = { BaseTheme.palette.ui01 } >
                             <Text style = { styles.passwordSetupButton }>
                                 { t('info.addPassword') }
                             </Text>
@@ -316,7 +316,7 @@ class SecurityDialog extends PureComponent<Props, State> {
         return (
             <View
                 style = { styles.passwordContainer } >
-                <Text>
+                <Text style = { styles.passwordContainerText }>
                     { t('security.about') }
                 </Text>
                 <View
@@ -370,7 +370,7 @@ class SecurityDialog extends PureComponent<Props, State> {
                         onChangeText = { this._onChangeText }
                         placeholder = { t('lobby.passwordField') }
                         placeholderTextColor = { BaseTheme.palette.text03 }
-                        selectionColor = { BaseTheme.palette.action03Active }
+                        selectionColor = { BaseTheme.palette.text03 }
                         style = { styles.passwordInput }
                         underlineColorAndroid = { FIELD_UNDERLINE }
                         value = { passwordInputValue }

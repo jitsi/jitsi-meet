@@ -2,11 +2,13 @@
 
 import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
 import { BoxModel } from '../../../base/styles';
-import BaseTheme from '../../../base/ui/components/BaseTheme';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 export const DROPBOX_LOGO = require('../../../../../images/dropboxLogo_square.png');
 export const ICON_CLOUD = require('../../../../../images/icon-cloud.png');
 export const JITSI_LOGO = require('../../../../../images/jitsiLogo_square.png');
+export const TRACK_COLOR = BaseTheme.palette.ui15;
+
 
 // XXX The "standard" {@code BoxModel.padding} has been deemed insufficient in
 // the special case(s) of the recording feature below.
@@ -17,12 +19,13 @@ export default {
      * Container for the StartRecordingDialog screen.
      */
     startRecodingContainer: {
+        backgroundColor: BaseTheme.palette.ui01,
         display: 'flex',
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'center',
-        marginHorizontal: BaseTheme.spacing[2],
-        marginTop: BaseTheme.spacing[3]
+        paddingHorizontal: BaseTheme.spacing[3],
+        paddingTop: BaseTheme.spacing[3]
     },
 
     /**
@@ -64,6 +67,10 @@ ColorSchemeRegistry.register('StartRecordingDialogContent', {
     recordingIcon: {
         width: BaseTheme.spacing[4],
         height: BaseTheme.spacing[4]
+    },
+
+    recordingText: {
+        color: BaseTheme.palette.text01
     },
 
     signButton: {

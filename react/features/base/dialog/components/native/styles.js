@@ -263,11 +263,12 @@ ColorSchemeRegistry.register('Dialog', {
     },
 
     text: {
-        ...brandedDialogText
+        ...brandedDialogText,
+        color: BaseTheme.palette.text01
     },
 
     topBorderContainer: {
-        borderTopColor: schemeColor('border'),
+        borderTopColor: BaseTheme.palette.dividerColor,
         borderTopWidth: 1
     }
 });
