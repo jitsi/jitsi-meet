@@ -11,7 +11,8 @@ import SpeakerStatsItem from './SpeakerStatsItem';
 const useStyles = makeStyles(theme => {
     return {
         list: {
-            marginTop: `${theme.spacing(3)}px`
+            marginTop: `${theme.spacing(3)}px`,
+            marginBottom: `${theme.spacing(3)}px`
         },
         item: {
             height: `${theme.spacing(7)}px`,
