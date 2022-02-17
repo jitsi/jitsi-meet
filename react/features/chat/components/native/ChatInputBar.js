@@ -5,9 +5,9 @@ import { Platform, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconChatSend } from '../../../base/icons';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 import styles from './styles';
-import BaseTheme from "../../../base/ui/components/BaseTheme";
 
 type Props = {
 

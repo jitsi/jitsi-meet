@@ -434,12 +434,20 @@ class StartRecordingDialogContent extends Component<Props> {
                     className = 'logged-in-panel'
                     style = { styles.loggedIn }>
                     <Container>
-                        <Text style = { styles.text }>
+                        <Text
+                            style = { [
+                                styles.text,
+                                styles.recordingText
+                            ] }>
                             { t('recording.loggedIn', { userName }) }
                         </Text>
                     </Container>
                     <Container>
-                        <Text style = { styles.text }>
+                        <Text
+                            style = { [
+                                styles.text,
+                                styles.recordingText
+                            ] }>
                             {
                                 t('recording.availableSpace', {
                                     spaceLeft,

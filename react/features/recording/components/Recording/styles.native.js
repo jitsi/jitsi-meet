@@ -69,6 +69,10 @@ ColorSchemeRegistry.register('StartRecordingDialogContent', {
         height: BaseTheme.spacing[4]
     },
 
+    recordingText: {
+        color: BaseTheme.palette.text01
+    },
+
     signButton: {
         backgroundColor: BaseTheme.palette.screen01Header,
         color: BaseTheme.palette.ui12,

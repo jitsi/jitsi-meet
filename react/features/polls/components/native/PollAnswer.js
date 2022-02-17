@@ -4,13 +4,13 @@ import React from 'react';
 import { Switch, Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
 
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import { BUTTON_MODES } from '../../../chat/constants';
 import { isSubmitAnswerDisabled } from '../../functions';
 import AbstractPollAnswer from '../AbstractPollAnswer';
 import type { AbstractProps } from '../AbstractPollAnswer';
 
 import { chatStyles, dialogStyles } from './styles';
-import BaseTheme from "../../../base/ui/components/BaseTheme";
 
 
 const PollAnswer = (props: AbstractProps) => {
