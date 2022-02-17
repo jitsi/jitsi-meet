@@ -1167,6 +1167,7 @@ var config = {
      forceJVB121Ratio
      forceTurnRelay
      hiddenDomain
+     hiddenFromRecorderFeatureEnabled
      ignoreStartMuted
      websocketKeepAlive
      websocketKeepAliveUrl
