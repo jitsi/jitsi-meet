@@ -86,12 +86,12 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case SET_AUDIO_UNMUTE_PERMISSIONS: {
-        const { blocked } = action;
+        const { blocked, skipNotification } = action;
         const state = store.getState();
         const tracks = state['features/base/tracks'];
         const isAudioMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
 
-        if (blocked && isAudioMuted) {
+        if (blocked && isAudioMuted && !skipNotification) {
             store.dispatch(showWarningNotification({
                 descriptionKey: 'notify.audioUnmuteBlockedDescription',
                 titleKey: 'notify.audioUnmuteBlockedTitle'
@@ -111,13 +111,13 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case SET_VIDEO_UNMUTE_PERMISSIONS: {
-        const { blocked } = action;
+        const { blocked, skipNotification } = action;
         const state = store.getState();
         const tracks = state['features/base/tracks'];
         const isVideoMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO);
         const isMediaShared = isScreenMediaShared(state);
 
-        if (blocked && isVideoMuted && !isMediaShared) {
+        if (blocked && isVideoMuted && !isMediaShared && !skipNotification) {
             store.dispatch(showWarningNotification({
                 descriptionKey: 'notify.videoUnmuteBlockedDescription',
                 titleKey: 'notify.videoUnmuteBlockedTitle'
