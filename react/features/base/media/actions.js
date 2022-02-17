@@ -65,12 +65,14 @@ export function setAudioMuted(muted: boolean, ensureTrack: boolean = false) {
  * Action to disable/enable the audio mute icon.
  *
  * @param {boolean} blocked - True if the audio mute icon needs to be disabled.
+ * @param {boolean|undefined} skipNotification - True if we want to skip showing the notification.
  * @returns {Function}
  */
-export function setAudioUnmutePermissions(blocked: boolean) {
+export function setAudioUnmutePermissions(blocked: boolean, skipNotification: boolean = false) {
     return {
         type: SET_AUDIO_UNMUTE_PERMISSIONS,
-        blocked
+        blocked,
+        skipNotification
     };
 }
 
@@ -155,12 +157,14 @@ export function setVideoMuted(
  * Action to disable/enable the video mute icon.
  *
  * @param {boolean} blocked - True if the video mute icon needs to be disabled.
+ * @param {boolean|undefined} skipNotification - True if we want to skip showing the notification.
  * @returns {Function}
  */
-export function setVideoUnmutePermissions(blocked: boolean) {
+export function setVideoUnmutePermissions(blocked: boolean, skipNotification: boolean = false) {
     return {
         type: SET_VIDEO_UNMUTE_PERMISSIONS,
-        blocked
+        blocked,
+        skipNotification
     };
 }
 
