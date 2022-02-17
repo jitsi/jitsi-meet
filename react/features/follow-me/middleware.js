@@ -115,8 +115,11 @@ function _onFollowMeCommand(attributes = {}, id, store) {
             return;
         }
     } else {
+        // This is the case of jibri receiving commands from a hidden participant.
         const { iAmRecorder } = state['features/base/config'];
         const { conference } = state['features/base/conference'];
+
+        // As this participant is not stored in redux store we do the checks on the JitsiParticipant from lib-jitsi-meet
         const participant = conference.getParticipantById(id);
 
         if (!iAmRecorder || !participant || participant.getRole() !== 'moderator'
