@@ -71,6 +71,7 @@ export const colorMap = {
     ui12: 'surface11',
     ui13: 'surface14',
     ui14: 'surface15',
+    ui15: 'surface12',
 
     // Primary buttons
     action01: 'primary05',
