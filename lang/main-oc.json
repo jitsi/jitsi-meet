@@ -365,11 +365,12 @@
         "shareVideoTitle": "Partejar una vidèo",
         "shareYourScreen": "Partejar vòstre ecran",
         "shareYourScreenDisabled": "Lo partiment d’ecran es desactivat.",
+        "sharedVideoDialogError": "Error : URL invalida",        
         "sharedVideoLinkPlaceholder": "Ligam YouTube o ligam vidèo dirèct",
         "start": "Començar ",
         "startLiveStreaming": "Aviar una difusion en dirècte",
         "startRecording": "Arrestar l'enregistrament",
-        "startRemoteControlErrorMessage": "Una error s'es produsida en ensajar de començar la session de contraròtle a distància !",
+        "startRemoteControlErrorMessage": "Una error s'es produsida en ensajar de començar la session de contraròtle a distància !",        
         "stopLiveStreaming": "Arrestar lo dirècte",
         "stopRecording": "Arrestar l'enregistrament",
         "stopRecordingWarning": "Sètz segur que volètz arrestar l'enregistrament?",
@@ -388,7 +389,6 @@
         "viewUpgradeOptions": "Veire las opcions de mesa a nivèl",
         "viewUpgradeOptionsContent": "Per obténer un accès sens limit a las foncionalitats premium coma l’enregistrament, la transcripcion, la difusion RTMP e encara mai, devètz passar al nivèl superior.",
         "viewUpgradeOptionsTitle": "Avètz descobèrt una foncionalitat premium !",
-        "sharedVideoDialogError": "Error : URL invalida",
         "yourEntireScreen": "Vòstre ecran complet"
     },
     "documentSharing": {
@@ -927,8 +927,8 @@
     "speaker": "Orator",
     "speakerStats": {
         "angry": "Encolerat",
-        "displayEmotions": "Afichar las emocions",
         "disgusted": "Desgostat",
+        "displayEmotions": "Afichar las emocions",        
         "fearful": "Pauruc",
         "happy": "Content",
         "hours": "{{count}} oras",
