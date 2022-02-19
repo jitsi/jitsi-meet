@@ -388,8 +388,8 @@
         "viewUpgradeOptions": "Veire las opcions de mesa a nivèl",
         "viewUpgradeOptionsContent": "Per obténer un accès sens limit a las foncionalitats premium coma l’enregistrament, la transcripcion, la difusion RTMP e encara mai, devètz passar al nivèl superior.",
         "viewUpgradeOptionsTitle": "Avètz descobèrt una foncionalitat premium !",
-        "yourEntireScreen": "Vòstre ecran complet",
-        "sharedVideoDialogError": "Error : URL invalida"
+        "sharedVideoDialogError": "Error : URL invalida",
+        "yourEntireScreen": "Vòstre ecran complet"
     },
     "documentSharing": {
         "title": "Document partejat"
@@ -927,7 +927,7 @@
     "speaker": "Orator",
     "speakerStats": {
         "angry": "Encolerat",
-        "displayEmotions": "Afichar las emocions",        
+        "displayEmotions": "Afichar las emocions",
         "disgusted": "Desgostat",
         "fearful": "Pauruc",
         "happy": "Content",
@@ -1003,7 +1003,7 @@
             "remoteVideoMute": "Copar la camèra del participant",
             "security": "Opcions de seguretat",
             "selectBackground": "Seleccionar un rèireplan",
-            "selfView": "Alternar pròpria vista",            
+            "selfView": "Alternar pròpria vista",
             "shareRoom": "Convidar qualqu’un",
             "shareYourScreen": "Passar a la captura d’ecran",
             "shareaudio": "Partejar l’àudio",
@@ -1171,7 +1171,7 @@
         "remoteControl": "Contraròtle alonhat",
         "screenSharing": "Lo participant es a partejar son ecran",
         "show": "Mostrar davant",
-        "showSelfView": "Afichar pròpria vista",      
+        "showSelfView": "Afichar pròpria vista",
         "videoMuted": "Camèra desactivada",
         "videomute": "Lo participant a arrestat la camèra"
     },
