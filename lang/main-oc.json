@@ -387,7 +387,9 @@
         "viewUpgradeOptions": "Veire las opcions de mesa a nivèl",
         "viewUpgradeOptionsContent": "Per obténer un accès sens limit a las foncionalitats premium coma l’enregistrament, la transcripcion, la difusion RTMP e encara mai, devètz passar al nivèl superior.",
         "viewUpgradeOptionsTitle": "Avètz descobèrt una foncionalitat premium !",
-        "yourEntireScreen": "Vòstre ecran complet"
+        "yourEntireScreen": "Vòstre ecran complet",
+        "start": "Començar ",
+        "sharedVideoDialogError": "Error : URL invalida"
     },
     "documentSharing": {
         "title": "Document partejat"
@@ -937,7 +939,8 @@
         "seconds": "{{count}} segondas",
         "speakerStats": "Estatisticas orator",
         "speakerTime": "Temps de paraula",
-        "surprised": "Surprés"
+        "surprised": "Surprés",
+        "displayEmotions": "Afichar las emocions"
     },
     "startupoverlay": {
         "genericTitle": "Aquesta reünion requerís l'utilizacion del microfòn e de la camèra.",
@@ -1013,7 +1016,8 @@
             "toggleCamera": "Passar a la camèra",
             "toggleFilmstrip": "Bascular mòde benda film",
             "videoblur": "Enfoscar o non la vidèo",
-            "videomute": "Silenciar la vidèo"
+            "videomute": "Silenciar la vidèo",
+            "selfView": "Alternar vista de se"
         },
         "addPeople": "Ajustar de monde a vòstra sonada",
         "audioOnlyOff": "Desactivar lo mòde connexion febla",
@@ -1168,7 +1172,8 @@
         "screenSharing": "Lo participant es a partejar son ecran",
         "show": "Mostrar davant",
         "videoMuted": "Camèra desactivada",
-        "videomute": "Lo participant a arrestat la camèra"
+        "videomute": "Lo participant a arrestat la camèra",
+        "showSelfView": "Afichar vista de se"
     },
     "virtualBackground": {
         "addBackground": "Apondre un rèireplan",
