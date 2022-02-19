@@ -889,7 +889,7 @@
         "selectAudioOutput": "Sortida àudio",
         "selectCamera": "Camèra",
         "selectMic": "Microfòn",
-        "selfView": "Vista de se",
+        "selfView": "Pròpria vista",
         "sounds": "Sons",
         "speakers": "Naut-parlairs",
         "startAudioMuted": "Començan totes sens son",
@@ -1017,7 +1017,7 @@
             "toggleFilmstrip": "Bascular mòde benda film",
             "videoblur": "Enfoscar o non la vidèo",
             "videomute": "Silenciar la vidèo",
-            "selfView": "Alternar vista de se"
+            "selfView": "Alternar pròpria vista"
         },
         "addPeople": "Ajustar de monde a vòstra sonada",
         "audioOnlyOff": "Desactivar lo mòde connexion febla",
@@ -1173,7 +1173,7 @@
         "show": "Mostrar davant",
         "videoMuted": "Camèra desactivada",
         "videomute": "Lo participant a arrestat la camèra",
-        "showSelfView": "Afichar vista de se"
+        "showSelfView": "Afichar pròpria vista"
     },
     "virtualBackground": {
         "addBackground": "Apondre un rèireplan",
