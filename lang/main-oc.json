@@ -366,6 +366,7 @@
         "shareYourScreen": "Partejar vòstre ecran",
         "shareYourScreenDisabled": "Lo partiment d’ecran es desactivat.",
         "sharedVideoLinkPlaceholder": "Ligam YouTube o ligam vidèo dirèct",
+        "start": "Començar ",
         "startLiveStreaming": "Aviar una difusion en dirècte",
         "startRecording": "Arrestar l'enregistrament",
         "startRemoteControlErrorMessage": "Una error s'es produsida en ensajar de començar la session de contraròtle a distància !",
@@ -388,7 +389,6 @@
         "viewUpgradeOptionsContent": "Per obténer un accès sens limit a las foncionalitats premium coma l’enregistrament, la transcripcion, la difusion RTMP e encara mai, devètz passar al nivèl superior.",
         "viewUpgradeOptionsTitle": "Avètz descobèrt una foncionalitat premium !",
         "yourEntireScreen": "Vòstre ecran complet",
-        "start": "Començar ",
         "sharedVideoDialogError": "Error : URL invalida"
     },
     "documentSharing": {
@@ -927,6 +927,7 @@
     "speaker": "Orator",
     "speakerStats": {
         "angry": "Encolerat",
+        "displayEmotions": "Afichar las emocions",        
         "disgusted": "Desgostat",
         "fearful": "Pauruc",
         "happy": "Content",
@@ -939,8 +940,7 @@
         "seconds": "{{count}} segondas",
         "speakerStats": "Estatisticas orator",
         "speakerTime": "Temps de paraula",
-        "surprised": "Surprés",
-        "displayEmotions": "Afichar las emocions"
+        "surprised": "Surprés"
     },
     "startupoverlay": {
         "genericTitle": "Aquesta reünion requerís l'utilizacion del microfòn e de la camèra.",
@@ -1003,6 +1003,7 @@
             "remoteVideoMute": "Copar la camèra del participant",
             "security": "Opcions de seguretat",
             "selectBackground": "Seleccionar un rèireplan",
+            "selfView": "Alternar pròpria vista",            
             "shareRoom": "Convidar qualqu’un",
             "shareYourScreen": "Passar a la captura d’ecran",
             "shareaudio": "Partejar l’àudio",
@@ -1016,8 +1017,7 @@
             "toggleCamera": "Passar a la camèra",
             "toggleFilmstrip": "Bascular mòde benda film",
             "videoblur": "Enfoscar o non la vidèo",
-            "videomute": "Silenciar la vidèo",
-            "selfView": "Alternar pròpria vista"
+            "videomute": "Silenciar la vidèo"
         },
         "addPeople": "Ajustar de monde a vòstra sonada",
         "audioOnlyOff": "Desactivar lo mòde connexion febla",
@@ -1171,9 +1171,9 @@
         "remoteControl": "Contraròtle alonhat",
         "screenSharing": "Lo participant es a partejar son ecran",
         "show": "Mostrar davant",
+        "showSelfView": "Afichar pròpria vista",      
         "videoMuted": "Camèra desactivada",
-        "videomute": "Lo participant a arrestat la camèra",
-        "showSelfView": "Afichar pròpria vista"
+        "videomute": "Lo participant a arrestat la camèra"
     },
     "virtualBackground": {
         "addBackground": "Apondre un rèireplan",
