@@ -370,7 +370,7 @@
         "start": "Començar ",
         "startLiveStreaming": "Aviar una difusion en dirècte",
         "startRecording": "Arrestar l'enregistrament",
-        "startRemoteControlErrorMessage": "Una error s'es produsida en ensajar de començar la session de contraròtle a distància !",        
+        "startRemoteControlErrorMessage": "Una error s'es produsida en ensajar de començar la session de contraròtle a distància !",
         "stopLiveStreaming": "Arrestar lo dirècte",
         "stopRecording": "Arrestar l'enregistrament",
         "stopRecordingWarning": "Sètz segur que volètz arrestar l'enregistrament?",
