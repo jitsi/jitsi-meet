@@ -86,6 +86,7 @@ import MuteEveryonesVideoButton from '../MuteEveryonesVideoButton';
 
 import AudioSettingsButton from './AudioSettingsButton';
 import FullscreenButton from './FullscreenButton';
+import LinkToSalesforceButton from './LinkToSalesforceButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import ProfileButton from './ProfileButton';
 import Separator from './Separator';
@@ -158,6 +159,11 @@ type Props = {
      * Whether or not the app is currently in full screen.
      */
     _fullScreen: boolean,
+
+    /**
+     * Whether the app has Salesforce integration.
+     */
+    _hasSalesforce: boolean,
 
     /**
      * Whether or not the app is running in an ios mobile browser.
@@ -609,6 +615,7 @@ class Toolbox extends Component<Props> {
             _feedbackConfigured,
             _isIosMobile,
             _isMobile,
+            _hasSalesforce,
             _screenSharing
         } = this.props;
 
@@ -721,6 +728,12 @@ class Toolbox extends Component<Props> {
             group: 2
         };
 
+        const linkToSalesforce = _hasSalesforce && {
+            key: 'linktosalesforce',
+            Content: LinkToSalesforceButton,
+            group: 2
+        };
+
         const muteEveryone = {
             key: 'mute-everyone',
             Content: MuteEveryoneButton,
@@ -817,6 +830,7 @@ class Toolbox extends Component<Props> {
             recording,
             localRecording,
             livestreaming,
+            linkToSalesforce,
             muteEveryone,
             muteVideoEveryone,
             shareVideo,
@@ -1361,7 +1375,8 @@ function _mapStateToProps(state, ownProps) {
         enableFeaturesBasedOnToken,
         hideDominantSpeakerBadge,
         iAmRecorder,
-        iAmSipGateway
+        iAmSipGateway,
+        salesforceUrl
     } = state['features/base/config'];
     const {
         fullScreen,
@@ -1409,6 +1424,7 @@ function _mapStateToProps(state, ownProps) {
         _isIosMobile: isIosMobileBrowser(),
         _isMobile: isMobileBrowser(),
         _isVpaasMeeting: isVpaasMeeting(state),
+        _hasSalesforce: Boolean(salesforceUrl),
         _localParticipantID: localParticipant?.id,
         _localVideo: localVideo,
         _overflowMenuVisible: overflowMenuVisible,

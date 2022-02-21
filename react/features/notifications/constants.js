@@ -59,6 +59,13 @@ export const NOTIFICATION_ICON = {
 };
 
 /**
+ * The identifier of the salesforce link notification.
+ *
+ * @type {string}
+ */
+export const SALESFORCE_LINK_NOTIFICATION_ID = 'SALESFORCE_LINK_NOTIFICATION';
+
+/**
  * The identifier of the lobby notification.
  *
  * @type {string}

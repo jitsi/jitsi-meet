@@ -28,6 +28,7 @@ declare var interfaceConfig: Object;
 const ICON_COLOR = {
     error: colors.error06,
     normal: colors.primary06,
+    success: colors.success05,
     warning: colors.warning05
 };
 

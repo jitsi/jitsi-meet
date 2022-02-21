@@ -27,6 +27,7 @@ export const screen = {
         recording: 'Recording',
         liveStream: 'Live stream',
         speakerStats: 'Speaker Stats',
+        salesforce: 'Link to Salesforce',
         participants: 'Participants',
         invite: 'Invite',
         sharedDocument: 'Shared document'

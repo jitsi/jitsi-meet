@@ -17,6 +17,8 @@ import { ParticipantsPane } from '../../../../../participants-pane/components/na
 import { StartLiveStreamDialog } from '../../../../../recording';
 import { StartRecordingDialog }
     from '../../../../../recording/components/Recording/native';
+import SalesforceLinkDialog
+    from '../../../../../salesforce/components/native/SalesforceLinkDialog';
 import SecurityDialog
     from '../../../../../security/components/security-dialog/native/SecurityDialog';
 import SpeakerStats
@@ -31,6 +33,7 @@ import {
     navigationContainerTheme,
     participantsScreenOptions,
     recordingScreenOptions,
+    salesforceScreenOptions,
     securityScreenOptions,
     sharedDocumentScreenOptions,
     speakerStatsScreenOptions
@@ -114,6 +117,13 @@ const ConferenceNavigationContainer = () => {
                     options = {{
                         ...speakerStatsScreenOptions,
                         title: t('speakerStats.speakerStats')
+                    }} />
+                <ConferenceStack.Screen
+                    component = { SalesforceLinkDialog }
+                    name = { screen.conference.salesforce }
+                    options = {{
+                        ...salesforceScreenOptions,
+                        title: t('notify.linkToSalesforce')
                     }} />
                 <ConferenceStack.Screen
                     component = { LobbyScreen }
