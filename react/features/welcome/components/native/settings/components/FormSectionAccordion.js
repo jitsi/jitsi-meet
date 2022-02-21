@@ -5,6 +5,7 @@ import { List } from 'react-native-paper';
 
 import { translate } from '../../../../../base/i18n';
 import { Icon, IconArrowDown, IconArrowUp } from '../../../../../base/icons';
+import BaseTheme from '../../../../../base/ui/components/BaseTheme.native';
 
 import styles from './styles';
 
@@ -64,15 +65,14 @@ function FormSectionAccordion({ accordion, children, expandable, label, style, t
                 accordion && <Icon
                     { ...props }
                     src = { expandSection ? IconArrowUp : IconArrowDown }
-                    style = { expandSection ? styles.sectionOpen : styles.sectionClose } /> }
+                    style = { styles.section } /> }
+            rippleColor = { BaseTheme.palette.uiBackground }
             style = { [
                 styles.formSectionTitle,
                 style
             ] }
             title = { t(label) }
-            titleStyle = {
-                expandSection || !expandable
-                    ? styles.formSectionTitleActive : styles.formSectionTitleInActive }>
+            titleStyle = { styles.formSectionTitleText }>
             { children }
         </List.Accordion>
     );

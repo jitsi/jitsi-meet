@@ -1,6 +1,8 @@
-import BaseTheme from '../../../../../base/ui/components/BaseTheme';
+import BaseTheme from '../../../../../base/ui/components/BaseTheme.native';
 export const ANDROID_UNDERLINE_COLOR = 'transparent';
 export const PLACEHOLDER_COLOR = BaseTheme.palette.action02Focus;
+export const ENABLED_TRACK_COLOR = BaseTheme.palette.lobbySwitch01Active;
+export const DISABLED_TRACK_COLOR = BaseTheme.palette.ui02;
 export const THUMB_COLOR = BaseTheme.palette.field02;
 
 const TEXT_SIZE = 14;
@@ -14,6 +16,7 @@ export default {
      * Style for screen container.
      */
     settingsViewContainer: {
+        backgroundColor: BaseTheme.palette.ui01,
         flex: 1
     },
 
@@ -63,7 +66,7 @@ export default {
      */
     fieldSeparator: {
         borderBottomWidth: 1,
-        borderColor: 'rgba(0, 0, 0, 0.1)'
+        borderColor: BaseTheme.palette.border02
     },
 
     /**
@@ -82,26 +85,17 @@ export default {
      * Style for the form section separator titles.
      */
     formSectionTitle: {
-        backgroundColor: BaseTheme.palette.section01,
+        backgroundColor: BaseTheme.palette.ui02,
         paddingBottom: 0,
         paddingTop: 0
     },
 
-    formSectionTitleActive: {
-        color: BaseTheme.palette.screen01Header
+    formSectionTitleText: {
+        color: BaseTheme.palette.text01
     },
 
-    formSectionTitleInActive: {
-        color: BaseTheme.palette.section01Inactive
-    },
-
-    sectionClose: {
-        color: BaseTheme.palette.section01Inactive,
-        fontSize: 14
-    },
-
-    sectionOpen: {
-        color: BaseTheme.palette.screen01Header,
+    section: {
+        color: BaseTheme.palette.icon01,
         fontSize: 14
     },
 
@@ -109,7 +103,7 @@ export default {
      * Global {@code Text} color for the components.
      */
     text: {
-        color: BaseTheme.palette.field01
+        color: BaseTheme.palette.text02
     },
 
     /**
