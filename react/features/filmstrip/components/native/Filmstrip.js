@@ -237,8 +237,15 @@ class Filmstrip extends PureComponent<Props> {
             ? width / (thumbnailWidth + (2 * margin))
             : height / (thumbnailHeight + (2 * margin))
         );
-        const participants = this._separateLocalThumbnail || _disableSelfView
-            ? _participants : [ _localParticipantId, ..._participants ];
+        let participants;
+
+        if (this._separateLocalThumbnail || _disableSelfView) {
+            participants = _participants;
+        } else if (isNarrowAspectRatio) {
+            participants = [ ..._participants, _localParticipantId ];
+        } else {
+            participants = [ _localParticipantId, ..._participants ];
+        }
 
         return (
             <SafeAreaView style = { filmstripStyle }>
