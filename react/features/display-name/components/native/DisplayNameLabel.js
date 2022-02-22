@@ -71,18 +71,10 @@ class DisplayNameLabel extends Component<Props> {
 function _mapStateToProps(state: Object, ownProps: Props) {
     const { participantId } = ownProps;
     const participant = getParticipantById(state, participantId);
-    const isFakeParticipant = participant && participant.isFakeParticipant;
-
-    // Currently we only render the display name if it's not the local
-    // participant and there is no video rendered for
-    // them.
-    const _render = Boolean(participantId)
-        && !isFakeParticipant;
 
     return {
-        _participantName:
-            getParticipantDisplayName(state, participantId),
-        _render
+        _participantName: getParticipantDisplayName(state, participantId),
+        _render: participant && !participant?.local && !participant?.isFakeParticipant
     };
 }
 
