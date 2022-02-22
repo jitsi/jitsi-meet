@@ -266,8 +266,11 @@ export const colorMap = {
     // Color for disabled tab
     tab01Disabled: 'disabled01',
 
-    // Color for enabled lobby mode switch
-    lobbySwitch01Active: 'success04',
+    // Color for enabled switch
+    switch01Enabled: 'success04',
+
+    // Color for disabled switch
+    switch01Disabled: 'surface06',
 
     // Color for disabled video switch
     video01Disabled: 'disabled01',

@@ -258,8 +258,8 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                                 onValueChange = { this._onStartAudioMutedChange }
                                 thumbColor = { THUMB_COLOR }
                                 trackColor = {{
-                                    false: DISABLED_TRACK_COLOR,
-                                    true: ENABLED_TRACK_COLOR
+                                    true: ENABLED_TRACK_COLOR,
+                                    false: DISABLED_TRACK_COLOR
                                 }}
                                 value = { startWithAudioMuted } />
                         </FormRow>
@@ -269,8 +269,8 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                                 onValueChange = { this._onStartVideoMutedChange }
                                 thumbColor = { THUMB_COLOR }
                                 trackColor = {{
-                                    false: DISABLED_TRACK_COLOR,
-                                    true: ENABLED_TRACK_COLOR
+                                    true: ENABLED_TRACK_COLOR,
+                                    false: DISABLED_TRACK_COLOR
                                 }}
                                 value = { startWithVideoMuted } />
                         </FormRow>
@@ -298,8 +298,8 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                                         onValueChange = { this._onDisableCallIntegration }
                                         thumbColor = { THUMB_COLOR }
                                         trackColor = {{
-                                            false: DISABLED_TRACK_COLOR,
-                                            true: ENABLED_TRACK_COLOR
+                                            true: ENABLED_TRACK_COLOR,
+                                            false: DISABLED_TRACK_COLOR
                                         }}
                                         value = { disableCallIntegration } />
                                 </FormRow>
@@ -312,8 +312,9 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                                 onValueChange = { this._onDisableP2P }
                                 thumbColor = { THUMB_COLOR }
                                 trackColor = {{
-                                    false: DISABLED_TRACK_COLOR,
-                                    true: ENABLED_TRACK_COLOR }}
+                                    true: ENABLED_TRACK_COLOR,
+                                    false: DISABLED_TRACK_COLOR
+                                }}
                                 value = { disableP2P } />
                         </FormRow>
                         <Divider style = { styles.fieldSeparator } />
@@ -325,8 +326,8 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                                     onValueChange = { this._onDisableCrashReporting }
                                     thumbColor = { THUMB_COLOR }
                                     trackColor = {{
-                                        false: DISABLED_TRACK_COLOR,
-                                        true: ENABLED_TRACK_COLOR
+                                        true: ENABLED_TRACK_COLOR,
+                                        false: DISABLED_TRACK_COLOR
                                     }}
                                     value = { disableCrashReporting } />
                             </FormRow>

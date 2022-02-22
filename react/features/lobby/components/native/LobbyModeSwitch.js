@@ -5,8 +5,13 @@ import { Switch, View } from 'react-native';
 
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
+import {
+    DISABLED_TRACK_COLOR,
+    ENABLED_TRACK_COLOR,
+    THUMB_COLOR
+} from '../../../welcome/components/native/settings/components/styles';
 
-import styles, { ENABLED_TRACK_COLOR, THUMB_COLOR } from './styles';
+import styles from './styles';
 
 /**
  * The type of the React {@code Component} props of {@link LobbyModeSwitch}.
@@ -41,7 +46,10 @@ function LobbyModeSwitch(
                 onValueChange = { onToggleLobbyMode }
                 style = { styles.lobbySwitchIcon }
                 thumbColor = { THUMB_COLOR }
-                trackColor = {{ true: ENABLED_TRACK_COLOR }}
+                trackColor = {{
+                    true: ENABLED_TRACK_COLOR,
+                    false: DISABLED_TRACK_COLOR
+                }}
                 value = { lobbyEnabled } />
         </View>
     );
