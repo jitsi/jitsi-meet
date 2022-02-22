@@ -42,8 +42,7 @@ const WelcomePageTabs = ({ disabled, onListContainerPress }: Props) => {
 
     const CalendarListScreen = useCallback(() =>
         (<CalendarList
-            disabled = { disabled }
-            onListContainerPress = { onListContainerPress } />)
+            disabled = { disabled } />)
     );
 
     return (
