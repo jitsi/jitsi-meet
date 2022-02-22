@@ -138,7 +138,7 @@ const ParticipantContextMenu = ({
     const { disableKick, disableGrantModerator } = remoteVideoMenu;
     const { participantsVolume } = useSelector(state => state['features/filmstrip']);
     const _volume = (participant?.local ?? true ? undefined
-        : participant?.id ? participantsVolume[participant?.id] : undefined) || 1;
+        : participant?.id ? participantsVolume[participant?.id] : undefined) ?? 1;
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
 
     const _currentRoomId = useSelector(getCurrentRoomId);
