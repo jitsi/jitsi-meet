@@ -1,0 +1,22 @@
+diff --git a/node_modules/react-native-dialog/lib/Container.js b/node_modules/react-native-dialog/lib/Container.js
+index 69e3764..109126f 100644
+--- a/node_modules/react-native-dialog/lib/Container.js
++++ b/node_modules/react-native-dialog/lib/Container.js
+@@ -82,7 +82,7 @@ DialogContainer.propTypes = {
+     useNativeDriver: PropTypes.bool,
+     children: PropTypes.node.isRequired,
+ };
+-const buildStyles = () => StyleSheet.create({
++const buildStyles = (isDark) => StyleSheet.create({
+     centeredView: {
+         marginTop: 22,
+     },
+@@ -103,7 +103,7 @@ const buildStyles = () => StyleSheet.create({
+             overflow: "hidden",
+         },
+         android: {
+-            backgroundColor: PlatformColor("?attr/colorBackgroundFloating"),
++            backgroundColor: PlatformColor(`@android:color/${isDark ? "background_dark" : "background_light"}`),
+             flexDirection: "column",
+             borderRadius: 3,
+             padding: 16,

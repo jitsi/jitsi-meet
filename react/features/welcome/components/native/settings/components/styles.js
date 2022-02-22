@@ -1,8 +1,8 @@
 import BaseTheme from '../../../../../base/ui/components/BaseTheme.native';
 export const ANDROID_UNDERLINE_COLOR = 'transparent';
 export const PLACEHOLDER_COLOR = BaseTheme.palette.action02Focus;
-export const ENABLED_TRACK_COLOR = BaseTheme.palette.lobbySwitch01Active;
-export const DISABLED_TRACK_COLOR = BaseTheme.palette.ui02;
+export const ENABLED_TRACK_COLOR = BaseTheme.palette.switch01Enabled;
+export const DISABLED_TRACK_COLOR = BaseTheme.palette.switch01Disabled;
 export const THUMB_COLOR = BaseTheme.palette.field02;
 
 const TEXT_SIZE = 14;

@@ -4,9 +4,6 @@ import BaseTheme from '../../../base/ui/components/BaseTheme';
 
 const SECONDARY_COLOR = BaseTheme.palette.border04;
 
-export const ENABLED_TRACK_COLOR = BaseTheme.palette.lobbySwitch01Active;
-export const THUMB_COLOR = BaseTheme.palette.field02;
-
 export default {
     button: {
         alignItems: 'center',
