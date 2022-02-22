@@ -82,6 +82,8 @@ import i18next from 'i18next';
 
 const logger = Logger.getLogger(__filename);
 
+const TEST_SOUND_PATH = 'sounds/ring.wav';
+
 declare var APP: Object;
 declare var interfaceConfig: Object;
 
@@ -539,6 +541,14 @@ function initCommands() {
         },
         'toggle-virtual-background': () => {
             APP.store.dispatch(toggleDialog(VirtualBackgroundDialog));
+        },
+        'play-test-sound': (deviceId) => {
+            const audio = new Audio();
+            audio.src = TEST_SOUND_PATH;
+            
+            audio.setSinkId(deviceId)
+                .then(() => audio.play())
+                .catch( err => logger.error('Could not set sink id', err));
         }
     };
     transport.on('event', ({ data, name }) => {
