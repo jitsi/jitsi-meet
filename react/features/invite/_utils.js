@@ -5,6 +5,8 @@
  * and requires as less dependencies as possible.
  */
 
+import { doGetJSON } from '../base/util';
+
 /**
  * Formats the conference pin in readable way for UI to display it.
  * Formats the pin in 3 groups of digits:
@@ -25,4 +27,26 @@ export function _formatConferenceIDPin(conferenceID: Object) {
         conferenceIDStr.substring(0, partLen)} ${
         conferenceIDStr.substring(partLen, 2 * partLen)} ${
         conferenceIDStr.substring(2 * partLen, conferenceIDStr.length)}`;
+}
+
+/**
+ * Sends a GET request to obtain the conference ID necessary for identifying
+ * which conference to join after diaing the dial-in service.
+ *
+ * @param {string} baseUrl - The url for obtaining the conference ID (pin) for
+ * dialing into a conference.
+ * @param {string} roomName - The conference name to find the associated
+ * conference ID.
+ * @param {string} mucURL - In which MUC the conference exists.
+ * @returns {Promise} - The promise created by the request.
+ */
+export function getDialInConferenceID(
+        baseUrl: string,
+        roomName: string,
+        mucURL: string
+): Promise<Object> {
+
+    const conferenceIDURL = `${baseUrl}?conference=${roomName}@${mucURL}`;
+
+    return doGetJSON(conferenceIDURL, true);
 }

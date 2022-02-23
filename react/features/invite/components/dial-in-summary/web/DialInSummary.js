@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 
 import { translate } from '../../../../base/i18n';
 import { doGetJSON } from '../../../../base/util';
+import { getDialInConferenceID } from '../../../_utils';
 
 import ConferenceID from './ConferenceID';
 import NumbersList from './NumbersList';
@@ -177,7 +178,7 @@ class DialInSummary extends Component<Props, State> {
             return Promise.resolve();
         }
 
-        return doGetJSON(`${dialInConfCodeUrl}?conference=${room}@${mucURL}`, true)
+        return getDialInConferenceID(dialInConfCodeUrl, room, mucURL)
             .catch(() => Promise.reject(this.props.t('info.genericError')));
     }
 

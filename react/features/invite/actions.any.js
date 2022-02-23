@@ -6,6 +6,7 @@ import { getInviteURL } from '../base/connection';
 import { getLocalParticipant, getParticipantCount } from '../base/participants';
 import { inviteVideoRooms } from '../videosipgw';
 
+import { getDialInConferenceID } from './_utils';
 import {
     ADD_PENDING_INVITE_REQUEST,
     BEGIN_ADD_PEOPLE,
@@ -17,7 +18,6 @@ import {
 } from './actionTypes';
 import { INVITE_TYPES } from './constants';
 import {
-    getDialInConferenceID,
     getDialInNumbers,
     invitePeopleAndChatRooms,
     inviteSipEndpoints

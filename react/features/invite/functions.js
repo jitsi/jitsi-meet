@@ -11,6 +11,7 @@ import { toState } from '../base/redux';
 import { doGetJSON, parseURIString } from '../base/util';
 import { isVpaasMeeting } from '../jaas/functions';
 
+import { getDialInConferenceID } from './_utils';
 import { INVITE_TYPES, SIP_ADDRESS_REGEX } from './constants';
 import logger from './logger';
 
@@ -35,28 +36,6 @@ export function checkDialNumber(
             .then(resolve)
             .catch(reject);
     });
-}
-
-/**
- * Sends a GET request to obtain the conference ID necessary for identifying
- * which conference to join after diaing the dial-in service.
- *
- * @param {string} baseUrl - The url for obtaining the conference ID (pin) for
- * dialing into a conference.
- * @param {string} roomName - The conference name to find the associated
- * conference ID.
- * @param {string} mucURL - In which MUC the conference exists.
- * @returns {Promise} - The promise created by the request.
- */
-export function getDialInConferenceID(
-        baseUrl: string,
-        roomName: string,
-        mucURL: string
-): Promise<Object> {
-
-    const conferenceIDURL = `${baseUrl}?conference=${roomName}@${mucURL}`;
-
-    return doGetJSON(conferenceIDURL, true);
 }
 
 /**
