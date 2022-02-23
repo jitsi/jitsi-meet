@@ -1,6 +1,6 @@
 // @flow
 
-import { JitsiParticipantConnectionStatus } from '../base/lib-jitsi-meet';
+import { getSourceNameSignalingFeatureFlag } from '../base/config';
 import { MEDIA_TYPE } from '../base/media';
 import {
     getLocalParticipant,
@@ -15,6 +15,7 @@ import {
     isLocalTrackMuted,
     isRemoteTrackMuted
 } from '../base/tracks/functions';
+import { isTrackStreamingStatusActive, isParticipantConnectionStatusActive } from '../connection-indicator/functions';
 import { LAYOUTS } from '../video-layout';
 
 import {
@@ -105,7 +106,7 @@ export function isVideoPlayable(stateful: Object | Function, id: String) {
     const tracks = state['features/base/tracks'];
     const participant = id ? getParticipantById(state, id) : getLocalParticipant(state);
     const isLocal = participant?.local ?? true;
-    const { connectionStatus } = participant || {};
+
     const videoTrack
         = isLocal ? getLocalVideoTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
     const isAudioOnly = Boolean(state['features/base/audio-only'].enabled);
@@ -118,8 +119,13 @@ export function isVideoPlayable(stateful: Object | Function, id: String) {
     } else if (!participant?.isFakeParticipant) { // remote participants excluding shared video
         const isVideoMuted = isRemoteTrackMuted(tracks, MEDIA_TYPE.VIDEO, id);
 
-        isPlayable = Boolean(videoTrack) && !isVideoMuted && !isAudioOnly
-            && connectionStatus === JitsiParticipantConnectionStatus.ACTIVE;
+        if (getSourceNameSignalingFeatureFlag(state)) {
+            isPlayable = Boolean(videoTrack) && !isVideoMuted && !isAudioOnly
+                && isTrackStreamingStatusActive(videoTrack);
+        } else {
+            isPlayable = Boolean(videoTrack) && !isVideoMuted && !isAudioOnly
+                && isParticipantConnectionStatusActive(participant);
+        }
     }
 
     return isPlayable;
