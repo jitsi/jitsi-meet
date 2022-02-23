@@ -226,9 +226,11 @@ class Thumbnail extends PureComponent<Props> {
                 style = { styles.thumbnailIndicatorContainer }>
                 { audioMuted && <AudioMutedIndicator /> }
                 { renderModeratorIndicator && <ModeratorIndicator />}
-                {renderDisplayName && <DisplayNameLabel
-                    contained = { true }
-                    participantId = { participantId } />}
+                {
+                    renderDisplayName && <DisplayNameLabel
+                        contained = { true }
+                        participantId = { participantId } />
+                }
             </Container>);
         }
 

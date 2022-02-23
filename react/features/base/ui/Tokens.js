@@ -37,6 +37,7 @@ export const colors = {
     surface13: '#495258',
     surface14: '#555555',
     surface15: '#474747',
+    surface16: '#131519',
 
     success04: '#189B55',
     success05: '#1EC26A',
@@ -72,6 +73,7 @@ export const colorMap = {
     ui13: 'surface14',
     ui14: 'surface15',
     ui15: 'surface12',
+    ui16: 'surface16',
 
     // Primary buttons
     action01: 'primary05',

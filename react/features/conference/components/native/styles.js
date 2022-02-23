@@ -1,5 +1,5 @@
 import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
-import { BoxModel, fixAndroidViewClipping } from '../../../base/styles';
+import { fixAndroidViewClipping } from '../../../base/styles';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 export const INSECURE_ROOM_NAME_LABEL_COLOR = BaseTheme.palette.actionDanger;
@@ -101,11 +101,11 @@ export default {
     lonelyMeetingContainer: {
         alignSelf: 'stretch',
         alignItems: 'center',
-        padding: BoxModel.padding * 2
+        padding: BaseTheme.spacing[3]
     },
 
     lonelyMessage: {
-        paddingVertical: 12
+        paddingVertical: BaseTheme.spacing[2]
     },
 
     pipButtonContainer: {
