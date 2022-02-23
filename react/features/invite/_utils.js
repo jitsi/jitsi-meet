@@ -38,15 +38,17 @@ export function _formatConferenceIDPin(conferenceID: Object) {
  * @param {string} roomName - The conference name to find the associated
  * conference ID.
  * @param {string} mucURL - In which MUC the conference exists.
+ * @param {string} url - The address we are loaded in.
  * @returns {Promise} - The promise created by the request.
  */
 export function getDialInConferenceID(
         baseUrl: string,
         roomName: string,
-        mucURL: string
+        mucURL: string,
+        url: string
 ): Promise<Object> {
 
-    const conferenceIDURL = `${baseUrl}?conference=${roomName}@${mucURL}`;
+    const conferenceIDURL = `${baseUrl}?conference=${roomName}@${mucURL}&url=${url}`;
 
     return doGetJSON(conferenceIDURL, true);
 }

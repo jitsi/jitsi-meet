@@ -31,6 +31,11 @@ type Props = {
     room: string,
 
     /**
+     * The url where we were loaded.
+     */
+    url: string,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -177,7 +182,7 @@ class DialInSummary extends Component<Props, State> {
             return Promise.resolve();
         }
 
-        return getDialInConferenceID(dialInConfCodeUrl, room, mucURL)
+        return getDialInConferenceID(dialInConfCodeUrl, room, mucURL, this.props.url)
             .catch(() => Promise.reject(this.props.t('info.genericError')));
     }
 

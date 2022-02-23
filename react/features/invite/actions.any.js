@@ -208,11 +208,12 @@ export function updateDialInNumbers() {
             return;
         }
 
+        const { locationURL = {} } = state['features/base/connection'];
         const { room } = state['features/base/conference'];
 
         Promise.all([
             getDialInNumbers(dialInNumbersUrl, room, mucURL),
-            getDialInConferenceID(dialInConfCodeUrl, room, mucURL)
+            getDialInConferenceID(dialInConfCodeUrl, room, mucURL, locationURL.href)
         ])
             .then(([ dialInNumbers, { conference, id, message, sipUri } ]) => {
                 if (!conference || !id) {

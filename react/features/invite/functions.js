@@ -524,6 +524,7 @@ export function getShareInfoText(
             // in the state
             const { dialInConfCodeUrl, dialInNumbersUrl, hosts }
                 = state['features/base/config'];
+            const { locationURL = {} } = state['features/base/connection'];
             const mucURL = hosts && hosts.muc;
 
             if (!dialInConfCodeUrl || !dialInNumbersUrl || !mucURL) {
@@ -533,7 +534,7 @@ export function getShareInfoText(
 
             numbersPromise = Promise.all([
                 getDialInNumbers(dialInNumbersUrl, room, mucURL),
-                getDialInConferenceID(dialInConfCodeUrl, room, mucURL)
+                getDialInConferenceID(dialInConfCodeUrl, room, mucURL, locationURL.href)
             ]).then(([ numbers, {
                 conference, id, message } ]) => {
 
