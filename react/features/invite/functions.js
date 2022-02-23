@@ -12,7 +12,11 @@ import { parseURIString } from '../base/util';
 import { isVpaasMeeting } from '../jaas/functions';
 
 import { getDialInConferenceID, getDialInNumbers } from './_utils';
-import { INVITE_TYPES, SIP_ADDRESS_REGEX } from './constants';
+import {
+    DIAL_IN_INFO_PAGE_PATH_NAME,
+    INVITE_TYPES,
+    SIP_ADDRESS_REGEX
+} from './constants';
 import logger from './logger';
 
 declare var $: Function;
@@ -589,7 +593,7 @@ export function getDialInfoPageURL(state: Object, roomName: ?string) {
     const { href } = locationURL;
     const room = _decodeRoomURI(conferenceName);
 
-    const url = didPageUrl || `${href.substring(0, href.lastIndexOf('/'))}/static/dialInInfo.html`;
+    const url = didPageUrl || `${href.substring(0, href.lastIndexOf('/'))}/${DIAL_IN_INFO_PAGE_PATH_NAME}`;
 
     return `${url}?room=${room}`;
 }
@@ -607,7 +611,7 @@ export function getDialInfoPageURLForURIString(
     }
     const { protocol, host, contextRoot, room } = parseURIString(uri);
 
-    return `${protocol}//${host}${contextRoot}static/dialInInfo.html?room=${room}`;
+    return `${protocol}//${host}${contextRoot}${DIAL_IN_INFO_PAGE_PATH_NAME}?room=${room}`;
 }
 
 /**

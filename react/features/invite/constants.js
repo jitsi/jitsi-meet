@@ -1,6 +1,13 @@
 // @flow
 
 /**
+ * The pathName for the dialInInfo page.
+ *
+ * @type {string}
+ */
+export const DIAL_IN_INFO_PAGE_PATH_NAME = 'static/dialInInfo.html';
+
+/**
  * Modal ID for the DialInSummary modal.
  */
 export const DIAL_IN_SUMMARY_VIEW_ID = 'DIAL_IN_SUMMARY_VIEW_ID';
