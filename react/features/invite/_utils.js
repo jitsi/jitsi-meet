@@ -47,8 +47,8 @@ export function getDialInConferenceID(
         mucURL: string,
         url: string
 ): Promise<Object> {
-
-    const conferenceIDURL = `${baseUrl}?conference=${roomName}@${mucURL}&url=${url}`;
+    const separator = baseUrl.includes('?') ? '&' : '?';
+    const conferenceIDURL = `${baseUrl}${separator}conference=${roomName}@${mucURL}&url=${url}`;
 
     return doGetJSON(conferenceIDURL, true);
 }
@@ -70,9 +70,10 @@ export function getDialInNumbers(
         roomName: string,
         mucURL: string
 ): Promise<*> {
+    const separator = url.includes('?') ? '&' : '?';
 
     // when roomName and mucURL are available
     // provide conference when looking up dial in numbers
 
-    return doGetJSON(url + (roomName && mucURL ? `?conference=${roomName}@${mucURL}` : ''), true);
+    return doGetJSON(url + (roomName && mucURL ? `${separator}conference=${roomName}@${mucURL}` : ''), true);
 }
