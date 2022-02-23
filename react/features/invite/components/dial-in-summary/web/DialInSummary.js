@@ -3,8 +3,7 @@
 import React, { Component } from 'react';
 
 import { translate } from '../../../../base/i18n';
-import { doGetJSON } from '../../../../base/util';
-import { getDialInConferenceID } from '../../../_utils';
+import { getDialInConferenceID, getDialInNumbers } from '../../../_utils';
 
 import ConferenceID from './ConferenceID';
 import NumbersList from './NumbersList';
@@ -192,20 +191,12 @@ class DialInSummary extends Component<Props, State> {
         const { room } = this.props;
         const { dialInNumbersUrl, hosts } = config;
         const mucURL = hosts && hosts.muc;
-        let URLSuffix = '';
 
         if (!dialInNumbersUrl) {
             return Promise.reject(this.props.t('info.dialInNotSupported'));
         }
 
-        // when room and mucURL are available
-        // provide conference when looking up dial in numbers
-
-        if (room && mucURL) {
-            URLSuffix = `?conference=${room}@${mucURL}`;
-        }
-
-        return doGetJSON(`${dialInNumbersUrl}${URLSuffix}`, true)
+        return getDialInNumbers(dialInNumbersUrl, room, mucURL)
             .catch(() => Promise.reject(this.props.t('info.genericError')));
     }
 

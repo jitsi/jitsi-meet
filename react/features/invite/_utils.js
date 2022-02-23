@@ -50,3 +50,27 @@ export function getDialInConferenceID(
 
     return doGetJSON(conferenceIDURL, true);
 }
+
+/**
+ * Sends a GET request for phone numbers used to dial into a conference.
+ *
+ * @param {string} url - The service that returns conference dial-in numbers.
+ * @param {string} roomName - The conference name to find the associated
+ * conference ID.
+ * @param {string} mucURL - In which MUC the conference exists.
+ * @returns {Promise} - The promise created by the request. The returned numbers
+ * may be an array of Objects containing numbers, with keys countryCode,
+ * tollFree, formattedNumber or an object with countries as keys and arrays of
+ * phone number strings, as the second one should not be used and is deprecated.
+ */
+export function getDialInNumbers(
+        url: string,
+        roomName: string,
+        mucURL: string
+): Promise<*> {
+
+    // when roomName and mucURL are available
+    // provide conference when looking up dial in numbers
+
+    return doGetJSON(url + (roomName && mucURL ? `?conference=${roomName}@${mucURL}` : ''), true);
+}

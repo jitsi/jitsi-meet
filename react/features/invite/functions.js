@@ -8,10 +8,10 @@ import { i18next } from '../base/i18n';
 import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 import { getLocalParticipant, isLocalParticipantModerator } from '../base/participants';
 import { toState } from '../base/redux';
-import { doGetJSON, parseURIString } from '../base/util';
+import { parseURIString } from '../base/util';
 import { isVpaasMeeting } from '../jaas/functions';
 
-import { getDialInConferenceID } from './_utils';
+import { getDialInConferenceID, getDialInNumbers } from './_utils';
 import { INVITE_TYPES, SIP_ADDRESS_REGEX } from './constants';
 import logger from './logger';
 
@@ -36,29 +36,6 @@ export function checkDialNumber(
             .then(resolve)
             .catch(reject);
     });
-}
-
-/**
- * Sends a GET request for phone numbers used to dial into a conference.
- *
- * @param {string} url - The service that returns conference dial-in numbers.
- * @param {string} roomName - The conference name to find the associated
- * conference ID.
- * @param {string} mucURL - In which MUC the conference exists.
- * @returns {Promise} - The promise created by the request. The returned numbers
- * may be an array of Objects containing numbers, with keys countryCode,
- * tollFree, formattedNumber or an object with countries as keys and arrays of
- * phone number strings, as the second one should not be used and is deprecated.
- */
-export function getDialInNumbers(
-        url: string,
-        roomName: string,
-        mucURL: string
-): Promise<*> {
-
-    const fullUrl = `${url}?conference=${roomName}@${mucURL}`;
-
-    return doGetJSON(fullUrl, true);
 }
 
 /**
