@@ -91,7 +91,7 @@ var interfaceConfig = {
 
     LANG_DETECTION: true, // Allow i18n to detect the system language
     LIVE_STREAMING_HELP_LINK: 'https://jitsi.org/live', // Documentation reference for the live streaming feature.
-    LOCAL_THUMBNAIL_RATIO: 1, // 1:1
+    LOCAL_THUMBNAIL_RATIO: 16 / 9, // 16:9
 
     /**
      * Maximum coefficient of the ratio of the large video to the visible area
