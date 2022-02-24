@@ -28,7 +28,7 @@
     flex-direction: column-reverse;
     height: 100%;
     width: 100%;
-    padding: ($desktopAppDragBarHeight - 5px) 5px calc(env(safe-area-inset-bottom, 0) + 10px);
+    padding: 0;
     /**
      * fixed positioning is necessary for remote menus and tooltips to pop
      * out of the scrolling filmstrip. AtlasKit dialogs and tooltips use
@@ -39,6 +39,10 @@
     top: 0;
     right: 0;
     z-index: $filmstripVideosZ;
+
+    &.no-vertical-padding {
+        padding: 0;
+    }
 
     /**
      * Hide videos by making them slight to the right.
@@ -58,7 +62,10 @@
         &#remoteVideos {
             border: $thumbnailsBorder solid transparent;
             padding-left: 0;
+            border-left: 0;
             width: 100%;
+            height: 100%;
+            justify-content: center;
         }
     }
 
@@ -67,11 +74,12 @@
      */
     #filmstripLocalVideo {
         align-self: initial;
-        bottom: 5px;
+        margin-bottom: 5px;
         display: flex;
         flex-direction: column-reverse;
         height: auto;
         justify-content: flex-start;
+        width: 100%;
 
         #filmstripLocalVideoThumbnail {
             width: calc(100% - 15px);
@@ -100,14 +108,26 @@
         flex-grow: 1;
     }
 
+    .resizable-filmstrip #remoteVideos .videocontainer {
+        border-left: 0;
+        margin: 0;
+    }
+
     &.reduce-height {
         height: calc(100% - calc(#{$newToolbarSizeWithPadding} + #{$scrollHeight}));
     }
 
     .remote-videos {
         display: flex;
-        transition: height .3s ease-in;
         overscroll-behavior: contain;
+
+        &.height-transition {
+            transition: height .3s ease-in;
+        }
+
+        &.vertical-grid-margin > div {
+            margin-right: $scrollHeight;
+        }
 
         & > div {
             position: absolute;

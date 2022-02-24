@@ -138,6 +138,14 @@ export const TILE_VERTICAL_MARGIN = 4;
 export const TILE_HORIZONTAL_MARGIN = 4;
 
 /**
+ * The horizontal margin of a vertical filmstrip tile container.
+ *
+ * @type {number}
+ */
+export const TILE_VERTICAL_CONTAINER_HORIZONTAL_MARGIN = 2;
+
+
+/**
  * The vertical margin of the tile grid container.
  *
  * @type {number}
@@ -189,7 +197,7 @@ export const SCROLL_SIZE = 7;
  *
  * @type {number}
  */
-export const VERTICAL_FILMSTRIP_VERTICAL_MARGIN = 60;
+export const VERTICAL_FILMSTRIP_VERTICAL_MARGIN = 26;
 
 /**
  * The min horizontal space between the thumbnails container and the edges of the window.
@@ -242,3 +250,37 @@ export const INDICATORS_TOOLTIP_POSITION = {
     [LAYOUTS.VERTICAL_FILMSTRIP_VIEW]: 'left',
     [LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW]: 'top'
 };
+
+/**
+ * The default (and minimum) width for the vertical filmstrip (user resizable).
+ */
+export const DEFAULT_FILMSTRIP_WIDTH = 120;
+
+/**
+ * The width of the filmstrip at which it no longer goes above the stage view, but it pushes it.
+ */
+export const FILMSTRIP_BREAKPOINT = 180;
+
+/**
+ * The width of the filmstrip at which the display mode changes from column to grid.
+ */
+export const FILMSTRIP_GRID_BREAKPOINT = 300;
+
+/**
+ * How much before the breakpoint should we display the background.
+ * (We display the opaque background before we resize the stage view to make sure
+ * the resize is not visible behind the filmstrip).
+ */
+export const FILMSTRIP_BREAKPOINT_OFFSET = 5;
+
+/**
+ * The minimum width for the stage view
+ * (used to determine the maximum width of the user-resizable vertical filmstrip).
+ */
+export const MIN_STAGE_VIEW_WIDTH = 800;
+
+/**
+ * Horizontal margin used for the vertical filmstrip.
+ */
+export const VERTICAL_VIEW_HORIZONTAL_MARGIN = VERTICAL_FILMSTRIP_MIN_HORIZONTAL_MARGIN
+    + SCROLL_SIZE + TILE_HORIZONTAL_MARGIN + STAGE_VIEW_THUMBNAIL_HORIZONTAL_BORDER;

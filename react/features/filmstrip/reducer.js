@@ -6,9 +6,11 @@ import { ReducerRegistry } from '../base/redux';
 import {
     SET_FILMSTRIP_ENABLED,
     SET_FILMSTRIP_VISIBLE,
+    SET_FILMSTRIP_WIDTH,
     SET_HORIZONTAL_VIEW_DIMENSIONS,
     SET_REMOTE_PARTICIPANTS,
     SET_TILE_VIEW_DIMENSIONS,
+    SET_USER_FILMSTRIP_WIDTH,
     SET_VERTICAL_VIEW_DIMENSIONS,
     SET_VISIBLE_REMOTE_PARTICIPANTS,
     SET_VOLUME
@@ -92,7 +94,26 @@ const DEFAULT_STATE = {
      * @public
      * @type {Set<string>}
      */
-    visibleRemoteParticipants: new Set()
+    visibleRemoteParticipants: new Set(),
+
+    /**
+     * The width of the resizable filmstrip.
+     *
+     * @public
+     * @type {Object}
+     */
+    width: {
+        /**
+         * Current width. Affected by: user filmstrip resize,
+         * window resize, panels open/ close.
+         */
+        current: null,
+
+        /**
+         * Width set by user resize. Used as the preferred width.
+         */
+        userSet: null
+    }
 };
 
 ReducerRegistry.register(
@@ -165,6 +186,26 @@ ReducerRegistry.register(
 
             return {
                 ...state
+            };
+        }
+        case SET_FILMSTRIP_WIDTH: {
+            return {
+                ...state,
+                width: {
+                    ...state.width,
+                    current: action.width
+                }
+            };
+        }
+        case SET_USER_FILMSTRIP_WIDTH: {
+            const { width } = action;
+
+            return {
+                ...state,
+                width: {
+                    current: width,
+                    userSet: width
+                }
             };
         }
         }

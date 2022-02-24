@@ -21,6 +21,7 @@ import {
     SINGLE_COLUMN_BREAKPOINT,
     TWO_COLUMN_BREAKPOINT
 } from './constants';
+import { isFilmstripResizable } from './functions.web';
 import './subscriber.any';
 
 
@@ -36,6 +37,7 @@ StateListenerRegistry.register(
     },
     /* listener */ (currentState, store) => {
         const state = store.getState();
+        const resizableFilmstrip = isFilmstripResizable(state);
 
         if (shouldDisplayTileView(state)) {
             const gridDimensions = getTileViewGridDimensions(state);
@@ -44,6 +46,9 @@ StateListenerRegistry.register(
             if (!equals(gridDimensions, oldGridDimensions)) {
                 store.dispatch(setTileViewDimensions(gridDimensions));
             }
+        }
+        if (resizableFilmstrip) {
+            store.dispatch(setVerticalViewDimensions());
         }
     }, {
         deepEquals: true
@@ -169,4 +174,13 @@ StateListenerRegistry.register(
 
             store.dispatch(setTileViewDimensions(gridDimensions));
         }
+    });
+
+/**
+ * Listens for changes in the filmstrip width to determine the size of the tiles.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => state['features/filmstrip'].width?.current,
+    /* listener */(_, store) => {
+        store.dispatch(setVerticalViewDimensions());
     });

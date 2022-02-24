@@ -10,7 +10,6 @@ import {
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { TRACK_ADDED, TRACK_REMOVED, TRACK_STOPPED } from '../base/tracks';
-import { SET_FILMSTRIP_VISIBLE } from '../filmstrip';
 import { PARTICIPANTS_PANE_CLOSE, PARTICIPANTS_PANE_OPEN } from '../participants-pane/actionTypes.js';
 
 import './middleware.any';
@@ -54,7 +53,6 @@ MiddlewareRegistry.register(store => next => action => {
 
     case PARTICIPANTS_PANE_CLOSE:
     case PARTICIPANTS_PANE_OPEN:
-    case SET_FILMSTRIP_VISIBLE:
         VideoLayout.resizeVideoArea();
         break;
 

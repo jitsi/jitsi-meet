@@ -78,6 +78,10 @@
 #largeVideoContainer {
     overflow: hidden;
     text-align: center;
+
+    &.transition {
+        transition: width 1s, height 1s, top 1s;
+    }
 }
 
 #largeVideoContainer {

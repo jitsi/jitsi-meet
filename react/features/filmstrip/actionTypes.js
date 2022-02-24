@@ -91,3 +91,21 @@ export const SET_VOLUME = 'SET_VOLUME';
  * }
  */
 export const SET_VISIBLE_REMOTE_PARTICIPANTS = 'SET_VISIBLE_REMOTE_PARTICIPANTS';
+
+/**
+ * The type of action which sets the width for the vertical filmstrip.
+ * {
+ *      type: SET_FILMSTRIP_WIDTH,
+ *      width: number
+ * }
+ */
+export const SET_FILMSTRIP_WIDTH = 'SET_FILMSTRIP_WIDTH';
+
+/**
+ * The type of action which sets the width for the vertical filmstrip (user resized).
+ * {
+ *      type: SET_USER_FILMSTRIP_WIDTH,
+ *      width: number
+ * }
+ */
+export const SET_USER_FILMSTRIP_WIDTH = 'SET_USER_FILMSTRIP_WIDTH';
