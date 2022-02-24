@@ -69,12 +69,12 @@ class DisplayNameLabel extends Component<Props> {
  * }}
  */
 function _mapStateToProps(state: Object, ownProps: Props) {
-    const { participantId } = ownProps;
+    const { participantId, contained } = ownProps;
     const participant = getParticipantById(state, participantId);
 
     return {
         _participantName: getParticipantDisplayName(state, participantId),
-        _render: participant && !participant?.local && !participant?.isFakeParticipant
+        _render: participant && (!participant?.local || contained) && !participant?.isFakeParticipant
     };
 }
 
