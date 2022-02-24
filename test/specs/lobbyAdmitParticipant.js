@@ -1,4 +1,3 @@
-
 import openSession from "../helpers/lobbyHelper"
 
 import openParticipantsPane from "../helpers/openParticipantsPane"

@@ -1,7 +1,7 @@
-
 import openSession from "../helpers/lobbyHelper"
-describe('Activate lobby and admit participant', () => {
-    it('should open jitsi-meet app, enable lobby and admit participant', async () => {
+
+describe('Activate lobby and reject participant', () => {
+    it('should open jitsi-meet app, enable lobby and reject participant', async () => {
         await openSession({
             moderator: true,
             name: 'Participant 1',
