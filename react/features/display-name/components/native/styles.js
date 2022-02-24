@@ -12,8 +12,8 @@ export default {
     },
 
     displayNamePadding: {
-        paddingHorizontal: BaseTheme.spacing[2],
-        paddingVertical: BaseTheme.spacing[1]
+        padding: BaseTheme.spacing[1],
+        paddingRight: 6
     },
 
     displayNameText: {

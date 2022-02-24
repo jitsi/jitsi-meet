@@ -134,7 +134,13 @@ export default {
         position: 'absolute',
         maxWidth: '95%',
         overflow: 'hidden',
-        ...indicatorContainer
+        ...indicatorContainer,
+        padding: 0
+    },
+
+    bottomIndicatorsContainer: {
+        padding: 2,
+        flexDirection: 'row'
     },
 
     thumbnailTopIndicatorContainer: {
