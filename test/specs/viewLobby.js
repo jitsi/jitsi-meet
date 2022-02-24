@@ -1,17 +1,19 @@
 
 import openSession from "../helpers/lobbyHelper"
+import { BASE_URL } from "../helpers/constants"
+
 describe('Open jitsimeet app, enable lobby and view lobby', () => {
     it('should open jitsimeet app, enable lobby and view lobby', async () => {
         await openSession({
             moderator: true,
             name: 'Participant 1',
-            url: 'https://localhost:8080',
+            url: BASE_URL,
             roomName: 'RoomNameTest'
         });
         await openSession({
             moderator: false,
             name: 'Participant 2',
-            url: 'https://localhost:8080',
+            url: BASE_URL,
             roomName: 'RoomNameTest'
         });
 
@@ -27,7 +29,7 @@ describe('Open jitsimeet app, enable lobby and view lobby', () => {
         await openSession({
             moderator: false,
             name: 'Participant 3',
-            url: 'https://localhost:8080',
+            url: BASE_URL,
             roomName: 'RoomNameTest'
         });
         await browser.switchToWindow(handles[0]);

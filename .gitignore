@@ -2,6 +2,8 @@
 .*.tmp
 deploy-local.sh
 libs/
+allure-report/
+allure-results/
 all.css
 *css.map
 .remote-sync.json

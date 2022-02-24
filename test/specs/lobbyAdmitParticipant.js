@@ -1,4 +1,5 @@
 import openSession from "../helpers/lobbyHelper"
+import { BASE_URL } from "../helpers/constants"
 
 import openParticipantsPane from "../helpers/openParticipantsPane"
 
@@ -19,13 +20,13 @@ describe('Activate lobby and admit participant', () => {
         await openSession({
             moderator: true,
             name: 'Participant 1',
-            url: 'https://localhost:8080',
+            url: BASE_URL,
             roomName
         });
         await openSession({
             moderator: false,
             name: 'Participant 2',
-            url: 'https://localhost:8080',
+            url: BASE_URL,
             roomName
         });
 

@@ -1,17 +1,18 @@
 import openSession from "../helpers/lobbyHelper"
+import { BASE_URL } from "../helpers/constants"
 
 describe('Activate lobby and reject participant', () => {
     it('should open jitsi-meet app, enable lobby and reject participant', async () => {
         await openSession({
             moderator: true,
             name: 'Participant 1',
-            url: 'https://localhost:8080',
+            url: BASE_URL,
             roomName: 'RoomNameTest'
         });
         await openSession({
             moderator: false,
             name: 'Participant 2',
-            url: 'https://localhost:8080',
+            url: BASE_URL,
             roomName: 'RoomNameTest'
         });
 
