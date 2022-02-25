@@ -82,7 +82,7 @@
         flex-direction: column;
         flex-shrink: 0;
         height: 100%;
-        margin: 0 110px;
+        margin: 0 30px;
         padding: 24px 0 16px;
         position: relative;
         width: $prejoinDefaultContentWidth;
@@ -154,7 +154,7 @@
         }
     }
 
-    @media (max-width: 1000px) {
+    @media (max-width: 720px) {
         flex-direction: column-reverse;
 
         .content {
