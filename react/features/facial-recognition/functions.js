@@ -131,17 +131,8 @@ export async function sendDataToWorker(
         return;
     }
 
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-
-    canvas.width = imageBitmap.width;
-    canvas.height = imageBitmap.height;
-    context.drawImage(imageBitmap, 0, 0);
-
-    const imageData = context.getImageData(0, 0, imageBitmap.width, imageBitmap.height);
-
     worker.postMessage({
         type: SET_TIMEOUT,
-        imageData
+        imageBitmap
     });
 }

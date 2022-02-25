@@ -58,7 +58,7 @@ onmessage = async function(message) {
     }
 
     case SET_TIMEOUT : {
-        if (!message.data.imageData || !modelsURL) {
+        if (!message.data.imageBitmap || !modelsURL) {
             self.postMessage({
                 type: FACIAL_EXPRESSION_MESSAGE,
                 value: null
@@ -72,7 +72,7 @@ onmessage = async function(message) {
             modelsLoaded = true;
         }
         faceapi.tf.engine().startScope();
-        const tensor = faceapi.tf.browser.fromPixels(message.data.imageData);
+        const tensor = faceapi.tf.browser.fromPixels(message.data.imageBitmap);
         const detections = await faceapi.detectSingleFace(
                 tensor,
                 new faceapi.TinyFaceDetectorOptions()
