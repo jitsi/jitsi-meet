@@ -100,7 +100,10 @@ const styles = {
         flexGrow: 0,
         height: '100%',
         width: '100%',
-        maxHeight: 80,
+
+        // TODO revisit this
+
+        maxHeight: 76,
         maxWidth: 580,
         marginLeft: 'auto',
         marginRight: 'auto'

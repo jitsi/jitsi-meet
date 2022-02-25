@@ -1,13 +1,15 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-import { FlatList, SafeAreaView } from 'react-native';
+import { FlatList } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { getLocalParticipant } from '../../../base/participants';
 import { Platform } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { shouldHideSelfView } from '../../../base/settings/functions.any';
+import { isToolboxVisible } from '../../../toolbox/functions';
 import { setVisibleRemoteParticipants } from '../../actions';
 import { isFilmstripVisible, shouldRemoteVideosBeVisible } from '../../functions';
 
@@ -36,6 +38,11 @@ type Props = {
      * Whether or not to hide the self view.
      */
     _disableSelfView: boolean,
+
+    /**
+     * Whether or not the toolbox is displayed.
+     */
+    _isToolboxVisible: Boolean,
 
     _localParticipantId: string,
 
@@ -223,7 +230,14 @@ class Filmstrip extends PureComponent<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _aspectRatio, _localParticipantId, _participants, _visible, _disableSelfView } = this.props;
+        const {
+            _aspectRatio,
+            _disableSelfView,
+            _isToolboxVisible,
+            _localParticipantId,
+            _participants,
+            _visible
+        } = this.props;
 
         if (!_visible) {
             return null;
@@ -248,7 +262,14 @@ class Filmstrip extends PureComponent<Props> {
         }
 
         return (
-            <SafeAreaView style = { filmstripStyle }>
+            <SafeAreaView
+                edges = { [
+                    !_isToolboxVisible && 'bottom',
+                    'top',
+                    'left',
+                    'right'
+                ].filter(Boolean) }
+                style = { filmstripStyle }>
                 {
                     this._separateLocalThumbnail
                         && !isNarrowAspectRatio
@@ -299,6 +320,7 @@ function _mapStateToProps(state) {
         _clientHeight: responsiveUI.clientHeight,
         _clientWidth: responsiveUI.clientWidth,
         _disableSelfView: disableSelfView,
+        _isToolboxVisible: isToolboxVisible(state),
         _localParticipantId: getLocalParticipant(state)?.id,
         _participants: showRemoteVideos ? remoteParticipants : NO_REMOTE_VIDEOS,
         _visible: enabled && isFilmstripVisible(state)
