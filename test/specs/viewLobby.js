@@ -43,5 +43,3 @@ describe('Open jitsimeet app, enable lobby and view lobby', () => {
         await browser.deleteSession();
     });
 });
-
-

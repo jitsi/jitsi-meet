@@ -7,16 +7,16 @@ describe('Activate lobby and admit participant', () => {
     it('should open jitsi-meet app, enable lobby and admit participant', async () => {
         let roomName;
         const capabilities = await browser.requestedCapabilities;
-        switch(capabilities.browserName) {
+        switch (capabilities.browserName) {
             case 'chrome':
-            roomName = 'ChromeRoomNameTest'
-              break;
+                roomName = 'ChromeRoomNameTest'
+                break;
             case 'firefox':
-            roomName = 'FirefoxRoomNameTest'
-              break;
+                roomName = 'FirefoxRoomNameTest'
+                break;
             default:
-              roomName = 'SafariRoomNameTest'
-          }
+                roomName = 'SafariRoomNameTest'
+        }
         await openSession({
             moderator: true,
             name: 'Participant 1',
@@ -44,5 +44,3 @@ describe('Activate lobby and admit participant', () => {
         await browser.deleteSession();
     });
 });
-
-

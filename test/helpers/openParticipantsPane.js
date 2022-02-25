@@ -1,5 +1,3 @@
-
-
 export default async function openParticipantsPane() {
 
     const video = await $('#largeVideo');
