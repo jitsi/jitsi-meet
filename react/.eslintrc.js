@@ -11,6 +11,9 @@ module.exports = {
         'react/jsx-indent-props': 0
     },
     'settings': {
+        'flowtype': {
+            'onlyFilesWithFlowAnnotation': true
+        },
         'react': {
             'version': 'detect'
         }

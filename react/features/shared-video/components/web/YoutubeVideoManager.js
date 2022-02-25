@@ -15,7 +15,7 @@ import AbstractVideoManager, {
  *
  * @returns {void}
  */
-class YoutubeVideoManager extends AbstractVideoManager<Props> {
+class YoutubeVideoManager extends AbstractVideoManager {
     /**
      * Initializes a new YoutubeVideoManager instance.
      *
