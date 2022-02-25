@@ -184,3 +184,12 @@ StateListenerRegistry.register(
     /* listener */(_, store) => {
         store.dispatch(setVerticalViewDimensions());
     });
+
+/**
+ * Listens for changes in the filmstrip config to determine the size of the tiles.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => state['features/base/config'].filmstrip?.disableResizable,
+    /* listener */(_, store) => {
+        store.dispatch(setVerticalViewDimensions());
+    });

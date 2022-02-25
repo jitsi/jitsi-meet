@@ -257,6 +257,11 @@ export const INDICATORS_TOOLTIP_POSITION = {
 export const DEFAULT_FILMSTRIP_WIDTH = 120;
 
 /**
+ * The default aspect ratio for the local tile.
+ */
+export const DEFAULT_LOCAL_TILE_ASPECT_RATIO = 16 / 9;
+
+/**
  * The width of the filmstrip at which it no longer goes above the stage view, but it pushes it.
  */
 export const FILMSTRIP_BREAKPOINT = 180;

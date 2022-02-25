@@ -26,7 +26,6 @@ import {
     calculateThumbnailSizeForHorizontalView,
     calculateThumbnailSizeForTileView,
     calculateThumbnailSizeForVerticalView,
-    calculateThumbnailSizeForResizableVerticalView,
     isFilmstripResizable,
     showGridInVerticalView
 } from './functions';
@@ -128,9 +127,7 @@ export function setVerticalViewDimensions() {
                 width: widthOfFilmstrip
             };
         } else {
-            thumbnails = resizableFilmstrip
-                ? calculateThumbnailSizeForResizableVerticalView(clientWidth, filmstripWidth.current)
-                : calculateThumbnailSizeForVerticalView(clientWidth);
+            thumbnails = calculateThumbnailSizeForVerticalView(clientWidth, filmstripWidth.current, resizableFilmstrip);
         }
 
         dispatch({
