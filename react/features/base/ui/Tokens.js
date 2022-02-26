@@ -295,7 +295,13 @@ export const colorMap = {
     support09: 'support09',
 
     // Used for avatars and raise hand badge
-    support07: 'support07'
+    support07: 'support07',
+
+    // Colors for avatar status badge
+    presenceAvailable: 'rgb(110, 176, 5)',
+    presenceAway: 'rgb(250, 201, 20)',
+    presenceBusy: 'rgb(233, 0, 27)',
+    presenceIdle: 'rgb(172, 172, 172)'
 };
 
 
