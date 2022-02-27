@@ -201,57 +201,6 @@ class WelcomePage extends AbstractWelcomePage {
                     </div>
                     <div className = 'header-image' />
                     <div className = 'header-container'>
-                        <h1 className = 'header-text-title'>
-                            { t('welcomepage.headerTitle') }
-                        </h1>
-                        <span className = 'header-text-subtitle'>
-                            { t('welcomepage.headerSubtitle')}
-                        </span>
-                        <div id = 'enter_room'>
-                            <div className = 'enter-room-input-container'>
-                                <form onSubmit = { this._onFormSubmit }>
-                                    <input
-                                        aria-disabled = 'false'
-                                        aria-label = 'Meeting name input'
-                                        autoFocus = { true }
-                                        className = 'enter-room-input'
-                                        id = 'enter_room_field'
-                                        onChange = { this._onRoomChange }
-                                        pattern = { ROOM_NAME_VALIDATE_PATTERN_STR }
-                                        placeholder = { this.state.roomPlaceholder }
-                                        ref = { this._setRoomInputRef }
-                                        title = { t('welcomepage.roomNameAllowedChars') }
-                                        type = 'text'
-                                        value = { this.state.room } />
-                                    <div
-                                        className = { _moderatedRoomServiceUrl
-                                            ? 'warning-with-link'
-                                            : 'warning-without-link' }>
-                                        { this._renderInsecureRoomNameWarning() }
-                                    </div>
-                                </form>
-                            </div>
-                            <button
-                                aria-disabled = 'false'
-                                aria-label = 'Start meeting'
-                                className = 'welcome-page-button'
-                                id = 'enter_room_button'
-                                onClick = { this._onFormSubmit }
-                                tabIndex = '0'
-                                type = 'button'>
-                                { t('welcomepage.startMeeting') }
-                            </button>
-                        </div>
-
-                        { _moderatedRoomServiceUrl && (
-                            <div id = 'moderated-meetings'>
-                                <p>
-                                    {
-                                        translateToHTML(
-                                        t, 'welcomepage.moderatedMessage', { url: _moderatedRoomServiceUrl })
-                                    }
-                                </p>
-                            </div>)}
                     </div>
                 </div>
 
@@ -344,43 +293,155 @@ class WelcomePage extends AbstractWelcomePage {
     _renderFooter() {
         const { t } = this.props;
         const {
-            MOBILE_DOWNLOAD_LINK_ANDROID,
-            MOBILE_DOWNLOAD_LINK_F_DROID,
-            MOBILE_DOWNLOAD_LINK_IOS
+            DISPLAY_WELCOME_FOOTER_MOBILE,
+            DISPLAY_WELCOME_FOOTER_SLACK,
+            DISPLAY_WELCOME_FOOTER_LINKS,
+            DISPLAY_WELCOME_FOOTER_LOGO
         } = interfaceConfig;
 
         return (<footer className = 'welcome-footer'>
             <div className = 'welcome-footer-centered'>
                 <div className = 'welcome-footer-padded'>
-                    <div className = 'welcome-footer-row-block welcome-footer--row-1'>
-                        <div className = 'welcome-footer-row-1-text'>{t('welcomepage.jitsiOnMobile')}</div>
-                        <a
-                            className = 'welcome-badge'
-                            href = { MOBILE_DOWNLOAD_LINK_IOS }>
-                            <img
-                                alt = { t('welcomepage.mobileDownLoadLinkIos') }
-                                src = './images/app-store-badge.png' />
-                        </a>
-                        <a
-                            className = 'welcome-badge'
-                            href = { MOBILE_DOWNLOAD_LINK_ANDROID }>
-                            <img
-                                alt = { t('welcomepage.mobileDownLoadLinkAndroid') }
-                                src = './images/google-play-badge.png' />
-                        </a>
-                        <a
-                            className = 'welcome-badge'
-                            href = { MOBILE_DOWNLOAD_LINK_F_DROID }>
-                            <img
-                                alt = { t('welcomepage.mobileDownLoadLinkFDroid') }
-                                src = './images/f-droid-badge.png' />
-                        </a>
-                    </div>
+                { DISPLAY_WELCOME_FOOTER_MOBILE && this._renderMobileFooter() }
+                { DISPLAY_WELCOME_FOOTER_SLACK && this._renderFooterSlack() }
+                { DISPLAY_WELCOME_FOOTER_LINKS && this._renderFooterLinks() }
+                { DISPLAY_WELCOME_FOOTER_LOGO && this._renderFoorerLogo() }
                 </div>
             </div>
         </footer>);
     }
 
+    _renderMobileFooter() {
+        const { t } = this.props;
+        const {
+            MOBILE_DOWNLOAD_LINK_ANDROID,
+            MOBILE_DOWNLOAD_LINK_F_DROID,
+            MOBILE_DOWNLOAD_LINK_IOS
+        } = interfaceConfig;
+
+        return (
+            <div className = 'welcome-footer-row-block welcome-footer--row-1'>
+            <div className = 'welcome-footer-row-1-text'>{t('welcomepage.jitsiOnMobile')}</div>
+            <a
+                className = 'welcome-badge'
+                href = { MOBILE_DOWNLOAD_LINK_IOS }>
+                <img
+                    alt = { t('welcomepage.mobileDownLoadLinkIos') }
+                    src = './images/app-store-badge.png' />
+            </a>
+            <a
+                className = 'welcome-badge'
+                href = { MOBILE_DOWNLOAD_LINK_ANDROID }>
+                <img
+                    alt = { t('welcomepage.mobileDownLoadLinkAndroid') }
+                    src = './images/google-play-badge.png' />
+            </a>
+            <a
+                className = 'welcome-badge'
+                href = { MOBILE_DOWNLOAD_LINK_F_DROID }>
+                <img
+                    alt = { t('welcomepage.mobileDownLoadLinkFDroid') }
+                    src = './images/f-droid-badge.png' />
+            </a>
+        </div>);
+    }
+    _renderFooterSlack() {
+        const { t } = this.props;
+        const { DOWNLOAD_LINK_SLACK } = interfaceConfig;
+
+        return(<div className = 'welcome-footer-row-block welcome-footer--row-2'>
+            <div className = 'welcome-footer-row-2-text'>{t('welcomepage.slackMessage')}</div>
+            <a
+                className = 'welcome-badge'
+                href = { DOWNLOAD_LINK_SLACK }>
+                <img
+                    alt = { t('welcomepage.slack') }
+                    src = './images/welcome_page/slack.png' />
+            </a>
+        </div>);
+    }
+    _renderFooterLinks() {
+        const { t } = this.props;
+        const {
+            FOOTER_LINK_PRIVACY,
+            FOOTER_LINK_TOS,
+            DISPLAY_WELCOME_FOOTER_SOCIALS
+        } = interfaceConfig;
+        return(<div className = 'welcome-footer-row-block welcome-footer--row-3'>
+            <div className ='welcome-footer-row-3-text'>
+            <a
+                className = 'welcome-footer-link'
+                href = { FOOTER_LINK_PRIVACY }>{t('welcomepage.privacy')}
+            </a>
+            <a
+                className = 'welcome-footer-link'
+                href = { FOOTER_LINK_TOS }>{t('welcomepage.terms')}
+            </a>
+            </div>
+            { DISPLAY_WELCOME_FOOTER_SOCIALS && this._renderFooterSocials() }
+        </div>);
+    }
+    _renderFooterSocials() {
+        const { t } = this.props;
+        const {
+            SOCIAL_LINK_FB,
+            SOCIAL_LINK_IN,
+            SOCIAL_LINK_TW,
+            SOCIAL_LINK_GH,
+            SOCIAL_LINK_IG
+        } = interfaceConfig;
+        return(<div className ='welcome-footer-socials'>
+        { SOCIAL_LINK_FB && <a
+            className = 'welcome-page-sm'
+            href = { SOCIAL_LINK_FB }>
+            <img
+                alt = { t('welcomepage.social-facebook') }
+                src = './images/welcome_page/fb.png' />
+        </a> }
+        { SOCIAL_LINK_IN && <a
+            className = 'welcome-page-sm'
+            href = { SOCIAL_LINK_IN }>
+            <img
+                alt = { t('welcomepage.social-linkedin') }
+                src = './images/welcome_page/li.png' />
+        </a>}
+        { SOCIAL_LINK_TW && <a
+            className = 'welcome-page-sm'
+            href = { SOCIAL_LINK_TW }>
+            <img
+                alt = { t('welcomepage.social-twitter') }
+                src = './images/welcome_page/tw.png' />
+        </a>}
+        { SOCIAL_LINK_GH && <a
+            className = 'welcome-page-sm'
+            href = { SOCIAL_LINK_GH }>
+            <img
+                alt = { t('welcomepage.social-github') }
+                src = './images/welcome_page/gh.png' />
+        </a>}
+        { SOCIAL_LINK_IG && <a
+            className = 'welcome-page-sm'
+            href = { SOCIAL_LINK_IG }>
+            <img
+                alt = { t('welcomepage.social-insta') }
+                src = './images/welcome_page/ig.png' />
+        </a>}
+        </div>);
+    }
+    _renderFoorerLogo() {
+        const { t } = this.props;
+        const { FOOTER_LINK_LOGO } = interfaceConfig;
+        return(<div className = 'welcome-footer-row-block welcome-footer--row-4'>
+        <a
+                className = 'logo-footer'
+                href = { FOOTER_LINK_LOGO }>
+                <img
+                    alt = { t('welcomepage.footer-logo') }
+                    src = './images/welcome_page/logo.png' />
+            </a>
+            <div className = 'welcome-footer-row-4-text'>{t('welcomepage.logotext')}</div>
+        </div>);
+    }
     /**
      * Renders tabs to show previous meetings and upcoming calendar events. The
      * tabs are purposefully hidden on mobile browsers.

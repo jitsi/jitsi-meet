@@ -1231,11 +1231,12 @@
             "microsoftLogo": "Microsoft logo",
             "policyLogo": "Policy logo"
         },
+	"logotext": "8x8 is a proud supporter of the Jitsi community.\n\n© 8x8, Inc. All Rights Reserved.",
         "mobileDownLoadLinkAndroid": "Download mobile app for Android",
         "mobileDownLoadLinkFDroid": "Download mobile app for F-Droid",
         "mobileDownLoadLinkIos": "Download mobile app for iOS",
         "moderatedMessage": "Or <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">book a meeting URL</a> in advance where you are the only moderator.",
-        "privacy": "Privacy",
+        "privacy": "Privacy Policy",
         "recentList": "Recent",
         "recentListDelete": "Delete entry",
         "recentListEmpty": "Your recent list is currently empty. Chat with your team and you will find all your recent meetings here.",
@@ -1244,8 +1245,13 @@
         "roomname": "Enter room name",
         "roomnameHint": "Enter the name or URL of the room you want to join. You may make a name up, just let the people you are meeting know it so that they enter the same name.",
         "sendFeedback": "Send feedback",
+        "slackMessage": "Hello, Slack fans! Very pleased to meet you! There's no need to create an account. Just add our extension and off you go!",
+        "social-facebook": "Follow us on Facebook",
+        "social-linkedin": "Follow us on LinkedIn",
+        "social-github": "Follow us on Github",
+        "social-twitter": "Follow us on Twitter",
         "startMeeting": "Start meeting",
-        "terms": "Terms",
+        "terms": "Terms & Conditions",
         "title": "Secure, fully featured, and completely free video conferencing"
     }
 }

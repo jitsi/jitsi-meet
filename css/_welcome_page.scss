@@ -309,4 +309,36 @@ body.welcome-page {
         max-width: 200px;
         margin-right: 16px;
     }
+    .welcome-footer--row-2 {
+        padding: 32px 0;
+    }
+    .welcome-footer-row-2-text {
+        margin-right: 32px;
+    }
+    .welcome-footer--row-3 {
+        padding: 20px 0;
+    }
+    .welcome-footer-link {
+        color: #fff;
+        font-weight: 600;
+        font-size: 12px;
+        line-height: 16px;
+        margin-right: 16px;
+        text-decoration: none;
+    }
+    .welcome-page-sm {
+        margin-left: 24px;
+    }
+    .welcome-footer--row-4 {
+        padding: 32px 0 56px 0;
+        justify-content: flex-start;
+    }
+    .welcome-footer-row-4-text {
+        color: #a1a1a3;
+        font-size: 12px;
+        line-height: 16px;
+    }
+    .logo-footer {
+        padding-right: 20px;
+    }
 }

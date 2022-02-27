@@ -64,7 +64,33 @@ var interfaceConfig = {
      */
     DISABLE_VIDEO_BACKGROUND: false,
 
+    /**
+     * Whether or not to show the footer element on welcome page.
+     * After sub parts can be set true or false.
+     */    
     DISPLAY_WELCOME_FOOTER: true,
+    DISPLAY_WELCOME_FOOTER_MOBILE: true,
+    DISPLAY_WELCOME_FOOTER_SLACK: true,
+    DISPLAY_WELCOME_FOOTER_LINKS: true,
+    DISPLAY_WELCOME_FOOTER_SOCIALS: true,
+    DISPLAY_WELCOME_FOOTER_LOGO: true,
+
+    /**
+     * Specify custom URLs for TOC, privacy, social-links and slack plugin.
+     */
+    FOOTER_LINK_PRIVACY: 'https://jitsi.org/meet-jit-si-privacy/',
+    FOOTER_LINK_TOS: 'http://jitsi.org/meet-jit-si-terms-of-service/',
+    DOWNLOAD_LINK_SLACK: 'https://slack.com/oauth/authorize?client_id=116888949298.122751011265&scope=bot,commands',
+    /**
+     * The social links can be turned off individually by commenting below links
+     */
+    SOCIAL_LINK_FB: 'https://www.facebook.com/jitsi',
+    SOCIAL_LINK_IN: 'https://www.linkedin.com/company/8x8/',
+    SOCIAL_LINK_TW: 'https://twitter.com/jitsinews',
+    SOCIAL_LINK_GH: 'https://github.com/jitsi',
+    SOCIAL_LINK_IG: 'https://www.instagram.com/assistente_jitsi_meet',
+    FOOTER_LINK_LOGO: 'https://8x8.com',
+
     DISPLAY_WELCOME_PAGE_ADDITIONAL_CARD: false,
     DISPLAY_WELCOME_PAGE_CONTENT: false,
     DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
