@@ -201,6 +201,57 @@ class WelcomePage extends AbstractWelcomePage {
                     </div>
                     <div className = 'header-image' />
                     <div className = 'header-container'>
+                        <h1 className = 'header-text-title'>
+                            { t('welcomepage.headerTitle') }
+                        </h1>
+                        <span className = 'header-text-subtitle'>
+                            { t('welcomepage.headerSubtitle')}
+                        </span>
+                        <div id = 'enter_room'>
+                            <div className = 'enter-room-input-container'>
+                                <form onSubmit = { this._onFormSubmit }>
+                                    <input
+                                        aria-disabled = 'false'
+                                        aria-label = 'Meeting name input'
+                                        autoFocus = { true }
+                                        className = 'enter-room-input'
+                                        id = 'enter_room_field'
+                                        onChange = { this._onRoomChange }
+                                        pattern = { ROOM_NAME_VALIDATE_PATTERN_STR }
+                                        placeholder = { this.state.roomPlaceholder }
+                                        ref = { this._setRoomInputRef }
+                                        title = { t('welcomepage.roomNameAllowedChars') }
+                                        type = 'text'
+                                        value = { this.state.room } />
+                                    <div
+                                        className = { _moderatedRoomServiceUrl
+                                            ? 'warning-with-link'
+                                            : 'warning-without-link' }>
+                                        { this._renderInsecureRoomNameWarning() }
+                                    </div>
+                                </form>
+                            </div>
+                            <button
+                                aria-disabled = 'false'
+                                aria-label = 'Start meeting'
+                                className = 'welcome-page-button'
+                                id = 'enter_room_button'
+                                onClick = { this._onFormSubmit }
+                                tabIndex = '0'
+                                type = 'button'>
+                                { t('welcomepage.startMeeting') }
+                            </button>
+                        </div>
+
+                        { _moderatedRoomServiceUrl && (
+                            <div id = 'moderated-meetings'>
+                                <p>
+                                    {
+                                        translateToHTML(
+                                        t, 'welcomepage.moderatedMessage', { url: _moderatedRoomServiceUrl })
+                                    }
+                                </p>
+                            </div>)}
                     </div>
                 </div>
 
