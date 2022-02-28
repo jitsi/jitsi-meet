@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { shouldComponentUpdate } from 'react-window';
 
+import { getPinnedParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { shouldHideSelfView } from '../../../base/settings/functions.any';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
@@ -90,6 +91,7 @@ class ThumbnailWrapper extends Component<Props> {
         if (_participantID === 'local') {
             return _disableSelfView ? null : (
                 <Thumbnail
+                    _isAnyParticipantPinned = { _isAnyParticipantPinned }
                     horizontalOffset = { _horizontalOffset }
                     key = 'local'
                     style = { style } />);
@@ -116,12 +118,12 @@ class ThumbnailWrapper extends Component<Props> {
 function _mapStateToProps(state, ownProps) {
     const _currentLayout = getCurrentLayout(state);
     const { remoteParticipants } = state['features/filmstrip'];
-    const { remote, local } = state['features/base/participants'];
     const remoteParticipantsLength = remoteParticipants.length;
     const { testing = {} } = state['features/base/config'];
     const disableSelfView = shouldHideSelfView(state);
     const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
     const _verticalViewGrid = showGridInVerticalView(state);
+    const _isAnyParticipantPinned = Boolean(getPinnedParticipant(state));
 
     if (_currentLayout === LAYOUTS.TILE_VIEW || _verticalViewGrid) {
         const { columnIndex, rowIndex } = ownProps;
@@ -156,13 +158,15 @@ function _mapStateToProps(state, ownProps) {
             return {
                 _disableSelfView: disableSelfView,
                 _participantID: 'local',
-                _horizontalOffset: horizontalOffset
+                _horizontalOffset: horizontalOffset,
+                _isAnyParticipantPinned: _verticalViewGrid && _isAnyParticipantPinned
             };
         }
 
         return {
             _participantID: remoteParticipants[remoteIndex],
-            _horizontalOffset: horizontalOffset
+            _horizontalOffset: horizontalOffset,
+            _isAnyParticipantPinned: _verticalViewGrid && _isAnyParticipantPinned
         };
     }
 
@@ -171,8 +175,6 @@ function _mapStateToProps(state, ownProps) {
     if (typeof index !== 'number' || remoteParticipantsLength <= index) {
         return {};
     }
-
-    const _isAnyParticipantPinned = Boolean([ ...remote ].find(([ , value ]) => value?.pinned) || local?.pinned);
 
     return {
         _participantID: remoteParticipants[index],
