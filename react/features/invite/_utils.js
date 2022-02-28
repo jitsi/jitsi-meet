@@ -31,7 +31,9 @@ export function _formatConferenceIDPin(conferenceID: Object) {
 
 /**
  * Sends a GET request to obtain the conference ID necessary for identifying
- * which conference to join after diaing the dial-in service.
+ * which conference to join after dialing the dial-in service.
+ * This function is used not only in the main app bundle but in separate bundles for the dial in numbers page,
+ * and we do want to limit the dependencies.
  *
  * @param {string} baseUrl - The url for obtaining the conference ID (pin) for
  * dialing into a conference.
@@ -55,6 +57,8 @@ export function getDialInConferenceID(
 
 /**
  * Sends a GET request for phone numbers used to dial into a conference.
+ * This function is used not only in the main app bundle but in separate bundles for the dial in numbers page,
+ * and we do want to limit the dependencies.
  *
  * @param {string} url - The service that returns conference dial-in numbers.
  * @param {string} roomName - The conference name to find the associated
