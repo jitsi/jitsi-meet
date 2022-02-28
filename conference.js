@@ -1661,9 +1661,12 @@ export default {
      * toggles between screen sharing and camera video.
      * @param {Object} [options] - Screen sharing options that will be passed to
      * createLocalTracks.
+     * @param {boolean} [options.audioOnly] - Whether or not audioOnly is enabled.
      * @param {Array<string>} [options.desktopSharingSources] - Array with the
      * sources that have to be displayed in the desktop picker window ('screen',
      * 'window', etc.).
+     * @param {Object} [options.desktopStream] - An existing desktop stream to
+     * use instead of creating a new desktop stream.
      * @param {boolean} ignoreDidHaveVideo - if true ignore if video was on when sharing started.
      * @return {Promise.<T>}
      */
@@ -1674,10 +1677,6 @@ export default {
         }
         if (!JitsiMeetJS.isDesktopSharingEnabled()) {
             return Promise.reject('Cannot toggle screen sharing: not supported.');
-        }
-
-        if (this.isAudioOnly()) {
-            return Promise.reject('No screensharing in audio only mode');
         }
 
         if (toggle) {
