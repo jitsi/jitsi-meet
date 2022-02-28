@@ -213,7 +213,7 @@ export function updateDialInNumbers() {
 
         Promise.all([
             getDialInNumbers(dialInNumbersUrl, room, mucURL),
-            getDialInConferenceID(dialInConfCodeUrl, room, mucURL, locationURL.href)
+            getDialInConferenceID(dialInConfCodeUrl, room, mucURL, locationURL)
         ])
             .then(([ dialInNumbers, { conference, id, message, sipUri } ]) => {
                 if (!conference || !id) {

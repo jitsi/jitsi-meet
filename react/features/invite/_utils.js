@@ -5,6 +5,7 @@
  * and requires as less dependencies as possible.
  */
 
+import { getURLWithoutParams } from '../base/connection/utils';
 import { doGetJSON } from '../base/util';
 
 /**
@@ -40,17 +41,18 @@ export function _formatConferenceIDPin(conferenceID: Object) {
  * @param {string} roomName - The conference name to find the associated
  * conference ID.
  * @param {string} mucURL - In which MUC the conference exists.
- * @param {string} url - The address we are loaded in.
+ * @param {URL} url - The address we are loaded in.
  * @returns {Promise} - The promise created by the request.
  */
 export function getDialInConferenceID(
         baseUrl: string,
         roomName: string,
         mucURL: string,
-        url: string
+        url: URL
 ): Promise<Object> {
     const separator = baseUrl.includes('?') ? '&' : '?';
-    const conferenceIDURL = `${baseUrl}${separator}conference=${roomName}@${mucURL}&url=${url}`;
+    const conferenceIDURL
+        = `${baseUrl}${separator}conference=${roomName}@${mucURL}&url=${getURLWithoutParams(url).href}`;
 
     return doGetJSON(conferenceIDURL, true);
 }

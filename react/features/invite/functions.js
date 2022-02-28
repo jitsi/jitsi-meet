@@ -534,7 +534,7 @@ export function getShareInfoText(
 
             numbersPromise = Promise.all([
                 getDialInNumbers(dialInNumbersUrl, room, mucURL),
-                getDialInConferenceID(dialInConfCodeUrl, room, mucURL, locationURL.href)
+                getDialInConferenceID(dialInConfCodeUrl, room, mucURL, locationURL)
             ]).then(([ numbers, {
                 conference, id, message } ]) => {
 

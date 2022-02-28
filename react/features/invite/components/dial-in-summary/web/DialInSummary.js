@@ -182,7 +182,7 @@ class DialInSummary extends Component<Props, State> {
             return Promise.resolve();
         }
 
-        return getDialInConferenceID(dialInConfCodeUrl, room, mucURL, this.props.url)
+        return getDialInConferenceID(dialInConfCodeUrl, room, mucURL, new URL(this.props.url))
             .catch(() => Promise.reject(this.props.t('info.genericError')));
     }
 
