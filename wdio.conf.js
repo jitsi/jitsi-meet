@@ -54,7 +54,7 @@ exports.config = {
     capabilities: [
         {
             maxInstances: 1,
-            port: 4444,
+            //port: 4444,
             browserName: 'chrome',
             acceptInsecureCerts: true,
             "goog:chromeOptions": {
@@ -81,12 +81,12 @@ exports.config = {
                 }
             }
         },
-        {
-            maxInstances: 1,
-            port: 4445,
-            browserName: 'safari technology preview',
-            acceptInsecureCerts: true,
-        }
+        // {
+        //     maxInstances: 1,
+        //     port: 4445,
+        //     browserName: 'safari technology preview',
+        //     acceptInsecureCerts: true,
+        // }
     ],
     //
     // ===================
