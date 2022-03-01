@@ -84,6 +84,7 @@ var interfaceConfig = {
     /**
      * The social links can be turned off individually by commenting below links
      */
+    SOCIAL_LINK_YT: 'https://www.youtube.com/c/JitsiOrg',
     SOCIAL_LINK_FB: 'https://www.facebook.com/jitsi',
     SOCIAL_LINK_IN: 'https://www.linkedin.com/company/8x8/',
     SOCIAL_LINK_TW: 'https://twitter.com/jitsinews',

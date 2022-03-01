@@ -435,6 +435,7 @@ class WelcomePage extends AbstractWelcomePage {
     _renderFooterSocials() {
         const { t } = this.props;
         const {
+            SOCIAL_LINK_YT,
             SOCIAL_LINK_FB,
             SOCIAL_LINK_IN,
             SOCIAL_LINK_TW,
@@ -442,6 +443,13 @@ class WelcomePage extends AbstractWelcomePage {
             SOCIAL_LINK_IG
         } = interfaceConfig;
         return(<div className ='welcome-footer-socials'>
+        { SOCIAL_LINK_YT && <a
+            className = 'welcome-page-sm'
+            href = { SOCIAL_LINK_YT }>
+            <img
+                alt = { t('welcomepage.social-youtube') }
+                src = './images/welcome_page/yt.png' />
+        </a> }
         { SOCIAL_LINK_FB && <a
             className = 'welcome-page-sm'
             href = { SOCIAL_LINK_FB }>
