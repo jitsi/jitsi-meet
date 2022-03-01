@@ -27,7 +27,7 @@ import { open as openParticipantsPane } from '../participants-pane/actions';
 import { getParticipantsPaneOpen } from '../participants-pane/functions';
 import { shouldAutoKnock } from '../prejoin/functions';
 
-import { KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED } from './actionTypes';
+import { KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED, KNOCKING_PARTICIPANT_LEFT } from './actionTypes';
 import {
     hideLobbyScreen,
     knockingParticipantLeft,
@@ -60,6 +60,15 @@ MiddlewareRegistry.register(store => next => action => {
         const result = next(action);
 
         _findLoadableAvatarForKnockingParticipant(store, action.participant);
+        _handleLobbyNotification(store);
+
+        return result;
+    }
+    case KNOCKING_PARTICIPANT_LEFT: {
+        // We need the full update result to be in the store already
+        const result = next(action);
+
+        _handleLobbyNotification(store);
 
         return result;
     }
@@ -95,48 +104,11 @@ StateListenerRegistry.register(
                     if (navigator.product === 'ReactNative' || isParticipantsPaneVisible) {
                         return;
                     }
-                    let notificationTitle;
-                    let customActionNameKey;
-                    let customActionHandler;
-                    let descriptionKey;
-                    let icon;
 
-                    const knockingParticipants = getKnockingParticipants(getState());
-                    const firstParticipant = knockingParticipants[0];
-
-                    if (knockingParticipants.length > 1) {
-                        descriptionKey = 'notify.participantsWantToJoin';
-                        notificationTitle = i18n.t('notify.waitingParticipants', {
-                            waitingParticipants: knockingParticipants.length
-                        });
-                        icon = NOTIFICATION_ICON.PARTICIPANTS;
-                        customActionNameKey = [ 'notify.viewLobby' ];
-                        customActionHandler = [ () => batch(() => {
-                            dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
-                            dispatch(openParticipantsPane());
-                        }) ];
-                    } else {
-                        descriptionKey = 'notify.participantWantsToJoin';
-                        notificationTitle = firstParticipant.name;
-                        icon = NOTIFICATION_ICON.PARTICIPANT;
-                        customActionNameKey = [ 'lobby.admit', 'lobby.reject' ];
-                        customActionHandler = [ () => batch(() => {
-                            dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
-                            dispatch(approveKnockingParticipant(firstParticipant.id));
-                        }),
-                        () => batch(() => {
-                            dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
-                            dispatch(rejectKnockingParticipant(firstParticipant.id));
-                        }) ];
-                    }
-                    dispatch(showNotification({
-                        title: notificationTitle,
-                        descriptionKey,
-                        uid: LOBBY_NOTIFICATION_ID,
-                        customActionNameKey,
-                        customActionHandler,
-                        icon
-                    }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+                    _handleLobbyNotification({
+                        dispatch,
+                        getState
+                    });
 
                     if (typeof APP !== 'undefined') {
                         APP.API.notifyKnockingParticipant({
@@ -169,6 +141,65 @@ StateListenerRegistry.register(
         }
     }
 );
+
+/**
+ * Function to handle the lobby notification.
+ *
+ * @param {Object} store - The Redux store.
+ * @returns {void}
+ */
+function _handleLobbyNotification(store) {
+    const { dispatch, getState } = store;
+    const knockingParticipants = getKnockingParticipants(getState());
+
+    if (knockingParticipants.length === 0) {
+        dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
+
+        return;
+    }
+
+    let notificationTitle;
+    let customActionNameKey;
+    let customActionHandler;
+    let descriptionKey;
+    let icon;
+
+    if (knockingParticipants.length === 1) {
+        const firstParticipant = knockingParticipants[0];
+
+        descriptionKey = 'notify.participantWantsToJoin';
+        notificationTitle = firstParticipant.name;
+        icon = NOTIFICATION_ICON.PARTICIPANT;
+        customActionNameKey = [ 'lobby.admit', 'lobby.reject' ];
+        customActionHandler = [ () => batch(() => {
+            dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
+            dispatch(approveKnockingParticipant(firstParticipant.id));
+        }),
+        () => batch(() => {
+            dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
+            dispatch(rejectKnockingParticipant(firstParticipant.id));
+        }) ];
+    } else {
+        descriptionKey = 'notify.participantsWantToJoin';
+        notificationTitle = i18n.t('notify.waitingParticipants', {
+            waitingParticipants: knockingParticipants.length
+        });
+        icon = NOTIFICATION_ICON.PARTICIPANTS;
+        customActionNameKey = [ 'notify.viewLobby' ];
+        customActionHandler = [ () => batch(() => {
+            dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
+            dispatch(openParticipantsPane());
+        }) ];
+    }
+    dispatch(showNotification({
+        title: notificationTitle,
+        descriptionKey,
+        uid: LOBBY_NOTIFICATION_ID,
+        customActionNameKey,
+        customActionHandler,
+        icon
+    }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+}
 
 /**
  * Function to handle the conference failed event and navigate the user to the lobby screen
