@@ -9,6 +9,7 @@ import {
     setPassword
 } from '../base/conference';
 import { getLocalParticipant } from '../base/participants';
+import { hideNotification, LOBBY_NOTIFICATION_ID } from '../notifications';
 
 import {
     KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED,
@@ -62,6 +63,20 @@ export function participantIsKnockingOrUpdated(participant: Object) {
     return {
         participant,
         type: KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED
+    };
+}
+
+/**
+ * Handles a knocking participant and dismisses the notification.
+ *
+ * @param {string} id - The id of the knocking participant.
+ * @param {boolean} approved - True if the participant is approved, false otherwise.
+ * @returns {Function}
+ */
+export function answerKnockingParticipant(id: string, approved: boolean) {
+    return async (dispatch: Dispatch<any>) => {
+        dispatch(setKnockingParticipantApproval(id, approved));
+        dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
     };
 }
 
