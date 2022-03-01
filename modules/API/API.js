@@ -72,7 +72,7 @@ import {
     captureLargeVideoScreenshot,
     resizeLargeVideo
 } from '../../react/features/large-video/actions.web';
-import { toggleLobbyMode, setKnockingParticipantApproval } from '../../react/features/lobby/actions';
+import { toggleLobbyMode, answerKnockingParticipant } from '../../react/features/lobby/actions';
 import {
     close as closeParticipantsPane,
     open as openParticipantsPane
@@ -140,7 +140,7 @@ function initCommands() {
             APP.store.dispatch(createBreakoutRoom(name));
         },
         'answer-knocking-participant': (id, approved) => {
-            APP.store.dispatch(setKnockingParticipantApproval(id, approved));
+            APP.store.dispatch(answerKnockingParticipant(id, approved));
         },
         'approve-video': participantId => {
             if (!isLocalParticipantModerator(APP.store.getState())) {
