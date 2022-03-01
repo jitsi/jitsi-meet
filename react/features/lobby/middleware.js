@@ -149,43 +149,44 @@ StateListenerRegistry.register(
  */
 function _handleLobbyNotification(store) {
     const { dispatch, getState } = store;
-    let notificationTitle;
-    let customActionNameKey;
-    let customActionHandler;
-    let descriptionKey;
-    let icon;
-
     const knockingParticipants = getKnockingParticipants(getState());
-    const firstParticipant = knockingParticipants[0];
 
-    if (knockingParticipants.length > 1) {
-        descriptionKey = 'notify.participantsWantToJoin';
-        notificationTitle = i18n.t('notify.waitingParticipants', {
-            waitingParticipants: knockingParticipants.length
-        });
-        icon = NOTIFICATION_ICON.PARTICIPANTS;
-        customActionNameKey = [ 'notify.viewLobby' ];
-        customActionHandler = [ () => batch(() => {
-            dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
-            dispatch(openParticipantsPane());
-        }) ];
-    } else {
-        descriptionKey = 'notify.participantWantsToJoin';
-        notificationTitle = firstParticipant.name;
-        icon = NOTIFICATION_ICON.PARTICIPANT;
-        customActionNameKey = [ 'lobby.admit', 'lobby.reject' ];
-        customActionHandler = [ () => batch(() => {
-            dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
-            dispatch(approveKnockingParticipant(firstParticipant.id));
-        }),
-        () => batch(() => {
-            dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
-            dispatch(rejectKnockingParticipant(firstParticipant.id));
-        }) ];
-    }
     if (knockingParticipants.length === 0) {
         dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
     } else {
+        let notificationTitle;
+        let customActionNameKey;
+        let customActionHandler;
+        let descriptionKey;
+        let icon;
+
+        if (knockingParticipants.length === 1) {
+            const firstParticipant = knockingParticipants[0];
+
+            descriptionKey = 'notify.participantWantsToJoin';
+            notificationTitle = firstParticipant.name;
+            icon = NOTIFICATION_ICON.PARTICIPANT;
+            customActionNameKey = [ 'lobby.admit', 'lobby.reject' ];
+            customActionHandler = [ () => batch(() => {
+                dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
+                dispatch(approveKnockingParticipant(firstParticipant.id));
+            }),
+            () => batch(() => {
+                dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
+                dispatch(rejectKnockingParticipant(firstParticipant.id));
+            }) ];
+        } else if (knockingParticipants.length > 1) {
+            descriptionKey = 'notify.participantsWantToJoin';
+            notificationTitle = i18n.t('notify.waitingParticipants', {
+                waitingParticipants: knockingParticipants.length
+            });
+            icon = NOTIFICATION_ICON.PARTICIPANTS;
+            customActionNameKey = [ 'notify.viewLobby' ];
+            customActionHandler = [ () => batch(() => {
+                dispatch(hideNotification(LOBBY_NOTIFICATION_ID));
+                dispatch(openParticipantsPane());
+            }) ];
+        }
         dispatch(showNotification({
             title: notificationTitle,
             descriptionKey,
