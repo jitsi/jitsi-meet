@@ -11,12 +11,14 @@ import { Avatar } from '../../../react/features/base/avatar';
 import theme from '../../../react/features/base/components/themes/participantsPaneTheme.json';
 import { getSourceNameSignalingFeatureFlag } from '../../../react/features/base/config';
 import { i18next } from '../../../react/features/base/i18n';
-import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media';
+import { VIDEO_TYPE } from '../../../react/features/base/media';
 import {
     getParticipantById,
     getParticipantDisplayName
 } from '../../../react/features/base/participants';
-import { getTrackByMediaTypeAndParticipant } from '../../../react/features/base/tracks';
+import {
+    getVideoTrackByParticipant
+} from '../../../react/features/base/tracks';
 import { CHAT_SIZE } from '../../../react/features/chat';
 import {
     isParticipantConnectionStatusActive,
@@ -237,11 +239,14 @@ export default class LargeVideoManager {
             let isVideoRenderable;
 
             if (getSourceNameSignalingFeatureFlag(state)) {
-                const videoTrack = getTrackByMediaTypeAndParticipant(
-                    state['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
+                const tracks = state['features/base/tracks'];
+                const videoTrack = getVideoTrackByParticipant(tracks, participant);
 
-                isVideoRenderable = !isVideoMuted
-                    && (APP.conference.isLocalId(id) || isTrackStreamingStatusActive(videoTrack));
+                isVideoRenderable = !isVideoMuted && (
+                    APP.conference.isLocalId(id)
+                    || participant?.isLocalScreenShare
+                    || isTrackStreamingStatusActive(videoTrack)
+                );
             } else {
                 isVideoRenderable = !isVideoMuted
                     && (APP.conference.isLocalId(id) || isParticipantConnectionStatusActive(participant));
@@ -268,8 +273,10 @@ export default class LargeVideoManager {
 
                         && participant && !participant.local && !participant.isFakeParticipant) {
                     // remote participant only
-                    const track = getTrackByMediaTypeAndParticipant(
-                        state['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
+
+                    const tracks = state['features/base/tracks'];
+                    const track = getVideoTrackByParticipant(tracks, participant);
+
                     const isScreenSharing = track?.videoType === 'desktop';
 
                     if (isScreenSharing) {
@@ -300,8 +307,8 @@ export default class LargeVideoManager {
             let messageKey;
 
             if (getSourceNameSignalingFeatureFlag(state)) {
-                const videoTrack = getTrackByMediaTypeAndParticipant(
-                    state['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
+                const tracks = state['features/base/tracks'];
+                const videoTrack = getVideoTrackByParticipant(tracks, participant);
 
                 messageKey = isTrackStreamingStatusInactive(videoTrack) ? 'connection.LOW_BANDWIDTH' : null;
             } else {
@@ -541,8 +548,8 @@ export default class LargeVideoManager {
             const state = APP.store.getState();
 
             if (getSourceNameSignalingFeatureFlag(state)) {
-                const videoTrack = getTrackByMediaTypeAndParticipant(
-                    state['features/base/tracks'], MEDIA_TYPE.VIDEO, this.id);
+                const tracks = state['features/base/tracks'];
+                const videoTrack = getVideoTrackByParticipant(tracks, participant);
 
                 // eslint-disable-next-line no-param-reassign
                 show = !APP.conference.isLocalId(this.id)

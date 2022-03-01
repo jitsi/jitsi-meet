@@ -4,6 +4,7 @@ import { getMultipleVideoSupportFeatureFlag } from '../config/functions.any';
 import { isMobileBrowser } from '../environment/utils';
 import JitsiMeetJS, { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, VIDEO_TYPE, setAudioMuted } from '../media';
+import { getFakeScreenShareParticipantOwnerId } from '../participants';
 import { toState } from '../redux';
 import {
     getUserSelectedCameraDeviceId,
@@ -411,6 +412,35 @@ export function getLocalJitsiAudioTrack(state) {
 }
 
 /**
+ * Returns track of specified media type for specified participant.
+ *
+ * @param {Track[]} tracks - List of all tracks.
+ * @param {Object} participant - Participant Object.
+ * @returns {(Track|undefined)}
+ */
+export function getVideoTrackByParticipant(
+        tracks,
+        participant) {
+
+    if (!participant) {
+        return;
+    }
+
+    let participantId;
+    let mediaType;
+
+    if (participant?.isFakeScreenShareParticipant) {
+        participantId = getFakeScreenShareParticipantOwnerId(participant.id);
+        mediaType = MEDIA_TYPE.SCREENSHARE;
+    } else {
+        participantId = participant.id;
+        mediaType = MEDIA_TYPE.VIDEO;
+    }
+
+    return getTrackByMediaTypeAndParticipant(tracks, mediaType, participantId);
+}
+
+/**
  * Returns track of specified media type for specified participant id.
  *
  * @param {Track[]} tracks - List of all tracks.
@@ -425,6 +455,19 @@ export function getTrackByMediaTypeAndParticipant(
     return tracks.find(
         t => Boolean(t.jitsiTrack) && t.participantId === participantId && t.mediaType === mediaType
     );
+}
+
+/**
+ * Returns track of given fakeScreenshareParticipantId.
+ *
+ * @param {Track[]} tracks - List of all tracks.
+ * @param {string} fakeScreenshareParticipantId - Fake Screenshare Participant ID.
+ * @returns {(Track|undefined)}
+ */
+export function getFakeScreenshareParticipantTrack(tracks, fakeScreenshareParticipantId) {
+    const participantId = getFakeScreenShareParticipantOwnerId(fakeScreenshareParticipantId);
+
+    return getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.SCREENSHARE, participantId);
 }
 
 /**
