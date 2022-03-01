@@ -6,7 +6,12 @@ import { useSelector } from 'react-redux';
 import useContextMenu from '../../../../../base/components/context-menu/useContextMenu';
 import { getParticipantCount, isLocalParticipantModerator } from '../../../../../base/participants';
 import { equals } from '../../../../../base/redux';
-import { getBreakoutRooms, isInBreakoutRoom, getCurrentRoomId } from '../../../../../breakout-rooms/functions';
+import {
+    getBreakoutRooms,
+    isInBreakoutRoom,
+    getCurrentRoomId,
+    getBreakoutRoomsConfig
+} from '../../../../../breakout-rooms/functions';
 import { showOverflowDrawer } from '../../../../../toolbox/functions';
 
 import { AutoAssignButton } from './AutoAssignButton';
@@ -32,6 +37,7 @@ export const RoomList = ({ searchString }: Props) => {
     const inBreakoutRoom = useSelector(isInBreakoutRoom);
     const isLocalModerator = useSelector(isLocalParticipantModerator);
     const participantsCount = useSelector(getParticipantCount);
+    const { hideJoinRoomButton } = useSelector(getBreakoutRoomsConfig);
     const _overflowDrawer = useSelector(showOverflowDrawer);
     const [ lowerMenu, raiseMenu, toggleMenu, menuEnter, menuLeave, raiseContext ] = useContextMenu();
 
@@ -55,7 +61,7 @@ export const RoomList = ({ searchString }: Props) => {
                             room = { room }
                             searchString = { searchString }>
                             {!_overflowDrawer && <>
-                                <JoinActionButton room = { room } />
+                                {!hideJoinRoomButton && <JoinActionButton room = { room } />}
                                 {isLocalModerator && !room.isMainRoom
                                     && <RoomActionEllipsis onClick = { toggleMenu(room) } />}
                             </>}

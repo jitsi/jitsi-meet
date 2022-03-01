@@ -9,6 +9,7 @@ import { translate } from '../../../base/i18n';
 import { Icon, IconClose, IconHorizontalPoints } from '../../../base/icons';
 import { isLocalParticipantModerator } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+import { getBreakoutRoomsConfig } from '../../../breakout-rooms/functions';
 import { MuteEveryoneDialog } from '../../../video-menu/components/';
 import { close } from '../../actions';
 import { classList, findAncestorByClass, getParticipantsPaneOpen } from '../../functions';
@@ -373,7 +374,7 @@ class ParticipantsPane extends Component<Props, State> {
  */
 function _mapStateToProps(state: Object) {
     const isPaneOpen = getParticipantsPaneOpen(state);
-    const { hideAddRoomButton } = state['features/base/config'];
+    const { hideAddRoomButton } = getBreakoutRoomsConfig(state);
     const { conference } = state['features/base/conference'];
 
     // $FlowExpectedError

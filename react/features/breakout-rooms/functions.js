@@ -71,3 +71,17 @@ export const isInBreakoutRoom = (stateful: Function | Object) => {
     return conference?.getBreakoutRooms()
         ?.isBreakoutRoom();
 };
+
+/**
+ * Returns the breakout rooms config.
+ *
+ * @param {Function|Object} stateful - The redux store, the redux
+ * {@code getState} function, or the redux state itself.
+ * @returns {Object}
+ */
+export const getBreakoutRoomsConfig = (stateful: Function | Object) => {
+    const state = toState(stateful);
+    const { breakoutRooms = {} } = state['features/base/config'];
+
+    return breakoutRooms;
+};

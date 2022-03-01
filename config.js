@@ -473,6 +473,7 @@ var config = {
     // If Lobby is enabled starts knocking automatically.
     // autoKnockLobby: false,
 
+    // DEPRECATED! Use `breakoutRooms.hideAddRoomButton` instead.
     // Hides add breakout room button
     // hideAddRoomButton: false,
 
@@ -1047,6 +1048,14 @@ var config = {
     }
     */
     // dynamicBrandingUrl: '',
+
+    // Options related to the breakout rooms feature.
+    // breakoutRooms: {
+    //     // Hides the add breakout room button. This replaces `hideAddRoomButton`.
+    //     hideAddRoomButton: false,
+    //     // Hides the join breakout room button.
+    //     hideJoinRoomButton: false
+    // },
 
     // When true the user cannot add more images to be used as virtual background.
     // Only the default ones from will be available.

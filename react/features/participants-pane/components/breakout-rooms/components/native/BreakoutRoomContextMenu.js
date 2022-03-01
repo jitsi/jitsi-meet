@@ -16,6 +16,7 @@ import {
 } from '../../../../../base/icons';
 import { isLocalParticipantModerator } from '../../../../../base/participants';
 import { closeBreakoutRoom, moveToRoom, removeBreakoutRoom } from '../../../../../breakout-rooms/actions';
+import { getBreakoutRoomsConfig } from '../../../../../breakout-rooms/functions';
 import styles from '../../../native/styles';
 
 type Props = {
@@ -30,6 +31,7 @@ const BreakoutRoomContextMenu = ({ room }: Props) => {
     const dispatch = useDispatch();
     const closeDialog = useCallback(() => dispatch(hideDialog()), [ dispatch ]);
     const isLocalModerator = useSelector(isLocalParticipantModerator);
+    const { hideJoinRoomButton } = useSelector(getBreakoutRoomsConfig);
     const { t } = useTranslation();
 
     const onJoinRoom = useCallback(() => {
@@ -53,14 +55,18 @@ const BreakoutRoomContextMenu = ({ room }: Props) => {
             addScrollViewPadding = { false }
             onCancel = { closeDialog }
             showSlidingView = { true }>
-            <TouchableOpacity
-                onPress = { onJoinRoom }
-                style = { styles.contextMenuItem }>
-                <Icon
-                    size = { 24 }
-                    src = { IconRingGroup } />
-                <Text style = { styles.contextMenuItemText }>{t('breakoutRooms.actions.join')}</Text>
-            </TouchableOpacity>
+            {
+                !hideJoinRoomButton && (
+                    <TouchableOpacity
+                        onPress = { onJoinRoom }
+                        style = { styles.contextMenuItem }>
+                        <Icon
+                            size = { 24 }
+                            src = { IconRingGroup } />
+                        <Text style = { styles.contextMenuItemText }>{t('breakoutRooms.actions.join')}</Text>
+                    </TouchableOpacity>
+                )
+            }
             {!room?.isMainRoom && isLocalModerator
                 && (room?.participants && Object.keys(room.participants).length > 0
                     ? <TouchableOpacity
