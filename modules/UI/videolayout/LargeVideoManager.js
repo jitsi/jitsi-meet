@@ -16,7 +16,7 @@ import {
     getParticipantById,
     getParticipantDisplayName
 } from '../../../react/features/base/participants';
-import { getTrackByMediaTypeAndParticipant } from '../../../react/features/base/tracks';
+import { getTrackByMediaTypeAndParticipant, getTrackBySourceName } from '../../../react/features/base/tracks';
 import { CHAT_SIZE } from '../../../react/features/chat';
 import {
     isParticipantConnectionStatusActive,
@@ -237,11 +237,19 @@ export default class LargeVideoManager {
             let isVideoRenderable;
 
             if (getSourceNameSignalingFeatureFlag(state)) {
-                const videoTrack = getTrackByMediaTypeAndParticipant(
-                    state['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
+                const tracks = state['features/base/tracks'];
+                const { local, isFakeScreenShareParticipant, isLocalScreenShare } = participant;
+                let videoTrack;
 
-                isVideoRenderable = !isVideoMuted
-                    && (APP.conference.isLocalId(id) || isTrackStreamingStatusActive(videoTrack));
+                if (isFakeScreenShareParticipant) {
+                    videoTrack = getTrackBySourceName(tracks, id);
+                } else {
+                    videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
+                }
+
+                isVideoRenderable = !isVideoMuted && (
+                    local || isLocalScreenShare || isTrackStreamingStatusActive(videoTrack)
+                );
             } else {
                 isVideoRenderable = !isVideoMuted
                     && (APP.conference.isLocalId(id) || isParticipantConnectionStatusActive(participant));

@@ -1,5 +1,7 @@
 // @flow
 
+import { getSourceNameSignalingFeatureFlag } from '../base/config';
+
 import { setRemoteParticipants } from './actions';
 import { isReorderingEnabled } from './functions';
 
@@ -28,19 +30,33 @@ export function updateRemoteParticipants(store: Object, participantId: ?number) 
 
     const {
         fakeParticipants,
+        sortedFakeScreenShareParticipants,
         sortedRemoteParticipants,
         sortedRemoteScreenshares,
         speakersList
     } = state['features/base/participants'];
     const remoteParticipants = new Map(sortedRemoteParticipants);
     const screenShares = new Map(sortedRemoteScreenshares);
+    const screenShareParticipants
+        = sortedFakeScreenShareParticipants ? [ ...sortedFakeScreenShareParticipants.entries() ] : [];
     const sharedVideos = fakeParticipants ? Array.from(fakeParticipants.keys()) : [];
     const speakers = new Map(speakersList);
 
-    for (const screenshare of screenShares.keys()) {
-        remoteParticipants.delete(screenshare);
-        speakers.delete(screenshare);
+    if (getSourceNameSignalingFeatureFlag(state)) {
+        for (const [ ownerId, screenshare ] of screenShareParticipants) {
+            remoteParticipants.delete(ownerId);
+            remoteParticipants.delete(screenshare.id);
+
+            speakers.delete(ownerId);
+            speakers.delete(screenshare.id);
+        }
+    } else {
+        for (const screenshare of screenShares.keys()) {
+            remoteParticipants.delete(screenshare);
+            speakers.delete(screenshare);
+        }
     }
+
     for (const sharedVideo of sharedVideos) {
         remoteParticipants.delete(sharedVideo);
         speakers.delete(sharedVideo);
@@ -49,13 +65,30 @@ export function updateRemoteParticipants(store: Object, participantId: ?number) 
         remoteParticipants.delete(speaker);
     }
 
-    // Always update the order of the thumnails.
-    reorderedParticipants = [
-        ...Array.from(screenShares.keys()),
-        ...sharedVideos,
-        ...Array.from(speakers.keys()),
-        ...Array.from(remoteParticipants.keys())
-    ];
+    if (getSourceNameSignalingFeatureFlag(state)) {
+        // Always update the order of the thumnails.
+        const participantsWithScreenShare = screenShareParticipants.reduce((acc, [ ownerId, screenshare ]) => {
+            acc.push(ownerId);
+            acc.push(screenshare.id);
+
+            return acc;
+        }, []);
+
+        reorderedParticipants = [
+            ...participantsWithScreenShare,
+            ...sharedVideos,
+            ...Array.from(speakers.keys()),
+            ...Array.from(remoteParticipants.keys())
+        ];
+    } else {
+        // Always update the order of the thumnails.
+        reorderedParticipants = [
+            ...Array.from(screenShares.keys()),
+            ...sharedVideos,
+            ...Array.from(speakers.keys()),
+            ...Array.from(remoteParticipants.keys())
+        ];
+    }
 
     store.dispatch(setRemoteParticipants(reorderedParticipants));
 }

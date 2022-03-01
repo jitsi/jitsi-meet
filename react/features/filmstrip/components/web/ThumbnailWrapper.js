@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { shouldComponentUpdate } from 'react-window';
 
+import { getSourceNameSignalingFeatureFlag } from '../../../base/config';
 import { getPinnedParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { shouldHideSelfView } from '../../../base/settings/functions.any';
@@ -29,6 +30,11 @@ type Props = {
      * Whether or not there is a pinned participant.
      */
     _isAnyParticipantPinned: boolean,
+
+    /**
+     * Whether or not the thumbnail is a local screen share.
+     */
+    _isLocalScreenShare: boolean,
 
     /**
      * The ID of the participant associated with the Thumbnail.
@@ -82,7 +88,14 @@ class ThumbnailWrapper extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _participantID, style, _horizontalOffset = 0, _isAnyParticipantPinned, _disableSelfView } = this.props;
+        const {
+            _disableSelfView,
+            _isAnyParticipantPinned,
+            _isLocalScreenShare = false,
+            _horizontalOffset = 0,
+            _participantID,
+            style
+        } = this.props;
 
         if (typeof _participantID !== 'string') {
             return null;
@@ -94,6 +107,16 @@ class ThumbnailWrapper extends Component<Props> {
                     _isAnyParticipantPinned = { _isAnyParticipantPinned }
                     horizontalOffset = { _horizontalOffset }
                     key = 'local'
+                    style = { style } />);
+        }
+
+        if (_isLocalScreenShare) {
+            return _disableSelfView ? null : (
+                <Thumbnail
+                    _isAnyParticipantPinned = { _isAnyParticipantPinned }
+                    horizontalOffset = { _horizontalOffset }
+                    key = 'localScreenShare'
+                    participantID = { _participantID }
                     style = { style } />);
         }
 
@@ -122,6 +145,7 @@ function _mapStateToProps(state, ownProps) {
     const { testing = {} } = state['features/base/config'];
     const disableSelfView = shouldHideSelfView(state);
     const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
+    const sourceNameSignalingEnabled = getSourceNameSignalingFeatureFlag(state);
     const _verticalViewGrid = showGridInVerticalView(state);
     const _isAnyParticipantPinned = Boolean(getPinnedParticipant(state));
 
@@ -135,29 +159,66 @@ function _mapStateToProps(state, ownProps) {
         const index = (rowIndex * columns) + columnIndex;
         let horizontalOffset;
         const { iAmRecorder } = state['features/base/config'];
-        const participantsLenght = remoteParticipantsLength + (iAmRecorder ? 0 : 1) - (disableSelfView ? 1 : 0);
+        const { localScreenShare } = state['features/base/participants'];
+        const localParticipantsLength = localScreenShare ? 2 : 1;
+
+        let participantsLength;
+
+        if (sourceNameSignalingEnabled) {
+            participantsLength = remoteParticipantsLength
+
+            // Add local camera and screen share to total participant count when self view is not disabled.
+            + (disableSelfView ? 0 : localParticipantsLength)
+
+            // Removes iAmRecorder from the total participants count.
+            - (iAmRecorder ? 1 : 0);
+        } else {
+            participantsLength = remoteParticipantsLength + (iAmRecorder ? 0 : 1) - (disableSelfView ? 1 : 0);
+        }
+
 
         if (rowIndex === rows - 1) { // center the last row
             const { width: thumbnailWidth } = thumbnailSize;
-            const partialLastRowParticipantsNumber = participantsLenght % columns;
+            const partialLastRowParticipantsNumber = participantsLength % columns;
 
             if (partialLastRowParticipantsNumber > 0) {
                 horizontalOffset = Math.floor((columns - partialLastRowParticipantsNumber) * (thumbnailWidth + 4) / 2);
             }
         }
 
-        if (index > participantsLenght - 1) {
+        if (index > participantsLength - 1) {
             return {};
         }
 
         // When the thumbnails are reordered, local participant is inserted at index 0.
         const localIndex = enableThumbnailReordering && !disableSelfView ? 0 : remoteParticipantsLength;
-        const remoteIndex = enableThumbnailReordering && !iAmRecorder && !disableSelfView ? index - 1 : index;
+
+        // Local screen share is inserted at index 1 after the local camera.
+        const localScreenShareIndex = enableThumbnailReordering && !disableSelfView ? 1 : remoteParticipantsLength;
+
+        let remoteIndex;
+
+        if (sourceNameSignalingEnabled) {
+            remoteIndex = enableThumbnailReordering && !iAmRecorder && !disableSelfView
+                ? index - localParticipantsLength : index;
+        } else {
+            remoteIndex = enableThumbnailReordering && !iAmRecorder && !disableSelfView ? index - 1 : index;
+        }
 
         if (!iAmRecorder && index === localIndex) {
             return {
                 _disableSelfView: disableSelfView,
                 _participantID: 'local',
+                _horizontalOffset: horizontalOffset,
+                _isAnyParticipantPinned: _verticalViewGrid && _isAnyParticipantPinned
+            };
+        }
+
+        if (sourceNameSignalingEnabled && !iAmRecorder && localScreenShare && index === localScreenShareIndex) {
+            return {
+                _disableSelfView: disableSelfView,
+                _isLocalScreenShare: true,
+                _participantID: localScreenShare?.id,
                 _horizontalOffset: horizontalOffset,
                 _isAnyParticipantPinned: _verticalViewGrid && _isAnyParticipantPinned
             };

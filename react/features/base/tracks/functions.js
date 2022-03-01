@@ -427,6 +427,10 @@ export function getTrackByMediaTypeAndParticipant(
     );
 }
 
+export function getTrackBySourceName(tracks, sourceName) {
+    return tracks.find(t => t?.jitsiTrack?.getSourceName() === sourceName);
+}
+
 /**
  * Returns track source name of specified media type for specified participant id.
  *

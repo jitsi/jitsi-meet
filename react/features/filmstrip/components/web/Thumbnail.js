@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 
 import { createScreenSharingIssueEvent, sendAnalytics } from '../../../analytics';
 import { Avatar } from '../../../base/avatar';
+import { getSourceNameSignalingFeatureFlag } from '../../../base/config';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { MEDIA_TYPE, VideoTrack } from '../../../base/media';
 import {
@@ -21,6 +22,7 @@ import {
     getLocalAudioTrack,
     getLocalVideoTrack,
     getTrackByMediaTypeAndParticipant,
+    getTrackBySourceName,
     updateLastTrackVideoMediaEvent
 } from '../../../base/tracks';
 import { getVideoObjectPosition } from '../../../face-centering/functions';
@@ -41,6 +43,7 @@ import {
     showGridInVerticalView
 } from '../../functions';
 
+import FakeScreenShareParticipant from './FakeScreenShareParticipant';
 import ThumbnailAudioIndicator from './ThumbnailAudioIndicator';
 import ThumbnailBottomIndicators from './ThumbnailBottomIndicators';
 import ThumbnailTopIndicators from './ThumbnailTopIndicators';
@@ -127,6 +130,12 @@ export type Props = {|
      * Indicates whether the participant associated with the thumbnail is displayed on the large video.
      */
     _isCurrentlyOnLargeVideo: boolean,
+
+    /**
+     * Indicates whether the participant is a fake screen share participant. This prop is behind the
+     * sourceNameSignaling feature flag.
+     */
+    _isFakeScreenShareParticipant: boolean,
 
     /**
      * Whether we are currently running in a mobile browser.
@@ -514,6 +523,7 @@ class Thumbnail extends Component<Props, State> {
             _currentLayout,
             _disableTileEnlargement,
             _height,
+            _isFakeScreenShareParticipant,
             _isHidden,
             _isScreenSharing,
             _participant,
@@ -551,7 +561,7 @@ class Thumbnail extends Component<Props, State> {
             || _disableTileEnlargement
             || _isScreenSharing;
 
-        if (canPlayEventReceived || _participant.local) {
+        if (canPlayEventReceived || _participant.local || _isFakeScreenShareParticipant) {
             videoStyles = {
                 objectFit: doNotStretchVideo ? 'contain' : 'cover'
             };
@@ -988,7 +998,7 @@ class Thumbnail extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { _participant } = this.props;
+        const { _participant, _isFakeScreenShareParticipant } = this.props;
 
         if (!_participant) {
             return null;
@@ -1002,6 +1012,29 @@ class Thumbnail extends Component<Props, State> {
 
         if (isFakeParticipant) {
             return this._renderFakeParticipant();
+        }
+
+        if (_isFakeScreenShareParticipant) {
+            const { isHovered } = this.state;
+            const { _videoTrack, _isMobile, classes } = this.props;
+
+            return (
+                <FakeScreenShareParticipant
+                    classes = { classes }
+                    containerClassName = { this._getContainerClassName() }
+                    isHovered = { isHovered }
+                    isMobile = { _isMobile }
+                    onClick = { this._onClick }
+                    onMouseEnter = { this._onMouseEnter }
+                    onMouseLeave = { this._onMouseLeave }
+                    onMouseMove = { this._onMouseMove }
+                    onTouchEnd = { this._onTouchEnd }
+                    onTouchMove = { this._onTouchMove }
+                    onTouchStart = { this._onTouchStart }
+                    participantId = { _participant.id }
+                    styles = { this._getStyles() }
+                    videoTrack = { _videoTrack } />
+            );
         }
 
         return this._renderParticipant();
@@ -1023,8 +1056,16 @@ function _mapStateToProps(state, ownProps): Object {
     const id = participant?.id;
     const isLocal = participant?.local ?? true;
     const tracks = state['features/base/tracks'];
-    const _videoTrack = isLocal
-        ? getLocalVideoTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantID);
+    const sourceNameSignalingEnabled = getSourceNameSignalingFeatureFlag(state);
+
+    let _videoTrack;
+
+    if (sourceNameSignalingEnabled && participant?.isFakeScreenShareParticipant) {
+        _videoTrack = getTrackBySourceName(tracks, id);
+    } else {
+        _videoTrack = isLocal
+            ? getLocalVideoTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantID);
+    }
     const _audioTrack = isLocal
         ? getLocalAudioTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, participantID);
     const _currentLayout = getCurrentLayout(state);
@@ -1102,6 +1143,7 @@ function _mapStateToProps(state, ownProps): Object {
         _isAudioOnly: Boolean(state['features/base/audio-only'].enabled),
         _isCurrentlyOnLargeVideo: state['features/large-video']?.participantId === id,
         _isDominantSpeakerDisabled: interfaceConfig.DISABLE_DOMINANT_SPEAKER_INDICATOR,
+        _isFakeScreenShareParticipant: sourceNameSignalingEnabled && participant?.isFakeScreenShareParticipant,
         _isMobile,
         _isMobilePortrait,
         _isScreenSharing: _videoTrack?.videoType === 'desktop',

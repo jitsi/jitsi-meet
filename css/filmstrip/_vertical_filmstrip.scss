@@ -87,9 +87,27 @@
             .videocontainer {
                 height: 0px;
                 width: 100%;
-    }
+            }
         }
+    }
 
+    #filmstripLocalScreenShare {
+        align-self: initial;
+        margin-bottom: 5px;
+        display: flex;
+        flex-direction: column-reverse;
+        height: auto;
+        justify-content: flex-start;
+        width: 100%;
+
+        #filmstripLocalScreenShareThumbnail {
+            width: calc(100% - 15px);
+
+            .videocontainer {
+                height: 0px;
+                width: 100%;
+            }
+        }
     }
 
     /**
@@ -97,6 +115,7 @@
      * filmstrip from overlapping the left edge of the screen.
      */
     #filmstripLocalVideo,
+    #filmstripLocalScreenShare,
     .remote-videos {
         padding: 0;
     }

@@ -1,6 +1,7 @@
 // @flow
 import type { Dispatch } from 'redux';
 
+import { getSourceNameSignalingFeatureFlag } from '../base/config';
 import {
     getLocalParticipant,
     getParticipantById,
@@ -119,6 +120,7 @@ export function setVerticalViewDimensions() {
         const resizableFilmstrip = isFilmstripResizable(state);
         const _verticalViewGrid = showGridInVerticalView(state);
         const numberOfRemoteParticipants = getRemoteParticipantCount(state);
+        const { localScreenShare } = state['features/base/participants'];
 
         let gridView = {};
         let thumbnails = {};
@@ -176,6 +178,20 @@ export function setVerticalViewDimensions() {
                 = thumbnails?.local?.width + TILE_VERTICAL_CONTAINER_HORIZONTAL_MARGIN + SCROLL_SIZE;
             remoteVideosContainerHeight
                 = clientHeight - (disableSelfView ? 0 : thumbnails?.local?.height) - VERTICAL_FILMSTRIP_VERTICAL_MARGIN;
+
+            if (getSourceNameSignalingFeatureFlag(state)) {
+                // Account for the height of the local screen share thumbnail when calculating the height of the remote
+                // videos container.
+                const localCameraThumbnailHeight = thumbnails?.local?.height;
+                const localScreenShareThumbnailHeight
+                    = localScreenShare && !disableSelfView ? thumbnails?.local?.height : 0;
+
+                remoteVideosContainerHeight = clientHeight
+                    - localCameraThumbnailHeight
+                    - localScreenShareThumbnailHeight
+                    - VERTICAL_FILMSTRIP_VERTICAL_MARGIN;
+            }
+
             hasScroll
                 = remoteVideosContainerHeight
                     < (thumbnails?.remote.height + TILE_VERTICAL_MARGIN) * numberOfRemoteParticipants;

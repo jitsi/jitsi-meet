@@ -2,12 +2,13 @@
 
 import Logger from '@jitsi/logger';
 
+import { getSourceNameSignalingFeatureFlag } from '../../../react/features/base/config';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media';
 import {
     getPinnedParticipant,
     getParticipantById
 } from '../../../react/features/base/participants';
-import { getTrackByMediaTypeAndParticipant } from '../../../react/features/base/tracks';
+import { getTrackByMediaTypeAndParticipant, getTrackBySourceName } from '../../../react/features/base/tracks';
 
 import LargeVideoManager from './LargeVideoManager';
 import { VIDEO_CONTAINER_TYPE } from './VideoContainer';
@@ -89,6 +90,10 @@ const VideoLayout = {
 
         if (participant?.isFakeParticipant) {
             return VIDEO_TYPE.CAMERA;
+        }
+
+        if (getSourceNameSignalingFeatureFlag(state) && participant?.isFakeScreenShareParticipant) {
+            return VIDEO_TYPE.DESKTOP;
         }
 
         const videoTrack = getTrackByMediaTypeAndParticipant(state['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
@@ -177,7 +182,17 @@ const VideoLayout = {
         const currentContainerType = largeVideo.getCurrentContainerType();
         const isOnLarge = this.isCurrentlyOnLarge(id);
         const state = APP.store.getState();
-        const videoTrack = getTrackByMediaTypeAndParticipant(state['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
+        const participant = getParticipantById(state, id);
+        const tracks = state['features/base/tracks'];
+
+        let videoTrack;
+
+        if (getSourceNameSignalingFeatureFlag(state) && participant?.isFakeScreenShareParticipant) {
+            videoTrack = getTrackBySourceName(tracks, id);
+        } else {
+            videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
+        }
+
         const videoStream = videoTrack?.jitsiTrack;
 
         if (isOnLarge && !forceUpdate

@@ -30,7 +30,8 @@ StateListenerRegistry.register(
     /* selector */ state => {
         return {
             numberOfParticipants: getParticipantCountWithFake(state),
-            disableSelfView: shouldHideSelfView(state)
+            disableSelfView: shouldHideSelfView(state),
+            localScreenShare: state['features/base/participants'].localScreenShare
         };
     },
     /* listener */ (currentState, store) => {

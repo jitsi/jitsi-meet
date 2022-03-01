@@ -74,6 +74,10 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
     case PARTICIPANT_JOINED: {
+        if (action.participant?.isLocalScreenShare) {
+            break;
+        }
+
         updateRemoteParticipants(store, action.participant?.id);
         break;
     }

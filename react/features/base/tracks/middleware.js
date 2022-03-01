@@ -8,7 +8,7 @@ import { shouldShowModeratedNotification } from '../../av-moderation/functions';
 import { hideNotification, isModerationNotificationDisplayed } from '../../notifications';
 import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { getCurrentConference } from '../conference/functions';
-import { getMultipleVideoSupportFeatureFlag } from '../config';
+import { getMultipleVideoSupportFeatureFlag, getSourceNameSignalingFeatureFlag } from '../config';
 import { getAvailableDevices } from '../devices/actions';
 import {
     CAMERA_FACING_MODE,
@@ -24,6 +24,7 @@ import {
     setScreenshareMuted,
     SCREENSHARE_MUTISM_AUTHORITY
 } from '../media';
+import { participantJoined, getParticipantById } from '../participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
 
 import {
@@ -70,6 +71,10 @@ MiddlewareRegistry.register(store => next => action => {
         // were granted and a local video track is added by umuting the video.
         if (action.track.local) {
             store.dispatch(getAvailableDevices());
+        }
+
+        if (getSourceNameSignalingFeatureFlag(store.getState()) && action.track.videoType === VIDEO_TYPE.DESKTOP) {
+            createFakeScreenShareParticipant(store, action);
         }
 
         break;
@@ -214,6 +219,12 @@ MiddlewareRegistry.register(store => next => action => {
             const result = next(action);
             const state = store.getState();
 
+            // TODO: This is only used for testing, remove this when we can start sending screen shares as a separate
+            // track.
+            if (getSourceNameSignalingFeatureFlag(state) && action.track.videoType === VIDEO_TYPE.DESKTOP) {
+                createFakeScreenShareParticipant(store, action);
+            }
+
             if (isPrejoinPageVisible(state)) {
                 return result;
             }
@@ -324,6 +335,23 @@ function _handleNoDataFromSourceErrors(store, action) {
             dispatch(trackNoDataFromSourceNotificationInfoChanged(jitsiTrack, { timeout }));
         }
     }
+}
+
+function createFakeScreenShareParticipant(store, action) {
+    const { track } = action;
+    const { dispatch } = store;
+    const { conference } = store.getState()['features/base/conference'];
+    const particiipantId = track?.jitsiTrack?.getParticipantId?.();
+    const particiipant = getParticipantById(store.getState(), particiipantId);
+    const name = particiipant?.name ? `${particiipant.name}'s screen` : 'Fellow Jitster\'s Screen';
+
+    dispatch(participantJoined({
+        conference,
+        id: track.jitsiTrack.getSourceName(),
+        isFakeScreenShareParticipant: true,
+        isLocalScreenShare: track?.jitsiTrack.isLocal(),
+        name
+    }));
 }
 
 /**

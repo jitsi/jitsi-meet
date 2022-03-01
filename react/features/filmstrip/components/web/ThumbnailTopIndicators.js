@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
+import { getSourceNameSignalingFeatureFlag } from '../../../base/config';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import ConnectionIndicator from '../../../connection-indicator/components/web/ConnectionIndicator';
 import { LAYOUTS } from '../../../video-layout';
@@ -38,6 +39,11 @@ type Props = {
      * Whether or not the thumbnail is hovered.
      */
     isHovered: boolean,
+
+    /**
+     * Whether or not the thumbnail is a fake screen share participant.
+     */
+    isFakeScreenShareParticipant: boolean,
 
     /**
      * Whether or not the indicators are for the local participant.
@@ -76,6 +82,7 @@ const ThumbnailTopIndicators = ({
     currentLayout,
     hidePopover,
     indicatorsClassName,
+    isFakeScreenShareParticipant,
     isHovered,
     local,
     participantId,
@@ -91,8 +98,23 @@ const ThumbnailTopIndicators = ({
         useSelector(state => state['features/base/config'].connectionIndicators?.autoHide) ?? true);
     const _connectionIndicatorDisabled = _isMobile
         || Boolean(useSelector(state => state['features/base/config'].connectionIndicators?.disabled));
-
+    const sourceNameSignalingEnabled = useSelector(getSourceNameSignalingFeatureFlag);
     const showConnectionIndicator = isHovered || !_connectionIndicatorAutoHideEnabled;
+
+    if (sourceNameSignalingEnabled && isFakeScreenShareParticipant) {
+        return (
+            <div className = { styles.container }>
+                {!_connectionIndicatorDisabled
+                    && <ConnectionIndicator
+                        alwaysVisible = { showConnectionIndicator }
+                        enableStatsDisplay = { true }
+                        iconSize = { _indicatorIconSize }
+                        participantId = { participantId }
+                        statsPopoverPosition = { STATS_POPOVER_POSITION[currentLayout] } />
+                }
+            </div>
+        );
+    }
 
     return (
         <>

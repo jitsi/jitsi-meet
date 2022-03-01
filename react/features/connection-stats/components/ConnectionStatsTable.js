@@ -91,6 +91,11 @@ type Props = {
     isLocalVideo: boolean,
 
     /**
+     * Whether or not the statistics are for screen share.
+     */
+    isFakeScreenShareParticipant: boolean,
+
+    /**
      * The send-side max enabled resolution (aka the highest layer that is not
      * suspended on the send-side).
      */
@@ -197,8 +202,18 @@ class ConnectionStatsTable extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { isLocalVideo, enableSaveLogs, disableShowMoreStats, classes } = this.props;
+        const {
+            classes,
+            disableShowMoreStats,
+            enableSaveLogs,
+            isFakeScreenShareParticipant,
+            isLocalVideo
+        } = this.props;
         const className = isMobileBrowser() ? 'connection-info connection-info__mobile' : 'connection-info';
+
+        if (isFakeScreenShareParticipant) {
+            return this._renderScreenShareStatus();
+        }
 
         return (
             <ContextMenu
@@ -217,6 +232,34 @@ class ConnectionStatsTable extends Component<Props> {
                 </div>
             </ContextMenu>
         );
+    }
+
+    /**
+     * Creates a ReactElement that will display connection statistics for a screen share thumbnail.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderScreenShareStatus() {
+        const { classes } = this.props;
+        const className = isMobileBrowser() ? 'connection-info connection-info__mobile' : 'connection-info';
+
+        return (<ContextMenu
+            className = { classes.contextMenu }
+            hidden = { false }
+            inDrawer = { true }>
+            <div
+                className = { className }
+                onClick = { onClick }>
+                { <table className = 'connection-info__container'>
+                    <tbody>
+                        { this._renderResolution() }
+                        { this._renderFrameRate() }
+                    </tbody>
+                </table> }
+
+            </div>
+        </ContextMenu>);
     }
 
     /**
