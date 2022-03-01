@@ -3,7 +3,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { initialWindowMetrics, SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { connect } from '../../../base/redux';
 import { DialInSummary } from '../../../invite';
@@ -34,7 +34,8 @@ type Props = {
 
 
 const RootNavigationContainer = ({ isWelcomePageAvailable }: Props) => (
-    <SafeAreaProvider>
+    <SafeAreaProvider
+        initialMetrics = { initialWindowMetrics }>
         <NavigationContainer
             independent = { true }
             ref = { rootNavigationRef }

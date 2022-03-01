@@ -364,7 +364,10 @@ class Conference extends AbstractConference<Props, State> {
 
                     <LonelyMeetingExperience />
 
-                    { _shouldDisplayTileView || <><Filmstrip /><Toolbox /></> }
+                    { _shouldDisplayTileView || <>
+                        <Filmstrip _toolboxVisible = { _toolboxVisible } />
+                        <Toolbox />
+                    </> }
                 </View>
 
                 <SafeAreaView
