@@ -86,9 +86,7 @@ const styles = {
         borderTopLeftRadius: 3,
         borderTopRightRadius: 3,
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        paddingLeft: BaseTheme.spacing[2],
-        paddingRight: BaseTheme.spacing[2]
+        justifyContent: 'space-between'
     },
 
     /**
