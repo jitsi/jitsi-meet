@@ -9,6 +9,7 @@ import { Platform } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { shouldHideSelfView } from '../../../base/settings/functions.any';
+import { isToolboxVisible } from '../../../toolbox/functions';
 import { setVisibleRemoteParticipants } from '../../actions';
 import { isFilmstripVisible, shouldRemoteVideosBeVisible } from '../../functions';
 
@@ -317,6 +318,7 @@ function _mapStateToProps(state) {
         _disableSelfView: disableSelfView,
         _localParticipantId: getLocalParticipant(state)?.id,
         _participants: showRemoteVideos ? remoteParticipants : NO_REMOTE_VIDEOS,
+        _toolboxVisible: isToolboxVisible(state),
         _visible: enabled && isFilmstripVisible(state)
     };
 }

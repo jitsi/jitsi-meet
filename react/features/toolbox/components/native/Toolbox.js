@@ -29,6 +29,11 @@ import styles from './styles';
 type Props = {
 
     /**
+     * Whether or not the reactions feature is enabled.
+     */
+    _reactionsEnabled: boolean,
+
+    /**
      * The color-schemed stylesheet of the feature.
      */
     _styles: StyleType,
@@ -41,12 +46,7 @@ type Props = {
     /**
      * The width of the screen.
      */
-    _width: number,
-
-    /**
-     * Whether or not the reactions feature is enabled.
-     */
-    _reactionsEnabled: boolean
+    _width: number
 };
 
 /**
@@ -56,12 +56,13 @@ type Props = {
  * @returns {React$Element}.
  */
 function Toolbox(props: Props) {
-    if (!props._visible) {
+    const { _reactionsEnabled, _styles, _visible, _width } = props;
+
+    if (!_visible) {
         return null;
     }
 
-    const { _styles, _width, _reactionsEnabled } = props;
-    const bottomEdge = Platform.OS === 'ios' && props._visible;
+    const bottomEdge = Platform.OS === 'ios' && _visible;
     const { buttonStylesBorderless, hangupButtonStyles, toggledButtonStyles } = _styles;
     const additionalButtons = getMovableButtons(_width);
     const backgroundToggledStyle = {
