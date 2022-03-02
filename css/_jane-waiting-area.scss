@@ -328,23 +328,6 @@
         }
     }
 
-    &-overlay {
-        height: 100%;
-        position: absolute;
-        width: 100%;
-        z-index: 1;
-        background: linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3));
-    }
-
-    &-bottom-overlay {
-        background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.9) 100%);
-        bottom: 0;
-        height: 50%;
-        position: absolute;
-        width: 100%;
-        z-index: 1;
-    }
-
     &-status {
         align-items: center;
         bottom: 0;

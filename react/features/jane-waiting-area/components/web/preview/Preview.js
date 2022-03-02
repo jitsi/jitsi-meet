@@ -50,8 +50,6 @@ function Preview(props: Props) {
     if (showCameraPreview && videoTrack) {
         return (
             <div className = 'jane-waiting-area-preview'>
-                <div className = 'jane-waiting-area-preview-overlay' />
-                <div className = 'jane-waiting-area-preview-bottom-overlay' />
                 <Video
                     className = { `jane-waiting-area-preview-video ${screensharing ? '' : 'flipVideoX'} ` }
                     videoTrack = {{ jitsiTrack: videoTrack }} />
