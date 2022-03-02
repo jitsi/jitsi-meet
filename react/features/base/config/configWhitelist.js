@@ -22,6 +22,7 @@ export default [
     'apiLogLevels',
     'avgRtpStatsN',
     'backgroundAlpha',
+    'breakoutRooms',
     'buttonsWithNotifyClick',
 
     /**
