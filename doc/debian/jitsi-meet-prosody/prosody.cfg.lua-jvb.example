@@ -83,6 +83,7 @@ Component "breakout.jitmeet.example.com" "muc"
         "muc_domain_mapper";
         --"token_verification";
         "muc_rate_limit";
+        "polls";
     }
     admins = { "focusUser@auth.jitmeet.example.com" }
     muc_room_locking = false
