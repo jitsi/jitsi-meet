@@ -56,3 +56,13 @@ export const SET_SELECTED_RECORDING_SERVICE = 'SET_SELECTED_RECORDING_SERVICE';
  * }
  */
 export const SET_STREAM_KEY = 'SET_STREAM_KEY';
+
+/**
+ * Sets the enable state of the meeting highlight button.
+ *
+ * {
+ *     type: SET_MEETING_HIGHLIGHT_BUTTON_STATE,
+ *     disabled: boolean
+ * }
+ */
+export const SET_MEETING_HIGHLIGHT_BUTTON_STATE = 'SET_MEETING_HIGHLIGHT_BUTTON_STATE';

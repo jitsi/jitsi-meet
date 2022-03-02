@@ -26,6 +26,7 @@ export const TOOLBAR_BUTTONS = [
     'fullscreen',
     'hangup',
     'help',
+    'highlight',
     'invite',
     'linktosalesforce',
     'livestreaming',

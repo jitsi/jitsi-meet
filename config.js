@@ -603,6 +603,7 @@ var config = {
     //    'fullscreen',
     //    'hangup',
     //    'help',
+    //    'highlight',
     //    'invite',
     //    'livestreaming',
     //    'microphone',
@@ -1116,7 +1117,8 @@ var config = {
     //         'e2ee',
     //         'transcribing',
     //         'video-quality',
-    //         'insecure-room'
+    //         'insecure-room',
+    //         'highlight-moment'
     //     ]
     // },
 
