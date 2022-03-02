@@ -1,8 +1,9 @@
 // @flow
-import { getLocalVideoTrack } from '../base/tracks';
-
 import 'image-capture';
 import './createImageBitmap';
+
+import { getLocalVideoTrack } from '../base/tracks';
+import { getBaseUrl } from '../base/util';
 
 import {
     ADD_FACIAL_EXPRESSION,
@@ -65,15 +66,9 @@ export function loadWorker() {
 
             return;
         }
-        let baseUrl = '';
-        const app: Object = document.querySelector('script[src*="app.bundle.min.js"]');
 
-        if (app) {
-            const idx = app.src.lastIndexOf('/');
-
-            baseUrl = `${app.src.substring(0, idx)}/`;
-        }
-        let workerUrl = `${baseUrl}facial-expressions-worker.min.js`;
+        const baseUrl = getBaseUrl();
+        let workerUrl = `${baseUrl}libs/facial-expressions-worker.min.js`;
 
         const workerBlob = new Blob([ `importScripts("${workerUrl}");` ], { type: 'application/javascript' });
 
@@ -132,9 +127,10 @@ export function loadWorker() {
  */
 export function startFacialRecognition() {
     return async function(dispatch: Function, getState: Function) {
-        if (worker === undefined || worker === null) {
+        if (!worker) {
             return;
         }
+
         const state = getState();
         const { recognitionActive } = state['features/facial-recognition'];
 
