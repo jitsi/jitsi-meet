@@ -1,5 +1,6 @@
 // @flow
 
+import { withStyles } from '@material-ui/styles';
 import React, { Component } from 'react';
 
 import { getAvailableDevices } from '../../../base/devices';
@@ -40,6 +41,11 @@ declare var interfaceConfig: Object;
 type Props = {
 
     /**
+     * An object containing the CSS classes.
+     */
+    classes: Object,
+
+    /**
      * Which settings tab should be initially displayed. If not defined then
      * the first tab will be displayed.
      */
@@ -54,6 +60,118 @@ type Props = {
      * Invoked to save changed settings.
      */
     dispatch: Function
+};
+
+/**
+ * Creates the styles for the component.
+ *
+ * @param {Object} theme - The current UI theme.
+ *
+ * @returns {Object}
+ */
+const styles = theme => {
+    return {
+        root: {
+            display: 'flex',
+            width: '100%',
+
+            '&.profile-pane': {
+                flexDirection: 'column'
+            },
+
+            '& .auth-name': {
+                marginBottom: theme.spacing(1)
+            },
+
+            [[ '& .calendar-tab',
+                '& .device-selection' ]]: {
+                marginTop: theme.spacing(4)
+            },
+
+            '& .mock-atlaskit-label': {
+                color: '#b8c7e0',
+                fontSize: '12px',
+                fontWeight: 600,
+                lineHeight: 1.33,
+                padding: `${theme.spacing(4)}px 0px ${theme.spacing(1)}px 0px`
+            },
+
+            '& input[type="checkbox"]:checked + svg': {
+                '--checkbox-background-color': '#6492e7',
+                '--checkbox-border-color': '#6492e7'
+            },
+
+            '& input[type="checkbox"] + svg + span': {
+                color: '#9FB0CC'
+            },
+
+            [[ '& .calendar-tab',
+                '& .more-tab',
+                '& .box' ]]: {
+                display: 'flex',
+                justifyContent: 'space-between',
+                width: '100%'
+            },
+
+            '& .profile-edit': {
+                display: 'flex',
+                width: '100%'
+            },
+
+            '& .profile-edit-field': {
+                flex: 0.5,
+                marginRight: theme.spacing(5)
+            },
+
+            '& .settings-sub-pane': {
+                flex: 1
+            },
+
+            '& .settings-sub-pane .right': {
+                flex: 1
+            },
+            '& .settings-sub-pane .left': {
+                flex: 1
+            },
+
+            '& .settings-sub-pane-element': {
+                textAlign: 'left',
+                flex: 1
+            },
+
+            '& .moderator-settings-wrapper': {
+                paddingTop: theme.spacing(5)
+            },
+
+            '& .calendar-tab': {
+                alignItems: 'center',
+                flexDirection: 'column',
+                fontSize: '14px',
+                minHeight: '100px',
+                textAlign: 'center'
+            },
+
+            '& .calendar-tab-sign-in': {
+                marginTop: theme.spacing(5)
+            },
+
+            '& .sign-out-cta': {
+                marginBottom: theme.spacing(5)
+            },
+
+            '@media only screen': {
+                [theme.breakpoints.down('700')]: {
+                    '& .device-selection': {
+                        display: 'flex',
+                        flexDirection: 'column'
+                    },
+                    '& .more-tab': {
+                        flexDirection: 'column'
+                    }
+                }
+            }
+        }
+    };
 };
 
 /**
@@ -130,12 +248,14 @@ class SettingsDialog extends Component<Props> {
  * {@code ConnectedSettingsDialog} component.
  *
  * @param {Object} state - The Redux state.
+ * @param {Object} ownProps - The props passed to the component.
  * @private
  * @returns {{
  *     tabs: Array<Object>
  * }}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state, ownProps) {
+    const { classes } = ownProps;
     const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
 
     // The settings sections to display.
@@ -173,7 +293,7 @@ function _mapStateToProps(state) {
                     selectedVideoInputId: tabState.selectedVideoInputId
                 };
             },
-            styles: 'settings-pane devices-pane',
+            styles: `settings-pane ${classes.root} devices-pane`,
             submit: submitDeviceSelectionTab
         });
     }
@@ -184,7 +304,7 @@ function _mapStateToProps(state) {
             component: ProfileTab,
             label: 'profile.title',
             props: getProfileTabProps(state),
-            styles: 'settings-pane profile-pane',
+            styles: `settings-pane ${classes.root} profile-pane`,
             submit: submitProfileTab
         });
     }
@@ -206,7 +326,7 @@ function _mapStateToProps(state) {
                     startReactionsMuted: tabState.startReactionsMuted
                 };
             },
-            styles: 'settings-pane moderator-pane',
+            styles: `settings-pane ${classes.root} moderator-pane`,
             submit: submitModeratorTab
         });
     }
@@ -216,7 +336,7 @@ function _mapStateToProps(state) {
             name: SETTINGS_TABS.CALENDAR,
             component: CalendarTab,
             label: 'settings.calendar.title',
-            styles: 'settings-pane calendar-pane'
+            styles: `settings-pane ${classes.root} calendar-pan`
         });
     }
 
@@ -226,7 +346,7 @@ function _mapStateToProps(state) {
             component: SoundsTab,
             label: 'settings.sounds',
             props: getSoundsTabProps(state),
-            styles: 'settings-pane profile-pane',
+            styles: `settings-pane ${classes.root} profile-pane`,
             submit: submitSoundsTab
         });
     }
@@ -249,7 +369,7 @@ function _mapStateToProps(state) {
                     enabledNotifications: tabState.enabledNotifications
                 };
             },
-            styles: 'settings-pane more-pane',
+            styles: `settings-pane ${classes.root} more-pane`,
             submit: submitMoreTab
         });
     }
@@ -257,4 +377,4 @@ function _mapStateToProps(state) {
     return { _tabs: tabs };
 }
 
-export default connect(_mapStateToProps)(SettingsDialog);
+export default withStyles(styles)(connect(_mapStateToProps)(SettingsDialog));

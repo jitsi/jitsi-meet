@@ -15,6 +15,13 @@ import { formatCommonClasses } from '../functions';
 const useStyles = makeStyles(theme =>
     createStyles({
         '@global': {
+            ':root': {
+                /**
+                 * Media type thresholds.
+                 */
+                '--small-screen': '700px',
+                '--very-small-screen': '500px'
+            },
             ...formatCommonClasses(commonStyles(theme)),
             ...getGlobalStyles(theme)
         }
