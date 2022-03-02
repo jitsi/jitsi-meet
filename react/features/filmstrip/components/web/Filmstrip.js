@@ -562,6 +562,7 @@ class Filmstrip extends PureComponent <Props, State> {
             _filmstripHeight,
             _filmstripWidth,
             _remoteParticipantsLength,
+            _resizableFilmstrip,
             _rows,
             _thumbnailHeight,
             _thumbnailWidth,
@@ -599,7 +600,7 @@ class Filmstrip extends PureComponent <Props, State> {
 
         const props = {
             itemCount: _remoteParticipantsLength,
-            className: 'filmstrip__videos remote-videos height-transition',
+            className: `filmstrip__videos remote-videos ${_resizableFilmstrip ? '' : 'height-transition'}`,
             height: _filmstripHeight,
             itemKey: this._listItemKey,
             itemSize: 0,
