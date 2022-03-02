@@ -106,7 +106,7 @@ i18next.addResourceBundle(
 require('./BuiltinLanguages');
 
 // Label change through dynamic branding is available only for web
-if (typeof APP !== 'undefined') {
+if (navigator.product !== 'ReactNative') {
     i18next.on('initialized', () => {
         APP.store.dispatch({ type: I18NEXT_INITIALIZED });
     });

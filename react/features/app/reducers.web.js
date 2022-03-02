@@ -1,6 +1,7 @@
 // @flow
 
 import '../base/devices/reducer';
+import '../base/ui/reducer';
 import '../e2ee/reducer';
 import '../face-centering/reducer';
 import '../facial-recognition/reducer';

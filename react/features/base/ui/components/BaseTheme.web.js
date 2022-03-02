@@ -12,3 +12,25 @@ export default createWebTheme({
     typography,
     breakpoints
 });
+
+export const rltTheme = createWebTheme({
+    font,
+    colors,
+    colorMap,
+    direction: 'rtl',
+    spacing,
+    shape,
+    typography,
+    breakpoints
+});
+
+export const ltrTheme = createWebTheme({
+    font,
+    colors,
+    colorMap,
+    direction: 'ltr',
+    spacing,
+    shape,
+    typography,
+    breakpoints
+});

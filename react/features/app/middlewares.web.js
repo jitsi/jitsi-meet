@@ -2,6 +2,7 @@
 
 import '../authentication/middleware';
 import '../base/i18n/middleware';
+import '../base/ui/middleware';
 import '../base/devices/middleware';
 import '../dynamic-branding/middleware';
 import '../e2ee/middleware';

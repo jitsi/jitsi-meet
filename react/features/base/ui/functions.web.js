@@ -4,14 +4,17 @@ import { createMuiTheme } from '@material-ui/core/styles';
 
 import { createColorTokens } from './utils';
 
+export * from './functions.any';
+
 /**
  * Creates a MUI theme based on local UI tokens.
  *
  * @param {Object} arg - The ui tokens.
  * @returns {Object}
  */
-export function createWebTheme({ font, colors, colorMap, shape, spacing, typography, breakpoints }: Object) {
+export function createWebTheme({ font, colors, colorMap, shape, spacing, typography, breakpoints, direction }: Object) {
     return createMuiTheme({
+        direction,
         props: {
             // disable ripple effect on buttons globally
             MuiButtonBase: {

@@ -1,11 +1,13 @@
 // @flow
 
-import { ThemeProvider } from '@material-ui/core/styles';
+import { jssPreset, StylesProvider, ThemeProvider } from '@material-ui/core/styles';
+import { create } from 'jss';
+import rtl from 'jss-rtl';
 import * as React from 'react';
 
 import { connect } from '../../../base/redux';
 
-import BaseTheme from './BaseTheme';
+import { ltrTheme, rltTheme } from './BaseTheme';
 
 type Props = {
 
@@ -20,6 +22,9 @@ type Props = {
     children: React.ChildrenArray<any>
 }
 
+// Configure JSS
+const jss = create({ plugins: [ ...jssPreset().plugins, rtl() ] });
+
 /**
  * The theme provider for the web app.
  *
@@ -27,7 +32,9 @@ type Props = {
  * @returns {React.ReactNode}
  */
 function JitsiThemeProvider(props: Props) {
-    return <ThemeProvider theme = { props._theme }>{ props.children }</ThemeProvider>;
+    return (<StylesProvider jss = { jss }>
+        <ThemeProvider theme = { props._theme }>{ props.children }</ThemeProvider>
+    </StylesProvider>);
 }
 
 /**
@@ -38,9 +45,10 @@ function JitsiThemeProvider(props: Props) {
  */
 function _mapStateToProps(state) {
     const { muiBrandedTheme } = state['features/dynamic-branding'];
+    const { direction } = state['features/base/ui'];
 
     return {
-        _theme: muiBrandedTheme || BaseTheme
+        _theme: muiBrandedTheme || direction === 'rtl' ? rltTheme : ltrTheme
     };
 }
 
