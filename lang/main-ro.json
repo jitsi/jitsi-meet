@@ -159,8 +159,7 @@
         "Remove": "Eliminați",
         "Share": "Partajare",
         "Submit": "Trimiteți",
-        "WaitForHostMsg": "Conferința {{room}} nu a început. Daca sunteți moderatorul conferinței, vă rugăm să vă autentificați. Dacă nu, așteptați ca moderatorul să înceapă conferința.",
-        "WaitForHostMsgWOk": "Conferința {{room}} nu a început. Daca sunteți moderatorul, apăsați butonul OK pentru autentificare. Dacă nu, așteptați ca moderatorul să înceapă conferința.",
+        "WaitForHostMsg": "Conferința nu a început. Daca sunteți moderatorul conferinței, vă rugăm să vă autentificați. Dacă nu, așteptați ca moderatorul să înceapă conferința.",
         "WaitingForHost": "Așteptare moderator conferință ...",
         "Yes": "Da",
         "accessibilityLabel": {

@@ -174,8 +174,7 @@
         "Remove": "നീക്കംചെയ്യുക",
         "Share": "പങ്കിടുക",
         "Submit": "സമർപ്പിക്കുക",
-        "WaitForHostMsg": "The conference <b>{{room}}</b> has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
-        "WaitForHostMsgWOk": "The conference <b>{{room}}</b> has not yet started. If you are the host then please press Ok to authenticate. Otherwise, please wait for the host to arrive.",
+        "WaitForHostMsg": "The conference has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
         "WaitingForHost": "ഹോസ്റ്റിനായി കാത്തിരിക്കുന്നു ...",
         "Yes": "അതെ",
         "accessibilityLabel": {

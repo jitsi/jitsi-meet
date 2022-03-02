@@ -156,8 +156,7 @@
         "Remove": "Eltávolítás",
         "Share": "Megosztás",
         "Submit": "Elküldés",
-        "WaitForHostMsg": "A <b>{{room}}</b> konferencia még nem kezdődött meg. Ha Ön a házigazda, akkor hitelesítse magát. Ellenkező esetben, kérjük várjon a házigazda érkezésére.",
-        "WaitForHostMsgWOk": "A <b>{{room}}</b> konferencia még nem kezdődött meg. Ha Ön a házigazda, kérjük az „OK” gombra kattintva hitelesítse magát. Ellenkező esetben, kérjük várjon a házigazda érkezésére.",
+        "WaitForHostMsg": "A konferencia még nem kezdődött meg. Ha Ön a házigazda, akkor hitelesítse magát. Ellenkező esetben, kérjük várjon a házigazda érkezésére.",
         "WaitingForHost": "Várakozás a házigazdára…",
         "Yes": "Igen",
         "accessibilityLabel": {

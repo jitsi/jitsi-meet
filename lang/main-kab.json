@@ -185,8 +185,7 @@
         "Remove": "Sfeḍ",
         "Share": "Bḍu",
         "Submit": "Azen",
-        "WaitForHostMsg": "Asarag <b>{{room}}</b> mazal ur yebdi ara. Ma yella d kečč·kemm i d asenneftaɣ, ttxil-k·m ilaq usesteb. Ma yella xaṭi, ttxil-k·m rǧu asenneftaɣ ad d-yaweḍ.",
-        "WaitForHostMsgWOk": "Asarag <b>{{room}}</b> mazal ur yebdi ara. Ma yella d kečč·kemm i d asenneftaɣ, ttxil-k·m sit ɣef Ih i usesteb. Ma yella xaṭi, ttxil-k·m rǧu asenneftaɣ ad d-yaweḍ.",
+        "WaitForHostMsg": "Asarag mazal ur yebdi ara. Ma yella d kečč·kemm i d asenneftaɣ, ttxil-k·m ilaq usesteb. Ma yella xaṭi, ttxil-k·m rǧu asenneftaɣ ad d-yaweḍ.",
         "WaitingForHostTitle": "Aṛaǧu n usenneftaɣ ...",
         "Yes": "Ih",
         "accessibilityLabel": {

@@ -174,8 +174,7 @@
         "Remove": "Odstrániť",
         "Share": "Zdieľať",
         "Submit": "OK",
-        "WaitForHostMsg": "Konferencia <b>{{room}}</b> sa ešte nezačala. Autorizujte sa prosím ak ste hostiteľ. V opačnom prípade čakajte na hostiteľa.",
-        "WaitForHostMsgWOk": "Konferencia <b>{{room}}</b> sa ešte nezačala. Ak ste hostiteľ autorizujte sa stlačením Ok. V opačnom prípade čakajte na hostiteľa.",
+        "WaitForHostMsg": "Konferencia sa ešte nezačala. Autorizujte sa prosím ak ste hostiteľ. V opačnom prípade čakajte na hostiteľa.",
         "WaitingForHost": "Čakám na hostiteľa ...",
         "Yes": "Áno",
         "accessibilityLabel": {

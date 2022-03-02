@@ -208,8 +208,7 @@
         "Remove": "Supprimer",
         "Share": "Partager",
         "Submit": "Soumettre",
-        "WaitForHostMsg": "La conférence <b>{{room}}</b> n'a pas encore commencé. Si vous en êtes l'hôte, veuillez vous authentifier. Sinon, veuillez attendre son arrivée.",
-        "WaitForHostMsgWOk": "La conférence <b>{{room}}</b> n'a pas encore commencé. Si vous en êtes l'hôte, veuillez appuyer sur Ok pour vous authentifier. Sinon, veuillez attendre son arrivée.",
+        "WaitForHostMsg": "La conférence n'a pas encore commencé. Si vous en êtes l'hôte, veuillez vous authentifier. Sinon, veuillez attendre son arrivée.",
         "WaitingForHostTitle": "En attente de l'hôte ...",
         "Yes": "Oui",
         "accessibilityLabel": {

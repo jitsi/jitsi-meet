@@ -206,8 +206,7 @@
         "Remove": "Verwijderen",
         "Share": "Delen",
         "Submit": "Verzenden",
-        "WaitForHostMsg": "De vergadering <b>{{room}}</b> is nog niet gestart. Authenticeer uzelf als u de host bent. Anders wacht u tot de host aanwezig is.",
-        "WaitForHostMsgWOk": "De vergadering <b>{{room}}</b> is nog niet gestart. Als u de host bent, drukt u op 'OK' om uzelf te authenticeren. Anders wacht u tot de host aanwezig is.",
+        "WaitForHostMsg": "De vergadering is nog niet gestart. Authenticeer uzelf als u de host bent. Anders wacht u tot de host aanwezig is.",
         "Yes": "Ja",
         "accessibilityLabel": {
             "liveStreaming": "Livestream"
