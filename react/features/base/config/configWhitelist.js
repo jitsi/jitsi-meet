@@ -153,6 +153,7 @@ export default [
     'enableTcc',
     'enableAutomaticUrlCopy',
     'etherpad_base',
+    'faceCoordinatesSharing',
     'failICE',
     'feedbackPercentage',
     'fileRecordingsEnabled',

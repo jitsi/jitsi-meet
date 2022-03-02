@@ -1,3 +1,4 @@
+
 /* eslint-disable no-unused-vars, no-var */
 
 var config = {
@@ -748,6 +749,17 @@ var config = {
 
     // Enables displaying facial expressions in speaker stats
     // enableDisplayFacialExpressions: true,
+
+    // faceCoordinatesSharing: {
+    //     // Enables sharing your face cordinates. Used for centering faces within a video.
+    //     enabled: false,
+
+    //     // Minimum required face movement percentage threshold for sending new face coordinates data.
+    //     threshold: 10,
+
+    //     // Miliseconds for processing a new image capture in order to detect face coordinates if they exist.
+    //     captureInterval: 100
+    // },
 
     // Controls the percentage of automatic feedback shown to participants when callstats is enabled.
     // The default value is 100%. If set to 0, no automatic feedback will be requested

@@ -4,6 +4,7 @@ DEPLOY_DIR = libs
 LIBJITSIMEET_DIR = node_modules/lib-jitsi-meet
 LIBFLAC_DIR = node_modules/libflacjs/dist/min
 OLM_DIR = node_modules/@matrix-org/olm
+TF_WASM_DIR = node_modules/@tensorflow/tfjs-backend-wasm/dist/
 RNNOISE_WASM_DIR = node_modules/rnnoise-wasm/dist
 TFLITE_WASM = react/features/stream-effects/virtual-background/vendor/tflite
 MEET_MODELS_DIR  = react/features/stream-effects/virtual-background/vendor/models
@@ -29,7 +30,7 @@ clean:
 	rm -fr $(BUILD_DIR)
 
 .NOTPARALLEL:
-deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-libflac deploy-olm deploy-css deploy-local deploy-facial-expressions
+deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-libflac deploy-olm deploy-tf-wasm deploy-css deploy-local deploy-facial-expressions
 
 deploy-init:
 	rm -fr $(DEPLOY_DIR)
@@ -52,6 +53,8 @@ deploy-appbundle:
 		$(OUTPUT_DIR)/analytics-ga.js \
 		$(BUILD_DIR)/analytics-ga.min.js \
 		$(BUILD_DIR)/analytics-ga.min.js.map \
+		$(BUILD_DIR)/face-centering-worker.min.js \
+		$(BUILD_DIR)/face-centering-worker.min.js.map \
 		$(BUILD_DIR)/facial-expressions-worker.min.js \
 		$(BUILD_DIR)/facial-expressions-worker.min.js.map \
 		$(DEPLOY_DIR)
@@ -78,6 +81,11 @@ deploy-libflac:
 deploy-olm:
 	cp \
 		$(OLM_DIR)/olm.wasm \
+		$(DEPLOY_DIR)
+
+deploy-tf-wasm:
+	cp \
+		$(TF_WASM_DIR)/*.wasm \
 		$(DEPLOY_DIR)
 
 deploy-rnnoise-binary:
@@ -109,7 +117,7 @@ deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
 .NOTPARALLEL:
-dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-libflac deploy-olm deploy-facial-expressions
+dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-libflac deploy-olm deploy-tf-wasm deploy-facial-expressions
 	$(WEBPACK_DEV_SERVER)
 
 source-package:

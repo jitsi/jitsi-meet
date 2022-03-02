@@ -48,6 +48,7 @@ canvas,
 progress,
 video {
   display: inline-block;
+  transition: object-position 0.5s ease 0s;
   vertical-align: baseline;
 }
 audio:not([controls]) {
