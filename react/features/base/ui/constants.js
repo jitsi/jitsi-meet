@@ -177,3 +177,5 @@ export const getGlobalStyles = (theme: Object) => {
         }
     };
 };
+
+export const RTL_LANGUAGES = [ 'ar', 'fa' ];
