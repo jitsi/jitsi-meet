@@ -16,6 +16,34 @@ const useStyles = makeStyles(theme =>
     createStyles({
         '@global': {
             ':root': {
+
+                /**
+                 * Color variables.
+                 */
+                '--default-color': '#F1F1F1',
+                '--default-dark-color': '#2b3d5c',
+                '--default-warning-color': 'rgb(215, 121, 118)',
+                '--participants-pane-bg-color': '#141414',
+
+                /**
+                 * Toolbar.
+                 */
+                '--new-toolbar-background-color': '#131519',
+                '--new-toolbar-button-hover-color': 'rgba(255, 255, 255, 0.2)',
+                '--new-toolbar-button-toggle-color': 'rgba(255, 255, 255, 0.15)',
+                '--menu-bg': '#242528',
+                '--new-toolbar-size': '48px',
+                '--new-toolbar-size-mobile': '60px',
+                '--new-toolbar-size-wth-padding': 'calc(var(--new-toolbar-size) + 24px)',
+                '--overflow-menu-item-color': '#fff',
+
+                /**
+                 * Video layout.
+                 */
+                '--participant-name-color': '#fff',
+                '--audio-level-bg': '#44A5FF',
+                '--audio-level-shadow': 'rgba(9, 36, 77, 0.9)',
+
                 /**
                  * Media type thresholds.
                  */

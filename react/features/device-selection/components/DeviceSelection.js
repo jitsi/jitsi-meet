@@ -1,5 +1,7 @@
 // @flow
 
+import { withStyles } from '@material-ui/styles';
+import clsx from 'clsx';
 import React from 'react';
 
 import AbstractDialogTab, {
@@ -25,6 +27,11 @@ export type Props = {
      * the app state.
      */
     availableDevices: Object,
+
+    /**
+     * An object containing the CSS classes.
+     */
+    classes: Object,
 
     /**
      * Whether or not the audio selector can be interacted with. If true,
@@ -130,6 +137,147 @@ type State = {
 };
 
 /**
+ * Creates the styles for the component.
+ *
+ * @param {Object} theme - The current UI theme.
+ *
+ * @returns {Object}
+ */
+const styles = theme => {
+    return {
+        root: {
+            '& .device-selectors': {
+                fontSize: '14px',
+
+                '& > div': {
+                    display: 'block',
+                    marginBottom: theme.spacing(1)
+                },
+
+                '& .device-selector-icon': {
+                    alignSelf: 'center',
+                    color: 'inherit',
+                    fontSize: '20px',
+                    marginLeft: '3px'
+                },
+
+                '& .device-selector-label': {
+                    marginBottom: '1px'
+                },
+
+                /* device-selector-trigger stylings attempt to mimic AtlasKit button */
+                '& .device-selector-trigger': {
+                    backgroundColor: '#0E1624',
+                    border: '1px solid #455166',
+                    borderRadius: '5px',
+                    display: 'flex',
+                    height: '2.3em',
+                    justifyContent: 'space-between',
+                    lineHeight: '2.3em',
+                    overflow: 'hidden',
+                    padding: `0 ${theme.spacing(1)}`
+                },
+
+                '& .device-selector-trigger-disabled': {
+                    '& .device-selector-trigger': {
+                        color: '#a5adba',
+                        cursor: 'default'
+                    }
+                },
+
+                '& .device-selector-trigger-text': {
+                    overflow: 'hidden',
+                    textAlign: 'center',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    width: '100%'
+                }
+            },
+
+            '& .device-selection-column': {
+                boxSizing: 'border-box',
+                display: 'inline-block',
+                verticalAlign: 'top',
+
+                '&.column-selectors': {
+                    marginLeft: '15px',
+                    width: '45%'
+                },
+
+                '&.column-video': {
+                    width: '50%'
+                }
+            },
+
+            '& .device-selection-video-container': {
+                borderRadius: '3px',
+                marginBottom: '5px',
+
+                '& .video-input-preview': {
+                    marginTop: '2px',
+                    position: 'relative',
+
+                    '& > video': {
+                        borderRadius: '3px'
+                    },
+
+                    '& .video-input-preview-error': {
+                        color: 'var(--participant-name-color)',
+                        display: 'none',
+                        left: 0,
+                        position: 'absolute',
+                        right: 0,
+                        textAlign: 'center',
+                        top: '50%'
+                    },
+
+                    '&.video-preview-has-error': {
+                        background: 'black',
+
+                        '& .video-input-preview-error': {
+                            display: 'block'
+                        }
+                    },
+
+                    '& .video-input-preview-display': {
+                        height: 'auto',
+                        overflow: 'hidden',
+                        width: '100%'
+                    }
+                }
+            },
+
+            '& .audio-output-preview': {
+                fontSize: '14px',
+
+                '& a': {
+                    color: '#6FB1EA',
+                    cursor: 'pointer',
+                    textDecoration: 'none'
+                },
+
+                '& a:hover': {
+                    color: '#B3D4FF'
+                }
+            },
+
+            '& .audio-input-preview': {
+                background: '#1B2638',
+                borderRadius: '5px',
+                height: '8px',
+
+                '& .audio-input-preview-level': {
+                    background: '#75B1FF',
+                    borderRadius: '5px',
+                    height: '100%',
+                    transition: 'width .1s ease-in-out'
+                }
+            }
+        }
+    };
+};
+
+/**
  * React {@code Component} for previewing audio and video input/output devices.
  *
  * @augments Component
@@ -216,6 +364,7 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
      */
     render() {
         const {
+            classes,
             hideAudioInputPreview,
             hideAudioOutputPreview,
             hideVideoInputPreview,
@@ -223,7 +372,7 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
         } = this.props;
 
         return (
-            <div className = { `device-selection${hideVideoInputPreview ? ' video-hidden' : ''}` }>
+            <div className = { clsx('device-selection', classes.root, { 'video-hidden': hideVideoInputPreview }) }>
                 <div className = 'device-selection-column column-video'>
                     { !hideVideoInputPreview
                         && <div className = 'device-selection-video-container'>
@@ -422,4 +571,4 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
     }
 }
 
-export default translate(DeviceSelection);
+export default translate(withStyles(styles)(DeviceSelection));
