@@ -1,4 +1,4 @@
-.vertical-filmstrip .filmstrip {
+.vertical-filmstrip span:not(.tile-view) .filmstrip {
     &.hide-videos {
         .remote-videos {
             & > div {

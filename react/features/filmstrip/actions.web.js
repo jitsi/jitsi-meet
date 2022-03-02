@@ -11,8 +11,12 @@ import { shouldHideSelfView } from '../base/settings/functions.any';
 import { getMaxColumnCount } from '../video-layout';
 
 import {
+    ADD_STAGE_PARTICIPANT,
+    REMOVE_STAGE_PARTICIPANT,
+    SET_STAGE_PARTICIPANTS,
     SET_FILMSTRIP_WIDTH,
     SET_HORIZONTAL_VIEW_DIMENSIONS,
+    SET_STAGE_FILMSTRIP_DIMENSIONS,
     SET_TILE_VIEW_DIMENSIONS,
     SET_USER_FILMSTRIP_WIDTH,
     SET_USER_IS_RESIZING,
@@ -21,6 +25,7 @@ import {
 } from './actionTypes';
 import {
     HORIZONTAL_FILMSTRIP_MARGIN,
+    MAX_ACTIVE_PARTICIPANTS,
     SCROLL_SIZE,
     STAGE_VIEW_THUMBNAIL_VERTICAL_BORDER,
     TILE_HORIZONTAL_MARGIN,
@@ -32,11 +37,12 @@ import {
     VERTICAL_FILMSTRIP_VERTICAL_MARGIN
 } from './constants';
 import {
-    calculateNotResponsiveTileViewDimensions,
+    calculateNonResponsiveTileViewDimensions,
     calculateResponsiveTileViewDimensions,
     calculateThumbnailSizeForHorizontalView,
     calculateThumbnailSizeForVerticalView,
     getNumberOfPartipantsForTileView,
+    getVerticalViewMaxWidth,
     isFilmstripResizable,
     showGridInVerticalView
 } from './functions';
@@ -46,9 +52,6 @@ export * from './actions.any';
 /**
  * Sets the dimensions of the tile view grid.
  *
- * @param {Object} dimensions - Whether the filmstrip is visible.
- * @param {Object | Function} stateful - An object or function that can be
- * resolved to Redux state using the {@code toState} function.
  * @returns {Function}
  */
 export function setTileViewDimensions() {
@@ -70,7 +73,7 @@ export function setTileViewDimensions() {
             columns,
             rows
         } = disableResponsiveTiles
-            ? calculateNotResponsiveTileViewDimensions(state)
+            ? calculateNonResponsiveTileViewDimensions(state)
             : calculateResponsiveTileViewDimensions({
                 clientWidth,
                 clientHeight,
@@ -142,8 +145,8 @@ export function setVerticalViewDimensions() {
                 clientWidth: filmstripWidth.current,
                 clientHeight,
                 disableTileEnlargement: false,
-                isVerticalFilmstrip: true,
                 maxColumns,
+                noHorizontalContainerMargin: true,
                 numberOfParticipants,
                 numberOfVisibleTiles
             });
@@ -231,6 +234,68 @@ export function setHorizontalViewDimensions() {
 }
 
 /**
+ * Sets the dimensions of the stage filmstrip tile view grid.
+ *
+ * @returns {Function}
+ */
+export function setStageFilmstripViewDimensions() {
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        const state = getState();
+        const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
+        const {
+            disableResponsiveTiles,
+            disableTileEnlargement,
+            tileView = {}
+        } = state['features/base/config'];
+        const { visible } = state['features/filmstrip'];
+        const verticalWidth = visible ? getVerticalViewMaxWidth(state) : 0;
+        const { numberOfVisibleTiles = MAX_ACTIVE_PARTICIPANTS } = tileView;
+        const numberOfParticipants = state['features/filmstrip'].activeParticipants.length;
+        const maxColumns = getMaxColumnCount(state);
+
+        const {
+            height,
+            width,
+            columns,
+            rows
+        } = disableResponsiveTiles
+            ? calculateNonResponsiveTileViewDimensions(state, true)
+            : calculateResponsiveTileViewDimensions({
+                clientWidth: clientWidth - verticalWidth,
+                clientHeight,
+                disableTileEnlargement,
+                maxColumns,
+                noHorizontalContainerMargin: verticalWidth > 0,
+                numberOfParticipants,
+                numberOfVisibleTiles
+            });
+        const thumbnailsTotalHeight = rows * (TILE_VERTICAL_MARGIN + height);
+        const hasScroll = clientHeight < thumbnailsTotalHeight;
+        const filmstripWidth
+            = Math.min(clientWidth - TILE_VIEW_GRID_HORIZONTAL_MARGIN, columns * (TILE_HORIZONTAL_MARGIN + width))
+            + (hasScroll ? SCROLL_SIZE : 0);
+        const filmstripHeight = Math.min(clientHeight - TILE_VIEW_GRID_VERTICAL_MARGIN, thumbnailsTotalHeight);
+
+        dispatch({
+            type: SET_STAGE_FILMSTRIP_DIMENSIONS,
+            dimensions: {
+                gridDimensions: {
+                    columns,
+                    rows
+                },
+                thumbnailSize: {
+                    height,
+                    width
+                },
+                filmstripHeight,
+                filmstripWidth,
+                hasScroll
+            }
+        });
+    };
+}
+
+/**
  * Emulates a click on the n-th video.
  *
  * @param {number} n - Number that identifies the video.
@@ -311,5 +376,46 @@ export function setUserIsResizing(resizing: boolean) {
     return {
         type: SET_USER_IS_RESIZING,
         resizing
+    };
+}
+
+/**
+ * Add participant to the active participants list.
+ *
+ * @param {string} participantId - The Id of the participant to be added.
+ * @param {boolean?} pinned - Whether the participant is pinned or not.
+ * @returns {Object}
+ */
+export function addStageParticipant(participantId, pinned = false) {
+    return {
+        type: ADD_STAGE_PARTICIPANT,
+        participantId,
+        pinned
+    };
+}
+
+/**
+ * Remove participant from the active participants list.
+ *
+ * @param {string} participantId - The Id of the participant to be removed.
+ * @returns {Object}
+ */
+export function removeStageParticipant(participantId) {
+    return {
+        type: REMOVE_STAGE_PARTICIPANT,
+        participantId
+    };
+}
+
+/**
+ * Sets the active participants list.
+ *
+ * @param {Array<Object>} queue - The new list.
+ * @returns {Object}
+ */
+export function setStageParticipants(queue) {
+    return {
+        type: SET_STAGE_PARTICIPANTS,
+        queue
     };
 }

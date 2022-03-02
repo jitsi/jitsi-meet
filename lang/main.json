@@ -722,6 +722,7 @@
     },
     "passwordDigitsOnly": "Up to {{number}} digits",
     "passwordSetRemotely": "Set by another participant",
+    "pinnedParticipant": "The participant is pinned",
     "polls": {
         "answer": {
             "skip": "Skip",
@@ -1213,10 +1214,12 @@
         "moderator": "Moderator",
         "mute": "Participant is muted",
         "muted": "Muted",
+        "pinToStage": "Pin to stage",
         "remoteControl": "Start / Stop remote control",
         "screenSharing": "Participant is sharing their screen",
         "show": "Show on stage",
         "showSelfView": "Show self view",
+        "unpinFromStage": "Unpin",
         "videoMuted": "Camera disabled",
         "videomute": "Participant has stopped the camera"
     },

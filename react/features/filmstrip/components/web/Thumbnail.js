@@ -28,6 +28,7 @@ import { hideGif, showGif } from '../../../gifs/actions';
 import { getGifDisplayMode, getGifForParticipant } from '../../../gifs/functions';
 import { PresenceLabel } from '../../../presence-status';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
+import { addStageParticipant } from '../../actions.web';
 import {
     DISPLAY_MODE_TO_CLASS_NAME,
     DISPLAY_VIDEO,
@@ -36,10 +37,12 @@ import {
 } from '../../constants';
 import {
     computeDisplayModeFromInput,
+    getActiveParticipantsIds,
     getDisplayModeInput,
     isVideoPlayable,
     showGridInVerticalView
 } from '../../functions';
+import { isStageFilmstripEnabled } from '../../functions.web';
 
 import ThumbnailAudioIndicator from './ThumbnailAudioIndicator';
 import ThumbnailBottomIndicators from './ThumbnailBottomIndicators';
@@ -109,14 +112,15 @@ export type Props = {|
     _height: number,
 
     /**
+     * Whether or not the participant is displayed on the stage filmstrip.
+     * Used to hide the video from the vertical filmstrip.
+     */
+    _isActiveParticipant: boolean,
+
+    /**
      * Indicates whether the thumbnail should be hidden or not.
      */
     _isHidden: boolean,
-
-    /**
-     * Whether or not there is a pinned participant.
-     */
-    _isAnyParticipantPinned: boolean,
 
     /**
      * Indicates whether audio only mode is enabled.
@@ -174,6 +178,11 @@ export type Props = {|
     _raisedHand: boolean,
 
     /**
+     * Whether or not the stage filmstrip is disabled.
+     */
+    _stageFilmstripDisabled: boolean,
+
+    /**
      * The video object position for the participant.
      */
     _videoObjectPosition: string,
@@ -207,6 +216,11 @@ export type Props = {|
      * The ID of the participant related to the thumbnail.
      */
     participantID: ?string,
+
+    /**
+     * Whether the tile is displayed in the stage filmstrip or not.
+     */
+    stageFilmstrip: boolean,
 
     /**
      * Styles that will be set to the Thumbnail's main span element.
@@ -498,6 +512,13 @@ class Thumbnail extends Component<Props, State> {
      * @returns {void}
      */
     _hidePopover() {
+        const { _currentLayout } = this.props;
+
+        if (_currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW) {
+            this.setState({
+                isHovered: false
+            });
+        }
         this.setState({
             popoverVisible: false
         });
@@ -596,10 +617,14 @@ class Thumbnail extends Component<Props, State> {
      * @returns {void}
      */
     _onClick() {
-        const { _participant, dispatch } = this.props;
+        const { _participant, dispatch, _stageFilmstripDisabled } = this.props;
         const { id, pinned } = _participant;
 
-        dispatch(pinParticipant(pinned ? null : id));
+        if (_stageFilmstripDisabled) {
+            dispatch(pinParticipant(pinned ? null : id));
+        } else {
+            dispatch(addStageParticipant(id, true));
+        }
     }
 
     _onMouseEnter: () => void;
@@ -747,7 +772,6 @@ class Thumbnail extends Component<Props, State> {
             _isDominantSpeakerDisabled,
             _participant,
             _currentLayout,
-            _isAnyParticipantPinned,
             _raisedHand,
             classes
         } = this.props;
@@ -758,16 +782,11 @@ class Thumbnail extends Component<Props, State> {
             className += ` ${classes.raisedHand}`;
         }
 
-        if (_currentLayout === LAYOUTS.TILE_VIEW) {
-            if (!_isDominantSpeakerDisabled && _participant?.dominantSpeaker) {
-                className += ` ${classes.activeSpeaker} dominant-speaker`;
-            }
-        } else if (_isAnyParticipantPinned) {
-            if (_participant?.pinned) {
-                className += ` videoContainerFocused ${classes.activeSpeaker}`;
-            }
-        } else if (!_isDominantSpeakerDisabled && _participant?.dominantSpeaker) {
+        if (!_isDominantSpeakerDisabled && _participant?.dominantSpeaker) {
             className += ` ${classes.activeSpeaker} dominant-speaker`;
+        }
+        if (_currentLayout !== LAYOUTS.TILE_VIEW && _participant?.pinned) {
+            className += ' videoContainerFocused';
         }
 
         return className;
@@ -876,8 +895,9 @@ class Thumbnail extends Component<Props, State> {
             _localFlipX,
             _participant,
             _videoTrack,
+            _gifSrc,
             classes,
-            _gifSrc
+            stageFilmstrip
         } = this.props;
         const { id } = _participant || {};
         const { isHovered, popoverVisible } = this.state;
@@ -914,7 +934,10 @@ class Thumbnail extends Component<Props, State> {
         return (
             <span
                 className = { containerClassName }
-                id = { local ? 'localVideoContainer' : `participant_${id}` }
+                id = { local
+                    ? `localVideoContainer${stageFilmstrip ? '_stage' : ''}`
+                    : `participant_${id}${stageFilmstrip ? '_stage' : ''}`
+                }
                 { ...(_isMobile
                     ? {
                         onTouchEnd: this._onTouchEnd,
@@ -1017,7 +1040,7 @@ class Thumbnail extends Component<Props, State> {
  * @returns {Props}
  */
 function _mapStateToProps(state, ownProps): Object {
-    const { participantID } = ownProps;
+    const { participantID, stageFilmstrip } = ownProps;
 
     const participant = getParticipantByIdOrUndefined(state, participantID);
     const id = participant?.id;
@@ -1027,7 +1050,7 @@ function _mapStateToProps(state, ownProps): Object {
         ? getLocalVideoTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantID);
     const _audioTrack = isLocal
         ? getLocalAudioTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, participantID);
-    const _currentLayout = getCurrentLayout(state);
+    const _currentLayout = stageFilmstrip ? LAYOUTS.TILE_VIEW : getCurrentLayout(state);
     let size = {};
     let _isMobilePortrait = false;
     const {
@@ -1039,6 +1062,7 @@ function _mapStateToProps(state, ownProps): Object {
     } = state['features/base/config'];
     const { localFlipX } = state['features/base/settings'];
     const _isMobile = isMobileBrowser();
+    const activeParticipants = getActiveParticipantsIds(state);
 
     switch (_currentLayout) {
     case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
@@ -1079,12 +1103,26 @@ function _mapStateToProps(state, ownProps): Object {
         break;
     }
     case LAYOUTS.TILE_VIEW: {
-        const { width, height } = state['features/filmstrip'].tileViewDimensions.thumbnailSize;
+        const { thumbnailSize } = state['features/filmstrip'].tileViewDimensions;
+        const {
+            stageFilmstripDimensions = {
+                thumbnailSize: {}
+            }
+        } = state['features/filmstrip'];
 
         size = {
-            _width: width,
-            _height: height
+            _width: thumbnailSize?.width,
+            _height: thumbnailSize?.height
         };
+
+        if (stageFilmstrip) {
+            const { width: _width, height: _height } = stageFilmstripDimensions.thumbnailSize;
+
+            size = {
+                _width,
+                _height
+            };
+        }
         break;
     }
     }
@@ -1098,6 +1136,7 @@ function _mapStateToProps(state, ownProps): Object {
         _defaultLocalDisplayName: defaultLocalDisplayName,
         _disableLocalVideoFlip: Boolean(disableLocalVideoFlip),
         _disableTileEnlargement: Boolean(disableTileEnlargement),
+        _isActiveParticipant: activeParticipants.find(pId => pId === participantID),
         _isHidden: isLocal && iAmRecorder && !iAmSipGateway,
         _isAudioOnly: Boolean(state['features/base/audio-only'].enabled),
         _isCurrentlyOnLargeVideo: state['features/large-video']?.participantId === id,
@@ -1110,6 +1149,7 @@ function _mapStateToProps(state, ownProps): Object {
         _localFlipX: Boolean(localFlipX),
         _participant: participant,
         _raisedHand: hasRaisedHand(participant),
+        _stageFilmstripDisabled: !isStageFilmstripEnabled(state),
         _videoObjectPosition: getVideoObjectPosition(state, participant?.id),
         _videoTrack,
         ...size,

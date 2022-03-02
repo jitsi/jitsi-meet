@@ -18,6 +18,7 @@ import {
     isRemoteTrackMuted
 } from '../base/tracks/functions';
 import { isTrackStreamingStatusActive, isParticipantConnectionStatusActive } from '../connection-indicator/functions';
+import { isSharingStatus } from '../shared-video/functions';
 import {
     getCurrentLayout,
     getNotResponsiveTileViewGridDimensions,
@@ -240,16 +241,18 @@ export function getNumberOfPartipantsForTileView(state) {
  * disabled.
  *
  * @param {Object} state - The redux store state.
+ * @param {boolean} stageFilmstrip - Whether the dimensions should be calculated for the stage filmstrip.
  * @returns {Object} - The dimensions.
  */
-export function calculateNotResponsiveTileViewDimensions(state) {
+export function calculateNonResponsiveTileViewDimensions(state, stageFilmstrip = false) {
     const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
     const { disableTileEnlargement } = state['features/base/config'];
-    const { columns: c, minVisibleRows, rows: r } = getNotResponsiveTileViewGridDimensions(state);
+    const { columns: c, minVisibleRows, rows: r } = getNotResponsiveTileViewGridDimensions(state, stageFilmstrip);
+    const filmstripWidth = getVerticalViewMaxWidth(state);
     const size = calculateThumbnailSizeForTileView({
         columns: c,
         minVisibleRows,
-        clientWidth,
+        clientWidth: clientWidth - (stageFilmstrip ? filmstripWidth : 0),
         clientHeight,
         disableTileEnlargement,
         disableResponsiveTiles: true
@@ -289,7 +292,7 @@ export function calculateResponsiveTileViewDimensions({
     clientWidth,
     clientHeight,
     disableTileEnlargement = false,
-    isVerticalFilmstrip = false,
+    noHorizontalContainerMargin = false,
     maxColumns,
     numberOfParticipants,
     numberOfVisibleTiles = TILE_VIEW_DEFAULT_NUMBER_OF_VISIBLE_TILES
@@ -320,7 +323,7 @@ export function calculateResponsiveTileViewDimensions({
             clientHeight,
             disableTileEnlargement,
             disableResponsiveTiles: false,
-            isVerticalFilmstrip
+            noHorizontalContainerMargin
         });
 
         if (size) {
@@ -389,12 +392,12 @@ export function calculateThumbnailSizeForTileView({
     clientHeight,
     disableResponsiveTiles = false,
     disableTileEnlargement = false,
-    isVerticalFilmstrip = false
+    noHorizontalContainerMargin = false
 }: Object) {
     const aspectRatio = getTileDefaultAspectRatio(disableResponsiveTiles, disableTileEnlargement, clientWidth);
     const minHeight = getThumbnailMinHeight(clientWidth);
     const viewWidth = clientWidth - (columns * TILE_HORIZONTAL_MARGIN)
-        - (isVerticalFilmstrip ? SCROLL_SIZE : TILE_VIEW_GRID_HORIZONTAL_MARGIN);
+        - (noHorizontalContainerMargin ? SCROLL_SIZE : TILE_VIEW_GRID_HORIZONTAL_MARGIN);
     const viewHeight = clientHeight - (minVisibleRows * TILE_VERTICAL_MARGIN) - TILE_VIEW_GRID_VERTICAL_MARGIN;
     const initialWidth = viewWidth / columns;
     let initialHeight = viewHeight / minVisibleRows;
@@ -486,6 +489,7 @@ export function getVerticalFilmstripVisibleAreaWidth() {
 */
 export function computeDisplayModeFromInput(input: Object) {
     const {
+        isActiveParticipant,
         isAudioOnly,
         isCurrentlyOnLargeVideo,
         isScreenSharing,
@@ -495,7 +499,7 @@ export function computeDisplayModeFromInput(input: Object) {
     } = input;
     const adjustedIsVideoPlayable = input.isVideoPlayable && (!isRemoteParticipant || canPlayEventReceived);
 
-    if (!tileViewActive && isScreenSharing && isRemoteParticipant) {
+    if (!tileViewActive && ((isScreenSharing && isRemoteParticipant) || isActiveParticipant)) {
         return DISPLAY_AVATAR;
     } else if (isCurrentlyOnLargeVideo && !tileViewActive) {
         // Display name is always and only displayed when user is on the stage
@@ -519,6 +523,7 @@ export function computeDisplayModeFromInput(input: Object) {
 export function getDisplayModeInput(props: Object, state: Object) {
     const {
         _currentLayout,
+        _isActiveParticipant,
         _isAudioOnly,
         _isCurrentlyOnLargeVideo,
         _isScreenSharing,
@@ -530,6 +535,7 @@ export function getDisplayModeInput(props: Object, state: Object) {
     const { canPlayEventReceived } = state;
 
     return {
+        isActiveParticipant: _isActiveParticipant,
         isCurrentlyOnLargeVideo: _isCurrentlyOnLargeVideo,
         isAudioOnly: _isAudioOnly,
         tileViewActive,
@@ -613,7 +619,7 @@ export function isReorderingEnabled(state) {
     const { testing = {} } = state['features/base/config'];
     const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
 
-    return enableThumbnailReordering && isFilmstripScollVisible(state);
+    return enableThumbnailReordering && isFilmstripScrollVisible(state);
 }
 
 /**
@@ -622,7 +628,7 @@ export function isReorderingEnabled(state) {
  * @param {Object} state - The redux state.
  * @returns {boolean} - True if the scroll is displayed and false otherwise.
  */
-export function isFilmstripScollVisible(state) {
+export function isFilmstripScrollVisible(state) {
     const _currentLayout = getCurrentLayout(state);
     let hasScroll = false;
 
@@ -641,4 +647,44 @@ export function isFilmstripScollVisible(state) {
     }
 
     return hasScroll;
+}
+
+/**
+ * Gets the ids of the active participants.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {Array<string>}
+ */
+export function getActiveParticipantsIds(state) {
+    const { activeParticipants } = state['features/filmstrip'];
+
+    return activeParticipants.map(p => p.participantId);
+}
+
+/**
+ * Get whether or not the stage filmstrip should be displayed.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {boolean}
+ */
+export function shouldDisplayStageFilmstrip(state) {
+    const { activeParticipants } = state['features/filmstrip'];
+    const { remoteScreenShares } = state['features/video-layout'];
+    const currentLayout = getCurrentLayout(state);
+    const sharedVideo = isSharingStatus(state['features/shared-video']?.status);
+
+    return isStageFilmstripEnabled(state) && remoteScreenShares.length === 0 && !sharedVideo
+        && activeParticipants.length > 1 && currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW;
+}
+
+/**
+ * Whether the stage filmstrip is disabled or not.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {boolean}
+ */
+export function isStageFilmstripEnabled(state) {
+    const { filmstrip } = state['features/base/config'];
+
+    return !filmstrip?.disableStageFilmstrip && interfaceConfig.VERTICAL_FILMSTRIP;
 }
