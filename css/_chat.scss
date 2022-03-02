@@ -457,6 +457,10 @@
     &.local {
         align-items: flex-end;
 
+        body[dir=rtl] & {
+            align-items: flex-start;
+        }
+
         .chatmessage {
             background-color: $chatLocalMessageBackgroundColor;
             border-radius: 6px 0px 6px 6px;
