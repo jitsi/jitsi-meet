@@ -23,14 +23,6 @@ import { isInBreakoutRoom } from '../breakout-rooms/functions';
 import { QUICK_ACTION_BUTTON, REDUCER_KEY, MEDIA_STATE } from './constants';
 
 /**
- * Generates a class attribute value.
- *
- * @param {Iterable<string>} args - String iterable.
- * @returns {string} Class attribute value.
- */
-export const classList = (...args: Array<string | boolean>) => args.filter(Boolean).join(' ');
-
-/**
  * Find the first styled ancestor component of an element.
  *
  * @param {Element} target - Element to look up.
