@@ -1,5 +1,8 @@
 // @flow
 
+import { navigateRoot } from '../mobile/navigation/rootNavigationContainerRef';
+import { screen } from '../mobile/navigation/routes';
+
 import { getOverlays } from './overlays';
 
 /**
@@ -9,6 +12,10 @@ import { getOverlays } from './overlays';
  * @returns {?React$ComponentType<*>}
  */
 export function getOverlayToRender(state: Object) {
+    const { loadConfigOverlayVisible } = state['features/overlay'];
+    const nativeOverlay
+        = navigator.product === 'ReactNative' && loadConfigOverlayVisible;
+
     for (const overlay of getOverlays()) {
         // react-i18n / react-redux wrap components and thus we cannot access
         // the wrapped component's static methods directly.
@@ -17,6 +24,10 @@ export function getOverlayToRender(state: Object) {
         if (component.needsRender(state)) {
             return overlay;
         }
+    }
+
+    if (nativeOverlay) {
+        navigateRoot(screen.loadConfigOverlay);
     }
 
     return undefined;

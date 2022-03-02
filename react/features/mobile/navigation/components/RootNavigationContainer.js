@@ -7,6 +7,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { connect } from '../../../base/redux';
 import { DialInSummary } from '../../../invite';
+import LoadConfigOverlay
+    from '../../../overlay/components/native/LoadConfigOverlay';
 import BlankPage from '../../../welcome/components/BlankPage';
 import { rootNavigationRef } from '../rootNavigationContainerRef';
 import { screen } from '../routes';
@@ -55,6 +57,13 @@ const RootNavigationContainer = ({ isWelcomePageAvailable }: Props) => (
                     component = { DialInSummary }
                     name = { screen.dialInSummary }
                     options = { dialInSummaryScreenOptions } />
+                <RootStack.Screen
+                    component = { LoadConfigOverlay }
+                    name = { screen.loadConfigOverlay }
+                    options = {{
+                        gestureEnabled: false,
+                        headerShown: false
+                    }} />
                 <RootStack.Screen
                     component = { ConferenceNavigationContainer }
                     name = { screen.conference.root }
