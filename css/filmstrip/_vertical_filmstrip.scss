@@ -81,6 +81,10 @@
         justify-content: flex-start;
         width: 100%;
 
+        body[dir=rtl] & {
+            direction: ltr;
+        }
+
         #filmstripLocalVideoThumbnail {
             width: calc(100% - 15px);
 

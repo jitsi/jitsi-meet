@@ -229,7 +229,12 @@ const defaultStyles = theme => {
         },
 
         indicatorsBottomContainer: {
-            bottom: 0
+            bottom: 0,
+
+            'body[dir=rtl] &': {
+                flip: false,
+                direction: 'rtl'
+            }
         },
 
         indicatorsBackground: {

@@ -10,6 +10,7 @@ const BACKGROUND_COLOR = 'rgba(51, 51, 51, .5)';
 export const styles = theme => {
     return {
         toggleFilmstripContainer: {
+            flip: false,
             display: 'flex',
             flexWrap: 'nowrap',
             alignItems: 'center',
@@ -48,12 +49,14 @@ export const styles = theme => {
         },
 
         toggleVerticalFilmstripContainer: {
+            flip: false,
             transform: 'rotate(-90deg)',
             left: 'calc(-24px - 3px - 4px)',
             top: 'calc(50% - 12px)'
         },
 
         filmstrip: {
+            flip: false,
             transition: 'background .2s ease-in-out, right 1s, bottom 1s, height .3s ease-in',
             right: 0,
             bottom: 0,
@@ -111,6 +114,10 @@ export const styles = theme => {
             '& .avatar-container': {
                 maxWidth: 'initial',
                 maxHeight: 'initial'
+            },
+
+            'body[dir=rtl] &': {
+                flexDirection: 'row-reverse'
             }
         },
 
