@@ -30,6 +30,12 @@ StateListenerRegistry.register(
         _updateReceiverVideoConstraints(store);
     }, 100));
 
+StateListenerRegistry.register(
+    /* selector */ state => state['features/base/tracks'],
+    /* listener */(remoteTracks, store) => {
+        _updateReceiverVideoConstraints(store);
+    });
+
 /**
  * Handles the use case when the on-stage participant has changed.
  */
