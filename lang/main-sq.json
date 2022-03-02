@@ -208,8 +208,7 @@
         "Remove": "Hiqe",
         "Share": "Ndaje",
         "Submit": "Parashtroje",
-        "WaitForHostMsg": "Konferenca <b>{{room}}</b> s’ka nisur ende. Nëse jeni organizatori, ju lutemi, bëni mirëfilltësimin. Përndryshe, ju lutemi, pritni që të mbërrijë organizatori.",
-        "WaitForHostMsgWOk": "Konferenca <b>{{room}}</b> s’ka nisur ende. Nëse jeni organizatori, ju lutemi, shtypni OK që të bëhet mirëfilltësimi. Përndryshe, ju lutemi, pritni që të mbërrijë organizatori.",
+        "WaitForHostMsg": "Konferenca s’ka nisur ende. Nëse jeni organizatori, ju lutemi, bëni mirëfilltësimin. Përndryshe, ju lutemi, pritni që të mbërrijë organizatori.",
         "WaitingForHostTitle": "Po pritet për organizatorin…",
         "Yes": "Po",
         "accessibilityLabel": {

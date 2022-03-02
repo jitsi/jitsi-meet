@@ -208,8 +208,7 @@
         "Remove": "Remover",
         "Share": "Partilhar",
         "Submit": "Submeter",
-        "WaitForHostMsg": "A conferência <b>{{room}}</b> ainda não começou. Se for o anfitrião, por favor autentique. Caso contrário, por favor aguarde que o anfitrião chegue.",
-        "WaitForHostMsgWOk": "A conferência <b>{{room}}</b> ainda não começou. Se for o anfitrião, por favor prima Ok para autenticar. Caso contrário, por favor aguarde que o anfitrião chegue.",
+        "WaitForHostMsg": "A conferência ainda não começou. Se for o anfitrião, por favor autentique. Caso contrário, por favor aguarde que o anfitrião chegue.",
         "WaitingForHostTitle": "À espera do anfitrião ...",
         "Yes": "Sim",
         "accessibilityLabel": {

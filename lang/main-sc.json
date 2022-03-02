@@ -155,8 +155,7 @@
         "Remove": "Boga",
         "Share": "Cumpartzi",
         "Submit": "Imbia",
-        "WaitForHostMsg": "Sa cunferèntzia <b>{{room}}</b> no est cumintzada. Si ses mere de custa cunferèntzia, autèntica·ti. Si nono, iseta chi arribet.",
-        "WaitForHostMsgWOk": "Sa cunferèntzia <b>{{room}}</b> no est cumintzada. Si ses mere, incarca AB pro ti autenticare. Si nono, iseta chi arribet.",
+        "WaitForHostMsg": "Sa cunferèntzia no est cumintzada. Si ses mere de custa cunferèntzia, autèntica·ti. Si nono, iseta chi arribet.",
         "WaitingForHost": "Isetende mere...",
         "Yes": "Eja",
         "accessibilityLabel": {

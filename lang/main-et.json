@@ -155,8 +155,7 @@
         "Remove": "Eemalda",
         "Share": "Jaga",
         "Submit": "Esita",
-        "WaitForHostMsg": "Kõne <b>{{room}}</b> ei ole veel alanud. Autendi ennast, kui oled võõrustaja. Külalisena oota, kuni võõrustaja saabub.",
-        "WaitForHostMsgWOk": "Kõne <b>{{room}}</b> ei ole veel alanud. Kui oled võõrustaja, vajuta OK, et ennast autentida. Külalisena oota, kuni võõrustaja saabub.",
+        "WaitForHostMsg": "Kõne ei ole veel alanud. Autendi ennast, kui oled võõrustaja. Külalisena oota, kuni võõrustaja saabub.",
         "WaitingForHost": "Võõrustaja ootamine…",
         "Yes": "Jah",
         "accessibilityLabel": {

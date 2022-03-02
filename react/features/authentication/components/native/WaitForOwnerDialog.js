@@ -14,11 +14,6 @@ import { openLoginDialog, cancelWaitForOwner } from '../../actions.native';
 type Props = {
 
     /**
-     * The name of the conference room (without the domain part).
-     */
-    _room: string,
-
-    /**
      * Redux store dispatch function.
      */
     dispatch: Dispatch<any>,
@@ -57,20 +52,11 @@ class WaitForOwnerDialog extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const {
-            _room: room
-        } = this.props;
-
         return (
             <ConfirmDialog
                 cancelLabel = 'dialog.Cancel'
                 confirmLabel = 'dialog.IamHost'
-                descriptionKey = {
-                    {
-                        key: 'dialog.WaitForHostMsgWOk',
-                        params: { room }
-                    }
-                }
+                descriptionKey = 'dialog.WaitForHostMsg'
                 onCancel = { this._onCancel }
                 onSubmit = { this._onLogin } />
         );
@@ -101,20 +87,4 @@ class WaitForOwnerDialog extends Component<Props> {
     }
 }
 
-/**
- * Maps (parts of) the Redux state to the associated props for the
- * {@code WaitForOwnerDialog} component.
- *
- * @param {Object} state - The Redux state.
- * @private
- * @returns {Props}
- */
-function _mapStateToProps(state) {
-    const { authRequired } = state['features/base/conference'];
-
-    return {
-        _room: authRequired && authRequired.getName()
-    };
-}
-
-export default translate(connect(_mapStateToProps)(WaitForOwnerDialog));
+export default translate(connect()(WaitForOwnerDialog));

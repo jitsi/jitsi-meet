@@ -185,8 +185,7 @@
         "Remove": "Rimuovi",
         "Share": "Condividi",
         "Submit": "Invia",
-        "WaitForHostMsg": "La riunione <b>{{room}}</b> non è ancora cominciata. Se sei l'organizzatore, per favore autenticati. Altrimenti, aspetta l'arrivo dell'organizzatore.",
-        "WaitForHostMsgWOk": "La riunione <b>{{room}}</b> non è ancora cominciata. Se sei l'organizzatore, allora premi OK per autenticarti. Altrimenti, aspetta l'arrivo dell'organizzatore.",
+        "WaitForHostMsg": "La riunione non è ancora cominciata. Se sei l'organizzatore, per favore autenticati. Altrimenti, aspetta l'arrivo dell'organizzatore.",
         "WaitingForHost": "In attesa dell'organizzatore...",
         "Yes": "Sì",
         "accessibilityLabel": {

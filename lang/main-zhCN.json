@@ -174,8 +174,7 @@
         "Remove": "移除",
         "Share": "分享",
         "Submit": "提交",
-        "WaitForHostMsg": "会议<b>{{room}}</b>尚未开始。如果您是主持人，请进行身份验证。否则，请等待主持人的到来。",
-        "WaitForHostMsgWOk": "会议<b>{{room}}</b>尚未开始。如果您是主持人，请进行身份验证。否则，请等待主持人的到来。",
+        "WaitForHostMsg": "会议 尚未开始。如果您是主持人，请进行身份验证。否则，请等待主持人的到来。",
         "WaitingForHost": "等待主持人。。。",
         "Yes": "是",
         "accessibilityLabel": {

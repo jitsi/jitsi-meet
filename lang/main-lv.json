@@ -155,8 +155,7 @@
         "Remove": "Noņemt",
         "Share": "Kopīgot",
         "Submit": "ОК",
-        "WaitForHostMsg": "Sapulce <b>{{room}}</b> vēl nav sākusies. Ja esat sapulces rīkotājs, lūdzu autorizējaties. Ja nē, sagaidiet rīkotāju.",
-        "WaitForHostMsgWOk": "Sapulce <b>{{room}}</b> vēl nav sākusies. Ja esat sapulces rīkotājs, lūdzu nospiediet |Ok|, lai autentificētos. Ja nē, sagaidiet rīkotāju.",
+        "WaitForHostMsg": "Sapulce vēl nav sākusies. Ja esat sapulces rīkotājs, lūdzu autorizējaties. Ja nē, sagaidiet rīkotāju.",
         "WaitingForHost": "Gaidām rīkotāju...",
         "Yes": "Jā",
         "accessibilityLabel": {

@@ -208,8 +208,7 @@
         "Remove": "Usuń",
         "Share": "Udostępnij",
         "Submit": "Wyślij",
-        "WaitForHostMsg": "Spotkanie <b>{{room}}</b> jeszcze się nie rozpoczęło. Jeśli jesteś gospodarzem, prosimy o uwierzytelnienie. Jeśli nie, prosimy czekać na przybycie gospodarza.",
-        "WaitForHostMsgWOk": "Spotkanie <b>{{room}}</b> jeszcze się nie rozoczęło. Jeśli jesteś jej gospodarzem, wybierz Ok, aby się uwierzytelnić. Jeśli nie, prosimy czekać na przybycie gospodarza.",
+        "WaitForHostMsg": "Spotkanie jeszcze się nie rozpoczęło. Jeśli jesteś gospodarzem, prosimy o uwierzytelnienie. Jeśli nie, prosimy czekać na przybycie gospodarza.",
         "WaitingForHostTitle": "Oczekiwanie na gospodarza...",
         "Yes": "Tak",
         "accessibilityLabel": {

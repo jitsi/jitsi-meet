@@ -196,8 +196,7 @@
         "Remove": "Odstranit",
         "Share": "Sdílet",
         "Submit": "Potvrdit",
-        "WaitForHostMsg": "Konference <b>{{room}}</b> ještě nezačala. Pokud jste hostitel, přihlaste se. Jinak prosím počkejte, až hostitel dorazí.",
-        "WaitForHostMsgWOk": "Konference <b>{{room}}</b> ještě nezačala. Pokud jste hostitel, prosím přihlaste se kliknutím na OK. Jinak prosím počkejte, až hostitel dorazí.",
+        "WaitForHostMsg": "Konference ještě nezačala. Pokud jste hostitel, přihlaste se. Jinak prosím počkejte, až hostitel dorazí.",
         "WaitingForHost": "Čeká se na hostitele…",
         "Yes": "Ano",
         "accessibilityLabel": {

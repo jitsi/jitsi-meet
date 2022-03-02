@@ -155,8 +155,7 @@
         "Remove": "Fjarlægja",
         "Share": "Deila",
         "Submit": "Senda inn",
-        "WaitForHostMsg": "Fjarfundurinn <b>{{room}}</b> er ekki byrjaður. Ef þú ert gestgjafinn skaltu auðkenna þig. Annars ættiðu að bíða eftir að gestgjafinn skrái sig inn.",
-        "WaitForHostMsgWOk": "Fjarfundurinn <b>{{room}}</b> er ekki byrjaður. Ef þú ert gestgjafinn skaltu ýta á 'Í lagi' til að auðkenna þig. Annars ættiðu að bíða eftir að gestgjafinn skrái sig inn.",
+        "WaitForHostMsg": "Fjarfundurinn er ekki byrjaður. Ef þú ert gestgjafinn skaltu auðkenna þig. Annars ættiðu að bíða eftir að gestgjafinn skrái sig inn.",
         "WaitingForHost": "Bíð eftir að gestgjafanum ...",
         "Yes": "Já",
         "accessibilityLabel": {
