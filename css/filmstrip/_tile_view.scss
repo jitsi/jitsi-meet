@@ -41,17 +41,6 @@
         top: 0;
         width: 100%;
 
-        @media (min-width: 581px) {
-            &.shift-right {
-                margin-left: $sidebarWidth;
-                width: calc(100% - #{$sidebarWidth});
-
-                .remote-videos {
-                    width: calc(100vw - #{$sidebarWidth});
-                }
-            }
-        }
-
         &.collapse {
             #remoteVideos {
                 height: calc(100% - #{$newToolbarSizeMobile}) !important;

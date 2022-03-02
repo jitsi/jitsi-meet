@@ -206,3 +206,17 @@
     bottom: 0;
     width: 35%;
 }
+
+/**
+ * Change the direction of the current element to LTR, but do not change the direction
+ * of its children; Keep them RTL.
+ */
+@mixin ltr {
+    body[dir=rtl] & {
+        direction: ltr;
+
+        & > * {
+            direction: rtl;
+        }
+    }
+}
