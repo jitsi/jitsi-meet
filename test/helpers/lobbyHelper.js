@@ -1,4 +1,5 @@
 const Toolbox = require("../page-objects/Toolbox");
+const PrejoinScreen = require("../page-objects/PrejoinScreen");
 const SecurityDialog = require("../page-objects/SecurityDialog");
 export default async function openSession(participant) {
     if (participant.moderator) {
@@ -35,7 +36,10 @@ export default async function openSession(participant) {
         await securityDialogCloseButton.click();
     } else {
         await browser.newWindow(`${participant.url}/${participant.roomName}`, {});
-        const prejoinTextInput = await $('.prejoin-input-area input');
+        const prejoinScreen = await PrejoinScreen.PremeetingScreen;
+        await expect(prejoinScreen).toBeDisplayed();
+        const prejoinTextInput = await PrejoinScreen.PrejoinInput;
+        await expect(prejoinTextInput).toBeDisplayed();
         await prejoinTextInput.setValue('');
         await prejoinTextInput.setValue(participant.name);
         await browser.keys("\uE007");
