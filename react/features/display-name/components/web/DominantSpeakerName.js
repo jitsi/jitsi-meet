@@ -18,13 +18,18 @@ const useStyles = makeStyles(theme => {
         badgeContainer: {
             ...withPixelLineHeight(theme.typography.bodyShortRegularLarge),
             alignItems: 'center',
-            display: 'flex',
+            display: 'inline-flex',
             justifyContent: 'center',
-            marginBottom: theme.spacing(2),
-            transition: 'margin-bottom 0.3s'
+            marginBottom: theme.spacing(7),
+            transition: 'margin-bottom 0.3s',
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            width: '100%',
+            zIndex: 1
         },
         containerElevated: {
-            marginBottom: theme.spacing(7)
+            marginBottom: theme.spacing(12)
         }
     };
 });
@@ -50,7 +55,7 @@ const DominantSpeakerName = () => {
     if (showDisplayName && nameToDisplay && selectedId !== localId && !isTileView) {
         return (
             <div
-                className = { `${classes.badgeContainer}${toolboxVisible ? '' : ` ${classes.containerElevated}`}` }>
+                className = { `${classes.badgeContainer}${toolboxVisible ? ` ${classes.containerElevated}` : ''}` }>
                 <DisplayNameBadge name = { nameToDisplay } />
             </div>
         );
