@@ -1,8 +1,10 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
+        "module": "es6",
         "target": "es6",
-        "sourceMap": true
+        "jsx": "react",
+        "lib": [ "ES2020", "DOM" ],
+        "noEmit": true
     },
     "exclude": [
         "node_modules"
