@@ -192,7 +192,7 @@ export function setLobbyChatActiveState(value: boolean) {
     };
 }
 
-/** ...................
+/**
  * Removes lobby type messages.
  *
  *  @param {boolean} removeLobbyChatMessages - Should remove messages from chat  (works only for accepted users).
@@ -207,7 +207,7 @@ export function removeLobbyChatParticipant(removeLobbyChatMessages: ?boolean) {
     };
 }
 
-/** .........
+/**
  * Handles initial setup of lobby message between
  * Moderator and participant.
  *
