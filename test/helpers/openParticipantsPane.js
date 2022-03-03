@@ -1,12 +1,11 @@
+const ParticipantsPane = require("../page-objects/ParticipantsPane");
+const Toolbox = require("../page-objects/Toolbox")
 export default async function openParticipantsPane() {
-
-    const video = await $('#largeVideo');
-    await video.moveTo();
-    const toolbox = await $('.toolbox-content-items');
+    const toolbox = await Toolbox.ToolboxView;
     await expect(toolbox).toBeDisplayed();
-    const participantsButton = await $("[aria-label='Participants']");
+    const participantsButton = await Toolbox.ParticipantsPaneButton
     await expect(participantsButton).toBeDisplayed();
     await participantsButton.click();
-    const participantsPane = await $('.participants_pane');
+    const participantsPane = await ParticipantsPane.ParticipantsPaneView;
     await expect(participantsPane).toBeDisplayed();
 }

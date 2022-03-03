@@ -1,3 +1,4 @@
+const LobbyNotification = require("../page-objects/notifications/LobbyNotification");
 import openSession from "../helpers/lobbyHelper"
 import { BASE_URL } from "../helpers/constants"
 
@@ -33,11 +34,11 @@ describe('Activate lobby and admit participant', () => {
         const handles = await browser.getWindowHandles()
 
         await browser.switchToWindow(handles[0]);
-        const notification = await $('#notifications-container');
+        const notification = await LobbyNotification.Notification;
         await expect(notification).toBeDisplayed();
-        const lobbyAdmitBtn = await $('[data-testid="lobby.admit"]');
+        const lobbyAdmitBtn = await LobbyNotification.AdmitLobby;
         await expect(lobbyAdmitBtn).toBeDisplayed();
-        const lobbyRejectBtn = await $('[data-testid="lobby.reject"]');
+        const lobbyRejectBtn = await LobbyNotification.RejectLobby;
         await expect(lobbyRejectBtn).toBeDisplayed();
         await lobbyAdmitBtn.click();
         await openParticipantsPane();

@@ -1,3 +1,5 @@
+const LobbyNotification = require("../page-objects/notifications/LobbyNotification");
+const LobbyRejectNotification = require("../page-objects/notifications/LobbyRejectNotification");
 import openSession from "../helpers/lobbyHelper"
 import { BASE_URL } from "../helpers/constants"
 
@@ -19,17 +21,17 @@ describe('Activate lobby and reject participant', () => {
         const handles = await browser.getWindowHandles()
 
         await browser.switchToWindow(handles[0]);
-        const notification = await $('#notifications-container');
+        const notification = await LobbyNotification.Notification;
         await expect(notification).toBeDisplayed();
-        const lobbyAdmitBtn = await $('[data-testid="lobby.admit"]');
+        const lobbyAdmitBtn = await LobbyNotification.AdmitLobby;
         await expect(lobbyAdmitBtn).toBeDisplayed();
-        const lobbyRejectBtn = await $('[data-testid="lobby.reject"]');
+        const lobbyRejectBtn = await LobbyNotification.RejectLobby;
         await expect(lobbyRejectBtn).toBeDisplayed();
         await lobbyRejectBtn.click();
         await browser.switchToWindow(handles[1]);
-        const rejectNotification = await $('#notifications-container');
+        const rejectNotification = await LobbyNotification.Notification;
         await expect(rejectNotification).toBeDisplayed();
-        const rejectedMessage = await $('[data-testid="lobby.joinRejectedMessage"]');
+        const rejectedMessage = await LobbyRejectNotification.Notification;
         await expect(rejectedMessage).toBeDisplayed();
         await browser.deleteSession();
     });

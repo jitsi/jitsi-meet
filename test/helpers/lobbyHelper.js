@@ -1,3 +1,5 @@
+const Toolbox = require("../page-objects/Toolbox");
+const SecurityDialog = require("../page-objects/SecurityDialog");
 export default async function openSession(participant) {
     if (participant.moderator) {
         await browser.url(participant.url);
@@ -11,22 +13,26 @@ export default async function openSession(participant) {
         await prejoinTextInput.setValue(participant.name);
         await browser.keys("\uE007"); //TODO change this
         await prejoinTextInput.setValue('');
-        const video = await $('#largeVideo');
-        await video.moveTo();
-        const toolbox = await $('.toolbox-content-items');
+        const toolbox = await Toolbox.ToolboxView;
         await expect(toolbox).toBeDisplayed();
-        const moreActions = await $('.toolbox-button-wth-dialog div');
-        await moreActions.click();
-        const securityOptions = await $('[aria-label="Security options"]');
-        await securityOptions.click();
-        const enableLobby = await $('[aria-label="cross"]');
-        await expect(enableLobby).toBeDisplayed();
-        await enableLobby.click();
-        const lobbyEnabled = await $('[data-checked="true"]');
+        const toolbarSecurityOption = await Toolbox.ToolboxSecurityOption;
+        await expect(toolbarSecurityOption).toBeDisplayed();
+        await toolbarSecurityOption.click();
+        const overflowMenu = await Toolbox.OverflowMenu;
+        await expect(overflowMenu).toBeDisplayed();
+        const securityOptionsButton = await Toolbox.SecurityOptionButton;
+        await expect(securityOptionsButton).toBeDisplayed();
+        await securityOptionsButton.click();
+        const securityDialog = await SecurityDialog.SecurityDialogView;
+        await expect(securityDialog).toBeDisplayed();
+        const lobbySwitch = await SecurityDialog.LobbySwitch;
+        await expect(lobbySwitch).toBeDisplayed();
+        await lobbySwitch.click();
+        const lobbyEnabled = await SecurityDialog.LobbyEnabled;
         await expect(lobbyEnabled).toBeDisplayed();
-        const modalClose = await $('#modal-header-close-button');
-        await expect(modalClose).toBeDisplayed();
-        await modalClose.click();
+        const securityDialogCloseButton = await SecurityDialog.SecurityDialogCloseButton;
+        await expect(securityDialogCloseButton).toBeDisplayed();
+        await securityDialogCloseButton.click();
     } else {
         await browser.newWindow(`${participant.url}/${participant.roomName}`, {});
         const prejoinTextInput = await $('.prejoin-input-area input');
