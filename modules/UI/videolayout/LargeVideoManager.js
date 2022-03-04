@@ -26,7 +26,7 @@ import {
     isTrackStreamingStatusInactive,
     isTrackStreamingStatusInterrupted
 } from '../../../react/features/connection-indicator/functions';
-import { FILMSTRIP_BREAKPOINT, isFilmstripResizable } from '../../../react/features/filmstrip';
+import { FILMSTRIP_BREAKPOINT, isFilmstripResizable, getVerticalViewMaxWidth } from '../../../react/features/filmstrip';
 import {
     updateKnownLargeVideoResolution
 } from '../../../react/features/large-video/actions';
@@ -419,7 +419,7 @@ export default class LargeVideoManager {
         }
 
         if (resizableFilmstrip && visible && filmstripWidth.current >= FILMSTRIP_BREAKPOINT) {
-            widthToUse -= filmstripWidth.current;
+            widthToUse -= getVerticalViewMaxWidth(state);
         }
 
         this.width = widthToUse;

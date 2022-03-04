@@ -27,7 +27,6 @@ import { connect } from '../../../base/redux';
 import { getLocalVideoTrack } from '../../../base/tracks';
 import { toggleChat } from '../../../chat';
 import { ChatButton } from '../../../chat/components';
-import { DominantSpeakerName } from '../../../display-name';
 import { EmbedMeetingButton } from '../../../embed-meeting';
 import { SharedDocumentButton } from '../../../etherpad';
 import { FeedbackButton } from '../../../feedback';
@@ -224,11 +223,6 @@ type Props = {
      * Whether or not the local participant is sharing a YouTube video.
      */
     _sharingVideo: boolean,
-
-    /**
-     * Whether or not to show dominant speaker badge.
-     */
-    _showDominantSpeakerBadge: boolean,
 
     /**
      * Whether or not the tile view is enabled.
@@ -1267,7 +1261,6 @@ class Toolbox extends Component<Props> {
             _overflowMenuVisible,
             _reactionsEnabled,
             _toolbarButtons,
-            _showDominantSpeakerBadge,
             classes,
             t
         } = this.props;
@@ -1286,8 +1279,6 @@ class Toolbox extends Component<Props> {
                         onMouseOut: this._onMouseOut,
                         onMouseOver: this._onMouseOver
                     }) }>
-
-                    { _showDominantSpeakerBadge && <DominantSpeakerName /> }
 
                     <div className = 'toolbox-content-items'>
                         {mainMenuButtons.map(({ Content, key, ...rest }) => Content !== Separator && (
@@ -1359,7 +1350,6 @@ function _mapStateToProps(state, ownProps) {
         callStatsID,
         disableProfile,
         enableFeaturesBasedOnToken,
-        hideDominantSpeakerBadge,
         iAmRecorder,
         iAmSipGateway
     } = state['features/base/config'];
@@ -1417,7 +1407,6 @@ function _mapStateToProps(state, ownProps) {
         _raisedHand: hasRaisedHand(localParticipant),
         _reactionsEnabled: isReactionsEnabled(state),
         _screenSharing: isScreenVideoShared(state),
-        _showDominantSpeakerBadge: !hideDominantSpeakerBadge,
         _tileViewEnabled: shouldDisplayTileView(state),
         _toolbarButtons: toolbarButtons,
         _virtualSource: state['features/virtual-background'].virtualSource,

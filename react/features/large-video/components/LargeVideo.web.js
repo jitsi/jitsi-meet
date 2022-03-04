@@ -6,7 +6,9 @@ import VideoLayout from '../../../../modules/UI/videolayout/VideoLayout';
 import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
 import { setColorAlpha } from '../../base/util';
+import { DominantSpeakerName } from '../../display-name';
 import { FILMSTRIP_BREAKPOINT, isFilmstripResizable } from '../../filmstrip';
+import { getVerticalViewMaxWidth } from '../../filmstrip/functions.web';
 import { SharedVideo } from '../../shared-video/components/web';
 import { Captions } from '../../subtitles/';
 import { setTileView } from '../../video-layout/actions';
@@ -47,9 +49,19 @@ type Props = {
     _resizableFilmstrip: boolean,
 
     /**
+     * Whether or not to show dominant speaker badge.
+     */
+    _showDominantSpeakerBadge: boolean,
+
+    /**
      * The width of the vertical filmstrip (user resized).
      */
     _verticalFilmstripWidth: ?number,
+
+    /**
+     * The max width of the vertical filmstrip.
+     */
+    _verticalViewMaxWidth: number,
 
     /**
      * Whether or not the filmstrip is visible.
@@ -113,7 +125,8 @@ class LargeVideo extends Component<Props> {
     render() {
         const {
             _isChatOpen,
-            _noAutoPlayVideo
+            _noAutoPlayVideo,
+            _showDominantSpeakerBadge
         } = this.props;
         const style = this._getCustomSyles();
         const className = `videocontainer${_isChatOpen ? ' shift-right' : ''}`;
@@ -162,6 +175,7 @@ class LargeVideo extends Component<Props> {
                 </div>
                 { interfaceConfig.DISABLE_TRANSCRIPTION_SUBTITLES
                     || <Captions /> }
+                {_showDominantSpeakerBadge && <DominantSpeakerName />}
             </div>
         );
     }
@@ -217,6 +231,7 @@ class LargeVideo extends Component<Props> {
             _customBackgroundColor,
             _customBackgroundImageUrl,
             _verticalFilmstripWidth,
+            _verticalViewMaxWidth,
             _visibleFilmstrip
         } = this.props;
 
@@ -234,7 +249,7 @@ class LargeVideo extends Component<Props> {
         }
 
         if (_visibleFilmstrip && _verticalFilmstripWidth >= FILMSTRIP_BREAKPOINT) {
-            styles.width = `calc(100% - ${_verticalFilmstripWidth || 0}px)`;
+            styles.width = `calc(100% - ${_verticalViewMaxWidth || 0}px)`;
         }
 
         return styles;
@@ -275,6 +290,7 @@ function _mapStateToProps(state) {
     const { backgroundColor, backgroundImageUrl } = state['features/dynamic-branding'];
     const { isOpen: isChatOpen } = state['features/chat'];
     const { width: verticalFilmstripWidth, visible } = state['features/filmstrip'];
+    const { hideDominantSpeakerBadge } = state['features/base/config'];
 
     return {
         _backgroundAlpha: state['features/base/config'].backgroundAlpha,
@@ -283,7 +299,9 @@ function _mapStateToProps(state) {
         _isChatOpen: isChatOpen,
         _noAutoPlayVideo: testingConfig?.noAutoPlayVideo,
         _resizableFilmstrip: isFilmstripResizable(state),
+        _showDominantSpeakerBadge: !hideDominantSpeakerBadge,
         _verticalFilmstripWidth: verticalFilmstripWidth.current,
+        _verticalViewMaxWidth: getVerticalViewMaxWidth(state),
         _visibleFilmstrip: visible
     };
 }

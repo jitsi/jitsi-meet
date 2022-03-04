@@ -401,3 +401,25 @@ export function showGridInVerticalView(state) {
 
     return resizableFilmstrip && ((width.current ?? 0) > FILMSTRIP_GRID_BREAKPOINT);
 }
+
+/**
+ * Gets the vertical filmstrip max width.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {number}
+ */
+export function getVerticalViewMaxWidth(state) {
+    const { width } = state['features/filmstrip'];
+    const _resizableFilmstrip = isFilmstripResizable(state);
+    const _verticalViewGrid = showGridInVerticalView(state);
+    let maxWidth = _resizableFilmstrip
+        ? width.current || DEFAULT_FILMSTRIP_WIDTH
+        : interfaceConfig.FILM_STRIP_MAX_HEIGHT || DEFAULT_FILMSTRIP_WIDTH;
+
+    // Adding 4px for the border-right and margin-right.
+    // On non-resizable filmstrip add 4px for the left margin and border.
+    // Also adding 7px for the scrollbar. Also adding 9px for the drag handle.
+    maxWidth += (_verticalViewGrid ? 0 : 11) + (_resizableFilmstrip ? 9 : 4);
+
+    return maxWidth;
+}
