@@ -16,6 +16,10 @@ import { getAutoPinSetting, updateAutoPinnedParticipant } from './functions';
 StateListenerRegistry.register(
     /* selector */ state => state['features/base/tracks'],
     /* listener */ debounce((tracks, store) => {
+        // Because of the debounce we need to handle removal of screen shares in the middleware. Otherwise it is
+        // possible to have screen sharing participant that has already left in the remoteScreenShares array.
+        // This can lead to rendering a thumbnails for already left participants since the remoteScreenShares
+        // array is used for building the ordered list of remote participants.
         if (!getAutoPinSetting() || isFollowMeActive(store)) {
             return;
         }
