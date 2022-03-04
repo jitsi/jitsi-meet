@@ -62,13 +62,14 @@ MiddlewareRegistry.register(store => next => action => {
             // Go back to the app's entry point.
             _hideLoginDialog(store);
 
-            const { authRequired, conference } = getState()['features/base/conference'];
+            const state = getState();
+            const { authRequired, conference } = state['features/base/conference'];
+            const { passwordRequired } = state['features/base/connection'];
 
             // Only end the meeting if we are not already inside and trying to upgrade.
-            if (authRequired && !conference) {
-                // FIXME Like cancelWaitForOwner, dispatch conferenceLeft to notify
-                // the external-api.
-
+            // NOTE: Despite it's confusing name, `passwordRequired` implies an XMPP
+            // connection auth error.
+            if ((passwordRequired || authRequired) && !conference) {
                 dispatch(appNavigate(undefined));
             }
         }
