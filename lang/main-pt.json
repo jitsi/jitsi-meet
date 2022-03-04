@@ -83,6 +83,7 @@
         "enter": "Entrar na sala",
         "error": "Erro: a sua mensagem não foi enviada. Motivo: {{error}}",
         "fieldPlaceHolder": "Escreva aqui a sua mensagem",
+        "lobbyChatMessageTo": "Mensagem de chat na sala de espera para {{recipient}}",
         "message": "Mensagem",
         "messageAccessibleTitle": "{{user}} disse:",
         "messageAccessibleTitleMe": "Eu disse:",
@@ -126,7 +127,7 @@
         "FETCH_SESSION_ID": "Obtenção da session-id...",
         "GET_SESSION_ID_ERROR": "Obter erro de session-id: {{code}}",
         "GOT_SESSION_ID": "Obtenção da  session-id... Feito",
-        "LOW_BANDWIDTH": "Vídeo para {{displayName}} foi desligada para poupar largura de banda"
+        "LOW_BANDWIDTH": "O vídeo para {{displayName}} foi desligado para poupar largura de banda"
     },
     "connectionindicator": {
         "address": "Endereço:",
@@ -364,7 +365,9 @@
         "shareVideoTitle": "Partilhar vídeo",
         "shareYourScreen": "Partilhe o seu ecrã",
         "shareYourScreenDisabled": "Partilha de ecrã desactivada.",
+        "sharedVideoDialogError": "Erro: URL inválido",
         "sharedVideoLinkPlaceholder": "Link do YouTube ou link direto do vídeo",
+        "start": "Iniciar ",
         "startLiveStreaming": "Iniciar a transmissão em direto",
         "startRecording": "Iniciar gravação",
         "startRemoteControlErrorMessage": "Ocorreu um erro ao tentar iniciar a sessão de controlo remoto!",
@@ -527,6 +530,7 @@
         "admitAll": "Aceitar todos",
         "allow": "Permitir",
         "backToKnockModeButton": "Peça para aderir",
+        "chat": "Chat",
         "dialogTitle": "Modo sala de espera",
         "disableDialogContent": "O modo sala de espera está actualmente activada. Esta característica assegura que os participantes indesejados não possam juntar-se à sua reunião. Quer desativá-la?",
         "disableDialogSubmit": "Desativar",
@@ -547,6 +551,8 @@
         "knockButton": "Pedir para participar",
         "knockTitle": "Alguém quer juntar-se à reunião",
         "knockingParticipantList": "Lista de participantes a expulsar",
+        "lobbyChatStartedNotification": "{{moderator}} iniciou uma conversa na sala de espera com {{attendee}}",
+        "lobbyChatStartedTitle": "{{moderator}} iniciou uma conversa na sala de espera consigo.",
         "nameField": "Introduza o seu nome",
         "notificationLobbyAccessDenied": "{{targetParticipantName}} foi recusada a adesão por {{originParticipantName}}",
         "notificationLobbyAccessGranted": "{{targetParticipantName}} foi autorizado a aderir por {{originParticipantName}}",
@@ -641,6 +647,8 @@
         "oldElectronClientDescription1": "Parece estar a utilizar uma versão antiga do cliente Jitsi Meet que tem vulnerabilidades de segurança conhecidas. Por favor, certifique-se de que actualiza a nossa ",
         "oldElectronClientDescription2": "compilação mais recente",
         "oldElectronClientDescription3": " agora!",
+        "participantWantsToJoin": "Deseja juntar-se à reunião",
+        "participantsWantToJoin": "Desejam juntar-se à reunião",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) removido por outro participante",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) definido por outro participante",
         "raiseHandAction": "Levantar a mão",
@@ -648,7 +656,7 @@
         "raisedHands": "{{participantName}} e mais {{raisedHands}} pessoas",
         "reactionSounds": "Desactivar sons",
         "reactionSoundsForAll": "Desativar sons para todos",
-        "screenShareNoAudio": " A caixa de compartilhar áudio não foi marcada no ecrã de seleção da janela.",
+        "screenShareNoAudio": "A caixa de compartilhar áudio não foi marcada no ecrã de seleção da janela.",
         "screenShareNoAudioTitle": "Não foi possível partilhar o áudio do sistema!",
         "selfViewTitle": "Pode sempre reexibir a autovisualização a partir das definições",
         "somebody": "Alguém",
@@ -660,7 +668,9 @@
         "videoMutedRemotelyDescription": "Pode sempre ligá-la novamente.",
         "videoMutedRemotelyTitle": "A sua câmara foi desligada pelo {{participantDisplayName}}.",
         "videoUnmuteBlockedDescription": "A operação de ligar a câmara e partilhar o ambiente de trabalho foi temporariamente bloqueada devido aos limites do sistema.",
-        "videoUnmuteBlockedTitle": "Está bloqueado ligar a câmara e partilhar o ambiente de trabalho!"
+        "videoUnmuteBlockedTitle": "Está bloqueado ligar a câmara e partilhar o ambiente de trabalho!",
+        "viewLobby": "Ver sala de espera",
+        "waitingParticipants": "{{waitingParticipants}} pessoas"
     },
     "participantsPane": {
         "actions": {
@@ -921,6 +931,7 @@
     "speakerStats": {
         "angry": "Zangado",
         "disgusted": "Desgostoso",
+        "displayEmotions": "Mostrar emoções",
         "fearful": "Temeroso",
         "happy": "Feliz",
         "hours": "{{count}}h",
@@ -995,6 +1006,7 @@
             "remoteVideoMute": "Desativar a câmara do participante",
             "security": "Opções de segurança",
             "selectBackground": "Selecionar plano de fundo",
+            "selfView": "Mudar a autovisualização",
             "shareRoom": "Convidar alguém",
             "shareYourScreen": "Iniciar / Parar partilha de ecrã",
             "shareaudio": "Partilhar áudio",
@@ -1160,9 +1172,11 @@
         "mute": "Participante está sem som",
         "muted": "Sem som",
         "remoteControl": "Iniciar / Parar controlo remoto",
+        "screenSharing": "Participante está a partilhar o seu ecrã",
         "show": "Mostrar no palco",
+        "showSelfView": "Mostrar autovisualização",
         "videoMuted": "Câmara desativada",
-        "videomute": "O participante parou a câmara"
+        "videomute": "Participante parou a câmara"
     },
     "virtualBackground": {
         "addBackground": "Adicionar imagem de fundo",
@@ -1194,7 +1208,7 @@
             "join": "Toque para entrar",
             "roomname": "Digite o nome da sala"
         },
-        "addMeetingName": "AAdicionar nome da reunião",
+        "addMeetingName": "Adicionar nome da reunião",
         "appDescription": "Vá em frente, converse por vídeo com toda a equipa. Na verdade, convide todos os que conhece. {{app}} é uma solução de videoconferência totalmente criptografada e 100% de código aberto que pode usar todos os dias, a cada dia, gratuitamente — sem necessidade de conta.",
         "audioVideoSwitch": {
             "audio": "Voz",
