@@ -1021,7 +1021,7 @@ function _mapStateToProps(state, ownProps): Object {
         _localFlipX: Boolean(localFlipX),
         _participant: participant,
         _raisedHand: hasRaisedHand(participant),
-        _videoObjectPosition: getVideoObjectPosition(state, participant.id),
+        _videoObjectPosition: getVideoObjectPosition(state, participant?.id),
         _videoTrack,
         ...size
     };
