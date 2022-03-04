@@ -45,6 +45,11 @@ type Props = {
     _error: Object,
 
     /**
+     * Extra handler for cancel functionality.
+     */
+    _onCancel: Function,
+
+    /**
      * The progress in the floating range between 0 and 1 of the authenticating
      * and upgrading the role of the local participant/user.
      */
@@ -63,7 +68,12 @@ type Props = {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * Override the default visibility.
+     */
+    visible: boolean
 };
 
 /**
@@ -110,6 +120,10 @@ type State = {
  * of the configuration parameters.
  */
 class LoginDialog extends Component<Props, State> {
+    static defaultProps = {
+        visible: true
+    };
+
     /**
      * Initializes a new LoginDialog instance.
      *
@@ -140,13 +154,14 @@ class LoginDialog extends Component<Props, State> {
     render() {
         const {
             _connecting: connecting,
-            t
+            t,
+            visible
         } = this.props;
 
         return (
             <View>
                 <Dialog.Container
-                    visible = { true }>
+                    visible = { visible }>
                     <Dialog.Title>
                         { t('dialog.login') }
                     </Dialog.Title>
@@ -280,7 +295,10 @@ class LoginDialog extends Component<Props, State> {
      * @returns {void}
      */
     _onCancel() {
-        this.props.dispatch(cancelLogin());
+        const { _onCancel, dispatch } = this.props;
+
+        _onCancel && _onCancel();
+        dispatch(cancelLogin());
     }
 
     _onLogin: () => void;
