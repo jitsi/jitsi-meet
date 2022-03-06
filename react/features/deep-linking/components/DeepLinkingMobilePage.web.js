@@ -118,7 +118,11 @@ class DeepLinkingMobilePage extends Component<Props> {
             };
 
         return (
-            <div className = { _SNS }>
+            <div
+                className = { _SNS }
+
+                // TODO: Use jss instead of sass for styles. Remove the following line when it is done.
+                dir = 'ltr'>
                 <div className = 'header'>
                     {
                         HIDE_DEEP_LINKING_LOGO

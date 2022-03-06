@@ -81,7 +81,11 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
 
             // Enabling light theme because of the color of the buttons.
             <AtlasKitThemeProvider mode = 'light'>
-                <div className = 'deep-linking-desktop'>
+                <div
+                    className = 'deep-linking-desktop'
+
+                    // TODO: Use jss instead of sass for styles. Remove the following line when it is done.
+                    dir = 'ltr'>
                     <div className = 'header'>
                         {
                             HIDE_DEEP_LINKING_LOGO
