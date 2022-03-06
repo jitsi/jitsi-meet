@@ -3,6 +3,8 @@
 import Spinner from '@atlaskit/spinner';
 import Bourne from '@hapi/bourne';
 import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -106,6 +108,149 @@ function _mapStateToProps(state): Object {
 
 const VirtualBackgroundDialog = translate(connect(_mapStateToProps)(VirtualBackground));
 
+const useStyles = makeStyles(() => {
+    return {
+        dialog: {
+            marginLeft: '-10px',
+            position: 'relative',
+            maxHeight: '300px',
+            color: 'white',
+            display: 'inline-grid',
+            gridTemplateColumns: 'auto auto auto auto auto',
+            columnGap: '9px',
+            cursor: 'pointer',
+            [[ '& .desktop-share:hover',
+                '& .thumbnail:hover',
+                '& .blur:hover',
+                '& .slight-blur:hover',
+                '& .virtual-background-none:hover' ]]: {
+                opacity: 0.5,
+                border: '2px solid #99bbf3'
+            },
+            '@media (max-width: 632px)': {
+                [[ '& .desktop-share:hover',
+                    '& .thumbnail:hover',
+                    '& .blur:hover',
+                    '& .slight-blur:hover',
+                    '& .virtual-background-none:hover' ]]: {
+                    height: '60px',
+                    width: '60px'
+                },
+                '&': {
+                    fontSize: '1.5vw'
+                },
+                '& .desktop-share, & .virtual-background-none, & .thumbnail, & .blur, & .slight-blur': {
+                    height: '60px',
+                    width: '60px'
+                },
+                [[ '& .desktop-share-selected',
+                    '& .thumbnail-selected',
+                    '& .none-selected',
+                    '& .blur-selected',
+                    '& .slight-blur-selected' ]]: {
+                    height: '60px',
+                    width: '60px'
+                }
+            },
+            '& .background-option': {
+                marginTop: '8px',
+                borderRadius: '6px',
+                height: '60px',
+                width: '107px',
+                textAlign: 'center',
+                justifyContent: 'center',
+                fontWeight: 'bold',
+                boxSizing: 'border-box',
+                display: 'flex',
+                alignItems: 'center'
+            },
+            '& thumbnail-container': {
+                position: 'relative',
+                '&:focus-within': {
+                    '& .thumbnail ~ .delete-image-icon': {
+                        display: 'block'
+                    }
+                }
+            },
+            '& .thumbnail': {
+                objectFit: 'cover'
+            },
+            '& .thumbnail:hover ~ .delete-image-icon': {
+                display: 'block'
+            },
+            '& .thumbnail-selected': {
+                objectFit: 'cover',
+                border: '2px solid #246fe5'
+            },
+            '& .blur': {
+                boxShadow: 'inset 0 0 12px #000000',
+                background: '#7e8287',
+                padding: '0 10px'
+            },
+            '& .blur-selected': {
+                boxShadow: 'inset 0 0 12px #000000',
+                background: '#7e8287',
+                border: '2px solid #246fe5',
+                padding: '0 10px'
+            },
+            '& .slight-blur': {
+                boxShadow: 'inset 0 0 12px #000000',
+                background: '#a4a4a4',
+                padding: '0 10px'
+            },
+            '& .slight-blur-selected': {
+                boxShadow: 'inset 0 0 12px #000000',
+                background: '#a4a4a4',
+                border: '2px solid #246fe5',
+                padding: '0 10px'
+            },
+            '& .virtual-background-none': {
+                background: '#525252',
+                padding: '0 10px'
+            },
+            '& .none-selected': {
+                background: '#525252',
+                border: '2px solid #246fe5',
+                padding: '0 10px'
+            },
+            '& .desktop-share': {
+                background: '#525252'
+            },
+            '& .desktop-share-selected': {
+                background: '#525252',
+                border: '2px solid #246fe5',
+                padding: '0 10px'
+            },
+            '@media (max-width: 360px)': {
+                gridTemplateColumns: 'auto auto auto'
+            },
+            '& delete-image-icon': {
+                background: '#3d3d3d',
+                position: 'absolute',
+                display: 'none',
+                left: '96',
+                bottom: '51',
+                '&:hover': {
+                    display: 'block'
+                },
+                '@media (max-width: 632px)': {
+                    left: '51px'
+                }
+            }
+        },
+        dialogMarginTop: {
+            marginTop: '44px'
+        },
+        virtualBackgroundLoading: {
+            overflow: 'hidden',
+            position: 'fixed',
+            left: '50%',
+            marginTop: '10px',
+            transform: 'translateX(-50%)'
+        }
+    };
+});
+
 /**
  * Renders virtual background dialog.
  *
@@ -122,6 +267,7 @@ function VirtualBackground({
     initialOptions,
     t
 }: Props) {
+    const classes = useStyles();
     const [ previewIsLoaded, setPreviewIsLoaded ] = useState(false);
     const [ options, setOptions ] = useState({ ...initialOptions });
     const localImages = jitsiLocalStorage.getItem('virtualBackgrounds');
@@ -382,7 +528,7 @@ function VirtualBackground({
                 loadedPreview = { loadedPreviewState }
                 options = { options } />
             {loading ? (
-                <div className = 'virtual-background-loading'>
+                <div className = { classes.virtualBackgroundLoading }>
                     <Spinner
                         isCompleting = { false }
                         size = 'medium' />
@@ -397,7 +543,7 @@ function VirtualBackground({
                         showLabel = { previewIsLoaded }
                         storedImages = { storedImages } />}
                     <div
-                        className = { `virtual-background-dialog${previewIsLoaded ? '' : ' dialog-margin-top'}` }
+                        className = { clsx(classes.dialog, { 'dialog-margin-top': previewIsLoaded }) }
                         role = 'radiogroup'
                         tabIndex = '-1'>
                         <Tooltip

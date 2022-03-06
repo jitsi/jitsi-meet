@@ -1,5 +1,6 @@
 // @flow
 
+import { makeStyles } from '@material-ui/styles';
 import React, { useCallback, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -42,6 +43,28 @@ type Props = {
     t: Function
 }
 
+const useStyles = makeStyles(() => {
+    return {
+        addBackground: {
+            marginRight: '8px'
+        },
+        button: {
+            display: 'none'
+        },
+        label: {
+            fontSize: '14px',
+            fontWeight: '600',
+            lineHeight: '20px',
+            marginLeft: '-10px',
+            marginTop: '16px',
+            marginBottom: '8px',
+            color: '#669aec',
+            display: 'inline-flex',
+            cursor: 'pointer'
+        }
+    };
+});
+
 /**
  * Component used to upload an image.
  *
@@ -56,6 +79,7 @@ function UploadImageButton({
     storedImages,
     t
 }: Props) {
+    const classes = useStyles();
     const uploadImageButton: Object = useRef(null);
     const uploadImageKeyPress = useCallback(e => {
         if (uploadImageButton.current && (e.key === ' ' || e.key === 'Enter')) {
@@ -100,7 +124,7 @@ function UploadImageButton({
         <>
             {showLabel && <label
                 aria-label = { t('virtualBackground.uploadImage') }
-                className = 'file-upload-label'
+                className = { classes.label }
                 htmlFor = 'file-upload'
                 onKeyPress = { uploadImageKeyPress }
                 tabIndex = { 0 } >
@@ -113,7 +137,7 @@ function UploadImageButton({
 
             <input
                 accept = 'image/*'
-                className = 'file-upload-btn'
+                className = { classes.button }
                 id = 'file-upload'
                 onChange = { uploadImage }
                 ref = { uploadImageButton }
