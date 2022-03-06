@@ -73,3 +73,10 @@
     outline: none;
     padding: 8px 0 0 0;
 }
+
+.cpick-container {
+    // TODO: Remove the following line when styles are converted to jss.
+    body[dir=rtl] & {
+        direction: ltr !important;
+    }
+}
