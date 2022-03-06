@@ -1,0 +1,17 @@
+/* Error: Can't find stylesheet to import.
+ *    ,
+ * 91 | @import 'plan-limit';
+ *    |         ^^^^^^^^^^^^
+ *    '
+ *   css/main.scss 91:9  root stylesheet */
+
+body::before {
+  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
+      "Droid Sans Mono", monospace, monospace;
+  white-space: pre;
+  display: block;
+  padding: 1em;
+  margin-bottom: 1em;
+  border-bottom: 2px solid black;
+  content: "Error: Can't find stylesheet to import.\a    \2577 \a 91 \2502  @import 'plan-limit';\a    \2502          ^^^^^^^^^^^^\a    \2575 \a   css/main.scss 91:9  root stylesheet";
+}
