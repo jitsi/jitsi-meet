@@ -12,6 +12,12 @@
   padding: 20px 20px;
   top: $chromeExtensionBannerTop;
   right: $chromeExtensionBannerRight;
+
+  // TODO: Remove the following line when styles are converted to jss.
+  body[dir=rtl] & {
+    direction: ltr;
+  }
+
     &__pos_in_meeting {
       top: $chromeExtensionBannerTopInMeeting;
       right: $chromeExtensionBannerRightInMeeeting;
