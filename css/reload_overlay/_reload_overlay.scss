@@ -23,4 +23,8 @@
         height: 100%;
         transition: width .5s;
     }
+
+    body[dir=rtl] & {
+        direction: ltr;
+    }
 }
