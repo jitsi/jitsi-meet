@@ -7,6 +7,7 @@
  */
 export const commonClassName = {
     emptyList: 'empty-list',
+    muteDialog: 'mute-dialog',
     overflowMenuItem: 'overflow-menu-item',
     overflowMenuItemIcon: 'overflow-menu-item-icon',
     toolboxIcon: 'toolbox-icon',
@@ -28,6 +29,25 @@ export const commonStyles = (theme: Object) => {
             listStyleType: 'none',
             margin: 0,
             padding: 0
+        },
+        [commonClassName.muteDialog]: {
+            '& .separator-line': {
+                margin: '24px 0 24px -20px',
+                padding: '0 20px',
+                width: '100%',
+                height: '1px',
+                background: '#5E6D7A'
+            },
+
+            '& .control-row': {
+                display: 'flex',
+                justifyContent: 'space-between',
+                marginTop: '15px',
+
+                '& label': {
+                    fontSize: '14px'
+                }
+            }
         },
         [commonClassName.overflowMenuItem]: {
             alignItems: 'center',
