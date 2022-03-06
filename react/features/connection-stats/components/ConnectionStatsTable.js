@@ -1,6 +1,7 @@
 /* @flow */
 
 import { withStyles } from '@material-ui/styles';
+import clsx from 'clsx';
 import React, { Component } from 'react';
 
 import { isMobileBrowser } from '../../../features/base/environment/utils';
@@ -172,15 +173,48 @@ function onClick(event) {
 
 const styles = theme => {
     return {
+        actions: {
+            margin: '10px auto',
+            textAlign: 'center'
+        },
+        connectionStatsTable: {
+            '&, & > table': {
+                fontSize: '12px',
+                fontWeight: '400',
+
+                '& td': {
+                    padding: '2px 0'
+                }
+            },
+            '& > table': {
+                whiteSpace: 'nowrap'
+            },
+
+            '& td:nth-child(n-1)': {
+                paddingLeft: '5px'
+            },
+
+            '& $upload, & $download': {
+                marginRight: '2px'
+            }
+        },
         contextMenu: {
             position: 'relative',
             marginTop: 0,
             right: 'auto',
             padding: `${theme.spacing(2)}px ${theme.spacing(1)}px`,
-            marginLeft: '4px',
-            marginRight: '4px',
-            marginBottom: '4px'
-        }
+            marginLeft: `${theme.spacing(1)}px`,
+            marginRight: `${theme.spacing(1)}px`,
+            marginBottom: `${theme.spacing(1)}px`
+        },
+        download: {},
+        mobile: {
+            margin: `${theme.spacing(3)}px`
+        },
+        status: {
+            fontWeight: 'bold'
+        },
+        upload: {}
     };
 };
 
@@ -198,7 +232,7 @@ class ConnectionStatsTable extends Component<Props> {
      */
     render() {
         const { isLocalVideo, enableSaveLogs, disableShowMoreStats, classes } = this.props;
-        const className = isMobileBrowser() ? 'connection-info connection-info__mobile' : 'connection-info';
+        const className = clsx(classes.connectionStatsTable, { [classes.mobile]: isMobileBrowser() });
 
         return (
             <ContextMenu
@@ -209,7 +243,7 @@ class ConnectionStatsTable extends Component<Props> {
                     className = { className }
                     onClick = { onClick }>
                     { this._renderStatistics() }
-                    <div className = 'connection-actions'>
+                    <div className = { classes.actions }>
                         { isLocalVideo && enableSaveLogs ? this._renderSaveLogs() : null}
                         { !disableShowMoreStats && this._renderShowMoreLink() }
                     </div>
@@ -230,7 +264,7 @@ class ConnectionStatsTable extends Component<Props> {
         const { isLocalVideo } = this.props;
 
         return (
-            <table className = 'connection-info__container'>
+            <table>
                 <tbody>
                     { isLocalVideo ? this._renderBandwidth() : null }
                     { isLocalVideo ? this._renderTransport() : null }
@@ -251,6 +285,7 @@ class ConnectionStatsTable extends Component<Props> {
      * @returns {ReactElement}
      */
     _renderBandwidth() {
+        const { classes } = this.props;
         const { download, upload } = this.props.bandwidth || {};
 
         return (
@@ -259,11 +294,11 @@ class ConnectionStatsTable extends Component<Props> {
                     { this.props.t('connectionindicator.bandwidth') }
                 </td>
                 <td>
-                    <span className = 'connection-info__download'>
+                    <span className = { classes.download }>
                         &darr;
                     </span>
                     { download ? `${download} Kbps` : 'N/A' }
-                    <span className = 'connection-info__upload'>
+                    <span className = { classes.upload }>
                         &uarr;
                     </span>
                     { upload ? `${upload} Kbps` : 'N/A' }
@@ -280,6 +315,7 @@ class ConnectionStatsTable extends Component<Props> {
      * @returns {ReactElement}
      */
     _renderBitrate() {
+        const { classes } = this.props;
         const { download, upload } = this.props.bitrate || {};
 
         return (
@@ -290,11 +326,11 @@ class ConnectionStatsTable extends Component<Props> {
                     </span>
                 </td>
                 <td>
-                    <span className = 'connection-info__download'>
+                    <span className = { classes.download }>
                         &darr;
                     </span>
                     { download ? `${download} Kbps` : 'N/A' }
-                    <span className = 'connection-info__upload'>
+                    <span className = { classes.upload }>
                         &uarr;
                     </span>
                     { upload ? `${upload} Kbps` : 'N/A' }
@@ -410,8 +446,10 @@ class ConnectionStatsTable extends Component<Props> {
      * @returns {ReactElement}
      */
     _renderConnectionSummary() {
+        const { classes } = this.props;
+
         return (
-            <tr className = 'connection-info__status'>
+            <tr className = { classes.status }>
                 <td>
                     <span>{ this.props.t('connectionindicator.status') }</span>
                 </td>
@@ -527,7 +565,7 @@ class ConnectionStatsTable extends Component<Props> {
      * @returns {ReactElement}
      */
     _renderPacketLoss() {
-        const { packetLoss, t } = this.props;
+        const { classes, packetLoss, t } = this.props;
         let packetLossTableData;
 
         if (packetLoss) {
@@ -535,11 +573,11 @@ class ConnectionStatsTable extends Component<Props> {
 
             packetLossTableData = (
                 <td>
-                    <span className = 'connection-info__download'>
+                    <span className = { classes.download }>
                         &darr;
                     </span>
                     { download === null ? 'N/A' : `${download}%` }
-                    <span className = 'connection-info__upload'>
+                    <span className = { classes.upload }>
                         &uarr;
                     </span>
                     { upload === null ? 'N/A' : `${upload}%` }
@@ -650,7 +688,7 @@ class ConnectionStatsTable extends Component<Props> {
         const isRemoteVideo = !this.props.isLocalVideo;
 
         return (
-            <table className = 'connection-info__container'>
+            <table>
                 <tbody>
                     { this._renderConnectionSummary() }
                     { this._renderBitrate() }
