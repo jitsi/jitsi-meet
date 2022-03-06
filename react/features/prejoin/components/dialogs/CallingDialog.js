@@ -1,5 +1,7 @@
 // @flow
 
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
 import React from 'react';
 
 import { Avatar } from '../../../base/avatar';
@@ -35,6 +37,30 @@ type Props = {
     t: Function,
 };
 
+const useStyles = makeStyles(theme => {
+    return {
+        root: {
+            padding: theme.spacing(3),
+            textAlign: 'center',
+
+            '& .prejoin-dialog-calling-header': {
+                textAlign: 'right'
+            },
+
+            '& .prejoin-dialog-calling-label': {
+                fontSize: '15px',
+                margin: `${theme.spacing(2)} 0 ${theme.spacing(2)} 0`
+            },
+
+            '& .prejoin-dialog-calling-number': {
+                fontSize: '19px',
+                lineHeight: '28px',
+                margin: `${theme.spacing(3)} 0`
+            }
+        }
+    };
+});
+
 /**
  * Dialog displayed when the user gets called by the meeting.
  *
@@ -43,9 +69,10 @@ type Props = {
  */
 function CallingDialog(props: Props) {
     const { number, onClose, status, t } = props;
+    const classes = useStyles();
 
     return (
-        <div className = 'prejoin-dialog-calling'>
+        <div className = { clsx('prejoin-dialog-calling', classes.root) }>
             <div className = 'prejoin-dialog-calling-header'>
                 <Icon
                     className = 'prejoin-dialog-icon'
