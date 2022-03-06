@@ -51,6 +51,14 @@ const useStyles = makeStyles(theme =>
                 '--very-small-screen': '500px',
 
                 /**
+                 * Welcome page variables.
+                 */
+                '--welcome-page-description-color': '#fff',
+                '--welcome-page-font-family': 'inherit',
+                '--welcome-page-background': 'none',
+                '--welcome-page-title-color': '#fff',
+
+                /**
                  * Prejoin / premeeting screen.
                  */
                 '--prejoin-default-content-width': '336px'

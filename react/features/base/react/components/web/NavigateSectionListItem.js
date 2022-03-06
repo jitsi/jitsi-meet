@@ -1,5 +1,7 @@
 // @flow
 
+import { withStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import React, { Component } from 'react';
 
 import type { Item } from '../../Types';
@@ -14,6 +16,11 @@ import Text from './Text';
 type Props = {
 
     /**
+     * An object containing the CSS classes.
+     */
+    classes: Object,
+
+    /**
      * Function to be invoked when an item is pressed. The item's URL is passed.
      */
     onPress: ?Function,
@@ -25,12 +32,81 @@ type Props = {
 };
 
 /**
+ * Creates the styles for the component.
+ *
+ * @param {Object} theme - The current UI theme.
+ *
+ * @returns {Object}
+ */
+const styles = theme => {
+    const listTileText = {
+        ...theme.mixins.navigateSectionlistText,
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        float: 'left'
+    };
+
+    return {
+        root: {
+            backgroundColor: '#1754A9',
+            borderRadius: '4px',
+            boxSizing: 'border-box',
+            display: 'inline-flex',
+            marginBottom: '8px',
+            marginRight: '8px',
+            minHeight: '100px',
+            padding: '16px',
+            width: '100%',
+            '.&.with-click-handler': {
+                cursor: 'pointer'
+            },
+
+            '&.with-click-handler:hover': {
+                backgroundColor: '#1a5dbb'
+            },
+
+            '& i': {
+                cursor: 'inherit'
+            },
+
+            '& .element-after': {
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+            },
+
+            '& .join-button': {
+                display: 'none'
+            },
+
+            '&:hover .join-button': {
+                display: 'block'
+            }
+        },
+        listTileInfo: {
+            flex: 1,
+            wordBreak: 'break-word'
+        },
+        tileBody: {
+            ...listTileText,
+            fontWeight: 'normal',
+            lineHeight: '24px'
+        },
+        tileTitle: {
+            ...listTileText,
+            fontWeight: 'bold',
+            lineHeight: '24px'
+        }
+    };
+};
+
+/**
  * Implements a React/Web {@link Component} for displaying an item in a
  * NavigateSectionList.
  *
  * @augments Component
  */
-export default class NavigateSectionListItem<P: Props>
+class NavigateSectionListItem<P: Props>
     extends Component<P> {
 
     /**
@@ -39,7 +115,7 @@ export default class NavigateSectionListItem<P: Props>
      * @returns {ReactElement}
      */
     render() {
-        const { elementAfter, lines, title } = this.props.item;
+        const { classes, elementAfter, lines, title } = this.props.item;
         const { onPress } = this.props;
 
         /**
@@ -60,24 +136,21 @@ export default class NavigateSectionListItem<P: Props>
             duration = lines[1];
         }
 
-        const rootClassName = `navigate-section-list-tile ${
-            onPress ? 'with-click-handler' : 'without-click-handler'}`;
-
         return (
             <Container
-                className = { rootClassName }
+                className = { clsx(classes.root, { 'with-click-handler': onPress }) }
                 onClick = { onPress }>
-                <Container className = 'navigate-section-list-tile-info'>
+                <Container className = { classes.listTileInfo }>
                     <Text
-                        className = 'navigate-section-tile-title'>
+                        className = { classes.tileTitle }>
                         { title }
                     </Text>
                     <Text
-                        className = 'navigate-section-tile-body'>
+                        className = { classes.tileBody }>
                         { date }
                     </Text>
                     <Text
-                        className = 'navigate-section-tile-body'>
+                        className = { classes.tileBody }>
                         { duration }
                     </Text>
                 </Container>
@@ -88,3 +161,5 @@ export default class NavigateSectionListItem<P: Props>
         );
     }
 }
+
+export default withStyles(styles)(NavigateSectionListItem);

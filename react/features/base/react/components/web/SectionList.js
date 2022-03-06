@@ -1,5 +1,6 @@
 // @flow
 
+import { withStyles } from '@material-ui/core/styles';
 import React, { Component } from 'react';
 
 import type { Section } from '../../Types';
@@ -7,6 +8,11 @@ import type { Section } from '../../Types';
 import Container from './Container';
 
 type Props = {
+
+    /**
+     * An object containing the CSS classes.
+     */
+    classes: Object,
 
     /**
      * Rendered when the list is empty. Should be a rendered element.
@@ -41,13 +47,29 @@ type Props = {
 };
 
 /**
+ * Creates the styles for the component.
+ *
+ * @returns {Object}
+ */
+const styles = () => {
+    return {
+        root: {
+            position: 'relative',
+            marginTop: '36px',
+            marginBottom: '36px',
+            width: '100%'
+        }
+    };
+};
+
+/**
  * Implements a React/Web {@link Component} for displaying a list with
  * sections similar to React Native's {@code SectionList} in order to
  * facilitate cross-platform source code.
  *
  * @augments Component
  */
-export default class SectionList extends Component<Props> {
+class SectionList extends Component<Props> {
     /**
      * Renders the content of this component.
      *
@@ -55,6 +77,7 @@ export default class SectionList extends Component<Props> {
      */
     render() {
         const {
+            classes,
             ListEmptyComponent,
             renderSectionHeader,
             renderItem,
@@ -68,7 +91,7 @@ export default class SectionList extends Component<Props> {
         if (sections) {
             return (
                 <Container
-                    className = 'navigate-section-list'>
+                    className = { classes.root }>
                     {
                         sections.length === 0
                             ? ListEmptyComponent
@@ -97,3 +120,5 @@ export default class SectionList extends Component<Props> {
         return null;
     }
 }
+
+export default withStyles(styles)(SectionList);

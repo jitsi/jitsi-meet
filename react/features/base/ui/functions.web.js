@@ -12,9 +12,20 @@ export * from './functions.any';
  * @param {Object} arg - The ui tokens.
  * @returns {Object}
  */
-export function createWebTheme({ font, colors, colorMap, shape, spacing, typography, breakpoints, direction }: Object) {
+export function createWebTheme({
+    font,
+    colors,
+    colorMap,
+    shape,
+    spacing,
+    typography,
+    breakpoints,
+    direction,
+    mixins
+}: Object) {
     return createMuiTheme({
         direction,
+        mixins,
         props: {
             // disable ripple effect on buttons globally
             MuiButtonBase: {
