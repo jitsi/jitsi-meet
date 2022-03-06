@@ -23,30 +23,6 @@
         padding: 8px 0;
     }
   
-    &-dropdown-btn {
-        align-items: center;
-        color: #1C2025;
-        cursor: pointer;
-        display: flex;
-        height: 40px;
-        font-size: 15px;
-        line-height: 24px;
-        padding: 0 16px;
-  
-        &:hover {
-            background-color: #DAEBFA;
-        }
-    }
-  
-    &-dropdown-icon {
-        display: inline-block;
-        margin-right: 16px;
-  
-        & > svg {
-            fill:  #1C2025;
-        }
-    }
-  
     &-dropdown-container {
         position: relative;
         width: 100%;
