@@ -1,6 +1,11 @@
 .audio-preview {
     display: inline-block;
 
+    // TODO: Remove the following line when styles are converted to jss.
+    body[dir=rtl] & {
+        direction: ltr !important;
+    }
+
     &-content {
         background: $menuBG;
         border-radius: 3px;
