@@ -1,5 +1,7 @@
 // @flow
 
+import { withStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import React, { Component } from 'react';
 
 import {
@@ -39,6 +41,11 @@ type Props = {
      * The color-schemed stylesheet of this component.
      */
     _styles: StyleType,
+
+    /**
+     * An object containing the CSS classes.
+     */
+    classes: Object,
 
     /**
      * The redux dispatch function.
@@ -115,6 +122,59 @@ type Props = {
 };
 
 /**
+ * Creates the styles for the component.
+ *
+ * @param {Object} theme - The current UI theme.
+ *
+ * @returns {Object}
+ */
+const styles = theme => {
+    return {
+        root: {
+            flex: 0,
+            flexDirection: 'column'
+        },
+        authorizationPanel: {
+            display: 'flex',
+            flexDirection: 'column',
+            margin: '0 40px 10px 40px',
+            paddingBottom: '10px'
+        },
+        header: {
+            display: 'flex',
+            flex: '0',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            paddingTop: theme.spacing(5)
+        },
+        headerLine: {
+            borderTop: '1px solid #5e6d7a'
+        },
+        icon: {
+            width: '32px',
+            height: '32px',
+            objectFit: 'contain'
+        },
+        iconContainer: {
+            display: 'inline-flex',
+            alignItems: 'center'
+        },
+        loggedInPanel: {
+            padding: '10px'
+        },
+        title: {
+            display: 'inline-flex',
+            alignItems: 'center',
+            fontSize: '16px',
+            marginLeft: '16px'
+        },
+        switch: {
+            marginLeft: 'auto'
+        }
+    };
+};
+
+/**
  * React Component for getting confirmation to start a file recording session.
  *
  * @augments Component
@@ -142,11 +202,12 @@ class StartRecordingDialogContent extends Component<Props> {
      * @returns {React$Component}
      */
     render() {
-        const { _styles: styles } = this.props;
+        // eslint-disable-next-line no-shadow
+        const { _styles: styles, classes } = this.props;
 
         return (
             <Container
-                className = 'recording-dialog'
+                className = { classes.root }
                 style = { styles.container }>
                 { this._renderNoIntegrationsContent() }
                 { this._renderIntegrationsContent() }
@@ -171,7 +232,10 @@ class StartRecordingDialogContent extends Component<Props> {
 
         const {
             _dialogStyles,
+
+            // eslint-disable-next-line no-shadow
             _styles: styles,
+            classes,
             isValidating,
             onSharingSettingChanged,
             sharingSetting,
@@ -180,20 +244,20 @@ class StartRecordingDialogContent extends Component<Props> {
 
         return (
             <Container
-                className = 'recording-header'
+                className = { classes.header }
                 key = 'fileSharingSetting'
                 style = { [
                     styles.header,
                     _dialogStyles.topBorderContainer
                 ] }>
-                <Container className = 'recording-icon-container'>
+                <Container className = { classes.iconContainer }>
                     <Image
-                        className = 'recording-icon'
+                        className = { classes.icon }
                         src = { ICON_CLOUD }
                         style = { styles.recordingIcon } />
                 </Container>
                 <Text
-                    className = 'recording-title'
+                    className = { classes.title }
                     style = {{
                         ..._dialogStyles.text,
                         ...styles.title
@@ -201,7 +265,7 @@ class StartRecordingDialogContent extends Component<Props> {
                     { t('recording.fileSharingdescription') }
                 </Text>
                 <Switch
-                    className = 'recording-switch'
+                    className = { classes.switch }
                     disabled = { isValidating }
                     onValueChange
                         = { onSharingSettingChanged }
@@ -226,13 +290,14 @@ class StartRecordingDialogContent extends Component<Props> {
             return null;
         }
 
-        const { _dialogStyles, _styles: styles, isValidating, isVpaas, t } = this.props;
+        // eslint-disable-next-line no-shadow
+        const { _dialogStyles, _styles: styles, classes, isValidating, isVpaas, t } = this.props;
 
         const switchContent
             = this.props.integrationsEnabled
                 ? (
                     <Switch
-                        className = 'recording-switch'
+                        className = { classes.switch }
                         disabled = { isValidating }
                         onValueChange = { this._onRecordingServiceSwitchChange }
                         style = { styles.switch }
@@ -245,17 +310,17 @@ class StartRecordingDialogContent extends Component<Props> {
 
         return (
             <Container
-                className = 'recording-header'
+                className = { classes.header }
                 key = 'noIntegrationSetting'
                 style = { styles.header }>
-                <Container className = 'recording-icon-container'>
+                <Container className = { classes.iconContainer }>
                     <Image
-                        className = 'recording-icon'
+                        className = { classes.icon }
                         src = { icon }
                         style = { styles.recordingIcon } />
                 </Container>
                 <Text
-                    className = 'recording-title'
+                    className = { classes.title }
                     style = {{
                         ..._dialogStyles.text,
                         ...styles.title
@@ -278,18 +343,19 @@ class StartRecordingDialogContent extends Component<Props> {
             return null;
         }
 
-        const { _dialogStyles, _styles: styles, isTokenValid, isValidating, t } = this.props;
+        // eslint-disable-next-line no-shadow
+        const { _dialogStyles, _styles: styles, classes, isTokenValid, isValidating, t } = this.props;
 
         let content = null;
         let switchContent = null;
 
         if (isValidating) {
             content = this._renderSpinner();
-            switchContent = <Container className = 'recording-switch' />;
+            switchContent = <Container className = { classes.switch } />;
         } else if (isTokenValid) {
             content = this._renderSignOut();
             switchContent = (
-                <Container className = 'recording-switch'>
+                <Container className = { classes.switch }>
                     <Button
                         onValueChange = { this._onSignOut }
                         style = { styles.signButton }>
@@ -300,7 +366,7 @@ class StartRecordingDialogContent extends Component<Props> {
 
         } else {
             switchContent = (
-                <Container className = 'recording-switch'>
+                <Container className = { classes.switch }>
                     <Button
                         onValueChange = { this._onSignIn }
                         style = { styles.signButton }>
@@ -313,7 +379,7 @@ class StartRecordingDialogContent extends Component<Props> {
         if (this.props.fileRecordingsServiceEnabled) {
             switchContent = (
                 <Switch
-                    className = 'recording-switch'
+                    className = { classes.switch }
                     disabled = { isValidating }
                     onValueChange = { this._onDropboxSwitchChange }
                     style = { styles.switch }
@@ -326,17 +392,17 @@ class StartRecordingDialogContent extends Component<Props> {
         return (
             <Container>
                 <Container
-                    className = 'recording-header recording-header-line'
+                    className = { clsx(classes.header, classes.headerLine) }
                     style = { styles.header }>
                     <Container
-                        className = 'recording-icon-container'>
+                        className = { classes.iconContainer }>
                         <Image
-                            className = 'recording-icon'
+                            className = { classes.icon }
                             src = { DROPBOX_LOGO }
                             style = { styles.recordingIcon } />
                     </Container>
                     <Text
-                        className = 'recording-title'
+                        className = { classes.title }
                         style = {{
                             ..._dialogStyles.text,
                             ...styles.title
@@ -346,7 +412,7 @@ class StartRecordingDialogContent extends Component<Props> {
                     { switchContent }
                 </Container>
                 <Container
-                    className = 'authorization-panel'>
+                    className = { classes.authorizationPanel }>
                     { content }
                 </Container>
             </Container>
@@ -425,13 +491,14 @@ class StartRecordingDialogContent extends Component<Props> {
      * @returns {React$Component}
      */
     _renderSignOut() {
-        const { _styles: styles, spaceLeft, t, userName } = this.props;
+        // eslint-disable-next-line no-shadow
+        const { _styles: styles, classes, spaceLeft, t, userName } = this.props;
         const duration = getRecordingDurationEstimation(spaceLeft);
 
         return (
             <Container>
                 <Container
-                    className = 'logged-in-panel'
+                    className = { classes.loggedInPanel }
                     style = { styles.loggedIn }>
                     <Container>
                         <Text
@@ -500,4 +567,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default translate(connect(_mapStateToProps)(StartRecordingDialogContent));
+export default translate(connect(_mapStateToProps)(withStyles(styles)(StartRecordingDialogContent)));
