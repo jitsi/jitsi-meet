@@ -1,5 +1,7 @@
 // @flow
 
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
@@ -29,6 +31,45 @@ export type Props = {
     t: Function
 };
 
+const useStyles = makeStyles(() => {
+    return {
+        root: {
+            '&.device-status': {
+                alignItems: 'center',
+                color: '#fff',
+                display: 'flex',
+                fontSize: '14px',
+                lineHeight: '20px',
+                padding: '6px',
+                textAlign: 'center',
+
+                '& span': {
+                    marginLeft: '16px'
+                }
+            },
+
+            '&.device-status-error': {
+                alignItems: 'flex-start',
+                backgroundColor: '#F8AE1A',
+                borderRadius: '6px',
+                color: '#040404',
+                padding: '12px 16px',
+                textAlign: 'left'
+            },
+            '& .device-icon': {
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                display: 'inline-block',
+                height: '16px',
+                width: '16px'
+            },
+            '& .device-icon--ok svg path': {
+                fill: '#189b55'
+            }
+        }
+    };
+});
+
 const iconMap = {
     warning: {
         src: IconExclamationTriangle,
@@ -47,9 +88,10 @@ const iconMap = {
  * @returns {ReactElement}
  */
 function DeviceStatus({ deviceStatusType, deviceStatusText, t }: Props) {
+    const styles = useStyles();
     const { src, className } = iconMap[deviceStatusType];
     const hasError = deviceStatusType === 'warning';
-    const containerClassName = `device-status ${hasError ? 'device-status-error' : ''}`;
+    const containerClassName = clsx('device-status', styles.root, { 'device-status-error': hasError });
 
     return (
         <div
