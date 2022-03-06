@@ -10,6 +10,7 @@ export const commonClassName = {
     muteDialog: 'mute-dialog',
     overflowMenuItem: 'overflow-menu-item',
     overflowMenuItemIcon: 'overflow-menu-item-icon',
+    participantAvatar: 'participant-avatar',
     toolboxIcon: 'toolbox-icon',
     toolboxButton: 'toolbox-button',
     toolboxContentItems: 'toolbox-content-items'
@@ -115,6 +116,9 @@ export const commonStyles = (theme: Object) => {
                 height: 20,
                 width: 20
             }
+        },
+        [commonClassName.participantAvatar]: {
+            margin: '8px 16px 8px 0'
         },
         [commonClassName.toolboxIcon]: {
             display: 'flex',
