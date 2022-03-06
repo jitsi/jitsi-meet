@@ -67,12 +67,6 @@ type Props = {
 }
 
 const SpeakerStatsItem = (props: Props) => {
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
     const hasLeftClass = props.hasLeft ? props.styles.hasLeft : '';
     const rowDisplayClass = `row ${hasLeftClass} ${props.styles.item}`;
     const expressionClass = 'expression';
