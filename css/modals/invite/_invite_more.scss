@@ -3,6 +3,11 @@
         margin-bottom: 8px;
         transition: margin-bottom 0.3s;
 
+        // TODO: Remove the following line when styles are converted to jss.
+        body[dir=rtl] & {
+            direction: ltr;
+        }
+
         &.elevated {
             margin-bottom: 36px;
         }

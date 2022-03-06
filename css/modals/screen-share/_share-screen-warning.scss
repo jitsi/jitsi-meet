@@ -1,6 +1,11 @@
 .share-screen-warn-dialog {
     font-size: 14px;
 
+    // TODO: Remove the following line when styles are converted to jss.
+    body[dir=rtl] & {
+        direction: ltr;
+    }
+
     .separator-line {
         margin: 24px 0 24px -20px;
         padding: 0 20px;

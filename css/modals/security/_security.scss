@@ -4,6 +4,11 @@
         font-size: 15px;
         line-height: 24px;
 
+        // TODO: Remove the following line when styles are converted to jss.
+        body[dir=rtl] & {
+            direction: ltr;
+        }
+
         &.password-section {
             display: flex;
             flex-direction: column;

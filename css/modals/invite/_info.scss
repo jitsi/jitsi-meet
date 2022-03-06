@@ -3,6 +3,11 @@
     display: flex;
     font-size: 14px;
 
+    // TODO: Remove the following line when styles are converted to jss.
+    body[dir=rtl] & {
+        direction: ltr;
+    }
+
     .info-dialog-column {
         margin-right: 10px;
         overflow: hidden;

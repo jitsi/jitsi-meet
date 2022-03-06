@@ -2,6 +2,11 @@
     &-dialog {
         display: flex;
         flex-direction: column;
+
+        // TODO: Remove the following line when styles are converted to jss.
+        body[dir=rtl] & {
+            direction: ltr;
+        }
     }
 
     &-copy {

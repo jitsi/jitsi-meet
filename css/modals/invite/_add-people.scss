@@ -5,6 +5,11 @@
     .add-people-form-wrap {
         margin-top: 8px;
 
+        // TODO: Remove the following line when styles are converted to jss.
+        body[dir=rtl] & {
+            direction: ltr;
+        }
+
         .error {
             padding-left: 5px;
 

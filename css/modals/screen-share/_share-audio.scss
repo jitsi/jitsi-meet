@@ -1,4 +1,9 @@
 .share-audio-dialog {
+    // TODO: Remove the following line when styles are converted to jss.
+    body[dir=rtl] & {
+        direction: ltr;
+    }
+
     .share-audio-animation {
         width: 100%;
         height: 90%;
