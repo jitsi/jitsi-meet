@@ -1,5 +1,7 @@
 // @flow
 
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
@@ -31,6 +33,24 @@ type Props = {
     t: Function,
 };
 
+const useStyles = makeStyles(() => {
+    return {
+        root: {
+            '&.prejoin-dialog-callout': {
+                padding: '16px'
+            },
+            '& .prejoin-dialog-callout-header': {
+                display: 'flex',
+                justifyContent: 'space-between',
+                marginBottom: '24px'
+            },
+            '& .prejoin-dialog-callout-picker': {
+                margin: '8px 0 16px 0'
+            }
+        }
+    };
+});
+
 /**
  * This component displays the dialog from which the user can enter the
  * phone number in order to be called by the meeting.
@@ -40,9 +60,10 @@ type Props = {
  */
 function DialOutDialog(props: Props) {
     const { onClose, onTextButtonClick, onSubmit, t } = props;
+    const styles = useStyles();
 
     return (
-        <div className = 'prejoin-dialog-callout'>
+        <div className = { clsx('prejoin-dialog-callout', styles.root) }>
             <div className = 'prejoin-dialog-callout-header'>
                 <div className = 'prejoin-dialog-title'>
                     {t('prejoin.startWithPhone')}
