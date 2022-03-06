@@ -1,13 +1,49 @@
 // @flow
 
 import { FieldTextStateless } from '@atlaskit/field-text';
+import { withStyles } from '@material-ui/core/styles';
 import React from 'react';
 
 import { translate } from '../../../../base/i18n';
 import AbstractStreamKeyForm, {
-    type Props
+    type Props as AbstractProps
 } from '../AbstractStreamKeyForm';
 import { GOOGLE_PRIVACY_POLICY, YOUTUBE_TERMS_URL } from '../constants';
+
+type Props = AbstractProps & {
+
+    /**
+     * An object containing the CSS classes.
+     */
+    classes: Object,
+}
+
+/**
+ * Creates the styles for the component.
+ *
+ * @returns {Object}
+ */
+const styles = () => {
+    return {
+        root: {},
+        formFooter: {
+            display: 'flex',
+            marginTop: '5px',
+            textAlign: 'right',
+            flexDirection: 'column'
+        },
+        helpContainer: {
+            display: 'flex'
+        },
+        helperLink: {
+            cursor: 'pointer',
+            fontWeight: 'bold',
+            display: 'inline-block',
+            flexShrink: 0,
+            marginLeft: 'auto'
+        }
+    };
+};
 
 /**
  * A React Component for entering a key for starting a YouTube live stream.
@@ -37,7 +73,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { t, value } = this.props;
+        const { classes, t, value } = this.props;
 
         return (
             <div className = 'stream-key-form'>
@@ -53,8 +89,8 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
                     shouldFitContainer = { true }
                     type = 'text'
                     value = { this.props.value } />
-                <div className = 'form-footer'>
-                    <div className = 'help-container'>
+                <div className = { classes.formFooter }>
+                    <div className = { classes.helpContainer }>
                         {
                             this.state.showValidationError
                                 ? <span className = 'warning-text'>
@@ -65,7 +101,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
                         { this.helpURL
                             ? <a
                                 aria-label = { t('liveStreaming.streamIdHelp') }
-                                className = 'helper-link'
+                                className = { classes.helperLink }
                                 onClick = { this._onOpenHelp }
                                 onKeyPress = { this._onOpenHelpKeyPress }
                                 role = 'link'
@@ -76,14 +112,14 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
                         }
                     </div>
                     <a
-                        className = 'helper-link'
+                        className = { classes.helperLink }
                         href = { YOUTUBE_TERMS_URL }
                         rel = 'noopener noreferrer'
                         target = '_blank'>
                         { t('liveStreaming.youtubeTerms') }
                     </a>
                     <a
-                        className = 'helper-link'
+                        className = { classes.helperLink }
                         href = { GOOGLE_PRIVACY_POLICY }
                         rel = 'noopener noreferrer'
                         target = '_blank'>
@@ -128,4 +164,4 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
     }
 }
 
-export default translate(StreamKeyForm);
+export default translate(withStyles(styles)(StreamKeyForm));

@@ -5,6 +5,8 @@ import {
     DropdownItemGroup,
     DropdownMenuStateless
 } from '@atlaskit/dropdown-menu';
+import { withStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import React, { PureComponent } from 'react';
 
 import { translate } from '../../../../base/i18n';
@@ -21,6 +23,11 @@ type Props = {
      * return in the {@link onBroadcastSelected} callback.
      */
     broadcasts: Array<Object>,
+
+    /**
+     * An object containing the CSS classes.
+     */
+    classes: Object,
 
     /**
      * Callback invoked when an item in the dropdown is selected. The selected
@@ -50,6 +57,27 @@ type State = {
      */
     isDropdownOpen: boolean
 };
+
+/**
+ * Creates the styles for the component.
+ *
+ * @returns {Object}
+ */
+const styles = () => {
+    const dropdown = {
+        textAlign: 'left'
+    };
+
+    return {
+        broadcastDropdown: {
+            ...dropdown
+        },
+        broadcastDropdownTrigger: {
+            ...dropdown
+        }
+    };
+};
+
 
 /**
  * A dropdown to select a YouTube broadcast.
@@ -94,7 +122,7 @@ class StreamKeyPicker extends PureComponent<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { broadcasts, selectedBoundStreamID, t } = this.props;
+        const { classes, broadcasts, selectedBoundStreamID, t } = this.props;
 
         if (!broadcasts.length) {
             return (
@@ -123,7 +151,7 @@ class StreamKeyPicker extends PureComponent<Props, State> {
             = (selected && selected.title) || t('liveStreaming.choose');
 
         return (
-            <div className = 'broadcast-dropdown dropdown-menu'>
+            <div className = { clsx(classes.broadcastDropdown, 'dropdown-menu') }>
                 <DropdownMenuStateless
                     isOpen = { this.state.isDropdownOpen }
                     onItemActivated = { this._onSelect }
@@ -131,7 +159,7 @@ class StreamKeyPicker extends PureComponent<Props, State> {
                     shouldFitContainer = { true }
                     trigger = { triggerText }
                     triggerButtonProps = {{
-                        className: 'broadcast-dropdown-trigger',
+                        className: classes.classes.broadcastDropdownTrigger,
                         shouldFitContainer: true
                     }}
                     triggerType = 'button'>
@@ -193,4 +221,4 @@ class StreamKeyPicker extends PureComponent<Props, State> {
     }
 }
 
-export default translate(StreamKeyPicker);
+export default translate(withStyles(styles)(StreamKeyPicker));

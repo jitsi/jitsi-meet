@@ -1,6 +1,7 @@
 // @flow
 
 import Spinner from '@atlaskit/spinner';
+import { withStyles } from '@material-ui/core/styles';
 import React from 'react';
 
 import { Dialog } from '../../../../base/dialog';
@@ -30,8 +31,56 @@ type Props = AbstractProps & {
      * The ID for the Google client application used for making stream key
      * related requests.
      */
-    _googleApiApplicationClientID: string
+    _googleApiApplicationClientID: string,
+
+    /**
+     * An object containing the CSS classes.
+     */
+    classes: Object,
 }
+
+/**
+ * Creates the styles for the component.
+ *
+ * @param {Object} theme - The current UI theme.
+ *
+ * @returns {Object}
+ */
+const styles = theme => {
+    return {
+        root: {
+            /**
+             * Set font-size to be consistent with Atlaskit FieldText.
+             */
+            fontSize: '14px',
+            '& .warning-text': {
+                color: '#FFD740',
+                fontSize: '12px'
+            }
+        },
+        googleApi: {
+            marginTop: '10px',
+            minHeight: '36px',
+            textAlign: 'center',
+            width: '100%'
+        },
+        googleError: {
+            color: theme.palette.textError
+        },
+        googlePanel: {
+            alignItems: 'center',
+            borderBottom: '2px solid rgba(0, 0, 0, 0.3)',
+            display: 'flex',
+            flexDirection: 'column',
+            paddingBottom: '10px'
+        },
+        liveStreamCta: {
+            '& a': {
+                cursor: 'pointer'
+            }
+        }
+    };
+};
 
 /**
  * A React Component for requesting a YouTube stream key to use for live
@@ -81,7 +130,7 @@ class StartLiveStreamDialog
      * @inheritdoc
      */
     render() {
-        const { _googleApiApplicationClientID } = this.props;
+        const { _googleApiApplicationClientID, classes } = this.props;
 
         return (
             <Dialog
@@ -91,7 +140,7 @@ class StartLiveStreamDialog
                 onSubmit = { this._onSubmit }
                 titleKey = 'liveStreaming.start'
                 width = { 'small' }>
-                <div className = 'live-stream-dialog'>
+                <div className = { classes.root }>
                     { _googleApiApplicationClientID
                         ? this._renderYouTubePanel() : null }
                     <StreamKeyForm
@@ -258,6 +307,7 @@ class StartLiveStreamDialog
      */
     _renderYouTubePanel() {
         const {
+            classes,
             t,
             _googleProfileEmail
         } = this.props;
@@ -330,11 +380,11 @@ class StartLiveStreamDialog
         }
 
         return (
-            <div className = 'google-panel'>
-                <div className = 'live-stream-cta'>
+            <div className = { classes.googlePanel }>
+                <div className = { classes.liveStreamCta }>
                     { helpText }
                 </div>
-                <div className = 'google-api'>
+                <div className = { classes.googleApi }>
                     { googleContent }
                 </div>
             </div>
@@ -350,6 +400,7 @@ class StartLiveStreamDialog
      * @returns {string} The error message to display.
      */
     _getGoogleErrorMessageToDisplay() {
+        const { classes } = this.props;
         let text;
 
         switch (this.state.errorType) {
@@ -363,7 +414,7 @@ class StartLiveStreamDialog
             break;
         }
 
-        return <div className = 'google-error'>{ text }</div>;
+        return <div className = { classes.googleError }>{ text }</div>;
     }
 }
 
@@ -383,4 +434,4 @@ function _mapStateToProps(state: Object) {
     };
 }
 
-export default translate(connect(_mapStateToProps)(StartLiveStreamDialog));
+export default translate(connect(_mapStateToProps)(withStyles(styles)(StartLiveStreamDialog)));
