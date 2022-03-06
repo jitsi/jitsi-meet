@@ -45,6 +45,19 @@ const useStyles = makeStyles(theme =>
                 '--audio-level-shadow': 'rgba(9, 36, 77, 0.9)',
 
                 /**
+                 * Chat.
+                 */
+                '--chat-actions-separator-color': 'rgb(173, 105, 112)',
+                '--chat-background-color': '#131519',
+                '--chat-input-separator-color': '#A4B8D1',
+                '--chat-lobby-message-background-color': '#6A50D3',
+                '--chat-lobby-actions-separator-color': '#6A50D3',
+                '--chat-local-message-background-color': '#484A4F',
+                '--chat-private-message-background-color': 'rgb(153, 69, 77)',
+                '--chat-remote-message-background-color': ' #242528',
+                '--sidebar-width': '315px',
+
+                /**
                  * Media type thresholds.
                  */
                 '--small-screen': '700px',

@@ -1,5 +1,6 @@
 // @flow
 
+import { withStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import React from 'react';
 
@@ -9,7 +10,7 @@ import { PollsPane } from '../../../polls/components';
 import { toggleChat } from '../../actions.web';
 import AbstractChat, {
     _mapStateToProps,
-    type Props
+    type Props as AbstractProps
 } from '../AbstractChat';
 
 import ChatHeader from './ChatHeader';
@@ -18,6 +19,123 @@ import DisplayNameForm from './DisplayNameForm';
 import KeyboardAvoider from './KeyboardAvoider';
 import MessageContainer from './MessageContainer';
 import MessageRecipient from './MessageRecipient';
+
+type Props = AbstractProps & {
+
+    /**
+     * An object containing the CSS classes.
+     */
+    classes: Object,
+}
+
+/**
+ * Creates the styles for the component.
+ *
+ * @param {Object} theme - The current UI theme.
+ *
+ * @returns {Object}
+ */
+const styles = theme => {
+    return {
+        focused: {},
+        header: {
+            height: '70px',
+            position: 'relative',
+            width: '100%',
+            zIndex: 1,
+            display: 'flex',
+            justifyContent: 'space-between',
+            padding: '16px',
+            alignItems: 'center',
+            boxSizing: 'border-box',
+            color: '#fff',
+            fontWeight: '600',
+            fontSize: '24px',
+            lineHeight: '32px',
+
+            '& .jitsi-icon': {
+                cursor: 'pointer'
+            }
+        },
+        noTabs: {
+            // extract header height
+            height: 'calc(100% - 70px)'
+        },
+        panel: {
+            display: 'flex',
+            flexDirection: 'column',
+
+            // extract header + tabs height
+            height: 'calc(100% - 102px)'
+        },
+        sideToolbarContainer: {
+            backgroundColor: 'var(--chat-background-color)',
+            flexShrink: 0,
+            overflow: 'hidden',
+            position: 'relative',
+            transition: 'width .16s ease-in-out',
+            width: 'var(--sidebar-width)',
+            zIndex: theme.zIndex.sideToolbarContainer,
+
+            '@media (max-width: 580px)': {
+                height: 'fill-available',
+                left: 0,
+                position: 'fixed',
+                right: 0,
+                top: 0,
+                width: 'auto'
+            },
+
+            '& *': {
+                webkitUserSelect: 'text',
+                userSelect: 'text'
+            },
+
+            '& .display-name': {
+                fontSize: '12px',
+                fontWeight: '600',
+                marginBottom: '5px',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+                overflow: 'hidden'
+            }
+        },
+        tab: {
+            fontSize: '1.2em',
+            paddingBottom: '0.5em',
+            width: '50%',
+            textAlign: 'center',
+            color: '#8B8B8B',
+            cursor: 'pointer',
+
+            '&$focused': {
+                borderBottomStyle: 'solid',
+                color: '#FFF'
+            }
+        },
+        tabBadge: {
+            backgroundColor: '#165ecc',
+            borderRadius: '50%',
+            boxSizing: 'border-box',
+            fontWeight: '700',
+            overflow: 'hidden',
+            textAlign: 'center',
+            textOverflow: 'ellipsis',
+            verticalAlign: 'middle',
+            padding: '0 4px',
+            color: '#FFF'
+        },
+        tabsContainer: {
+            width: '100%',
+            borderBottom: 'thin solid #292929',
+            display: 'flex',
+            justifyContent: 'space-around'
+        },
+        tabTitle: {
+            marginRight: '8px'
+        }
+    };
+};
 
 /**
  * React Component for holding the chat feature in a side panel that slides in
@@ -79,15 +197,15 @@ class Chat extends AbstractChat<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _isOpen, _isPollsEnabled, _showNamePrompt } = this.props;
+        const { _isOpen, _isPollsEnabled, _showNamePrompt, classes } = this.props;
 
         return (
             _isOpen ? <div
-                className = 'sideToolbarContainer'
+                className = { classes.sideToolbarContainer }
                 id = 'sideToolbarContainer'
                 onKeyDown = { this._onEscClick } >
                 <ChatHeader
-                    className = 'chat-header'
+                    className = { classes.header }
                     id = 'chat-header'
                     isPollsEnabled = { _isPollsEnabled }
                     onCancel = { this._onToggleChat } />
@@ -167,7 +285,7 @@ class Chat extends AbstractChat<Props> {
      * @returns {ReactElement}
      */
     _renderChat() {
-        const { _isPollsEnabled, _isPollsTabFocused } = this.props;
+        const { _isPollsEnabled, _isPollsTabFocused, classes } = this.props;
 
         if (_isPollsTabFocused) {
             return (
@@ -189,7 +307,7 @@ class Chat extends AbstractChat<Props> {
                 {_isPollsEnabled && this._renderTabs()}
                 <div
                     aria-labelledby = 'chat-tab'
-                    className = { clsx('chat-panel', !_isPollsEnabled && 'chat-panel-no-tabs') }
+                    className = { clsx(classes.panel, !_isPollsEnabled && classes.noTabs) }
                     id = 'chat-panel'
                     role = 'tabpanel'>
                     <MessageContainer
@@ -212,32 +330,30 @@ class Chat extends AbstractChat<Props> {
      * @returns {ReactElement}
      */
     _renderTabs() {
-        const { _isPollsEnabled, _isPollsTabFocused, _nbUnreadMessages, _nbUnreadPolls, t } = this.props;
+        const { _isPollsEnabled, _isPollsTabFocused, _nbUnreadMessages, _nbUnreadPolls, classes, t } = this.props;
 
         return (
             <div
                 aria-label = { t(_isPollsEnabled ? 'chat.titleWithPolls' : 'chat.title') }
-                className = { 'chat-tabs-container' }
+                className = { classes.tabsContainer }
                 role = 'tablist'>
                 <div
                     aria-controls = 'chat-panel'
                     aria-label = { t('chat.tabs.chat') }
                     aria-selected = { !_isPollsTabFocused }
-                    className = { `chat-tab ${
-                        _isPollsTabFocused ? '' : 'chat-tab-focus'
-                    }` }
+                    className = { clsx(classes.tab, { [classes.focused]: !_isPollsTabFocused }) }
                     id = 'chat-tab'
                     onClick = { this._onToggleChatTab }
                     onKeyDown = { this._onChatTabKeyDown }
                     role = 'tab'
                     tabIndex = '0'>
                     <span
-                        className = { 'chat-tab-title' }>
+                        className = { classes.tabTitle }>
                         {t('chat.tabs.chat')}
                     </span>
                     {this.props._isPollsTabFocused
                         && _nbUnreadMessages > 0 && (
-                        <span className = { 'chat-tab-badge' }>
+                        <span className = { classes.tabBadge }>
                             {_nbUnreadMessages}
                         </span>
                     )}
@@ -246,20 +362,18 @@ class Chat extends AbstractChat<Props> {
                     aria-controls = 'polls-panel'
                     aria-label = { t('chat.tabs.polls') }
                     aria-selected = { _isPollsTabFocused }
-                    className = { `chat-tab ${
-                        _isPollsTabFocused ? 'chat-tab-focus' : ''
-                    }` }
+                    className = { clsx(classes.tab, { [classes.focused]: _isPollsTabFocused }) }
                     id = 'polls-tab'
                     onClick = { this._onTogglePollsTab }
                     onKeyDown = { this._onPollsTabKeyDown }
                     role = 'tab'
                     tabIndex = '0'>
-                    <span className = { 'chat-tab-title' }>
+                    <span className = { classes.tabTitle }>
                         {t('chat.tabs.polls')}
                     </span>
                     {!_isPollsTabFocused
                         && this.props._nbUnreadPolls > 0 && (
-                        <span className = { 'chat-tab-badge' }>
+                        <span className = { classes.tabBadge }>
                             {_nbUnreadPolls}
                         </span>
                     )}
@@ -299,4 +413,4 @@ class Chat extends AbstractChat<Props> {
 
 }
 
-export default translate(connect(_mapStateToProps)(Chat));
+export default translate(connect(_mapStateToProps)(withStyles(styles)(Chat)));

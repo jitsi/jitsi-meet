@@ -3,7 +3,7 @@
 import { font, colors, colorMap, spacing, shape, typography, breakpoints } from '../Tokens';
 import { createWebTheme } from '../functions';
 
-export const mixins = {
+const mixins = {
     navigateSectionlistText: {
         width: '100%',
         fontSize: '14px',
@@ -14,6 +14,10 @@ export const mixins = {
     }
 };
 
+const zIndex = {
+    sideToolbarContainer: 300
+};
+
 export default createWebTheme({
     font,
     colors,
@@ -22,7 +26,8 @@ export default createWebTheme({
     spacing,
     shape,
     typography,
-    breakpoints
+    breakpoints,
+    zIndex
 });
 
 export const rltTheme = createWebTheme({
@@ -34,7 +39,8 @@ export const rltTheme = createWebTheme({
     spacing,
     shape,
     typography,
-    breakpoints
+    breakpoints,
+    zIndex
 });
 
 export const ltrTheme = createWebTheme({
@@ -46,5 +52,6 @@ export const ltrTheme = createWebTheme({
     spacing,
     shape,
     typography,
-    breakpoints
+    breakpoints,
+    zIndex
 });

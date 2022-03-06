@@ -21,7 +21,8 @@ export function createWebTheme({
     typography,
     breakpoints,
     direction,
-    mixins
+    mixins,
+    zIndex
 }: Object) {
     return createMuiTheme({
         direction,
@@ -34,7 +35,8 @@ export function createWebTheme({
         },
 
         // use token spacing array
-        spacing
+        spacing,
+        zIndex
     }, {
         palette: createColorTokens(colorMap, colors),
         shape,

@@ -1,19 +1,71 @@
 // @flow
 
+import { withStyles } from '@material-ui/core/styles';
 import React from 'react';
 
 import { MESSAGE_TYPE_REMOTE } from '../../constants';
-import AbstractMessageContainer, { type Props }
+import AbstractMessageContainer, { type Props as AbstractProps }
     from '../AbstractMessageContainer';
 
 import ChatMessageGroup from './ChatMessageGroup';
+
+type Props = AbstractProps & {
+
+    /**
+     * An object containing the CSS classes.
+     */
+    classes: Object,
+}
+
+/**
+ * Creates the styles for the component.
+ *
+ * @returns {Object}
+ */
+const styles = () => {
+    return {
+        root: {
+            flip: false,
+            boxSizing: 'border-box',
+            flex: '1',
+            fontSize: '10pt',
+            height: 'calc(100% - 68px)',
+            lineHeight: '20px',
+            overflow: 'auto',
+            padding: '16px',
+            textAlign: 'left',
+            wordWrap: 'break-word',
+            display: 'flex',
+            flexDirection: 'column',
+
+            '& > :first-child': {
+                marginTop: 'auto'
+            },
+            '& a': {
+                display: 'block'
+            },
+            '& a:link': {
+                color: '#b8b8b8'
+            },
+            '& a:visited': {
+                color: 'white'
+            },
+            '& a:hover': {
+                color: '#d5d5d5'
+            },
+            '& a:active': {
+                color: 'black'
+            }
+        }
+    };
+};
 
 /**
  * Displays all received chat messages, grouped by sender.
  *
  * @augments AbstractMessageContainer
  */
-export default class MessageContainer extends AbstractMessageContainer<Props> {
+class MessageContainer extends AbstractMessageContainer<Props> {
     /**
      * Whether or not chat has been scrolled to the bottom of the screen. Used
      * to determine if chat should be scrolled automatically to the bottom when
@@ -56,6 +108,7 @@ export default class MessageContainer extends AbstractMessageContainer<Props> {
      * @inheritdoc
      */
     render() {
+        const { classes } = this.props;
         const groupedMessages = this._getMessagesGroupedBySender();
         const messages = groupedMessages.map((group, index) => {
             const messageType = group[0] && group[0].messageType;
@@ -71,6 +124,7 @@ export default class MessageContainer extends AbstractMessageContainer<Props> {
         return (
             <div
                 aria-labelledby = 'chat-header'
+                className = { classes.root }
                 id = 'chatconversation'
                 onScroll = { this._onChatScroll }
                 ref = { this._messageListRef }
@@ -126,3 +180,5 @@ export default class MessageContainer extends AbstractMessageContainer<Props> {
             = element.scrollHeight - element.scrollTop === element.clientHeight;
     }
 }
+
+export default withStyles(styles)(MessageContainer);
