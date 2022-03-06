@@ -55,6 +55,7 @@ type Props = {
 const useStyles = theme => {
     return {
         container: {
+            flip: false,
             position: 'absolute',
             left: '16px',
             bottom: '90px',
@@ -68,6 +69,7 @@ const useStyles = theme => {
         },
 
         containerChatOpen: {
+            flip: false,
             left: '331px'
         },
 
@@ -91,6 +93,7 @@ const useStyles = theme => {
             },
 
             '& .ribbon': {
+                flip: false,
                 width: '4px',
                 height: 'calc(100% - 16px)',
                 position: 'absolute',
