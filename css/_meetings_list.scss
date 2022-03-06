@@ -10,6 +10,11 @@
     overflow: auto;
     width: 100%;
 
+    // TODO: Remove the following line when styles are converted to jss.
+    body[dir=rtl] & {
+        direction: ltr;
+    }
+
     .meetings-list-empty {
         text-align: center;
         align-items: center;
