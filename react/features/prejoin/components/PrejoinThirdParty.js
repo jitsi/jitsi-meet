@@ -1,5 +1,7 @@
 // @flow
 
+import { withStyles } from '@material-ui/styles';
+import clsx from 'clsx';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
@@ -12,9 +14,14 @@ import { isDeviceStatusVisible } from '../functions';
 type Props = {
 
     /**
+     * An object containing the CSS classes.
+     */
+    classes: Object,
+
+    /**
      * Indicates the className that needs to be applied.
     */
-     className: string,
+    className: string,
 
     /**
      * Flag signaling if the device status is visible or not.
@@ -37,6 +44,55 @@ type Props = {
     videoTrack: ?Object
 };
 
+/**
+ * Creates the styles for the component.
+ *
+ * @returns {Object}
+ */
+const styles = () => {
+    const sidePanelWidth = '300px';
+
+    return {
+        root: {
+            flexDirection: 'column-reverse',
+
+            '& .content': {
+                height: 'auto',
+                margin: '0 auto',
+                width: 'auto',
+
+                '& .new-toolbox': {
+                    width: 'auto'
+                }
+            },
+
+            '& #preview': {
+                backgroundColor: 'transparent',
+                bottom: '0',
+                left: '0',
+                position: 'absolute',
+                right: '0',
+                top: '0',
+
+                '& .avatar': {
+                    display: 'none'
+                }
+            },
+
+            '&.splash': {
+                '& .content': {
+                    marginLeft: `calc((100% - var(--prejoin-default-content-width) + ${sidePanelWidth}) / 2)`
+                }
+            },
+
+            '&.guest': {
+                '& .content': {
+                    marginBottom: 'auto'
+                }
+            }
+        }
+    };
+};
 
 /**
  * This component is displayed before joining a meeting.
@@ -50,6 +106,7 @@ class PrejoinThirdParty extends Component<Props> {
      */
     render() {
         const {
+            classes,
             className,
             deviceStatusVisible,
             showCameraPreview,
@@ -58,7 +115,7 @@ class PrejoinThirdParty extends Component<Props> {
 
         return (
             <PreMeetingScreen
-                className = { `prejoin-third-party ${className}` }
+                className = { clsx('prejoin-third-party', className, classes.root) }
                 showDeviceStatus = { deviceStatusVisible }
                 skipPrejoinButton = { false }
                 thirdParty = { true }
@@ -83,4 +140,4 @@ function mapStateToProps(state): Object {
     };
 }
 
-export default connect(mapStateToProps)(translate(PrejoinThirdParty));
+export default connect(mapStateToProps)(translate(withStyles(styles)(PrejoinThirdParty)));

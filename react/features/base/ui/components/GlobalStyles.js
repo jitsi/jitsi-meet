@@ -48,7 +48,12 @@ const useStyles = makeStyles(theme =>
                  * Media type thresholds.
                  */
                 '--small-screen': '700px',
-                '--very-small-screen': '500px'
+                '--very-small-screen': '500px',
+
+                /**
+                 * Prejoin / premeeting screen.
+                 */
+                '--prejoin-default-content-width': '336px'
             },
             ...formatCommonClasses(commonStyles(theme)),
             ...getGlobalStyles(theme)
