@@ -1,5 +1,7 @@
 // @flow
 
+import { withStyles } from '@material-ui/styles';
+import clsx from 'clsx';
 import React, { PureComponent } from 'react';
 
 import { connect } from '../../../base/redux';
@@ -20,6 +22,11 @@ import DialInDialog from './DialInDialog';
 import DialOutDialog from './DialOutDialog';
 
 type Props = {
+
+    /**
+     * An object containing the CSS classes.
+     */
+    classes: Object,
 
     /**
      * The number to call in order to join the conference.
@@ -84,6 +91,108 @@ type State = {
      */
     showDialOut: boolean
 }
+
+/**
+ * Creates the styles for the component.
+ *
+ * @returns {Object}
+ */
+const styles = () => {
+    return {
+        root: {
+            alignItems: 'center',
+            background: 'rgba(0, 0, 0, 0.6)',
+            display: 'flex',
+            height: '100vh',
+            justifyContent: 'center',
+            left: 0,
+            position: 'absolute',
+            top: 0,
+            width: '100vw',
+            zIndex: 3,
+
+            '& .prejoin-dialog': {
+                background: '#1C2025',
+                boxShadow: '0px 2px 20px rgba(0, 0, 0, 0.5)',
+                borderRadius: '5px',
+                color: '#fff',
+                height: '400px',
+                width: '375px'
+            },
+            '& .prejoin-dialog--small': {
+                height: '300',
+                width: '400'
+            },
+            '& .prejoin-dialog-label': {
+                fontSize: '15px',
+                lineHeight: '24px'
+            },
+            '& .prejoin-dialog-label-num': {
+                background: '#2b3b4b',
+                border: '1px solid #A4B8D1',
+                borderRadius: '50%',
+                color: '#fff',
+                display: 'inline-block',
+                height: '24px',
+                marginRight: '8px',
+                width: '24px'
+            },
+            '& .prejoin-dialog-container': {
+
+            },
+            '& .prejoin-dialog-flag': {
+                display: 'inline-block',
+                marginRight: '8px',
+                transform: 'scale(1.2)'
+            },
+            '& .prejoin-dialog-title': {
+                display: 'inline-block',
+                fontSize: '24px',
+                lineHeight: '32px'
+            },
+            '& .prejoin-dialog-icon': {
+                cursor: 'pointer'
+            },
+            '& .prejoin-dialog-icon > svg': {
+                fill: '#A4B8D1'
+            },
+            '& .prejoin-dialog-btn': {
+                width: '309px'
+            },
+            '& .prejoin-dialog-dialin-container': {
+                textAlign: 'center'
+            },
+            '& .prejoin-dialog-delimiter': {
+                background: '#5f6266',
+                border: 0,
+                height: '1px',
+                margin: 0,
+                padding: 0,
+                width: '100%'
+            },
+            '& .prejoin-dialog-delimiter-container': {
+                margin: '16px 0 24px 0',
+                position: 'relative'
+            },
+            '& .prejoin-dialog-delimiter-txt-container': {
+                position: 'absolute',
+                textAlign: 'center',
+                top: '-8px',
+                width: '100%'
+            },
+            '& .prejoin-dialog-delimiter-txt': {
+                background: '#1C2025',
+                color: '#5f6266',
+                fontSize: '11px',
+                textTransform: 'uppercase',
+                padding: '0 8px'
+            },
+            '& .prejoin-dialog .prejoin-dialog-btn.primary, & .prejoin-dialog .action-btn.prejoin-dialog-btn.text': {
+                width: '310px'
+            }
+        }
+    };
+};
 
 /**
  * This is the dialog shown when a user wants to join with phone audio.
@@ -174,6 +283,7 @@ class JoinByPhoneDialog extends PureComponent<Props, State> {
      */
     render() {
         const {
+            classes,
             dialOutStatus,
             dialInNumber,
             dialOutNumber,
@@ -188,12 +298,10 @@ class JoinByPhoneDialog extends PureComponent<Props, State> {
             _showDialOutDialog
         } = this;
         const { isCalling, showDialOut, showDialIn } = this.state;
-        const className = isCalling
-            ? 'prejoin-dialog prejoin-dialog--small'
-            : 'prejoin-dialog';
+        const className = clsx('prejoin-dialog', { 'prejoin-dialog--small': isCalling });
 
         return (
-            <div className = 'prejoin-dialog-container'>
+            <div className = { clsx('prejoin-dialog-container', classes.root) }>
                 <div className = { className }>
                     {showDialOut && (
                         <DialOutDialog
@@ -245,4 +353,4 @@ const mapDispatchToProps = {
 };
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(JoinByPhoneDialog);
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(JoinByPhoneDialog));
