@@ -8,6 +8,11 @@
     z-index: $ringingZ;
     @include transparentBg(#283447, 0.95);
 
+    // TODO: Remove the following line when styles are converted to jss.
+    body[dir=rtl] & {
+        direction: ltr;
+    }
+
     &.solidBG {
         background: $defaultBackground;
     }
