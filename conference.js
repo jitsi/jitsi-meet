@@ -27,6 +27,7 @@ import {
 } from './react/features/app/actions';
 import { showModeratedNotification } from './react/features/av-moderation/actions';
 import { shouldShowModeratedNotification } from './react/features/av-moderation/functions';
+import { setAudioOnly } from './react/features/base/audio-only';
 import {
     AVATAR_URL_COMMAND,
     EMAIL_COMMAND,
@@ -1677,6 +1678,9 @@ export default {
             return Promise.reject('Cannot toggle screen sharing: not supported.');
         }
 
+        if (this.isAudioOnly()) {
+            APP.store.dispatch(setAudioOnly(false));
+        }
         if (toggle) {
             try {
                 await this._switchToScreenSharing(options);
@@ -1938,11 +1942,13 @@ export default {
                     // api.
                     if (localAudio) {
                         this._mixerEffect = new AudioMixerEffect(this._desktopAudioStream);
-
+                        logger.debug(`_switchToScreenSharing is mixing ${this._desktopAudioStream} and ${localAudio}`
+                        + ' as a single audio stream');
                         await localAudio.setEffect(this._mixerEffect);
                     } else {
                         // If no local stream is present ( i.e. no input audio devices) we use the screen share audio
                         // stream as we would use a regular stream.
+                        logger.debug(`_switchToScreenSharing is using ${this._desktopAudioStream} for useAudioStream`);
                         await this.useAudioStream(this._desktopAudioStream);
 
                     }
