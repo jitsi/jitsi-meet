@@ -16,7 +16,7 @@ export default async function openSession(participant) {
         await prejoinTextInput.setValue('');
         const toolbox = await Toolbox.ToolboxView;
         await expect(toolbox).toBeDisplayed();
-        const toolbarSecurityOption = await Toolbox.ToolboxSecurityOption;
+        const toolbarSecurityOption = await Toolbox.MoreActionOption;
         await expect(toolbarSecurityOption).toBeDisplayed();
         await toolbarSecurityOption.click();
         const overflowMenu = await Toolbox.OverflowMenu;

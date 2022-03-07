@@ -150,13 +150,13 @@
     "@wdio/allure-reporter": "7.16.14",
     "@wdio/cli": "7.16.15",
     "@wdio/junit-reporter": "7.16.15",
-    "@wdio/local-runner": "^7.16.13",
-    "@wdio/mocha-framework": "^7.16.13",
-    "@wdio/selenium-standalone-service": "^7.16.14",
-    "@wdio/spec-reporter": "^7.16.13",
+    "@wdio/local-runner": "7.16.13",
+    "@wdio/mocha-framework": "7.16.13",
+    "@wdio/selenium-standalone-service": "7.16.14",
+    "@wdio/spec-reporter": "7.16.13",
     "babel-loader": "8.2.3",
     "babel-plugin-optional-require": "0.3.1",
-    "chromedriver": "^97.0.2",
+    "chromedriver": "97.0.2",
     "circular-dependency-plugin": "5.2.0",
     "clean-css-cli": "4.3.0",
     "css-loader": "3.6.0",
@@ -196,6 +196,6 @@
     "postinstall": "patch-package && jetify",
     "validate": "npm ls",
     "start": "make dev",
-    "wdio": "wdio run wdio.conf.js"
+    "e2e-tests": "wdio run wdio.conf.js"
   }
 }
