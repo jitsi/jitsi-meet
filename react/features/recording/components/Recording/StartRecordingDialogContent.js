@@ -223,9 +223,18 @@ class StartRecordingDialogContent extends Component<Props> {
      * @returns {React$Component}
      */
     _renderUploadToTheCloudInfo() {
-        const { _dialogStyles, _styles: styles, t } = this.props;
+        const {
+            _dialogStyles,
+            _styles: styles,
+            fileRecordingsServiceSharingEnabled,
+            isVpaas,
+            selectedRecordingService,
+            t
+        } = this.props;
 
-        if (!this.props.integrationsEnabled) {
+        if (!fileRecordingsServiceSharingEnabled
+            || isVpaas
+            || selectedRecordingService !== RECORDING_TYPES.JITSI_REC_SERVICE) {
             return null;
         }
 
@@ -280,13 +289,21 @@ class StartRecordingDialogContent extends Component<Props> {
 
         const icon = isVpaas ? ICON_CLOUD : JITSI_LOGO;
         const label = isVpaas ? t('recording.serviceDescriptionCloud') : t('recording.serviceDescription');
+        const jitsiContentRecordingIconContainer
+            = this.props.integrationsEnabled
+                ? 'jitsi-content-recording-icon-container-with-switch'
+                : 'jitsi-content-recording-icon-container-without-switch';
+        const contentRecordingClass = isVpaas
+            ? 'cloud-content-recording-icon-container'
+            : jitsiContentRecordingIconContainer;
+        const jitsiRecordingHeaderClass = !isVpaas && 'jitsi-recording-header';
 
         return (
             <Container
-                className = 'recording-header'
+                className = { `recording-header ${jitsiRecordingHeaderClass}` }
                 key = 'noIntegrationSetting'
                 style = { styles.header }>
-                <Container className = 'content-recording-icon-container'>
+                <Container className = { contentRecordingClass }>
                     <Image
                         className = 'content-recording-icon'
                         src = { icon }

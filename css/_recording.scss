@@ -43,12 +43,30 @@
         width: 56px;
     }
 
-    .content-recording-icon-container {
+    .cloud-content-recording-icon-container {
         background-color: #FFFFFF;
         border-radius: 4px;
         height: 40px;
         justify-content: center;
         width: 40px;
+    }
+
+    .jitsi-recording-header {
+        margin-bottom: 32px;
+    }
+
+    .jitsi-content-recording-icon-container-with-switch {
+        background-color: #FFFFFF;
+        border-radius: 4px;
+        height: 40px;
+        width: 56px;
+    }
+
+    .jitsi-content-recording-icon-container-without-switch {
+        background-color: #FFFFFF;
+        border-radius: 4px;
+        height: 40px;
+        width: 46px;
     }
 
     .recording-icon {
