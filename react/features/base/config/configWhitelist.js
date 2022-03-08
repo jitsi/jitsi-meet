@@ -81,7 +81,6 @@ export default [
     'brandingRoomAlias',
     'debug',
     'debugAudioLevels',
-    'defaultLanguage',
     'defaultLocalDisplayName',
     'defaultRemoteDisplayName',
     'desktopSharingFrameRate',
