@@ -1,19 +1,15 @@
 const Toolbox = require("../page-objects/Toolbox");
 const PrejoinScreen = require("../page-objects/PrejoinScreen");
 const SecurityDialog = require("../page-objects/SecurityDialog");
+import { DEFAULT_CONFIG } from "../helpers/constants";
+//import createBrowserUserSession from "../helpers/browserUserSession";
+
 export default async function openSession(participant) {
     if (participant.moderator) {
-        await browser.url(participant.url);
-        const enterRoomField = await $('#enter_room_field');
-        await expect(enterRoomField).toBeDisplayed();
-        await enterRoomField.setValue(participant.roomName);
-        const enterRoomBtn = await $('#enter_room_button');
-        await expect(enterRoomBtn).toBeDisplayed();
-        await enterRoomBtn.click();
+        await browser.url(`${participant.url}/${participant.roomName}?${DEFAULT_CONFIG}`);
         const prejoinTextInput = await $('.prejoin-input-area input');
         await prejoinTextInput.setValue(participant.name);
         await browser.keys("\uE007"); //TODO change this
-        await prejoinTextInput.setValue('');
         const toolbox = await Toolbox.ToolboxView;
         await expect(toolbox).toBeDisplayed();
         const toolbarSecurityOption = await Toolbox.MoreActionOption;
@@ -35,12 +31,11 @@ export default async function openSession(participant) {
         await expect(securityDialogCloseButton).toBeDisplayed();
         await securityDialogCloseButton.click();
     } else {
-        await browser.newWindow(`${participant.url}/${participant.roomName}`, {});
-        const prejoinScreen = await PrejoinScreen.PremeetingScreen;
-        await expect(prejoinScreen).toBeDisplayed();
+        // const browserSession = await createBrowserUserSession()
+        // await browserSession.url(`${participant.url}/${participant.roomName}?${DEFAULT_CONFIG}`);
+        await browser.newWindow(`${participant.url}/${participant.roomName}?${DEFAULT_CONFIG}`);
         const prejoinTextInput = await PrejoinScreen.PrejoinInput;
         await expect(prejoinTextInput).toBeDisplayed();
-        await prejoinTextInput.setValue('');
         await prejoinTextInput.setValue(participant.name);
         await browser.keys("\uE007");
     }

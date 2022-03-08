@@ -53,22 +53,24 @@ exports.config = {
 
     capabilities: [
         {
-            maxInstances: 1,
+            maxInstances: 4,
             //port: 4444,
             browserName: 'chrome',
             acceptInsecureCerts: true,
             "goog:chromeOptions": {
-                args: ['use-fake-device-for-media-stream',
+                args: [
+                    'use-fake-device-for-media-stream',
                     'use-fake-ui-for-media-stream',
                     'disable-plugins',
                     'mute-audio',
                     'disable-infobars',
                     'autoplay-policy=no-user-gesture-required',
-                    'auto-select-desktop-capture-source=Your Entire screen'],
+                    'auto-select-desktop-capture-source=Your Entire screen'
+                ],
             }
         },
         {
-            maxInstances: 1,
+            maxInstances: 4,
             browserName: 'firefox',
             acceptInsecureCerts: true,
             "moz:firefoxOptions": {
