@@ -170,6 +170,7 @@ function changeParticipantNumber(APIInstance, number) {
  * configuration options defined in interface_config.js to be overridden.
  * @param {string} [options.jwt] - The JWT token if needed by jitsi-meet for
  * authentication.
+ * @param {string} [options.lang] - The meeting's language.
  * @param {string} [options.roomName] - The name of the room to join.
  * @returns {string} The URL.
  */
@@ -282,6 +283,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * configuration options defined in interface_config.js to be overridden.
      * @param {string} [options.jwt] - The JWT token if needed by jitsi-meet for
      * authentication.
+     * @param {string} [options.lang] - The meeting's language.
      * @param {string} [options.onload] - The onload function that will listen
      * for iframe onload event.
      * @param {Array<Object>} [options.invitees] - Array of objects containing
