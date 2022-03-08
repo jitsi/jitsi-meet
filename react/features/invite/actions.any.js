@@ -6,6 +6,7 @@ import { getInviteURL } from '../base/connection';
 import { getLocalParticipant, getParticipantCount } from '../base/participants';
 import { inviteVideoRooms } from '../videosipgw';
 
+import { getDialInConferenceID, getDialInNumbers } from './_utils';
 import {
     ADD_PENDING_INVITE_REQUEST,
     BEGIN_ADD_PEOPLE,
@@ -17,8 +18,6 @@ import {
 } from './actionTypes';
 import { INVITE_TYPES } from './constants';
 import {
-    getDialInConferenceID,
-    getDialInNumbers,
     invitePeopleAndChatRooms,
     inviteSipEndpoints
 } from './functions';
@@ -209,11 +208,12 @@ export function updateDialInNumbers() {
             return;
         }
 
+        const { locationURL = {} } = state['features/base/connection'];
         const { room } = state['features/base/conference'];
 
         Promise.all([
             getDialInNumbers(dialInNumbersUrl, room, mucURL),
-            getDialInConferenceID(dialInConfCodeUrl, room, mucURL)
+            getDialInConferenceID(dialInConfCodeUrl, room, mucURL, locationURL)
         ])
             .then(([ dialInNumbers, { conference, id, message, sipUri } ]) => {
                 if (!conference || !id) {

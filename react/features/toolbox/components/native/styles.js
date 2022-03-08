@@ -18,7 +18,7 @@ const toolbarButton = {
     height: BUTTON_SIZE,
     justifyContent: 'center',
     marginHorizontal: 6,
-    marginTop: 6,
+    marginVertical: 6,
     width: BUTTON_SIZE
 };
 
@@ -86,9 +86,7 @@ const styles = {
         borderTopLeftRadius: 3,
         borderTopRightRadius: 3,
         flexDirection: 'row',
-        flexGrow: 0,
-        justifyContent: 'space-between',
-        margin: BaseTheme.spacing[2]
+        justifyContent: 'space-between'
     },
 
     /**
@@ -97,16 +95,10 @@ const styles = {
     toolboxContainer: {
         backgroundColor: BaseTheme.palette.uiBackground,
         flexDirection: 'column',
-        flexGrow: 0,
-        height: '100%',
-        width: '100%',
-
-        // TODO revisit this
-
-        maxHeight: 76,
         maxWidth: 580,
         marginLeft: 'auto',
-        marginRight: 'auto'
+        marginRight: 'auto',
+        width: '100%'
     }
 };
 

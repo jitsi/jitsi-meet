@@ -27,7 +27,6 @@ import { connect } from '../../../base/redux';
 import { getLocalVideoTrack } from '../../../base/tracks';
 import { toggleChat } from '../../../chat';
 import { ChatButton } from '../../../chat/components';
-import { DominantSpeakerName } from '../../../display-name';
 import { EmbedMeetingButton } from '../../../embed-meeting';
 import { SharedDocumentButton } from '../../../etherpad';
 import { FeedbackButton } from '../../../feedback';
@@ -86,6 +85,7 @@ import MuteEveryonesVideoButton from '../MuteEveryonesVideoButton';
 
 import AudioSettingsButton from './AudioSettingsButton';
 import FullscreenButton from './FullscreenButton';
+import LinkToSalesforceButton from './LinkToSalesforceButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import ProfileButton from './ProfileButton';
 import Separator from './Separator';
@@ -160,6 +160,11 @@ type Props = {
     _fullScreen: boolean,
 
     /**
+     * Whether the app has Salesforce integration.
+     */
+    _hasSalesforce: boolean,
+
+    /**
      * Whether or not the app is running in an ios mobile browser.
      */
     _isIosMobile: boolean,
@@ -224,11 +229,6 @@ type Props = {
      * Whether or not the local participant is sharing a YouTube video.
      */
     _sharingVideo: boolean,
-
-    /**
-     * Whether or not to show dominant speaker badge.
-     */
-    _showDominantSpeakerBadge: boolean,
 
     /**
      * Whether or not the tile view is enabled.
@@ -609,6 +609,7 @@ class Toolbox extends Component<Props> {
             _feedbackConfigured,
             _isIosMobile,
             _isMobile,
+            _hasSalesforce,
             _screenSharing
         } = this.props;
 
@@ -721,6 +722,12 @@ class Toolbox extends Component<Props> {
             group: 2
         };
 
+        const linkToSalesforce = _hasSalesforce && {
+            key: 'linktosalesforce',
+            Content: LinkToSalesforceButton,
+            group: 2
+        };
+
         const muteEveryone = {
             key: 'mute-everyone',
             Content: MuteEveryoneButton,
@@ -817,6 +824,7 @@ class Toolbox extends Component<Props> {
             recording,
             localRecording,
             livestreaming,
+            linkToSalesforce,
             muteEveryone,
             muteVideoEveryone,
             shareVideo,
@@ -1267,7 +1275,6 @@ class Toolbox extends Component<Props> {
             _overflowMenuVisible,
             _reactionsEnabled,
             _toolbarButtons,
-            _showDominantSpeakerBadge,
             classes,
             t
         } = this.props;
@@ -1286,8 +1293,6 @@ class Toolbox extends Component<Props> {
                         onMouseOut: this._onMouseOut,
                         onMouseOver: this._onMouseOver
                     }) }>
-
-                    { _showDominantSpeakerBadge && <DominantSpeakerName /> }
 
                     <div className = 'toolbox-content-items'>
                         {mainMenuButtons.map(({ Content, key, ...rest }) => Content !== Separator && (
@@ -1359,9 +1364,9 @@ function _mapStateToProps(state, ownProps) {
         callStatsID,
         disableProfile,
         enableFeaturesBasedOnToken,
-        hideDominantSpeakerBadge,
         iAmRecorder,
-        iAmSipGateway
+        iAmSipGateway,
+        salesforceUrl
     } = state['features/base/config'];
     const {
         fullScreen,
@@ -1409,6 +1414,7 @@ function _mapStateToProps(state, ownProps) {
         _isIosMobile: isIosMobileBrowser(),
         _isMobile: isMobileBrowser(),
         _isVpaasMeeting: isVpaasMeeting(state),
+        _hasSalesforce: Boolean(salesforceUrl),
         _localParticipantID: localParticipant?.id,
         _localVideo: localVideo,
         _overflowMenuVisible: overflowMenuVisible,
@@ -1417,7 +1423,6 @@ function _mapStateToProps(state, ownProps) {
         _raisedHand: hasRaisedHand(localParticipant),
         _reactionsEnabled: isReactionsEnabled(state),
         _screenSharing: isScreenVideoShared(state),
-        _showDominantSpeakerBadge: !hideDominantSpeakerBadge,
         _tileViewEnabled: shouldDisplayTileView(state),
         _toolbarButtons: toolbarButtons,
         _virtualSource: state['features/virtual-background'].virtualSource,

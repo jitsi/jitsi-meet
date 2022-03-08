@@ -155,8 +155,7 @@
         "Remove": "Pašalinti",
         "Share": "Dalintis",
         "Submit": "Pateikti",
-        "WaitForHostMsg": "Konferencija <b>{{room}}</b> dar neprasidėjo. Jei jūs organizatorius, prašome tai patvirtinti. Jei ne, prašome palaukti organizatoriaus.",
-        "WaitForHostMsgWOk": "Konferencija <b>{{room}}</b> dar neprasidėjo. Jei jūs organizatorius, prašome tai patvirtinti. Jei ne, prašome palaukti organizatoriaus.",
+        "WaitForHostMsg": "Konferencija dar neprasidėjo. Jei jūs organizatorius, prašome tai patvirtinti. Jei ne, prašome palaukti organizatoriaus.",
         "WaitingForHost": "Laukiama organizatoriaus ...",
         "Yes": "Taip",
         "accessibilityLabel": {

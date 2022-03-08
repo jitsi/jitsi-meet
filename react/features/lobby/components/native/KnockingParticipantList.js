@@ -7,9 +7,12 @@ import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n';
 import { isLocalParticipantModerator } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+import { handleLobbyChatInitialized } from '../../../chat/actions.any';
+import { navigate } from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+import { screen } from '../../../mobile/navigation/routes';
 import { setKnockingParticipantApproval } from '../../actions';
 import { HIDDEN_EMAILS } from '../../constants';
-import { getKnockingParticipants, getLobbyEnabled } from '../../functions';
+import { showLobbyChatButton, getKnockingParticipants, getLobbyEnabled } from '../../functions';
 
 import styles from './styles';
 
@@ -27,6 +30,16 @@ export type Props = {
      * True if the list should be rendered.
      */
     _visible: boolean,
+
+    /**
+     * True if the polls feature is disabled.
+     */
+    _isPollsDisabled: boolean,
+
+    /**
+     * Returns true if the lobby chat button should be shown.
+     */
+    _showChatButton: Function,
 
     /**
      * The Redux Dispatch function.
@@ -61,7 +74,7 @@ class KnockingParticipantList extends PureComponent<Props> {
      * @inheritdoc
      */
     render() {
-        const { _participants, _visible, t } = this.props;
+        const { _participants, _visible, _showChatButton, t } = this.props;
 
         if (!_visible) {
             return null;
@@ -108,6 +121,18 @@ class KnockingParticipantList extends PureComponent<Props> {
                                 { t('lobby.reject') }
                             </Text>
                         </TouchableOpacity>
+                        {_showChatButton(p) ? (
+                            <TouchableOpacity
+                                onPress = { this._onInitializeLobbyChat(p.id) }
+                                style = { [
+                                    styles.knockingParticipantListButton,
+                                    styles.knockingParticipantListSecondaryButton
+                                ] }>
+                                <Text style = { styles.knockingParticipantListText }>
+                                    { t('lobby.chat') }
+                                </Text>
+                            </TouchableOpacity>
+                        ) : null}
                     </View>
                 )) }
             </ScrollView>
@@ -128,6 +153,24 @@ class KnockingParticipantList extends PureComponent<Props> {
             this.props.dispatch(setKnockingParticipantApproval(id, approve));
         };
     }
+
+    _onInitializeLobbyChat: (string) => Function;
+
+    /**
+     * Function that constructs a callback for the lobby chat button.
+     *
+     * @param {string} id - The id of the knocking participant.
+     * @returns {Function}
+     */
+    _onInitializeLobbyChat(id) {
+        return () => {
+            this.props.dispatch(handleLobbyChatInitialized(id));
+            if (this.props._isPollsDisabled) {
+                return navigate(screen.conference.chat);
+            }
+            navigate(screen.conference.chatandpolls.main);
+        };
+    }
 }
 
 /**
@@ -139,9 +182,12 @@ class KnockingParticipantList extends PureComponent<Props> {
 function _mapStateToProps(state): Object {
     const lobbyEnabled = getLobbyEnabled(state);
     const knockingParticipants = getKnockingParticipants(state);
+    const { disablePolls } = state['features/base/config'];
 
     return {
         _visible: lobbyEnabled && isLocalParticipantModerator(state),
+        _showChatButton: participant => showLobbyChatButton(participant)(state),
+        _isPollsDisabled: disablePolls,
 
         // On mobile we only show a portion of the list for screen real estate reasons
         _participants: knockingParticipants.slice(0, 2)

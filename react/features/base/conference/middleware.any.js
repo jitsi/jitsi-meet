@@ -9,8 +9,13 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { reloadNow } from '../../app/actions';
+import { removeLobbyChatParticipant } from '../../chat/actions.any';
 import { openDisplayNamePrompt } from '../../display-name';
-import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification } from '../../notifications';
+import {
+    NOTIFICATION_TIMEOUT_TYPE,
+    showErrorNotification
+} from '../../notifications';
+import { showSalesforceNotification } from '../../salesforce';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED, connectionDisconnected } from '../connection';
 import { validateJwt } from '../jwt';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
@@ -210,7 +215,12 @@ function _conferenceJoined({ dispatch, getState }, next, action) {
     const result = next(action);
     const { conference } = action;
     const { pendingSubjectChange } = getState()['features/base/conference'];
-    const { requireDisplayName, disableBeforeUnloadHandlers = false } = getState()['features/base/config'];
+    const {
+        disableBeforeUnloadHandlers = false,
+        requireDisplayName
+    } = getState()['features/base/config'];
+
+    dispatch(removeLobbyChatParticipant(true));
 
     pendingSubjectChange && dispatch(setSubject(pendingSubjectChange));
 
@@ -229,6 +239,9 @@ function _conferenceJoined({ dispatch, getState }, next, action) {
         && !conference.isHidden()) {
         dispatch(openDisplayNamePrompt(undefined));
     }
+
+
+    dispatch(showSalesforceNotification());
 
     return result;
 }

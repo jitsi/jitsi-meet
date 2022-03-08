@@ -13,7 +13,11 @@ import {
     participantLeft
 } from '../participants';
 import { toState } from '../redux';
-import { getBackendSafePath, getJitsiMeetGlobalNS, safeDecodeURIComponent } from '../util';
+import {
+    getBackendSafePath,
+    getJitsiMeetGlobalNS,
+    safeDecodeURIComponent
+} from '../util';
 
 import {
     AVATAR_URL_COMMAND,

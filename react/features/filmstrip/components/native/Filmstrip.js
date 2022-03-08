@@ -42,7 +42,7 @@ type Props = {
     /**
      * Whether or not the toolbox is displayed.
      */
-    _isToolboxVisible: Boolean,
+    _toolboxVisible: Boolean,
 
     _localParticipantId: string,
 
@@ -97,7 +97,7 @@ class Filmstrip extends PureComponent<Props> {
         // layer #0 sits behind the window, creates a hole in the window, and
         // there we render the LargeVideo; layer #1 is known as media overlay in
         // EGL terms, renders on top of layer #0, and, consequently, is for the
-        // Filmstrip. With the separate LocalThumnail, we should have left the
+        // Filmstrip. With the separate LocalThumbnail, we should have left the
         // remote participants' Thumbnails in layer #1 and utilized layer #2 for
         // LocalThumbnail. Unfortunately, layer #2 is not practical (that's why
         // I said we had two practical layers only) because it renders on top of
@@ -233,7 +233,7 @@ class Filmstrip extends PureComponent<Props> {
         const {
             _aspectRatio,
             _disableSelfView,
-            _isToolboxVisible,
+            _toolboxVisible,
             _localParticipantId,
             _participants,
             _visible
@@ -243,6 +243,7 @@ class Filmstrip extends PureComponent<Props> {
             return null;
         }
 
+        const bottomEdge = Platform.OS === 'ios' && !_toolboxVisible;
         const isNarrowAspectRatio = _aspectRatio === ASPECT_RATIO_NARROW;
         const filmstripStyle = isNarrowAspectRatio ? styles.filmstripNarrow : styles.filmstripWide;
         const { height, width } = this._getDimensions();
@@ -263,12 +264,7 @@ class Filmstrip extends PureComponent<Props> {
 
         return (
             <SafeAreaView
-                edges = { [
-                    !_isToolboxVisible && 'bottom',
-                    'top',
-                    'left',
-                    'right'
-                ].filter(Boolean) }
+                edges = { [ bottomEdge && 'bottom', 'left', 'right' ].filter(Boolean) }
                 style = { filmstripStyle }>
                 {
                     this._separateLocalThumbnail
@@ -320,9 +316,9 @@ function _mapStateToProps(state) {
         _clientHeight: responsiveUI.clientHeight,
         _clientWidth: responsiveUI.clientWidth,
         _disableSelfView: disableSelfView,
-        _isToolboxVisible: isToolboxVisible(state),
         _localParticipantId: getLocalParticipant(state)?.id,
         _participants: showRemoteVideos ? remoteParticipants : NO_REMOTE_VIDEOS,
+        _toolboxVisible: isToolboxVisible(state),
         _visible: enabled && isFilmstripVisible(state)
     };
 }

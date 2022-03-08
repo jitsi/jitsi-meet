@@ -27,6 +27,7 @@ export const TOOLBAR_BUTTONS = [
     'hangup',
     'help',
     'invite',
+    'linktosalesforce',
     'livestreaming',
     'microphone',
     'mute-everyone',

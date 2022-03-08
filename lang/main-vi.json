@@ -146,8 +146,7 @@
         "Remove": "Xóa",
         "Share": "Chia sẻ",
         "Submit": "Đăng ký",
-        "WaitForHostMsg": "Cuộc họp <b>{{room}}</b> chưa được khởi tạo. Nếu bạn là chủ nghị vui lòng xác thực. Nếu không, vui lòng đợi chủ nghị.",
-        "WaitForHostMsgWOk": "Cuộc họp <b>{{room}}</b> chưa được khởi tạo. Nếu bạn là chủ nghị vui lòng nhấn OK để xác thực. Nếu không, vui lòng đợi chủ nghị.",
+        "WaitForHostMsg": "Cuộc họp chưa được khởi tạo. Nếu bạn là chủ nghị vui lòng xác thực. Nếu không, vui lòng đợi chủ nghị.",
         "WaitingForHost": "Đang đợi chủ nghị …",
         "Yes": "Có",
         "accessibilityLabel": {

@@ -34,6 +34,7 @@ import {
     TOOLBAR_HEIGHT_MOBILE
 } from '../../constants';
 import {
+    getVerticalViewMaxWidth,
     isFilmstripResizable,
     shouldRemoteVideosBeVisible,
     showGridInVerticalView
@@ -151,6 +152,11 @@ type Props = {
      * Whether or not the vertical filmstrip should be displayed as grid.
      */
     _verticalViewGrid: boolean,
+
+    /**
+     * The max width of the vertical filmstrip.
+     */
+    _verticalViewMaxWidth: number,
 
     /**
      * Additional CSS class names to add to the container of all the thumbnails.
@@ -285,23 +291,15 @@ class Filmstrip extends PureComponent <Props, State> {
             _verticalFilmstripWidth,
             _visible,
             _verticalViewGrid,
+            _verticalViewMaxWidth,
             classes
         } = this.props;
         const { isMouseDown } = this.state;
         const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
-        let maxWidth;
 
         switch (_currentLayout) {
         case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
-            maxWidth = _resizableFilmstrip
-                ? _verticalFilmstripWidth || DEFAULT_FILMSTRIP_WIDTH
-                : interfaceConfig.FILM_STRIP_MAX_HEIGHT || DEFAULT_FILMSTRIP_WIDTH;
-
-            // Adding 4px for the border-right and margin-right.
-            // On non-resizable filmstrip add 4px for the left margin and border.
-            // Also adding 7px for the scrollbar. Also adding 9px for the drag handle.
-            filmstripStyle.maxWidth = maxWidth + (_verticalViewGrid ? 0 : 11) + (_resizableFilmstrip ? 9 : 4);
-
+            filmstripStyle.maxWidth = _verticalViewMaxWidth;
             if (!_visible) {
                 filmstripStyle.right = `-${filmstripStyle.maxWidth}px`;
             }
@@ -562,6 +560,7 @@ class Filmstrip extends PureComponent <Props, State> {
             _filmstripHeight,
             _filmstripWidth,
             _remoteParticipantsLength,
+            _resizableFilmstrip,
             _rows,
             _thumbnailHeight,
             _thumbnailWidth,
@@ -599,7 +598,7 @@ class Filmstrip extends PureComponent <Props, State> {
 
         const props = {
             itemCount: _remoteParticipantsLength,
-            className: 'filmstrip__videos remote-videos height-transition',
+            className: `filmstrip__videos remote-videos ${_resizableFilmstrip ? '' : 'height-transition'}`,
             height: _filmstripHeight,
             itemKey: this._listItemKey,
             itemSize: 0,
@@ -849,7 +848,8 @@ function _mapStateToProps(state) {
         _verticalFilmstripWidth: verticalFilmstripWidth.current,
         _videosClassName: videosClassName,
         _visible: visible,
-        _verticalViewGrid
+        _verticalViewGrid,
+        _verticalViewMaxWidth: getVerticalViewMaxWidth(state)
     };
 }
 

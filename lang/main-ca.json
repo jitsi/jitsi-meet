@@ -208,8 +208,7 @@
         "Remove": "Elimina",
         "Share": "Comparteix",
         "Submit": "Tramet",
-        "WaitForHostMsg": "La conferència <b>{{room}}</b> encara no ha començat. Si en sou l'amfitrió autentiqueu-vos. Altrament, espereu que arribi l'amfitrió.",
-        "WaitForHostMsgWOk": "La conferència <b>{{room}}</b> encara no ha començat. Si sou l'amfitrió, aleshores pitgeu «D'acord» per a autenticar-vos. Altrament, espereu que arribi l'amfitrió.",
+        "WaitForHostMsg": "La conferència encara no ha començat. Si en sou l'amfitrió autentiqueu-vos. Altrament, espereu que arribi l'amfitrió.",
         "WaitingForHostTitle": "S'està esperant l'amfitrió...",
         "Yes": "Sí",
         "accessibilityLabel": {

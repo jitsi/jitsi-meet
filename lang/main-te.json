@@ -180,8 +180,7 @@
         "Remove": "తీసివేయి",
         "Share": "పంచుకోండి",
         "Submit": "దాఖలుచేయి",
-        "WaitForHostMsg": "The conference <b>{{room}}</b> has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
-        "WaitForHostMsgWOk": "The conference <b>{{room}}</b> has not yet started. If you are the host then please press Ok to authenticate. Otherwise, please wait for the host to arrive.",
+        "WaitForHostMsg": "The conference has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
         "WaitingForHostTitle": "అతిథేయి కోసం వేచివున్నాం ...",
         "Yes": "అవును",
         "accessibilityLabel": {

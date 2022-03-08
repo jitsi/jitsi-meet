@@ -44,6 +44,7 @@ export const colors = {
 
     warning05: '#F8AE1A',
     warning06: '#FFD600',
+    warning07: '#FFD740',
 
     disabled01: '#00000040',
 
@@ -166,6 +167,9 @@ export const colorMap = {
     // Text for saved input values
     text06: 'surface03',
 
+    // Text info
+    text07Info: 'surface02',
+
     // error messages
     textError: 'error06',
 
@@ -264,6 +268,9 @@ export const colorMap = {
 
     // Color for indicating a raised hand
     warning02: 'warning06',
+
+    // Color for indicating recording info
+    warning03: 'warning07',
 
     // Color for disabled tab
     tab01Disabled: 'disabled01',

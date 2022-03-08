@@ -8,10 +8,15 @@ import { i18next } from '../base/i18n';
 import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 import { getLocalParticipant, isLocalParticipantModerator } from '../base/participants';
 import { toState } from '../base/redux';
-import { doGetJSON, parseURIString } from '../base/util';
+import { parseURIString } from '../base/util';
 import { isVpaasMeeting } from '../jaas/functions';
 
-import { INVITE_TYPES, SIP_ADDRESS_REGEX } from './constants';
+import { getDialInConferenceID, getDialInNumbers } from './_utils';
+import {
+    DIAL_IN_INFO_PAGE_PATH_NAME,
+    INVITE_TYPES,
+    SIP_ADDRESS_REGEX
+} from './constants';
 import logger from './logger';
 
 declare var $: Function;
@@ -35,51 +40,6 @@ export function checkDialNumber(
             .then(resolve)
             .catch(reject);
     });
-}
-
-/**
- * Sends a GET request to obtain the conference ID necessary for identifying
- * which conference to join after diaing the dial-in service.
- *
- * @param {string} baseUrl - The url for obtaining the conference ID (pin) for
- * dialing into a conference.
- * @param {string} roomName - The conference name to find the associated
- * conference ID.
- * @param {string} mucURL - In which MUC the conference exists.
- * @returns {Promise} - The promise created by the request.
- */
-export function getDialInConferenceID(
-        baseUrl: string,
-        roomName: string,
-        mucURL: string
-): Promise<Object> {
-
-    const conferenceIDURL = `${baseUrl}?conference=${roomName}@${mucURL}`;
-
-    return doGetJSON(conferenceIDURL, true);
-}
-
-/**
- * Sends a GET request for phone numbers used to dial into a conference.
- *
- * @param {string} url - The service that returns conference dial-in numbers.
- * @param {string} roomName - The conference name to find the associated
- * conference ID.
- * @param {string} mucURL - In which MUC the conference exists.
- * @returns {Promise} - The promise created by the request. The returned numbers
- * may be an array of Objects containing numbers, with keys countryCode,
- * tollFree, formattedNumber or an object with countries as keys and arrays of
- * phone number strings, as the second one should not be used and is deprecated.
- */
-export function getDialInNumbers(
-        url: string,
-        roomName: string,
-        mucURL: string
-): Promise<*> {
-
-    const fullUrl = `${url}?conference=${roomName}@${mucURL}`;
-
-    return doGetJSON(fullUrl, true);
 }
 
 /**
@@ -564,6 +524,7 @@ export function getShareInfoText(
             // in the state
             const { dialInConfCodeUrl, dialInNumbersUrl, hosts }
                 = state['features/base/config'];
+            const { locationURL = {} } = state['features/base/connection'];
             const mucURL = hosts && hosts.muc;
 
             if (!dialInConfCodeUrl || !dialInNumbersUrl || !mucURL) {
@@ -573,7 +534,7 @@ export function getShareInfoText(
 
             numbersPromise = Promise.all([
                 getDialInNumbers(dialInNumbersUrl, room, mucURL),
-                getDialInConferenceID(dialInConfCodeUrl, room, mucURL)
+                getDialInConferenceID(dialInConfCodeUrl, room, mucURL, locationURL)
             ]).then(([ numbers, {
                 conference, id, message } ]) => {
 
@@ -633,7 +594,7 @@ export function getDialInfoPageURL(state: Object, roomName: ?string) {
     const { href } = locationURL;
     const room = _decodeRoomURI(conferenceName);
 
-    const url = didPageUrl || `${href.substring(0, href.lastIndexOf('/'))}/static/dialInInfo.html`;
+    const url = didPageUrl || `${href.substring(0, href.lastIndexOf('/'))}/${DIAL_IN_INFO_PAGE_PATH_NAME}`;
 
     return `${url}?room=${room}`;
 }
@@ -651,7 +612,7 @@ export function getDialInfoPageURLForURIString(
     }
     const { protocol, host, contextRoot, room } = parseURIString(uri);
 
-    return `${protocol}//${host}${contextRoot}static/dialInInfo.html?room=${room}`;
+    return `${protocol}//${host}${contextRoot}${DIAL_IN_INFO_PAGE_PATH_NAME}?room=${room}`;
 }
 
 /**

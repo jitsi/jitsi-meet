@@ -181,8 +181,7 @@
         "Remove": "Kendu",
         "Share": "Partekatu",
         "Submit": "Bidali",
-        "WaitForHostMsg": "<b>{{room}}</b> konferentzia oraindik ez da hasi. Ostalaria bazara, autentifikatu. Bestela, itxaron ostalaria iritsi arte.",
-        "WaitForHostMsgWOk": "<b>{{room}}</b> konferentzia oraindik ez da hasi. Ostalaria bazara, sakatu Ados autentifikatu ahal izateko. Bestela, itxaron ostalaria iritsi arte.",
+        "WaitForHostMsg": "Konferentzia oraindik ez da hasi. Ostalaria bazara, autentifikatu. Bestela, itxaron ostalaria iritsi arte.",
         "WaitingForHostTitle": "Antolatzailearen zain...",
         "Yes": "Bai",
         "accessibilityLabel": {

@@ -22,6 +22,7 @@ import { getCurrentLayout, LAYOUTS } from '../video-layout';
 import {
     ASPECT_RATIO_BREAKPOINT,
     DEFAULT_FILMSTRIP_WIDTH,
+    DEFAULT_LOCAL_TILE_ASPECT_RATIO,
     DISPLAY_AVATAR,
     DISPLAY_VIDEO,
     FILMSTRIP_GRID_BREAKPOINT,
@@ -161,45 +162,26 @@ export function calculateThumbnailSizeForHorizontalView(clientHeight: number = 0
  * Calculates the size for thumbnails when in vertical view layout.
  *
  * @param {number} clientWidth - The height of the app window.
- * @returns {{local: {height, width}, remote: {height, width}}}
- */
-export function calculateThumbnailSizeForVerticalView(clientWidth: number = 0) {
-    const availableWidth = Math.min(
-        Math.max(clientWidth - VERTICAL_VIEW_HORIZONTAL_MARGIN, 0),
-        interfaceConfig.FILM_STRIP_MAX_HEIGHT || DEFAULT_FILMSTRIP_WIDTH);
-
-    return {
-        local: {
-            height: Math.floor(availableWidth / interfaceConfig.LOCAL_THUMBNAIL_RATIO),
-            width: availableWidth
-        },
-        remote: {
-            height: Math.floor(availableWidth / interfaceConfig.REMOTE_THUMBNAIL_RATIO),
-            width: availableWidth
-        }
-    };
-}
-
-/**
- * Calculates the size for thumbnails when in vertical view layout
- * and the filmstrip is resizable.
- *
- * @param {number} clientWidth - The height of the app window.
  * @param {number} filmstripWidth - The width of the filmstrip.
+ * @param {boolean} isResizable - Whether the filmstrip is resizable or not.
  * @returns {{local: {height, width}, remote: {height, width}}}
  */
-export function calculateThumbnailSizeForResizableVerticalView(clientWidth: number = 0, filmstripWidth: number = 0) {
+export function calculateThumbnailSizeForVerticalView(clientWidth: number = 0,
+        filmstripWidth: number = 0, isResizable = false) {
     const availableWidth = Math.min(
         Math.max(clientWidth - VERTICAL_VIEW_HORIZONTAL_MARGIN, 0),
-        filmstripWidth || DEFAULT_FILMSTRIP_WIDTH);
+        (isResizable ? filmstripWidth : interfaceConfig.FILM_STRIP_MAX_HEIGHT) || DEFAULT_FILMSTRIP_WIDTH);
 
     return {
         local: {
-            height: DEFAULT_FILMSTRIP_WIDTH,
+            height: Math.floor(availableWidth
+                / (interfaceConfig.LOCAL_THUMBNAIL_RATIO || DEFAULT_LOCAL_TILE_ASPECT_RATIO)),
             width: availableWidth
         },
         remote: {
-            height: DEFAULT_FILMSTRIP_WIDTH,
+            height: isResizable
+                ? DEFAULT_FILMSTRIP_WIDTH
+                : Math.floor(availableWidth / interfaceConfig.REMOTE_THUMBNAIL_RATIO),
             width: availableWidth
         }
     };
@@ -418,4 +400,26 @@ export function showGridInVerticalView(state) {
     const { width } = state['features/filmstrip'];
 
     return resizableFilmstrip && ((width.current ?? 0) > FILMSTRIP_GRID_BREAKPOINT);
+}
+
+/**
+ * Gets the vertical filmstrip max width.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {number}
+ */
+export function getVerticalViewMaxWidth(state) {
+    const { width } = state['features/filmstrip'];
+    const _resizableFilmstrip = isFilmstripResizable(state);
+    const _verticalViewGrid = showGridInVerticalView(state);
+    let maxWidth = _resizableFilmstrip
+        ? width.current || DEFAULT_FILMSTRIP_WIDTH
+        : interfaceConfig.FILM_STRIP_MAX_HEIGHT || DEFAULT_FILMSTRIP_WIDTH;
+
+    // Adding 4px for the border-right and margin-right.
+    // On non-resizable filmstrip add 4px for the left margin and border.
+    // Also adding 7px for the scrollbar. Also adding 9px for the drag handle.
+    maxWidth += (_verticalViewGrid ? 0 : 11) + (_resizableFilmstrip ? 9 : 4);
+
+    return maxWidth;
 }

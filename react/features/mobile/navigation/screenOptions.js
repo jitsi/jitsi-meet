@@ -274,6 +274,11 @@ export const liveStreamScreenOptions = {
 };
 
 /**
+ * Screen options for salesforce link modal.
+ */
+export const salesforceScreenOptions = presentationScreenOptions;
+
+/**
  * Screen options for shared document.
  */
 export const sharedDocumentScreenOptions = {

@@ -151,8 +151,7 @@
         "Remove": "Retirar",
         "Share": "Compartir",
         "Submit": "Enviar",
-        "WaitForHostMsg": "A sala <b>{{room}}</b> aínda non comezou. Se vostede é o anfitrión, autentíquese. Se non, agarde a que o anfitrión chegue.",
-        "WaitForHostMsgWOk": "A sala <b>{{room}}</b> aínda non comezou. Se vostede é o anfitrión, prema en Aceptar para autenticar. Se non, agarde a que o anfitrión chegue.",
+        "WaitForHostMsg": "A sala aínda non comezou. Se vostede é o anfitrión, autentíquese. Se non, agarde a que o anfitrión chegue.",
         "WaitingForHost": "Agardando polo anfitrión…",
         "Yes": "Si",
         "accessibilityLabel": {

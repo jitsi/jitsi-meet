@@ -342,6 +342,14 @@ function _translateLegacyConfig(oldValue: Object) {
         newValue.defaultRemoteDisplayName = interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME;
     }
 
+    if (oldValue.hideAddRoomButton) {
+        newValue.breakoutRooms = {
+            /* eslint-disable-next-line no-extra-parens */
+            ...(newValue.breakoutRooms || {}),
+            hideAddRoomButton: oldValue.hideAddRoomButton
+        };
+    }
+
     newValue.defaultRemoteDisplayName
         = newValue.defaultRemoteDisplayName || 'Fellow Jitster';
 

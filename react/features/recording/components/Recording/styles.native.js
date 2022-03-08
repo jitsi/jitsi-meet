@@ -6,6 +6,8 @@ import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 export const DROPBOX_LOGO = require('../../../../../images/dropboxLogo_square.png');
 export const ICON_CLOUD = require('../../../../../images/icon-cloud.png');
+export const ICON_INFO = require('../../../../../images/icon-info.png');
+export const ICON_USERS = require('../../../../../images/icon-users.png');
 export const JITSI_LOGO = require('../../../../../images/jitsiLogo_square.png');
 export const TRACK_COLOR = BaseTheme.palette.ui15;
 
@@ -13,6 +15,29 @@ export const TRACK_COLOR = BaseTheme.palette.ui15;
 // XXX The "standard" {@code BoxModel.padding} has been deemed insufficient in
 // the special case(s) of the recording feature below.
 const _PADDING = BoxModel.padding * 1.5;
+
+
+const header = {
+    alignItems: 'center',
+    flex: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingBottom: _PADDING,
+    paddingTop: _PADDING
+};
+
+const recordingIcon = {
+    width: BaseTheme.spacing[4],
+    height: BaseTheme.spacing[4]
+};
+
+const title = {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'left',
+    paddingLeft: BoxModel.padding
+};
 
 export default {
     /**
@@ -24,7 +49,6 @@ export default {
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'center',
-        paddingHorizontal: BaseTheme.spacing[3],
         paddingTop: BaseTheme.spacing[3]
     },
 
@@ -52,12 +76,20 @@ ColorSchemeRegistry.register('StartRecordingDialogContent', {
     },
 
     header: {
-        alignItems: 'center',
-        flex: 0,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        paddingBottom: _PADDING,
-        paddingTop: _PADDING
+        ...header,
+        marginHorizontal: BaseTheme.spacing[3]
+    },
+
+    headerIntegrations: {
+        ...header,
+        paddingHorizontal: BaseTheme.spacing[3]
+    },
+
+    headerInfo: {
+        ...header,
+        backgroundColor: BaseTheme.palette.warning03,
+        marginBottom: BaseTheme.spacing[4],
+        paddingHorizontal: BaseTheme.spacing[3]
     },
 
     loggedIn: {
@@ -65,8 +97,11 @@ ColorSchemeRegistry.register('StartRecordingDialogContent', {
     },
 
     recordingIcon: {
-        width: BaseTheme.spacing[4],
-        height: BaseTheme.spacing[4]
+        ...recordingIcon
+    },
+
+    recordingInfoIcon: {
+        ...recordingIcon
     },
 
     recordingText: {
@@ -86,11 +121,12 @@ ColorSchemeRegistry.register('StartRecordingDialogContent', {
     },
 
     title: {
-        flex: 1,
-        fontSize: 16,
-        fontWeight: 'bold',
-        textAlign: 'left',
-        paddingLeft: BoxModel.padding
+        ...title
+    },
+
+    titleInfo: {
+        ...title,
+        color: BaseTheme.palette.text07Info
     },
 
     text: {

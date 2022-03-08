@@ -17,6 +17,8 @@ export default {
     'Chat': {
         displayName: 'rgb(94, 109, 121)',
         localMsgBackground: 'rgb(215, 230, 249)',
+        lobbyMsgBackground: 'rgb(106, 80, 211)',
+        lobbyMsgNotice: 'rgb(16, 10, 41)',
         privateMsgBackground: 'rgb(250, 219, 219)',
         privateMsgNotice: 'rgb(186, 39, 58)',
         remoteMsgBackground: 'rgb(241, 242, 246)',

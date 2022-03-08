@@ -7,22 +7,23 @@
     flex-direction: column;
 
     .recording-header {
+        align-items: center;
         display: flex;
         flex: 0;
         flex-direction: row;
         justify-content: space-between;
-        padding-top: 32px;
 
         .recording-title {
             display: inline-flex;
             align-items: center;
-            font-size: 16px;
+            font-size: 14px;
             margin-left: 16px;
         }
     }
 
     .recording-header-line {
         border-top: 1px solid #5e6d7a;
+        padding-top: 32px;
     }
 
     .recording-switch-disabled {
@@ -34,10 +35,79 @@
         align-items: center;
     }
 
+    .file-sharing-icon-container {
+        background-color: #525252;
+        border-radius: 4px;
+        height: 40px;
+        justify-content: center;
+        width: 56px;
+    }
+
+    .cloud-content-recording-icon-container {
+        background-color: #FFFFFF;
+        border-radius: 4px;
+        height: 40px;
+        justify-content: center;
+        width: 40px;
+    }
+
+    .jitsi-recording-header {
+        margin-bottom: 32px;
+    }
+
+    .jitsi-content-recording-icon-container-with-switch {
+        background-color: #FFFFFF;
+        border-radius: 4px;
+        height: 40px;
+        width: 56px;
+    }
+
+    .jitsi-content-recording-icon-container-without-switch {
+        background-color: #FFFFFF;
+        border-radius: 4px;
+        height: 40px;
+        width: 46px;
+    }
+
     .recording-icon {
-        width: 32px;
-        height: 32px;
+        height: 40px;
         object-fit: contain;
+        width: 40px;
+    }
+
+    .content-recording-icon {
+        height: 18px;
+        margin: 10px 0 0 10px;
+        object-fit: contain;
+        width: 18px;
+    }
+
+    .recording-file-sharing-icon {
+        height: 18px;
+        object-fit: contain;
+        width: 18px;
+    }
+
+    .recording-info{
+        background-color: #FFD740;
+        color: black;
+        display: inline-flex;
+        margin: 32px 0;
+        width: 100%;
+    }
+
+    .recording-info-icon {
+        align-self: center;
+        height: 14px;
+        margin: 0 24px 0 16px;
+        object-fit: contain;
+        width: 14px;
+    }
+
+    .recording-info-title {
+        display: inline-flex;
+        font-size: 14px;
+        width: 290px
     }
 
     .recording-switch {

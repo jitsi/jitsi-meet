@@ -1,3 +1,4 @@
+
 /* eslint-disable no-unused-vars, no-var */
 
 var config = {
@@ -473,6 +474,10 @@ var config = {
     // If Lobby is enabled starts knocking automatically.
     // autoKnockLobby: false,
 
+    // Enable lobby chat.
+    // enableLobbyChat: true,
+
+    // DEPRECATED! Use `breakoutRooms.hideAddRoomButton` instead.
     // Hides add breakout room button
     // hideAddRoomButton: false,
 
@@ -511,7 +516,7 @@ var config = {
     // Hides the dominant speaker name badge that hovers above the toolbox
     // hideDominantSpeakerBadge: false,
 
-    // Default language for the user interface.
+    // Default language for the user interface. Cannot be overwritten.
     // defaultLanguage: 'en',
 
     // Disables profile and the edit of all fields from the profile settings (display name and email)
@@ -744,6 +749,17 @@ var config = {
 
     // Enables displaying facial expressions in speaker stats
     // enableDisplayFacialExpressions: true,
+
+    // faceCoordinatesSharing: {
+    //     // Enables sharing your face cordinates. Used for centering faces within a video.
+    //     enabled: false,
+
+    //     // Minimum required face movement percentage threshold for sending new face coordinates data.
+    //     threshold: 10,
+
+    //     // Miliseconds for processing a new image capture in order to detect face coordinates if they exist.
+    //     captureInterval: 100
+    // },
 
     // Controls the percentage of automatic feedback shown to participants when callstats is enabled.
     // The default value is 100%. If set to 0, no automatic feedback will be requested
@@ -985,6 +1001,15 @@ var config = {
     //     disableGrantModerator: true
     // },
 
+    // Endpoint that enables support for salesforce integration with in-meeting resource linking
+    // This is required for:
+    // listing the most recent records - salesforceUrl/records/recents
+    // searching records - salesforceUrl/records?text=${text}
+    // retrieving record details - salesforceUrl/records/${id}?type=${type}
+    // and linking the meeting - salesforceUrl/sessions/${sessionId}/records/${id}
+    //
+    // salesforceUrl: 'https://api.example.com/',
+
     // If set to true all muting operations of remote participants will be disabled.
     // disableRemoteMute: true,
 
@@ -1047,6 +1072,14 @@ var config = {
     }
     */
     // dynamicBrandingUrl: '',
+
+    // Options related to the breakout rooms feature.
+    // breakoutRooms: {
+    //     // Hides the add breakout room button. This replaces `hideAddRoomButton`.
+    //     hideAddRoomButton: false,
+    //     // Hides the join breakout room button.
+    //     hideJoinRoomButton: false
+    // },
 
     // When true the user cannot add more images to be used as virtual background.
     // Only the default ones from will be available.
@@ -1223,6 +1256,7 @@ var config = {
     //     'notify.invitedThreePlusMembers', // shown when 3+ participants have been invited
     //     'notify.invitedTwoMembers', // shown when 2 participants have been invited
     //     'notify.kickParticipant', // shown when a participant is kicked
+    //     'notify.linkToSalesforce', // shown when joining a meeting with salesforce integration
     //     'notify.moderationStartedTitle', // shown when AV moderation is activated
     //     'notify.moderationStoppedTitle', // shown when AV moderation is deactivated
     //     'notify.moderationInEffectTitle', // shown when user attempts to unmute audio during AV moderation
