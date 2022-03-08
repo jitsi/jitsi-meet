@@ -26,7 +26,14 @@ import { isVpaasMeeting } from '../../../jaas/functions';
 import { RECORDING_TYPES } from '../../constants';
 import { getRecordingDurationEstimation } from '../../functions';
 
-import { DROPBOX_LOGO, ICON_CLOUD, JITSI_LOGO, TRACK_COLOR } from './styles';
+import {
+    DROPBOX_LOGO,
+    ICON_CLOUD,
+    ICON_INFO,
+    ICON_USERS,
+    JITSI_LOGO,
+    TRACK_COLOR
+} from './styles';
 
 type Props = {
 
@@ -149,8 +156,9 @@ class StartRecordingDialogContent extends Component<Props> {
                 className = 'recording-dialog'
                 style = { styles.container }>
                 { this._renderNoIntegrationsContent() }
-                { this._renderIntegrationsContent() }
                 { this._renderFileSharingContent() }
+                { this._renderUploadToTheCloudInfo() }
+                { this._renderIntegrationsContent() }
             </Container>
         );
     }
@@ -182,14 +190,11 @@ class StartRecordingDialogContent extends Component<Props> {
             <Container
                 className = 'recording-header'
                 key = 'fileSharingSetting'
-                style = { [
-                    styles.header,
-                    _dialogStyles.topBorderContainer
-                ] }>
-                <Container className = 'recording-icon-container'>
+                style = { styles.header }>
+                <Container className = 'recording-icon-container file-sharing-icon-container'>
                     <Image
-                        className = 'recording-icon'
-                        src = { ICON_CLOUD }
+                        className = 'recording-file-sharing-icon'
+                        src = { ICON_USERS }
                         style = { styles.recordingIcon } />
                 </Container>
                 <Text
@@ -208,6 +213,46 @@ class StartRecordingDialogContent extends Component<Props> {
                     style = { styles.switch }
                     trackColor = {{ false: TRACK_COLOR }}
                     value = { sharingSetting } />
+            </Container>
+        );
+    }
+
+    /**
+     * Renders the info in case recording is uploaded to the cloud.
+     *
+     * @returns {React$Component}
+     */
+    _renderUploadToTheCloudInfo() {
+        const {
+            _dialogStyles,
+            _styles: styles,
+            isVpaas,
+            selectedRecordingService,
+            t
+        } = this.props;
+
+        if (isVpaas
+            || selectedRecordingService !== RECORDING_TYPES.JITSI_REC_SERVICE) {
+            return null;
+        }
+
+        return (
+            <Container
+                className = 'recording-info'
+                key = 'cloudUploadInfo'
+                style = { styles.headerInfo }>
+                <Image
+                    className = 'recording-info-icon'
+                    src = { ICON_INFO }
+                    style = { styles.recordingInfoIcon } />
+                <Text
+                    className = 'recording-info-title'
+                    style = {{
+                        ..._dialogStyles.text,
+                        ...styles.titleInfo
+                    }}>
+                    { t('recording.serviceDescriptionCloudInfo') }
+                </Text>
             </Container>
         );
     }
@@ -242,15 +287,23 @@ class StartRecordingDialogContent extends Component<Props> {
 
         const icon = isVpaas ? ICON_CLOUD : JITSI_LOGO;
         const label = isVpaas ? t('recording.serviceDescriptionCloud') : t('recording.serviceDescription');
+        const jitsiContentRecordingIconContainer
+            = this.props.integrationsEnabled
+                ? 'jitsi-content-recording-icon-container-with-switch'
+                : 'jitsi-content-recording-icon-container-without-switch';
+        const contentRecordingClass = isVpaas
+            ? 'cloud-content-recording-icon-container'
+            : jitsiContentRecordingIconContainer;
+        const jitsiRecordingHeaderClass = !isVpaas && 'jitsi-recording-header';
 
         return (
             <Container
-                className = 'recording-header'
+                className = { `recording-header ${jitsiRecordingHeaderClass}` }
                 key = 'noIntegrationSetting'
                 style = { styles.header }>
-                <Container className = 'recording-icon-container'>
+                <Container className = { contentRecordingClass }>
                     <Image
-                        className = 'recording-icon'
+                        className = 'content-recording-icon'
                         src = { icon }
                         style = { styles.recordingIcon } />
                 </Container>
@@ -327,7 +380,10 @@ class StartRecordingDialogContent extends Component<Props> {
             <Container>
                 <Container
                     className = 'recording-header recording-header-line'
-                    style = { styles.header }>
+                    style = { [
+                        styles.headerIntegrations,
+                        _dialogStyles.topBorderContainer
+                    ] }>
                     <Container
                         className = 'recording-icon-container'>
                         <Image
