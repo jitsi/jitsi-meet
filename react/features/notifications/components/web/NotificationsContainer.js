@@ -106,6 +106,10 @@ const useStyles = theme => {
                     backgroundColor: theme.palette.iconError
                 },
 
+                '&.success': {
+                    backgroundColor: theme.palette.success01
+                },
+
                 '&.warning': {
                     backgroundColor: theme.palette.warning01
                 }

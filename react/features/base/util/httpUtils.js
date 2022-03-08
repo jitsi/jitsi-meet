@@ -13,11 +13,12 @@ const RETRY_TIMEOUT = 3000;
  *
  * @param {string} url - The URL to perform a GET against.
  * @param {?boolean} retry - Whether the request will be retried after short timeout.
+ * @param {?Object} options - The request options.
  * @returns {Promise<Object>} The response body, in JSON format, will be
  * through the Promise.
  */
-export function doGetJSON(url, retry) {
-    const fetchPromise = fetch(url)
+export function doGetJSON(url, retry, options) {
+    const fetchPromise = fetch(url, options)
         .then(response => {
             const jsonify = response.json();
 

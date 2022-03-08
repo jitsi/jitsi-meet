@@ -201,6 +201,7 @@ export default [
     'readOnlyName',
     'replaceParticipant',
     'resolution',
+    'salesforceUrl',
     'screenshotCapture',
     'startAudioMuted',
     'startAudioOnly',

@@ -1001,6 +1001,15 @@ var config = {
     //     disableGrantModerator: true
     // },
 
+    // Endpoint that enables support for salesforce integration with in-meeting resource linking
+    // This is required for:
+    // listing the most recent records - salesforceUrl/records/recents
+    // searching records - salesforceUrl/records?text=${text}
+    // retrieving record details - salesforceUrl/records/${id}?type=${type}
+    // and linking the meeting - salesforceUrl/sessions/${sessionId}/records/${id}
+    //
+    // salesforceUrl: 'https://api.example.com/',
+
     // If set to true all muting operations of remote participants will be disabled.
     // disableRemoteMute: true,
 
@@ -1247,6 +1256,7 @@ var config = {
     //     'notify.invitedThreePlusMembers', // shown when 3+ participants have been invited
     //     'notify.invitedTwoMembers', // shown when 2 participants have been invited
     //     'notify.kickParticipant', // shown when a participant is kicked
+    //     'notify.linkToSalesforce', // shown when joining a meeting with salesforce integration
     //     'notify.moderationStartedTitle', // shown when AV moderation is activated
     //     'notify.moderationStoppedTitle', // shown when AV moderation is deactivated
     //     'notify.moderationInEffectTitle', // shown when user attempts to unmute audio during AV moderation
