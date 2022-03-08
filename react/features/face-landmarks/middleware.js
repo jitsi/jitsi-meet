@@ -1,5 +1,3 @@
-// @flow
-
 import {
     CONFERENCE_JOINED,
     CONFERENCE_WILL_LEAVE,
