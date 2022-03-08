@@ -516,7 +516,7 @@ var config = {
     // Hides the dominant speaker name badge that hovers above the toolbox
     // hideDominantSpeakerBadge: false,
 
-    // Default language for the user interface.
+    // Default language for the user interface. Cannot be overwritten.
     // defaultLanguage: 'en',
 
     // Disables profile and the edit of all fields from the profile settings (display name and email)
