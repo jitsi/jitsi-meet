@@ -1,43 +1,39 @@
-// @flow
-
-import React, { Component } from 'react';
+import * as React from 'react';
 import { Text, View } from 'react-native';
 
 import {
     getParticipantById,
     getParticipantDisplayName
-} from '../../../base/participants';
-import { connect } from '../../../base/redux';
+} from '../../../base/participants/functions.js';
+import { connect } from '../../../base/redux/functions.js';
 
 import styles from './styles';
-
-type Props = {
-
-    /**
-     * The name of the participant to render.
-     */
-    _participantName: string,
-
-    /**
-     * True of the label needs to be rendered. False otherwise.
-     */
-    _render: boolean,
-
-    /**
-     * Whether ot not the name is in a container.
-     */
-    contained?: boolean,
-
-    /**
-     * The ID of the participant to render the label for.
-     */
-    participantId: string
-}
 
 /**
  * Renders a label with the display name of the on-stage participant.
  */
-class DisplayNameLabel extends Component<Props> {
+class DisplayNameLabel extends React.Component<{
+
+    /**
+     * The name of the participant to render.
+     */
+    _participantName: string;
+
+    /**
+     * True of the label needs to be rendered. False otherwise.
+     */
+    _render: boolean;
+
+    /**
+     * Whether ot not the name is in a container.
+     */
+    contained?: boolean;
+
+    /**
+     * The ID of the participant to render the label for.
+     */
+    participantId: string;
+}> {
     /**
      * Implements {@code Component#render}.
      *
@@ -68,13 +64,12 @@ class DisplayNameLabel extends Component<Props> {
  * @returns {{
  * }}
  */
-function _mapStateToProps(state: Object, ownProps: Props) {
-    const { participantId, contained } = ownProps;
-    const participant = getParticipantById(state, participantId);
+function _mapStateToProps(state: Object, ownProps) {
+    const participant = getParticipantById(state, ownProps.participantId);
 
     return {
-        _participantName: getParticipantDisplayName(state, participantId),
-        _render: participant && (!participant?.local || contained) && !participant?.isFakeParticipant
+        _participantName: getParticipantDisplayName(state, ownProps.participantId),
+        _render: participant && (!participant?.local || ownProps.contained) && !participant?.isFakeParticipant
     };
 }
 

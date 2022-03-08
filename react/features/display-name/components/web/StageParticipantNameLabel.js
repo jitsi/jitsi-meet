@@ -12,7 +12,7 @@ import { getLargeVideoParticipant } from '../../../large-video/functions';
 import { isToolboxVisible } from '../../../toolbox/functions.web';
 import { isLayoutTileView } from '../../../video-layout';
 
-import DisplayNameBadge from './DisplayNameBadge';
+import DisplayNameBadge from './DisplayNameBadge.tsx';
 
 const useStyles = makeStyles(theme => {
     return {
