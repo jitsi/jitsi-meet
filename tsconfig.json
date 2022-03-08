@@ -4,7 +4,7 @@
         "target": "es6",
         "jsx": "react",
         "lib": [ "ES2020", "DOM" ],
-        "noEmit": true
+        "noEmit": false
     },
     "exclude": [
         "node_modules"
