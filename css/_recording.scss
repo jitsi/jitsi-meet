@@ -12,7 +12,6 @@
         flex: 0;
         flex-direction: row;
         justify-content: space-between;
-        padding-top: 32px;
 
         .recording-title {
             display: inline-flex;
@@ -24,6 +23,7 @@
 
     .recording-header-line {
         border-top: 1px solid #5e6d7a;
+        padding-top: 32px;
     }
 
     .recording-switch-disabled {

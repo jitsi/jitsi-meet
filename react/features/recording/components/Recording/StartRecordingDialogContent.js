@@ -226,14 +226,12 @@ class StartRecordingDialogContent extends Component<Props> {
         const {
             _dialogStyles,
             _styles: styles,
-            fileRecordingsServiceSharingEnabled,
             isVpaas,
             selectedRecordingService,
             t
         } = this.props;
 
-        if (!fileRecordingsServiceSharingEnabled
-            || isVpaas
+        if (isVpaas
             || selectedRecordingService !== RECORDING_TYPES.JITSI_REC_SERVICE) {
             return null;
         }
