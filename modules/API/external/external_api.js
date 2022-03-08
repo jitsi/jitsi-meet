@@ -208,7 +208,8 @@ function parseArguments(args) {
             configOverwrite,
             interfaceConfigOverwrite,
             jwt,
-            onload
+            onload,
+            lang
         ] = args;
 
         return {
@@ -219,7 +220,8 @@ function parseArguments(args) {
             configOverwrite,
             interfaceConfigOverwrite,
             jwt,
-            onload
+            onload,
+            lang
         };
     }
     case 'object': // new arguments format
@@ -301,6 +303,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             configOverwrite = {},
             interfaceConfigOverwrite = {},
             jwt = undefined,
+            lang = undefined,
             onload = undefined,
             invitees,
             devices,
@@ -314,6 +317,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             configOverwrite,
             interfaceConfigOverwrite,
             jwt,
+            lang,
             roomName,
             devices,
             userInfo,
