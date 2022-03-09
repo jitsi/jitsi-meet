@@ -27,7 +27,7 @@ export function getOverlayToRender(state: Object) {
     }
 
     if (nativeOverlay) {
-        navigateRoot(screen.loadConfigOverlay);
+        navigateRoot(screen.connecting);
     }
 
     return undefined;

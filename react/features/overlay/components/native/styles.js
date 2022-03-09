@@ -2,7 +2,7 @@
 
 import { StyleSheet } from 'react-native';
 
-import { BoxModel, ColorPalette } from '../../../base/styles';
+import { BoxModel } from '../../../base/styles';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 export const TEXT_COLOR = BaseTheme.palette.text01;
@@ -21,7 +21,7 @@ export default {
      */
     container: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: ColorPalette.black
+        backgroundColor: BaseTheme.palette.ui00
     },
 
     loadingOverlayText: {

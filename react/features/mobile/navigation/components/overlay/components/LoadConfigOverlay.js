@@ -3,12 +3,11 @@
 import React, { PureComponent } from 'react';
 import { SafeAreaView, Text, View } from 'react-native';
 
-import { translate } from '../../../base/i18n';
-import { LoadingIndicator } from '../../../base/react';
-import { StyleType } from '../../../base/styles';
-
-import OverlayFrame from './OverlayFrame';
-import styles, { TEXT_COLOR } from './styles';
+import { translate } from '../../../../../base/i18n';
+import { LoadingIndicator } from '../../../../../base/react';
+import { StyleType } from '../../../../../base/styles';
+import { OverlayFrame } from '../../../../../overlay';
+import styles, { TEXT_COLOR } from '../../../../../overlay/components/native/styles';
 
 type Props = {
 
@@ -28,18 +27,6 @@ type Props = {
  * so then the app doesn't seem hung.
  */
 class LoadConfigOverlay extends PureComponent<Props> {
-    /**
-     * Determines whether this overlay needs to be rendered (according to a
-     * specific redux state). Called by {@link OverlayContainer}.
-     *
-     * @param {Object} state - The redux state.
-     * @returns {boolean} - If this overlay needs to be rendered, {@code true};
-     * {@code false}, otherwise.
-     */
-    static needsRender(state: Object) {
-        return Boolean(state['features/overlay'].loadConfigOverlayVisible);
-    }
-
     /**
      * Implements React's {@link Component#render()}.
      *

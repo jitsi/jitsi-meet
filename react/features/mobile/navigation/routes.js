@@ -12,7 +12,7 @@ export const screen = {
         help: 'Help'
     },
     dialInSummary: 'Dial-In Info',
-    loadConfigOverlay: 'Connecting',
+    connecting: 'Connecting',
     conference: {
         root: 'Conference root',
         main: 'Conference',
