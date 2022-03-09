@@ -51,7 +51,7 @@ describe('Jitsi Meet App', () => {
         await element(by.id('join-room-button')).tap();
 
         // Conference joined
-        await sleep(1000);
+        await sleep(2000);
         await expect(element(by.label('Mute / Unmute'))).toBeVisible();
         await expect(element(by.label('Start / Stop camera'))).toBeVisible();
         await element(by.label('Mute / Unmute')).tap();
