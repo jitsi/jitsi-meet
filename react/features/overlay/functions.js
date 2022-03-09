@@ -13,8 +13,6 @@ import { getOverlays } from './overlays';
  */
 export function getOverlayToRender(state: Object) {
     const { loadConfigOverlayVisible } = state['features/overlay'];
-    const nativeOverlay
-        = navigator.product === 'ReactNative' && loadConfigOverlayVisible;
 
     for (const overlay of getOverlays()) {
         // react-i18n / react-redux wrap components and thus we cannot access
@@ -26,7 +24,7 @@ export function getOverlayToRender(state: Object) {
         }
     }
 
-    if (nativeOverlay) {
+    if (loadConfigOverlayVisible) {
         navigateRoot(screen.connecting);
     }
 
