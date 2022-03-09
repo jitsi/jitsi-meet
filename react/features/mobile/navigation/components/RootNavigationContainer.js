@@ -51,7 +51,11 @@ const RootNavigationContainer = ({ isWelcomePageAvailable }: Props) => (
                             options = { drawerNavigatorScreenOptions } />
                         : <RootStack.Screen
                             component = { BlankPage }
-                            name = { screen.root } />
+                            name = { screen.root }
+                            options = {{
+                                gestureEnabled: false,
+                                headerShown: false
+                            }} />
                 }
                 <RootStack.Screen
                     component = { DialInSummary }
