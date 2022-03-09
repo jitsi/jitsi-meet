@@ -571,7 +571,8 @@ class Toolbox extends Component<Props> {
         const {
             _feedbackConfigured,
             _isMobile,
-            _screenSharing
+            _screenSharing,
+            _isStaffMember
         } = this.props;
 
         const microphone = {
@@ -638,12 +639,12 @@ class Toolbox extends Component<Props> {
             group: 2
         };
 
-        const videoQuality = {
+        const videoQuality = _isStaffMember && {
             key: 'videoquality',
             Content: VideoQualityButton,
             handleClick: this._onToolbarOpenVideoQuality,
             group: 2
-        };
+        }
 
         const fullscreen = !_isMobile && {
             key: 'fullscreen',
