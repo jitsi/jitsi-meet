@@ -23,10 +23,15 @@ class UserMediaPermissionsOverlay extends AbstractUserMediaPermissionsOverlay {
      * @returns {ReactElement}
      */
     render() {
-        const { browser, t } = this.props;
+        const { _premeetingBackground, browser, t } = this.props;
+        const style = _premeetingBackground ? {
+            background: _premeetingBackground,
+            backgroundPosition: 'center',
+            backgroundSize: 'cover'
+        } : {};
 
         return (
-            <OverlayFrame>
+            <OverlayFrame style = { style }>
                 <div className = 'inlay'>
                     <span className = 'inlay__icon icon-microphone' />
                     <span className = 'inlay__icon icon-camera' />
@@ -84,5 +89,21 @@ class UserMediaPermissionsOverlay extends AbstractUserMediaPermissionsOverlay {
     }
 }
 
+/**
+ * Maps (parts of) the redux state to the React {@code Component} props.
+ *
+ * @param {Object} state - The redux state.
+ * @param {Object} ownProps - The props passed to the component.
+ * @returns {Object}
+ */
+function mapStateToProps(state): Object {
+    const { premeetingBackground } = state['features/dynamic-branding'];
+
+    return {
+        ...abstractMapStateToProps,
+        _premeetingBackground: premeetingBackground
+    };
+}
+
 export default translate(
-    connect(abstractMapStateToProps)(UserMediaPermissionsOverlay));
+    connect(mapStateToProps)(UserMediaPermissionsOverlay));
