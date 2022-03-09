@@ -27,7 +27,7 @@
         "ios.release": {
             "type": "ios.app",
             "binaryPath": "ios/DerivedData/Build/Products/Release-iphonesimulator/jitsi-meet.app",
-            "build": "xcodebuild -workspace ios/jitsi-meet.xcworkspace -scheme JitsiMeet -configuration Release -sdk iphonesimulator -derivedDataPath ios/DerivedData VALID_ARCHS=x86_64 ENABLE_BITCODE=NO"
+            "build": "xcodebuild -workspace ios/jitsi-meet.xcworkspace -scheme JitsiMeet -configuration Release -derivedDataPath ios/DerivedData"
         }
     },
     "configurations": {
