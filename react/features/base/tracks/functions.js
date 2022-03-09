@@ -1,5 +1,6 @@
 /* global APP */
 
+import { getMultipleVideoSupportFeatureFlag } from '../config/functions.any';
 import { isMobileBrowser } from '../environment/utils';
 import JitsiMeetJS, { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, VIDEO_TYPE, setAudioMuted } from '../media';
@@ -296,6 +297,33 @@ export function getLocalAudioTrack(tracks) {
 }
 
 /**
+ * Returns the local desktop track.
+ *
+ * @param {Track[]} tracks - List of all tracks.
+ * @param {boolean} [includePending] - Indicates whether a local track is to be returned if it is still pending.
+ * A local track is pending if {@code getUserMedia} is still executing to create it and, consequently, its
+ * {@code jitsiTrack} property is {@code undefined}. By default a pending local track is not returned.
+ * @returns {(Track|undefined)}
+ */
+export function getLocalDesktopTrack(tracks, includePending = false) {
+    return (
+        getLocalTracks(tracks, includePending)
+            .find(t => t.mediaType === MEDIA_TYPE.SCREENSHARE || t.videoType === VIDEO_TYPE.DESKTOP));
+}
+
+/**
+ * Returns the stored local desktop jitsiLocalTrack.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {JitsiLocalTrack|undefined}
+ */
+export function getLocalJitsiDesktopTrack(state) {
+    const track = getLocalDesktopTrack(getTrackState(state));
+
+    return track?.jitsiTrack;
+}
+
+/**
  * Returns local track by media type.
  *
  * @param {Track[]} tracks - List of all tracks.
@@ -524,20 +552,22 @@ export function isUserInteractionRequiredForUnmute(state) {
 }
 
 /**
- * Mutes or unmutes a specific {@code JitsiLocalTrack}. If the muted state of
- * the specified {@code track} is already in accord with the specified
- * {@code muted} value, then does nothing.
+ * Mutes or unmutes a specific {@code JitsiLocalTrack}. If the muted state of the specified {@code track} is already in
+ * accord with the specified {@code muted} value, then does nothing.
  *
- * @param {JitsiLocalTrack} track - The {@code JitsiLocalTrack} to mute or
- * unmute.
- * @param {boolean} muted - If the specified {@code track} is to be muted, then
- * {@code true}; otherwise, {@code false}.
+ * @param {JitsiLocalTrack} track - The {@code JitsiLocalTrack} to mute or unmute.
+ * @param {boolean} muted - If the specified {@code track} is to be muted, then {@code true}; otherwise, {@code false}.
+ * @param {Object} state - The redux state.
  * @returns {Promise}
  */
-export function setTrackMuted(track, muted) {
+export function setTrackMuted(track, muted, state) {
     muted = Boolean(muted); // eslint-disable-line no-param-reassign
 
-    if (track.isMuted() === muted) {
+    // Ignore the check for desktop track muted operation. When the screenshare is terminated by clicking on the
+    // browser's 'Stop sharing' button, the local stream is stopped before the inactive stream handler is fired.
+    // We still need to proceed here and remove the track from the peerconnection.
+    if (track.isMuted() === muted
+        && !(track.getVideoType() === VIDEO_TYPE.DESKTOP && getMultipleVideoSupportFeatureFlag(state))) {
         return Promise.resolve();
     }
 
@@ -546,8 +576,9 @@ export function setTrackMuted(track, muted) {
     return track[f]().catch(error => {
         // Track might be already disposed so ignore such an error.
         if (error.name !== JitsiTrackErrors.TRACK_IS_DISPOSED) {
-            // FIXME Emit mute failed, so that the app can show error dialog.
             logger.error(`set track ${f} failed`, error);
+
+            return Promise.reject(error);
         }
     });
 }

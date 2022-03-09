@@ -55,6 +55,18 @@ export const TRACK_CREATE_CANCELED = 'TRACK_CREATE_CANCELED';
 export const TRACK_CREATE_ERROR = 'TRACK_CREATE_ERROR';
 
 /**
+ * The type of redux action dispatched when the track mute/unmute operation fails at the conference level. This could
+ * happen because of {@code getUserMedia} errors during unmute or replace track errors at the peerconnection level.
+ *
+ * {
+ *     type: TRACK_MUTE_UNMUTE_FAILED,
+ *     track: Track,
+ *     wasMuting: Boolean
+ * }
+ */
+export const TRACK_MUTE_UNMUTE_FAILED = 'TRACK_MUTE_UNMUTE_FAILED';
+
+/**
  * The type of redux action dispatched when a track has triggered no data from source event.
  *
  * {

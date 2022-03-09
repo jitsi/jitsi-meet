@@ -554,6 +554,7 @@ class Toolbox extends Component<Props> {
             _desktopSharingButtonDisabled,
             _desktopSharingEnabled,
             _localVideo,
+            _screenSharing,
             _virtualSource,
             dispatch
         } = this.props;
@@ -574,7 +575,7 @@ class Toolbox extends Component<Props> {
         }
 
         if (_desktopSharingEnabled && !_desktopSharingButtonDisabled) {
-            dispatch(startScreenShareFlow());
+            dispatch(startScreenShareFlow(!_screenSharing));
         }
     }
 

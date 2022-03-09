@@ -50,6 +50,17 @@ export function getMeetingRegion(state: Object) {
 }
 
 /**
+ * Selector used to get the sendMultipleVideoStreams feature flag.
+ *
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+export function getMultipleVideoSupportFeatureFlag(state: Object) {
+    return getFeatureFlag(state, FEATURE_FLAGS.MULTIPLE_VIDEO_STREAMS_SUPPORT)
+        && getSourceNameSignalingFeatureFlag(state);
+}
+
+/**
  * Selector used to get the sourceNameSignaling feature flag.
  *
  * @param {Object} state - The global state.

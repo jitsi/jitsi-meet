@@ -127,15 +127,7 @@ ReducerRegistry.register('features/base/tracks', (state = [], action) => {
         return state.map(t => track(t, action));
 
     case TRACK_ADDED: {
-        let withoutTrackStub = state;
-
-        if (action.track.local) {
-            withoutTrackStub
-                = state.filter(
-                    t => !t.local || t.mediaType !== action.track.mediaType);
-        }
-
-        return [ ...withoutTrackStub, action.track ];
+        return [ ...state, action.track ];
     }
 
     case TRACK_CREATE_CANCELED:

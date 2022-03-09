@@ -1,11 +1,16 @@
 // @flow
 
+import { getMultipleVideoSupportFeatureFlag } from '../base/config/functions.any';
 import { openDialog } from '../base/dialog/actions';
 import { browser } from '../base/lib-jitsi-meet';
 import { shouldHideShareAudioHelper } from '../base/settings';
 import { toggleScreensharing } from '../base/tracks';
 
-import { SET_SCREEN_AUDIO_SHARE_STATE, SET_SCREENSHARE_CAPTURE_FRAME_RATE } from './actionTypes';
+import {
+    SET_SCREEN_AUDIO_SHARE_STATE,
+    SET_SCREENSHARE_CAPTURE_FRAME_RATE,
+    SET_SCREENSHARE_TRACKS
+} from './actionTypes';
 import { ShareAudioDialog } from './components';
 import ShareMediaWarningDialog from './components/ShareScreenWarningDialog';
 import { isAudioOnlySharing, isScreenVideoShared } from './functions';
@@ -43,6 +48,22 @@ export function setScreenshareFramerate(captureFrameRate: number) {
 }
 
 /**
+ * Updates the audio track associated with the screenshare.
+ *
+ * @param {JitsiLocalTrack} desktopAudioTrack - The audio track captured from the screenshare.
+ * @returns {{
+ *      type: SET_SCREENSHARE_TRACKS,
+ *      desktopAudioTrack: JitsiTrack
+ * }}
+ */
+export function setScreenshareAudioTrack(desktopAudioTrack) {
+    return {
+        type: SET_SCREENSHARE_TRACKS,
+        desktopAudioTrack
+    };
+}
+
+/**
  * Start the audio only screen sharing flow. Function will switch between off and on states depending on the context.
  *
  * @param {Object} state - The state of the application.
@@ -65,6 +86,12 @@ export function startAudioScreenShareFlow() {
         // available for audio screen sharing, namely full window audio.
         // If we're already sharing audio, toggle off.
         if (shouldHideShareAudioHelper(state) || browser.isElectron() || audioOnlySharing) {
+            if (getMultipleVideoSupportFeatureFlag(state)) {
+                dispatch(toggleScreensharing(!audioOnlySharing, true));
+
+                return;
+            }
+
             // We don't want to explicity set the screens share state, by passing undefined we let the
             // underlying logic decide if it's on or off.
             dispatch(toggleScreensharing(undefined, true));
@@ -80,8 +107,7 @@ export function startAudioScreenShareFlow() {
  * Start normal screen sharing flow.Function will switch between off and on states depending on the context, and if
  * not explicity told otherwise.
  *
- * @param {boolean} enabled - Explicitly set the screen sharing state. This has been kept for backward compatibility
- * with the external API exposed by the iframe, even though it might not be used.
+ * @param {boolean} enabled - Explicitly set the screen sharing state.
  * @returns {void}
  */
 export function startScreenShareFlow(enabled: boolean) {
