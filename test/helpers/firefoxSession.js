@@ -1,5 +1,5 @@
 import { remote } from 'webdriverio'
-export default async function createBrowserUserSession() {
+export default async function createFirefoxSession() {
     const browser = await remote({
         capabilities: {
             browserName: 'firefox',
@@ -16,4 +16,4 @@ export default async function createBrowserUserSession() {
         }
     })
     return browser
-}
+};

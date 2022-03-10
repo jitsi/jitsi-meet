@@ -18,3 +18,9 @@ export const DEFAULT_CONFIG =
 + "&config.analytics.disabled=true"
 + "&interfaceConfig.SHOW_CHROME_EXTENSION_BANNER=false"
 + "&interfaceConfig.DISABLE_FOCUS_INDICATOR=true";
+
+export const FIRST_PARTICIPANT = "First participant";
+export const SECOND_PARTICIPANT = "Second participant";
+export const THIRD_PARTICIPANT = "Third participant";
+
+export const ENTER_KEY = "\uE007";
