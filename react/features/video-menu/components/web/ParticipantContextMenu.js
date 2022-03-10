@@ -5,6 +5,7 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { isSupported as isAvModerationSupported } from '../../../av-moderation/functions';
 import { Avatar } from '../../../base/avatar';
 import ContextMenu from '../../../base/components/context-menu/ContextMenu';
 import ContextMenuItemGroup from '../../../base/components/context-menu/ContextMenuItemGroup';
@@ -140,6 +141,7 @@ const ParticipantContextMenu = ({
     const _volume = (participant?.local ?? true ? undefined
         : participant?.id ? participantsVolume[participant?.id] : undefined) ?? 1;
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
+    const isModerationSupported = useSelector(isAvModerationSupported());
 
     const _currentRoomId = useSelector(getCurrentRoomId);
     const _rooms = Object.values(useSelector(getBreakoutRooms));
@@ -179,7 +181,7 @@ const ParticipantContextMenu = ({
     } ];
 
     if (_isModerator) {
-        if (thumbnailMenu || _overflowDrawer) {
+        if ((thumbnailMenu || _overflowDrawer) && isModerationSupported) {
             buttons.push(<AskToUnmuteButton
                 isAudioForceMuted = { _isAudioForceMuted }
                 isVideoForceMuted = { _isVideoForceMuted }
