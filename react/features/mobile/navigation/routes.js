@@ -33,5 +33,6 @@ export const screen = {
         invite: 'Invite',
         sharedDocument: 'Shared document'
     },
-    lobby: 'Lobby'
+    lobby: 'Lobby',
+    endMeeting: 'End'
 };

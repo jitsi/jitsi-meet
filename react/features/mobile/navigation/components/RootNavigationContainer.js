@@ -7,7 +7,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { connect } from '../../../base/redux';
 import { DialInSummary } from '../../../invite';
-import BlankPage from '../../../welcome/components/BlankPage';
+import EndMeetingPage from '../../../welcome/components/EndMeetingPage';
 import { rootNavigationRef } from '../rootNavigationContainerRef';
 import { screen } from '../routes';
 import {
@@ -18,7 +18,7 @@ import {
 
 import ConferenceNavigationContainer
     from './conference/components/ConferenceNavigationContainer';
-import LoadConfigOverlay from './overlay/components/LoadConfigOverlay';
+import ConnectingPage from './connecting/components/ConnectingPage';
 import WelcomePageNavigationContainer from './welcome/components/WelcomePageNavigationContainer';
 import { isWelcomePageAppEnabled } from './welcome/functions';
 
@@ -34,51 +34,50 @@ type Props = {
 }
 
 
-const RootNavigationContainer
-    = ({ isWelcomePageAvailable }: Props) => (
-        <SafeAreaProvider>
-            <NavigationContainer
-                independent = { true }
-                ref = { rootNavigationRef }
-                theme = { navigationContainerTheme }>
-                <RootStack.Navigator
-                    initialRouteName = { screen.root }>
-                    {
-                        isWelcomePageAvailable
-                            ? <RootStack.Screen
-                                component = { WelcomePageNavigationContainer }
-                                name = { screen.root }
-                                options = { drawerNavigatorScreenOptions } />
-                            : <RootStack.Screen
-                                component = { BlankPage }
-                                name = { screen.root }
-                                options = {{
-                                    gestureEnabled: false,
-                                    headerShown: false
-                                }} />
-                    }
-                    <RootStack.Screen
-                        component = { DialInSummary }
-                        name = { screen.dialInSummary }
-                        options = { dialInSummaryScreenOptions } />
-                    <RootStack.Screen
-                        component = { LoadConfigOverlay }
-                        name = { screen.connecting }
-                        options = {{
-                            gestureEnabled: false,
-                            headerShown: false
-                        }} />
-                    <RootStack.Screen
-                        component = { ConferenceNavigationContainer }
-                        name = { screen.conference.root }
-                        options = {{
-                            gestureEnabled: false,
-                            headerShown: false
-                        }} />
-                </RootStack.Navigator>
-            </NavigationContainer>
-        </SafeAreaProvider>
-    );
+const RootNavigationContainer = ({ isWelcomePageAvailable }: Props) => (
+    <SafeAreaProvider>
+        <NavigationContainer
+            independent = { true }
+            ref = { rootNavigationRef }
+            theme = { navigationContainerTheme }>
+            <RootStack.Navigator
+                initialRouteName = { screen.root }>
+                {
+                    isWelcomePageAvailable
+                        ? <RootStack.Screen
+                            component = { WelcomePageNavigationContainer }
+                            name = { screen.root }
+                            options = { drawerNavigatorScreenOptions } />
+                        : <RootStack.Screen
+                            component = { ConnectingPage }
+                            name = { screen.connecting }
+                            options = {{
+                                gestureEnabled: false,
+                                headerShown: false
+                            }} />
+                }
+                <RootStack.Screen
+                    component = { DialInSummary }
+                    name = { screen.dialInSummary }
+                    options = { dialInSummaryScreenOptions } />
+                <RootStack.Screen
+                    component = { ConferenceNavigationContainer }
+                    name = { screen.conference.root }
+                    options = {{
+                        gestureEnabled: false,
+                        headerShown: false
+                    }} />
+                <RootStack.Screen
+                    component = { EndMeetingPage }
+                    name = { screen.endMeeting }
+                    options = {{
+                        gestureEnabled: false,
+                        headerShown: false
+                    }} />
+            </RootStack.Navigator>
+        </NavigationContainer>
+    </SafeAreaProvider>
+);
 
 /**
  * Maps part of the Redux store to the props of this component.

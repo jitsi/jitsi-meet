@@ -26,7 +26,7 @@ type Props = {
  * Implements an overlay to tell the user that there is an operation in progress in the background during connect
  * so then the app doesn't seem hung.
  */
-class LoadConfigOverlay extends PureComponent<Props> {
+class ConnectingPage extends PureComponent<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -53,4 +53,4 @@ class LoadConfigOverlay extends PureComponent<Props> {
 }
 
 
-export default translate(LoadConfigOverlay);
+export default translate(ConnectingPage);
