@@ -635,7 +635,9 @@ var config = {
     //     timeout: 4000,
     //     // Moved from interfaceConfig.TOOLBAR_ALWAYS_VISIBLE
     //     // Whether toolbar should be always visible or should hide after x miliseconds.
-    //     alwaysVisible: false
+    //     alwaysVisible: false,
+    //     // Indicates whether the toolbar should still autohide when chat is open
+    //     autoHideWhileChatIsOpen: false
     // },
 
     // Toolbar buttons which have their click/tap event exposed through the API on

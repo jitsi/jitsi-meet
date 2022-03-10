@@ -74,7 +74,7 @@ export function fullScreenChanged(fullScreen: boolean) {
 export function hideToolbox(force: boolean = false): Function {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
-        const { toolbarConfig: { alwaysVisible } } = state['features/base/config'];
+        const { toolbarConfig: { alwaysVisible, autoHideWhileChatIsOpen } } = state['features/base/config'];
         const { hovered } = state['features/toolbox'];
         const toolbarTimeout = getToolbarTimeout(state);
 
@@ -89,7 +89,7 @@ export function hideToolbox(force: boolean = false): Function {
         if (!force
                 && (hovered
                     || state['features/invite'].calleeInfoVisible
-                    || state['features/chat'].isOpen
+                    || (state['features/chat'].isOpen && !autoHideWhileChatIsOpen)
                     || document.querySelector(focusSelector))) {
             dispatch(
                 setToolboxTimeout(
