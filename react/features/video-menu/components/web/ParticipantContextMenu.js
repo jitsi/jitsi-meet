@@ -13,6 +13,7 @@ import { isIosMobileBrowser, isMobileBrowser } from '../../../base/environment/u
 import { IconShareVideo } from '../../../base/icons';
 import { MEDIA_TYPE } from '../../../base/media';
 import { getLocalParticipant, PARTICIPANT_ROLE } from '../../../base/participants';
+import { isParticipantAudioMuted } from '../../../base/tracks';
 import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { setVolume } from '../../../filmstrip/actions.web';
 import { isForceMuted } from '../../../participants-pane/functions';
@@ -133,6 +134,7 @@ const ParticipantContextMenu = ({
         isForceMuted(participant, MEDIA_TYPE.AUDIO, state));
     const _isVideoForceMuted = useSelector(state =>
         isForceMuted(participant, MEDIA_TYPE.VIDEO, state));
+    const _isAudioMuted = useSelector(state => isParticipantAudioMuted(participant, state));
     const _overflowDrawer = useSelector(showOverflowDrawer);
     const { remoteVideoMenu = {}, disableRemoteMute, startSilent }
         = useSelector(state => state['features/base/config']);
@@ -181,7 +183,7 @@ const ParticipantContextMenu = ({
     } ];
 
     if (_isModerator) {
-        if ((thumbnailMenu || _overflowDrawer) && isModerationSupported) {
+        if ((thumbnailMenu || _overflowDrawer) && isModerationSupported && _isAudioMuted) {
             buttons.push(<AskToUnmuteButton
                 isAudioForceMuted = { _isAudioForceMuted }
                 isVideoForceMuted = { _isVideoForceMuted }
