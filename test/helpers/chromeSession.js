@@ -1,4 +1,5 @@
 
+import { remote } from 'webdriverio'
 export default async function createChromeSession() {
     const browser = await remote({
         capabilities: {

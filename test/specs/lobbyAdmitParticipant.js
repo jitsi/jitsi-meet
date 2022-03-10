@@ -80,6 +80,6 @@ describe('Activate lobby and admit participant', () => {
         await lobbyAdmitBtn.click();
         await openParticipantsPane();
         await browser.deleteSession();
-        await Guest1.deleteSession
+        await Guest1.deleteSession();
     });
 });
