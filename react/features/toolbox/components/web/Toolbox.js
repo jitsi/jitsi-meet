@@ -3,6 +3,7 @@
 import { withStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import React, { Component, Fragment } from 'react';
+import { batch } from 'react-redux';
 
 import keyboardShortcut from '../../../../../modules/keyboardshortcut/keyboardshortcut';
 import {
@@ -30,6 +31,8 @@ import { ChatButton } from '../../../chat/components';
 import { EmbedMeetingButton } from '../../../embed-meeting';
 import { SharedDocumentButton } from '../../../etherpad';
 import { FeedbackButton } from '../../../feedback';
+import { setGifMenuVisibility } from '../../../gifs/actions';
+import { isGifEnabled } from '../../../gifs/functions';
 import { InviteButton } from '../../../invite/components/add-people-dialog';
 import { isVpaasMeeting } from '../../../jaas/functions';
 import { KeyboardShortcutsButton } from '../../../keyboard-shortcuts';
@@ -41,6 +44,7 @@ import {
 import { ParticipantsPaneButton } from '../../../participants-pane/components/web';
 import { getParticipantsPaneOpen } from '../../../participants-pane/functions';
 import { addReactionToBuffer } from '../../../reactions/actions.any';
+import { toggleReactionsMenuVisibility } from '../../../reactions/actions.web';
 import { ReactionsMenuButton } from '../../../reactions/components';
 import { REACTIONS, REACTIONS_MENU_HEIGHT } from '../../../reactions/constants';
 import { isReactionsEnabled } from '../../../reactions/functions.any';
@@ -158,6 +162,11 @@ type Props = {
      * Whether or not the app is currently in full screen.
      */
     _fullScreen: boolean,
+
+    /**
+     * Whether or not the GIFs feature is enabled.
+     */
+    _gifsEnabled: boolean,
 
     /**
      * Whether the app has Salesforce integration.
@@ -334,7 +343,7 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     componentDidMount() {
-        const { _toolbarButtons, t, dispatch, _reactionsEnabled } = this.props;
+        const { _toolbarButtons, t, dispatch, _reactionsEnabled, _gifsEnabled } = this.props;
         const KEYBOARD_SHORTCUTS = [
             isToolbarButtonEnabled('videoquality', _toolbarButtons) && {
                 character: 'A',
@@ -408,6 +417,22 @@ class Toolbox extends Component<Props> {
                     shortcut.helpDescription,
                     shortcut.altKey);
             });
+
+            if (_gifsEnabled) {
+                const onGifShortcut = () => {
+                    batch(() => {
+                        dispatch(toggleReactionsMenuVisibility());
+                        dispatch(setGifMenuVisibility(true));
+                    });
+                };
+
+                APP.keyboardshortcut.registerShortcut(
+                    'G',
+                    null,
+                    onGifShortcut,
+                    t('keyboardShortcuts.giphyMenu')
+                );
+            }
         }
     }
 
@@ -1410,6 +1435,7 @@ function _mapStateToProps(state, ownProps) {
         _disabled: Boolean(iAmRecorder || iAmSipGateway),
         _feedbackConfigured: Boolean(callStatsID),
         _fullScreen: fullScreen,
+        _gifsEnabled: isGifEnabled(state),
         _isProfileDisabled: Boolean(disableProfile),
         _isIosMobile: isIosMobileBrowser(),
         _isMobile: isMobileBrowser(),

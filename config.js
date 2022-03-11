@@ -1300,6 +1300,21 @@ var config = {
     // Specifies whether the chat emoticons are disabled or not
     // disableChatSmileys: false,
 
+    // Settings for the GIPHY integration.
+    // giphy: {
+    //     // Whether the feature is enabled or not.
+    //     enabled: false,
+    //     // SDK API Key from Giphy.
+    //     sdkKey: '',
+    //     // Display mode can be one of:
+    //     // - tile: show the GIF on the tile of the participant that sent it.
+    //     // - chat: show the GIF as a message in chat
+    //     // - all: all of the above. This is the default option
+    //     displayMode: 'all',
+    //     // How long the GIF should be displayed on the tile (in miliseconds).
+    //     tileTime: 5000
+    // },
+
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.
     makeJsonParserHappy: 'even if last key had a trailing comma'

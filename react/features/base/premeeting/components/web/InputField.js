@@ -2,6 +2,7 @@
 
 import React, { PureComponent } from 'react';
 
+import { isMobileBrowser } from '../../../environment/utils';
 import { getFieldValue } from '../../../react';
 
 type Props = {
@@ -132,6 +133,9 @@ export default class InputField extends PureComponent<Props, State> {
                 onKeyDown = { this._onKeyDown }
                 placeholder = { this.props.placeHolder }
                 readOnly = { this.props.readOnly }
+                // eslint-disable-next-line react/jsx-no-bind
+                ref = { inputElement => this.props.autoFocus && isMobileBrowser()
+                    && inputElement && inputElement.focus() }
                 type = { this.props.type }
                 value = { this.state.value } />
         );

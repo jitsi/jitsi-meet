@@ -421,6 +421,10 @@
         "veryBad": "Very Bad",
         "veryGood": "Very Good"
     },
+    "giphy": {
+        "noResults": "No results found :(",
+        "search": "Search GIPHY"
+    },
     "helpView": {
         "header": "Help center"
     },
@@ -487,6 +491,7 @@
         "focusLocal": "Focus on your video",
         "focusRemote": "Focus on another person's video",
         "fullScreen": "View or exit full screen",
+        "giphyMenu": "Toggle GIPHY menu",
         "keyboardShortcuts": "Keyboard shortcuts",
         "localRecording": "Show or hide local recording controls",
         "mute": "Mute or unmute your microphone",
@@ -1007,6 +1012,7 @@
             "expand": "Expand",
             "feedback": "Leave feedback",
             "fullScreen": "Toggle full screen",
+            "giphy": "Toggle GIPHY menu",
             "grantModerator": "Grant Moderator Rights",
             "hangup": "Leave the meeting",
             "help": "Help",
@@ -1076,6 +1082,7 @@
         "exitFullScreen": "Exit full screen",
         "exitTileView": "Exit tile view",
         "feedback": "Leave feedback",
+        "giphy": "Toggle GIPHY menu",
         "hangup": "Leave the meeting",
         "help": "Help",
         "invite": "Invite people",

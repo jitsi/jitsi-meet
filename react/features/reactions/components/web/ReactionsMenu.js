@@ -3,6 +3,7 @@
 /* eslint-disable react/jsx-no-bind */
 
 import { withStyles } from '@material-ui/styles';
+import clsx from 'clsx';
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 
@@ -15,6 +16,8 @@ import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
 import { getLocalParticipant, hasRaisedHand, raiseHand } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+import { GifsMenu, GifsMenuButton } from '../../../gifs/components';
+import { isGifEnabled, isGifsMenuOpen } from '../../../gifs/functions';
 import { dockToolbox } from '../../../toolbox/actions.web';
 import { addReactionToBuffer } from '../../actions.any';
 import { toggleReactionsMenuVisibility } from '../../actions.web';
@@ -28,6 +31,16 @@ type Props = {
      * Docks the toolbox.
      */
     _dockToolbox: Function,
+
+    /**
+     * Whether or not the GIF feature is enabled.
+     */
+    _isGifEnabled: boolean,
+
+    /**
+     * Whether or not the GIF menu is visible.
+     */
+    _isGifMenuVisible: boolean,
 
     /**
      * Whether or not it's a mobile browser.
@@ -193,12 +206,16 @@ class ReactionsMenu extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { _raisedHand, t, overflowMenu, _isMobile, classes } = this.props;
+        const { _raisedHand, t, overflowMenu, _isMobile, classes, _isGifMenuVisible, _isGifEnabled } = this.props;
 
         return (
-            <div className = { `reactions-menu ${overflowMenu ? `overflow ${classes.overflow}` : ''}` }>
+            <div
+                className = { clsx('reactions-menu', _isGifEnabled && 'with-gif',
+                    overflowMenu && `overflow ${classes.overflow}`) }>
+                {_isGifEnabled && _isGifMenuVisible && <GifsMenu />}
                 <div className = 'reactions-row'>
                     { this._getReactionButtons() }
+                    {_isGifEnabled && <GifsMenuButton />}
                 </div>
                 {_isMobile && (
                     <div className = 'raise-hand-row'>
@@ -231,6 +248,8 @@ function mapStateToProps(state) {
     return {
         _localParticipantID: localParticipant.id,
         _isMobile: isMobileBrowser(),
+        _isGifEnabled: isGifEnabled(state),
+        _isGifMenuVisible: isGifsMenuOpen(state),
         _raisedHand: hasRaisedHand(localParticipant)
     };
 }

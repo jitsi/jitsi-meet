@@ -9,6 +9,11 @@ import { DRAWER_MAX_HEIGHT } from '../../constants';
 type Props = {
 
     /**
+     * Class name for custom styles.
+     */
+    className: string,
+
+    /**
      * The component(s) to be displayed within the drawer menu.
      */
     children: React$Node,
@@ -40,6 +45,7 @@ const useStyles = makeStyles(theme => {
  */
 function Drawer({
     children,
+    className = '',
     isOpen,
     onClose
 }: Props) {
@@ -72,7 +78,7 @@ function Drawer({
                 className = 'drawer-menu-container'
                 onClick = { handleOutsideClick }>
                 <div
-                    className = { `drawer-menu ${styles.drawer}` }
+                    className = { `drawer-menu ${styles.drawer} ${className}` }
                     onClick = { handleInsideClick }>
                     {children}
                 </div>
