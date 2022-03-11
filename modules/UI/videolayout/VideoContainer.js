@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom';
 
 import { browser } from '../../../react/features/base/lib-jitsi-meet';
 import { isTestModeEnabled } from '../../../react/features/base/testing';
+import { FILMSTRIP_BREAKPOINT } from '../../../react/features/filmstrip';
 import { ORIENTATION, LargeVideoBackground, updateLastLargeVideoMediaEvent } from '../../../react/features/large-video';
 import { LAYOUTS, getCurrentLayout } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
@@ -37,13 +38,15 @@ const containerEvents = [
  * @param videoHeight the height of the video to position
  * @param videoSpaceWidth the width of the available space
  * @param videoSpaceHeight the height of the available space
+ * @param subtractFilmstrip whether to subtract the filmstrip or not
  * @return an array with 2 elements, the video width and the video height
  */
 function computeDesktopVideoSize( // eslint-disable-line max-params
         videoWidth,
         videoHeight,
         videoSpaceWidth,
-        videoSpaceHeight) {
+        videoSpaceHeight,
+        subtractFilmstrip) {
     if (videoWidth === 0 || videoHeight === 0 || videoSpaceWidth === 0 || videoSpaceHeight === 0) {
         // Avoid NaN values caused by division by 0.
         return [ 0, 0 ];
@@ -54,8 +57,10 @@ function computeDesktopVideoSize( // eslint-disable-line max-params
     let availableHeight = Math.max(videoHeight, videoSpaceHeight);
 
     if (interfaceConfig.VERTICAL_FILMSTRIP) {
-        // eslint-disable-next-line no-param-reassign
-        videoSpaceWidth -= Filmstrip.getVerticalFilmstripWidth();
+        if (subtractFilmstrip) {
+            // eslint-disable-next-line no-param-reassign
+            videoSpaceWidth -= Filmstrip.getVerticalFilmstripWidth();
+        }
     } else {
         // eslint-disable-next-line no-param-reassign
         videoSpaceHeight -= Filmstrip.getFilmstripHeight();
@@ -307,16 +312,18 @@ export class VideoContainer extends LargeContainer {
      * Calculate optimal video size for specified container size.
      * @param {number} containerWidth container width
      * @param {number} containerHeight container height
+     * @param {number} verticalFilmstripWidth current width of the vertical filmstrip
      * @returns {{availableWidth, availableHeight}}
      */
-    _getVideoSize(containerWidth, containerHeight) {
+    _getVideoSize(containerWidth, containerHeight, verticalFilmstripWidth) {
         const { width, height } = this.getStreamSize();
 
         if (this.stream && this.isScreenSharing()) {
             return computeDesktopVideoSize(width,
                 height,
                 containerWidth,
-                containerHeight);
+                containerHeight,
+                verticalFilmstripWidth < FILMSTRIP_BREAKPOINT);
         }
 
         return computeCameraVideoSize(width,
@@ -334,14 +341,15 @@ export class VideoContainer extends LargeContainer {
      * @param {number} height video height
      * @param {number} containerWidth container width
      * @param {number} containerHeight container height
+     * @param {number} verticalFilmstripWidth current width of the vertical filmstrip
      * @returns {{horizontalIndent, verticalIndent}}
      */
-    getVideoPosition(width, height, containerWidth, containerHeight) {
+    getVideoPosition(width, height, containerWidth, containerHeight, verticalFilmstripWidth) {
         let containerWidthToUse = containerWidth;
 
         /* eslint-enable max-params */
         if (this.stream && this.isScreenSharing()) {
-            if (interfaceConfig.VERTICAL_FILMSTRIP) {
+            if (interfaceConfig.VERTICAL_FILMSTRIP && verticalFilmstripWidth < FILMSTRIP_BREAKPOINT) {
                 containerWidthToUse -= Filmstrip.getVerticalFilmstripWidth();
             }
 
@@ -401,7 +409,10 @@ export class VideoContainer extends LargeContainer {
         if (this.$video.length === 0) {
             return;
         }
-        const currentLayout = getCurrentLayout(APP.store.getState());
+        const state = APP.store.getState();
+        const currentLayout = getCurrentLayout(state);
+
+        const verticalFilmstripWidth = state['features/filmstrip'].width?.current;
 
         if (currentLayout === LAYOUTS.TILE_VIEW) {
             // We don't need to resize the large video since it won't be displayed and we'll resize when returning back
@@ -411,7 +422,7 @@ export class VideoContainer extends LargeContainer {
 
         this.positionRemoteStatusMessages();
 
-        const [ width, height ] = this._getVideoSize(containerWidth, containerHeight);
+        const [ width, height ] = this._getVideoSize(containerWidth, containerHeight, verticalFilmstripWidth);
 
         if (width === 0 || height === 0) {
             // We don't need to set 0 for width or height since the visibility is controlled by the visibility css prop
@@ -432,7 +443,7 @@ export class VideoContainer extends LargeContainer {
         this._updateBackground();
 
         const { horizontalIndent, verticalIndent }
-            = this.getVideoPosition(width, height, containerWidth, containerHeight);
+            = this.getVideoPosition(width, height, containerWidth, containerHeight, verticalFilmstripWidth);
 
         this.$wrapper.animate({
             width,
