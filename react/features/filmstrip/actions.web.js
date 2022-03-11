@@ -1,9 +1,13 @@
 // @flow
 import type { Dispatch } from 'redux';
 
-import { getLocalParticipant, getParticipantById, pinParticipant } from '../base/participants';
+import {
+    getLocalParticipant,
+    getParticipantById,
+    pinParticipant
+} from '../base/participants';
 import { shouldHideSelfView } from '../base/settings/functions.any';
-import { getTileViewGridDimensions } from '../video-layout';
+import { getMaxColumnCount } from '../video-layout';
 
 import {
     SET_FILMSTRIP_WIDTH,
@@ -21,15 +25,20 @@ import {
     TILE_HORIZONTAL_MARGIN,
     TILE_VERTICAL_CONTAINER_HORIZONTAL_MARGIN,
     TILE_VERTICAL_MARGIN,
+    TILE_VIEW_DEFAULT_NUMBER_OF_VISIBLE_TILES,
+    TILE_VIEW_GRID_HORIZONTAL_MARGIN,
+    TILE_VIEW_GRID_VERTICAL_MARGIN,
     VERTICAL_FILMSTRIP_VERTICAL_MARGIN
 } from './constants';
 import {
+    calculateNotResponsiveTileViewDimensions,
+    calculateResponsiveTileViewDimensions,
     calculateThumbnailSizeForHorizontalView,
-    calculateThumbnailSizeForTileView,
     calculateThumbnailSizeForVerticalView,
     isFilmstripResizable,
     showGridInVerticalView
 } from './functions';
+import { getNumberOfPartipantsForTileView } from './functions.web';
 
 export * from './actions.any';
 
@@ -41,37 +50,56 @@ export * from './actions.any';
  * resolved to Redux state using the {@code toState} function.
  * @returns {Function}
  */
-export function setTileViewDimensions(dimensions: Object) {
+export function setTileViewDimensions() {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
         const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
-        const { disableResponsiveTiles, disableTileEnlargement } = state['features/base/config'];
+        const {
+            disableResponsiveTiles,
+            disableTileEnlargement,
+            tileView = {}
+        } = state['features/base/config'];
+        const { numberOfVisibleTiles = TILE_VIEW_DEFAULT_NUMBER_OF_VISIBLE_TILES } = tileView;
+        const numberOfParticipants = getNumberOfPartipantsForTileView(state);
+        const maxColumns = getMaxColumnCount(state);
+
         const {
             height,
-            width
-        } = calculateThumbnailSizeForTileView({
-            ...dimensions,
-            clientWidth,
-            clientHeight,
-            disableResponsiveTiles,
-            disableTileEnlargement
-        });
-        const { columns, rows } = dimensions;
+            width,
+            columns,
+            rows
+        } = disableResponsiveTiles
+            ? calculateNotResponsiveTileViewDimensions(state)
+            : calculateResponsiveTileViewDimensions({
+                clientWidth,
+                clientHeight,
+                disableTileEnlargement,
+                isVerticalFilmstrip: false,
+                maxColumns,
+                numberOfParticipants,
+                numberOfVisibleTiles
+            });
         const thumbnailsTotalHeight = rows * (TILE_VERTICAL_MARGIN + height);
         const hasScroll = clientHeight < thumbnailsTotalHeight;
-        const filmstripWidth = (columns * (TILE_HORIZONTAL_MARGIN + width)) + (hasScroll ? SCROLL_SIZE : 0);
-        const filmstripHeight = Math.min(clientHeight, thumbnailsTotalHeight);
+        const filmstripWidth
+            = Math.min(clientWidth - TILE_VIEW_GRID_HORIZONTAL_MARGIN, columns * (TILE_HORIZONTAL_MARGIN + width))
+                + (hasScroll ? SCROLL_SIZE : 0);
+        const filmstripHeight = Math.min(clientHeight - TILE_VIEW_GRID_VERTICAL_MARGIN, thumbnailsTotalHeight);
 
         dispatch({
             type: SET_TILE_VIEW_DIMENSIONS,
             dimensions: {
-                gridDimensions: dimensions,
+                gridDimensions: {
+                    columns,
+                    rows
+                },
                 thumbnailSize: {
                     height,
                     width
                 },
                 filmstripHeight,
-                filmstripWidth
+                filmstripWidth,
+                hasScroll
             }
         });
     };
@@ -97,26 +125,34 @@ export function setVerticalViewDimensions() {
 
         // grid view in the vertical filmstrip
         if (_verticalViewGrid) {
-            const dimensions = getTileViewGridDimensions(state, filmstripWidth.current);
+            const { tileView = {} } = state['features/base/config'];
+            const { numberOfVisibleTiles = TILE_VIEW_DEFAULT_NUMBER_OF_VISIBLE_TILES } = tileView;
+            const numberOfParticipants = getNumberOfPartipantsForTileView(state);
+            const maxColumns = getMaxColumnCount(state);
             const {
                 height,
-                width
-            } = calculateThumbnailSizeForTileView({
-                ...dimensions,
+                width,
+                columns,
+                rows
+            } = calculateResponsiveTileViewDimensions({
                 clientWidth: filmstripWidth.current,
                 clientHeight,
-                disableResponsiveTiles: false,
                 disableTileEnlargement: false,
-                isVerticalFilmstrip: true
+                isVerticalFilmstrip: true,
+                maxColumns,
+                numberOfParticipants,
+                numberOfVisibleTiles
             });
-            const { columns, rows } = dimensions;
             const thumbnailsTotalHeight = rows * (TILE_VERTICAL_MARGIN + height);
             const hasScroll = clientHeight < thumbnailsTotalHeight;
             const widthOfFilmstrip = (columns * (TILE_HORIZONTAL_MARGIN + width)) + (hasScroll ? SCROLL_SIZE : 0);
             const filmstripHeight = Math.min(clientHeight, thumbnailsTotalHeight);
 
             gridView = {
-                gridDimensions: dimensions,
+                gridDimensions: {
+                    columns,
+                    rows
+                },
                 thumbnailSize: {
                     height,
                     width

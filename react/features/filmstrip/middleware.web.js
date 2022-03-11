@@ -44,9 +44,7 @@ MiddlewareRegistry.register(store => next => action => {
 
         switch (layout) {
         case LAYOUTS.TILE_VIEW: {
-            const { gridDimensions } = state['features/filmstrip'].tileViewDimensions;
-
-            store.dispatch(setTileViewDimensions(gridDimensions));
+            store.dispatch(setTileViewDimensions());
             break;
         }
         case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW:
