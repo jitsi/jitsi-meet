@@ -23,7 +23,8 @@ echo "by providing an email address for important account notifications"
 echo -n "Enter your email and press [ENTER]: "
 read EMAIL
 
-if [ ! -x "$(command -v certbot)" ] ; then
+CERTBOT="$(command -v certbot)"
+if [ ! -x "$CERTBOT" ] ; then
     DISTRO=$(lsb_release -is)
     DISTRO_VERSION=$(lsb_release -rs)
     if [ "$DISTRO" = "Debian" ]; then
@@ -56,7 +57,7 @@ if [ ! -d "/etc/cron.weekly" ] ; then
     mkdir "/etc/cron.weekly"
 fi
 echo "#!/bin/bash" > $CRON_FILE
-echo "/usr/bin/certbot renew >> /var/log/le-renew.log" >> $CRON_FILE
+echo "$CERTBOT renew >> /var/log/le-renew.log" >> $CRON_FILE
 
 CERT_KEY="/etc/letsencrypt/live/$DOMAIN/privkey.pem"
 CERT_CRT="/etc/letsencrypt/live/$DOMAIN/fullchain.pem"
@@ -72,13 +73,13 @@ if [ -f /etc/nginx/sites-enabled/$DOMAIN.conf ] ; then
         chmod u+x $TURN_HOOK
         sed -i "s/jitsi-meet.example.com/$DOMAIN/g" $TURN_HOOK
 
-        /usr/bin/certbot certonly --noninteractive \
+        $CERTBOT certonly --noninteractive \
         --webroot --webroot-path /usr/share/jitsi-meet \
         -d $DOMAIN \
         --agree-tos --email $EMAIL \
         --deploy-hook $TURN_HOOK
     else
-        /usr/bin/certbot certonly --noninteractive \
+        $CERTBOT certonly --noninteractive \
         --webroot --webroot-path /usr/share/jitsi-meet \
         -d $DOMAIN \
         --agree-tos --email $EMAIL
@@ -107,7 +108,7 @@ if [ -f /etc/nginx/sites-enabled/$DOMAIN.conf ] ; then
     
 elif [ -f /etc/apache2/sites-enabled/$DOMAIN.conf ] ; then
 
-    /usr/bin/certbot certonly --noninteractive \
+    $CERTBOT certonly --noninteractive \
     --webroot --webroot-path /usr/share/jitsi-meet \
     -d $DOMAIN \
     --agree-tos --email $EMAIL
