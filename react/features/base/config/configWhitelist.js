@@ -215,6 +215,7 @@ export default [
     'testing',
     'toolbarButtons',
     'toolbarConfig',
+    'tileView',
     'transcribingEnabled',
     'useHostPageLocalStorage',
     'useTurnUdp',

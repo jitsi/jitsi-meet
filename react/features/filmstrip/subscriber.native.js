@@ -2,7 +2,7 @@
 
 import { getParticipantCountWithFake } from '../base/participants';
 import { StateListenerRegistry } from '../base/redux';
-import { getTileViewGridDimensions, shouldDisplayTileView } from '../video-layout';
+import { shouldDisplayTileView } from '../video-layout';
 
 import { setTileViewDimensions } from './actions';
 import './subscriber.any';
@@ -34,9 +34,7 @@ StateListenerRegistry.register(
 StateListenerRegistry.register(
     /* selector */ state => shouldDisplayTileView(state),
     /* listener */ (isTileView, store) => {
-        const state = store.getState();
-
         if (isTileView) {
-            store.dispatch(setTileViewDimensions(getTileViewGridDimensions(state)));
+            store.dispatch(setTileViewDimensions());
         }
     });
