@@ -1,7 +1,11 @@
 // @flow
 import type { Dispatch } from 'redux';
 
-import { getLocalParticipant, getParticipantById, pinParticipant } from '../base/participants';
+import {
+    getLocalParticipant,
+    getParticipantById,
+    pinParticipant
+} from '../base/participants';
 import { shouldHideSelfView } from '../base/settings/functions.any';
 
 import {
@@ -17,11 +21,14 @@ import {
     STAGE_VIEW_THUMBNAIL_VERTICAL_BORDER,
     TILE_HORIZONTAL_MARGIN,
     TILE_VERTICAL_MARGIN,
+    TILE_VIEW_GRID_HORIZONTAL_MARGIN,
+    TILE_VIEW_GRID_VERTICAL_MARGIN,
     VERTICAL_FILMSTRIP_VERTICAL_MARGIN
 } from './constants';
 import {
+    calculateNotResponsiveTileViewDimensions,
+    calculateResponsiveTileViewDimensions,
     calculateThumbnailSizeForHorizontalView,
-    calculateThumbnailSizeForTileView,
     calculateThumbnailSizeForVerticalView
 } from './functions';
 
@@ -35,37 +42,40 @@ export * from './actions.any';
  * resolved to Redux state using the {@code toState} function.
  * @returns {Function}
  */
-export function setTileViewDimensions(dimensions: Object) {
+export function setTileViewDimensions() {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
         const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
-        const { disableResponsiveTiles, disableTileEnlargement } = state['features/base/config'];
+        const { disableResponsiveTiles } = state['features/base/config'];
         const {
             height,
-            width
-        } = calculateThumbnailSizeForTileView({
-            ...dimensions,
-            clientWidth,
-            clientHeight,
-            disableResponsiveTiles,
-            disableTileEnlargement
-        });
-        const { columns, rows } = dimensions;
+            width,
+            columns,
+            rows
+        } = disableResponsiveTiles
+            ? calculateNotResponsiveTileViewDimensions(state)
+            : calculateResponsiveTileViewDimensions(state);
         const thumbnailsTotalHeight = rows * (TILE_VERTICAL_MARGIN + height);
         const hasScroll = clientHeight < thumbnailsTotalHeight;
-        const filmstripWidth = (columns * (TILE_HORIZONTAL_MARGIN + width)) + (hasScroll ? SCROLL_SIZE : 0);
-        const filmstripHeight = Math.min(clientHeight, thumbnailsTotalHeight);
+        const filmstripWidth
+            = Math.min(clientWidth - TILE_VIEW_GRID_HORIZONTAL_MARGIN, columns * (TILE_HORIZONTAL_MARGIN + width))
+                + (hasScroll ? SCROLL_SIZE : 0);
+        const filmstripHeight = Math.min(clientHeight - TILE_VIEW_GRID_VERTICAL_MARGIN, thumbnailsTotalHeight);
 
         dispatch({
             type: SET_TILE_VIEW_DIMENSIONS,
             dimensions: {
-                gridDimensions: dimensions,
+                gridDimensions: {
+                    columns,
+                    rows
+                },
                 thumbnailSize: {
                     height,
                     width
                 },
                 filmstripHeight,
-                filmstripWidth
+                filmstripWidth,
+                hasScroll
             }
         });
     };

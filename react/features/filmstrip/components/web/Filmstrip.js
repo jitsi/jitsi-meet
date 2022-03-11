@@ -676,6 +676,7 @@ function _mapStateToProps(state) {
         gridDimensions = {},
         filmstripHeight,
         filmstripWidth,
+        hasScroll = false,
         thumbnailSize: tileViewThumbnailSize
     } = state['features/filmstrip'].tileViewDimensions;
     const _currentLayout = getCurrentLayout(state);
@@ -702,7 +703,7 @@ function _mapStateToProps(state) {
     const shouldReduceHeight = reduceHeight && (
         isMobileBrowser() || _currentLayout !== LAYOUTS.VERTICAL_FILMSTRIP_VIEW);
 
-    const videosClassName = `filmstrip__videos${visible ? '' : ' hidden'}`;
+    let videosClassName = `filmstrip__videos${visible ? '' : ' hidden'}`;
     const className = `${remoteVideosVisible ? '' : 'hide-videos'} ${
         shouldReduceHeight ? 'reduce-height' : ''
     } ${shiftRight ? 'shift-right' : ''} ${collapseTileView ? 'collapse' : ''} ${visible ? '' : 'hidden'}`.trim();
@@ -710,6 +711,9 @@ function _mapStateToProps(state) {
 
     switch (_currentLayout) {
     case LAYOUTS.TILE_VIEW:
+        if (hasScroll) {
+            videosClassName += ' has-scroll';
+        }
         _thumbnailSize = tileViewThumbnailSize;
         remoteFilmstripHeight = filmstripHeight - (collapseTileView && filmstripPadding > 0 ? filmstripPadding : 0);
         remoteFilmstripWidth = filmstripWidth;

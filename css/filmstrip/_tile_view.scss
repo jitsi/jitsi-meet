@@ -74,6 +74,10 @@
         display: block;
     }
 
+    .filmstrip__videos.has-scroll {
+        padding-left: 7px;
+    }
+
     .remote-videos {
         box-sizing: border-box;
 
@@ -91,7 +95,6 @@
             margin-top: auto;
             margin-bottom: auto;
             justify-content: center;
-            position: absolute;
 
             .videocontainer {
                 border: 0;

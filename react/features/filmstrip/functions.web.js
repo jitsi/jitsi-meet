@@ -9,13 +9,14 @@ import {
     getPinnedParticipant
 } from '../base/participants';
 import { toState } from '../base/redux';
+import { shouldHideSelfView } from '../base/settings/functions.any';
 import {
     getLocalVideoTrack,
     getTrackByMediaTypeAndParticipant,
     isLocalTrackMuted,
     isRemoteTrackMuted
 } from '../base/tracks/functions';
-import { LAYOUTS } from '../video-layout';
+import { getMaxColumnCount, getNotResoinsiveTileViewGridDimensions, LAYOUTS } from '../video-layout';
 
 import {
     ASPECT_RATIO_BREAKPOINT,
@@ -23,7 +24,6 @@ import {
     DISPLAY_VIDEO,
     INDICATORS_TOOLTIP_POSITION,
     SCROLL_SIZE,
-    SQUARE_TILE_ASPECT_RATIO,
     STAGE_VIEW_THUMBNAIL_HORIZONTAL_BORDER,
     TILE_ASPECT_RATIO,
     TILE_HORIZONTAL_MARGIN,
@@ -33,7 +33,9 @@ import {
     VERTICAL_FILMSTRIP_MIN_HORIZONTAL_MARGIN,
     TILE_MIN_HEIGHT_LARGE,
     TILE_MIN_HEIGHT_SMALL,
-    TILE_PORTRAIT_ASPECT_RATIO
+    TILE_PORTRAIT_ASPECT_RATIO,
+    SQUARE_TILE_ASPECT_RATIO,
+    TILE_VIEW_DEFAULT_NUMBER_OF_VISIBLE_TILES
 } from './constants';
 
 export * from './functions.any';
@@ -175,6 +177,202 @@ export function calculateThumbnailSizeForVerticalView(clientWidth: number = 0) {
 }
 
 /**
+ * Returns the minimum height of a thumbnail.
+ *
+ * @param {number} clientWidth - The width of the window.
+ * @returns {number} The minimum height of a thumbnail.
+ */
+export function getThumbnailMinHeight(clientWidth) {
+    return clientWidth < ASPECT_RATIO_BREAKPOINT ? TILE_MIN_HEIGHT_SMALL : TILE_MIN_HEIGHT_LARGE;
+}
+
+/**
+ * Returns the default aspect ratio for a tile.
+ *
+ * @param {boolean} disableResponsiveTiles - Indicates whether the responsive tiles functionality is disabled.
+ * @param {boolean} disableTileEnlargement - Indicates whether the tiles enlargement functionality is disabled.
+ * @param {number} clientWidth - The width of the window.
+ * @returns {number} The default aspect ratio for a tile.
+ */
+export function getTileDefaultAspectRatio(disableResponsiveTiles, disableTileEnlargement, clientWidth) {
+    if (!disableResponsiveTiles && disableTileEnlargement && clientWidth < ASPECT_RATIO_BREAKPOINT) {
+        return SQUARE_TILE_ASPECT_RATIO;
+    }
+
+    return TILE_ASPECT_RATIO;
+}
+
+/**
+ * Calculates the dimensions (thumbnail width/height and columns/row) for tile view when the responsive tiles are
+ * disabled.
+ *
+ * @param {Object} state - The redux store state.
+ * @returns {Object} - The dimensions.
+ */
+export function calculateNotResponsiveTileViewDimensions(state) {
+    const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
+    const { disableTileEnlargement } = state['features/base/config'];
+    const { columns: c, minVisibleRows, rows: r } = getNotResoinsiveTileViewGridDimensions(state);
+    const size = calculateThumbnailSizeForTileView({
+        columns: c,
+        minVisibleRows,
+        clientWidth,
+        clientHeight,
+        disableTileEnlargement,
+        disableResponsiveTiles: true
+    });
+
+    if (typeof size === 'undefined') { // The columns don't fit into the screen. We will have horizontal scroll.
+        const aspectRatio = disableTileEnlargement
+            ? getTileDefaultAspectRatio(true, disableTileEnlargement, clientWidth)
+            : TILE_PORTRAIT_ASPECT_RATIO;
+
+        const height = getThumbnailMinHeight(clientWidth);
+
+        return {
+            height,
+            width: aspectRatio * height,
+            columns: c,
+            rows: r
+        };
+    }
+
+    return {
+        height: size.height,
+        width: size.width,
+        columns: c,
+        rows: r
+    };
+}
+
+/**
+ * Calculates the dimensions (thumbnail width/height and columns/row) for tile view when the responsive tiles are
+ * enabled.
+ *
+ * @param {Object} state - The redux store state.
+ * @returns {Object} - The dimensions.
+ */
+export function calculateResponsiveTileViewDimensions(state) {
+    const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
+    const {
+        disableTileEnlargement,
+        iAmRecorder,
+        tileView = {}
+    } = state['features/base/config'];
+    const { numberOfVisibleTiles = TILE_VIEW_DEFAULT_NUMBER_OF_VISIBLE_TILES } = tileView;
+
+    let height, width;
+    let columns, rows;
+
+    // When in tile view mode, we must discount ourselves (the local participant) because our
+    // tile is not visible.
+    const disableSelfView = shouldHideSelfView(state);
+    const numberOfParticipants = getParticipantCountWithFake(state)
+        - (iAmRecorder ? 1 : 0)
+        - (disableSelfView ? 1 : 0);
+
+    let dimensions = {
+        maxArea: 0
+    };
+    let minHeightEnforcedDimensions = {
+        maxArea: 0
+    };
+    let zeroVisibleRowsDimensions = {
+        maxArea: 0
+    };
+    const maxColumns = getMaxColumnCount(state);
+
+    for (let c = 1; c <= Math.min(maxColumns, numberOfParticipants); c++) {
+        const r = Math.ceil(numberOfParticipants / c);
+
+        // we want to display as much as possible tumbnails up to numberOfVisibleTiles
+        const visibleRows
+            = numberOfParticipants <= numberOfVisibleTiles ? r : Math.floor(numberOfVisibleTiles / c);
+
+        const size = calculateThumbnailSizeForTileView({
+            columns: c,
+            minVisibleRows: visibleRows,
+            clientWidth,
+            clientHeight,
+            disableTileEnlargement,
+            disableResponsiveTiles: false
+        });
+
+        // eslint-disable-next-line no-negated-condition
+        if (typeof size !== 'undefined') {
+
+            const { height: currentHeight, width: currentWidth, minHeightEnforced, maxVisibleRows } = size;
+
+            console.error(`Num col = ${c}, visibleRows=${visibleRows}, hxw=${
+                currentHeight}x${currentWidth}, maxVisibleRows=${maxVisibleRows}`);
+            let area = currentHeight * currentWidth * Math.min(c * maxVisibleRows, numberOfParticipants);
+
+            // we have a preference to show more columns if possible, that's why even if the area is equal we
+            // overwrite.
+            if (!minHeightEnforced && area > dimensions.maxArea) {
+                dimensions = {
+                    maxArea: area,
+                    height: currentHeight,
+                    width: currentWidth,
+                    columns: c,
+                    rows: r
+                };
+            } else if (minHeightEnforced) {
+                // eslint-disable-next-line max-depth
+                if (area > minHeightEnforcedDimensions.maxArea) {
+                    minHeightEnforcedDimensions = {
+                        maxArea: area,
+                        height: currentHeight,
+                        width: currentWidth,
+                        columns: c,
+                        rows: r
+                    };
+                } else if (maxVisibleRows === 0) {
+                    area = currentHeight * currentWidth * Math.min(c, numberOfParticipants);
+
+                    // eslint-disable-next-line max-depth
+                    if (area > zeroVisibleRowsDimensions.maxArea) {
+                        zeroVisibleRowsDimensions = {
+                            maxArea: area,
+                            height: currentHeight,
+                            width: currentWidth,
+                            columns: c,
+                            rows: r
+                        };
+                    }
+                }
+            }
+        } else {
+            console.error(`Num col = ${c}, visibleRows=${visibleRows} not possible`);
+        }
+    }
+
+    if (dimensions.maxArea > 0) {
+        ({ height, width, columns, rows } = dimensions);
+    } else if (minHeightEnforcedDimensions.maxArea > 0) {
+        ({ height, width, columns, rows } = minHeightEnforcedDimensions);
+    } else if (zeroVisibleRowsDimensions.maxArea > 0) {
+        ({ height, width, columns, rows } = zeroVisibleRowsDimensions);
+    } else { // This would mean that we can't fit even one thumbnail with minimal size.
+        const aspectRatio = disableTileEnlargement
+            ? getTileDefaultAspectRatio(false, disableTileEnlargement, clientWidth)
+            : TILE_PORTRAIT_ASPECT_RATIO;
+
+        height = getThumbnailMinHeight(clientWidth);
+        width = aspectRatio * height;
+        columns = 1;
+        rows = numberOfParticipants;
+    }
+
+    return {
+        height,
+        width,
+        columns,
+        rows
+    };
+}
+
+/**
  * Calculates the size for thumbnails when in tile view layout.
  *
  * @param {Object} dimensions - The desired dimensions of the tile view grid.
@@ -183,88 +381,76 @@ export function calculateThumbnailSizeForVerticalView(clientWidth: number = 0) {
 export function calculateThumbnailSizeForTileView({
     columns,
     minVisibleRows,
-    rows,
     clientWidth,
     clientHeight,
-    disableResponsiveTiles,
-    disableTileEnlargement
+    disableResponsiveTiles = false,
+    disableTileEnlargement = false
 }: Object) {
-    let aspectRatio = TILE_ASPECT_RATIO;
-
-    if (!disableResponsiveTiles && clientWidth < ASPECT_RATIO_BREAKPOINT) {
-        aspectRatio = SQUARE_TILE_ASPECT_RATIO;
-    }
-
-    const minHeight = clientWidth < ASPECT_RATIO_BREAKPOINT ? TILE_MIN_HEIGHT_SMALL : TILE_MIN_HEIGHT_LARGE;
+    const aspectRatio = getTileDefaultAspectRatio(disableResponsiveTiles, disableTileEnlargement, clientWidth);
+    const minHeight = getThumbnailMinHeight(clientWidth);
     const viewWidth = clientWidth - (columns * TILE_HORIZONTAL_MARGIN) - TILE_VIEW_GRID_HORIZONTAL_MARGIN;
     const viewHeight = clientHeight - (minVisibleRows * TILE_VERTICAL_MARGIN) - TILE_VIEW_GRID_VERTICAL_MARGIN;
     const initialWidth = viewWidth / columns;
-    const initialHeight = viewHeight / minVisibleRows;
-    const aspectRatioHeight = initialWidth / aspectRatio;
-    const noScrollHeight = (clientHeight / rows) - TILE_VERTICAL_MARGIN;
-    const scrollInitialWidth = (viewWidth - SCROLL_SIZE) / columns;
-    let height = Math.floor(Math.min(aspectRatioHeight, initialHeight));
-    let width = Math.floor(aspectRatio * height);
+    let initialHeight = viewHeight / minVisibleRows;
+    let minHeightEnforced = false;
 
-    if (height > noScrollHeight && width > scrollInitialWidth) { // we will have scroll and we need more space for it.
-        const scrollAspectRatioHeight = scrollInitialWidth / aspectRatio;
-
-        // Recalculating width/height to fit the available space when a scroll is displayed.
-        // NOTE: Math.min(scrollAspectRatioHeight, initialHeight) would be enough to recalculate but since the new
-        // height value can theoretically be dramatically smaller and the scroll may not be neccessary anymore we need
-        // to compare it with noScrollHeight( the optimal height to fit all thumbnails without scroll) and get the
-        // bigger one. This way we ensure that we always strech the thumbnails as close as we can to the edges of the
-        // window.
-        height = Math.floor(Math.max(Math.min(scrollAspectRatioHeight, initialHeight), noScrollHeight));
-        width = Math.floor(aspectRatio * height);
-
-        return {
-            height,
-            width
-        };
+    if (initialHeight < minHeight) {
+        minHeightEnforced = true;
+        initialHeight = minHeight;
     }
 
     if (disableTileEnlargement) {
-        return {
-            height,
-            width
-        };
-    }
+        const aspectRatioHeight = initialWidth / aspectRatio;
 
-    if (initialHeight > noScrollHeight) {
-        height = Math.max(height, viewHeight / rows, minHeight);
-        width = Math.max(width, initialWidth);
-    } else {
-        height = Math.max(initialHeight, minHeight);
-        width = initialWidth;
-    }
-
-    if (height > width) {
-        const heightFromWidth = TILE_PORTRAIT_ASPECT_RATIO * width;
-
-        if (height > heightFromWidth && heightFromWidth < minHeight) {
-            return {
-                height,
-                width: height / TILE_PORTRAIT_ASPECT_RATIO
-            };
+        if (aspectRatioHeight < minHeight) { // we can't fit the required number of columns.
+            return;
         }
 
-        return {
-            height: Math.min(height, heightFromWidth),
-            width
-        };
-    } else if (height < width) {
+        const height = Math.floor(Math.min(aspectRatioHeight, initialHeight));
+
         return {
             height,
-            width: Math.min(width, aspectRatio * height)
+            width: Math.floor(aspectRatio * height),
+            minHeightEnforced,
+            maxVisibleRows: Math.floor(viewHeight / height)
         };
     }
 
-    return {
-        height,
-        width
-    };
+    const initialRatio = initialWidth / initialHeight;
+    let height = Math.floor(initialHeight);
 
+    // The biggest area of the grid will be when the grid's height is equal to clientHeight or when the grid's width is
+    // equal to clientWidth.
+
+    if (initialRatio > aspectRatio) {
+        return {
+            height,
+            width: Math.floor(initialHeight * aspectRatio),
+            minHeightEnforced,
+            maxVisibleRows: Math.floor(viewHeight / height)
+        };
+    } else if (initialRatio >= TILE_PORTRAIT_ASPECT_RATIO) {
+        return {
+            height,
+            width: Math.floor(initialWidth),
+            minHeightEnforced,
+            maxVisibleRows: Math.floor(viewHeight / height)
+        };
+    } else if (!minHeightEnforced) {
+        height = Math.floor(initialWidth / TILE_PORTRAIT_ASPECT_RATIO);
+
+        if (height >= minHeight) {
+            return {
+                height,
+                width: Math.floor(initialWidth),
+                minHeightEnforced,
+                maxVisibleRows: Math.floor(viewHeight / height)
+            };
+        }
+    }
+
+    // else
+    // We can't fit that number of columns with the desired min height and aspect ratio.
 }
 
 /**

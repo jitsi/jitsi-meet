@@ -10,11 +10,8 @@ import {
 } from '../base/participants';
 import { shouldHideSelfView } from '../base/settings/functions.any';
 import {
-    ASPECT_RATIO_BREAKPOINT,
     DEFAULT_MAX_COLUMNS,
-    ABSOLUTE_MAX_COLUMNS,
-    SINGLE_COLUMN_BREAKPOINT,
-    TWO_COLUMN_BREAKPOINT
+    ABSOLUTE_MAX_COLUMNS
 } from '../filmstrip/constants';
 import { isVideoPlaying } from '../shared-video/functions';
 
@@ -61,31 +58,10 @@ export function getCurrentLayout(state: Object) {
  * @param {Object} state - The redux store state.
  * @returns {number}
  */
-export function getMaxColumnCount(state: Object) {
+export function getMaxColumnCount() {
     const configuredMax = (typeof interfaceConfig === 'undefined'
         ? DEFAULT_MAX_COLUMNS
         : interfaceConfig.TILE_VIEW_MAX_COLUMNS) || DEFAULT_MAX_COLUMNS;
-    const { disableResponsiveTiles } = state['features/base/config'];
-
-    if (!disableResponsiveTiles) {
-        const { clientWidth } = state['features/base/responsive-ui'];
-        const participantCount = getParticipantCount(state);
-
-        // If there are just two participants in a conference, enforce single-column view for mobile size.
-        if (participantCount === 2 && clientWidth < ASPECT_RATIO_BREAKPOINT) {
-            return Math.min(1, Math.max(configuredMax, 1));
-        }
-
-        // Enforce single column view at very small screen widths.
-        if (clientWidth < SINGLE_COLUMN_BREAKPOINT) {
-            return Math.min(1, Math.max(configuredMax, 1));
-        }
-
-        // Enforce two column view below breakpoint.
-        if (clientWidth < TWO_COLUMN_BREAKPOINT) {
-            return Math.min(2, Math.max(configuredMax, 1));
-        }
-    }
 
     return Math.min(Math.max(configuredMax, 1), ABSOLUTE_MAX_COLUMNS);
 }
@@ -99,7 +75,7 @@ export function getMaxColumnCount(state: Object) {
  * @returns {Object} An object is return with the desired number of columns,
  * rows, and visible rows (the rest should overflow) for the tile view layout.
  */
-export function getTileViewGridDimensions(state: Object) {
+export function getNotResoinsiveTileViewGridDimensions(state: Object) {
     const maxColumns = getMaxColumnCount(state);
 
     // When in tile view mode, we must discount ourselves (the local participant) because our
@@ -109,12 +85,7 @@ export function getTileViewGridDimensions(state: Object) {
     const numberOfParticipants = getParticipantCountWithFake(state)
         - (iAmRecorder ? 1 : 0)
         - (disableSelfView ? 1 : 0);
-    const isWeb = navigator.product !== 'ReactNative';
-
-    // When there are 3 participants in the call we want them to be placed on a single row unless the maxColumn setting
-    // is lower.
-    const columnsToMaintainASquare
-        = isWeb && numberOfParticipants === 3 ? 3 : Math.ceil(Math.sqrt(numberOfParticipants));
+    const columnsToMaintainASquare = Math.ceil(Math.sqrt(numberOfParticipants));
     const columns = Math.min(columnsToMaintainASquare, maxColumns);
     const rows = Math.ceil(numberOfParticipants / columns);
     const minVisibleRows = Math.min(maxColumns, rows);
