@@ -52,7 +52,7 @@ import {
     sendLocalParticipant,
     nonParticipantMessageReceived
 } from './react/features/base/conference';
-import { getReplaceParticipant } from './react/features/base/config/functions';
+import { getReplaceParticipant, getMultipleVideoSupportFeatureFlag } from './react/features/base/config/functions';
 import {
     checkAndNotifyForNewDevice,
     getAvailableDevices,
@@ -106,10 +106,12 @@ import {
     updateSettings
 } from './react/features/base/settings';
 import {
+    addLocalTrack,
     createLocalPresenterTrack,
     createLocalTracksF,
     destroyLocalTracks,
     getLocalJitsiAudioTrack,
+    getLocalJitsiDesktopTrack,
     getLocalJitsiVideoTrack,
     getLocalTracks,
     getLocalVideoTrack,
@@ -1444,11 +1446,14 @@ export default {
      * @returns {Promise}
      */
     useVideoStream(newTrack) {
+        const state = APP.store.getState();
+
         logger.debug(`useVideoStream: ${newTrack}`);
 
         return new Promise((resolve, reject) => {
             _replaceLocalVideoTrackQueue.enqueue(onFinish => {
-                const oldTrack = getLocalJitsiVideoTrack(APP.store.getState());
+                const oldTrack = getLocalJitsiVideoTrack(state);
+                const desktopTrack = getLocalJitsiDesktopTrack(state);
 
                 logger.debug(`useVideoStream: Replacing ${oldTrack} with ${newTrack}`);
 
@@ -1459,6 +1464,22 @@ export default {
                     return;
                 }
 
+                // Add the camera track as a secondary track if a screenshare track was already added.
+                if (getMultipleVideoSupportFeatureFlag(state) && desktopTrack) {
+                    APP.store.dispatch(
+                        addLocalTrack(newTrack))
+                        .then(() => {
+                            this.setVideoMuteStatus();
+                        })
+                        .then(resolve)
+                        .catch(error => {
+                            logger.error(`useVideoStream failed: ${error}`);
+                            reject(error);
+                        })
+                        .then(onFinish);
+
+                    return;
+                }
                 APP.store.dispatch(
                     replaceLocalTrack(oldTrack, newTrack, room))
                     .then(() => {
