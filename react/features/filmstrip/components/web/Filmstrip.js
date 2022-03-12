@@ -315,7 +315,8 @@ class Filmstrip extends PureComponent <Props, State> {
         const filmstrip = (<>
             <div
                 className = { clsx(this.props._videosClassName,
-                    !tileViewActive && !_resizableFilmstrip && 'filmstrip-hover') }
+                    !tileViewActive && !_resizableFilmstrip && 'filmstrip-hover',
+                    _verticalViewGrid && 'vertical-view-grid') }
                 id = 'remoteVideos'>
                 {!_disableSelfView && !_verticalViewGrid && (
                     <div
@@ -815,6 +816,10 @@ function _mapStateToProps(state) {
         if (_verticalViewGrid) {
             gridDimensions = gridView.gridDimensions;
             _thumbnailSize = gridView.thumbnailSize;
+
+            if (gridView.hasScroll) {
+                videosClassName += ' has-scroll';
+            }
         } else {
             _thumbnailSize = remote;
         }

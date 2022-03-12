@@ -117,16 +117,31 @@
         height: calc(100% - calc(#{$newToolbarSizeWithPadding} + #{$scrollHeight}));
     }
 
+    .filmstrip__videos.vertical-view-grid#remoteVideos {
+        align-items: 'center';
+        border: 0px;
+        padding-right: 7px;
+
+        &.has-scroll {
+            padding-right: 0px;
+        }
+
+        .remote-videos > div {
+            left: 0px; // fixes an issue on FF - the div is aligned to the right by default for some reason
+        }
+
+        .videocontainer {
+            border: 0px;
+            margin: 2px;
+        }
+    }
+
     .remote-videos {
         display: flex;
         overscroll-behavior: contain;
 
         &.height-transition {
             transition: height .3s ease-in;
-        }
-
-        &.vertical-grid-margin > div {
-            margin-right: $scrollHeight;
         }
 
         & > div {

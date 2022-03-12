@@ -34,10 +34,10 @@ import {
     calculateResponsiveTileViewDimensions,
     calculateThumbnailSizeForHorizontalView,
     calculateThumbnailSizeForVerticalView,
+    getNumberOfPartipantsForTileView,
     isFilmstripResizable,
     showGridInVerticalView
 } from './functions';
-import { getNumberOfPartipantsForTileView } from './functions.web';
 
 export * from './actions.any';
 
@@ -73,7 +73,6 @@ export function setTileViewDimensions() {
                 clientWidth,
                 clientHeight,
                 disableTileEnlargement,
-                isVerticalFilmstrip: false,
                 maxColumns,
                 numberOfParticipants,
                 numberOfVisibleTiles
@@ -145,7 +144,7 @@ export function setVerticalViewDimensions() {
             const thumbnailsTotalHeight = rows * (TILE_VERTICAL_MARGIN + height);
             const hasScroll = clientHeight < thumbnailsTotalHeight;
             const widthOfFilmstrip = (columns * (TILE_HORIZONTAL_MARGIN + width)) + (hasScroll ? SCROLL_SIZE : 0);
-            const filmstripHeight = Math.min(clientHeight, thumbnailsTotalHeight);
+            const filmstripHeight = Math.min(clientHeight - TILE_VIEW_GRID_VERTICAL_MARGIN, thumbnailsTotalHeight);
 
             gridView = {
                 gridDimensions: {
@@ -155,7 +154,8 @@ export function setVerticalViewDimensions() {
                 thumbnailSize: {
                     height,
                     width
-                }
+                },
+                hasScroll
             };
 
             filmstripDimensions = {
