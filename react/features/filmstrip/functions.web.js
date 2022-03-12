@@ -32,6 +32,7 @@ import {
     DISPLAY_VIDEO,
     FILMSTRIP_GRID_BREAKPOINT,
     INDICATORS_TOOLTIP_POSITION,
+    SCROLL_SIZE,
     SQUARE_TILE_ASPECT_RATIO,
     TILE_ASPECT_RATIO,
     TILE_HORIZONTAL_MARGIN,
@@ -295,7 +296,6 @@ export function calculateResponsiveTileViewDimensions({
 }) {
     let height, width;
     let columns, rows;
-
     let dimensions = {
         maxArea: 0
     };
@@ -323,52 +323,31 @@ export function calculateResponsiveTileViewDimensions({
             isVerticalFilmstrip
         });
 
-        // eslint-disable-next-line no-negated-condition
-        if (typeof size !== 'undefined') {
-
+        if (size) {
             const { height: currentHeight, width: currentWidth, minHeightEnforced, maxVisibleRows } = size;
-
-            console.error(`Num col = ${c}, visibleRows=${visibleRows}, hxw=${
-                currentHeight}x${currentWidth}, maxVisibleRows=${maxVisibleRows}`);
             let area = currentHeight * currentWidth * Math.min(c * maxVisibleRows, numberOfParticipants);
+            const currentDimensions = {
+                maxArea: area,
+                height: currentHeight,
+                width: currentWidth,
+                columns: c,
+                rows: r
+            };
 
-            // we have a preference to show more columns if possible, that's why even if the area is equal we
-            // overwrite.
             if (!minHeightEnforced && area > dimensions.maxArea) {
-                dimensions = {
-                    maxArea: area,
-                    height: currentHeight,
-                    width: currentWidth,
-                    columns: c,
-                    rows: r
-                };
-            } else if (minHeightEnforced) {
-                // eslint-disable-next-line max-depth
-                if (area > minHeightEnforcedDimensions.maxArea) {
-                    minHeightEnforcedDimensions = {
-                        maxArea: area,
-                        height: currentHeight,
-                        width: currentWidth,
-                        columns: c,
-                        rows: r
-                    };
-                } else if (maxVisibleRows === 0) {
-                    area = currentHeight * currentWidth * Math.min(c, numberOfParticipants);
+                dimensions = currentDimensions;
+            } else if (minHeightEnforced && area > minHeightEnforcedDimensions.maxArea) {
+                minHeightEnforcedDimensions = currentDimensions;
+            } else if (minHeightEnforced && maxVisibleRows === 0) {
+                area = currentHeight * currentWidth * Math.min(c, numberOfParticipants);
 
-                    // eslint-disable-next-line max-depth
-                    if (area > zeroVisibleRowsDimensions.maxArea) {
-                        zeroVisibleRowsDimensions = {
-                            maxArea: area,
-                            height: currentHeight,
-                            width: currentWidth,
-                            columns: c,
-                            rows: r
-                        };
-                    }
+                if (area > zeroVisibleRowsDimensions.maxArea) {
+                    zeroVisibleRowsDimensions = {
+                        ...currentDimensions,
+                        maxArea: area
+                    };
                 }
             }
-        } else {
-            console.error(`Num col = ${c}, visibleRows=${visibleRows} not possible`);
         }
     }
 
@@ -415,7 +394,7 @@ export function calculateThumbnailSizeForTileView({
     const aspectRatio = getTileDefaultAspectRatio(disableResponsiveTiles, disableTileEnlargement, clientWidth);
     const minHeight = getThumbnailMinHeight(clientWidth);
     const viewWidth = clientWidth - (columns * TILE_HORIZONTAL_MARGIN)
-        - (isVerticalFilmstrip ? 0 : TILE_VIEW_GRID_HORIZONTAL_MARGIN);
+        - (isVerticalFilmstrip ? SCROLL_SIZE : TILE_VIEW_GRID_HORIZONTAL_MARGIN);
     const viewHeight = clientHeight - (minVisibleRows * TILE_VERTICAL_MARGIN) - TILE_VIEW_GRID_VERTICAL_MARGIN;
     const initialWidth = viewWidth / columns;
     let initialHeight = viewHeight / minVisibleRows;
@@ -478,6 +457,7 @@ export function calculateThumbnailSizeForTileView({
 
     // else
     // We can't fit that number of columns with the desired min height and aspect ratio.
+    return;
 }
 
 /**

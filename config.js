@@ -1302,7 +1302,14 @@ var config = {
     //     // Disables user resizable filmstrip. Also, allows configuration of the filmstrip
     //     // (width, tiles aspect ratios) through the interfaceConfig options.
     //     disableResizable: false,
-    // }
+    // },
+
+    // Tile view related config options.
+    // tileView: {
+    //     // The optimal number of tiles that are going to be shown in tile view. Depending on the screen size it may
+    //     // not be possible to show the exact number of participants specified here.
+    //     numberOfVisibleTiles: 25
+    // },
 
 
     // Specifies whether the chat emoticons are disabled or not
