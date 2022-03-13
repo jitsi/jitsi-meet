@@ -421,6 +421,10 @@
         "veryBad": "Muito má",
         "veryGood": "Muito boa"
     },
+    "giphy": {
+        "noResults": "Não foram encontrados resultados :(",
+        "search": "Procurar GIPHY"
+    },
     "helpView": {
         "header": "Centro de ajuda"
     },
@@ -487,6 +491,7 @@
         "focusLocal": "Focar no seu vídeo",
         "focusRemote": "Focar no vídeo de outro participante",
         "fullScreen": "Entrar ou sair do ecrã completo",
+        "giphyMenu": "Alternar o menu GIPHY",
         "keyboardShortcuts": "Atalhos de teclado",
         "localRecording": "Mostrar ou ocultar controlos de gravação local",
         "mute": "Ligar ou desligar o seu microfone",
@@ -1007,6 +1012,7 @@
             "expand": "Expandir",
             "feedback": "Deixar comentários",
             "fullScreen": "Mudar para ecrã completo",
+            "giphy": "Alternar o menu GIPHY",
             "grantModerator": "Conceder direitos de moderador",
             "hangup": "Sair da reunião",
             "help": "Ajuda",
@@ -1076,6 +1082,7 @@
         "exitFullScreen": "Sair de ecrã completo",
         "exitTileView": "Sair de quadrícula",
         "feedback": "Deixar comentários",
+        "giphy": "Alternar o menu GIPHY",
         "hangup": "Sair da reunião",
         "help": "Ajuda",
         "invite": "Convidar pessoas",
