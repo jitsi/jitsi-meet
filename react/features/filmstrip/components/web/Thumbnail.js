@@ -45,6 +45,9 @@ import ThumbnailAudioIndicator from './ThumbnailAudioIndicator';
 import ThumbnailBottomIndicators from './ThumbnailBottomIndicators';
 import ThumbnailTopIndicators from './ThumbnailTopIndicators';
 
+import { setPopoutDisplayMode, setPopoutAvatar } from '../../../popout/actions';
+import { getPopoutAvatarHtmlFromThumbnail, isPopoutOpen } from '../../../popout/functions';
+
 declare var interfaceConfig: Object;
 
 /**
@@ -381,6 +384,12 @@ class Thumbnail extends Component<Props, State> {
      */
     componentDidMount() {
         this._onDisplayModeChanged();
+
+        const participantId = this.props._participant?.id;
+        // update popout display mode
+        this.props.dispatch(setPopoutDisplayMode(participantId, this.props._isScreenSharing ? DISPLAY_VIDEO : this.state.displayMode));
+        // set popout avatar
+        this.props.dispatch(setPopoutAvatar(participantId, getPopoutAvatarHtmlFromThumbnail(participantId)));
     }
 
     /**
@@ -393,6 +402,11 @@ class Thumbnail extends Component<Props, State> {
     componentDidUpdate(prevProps: Props, prevState: State) {
         if (prevState.displayMode !== this.state.displayMode) {
             this._onDisplayModeChanged();
+        }
+
+        // update popout display mode
+        if (prevState.displayMode !== this.state.displayMode || prevProps._isScreenSharing !== this.props._isScreenSharing) {
+            this.props.dispatch(setPopoutDisplayMode(this.props._participant?.id, this.props._isScreenSharing ? DISPLAY_VIDEO : this.state.displayMode));
         }
     }
 
@@ -727,6 +741,7 @@ class Thumbnail extends Component<Props, State> {
         return (
             <div
                 className = 'avatar-container'
+                id = { `avatar-${id}` } // assign an id for popout to copy avatar
                 style = { styles }>
                 <Avatar
                     className = 'userAvatar'
@@ -877,7 +892,8 @@ class Thumbnail extends Component<Props, State> {
             _participant,
             _videoTrack,
             classes,
-            _gifSrc
+            _gifSrc,
+            _popoutOpen
         } = this.props;
         const { id } = _participant || {};
         const { isHovered, popoverVisible } = this.state;
@@ -977,6 +993,18 @@ class Thumbnail extends Component<Props, State> {
                     className = { clsx(classes.borderIndicator,
                     _gifSrc && classes.borderIndicatorOnTop,
                     'active-speaker-indicator') } />
+                {_popoutOpen && <div
+                    style={{
+                        background: `rgba(0,0,0,.6)`,
+                        position: 'absolute',
+                        width: '100%',
+                        height: '100%',
+                        zIndex: '1',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}
+                >Popout Open</div>}
             </span>
         );
     }
@@ -1113,7 +1141,8 @@ function _mapStateToProps(state, ownProps): Object {
         _videoObjectPosition: getVideoObjectPosition(state, participant?.id),
         _videoTrack,
         ...size,
-        _gifSrc: mode === 'chat' ? null : gifSrc
+        _gifSrc: mode === 'chat' ? null : gifSrc,
+        _popoutOpen: isPopoutOpen(state['features/popout'][participantID]?.popout)
     };
 }
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>close popout</title>
+    <defs>
+        <path d="M7,2 L7,4 L4,4 L4,12 L12,12 L12,9 L14,9 L14,14 L2,14 L2,2 L7,2 Z M13.9992,2.0003 L13.9992,6.9993 L12.2070568,5.20715678 L7.70710678,9.70710678 L6.29289322,8.29289322 L10.7928432,3.79294322 L9.0002,2.0003 L13.9992,2.0003 Z" id="path-1"></path>
+    </defs>
+    <g id="2-Icons/Navigation/popout" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <mask id="mask-2" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+        <use id="Icon" fill="white" transform="translate(8.000000, 8.000000) rotate(180.000000) translate(-8.000000, -8.000000) " xlink:href="#path-1"></use>
+    </g>
+</svg>

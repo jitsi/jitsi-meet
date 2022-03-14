@@ -43,6 +43,7 @@ import '../notifications/reducer';
 import '../overlay/reducer';
 import '../participants-pane/reducer';
 import '../polls/reducer';
+import '../popout/reducer';
 import '../reactions/reducer';
 import '../recent-list/reducer';
 import '../recording/reducer';

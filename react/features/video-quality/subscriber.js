@@ -17,6 +17,8 @@ import { getReceiverVideoQualityLevel } from './functions';
 import logger from './logger';
 import { getMinHeightForQualityLvlMap } from './selector';
 
+import { isPopoutOpen } from '../popout/functions';
+
 declare var APP: Object;
 
 /**
@@ -206,6 +208,10 @@ function _updateReceiverVideoConstraints({ getState }) {
     const sourceNameSignaling = getSourceNameSignalingFeatureFlag(state);
     const localParticipantId = getLocalParticipant(state).id;
 
+    const participantIdsWithPopout = Object.entries(state['features/popout'])
+        .filter(([participantId, popoutState]) => isPopoutOpen(popoutState.popout))
+        .map(([participantId, popoutState]) => participantId);
+
     let receiverConstraints;
 
     if (sourceNameSignaling) {
@@ -296,6 +302,11 @@ function _updateReceiverVideoConstraints({ getState }) {
             // Prioritize screenshare in tile view.
             remoteScreenShares?.length && (receiverConstraints.selectedEndpoints = remoteScreenShares);
 
+            // Prioritize popout in tile view.
+            participantIdsWithPopout.forEach(id => {
+                receiverConstraints.selectedEndpoints.push(id);
+            });
+
         // Stage view.
         } else {
             if (!visibleRemoteParticipants?.size && !largeVideoParticipantId) {
@@ -312,6 +323,12 @@ function _updateReceiverVideoConstraints({ getState }) {
                 receiverConstraints.constraints[largeVideoParticipantId] = { 'maxHeight': maxFrameHeight };
                 receiverConstraints.onStageEndpoints = [ largeVideoParticipantId ];
             }
+
+            // Prioritize popout in stage view.
+            participantIdsWithPopout.forEach(id => {
+                receiverConstraints.constraints[id] = { 'maxHeight': maxFrameHeight };
+                receiverConstraints.onStageEndpoints.push(id);
+            });
         }
     }
 

@@ -32,6 +32,9 @@ import type { AbstractProps } from '../AbstractConference';
 import ConferenceInfo from './ConferenceInfo';
 import { default as Notice } from './Notice';
 
+import { closePopout } from '../../../popout/actions';
+import { isPopoutClosedButNotMarked } from '../../../popout/functions';
+
 declare var APP: Object;
 declare var interfaceConfig: Object;
 
@@ -166,6 +169,15 @@ class Conference extends AbstractConference<Props, *> {
     componentDidMount() {
         document.title = `${this.props._roomName} | ${interfaceConfig.APP_NAME}`;
         this._start();
+
+        // marked already closed popouts
+        this.markPopoutClosedInterval = setInterval(() => {
+            Object.entries(this.props._popouts).forEach(([participantId, popoutState]) => {
+                if (isPopoutClosedButNotMarked(popoutState.popout)) {
+                    this.props.dispatch(closePopout(participantId));
+                }
+            })
+        }, 500);
     }
 
     /**
@@ -194,6 +206,13 @@ class Conference extends AbstractConference<Props, *> {
      * @inheritdoc
      */
     componentWillUnmount() {
+        // cleanup popout related intervals when conference ends
+        if (this.markPopoutClosedInterval) {
+            clearInterval(this.markPopoutClosedInterval);
+        }
+        // close all popouts when conference ends
+        Object.keys(this.props._popouts).forEach(participantId => this.props.dispatch(closePopout(participantId)));
+
         APP.UI.unbindEvents();
 
         FULL_SCREEN_EVENTS.forEach(name =>
@@ -386,6 +405,7 @@ class Conference extends AbstractConference<Props, *> {
 function _mapStateToProps(state) {
     const { backgroundAlpha, mouseMoveCallbackInterval } = state['features/base/config'];
     const { overflowDrawer } = state['features/toolbox'];
+    const popouts = state['features/popout'];
 
     return {
         ...abstractMapStateToProps(state),
@@ -395,7 +415,8 @@ function _mapStateToProps(state) {
         _overflowDrawer: overflowDrawer,
         _roomName: getConferenceNameForTitle(state),
         _showLobby: getIsLobbyVisible(state),
-        _showPrejoin: isPrejoinPageVisible(state)
+        _showPrejoin: isPrejoinPageVisible(state),
+        _popouts: popouts
     };
 }
 

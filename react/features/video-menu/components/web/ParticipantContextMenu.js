@@ -38,6 +38,10 @@ import {
     VolumeSlider
 } from './';
 
+import { openPopout, closePopout } from '../../../popout/actions';
+import { IconPopout, IconPopin } from "../../../base/icons";
+import ContextMenuItem from '../../../base/components/context-menu/ContextMenuItem';
+
 type Props = {
 
     /**
@@ -182,6 +186,8 @@ const ParticipantContextMenu = ({
         text: t('toolbar.stopSharedVideo')
     } ];
 
+    const isPopoutOpen = useSelector(state => state['features/popout'][_getCurrentParticipantId()]?.popout);
+
     if (_isModerator) {
         if ((thumbnailMenu || _overflowDrawer) && isModerationSupported && _isAudioMuted) {
             buttons.push(<AskToUnmuteButton
@@ -244,6 +250,30 @@ const ParticipantContextMenu = ({
                 key = 'conn-status'
                 participantId = { _getCurrentParticipantId() } />
         );
+    }
+
+    if (!isMobileBrowser()) {
+        if (isPopoutOpen) {
+            buttons.push(
+                <ContextMenuItem
+                    accessibilityLabel = 'Close Popout'
+                    icon = { IconPopin }
+                    key = 'close-popout'
+                    // eslint-disable-next-line react/jsx-handler-names
+                    onClick = { () => dispatch(closePopout(_getCurrentParticipantId())) }
+                    text = 'Close Popout' />
+            );
+        } else {
+            buttons.push(
+                <ContextMenuItem
+                    accessibilityLabel = 'Open Popout'
+                    icon = { IconPopout }
+                    key = 'open-popout'
+                    // eslint-disable-next-line react/jsx-handler-names
+                    onClick = { () => dispatch(openPopout(_getCurrentParticipantId())) }
+                    text = 'Open Popout' />
+            );
+        }
     }
 
     if (thumbnailMenu && remoteControlState) {
