@@ -241,7 +241,6 @@ function _mapStateToProps(state, ownProps) {
     const { disableKick, disablePrivateChat } = remoteVideoMenu;
     const _rooms = Object.values(getBreakoutRooms(state));
     const _currentRoomId = getCurrentRoomId(state);
-
     const shouldDisableKick = disableKick || !kickOutEnabled;
 
     return {

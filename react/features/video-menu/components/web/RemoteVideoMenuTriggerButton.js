@@ -165,9 +165,13 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
             participantID,
             popoverVisible
         } = this.props;
-        const content = _showConnectionInfo
-            ? <ConnectionIndicatorContent participantId = { participantID } />
-            : _disabled ? null : this._renderRemoteVideoMenu();
+        let content;
+
+        if (_showConnectionInfo) {
+            content = <ConnectionIndicatorContent participantId = { participantID } />;
+        } else if (!_disabled) {
+            content = this._renderRemoteVideoMenu();
+        }
 
         if (!content) {
             return null;
@@ -183,7 +187,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                 onPopoverOpen = { this._onPopoverOpen }
                 position = { this.props._menuPosition }
                 visible = { popoverVisible }>
-                {!_overflowDrawer && buttonVisible && !_disabled && (
+                {!_overflowDrawer && buttonVisible(
                     <span
                         className = { classes.triggerButton }
                         role = 'button'>
@@ -303,13 +307,13 @@ function _mapStateToProps(state, ownProps) {
     }
 
     return {
+        _disabled: remoteVideoMenu?.disabled,
         _menuPosition,
         _overflowDrawer: overflowDrawer,
         _participant: participant,
         _participantDisplayName,
         _remoteControlState,
-        _showConnectionInfo: showConnectionInfo,
-        _disabled: remoteVideoMenu?.disabled
+        _showConnectionInfo: showConnectionInfo
     };
 }
 
