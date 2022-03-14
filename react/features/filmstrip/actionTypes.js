@@ -109,3 +109,12 @@ export const SET_FILMSTRIP_WIDTH = 'SET_FILMSTRIP_WIDTH';
  * }
  */
 export const SET_USER_FILMSTRIP_WIDTH = 'SET_USER_FILMSTRIP_WIDTH';
+
+/**
+ * The type of action which sets whether the user is resizing or not.
+ * {
+ *      type: SET_USER_IS_RESIZING,
+ *      resizing: boolean
+ * }
+ */
+export const SET_USER_IS_RESIZING = 'SET_USER_IS_RESIZING';
