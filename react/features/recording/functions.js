@@ -1,9 +1,12 @@
 // @flow
 
 import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
+import { getLocalParticipant } from '../base/participants';
 import { isEnabled as isDropboxEnabled } from '../dropbox';
+import { extractFqnFromPath } from '../dynamic-branding';
 
 import { RECORDING_STATUS_PRIORITIES, RECORDING_TYPES } from './constants';
+import logger from './logger';
 
 /**
  * Searches in the passed in redux state for an active recording session of the
@@ -80,6 +83,16 @@ export function isSavingRecordingOnDropbox(state: Object) {
 }
 
 /**
+ * Selector used for determining disable state for the meeting highlight button.
+ *
+ * @param {Object} state - The redux state to search in.
+ * @returns {string}
+ */
+export function isHighlightMeetingMomentDisabled(state: Object) {
+    return state['features/recording'].disableHighlightMeetingMoment;
+}
+
+/**
  * Returns the recording session status that is to be shown in a label. E.g. If
  * there is a session with the status OFF and one with PENDING, then the PENDING
  * one will be shown, because that is likely more important for the user to see.
@@ -119,4 +132,52 @@ export function getResourceId(recorder: string | Object) {
             ? recorder
             : recorder.getId();
     }
+}
+
+/**
+ * Sends a meeting highlight to backend.
+ *
+ * @param  {Object} state - Redux state.
+ * @returns {boolean} - True if sent, false otherwise.
+ */
+export async function sendMeetingHighlight(state: Object) {
+    const { webhookProxyUrl: url } = state['features/base/config'];
+    const { conference } = state['features/base/conference'];
+    const { jwt } = state['features/base/jwt'];
+    const { connection } = state['features/base/connection'];
+    const jid = connection.getJid();
+    const localParticipant = getLocalParticipant(state);
+
+    const headers = {
+        ...jwt ? { 'Authorization': `Bearer ${jwt}` } : {},
+        'Content-Type': 'application/json'
+    };
+
+    const reqBody = {
+        meetingFqn: extractFqnFromPath(),
+        sessionId: conference.sessionId,
+        submitted: Date.now(),
+        participantId: localParticipant.jwtId,
+        participantName: localParticipant.name,
+        participantJid: jid
+    };
+
+    if (url) {
+        try {
+            const res = await fetch(`${url}/v2/highlights`, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify(reqBody)
+            });
+
+            if (res.ok) {
+                return true;
+            }
+            logger.error('Status error:', res.status);
+        } catch (err) {
+            logger.error('Could not send request', err);
+        }
+    }
+
+    return false;
 }

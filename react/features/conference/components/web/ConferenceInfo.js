@@ -9,6 +9,7 @@ import { connect } from '../../../base/redux';
 import { E2EELabel } from '../../../e2ee';
 import { LocalRecordingLabel } from '../../../local-recording';
 import { RecordingLabel } from '../../../recording';
+import HighlightButton from '../../../recording/components/Recording/web/HighlightButton';
 import { isToolboxVisible } from '../../../toolbox/functions.web';
 import { TranscribingLabel } from '../../../transcribing';
 import { VideoQualityLabel } from '../../../video-quality';
@@ -38,6 +39,10 @@ type Props = {
 };
 
 const COMPONENTS = [
+    {
+        Component: HighlightButton,
+        id: 'highlight-moment'
+    },
     {
         Component: SubjectText,
         id: 'subject'
