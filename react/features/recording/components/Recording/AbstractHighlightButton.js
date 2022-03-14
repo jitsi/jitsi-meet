@@ -43,9 +43,11 @@ export default class AbstractHighlightButton<P: Props> extends Component<P> {
    * @returns {void}
    */
     _onClick() {
-        const { dispatch } = this.props;
+        const { _disabled, dispatch } = this.props;
 
-        dispatch(highlightMeetingMoment());
+        if (!_disabled) {
+            dispatch(highlightMeetingMoment());
+        }
     }
 }
 
