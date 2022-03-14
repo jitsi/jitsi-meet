@@ -66,6 +66,11 @@ type Props = {
     _disableKick: boolean,
 
     /**
+     * Whether or not to display the send private message button.
+     */
+    _disablePrivateChat: Boolean,
+
+    /**
      * Whether or not to display the remote mute buttons.
      */
     _disableRemoteMute: boolean,
@@ -128,6 +133,7 @@ class RemoteVideoMenu extends PureComponent<Props> {
     render() {
         const {
             _disableKick,
+            _disablePrivateChat,
             _disableRemoteMute,
             _disableGrantModerator,
             _isParticipantAvailable,
@@ -156,7 +162,7 @@ class RemoteVideoMenu extends PureComponent<Props> {
                 { !_disableKick && <KickButton { ...buttonProps } /> }
                 { !_disableGrantModerator && <GrantModeratorButton { ...buttonProps } /> }
                 <PinButton { ...buttonProps } />
-                <PrivateMessageButton { ...buttonProps } />
+                { !_disablePrivateChat && <PrivateMessageButton { ...buttonProps } /> }
                 <ConnectionStatusButton { ...buttonProps } />
                 {_rooms.length > 1 && <>
                     <Divider style = { styles.divider } />
@@ -232,17 +238,17 @@ function _mapStateToProps(state, ownProps) {
     const { participantId } = ownProps;
     const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
     const isParticipantAvailable = getParticipantById(state, participantId);
-    let { disableKick } = remoteVideoMenu;
+    const { disableKick, disablePrivateChat } = remoteVideoMenu;
     const _rooms = Object.values(getBreakoutRooms(state));
     const _currentRoomId = getCurrentRoomId(state);
-
-    disableKick = disableKick || !kickOutEnabled;
+    const shouldDisableKick = disableKick || !kickOutEnabled;
 
     return {
         _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
         _currentRoomId,
-        _disableKick: Boolean(disableKick),
+        _disableKick: Boolean(shouldDisableKick),
         _disableRemoteMute: Boolean(disableRemoteMute),
+        _disablePrivateChat: Boolean(disablePrivateChat),
         _isOpen: isDialogOpen(state, RemoteVideoMenu_),
         _isParticipantAvailable: Boolean(isParticipantAvailable),
         _participantDisplayName: getParticipantDisplayName(state, participantId),

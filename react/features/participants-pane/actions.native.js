@@ -42,9 +42,15 @@ export function showConnectionStatus(participantID: string) {
  * @returns {Function}
  */
 export function showContextMenuDetails(participantId: string, local: boolean = false) {
-    return local
-        ? openDialog(LocalVideoMenu)
-        : openDialog(RemoteVideoMenu, { participantId });
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        const { remoteVideoMenu } = getState()['features/base/config'];
+
+        if (local) {
+            dispatch(openDialog(LocalVideoMenu));
+        } else if (!remoteVideoMenu?.disabled) {
+            dispatch(openDialog(RemoteVideoMenu, { participantId }));
+        }
+    };
 }
 
 /**
