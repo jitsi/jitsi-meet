@@ -187,7 +187,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                 onPopoverOpen = { this._onPopoverOpen }
                 position = { this.props._menuPosition }
                 visible = { popoverVisible }>
-                {!_overflowDrawer && buttonVisible(
+                {!_overflowDrawer && buttonVisible && !_disabled && (
                     <span
                         className = { classes.triggerButton }
                         role = 'button'>
