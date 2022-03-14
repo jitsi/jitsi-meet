@@ -21,7 +21,12 @@ import { shouldHideSelfView } from '../../../base/settings/functions.any';
 import { showToolbox } from '../../../toolbox/actions.web';
 import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';
 import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
-import { setFilmstripVisible, setVisibleRemoteParticipants, setUserFilmstripWidth } from '../../actions';
+import {
+    setFilmstripVisible,
+    setVisibleRemoteParticipants,
+    setUserFilmstripWidth,
+    setUserIsResizing
+} from '../../actions';
 import {
     ASPECT_RATIO_BREAKPOINT,
     DEFAULT_FILMSTRIP_WIDTH,
@@ -378,6 +383,7 @@ class Filmstrip extends PureComponent <Props, State> {
             mousePosition: e.clientX,
             dragFilmstripWidth: this.props._verticalFilmstripWidth || DEFAULT_FILMSTRIP_WIDTH
         });
+        this.props.dispatch(setUserIsResizing(true));
     }
 
     _onDragMouseUp: () => void;
@@ -392,6 +398,7 @@ class Filmstrip extends PureComponent <Props, State> {
             this.setState({
                 isMouseDown: false
             });
+            this.props.dispatch(setUserIsResizing(false));
         }
     }
 

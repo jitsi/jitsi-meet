@@ -11,6 +11,7 @@ import {
     SET_REMOTE_PARTICIPANTS,
     SET_TILE_VIEW_DIMENSIONS,
     SET_USER_FILMSTRIP_WIDTH,
+    SET_USER_IS_RESIZING,
     SET_VERTICAL_VIEW_DIMENSIONS,
     SET_VISIBLE_REMOTE_PARTICIPANTS,
     SET_VOLUME
@@ -32,6 +33,14 @@ const DEFAULT_STATE = {
      * @type {Object}
      */
     horizontalViewDimensions: {},
+
+    /**
+     * Whether or not the user is actively resizing the filmstrip.
+     *
+     * @public
+     * @type {boolean}
+     */
+    isResizing: false,
 
     /**
      * The custom audio volume levels per participant.
@@ -206,6 +215,12 @@ ReducerRegistry.register(
                     current: width,
                     userSet: width
                 }
+            };
+        }
+        case SET_USER_IS_RESIZING: {
+            return {
+                ...state,
+                isResizing: action.resizing
             };
         }
         }

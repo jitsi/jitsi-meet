@@ -10,6 +10,7 @@ import {
     SET_HORIZONTAL_VIEW_DIMENSIONS,
     SET_TILE_VIEW_DIMENSIONS,
     SET_USER_FILMSTRIP_WIDTH,
+    SET_USER_IS_RESIZING,
     SET_VERTICAL_VIEW_DIMENSIONS,
     SET_VOLUME
 } from './actionTypes';
@@ -240,5 +241,18 @@ export function setUserFilmstripWidth(width: number) {
     return {
         type: SET_USER_FILMSTRIP_WIDTH,
         width
+    };
+}
+
+/**
+ * Sets whether the user is resizing or not.
+ *
+ * @param {boolean} resizing - Whether the user is resizing or not.
+ * @returns {Object}
+ */
+export function setUserIsResizing(resizing: boolean) {
+    return {
+        type: SET_USER_IS_RESIZING,
+        resizing
     };
 }

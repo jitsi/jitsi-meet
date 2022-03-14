@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import Filmstrip from '../../../../../modules/UI/videolayout/Filmstrip';
 import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+import { getVerticalViewMaxWidth } from '../../../filmstrip/functions.web';
 import { getToolboxHeight } from '../../../toolbox/functions.web';
 
 import VideoManager from './VideoManager';
@@ -30,9 +31,19 @@ type Props = {
     filmstripVisible: boolean,
 
     /**
+     * The width of the vertical filmstrip.
+     */
+    filmstripWidth: number,
+
+    /**
      * Is the video shared by the local user.
      */
     isOwner: boolean,
+
+    /**
+     * Whether or not the user is actively resizing the filmstrip.
+     */
+    isResizing: boolean,
 
     /**
      * The shared video url.
@@ -56,14 +67,14 @@ class SharedVideo extends Component<Props> {
      * }}
      */
     getDimensions() {
-        const { clientHeight, clientWidth, filmstripVisible } = this.props;
+        const { clientHeight, clientWidth, filmstripVisible, filmstripWidth } = this.props;
 
         let width;
         let height;
 
         if (interfaceConfig.VERTICAL_FILMSTRIP) {
             if (filmstripVisible) {
-                width = `${clientWidth - Filmstrip.getVerticalFilmstripWidth()}px`;
+                width = `${clientWidth - filmstripWidth}px`;
             } else {
                 width = `${clientWidth}px`;
             }
@@ -109,8 +120,8 @@ class SharedVideo extends Component<Props> {
      * @returns {React$Element}
      */
     render() {
-        const { isOwner } = this.props;
-        const className = isOwner ? '' : 'disable-pointer';
+        const { isOwner, isResizing } = this.props;
+        const className = !isResizing && isOwner ? '' : 'disable-pointer';
 
         return (
             <div
@@ -134,7 +145,7 @@ class SharedVideo extends Component<Props> {
 function _mapStateToProps(state) {
     const { ownerId, videoUrl } = state['features/shared-video'];
     const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
-    const { visible } = state['features/filmstrip'];
+    const { visible, isResizing } = state['features/filmstrip'];
 
     const localParticipant = getLocalParticipant(state);
 
@@ -142,7 +153,9 @@ function _mapStateToProps(state) {
         clientHeight,
         clientWidth,
         filmstripVisible: visible,
+        filmstripWidth: getVerticalViewMaxWidth(state),
         isOwner: ownerId === localParticipant?.id,
+        isResizing,
         videoUrl
     };
 }
