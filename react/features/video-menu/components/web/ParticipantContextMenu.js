@@ -135,7 +135,7 @@ const ParticipantContextMenu = ({
     const _overflowDrawer = useSelector(showOverflowDrawer);
     const { remoteVideoMenu = {}, disableRemoteMute, startSilent }
         = useSelector(state => state['features/base/config']);
-    const { disableKick, disableGrantModerator } = remoteVideoMenu;
+    const { disableKick, disableGrantModerator, disablePrivateChat } = remoteVideoMenu;
     const { participantsVolume } = useSelector(state => state['features/filmstrip']);
     const _volume = (participant?.local ?? true ? undefined
         : participant?.id ? participantsVolume[participant?.id] : undefined) ?? 1;
@@ -227,11 +227,12 @@ const ParticipantContextMenu = ({
         }
     }
 
-    buttons2.push(
-        <PrivateMessageMenuButton
+    if (!disablePrivateChat) {
+        buttons2.push(<PrivateMessageMenuButton
             key = 'privateMessage'
             participantID = { _getCurrentParticipantId() } />
-    );
+        );
+    }
 
     if (thumbnailMenu && isMobileBrowser()) {
         buttons2.push(

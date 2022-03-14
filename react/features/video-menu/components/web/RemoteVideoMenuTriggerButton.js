@@ -87,6 +87,11 @@ type Props = {
     participantID: string,
 
     /**
+     * Whether the remote video context menu is disabled.
+     */
+    _disabled: Boolean,
+
+    /**
      * The ID for the participant on which the remote video menu will act.
      */
     _participantDisplayName: string,
@@ -151,6 +156,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
      */
     render() {
         const {
+            _disabled,
             _overflowDrawer,
             _showConnectionInfo,
             _participantDisplayName,
@@ -161,7 +167,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
         } = this.props;
         const content = _showConnectionInfo
             ? <ConnectionIndicatorContent participantId = { participantID } />
-            : this._renderRemoteVideoMenu();
+            : _disabled ? null : this._renderRemoteVideoMenu();
 
         if (!content) {
             return null;
@@ -177,7 +183,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                 onPopoverOpen = { this._onPopoverOpen }
                 position = { this.props._menuPosition }
                 visible = { popoverVisible }>
-                {!_overflowDrawer && buttonVisible && (
+                {!_overflowDrawer && buttonVisible && !_disabled && (
                     <span
                         className = { classes.triggerButton }
                         role = 'button'>
@@ -266,6 +272,7 @@ function _mapStateToProps(state, ownProps) {
     const activeParticipant = requestedParticipant || controlled;
     const { overflowDrawer } = state['features/toolbox'];
     const { showConnectionInfo } = state['features/base/connection'];
+    const { remoteVideoMenu } = state['features/base/config'];
 
     if (_supportsRemoteControl
             && ((!active && !_isRemoteControlSessionActive) || activeParticipant === participantID)) {
@@ -301,7 +308,8 @@ function _mapStateToProps(state, ownProps) {
         _participant: participant,
         _participantDisplayName,
         _remoteControlState,
-        _showConnectionInfo: showConnectionInfo
+        _showConnectionInfo: showConnectionInfo,
+        _disabled: remoteVideoMenu?.disabled
     };
 }
 
