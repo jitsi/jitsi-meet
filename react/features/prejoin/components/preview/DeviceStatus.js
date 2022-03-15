@@ -62,7 +62,7 @@ const useStyles = makeStyles(theme => {
                 width: '16px'
             },
             '& .device-icon--ok svg path': {
-                fill: theme.palette.switch01Enabled
+                fill: '#189B55'
             }
         }
     };
