@@ -193,16 +193,3 @@
 @mixin transparentBg($color, $alpha) {
     background-color: rgba(red($color), green($color), blue($color), $alpha);
 }
-
-/**
- * Avatar status badge mixin
- */
-@mixin avatarBadge {
-    border-radius: 50%;
-    content: '';
-    display: block;
-    height: 35%;
-    position: absolute;
-    bottom: 0;
-    width: 35%;
-}
