@@ -18,7 +18,7 @@ class SecurityDialog {
         return $('[data-checked="true"]');
     }
 
-    //Security dialog close button object.
+    // Security dialog close button object.
     get SecurityDialogCloseButton() {
         return $('#modal-header-close-button');
     }

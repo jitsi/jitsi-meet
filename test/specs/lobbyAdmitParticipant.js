@@ -1,16 +1,15 @@
-const LobbyNotification = require("../page-objects/notifications/LobbyNotification");
-
-const Toolbox = require("../page-objects/Toolbox");
-const SecurityDialog = require("../page-objects/SecurityDialog");
 import {
     ENTER_KEY,
     FIRST_PARTICIPANT,
     SECOND_PARTICIPANT
-} from "../helpers/constants"
-import createBrowserSession from "../helpers/createBrowserSession";
-import openParticipantsPane from "../helpers/openParticipantsPane";
-import createMeetingUrl from "../helpers/createMeetingUrl"
-import createMeetingRoom from "../helpers/createMeetingRoom";
+} from '../helpers/constants';
+import createBrowserSession from '../helpers/createBrowserSession';
+import createMeetingRoom from '../helpers/createMeetingRoom';
+import createMeetingUrl from '../helpers/createMeetingUrl';
+import openParticipantsPane from '../helpers/openParticipantsPane';
+const SecurityDialog = require('../page-objects/SecurityDialog');
+const Toolbox = require('../page-objects/Toolbox');
+const LobbyNotification = require('../page-objects/notifications/LobbyNotification');
 
 describe('Activate lobby and admit participant', () => {
     let meetingUrl;
@@ -18,7 +17,7 @@ describe('Activate lobby and admit participant', () => {
 
     it('should open jitsi-meet app and enable lobby by first participant', async () => {
         meetingUrl = await createMeetingUrl();
-        await createMeetingRoom(meetingUrl)
+        await createMeetingRoom(meetingUrl);
         const prejoinTextInput = await $('.prejoin-input-area input');
 
         await prejoinTextInput.setValue(FIRST_PARTICIPANT);
@@ -54,7 +53,7 @@ describe('Activate lobby and admit participant', () => {
     });
     it('should open jitsi-meet with same room name where second participant wants to join', async () => {
 
-        Participant = await createBrowserSession()
+        Participant = await createBrowserSession();
         await Participant.url(meetingUrl);
         const prejoinTextInput = await Participant.$('.prejoin-input-area input');
 

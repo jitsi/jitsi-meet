@@ -6,7 +6,9 @@ class Toolbox {
     // Toolbox object.
     get ToolboxView() {
         const video = $('#largeVideo');
+
         video.moveTo();
+
         return $('.toolbox-content-items');
     }
 
@@ -27,7 +29,7 @@ class Toolbox {
 
     // Participants pane button object.
     get ParticipantsPaneButton() {
-        return $("[aria-label='Participants']");
+        return $('[aria-label="Participants"]');
     }
 }
 module.exports = new Toolbox();

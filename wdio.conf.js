@@ -1,5 +1,7 @@
-const allureReporter = require('@wdio/allure-reporter').default
+const allureReporter = require('@wdio/allure-reporter').default;
+
 exports.config = {
+
     //
     // ====================
     // Runner Configuration
@@ -24,10 +26,12 @@ exports.config = {
     specs: [
         './test/specs/**/*.js'
     ],
+
     // Patterns to exclude.
     exclude: [
         // 'path/to/excluded/files'
     ],
+
     //
     // ============
     // Capabilities
@@ -45,6 +49,7 @@ exports.config = {
     // from the same test should run tests.
     //
     maxInstances: 10,
+
     //
     // If you have trouble getting all important capabilities together, check out the
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
@@ -56,7 +61,7 @@ exports.config = {
             //port: 4444,
             browserName: 'chrome',
             acceptInsecureCerts: true,
-            "goog:chromeOptions": {
+            'goog:chromeOptions': {
                 args: [
                     'use-fake-device-for-media-stream',
                     'use-fake-ui-for-media-stream',
@@ -65,23 +70,23 @@ exports.config = {
                     'disable-infobars',
                     'autoplay-policy=no-user-gesture-required',
                     'auto-select-desktop-capture-source=Your Entire screen'
-                ],
+                ]
             }
         },
         {
             maxInstances: 4,
             browserName: 'firefox',
             acceptInsecureCerts: true,
-            "moz:firefoxOptions": {
-                "prefs": {
-                    "media.navigator.streams.fake": true,
-                    "media.navigator.permission.disabled": true,
-                    "media.peerconnection.ice.tcp": true,
-                    "intl.accept_languages": "en",
-                    "media.autoplay.default": 0
+            'moz:firefoxOptions': {
+                'prefs': {
+                    'media.navigator.streams.fake': true,
+                    'media.navigator.permission.disabled': true,
+                    'media.peerconnection.ice.tcp': true,
+                    'intl.accept_languages': 'en',
+                    'media.autoplay.default': 0
                 }
             }
-        },
+        }
         // {
         //     maxInstances: 1,
         //     port: 4445,
@@ -89,7 +94,9 @@ exports.config = {
         //     acceptInsecureCerts: true,
         // }
     ],
-    sync:true,
+
+    sync: true,
+
     //
     // ===================
     // Test Configurations
@@ -98,6 +105,7 @@ exports.config = {
     //
     // Level of logging verbosity: trace | debug | info | warn | error | silent
     logLevel: 'info',
+
     //
     // Set specific log levels per logger
     // loggers:
@@ -116,29 +124,34 @@ exports.config = {
     // If you only want to run your tests until a specific amount of tests have failed use
     // bail (default is 0 - don't bail, run all tests).
     bail: 0,
+
     //
     // Set a base URL in order to shorten url command calls. If your `url` parameter starts
     // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
     // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
     // gets prepended directly.
     baseUrl: process.env.BROWSER || 'https://localhost:8080',
+
     //
     // Default timeout for all waitFor* commands.
     waitforTimeout: 10000,
+
     //
     // Default timeout in milliseconds for request
     // if browser driver or grid doesn't send response
     connectionRetryTimeout: 120000,
+
     //
     // Default request retries count
     connectionRetryCount: 3,
+
     //
     // Test runner services
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
     //services: ['chromedriver'],
-    services: ['selenium-standalone'],
+    services: [ 'selenium-standalone' ],
 
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
@@ -147,6 +160,7 @@ exports.config = {
     // Make sure you have the wdio adapter package for the specific framework installed
     // before running any tests.
     framework: 'mocha',
+
     //
     // The number of times to retry the entire specfile when it fails as a whole
     // specFileRetries: 1,
@@ -161,18 +175,19 @@ exports.config = {
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
     // reporters: ['spec'],
-    reporters: [['allure', {
+    reporters: [ [ 'allure', {
         outputDir: 'allure-results',
         disableWebdriverStepsReporting: false,
-        disableWebdriverScreenshotsReporting: false,
-    }],
+        disableWebdriverScreenshotsReporting: false
+    } ]
+
     // ['junit', {
     //     outputDir: './',
     //     outputFileFormat: function(options) { // optional
     //         return `results-${options.cid}.${options.capabilities}.xml`
     //     }
     // }]
-],
+    ],
 
     //
     // Options to be passed to Mocha.
@@ -181,6 +196,7 @@ exports.config = {
         ui: 'bdd',
         timeout: 60000
     },
+
     //
     // =====
     // Hooks
@@ -270,14 +286,15 @@ exports.config = {
      */
 
     afterTest: async function (test, context, { error, result, duration, passed, retries }) {
-        if(!passed) {
-          await browser.takeScreenshot();
-          const result = await browser.execute(() => {
-            return window.APP.connection.getLogs();
-          });
-        await allureReporter.addAttachment('meetlog', result)
+        if (!passed) {
+            await browser.takeScreenshot();
+            const result = await browser.execute(() => {
+                return window.APP.connection.getLogs();
+            });
+
+            await allureReporter.addAttachment('meetlog', result);
         }
-      },
+    }
 
     /**
      * Hook that gets executed after the suite has ended
@@ -326,6 +343,6 @@ exports.config = {
     * @param {String} oldSessionId session ID of the old session
     * @param {String} newSessionId session ID of the new session
     */
-    //onReload: function(oldSessionId, newSessionId) {
-    //}
-}
+    // onReload: function(oldSessionId, newSessionId) {
+    // }
+};

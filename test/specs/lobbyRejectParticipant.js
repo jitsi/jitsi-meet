@@ -1,22 +1,23 @@
-const LobbyNotification = require("../page-objects/notifications/LobbyNotification");
-//const LobbyRejectNotification = require("../page-objects/notifications/LobbyRejectNotification")
-const Toolbox = require("../page-objects/Toolbox");
-const SecurityDialog = require("../page-objects/SecurityDialog");
 import {
     ENTER_KEY,
     FIRST_PARTICIPANT,
     SECOND_PARTICIPANT
-} from "../helpers/constants"
-import createBrowserSession from "../helpers/createBrowserSession";
-import createMeetingUrl from "../helpers/createMeetingUrl"
-import createMeetingRoom from "../helpers/createMeetingRoom";
+} from '../helpers/constants';
+import createBrowserSession from '../helpers/createBrowserSession';
+import createMeetingRoom from '../helpers/createMeetingRoom';
+import createMeetingUrl from '../helpers/createMeetingUrl';
+
+const SecurityDialog = require('../page-objects/SecurityDialog');
+const Toolbox = require('../page-objects/Toolbox');
+const LobbyNotification = require('../page-objects/notifications/LobbyNotification');
 
 describe('Activate lobby and admit participant', () => {
     let meetingUrl;
     let Participant;
+
     it('should open jitsi-meet app and enable lobby', async () => {
         meetingUrl = await createMeetingUrl();
-        await createMeetingRoom(meetingUrl)
+        await createMeetingRoom(meetingUrl);
         const prejoinTextInput = await $('.prejoin-input-area input');
 
         await prejoinTextInput.setValue(FIRST_PARTICIPANT);
@@ -51,7 +52,7 @@ describe('Activate lobby and admit participant', () => {
         await securityDialogCloseButton.click();
     });
     it('should open jitsi-meet with same room name where second participant wants to join', async () => {
-        Participant = await createBrowserSession()
+        Participant = await createBrowserSession();
         await Participant.url(meetingUrl);
         const prejoinTextInput = await Participant.$('.prejoin-input-area input');
 
@@ -69,13 +70,15 @@ describe('Activate lobby and admit participant', () => {
 
         await expect(lobbyRejectBtn).toBeDisplayed();
         await lobbyRejectBtn.click();
-        // TODO: Find a solution to select Participant.LobbyNotification.Notidication
+
+        // TODO: Find a solution to select Participant.LobbyNotification.Notification
         // instead of Participant.$('#notifications-container').
         const rejectNotification = await Participant.$('#notifications-container');
 
         await expect(rejectNotification).toBeDisplayed();
-        // TODO: Find a solution to select Participant.LobbyRejectNotification.Notidication
-        // instead of Participant.$('[data-testid="lobby.joinRejectedMessage"]').
+
+        // TODO: Find a solution to select Participant.LobbyRejectNotification.Notification
+        // instead of Participant.$('[data-testid='lobby.joinRejectedMessage']').
         const rejectedMessage = await Participant.$('[data-testid="lobby.joinRejectedMessage"]');
 
         await expect(rejectedMessage).toBeDisplayed();

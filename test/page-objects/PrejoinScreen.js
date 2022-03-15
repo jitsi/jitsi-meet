@@ -6,7 +6,7 @@ class PrejoinScreen {
     // Premeeting screen object.
     get PremeetingScreen() {
         return $('.premeeting-screen');
-    };
+    }
 
     // Prejoin input object.
     get PrejoinInput() {

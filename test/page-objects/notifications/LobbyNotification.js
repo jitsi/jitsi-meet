@@ -5,7 +5,7 @@ class LobbyNotification {
 
     // Lobby notification object.
     get Notification() {
-        return  $('#notifications-container');
+        return $('#notifications-container');
     }
 
     // View lobby button object.
@@ -15,7 +15,7 @@ class LobbyNotification {
 
     // Admit lobby button object.
     get AdmitLobby() {
-        return  $('[data-testid="lobby.admit"]');
+        return $('[data-testid="lobby.admit"]');
     }
 
     // Reject lobby button object.
