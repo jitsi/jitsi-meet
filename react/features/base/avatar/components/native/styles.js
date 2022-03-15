@@ -2,8 +2,8 @@
 
 import { StyleSheet } from 'react-native';
 
-import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
 import { ColorPalette } from '../../../styles';
+import { PRESENCE_AVAILABLE_COLOR, PRESENCE_AWAY_COLOR, PRESENCE_BUSY_COLOR, PRESENCE_IDLE_COLOR } from '../styles';
 
 const DEFAULT_SIZE = 65;
 
@@ -35,16 +35,16 @@ export default {
 
         switch (status) {
         case 'available':
-            color = BaseTheme.palette.presenceAvailable;
+            color = PRESENCE_AVAILABLE_COLOR;
             break;
         case 'away':
-            color = BaseTheme.palette.presenceAway;
+            color = PRESENCE_AWAY_COLOR;
             break;
         case 'busy':
-            color = BaseTheme.palette.presenceBusy;
+            color = PRESENCE_BUSY_COLOR;
             break;
         case 'idle':
-            color = BaseTheme.palette.presenceIdle;
+            color = PRESENCE_IDLE_COLOR;
             break;
         }
 

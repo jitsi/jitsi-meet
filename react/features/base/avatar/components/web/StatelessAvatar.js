@@ -6,6 +6,7 @@ import React from 'react';
 
 import { Icon } from '../../../icons';
 import AbstractStatelessAvatar, { type Props as AbstractProps } from '../AbstractStatelessAvatar';
+import { PRESENCE_AVAILABLE_COLOR, PRESENCE_AWAY_COLOR, PRESENCE_BUSY_COLOR, PRESENCE_IDLE_COLOR } from '../styles';
 
 type Props = AbstractProps & {
 
@@ -48,11 +49,9 @@ type Props = AbstractProps & {
 /**
  * Creates the styles for the component.
  *
- * @param {Object} theme - The current UI theme.
- *
  * @returns {Object}
  */
-const styles = theme => {
+const styles = () => {
     return {
         avatar: {
             backgroundColor: '#AAA',
@@ -75,7 +74,7 @@ const styles = theme => {
                 transform: 'translateY(50%)'
             },
 
-            '& svg': {
+            '& .avatar-svg': {
                 height: '100%',
                 width: '100%'
             }
@@ -95,19 +94,19 @@ const styles = theme => {
             },
 
             '&.avatar-badge-available:after': {
-                backgroundColor: theme.palette.presenceAvailable
+                backgroundColor: PRESENCE_AVAILABLE_COLOR
             },
 
             '&.avatar-badge-away:after': {
-                backgroundColor: theme.palette.presenceAway
+                backgroundColor: PRESENCE_AWAY_COLOR
             },
 
             '&.avatar-badge-busy:after': {
-                backgroundColor: theme.palette.presenceBusy
+                backgroundColor: PRESENCE_BUSY_COLOR
             },
 
             '&.avatar-badge-idle:after': {
-                backgroundColor: theme.palette.presenceIdle
+                backgroundColor: PRESENCE_IDLE_COLOR
             }
         }
     };
