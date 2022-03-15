@@ -1,6 +1,6 @@
 import { ReducerRegistry } from '../redux';
 
-import { SET_DIRECTION } from './actionTypes';
+import { SET_LANGUAGE_DIRECTION } from './actionTypes';
 
 /**
  * The base/ui feature's reducer.
@@ -13,8 +13,7 @@ ReducerRegistry.register(
     'features/base/ui',
     (state = {}, action) => {
         switch (action.type) {
-        case SET_DIRECTION: {
-
+        case SET_LANGUAGE_DIRECTION: {
             return {
                 ...state,
                 direction: action.direction

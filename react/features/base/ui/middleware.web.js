@@ -4,7 +4,7 @@ import { i18next } from '../i18n';
 import { I18NEXT_INITIALIZED, LANGUAGE_CHANGED } from '../i18n/actionTypes';
 import { MiddlewareRegistry } from '../redux';
 
-import { setDirection } from './actions';
+import { setLanguageDirection } from './actions';
 import { detectDirectionBasedOnLanguage } from './functions';
 
 /**
@@ -28,9 +28,9 @@ MiddlewareRegistry.register(store => next => action => {
         const direction = detectDirectionBasedOnLanguage(language);
 
         // Make sure the dir attribute is set on the body, otherwise native components will break.
-        document.getElementsByTagName('Body')[0].dir = direction;
+        document.getElementsByTagName('body')[0].dir = direction;
 
-        store.dispatch(setDirection(direction));
+        store.dispatch(setLanguageDirection(direction));
         break;
     }
     }

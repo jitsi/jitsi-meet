@@ -44,11 +44,11 @@ function JitsiThemeProvider(props: Props) {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
-    const { muiBrandedTheme } = state['features/dynamic-branding'];
+    const { muiBrandedRtlTheme, muiBrandedTheme } = state['features/dynamic-branding'];
     const { direction } = state['features/base/ui'];
 
     return {
-        _theme: muiBrandedTheme || direction === 'rtl' ? rltTheme : ltrTheme
+        _theme: direction === 'rtl' ? muiBrandedRtlTheme || rltTheme : muiBrandedTheme || ltrTheme
     };
 }
 

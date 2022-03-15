@@ -18,7 +18,8 @@ MiddlewareRegistry.register(store => next => action => {
         const { customTheme } = action.value;
 
         if (customTheme) {
-            action.value.muiBrandedTheme = createMuiBrandingTheme(customTheme);
+            action.value.muiBrandedTheme = createMuiBrandingTheme(customTheme, 'ltr');
+            action.value.muiBrandedRtlTheme = createMuiBrandingTheme(customTheme, 'rtl');
         }
     }
     }

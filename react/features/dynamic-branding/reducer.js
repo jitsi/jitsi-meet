@@ -158,6 +158,7 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
             labels,
             logoClickUrl,
             logoImageUrl,
+            muiBrandedRtlTheme,
             muiBrandedTheme,
             premeetingBackground,
             virtualBackgrounds
@@ -173,6 +174,7 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
             labels,
             logoClickUrl,
             logoImageUrl,
+            muiBrandedRtlTheme,
             muiBrandedTheme,
             premeetingBackground,
             customizationFailed: false,

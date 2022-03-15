@@ -9,9 +9,10 @@ import { createColorTokens } from '../base/ui/utils';
  * Creates MUI branding theme based on the custom theme json.
  *
  * @param {Object} customTheme - The branded custom theme.
+ * @param {string|undefined} direction - Theme direction.
  * @returns {Object} - The MUI theme.
  */
-export function createMuiBrandingTheme(customTheme: Object) {
+export function createMuiBrandingTheme(customTheme: Object, direction?: boolean) {
     const {
         palette: customPalette,
         shape: customShape,
@@ -54,6 +55,7 @@ export function createMuiBrandingTheme(customTheme: Object) {
     }
 
     return createMuiTheme({
+        direction,
         props: {
             // disable ripple effect on buttons globally
             MuiButtonBase: {
