@@ -24,29 +24,6 @@ export function createScreenshotCaptureSummary(stateful: Object | Function) {
 }
 
 /**
- * Get a participant's connection JID given its ID.
- *
- * @param {Object} state - The redux store state.
- * @param {string} participantId - ID of the given participant.
- * @returns {string|undefined} - The participant connection JID if found.
- */
-export function getParticipantJid(state: Object, participantId: string) {
-    const conference = getCurrentConference(state);
-
-    if (!conference) {
-        return;
-    }
-
-    const participant = conference.getParticipantById(participantId);
-
-    if (!participant) {
-        return;
-    }
-
-    return participant.getJid();
-}
-
-/**
  * Checks if the screenshot capture is enabled based on the config.
  *
  * @param {Object} state - Redux state.
