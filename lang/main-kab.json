@@ -80,7 +80,8 @@
         },
         "title": "Asqerdec",
         "titleWithPolls": "Asqerdec",
-        "you": "kečč·kemm"
+        "you": "kečč·kemm",
+        "lobbyChatMessageTo": ""
     },
     "chromeExtensionBanner": {
         "buttonText": "Sbedd asiɣzef Chrome",
@@ -158,7 +159,8 @@
         "joinInApp": "Ttekki deg usarag s useqdec n usnas",
         "launchWebButton": "Seddu deg web",
         "title": "Seddu timlilit-ik·im deg {{app}}...",
-        "tryAgainButton": "Ɛreḍ tikkelt-nniḍen ɣef tnarit"
+        "tryAgainButton": "Ɛreḍ tikkelt-nniḍen ɣef tnarit",
+        "unsupportedBrowser": "Waqil d iminig ur nessefrak ara i tesseqdaceḍ."
     },
     "defaultLink": "md. {{url}}",
     "defaultNickname": "am. Jayn Pink",
@@ -232,7 +234,7 @@
         "error": "Tuccḍa",
         "gracefulShutdown": "Ameẓlu-nneɣ akka tura yensa i uṣeggem. Ma ulac aɣilif ɛreḍ tikkelt-nniḍen.",
         "grantModeratorDialog": "Tebγiḍ s tidet ad tefkeḍ izerfan n usektem i {{participantName}}?",
-        "grantModeratorTitle": "Efk  izerfan n usektem",
+        "grantModeratorTitle": "Mudd-as izerfan n useɣyad",
         "hideShareAudioHelper": "Ur d-skan ara adiweni-agi tikelt nniḍen",
         "incorrectPassword": "Isem n useqdac neɣ awal uffir ud arameɣt",
         "incorrectRoomLockPassword": "Awal uffir d arameɣtu",
@@ -248,7 +250,7 @@
         "liveStreamingDisabledTooltip": "Beddu n usuddem usrid yensa.",
         "localUserControls": "Isenqaden n useqdac adigan",
         "lockMessage": "Asekkeṛ n usarag ur yeddi ara.",
-        "lockRoom": "Rnu timlilit $t(lockRoomPasswordUppercase)",
+        "lockRoom": "Rnu timlilit $t(lockRoomPassword)",
         "lockTitle": "Asekkeṛ ur yeddi ara",
         "login": "Aseqdac",
         "logoutQuestion": "S tidet tebɣiḍ ad teffɣeḍ rnu ad tesḥebseḍ asarag?",
@@ -262,10 +264,10 @@
         "micPermissionDeniedError": "Ur tefkiḍ ara tisirag i useqdec n usawa-inek·inem. Mazal tzemreḍ ad tettekkiḍ deg usarag maca wiyaḍ ur ak·akem-id-sellen ara. Seqdec taqeffalt n tkamiṛat deg ufeggag n tansiwin i wakken ad tefruḍ ugur.",
         "micTimeoutError": "Ur yezmir ara ad ibdu aɣbalu n yimesli. Yemmut umenḍar!",
         "micUnknownError": "Ur tezmireḍ ara ad tesqedceḍ asawaḍ, ur neẓri ara acuɣer.",
-        "moderationAudioLabel": "Sireg imttekiyen ad ksen iesli i yiman-nsen",
-        "moderationVideoLabel": "Sireg imttekiyen ad bdun tavidyut i yiman-nsen",
+        "moderationAudioLabel": "Sireg imttekiyen ad remden akk isawaḍen",
+        "moderationVideoLabel": "Sireg imttekiyen ad sekkren tividyutin-nsen",
         "muteEveryoneDialog": "Tebɣiḍ s tidet ad tsenseḍ yal yiwen? Ur tettizmireḍ ara ad talseḍ armad-nsen, maca zemren ad alsen armad melmi i bɣan.",
-        "muteEveryoneDialogModerationOn": "Zemren imttekiyen ad aznen asuter n umeslay deg yal lawan.",
+        "muteEveryoneDialogModerationOn": "Zemren imttekiyen ad aznen assuter n umeslay melmi bɣan.",
         "muteEveryoneElseDialog": "Akken ara yens yimesli, ur tettizmireḍ ara ad talseḍ armad-ines, maca zemren ad alsen armad-ines melmi i bɣan.",
         "muteEveryoneElseTitle": "Sgugem yal yiwen slid {{whom}}?",
         "muteEveryoneElsesVideoDialog": "Ticki takamiṛat tensa, ur tettizmireḍ ara ad talseḍ armad-ines, maca nutni zemren ad alsen armad-ines melmi i bɣan.",
@@ -274,7 +276,7 @@
         "muteEveryoneStartMuted": "Yal yiwen ad yebdu s tsusmi seg tura",
         "muteEveryoneTitle": "Sgugem yal yiwen?",
         "muteEveryonesVideoDialog": "Zemren imttekiyen ad remden tavidyut-nsen deg yal lawan.",
-        "muteEveryonesVideoDialogModerationOn": "Zemren imttekiyen ad aznen asuter ad remden tavidyut-nsen deg yal lawan.",
+        "muteEveryonesVideoDialogModerationOn": "Zemren imttekiyen ad aznen assuter ad remden tividyutin-nsen melmi bɣan.",
         "muteEveryonesVideoDialogOk": "Désactiver",
         "muteEveryonesVideoTitle": "Seḥbes tavidyut n yal yiwen?",
         "muteParticipantBody": "Ur tettizmireḍ ara ad talseḍ armad-nsen, maca zemren ad alsen armad melmi i bɣan.",
@@ -325,7 +327,7 @@
         "sendPrivateMessageTitle": "Azen s wudem uslig?",
         "serviceUnavailable": "Ulac ameẓlu",
         "sessTerminated": "Yekfa usiwel",
-        "sessionRestarted": "Allus n usenker n usiwel s ttawil n tqenṭert",
+        "sessionRestarted": "Allus n usiwel seg tqenṭert.",
         "shareAudio": "Continuer",
         "shareAudioTitle": "Amek ara tebḍuḍ imesli",
         "shareAudioWarningD1": "ilaq ad tesḥebseḍ beṭṭu n ugdil send beṭṭu n yimesli inek.inem.",
@@ -363,7 +365,16 @@
         "viewUpgradeOptions": "Wali iɣewaṛen n uleqqem",
         "viewUpgradeOptionsContent": "I wakken ad tesεuḍ anekcum war talast ɣer tmahilin premium am usekles, azemmem, asuddem RTMP & wayen-nniḍen, ilaq ad tleqqmeḍ aɣawas-ik·im.",
         "viewUpgradeOptionsTitle": "Tufid-d tamahilt premium!",
-        "yourEntireScreen": "Meṛṛa agdil-inek·inem"
+        "yourEntireScreen": "Meṛṛa agdil-inek·inem",
+        "sharedVideoDialogError": "",
+        "muteParticipantsVideoDialogModerationOn": "",
+        "start": "",
+        "muteParticipantsVideoBodyModerationOn": "Ama d kečč ama d imttekkiyen, yiwen ur yezmir ad yales armad n tkamiṛat.",
+        "linkMeeting": "Qqen timlilit",
+        "addOptionalNote": "Rnu tamawt (d afrayan):",
+        "addMeetingNote": "Rnu tamawt ɣef temlilit-a",
+        "recentlyUsedObjects": "Tesqedceḍ melmi kan isental",
+        "linkMeetingTitle": "Qqen timlilit ɣer Salesforce"
     },
     "documentSharing": {
         "title": "Yebḍa isemli"
@@ -426,7 +437,7 @@
         "noPassword": "Ula d yiwen",
         "noRoom": "Ulac taxxamt i yettwafernen i usiwel ɣer-s.",
         "numbers": "Uṭṭunen n usiwel",
-        "password": "$t(lockRoomPasswordUppercase) :",
+        "password": "$t(lockRoomPasswordUppercase): ",
         "sip": "Tansiwin SIP",
         "title": "Bḍu",
         "tooltip": "Bḍu aseɣwen d telɣut n tuqqna n temlilit-a"
@@ -495,7 +506,9 @@
         "start": "Bdu asuddem usrid",
         "streamIdHelp": "D acu-t wa?",
         "unavailableTitle": "Ulac asuddem usrid",
-        "youtubeTerms": "Tiwtilin n yimeẓla n Youtube"
+        "youtubeTerms": "Tiwtilin n yimeẓla n Youtube",
+        "sessionAlreadyActive": "",
+        "inProgress": ""
     },
     "lobby": {
         "admit": "Steεref",
@@ -532,7 +545,10 @@
         "passwordJoinButton": "Semlil",
         "reject": "Agi",
         "rejectAll": "Agi akk",
-        "toggleLabel": "Rmed Lobby"
+        "toggleLabel": "Rmed Lobby",
+        "lobbyChatStartedTitle": "",
+        "lobbyChatStartedNotification": "",
+        "chat": ""
     },
     "localRecording": {
         "clientState": {
@@ -575,7 +591,7 @@
         "allowAction": "Sireg",
         "allowedUnmute": "Tzemreḍ ad tekkseḍ asgugem i usawaḍ-ik·im, ad tesnekreḍ takamiṛat neɣ ad tebḍuḍ agdil.",
         "connectedOneMember": "{{name}} yerna ɣer temlilit",
-        "connectedThreePlusMembers": "{{name}} d {{count}} wiyaḍ rnan ɣer temlilit",
+        "connectedThreePlusMembers": "{{name}} d wiyaḍ rnan ɣer temlilit",
         "connectedTwoMembers": "{{first}} d {{second}} rnan ɣer temlilit",
         "disconnected": "yeffeɣ",
         "focus": "Afukus n usarag",
@@ -588,20 +604,20 @@
         "kickParticipant": "{{kicked}} isuffeɣ-it {{kicker}}",
         "me": "Nekk",
         "moderationInEffectCSDescription": "Ma ulac aɣilif, rfed afus-ik·im ma tebɣiḍ ad tebḍuḍ agdil.",
-        "moderationInEffectCSTitle": "Beṭṭu n ugdil yettusewḥel sɣur yimḍebber",
+        "moderationInEffectCSTitle": "Beṭṭu n ugdil issewḥel-it useɣyad",
         "moderationInEffectDescription": "Ma ulac aɣilif, rfed afus-ik·im ma tebɣiḍ ad temmeslayeḍ.",
-        "moderationInEffectTitle": "Asawaḍ-ik·im yettwasgugem sɣur yimḍebber",
-        "moderationInEffectVideoDescription": "Ma ulac aɣilif, rfed afus-ik·im ma tebɣiḍ ad tesnekreḍ takamiṛat.",
-        "moderationInEffectVideoTitle": "Takamiṛat-ik·im tettusewḥel sɣur yimḍebber",
+        "moderationInEffectTitle": "Asawaḍ-ik·im isgugem-it useɣyad",
+        "moderationInEffectVideoDescription": "Ma ulac aɣilif, rfed afus-ik·im ma tebɣiḍ ad tesnekkreḍ takamiṛat.",
+        "moderationInEffectVideoTitle": "Takamiṛat-ik·im issewḥel-itt useɣyad",
         "moderationRequestFromModerator": "Asenneftaɣ yebɣa ad tekkseḍ asgugem",
-        "moderationRequestFromParticipant": "Ibɣa ad imeslay",
+        "moderationRequestFromParticipant": "Ibɣa ad immeslay",
         "moderationStartedTitle": "Asektem yebda",
         "moderationStoppedTitle": "Asektem yensa",
         "moderationToggleDescription": "sɣur {{participantDisplayName}}",
         "moderator": "Izerfan n usektem ttwamudden",
         "muted": "Tebdiḍ asqerdec s tsusmi.",
         "mutedRemotelyDescription": "Tzemreḍ ad d-terreḍ imesli melmi i tebɣiḍ ad d-temmeslayeḍ. Sens-it mi ara tfakkeḍ ameslay i wakken ad tesbeɛdeḍ zzhir ɣef temlilit.",
-        "mutedRemotelyTitle": "Yesgugem-ik·ikem {{moderator}}",
+        "mutedRemotelyTitle": "Yesgugem-ik·ikem {{participantDisplayName}}",
         "mutedTitle": "Tettwasgugmeḍ!",
         "newDeviceAction": "Seqdec",
         "newDeviceAudioTitle": "Ibenk amaynut n umeslaw yettwaf-d",
@@ -612,9 +628,9 @@
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) yettwakkes sɣur yimttekki-nniḍen",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) yettusbadu sɣur yimttekki-nniḍen",
         "raiseHandAction": "Rfed afus",
-        "raisedHand": "{{name}} yebɣa ad d-yemmeslay.",
+        "raisedHand": "Yebɣa ad d-yemmeslay.",
         "reactionSounds": "Sens imesli",
-        "screenShareNoAudio": " Tabewwaḍt n umeslaw n beṭṭu ur tettwaṛcam ara deg ugdil n tefrant n usfaylu.",
+        "screenShareNoAudio": "Tabewwaḍt n umeslaw n beṭṭu ur tettwaṛcam ara deg ugdil n tefrant n usfaylu.",
         "screenShareNoAudioTitle": "Ur yezmir ara ad yebḍu ameslaw n unagraw!",
         "somebody": "Albaɛḍ",
         "startSilentDescription": "Ttekki deg temlilit i wakken ad tremdeḍ ameslaw",
@@ -622,15 +638,33 @@
         "suboptimalBrowserWarning": "Nkukra ɣef termit-ik·im n temlilit ur tettili ara tgerrez da. Nettmuqul ttawilat s wamek ara nqeɛɛed aya, maca sya ɣer yimir ɛreḍ ad tesqedceḍ yiwen seg <a href='{{recommendedBrowserPageLink}}' target='_blank'>yiminigen yettusefraken s lekmal</a>.",
         "suboptimalExperienceTitle": "Alɣu n yiminig",
         "unmute": "Sgugem",
-        "videoMutedRemotelyDescription": "Tzemreḍ ad ad t-tremdeḍ melmi tebɣiḍ.",
-        "videoMutedRemotelyTitle": "Tavidyut-ik·im tettwasens sɣur {{moderator}}"
+        "videoMutedRemotelyDescription": "Tzemreḍ ad t-tremdeḍ melmi tebɣiḍ.",
+        "videoMutedRemotelyTitle": "Tavidyut-ik·im tettwasens sɣur {{participantDisplayName}}",
+        "leftTwoMembers": "",
+        "leftThreePlusMembers": "",
+        "leftOneMember": "",
+        "audioUnmuteBlockedTitle": "",
+        "chatMessages": "",
+        "audioUnmuteBlockedDescription": "",
+        "videoUnmuteBlockedDescription": "",
+        "raisedHands": "{{participantName}} d {{raisedHands}} d wugar n yimdanen",
+        "participantsWantToJoin": "Bɣan ad d-rnun ɣer temlilit",
+        "waitingParticipants": "{{waitingParticipants}} imdanen",
+        "viewLobby": "Wali tzeqqa n uṛaǧu",
+        "videoUnmuteBlockedTitle": "Yettwakkes-as usgugem i tkamiṛat ma d beṭṭu n ugdil yettusewḥel!",
+        "selfViewTitle": "Tzemreḍ melmi i tebɣiḍ ad tsenseḍ tuffra n uskan n tvidyut-ik•im deg yiɣewwaren",
+        "reactionSoundsForAll": "Sens imesla i meṛṛa",
+        "participantWantsToJoin": "Y•Tebɣa ad d-y•ternu ɣer temlilit",
+        "displayNotifications": "",
+        "linkToSalesforceDescription": "Tzemreḍ ad teqqneḍ agzul n temlilit ɣer usentel n Salesforce.",
+        "linkToSalesforceSuccess": "Timlilit tettwaqqen ɣer Salesforce"
     },
     "participantsPane": {
         "actions": {
             "allow": "Sireg i yimttekkiyen ad:",
             "allowVideo": "Sireg tavidyut",
             "askUnmute": "Suter tririt n ṣṣut",
-            "audioModeration": "Kksen asgugem i yiman-nsen",
+            "audioModeration": "Rran-d imesli s yilan-nsen",
             "blockEveryoneMicCamera": "Sewḥel asawaḍ d tkamiṛat n yal yiwen",
             "invite": "Snubget-d albaɛḍ",
             "mute": "Asusam",
@@ -639,15 +673,19 @@
             "stopEveryonesVideo": "Seḥbes tavidyut n yal yiwen",
             "stopVideo": "Seḥbes tavidyut n Youtube",
             "unblockEveryoneMicCamera": "Serreḥ i usawaḍ d tkamiṛat n yal yiwen",
-            "videoModeration": "Bdan tavidyut-nsen"
+            "videoModeration": "Bdan tavidyut-nsen",
+            "moreModerationActions": "Ugar n textiṛiyin n usektem",
+            "moreParticipantOptions": "Ugar n textiṛiyin i yimttekkiyen",
+            "moreModerationControls": "Ugar n textiṛiyin n usektem"
         },
         "close": "Mdel",
         "header": "Imttekkiyen",
         "headings": {
-            "lobby": "Lobby ({{count}})",
+            "lobby": "Tzeqqa n uṛaǧu ({{count}})",
             "participantsList": "Imttekkiyen n temlilit ({{count}})",
             "waitingLobby": "Araǧu deg lobby ({{count}})"
-        }
+        },
+        "search": "Nadi imttekkiyen"
     },
     "passwordDigitsOnly": "Alamma d {{number}} yizwilen",
     "passwordSetRemotely": "Yettusbadu sɣur yimttekki-nniḍen",
@@ -677,7 +715,8 @@
             "hideDetailedResults": "Ffer tilɣa",
             "showDetailedResults": "Sken talqayt",
             "vote": "Tafrant"
-        }
+        },
+        "by": "Seg {{ name }}"
     },
     "poweredby": "yemmug-d sɣur",
     "prejoin": {
@@ -793,7 +832,9 @@
         "signOut": "Ffeɣ",
         "unavailable": "Suref-aɣ! {{serviceName}} akka tura ulac-it. Aql-aɣ nxeddem ad nefru ugur. Ma ulac aɣilif ɛreḍ tikkelt-nniḍen ticki.",
         "unavailableTitle": "Ulac asekles",
-        "uploadToCloud": "Sali ɣer usigna"
+        "uploadToCloud": "Sali ɣer usigna",
+        "sessionAlreadyActive": "",
+        "inProgress": ""
     },
     "sectionList": {
         "pullToRefresh": "Jbed-d i usnirem"
@@ -802,7 +843,8 @@
         "about": "Tzemreḍ ad ternuḍ $t(lockRoomPassword) ɣer temlilit-ik·im. Imttekkiyen sran ad d-mudden $t(lockRoomPassword) send ad ttwaqeblen ad ttekkin deg temlilit.",
         "aboutReadOnly": "Imttekkiyen imaẓragen zemren ad rnun $t(lockRoomPassword) ɣer temlilit-ik·im. Imttekkiyen sran ad d-mudden $t(lockRoomPassword) send ad ttwaqeblen ad ttekkin deg temlilit.",
         "insecureRoomNameWarning": "Isem n texxamt yella ccekk deg-s. Imttekkiyen ur tebɣiḍ ara zemren ad d-rnun ɣer usarag-ik·im. Xemmem ad tḥarzeḍ timlilit-ik·im s useqdec n tqeffalt n tɣellist.",
-        "securityOptions": "Tixtiṛiyin n tɣellist"
+        "securityOptions": "Tixtiṛiyin n tɣellist",
+        "header": "Tixtiṛiyin n tɣellist"
     },
     "settings": {
         "calendar": {
@@ -839,7 +881,9 @@
         "startAudioMuted": "Yettwagugem waddad n yal yiwen",
         "startVideoMuted": "Yeffer waddad n yal yiwen",
         "talkWhileMuted": "Mmeslay ma yettwakkes ṣṣut",
-        "title": "Iɣewwaren"
+        "title": "Iɣewwaren",
+        "startReactionsMuted": "",
+        "selfView": ""
     },
     "settingsView": {
         "advanced": "Talqayt",
@@ -875,7 +919,15 @@
         "search": "Rechercher",
         "seconds": "{{count}} n tsinin",
         "speakerStats": "Addad n yimsiwel",
-        "speakerTime": "Akud n yimsiwel"
+        "speakerTime": "Akud n yimsiwel",
+        "neutral": "",
+        "happy": "",
+        "disgusted": "",
+        "angry": "",
+        "surprised": "Y•Tewhem",
+        "sad": "Y•Teḥzen",
+        "fearful": "",
+        "displayEmotions": ""
     },
     "startupoverlay": {
         "genericTitle": "Timlilit tesra aseqdec n usawaḍ d tkamiṛat inek·inem.",
@@ -947,7 +999,12 @@
             "toggleCamera": "Rmed/sens takamiṛat",
             "toggleFilmstrip": "Sken/Ffer tilemyin",
             "videoblur": "Rmed/Sens arway n tvidyut",
-            "videomute": "Rmed/Sens tavidyut"
+            "videomute": "Rmed/Sens tavidyut",
+            "muteEveryonesVideoStream": "Seḥbes takamiṛat n wiyaḍ",
+            "selfView": "Beddel taskant-inek•inem",
+            "muteEveryoneElsesVideoStream": "Seḥbes akk tikamiṛin n wiyaḍ",
+            "breakoutRoom": "Rnu/eǧǧ taxxamt tadisant",
+            "linkToSalesforce": "Qqen ɣer Salesforce"
         },
         "addPeople": "Rnu-d imdanen ɣer usiwel-inek·inem",
         "audioOnlyOff": "Sens askar n tehri n tesfift adday",
@@ -1027,7 +1084,10 @@
         "tileViewToggle": "Err askan d aɛban",
         "toggleCamera": "Rmed/sens takamiṛat",
         "videoSettings": "Iɣewwaren n tvidyut",
-        "videomute": "Seqleɛ / Seḥbes takamirat"
+        "videomute": "Seqleɛ / Seḥbes takamirat",
+        "joinBreakoutRoom": "Rnu ɣer texxamt tadisant",
+        "leaveBreakoutRoom": "Eǧǧ taxxamt tadisant",
+        "linkToSalesforce": "Qqen ɣer Salesforce"
     },
     "transcribing": {
         "ccButtonTooltip": "Bdu / Seḥbes izwal isnawanen",
@@ -1077,7 +1137,11 @@
         "lowDefinition": "Tabadut taddayt",
         "sd": "SD",
         "sdTooltip": "Awali n tvidyut s tbadut taslugant",
-        "standardDefinition": "Tabadut taslugant"
+        "standardDefinition": "Tabadut taslugant",
+        "performanceSettings": "Iɣewwaren n temlellit",
+        "highestQuality": "Taɣara tafellayt",
+        "bestPerformance": "Tamlellit igerrzen",
+        "adjustFor": "Ṣeggem i:"
     },
     "videothumbnail": {
         "connectionInfo": "Talɣut n tuqqna",
@@ -1094,7 +1158,10 @@
         "remoteControl": "Bdu / Asenqed agemmaḍ",
         "show": "Sken ɣef usayes",
         "videoMuted": "Tensa tkamiṛat",
-        "videomute": "Imttekki isseḥbes takamiṛat"
+        "videomute": "Imttekki isseḥbes takamiṛat",
+        "hideSelfView": "Ffer taskant-inek•inem",
+        "showSelfView": "Sken taskant-inek•inem",
+        "screenSharing": "Imttekki la ibeṭṭu agdil-ines"
     },
     "virtualBackground": {
         "addBackground": "Rnu agilal",
@@ -1117,7 +1184,8 @@
         "slightBlur": "Cwiṭ n uluɣu",
         "title": "Igilalen uhlisen",
         "uploadedImage": "Sali-d tugna {{index}}",
-        "webAssemblyWarning": "WebAssembly ur yettusefrak ara"
+        "webAssemblyWarning": "WebAssembly ur yettusefrak ara",
+        "webAssemblyWarningDescription": "WebAssembly yensa neɣ ur yettusefrak ara s yiminig-a"
     },
     "volumeSlider": "Tigri n ubleɣ",
     "welcomepage": {
@@ -1167,5 +1235,44 @@
         "startMeeting": "Bdu timlilit",
         "terms": "Tiwtilin",
         "title": "Asarag s tvidyut d aɣelsan, d ummid yerna baṭel"
+    },
+    "raisedHandsLabel": "Amḍan n yifassen yettwarefden",
+    "privacyView": {
+        "header": "Tabaḍnit"
+    },
+    "breakoutRooms": {
+        "notifications": {
+            "joinedTitle": "Tixxamin tirnawin",
+            "joinedMainRoom": "Rnu ɣer texxamt tagejdant",
+            "joined": "Rnu ɣer texxamt tarnawt \"{{name}}\""
+        },
+        "mainRoom": "Taxxamt tagejdant",
+        "actions": {
+            "join": "Rnu",
+            "close": "Mdel",
+            "sendToBreakoutRoom": "Azen imttekki ɣer:",
+            "remove": "Kkes",
+            "more": "Ugar",
+            "leaveBreakoutRoom": "Eǧǧ taxxamt tarnawt",
+            "autoAssign": "",
+            "add": "Rnu taxxamt tarnawt"
+        },
+        "defaultName": "Taxxamt tarnawt #{{index}}"
+    },
+    "termsView": {
+        "header": "Awalen"
+    },
+    "blankPage": {
+        "meetingEnded": "Tekfa temlilit."
+    },
+    "record": {
+        "type": {
+            "owner": "Bab",
+            "contact": "Anermis",
+            "account": "Amiḍan"
+        },
+        "already": {
+            "linked": "Asekles yettwaqqen yakan ɣer tiɣimit-a."
+        }
     }
 }
