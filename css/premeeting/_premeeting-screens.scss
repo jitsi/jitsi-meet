@@ -161,23 +161,12 @@
             height: auto;
             margin: 0 auto;
         }
-
-        .con-status {
-            margin: 24px auto;
-            position: fixed;
-            top: 0;
-            width: $prejoinDefaultContentWidth;
-        }
     }
 
     // mobile phone landscape
     @media (max-height: 420px) {
         div.content {
             padding: 16px 16px 0 16px;
-        }
-
-        .con-status {
-            display: none;
         }
     }
 
@@ -196,11 +185,6 @@
             .title {
                 display: none;
             }
-        }
-
-        .con-status {
-            margin: 0;
-            width: 100%;
         }
 
         .device-status-error {

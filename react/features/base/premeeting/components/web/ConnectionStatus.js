@@ -1,12 +1,12 @@
 // @flow
 
 import { makeStyles } from '@material-ui/styles';
-import clsx from 'clsx';
 import React, { useCallback, useState } from 'react';
 
 import { translate } from '../../../i18n';
 import { Icon, IconArrowDownSmall, IconWifi1Bar, IconWifi2Bars, IconWifi3Bars } from '../../../icons';
 import { connect } from '../../../redux';
+import { PREJOIN_DEFAULT_CONTENT_WIDTH } from '../../../ui/components/variables';
 import { CONNECTION_TYPE } from '../../constants';
 import { getConnectionData } from '../../functions';
 
@@ -28,17 +28,32 @@ type Props = {
     t: Function
 }
 
-const useStyles = makeStyles(() => {
+const useStyles = makeStyles(theme => {
     return {
-        root: {
-            '&.con-status': {
-                borderRadius: '6px',
-                color: '#fff',
-                fontSize: '12px',
-                letterSpacing: '0.16px',
-                lineHeight: '16px',
-                position: 'absolute',
+        connectionStatus: {
+            borderRadius: '6px',
+            color: '#fff',
+            fontSize: '12px',
+            letterSpacing: '0.16px',
+            lineHeight: '16px',
+            position: 'absolute',
+            width: '100%',
+
+            [theme.breakpoints.down('400')]: {
+                margin: 0,
                 width: '100%'
+            },
+
+            [theme.breakpoints.down('720')]: {
+                margin: `${theme.spacing(4)} auto`,
+                position: 'fixed',
+                top: 0,
+                width: PREJOIN_DEFAULT_CONTENT_WIDTH
+            },
+
+            // mobile phone landscape
+            '@media (max-height: 420px)': {
+                display: 'none'
             },
 
             '& .con-status-header': {
@@ -51,8 +66,8 @@ const useStyles = makeStyles(() => {
             '& .con-status-circle': {
                 borderRadius: '50%',
                 display: 'inline-block',
-                padding: '4px',
-                marginRight: '16px'
+                padding: theme.spacing(1),
+                marginRight: theme.spacing(3)
             },
 
             '& .con-status--good': {
@@ -91,7 +106,7 @@ const useStyles = makeStyles(() => {
             '& .con-status-details': {
                 backgroundColor: 'rgba(0, 0, 0, 0.7)',
                 borderTop: '1px solid #5E6D7A',
-                padding: '16px',
+                padding: theme.spacing(3),
                 transition: 'opacity 0.16s ease-out'
             },
 
@@ -131,7 +146,7 @@ const CONNECTION_TYPE_MAP = {
  * @returns {ReactElement}
  */
 function ConnectionStatus({ connectionDetails, t, connectionType }: Props) {
-    const styles = useStyles();
+    const classes = useStyles();
 
     if (connectionType === CONNECTION_TYPE.NONE) {
         return null;
@@ -160,7 +175,7 @@ function ConnectionStatus({ connectionDetails, t, connectionType }: Props) {
     }, [ showDetails, toggleDetails ]);
 
     return (
-        <div className = { clsx(styles.root, 'con-status') }>
+        <div className = { classes.connectionStatus }>
             <div
                 aria-level = { 1 }
                 className = 'con-status-header'
