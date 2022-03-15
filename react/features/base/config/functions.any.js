@@ -4,6 +4,7 @@ import Bourne from '@hapi/bourne';
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import _ from 'lodash';
 
+import { browser } from '../lib-jitsi-meet';
 import { parseURLParams } from '../util';
 
 import CONFIG_WHITELIST from './configWhitelist';
@@ -47,6 +48,18 @@ export function createFakeConfig(baseURL: string) {
  */
 export function getMeetingRegion(state: Object) {
     return state['features/base/config']?.deploymentInfo?.region || '';
+}
+
+/**
+ * Selector used to get the sendMultipleVideoStreams feature flag.
+ *
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+export function getMultipleVideoSupportFeatureFlag(state: Object) {
+    return getFeatureFlag(state, FEATURE_FLAGS.MULTIPLE_VIDEO_STREAMS_SUPPORT)
+        && getSourceNameSignalingFeatureFlag(state)
+        && isUnifiedPlanEnabled(state);
 }
 
 /**
@@ -194,6 +207,19 @@ export function isNameReadOnly(state: Object): boolean {
  */
 export function isDisplayNameVisible(state: Object): boolean {
     return !state['features/base/config'].hideDisplayName;
+}
+
+/**
+ * Selector for determining if Unified plan support is enabled.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {boolean}
+ */
+export function isUnifiedPlanEnabled(state: Object): boolean {
+    const { enableUnifiedOnChrome = true } = state['features/base/config'];
+
+    return browser.supportsUnifiedPlan()
+        && (!browser.isChromiumBased() || (browser.isChromiumBased() && enableUnifiedOnChrome));
 }
 
 /**
