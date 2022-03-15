@@ -5,8 +5,7 @@ class LobbyRejectNotification {
 
     //Lobby reject notification object
     get Notification() {
-        const rejectedMessage = $('[data-testid="lobby.joinRejectedMessage"]');
-        return rejectedMessage;
+        return $('[data-testid="lobby.joinRejectedMessage"]');
     };
 }
 module.exports = new LobbyRejectNotification();

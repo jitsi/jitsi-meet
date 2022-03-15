@@ -4,32 +4,21 @@ import { v4 as uuidv4 } from "uuid";
 const Toolbox = require("../page-objects/Toolbox");
 const SecurityDialog = require("../page-objects/SecurityDialog");
 import {
-    BASE_URL,
-    DEFAULT_CONFIG,
     ENTER_KEY,
     FIRST_PARTICIPANT,
     SECOND_PARTICIPANT
 } from "../helpers/constants"
-import createFirefoxSession from "../helpers/firefoxSession";
-import createChromeSession from "../helpers/chromeSession";
+import createBrowserSession from "../helpers/createBrowserSession";
+import openParticipantsPane from "../helpers/openParticipantsPane";
+import createMeetingUrl from "../helpers/createMeetingUrl"
+import createMeetingRoom from "../helpers/createMeetingRoom";
 
 describe('Activate lobby and admit participant', () => {
-    let roomName;
-    let capabilities;
+    let meetingUrl;
     let Participant;
     it('should open jitsi-meet app and enable lobby', async () => {
-        capabilities = await browser.requestedCapabilities;
-        switch (capabilities.browserName) {
-            case 'chrome':
-                roomName = 'WdioChrome'+uuidv4()
-                break;
-            case 'firefox':
-                roomName = 'WdioFirefox'+uuidv4()
-                break;
-            default:
-                roomName = 'WdioSafari'+uuidv4()
-        }
-        await browser.url(`${BASE_URL}/${roomName}?${DEFAULT_CONFIG}`);
+        meetingUrl = await createMeetingUrl();
+        await createMeetingRoom(meetingUrl)
         const prejoinTextInput = await $('.prejoin-input-area input');
         await prejoinTextInput.setValue(FIRST_PARTICIPANT);
         await browser.keys(ENTER_KEY);
@@ -55,17 +44,8 @@ describe('Activate lobby and admit participant', () => {
         await securityDialogCloseButton.click();
     });
     it('should open jitsi-meet with same room name where second participant wants to join', async () => {
-        switch (capabilities.browserName) {
-            case 'chrome':
-                Participant = await createChromeSession()
-                break;
-            case 'firefox':
-                Participant = await createFirefoxSession()
-                break;
-            default:
-                return;
-        }
-        await Participant.url(`${BASE_URL}/${roomName}?${DEFAULT_CONFIG}`);
+        Participant = await createBrowserSession()
+        await Participant.url(meetingUrl);
         const prejoinTextInput = await Participant.$('.prejoin-input-area input');
         await prejoinTextInput.setValue(SECOND_PARTICIPANT);
         await Participant.keys(ENTER_KEY);
