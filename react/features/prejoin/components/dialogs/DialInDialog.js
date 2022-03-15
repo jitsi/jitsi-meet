@@ -1,5 +1,6 @@
 // @flow
 
+import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
@@ -46,6 +47,53 @@ type Props = {
     t: Function,
 };
 
+const useStyles = makeStyles(theme => {
+    return {
+        dialInDialog: {
+            textAlign: 'center',
+
+            '& .prejoin-dialog-dialin-header': {
+                alignItems: 'center',
+                margin: `${theme.spacing(3)}px 0 ${theme.spacing(5)}px ${theme.spacing(3)}px`,
+                display: 'flex'
+            },
+            '& .prejoin-dialog-dialin-icon': {
+                marginRight: theme.spacing(3)
+            },
+            '& .prejoin-dialog-dialin-num': {
+                background: '#3e474f',
+                borderRadius: '4px',
+                display: 'inline-block',
+                fontSize: '15px',
+                lineHeight: '24px',
+                margin: theme.spacing(1),
+                padding: theme.spacing(2),
+
+                '& .prejoin-dialog-dialin-num-container': {
+                    minHeight: '48px',
+                    margin: `${theme.spacing(2)}px 0`
+                }
+            },
+
+            '& .prejoin-dialog-dialin-link': {
+                color: '#6FB1EA',
+                cursor: 'pointer',
+                display: 'inline-block',
+                fontSize: '13px',
+                lineHeight: '20px',
+                marginBottom: theme.spacing(4)
+            },
+            '& .prejoin-dialog-dialin-spaced-label': {
+                marginBottom: theme.spacing(3),
+                marginTop: '28px'
+            },
+            '& .prejoin-dialog-dialin-btns > div': {
+                marginBottom: theme.spacing(3)
+            }
+        }
+    };
+});
+
 /**
  * This component displays the dialog with all the information
  * to join a meeting by calling it.
@@ -63,12 +111,13 @@ function DialinDialog(props: Props) {
         passCode,
         t
     } = props;
+    const classes = useStyles();
     const flagClassName = `prejoin-dialog-flag iti-flag ${getCountryCodeFromPhone(
         number
     )}`;
 
     return (
-        <div className = 'prejoin-dialog-dialin'>
+        <div className = { classes.dialInDialog }>
             <div className = 'prejoin-dialog-dialin-header'>
                 <Icon
                     className = 'prejoin-dialog-icon prejoin-dialog-dialin-icon'
