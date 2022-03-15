@@ -1,7 +1,6 @@
 // @flow
 
 import { makeStyles } from '@material-ui/styles';
-import clsx from 'clsx';
 import React from 'react';
 
 import { Avatar } from '../../../base/avatar';
@@ -39,7 +38,7 @@ type Props = {
 
 const useStyles = makeStyles(theme => {
     return {
-        root: {
+        callingDialog: {
             padding: theme.spacing(3),
             textAlign: 'center',
 
@@ -49,13 +48,13 @@ const useStyles = makeStyles(theme => {
 
             '& .prejoin-dialog-calling-label': {
                 fontSize: '15px',
-                margin: `${theme.spacing(2)} 0 ${theme.spacing(2)} 0`
+                margin: `${theme.spacing(2)}px 0 ${theme.spacing(3)}px 0`
             },
 
             '& .prejoin-dialog-calling-number': {
                 fontSize: '19px',
                 lineHeight: '28px',
-                margin: `${theme.spacing(3)} 0`
+                margin: `${theme.spacing(3)}px 0`
             }
         }
     };
@@ -72,7 +71,7 @@ function CallingDialog(props: Props) {
     const classes = useStyles();
 
     return (
-        <div className = { clsx('prejoin-dialog-calling', classes.root) }>
+        <div className = { classes.callingDialog }>
             <div className = 'prejoin-dialog-calling-header'>
                 <Icon
                     className = 'prejoin-dialog-icon'
