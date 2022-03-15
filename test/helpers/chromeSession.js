@@ -1,11 +1,17 @@
 
-import { remote } from 'webdriverio'
+import { remote } from 'webdriverio';
+
+/**
+ * Function that creates a chrome session.
+ *
+ * @returns {void}
+ */
 export default function createChromeSession() {
     return remote({
         capabilities: {
             browserName: 'chrome',
             acceptInsecureCerts: true,
-            "goog:chromeOptions": {
+            'goog:chromeOptions': {
                 args: [
                     'use-fake-device-for-media-stream',
                     'use-fake-ui-for-media-stream',
@@ -14,8 +20,8 @@ export default function createChromeSession() {
                     'disable-infobars',
                     'autoplay-policy=no-user-gesture-required',
                     'auto-select-desktop-capture-source=Your Entire screen'
-                ],
+                ]
             }
         }
-    })
+    });
 }

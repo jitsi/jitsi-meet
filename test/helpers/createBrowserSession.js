@@ -1,8 +1,12 @@
-
-import createFirefoxSession from "./firefoxSession";
-import createChromeSession from "./chromeSession";
+import createChromeSession from './chromeSession';
 import { BROWSERS } from './constants';
+import createFirefoxSession from './firefoxSession';
 
+/**
+ * Function that creates a browser session.
+ *
+ * @returns {void}
+ */
 export default function createBrowserSession() {
     for (let i = 0; i < BROWSERS.length; i++) {
         const browserName = BROWSERS[i];
@@ -15,5 +19,4 @@ export default function createBrowserSession() {
                 return
         }
     }
-
 }
