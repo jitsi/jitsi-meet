@@ -19,7 +19,7 @@ import {
     ASPECT_RATIO_BREAKPOINT,
     DISPLAY_DRAWER_THRESHOLD
 } from './constants';
-import { isFilmstripResizable } from './functions.web';
+import { isFilmstripResizable, isFilmstripScollVisible, updateRemoteParticipants } from './functions';
 import './subscriber.any';
 
 
@@ -140,3 +140,10 @@ StateListenerRegistry.register(
     /* listener */(_, store) => {
         store.dispatch(setVerticalViewDimensions());
     });
+
+/**
+ * Listens for changes in the filmstrip scroll visibility.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => isFilmstripScollVisible(state),
+    /* listener */ (_, store) => updateRemoteParticipants(store));

@@ -1,6 +1,7 @@
 // @flow
 
 import { setRemoteParticipants } from './actions';
+import { isReorderingEnabled } from './functions';
 
 /**
  * Computes the reorderd list of the remote participants.
@@ -12,11 +13,9 @@ import { setRemoteParticipants } from './actions';
  */
 export function updateRemoteParticipants(store: Object, participantId: ?number) {
     const state = store.getState();
-    const { testing = {} } = state['features/base/config'];
-    const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
     let reorderedParticipants = [];
 
-    if (!enableThumbnailReordering) {
+    if (!isReorderingEnabled(state)) {
         if (participantId) {
             const { remoteParticipants } = state['features/filmstrip'];
 

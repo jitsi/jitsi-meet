@@ -601,3 +601,44 @@ export function getVerticalViewMaxWidth(state) {
 
     return maxWidth;
 }
+
+/**
+ * Returns true if thumbnail reordering is enabled and false otherwise.
+ * Note: The function will return false if all participants are displayed on the screen.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {boolean} - True if thumbnail reordering is enabled and false otherwise.
+ */
+export function isReorderingEnabled(state) {
+    const { testing = {} } = state['features/base/config'];
+    const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
+
+    return enableThumbnailReordering && isFilmstripScollVisible(state);
+}
+
+/**
+ * Returns true if the scroll is displayed and false otherwise.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {boolean} - True if the scroll is displayed and false otherwise.
+ */
+export function isFilmstripScollVisible(state) {
+    const _currentLayout = getCurrentLayout(state);
+    let hasScroll = false;
+
+    switch (_currentLayout) {
+    case LAYOUTS.TILE_VIEW:
+        ({ hasScroll = false } = state['features/filmstrip'].tileViewDimensions);
+        break;
+    case LAYOUTS.VERTICAL_FILMSTRIP_VIEW: {
+        ({ hasScroll = false } = state['features/filmstrip'].verticalViewDimensions);
+        break;
+    }
+    case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW: {
+        ({ hasScroll = false } = state['features/filmstrip'].horizontalViewDimensions);
+        break;
+    }
+    }
+
+    return hasScroll;
+}
