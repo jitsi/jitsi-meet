@@ -6,7 +6,7 @@ import './createImageBitmap';
 
 import { createScreensharingCaptureTakenEvent, sendAnalytics } from '../analytics';
 import { getCurrentConference } from '../base/conference';
-import { getRemoteParticipants } from '../base/participants';
+import { getLocalParticipant, getRemoteParticipants } from '../base/participants';
 import { extractFqnFromPath } from '../dynamic-branding';
 
 import {
@@ -177,6 +177,7 @@ export default class ScreenshotCaptureSummary {
         const remoteParticipants = getRemoteParticipants(this._state);
         const participants = [];
 
+        participants.push(getLocalParticipant(this._state).id);
         remoteParticipants.forEach(p => participants.push(p.id));
         this._storedImageData = imageData;
 
