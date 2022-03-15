@@ -5,8 +5,7 @@ class ParticipantsPane {
 
     // Participants pane object.
     get ParticipantsPaneView() {
-        const participantsPane = $('.participants_pane');
-        return participantsPane
+        return $('.participants_pane');
     };
 }
 module.exports = new ParticipantsPane();

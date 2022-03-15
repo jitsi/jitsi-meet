@@ -1,4 +1,6 @@
 const LobbyNotification = require("../page-objects/notifications/LobbyNotification");
+import { v4 as uuidv4 } from "uuid";
+
 const Toolbox = require("../page-objects/Toolbox");
 const SecurityDialog = require("../page-objects/SecurityDialog");
 import {
@@ -15,18 +17,18 @@ import openParticipantsPane from "../helpers/openParticipantsPane";
 describe('Activate lobby and admit participant', () => {
     let roomName;
     let capabilities;
-    let Guest1;
+    let Participant;
     it('should open jitsi-meet app and enable lobby by first participant', async () => {
         capabilities = await browser.requestedCapabilities;
         switch (capabilities.browserName) {
             case 'chrome':
-                roomName = 'ChromeRoomNameTest'
+                roomName = 'WdioChrome'+uuidv4()
                 break;
             case 'firefox':
-                roomName = 'FirefoxRoomNameTest'
+                roomName = 'WdioFirefox'+uuidv4()
                 break;
             default:
-                roomName = 'SafariRoomNameTest'
+                roomName = 'WdioSafari'+uuidv4()
         }
         await browser.url(`${BASE_URL}/${roomName}?${DEFAULT_CONFIG}`);
         const prejoinTextInput = await $('.prejoin-input-area input');
@@ -57,18 +59,18 @@ describe('Activate lobby and admit participant', () => {
 
         switch (capabilities.browserName) {
             case 'chrome':
-                Guest1 = await createChromeSession()
+                Participant = await createChromeSession()
                 break;
             case 'firefox':
-                Guest1 = await createFirefoxSession()
+                Participant = await createFirefoxSession()
                 break;
             default:
                 return;
         }
-        await Guest1.url(`${BASE_URL}/${roomName}?${DEFAULT_CONFIG}`);
-        const prejoinTextInput = await Guest1.$('.prejoin-input-area input');
+        await Participant.url(`${BASE_URL}/${roomName}?${DEFAULT_CONFIG}`);
+        const prejoinTextInput = await Participant.$('.prejoin-input-area input');
         await prejoinTextInput.setValue(SECOND_PARTICIPANT);
-        await Guest1.keys(ENTER_KEY);
+        await Participant.keys(ENTER_KEY);
     });
     it('Moderator should admit the user that wants to join the meeting', async () => {
         const notification = await LobbyNotification.Notification;
@@ -80,6 +82,6 @@ describe('Activate lobby and admit participant', () => {
         await lobbyAdmitBtn.click();
         await openParticipantsPane();
         await browser.deleteSession();
-        await Guest1.deleteSession();
+        await Participant.deleteSession();
     });
 });

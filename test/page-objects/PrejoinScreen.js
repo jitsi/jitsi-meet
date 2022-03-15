@@ -5,14 +5,12 @@ class PrejoinScreen {
 
     // Premeeting screen object.
     get PremeetingScreen() {
-        const premeetingScreen = $('.premeeting-screen');
-        return premeetingScreen
+        return $('.premeeting-screen');
     };
 
     // Prejoin input object.
     get PrejoinInput() {
-        const prejoinInput = $('.prejoin-input-area input');
-        return prejoinInput
+        return $('.prejoin-input-area input');
     }
 }
 

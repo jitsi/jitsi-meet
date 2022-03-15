@@ -10,25 +10,26 @@ import {
     SECOND_PARTICIPANT,
     THIRD_PARTICIPANT
 } from "../helpers/constants"
+import { v4 as uuidv4 } from "uuid";
 import createFirefoxSession from "../helpers/firefoxSession";
 import createChromeSession from "../helpers/chromeSession";
 
 describe('Open jitsimeet app, enable lobby and view lobby', () => {
     let roomName;
     let capabilities;
-    let Guest1;
-    let Guest2;
+    let Participant1;
+    let Participant2;
     it('should open jitsi-meet app and enable lobby by first participant', async () => {
         capabilities = await browser.requestedCapabilities;
         switch (capabilities.browserName) {
             case 'chrome':
-                roomName = 'ChromeRoomNameTest'
+                roomName = 'WdioChrome'+uuidv4()
                 break;
             case 'firefox':
-                roomName = 'FirefoxRoomNameTest'
+                roomName = 'WdioFirefox'+uuidv4()
                 break;
             default:
-                roomName = 'SafariRoomNameTest'
+                roomName = 'WdioSafari'+uuidv4()
         }
         await browser.url(`${BASE_URL}/${roomName}?${DEFAULT_CONFIG}`);
         const prejoinTextInput = await $('.prejoin-input-area input');
@@ -58,34 +59,34 @@ describe('Open jitsimeet app, enable lobby and view lobby', () => {
     it('second participant should ask to join the meeting', async () => {
         switch (capabilities.browserName) {
             case 'chrome':
-                Guest1 = await createChromeSession()
+                Participant1 = await createChromeSession()
                 break;
             case 'firefox':
-                Guest1 = await createFirefoxSession()
+                Participant1 = await createFirefoxSession()
                 break;
             default:
                 return;
         }
-        await Guest1.url(`${BASE_URL}/${roomName}?${DEFAULT_CONFIG}`);
-        const prejoinTextInput = await Guest1.$('.prejoin-input-area input');
+        await Participant1.url(`${BASE_URL}/${roomName}?${DEFAULT_CONFIG}`);
+        const prejoinTextInput = await Participant1.$('.prejoin-input-area input');
         await prejoinTextInput.setValue(SECOND_PARTICIPANT);
-        await Guest1.keys(ENTER_KEY);
+        await Participant1.keys(ENTER_KEY);
     });
     it('third participant should ask to join the meeting', async () => {
         switch (capabilities.browserName) {
             case 'chrome':
-                Guest2 = await createChromeSession()
+                Participant2 = await createChromeSession()
                 break;
             case 'firefox':
-                Guest2 = await createFirefoxSession()
+                Participant2 = await createFirefoxSession()
                 break;
             default:
                 return;
         }
-        await Guest2.url(`${BASE_URL}/${roomName}?${DEFAULT_CONFIG}`);
-        const prejoinTextInput = await Guest2.$('.prejoin-input-area input');
+        await Participant2.url(`${BASE_URL}/${roomName}?${DEFAULT_CONFIG}`);
+        const prejoinTextInput = await Participant2.$('.prejoin-input-area input');
         await prejoinTextInput.setValue(THIRD_PARTICIPANT);
-        await Guest2.keys(ENTER_KEY);
+        await Participant2.keys(ENTER_KEY);
     });
     it('Moderator should press the view button from lobby notification', async () => {
         const viewLobbyNotification = await LobbyNotification.Notification;
@@ -96,7 +97,7 @@ describe('Open jitsimeet app, enable lobby and view lobby', () => {
         const participantsPane = await ParticipantsPane.ParticipantsPaneView
         await expect(participantsPane).toBeDisplayed();
         await browser.deleteSession();
-        await Guest1.deleteSession();
-        await Guest2.deleteSession();
+        await Participant1.deleteSession();
+        await Participant2.deleteSession();
     });
 });

@@ -1,4 +1,5 @@
 const LobbyNotification = require("../page-objects/notifications/LobbyNotification");
+import { v4 as uuidv4 } from "uuid";
 //const LobbyRejectNotification = require("../page-objects/notifications/LobbyRejectNotification")
 const Toolbox = require("../page-objects/Toolbox");
 const SecurityDialog = require("../page-objects/SecurityDialog");
@@ -15,18 +16,18 @@ import createChromeSession from "../helpers/chromeSession";
 describe('Activate lobby and admit participant', () => {
     let roomName;
     let capabilities;
-    let Guest1;
+    let Participant;
     it('should open jitsi-meet app and enable lobby', async () => {
         capabilities = await browser.requestedCapabilities;
         switch (capabilities.browserName) {
             case 'chrome':
-                roomName = 'ChromeRoomNameTest'
+                roomName = 'WdioChrome'+uuidv4()
                 break;
             case 'firefox':
-                roomName = 'FirefoxRoomNameTest'
+                roomName = 'WdioFirefox'+uuidv4()
                 break;
             default:
-                roomName = 'SafariRoomNameTest'
+                roomName = 'WdioSafari'+uuidv4()
         }
         await browser.url(`${BASE_URL}/${roomName}?${DEFAULT_CONFIG}`);
         const prejoinTextInput = await $('.prejoin-input-area input');
@@ -56,18 +57,18 @@ describe('Activate lobby and admit participant', () => {
     it('should open jitsi-meet with same room name where second participant wants to join', async () => {
         switch (capabilities.browserName) {
             case 'chrome':
-                Guest1 = await createChromeSession()
+                Participant = await createChromeSession()
                 break;
             case 'firefox':
-                Guest1 = await createFirefoxSession()
+                Participant = await createFirefoxSession()
                 break;
             default:
                 return;
         }
-        await Guest1.url(`${BASE_URL}/${roomName}?${DEFAULT_CONFIG}`);
-        const prejoinTextInput = await Guest1.$('.prejoin-input-area input');
+        await Participant.url(`${BASE_URL}/${roomName}?${DEFAULT_CONFIG}`);
+        const prejoinTextInput = await Participant.$('.prejoin-input-area input');
         await prejoinTextInput.setValue(SECOND_PARTICIPANT);
-        await Guest1.keys(ENTER_KEY);
+        await Participant.keys(ENTER_KEY);
     });
     it('Moderator should reject the user that wants to join the meeting', async () => {
         const notification = await LobbyNotification.Notification;
@@ -77,15 +78,15 @@ describe('Activate lobby and admit participant', () => {
         const lobbyRejectBtn = await LobbyNotification.RejectLobby;
         await expect(lobbyRejectBtn).toBeDisplayed();
         await lobbyRejectBtn.click();
-        // TODO: Find a solution to select Guest1.LobbyNotification.Notidication
-        // instead of Guest1.$('#notifications-container').
-        const rejectNotification = await Guest1.$('#notifications-container');
+        // TODO: Find a solution to select Participant.LobbyNotification.Notidication
+        // instead of Participant.$('#notifications-container').
+        const rejectNotification = await Participant.$('#notifications-container');
         await expect(rejectNotification).toBeDisplayed();
-        // TODO: Find a solution to select Guest1.LobbyRejectNotification.Notidication
-        // instead of Guest1.$('[data-testid="lobby.joinRejectedMessage"]').
-        const rejectedMessage = await Guest1.$('[data-testid="lobby.joinRejectedMessage"]')
+        // TODO: Find a solution to select Participant.LobbyRejectNotification.Notidication
+        // instead of Participant.$('[data-testid="lobby.joinRejectedMessage"]').
+        const rejectedMessage = await Participant.$('[data-testid="lobby.joinRejectedMessage"]')
         await expect(rejectedMessage).toBeDisplayed();
         await browser.deleteSession();
-        await Guest1.deleteSession();
+        await Participant.deleteSession();
     });
 });

@@ -7,32 +7,27 @@ class Toolbox {
     get ToolboxView() {
         const video = $('#largeVideo');
         video.moveTo();
-        const toolbox = $('.toolbox-content-items');
-        return toolbox;
+        return $('.toolbox-content-items');
     };
 
     // More action object.
     get MoreActionOption() {
-        const toolbarSecurityOption = $('.toolbox-button-wth-dialog div');
-        return toolbarSecurityOption;
+        return $('.toolbox-button-wth-dialog div');
     };
 
     // Overflow menu object.
     get OverflowMenu() {
-        const overflowMenu = $('#overflow-menu');
-        return overflowMenu;
+        return $('#overflow-menu');
     };
 
     // Security option button object.
     get SecurityOptionButton() {
-        const securityOptions = $('[aria-label="Security options"]');
-        return securityOptions;
+        return $('[aria-label="Security options"]');
     };
 
     // Participants pane button object.
     get ParticipantsPaneButton() {
-        const participantsPaneButton = $("[aria-label='Participants']");
-        return participantsPaneButton;
+        return $("[aria-label='Participants']");
     };
 }
 module.exports = new Toolbox();

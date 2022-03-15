@@ -1,7 +1,7 @@
 
 import { remote } from 'webdriverio'
-export default async function createChromeSession() {
-    const browser = await remote({
+export default function createChromeSession() {
+    return remote({
         capabilities: {
             browserName: 'chrome',
             acceptInsecureCerts: true,
@@ -18,5 +18,4 @@ export default async function createChromeSession() {
             }
         }
     })
-    return browser
 }

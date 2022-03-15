@@ -197,6 +197,6 @@
     "validate": "npm ls",
     "start": "make dev",
     "e2e-tests": "wdio run wdio.conf.js",
-    "e2e-test-reports": "npx wdio run ./wdio.conf.js && allure generate allure-results/ --clean && allure open"
+    "e2e-test-reports": "npx wdio run ./wdio.conf.js && allure generate allure-results/ --clean"
   }
 }

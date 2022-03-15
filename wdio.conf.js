@@ -89,6 +89,7 @@ exports.config = {
         //     acceptInsecureCerts: true,
         // }
     ],
+    sync:true,
     //
     // ===================
     // Test Configurations

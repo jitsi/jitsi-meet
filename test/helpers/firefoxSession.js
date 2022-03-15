@@ -1,6 +1,6 @@
 import { remote } from 'webdriverio'
-export default async function createFirefoxSession() {
-    const browser = await remote({
+export default function createFirefoxSession() {
+    return remote({
         capabilities: {
             browserName: 'firefox',
             acceptInsecureCerts: true,
@@ -15,5 +15,4 @@ export default async function createFirefoxSession() {
             }
         }
     })
-    return browser
 };
