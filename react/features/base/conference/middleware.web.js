@@ -177,6 +177,9 @@ async function _toggleScreenSharing({ enabled, audioOnly = false }, store) {
     } else {
         const { desktopAudioTrack } = state['features/screen-share'];
 
+        // Mute the desktop track instead of removing it from the conference since we don't want the client to signal
+        // a source-remove to the remote peer for the screenshare track. Later when screenshare is enabled again, the
+        // same sender will be re-used without the need for signaling a new ssrc through source-add.
         dispatch(setScreenshareMuted(true));
         if (desktopAudioTrack) {
             if (localAudio) {
