@@ -1,6 +1,5 @@
 // @flow
 
-import { getCurrentConference } from '../base/conference';
 import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 import { toState } from '../base/redux';
 import { getActiveSession } from '../recording/functions';
