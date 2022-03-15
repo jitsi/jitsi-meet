@@ -1,7 +1,6 @@
 // @flow
 
 import { makeStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
 import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -21,14 +20,14 @@ import SpeakerStatsSearch from './SpeakerStatsSearch';
 
 const useStyles = makeStyles(theme => {
     return {
-        root: {
+        speakerStats: {
             '& .row': {
                 display: 'flex',
                 alignItems: 'center',
 
                 '& .avatar': {
                     width: '32px',
-                    marginRight: '16px'
+                    marginRight: theme.spacing(3)
                 },
 
                 '& .name-time': {
@@ -119,7 +118,7 @@ const SpeakerStats = () => {
             submitDisabled = { true }
             titleKey = 'speakerStats.speakerStats'
             width = { showFacialExpressions ? '664px' : 'small' }>
-            <div className = { clsx('speaker-stats', classes.root) }>
+            <div className = { classes.speakerStats }>
                 <div
                     className = {
                         `${classes.searchSwitchContainer}
