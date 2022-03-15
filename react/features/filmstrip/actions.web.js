@@ -4,6 +4,7 @@ import type { Dispatch } from 'redux';
 import {
     getLocalParticipant,
     getParticipantById,
+    getRemoteParticipantCount,
     pinParticipant
 } from '../base/participants';
 import { shouldHideSelfView } from '../base/settings/functions.any';
@@ -117,10 +118,14 @@ export function setVerticalViewDimensions() {
         const disableSelfView = shouldHideSelfView(state);
         const resizableFilmstrip = isFilmstripResizable(state);
         const _verticalViewGrid = showGridInVerticalView(state);
+        const numberOfRemoteParticipants = getRemoteParticipantCount(state);
 
         let gridView = {};
         let thumbnails = {};
         let filmstripDimensions = {};
+        let hasScroll = false;
+        let remoteVideosContainerWidth;
+        let remoteVideosContainerHeight;
 
         // grid view in the vertical filmstrip
         if (_verticalViewGrid) {
@@ -143,7 +148,8 @@ export function setVerticalViewDimensions() {
                 numberOfVisibleTiles
             });
             const thumbnailsTotalHeight = rows * (TILE_VERTICAL_MARGIN + height);
-            const hasScroll = clientHeight < thumbnailsTotalHeight;
+
+            hasScroll = clientHeight < thumbnailsTotalHeight;
             const widthOfFilmstrip = (columns * (TILE_HORIZONTAL_MARGIN + width)) + (hasScroll ? SCROLL_SIZE : 0);
             const filmstripHeight = Math.min(clientHeight - TILE_VIEW_GRID_VERTICAL_MARGIN, thumbnailsTotalHeight);
 
@@ -165,6 +171,14 @@ export function setVerticalViewDimensions() {
             };
         } else {
             thumbnails = calculateThumbnailSizeForVerticalView(clientWidth, filmstripWidth.current, resizableFilmstrip);
+
+            remoteVideosContainerWidth
+                = thumbnails?.local?.width + TILE_VERTICAL_CONTAINER_HORIZONTAL_MARGIN + SCROLL_SIZE;
+            remoteVideosContainerHeight
+                = clientHeight - (disableSelfView ? 0 : thumbnails?.local?.height) - VERTICAL_FILMSTRIP_VERTICAL_MARGIN;
+            hasScroll
+                = remoteVideosContainerHeight
+                    < (thumbnails?.remote.height + TILE_VERTICAL_MARGIN) * numberOfRemoteParticipants;
         }
 
         dispatch({
@@ -172,12 +186,11 @@ export function setVerticalViewDimensions() {
             dimensions: {
                 ...thumbnails,
                 remoteVideosContainer: _verticalViewGrid ? filmstripDimensions : {
-                    width: thumbnails?.local?.width
-                        + TILE_VERTICAL_CONTAINER_HORIZONTAL_MARGIN + SCROLL_SIZE,
-                    height: clientHeight - (disableSelfView ? 0 : thumbnails?.local?.height)
-                        - VERTICAL_FILMSTRIP_VERTICAL_MARGIN
+                    width: remoteVideosContainerWidth,
+                    height: remoteVideosContainerHeight
                 },
-                gridView
+                gridView,
+                hasScroll
             }
         });
     };
@@ -194,16 +207,24 @@ export function setHorizontalViewDimensions() {
         const { clientHeight = 0, clientWidth = 0 } = state['features/base/responsive-ui'];
         const disableSelfView = shouldHideSelfView(state);
         const thumbnails = calculateThumbnailSizeForHorizontalView(clientHeight);
+        const remoteVideosContainerWidth
+            = clientWidth - (disableSelfView ? 0 : thumbnails?.local?.width) - HORIZONTAL_FILMSTRIP_MARGIN;
+        const remoteVideosContainerHeight
+            = thumbnails?.local?.height + TILE_VERTICAL_MARGIN + STAGE_VIEW_THUMBNAIL_VERTICAL_BORDER + SCROLL_SIZE;
+        const numberOfRemoteParticipants = getRemoteParticipantCount(state);
+        const hasScroll
+            = remoteVideosContainerHeight
+                < (thumbnails?.remote.width + TILE_HORIZONTAL_MARGIN) * numberOfRemoteParticipants;
 
         dispatch({
             type: SET_HORIZONTAL_VIEW_DIMENSIONS,
             dimensions: {
                 ...thumbnails,
                 remoteVideosContainer: {
-                    width: clientWidth - (disableSelfView ? 0 : thumbnails?.local?.width) - HORIZONTAL_FILMSTRIP_MARGIN,
-                    height: thumbnails?.local?.height
-                        + TILE_VERTICAL_MARGIN + STAGE_VIEW_THUMBNAIL_VERTICAL_BORDER + SCROLL_SIZE
-                }
+                    width: remoteVideosContainerWidth,
+                    height: remoteVideosContainerHeight
+                },
+                hasScroll
             }
         });
     };

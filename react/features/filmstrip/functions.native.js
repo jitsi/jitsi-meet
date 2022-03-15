@@ -88,3 +88,17 @@ export function getColumnCount(stateful: Object | Function) {
 
     return Math.min(3, participantCount);
 }
+
+/**
+ * Returns true if thumbnail reordering is enabled and false otherwise.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {boolean} - True if thumbnail reordering is enabled and false otherwise.
+ */
+export function isReorderingEnabled(state) {
+    const { testing = {} } = state['features/base/config'];
+    const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
+
+    return enableThumbnailReordering;
+}
+

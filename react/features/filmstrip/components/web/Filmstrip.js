@@ -89,6 +89,11 @@ type Props = {
     _filmstripHeight: number,
 
     /**
+     * Whether or not we have scroll on the filmstrip.
+     */
+    _hasScroll: boolean,
+
+    /**
      * Whether this is a recorder or not.
      */
     _iAmRecorder: boolean,
@@ -567,6 +572,7 @@ class Filmstrip extends PureComponent <Props, State> {
             _currentLayout,
             _filmstripHeight,
             _filmstripWidth,
+            _hasScroll,
             _remoteParticipantsLength,
             _resizableFilmstrip,
             _rows,
@@ -620,7 +626,7 @@ class Filmstrip extends PureComponent <Props, State> {
 
         if (_currentLayout === LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW) {
             const itemSize = _thumbnailWidth + TILE_HORIZONTAL_MARGIN;
-            const isNotOverflowing = (_remoteParticipantsLength * itemSize) <= _filmstripWidth;
+            const isNotOverflowing = !_hasScroll;
 
             props.itemSize = itemSize;
 
@@ -632,7 +638,7 @@ class Filmstrip extends PureComponent <Props, State> {
 
         } else if (_currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW) {
             const itemSize = _thumbnailHeight + TILE_VERTICAL_MARGIN;
-            const isNotOverflowing = (_remoteParticipantsLength * itemSize) <= _filmstripHeight;
+            const isNotOverflowing = !_hasScroll;
 
             if (isNotOverflowing) {
                 props.className += ' is-not-overflowing';
@@ -768,7 +774,7 @@ function _mapStateToProps(state) {
         gridDimensions: dimensions = {},
         filmstripHeight,
         filmstripWidth,
-        hasScroll = false,
+        hasScroll: tileViewHasScroll,
         thumbnailSize: tileViewThumbnailSize
     } = state['features/filmstrip'].tileViewDimensions;
     const _currentLayout = getCurrentLayout(state);
@@ -776,6 +782,7 @@ function _mapStateToProps(state) {
     const _resizableFilmstrip = isFilmstripResizable(state);
     const _verticalViewGrid = showGridInVerticalView(state);
     let gridDimensions = dimensions;
+    let _hasScroll = false;
 
     const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
     const availableSpace = clientHeight - filmstripHeight;
@@ -806,7 +813,8 @@ function _mapStateToProps(state) {
 
     switch (_currentLayout) {
     case LAYOUTS.TILE_VIEW:
-        if (hasScroll) {
+        _hasScroll = Boolean(tileViewHasScroll);
+        if (_hasScroll) {
             videosClassName += ' has-scroll';
         }
         _thumbnailSize = tileViewThumbnailSize;
@@ -814,8 +822,14 @@ function _mapStateToProps(state) {
         remoteFilmstripWidth = filmstripWidth;
         break;
     case LAYOUTS.VERTICAL_FILMSTRIP_VIEW: {
-        const { remote, remoteVideosContainer, gridView } = state['features/filmstrip'].verticalViewDimensions;
+        const {
+            remote,
+            remoteVideosContainer,
+            gridView,
+            hasScroll
+        } = state['features/filmstrip'].verticalViewDimensions;
 
+        _hasScroll = Boolean(hasScroll);
         remoteFilmstripHeight = remoteVideosContainer?.height - (!_verticalViewGrid && shouldReduceHeight
             ? TOOLBAR_HEIGHT : 0);
         remoteFilmstripWidth = remoteVideosContainer?.width;
@@ -833,8 +847,9 @@ function _mapStateToProps(state) {
         break;
     }
     case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW: {
-        const { remote, remoteVideosContainer } = state['features/filmstrip'].horizontalViewDimensions;
+        const { remote, remoteVideosContainer, hasScroll } = state['features/filmstrip'].horizontalViewDimensions;
 
+        _hasScroll = Boolean(hasScroll);
         _thumbnailSize = remote;
         remoteFilmstripHeight = remoteVideosContainer?.height;
         remoteFilmstripWidth = remoteVideosContainer?.width;
@@ -849,6 +864,7 @@ function _mapStateToProps(state) {
         _disableSelfView: disableSelfView,
         _filmstripHeight: remoteFilmstripHeight,
         _filmstripWidth: remoteFilmstripWidth,
+        _hasScroll,
         _iAmRecorder: Boolean(iAmRecorder),
         _isFilmstripButtonEnabled: isButtonEnabled('filmstrip', state),
         _isToolboxVisible: isToolboxVisible(state),
