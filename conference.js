@@ -111,7 +111,6 @@ import {
     createLocalTracksF,
     destroyLocalTracks,
     getLocalJitsiAudioTrack,
-    getLocalJitsiDesktopTrack,
     getLocalJitsiVideoTrack,
     getLocalTracks,
     getLocalVideoTrack,
@@ -1453,7 +1452,6 @@ export default {
         return new Promise((resolve, reject) => {
             _replaceLocalVideoTrackQueue.enqueue(onFinish => {
                 const oldTrack = getLocalJitsiVideoTrack(state);
-                const desktopTrack = getLocalJitsiDesktopTrack(state);
 
                 logger.debug(`useVideoStream: Replacing ${oldTrack} with ${newTrack}`);
 
@@ -1464,10 +1462,14 @@ export default {
                     return;
                 }
 
-                // Add the camera track as a secondary track if a screenshare track was already added.
-                if (getMultipleVideoSupportFeatureFlag(state) && desktopTrack) {
-                    APP.store.dispatch(
-                        addLocalTrack(newTrack))
+                // In the multi-stream mode, add the track to the conference if there is no existing track, replace it
+                // otherwise.
+                if (getMultipleVideoSupportFeatureFlag(state)) {
+                    const trackAction = oldTrack
+                        ? replaceLocalTrack(oldTrack, newTrack, room)
+                        : addLocalTrack(newTrack);
+
+                    APP.store.dispatch(trackAction)
                         .then(() => {
                             this.setVideoMuteStatus();
                         })

@@ -15,7 +15,6 @@ import {
     createLocalTracksF,
     getLocalDesktopTrack,
     getLocalJitsiAudioTrack,
-    getLocalJitsiVideoTrack,
     replaceLocalTrack,
     TOGGLE_SCREENSHARING
 } from '../tracks';
@@ -126,7 +125,6 @@ async function _toggleScreenSharing({ enabled, audioOnly = false }, store) {
     const conference = getCurrentConference(state);
     const localAudio = getLocalJitsiAudioTrack(state);
     const localScreenshare = getLocalDesktopTrack(state['features/base/tracks']);
-    const localVideo = getLocalJitsiVideoTrack(state);
 
     if (enabled) {
         let tracks;
@@ -153,10 +151,8 @@ async function _toggleScreenSharing({ enabled, audioOnly = false }, store) {
         } else if (desktopVideoTrack) {
             if (localScreenshare) {
                 await dispatch(replaceLocalTrack(localScreenshare.jitsiTrack, desktopVideoTrack, conference));
-            } else if (localVideo) {
-                await dispatch(addLocalTrack(desktopVideoTrack));
             } else {
-                await dispatch(replaceLocalTrack(null, desktopVideoTrack, conference));
+                await dispatch(addLocalTrack(desktopVideoTrack));
             }
         }
 
