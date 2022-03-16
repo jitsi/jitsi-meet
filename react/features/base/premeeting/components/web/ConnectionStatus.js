@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => {
                 width: '100%'
             },
 
-            [theme.breakpoints.down('720')]: {
+            '@media (max-width: 720px)': {
                 margin: `${theme.spacing(4)} auto`,
                 position: 'fixed',
                 top: 0,
