@@ -13,6 +13,7 @@ import {
 } from '../filmstrip/constants';
 import { getNumberOfPartipantsForTileView } from '../filmstrip/functions.web';
 import { isVideoPlaying } from '../shared-video/functions';
+import { VIDEO_QUALITY_LEVELS } from '../video-quality/constants';
 
 import { LAYOUTS } from './constants';
 
@@ -192,4 +193,50 @@ export function updateAutoPinnedParticipant(
  */
 export function isLayoutTileView(state: Object) {
     return getCurrentLayout(state) === LAYOUTS.TILE_VIEW;
+}
+
+/**
+ * Gets the video quality for the given height.
+ *
+ * @param {number|undefined} height - Height of the video container.
+ * @returns {number}
+ */
+function getVideoQualityForHeight(height: number) {
+    if (!height) {
+        return VIDEO_QUALITY_LEVELS.LOW;
+    }
+    const levels = Object.values(VIDEO_QUALITY_LEVELS)
+        .map(Number)
+        .sort((a, b) => a - b);
+
+    for (const level of levels) {
+        if (height <= level) {
+            return level;
+        }
+    }
+
+    return VIDEO_QUALITY_LEVELS.ULTRA;
+}
+
+/**
+ * Gets the video quality level for the resizable filmstrip thumbnail height.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {number}
+ */
+export function getVideoQualityForResizableFilmstripThumbnails(state) {
+    const height = state['features/filmstrip'].verticalViewDimensions?.gridView?.thumbnailSize?.height;
+
+    return getVideoQualityForHeight(height);
+}
+
+/**
+ * Gets the video quality for the large video.
+ *
+ * @returns {number}
+ */
+export function getVideoQualityForLargeVideo() {
+    const wrapper = document.querySelector('#largeVideoWrapper');
+
+    return getVideoQualityForHeight(wrapper.clientHeight);
 }
