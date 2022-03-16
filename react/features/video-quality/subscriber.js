@@ -9,7 +9,11 @@ import { getLocalParticipant, getParticipantCount } from '../base/participants';
 import { StateListenerRegistry } from '../base/redux';
 import { getTrackSourceNameByMediaTypeAndParticipant } from '../base/tracks';
 import { reportError } from '../base/util';
-import { shouldDisplayTileView } from '../video-layout';
+import {
+    getVideoQualityForLargeVideo,
+    getVideoQualityForResizableFilmstripThumbnails,
+    shouldDisplayTileView
+} from '../video-layout';
 
 import { setMaxReceiverVideoQuality } from './actions';
 import { VIDEO_QUALITY_LEVELS } from './constants';
@@ -77,6 +81,16 @@ StateListenerRegistry.register(
     /* listener */ (lastN, store) => {
         _updateReceiverVideoConstraints(store);
     });
+
+/**
+ * Updates the receiver constraints when the tiles in the resizable filmstrip change dimensions.
+ */
+StateListenerRegistry.register(
+    state => getVideoQualityForResizableFilmstripThumbnails(state),
+    (_, store) => {
+        _updateReceiverVideoConstraints(store);
+    }
+);
 
 /**
  * StateListenerRegistry provides a reliable way of detecting changes to
@@ -262,13 +276,20 @@ function _updateReceiverVideoConstraints({ getState }) {
             }
 
             if (visibleRemoteTrackSourceNames?.length) {
+                const qualityLevel = getVideoQualityForResizableFilmstripThumbnails(state);
+
                 visibleRemoteTrackSourceNames.forEach(sourceName => {
-                    receiverConstraints.constraints[sourceName] = { 'maxHeight': VIDEO_QUALITY_LEVELS.LOW };
+                    receiverConstraints.constraints[sourceName] = { 'maxHeight': qualityLevel };
                 });
             }
 
             if (largeVideoSourceName) {
-                receiverConstraints.constraints[largeVideoSourceName] = { 'maxHeight': maxFrameHeight };
+                let quality = maxFrameHeight;
+
+                if (!remoteScreenShares.find(id => id === largeVideoParticipantId)) {
+                    quality = getVideoQualityForLargeVideo();
+                }
+                receiverConstraints.constraints[largeVideoSourceName] = { 'maxHeight': quality };
                 receiverConstraints.onStageSources = [ largeVideoSourceName ];
             }
         }
@@ -283,7 +304,6 @@ function _updateReceiverVideoConstraints({ getState }) {
         };
 
         // Tile view.
-        // eslint-disable-next-line no-lonely-if
         if (shouldDisplayTileView(state)) {
             if (!visibleRemoteParticipants?.size) {
                 return;
@@ -303,13 +323,20 @@ function _updateReceiverVideoConstraints({ getState }) {
             }
 
             if (visibleRemoteParticipants?.size > 0) {
+                const qualityLevel = getVideoQualityForResizableFilmstripThumbnails(state);
+
                 visibleRemoteParticipants.forEach(participantId => {
-                    receiverConstraints.constraints[participantId] = { 'maxHeight': VIDEO_QUALITY_LEVELS.LOW };
+                    receiverConstraints.constraints[participantId] = { 'maxHeight': qualityLevel };
                 });
             }
 
             if (largeVideoParticipantId) {
-                receiverConstraints.constraints[largeVideoParticipantId] = { 'maxHeight': maxFrameHeight };
+                let quality = maxFrameHeight;
+
+                if (!remoteScreenShares.find(id => id === largeVideoParticipantId)) {
+                    quality = getVideoQualityForLargeVideo();
+                }
+                receiverConstraints.constraints[largeVideoParticipantId] = { 'maxHeight': quality };
                 receiverConstraints.onStageEndpoints = [ largeVideoParticipantId ];
             }
         }
