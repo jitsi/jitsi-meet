@@ -57,6 +57,13 @@ const RootNavigationContainer = ({ isWelcomePageAvailable }: Props) => (
                             }} />
                 }
                 <RootStack.Screen
+                    component = { ConnectingPage }
+                    name = { screen.connecting }
+                    options = {{
+                        gestureEnabled: false,
+                        headerShown: false
+                    }} />
+                <RootStack.Screen
                     component = { DialInSummary }
                     name = { screen.dialInSummary }
                     options = { dialInSummaryScreenOptions } />
