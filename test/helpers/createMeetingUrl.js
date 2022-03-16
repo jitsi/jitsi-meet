@@ -13,8 +13,10 @@ export default function createMeetingUrl() {
 
         switch (browserName) {
         case 'chrome':
+            // eslint-disable-next-line prefer-template
             return `${BASE_URL}/${'WdioChrome-' + uuidv4()}?${DEFAULT_CONFIG}`;
         case 'firefox':
+            // eslint-disable-next-line prefer-template
             return `${BASE_URL}/${'WdioFirefox-' + uuidv4()}?${DEFAULT_CONFIG}`;
         default:
             return;

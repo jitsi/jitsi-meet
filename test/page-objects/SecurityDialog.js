@@ -1,24 +1,42 @@
+/* eslint-disable no-undef */
+
 /**
  * Define security dialog elements.
 */
 class SecurityDialog {
 
-    // Security dialog object.
+    /**
+     * Security dialog element.
+     *
+     * @returns {HTMLElement}
+     */
     get SecurityDialogView() {
         return $('.security-dialog');
     }
 
-    // Lobby switch object.
+    /**
+     * Lobby switch element.
+     *
+     * @returns {HTMLElement}
+     */
     get LobbySwitch() {
         return $('[aria-label="cross"]');
     }
 
-    // Lobby enabled object. Check if lobby is enabled.
+    /**
+     * Lobby enabled element.
+     *
+     * @returns {HTMLElement}
+     */
     get LobbyEnabled() {
         return $('[data-checked="true"]');
     }
 
-    // Security dialog close button object.
+    /**
+     * Security dialog close button element.
+     *
+     * @returns {HTMLElement}
+     */
     get SecurityDialogCloseButton() {
         return $('#modal-header-close-button');
     }

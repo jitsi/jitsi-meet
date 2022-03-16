@@ -1,9 +1,11 @@
+/* eslint-disable no-undef */
+
 export const BASE_URL = process.env.BASE_URL || 'https://localhost:8080';
 
 export const BROWSERS = process.env.BROWSERS || [ 'chrome', 'firefox' ];
 
-export const DEFAULT_CONFIG =
-'config.requireDisplayName=false'
+export const DEFAULT_CONFIG
+= 'config.requireDisplayName=false'
 + '&config.debug=true'
 + '&config.testing.testMode=true'
 + '&config.disableAEC=true'

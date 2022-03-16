@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 import {
     ENTER_KEY,
     FIRST_PARTICIPANT,

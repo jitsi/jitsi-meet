@@ -1,9 +1,15 @@
+/* eslint-disable no-undef */
+
 /**
  * Define participants pane elements.
 */
 class ParticipantsPane {
 
-    // Participants pane object.
+    /**
+     * Participants pane element.
+     *
+     * @returns {HTMLElement}
+     */
     get ParticipantsPaneView() {
         return $('.participants_pane');
     }

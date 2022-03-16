@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 import {
     ENTER_KEY,
     FIRST_PARTICIPANT,
@@ -7,6 +9,7 @@ import createBrowserSession from '../helpers/createBrowserSession';
 import createMeetingRoom from '../helpers/createMeetingRoom';
 import createMeetingUrl from '../helpers/createMeetingUrl';
 import openParticipantsPane from '../helpers/openParticipantsPane';
+
 const SecurityDialog = require('../page-objects/SecurityDialog');
 const Toolbox = require('../page-objects/Toolbox');
 const LobbyNotification = require('../page-objects/notifications/LobbyNotification');

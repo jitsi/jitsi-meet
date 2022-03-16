@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 const allureReporter = require('@wdio/allure-reporter').default;
 
 exports.config = {
@@ -29,6 +31,7 @@ exports.config = {
 
     // Patterns to exclude.
     exclude: [
+
         // 'path/to/excluded/files'
     ],
 
@@ -48,6 +51,7 @@ exports.config = {
     // and 30 processes will get spawned. The property handles how many capabilities
     // from the same test should run tests.
     //
+
     maxInstances: 10,
 
     //
@@ -58,7 +62,6 @@ exports.config = {
     capabilities: [
         {
             maxInstances: 4,
-            //port: 4444,
             browserName: 'chrome',
             acceptInsecureCerts: true,
             'goog:chromeOptions': {
@@ -87,6 +90,7 @@ exports.config = {
                 }
             }
         }
+
         // {
         //     maxInstances: 1,
         //     port: 4445,
@@ -150,7 +154,6 @@ exports.config = {
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
-    //services: ['chromedriver'],
     services: [ 'selenium-standalone' ],
 
     // Framework you want to run your specs with.
@@ -285,14 +288,16 @@ exports.config = {
      * @param {Object}  result.retries   informations to spec related retries, e.g. `{ attempts: 0, limit: 0 }`
      */
 
-    afterTest: async function (test, context, { error, result, duration, passed, retries }) {
+    // eslint-disable-next-line no-unused-vars, object-shorthand
+    afterTest: async function(test, context, { error, result, duration, passed, retries }) {
         if (!passed) {
             await browser.takeScreenshot();
-            const result = await browser.execute(() => {
+            // eslint-disable-next-line arrow-body-style
+            const logResult = await browser.execute(() => {
                 return window.APP.connection.getLogs();
             });
 
-            await allureReporter.addAttachment('meetlog', result);
+            await allureReporter.addAttachment('meetlog', logResult);
         }
     }
 

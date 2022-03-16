@@ -1,24 +1,42 @@
+/* eslint-disable no-undef */
+
 /**
  * Define lobby notification elements.
 */
 class LobbyNotification {
 
-    // Lobby notification object.
+    /**
+     * Lobby notification element.
+     *
+     * @returns {HTMLElement}
+     */
     get Notification() {
         return $('#notifications-container');
     }
 
-    // View lobby button object.
+    /**
+     * View lobby button element.
+     *
+     * @returns {HTMLElement}
+     */
     get ViewLobby() {
         return $('[data-testid="notify.viewLobby"]');
     }
 
-    // Admit lobby button object.
+    /**
+     * Admit lobby button element.
+     *
+     * @returns {HTMLElement}
+     */
     get AdmitLobby() {
         return $('[data-testid="lobby.admit"]');
     }
 
-    // Reject lobby button object.
+    /**
+     * Reject lobby button element.
+     *
+     * @returns {HTMLElement}
+     */
     get RejectLobby() {
         return $('[data-testid="lobby.reject"]');
     }
