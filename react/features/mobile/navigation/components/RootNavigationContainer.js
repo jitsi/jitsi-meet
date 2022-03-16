@@ -16,9 +16,9 @@ import {
     navigationContainerTheme
 } from '../screenOptions';
 
+import ConnectingPage from './ConnectingPage';
 import ConferenceNavigationContainer
     from './conference/components/ConferenceNavigationContainer';
-import ConnectingPage from './connecting/components/ConnectingPage';
 import WelcomePageNavigationContainer from './welcome/components/WelcomePageNavigationContainer';
 import { isWelcomePageAppEnabled } from './welcome/functions';
 
