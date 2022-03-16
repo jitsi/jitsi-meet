@@ -865,6 +865,7 @@
         "expandedPending": "Recording is being started...",
         "failedToStart": "Recording failed to start",
         "fileSharingdescription": "Share the recording link with the meeting participants",
+        "highlight": "Highlight",
         "highlightMoment": "Highlight moment",
         "highlightMomentDisabled": "You can highlight moments when the recording starts",
         "highlightMomentSuccess": "Moment highlighted",

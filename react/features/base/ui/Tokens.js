@@ -377,6 +377,13 @@ export const typography = {
         letterSpacing: 0
     },
 
+    bodyLongRegularLarge: {
+        fontSize: 16,
+        lineHeight: 26,
+        fontWeight: font.weightRegular,
+        letterSpacing: 0
+    },
+
     bodyLongBold: {
         fontSize: 14,
         lineHeight: 24,

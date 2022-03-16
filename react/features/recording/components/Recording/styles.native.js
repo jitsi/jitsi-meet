@@ -39,6 +39,17 @@ const title = {
     paddingLeft: BoxModel.padding
 };
 
+const baseHighlightDialogButton = {
+    borderRadius: BaseTheme.shape.borderRadius,
+    height: BaseTheme.spacing[7],
+    flex: 1
+};
+
+const baseHighlightDialogLabel = {
+    ...BaseTheme.typography.bodyShortBoldLarge,
+    textTransform: 'none'
+};
+
 export default {
     /**
      * Container for the StartRecordingDialog screen.
@@ -58,7 +69,61 @@ export default {
     startRecordingLabel: {
         color: BaseTheme.palette.text01,
         marginRight: 12
+    },
+    highlightButton: {
+        backgroundColor: BaseTheme.palette.section01,
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginLeft: BaseTheme.spacing[0],
+        marginBottom: BaseTheme.spacing[0],
+        marginRight: BaseTheme.spacing[1]
+    },
+    highlightButtonText: {
+        color: BaseTheme.palette.field01,
+        paddingLeft: BaseTheme.spacing[2],
+        ...BaseTheme.typography.labelBold
+    },
+    highlightDialog: {
+        paddingLeft: BaseTheme.spacing[3],
+        paddingRight: BaseTheme.spacing[3],
+        paddingTop: BaseTheme.spacing[4],
+        paddingBottom: BaseTheme.spacing[7]
+    },
+    highlightDialogHeading: {
+        ...BaseTheme.typography.heading5,
+        color: BaseTheme.palette.text01,
+        marginBottom: BaseTheme.spacing[3]
+    },
+    highlightDialogText: {
+        ...BaseTheme.typography.bodyLongRegularLarge,
+        color: BaseTheme.palette.text01,
+        marginBottom: BaseTheme.spacing[5]
+    },
+    highlightDialogButtonsContainer: {
+        display: 'flex',
+        flexDirection: 'row'
+    },
+    highlightDialogCancelButton: {
+        ...baseHighlightDialogButton,
+        backgroundColor: BaseTheme.palette.section01
+    },
+    highlightDialogHighlightButton: {
+        ...baseHighlightDialogButton,
+        backgroundColor: BaseTheme.palette.action01
+    },
+    highlightDialogCancelLabel: {
+        ...baseHighlightDialogLabel,
+        color: BaseTheme.palette.field01
+    },
+    highlightDialogHighlighLabel: {
+        ...baseHighlightDialogLabel,
+        color: BaseTheme.palette.text01
+    },
+    highlightDialogButtonsSpace: {
+        width: 16,
+        height: '100%'
     }
+
 };
 
 /**
