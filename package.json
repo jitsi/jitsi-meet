@@ -189,8 +189,9 @@
     "postinstall": "patch-package && jetify",
     "validate": "npm ls",
     "start": "make dev",
+    "e2e:generate": "node detoxrcFileGenerator.js",
     "e2e:build-android": "detox build --configuration android",
-    "e2e:build-ios": "node detoxrcFileGenerator.js && detox build --configuration ios",
+    "e2e:build-ios": "detox build --configuration ios",
     "e2e:run-android": "detox test --configuration android",
     "e2e:run-ios": "detox test --configuration ios"
   }
