@@ -66,6 +66,7 @@
     "clipboard-copy": "4.0.1",
     "clsx": "1.1.1",
     "dropbox": "10.7.0",
+    "file-system": "2.2.2",
     "focus-visible": "5.1.0",
     "grapheme-splitter": "1.0.4",
     "i18n-iso-countries": "6.8.0",
@@ -189,7 +190,7 @@
     "validate": "npm ls",
     "start": "make dev",
     "e2e:build-android": "detox build --configuration android",
-    "e2e:build-ios": "detox build --configuration ios",
+    "e2e:build-ios": "node detoxrcFileGenerator.js && detox build --configuration ios",
     "e2e:run-android": "detox test --configuration android",
     "e2e:run-ios": "detox test --configuration ios"
   }

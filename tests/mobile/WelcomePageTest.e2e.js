@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import { screen } from '../react/features/mobile/navigation/routes';
+import { screen } from '../../react/features/mobile/navigation/routes';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
