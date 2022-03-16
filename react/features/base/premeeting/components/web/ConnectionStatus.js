@@ -148,11 +148,6 @@ const CONNECTION_TYPE_MAP = {
 function ConnectionStatus({ connectionDetails, t, connectionType }: Props) {
     const classes = useStyles();
 
-    if (connectionType === CONNECTION_TYPE.NONE) {
-        return null;
-    }
-
-    const { connectionClass, icon, connectionText } = CONNECTION_TYPE_MAP[connectionType];
     const [ showDetails, toggleDetails ] = useState(false);
     const arrowClassName = showDetails
         ? 'con-status-arrow con-status-arrow--up'
@@ -173,6 +168,12 @@ function ConnectionStatus({ connectionDetails, t, connectionType }: Props) {
             toggleDetails(!showDetails);
         }
     }, [ showDetails, toggleDetails ]);
+
+    if (connectionType === CONNECTION_TYPE.NONE) {
+        return null;
+    }
+
+    const { connectionClass, icon, connectionText } = CONNECTION_TYPE_MAP[connectionType];
 
     return (
         <div className = { classes.connectionStatus }>
