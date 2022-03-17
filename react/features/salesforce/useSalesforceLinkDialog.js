@@ -26,7 +26,7 @@ export const useSalesforceLinkDialog = () => {
     const [ records, setRecords ] = useState([]);
     const [ isLoading, setLoading ] = useState(false);
     const [ searchTerm, setSearchTerm ] = useState(null);
-    const [ notes, setNotes ] = useState(null);
+    const [ notes, setNotes ] = useState('');
     const [ hasRecordsErrors, setRecordsErrors ] = useState(false);
     const [ hasDetailsErrors, setDetailsErrors ] = useState(false);
     const conference = useSelector(getCurrentConference);
@@ -122,6 +122,7 @@ export const useSalesforceLinkDialog = () => {
         executeLinkMeetingRequest,
         hideNotification,
         jwt,
+        notes,
         salesforceUrl,
         selectedRecord,
         showNotification
