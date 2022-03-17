@@ -5,6 +5,8 @@ import { NativeModules } from 'react-native';
 import { toState } from '../base/redux';
 import { getServerURL } from '../base/settings';
 
+export * from './functions.any';
+
 /**
  * Retrieves the default URL for the app. This can either come from a prop to
  * the root App component or be configured in the settings.

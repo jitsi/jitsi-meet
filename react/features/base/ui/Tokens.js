@@ -65,6 +65,7 @@ export const colorMap = {
     uiBackground: 'surface01',
 
     // Container background
+    ui00: 'surface00',
     ui01: 'surface02',
     ui02: 'surface03',
     ui03: 'surface04',

@@ -156,7 +156,7 @@ function _connectionWillConnect(
 }
 
 /**
- * The current (similar to getCurrentConference in base/conference/functions.js)
+ * The current (similar to getCurrentConference in base/conference/functions.any.js)
  * connection which is {@code connection} or {@code connecting}.
  *
  * @param {Object} baseConnectionState - The current state of the

@@ -3,6 +3,7 @@
 import { SET_ROOM } from '../../base/conference/actionTypes';
 import { MiddlewareRegistry } from '../../base/redux';
 
+import { isWelcomePageAppEnabled } from './components/welcome/functions';
 import { navigateRoot } from './rootNavigationContainerRef';
 import { screen } from './routes';
 
@@ -35,11 +36,17 @@ function _setRoom(store, next, action) {
     const { room: oldRoom } = store.getState()['features/base/conference'];
     const result = next(action);
     const { room: newRoom } = store.getState()['features/base/conference'];
+    const isWelcomePageEnabled = isWelcomePageAppEnabled(store.getState());
 
     if (!oldRoom && newRoom) {
         navigateRoot(screen.conference.root);
     } else if (!newRoom) {
-        navigateRoot(screen.root);
+        if (isWelcomePageEnabled) {
+            navigateRoot(screen.root);
+        } else {
+            // For JitsiSDK, WelcomePage is not available
+            navigateRoot(screen.endMeeting);
+        }
     }
 
     return result;
