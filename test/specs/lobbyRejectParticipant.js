@@ -78,15 +78,9 @@ describe('Activate lobby and reject participant', () => {
 
         await expect(lobbyRejectBtn).toBeDisplayed();
         await lobbyRejectBtn.click();
-
-        // TODO: Find a solution to select Participant.LobbyNotification.Notification
-        // instead of Participant.$('#notifications-container').
         const rejectNotification = await Participant.$('#notifications-container');
 
         await expect(rejectNotification).toBeDisplayed();
-
-        // TODO: Find a solution to select Participant.LobbyRejectNotification.Notification
-        // instead of Participant.$('[data-testid='lobby.joinRejectedMessage']').
         const rejectedMessage = await Participant.$('[data-testid="lobby.joinRejectedMessage"]');
 
         await expect(rejectedMessage).toBeDisplayed();
