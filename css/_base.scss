@@ -164,16 +164,6 @@ form {
     font-size: 12px;
 }
 
-/**
-* Dialogs fade
-*/
-.aui-blanket {
-    background: #000;
-    transition: opacity 0.2s, visibility 0.2s;
-    transition-delay: 0.1s;
-    visibility: visible;
-}
-
 #inviteLinkRef {
     -webkit-user-select: text;
     user-select: text;

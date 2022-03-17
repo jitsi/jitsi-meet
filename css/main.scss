@@ -24,8 +24,7 @@ $flagsImagePath: "../images/";
 /* Flags END */
 
 /* Modules BEGIN */
-
-@import 'aui_reset';
+@import 'reset';
 @import 'atlaskit_overrides';
 @import 'base';
 @import 'utils';
@@ -63,7 +62,6 @@ $flagsImagePath: "../images/";
 @import 'components/input-control';
 @import 'components/input-slider';
 @import "connection-info";
-@import 'aui-components/dropdown';
 @import '404';
 @import 'policy';
 @import 'popover';
