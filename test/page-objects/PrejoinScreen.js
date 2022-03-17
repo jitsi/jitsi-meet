@@ -22,6 +22,15 @@ class PrejoinScreen {
     get PrejoinInput() {
         return $('.prejoin-input-area input');
     }
+
+    /**
+     * Prejoin button element.
+     *
+     * @returns {HTMLElement}
+     */
+    get PrejoinButton() {
+        return $('[data-testid="prejoin.joinMeeting"]');
+    }
 }
 
 module.exports = new PrejoinScreen();

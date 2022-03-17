@@ -10,6 +10,7 @@ import createMeetingRoom from '../helpers/createMeetingRoom';
 import createMeetingUrl from '../helpers/createMeetingUrl';
 import openParticipantsPane from '../helpers/openParticipantsPane';
 
+const PrejoinScreen = require('../page-objects/PrejoinScreen');
 const SecurityDialog = require('../page-objects/SecurityDialog');
 const Toolbox = require('../page-objects/Toolbox');
 const LobbyNotification = require('../page-objects/notifications/LobbyNotification');
@@ -18,13 +19,20 @@ describe('Activate lobby and admit participant', () => {
     let meetingUrl;
     let Participant;
 
-    it('should open jitsi-meet app and enable lobby by first participant', async () => {
+    before(async () => {
         meetingUrl = await createMeetingUrl();
         await createMeetingRoom(meetingUrl);
+        Participant = await createBrowserSession();
+        await Participant.url(meetingUrl);
+    });
+
+    it('should open jitsi-meet app and enable lobby by first participant', async () => {
         const prejoinTextInput = await $('.prejoin-input-area input');
 
         await prejoinTextInput.setValue(FIRST_PARTICIPANT);
-        await browser.keys(ENTER_KEY);
+        const prejoinButton = PrejoinScreen.PrejoinButton;
+
+        await prejoinButton.click();
         const toolbox = await Toolbox.ToolboxView;
 
         await expect(toolbox).toBeDisplayed();
@@ -55,9 +63,6 @@ describe('Activate lobby and admit participant', () => {
         await securityDialogCloseButton.click();
     });
     it('should open jitsi-meet with same room name where second participant wants to join', async () => {
-
-        Participant = await createBrowserSession();
-        await Participant.url(meetingUrl);
         const prejoinTextInput = await Participant.$('.prejoin-input-area input');
 
         await prejoinTextInput.setValue(SECOND_PARTICIPANT);
@@ -75,6 +80,9 @@ describe('Activate lobby and admit participant', () => {
         await expect(lobbyRejectBtn).toBeDisplayed();
         await lobbyAdmitBtn.click();
         await openParticipantsPane();
+    });
+
+    after(async () => {
         await browser.deleteSession();
         await Participant.deleteSession();
     });

@@ -11,6 +11,7 @@ import createMeetingRoom from '../helpers/createMeetingRoom';
 import createMeetingUrl from '../helpers/createMeetingUrl';
 
 const ParticipantsPane = require('../page-objects/ParticipantsPane');
+const PrejoinScreen = require('../page-objects/PrejoinScreen');
 const SecurityDialog = require('../page-objects/SecurityDialog');
 const Toolbox = require('../page-objects/Toolbox');
 const LobbyNotification = require('../page-objects/notifications/LobbyNotification');
@@ -20,13 +21,22 @@ describe('Open jitsimeet app, enable lobby and view lobby', () => {
     let Participant1;
     let Participant2;
 
-    it('should open jitsi-meet app and enable lobby by first participant', async () => {
+    before(async () => {
         meetingUrl = await createMeetingUrl();
         await createMeetingRoom(meetingUrl);
+        Participant1 = await createBrowserSession();
+        await Participant1.url(meetingUrl);
+        Participant2 = await createBrowserSession();
+        await Participant2.url(meetingUrl);
+    });
+
+    it('should open jitsi-meet app and enable lobby by first participant', async () => {
         const prejoinTextInput = await $('.prejoin-input-area input');
 
         await prejoinTextInput.setValue(FIRST_PARTICIPANT);
-        await browser.keys(ENTER_KEY);
+        const prejoinButton = PrejoinScreen.PrejoinButton;
+
+        await prejoinButton.click();
         const toolbox = await Toolbox.ToolboxView;
 
         await expect(toolbox).toBeDisplayed();
@@ -57,16 +67,12 @@ describe('Open jitsimeet app, enable lobby and view lobby', () => {
         await securityDialogCloseButton.click();
     });
     it('second participant should ask to join the meeting', async () => {
-        Participant1 = await createBrowserSession();
-        await Participant1.url(meetingUrl);
         const prejoinTextInput = await Participant1.$('.prejoin-input-area input');
 
         await prejoinTextInput.setValue(SECOND_PARTICIPANT);
         await Participant1.keys(ENTER_KEY);
     });
     it('third participant should ask to join the meeting', async () => {
-        Participant2 = await createBrowserSession();
-        await Participant2.url(meetingUrl);
         const prejoinTextInput = await Participant2.$('.prejoin-input-area input');
 
         await prejoinTextInput.setValue(THIRD_PARTICIPANT);
@@ -83,6 +89,9 @@ describe('Open jitsimeet app, enable lobby and view lobby', () => {
         const participantsPane = await ParticipantsPane.ParticipantsPaneView;
 
         await expect(participantsPane).toBeDisplayed();
+    });
+
+    after(async () => {
         await browser.deleteSession();
         await Participant1.deleteSession();
         await Participant2.deleteSession();

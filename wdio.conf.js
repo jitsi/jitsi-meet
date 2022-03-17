@@ -134,7 +134,7 @@ exports.config = {
     // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
     // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
     // gets prepended directly.
-    baseUrl: process.env.BROWSER || 'https://localhost:8080',
+    baseUrl: process.env.BROWSER || 'https://alpha.jitsi.net',
 
     //
     // Default timeout for all waitFor* commands.
@@ -197,7 +197,7 @@ exports.config = {
     // See the full list at http://mochajs.org/
     mochaOpts: {
         ui: 'bdd',
-        timeout: 60000
+        timeout: 100000
     },
 
     //

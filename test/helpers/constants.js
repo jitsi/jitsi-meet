@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 
-export const BASE_URL = process.env.BASE_URL || 'https://localhost:8080';
+export const BASE_URL = process.env.BASE_URL || 'https://alpha.jitsi.net';
 
 export const BROWSERS = process.env.BROWSERS || [ 'chrome', 'firefox' ];
 
