@@ -1,23 +1,27 @@
-import createChromeSession from './chromeSession';
-import { BROWSERS } from './constants';
-import createFirefoxSession from './firefoxSession';
+import {
+    MODERATOR,
+    MODERATOR_BROWSER,
+    PARTICIPANT1_BROWSER,
+    PARTICIPANT2_BROWSER,
+    FIRST_PARTICIPANT,
+    SECOND_PARTICIPANT
+} from './constants';
+import createSession from './createSession';
 
 /**
  * Function that creates a browser session.
  *
  * @returns {void}
  */
-export default function createBrowserSession() {
-    for (let i = 0; i < BROWSERS.length; i++) {
-        const browserName = BROWSERS[i];
-
-        switch (browserName) {
-        case 'chrome':
-            return createChromeSession();
-        case 'firefox':
-            return createFirefoxSession();
-        default:
-            return;
-        }
+export default function createBrowserSession(participant) {
+    switch (participant) {
+    case FIRST_PARTICIPANT:
+        return createSession(PARTICIPANT1_BROWSER);
+    case SECOND_PARTICIPANT:
+        return createSession(PARTICIPANT2_BROWSER);
+    case MODERATOR:
+        return createSession(MODERATOR_BROWSER);
+    default:
+        return;
     }
 }

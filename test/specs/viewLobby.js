@@ -2,9 +2,9 @@
 
 import {
     ENTER_KEY,
+    MODERATOR,
     FIRST_PARTICIPANT,
-    SECOND_PARTICIPANT,
-    THIRD_PARTICIPANT
+    SECOND_PARTICIPANT
 } from '../helpers/constants';
 import createBrowserSession from '../helpers/createBrowserSession';
 import createMeetingRoom from '../helpers/createMeetingRoom';
@@ -24,16 +24,16 @@ describe('Open jitsimeet app, enable lobby and view lobby', () => {
     before(async () => {
         meetingUrl = await createMeetingUrl();
         await createMeetingRoom(meetingUrl);
-        Participant1 = await createBrowserSession();
+        Participant1 = await createBrowserSession(FIRST_PARTICIPANT);
         await Participant1.url(meetingUrl);
-        Participant2 = await createBrowserSession();
+        Participant2 = await createBrowserSession(SECOND_PARTICIPANT);
         await Participant2.url(meetingUrl);
     });
 
     it('should open jitsi-meet app and enable lobby by first participant', async () => {
         const prejoinTextInput = await $('.prejoin-input-area input');
 
-        await prejoinTextInput.setValue(FIRST_PARTICIPANT);
+        await prejoinTextInput.setValue(MODERATOR);
         const prejoinButton = PrejoinScreen.PrejoinButton;
 
         await prejoinButton.click();
@@ -69,13 +69,13 @@ describe('Open jitsimeet app, enable lobby and view lobby', () => {
     it('second participant should ask to join the meeting', async () => {
         const prejoinTextInput = await Participant1.$('.prejoin-input-area input');
 
-        await prejoinTextInput.setValue(SECOND_PARTICIPANT);
+        await prejoinTextInput.setValue(FIRST_PARTICIPANT);
         await Participant1.keys(ENTER_KEY);
     });
     it('third participant should ask to join the meeting', async () => {
         const prejoinTextInput = await Participant2.$('.prejoin-input-area input');
 
-        await prejoinTextInput.setValue(THIRD_PARTICIPANT);
+        await prejoinTextInput.setValue(SECOND_PARTICIPANT);
         await Participant2.keys(ENTER_KEY);
     });
     it('Moderator should press the view button from lobby notification', async () => {

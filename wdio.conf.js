@@ -1,4 +1,5 @@
 /* eslint-disable no-undef */
+import createBrowserCapabilities from './test/helpers/browserCapabilities';
 
 const allureReporter = require('@wdio/allure-reporter').default;
 
@@ -60,36 +61,7 @@ exports.config = {
     // https://saucelabs.com/platform/platform-configurator
 
     capabilities: [
-        {
-            maxInstances: 4,
-            browserName: 'chrome',
-            acceptInsecureCerts: true,
-            'goog:chromeOptions': {
-                args: [
-                    'use-fake-device-for-media-stream',
-                    'use-fake-ui-for-media-stream',
-                    'disable-plugins',
-                    'mute-audio',
-                    'disable-infobars',
-                    'autoplay-policy=no-user-gesture-required',
-                    'auto-select-desktop-capture-source=Your Entire screen'
-                ]
-            }
-        },
-        {
-            maxInstances: 4,
-            browserName: 'firefox',
-            acceptInsecureCerts: true,
-            'moz:firefoxOptions': {
-                'prefs': {
-                    'media.navigator.streams.fake': true,
-                    'media.navigator.permission.disabled': true,
-                    'media.peerconnection.ice.tcp': true,
-                    'intl.accept_languages': 'en',
-                    'media.autoplay.default': 0
-                }
-            }
-        }
+        createBrowserCapabilities()
 
         // {
         //     maxInstances: 1,

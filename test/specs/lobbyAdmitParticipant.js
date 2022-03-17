@@ -2,8 +2,8 @@
 
 import {
     ENTER_KEY,
-    FIRST_PARTICIPANT,
-    SECOND_PARTICIPANT
+    MODERATOR,
+    FIRST_PARTICIPANT
 } from '../helpers/constants';
 import createBrowserSession from '../helpers/createBrowserSession';
 import createMeetingRoom from '../helpers/createMeetingRoom';
@@ -22,14 +22,14 @@ describe('Activate lobby and admit participant', () => {
     before(async () => {
         meetingUrl = await createMeetingUrl();
         await createMeetingRoom(meetingUrl);
-        Participant = await createBrowserSession();
+        Participant = await createBrowserSession(FIRST_PARTICIPANT);
         await Participant.url(meetingUrl);
     });
 
     it('should open jitsi-meet app and enable lobby by first participant', async () => {
         const prejoinTextInput = await $('.prejoin-input-area input');
 
-        await prejoinTextInput.setValue(FIRST_PARTICIPANT);
+        await prejoinTextInput.setValue(MODERATOR);
         const prejoinButton = PrejoinScreen.PrejoinButton;
 
         await prejoinButton.click();
@@ -65,7 +65,7 @@ describe('Activate lobby and admit participant', () => {
     it('should open jitsi-meet with same room name where second participant wants to join', async () => {
         const prejoinTextInput = await Participant.$('.prejoin-input-area input');
 
-        await prejoinTextInput.setValue(SECOND_PARTICIPANT);
+        await prejoinTextInput.setValue(FIRST_PARTICIPANT);
         await Participant.keys(ENTER_KEY);
     });
     it('Moderator should admit the user that wants to join the meeting', async () => {
