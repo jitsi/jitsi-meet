@@ -14,7 +14,7 @@ const SecurityDialog = require('../page-objects/SecurityDialog');
 const Toolbox = require('../page-objects/Toolbox');
 const LobbyNotification = require('../page-objects/notifications/LobbyNotification');
 
-describe('Activate lobby and admit participant', () => {
+describe('Activate lobby and reject participant', () => {
     let meetingUrl;
     let Participant;
 
