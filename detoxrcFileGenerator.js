@@ -1,4 +1,5 @@
 const fs = require('file-system');
+
 const devices = require('./tests/mobile/constants.js');
 
 const data = {

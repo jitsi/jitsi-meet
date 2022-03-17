@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 import { v4 as uuidv4 } from 'uuid';
 
 import { screen } from '../../react/features/mobile/navigation/routes';
@@ -14,6 +16,7 @@ describe('Jitsi Meet App', () => {
             }
         });
 
+        // eslint-disable-next-line no-unused-expressions
         true;
     });
 
@@ -43,6 +46,7 @@ describe('Jitsi Meet App', () => {
         const roomName = uuidv4();
 
         await expect(element(by.id('room-name-input'))).toBeVisible();
+
         // Helps the app to move forward with the test execution
         // when it navigates to the conference room
         await device.disableSynchronization();
