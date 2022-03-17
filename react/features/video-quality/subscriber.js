@@ -279,14 +279,16 @@ function _updateReceiverVideoConstraints({ getState }) {
                 const qualityLevel = getVideoQualityForResizableFilmstripThumbnails(state);
 
                 visibleRemoteTrackSourceNames.forEach(sourceName => {
-                    receiverConstraints.constraints[sourceName] = { 'maxHeight': qualityLevel };
+                    receiverConstraints.constraints[sourceName] = { 'maxHeight': Math.min(qualityLevel,
+                        maxFrameHeight) };
                 });
             }
 
             if (largeVideoSourceName) {
                 let quality = maxFrameHeight;
 
-                if (!remoteScreenShares.find(id => id === largeVideoParticipantId)) {
+                if (navigator.product !== 'ReactNative'
+                    && !remoteScreenShares.find(id => id === largeVideoParticipantId)) {
                     quality = getVideoQualityForLargeVideo();
                 }
                 receiverConstraints.constraints[largeVideoSourceName] = { 'maxHeight': quality };
@@ -326,14 +328,16 @@ function _updateReceiverVideoConstraints({ getState }) {
                 const qualityLevel = getVideoQualityForResizableFilmstripThumbnails(state);
 
                 visibleRemoteParticipants.forEach(participantId => {
-                    receiverConstraints.constraints[participantId] = { 'maxHeight': qualityLevel };
+                    receiverConstraints.constraints[participantId] = { 'maxHeight': Math.min(qualityLevel,
+                        maxFrameHeight) };
                 });
             }
 
             if (largeVideoParticipantId) {
                 let quality = maxFrameHeight;
 
-                if (!remoteScreenShares.find(id => id === largeVideoParticipantId)) {
+                if (navigator.product !== 'ReactNative'
+                    && !remoteScreenShares.find(id => id === largeVideoParticipantId)) {
                     quality = getVideoQualityForLargeVideo();
                 }
                 receiverConstraints.constraints[largeVideoParticipantId] = { 'maxHeight': quality };
