@@ -13,7 +13,7 @@ import INTERFACE_CONFIG_WHITELIST from './interfaceConfigWhitelist';
 import logger from './logger';
 
 // XXX The function getRoomName is split out of
-// functions.js because it is bundled in both app.bundle and
+// functions.any.js because it is bundled in both app.bundle and
 // do_external_connect, webpack 1 does not support tree shaking, and we don't
 // want all functions to be bundled in do_external_connect.
 export { default as getRoomName } from './getRoomName';

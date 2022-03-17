@@ -12,6 +12,7 @@ export const screen = {
         help: 'Help'
     },
     dialInSummary: 'Dial-In Info',
+    connecting: 'Connecting',
     conference: {
         root: 'Conference root',
         main: 'Conference',
@@ -32,5 +33,6 @@ export const screen = {
         invite: 'Invite',
         sharedDocument: 'Shared document'
     },
-    lobby: 'Lobby'
+    lobby: 'Lobby',
+    endMeeting: 'End'
 };
