@@ -605,6 +605,7 @@ var config = {
     //    'help',
     //    'highlight',
     //    'invite',
+    //    'linktosalesforce',
     //    'livestreaming',
     //    'microphone',
     //    'mute-everyone',
