@@ -1,10 +1,8 @@
 /* eslint-disable no-undef */
 import createBrowserCapabilities from './test/helpers/browserCapabilities';
 import {
-    GRID_HOST_NAME,
-    GRID_PATH,
-    GRID_PORT,
-    GRID_PROTOCOL,
+    GRID_URL,
+    MAX_INSANCES,
     SERVICES
 } from './test/helpers/constants';
 
@@ -60,7 +58,7 @@ exports.config = {
     // from the same test should run tests.
     //
 
-    maxInstances: 16,
+    maxInstances: MAX_INSANCES,
 
     //
     // If you have trouble getting all important capabilities together, check out the
@@ -136,10 +134,10 @@ exports.config = {
     services: SERVICES,
 
     // Remote selenium grid.
-    hostname: GRID_HOST_NAME,
-    port: GRID_PORT,
-    path: GRID_PATH,
-    protocol: GRID_PROTOCOL,
+    hostname: GRID_URL?.host,
+    port: GRID_URL?.port,
+    path: GRID_URL?.pathname,
+    protocol: GRID_URL?.protocol,
 
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
