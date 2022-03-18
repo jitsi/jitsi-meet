@@ -154,7 +154,7 @@ export async function sendMeetingHighlight(state: Object) {
     };
 
     const reqBody = {
-        meetingFqn: extractFqnFromPath(),
+        meetingFqn: extractFqnFromPath(state),
         sessionId: conference.sessionId,
         submitted: Date.now(),
         participantId: localParticipant.jwtId,
