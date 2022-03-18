@@ -1,11 +1,18 @@
 /* eslint-disable no-undef */
 
+// Define base url.
 export const BASE_URL = process.env.BASE_URL || 'https://alpha.jitsi.net';
 
-export const MODERATOR_BROWSER = process.env.PARTICIPANT1_BROWSER || 'chrome';
-export const PARTICIPANT1_BROWSER = process.env.PARTICIPANT1_BROWSER || 'chrome';
-export const PARTICIPANT2_BROWSER = process.env.PARTICIPANT2_BROWSER || 'chrome';
+// Define available browsers.
+export const FIREFOX_BROWSER = 'firefox';
+export const CHROME_BROWSER = 'chrome';
 
+// Define browser for each participant.
+export const MODERATOR_BROWSER = process.env.MODERATOR_BROWSER || CHROME_BROWSER;
+export const PARTICIPANT1_BROWSER = process.env.PARTICIPANT1_BROWSER || CHROME_BROWSER;
+export const PARTICIPANT2_BROWSER = process.env.PARTICIPANT2_BROWSER || CHROME_BROWSER;
+
+// Define default config.
 export const DEFAULT_CONFIG
 = 'config.requireDisplayName=false'
 + '&config.debug=true'
@@ -25,15 +32,17 @@ export const DEFAULT_CONFIG
 + '&interfaceConfig.SHOW_CHROME_EXTENSION_BANNER=false'
 + '&interfaceConfig.DISABLE_FOCUS_INDICATOR=true';
 
+// Define participants names.
 export const MODERATOR = 'Moderator';
 export const FIRST_PARTICIPANT = 'First participant';
 export const SECOND_PARTICIPANT = 'Second participant';
 
 export const ENTER_KEY = '\uE007';
 
+// Define chrome properties.
 export const CHROME_PROPERTIES = {
     maxInstances: 4,
-    browserName: 'chrome',
+    browserName: CHROME_BROWSER,
     acceptInsecureCerts: true,
     'goog:chromeOptions': {
         args: [
@@ -48,9 +57,10 @@ export const CHROME_PROPERTIES = {
     }
 };
 
+// Define firefox properties.
 export const FIREFOX_PROPERTIES = {
     maxInstances: 4,
-    browserName: 'firefox',
+    browserName: FIREFOX_BROWSER,
     acceptInsecureCerts: true,
     'moz:firefoxOptions': {
         'prefs': {

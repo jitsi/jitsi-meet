@@ -1,4 +1,5 @@
 import {
+    CHROME_BROWSER,
     CHROME_PROPERTIES,
     FIREFOX_PROPERTIES,
     MODERATOR_BROWSER
@@ -11,7 +12,7 @@ import {
  */
 export default function createBrowserCapabilities() {
 
-    if (MODERATOR_BROWSER === 'crome') {
+    if (MODERATOR_BROWSER === CHROME_BROWSER) {
         return CHROME_PROPERTIES;
     }
 

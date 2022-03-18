@@ -1,5 +1,10 @@
 import { remote } from 'webdriverio';
 
+import {
+    CHROME_BROWSER,
+    FIREFOX_BROWSER
+} from './constants';
+
 /**
  * Function that creates a session.
  *
@@ -8,10 +13,10 @@ import { remote } from 'webdriverio';
 export default function createSession(participantBrowser) {
 
     switch (participantBrowser) {
-    case 'chrome':
+    case CHROME_BROWSER:
         return remote({
             capabilities: {
-                browserName: 'chrome',
+                browserName: CHROME_BROWSER,
                 acceptInsecureCerts: true,
                 'goog:chromeOptions': {
                     args: [
@@ -26,10 +31,10 @@ export default function createSession(participantBrowser) {
                 }
             }
         });
-    case 'firefox':
+    case FIREFOX_BROWSER:
         return remote({
             capabilities: {
-                browserName: 'firefox',
+                browserName: FIREFOX_BROWSER,
                 acceptInsecureCerts: true,
                 'moz:firefoxOptions': {
                     'prefs': {
