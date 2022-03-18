@@ -14,7 +14,7 @@ export function extractFqnFromPath(state?: Object) {
 
     if (window.location.pathname) {
         pathname = window.location.pathname;
-    } else if (state['features/base/connection']) {
+    } else if (state && state['features/base/connection']) {
         pathname = state['features/base/connection'].locationURL.pathname;
     } else {
         return '';
