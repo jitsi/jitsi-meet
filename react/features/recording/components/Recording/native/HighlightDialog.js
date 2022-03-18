@@ -3,7 +3,7 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
-import { useDispatch } from 'react-redux';
+import { useDispatch, batch } from 'react-redux';
 
 import { hideDialog, BottomSheet } from '../../../../base/dialog';
 import { highlightMeetingMoment } from '../../../actions.any';
@@ -14,8 +14,10 @@ const HighlightDialog = () => {
     const { t } = useTranslation();
     const closeDialog = useCallback(() => dispatch(hideDialog()), [ dispatch ]);
     const highlightMoment = useCallback(() => {
-        dispatch(highlightMeetingMoment());
-        dispatch(hideDialog());
+        batch(() => {
+            dispatch(highlightMeetingMoment());
+            dispatch(hideDialog());
+        });
     }, [ dispatch ]);
 
     return (
