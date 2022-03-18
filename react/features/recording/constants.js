@@ -18,6 +18,13 @@ export const LIVE_STREAMING_OFF_SOUND_ID = 'LIVE_STREAMING_OFF_SOUND';
 export const LIVE_STREAMING_ON_SOUND_ID = 'LIVE_STREAMING_ON_SOUND';
 
 /**
+ * The identifier of the prompt to start recording notification.
+ *
+ * @type {string}
+ */
+export const PROMPT_RECORDING_NOTIFICATION_ID = 'PROMPT_RECORDING_NOTIFICATION_ID';
+
+/**
  * The identifier of the sound to be played when a recording session is stopped.
  *
  * @type {string}

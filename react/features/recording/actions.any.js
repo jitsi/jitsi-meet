@@ -132,14 +132,13 @@ export function highlightMeetingMoment() {
     return async (dispatch: Function, getState: Function) => {
         dispatch(setHighlightMomentButtonState(true));
 
-        try {
-            await sendMeetingHighlight(getState());
+        const success = await sendMeetingHighlight(getState());
+
+        if (success) {
             dispatch(showNotification({
                 descriptionKey: 'recording.highlightMomentSucessDescription',
                 titleKey: 'recording.highlightMomentSuccess'
             }));
-        } catch (err) {
-            logger.error('Could not highlight meeting moment', err);
         }
 
         dispatch(setHighlightMomentButtonState(false));
