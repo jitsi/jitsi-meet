@@ -73,7 +73,7 @@ export const FIREFOX_PROPERTIES = {
     }
 };
 
-export const SERVICES = process.env.GRID ? '' : 'selenium-standalone';
+export const SERVICES = process.env.GRID ? [] : [ 'selenium-standalone' ];
 
 export const GRID_HOST_NAME = process.env.GRID ? process.env.GRID.HOST_NAME : '';
 export const GRID_PORT = process.env.GRID ? process.env.GRID.PORT : null;
