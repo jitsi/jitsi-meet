@@ -8,9 +8,9 @@ export const FIREFOX_BROWSER = 'firefox';
 export const CHROME_BROWSER = 'chrome';
 
 // Define browser for each participant.
-export const MODERATOR_BROWSER = process.env.MODERATOR_BROWSER || CHROME_BROWSER;
 export const PARTICIPANT1_BROWSER = process.env.PARTICIPANT1_BROWSER || CHROME_BROWSER;
 export const PARTICIPANT2_BROWSER = process.env.PARTICIPANT2_BROWSER || CHROME_BROWSER;
+export const PARTICIPANT3_BROWSER = process.env.PARTICIPANT3_BROWSER || CHROME_BROWSER;
 
 // Define default config.
 export const DEFAULT_CONFIG
@@ -33,9 +33,9 @@ export const DEFAULT_CONFIG
 + '&interfaceConfig.DISABLE_FOCUS_INDICATOR=true';
 
 // Define participants names.
-export const MODERATOR = 'Moderator';
 export const FIRST_PARTICIPANT = 'First participant';
 export const SECOND_PARTICIPANT = 'Second participant';
+export const THIRD_PARTICIPANT = 'Third participant';
 
 export const ENTER_KEY = '\uE007';
 

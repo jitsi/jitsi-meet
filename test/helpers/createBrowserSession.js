@@ -1,10 +1,10 @@
 import {
-    MODERATOR,
-    MODERATOR_BROWSER,
     PARTICIPANT1_BROWSER,
     PARTICIPANT2_BROWSER,
+    PARTICIPANT3_BROWSER,
     FIRST_PARTICIPANT,
-    SECOND_PARTICIPANT
+    SECOND_PARTICIPANT,
+    THIRD_PARTICIPANT
 } from './constants';
 import createSession from './createSession';
 
@@ -19,8 +19,8 @@ export default function createBrowserSession(participant) {
         return createSession(PARTICIPANT1_BROWSER);
     case SECOND_PARTICIPANT:
         return createSession(PARTICIPANT2_BROWSER);
-    case MODERATOR:
-        return createSession(MODERATOR_BROWSER);
+    case THIRD_PARTICIPANT:
+        return createSession(PARTICIPANT3_BROWSER);
     default:
         return;
     }

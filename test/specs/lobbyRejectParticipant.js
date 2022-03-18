@@ -2,8 +2,8 @@
 
 import {
     ENTER_KEY,
-    MODERATOR,
-    FIRST_PARTICIPANT
+    FIRST_PARTICIPANT,
+    SECOND_PARTICIPANT
 } from '../helpers/constants';
 import createBrowserSession from '../helpers/createBrowserSession';
 import createMeetingRoom from '../helpers/createMeetingRoom';
@@ -21,14 +21,14 @@ describe('Activate lobby and reject participant', () => {
     before(async () => {
         meetingUrl = await createMeetingUrl();
         await createMeetingRoom(meetingUrl);
-        Participant = await createBrowserSession(FIRST_PARTICIPANT);
+        Participant = await createBrowserSession(SECOND_PARTICIPANT);
         await Participant.url(meetingUrl);
     });
 
     it('should open jitsi-meet app and enable lobby', async () => {
         const prejoinTextInput = await $('.prejoin-input-area input');
 
-        await prejoinTextInput.setValue(MODERATOR);
+        await prejoinTextInput.setValue(FIRST_PARTICIPANT);
         const prejoinButton = PrejoinScreen.PrejoinButton;
 
         await prejoinButton.click();
@@ -64,7 +64,7 @@ describe('Activate lobby and reject participant', () => {
     it('should open jitsi-meet with same room name where second participant wants to join', async () => {
         const prejoinTextInput = await Participant.$('.prejoin-input-area input');
 
-        await prejoinTextInput.setValue(FIRST_PARTICIPANT);
+        await prejoinTextInput.setValue(SECOND_PARTICIPANT);
         await Participant.keys(ENTER_KEY);
     });
     it('Moderator should reject the user that wants to join the meeting', async () => {
