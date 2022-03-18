@@ -73,8 +73,10 @@ export const FIREFOX_PROPERTIES = {
     }
 };
 
+// Define services properties based on grid availability.
 export const SERVICES = process.env.GRID ? [] : [ 'selenium-standalone' ];
 
+// Define remote selenium grid properties.
 export const GRID_HOST_NAME = process.env.GRID ? process.env.GRID.HOST_NAME : '';
 export const GRID_PORT = process.env.GRID ? process.env.GRID.PORT : null;
 export const GRID_PATH = process.env.GRID ? process.env.GRID.PATH : '';
