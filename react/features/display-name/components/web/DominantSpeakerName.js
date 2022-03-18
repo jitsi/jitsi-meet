@@ -22,6 +22,7 @@ const useStyles = makeStyles(theme => {
             justifyContent: 'center',
             marginBottom: theme.spacing(7),
             transition: 'margin-bottom 0.3s',
+            pointerEvents: 'none',
             position: 'absolute',
             bottom: 0,
             left: 0,
