@@ -85,7 +85,7 @@ exports.config = {
     // Define all options that are relevant for the WebdriverIO instance here
     //
     // Level of logging verbosity: trace | debug | info | warn | error | silent
-    logLevel: 'info',
+    logLevel: 'trace',
 
     //
     // Set specific log levels per logger
@@ -280,7 +280,10 @@ exports.config = {
                 return window.APP.connection.getLogs();
             });
 
-            await allureReporter.addAttachment('meetlog', logResult);
+            const consoleLogs = await browser.getLogs('browser');
+
+            await allureReporter.addAttachment('meetLogs', logResult);
+            await allureReporter.addAttachment('consoleLogs', consoleLogs);
         }
     }
 
