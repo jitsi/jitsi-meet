@@ -153,8 +153,20 @@ export async function sendMeetingHighlight(state: Object) {
         'Content-Type': 'application/json'
     };
 
+    let fqn;
+
+    if (window.window.location.pathname) {
+        fqn = extractFqnFromPath();
+    } else {
+        const pathname = state['features/base/connection'].locationURL.pathname;
+        const parts = pathname.split('/');
+        const len = parts.length;
+
+        fqn = parts.length > 2 ? `${parts[len - 2]}/${parts[len - 1]}` : parts[1];
+    }
+
     const reqBody = {
-        meetingFqn: extractFqnFromPath(),
+        meetingFqn: fqn,
         sessionId: conference.sessionId,
         submitted: Date.now(),
         participantId: localParticipant.jwtId,

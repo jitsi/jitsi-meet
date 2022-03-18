@@ -9,6 +9,9 @@ import HighlightDialog from './components/Recording/native/HighlightDialog';
 export * from './actions.any';
 
 /**
+ * Opens the highlight dialog.
+ *
+ * @returns {Function}
  */
 export function openHighlightDialog() {
     return (dispatch: Function) => {

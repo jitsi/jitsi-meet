@@ -37,9 +37,6 @@ export class HighlightButton extends AbstractHighlightButton<Props> {
      * @inheritdoc
      * @returns {ReactElement}
      */
-
-    /**
-     */
     render() {
         const {
             _disabled,
