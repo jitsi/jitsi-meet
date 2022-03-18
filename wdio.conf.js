@@ -60,7 +60,7 @@ exports.config = {
     // from the same test should run tests.
     //
 
-    maxInstances: 10,
+    maxInstances: 16,
 
     //
     // If you have trouble getting all important capabilities together, check out the
