@@ -231,8 +231,7 @@ class StartRecordingDialogContent extends Component<Props> {
             t
         } = this.props;
 
-        if (isVpaas
-            || selectedRecordingService !== RECORDING_TYPES.JITSI_REC_SERVICE) {
+        if (!(isVpaas && selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE)) {
             return null;
         }
 
