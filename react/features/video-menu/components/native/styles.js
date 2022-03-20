@@ -1,7 +1,5 @@
 // @flow
 
-import { PlatformColor } from 'react-native';
-
 import {
     MD_FONT_SIZE,
     MD_ITEM_HEIGHT,
@@ -72,8 +70,7 @@ export default createStyleSheet({
     },
 
     dividerDialog: {
-        // eslint-disable-next-line new-cap
-        backgroundColor: PlatformColor('separator'),
+        backgroundColor: BaseTheme.palette.dividerColor,
         marginBottom: BaseTheme.spacing[3]
     },
 
