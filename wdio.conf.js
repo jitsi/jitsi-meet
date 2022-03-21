@@ -135,7 +135,7 @@ exports.config = {
 
     // Remote selenium grid.
     hostname: GRID_URL?.host,
-    port: GRID_URL?.port,
+    port: GRID_URL?.port && Number(GRID_URL.port),
     path: GRID_URL?.pathname,
     protocol: GRID_URL?.protocol,
 
