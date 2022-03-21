@@ -34,57 +34,55 @@ type Props = {
 }
 
 
-const RootNavigationContainer = ({ isWelcomePageAvailable }: Props) => (
-    <SafeAreaProvider>
-        <NavigationContainer
-            independent = { true }
-            ref = { rootNavigationRef }
-            theme = { navigationContainerTheme }>
-            <RootStack.Navigator
-                initialRouteName = { screen.root }>
-                {
-                    isWelcomePageAvailable
-                        ? <RootStack.Screen
-                            component = { WelcomePageNavigationContainer }
-                            name = { screen.root }
-                            options = { drawerNavigatorScreenOptions } />
-                        : <RootStack.Screen
-                            component = { ConnectingPage }
-                            name = { screen.connecting }
-                            options = {{
-                                gestureEnabled: false,
-                                headerShown: false
-                            }} />
-                }
-                <RootStack.Screen
-                    component = { ConnectingPage }
-                    name = { screen.connecting }
-                    options = {{
-                        gestureEnabled: false,
-                        headerShown: false
-                    }} />
-                <RootStack.Screen
-                    component = { DialInSummary }
-                    name = { screen.dialInSummary }
-                    options = { dialInSummaryScreenOptions } />
-                <RootStack.Screen
-                    component = { ConferenceNavigationContainer }
-                    name = { screen.conference.root }
-                    options = {{
-                        gestureEnabled: false,
-                        headerShown: false
-                    }} />
-                <RootStack.Screen
-                    component = { EndMeetingPage }
-                    name = { screen.endMeeting }
-                    options = {{
-                        gestureEnabled: false,
-                        headerShown: false
-                    }} />
-            </RootStack.Navigator>
-        </NavigationContainer>
-    </SafeAreaProvider>
-);
+const RootNavigationContainer = ({ isWelcomePageAvailable }: Props) => {
+    const initialRouteName = isWelcomePageAvailable
+        ? screen.root : screen.connecting;
+
+    return (
+        <SafeAreaProvider>
+            <NavigationContainer
+                independent = { true }
+                ref = { rootNavigationRef }
+                theme = { navigationContainerTheme }>
+                <RootStack.Navigator
+                    initialRouteName = { initialRouteName }>
+                    {
+                        isWelcomePageAvailable
+                            && <RootStack.Screen
+                                component = { WelcomePageNavigationContainer }
+                                name = { screen.root }
+                                options = { drawerNavigatorScreenOptions } />
+                    }
+                    <RootStack.Screen
+                        component = { ConnectingPage }
+                        name = { screen.connecting }
+                        options = {{
+                            gestureEnabled: false,
+                            headerShown: false
+                        }} />
+                    <RootStack.Screen
+                        component = { DialInSummary }
+                        name = { screen.dialInSummary }
+                        options = { dialInSummaryScreenOptions } />
+                    <RootStack.Screen
+                        component = { ConferenceNavigationContainer }
+                        name = { screen.conference.root }
+                        options = {{
+                            gestureEnabled: false,
+                            headerShown: false
+                        }} />
+                    <RootStack.Screen
+                        component = { EndMeetingPage }
+                        name = { screen.endMeeting }
+                        options = {{
+                            gestureEnabled: false,
+                            headerShown: false
+                        }} />
+                </RootStack.Navigator>
+            </NavigationContainer>
+        </SafeAreaProvider>
+    );
+};
 
 /**
  * Maps part of the Redux store to the props of this component.
