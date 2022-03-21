@@ -138,7 +138,7 @@ export function highlightMeetingMoment() {
             dispatch(showNotification({
                 descriptionKey: 'recording.highlightMomentSucessDescription',
                 titleKey: 'recording.highlightMomentSuccess'
-            }));
+            }, NOTIFICATION_TIMEOUT_TYPE.SHORT));
         }
 
         dispatch(setHighlightMomentButtonState(false));

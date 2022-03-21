@@ -19,9 +19,19 @@ import { PROMPT_RECORDING_NOTIFICATION_ID } from '../../constants';
 export type Props = {
 
     /**
-     * Whether or not the conference is in audio only mode.
+     * Indicates whether or not the button is disabled.
      */
-    _audioOnly: boolean,
+    _disabled: boolean,
+
+    /**
+     * Indicates whether or not a highlight request is in progress.
+     */
+    _isHighlightInProgress: boolean,
+
+    /**
+     * Indicates whether or not the button should be visible.
+     */
+    _visible: boolean,
 
     /**
      * Invoked to obtain translated strings.
@@ -53,7 +63,11 @@ export default class AbstractHighlightButton<P: Props> extends Component<P> {
    * @returns {void}
    */
     _onClick() {
-        const { _disabled, dispatch } = this.props;
+        const { _disabled, _isHighlightInProgress, dispatch } = this.props;
+
+        if (_isHighlightInProgress) {
+            return;
+        }
 
         if (_disabled) {
             dispatch(showNotification({
@@ -77,12 +91,14 @@ export default class AbstractHighlightButton<P: Props> extends Component<P> {
 
 /**
  * Maps (parts of) the Redux state to the associated
- * {@code AbstractVideoQualityLabel}'s props.
+ * {@code AbstractHighlightButton}'s props.
  *
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _audioOnly: boolean
+ *     _disabled: boolean,
+ *     _isHighlightInProgress: boolean,
+ *     _visible: boolean
  * }}
  */
 export function _abstractMapStateToProps(state: Object) {
@@ -91,7 +107,8 @@ export function _abstractMapStateToProps(state: Object) {
     const { webhookProxyUrl } = state['features/base/config'];
 
     return {
-        _disabled: !isRecordingRunning || isButtonDisabled,
+        _disabled: !isRecordingRunning,
+        _isHighlightInProgress: isButtonDisabled,
         _visible: Boolean(webhookProxyUrl)
     };
 }
