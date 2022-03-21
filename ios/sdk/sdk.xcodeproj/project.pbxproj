@@ -303,9 +303,9 @@
 			buildConfigurationList = 0BD906ED1EC0C00300C8C18E /* Build configuration list for PBXNativeTarget "JitsiMeetSDK" */;
 			buildPhases = (
 				26796D8589142D80C8AFDA51 /* [CP] Check Pods Manifest.lock */,
+                0BD906E21EC0C00300C8C18E /* Headers */,
 				0BD906E01EC0C00300C8C18E /* Sources */,
 				0BD906E11EC0C00300C8C18E /* Frameworks */,
-				0BD906E21EC0C00300C8C18E /* Headers */,
 				0BD906E31EC0C00300C8C18E /* Resources */,
 				DE17D0D426E0B86300F77E2E /* Copy sounds */,
 				0BCA49651EC4B77500B793EE /* Package React bundle */,
