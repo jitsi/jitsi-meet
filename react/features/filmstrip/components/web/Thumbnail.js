@@ -22,7 +22,7 @@ import {
     getLocalAudioTrack,
     getLocalVideoTrack,
     getTrackByMediaTypeAndParticipant,
-    getTrackBySourceName,
+    getFakeScreenshareParticipantTrack,
     updateLastTrackVideoMediaEvent
 } from '../../../base/tracks';
 import { getVideoObjectPosition } from '../../../face-centering/functions';
@@ -1061,7 +1061,7 @@ function _mapStateToProps(state, ownProps): Object {
     let _videoTrack;
 
     if (sourceNameSignalingEnabled && participant?.isFakeScreenShareParticipant) {
-        _videoTrack = getTrackBySourceName(tracks, id);
+        _videoTrack = getFakeScreenshareParticipantTrack(tracks, id);
     } else {
         _videoTrack = isLocal
             ? getLocalVideoTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantID);

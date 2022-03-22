@@ -36,7 +36,7 @@ export function setRemoteParticipantsWithScreenShare(participantIds: Array<strin
  *     participantIds: Array<string>
  * }}
  */
-export function setRemoteFakeScreenShareParticipants(participantIds: Array<string>) {
+export function fakeScreenshareParticipantsUpdated(participantIds: Array<string>) {
     return {
         type: FAKE_SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
         participantIds

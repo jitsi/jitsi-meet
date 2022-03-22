@@ -1,7 +1,6 @@
 // @flow
 
 import {
-    FAKE_SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
     SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED
 } from '../../video-layout/actionTypes';
 import { ReducerRegistry, set } from '../redux';
@@ -381,29 +380,6 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
         // Keep the remote screen share list sorted alphabetically.
         sortedSharesList.length && sortedSharesList.sort((a, b) => a[1].localeCompare(b[1]));
         state.sortedRemoteScreenshares = new Map(sortedSharesList);
-
-        return { ...state };
-    }
-
-    // TODO: Revisit if we still need to listen to this event since it is only emitted when
-    // sortedFakeScreenShareParticipants has changed and we are resorted it here.
-    case FAKE_SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED: {
-        const { participantIds } = action;
-
-        const sortedSharesList = participantIds.reduce((acc, participantId) => {
-            const ownerId = _getScreenShareOwnerId(participantId);
-            const fakeScreenShareParticipant = state.sortedFakeScreenShareParticipants.get(ownerId);
-
-            if (fakeScreenShareParticipant) {
-                acc.push([ ownerId, fakeScreenShareParticipant ]);
-            }
-
-            return acc;
-        }, []);
-
-        // Keep the remote screen share list sorted alphabetically.
-        sortedSharesList.length && sortedSharesList.sort((a, b) => a[1]?.name.localeCompare(b[1]?.name));
-        state.sortedFakeScreenShareParticipants = new Map(sortedSharesList);
 
         return { ...state };
     }

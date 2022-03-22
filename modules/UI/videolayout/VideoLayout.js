@@ -8,7 +8,7 @@ import {
     getPinnedParticipant,
     getParticipantById
 } from '../../../react/features/base/participants';
-import { getTrackByMediaTypeAndParticipant, getTrackBySourceName } from '../../../react/features/base/tracks';
+import { getTrackByMediaTypeAndParticipant, getFakeScreenshareParticipantTrack } from '../../../react/features/base/tracks';
 
 import LargeVideoManager from './LargeVideoManager';
 import { VIDEO_CONTAINER_TYPE } from './VideoContainer';
@@ -188,7 +188,7 @@ const VideoLayout = {
         let videoTrack;
 
         if (getSourceNameSignalingFeatureFlag(state) && participant?.isFakeScreenShareParticipant) {
-            videoTrack = getTrackBySourceName(tracks, id);
+            videoTrack = getFakeScreenshareParticipantTrack(tracks, id);
         } else {
             videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
         }

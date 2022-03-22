@@ -16,7 +16,7 @@ import {
     getParticipantById,
     getParticipantDisplayName
 } from '../../../react/features/base/participants';
-import { getTrackByMediaTypeAndParticipant, getTrackBySourceName } from '../../../react/features/base/tracks';
+import { getTrackByMediaTypeAndParticipant, getFakeScreenshareParticipantTrack } from '../../../react/features/base/tracks';
 import { CHAT_SIZE } from '../../../react/features/chat';
 import {
     isParticipantConnectionStatusActive,
@@ -242,7 +242,7 @@ export default class LargeVideoManager {
                 let videoTrack;
 
                 if (isFakeScreenShareParticipant) {
-                    videoTrack = getTrackBySourceName(tracks, id);
+                    videoTrack = getFakeScreenshareParticipantTrack(tracks, id);
                 } else {
                     videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
                 }

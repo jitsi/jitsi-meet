@@ -6,12 +6,12 @@ import { getSourceNameSignalingFeatureFlag } from '../base/config';
 import { StateListenerRegistry, equals } from '../base/redux';
 import { isFollowMeActive } from '../follow-me';
 
-import { setRemoteParticipantsWithScreenShare, setRemoteFakeScreenShareParticipants } from './actions';
+import { setRemoteParticipantsWithScreenShare, fakeScreenshareParticipantsUpdated } from './actions';
 import { getAutoPinSetting, updateAutoPinnedParticipant } from './functions';
 
 StateListenerRegistry.register(
-    /* selector */ state => [ ...state['features/base/participants'].sortedFakeScreenShareParticipants.values() ],
-    /* listener */ debounce((sortedFakeScreenShareParticipants, store) => {
+    /* selector */ state => [ ...state['features/base/participants'].sortedFakeScreenShareParticipants ],
+    /* listener */ (sortedFakeScreenShareParticipants, store) => {
         if (!getAutoPinSetting() || isFollowMeActive(store) || !getSourceNameSignalingFeatureFlag(store.getState())) {
             return;
         }
@@ -34,12 +34,10 @@ StateListenerRegistry.register(
         });
 
         if (!equals(oldScreenSharesOrder, newScreenSharesOrder)) {
-            store.dispatch(setRemoteFakeScreenShareParticipants(newScreenSharesOrder));
+            store.dispatch(fakeScreenshareParticipantsUpdated(newScreenSharesOrder));
 
             updateAutoPinnedParticipant(oldScreenSharesOrder, store);
         }
-    }, 100), {
-        deepEquals: true
     });
 
 
