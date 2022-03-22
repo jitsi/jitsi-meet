@@ -45,7 +45,7 @@ export function isGifsMenuOpen(state) {
 export function getGifUrl(gif) {
     const embedUrl = gif?.embed_url || '';
     const idx = embedUrl.lastIndexOf('/');
-    const id = embedUrl.substr(idx + 1);
+    const id = embedUrl.slice(idx + 1);
 
     return `https://i.giphy.com/media/${id}/giphy.webp`;
 }

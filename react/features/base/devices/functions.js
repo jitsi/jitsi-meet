@@ -185,7 +185,7 @@ export function formatDeviceLabel(label: string) {
     const ix = formattedLabel.lastIndexOf('(');
 
     if (ix !== -1) {
-        formattedLabel = formattedLabel.substr(0, ix);
+        formattedLabel = formattedLabel.slice(0, ix);
     }
 
     return formattedLabel;

@@ -28,7 +28,7 @@ export function parseURLParams(
         source: string = 'hash'): Object {
     const paramStr = source === 'search' ? url.search : url.hash;
     const params = {};
-    const paramParts = (paramStr && paramStr.substr(1).split('&')) || [];
+    const paramParts = (paramStr && paramStr.slice(1).split('&')) || [];
 
     // Detect and ignore hash params for hash routers.
     if (source === 'hash' && paramParts.length === 1) {
