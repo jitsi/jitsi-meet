@@ -39,9 +39,6 @@
     "audioOnly": {
         "audioOnly": "Low bandwidth"
     },
-    "blankPage": {
-        "meetingEnded": "Meeting ended."
-    },
     "breakoutRooms": {
         "actions": {
             "add": "Add breakout room",
