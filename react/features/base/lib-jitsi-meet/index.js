@@ -26,5 +26,5 @@ export const JitsiTrackErrors = JitsiMeetJS.errors.track;
 export const JitsiTrackEvents = JitsiMeetJS.events.track;
 
 export * from './actions';
-export * from './actionTypes';
+export * from './actionTypes.ts';
 export * from './functions';
