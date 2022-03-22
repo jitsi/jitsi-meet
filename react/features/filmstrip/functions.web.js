@@ -653,20 +653,6 @@ export function getVerticalViewMaxWidth(state) {
 }
 
 /**
- * Returns true if thumbnail reordering is enabled and false otherwise.
- * Note: The function will return false if all participants are displayed on the screen.
- *
- * @param {Object} state - The redux state.
- * @returns {boolean} - True if thumbnail reordering is enabled and false otherwise.
- */
-export function isReorderingEnabled(state) {
-    const { testing = {} } = state['features/base/config'];
-    const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
-
-    return enableThumbnailReordering && isFilmstripScrollVisible(state);
-}
-
-/**
  * Returns true if the scroll is displayed and false otherwise.
  *
  * @param {Object} state - The redux state.

@@ -4,6 +4,7 @@ import React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { connect } from '../../../base/redux';
+import { SafeAreaInsetsDetector } from '../../../base/responsive-ui';
 import { DialInSummary } from '../../../invite';
 import { rootNavigationRef } from '../rootNavigationContainerRef';
 import { screen } from '../routes';
@@ -37,6 +38,7 @@ const RootNavigationContainer = ({ isWelcomePageAvailable }: Props) => {
 
     return (
         <SafeAreaProvider>
+            <SafeAreaInsetsDetector />
             <NavigationContainer
                 independent = { true }
                 ref = { rootNavigationRef }

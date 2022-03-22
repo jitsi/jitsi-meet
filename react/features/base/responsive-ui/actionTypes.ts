@@ -42,3 +42,13 @@ export const SET_REDUCED_UI = 'SET_REDUCED_UI';
  */
 export const SET_CONTEXT_MENU_OPEN = 'SET_CONTEXT_MENU_OPEN';
 
+/**
+ * The type of (redux) action which indicates that the insets from the SafeAreaProvider have changed.
+ *
+ * {
+ *    type: SAFE_AREA_INSETS_CHANGED,
+ *    insets: Object
+ * }
+ */
+export const SAFE_AREA_INSETS_CHANGED = 'SAFE_AREA_INSETS_CHANGED';
+
