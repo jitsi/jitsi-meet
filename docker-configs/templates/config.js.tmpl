@@ -3,15 +3,15 @@ var config = {
     domain: 'meet.jane',
     muc: 'muc.meet.jane'
   },
-  bosh: '//{{ PUBLIC_URL }}/http-bind',
-  websocket: 'wss://{{ PUBLIC_URL }}/xmpp-websocket',
+  bosh: '//${PUBLIC_URL}/http-bind',
+  websocket: 'wss://${PUBLIC_URL}/xmpp-websocket',
   openBridgeChannel: 'websocket',
   clientNode: 'http://jitsi.org/jitsimeet',
   disableSuspendVideo: true,
   desktopSharingChromeExtId: null,
   desktopSharingChromeSources: [ 'screen', 'window', 'tab' ],
   desktopSharingChromeMinExtVersion: '0.1',
-  channelLastN: {{ VIDEO_STREAM_LIMIT|default(-1, true) }},
+  channelLastN: ${VIDEO_STREAM_LIMIT},
   enableWelcomePage: true,
   enableUserRolesBasedOnToken: false,
   enableLipSync: false,
@@ -57,8 +57,8 @@ var config = {
   },
   prejoinPageEnabled: false,
   analytics: {
-    googleAnalyticsTrackingId: '{{ GOOGLE_ANALYTICS_ID }}',
-    amplitudeAPPKey: '{{ AMPLITUDE_KEY }}',
+    googleAnalyticsTrackingId: '${GOOGLE_ANALYTICS_ID}',
+    amplitudeAPPKey: '${AMPLITUDE_KEY}',
     scriptURLs: [
       "libs/analytics-ga.min.js", // google-analytics
     ],
