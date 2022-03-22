@@ -73,11 +73,11 @@ export const FIREFOX_PROPERTIES = {
     }
 };
 
-// Define services properties based on grid availability.
-export const SERVICES = process.env.GRID ? [] : [ 'selenium-standalone' ];
-
 // Define remote selenium grid url.
 export const GRID_URL = process.env.GRID_URL ? new URL(process.env.GRID_URL) : '';
+
+// Define services properties based on grid availability.
+export const SERVICES = process.env.GRID_URL ? [] : [ 'selenium-standalone' ];
 
 // Define max instances.
 export const MAX_INSANCES = process.env.MAX_INSANCES || 16;
