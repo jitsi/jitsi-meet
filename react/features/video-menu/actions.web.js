@@ -1,5 +1,5 @@
 // @flow
-import { SHOW_CONNECTION_INFO } from '../base/connection/actionTypes.ts';
+import { SHOW_CONNECTION_INFO } from '../base/connection/actionTypes';
 
 export * from './actions.any';
 

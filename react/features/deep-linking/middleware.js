@@ -2,7 +2,7 @@
 
 import { MiddlewareRegistry } from '../base/redux';
 
-import { OPEN_DESKTOP_APP } from './actionTypes.ts';
+import { OPEN_DESKTOP_APP } from './actionTypes';
 import { openDesktopApp } from './functions';
 
 /**

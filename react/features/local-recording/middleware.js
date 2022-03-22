@@ -1,13 +1,13 @@
 /* @flow */
 
 import { createShortcutEvent, sendAnalytics } from '../analytics';
-import { APP_WILL_UNMOUNT } from '../base/app/actionTypes.ts';
-import { CONFERENCE_JOINED } from '../base/conference/actionTypes.ts';
+import { APP_WILL_UNMOUNT } from '../base/app/actionTypes';
+import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
 import { toggleDialog } from '../base/dialog/actions';
 import { i18next } from '../base/i18n';
-import { SET_AUDIO_MUTED } from '../base/media/actionTypes.ts';
+import { SET_AUDIO_MUTED } from '../base/media/actionTypes';
 import { MiddlewareRegistry } from '../base/redux';
-import { SETTINGS_UPDATED } from '../base/settings/actionTypes.ts';
+import { SETTINGS_UPDATED } from '../base/settings/actionTypes';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications';
 import { showNotification } from '../notifications/actions';
 

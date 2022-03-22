@@ -7,7 +7,7 @@ import {
     HIDE_NOTIFICATION,
     SET_NOTIFICATIONS_ENABLED,
     SHOW_NOTIFICATION
-} from './actionTypes.ts';
+} from './actionTypes';
 import { NOTIFICATION_TYPE_PRIORITIES } from './constants';
 
 /**

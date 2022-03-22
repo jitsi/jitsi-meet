@@ -1,7 +1,7 @@
 import { SET_CONFIG } from '../base/config';
 import { PersistenceRegistry, ReducerRegistry, set } from '../base/redux';
 
-import { SET_MAX_RECEIVER_VIDEO_QUALITY, SET_PREFERRED_VIDEO_QUALITY } from './actionTypes.ts';
+import { SET_MAX_RECEIVER_VIDEO_QUALITY, SET_PREFERRED_VIDEO_QUALITY } from './actionTypes';
 import { VIDEO_QUALITY_LEVELS } from './constants';
 import { validateMinHeightForQualityLvl } from './functions';
 import logger from './logger';

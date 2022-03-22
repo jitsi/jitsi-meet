@@ -7,7 +7,7 @@ import ConnectionStatusComponent
     from '../video-menu/components/native/ConnectionStatusComponent';
 import RemoteVideoMenu from '../video-menu/components/native/RemoteVideoMenu';
 
-import { SET_VOLUME } from './actionTypes.ts';
+import { SET_VOLUME } from './actionTypes';
 import {
     ContextMenuLobbyParticipantReject
 } from './components/native';

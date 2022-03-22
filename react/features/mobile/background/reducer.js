@@ -5,7 +5,7 @@ import { ReducerRegistry } from '../../base/redux';
 import {
     _SET_APP_STATE_LISTENER,
     APP_STATE_CHANGED
-} from './actionTypes.ts';
+} from './actionTypes';
 
 /**
  * The default/initial redux state of the feature background.

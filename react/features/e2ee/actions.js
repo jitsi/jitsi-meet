@@ -5,7 +5,7 @@ import {
     SET_EVERYONE_SUPPORT_E2EE,
     SET_MAX_MODE,
     SET_MEDIA_ENCRYPTION_KEY,
-    TOGGLE_E2EE } from './actionTypes.ts';
+    TOGGLE_E2EE } from './actionTypes';
 
 /**
  * Dispatches an action to enable / disable E2EE.

@@ -1,1 +1,1 @@
-export * from './actionTypes.ts';
+export * from './actionTypes';

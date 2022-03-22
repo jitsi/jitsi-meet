@@ -23,7 +23,7 @@ import {
     SET_ROOM,
     SET_START_MUTED_POLICY,
     SET_START_REACTIONS_MUTED
-} from './actionTypes.ts';
+} from './actionTypes';
 import { isRoomValid } from './functions';
 
 const DEFAULT_STATE = {

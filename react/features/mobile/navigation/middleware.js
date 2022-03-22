@@ -2,7 +2,7 @@
 
 import debounce from 'lodash/debounce';
 
-import { SET_ROOM } from '../../base/conference/actionTypes.ts';
+import { SET_ROOM } from '../../base/conference/actionTypes';
 import { MiddlewareRegistry } from '../../base/redux';
 import { readyToClose } from '../external-api/actions';
 

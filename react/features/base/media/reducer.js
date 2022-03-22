@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux';
 
-import { CONFERENCE_FAILED, CONFERENCE_LEFT } from '../conference/actionTypes.ts';
+import { CONFERENCE_FAILED, CONFERENCE_LEFT } from '../conference/actionTypes';
 import { ReducerRegistry } from '../redux';
-import { TRACK_REMOVED } from '../tracks/actionTypes.ts';
+import { TRACK_REMOVED } from '../tracks/actionTypes';
 
 import {
     SET_AUDIO_AVAILABLE,
@@ -15,7 +15,7 @@ import {
     SET_VIDEO_UNMUTE_PERMISSIONS,
     STORE_VIDEO_TRANSFORM,
     TOGGLE_CAMERA_FACING_MODE
-} from './actionTypes.ts';
+} from './actionTypes';
 import { CAMERA_FACING_MODE, SCREENSHARE_MUTISM_AUTHORITY } from './constants';
 
 /**

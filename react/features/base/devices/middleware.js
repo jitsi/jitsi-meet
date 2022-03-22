@@ -21,7 +21,7 @@ import {
     SET_AUDIO_INPUT_DEVICE,
     SET_VIDEO_INPUT_DEVICE,
     UPDATE_DEVICE_LIST
-} from './actionTypes.ts';
+} from './actionTypes';
 import {
     devicePermissionsChanged,
     removePendingDeviceRequests,

@@ -32,7 +32,7 @@ import {
 
 import CallKit from './CallKit';
 import ConnectionService from './ConnectionService';
-import { _SET_CALL_INTEGRATION_SUBSCRIPTIONS } from './actionTypes.ts';
+import { _SET_CALL_INTEGRATION_SUBSCRIPTIONS } from './actionTypes';
 import { isCallIntegrationEnabled } from './functions';
 
 const { AudioMode } = NativeModules;

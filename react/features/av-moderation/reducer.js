@@ -17,7 +17,7 @@ import {
     PARTICIPANT_APPROVED,
     PARTICIPANT_PENDING_AUDIO,
     PARTICIPANT_REJECTED
-} from './actionTypes.ts';
+} from './actionTypes';
 import { MEDIA_TYPE_TO_PENDING_STORE_KEY } from './constants';
 
 const initialState = {

@@ -10,7 +10,7 @@ import {
     REGISTER_VOTE,
     RETRACT_VOTE,
     RESET_NB_UNREAD_POLLS
-} from './actionTypes.ts';
+} from './actionTypes';
 import type { Answer } from './types';
 
 const INITIAL_STATE = {

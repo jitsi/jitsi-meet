@@ -1,4 +1,4 @@
-import { OPEN_KEYBOARD_SHORTCUTS_DIALOG } from './actionTypes.ts';
+import { OPEN_KEYBOARD_SHORTCUTS_DIALOG } from './actionTypes';
 
 /**
  * Opens the dialog showing available keyboard shortcuts.

@@ -1,9 +1,9 @@
 // @flow
 
-import { APP_WILL_MOUNT } from '../app/actionTypes.ts';
+import { APP_WILL_MOUNT } from '../app/actionTypes';
 import { PersistenceRegistry, ReducerRegistry } from '../redux';
 
-import { ADD_KNOWN_DOMAINS } from './actionTypes.ts';
+import { ADD_KNOWN_DOMAINS } from './actionTypes';
 
 /**
  * The default list of domains known to the feature base/known-domains.

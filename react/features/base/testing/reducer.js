@@ -1,6 +1,6 @@
 import { assign, ReducerRegistry } from '../redux';
 
-import { SET_CONNECTION_STATE } from './actionTypes.ts';
+import { SET_CONNECTION_STATE } from './actionTypes';
 
 /**
  * The initial state of the feature testing.

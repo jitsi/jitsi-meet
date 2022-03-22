@@ -16,7 +16,7 @@ import { setScreenshareFramerate } from '../screen-share/actions';
 import {
     SET_AUDIO_SETTINGS_VISIBILITY,
     SET_VIDEO_SETTINGS_VISIBILITY
-} from './actionTypes.ts';
+} from './actionTypes';
 import { LogoutDialog, SettingsDialog } from './components';
 import {
     getModeratorTabProps,

@@ -2,7 +2,7 @@
 
 import { ReducerRegistry } from '../../base/redux';
 
-import { _SET_IMMERSIVE_LISTENER } from './actionTypes.ts';
+import { _SET_IMMERSIVE_LISTENER } from './actionTypes';
 
 ReducerRegistry.register('features/full-screen', (state = {}, action) => {
     switch (action.type) {

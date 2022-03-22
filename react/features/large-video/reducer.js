@@ -6,7 +6,7 @@ import { ReducerRegistry } from '../base/redux';
 import {
     SELECT_LARGE_VIDEO_PARTICIPANT,
     UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION, UPDATE_LAST_LARGE_VIDEO_MEDIA_EVENT
-} from './actionTypes.ts';
+} from './actionTypes';
 
 ReducerRegistry.register('features/large-video', (state = {}, action) => {
     switch (action.type) {

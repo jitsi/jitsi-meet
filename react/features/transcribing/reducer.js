@@ -6,7 +6,7 @@ import {
     _TRANSCRIBER_LEFT,
     _POTENTIAL_TRANSCRIBER_JOINED,
     SET_PENDING_TRANSCRIBING_NOTIFICATION_UID
-} from './actionTypes.ts';
+} from './actionTypes';
 
 /**
  * Returns initial state for transcribing feature part of Redux store.

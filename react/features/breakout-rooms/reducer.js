@@ -6,7 +6,7 @@ import {
     _RESET_BREAKOUT_ROOMS,
     _UPDATE_ROOM_COUNTER,
     UPDATE_BREAKOUT_ROOMS
-} from './actionTypes.ts';
+} from './actionTypes';
 import { FEATURE_KEY } from './constants';
 
 const DEFAULT_STATE = {

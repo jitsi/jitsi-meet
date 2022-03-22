@@ -2,4 +2,4 @@
 
 export * from './actions';
 export * from './components';
-export * from './functions.ts';
+export * from './functions';

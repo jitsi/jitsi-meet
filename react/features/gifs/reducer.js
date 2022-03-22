@@ -7,7 +7,7 @@ import {
     REMOVE_GIF_FOR_PARTICIPANT,
     SET_GIF_DRAWER_VISIBILITY,
     SET_GIF_MENU_VISIBILITY
-} from './actionTypes.ts';
+} from './actionTypes';
 
 const initialState = {
     drawerVisible: false,

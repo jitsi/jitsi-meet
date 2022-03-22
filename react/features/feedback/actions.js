@@ -11,7 +11,7 @@ import {
     CANCEL_FEEDBACK,
     SUBMIT_FEEDBACK_ERROR,
     SUBMIT_FEEDBACK_SUCCESS
-} from './actionTypes.ts';
+} from './actionTypes';
 import { FeedbackDialog } from './components';
 import { sendFeedbackToJaaSRequest } from './functions';
 

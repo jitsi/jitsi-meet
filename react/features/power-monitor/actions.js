@@ -5,7 +5,7 @@ import { Transport } from '../../../modules/transport';
 import {
     SET_TRANSPORT,
     SUSPEND_DETECTED
-} from './actionTypes.ts';
+} from './actionTypes';
 
 /**
  * Signals that suspend was detected.

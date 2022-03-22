@@ -3,9 +3,9 @@
 import { SET_CONFIG } from '../base/config';
 import { ADD_KNOWN_DOMAINS } from '../base/known-domains';
 import { equals, MiddlewareRegistry } from '../base/redux';
-import { APP_STATE_CHANGED } from '../mobile/background/actionTypes.ts';
+import { APP_STATE_CHANGED } from '../mobile/background/actionTypes';
 
-import { REFRESH_CALENDAR } from './actionTypes.ts';
+import { REFRESH_CALENDAR } from './actionTypes';
 import { setCalendarAuthorization } from './actions';
 import { _fetchCalendarEntries, isCalendarEnabled } from './functions';
 

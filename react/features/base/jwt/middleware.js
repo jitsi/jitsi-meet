@@ -10,7 +10,7 @@ import {
 } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 
-import { SET_JWT } from './actionTypes.ts';
+import { SET_JWT } from './actionTypes';
 import { setJWT } from './actions';
 import { parseJWTFromURLParams } from './functions';
 import logger from './logger';

@@ -17,7 +17,7 @@ import {
     CONNECTION_FAILED,
     CONNECTION_WILL_CONNECT,
     SET_LOCATION_URL
-} from './actionTypes.ts';
+} from './actionTypes';
 import { JITSI_CONNECTION_URL_KEY } from './constants';
 import logger from './logger';
 

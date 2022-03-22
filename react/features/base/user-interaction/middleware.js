@@ -3,7 +3,7 @@
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 import { MiddlewareRegistry } from '../redux';
 
-import { USER_INTERACTION_RECEIVED } from './actionTypes.ts';
+import { USER_INTERACTION_RECEIVED } from './actionTypes';
 
 /**
  * Reference to any callback that has been created to be invoked on user

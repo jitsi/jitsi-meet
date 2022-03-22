@@ -3,11 +3,11 @@
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import _ from 'lodash';
 
-import { APP_WILL_MOUNT } from '../app/actionTypes.ts';
+import { APP_WILL_MOUNT } from '../app/actionTypes';
 import { PersistenceRegistry, ReducerRegistry } from '../redux';
 import { assignIfDefined } from '../util';
 
-import { SETTINGS_UPDATED } from './actionTypes.ts';
+import { SETTINGS_UPDATED } from './actionTypes';
 
 /**
  * The default/initial redux state of the feature {@code base/settings}.

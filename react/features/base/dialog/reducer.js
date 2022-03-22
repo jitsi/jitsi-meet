@@ -2,7 +2,7 @@
 
 import { assign, ReducerRegistry } from '../redux';
 
-import { HIDE_DIALOG, OPEN_DIALOG } from './actionTypes.ts';
+import { HIDE_DIALOG, OPEN_DIALOG } from './actionTypes';
 
 /**
  * Reduces redux actions which show or hide dialogs.

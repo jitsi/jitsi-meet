@@ -14,7 +14,7 @@ import { isStageFilmstripEnabled } from '../filmstrip/functions';
 import {
     SELECT_LARGE_VIDEO_PARTICIPANT,
     UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION
-} from './actionTypes.ts';
+} from './actionTypes';
 
 /**
  * Action to select the participant to be displayed in LargeVideo based on the

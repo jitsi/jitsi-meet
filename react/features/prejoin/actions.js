@@ -33,7 +33,7 @@ import {
     SET_PREJOIN_DEVICE_ERRORS,
     SET_PREJOIN_PAGE_VISIBILITY,
     SET_DEVICE_STATUS
-} from './actionTypes.ts';
+} from './actionTypes';
 import {
     getFullDialOutNumber,
     getDialOutConferenceUrl,

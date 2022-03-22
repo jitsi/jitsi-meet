@@ -2,7 +2,7 @@
 
 import { ReducerRegistry } from '../base/redux';
 
-import { SET_DOCUMENT_EDITING_STATUS, SET_DOCUMENT_URL } from './actionTypes.ts';
+import { SET_DOCUMENT_EDITING_STATUS, SET_DOCUMENT_URL } from './actionTypes';
 
 const DEFAULT_STATE = {
 

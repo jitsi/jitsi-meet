@@ -14,7 +14,7 @@ import {
     SET_RECEIVER_ENABLED,
     SET_RECEIVER_TRANSPORT,
     SET_CONTROLLED_PARTICIPANT
-} from './actionTypes.ts';
+} from './actionTypes';
 import { RemoteControlAuthorizationDialog } from './components';
 import {
     DISCO_REMOTE_CONTROL_FEATURE,

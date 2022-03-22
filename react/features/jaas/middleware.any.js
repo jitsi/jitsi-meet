@@ -1,5 +1,5 @@
 import { sendAnalytics, createVpaasConferenceJoinedEvent } from '../analytics';
-import { CONFERENCE_JOINED } from '../base/conference/actionTypes.ts';
+import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
 import { MiddlewareRegistry } from '../base/redux';
 
 import { isVpaasMeeting, getVpaasTenant } from './functions';

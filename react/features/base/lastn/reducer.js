@@ -3,7 +3,7 @@ import {
 } from '../config';
 import { ReducerRegistry, set } from '../redux';
 
-import { SET_LAST_N } from './actionTypes.ts';
+import { SET_LAST_N } from './actionTypes';
 import { validateLastNLimits } from './functions';
 
 ReducerRegistry.register('features/base/lastn', (state = { }, action) => {

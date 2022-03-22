@@ -2,7 +2,7 @@
 
 import { MiddlewareRegistry } from '../redux';
 
-import { PLAY_SOUND, STOP_SOUND } from './actionTypes.ts';
+import { PLAY_SOUND, STOP_SOUND } from './actionTypes';
 import logger from './logger';
 
 /**

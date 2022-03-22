@@ -9,7 +9,7 @@ import { MiddlewareRegistry } from '../redux';
 import { updateSettings } from '../settings';
 import { parseURIString } from '../util';
 
-import { SET_CONFIG, OVERWRITE_CONFIG } from './actionTypes.ts';
+import { SET_CONFIG, OVERWRITE_CONFIG } from './actionTypes';
 import { updateConfig } from './actions';
 import { _CONFIG_STORE_PREFIX } from './constants';
 

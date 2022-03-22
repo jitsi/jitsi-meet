@@ -7,7 +7,7 @@ import {
     PUSH_REACTIONS,
     SEND_REACTIONS,
     SET_REACTION_QUEUE
-} from './actionTypes.ts';
+} from './actionTypes';
 import { type ReactionEmojiProps } from './constants';
 
 /**

@@ -3,7 +3,7 @@
 import {
     PARTICIPANTS_PANE_CLOSE,
     PARTICIPANTS_PANE_OPEN
-} from './actionTypes.ts';
+} from './actionTypes';
 
 /**
  * Action to close the participants pane.

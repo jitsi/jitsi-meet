@@ -1,6 +1,6 @@
 // @flow
 
-import { _SET_IMMERSIVE_LISTENER } from './actionTypes.ts';
+import { _SET_IMMERSIVE_LISTENER } from './actionTypes';
 
 /**
  * Sets the change event listener to be used with react-native-immersive's API.

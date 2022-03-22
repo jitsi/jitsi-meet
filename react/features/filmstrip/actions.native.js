@@ -2,7 +2,7 @@
 
 import { getParticipantCountWithFake } from '../base/participants';
 
-import { SET_TILE_VIEW_DIMENSIONS } from './actionTypes.ts';
+import { SET_TILE_VIEW_DIMENSIONS } from './actionTypes';
 import { SQUARE_TILE_ASPECT_RATIO, TILE_MARGIN } from './constants';
 import { getColumnCount } from './functions.native';
 

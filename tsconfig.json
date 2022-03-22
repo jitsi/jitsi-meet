@@ -1,11 +1,14 @@
 {
+    "include": ["react/features/**/*.ts"],
     "compilerOptions": {
         "module": "es6",
         "target": "es6",
         "jsx": "react",
         "lib": [ "ES2020", "DOM" ],
         "noEmit": false,
-        "moduleResolution": "Node"
+        "moduleResolution": "Node",
+        "strict": true,
+        "noImplicitAny": false
     },
     "exclude": [
         "node_modules"

@@ -1,6 +1,6 @@
 // @flow
 
-import { SET_NO_AUDIO_SIGNAL_NOTIFICATION_UID } from './actionTypes.ts';
+import { SET_NO_AUDIO_SIGNAL_NOTIFICATION_UID } from './actionTypes';
 
 /**
  * Sets UID of the the pending notification to use it when hiding

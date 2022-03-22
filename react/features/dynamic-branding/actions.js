@@ -8,7 +8,7 @@ import {
     SET_DYNAMIC_BRANDING_DATA,
     SET_DYNAMIC_BRANDING_FAILED,
     SET_DYNAMIC_BRANDING_READY
-} from './actionTypes.ts';
+} from './actionTypes';
 import { getDynamicBrandingUrl } from './functions.any';
 
 const logger = getLogger(__filename);

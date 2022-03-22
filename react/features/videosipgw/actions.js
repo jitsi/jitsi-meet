@@ -1,6 +1,6 @@
 /* @flow */
 
-import { SIP_GW_INVITE_ROOMS } from './actionTypes.ts';
+import { SIP_GW_INVITE_ROOMS } from './actionTypes';
 
 /**
  * Invites room participants to the conference through the SIP Jibri service.

@@ -12,7 +12,7 @@ import {
 import { getFeatureFlag, AUDIO_FOCUS_DISABLED } from '../../base/flags';
 import { MiddlewareRegistry } from '../../base/redux';
 
-import { _SET_AUDIOMODE_DEVICES, _SET_AUDIOMODE_SUBSCRIPTIONS } from './actionTypes.ts';
+import { _SET_AUDIOMODE_DEVICES, _SET_AUDIOMODE_SUBSCRIPTIONS } from './actionTypes';
 import logger from './logger';
 
 const { AudioMode } = NativeModules;

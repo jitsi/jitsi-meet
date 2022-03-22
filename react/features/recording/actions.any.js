@@ -20,7 +20,7 @@ import {
     SET_PENDING_RECORDING_NOTIFICATION_UID,
     SET_SELECTED_RECORDING_SERVICE,
     SET_STREAM_KEY
-} from './actionTypes.ts';
+} from './actionTypes';
 import {
     getRecordingLink,
     getResourceId,

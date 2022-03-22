@@ -4,7 +4,7 @@ import {
     REFRESH_CALENDAR,
     SET_CALENDAR_AUTHORIZATION,
     SET_CALENDAR_EVENTS
-} from './actionTypes.ts';
+} from './actionTypes';
 
 /**
  * Sends an action to refresh the entry list (fetches new data).

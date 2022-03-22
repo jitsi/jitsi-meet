@@ -6,7 +6,7 @@ import {
     LOCAL_RECORDING_ENGAGED,
     LOCAL_RECORDING_STATS_UPDATE,
     LOCAL_RECORDING_UNENGAGED
-} from './actionTypes.ts';
+} from './actionTypes';
 import { recordingController } from './controller';
 
 ReducerRegistry.register('features/local-recording', (state = {}, action) => {

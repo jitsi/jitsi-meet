@@ -11,7 +11,7 @@ import {
     _STORE_CURRENT_CONFERENCE,
     _UPDATE_CONFERENCE_DURATION,
     DELETE_RECENT_LIST_ENTRY
-} from './actionTypes.ts';
+} from './actionTypes';
 import { isRecentListEnabled } from './functions';
 import logger from './logger';
 

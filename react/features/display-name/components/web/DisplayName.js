@@ -13,7 +13,7 @@ import { connect } from '../../../base/redux';
 import { updateSettings } from '../../../base/settings';
 import { Tooltip } from '../../../base/tooltip';
 import { getIndicatorsTooltipPosition } from '../../../filmstrip/functions.web';
-import { appendSuffix } from '../../functions.ts';
+import { appendSuffix } from '../../functions';
 
 /**
  * The type of the React {@code Component} props of {@link DisplayName}.

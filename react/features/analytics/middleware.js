@@ -17,7 +17,7 @@ import {
 } from '../base/tracks';
 
 import { createLocalTracksDurationEvent, createNetworkInfoEvent } from './AnalyticsEvents';
-import { UPDATE_LOCAL_TRACKS_DURATION } from './actionTypes.ts';
+import { UPDATE_LOCAL_TRACKS_DURATION } from './actionTypes';
 import { createHandlers, initAnalytics, resetAnalytics, sendAnalytics } from './functions';
 
 /**

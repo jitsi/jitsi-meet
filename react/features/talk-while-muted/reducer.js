@@ -2,7 +2,7 @@
 
 import { ReducerRegistry, set } from '../base/redux';
 
-import { SET_CURRENT_NOTIFICATION_UID } from './actionTypes.ts';
+import { SET_CURRENT_NOTIFICATION_UID } from './actionTypes';
 
 /**
  * Reduces the redux actions of the feature talk while muted.

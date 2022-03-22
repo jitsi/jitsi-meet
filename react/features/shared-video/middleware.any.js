@@ -13,7 +13,7 @@ import {
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 
-import { SET_SHARED_VIDEO_STATUS, RESET_SHARED_VIDEO_STATUS } from './actionTypes.ts';
+import { SET_SHARED_VIDEO_STATUS, RESET_SHARED_VIDEO_STATUS } from './actionTypes';
 import {
     resetSharedVideoStatus,
     setSharedVideoStatus

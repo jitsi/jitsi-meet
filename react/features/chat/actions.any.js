@@ -16,7 +16,7 @@ import {
     SET_LOBBY_CHAT_RECIPIENT,
     REMOVE_LOBBY_CHAT_PARTICIPANT,
     SET_LOBBY_CHAT_ACTIVE_STATE
-} from './actionTypes.ts';
+} from './actionTypes';
 
 /**
  * Adds a chat message to the collection of messages.

@@ -6,7 +6,7 @@ import {
     CANCEL_FEEDBACK,
     SUBMIT_FEEDBACK_ERROR,
     SUBMIT_FEEDBACK_SUCCESS
-} from './actionTypes.ts';
+} from './actionTypes';
 
 const DEFAULT_STATE = {
     message: '',

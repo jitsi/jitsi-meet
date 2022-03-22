@@ -3,7 +3,7 @@ import { openDialog } from '../base/dialog/actions';
 import { getLocalParticipant } from '../base/participants';
 import { SharedVideoDialog } from '../shared-video/components';
 
-import { RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS } from './actionTypes.ts';
+import { RESET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_STATUS } from './actionTypes';
 
 /**
  * Resets the status of the shared video.

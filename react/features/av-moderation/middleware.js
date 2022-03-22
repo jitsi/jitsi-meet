@@ -35,7 +35,7 @@ import {
     REQUEST_DISABLE_VIDEO_MODERATION,
     REQUEST_ENABLE_AUDIO_MODERATION,
     REQUEST_ENABLE_VIDEO_MODERATION
-} from './actionTypes.ts';
+} from './actionTypes';
 import {
     disableModeration,
     dismissPendingParticipant,

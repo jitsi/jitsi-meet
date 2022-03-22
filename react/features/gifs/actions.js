@@ -5,7 +5,7 @@ import {
     SET_GIF_DRAWER_VISIBILITY,
     SET_GIF_MENU_VISIBILITY,
     SHOW_GIF_FOR_PARTICIPANT
-} from './actionTypes.ts';
+} from './actionTypes';
 
 /**
  * Adds a GIF for a given participant.

@@ -15,7 +15,7 @@ import { SET_DOCUMENT_EDITING_STATUS } from '../etherpad';
 import { isStageFilmstripEnabled } from '../filmstrip/functions';
 import { isFollowMeActive } from '../follow-me';
 
-import { SET_TILE_VIEW } from './actionTypes.ts';
+import { SET_TILE_VIEW } from './actionTypes';
 import { setRemoteParticipantsWithScreenShare, setTileView } from './actions';
 import { getAutoPinSetting, updateAutoPinnedParticipant } from './functions';
 

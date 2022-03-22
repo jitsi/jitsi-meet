@@ -5,7 +5,7 @@ import { hideDialog, openDialog } from '../base/dialog/actions';
 
 import {
     CANCEL_LOGIN
-} from './actionTypes.ts';
+} from './actionTypes';
 import { WaitForOwnerDialog, LoginDialog } from './components';
 
 export * from './actions.any';

@@ -4,7 +4,7 @@ import { VIDEO_TYPE } from '../base/media';
 import { MiddlewareRegistry } from '../base/redux';
 import { getLocalVideoTrack } from '../base/tracks';
 
-import { SET_VIRTUAL_BACKGROUND } from './actionTypes.ts';
+import { SET_VIRTUAL_BACKGROUND } from './actionTypes';
 import { localTrackStopped } from './functions';
 
 /**

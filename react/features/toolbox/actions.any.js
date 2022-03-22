@@ -6,7 +6,7 @@ import {
     SET_TOOLBOX_ENABLED,
     SET_TOOLBOX_VISIBLE,
     TOGGLE_TOOLBOX_VISIBLE
-} from './actionTypes.ts';
+} from './actionTypes';
 
 /**
  * Enables/disables the toolbox.

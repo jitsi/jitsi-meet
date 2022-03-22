@@ -5,7 +5,7 @@ import {
     REMOVE_TRANSCRIPT_MESSAGE,
     TOGGLE_REQUESTING_SUBTITLES,
     UPDATE_TRANSCRIPT_MESSAGE
-} from './actionTypes.ts';
+} from './actionTypes';
 
 /**
  * Signals that a participant sent an endpoint message on the data channel.

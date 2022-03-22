@@ -2,7 +2,7 @@
 
 import type { Dispatch } from 'redux';
 
-import { HIDE_DIALOG, OPEN_DIALOG } from './actionTypes.ts';
+import { HIDE_DIALOG, OPEN_DIALOG } from './actionTypes';
 import { isDialogOpen } from './functions';
 
 /**

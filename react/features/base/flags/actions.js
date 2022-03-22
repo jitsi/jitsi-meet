@@ -1,6 +1,6 @@
 // @flow
 
-import { UPDATE_FLAGS } from './actionTypes.ts';
+import { UPDATE_FLAGS } from './actionTypes';
 
 /**
  * Updates the current features flags with the given ones. They will be merged.

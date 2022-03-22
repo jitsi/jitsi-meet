@@ -11,7 +11,7 @@ import {
     SET_CALENDAR_INTEGRATION,
     SET_CALENDAR_PROFILE_EMAIL,
     SET_LOADING_CALENDAR_EVENTS
-} from './actionTypes.ts';
+} from './actionTypes';
 
 /**
  * The default state of the calendar feature.

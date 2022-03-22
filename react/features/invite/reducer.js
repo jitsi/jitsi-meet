@@ -8,7 +8,7 @@ import {
     SET_CALLEE_INFO_VISIBLE,
     UPDATE_DIAL_IN_NUMBERS_FAILED,
     UPDATE_DIAL_IN_NUMBERS_SUCCESS
-} from './actionTypes.ts';
+} from './actionTypes';
 import logger from './logger';
 
 const DEFAULT_STATE = {

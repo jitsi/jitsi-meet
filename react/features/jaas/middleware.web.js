@@ -1,12 +1,12 @@
 import { redirectToStaticPage } from '../app/actions';
-import { CONFERENCE_JOINED } from '../base/conference/actionTypes.ts';
+import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
 import {
     JitsiConferenceErrors,
     JitsiConferenceEvents
 } from '../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../base/redux';
 
-import { SET_DETAILS } from './actionTypes.ts';
+import { SET_DETAILS } from './actionTypes';
 import { STATUSES } from './constants';
 import logger from './logger';
 

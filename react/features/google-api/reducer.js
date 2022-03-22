@@ -5,7 +5,7 @@ import { ReducerRegistry } from '../base/redux';
 import {
     SET_GOOGLE_API_PROFILE,
     SET_GOOGLE_API_STATE
-} from './actionTypes.ts';
+} from './actionTypes';
 import { GOOGLE_API_STATES } from './constants';
 
 /**

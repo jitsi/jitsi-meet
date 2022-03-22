@@ -2,7 +2,7 @@
 
 import { ReducerRegistry, set } from '../redux';
 
-import { CLIENT_RESIZED, SET_ASPECT_RATIO, SET_CONTEXT_MENU_OPEN, SET_REDUCED_UI } from './actionTypes.ts';
+import { CLIENT_RESIZED, SET_ASPECT_RATIO, SET_CONTEXT_MENU_OPEN, SET_REDUCED_UI } from './actionTypes';
 import { ASPECT_RATIO_NARROW } from './constants';
 
 const {

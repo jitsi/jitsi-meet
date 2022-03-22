@@ -11,7 +11,7 @@ import {
     CONNECTION_WILL_CONNECT,
     SET_LOCATION_URL,
     SHOW_CONNECTION_INFO
-} from './actionTypes.ts';
+} from './actionTypes';
 import type { ConnectionFailedError } from './actions.native';
 
 /**

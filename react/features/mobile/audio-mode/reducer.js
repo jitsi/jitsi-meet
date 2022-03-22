@@ -2,7 +2,7 @@
 
 import { equals, set, ReducerRegistry } from '../../base/redux';
 
-import { _SET_AUDIOMODE_DEVICES, _SET_AUDIOMODE_SUBSCRIPTIONS } from './actionTypes.ts';
+import { _SET_AUDIOMODE_DEVICES, _SET_AUDIOMODE_SUBSCRIPTIONS } from './actionTypes';
 
 const DEFAULT_STATE = {
     devices: [],

@@ -12,7 +12,7 @@ import {
     SET_TOOLBOX_TIMEOUT,
     SET_TOOLBOX_VISIBLE,
     TOGGLE_TOOLBOX_VISIBLE
-} from './actionTypes.ts';
+} from './actionTypes';
 
 /**
  * Initial state of toolbox's part of Redux store.

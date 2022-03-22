@@ -1,6 +1,6 @@
 // @flow
 
-import { SET_LAST_N } from './actionTypes.ts';
+import { SET_LAST_N } from './actionTypes';
 
 /**
  * Sets the last-n, i.e., the number of remote videos to be requested from the bridge for the conference.

@@ -2,7 +2,7 @@
 
 import { createVirtualBackgroundEffect } from '../stream-effects/virtual-background';
 
-import { BACKGROUND_ENABLED, SET_VIRTUAL_BACKGROUND, VIRTUAL_BACKGROUND_TRACK_CHANGED } from './actionTypes.ts';
+import { BACKGROUND_ENABLED, SET_VIRTUAL_BACKGROUND, VIRTUAL_BACKGROUND_TRACK_CHANGED } from './actionTypes';
 import logger from './logger';
 
 /**

@@ -1,6 +1,6 @@
 // @flow
 
-import { SET_CONFERENCE_TIMESTAMP, SET_SESSION_ID, SET_WATCH_REACHABLE } from './actionTypes.ts';
+import { SET_CONFERENCE_TIMESTAMP, SET_SESSION_ID, SET_WATCH_REACHABLE } from './actionTypes';
 
 /**
  * Stores a timestamp when the conference is joined, so that the watch counterpart can start counting from when

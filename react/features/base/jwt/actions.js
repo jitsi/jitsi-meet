@@ -1,6 +1,6 @@
 // @flow
 
-import { SET_JWT } from './actionTypes.ts';
+import { SET_JWT } from './actionTypes';
 
 /**
  * Stores a specific JSON Web Token (JWT) into the redux store.

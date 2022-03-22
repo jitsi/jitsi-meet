@@ -3,7 +3,7 @@
 import { CONFERENCE_JOINED } from '../base/conference';
 import { MiddlewareRegistry } from '../base/redux';
 
-import { SET_SCREENSHARE_CAPTURE_FRAME_RATE } from './actionTypes.ts';
+import { SET_SCREENSHARE_CAPTURE_FRAME_RATE } from './actionTypes';
 import logger from './logger';
 
 /**

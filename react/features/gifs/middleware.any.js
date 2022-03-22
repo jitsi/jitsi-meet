@@ -1,6 +1,6 @@
 import { MiddlewareRegistry } from '../base/redux';
 
-import { ADD_GIF_FOR_PARTICIPANT, HIDE_GIF_FOR_PARTICIPANT, SHOW_GIF_FOR_PARTICIPANT } from './actionTypes.ts';
+import { ADD_GIF_FOR_PARTICIPANT, HIDE_GIF_FOR_PARTICIPANT, SHOW_GIF_FOR_PARTICIPANT } from './actionTypes';
 import { removeGif } from './actions';
 import { GIF_DEFAULT_TIMEOUT } from './constants';
 import { getGifForParticipant } from './functions';

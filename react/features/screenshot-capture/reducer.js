@@ -2,7 +2,7 @@
 
 import { PersistenceRegistry, ReducerRegistry } from '../base/redux';
 
-import { SET_SCREENSHOT_CAPTURE } from './actionTypes.ts';
+import { SET_SCREENSHOT_CAPTURE } from './actionTypes';
 
 PersistenceRegistry.register('features/screnshot-capture', true, {
     capturesEnabled: false

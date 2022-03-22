@@ -34,7 +34,7 @@ import {
     TRACK_UPDATED,
     TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT,
     TRACK_WILL_CREATE
-} from './actionTypes.ts';
+} from './actionTypes';
 import {
     createLocalTracksF,
     getLocalTrack,

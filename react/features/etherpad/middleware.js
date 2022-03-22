@@ -5,7 +5,7 @@ import { getCurrentConference } from '../base/conference';
 import { CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 
-import { TOGGLE_DOCUMENT_EDITING } from './actionTypes.ts';
+import { TOGGLE_DOCUMENT_EDITING } from './actionTypes';
 import { setDocumentUrl } from './actions';
 
 declare var APP: Object;

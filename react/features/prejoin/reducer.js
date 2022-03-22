@@ -12,7 +12,7 @@ import {
     SET_PREJOIN_DISPLAY_NAME_REQUIRED,
     SET_PREJOIN_PAGE_VISIBILITY,
     SET_SKIP_PREJOIN_RELOAD
-} from './actionTypes.ts';
+} from './actionTypes';
 
 const DEFAULT_STATE = {
     country: '',

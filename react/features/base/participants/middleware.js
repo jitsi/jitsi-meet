@@ -39,7 +39,7 @@ import {
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
     RAISE_HAND_UPDATED
-} from './actionTypes.ts';
+} from './actionTypes';
 import {
     localParticipantIdChanged,
     localParticipantJoined,
