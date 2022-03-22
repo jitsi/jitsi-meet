@@ -10,14 +10,14 @@ import { setRemoteParticipantsWithScreenShare, fakeScreenshareParticipantsUpdate
 import { getAutoPinSetting, updateAutoPinnedParticipant } from './functions';
 
 StateListenerRegistry.register(
-    /* selector */ state => [ ...state['features/base/participants'].sortedFakeScreenShareParticipants ],
+    /* selector */ state => state['features/base/participants'].sortedFakeScreenShareParticipants,
     /* listener */ (sortedFakeScreenShareParticipants, store) => {
         if (!getAutoPinSetting() || isFollowMeActive(store) || !getSourceNameSignalingFeatureFlag(store.getState())) {
             return;
         }
 
         const oldScreenSharesOrder = store.getState()['features/video-layout'].remoteScreenShares || [];
-        const knownSharingParticipantIds = sortedFakeScreenShareParticipants.map(p => p.id);
+        const knownSharingParticipantIds = [ ...sortedFakeScreenShareParticipants.values() ].map(p => p.id);
 
         // Filter out any participants which are no longer screen sharing
         // by looping through the known sharing participants and removing any
