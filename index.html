@@ -106,9 +106,9 @@
                         if (hashIdx === -1) {
                             href += separator + "rCounter=1";
                         } else {
-                            var hashPart = href.substr(hashIdx);
+                            var hashPart = href.slice(hashIdx);
 
-                            href = href.substr(0, hashIdx)
+                            href = href.slice(0, hashIdx)
                                 + separator + "rCounter=1" + hashPart;
                         }
                     } else {

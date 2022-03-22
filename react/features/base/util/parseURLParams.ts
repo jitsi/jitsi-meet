@@ -35,7 +35,7 @@ export function parseURLParams(
     }
     const paramStr = source === 'search' ? url.search : url.hash;
     const params: any = {};
-    const paramParts = paramStr?.substr(1).split('&') || [];
+    const paramParts = paramStr?.slice(1).split('&') || [];
 
     // Detect and ignore hash params for hash routers.
     if (source === 'hash' && paramParts.length === 1) {

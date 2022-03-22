@@ -21,7 +21,7 @@ export function getCurrentConferenceUrl(stateful: IStateful) {
     }
 
     // Check if the URL doesn't end with a slash
-    if (currentUrl && currentUrl.substr(-1) === '/') {
+    if (currentUrl && currentUrl.slice(-1) === '/') {
         currentUrl = undefined;
     }
 
