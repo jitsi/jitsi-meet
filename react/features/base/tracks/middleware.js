@@ -73,7 +73,8 @@ MiddlewareRegistry.register(store => next => action => {
             store.dispatch(getAvailableDevices());
         }
 
-        if (getSourceNameSignalingFeatureFlag(store.getState()) && action.track.videoType === VIDEO_TYPE.DESKTOP) {
+        if (getSourceNameSignalingFeatureFlag(store.getState())
+            && action?.track?.jitsiTrack.videoType === VIDEO_TYPE.DESKTOP) {
             createFakeScreenShareParticipant(store, action);
         }
 
@@ -219,12 +220,6 @@ MiddlewareRegistry.register(store => next => action => {
             const result = next(action);
             const state = store.getState();
 
-            // TODO: This is only used for testing, remove this when we can start sending screen shares as a separate
-            // track.
-            if (getSourceNameSignalingFeatureFlag(state) && action.track.videoType === VIDEO_TYPE.DESKTOP) {
-                createFakeScreenShareParticipant(store, action);
-            }
-
             if (isPrejoinPageVisible(state)) {
                 return result;
             }
@@ -337,17 +332,23 @@ function _handleNoDataFromSourceErrors(store, action) {
     }
 }
 
-function createFakeScreenShareParticipant(store, action) {
-    const { track } = action;
-    const { dispatch } = store;
-    const { conference } = store.getState()['features/base/conference'];
+/**
+ * Creates a fake participant for screen share using the track's source name as the participant id.
+ *
+ * @param {Store} store - The redux store in which the specified action is dispatched.
+ * @param {Action} action - The redux action dispatched in the specified store.
+ * @private
+ * @returns {void}
+ */
+function createFakeScreenShareParticipant({ dispatch, getState }, { track }) {
+    const state = getState();
     const particiipantId = track?.jitsiTrack?.getParticipantId?.();
-    const particiipant = getParticipantById(store.getState(), particiipantId);
+    const particiipant = getParticipantById(state, particiipantId);
     const name = particiipant?.name ? `${particiipant.name}'s screen` : 'Fellow Jitster\'s Screen';
 
     dispatch(participantJoined({
-        conference,
-        id: track.jitsiTrack.getSourceName(),
+        conference: state['features/base/conference'].conference,
+        id: track.jitsiTrack.getSourceName(), // endpointID-video-idx
         isFakeScreenShareParticipant: true,
         isLocalScreenShare: track?.jitsiTrack.isLocal(),
         name
