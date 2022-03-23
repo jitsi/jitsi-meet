@@ -1,5 +1,3 @@
-import { StyleSheet } from 'react-native';
-
 import { BoxModel } from '../../../base/styles';
 import BaseTheme from '../../../base/ui/components/BaseTheme';
 
@@ -11,13 +9,12 @@ export const TEXT_COLOR = BaseTheme.palette.text01;
  */
 export const navigationStyles = {
     connectingScreenContainer: {
+        backgroundColor: BaseTheme.palette.uiBackground,
         flex: 1
     },
 
     connectingScreenContent: {
-        ...StyleSheet.absoluteFillObject,
         alignItems: 'center',
-        backgroundColor: BaseTheme.palette.uiBackground,
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'center'
