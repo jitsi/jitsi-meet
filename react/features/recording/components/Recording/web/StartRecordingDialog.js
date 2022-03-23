@@ -19,6 +19,31 @@ import StartRecordingDialogContent from '../StartRecordingDialogContent';
  * @augments Component
  */
 class StartRecordingDialog extends AbstractStartRecordingDialog {
+
+    _onDisableStartRecording: () => boolean;
+
+    /**
+     * Disables start recording button.
+     *
+     * @returns {boolean}
+     */
+    _onDisableStartRecording() {
+        const { _fileRecordingsServiceEnabled, _isDropboxEnabled } = this.props;
+        const { isTokenValid, isValidating } = this.state;
+
+        // disable ok button id recording service is shown only, when
+        // validating dropbox token, if that is not enabled we either always
+        // show the ok button or if just dropbox is enabled ok is available
+        // when there is token
+        if (_fileRecordingsServiceEnabled) {
+            return isValidating;
+        } else if (_isDropboxEnabled) {
+            return !isTokenValid;
+        }
+
+        return false;
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -33,19 +58,14 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
             spaceLeft,
             userName
         } = this.state;
-        const { _fileRecordingsServiceEnabled, _fileRecordingsServiceSharingEnabled, _isDropboxEnabled } = this.props;
-
-        // disable ok button id recording service is shown only, when
-        // validating dropbox token, if that is not enabled we either always
-        // show the ok button or if just dropbox is enabled ok is available
-        // when there is token
-        const isOkDisabled
-            = _fileRecordingsServiceEnabled ? isValidating
-                : _isDropboxEnabled ? !isTokenValid : false;
+        const {
+            _fileRecordingsServiceEnabled,
+            _fileRecordingsServiceSharingEnabled
+        } = this.props;
 
         return (
             <Dialog
-                okDisabled = { isOkDisabled }
+                okDisabled = { this._onDisableStartRecording() }
                 okKey = 'dialog.startRecording'
                 onSubmit = { this._onSubmit }
                 titleKey = 'dialog.startRecording'

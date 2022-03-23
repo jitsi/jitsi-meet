@@ -43,30 +43,12 @@ class StartRecordingDialog extends AbstractStartRecordingDialog<Props> {
      * @returns {void}
      */
     componentDidMount() {
-        const {
-            _fileRecordingsServiceEnabled,
-            _isDropboxEnabled,
-            navigation,
-            t
-        } = this.props;
-
-        const {
-            isTokenValid,
-            isValidating
-        } = this.state;
-
-        // disable start button id recording service is shown only, when
-        // validating dropbox token, if that is not enabled we either always
-        // show the start button or if just dropbox is enabled start is available
-        // when there is token
-        const isStartDisabled
-            = _fileRecordingsServiceEnabled ? isValidating
-                : _isDropboxEnabled ? !isTokenValid : false;
+        const { navigation, t } = this.props;
 
         navigation.setOptions({
             headerRight: () => (
                 <HeaderNavigationButton
-                    disabled = { isStartDisabled }
+                    disabled = { this._onDisableStartRecording() }
                     label = { t('dialog.start') }
                     onPress = { this._onStartPress }
                     twoActions = { true } />
@@ -83,6 +65,30 @@ class StartRecordingDialog extends AbstractStartRecordingDialog<Props> {
      */
     _onStartPress() {
         this._onSubmit() && goBack();
+    }
+
+    _onDisableStartRecording: () => boolean;
+
+    /**
+     * Disables start recording button.
+     *
+     * @returns {boolean}
+     */
+    _onDisableStartRecording() {
+        const { _fileRecordingsServiceEnabled, _isDropboxEnabled } = this.props;
+        const { isTokenValid, isValidating } = this.state;
+
+        // disable ok button id recording service is shown only, when
+        // validating dropbox token, if that is not enabled we either always
+        // show the ok button or if just dropbox is enabled ok is available
+        // when there is token
+        if (_fileRecordingsServiceEnabled) {
+            return isValidating;
+        } else if (_isDropboxEnabled) {
+            return isTokenValid;
+        }
+
+        return false;
     }
 
     /**
