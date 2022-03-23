@@ -39,7 +39,8 @@ import {
     raiseHand,
     isParticipantModerator,
     isLocalParticipantModerator,
-    hasRaisedHand
+    hasRaisedHand,
+    grantModerator
 } from '../../react/features/base/participants';
 import { updateSettings } from '../../react/features/base/settings';
 import { isToggleCameraEnabled, toggleCamera } from '../../react/features/base/tracks';
@@ -163,6 +164,14 @@ function initCommands() {
                 return;
             }
             APP.store.dispatch(autoAssignToBreakoutRooms());
+        },
+        'grant-moderator': participantId => {
+            if (!isLocalParticipantModerator(APP.store.getState())) {
+                logger.error('Missing moderator rights to grant moderator right to another participant');
+
+                return;
+            }
+            APP.store.dispatch(grantModerator(participantId));
         },
         'display-name': displayName => {
             sendAnalytics(createApiEvent('display.name.changed'));
