@@ -134,10 +134,10 @@ exports.config = {
     services: SERVICES,
 
     // Remote selenium grid.
-    hostname: GRID_URL?.host,
+    hostname: GRID_URL?.hostname,
     port: GRID_URL?.port && Number(GRID_URL.port),
     path: GRID_URL?.pathname,
-    protocol: GRID_URL?.protocol,
+    protocol: GRID_URL?.protocol.slice(0, -1),
 
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
