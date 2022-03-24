@@ -7,6 +7,7 @@ import { translate } from '../../../../base/i18n';
 import { connect } from '../../../../base/redux';
 import { toggleScreenshotCaptureSummary } from '../../../../screenshot-capture';
 import { isScreenshotCaptureEnabled } from '../../../../screenshot-capture/functions';
+import { RECORDING_TYPES } from '../../../constants';
 import AbstractStartRecordingDialog, {
     mapStateToProps as abstractMapStateToProps
 } from '../AbstractStartRecordingDialog';
@@ -28,16 +29,15 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
      * @returns {boolean}
      */
     isStartRecordingDisabled() {
-        const { _fileRecordingsServiceEnabled, _isDropboxEnabled } = this.props;
-        const { isTokenValid, isValidating } = this.state;
+        const { isTokenValid, selectedRecordingService } = this.state;
 
         // Start button is disabled if recording service is only shown;
         // When validating dropbox token, if that is not enabled, we either always
         // show the start button or, if just dropbox is enabled, start button
         // is available when there is token.
-        if (_fileRecordingsServiceEnabled) {
-            return isValidating;
-        } else if (_isDropboxEnabled) {
+        if (selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE) {
+            return false;
+        } else if (selectedRecordingService === RECORDING_TYPES.DROPBOX) {
             return !isTokenValid;
         }
 
