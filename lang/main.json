@@ -556,6 +556,7 @@
         "errorMissingPassword": "Please enter the meeting password",
         "invalidPassword": "Invalid password",
         "joinRejectedMessage": "Your join request was rejected by a moderator.",
+        "joinRejectedTitle": "Join request rejected.",
         "joinTitle": "Join Meeting",
         "joinWithPasswordMessage": "Trying to join with password, please wait...",
         "joiningMessage": "You'll join the meeting as soon as someone accepts your request",
