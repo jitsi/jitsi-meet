@@ -8,7 +8,7 @@ import I18nextXHRBackend from 'i18next-xhr-backend';
 import _ from 'lodash';
 
 import LANGUAGES_RESOURCES from '../../../../lang/languages.json';
-import MAIN_RESOURCES from '../../../../lang/main.json';
+import MAIN_RESOURCES from '../../../../lang/main-fa.json';
 
 import { I18NEXT_INITIALIZED, LANGUAGE_CHANGED } from './actionTypes';
 import languageDetector from './languageDetector';
@@ -43,7 +43,7 @@ export const LANGUAGES: Array<string> = Object.keys(LANGUAGES_RESOURCES);
  * @public
  * @type {string} The default language.
  */
-export const DEFAULT_LANGUAGE = 'en';
+export const DEFAULT_LANGUAGE = 'fa';
 
 /**
  * The options to initialize i18next with.
