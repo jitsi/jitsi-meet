@@ -48,7 +48,7 @@ class StartRecordingDialog extends AbstractStartRecordingDialog<Props> {
         navigation.setOptions({
             headerRight: () => (
                 <HeaderNavigationButton
-                    disabled = { this._onDisableStartRecording() }
+                    disabled = { this.isStartRecordingDisabled() }
                     label = { t('dialog.start') }
                     onPress = { this._onStartPress }
                     twoActions = { true } />
@@ -67,28 +67,29 @@ class StartRecordingDialog extends AbstractStartRecordingDialog<Props> {
         this._onSubmit() && goBack();
     }
 
-    _onDisableStartRecording: () => boolean;
+    isStartRecordingDisabled: () => boolean;
 
     /**
      * Disables start recording button.
      *
      * @returns {boolean}
      */
-    _onDisableStartRecording() {
+    isStartRecordingDisabled() {
         const { _fileRecordingsServiceEnabled, _isDropboxEnabled } = this.props;
         const { isTokenValid, isValidating } = this.state;
 
-        // disable ok button id recording service is shown only, when
-        // validating dropbox token, if that is not enabled we either always
-        // show the ok button or if just dropbox is enabled ok is available
-        // when there is token
+        // Start button is disabled if recording service is only shown;
+        // When validating dropbox token, if that is not enabled, we either always
+        // show the start button or, if just dropbox is enabled, start button
+        // is available when there is token.
         if (_fileRecordingsServiceEnabled) {
             return isValidating;
         } else if (_isDropboxEnabled) {
             return isTokenValid;
         }
 
-        return false;
+        return true;
+
     }
 
     /**
