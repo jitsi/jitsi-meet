@@ -39,9 +39,6 @@
     "audioOnly": {
         "audioOnly": "پهنای باند پایین"
     },
-    "blankPage": {
-        "meetingEnded": "جلسه تمام شد"
-    },
     "breakoutRooms": {
         "actions": {
             "add": "یک گروه کوچک اضافه کنید",
@@ -83,6 +80,7 @@
         "enter": "وارد اتاق شوید",
         "error": "پیام شما ارسال نشد: {{error}}",
         "fieldPlaceHolder": "پیام خود را بنویسید",
+        "lobbyChatMessageTo": "پیام چت لابی به {{recipient}}",
         "message": "پیام",
         "messageAccessibleTitle": "{{user}} می‌گوید:",
         "messageAccessibleTitleMe": "من میگویم:",
@@ -215,6 +213,8 @@
             "liveStreaming": "پخش زنده"
         },
         "add": "افزودن",
+        "addMeetingNote": "یک یادداشت برای این جلسه وارد کنید",
+        "addOptionalNote": "افزودن یادداشت (اختیاری):",
         "allow": "اجازه دادن",
         "alreadySharedVideoMsg": "یکی دیگر از شرکت‌کنندگان ویدیویی را به اشتراک گذاشته است؛ در این کنفرانس فقط یک ویدیو را می‌توان به صورت همزمان به اشتراک گذاشت",
         "alreadySharedVideoTitle": "فقط یک ویدیو را می‌توان به صورت همزمان به اشتراک گذاشت",
@@ -266,6 +266,8 @@
         "kickParticipantDialog": "آیا می‌خواهید این شرکت کننده را بیرون کنید؟",
         "kickParticipantTitle": "این شرکت کننده را بیرون می‌کنید؟",
         "kickTitle": "{{participantDisplayName}} شما را از جلسه بیرون کرد",
+        "linkMeeting": "لینک جلسه",
+        "linkMeetingTitle": "لینک جلسه به نیروی فروش",
         "liveStreaming": "پخش زنده",
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "هنگامی که ضبط جلسه فعال است، نمی‌توان پخش زنده انجام داد",
         "liveStreamingDisabledTooltip": "پخش زنده غیرفعال شده است",
@@ -320,6 +322,7 @@
         "popupError": "مرورگر شما پنجره‌های بازشونده را در این سایت مسدود کرده است؛ در تنظیمات امنیتی مرورگر خود، پنجره‌های بازشونده را برای این سایت فعال کرده و دوباره امتحان کنید",
         "popupErrorTitle": "پنجره‌های بازشونده مسدود شده است",
         "readMore": "بیشتر",
+        "recentlyUsedObjects": "اشیایی که اخیراً استفاده کرده اید",
         "recording": "در حال ضبط",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "هنگامی که پخش زنده در جریان است نمی‌توان جلسه را ضبط کرد",
         "recordingDisabledTooltip": "ضبط جلسه غیر فعال شده است",
@@ -342,6 +345,12 @@
         "screenSharingFailed": "متاسفانه مشکلی پیش آمده است و امکان به اشتراک گذاری صفحه نمایش وجود ندارد",
         "screenSharingFailedTitle": "به اشتراک گذاری صفحه نمایش با خطا مواجه شد",
         "screenSharingPermissionDeniedError": "در دسترسی به مجوز به اشتراک گذاری صفحه نمایش مشکلی پیش آمده است، لطفا صفحه را مجددا بارگیری نمایید",
+        "searchInSalesforce": "جستجو در salesforce",
+        "searchResults": "نتایج جستجو({{count}})",
+        "searchResultsDetailsError": "هنگام بازیابی اطلاعات مالک مشکلی پیش آمد.",
+        "searchResultsError": "هنگام بازیابی داده ها مشکلی پیش آمد.",
+        "searchResultsNotFound": "هیچ نتیجه ای برای این جستجو یافت نشد.",
+        "searchResultsTryAgain": "سعی کنید از کلمات کلیدی جایگزین استفاده کنید.",
         "sendPrivateMessage": "شما یک پیام خصوصی دریافت کرده‌اید، می‌خواهید پاسخ آن را به صورت خصوصی برای فرستنده ارسال کنید یا در گروه به أن پاسخ دهید؟",
         "sendPrivateMessageCancel": "ارسال به گروه",
         "sendPrivateMessageOk": "ارسال به صورت خصوصی",
@@ -364,7 +373,9 @@
         "shareVideoTitle": "به اشتراک گذاری ویدیو",
         "shareYourScreen": "به اشتراک گذاری صفحه",
         "shareYourScreenDisabled": "به اشتراک گذاری صفحه غیرفعال شده است",
+        "sharedVideoDialogError": "خطا: لینک نا معتبر است",
         "sharedVideoLinkPlaceholder": "لینک یوتیوب یا لینک مستقیم ویدیو",
+        "start": "شروع ",
         "startLiveStreaming": "پخش زنده",
         "startRecording": "ضبط جلسه",
         "startRemoteControlErrorMessage": "در کنترل از راه دور خطایی روی داده است!",
@@ -406,6 +417,10 @@
         "star": "ستاره",
         "veryBad": "خیلی بد",
         "veryGood": "خیلی خوب"
+    },
+    "giphy": {
+        "noResults": "نتیجه ای یافت نشد :(",
+        "search": "جستجو GIPHY"
     },
     "helpView": {
         "header": "مرکز راهنما"
@@ -473,6 +488,7 @@
         "focusLocal": "تمرکز روی ویدیوی شما",
         "focusRemote": "انتخاب تصویر مخاطب",
         "fullScreen": "شروع یا پایان نمای تمام صفحه",
+        "giphyMenu": "منوی GIPHY را تغییر دهید",
         "keyboardShortcuts": "کلیدهای میانبر",
         "localRecording": "نمایش یا مخفی کردن کنترل ضبط شخصی‌",
         "mute": "قطع و وصل میکروفن",
@@ -526,7 +542,8 @@
         "admit": "پذیرفتن",
         "admitAll": "پذیرفتن همه",
         "allow": "اجازه دادن",
-        "backToKnockModeButton": "بدون رمز عبور، برای پیوستن درخواست دهید",
+        "backToKnockModeButton": "برای پیوستن بدون رمز عبور درخواست دهید",
+        "chat": "چت",
         "dialogTitle": "حالت لابی",
         "disableDialogContent": "حالت لابی فعال شد، با این قابلیت مطمعن خواهید بود که افراد ناشناس به جلسه‌ی شما وارد نخواهند شد؛ آیا می‌خواهید این حالت را غیرفعال کنید؟",
         "disableDialogSubmit": "غیرفعال کردن",
@@ -547,6 +564,8 @@
         "knockButton": "درخواست پیوستن",
         "knockTitle": "یک نفر می‌خواهد به جلسه بپیوندد",
         "knockingParticipantList": "Knocking لیست شرکت‌کنندگان",
+        "lobbyChatStartedNotification": "{{moderator}} شروع به یک چت لابی با {{attendee}} .کرد",
+        "lobbyChatStartedTitle": "{{moderator}} شروع به یک چت لابی با شما کرد.",
         "nameField": "نام خود را وارد کنید",
         "notificationLobbyAccessDenied": "درخواست پیوستن {{targetParticipantName}} توسط {{originParticipantName}} رد شد",
         "notificationLobbyAccessGranted": "درخواست پیوستن {{targetParticipantName}} توسط {{originParticipantName}} تایید شد",
@@ -618,6 +637,12 @@
         "leftOneMember": "{{name}} از جلسه خارج شد",
         "leftThreePlusMembers": "{{name}} و بسیاری دیگر جلسه را خارج شدند",
         "leftTwoMembers": "{{first}} و {{second}} جلسه را خارج شدند",
+        "linkToSalesforce": "لینک به salesforce",
+        "linkToSalesforceDescription": "شما میتوانید خلاصه جلسه را به یک Salesforce لینک کنید.",
+        "linkToSalesforceError": "خطا در لینک کردن جلسه به Salesforce",
+        "linkToSalesforceKey": "این جلسه را لینک کن",
+        "linkToSalesforceProgress": "در حال لینک کردن جلسه به Salesforce...",
+        "linkToSalesforceSuccess": "جلسه به Salesforce لینک شد.",
         "me": "من",
         "moderationInEffectCSDescription": "لطفاً اگر می خواهید صفحه خود را به اشتراک بگذارید، دست را بالا ببرید.",
         "moderationInEffectCSTitle": "اشتراک‌گذاری صفحه توسط مدیر مسدود شده است ",
@@ -641,6 +666,8 @@
         "oldElectronClientDescription1": "به نظر می‌رسد شما از نسخه قدیمی استفاده می‌کنید که برخی آسیب‌پذیری امنیتی روی آن وجود دارد؛ لطفا از آخرین نسخه‌ی برنامه استفاده کنید",
         "oldElectronClientDescription2": "آخرین نسخه",
         "oldElectronClientDescription3": " الان!",
+        "participantWantsToJoin": "می خواهد به جلسه بپیوندد",
+        "participantsWantToJoin": "می خواهید به جلسه بپیوندید",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) توسط شرکت‌کننده‌ی دیگری حذف شد",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) توسط شرکت‌کننده دیگری تنظیم شد",
         "raiseHandAction": "دست را بلند کن",
@@ -660,7 +687,9 @@
         "videoMutedRemotelyDescription": "همیشه می توانید دوباره آن را روشن کنید.",
         "videoMutedRemotelyTitle": "ویدیوی شما توسط {{participantDisplayName}} غیرفعال شده است",
         "videoUnmuteBlockedDescription": "به دلیل محدودیت های سیستم، روشن کردن روشن کردن دوربین و اشتراک‌گذاری دسکتاپ به طور موقت مسدود شده است.",
-        "videoUnmuteBlockedTitle": "روشن کردن دوربین و اشتراک‌گذاری دسکتاپ مسدود شده است!"
+        "videoUnmuteBlockedTitle": "روشن کردن دوربین و اشتراک‌گذاری دسکتاپ مسدود شده است!",
+        "viewLobby": "مشاهده لابی",
+        "waitingParticipants": "{{waitingParticipants}} نفر"
     },
     "participantsPane": {
         "actions": {
@@ -684,9 +713,9 @@
         "close": "بستن",
         "header": "شركت كنندگان",
         "headings": {
-            "lobby": "سالن انتظار",
+            "lobby": "لابی",
             "participantsList": "شرکت کنندگان در جلسه ({{count}})",
-            "waitingLobby": "در سالن انتظار ({{count}})"
+            "waitingLobby": "در لابی ({{count}})"
         },
         "search": "جستجوی شرکت کنندگان"
     },
@@ -807,6 +836,18 @@
     },
     "raisedHand": "می‌خواهم صحبت کنم",
     "raisedHandsLabel": "تعداد دست های بلند شده",
+    "record": {
+        "already": {
+            "linked": "رکورد قبلاً به این جلسه لینک شده است."
+        },
+        "type": {
+            "account": "اکانت",
+            "contact": "مخاطب",
+            "lead": "رهبر",
+            "opportunity": "فرصت",
+            "owner": "مالک"
+        }
+    },
     "recording": {
         "authDropboxText": "آپلود کردن در دراپ‌باکس",
         "availableSpace": "فضای خالی: {{spaceLeft}} مگابایت (مناسب برای تقریبا {{duration}} دقیقه ضبط جلسه)",
@@ -821,6 +862,11 @@
         "expandedPending": "ضبط آغاز شد...",
         "failedToStart": "ضبط جلسه با خطا مواجه شد",
         "fileSharingdescription": "به اشتراک گذاری ضبط جلسه با شرکت‌کنندگان",
+        "highlight": "هایلایت",
+        "highlightMoment": "هایلایت لحظه",
+        "highlightMomentDisabled": "شما میتوانید لحظه را هایلایت کنید وقتی ضبط کردن شروع شود.",
+        "highlightMomentSuccess": "لحظه هایلایت شد",
+        "highlightMomentSucessDescription": "لحظه های هایلایت شده شما به خلاصه جلسه اضافه میشود.",
         "inProgress": "ضبط در یا پخش زنده حال انجام است",
         "limitNotificationDescriptionNative": "با توجه به تعداد درخواست‌های بالا، ضبط جلسه به {{limit}} دقیقه محدود شده است؛ برای ضبط نامحدود <3>{{app}}</3> را ببینید",
         "limitNotificationDescriptionWeb": "با توجه به تعداد درخواست‌های بالا، ضبط جلسه به {{limit}} دقیقه محدود شده است؛ برای ضبط نامحدود <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a> را ببینید",
@@ -835,6 +881,7 @@
         "rec": "ضبط",
         "serviceDescription": "ضبط جلسه توسط سرویس ضبط ذخیره خواهد شد",
         "serviceDescriptionCloud": "ضبط ابری",
+        "serviceDescriptionCloudInfo": "جلسات ضبط شده بصورت اتوماتیک بعد از ۲۴ ساعت حذف خواهند شد.",
         "serviceName": "سرویس ضبط",
         "sessionAlreadyActive": "این جلسه قبلاً در حال ضبط یا پخش زنده است.",
         "signIn": "ورود",
@@ -921,6 +968,7 @@
     "speakerStats": {
         "angry": "عصبانی",
         "disgusted": "منزجر کرده ",
+        "displayEmotions": "نمایش احساسات",
         "fearful": "ترسناک",
         "happy": "خوشحال",
         "hours": "{{count}} ساعت",
@@ -966,6 +1014,7 @@
             "expand": "باز کردن",
             "feedback": "ثبت بازخورد",
             "fullScreen": "تغییر نمای تمام صفحه",
+            "giphy": "تغییر منوی GIPHY",
             "grantModerator": "اعطای دسترسی مدیر",
             "hangup": "قطع کردن تماس",
             "help": "راهنما",
@@ -973,6 +1022,7 @@
             "kick": "بیرون کردن",
             "laugh": "خنده",
             "like": "دوست داشتن ",
+            "linkToSalesforce": "لینک به Salesforce",
             "lobbyButton": "فعال/غیرفعال کردن حالت لابی",
             "localRecording": "تغییر تنظیمات کنترل ضبط",
             "lockRoom": "تعویض رمز عبور جلسه",
@@ -995,6 +1045,7 @@
             "remoteVideoMute": "دوربینی  شرکت کننده را غیرفعال کردن",
             "security": "گزینه‌های امنیتی",
             "selectBackground": "انتخاب پس زمینه",
+            "selfView": "تغییر مشاهده خود",
             "shareRoom": "دعوت دیگران",
             "shareYourScreen": "تغییر اشتراک گذاری صفحه",
             "shareaudio": "صدا را به اشتراک بگذارید",
@@ -1033,6 +1084,7 @@
         "exitFullScreen": "اتمام نمای تمام صفحه",
         "exitTileView": "خروج از نمای کاشی",
         "feedback": "ثبت بازخورد",
+        "giphy": "تغییر منوی GIPHY",
         "hangup": "ترک کردن جلسه",
         "help": "راهنما",
         "invite": "دعوت کردن",
@@ -1040,6 +1092,7 @@
         "laugh": "خنده",
         "leaveBreakoutRoom": "گروهی کوچک ترک کنید",
         "like": "دوست داشتن ",
+        "linkToSalesforce": "لینک به Salesforce",
         "lobbyButtonDisable": "غیرفعال کردن حالت لابی",
         "lobbyButtonEnable": "فعال کردن حالت لابی",
         "login": "ورود",
@@ -1160,7 +1213,9 @@
         "mute": "شرکت کننده بیصدا است",
         "muted": "بیصدا",
         "remoteControl": "شروع/توقف کنترل از دور",
+        "screenSharing": "شرکت کننده صفحه خود را به اشتراک می گذارد",
         "show": "نمایش روی صحنه",
+        "showSelfView": "نمایش خود",
         "videoMuted": "دوربین غیرفعال است",
         "videomute": "شرکت کننده دوربین را متوقف کرده است"
     },
