@@ -42,7 +42,10 @@ const title = {
 const baseHighlightDialogButton = {
     borderRadius: BaseTheme.shape.borderRadius,
     height: BaseTheme.spacing[7],
-    flex: 1
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
 };
 
 const baseHighlightDialogLabel = {
