@@ -100,7 +100,7 @@ function mapStateToProps(state): Object {
     const { premeetingBackground } = state['features/dynamic-branding'];
 
     return {
-        ...abstractMapStateToProps,
+        ...abstractMapStateToProps(state),
         _premeetingBackground: premeetingBackground
     };
 }
