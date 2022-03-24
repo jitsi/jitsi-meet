@@ -204,9 +204,9 @@ class Watermarks extends Component<Props, State> {
             return (
                 <a
                     className = 'poweredby'
-                    href = 'http://jitsi.org'
+                    href = 'https://zinochat.ir'
                     target = '_new'>
-                    <span>{ t('poweredby') } jitsi.org</span>
+                    <span>تولید شده توسط فناوری اطلاعات زینو سامان</span>
                 </a>
             );
         }
