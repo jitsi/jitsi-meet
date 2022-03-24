@@ -629,6 +629,7 @@
         "displayNotifications": "Display notifications for",
         "focus": "Conference focus",
         "focusFail": "{{component}} not available - retry in {{ms}} sec",
+        "gifsMenu": "GIPHY",
         "groupTitle": "Notifications",
         "hostAskedUnmute": "The moderator would like you to speak",
         "invitedOneMember": "{{name}} has been invited",

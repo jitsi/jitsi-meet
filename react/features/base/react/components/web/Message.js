@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { toArray } from 'react-emoji-render';
 
 import GifMessage from '../../../../chat/components/web/GifMessage';
+import { GIF_PREFIX } from '../../../../gifs/constants';
 import { isGifMessage } from '../../../../gifs/functions';
 
 import Linkify from './Linkify';
@@ -49,7 +50,7 @@ class Message extends Component<Props> {
 
         // check if the message is a GIF
         if (isGifMessage(text)) {
-            const url = text.substring(4, text.length - 1);
+            const url = text.substring(GIF_PREFIX.length, text.length - 1);
 
             content.push(<GifMessage
                 key = { url }

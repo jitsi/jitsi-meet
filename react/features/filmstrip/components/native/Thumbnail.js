@@ -1,7 +1,7 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-import { View } from 'react-native';
+import { Image, View } from 'react-native';
 import type { Dispatch } from 'redux';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
@@ -22,6 +22,7 @@ import { StyleType } from '../../../base/styles';
 import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 import { ConnectionIndicator } from '../../../connection-indicator';
 import { DisplayNameLabel } from '../../../display-name';
+import { getGifDisplayMode, getGifForParticipant } from '../../../gifs/functions';
 import {
     showContextMenuDetails,
     showSharedVideoMenu
@@ -44,6 +45,11 @@ type Props = {
      * Whether local audio (microphone) is muted or not.
      */
     _audioMuted: boolean,
+
+    /**
+     * URL of GIF sent by this participant, null if there's none.
+     */
+    _gifSrc: ?string,
 
     /**
      * Indicates whether the participant is fake.
@@ -247,6 +253,7 @@ class Thumbnail extends PureComponent<Props> {
      */
     render() {
         const {
+            _gifSrc,
             _isScreenShare: isScreenShare,
             _isFakeParticipant,
             _participantId: participantId,
@@ -280,15 +287,21 @@ class Thumbnail extends PureComponent<Props> {
                     _renderDominantSpeakerIndicator ? styles.thumbnailDominantSpeaker : null
                 ] }
                 touchFeedback = { false }>
-                <ParticipantView
-                    avatarSize = { tileView ? AVATAR_SIZE * 1.5 : AVATAR_SIZE }
-                    disableVideo = { isScreenShare || _isFakeParticipant }
-                    participantId = { participantId }
-                    tintEnabled = { participantInLargeVideo && !disableTint }
-                    tintStyle = { _styles.activeThumbnailTint }
-                    zOrder = { 1 } />
-                {
-                    this._renderIndicators()
+                {_gifSrc ? <Image
+                    source = {{ uri: _gifSrc }}
+                    style = { styles.thumbnailGif } />
+                    : <>
+                        <ParticipantView
+                            avatarSize = { tileView ? AVATAR_SIZE * 1.5 : AVATAR_SIZE }
+                            disableVideo = { isScreenShare || _isFakeParticipant }
+                            participantId = { participantId }
+                            tintEnabled = { participantInLargeVideo && !disableTint }
+                            tintStyle = { _styles.activeThumbnailTint }
+                            zOrder = { 1 } />
+                        {
+                            this._renderIndicators()
+                        }
+                    </>
                 }
             </Container>
         );
@@ -324,9 +337,12 @@ function _mapStateToProps(state, ownProps) {
     const renderModeratorIndicator = !_isEveryoneModerator
         && participant?.role === PARTICIPANT_ROLE.MODERATOR;
     const participantInLargeVideo = id === largeVideo.participantId;
+    const { gifUrl: gifSrc } = getGifForParticipant(state, id);
+    const mode = getGifDisplayMode(state);
 
     return {
         _audioMuted: audioTrack?.muted ?? true,
+        _gifSrc: mode === 'chat' ? null : gifSrc,
         _isFakeParticipant: participant?.isFakeParticipant,
         _isScreenShare: isScreenShare,
         _local: participant?.local,

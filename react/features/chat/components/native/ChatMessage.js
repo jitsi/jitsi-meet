@@ -9,10 +9,12 @@ import { translate } from '../../../base/i18n';
 import { Linkify } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { type StyleType } from '../../../base/styles';
+import { isGifMessage } from '../../../gifs/functions';
 import { MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL } from '../../constants';
 import { replaceNonUnicodeEmojis } from '../../functions';
 import AbstractChatMessage, { type Props as AbstractProps } from '../AbstractChatMessage';
 
+import GifMessage from './GifMessage';
 import PrivateMessageButton from './PrivateMessageButton';
 import styles from './styles';
 
@@ -75,6 +77,8 @@ class ChatMessage extends AbstractChatMessage<Props> {
             messageBubbleStyle.push(_styles.lobbyMessageBubble);
         }
 
+        const messageText = replaceNonUnicodeEmojis(this._getMessageText());
+
         return (
             <View style = { styles.messageWrapper } >
                 { this._renderAvatar() }
@@ -82,9 +86,13 @@ class ChatMessage extends AbstractChatMessage<Props> {
                     <View style = { messageBubbleStyle }>
                         <View style = { styles.textWrapper } >
                             { this._renderDisplayName() }
-                            <Linkify linkStyle = { styles.chatLink }>
-                                { replaceNonUnicodeEmojis(this._getMessageText()) }
-                            </Linkify>
+                            {isGifMessage(messageText)
+                                ? <GifMessage message = { messageText } />
+                                : (
+                                    <Linkify linkStyle = { styles.chatLink }>
+                                        {messageText}
+                                    </Linkify>
+                                )}
                             { this._renderPrivateNotice() }
                         </View>
                         { this._renderPrivateReplyButton() }
