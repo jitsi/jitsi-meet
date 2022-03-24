@@ -307,7 +307,8 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
             showNotification({
                 appearance: NOTIFICATION_TYPE.ERROR,
                 hideErrorSupportLink: true,
-                titleKey: 'lobby.joinRejectedMessage'
+                titleKey: 'lobby.joinRejectedTitle',
+                descriptionKey: 'lobby.joinRejectedMessage'
             }, NOTIFICATION_TIMEOUT_TYPE.LONG)
         );
     }
