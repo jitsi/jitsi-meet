@@ -44,7 +44,7 @@ export type Props = {
  */
 export default class AbstractHighlightButton<P: Props> extends Component<P> {
     /**
-     * Initializes a new AbstractVideoTrack instance.
+     * Initializes a new AbstractHighlightButton instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
