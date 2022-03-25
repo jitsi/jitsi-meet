@@ -379,10 +379,7 @@ class StartRecordingDialogContent extends Component<Props> {
             <Container>
                 <Container
                     className = 'recording-header recording-header-line'
-                    style = { [
-                        styles.headerIntegrations,
-                        _dialogStyles.topBorderContainer
-                    ] }>
+                    style = { styles.headerIntegrations }>
                     <Container
                         className = 'recording-icon-container'>
                         <Image
