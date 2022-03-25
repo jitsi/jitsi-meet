@@ -15,6 +15,7 @@ import {
 import { highlightMeetingMoment } from '../../actions.any';
 import { StartRecordingDialog } from '../../components';
 import { PROMPT_RECORDING_NOTIFICATION_ID } from '../../constants';
+import { getRecordButtonProps } from '../../functions';
 
 export type Props = {
 
@@ -106,9 +107,14 @@ export function _abstractMapStateToProps(state: Object) {
     const isButtonDisabled = isHighlightMeetingMomentDisabled(state);
     const { webhookProxyUrl } = state['features/base/config'];
 
+    const {
+        disabled: isRecordButtonDisabled,
+        visible: isRecordButtonVisible
+    } = getRecordButtonProps(state);
+
     return {
         _disabled: !isRecordingRunning,
         _isHighlightInProgress: isButtonDisabled,
-        _visible: Boolean(webhookProxyUrl)
+        _visible: isRecordButtonVisible && !isRecordButtonDisabled && Boolean(webhookProxyUrl)
     };
 }
