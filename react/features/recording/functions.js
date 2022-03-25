@@ -136,8 +136,8 @@ export function getRecordButtonProps(state: Object): ?string {
 
     // a button can be disabled/enabled if enableFeaturesBasedOnToken
     // is on or if the livestreaming is running.
-    let _disabled;
-    let _tooltip = '';
+    let disabled;
+    let tooltip = '';
 
     // If the containing component provides the visible prop, that is one
     // above all, but if not, the button should be autonomus and decide on
@@ -153,29 +153,29 @@ export function getRecordButtonProps(state: Object): ?string {
 
     if (enableFeaturesBasedOnToken) {
         visible = visible && String(features.recording) === 'true';
-        _disabled = String(features.recording) === 'disabled';
-        if (!visible && !_disabled) {
-            _disabled = true;
+        disabled = String(features.recording) === 'disabled';
+        if (!visible && !disabled) {
+            disabled = true;
             visible = true;
-            _tooltip = 'dialog.recordingDisabledTooltip';
+            tooltip = 'dialog.recordingDisabledTooltip';
         }
     }
 
     // disable the button if the livestreaming is running.
     if (getActiveSession(state, JitsiRecordingConstants.mode.STREAM)) {
-        _disabled = true;
-        _tooltip = 'dialog.recordingDisabledBecauseOfActiveLiveStreamingTooltip';
+        disabled = true;
+        tooltip = 'dialog.recordingDisabledBecauseOfActiveLiveStreamingTooltip';
     }
 
     // disable the button if we are in a breakout room.
     if (isInBreakoutRoom(state)) {
-        _disabled = true;
+        disabled = true;
         visible = false;
     }
 
     return {
-        _disabled,
-        _tooltip,
+        disabled,
+        tooltip,
         visible
     };
 }

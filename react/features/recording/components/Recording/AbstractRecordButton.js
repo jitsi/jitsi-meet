@@ -135,8 +135,8 @@ export default class AbstractRecordButton<P: Props> extends AbstractButton<P, *>
  */
 export function _mapStateToProps(state: Object): Object {
     const {
-        _disabled,
-        _tooltip,
+        disabled: _disabled,
+        tooltip: _tooltip,
         visible
     } = getRecordButtonProps(state);
 

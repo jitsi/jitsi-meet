@@ -108,7 +108,7 @@ export function _abstractMapStateToProps(state: Object) {
     const { webhookProxyUrl } = state['features/base/config'];
 
     const {
-        _disabled: isRecordButtonDisabled,
+        disabled: isRecordButtonDisabled,
         visible: isRecordButtonVisible
     } = getRecordButtonProps(state);
 
