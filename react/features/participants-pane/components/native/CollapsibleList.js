@@ -31,7 +31,7 @@ type Props = {
 }
 
 const CollapsibleList = ({ children, containerStyle, onLongPress, title }: Props) => {
-    const [ collapsed, setCollapsed ] = useState(true);
+    const [ collapsed, setCollapsed ] = useState(false);
     const _toggleCollapsed = useCallback(() => {
         setCollapsed(!collapsed);
     }, [ collapsed ]);

@@ -51,9 +51,19 @@ type Props = {
     _sortedRemoteParticipants: Map<string, string>,
 
     /**
+     * List of breakout rooms that were created.
+     */
+    breakoutRooms: Array,
+
+    /**
      * The redux dispatch function.
      */
     dispatch: Function,
+
+    /**
+     * List of participants waiting in lobby.
+     */
+    lobbyParticipants: Array,
 
     /**
      * Participants search string.
@@ -180,6 +190,8 @@ class MeetingParticipantList extends PureComponent<Props> {
             _participantsCount,
             _showInviteButton,
             _sortedRemoteParticipants,
+            breakoutRooms,
+            lobbyParticipants,
             t
         } = this.props;
         const title = _currentRoom?.name
@@ -192,12 +204,19 @@ class MeetingParticipantList extends PureComponent<Props> {
         // Regarding the fact that we have 3 sections, we apply
         // a certain height percentage for every section in order for all to fit
         // inside the participants pane container
+        // If there are only meeting participants available,
+        // we take the full container height
+        const onlyMeetingParticipants
+            = breakoutRooms.length === 0 && lobbyParticipants.length === 0;
         const containerStyle
-            = _participantsCount > 3 && styles.meetingListContainer;
+            = onlyMeetingParticipants
+                ? styles.meetingListFullContainer : styles.meetingListContainer;
+        const finalContainerStyle
+            = _participantsCount > 3 && containerStyle;
 
         return (
             <CollapsibleList
-                containerStyle = { containerStyle }
+                containerStyle = { finalContainerStyle }
                 title = { title } >
                 {
                     _showInviteButton
