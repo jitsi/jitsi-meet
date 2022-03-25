@@ -67,8 +67,8 @@ export function loadWorker() {
             return;
         }
 
-        const baseUrl = getBaseUrl();
-        let workerUrl = `${baseUrl}libs/facial-expressions-worker.min.js`;
+        const baseUrl = `${getBaseUrl()}/libs/`;
+        let workerUrl = `${baseUrl}facial-expressions-worker.min.js`;
 
         const workerBlob = new Blob([ `importScripts("${workerUrl}");` ], { type: 'application/javascript' });
 
