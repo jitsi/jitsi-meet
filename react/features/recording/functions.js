@@ -1,7 +1,8 @@
 // @flow
 
 import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
-import { getLocalParticipant } from '../base/participants';
+import { getLocalParticipant, isLocalParticipantModerator } from '../base/participants';
+import { isInBreakoutRoom } from '../breakout-rooms/functions';
 import { isEnabled as isDropboxEnabled } from '../dropbox';
 import { extractFqnFromPath } from '../dynamic-branding';
 
@@ -119,6 +120,65 @@ export function getSessionStatusToShow(state: Object, mode: string): ?string {
     return status;
 }
 
+/**
+ * Returns the recording button props.
+ *
+ * @param {Object} state - The redux state to search in.
+ *
+ * @returns {{
+ *    disabled: boolean,
+ *    tooltip: string,
+ *    visible: boolean
+ * }}
+ */
+export function getRecordButtonProps(state: Object): ?string {
+    let visible;
+
+    // a button can be disabled/enabled if enableFeaturesBasedOnToken
+    // is on or if the livestreaming is running.
+    let disabled;
+    let tooltip = '';
+
+    // If the containing component provides the visible prop, that is one
+    // above all, but if not, the button should be autonomus and decide on
+    // its own to be visible or not.
+    const isModerator = isLocalParticipantModerator(state);
+    const {
+        enableFeaturesBasedOnToken,
+        fileRecordingsEnabled
+    } = state['features/base/config'];
+    const { features = {} } = getLocalParticipant(state);
+
+    visible = isModerator && fileRecordingsEnabled;
+
+    if (enableFeaturesBasedOnToken) {
+        visible = visible && String(features.recording) === 'true';
+        disabled = String(features.recording) === 'disabled';
+        if (!visible && !disabled) {
+            disabled = true;
+            visible = true;
+            tooltip = 'dialog.recordingDisabledTooltip';
+        }
+    }
+
+    // disable the button if the livestreaming is running.
+    if (getActiveSession(state, JitsiRecordingConstants.mode.STREAM)) {
+        disabled = true;
+        tooltip = 'dialog.recordingDisabledBecauseOfActiveLiveStreamingTooltip';
+    }
+
+    // disable the button if we are in a breakout room.
+    if (isInBreakoutRoom(state)) {
+        disabled = true;
+        visible = false;
+    }
+
+    return {
+        disabled,
+        tooltip,
+        visible
+    };
+}
 
 /**
  * Returns the resource id.
