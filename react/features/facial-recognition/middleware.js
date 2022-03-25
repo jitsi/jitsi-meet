@@ -23,11 +23,11 @@ import { sendFacialExpressionToParticipants, sendFacialExpressionToServer } from
 
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
-    const { enableFacialRecognition } = getState()['features/base/config'];
+    // const { enableFacialRecognition } = getState()['features/base/config'];
 
-    if (!enableFacialRecognition) {
-        return next(action);
-    }
+    // // if (!enableFacialRecognition) {
+    // //     return next(action);
+    // // }
     if (action.type === CONFERENCE_JOINED) {
         dispatch(loadWorker());
 
