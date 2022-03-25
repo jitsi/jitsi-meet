@@ -297,7 +297,7 @@ export function calculateResponsiveTileViewDimensions({
     noHorizontalContainerMargin = false,
     maxColumns,
     numberOfParticipants,
-    numberOfVisibleTiles = TILE_VIEW_DEFAULT_NUMBER_OF_VISIBLE_TILES
+    desiredNumberOfVisibleTiles = TILE_VIEW_DEFAULT_NUMBER_OF_VISIBLE_TILES
 }) {
     let height, width;
     let columns, rows;
@@ -311,12 +311,12 @@ export function calculateResponsiveTileViewDimensions({
         maxArea: 0
     };
 
-    for (let c = 1; c <= Math.min(maxColumns, numberOfParticipants); c++) {
+    for (let c = 1; c <= Math.min(maxColumns, numberOfParticipants, desiredNumberOfVisibleTiles); c++) {
         const r = Math.ceil(numberOfParticipants / c);
 
-        // we want to display as much as possible tumbnails up to numberOfVisibleTiles
+        // we want to display as much as possible tumbnails up to desiredNumberOfVisibleTiles
         const visibleRows
-            = numberOfParticipants <= numberOfVisibleTiles ? r : Math.floor(numberOfVisibleTiles / c);
+            = numberOfParticipants <= desiredNumberOfVisibleTiles ? r : Math.floor(desiredNumberOfVisibleTiles / c);
 
         const size = calculateThumbnailSizeForTileView({
             columns: c,
@@ -330,18 +330,38 @@ export function calculateResponsiveTileViewDimensions({
 
         if (size) {
             const { height: currentHeight, width: currentWidth, minHeightEnforced, maxVisibleRows } = size;
-            let area = currentHeight * currentWidth * Math.min(c * maxVisibleRows, numberOfParticipants);
+            const numberOfVisibleParticipants = Math.min(c * maxVisibleRows, numberOfParticipants);
+
+            let area = Math.round(
+                (currentHeight + TILE_VERTICAL_MARGIN)
+                * (currentWidth + TILE_HORIZONTAL_MARGIN)
+                * numberOfVisibleParticipants);
+
             const currentDimensions = {
                 maxArea: area,
                 height: currentHeight,
                 width: currentWidth,
                 columns: c,
-                rows: r
+                rows: r,
+                numberOfVisibleParticipants
             };
+            const { numberOfVisibleParticipants: oldNumberOfVisibleParticipants = 0 } = dimensions;
 
-            if (!minHeightEnforced && area > dimensions.maxArea) {
-                dimensions = currentDimensions;
-            } else if (minHeightEnforced && area > minHeightEnforcedDimensions.maxArea) {
+            if (!minHeightEnforced) {
+                if (area > dimensions.maxArea) {
+                    dimensions = currentDimensions;
+                } else if ((area === dimensions.maxArea)
+                    && ((oldNumberOfVisibleParticipants > desiredNumberOfVisibleTiles
+                            && oldNumberOfVisibleParticipants >= numberOfParticipants)
+                        || (oldNumberOfVisibleParticipants < numberOfParticipants
+                            && numberOfVisibleParticipants <= desiredNumberOfVisibleTiles))
+                ) { // If the area of the new candidates and the old ones are equal we preffer the one that will have
+                    // closer number of visible participants to desiredNumberOfVisibleTiles config.
+                    dimensions = currentDimensions;
+                }
+            } else if (minHeightEnforced && area >= minHeightEnforcedDimensions.maxArea) {
+                // If we choose configuration with minHeightEnforced there will be less than desiredNumberOfVisibleTiles
+                // visible tiles, that's why we prefer more columns when the area is the same.
                 minHeightEnforcedDimensions = currentDimensions;
             } else if (minHeightEnforced && maxVisibleRows === 0) {
                 area = currentHeight * currentWidth * Math.min(c, numberOfParticipants);
@@ -400,7 +420,8 @@ export function calculateThumbnailSizeForTileView({
     const minHeight = getThumbnailMinHeight(clientWidth);
     const viewWidth = clientWidth - (columns * TILE_HORIZONTAL_MARGIN)
         - (noHorizontalContainerMargin ? SCROLL_SIZE : TILE_VIEW_GRID_HORIZONTAL_MARGIN);
-    const viewHeight = clientHeight - (minVisibleRows * TILE_VERTICAL_MARGIN) - TILE_VIEW_GRID_VERTICAL_MARGIN;
+    const availableHeight = clientHeight - TILE_VIEW_GRID_VERTICAL_MARGIN;
+    const viewHeight = availableHeight - (minVisibleRows * TILE_VERTICAL_MARGIN);
     const initialWidth = viewWidth / columns;
     let initialHeight = viewHeight / minVisibleRows;
     let minHeightEnforced = false;
@@ -417,52 +438,47 @@ export function calculateThumbnailSizeForTileView({
             return;
         }
 
-        const height = Math.floor(Math.min(aspectRatioHeight, initialHeight));
+        const height = Math.min(aspectRatioHeight, initialHeight);
 
         return {
             height,
-            width: Math.floor(aspectRatio * height),
+            width: aspectRatio * height,
             minHeightEnforced,
-            maxVisibleRows: Math.floor(viewHeight / height)
+            maxVisibleRows: Math.floor(availableHeight / (height + TILE_VERTICAL_MARGIN))
         };
     }
 
     const initialRatio = initialWidth / initialHeight;
-    let height = Math.floor(initialHeight);
+    let height = initialHeight;
+    let width;
 
     // The biggest area of the grid will be when the grid's height is equal to clientHeight or when the grid's width is
     // equal to clientWidth.
 
     if (initialRatio > aspectRatio) {
-        return {
-            height,
-            width: Math.floor(initialHeight * aspectRatio),
-            minHeightEnforced,
-            maxVisibleRows: Math.floor(viewHeight / height)
-        };
+        width = initialHeight * aspectRatio;
     } else if (initialRatio >= TILE_PORTRAIT_ASPECT_RATIO) {
-        return {
-            height,
-            width: Math.floor(initialWidth),
-            minHeightEnforced,
-            maxVisibleRows: Math.floor(viewHeight / height)
-        };
+        width = initialWidth;
+    // eslint-disable-next-line no-negated-condition
     } else if (!minHeightEnforced) {
-        height = Math.floor(initialWidth / TILE_PORTRAIT_ASPECT_RATIO);
+        height = initialWidth / TILE_PORTRAIT_ASPECT_RATIO;
 
         if (height >= minHeight) {
-            return {
-                height,
-                width: Math.floor(initialWidth),
-                minHeightEnforced,
-                maxVisibleRows: Math.floor(viewHeight / height)
-            };
+            width = initialWidth;
+        } else { // The width is so small that we can't reach the minimum height with portrait aspect ratio.
+            return;
         }
+    } else {
+        // We can't fit that number of columns with the desired min height and aspect ratio.
+        return;
     }
 
-    // else
-    // We can't fit that number of columns with the desired min height and aspect ratio.
-    return;
+    return {
+        height,
+        width,
+        minHeightEnforced,
+        maxVisibleRows: Math.floor(availableHeight / (height + TILE_VERTICAL_MARGIN))
+    };
 }
 
 /**
