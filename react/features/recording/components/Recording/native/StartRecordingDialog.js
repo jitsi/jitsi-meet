@@ -44,6 +44,8 @@ class StartRecordingDialog extends AbstractStartRecordingDialog<Props> {
      * @returns {void}
      */
     componentDidMount() {
+        super.componentDidMount();
+
         const { navigation, t } = this.props;
 
         navigation.setOptions({
@@ -64,7 +66,9 @@ class StartRecordingDialog extends AbstractStartRecordingDialog<Props> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidUpdate() {
+    componentDidUpdate(prevProps) {
+        super.componentDidUpdate(prevProps);
+
         const { navigation, t } = this.props;
 
         navigation.setOptions({
