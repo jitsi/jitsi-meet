@@ -196,7 +196,7 @@ export default {
     },
 
     lobbyListContent: {
-        height: '20%'
+        height: '16%'
     },
 
     lobbyListDescription: {
@@ -217,7 +217,11 @@ export default {
     },
 
     meetingListContainer: {
-        height: '60%'
+        height: '56%'
+    },
+
+    meetingListFullContainer: {
+        height: '82%'
     },
 
     meetingListDescription: {

@@ -19,6 +19,10 @@ import {
     getCurrentRoomId,
     isInBreakoutRoom
 } from '../../../breakout-rooms/functions';
+import {
+    getKnockingParticipants,
+    getLobbyEnabled
+} from '../../../lobby/functions';
 import MuteEveryoneDialog
     from '../../../video-menu/components/native/MuteEveryoneDialog';
 import {
@@ -63,11 +67,15 @@ const ParticipantsPane = () => {
         && participantsCount > 2 && rooms.length > 1;
     const addBreakoutRoom
         = _isBreakoutRoomsSupported && !hideAddRoomButton && isLocalModerator;
+    const lobbyEnabled = useSelector(getLobbyEnabled);
+    const lobbyParticipants = useSelector(getKnockingParticipants);
 
     return (
         <JitsiScreen style = { styles.participantsPaneContainer }>
             <LobbyParticipantList />
             <MeetingParticipantList
+                breakoutRooms = { _isBreakoutRoomsSupported && rooms }
+                lobbyParticipants = { lobbyEnabled && lobbyParticipants }
                 searchString = { searchString }
                 setSearchString = { setSearchString } />
             {
