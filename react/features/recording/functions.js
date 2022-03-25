@@ -126,8 +126,8 @@ export function getSessionStatusToShow(state: Object, mode: string): ?string {
  * @param {Object} state - The redux state to search in.
  *
  * @returns {{
- *    _disabled: boolean,
- *    _tooltip: string,
+ *    disabled: boolean,
+ *    tooltip: string,
  *    visible: boolean
  * }}
  */
