@@ -1054,6 +1054,7 @@
     },
     "virtualBackground": {
         "addBackground": "Achtergrond toevoegen",
+        "apply": "Toepassen",
         "blur": "Vervagen",
         "none": "Geen",
         "pleaseWait": "Even geduld a.u.b...",
