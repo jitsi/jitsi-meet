@@ -497,6 +497,7 @@
         "errorMissingPassword": "Voer alstublieft het wachtwoord van de vergadering in",
         "invalidPassword": "Ongeldig wachtwoord",
         "joinRejectedMessage": "Uw verzoek tot deelname is afgewezen door een moderator.",
+        "joinRejectedTitle": "Verzoek tot deelname afgewezen.",
         "joinTitle": "Deelnemen aan vergadering",
         "joinWithPasswordMessage": "Poging tot deelname met wachtwoord, even geduld a.u.b...",
         "joiningMessage": "U neemt deel aan de vergadering zodra iemand uw verzoek accepteert",
