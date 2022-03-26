@@ -39,9 +39,6 @@
     "audioOnly": {
         "audioOnly": "Bande passante faible"
     },
-    "blankPage": {
-        "meetingEnded": "Réunion terminée."
-    },
     "breakoutRooms": {
         "actions": {
             "add": "Ajouter salle annexe",
@@ -559,6 +556,7 @@
         "errorMissingPassword": "Veuillez saisir le mot de passe de la réunion",
         "invalidPassword": "Mot de passe invalide",
         "joinRejectedMessage": "Votre requête pour rejoindre une réunion a été refusée par un modérateur.",
+        "joinRejectedTitle": "Demande d'accès rejetée.",
         "joinTitle": "Rejoindre une réunion",
         "joinWithPasswordMessage": "Tentative de rejoindre avec mot de passe, patientez s'il vous plait ...",
         "joiningMessage": "Vous allez rejoindre une réunion dès que quelqu'un aura accepté votre demande",
@@ -865,6 +863,11 @@
         "expandedPending": "Démarrage de l'enregistrement ...",
         "failedToStart": "L'enregistrement n'a pas réussi à démarrer",
         "fileSharingdescription": "Partager l'enregistrement avec les participants de la réunion",
+        "highlight": "Souligner",
+        "highlightMoment": "Souligner un moment",
+        "highlightMomentDisabled": "Vous ne pouvez souligner des moments que pendant une réunion",
+        "highlightMomentSuccess": "Moment souligné",
+        "highlightMomentSucessDescription": "Votre moment souligné sera ajouté au résumé de la réunion.",
         "inProgress": "Enregistrement ou diffusion en cours",
         "limitNotificationDescriptionNative": "En raison d'une forte demande, votre enregistrement sera limité à {{limit}} min. Pour des enregistrements illimités, essayez <3> {{app}} </3>.",
         "limitNotificationDescriptionWeb": "En raison d'une forte demande, votre enregistrement sera limité à {{limit}} min. Pour des enregistrements illimités, essayez <a href={{url}} rel='noopener noreferrer' target='_blank'> {{app}} </a>.",
