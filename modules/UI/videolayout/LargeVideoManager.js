@@ -239,8 +239,7 @@ export default class LargeVideoManager {
             let isVideoRenderable;
 
             if (getSourceNameSignalingFeatureFlag(state)) {
-                const tracks = state['features/base/tracks'];
-                const videoTrack = getVideoTrackByParticipant(tracks, participant);
+                const videoTrack = getVideoTrackByParticipant(state['features/base/tracks'], participant);
 
                 isVideoRenderable = !isVideoMuted && (
                     APP.conference.isLocalId(id)
@@ -273,9 +272,7 @@ export default class LargeVideoManager {
 
                         && participant && !participant.local && !participant.isFakeParticipant) {
                     // remote participant only
-
-                    const tracks = state['features/base/tracks'];
-                    const track = getVideoTrackByParticipant(tracks, participant);
+                    const track = getVideoTrackByParticipant(state['features/base/tracks'], participant);
 
                     const isScreenSharing = track?.videoType === 'desktop';
 
@@ -307,8 +304,7 @@ export default class LargeVideoManager {
             let messageKey;
 
             if (getSourceNameSignalingFeatureFlag(state)) {
-                const tracks = state['features/base/tracks'];
-                const videoTrack = getVideoTrackByParticipant(tracks, participant);
+                const videoTrack = getVideoTrackByParticipant(state['features/base/tracks'], participant);
 
                 messageKey = isTrackStreamingStatusInactive(videoTrack) ? 'connection.LOW_BANDWIDTH' : null;
             } else {
@@ -548,8 +544,7 @@ export default class LargeVideoManager {
             const state = APP.store.getState();
 
             if (getSourceNameSignalingFeatureFlag(state)) {
-                const tracks = state['features/base/tracks'];
-                const videoTrack = getVideoTrackByParticipant(tracks, participant);
+                const videoTrack = getVideoTrackByParticipant(state['features/base/tracks'], participant);
 
                 // eslint-disable-next-line no-param-reassign
                 show = !APP.conference.isLocalId(this.id)

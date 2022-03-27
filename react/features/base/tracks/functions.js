@@ -418,10 +418,7 @@ export function getLocalJitsiAudioTrack(state) {
  * @param {Object} participant - Participant Object.
  * @returns {(Track|undefined)}
  */
-export function getVideoTrackByParticipant(
-        tracks,
-        participant) {
-
+export function getVideoTrackByParticipant(tracks, participant) {
     if (!participant) {
         return;
     }

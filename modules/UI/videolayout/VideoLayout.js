@@ -186,8 +186,7 @@ const VideoLayout = {
         const isOnLarge = this.isCurrentlyOnLarge(id);
         const state = APP.store.getState();
         const participant = getParticipantById(state, id);
-        const tracks = state['features/base/tracks'];
-        const videoTrack = getVideoTrackByParticipant(tracks, participant);
+        const videoTrack = getVideoTrackByParticipant(state['features/base/tracks'], participant);
         const videoStream = videoTrack?.jitsiTrack;
 
         if (isOnLarge && !forceUpdate
