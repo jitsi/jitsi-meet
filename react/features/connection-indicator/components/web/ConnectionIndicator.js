@@ -11,7 +11,9 @@ import { MEDIA_TYPE } from '../../../base/media';
 import { getLocalParticipant, getParticipantById } from '../../../base/participants';
 import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
-import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
+import {
+    getFakeScreenshareParticipantTrack,
+    getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 import {
     isParticipantConnectionStatusInactive,
     isParticipantConnectionStatusInterrupted,
@@ -366,11 +368,17 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
  */
 export function _mapStateToProps(state: Object, ownProps: Props) {
     const { participantId } = ownProps;
+    const tracks = state['features/base/tracks'];
     const sourceNameSignalingEnabled = getSourceNameSignalingFeatureFlag(state);
-    const firstVideoTrack = getTrackByMediaTypeAndParticipant(
-        state['features/base/tracks'], MEDIA_TYPE.VIDEO, participantId);
-
     const participant = participantId ? getParticipantById(state, participantId) : getLocalParticipant(state);
+
+    let firstVideoTrack;
+
+    if (sourceNameSignalingEnabled && participant?.isFakeScreenShareParticipant) {
+        firstVideoTrack = getFakeScreenshareParticipantTrack(tracks, participantId);
+    } else {
+        firstVideoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
+    }
 
     const _isConnectionStatusInactive = sourceNameSignalingEnabled
         ? isTrackStreamingStatusInactive(firstVideoTrack)

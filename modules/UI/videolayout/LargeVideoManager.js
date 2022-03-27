@@ -16,7 +16,10 @@ import {
     getParticipantById,
     getParticipantDisplayName
 } from '../../../react/features/base/participants';
-import { getTrackByMediaTypeAndParticipant, getFakeScreenshareParticipantTrack } from '../../../react/features/base/tracks';
+import {
+    getFakeScreenshareParticipantTrack,
+    getTrackByMediaTypeAndParticipant
+} from '../../../react/features/base/tracks';
 import { CHAT_SIZE } from '../../../react/features/chat';
 import {
     isParticipantConnectionStatusActive,
@@ -238,17 +241,18 @@ export default class LargeVideoManager {
 
             if (getSourceNameSignalingFeatureFlag(state)) {
                 const tracks = state['features/base/tracks'];
-                const { local, isFakeScreenShareParticipant, isLocalScreenShare } = participant;
                 let videoTrack;
 
-                if (isFakeScreenShareParticipant) {
+                if (participant?.isFakeScreenShareParticipant) {
                     videoTrack = getFakeScreenshareParticipantTrack(tracks, id);
                 } else {
                     videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
                 }
 
                 isVideoRenderable = !isVideoMuted && (
-                    local || isLocalScreenShare || isTrackStreamingStatusActive(videoTrack)
+                    APP.conference.isLocalId(id)
+                    || participant?.isLocalScreenShare
+                    || isTrackStreamingStatusActive(videoTrack)
                 );
             } else {
                 isVideoRenderable = !isVideoMuted
@@ -276,8 +280,15 @@ export default class LargeVideoManager {
 
                         && participant && !participant.local && !participant.isFakeParticipant) {
                     // remote participant only
-                    const track = getTrackByMediaTypeAndParticipant(
-                        state['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
+
+                    const tracks = state['features/base/tracks'];
+                    let track;
+
+                    if (getSourceNameSignalingFeatureFlag(state) && participant?.isFakeScreenShareParticipant) {
+                        track = getFakeScreenshareParticipantTrack(tracks, id);
+                    } else {
+                        track = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
+                    }
                     const isScreenSharing = track?.videoType === 'desktop';
 
                     if (isScreenSharing) {
@@ -308,8 +319,14 @@ export default class LargeVideoManager {
             let messageKey;
 
             if (getSourceNameSignalingFeatureFlag(state)) {
-                const videoTrack = getTrackByMediaTypeAndParticipant(
-                    state['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
+                const tracks = state['features/base/tracks'];
+                let videoTrack;
+
+                if (participant?.isFakeScreenShareParticipant) {
+                    videoTrack = getFakeScreenshareParticipantTrack(tracks, id);
+                } else {
+                    videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
+                }
 
                 messageKey = isTrackStreamingStatusInactive(videoTrack) ? 'connection.LOW_BANDWIDTH' : null;
             } else {
@@ -549,8 +566,14 @@ export default class LargeVideoManager {
             const state = APP.store.getState();
 
             if (getSourceNameSignalingFeatureFlag(state)) {
-                const videoTrack = getTrackByMediaTypeAndParticipant(
-                    state['features/base/tracks'], MEDIA_TYPE.VIDEO, this.id);
+                const tracks = state['features/base/tracks'];
+                let videoTrack;
+
+                if (participant?.isFakeScreenShareParticipant) {
+                    videoTrack = getFakeScreenshareParticipantTrack(tracks, this.id);
+                } else {
+                    videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, this.id);
+                }
 
                 // eslint-disable-next-line no-param-reassign
                 show = !APP.conference.isLocalId(this.id)
