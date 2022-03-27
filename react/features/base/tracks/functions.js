@@ -470,23 +470,6 @@ export function getTrackSourceNameByMediaTypeAndParticipant(
 }
 
 /**
- * Returns track source name of specified screen share participant id.
- *
- * @param {Track[]} tracks - List of all tracks.
- * @param {string} participantId - Participant ID.
- * @returns {(string|undefined)}
- */
-export function getTrackSourceNameByFakeScreenShareParticipant(
-        tracks,
-        participantId) {
-    const track = getFakeScreenshareParticipantTrack(
-        tracks,
-        participantId);
-
-    return track?.jitsiTrack?.getSourceName();
-}
-
-/**
  * Returns the track if any which corresponds to a specific instance
  * of JitsiLocalTrack or JitsiRemoteTrack.
  *

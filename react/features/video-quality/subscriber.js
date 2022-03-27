@@ -7,10 +7,7 @@ import { getSourceNameSignalingFeatureFlag } from '../base/config';
 import { MEDIA_TYPE } from '../base/media';
 import { getLocalParticipant, getParticipantCount } from '../base/participants';
 import { StateListenerRegistry } from '../base/redux';
-import {
-    getTrackSourceNameByFakeScreenShareParticipant,
-    getTrackSourceNameByMediaTypeAndParticipant
-} from '../base/tracks';
+import { getTrackSourceNameByMediaTypeAndParticipant } from '../base/tracks';
 import { reportError } from '../base/util';
 import {
     getVideoQualityForLargeVideo,
@@ -241,7 +238,7 @@ function _updateReceiverVideoConstraints({ getState }) {
                 let sourceName;
 
                 if (remoteScreenShares.includes(participantId)) {
-                    sourceName = getTrackSourceNameByFakeScreenShareParticipant(tracks, participantId);
+                    sourceName = participantId;
                 } else {
                     sourceName = getTrackSourceNameByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
                 }
@@ -253,9 +250,14 @@ function _updateReceiverVideoConstraints({ getState }) {
         }
 
         if (localParticipantId !== largeVideoParticipantId) {
-            largeVideoSourceName = getTrackSourceNameByFakeScreenShareParticipant(
-                tracks, largeVideoParticipantId
-            );
+            if (remoteScreenShares.includes(largeVideoParticipantId)) {
+                largeVideoSourceName = largeVideoParticipantId;
+            } else {
+                largeVideoSourceName = getTrackSourceNameByMediaTypeAndParticipant(
+                    tracks, MEDIA_TYPE.VIDEO,
+                    largeVideoParticipantId
+                );
+            }
         }
 
         // Tile view.
@@ -270,11 +272,7 @@ function _updateReceiverVideoConstraints({ getState }) {
 
             // Prioritize screenshare in tile view.
             if (remoteScreenShares?.length) {
-                const remoteScreenShareSourceNames = remoteScreenShares.map(remoteScreenShare =>
-                    getTrackSourceNameByFakeScreenShareParticipant(tracks, remoteScreenShare)
-                );
-
-                receiverConstraints.selectedSources = remoteScreenShareSourceNames;
+                receiverConstraints.selectedSources = remoteScreenShares;
             }
 
         // Stage view.

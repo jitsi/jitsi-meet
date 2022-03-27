@@ -52,6 +52,7 @@ import {
     isUserInteractionRequiredForUnmute,
     setTrackMuted
 } from './functions';
+import logger from './logger';
 
 import './subscriber';
 
@@ -75,8 +76,8 @@ MiddlewareRegistry.register(store => next => action => {
         }
 
         if (getSourceNameSignalingFeatureFlag(store.getState())
-            && action?.track?.jitsiTrack.videoType === VIDEO_TYPE.DESKTOP
-            && !action?.track?.jitsiTrack.isMuted()
+            && action.track.jitsiTrack.videoType === VIDEO_TYPE.DESKTOP
+            && !action.track.jitsiTrack.isMuted()
         ) {
             createFakeScreenShareParticipant(store, action);
         }
@@ -117,9 +118,9 @@ MiddlewareRegistry.register(store => next => action => {
     case TRACK_REMOVED: {
         const state = store.getState();
 
-        if (getSourceNameSignalingFeatureFlag(state) && action?.track?.jitsiTrack.videoType === VIDEO_TYPE.DESKTOP) {
+        if (getSourceNameSignalingFeatureFlag(state) && action.track.jitsiTrack.videoType === VIDEO_TYPE.DESKTOP) {
             const conference = getCurrentConference(state);
-            const participantId = action?.track?.jitsiTrack.getSourceName();
+            const participantId = action.track.jitsiTrack.getSourceName();
 
             store.dispatch(participantLeft(participantId, conference));
         }
@@ -378,17 +379,20 @@ function _handleNoDataFromSourceErrors(store, action) {
  */
 function createFakeScreenShareParticipant({ dispatch, getState }, { track }) {
     const state = getState();
-    const particiipantId = track?.jitsiTrack?.getParticipantId?.();
-    const particiipant = getParticipantById(state, particiipantId);
-    const name = particiipant?.name ? `${particiipant.name}'s screen` : 'Fellow Jitster\'s Screen';
+    const participantId = track.jitsiTrack?.getParticipantId?.();
+    const participant = getParticipantById(state, participantId);
 
-    dispatch(participantJoined({
-        conference: state['features/base/conference'].conference,
-        id: track.jitsiTrack.getSourceName(), // endpointID-video-idx
-        isFakeScreenShareParticipant: true,
-        isLocalScreenShare: track?.jitsiTrack.isLocal(),
-        name
-    }));
+    if (participant.name) {
+        dispatch(participantJoined({
+            conference: state['features/base/conference'].conference,
+            id: track.jitsiTrack.getSourceName(),
+            isFakeScreenShareParticipant: true,
+            isLocalScreenShare: track?.jitsiTrack.isLocal(),
+            name: `${participant.name}'s screen`
+        }));
+    } else {
+        logger.error(`Failed to create a screenshare participant for participantId: ${participantId}`);
+    }
 }
 
 /**
