@@ -1,6 +1,7 @@
 // @flow
 
 import { getSourceNameSignalingFeatureFlag } from '../base/config';
+import { getFakeScreenShareParticipantOwnerId } from '../base/participants';
 
 import { setRemoteParticipants } from './actions';
 import { isReorderingEnabled } from './functions';
@@ -45,7 +46,7 @@ export function updateRemoteParticipants(store: Object, participantId: ?number) 
 
     if (getSourceNameSignalingFeatureFlag(state)) {
         for (const screenshare of screenShareParticipants) {
-            const ownerId = screenshare.split('-')[0];
+            const ownerId = getFakeScreenShareParticipantOwnerId(screenshare);
 
             remoteParticipants.delete(ownerId);
             remoteParticipants.delete(screenshare);
@@ -71,7 +72,7 @@ export function updateRemoteParticipants(store: Object, participantId: ?number) 
     if (getSourceNameSignalingFeatureFlag(state)) {
         // Always update the order of the thumnails.
         const participantsWithScreenShare = screenShareParticipants.reduce((acc, screenshare) => {
-            const ownerId = screenshare.split('-')[0];
+            const ownerId = getFakeScreenShareParticipantOwnerId(screenshare);
 
             acc.push(ownerId);
             acc.push(screenshare);

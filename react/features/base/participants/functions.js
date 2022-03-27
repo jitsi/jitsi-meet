@@ -162,6 +162,17 @@ export function getParticipantCount(stateful: Object | Function) {
 }
 
 /**
+ * Returns participant ID of the owner of a fake screenshare participant.
+ *
+ * @param {string} id - The ID of the fake screenshare participant.
+ * @private
+ * @returns {(string|undefined)}
+ */
+export function getFakeScreenShareParticipantOwnerId(id: string) {
+    return id.split('-')[0];
+}
+
+/**
  * Returns the Map with fake participants.
  *
  * @param {(Function|Object)} stateful - The (whole) redux state, or redux's

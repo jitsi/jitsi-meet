@@ -11,14 +11,13 @@ import { Avatar } from '../../../react/features/base/avatar';
 import theme from '../../../react/features/base/components/themes/participantsPaneTheme.json';
 import { getSourceNameSignalingFeatureFlag } from '../../../react/features/base/config';
 import { i18next } from '../../../react/features/base/i18n';
-import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media';
+import { VIDEO_TYPE } from '../../../react/features/base/media';
 import {
     getParticipantById,
     getParticipantDisplayName
 } from '../../../react/features/base/participants';
 import {
-    getFakeScreenshareParticipantTrack,
-    getTrackByMediaTypeAndParticipant
+    getVideoTrackByParticipant
 } from '../../../react/features/base/tracks';
 import { CHAT_SIZE } from '../../../react/features/chat';
 import {
@@ -241,13 +240,7 @@ export default class LargeVideoManager {
 
             if (getSourceNameSignalingFeatureFlag(state)) {
                 const tracks = state['features/base/tracks'];
-                let videoTrack;
-
-                if (participant?.isFakeScreenShareParticipant) {
-                    videoTrack = getFakeScreenshareParticipantTrack(tracks, id);
-                } else {
-                    videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
-                }
+                const videoTrack = getVideoTrackByParticipant(tracks, participant);
 
                 isVideoRenderable = !isVideoMuted && (
                     APP.conference.isLocalId(id)
@@ -282,13 +275,8 @@ export default class LargeVideoManager {
                     // remote participant only
 
                     const tracks = state['features/base/tracks'];
-                    let track;
+                    const track = getVideoTrackByParticipant(tracks, participant);
 
-                    if (getSourceNameSignalingFeatureFlag(state) && participant?.isFakeScreenShareParticipant) {
-                        track = getFakeScreenshareParticipantTrack(tracks, id);
-                    } else {
-                        track = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
-                    }
                     const isScreenSharing = track?.videoType === 'desktop';
 
                     if (isScreenSharing) {
@@ -320,13 +308,7 @@ export default class LargeVideoManager {
 
             if (getSourceNameSignalingFeatureFlag(state)) {
                 const tracks = state['features/base/tracks'];
-                let videoTrack;
-
-                if (participant?.isFakeScreenShareParticipant) {
-                    videoTrack = getFakeScreenshareParticipantTrack(tracks, id);
-                } else {
-                    videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
-                }
+                const videoTrack = getVideoTrackByParticipant(tracks, participant);
 
                 messageKey = isTrackStreamingStatusInactive(videoTrack) ? 'connection.LOW_BANDWIDTH' : null;
             } else {
@@ -567,13 +549,7 @@ export default class LargeVideoManager {
 
             if (getSourceNameSignalingFeatureFlag(state)) {
                 const tracks = state['features/base/tracks'];
-                let videoTrack;
-
-                if (participant?.isFakeScreenShareParticipant) {
-                    videoTrack = getFakeScreenshareParticipantTrack(tracks, this.id);
-                } else {
-                    videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, this.id);
-                }
+                const videoTrack = getVideoTrackByParticipant(tracks, participant);
 
                 // eslint-disable-next-line no-param-reassign
                 show = !APP.conference.isLocalId(this.id)
