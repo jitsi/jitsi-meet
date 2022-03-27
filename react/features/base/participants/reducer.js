@@ -352,6 +352,7 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
 
         if (sortedFakeScreenShareParticipants.has(id)) {
             sortedFakeScreenShareParticipants.delete(id);
+            state.sortedFakeScreenShareParticipants = new Map(sortedFakeScreenShareParticipants);
         }
 
         return { ...state };

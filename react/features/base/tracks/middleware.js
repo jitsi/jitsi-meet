@@ -24,10 +24,11 @@ import {
     setScreenshareMuted,
     SCREENSHARE_MUTISM_AUTHORITY
 } from '../media';
-import { participantJoined, getParticipantById } from '../participants';
+import { participantLeft, participantJoined, getParticipantById } from '../participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
 
 import {
+    SCREENSHARE_TRACK_MUTED_UPDATED,
     TOGGLE_SCREENSHARING,
     TRACK_ADDED,
     TRACK_MUTE_UNMUTE_FAILED,
@@ -74,7 +75,9 @@ MiddlewareRegistry.register(store => next => action => {
         }
 
         if (getSourceNameSignalingFeatureFlag(store.getState())
-            && action?.track?.jitsiTrack.videoType === VIDEO_TYPE.DESKTOP) {
+            && action?.track?.jitsiTrack.videoType === VIDEO_TYPE.DESKTOP
+            && !action?.track?.jitsiTrack.isMuted()
+        ) {
             createFakeScreenShareParticipant(store, action);
         }
 
@@ -87,7 +90,40 @@ MiddlewareRegistry.register(store => next => action => {
 
         return result;
     }
+
+    case SCREENSHARE_TRACK_MUTED_UPDATED: {
+        const state = store.getState();
+
+        if (!getSourceNameSignalingFeatureFlag(state)) {
+            return;
+        }
+
+        const { track, muted } = action;
+
+        if (muted) {
+            const conference = getCurrentConference(state);
+            const participantId = track?.jitsiTrack.getSourceName();
+
+            store.dispatch(participantLeft(participantId, conference));
+        }
+
+        if (!muted) {
+            createFakeScreenShareParticipant(store, action);
+        }
+
+        break;
+    }
+
     case TRACK_REMOVED: {
+        const state = store.getState();
+
+        if (getSourceNameSignalingFeatureFlag(state) && action?.track?.jitsiTrack.videoType === VIDEO_TYPE.DESKTOP) {
+            const conference = getCurrentConference(state);
+            const participantId = action?.track?.jitsiTrack.getSourceName();
+
+            store.dispatch(participantLeft(participantId, conference));
+        }
+
         _removeNoDataFromSourceNotification(store, action.track);
         break;
     }
