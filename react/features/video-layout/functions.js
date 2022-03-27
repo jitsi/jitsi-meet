@@ -1,7 +1,6 @@
 // @flow
 import type { Dispatch } from 'redux';
 
-import { getSourceNameSignalingFeatureFlag } from '../base/config';
 import { getFeatureFlag, TILE_VIEW_ENABLED } from '../base/flags';
 import {
     getPinnedParticipant,

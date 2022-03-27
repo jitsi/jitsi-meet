@@ -8,7 +8,10 @@ import {
     getPinnedParticipant,
     getParticipantById
 } from '../../../react/features/base/participants';
-import { getTrackByMediaTypeAndParticipant, getFakeScreenshareParticipantTrack } from '../../../react/features/base/tracks';
+import {
+    getTrackByMediaTypeAndParticipant,
+    getVideoTrackByParticipant
+} from '../../../react/features/base/tracks';
 
 import LargeVideoManager from './LargeVideoManager';
 import { VIDEO_CONTAINER_TYPE } from './VideoContainer';
@@ -184,15 +187,7 @@ const VideoLayout = {
         const state = APP.store.getState();
         const participant = getParticipantById(state, id);
         const tracks = state['features/base/tracks'];
-
-        let videoTrack;
-
-        if (getSourceNameSignalingFeatureFlag(state) && participant?.isFakeScreenShareParticipant) {
-            videoTrack = getFakeScreenshareParticipantTrack(tracks, id);
-        } else {
-            videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
-        }
-
+        const videoTrack = getVideoTrackByParticipant(tracks, participant);
         const videoStream = videoTrack?.jitsiTrack;
 
         if (isOnLarge && !forceUpdate
