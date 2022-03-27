@@ -267,8 +267,8 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
         if (isFakeScreenShareParticipant) {
             const sortedFakeScreenShareParticipants = [ ...state.sortedFakeScreenShareParticipants ];
 
-            sortedFakeScreenShareParticipants.push([ _getScreenShareOwnerId(id), participant ]);
-            sortedFakeScreenShareParticipants.sort((a, b) => a[1].name.localeCompare(b[1].name));
+            sortedFakeScreenShareParticipants.push([ id, name ]);
+            sortedFakeScreenShareParticipants.sort((a, b) => a[1].localeCompare(b[1]));
 
             state.sortedFakeScreenShareParticipants = new Map(sortedFakeScreenShareParticipants);
         }
@@ -291,6 +291,7 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
             sortedFakeScreenShareParticipants,
             remote,
             local,
+            localScreenShare,
             dominantSpeaker,
             pinnedParticipant
         } = state;
@@ -301,6 +302,9 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
         } else if (local?.id === id) {
             oldParticipant = state.local;
             delete state.local;
+        } else if (localScreenShare?.id === id) {
+            oldParticipant = state.local;
+            delete state.localScreenShare;
         } else {
             // no participant found
             return state;
@@ -400,16 +404,6 @@ function _getDisplayName(state: Object, name: string): string {
     const config = state['features/base/config'];
 
     return name ?? (config?.defaultRemoteDisplayName || 'Fellow Jitster');
-}
-
-/**
- * Returns the owner (participant) id of a fake screen share participant.
- *
- * @param {string} fakeScreenShareParticipantId - The fake screen share participant id.
- * @returns {string}
- */
-function _getScreenShareOwnerId(fakeScreenShareParticipantId) {
-    return fakeScreenShareParticipantId.split('-')[0];
 }
 
 /**

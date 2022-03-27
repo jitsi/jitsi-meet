@@ -17,7 +17,9 @@ export function updateRemoteParticipants(store: Object, participantId: ?number) 
     const state = store.getState();
     let reorderedParticipants = [];
 
-    if (!isReorderingEnabled(state)) {
+    const { sortedFakeScreenShareParticipants } = state['features/base/participants'];
+
+    if (!isReorderingEnabled(state) && !sortedFakeScreenShareParticipants.size) {
         if (participantId) {
             const { remoteParticipants } = state['features/filmstrip'];
 
@@ -30,25 +32,26 @@ export function updateRemoteParticipants(store: Object, participantId: ?number) 
 
     const {
         fakeParticipants,
-        sortedFakeScreenShareParticipants,
         sortedRemoteParticipants,
         sortedRemoteScreenshares,
         speakersList
     } = state['features/base/participants'];
     const remoteParticipants = new Map(sortedRemoteParticipants);
     const screenShares = new Map(sortedRemoteScreenshares);
-    const screenShareParticipants
-        = sortedFakeScreenShareParticipants ? [ ...sortedFakeScreenShareParticipants.entries() ] : [];
+    const screenShareParticipants = sortedFakeScreenShareParticipants
+        ? [ ...sortedFakeScreenShareParticipants.keys() ] : [];
     const sharedVideos = fakeParticipants ? Array.from(fakeParticipants.keys()) : [];
     const speakers = new Map(speakersList);
 
     if (getSourceNameSignalingFeatureFlag(state)) {
-        for (const [ ownerId, screenshare ] of screenShareParticipants) {
+        for (const screenshare of screenShareParticipants) {
+            const ownerId = screenshare.split('-')[0];
+
             remoteParticipants.delete(ownerId);
-            remoteParticipants.delete(screenshare.id);
+            remoteParticipants.delete(screenshare);
 
             speakers.delete(ownerId);
-            speakers.delete(screenshare.id);
+            speakers.delete(screenshare);
         }
     } else {
         for (const screenshare of screenShares.keys()) {
@@ -67,9 +70,11 @@ export function updateRemoteParticipants(store: Object, participantId: ?number) 
 
     if (getSourceNameSignalingFeatureFlag(state)) {
         // Always update the order of the thumnails.
-        const participantsWithScreenShare = screenShareParticipants.reduce((acc, [ ownerId, screenshare ]) => {
+        const participantsWithScreenShare = screenShareParticipants.reduce((acc, screenshare) => {
+            const ownerId = screenshare.split('-')[0];
+
             acc.push(ownerId);
-            acc.push(screenshare.id);
+            acc.push(screenshare);
 
             return acc;
         }, []);

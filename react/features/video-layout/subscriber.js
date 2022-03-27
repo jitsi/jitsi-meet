@@ -17,7 +17,7 @@ StateListenerRegistry.register(
         }
 
         const oldScreenSharesOrder = store.getState()['features/video-layout'].remoteScreenShares || [];
-        const knownSharingParticipantIds = [ ...sortedFakeScreenShareParticipants.values() ].map(p => p.id);
+        const knownSharingParticipantIds = [ ...sortedFakeScreenShareParticipants.keys() ];
 
         // Filter out any participants which are no longer screen sharing
         // by looping through the known sharing participants and removing any
