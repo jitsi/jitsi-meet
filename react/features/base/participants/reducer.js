@@ -65,7 +65,7 @@ const DEFAULT_STATE = {
     pinnedParticipant: undefined,
     raisedHandsQueue: [],
     remote: new Map(),
-    sortedFakeScreenShareParticipants: new Map(),
+    sortedRemoteFakeScreenShareParticipants: new Map(),
     sortedRemoteParticipants: new Map(),
     sortedRemoteScreenshares: new Map(),
     speakersList: new Map()
@@ -265,12 +265,12 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
         state.sortedRemoteParticipants = new Map(sortedRemoteParticipants);
 
         if (isFakeScreenShareParticipant) {
-            const sortedFakeScreenShareParticipants = [ ...state.sortedFakeScreenShareParticipants ];
+            const sortedRemoteFakeScreenShareParticipants = [ ...state.sortedRemoteFakeScreenShareParticipants ];
 
-            sortedFakeScreenShareParticipants.push([ id, name ]);
-            sortedFakeScreenShareParticipants.sort((a, b) => a[1].localeCompare(b[1]));
+            sortedRemoteFakeScreenShareParticipants.push([ id, name ]);
+            sortedRemoteFakeScreenShareParticipants.sort((a, b) => a[1].localeCompare(b[1]));
 
-            state.sortedFakeScreenShareParticipants = new Map(sortedFakeScreenShareParticipants);
+            state.sortedRemoteFakeScreenShareParticipants = new Map(sortedRemoteFakeScreenShareParticipants);
         }
         if (isFakeParticipant) {
             state.fakeParticipants.set(id, participant);
@@ -288,7 +288,7 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
         const { conference, id } = action.participant;
         const {
             fakeParticipants,
-            sortedFakeScreenShareParticipants,
+            sortedRemoteFakeScreenShareParticipants,
             remote,
             local,
             localScreenShare,
@@ -354,9 +354,9 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
             fakeParticipants.delete(id);
         }
 
-        if (sortedFakeScreenShareParticipants.has(id)) {
-            sortedFakeScreenShareParticipants.delete(id);
-            state.sortedFakeScreenShareParticipants = new Map(sortedFakeScreenShareParticipants);
+        if (sortedRemoteFakeScreenShareParticipants.has(id)) {
+            sortedRemoteFakeScreenShareParticipants.delete(id);
+            state.sortedRemoteFakeScreenShareParticipants = new Map(sortedRemoteFakeScreenShareParticipants);
         }
 
         return { ...state };

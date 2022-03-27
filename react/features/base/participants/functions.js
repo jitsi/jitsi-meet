@@ -151,10 +151,15 @@ export function getParticipantByIdOrUndefined(stateful: Object | Function, parti
  */
 export function getParticipantCount(stateful: Object | Function) {
     const state = toState(stateful);
-    const { local, remote, fakeParticipants, sortedFakeScreenShareParticipants } = state['features/base/participants'];
+    const {
+        local,
+        remote,
+        fakeParticipants,
+        sortedRemoteFakeScreenShareParticipants
+    } = state['features/base/participants'];
 
     if (getSourceNameSignalingFeatureFlag(state)) {
-        return remote.size - fakeParticipants.size - sortedFakeScreenShareParticipants.size + (local ? 1 : 0);
+        return remote.size - fakeParticipants.size - sortedRemoteFakeScreenShareParticipants.size + (local ? 1 : 0);
     }
 
     return remote.size - fakeParticipants.size + (local ? 1 : 0);
@@ -196,7 +201,7 @@ export function getRemoteParticipantCount(stateful: Object | Function) {
     const state = toState(stateful)['features/base/participants'];
 
     if (getSourceNameSignalingFeatureFlag(state)) {
-        return state.remote.size - state.sortedFakeScreenShareParticipants.size;
+        return state.remote.size - state.sortedRemoteFakeScreenShareParticipants.size;
     }
 
     return state.remote.size;

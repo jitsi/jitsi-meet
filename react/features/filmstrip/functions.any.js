@@ -18,9 +18,9 @@ export function updateRemoteParticipants(store: Object, participantId: ?number) 
     const state = store.getState();
     let reorderedParticipants = [];
 
-    const { sortedFakeScreenShareParticipants } = state['features/base/participants'];
+    const { sortedRemoteFakeScreenShareParticipants } = state['features/base/participants'];
 
-    if (!isReorderingEnabled(state) && !sortedFakeScreenShareParticipants.size) {
+    if (!isReorderingEnabled(state) && !sortedRemoteFakeScreenShareParticipants.size) {
         if (participantId) {
             const { remoteParticipants } = state['features/filmstrip'];
 
@@ -39,8 +39,8 @@ export function updateRemoteParticipants(store: Object, participantId: ?number) 
     } = state['features/base/participants'];
     const remoteParticipants = new Map(sortedRemoteParticipants);
     const screenShares = new Map(sortedRemoteScreenshares);
-    const screenShareParticipants = sortedFakeScreenShareParticipants
-        ? [ ...sortedFakeScreenShareParticipants.keys() ] : [];
+    const screenShareParticipants = sortedRemoteFakeScreenShareParticipants
+        ? [ ...sortedRemoteFakeScreenShareParticipants.keys() ] : [];
     const sharedVideos = fakeParticipants ? Array.from(fakeParticipants.keys()) : [];
     const speakers = new Map(speakersList);
 
