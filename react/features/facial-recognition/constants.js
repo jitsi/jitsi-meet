@@ -21,7 +21,7 @@ export const WEBHOOK_SEND_TIME_INTERVAL = 15000;
 /**
  * Time used for detection interval when facial expressions worker uses webgl backend.
  */
- export const DETECTION_TIME_INTERVAL = 1000;
+export const DETECTION_TIME_INTERVAL = 1000;
 
 /**
  * Type of message sent from main thread to worker that contains init information:

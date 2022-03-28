@@ -27,6 +27,8 @@ declare var interfaceConfig: Object;
  * @type {Object}
  */
 const INITIAL_NON_RN_STATE = {
+    enableFacialRecognition: true,
+    enableDisplayFacialExpressions: true
 };
 
 /**
