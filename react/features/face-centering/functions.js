@@ -44,6 +44,7 @@ export async function sendDataToWorker(
     }
 
     let imageBitmap;
+    let image;
 
     try {
         imageBitmap = await imageCapture.grabFrame();
@@ -53,13 +54,28 @@ export async function sendDataToWorker(
         return;
     }
 
+    if (typeof OffscreenCanvas === 'undefined') {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+
+        canvas.width = imageBitmap.width;
+        canvas.height = imageBitmap.height;
+        context.drawImage(imageBitmap, 0, 0);
+
+        image = context.getImageData(0, 0, imageBitmap.width, imageBitmap.height);
+    } else {
+        image = imageBitmap;
+    }
+
     worker.postMessage({
         id: DETECT_FACE_BOX,
         baseUrl: getBaseUrl(),
-        imageBitmap,
+        image,
         threshold,
         isHorizontallyFlipped
     });
+
+    imageBitmap.close();
 }
 
 /**
