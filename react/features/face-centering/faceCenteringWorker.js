@@ -35,7 +35,7 @@ const queue = [];
 let lastValidFaceBox;
 
 const detect = async message => {
-    const { baseUrl, imageBitmap, isHorizontallyFlipped, threshold } = message.data;
+    const { baseUrl, image, isHorizontallyFlipped, threshold } = message.data;
 
     if (initInProgress || initError) {
         return;
@@ -70,8 +70,8 @@ const detect = async message => {
 
     tf.engine().startScope();
 
-    const image = tf.browser.fromPixels(imageBitmap);
-    const detections = await model.estimateFaces(image, false, isHorizontallyFlipped, false);
+    const imageTensor = tf.browser.fromPixels(image);
+    const detections = await model.estimateFaces(imageTensor, false, isHorizontallyFlipped, false);
 
     tf.engine().endScope();
 
@@ -80,10 +80,10 @@ const detect = async message => {
     if (detections.length) {
         faceBox = {
             // normalize to percentage based
-            left: Math.round(Math.min(...detections.map(d => d.topLeft[0])) * 100 / imageBitmap.width),
-            right: Math.round(Math.max(...detections.map(d => d.bottomRight[0])) * 100 / imageBitmap.width),
-            top: Math.round(Math.min(...detections.map(d => d.topLeft[1])) * 100 / imageBitmap.height),
-            bottom: Math.round(Math.max(...detections.map(d => d.bottomRight[1])) * 100 / imageBitmap.height)
+            left: Math.round(Math.min(...detections.map(d => d.topLeft[0])) * 100 / image.width),
+            right: Math.round(Math.max(...detections.map(d => d.bottomRight[0])) * 100 / image.width),
+            top: Math.round(Math.min(...detections.map(d => d.topLeft[1])) * 100 / image.height),
+            bottom: Math.round(Math.max(...detections.map(d => d.bottomRight[1])) * 100 / image.height)
         };
 
         if (lastValidFaceBox && Math.abs(lastValidFaceBox.left - faceBox.left) < threshold) {
