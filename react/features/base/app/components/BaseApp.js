@@ -218,19 +218,9 @@ export default class BaseApp extends Component<*, State> {
         // additional 3rd party middleware:
         // - Thunk - allows us to dispatch async actions easily. For more info
         // @see https://github.com/gaearon/redux-thunk.
-        let middleware = MiddlewareRegistry.applyMiddleware(Thunk);
-
-        // Try to enable Redux DevTools Chrome extension in order to make it
-        // available for the purposes of facilitating development.
-        let devToolsExtension;
-
-        if (typeof window === 'object'
-                && (devToolsExtension = window.devToolsExtension)) {
-            middleware = compose(middleware, devToolsExtension());
-        }
-
-        const store = createStore(
-            reducer, PersistenceRegistry.getPersistedState(), middleware);
+        const middleware = MiddlewareRegistry.applyMiddleware(Thunk);
+        const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+        const store = createStore(reducer, PersistenceRegistry.getPersistedState(), composeEnhancers(middleware));
 
         // StateListenerRegistry
         StateListenerRegistry.subscribe(store);
