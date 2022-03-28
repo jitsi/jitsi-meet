@@ -9,7 +9,6 @@ import {
     ADD_FACIAL_EXPRESSION,
     ADD_TO_FACIAL_EXPRESSIONS_BUFFER,
     CLEAR_FACIAL_EXPRESSIONS_BUFFER,
-    SET_DETECTION_TIME_INTERVAL,
     START_FACIAL_RECOGNITION,
     STOP_FACIAL_RECOGNITION
 } from './actionTypes';
@@ -17,7 +16,6 @@ import {
     CLEAR_TIMEOUT,
     FACIAL_EXPRESSION_MESSAGE,
     INIT_WORKER,
-    INTERVAL_MESSAGE,
     WEBHOOK_SEND_TIME_INTERVAL
 } from './constants';
 import { sendDataToWorker, sendFacialExpressionsWebhook } from './functions';
@@ -67,21 +65,14 @@ export function loadWorker() {
             return;
         }
 
-        const baseUrl = `${getBaseUrl()}/libs/`;
+        const baseUrl = `${getBaseUrl()}libs/`;
         let workerUrl = `${baseUrl}facial-expressions-worker.min.js`;
-
         const workerBlob = new Blob([ `importScripts("${workerUrl}");` ], { type: 'application/javascript' });
 
         workerUrl = window.URL.createObjectURL(workerBlob);
         worker = new Worker(workerUrl, { name: 'Facial Expression Worker' });
         worker.onmessage = function(e: Object) {
             const { type, value } = e.data;
-
-            // receives a message indicating what type of backend tfjs decided to use.
-            // it is received after as a response to the first message sent to the worker.
-            if (type === INTERVAL_MESSAGE) {
-                value && dispatch(setDetectionTimeInterval(value));
-            }
 
             // receives a message with the predicted facial expression.
             if (type === FACIAL_EXPRESSION_MESSAGE) {
@@ -247,32 +238,13 @@ export function changeTrack(track: Object) {
  * @returns {Object}
  */
 function addFacialExpression(facialExpression: string, duration: number, timestamp: number) {
-    return function(dispatch: Function, getState: Function) {
-        const { detectionTimeInterval } = getState()['features/facial-recognition'];
-        let finalDuration = duration;
-
-        if (detectionTimeInterval !== -1) {
-            finalDuration *= detectionTimeInterval / 1000;
-        }
+    return function(dispatch: Function) {
         dispatch({
             type: ADD_FACIAL_EXPRESSION,
             facialExpression,
-            duration: finalDuration,
+            duration,
             timestamp
         });
-    };
-}
-
-/**
- * Sets the time interval for the detection worker post message.
- *
- * @param  {number} time - The time interval.
- * @returns {Object}
- */
-function setDetectionTimeInterval(time: number) {
-    return {
-        type: SET_DETECTION_TIME_INTERVAL,
-        time
     };
 }
 

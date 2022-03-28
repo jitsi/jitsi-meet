@@ -4,12 +4,10 @@ import * as faceapi from '@vladmandic/face-api';
 
 import {
     CLEAR_TIMEOUT,
-    CPU_TIME_INTERVAL,
+    DETECTION_TIME_INTERVAL,
     FACIAL_EXPRESSION_MESSAGE,
     INIT_WORKER,
-    SET_TIMEOUT,
-    INTERVAL_MESSAGE,
-    WEBGL_TIME_INTERVAL
+    SET_TIMEOUT
 } from './constants';
 
 /**
@@ -23,19 +21,9 @@ let modelsLoaded = false;
 let modelsURL;
 
 /**
- * A flag that indicates whether the tensorflow backend is set or not.
- */
-let backendSet = false;
-
-/**
  * A timer variable for set interval.
  */
 let timer;
-
-/**
- * The duration of the set timeout.
- */
-let timeoutDuration = -1;
 
 /**
  * A patch for having window object in the worker.
@@ -48,53 +36,40 @@ const window = {
 };
 
 onmessage = async function(message) {
-    switch (message.data.type) {
+    const { image, type } = message.data;
+
+    switch (type) {
     case INIT_WORKER : {
         modelsURL = message.data.url;
         if (message.data.windowScreenSize) {
             window.screen = message.data.windowScreenSize;
         }
+        if (self.useWASM) {
+            faceapi.tf.setWasmPaths(modelsURL);
+            await faceapi.tf.setBackend('wasm');
+        }
         break;
     }
-
     case SET_TIMEOUT : {
-        if (!message.data.imageBitmap || !modelsURL) {
+        if (!image || !modelsURL) {
             self.postMessage({
                 type: FACIAL_EXPRESSION_MESSAGE,
                 value: null
             });
         }
-
-        // the models are loaded
         if (!modelsLoaded) {
             await faceapi.loadTinyFaceDetectorModel(modelsURL);
             await faceapi.loadFaceExpressionModel(modelsURL);
             modelsLoaded = true;
         }
         faceapi.tf.engine().startScope();
-        const tensor = faceapi.tf.browser.fromPixels(message.data.imageBitmap);
+
+        const tensor = faceapi.tf.browser.fromPixels(image);
         const detections = await faceapi.detectSingleFace(
                 tensor,
                 new faceapi.TinyFaceDetectorOptions()
         ).withFaceExpressions();
 
-        // The backend is set
-        if (!backendSet) {
-            const backend = faceapi.tf.getBackend();
-
-            if (backend) {
-                if (backend === 'webgl') {
-                    timeoutDuration = WEBGL_TIME_INTERVAL;
-                } else if (backend === 'cpu') {
-                    timeoutDuration = CPU_TIME_INTERVAL;
-                }
-                self.postMessage({
-                    type: INTERVAL_MESSAGE,
-                    value: timeoutDuration
-                });
-                backendSet = true;
-            }
-        }
         faceapi.tf.engine().endScope();
         let facialExpression;
 
@@ -106,10 +81,9 @@ onmessage = async function(message) {
                 type: FACIAL_EXPRESSION_MESSAGE,
                 value: facialExpression
             });
-        }, timeoutDuration);
+        }, DETECTION_TIME_INTERVAL);
         break;
     }
-
     case CLEAR_TIMEOUT: {
         if (timer) {
             clearTimeout(timer);
