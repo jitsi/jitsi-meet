@@ -7,6 +7,7 @@ import { PureComponent } from 'react';
 import { sendAnalytics, createSharedVideoEvent as createEvent } from '../../../analytics';
 import { getCurrentConference } from '../../../base/conference';
 import { MEDIA_TYPE } from '../../../base/media';
+import { getAutoMute } from '../../../base/settings/functions.any';
 import { getLocalParticipant } from '../../../base/participants';
 import { isLocalTrackMuted } from '../../../base/tracks';
 import { NOTIFICATION_TIMEOUT_TYPE } from '../../../notifications';
@@ -15,6 +16,7 @@ import { dockToolbox } from '../../../toolbox/actions.web';
 import { muteLocal } from '../../../video-menu/actions.any';
 import { setSharedVideoStatus, stopSharedVideo } from '../../actions.any';
 import { PLAYBACK_STATUSES } from '../../constants';
+
 
 const logger = Logger.getLogger(__filename);
 
@@ -34,6 +36,7 @@ function shouldSeekToPosition(newTime, previousTime) {
  * The type of the React {@link PureComponent} props of {@link AbstractVideoManager}.
  */
 export type Props = {
+
 
     /**
      * The current coference.
@@ -106,7 +109,12 @@ export type Props = {
      /**
       * The video id.
       */
-     videoId: string
+     videoId: string,
+
+     /**
+      * disable the auto mute functionality.
+      */
+     _disableAutoMute: boolean,
 }
 
 /**
@@ -236,6 +244,20 @@ class AbstractVideoManager extends PureComponent<Props> {
     onPause() {
         sendAnalytics(createEvent('paused'));
         this.fireUpdateSharedVideoEvent();
+        this.smartAudioMuteStop();
+
+    }
+
+    /**
+     * Handle video stopped.
+     *
+     * @returns {void}
+     */
+    onEnd() {
+        sendAnalytics(createEvent('stopped'));
+        this.fireUpdateSharedVideoEvent();
+        this.smartAudioMuteStop();
+
     }
 
     /**
@@ -325,15 +347,29 @@ class AbstractVideoManager extends PureComponent<Props> {
      *
      * @returns {void}
      */
-    smartAudioMute() {
-        const { _isLocalAudioMuted, _muteLocal } = this.props;
+   smartAudioMute() {
+        const { _isLocalAudioMuted, _muteLocal,_disableAutoMute } = this.props;
 
         if (!_isLocalAudioMuted
-            && this.isSharedVideoVolumeOn()) {
+            && this.isSharedVideoVolumeOn() && !_disableAutoMute) {
             sendAnalytics(createEvent('audio.muted'));
             _muteLocal(true);
         }
     }
+
+      /**
+     * Inverse of audio mute at the end of a video, or when paused.
+     *
+     * @returns {void}
+     */
+   smartAudioMuteStop() {
+    const { _isLocalAudioMuted, _muteLocal } = this.props;
+    if (_isLocalAudioMuted
+        && !this.isSharedVideoVolumeOn()) {
+        sendAnalytics(createEvent('audio.unmuted'));
+        _muteLocal(false);
+    }
+}
 
     /**
      * Seeks video to provided time.
@@ -401,6 +437,7 @@ export function _mapStateToProps(state: Object): $Shape<Props> {
     const { ownerId, status, time, videoUrl, muted } = state['features/shared-video'];
     const localParticipant = getLocalParticipant(state);
     const _isLocalAudioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
+    const _disableAutoMute = getAutoMute(state);
 
     return {
         _conference: getCurrentConference(state),
@@ -410,7 +447,8 @@ export function _mapStateToProps(state: Object): $Shape<Props> {
         _ownerId: ownerId,
         _status: status,
         _time: time,
-        _videoUrl: videoUrl
+        _videoUrl: videoUrl,
+        _disableAutoMute
     };
 }
 

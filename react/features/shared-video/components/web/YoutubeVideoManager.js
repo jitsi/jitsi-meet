@@ -152,6 +152,8 @@ class YoutubeVideoManager extends AbstractVideoManager {
             this.onPlay();
         } else if (event.data === YouTube.PlayerState.PAUSED) {
             this.onPause();
+        } else if (event.data === YouTube.PlayerState.ENDED) {
+            this.onEnd();
         }
     };
 

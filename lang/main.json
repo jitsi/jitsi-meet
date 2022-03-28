@@ -937,6 +937,7 @@
         "startReactionsMuted": "Mute reaction sounds for everyone",
         "startVideoMuted": "Everyone starts hidden",
         "talkWhileMuted": "Talk while muted",
+        "disableAutoMute": "Auto-Mute",
         "title": "Settings"
     },
     "settingsView": {
@@ -959,6 +960,7 @@
         "showAdvanced": "Show advanced settings",
         "startWithAudioMuted": "Start with audio muted",
         "startWithVideoMuted": "Start with video muted",
+        "disableAutoMute": "Disable Auto-Mute on Youtube playback.",
         "version": "Version"
     },
     "share": {
