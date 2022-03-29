@@ -193,3 +193,17 @@
 @mixin transparentBg($color, $alpha) {
     background-color: rgba(red($color), green($color), blue($color), $alpha);
 }
+
+/**
+ * Change the direction of the current element to LTR, but do not change the direction
+ * of its children; Keep them RTL.
+ */
+@mixin ltr {
+    body[dir=rtl] & {
+        direction: ltr;
+
+        & > * {
+            direction: rtl;
+        }
+    }
+}
