@@ -291,7 +291,7 @@ function _mapStateToProps(state, ownProps) {
                     selectedVideoInputId: tabState.selectedVideoInputId
                 };
             },
-            styles: `${classes.settingsDialog} devices-pane`,
+            styles: `settings-pane ${classes.settingsDialog} devices-pane`,
             submit: submitDeviceSelectionTab
         });
     }
@@ -302,7 +302,7 @@ function _mapStateToProps(state, ownProps) {
             component: ProfileTab,
             label: 'profile.title',
             props: getProfileTabProps(state),
-            styles: `${classes.settingsDialog} profile-pane`,
+            styles: `settings-pane ${classes.settingsDialog} profile-pane`,
             submit: submitProfileTab
         });
     }
@@ -324,7 +324,7 @@ function _mapStateToProps(state, ownProps) {
                     startReactionsMuted: tabState?.startReactionsMuted
                 };
             },
-            styles: `${classes.settingsDialog} moderator-pane`,
+            styles: `settings-pane ${classes.settingsDialog} moderator-pane`,
             submit: submitModeratorTab
         });
     }
@@ -333,7 +333,7 @@ function _mapStateToProps(state, ownProps) {
         tabs.push({
             name: SETTINGS_TABS.CALENDAR,
             component: CalendarTab,
-            label: 'settings.calendar.title',
+            label: 'settings-pane settings.calendar.title',
             styles: `${classes.settingsDialog} calendar-pane`
         });
     }
@@ -344,7 +344,7 @@ function _mapStateToProps(state, ownProps) {
             component: SoundsTab,
             label: 'settings.sounds',
             props: getSoundsTabProps(state),
-            styles: `${classes.settingsDialog} profile-pane`,
+            styles: `settings-pane ${classes.settingsDialog} profile-pane`,
             submit: submitSoundsTab
         });
     }
@@ -367,7 +367,7 @@ function _mapStateToProps(state, ownProps) {
                     enabledNotifications: tabState?.enabledNotifications
                 };
             },
-            styles: `${classes.settingsDialog} more-pane`,
+            styles: `settings-pane ${classes.settingsDialog} more-pane`,
             submit: submitMoreTab
         });
     }
