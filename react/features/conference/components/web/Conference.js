@@ -230,13 +230,13 @@ class Conference extends AbstractConference<Props, *> {
                 onMouseEnter = { this._onMouseEnter }
                 onMouseLeave = { this._onMouseLeave }
                 onMouseMove = { this._onMouseMove } >
+                <Chat />
                 <div
                     className = { clsx(_layoutClassName, _showStageFilmstrip && 'stage-filmstrip') }
                     id = 'videoconference_page'
                     onMouseMove = { isMobileBrowser() ? undefined : this._onShowToolbar }
                     ref = { this._setBackground }>
                     <ConferenceInfo />
-
                     <Notice />
                     <div
                         id = 'videospace'
@@ -247,7 +247,6 @@ class Conference extends AbstractConference<Props, *> {
                     </div>
 
                     { _showPrejoin || _showLobby || <Toolbox /> }
-                    <Chat />
 
                     {_notificationsVisible && (_overflowDrawer
                         ? <JitsiPortal className = 'notification-portal'>
