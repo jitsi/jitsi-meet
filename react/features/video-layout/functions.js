@@ -73,13 +73,14 @@ export function getMaxColumnCount() {
  * which rows will be added but no more columns.
  *
  * @param {Object} state - The redux store state.
- * @param {number} width - Custom width to use for calculation.
+ * @param {boolean} stageFilmstrip - Whether the dimensions should be calculated for the stage filmstrip.
  * @returns {Object} An object is return with the desired number of columns,
  * rows, and visible rows (the rest should overflow) for the tile view layout.
  */
-export function getNotResponsiveTileViewGridDimensions(state: Object) {
+export function getNotResponsiveTileViewGridDimensions(state: Object, stageFilmstrip: boolean = false) {
     const maxColumns = getMaxColumnCount(state);
-    const numberOfParticipants = getNumberOfPartipantsForTileView(state);
+    const { activeParticipants } = state['features/filmstrip'];
+    const numberOfParticipants = stageFilmstrip ? activeParticipants.length : getNumberOfPartipantsForTileView(state);
     const columnsToMaintainASquare = Math.ceil(Math.sqrt(numberOfParticipants));
     const columns = Math.min(columnsToMaintainASquare, maxColumns);
     const rows = Math.ceil(numberOfParticipants / columns);
@@ -239,4 +240,16 @@ export function getVideoQualityForLargeVideo() {
     const wrapper = document.querySelector('#largeVideoWrapper');
 
     return getVideoQualityForHeight(wrapper.clientHeight);
+}
+
+/**
+ * Gets the video quality level for the thumbnails in the stage filmstrip.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {number}
+ */
+export function getVideoQualityForStageThumbnails(state) {
+    const height = state['features/filmstrip'].stageFilmstripDimensions?.thumbnailSize?.height;
+
+    return getVideoQualityForHeight(height);
 }

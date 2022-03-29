@@ -12,6 +12,7 @@ import { LAYOUTS } from '../../../video-layout';
 import { STATS_POPOVER_POSITION } from '../../constants';
 import { getIndicatorsTooltipPosition } from '../../functions.web';
 
+import PinnedIndicator from './PinnedIndicator';
 import RaisedHandIndicator from './RaisedHandIndicator';
 import StatusIndicators from './StatusIndicators';
 import VideoMenuTriggerButton from './VideoMenuTriggerButton';
@@ -119,6 +120,10 @@ const ThumbnailTopIndicators = ({
     return (
         <>
             <div className = { styles.container }>
+                <PinnedIndicator
+                    iconSize = { _indicatorIconSize }
+                    participantId = { participantId }
+                    tooltipPosition = { getIndicatorsTooltipPosition(currentLayout) } />
                 {!_connectionIndicatorDisabled
                     && <ConnectionIndicator
                         alwaysVisible = { showConnectionIndicator }
@@ -141,6 +146,7 @@ const ThumbnailTopIndicators = ({
             </div>
             <div className = { styles.container }>
                 <VideoMenuTriggerButton
+                    currentLayout = { currentLayout }
                     hidePopover = { hidePopover }
                     local = { local }
                     participantId = { participantId }

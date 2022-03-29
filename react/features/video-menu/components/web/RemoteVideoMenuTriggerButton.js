@@ -14,7 +14,7 @@ import { getParticipantById } from '../../../base/participants';
 import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
 import { setParticipantContextMenuOpen } from '../../../base/responsive-ui/actions';
-import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
+import { LAYOUTS } from '../../../video-layout';
 import { renderConnectionStatus } from '../../actions.web';
 
 import ParticipantContextMenu from './ParticipantContextMenu';
@@ -265,7 +265,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state, ownProps) {
-    const { participantID } = ownProps;
+    const { participantID, currentLayout } = ownProps;
     let _remoteControlState = null;
     const participant = getParticipantById(state, participantID);
     const _participantDisplayName = participant?.name;
@@ -289,7 +289,6 @@ function _mapStateToProps(state, ownProps) {
         }
     }
 
-    const currentLayout = getCurrentLayout(state);
     let _menuPosition;
 
     switch (currentLayout) {

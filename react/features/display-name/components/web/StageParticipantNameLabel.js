@@ -1,6 +1,7 @@
 // @flow
 
 import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
@@ -40,7 +41,7 @@ const useStyles = makeStyles(theme => {
  *
  * @returns {ReactElement|null}
  */
-const DominantSpeakerName = () => {
+const StageParticipantNameLabel = () => {
     const classes = useStyles();
     const largeVideoParticipant = useSelector(getLargeVideoParticipant);
     const nameToDisplay = largeVideoParticipant?.name;
@@ -56,7 +57,11 @@ const DominantSpeakerName = () => {
     if (showDisplayName && nameToDisplay && selectedId !== localId && !isTileView) {
         return (
             <div
-                className = { `${classes.badgeContainer}${toolboxVisible ? ` ${classes.containerElevated}` : ''}` }>
+                className = { clsx(
+                    'stage-participant-label',
+                    classes.badgeContainer,
+                    toolboxVisible && classes.containerElevated
+                ) }>
                 <DisplayNameBadge name = { nameToDisplay } />
             </div>
         );
@@ -65,4 +70,4 @@ const DominantSpeakerName = () => {
     return null;
 };
 
-export default DominantSpeakerName;
+export default StageParticipantNameLabel;
