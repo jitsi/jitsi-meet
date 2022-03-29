@@ -6,15 +6,18 @@ const Toolbox = require('../page-objects/Toolbox');
  *
  * @returns {void}
  */
-export default async function openParticipantsPane() {
-    const getToolbox = await Toolbox.ToolboxView;
+export default async function openParticipantsPane(userBrowser) {
+    const getToolbox = await new Toolbox(userBrowser);
+    const getToolboxView = await getToolbox.ToolboxView;
 
-    await expect(getToolbox).toBeDisplayed();
-    const participantsButton = await Toolbox.ParticipantsPaneButton;
+    await expect(getToolboxView).toBeDisplayed();
+    const participantsButton = await getToolbox.ParticipantsPaneButton;
 
     await expect(participantsButton).toBeDisplayed();
     await participantsButton.click();
-    const participantsPane = await ParticipantsPane.ParticipantsPaneView;
+
+    const participantsPanePageObject = await new ParticipantsPane(userBrowser);
+    const participantsPane = await participantsPanePageObject.ParticipantsPaneView;
 
     await expect(participantsPane).toBeDisplayed();
 }

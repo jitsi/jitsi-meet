@@ -15,6 +15,7 @@ export default function createSession(participantBrowser) {
     switch (participantBrowser) {
     case CHROME_BROWSER:
         return remote({
+            path: '/wd/hub',
             capabilities: {
                 browserName: CHROME_BROWSER,
                 acceptInsecureCerts: true,
@@ -33,6 +34,7 @@ export default function createSession(participantBrowser) {
         });
     case FIREFOX_BROWSER:
         return remote({
+            path: '/wd/hub',
             capabilities: {
                 browserName: FIREFOX_BROWSER,
                 acceptInsecureCerts: true,

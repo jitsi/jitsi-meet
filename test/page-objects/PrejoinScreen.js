@@ -6,12 +6,22 @@
 class PrejoinScreen {
 
     /**
+     * Initializes a new user browser instance.
+     *
+     * @param {Object} userBrowser - The read-only properties with which the new
+     * instance is to be initialized.
+     */
+    constructor(userBrowser) {
+        this.userBrowser = userBrowser;
+    }
+
+    /**
      * Premeeting screen element.
      *
      * @returns {HTMLElement}
      */
     get PremeetingScreen() {
-        return $('.premeeting-screen');
+        return this.userBrowser.$('.premeeting-screen');
     }
 
     /**
@@ -20,7 +30,7 @@ class PrejoinScreen {
      * @returns {HTMLElement}
      */
     get PrejoinInput() {
-        return $('.prejoin-input-area input');
+        return this.userBrowser.$('.prejoin-input-area input');
     }
 
     /**
@@ -29,8 +39,8 @@ class PrejoinScreen {
      * @returns {HTMLElement}
      */
     get PrejoinButton() {
-        return $('[data-testid="prejoin.joinMeeting"]');
+        return this.userBrowser.$('[data-testid="prejoin.joinMeeting"]');
     }
 }
 
-module.exports = new PrejoinScreen();
+module.exports = PrejoinScreen;

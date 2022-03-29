@@ -41,7 +41,6 @@ export const ENTER_KEY = '\uE007';
 
 // Define chrome properties.
 export const CHROME_PROPERTIES = {
-    path: '/wd/hub',
     maxInstances: 4,
     browserName: CHROME_BROWSER,
     acceptInsecureCerts: true,
@@ -60,7 +59,6 @@ export const CHROME_PROPERTIES = {
 
 // Define firefox properties.
 export const FIREFOX_PROPERTIES = {
-    path: '/wd/hub',
     maxInstances: 4,
     browserName: FIREFOX_BROWSER,
     acceptInsecureCerts: true,
@@ -76,10 +74,11 @@ export const FIREFOX_PROPERTIES = {
 };
 
 // Define remote selenium grid url.
-export const GRID_URL = process.env.GRID_URL ? new URL(process.env.GRID_URL) : new URL('http://localhost:4444/wd/hub');
+export const GRID_URL = process.env.GRID_URL ? new URL(process.env.GRID_URL) : null;
 
 // Define services properties based on grid availability.
-export const SERVICES = process.env.GRID_URL ? [] : [ 'selenium-standalone' ];
+export const SERVICES = GRID_URL ? [] : [ 'selenium-standalone' ];
 
 // Define max instances.
-export const MAX_INSANCES = process.env.MAX_INSANCES || 16;
+
+export const MAX_INSANCES = process.env.MAX_INSANCES || 1;

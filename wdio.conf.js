@@ -252,8 +252,11 @@ exports.config = {
      * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
      * beforeEach in Mocha)
      */
-    // beforeHook: function (test, context) {
-    // },
+    // eslint-disable-next-line no-unused-vars, object-shorthand
+    beforeHook: function(test, context) {
+        browser && browser.deleteSession();
+    },
+
     /**
      * Hook that gets executed _after_ a hook within the suite starts (e.g. runs after calling
      * afterEach in Mocha)
@@ -274,13 +277,13 @@ exports.config = {
     // eslint-disable-next-line no-unused-vars, object-shorthand
     afterTest: async function(test, context, { error, result, duration, passed, retries }) {
         if (!passed) {
-            await browser.takeScreenshot();
+            await browser && browser.takeScreenshot();
             // eslint-disable-next-line arrow-body-style
-            const logResult = await browser.execute(() => {
+            const logResult = await browser && browser.execute(() => {
                 return window.APP.connection.getLogs();
             });
 
-            const consoleLogs = await browser.getLogs('browser');
+            const consoleLogs = await browser && browser.getLogs('browser');
 
             await allureReporter.addAttachment('meetLogs', logResult);
             await allureReporter.addAttachment('consoleLogs', consoleLogs);

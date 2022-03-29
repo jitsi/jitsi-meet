@@ -6,16 +6,26 @@
 class Toolbox {
 
     /**
+     * Initializes a new user browser instance.
+     *
+     * @param {Object} userBrowser - The read-only properties with which the new
+     * instance is to be initialized.
+     */
+    constructor(userBrowser) {
+        this.userBrowser = userBrowser;
+    }
+
+    /**
      * Toolbox element.
      *
      * @returns {HTMLElement}
      */
     get ToolboxView() {
-        const video = $('#largeVideo');
+        const video = this.userBrowser.$('#largeVideo');
 
         video.moveTo();
 
-        return $('.toolbox-content-items');
+        return this.userBrowser.$('.toolbox-content-items');
     }
 
     /**
@@ -24,7 +34,7 @@ class Toolbox {
      * @returns {HTMLElement}
      */
     get MoreActionOption() {
-        return $('.toolbox-button-wth-dialog div');
+        return this.userBrowser.$('.toolbox-button-wth-dialog div');
     }
 
     /**
@@ -33,7 +43,7 @@ class Toolbox {
      * @returns {HTMLElement}
      */
     get OverflowMenu() {
-        return $('#overflow-menu');
+        return this.userBrowser.$('#overflow-menu');
     }
 
     /**
@@ -42,7 +52,7 @@ class Toolbox {
      * @returns {HTMLElement}
      */
     get SecurityOptionButton() {
-        return $('[aria-label="Security options"]');
+        return this.userBrowser.$('[aria-label="Security options"]');
     }
 
     /**
@@ -51,7 +61,7 @@ class Toolbox {
      * @returns {HTMLElement}
      */
     get ParticipantsPaneButton() {
-        return $('[aria-label="Participants"]');
+        return this.userBrowser.$('[aria-label="Participants"]');
     }
 }
-module.exports = new Toolbox();
+module.exports = Toolbox;

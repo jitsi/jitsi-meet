@@ -6,12 +6,22 @@
 class SecurityDialog {
 
     /**
+     * Initializes a new user browser instance.
+     *
+     * @param {Object} userBrowser - The read-only properties with which the new
+     * instance is to be initialized.
+     */
+    constructor(userBrowser) {
+        this.userBrowser = userBrowser;
+    }
+
+    /**
      * Security dialog element.
      *
      * @returns {HTMLElement}
      */
     get SecurityDialogView() {
-        return $('.security-dialog');
+        return this.userBrowser.$('.security-dialog');
     }
 
     /**
@@ -20,7 +30,7 @@ class SecurityDialog {
      * @returns {HTMLElement}
      */
     get LobbySwitch() {
-        return $('[aria-label="cross"]');
+        return this.userBrowser.$('[aria-label="cross"]');
     }
 
     /**
@@ -29,7 +39,7 @@ class SecurityDialog {
      * @returns {HTMLElement}
      */
     get LobbyEnabled() {
-        return $('[data-checked="true"]');
+        return this.userBrowser.$('[data-checked="true"]');
     }
 
     /**
@@ -38,8 +48,8 @@ class SecurityDialog {
      * @returns {HTMLElement}
      */
     get SecurityDialogCloseButton() {
-        return $('#modal-header-close-button');
+        return this.userBrowser.$('#modal-header-close-button');
     }
 }
 
-module.exports = new SecurityDialog();
+module.exports = SecurityDialog;

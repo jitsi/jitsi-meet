@@ -6,12 +6,22 @@
 class LobbyNotification {
 
     /**
+     * Initializes a new user browser instance.
+     *
+     * @param {Object} userBrowser - The read-only properties with which the new
+     * instance is to be initialized.
+     */
+    constructor(userBrowser) {
+        this.userBrowser = userBrowser;
+    }
+
+    /**
      * Lobby notification element.
      *
      * @returns {HTMLElement}
      */
     get Notification() {
-        return $('#notifications-container');
+        return this.userBrowser.$('#notifications-container');
     }
 
     /**
@@ -20,7 +30,7 @@ class LobbyNotification {
      * @returns {HTMLElement}
      */
     get ViewLobby() {
-        return $('[data-testid="notify.viewLobby"]');
+        return this.userBrowser.$('[data-testid="notify.viewLobby"]');
     }
 
     /**
@@ -29,7 +39,7 @@ class LobbyNotification {
      * @returns {HTMLElement}
      */
     get AdmitLobby() {
-        return $('[data-testid="lobby.admit"]');
+        return this.userBrowser.$('[data-testid="lobby.admit"]');
     }
 
     /**
@@ -38,7 +48,7 @@ class LobbyNotification {
      * @returns {HTMLElement}
      */
     get RejectLobby() {
-        return $('[data-testid="lobby.reject"]');
+        return this.userBrowser.$('[data-testid="lobby.reject"]');
     }
 }
-module.exports = new LobbyNotification();
+module.exports = LobbyNotification;
