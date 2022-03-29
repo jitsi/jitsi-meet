@@ -137,6 +137,7 @@
                 }
 
                 .toolbox-content-items {
+                    @include ltr;
                     background: transparent;
                     box-shadow: none;
                     display: flex;
