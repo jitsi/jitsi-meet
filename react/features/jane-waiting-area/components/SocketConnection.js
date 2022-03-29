@@ -66,10 +66,16 @@ class SocketConnection extends Component<Props> {
     }
 
     componentDidMount() {
-        const { isRNWebViewPage } = this.props;
+        const { isRNWebViewPage, participantType } = this.props;
 
         if (isRNWebViewPage) {
             sendMessageToIosApp({ message: 'webview page is ready' });
+            // Temp fix to ensure the patient side will not miss the "joined" signal when initializing webview in ios app
+            if (participantType === 'Patient') {
+                setTimeout(() => {
+                    this._fetchDataAndconnectSocket(true);
+                }, 4000)
+            }
         } else {
             window.APP.waitingArea.status = 'initialized';
             updateParticipantReadyStatus('waiting');
@@ -168,7 +174,7 @@ class SocketConnection extends Component<Props> {
             POLL_INTERVAL);
     }
 
-    async _fetchDataAndconnectSocket() {
+    async _fetchDataAndconnectSocket(fetchDataOnly = false) {
         const { participantType,
             isRNWebViewPage,
             updateRemoteParticipantsStatuses,
@@ -182,6 +188,10 @@ class SocketConnection extends Component<Props> {
 
             // This action will update the remote participant states in reducer
             updateRemoteParticipantsStatuses(remoteParticipantsStatuses);
+
+            if (fetchDataOnly) {
+                return;
+            }
 
             if (this.socket) {
                 this.socket.reconnect(response.socket_token);
