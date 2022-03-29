@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { NativeModules, SafeAreaView, StatusBar, View } from 'react-native';
+import { BackHandler, NativeModules, SafeAreaView, StatusBar, View } from 'react-native';
 import { withSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { appNavigate } from '../../../app/actions';
@@ -22,7 +22,6 @@ import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
 import { KnockingParticipantList } from '../../../lobby/components/native';
 import { getIsLobbyVisible } from '../../../lobby/functions';
-import { BackButtonRegistry } from '../../../mobile/back-button';
 import { navigate }
     from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
@@ -166,7 +165,7 @@ class Conference extends AbstractConference<Props, State> {
      * @returns {void}
      */
     componentDidMount() {
-        BackButtonRegistry.addListener(this._onHardwareBackPress);
+        BackHandler.addEventListener('hardwareBackPress', this._onHardwareBackPress);
     }
 
     /**
@@ -196,7 +195,7 @@ class Conference extends AbstractConference<Props, State> {
      */
     componentWillUnmount() {
         // Tear handling any hardware button presses for back navigation down.
-        BackButtonRegistry.removeListener(this._onHardwareBackPress);
+        BackHandler.removeEventListener('hardwareBackPress', this._onHardwareBackPress);
 
         clearTimeout(this._expandedLabelTimeout.current);
     }
