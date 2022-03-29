@@ -102,3 +102,12 @@ export function isReorderingEnabled(state) {
     return enableThumbnailReordering;
 }
 
+/**
+ * Whether the stage filmstrip is disabled or not.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {boolean}
+ */
+export function isStageFilmstripEnabled() {
+    return false;
+}
