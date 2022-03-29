@@ -12,7 +12,7 @@ import {
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { TRACK_REMOVED } from '../base/tracks';
 import { SET_DOCUMENT_EDITING_STATUS } from '../etherpad';
-import { isStageFilmstripEnabled } from '../filmstrip/functions.web';
+import { isStageFilmstripEnabled } from '../filmstrip/functions';
 import { isFollowMeActive } from '../follow-me';
 
 import { SET_TILE_VIEW } from './actionTypes';
