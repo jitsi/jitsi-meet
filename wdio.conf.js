@@ -253,9 +253,9 @@ exports.config = {
      * beforeEach in Mocha)
      */
     // eslint-disable-next-line no-unused-vars, object-shorthand
-    beforeHook: function(test, context) {
-        browser && browser.deleteSession();
-    },
+    // beforeHook: function(test, context) {
+    //     browser && browser.deleteSession();
+    // },
 
     /**
      * Hook that gets executed _after_ a hook within the suite starts (e.g. runs after calling
