@@ -108,13 +108,13 @@ UI.start = function() {
         $('body').addClass('mobile-browser');
     } else {
         $('body').addClass('desktop-browser');
+    }
 
-        if (config.backgroundAlpha !== undefined) {
-            const backgroundColor = $('body').css('background-color');
-            const alphaColor = setColorAlpha(backgroundColor, config.backgroundAlpha);
+    if (config.backgroundAlpha !== undefined) {
+        const backgroundColor = $('body').css('background-color');
+        const alphaColor = setColorAlpha(backgroundColor, config.backgroundAlpha);
 
-            $('body').css('background-color', alphaColor);
-        }
+        $('body').css('background-color', alphaColor);
     }
 
     if (config.iAmRecorder) {
