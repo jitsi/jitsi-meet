@@ -18,9 +18,10 @@ import { translate } from '../../../base/i18n';
 import { Icon, IconMenuDown, IconMenuUp } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { shouldHideSelfView } from '../../../base/settings/functions.any';
+import { CHAT_SIZE } from '../../../chat';
 import { showToolbox } from '../../../toolbox/actions.web';
 import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';
-import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
+import { LAYOUTS } from '../../../video-layout';
 import {
     setFilmstripVisible,
     setVisibleRemoteParticipants,
@@ -30,19 +31,13 @@ import {
 import {
     ASPECT_RATIO_BREAKPOINT,
     DEFAULT_FILMSTRIP_WIDTH,
-    FILMSTRIP_BREAKPOINT,
-    FILMSTRIP_BREAKPOINT_OFFSET,
     MIN_STAGE_VIEW_WIDTH,
     TILE_HORIZONTAL_MARGIN,
-    TILE_VERTICAL_MARGIN,
-    TOOLBAR_HEIGHT,
-    TOOLBAR_HEIGHT_MOBILE
+    TILE_VERTICAL_MARGIN
 } from '../../constants';
 import {
     getVerticalViewMaxWidth,
-    isFilmstripResizable,
-    shouldRemoteVideosBeVisible,
-    showGridInVerticalView
+    shouldRemoteVideosBeVisible
 } from '../../functions';
 
 import AudioTracksContainer from './AudioTracksContainer';
@@ -62,6 +57,11 @@ type Props = {
      * Additional CSS class names top add to the root.
      */
     _className: string,
+
+    /**
+     * Whether or not the chat is open.
+     */
+    _chatOpen: boolean,
 
     /**
      * The current layout of the filmstrip.
@@ -139,6 +139,11 @@ type Props = {
     _rows: number,
 
     /**
+     * Whether or not this is the stage filmstrip.
+     */
+    _stageFilmstrip: boolean,
+
+    /**
      * The height of the thumbnail.
      */
     _thumbnailHeight: number,
@@ -157,6 +162,11 @@ type Props = {
      * The width of the vertical filmstrip (user resized).
      */
     _verticalFilmstripWidth: ?number,
+
+    /**
+     * Whether or not the vertical filmstrip should have a background color.
+     */
+    _verticalViewBackground: boolean,
 
     /**
      * Whether or not the vertical filmstrip should be displayed as grid.
@@ -295,11 +305,13 @@ class Filmstrip extends PureComponent <Props, State> {
     render() {
         const filmstripStyle = { };
         const {
+            _chatOpen,
             _currentLayout,
             _disableSelfView,
             _resizableFilmstrip,
-            _verticalFilmstripWidth,
+            _stageFilmstrip,
             _visible,
+            _verticalViewBackground,
             _verticalViewGrid,
             _verticalViewMaxWidth,
             classes
@@ -308,12 +320,19 @@ class Filmstrip extends PureComponent <Props, State> {
         const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
 
         switch (_currentLayout) {
-        case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
+        case LAYOUTS.VERTICAL_FILMSTRIP_VIEW: {
             filmstripStyle.maxWidth = _verticalViewMaxWidth;
             if (!_visible) {
                 filmstripStyle.right = `-${filmstripStyle.maxWidth}px`;
             }
             break;
+        }
+        case LAYOUTS.TILE_VIEW: {
+            if (_stageFilmstrip && _visible) {
+                filmstripStyle.maxWidth = `calc(100% - ${_verticalViewMaxWidth}px - ${_chatOpen ? CHAT_SIZE : 0}px)`;
+            }
+            break;
+        }
         }
 
         let toolbar = null;
@@ -332,12 +351,12 @@ class Filmstrip extends PureComponent <Props, State> {
                     <div
                         className = 'filmstrip__videos'
                         id = 'filmstripLocalVideo'>
-                        <div id = 'filmstripLocalVideoThumbnail'>
-                            {
-                                !tileViewActive && <Thumbnail
+                        {
+                            !tileViewActive && <div id = 'filmstripLocalVideoThumbnail'>
+                                <Thumbnail
                                     key = 'local' />
-                            }
-                        </div>
+                            </div>
+                        }
                     </div>
                 )}
                 {
@@ -352,8 +371,7 @@ class Filmstrip extends PureComponent <Props, State> {
                     this.props._className,
                     classes.filmstrip,
                     _verticalViewGrid && 'no-vertical-padding',
-                    _verticalFilmstripWidth + FILMSTRIP_BREAKPOINT_OFFSET >= FILMSTRIP_BREAKPOINT
-                        && classes.filmstripBackground) }
+                    _verticalViewBackground && classes.filmstripBackground) }
                 style = { filmstripStyle }>
                 { toolbar }
                 {_resizableFilmstrip
@@ -576,6 +594,7 @@ class Filmstrip extends PureComponent <Props, State> {
             _remoteParticipantsLength,
             _resizableFilmstrip,
             _rows,
+            _stageFilmstrip,
             _thumbnailHeight,
             _thumbnailWidth,
             _verticalViewGrid
@@ -596,6 +615,7 @@ class Filmstrip extends PureComponent <Props, State> {
                     height = { _filmstripHeight }
                     initialScrollLeft = { 0 }
                     initialScrollTop = { 0 }
+                    itemData = {{ stageFilmstrip: _stageFilmstrip }}
                     itemKey = { this._gridItemKey }
                     onItemsRendered = { this._onGridItemsRendered }
                     overscanRowCount = { 1 }
@@ -759,129 +779,47 @@ class Filmstrip extends PureComponent <Props, State> {
  * Maps (parts of) the Redux state to the associated {@code Filmstrip}'s props.
  *
  * @param {Object} state - The Redux state.
+ * @param {Object} ownProps - The own props of the component.
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state, ownProps) {
+    const { _hasScroll = false } = ownProps;
     const toolbarButtons = getToolbarButtons(state);
     const { testing = {}, iAmRecorder } = state['features/base/config'];
     const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
-    const { visible, remoteParticipants, width: verticalFilmstripWidth } = state['features/filmstrip'];
+    const { visible, width: verticalFilmstripWidth } = state['features/filmstrip'];
     const reduceHeight = state['features/toolbox'].visible && toolbarButtons.length;
     const remoteVideosVisible = shouldRemoteVideosBeVisible(state);
     const { isOpen: shiftRight } = state['features/chat'];
-    const {
-        gridDimensions: dimensions = {},
-        filmstripHeight,
-        filmstripWidth,
-        hasScroll: tileViewHasScroll,
-        thumbnailSize: tileViewThumbnailSize
-    } = state['features/filmstrip'].tileViewDimensions;
-    const _currentLayout = getCurrentLayout(state);
     const disableSelfView = shouldHideSelfView(state);
-    const _resizableFilmstrip = isFilmstripResizable(state);
-    const _verticalViewGrid = showGridInVerticalView(state);
-    let gridDimensions = dimensions;
-    let _hasScroll = false;
-
-    const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
-    const availableSpace = clientHeight - filmstripHeight;
-    let filmstripPadding = 0;
-
-    if (availableSpace > 0) {
-        const paddingValue = TOOLBAR_HEIGHT_MOBILE - availableSpace;
-
-        if (paddingValue > 0) {
-            filmstripPadding = paddingValue;
-        }
-    } else {
-        filmstripPadding = TOOLBAR_HEIGHT_MOBILE;
-    }
+    const { clientWidth } = state['features/base/responsive-ui'];
 
     const collapseTileView = reduceHeight
         && isMobileBrowser()
         && clientWidth <= ASPECT_RATIO_BREAKPOINT;
 
-    const shouldReduceHeight = reduceHeight && (
-        isMobileBrowser() || _currentLayout !== LAYOUTS.VERTICAL_FILMSTRIP_VIEW);
+    const shouldReduceHeight = reduceHeight && isMobileBrowser();
 
-    let videosClassName = `filmstrip__videos${visible ? '' : ' hidden'}`;
-    const className = `${remoteVideosVisible || _verticalViewGrid ? '' : 'hide-videos'} ${
+    const videosClassName = `filmstrip__videos${visible ? '' : ' hidden'}${_hasScroll ? ' has-scroll' : ''}`;
+    const className = `${remoteVideosVisible || ownProps._verticalViewGrid ? '' : 'hide-videos'} ${
         shouldReduceHeight ? 'reduce-height' : ''
     } ${shiftRight ? 'shift-right' : ''} ${collapseTileView ? 'collapse' : ''} ${visible ? '' : 'hidden'}`.trim();
-    let _thumbnailSize, remoteFilmstripHeight, remoteFilmstripWidth;
-
-    switch (_currentLayout) {
-    case LAYOUTS.TILE_VIEW:
-        _hasScroll = Boolean(tileViewHasScroll);
-        if (_hasScroll) {
-            videosClassName += ' has-scroll';
-        }
-        _thumbnailSize = tileViewThumbnailSize;
-        remoteFilmstripHeight = filmstripHeight - (collapseTileView && filmstripPadding > 0 ? filmstripPadding : 0);
-        remoteFilmstripWidth = filmstripWidth;
-        break;
-    case LAYOUTS.VERTICAL_FILMSTRIP_VIEW: {
-        const {
-            remote,
-            remoteVideosContainer,
-            gridView,
-            hasScroll
-        } = state['features/filmstrip'].verticalViewDimensions;
-
-        _hasScroll = Boolean(hasScroll);
-        remoteFilmstripHeight = remoteVideosContainer?.height - (!_verticalViewGrid && shouldReduceHeight
-            ? TOOLBAR_HEIGHT : 0);
-        remoteFilmstripWidth = remoteVideosContainer?.width;
-
-        if (_verticalViewGrid) {
-            gridDimensions = gridView.gridDimensions;
-            _thumbnailSize = gridView.thumbnailSize;
-
-            if (gridView.hasScroll) {
-                videosClassName += ' has-scroll';
-            }
-        } else {
-            _thumbnailSize = remote;
-        }
-        break;
-    }
-    case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW: {
-        const { remote, remoteVideosContainer, hasScroll } = state['features/filmstrip'].horizontalViewDimensions;
-
-        _hasScroll = Boolean(hasScroll);
-        _thumbnailSize = remote;
-        remoteFilmstripHeight = remoteVideosContainer?.height;
-        remoteFilmstripWidth = remoteVideosContainer?.width;
-        break;
-    }
-    }
 
     return {
         _className: className,
-        _columns: gridDimensions.columns,
-        _currentLayout,
+        _chatOpen: state['features/chat'].isOpen,
         _disableSelfView: disableSelfView,
-        _filmstripHeight: remoteFilmstripHeight,
-        _filmstripWidth: remoteFilmstripWidth,
         _hasScroll,
         _iAmRecorder: Boolean(iAmRecorder),
         _isFilmstripButtonEnabled: isButtonEnabled('filmstrip', state),
         _isToolboxVisible: isToolboxVisible(state),
-        _isVerticalFilmstrip: _currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW,
+        _isVerticalFilmstrip: ownProps._currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW,
         _maxFilmstripWidth: clientWidth - MIN_STAGE_VIEW_WIDTH,
-        _remoteParticipantsLength: remoteParticipants.length,
-        _remoteParticipants: remoteParticipants,
-        _resizableFilmstrip,
-        _rows: gridDimensions.rows,
-        _thumbnailWidth: _thumbnailSize?.width,
-        _thumbnailHeight: _thumbnailSize?.height,
         _thumbnailsReordered: enableThumbnailReordering,
         _verticalFilmstripWidth: verticalFilmstripWidth.current,
-        _videosClassName: videosClassName,
-        _visible: visible,
-        _verticalViewGrid,
-        _verticalViewMaxWidth: getVerticalViewMaxWidth(state)
+        _verticalViewMaxWidth: getVerticalViewMaxWidth(state),
+        _videosClassName: videosClassName
     };
 }
 

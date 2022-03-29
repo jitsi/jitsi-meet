@@ -6,12 +6,14 @@ import { StateListenerRegistry } from '../base/redux';
 import { clientResized } from '../base/responsive-ui';
 import { shouldHideSelfView } from '../base/settings';
 import { setFilmstripVisible } from '../filmstrip/actions';
+import { selectParticipantInLargeVideo } from '../large-video/actions.any';
 import { getParticipantsPaneOpen } from '../participants-pane/functions';
 import { setOverflowDrawer } from '../toolbox/actions.web';
 import { getCurrentLayout, shouldDisplayTileView, LAYOUTS } from '../video-layout';
 
 import {
     setHorizontalViewDimensions,
+    setStageFilmstripViewDimensions,
     setTileViewDimensions,
     setVerticalViewDimensions
 } from './actions';
@@ -19,7 +21,13 @@ import {
     ASPECT_RATIO_BREAKPOINT,
     DISPLAY_DRAWER_THRESHOLD
 } from './constants';
-import { isFilmstripResizable, isFilmstripScollVisible, updateRemoteParticipants } from './functions';
+import {
+    isFilmstripResizable,
+    isFilmstripScrollVisible,
+    shouldDisplayStageFilmstrip,
+    updateRemoteParticipants
+} from './functions';
+
 import './subscriber.any';
 
 
@@ -145,5 +153,39 @@ StateListenerRegistry.register(
  * Listens for changes in the filmstrip scroll visibility.
  */
 StateListenerRegistry.register(
-    /* selector */ state => isFilmstripScollVisible(state),
+    /* selector */ state => isFilmstripScrollVisible(state),
     /* listener */ (_, store) => updateRemoteParticipants(store));
+
+/**
+ * Listens for changes to determine the size of the stage filmstrip tiles.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => {
+        return {
+            remoteScreenShares: state['features/video-layout'].remoteScreenShares.length,
+            length: state['features/filmstrip'].activeParticipants.length,
+            width: state['features/filmstrip'].width?.current,
+            visible: state['features/filmstrip'].visible,
+            clientWidth: state['features/base/responsive-ui'].clientWidth,
+            tileView: state['features/video-layout'].tileViewEnabled
+        };
+    },
+    /* listener */(_, store) => {
+        if (shouldDisplayStageFilmstrip(store.getState())) {
+            store.dispatch(setStageFilmstripViewDimensions());
+        }
+    }, {
+        deepEquals: true
+    });
+
+/**
+ * Listens for changes in the active participants count determine the stage participant (when
+ * there's just one).
+ */
+StateListenerRegistry.register(
+    /* selector */ state => state['features/filmstrip'].activeParticipants.length,
+    /* listener */(length, store) => {
+        if (length <= 1) {
+            store.dispatch(selectParticipantInLargeVideo());
+        }
+    });
