@@ -319,7 +319,8 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
      * @inheritdoc
      */
     render() {
-        const { classes, jitsiTrack } = this.state;
+        const { jitsiTrack } = this.state;
+        const { classes } = this.props;
 
         return (<div className = { classes.virtualBackgroundPreview }>
             {jitsiTrack
