@@ -111,3 +111,4 @@ export function isReorderingEnabled(state) {
 export function isStageFilmstripEnabled() {
     return false;
 }
+
