@@ -43,18 +43,6 @@ body {
   outline: none;
 }
 
-/**
- * AtlasKit sets a default margin on the rendered modals, so
- * when the shift-right class is set when the chat opens, we
- * pad the modal container in order for the modals to be centered
- * while also taking the chat size into consideration.
-*/
-@media (min-width: 581px) {
-    .shift-right .atlaskit-portal > div:not(.Tooltip) {
-        padding-left: $sidebarWidth;
-    }
-}
-
 .jitsi-icon {
     &-default svg {
         fill: white;

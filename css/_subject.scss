@@ -88,10 +88,6 @@
     max-width: calc(100% - 24px);
 }
 
-.shift-right .details-container {
-    margin-left: calc(#{$sidebarWidth} / 2);
-}
-
 @keyframes hideSubject {
     0% {
         max-width: 100%;
