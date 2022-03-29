@@ -1183,8 +1183,10 @@
         "willIncludeDirectLink": "Clinics will often include a direct link to their Jane online booking site on their website, but you can always ask if you are unsure!",
         "gotIt": "OK.Got it!",
         "joinAsStaffMember": "Join as a Staff Member",
-        "firstStep": "1. Sign in to your Jane Account on this device and view your scheduled appointments.",
-        "secondStep": "2. Select the appointment and tap begin."
+        "toOpenYourApp": "To open your Online Appointment:",
+        "pleaseNote": "*Please note: This app acts as a key to help open Telehealth appointments in Jane while using an iOS device (iPhone or iPad). Once downloaded from the App store, you will no longer need to access the app.",
+        "firstStep": "Sign in to your Clinic Account (Example:clinicnamehere.janeapp.com/admin) via Safari, your default web browser.",
+        "secondStep": "Select your Online Appointment and click Begin."
     },
     "lonelyMeetingExperience": {
         "button": "Invite others",

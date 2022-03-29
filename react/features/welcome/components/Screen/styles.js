@@ -234,12 +234,28 @@ const stepsScreenStyles = {
         },
         innerUpperContainer: {
             ...commonStyles.innerUpperContainer,
-            height: sizeHelper.getDpByHeight(isPad ? 835 : INNER_UPPER_CONTAINER_HEIGHT),
-            paddingTop: sizeHelper.getDpByHeight(isPad ? 150 : 34) },
+            height: sizeHelper.getDpByHeight(isPad ? 855 : 718),
+            paddingTop: sizeHelper.getDpByHeight(isPad ? 50 : 34) },
         innerLowerContainer: {
             ...commonStyles.innerLowerContainer,
             justifyContent: isPad ? 'center' : 'flex-end',
             paddingBottom: sizeHelper.getDpByHeight(isPad ? undefined : 25)
+        },
+        title: {
+            ...commonStyles.bigText,
+            marginBottom: sizeHelper.getDpByHeight(5)
+        },
+        steps: {
+            container: {
+                flexDirection: 'row',
+                maxWidth: sizeHelper.getDpByWidth(371)
+            },
+            number: {
+                width: sizeHelper.getDpByHeight(20)
+            },
+            text: {
+                flex: 1
+            }
         },
         lightText: {
             ...JaneWeb.regularFont,
@@ -254,10 +270,9 @@ const stepsScreenStyles = {
             fontWeight: 'bold'
         },
         mobileScreen: {
-            height: sizeHelper.getDpByHeight(418),
+            flex: 1,
             aspectRatio: 717 / 1257,
-            marginBottom: sizeHelper.getDpByHeight(9.5),
-            marginTop: sizeHelper.getDpByHeight(isPad ? 44 : 10)
+            marginTop: sizeHelper.getDpByHeight(10)
         }
     },
     default: {

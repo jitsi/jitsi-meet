@@ -825,8 +825,10 @@
         "willIncludeDirectLink" : "Les cliniques incluront souvent un lien direct vers leur site de réservation en ligne Jane sur leur site Web, mais vous pouvez toujours demander si vous n'êtes pas sûr !",
         "gotIt" : "OK. Je l'ai eu !",
         "joinAsStaffMember" : "Adhérer en tant que membre du personnel",
-        "firstStep" : "1. Connectez-vous à votre compte Jane sur cet appareil et consultez vos rendez-vous programmés.",
-        "secondStep" : "2. Sélectionnez le rendez-vous et appuyez sur commencer."
+        "toOpenYourApp": "Pour ouvrir votre rendez-vous en ligne :",
+        "pleaseNote": "*Remarque : cette application sert à ouvrir les rendez-vous de télésanté dans Jane à l'aide d'un appareil iOS (iPhone ou iPad). Une fois téléchargée de l'App Store, vous n'aurez plus besoin d'accéder à l'application.",
+        "firstStep": "Connectez-vous à votre compte de la clinique (exemple : nom de la clinique ici.janeapp.com/admin) via Safari, votre navigateur Web par défaut.",
+        "secondStep": "Sélectionnez votre rendez-vous en ligne et cliquez sur Commencer."
     },
     "devices": "Périphériques",
     "followMe": "Tout le monde me suit",

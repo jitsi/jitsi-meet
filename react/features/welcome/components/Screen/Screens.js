@@ -387,7 +387,7 @@ const Staff = (props: Props) => {
             style = { tutorialStyles.staff.mainContainer }>
             <View style = { tutorialStyles.staff.innerUpperContainer }>
                 <WelcomeScreenText
-                    style = { tutorialStyles.bigText }>
+                    style = { tutorialStyles.staff.title }>
                     {
                         t('welcomepage.joinAsStaffMember')
                     }
@@ -396,16 +396,42 @@ const Staff = (props: Props) => {
                     style = { tutorialStyles.staff.lightText } >
                     {
 
-                        t('welcomepage.firstStep')
+                        t('welcomepage.pleaseNote')
                     }
                 </WelcomeScreenText>
                 <WelcomeScreenText
-                    style = { tutorialStyles.staff.lightText }>
+                    style = { [ tutorialStyles.staff.lightText, tutorialStyles.staff.boldText ] } >
                     {
 
-                        t('welcomepage.secondStep')
+                        t('welcomepage.toOpenYourApp')
                     }
                 </WelcomeScreenText>
+                <View
+                    style = { tutorialStyles.staff.steps.container }>
+                    <WelcomeScreenText
+                        style = { [ tutorialStyles.staff.lightText, tutorialStyles.staff.steps.number ] }>
+                        1.
+                    </WelcomeScreenText>
+                    <WelcomeScreenText
+                        style = { [ tutorialStyles.staff.lightText, tutorialStyles.staff.steps.text ] }>
+                        {
+                            t('welcomepage.firstStep')
+                        }
+                    </WelcomeScreenText>
+                </View>
+                <View
+                    style = { tutorialStyles.staff.steps.container }>
+                    <WelcomeScreenText
+                        style = { [ tutorialStyles.staff.lightText, tutorialStyles.staff.steps.number ] }>
+                        2.
+                    </WelcomeScreenText>
+                    <WelcomeScreenText
+                        style = { [ tutorialStyles.staff.lightText, tutorialStyles.staff.steps.text ] }>
+                        {
+                            t('welcomepage.secondStep')
+                        }
+                    </WelcomeScreenText>
+                </View>
                 <Image
                     source = { require('../../../../../images/staff-mobile-screen.png') }
                     style = { tutorialStyles.staff.mobileScreen } />
