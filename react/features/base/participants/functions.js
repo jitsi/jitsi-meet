@@ -3,6 +3,7 @@
 import { getGravatarURL } from '@jitsi/js-utils/avatar';
 import type { Store } from 'redux';
 
+import { isStageFilmstripEnabled } from '../../filmstrip/functions';
 import { GRAVATAR_BASE_URL, isCORSAvatarURL } from '../avatar';
 import { getSourceNameSignalingFeatureFlag } from '../config';
 import { JitsiParticipantConnectionStatus } from '../lib-jitsi-meet';
@@ -322,8 +323,16 @@ export function getRemoteParticipantsSorted(stateful: Object | Function) {
  * @returns {(Participant|undefined)}
  */
 export function getPinnedParticipant(stateful: Object | Function) {
-    const state = toState(stateful)['features/base/participants'];
-    const { pinnedParticipant } = state;
+    const state = toState(stateful);
+    const { pinnedParticipant } = state['features/base/participants'];
+    const stageFilmstrip = isStageFilmstripEnabled(state);
+
+    if (stageFilmstrip) {
+        const { activeParticipants } = state['features/filmstrip'];
+        const id = activeParticipants.find(p => p.pinned)?.participantId;
+
+        return id ? getParticipantById(stateful, id) : undefined;
+    }
 
     if (!pinnedParticipant) {
         return undefined;

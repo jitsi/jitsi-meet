@@ -1308,6 +1308,10 @@ var config = {
     //     // Disables user resizable filmstrip. Also, allows configuration of the filmstrip
     //     // (width, tiles aspect ratios) through the interfaceConfig options.
     //     disableResizable: false,
+
+    //     // Disables the stage filmstrip
+    //     // (displaying multiple participants on stage besides the vertical filmstrip)
+    //     disableStageFilmstrip: false
     // },
 
     // Tile view related config options.
@@ -1316,7 +1320,6 @@ var config = {
     //     // not be possible to show the exact number of participants specified here.
     //     numberOfVisibleTiles: 25
     // },
-
 
     // Specifies whether the chat emoticons are disabled or not
     // disableChatSmileys: false,

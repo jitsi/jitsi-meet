@@ -284,3 +284,13 @@ export const MIN_STAGE_VIEW_WIDTH = 800;
  */
 export const VERTICAL_VIEW_HORIZONTAL_MARGIN = VERTICAL_FILMSTRIP_MIN_HORIZONTAL_MARGIN
     + SCROLL_SIZE + TILE_HORIZONTAL_MARGIN + STAGE_VIEW_THUMBNAIL_HORIZONTAL_BORDER;
+
+/**
+ * The time after which a participant should be removed from active participants.
+ */
+export const ACTIVE_PARTICIPANT_TIMEOUT = 1000 * 60;
+
+/**
+ * The max number of participants to be displayed on the stage filmstrip.
+ */
+export const MAX_ACTIVE_PARTICIPANTS = 4;
