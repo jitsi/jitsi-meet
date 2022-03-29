@@ -1637,29 +1637,32 @@ export default {
 
         APP.store.dispatch(setScreenAudioShareState(false));
 
-        promise = promise.then(() => createLocalTracksF({ devices: [ 'video' ] }))
-            .then(([ stream ]) => {
-                logger.debug(`_turnScreenSharingOff using ${stream} for useVideoStream`);
+        if (didHaveVideo && !ignoreDidHaveVideo) {
+            promise = promise.then(() => createLocalTracksF({ devices: [ 'video' ] }))
+                .then(([ stream ]) => {
+                    logger.debug(`_turnScreenSharingOff using ${stream} for useVideoStream`);
 
-                return this.useVideoStream(stream);
-            })
-            .catch(error => {
-                logger.error('failed to switch back to local video', error);
+                    return this.useVideoStream(stream);
+                })
+                .catch(error => {
+                    logger.error('failed to switch back to local video', error);
 
-                return this.useVideoStream(null).then(() =>
+                    return this.useVideoStream(null).then(() =>
 
-                    // Still fail with the original err
-                    Promise.reject(error)
-                );
+                        // Still fail with the original err
+                        Promise.reject(error)
+                    );
+                });
+        } else {
+            promise = promise.then(() => {
+                logger.debug('_turnScreenSharingOff using null for useVideoStream');
+
+                return this.useVideoStream(null);
             });
+        }
 
         return promise.then(
             () => {
-                // Mute the video if camera video needs to be ignored or if video was muted before switching to screen
-                // share.
-                if (ignoreDidHaveVideo || !didHaveVideo) {
-                    APP.store.dispatch(setVideoMuted(true, MEDIA_TYPE.VIDEO));
-                }
                 this.videoSwitchInProgress = false;
                 sendAnalytics(createScreenSharingEvent('stopped',
                     duration === 0 ? null : duration));
