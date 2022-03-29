@@ -71,8 +71,8 @@ export default {
     },
 
     transparentButton: {
-        ...baseButton,
-        backgroundColor: 'transparent'
+        backgroundColor: 'transparent',
+        marginTop: BaseTheme.spacing[3]
     },
 
     leaveButtonLabel: {
