@@ -18,12 +18,14 @@ import { setParticipantContextMenuOpen } from '../../../base/responsive-ui/actio
 import { getHideSelfView } from '../../../base/settings';
 import { getLocalVideoTrack } from '../../../base/tracks';
 import ConnectionIndicatorContent from '../../../connection-indicator/components/web/ConnectionIndicatorContent';
-import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
+import { isStageFilmstripEnabled } from '../../../filmstrip/functions.web';
+import { LAYOUTS } from '../../../video-layout';
 import { renderConnectionStatus } from '../../actions.web';
 
 import ConnectionStatusButton from './ConnectionStatusButton';
 import FlipLocalVideoButton from './FlipLocalVideoButton';
 import HideSelfViewVideoButton from './HideSelfViewVideoButton';
+import TogglePinToStageButton from './TogglePinToStageButton';
 
 /**
  * The type of the React {@code Component} props of
@@ -94,6 +96,11 @@ type Props = {
     _showLocalVideoFlipButton: boolean,
 
     /**
+     * Whether to render the pin to stage button.
+     */
+    _showPinToStage: boolean,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -158,6 +165,7 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
             _showConnectionInfo,
             _showHideSelfViewButton,
             _showLocalVideoFlipButton,
+            _showPinToStage,
             buttonVisible,
             classes,
             hidePopover,
@@ -183,8 +191,15 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
                                 className = { _overflowDrawer ? classes.flipText : '' }
                                 onClick = { hidePopover } />
                         }
+                        {
+                            _showPinToStage && <TogglePinToStageButton
+                                className = { _overflowDrawer ? classes.flipText : '' }
+                                noIcon = { true }
+                                onClick = { hidePopover }
+                                participantID = { _localParticipantId } />
+                        }
                         { isMobileBrowser()
-                                    && <ConnectionStatusButton participantId = { _localParticipantId } />
+                            && <ConnectionStatusButton participantId = { _localParticipantId } />
                         }
                     </ContextMenuItemGroup>
                 </ContextMenu>
@@ -254,11 +269,12 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
  * Maps (parts of) the Redux state to the associated {@code LocalVideoMenuTriggerButton}'s props.
  *
  * @param {Object} state - The Redux state.
+ * @param {Object} ownProps - The own props of the component.
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state) {
-    const currentLayout = getCurrentLayout(state);
+function _mapStateToProps(state, ownProps) {
+    const { currentLayout } = ownProps;
     const localParticipant = getLocalParticipant(state);
     const { disableLocalVideoFlip, disableSelfViewSettings } = state['features/base/config'];
     const videoTrack = getLocalVideoTrack(state['features/base/tracks']);
@@ -288,7 +304,8 @@ function _mapStateToProps(state) {
         _showHideSelfViewButton: showHideSelfViewButton,
         _overflowDrawer: overflowDrawer,
         _localParticipantId: localParticipant.id,
-        _showConnectionInfo: showConnectionInfo
+        _showConnectionInfo: showConnectionInfo,
+        _showPinToStage: isStageFilmstripEnabled(state)
     };
 }
 

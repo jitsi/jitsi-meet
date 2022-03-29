@@ -6,7 +6,7 @@ import ReactDOM from 'react-dom';
 
 import { browser } from '../../../react/features/base/lib-jitsi-meet';
 import { isTestModeEnabled } from '../../../react/features/base/testing';
-import { FILMSTRIP_BREAKPOINT } from '../../../react/features/filmstrip';
+import { FILMSTRIP_BREAKPOINT, shouldDisplayStageFilmstrip } from '../../../react/features/filmstrip';
 import { ORIENTATION, LargeVideoBackground, updateLastLargeVideoMediaEvent } from '../../../react/features/large-video';
 import { LAYOUTS, getCurrentLayout } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
@@ -414,7 +414,7 @@ export class VideoContainer extends LargeContainer {
 
         const verticalFilmstripWidth = state['features/filmstrip'].width?.current;
 
-        if (currentLayout === LAYOUTS.TILE_VIEW) {
+        if (currentLayout === LAYOUTS.TILE_VIEW || shouldDisplayStageFilmstrip(state)) {
             // We don't need to resize the large video since it won't be displayed and we'll resize when returning back
             // to stage view.
             return;
