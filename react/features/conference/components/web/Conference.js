@@ -229,13 +229,13 @@ class Conference extends AbstractConference<Props, *> {
                 id = 'layout_wrapper'
                 onMouseEnter = { this._onMouseEnter }
                 onMouseLeave = { this._onMouseLeave }
-                onMouseMove = { this._onMouseMove } >
+                onMouseMove = { this._onMouseMove }
+                ref = { this._setBackground }>
                 <Chat />
                 <div
                     className = { clsx(_layoutClassName, _showStageFilmstrip && 'stage-filmstrip') }
                     id = 'videoconference_page'
-                    onMouseMove = { isMobileBrowser() ? undefined : this._onShowToolbar }
-                    ref = { this._setBackground }>
+                    onMouseMove = { isMobileBrowser() ? undefined : this._onShowToolbar }>
                     <ConferenceInfo />
                     <Notice />
                     <div
