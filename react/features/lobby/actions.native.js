@@ -1,8 +1,8 @@
-// @flow
-
-import { type Dispatch } from 'redux';
+import { batch } from 'react-redux';
 
 import { appNavigate } from '../app/actions';
+
+import { hideLobbyScreen, setKnockingState } from './actions.any';
 
 export * from './actions.any';
 
@@ -12,8 +12,11 @@ export * from './actions.any';
  * @returns {Function}
  */
 export function cancelKnocking() {
-    return async (dispatch: Dispatch<any>) => {
-        dispatch(appNavigate(undefined));
+    return dispatch => {
+        batch(() => {
+            dispatch(setKnockingState(false));
+            dispatch(hideLobbyScreen());
+            dispatch(appNavigate(undefined));
+        });
     };
 }
-
