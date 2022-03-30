@@ -171,6 +171,11 @@ export default {
     thumbnailDominantSpeaker: {
         borderWidth: 4,
         borderColor: BaseTheme.palette.action01Hover
+    },
+
+    thumbnailGif: {
+        flexGrow: 1,
+        resizeMode: 'contain'
     }
 };
 

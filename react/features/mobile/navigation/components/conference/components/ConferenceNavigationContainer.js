@@ -10,6 +10,7 @@ import { Chat } from '../../../../../chat';
 import Conference from '../../../../../conference/components/native/Conference';
 import { getDisablePolls } from '../../../../../conference/functions';
 import { SharedDocument } from '../../../../../etherpad';
+import { GifsMenu } from '../../../../../gifs/components';
 import AddPeopleDialog
     from '../../../../../invite/components/add-people-dialog/native/AddPeopleDialog';
 import LobbyScreen from '../../../../../lobby/components/native/LobbyScreen';
@@ -27,6 +28,7 @@ import { screen } from '../../../routes';
 import {
     chatScreenOptions,
     conferenceScreenOptions,
+    gifsMenuOptions,
     inviteScreenOptions,
     liveStreamScreenOptions,
     lobbyScreenOptions,
@@ -123,6 +125,13 @@ const ConferenceNavigationContainer = () => {
                     options = {{
                         ...salesforceScreenOptions,
                         title: t('notify.linkToSalesforce')
+                    }} />
+                <ConferenceStack.Screen
+                    component = { GifsMenu }
+                    name = { screen.conference.gifsMenu }
+                    options = {{
+                        ...gifsMenuOptions,
+                        title: t('notify.gifsMenu')
                     }} />
                 <ConferenceStack.Screen
                     component = { LobbyScreen }

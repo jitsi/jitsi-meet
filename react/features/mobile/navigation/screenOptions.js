@@ -279,6 +279,11 @@ export const liveStreamScreenOptions = {
 export const salesforceScreenOptions = presentationScreenOptions;
 
 /**
+ * Screen options for GIPHY integration modal.
+ */
+export const gifsMenuOptions = presentationScreenOptions;
+
+/**
  * Screen options for shared document.
  */
 export const sharedDocumentScreenOptions = {

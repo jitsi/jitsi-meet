@@ -30,6 +30,7 @@ export const screen = {
         speakerStats: 'Speaker Stats',
         salesforce: 'Link to Salesforce',
         participants: 'Participants',
+        gifsMenu: 'GIPHY',
         invite: 'Invite',
         sharedDocument: 'Shared document'
     },

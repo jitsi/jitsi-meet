@@ -10,7 +10,7 @@ import { GIF_PREFIX } from './constants';
  * @returns {Object}
  */
 export function getGifForParticipant(state, participantId) {
-    return state['features/gifs'].gifList.get(participantId) || {};
+    return isGifEnabled(state) ? state['features/gifs'].gifList.get(participantId) || {} : {};
 }
 
 /**
@@ -20,7 +20,8 @@ export function getGifForParticipant(state, participantId) {
  * @returns {boolean}
  */
 export function isGifMessage(message) {
-    return message.trim().startsWith(GIF_PREFIX);
+    return message.trim().toLowerCase()
+        .startsWith(GIF_PREFIX);
 }
 
 /**
@@ -43,11 +44,11 @@ export function isGifsMenuOpen(state) {
  * @returns {boolean}
  */
 export function getGifUrl(gif) {
-    const embedUrl = gif?.embed_url || '';
+    const embedUrl = gif?.embed_url || gif?.data?.embed_url || '';
     const idx = embedUrl.lastIndexOf('/');
     const id = embedUrl.substr(idx + 1);
 
-    return `https://i.giphy.com/media/${id}/giphy.webp`;
+    return `https://i.giphy.com/media/${id}/giphy.gif`;
 }
 
 /**
