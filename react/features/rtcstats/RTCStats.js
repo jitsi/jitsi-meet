@@ -98,7 +98,7 @@ class RTCStats {
     /**
      * Send e2e rtt data, the data will be processed by rtcstats-server and saved in the dump file.
      *
-     * @param e2eRttData
+     * @param {Object} e2eRttData - The object that holds the e2e data.
      * @returns {void}
      */
     sendParticipantE2eRttData(e2eRttData) {
