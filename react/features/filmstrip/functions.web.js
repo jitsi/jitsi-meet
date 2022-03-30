@@ -229,9 +229,11 @@ export function getTileDefaultAspectRatio(disableResponsiveTiles, disableTileEnl
 export function getNumberOfPartipantsForTileView(state) {
     const { iAmRecorder } = state['features/base/config'];
     const disableSelfView = shouldHideSelfView(state);
+    const { localScreenShare } = state['features/base/participants'];
+    const localParticipantsCount = getSourceNameSignalingFeatureFlag(state) && localScreenShare ? 2 : 1;
     const numberOfParticipants = getParticipantCountWithFake(state)
         - (iAmRecorder ? 1 : 0)
-        - (disableSelfView ? 1 : 0);
+        - (disableSelfView ? localParticipantsCount : 0);
 
     return numberOfParticipants;
 }
@@ -492,12 +494,17 @@ export function computeDisplayModeFromInput(input: Object) {
         isActiveParticipant,
         isAudioOnly,
         isCurrentlyOnLargeVideo,
+        isFakeScreenShareParticipant,
         isScreenSharing,
         canPlayEventReceived,
         isRemoteParticipant,
         tileViewActive
     } = input;
     const adjustedIsVideoPlayable = input.isVideoPlayable && (!isRemoteParticipant || canPlayEventReceived);
+
+    if (isFakeScreenShareParticipant) {
+        return DISPLAY_VIDEO;
+    }
 
     if (!tileViewActive && ((isScreenSharing && isRemoteParticipant) || isActiveParticipant)) {
         return DISPLAY_AVATAR;
@@ -526,6 +533,7 @@ export function getDisplayModeInput(props: Object, state: Object) {
         _isActiveParticipant,
         _isAudioOnly,
         _isCurrentlyOnLargeVideo,
+        _isFakeScreenShareParticipant,
         _isScreenSharing,
         _isVideoPlayable,
         _participant,
@@ -545,6 +553,7 @@ export function getDisplayModeInput(props: Object, state: Object) {
         videoStream: Boolean(_videoTrack),
         isRemoteParticipant: !_participant?.isFakeParticipant && !_participant?.local,
         isScreenSharing: _isScreenSharing,
+        isFakeScreenShareParticipant: _isFakeScreenShareParticipant,
         videoStreamMuted: _videoTrack ? _videoTrack.muted : 'no stream'
     };
 }
