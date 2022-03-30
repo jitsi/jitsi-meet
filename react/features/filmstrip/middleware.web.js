@@ -22,10 +22,7 @@ import {
     addStageParticipant,
     removeStageParticipant,
     setFilmstripWidth,
-    setHorizontalViewDimensions,
-    setStageParticipants,
-    setTileViewDimensions,
-    setVerticalViewDimensions
+    setStageParticipants
 } from './actions';
 import {
     ACTIVE_PARTICIPANT_TIMEOUT,
@@ -66,21 +63,6 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CLIENT_RESIZED: {
         const state = store.getState();
-        const layout = getCurrentLayout(state);
-
-        switch (layout) {
-        case LAYOUTS.TILE_VIEW: {
-            store.dispatch(setTileViewDimensions());
-            break;
-        }
-        case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW:
-            store.dispatch(setHorizontalViewDimensions());
-            break;
-
-        case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
-            store.dispatch(setVerticalViewDimensions());
-            break;
-        }
 
         if (isFilmstripResizable(state)) {
             const { width: filmstripWidth } = state['features/filmstrip'];
