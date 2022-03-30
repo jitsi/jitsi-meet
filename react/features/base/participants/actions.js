@@ -63,7 +63,7 @@ export function dominantSpeakerChanged(dominantSpeaker, previousSpeakers, confer
 /**
  * Create an action for when a participant e2e RTT is received.
  *
- * @param {object} e2eRtt - The object that holds the e2e rtt information.
+ * @param {Object} e2eRtt - The object that holds the e2e rtt information.
  * @returns {{
  *     type: PARTICIPANT_E2ERTT_RECEIVED,
  *     e2eRtt: {

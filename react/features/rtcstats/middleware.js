@@ -113,7 +113,11 @@ MiddlewareRegistry.register(store => next => action => {
         if (canSendRtcstatsData(state)) {
             const { remoteEndpointId, rtt, remoteRegion } = action.e2eRtt;
 
-            RTCStats.sendParticipantE2eRttData({ remoteEndpointId, rtt, remoteRegion });
+            RTCStats.sendParticipantE2eRttData({
+                remoteEndpointId,
+                rtt,
+                remoteRegion
+            });
         }
         break;
     }
