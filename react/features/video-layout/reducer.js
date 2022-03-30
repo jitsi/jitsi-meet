@@ -3,6 +3,7 @@
 import { ReducerRegistry } from '../base/redux';
 
 import {
+    FAKE_SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
     SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
     SET_TILE_VIEW
 } from './actionTypes';
@@ -27,6 +28,7 @@ const STORE_NAME = 'features/video-layout';
 
 ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
     switch (action.type) {
+    case FAKE_SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED:
     case SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED: {
         return {
             ...state,

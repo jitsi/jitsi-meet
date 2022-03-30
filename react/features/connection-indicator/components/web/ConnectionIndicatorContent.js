@@ -88,6 +88,12 @@ type Props = AbstractProps & {
     _enableSaveLogs: boolean,
 
     /**
+     * Whether or not the displays stats are for screen share. This prop is behind the sourceNameSignaling feature
+     * flag.
+     */
+    _isFakeScreenShareParticipant: Boolean,
+
+    /**
      * Whether or not the displays stats are for local video.
      */
     _isLocalVideo: boolean,
@@ -199,6 +205,7 @@ class ConnectionIndicatorContent extends AbstractConnectionIndicator<Props, Stat
                 e2eRtt = { e2eRtt }
                 enableSaveLogs = { this.props._enableSaveLogs }
                 framerate = { framerate }
+                isFakeScreenShareParticipant = { this.props._isFakeScreenShareParticipant }
                 isLocalVideo = { this.props._isLocalVideo }
                 maxEnabledResolution = { maxEnabledResolution }
                 onSaveLogs = { this.props._onSaveLogs }
@@ -334,10 +341,11 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
         _connectionStatus: participant?.connectionStatus,
         _enableSaveLogs: state['features/base/config'].enableSaveLogs,
         _disableShowMoreStats: state['features/base/config'].disableShowMoreStats,
-        _isLocalVideo: participant?.local,
-        _region: participant?.region,
         _isConnectionStatusInactive,
-        _isConnectionStatusInterrupted
+        _isConnectionStatusInterrupted,
+        _isFakeScreenShareParticipant: sourceNameSignalingEnabled && participant?.isFakeScreenShareParticipant,
+        _isLocalVideo: participant?.local,
+        _region: participant?.region
     };
 
     if (conference) {
