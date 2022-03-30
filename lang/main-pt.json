@@ -39,9 +39,6 @@
     "audioOnly": {
         "audioOnly": "Largura de banda baixa"
     },
-    "blankPage": {
-        "meetingEnded": "A reunião terminou."
-    },
     "breakoutRooms": {
         "actions": {
             "add": "Adicionar salas simultâneas",
@@ -423,7 +420,7 @@
     },
     "giphy": {
         "noResults": "Não foram encontrados resultados :(",
-        "search": "Procurar GIPHY"
+        "search": "Procurar no GIPHY"
     },
     "helpView": {
         "header": "Centro de ajuda"
@@ -491,7 +488,7 @@
         "focusLocal": "Focar no seu vídeo",
         "focusRemote": "Focar no vídeo de outro participante",
         "fullScreen": "Entrar ou sair do ecrã completo",
-        "giphyMenu": "Alternar o menu GIPHY",
+        "giphyMenu": "Ativar/Desativar o menu GIPHY",
         "keyboardShortcuts": "Atalhos de teclado",
         "localRecording": "Mostrar ou ocultar controlos de gravação local",
         "mute": "Ligar ou desligar o seu microfone",
@@ -559,6 +556,7 @@
         "errorMissingPassword": "Por favor introduza a senha da reunião",
         "invalidPassword": "Senha inválida",
         "joinRejectedMessage": "O seu pedido de adesão foi rejeitado por um moderador.",
+        "joinRejectedTitle": "Pedido de adesão rejeitado.",
         "joinTitle": "Junte-se à reunião",
         "joinWithPasswordMessage": "Tentando aderir com senha, por favor aguarde...",
         "joiningMessage": "Participará na reunião assim que alguém aceitar o seu pedido",
@@ -631,6 +629,7 @@
         "displayNotifications": "Mostrar notificações para",
         "focus": "Foco da conferência",
         "focusFail": "{{component}} não disponĩvel - tente em {{ms}} seg.",
+        "gifsMenu": "GIPHY",
         "groupTitle": "Notificações",
         "hostAskedUnmute": "O moderador gostaria que você falasse",
         "invitedOneMember": "{{displayName}} foi convidado",
@@ -724,6 +723,7 @@
     },
     "passwordDigitsOnly": "Até {{number}} dígitos",
     "passwordSetRemotely": "Definido por outro participante",
+    "pinnedParticipant": "O participante está fixado",
     "polls": {
         "answer": {
             "skip": "Ignorar",
@@ -865,6 +865,11 @@
         "expandedPending": "Iniciando gravação...",
         "failedToStart": "Falha ao iniciar a gravação",
         "fileSharingdescription": "Partilhar o link da gravação com os participantes da reunião",
+        "highlight": "Destaque",
+        "highlightMoment": "Momento de destaque",
+        "highlightMomentDisabled": "É possível destacar momentos quando a gravação começa",
+        "highlightMomentSuccess": "Momento destacado",
+        "highlightMomentSucessDescription": "O seu momento destacado será acrescentado ao resumo da reunião.",
         "inProgress": "Gravação ou transmissão em direto em curso",
         "limitNotificationDescriptionNative": "Due to high demand your recording will be limited to {{limit}} min. Para gravações ilimitadas tente <3>{{app}}</3>.",
         "limitNotificationDescriptionWeb": "Devido à grande procura, a sua gravação será limitada a {{limit}} min. For unlimited recordings try <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
@@ -1012,7 +1017,7 @@
             "expand": "Expandir",
             "feedback": "Deixar comentários",
             "fullScreen": "Mudar para ecrã completo",
-            "giphy": "Alternar o menu GIPHY",
+            "giphy": "Ativar/Desativar o menu GIPHY",
             "grantModerator": "Conceder direitos de moderador",
             "hangup": "Sair da reunião",
             "help": "Ajuda",
@@ -1082,7 +1087,7 @@
         "exitFullScreen": "Sair de ecrã completo",
         "exitTileView": "Sair de quadrícula",
         "feedback": "Deixar comentários",
-        "giphy": "Alternar o menu GIPHY",
+        "giphy": "Ativar/Desativar o menu GIPHY",
         "hangup": "Sair da reunião",
         "help": "Ajuda",
         "invite": "Convidar pessoas",
@@ -1210,10 +1215,12 @@
         "moderator": "Moderador",
         "mute": "Participante está sem som",
         "muted": "Sem som",
+        "pinToStage": "Fixar no palco",
         "remoteControl": "Iniciar / Parar controlo remoto",
         "screenSharing": "Participante está a partilhar o seu ecrã",
         "show": "Mostrar no palco",
         "showSelfView": "Mostrar autovisualização",
+        "unpinFromStage": "Desafixar",
         "videoMuted": "Câmara desativada",
         "videomute": "Participante parou a câmara"
     },
