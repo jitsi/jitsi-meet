@@ -148,7 +148,7 @@ const ContextMenu = ({
 
             setIsHidden(false);
         } else {
-            setIsHidden(true);
+            hidden === undefined && setIsHidden(true);
         }
     }, [ entity, offsetTarget, _overflowDrawer ]);
 
