@@ -2,10 +2,7 @@
 import React, { Component } from 'react';
 import { shouldComponentUpdate } from 'react-window';
 
-<<<<<<< HEAD
-=======
 import { getSourceNameSignalingFeatureFlag } from '../../../base/config';
->>>>>>> bloomberg-fake-screen-share-participant
 import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { shouldHideSelfView } from '../../../base/settings/functions.any';
