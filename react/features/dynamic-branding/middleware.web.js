@@ -1,6 +1,6 @@
 // @flow
 
-import { APP_WILL_MOUNT } from '../base/app';
+import { SET_CONFIG, UPDATE_CONFIG, OVERWRITE_CONFIG } from '../base/config';
 import { MiddlewareRegistry } from '../base/redux';
 
 import { SET_DYNAMIC_BRANDING_DATA } from './actionTypes';
@@ -9,9 +9,11 @@ import { createMuiBrandingTheme } from './functions.web';
 
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case APP_WILL_MOUNT: {
+    case SET_CONFIG:
+    case UPDATE_CONFIG:
+    case OVERWRITE_CONFIG: {
 
-        store.dispatch(fetchCustomBrandingData());
+        store.dispatch(fetchCustomBrandingData(action));
         break;
     }
     case SET_DYNAMIC_BRANDING_DATA: {

@@ -130,6 +130,7 @@ export default [
     'doNotStoreRoom',
     'doNotFlipLocalVideo',
     'dropbox',
+    'dynamicBrandingUrl',
     'e2eeLabels',
     'e2ee',
     'e2eping',

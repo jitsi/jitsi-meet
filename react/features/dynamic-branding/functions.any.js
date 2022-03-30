@@ -1,7 +1,5 @@
 // @flow
 
-import { loadConfig } from '../base/lib-jitsi-meet';
-
 /**
  * Extracts the fqn part from a path, where fqn represents
  * tenant/roomName.
@@ -29,17 +27,14 @@ export function extractFqnFromPath(state?: Object) {
 /**
  * Returns the url used for fetching dynamic branding.
  *
+ * @param {Object} config - The config from which to read
  * @returns {string}
  */
-export async function getDynamicBrandingUrl() {
-    const config = await loadConfig(window.location.href);
-    const { dynamicBrandingUrl } = config;
-
+export function getDynamicBrandingUrl({ dynamicBrandingUrl, brandingDataUrl: baseUrl }) {
     if (dynamicBrandingUrl) {
         return dynamicBrandingUrl;
     }
 
-    const { brandingDataUrl: baseUrl } = config;
     const fqn = extractFqnFromPath();
 
     if (baseUrl && fqn) {

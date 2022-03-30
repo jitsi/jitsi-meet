@@ -21,13 +21,13 @@ const logger = getLogger(__filename);
  *
  * @returns {Function}
  */
-export function fetchCustomBrandingData() {
+export function fetchCustomBrandingData({ config }) {
     return async function(dispatch: Function, getState: Function) {
         const state = getState();
         const { customizationReady } = state['features/dynamic-branding'];
 
         if (!customizationReady) {
-            const url = await getDynamicBrandingUrl();
+            const url = getDynamicBrandingUrl(config);
 
             if (url) {
                 try {
