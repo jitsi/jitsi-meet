@@ -479,7 +479,7 @@ export function participantMutedUs(participant, track) {
             titleArguments: {
                 participantDisplayName: getParticipantDisplayName(getState, participant.getId())
             }
-        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
     };
 }
 
