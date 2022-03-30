@@ -107,7 +107,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             sticky: true,
             titleKey,
             uid
-        }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+        }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
 
         break;
     }
@@ -223,7 +223,7 @@ StateListenerRegistry.register(
                         sticky: true,
                         customActionNameKey: [ 'notify.unmute' ],
                         customActionHandler: [ () => dispatch(muteLocal(false, MEDIA_TYPE.AUDIO)) ]
-                    }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+                    }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
                     dispatch(playSound(ASKED_TO_UNMUTE_SOUND_ID));
                 }
             });
