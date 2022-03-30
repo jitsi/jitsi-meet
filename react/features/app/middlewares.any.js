@@ -30,7 +30,6 @@ import '../display-name/middleware';
 import '../etherpad/middleware';
 import '../filmstrip/middleware';
 import '../follow-me/middleware';
-import '../gifs/middleware';
 import '../invite/middleware';
 import '../jaas/middleware';
 import '../large-video/middleware';

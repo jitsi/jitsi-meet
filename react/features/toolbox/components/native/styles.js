@@ -51,6 +51,11 @@ const reactionButton = {
     marginHorizontal: 0
 };
 
+const gifButton = {
+    ...reactionButton,
+    backgroundColor: '#000'
+};
+
 /**
  * The style of the emoji on the reaction buttons.
  */
@@ -161,6 +166,7 @@ ColorSchemeRegistry.register('Toolbox', {
     },
 
     reactionButton: {
+        gifButton,
         style: reactionButton,
         underlayColor: BaseTheme.palette.ui13,
         emoji: reactionEmoji

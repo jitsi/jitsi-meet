@@ -66,6 +66,11 @@ PODS:
     - GoogleUtilities/UserDefaults (~> 6.7)
     - PromisesObjC (~> 1.2)
   - fmt (6.2.1)
+  - Giphy (2.1.20):
+    - libwebp
+  - giphy-react-native-sdk (1.7.0):
+    - Giphy (= 2.1.20)
+    - React-Core
   - glog (0.3.5)
   - GoogleAppMeasurement (6.8.3):
     - GoogleUtilities/AppDelegateSwizzler (~> 6.7)
@@ -102,6 +107,15 @@ PODS:
     - AppAuth/Core (~> 1.4)
     - GTMSessionFetcher/Core (~> 1.5)
   - GTMSessionFetcher/Core (1.7.0)
+  - libwebp (1.2.1):
+    - libwebp/demux (= 1.2.1)
+    - libwebp/mux (= 1.2.1)
+    - libwebp/webp (= 1.2.1)
+  - libwebp/demux (1.2.1):
+    - libwebp/webp
+  - libwebp/mux (1.2.1):
+    - libwebp/demux
+  - libwebp/webp (1.2.1)
   - nanopb (1.30906.0):
     - nanopb/decode (= 1.30906.0)
     - nanopb/encode (= 1.30906.0)
@@ -442,6 +456,7 @@ DEPENDENCIES:
   - Firebase/Analytics (~> 6.33.0)
   - Firebase/Crashlytics (~> 6.33.0)
   - Firebase/DynamicLinks (~> 6.33.0)
+  - "giphy-react-native-sdk (from `../node_modules/@giphy/react-native-sdk`)"
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - ObjectiveDropboxOfficial (= 6.2.3)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
@@ -510,12 +525,14 @@ SPEC REPOS:
     - FirebaseDynamicLinks
     - FirebaseInstallations
     - fmt
+    - Giphy
     - GoogleAppMeasurement
     - GoogleDataTransport
     - GoogleSignIn
     - GoogleUtilities
     - GTMAppAuth
     - GTMSessionFetcher
+    - libwebp
     - nanopb
     - ObjectiveDropboxOfficial
     - PromisesObjC
@@ -531,6 +548,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/Libraries/FBLazyVector"
   FBReactNativeSpec:
     :path: "../node_modules/react-native/React/FBReactNativeSpec"
+  giphy-react-native-sdk:
+    :path: "../node_modules/@giphy/react-native-sdk"
   glog:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
   RCT-Folly:
@@ -651,6 +670,8 @@ SPEC CHECKSUMS:
   FirebaseDynamicLinks: 6eac37d86910382eafb6315d952cc44c9e176094
   FirebaseInstallations: 466c7b4d1f58fe16707693091da253726a731ed2
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
+  Giphy: b6d5087521d251bb8c99cdc0eb07bbdf86d142d5
+  giphy-react-native-sdk: 7abccf2b52123a0f30ce99da895ab6288023680c
   glog: 5337263514dd6f09803962437687240c5dc39aa4
   GoogleAppMeasurement: 966e88df9d19c15715137bb2ddaf52373f111436
   GoogleDataTransport: f56af7caa4ed338dc8e138a5d7c5973e66440833
@@ -658,6 +679,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: 7f2f5a07f888cdb145101d6042bc4422f57e70b3
   GTMAppAuth: ad5c2b70b9a8689e1a04033c9369c4915bfcbe89
   GTMSessionFetcher: 43748f93435c2aa068b1cbe39655aaf600652e91
+  libwebp: 98a37e597e40bfdb4c911fc98f2c53d0b12d05fc
   nanopb: 59317e09cf1f1a0af72f12af412d54edf52603fc
   ObjectiveDropboxOfficial: fe206ce8c0bc49976c249d472db7fdbc53ebbd53
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97

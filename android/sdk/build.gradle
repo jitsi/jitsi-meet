@@ -50,7 +50,8 @@ dependencies {
     api 'com.facebook.react:react-native:+'
     //noinspection GradleDynamicVersion
     implementation 'org.webkit:android-jsc:+'
-
+    
+    implementation 'com.facebook.fresco:animated-gif:2.5.0'
     implementation 'com.dropbox.core:dropbox-core-sdk:4.0.1'
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'com.squareup.duktape:duktape-android:1.3.0'
@@ -80,6 +81,7 @@ dependencies {
     implementation project(':react-native-default-preference')
     implementation project(':react-native-gesture-handler')
     implementation project(':react-native-get-random-values')
+    implementation project(':react-native-giphy')
     implementation project(':react-native-immersive')
     implementation project(':react-native-keep-awake')
     implementation project(':react-native-masked-view_masked-view')
