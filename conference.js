@@ -94,6 +94,7 @@ import {
     localParticipantConnectionStatusChanged,
     localParticipantRoleChanged,
     participantConnectionStatusChanged,
+    participantE2eRttReceived,
     participantKicked,
     participantMutedUs,
     participantPresenceChanged,
@@ -2083,6 +2084,12 @@ export default {
                 // is disconnected.
                 room.sessionId = room.getMeetingUniqueId();
                 APP.store.dispatch(conferenceUniqueIdSet(room, ...args));
+            });
+
+        room.on(
+            JitsiConferenceEvents.PARTICIPANT_E2ERTT_RECEIVED,
+            e2eRtt => {
+                APP.store.dispatch(participantE2eRttReceived(e2eRtt));
             });
 
         room.on(

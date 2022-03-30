@@ -95,6 +95,10 @@ class RTCStats {
         this.trace && this.trace.statsEntry('dominantSpeaker', null, dominantSpeakerData);
     }
 
+    sendParticipantE2eRttData(e2eRttData) {
+        this.trace && this.trace.statsEntry('e2eRtt', null, e2eRttData);
+    }
+
     /**
      * Send facial expression data, the data will be processed by rtcstats-server and saved in the dump file.
      *

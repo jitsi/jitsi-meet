@@ -10,6 +10,7 @@ import {
     LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED,
     LOCAL_PARTICIPANT_RAISE_HAND,
     MUTE_REMOTE_PARTICIPANT,
+    PARTICIPANT_E2ERTT_RECEIVED,
     PARTICIPANT_ID_CHANGED,
     PARTICIPANT_JOINED,
     PARTICIPANT_KICKED,
@@ -56,6 +57,26 @@ export function dominantSpeakerChanged(dominantSpeaker, previousSpeakers, confer
             id: dominantSpeaker,
             previousSpeakers
         }
+    };
+}
+
+/**
+ * Create an action for when a participant e2e RTT is received.
+ *
+ * @param {object} e2eRtt - The object that holds the e2e rtt information.
+ * @returns {{
+ *     type: PARTICIPANT_E2ERTT_RECEIVED,
+ *     e2eRtt: {
+ *         remoteEndpointId: string,
+ *         remoteRegion: string,
+ *         rtt: number
+ *     }
+ * }}
+ */
+export function participantE2eRttReceived(e2eRtt: Object) {
+    return {
+        type: PARTICIPANT_E2ERTT_RECEIVED,
+        e2eRtt
     };
 }
 
