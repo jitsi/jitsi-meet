@@ -837,10 +837,7 @@ class Thumbnail extends Component<Props, State> {
         const { _gifSrc, classes } = this.props;
 
         return _gifSrc && (
-            <div
-                className = { classes.gif }
-                onMouseEnter = { this._onGifMouseEnter }
-                onMouseLeave = { this._onGifMouseLeave }>
+            <div className = { classes.gif }>
                 <img
                     alt = 'GIF'
                     src = { _gifSrc } />
@@ -1010,6 +1007,12 @@ class Thumbnail extends Component<Props, State> {
                     className = { clsx(classes.borderIndicator,
                     _gifSrc && classes.borderIndicatorOnTop,
                     'active-speaker-indicator') } />
+                {_gifSrc && (
+                    <div
+                        className = { clsx(classes.borderIndicator, classes.borderIndicatorOnTop) }
+                        onMouseEnter = { this._onGifMouseEnter }
+                        onMouseLeave = { this._onGifMouseLeave } />
+                )}
             </span>
         );
     }
