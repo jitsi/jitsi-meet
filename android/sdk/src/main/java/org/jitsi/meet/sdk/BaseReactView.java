@@ -20,6 +20,7 @@ package org.jitsi.meet.sdk;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -93,7 +94,7 @@ public abstract class BaseReactView<ListenerT>
      * inspired by postis which we use on Web for the similar purposes of the
      * iframe-based external API.
      */
-    protected final String externalAPIScope;
+    protected String externalAPIScope;
 
     /**
      * The listener (e.g. {@link JitsiMeetViewListener}) instance for reporting
@@ -109,16 +110,17 @@ public abstract class BaseReactView<ListenerT>
 
     public BaseReactView(@NonNull Context context) {
         super(context);
+        initialize((Activity)context);
+    }
 
-        setBackgroundColor(BACKGROUND_COLOR);
+    public BaseReactView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        initialize((Activity)context);
+    }
 
-        ReactInstanceManagerHolder.initReactInstanceManager((Activity)context);
-
-        // Hook this BaseReactView into ExternalAPI.
-        externalAPIScope = UUID.randomUUID().toString();
-        synchronized (views) {
-            views.add(this);
-        }
+    public BaseReactView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        initialize((Activity)context);
     }
 
     /**
@@ -222,5 +224,17 @@ public abstract class BaseReactView<ListenerT>
     @Deprecated
     public void setListener(ListenerT listener) {
         this.listener = listener;
+    }
+
+    private void initialize(Activity activity) {
+        setBackgroundColor(BACKGROUND_COLOR);
+
+        ReactInstanceManagerHolder.initReactInstanceManager(activity);
+
+        // Hook this BaseReactView into ExternalAPI.
+        externalAPIScope = UUID.randomUUID().toString();
+        synchronized (views) {
+            views.add(this);
+        }
     }
 }

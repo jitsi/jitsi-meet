@@ -23,7 +23,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.widget.FrameLayout;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -53,13 +52,18 @@ public class JitsiMeetActivity extends AppCompatActivity
     private static final String ACTION_JITSI_MEET_CONFERENCE = "org.jitsi.meet.CONFERENCE";
     private static final String JITSI_MEET_CONFERENCE_OPTIONS = "JitsiMeetConferenceOptions";
 
-    private JitsiMeetView jitsiView;
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             onBroadcastReceived(intent);
         }
     };
+
+    /**
+     * Instance of the {@link JitsiMeetView} which this activity will display.
+     */
+    private JitsiMeetView jitsiView;
+
     // Helpers for starting the activity
     //
 
@@ -87,15 +91,7 @@ public class JitsiMeetActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_jitsi_meet);
-
-        FrameLayout jitsiLayout = findViewById(R.id.jitsi_layout);
-
-        jitsiView = new JitsiMeetView(this);
-        jitsiView.setLayoutParams(new FrameLayout.LayoutParams(
-            FrameLayout.LayoutParams.MATCH_PARENT,
-            FrameLayout.LayoutParams.MATCH_PARENT));
-
-        jitsiLayout.addView(jitsiView);
+        this.jitsiView = findViewById(R.id.jitsiView);
 
         registerForBroadcastMessages();
 
@@ -127,7 +123,7 @@ public class JitsiMeetActivity extends AppCompatActivity
         // conference terminated. Thus, try our best to clean up.
         leave();
 
-        jitsiView = null;
+        this.jitsiView = null;
 
         if (AudioModeModule.useConnectionService()) {
             ConnectionService.abortConnections();
@@ -164,16 +160,16 @@ public class JitsiMeetActivity extends AppCompatActivity
     }
 
     public void join(JitsiMeetConferenceOptions options) {
-        if (jitsiView != null) {
-            jitsiView.join(options);
+        if (this.jitsiView  != null) {
+            this.jitsiView .join(options);
         } else {
             JitsiMeetLogger.w("Cannot join, view is null");
         }
     }
 
     public void leave() {
-        if (jitsiView != null) {
-            jitsiView.leave();
+        if (this.jitsiView  != null) {
+            this.jitsiView .leave();
         } else {
             JitsiMeetLogger.w("Cannot leave, view is null");
         }
@@ -280,8 +276,8 @@ public class JitsiMeetActivity extends AppCompatActivity
 
     @Override
     protected void onUserLeaveHint() {
-        if (jitsiView != null) {
-            jitsiView.enterPictureInPicture();
+        if (this.jitsiView  != null) {
+            this.jitsiView .enterPictureInPicture();
         }
     }
 
