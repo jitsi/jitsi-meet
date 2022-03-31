@@ -565,7 +565,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      * @returns {ReactElement}
      */
     _renderSettingsLeft() {
-        const { disableHideSelfView, showNotificationsSettings, showPrejoinSettings} = this.props;
+        const { disableHideSelfView, showNotificationsSettings, showPrejoinSettings } = this.props;
 
         return (
             <div

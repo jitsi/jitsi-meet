@@ -200,10 +200,10 @@ function _mapStateToProps(state) {
 
                 return {
                     ...newProps,
-                    followMeEnabled: tabState.followMeEnabled,
-                    startAudioMuted: tabState.startAudioMuted,
-                    startVideoMuted: tabState.startVideoMuted,
-                    startReactionsMuted: tabState.startReactionsMuted
+                    followMeEnabled: tabState?.followMeEnabled,
+                    startAudioMuted: tabState?.startAudioMuted,
+                    startVideoMuted: tabState?.startVideoMuted,
+                    startReactionsMuted: tabState?.startReactionsMuted
                 };
             },
             styles: 'settings-pane moderator-pane',
@@ -242,12 +242,12 @@ function _mapStateToProps(state) {
 
                 return {
                     ...newProps,
-                    currentFramerate: tabState.currentFramerate,
-                    currentLanguage: tabState.currentLanguage,
-                    hideSelfView: tabState.hideSelfView,
-                    showPrejoinPage: tabState.showPrejoinPage,
-                    enabledNotifications: tabState.enabledNotifications,
-                    disableAutoMute: tabState.disableAutoMute,
+                    currentFramerate: tabState?.currentFramerate,
+                    currentLanguage: tabState?.currentLanguage,
+                    hideSelfView: tabState?.hideSelfView,
+                    showPrejoinPage: tabState?.showPrejoinPage,
+                    enabledNotifications: tabState?.enabledNotifications,
+                    disableAutoMute: tabState?.disableAutoMute,
                 };
             },
             styles: 'settings-pane more-pane',
