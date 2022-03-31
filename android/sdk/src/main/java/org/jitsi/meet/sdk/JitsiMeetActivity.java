@@ -16,6 +16,7 @@
 
 package org.jitsi.meet.sdk;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -32,11 +33,16 @@ import com.facebook.react.modules.core.PermissionListener;
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 import java.util.HashMap;
-import android.app.Activity;
 
 /**
- * A base activity for SDK users to embed. It uses {@link JitsiMeetFragment} to do the heavy
- * lifting and wires the remaining Activity lifecycle methods so it works out of the box.
+ * A base activity for SDK users to embed.  It contains all the required wiring
+ * between the {@code JitsiMeetView} and the Activity lifecycle methods.
+ *
+ * In this activity we use a single {@code JitsiMeetView} instance. This
+ * instance gives us access to a view which displays the welcome page and the
+ * conference itself. All lifecycle methods associated with this Activity are
+ * hooked to the React Native subsystem via proxy calls through the
+ * {@code JitsiMeetActivityDelegate} static methods.
  */
 public class JitsiMeetActivity extends AppCompatActivity
     implements JitsiMeetActivityInterface {
@@ -52,6 +58,12 @@ public class JitsiMeetActivity extends AppCompatActivity
             onBroadcastReceived(intent);
         }
     };
+
+    /**
+     * Instance of the {@link JitsiMeetView} which this activity will display.
+     */
+    private JitsiMeetView jitsiView;
+
     // Helpers for starting the activity
     //
 
@@ -79,12 +91,25 @@ public class JitsiMeetActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_jitsi_meet);
+        this.jitsiView = findViewById(R.id.jitsiView);
 
         registerForBroadcastMessages();
 
         if (!extraInitialize()) {
             initialize();
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        JitsiMeetActivityDelegate.onHostResume(this);
+    }
+
+    @Override
+    public void onStop() {
+        JitsiMeetActivityDelegate.onHostPause(this);
+        super.onStop();
     }
 
     @Override
@@ -97,12 +122,17 @@ public class JitsiMeetActivity extends AppCompatActivity
         // be operational so the external API won't be able to notify the native side that the
         // conference terminated. Thus, try our best to clean up.
         leave();
+
+        this.jitsiView = null;
+
         if (AudioModeModule.useConnectionService()) {
             ConnectionService.abortConnections();
         }
         JitsiMeetOngoingConferenceService.abort(this);
 
         LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
+
+        JitsiMeetActivityDelegate.onHostDestroy(this);
 
         super.onDestroy();
     }
@@ -118,9 +148,7 @@ public class JitsiMeetActivity extends AppCompatActivity
     //
 
     protected JitsiMeetView getJitsiView() {
-        JitsiMeetFragment fragment
-            = (JitsiMeetFragment) getSupportFragmentManager().findFragmentById(R.id.jitsiFragment);
-        return fragment != null ? fragment.getJitsiView() : null;
+        return jitsiView;
     }
 
     public void join(@Nullable String url) {
@@ -132,20 +160,16 @@ public class JitsiMeetActivity extends AppCompatActivity
     }
 
     public void join(JitsiMeetConferenceOptions options) {
-        JitsiMeetView view = getJitsiView();
-
-        if (view != null) {
-            view.join(options);
+        if (this.jitsiView  != null) {
+            this.jitsiView .join(options);
         } else {
             JitsiMeetLogger.w("Cannot join, view is null");
         }
     }
 
     public void leave() {
-        JitsiMeetView view = getJitsiView();
-
-        if (view != null) {
-            view.leave();
+        if (this.jitsiView  != null) {
+            this.jitsiView .leave();
         } else {
             JitsiMeetLogger.w("Cannot leave, view is null");
         }
@@ -252,10 +276,8 @@ public class JitsiMeetActivity extends AppCompatActivity
 
     @Override
     protected void onUserLeaveHint() {
-        JitsiMeetView view = getJitsiView();
-
-        if (view != null) {
-            view.enterPictureInPicture();
+        if (this.jitsiView  != null) {
+            this.jitsiView .enterPictureInPicture();
         }
     }
 
