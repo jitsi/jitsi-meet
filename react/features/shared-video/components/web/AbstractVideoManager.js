@@ -345,8 +345,8 @@ class AbstractVideoManager extends PureComponent<Props> {
      *
      * @returns {void}
      */
-   smartAudioMute() {
-        const { _isLocalAudioMuted, _muteLocal,_disableAutoMute } = this.props;
+    smartAudioMute() {
+        const { _isLocalAudioMuted, _muteLocal, _disableAutoMute } = this.props;
 
         if (!_isLocalAudioMuted
             && this.isSharedVideoVolumeOn() && !_disableAutoMute) {
