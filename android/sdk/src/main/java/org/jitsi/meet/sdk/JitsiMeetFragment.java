@@ -17,7 +17,6 @@
 
 package org.jitsi.meet.sdk;
 
-import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -38,6 +37,7 @@ import android.view.ViewGroup;
  * hooked to the React Native subsystem via proxy calls through the
  * {@code JitsiMeetActivityDelegate} static methods.
  */
+@Deprecated
 public class JitsiMeetFragment extends Fragment {
 
     /**
