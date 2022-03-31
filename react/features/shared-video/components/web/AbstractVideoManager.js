@@ -17,7 +17,6 @@ import { muteLocal } from '../../../video-menu/actions.any';
 import { setSharedVideoStatus, stopSharedVideo } from '../../actions.any';
 import { PLAYBACK_STATUSES } from '../../constants';
 
-
 const logger = Logger.getLogger(__filename);
 
 /**
@@ -36,7 +35,6 @@ function shouldSeekToPosition(newTime, previousTime) {
  * The type of the React {@link PureComponent} props of {@link AbstractVideoManager}.
  */
 export type Props = {
-
 
     /**
      * The current coference.
