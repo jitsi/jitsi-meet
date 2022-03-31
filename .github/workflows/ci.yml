@@ -16,10 +16,8 @@ jobs:
       run: git status
     - name: Normalize lang files to ensure sorted
       run: npm run lang-sort
-    - name: Check git diff
-      run: git diff
     - name: Check if the git repository is clean
-      run: exit $( git status --porcelain --untracked-files=no | head -255 | wc -l )
+      run: $(exit $(git status --porcelain --untracked-files=no | head -255 | wc -l)) || (echo "Dirty git tree"; git diff; exit 1)
     - run: npm run lint
     - run: for file in lang/*.json; do npx --yes jsonlint -q $file || exit 1; done
     - run: make
