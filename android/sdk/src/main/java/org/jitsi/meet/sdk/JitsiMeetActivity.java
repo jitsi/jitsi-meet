@@ -36,8 +36,14 @@ import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 import java.util.HashMap;
 
 /**
- * A base activity for SDK users to embed. It uses {@link JitsiMeetView} to do the heavy
- * lifting and wires the remaining Activity lifecycle methods so it works out of the box.
+ * A base activity for SDK users to embed.  It contains all the required wiring
+ * between the {@code JitsiMeetView} and the Activity lifecycle methods.
+ *
+ * In this activity we use a single {@code JitsiMeetView} instance. This
+ * instance gives us access to a view which displays the welcome page and the
+ * conference itself. All lifecycle methods associated with this Activity are
+ * hooked to the React Native subsystem via proxy calls through the
+ * {@code JitsiMeetActivityDelegate} static methods.
  */
 public class JitsiMeetActivity extends AppCompatActivity
     implements JitsiMeetActivityInterface {

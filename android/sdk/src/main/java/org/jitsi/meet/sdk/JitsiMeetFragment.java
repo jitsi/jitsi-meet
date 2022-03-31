@@ -36,6 +36,8 @@ import android.view.ViewGroup;
  * conference itself. All lifecycle methods associated with this Fragment are
  * hooked to the React Native subsystem via proxy calls through the
  * {@code JitsiMeetActivityDelegate} static methods.
+ *
+ * @deprecated use {@link JitsiMeetActivity} or directly {@link JitsiMeetView}
  */
 @Deprecated
 public class JitsiMeetFragment extends Fragment {
