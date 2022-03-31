@@ -6,9 +6,8 @@ import { getAmplitudeIdentity } from '../analytics';
 import { CONFERENCE_UNIQUE_ID_SET, getConferenceOptions, getRoomName } from '../base/conference';
 import { LIB_WILL_INIT } from '../base/lib-jitsi-meet';
 import {
-    DOMINANT_SPEAKER_CHANGED,
-    getLocalParticipant,
-    PARTICIPANT_E2ERTT_RECEIVED
+    DOMINANT_SPEAKER_CHANGED, E2E_RTT_CHANGED,
+    getLocalParticipant
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { ADD_FACIAL_EXPRESSION } from '../facial-recognition/actionTypes';
@@ -109,11 +108,11 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
     }
-    case PARTICIPANT_E2ERTT_RECEIVED: {
+    case E2E_RTT_CHANGED: {
         if (canSendRtcstatsData(state)) {
             const { remoteEndpointId, rtt, remoteRegion } = action.e2eRtt;
 
-            RTCStats.sendParticipantE2eRttData({
+            RTCStats.sendE2eRttData({
                 remoteEndpointId,
                 rtt,
                 remoteRegion

@@ -101,7 +101,7 @@ class RTCStats {
      * @param {Object} e2eRttData - The object that holds the e2e data.
      * @returns {void}
      */
-    sendParticipantE2eRttData(e2eRttData) {
+    sendE2eRttData(e2eRttData) {
         this.trace && this.trace.statsEntry('e2eRtt', null, e2eRttData);
     }
 

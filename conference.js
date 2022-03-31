@@ -69,6 +69,7 @@ import {
     JitsiConferenceEvents,
     JitsiConnectionErrors,
     JitsiConnectionEvents,
+    JitsiE2ePingEvents,
     JitsiMediaDevicesEvents,
     JitsiParticipantConnectionStatus,
     JitsiTrackErrors,
@@ -94,7 +95,7 @@ import {
     localParticipantConnectionStatusChanged,
     localParticipantRoleChanged,
     participantConnectionStatusChanged,
-    participantE2eRttReceived,
+    e2eRttChanged,
     participantKicked,
     participantMutedUs,
     participantPresenceChanged,
@@ -2087,9 +2088,9 @@ export default {
             });
 
         room.on(
-            JitsiConferenceEvents.PARTICIPANT_E2ERTT_RECEIVED,
-            e2eRtt => {
-                APP.store.dispatch(participantE2eRttReceived(e2eRtt));
+            JitsiE2ePingEvents.E2E_RTT_CHANGED,
+            (participant, rtt) => {
+                APP.store.dispatch(e2eRttChanged(participant, rtt));
             });
 
         room.on(

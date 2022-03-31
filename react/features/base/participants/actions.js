@@ -3,6 +3,7 @@ import { set } from '../redux';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
+    E2E_RTT_CHANGED,
     HIDDEN_PARTICIPANT_JOINED,
     HIDDEN_PARTICIPANT_LEFT,
     GRANT_MODERATOR,
@@ -10,7 +11,6 @@ import {
     LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED,
     LOCAL_PARTICIPANT_RAISE_HAND,
     MUTE_REMOTE_PARTICIPANT,
-    PARTICIPANT_E2ERTT_RECEIVED,
     PARTICIPANT_ID_CHANGED,
     PARTICIPANT_JOINED,
     PARTICIPANT_KICKED,
@@ -61,11 +61,12 @@ export function dominantSpeakerChanged(dominantSpeaker, previousSpeakers, confer
 }
 
 /**
- * Create an action for when a participant e2e RTT is received.
+ * Create an action for when a participant e2e rtt is changed.
  *
- * @param {Object} e2eRtt - The object that holds the e2e rtt information.
+ * @param {Object} participant - The participant against which the rtt is measured.
+ * @param {number} rtt - The rtt.
  * @returns {{
- *     type: PARTICIPANT_E2ERTT_RECEIVED,
+ *     type: E2E_RTT_CHANGED,
  *     e2eRtt: {
  *         remoteEndpointId: string,
  *         remoteRegion: string,
@@ -73,10 +74,14 @@ export function dominantSpeakerChanged(dominantSpeaker, previousSpeakers, confer
  *     }
  * }}
  */
-export function participantE2eRttReceived(e2eRtt: Object) {
+export function e2eRttChanged(participant, rtt) {
     return {
-        type: PARTICIPANT_E2ERTT_RECEIVED,
-        e2eRtt
+        type: E2E_RTT_CHANGED,
+        e2eRtt: {
+            rtt,
+            remoteEndpointId: participant.getId(),
+            remoteRegion: participant.getProperty('region')
+        }
     };
 }
 
