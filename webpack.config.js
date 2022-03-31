@@ -386,16 +386,6 @@ module.exports = (_env, argv) => {
         }),
         Object.assign({}, config, {
             entry: {
-                'face-centering-worker': './react/features/face-centering/faceCenteringWorker.js'
-            },
-            plugins: [
-                ...config.plugins,
-                ...getBundleAnalyzerPlugin(analyzeBundle, 'face-centering-worker')
-            ],
-            performance: getPerformanceHints(perfHintOptions, 500 * 1024)
-        }),
-        Object.assign({}, config, {
-            entry: {
                 'facial-expressions-worker': './react/features/facial-recognition/facialExpressionsWorker.js'
             },
             plugins: [
