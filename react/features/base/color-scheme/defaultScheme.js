@@ -45,11 +45,6 @@ export default {
     'LargeVideo': {
         background: '#040404'
     },
-    'Thumbnail': {
-        activeParticipantHighlight: 'rgb(81, 214, 170)',
-        activeParticipantTint: 'rgba(49, 183, 106, 0.3)',
-        background: '#36383C'
-    },
     'Toolbox': {
         button: 'rgb(255, 255, 255)',
         buttonToggled: 'rgb(38, 58, 76)',
