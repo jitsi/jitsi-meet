@@ -32,13 +32,11 @@ describe('Jitsi Meet App', () => {
         true;
     });
 
-    // it('is welcome screen enabled', async () => {
-    //     await expect(element(by.id(WELCOME_PAGE_ID))).toBeVisible();
-    // });
+    it('is welcome screen enabled', async () => {
+        await expect(element(by.id(WELCOME_PAGE_ID))).toBeVisible();
+    });
 
     it('did the display name update', async () => {
-        await sleep(2000);
-
         await waitFor(element(by.id(DRAWER_MENU_BUTTON_ID))).toBeVisible();
         await element(by.id(DRAWER_MENU_BUTTON_ID)).tap();
         await waitFor(element(by.id(DRAWER_NAVIGATOR_ID))).toBeVisible();
@@ -51,21 +49,21 @@ describe('Jitsi Meet App', () => {
         await expect(element(by.text(DISPLAY_NAME))).toBeVisible();
     });
 
-    // it('Mute audio/video', async () => {
-    //     await expect(element(by.id(ROOM_NAME_INPUT_ID))).toBeVisible();
-    //
-    //     // Helps the app to move forward with the test execution
-    //     // when it navigates to the conference room
-    //     await device.disableSynchronization();
-    //     await element(by.id(ROOM_NAME_INPUT_ID)).tap();
-    //     await element(by.id(ROOM_NAME_INPUT_ID)).typeText(RANDOM_ROOM_NAME);
-    //     await element(by.id(JOIN_ROOM_BUTTON_ID)).tap();
-    //
-    //     // Conference joined
-    //     await sleep(2000);
-    //     await expect(element(by.id(MICROPHONE_BUTTON_ID))).toBeVisible();
-    //     await expect(element(by.id(CAMERA_BUTTON_ID))).toBeVisible();
-    //     await element(by.id(MICROPHONE_BUTTON_ID)).tap();
-    //     await element(by.id(CAMERA_BUTTON_ID)).tap();
-    // });
+    it('Mute audio/video', async () => {
+        await expect(element(by.id(ROOM_NAME_INPUT_ID))).toBeVisible();
+
+        // Helps the app to move forward with the test execution
+        // when it navigates to the conference room
+        await device.disableSynchronization();
+        await element(by.id(ROOM_NAME_INPUT_ID)).tap();
+        await element(by.id(ROOM_NAME_INPUT_ID)).typeText(RANDOM_ROOM_NAME);
+        await element(by.id(JOIN_ROOM_BUTTON_ID)).tap();
+
+        // Conference joined
+        await sleep(2000);
+        await expect(element(by.id(MICROPHONE_BUTTON_ID))).toBeVisible();
+        await expect(element(by.id(CAMERA_BUTTON_ID))).toBeVisible();
+        await element(by.id(MICROPHONE_BUTTON_ID)).tap();
+        await element(by.id(CAMERA_BUTTON_ID)).tap();
+    });
 });
