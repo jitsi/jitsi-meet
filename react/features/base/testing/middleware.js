@@ -25,7 +25,9 @@ import logger from './logger';
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CONFERENCE_WILL_JOIN:
-        _bindConferenceConnectionListener(action.conference, store);
+        if (!store.getState()['features/base/conference'].authRequired) {
+            _bindConferenceConnectionListener(action.conference, store);
+        }
         break;
     case SET_CONFIG: {
         const result = next(action);

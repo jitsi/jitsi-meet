@@ -56,8 +56,8 @@ const parsePollData = (pollData): Poll | null => {
 
 StateListenerRegistry.register(
     state => getCurrentConference(state),
-    (conference, store, previousConference) => {
-        if (conference && conference !== previousConference) {
+    (conference, { dispatch, getState }, previousConference) => {
+        if (conference && conference !== previousConference && !getState()['features/base/conference'].authRequired) {
             const receiveMessage = (_, data) => {
                 switch (data.type) {
                 case COMMAND_NEW_POLL: {
@@ -78,8 +78,8 @@ StateListenerRegistry.register(
                         })
                     };
 
-                    store.dispatch(receivePoll(pollId, poll, true));
-                    store.dispatch(showNotification({
+                    dispatch(receivePoll(pollId, poll, true));
+                    dispatch(showNotification({
                         appearance: NOTIFICATION_TYPE.NORMAL,
                         titleKey: 'polls.notification.title',
                         descriptionKey: 'polls.notification.description'
@@ -98,7 +98,7 @@ StateListenerRegistry.register(
                         answers
                     };
 
-                    store.dispatch(receiveAnswer(pollId, receivedAnswer));
+                    dispatch(receiveAnswer(pollId, receivedAnswer));
                     break;
 
                 }
@@ -112,7 +112,7 @@ StateListenerRegistry.register(
                         if (poll === null) {
                             console.warn('[features/polls] Invalid old poll data');
                         } else {
-                            store.dispatch(receivePoll(pollData.id, poll, false));
+                            dispatch(receivePoll(pollData.id, poll, false));
                         }
                     }
                     break;
@@ -124,7 +124,7 @@ StateListenerRegistry.register(
             conference.on(JitsiConferenceEvents.NON_PARTICIPANT_MESSAGE_RECEIVED, receiveMessage);
 
             // clean old polls
-            store.dispatch(clearPolls());
+            dispatch(clearPolls());
         }
     }
 );

@@ -109,22 +109,18 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     case CONFERENCE_WILL_JOIN: {
         const { conference } = action;
 
-        conference.on(
-            JitsiConferenceEvents.RECORDER_STATE_CHANGED,
-            recorderSession => {
+        if (!getState()['features/base/conference'].authRequired) {
+            conference.on(
+                JitsiConferenceEvents.RECORDER_STATE_CHANGED,
+                recorderSession => {
+                    if (recorderSession) {
+                        recorderSession.getID() && dispatch(updateRecordingSessionData(recorderSession));
+                        recorderSession.getError() && _showRecordingErrorNotification(recorderSession, dispatch);
+                    }
 
-                if (recorderSession) {
-                    recorderSession.getID()
-                        && dispatch(
-                            updateRecordingSessionData(recorderSession));
-
-                    recorderSession.getError()
-                        && _showRecordingErrorNotification(
-                            recorderSession, dispatch);
-                }
-
-                return;
-            });
+                    return;
+                });
+        }
 
         break;
     }

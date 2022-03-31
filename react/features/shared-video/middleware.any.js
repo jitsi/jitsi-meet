@@ -86,11 +86,12 @@ MiddlewareRegistry.register(store => next => action => {
 StateListenerRegistry.register(
     state => getCurrentConference(state),
     (conference, store, previousConference) => {
-        if (conference && conference !== previousConference) {
+        const { dispatch, getState } = store;
+
+        if (conference && conference !== previousConference && !getState()['features/base/conference'].authRequired) {
             conference.addCommandListener(SHARED_VIDEO,
                 ({ value, attributes }) => {
 
-                    const { dispatch, getState } = store;
                     const { from } = attributes;
                     const localParticipantId = getLocalParticipant(getState()).id;
                     const status = attributes.state;

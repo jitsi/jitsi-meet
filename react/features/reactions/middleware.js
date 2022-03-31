@@ -107,10 +107,12 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_WILL_JOIN: {
         const { conference } = action;
 
-        conference.addCommandListener(
-            MUTE_REACTIONS_COMMAND, ({ attributes }, id) => {
-                _onMuteReactionsCommand(attributes, id, store);
-            });
+        if (!store.getState()['features/base/conference'].authRequired) {
+            conference.addCommandListener(
+                MUTE_REACTIONS_COMMAND, ({ attributes }, id) => {
+                    _onMuteReactionsCommand(attributes, id, store);
+                });
+        }
         break;
     }
     case FLUSH_REACTION_BUFFER: {

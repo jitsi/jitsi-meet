@@ -36,19 +36,21 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     case CONFERENCE_WILL_JOIN: {
         const conference = getState()['features/base/conference'].joining;
 
-        conference.on(
-            JitsiConferenceEvents.VIDEO_SIP_GW_AVAILABILITY_CHANGED,
-            (...args) => dispatch(_availabilityChanged(...args)));
-        conference.on(
-            JitsiConferenceEvents.VIDEO_SIP_GW_SESSION_STATE_CHANGED,
-            event => {
-                const toDispatch = _sessionStateChanged(event);
+        if (!getState()['features/base/conference'].authRequired) {
+            conference.on(
+                JitsiConferenceEvents.VIDEO_SIP_GW_AVAILABILITY_CHANGED,
+                (...args) => dispatch(_availabilityChanged(...args)));
+            conference.on(
+                JitsiConferenceEvents.VIDEO_SIP_GW_SESSION_STATE_CHANGED,
+                event => {
+                    const toDispatch = _sessionStateChanged(event);
 
-                // sessionStateChanged can decide there is nothing to dispatch
-                if (toDispatch) {
-                    dispatch(toDispatch);
-                }
-            });
+                    // sessionStateChanged can decide there is nothing to dispatch
+                    if (toDispatch) {
+                        dispatch(toDispatch);
+                    }
+                });
+        }
 
         break;
     }

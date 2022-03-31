@@ -64,10 +64,12 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_WILL_JOIN: {
         const { conference } = action;
 
-        conference.addCommandListener(
-            FOLLOW_ME_COMMAND, ({ attributes }, id) => {
-                _onFollowMeCommand(attributes, id, store);
-            });
+        if (!store.getState()['features/base/conference'].authRequired) {
+            conference.addCommandListener(
+                FOLLOW_ME_COMMAND, ({ attributes }, id) => {
+                    _onFollowMeCommand(attributes, id, store);
+                });
+        }
         break;
     }
     case PARTICIPANT_LEFT:

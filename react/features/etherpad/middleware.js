@@ -40,7 +40,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 StateListenerRegistry.register(
     state => getCurrentConference(state),
     (conference, { dispatch, getState }, previousConference) => {
-        if (conference) {
+        if (conference && !getState()['features/base/conference'].authRequired) {
             conference.addCommandListener(ETHERPAD_COMMAND,
                 ({ value }) => {
                     let url;
