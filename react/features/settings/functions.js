@@ -116,7 +116,7 @@ export function getMoreTabProps(stateful: Object | Function) {
     const language = i18next.language || DEFAULT_LANGUAGE;
     const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
     const enabledNotifications = getNotificationsMap(stateful);
-    
+
     // when self view is controlled by the config we hide the settings
     const { disableSelfView, disableSelfViewSettings } = state['features/base/config'];
 
