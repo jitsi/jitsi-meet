@@ -4,6 +4,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { DRAWER_NAVIGATOR_ID } from '../../../../../../../tests/mobile/constants';
 import WelcomePage from '../../../../../welcome/components/WelcomePage';
 import HelpView from '../../../../../welcome/components/native/HelpView';
 import PrivacyView from '../../../../../welcome/components/native/PrivacyView';
@@ -33,7 +34,7 @@ const WelcomePageNavigationContainer = () => {
             /* eslint-disable-next-line react/jsx-no-bind */
             drawerContent = { props => <CustomDrawerContent { ...props } /> }
             screenOptions = { drawerContentOptions }
-            testID = 'drawer-navigator'>
+            testID = { DRAWER_NAVIGATOR_ID }>
             <DrawerStack.Screen
                 component = { WelcomePage }
                 name = { screen.welcome.main }

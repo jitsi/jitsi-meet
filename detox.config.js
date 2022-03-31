@@ -1,53 +1,10 @@
 /* eslint-disable no-undef */
 
-const fs = require('file-system');
+const { IOS_SIMULATOR } = require('./tests/mobile/constants');
+const { getAndroidConfiguration, getAndroidDevices } = require('./tests/mobile/functions');
 
-const device = {
-    android: process.env.android,
-    ios: process.env.ios
-};
 
-const androidEmulatorArray = [ 'Pixel_3a_API_30_x86' ];
-const iOSSimulatorArray = [ 'iPhone 13 Pro' ];
-
-// Returns a random emulator name from the array
-const emulatorName = emulatorArray => emulatorArray[Math.floor(Math.random() * emulatorArray.length)];
-
-const getAndroidDevices = () => {
-    if (device.android) {
-        return {
-            'phone': {
-                'type': 'android.phone',
-                'device': {
-                    'avdName': device.android
-                }
-            }
-        };
-    }
-
-    return {
-        'emulator': {
-            'type': 'android.emulator',
-            'device': {
-                'avdName': emulatorName(androidEmulatorArray)
-            }
-        }
-    };
-};
-
-const getAndroidConfiguration = () => {
-    if (device.android) {
-        return {
-            'device': 'phone'
-        };
-    }
-
-    return {
-        'device': 'emulator'
-    };
-};
-
-const data = {
+module.exports = {
     'testRunner': 'jest',
     'runnerConfig': 'tests/mobile/config.json',
     'skipLegacyWorkersInjection': true,
@@ -57,7 +14,7 @@ const data = {
         'simulator': {
             'type': 'ios.simulator',
             'device': {
-                'type': emulatorName(iOSSimulatorArray)
+                'type': IOS_SIMULATOR
             }
         }
     },
@@ -87,7 +44,3 @@ const data = {
         }
     }
 };
-
-const detoxrc = JSON.stringify(data, null, 2);
-
-fs.writeFile('./.detoxrc.json', detoxrc);

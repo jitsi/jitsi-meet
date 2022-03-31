@@ -1,6 +1,7 @@
 // @flow
 
 import UIEvents from '../../../../service/UI/UIEvents';
+import { CAMERA_BUTTON_ID } from '../../../../tests/mobile/constants';
 import {
     ACTION_SHORTCUT_TRIGGERED,
     VIDEO_MUTE,
@@ -62,6 +63,7 @@ type Props = AbstractButtonProps & {
 class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.videomute';
     label = 'toolbar.videomute';
+    testID = CAMERA_BUTTON_ID;
     tooltip = 'toolbar.videomute';
 
     /**

@@ -128,6 +128,11 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
     label: string;
 
     /**
+     * Id used for tests.
+     */
+    testID: string;
+
+    /**
      * The label for this button, when toggled.
      */
     toggledLabel: string;
@@ -336,6 +341,7 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
                 disabled = { this._isDisabled() }
                 onClick = { this._onClick }
                 onKeyDown = { this._onKeyDown }
+                testID = { this.testID }
                 { ...props } />
         );
     }

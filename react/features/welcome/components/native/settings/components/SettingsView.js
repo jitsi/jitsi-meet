@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { Divider, Switch, TextInput, withTheme } from 'react-native-paper';
 
+import { DISPLAY_NAME_INPUT_ID } from '../../../../../../../tests/mobile/constants';
 import { translate } from '../../../../../base/i18n';
 import JitsiScreen from '../../../../../base/modal/components/JitsiScreen';
 import { connect } from '../../../../../base/redux';
@@ -214,7 +215,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             placeholder = 'John Doe'
                             spellCheck = { false }
                             style = { styles.textInputContainer }
-                            testID = 'display-name-input'
+                            testID = { DISPLAY_NAME_INPUT_ID }
                             textContentType = { 'name' } // iOS only
                             theme = { textInputTheme }
                             value = { displayName } />

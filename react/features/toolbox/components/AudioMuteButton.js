@@ -1,5 +1,6 @@
 // @flow
 
+import { MICROPHONE_BUTTON_ID } from '../../../../tests/mobile/constants';
 import {
     ACTION_SHORTCUT_TRIGGERED,
     AUDIO_MUTE,
@@ -47,6 +48,7 @@ type Props = AbstractButtonProps & {
 class AudioMuteButton extends AbstractAudioMuteButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.mute';
     label = 'toolbar.mute';
+    testID = MICROPHONE_BUTTON_ID;
     tooltip = 'toolbar.mute';
 
     /**

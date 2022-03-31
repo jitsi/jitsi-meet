@@ -30,6 +30,13 @@ import {
 import VideoSwitch from './VideoSwitch';
 import styles, { PLACEHOLDER_TEXT_COLOR } from './styles';
 
+const {
+    DRAWER_MENU_BUTTON_ID,
+    JOIN_ROOM_BUTTON_ID,
+    ROOM_NAME_INPUT_ID,
+    WELCOME_PAGE_ID
+} = require('../../../../tests/mobile/constants');
+
 
 type Props = AbstractProps & {
 
@@ -112,7 +119,7 @@ class WelcomePage extends AbstractWelcomePage<*> {
                         navigation.dispatch(DrawerActions.openDrawer())
                     }
                     style = { styles.drawerNavigationIcon }
-                    testID = { 'toggle-drawer-button' }>
+                    testID = { DRAWER_MENU_BUTTON_ID }>
                     <Icon
                         size = { 24 }
                         src = { IconMenu }
@@ -318,7 +325,7 @@ class WelcomePage extends AbstractWelcomePage<*> {
                     { t('welcomepage.accessibilityLabel.join') }
                 onPress = { this._onJoin }
                 style = { styles.button }
-                testID = { 'join-room-button' }
+                testID = { JOIN_ROOM_BUTTON_ID }
                 underlayColor = { BaseTheme.palette.ui12 }>
                 { children }
             </TouchableHighlight>
@@ -339,7 +346,7 @@ class WelcomePage extends AbstractWelcomePage<*> {
                 <JitsiStatusBar />
                 <View
                     style = { styles.welcomePage }
-                    testID = 'welcome-screen'>
+                    testID = { WELCOME_PAGE_ID }>
                     <SafeAreaView style = { styles.roomContainer } >
                         <View style = { styles.joinControls } >
                             <Text style = { styles.enterRoomText }>
@@ -361,7 +368,7 @@ class WelcomePage extends AbstractWelcomePage<*> {
                                 returnKeyType = { 'go' }
                                 spellCheck = { false }
                                 style = { styles.textInput }
-                                testID = { 'room-name-input' }
+                                testID = { ROOM_NAME_INPUT_ID }
                                 underlineColorAndroid = 'transparent'
                                 value = { this.state.room } />
                             {

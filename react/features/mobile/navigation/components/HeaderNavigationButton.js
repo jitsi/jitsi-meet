@@ -4,6 +4,7 @@ import React from 'react';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Text, TouchableRipple } from 'react-native-paper';
 
+import { HEADER_BACK_NAV_BUTTON_ID } from '../../../../../tests/mobile/constants';
 import { Icon } from '../../../base/icons';
 import BaseTheme from '../../../base/ui/components/BaseTheme';
 import styles from '../../../conference/components/native/styles';
@@ -51,7 +52,7 @@ const HeaderNavigationButton
                         <TouchableOpacity
                             onPress = { onPress }
                             style = { styles.headerNavigationButton }
-                            testID = 'header-back-nav-btn'>
+                            testID = { HEADER_BACK_NAV_BUTTON_ID }>
                             <Icon
                                 size = { 20 }
                                 src = { src }
@@ -62,7 +63,7 @@ const HeaderNavigationButton
                             disabled = { disabled }
                             onPress = { onPress }
                             rippleColor = { BaseTheme.palette.screen01Header }
-                            testID = 'header-back-nav-btn'>
+                            testID = { HEADER_BACK_NAV_BUTTON_ID }>
                             <Text
                                 style = {
                                     twoActions
