@@ -5,17 +5,10 @@ import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { CLIENT_RESIZED } from '../base/responsive-ui';
 import { SETTINGS_UPDATED } from '../base/settings';
-import {
-    getCurrentLayout,
-    LAYOUTS
-} from '../video-layout';
 
 import { SET_USER_FILMSTRIP_WIDTH } from './actionTypes';
 import {
-    setFilmstripWidth,
-    setHorizontalViewDimensions,
-    setTileViewDimensions,
-    setVerticalViewDimensions
+    setFilmstripWidth
 } from './actions';
 import { DEFAULT_FILMSTRIP_WIDTH, MIN_STAGE_VIEW_WIDTH } from './constants';
 import { updateRemoteParticipants, updateRemoteParticipantsOnLeave } from './functions';
@@ -40,21 +33,6 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CLIENT_RESIZED: {
         const state = store.getState();
-        const layout = getCurrentLayout(state);
-
-        switch (layout) {
-        case LAYOUTS.TILE_VIEW: {
-            store.dispatch(setTileViewDimensions());
-            break;
-        }
-        case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW:
-            store.dispatch(setHorizontalViewDimensions());
-            break;
-
-        case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
-            store.dispatch(setVerticalViewDimensions());
-            break;
-        }
 
         if (isFilmstripResizable(state)) {
             const { width: filmstripWidth } = state['features/filmstrip'];
