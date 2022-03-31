@@ -215,7 +215,7 @@ export async function sendMeetingHighlight(state: Object) {
 
     const reqBody = {
         meetingFqn: extractFqnFromPath(state),
-        sessionId: conference.sessionId,
+        sessionId: conference.sessionId || conference.room.meetingId,
         submitted: Date.now(),
         participantId: localParticipant.jwtId,
         participantName: localParticipant.name,
