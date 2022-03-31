@@ -19,7 +19,7 @@ const ScrollChatInput = () => {
 
     const toggleChatScroll = useCallback(() => {
         dispatch(disableChatScroll(!scrollChat));
-    });
+    }, [ scrollChat ]);
 
     return (
         <div>
