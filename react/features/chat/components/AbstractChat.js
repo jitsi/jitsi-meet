@@ -74,6 +74,11 @@ export type Props = {
     _onToggleChat: Function,
 
     /**
+     * True if the chat scroll is enabled.
+     */
+    _scrollChat: boolean,
+
+    /**
      * Whether or not to block chat access with a nickname input form.
      */
     _showNamePrompt: boolean,
@@ -161,7 +166,8 @@ export default class AbstractChat<P: Props> extends Component<P> {
  * }}
  */
 export function _mapStateToProps(state: Object) {
-    const { isOpen, isPollsTabFocused, messages, nbUnreadMessages } = state['features/chat'];
+    const { isOpen, isPollsTabFocused, messages, nbUnreadMessages, scrollChat } = state['features/chat'];
+
     const { nbUnreadPolls } = state['features/polls'];
     const _localParticipant = getLocalParticipant(state);
     const { disablePolls } = state['features/base/config'];
@@ -174,6 +180,7 @@ export function _mapStateToProps(state: Object) {
         _messages: messages,
         _nbUnreadMessages: nbUnreadMessages,
         _nbUnreadPolls: nbUnreadPolls,
+        _scrollChat: scrollChat,
         _showNamePrompt: !_localParticipant?.name
     };
 }

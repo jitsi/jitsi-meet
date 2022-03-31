@@ -7,6 +7,7 @@ import { LOBBY_CHAT_INITIALIZED } from '../lobby/constants';
 
 import {
     ADD_MESSAGE,
+    CHAT_SCROLL_DISABLED,
     CLEAR_MESSAGES,
     CLOSE_CHAT,
     EDIT_MESSAGE,
@@ -47,6 +48,23 @@ export function addMessage(messageDetails: Object) {
     return {
         type: ADD_MESSAGE,
         ...messageDetails
+    };
+}
+
+/**
+ * Disable or enable chat scroll.
+ *
+ * @param {boolean} scrollChat - Set the value of scrollChat.
+ *
+ * @returns {{
+ *     type: CHAT_SCROLL_DISABLED,
+ *     scrollChat: boolean
+ * }}
+ */
+export function disableChatScroll(scrollChat: boolean) {
+    return {
+        type: CHAT_SCROLL_DISABLED,
+        scrollChat
     };
 }
 

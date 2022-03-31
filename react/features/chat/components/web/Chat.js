@@ -18,6 +18,7 @@ import DisplayNameForm from './DisplayNameForm';
 import KeyboardAvoider from './KeyboardAvoider';
 import MessageContainer from './MessageContainer';
 import MessageRecipient from './MessageRecipient';
+import ScrollChatInput from './ScrollChatInput';
 
 /**
  * React Component for holding the chat feature in a side panel that slides in
@@ -192,6 +193,7 @@ class Chat extends AbstractChat<Props> {
                     className = { clsx('chat-panel', !_isPollsEnabled && 'chat-panel-no-tabs') }
                     id = 'chat-panel'
                     role = 'tabpanel'>
+                    <ScrollChatInput />
                     <MessageContainer
                         messages = { this.props._messages }
                         ref = { this._messageContainerRef } />
@@ -276,7 +278,7 @@ class Chat extends AbstractChat<Props> {
      * @returns {void}
      */
     _scrollMessageContainerToBottom(withAnimation) {
-        if (this._messageContainerRef.current) {
+        if (this._messageContainerRef.current && !this.props._scrollChat) {
             this._messageContainerRef.current.scrollToBottom(withAnimation);
         }
     }

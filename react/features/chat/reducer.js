@@ -2,10 +2,11 @@
 
 import { v4 as uuidv4 } from 'uuid';
 
-import { ReducerRegistry } from '../base/redux';
+import { ReducerRegistry, PersistenceRegistry } from '../base/redux';
 
 import {
     ADD_MESSAGE,
+    CHAT_SCROLL_DISABLED,
     CLEAR_MESSAGES,
     CLOSE_CHAT,
     EDIT_MESSAGE,
@@ -26,10 +27,24 @@ const DEFAULT_STATE = {
     nbUnreadMessages: 0,
     privateMessageRecipient: undefined,
     lobbyMessageRecipient: undefined,
-    isLobbyChatActive: false
+    isLobbyChatActive: false,
+    scrollChat: true
 };
 
-ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
+/**
+ * The name of the redux store/state property which is the root of the redux
+ * state of the feature {@code chat}.
+ */
+const STORE_NAME = 'features/chat';
+
+/**
+ * Sets up the persistence of the feature {@code chat}.
+ */
+PersistenceRegistry.register(STORE_NAME, {
+    scrollChat: true
+}, DEFAULT_STATE);
+
+ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
     switch (action.type) {
     case ADD_MESSAGE: {
         const newMessage = {
@@ -65,6 +80,12 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
             messages
         };
     }
+
+    case CHAT_SCROLL_DISABLED:
+        return {
+            ...state,
+            scrollChat: action.scrollChat
+        };
 
     case CLEAR_MESSAGES:
         return {

@@ -16,6 +16,16 @@
 export const ADD_MESSAGE = 'ADD_MESSAGE';
 
 /**
+ * The type of the action which signals if chat scrolling is disabled.
+ *
+ * {
+ *     type: CHAT_SCROLL_DISABLED,
+ *     scrollChat: boolean,
+ * }
+ */
+export const CHAT_SCROLL_DISABLED = 'CHAT_SCROLL_DISABLED';
+
+/**
  * The type of the action which signals to clear messages in Redux.
  *
  * {
