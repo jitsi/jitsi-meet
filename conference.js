@@ -44,6 +44,7 @@ import {
     conferenceWillJoin,
     conferenceWillLeave,
     dataChannelOpened,
+    e2eRttChanged,
     getConferenceOptions,
     kickedOut,
     lockStateChanged,
@@ -95,7 +96,6 @@ import {
     localParticipantConnectionStatusChanged,
     localParticipantRoleChanged,
     participantConnectionStatusChanged,
-    e2eRttChanged,
     participantKicked,
     participantMutedUs,
     participantPresenceChanged,
@@ -2088,12 +2088,6 @@ export default {
             });
 
         room.on(
-            JitsiE2ePingEvents.E2E_RTT_CHANGED,
-            (participant, rtt) => {
-                APP.store.dispatch(e2eRttChanged(participant, rtt));
-            });
-
-        room.on(
             JitsiConferenceEvents.AUTH_STATUS_CHANGED,
             (authEnabled, authLogin) =>
                 APP.store.dispatch(authStatusChanged(authEnabled, authLogin)));
@@ -2350,6 +2344,10 @@ export default {
             disableVideoMuteChange => {
                 APP.store.dispatch(setVideoUnmutePermissions(disableVideoMuteChange));
             });
+
+        room.on(
+            JitsiE2ePingEvents.E2E_RTT_CHANGED,
+            (...args) => APP.store.dispatch(e2eRttChanged(...args)));
 
         APP.UI.addListener(UIEvents.AUDIO_MUTED, muted => {
             this.muteAudio(muted);

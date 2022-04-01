@@ -15,20 +15,6 @@
 export const DOMINANT_SPEAKER_CHANGED = 'DOMINANT_SPEAKER_CHANGED';
 
 /**
- * Create an action for when an end-to-end RTT is changed.
- *
- * {
- *     type: E2E_RTT_CHANGED,
- *     e2eRtt: {
- *         rtt: number,
- *         remoteEndpointId: string,
- *         remoteRegion: string
- *     }
- * }
- */
-export const E2E_RTT_CHANGED = 'E2E_RTT_CHANGED'
-
-/**
  * Create an action for granting moderator to a participant.
  *
  * {

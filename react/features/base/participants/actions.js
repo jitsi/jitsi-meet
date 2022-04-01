@@ -3,7 +3,6 @@ import { set } from '../redux';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
-    E2E_RTT_CHANGED,
     HIDDEN_PARTICIPANT_JOINED,
     HIDDEN_PARTICIPANT_LEFT,
     GRANT_MODERATOR,
@@ -56,31 +55,6 @@ export function dominantSpeakerChanged(dominantSpeaker, previousSpeakers, confer
             conference,
             id: dominantSpeaker,
             previousSpeakers
-        }
-    };
-}
-
-/**
- * Create an action for when a participant e2e rtt is changed.
- *
- * @param {Object} participant - The participant against which the rtt is measured.
- * @param {number} rtt - The rtt.
- * @returns {{
- *     type: E2E_RTT_CHANGED,
- *     e2eRtt: {
- *         remoteEndpointId: string,
- *         remoteRegion: string,
- *         rtt: number
- *     }
- * }}
- */
-export function e2eRttChanged(participant, rtt) {
-    return {
-        type: E2E_RTT_CHANGED,
-        e2eRtt: {
-            rtt,
-            remoteEndpointId: participant.getId(),
-            remoteRegion: participant.getProperty('region')
         }
     };
 }
