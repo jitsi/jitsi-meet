@@ -2,7 +2,6 @@
 import { getLocalParticipant } from '../base/participants';
 import { extractFqnFromPath } from '../dynamic-branding';
 
-import { SET_TIMEOUT } from './constants';
 import logger from './logger';
 
 /**
@@ -116,6 +115,7 @@ export async function sendFacialExpressionsWebhook(state: Object) {
  */
 export async function sendDataToWorker(
         worker: Worker,
+        type: string,
         imageCapture: Object
 ): Promise<void> {
     if (!imageCapture) {
@@ -146,7 +146,7 @@ export async function sendDataToWorker(
     }
 
     worker.postMessage({
-        type: SET_TIMEOUT,
+        type,
         image
     });
 

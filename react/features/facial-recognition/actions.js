@@ -13,9 +13,9 @@ import {
     STOP_FACIAL_RECOGNITION
 } from './actionTypes';
 import {
-    CLEAR_TIMEOUT,
-    FACIAL_EXPRESSION_MESSAGE,
+    DETECT,
     INIT_WORKER,
+    STOP_FACIAL_EXPRESSION_DETECTION,
     WEBHOOK_SEND_TIME_INTERVAL
 } from './constants';
 import { sendDataToWorker, sendFacialExpressionsWebhook } from './functions';
@@ -52,13 +52,16 @@ let duplicateConsecutiveExpressions = 0;
  */
 let sendInterval;
 
+
+let interval;
+
 /**
  * Loads the worker that predicts the facial expression.
  *
  * @returns {void}
  */
 export function loadWorker() {
-    return function(dispatch: Function) {
+    return function(dispatch: Function, getState: Function) {
         if (!window.Worker) {
             logger.warn('Browser does not support web workers');
 
@@ -72,15 +75,14 @@ export function loadWorker() {
         workerUrl = window.URL.createObjectURL(workerBlob);
         worker = new Worker(workerUrl, { name: 'Facial Expression Worker' });
         worker.onmessage = function(e: Object) {
-            const { type, value } = e.data;
+            const { faceBox, facialExpression } = e.data;
+
+            sendDataToWorker(worker, DETECT, imageCapture);
 
             // receives a message with the predicted facial expression.
-            if (type === FACIAL_EXPRESSION_MESSAGE) {
-                sendDataToWorker(worker, imageCapture);
-                if (!value) {
-                    return;
-                }
-                if (value === lastFacialExpression) {
+            if (facialExpression) {
+                console.log(facialExpression);
+                if (facialExpression === lastFacialExpression) {
                     duplicateConsecutiveExpressions++;
                 } else {
                     if (lastFacialExpression && lastFacialExpressionTimestamp) {
@@ -92,19 +94,24 @@ export function loadWorker() {
                         )
                         );
                     }
-                    lastFacialExpression = value;
+                    lastFacialExpression = facialExpression;
                     lastFacialExpressionTimestamp = Date.now();
                     duplicateConsecutiveExpressions = 0;
                 }
             }
+            if (faceBox) {
+                // face box stuff
+                console.log(faceBox);
+            }
+
         };
+        const { enableFacialRecognition } = getState()['features/base/config'];
+
         worker.postMessage({
             type: INIT_WORKER,
             url: baseUrl,
-            windowScreenSize: window.screen ? {
-                width: window.screen.width,
-                height: window.screen.height
-            } : undefined
+            facialExpressions: enableFacialRecognition,
+            faceBox: true
         });
         dispatch(startFacialRecognition());
     };
@@ -144,7 +151,7 @@ export function startFacialRecognition() {
 
         // $FlowFixMe
         imageCapture = new ImageCapture(firstVideoTrack);
-        sendDataToWorker(worker, imageCapture);
+        sendDataToWorker(worker, DETECT, imageCapture);
         sendInterval = setInterval(async () => {
             const result = await sendFacialExpressionsWebhook(getState());
 
@@ -173,16 +180,16 @@ export function stopFacialRecognition() {
         }
         imageCapture = null;
         worker.postMessage({
-            type: CLEAR_TIMEOUT
+            type: STOP_FACIAL_EXPRESSION_DETECTION
         });
 
         if (lastFacialExpression && lastFacialExpressionTimestamp) {
             dispatch(
-                        addFacialExpression(
-                            lastFacialExpression,
-                            duplicateConsecutiveExpressions + 1,
-                            lastFacialExpressionTimestamp
-                        )
+                addFacialExpression(
+                    lastFacialExpression,
+                    duplicateConsecutiveExpressions + 1,
+                    lastFacialExpressionTimestamp
+                )
             );
         }
         duplicateConsecutiveExpressions = 0;
@@ -191,6 +198,8 @@ export function stopFacialRecognition() {
             clearInterval(sendInterval);
             sendInterval = null;
         }
+        clearInterval(interval);
+        interval = null;
         dispatch({ type: STOP_FACIAL_RECOGNITION });
         logger.log('Stop face recognition');
     };

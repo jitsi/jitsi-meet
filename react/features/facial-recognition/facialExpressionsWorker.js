@@ -3,88 +3,132 @@ import './faceApiPatch';
 import * as faceapi from '@vladmandic/face-api';
 
 import {
-    CLEAR_TIMEOUT,
-    DETECTION_TIME_INTERVAL,
-    FACIAL_EXPRESSION_MESSAGE,
+    DETECT,
     INIT_WORKER,
-    SET_TIMEOUT
+    STOP_DETECTION,
+    FACE_CENTERING_INTERVAL,
+    FACIAL_EXPRESSION_INTERVAL
 } from './constants';
+
 
 /**
  * A flag that indicates whether the tensorflow models were loaded or not.
  */
-let modelsLoaded = false;
-
-/**
- * The url where the models for the facial detection of expressions are located.
- */
-let modelsURL;
+let workerReady = false;
 
 /**
  * A timer variable for set interval.
  */
 let timer;
 
-/**
- * A patch for having window object in the worker.
- */
-const window = {
-    screen: {
-        width: 1280,
-        height: 720
+let enableFaceBox;
+
+let enableFacialExpressions;
+
+let detectionCycleCount = 0;
+
+let lastValidFaceBox;
+
+const initWorker = async ({ url, faceBox, facialExpressions }) => {
+    if (workerReady) {
+        return;
     }
+
+    enableFaceBox = faceBox;
+    enableFacialExpressions = facialExpressions;
+    faceapi.tf.setWasmPaths(url);
+    await faceapi.tf.setBackend('wasm');
+    await faceapi.loadTinyFaceDetectorModel(url);
+    await faceapi.loadFaceExpressionModel(url);
+
+    workerReady = true;
+};
+
+const sendMessage = (time, faceBox, facialExpression) => {
+    timer = setTimeout(() => {
+        self.postMessage({
+            faceBox,
+            facialExpression
+        });
+    }, time);
+};
+
+// eslint-disable-next-line max-params
+const detect = async (image, withFaceBox, withFacialExpressions, time, threshold) => {
+    if (!workerReady || !image || (!withFaceBox && !withFacialExpressions)) {
+        sendMessage(time, null, null);
+
+        return;
+    }
+
+    faceapi.tf.engine().startScope();
+
+    const tensor = faceapi.tf.browser.fromPixels(image);
+    const detectPromise = faceapi.detectAllFaces(tensor, new faceapi.TinyFaceDetectorOptions());
+    const detections = withFacialExpressions ? await detectPromise.withFaceExpressions() : await detectPromise;
+
+    faceapi.tf.engine().endScope();
+    let faceBox = null;
+    let facialExpression = null;
+
+    if (!detections.length) {
+        sendMessage(time, null, null);
+
+        return;
+    }
+
+    facialExpression = withFacialExpressions ? detections[0].expressions.asSortedArray()[0].expression : null;
+    if (withFaceBox) {
+        const finalDetections = withFacialExpressions ? detections.map(d => d.detection) : detections;
+
+        faceBox = {
+            // normalize to percentage based
+            left: Math.round(Math.min(...finalDetections.map(d => d.relativeBox.left)) * 100),
+            right: Math.round(Math.max(...finalDetections.map(d => d.relativeBox.right)) * 100),
+            top: Math.round(Math.min(...finalDetections.map(d => d.relativeBox.top)) * 100),
+            bottom: Math.round(Math.max(...finalDetections.map(d => d.relativeBox.bottom)) * 100)
+        };
+    }
+
+    if (lastValidFaceBox && Math.abs(lastValidFaceBox.left - faceBox.left) < threshold) {
+        sendMessage(time, null, null);
+
+        return;
+    }
+
+
+    sendMessage(time, faceBox, facialExpression);
 };
 
 onmessage = async function(message) {
-    const { image, type } = message.data;
+    const { type } = message.data;
 
     switch (type) {
     case INIT_WORKER : {
-        modelsURL = message.data.url;
-        if (message.data.windowScreenSize) {
-            window.screen = message.data.windowScreenSize;
-        }
-        if (self.useWASM) {
-            faceapi.tf.setWasmPaths(modelsURL);
-            await faceapi.tf.setBackend('wasm');
+
+        await initWorker(message.data);
+        break;
+    }
+    case DETECT : {
+        const { image } = message.data;
+        let withFacialExpressions = false;
+
+        if (enableFaceBox && enableFacialExpressions) {
+            if (++detectionCycleCount === FACIAL_EXPRESSION_INTERVAL / FACE_CENTERING_INTERVAL) {
+                withFacialExpressions = true;
+                detectionCycleCount = 0;
+            }
+            await detect(image, true, withFacialExpressions, FACE_CENTERING_INTERVAL);
+        } else if (enableFaceBox) {
+            await detect(image, true, false);
+        } else if (enableFacialExpressions) {
+            await detect(image, false, true, FACIAL_EXPRESSION_INTERVAL);
+        } else {
+            return;
         }
         break;
     }
-    case SET_TIMEOUT : {
-        if (!image || !modelsURL) {
-            self.postMessage({
-                type: FACIAL_EXPRESSION_MESSAGE,
-                value: null
-            });
-        }
-        if (!modelsLoaded) {
-            await faceapi.loadTinyFaceDetectorModel(modelsURL);
-            await faceapi.loadFaceExpressionModel(modelsURL);
-            modelsLoaded = true;
-        }
-        faceapi.tf.engine().startScope();
-
-        const tensor = faceapi.tf.browser.fromPixels(image);
-        const detections = await faceapi.detectSingleFace(
-                tensor,
-                new faceapi.TinyFaceDetectorOptions()
-        ).withFaceExpressions();
-
-        faceapi.tf.engine().endScope();
-        let facialExpression;
-
-        if (detections) {
-            facialExpression = detections.expressions.asSortedArray()[0].expression;
-        }
-        timer = setTimeout(() => {
-            self.postMessage({
-                type: FACIAL_EXPRESSION_MESSAGE,
-                value: facialExpression
-            });
-        }, DETECTION_TIME_INTERVAL);
-        break;
-    }
-    case CLEAR_TIMEOUT: {
+    case STOP_DETECTION : {
         if (timer) {
             clearTimeout(timer);
             timer = null;
