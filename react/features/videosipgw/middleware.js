@@ -1,6 +1,6 @@
 // @flow
 
-import { CONFERENCE_WILL_JOIN } from '../base/conference';
+import { CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
 import {
     JitsiConferenceEvents,
     JitsiSIPVideoGWStatus
@@ -33,24 +33,22 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     const result = next(action);
 
     switch (action.type) {
-    case CONFERENCE_WILL_JOIN: {
+    case CONFERENCE_JOIN_IN_PROGRESS: {
         const conference = getState()['features/base/conference'].joining;
 
-        if (!getState()['features/base/conference'].authRequired) {
-            conference.on(
-                JitsiConferenceEvents.VIDEO_SIP_GW_AVAILABILITY_CHANGED,
-                (...args) => dispatch(_availabilityChanged(...args)));
-            conference.on(
-                JitsiConferenceEvents.VIDEO_SIP_GW_SESSION_STATE_CHANGED,
-                event => {
-                    const toDispatch = _sessionStateChanged(event);
+        conference.on(
+            JitsiConferenceEvents.VIDEO_SIP_GW_AVAILABILITY_CHANGED,
+            (...args) => dispatch(_availabilityChanged(...args)));
+        conference.on(
+            JitsiConferenceEvents.VIDEO_SIP_GW_SESSION_STATE_CHANGED,
+            event => {
+                const toDispatch = _sessionStateChanged(event);
 
-                    // sessionStateChanged can decide there is nothing to dispatch
-                    if (toDispatch) {
-                        dispatch(toDispatch);
-                    }
-                });
-        }
+                // sessionStateChanged can decide there is nothing to dispatch
+                if (toDispatch) {
+                    dispatch(toDispatch);
+                }
+            });
 
         break;
     }
