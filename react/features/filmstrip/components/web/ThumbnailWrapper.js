@@ -90,7 +90,6 @@ class ThumbnailWrapper extends Component<Props> {
     render() {
         const {
             _disableSelfView,
-            _isAnyParticipantPinned,
             _isLocalScreenShare = false,
             _horizontalOffset = 0,
             _participantID,
@@ -114,7 +113,6 @@ class ThumbnailWrapper extends Component<Props> {
         if (_isLocalScreenShare) {
             return _disableSelfView ? null : (
                 <Thumbnail
-                    _isAnyParticipantPinned = { _isAnyParticipantPinned }
                     horizontalOffset = { _horizontalOffset }
                     key = 'localScreenShare'
                     participantID = { _participantID }
@@ -240,7 +238,6 @@ function _mapStateToProps(state, ownProps) {
                 _isLocalScreenShare: true,
                 _participantID: localScreenShare?.id,
                 _horizontalOffset: horizontalOffset,
-                _isAnyParticipantPinned: _verticalViewGrid && _isAnyParticipantPinned
             };
         }
 
