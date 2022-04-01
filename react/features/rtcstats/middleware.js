@@ -107,12 +107,12 @@ MiddlewareRegistry.register(store => next => action => {
     }
     case E2E_RTT_CHANGED: {
         if (canSendRtcstatsData(state)) {
-            const { remoteEndpointId, rtt, remoteRegion } = action.e2eRtt;
+            const { participant, rtt } = action.e2eRtt;
 
             RTCStats.sendE2eRttData({
-                remoteEndpointId,
+                remoteEndpointId: participant.getId(),
                 rtt,
-                remoteRegion
+                remoteRegion: participant.getProperty('region')
             });
         }
         break;

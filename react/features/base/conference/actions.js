@@ -9,7 +9,7 @@ import {
 import { endpointMessageReceived } from '../../subtitles';
 import { getReplaceParticipant } from '../config/functions';
 import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection';
-import {JitsiConferenceEvents, JitsiE2ePingEvents} from '../lib-jitsi-meet';
+import { JitsiConferenceEvents, JitsiE2ePingEvents } from '../lib-jitsi-meet';
 import {
     MEDIA_TYPE,
     setAudioMuted,
@@ -280,8 +280,7 @@ export function e2eRttChanged(participant, rtt) {
         type: E2E_RTT_CHANGED,
         e2eRtt: {
             rtt,
-            remoteEndpointId: participant.getId(),
-            remoteRegion: participant.getProperty('region')
+            participant
         }
     };
 }
