@@ -262,15 +262,14 @@ function _addConferenceListeners(conference, dispatch, state) {
 
 
 /**
- * Create an action for when a participant e2e rtt is changed.
+ * Create an action for when the end-to-end RTT against a specific remote participant has changed.
  *
  * @param {Object} participant - The participant against which the rtt is measured.
  * @param {number} rtt - The rtt.
  * @returns {{
  *     type: E2E_RTT_CHANGED,
  *     e2eRtt: {
- *         remoteEndpointId: string,
- *         remoteRegion: string,
+ *         participant: Object,
  *         rtt: number
  *     }
  * }}
