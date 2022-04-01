@@ -37,6 +37,7 @@ import {
     commonUserLeftHandling,
     conferenceFailed,
     conferenceJoined,
+    conferenceJoinInProgress,
     conferenceLeft,
     conferenceSubjectChanged,
     conferenceTimestampChanged,
@@ -2067,6 +2068,9 @@ export default {
         room.on(JitsiConferenceEvents.CONFERENCE_JOINED, () => {
             this._onConferenceJoined();
         });
+        room.on(
+            JitsiConferenceEvents.CONFERENCE_JOIN_IN_PROGRESS,
+            () => APP.store.dispatch(conferenceJoinInProgress(room)));
 
         room.on(
             JitsiConferenceEvents.CONFERENCE_LEFT,
