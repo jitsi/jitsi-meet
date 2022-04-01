@@ -1,37 +1,36 @@
 // @flow
 
-import { getCurrentConference } from '../base/conference';
+import { CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
+import { getCurrentConference } from '../base/conference/functions';
 import { getLocalParticipant } from '../base/participants';
-import { StateListenerRegistry } from '../base/redux';
+import { MiddlewareRegistry } from '../base/redux';
 
 import { setDisableButton } from './actions.web';
 import { SHARED_VIDEO } from './constants';
 
 import './middleware.any';
 
-/**
- * Set up state change listener to disable or enable the share video button in
- * the toolbar menu.
- */
-StateListenerRegistry.register(
-    state => getCurrentConference(state),
-    (conference, { dispatch, getState }, previousConference) => {
-        if (conference && conference !== previousConference && !getState()['features/base/conference'].authRequired) {
-            conference.addCommandListener(SHARED_VIDEO,
-                ({ attributes }) => {
-                    const { from } = attributes;
-                    const localParticipantId = getLocalParticipant(getState()).id;
-                    const status = attributes.state;
+MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
+    const state = getState();
+    const conference = getCurrentConference(state);
+    const localParticipantId = getLocalParticipant(state)?.id;
 
-                    if (status === 'playing') {
-                        if (localParticipantId !== from) {
-                            dispatch(setDisableButton(true));
-                        }
-                    } else if (status === 'stop') {
-                        dispatch(setDisableButton(false));
-                    }
+    switch (action.type) {
+    case CONFERENCE_JOIN_IN_PROGRESS:
+        conference.addCommandListener(SHARED_VIDEO, ({ attributes }) => {
+            const { from } = attributes;
+            const status = attributes.state;
+
+            if (status === 'playing') {
+                if (localParticipantId !== from) {
+                    dispatch(setDisableButton(true));
                 }
-            );
-        }
+            } else if (status === 'stop') {
+                dispatch(setDisableButton(false));
+            }
+        });
+        break;
     }
-);
+
+    return next(action);
+});

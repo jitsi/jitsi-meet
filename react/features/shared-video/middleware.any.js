@@ -2,7 +2,8 @@
 
 import { batch } from 'react-redux';
 
-import { CONFERENCE_LEFT, getCurrentConference } from '../base/conference';
+import { CONFERENCE_JOIN_IN_PROGRESS, CONFERENCE_LEFT } from '../base/conference/actionTypes';
+import { getCurrentConference } from '../base/conference/functions';
 import {
     PARTICIPANT_LEFT,
     getLocalParticipant,
@@ -10,7 +11,7 @@ import {
     participantLeft,
     pinParticipant
 } from '../base/participants';
-import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
+import { MiddlewareRegistry } from '../base/redux';
 
 import { SET_SHARED_VIDEO_STATUS, RESET_SHARED_VIDEO_STATUS } from './actionTypes';
 import {
@@ -36,6 +37,25 @@ MiddlewareRegistry.register(store => next => action => {
     const { ownerId: stateOwnerId, videoUrl: statevideoUrl } = state['features/shared-video'];
 
     switch (action.type) {
+    case CONFERENCE_JOIN_IN_PROGRESS: {
+        conference.addCommandListener(SHARED_VIDEO,
+            ({ value, attributes }) => {
+
+                const { from } = attributes;
+                const sharedVideoStatus = attributes.state;
+
+                if (isSharingStatus(sharedVideoStatus)) {
+                    handleSharingVideoStatus(store, value, attributes, conference);
+                } else if (sharedVideoStatus === 'stop') {
+                    dispatch(participantLeft(value, conference));
+                    if (localParticipantId !== from) {
+                        dispatch(resetSharedVideoStatus());
+                    }
+                }
+            }
+        );
+        break;
+    }
     case CONFERENCE_LEFT:
         dispatch(resetSharedVideoStatus());
         break;
@@ -77,38 +97,6 @@ MiddlewareRegistry.register(store => next => action => {
 
     return next(action);
 });
-
-/**
- * Set up state change listener to perform maintenance tasks when the conference
- * is left or failed, e.g. Clear messages or close the chat modal if it's left
- * open.
- */
-StateListenerRegistry.register(
-    state => getCurrentConference(state),
-    (conference, store, previousConference) => {
-        const { dispatch, getState } = store;
-
-        if (conference && conference !== previousConference && !getState()['features/base/conference'].authRequired) {
-            conference.addCommandListener(SHARED_VIDEO,
-                ({ value, attributes }) => {
-
-                    const { from } = attributes;
-                    const localParticipantId = getLocalParticipant(getState()).id;
-                    const status = attributes.state;
-
-                    if (isSharingStatus(status)) {
-                        handleSharingVideoStatus(store, value, attributes, conference);
-                    } else if (status === 'stop') {
-                        dispatch(participantLeft(value, conference));
-                        if (localParticipantId !== from) {
-                            dispatch(resetSharedVideoStatus());
-                        }
-                    }
-                }
-            );
-        }
-    }
-);
 
 /**
  * Handles the playing, pause and start statuses for the shared video.
