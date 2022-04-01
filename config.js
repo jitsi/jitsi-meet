@@ -79,6 +79,10 @@ var config = {
     flags: {
         // Enables source names in the signaling.
         // sourceNameSignaling: false,
+
+        // Enables sending multiple video streams, i.e., camera and desktop tracks can be shared in the conference
+        // separately as two different streams instead of one composite stream.
+        // sendMultipleVideoStreams: false
     },
 
     // Disables moderator indicators.
