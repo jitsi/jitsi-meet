@@ -34,6 +34,7 @@ export const CONFERENCE_JOINED = 'CONFERENCE_JOINED';
 
 /**
  * The type of (redux) action which signals that a specific conference joining is in progress.
+ * A CONFERENCE_JOINED is guaranteed to follow.
  *
  * {
  *     type: CONFERENCE_JOIN_IN_PROGRESS,
