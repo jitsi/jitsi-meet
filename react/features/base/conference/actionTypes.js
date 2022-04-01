@@ -83,6 +83,19 @@ export const CONFERENCE_TIMESTAMP_CHANGED = 'CONFERENCE_TIMESTAMP_CHANGED';
 export const CONFERENCE_UNIQUE_ID_SET = 'CONFERENCE_UNIQUE_ID_SET';
 
 /**
+ * The type of (redux) action which signals that the end-to-end RTT against a specific remote participant has changed.
+ *
+ * {
+ *     type: E2E_RTT_CHANGED,
+ *     e2eRtt: {
+ *         rtt: number,
+ *         participant: Object,
+ *     }
+ * }
+ */
+export const E2E_RTT_CHANGED = 'E2E_RTT_CHANGED'
+
+/**
  * The type of (redux) action which signals that a specific conference will be
  * joined.
  *

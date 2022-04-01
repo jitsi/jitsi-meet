@@ -3,7 +3,7 @@
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 
 import { getAmplitudeIdentity } from '../analytics';
-import { CONFERENCE_UNIQUE_ID_SET, getConferenceOptions, getRoomName } from '../base/conference';
+import { CONFERENCE_UNIQUE_ID_SET, E2E_RTT_CHANGED, getConferenceOptions, getRoomName } from '../base/conference';
 import { LIB_WILL_INIT } from '../base/lib-jitsi-meet';
 import { DOMINANT_SPEAKER_CHANGED, getLocalParticipant } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
@@ -102,6 +102,18 @@ MiddlewareRegistry.register(store => next => action => {
 
             RTCStats.sendDominantSpeakerData({ dominantSpeakerEndpoint: id,
                 previousSpeakers });
+        }
+        break;
+    }
+    case E2E_RTT_CHANGED: {
+        if (canSendRtcstatsData(state)) {
+            const { participant, rtt } = action.e2eRtt;
+
+            RTCStats.sendE2eRttData({
+                remoteEndpointId: participant.getId(),
+                rtt,
+                remoteRegion: participant.getProperty('region')
+            });
         }
         break;
     }

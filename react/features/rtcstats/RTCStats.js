@@ -96,6 +96,16 @@ class RTCStats {
     }
 
     /**
+     * Send e2e rtt data, the data will be processed by rtcstats-server and saved in the dump file.
+     *
+     * @param {Object} e2eRttData - The object that holds the e2e data.
+     * @returns {void}
+     */
+    sendE2eRttData(e2eRttData) {
+        this.trace && this.trace.statsEntry('e2eRtt', null, e2eRttData);
+    }
+
+    /**
      * Send facial expression data, the data will be processed by rtcstats-server and saved in the dump file.
      *
      * @param {Object} facialExpressionData - Facial expression data to be saved in the rtcstats dump.
