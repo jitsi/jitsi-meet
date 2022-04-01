@@ -42,7 +42,8 @@ const title = {
 const baseHighlightDialogButton = {
     borderRadius: BaseTheme.shape.borderRadius,
     height: BaseTheme.spacing[7],
-    flex: 1
+    flex: 1,
+    justifyContent: 'space-around'
 };
 
 const baseHighlightDialogLabel = {
@@ -101,7 +102,7 @@ export default {
     },
     highlightDialogButtonsContainer: {
         display: 'flex',
-        flexDirection: 'row'
+        flexDirection: 'column-reverse'
     },
     highlightDialogCancelButton: {
         ...baseHighlightDialogButton,
@@ -120,8 +121,8 @@ export default {
         color: BaseTheme.palette.text01
     },
     highlightDialogButtonsSpace: {
-        width: 16,
-        height: '100%'
+        height: 16,
+        width: '100%'
     }
 
 };
