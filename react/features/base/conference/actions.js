@@ -39,6 +39,7 @@ import { getBackendSafeRoomName } from '../util';
 import {
     AUTH_STATUS_CHANGED,
     CONFERENCE_FAILED,
+    CONFERENCE_JOIN_IN_PROGRESS,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     CONFERENCE_LOCAL_SUBJECT_CHANGED,
@@ -105,6 +106,9 @@ function _addConferenceListeners(conference, dispatch, state) {
     conference.on(
         JitsiConferenceEvents.CONFERENCE_JOINED,
         (...args) => dispatch(conferenceJoined(conference, ...args)));
+    conference.on(
+        JitsiConferenceEvents.CONFERENCE_JOIN_IN_PROGRESS,
+        (...args) => dispatch(conferenceJoinInProgress(conference, ...args)));
     conference.on(
         JitsiConferenceEvents.CONFERENCE_LEFT,
         (...args) => {
@@ -346,6 +350,23 @@ export function conferenceFailed(conference: Object, error: string, ...params: a
 export function conferenceJoined(conference: Object) {
     return {
         type: CONFERENCE_JOINED,
+        conference
+    };
+}
+
+/**
+ * Signals that a specific conference join is in progress.
+ *
+ * @param {JitsiConference} conference - The JitsiConference instance for which join by the local participant
+ * is in progress.
+ * @returns {{
+ *     type: CONFERENCE_JOIN_IN_PROGRESS,
+ *     conference: JitsiConference
+ * }}
+ */
+export function conferenceJoinInProgress(conference: Object) {
+    return {
+        type: CONFERENCE_JOIN_IN_PROGRESS,
         conference
     };
 }

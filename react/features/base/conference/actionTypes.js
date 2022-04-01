@@ -33,6 +33,16 @@ export const CONFERENCE_FAILED = 'CONFERENCE_FAILED';
 export const CONFERENCE_JOINED = 'CONFERENCE_JOINED';
 
 /**
+ * The type of (redux) action which signals that a specific conference joining is in progress.
+ *
+ * {
+ *     type: CONFERENCE_JOIN_IN_PROGRESS,
+ *     conference: JitsiConference
+ * }
+ */
+export const CONFERENCE_JOIN_IN_PROGRESS = 'CONFERENCE_JOIN_IN_PROGRESS';
+
+/**
  * The type of (redux) action which signals that a specific conference was left.
  *
  * {
