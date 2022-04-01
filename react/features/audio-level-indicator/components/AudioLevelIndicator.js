@@ -41,6 +41,10 @@ class AudioLevelIndicator extends Component<Props> {
     render() {
         const { audioLevel: passedAudioLevel } = this.props;
 
+        if (passedAudioLevel) {
+            return null;
+        }
+
         // First make sure we are sensitive enough.
         const audioLevel = typeof passedAudioLevel === 'number' && !isNaN(passedAudioLevel)
             ? Math.min(passedAudioLevel * 1.2, 1) : 0;
