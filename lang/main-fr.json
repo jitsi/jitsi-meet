@@ -629,6 +629,7 @@
         "displayNotifications": "Afficher les notifications pour",
         "focus": "Focus de conférence",
         "focusFail": "{{component}} n'est pas disponible - réessayez dans {{ms}} sec",
+        "gifsMenu": "GIPHY",
         "groupTitle": "Notifications",
         "hostAskedUnmute": "Le modérateur souhaite vous donner la parole",
         "invitedOneMember": "{{name}} a été invité(e)",
@@ -722,6 +723,7 @@
     },
     "passwordDigitsOnly": "Jusqu'à {{number}} chiffres",
     "passwordSetRemotely": "défini par un autre participant",
+    "pinnedParticipant": "Participant toujours affiché",
     "polls": {
         "answer": {
             "skip": "Passer",
@@ -1211,12 +1213,14 @@
         "hideSelfView": "Cacher l'affichage de votre propre vidéo",
         "kick": "Exclure",
         "moderator": "Modérateur",
-        "mute": "Un participant a coupé son micro",
+        "mute": "Le participant a coupé son micro",
         "muted": "Muet",
+        "pinToStage": "Garder affiché",
         "remoteControl": "Démarrer / Arrêter le contrôle à distance",
         "screenSharing": "Cette personne partage son écran",
         "show": "Afficher en premier plan",
         "showSelfView": "Montrer votre propre vidéo",
+        "unpinFromStage": "Ne plus garder affiché",
         "videoMuted": "Caméra coupée",
         "videomute": "Le participant a arrêté la caméra"
     },
