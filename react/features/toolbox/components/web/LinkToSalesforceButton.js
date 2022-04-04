@@ -6,7 +6,7 @@ import { translate } from '../../../base/i18n';
 import { IconSalesforce } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-import { SalesforceLinkDialog } from '../../../salesforce';
+import { SalesforceLinkDialog } from '../../../salesforce/components';
 
 /**
  * The type of the React {@code Component} props of {@link LinkToSalesforce}.
