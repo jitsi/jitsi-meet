@@ -3,7 +3,7 @@ import './faceApiPatch';
 import { setWasmPaths } from '@tensorflow/tfjs-backend-wasm';
 import * as faceapi from '@vladmandic/face-api';
 
-import { DETECTION_TYPES, DETECT_FACE, FACE_BOX_MESSAGE, FACIAL_EXPRESSION_MESSAGE, INIT_WORKER } from './constants';
+import { DETECTION_TYPES, DETECT_FACE, FACE_LANDMARKS_MESSAGE, INIT_WORKER } from './constants';
 
 /**
  * Detection types to be applied.
@@ -37,7 +37,7 @@ let lastValidFaceBox;
 
 const detectFaceBox = async ({ detections, threshold }) => {
     if (!detections.length) {
-        return;
+        return null;
     }
 
     const faceBox = {
@@ -49,30 +49,21 @@ const detectFaceBox = async ({ detections, threshold }) => {
     faceBox.width = Math.round(faceBox.right - faceBox.left);
 
     if (lastValidFaceBox && Math.abs(lastValidFaceBox.left - faceBox.left) < threshold) {
-        return;
+        return null;
     }
 
     lastValidFaceBox = faceBox;
 
-    self.postMessage({
-        type: FACE_BOX_MESSAGE,
-        value: faceBox
-    });
+    return faceBox;
 };
 
-const detectFaceExpressions = async ({ detections }) => {
-    const facialExpression = detections[0]?.expressions.asSortedArray()[0].expression;
-
-    if (facialExpression) {
-        self.postMessage({
-            type: FACIAL_EXPRESSION_MESSAGE,
-            value: facialExpression
-        });
-    }
-};
+const detectFaceExpression = async ({ detections }) =>
+    detections[0]?.expressions.asSortedArray()[0].expression;
 
 const detect = async ({ image, threshold }) => {
     let detections;
+    let faceExpression;
+    let faceBox;
 
     detectionInProgress = true;
     faceapi.tf.engine().startScope();
@@ -85,20 +76,30 @@ const detect = async ({ image, threshold }) => {
             new faceapi.TinyFaceDetectorOptions()
         ).withFaceExpressions();
 
-        await detectFaceExpressions({ detections });
+        faceExpression = await detectFaceExpression({ detections });
     }
 
     if (faceDetectionTypes.includes(DETECTION_TYPES.FACE_BOX)) {
         detections = detections
             ? detections.map(d => d.detection)
             : await faceapi.detectAllFaces(imageTensor, new faceapi.TinyFaceDetectorOptions());
-        await detectFaceBox({
+
+        faceBox = await detectFaceBox({
             detections,
             threshold
         });
     }
 
     faceapi.tf.engine().endScope();
+
+    if (faceBox || faceExpression) {
+        self.postMessage({
+            faceBox,
+            faceExpression,
+            type: FACE_LANDMARKS_MESSAGE
+        });
+    }
+
     detectionInProgress = false;
 };
 

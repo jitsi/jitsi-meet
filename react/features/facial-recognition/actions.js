@@ -17,8 +17,7 @@ import {
 } from './actionTypes';
 import {
     DETECTION_TYPES,
-    FACE_BOX_MESSAGE,
-    FACIAL_EXPRESSION_MESSAGE,
+    FACE_LANDMARKS_MESSAGE,
     INIT_WORKER,
     WEBHOOK_SEND_TIME_INTERVAL
 } from './constants';
@@ -93,11 +92,14 @@ export function loadWorker() {
         workerUrl = window.URL.createObjectURL(workerBlob);
         worker = new Worker(workerUrl, { name: 'Face Recognition Worker' });
         worker.onmessage = function(e: Object) {
-            const { type, value } = e.data;
+            const { type, faceExpression, faceBox } = e.data;
 
-            switch (type) {
-            case FACIAL_EXPRESSION_MESSAGE: {
-                if (value === lastFacialExpression) {
+            if (type !== FACE_LANDMARKS_MESSAGE) {
+                return;
+            }
+
+            if (faceExpression) {
+                if (faceExpression === lastFacialExpression) {
                     duplicateConsecutiveExpressions++;
                 } else {
                     if (lastFacialExpression && lastFacialExpressionTimestamp) {
@@ -107,29 +109,26 @@ export function loadWorker() {
                             lastFacialExpressionTimestamp
                         ));
                     }
-                    lastFacialExpression = value;
+                    lastFacialExpression = faceExpression;
                     lastFacialExpressionTimestamp = Date.now();
                     duplicateConsecutiveExpressions = 0;
                 }
-                break;
             }
-            case FACE_BOX_MESSAGE: {
+
+            if (faceBox) {
                 const state = getState();
                 const conference = getCurrentConference(state);
                 const localParticipant = getLocalParticipant(state);
 
                 if (getParticipantCount(state) > 1) {
-                    sendFaceBoxToParticipants(conference, value);
+                    sendFaceBoxToParticipants(conference, faceBox);
                 }
 
                 dispatch({
                     type: UPDATE_FACE_COORDINATES,
-                    faceBox: value,
+                    faceBox,
                     id: localParticipant.id
                 });
-
-                break;
-            }
             }
         };
 
