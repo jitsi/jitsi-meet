@@ -12,17 +12,6 @@
 export const ADD_FACIAL_EXPRESSION = 'ADD_FACIAL_EXPRESSION';
 
 /**
- * Redux action type dispatched in order to set the time interval in which
- * the message to the facial expression worker will be sent.
- *
- * {
- *      type: SET_DETECTION_TIME_INTERVAL,
- *      time: number
- * }
- */
-export const SET_DETECTION_TIME_INTERVAL = 'SET_DETECTION_TIME_INTERVAL';
-
-/**
  * Redux action type dispatched in order to set recognition active in the state.
  *
  * {
@@ -57,3 +46,14 @@ export const CLEAR_FACIAL_EXPRESSIONS_BUFFER = 'CLEAR_FACIAL_EXPRESSIONS_BUFFER'
  * }
 */
 export const ADD_TO_FACIAL_EXPRESSIONS_BUFFER = 'ADD_TO_FACIAL_EXPRESSIONS_BUFFER ';
+
+/**
+ * Redux action type dispatched in order to update coordinates of a detected face.
+ *
+ * {
+ *      type: UPDATE_FACE_COORDINATES,
+ *      faceBox: Object({ left, bottom, right, top }),
+ *      participantId: string
+ * }
+ */
+ export const UPDATE_FACE_COORDINATES = 'UPDATE_FACE_COORDINATES';

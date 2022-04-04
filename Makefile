@@ -53,8 +53,6 @@ deploy-appbundle:
 		$(OUTPUT_DIR)/analytics-ga.js \
 		$(BUILD_DIR)/analytics-ga.min.js \
 		$(BUILD_DIR)/analytics-ga.min.js.map \
-		$(BUILD_DIR)/face-centering-worker.min.js \
-		$(BUILD_DIR)/face-centering-worker.min.js.map \
 		$(BUILD_DIR)/facial-expressions-worker.min.js \
 		$(BUILD_DIR)/facial-expressions-worker.min.js.map \
 		$(DEPLOY_DIR)

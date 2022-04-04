@@ -2,8 +2,16 @@
 import { getLocalParticipant } from '../base/participants';
 import { extractFqnFromPath } from '../dynamic-branding';
 
-import { SET_TIMEOUT } from './constants';
+import { DETECT_FACE, FACE_BOX_EVENT_TYPE, SEND_IMAGE_INTERVAL_MS } from './constants';
 import logger from './logger';
+
+let canvas;
+let context;
+
+if (typeof OffscreenCanvas === 'undefined') {
+    canvas = document.createElement('canvas');
+    context = canvas.getContext('2d');
+}
 
 /**
  * Sends the facial expression with its duration to all the other participants.
@@ -28,6 +36,27 @@ export function sendFacialExpressionToParticipants(
         logger.warn('Could not broadcast the facial expression to the other participants', err);
     }
 
+}
+
+/**
+ * Sends the face box to all the other participants.
+ *
+ * @param {Object} conference - The current conference.
+ * @param  {Object} faceBox - Face box to be sent.
+ * @returns {void}
+ */
+export function sendFaceBoxToParticipants(
+        conference: Object,
+        faceBox: Object
+): void {
+    try {
+        conference.sendEndpointMessage('', {
+            type: FACE_BOX_EVENT_TYPE,
+            faceBox
+        });
+    } catch (err) {
+        logger.warn('Could not broadcast the face box to the other participants', err);
+    }
 }
 
 /**
@@ -107,21 +136,26 @@ export async function sendFacialExpressionsWebhook(state: Object) {
     return false;
 }
 
+
 /**
- * Sends the image data a canvas from the track in the image capture to the facial expression worker.
+ * Sends the image data a canvas from the track in the image capture to the face recognition worker.
  *
- * @param {Worker} worker - Facial expression worker.
+ * @param {Worker} worker - Face recognition worker.
  * @param {Object} imageCapture - Image capture that contains the current track.
+ * @param {number} threshold - Movement threshold as percentage for sharing face coordinates.
  * @returns {Promise<void>}
  */
 export async function sendDataToWorker(
         worker: Worker,
-        imageCapture: Object
+        imageCapture: Object,
+        threshold: number = 10
 ): Promise<void> {
     if (imageCapture === null || imageCapture === undefined) {
         return;
     }
+
     let imageBitmap;
+    let image;
 
     try {
         imageBitmap = await imageCapture.grabFrame();
@@ -131,8 +165,63 @@ export async function sendDataToWorker(
         return;
     }
 
+    if (typeof OffscreenCanvas === 'undefined') {
+        canvas.width = imageBitmap.width;
+        canvas.height = imageBitmap.height;
+        context.drawImage(imageBitmap, 0, 0);
+
+        image = context.getImageData(0, 0, imageBitmap.width, imageBitmap.height);
+    } else {
+        image = imageBitmap;
+    }
+
     worker.postMessage({
-        type: SET_TIMEOUT,
-        imageBitmap
+        type: DETECT_FACE,
+        image,
+        threshold
     });
+
+    imageBitmap.close();
+}
+
+/**
+ * Gets face box for a participant id.
+ *
+ * @param {string} id - The participant id.
+ * @param {Object} state - The redux state.
+ * @returns {Object}
+ */
+function getFaceBoxForId(id: string, state: Object) {
+    return state['features/facial-recognition'].faceBoxes[id];
+}
+
+/**
+ * Gets the video object position for a participant id.
+ *
+ * @param {Object} state - The redux state.
+ * @param {string} id - The participant id.
+ * @returns {string} - CSS object-position in the shape of '{horizontalPercentage}% {verticalPercentage}%'.
+ */
+export function getVideoObjectPosition(state: Object, id: string) {
+    const faceBox = getFaceBoxForId(id, state);
+
+    if (faceBox) {
+        const { right, width } = faceBox;
+
+        return `${right - (width / 2)}% 50%`;
+    }
+
+    return '50% 50%';
+}
+
+/**
+ * Gets the video object position for a participant id.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {number} - Number of miliseconds for doing face detection.
+ */
+export function getDetectionInterval(state: Object) {
+    const { faceCoordinatesSharing } = state['features/base/config'];
+
+    return Math.min(faceCoordinatesSharing?.captureInterval || SEND_IMAGE_INTERVAL_MS);
 }

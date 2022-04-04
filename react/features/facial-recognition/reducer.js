@@ -6,12 +6,13 @@ import {
     ADD_FACIAL_EXPRESSION,
     ADD_TO_FACIAL_EXPRESSIONS_BUFFER,
     CLEAR_FACIAL_EXPRESSIONS_BUFFER,
-    SET_DETECTION_TIME_INTERVAL,
     START_FACIAL_RECOGNITION,
-    STOP_FACIAL_RECOGNITION
+    STOP_FACIAL_RECOGNITION,
+    UPDATE_FACE_COORDINATES
 } from './actionTypes';
 
 const defaultState = {
+    faceBoxes: {},
     facialExpressions: {
         happy: 0,
         neutral: 0,
@@ -22,7 +23,6 @@ const defaultState = {
         sad: 0
     },
     facialExpressionsBuffer: [],
-    detectionTimeInterval: -1,
     recognitionActive: false
 };
 
@@ -45,23 +45,25 @@ ReducerRegistry.register('features/facial-recognition', (state = defaultState, a
             facialExpressionsBuffer: []
         };
     }
-    case SET_DETECTION_TIME_INTERVAL: {
-        return {
-            ...state,
-            detectionTimeInterval: action.time
-        };
-    }
     case START_FACIAL_RECOGNITION: {
         return {
             ...state,
             recognitionActive: true
         };
     }
-
     case STOP_FACIAL_RECOGNITION: {
         return {
             ...state,
             recognitionActive: false
+        };
+    }
+    case UPDATE_FACE_COORDINATES: {
+        return {
+            ...state,
+            faceBoxes: {
+                ...state.faceBoxes,
+                [action.id]: action.faceBox
+            }
         };
     }
     }
