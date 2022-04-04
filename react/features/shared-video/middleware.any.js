@@ -31,13 +31,14 @@ import { isSharingStatus } from './functions';
 MiddlewareRegistry.register(store => next => action => {
     const { dispatch, getState } = store;
     const state = getState();
-    const conference = getCurrentConference(state);
-    const localParticipantId = getLocalParticipant(state)?.id;
     const { videoUrl, status, ownerId, time, muted, volume } = action;
     const { ownerId: stateOwnerId, videoUrl: statevideoUrl } = state['features/shared-video'];
 
     switch (action.type) {
     case CONFERENCE_JOIN_IN_PROGRESS: {
+        const { conference } = action;
+        const localParticipantId = getLocalParticipant(state)?.id;
+
         conference.addCommandListener(SHARED_VIDEO,
             ({ value, attributes }) => {
 
@@ -59,7 +60,9 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_LEFT:
         dispatch(resetSharedVideoStatus());
         break;
-    case PARTICIPANT_LEFT:
+    case PARTICIPANT_LEFT: {
+        const conference = getCurrentConference(state);
+
         if (action.participant.id === stateOwnerId) {
             batch(() => {
                 dispatch(resetSharedVideoStatus());
@@ -67,7 +70,11 @@ MiddlewareRegistry.register(store => next => action => {
             });
         }
         break;
-    case SET_SHARED_VIDEO_STATUS:
+    }
+    case SET_SHARED_VIDEO_STATUS: {
+        const conference = getCurrentConference(state);
+        const localParticipantId = getLocalParticipant(state)?.id;
+
         if (localParticipantId === ownerId) {
             sendShareVideoCommand({
                 conference,
@@ -80,8 +87,13 @@ MiddlewareRegistry.register(store => next => action => {
             });
         }
         break;
-    case RESET_SHARED_VIDEO_STATUS:
+    }
+    case RESET_SHARED_VIDEO_STATUS: {
+        const localParticipantId = getLocalParticipant(state)?.id;
+
         if (localParticipantId === stateOwnerId) {
+            const conference = getCurrentConference(state);
+
             sendShareVideoCommand({
                 conference,
                 id: statevideoUrl,
@@ -93,6 +105,7 @@ MiddlewareRegistry.register(store => next => action => {
             });
         }
         break;
+    }
     }
 
     return next(action);
