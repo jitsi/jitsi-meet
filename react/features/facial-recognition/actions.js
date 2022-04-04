@@ -17,7 +17,6 @@ import {
 } from './actionTypes';
 import {
     DETECTION_TYPES,
-    FACE_LANDMARKS_MESSAGE,
     INIT_WORKER,
     WEBHOOK_SEND_TIME_INTERVAL
 } from './constants';
@@ -92,11 +91,7 @@ export function loadWorker() {
         workerUrl = window.URL.createObjectURL(workerBlob);
         worker = new Worker(workerUrl, { name: 'Face Recognition Worker' });
         worker.onmessage = function(e: Object) {
-            const { type, faceExpression, faceBox } = e.data;
-
-            if (type !== FACE_LANDMARKS_MESSAGE) {
-                return;
-            }
+            const { faceExpression, faceBox } = e.data;
 
             if (faceExpression) {
                 if (faceExpression === lastFacialExpression) {

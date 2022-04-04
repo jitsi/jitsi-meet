@@ -35,11 +35,6 @@ export const WEBHOOK_SEND_TIME_INTERVAL = 15000;
 export const INIT_WORKER = 'INIT_WORKER';
 
 /**
- * Type of message sent from the worker to main thread that contains face landmarks.
- */
-export const FACE_LANDMARKS_MESSAGE = 'FACE_LANDMARKS_MESSAGE';
-
-/**
  * Type of event sent on the data channel.
  */
 export const FACE_BOX_EVENT_TYPE = 'face-box';

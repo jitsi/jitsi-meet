@@ -3,7 +3,7 @@ import './faceApiPatch';
 import { setWasmPaths } from '@tensorflow/tfjs-backend-wasm';
 import * as faceapi from '@vladmandic/face-api';
 
-import { DETECTION_TYPES, DETECT_FACE, FACE_LANDMARKS_MESSAGE, INIT_WORKER } from './constants';
+import { DETECTION_TYPES, DETECT_FACE, INIT_WORKER } from './constants';
 
 /**
  * Detection types to be applied.
@@ -95,8 +95,7 @@ const detect = async ({ image, threshold }) => {
     if (faceBox || faceExpression) {
         self.postMessage({
             faceBox,
-            faceExpression,
-            type: FACE_LANDMARKS_MESSAGE
+            faceExpression
         });
     }
 
