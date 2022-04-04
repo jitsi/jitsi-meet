@@ -6,7 +6,6 @@ import { useSelector } from 'react-redux';
 
 import { IconPinParticipant } from '../../../base/icons';
 import { BaseIndicator } from '../../../base/react';
-import { getActiveParticipantsIds } from '../../functions.web';
 
 /**
  * The type of the React {@code Component} props of {@link PinnedIndicator}.
@@ -53,7 +52,8 @@ const PinnedIndicator = ({
     participantId,
     tooltipPosition
 }: Props) => {
-    const isPinned = useSelector(getActiveParticipantsIds).find(id => id === participantId);
+    const isPinned = useSelector(state => state['features/filmstrip'].activeParticipants)
+        .find(p => p.id === participantId && p.pinned);
     const styles = useStyles();
 
     if (!isPinned) {

@@ -18,7 +18,6 @@ import { translate } from '../../../base/i18n';
 import { Icon, IconMenuDown, IconMenuUp } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { shouldHideSelfView } from '../../../base/settings/functions.any';
-import { CHAT_SIZE } from '../../../chat';
 import { showToolbox } from '../../../toolbox/actions.web';
 import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';
 import { LAYOUTS } from '../../../video-layout';
@@ -57,11 +56,6 @@ type Props = {
      * Additional CSS class names top add to the root.
      */
     _className: string,
-
-    /**
-     * Whether or not the chat is open.
-     */
-    _chatOpen: boolean,
 
     /**
      * The current layout of the filmstrip.
@@ -305,7 +299,6 @@ class Filmstrip extends PureComponent <Props, State> {
     render() {
         const filmstripStyle = { };
         const {
-            _chatOpen,
             _currentLayout,
             _disableSelfView,
             _resizableFilmstrip,
@@ -329,7 +322,7 @@ class Filmstrip extends PureComponent <Props, State> {
         }
         case LAYOUTS.TILE_VIEW: {
             if (_stageFilmstrip && _visible) {
-                filmstripStyle.maxWidth = `calc(100% - ${_verticalViewMaxWidth}px - ${_chatOpen ? CHAT_SIZE : 0}px)`;
+                filmstripStyle.maxWidth = `calc(100% - ${_verticalViewMaxWidth}px)`;
             }
             break;
         }
