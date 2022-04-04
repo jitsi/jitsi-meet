@@ -31,8 +31,6 @@ import { isSharingStatus } from './functions';
 MiddlewareRegistry.register(store => next => action => {
     const { dispatch, getState } = store;
     const state = getState();
-    const { videoUrl, status, ownerId, time, muted, volume } = action;
-    const { ownerId: stateOwnerId, videoUrl: statevideoUrl } = state['features/shared-video'];
 
     switch (action.type) {
     case CONFERENCE_JOIN_IN_PROGRESS: {
@@ -62,6 +60,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     case PARTICIPANT_LEFT: {
         const conference = getCurrentConference(state);
+        const { ownerId: stateOwnerId, videoUrl: statevideoUrl } = state['features/shared-video'];
 
         if (action.participant.id === stateOwnerId) {
             batch(() => {
@@ -74,6 +73,7 @@ MiddlewareRegistry.register(store => next => action => {
     case SET_SHARED_VIDEO_STATUS: {
         const conference = getCurrentConference(state);
         const localParticipantId = getLocalParticipant(state)?.id;
+        const { videoUrl, status, ownerId, time, muted, volume } = action;
 
         if (localParticipantId === ownerId) {
             sendShareVideoCommand({
@@ -90,6 +90,7 @@ MiddlewareRegistry.register(store => next => action => {
     }
     case RESET_SHARED_VIDEO_STATUS: {
         const localParticipantId = getLocalParticipant(state)?.id;
+        const { ownerId: stateOwnerId, videoUrl: statevideoUrl } = state['features/shared-video'];
 
         if (localParticipantId === stateOwnerId) {
             const conference = getCurrentConference(state);
