@@ -112,9 +112,12 @@ export function _abstractMapStateToProps(state: Object) {
         visible: isRecordButtonVisible
     } = getRecordButtonProps(state);
 
+    const canStartRecording = isRecordButtonVisible && !isRecordButtonDisabled;
+    const _visible = (canStartRecording || isRecordingRunning) && Boolean(webhookProxyUrl);
+
     return {
         _disabled: !isRecordingRunning,
         _isHighlightInProgress: isButtonDisabled,
-        _visible: isRecordButtonVisible && !isRecordButtonDisabled && Boolean(webhookProxyUrl)
+        _visible
     };
 }
