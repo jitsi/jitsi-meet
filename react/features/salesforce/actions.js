@@ -10,7 +10,6 @@ import {
 } from '../notifications';
 
 import { SalesforceLinkDialog } from './components';
-import { isSalesforceEnabled } from './functions';
 
 /**
  * Displays the notification for linking the meeting to Salesforce.
@@ -19,7 +18,9 @@ import { isSalesforceEnabled } from './functions';
  */
 export function showSalesforceNotification() {
     return (dispatch: Object, getState: Function) => {
-        if (!isSalesforceEnabled(getState())) {
+        const { salesforceUrl } = getState()['features/base/config'];
+
+        if (!salesforceUrl) {
             return;
         }
 
