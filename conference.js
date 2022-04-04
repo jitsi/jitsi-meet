@@ -3117,12 +3117,12 @@ export default {
     },
 
     /**
-     * Sends a facial expression as a string and its duration as a number
-     * @param {object} payload - Object containing the {string} facialExpression
+     * Sends a face expression as a string and its duration as a number
+     * @param {object} payload - Object containing the {string} faceExpression
      * and {number} duration
      */
-    sendFacialExpression(payload) {
-        room.sendFacialExpression(payload);
+    sendFaceExpression(payload) {
+        room.sendFaceLandmarks(payload);
     },
 
     /**

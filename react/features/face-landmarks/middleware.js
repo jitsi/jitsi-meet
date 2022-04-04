@@ -10,20 +10,20 @@ import { getParticipantCount } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { TRACK_UPDATED, TRACK_ADDED, TRACK_REMOVED } from '../base/tracks';
 
-import { ADD_FACIAL_EXPRESSION, UPDATE_FACE_COORDINATES } from './actionTypes';
+import { ADD_FACE_EXPRESSION, UPDATE_FACE_COORDINATES } from './actionTypes';
 import {
-    addToFacialExpressionsBuffer,
+    addToFaceExpressionsBuffer,
     loadWorker,
-    stopFacialRecognition,
-    startFacialRecognition
+    stopFaceLandmarksDetection,
+    startFaceLandmarksDetection
 } from './actions';
 import { FACE_BOX_EVENT_TYPE } from './constants';
-import { sendFacialExpressionToParticipants, sendFacialExpressionToServer } from './functions';
+import { sendFaceExpressionToParticipants, sendFaceExpressionToServer } from './functions';
 
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
-    const { enableFacialRecognition, faceCoordinatesSharing } = getState()['features/base/config'];
-    const isEnabled = enableFacialRecognition || faceCoordinatesSharing?.enabled;
+    const { faceLandmarks } = getState()['features/base/config'];
+    const isEnabled = faceLandmarks?.enableFaceCentering || faceLandmarks?.enableFaceExpressionsDetection;
 
     if (action.type === CONFERENCE_JOINED) {
         if (isEnabled) {
@@ -57,7 +57,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
     switch (action.type) {
     case CONFERENCE_WILL_LEAVE : {
-        dispatch(stopFacialRecognition());
+        dispatch(stopFaceLandmarksDetection());
 
         return next(action);
     }
@@ -66,7 +66,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
         if (videoType === 'camera' && isLocal()) {
             // need to pass this since the track is not yet added in the store
-            dispatch(startFacialRecognition(action.track));
+            dispatch(startFaceLandmarksDetection(action.track));
         }
 
         return next(action);
@@ -83,9 +83,9 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         if (muted !== undefined) {
             // addresses video mute state changes
             if (muted) {
-                dispatch(stopFacialRecognition());
+                dispatch(stopFaceLandmarksDetection());
             } else {
-                dispatch(startFacialRecognition());
+                dispatch(startFaceLandmarksDetection());
             }
         }
 
@@ -95,21 +95,21 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         const { jitsiTrack: { isLocal, videoType } } = action.track;
 
         if (videoType === 'camera' && isLocal()) {
-            dispatch(stopFacialRecognition());
+            dispatch(stopFaceLandmarksDetection());
         }
 
         return next(action);
     }
-    case ADD_FACIAL_EXPRESSION: {
+    case ADD_FACE_EXPRESSION: {
         const state = getState();
         const conference = getCurrentConference(state);
 
         if (getParticipantCount(state) > 1) {
-            sendFacialExpressionToParticipants(conference, action.facialExpression, action.duration);
+            sendFaceExpressionToParticipants(conference, action.faceExpression, action.duration);
         }
-        sendFacialExpressionToServer(conference, action.facialExpression, action.duration);
-        dispatch(addToFacialExpressionsBuffer({
-            emotion: action.facialExpression,
+        sendFaceExpressionToServer(conference, action.faceExpression, action.duration);
+        dispatch(addToFaceExpressionsBuffer({
+            emotion: action.faceExpression,
             timestamp: action.timestamp
         }));
 

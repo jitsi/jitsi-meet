@@ -2,4 +2,4 @@
 
 import { getLogger } from '../base/logging/functions';
 
-export default getLogger('features/facial-recognition');
+export default getLogger('features/face-landmarks');
