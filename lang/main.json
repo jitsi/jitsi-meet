@@ -841,7 +841,7 @@
     "raisedHandsLabel": "Number of raised hands",
     "record": {
         "already": {
-            "linked": "The meeting is already linked to this Salesforce object."
+            "linked": "Record is already linked to this session."
         },
         "type": {
             "account": "Account",

@@ -12,7 +12,6 @@ import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { SET_REDUCED_UI } from '../base/responsive-ui';
 import { FeedbackDialog } from '../feedback';
 import { setFilmstripEnabled } from '../filmstrip';
-import { showSalesforceNotification } from '../salesforce/actions';
 import { setToolboxEnabled } from '../toolbox/actions';
 
 import { notifyKickedOut } from './actions';
@@ -22,12 +21,13 @@ MiddlewareRegistry.register(store => next => action => {
 
     switch (action.type) {
     case CONFERENCE_JOINED:
-        _conferenceJoined(store);
-
-        break;
-
     case SET_REDUCED_UI: {
-        _setReducedUI(store);
+        const { dispatch, getState } = store;
+        const state = getState();
+        const { reducedUI } = state['features/base/responsive-ui'];
+
+        dispatch(setToolboxEnabled(!reducedUI));
+        dispatch(setFilmstripEnabled(!reducedUI));
 
         break;
     }
@@ -80,37 +80,3 @@ StateListenerRegistry.register(
             }
         }
     });
-
-/**
- * Configures the UI. In reduced UI mode some components will
- * be hidden if there is no space to render them.
- *
- * @param {Store} store - The redux store in which the specified {@code action}
- * is being dispatched.
- * @private
- * @returns {void}
- */
-function _setReducedUI({ dispatch, getState }) {
-    const { reducedUI } = getState()['features/base/responsive-ui'];
-
-    dispatch(setToolboxEnabled(!reducedUI));
-    dispatch(setFilmstripEnabled(!reducedUI));
-}
-
-/**
- * Does extra sync up on properties that may need to be updated after the
- * conference was joined.
- *
- * @param {Store} store - The redux store in which the specified {@code action}
- * is being dispatched.
- * @private
- * @returns {void}
- */
-function _conferenceJoined({ dispatch, getState }) {
-    _setReducedUI({
-        dispatch,
-        getState
-    });
-
-    dispatch(showSalesforceNotification());
-}

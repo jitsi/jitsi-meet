@@ -52,7 +52,6 @@ import {
     LiveStreamButton,
     RecordButton
 } from '../../../recording';
-import { isSalesforceEnabled } from '../../../salesforce/functions';
 import {
     isScreenAudioSupported,
     isScreenVideoShared,
@@ -1392,7 +1391,8 @@ function _mapStateToProps(state, ownProps) {
         disableProfile,
         enableFeaturesBasedOnToken,
         iAmRecorder,
-        iAmSipGateway
+        iAmSipGateway,
+        salesforceUrl
     } = state['features/base/config'];
     const {
         fullScreen,
@@ -1441,7 +1441,7 @@ function _mapStateToProps(state, ownProps) {
         _isIosMobile: isIosMobileBrowser(),
         _isMobile: isMobileBrowser(),
         _isVpaasMeeting: isVpaasMeeting(state),
-        _hasSalesforce: isSalesforceEnabled(state),
+        _hasSalesforce: Boolean(salesforceUrl),
         _localParticipantID: localParticipant?.id,
         _localVideo: localVideo,
         _overflowMenuVisible: overflowMenuVisible,
