@@ -74,7 +74,11 @@
         "privateNotice": "Личное сообщение пользователю {{recipient}}",
         "title": "Чат",
         "titleWithPolls": "Чат",
-        "you": "вы"
+        "you": "вы",
+        "tabs": {
+            "chat": "Чат",
+            "polls": "Опросы"
+        }
     },
     "chromeExtensionBanner": {
         "buttonText": "Установить расширение Chrome",
@@ -250,7 +254,7 @@
         "liveStreamingDisabledForGuestTooltip": "Гости не могут начать трансляцию",
         "liveStreamingDisabledTooltip": "Возможность трансляции отключена",
         "lockMessage": "Не удалось запереть конференцию",
-        "lockRoom": "Добавить конференцию $t(lockRoomPasswordUppercase)",
+        "lockRoom": "Добавить в конференцию $t(lockRoomPasswordUppercase)",
         "lockTitle": "Блокировка не удалась",
         "logoutQuestion": "Уверены, что хотите выйти и остановить встречу?",
         "logoutTitle": "Завершить сеанс",
@@ -588,6 +592,36 @@
     },
     "passwordDigitsOnly": "До {{number}} цифр",
     "passwordSetRemotely": "установлен другим участником",
+    "pinnedParticipant": "Участник закреплен",
+    "polls": {
+        "answer": {
+            "skip": "Пропустить",
+            "submit": "Отправить"
+        },
+        "by": "По {{ name }}",
+        "create": {
+            "addOption": "Добавить вариант",
+            "answerPlaceholder": "Вариант {{index}}",
+            "cancel": "Отменить",
+            "create": "Создать опрос",
+            "pollOption": "Вариант опроса {{index}}",
+            "pollQuestion": "Вопрос опроса",
+            "questionPlaceholder": "Задать вопрос",
+            "removeOption": "Удалить вариант",
+            "send": "Отправить"
+        },
+        "notification": {
+            "description": "Откройте вкладку опросов, чтобы проголосовать",
+            "title": "К этой встрече добавлен новый опрос"
+        },
+        "results": {
+            "changeVote": "Изменить голос",
+            "empty": "На встрече еще нет опросов. Начать опрос здесь!",
+            "hideDetailedResults": "Скрыть детали",
+            "showDetailedResults": "Показать детали",
+            "vote": "Голосование"
+        }
+    },
     "poweredby": "работает на",
     "prejoin": {
         "audioAndVideoError": "Ошибка звука и видео:",
