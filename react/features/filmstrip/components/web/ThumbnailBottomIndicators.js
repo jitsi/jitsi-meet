@@ -32,7 +32,12 @@ type Props = {
     /**
      * Id of the participant for which the component is displayed.
      */
-    participantId: string
+    participantId: string,
+
+    /**
+     * Whether or not to show the status indicators.
+     */
+    showStatusIndicators: string
 }
 
 const useStyles = makeStyles(() => {
@@ -58,7 +63,8 @@ const ThumbnailBottomIndicators = ({
     className,
     currentLayout,
     local,
-    participantId
+    participantId,
+    showStatusIndicators = true
 }: Props) => {
     const styles = useStyles();
     const _allowEditing = !useSelector(isNameReadOnly);
@@ -66,11 +72,13 @@ const ThumbnailBottomIndicators = ({
     const _showDisplayName = useSelector(isDisplayNameVisible);
 
     return (<div className = { className }>
-        <StatusIndicators
-            audio = { true }
-            moderator = { true }
-            participantID = { participantId }
-            screenshare = { currentLayout === LAYOUTS.TILE_VIEW } />
+        {
+            showStatusIndicators && <StatusIndicators
+                audio = { true }
+                moderator = { true }
+                participantID = { participantId }
+                screenshare = { currentLayout === LAYOUTS.TILE_VIEW } />
+        }
         {
             _showDisplayName && (
                 <span className = { styles.nameContainer }>
