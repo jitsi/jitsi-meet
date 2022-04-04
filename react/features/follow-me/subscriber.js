@@ -6,6 +6,7 @@ import {
     isLocalParticipantModerator
 } from '../base/participants';
 import { StateListenerRegistry } from '../base/redux';
+import { getPinnedActiveParticipants, isStageFilmstripEnabled } from '../filmstrip/functions.web';
 import { shouldDisplayTileView } from '../video-layout/functions';
 
 import { FOLLOW_ME_COMMAND } from './constants';
@@ -52,6 +53,16 @@ StateListenerRegistry.register(
     /* listener */ _sendFollowMeCommand);
 
 /**
+ * Subscribes to changes to the stage filmstrip participants.
+ */
+StateListenerRegistry.register(
+    /* selector */ getPinnedActiveParticipants,
+    /* listener */ _sendFollowMeCommand,
+    {
+        deepEquals: true
+    });
+
+/**
  * Subscribes to changes to the tile view setting in the user interface of the
  * local participant.
  */
@@ -68,10 +79,12 @@ StateListenerRegistry.register(
  */
 function _getFollowMeState(state) {
     const pinnedParticipant = getPinnedParticipant(state);
+    const stageFilmstrip = isStageFilmstripEnabled(state);
 
     return {
         filmstripVisible: state['features/filmstrip'].visible,
-        nextOnStage: pinnedParticipant && pinnedParticipant.id,
+        nextOnStage: stageFilmstrip ? undefined : pinnedParticipant && pinnedParticipant.id,
+        pinnedStageParticipants: stageFilmstrip ? JSON.stringify(getPinnedActiveParticipants(state)) : undefined,
         sharedDocumentVisible: state['features/etherpad'].editing,
         tileViewEnabled: shouldDisplayTileView(state)
     };

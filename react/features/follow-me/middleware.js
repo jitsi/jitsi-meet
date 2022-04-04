@@ -1,5 +1,7 @@
 // @flow
 
+import _ from 'lodash';
+
 import { CONFERENCE_WILL_JOIN } from '../base/conference/actionTypes';
 import {
     getParticipantById,
@@ -9,6 +11,7 @@ import {
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { setFilmstripVisible } from '../filmstrip';
+import { addStageParticipant } from '../filmstrip/actions.web';
 import { setTileView } from '../video-layout';
 
 import {
@@ -177,6 +180,14 @@ function _onFollowMeCommand(attributes = {}, id, store) {
         _pinVideoThumbnailById(store, idOfParticipantToPin);
     } else if (typeof idOfParticipantToPin === 'undefined' && pinnedParticipant) {
         store.dispatch(pinParticipant(null));
+    }
+
+    if (attributes.pinnedStageParticipants !== undefined) {
+        const stageParticipants = JSON.parse(attributes.pinnedStageParticipants);
+
+        if (!_.isEqual(stageParticipants, oldState.pinnedStageParticipants)) {
+            stageParticipants.forEach(p => store.dispatch(addStageParticipant(p.participantId, true)));
+        }
     }
 }
 
