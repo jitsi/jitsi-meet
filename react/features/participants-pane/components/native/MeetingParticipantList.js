@@ -207,7 +207,7 @@ class MeetingParticipantList extends PureComponent<Props> {
         // If there are only meeting participants available,
         // we take the full container height
         const onlyMeetingParticipants
-            = breakoutRooms?.length === 0 && lobbyParticipants.length === 0;
+            = breakoutRooms?.length === 0 && lobbyParticipants?.length === 0;
         const containerStyle
             = onlyMeetingParticipants
                 ? styles.meetingListFullContainer : styles.meetingListContainer;
