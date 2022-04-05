@@ -73,7 +73,7 @@ export function sendFaceExpressionToServer(
         duration: number
 ): void {
     try {
-        conference.sendFaceExpression({
+        conference.sendFaceLandmarks({
             faceExpression,
             duration
         });

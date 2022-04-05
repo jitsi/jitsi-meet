@@ -12,22 +12,14 @@
 export const ADD_FACE_EXPRESSION = 'ADD_FACE_EXPRESSION';
 
 /**
- * Redux action type dispatched in order to set recognition active in the state.
+ * Redux action type dispatched in order to add a expression to the face expressions buffer.
  *
  * {
- *      type: START_FACE_LANDMARKS_DETECTION
+ *      type: ADD_TO_FACE_EXPRESSIONS_BUFFER,
+ *      faceExpression: string
  * }
- */
-export const START_FACE_LANDMARKS_DETECTION = 'START_FACE_LANDMARKS_DETECTION';
-
-/**
- * Redux action type dispatched in order to set recognition inactive in the state.
- *
- * {
- *      type: STOP_FACE_LANDMARKS_DETECTION
- * }
- */
-export const STOP_FACE_LANDMARKS_DETECTION = 'STOP_FACE_LANDMARKS_DETECTION';
+*/
+export const ADD_TO_FACE_EXPRESSIONS_BUFFER = 'ADD_TO_FACE_EXPRESSIONS_BUFFER ';
 
 /**
  * Redux action type dispatched in order to clear the face expressions buffer in the state.
@@ -39,13 +31,22 @@ export const STOP_FACE_LANDMARKS_DETECTION = 'STOP_FACE_LANDMARKS_DETECTION';
 export const CLEAR_FACE_EXPRESSIONS_BUFFER = 'CLEAR_FACE_EXPRESSIONS_BUFFER';
 
 /**
- * Redux action type dispatched in order to add a expression to the face expressions buffer.
+ * Redux action type dispatched in order to set recognition active in the state.
  *
  * {
- *      type: ADD_TO_FACE_EXPRESSIONS_BUFFER 
+ *      type: START_FACE_LANDMARKS_DETECTION
  * }
-*/
-export const ADD_TO_FACE_EXPRESSIONS_BUFFER = 'ADD_TO_FACE_EXPRESSIONS_BUFFER ';
+ */
+export const START_FACE_LANDMARKS_DETECTION = 'START_FACE_LANDMARKS_DETECTION';
+
+ /**
+  * Redux action type dispatched in order to set recognition inactive in the state.
+  *
+  * {
+  *      type: STOP_FACE_LANDMARKS_DETECTION
+  * }
+  */
+export const STOP_FACE_LANDMARKS_DETECTION = 'STOP_FACE_LANDMARKS_DETECTION';
 
 /**
  * Redux action type dispatched in order to update coordinates of a detected face.
@@ -56,4 +57,4 @@ export const ADD_TO_FACE_EXPRESSIONS_BUFFER = 'ADD_TO_FACE_EXPRESSIONS_BUFFER ';
  *      participantId: string
  * }
  */
- export const UPDATE_FACE_COORDINATES = 'UPDATE_FACE_COORDINATES';
+export const UPDATE_FACE_COORDINATES = 'UPDATE_FACE_COORDINATES';

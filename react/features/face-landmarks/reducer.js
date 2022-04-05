@@ -29,9 +29,13 @@ const defaultState = {
 ReducerRegistry.register('features/face-landmarks', (state = defaultState, action) => {
     switch (action.type) {
     case ADD_FACE_EXPRESSION: {
-        state.faceExpressions[action.faceExpression] += action.duration;
-
-        return state;
+        return {
+            ...state,
+            faceExpressions: {
+                ...state.faceExpressions,
+                [action.faceExpression]: state.faceExpressions[action.faceExpression] + action.duration
+            }
+        };
     }
     case ADD_TO_FACE_EXPRESSIONS_BUFFER: {
         return {
