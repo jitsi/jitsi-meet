@@ -98,10 +98,11 @@ StateListenerRegistry.register(
  * Updates the receiver constraints when the stage participants change.
  */
 StateListenerRegistry.register(
-    state => getActiveParticipantsIds(state).sort()
-        .join(),
+    state => getActiveParticipantsIds(state).sort(),
     (_, store) => {
         _updateReceiverVideoConstraints(store);
+    }, {
+        deepEquals: true
     }
 );
 

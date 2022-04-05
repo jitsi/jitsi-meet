@@ -671,6 +671,18 @@ export function getActiveParticipantsIds(state) {
 }
 
 /**
+ * Gets the ids of the active participants.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {Array<string>}
+ */
+export function getPinnedActiveParticipants(state) {
+    const { activeParticipants } = state['features/filmstrip'];
+
+    return activeParticipants.filter(p => p.pinned);
+}
+
+/**
  * Get whether or not the stage filmstrip should be displayed.
  *
  * @param {Object} state - Redux state.
