@@ -93,6 +93,19 @@ export function getLocalParticipant(stateful: Object | Function) {
 }
 
 /**
+ * Returns local screen share participant from Redux state.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state features/base/participants.
+ * @returns {(Participant|undefined)}
+ */
+export function getLocalScreenShareParticipant(stateful: Object | Function) {
+    const state = toState(stateful)['features/base/participants'];
+
+    return state.localScreenShare;
+}
+
+/**
  * Normalizes a display name so then no invalid values (padding, length...etc)
  * can be set.
  *

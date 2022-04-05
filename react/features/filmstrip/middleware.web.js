@@ -5,6 +5,7 @@ import {
     DOMINANT_SPEAKER_CHANGED,
     getDominantSpeakerParticipant,
     getLocalParticipant,
+    getLocalScreenShareParticipant,
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT
 } from '../base/participants';
@@ -98,10 +99,15 @@ MiddlewareRegistry.register(store => next => action => {
         if (action.settings?.disableSelfView) {
             const state = store.getState();
             const local = getLocalParticipant(state);
+            const localScreenShare = getLocalScreenShareParticipant(state);
             const activeParticipantsIds = getActiveParticipantsIds(state);
 
             if (activeParticipantsIds.find(id => id === local.id)) {
                 store.dispatch(removeStageParticipant(local.id));
+            }
+
+            if (activeParticipantsIds.find(id => id === localScreenShare.id)) {
+                store.dispatch(removeStageParticipant(localScreenShare.id));
             }
         }
         break;
