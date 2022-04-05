@@ -298,12 +298,7 @@ function _visitNode(node, callback) {
     // Timers
     //
     // React Native's timers won't run while the app is in the background, this
-    // is a known limitation. Replace them with a background-friendly
-    // alternative.
-    //
-    // Required by:
-    // - lib-jitsi-meet
-    // - Strophe
+    // is a known limitation. Replace them with a background-friendly alternative.
     if (Platform.OS === 'android') {
         global.clearTimeout = BackgroundTimer.clearTimeout.bind(BackgroundTimer);
         global.clearInterval = BackgroundTimer.clearInterval.bind(BackgroundTimer);
