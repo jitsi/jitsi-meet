@@ -1,0 +1,13 @@
+diff --git a/node_modules/@giphy/react-native-sdk/android/build.gradle b/node_modules/@giphy/react-native-sdk/android/build.gradle
+index fce5012..58e4e48 100644
+--- a/node_modules/@giphy/react-native-sdk/android/build.gradle
++++ b/node_modules/@giphy/react-native-sdk/android/build.gradle
+@@ -29,7 +29,7 @@ android {
+   compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
+   buildToolsVersion getExtOrDefault('buildToolsVersion')
+   defaultConfig {
+-    minSdkVersion 16
++    minSdkVersion 23
+     targetSdkVersion getExtOrIntegerDefault('targetSdkVersion')
+     versionCode 1
+     versionName "1.0"
