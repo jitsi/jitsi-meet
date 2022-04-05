@@ -12,6 +12,11 @@ import participantsPaneTheme from '../themes/participantsPaneTheme.json';
 type Props = {
 
     /**
+     * Accessibility label for menu container.
+     */
+    accessibilityLabel?: string,
+
+    /**
      * Children of the context menu.
      */
     children: React$Node,
@@ -50,6 +55,11 @@ type Props = {
      * Callback for click on an item in the menu.
      */
     onClick?: Function,
+
+    /**
+     * Keydown handler.
+     */
+    onKeyDown?: Function,
 
     /**
      * Callback for drawer close.
@@ -111,6 +121,7 @@ const useStyles = makeStyles(theme => {
 });
 
 const ContextMenu = ({
+    accessibilityLabel,
     children,
     className,
     entity,
@@ -119,6 +130,7 @@ const ContextMenu = ({
     isDrawerOpen,
     offsetTarget,
     onClick,
+    onKeyDown,
     onDrawerClose,
     onMouseEnter,
     onMouseLeave
@@ -179,12 +191,14 @@ const ContextMenu = ({
             </Drawer>
         </JitsiPortal>
         : <div
+            aria-label = { accessibilityLabel }
             className = { clsx(participantsPaneTheme.ignoredChildClassName,
                 styles.contextMenu,
                 isHidden && styles.contextMenuHidden,
                 className
             ) }
             onClick = { onClick }
+            onKeyDown = { onKeyDown }
             onMouseEnter = { onMouseEnter }
             onMouseLeave = { onMouseLeave }
             ref = { containerRef }>

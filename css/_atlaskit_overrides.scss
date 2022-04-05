@@ -28,12 +28,21 @@
 /**
  * Keep overflow menu within screen vertical bounds and make it scrollable.
  */
- .toolbox-button-wth-dialog > div:nth-child(2) {
+.toolbox-button-wth-dialog > div:nth-child(2) {
     background: $menuBG;
     max-height: calc(100vh - #{$newToolbarSizeWithPadding} - 46px);
     margin-bottom: 4px;
     padding: 0;
     overflow-y: auto;
+}
+
+/**
+ * Remove background color and box-shadow for the context menu container.
+ */
+.toolbox-button-wth-dialog.context-menu > div:nth-child(2) {
+    background: transparent;
+    box-shadow: none;
+    overflow-y: initial;
 }
 
 .audio-preview > div:nth-child(2),
