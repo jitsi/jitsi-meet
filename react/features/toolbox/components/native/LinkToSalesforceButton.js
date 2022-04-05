@@ -8,6 +8,7 @@ import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/
 import { navigate }
     from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
+import { isSalesforceEnabled } from '../../../salesforce/functions';
 
 /**
  * Implementation of a button for opening the Salesforce link dialog.
@@ -39,7 +40,7 @@ class LinkToSalesforceButton extends AbstractButton<AbstractButtonProps, *> {
  */
 function mapStateToProps(state) {
     return {
-        visible: Boolean(state['features/base/config'].salesforceUrl)
+        visible: isSalesforceEnabled(state)
     };
 }
 
