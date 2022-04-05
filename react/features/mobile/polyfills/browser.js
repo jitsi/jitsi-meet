@@ -295,29 +295,6 @@ function _visitNode(node, callback) {
     require('react-native-callstats/csio-polyfill');
     global.callstats = require('react-native-callstats/callstats');
 
-    // XMLHttpRequest
-    if (global.XMLHttpRequest) {
-        const { prototype } = global.XMLHttpRequest;
-
-        // XMLHttpRequest.responseXML
-        //
-        // Required by:
-        // - Strophe
-        if (prototype && !prototype.hasOwnProperty('responseXML')) {
-            Object.defineProperty(prototype, 'responseXML', {
-                get() {
-                    const { responseText } = this;
-
-                    return (
-                        responseText
-                            && new DOMParser().parseFromString(
-                                responseText,
-                                'text/xml'));
-                }
-            });
-        }
-    }
-
     // Timers
     //
     // React Native's timers won't run while the app is in the background, this
