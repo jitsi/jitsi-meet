@@ -2,6 +2,7 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
+        <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
         <item name="android:navigationBarColor">@color/colorPrimaryDark</item>
         <item name="android:windowDisablePreview">true</item>
    </style>
