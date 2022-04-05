@@ -116,6 +116,7 @@ class ThumbnailWrapper extends Component<Props> {
                     horizontalOffset = { _horizontalOffset }
                     key = 'localScreenShare'
                     participantID = { _participantID }
+                    stageFilmstrip = { _stageFilmstrip }
                     style = { style } />);
         }
 
@@ -169,13 +170,16 @@ function _mapStateToProps(state, ownProps) {
         const index = (rowIndex * columns) + columnIndex;
         let horizontalOffset;
         const { iAmRecorder } = state['features/base/config'];
-        let participantsLength = stageFilmstrip ? remoteParticipantsLength
-            : remoteParticipantsLength + (iAmRecorder ? 0 : 1) - (disableSelfView ? 1 : 0);
-
         const { localScreenShare } = state['features/base/participants'];
         const localParticipantsLength = localScreenShare ? 2 : 1;
 
-        if (sourceNameSignalingEnabled) {
+        let participantsLength;
+
+        if (stageFilmstrip) {
+            // We use the length of activeParticipants in stage filmstrip which includes local participants.
+            participantsLength = remoteParticipantsLength;
+        } else if (sourceNameSignalingEnabled) {
+            // We need to include the local screenshare participant in tile view.
             participantsLength = remoteParticipantsLength
 
             // Add local camera and screen share to total participant count when self view is not disabled.
@@ -183,6 +187,8 @@ function _mapStateToProps(state, ownProps) {
 
             // Removes iAmRecorder from the total participants count.
             - (iAmRecorder ? 1 : 0);
+        } else {
+            participantsLength = remoteParticipantsLength + (iAmRecorder ? 0 : 1) - (disableSelfView ? 1 : 0);
         }
 
         if (rowIndex === rows - 1) { // center the last row
