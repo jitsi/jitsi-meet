@@ -841,7 +841,7 @@
     "raisedHandsLabel": "Número de mãos levantadas",
     "record": {
         "already": {
-            "linked": "O registo já está ligado a esta sessão."
+            "linked": "A reunião já está ligada a este objecto da Força de vendas."
         },
         "type": {
             "account": "Conta",
@@ -1215,12 +1215,12 @@
         "moderator": "Moderador",
         "mute": "Participante está sem som",
         "muted": "Sem som",
-        "pinToStage": "Fixar no palco",
+        "pinToStage": "Fixar no ecrã",
         "remoteControl": "Iniciar / Parar controlo remoto",
         "screenSharing": "Participante está a partilhar o seu ecrã",
         "show": "Mostrar no palco",
         "showSelfView": "Mostrar autovisualização",
-        "unpinFromStage": "Desafixar",
+        "unpinFromStage": "Soltar",
         "videoMuted": "Câmara desativada",
         "videomute": "Participante parou a câmara"
     },
