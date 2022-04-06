@@ -12,6 +12,7 @@ import { toState } from '../base/redux';
 import { getHideSelfView } from '../base/settings';
 import { parseStandardURIString } from '../base/util';
 import { isFollowMeActive } from '../follow-me';
+import { getAutoMute } from '../base/settings';
 import { isReactionsEnabled } from '../reactions/functions.any';
 
 import { SS_DEFAULT_FRAME_RATE, SS_SUPPORTED_FRAMERATES } from './constants';
@@ -130,7 +131,8 @@ export function getMoreTabProps(stateful: Object | Function) {
         enabledNotifications,
         showNotificationsSettings: Object.keys(enabledNotifications).length > 0,
         showPrejoinPage: !state['features/base/settings'].userSelectedSkipPrejoin,
-        showPrejoinSettings: state['features/base/config'].prejoinConfig?.enabled
+        showPrejoinSettings: state['features/base/config'].prejoinConfig?.enabled,
+        disableAutoMute: getAutoMute(state)
     };
 }
 

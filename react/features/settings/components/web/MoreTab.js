@@ -13,6 +13,8 @@ import { translate } from '../../../base/i18n';
 import TouchmoveHack from '../../../chat/components/web/TouchmoveHack';
 import { SS_DEFAULT_FRAME_RATE } from '../../constants';
 
+const _disableAutoMute = "automute-disable"
+
 /**
  * The type of the React {@code Component} props of {@link MoreTab}.
  */
@@ -86,6 +88,11 @@ export type Props = {
     hideSelfView: boolean,
 
     /**
+     * boolean to disable mic auto mute when sharing a Youtube video
+     */
+    disableAutoMute: boolean,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -136,6 +143,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
         this._onShowPrejoinPageChanged = this._onShowPrejoinPageChanged.bind(this);
         this._onKeyboardShortcutEnableChanged = this._onKeyboardShortcutEnableChanged.bind(this);
         this._onHideSelfViewChanged = this._onHideSelfViewChanged.bind(this);
+        this._ondisableAutoMuteChanged = this._ondisableAutoMuteChanged.bind(this);
     }
 
     /**
@@ -277,6 +285,21 @@ class MoreTab extends AbstractDialogTab<Props, State> {
         super._onChange({ hideSelfView: checked });
     }
 
+    _ondisableAutoMuteChanged: (Object) => void;
+
+    /**
+     * Callback invoked to select if the user
+     * should be automuted during youtube video playback.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _ondisableAutoMuteChanged({ target: { checked } }) {
+        super._onChange({ disableAutoMute: checked });
+    }
+
+
     /**
      * Returns the React Element for the desktop share frame rate dropdown.
      *
@@ -379,6 +402,33 @@ class MoreTab extends AbstractDialogTab<Props, State> {
             </div>
         );
     }
+
+
+    /**
+     * Returns the React Element for Automute settings.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+     _renderdisableAutoMuteCheckbox() {
+        const { disableAutoMute, t} = this.props;
+
+        return (
+            <div
+                className = 'settings-sub-pane-element'
+                key = 'disableAutoMute'>
+                <h2 className = 'mock-atlaskit-label'>
+                    { t('settings.disableAutoMute') }
+                </h2>
+                <Checkbox
+                    isChecked = { disableAutoMute }
+                    label = { t('settingsView.disableAutoMute') }
+                    name = 'disable-auto-mute'
+                    onChange = { this._ondisableAutoMuteChanged } />
+            </div>
+        );
+    }
+
 
     /**
      * Returns the menu item for changing displayed language.
@@ -525,6 +575,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                 { showNotificationsSettings && this._renderNotificationsSettings() }
                 { this._renderKeyboardShortcutCheckbox() }
                 { !disableHideSelfView && this._renderSelfViewCheckbox() }
+                { this._renderdisableAutoMuteCheckbox() }
             </div>
         );
     }

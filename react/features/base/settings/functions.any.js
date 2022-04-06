@@ -277,3 +277,13 @@ export function shouldHideSelfView(state: Object) {
 export function getHideSelfView(state: Object) {
     return state['features/base/config'].disableSelfView || state['features/base/settings'].disableSelfView;
 }
+
+/**
+ * Gets the AutoMute setting for the youtube video share.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {boolean}
+ */
+ export function getAutoMute(state: Object) {
+    return state['features/base/settings'].disableAutoMute;
+}
