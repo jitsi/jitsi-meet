@@ -77,10 +77,10 @@ function on_message(event)
         room.speakerStats['dominantSpeakerId'] = occupant.jid;
     end
 
-    local facialExpression = event.stanza:get_child('facialExpression', 'http://jitsi.org/jitmeet');
+    local faceExpression = event.stanza:get_child('faceExpression', 'http://jitsi.org/jitmeet');
 
-    if facialExpression then
-        local roomAddress = facialExpression.attr.room;
+    if faceExpression then
+        local roomAddress = faceExpression.attr.room;
         local room = get_room_from_jid(room_jid_match_rewrite(roomAddress));
 
         if not room then
@@ -98,9 +98,9 @@ function on_message(event)
             log("warn", "No occupant %s found for %s", from, roomAddress);
             return false;
         end
-        local facialExpressions = room.speakerStats[occupant.jid].facialExpressions;
-        facialExpressions[facialExpression.attr.expression] = 
-            facialExpressions[facialExpression.attr.expression] + tonumber(facialExpression.attr.duration);
+        local faceExpressions = room.speakerStats[occupant.jid].faceExpressions;
+        faceExpressions[faceExpression.attr.expression] = 
+            faceExpressions[faceExpression.attr.expression] + tonumber(faceExpression.attr.duration);
     end
 
     return true
@@ -117,7 +117,7 @@ function new_SpeakerStats(nick, context_user)
         nick = nick;
         context_user = context_user;
         displayName = nil;
-        facialExpressions = {
+        faceExpressions = {
             happy = 0,
             neutral = 0,
             surprised = 0,
@@ -186,9 +186,9 @@ function occupant_joined(event)
                 -- and skip focus if sneaked into the table
                 if values.nick ~= nil and values.nick ~= 'focus' then
                     local totalDominantSpeakerTime = values.totalDominantSpeakerTime;
-                    local facialExpressions = values.facialExpressions;
+                    local faceExpressions = values.faceExpressions;
                     if totalDominantSpeakerTime > 0 or room:get_occupant_jid(jid) == nil or values:isDominantSpeaker()
-                        or get_participant_expressions_count(facialExpressions) > 0 then
+                        or get_participant_expressions_count(faceExpressions) > 0 then
                         -- before sending we need to calculate current dominant speaker state
                         if values:isDominantSpeaker() then
                             local timeElapsed = math.floor(socket.gettime()*1000 - values._dominantSpeakerStart);
@@ -198,7 +198,7 @@ function occupant_joined(event)
                         users_json[values.nick] =  {
                             displayName = values.displayName,
                             totalDominantSpeakerTime = totalDominantSpeakerTime,
-                            facialExpressions = facialExpressions
+                            faceExpressions = faceExpressions
                         };
                     end
                 end
@@ -285,9 +285,9 @@ else
     process_host(muc_component_host);
 end
 
-function get_participant_expressions_count(facialExpressions)
+function get_participant_expressions_count(faceExpressions)
     local count = 0;
-    for expression, value in pairs(facialExpressions) do
+    for expression, value in pairs(faceExpressions) do
         count = count + value;
     end
 

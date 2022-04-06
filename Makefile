@@ -8,7 +8,7 @@ TF_WASM_DIR = node_modules/@tensorflow/tfjs-backend-wasm/dist/
 RNNOISE_WASM_DIR = node_modules/rnnoise-wasm/dist
 TFLITE_WASM = react/features/stream-effects/virtual-background/vendor/tflite
 MEET_MODELS_DIR  = react/features/stream-effects/virtual-background/vendor/models
-FACIAL_MODELS_DIR = react/features/facial-recognition/resources
+FACE_MODELS_DIR = react/features/face-landmarks/resources
 NODE_SASS = ./node_modules/.bin/sass
 NPM = npm
 OUTPUT_DIR = .
@@ -30,7 +30,7 @@ clean:
 	rm -fr $(BUILD_DIR)
 
 .NOTPARALLEL:
-deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-libflac deploy-olm deploy-tf-wasm deploy-css deploy-local deploy-facial-expressions
+deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-libflac deploy-olm deploy-tf-wasm deploy-css deploy-local deploy-face-landmarks
 
 deploy-init:
 	rm -fr $(DEPLOY_DIR)
@@ -53,8 +53,8 @@ deploy-appbundle:
 		$(OUTPUT_DIR)/analytics-ga.js \
 		$(BUILD_DIR)/analytics-ga.min.js \
 		$(BUILD_DIR)/analytics-ga.min.js.map \
-		$(BUILD_DIR)/facial-expressions-worker.min.js \
-		$(BUILD_DIR)/facial-expressions-worker.min.js.map \
+		$(BUILD_DIR)/face-landmarks-worker.min.js \
+		$(BUILD_DIR)/face-landmarks-worker.min.js.map \
 		$(DEPLOY_DIR)
 	cp \
 		$(BUILD_DIR)/close3.min.js \
@@ -101,9 +101,9 @@ deploy-meet-models:
 		$(MEET_MODELS_DIR)/*.tflite \
 		$(DEPLOY_DIR)
 
-deploy-facial-expressions:
+deploy-face-landmarks:
 	cp \
-		$(FACIAL_MODELS_DIR)/* \
+		$(FACE_MODELS_DIR)/* \
 		$(DEPLOY_DIR)
 
 deploy-css:
@@ -115,7 +115,7 @@ deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
 .NOTPARALLEL:
-dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-libflac deploy-olm deploy-tf-wasm deploy-facial-expressions
+dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-libflac deploy-olm deploy-tf-wasm deploy-face-landmarks
 	$(WEBPACK_DEV_SERVER)
 
 source-package:

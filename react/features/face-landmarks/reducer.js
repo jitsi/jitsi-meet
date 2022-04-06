@@ -3,17 +3,17 @@
 import { ReducerRegistry } from '../base/redux';
 
 import {
-    ADD_FACIAL_EXPRESSION,
-    ADD_TO_FACIAL_EXPRESSIONS_BUFFER,
-    CLEAR_FACIAL_EXPRESSIONS_BUFFER,
-    START_FACIAL_RECOGNITION,
-    STOP_FACIAL_RECOGNITION,
+    ADD_FACE_EXPRESSION,
+    ADD_TO_FACE_EXPRESSIONS_BUFFER,
+    CLEAR_FACE_EXPRESSIONS_BUFFER,
+    START_FACE_LANDMARKS_DETECTION,
+    STOP_FACE_LANDMARKS_DETECTION,
     UPDATE_FACE_COORDINATES
 } from './actionTypes';
 
 const defaultState = {
     faceBoxes: {},
-    facialExpressions: {
+    faceExpressions: {
         happy: 0,
         neutral: 0,
         surprised: 0,
@@ -22,36 +22,40 @@ const defaultState = {
         disgusted: 0,
         sad: 0
     },
-    facialExpressionsBuffer: [],
+    faceExpressionsBuffer: [],
     recognitionActive: false
 };
 
-ReducerRegistry.register('features/facial-recognition', (state = defaultState, action) => {
+ReducerRegistry.register('features/face-landmarks', (state = defaultState, action) => {
     switch (action.type) {
-    case ADD_FACIAL_EXPRESSION: {
-        state.facialExpressions[action.facialExpression] += action.duration;
-
-        return state;
-    }
-    case ADD_TO_FACIAL_EXPRESSIONS_BUFFER: {
+    case ADD_FACE_EXPRESSION: {
         return {
             ...state,
-            facialExpressionsBuffer: [ ...state.facialExpressionsBuffer, action.facialExpression ]
+            faceExpressions: {
+                ...state.faceExpressions,
+                [action.faceExpression]: state.faceExpressions[action.faceExpression] + action.duration
+            }
         };
     }
-    case CLEAR_FACIAL_EXPRESSIONS_BUFFER: {
+    case ADD_TO_FACE_EXPRESSIONS_BUFFER: {
         return {
             ...state,
-            facialExpressionsBuffer: []
+            faceExpressionsBuffer: [ ...state.faceExpressionsBuffer, action.faceExpression ]
         };
     }
-    case START_FACIAL_RECOGNITION: {
+    case CLEAR_FACE_EXPRESSIONS_BUFFER: {
+        return {
+            ...state,
+            faceExpressionsBuffer: []
+        };
+    }
+    case START_FACE_LANDMARKS_DETECTION: {
         return {
             ...state,
             recognitionActive: true
         };
     }
-    case STOP_FACIAL_RECOGNITION: {
+    case STOP_FACE_LANDMARKS_DETECTION: {
         return {
             ...state,
             recognitionActive: false

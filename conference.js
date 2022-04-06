@@ -3117,15 +3117,6 @@ export default {
     },
 
     /**
-     * Sends a facial expression as a string and its duration as a number
-     * @param {object} payload - Object containing the {string} facialExpression
-     * and {number} duration
-     */
-    sendFacialExpression(payload) {
-        room.sendFacialExpression(payload);
-    },
-
-    /**
      * Adds new listener.
      * @param {String} eventName the name of the event
      * @param {Function} listener the listener.

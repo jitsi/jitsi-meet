@@ -386,11 +386,11 @@ module.exports = (_env, argv) => {
         }),
         Object.assign({}, config, {
             entry: {
-                'facial-expressions-worker': './react/features/facial-recognition/facialExpressionsWorker.js'
+                'face-landmarks-worker': './react/features/face-landmarks/faceLandmarksWorker.js'
             },
             plugins: [
                 ...config.plugins,
-                ...getBundleAnalyzerPlugin(analyzeBundle, 'facial-expressions-worker')
+                ...getBundleAnalyzerPlugin(analyzeBundle, 'face-landmarks-worker')
             ],
             performance: getPerformanceHints(perfHintOptions, 1024 * 1024 * 1.5)
         })

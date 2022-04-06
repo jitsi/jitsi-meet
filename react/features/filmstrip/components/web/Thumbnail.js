@@ -25,7 +25,7 @@ import {
     getFakeScreenshareParticipantTrack,
     updateLastTrackVideoMediaEvent
 } from '../../../base/tracks';
-import { getVideoObjectPosition } from '../../../facial-recognition/functions';
+import { getVideoObjectPosition } from '../../../face-landmarks/functions';
 import { hideGif, showGif } from '../../../gifs/actions';
 import { getGifDisplayMode, getGifForParticipant } from '../../../gifs/functions';
 import { PresenceLabel } from '../../../presence-status';

@@ -752,18 +752,18 @@ var config = {
     // Enables sending participants' emails (if available) to callstats and other analytics
     // enableEmailInStats: false,
 
-    // Enables detecting faces of participants and get their expression and send it to other participants
-    // enableFacialRecognition: true,
-
-    // Enables displaying facial expressions in speaker stats
-    // enableDisplayFacialExpressions: true,
-
-    // faceCoordinatesSharing: {
+    // faceLandmarks: {
     //     // Enables sharing your face cordinates. Used for centering faces within a video.
-    //     enabled: false,
+    //     enableFaceCentering: false,
 
-    //     // Minimum required face movement percentage threshold for sending new face coordinates data.
-    //     threshold: 10,
+    //     // Enables detecting face expressions and sharing data with other participants
+    //     enableFaceExpressionsDetection: false,
+
+    //     // Enables displaying face expressions in speaker stats
+    //     enableDisplayFaceExpressions: false,
+
+    //     // Minimum required face movement percentage threshold for sending new face centering coordinates data.
+    //     faceCenteringThreshold: 10,
 
     //     // Miliseconds for processing a new image capture in order to detect face coordinates if they exist.
     //     captureInterval: 100

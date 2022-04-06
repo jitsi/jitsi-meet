@@ -4,7 +4,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Tooltip } from '../../../base/tooltip';
-import { FACIAL_EXPRESSION_EMOJIS } from '../../../facial-recognition/constants.js';
+import { FACE_EXPRESSIONS_EMOJIS } from '../../../face-landmarks/constants.js';
 
 const useStyles = makeStyles(theme => {
     return {
@@ -26,15 +26,15 @@ const useStyles = makeStyles(theme => {
 type Props = {
 
     /**
-     * True if the facial recognition is not disabled.
+     * True if the face expressions detection is not disabled.
      */
-    showFacialExpressions: boolean,
+    showFaceExpressions: boolean,
 };
 
 const SpeakerStatsLabels = (props: Props) => {
     const { t } = useTranslation();
     const classes = useStyles();
-    const FacialExpressionsLabels = () => Object.keys(FACIAL_EXPRESSION_EMOJIS).map(
+    const FaceExpressionsLabels = () => Object.keys(FACE_EXPRESSIONS_EMOJIS).map(
             expression => (
                 <div
                     className = 'expression'
@@ -43,7 +43,7 @@ const SpeakerStatsLabels = (props: Props) => {
                         content = { t(`speakerStats.${expression}`) }
                         position = { 'top' } >
                         <div>
-                            { FACIAL_EXPRESSION_EMOJIS[expression] }
+                            { FACE_EXPRESSIONS_EMOJIS[expression] }
                         </div>
 
                     </Tooltip>
@@ -51,7 +51,7 @@ const SpeakerStatsLabels = (props: Props) => {
             )
     );
     const nameTimeClass = `name-time${
-        props.showFacialExpressions ? ' name-time_expressions-on' : ''
+        props.showFaceExpressions ? ' name-time_expressions-on' : ''
     }`;
 
     return (
@@ -67,9 +67,9 @@ const SpeakerStatsLabels = (props: Props) => {
                 </div>
             </div>
             {
-                props.showFacialExpressions
+                props.showFaceExpressions
                 && <div className = { `expressions ${classes.emojis}` }>
-                    <FacialExpressionsLabels />
+                    <FaceExpressionsLabels />
                 </div>
             }
         </div>

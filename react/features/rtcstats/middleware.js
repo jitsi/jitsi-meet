@@ -7,7 +7,7 @@ import { CONFERENCE_UNIQUE_ID_SET, E2E_RTT_CHANGED, getConferenceOptions, getRoo
 import { LIB_WILL_INIT } from '../base/lib-jitsi-meet';
 import { DOMINANT_SPEAKER_CHANGED, getLocalParticipant } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
-import { ADD_FACIAL_EXPRESSION } from '../facial-recognition/actionTypes';
+import { ADD_FACE_EXPRESSION } from '../face-landmarks/actionTypes';
 
 import RTCStats from './RTCStats';
 import { canSendRtcstatsData, isRtcstatsEnabled } from './functions';
@@ -117,13 +117,13 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
     }
-    case ADD_FACIAL_EXPRESSION: {
+    case ADD_FACE_EXPRESSION: {
         if (canSendRtcstatsData(state)) {
-            const { duration, facialExpression } = action;
+            const { duration, faceExpression } = action;
 
-            RTCStats.sendFacialExpressionData({
+            RTCStats.sendFaceExpressionData({
                 duration,
-                facialExpression
+                faceExpression
             });
         }
         break;

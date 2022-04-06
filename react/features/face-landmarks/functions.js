@@ -14,26 +14,26 @@ if (typeof OffscreenCanvas === 'undefined') {
 }
 
 /**
- * Sends the facial expression with its duration to all the other participants.
+ * Sends the face expression with its duration to all the other participants.
  *
  * @param {Object} conference - The current conference.
- * @param  {string} facialExpression - Facial expression to be sent.
- * @param {number} duration - The duration of the facial expression in seconds.
+ * @param  {string} faceExpression - Face expression to be sent.
+ * @param {number} duration - The duration of the face expression in seconds.
  * @returns {void}
  */
-export function sendFacialExpressionToParticipants(
+export function sendFaceExpressionToParticipants(
         conference: Object,
-        facialExpression: string,
+        faceExpression: string,
         duration: number
 ): void {
     try {
         conference.sendEndpointMessage('', {
-            type: 'facial_expression',
-            facialExpression,
+            type: 'face_landmark',
+            faceExpression,
             duration
         });
     } catch (err) {
-        logger.warn('Could not broadcast the facial expression to the other participants', err);
+        logger.warn('Could not broadcast the face expression to the other participants', err);
     }
 
 }
@@ -60,44 +60,44 @@ export function sendFaceBoxToParticipants(
 }
 
 /**
- * Sends the facial expression with its duration to xmpp server.
+ * Sends the face expression with its duration to xmpp server.
  *
  * @param {Object} conference - The current conference.
- * @param  {string} facialExpression - Facial expression to be sent.
- * @param {number} duration - The duration of the facial expression in seconds.
+ * @param  {string} faceExpression - Face expression to be sent.
+ * @param {number} duration - The duration of the face expression in seconds.
  * @returns {void}
  */
-export function sendFacialExpressionToServer(
+export function sendFaceExpressionToServer(
         conference: Object,
-        facialExpression: string,
+        faceExpression: string,
         duration: number
 ): void {
     try {
-        conference.sendFacialExpression({
-            facialExpression,
+        conference.sendFaceLandmarks({
+            faceExpression,
             duration
         });
     } catch (err) {
-        logger.warn('Could not send the facial expression to xmpp server', err);
+        logger.warn('Could not send the face expression to xmpp server', err);
     }
 }
 
 /**
- * Sends facial expression to backend.
+ * Sends face expression to backend.
  *
  * @param  {Object} state - Redux state.
  * @returns {boolean} - True if sent, false otherwise.
  */
-export async function sendFacialExpressionsWebhook(state: Object) {
+export async function sendFaceExpressionsWebhook(state: Object) {
     const { webhookProxyUrl: url } = state['features/base/config'];
     const { conference } = state['features/base/conference'];
     const { jwt } = state['features/base/jwt'];
     const { connection } = state['features/base/connection'];
     const jid = connection.getJid();
     const localParticipant = getLocalParticipant(state);
-    const { facialExpressionsBuffer } = state['features/facial-recognition'];
+    const { faceExpressionsBuffer } = state['features/face-landmarks'];
 
-    if (facialExpressionsBuffer.length === 0) {
+    if (faceExpressionsBuffer.length === 0) {
         return false;
     }
 
@@ -110,7 +110,7 @@ export async function sendFacialExpressionsWebhook(state: Object) {
         meetingFqn: extractFqnFromPath(),
         sessionId: conference.sessionId,
         submitted: Date.now(),
-        emotions: facialExpressionsBuffer,
+        emotions: faceExpressionsBuffer,
         participantId: localParticipant.jwtId,
         participantName: localParticipant.name,
         participantJid: jid
@@ -192,7 +192,7 @@ export async function sendDataToWorker(
  * @returns {Object}
  */
 function getFaceBoxForId(id: string, state: Object) {
-    return state['features/facial-recognition'].faceBoxes[id];
+    return state['features/face-landmarks'].faceBoxes[id];
 }
 
 /**
@@ -221,7 +221,7 @@ export function getVideoObjectPosition(state: Object, id: string) {
  * @returns {number} - Number of miliseconds for doing face detection.
  */
 export function getDetectionInterval(state: Object) {
-    const { faceCoordinatesSharing } = state['features/base/config'];
+    const { faceLandmarks } = state['features/base/config'];
 
-    return Math.min(faceCoordinatesSharing?.captureInterval || SEND_IMAGE_INTERVAL_MS);
+    return Math.max(faceLandmarks?.captureInterval || SEND_IMAGE_INTERVAL_MS);
 }

@@ -21,13 +21,13 @@ const abstractSpeakerStatsList = (speakerStatsItem: Function, itemStyles?: Objec
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const conference = useSelector(state => state['features/base/conference'].conference);
-    const { stats: speakerStats, showFacialExpressions } = useSelector(state => state['features/speaker-stats']);
+    const { stats: speakerStats, showFaceExpressions } = useSelector(state => state['features/speaker-stats']);
     const localParticipant = useSelector(getLocalParticipant);
     const { defaultRemoteDisplayName } = useSelector(
         state => state['features/base/config']) || {};
-    const { enableDisplayFacialExpressions } = useSelector(state => state['features/base/config']) || {};
-    const { facialExpressions: localFacialExpressions } = useSelector(
-        state => state['features/facial-recognition']) || {};
+    const { faceLandmarks } = useSelector(state => state['features/base/config']) || {};
+    const { faceExpressions: localFaceExpressions } = useSelector(
+        state => state['features/face-landmarks']) || {};
 
     /**
      * Update the internal state with the latest speaker stats.
@@ -48,8 +48,8 @@ const abstractSpeakerStatsList = (speakerStatsItem: Function, itemStyles?: Objec
                             ? `${localParticipant.name} (${meString})`
                             : meString
                     );
-                    if (enableDisplayFacialExpressions) {
-                        stats[userId].setFacialExpressions(localFacialExpressions);
+                    if (faceLandmarks?.enableDisplayFaceExpressions) {
+                        stats[userId].setFaceExpressions(localFaceExpressions);
                     }
                 }
 
@@ -87,11 +87,11 @@ const abstractSpeakerStatsList = (speakerStatsItem: Function, itemStyles?: Objec
         props.dominantSpeakerTime = statsModel.getTotalDominantSpeakerTime();
         props.participantId = userId;
         props.hasLeft = statsModel.hasLeft();
-        if (showFacialExpressions) {
-            props.facialExpressions = statsModel.getFacialExpressions();
+        if (showFaceExpressions) {
+            props.faceExpressions = statsModel.getFaceExpressions();
         }
         props.hidden = statsModel.hidden;
-        props.showFacialExpressions = showFacialExpressions;
+        props.showFaceExpressions = showFaceExpressions;
         props.displayName = statsModel.getDisplayName() || defaultRemoteDisplayName;
         if (itemStyles) {
             props.styles = itemStyles;

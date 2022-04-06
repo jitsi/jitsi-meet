@@ -1,4 +1,4 @@
-# Facial Recognition and Facial Expression Models and Weights
+# Face Landmarks Detection and Face Expression Models and Weights
 
 ### Tiny Face Detector
 
@@ -6,7 +6,7 @@ It is a realtime face detector.
 
 ### Face Expression Recognition Model
 
-It is a models that recognizes facial expressions.
+It is a models that recognizes face expressions.
 
 ### Usage
 
