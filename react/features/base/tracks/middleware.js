@@ -8,7 +8,7 @@ import { shouldShowModeratedNotification } from '../../av-moderation/functions';
 import { hideNotification, isModerationNotificationDisplayed } from '../../notifications';
 import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { getCurrentConference } from '../conference/functions';
-import { getMultipleVideoSupportFeatureFlag, getSourceNameSignalingFeatureFlag } from '../config';
+import { getMultipleVideoSupportFeatureFlag } from '../config';
 import { getAvailableDevices } from '../devices/actions';
 import {
     CAMERA_FACING_MODE,
@@ -75,7 +75,7 @@ MiddlewareRegistry.register(store => next => action => {
             store.dispatch(getAvailableDevices());
         }
 
-        if (getSourceNameSignalingFeatureFlag(store.getState())
+        if (getMultipleVideoSupportFeatureFlag(store.getState())
             && action.track.jitsiTrack.videoType === VIDEO_TYPE.DESKTOP
             && !action.track.jitsiTrack.isMuted()
         ) {
@@ -95,7 +95,7 @@ MiddlewareRegistry.register(store => next => action => {
     case SCREENSHARE_TRACK_MUTED_UPDATED: {
         const state = store.getState();
 
-        if (!getSourceNameSignalingFeatureFlag(state)) {
+        if (!getMultipleVideoSupportFeatureFlag(state)) {
             return;
         }
 
@@ -118,7 +118,7 @@ MiddlewareRegistry.register(store => next => action => {
     case TRACK_REMOVED: {
         const state = store.getState();
 
-        if (getSourceNameSignalingFeatureFlag(state) && action.track.jitsiTrack.videoType === VIDEO_TYPE.DESKTOP) {
+        if (getMultipleVideoSupportFeatureFlag(state) && action.track.jitsiTrack.videoType === VIDEO_TYPE.DESKTOP) {
             const conference = getCurrentConference(state);
             const participantId = action.track.jitsiTrack.getSourceName();
 

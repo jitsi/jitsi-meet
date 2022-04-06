@@ -6,7 +6,7 @@ import {
 } from '../../analytics';
 import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification, showNotification } from '../../notifications';
 import { getCurrentConference } from '../conference';
-import { getMultipleVideoSupportFeatureFlag, getSourceNameSignalingFeatureFlag } from '../config';
+import { getMultipleVideoSupportFeatureFlag } from '../config';
 import { JitsiTrackErrors, JitsiTrackEvents, createLocalTrack } from '../lib-jitsi-meet';
 import {
     CAMERA_FACING_MODE,
@@ -397,7 +397,7 @@ export function trackAdded(track) {
         track.on(
             JitsiTrackEvents.TRACK_MUTE_CHANGED,
         () => {
-            if (getSourceNameSignalingFeatureFlag(getState()) && track.getVideoType() === VIDEO_TYPE.DESKTOP) {
+            if (getMultipleVideoSupportFeatureFlag(getState()) && track.getVideoType() === VIDEO_TYPE.DESKTOP) {
                 dispatch(screenshareTrackMutedChanged(track));
             }
             dispatch(trackMutedChanged(track));
