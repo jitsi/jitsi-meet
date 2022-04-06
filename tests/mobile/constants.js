@@ -1,6 +1,8 @@
+/* eslint-disable no-undef */
+
 const { v4 } = require('uuid');
 
-module.exports =  {
+module.exports = {
     ANDROID_SIMULATOR: process.env.ANDROID_SIMULATOR || 'Pixel_3a_XL_API_31',
     ANDROID_DEVICE: process.env.ANDROID_DEVICE || 'Pixel_3a_XL_API_31',
     IOS_SIMULATOR: process.env.IOS_SIMULATOR || 'iPhone 13 Pro',
@@ -15,5 +17,5 @@ module.exports =  {
     HEADER_BACK_NAV_BUTTON_ID: 'header-back-nav-button',
     MICROPHONE_BUTTON_ID: 'microphone-button',
     CAMERA_BUTTON_ID: 'camera-button'
-}
+};
 

@@ -34,4 +34,4 @@ module.exports = {
             'device': 'emulator'
         };
     }
-}
+};

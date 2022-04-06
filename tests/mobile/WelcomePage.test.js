@@ -29,7 +29,7 @@ describe('Jitsi Meet App', () => {
             }
         });
 
-        true;
+        return true;
     });
 
     it('is welcome screen enabled', async () => {
