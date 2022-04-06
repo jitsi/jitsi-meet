@@ -977,7 +977,18 @@ export default {
                     // Rollback the audio muted status by using null track
                     return null;
                 })
-                .then(audioTrack => this.useAudioStream(audioTrack));
+                .then(async audioTrack => {
+                    // If screen audio is already being sent, mix it with the newly created audio track.
+                    if (this._desktopAudioStream) {
+                        // Detach the _desktopAudioStream from the room before setting it as an effect.
+                        await room.replaceTrack(this._desktopAudioStream, null);
+                        this._mixerEffect = new AudioMixerEffect(this._desktopAudioStream);
+                        logger.debug('Mixing new audio track with existing screen audio track.');
+                        await audioTrack.setEffect(this._mixerEffect);
+                    }
+
+                    this.useAudioStream(audioTrack);
+                });
         } else {
             muteLocalAudio(mute);
         }
