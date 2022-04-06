@@ -1,5 +1,3 @@
-// @flow
-
 /**
  * Redux action type dispatched in order to add a face expression.
  *
@@ -19,7 +17,7 @@ export const ADD_FACE_EXPRESSION = 'ADD_FACE_EXPRESSION';
  *      faceExpression: string
  * }
 */
-export const ADD_TO_FACE_EXPRESSIONS_BUFFER = 'ADD_TO_FACE_EXPRESSIONS_BUFFER ';
+export const ADD_TO_FACE_EXPRESSIONS_BUFFER = 'ADD_TO_FACE_EXPRESSIONS_BUFFER';
 
 /**
  * Redux action type dispatched in order to clear the face expressions buffer in the state.
