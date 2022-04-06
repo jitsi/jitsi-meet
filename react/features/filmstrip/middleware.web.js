@@ -106,8 +106,10 @@ MiddlewareRegistry.register(store => next => action => {
                 store.dispatch(removeStageParticipant(local.id));
             }
 
-            if (activeParticipantsIds.find(id => id === localScreenShare.id)) {
-                store.dispatch(removeStageParticipant(localScreenShare.id));
+            if (localScreenShare) {
+                if (activeParticipantsIds.find(id => id === localScreenShare.id)) {
+                    store.dispatch(removeStageParticipant(localScreenShare.id));
+                }
             }
         }
         break;
