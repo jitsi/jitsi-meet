@@ -6,7 +6,7 @@ import {
     sendAnalytics
 } from '../analytics';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
-import { CONFERENCE_WILL_JOIN, getCurrentConference } from '../base/conference';
+import { CONFERENCE_JOIN_IN_PROGRESS, getCurrentConference } from '../base/conference';
 import JitsiMeetJS, {
     JitsiConferenceEvents,
     JitsiRecordingConstants
@@ -106,21 +106,15 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
         break;
 
-    case CONFERENCE_WILL_JOIN: {
+    case CONFERENCE_JOIN_IN_PROGRESS: {
         const { conference } = action;
 
         conference.on(
             JitsiConferenceEvents.RECORDER_STATE_CHANGED,
             recorderSession => {
-
                 if (recorderSession) {
-                    recorderSession.getID()
-                        && dispatch(
-                            updateRecordingSessionData(recorderSession));
-
-                    recorderSession.getError()
-                        && _showRecordingErrorNotification(
-                            recorderSession, dispatch);
+                    recorderSession.getID() && dispatch(updateRecordingSessionData(recorderSession));
+                    recorderSession.getError() && _showRecordingErrorNotification(recorderSession, dispatch);
                 }
 
                 return;

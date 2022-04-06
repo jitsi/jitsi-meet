@@ -5,7 +5,7 @@ import { batch } from 'react-redux';
 import { createReactionSoundsDisabledEvent, sendAnalytics } from '../analytics';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import {
-    CONFERENCE_WILL_JOIN,
+    CONFERENCE_JOIN_IN_PROGRESS,
     SET_START_REACTIONS_MUTED,
     setStartReactionsMuted
 } from '../base/conference';
@@ -104,7 +104,7 @@ MiddlewareRegistry.register(store => next => action => {
 
         break;
     }
-    case CONFERENCE_WILL_JOIN: {
+    case CONFERENCE_JOIN_IN_PROGRESS: {
         const { conference } = action;
 
         conference.addCommandListener(
