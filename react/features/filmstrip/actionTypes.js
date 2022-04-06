@@ -159,3 +159,14 @@ export const REMOVE_STAGE_PARTICIPANT = 'REMOVE_STAGE_PARTICIPANT';
  * }
  */
 export const SET_STAGE_PARTICIPANTS = 'SET_STAGE_PARTICIPANTS';
+
+
+/**
+ * The type of Redux action which sets the max number of active participants.
+ * (the participants displayed on the stage filmstrip).
+ * {
+ *     type: SET_MAX_STAGE_PARTICIPANTS,
+ *     maxParticipants: Number
+ * }
+ */
+export const SET_MAX_STAGE_PARTICIPANTS = 'SET_MAX_STAGE_PARTICIPANTS';

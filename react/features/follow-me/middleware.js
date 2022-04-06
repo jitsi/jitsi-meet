@@ -11,7 +11,7 @@ import {
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { setFilmstripVisible } from '../filmstrip';
-import { addStageParticipant } from '../filmstrip/actions.web';
+import { addStageParticipant, setMaxStageParticipants } from '../filmstrip/actions.web';
 import { setTileView } from '../video-layout';
 
 import {
@@ -188,6 +188,11 @@ function _onFollowMeCommand(attributes = {}, id, store) {
         if (!_.isEqual(stageParticipants, oldState.pinnedStageParticipants)) {
             stageParticipants.forEach(p => store.dispatch(addStageParticipant(p.participantId, true)));
         }
+    }
+
+    if (attributes.maxStageParticipants !== undefined
+        && oldState.maxStageParticipants !== attributes.maxStageParticipants) {
+        store.dispatch(setMaxStageParticipants(Number(attributes.maxStageParticipants)));
     }
 }
 

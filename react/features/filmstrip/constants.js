@@ -293,4 +293,4 @@ export const ACTIVE_PARTICIPANT_TIMEOUT = 1000 * 60;
 /**
  * The max number of participants to be displayed on the stage filmstrip.
  */
-export const MAX_ACTIVE_PARTICIPANTS = 4;
+export const MAX_ACTIVE_PARTICIPANTS = 6;

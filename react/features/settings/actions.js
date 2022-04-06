@@ -10,6 +10,7 @@ import {
 import { openDialog } from '../base/dialog';
 import { i18next } from '../base/i18n';
 import { updateSettings } from '../base/settings';
+import { setMaxStageParticipants } from '../filmstrip/actions.web';
 import { setScreenshareFramerate } from '../screen-share/actions';
 
 import {
@@ -115,6 +116,10 @@ export function submitMoreTab(newState: Object): Function {
 
         if (newState.hideSelfView !== currentState.hideSelfView) {
             dispatch(updateSettings({ disableSelfView: newState.hideSelfView }));
+        }
+
+        if (Number(newState.maxStageParticipants) !== currentState.maxStageParticipants) {
+            dispatch(setMaxStageParticipants(Number(newState.maxStageParticipants)));
         }
     };
 }

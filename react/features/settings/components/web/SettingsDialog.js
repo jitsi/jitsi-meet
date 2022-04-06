@@ -333,8 +333,8 @@ function _mapStateToProps(state, ownProps) {
         tabs.push({
             name: SETTINGS_TABS.CALENDAR,
             component: CalendarTab,
-            label: 'settings-pane settings.calendar.title',
-            styles: `${classes.settingsDialog} calendar-pane`
+            label: 'settings.calendar.title',
+            styles: `settings-pane ${classes.settingsDialog} calendar-pane`
         });
     }
 
@@ -364,7 +364,8 @@ function _mapStateToProps(state, ownProps) {
                     currentLanguage: tabState?.currentLanguage,
                     hideSelfView: tabState?.hideSelfView,
                     showPrejoinPage: tabState?.showPrejoinPage,
-                    enabledNotifications: tabState?.enabledNotifications
+                    enabledNotifications: tabState?.enabledNotifications,
+                    maxStageParticipants: tabState?.maxStageParticipants
                 };
             },
             styles: `settings-pane ${classes.settingsDialog} more-pane`,

@@ -1,5 +1,7 @@
 // @flow
 
+import { batch } from 'react-redux';
+
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 import {
     DOMINANT_SPEAKER_CHANGED,
@@ -18,7 +20,12 @@ import {
     setTileView
 } from '../video-layout';
 
-import { ADD_STAGE_PARTICIPANT, REMOVE_STAGE_PARTICIPANT, SET_USER_FILMSTRIP_WIDTH } from './actionTypes';
+import {
+    ADD_STAGE_PARTICIPANT,
+    REMOVE_STAGE_PARTICIPANT,
+    SET_MAX_STAGE_PARTICIPANTS,
+    SET_USER_FILMSTRIP_WIDTH
+} from './actionTypes';
 import {
     addStageParticipant,
     removeStageParticipant,
@@ -122,7 +129,7 @@ MiddlewareRegistry.register(store => next => action => {
         const { dispatch, getState } = store;
         const { participantId, pinned } = action;
         const state = getState();
-        const { activeParticipants } = state['features/filmstrip'];
+        const { activeParticipants, maxStageParticipants } = state['features/filmstrip'];
         let queue;
 
         if (activeParticipants.find(p => p.participantId === participantId)) {
@@ -134,7 +141,7 @@ MiddlewareRegistry.register(store => next => action => {
             const tid = timers.get(participantId);
 
             clearTimeout(tid);
-        } else if (activeParticipants.length < MAX_ACTIVE_PARTICIPANTS) {
+        } else if (activeParticipants.length < maxStageParticipants) {
             queue = [ ...activeParticipants, {
                 participantId,
                 pinned
@@ -214,6 +221,22 @@ MiddlewareRegistry.register(store => next => action => {
 
         if (activeParticipantsIds.find(pId => pId === id)) {
             store.dispatch(removeStageParticipant(id));
+        }
+        break;
+    }
+    case SET_MAX_STAGE_PARTICIPANTS: {
+        const { maxParticipants } = action;
+        const { activeParticipants } = store.getState()['features/filmstrip'];
+        const newMax = Math.min(MAX_ACTIVE_PARTICIPANTS, maxParticipants);
+
+        action.maxParticipants = newMax;
+
+        if (newMax < activeParticipants.length) {
+            const toRemove = activeParticipants.slice(0, activeParticipants.length - newMax);
+
+            batch(() => {
+                toRemove.forEach(p => store.dispatch(removeStageParticipant(p.participantId)));
+            });
         }
         break;
     }
