@@ -187,9 +187,9 @@
     "postinstall": "patch-package && jetify",
     "validate": "npm ls",
     "start": "make dev",
-    "e2e:build-android": "detox build --configuration android",
-    "e2e:build-ios": "detox build --configuration ios",
-    "e2e:run-android": "detox test --configuration android",
-    "e2e:run-ios": "detox test --configuration ios"
+    "detox-build-android": "detox build --configuration android",
+    "detox-build-ios": "detox build --configuration ios",
+    "detox-test-android": "detox test ./tests/mobile --c android",
+    "detox-test-ios": "detox test ./tests/mobile --c ios"
   }
 }

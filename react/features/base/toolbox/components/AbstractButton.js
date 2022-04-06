@@ -332,6 +332,7 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
             icon: this._getIcon(),
             label: this._getLabel(),
             styles: this._getStyles(),
+            testID: this.testID,
             toggled: this._isToggled(),
             tooltip: this._getTooltip()
         };
@@ -341,7 +342,6 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
                 disabled = { this._isDisabled() }
                 onClick = { this._onClick }
                 onKeyDown = { this._onKeyDown }
-                testID = { this.testID }
                 { ...props } />
         );
     }
