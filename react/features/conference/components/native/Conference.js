@@ -6,6 +6,7 @@ import { withSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { appNavigate } from '../../../app/actions';
 import { PIP_ENABLED, FULLSCREEN_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { getParticipantCount } from '../../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
@@ -75,6 +76,11 @@ type Props = AbstractProps & {
      * The indicator which determines whether fullscreen (immersive) mode is enabled.
      */
     _fullscreenEnabled: boolean,
+
+    /**
+     * The indicator which determines if the conference type is one to one.
+     */
+    _isOneToOneConference: boolean,
 
     /**
      * The indicator which determines if the participants pane is open.
@@ -315,6 +321,7 @@ class Conference extends AbstractConference<Props, State> {
     _renderContent() {
         const {
             _connecting,
+            _isOneToOneConference,
             _largeVideoParticipantId,
             _reducedUI,
             _shouldDisplayTileView,
@@ -357,9 +364,15 @@ class Conference extends AbstractConference<Props, State> {
 
                     <Captions onPress = { this._onClick } />
 
-                    { _shouldDisplayTileView || <Container style = { styles.displayNameContainer }>
-                        <DisplayNameLabel participantId = { _largeVideoParticipantId } />
-                    </Container> }
+                    {
+                        _shouldDisplayTileView || (
+                            !_isOneToOneConference
+                            && <Container style = { styles.displayNameContainer }>
+                                <DisplayNameLabel
+                                    participantId = { _largeVideoParticipantId } />
+                            </Container>
+                        )
+                    }
 
                     <LonelyMeetingExperience />
 
@@ -492,6 +505,7 @@ function _mapStateToProps(state) {
     } = state['features/base/conference'];
     const { isOpen } = state['features/participants-pane'];
     const { aspectRatio, reducedUI } = state['features/base/responsive-ui'];
+    const participantCount = getParticipantCount(state);
 
     // XXX There is a window of time between the successful establishment of the
     // XMPP connection and the subsequent commencement of joining the MUC during
@@ -512,6 +526,7 @@ function _mapStateToProps(state) {
         _connecting: Boolean(connecting_),
         _filmstripVisible: isFilmstripVisible(state),
         _fullscreenEnabled: getFeatureFlag(state, FULLSCREEN_ENABLED, true),
+        _isOneToOneConference: Boolean(participantCount === 2),
         _isParticipantsPaneOpen: isOpen,
         _largeVideoParticipantId: state['features/large-video'].participantId,
         _pictureInPictureEnabled: getFeatureFlag(state, PIP_ENABLED),
