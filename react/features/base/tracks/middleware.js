@@ -69,15 +69,23 @@ declare var APP: Object;
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case TRACK_ADDED: {
+        const state = store.getState();
+        const { jitsiTrack, local } = action.track;
+
         // The devices list needs to be refreshed when no initial video permissions
         // were granted and a local video track is added by umuting the video.
-        if (action.track.local) {
+        if (local) {
             store.dispatch(getAvailableDevices());
         }
 
-        if (getSourceNameSignalingFeatureFlag(store.getState())
-            && action.track.jitsiTrack.videoType === VIDEO_TYPE.DESKTOP
-            && !action.track.jitsiTrack.isMuted()
+        // The TRACK_ADDED action is dispatched when a presenter starts a screenshare. Do not create a local fake
+        // screenshare participant when multiple stream is not enabled.
+        const skipCreateFakeScreenShareParticipant = local && !getMultipleVideoSupportFeatureFlag(state);
+
+        if (getSourceNameSignalingFeatureFlag(state)
+            && jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP
+            && !jitsiTrack.isMuted()
+            && !skipCreateFakeScreenShareParticipant
         ) {
             createFakeScreenShareParticipant(store, action);
         }
