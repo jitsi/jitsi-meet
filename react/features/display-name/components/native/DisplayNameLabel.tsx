@@ -4,8 +4,8 @@ import { Text, View } from 'react-native';
 import {
     getParticipantById,
     getParticipantDisplayName
-} from '../../../base/participants/functions.js';
-import { connect } from '../../../base/redux/functions.js';
+} from '../../../base/participants/functions';
+import { connect } from '../../../base/redux/functions';
 
 import styles from './styles';
 
@@ -59,12 +59,11 @@ class DisplayNameLabel extends React.Component<{
 /**
  * Maps part of the Redux state to the props of this component.
  *
- * @param {Object} state - The Redux state.
+ * @param {any} state - The Redux state.
  * @param {Props} ownProps - The own props of the component.
- * @returns {{
- * }}
+ * @returns {Props}
  */
-function _mapStateToProps(state: Object, ownProps) {
+function _mapStateToProps(state: any, ownProps) {
     const participant = getParticipantById(state, ownProps.participantId);
 
     return {

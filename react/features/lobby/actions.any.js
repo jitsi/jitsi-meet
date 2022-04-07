@@ -219,6 +219,7 @@ export function startKnocking() {
         sendLocalParticipant(state, membersOnly);
 
         membersOnly.joinLobby(localParticipant.name, localParticipant.email);
+        dispatch(setLobbyMessageListener());
         dispatch(setKnockingState(true));
     };
 }

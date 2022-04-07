@@ -1,6 +1,7 @@
 {
     "include": ["react/features/**/*.ts"],
     "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
         "module": "es6",
         "target": "es6",
         "jsx": "react",

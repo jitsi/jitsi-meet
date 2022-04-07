@@ -12,7 +12,7 @@ import {
     LIB_INIT_ERROR,
     LIB_WILL_DISPOSE,
     LIB_WILL_INIT
-} from './actionTypes.ts';
+} from './actionTypes';
 import { isAnalyticsEnabled } from './functions';
 
 declare var APP: Object;
