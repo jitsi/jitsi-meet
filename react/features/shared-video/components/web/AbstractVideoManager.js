@@ -243,7 +243,6 @@ class AbstractVideoManager extends PureComponent<Props> {
         sendAnalytics(createEvent('paused'));
         this.fireUpdateSharedVideoEvent();
         this.smartAudioMuteStop();
-
     }
 
     /**
@@ -255,7 +254,6 @@ class AbstractVideoManager extends PureComponent<Props> {
         sendAnalytics(createEvent('stopped'));
         this.fireUpdateSharedVideoEvent();
         this.smartAudioMuteStop();
-
     }
 
     /**

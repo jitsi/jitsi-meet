@@ -288,9 +288,6 @@ class MoreTab extends AbstractDialogTab<Props, State> {
         super._onChange({ hideSelfView: checked });
     }
 
-<<<<<<< HEAD
-    _ondisableAutoMuteChanged: (Object) => void;
-
     /**
      * Callback invoked to select if the user
      * should be automuted during youtube video playback.
@@ -303,8 +300,6 @@ class MoreTab extends AbstractDialogTab<Props, State> {
         super._onChange({ disableAutoMute: checked });
     }
 
-=======
->>>>>>> master
     _onMaxStageParticipantsOpenChange: (Object) => void;
 
     /**
