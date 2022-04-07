@@ -35,9 +35,10 @@ typedef enum {
 static NSString * const kDevicesChanged = @"org.jitsi.meet:features/audio-mode#devices-update";
 
 // Device types (must match JS and Java)
-static NSString * const kDeviceTypeHeadphones = @"HEADPHONES";
 static NSString * const kDeviceTypeBluetooth  = @"BLUETOOTH";
+static NSString * const kDeviceTypeCar        = @"CAR";
 static NSString * const kDeviceTypeEarpiece   = @"EARPIECE";
+static NSString * const kDeviceTypeHeadphones = @"HEADPHONES";
 static NSString * const kDeviceTypeSpeaker    = @"SPEAKER";
 static NSString * const kDeviceTypeUnknown    = @"UNKNOWN";
 
@@ -320,6 +321,8 @@ RCT_EXPORT_METHOD(updateDeviceList) {
             || [portType isEqualToString:AVAudioSessionPortBluetoothLE]
             || [portType isEqualToString:AVAudioSessionPortBluetoothA2DP]) {
         return kDeviceTypeBluetooth;
+    } else if ([portType isEqualToString:AVAudioSessionPortCarAudio]) {
+        return kDeviceTypeCar; 
     } else {
         return kDeviceTypeUnknown;
     }
