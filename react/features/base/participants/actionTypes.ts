@@ -231,3 +231,12 @@ export const OVERWRITE_PARTICIPANT_NAME = 'OVERWRITE_PARTICIPANT_NAME';
  * }
  */
 export const OVERWRITE_PARTICIPANTS_NAMES = 'OVERWRITE_PARTICIPANTS_NAMES';
+
+/**
+ * Updates participants local recording status.
+ * {
+ *     type: LOCAL_PARTICIPANT_RECORDING_STATUS,
+ *     localVideoRecordingHasStarted: boolean
+ * }
+ */
+export const LOCAL_PARTICIPANT_RECORDING_STATUS = 'LOCAL_PARTICIPANT_RECORDING_STATUS';

@@ -23,7 +23,13 @@
 
     .recording-header-line {
         border-top: 1px solid #5e6d7a;
-        padding-top: 32px;
+        padding-top: 16px;
+        margin-top: 16px;
+    }
+
+    .local-recording-warning {
+        margin-top: 4px;
+        display: block;
     }
 
     .recording-switch-disabled {

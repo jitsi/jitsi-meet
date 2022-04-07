@@ -6,6 +6,8 @@ export default {};
 
 export const DROPBOX_LOGO = 'images/dropboxLogo_square.png';
 
+export const LOCAL_RECORDING = 'images/downloadLocalRecording.png';
+
 export const ICON_CLOUD = 'images/icon-cloud.png';
 
 export const ICON_INFO = 'images/icon-info.png';

@@ -11,6 +11,8 @@ import { maybeShowPremiumFeatureDialog } from '../../../jaas/actions';
 import { FEATURES } from '../../../jaas/constants';
 import { getActiveSession, getRecordButtonProps } from '../../functions';
 
+import LocalRecordingManager from './LocalRecordingManager';
+
 /**
  * The type of the React {@code Component} props of
  * {@link AbstractRecordButton}.
@@ -142,7 +144,8 @@ export function _mapStateToProps(state: Object): Object {
 
     return {
         _disabled,
-        _isRecordingRunning: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE)),
+        _isRecordingRunning: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE))
+            || LocalRecordingManager.isRecordingLocally(),
         _tooltip,
         visible
     };
