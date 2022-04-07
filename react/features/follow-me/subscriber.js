@@ -71,6 +71,13 @@ StateListenerRegistry.register(
     /* listener */ _sendFollowMeCommand);
 
 /**
+ * Subscribes to changes to the max number of stage participants setting.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => state['features/filmstrip'].maxStageParticipants,
+    /* listener */ _sendFollowMeCommand);
+
+/**
  * Private selector for returning state from redux that should be respected by
  * other participants while follow me is enabled.
  *
@@ -83,6 +90,7 @@ function _getFollowMeState(state) {
 
     return {
         filmstripVisible: state['features/filmstrip'].visible,
+        maxStageParticipants: stageFilmstrip ? state['features/filmstrip'].maxStageParticipants : undefined,
         nextOnStage: stageFilmstrip ? undefined : pinnedParticipant && pinnedParticipant.id,
         pinnedStageParticipants: stageFilmstrip ? JSON.stringify(getPinnedActiveParticipants(state)) : undefined,
         sharedDocumentVisible: state['features/etherpad'].editing,
