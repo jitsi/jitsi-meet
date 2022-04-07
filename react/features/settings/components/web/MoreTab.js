@@ -288,6 +288,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
         super._onChange({ hideSelfView: checked });
     }
 
+<<<<<<< HEAD
     _ondisableAutoMuteChanged: (Object) => void;
 
     /**
@@ -302,6 +303,8 @@ class MoreTab extends AbstractDialogTab<Props, State> {
         super._onChange({ disableAutoMute: checked });
     }
 
+=======
+>>>>>>> master
     _onMaxStageParticipantsOpenChange: (Object) => void;
 
     /**
