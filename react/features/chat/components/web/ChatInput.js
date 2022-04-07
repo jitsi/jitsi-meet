@@ -228,7 +228,7 @@ class ChatInput extends Component<Props, State> {
             // but input method is still processing that.
             // This is a standard behavior for some input methods
             // like entering japanese or сhinese hieroglyphs.
-            return true;
+            return;
         }
 
         if (event.key === 'Enter'
