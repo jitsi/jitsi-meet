@@ -2,7 +2,10 @@
 
 import { AUDIO_ONLY_SCREEN_SHARE_NO_TRACK } from '../../../../modules/UI/UIErrors';
 import { showNotification, NOTIFICATION_TIMEOUT_TYPE } from '../../notifications';
-import { setSkipPrejoinOnReload } from '../../prejoin';
+import {
+    setPrejoinPageVisibility,
+    setSkipPrejoinOnReload
+} from '../../prejoin';
 import { setScreenAudioShareState, setScreenshareAudioTrack } from '../../screen-share';
 import { AudioMixerEffect } from '../../stream-effects/audio-mixer/AudioMixerEffect';
 import { setAudioOnly } from '../audio-only';
@@ -19,7 +22,7 @@ import {
     TOGGLE_SCREENSHARING
 } from '../tracks';
 
-import { CONFERENCE_FAILED, CONFERENCE_JOINED } from './actionTypes';
+import { CONFERENCE_FAILED, CONFERENCE_JOIN_IN_PROGRESS, CONFERENCE_JOINED } from './actionTypes';
 import { getCurrentConference } from './functions';
 import './middleware.any';
 
@@ -28,6 +31,11 @@ MiddlewareRegistry.register(store => next => action => {
     const { enableForcedReload } = getState()['features/base/config'];
 
     switch (action.type) {
+    case CONFERENCE_JOIN_IN_PROGRESS: {
+        dispatch(setPrejoinPageVisibility(false));
+
+        break;
+    }
     case CONFERENCE_JOINED: {
         if (enableForcedReload) {
             dispatch(setSkipPrejoinOnReload(false));

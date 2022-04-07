@@ -1,5 +1,6 @@
 // @flow
 
+import clsx from 'clsx';
 import _ from 'lodash';
 import React from 'react';
 
@@ -11,7 +12,7 @@ import { translate } from '../../../base/i18n';
 import { connect as reactReduxConnect } from '../../../base/redux';
 import { setColorAlpha } from '../../../base/util';
 import { Chat } from '../../../chat';
-import { Filmstrip } from '../../../filmstrip';
+import { MainFilmstrip, StageFilmstrip, shouldDisplayStageFilmstrip } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
 import { LobbyScreen } from '../../../lobby';
@@ -55,7 +56,7 @@ const FULL_SCREEN_EVENTS = [
  * @private
  * @type {Object}
  */
-const LAYOUT_CLASSNAMES = {
+export const LAYOUT_CLASSNAMES = {
     [LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW]: 'horizontal-filmstrip',
     [LAYOUTS.TILE_VIEW]: 'tile-view',
     [LAYOUTS.VERTICAL_FILMSTRIP_VIEW]: 'vertical-filmstrip'
@@ -95,12 +96,17 @@ type Props = AbstractProps & {
     /**
      * If lobby page is visible or not.
      */
-     _showLobby: boolean,
+    _showLobby: boolean,
 
     /**
      * If prejoin page is visible or not.
      */
     _showPrejoin: boolean,
+
+    /**
+     * Whether or not the stage filmstrip should be displayed.
+     */
+    _showStageFilmstrip: boolean,
 
     dispatch: Function,
     t: Function
@@ -214,7 +220,8 @@ class Conference extends AbstractConference<Props, *> {
             _notificationsVisible,
             _overflowDrawer,
             _showLobby,
-            _showPrejoin
+            _showPrejoin,
+            _showStageFilmstrip
         } = this.props;
 
         return (
@@ -222,24 +229,24 @@ class Conference extends AbstractConference<Props, *> {
                 id = 'layout_wrapper'
                 onMouseEnter = { this._onMouseEnter }
                 onMouseLeave = { this._onMouseLeave }
-                onMouseMove = { this._onMouseMove } >
+                onMouseMove = { this._onMouseMove }
+                ref = { this._setBackground }>
+                <Chat />
                 <div
-                    className = { _layoutClassName }
+                    className = { clsx(_layoutClassName, _showStageFilmstrip && 'stage-filmstrip') }
                     id = 'videoconference_page'
-                    onMouseMove = { isMobileBrowser() ? undefined : this._onShowToolbar }
-                    ref = { this._setBackground }>
+                    onMouseMove = { isMobileBrowser() ? undefined : this._onShowToolbar }>
                     <ConferenceInfo />
-
                     <Notice />
                     <div
                         id = 'videospace'
                         onTouchStart = { this._onVidespaceTouchStart }>
                         <LargeVideo />
-                        <Filmstrip />
+                        {_showStageFilmstrip && <StageFilmstrip />}
+                        <MainFilmstrip />
                     </div>
 
                     { _showPrejoin || _showLobby || <Toolbox /> }
-                    <Chat />
 
                     {_notificationsVisible && (_overflowDrawer
                         ? <JitsiPortal className = 'notification-portal'>
@@ -395,7 +402,8 @@ function _mapStateToProps(state) {
         _overflowDrawer: overflowDrawer,
         _roomName: getConferenceNameForTitle(state),
         _showLobby: getIsLobbyVisible(state),
-        _showPrejoin: isPrejoinPageVisible(state)
+        _showPrejoin: isPrejoinPageVisible(state),
+        _showStageFilmstrip: shouldDisplayStageFilmstrip(state)
     };
 }
 

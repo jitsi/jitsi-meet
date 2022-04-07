@@ -11,6 +11,7 @@ import { AbstractDialogTab } from '../../../base/dialog';
 import type { Props as AbstractDialogTabProps } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import TouchmoveHack from '../../../chat/components/web/TouchmoveHack';
+import { MAX_ACTIVE_PARTICIPANTS } from '../../../filmstrip';
 import { SS_DEFAULT_FRAME_RATE } from '../../constants';
 
 /**
@@ -22,7 +23,7 @@ export type Props = {
     /**
      * The currently selected desktop share frame rate in the frame rate select dropdown.
      */
-     currentFramerate: string,
+    currentFramerate: string,
 
     /**
      * The currently selected language to display in the language select
@@ -86,6 +87,11 @@ export type Props = {
     hideSelfView: boolean,
 
     /**
+     * boolean to disable mic auto mute when sharing a Youtube video
+     */
+    disableAutoMute: boolean,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -99,7 +105,7 @@ type State = {
     /**
      * Whether or not the desktop share frame rate select dropdown is open.
      */
-     isFramerateSelectOpen: boolean,
+    isFramerateSelectOpen: boolean,
 
     /**
      * Whether or not the language select dropdown is open.
@@ -124,7 +130,8 @@ class MoreTab extends AbstractDialogTab<Props, State> {
 
         this.state = {
             isFramerateSelectOpen: false,
-            isLanguageSelectOpen: false
+            isLanguageSelectOpen: false,
+            isMaxStageParticipantsOpen: false
         };
 
         // Bind event handler so it is only bound once for every instance.
@@ -136,6 +143,10 @@ class MoreTab extends AbstractDialogTab<Props, State> {
         this._onShowPrejoinPageChanged = this._onShowPrejoinPageChanged.bind(this);
         this._onKeyboardShortcutEnableChanged = this._onKeyboardShortcutEnableChanged.bind(this);
         this._onHideSelfViewChanged = this._onHideSelfViewChanged.bind(this);
+        this._ondisableAutoMuteChanged = this._ondisableAutoMuteChanged.bind(this);
+        this._renderMaxStageParticipantsSelect = this._renderMaxStageParticipantsSelect.bind(this);
+        this._onMaxStageParticipantsSelect = this._onMaxStageParticipantsSelect.bind(this);
+        this._onMaxStageParticipantsOpenChange = this._onMaxStageParticipantsOpenChange.bind(this);
     }
 
     /**
@@ -277,6 +288,48 @@ class MoreTab extends AbstractDialogTab<Props, State> {
         super._onChange({ hideSelfView: checked });
     }
 
+    _ondisableAutoMuteChanged: (Object) => void;
+
+    /**
+     * Callback invoked to select if the user
+     * should be automuted during youtube video playback.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _ondisableAutoMuteChanged({ target: { checked } }) {
+        super._onChange({ disableAutoMute: checked });
+    }
+
+    _onMaxStageParticipantsOpenChange: (Object) => void;
+
+    /**
+     * Callback invoked to toggle display of the max stage participants select dropdown.
+     *
+     * @param {Object} event - The event for opening or closing the dropdown.
+     * @private
+     * @returns {void}
+     */
+    _onMaxStageParticipantsOpenChange({ isOpen }) {
+        this.setState({ isMaxStageParticipantsOpen: isOpen });
+    }
+
+    _onMaxStageParticipantsSelect: (Object) => void;
+
+    /**
+     * Callback invoked to select a max number of stage participants from the select dropdown.
+     *
+     * @param {Object} e - The key event to handle.
+     * @private
+     * @returns {void}
+     */
+    _onMaxStageParticipantsSelect(e) {
+        const maxParticipants = e.currentTarget.getAttribute('data-maxparticipants');
+
+        super._onChange({ maxStageParticipants: maxParticipants });
+    }
+
     /**
      * Returns the React Element for the desktop share frame rate dropdown.
      *
@@ -379,6 +432,33 @@ class MoreTab extends AbstractDialogTab<Props, State> {
             </div>
         );
     }
+
+
+    /**
+     * Returns the React Element for Automute settings.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+     _renderdisableAutoMuteCheckbox() {
+        const { disableAutoMute, t} = this.props;
+
+        return (
+            <div
+                className = 'settings-sub-pane-element'
+                key = 'disableAutoMute'>
+                <h2 className = 'mock-atlaskit-label'>
+                    { t('settings.disableAutoMute') }
+                </h2>
+                <Checkbox
+                    isChecked = { disableAutoMute }
+                    label = { t('settingsView.disableAutoMute') }
+                    name = 'disable-auto-mute'
+                    onChange = { this._ondisableAutoMuteChanged } />
+            </div>
+        );
+    }
+
 
     /**
      * Returns the menu item for changing displayed language.
@@ -490,6 +570,54 @@ class MoreTab extends AbstractDialogTab<Props, State> {
         );
     }
 
+    _renderMaxStageParticipantsSelect: () => void;
+
+    /**
+     * Returns the React Element for the max stage participants dropdown.
+     *
+     * @returns {ReactElement}
+     */
+    _renderMaxStageParticipantsSelect() {
+        const { maxStageParticipants, t } = this.props;
+        const maxParticipantsItems = Array(MAX_ACTIVE_PARTICIPANTS).fill(0)
+            .map((no, index) => (
+                <DropdownItem
+                    data-maxparticipants = { index + 1 }
+                    key = { index + 1 }
+                    onClick = { this._onMaxStageParticipantsSelect }>
+                    {index + 1}
+                </DropdownItem>));
+
+        return (
+            <div
+                className = 'settings-sub-pane-element'
+                key = 'maxStageParticipants'>
+                <h2 className = 'mock-atlaskit-label'>
+                    { t('settings.maxStageParticipants') }
+                </h2>
+                <div className = 'dropdown-menu'>
+                    <TouchmoveHack
+                        flex = { true }
+                        isModal = { true }>
+                        <DropdownMenu
+                            isOpen = { this.state.isMaxStageParticipantsOpen }
+                            onOpenChange = { this._onMaxStageParticipantsOpenChange }
+                            shouldFitContainer = { true }
+                            trigger = { maxStageParticipants }
+                            triggerButtonProps = {{
+                                shouldFitContainer: true
+                            }}
+                            triggerType = 'button'>
+                            <DropdownItemGroup>
+                                { maxParticipantsItems }
+                            </DropdownItemGroup>
+                        </DropdownMenu>
+                    </TouchmoveHack>
+                </div>
+            </div>
+        );
+    }
+
     /**
      * Returns the React element that needs to be displayed on the right half of the more tabs.
      *
@@ -505,6 +633,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                 key = 'settings-sub-pane-right'>
                 { showLanguageSettings && this._renderLanguageSelect() }
                 { this._renderFramerateSelect() }
+                { this._renderMaxStageParticipantsSelect() }
             </div>
         );
     }
@@ -525,6 +654,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                 { showNotificationsSettings && this._renderNotificationsSettings() }
                 { this._renderKeyboardShortcutCheckbox() }
                 { !disableHideSelfView && this._renderSelfViewCheckbox() }
+                { this._renderdisableAutoMuteCheckbox() }
             </div>
         );
     }

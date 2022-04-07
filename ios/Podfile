@@ -35,6 +35,7 @@ end
 
 post_install do |installer|
   react_native_post_install(installer)
+  __apply_Xcode_12_5_M1_post_install_workaround(installer)
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
       config.build_settings['ENABLE_BITCODE'] = 'YES'
@@ -42,7 +43,4 @@ post_install do |installer|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
     end
   end
-  # https://github.com/facebook/react-native/blob/d7f748a944a9a9324e485ccbe214098e6c8645fc/scripts/react_native_pods.rb#L630
-  time_header = "#{Pod::Config.instance.installation_root.to_s}/Pods/RCT-Folly/folly/portability/Time.h"
-  `sed -i -e  $'s/ && (__IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_10_0)//' #{time_header}`
 end

@@ -1,9 +1,13 @@
 // @flow
 
+import React, { Component } from 'react';
+
 // We need to reference these files directly to avoid loading things that are not available
 // in this environment (e.g. JitsiMeetJS or interfaceConfig)
-import AbstractAudioMuteButton from '../base/toolbox/components/AbstractAudioMuteButton';
+import { IconMicrophoneEmpty, IconMicrophoneEmptySlash } from '../base/icons';
 import type { Props } from '../base/toolbox/components/AbstractButton';
+
+import ToolbarButton from './ToolbarButton';
 
 const { api } = window.alwaysOnTop;
 
@@ -26,9 +30,9 @@ type State = {
 /**
  * Stateless "mute/unmute audio" button for the Always-on-Top windows.
  */
-export default class AudioMuteButton
-    extends AbstractAudioMuteButton<Props, State> {
-
+export default class AudioMuteButton extends Component<Props, State> {
+    icon = IconMicrophoneEmpty;
+    toggledIcon = IconMicrophoneEmptySlash;
     accessibilityLabel = 'Audio mute';
 
     /**
@@ -49,6 +53,7 @@ export default class AudioMuteButton
         this._audioAvailabilityListener
             = this._audioAvailabilityListener.bind(this);
         this._audioMutedListener = this._audioMutedListener.bind(this);
+        this._onClick = this._onClick.bind(this);
     }
 
     /**
@@ -144,5 +149,34 @@ export default class AudioMuteButton
      */
     _setAudioMuted(audioMuted: boolean) { // eslint-disable-line no-unused-vars
         this.state.audioAvailable && api.executeCommand('toggleAudio');
+    }
+
+    _onClick: () => {};
+
+    /**
+     * Handles clicking / pressing the button, and toggles the audio mute state
+     * accordingly.
+     *
+     * @returns {void}
+     */
+    _onClick() {
+        this._setAudioMuted(!this._isAudioMuted());
+    }
+
+    /**
+     * Implements React's {@link Component#render()}.
+     *
+     * @inheritdoc
+     * @returns {ReactElement}
+     */
+    render() {
+        const toggled = this._isAudioMuted();
+
+        return (<ToolbarButton
+            accessibilityLabel = { this.accessibilityLabel }
+            disabled = { this._isDisabled() }
+            icon = { toggled ? this.toggledIcon : this.icon }
+            onClick = { this._onClick }
+            toggled = { toggled } />);
     }
 }

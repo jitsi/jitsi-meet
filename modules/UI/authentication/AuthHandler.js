@@ -6,7 +6,10 @@ import { openConnection } from '../../../connection';
 import {
     openAuthDialog,
     openLoginDialog } from '../../../react/features/authentication/actions.web';
-import { WaitForOwnerDialog } from '../../../react/features/authentication/components';
+import {
+    LoginDialog,
+    WaitForOwnerDialog
+} from '../../../react/features/authentication/components';
 import {
     isTokenAuthEnabled,
     getTokenAuthUrl
@@ -16,7 +19,7 @@ import { isDialogOpen } from '../../../react/features/base/dialog';
 import { setJWT } from '../../../react/features/base/jwt';
 import UIUtil from '../util/UIUtil';
 
-import LoginDialog from './LoginDialog';
+import ExternalLoginDialog from './LoginDialog';
 
 
 let externalAuthWindow;
@@ -51,7 +54,7 @@ function doExternalAuth(room, lockPassword) {
             getUrl = room.getExternalAuthUrl(true);
         }
         getUrl.then(url => {
-            externalAuthWindow = LoginDialog.showExternalAuthDialog(
+            externalAuthWindow = ExternalLoginDialog.showExternalAuthDialog(
                 url,
                 () => {
                     externalAuthWindow = null;
@@ -187,7 +190,7 @@ function authenticate(room: Object, lockPassword: string) {
  * @param {string} [lockPassword] password to use if the conference is locked
  */
 function requireAuth(room: Object, lockPassword: string) {
-    if (!isDialogOpen(APP.store, WaitForOwnerDialog)) {
+    if (isDialogOpen(APP.store, WaitForOwnerDialog) || isDialogOpen(APP.store, LoginDialog)) {
         return;
     }
 

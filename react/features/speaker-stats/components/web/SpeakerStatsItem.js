@@ -5,7 +5,7 @@ import React from 'react';
 import { Avatar, StatelessAvatar } from '../../../base/avatar';
 import { getInitials } from '../../../base/avatar/functions';
 import BaseTheme from '../../../base/ui/components/BaseTheme';
-import { FACIAL_EXPRESSIONS } from '../../../facial-recognition/constants.js';
+import { FACE_EXPRESSIONS } from '../../../face-landmarks/constants.js';
 
 import TimeElapsed from './TimeElapsed';
 
@@ -20,15 +20,15 @@ type Props = {
     displayName: string,
 
     /**
-     * The object that has as keys the facial expressions of the
+     * The object that has as keys the face expressions of the
      * participant and as values a number that represents the count .
      */
-    facialExpressions: Object,
+    faceExpressions: Object,
 
     /**
-     * True if the facial recognition is not disabled.
+     * True if the face expressions detection is not disabled.
      */
-    showFacialExpressions: boolean,
+    showFaceExpressions: boolean,
 
     /**
      * The total milliseconds the participant has been dominant speaker.
@@ -71,22 +71,22 @@ const SpeakerStatsItem = (props: Props) => {
     const rowDisplayClass = `row ${hasLeftClass} ${props.styles.item}`;
     const expressionClass = 'expression';
     const nameTimeClass = `name-time${
-        props.showFacialExpressions ? ' name-time_expressions-on' : ''
+        props.showFaceExpressions ? ' name-time_expressions-on' : ''
     }`;
     const timeClass = `${props.styles.time} ${props.isDominantSpeaker ? props.styles.dominant : ''}`;
 
 
-    const FacialExpressions = () => FACIAL_EXPRESSIONS.map(
+    const FaceExpressions = () => FACE_EXPRESSIONS.map(
             expression => (
                 <div
                     aria-label = { props.t(`speakerStats.${expression}`) }
                     className = {
                         `${expressionClass} ${
-                            props.facialExpressions[expression] === 0 ? props.styles.hasLeft : ''
+                            props.faceExpressions[expression] === 0 ? props.styles.hasLeft : ''
                         }`
                     }
                     key = { expression }>
-                    { props.facialExpressions[expression] }
+                    { props.faceExpressions[expression] }
                 </div>
             )
     );
@@ -123,10 +123,10 @@ const SpeakerStatsItem = (props: Props) => {
                         time = { props.dominantSpeakerTime } />
                 </div>
             </div>
-            { props.showFacialExpressions
+            { props.showFaceExpressions
             && (
                 <div className = { `expressions ${props.styles.expressions}` }>
-                    <FacialExpressions />
+                    <FaceExpressions />
                 </div>
             )}
         </div>

@@ -22,8 +22,7 @@ import {
 import {
     hideLoginDialog,
     openWaitForOwnerDialog,
-    stopWaitForOwner,
-    waitForOwner
+    stopWaitForOwner
 } from './actions.web';
 import { LoginDialog, WaitForOwnerDialog } from './components';
 
@@ -72,7 +71,11 @@ MiddlewareRegistry.register(store => next => action => {
             recoverable = error.recoverable;
         }
         if (recoverable) {
-            store.dispatch(waitForOwner());
+            // we haven't migrated all the code from AuthHandler, and we need for now conference.js to trigger
+            // the dialog to pass all required parameters to WaitForOwnerDialog
+            // keep it commented, so we do not trigger sending iqs to jicofo twice
+            // and showing the broken dialog with no handler
+            // store.dispatch(waitForOwner());
         } else {
             store.dispatch(stopWaitForOwner());
         }

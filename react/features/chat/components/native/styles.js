@@ -145,6 +145,17 @@ export default {
         borderTopLeftRadius: 0,
         borderTopRightRadius: 0,
         borderBottomRightRadius: 0
+    },
+
+    gifContainer: {
+        maxHeight: 150
+    },
+
+    gifImage: {
+        resizeMode: 'contain',
+        width: 250,
+        height: undefined,
+        flexGrow: 1
     }
 };
 

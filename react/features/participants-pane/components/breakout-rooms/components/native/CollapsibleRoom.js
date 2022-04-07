@@ -52,7 +52,7 @@ export const CollapsibleRoom = ({ room, searchString }: Props) => {
     // a certain height percentage for every section in order for all to fit
     // inside the participants pane container
     const containerStyle
-        = roomParticipantsNr > 3 && styles.collapsibleRoomContainer;
+        = roomParticipantsNr > 2 && styles.collapsibleRoomContainer;
 
     return (
         <CollapsibleList

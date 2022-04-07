@@ -14,6 +14,11 @@ import { REACTIONS } from '../../constants';
 export type ReactionStyles = {
 
     /**
+     * Style for the gif button.
+     */
+    gifButton: StyleType,
+
+    /**
      * Style for the button.
      */
     style: StyleType,
@@ -46,6 +51,16 @@ export type ReactionStyles = {
 type Props = {
 
     /**
+     * Component children.
+     */
+    children?: ReactNode,
+
+    /**
+     * External click handler.
+     */
+    onClick?: Function,
+
+    /**
      * Collection of styles for the button.
      */
     styles: ReactionStyles,
@@ -67,6 +82,8 @@ type Props = {
  * @returns {ReactElement}
  */
 function ReactionButton({
+    children,
+    onClick,
     styles,
     reaction,
     t
@@ -81,10 +98,10 @@ function ReactionButton({
         <TouchableHighlight
             accessibilityLabel = { t(`toolbar.accessibilityLabel.${reaction}`) }
             accessibilityRole = 'button'
-            onPress = { _onClick }
-            style = { styles.style }
+            onPress = { onClick || _onClick }
+            style = { [ styles.style, children && styles?.gifButton ] }
             underlayColor = { styles.underlayColor }>
-            <Text style = { styles.emoji }>{REACTIONS[reaction].emoji}</Text>
+            {children ?? <Text style = { styles.emoji }>{REACTIONS[reaction].emoji}</Text>}
         </TouchableHighlight>
     );
 }

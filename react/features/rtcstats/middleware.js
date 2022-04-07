@@ -3,11 +3,11 @@
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 
 import { getAmplitudeIdentity } from '../analytics';
-import { CONFERENCE_UNIQUE_ID_SET, getConferenceOptions, getRoomName } from '../base/conference';
+import { CONFERENCE_UNIQUE_ID_SET, E2E_RTT_CHANGED, getConferenceOptions, getRoomName } from '../base/conference';
 import { LIB_WILL_INIT } from '../base/lib-jitsi-meet';
 import { DOMINANT_SPEAKER_CHANGED, getLocalParticipant } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
-import { ADD_FACIAL_EXPRESSION } from '../facial-recognition/actionTypes';
+import { ADD_FACE_EXPRESSION } from '../face-landmarks/actionTypes';
 
 import RTCStats from './RTCStats';
 import { canSendRtcstatsData, isRtcstatsEnabled } from './functions';
@@ -105,13 +105,25 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
     }
-    case ADD_FACIAL_EXPRESSION: {
+    case E2E_RTT_CHANGED: {
         if (canSendRtcstatsData(state)) {
-            const { duration, facialExpression } = action;
+            const { participant, rtt } = action.e2eRtt;
 
-            RTCStats.sendFacialExpressionData({
+            RTCStats.sendE2eRttData({
+                remoteEndpointId: participant.getId(),
+                rtt,
+                remoteRegion: participant.getProperty('region')
+            });
+        }
+        break;
+    }
+    case ADD_FACE_EXPRESSION: {
+        if (canSendRtcstatsData(state)) {
+            const { duration, faceExpression } = action;
+
+            RTCStats.sendFaceExpressionData({
                 duration,
-                facialExpression
+                faceExpression
             });
         }
         break;

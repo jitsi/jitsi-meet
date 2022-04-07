@@ -9,9 +9,11 @@ import { getLocalParticipant, getParticipantCount } from '../base/participants';
 import { StateListenerRegistry } from '../base/redux';
 import { getTrackSourceNameByMediaTypeAndParticipant } from '../base/tracks';
 import { reportError } from '../base/util';
+import { getActiveParticipantsIds } from '../filmstrip/functions.web';
 import {
     getVideoQualityForLargeVideo,
     getVideoQualityForResizableFilmstripThumbnails,
+    getVideoQualityForStageThumbnails,
     shouldDisplayTileView
 } from '../video-layout';
 
@@ -89,6 +91,18 @@ StateListenerRegistry.register(
     state => getVideoQualityForResizableFilmstripThumbnails(state),
     (_, store) => {
         _updateReceiverVideoConstraints(store);
+    }
+);
+
+/**
+ * Updates the receiver constraints when the stage participants change.
+ */
+StateListenerRegistry.register(
+    state => getActiveParticipantsIds(state).sort(),
+    (_, store) => {
+        _updateReceiverVideoConstraints(store);
+    }, {
+        deepEquals: true
     }
 );
 
@@ -219,6 +233,7 @@ function _updateReceiverVideoConstraints({ getState }) {
     const tracks = state['features/base/tracks'];
     const sourceNameSignaling = getSourceNameSignalingFeatureFlag(state);
     const localParticipantId = getLocalParticipant(state).id;
+    const activeParticipantsIds = getActiveParticipantsIds(state);
 
     let receiverConstraints;
 
@@ -232,22 +247,36 @@ function _updateReceiverVideoConstraints({ getState }) {
         };
         const visibleRemoteTrackSourceNames = [];
         let largeVideoSourceName;
+        const activeParticipantsSources = [];
 
         if (visibleRemoteParticipants?.size) {
             visibleRemoteParticipants.forEach(participantId => {
-                const sourceName = getTrackSourceNameByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
+                let sourceName;
+
+                if (remoteScreenShares.includes(participantId)) {
+                    sourceName = participantId;
+                } else {
+                    sourceName = getTrackSourceNameByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
+                }
 
                 if (sourceName) {
                     visibleRemoteTrackSourceNames.push(sourceName);
+                    if (activeParticipantsIds.find(id => id === participantId)) {
+                        activeParticipantsSources.push(sourceName);
+                    }
                 }
             });
         }
 
         if (localParticipantId !== largeVideoParticipantId) {
-            largeVideoSourceName = getTrackSourceNameByMediaTypeAndParticipant(
-                tracks, MEDIA_TYPE.VIDEO,
-                largeVideoParticipantId
-            );
+            if (remoteScreenShares.includes(largeVideoParticipantId)) {
+                largeVideoSourceName = largeVideoParticipantId;
+            } else {
+                largeVideoSourceName = getTrackSourceNameByMediaTypeAndParticipant(
+                    tracks, MEDIA_TYPE.VIDEO,
+                    largeVideoParticipantId
+                );
+            }
         }
 
         // Tile view.
@@ -262,11 +291,7 @@ function _updateReceiverVideoConstraints({ getState }) {
 
             // Prioritize screenshare in tile view.
             if (remoteScreenShares?.length) {
-                const remoteScreenShareSourceNames = remoteScreenShares.map(remoteScreenShare =>
-                    getTrackSourceNameByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, remoteScreenShare)
-                );
-
-                receiverConstraints.selectedSources = remoteScreenShareSourceNames;
+                receiverConstraints.selectedSources = remoteScreenShares;
             }
 
         // Stage view.
@@ -277,10 +302,14 @@ function _updateReceiverVideoConstraints({ getState }) {
 
             if (visibleRemoteTrackSourceNames?.length) {
                 const qualityLevel = getVideoQualityForResizableFilmstripThumbnails(state);
+                const stageParticipantsLevel = getVideoQualityForStageThumbnails(state);
 
                 visibleRemoteTrackSourceNames.forEach(sourceName => {
-                    receiverConstraints.constraints[sourceName] = { 'maxHeight': Math.min(qualityLevel,
-                        maxFrameHeight) };
+                    const isStageParticipant = activeParticipantsSources.find(name => name === sourceName);
+                    const quality = Math.min(maxFrameHeight, isStageParticipant
+                        ? stageParticipantsLevel : qualityLevel);
+
+                    receiverConstraints.constraints[sourceName] = { 'maxHeight': quality };
                 });
             }
 
@@ -326,10 +355,14 @@ function _updateReceiverVideoConstraints({ getState }) {
 
             if (visibleRemoteParticipants?.size > 0) {
                 const qualityLevel = getVideoQualityForResizableFilmstripThumbnails(state);
+                const stageParticipantsLevel = getVideoQualityForStageThumbnails(state);
 
                 visibleRemoteParticipants.forEach(participantId => {
-                    receiverConstraints.constraints[participantId] = { 'maxHeight': Math.min(qualityLevel,
-                        maxFrameHeight) };
+                    const isStageParticipant = activeParticipantsIds.find(id => id === participantId);
+                    const quality = Math.min(maxFrameHeight, isStageParticipant
+                        ? stageParticipantsLevel : qualityLevel);
+
+                    receiverConstraints.constraints[participantId] = { 'maxHeight': quality };
                 });
             }
 

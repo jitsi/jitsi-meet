@@ -22,6 +22,7 @@ const DEFAULT_STATE = {
     disableCrashReporting: undefined,
     disableP2P: undefined,
     disableSelfView: false,
+    disableAutoMute: false,
     displayName: undefined,
     email: undefined,
     localFlipX: true,

@@ -1,6 +1,6 @@
 // @flow
 
-import { CONFERENCE_WILL_JOIN } from '../base/conference';
+import { CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
 import {
     JitsiConferenceEvents,
     JitsiSIPVideoGWStatus
@@ -29,12 +29,12 @@ import logger from './logger';
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
+MiddlewareRegistry.register(({ dispatch }) => next => action => {
     const result = next(action);
 
     switch (action.type) {
-    case CONFERENCE_WILL_JOIN: {
-        const conference = getState()['features/base/conference'].joining;
+    case CONFERENCE_JOIN_IN_PROGRESS: {
+        const { conference } = action;
 
         conference.on(
             JitsiConferenceEvents.VIDEO_SIP_GW_AVAILABILITY_CHANGED,

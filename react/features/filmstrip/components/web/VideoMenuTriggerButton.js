@@ -7,6 +7,11 @@ import { LocalVideoMenuTriggerButton, RemoteVideoMenuTriggerButton } from '../..
 type Props = {
 
     /**
+     * The current layout of the filmstrip.
+     */
+    currentLayout: string,
+
+    /**
      * Hide popover callback.
      */
     hidePopover: Function,
@@ -39,6 +44,7 @@ type Props = {
 
 // eslint-disable-next-line no-confusing-arrow
 const VideoMenuTriggerButton = ({
+    currentLayout,
     hidePopover,
     local,
     participantId,
@@ -50,6 +56,7 @@ const VideoMenuTriggerButton = ({
         <span id = 'localvideomenu'>
             <LocalVideoMenuTriggerButton
                 buttonVisible = { visible }
+                currentLayout = { currentLayout }
                 hidePopover = { hidePopover }
                 popoverVisible = { popoverVisible }
                 showPopover = { showPopover } />
@@ -59,6 +66,7 @@ const VideoMenuTriggerButton = ({
         <span id = 'remotevideomenu'>
             <RemoteVideoMenuTriggerButton
                 buttonVisible = { visible }
+                currentLayout = { currentLayout }
                 hidePopover = { hidePopover }
                 participantID = { participantId }
                 popoverVisible = { popoverVisible }

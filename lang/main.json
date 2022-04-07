@@ -629,6 +629,7 @@
         "displayNotifications": "Display notifications for",
         "focus": "Conference focus",
         "focusFail": "{{component}} not available - retry in {{ms}} sec",
+        "gifsMenu": "GIPHY",
         "groupTitle": "Notifications",
         "hostAskedUnmute": "The moderator would like you to speak",
         "invitedOneMember": "{{name}} has been invited",
@@ -722,6 +723,7 @@
     },
     "passwordDigitsOnly": "Up to {{number}} digits",
     "passwordSetRemotely": "Set by another participant",
+    "pinnedParticipant": "The participant is pinned",
     "polls": {
         "answer": {
             "skip": "Skip",
@@ -839,7 +841,7 @@
     "raisedHandsLabel": "Number of raised hands",
     "record": {
         "already": {
-            "linked": "Record is already linked to this session."
+            "linked": "The meeting is already linked to this Salesforce object."
         },
         "type": {
             "account": "Account",
@@ -917,6 +919,7 @@
         "incomingMessage": "Incoming message",
         "language": "Language",
         "loggedIn": "Logged in as {{name}}",
+        "maxStageParticipants": "Maximum number of participants who can be pinned to the main stage",
         "microphones": "Microphones",
         "moderator": "Moderator",
         "more": "More",
@@ -937,6 +940,7 @@
         "startReactionsMuted": "Mute reaction sounds for everyone",
         "startVideoMuted": "Everyone starts hidden",
         "talkWhileMuted": "Talk while muted",
+        "disableAutoMute": "Auto-Mute",
         "title": "Settings"
     },
     "settingsView": {
@@ -959,6 +963,7 @@
         "showAdvanced": "Show advanced settings",
         "startWithAudioMuted": "Start with audio muted",
         "startWithVideoMuted": "Start with video muted",
+        "disableAutoMute": "Disable Auto-Mute on Youtube playback.",
         "version": "Version"
     },
     "share": {
@@ -1213,10 +1218,12 @@
         "moderator": "Moderator",
         "mute": "Participant is muted",
         "muted": "Muted",
+        "pinToStage": "Pin to stage",
         "remoteControl": "Start / Stop remote control",
         "screenSharing": "Participant is sharing their screen",
         "show": "Show on stage",
         "showSelfView": "Show self view",
+        "unpinFromStage": "Unpin",
         "videoMuted": "Camera disabled",
         "videomute": "Participant has stopped the camera"
     },

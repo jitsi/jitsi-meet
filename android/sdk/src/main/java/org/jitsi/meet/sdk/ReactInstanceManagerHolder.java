@@ -110,6 +110,7 @@ class ReactInstanceManagerHolder {
             new com.corbt.keepawake.KCKeepAwakePackage(),
             new com.facebook.react.shell.MainReactPackage(),
             new com.reactnativecommunity.clipboard.ClipboardPackage(),
+            new com.giphyreactnativesdk.GiphyReactNativeSdkPackage(),
             new com.reactnativecommunity.netinfo.NetInfoPackage(),
             new com.reactnativepagerview.PagerViewPackage(),
             new com.oblador.performance.PerformancePackage(),

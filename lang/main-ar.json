@@ -39,9 +39,6 @@
     "audioOnly": {
         "audioOnly": "معدل تبادل البيانات منخفض"
     },
-    "blankPage": {
-        "meetingEnded": "انتهى المُلتقى."
-    },
     "breakoutRooms": {
         "actions": {
             "add": "أضف غرفة جانبية",
@@ -559,6 +556,7 @@
         "errorMissingPassword": "الرجاء إدخال كلمة مرور المُلتقى",
         "invalidPassword": "كلمة مرور غير صحيحة",
         "joinRejectedMessage": "رفض رئيس الجلسة منحك الإذن بالدخول إلى المُلتقى",
+        "joinRejectedTitle": "تم رفض طلب الانضمام.",
         "joinTitle": "انضم للمُلتقى",
         "joinWithPasswordMessage": "الرجاء الانتظار أثناء محاولة الدخول دون كلمة مرور...",
         "joiningMessage": "ستتمكن من الانضمام للمُلتقى بعد الموافقة على طلبك",
@@ -631,6 +629,7 @@
         "displayNotifications": "عرض الإخطارات لـ",
         "focus": "التركيز على المؤتمر",
         "focusFail": "إنَّ {{component}} غير متاح. ستعاد المحاولة مرة أخرى خلال {{ms}} ثانية.",
+        "gifsMenu": "GIPHY",
         "groupTitle": "إشعارات",
         "hostAskedUnmute": "The moderator would like you to speak",
         "invitedOneMember": "دُعِي {{name}}",
@@ -724,6 +723,7 @@
     },
     "passwordDigitsOnly": "حتى {{number}} عدد",
     "passwordSetRemotely": "ضبطها مشارك آخر",
+    "pinnedParticipant": "تم تثبيت المشارك",
     "polls": {
         "answer": {
             "skip": "تخطى",
@@ -865,6 +865,7 @@
         "expandedPending": "بدء التسجيل...",
         "failedToStart": "فشل بدء التسجيل",
         "fileSharingdescription": "شارك التسجيل مع المشاركين للمُلتقى",
+        "highlight": "تسليط الضوء",
         "highlightMoment": "لحظة تسليط الضوء",
         "highlightMomentDisabled": "يمكنك تمييز اللحظات التي يبدأ فيها التسجيل",
         "highlightMomentSuccess": "تم تمييز اللحظة",
@@ -1214,10 +1215,12 @@
         "moderator": "رئيس الجلسة",
         "mute": "المشارك مكتوم الصوت",
         "muted": "مكتوم",
+        "pinToStage": "تثبيت في المرحلة",
         "remoteControl": "بدء / إيقاف التحكم البعيد",
         "screenSharing": "المشارك يشارك شاشته",
         "show": "أظهر على المنصة",
         "showSelfView": "إظهار الواجهة الذاتية",
+        "unpinFromStage": "فك",
         "videoMuted": "الكاميرا معطلة",
         "videomute": "أوقف المشارك الكاميرا"
     },

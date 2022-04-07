@@ -263,7 +263,6 @@ class TileView extends PureComponent<Props> {
 
         return (
             <Thumbnail
-                disableTint = { true }
                 height = { _thumbnailHeight }
                 key = { item }
                 participantID = { item }

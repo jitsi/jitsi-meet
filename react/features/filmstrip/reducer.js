@@ -4,20 +4,30 @@ import { PARTICIPANT_LEFT } from '../base/participants';
 import { ReducerRegistry } from '../base/redux';
 
 import {
+    REMOVE_STAGE_PARTICIPANT,
+    SET_STAGE_PARTICIPANTS,
     SET_FILMSTRIP_ENABLED,
     SET_FILMSTRIP_VISIBLE,
     SET_FILMSTRIP_WIDTH,
     SET_HORIZONTAL_VIEW_DIMENSIONS,
     SET_REMOTE_PARTICIPANTS,
+    SET_STAGE_FILMSTRIP_DIMENSIONS,
     SET_TILE_VIEW_DIMENSIONS,
     SET_USER_FILMSTRIP_WIDTH,
     SET_USER_IS_RESIZING,
     SET_VERTICAL_VIEW_DIMENSIONS,
     SET_VISIBLE_REMOTE_PARTICIPANTS,
-    SET_VOLUME
+    SET_VOLUME,
+    SET_MAX_STAGE_PARTICIPANTS
 } from './actionTypes';
 
 const DEFAULT_STATE = {
+
+    /**
+     * The list of participants to be displayed on the stage filmstrip.
+     */
+    activeParticipants: [],
+
     /**
      * The indicator which determines whether the {@link Filmstrip} is enabled.
      *
@@ -43,6 +53,14 @@ const DEFAULT_STATE = {
     isResizing: false,
 
     /**
+     * The current max number of participants to be displayed on the stage filmstrip.
+     *
+     * @public
+     * @type {Number}
+     */
+    maxStageParticipants: 4,
+
+    /**
      * The custom audio volume levels per participant.
      *
      * @type {Object}
@@ -56,6 +74,14 @@ const DEFAULT_STATE = {
      * @type {Array<string>}
      */
     remoteParticipants: [],
+
+    /**
+     * The stage filmstrip view dimensions.
+     *
+     * @public
+     * @type {Object}
+     */
+    stageFilmstripDimensions: {},
 
     /**
      * The tile view dimensions.
@@ -221,6 +247,30 @@ ReducerRegistry.register(
             return {
                 ...state,
                 isResizing: action.resizing
+            };
+        }
+        case SET_STAGE_FILMSTRIP_DIMENSIONS: {
+            return {
+                ...state,
+                stageFilmstripDimensions: action.dimensions
+            };
+        }
+        case SET_STAGE_PARTICIPANTS: {
+            return {
+                ...state,
+                activeParticipants: action.queue
+            };
+        }
+        case REMOVE_STAGE_PARTICIPANT: {
+            return {
+                ...state,
+                activeParticipants: state.activeParticipants.filter(p => p.participantId !== action.participantId)
+            };
+        }
+        case SET_MAX_STAGE_PARTICIPANTS: {
+            return {
+                ...state,
+                maxStageParticipants: action.maxParticipants
             };
         }
         }

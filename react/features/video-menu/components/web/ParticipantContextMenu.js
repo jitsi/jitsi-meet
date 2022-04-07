@@ -16,6 +16,7 @@ import { getLocalParticipant, PARTICIPANT_ROLE } from '../../../base/participant
 import { isParticipantAudioMuted } from '../../../base/tracks';
 import { getBreakoutRooms, getCurrentRoomId, isInBreakoutRoom } from '../../../breakout-rooms/functions';
 import { setVolume } from '../../../filmstrip/actions.web';
+import { isStageFilmstripEnabled } from '../../../filmstrip/functions.web';
 import { isForceMuted } from '../../../participants-pane/functions';
 import { requestRemoteControl, stopController } from '../../../remote-control';
 import { stopSharedVideo } from '../../../shared-video/actions.any';
@@ -35,6 +36,7 @@ import {
     KickButton,
     PrivateMessageMenuButton,
     RemoteControlButton,
+    TogglePinToStageButton,
     VolumeSlider
 } from './';
 
@@ -144,6 +146,7 @@ const ParticipantContextMenu = ({
         : participant?.id ? participantsVolume[participant?.id] : undefined) ?? 1;
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
     const isModerationSupported = useSelector(isAvModerationSupported());
+    const stageFilmstrip = useSelector(isStageFilmstripEnabled);
 
     const _currentRoomId = useSelector(getCurrentRoomId);
     const _rooms = Object.values(useSelector(getBreakoutRooms));
@@ -229,6 +232,12 @@ const ParticipantContextMenu = ({
                     participantID = { _getCurrentParticipantId() } />
             );
         }
+    }
+
+    if (stageFilmstrip) {
+        buttons2.push(<TogglePinToStageButton
+            key = 'pinToStage'
+            participantID = { _getCurrentParticipantId() } />);
     }
 
     if (!disablePrivateChat) {

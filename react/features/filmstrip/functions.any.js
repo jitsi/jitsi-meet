@@ -1,5 +1,8 @@
 // @flow
 
+import { getSourceNameSignalingFeatureFlag } from '../base/config';
+import { getFakeScreenShareParticipantOwnerId } from '../base/participants';
+
 import { setRemoteParticipants } from './actions';
 import { isReorderingEnabled } from './functions';
 
@@ -15,7 +18,9 @@ export function updateRemoteParticipants(store: Object, participantId: ?number) 
     const state = store.getState();
     let reorderedParticipants = [];
 
-    if (!isReorderingEnabled(state)) {
+    const { sortedRemoteFakeScreenShareParticipants } = state['features/base/participants'];
+
+    if (!isReorderingEnabled(state) && !sortedRemoteFakeScreenShareParticipants.size) {
         if (participantId) {
             const { remoteParticipants } = state['features/filmstrip'];
 
@@ -34,13 +39,28 @@ export function updateRemoteParticipants(store: Object, participantId: ?number) 
     } = state['features/base/participants'];
     const remoteParticipants = new Map(sortedRemoteParticipants);
     const screenShares = new Map(sortedRemoteScreenshares);
+    const screenShareParticipants = sortedRemoteFakeScreenShareParticipants
+        ? [ ...sortedRemoteFakeScreenShareParticipants.keys() ] : [];
     const sharedVideos = fakeParticipants ? Array.from(fakeParticipants.keys()) : [];
     const speakers = new Map(speakersList);
 
-    for (const screenshare of screenShares.keys()) {
-        remoteParticipants.delete(screenshare);
-        speakers.delete(screenshare);
+    if (getSourceNameSignalingFeatureFlag(state)) {
+        for (const screenshare of screenShareParticipants) {
+            const ownerId = getFakeScreenShareParticipantOwnerId(screenshare);
+
+            remoteParticipants.delete(ownerId);
+            remoteParticipants.delete(screenshare);
+
+            speakers.delete(ownerId);
+            speakers.delete(screenshare);
+        }
+    } else {
+        for (const screenshare of screenShares.keys()) {
+            remoteParticipants.delete(screenshare);
+            speakers.delete(screenshare);
+        }
     }
+
     for (const sharedVideo of sharedVideos) {
         remoteParticipants.delete(sharedVideo);
         speakers.delete(sharedVideo);
@@ -49,13 +69,32 @@ export function updateRemoteParticipants(store: Object, participantId: ?number) 
         remoteParticipants.delete(speaker);
     }
 
-    // Always update the order of the thumnails.
-    reorderedParticipants = [
-        ...Array.from(screenShares.keys()),
-        ...sharedVideos,
-        ...Array.from(speakers.keys()),
-        ...Array.from(remoteParticipants.keys())
-    ];
+    if (getSourceNameSignalingFeatureFlag(state)) {
+        // Always update the order of the thumnails.
+        const participantsWithScreenShare = screenShareParticipants.reduce((acc, screenshare) => {
+            const ownerId = getFakeScreenShareParticipantOwnerId(screenshare);
+
+            acc.push(ownerId);
+            acc.push(screenshare);
+
+            return acc;
+        }, []);
+
+        reorderedParticipants = [
+            ...participantsWithScreenShare,
+            ...sharedVideos,
+            ...Array.from(speakers.keys()),
+            ...Array.from(remoteParticipants.keys())
+        ];
+    } else {
+        // Always update the order of the thumnails.
+        reorderedParticipants = [
+            ...Array.from(screenShares.keys()),
+            ...sharedVideos,
+            ...Array.from(speakers.keys()),
+            ...Array.from(remoteParticipants.keys())
+        ];
+    }
 
     store.dispatch(setRemoteParticipants(reorderedParticipants));
 }

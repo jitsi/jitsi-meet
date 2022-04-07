@@ -12,7 +12,7 @@ import { connect } from '../../../base/redux';
 import { getBreakoutRoomsConfig } from '../../../breakout-rooms/functions';
 import { MuteEveryoneDialog } from '../../../video-menu/components/';
 import { close } from '../../actions';
-import { classList, findAncestorByClass, getParticipantsPaneOpen } from '../../functions';
+import { findAncestorByClass, getParticipantsPaneOpen } from '../../functions';
 import { AddBreakoutRoomButton } from '../breakout-rooms/components/web/AddBreakoutRoomButton';
 import { RoomList } from '../breakout-rooms/components/web/RoomList';
 
@@ -214,7 +214,7 @@ class ParticipantsPane extends Component<Props, State> {
         }
 
         return (
-            <div className = { classList('participants_pane', !_paneOpen && 'participants_pane--closed') }>
+            <div className = 'participants_pane'>
                 <div className = 'participants_pane-content'>
                     <div className = { classes.header }>
                         <div

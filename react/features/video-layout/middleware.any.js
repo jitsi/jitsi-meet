@@ -12,6 +12,7 @@ import {
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { TRACK_REMOVED } from '../base/tracks';
 import { SET_DOCUMENT_EDITING_STATUS } from '../etherpad';
+import { isStageFilmstripEnabled } from '../filmstrip/functions';
 import { isFollowMeActive } from '../follow-me';
 
 import { SET_TILE_VIEW } from './actionTypes';
@@ -68,11 +69,15 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     // Things to update when tile view state changes
-    case SET_TILE_VIEW:
-        if (action.enabled && getPinnedParticipant(store)) {
+    case SET_TILE_VIEW: {
+        const state = store.getState();
+        const stageFilmstrip = isStageFilmstripEnabled(state);
+
+        if (action.enabled && !stageFilmstrip && getPinnedParticipant(state)) {
             store.dispatch(pinParticipant(null));
         }
         break;
+    }
 
     // Update the remoteScreenShares.
     // Because of the debounce in the subscriber which updates the remoteScreenShares we need to handle

@@ -1,9 +1,12 @@
 // @flow
+import React, { Component } from 'react';
 
 // We need to reference these files directly to avoid loading things that are not available
 // in this environment (e.g. JitsiMeetJS or interfaceConfig)
+import { IconCameraEmpty, IconCameraEmptyDisabled } from '../base/icons';
 import type { Props } from '../base/toolbox/components/AbstractButton';
-import AbstractVideoMuteButton from '../base/toolbox/components/AbstractVideoMuteButton';
+
+import ToolbarButton from './ToolbarButton';
 
 const { api } = window.alwaysOnTop;
 
@@ -26,9 +29,10 @@ type State = {
 /**
  * Stateless "mute/unmute video" button for the Always-on-Top windows.
  */
-export default class VideoMuteButton
-    extends AbstractVideoMuteButton<Props, State> {
+export default class VideoMuteButton extends Component<Props, State> {
 
+    icon = IconCameraEmpty;
+    toggledIcon = IconCameraEmptyDisabled;
     accessibilityLabel = 'Video mute';
 
     /**
@@ -49,6 +53,7 @@ export default class VideoMuteButton
         this._videoAvailabilityListener
             = this._videoAvailabilityListener.bind(this);
         this._videoMutedListener = this._videoMutedListener.bind(this);
+        this._onClick = this._onClick.bind(this);
     }
 
     /**
@@ -144,5 +149,35 @@ export default class VideoMuteButton
      */
     _videoMutedListener({ muted }) {
         this.setState({ videoMuted: muted });
+    }
+
+    _onClick: () => {};
+
+    /**
+     * Handles clicking / pressing the button, and toggles the video mute state
+     * accordingly.
+     *
+     * @protected
+     * @returns {void}
+     */
+    _onClick() {
+        this._setVideoMuted(!this._isVideoMuted());
+    }
+
+    /**
+     * Implements React's {@link Component#render()}.
+     *
+     * @inheritdoc
+     * @returns {ReactElement}
+     */
+    render() {
+        const toggled = this._isVideoMuted();
+
+        return (<ToolbarButton
+            accessibilityLabel = { this.accessibilityLabel }
+            disabled = { this._isDisabled() }
+            icon = { toggled ? this.toggledIcon : this.icon }
+            onClick = { this._onClick }
+            toggled = { toggled } />);
     }
 }

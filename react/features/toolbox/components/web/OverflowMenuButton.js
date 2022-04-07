@@ -1,14 +1,16 @@
 /* @flow */
 
 import InlineDialog from '@atlaskit/inline-dialog';
+import { withStyles } from '@material-ui/styles';
 import React, { Component } from 'react';
 
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import { ReactionEmoji, ReactionsMenu } from '../../../reactions/components';
-import { type ReactionEmojiProps } from '../../../reactions/constants';
+import { type ReactionEmojiProps, REACTIONS_MENU_HEIGHT } from '../../../reactions/constants';
 import { getReactionsQueue } from '../../../reactions/functions.any';
+import { DRAWER_MAX_HEIGHT } from '../../constants';
 
 import Drawer from './Drawer';
 import JitsiPortal from './JitsiPortal';
@@ -28,6 +30,11 @@ type Props = {
      * A child React Element to display within {@code InlineDialog}.
      */
     children: React$Node,
+
+    /**
+     * An object containing the CSS classes.
+     */
+    classes: Object,
 
     /**
      * Whether or not the OverflowMenu popover should display.
@@ -58,6 +65,15 @@ type Props = {
      * Whether or not to display the reactions in the mobile menu.
      */
     showMobileReactions: boolean
+};
+
+const styles = () => {
+    return {
+        overflowMenuDrawer: {
+            overflowY: 'auto',
+            height: `calc(${DRAWER_MAX_HEIGHT} - ${REACTIONS_MENU_HEIGHT}px - 16px)`
+        }
+    };
 };
 
 /**
@@ -105,10 +121,10 @@ class OverflowMenuButton extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { children, isOpen, overflowDrawer, reactionsQueue, showMobileReactions } = this.props;
+        const { children, classes, isOpen, overflowDrawer, reactionsQueue, showMobileReactions } = this.props;
 
         return (
-            <div className = 'toolbox-button-wth-dialog'>
+            <div className = 'toolbox-button-wth-dialog context-menu'>
                 {
                     overflowDrawer ? (
                         <>
@@ -120,7 +136,9 @@ class OverflowMenuButton extends Component<Props> {
                                 <Drawer
                                     isOpen = { isOpen }
                                     onClose = { this._onCloseDialog }>
-                                    {children}
+                                    <div className = { classes.overflowMenuDrawer }>
+                                        {children}
+                                    </div>
                                     {showMobileReactions && <ReactionsMenu overflowMenu = { true } />}
                                 </Drawer>
                                 {showMobileReactions && <div className = 'reactions-animations-container'>
@@ -194,4 +212,4 @@ function mapStateToProps(state) {
     };
 }
 
-export default translate(connect(mapStateToProps)(OverflowMenuButton));
+export default withStyles(styles)(translate(connect(mapStateToProps)(OverflowMenuButton)));

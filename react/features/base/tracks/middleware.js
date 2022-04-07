@@ -8,7 +8,7 @@ import { shouldShowModeratedNotification } from '../../av-moderation/functions';
 import { hideNotification, isModerationNotificationDisplayed } from '../../notifications';
 import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { getCurrentConference } from '../conference/functions';
-import { getMultipleVideoSupportFeatureFlag } from '../config';
+import { getMultipleVideoSupportFeatureFlag, getSourceNameSignalingFeatureFlag } from '../config';
 import { getAvailableDevices } from '../devices/actions';
 import {
     CAMERA_FACING_MODE,
@@ -24,9 +24,11 @@ import {
     setScreenshareMuted,
     SCREENSHARE_MUTISM_AUTHORITY
 } from '../media';
+import { participantLeft, participantJoined, getParticipantById } from '../participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
 
 import {
+    SCREENSHARE_TRACK_MUTED_UPDATED,
     TOGGLE_SCREENSHARING,
     TRACK_ADDED,
     TRACK_MUTE_UNMUTE_FAILED,
@@ -50,6 +52,7 @@ import {
     isUserInteractionRequiredForUnmute,
     setTrackMuted
 } from './functions';
+import logger from './logger';
 
 import './subscriber';
 
@@ -66,10 +69,25 @@ declare var APP: Object;
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case TRACK_ADDED: {
+        const state = store.getState();
+        const { jitsiTrack, local } = action.track;
+
         // The devices list needs to be refreshed when no initial video permissions
         // were granted and a local video track is added by umuting the video.
-        if (action.track.local) {
+        if (local) {
             store.dispatch(getAvailableDevices());
+        }
+
+        // The TRACK_ADDED action is dispatched when a presenter starts a screenshare. Do not create a local fake
+        // screenshare participant when multiple stream is not enabled.
+        const skipCreateFakeScreenShareParticipant = local && !getMultipleVideoSupportFeatureFlag(state);
+
+        if (getSourceNameSignalingFeatureFlag(state)
+            && jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP
+            && !jitsiTrack.isMuted()
+            && !skipCreateFakeScreenShareParticipant
+        ) {
+            createFakeScreenShareParticipant(store, action);
         }
 
         break;
@@ -81,7 +99,40 @@ MiddlewareRegistry.register(store => next => action => {
 
         return result;
     }
+
+    case SCREENSHARE_TRACK_MUTED_UPDATED: {
+        const state = store.getState();
+
+        if (!getSourceNameSignalingFeatureFlag(state)) {
+            return;
+        }
+
+        const { track, muted } = action;
+
+        if (muted) {
+            const conference = getCurrentConference(state);
+            const participantId = track?.jitsiTrack.getSourceName();
+
+            store.dispatch(participantLeft(participantId, conference));
+        }
+
+        if (!muted) {
+            createFakeScreenShareParticipant(store, action);
+        }
+
+        break;
+    }
+
     case TRACK_REMOVED: {
+        const state = store.getState();
+
+        if (getSourceNameSignalingFeatureFlag(state) && action.track.jitsiTrack.videoType === VIDEO_TYPE.DESKTOP) {
+            const conference = getCurrentConference(state);
+            const participantId = action.track.jitsiTrack.getSourceName();
+
+            store.dispatch(participantLeft(participantId, conference));
+        }
+
         _removeNoDataFromSourceNotification(store, action.track);
         break;
     }
@@ -323,6 +374,32 @@ function _handleNoDataFromSourceErrors(store, action) {
 
             dispatch(trackNoDataFromSourceNotificationInfoChanged(jitsiTrack, { timeout }));
         }
+    }
+}
+
+/**
+ * Creates a fake participant for screen share using the track's source name as the participant id.
+ *
+ * @param {Store} store - The redux store in which the specified action is dispatched.
+ * @param {Action} action - The redux action dispatched in the specified store.
+ * @private
+ * @returns {void}
+ */
+function createFakeScreenShareParticipant({ dispatch, getState }, { track }) {
+    const state = getState();
+    const participantId = track.jitsiTrack?.getParticipantId?.();
+    const participant = getParticipantById(state, participantId);
+
+    if (participant.name) {
+        dispatch(participantJoined({
+            conference: state['features/base/conference'].conference,
+            id: track.jitsiTrack.getSourceName(),
+            isFakeScreenShareParticipant: true,
+            isLocalScreenShare: track?.jitsiTrack.isLocal(),
+            name: `${participant.name}'s screen`
+        }));
+    } else {
+        logger.error(`Failed to create a screenshare participant for participantId: ${participantId}`);
     }
 }
 

@@ -8,7 +8,7 @@ libs/*
 resources/*
 react/features/stream-effects/virtual-background/vendor/*
 load-test/*
-react/features/facial-recognition/resources/*
+react/features/face-landmarks/resources/*
 
 # ESLint will by default ignore its own configuration file. However, there does
 # not seem to be a reason why we will want to risk being inconsistent with our

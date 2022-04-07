@@ -5,12 +5,14 @@ import clsx from 'clsx';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
+import { getSourceNameSignalingFeatureFlag } from '../../../base/config';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import ConnectionIndicator from '../../../connection-indicator/components/web/ConnectionIndicator';
 import { LAYOUTS } from '../../../video-layout';
 import { STATS_POPOVER_POSITION } from '../../constants';
 import { getIndicatorsTooltipPosition } from '../../functions.web';
 
+import PinnedIndicator from './PinnedIndicator';
 import RaisedHandIndicator from './RaisedHandIndicator';
 import StatusIndicators from './StatusIndicators';
 import VideoMenuTriggerButton from './VideoMenuTriggerButton';
@@ -38,6 +40,11 @@ type Props = {
      * Whether or not the thumbnail is hovered.
      */
     isHovered: boolean,
+
+    /**
+     * Whether or not the thumbnail is a fake screen share participant.
+     */
+    isFakeScreenShareParticipant: boolean,
 
     /**
      * Whether or not the indicators are for the local participant.
@@ -76,6 +83,7 @@ const ThumbnailTopIndicators = ({
     currentLayout,
     hidePopover,
     indicatorsClassName,
+    isFakeScreenShareParticipant,
     isHovered,
     local,
     participantId,
@@ -91,12 +99,31 @@ const ThumbnailTopIndicators = ({
         useSelector(state => state['features/base/config'].connectionIndicators?.autoHide) ?? true);
     const _connectionIndicatorDisabled = _isMobile
         || Boolean(useSelector(state => state['features/base/config'].connectionIndicators?.disabled));
-
+    const sourceNameSignalingEnabled = useSelector(getSourceNameSignalingFeatureFlag);
     const showConnectionIndicator = isHovered || !_connectionIndicatorAutoHideEnabled;
+
+    if (sourceNameSignalingEnabled && isFakeScreenShareParticipant) {
+        return (
+            <div className = { styles.container }>
+                {!_connectionIndicatorDisabled
+                    && <ConnectionIndicator
+                        alwaysVisible = { showConnectionIndicator }
+                        enableStatsDisplay = { true }
+                        iconSize = { _indicatorIconSize }
+                        participantId = { participantId }
+                        statsPopoverPosition = { STATS_POPOVER_POSITION[currentLayout] } />
+                }
+            </div>
+        );
+    }
 
     return (
         <>
             <div className = { styles.container }>
+                <PinnedIndicator
+                    iconSize = { _indicatorIconSize }
+                    participantId = { participantId }
+                    tooltipPosition = { getIndicatorsTooltipPosition(currentLayout) } />
                 {!_connectionIndicatorDisabled
                     && <ConnectionIndicator
                         alwaysVisible = { showConnectionIndicator }
@@ -119,6 +146,7 @@ const ThumbnailTopIndicators = ({
             </div>
             <div className = { styles.container }>
                 <VideoMenuTriggerButton
+                    currentLayout = { currentLayout }
                     hidePopover = { hidePopover }
                     local = { local }
                     participantId = { participantId }

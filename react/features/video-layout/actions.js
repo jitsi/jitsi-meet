@@ -3,6 +3,7 @@
 import type { Dispatch } from 'redux';
 
 import {
+    FAKE_SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
     SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
     SET_TILE_VIEW
 } from './actionTypes';
@@ -22,6 +23,22 @@ import { shouldDisplayTileView } from './functions';
 export function setRemoteParticipantsWithScreenShare(participantIds: Array<string>) {
     return {
         type: SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
+        participantIds
+    };
+}
+
+/**
+ * Creates a (redux) action which signals that the list of known remote fake screen share participant ids has changed.
+ *
+ * @param {string} participantIds - The remote fake screen share participants.
+ * @returns {{
+ *     type: FAKE_SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
+ *     participantIds: Array<string>
+ * }}
+ */
+export function fakeScreenshareParticipantsUpdated(participantIds: Array<string>) {
+    return {
+        type: FAKE_SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
         participantIds
     };
 }
