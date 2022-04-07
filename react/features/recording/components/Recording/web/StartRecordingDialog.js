@@ -39,6 +39,8 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
             return false;
         } else if (selectedRecordingService === RECORDING_TYPES.DROPBOX) {
             return !isTokenValid;
+        } else if (selectedRecordingService === RECORDING_TYPES.LOCAL) {
+            return false;
         }
 
         return true;
