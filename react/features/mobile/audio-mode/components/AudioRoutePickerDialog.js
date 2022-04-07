@@ -9,6 +9,7 @@ import { hideDialog, BottomSheet } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import {
     Icon,
+    IconCar,
     IconDeviceBluetooth,
     IconDeviceEarpiece,
     IconDeviceHeadphone,
@@ -125,6 +126,11 @@ const deviceInfoMap = {
         text: 'audioDevices.bluetooth',
         type: 'BLUETOOTH'
     },
+    CAR: {
+        icon: IconCar,
+        text: 'audioDevices.car',
+        type: 'CAR'
+    },
     EARPIECE: {
         icon: IconDeviceEarpiece,
         text: 'audioDevices.phone',
@@ -166,7 +172,7 @@ class AudioRoutePickerDialog extends Component<Props, State> {
      * @inheritdoc
      */
     static getDerivedStateFromProps(props: Props) {
-        const { _devices: devices } = props;
+        const { _devices: devices, t } = props;
 
         if (!devices) {
             return null;
@@ -183,13 +189,18 @@ class AudioRoutePickerDialog extends Component<Props, State> {
                 continue;
             }
 
-            const text = device.type === 'BLUETOOTH' && device.name ? device.name : infoMap.text;
+            let text = t(infoMap.text);
+
+            // iOS provides descriptive names for these, use it.
+            if ((device.type === 'BLUETOOTH' || device.type === 'CAR') && device.name) {
+                text = device.name;
+            }
 
             if (infoMap) {
                 const info = {
                     ...infoMap,
                     selected: Boolean(device.selected),
-                    text: props.t(text),
+                    text,
                     uid: device.uid
                 };
 
