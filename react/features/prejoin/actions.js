@@ -6,7 +6,8 @@ declare var APP: Object;
 import { v4 as uuidv4 } from 'uuid';
 
 import { getDialOutStatusUrl, getDialOutUrl, updateConfig } from '../base/config';
-import { browser, createLocalTrack } from '../base/lib-jitsi-meet';
+import { browser } from '../base/lib-jitsi-meet';
+import { createLocalTrack } from '../base/lib-jitsi-meet/functions';
 import { isVideoMutedByUser, MEDIA_TYPE } from '../base/media';
 import {
     createLocalTracksF,

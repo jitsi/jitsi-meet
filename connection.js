@@ -13,10 +13,10 @@ import {
 import { openDialog } from './react/features/base/dialog/actions';
 import { setJWT } from './react/features/base/jwt';
 import {
-    isFatalJitsiConnectionError,
     JitsiConnectionErrors,
     JitsiConnectionEvents
 } from './react/features/base/lib-jitsi-meet';
+import { isFatalJitsiConnectionError } from './react/features/base/lib-jitsi-meet/functions';
 import { getCustomerDetails } from './react/features/jaas/actions.any';
 import { isVpaasMeeting, getJaasJWT } from './react/features/jaas/functions';
 import { setPrejoinDisplayNameRequired } from './react/features/prejoin/actions';
