@@ -1,7 +1,10 @@
 // @flow
 
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
-import { isFatalJitsiConferenceError } from '../base/lib-jitsi-meet/functions';
+import {
+    isFatalJitsiConferenceError,
+    isFatalJitsiConnectionError
+} from '../base/lib-jitsi-meet/functions';
 import { StateListenerRegistry } from '../base/redux';
 
 import { setFatalError } from './actions';
