@@ -80,7 +80,7 @@
     "lib-jitsi-meet": "https://github.com/jitsi/lib-jitsi-meet/releases/download/v1413.0.0+474b2ec7/lib-jitsi-meet.tgz",
     "libflacjs": "https://git@github.com/mmig/libflac.js#93d37e7f811f01cf7d8b6a603e38bd3c3810907d",
     "lodash": "4.17.21",
-    "moment": "2.29.1",
+    "moment": "2.29.2",
     "moment-duration-format": "2.2.2",
     "optional-require": "1.0.3",
     "promise.allsettled": "1.0.4",
