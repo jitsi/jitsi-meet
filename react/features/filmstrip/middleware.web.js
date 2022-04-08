@@ -24,7 +24,8 @@ import {
     ADD_STAGE_PARTICIPANT,
     REMOVE_STAGE_PARTICIPANT,
     SET_MAX_STAGE_PARTICIPANTS,
-    SET_USER_FILMSTRIP_WIDTH
+    SET_USER_FILMSTRIP_WIDTH,
+    TOGGLE_PIN_STAGE_PARTICIPANT
 } from './actionTypes';
 import {
     addStageParticipant,
@@ -141,6 +142,7 @@ MiddlewareRegistry.register(store => next => action => {
             const tid = timers.get(participantId);
 
             clearTimeout(tid);
+            timers.delete(participantId);
         } else if (activeParticipants.length < maxStageParticipants) {
             queue = [ ...activeParticipants, {
                 participantId,
@@ -216,11 +218,17 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
     case PARTICIPANT_LEFT: {
+        const state = store.getState();
         const { id } = action.participant;
-        const activeParticipantsIds = getActiveParticipantsIds(store.getState());
+        const activeParticipantsIds = getActiveParticipantsIds(state);
 
         if (activeParticipantsIds.find(pId => pId === id)) {
-            store.dispatch(removeStageParticipant(id));
+            const tid = timers.get(id);
+            const { activeParticipants } = state['features/filmstrip'];
+
+            clearTimeout(tid);
+            timers.delete(id);
+            store.dispatch(setStageParticipants(activeParticipants.filter(p => p.participantId !== id)));
         }
         break;
     }
@@ -239,6 +247,36 @@ MiddlewareRegistry.register(store => next => action => {
             });
         }
         break;
+    }
+    case TOGGLE_PIN_STAGE_PARTICIPANT: {
+        const { dispatch, getState } = store;
+        const state = getState();
+        const { participantId } = action;
+        const pinnedParticipants = getPinnedActiveParticipants(state);
+        const dominant = getDominantSpeakerParticipant(state);
+
+        if (pinnedParticipants.find(p => p.participantId === participantId)) {
+            if (dominant?.id === participantId) {
+                const { activeParticipants } = state['features/filmstrip'];
+                const queue = activeParticipants.map(p => {
+                    if (p.participantId === participantId) {
+                        return {
+                            participantId,
+                            pinned: false
+                        };
+                    }
+
+                    return p;
+                });
+
+                dispatch(setStageParticipants(queue));
+            } else {
+                dispatch(removeStageParticipant(participantId));
+            }
+        } else {
+            dispatch(addStageParticipant(participantId, true));
+        }
+
     }
     }
 

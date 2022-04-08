@@ -23,7 +23,8 @@ import {
     SET_USER_IS_RESIZING,
     SET_VERTICAL_VIEW_DIMENSIONS,
     SET_VOLUME,
-    SET_MAX_STAGE_PARTICIPANTS
+    SET_MAX_STAGE_PARTICIPANTS,
+    TOGGLE_PIN_STAGE_PARTICIPANT
 } from './actionTypes';
 import {
     HORIZONTAL_FILMSTRIP_MARGIN,
@@ -447,5 +448,18 @@ export function setMaxStageParticipants(maxParticipants) {
     return {
         type: SET_MAX_STAGE_PARTICIPANTS,
         maxParticipants
+    };
+}
+
+/**
+ * Toggles the pin state of the given participant.
+ *
+ * @param {string} participantId - The id of the participant to be toggled.
+ * @returns {Object}
+ */
+export function togglePinStageParticipant(participantId) {
+    return {
+        type: TOGGLE_PIN_STAGE_PARTICIPANT,
+        participantId
     };
 }
