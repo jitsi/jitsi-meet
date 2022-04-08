@@ -61,6 +61,11 @@ type Props = {
     dispatch: Function,
 
     /**
+     * Is the local participant moderator?
+     */
+    isLocalModerator: boolean,
+
+    /**
      * List of participants waiting in lobby.
      */
     lobbyParticipants: Array,
@@ -191,6 +196,7 @@ class MeetingParticipantList extends PureComponent<Props> {
             _showInviteButton,
             _sortedRemoteParticipants,
             breakoutRooms,
+            isLocalModerator,
             lobbyParticipants,
             t
         } = this.props;
@@ -208,9 +214,15 @@ class MeetingParticipantList extends PureComponent<Props> {
         // we take the full container height
         const onlyMeetingParticipants
             = breakoutRooms?.length === 0 && lobbyParticipants?.length === 0;
-        const containerStyle
+        const containerStyleModerator
             = onlyMeetingParticipants
                 ? styles.meetingListFullContainer : styles.meetingListContainer;
+        const localModeratorContainerStyle
+            = isLocalModerator
+                ? containerStyleModerator : styles.notLocalModeratorContainer;
+        const containerStyle = lobbyParticipants?.length > 0
+            ? styles.notLocalModeratorWithLobbyContainer
+            : localModeratorContainerStyle;
         const finalContainerStyle
             = _participantsCount > 3 && containerStyle;
 

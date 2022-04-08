@@ -43,7 +43,7 @@ export default {
         flexDirection: 'row',
         height: BaseTheme.spacing[7],
         marginHorizontal: BaseTheme.spacing[3],
-        marginTop: BaseTheme.spacing[3]
+        marginTop: BaseTheme.spacing[5]
     },
 
     arrowIcon: {

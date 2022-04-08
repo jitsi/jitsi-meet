@@ -216,6 +216,14 @@ export default {
         width: '100%'
     },
 
+    notLocalModeratorContainer: {
+        height: '100%'
+    },
+
+    notLocalModeratorWithLobbyContainer: {
+        height: '80%'
+    },
+
     meetingListContainer: {
         height: '56%'
     },
