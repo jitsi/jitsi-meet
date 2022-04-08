@@ -28,6 +28,8 @@ import {
 } from './functions';
 import logger from './logger';
 
+declare var APP: Object;
+
 /**
  * Object containing  a image capture of the local track.
  */
@@ -125,6 +127,8 @@ export function loadWorker() {
                     id: localParticipant.id
                 });
             }
+
+            APP.API.notifyFaceLandmarkDetected(faceBox, faceExpression);
         };
 
         const { faceLandmarks } = getState()['features/base/config'];
