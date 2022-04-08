@@ -1142,6 +1142,21 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that some face landmark data is available.
+     *
+     * @param {Object | undefined} faceBox - Detected face(s) bounding box (left, right, width).
+     * @param {string} faceExpression - Detected face expression.
+     * @returns {void}
+     */
+    notifyFaceLandmarkDetected(faceBox: Object, faceExpression: string) {
+        this._sendEvent({
+            name: 'face-landmark-detected',
+            faceBox,
+            faceExpression
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) that the list of sharing participants changed.
      *
      * @param {Object} data - The event data.
