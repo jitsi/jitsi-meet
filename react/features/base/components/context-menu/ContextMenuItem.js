@@ -57,6 +57,11 @@ export type Props = {
     onKeyPress?: Function,
 
     /**
+     * TestId of the element, if any.
+     */
+    testId?: string,
+
+    /**
      * Action text.
      */
     text: string,
@@ -112,6 +117,7 @@ const ContextMenuItem = ({
     onClick,
     onKeyDown,
     onKeyPress,
+    testId,
     text,
     textClassName }: Props) => {
     const styles = useStyles();
@@ -126,6 +132,7 @@ const ContextMenuItem = ({
                     disabled && styles.contextMenuItemDisabled,
                     className
             ) }
+            data-testid = { testId }
             id = { id }
             key = { text }
             onClick = { disabled ? undefined : onClick }

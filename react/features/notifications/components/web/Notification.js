@@ -60,7 +60,7 @@ class Notification extends AbstractNotification<Props> {
                 description = { this._renderDescription() }
                 icon = { this._mapAppearanceToIcon() }
                 id = { uid }
-                testId = { titleKey }
+                testId = { titleKey || this._getDescriptionKey() }
                 title = { title || t(titleKey, titleArguments) } />
         );
     }
