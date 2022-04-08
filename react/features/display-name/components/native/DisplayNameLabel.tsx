@@ -46,8 +46,6 @@ class DisplayNameLabel extends React.Component<Props> {
             return null;
         }
 
-        console.log(this.props.contained, 'YES OR NO');
-
         return (
             <View style = { this.props.contained ? styles.displayNamePadding : styles.displayNameBackdrop }>
                 <Text
