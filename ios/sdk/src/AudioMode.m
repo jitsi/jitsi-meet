@@ -259,10 +259,16 @@ RCT_EXPORT_METHOD(updateDeviceList) {
                 self->forceSpeaker = NO;
                 self->forceEarpiece = NO;
                 break;
-            case AVAudioSessionRouteChangeReasonCategoryChange:
+            case AVAudioSessionRouteChangeReasonCategoryChange: {
                 // The category has changed. Check if it's the one we want and adjust as
                 // needed.
+                RTCAudioSessionConfiguration *currentConfig = [self configForMode:self->activeMode];
+                if ([session.category isEqualToString:currentConfig.category]) {
+                    // We are in the desired category, nothing to do here.
+                    return;
+                }
                 break;
+            }
             default:
                 return;
         }
@@ -275,7 +281,6 @@ RCT_EXPORT_METHOD(updateDeviceList) {
             RTCAudioSessionConfiguration *config = [self configForMode:self->activeMode];
             [self setConfig:config error:nil];
             if (self->forceSpeaker && !self->isSpeakerOn) {
-                RTCAudioSession *session = JitsiAudioSession.rtcAudioSession;
                 [session lockForConfiguration];
                 [session overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
                 [session unlockForConfiguration];
@@ -358,7 +363,7 @@ RCT_EXPORT_METHOD(updateDeviceList) {
                 break;
             }
         }
-        
+
         for (AVAudioSessionPortDescription *portDesc in session.availableInputs) {
             // Skip "Phone" if headphones are present.
             if (headphonesAvailable && [portDesc.portType isEqualToString:AVAudioSessionPortBuiltInMic]) {
