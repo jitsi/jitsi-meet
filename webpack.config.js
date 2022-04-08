@@ -222,13 +222,13 @@ function getConfig(options = {}) {
             extensions: [
                 '.web.js',
 
-                // Webpack defaults:
-                '.js',
-                '.json',
-
                 // Typescript:
                 '.tsx',
-                '.ts'
+                '.ts',
+
+                // Webpack defaults:
+                '.js',
+                '.json'
             ],
             fallback: {
                 // Provide some empty Node modules (required by AtlasKit, olm).
