@@ -13,7 +13,7 @@ import {
     storeConfig
 } from '../base/config';
 import { setLocationURL } from '../base/connection';
-import { loadConfig } from '../base/lib-jitsi-meet';
+import { loadConfig } from '../base/lib-jitsi-meet/functions.web';
 import {
     getBackendSafeRoomName,
     parseURIString

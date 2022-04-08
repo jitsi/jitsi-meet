@@ -8,9 +8,9 @@ import {
 } from '../base/environment/utils';
 import JitsiMeetJS, {
     analytics,
-    browser,
-    isAnalyticsEnabled
+    browser
 } from '../base/lib-jitsi-meet';
+import { isAnalyticsEnabled } from '../base/lib-jitsi-meet/functions';
 import { getJitsiMeetGlobalNS, loadScript, parseURIString } from '../base/util';
 
 import { AmplitudeHandler, MatomoHandler } from './handlers';

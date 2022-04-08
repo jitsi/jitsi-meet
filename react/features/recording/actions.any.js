@@ -21,7 +21,12 @@ import {
     SET_SELECTED_RECORDING_SERVICE,
     SET_STREAM_KEY
 } from './actionTypes';
-import { getRecordingLink, getResourceId, isSavingRecordingOnDropbox, sendMeetingHighlight } from './functions';
+import {
+    getRecordingLink,
+    getResourceId,
+    isSavingRecordingOnDropbox,
+    sendMeetingHighlight
+} from './functions';
 import logger from './logger';
 
 declare var APP: Object;
