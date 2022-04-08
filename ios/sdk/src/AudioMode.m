@@ -191,7 +191,7 @@ RCT_EXPORT_METHOD(setAudioDevice:(NSString *)device
     
     // The speaker is special, so test for it first.
     if ([device isEqualToString:kDeviceTypeSpeaker]) {
-        forceSpeaker = NO;
+        forceSpeaker = YES;
         success = [session overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:&error];
     } else {
         // Here we use AVAudioSession because RTCAudioSession doesn't expose availableInputs.
