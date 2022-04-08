@@ -1,9 +1,12 @@
 import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
 
+interface Theme {
+    palette: any;
+    text01: string;
+}
 
-const useStyles = makeStyles(theme => {
-    // @ts-ignore
+const useStyles = makeStyles((theme: Theme) => {
     const { text01 } = theme.palette;
 
     return {

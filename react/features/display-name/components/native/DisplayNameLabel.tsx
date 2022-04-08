@@ -9,10 +9,7 @@ import { connect } from '../../../base/redux/functions';
 
 import styles from './styles';
 
-/**
- * Renders a label with the display name of the on-stage participant.
- */
-class DisplayNameLabel extends React.Component<{
+type Props = {
 
     /**
      * The name of the participant to render.
@@ -33,7 +30,12 @@ class DisplayNameLabel extends React.Component<{
      * The ID of the participant to render the label for.
      */
     participantId: string;
-}> {
+}
+
+/**
+ * Renders a label with the display name of the on-stage participant.
+ */
+class DisplayNameLabel extends React.Component<Props> {
     /**
      * Implements {@code Component#render}.
      *
@@ -43,6 +45,8 @@ class DisplayNameLabel extends React.Component<{
         if (!this.props._render) {
             return null;
         }
+
+        console.log(this.props.contained, 'YES OR NO');
 
         return (
             <View style = { this.props.contained ? styles.displayNamePadding : styles.displayNameBackdrop }>
