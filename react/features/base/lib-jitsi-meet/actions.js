@@ -6,16 +6,14 @@ import type { Dispatch } from 'redux';
 import { isOnline } from '../net-info/selectors';
 
 import JitsiMeetJS from './_';
-
 import {
-    isAnalyticsEnabled,
     LIB_DID_DISPOSE,
     LIB_DID_INIT,
     LIB_INIT_ERROR,
     LIB_WILL_DISPOSE,
     LIB_WILL_INIT
-} from './';
-
+} from './actionTypes';
+import { isAnalyticsEnabled } from './functions';
 
 declare var APP: Object;
 
