@@ -68,7 +68,9 @@ export function getInitials(s: ?string) {
     const initialsBasis = _.split(s, '@')[0];
     const [ firstWord, secondWord ] = initialsBasis.split(wordSplitRegex).filter(Boolean);
 
-    return getFirstGraphemeUpper(firstWord) + getFirstGraphemeUpper(secondWord);
+    // Add ZWNJ to separate the initials in languages like Arabic or Persian.
+    return `${getFirstGraphemeUpper(firstWord)}\u200c${getFirstGraphemeUpper(secondWord)}`;
+
 }
 
 /**
