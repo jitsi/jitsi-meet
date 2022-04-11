@@ -4,7 +4,7 @@ import { jitsiLocalStorage } from '@jitsi/js-utils';
 
 import { getAmplitudeIdentity } from '../analytics';
 import { CONFERENCE_UNIQUE_ID_SET, E2E_RTT_CHANGED, getConferenceOptions, getRoomName } from '../base/conference';
-import { LIB_WILL_INIT } from '../base/lib-jitsi-meet';
+import { LIB_WILL_INIT } from '../base/lib-jitsi-meet/actionTypes';
 import { DOMINANT_SPEAKER_CHANGED, getLocalParticipant } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { ADD_FACE_EXPRESSION } from '../face-landmarks/actionTypes';
@@ -119,11 +119,12 @@ MiddlewareRegistry.register(store => next => action => {
     }
     case ADD_FACE_EXPRESSION: {
         if (canSendRtcstatsData(state)) {
-            const { duration, faceExpression } = action;
+            const { duration, faceExpression, timestamp } = action;
 
             RTCStats.sendFaceExpressionData({
                 duration,
-                faceExpression
+                faceExpression,
+                timestamp
             });
         }
         break;

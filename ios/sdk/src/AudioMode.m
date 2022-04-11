@@ -35,9 +35,10 @@ typedef enum {
 static NSString * const kDevicesChanged = @"org.jitsi.meet:features/audio-mode#devices-update";
 
 // Device types (must match JS and Java)
-static NSString * const kDeviceTypeHeadphones = @"HEADPHONES";
 static NSString * const kDeviceTypeBluetooth  = @"BLUETOOTH";
+static NSString * const kDeviceTypeCar        = @"CAR";
 static NSString * const kDeviceTypeEarpiece   = @"EARPIECE";
+static NSString * const kDeviceTypeHeadphones = @"HEADPHONES";
 static NSString * const kDeviceTypeSpeaker    = @"SPEAKER";
 static NSString * const kDeviceTypeUnknown    = @"UNKNOWN";
 
@@ -190,7 +191,7 @@ RCT_EXPORT_METHOD(setAudioDevice:(NSString *)device
     
     // The speaker is special, so test for it first.
     if ([device isEqualToString:kDeviceTypeSpeaker]) {
-        forceSpeaker = NO;
+        forceSpeaker = YES;
         success = [session overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:&error];
     } else {
         // Here we use AVAudioSession because RTCAudioSession doesn't expose availableInputs.
@@ -258,10 +259,16 @@ RCT_EXPORT_METHOD(updateDeviceList) {
                 self->forceSpeaker = NO;
                 self->forceEarpiece = NO;
                 break;
-            case AVAudioSessionRouteChangeReasonCategoryChange:
+            case AVAudioSessionRouteChangeReasonCategoryChange: {
                 // The category has changed. Check if it's the one we want and adjust as
                 // needed.
+                RTCAudioSessionConfiguration *currentConfig = [self configForMode:self->activeMode];
+                if ([session.category isEqualToString:currentConfig.category]) {
+                    // We are in the desired category, nothing to do here.
+                    return;
+                }
                 break;
+            }
             default:
                 return;
         }
@@ -274,7 +281,6 @@ RCT_EXPORT_METHOD(updateDeviceList) {
             RTCAudioSessionConfiguration *config = [self configForMode:self->activeMode];
             [self setConfig:config error:nil];
             if (self->forceSpeaker && !self->isSpeakerOn) {
-                RTCAudioSession *session = JitsiAudioSession.rtcAudioSession;
                 [session lockForConfiguration];
                 [session overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
                 [session unlockForConfiguration];
@@ -320,6 +326,8 @@ RCT_EXPORT_METHOD(updateDeviceList) {
             || [portType isEqualToString:AVAudioSessionPortBluetoothLE]
             || [portType isEqualToString:AVAudioSessionPortBluetoothA2DP]) {
         return kDeviceTypeBluetooth;
+    } else if ([portType isEqualToString:AVAudioSessionPortCarAudio]) {
+        return kDeviceTypeCar; 
     } else {
         return kDeviceTypeUnknown;
     }
@@ -355,7 +363,7 @@ RCT_EXPORT_METHOD(updateDeviceList) {
                 break;
             }
         }
-        
+
         for (AVAudioSessionPortDescription *portDesc in session.availableInputs) {
             // Skip "Phone" if headphones are present.
             if (headphonesAvailable && [portDesc.portType isEqualToString:AVAudioSessionPortBuiltInMic]) {

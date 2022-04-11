@@ -78,6 +78,10 @@ MiddlewareRegistry.register(store => next => action => {
             store.dispatch(getAvailableDevices());
         }
 
+        // Call next before the creation of a fake screenshare participant to ensure a video track is available when
+        // the participant is auto pinned.
+        const result = next(action);
+
         // The TRACK_ADDED action is dispatched when a presenter starts a screenshare. Do not create a local fake
         // screenshare participant when multiple stream is not enabled.
         const skipCreateFakeScreenShareParticipant = local && !getMultipleVideoSupportFeatureFlag(state);
@@ -90,7 +94,7 @@ MiddlewareRegistry.register(store => next => action => {
             createFakeScreenShareParticipant(store, action);
         }
 
-        break;
+        return result;
     }
     case TRACK_NO_DATA_FROM_SOURCE: {
         const result = next(action);

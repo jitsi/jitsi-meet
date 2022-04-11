@@ -1,0 +1,17 @@
+{
+    "include": ["react/features/**/*.ts"],
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "module": "es6",
+        "target": "es6",
+        "jsx": "react",
+        "lib": [ "ES2020", "DOM" ],
+        "noEmit": false,
+        "moduleResolution": "Node",
+        "strict": true,
+        "noImplicitAny": true
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

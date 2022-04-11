@@ -66,7 +66,6 @@ import {
 } from './react/features/base/devices';
 import {
     browser,
-    isFatalJitsiConnectionError,
     JitsiConferenceErrors,
     JitsiConferenceEvents,
     JitsiConnectionErrors,
@@ -77,6 +76,7 @@ import {
     JitsiTrackErrors,
     JitsiTrackEvents
 } from './react/features/base/lib-jitsi-meet';
+import { isFatalJitsiConnectionError } from './react/features/base/lib-jitsi-meet/functions';
 import {
     getStartWithAudioMuted,
     getStartWithVideoMuted,

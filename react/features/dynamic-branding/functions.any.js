@@ -1,6 +1,6 @@
 // @flow
 
-import { loadConfig } from '../base/lib-jitsi-meet';
+import { loadConfig } from '../base/lib-jitsi-meet/functions';
 
 /**
  * Extracts the fqn part from a path, where fqn represents
