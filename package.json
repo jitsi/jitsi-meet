@@ -96,7 +96,7 @@
     "react-native-calendar-events": "2.2.0",
     "react-native-callstats": "3.73.7",
     "react-native-collapsible": "1.6.0",
-    "react-native-default-preference": "https://git@github.com/kevinresol/react-native-default-preference#11bff5eb05cb04fd8d35b5e761eeee80525e8c6c",
+    "react-native-default-preference": "1.4.4",
     "react-native-device-info": "8.4.8",
     "react-native-dialog": "9.2.1",
     "react-native-gesture-handler": "2.1.0",
