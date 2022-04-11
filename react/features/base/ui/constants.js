@@ -11,6 +11,8 @@ export const commonClassName = {
     overflowMenuItem: 'overflow-menu-item',
     overflowMenuItemIcon: 'overflow-menu-item-icon',
     participantAvatar: 'participant-avatar',
+    prejoinDialog: 'prejoin-dialog',
+    prejoinDialogButton: 'prejoin-dialog-btn',
     toolboxIcon: 'toolbox-icon',
     toolboxButton: 'toolbox-button',
     toolboxContentItems: 'toolbox-content-items'
@@ -120,6 +122,112 @@ export const commonStyles = (theme: Object) => {
         [commonClassName.participantAvatar]: {
             margin: `${theme.spacing(2)}px ${theme.spacing(3)}px ${theme.spacing(2)}px 0`
         },
+        [commonClassName.prejoinDialog]: {
+            background: '#1C2025',
+            boxShadow: '0px 2px 20px rgba(0, 0, 0, 0.5)',
+            borderRadius: '5px',
+            color: '#fff',
+            height: '400px',
+            width: '375px',
+
+            [`${commonClassName.prejoinDialog}--small`]: {
+                height: 300,
+                width: 400
+            },
+
+            [`${commonClassName.prejoinDialog}-label`]: {
+                fontSize: '15px',
+                lineHeight: '24px'
+            },
+
+            [`${commonClassName.prejoinDialog}-label-num`]: {
+                background: '#2b3b4b',
+                border: '1px solid #A4B8D1',
+                borderRadius: '50%',
+                color: '#fff',
+                display: 'inline-block',
+                height: '24px',
+                marginRight: `${theme.spacing(2)}px`,
+                width: '24px'
+            },
+
+            [`${commonClassName.prejoinDialog}-container`]: {
+                alignItems: 'center',
+                background: 'rgba(0,0,0,0.6)',
+                display: 'flex',
+                height: '100vh',
+                justifyContent: 'center',
+                left: 0,
+                position: 'absolute',
+                top: 0,
+                width: '100vw',
+                zIndex: 3
+            },
+
+            [`${commonClassName.prejoinDialog}-flag`]: {
+                display: 'inline-block',
+                marginRight: `${theme.spacing(2)}px}`,
+                transform: 'scale(1.2)'
+            },
+
+            [`${commonClassName.prejoinDialog}-title`]: {
+                display: 'inline-block',
+                fontSize: '24px',
+                lineHeight: '32px'
+            },
+
+            [`${commonClassName.prejoinDialog}-icon`]: {
+                cursor: 'pointer',
+
+                '& > svg': {
+                    fill: '#A4B8D1'
+                }
+            },
+
+            [commonClassName.prejoinDialogButton]: {
+                width: '309px'
+            },
+
+            [`${commonClassName.prejoinDialog}-dialin-container`]: {
+                textAlign: 'center'
+            },
+
+            [`${commonClassName.prejoinDialog}-delimiter`]: {
+                background: '#5f6266',
+                border: '0',
+                height: '1px',
+                margin: '0',
+                padding: '0',
+                width: '100%'
+            },
+
+            [`${commonClassName.prejoinDialog}-delimiter-container`]: {
+                margin: `${theme.spacing(3)}px 0 ${theme.spacing(4)}px 0`,
+                position: 'relative'
+            },
+
+            [`${commonClassName.prejoinDialog}-delimiter-txt-container`]: {
+                position: 'absolute',
+                textAlign: 'center',
+                top: '-8px',
+                width: '100%'
+            },
+
+            [`${commonClassName.prejoinDialog}-delimiter-txt`]: {
+                background: '#1C2025',
+                color: '#5f6266',
+                fontSize: '11px',
+                textTransform: 'uppercase',
+                padding: `0 ${theme.spacing(2)}px`
+            }
+        },
+
+        [commonClassName.prejoinDialogButton]: {
+            [`&.primary, &${commonClassName.prejoinDialogButton}.text`]: {
+                width: '310px'
+            }
+        },
+
         [commonClassName.toolboxIcon]: {
             display: 'flex',
             borderRadius: 3,
