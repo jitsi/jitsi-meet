@@ -119,11 +119,12 @@ MiddlewareRegistry.register(store => next => action => {
     }
     case ADD_FACE_EXPRESSION: {
         if (canSendRtcstatsData(state)) {
-            const { duration, faceExpression } = action;
+            const { duration, faceExpression, timestamp } = action;
 
             RTCStats.sendFaceExpressionData({
                 duration,
-                faceExpression
+                faceExpression,
+                timestamp
             });
         }
         break;
