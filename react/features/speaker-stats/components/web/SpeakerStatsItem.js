@@ -7,8 +7,6 @@ import { getInitials } from '../../../base/avatar/functions';
 import BaseTheme from '../../../base/ui/components/BaseTheme';
 import { FACE_EXPRESSIONS } from '../../../face-landmarks/constants';
 
-// const FACE_EXPRESSIONS = [ 'happy', 'neutral', 'sad', 'surprised', 'angry', 'fearful' ];
-
 import TimeElapsed from './TimeElapsed';
 
 /**
