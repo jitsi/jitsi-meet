@@ -8,8 +8,7 @@ import { useSelector } from 'react-redux';
 import { getSourceNameSignalingFeatureFlag } from '../../../base/config';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import ConnectionIndicator from '../../../connection-indicator/components/web/ConnectionIndicator';
-import { LAYOUTS } from '../../../video-layout';
-import { STATS_POPOVER_POSITION } from '../../constants';
+import { STATS_POPOVER_POSITION, THUMBNAIL_TYPE } from '../../constants';
 import { getIndicatorsTooltipPosition } from '../../functions.web';
 
 import PinnedIndicator from './PinnedIndicator';
@@ -20,11 +19,6 @@ import VideoMenuTriggerButton from './VideoMenuTriggerButton';
 declare var interfaceConfig: Object;
 
 type Props = {
-
-    /**
-     * The current layout of the filmstrip.
-     */
-    currentLayout: string,
 
     /**
      * Hide popover callback.
@@ -64,7 +58,12 @@ type Props = {
     /**
      * Show popover callback.
      */
-    showPopover: Function
+    showPopover: Function,
+
+    /**
+     * The type of thumbnail.
+     */
+    thumbnailType: string
 }
 
 const useStyles = makeStyles(() => {
@@ -80,7 +79,6 @@ const useStyles = makeStyles(() => {
 });
 
 const ThumbnailTopIndicators = ({
-    currentLayout,
     hidePopover,
     indicatorsClassName,
     isFakeScreenShareParticipant,
@@ -88,7 +86,8 @@ const ThumbnailTopIndicators = ({
     local,
     participantId,
     popoverVisible,
-    showPopover
+    showPopover,
+    thumbnailType
 }: Props) => {
     const styles = useStyles();
 
@@ -111,11 +110,13 @@ const ThumbnailTopIndicators = ({
                         enableStatsDisplay = { true }
                         iconSize = { _indicatorIconSize }
                         participantId = { participantId }
-                        statsPopoverPosition = { STATS_POPOVER_POSITION[currentLayout] } />
+                        statsPopoverPosition = { STATS_POPOVER_POSITION[thumbnailType] } />
                 }
             </div>
         );
     }
+
+    const tooltipPosition = getIndicatorsTooltipPosition(thumbnailType);
 
     return (
         <>
@@ -123,20 +124,20 @@ const ThumbnailTopIndicators = ({
                 <PinnedIndicator
                     iconSize = { _indicatorIconSize }
                     participantId = { participantId }
-                    tooltipPosition = { getIndicatorsTooltipPosition(currentLayout) } />
+                    tooltipPosition = { tooltipPosition } />
                 {!_connectionIndicatorDisabled
                     && <ConnectionIndicator
                         alwaysVisible = { showConnectionIndicator }
                         enableStatsDisplay = { true }
                         iconSize = { _indicatorIconSize }
                         participantId = { participantId }
-                        statsPopoverPosition = { STATS_POPOVER_POSITION[currentLayout] } />
+                        statsPopoverPosition = { STATS_POPOVER_POSITION[thumbnailType] } />
                 }
                 <RaisedHandIndicator
                     iconSize = { _indicatorIconSize }
                     participantId = { participantId }
-                    tooltipPosition = { getIndicatorsTooltipPosition(currentLayout) } />
-                {currentLayout !== LAYOUTS.TILE_VIEW && (
+                    tooltipPosition = { tooltipPosition } />
+                {thumbnailType !== THUMBNAIL_TYPE.TILE && (
                     <div className = { clsx(indicatorsClassName, 'top-indicators') }>
                         <StatusIndicators
                             participantID = { participantId }
@@ -146,12 +147,12 @@ const ThumbnailTopIndicators = ({
             </div>
             <div className = { styles.container }>
                 <VideoMenuTriggerButton
-                    currentLayout = { currentLayout }
                     hidePopover = { hidePopover }
                     local = { local }
                     participantId = { participantId }
                     popoverVisible = { popoverVisible }
                     showPopover = { showPopover }
+                    thumbnailType = { thumbnailType }
                     visible = { isHovered } />
             </div>
         </>);

@@ -3,14 +3,17 @@
  * clashing with the filmstrip.
  */
 .vertical-filmstrip #etherpad,
-.vertical-filmstrip #sharedvideo {
+.stage-filmstrip #etherpad,
+.vertical-filmstrip #sharedvideo,
+.stage-filmstrip #sharedvideo {
     text-align: left;
 }
 
 /**
  * Overrides for small videos in vertical filmstrip mode.
  */
-.vertical-filmstrip .filmstrip__videos .videocontainer {
+.vertical-filmstrip .filmstrip__videos .videocontainer,
+.stage-filmstrip .filmstrip__videos .videocontainer {
     .self-view-mobile-portrait video {
         object-fit: contain;
     }
@@ -27,7 +30,8 @@
  * The class opening is for when the filmstrip is transitioning from hidden
  * to visible.
  */
-.vertical-filmstrip .large-video-labels {
+.vertical-filmstrip .large-video-labels,
+.stage-filmstrip .large-video-labels {
     &.with-filmstrip {
         right: 150px;
     }
@@ -47,6 +51,7 @@
  * Overrides for self view when in portrait mode on mobile.
  * This is done in order to keep the aspect ratio.
  */
-.vertical-filmstrip .self-view-mobile-portrait #localVideo_container {
+.vertical-filmstrip .self-view-mobile-portrait #localVideo_container,
+.stage-filmstrip .self-view-mobile-portrait #localVideo_container {
     object-fit: contain;
 }

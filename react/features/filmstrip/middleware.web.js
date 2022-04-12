@@ -22,6 +22,7 @@ import {
 
 import {
     ADD_STAGE_PARTICIPANT,
+    CLEAR_STAGE_PARTICIPANTS,
     REMOVE_STAGE_PARTICIPANT,
     SET_MAX_STAGE_PARTICIPANTS,
     SET_USER_FILMSTRIP_WIDTH,
@@ -42,10 +43,12 @@ import {
 import {
     isFilmstripResizable,
     updateRemoteParticipants,
-    updateRemoteParticipantsOnLeave
+    updateRemoteParticipantsOnLeave,
+    getActiveParticipantsIds,
+    getPinnedActiveParticipants,
+    isStageFilmstripAvailable
 } from './functions';
 import './subscriber';
-import { getActiveParticipantsIds, getPinnedActiveParticipants, isStageFilmstripEnabled } from './functions.web';
 
 /**
  * Map of timers.
@@ -202,15 +205,15 @@ MiddlewareRegistry.register(store => next => action => {
     case DOMINANT_SPEAKER_CHANGED: {
         const { id } = action.participant;
         const state = store.getState();
-        const stageFilmstrip = isStageFilmstripEnabled(state);
-        const currentLayout = getCurrentLayout(state);
+        const stageFilmstrip = isStageFilmstripAvailable(state);
         const local = getLocalParticipant(state);
+        const currentLayout = getCurrentLayout(state);
 
-        if (id === local.id) {
+        if (id === local.id || currentLayout === LAYOUTS.TILE_VIEW) {
             break;
         }
 
-        if (stageFilmstrip && currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW) {
+        if (stageFilmstrip) {
             const isPinned = getPinnedActiveParticipants(state).some(p => p.participantId === id);
 
             store.dispatch(addStageParticipant(id, Boolean(isPinned)));
@@ -276,7 +279,17 @@ MiddlewareRegistry.register(store => next => action => {
         } else {
             dispatch(addStageParticipant(participantId, true));
         }
+        break;
+    }
+    case CLEAR_STAGE_PARTICIPANTS: {
+        const activeParticipants = getActiveParticipantsIds(store.getState());
 
+        activeParticipants.forEach(pId => {
+            const tid = timers.get(pId);
+
+            clearTimeout(tid);
+            timers.delete(pId);
+        });
     }
     }
 

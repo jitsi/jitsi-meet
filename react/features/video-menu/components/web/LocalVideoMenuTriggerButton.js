@@ -18,8 +18,8 @@ import { setParticipantContextMenuOpen } from '../../../base/responsive-ui/actio
 import { getHideSelfView } from '../../../base/settings';
 import { getLocalVideoTrack } from '../../../base/tracks';
 import ConnectionIndicatorContent from '../../../connection-indicator/components/web/ConnectionIndicatorContent';
+import { THUMBNAIL_TYPE } from '../../../filmstrip';
 import { isStageFilmstripEnabled } from '../../../filmstrip/functions.web';
-import { LAYOUTS } from '../../../video-layout';
 import { renderConnectionStatus } from '../../actions.web';
 
 import ConnectionStatusButton from './ConnectionStatusButton';
@@ -274,7 +274,7 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state, ownProps) {
-    const { currentLayout } = ownProps;
+    const { thumbnailType } = ownProps;
     const localParticipant = getLocalParticipant(state);
     const { disableLocalVideoFlip, disableSelfViewSettings } = state['features/base/config'];
     const videoTrack = getLocalVideoTrack(state['features/base/tracks']);
@@ -284,14 +284,14 @@ function _mapStateToProps(state, ownProps) {
 
     let _menuPosition;
 
-    switch (currentLayout) {
-    case LAYOUTS.TILE_VIEW:
+    switch (thumbnailType) {
+    case THUMBNAIL_TYPE.TILE:
         _menuPosition = 'left-start';
         break;
-    case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
+    case THUMBNAIL_TYPE.VERTICAL:
         _menuPosition = 'left-start';
         break;
-    case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW:
+    case THUMBNAIL_TYPE.HORIZONTAL:
         _menuPosition = 'top-start';
         break;
     default:

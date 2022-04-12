@@ -18,11 +18,6 @@ import Filmstrip from './Filmstrip';
 type Props = {
 
     /**
-     * The current layout of the filmstrip.
-     */
-    _currentLayout: string,
-
-    /**
      * The number of columns in tile view.
      */
     _columns: number,
@@ -143,7 +138,8 @@ function _mapStateToProps(state) {
         && clientWidth <= ASPECT_RATIO_BREAKPOINT;
 
     const shouldReduceHeight = reduceHeight && (
-        isMobileBrowser() || _currentLayout !== LAYOUTS.VERTICAL_FILMSTRIP_VIEW);
+        isMobileBrowser() || (_currentLayout !== LAYOUTS.VERTICAL_FILMSTRIP_VIEW
+            && _currentLayout !== LAYOUTS.STAGE_FILMSTRIP_VIEW));
 
     let _thumbnailSize, remoteFilmstripHeight, remoteFilmstripWidth;
 
@@ -154,7 +150,8 @@ function _mapStateToProps(state) {
         remoteFilmstripHeight = filmstripHeight - (collapseTileView && filmstripPadding > 0 ? filmstripPadding : 0);
         remoteFilmstripWidth = filmstripWidth;
         break;
-    case LAYOUTS.VERTICAL_FILMSTRIP_VIEW: {
+    case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
+    case LAYOUTS.STAGE_FILMSTRIP_VIEW: {
         const {
             remote,
             remoteVideosContainer,
@@ -189,7 +186,6 @@ function _mapStateToProps(state) {
 
     return {
         _columns: gridDimensions.columns,
-        _currentLayout,
         _filmstripHeight: remoteFilmstripHeight,
         _filmstripWidth: remoteFilmstripWidth,
         _hasScroll,
