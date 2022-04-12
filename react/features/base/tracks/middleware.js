@@ -56,6 +56,8 @@ import logger from './logger';
 
 import './subscriber';
 
+import { JitsiTrackEvents } from '../lib-jitsi-meet';
+
 declare var APP: Object;
 
 /**
@@ -93,6 +95,8 @@ MiddlewareRegistry.register(store => next => action => {
         ) {
             createFakeScreenShareParticipant(store, action);
         }
+
+        !local && jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED, (streamingStatus, jitsiTrack) => store.dispatch(trackStreamingStatusChanged(jitsiTrack, streamingStatus)));
 
         return result;
     }
@@ -138,6 +142,9 @@ MiddlewareRegistry.register(store => next => action => {
         }
 
         _removeNoDataFromSourceNotification(store, action.track);
+
+        action.track.jitsiTrack.removeAllListeners(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED);
+
         break;
     }
     case SET_AUDIO_MUTED:
