@@ -220,12 +220,8 @@ export default {
         height: '100%'
     },
 
-    notLocalModeratorWithLobbyContainer: {
-        height: '80%'
-    },
-
     meetingListContainer: {
-        height: '56%'
+        height: '58%'
     },
 
     meetingListFullContainer: {

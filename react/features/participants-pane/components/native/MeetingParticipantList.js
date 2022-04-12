@@ -217,14 +217,11 @@ class MeetingParticipantList extends PureComponent<Props> {
         const containerStyleModerator
             = onlyMeetingParticipants
                 ? styles.meetingListFullContainer : styles.meetingListContainer;
-        const localModeratorContainerStyle
+        const containerStyle
             = isLocalModerator
                 ? containerStyleModerator : styles.notLocalModeratorContainer;
-        const containerStyle = lobbyParticipants?.length > 0
-            ? styles.notLocalModeratorWithLobbyContainer
-            : localModeratorContainerStyle;
         const finalContainerStyle
-            = _participantsCount > 3 && containerStyle;
+            = _participantsCount > 6 && containerStyle;
 
         return (
             <CollapsibleList
