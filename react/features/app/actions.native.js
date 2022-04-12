@@ -12,7 +12,7 @@ import {
     storeConfig
 } from '../base/config';
 import { connect, disconnect, setLocationURL } from '../base/connection';
-import { loadConfig } from '../base/lib-jitsi-meet';
+import { loadConfig } from '../base/lib-jitsi-meet/functions.native';
 import { createDesiredLocalTracks } from '../base/tracks';
 import {
     getBackendSafeRoomName,
