@@ -400,7 +400,7 @@ function createFakeScreenShareParticipant({ dispatch, getState }, { track }) {
             id: track.jitsiTrack.getSourceName(),
             isFakeScreenShareParticipant: true,
             isLocalScreenShare: track?.jitsiTrack.isLocal(),
-            name: `${participant.name}'s screen`
+            name: participant.name
         }));
     } else {
         logger.error(`Failed to create a screenshare participant for participantId: ${participantId}`);

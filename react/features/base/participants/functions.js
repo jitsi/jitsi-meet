@@ -106,6 +106,22 @@ export function getLocalScreenShareParticipant(stateful: Object | Function) {
 }
 
 /**
+ * Returns screenshare participant.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's {@code getState} function to be used to
+ * retrieve the state features/base/participants.
+ * @param {string} id - The owner ID of the screenshare participant to retrieve.
+ * @returns {(Participant|undefined)}
+ */
+export function getScreenshareParticipantByOwnerId(stateful: Object | Function, id: string) {
+    const track = getTrackByMediaTypeAndParticipant(
+        toState(stateful)['features/base/tracks'], MEDIA_TYPE.SCREENSHARE, id
+    );
+
+    return getParticipantById(stateful, track?.jitsiTrack.getSourceName());
+}
+
+/**
  * Normalizes a display name so then no invalid values (padding, length...etc)
  * can be set.
  *
@@ -244,14 +260,12 @@ export function getParticipantCountWithFake(stateful: Object | Function) {
 /**
  * Returns participant's display name.
  *
- * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
- * {@code getState} function to be used to retrieve the state.
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's {@code getState} function to be used to
+ * retrieve the state.
  * @param {string} id - The ID of the participant's display name to retrieve.
  * @returns {string}
  */
-export function getParticipantDisplayName(
-        stateful: Object | Function,
-        id: string) {
+export function getParticipantDisplayName(stateful: Object | Function, id: string) {
     const participant = getParticipantById(stateful, id);
     const {
         defaultLocalDisplayName,
@@ -259,6 +273,10 @@ export function getParticipantDisplayName(
     } = toState(stateful)['features/base/config'];
 
     if (participant) {
+        if (participant.isFakeScreenShareParticipant) {
+            return getScreenshareParticipantDisplayName(stateful, id);
+        }
+
         if (participant.name) {
             return participant.name;
         }
@@ -269,6 +287,20 @@ export function getParticipantDisplayName(
     }
 
     return defaultRemoteDisplayName;
+}
+
+/**
+ * Returns screenshare participant's display name.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's {@code getState} function to be used to
+ * retrieve the state.
+ * @param {string} id - The ID of the screenshare participant's display name to retrieve.
+ * @returns {string}
+ */
+export function getScreenshareParticipantDisplayName(stateful: Object | Function, id: string) {
+    const owner = getParticipantById(stateful, getFakeScreenShareParticipantOwnerId(id));
+
+    return `${owner.name}'s screen`;
 }
 
 /**
