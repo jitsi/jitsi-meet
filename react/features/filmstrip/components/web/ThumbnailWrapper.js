@@ -148,7 +148,8 @@ function _mapStateToProps(state, ownProps) {
     const sourceNameSignalingEnabled = getSourceNameSignalingFeatureFlag(state);
     const _verticalViewGrid = showGridInVerticalView(state);
     const stageFilmstrip = ownProps.data?.stageFilmstrip;
-    const remoteParticipants = stageFilmstrip ? activeParticipants : remote;
+    const sortedActiveParticipants = activeParticipants.sort();
+    const remoteParticipants = stageFilmstrip ? sortedActiveParticipants : remote;
     const remoteParticipantsLength = remoteParticipants.length;
     const localId = getLocalParticipant(state).id;
 

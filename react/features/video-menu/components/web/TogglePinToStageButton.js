@@ -6,8 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import ContextMenuItem from '../../../base/components/context-menu/ContextMenuItem';
 import { IconPinParticipant, IconUnpin } from '../../../base/icons';
-import { addStageParticipant, removeStageParticipant } from '../../../filmstrip/actions.web';
-import { getActiveParticipantsIds } from '../../../filmstrip/functions';
+import { togglePinStageParticipant } from '../../../filmstrip/actions.web';
+import { getPinnedActiveParticipants } from '../../../filmstrip/functions.web';
 
 type Props = {
 
@@ -35,11 +35,10 @@ type Props = {
 const TogglePinToStageButton = ({ className, noIcon = false, onClick, participantID }: Props) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
-    const isActive = Boolean(useSelector(getActiveParticipantsIds).find(p => p === participantID));
+    const isActive = Boolean(useSelector(getPinnedActiveParticipants)
+        .find(p => p.participantId === participantID));
     const _onClick = useCallback(() => {
-        dispatch(isActive
-            ? removeStageParticipant(participantID)
-            : addStageParticipant(participantID, true));
+        dispatch(togglePinStageParticipant(participantID));
         onClick && onClick();
     }, [ participantID, isActive ]);
 

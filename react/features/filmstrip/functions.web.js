@@ -498,6 +498,7 @@ export function computeDisplayModeFromInput(input: Object) {
         isScreenSharing,
         canPlayEventReceived,
         isRemoteParticipant,
+        stageParticipantsVisible,
         tileViewActive
     } = input;
     const adjustedIsVideoPlayable = input.isVideoPlayable && (!isRemoteParticipant || canPlayEventReceived);
@@ -506,7 +507,8 @@ export function computeDisplayModeFromInput(input: Object) {
         return DISPLAY_VIDEO;
     }
 
-    if (!tileViewActive && ((isScreenSharing && isRemoteParticipant) || isActiveParticipant)) {
+    if (!tileViewActive && ((isScreenSharing && isRemoteParticipant)
+        || (stageParticipantsVisible && isActiveParticipant))) {
         return DISPLAY_AVATAR;
     } else if (isCurrentlyOnLargeVideo && !tileViewActive) {
         // Display name is always and only displayed when user is on the stage
@@ -537,6 +539,7 @@ export function getDisplayModeInput(props: Object, state: Object) {
         _isScreenSharing,
         _isVideoPlayable,
         _participant,
+        _stageParticipantsVisible,
         _videoTrack
     } = props;
     const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
@@ -554,6 +557,7 @@ export function getDisplayModeInput(props: Object, state: Object) {
         isRemoteParticipant: !_participant?.isFakeParticipant && !_participant?.local,
         isScreenSharing: _isScreenSharing,
         isFakeScreenShareParticipant: _isFakeScreenShareParticipant,
+        stageParticipantsVisible: _stageParticipantsVisible,
         videoStreamMuted: _videoTrack ? _videoTrack.muted : 'no stream'
     };
 }
@@ -674,7 +678,7 @@ export function getActiveParticipantsIds(state) {
  * Gets the ids of the active participants.
  *
  * @param {Object} state - Redux state.
- * @returns {Array<string>}
+ * @returns {Array<Object>}
  */
 export function getPinnedActiveParticipants(state) {
     const { activeParticipants } = state['features/filmstrip'];
@@ -686,16 +690,18 @@ export function getPinnedActiveParticipants(state) {
  * Get whether or not the stage filmstrip should be displayed.
  *
  * @param {Object} state - Redux state.
+ * @param {number} minParticipantCount - The min number of participants for the stage filmstrip
+ * to be displayed.
  * @returns {boolean}
  */
-export function shouldDisplayStageFilmstrip(state) {
+export function shouldDisplayStageFilmstrip(state, minParticipantCount = 2) {
     const { activeParticipants } = state['features/filmstrip'];
     const { remoteScreenShares } = state['features/video-layout'];
     const currentLayout = getCurrentLayout(state);
     const sharedVideo = isSharingStatus(state['features/shared-video']?.status);
 
     return isStageFilmstripEnabled(state) && remoteScreenShares.length === 0 && !sharedVideo
-        && activeParticipants.length > 1 && currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW;
+        && activeParticipants.length >= minParticipantCount && currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW;
 }
 
 /**

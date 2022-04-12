@@ -11,6 +11,7 @@ import { getSourceNameSignalingFeatureFlag } from '../../../base/config';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { MEDIA_TYPE, VideoTrack } from '../../../base/media';
 import {
+    getLocalParticipant,
     getParticipantByIdOrUndefined,
     hasRaisedHand,
     pinParticipant
@@ -30,7 +31,7 @@ import { hideGif, showGif } from '../../../gifs/actions';
 import { getGifDisplayMode, getGifForParticipant } from '../../../gifs/functions';
 import { PresenceLabel } from '../../../presence-status';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
-import { addStageParticipant } from '../../actions.web';
+import { togglePinStageParticipant } from '../../actions';
 import {
     DISPLAY_MODE_TO_CLASS_NAME,
     DISPLAY_VIDEO,
@@ -42,9 +43,10 @@ import {
     getActiveParticipantsIds,
     getDisplayModeInput,
     isVideoPlayable,
-    showGridInVerticalView
+    showGridInVerticalView,
+    isStageFilmstripEnabled,
+    shouldDisplayStageFilmstrip
 } from '../../functions';
-import { isStageFilmstripEnabled } from '../../functions.web';
 
 import FakeScreenShareParticipant from './FakeScreenShareParticipant';
 import ThumbnailAudioIndicator from './ThumbnailAudioIndicator';
@@ -190,6 +192,13 @@ export type Props = {|
      * Whether or not the stage filmstrip is disabled.
      */
     _stageFilmstripDisabled: boolean,
+
+    /**
+     * Whether or not the participants are displayed on stage.
+     * (and not screensharing or shared video; used to determine
+     * whether or not the display the participant video in the vertical filmstrip).
+     */
+    _stageParticipantsVisible: boolean,
 
     /**
      * The video object position for the participant.
@@ -633,7 +642,7 @@ class Thumbnail extends Component<Props, State> {
         if (_stageFilmstripDisabled) {
             dispatch(pinParticipant(pinned ? null : id));
         } else {
-            dispatch(addStageParticipant(id, true));
+            dispatch(togglePinStageParticipant(id));
         }
     }
 
@@ -1173,6 +1182,7 @@ function _mapStateToProps(state, ownProps): Object {
 
     const { gifUrl: gifSrc } = getGifForParticipant(state, id);
     const mode = getGifDisplayMode(state);
+    const participantId = isLocal ? getLocalParticipant(state).id : participantID;
 
     return {
         _audioTrack,
@@ -1180,7 +1190,7 @@ function _mapStateToProps(state, ownProps): Object {
         _defaultLocalDisplayName: defaultLocalDisplayName,
         _disableLocalVideoFlip: Boolean(disableLocalVideoFlip),
         _disableTileEnlargement: Boolean(disableTileEnlargement),
-        _isActiveParticipant: activeParticipants.find(pId => pId === participantID),
+        _isActiveParticipant: activeParticipants.find(pId => pId === participantId),
         _isHidden: isLocal && iAmRecorder && !iAmSipGateway,
         _isAudioOnly: Boolean(state['features/base/audio-only'].enabled),
         _isCurrentlyOnLargeVideo: state['features/large-video']?.participantId === id,
@@ -1195,6 +1205,7 @@ function _mapStateToProps(state, ownProps): Object {
         _participant: participant,
         _raisedHand: hasRaisedHand(participant),
         _stageFilmstripDisabled: !isStageFilmstripEnabled(state),
+        _stageParticipantsVisible: shouldDisplayStageFilmstrip(state, 1),
         _videoObjectPosition: getVideoObjectPosition(state, participant?.id),
         _videoTrack,
         ...size,
