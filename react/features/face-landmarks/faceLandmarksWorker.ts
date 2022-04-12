@@ -1,17 +1,38 @@
 import { setWasmPaths } from '@tensorflow/tfjs-backend-wasm';
-import Human from '@vladmandic/human/dist/human.esm.js';
+import { Human, Config, FaceResult } from '@vladmandic/human/dist/human.esm.js';
 
 import { DETECTION_TYPES, DETECT_FACE, INIT_WORKER, FACE_EXPRESSIONS_NAMING_MAPPING } from './constants';
+
+type Detection = {
+    detections: Array<FaceResult>,
+    threshold?: number
+};
+
+type DetectInput = {
+    image: ImageBitmap | ImageData,
+    threshold: number
+};
+
+type FaceBox = {
+    left: number,
+    right: number,
+    width?: number
+};
+
+type InitInput = {
+    baseUrl: string,
+    detectionTypes: string[]
+}
 
 /**
  * An object that is used for using human.
  */
-let human;
+let human: Human;
 
 /**
  * Detection types to be applied.
  */
-let faceDetectionTypes = [];
+let faceDetectionTypes: string[] = [];
 
 /**
  * Flag for indicating whether a face detection flow is in progress or not.
@@ -21,20 +42,18 @@ let detectionInProgress = false;
 /**
  * Contains the last valid face bounding box (passes threshold validation) which was sent to the main process.
  */
-let lastValidFaceBox;
+let lastValidFaceBox: FaceBox;
 
 /**
  * Configuration for human.
  */
-const config = {
+const config: Partial<Config> = {
     backend: 'humangl',
-    wasmPath: '',
     async: true,
     warmup: 'none',
     cacheModels: true,
     cacheSensitivity: 0,
     debug: true,
-    modelBasePath: '',
     deallocate: true,
     filter: { enabled: false },
     face: {
@@ -54,12 +73,12 @@ const config = {
     segmentation: { enabled: false }
 };
 
-const detectFaceBox = async ({ detections, threshold }) => {
+const detectFaceBox = async ({ detections, threshold }: Detection) => {
     if (!detections.length) {
         return null;
     }
 
-    const faceBox = {
+    const faceBox: FaceBox = {
         // normalize to percentage based
         left: Math.round(Math.min(...detections.map(d => d.boxRaw[0])) * 100),
         right: Math.round(Math.max(...detections.map(d => d.boxRaw[0] + d.boxRaw[2])) * 100)
@@ -67,7 +86,7 @@ const detectFaceBox = async ({ detections, threshold }) => {
 
     faceBox.width = Math.round(faceBox.right - faceBox.left);
 
-    if (lastValidFaceBox && Math.abs(lastValidFaceBox.left - faceBox.left) < threshold) {
+    if (lastValidFaceBox && threshold && Math.abs(lastValidFaceBox.left - faceBox.left) < threshold) {
         return null;
     }
 
@@ -76,10 +95,10 @@ const detectFaceBox = async ({ detections, threshold }) => {
     return faceBox;
 };
 
-const detectFaceExpression = async ({ detections }) =>
-    FACE_EXPRESSIONS_NAMING_MAPPING[detections[0]?.emotion[0].emotion];
+const detectFaceExpression = async ({ detections }: Detection) => 
+    detections[0]?.emotion && FACE_EXPRESSIONS_NAMING_MAPPING[detections[0]?.emotion[0].emotion];
 
-const detect = async ({ image, threshold }) => {
+const detect = async ({ image, threshold } : DetectInput) => {
     let detections;
     let faceExpression;
     let faceBox;
@@ -109,16 +128,16 @@ const detect = async ({ image, threshold }) => {
     }
 
     if (faceBox || faceExpression) {
-        self.postMessage({
-            faceBox,
-            faceExpression
+        self.postMessage({ 
+            faceBox, 
+            faceExpression 
         });
     }
 
     detectionInProgress = false;
 };
 
-const init = async ({ baseUrl, detectionTypes }) => {
+const init = async ({ baseUrl, detectionTypes }: InitInput) => {
     faceDetectionTypes = detectionTypes;
 
     if (!human) {
@@ -128,8 +147,8 @@ const init = async ({ baseUrl, detectionTypes }) => {
             config.wasmPath = baseUrl;
             setWasmPaths(baseUrl);
         }
-        if (detectionTypes.includes(DETECTION_TYPES.FACE_EXPRESSIONS)) {
-            config.face.emotion.enabled = true;
+        if (detectionTypes.includes(DETECTION_TYPES.FACE_EXPRESSIONS) && config.face) {
+            config.face.emotion = { enabled: true };
         }
         const initialHuman = new Human(config);
 
@@ -138,7 +157,7 @@ const init = async ({ baseUrl, detectionTypes }) => {
     }
 };
 
-onmessage = function(message) {
+onmessage = function(message: MessageEvent<any>) {
     switch (message.data.type) {
     case DETECT_FACE: {
         if (!human || detectionInProgress) {

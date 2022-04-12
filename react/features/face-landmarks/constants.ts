@@ -1,5 +1,3 @@
-// @flow
-
 export const FACE_EXPRESSIONS_EMOJIS = {
     happy: '😊',
     neutral: '😐',

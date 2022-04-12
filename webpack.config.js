@@ -394,7 +394,7 @@ module.exports = (_env, argv) => {
         }),
         Object.assign({}, config, {
             entry: {
-                'face-landmarks-worker': './react/features/face-landmarks/faceLandmarksWorker.js'
+                'face-landmarks-worker': './react/features/face-landmarks/faceLandmarksWorker.ts'
             },
             plugins: [
                 ...config.plugins,
