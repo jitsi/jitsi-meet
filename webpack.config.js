@@ -400,7 +400,7 @@ module.exports = (_env, argv) => {
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'face-landmarks-worker')
             ],
-            performance: getPerformanceHints(perfHintOptions, 1024 * 1024 * 1.5)
+            performance: getPerformanceHints(perfHintOptions, 1024 * 1024 * 2)
         })
     ];
 };
