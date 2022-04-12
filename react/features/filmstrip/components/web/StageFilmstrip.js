@@ -92,11 +92,10 @@ type Props = {
     _visible: boolean
 };
 
-const StageFilmstrip = (props: Props) => props._currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW && (
+const StageFilmstrip = (props: Props) => props._currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW && (
     <span className = { LAYOUT_CLASSNAMES[LAYOUTS.TILE_VIEW] }>
         <Filmstrip
             { ...props }
-            _currentLayout = { LAYOUTS.TILE_VIEW }
             _stageFilmstrip = { true } />
     </span>
 );

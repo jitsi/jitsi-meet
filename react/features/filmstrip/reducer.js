@@ -18,7 +18,8 @@ import {
     SET_VERTICAL_VIEW_DIMENSIONS,
     SET_VISIBLE_REMOTE_PARTICIPANTS,
     SET_VOLUME,
-    SET_MAX_STAGE_PARTICIPANTS
+    SET_MAX_STAGE_PARTICIPANTS,
+    CLEAR_STAGE_PARTICIPANTS
 } from './actionTypes';
 
 const DEFAULT_STATE = {
@@ -271,6 +272,12 @@ ReducerRegistry.register(
             return {
                 ...state,
                 maxStageParticipants: action.maxParticipants
+            };
+        }
+        case CLEAR_STAGE_PARTICIPANTS: {
+            return {
+                ...state,
+                activeParticipants: []
             };
         }
         }

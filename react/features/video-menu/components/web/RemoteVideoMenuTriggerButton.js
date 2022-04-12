@@ -14,7 +14,7 @@ import { getParticipantById } from '../../../base/participants';
 import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
 import { setParticipantContextMenuOpen } from '../../../base/responsive-ui/actions';
-import { LAYOUTS } from '../../../video-layout';
+import { THUMBNAIL_TYPE } from '../../../filmstrip';
 import { renderConnectionStatus } from '../../actions.web';
 
 import ParticipantContextMenu from './ParticipantContextMenu';
@@ -265,7 +265,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state, ownProps) {
-    const { participantID, currentLayout } = ownProps;
+    const { participantID, thumbnailType } = ownProps;
     let _remoteControlState = null;
     const participant = getParticipantById(state, participantID);
     const _participantDisplayName = participant?.name;
@@ -291,14 +291,14 @@ function _mapStateToProps(state, ownProps) {
 
     let _menuPosition;
 
-    switch (currentLayout) {
-    case LAYOUTS.TILE_VIEW:
+    switch (thumbnailType) {
+    case THUMBNAIL_TYPE.TILE:
         _menuPosition = 'left-start';
         break;
-    case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
+    case THUMBNAIL_TYPE.VERTICAL:
         _menuPosition = 'left-end';
         break;
-    case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW:
+    case THUMBNAIL_TYPE.HORIZONTAL:
         _menuPosition = 'top';
         break;
     default:

@@ -171,7 +171,6 @@ export const SET_STAGE_PARTICIPANTS = 'SET_STAGE_PARTICIPANTS';
  */
 export const SET_MAX_STAGE_PARTICIPANTS = 'SET_MAX_STAGE_PARTICIPANTS';
 
-
 /**
  * The type of Redux action which toggles the pin state of stage participants.
  * {
@@ -180,3 +179,11 @@ export const SET_MAX_STAGE_PARTICIPANTS = 'SET_MAX_STAGE_PARTICIPANTS';
  * }
  */
 export const TOGGLE_PIN_STAGE_PARTICIPANT = 'TOGGLE_PIN_STAGE_PARTICIPANT';
+
+/**
+ * The type of Redux action which clears the list of stage participants.
+ * {
+ *     type: CLEAR_STAGE_PARTICIPANTS
+ * }
+ */
+export const CLEAR_STAGE_PARTICIPANTS = 'CLEAR_STAGE_PARTICIPANTS';

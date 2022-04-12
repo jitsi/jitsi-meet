@@ -36,6 +36,7 @@ import {
     DISPLAY_MODE_TO_CLASS_NAME,
     DISPLAY_VIDEO,
     SHOW_TOOLBAR_CONTEXT_MENU_AFTER,
+    THUMBNAIL_TYPE,
     VIDEO_TEST_EVENTS
 } from '../../constants';
 import {
@@ -44,9 +45,9 @@ import {
     getDisplayModeInput,
     isVideoPlayable,
     showGridInVerticalView,
-    isStageFilmstripEnabled,
-    shouldDisplayStageFilmstrip
+    isStageFilmstripAvailable
 } from '../../functions';
+import { getThumbnailTypeFromLayout } from '../../functions.web';
 
 import FakeScreenShareParticipant from './FakeScreenShareParticipant';
 import ThumbnailAudioIndicator from './ThumbnailAudioIndicator';
@@ -90,11 +91,6 @@ export type Props = {|
      * The audio track related to the participant.
      */
     _audioTrack: ?Object,
-
-    /**
-     * The current layout of the filmstrip.
-     */
-    _currentLayout: string,
 
     /**
      * Indicates whether the local video flip feature is disabled or not.
@@ -189,9 +185,9 @@ export type Props = {|
     _raisedHand: boolean,
 
     /**
-     * Whether or not the stage filmstrip is disabled.
+     * Whether or not the current layout is stage filmstrip layout.
      */
-    _stageFilmstripDisabled: boolean,
+    _stageFilmstripLayout: boolean,
 
     /**
      * Whether or not the participants are displayed on stage.
@@ -199,6 +195,11 @@ export type Props = {|
      * whether or not the display the participant video in the vertical filmstrip).
      */
     _stageParticipantsVisible: boolean,
+
+    /**
+     * The type of thumbnail to display.
+     */
+    _thumbnailType: string,
 
     /**
      * The video object position for the participant.
@@ -447,15 +448,15 @@ class Thumbnail extends Component<Props, State> {
      */
     _maybeSendScreenSharingIssueEvents(input) {
         const {
-            _currentLayout,
             _isAudioOnly,
-            _isScreenSharing
+            _isScreenSharing,
+            _thumbnailType
         } = this.props;
         const { displayMode } = this.state;
-        const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
+        const isTileType = _thumbnailType === THUMBNAIL_TYPE.TILE;
 
         if (!(DISPLAY_VIDEO === displayMode)
-            && tileViewActive
+            && isTileType
             && _isScreenSharing
             && !_isAudioOnly) {
             sendAnalytics(createScreenSharingIssueEvent({
@@ -530,9 +531,9 @@ class Thumbnail extends Component<Props, State> {
      * @returns {void}
      */
     _hidePopover() {
-        const { _currentLayout } = this.props;
+        const { _thumbnailType } = this.props;
 
-        if (_currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW) {
+        if (_thumbnailType === THUMBNAIL_TYPE.VERTICAL) {
             this.setState({
                 isHovered: false
             });
@@ -550,13 +551,13 @@ class Thumbnail extends Component<Props, State> {
     _getStyles(): Object {
         const { canPlayEventReceived } = this.state;
         const {
-            _currentLayout,
             _disableTileEnlargement,
             _height,
             _isFakeScreenShareParticipant,
             _isHidden,
             _isScreenSharing,
             _participant,
+            _thumbnailType,
             _videoObjectPosition,
             _videoTrack,
             _width,
@@ -564,7 +565,7 @@ class Thumbnail extends Component<Props, State> {
             style
         } = this.props;
 
-        const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
+        const isTileType = _thumbnailType === THUMBNAIL_TYPE.TILE;
         const jitsiVideoTrack = _videoTrack?.jitsiTrack;
         const track = jitsiVideoTrack?.track;
         const isPortraitVideo = ((track && track.getSettings()?.aspectRatio) || 1) < 1;
@@ -587,7 +588,7 @@ class Thumbnail extends Component<Props, State> {
         }
 
         let videoStyles = null;
-        const doNotStretchVideo = (isPortraitVideo && tileViewActive)
+        const doNotStretchVideo = (isPortraitVideo && isTileType)
             || _disableTileEnlargement
             || _isScreenSharing;
 
@@ -636,13 +637,13 @@ class Thumbnail extends Component<Props, State> {
      * @returns {void}
      */
     _onClick() {
-        const { _participant, dispatch, _stageFilmstripDisabled } = this.props;
+        const { _participant, dispatch, _stageFilmstripLayout } = this.props;
         const { id, pinned } = _participant;
 
-        if (_stageFilmstripDisabled) {
-            dispatch(pinParticipant(pinned ? null : id));
-        } else {
+        if (_stageFilmstripLayout) {
             dispatch(togglePinStageParticipant(id));
+        } else {
+            dispatch(pinParticipant(pinned ? null : id));
         }
     }
 
@@ -790,8 +791,8 @@ class Thumbnail extends Component<Props, State> {
         const {
             _isDominantSpeakerDisabled,
             _participant,
-            _currentLayout,
             _raisedHand,
+            _thumbnailType,
             classes
         } = this.props;
 
@@ -804,7 +805,7 @@ class Thumbnail extends Component<Props, State> {
         if (!_isDominantSpeakerDisabled && _participant?.dominantSpeaker) {
             className += ` ${classes.activeSpeaker} dominant-speaker`;
         }
-        if (_currentLayout !== LAYOUTS.TILE_VIEW && _participant?.pinned) {
+        if (_thumbnailType !== THUMBNAIL_TYPE.TILE && _participant?.pinned) {
             className += ' videoContainerFocused';
         }
 
@@ -902,16 +903,16 @@ class Thumbnail extends Component<Props, State> {
     _renderParticipant(local = false) {
         const {
             _audioTrack,
-            _currentLayout,
             _disableLocalVideoFlip,
+            _gifSrc,
             _isMobile,
             _isMobilePortrait,
             _isScreenSharing,
             _isTestModeEnabled,
             _localFlipX,
             _participant,
+            _thumbnailType,
             _videoTrack,
-            _gifSrc,
             classes,
             stageFilmstrip
         } = this.props;
@@ -975,28 +976,28 @@ class Thumbnail extends Component<Props, State> {
                 <div
                     className = { clsx(classes.indicatorsContainer,
                         classes.indicatorsTopContainer,
-                        _currentLayout === LAYOUTS.TILE_VIEW && 'tile-view-mode'
+                        _thumbnailType === THUMBNAIL_TYPE.TILE && 'tile-view-mode'
                     ) }>
                     <ThumbnailTopIndicators
-                        currentLayout = { _currentLayout }
                         hidePopover = { this._hidePopover }
                         indicatorsClassName = { classes.indicatorsBackground }
                         isHovered = { isHovered }
                         local = { local }
                         participantId = { id }
                         popoverVisible = { popoverVisible }
-                        showPopover = { this._showPopover } />
+                        showPopover = { this._showPopover }
+                        thumbnailType = { _thumbnailType } />
                 </div>
                 <div
                     className = { clsx(classes.indicatorsContainer,
                         classes.indicatorsBottomContainer,
-                        _currentLayout === LAYOUTS.TILE_VIEW && 'tile-view-mode'
+                        _thumbnailType === THUMBNAIL_TYPE.TILE && 'tile-view-mode'
                     ) }>
                     <ThumbnailBottomIndicators
                         className = { classes.indicatorsBackground }
-                        currentLayout = { _currentLayout }
                         local = { local }
-                        participantId = { id } />
+                        participantId = { id }
+                        thumbnailType = { _thumbnailType } />
                 </div>
                 {!_gifSrc && this._renderAvatar(styles.avatar) }
                 { !local && (
@@ -1103,7 +1104,7 @@ function _mapStateToProps(state, ownProps): Object {
     }
     const _audioTrack = isLocal
         ? getLocalAudioTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, participantID);
-    const _currentLayout = stageFilmstrip ? LAYOUTS.TILE_VIEW : getCurrentLayout(state);
+    const _currentLayout = getCurrentLayout(state);
     let size = {};
     let _isMobilePortrait = false;
     const {
@@ -1116,10 +1117,12 @@ function _mapStateToProps(state, ownProps): Object {
     const { localFlipX } = state['features/base/settings'];
     const _isMobile = isMobileBrowser();
     const activeParticipants = getActiveParticipantsIds(state);
+    const tileType = getThumbnailTypeFromLayout(_currentLayout, stageFilmstrip);
 
-    switch (_currentLayout) {
-    case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
-    case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW: {
+
+    switch (tileType) {
+    case THUMBNAIL_TYPE.VERTICAL:
+    case THUMBNAIL_TYPE.HORIZONTAL: {
         const {
             horizontalViewDimensions = {
                 local: {},
@@ -1133,7 +1136,7 @@ function _mapStateToProps(state, ownProps): Object {
         } = state['features/filmstrip'];
         const _verticalViewGrid = showGridInVerticalView(state);
         const { local, remote }
-            = _currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW
+            = tileType === THUMBNAIL_TYPE.VERTICAL
                 ? verticalViewDimensions : horizontalViewDimensions;
         const { width, height } = (isLocal ? local : remote) ?? {};
 
@@ -1155,7 +1158,7 @@ function _mapStateToProps(state, ownProps): Object {
 
         break;
     }
-    case LAYOUTS.TILE_VIEW: {
+    case THUMBNAIL_TYPE.TILE: {
         const { thumbnailSize } = state['features/filmstrip'].tileViewDimensions;
         const {
             stageFilmstripDimensions = {
@@ -1186,7 +1189,6 @@ function _mapStateToProps(state, ownProps): Object {
 
     return {
         _audioTrack,
-        _currentLayout,
         _defaultLocalDisplayName: defaultLocalDisplayName,
         _disableLocalVideoFlip: Boolean(disableLocalVideoFlip),
         _disableTileEnlargement: Boolean(disableTileEnlargement),
@@ -1204,8 +1206,9 @@ function _mapStateToProps(state, ownProps): Object {
         _localFlipX: Boolean(localFlipX),
         _participant: participant,
         _raisedHand: hasRaisedHand(participant),
-        _stageFilmstripDisabled: !isStageFilmstripEnabled(state),
-        _stageParticipantsVisible: shouldDisplayStageFilmstrip(state, 1),
+        _stageFilmstripLayout: isStageFilmstripAvailable(state),
+        _stageParticipantsVisible: _currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW,
+        _thumbnailType: tileType,
         _videoObjectPosition: getVideoObjectPosition(state, participant?.id),
         _videoTrack,
         ...size,

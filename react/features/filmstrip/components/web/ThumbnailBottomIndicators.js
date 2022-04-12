@@ -6,18 +6,13 @@ import { useSelector } from 'react-redux';
 
 import { isDisplayNameVisible, isNameReadOnly } from '../../../base/config/functions.any';
 import DisplayName from '../../../display-name/components/web/DisplayName';
-import { LAYOUTS } from '../../../video-layout';
+import { THUMBNAIL_TYPE } from '../../constants';
 
 import StatusIndicators from './StatusIndicators';
 
 declare var interfaceConfig: Object;
 
 type Props = {
-
-    /**
-     * The current layout of the filmstrip.
-     */
-    currentLayout: string,
 
     /**
      * Class name for indicators container.
@@ -37,7 +32,12 @@ type Props = {
     /**
      * Whether or not to show the status indicators.
      */
-    showStatusIndicators: string
+    showStatusIndicators: string,
+
+    /**
+     * The type of thumbnail.
+     */
+    thumbnailType: string
 }
 
 const useStyles = makeStyles(() => {
@@ -61,10 +61,10 @@ const useStyles = makeStyles(() => {
 
 const ThumbnailBottomIndicators = ({
     className,
-    currentLayout,
     local,
     participantId,
-    showStatusIndicators = true
+    showStatusIndicators = true,
+    thumbnailType
 }: Props) => {
     const styles = useStyles();
     const _allowEditing = !useSelector(isNameReadOnly);
@@ -77,17 +77,18 @@ const ThumbnailBottomIndicators = ({
                 audio = { true }
                 moderator = { true }
                 participantID = { participantId }
-                screenshare = { currentLayout === LAYOUTS.TILE_VIEW } />
+                screenshare = { thumbnailType === THUMBNAIL_TYPE.TILE }
+                thumbnailType = { thumbnailType } />
         }
         {
             _showDisplayName && (
                 <span className = { styles.nameContainer }>
                     <DisplayName
                         allowEditing = { local ? _allowEditing : false }
-                        currentLayout = { currentLayout }
                         displayNameSuffix = { local ? _defaultLocalDisplayName : '' }
                         elementID = { local ? 'localDisplayName' : `participant_${participantId}_name` }
-                        participantID = { participantId } />
+                        participantID = { participantId }
+                        thumbnailType = { thumbnailType } />
                 </span>
             )
         }

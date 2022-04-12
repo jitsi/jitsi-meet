@@ -1,7 +1,6 @@
 // @flow
 
 import { BoxModel } from '../base/styles';
-import { LAYOUTS } from '../video-layout/constants';
 
 /**
  * The size (height and width) of the small (not tile view) thumbnails.
@@ -229,21 +228,30 @@ export const SHOW_TOOLBAR_CONTEXT_MENU_AFTER = 600;
 export const TILE_MARGIN = 10;
 
 /**
+ * The types of thumbnails for filmstrip.
+ */
+export const THUMBNAIL_TYPE = {
+    TILE: 'TILE',
+    VERTICAL: 'VERTICAL',
+    HORIZONTAL: 'HORIZONTAL'
+};
+
+/**
  * The popover position for the connection stats table.
  */
 export const STATS_POPOVER_POSITION = {
-    [LAYOUTS.TILE_VIEW]: 'right-start',
-    [LAYOUTS.VERTICAL_FILMSTRIP_VIEW]: 'left-start',
-    [LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW]: 'top-end'
+    [THUMBNAIL_TYPE.TILE]: 'right-start',
+    [THUMBNAIL_TYPE.VERTICAL]: 'left-start',
+    [THUMBNAIL_TYPE.HORIZONTAL]: 'top-end'
 };
 
 /**
  * The tooltip position for the indicators on the thumbnail.
  */
 export const INDICATORS_TOOLTIP_POSITION = {
-    [LAYOUTS.TILE_VIEW]: 'right',
-    [LAYOUTS.VERTICAL_FILMSTRIP_VIEW]: 'left',
-    [LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW]: 'top'
+    [THUMBNAIL_TYPE.TILE]: 'right',
+    [THUMBNAIL_TYPE.VERTICAL]: 'left',
+    [THUMBNAIL_TYPE.HORIZONTAL]: 'top'
 };
 
 /**

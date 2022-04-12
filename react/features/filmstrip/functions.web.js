@@ -35,6 +35,7 @@ import {
     INDICATORS_TOOLTIP_POSITION,
     SCROLL_SIZE,
     SQUARE_TILE_ASPECT_RATIO,
+    THUMBNAIL_TYPE,
     TILE_ASPECT_RATIO,
     TILE_HORIZONTAL_MARGIN,
     TILE_MIN_HEIGHT_LARGE,
@@ -243,18 +244,16 @@ export function getNumberOfPartipantsForTileView(state) {
  * disabled.
  *
  * @param {Object} state - The redux store state.
- * @param {boolean} stageFilmstrip - Whether the dimensions should be calculated for the stage filmstrip.
  * @returns {Object} - The dimensions.
  */
-export function calculateNonResponsiveTileViewDimensions(state, stageFilmstrip = false) {
+export function calculateNonResponsiveTileViewDimensions(state) {
     const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
     const { disableTileEnlargement } = state['features/base/config'];
-    const { columns: c, minVisibleRows, rows: r } = getNotResponsiveTileViewGridDimensions(state, stageFilmstrip);
-    const filmstripWidth = getVerticalViewMaxWidth(state);
+    const { columns: c, minVisibleRows, rows: r } = getNotResponsiveTileViewGridDimensions(state);
     const size = calculateThumbnailSizeForTileView({
         columns: c,
         minVisibleRows,
-        clientWidth: clientWidth - (stageFilmstrip ? filmstripWidth : 0),
+        clientWidth,
         clientHeight,
         disableTileEnlargement,
         disableResponsiveTiles: true
@@ -515,6 +514,7 @@ export function computeDisplayModeFromInput(input: Object) {
         canPlayEventReceived,
         isRemoteParticipant,
         stageParticipantsVisible,
+        stageFilmstrip,
         tileViewActive
     } = input;
     const adjustedIsVideoPlayable = input.isVideoPlayable && (!isRemoteParticipant || canPlayEventReceived);
@@ -524,7 +524,7 @@ export function computeDisplayModeFromInput(input: Object) {
     }
 
     if (!tileViewActive && ((isScreenSharing && isRemoteParticipant)
-        || (stageParticipantsVisible && isActiveParticipant))) {
+        || (stageParticipantsVisible && isActiveParticipant && !stageFilmstrip))) {
         return DISPLAY_AVATAR;
     } else if (isCurrentlyOnLargeVideo && !tileViewActive) {
         // Display name is always and only displayed when user is on the stage
@@ -556,7 +556,8 @@ export function getDisplayModeInput(props: Object, state: Object) {
         _isVideoPlayable,
         _participant,
         _stageParticipantsVisible,
-        _videoTrack
+        _videoTrack,
+        stageFilmstrip
     } = props;
     const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
     const { canPlayEventReceived } = state;
@@ -574,6 +575,7 @@ export function getDisplayModeInput(props: Object, state: Object) {
         isScreenSharing: _isScreenSharing,
         isFakeScreenShareParticipant: _isFakeScreenShareParticipant,
         stageParticipantsVisible: _stageParticipantsVisible,
+        stageFilmstrip,
         videoStreamMuted: _videoTrack ? _videoTrack.muted : 'no stream'
     };
 }
@@ -581,11 +583,11 @@ export function getDisplayModeInput(props: Object, state: Object) {
 /**
  * Gets the tooltip position for the thumbnail indicators.
  *
- * @param {string} currentLayout - The current layout of the app.
+ * @param {string} thumbnailType - The current thumbnail type.
  * @returns {string}
  */
-export function getIndicatorsTooltipPosition(currentLayout: string) {
-    return INDICATORS_TOOLTIP_POSITION[currentLayout] || 'top';
+export function getIndicatorsTooltipPosition(thumbnailType: string) {
+    return INDICATORS_TOOLTIP_POSITION[thumbnailType] || 'top';
 }
 
 /**
@@ -599,7 +601,7 @@ export function isFilmstripResizable(state: Object) {
     const _currentLayout = getCurrentLayout(state);
 
     return !filmstrip?.disableResizable && !isMobileBrowser()
-        && _currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW;
+        && (_currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW || _currentLayout === LAYOUTS.STAGE_FILMSTRIP_VIEW);
 }
 
 /**
@@ -665,7 +667,8 @@ export function isFilmstripScrollVisible(state) {
     case LAYOUTS.TILE_VIEW:
         ({ hasScroll = false } = state['features/filmstrip'].tileViewDimensions);
         break;
-    case LAYOUTS.VERTICAL_FILMSTRIP_VIEW: {
+    case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
+    case LAYOUTS.STAGE_FILMSTRIP_VIEW: {
         ({ hasScroll = false } = state['features/filmstrip'].verticalViewDimensions);
         break;
     }
@@ -703,21 +706,30 @@ export function getPinnedActiveParticipants(state) {
 }
 
 /**
- * Get whether or not the stage filmstrip should be displayed.
+ * Get whether or not the stage filmstrip is available (enabled & can be used).
  *
  * @param {Object} state - Redux state.
  * @param {number} minParticipantCount - The min number of participants for the stage filmstrip
  * to be displayed.
  * @returns {boolean}
  */
-export function shouldDisplayStageFilmstrip(state, minParticipantCount = 2) {
+export function isStageFilmstripAvailable(state, minParticipantCount = 0) {
     const { activeParticipants } = state['features/filmstrip'];
     const { remoteScreenShares } = state['features/video-layout'];
-    const currentLayout = getCurrentLayout(state);
     const sharedVideo = isSharingStatus(state['features/shared-video']?.status);
 
     return isStageFilmstripEnabled(state) && remoteScreenShares.length === 0 && !sharedVideo
-        && activeParticipants.length >= minParticipantCount && currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW;
+        && activeParticipants.length >= minParticipantCount;
+}
+
+/**
+ * Get whether or not the stage filmstrip should be displayed.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {boolean}
+ */
+export function shouldDisplayStageFilmstrip(state) {
+    return isStageFilmstripAvailable(state, 2);
 }
 
 /**
@@ -730,4 +742,28 @@ export function isStageFilmstripEnabled(state) {
     const { filmstrip } = state['features/base/config'];
 
     return !(filmstrip?.disableStageFilmstrip ?? true) && interfaceConfig.VERTICAL_FILMSTRIP;
+}
+
+/**
+ * Gets the thumbnail type by filmstrip type.
+ *
+ * @param {string} currentLayout - Current app layout.
+ * @param {boolean} isStageFilmstrip - Whether the filmstrip is stage filmstrip or not.
+ * @returns {string}
+ */
+export function getThumbnailTypeFromLayout(currentLayout, isStageFilmstrip = false) {
+    switch (currentLayout) {
+    case LAYOUTS.TILE_VIEW:
+        return THUMBNAIL_TYPE.TILE;
+    case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
+        return THUMBNAIL_TYPE.VERTICAL;
+    case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW:
+        return THUMBNAIL_TYPE.HORIZONTAL;
+    case LAYOUTS.STAGE_FILMSTRIP_VIEW:
+        if (isStageFilmstrip) {
+            return THUMBNAIL_TYPE.TILE;
+        }
+
+        return THUMBNAIL_TYPE.VERTICAL;
+    }
 }

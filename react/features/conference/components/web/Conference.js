@@ -1,6 +1,5 @@
 // @flow
 
-import clsx from 'clsx';
 import _ from 'lodash';
 import React from 'react';
 
@@ -12,7 +11,7 @@ import { translate } from '../../../base/i18n';
 import { connect as reactReduxConnect } from '../../../base/redux';
 import { setColorAlpha } from '../../../base/util';
 import { Chat } from '../../../chat';
-import { MainFilmstrip, StageFilmstrip, shouldDisplayStageFilmstrip } from '../../../filmstrip';
+import { MainFilmstrip, StageFilmstrip } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
 import { LobbyScreen } from '../../../lobby';
@@ -59,7 +58,8 @@ const FULL_SCREEN_EVENTS = [
 export const LAYOUT_CLASSNAMES = {
     [LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW]: 'horizontal-filmstrip',
     [LAYOUTS.TILE_VIEW]: 'tile-view',
-    [LAYOUTS.VERTICAL_FILMSTRIP_VIEW]: 'vertical-filmstrip'
+    [LAYOUTS.VERTICAL_FILMSTRIP_VIEW]: 'vertical-filmstrip',
+    [LAYOUTS.STAGE_FILMSTRIP_VIEW]: 'stage-filmstrip'
 };
 
 /**
@@ -102,11 +102,6 @@ type Props = AbstractProps & {
      * If prejoin page is visible or not.
      */
     _showPrejoin: boolean,
-
-    /**
-     * Whether or not the stage filmstrip should be displayed.
-     */
-    _showStageFilmstrip: boolean,
 
     dispatch: Function,
     t: Function
@@ -220,8 +215,7 @@ class Conference extends AbstractConference<Props, *> {
             _notificationsVisible,
             _overflowDrawer,
             _showLobby,
-            _showPrejoin,
-            _showStageFilmstrip
+            _showPrejoin
         } = this.props;
 
         return (
@@ -233,7 +227,7 @@ class Conference extends AbstractConference<Props, *> {
                 ref = { this._setBackground }>
                 <Chat />
                 <div
-                    className = { clsx(_layoutClassName, _showStageFilmstrip && 'stage-filmstrip') }
+                    className = { _layoutClassName }
                     id = 'videoconference_page'
                     onMouseMove = { isMobileBrowser() ? undefined : this._onShowToolbar }>
                     <ConferenceInfo />
@@ -242,7 +236,7 @@ class Conference extends AbstractConference<Props, *> {
                         id = 'videospace'
                         onTouchStart = { this._onVidespaceTouchStart }>
                         <LargeVideo />
-                        {_showStageFilmstrip && <StageFilmstrip />}
+                        <StageFilmstrip />
                         <MainFilmstrip />
                     </div>
 
@@ -402,8 +396,7 @@ function _mapStateToProps(state) {
         _overflowDrawer: overflowDrawer,
         _roomName: getConferenceNameForTitle(state),
         _showLobby: getIsLobbyVisible(state),
-        _showPrejoin: isPrejoinPageVisible(state),
-        _showStageFilmstrip: shouldDisplayStageFilmstrip(state)
+        _showPrejoin: isPrejoinPageVisible(state)
     };
 }
 

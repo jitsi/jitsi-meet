@@ -6,7 +6,6 @@ import { MEDIA_TYPE } from '../../../base/media';
 import { getParticipantByIdOrUndefined, PARTICIPANT_ROLE } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { getTrackByMediaTypeAndParticipant, isLocalTrackMuted, isRemoteTrackMuted } from '../../../base/tracks';
-import { getCurrentLayout } from '../../../video-layout';
 import { getIndicatorsTooltipPosition } from '../../functions.web';
 
 import AudioMutedIndicator from './AudioMutedIndicator';
@@ -19,11 +18,6 @@ declare var interfaceConfig: Object;
  * The type of the React {@code Component} props of {@link StatusIndicators}.
  */
 type Props = {
-
-    /**
-     * The current layout of the filmstrip.
-     */
-    _currentLayout: string,
 
     /**
      * Indicates if the audio muted indicator should be visible or not.
@@ -43,7 +37,12 @@ type Props = {
     /**
      * The ID of the participant for which the status bar is rendered.
      */
-    participantID: String
+    participantID: String,
+
+    /**
+     * The type of thumbnail.
+     */
+    thumbnailType: string
 };
 
 /**
@@ -60,12 +59,12 @@ class StatusIndicators extends Component<Props> {
      */
     render() {
         const {
-            _currentLayout,
             _showAudioMutedIndicator,
             _showModeratorIndicator,
-            _showScreenShareIndicator
+            _showScreenShareIndicator,
+            thumbnailType
         } = this.props;
-        const tooltipPosition = getIndicatorsTooltipPosition(_currentLayout);
+        const tooltipPosition = getIndicatorsTooltipPosition(thumbnailType);
 
         return (
             <>
@@ -111,7 +110,6 @@ function _mapStateToProps(state, ownProps) {
     const { disableModeratorIndicator } = state['features/base/config'];
 
     return {
-        _currentLayout: getCurrentLayout(state),
         _showAudioMutedIndicator: isAudioMuted && audio,
         _showModeratorIndicator:
             !disableModeratorIndicator && participant && participant.role === PARTICIPANT_ROLE.MODERATOR && moderator,

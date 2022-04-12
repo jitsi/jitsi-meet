@@ -37,11 +37,6 @@ type Props = {
     allowEditing: boolean,
 
     /**
-     * The current layout of the filmstrip.
-     */
-    currentLayout: string,
-
-    /**
      * Invoked to update the participant's display name.
      */
     dispatch: Dispatch<any>,
@@ -70,7 +65,12 @@ type Props = {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * The type of thumbnail.
+     */
+    thumbnailType: string
 };
 
 /**
@@ -183,11 +183,11 @@ class DisplayName extends Component<Props, State> {
         const {
             _nameToDisplay,
             allowEditing,
-            currentLayout,
             displayNameSuffix,
             classes,
             elementID,
-            t
+            t,
+            thumbnailType
         } = this.props;
 
         if (allowEditing && this.state.isEditing) {
@@ -211,7 +211,7 @@ class DisplayName extends Component<Props, State> {
         return (
             <Tooltip
                 content = { appendSuffix(_nameToDisplay, displayNameSuffix) }
-                position = { getIndicatorsTooltipPosition(currentLayout) }>
+                position = { getIndicatorsTooltipPosition(thumbnailType) }>
                 <span
                     className = { `displayname ${classes.displayName}` }
                     id = { elementID }
