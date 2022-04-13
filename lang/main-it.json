@@ -179,7 +179,7 @@
         "joinInApp": "Entra in riunione usando l'app",
         "launchWebButton": "Avvia sul web",
         "title": "Sto avviando la riunione su {{app}}...",
-        "tryAgainButton": "Prova di nuovo sul desktop"
+        "tryAgainButton": "Prova di nuovo sul desktop",
         "unsupportedBrowser": "Sembra tu stia usando un browser che non supportiamo."
     },
     "defaultLink": "es. {{url}}",
