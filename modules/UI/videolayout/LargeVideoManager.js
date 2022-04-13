@@ -41,6 +41,9 @@ import AudioLevels from '../audio_levels/AudioLevels';
 
 import { VideoContainer, VIDEO_CONTAINER_TYPE } from './VideoContainer';
 
+import { JitsiTrackEvents } from '../../../react/features/base/lib-jitsi-meet';
+import { trackStreamingStatusChanged } from '../../../react/features/base/tracks';
+
 const logger = Logger.getLogger(__filename);
 
 const DESKTOP_CONTAINER_TYPE = 'desktop';
@@ -242,6 +245,17 @@ export default class LargeVideoManager {
                 const tracks = state['features/base/tracks'];
                 const videoTrack = getVideoTrackByParticipant(tracks, participant);
 
+                // Remove track streaming status listener from the old track and add it to the new track,
+                // in order to stop updating track streaming status for the old track and start it for the new track. 
+                if (this.jitsiTrack) {
+                    this.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED, this.handleTrackStreamingStatusChanged);
+                }
+                if (videoTrack && !videoTrack.local) {
+                    this.jitsiTrack = videoTrack?.jitsiTrack;
+                    this.jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED, this.handleTrackStreamingStatusChanged);
+                    APP.store.dispatch(trackStreamingStatusChanged(this.jitsiTrack, this.jitsiTrack.getTrackStreamingStatus?.()));
+                }
+
                 isVideoRenderable = !isVideoMuted && (
                     APP.conference.isLocalId(id)
                     || participant?.isLocalScreenShare
@@ -339,6 +353,10 @@ export default class LargeVideoManager {
             this.scheduleLargeVideoUpdate();
         });
     }
+
+    handleTrackStreamingStatusChanged(jitsiTrack, streamingStatus) {
+        APP.store.dispatch(trackStreamingStatusChanged(jitsiTrack, streamingStatus));
+    };
 
     /**
      * Shows/hides notification about participant's connectivity issues to be

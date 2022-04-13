@@ -56,8 +56,6 @@ import logger from './logger';
 
 import './subscriber';
 
-import { JitsiTrackEvents } from '../lib-jitsi-meet';
-import { trackStreamingStatusChanged } from '../../base/tracks/actions';
 
 declare var APP: Object;
 
@@ -95,15 +93,6 @@ MiddlewareRegistry.register(store => next => action => {
             && !skipCreateFakeScreenShareParticipant
         ) {
             createFakeScreenShareParticipant(store, action);
-        }
-
-        if (!local) {
-            // Keep app state track streamingStatus updated.
-            jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
-                (jitsiTrack, streamingStatus) => store.dispatch(trackStreamingStatusChanged(jitsiTrack, streamingStatus))
-            );
-            // Need to initialize app state track streamingStatus.
-            store.dispatch(trackStreamingStatusChanged(jitsiTrack, jitsiTrack.getTrackStreamingStatus?.()));
         }
 
         return result;
@@ -150,8 +139,6 @@ MiddlewareRegistry.register(store => next => action => {
         }
 
         _removeNoDataFromSourceNotification(store, action.track);
-
-        action.track.jitsiTrack.removeAllListeners(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED);
 
         break;
     }

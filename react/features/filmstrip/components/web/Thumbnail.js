@@ -51,6 +51,9 @@ import ThumbnailAudioIndicator from './ThumbnailAudioIndicator';
 import ThumbnailBottomIndicators from './ThumbnailBottomIndicators';
 import ThumbnailTopIndicators from './ThumbnailTopIndicators';
 
+import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
+import { trackStreamingStatusChanged } from '../../../base/tracks';
+
 declare var interfaceConfig: Object;
 
 /**
@@ -404,6 +407,23 @@ class Thumbnail extends Component<Props, State> {
      */
     componentDidMount() {
         this._onDisplayModeChanged();
+
+        // Listen to track streaming status changed event to keep it updated.
+        const { _videoTrack, dispatch } = this.props;
+        if (_videoTrack && !_videoTrack.local) {
+            _videoTrack.jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED, this.handleTrackStreamingStatusChanged);
+            dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack, _videoTrack.jitsiTrack.getTrackStreamingStatus?.()));
+        }
+    }
+
+    /**
+     * 
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentWillUnmount() {
+        this.props._videoTrack?.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED, this.handleTrackStreamingStatusChanged);
     }
 
     /**
@@ -418,6 +438,10 @@ class Thumbnail extends Component<Props, State> {
             this._onDisplayModeChanged();
         }
     }
+
+    handleTrackStreamingStatusChanged(jitsiTrack, streamingStatus) {
+        APP.store.dispatch(trackStreamingStatusChanged(jitsiTrack, streamingStatus));
+    };
 
     /**
      * Handles display mode changes.
