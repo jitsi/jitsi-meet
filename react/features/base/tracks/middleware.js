@@ -57,6 +57,7 @@ import logger from './logger';
 import './subscriber';
 
 import { JitsiTrackEvents } from '../lib-jitsi-meet';
+import { trackStreamingStatusChanged } from '../../base/tracks/actions';
 
 declare var APP: Object;
 
@@ -96,7 +97,12 @@ MiddlewareRegistry.register(store => next => action => {
             createFakeScreenShareParticipant(store, action);
         }
 
-        !local && jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED, (jitsiTrack, streamingStatus) => store.dispatch(trackStreamingStatusChanged(jitsiTrack, streamingStatus)));
+        if (!local) {
+            jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
+                (jitsiTrack, streamingStatus) => store.dispatch(trackStreamingStatusChanged(jitsiTrack, streamingStatus))
+            );
+            store.dispatch(trackStreamingStatusChanged(jitsiTrack, jitsiTrack.getTrackStreamingStatus?.()));
+        }
 
         return result;
     }
