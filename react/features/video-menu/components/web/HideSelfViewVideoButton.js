@@ -5,7 +5,7 @@ import React, { PureComponent } from 'react';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import { updateSettings } from '../../../base/settings';
-import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../../../notifications';
+import { showNotification } from '../../../notifications';
 import { openSettingsDialog, SETTINGS_TABS } from '../../../settings';
 
 import VideoMenuButton from './VideoMenuButton';
@@ -94,10 +94,9 @@ class HideSelfViewVideoButton extends PureComponent<Props> {
             dispatch(showNotification({
                 titleKey: 'notify.selfViewTitle',
                 customActionNameKey: [ 'settings.title' ],
-                customActionHandler: [ () =>
+                customActionHandler: () =>
                     dispatch(openSettingsDialog(SETTINGS_TABS.PROFILE))
-                ]
-            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+            }));
         }
     }
 }

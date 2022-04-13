@@ -7,7 +7,7 @@ import {
 import { openDialog } from '../base/dialog';
 import { i18next } from '../base/i18n';
 import { updateSettings } from '../base/settings';
-import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../notifications';
+import { showNotification } from '../notifications';
 import { setPrejoinPageVisibility } from '../prejoin/actions';
 import { PREJOIN_SCREEN_STATES } from '../prejoin/constants';
 import { setScreenshareFramerate } from '../screen-share/actions';
@@ -140,10 +140,9 @@ export function submitProfileTab(newState: Object): Function {
                 dispatch(showNotification({
                     titleKey: 'notify.selfViewTitle',
                     customActionNameKey: [ 'settings.title' ],
-                    customActionHandler: [ () =>
+                    customActionHandler: () =>
                         dispatch(openSettingsDialog(SETTINGS_TABS.PROFILE))
-                    ]
-                }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+                }));
             }
         }
     };

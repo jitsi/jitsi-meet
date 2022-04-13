@@ -41,10 +41,9 @@ MiddlewareRegistry.register(store => next => action => {
             dispatch(showNotification({
                 titleKey: 'notify.selfViewTitle',
                 customActionNameKey: [ 'settings.title' ],
-                customActionHandler: [ () =>
+                customActionHandler: () =>
                     dispatch(openSettingsDialog(SETTINGS_TABS.PROFILE))
-                ]
-            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+            }, 5000));
         }
         break;
     }
