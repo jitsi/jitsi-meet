@@ -688,7 +688,7 @@
         "suboptimalExperienceTitle": "Avviso sul browser",
         "unmute": "Accendi microfono",
         "videoMutedRemotelyDescription": "Puoi riaccenderla in qualsiasi momento.",
-        "videoMutedRemotelyTitle": "La videocamera ti è stata spenta da {{participantDisplayName}}!"
+        "videoMutedRemotelyTitle": "La videocamera ti è stata spenta da {{participantDisplayName}}!",
         "videoUnmuteBlockedDescription": "Riattivazione video e condivisione schermo sono state momentaneamente bloccate per limiti di sistema.",
         "videoUnmuteBlockedTitle": "Riattivazione video e condivisione schermo bloccate!",
         "viewLobby": "Vedi sala d'attesa",
@@ -984,7 +984,7 @@
         "search": "Cerca",
         "seconds": "{{count}}s",
         "speakerStats": "Statistiche",
-        "speakerTime": "Tempo"
+        "speakerTime": "Tempo",
         "surprised": "Sorpreso"
     },
     "startupoverlay": {
