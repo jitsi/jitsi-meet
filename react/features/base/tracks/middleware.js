@@ -56,7 +56,6 @@ import logger from './logger';
 
 import './subscriber';
 
-
 declare var APP: Object;
 
 /**
@@ -139,7 +138,6 @@ MiddlewareRegistry.register(store => next => action => {
         }
 
         _removeNoDataFromSourceNotification(store, action.track);
-
         break;
     }
     case SET_AUDIO_MUTED:
