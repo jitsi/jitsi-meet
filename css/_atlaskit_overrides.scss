@@ -46,16 +46,10 @@
 }
 
 .audio-preview > div:nth-child(2),
-.video-preview > div:nth-child(2),
-.reactions-menu-popup > div:nth-child(2) {
+.video-preview > div:nth-child(2) {
     margin-bottom: 4px;
     outline: none;
     padding: 0;
-}
-
-.reactions-menu-popup > div:nth-child(2) {
-    margin-bottom: 6px;
-    box-shadow: none;
 }
 
 /**
