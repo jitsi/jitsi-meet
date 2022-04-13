@@ -98,9 +98,11 @@ MiddlewareRegistry.register(store => next => action => {
         }
 
         if (!local) {
+            // Keep app state track streamingStatus updated.
             jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
                 (jitsiTrack, streamingStatus) => store.dispatch(trackStreamingStatusChanged(jitsiTrack, streamingStatus))
             );
+            // Need to initialize app state track streamingStatus.
             store.dispatch(trackStreamingStatusChanged(jitsiTrack, jitsiTrack.getTrackStreamingStatus?.()));
         }
 
