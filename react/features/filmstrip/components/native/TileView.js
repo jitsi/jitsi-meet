@@ -13,7 +13,6 @@ import PreCallMessage
     from '../../../base/react/components/native/PreCallMessage';
 import { connect } from '../../../base/redux';
 import { setVisibleRemoteParticipants } from '../../actions.web';
-import { getDisableSelfView } from '../../functions.any';
 
 import Thumbnail from './Thumbnail';
 import styles from './styles';
@@ -32,11 +31,6 @@ type Props = {
      * The number of columns.
      */
     _columns: number,
-
-    /**
-     * Whether or not to hide the self view.
-     */
-    _disableSelfView: boolean,
 
     /**
      * Application's viewport height.
@@ -230,14 +224,10 @@ class TileView extends PureComponent<Props> {
      * @returns {Participant[]}
      */
     _getSortedParticipants() {
-        const { _localParticipant, _remoteParticipants, _disableSelfView } = this.props;
+        const { _localParticipant, _remoteParticipants } = this.props;
 
         if (!_localParticipant) {
             return EMPTY_ARRAY;
-        }
-
-        if (_disableSelfView) {
-            return _remoteParticipants;
         }
 
         return [ _localParticipant?.id, ..._remoteParticipants ];
@@ -276,14 +266,12 @@ class TileView extends PureComponent<Props> {
 function _mapStateToProps(state) {
     const responsiveUi = state['features/base/responsive-ui'];
     const { remoteParticipants, tileViewDimensions } = state['features/filmstrip'];
-    const disableSelfView = getDisableSelfView(state);
     const { height } = tileViewDimensions.thumbnailSize;
     const { columns } = tileViewDimensions;
 
     return {
         _aspectRatio: responsiveUi.aspectRatio,
         _columns: columns,
-        _disableSelfView: disableSelfView,
         _height: responsiveUi.clientHeight,
         _localParticipant: getLocalParticipant(state),
         _participantCount: getParticipantCountWithFake(state),

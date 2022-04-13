@@ -14,6 +14,7 @@ import { connect } from '../../../base/redux';
 import { setParticipantContextMenuOpen } from '../../../base/responsive-ui/actions';
 import { getLocalVideoTrack } from '../../../base/tracks';
 import ConnectionIndicatorContent from '../../../connection-indicator/components/web/ConnectionIndicatorContent';
+import { isJaneWaitingAreaPageVisible } from '../../../jane-waiting-area';
 import { hideToolboxOnTileView } from '../../../toolbox/actions';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
 import { renderConnectionStatus } from '../../actions.web';
@@ -66,6 +67,11 @@ type Props = {
      * Shows/hides the local video flip button.
      */
     _showLocalVideoFlipButton: boolean,
+
+    /**
+     * Shows/hides the hide self view button.
+     */
+    _showHideSelfViewButton: boolean,
 
     /**
      * Invoked to obtain translated strings.
@@ -147,6 +153,7 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
             _showConnectionInfo,
             _overflowDrawer,
             _showLocalVideoFlipButton,
+            _showHideSelfViewButton,
             t
         } = this.props;
 
@@ -155,7 +162,7 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
             : (
                 <VideoMenu id = 'localVideoMenu'>
                     <FlipLocalVideoButton />
-                    <HideSelfViewVideoButton />
+                    { _showHideSelfViewButton && <HideSelfViewVideoButton /> }
                     { isMobileBrowser()
                             && <ConnectionStatusButton participantId = { _localParticipantId } />
                     }
@@ -254,7 +261,8 @@ function _mapStateToProps(state) {
         _showLocalVideoFlipButton: !disableLocalVideoFlip && videoTrack?.videoType !== 'desktop',
         _overflowDrawer: overflowDrawer,
         _localParticipantId: localParticipant.id,
-        _showConnectionInfo: showConnectionInfo
+        _showConnectionInfo: showConnectionInfo,
+        _showHideSelfViewButton: !isJaneWaitingAreaPageVisible(state)
     };
 }
 
