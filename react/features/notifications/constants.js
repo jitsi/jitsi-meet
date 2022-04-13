@@ -6,6 +6,16 @@
 export const NOTIFICATION_TIMEOUT = 2500;
 
 /**
+ * Notification timeout type.
+ */
+export const NOTIFICATION_TIMEOUT_TYPE = {
+    SHORT: 'short',
+    MEDIUM: 'medium',
+    LONG: 'long',
+    STICKY: 'sticky'
+};
+
+/**
  * The set of possible notification types.
  *
  * @enum {string}

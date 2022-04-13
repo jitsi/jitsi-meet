@@ -20,6 +20,7 @@ import { renderConnectionStatus } from '../../actions.web';
 
 import ConnectionStatusButton from './ConnectionStatusButton';
 import FlipLocalVideoButton from './FlipLocalVideoButton';
+import HideSelfViewVideoButton from './HideSelfViewVideoButton';
 import VideoMenu from './VideoMenu';
 
 
@@ -154,6 +155,7 @@ class LocalVideoMenuTriggerButton extends Component<Props> {
             : (
                 <VideoMenu id = 'localVideoMenu'>
                     <FlipLocalVideoButton />
+                    <HideSelfViewVideoButton />
                     { isMobileBrowser()
                             && <ConnectionStatusButton participantId = { _localParticipantId } />
                     }

@@ -1,5 +1,7 @@
 // @flow
 
+import { getParticipantCount } from '../base/participants';
+
 import { setRemoteParticipants } from './actions';
 
 /**
@@ -79,4 +81,17 @@ export function updateRemoteParticipantsOnLeave(store: Object, participantId: ?s
 
     reorderedParticipants.delete(participantId)
         && store.dispatch(setRemoteParticipants(Array.from(reorderedParticipants)));
+}
+
+/**
+ * Gets the disable self view flag.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {boolean}
+ */
+export function getDisableSelfView(state: Object) {
+    const { disableSelfView } = state['features/base/settings'];
+    const participantsCount = getParticipantCount(state);
+
+    return participantsCount === 1 ? false : disableSelfView;
 }

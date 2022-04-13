@@ -1,6 +1,7 @@
 // @flow
 
 import Button from '@atlaskit/button/standard-button';
+import Checkbox from '@atlaskit/checkbox';
 import { FieldTextStateless } from '@atlaskit/field-text';
 import React from 'react';
 
@@ -31,6 +32,11 @@ export type Props = {
      * The name of the currently (server-side) authenticated user.
      */
     authLogin: string,
+
+    /**
+     * Whether or not to hide the self view.
+     */
+    disableSelfView: boolean,
 
     /**
      * The display name to display for the local participant.
@@ -77,6 +83,7 @@ class ProfileTab extends AbstractDialogTab<Props> {
         this._onAuthToggle = this._onAuthToggle.bind(this);
         this._onDisplayNameChange = this._onDisplayNameChange.bind(this);
         this._onEmailChange = this._onEmailChange.bind(this);
+        this._onChange = this._onChange.bind(this);
     }
 
     _onDisplayNameChange: (Object) => void;
@@ -105,6 +112,19 @@ class ProfileTab extends AbstractDialogTab<Props> {
         super._onChange({ email: value });
     }
 
+    _onChange: (Object) => void;
+
+    /**
+     * Changes the disable self view state.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onChange({ target }) {
+        super._onChange({ disableSelfView: target.checked });
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -115,6 +135,7 @@ class ProfileTab extends AbstractDialogTab<Props> {
         const {
             authEnabled,
             displayName,
+            disableSelfView,
             email,
             readOnlyName,
             t
@@ -148,6 +169,12 @@ class ProfileTab extends AbstractDialogTab<Props> {
                             value = { email } />
                     </div>
                 </div>
+                <br />
+                <Checkbox
+                    isChecked = { disableSelfView }
+                    label = { t('videothumbnail.hideSelfView') }
+                    name = 'disableSelfView'
+                    onChange = { this._onChange } />
                 { authEnabled && this._renderAuth() }
             </div>
         );
