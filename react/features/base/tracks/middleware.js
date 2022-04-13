@@ -96,7 +96,7 @@ MiddlewareRegistry.register(store => next => action => {
             createFakeScreenShareParticipant(store, action);
         }
 
-        !local && jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED, (streamingStatus, jitsiTrack) => store.dispatch(trackStreamingStatusChanged(jitsiTrack, streamingStatus)));
+        !local && jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED, (jitsiTrack, streamingStatus) => store.dispatch(trackStreamingStatusChanged(jitsiTrack, streamingStatus)));
 
         return result;
     }
