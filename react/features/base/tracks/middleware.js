@@ -27,7 +27,8 @@ import {
     TOGGLE_SCREENSHARING,
     TRACK_NO_DATA_FROM_SOURCE,
     TRACK_REMOVED,
-    TRACK_UPDATED
+    TRACK_UPDATED,
+    TRACK_AUDIO_LEVEL_CHANGED
 } from './actionTypes';
 import {
     createLocalTracksA,
@@ -58,6 +59,14 @@ declare var APP: Object;
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
+    case TRACK_AUDIO_LEVEL_CHANGED:
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyAudioLevelChanged({
+                deviceId: action.track.jitsiTrack.deviceId,
+                audioLevel: action.track.audioLevel
+            });
+        }
+        break;
     case TRACK_ADDED: {
         // The devices list needs to be refreshed when no initial video permissions
         // were granted and a local video track is added by umuting the video.

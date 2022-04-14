@@ -82,6 +82,7 @@ const commands = {
  */
 const events = {
     'avatar-changed': 'avatarChanged',
+    'audio-level-changed': 'audioLevelChanged',
     'audio-availability-changed': 'audioAvailabilityChanged',
     'audio-mute-status-changed': 'audioMuteStatusChanged',
     'browser-support': 'browserSupport',
@@ -1229,7 +1230,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
 
     /**
      * Returns conference speaker stats.
-     * 
+     *
      * @returns {Promise<Object>} Resolves with speaker stats and rejects on failure
      */
     getSpeakerStats() {

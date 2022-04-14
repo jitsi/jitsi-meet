@@ -28,7 +28,8 @@ import {
     TRACK_STOPPED,
     TRACK_UPDATED,
     TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT,
-    TRACK_WILL_CREATE
+    TRACK_WILL_CREATE,
+    TRACK_AUDIO_LEVEL_CHANGED,
 } from './actionTypes';
 import {
     createLocalTracksF,
@@ -376,6 +377,9 @@ function replaceStoredTracks(oldTrack, newTrack) {
 export function trackAdded(track) {
     return async (dispatch, getState) => {
         track.on(
+            JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED,
+            audioLevel => dispatch(trackAudioLevelChanged(track, audioLevel)));
+        track.on(
             JitsiTrackEvents.TRACK_MUTE_CHANGED,
             () => dispatch(trackMutedChanged(track)));
         track.on(
@@ -472,6 +476,25 @@ export function trackMutedChanged(track) {
 }
 
 /**
+ * Create an action for when a track's volume state has been changed.
+ *
+ * @param {(JitsiLocalTrack|JitsiRemoteTrack)} track - JitsiTrack instance.
+ * @returns {{
+ *     type: TRACK_AUDIO_LEVEL_CHANGED,
+ *     track: Track
+ * }}
+ */
+export function trackAudioLevelChanged(track, audioLevel) {
+    return {
+        type: TRACK_AUDIO_LEVEL_CHANGED,
+        track: {
+            jitsiTrack: track,
+            audioLevel
+        }
+    };
+}
+
+/**
  * Create an action for when a track's no data from source notification information changes.
  *
  * @param {JitsiLocalTrack} track - JitsiTrack instance.
@@ -505,6 +528,7 @@ export function trackRemoved(track) {
     track.removeAllListeners(JitsiTrackEvents.TRACK_MUTE_CHANGED);
     track.removeAllListeners(JitsiTrackEvents.TRACK_VIDEOTYPE_CHANGED);
     track.removeAllListeners(JitsiTrackEvents.NO_DATA_FROM_SOURCE);
+    track.removeAllListeners(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED);
 
     return {
         type: TRACK_REMOVED,

@@ -545,7 +545,7 @@ function initCommands() {
         'play-test-sound': (deviceId) => {
             const audio = new Audio();
             audio.src = TEST_SOUND_PATH;
-            
+
             audio.setSinkId(deviceId)
                 .then(() => audio.play())
                 .catch( err => logger.error('Could not set sink id', err));
@@ -686,7 +686,7 @@ function initCommands() {
         case 'get-speaker-stats':
             console.log("API - get-speaker-stats");
             console.log("API - speaker stats", APP.conference.getSpeakerStats());
-            
+
             const stats = createSpeakerStats(APP.conference.getSpeakerStats());
             console.log("API - get-speaker-stats", stats);
 
@@ -1264,6 +1264,20 @@ class API {
         this._sendEvent({
             name: 'audio-mute-status-changed',
             muted
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that audio input device level has changed
+     *
+     * @param {Object} data - Track meta and audio level
+     * @returns {void}
+     */
+    notifyAudioLevelChanged(data: Object) {
+        console.log(data);
+        this._sendEvent({
+            name: 'audio-level-changed',
+            data
         });
     }
 
