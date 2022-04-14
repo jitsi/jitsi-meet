@@ -16,7 +16,37 @@ export const THRESHOLDS = [
     },
     {
         width: 370,
-        order: [ 'microphone', 'camera', 'chat', 'participants' ]
+        order: [ 'microphone', 'camera', 'chat', 'participants-pane' ]
+    },
+    {
+        width: 225,
+        order: [ 'microphone', 'camera', 'chat' ]
+    },
+    {
+        width: 200,
+        order: [ 'microphone', 'camera' ]
+    }
+];
+
+/**
+ * Thresholds for displaying toolbox buttons on mobile web browsers.
+ */
+export const THRESHOLDS_MOBILE_WEB = [
+    {
+        width: 520,
+        order: [ 'microphone', 'camera', 'chat', 'toggle-camera', 'raisehand', 'participants-pane', 'tileview' ]
+    },
+    {
+        width: 470,
+        order: [ 'microphone', 'camera', 'chat', 'toggle-camera', 'raisehand', 'participants-pane' ]
+    },
+    {
+        width: 420,
+        order: [ 'microphone', 'camera', 'chat', 'toggle-camera', 'participants-pane' ]
+    },
+    {
+        width: 370,
+        order: [ 'microphone', 'camera', 'chat', 'toggle-camera' ]
     },
     {
         width: 225,

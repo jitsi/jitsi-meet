@@ -1,8 +1,7 @@
 // @flow
 
-import _ from 'lodash';
-
 import { withStyles } from '@material-ui/core/styles';
+import _ from 'lodash';
 import React, { Component } from 'react';
 import { batch } from 'react-redux';
 
@@ -82,7 +81,12 @@ import {
     setToolbarHovered,
     showToolbox
 } from '../../actions';
-import { THRESHOLDS, NOT_APPLICABLE, NOTIFY_CLICK_MODE } from '../../constants';
+import {
+    THRESHOLDS,
+    THRESHOLDS_MOBILE_WEB,
+    NOT_APPLICABLE,
+    NOTIFY_CLICK_MODE
+} from '../../constants';
 import { isDesktopShareButtonDisabled, isToolboxVisible } from '../../functions';
 import DownloadButton from '../DownloadButton';
 import HangupButton from '../HangupButton';
@@ -904,6 +908,7 @@ class Toolbox extends Component<Props> {
     _getVisibleButtons() {
         const {
             _clientWidth,
+            _isMobile,
             _toolbarButtons
         } = this.props;
 
@@ -912,12 +917,11 @@ class Toolbox extends Component<Props> {
 
         this._setButtonsNotifyClickMode(buttons);
         const isHangupVisible = isToolbarButtonEnabled('hangup', _toolbarButtons);
-        const { order } = THRESHOLDS.find(({ width }) => _clientWidth > width)
-            || THRESHOLDS[THRESHOLDS.length - 1];
+        const thresholds = _isMobile ? THRESHOLDS_MOBILE_WEB : THRESHOLDS;
+        const { order } = thresholds.find(({ width }) => _clientWidth > width)
+            || thresholds[thresholds.length - 1];
         let sliceIndex = order.length + 2;
-
         const keys = Object.keys(buttons);
-
         const filtered = [
             ...order.map(key => _.find(buttons, b => b?.key === key)),
             ...Object.values(buttons).filter((button, index) => !order.includes(keys[index]))
