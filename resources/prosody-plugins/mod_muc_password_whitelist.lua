@@ -8,6 +8,10 @@ local MUC_NS = "http://jabber.org/protocol/muc";
 module:hook("muc-occupant-pre-join", function (event)
     local room, stanza = event.room, event.stanza;
 
+    if event.occupant.role == 'visitor' then
+        return;
+    end
+
     local user, domain, res = jid_split(event.stanza.attr.from);
 
     --no user object means no way to check whitelist

@@ -133,6 +133,10 @@ module:hook("muc-occupant-joined", function(event)
         return
     end
 
+    if event.occupant.role == 'visitor' then
+        return;
+    end
+
     local data = {
         type = "old-polls",
         polls = {},

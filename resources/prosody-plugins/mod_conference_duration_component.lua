@@ -23,6 +23,10 @@ function occupant_joined(event)
     local room = event.room;
     local occupant = event.occupant;
 
+    if event.occupant.role == 'visitor' then
+        return;
+    end
+
     local participant_count = it.count(room:each_occupant());
 
     if participant_count > 1 then

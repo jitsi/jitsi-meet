@@ -263,6 +263,10 @@ function occupant_joined(event)
         return;
     end
 
+    if event.occupant.role == 'visitor' then
+        return;
+    end
+
     if room.av_moderation then
         for _,mediaType in pairs({'audio', 'video'}) do
             if room.av_moderation[mediaType] then

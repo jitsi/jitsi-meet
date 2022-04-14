@@ -172,6 +172,10 @@ function occupant_joined(event)
         return;
     end
 
+    if event.occupant.role == 'visitor' then
+        return;
+    end
+
     local occupant = event.occupant;
 
     local nick = jid_resource(occupant.nick);

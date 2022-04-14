@@ -333,6 +333,10 @@ end
 function on_occupant_joined(event)
     local room = event.room;
 
+    if event.occupant.role == 'visitor' then
+        return;
+    end
+
     if is_healthcheck_room(room.jid) then
         return;
     end
