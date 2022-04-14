@@ -13,6 +13,7 @@ import {
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT,
     RAISE_HAND_UPDATED,
+    SCREENSHARE_PARTICIPANT_NAME_CHANGED,
     SET_LOADABLE_AVATAR_URL
 } from './actionTypes';
 import { LOCAL_PARTICIPANT_DEFAULT_ID, PARTICIPANT_ROLE } from './constants';
@@ -209,6 +210,23 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
             ...state
         };
     }
+    case SCREENSHARE_PARTICIPANT_NAME_CHANGED: {
+        const { id, name } = action;
+
+        if (state.sortedRemoteFakeScreenShareParticipants.has(id)) {
+            state.sortedRemoteFakeScreenShareParticipants.delete(id);
+
+            const sortedRemoteFakeScreenShareParticipants = [ ...state.sortedRemoteFakeScreenShareParticipants ];
+
+            sortedRemoteFakeScreenShareParticipants.push([ id, name ]);
+            sortedRemoteFakeScreenShareParticipants.sort((a, b) => a[1].localeCompare(b[1]));
+
+            state.sortedRemoteFakeScreenShareParticipants = new Map(sortedRemoteFakeScreenShareParticipants);
+        }
+
+        return { ...state };
+    }
+
     case PARTICIPANT_JOINED: {
         const participant = _participantJoined(action);
         const { id, isFakeParticipant, isFakeScreenShareParticipant, isLocalScreenShare, name, pinned } = participant;

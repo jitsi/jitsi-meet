@@ -13,6 +13,13 @@ StateListenerRegistry.register(
     /* listener */ (remoteScreenShares, store) => updateRemoteParticipants(store));
 
 /**
+ * Listens for changes to the remote screenshare participants to recompute the reordered list of the remote endpoints.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => state['features/base/participants'].sortedRemoteFakeScreenShareParticipants,
+    /* listener */ (sortedRemoteFakeScreenShareParticipants, store) => updateRemoteParticipants(store));
+
+/**
  * Listens for changes to the dominant speaker to recompute the reordered list of the remote endpoints.
  */
 StateListenerRegistry.register(

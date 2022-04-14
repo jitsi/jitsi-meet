@@ -54,7 +54,11 @@ import {
     sendLocalParticipant,
     nonParticipantMessageReceived
 } from './react/features/base/conference';
-import { getReplaceParticipant, getMultipleVideoSupportFeatureFlag } from './react/features/base/config/functions';
+import {
+    getReplaceParticipant,
+    getMultipleVideoSupportFeatureFlag,
+    getSourceNameSignalingFeatureFlag
+} from './react/features/base/config/functions';
 import {
     checkAndNotifyForNewDevice,
     getAvailableDevices,
@@ -93,6 +97,7 @@ import {
     dominantSpeakerChanged,
     getLocalParticipant,
     getNormalizedDisplayName,
+    getScreenshareParticipantByOwnerId,
     localParticipantAudioLevelChanged,
     localParticipantConnectionStatusChanged,
     localParticipantRoleChanged,
@@ -102,6 +107,7 @@ import {
     participantPresenceChanged,
     participantRoleChanged,
     participantUpdated,
+    screenshareParticipantDisplayNameChanged,
     updateRemoteParticipantFeatures
 } from './react/features/base/participants';
 import {
@@ -2258,6 +2264,17 @@ export default {
                     id,
                     name: formattedDisplayName
                 }));
+
+                if (getSourceNameSignalingFeatureFlag(state)) {
+                    const screenshareParticipantId = getScreenshareParticipantByOwnerId(state, id)?.id;
+
+                    if (screenshareParticipantId) {
+                        APP.store.dispatch(
+                            screenshareParticipantDisplayNameChanged(screenshareParticipantId, formattedDisplayName)
+                        );
+                    }
+                }
+
                 APP.API.notifyDisplayNameChanged(id, {
                     displayName: formattedDisplayName,
                     formattedDisplayName:
