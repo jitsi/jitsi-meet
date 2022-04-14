@@ -1,5 +1,7 @@
 // @flow
 
+import _ from 'lodash';
+
 import { withStyles } from '@material-ui/core/styles';
 import React, { Component } from 'react';
 import { batch } from 'react-redux';
@@ -917,7 +919,7 @@ class Toolbox extends Component<Props> {
         const keys = Object.keys(buttons);
 
         const filtered = [
-            ...order.map(key => buttons[key]),
+            ...order.map(key => _.find(buttons, b => b?.key === key)),
             ...Object.values(buttons).filter((button, index) => !order.includes(keys[index]))
         ].filter(Boolean).filter(({ key, alias = NOT_APPLICABLE }) =>
             isToolbarButtonEnabled(key, _toolbarButtons) || isToolbarButtonEnabled(alias, _toolbarButtons));
