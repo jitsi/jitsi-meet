@@ -117,7 +117,8 @@ import {
     isUserInteractionRequiredForUnmute,
     replaceLocalTrack,
     trackAdded,
-    trackRemoved
+    trackRemoved,
+    trackAudioLevelChanged,
 } from './react/features/base/tracks';
 import { downloadJSON } from './react/features/base/util/downloadJSON';
 import { showDesktopPicker } from './react/features/desktop-picker';
@@ -145,6 +146,7 @@ import { getActiveSession } from './react/features/recording/functions';
 import { disableReceiver, stopReceiver } from './react/features/remote-control';
 import { setScreenAudioShareState, isScreenAudioShared } from './react/features/screen-share/';
 import { toggleScreenshotCaptureSummary } from './react/features/screenshot-capture';
+import { createLocalAudioTracks } from './react/features/settings/functions';
 import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
 import { createPresenterEffect } from './react/features/stream-effects/presenter';
 import { createRnnoiseProcessor } from './react/features/stream-effects/rnnoise';
@@ -184,6 +186,14 @@ let _onConnectionPromiseCreated;
  * @private
  */
 let _prevMutePresenterVideo = Promise.resolve();
+
+/**
+ * This is used to cache audio input devices.
+ *
+ * @type {[]}
+ * @private
+ */
+let _cachedAudioInputDevices = [];
 
 /*
  * Logic to open a desktop picker put on the window global for
@@ -2612,6 +2622,24 @@ export default {
 
             return dispatch(getAvailableDevices())
                 .then(devices => {
+                    const newAudioInputDevices = devices.filter(nDevice => nDevice.kind === "audioinput");
+                    const onlyNewDevices = newAudioInputDevices.filter(
+                        (nDevice) =>
+                            !_cachedAudioInputDevices.find(
+                                (device) => device.deviceId === nDevice.deviceId
+                            )
+                    );
+                    createLocalAudioTracks(onlyNewDevices).then(audioTracks => {
+                        return audioTracks.map(({jitsiTrack}) => {
+                            if (jitsiTrack) {
+                                jitsiTrack.on(
+                                    JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED,
+                                    audioLevel => dispatch(trackAudioLevelChanged(jitsiTrack, audioLevel))
+                                );
+                            }
+                        });
+                    }).catch();
+                    _cachedAudioInputDevices = [...newAudioInputDevices];
                     // Ugly way to synchronize real device IDs with local
                     // storage and settings menu. This is a workaround until
                     // getConstraints() method will be implemented in browsers.

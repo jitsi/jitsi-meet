@@ -1274,7 +1274,6 @@ class API {
      * @returns {void}
      */
     notifyAudioLevelChanged(data: Object) {
-        console.log(data);
         this._sendEvent({
             name: 'audio-level-changed',
             data

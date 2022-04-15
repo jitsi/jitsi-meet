@@ -377,9 +377,6 @@ function replaceStoredTracks(oldTrack, newTrack) {
 export function trackAdded(track) {
     return async (dispatch, getState) => {
         track.on(
-            JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED,
-            audioLevel => dispatch(trackAudioLevelChanged(track, audioLevel)));
-        track.on(
             JitsiTrackEvents.TRACK_MUTE_CHANGED,
             () => dispatch(trackMutedChanged(track)));
         track.on(
@@ -528,7 +525,6 @@ export function trackRemoved(track) {
     track.removeAllListeners(JitsiTrackEvents.TRACK_MUTE_CHANGED);
     track.removeAllListeners(JitsiTrackEvents.TRACK_VIDEOTYPE_CHANGED);
     track.removeAllListeners(JitsiTrackEvents.NO_DATA_FROM_SOURCE);
-    track.removeAllListeners(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED);
 
     return {
         type: TRACK_REMOVED,
