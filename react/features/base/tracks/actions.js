@@ -409,7 +409,7 @@ export function trackAdded(track) {
 
         // participantId
         const local = track.isLocal();
-        const mediaType = getMultipleVideoSupportFeatureFlag(getState()) && track.getVideoType() === VIDEO_TYPE.DESKTOP
+        const mediaType = getSourceNameSignalingFeatureFlag(getState()) && track.getVideoType() === VIDEO_TYPE.DESKTOP
             ? MEDIA_TYPE.SCREENSHARE
             : track.getType();
         let isReceivingData, noDataFromSourceNotificationInfo, participantId;
