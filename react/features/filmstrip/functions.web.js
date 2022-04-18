@@ -713,5 +713,5 @@ export function shouldDisplayStageFilmstrip(state, minParticipantCount = 2) {
 export function isStageFilmstripEnabled(state) {
     const { filmstrip } = state['features/base/config'];
 
-    return !filmstrip?.disableStageFilmstrip && interfaceConfig.VERTICAL_FILMSTRIP;
+    return !(filmstrip?.disableStageFilmstrip ?? true) && interfaceConfig.VERTICAL_FILMSTRIP;
 }
