@@ -206,7 +206,7 @@ export function getFilmstripDimensions({
 }
 
 /**
- * Returns true if the local thumbnail should be displayed separately and flase otherwise.
+ * Returns true if the local thumbnail should be displayed separately and false otherwise.
  *
  * @returns {boolean} - True if the local thumbnail should be displayed separately and flase otherwise.
  */
