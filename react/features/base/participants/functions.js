@@ -3,6 +3,7 @@
 import { getGravatarURL } from '@jitsi/js-utils/avatar';
 import type { Store } from 'redux';
 
+import { i18next } from '../../base/i18n';
 import { isStageFilmstripEnabled } from '../../filmstrip/functions';
 import { GRAVATAR_BASE_URL, isCORSAvatarURL } from '../avatar';
 import { getSourceNameSignalingFeatureFlag } from '../config';
@@ -299,8 +300,9 @@ export function getParticipantDisplayName(stateful: Object | Function, id: strin
  */
 export function getScreenshareParticipantDisplayName(stateful: Object | Function, id: string) {
     const owner = getParticipantById(stateful, getFakeScreenShareParticipantOwnerId(id));
+    const name = owner.name;
 
-    return `${owner.name}'s screen`;
+    return i18next.t('screenshareDisplayName', { name });
 }
 
 /**
