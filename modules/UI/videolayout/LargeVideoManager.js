@@ -249,6 +249,7 @@ export default class LargeVideoManager {
                 // in order to stop updating track streaming status for the old track and start it for the new track. 
                 if (this.jitsiTrack) {
                     this.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED, this.handleTrackStreamingStatusChanged);
+                    APP.store.dispatch(trackStreamingStatusChanged(this.jitsiTrack, this.jitsiTrack.getTrackStreamingStatus?.()));
                 }
                 if (videoTrack && !videoTrack.local) {
                     this.jitsiTrack = videoTrack?.jitsiTrack;

@@ -423,7 +423,9 @@ class Thumbnail extends Component<Props, State> {
      * @returns {void}
      */
     componentWillUnmount() {
-        this.props._videoTrack?.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED, this.handleTrackStreamingStatusChanged);
+        const { _videoTrack, dispatch }  = this.props;
+        _videoTrack?.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED, this.handleTrackStreamingStatusChanged);
+        dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack, _videoTrack.jitsiTrack.getTrackStreamingStatus?.()));
     }
 
     /**
