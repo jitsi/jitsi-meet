@@ -426,18 +426,11 @@ export function getVideoTrackByParticipant(
         return;
     }
 
-    let participantId;
-    let mediaType;
-
     if (participant?.isFakeScreenShareParticipant) {
-        participantId = getFakeScreenShareParticipantOwnerId(participant.id);
-        mediaType = MEDIA_TYPE.SCREENSHARE;
-    } else {
-        participantId = participant.id;
-        mediaType = MEDIA_TYPE.VIDEO;
+        return getFakeScreenshareParticipantTrack(tracks, participant.id);
     }
 
-    return getTrackByMediaTypeAndParticipant(tracks, mediaType, participantId);
+    return getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participant.id);
 }
 
 /**
@@ -467,7 +460,11 @@ export function getTrackByMediaTypeAndParticipant(
 export function getFakeScreenshareParticipantTrack(tracks, fakeScreenshareParticipantId) {
     const participantId = getFakeScreenShareParticipantOwnerId(fakeScreenshareParticipantId);
 
-    return getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.SCREENSHARE, participantId);
+    return tracks.find(
+        t => Boolean(t.jitsiTrack)
+        && t.participantId === participantId
+        && (t.mediaType === MEDIA_TYPE.SCREENSHARE || t.videoType === VIDEO_TYPE.DESKTOP)
+    );
 }
 
 /**
