@@ -33,6 +33,7 @@ function Util.new(module)
     self.appId = module:get_option_string("app_id");
     self.appSecret = module:get_option_string("app_secret");
     self.asapKeyServer = module:get_option_string("asap_key_server");
+    self.signatureAlgorithm = module:get_option_string("signature_algorithm");
     self.allowEmptyToken = module:get_option_boolean("allow_empty_token");
 
     self.cache = require"util.cache".new(cacheSize);
@@ -83,6 +84,15 @@ function Util.new(module)
     if self.appSecret == nil and self.asapKeyServer == nil then
         module:log("error", "'app_secret' or 'asap_key_server' must be specified");
         return nil;
+    end
+
+    -- Set defaults for signature algorithm
+    if self.signatureAlgorithm == nil then
+        if self.asapKeyServer ~= nil then
+            self.signatureAlgorithm = "RS256"
+        elseif self.appSecret ~= nil then
+            self.signatureAlgorithm = "HS256"
+        end
     end
 
     --array of accepted issuers: by default only includes our appId
@@ -143,94 +153,6 @@ function Util:get_public_key(keyId)
     end
 end
 
---- Verifies issuer part of token
--- @param 'issClaim' claim from the token to verify
--- @param 'acceptedIssuers' list of issuers to check
--- @return nil and error string or true for accepted claim
-function Util:verify_issuer(issClaim, acceptedIssuers)
-    if not acceptedIssuers then
-        acceptedIssuers = self.acceptedIssuers
-    end
-    module:log("debug", "verify_issuer claim: %s against accepted: %s", issClaim, acceptedIssuers);
-    for i, iss in ipairs(acceptedIssuers) do
-        if iss == '*' then
-            -- "*" indicates to accept any issuer in the claims so return success
-            return true;
-        end
-        if issClaim == iss then
-            -- claim matches an accepted issuer so return success
-            return true;
-        end
-    end
-    -- if issClaim not found in acceptedIssuers, fail claim
-    return nil, "Invalid issuer ('iss' claim)";
-end
-
---- Verifies audience part of token
--- @param 'audClaim' claim from the token to verify
--- @return nil and error string or true for accepted claim
-function Util:verify_audience(audClaim)
-    module:log("debug", "verify_audience claim: %s against accepted: %s", audClaim, self.acceptedAudiences);
-    for i, aud in ipairs(self.acceptedAudiences) do
-        if aud == '*' then
-            -- "*" indicates to accept any audience in the claims so return success
-            return true;
-        end
-        if audClaim == aud then
-            -- claim matches an accepted audience so return success
-            return true;
-        end
-    end
-    -- if audClaim not found in acceptedAudiences, fail claim
-    return nil, "Invalid audience ('aud' claim)";
-end
-
---- Verifies token
--- @param token the token to verify
--- @param secret the secret to use to verify token
--- @param acceptedIssuers the list of accepted issuers to check
--- @return nil and error or the extracted claims from the token
-function Util:verify_token(token, secret, acceptedIssuers)
-    local claims, err = jwt.decode(token, secret, true);
-    if claims == nil then
-        return nil, err;
-    end
-
-    local alg = claims["alg"];
-    if alg ~= nil and (alg == "none" or alg == "") then
-        return nil, "'alg' claim must not be empty";
-    end
-
-    local issClaim = claims["iss"];
-    if issClaim == nil then
-        return nil, "'iss' claim is missing";
-    end
-    --check the issuer against the accepted list
-    local issCheck, issCheckErr = self:verify_issuer(issClaim, acceptedIssuers);
-    if issCheck == nil then
-        return nil, issCheckErr;
-    end
-
-    if self.requireRoomClaim then
-        local roomClaim = claims["room"];
-        if roomClaim == nil then
-            return nil, "'room' claim is missing";
-        end
-    end
-
-    local audClaim = claims["aud"];
-    if audClaim == nil then
-        return nil, "'aud' claim is missing";
-    end
-    --check the audience against the accepted list
-    local audCheck, audCheckErr = self:verify_audience(audClaim);
-    if audCheck == nil then
-        return nil, audCheckErr;
-    end
-
-    return claims;
-end
-
 --- Verifies token and process needed values to be stored in the session.
 -- Token is obtained from session.auth_token.
 -- Stores in session the following values:
@@ -255,11 +177,13 @@ function Util:process_and_verify_token(session, acceptedIssuers)
         end
     end
 
-    local pubKey;
+    local key;
     if session.public_key then
+        -- We're using an public key stored in the session
         module:log("debug","Public key was found on the session");
-        pubKey = session.public_key;
+        key = session.public_key;
     elseif self.asapKeyServer and session.auth_token ~= nil then
+        -- We're fetching an public key from an ASAP server
         local dotFirst = session.auth_token:find("%.");
         if not dotFirst then return false, "not-allowed", "Invalid token" end
         local header, err = json_safe.decode(basexx.from_url64(session.auth_token:sub(1,dotFirst-1)));
@@ -274,23 +198,38 @@ function Util:process_and_verify_token(session, acceptedIssuers)
         if alg == nil then
             return false, "not-allowed", "'alg' claim is missing";
         end
-        if alg.sub(alg,1,2) ~= "RS" then -- do not remove - needed to protect jwt.decode in verify_token
+        if alg.sub(alg,1,2) ~= "RS" then
             return false, "not-allowed", "'kid' claim only support with RS family";
         end
-        pubKey = self:get_public_key(kid);
-        if pubKey == nil then
+        key = self:get_public_key(kid);
+        if key == nil then
             return false, "not-allowed", "could not obtain public key";
         end
+    elseif self.appSecret ~= nil then
+        -- We're using a symmetric secret
+        key = self.appSecret
+    end
+
+    if key == nil then
+        return false, "not-allowed", "signature verification key is missing";
     end
 
     -- now verify the whole token
-    local claims, msg;
-    if self.asapKeyServer then
-        claims, msg = self:verify_token(session.auth_token, pubKey, acceptedIssuers);
-    else
-        claims, msg = self:verify_token(session.auth_token, self.appSecret, acceptedIssuers);
-    end
+    local claims, msg = jwt.verify(
+        session.auth_token,
+        self.signatureAlgorithm,
+        key,
+        acceptedIssuers,
+        self.acceptedAudiences
+    )
     if claims ~= nil then
+        if self.requireRoomClaim then
+            local roomClaim = claims["room"];
+            if roomClaim == nil then
+                return false, "'room' claim is missing";
+            end
+        end
+
         -- Binds room name to the session which is later checked on MUC join
         session.jitsi_meet_room = claims["room"];
         -- Binds domain name to the session
