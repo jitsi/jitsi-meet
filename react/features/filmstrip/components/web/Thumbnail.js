@@ -439,8 +439,8 @@ class Thumbnail extends Component<Props, State> {
     componentWillUnmount() {
         const { _videoTrack, dispatch, _sourceNameSignalingEnabled } = this.props;
 
-        if (_sourceNameSignalingEnabled) {
-            _videoTrack?.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
+        if (_sourceNameSignalingEnabled && _videoTrack && !_videoTrack.local) {
+            _videoTrack.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
                 this.handleTrackStreamingStatusChanged);
             dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack,
                 _videoTrack.jitsiTrack.getTrackStreamingStatus()));
