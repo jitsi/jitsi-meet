@@ -23,8 +23,6 @@ import AbstractConnectionIndicator, {
     type State as AbstractState
 } from '../AbstractConnectionIndicator';
 
-import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
-import { trackStreamingStatusChanged } from '../../../base/tracks';
 
 /**
  * An array of display configurations for the connection indicator and its bars.
@@ -174,24 +172,6 @@ class ConnectionIndicatorContent extends AbstractConnectionIndicator<Props, Stat
         // Bind event handlers so they are only bound once for every instance.
         this._onToggleShowMore = this._onToggleShowMore.bind(this);
     }
-
-    componentDidMount() {
-        const { _videoTrack, dispatch } = this.props;
-        if (_videoTrack && !_videoTrack.local) {
-            _videoTrack.jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED, this.handleTrackStreamingStatusChanged);
-            dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack, _videoTrack.jitsiTrack.getTrackStreamingStatus?.()));
-        }
-    }
-
-    componentWillUnmount() {
-        const { _videoTrack, dispatch }  = this.props;
-        _videoTrack?.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED, this.handleTrackStreamingStatusChanged);
-        dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack, _videoTrack.jitsiTrack.getTrackStreamingStatus?.()));
-    }
-
-    handleTrackStreamingStatusChanged(jitsiTrack, streamingStatus) {
-        APP.store.dispatch(trackStreamingStatusChanged(jitsiTrack, streamingStatus));
-    };
 
     /**
      * Implements React's {@link Component#render()}.
