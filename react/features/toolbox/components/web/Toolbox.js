@@ -871,7 +871,7 @@ class Toolbox extends Component<Props> {
      * @returns {string|undefined} - The button's notify mode.
      */
     _getButtonNotifyMode(btnName) {
-        const notify = this.props._buttonsWithNotifyClick.find(
+        const notify = this.props._buttonsWithNotifyClick?.find(
             (btn: string | Object) =>
                 (typeof btn === 'string' && btn === btnName)
                 || (typeof btn === 'object' && btn.key === btnName)
