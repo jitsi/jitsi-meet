@@ -4,7 +4,7 @@ import { getSourceNameSignalingFeatureFlag } from '../base/config';
 import { getVirtualScreenshareParticipantOwnerId } from '../base/participants';
 
 import { setRemoteParticipants } from './actions';
-import { isFilmstripScollVisible } from './functions';
+import { isFilmstripScrollVisible } from './functions';
 
 /**
  * Computes the reorderd list of the remote participants.
@@ -130,5 +130,5 @@ export function isReorderingEnabled(state) {
     const { testing = {} } = state['features/base/config'];
     const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
 
-    return enableThumbnailReordering && isFilmstripScollVisible(state);
+    return enableThumbnailReordering && isFilmstripScrollVisible(state);
 }

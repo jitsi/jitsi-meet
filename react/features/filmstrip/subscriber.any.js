@@ -2,7 +2,7 @@
 
 import { StateListenerRegistry } from '../base/redux';
 
-import { isFilmstripScollVisible, updateRemoteParticipants } from './functions';
+import { isFilmstripScrollVisible, updateRemoteParticipants } from './functions';
 
 /**
  * Listens for changes to the screensharing status of the remote participants to recompute the reordered list of the
@@ -30,5 +30,5 @@ StateListenerRegistry.register(
  * Listens for changes in the filmstrip scroll visibility.
  */
 StateListenerRegistry.register(
-    /* selector */ state => isFilmstripScollVisible(state),
+    /* selector */ state => isFilmstripScrollVisible(state),
     /* listener */ (_, store) => updateRemoteParticipants(store));

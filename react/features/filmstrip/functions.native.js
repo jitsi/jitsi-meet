@@ -120,7 +120,7 @@ export function getColumnCount(stateful: Object | Function) {
  * @param {Object} state - The redux state.
  * @returns {boolean} - True if the scroll is displayed and false otherwise.
  */
-export function isFilmstripScollVisible(state) {
+export function isFilmstripScrollVisible(state) {
     if (shouldDisplayTileView(state)) {
         return state['features/filmstrip']?.tileViewDimensions?.hasScroll;
     }
