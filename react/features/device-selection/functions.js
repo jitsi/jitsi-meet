@@ -49,7 +49,7 @@ export function getDeviceSelectionDialogProps(stateful: Object | Function) {
     // conference and this is not supported, when we open device selection on
     // welcome page changing input devices will not be a problem
     // on welcome page we also show only what we have saved as user selected devices
-    if (!conference) {
+    if (!conference && !isMobileSafari) {
         disableAudioInputChange = false;
         disableVideoInputSelect = false;
         selectedAudioInputId = userSelectedMic;
