@@ -254,7 +254,7 @@ export default class LargeVideoManager {
                         this.jitsiTrack.getTrackStreamingStatus?.()));
                 }
                 if (videoTrack && !videoTrack.local) {
-                    this.jitsiTrack = videoTrack?.jitsiTrack;
+                    this.jitsiTrack = videoTrack.jitsiTrack;
                     this.jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
                         this.handleTrackStreamingStatusChanged);
                     APP.store.dispatch(trackStreamingStatusChanged(this.jitsiTrack,

@@ -418,10 +418,11 @@ class Thumbnail extends Component<Props, State> {
     componentDidMount() {
         this._onDisplayModeChanged();
 
-        // Listen to track streaming status changed event to keep it updated.
-        const { _videoTrack, dispatch } = this.props;
 
-        if (_videoTrack && !_videoTrack.local) {
+        // Listen to track streaming status changed event to keep it updated.
+        const { _videoTrack, dispatch, sourceNameSignalingEnabled } = this.props;
+
+        if (sourceNameSignalingEnabled && _videoTrack && !_videoTrack.local) {
             _videoTrack.jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
                 this.handleTrackStreamingStatusChanged);
             dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack,
@@ -436,12 +437,14 @@ class Thumbnail extends Component<Props, State> {
      * @returns {void}
      */
     componentWillUnmount() {
-        const { _videoTrack, dispatch } = this.props;
+        const { _videoTrack, dispatch, sourceNameSignalingEnabled } = this.props;
 
-        _videoTrack?.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
-            this.handleTrackStreamingStatusChanged);
-        dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack,
-            _videoTrack.jitsiTrack.getTrackStreamingStatus?.()));
+        if (sourceNameSignalingEnabled) {
+            _videoTrack?.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
+                this.handleTrackStreamingStatusChanged);
+            dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack,
+                _videoTrack.jitsiTrack.getTrackStreamingStatus?.()));
+        }
     }
 
     /**
@@ -1249,7 +1252,8 @@ function _mapStateToProps(state, ownProps): Object {
         _videoObjectPosition: getVideoObjectPosition(state, participant?.id),
         _videoTrack,
         ...size,
-        _gifSrc: mode === 'chat' ? null : gifSrc
+        _gifSrc: mode === 'chat' ? null : gifSrc,
+        sourceNameSignalingEnabled
     };
 }
 
