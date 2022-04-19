@@ -863,6 +863,27 @@ class Toolbox extends Component<Props> {
         };
     }
 
+
+    /**
+     * Returns the notify mode of the given toolbox button.
+     *
+     * @param {string} btnName - The toolbar button's name.
+     * @returns {string|undefined} - The button's notify mode.
+     */
+    _getButtonNotifyMode(btnName) {
+        const notify = this.props._buttonsWithNotifyClick?.find(
+            (btn: string | Object) =>
+                (typeof btn === 'string' && btn === btnName)
+                || (typeof btn === 'object' && btn.key === btnName)
+        );
+
+        if (notify) {
+            return typeof notify === 'string' || notify.preventExecution
+                ? NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY
+                : NOTIFY_CLICK_MODE.ONLY_NOTIFY;
+        }
+    }
+
     /**
      * Sets the notify click mode for the buttons.
      *
@@ -876,19 +897,7 @@ class Toolbox extends Component<Props> {
 
         Object.values(buttons).forEach((button: any) => {
             if (typeof button === 'object') {
-                const notify = this.props._buttonsWithNotifyClick.find(
-                    (btn: string | Object) =>
-                        (typeof btn === 'string' && btn === button.key)
-                        || (typeof btn === 'object' && btn.key === button.key)
-                );
-
-                if (notify) {
-                    const notifyMode = typeof notify === 'string' || notify.preventExecution
-                        ? NOTIFY_CLICK_MODE.PREVENT_AND_NOTIFY
-                        : NOTIFY_CLICK_MODE.ONLY_NOTIFY;
-
-                    button.notifyMode = notifyMode;
-                }
+                button.notifyMode = this._getButtonNotifyMode(button.key);
             }
         });
     }
@@ -1369,8 +1378,10 @@ class Toolbox extends Component<Props> {
                         )}
 
                         <HangupButton
+                            buttonKey = 'hangup'
                             customClass = 'hangup-button'
                             key = 'hangup-button'
+                            notifyMode = { this._getButtonNotifyMode('hangup') }
                             visible = { isToolbarButtonEnabled('hangup', _toolbarButtons) } />
                     </div>
                 </div>
