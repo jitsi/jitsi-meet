@@ -318,9 +318,10 @@ MiddlewareRegistry.register(store => next => action => {
 StateListenerRegistry.register(
     state => getCurrentConference(state),
     (conference, { dispatch, getState }, prevConference) => {
+        const { authRequired, error } = getState()['features/base/conference'];
 
         // conference keep flipping while we are authenticating, skip clearing while we are in that process
-        if (prevConference && !conference && !getState()['features/base/conference'].authRequired) {
+        if (prevConference && !conference && !authRequired && !error) {
 
             // Clear all tracks.
             const remoteTracks = getState()['features/base/tracks'].filter(t => !t.local);
@@ -400,7 +401,7 @@ function createFakeScreenShareParticipant({ dispatch, getState }, { track }) {
             id: track.jitsiTrack.getSourceName(),
             isFakeScreenShareParticipant: true,
             isLocalScreenShare: track?.jitsiTrack.isLocal(),
-            name: `${participant.name}'s screen`
+            name: participant.name
         }));
     } else {
         logger.error(`Failed to create a screenshare participant for participantId: ${participantId}`);

@@ -12,7 +12,7 @@ import {
     storeConfig
 } from '../base/config';
 import { connect, disconnect, setLocationURL } from '../base/connection';
-import { loadConfig } from '../base/lib-jitsi-meet';
+import { loadConfig } from '../base/lib-jitsi-meet/functions.native';
 import { createDesiredLocalTracks } from '../base/tracks';
 import {
     getBackendSafeRoomName,
@@ -39,6 +39,8 @@ export * from './actions.any';
  * @returns {Function}
  */
 export function appNavigate(uri: ?string) {
+    logger.info(`appNavigate to ${uri}`);
+
     return async (dispatch: Dispatch<any>, getState: Function) => {
         let location = parseURIString(uri);
 

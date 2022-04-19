@@ -60,3 +60,15 @@
         }
     }
 }
+
+.settings-button-small-icon-container {
+    position: absolute;
+    right: -4px;
+    top: -3px;
+
+    & .settings-button-small-icon {
+        position: relative;
+        top: 0;
+        right: 0;
+    }
+}

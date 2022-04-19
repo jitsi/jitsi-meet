@@ -210,14 +210,22 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case PARTICIPANT_JOINED: {
-        _maybePlaySounds(store, action);
+        const { isFakeScreenShareParticipant } = action.participant;
+
+        // Do not play sounds when a fake participant tile is created for screenshare.
+        !isFakeScreenShareParticipant && _maybePlaySounds(store, action);
 
         return _participantJoinedOrUpdated(store, next, action);
     }
 
-    case PARTICIPANT_LEFT:
-        _maybePlaySounds(store, action);
+    case PARTICIPANT_LEFT: {
+        const { isFakeScreenShareParticipant } = action.participant;
+
+        // Do not play sounds when a tile for screenshare is removed.
+        !isFakeScreenShareParticipant && _maybePlaySounds(store, action);
+
         break;
+    }
 
     case PARTICIPANT_UPDATED:
         return _participantJoinedOrUpdated(store, next, action);

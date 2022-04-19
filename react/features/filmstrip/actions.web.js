@@ -23,7 +23,8 @@ import {
     SET_USER_IS_RESIZING,
     SET_VERTICAL_VIEW_DIMENSIONS,
     SET_VOLUME,
-    SET_MAX_STAGE_PARTICIPANTS
+    SET_MAX_STAGE_PARTICIPANTS,
+    TOGGLE_PIN_STAGE_PARTICIPANT
 } from './actionTypes';
 import {
     HORIZONTAL_FILMSTRIP_MARGIN,
@@ -82,14 +83,15 @@ export function setTileViewDimensions() {
                 disableTileEnlargement,
                 maxColumns,
                 numberOfParticipants,
-                numberOfVisibleTiles
+                desiredNumberOfVisibleTiles: numberOfVisibleTiles
             });
         const thumbnailsTotalHeight = rows * (TILE_VERTICAL_MARGIN + height);
-        const hasScroll = clientHeight < thumbnailsTotalHeight;
+        const availableHeight = clientHeight - TILE_VIEW_GRID_VERTICAL_MARGIN;
+        const hasScroll = availableHeight < thumbnailsTotalHeight;
         const filmstripWidth
             = Math.min(clientWidth - TILE_VIEW_GRID_HORIZONTAL_MARGIN, columns * (TILE_HORIZONTAL_MARGIN + width))
                 + (hasScroll ? SCROLL_SIZE : 0);
-        const filmstripHeight = Math.min(clientHeight - TILE_VIEW_GRID_VERTICAL_MARGIN, thumbnailsTotalHeight);
+        const filmstripHeight = Math.min(availableHeight, thumbnailsTotalHeight);
 
         dispatch({
             type: SET_TILE_VIEW_DIMENSIONS,
@@ -138,7 +140,11 @@ export function setVerticalViewDimensions() {
             const { tileView = {} } = state['features/base/config'];
             const { numberOfVisibleTiles = TILE_VIEW_DEFAULT_NUMBER_OF_VISIBLE_TILES } = tileView;
             const numberOfParticipants = getNumberOfPartipantsForTileView(state);
-            const maxColumns = getMaxColumnCount(state);
+            const maxColumns = getMaxColumnCount(state, {
+                width: filmstripWidth.current,
+                disableResponsiveTiles: false,
+                disableTileEnlargement: false
+            });
             const {
                 height,
                 width,
@@ -151,7 +157,7 @@ export function setVerticalViewDimensions() {
                 maxColumns,
                 noHorizontalContainerMargin: true,
                 numberOfParticipants,
-                numberOfVisibleTiles
+                desiredNumberOfVisibleTiles: numberOfVisibleTiles
             });
             const thumbnailsTotalHeight = rows * (TILE_VERTICAL_MARGIN + height);
 
@@ -268,7 +274,8 @@ export function setStageFilmstripViewDimensions() {
         const verticalWidth = visible ? getVerticalViewMaxWidth(state) : 0;
         const { numberOfVisibleTiles = MAX_ACTIVE_PARTICIPANTS } = tileView;
         const numberOfParticipants = state['features/filmstrip'].activeParticipants.length;
-        const maxColumns = getMaxColumnCount(state);
+        const availableWidth = clientWidth - verticalWidth;
+        const maxColumns = getMaxColumnCount(state, { width: availableWidth });
 
         const {
             height,
@@ -278,7 +285,7 @@ export function setStageFilmstripViewDimensions() {
         } = disableResponsiveTiles
             ? calculateNonResponsiveTileViewDimensions(state, true)
             : calculateResponsiveTileViewDimensions({
-                clientWidth: clientWidth - verticalWidth,
+                clientWidth: availableWidth,
                 clientHeight,
                 disableTileEnlargement,
                 maxColumns,
@@ -447,5 +454,18 @@ export function setMaxStageParticipants(maxParticipants) {
     return {
         type: SET_MAX_STAGE_PARTICIPANTS,
         maxParticipants
+    };
+}
+
+/**
+ * Toggles the pin state of the given participant.
+ *
+ * @param {string} participantId - The id of the participant to be toggled.
+ * @returns {Object}
+ */
+export function togglePinStageParticipant(participantId) {
+    return {
+        type: TOGGLE_PIN_STAGE_PARTICIPANT,
+        participantId
     };
 }

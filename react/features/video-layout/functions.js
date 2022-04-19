@@ -9,9 +9,14 @@ import {
 } from '../base/participants';
 import {
     DEFAULT_MAX_COLUMNS,
-    ABSOLUTE_MAX_COLUMNS
+    ABSOLUTE_MAX_COLUMNS,
+    TILE_PORTRAIT_ASPECT_RATIO
 } from '../filmstrip/constants';
-import { getNumberOfPartipantsForTileView } from '../filmstrip/functions.web';
+import {
+    getNumberOfPartipantsForTileView,
+    getThumbnailMinHeight,
+    getTileDefaultAspectRatio
+} from '../filmstrip/functions.web';
 import { isVideoPlaying } from '../shared-video/functions';
 import { VIDEO_QUALITY_LEVELS } from '../video-quality/constants';
 
@@ -56,15 +61,45 @@ export function getCurrentLayout(state: Object) {
  * returned will be between 1 and 7, inclusive.
  *
  * @param {Object} state - The redux store state.
- * @param {number} width - Custom width to use for calculation.
+ * @param {Object} options - Object with custom values used to override the values that we get from redux by default.
+ * @param {number} options.width - Custom width to be used.
+ * @param {boolean} options.disableResponsiveTiles - Custom value to be used instead of config.disableResponsiveTiles.
+ * @param {boolean} options.disableTileEnlargement - Custom value to be used instead of config.disableTileEnlargement.
  * @returns {number}
  */
-export function getMaxColumnCount() {
-    const configuredMax = (typeof interfaceConfig === 'undefined'
-        ? DEFAULT_MAX_COLUMNS
-        : interfaceConfig.TILE_VIEW_MAX_COLUMNS) || DEFAULT_MAX_COLUMNS;
+export function getMaxColumnCount(state, options = {}) {
+    if (typeof interfaceConfig === 'undefined') {
+        return DEFAULT_MAX_COLUMNS;
+    }
 
-    return Math.min(Math.max(configuredMax, 1), ABSOLUTE_MAX_COLUMNS);
+    const {
+        disableResponsiveTiles: configDisableResponsiveTiles,
+        disableTileEnlargement: configDisableTileEnlargement
+    } = state['features/base/config'];
+    const {
+        width,
+        disableResponsiveTiles = configDisableResponsiveTiles,
+        disableTileEnlargement = configDisableTileEnlargement
+    } = options;
+    const { clientWidth } = state['features/base/responsive-ui'];
+    const widthToUse = width || clientWidth;
+    const configuredMax = interfaceConfig.TILE_VIEW_MAX_COLUMNS;
+
+    if (disableResponsiveTiles) {
+        return Math.min(Math.max(configuredMax || DEFAULT_MAX_COLUMNS, 1), ABSOLUTE_MAX_COLUMNS);
+    }
+
+    if (typeof interfaceConfig.TILE_VIEW_MAX_COLUMNS !== 'undefined' && interfaceConfig.TILE_VIEW_MAX_COLUMNS > 0) {
+        return Math.max(configuredMax, 1);
+    }
+
+    const aspectRatio = disableTileEnlargement
+        ? getTileDefaultAspectRatio(true, disableTileEnlargement, widthToUse)
+        : TILE_PORTRAIT_ASPECT_RATIO;
+    const minHeight = getThumbnailMinHeight(widthToUse);
+    const minWidth = aspectRatio * minHeight;
+
+    return Math.floor(widthToUse / minWidth);
 }
 
 /**

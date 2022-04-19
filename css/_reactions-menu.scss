@@ -104,6 +104,10 @@
 	}
 }
 
+.reactions-menu-container {
+	padding-bottom: 6px;
+}
+
 .reactions-animations-container {
 	position: absolute;
 	width: 20%;
@@ -112,8 +116,7 @@
 	height: 0;
 }
 
-.reactions-menu-popup-container,
-.reactions-menu-popup {
+.reactions-menu-popup-container {
 	display: inline-block;
 	position: relative;
 }

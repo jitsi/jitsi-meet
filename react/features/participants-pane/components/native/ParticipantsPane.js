@@ -71,6 +71,7 @@ const ParticipantsPane = () => {
             <LobbyParticipantList />
             <MeetingParticipantList
                 breakoutRooms = { rooms }
+                isLocalModerator = { isLocalModerator }
                 lobbyParticipants = { lobbyParticipants }
                 searchString = { searchString }
                 setSearchString = { setSearchString } />
