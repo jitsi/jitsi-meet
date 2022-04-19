@@ -43,7 +43,7 @@ export const ConnectionIndicatorIcon = ({
     colorClass,
     connectionIndicatorInactiveDisabled,
     isConnectionStatusInactive,
-    isConnectionStatusInterrupted,
+    isConnectionStatusInterrupted
 }: Props) => {
     if (isConnectionStatusInactive) {
         if (connectionIndicatorInactiveDisabled) {

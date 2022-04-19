@@ -9,6 +9,7 @@ import { createScreenSharingIssueEvent, sendAnalytics } from '../../../analytics
 import { Avatar } from '../../../base/avatar';
 import { getSourceNameSignalingFeatureFlag } from '../../../base/config';
 import { isMobileBrowser } from '../../../base/environment/utils';
+import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
 import { MEDIA_TYPE, VideoTrack } from '../../../base/media';
 import {
     getLocalParticipant,
@@ -24,7 +25,8 @@ import {
     getLocalVideoTrack,
     getTrackByMediaTypeAndParticipant,
     getFakeScreenshareParticipantTrack,
-    updateLastTrackVideoMediaEvent
+    updateLastTrackVideoMediaEvent,
+    trackStreamingStatusChanged
 } from '../../../base/tracks';
 import { getVideoObjectPosition } from '../../../face-landmarks/functions';
 import { hideGif, showGif } from '../../../gifs/actions';
@@ -53,8 +55,6 @@ import ThumbnailAudioIndicator from './ThumbnailAudioIndicator';
 import ThumbnailBottomIndicators from './ThumbnailBottomIndicators';
 import ThumbnailTopIndicators from './ThumbnailTopIndicators';
 
-import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
-import { trackStreamingStatusChanged } from '../../../base/tracks';
 
 declare var interfaceConfig: Object;
 
@@ -406,6 +406,7 @@ class Thumbnail extends Component<Props, State> {
         this._hidePopover = this._hidePopover.bind(this);
         this._onGifMouseEnter = this._onGifMouseEnter.bind(this);
         this._onGifMouseLeave = this._onGifMouseLeave.bind(this);
+        this.handleTrackStreamingStatusChanged = this.handleTrackStreamingStatusChanged.bind(this);
     }
 
     /**
@@ -419,22 +420,28 @@ class Thumbnail extends Component<Props, State> {
 
         // Listen to track streaming status changed event to keep it updated.
         const { _videoTrack, dispatch } = this.props;
+
         if (_videoTrack && !_videoTrack.local) {
-            _videoTrack.jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED, this.handleTrackStreamingStatusChanged);
-            dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack, _videoTrack.jitsiTrack.getTrackStreamingStatus?.()));
+            _videoTrack.jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
+                this.handleTrackStreamingStatusChanged);
+            dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack,
+                _videoTrack.jitsiTrack.getTrackStreamingStatus?.()));
         }
     }
 
     /**
-     * 
+     * Remove listeners for track streaming status update.
      *
      * @inheritdoc
      * @returns {void}
      */
     componentWillUnmount() {
-        const { _videoTrack, dispatch }  = this.props;
-        _videoTrack?.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED, this.handleTrackStreamingStatusChanged);
-        dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack, _videoTrack.jitsiTrack.getTrackStreamingStatus?.()));
+        const { _videoTrack, dispatch } = this.props;
+
+        _videoTrack?.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
+            this.handleTrackStreamingStatusChanged);
+        dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack,
+            _videoTrack.jitsiTrack.getTrackStreamingStatus?.()));
     }
 
     /**
@@ -450,9 +457,16 @@ class Thumbnail extends Component<Props, State> {
         }
     }
 
+    /**
+     * Handle track streaming status change event by
+     * by dispatching an action to update track streaming status for the given track in app state.
+     *
+     * @param {JitsiTrack} jitsiTrack the track with streaming status updated
+     * @param {JitsiTrackStreamingStatus} streamingStatus the updated track streaming status
+     */
     handleTrackStreamingStatusChanged(jitsiTrack, streamingStatus) {
-        APP.store.dispatch(trackStreamingStatusChanged(jitsiTrack, streamingStatus));
-    };
+        this.props.dispatch(trackStreamingStatusChanged(jitsiTrack, streamingStatus));
+    }
 
     /**
      * Handles display mode changes.
