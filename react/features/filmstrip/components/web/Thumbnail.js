@@ -420,13 +420,13 @@ class Thumbnail extends Component<Props, State> {
 
 
         // Listen to track streaming status changed event to keep it updated.
-        const { _videoTrack, dispatch, sourceNameSignalingEnabled } = this.props;
+        const { _videoTrack, dispatch, _sourceNameSignalingEnabled } = this.props;
 
-        if (sourceNameSignalingEnabled && _videoTrack && !_videoTrack.local) {
+        if (_sourceNameSignalingEnabled && _videoTrack && !_videoTrack.local) {
             _videoTrack.jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
                 this.handleTrackStreamingStatusChanged);
             dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack,
-                _videoTrack.jitsiTrack.getTrackStreamingStatus?.()));
+                _videoTrack.jitsiTrack.getTrackStreamingStatus()));
         }
     }
 
@@ -437,13 +437,13 @@ class Thumbnail extends Component<Props, State> {
      * @returns {void}
      */
     componentWillUnmount() {
-        const { _videoTrack, dispatch, sourceNameSignalingEnabled } = this.props;
+        const { _videoTrack, dispatch, _sourceNameSignalingEnabled } = this.props;
 
-        if (sourceNameSignalingEnabled) {
+        if (_sourceNameSignalingEnabled) {
             _videoTrack?.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
                 this.handleTrackStreamingStatusChanged);
             dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack,
-                _videoTrack.jitsiTrack.getTrackStreamingStatus?.()));
+                _videoTrack.jitsiTrack.getTrackStreamingStatus()));
         }
     }
 
@@ -1253,7 +1253,7 @@ function _mapStateToProps(state, ownProps): Object {
         _videoTrack,
         ...size,
         _gifSrc: mode === 'chat' ? null : gifSrc,
-        sourceNameSignalingEnabled
+        _sourceNameSignalingEnabled: sourceNameSignalingEnabled
     };
 }
 

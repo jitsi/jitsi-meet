@@ -251,14 +251,14 @@ export default class LargeVideoManager {
                     this.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
                         this.handleTrackStreamingStatusChanged);
                     APP.store.dispatch(trackStreamingStatusChanged(this.jitsiTrack,
-                        this.jitsiTrack.getTrackStreamingStatus?.()));
+                        this.jitsiTrack.getTrackStreamingStatus()));
                 }
                 if (videoTrack && !videoTrack.local) {
                     this.jitsiTrack = videoTrack.jitsiTrack;
                     this.jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
                         this.handleTrackStreamingStatusChanged);
                     APP.store.dispatch(trackStreamingStatusChanged(this.jitsiTrack,
-                        this.jitsiTrack.getTrackStreamingStatus?.()));
+                        this.jitsiTrack.getTrackStreamingStatus()));
                 }
 
                 isVideoRenderable = !isVideoMuted && (
