@@ -217,7 +217,7 @@ function Util:process_and_verify_token(session, acceptedIssuers)
     -- now verify the whole token
     local claims, msg = jwt.verify(
         session.auth_token,
-        signatureAlgorithm,
+        self.signatureAlgorithm,
         key,
         acceptedIssuers,
         self.acceptedAudiences
