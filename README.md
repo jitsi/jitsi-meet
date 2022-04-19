@@ -8,6 +8,9 @@
 
 ## iOS
 1. Run `pod install` inside `/ios`
+    * If `command not found: pod`
+    * `sudo gem install cocoapods`
+
   * If `glog` won't install:
     * Try: `xcode-select --switch /Applications/Xcode.app`
   * If you get `Error: EMFILE: too many open files, watch`:
