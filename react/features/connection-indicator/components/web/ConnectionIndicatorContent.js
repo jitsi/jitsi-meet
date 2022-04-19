@@ -23,7 +23,6 @@ import AbstractConnectionIndicator, {
     type State as AbstractState
 } from '../AbstractConnectionIndicator';
 
-
 /**
  * An array of display configurations for the connection indicator and its bars.
  * The ordering is done specifically for faster iteration to find a matching
