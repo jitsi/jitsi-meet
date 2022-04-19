@@ -6,6 +6,7 @@ import { connect } from '../../../../base/redux';
 import DeviceStatus from '../../../../prejoin/components/preview/DeviceStatus';
 import { Toolbox } from '../../../../toolbox/components/web';
 import { PREMEETING_BUTTONS, THIRD_PARTY_PREJOIN_BUTTONS } from '../../../config/constants';
+import { getToolbarButtons, isToolbarButtonEnabled } from '../../../config/functions.web';
 
 import ConnectionStatus from './ConnectionStatus';
 import Preview from './Preview';
@@ -147,14 +148,23 @@ class PreMeetingScreen extends PureComponent<Props> {
  * @returns {Object}
  */
 function mapStateToProps(state, ownProps): Object {
-    const hideButtons = state['features/base/config'].hiddenPremeetingButtons || [];
-    const premeetingButtons = ownProps.thirdParty
+    const { hiddenPremeetingButtons } = state['features/base/config'];
+    const toolbarButtons = getToolbarButtons(state);
+    const premeetingButtons = (ownProps.thirdParty
         ? THIRD_PARTY_PREJOIN_BUTTONS
-        : PREMEETING_BUTTONS;
+        : PREMEETING_BUTTONS).filter(b => !(hiddenPremeetingButtons || []).includes(b));
+
     const { premeetingBackground } = state['features/dynamic-branding'];
 
     return {
-        _buttons: premeetingButtons.filter(b => !hideButtons.includes(b)),
+        // For keeping backwards compat.: if we pass an empty hiddenPremeetingButtons
+        // array through external api, we have all prejoin buttons present on premeeting
+        // screen regardless of passed values into toolbarButtons config overwrite.
+        // If hiddenPremeetingButtons is missing, we hide the buttons according to
+        // toolbarButtons config overwrite.
+        _buttons: hiddenPremeetingButtons
+            ? premeetingButtons
+            : premeetingButtons.filter(b => isToolbarButtonEnabled(b, toolbarButtons)),
         _premeetingBackground: premeetingBackground
     };
 }
