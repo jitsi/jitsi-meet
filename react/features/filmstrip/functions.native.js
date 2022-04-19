@@ -184,6 +184,7 @@ export function getFilmstripDimensions({
     const { height, width, margin } = styles.thumbnail;
     const isNarrowAspectRatio = aspectRatio === ASPECT_RATIO_NARROW;
     const filmstripStyle = isNarrowAspectRatio ? styles.filmstripNarrow : styles.filmstripWide;
+    const { left = 0, right = 0, top = 0, bottom = 0 } = insets;
 
     if (aspectRatio === ASPECT_RATIO_NARROW) {
         return {
@@ -191,7 +192,7 @@ export function getFilmstripDimensions({
             width:
                 (shouldDisplayLocalThumbnailSeparately() && localParticipantVisible
                     ? clientWidth - width - (margin * 2) : clientWidth)
-                    - (insets.left || 0) - (insets.right || 0) - (filmstripStyle.margin * 2)
+                    - (left || 0) - (right || 0) - (filmstripStyle.margin * 2)
 
         };
     }
@@ -200,7 +201,7 @@ export function getFilmstripDimensions({
         height:
             (shouldDisplayLocalThumbnailSeparately() && localParticipantVisible
                 ? clientHeight - height - (margin * 2) : clientHeight)
-                - (insets.top || 0) - (insets.bottom || 0) - (filmstripStyle.margin * 2),
+                - (top || 0) - (bottom || 0) - (filmstripStyle.margin * 2),
         width
     };
 }
