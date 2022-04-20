@@ -274,7 +274,11 @@ export function setStageFilmstripViewDimensions() {
         const { numberOfVisibleTiles = MAX_ACTIVE_PARTICIPANTS } = tileView;
         const numberOfParticipants = state['features/filmstrip'].activeParticipants.length;
         const availableWidth = clientWidth - verticalWidth;
-        const maxColumns = getMaxColumnCount(state, { width: availableWidth });
+        const maxColumns = getMaxColumnCount(state, {
+            width: availableWidth,
+            disableResponsiveTiles: false,
+            disableTileEnlargement: false
+        });
 
         const {
             height,

@@ -111,3 +111,12 @@ export function isReorderingEnabled(state) {
 export function isStageFilmstripAvailable() {
     return false;
 }
+
+/**
+ * Whether the stage filmstrip should be displayed or not.
+ *
+ * @returns {boolean}
+ */
+export function shouldDisplayStageFilmstrip() {
+    return false;
+}
