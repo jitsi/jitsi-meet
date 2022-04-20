@@ -45,3 +45,15 @@ export const UPDATE_TRANSCRIPT_MESSAGE = 'UPDATE_TRANSCRIPT_MESSAGE';
  */
 export const TOGGLE_REQUESTING_SUBTITLES
     = 'TOGGLE_REQUESTING_SUBTITLES';
+
+/**
+ * The type of (redux) action which indicates if the user set the state of
+ * the subtitles to enabled or disabled.
+ *
+ * {
+ *      type: SET_REQUESTING_SUBTITLES
+ *      enabled: boolean
+ * }
+ */
+export const SET_REQUESTING_SUBTITLES
+    = 'SET_REQUESTING_SUBTITLES';

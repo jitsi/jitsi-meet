@@ -4,6 +4,7 @@ import {
     ENDPOINT_MESSAGE_RECEIVED,
     REMOVE_TRANSCRIPT_MESSAGE,
     TOGGLE_REQUESTING_SUBTITLES,
+    SET_REQUESTING_SUBTITLES,
     UPDATE_TRANSCRIPT_MESSAGE
 } from './actionTypes';
 
@@ -73,5 +74,21 @@ export function updateTranscriptMessage(transcriptMessageID: string,
 export function toggleRequestingSubtitles() {
     return {
         type: TOGGLE_REQUESTING_SUBTITLES
+    };
+}
+
+/**
+ * Signals that the local user has enabled or disabled the subtitles.
+ *
+ * @param {boolean} enabled - The new state of the subtitles.
+ * @returns {{
+ *    type: SET_REQUESTING_SUBTITLES,
+ *    enabled: boolean
+ * }}
+ */
+export function setRequestingSubtitles(enabled: boolean) {
+    return {
+        type: SET_REQUESTING_SUBTITLES,
+        enabled
     };
 }

@@ -2,7 +2,7 @@ import { ReducerRegistry } from '../base/redux';
 
 import {
     REMOVE_TRANSCRIPT_MESSAGE, TOGGLE_REQUESTING_SUBTITLES,
-    UPDATE_TRANSCRIPT_MESSAGE
+    SET_REQUESTING_SUBTITLES, UPDATE_TRANSCRIPT_MESSAGE
 } from './actionTypes';
 
 /**
@@ -29,6 +29,11 @@ ReducerRegistry.register('features/subtitles', (
         return {
             ...state,
             _requestingSubtitles: !state._requestingSubtitles
+        };
+    case SET_REQUESTING_SUBTITLES:
+        return {
+            ...state,
+            _requestingSubtitles: action.enabled
         };
     }
 
