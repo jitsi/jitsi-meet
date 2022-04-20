@@ -9,8 +9,7 @@ import {
     getPinnedParticipant,
     getRemoteParticipants
 } from '../base/participants';
-import { isStageFilmstripAvailable } from '../filmstrip/functions';
-import { shouldDisplayStageFilmstrip } from '../filmstrip/functions.web';
+import { isStageFilmstripAvailable, shouldDisplayStageFilmstrip } from '../filmstrip/functions';
 
 import {
     SELECT_LARGE_VIDEO_PARTICIPANT,
