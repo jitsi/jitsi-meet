@@ -113,6 +113,15 @@ export function isStageFilmstripAvailable() {
 }
 
 /**
+ * Whether the stage filmstrip is enabled.
+ *
+ * @returns {boolean}
+ */
+export function isStageFilmstripEnabled() {
+    return false;
+}
+
+/**
  * Whether the stage filmstrip should be displayed or not.
  *
  * @returns {boolean}
