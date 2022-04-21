@@ -7,7 +7,7 @@ import {
     getParticipantCount,
     pinParticipant
 } from '../base/participants';
-import { shouldDisplayStageFilmstrip } from '../filmstrip/functions.web';
+import { isStageFilmstripAvailable } from '../filmstrip/functions';
 import { isVideoPlaying } from '../shared-video/functions';
 import { VIDEO_QUALITY_LEVELS } from '../video-quality/constants';
 
@@ -41,7 +41,7 @@ export function getCurrentLayout(state: Object) {
     if (shouldDisplayTileView(state)) {
         return LAYOUTS.TILE_VIEW;
     } else if (interfaceConfig.VERTICAL_FILMSTRIP) {
-        if (shouldDisplayStageFilmstrip(state)) {
+        if (isStageFilmstripAvailable(state, 2)) {
             return LAYOUTS.STAGE_FILMSTRIP_VIEW;
         }
 

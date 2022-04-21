@@ -43,11 +43,11 @@ import {
     computeDisplayModeFromInput,
     getActiveParticipantsIds,
     getDisplayModeInput,
+    getThumbnailTypeFromLayout,
     isVideoPlayable,
-    showGridInVerticalView,
-    isStageFilmstripAvailable
+    isStageFilmstripAvailable,
+    showGridInVerticalView
 } from '../../functions';
-import { getThumbnailTypeFromLayout } from '../../functions.web';
 
 import FakeScreenShareParticipant from './FakeScreenShareParticipant';
 import ThumbnailAudioIndicator from './ThumbnailAudioIndicator';
