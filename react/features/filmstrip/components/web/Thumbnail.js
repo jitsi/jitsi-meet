@@ -430,10 +430,6 @@ class Thumbnail extends Component<Props, State> {
             dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack,
                 _videoTrack.jitsiTrack.getTrackStreamingStatus()));
         }
-
-        if (_videoTrack && !_videoTrack.local) {
-            console.log('trackSettings', _videoTrack.jitsiTrack.track.getSettings())
-        }
     }
 
     /**
@@ -443,6 +439,8 @@ class Thumbnail extends Component<Props, State> {
      * @returns {void}
      */
     componentWillUnmount() {
+        // TODO: after converting this component to a react function component,
+        // use a custom hook to update local track streaming status.
         const { _videoTrack, dispatch, _sourceNameSignalingEnabled } = this.props;
 
         if (_sourceNameSignalingEnabled && _videoTrack && !_videoTrack.local) {

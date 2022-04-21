@@ -43,7 +43,6 @@ import AudioLevels from '../audio_levels/AudioLevels';
 
 import { VideoContainer, VIDEO_CONTAINER_TYPE } from './VideoContainer';
 
-
 const logger = Logger.getLogger(__filename);
 
 const DESKTOP_CONTAINER_TYPE = 'desktop';
@@ -118,6 +117,14 @@ export default class LargeVideoManager {
          * @type {number}
          */
         this._videoAspectRatio = 0;
+
+        /**
+         * The jitsi track in effect.
+         * This is used to add and remove listeners on track streaming status change.
+         *
+         * @type {JitsiTrack}
+         */
+        this.jitsiTrack = undefined;
 
         this.$container = $('#largeVideoContainer');
 
@@ -247,6 +254,8 @@ export default class LargeVideoManager {
 
                 // Remove track streaming status listener from the old track and add it to the new track,
                 // in order to stop updating track streaming status for the old track and start it for the new track.
+                // TODO: when this class is converted to a function react component,
+                // use a custom hook to update a local track streaming status.
                 if (this.jitsiTrack) {
                     this.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
                         this.handleTrackStreamingStatusChanged);
