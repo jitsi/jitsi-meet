@@ -120,12 +120,3 @@ export function isStageFilmstripAvailable() {
 export function isStageFilmstripEnabled() {
     return false;
 }
-
-/**
- * Whether the stage filmstrip should be displayed or not.
- *
- * @returns {boolean}
- */
-export function shouldDisplayStageFilmstrip() {
-    return false;
-}

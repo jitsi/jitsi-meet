@@ -723,16 +723,6 @@ export function isStageFilmstripAvailable(state, minParticipantCount = 0) {
 }
 
 /**
- * Get whether or not the stage filmstrip should be displayed.
- *
- * @param {Object} state - Redux state.
- * @returns {boolean}
- */
-export function shouldDisplayStageFilmstrip(state) {
-    return isStageFilmstripAvailable(state, 2);
-}
-
-/**
  * Whether the stage filmstrip is disabled or not.
  *
  * @param {Object} state - Redux state.

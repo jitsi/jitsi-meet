@@ -9,7 +9,7 @@ import {
     getPinnedParticipant,
     getRemoteParticipants
 } from '../base/participants';
-import { isStageFilmstripAvailable, shouldDisplayStageFilmstrip } from '../filmstrip/functions';
+import { isStageFilmstripAvailable } from '../filmstrip/functions';
 
 import {
     SELECT_LARGE_VIDEO_PARTICIPANT,
@@ -30,7 +30,7 @@ export function selectParticipantInLargeVideo(participant: ?string) {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
 
-        if (shouldDisplayStageFilmstrip(state)) {
+        if (isStageFilmstripAvailable(state, 2)) {
             return;
         }
 

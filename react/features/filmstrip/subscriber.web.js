@@ -12,12 +12,12 @@ import { setOverflowDrawer } from '../toolbox/actions.web';
 import { getCurrentLayout, shouldDisplayTileView, LAYOUTS } from '../video-layout';
 
 import {
+    clearStageParticipants,
     setHorizontalViewDimensions,
     setStageFilmstripViewDimensions,
     setTileViewDimensions,
     setVerticalViewDimensions
 } from './actions';
-import { clearStageParticipants } from './actions.web';
 import {
     ASPECT_RATIO_BREAKPOINT,
     DISPLAY_DRAWER_THRESHOLD
