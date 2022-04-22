@@ -106,8 +106,17 @@ class RTCStats {
     }
 
     /**
-     * Send face expression data, the data will be processed by rtcstats-server and saved in the dump file.
+     * Send videoType data, the data will be processed by rtcstats-server and saved in the dump file.
      *
+     * @param {Object} videoTypeData - The object that holds the videoType data.
+     * @returns {void}
+     */
+    sendVideoTypeData(videoTypeData) {
+        this.trace && this.trace.statsEntry('videoType', null, videoTypeData);
+    }
+
+    /**
+     * Send face expression data, the data will be processed by rtcstats-server and saved in the dump file.     *
      * @param {Object} faceExpressionData - Face expression data to be saved in the rtcstats dump.
      * @returns {void}
      */
