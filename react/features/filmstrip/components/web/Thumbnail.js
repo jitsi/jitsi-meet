@@ -492,8 +492,8 @@ class Thumbnail extends Component<Props, State> {
      * Handle track streaming status change event by
      * by dispatching an action to update track streaming status for the given track in app state.
      *
-     * @param {JitsiTrack} jitsiTrack - the track with streaming status updated.
-     * @param {JitsiTrackStreamingStatus} streamingStatus - the updated track streaming status.
+     * @param {JitsiTrack} jitsiTrack - The track with streaming status updated.
+     * @param {JitsiTrackStreamingStatus} streamingStatus - The updated track streaming status.
      * @returns {void}
      */
     handleTrackStreamingStatusChanged(jitsiTrack, streamingStatus) {
