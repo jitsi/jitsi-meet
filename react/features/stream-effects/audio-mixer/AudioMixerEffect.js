@@ -90,7 +90,9 @@ export class AudioMixerEffect {
      * @returns {void}
      */
     stopEffect() {
-        this._audioMixer.reset();
+        this._audioProcessingNode.onaudioprocess = () => {};
+        this._audioProcessingNode.disconnect();
+        this._audioSource.disconnect();
     }
 
     /**
