@@ -25,11 +25,10 @@ import {
     setScreenshareMuted,
     SCREENSHARE_MUTISM_AUTHORITY
 } from '../media';
-import { participantLeft, participantJoined, getParticipantById } from '../participants';
+import { createFakeScreenShareParticipant, participantLeft } from '../participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
 
 import {
-    SCREENSHARE_TRACK_MUTED_UPDATED,
     TOGGLE_SCREENSHARING,
     TRACK_ADDED,
     TRACK_MUTE_UNMUTE_FAILED,
@@ -53,7 +52,6 @@ import {
     isUserInteractionRequiredForUnmute,
     setTrackMuted
 } from './functions';
-import logger from './logger';
 
 import './subscriber';
 
@@ -92,7 +90,7 @@ MiddlewareRegistry.register(store => next => action => {
             && !jitsiTrack.isMuted()
             && !skipCreateFakeScreenShareParticipant
         ) {
-            createFakeScreenShareParticipant(store, action);
+            store.dispatch(createFakeScreenShareParticipant(jitsiTrack));
         }
 
         return result;
@@ -103,29 +101,6 @@ MiddlewareRegistry.register(store => next => action => {
         _handleNoDataFromSourceErrors(store, action);
 
         return result;
-    }
-
-    case SCREENSHARE_TRACK_MUTED_UPDATED: {
-        const state = store.getState();
-
-        if (!getSourceNameSignalingFeatureFlag(state)) {
-            return;
-        }
-
-        const { track, muted } = action;
-
-        if (muted) {
-            const conference = getCurrentConference(state);
-            const participantId = track?.jitsiTrack.getSourceName();
-
-            store.dispatch(participantLeft(participantId, conference));
-        }
-
-        if (!muted) {
-            createFakeScreenShareParticipant(store, action);
-        }
-
-        break;
     }
 
     case TRACK_REMOVED: {
@@ -381,32 +356,6 @@ function _handleNoDataFromSourceErrors(store, action) {
 
             dispatch(trackNoDataFromSourceNotificationInfoChanged(jitsiTrack, { timeout }));
         }
-    }
-}
-
-/**
- * Creates a fake participant for screen share using the track's source name as the participant id.
- *
- * @param {Store} store - The redux store in which the specified action is dispatched.
- * @param {Action} action - The redux action dispatched in the specified store.
- * @private
- * @returns {void}
- */
-function createFakeScreenShareParticipant({ dispatch, getState }, { track }) {
-    const state = getState();
-    const participantId = track.jitsiTrack?.getParticipantId?.();
-    const participant = getParticipantById(state, participantId);
-
-    if (participant.name) {
-        dispatch(participantJoined({
-            conference: state['features/base/conference'].conference,
-            id: track.jitsiTrack.getSourceName(),
-            isFakeScreenShareParticipant: true,
-            isLocalScreenShare: track?.jitsiTrack.isLocal(),
-            name: participant.name
-        }));
-    } else {
-        logger.error(`Failed to create a screenshare participant for participantId: ${participantId}`);
     }
 }
 
