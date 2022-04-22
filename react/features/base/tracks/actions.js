@@ -18,11 +18,10 @@ import {
     VIDEO_MUTISM_AUTHORITY,
     VIDEO_TYPE
 } from '../media';
-import { getLocalParticipant } from '../participants';
+import { createFakeScreenShareParticipant, getLocalParticipant, participantLeft } from '../participants';
 import { updateSettings } from '../settings';
 
 import {
-    SCREENSHARE_TRACK_MUTED_UPDATED,
     SET_NO_SRC_DATA_NOTIFICATION_UID,
     TOGGLE_SCREENSHARING,
     TRACK_ADDED,
@@ -397,15 +396,24 @@ export function trackAdded(track) {
     return async (dispatch, getState) => {
         track.on(
             JitsiTrackEvents.TRACK_MUTE_CHANGED,
-        () => {
-            if (getSourceNameSignalingFeatureFlag(getState()) && track.getVideoType() === VIDEO_TYPE.DESKTOP) {
-                dispatch(screenshareTrackMutedChanged(track));
+            () => {
+                dispatch(trackMutedChanged(track));
+
+                if (getMultipleVideoSupportFeatureFlag(getState()) && track.getVideoType() === VIDEO_TYPE.DESKTOP) {
+                    dispatch(screenshareTrackMutedChanged(track));
+                }
             }
-            dispatch(trackMutedChanged(track));
-        });
+        );
         track.on(
             JitsiTrackEvents.TRACK_VIDEOTYPE_CHANGED,
-            type => dispatch(trackVideoTypeChanged(track, type)));
+            type => {
+                dispatch(trackVideoTypeChanged(track, type));
+
+                if (getMultipleVideoSupportFeatureFlag(getState())) {
+                    dispatch(screenshareVideoTypeChanged(track, type));
+                }
+            }
+        );
 
         // participantId
         const local = track.isLocal();
@@ -495,24 +503,6 @@ export function trackMutedChanged(track) {
             jitsiTrack: track,
             muted: track.isMuted()
         }
-    };
-}
-
-/**
- * Create an action for when a screenshare track's muted state has been signaled to be changed.
- *
- * @param {(JitsiLocalTrack|JitsiRemoteTrack)} track - JitsiTrack instance.
- * @returns {{
- *     type: TRACK_UPDATED,
- *     track: Track,
- *     muted: boolean
- * }}
- */
-export function screenshareTrackMutedChanged(track) {
-    return {
-        type: SCREENSHARE_TRACK_MUTED_UPDATED,
-        track: { jitsiTrack: track },
-        muted: track.isMuted()
     };
 }
 
@@ -792,6 +782,51 @@ export function destroyLocalDesktopTrackIfExists() {
         if (isDesktopTrack) {
             dispatch(_disposeAndRemoveTracks([ videoTrack.jitsiTrack ]));
         }
+    };
+}
+
+/**
+ * Create an action for when a screenshare track's muted state has been signaled to be changed.
+ *
+ * @param {(JitsiLocalTrack|JitsiRemoteTrack)} track - JitsiTrack instance.
+ * @returns {Function}
+ */
+export function screenshareTrackMutedChanged(track) {
+    return (dispatch, getState) => {
+        if (track.isMuted()) {
+            const sourceName = track.getSourceName();
+            const conference = getCurrentConference(getState());
+
+            dispatch(participantLeft(sourceName, conference));
+        } else {
+            dispatch(createFakeScreenShareParticipant(track));
+        }
+
+        return;
+    };
+}
+
+/**
+ * Create an action for when a screenshare track's video type state has been signaled to be changed.
+ *
+ * @param {(JitsiLocalTrack|JitsiRemoteTrack)} track - JitsiTrack instance.
+ * @param {VIDEO_TYPE|undefined} videoType - Video type.
+ * @returns {Function}
+ */
+export function screenshareVideoTypeChanged(track, videoType) {
+    return (dispatch, getState) => {
+        if (videoType === VIDEO_TYPE.DESKTOP) {
+            dispatch(createFakeScreenShareParticipant(track));
+        }
+
+        if (videoType === VIDEO_TYPE.CAMERA) {
+            const sourceName = track.getSourceName();
+            const conference = getCurrentConference(getState());
+
+            dispatch(participantLeft(sourceName, conference));
+        }
+
+        return;
     };
 }
 

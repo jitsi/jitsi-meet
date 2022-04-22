@@ -504,6 +504,35 @@ export function participantMutedUs(participant, track) {
 }
 
 /**
+ * Action to create a fake screen share participant.
+ *
+ * @param {(JitsiLocalTrack|JitsiRemoteTrack)} track - JitsiTrack instance.
+ * @returns {Function}
+ */
+export function createFakeScreenShareParticipant(track) {
+    return (dispatch, getState) => {
+        const state = getState();
+        const participantId = track.getParticipantId();
+        const participant = getParticipantById(state, participantId);
+        const sourceName = track.getSourceName();
+
+        if (!participant.name) {
+            logger.error(`Failed to create a screenshare participant for sourceName: ${sourceName}`);
+
+            return;
+        }
+
+        dispatch(participantJoined({
+            conference: state['features/base/conference'].conference,
+            id: sourceName,
+            isFakeScreenShareParticipant: true,
+            isLocalScreenShare: track.isLocal(),
+            name: participant.name
+        }));
+    };
+}
+
+/**
  * Action to signal that a participant had been kicked.
  *
  * @param {JitsiParticipant} kicker - Information about participant performing the kick.
