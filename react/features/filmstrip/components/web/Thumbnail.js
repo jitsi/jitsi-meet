@@ -467,6 +467,25 @@ class Thumbnail extends Component<Props, State> {
         if (prevState.displayMode !== this.state.displayMode) {
             this._onDisplayModeChanged();
         }
+
+        // TODO: after converting this component to a react function component,
+        // use a custom hook to update local track streaming status.
+        const { _videoTrack, dispatch, _sourceNameSignalingEnabled } = this.props;
+
+        if (_sourceNameSignalingEnabled) {
+            if (prevProps._videoTrack && !prevProps._videoTrack.local) {
+                prevProps._videoTrack.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
+                    this.handleTrackStreamingStatusChanged);
+                dispatch(trackStreamingStatusChanged(prevProps._videoTrack.jitsiTrack,
+                    prevProps._videoTrack.jitsiTrack.getTrackStreamingStatus()));
+            }
+            if (_videoTrack && !_videoTrack.local) {
+                _videoTrack.jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
+                    this.handleTrackStreamingStatusChanged);
+                dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack,
+                    _videoTrack.jitsiTrack.getTrackStreamingStatus()));
+            }
+        }
     }
 
     /**
