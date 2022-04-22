@@ -246,7 +246,12 @@ export type Props = {|
     /**
      * Styles that will be set to the Thumbnail's main span element.
      */
-    style?: ?Object
+    style?: ?Object,
+
+    /**
+     * Whether source name signaling is enabled.
+     */
+    _sourceNameSignalingEnabled: boolean
 |};
 
 const defaultStyles = theme => {
@@ -468,8 +473,9 @@ class Thumbnail extends Component<Props, State> {
      * Handle track streaming status change event by
      * by dispatching an action to update track streaming status for the given track in app state.
      *
-     * @param {JitsiTrack} jitsiTrack the track with streaming status updated
-     * @param {JitsiTrackStreamingStatus} streamingStatus the updated track streaming status
+     * @param {JitsiTrack} jitsiTrack - the track with streaming status updated.
+     * @param {JitsiTrackStreamingStatus} streamingStatus - the updated track streaming status.
+     * @returns {void}
      */
     handleTrackStreamingStatusChanged(jitsiTrack, streamingStatus) {
         this.props.dispatch(trackStreamingStatusChanged(jitsiTrack, streamingStatus));
