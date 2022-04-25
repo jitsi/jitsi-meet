@@ -56,7 +56,7 @@ import {
 } from './react/features/base/conference';
 import {
     getReplaceParticipant,
-    getMultipleVideoSupportFeatureFlag,
+    getMultipleVideoSendingSupportFeatureFlag,
     getSourceNameSignalingFeatureFlag
 } from './react/features/base/config/functions';
 import {
@@ -1472,7 +1472,7 @@ export default {
 
                 // In the multi-stream mode, add the track to the conference if there is no existing track, replace it
                 // otherwise.
-                if (getMultipleVideoSupportFeatureFlag(state)) {
+                if (getMultipleVideoSendingSupportFeatureFlag(state)) {
                     const trackAction = oldTrack
                         ? replaceLocalTrack(oldTrack, newTrack, room)
                         : addLocalTrack(newTrack);

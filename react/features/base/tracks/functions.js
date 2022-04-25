@@ -1,6 +1,6 @@
 /* global APP */
 
-import { getMultipleVideoSupportFeatureFlag } from '../config/functions.any';
+import { getMultipleVideoSendingSupportFeatureFlag } from '../config/functions.any';
 import { isMobileBrowser } from '../environment/utils';
 import JitsiMeetJS, { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, VIDEO_TYPE, setAudioMuted } from '../media';
@@ -607,7 +607,7 @@ export function setTrackMuted(track, muted, state) {
     // browser's 'Stop sharing' button, the local stream is stopped before the inactive stream handler is fired.
     // We still need to proceed here and remove the track from the peerconnection.
     if (track.isMuted() === muted
-        && !(track.getVideoType() === VIDEO_TYPE.DESKTOP && getMultipleVideoSupportFeatureFlag(state))) {
+        && !(track.getVideoType() === VIDEO_TYPE.DESKTOP && getMultipleVideoSendingSupportFeatureFlag(state))) {
         return Promise.resolve();
     }
 

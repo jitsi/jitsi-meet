@@ -51,15 +51,24 @@ export function getMeetingRegion(state: Object) {
 }
 
 /**
- * Selector used to get the sendMultipleVideoStreams feature flag.
+ * Selector for determining if receiving multiple stream support is enabled.
  *
  * @param {Object} state - The global state.
  * @returns {boolean}
  */
 export function getMultipleVideoSupportFeatureFlag(state: Object) {
     return getFeatureFlag(state, FEATURE_FLAGS.MULTIPLE_VIDEO_STREAMS_SUPPORT)
-        && getSourceNameSignalingFeatureFlag(state)
-        && isUnifiedPlanEnabled(state);
+        && getSourceNameSignalingFeatureFlag(state);
+}
+
+/**
+ * Selector for determining if sending multiple stream support is enabled.
+ *
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+export function getMultipleVideoSendingSupportFeatureFlag(state: Object) {
+    return getMultipleVideoSupportFeatureFlag(state) && isUnifiedPlanEnabled(state);
 }
 
 /**

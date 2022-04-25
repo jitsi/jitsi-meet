@@ -9,7 +9,7 @@ import {
 import { setScreenAudioShareState, setScreenshareAudioTrack } from '../../screen-share';
 import { AudioMixerEffect } from '../../stream-effects/audio-mixer/AudioMixerEffect';
 import { setAudioOnly } from '../audio-only';
-import { getMultipleVideoSupportFeatureFlag } from '../config/functions.any';
+import { getMultipleVideoSendingSupportFeatureFlag } from '../config/functions.any';
 import { JitsiConferenceErrors, JitsiTrackErrors } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, setScreenshareMuted, VIDEO_TYPE } from '../media';
 import { MiddlewareRegistry } from '../redux';
@@ -51,7 +51,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
     case TOGGLE_SCREENSHARING: {
-        getMultipleVideoSupportFeatureFlag(getState()) && _toggleScreenSharing(action, store);
+        getMultipleVideoSendingSupportFeatureFlag(getState()) && _toggleScreenSharing(action, store);
 
         break;
     }
