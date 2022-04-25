@@ -13,7 +13,6 @@ import {
     setAudioOutputDevice,
     setVideoInputDeviceAndUpdateSettings
 } from '../base/devices';
-import { isIosMobileBrowser } from '../base/environment/utils';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { toState } from '../base/redux';
 import {
@@ -34,22 +33,21 @@ export function getDeviceSelectionDialogProps(stateful: Object | Function) {
     const settings = state['features/base/settings'];
     const { conference } = state['features/base/conference'];
     const { permissions } = state['features/base/devices'];
-    const isMobileSafari = isIosMobileBrowser();
     const cameraChangeSupported = JitsiMeetJS.mediaDevices.isDeviceChangeAvailable('input');
     const speakerChangeSupported = JitsiMeetJS.mediaDevices.isDeviceChangeAvailable('output');
     const userSelectedCamera = getUserSelectedCameraDeviceId(state);
     const userSelectedMic = getUserSelectedMicDeviceId(state);
     let disableAudioInputChange = !JitsiMeetJS.mediaDevices.isMultipleAudioInputSupported();
     let disableVideoInputSelect = !cameraChangeSupported;
-    let selectedAudioInputId = isMobileSafari ? userSelectedMic : settings.micDeviceId;
+    let selectedAudioInputId = settings.micDeviceId;
     let selectedAudioOutputId = getAudioOutputDeviceId();
-    let selectedVideoInputId = isMobileSafari ? userSelectedCamera : settings.cameraDeviceId;
+    let selectedVideoInputId = settings.cameraDeviceId;
 
     // audio input change will be a problem only when we are in a
     // conference and this is not supported, when we open device selection on
     // welcome page changing input devices will not be a problem
     // on welcome page we also show only what we have saved as user selected devices
-    if (!conference && !isMobileSafari) {
+    if (!conference) {
         disableAudioInputChange = false;
         disableVideoInputSelect = false;
         selectedAudioInputId = userSelectedMic;
