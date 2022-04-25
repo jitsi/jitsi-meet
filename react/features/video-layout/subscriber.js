@@ -2,7 +2,7 @@
 
 import debounce from 'lodash/debounce';
 
-import { getSourceNameSignalingFeatureFlag } from '../base/config';
+import { getMultipleVideoSupportFeatureFlag } from '../base/config';
 import { StateListenerRegistry, equals } from '../base/redux';
 import { isFollowMeActive } from '../follow-me';
 
@@ -12,7 +12,7 @@ import { getAutoPinSetting, updateAutoPinnedParticipant } from './functions';
 StateListenerRegistry.register(
     /* selector */ state => state['features/base/participants'].sortedRemoteFakeScreenShareParticipants,
     /* listener */ (sortedRemoteFakeScreenShareParticipants, store) => {
-        if (!getAutoPinSetting() || isFollowMeActive(store) || !getSourceNameSignalingFeatureFlag(store.getState())) {
+        if (!getAutoPinSetting() || isFollowMeActive(store) || !getMultipleVideoSupportFeatureFlag(store.getState())) {
             return;
         }
 
@@ -53,7 +53,7 @@ StateListenerRegistry.register(
         // possible to have screen sharing participant that has already left in the remoteScreenShares array.
         // This can lead to rendering a thumbnails for already left participants since the remoteScreenShares
         // array is used for building the ordered list of remote participants.
-        if (!getAutoPinSetting() || isFollowMeActive(store) || getSourceNameSignalingFeatureFlag(store.getState())) {
+        if (!getAutoPinSetting() || isFollowMeActive(store) || getMultipleVideoSupportFeatureFlag(store.getState())) {
             return;
         }
 

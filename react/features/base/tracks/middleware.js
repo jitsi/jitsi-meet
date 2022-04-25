@@ -8,7 +8,10 @@ import { shouldShowModeratedNotification } from '../../av-moderation/functions';
 import { hideNotification, isModerationNotificationDisplayed } from '../../notifications';
 import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { getCurrentConference } from '../conference/functions';
-import { getMultipleVideoSupportFeatureFlag, getSourceNameSignalingFeatureFlag } from '../config';
+import {
+    getMultipleVideoSendingSupportFeatureFlag,
+    getMultipleVideoSupportFeatureFlag
+} from '../config';
 import { getAvailableDevices } from '../devices/actions';
 import {
     CAMERA_FACING_MODE,
@@ -82,9 +85,9 @@ MiddlewareRegistry.register(store => next => action => {
 
         // The TRACK_ADDED action is dispatched when a presenter starts a screenshare. Do not create a local fake
         // screenshare participant when multiple stream is not enabled.
-        const skipCreateFakeScreenShareParticipant = local && !getMultipleVideoSupportFeatureFlag(state);
+        const skipCreateFakeScreenShareParticipant = local && !getMultipleVideoSendingSupportFeatureFlag(state);
 
-        if (getSourceNameSignalingFeatureFlag(state)
+        if (getMultipleVideoSupportFeatureFlag(state)
             && jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP
             && !jitsiTrack.isMuted()
             && !skipCreateFakeScreenShareParticipant
@@ -105,7 +108,7 @@ MiddlewareRegistry.register(store => next => action => {
     case TRACK_REMOVED: {
         const state = store.getState();
 
-        if (getSourceNameSignalingFeatureFlag(state) && action.track.jitsiTrack.videoType === VIDEO_TYPE.DESKTOP) {
+        if (getMultipleVideoSupportFeatureFlag(state) && action.track.jitsiTrack.videoType === VIDEO_TYPE.DESKTOP) {
             const conference = getCurrentConference(state);
             const participantId = action.track.jitsiTrack.getSourceName();
 
@@ -197,7 +200,7 @@ MiddlewareRegistry.register(store => next => action => {
 
             const { enabled, audioOnly, ignoreDidHaveVideo } = action;
 
-            if (!getMultipleVideoSupportFeatureFlag(store.getState())) {
+            if (!getMultipleVideoSendingSupportFeatureFlag(store.getState())) {
                 APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING,
                     {
                         enabled,
@@ -215,7 +218,7 @@ MiddlewareRegistry.register(store => next => action => {
 
         if (typeof APP !== 'undefined') {
             if (isVideoTrack && jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP
-                && getMultipleVideoSupportFeatureFlag(store.getState())) {
+                && getMultipleVideoSendingSupportFeatureFlag(store.getState())) {
                 store.dispatch(setScreenshareMuted(!muted));
             } else if (isVideoTrack) {
                 APP.conference.setVideoMuteStatus();
@@ -230,7 +233,7 @@ MiddlewareRegistry.register(store => next => action => {
         const { jitsiTrack } = action.track;
 
         if (typeof APP !== 'undefined'
-            && getMultipleVideoSupportFeatureFlag(store.getState())
+            && getMultipleVideoSendingSupportFeatureFlag(store.getState())
             && jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP) {
             store.dispatch(toggleScreensharing(false));
         }
@@ -260,7 +263,7 @@ MiddlewareRegistry.register(store => next => action => {
                 } else if (jitsiTrack.isLocal() && !(jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP)) {
                     APP.conference.setVideoMuteStatus();
                 } else if (jitsiTrack.isLocal() && muted && jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP) {
-                    !getMultipleVideoSupportFeatureFlag(state)
+                    !getMultipleVideoSendingSupportFeatureFlag(state)
                         && store.dispatch(toggleScreensharing(false, false, true));
                 } else {
                     APP.UI.setVideoMuted(participantID);
@@ -419,7 +422,7 @@ async function _setMuted(store, { ensureTrack, authority, muted }, mediaType: ME
     const state = getState();
 
     if (mediaType === MEDIA_TYPE.SCREENSHARE
-        && getMultipleVideoSupportFeatureFlag(state)
+        && getMultipleVideoSendingSupportFeatureFlag(state)
         && !muted) {
         return;
     }
@@ -434,8 +437,9 @@ async function _setMuted(store, { ensureTrack, authority, muted }, mediaType: ME
 
         // Screenshare cannot be unmuted using the video mute button unless it is muted by audioOnly in the legacy
         // screensharing mode.
-        if (jitsiTrack
-            && (jitsiTrack.videoType !== 'desktop' || isAudioOnly || getMultipleVideoSupportFeatureFlag(state))) {
+        if (jitsiTrack && (
+            jitsiTrack.videoType !== 'desktop' || isAudioOnly || getMultipleVideoSendingSupportFeatureFlag(state))
+        ) {
             setTrackMuted(jitsiTrack, muted, state).catch(() => dispatch(trackMuteUnmuteFailed(localTrack, muted)));
         }
     } else if (!muted && ensureTrack && (typeof APP === 'undefined' || isPrejoinPageVisible(state))) {
