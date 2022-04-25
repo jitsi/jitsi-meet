@@ -31,6 +31,7 @@
     },
     "audioDevices": {
         "bluetooth": "بلوتوث",
+        "car": "مسجل السيارة",
         "headphones": "سماعات رأس",
         "none": "لا يوجد أي أجهزة صوت",
         "phone": "هاتف",
@@ -919,6 +920,7 @@
         "incomingMessage": "رسالة واردة",
         "language": "اللغة",
         "loggedIn": "الدخول باسم {{name}}",
+        "maxStageParticipants": "الحد الأقصى لعدد المشاركين الذين يمكن تثبيتهم في المرحلة الرئيسية",
         "microphones": "المجهار (المايكروفون)",
         "moderator": "رئيس الجلسة",
         "more": "المزيد",
