@@ -6,20 +6,15 @@ import type { Store } from 'redux';
 import { i18next } from '../../base/i18n';
 import { isStageFilmstripAvailable } from '../../filmstrip/functions';
 import { GRAVATAR_BASE_URL, isCORSAvatarURL } from '../avatar';
-import { getSourceNameSignalingFeatureFlag } from '../config';
+import { getMultipleVideoSupportFeatureFlag, getSourceNameSignalingFeatureFlag } from '../config';
 import { JitsiParticipantConnectionStatus } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, shouldRenderVideoTrack } from '../media';
 import { toState } from '../redux';
 import { getTrackByMediaTypeAndParticipant } from '../tracks';
 import { createDeferred } from '../util';
 
-import {
-    JIGASI_PARTICIPANT_ICON,
-    MAX_DISPLAY_NAME_LENGTH,
-    PARTICIPANT_ROLE
-} from './constants';
+import { JIGASI_PARTICIPANT_ICON, MAX_DISPLAY_NAME_LENGTH, PARTICIPANT_ROLE } from './constants';
 import { preloadImage } from './preloadImage';
-
 
 /**
  * Temp structures for avatar urls to be checked/preloaded.
@@ -114,12 +109,16 @@ export function getLocalScreenShareParticipant(stateful: Object | Function) {
  * @param {string} id - The owner ID of the screenshare participant to retrieve.
  * @returns {(Participant|undefined)}
  */
-export function getScreenshareParticipantByOwnerId(stateful: Object | Function, id: string) {
-    const track = getTrackByMediaTypeAndParticipant(
-        toState(stateful)['features/base/tracks'], MEDIA_TYPE.SCREENSHARE, id
-    );
+export function getFakeScreenshareParticipantByOwnerId(stateful: Object | Function, id: string) {
+    const state = toState(stateful);
 
-    return getParticipantById(stateful, track?.jitsiTrack.getSourceName());
+    if (getMultipleVideoSupportFeatureFlag(state)) {
+        const track = getTrackByMediaTypeAndParticipant(state['features/base/tracks'], MEDIA_TYPE.SCREENSHARE, id);
+
+        return getParticipantById(stateful, track?.jitsiTrack.getSourceName());
+    }
+
+    return;
 }
 
 /**

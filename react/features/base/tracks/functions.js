@@ -1,6 +1,9 @@
 /* global APP */
 
-import { getMultipleVideoSendingSupportFeatureFlag } from '../config/functions.any';
+import {
+    getMultipleVideoSendingSupportFeatureFlag,
+    getMultipleVideoSupportFeatureFlag
+} from '../config/functions.any';
 import { isMobileBrowser } from '../environment/utils';
 import JitsiMeetJS, { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, VIDEO_TYPE, setAudioMuted } from '../media';
@@ -451,18 +454,44 @@ export function getTrackByMediaTypeAndParticipant(
 }
 
 /**
- * Returns track of given fakeScreenshareParticipantId.
+ * Returns screenshare track of given fakeScreenshareParticipantId.
  *
  * @param {Track[]} tracks - List of all tracks.
  * @param {string} fakeScreenshareParticipantId - Fake Screenshare Participant ID.
  * @returns {(Track|undefined)}
  */
 export function getFakeScreenshareParticipantTrack(tracks, fakeScreenshareParticipantId) {
-    const participantId = getFakeScreenShareParticipantOwnerId(fakeScreenshareParticipantId);
+    const ownderId = getFakeScreenShareParticipantOwnerId(fakeScreenshareParticipantId);
 
+    return getScreenShareTrack(tracks, ownderId);
+}
+
+/**
+ * Returns track source names of given screen share participant ids.
+ *
+ * @param {Object} state - The entire redux state.
+ * @param {string[]} screenShareParticipantIds - Participant ID.
+ * @returns {(string[])}
+ */
+export function getRemoteScreenSharesSourceNames(state, screenShareParticipantIds = []) {
+    const tracks = state['features/base/tracks'];
+
+    return getMultipleVideoSupportFeatureFlag(state)
+        ? screenShareParticipantIds
+        : screenShareParticipantIds.map(id => getScreenShareTrack(tracks, id).jitsiTrack.getSourceName());
+}
+
+/**
+ * Returns screenshare track of given owner ID.
+ *
+ * @param {Track[]} tracks - List of all tracks.
+ * @param {string} ownerId - Screenshare track owner ID.
+ * @returns {(Track|undefined)}
+ */
+export function getScreenShareTrack(tracks, ownerId) {
     return tracks.find(
         t => Boolean(t.jitsiTrack)
-        && t.participantId === participantId
+        && t.participantId === ownerId
         && (t.mediaType === MEDIA_TYPE.SCREENSHARE || t.videoType === VIDEO_TYPE.DESKTOP)
     );
 }
