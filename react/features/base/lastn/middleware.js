@@ -49,15 +49,14 @@ const _updateLastN = debounce(({ dispatch, getState }) => {
     const { appState } = state['features/background'] || {};
     const { enabled: filmStripEnabled } = state['features/filmstrip'];
     const config = state['features/base/config'];
-    const { lastNLimits, lastN } = state['features/base/lastn'];
+    const { lastNLimits } = state['features/base/lastn'];
     const participantCount = getParticipantCount(state);
 
-    // Select the lastN value based on the following preference order.
-    // 1. The last-n value in redux.
-    // 2. The last-n value from 'startLastN' if it is specified in config.js
-    // 3. The last-n value from 'channelLastN' if specified in config.js.
-    // 4. -1 as the default value.
-    let lastNSelected = lastN || (config.startLastN ?? (config.channelLastN ?? -1));
+    // Select the (initial) lastN value based on the following preference order.
+    // 1. The last-n value from 'startLastN' if it is specified in config.js
+    // 2. The last-n value from 'channelLastN' if specified in config.js.
+    // 3. -1 as the default value.
+    let lastNSelected = config.startLastN ?? (config.channelLastN ?? -1);
 
     // Apply last N limit based on the # of participants and config settings.
     const limitedLastN = limitLastN(participantCount, lastNLimits);
