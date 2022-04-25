@@ -20,11 +20,6 @@ type Props = {
     _componentProps: Object,
 
     /**
-     * True if the dialog is a raw dialog (doesn't inherit behavior from other common frameworks, such as atlaskit).
-     */
-    _rawDialog: boolean,
-
-    /**
      * True if the UI is in a compact state where we don't show dialogs.
      */
     _reducedUI: boolean,
@@ -73,7 +68,6 @@ export function abstractMapStateToProps(state: Object): $Shape<Props> {
     return {
         _component: stateFeaturesBaseDialog.component,
         _componentProps: stateFeaturesBaseDialog.componentProps,
-        _rawDialog: stateFeaturesBaseDialog.rawDialog,
         _reducedUI: reducedUI
     };
 }

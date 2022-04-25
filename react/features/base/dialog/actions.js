@@ -30,17 +30,14 @@ export function hideDialog(component: ?Object) {
  * @param {Object} component - The component to display as dialog.
  * @param {Object} [componentProps] - The React {@code Component} props of the
  * specified {@code component}.
- * @param {boolean} rawDialog - True if the dialog is a raw dialog.
- * (Doesn't inherit behavior from other common frameworks).
  * @returns {{
  *     type: OPEN_DIALOG,
  *     component: React.Component,
  *     componentProps: (Object | undefined)
  * }}
  */
-export function openDialog(component: Object, componentProps: ?Object, rawDialog?: boolean) {
+export function openDialog(component: Object, componentProps: ?Object) {
     return {
-        rawDialog,
         type: OPEN_DIALOG,
         component,
         componentProps
