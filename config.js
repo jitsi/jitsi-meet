@@ -69,6 +69,11 @@ var config = {
         // or disabled for the screenshare.
         // capScreenshareBitrate: 1 // 0 to disable - deprecated.
 
+        // Whether to use fake constraints (height: 99999, width: 99999) when calling getDisplayMedia on
+        // Chromium based browsers. This is intended as a workaround for
+        // https://bugs.chromium.org/p/chromium/issues/detail?id=1056311
+        // setScreenSharingResolutionConstraints: true
+
         // Enable callstats only for a percentage of users.
         // This takes a value between 0 and 100 which determines the probability for
         // the callstats to be enabled.
