@@ -31,6 +31,7 @@
     },
     "audioDevices": {
         "bluetooth": "Bluetooth",
+        "car": "Sistema áudio do automóvel",
         "headphones": "Auscultadores",
         "none": "Sem dispositivos de áudio disponíveis",
         "phone": "Telemóvel",
@@ -565,8 +566,8 @@
         "knockButton": "Pedir para participar",
         "knockTitle": "Alguém quer juntar-se à reunião",
         "knockingParticipantList": "Lista de participantes a expulsar",
-        "lobbyChatStartedNotification": "{{moderator}} iniciou uma conversa na sala de espera com {{attendee}}",
-        "lobbyChatStartedTitle": "{{moderator}} iniciou uma conversa na sala de espera consigo.",
+        "lobbyChatStartedNotification": "{{moderator}} iniciou com {{attendee}} uma conversa na sala de espera",
+        "lobbyChatStartedTitle": "{{moderator}} iniciou consigo uma conversa na sala de espera.",
         "nameField": "Introduza o seu nome",
         "notificationLobbyAccessDenied": "{{targetParticipantName}} foi recusada a adesão por {{originParticipantName}}",
         "notificationLobbyAccessGranted": "{{targetParticipantName}} foi autorizado a aderir por {{originParticipantName}}",
@@ -723,7 +724,7 @@
     },
     "passwordDigitsOnly": "Até {{number}} dígitos",
     "passwordSetRemotely": "Definido por outro participante",
-    "pinnedParticipant": "O participante está fixado",
+    "pinnedParticipant": "O participante está afixado",
     "polls": {
         "answer": {
             "skip": "Ignorar",
@@ -893,6 +894,7 @@
         "unavailableTitle": "Gravação indisponível",
         "uploadToCloud": "Enviar para a nuvem"
     },
+    "screenshareDisplayName": "ecrã do {{name}}",
     "sectionList": {
         "pullToRefresh": "Puxe para atualizar"
     },
@@ -919,6 +921,7 @@
         "incomingMessage": "Receber uma mensagem",
         "language": "Idioma",
         "loggedIn": "Sessão iniciada como {{name}}",
+        "maxStageParticipants": "Número máximo de participantes que podem ser afixados",
         "microphones": "Microfones",
         "moderator": "Moderador",
         "more": "Mais",
@@ -1215,12 +1218,12 @@
         "moderator": "Moderador",
         "mute": "Participante está sem som",
         "muted": "Sem som",
-        "pinToStage": "Fixar no ecrã",
+        "pinToStage": "Afixar",
         "remoteControl": "Iniciar / Parar controlo remoto",
         "screenSharing": "Participante está a partilhar o seu ecrã",
         "show": "Mostrar no palco",
         "showSelfView": "Mostrar autovisualização",
-        "unpinFromStage": "Soltar",
+        "unpinFromStage": "Desafixar",
         "videoMuted": "Câmara desativada",
         "videomute": "Participante parou a câmara"
     },
