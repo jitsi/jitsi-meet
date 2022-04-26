@@ -88,6 +88,7 @@ import { isScreenshotCaptureEnabled } from '../../react/features/screenshot-capt
 import { playSharedVideo, stopSharedVideo } from '../../react/features/shared-video/actions.any';
 import { extractYoutubeIdOrURL } from '../../react/features/shared-video/functions';
 import { toggleRequestingSubtitles, setRequestingSubtitles } from '../../react/features/subtitles/actions';
+import { isAudioMuteButtonDisabled } from '../../react/features/toolbox/functions';
 import { toggleTileView, setTileView } from '../../react/features/video-layout';
 import { muteAllParticipants } from '../../react/features/video-menu/actions';
 import { setVideoQuality } from '../../react/features/video-quality';
@@ -699,6 +700,9 @@ function initCommands() {
         }
         case 'is-audio-muted':
             callback(APP.conference.isLocalAudioMuted());
+            break;
+        case 'is-audio-disabled':
+            callback(isAudioMuteButtonDisabled(APP.store.getState()));
             break;
         case 'is-moderation-on': {
             const { mediaType } = request;
