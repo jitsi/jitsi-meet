@@ -7,12 +7,12 @@ import { CONFERENCE_UNIQUE_ID_SET, E2E_RTT_CHANGED, getConferenceOptions, getRoo
 import { LIB_WILL_INIT } from '../base/lib-jitsi-meet/actionTypes';
 import { DOMINANT_SPEAKER_CHANGED, getLocalParticipant } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
+import { TRACK_ADDED, TRACK_UPDATED } from '../base/tracks';
 import { ADD_FACE_EXPRESSION } from '../face-landmarks/actionTypes';
 
 import RTCStats from './RTCStats';
 import { canSendRtcstatsData, isRtcstatsEnabled } from './functions';
 import logger from './logger';
-import { TRACK_ADDED, TRACK_UPDATED } from "../base/tracks";
 
 /**
  * Middleware which intercepts lib-jitsi-meet initialization and conference join in order init the
@@ -56,7 +56,7 @@ MiddlewareRegistry.register(store => next => action => {
     case TRACK_ADDED: {
         if (canSendRtcstatsData(state)) {
             const jitsiTrack = action.track.jitsiTrack;
-            const {ownerEndpointId, ssrc, videoType, type} = jitsiTrack;
+            const { ownerEndpointId, ssrc, videoType, type } = jitsiTrack;
 
             // Remote tracks store their ssrc in the jitsiTrack object. Local tracks don't. See getSsrcByTrack.
             if (type === 'video' && !jitsiTrack.isLocal()) {
@@ -74,9 +74,11 @@ MiddlewareRegistry.register(store => next => action => {
             const videoType = action.track?.videoType;
             const jitsiTrack = action.track.jitsiTrack;
 
-            // if the videoType of the remote track has changed we expect to find it in track.videoType. grep for trackVideoTypeChanged.
+            // if the videoType of the remote track has changed we expect to find it in track.videoType. grep for
+            // trackVideoTypeChanged.
             if (videoType && !jitsiTrack.isLocal()) {
-                const {ssrc, ownerEndpointId} = jitsiTrack;
+                const { ssrc, ownerEndpointId } = jitsiTrack;
+
                 RTCStats.sendVideoTypeData({
                     ownerEndpointId,
                     ssrc,
