@@ -1,13 +1,9 @@
-// @flow
-
 import { TransitionPresets } from '@react-navigation/stack';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Platform } from 'react-native';
 
 import {
     Icon,
-    IconClose,
     IconHelp,
     IconHome,
     IconInfo,
@@ -15,8 +11,9 @@ import {
 } from '../../base/icons';
 import BaseTheme from '../../base/ui/components/BaseTheme.native';
 
-import HeaderNavigationButton from './components/HeaderNavigationButton';
 import { goBack } from './components/conference/ConferenceNavigationContainerRef';
+import { goBack as goBackToLobbyScreen } from './components/lobby/LobbyNavigationContainerRef';
+import { screenHeaderCloseButton } from './functions';
 
 
 /**
@@ -167,16 +164,12 @@ export const helpScreenOptions = {
 /**
  * Screen options for conference.
  */
-export const conferenceScreenOptions = {
-    ...fullScreenOptions
-};
+export const conferenceScreenOptions = fullScreenOptions;
 
 /**
  * Screen options for lobby modal.
  */
-export const lobbyScreenOptions = {
-    ...fullScreenOptions
-};
+export const lobbyScreenOptions = fullScreenOptions;
 
 /**
  * Tab bar options for chat screen.
@@ -198,23 +191,7 @@ export const chatTabBarOptions = {
 export const presentationScreenOptions = {
     ...conferenceModalPresentation,
     headerBackTitleVisible: false,
-    headerLeft: () => {
-        const { t } = useTranslation();
-
-        if (Platform.OS === 'ios') {
-            return (
-                <HeaderNavigationButton
-                    label = { t('dialog.close') }
-                    onPress = { goBack } />
-            );
-        }
-
-        return (
-            <HeaderNavigationButton
-                onPress = { goBack }
-                src = { IconClose } />
-        );
-    },
+    headerLeft: () => screenHeaderCloseButton(goBack),
     headerStatusBarHeight: 0,
     headerStyle: {
         backgroundColor: BaseTheme.palette.screen01Header
@@ -227,50 +204,44 @@ export const presentationScreenOptions = {
 /**
  * Screen options for chat.
  */
-export const chatScreenOptions = {
-    ...presentationScreenOptions
-};
+export const chatScreenOptions = presentationScreenOptions;
 
 /**
  * Screen options for invite modal.
  */
-export const inviteScreenOptions = {
-    ...presentationScreenOptions
-};
+export const inviteScreenOptions = presentationScreenOptions;
 
 /**
  * Screen options for participants modal.
  */
-export const participantsScreenOptions = {
-    ...presentationScreenOptions
-};
+export const participantsScreenOptions = presentationScreenOptions;
 
 /**
  * Screen options for speaker stats modal.
  */
-export const speakerStatsScreenOptions = {
-    ...presentationScreenOptions
-};
+export const speakerStatsScreenOptions = presentationScreenOptions;
 
 /**
  * Screen options for security options modal.
  */
-export const securityScreenOptions = {
-    ...presentationScreenOptions
-};
+export const securityScreenOptions = presentationScreenOptions;
 
 /**
  * Screen options for recording modal.
  */
-export const recordingScreenOptions = {
-    ...presentationScreenOptions
-};
+export const recordingScreenOptions = presentationScreenOptions;
 
 /**
  * Screen options for live stream modal.
  */
-export const liveStreamScreenOptions = {
-    ...presentationScreenOptions
+export const liveStreamScreenOptions = presentationScreenOptions;
+
+/**
+ * Screen options for lobby chat modal.
+ */
+export const lobbyChatScreenOptions = {
+    ...presentationScreenOptions,
+    headerLeft: () => screenHeaderCloseButton(goBackToLobbyScreen)
 };
 
 /**

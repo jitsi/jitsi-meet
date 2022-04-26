@@ -38,6 +38,11 @@ type Props = {
     hasTabNavigator?: boolean,
 
     /**
+     * Insets for the SafeAreaView.
+     */
+    safeAreaInsets?: Array,
+
+    /**
      * Additional style to be appended to the KeyboardAvoidingView containing the content of the modal.
      */
     style?: StyleType
@@ -49,6 +54,7 @@ const JitsiScreen = ({
     footerComponent,
     hasTabNavigator = false,
     hasBottomTextInput = false,
+    safeAreaInsets = [ 'bottom', 'left', 'right' ],
     style
 }: Props) => (
     <View
@@ -59,11 +65,7 @@ const JitsiScreen = ({
             hasTabNavigator = { hasTabNavigator }
             style = { style }>
             <SafeAreaView
-                edges = { [
-                    'bottom',
-                    'left',
-                    'right'
-                ] }
+                edges = { safeAreaInsets }
                 style = { styles.safeArea }>
                 { children }
             </SafeAreaView>
