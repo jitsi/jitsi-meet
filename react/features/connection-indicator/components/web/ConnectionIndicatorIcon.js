@@ -52,12 +52,14 @@ export const ConnectionIndicatorIcon = ({
 }: Props) => {
     const sourceNameSignalingEnabled = useSelector(state => getSourceNameSignalingFeatureFlag(state));
     const dispatch = useDispatch();
-    const sourceName = track?.jitsiTrack?.getSourceName?.();
+    const sourceName = track?.jitsiTrack?.getSourceName();
 
     const handleTrackStreamingStatusChanged = streamingStatus => {
         dispatch(trackStreamingStatusChanged(track.jitsiTrack, streamingStatus));
     };
 
+    // TODO: replace this with a custom hook to be reused where track streaming status is needed.
+    // TODO: In the hood the listener should updates a local track streaming status instead of that in redux store.
     useEffect(() => {
         if (track && !track.local && sourceNameSignalingEnabled) {
             track.jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED, handleTrackStreamingStatusChanged);

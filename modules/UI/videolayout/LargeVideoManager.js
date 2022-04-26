@@ -11,13 +11,15 @@ import { Avatar } from '../../../react/features/base/avatar';
 import theme from '../../../react/features/base/components/themes/participantsPaneTheme.json';
 import { getSourceNameSignalingFeatureFlag } from '../../../react/features/base/config';
 import { i18next } from '../../../react/features/base/i18n';
+import { JitsiTrackEvents } from '../../../react/features/base/lib-jitsi-meet';
 import { VIDEO_TYPE } from '../../../react/features/base/media';
 import {
     getParticipantById,
     getParticipantDisplayName
 } from '../../../react/features/base/participants';
 import {
-    getVideoTrackByParticipant
+    getVideoTrackByParticipant,
+    trackStreamingStatusChanged
 } from '../../../react/features/base/tracks';
 import { CHAT_SIZE } from '../../../react/features/chat';
 import {
@@ -115,6 +117,14 @@ export default class LargeVideoManager {
          * @type {number}
          */
         this._videoAspectRatio = 0;
+
+        /**
+         * The video track in effect.
+         * This is used to add and remove listeners on track streaming status change.
+         *
+         * @type {Object}
+         */
+        this.videoTrack = undefined;
 
         this.$container = $('#largeVideoContainer');
 
@@ -242,6 +252,26 @@ export default class LargeVideoManager {
                 const tracks = state['features/base/tracks'];
                 const videoTrack = getVideoTrackByParticipant(tracks, participant);
 
+                // Remove track streaming status listener from the old track and add it to the new track,
+                // in order to stop updating track streaming status for the old track and start it for the new track.
+                // TODO: when this class is converted to a function react component,
+                // use a custom hook to update a local track streaming status.
+                if (this.videoTrack?.jitsiTrack?.getSourceName() !== videoTrack?.jitsiTrack?.getSourceName()) {
+                    if (this.videoTrack) {
+                        this.videoTrack.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
+                            this.handleTrackStreamingStatusChanged);
+                        APP.store.dispatch(trackStreamingStatusChanged(this.videoTrack.jitsiTrack,
+                            this.videoTrack.jitsiTrack.getTrackStreamingStatus()));
+                    }
+                    if (videoTrack && !videoTrack.local) {
+                        this.videoTrack = videoTrack;
+                        this.videoTrack.jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
+                            this.handleTrackStreamingStatusChanged);
+                        APP.store.dispatch(trackStreamingStatusChanged(this.videoTrack.jitsiTrack,
+                            this.videoTrack.jitsiTrack.getTrackStreamingStatus()));
+                    }
+                }
+
                 isVideoRenderable = !isVideoMuted && (
                     APP.conference.isLocalId(id)
                     || participant?.isLocalScreenShare
@@ -338,6 +368,19 @@ export default class LargeVideoManager {
             this.updateInProcess = false;
             this.scheduleLargeVideoUpdate();
         });
+    }
+
+    /**
+     * Handle track streaming status change event by
+     * by dispatching an action to update track streaming status for the given track in app state.
+     *
+     * @param {JitsiTrack} jitsiTrack the track with streaming status updated
+     * @param {JitsiTrackStreamingStatus} streamingStatus the updated track streaming status
+     *
+     * @private
+     */
+    handleTrackStreamingStatusChanged(jitsiTrack, streamingStatus) {
+        APP.store.dispatch(trackStreamingStatusChanged(jitsiTrack, streamingStatus));
     }
 
     /**
