@@ -9,7 +9,10 @@ import { Provider } from 'react-redux';
 import { createScreenSharingIssueEvent, sendAnalytics } from '../../../react/features/analytics';
 import { Avatar } from '../../../react/features/base/avatar';
 import theme from '../../../react/features/base/components/themes/participantsPaneTheme.json';
-import { getSourceNameSignalingFeatureFlag } from '../../../react/features/base/config';
+import {
+    getMultipleVideoSupportFeatureFlag,
+    getSourceNameSignalingFeatureFlag
+} from '../../../react/features/base/config';
 import { i18next } from '../../../react/features/base/i18n';
 import { JitsiTrackEvents } from '../../../react/features/base/lib-jitsi-meet';
 import { VIDEO_TYPE } from '../../../react/features/base/media';
@@ -283,9 +286,15 @@ export default class LargeVideoManager {
             }
 
             const isAudioOnly = APP.conference.isAudioOnly();
+
+            // For Plan B enbdpoints with multi-stream support, display an avatar for the original thumbnail.
+            const planBScreenShare = getMultipleVideoSupportFeatureFlag(state)
+                                        && videoType === VIDEO_TYPE.DESKTOP
+                                        && !participant.isFakeScreenShareParticipant;
+
             const showAvatar
                 = isVideoContainer
-                    && ((isAudioOnly && videoType !== VIDEO_TYPE.DESKTOP) || !isVideoRenderable);
+                    && ((isAudioOnly && videoType !== VIDEO_TYPE.DESKTOP) || !isVideoRenderable || planBScreenShare);
 
             let promise;
 

@@ -513,14 +513,23 @@ export function computeDisplayModeFromInput(input: Object) {
         isScreenSharing,
         canPlayEventReceived,
         isRemoteParticipant,
+        multipleVideoSupport,
         stageParticipantsVisible,
         stageFilmstrip,
         tileViewActive
     } = input;
     const adjustedIsVideoPlayable = input.isVideoPlayable && (!isRemoteParticipant || canPlayEventReceived);
 
-    if (isFakeScreenShareParticipant) {
-        return DISPLAY_VIDEO;
+    if (multipleVideoSupport) {
+        // Display video for fake screen share participants in all layouts.
+        if (isFakeScreenShareParticipant) {
+            return DISPLAY_VIDEO;
+        }
+
+        // For Plan B enbdpoints with multi-stream support, display an avatar for the original thumbnail.
+        if (isScreenSharing && isRemoteParticipant) {
+            return DISPLAY_AVATAR;
+        }
     }
 
     if (!tileViewActive && ((isScreenSharing && isRemoteParticipant)
@@ -554,6 +563,7 @@ export function getDisplayModeInput(props: Object, state: Object) {
         _isFakeScreenShareParticipant,
         _isScreenSharing,
         _isVideoPlayable,
+        _multipleVideoSupport,
         _participant,
         _stageParticipantsVisible,
         _videoTrack,
@@ -574,6 +584,7 @@ export function getDisplayModeInput(props: Object, state: Object) {
         isRemoteParticipant: !_participant?.isFakeParticipant && !_participant?.local,
         isScreenSharing: _isScreenSharing,
         isFakeScreenShareParticipant: _isFakeScreenShareParticipant,
+        multipleVideoSupport: _multipleVideoSupport,
         stageParticipantsVisible: _stageParticipantsVisible,
         stageFilmstrip,
         videoStreamMuted: _videoTrack ? _videoTrack.muted : 'no stream'
