@@ -291,7 +291,7 @@ function _mapStateToProps(state, ownProps) {
         _aspectRatio: responsiveUi.aspectRatio,
         _columns: columns,
         _disableSelfView: disableSelfView,
-        _height: responsiveUi.clientHeight - (ownProps.insets?.top || 0) - (ownProps.insets?.bottom || 0),
+        _height: responsiveUi.clientHeight - (ownProps.insets?.top || 0),
         _insets: ownProps.insets,
         _localParticipant: getLocalParticipant(state),
         _participantCount: getParticipantCountWithFake(state),

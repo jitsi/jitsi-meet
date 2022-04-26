@@ -218,7 +218,7 @@ export const SHOW_TOOLBAR_CONTEXT_MENU_AFTER = 600;
 
 /**
  * The margin for each side of the tile view. Taken away from the available
- * height and width for the tile container to display in.
+ * width for the tile container to display in.
  *
  * NOTE: Mobile specific.
  *

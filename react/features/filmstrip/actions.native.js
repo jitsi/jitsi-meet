@@ -1,5 +1,7 @@
 // @flow
 
+import { styles as conferenceStyles } from '../conference';
+
 import { SET_TILE_VIEW_DIMENSIONS } from './actionTypes';
 import { styles } from './components';
 import { SQUARE_TILE_ASPECT_RATIO, TILE_MARGIN } from './constants';
@@ -22,8 +24,10 @@ export function setTileViewDimensions() {
         const { clientHeight: height, clientWidth: width, safeAreaInsets = {} } = state['features/base/responsive-ui'];
         const columns = getColumnCount(state);
         const rows = Math.ceil(participantCount / columns);
-        const heightToUse = height - (TILE_MARGIN * 2) - (safeAreaInsets.top || 0) - (safeAreaInsets.bottom || 0);
-        const widthToUse = width - (TILE_MARGIN * 2) - (safeAreaInsets.left || 0) - (safeAreaInsets.right || 0);
+        const conferenceBorder = conferenceStyles.conference.borderWidth || 0;
+        const heightToUse = height - (safeAreaInsets.top || 0) - (2 * conferenceBorder);
+        const widthToUse = width - (TILE_MARGIN * 2) - (safeAreaInsets.left || 0)
+            - (safeAreaInsets.right || 0) - (2 * conferenceBorder);
         let tileWidth;
 
         // If there is going to be at least two rows, ensure that at least two
@@ -38,7 +42,9 @@ export function setTileViewDimensions() {
 
         tileWidth = Math.floor(tileWidth);
 
-        const hasScroll = heightToUse < (tileHeight + (2 * styles.thumbnail.margin)) * rows;
+        // Adding safeAreaInsets.bottom to the total height of all thumbnails because we add it as a padding to the
+        // thumbnails container.
+        const hasScroll = heightToUse < ((tileHeight + (2 * styles.thumbnail.margin)) * rows) + safeAreaInsets.bottom;
 
         dispatch({
             type: SET_TILE_VIEW_DIMENSIONS,
