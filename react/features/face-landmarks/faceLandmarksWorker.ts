@@ -1,5 +1,5 @@
 import { setWasmPaths } from '@tensorflow/tfjs-backend-wasm';
-import { Human, Config, FaceResult } from '@vladmandic/human/dist/human.esm.js';
+import { Human, Config, FaceResult } from '@vladmandic/human';
 
 import { DETECTION_TYPES, DETECT_FACE, INIT_WORKER, FACE_EXPRESSIONS_NAMING_MAPPING } from './constants';
 
@@ -53,7 +53,7 @@ const config: Partial<Config> = {
     warmup: 'none',
     cacheModels: true,
     cacheSensitivity: 0,
-    debug: true,
+    debug: false,
     deallocate: true,
     filter: { enabled: false },
     face: {
@@ -151,8 +151,12 @@ const init = async ({ baseUrl, detectionTypes }: InitInput) => {
             config.face.emotion = { enabled: true };
         }
         const initialHuman = new Human(config);
-
-        await initialHuman.load();
+        try {
+            await initialHuman.load();
+        } catch (err) {
+            console.error(err);
+        }
+        
         human = initialHuman;
     }
 };

@@ -8,7 +8,7 @@ TF_WASM_DIR = node_modules/@tensorflow/tfjs-backend-wasm/dist/
 RNNOISE_WASM_DIR = node_modules/rnnoise-wasm/dist
 TFLITE_WASM = react/features/stream-effects/virtual-background/vendor/tflite
 MEET_MODELS_DIR  = react/features/stream-effects/virtual-background/vendor/models
-FACE_MODELS_DIR = node_modules/@vladmandic/human/models
+FACE_MODELS_DIR = node_modules/@vladmandic/human-models/models
 NODE_SASS = ./node_modules/.bin/sass
 NPM = npm
 OUTPUT_DIR = .
@@ -103,8 +103,8 @@ deploy-meet-models:
 
 deploy-face-landmarks:
 	cp \
-		$(FACE_MODELS_DIR)/blazeface.bin \
-		$(FACE_MODELS_DIR)/blazeface.json \
+		$(FACE_MODELS_DIR)/blazeface-front.bin \
+		$(FACE_MODELS_DIR)/blazeface-front.json \
 		$(FACE_MODELS_DIR)/emotion.bin \
 		$(FACE_MODELS_DIR)/emotion.json \
 		$(DEPLOY_DIR)
