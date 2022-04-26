@@ -52,7 +52,7 @@ export const ConnectionIndicatorIcon = ({
 }: Props) => {
     const sourceNameSignalingEnabled = useSelector(state => getSourceNameSignalingFeatureFlag(state));
     const dispatch = useDispatch();
-    const sourceName = track?.jitsiTrack?.getSourceName?.();
+    const sourceName = track?.jitsiTrack?.getSourceName();
 
     const handleTrackStreamingStatusChanged = streamingStatus => {
         dispatch(trackStreamingStatusChanged(track.jitsiTrack, streamingStatus));
