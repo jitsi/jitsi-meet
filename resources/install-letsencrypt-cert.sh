@@ -10,8 +10,8 @@ DOMAIN="$(echo -e "${DOMAIN}" | tr -d '[:space:]')"
 echo "-------------------------------------------------------------------------"
 echo "This script will:"
 echo "- Need a working DNS record pointing to this machine(for domain ${DOMAIN})"
-echo "- Download certbot-auto from https://dl.eff.org to /usr/local/sbin"
-echo "- Install additional dependencies in order to request Let’s Encrypt certificate"
+echo "         ******************"
+echo "- Install certbot from apt and additional dependencies in order to request Let’s Encrypt certificate"
 echo "- If running with jetty serving web content, will stop Jitsi Videobridge"
 echo "- Configure and reload nginx or apache2, whichever is used"
 echo "- Configure the coturn server to use Let's Encrypt certificate and add required deploy hooks"
@@ -25,13 +25,18 @@ read EMAIL
 
 CERTBOT="$(command -v certbot || true)"
 if [ ! -x "$CERTBOT" ] ; then
+    LSBR="$(command -v lsb_release || true)"
+    if [ ! -x "$LSBR" ]; then
+        apt-get update	    
+        apt-get -y install lsb-release
+    fi
     DISTRO=$(lsb_release -is)
     DISTRO_VERSION=$(lsb_release -rs)
     if [ "$DISTRO" = "Debian" ]; then
         apt-get update
         apt-get -y install certbot
     elif [ "$DISTRO" = "Ubuntu" ]; then
-        if [ "$DISTRO_VERSION" = "20.04" ] || [ "$DISTRO_VERSION" = "19.10" ]; then
+        if [ "$DISTRO_VERSION" = "22.04" ] || [ "$DISTRO_VERSION" = "20.04" ]; then
                 apt-get update
                 apt-get -y install software-properties-common
                 add-apt-repository -y universe
@@ -44,13 +49,17 @@ if [ ! -x "$CERTBOT" ] ; then
                 add-apt-repository -y ppa:certbot/certbot
                 apt-get update
                 apt-get -y install certbot
+	else
+                echo "$DISTRO $DISTRO_VERSION is not supported"
+                echo "With Ubuntu, only 18.04, 20.04, 22.04 are supported"
+                exit 1
         fi
     else
         echo "$DISTRO $DISTRO_VERSION is not supported"
-        echo "Only Debian 9,10 and Ubuntu 18.04,19.10,20.04 are supported"
+        echo "Only Debian 9, 10, 11 and Ubuntu 18.04, 20.04, 22.04 are supported"
         exit 1
     fi
-    
+
     CERTBOT="$(command -v certbot)"
 fi
 
