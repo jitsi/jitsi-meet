@@ -2268,7 +2268,7 @@ export default {
 
                 if (fakeScreenshareParticipantId) {
                     APP.store.dispatch(
-                            screenshareParticipantDisplayNameChanged(fakeScreenshareParticipantId, formattedDisplayName)
+                        screenshareParticipantDisplayNameChanged(fakeScreenshareParticipantId, formattedDisplayName)
                     );
                 }
 
