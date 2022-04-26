@@ -34,5 +34,9 @@ export const screen = {
         invite: 'Invite',
         sharedDocument: 'Shared document'
     },
-    lobby: 'Lobby'
+    lobby: {
+        root: 'Lobby root',
+        main: 'Lobby',
+        chat: 'Lobby chat'
+    }
 };

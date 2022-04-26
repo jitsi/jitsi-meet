@@ -183,7 +183,7 @@ class Conference extends AbstractConference<Props, State> {
         const { _showLobby } = this.props;
 
         if (!prevProps._showLobby && _showLobby) {
-            navigate(screen.lobby);
+            navigate(screen.lobby.root);
         }
 
         if (prevProps._showLobby && !_showLobby) {

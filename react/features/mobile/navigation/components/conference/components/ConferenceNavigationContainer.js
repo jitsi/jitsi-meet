@@ -1,5 +1,3 @@
-// @flow
-
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
@@ -13,7 +11,6 @@ import { SharedDocument } from '../../../../../etherpad';
 import { GifsMenu } from '../../../../../gifs/components';
 import AddPeopleDialog
     from '../../../../../invite/components/add-people-dialog/native/AddPeopleDialog';
-import LobbyScreen from '../../../../../lobby/components/native/LobbyScreen';
 import { ParticipantsPane } from '../../../../../participants-pane/components/native';
 import { StartLiveStreamDialog } from '../../../../../recording';
 import { StartRecordingDialog }
@@ -31,7 +28,6 @@ import {
     gifsMenuOptions,
     inviteScreenOptions,
     liveStreamScreenOptions,
-    lobbyScreenOptions,
     navigationContainerTheme,
     participantsScreenOptions,
     recordingScreenOptions,
@@ -42,6 +38,8 @@ import {
 } from '../../../screenOptions';
 import ChatAndPollsNavigationContainer
     from '../../chat/components/ChatAndPollsNavigationContainer';
+import LobbyNavigationContainer
+    from '../../lobby/components/LobbyNavigationContainer';
 import {
     conferenceNavigationRef
 } from '../ConferenceNavigationContainerRef';
@@ -134,9 +132,12 @@ const ConferenceNavigationContainer = () => {
                         title: t('notify.gifsMenu')
                     }} />
                 <ConferenceStack.Screen
-                    component = { LobbyScreen }
-                    name = { screen.lobby }
-                    options = { lobbyScreenOptions } />
+                    component = { LobbyNavigationContainer }
+                    name = { screen.lobby.root }
+                    options = {{
+                        gestureEnabled: false,
+                        headerShown: false
+                    }} />
                 <ConferenceStack.Screen
                     component = { AddPeopleDialog }
                     name = { screen.conference.invite }

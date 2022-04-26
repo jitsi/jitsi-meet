@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const conferenceNavigationRef = React.createRef();
+export const lobbyNavigationContainerRef = React.createRef();
 
 /**
  * User defined navigation action included inside the reference to the container.
@@ -10,7 +10,7 @@ export const conferenceNavigationRef = React.createRef();
  * @returns {Function}
  */
 export function navigate(name: string, params: Object) {
-    return conferenceNavigationRef.current?.navigate(name, params);
+    return lobbyNavigationContainerRef.current?.navigate(name, params);
 }
 
 /**
@@ -19,16 +19,5 @@ export function navigate(name: string, params: Object) {
  * @returns {Function}
  */
 export function goBack() {
-    return conferenceNavigationRef.current?.goBack();
+    return lobbyNavigationContainerRef.current?.goBack();
 }
-
-/**
- * User defined navigation action included inside the reference to the container.
- *
- * @param {Object} params - Params to pass to the destination route.
- * @returns {Function}
- */
-export function setParams(params: Object) {
-    return conferenceNavigationRef.current?.setParams(params);
-}
-
