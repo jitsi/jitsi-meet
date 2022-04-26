@@ -31,23 +31,23 @@ if [ ! -x "$CERTBOT" ] ; then
         apt-get update
         apt-get -y install certbot
     elif [ "$DISTRO" = "Ubuntu" ]; then
-        if [ "$DISTRO_VERSION" = "20.04" ] || [ "$DISTRO_VERSION" = "19.10" ]; then
-                apt-get update
-                apt-get -y install software-properties-common
-                add-apt-repository -y universe
-                apt-get update
-                apt-get -y install certbot
-        elif [ "$DISTRO_VERSION" = "18.04" ]; then
-                apt-get update
-                apt-get -y install software-properties-common
-                add-apt-repository -y universe
-                add-apt-repository -y ppa:certbot/certbot
-                apt-get update
-                apt-get -y install certbot
+        if [ "$DISTRO_VERSION" = "18.04" ]; then
+            apt-get update
+            apt-get -y install software-properties-common
+            add-apt-repository -y universe
+            add-apt-repository -y ppa:certbot/certbot
+            apt-get update
+            apt-get -y install certbot
+        else
+            apt-get update
+            apt-get -y install software-properties-common
+            add-apt-repository -y universe
+            apt-get update
+            apt-get -y install certbot
         fi
     else
         echo "$DISTRO $DISTRO_VERSION is not supported"
-        echo "Only Debian 9,10 and Ubuntu 18.04,19.10,20.04 are supported"
+        echo "Only Debian 9,10 and Ubuntu 18.04,19.10+ are supported"
         exit 1
     fi
     
