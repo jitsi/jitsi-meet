@@ -472,7 +472,8 @@ class Thumbnail extends Component<Props, State> {
         // use a custom hook to update local track streaming status.
         const { _videoTrack, dispatch, _sourceNameSignalingEnabled } = this.props;
 
-        if (_sourceNameSignalingEnabled && prevProps._videoTrack?.jitsiTrack?.getSourceName?.() !== _videoTrack?.jitsiTrack?.getSourceName?.()) {
+        if (_sourceNameSignalingEnabled &&
+            prevProps._videoTrack?.jitsiTrack?.getSourceName?.() !== _videoTrack?.jitsiTrack?.getSourceName?.()) {
             if (prevProps._videoTrack && !prevProps._videoTrack.local) {
                 prevProps._videoTrack.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
                     this.handleTrackStreamingStatusChanged);
