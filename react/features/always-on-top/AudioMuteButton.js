@@ -69,11 +69,11 @@ export default class AudioMuteButton extends Component<Props, State> {
         Promise.all([
             api.isAudioAvailable(),
             api.isAudioMuted(),
-            api.isStartSilent()
+            api.isAudioDisabled?.() || Promise.resolve(false)
         ])
-            .then(([ audioAvailable, audioMuted, startSilent ]) =>
+            .then(([ audioAvailable, audioMuted, audioDisabled ]) =>
                 this.setState({
-                    audioAvailable: audioAvailable && !startSilent,
+                    audioAvailable: audioAvailable && !audioDisabled,
                     audioMuted
                 }))
             .catch(console.error);
