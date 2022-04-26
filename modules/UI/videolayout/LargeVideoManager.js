@@ -256,7 +256,7 @@ export default class LargeVideoManager {
                 // in order to stop updating track streaming status for the old track and start it for the new track.
                 // TODO: when this class is converted to a function react component,
                 // use a custom hook to update a local track streaming status.
-                if (this.videoTrack !== videoTrack) {
+                if (this.videoTrack?.jitsiTrack?.getSourceName?.() !== videoTrack?.jitsiTrack?.getSourceName?.()) {
                     if (this.videoTrack) {
                         this.videoTrack.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
                             this.handleTrackStreamingStatusChanged);
