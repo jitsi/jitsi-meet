@@ -23,7 +23,7 @@ echo "by providing an email address for important account notifications"
 echo -n "Enter your email and press [ENTER]: "
 read EMAIL
 
-CERTBOT="$(command -v certbot)"
+CERTBOT="$(command -v certbot || true)"
 if [ ! -x "$CERTBOT" ] ; then
     DISTRO=$(lsb_release -is)
     DISTRO_VERSION=$(lsb_release -rs)
@@ -50,6 +50,8 @@ if [ ! -x "$CERTBOT" ] ; then
         echo "Only Debian 9,10 and Ubuntu 18.04,19.10,20.04 are supported"
         exit 1
     fi
+    
+    CERTBOT="$(command -v certbot)"
 fi
 
 CRON_FILE="/etc/cron.weekly/letsencrypt-renew"
