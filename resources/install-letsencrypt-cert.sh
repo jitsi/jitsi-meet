@@ -50,6 +50,8 @@ if [ ! -x "$CERTBOT" ] ; then
         echo "Only Debian 9,10 and Ubuntu 18.04,19.10,20.04 are supported"
         exit 1
     fi
+    
+    CERTBOT="$(command -v certbot)"
 fi
 
 CRON_FILE="/etc/cron.weekly/letsencrypt-renew"
