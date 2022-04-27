@@ -59,6 +59,7 @@ const styles = () => {
             color: 'rgba(255, 255, 255, 1)',
             fontWeight: '100',
             objectFit: 'cover',
+            textAlign: 'center',
 
             '&.avatar-small': {
                 height: '28px !important',
