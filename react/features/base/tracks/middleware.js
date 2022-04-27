@@ -84,14 +84,9 @@ MiddlewareRegistry.register(store => next => action => {
         // the participant is auto pinned.
         const result = next(action);
 
-        // The TRACK_ADDED action is dispatched when a presenter starts a screenshare. Do not create a local fake
-        // screenshare participant when multiple stream is not enabled.
-        const skipCreateFakeScreenShareParticipant = local && !getMultipleVideoSendingSupportFeatureFlag(state);
-
         if (getMultipleVideoSupportFeatureFlag(state)
             && jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP
             && !jitsiTrack.isMuted()
-            && !skipCreateFakeScreenShareParticipant
         ) {
             store.dispatch(createFakeScreenShareParticipant(jitsiTrack));
         }
