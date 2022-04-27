@@ -507,7 +507,8 @@ export function participantMutedUs(participant, track) {
 /**
  * Action to create a fake screen share participant.
  *
- * @param {(JitsiLocalTrack|JitsiRemoteTrack)} track - JitsiTrack instance.
+ * @param {(string)} sourceName - JitsiTrack instance.
+ * @param {(boolean)} local - JitsiTrack instance.
  * @returns {Function}
  */
 export function createFakeScreenShareParticipant(sourceName, local) {

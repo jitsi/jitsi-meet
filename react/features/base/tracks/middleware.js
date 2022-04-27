@@ -67,8 +67,7 @@ declare var APP: Object;
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case TRACK_ADDED: {
-        const state = store.getState();
-        const { jitsiTrack, local } = action.track;
+        const { local } = action.track;
 
         // The devices list needs to be refreshed when no initial video permissions
         // were granted and a local video track is added by umuting the video.

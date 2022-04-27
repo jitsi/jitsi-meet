@@ -6,7 +6,7 @@ import {
 } from '../../analytics';
 import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification, showNotification } from '../../notifications';
 import { getCurrentConference } from '../conference';
-import { getMultipleVideoSendingSupportFeatureFlag, getMultipleVideoSupportFeatureFlag } from '../config';
+import { getMultipleVideoSendingSupportFeatureFlag } from '../config';
 import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
 import { createLocalTrack } from '../lib-jitsi-meet/functions';
 import {
