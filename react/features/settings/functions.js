@@ -11,6 +11,7 @@ import {
 import { toState } from '../base/redux';
 import { getHideSelfView } from '../base/settings';
 import { parseStandardURIString } from '../base/util';
+import { getBreakoutRoomsConfig, isInBreakoutRoom } from '../breakout-rooms/functions';
 import { isFollowMeActive } from '../follow-me';
 import { isReactionsEnabled } from '../reactions/functions.any';
 
@@ -177,10 +178,16 @@ export function getModeratorTabProps(stateful: Object | Function) {
  */
 export function shouldShowModeratorSettings(stateful: Object | Function) {
     const state = toState(stateful);
-
-    return Boolean(
+    const inBreakoutRoom = isInBreakoutRoom(state);
+    const { hideModeratorSettingsTab } = getBreakoutRoomsConfig(state);
+    const hasModeratorRights = Boolean(
         isSettingEnabled('moderator')
-        && isLocalParticipantModerator(state));
+        && isLocalParticipantModerator(state)
+    );
+
+    return inBreakoutRoom
+        ? hasModeratorRights && !hideModeratorSettingsTab
+        : hasModeratorRights;
 }
 
 /**
