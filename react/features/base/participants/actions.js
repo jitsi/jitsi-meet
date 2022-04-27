@@ -25,6 +25,7 @@ import {
 } from './constants';
 import {
     getLocalParticipant,
+    getFakeScreenShareParticipantOwnerId,
     getNormalizedDisplayName,
     getParticipantDisplayName,
     getParticipantById
@@ -509,14 +510,14 @@ export function participantMutedUs(participant, track) {
  * @param {(JitsiLocalTrack|JitsiRemoteTrack)} track - JitsiTrack instance.
  * @returns {Function}
  */
-export function createFakeScreenShareParticipant(track) {
+export function createFakeScreenShareParticipant(sourceName, local) {
     return (dispatch, getState) => {
         const state = getState();
-        const participantId = track.getParticipantId();
-        const participant = getParticipantById(state, participantId);
-        const sourceName = track.getSourceName();
+        const ownerId = getFakeScreenShareParticipantOwnerId(sourceName);
+        const owner = getParticipantById(state, ownerId);
+        const ownerName = owner.name;
 
-        if (!participant.name) {
+        if (!ownerName) {
             logger.error(`Failed to create a screenshare participant for sourceName: ${sourceName}`);
 
             return;
@@ -526,8 +527,8 @@ export function createFakeScreenShareParticipant(track) {
             conference: state['features/base/conference'].conference,
             id: sourceName,
             isFakeScreenShareParticipant: true,
-            isLocalScreenShare: track.isLocal(),
-            name: participant.name
+            isLocalScreenShare: local,
+            name: ownerName
         }));
     };
 }

@@ -69,6 +69,7 @@ import {
     isLocalParticipantModerator
 } from './functions';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
+import './subscriber';
 
 declare var APP: Object;
 
