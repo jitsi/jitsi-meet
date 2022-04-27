@@ -61,8 +61,13 @@ StateListenerRegistry.register(
  */
 StateListenerRegistry.register(
     /* selector */ state => {
-        return { layout: getCurrentLayout(state),
-            width: state['features/base/responsive-ui'].clientWidth };
+        const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
+
+        return {
+            layout: getCurrentLayout(state),
+            height: clientHeight,
+            width: clientWidth
+        };
     },
     /* listener */ ({ layout }, store) => {
         switch (layout) {
