@@ -66,7 +66,7 @@ const DEFAULT_STATE = {
     pinnedParticipant: undefined,
     raisedHandsQueue: [],
     remote: new Map(),
-    sortedRemoteFakeScreenShareParticipants: new Map(),
+    sortedRemoteVirtualScreenshareParticipants: new Map(),
     sortedRemoteParticipants: new Map(),
     sortedRemoteScreenshares: new Map(),
     speakersList: new Map()
@@ -213,15 +213,15 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
     case SCREENSHARE_PARTICIPANT_NAME_CHANGED: {
         const { id, name } = action;
 
-        if (state.sortedRemoteFakeScreenShareParticipants.has(id)) {
-            state.sortedRemoteFakeScreenShareParticipants.delete(id);
+        if (state.sortedRemoteVirtualScreenshareParticipants.has(id)) {
+            state.sortedRemoteVirtualScreenshareParticipants.delete(id);
 
-            const sortedRemoteFakeScreenShareParticipants = [ ...state.sortedRemoteFakeScreenShareParticipants ];
+            const sortedRemoteVirtualScreenshareParticipants = [ ...state.sortedRemoteVirtualScreenshareParticipants ];
 
-            sortedRemoteFakeScreenShareParticipants.push([ id, name ]);
-            sortedRemoteFakeScreenShareParticipants.sort((a, b) => a[1].localeCompare(b[1]));
+            sortedRemoteVirtualScreenshareParticipants.push([ id, name ]);
+            sortedRemoteVirtualScreenshareParticipants.sort((a, b) => a[1].localeCompare(b[1]));
 
-            state.sortedRemoteFakeScreenShareParticipants = new Map(sortedRemoteFakeScreenShareParticipants);
+            state.sortedRemoteVirtualScreenshareParticipants = new Map(sortedRemoteVirtualScreenshareParticipants);
         }
 
         return { ...state };
@@ -229,7 +229,14 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
 
     case PARTICIPANT_JOINED: {
         const participant = _participantJoined(action);
-        const { id, isFakeParticipant, isFakeScreenShareParticipant, isLocalScreenShare, name, pinned } = participant;
+        const {
+            id,
+            isFakeParticipant,
+            isLocalScreenShare,
+            isVirtualScreenshareParticipant,
+            name,
+            pinned
+        } = participant;
         const { pinnedParticipant, dominantSpeaker } = state;
 
         if (pinned) {
@@ -282,13 +289,13 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
         // The sort order of participants is preserved since Map remembers the original insertion order of the keys.
         state.sortedRemoteParticipants = new Map(sortedRemoteParticipants);
 
-        if (isFakeScreenShareParticipant) {
-            const sortedRemoteFakeScreenShareParticipants = [ ...state.sortedRemoteFakeScreenShareParticipants ];
+        if (isVirtualScreenshareParticipant) {
+            const sortedRemoteVirtualScreenshareParticipants = [ ...state.sortedRemoteVirtualScreenshareParticipants ];
 
-            sortedRemoteFakeScreenShareParticipants.push([ id, name ]);
-            sortedRemoteFakeScreenShareParticipants.sort((a, b) => a[1].localeCompare(b[1]));
+            sortedRemoteVirtualScreenshareParticipants.push([ id, name ]);
+            sortedRemoteVirtualScreenshareParticipants.sort((a, b) => a[1].localeCompare(b[1]));
 
-            state.sortedRemoteFakeScreenShareParticipants = new Map(sortedRemoteFakeScreenShareParticipants);
+            state.sortedRemoteVirtualScreenshareParticipants = new Map(sortedRemoteVirtualScreenshareParticipants);
         }
         if (isFakeParticipant) {
             state.fakeParticipants.set(id, participant);
@@ -306,7 +313,7 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
         const { conference, id } = action.participant;
         const {
             fakeParticipants,
-            sortedRemoteFakeScreenShareParticipants,
+            sortedRemoteVirtualScreenshareParticipants,
             remote,
             local,
             localScreenShare,
@@ -372,9 +379,9 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
             fakeParticipants.delete(id);
         }
 
-        if (sortedRemoteFakeScreenShareParticipants.has(id)) {
-            sortedRemoteFakeScreenShareParticipants.delete(id);
-            state.sortedRemoteFakeScreenShareParticipants = new Map(sortedRemoteFakeScreenShareParticipants);
+        if (sortedRemoteVirtualScreenshareParticipants.has(id)) {
+            sortedRemoteVirtualScreenshareParticipants.delete(id);
+            state.sortedRemoteVirtualScreenshareParticipants = new Map(sortedRemoteVirtualScreenshareParticipants);
         }
 
         return { ...state };
@@ -500,7 +507,7 @@ function _participantJoined({ participant }) {
         dominantSpeaker,
         email,
         isFakeParticipant,
-        isFakeScreenShareParticipant,
+        isVirtualScreenshareParticipant,
         isLocalScreenShare,
         isReplacing,
         isJigasi,
@@ -534,7 +541,7 @@ function _participantJoined({ participant }) {
         email,
         id,
         isFakeParticipant,
-        isFakeScreenShareParticipant,
+        isVirtualScreenshareParticipant,
         isLocalScreenShare,
         isReplacing,
         isJigasi,

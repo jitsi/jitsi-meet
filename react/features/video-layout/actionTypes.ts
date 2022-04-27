@@ -11,14 +11,14 @@ export const SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED
     = 'SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED';
 
 /**
- * The type of the action which sets the list of known remote fake screen share participant IDs.
+ * The type of the action which sets the list of known remote virtual screen share participant IDs.
  *
  * @returns {{
- *     type: FAKE_SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
+ *     type: VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED,
  *     participantIds: Array<string>
  * }}
  */
-export const FAKE_SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED = 'FAKE_SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED';
+export const VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED = 'VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED';
 
 /**
  * The type of the action which enables or disables the feature for showing

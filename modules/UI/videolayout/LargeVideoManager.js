@@ -287,13 +287,13 @@ export default class LargeVideoManager {
 
             const isAudioOnly = APP.conference.isAudioOnly();
 
-            // Multi-stream is not supported on plan-b endpoints even if its is enabled via config.js. A fake
+            // Multi-stream is not supported on plan-b endpoints even if its is enabled via config.js. A virtual
             // screenshare tile is still created when a remote endpoint starts screenshare to keep the behavior
             // consistent and an avatar is displayed on the original participant thumbnail as long as screenshare is in
             // progress.
             const legacyScreenshare = getMultipleVideoSupportFeatureFlag(state)
                                         && videoType === VIDEO_TYPE.DESKTOP
-                                        && !participant.isFakeScreenShareParticipant;
+                                        && !participant.isVirtualScreenshareParticipant;
 
             const showAvatar
                 = isVideoContainer

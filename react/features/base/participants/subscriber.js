@@ -6,7 +6,7 @@ import { StateListenerRegistry } from '../../base/redux';
 import { getCurrentConference } from '../conference';
 import { getMultipleVideoSupportFeatureFlag } from '../config';
 
-import { createFakeScreenShareParticipant, participantLeft } from './actions';
+import { createVirtualScreenshareParticipant, participantLeft } from './actions';
 
 StateListenerRegistry.register(
     /* selector */ state => state['features/base/tracks'],
@@ -14,7 +14,7 @@ StateListenerRegistry.register(
 );
 
 /**
- * Handles creating and removing screen share participants.
+ * Handles creating and removing virtual screenshare participants.
  *
  * @param {*} store - The redux store.
  * @returns {void}
@@ -28,8 +28,8 @@ function _updateScreenshareParticipants({ getState, dispatch }) {
 
     const conference = getCurrentConference(state);
     const tracks = state['features/base/tracks'];
-    const { sortedRemoteFakeScreenShareParticipants, localScreenShare } = state['features/base/participants'];
-    const previousScreenshareSourceNames = [ ...sortedRemoteFakeScreenShareParticipants.keys() ];
+    const { sortedRemoteVirtualScreenshareParticipants, localScreenShare } = state['features/base/participants'];
+    const previousScreenshareSourceNames = [ ...sortedRemoteVirtualScreenshareParticipants.keys() ];
 
     let newLocalSceenshareSourceName;
 
@@ -48,7 +48,7 @@ function _updateScreenshareParticipants({ getState, dispatch }) {
     }, []);
 
     if (!localScreenShare && newLocalSceenshareSourceName) {
-        dispatch(createFakeScreenShareParticipant(newLocalSceenshareSourceName, true));
+        dispatch(createVirtualScreenshareParticipant(newLocalSceenshareSourceName, true));
     }
 
     if (localScreenShare && !newLocalSceenshareSourceName) {
@@ -63,7 +63,7 @@ function _updateScreenshareParticipants({ getState, dispatch }) {
     }
 
     if (addedScreenshareSourceNames.length) {
-        addedScreenshareSourceNames.forEach(id => dispatch(createFakeScreenShareParticipant(id, false)));
+        addedScreenshareSourceNames.forEach(id => dispatch(createVirtualScreenshareParticipant(id, false)));
 
     }
 }

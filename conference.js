@@ -96,7 +96,7 @@ import {
     dominantSpeakerChanged,
     getLocalParticipant,
     getNormalizedDisplayName,
-    getFakeScreenshareParticipantByOwnerId,
+    getVirtualScreenshareParticipantByOwnerId,
     localParticipantAudioLevelChanged,
     localParticipantConnectionStatusChanged,
     localParticipantRoleChanged,
@@ -2264,11 +2264,11 @@ export default {
                     name: formattedDisplayName
                 }));
 
-                const fakeScreenshareParticipantId = getFakeScreenshareParticipantByOwnerId(state, id)?.id;
+                const virtualScreenshareParticipantId = getVirtualScreenshareParticipantByOwnerId(state, id)?.id;
 
-                if (fakeScreenshareParticipantId) {
+                if (virtualScreenshareParticipantId) {
                     APP.store.dispatch(
-                        screenshareParticipantDisplayNameChanged(fakeScreenshareParticipantId, formattedDisplayName)
+                        screenshareParticipantDisplayNameChanged(virtualScreenshareParticipantId, formattedDisplayName)
                     );
                 }
 

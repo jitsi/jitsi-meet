@@ -7,7 +7,7 @@ import {
 import { isMobileBrowser } from '../environment/utils';
 import JitsiMeetJS, { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, VIDEO_TYPE, setAudioMuted } from '../media';
-import { getFakeScreenShareParticipantOwnerId } from '../participants';
+import { getVirtualScreenshareParticipantOwnerId } from '../participants';
 import { toState } from '../redux';
 import {
     getUserSelectedCameraDeviceId,
@@ -429,8 +429,8 @@ export function getVideoTrackByParticipant(
         return;
     }
 
-    if (participant?.isFakeScreenShareParticipant) {
-        return getFakeScreenshareParticipantTrack(tracks, participant.id);
+    if (participant?.isVirtualScreenshareParticipant) {
+        return getVirtualScreenshareParticipantTrack(tracks, participant.id);
     }
 
     return getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participant.id);
@@ -454,14 +454,14 @@ export function getTrackByMediaTypeAndParticipant(
 }
 
 /**
- * Returns screenshare track of given fakeScreenshareParticipantId.
+ * Returns screenshare track of given virtualScreenshareParticipantId.
  *
  * @param {Track[]} tracks - List of all tracks.
- * @param {string} fakeScreenshareParticipantId - Fake Screenshare Participant ID.
+ * @param {string} virtualScreenshareParticipantId - Virtual Screenshare Participant ID.
  * @returns {(Track|undefined)}
  */
-export function getFakeScreenshareParticipantTrack(tracks, fakeScreenshareParticipantId) {
-    const ownderId = getFakeScreenShareParticipantOwnerId(fakeScreenshareParticipantId);
+export function getVirtualScreenshareParticipantTrack(tracks, virtualScreenshareParticipantId) {
+    const ownderId = getVirtualScreenshareParticipantOwnerId(virtualScreenshareParticipantId);
 
     return getScreenShareTrack(tracks, ownderId);
 }

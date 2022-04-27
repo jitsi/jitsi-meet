@@ -509,7 +509,7 @@ export function computeDisplayModeFromInput(input: Object) {
         isActiveParticipant,
         isAudioOnly,
         isCurrentlyOnLargeVideo,
-        isFakeScreenShareParticipant,
+        isVirtualScreenshareParticipant,
         isScreenSharing,
         canPlayEventReceived,
         isRemoteParticipant,
@@ -521,14 +521,14 @@ export function computeDisplayModeFromInput(input: Object) {
     const adjustedIsVideoPlayable = input.isVideoPlayable && (!isRemoteParticipant || canPlayEventReceived);
 
     if (multipleVideoSupport) {
-        // Display video for fake screen share participants in all layouts.
-        if (isFakeScreenShareParticipant) {
+        // Display video for virtual screen share participants in all layouts.
+        if (isVirtualScreenshareParticipant) {
             return DISPLAY_VIDEO;
         }
 
-        // Multi-stream is not supported on plan-b endpoints even if its is enabled via config.js. A fake screenshare
-        // tile is still created when a remote endpoint starts screenshare to keep the behavior consistent and an
-        // avatar is displayed on the original participant thumbnail as long as screenshare is in progress.
+        // Multi-stream is not supported on plan-b endpoints even if its is enabled via config.js. A virtual
+        // screenshare tile is still created when a remote endpoint starts screenshare to keep the behavior consistent
+        // and an avatar is displayed on the original participant thumbnail as long as screenshare is in progress.
         if (isScreenSharing) {
             return DISPLAY_AVATAR;
         }
@@ -562,7 +562,7 @@ export function getDisplayModeInput(props: Object, state: Object) {
         _isActiveParticipant,
         _isAudioOnly,
         _isCurrentlyOnLargeVideo,
-        _isFakeScreenShareParticipant,
+        _isVirtualScreenshareParticipant,
         _isScreenSharing,
         _isVideoPlayable,
         _multipleVideoSupport,
@@ -585,7 +585,7 @@ export function getDisplayModeInput(props: Object, state: Object) {
         videoStream: Boolean(_videoTrack),
         isRemoteParticipant: !_participant?.isFakeParticipant && !_participant?.local,
         isScreenSharing: _isScreenSharing,
-        isFakeScreenShareParticipant: _isFakeScreenShareParticipant,
+        isVirtualScreenshareParticipant: _isVirtualScreenshareParticipant,
         multipleVideoSupport: _multipleVideoSupport,
         stageParticipantsVisible: _stageParticipantsVisible,
         stageFilmstrip,

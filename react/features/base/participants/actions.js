@@ -25,7 +25,7 @@ import {
 } from './constants';
 import {
     getLocalParticipant,
-    getFakeScreenShareParticipantOwnerId,
+    getVirtualScreenshareParticipantOwnerId,
     getNormalizedDisplayName,
     getParticipantDisplayName,
     getParticipantById
@@ -505,16 +505,16 @@ export function participantMutedUs(participant, track) {
 }
 
 /**
- * Action to create a fake screen share participant.
+ * Action to create a virtual screenshare participant.
  *
  * @param {(string)} sourceName - JitsiTrack instance.
  * @param {(boolean)} local - JitsiTrack instance.
  * @returns {Function}
  */
-export function createFakeScreenShareParticipant(sourceName, local) {
+export function createVirtualScreenshareParticipant(sourceName, local) {
     return (dispatch, getState) => {
         const state = getState();
-        const ownerId = getFakeScreenShareParticipantOwnerId(sourceName);
+        const ownerId = getVirtualScreenshareParticipantOwnerId(sourceName);
         const owner = getParticipantById(state, ownerId);
         const ownerName = owner.name;
 
@@ -527,7 +527,7 @@ export function createFakeScreenShareParticipant(sourceName, local) {
         dispatch(participantJoined({
             conference: state['features/base/conference'].conference,
             id: sourceName,
-            isFakeScreenShareParticipant: true,
+            isVirtualScreenshareParticipant: true,
             isLocalScreenShare: local,
             name: ownerName
         }));

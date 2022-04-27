@@ -109,7 +109,7 @@ export function getLocalScreenShareParticipant(stateful: Object | Function) {
  * @param {string} id - The owner ID of the screenshare participant to retrieve.
  * @returns {(Participant|undefined)}
  */
-export function getFakeScreenshareParticipantByOwnerId(stateful: Object | Function, id: string) {
+export function getVirtualScreenshareParticipantByOwnerId(stateful: Object | Function, id: string) {
     const state = toState(stateful);
 
     if (getMultipleVideoSupportFeatureFlag(state)) {
@@ -185,11 +185,11 @@ export function getParticipantCount(stateful: Object | Function) {
         local,
         remote,
         fakeParticipants,
-        sortedRemoteFakeScreenShareParticipants
+        sortedRemoteVirtualScreenshareParticipants
     } = state['features/base/participants'];
 
     if (getSourceNameSignalingFeatureFlag(state)) {
-        return remote.size - fakeParticipants.size - sortedRemoteFakeScreenShareParticipants.size + (local ? 1 : 0);
+        return remote.size - fakeParticipants.size - sortedRemoteVirtualScreenshareParticipants.size + (local ? 1 : 0);
     }
 
     return remote.size - fakeParticipants.size + (local ? 1 : 0);
@@ -197,13 +197,13 @@ export function getParticipantCount(stateful: Object | Function) {
 }
 
 /**
- * Returns participant ID of the owner of a fake screenshare participant.
+ * Returns participant ID of the owner of a virtual screenshare participant.
  *
- * @param {string} id - The ID of the fake screenshare participant.
+ * @param {string} id - The ID of the virtual screenshare participant.
  * @private
  * @returns {(string|undefined)}
  */
-export function getFakeScreenShareParticipantOwnerId(id: string) {
+export function getVirtualScreenshareParticipantOwnerId(id: string) {
     return id.split('-')[0];
 }
 
@@ -231,7 +231,7 @@ export function getRemoteParticipantCount(stateful: Object | Function) {
     const state = toState(stateful)['features/base/participants'];
 
     if (getSourceNameSignalingFeatureFlag(state)) {
-        return state.remote.size - state.sortedRemoteFakeScreenShareParticipants.size;
+        return state.remote.size - state.sortedRemoteVirtualScreenshareParticipants.size;
     }
 
     return state.remote.size;
@@ -273,7 +273,7 @@ export function getParticipantDisplayName(stateful: Object | Function, id: strin
     } = toState(stateful)['features/base/config'];
 
     if (participant) {
-        if (participant.isFakeScreenShareParticipant) {
+        if (participant.isVirtualScreenshareParticipant) {
             return getScreenshareParticipantDisplayName(stateful, id);
         }
 
@@ -298,7 +298,7 @@ export function getParticipantDisplayName(stateful: Object | Function, id: strin
  * @returns {string}
  */
 export function getScreenshareParticipantDisplayName(stateful: Object | Function, id: string) {
-    const owner = getParticipantById(stateful, getFakeScreenShareParticipantOwnerId(id));
+    const owner = getParticipantById(stateful, getVirtualScreenshareParticipantOwnerId(id));
     const name = owner.name;
 
     return i18next.t('screenshareDisplayName', { name });

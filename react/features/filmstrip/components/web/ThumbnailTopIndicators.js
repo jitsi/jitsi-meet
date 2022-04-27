@@ -36,9 +36,9 @@ type Props = {
     isHovered: boolean,
 
     /**
-     * Whether or not the thumbnail is a fake screen share participant.
+     * Whether or not the thumbnail is a virtual screen share participant.
      */
-    isFakeScreenShareParticipant: boolean,
+    isVirtualScreenshareParticipant: boolean,
 
     /**
      * Whether or not the indicators are for the local participant.
@@ -81,7 +81,7 @@ const useStyles = makeStyles(() => {
 const ThumbnailTopIndicators = ({
     hidePopover,
     indicatorsClassName,
-    isFakeScreenShareParticipant,
+    isVirtualScreenshareParticipant,
     isHovered,
     local,
     participantId,
@@ -101,7 +101,7 @@ const ThumbnailTopIndicators = ({
     const sourceNameSignalingEnabled = useSelector(getSourceNameSignalingFeatureFlag);
     const showConnectionIndicator = isHovered || !_connectionIndicatorAutoHideEnabled;
 
-    if (sourceNameSignalingEnabled && isFakeScreenShareParticipant) {
+    if (sourceNameSignalingEnabled && isVirtualScreenshareParticipant) {
         return (
             <div className = { styles.container }>
                 {!_connectionIndicatorDisabled

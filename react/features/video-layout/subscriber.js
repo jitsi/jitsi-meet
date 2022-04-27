@@ -6,18 +6,18 @@ import { getMultipleVideoSupportFeatureFlag } from '../base/config';
 import { StateListenerRegistry, equals } from '../base/redux';
 import { isFollowMeActive } from '../follow-me';
 
-import { setRemoteParticipantsWithScreenShare, fakeScreenshareParticipantsUpdated } from './actions';
+import { setRemoteParticipantsWithScreenShare, virtualScreenshareParticipantsUpdated } from './actions';
 import { getAutoPinSetting, updateAutoPinnedParticipant } from './functions';
 
 StateListenerRegistry.register(
-    /* selector */ state => state['features/base/participants'].sortedRemoteFakeScreenShareParticipants,
-    /* listener */ (sortedRemoteFakeScreenShareParticipants, store) => {
+    /* selector */ state => state['features/base/participants'].sortedRemoteVirtualScreenshareParticipants,
+    /* listener */ (sortedRemoteVirtualScreenshareParticipants, store) => {
         if (!getAutoPinSetting() || isFollowMeActive(store) || !getMultipleVideoSupportFeatureFlag(store.getState())) {
             return;
         }
 
         const oldScreenSharesOrder = store.getState()['features/video-layout'].remoteScreenShares || [];
-        const knownSharingParticipantIds = [ ...sortedRemoteFakeScreenShareParticipants.keys() ];
+        const knownSharingParticipantIds = [ ...sortedRemoteVirtualScreenshareParticipants.keys() ];
 
         // Filter out any participants which are no longer screen sharing
         // by looping through the known sharing participants and removing any
@@ -34,7 +34,7 @@ StateListenerRegistry.register(
         });
 
         if (!equals(oldScreenSharesOrder, newScreenSharesOrder)) {
-            store.dispatch(fakeScreenshareParticipantsUpdated(newScreenSharesOrder));
+            store.dispatch(virtualScreenshareParticipantsUpdated(newScreenSharesOrder));
 
             updateAutoPinnedParticipant(oldScreenSharesOrder, store);
         }
