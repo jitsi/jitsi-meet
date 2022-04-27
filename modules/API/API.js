@@ -1281,6 +1281,27 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that audio input device level does not receive data
+     *
+     * @param {Object} data - Device id and is receiving data flag
+     * @returns {void}
+     */
+    notifyTrackReceivingStatus(data: Object) {
+        console.log('track-receiving-data-status');
+        this._sendEvent({
+            name: 'track-receiving-data-status',
+            data
+        });
+    }
+
+    notifyTalkWhileMuted() {
+        console.log('talk-while-muted');
+        this._sendEvent({
+            name: 'talk-while-muted'
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) for video muted status
      * changed.
      *

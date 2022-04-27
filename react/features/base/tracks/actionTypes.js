@@ -74,6 +74,8 @@ export const TRACK_CREATE_ERROR = 'TRACK_CREATE_ERROR';
  */
 export const TRACK_NO_DATA_FROM_SOURCE = 'TRACK_NO_DATA_FROM_SOURCE';
 
+
+export const TRACK_RECEIVING_DATA_STATUS = 'TRACK_RECEIVING_DATA_STATUS';
 /**
  * The type of redux action dispatched when a track has been (locally or
  * remotely) removed from the conference.

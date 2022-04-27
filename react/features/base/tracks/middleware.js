@@ -28,7 +28,8 @@ import {
     TRACK_NO_DATA_FROM_SOURCE,
     TRACK_REMOVED,
     TRACK_UPDATED,
-    TRACK_AUDIO_LEVEL_CHANGED
+    TRACK_AUDIO_LEVEL_CHANGED,
+    TRACK_RECEIVING_DATA_STATUS
 } from './actionTypes';
 import {
     createLocalTracksA,
@@ -36,7 +37,8 @@ import {
     showNoDataFromSourceVideoError,
     toggleScreensharing,
     trackRemoved,
-    trackNoDataFromSourceNotificationInfoChanged
+    trackNoDataFromSourceNotificationInfoChanged,
+    receivingDataStatusFromSource,
 } from './actions';
 import {
     getLocalTrack,
@@ -76,9 +78,17 @@ MiddlewareRegistry.register(store => next => action => {
 
         break;
     }
+    case TRACK_RECEIVING_DATA_STATUS: {
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyTrackReceivingStatus({
+                track: action.track,
+                isReceivingData: action.track.isReceivingData
+            });
+        }
+        break;
+    }
     case TRACK_NO_DATA_FROM_SOURCE: {
         const result = next(action);
-
         _handleNoDataFromSourceErrors(store, action);
 
         return result;
@@ -92,7 +102,6 @@ MiddlewareRegistry.register(store => next => action => {
                 && isUserInteractionRequiredForUnmute(store.getState())) {
             return;
         }
-
         _setMuted(store, action, MEDIA_TYPE.AUDIO);
         break;
 
@@ -249,14 +258,13 @@ StateListenerRegistry.register(
  */
 function _handleNoDataFromSourceErrors(store, action) {
     const { getState, dispatch } = store;
-
     const track = getTrackByJitsiTrack(getState()['features/base/tracks'], action.track.jitsiTrack);
-
     if (!track || !track.local) {
         return;
     }
-
     const { jitsiTrack } = track;
+
+    dispatch(receivingDataStatusFromSource({deviceId: jitsiTrack.deviceId, type: jitsiTrack.type}, track.isReceivingData));
 
     if (track.mediaType === MEDIA_TYPE.AUDIO && track.isReceivingData) {
         _removeNoDataFromSourceNotification(store, action.track);
@@ -352,7 +360,6 @@ function _setMuted(store, { ensureTrack, authority, muted }, mediaType: MEDIA_TY
         // `jitsiTrack` is created.
         const { jitsiTrack } = localTrack;
         const isAudioOnly = authority === VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY;
-
         // screenshare cannot be muted or unmuted using the video mute button
         // anymore, unless it is muted by audioOnly.
         jitsiTrack && (jitsiTrack.videoType !== 'desktop' || isAudioOnly)

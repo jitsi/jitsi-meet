@@ -130,6 +130,8 @@ const events = {
     'suspend-detected': 'suspendDetected',
     'tile-view-changed': 'tileViewChanged',
     'toolbar-button-clicked': 'toolbarButtonClicked',
+    'track-receiving-data-status': 'trackReceivingDataStatus',
+    'talk-while-muted': 'talkWhileMuted',
     'notification-raised': 'notificationRaised'
 };
 
