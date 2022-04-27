@@ -287,14 +287,17 @@ export default class LargeVideoManager {
 
             const isAudioOnly = APP.conference.isAudioOnly();
 
-            // For Plan B enbdpoints with multi-stream support, display an avatar for the original thumbnail.
-            const planBScreenShare = getMultipleVideoSupportFeatureFlag(state)
+            // Multi-stream is not supported on plan-b endpoints even if its is enabled via config.js. A fake
+            // screenshare tile is still created when a remote endpoint starts screenshare to keep the behavior
+            // consistent and an avatar is displayed on the original participant thumbnail as long as screenshare is in
+            // progress.
+            const legacyScreenshare = getMultipleVideoSupportFeatureFlag(state)
                                         && videoType === VIDEO_TYPE.DESKTOP
                                         && !participant.isFakeScreenShareParticipant;
 
             const showAvatar
                 = isVideoContainer
-                    && ((isAudioOnly && videoType !== VIDEO_TYPE.DESKTOP) || !isVideoRenderable || planBScreenShare);
+                    && ((isAudioOnly && videoType !== VIDEO_TYPE.DESKTOP) || !isVideoRenderable || legacyScreenshare);
 
             let promise;
 
