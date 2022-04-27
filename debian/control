@@ -54,5 +54,5 @@ Package: jitsi-meet-turnserver
 Architecture: all
 Breaks: apache2
 Pre-Depends: jitsi-meet-web-config
-Depends: ${misc:Depends}, nginx (>= 1.13.10) | nginx-full (>= 1.13.10) | nginx-extras (>= 1.13.10), jitsi-meet-prosody, coturn, dnsutils
+Depends: ${misc:Depends}, jitsi-meet-prosody, coturn, dnsutils
 Description: Configures coturn to be used with Jitsi Meet
