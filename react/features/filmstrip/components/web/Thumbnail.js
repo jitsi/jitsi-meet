@@ -1193,7 +1193,6 @@ function _mapStateToProps(state, ownProps): Object {
     const activeParticipants = getActiveParticipantsIds(state);
     const tileType = getThumbnailTypeFromLayout(_currentLayout, stageFilmstrip);
 
-
     switch (tileType) {
     case THUMBNAIL_TYPE.VERTICAL:
     case THUMBNAIL_TYPE.HORIZONTAL: {
@@ -1263,6 +1262,7 @@ function _mapStateToProps(state, ownProps): Object {
 
     return {
         _audioTrack,
+        _currentLayout,
         _defaultLocalDisplayName: defaultLocalDisplayName,
         _disableLocalVideoFlip: Boolean(disableLocalVideoFlip),
         _disableTileEnlargement: Boolean(disableTileEnlargement),

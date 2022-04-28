@@ -478,7 +478,15 @@ export function getRemoteScreenSharesSourceNames(state, screenShareParticipantId
 
     return getMultipleVideoSupportFeatureFlag(state)
         ? screenShareParticipantIds
-        : screenShareParticipantIds.map(id => getScreenShareTrack(tracks, id).jitsiTrack.getSourceName());
+        : screenShareParticipantIds.reduce((acc, id) => {
+            const sourceName = getScreenShareTrack(tracks, id)?.jitsiTrack.getSourceName();
+
+            if (sourceName) {
+                acc.push(sourceName);
+            }
+
+            return acc;
+        }, []);
 }
 
 /**

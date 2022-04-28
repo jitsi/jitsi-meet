@@ -326,8 +326,8 @@ function _updateReceiverVideoConstraints({ getState }) {
             }
         }
 
-        if (remoteScreenShares?.length) {
-            remoteScreenShares.forEach(sourceName => {
+        if (remoteScreenSharesSourceNames?.length) {
+            remoteScreenSharesSourceNames.forEach(sourceName => {
                 receiverConstraints.constraints[sourceName] = { 'maxHeight': VIDEO_QUALITY_LEVELS.ULTRA };
             });
         }
