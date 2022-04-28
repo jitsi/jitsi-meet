@@ -97,7 +97,8 @@ const FakeScreenShareParticipant = ({
     onTouchStart,
     participantId,
     styles,
-    videoTrack
+    videoTrack,
+    thumbnailType
 }: Props) => {
     const currentLayout = useSelector(getCurrentLayout);
     const videoTrackId = videoTrack?.jitsiTrack?.getId();
@@ -137,7 +138,8 @@ const FakeScreenShareParticipant = ({
                     currentLayout = { currentLayout }
                     isFakeScreenShareParticipant = { true }
                     isHovered = { isHovered }
-                    participantId = { participantId } />
+                    participantId = { participantId }
+                    thumbnailType = { thumbnailType } />
             </div>
             <div
                 className = { clsx(classes.indicatorsContainer,

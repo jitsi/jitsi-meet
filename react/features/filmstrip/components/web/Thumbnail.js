@@ -1125,7 +1125,7 @@ class Thumbnail extends Component<Props, State> {
 
         if (_isFakeScreenShareParticipant) {
             const { isHovered } = this.state;
-            const { _videoTrack, _isMobile, classes } = this.props;
+            const { _videoTrack, _isMobile, classes, _thumbnailType } = this.props;
 
             return (
                 <FakeScreenShareParticipant
@@ -1142,7 +1142,8 @@ class Thumbnail extends Component<Props, State> {
                     onTouchStart = { this._onTouchStart }
                     participantId = { _participant.id }
                     styles = { this._getStyles() }
-                    videoTrack = { _videoTrack } />
+                    videoTrack = { _videoTrack }
+                    thumbnailType = { _thumbnailType } />
             );
         }
 
