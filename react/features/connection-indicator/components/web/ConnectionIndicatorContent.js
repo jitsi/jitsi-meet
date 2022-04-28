@@ -131,7 +131,12 @@ type Props = AbstractProps & {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * Whether source name signaling is enabled.
+     */
+    _sourceNameSignalingEnabled: boolean
 };
 
 /**
@@ -216,6 +221,7 @@ class ConnectionIndicatorContent extends AbstractConnectionIndicator<Props, Stat
                 resolution = { resolution }
                 serverRegion = { serverRegion }
                 shouldShowMore = { this.state.showMoreStats }
+                sourceNameSignalingEnabled = {this.props._sourceNameSignalingEnabled }
                 transport = { transport }
                 videoSsrc = { this.props._videoSsrc } />
         );
@@ -345,7 +351,8 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
         _isConnectionStatusInterrupted,
         _isFakeScreenShareParticipant: sourceNameSignalingEnabled && participant?.isFakeScreenShareParticipant,
         _isLocalVideo: participant?.local,
-        _region: participant?.region
+        _region: participant?.region,
+        _sourceNameSignalingEnabled: sourceNameSignalingEnabled
     };
 
     if (conference) {

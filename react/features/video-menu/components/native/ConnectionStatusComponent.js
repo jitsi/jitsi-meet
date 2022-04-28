@@ -7,6 +7,7 @@ import { withTheme } from 'react-native-paper';
 
 import { Avatar } from '../../../base/avatar';
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
+import { getSourceNameSignalingFeatureFlag } from '../../../base/config';
 import { BottomSheet, isDialogOpen, hideDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { IconArrowDownLarge, IconArrowUpLarge } from '../../../base/icons';
@@ -64,7 +65,12 @@ export type Props = {
     /**
      * Theme used for styles.
      */
-    theme: Object
+    theme: Object,
+
+    /**
+     * Whether source name signaling is enabled.
+     */
+    _sourceNameSignalingEnabled: boolean
 }
 
 /**
@@ -280,18 +286,24 @@ class ConnectionStatusComponent extends Component<Props, State> {
      */
     _extractResolutionString(stats) {
         const { framerate, resolution } = stats;
+        let resolutionString, frameRateString;
 
-        const resolutionString = Object.keys(resolution || {})
-        .map(ssrc => {
-            const { width, height } = resolution[ssrc];
-
-            return `${width}x${height}`;
-        })
-        .join(', ') || null;
-
-        const frameRateString = Object.keys(framerate || {})
-            .map(ssrc => framerate[ssrc])
-            .join(', ') || null;
+        if (this.props._sourceNameSignalingEnabled) {
+            resolutionString = resolution ? `${resolution.width}x${resolution.height}` : null;
+            frameRateString = framerate || null;
+        } else {
+            resolutionString = Object.keys(resolution || {})
+                .map(ssrc => {
+                    const { width, height } = resolution[ssrc];
+        
+                    return `${width}x${height}`;
+                })
+                .join(', ') || null;
+    
+            frameRateString = Object.keys(framerate || {})
+                .map(ssrc => framerate[ssrc])
+                .join(', ') || null;
+        }
 
         return resolutionString && frameRateString ? `${resolutionString}@${frameRateString}fps` : undefined;
     }
@@ -341,13 +353,20 @@ class ConnectionStatusComponent extends Component<Props, State> {
 
         let codecString;
 
-        // Only report one codec, in case there are multiple for a user.
-        Object.keys(codec || {})
-            .forEach(ssrc => {
-                const { audio, video } = codec[ssrc];
+        if (this.props._sourceNameSignalingEnabled) {
+            if (codec) {
+                codecString = `${codec.audio}, ${codec.video}`;
+            }
+        } else {
+            // Only report one codec, in case there are multiple for a user.
+            Object.keys(codec || {})
+                .forEach(ssrc => {
+                    const { audio, video } = codec[ssrc];
+    
+                    codecString = `${audio}, ${video}`;
+                });
+        }
 
-                codecString = `${audio}, ${video}`;
-            });
 
         return codecString;
     }
@@ -430,7 +449,8 @@ function _mapStateToProps(state, ownProps) {
     return {
         _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
         _isOpen: isDialogOpen(state, ConnectionStatusComponent_),
-        _participantDisplayName: getParticipantDisplayName(state, participantID)
+        _participantDisplayName: getParticipantDisplayName(state, participantID),
+        _sourceNameSignalingEnabled: getSourceNameSignalingFeatureFlag(state)
     };
 }
 
