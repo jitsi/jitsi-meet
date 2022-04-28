@@ -5,6 +5,7 @@ import { batch } from 'react-redux';
 import UIEvents from '../../../../service/UI/UIEvents';
 import { showModeratedNotification } from '../../av-moderation/actions';
 import { shouldShowModeratedNotification } from '../../av-moderation/functions';
+import { _RESET_BREAKOUT_ROOMS } from '../../breakout-rooms/actionTypes';
 import { hideNotification, isModerationNotificationDisplayed } from '../../notifications';
 import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { getCurrentConference } from '../conference/functions';
@@ -331,6 +332,7 @@ StateListenerRegistry.register(
                 for (const track of remoteTracks) {
                     dispatch(trackRemoved(track.jitsiTrack));
                 }
+                dispatch({ type: _RESET_BREAKOUT_ROOMS });
             });
         }
     });
