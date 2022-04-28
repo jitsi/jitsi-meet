@@ -1,4 +1,5 @@
 import groovy.json.JsonSlurper
+import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.util.VersionNumber
 
 // Top-level build file where you can add configuration options common to all
@@ -10,19 +11,30 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.2'
+        classpath 'com.android.tools.build:gradle:7.0.4'
         classpath 'com.google.gms:google-services:4.3.10'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.1'
     }
 }
 
 ext {
-    buildToolsVersion = "30.0.3"
+    buildToolsVersion = "31.0.0"
     compileSdkVersion = 31
     minSdkVersion    = 23
     targetSdkVersion = 31
     supportLibVersion = "28.0.0"
-    ndkVersion = "21.4.7075529"
+
+    if (System.properties['os.arch'] == "aarch64") {
+        // For M1 Users we need to use the NDK 24 which added support for aarch64
+        ndkVersion = "24.0.8215888"
+    } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        // For Android Users, we need to use NDK 23, otherwise the build will
+        // fail due to paths longer than the OS limit
+        ndkVersion = "23.1.7779620"
+    } else {
+        // Otherwise we default to the side-by-side NDK version from AGP.
+        ndkVersion = "21.4.7075529"
+    }
 
     // The Maven artifact groupdId of the third-party react-native modules which
     // Jitsi Meet SDK for Android depends on and which are not available in
