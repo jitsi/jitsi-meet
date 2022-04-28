@@ -1,6 +1,11 @@
 
 /* eslint-disable no-unused-vars, no-var */
 
+/*
+ * NOTE: If you add a new option please remember to document it here:
+ * https://jitsi.github.io/handbook/docs/dev-guide/dev-guide-configuration
+ */
+
 var config = {
     // Connection
     //
