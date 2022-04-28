@@ -54,8 +54,8 @@ export const ConnectionIndicatorIcon = ({
     const dispatch = useDispatch();
     const sourceName = track?.jitsiTrack?.getSourceName();
 
-    const handleTrackStreamingStatusChanged = streamingStatus => {
-        dispatch(trackStreamingStatusChanged(track.jitsiTrack, streamingStatus));
+    const handleTrackStreamingStatusChanged = (jitsiTrack, streamingStatus) => {
+        dispatch(trackStreamingStatusChanged(jitsiTrack, streamingStatus));
     };
 
     // TODO: replace this with a custom hook to be reused where track streaming status is needed.
