@@ -1,5 +1,5 @@
 diff --git a/node_modules/react-native/React/CoreModules/RCTTiming.mm b/node_modules/react-native/React/CoreModules/RCTTiming.mm
-index 70f0543..d003662 100644
+index 13d0d57..00e5d4c 100644
 --- a/node_modules/react-native/React/CoreModules/RCTTiming.mm
 +++ b/node_modules/react-native/React/CoreModules/RCTTiming.mm
 @@ -127,7 +127,15 @@ - (void)setup
