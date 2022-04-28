@@ -50,6 +50,7 @@ import '../settings/reducer';
 import '../speaker-stats/reducer';
 import '../subtitles/reducer';
 import '../screen-share/reducer';
+import '../denoise/reducer';
 import '../toolbox/reducer';
 import '../transcribing/reducer';
 import '../video-layout/reducer';

@@ -41,6 +41,7 @@ export default {
     TOGGLE_FILMSTRIP: 'UI.toggle_filmstrip',
 
     TOGGLE_SCREENSHARING: 'UI.toggle_screensharing',
+    SET_DENOISE_STATE: 'UI.set_denoise_state',
     HANGUP: 'UI.hangup',
     LOGOUT: 'UI.logout',
     VIDEO_DEVICE_CHANGED: 'UI.video_device_changed',

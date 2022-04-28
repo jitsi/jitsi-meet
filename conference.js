@@ -155,6 +155,7 @@ import { setScreenAudioShareState, isScreenAudioShared } from './react/features/
 import { toggleScreenshotCaptureSummary } from './react/features/screenshot-capture';
 import { isScreenshotCaptureEnabled } from './react/features/screenshot-capture/functions';
 import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
+import { DenoiseEffect } from './react/features/stream-effects/denoise/DenoiseEffect';
 import { createPresenterEffect } from './react/features/stream-effects/presenter';
 import { createRnnoiseProcessor } from './react/features/stream-effects/rnnoise';
 import { endpointMessageReceived } from './react/features/subtitles';
@@ -1473,7 +1474,7 @@ export default {
     _getConferenceOptions() {
         const options = getConferenceOptions(APP.store.getState());
 
-        options.createVADProcessor = createRnnoiseProcessor;
+        options.createVADProcessor = undefined;
 
         return options;
     },
@@ -1777,6 +1778,32 @@ export default {
         return this._untoggleScreenSharing
             ? this._untoggleScreenSharing(ignoreDidHaveVideo)
             : Promise.resolve();
+    },
+
+    /**
+     *
+     * @param {*} isDenoiseActive
+     */
+    async toggleDenoiseAudio(isDenoiseActive) {
+        logger.info('Toggle denoise audio: ', isDenoiseActive);
+
+        const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
+
+        // If there is a localAudio stream, mix in the desktop audio stream captured by the screen sharing
+        // api.
+        if (localAudio) {
+            if (this._denoiseEffect) {
+                await localAudio.setEffect(undefined);
+                this._denoiseEffect = undefined;
+
+            } else {
+                this._denoiseEffect = new DenoiseEffect();
+                await this._denoiseEffect.createRnnoiseProcessor();
+
+                await localAudio.setEffect(this._denoiseEffect);
+            }
+        }
+
     },
 
     /**
@@ -2675,6 +2702,12 @@ export default {
         APP.UI.addListener(
             UIEvents.TOGGLE_SCREENSHARING, ({ enabled, audioOnly, ignoreDidHaveVideo }) => {
                 this.toggleScreenSharing(enabled, { audioOnly }, ignoreDidHaveVideo);
+            }
+        );
+
+        APP.UI.addListener(
+            UIEvents.SET_DENOISE_STATE, ({ isDenoiseActive }) => {
+                this.toggleDenoiseAudio(isDenoiseActive);
             }
         );
     },

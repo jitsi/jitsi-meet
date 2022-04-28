@@ -28,6 +28,7 @@ import { connect } from '../../../base/redux';
 import { getLocalVideoTrack } from '../../../base/tracks';
 import { toggleChat } from '../../../chat';
 import { ChatButton } from '../../../chat/components';
+import { DenoiseAudioButton } from '../../../denoise/';
 import { EmbedMeetingButton } from '../../../embed-meeting';
 import { SharedDocumentButton } from '../../../etherpad';
 import { FeedbackButton } from '../../../feedback';
@@ -761,6 +762,13 @@ class Toolbox extends Component<Props> {
             group: 3
         };
 
+        const denoiseAudio = {
+            key: 'denoiseaudio',
+            Content: DenoiseAudioButton,
+            group: 3
+        };
+
+
         const etherpad = {
             key: 'etherpad',
             Content: SharedDocumentButton,
@@ -847,6 +855,7 @@ class Toolbox extends Component<Props> {
             linkToSalesforce,
             shareVideo,
             shareAudio,
+            denoiseAudio,
             etherpad,
             virtualBackground,
             dockIframe,

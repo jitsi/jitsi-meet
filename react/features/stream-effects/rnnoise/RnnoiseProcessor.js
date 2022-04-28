@@ -178,20 +178,31 @@ export default class RnnoiseProcessor {
      * @param {Float32Array} pcmFrame - Array containing 32 bit PCM samples.
      * @returns {Float} Contains VAD score in the interval 0 - 1 i.e. 0.90 .
      */
-    calculateAudioFrameVAD(pcmFrame: Float32Array) {
-        if (this._destroyed) {
-            throw new Error('RnnoiseProcessor instance is destroyed, please create another one!');
+    calculateAudioFrameVAD(buffer: Float32Array) {
+        // if (this._destroyed) {
+        //     throw new Error('RnnoiseProcessor instance is destroyed, please create another one!');
+        // }
+
+        // const pcmFrameLength = pcmFrame.length;
+
+        // if (pcmFrameLength !== RNNOISE_SAMPLE_LENGTH) {
+        //     throw new Error(`Rnnoise can only process PCM frames of 480 samples! Input sample was:${pcmFrameLength}`);
+        // }
+
+        // this._convertTo16BitPCM(pcmFrame);
+        // this._copyPCMSampleToWasmBuffer(pcmFrame);
+
+        // return this._wasmInterface._rnnoise_process_frame(this._context, this._wasmPcmOutput, this._wasmPcmInput);
+
+
+        for (let i = 0; i < 480; i++) {
+            this._wasmInterface.HEAPF32[(this._wasmPcmInput >> 2) + i] = buffer[i] * 32768;
         }
 
-        const pcmFrameLength = pcmFrame.length;
+        this._wasmInterface._rnnoise_process_frame(this._context, this._wasmPcmInput, this._wasmPcmInput);
 
-        if (pcmFrameLength !== RNNOISE_SAMPLE_LENGTH) {
-            throw new Error(`Rnnoise can only process PCM frames of 480 samples! Input sample was:${pcmFrameLength}`);
+        for (let i = 0; i < 480; i++) {
+            buffer[i] = this._wasmInterface.HEAPF32[(this._wasmPcmInput >> 2) + i] / 32768;
         }
-
-        this._convertTo16BitPCM(pcmFrame);
-        this._copyPCMSampleToWasmBuffer(pcmFrame);
-
-        return this._wasmInterface._rnnoise_process_frame(this._context, this._wasmPcmOutput, this._wasmPcmInput);
     }
 }

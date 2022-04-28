@@ -1178,6 +1178,7 @@
         "startScreenSharing": "Start screen sharing",
         "startSubtitles": "Start subtitles",
         "stopAudioSharing": "Stop audio sharing",
+        "denoiseAudio": "Toggle audio denoise",
         "stopScreenSharing": "Stop screen sharing",
         "stopSharedVideo": "Stop video",
         "stopSubtitles": "Stop subtitles",
