@@ -78,6 +78,11 @@ type Props = {
     styles: Object,
 
     /**
+     * The type of thumbnail.
+     */
+    thumbnailType: string,
+
+    /**
      * JitsiTrack instance.
      */
     videoTrack: Object
