@@ -15,7 +15,7 @@ class DefaultUnsupportedDesktopBrowser extends Component {
      * @returns {void}
      */
     componentDidMount() {
-        window.location.href = `${window.location.origin}/static/recommendedBrowsers.html`;
+        window.location.pathname = 'static/recommendedBrowsers.html';
     }
 
     /**
