@@ -134,13 +134,10 @@ export function showToolbox(timeout: number = 0): Object {
 
         const {
             enabled,
-            visible,
-            overflowDrawer
+            visible
         } = state['features/toolbox'];
-        const { contextMenuOpened } = state['features/base/responsive-ui'];
-        const contextMenuOpenedInTileview = isLayoutTileView(state) && contextMenuOpened && !overflowDrawer;
 
-        if (enabled && !visible && !contextMenuOpenedInTileview) {
+        if (enabled && !visible) {
             dispatch(setToolboxVisible(true));
 
             // If the Toolbox is always visible, there's no need for a timeout
