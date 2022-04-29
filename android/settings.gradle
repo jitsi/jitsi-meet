@@ -1,6 +1,8 @@
 rootProject.name = 'jitsi-meet'
 
 include ':app', ':sdk'
+includeBuild('../node_modules/react-native-gradle-plugin')
+
 include ':react-native-amplitude'
 project(':react-native-amplitude').projectDir = new File(rootProject.projectDir, '../node_modules/@amplitude/react-native//android')
 include ':react-native-async-storage'

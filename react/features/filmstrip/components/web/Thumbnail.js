@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 
 import { createScreenSharingIssueEvent, sendAnalytics } from '../../../analytics';
 import { Avatar } from '../../../base/avatar';
-import { getSourceNameSignalingFeatureFlag } from '../../../base/config';
+import { getMultipleVideoSupportFeatureFlag, getSourceNameSignalingFeatureFlag } from '../../../base/config';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
 import { MEDIA_TYPE, VideoTrack } from '../../../base/media';
@@ -24,7 +24,7 @@ import {
     getLocalAudioTrack,
     getLocalVideoTrack,
     getTrackByMediaTypeAndParticipant,
-    getFakeScreenshareParticipantTrack,
+    getVirtualScreenshareParticipantTrack,
     updateLastTrackVideoMediaEvent,
     trackStreamingStatusChanged
 } from '../../../base/tracks';
@@ -51,10 +51,10 @@ import {
     showGridInVerticalView
 } from '../../functions';
 
-import FakeScreenShareParticipant from './FakeScreenShareParticipant';
 import ThumbnailAudioIndicator from './ThumbnailAudioIndicator';
 import ThumbnailBottomIndicators from './ThumbnailBottomIndicators';
 import ThumbnailTopIndicators from './ThumbnailTopIndicators';
+import VirtualScreenshareParticipant from './VirtualScreenshareParticipant';
 
 
 declare var interfaceConfig: Object;
@@ -137,10 +137,10 @@ export type Props = {|
     _isCurrentlyOnLargeVideo: boolean,
 
     /**
-     * Indicates whether the participant is a fake screen share participant. This prop is behind the
+     * Indicates whether the participant is a virtual screen share participant. This prop is behind the
      * sourceNameSignaling feature flag.
      */
-    _isFakeScreenShareParticipant: boolean,
+    _isVirtualScreenshareParticipant: boolean,
 
     /**
      * Whether we are currently running in a mobile browser.
@@ -626,7 +626,7 @@ class Thumbnail extends Component<Props, State> {
         const {
             _disableTileEnlargement,
             _height,
-            _isFakeScreenShareParticipant,
+            _isVirtualScreenshareParticipant,
             _isHidden,
             _isScreenSharing,
             _participant,
@@ -665,7 +665,7 @@ class Thumbnail extends Component<Props, State> {
             || _disableTileEnlargement
             || _isScreenSharing;
 
-        if (canPlayEventReceived || _participant.local || _isFakeScreenShareParticipant) {
+        if (canPlayEventReceived || _participant.local || _isVirtualScreenshareParticipant) {
             videoStyles = {
                 objectFit: doNotStretchVideo ? 'contain' : 'cover'
             };
@@ -1107,7 +1107,7 @@ class Thumbnail extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { _participant, _isFakeScreenShareParticipant } = this.props;
+        const { _participant, _isVirtualScreenshareParticipant } = this.props;
 
         if (!_participant) {
             return null;
@@ -1123,12 +1123,12 @@ class Thumbnail extends Component<Props, State> {
             return this._renderFakeParticipant();
         }
 
-        if (_isFakeScreenShareParticipant) {
+        if (_isVirtualScreenshareParticipant) {
             const { isHovered } = this.state;
-            const { _videoTrack, _isMobile, classes } = this.props;
+            const { _videoTrack, _isMobile, classes, _thumbnailType } = this.props;
 
             return (
-                <FakeScreenShareParticipant
+                <VirtualScreenshareParticipant
                     classes = { classes }
                     containerClassName = { this._getContainerClassName() }
                     isHovered = { isHovered }
@@ -1142,6 +1142,7 @@ class Thumbnail extends Component<Props, State> {
                     onTouchStart = { this._onTouchStart }
                     participantId = { _participant.id }
                     styles = { this._getStyles() }
+                    thumbnailType = { _thumbnailType }
                     videoTrack = { _videoTrack } />
             );
         }
@@ -1169,8 +1170,8 @@ function _mapStateToProps(state, ownProps): Object {
 
     let _videoTrack;
 
-    if (sourceNameSignalingEnabled && participant?.isFakeScreenShareParticipant) {
-        _videoTrack = getFakeScreenshareParticipantTrack(tracks, id);
+    if (sourceNameSignalingEnabled && participant?.isVirtualScreenshareParticipant) {
+        _videoTrack = getVirtualScreenshareParticipantTrack(tracks, id);
     } else {
         _videoTrack = isLocal
             ? getLocalVideoTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantID);
@@ -1191,7 +1192,6 @@ function _mapStateToProps(state, ownProps): Object {
     const _isMobile = isMobileBrowser();
     const activeParticipants = getActiveParticipantsIds(state);
     const tileType = getThumbnailTypeFromLayout(_currentLayout, stageFilmstrip);
-
 
     switch (tileType) {
     case THUMBNAIL_TYPE.VERTICAL:
@@ -1262,6 +1262,7 @@ function _mapStateToProps(state, ownProps): Object {
 
     return {
         _audioTrack,
+        _currentLayout,
         _defaultLocalDisplayName: defaultLocalDisplayName,
         _disableLocalVideoFlip: Boolean(disableLocalVideoFlip),
         _disableTileEnlargement: Boolean(disableTileEnlargement),
@@ -1270,13 +1271,14 @@ function _mapStateToProps(state, ownProps): Object {
         _isAudioOnly: Boolean(state['features/base/audio-only'].enabled),
         _isCurrentlyOnLargeVideo: state['features/large-video']?.participantId === id,
         _isDominantSpeakerDisabled: interfaceConfig.DISABLE_DOMINANT_SPEAKER_INDICATOR,
-        _isFakeScreenShareParticipant: sourceNameSignalingEnabled && participant?.isFakeScreenShareParticipant,
         _isMobile,
         _isMobilePortrait,
         _isScreenSharing: _videoTrack?.videoType === 'desktop',
         _isTestModeEnabled: isTestModeEnabled(state),
         _isVideoPlayable: id && isVideoPlayable(state, id),
+        _isVirtualScreenshareParticipant: sourceNameSignalingEnabled && participant?.isVirtualScreenshareParticipant,
         _localFlipX: Boolean(localFlipX),
+        _multipleVideoSupport: getMultipleVideoSupportFeatureFlag(state),
         _participant: participant,
         _raisedHand: hasRaisedHand(participant),
         _stageFilmstripLayout: isStageFilmstripAvailable(state),

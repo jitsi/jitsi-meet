@@ -68,7 +68,7 @@ type Props = {
     onTouchStart: Function,
 
     /**
-     * The ID of the fake screen share participant.
+     * The ID of the virtual screen share participant.
      */
     participantId: string,
 
@@ -78,12 +78,17 @@ type Props = {
     styles: Object,
 
     /**
+     * The type of thumbnail.
+     */
+    thumbnailType: string,
+
+    /**
      * JitsiTrack instance.
      */
     videoTrack: Object
 }
 
-const FakeScreenShareParticipant = ({
+const VirtualScreenshareParticipant = ({
     classes,
     containerClassName,
     isHovered,
@@ -97,7 +102,8 @@ const FakeScreenShareParticipant = ({
     onTouchStart,
     participantId,
     styles,
-    videoTrack
+    videoTrack,
+    thumbnailType
 }: Props) => {
     const currentLayout = useSelector(getCurrentLayout);
     const videoTrackId = videoTrack?.jitsiTrack?.getId();
@@ -135,9 +141,10 @@ const FakeScreenShareParticipant = ({
                 ) }>
                 <ThumbnailTopIndicators
                     currentLayout = { currentLayout }
-                    isFakeScreenShareParticipant = { true }
                     isHovered = { isHovered }
-                    participantId = { participantId } />
+                    isVirtualScreenshareParticipant = { true }
+                    participantId = { participantId }
+                    thumbnailType = { thumbnailType } />
             </div>
             <div
                 className = { clsx(classes.indicatorsContainer,
@@ -154,4 +161,4 @@ const FakeScreenShareParticipant = ({
         </span>);
 };
 
-export default FakeScreenShareParticipant;
+export default VirtualScreenshareParticipant;

@@ -83,9 +83,7 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case CONFERENCE_JOINED:
-        if (_isWaitingForOwner(store)) {
-            store.dispatch(stopWaitForOwner());
-        }
+        store.dispatch(stopWaitForOwner());
         store.dispatch(hideLoginDialog());
         break;
 

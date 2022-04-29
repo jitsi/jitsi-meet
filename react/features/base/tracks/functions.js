@@ -1,10 +1,13 @@
 /* global APP */
 
-import { getMultipleVideoSupportFeatureFlag } from '../config/functions.any';
+import {
+    getMultipleVideoSendingSupportFeatureFlag,
+    getMultipleVideoSupportFeatureFlag
+} from '../config/functions.any';
 import { isMobileBrowser } from '../environment/utils';
 import JitsiMeetJS, { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, VIDEO_TYPE, setAudioMuted } from '../media';
-import { getFakeScreenShareParticipantOwnerId } from '../participants';
+import { getVirtualScreenshareParticipantOwnerId } from '../participants';
 import { toState } from '../redux';
 import {
     getUserSelectedCameraDeviceId,
@@ -426,18 +429,11 @@ export function getVideoTrackByParticipant(
         return;
     }
 
-    let participantId;
-    let mediaType;
-
-    if (participant?.isFakeScreenShareParticipant) {
-        participantId = getFakeScreenShareParticipantOwnerId(participant.id);
-        mediaType = MEDIA_TYPE.SCREENSHARE;
-    } else {
-        participantId = participant.id;
-        mediaType = MEDIA_TYPE.VIDEO;
+    if (participant?.isVirtualScreenshareParticipant) {
+        return getVirtualScreenshareParticipantTrack(tracks, participant.id);
     }
 
-    return getTrackByMediaTypeAndParticipant(tracks, mediaType, participantId);
+    return getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participant.id);
 }
 
 /**
@@ -458,16 +454,54 @@ export function getTrackByMediaTypeAndParticipant(
 }
 
 /**
- * Returns track of given fakeScreenshareParticipantId.
+ * Returns screenshare track of given virtualScreenshareParticipantId.
  *
  * @param {Track[]} tracks - List of all tracks.
- * @param {string} fakeScreenshareParticipantId - Fake Screenshare Participant ID.
+ * @param {string} virtualScreenshareParticipantId - Virtual Screenshare Participant ID.
  * @returns {(Track|undefined)}
  */
-export function getFakeScreenshareParticipantTrack(tracks, fakeScreenshareParticipantId) {
-    const participantId = getFakeScreenShareParticipantOwnerId(fakeScreenshareParticipantId);
+export function getVirtualScreenshareParticipantTrack(tracks, virtualScreenshareParticipantId) {
+    const ownderId = getVirtualScreenshareParticipantOwnerId(virtualScreenshareParticipantId);
 
-    return getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.SCREENSHARE, participantId);
+    return getScreenShareTrack(tracks, ownderId);
+}
+
+/**
+ * Returns track source names of given screen share participant ids.
+ *
+ * @param {Object} state - The entire redux state.
+ * @param {string[]} screenShareParticipantIds - Participant ID.
+ * @returns {(string[])}
+ */
+export function getRemoteScreenSharesSourceNames(state, screenShareParticipantIds = []) {
+    const tracks = state['features/base/tracks'];
+
+    return getMultipleVideoSupportFeatureFlag(state)
+        ? screenShareParticipantIds
+        : screenShareParticipantIds.reduce((acc, id) => {
+            const sourceName = getScreenShareTrack(tracks, id)?.jitsiTrack.getSourceName();
+
+            if (sourceName) {
+                acc.push(sourceName);
+            }
+
+            return acc;
+        }, []);
+}
+
+/**
+ * Returns screenshare track of given owner ID.
+ *
+ * @param {Track[]} tracks - List of all tracks.
+ * @param {string} ownerId - Screenshare track owner ID.
+ * @returns {(Track|undefined)}
+ */
+export function getScreenShareTrack(tracks, ownerId) {
+    return tracks.find(
+        t => Boolean(t.jitsiTrack)
+        && t.participantId === ownerId
+        && (t.mediaType === MEDIA_TYPE.SCREENSHARE || t.videoType === VIDEO_TYPE.DESKTOP)
+    );
 }
 
 /**
@@ -610,7 +644,7 @@ export function setTrackMuted(track, muted, state) {
     // browser's 'Stop sharing' button, the local stream is stopped before the inactive stream handler is fired.
     // We still need to proceed here and remove the track from the peerconnection.
     if (track.isMuted() === muted
-        && !(track.getVideoType() === VIDEO_TYPE.DESKTOP && getMultipleVideoSupportFeatureFlag(state))) {
+        && !(track.getVideoType() === VIDEO_TYPE.DESKTOP && getMultipleVideoSendingSupportFeatureFlag(state))) {
         return Promise.resolve();
     }
 

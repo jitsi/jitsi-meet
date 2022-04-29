@@ -9,7 +9,7 @@ import { _RESET_BREAKOUT_ROOMS } from '../../breakout-rooms/actionTypes';
 import { hideNotification, isModerationNotificationDisplayed } from '../../notifications';
 import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { getCurrentConference } from '../conference/functions';
-import { getMultipleVideoSupportFeatureFlag, getSourceNameSignalingFeatureFlag } from '../config';
+import { getMultipleVideoSendingSupportFeatureFlag } from '../config';
 import { getAvailableDevices } from '../devices/actions';
 import {
     CAMERA_FACING_MODE,
@@ -25,11 +25,9 @@ import {
     setScreenshareMuted,
     SCREENSHARE_MUTISM_AUTHORITY
 } from '../media';
-import { participantLeft, participantJoined, getParticipantById } from '../participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
 
 import {
-    SCREENSHARE_TRACK_MUTED_UPDATED,
     TOGGLE_SCREENSHARING,
     TRACK_ADDED,
     TRACK_MUTE_UNMUTE_FAILED,
@@ -53,7 +51,6 @@ import {
     isUserInteractionRequiredForUnmute,
     setTrackMuted
 } from './functions';
-import logger from './logger';
 
 import './subscriber';
 
@@ -70,8 +67,7 @@ declare var APP: Object;
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case TRACK_ADDED: {
-        const state = store.getState();
-        const { jitsiTrack, local } = action.track;
+        const { local } = action.track;
 
         // The devices list needs to be refreshed when no initial video permissions
         // were granted and a local video track is added by umuting the video.
@@ -79,23 +75,7 @@ MiddlewareRegistry.register(store => next => action => {
             store.dispatch(getAvailableDevices());
         }
 
-        // Call next before the creation of a fake screenshare participant to ensure a video track is available when
-        // the participant is auto pinned.
-        const result = next(action);
-
-        // The TRACK_ADDED action is dispatched when a presenter starts a screenshare. Do not create a local fake
-        // screenshare participant when multiple stream is not enabled.
-        const skipCreateFakeScreenShareParticipant = local && !getMultipleVideoSupportFeatureFlag(state);
-
-        if (getSourceNameSignalingFeatureFlag(state)
-            && jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP
-            && !jitsiTrack.isMuted()
-            && !skipCreateFakeScreenShareParticipant
-        ) {
-            createFakeScreenShareParticipant(store, action);
-        }
-
-        return result;
+        break;
     }
     case TRACK_NO_DATA_FROM_SOURCE: {
         const result = next(action);
@@ -105,39 +85,7 @@ MiddlewareRegistry.register(store => next => action => {
         return result;
     }
 
-    case SCREENSHARE_TRACK_MUTED_UPDATED: {
-        const state = store.getState();
-
-        if (!getSourceNameSignalingFeatureFlag(state)) {
-            return;
-        }
-
-        const { track, muted } = action;
-
-        if (muted) {
-            const conference = getCurrentConference(state);
-            const participantId = track?.jitsiTrack.getSourceName();
-
-            store.dispatch(participantLeft(participantId, conference));
-        }
-
-        if (!muted) {
-            createFakeScreenShareParticipant(store, action);
-        }
-
-        break;
-    }
-
     case TRACK_REMOVED: {
-        const state = store.getState();
-
-        if (getSourceNameSignalingFeatureFlag(state) && action.track.jitsiTrack.videoType === VIDEO_TYPE.DESKTOP) {
-            const conference = getCurrentConference(state);
-            const participantId = action.track.jitsiTrack.getSourceName();
-
-            store.dispatch(participantLeft(participantId, conference));
-        }
-
         _removeNoDataFromSourceNotification(store, action.track);
         break;
     }
@@ -223,7 +171,7 @@ MiddlewareRegistry.register(store => next => action => {
 
             const { enabled, audioOnly, ignoreDidHaveVideo } = action;
 
-            if (!getMultipleVideoSupportFeatureFlag(store.getState())) {
+            if (!getMultipleVideoSendingSupportFeatureFlag(store.getState())) {
                 APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING,
                     {
                         enabled,
@@ -241,7 +189,7 @@ MiddlewareRegistry.register(store => next => action => {
 
         if (typeof APP !== 'undefined') {
             if (isVideoTrack && jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP
-                && getMultipleVideoSupportFeatureFlag(store.getState())) {
+                && getMultipleVideoSendingSupportFeatureFlag(store.getState())) {
                 store.dispatch(setScreenshareMuted(!muted));
             } else if (isVideoTrack) {
                 APP.conference.setVideoMuteStatus();
@@ -256,7 +204,7 @@ MiddlewareRegistry.register(store => next => action => {
         const { jitsiTrack } = action.track;
 
         if (typeof APP !== 'undefined'
-            && getMultipleVideoSupportFeatureFlag(store.getState())
+            && getMultipleVideoSendingSupportFeatureFlag(store.getState())
             && jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP) {
             store.dispatch(toggleScreensharing(false));
         }
@@ -286,7 +234,7 @@ MiddlewareRegistry.register(store => next => action => {
                 } else if (jitsiTrack.isLocal() && !(jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP)) {
                     APP.conference.setVideoMuteStatus();
                 } else if (jitsiTrack.isLocal() && muted && jitsiTrack.getVideoType() === VIDEO_TYPE.DESKTOP) {
-                    !getMultipleVideoSupportFeatureFlag(state)
+                    !getMultipleVideoSendingSupportFeatureFlag(state)
                         && store.dispatch(toggleScreensharing(false, false, true));
                 } else {
                     APP.UI.setVideoMuted(participantID);
@@ -385,32 +333,6 @@ function _handleNoDataFromSourceErrors(store, action) {
 }
 
 /**
- * Creates a fake participant for screen share using the track's source name as the participant id.
- *
- * @param {Store} store - The redux store in which the specified action is dispatched.
- * @param {Action} action - The redux action dispatched in the specified store.
- * @private
- * @returns {void}
- */
-function createFakeScreenShareParticipant({ dispatch, getState }, { track }) {
-    const state = getState();
-    const participantId = track.jitsiTrack?.getParticipantId?.();
-    const participant = getParticipantById(state, participantId);
-
-    if (participant.name) {
-        dispatch(participantJoined({
-            conference: state['features/base/conference'].conference,
-            id: track.jitsiTrack.getSourceName(),
-            isFakeScreenShareParticipant: true,
-            isLocalScreenShare: track?.jitsiTrack.isLocal(),
-            name: participant.name
-        }));
-    } else {
-        logger.error(`Failed to create a screenshare participant for participantId: ${participantId}`);
-    }
-}
-
-/**
  * Gets the local track associated with a specific {@code MEDIA_TYPE} in a
  * specific redux store.
  *
@@ -472,7 +394,7 @@ async function _setMuted(store, { ensureTrack, authority, muted }, mediaType: ME
     const state = getState();
 
     if (mediaType === MEDIA_TYPE.SCREENSHARE
-        && getMultipleVideoSupportFeatureFlag(state)
+        && getMultipleVideoSendingSupportFeatureFlag(state)
         && !muted) {
         return;
     }
@@ -487,8 +409,9 @@ async function _setMuted(store, { ensureTrack, authority, muted }, mediaType: ME
 
         // Screenshare cannot be unmuted using the video mute button unless it is muted by audioOnly in the legacy
         // screensharing mode.
-        if (jitsiTrack
-            && (jitsiTrack.videoType !== 'desktop' || isAudioOnly || getMultipleVideoSupportFeatureFlag(state))) {
+        if (jitsiTrack && (
+            jitsiTrack.videoType !== 'desktop' || isAudioOnly || getMultipleVideoSendingSupportFeatureFlag(state))
+        ) {
             setTrackMuted(jitsiTrack, muted, state).catch(() => dispatch(trackMuteUnmuteFailed(localTrack, muted)));
         }
     } else if (!muted && ensureTrack && (typeof APP === 'undefined' || isPrejoinPageVisible(state))) {

@@ -10,7 +10,7 @@ import {
 } from '../../../react/features/base/participants';
 import {
     getTrackByMediaTypeAndParticipant,
-    getFakeScreenshareParticipantTrack
+    getVirtualScreenshareParticipantTrack
 } from '../../../react/features/base/tracks';
 
 import LargeVideoManager from './LargeVideoManager';
@@ -95,7 +95,7 @@ const VideoLayout = {
             return VIDEO_TYPE.CAMERA;
         }
 
-        if (getSourceNameSignalingFeatureFlag(state) && participant?.isFakeScreenShareParticipant) {
+        if (getSourceNameSignalingFeatureFlag(state) && participant?.isVirtualScreenshareParticipant) {
             return VIDEO_TYPE.DESKTOP;
         }
 
@@ -190,8 +190,8 @@ const VideoLayout = {
 
         let videoTrack;
 
-        if (getSourceNameSignalingFeatureFlag(state) && participant?.isFakeScreenShareParticipant) {
-            videoTrack = getFakeScreenshareParticipantTrack(tracks, id);
+        if (getSourceNameSignalingFeatureFlag(state) && participant?.isVirtualScreenshareParticipant) {
+            videoTrack = getVirtualScreenshareParticipantTrack(tracks, id);
         } else {
             videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
         }

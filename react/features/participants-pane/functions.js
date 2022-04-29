@@ -18,7 +18,7 @@ import {
 } from '../base/participants/functions';
 import { toState } from '../base/redux';
 import { normalizeAccents } from '../base/util/strings';
-import { isInBreakoutRoom } from '../breakout-rooms/functions';
+import { getBreakoutRoomsConfig, isInBreakoutRoom } from '../breakout-rooms/functions';
 
 import { QUICK_ACTION_BUTTON, REDUCER_KEY, MEDIA_STATE } from './constants';
 
@@ -261,3 +261,49 @@ export function participantMatchesSearch(participant: Object, searchString: stri
 
     return false;
 }
+
+/**
+ * Returns whether the participants pane footer menu is visible.
+ *
+ * @param {Object} state - Global state.
+ * @returns {boolean}
+ */
+export const isFooterMenuVisible = (state: Object) => {
+    const isLocalModerator = isLocalParticipantModerator(state);
+    const inBreakoutRoom = isInBreakoutRoom(state);
+    const { hideFooterMenu } = getBreakoutRoomsConfig(state);
+
+    return inBreakoutRoom
+        ? !hideFooterMenu && isLocalModerator
+        : isLocalModerator;
+};
+
+/**
+ * Returns whether the more actions button is visible.
+ *
+ * @param {Object} state - Global state.
+ * @returns {boolean}
+ */
+export const isMoreActionsVisible = (state: Object) => {
+    const inBreakoutRoom = isInBreakoutRoom(state);
+    const { hideMoreActionsButton } = getBreakoutRoomsConfig(state);
+
+    return inBreakoutRoom
+        ? !hideMoreActionsButton
+        : true;
+};
+
+/**
+ * Returns whether the mute all button is visible.
+ *
+ * @param {Object} state - Global state.
+ * @returns {boolean}
+ */
+export const isMuteAllVisible = (state: Object) => {
+    const inBreakoutRoom = isInBreakoutRoom(state);
+    const { hideMuteAllButton } = getBreakoutRoomsConfig(state);
+
+    return inBreakoutRoom
+        ? !hideMuteAllButton
+        : true;
+};

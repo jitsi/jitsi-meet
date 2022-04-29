@@ -12,7 +12,7 @@ import { getLocalParticipant, getParticipantById } from '../../../base/participa
 import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
 import {
-    getFakeScreenshareParticipantTrack,
+    getVirtualScreenshareParticipantTrack,
     getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 import {
     isParticipantConnectionStatusInactive,
@@ -374,8 +374,8 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
 
     let firstVideoTrack;
 
-    if (sourceNameSignalingEnabled && participant?.isFakeScreenShareParticipant) {
-        firstVideoTrack = getFakeScreenshareParticipantTrack(tracks, participantId);
+    if (sourceNameSignalingEnabled && participant?.isVirtualScreenshareParticipant) {
+        firstVideoTrack = getVirtualScreenshareParticipantTrack(tracks, participantId);
     } else {
         firstVideoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
     }
