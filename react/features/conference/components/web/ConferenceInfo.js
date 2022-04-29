@@ -7,7 +7,6 @@ import React, { Component } from 'react';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { connect } from '../../../base/redux';
 import { E2EELabel } from '../../../e2ee';
-import { LocalRecordingLabel } from '../../../local-recording';
 import { RecordingLabel } from '../../../recording';
 import HighlightButton from '../../../recording/components/Recording/web/HighlightButton';
 import { isToolboxVisible } from '../../../toolbox/functions.web';
@@ -67,10 +66,6 @@ const COMPONENTS = [
             </>
         ),
         id: 'recording'
-    },
-    {
-        Component: LocalRecordingLabel,
-        id: 'local-recording'
     },
     {
         Component: RaisedHandsCountLabel,

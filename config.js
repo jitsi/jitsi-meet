@@ -1143,7 +1143,7 @@ var config = {
     // If a label's id is not in any of the 2 arrays, it will not be visible at all on the header.
     // conferenceInfo: {
     //     // those labels will not be hidden in tandem with the toolbox.
-    //     alwaysVisible: ['recording', 'local-recording', 'raised-hands-count'],
+    //     alwaysVisible: ['recording', 'raised-hands-count'],
     //     // those labels will be auto-hidden in tandem with the toolbox buttons.
     //     autoHide: [
     //         'subject',
