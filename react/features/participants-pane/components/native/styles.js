@@ -249,6 +249,7 @@ export default {
         bottom: 0,
         flexDirection: 'row',
         height: BaseTheme.spacing[12],
+        justifyContent: 'flex-end',
         left: 0,
         right: 0,
         position: 'absolute',
@@ -277,7 +278,8 @@ export default {
     },
 
     moreButton: {
-        ...smallButton
+        ...smallButton,
+        marginLeft: BaseTheme.spacing[3]
     },
 
     moreIcon: {
@@ -291,8 +293,7 @@ export default {
     },
 
     muteAllMoreButton: {
-        ...muteAllButton,
-        right: BaseTheme.spacing[3]
+        ...muteAllButton
     },
 
     muteAllLabel: {

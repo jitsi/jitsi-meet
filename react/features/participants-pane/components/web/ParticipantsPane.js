@@ -7,12 +7,17 @@ import participantsPaneTheme from '../../../base/components/themes/participantsP
 import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { Icon, IconClose, IconHorizontalPoints } from '../../../base/icons';
-import { isLocalParticipantModerator } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { getBreakoutRoomsConfig } from '../../../breakout-rooms/functions';
+import { isAddBreakoutRoomButtonVisible } from '../../../breakout-rooms/functions';
 import { MuteEveryoneDialog } from '../../../video-menu/components/';
 import { close } from '../../actions';
-import { findAncestorByClass, getParticipantsPaneOpen } from '../../functions';
+import {
+    findAncestorByClass,
+    getParticipantsPaneOpen,
+    isFooterMenuVisible,
+    isMoreActionsVisible,
+    isMuteAllVisible
+} from '../../functions';
 import { AddBreakoutRoomButton } from '../breakout-rooms/components/web/AddBreakoutRoomButton';
 import { RoomList } from '../breakout-rooms/components/web/RoomList';
 
@@ -37,14 +42,24 @@ type Props = {
     _overflowDrawer: boolean,
 
     /**
+     * Is the participants pane open.
+     */
+    _paneOpen: boolean,
+
+    /**
      * Should the add breakout room button be displayed?
      */
     _showAddRoomButton: boolean,
 
     /**
-     * Is the participants pane open.
+     * Whether to show the more actions button.
      */
-    _paneOpen: boolean,
+    _showMoreActionsButton: boolean,
+
+    /**
+     * Whether to show the mute all button.
+     */
+    _showMuteAllButton: boolean,
 
     /**
      * Whether to show the footer menu.
@@ -202,6 +217,8 @@ class ParticipantsPane extends Component<Props, State> {
             _paneOpen,
             _showAddRoomButton,
             _showFooter,
+            _showMoreActionsButton,
+            _showMuteAllButton,
             classes,
             t
         } = this.props;
@@ -240,24 +257,28 @@ class ParticipantsPane extends Component<Props, State> {
                     </div>
                     {_showFooter && (
                         <div className = { classes.footer }>
-                            <FooterButton
-                                accessibilityLabel = { t('participantsPane.actions.muteAll') }
-                                onClick = { this._onMuteAll }>
-                                {t('participantsPane.actions.muteAll')}
-                            </FooterButton>
-                            <div className = { classes.footerMoreContainer }>
+                            {_showMuteAllButton && (
                                 <FooterButton
-                                    accessibilityLabel = { t('participantsPane.actions.moreModerationActions') }
-                                    id = 'participants-pane-context-menu'
-                                    isIconButton = { true }
-                                    onClick = { this._onToggleContext }>
-                                    <Icon src = { IconHorizontalPoints } />
+                                    accessibilityLabel = { t('participantsPane.actions.muteAll') }
+                                    onClick = { this._onMuteAll }>
+                                    {t('participantsPane.actions.muteAll')}
                                 </FooterButton>
-                                <FooterContextMenu
-                                    isOpen = { contextOpen }
-                                    onDrawerClose = { this._onDrawerClose }
-                                    onMouseLeave = { this._onToggleContext } />
-                            </div>
+                            )}
+                            {_showMoreActionsButton && (
+                                <div className = { classes.footerMoreContainer }>
+                                    <FooterButton
+                                        accessibilityLabel = { t('participantsPane.actions.moreModerationActions') }
+                                        id = 'participants-pane-context-menu'
+                                        isIconButton = { true }
+                                        onClick = { this._onToggleContext }>
+                                        <Icon src = { IconHorizontalPoints } />
+                                    </FooterButton>
+                                    <FooterContextMenu
+                                        isOpen = { contextOpen }
+                                        onDrawerClose = { this._onDrawerClose }
+                                        onMouseLeave = { this._onToggleContext } />
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
@@ -374,18 +395,16 @@ class ParticipantsPane extends Component<Props, State> {
  */
 function _mapStateToProps(state: Object) {
     const isPaneOpen = getParticipantsPaneOpen(state);
-    const { hideAddRoomButton } = getBreakoutRoomsConfig(state);
     const { conference } = state['features/base/conference'];
-
-    // $FlowExpectedError
     const _isBreakoutRoomsSupported = conference?.getBreakoutRooms()?.isSupported();
-    const _isLocalParticipantModerator = isLocalParticipantModerator(state);
 
     return {
         _isBreakoutRoomsSupported,
         _paneOpen: isPaneOpen,
-        _showAddRoomButton: _isBreakoutRoomsSupported && !hideAddRoomButton && _isLocalParticipantModerator,
-        _showFooter: isPaneOpen && isLocalParticipantModerator(state)
+        _showAddRoomButton: isAddBreakoutRoomButtonVisible(state),
+        _showFooter: isFooterMenuVisible(state),
+        _showMuteAllButton: isMuteAllVisible(state),
+        _showMoreActionsButton: isMoreActionsVisible(state)
     };
 }
 
