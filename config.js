@@ -1103,8 +1103,18 @@ var config = {
     // breakoutRooms: {
     //     // Hides the add breakout room button. This replaces `hideAddRoomButton`.
     //     hideAddRoomButton: false,
+    //     // Hides the auto assign participants button.
+    //     hideAutoAssignButton: false,
+    //     // Hides the participants pane footer menu.
+    //     hideFooterMenu: false,
     //     // Hides the join breakout room button.
-    //     hideJoinRoomButton: false
+    //     hideJoinRoomButton: false,
+    //     // Hides the moderator settings tab.
+    //     hideModeratorSettingsTab: false,
+    //     // Hides the more actions button.
+    //     hideMoreActionsButton: false,
+    //     // Hides the mute all button.
+    //     hideMuteAllButton: false
     // },
 
     // When true the user cannot add more images to be used as virtual background.
