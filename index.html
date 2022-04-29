@@ -54,7 +54,7 @@
         // redirected to a page that is known to have no newer js syntax.
         if (window.navigator.userAgent.match(/(MSIE|Trident)/)) {
             var roomName = encodeURIComponent(window.location.pathname);
-            window.location.href = "static/recommendedBrowsers.html" + "?room=" + roomName;
+            window.location.href = window.location.origin + "/static/recommendedBrowsers.html" + "?room=" + roomName;
         }
 
         window.indexLoadedTime = window.performance.now();
