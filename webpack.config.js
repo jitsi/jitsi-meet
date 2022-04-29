@@ -349,16 +349,6 @@ module.exports = (_env, argv) => {
         }),
         Object.assign({}, config, {
             entry: {
-                'flacEncodeWorker': './react/features/local-recording/recording/flac/flacEncodeWorker.js'
-            },
-            plugins: [
-                ...config.plugins,
-                ...getBundleAnalyzerPlugin(analyzeBundle, 'flacEncodeWorker')
-            ],
-            performance: getPerformanceHints(perfHintOptions, 5 * 1024)
-        }),
-        Object.assign({}, config, {
-            entry: {
                 'analytics-ga': './react/features/analytics/handlers/GoogleAnalyticsHandler.js'
             },
             plugins: [

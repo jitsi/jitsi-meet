@@ -65,7 +65,7 @@ const CONFERENCE_HEADER_MAPPING = {
     hideConferenceTimer: [ 'conference-timer' ],
     hideConferenceSubject: [ 'subject' ],
     hideParticipantsStats: [ 'participants-count' ],
-    hideRecordingLabel: [ 'recording', 'local-recording' ]
+    hideRecordingLabel: [ 'recording' ]
 };
 
 ReducerRegistry.register('features/base/config', (state = _getInitialState(), action) => {
