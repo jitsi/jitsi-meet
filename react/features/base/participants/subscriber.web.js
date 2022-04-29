@@ -2,9 +2,9 @@
 
 import _ from 'lodash';
 
-import { StateListenerRegistry } from '../../base/redux';
 import { getCurrentConference } from '../conference';
 import { getMultipleVideoSupportFeatureFlag } from '../config';
+import { StateListenerRegistry } from '../redux';
 
 import { createVirtualScreenshareParticipant, participantLeft } from './actions';
 

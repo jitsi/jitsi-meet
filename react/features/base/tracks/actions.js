@@ -773,7 +773,6 @@ export function destroyLocalDesktopTrackIfExists() {
     };
 }
 
-
 /**
  * Sets UID of the displayed no data from source notification. Used to track
  * if the notification was previously displayed in this context.
