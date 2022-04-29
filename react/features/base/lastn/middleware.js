@@ -6,9 +6,9 @@ import { SET_FILMSTRIP_ENABLED } from '../../filmstrip/actionTypes';
 import { SELECT_LARGE_VIDEO_PARTICIPANT } from '../../large-video/actionTypes';
 import { APP_STATE_CHANGED } from '../../mobile/background/actionTypes';
 import {
-    FAKE_SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
     SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
-    SET_TILE_VIEW
+    SET_TILE_VIEW,
+    VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED
 } from '../../video-layout/actionTypes';
 import { SET_AUDIO_ONLY } from '../audio-only/actionTypes';
 import { CONFERENCE_JOINED } from '../conference/actionTypes';
@@ -95,7 +95,6 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case APP_STATE_CHANGED:
     case CONFERENCE_JOINED:
-    case FAKE_SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED:
     case PARTICIPANT_JOINED:
     case PARTICIPANT_KICKED:
     case PARTICIPANT_LEFT:
@@ -104,6 +103,7 @@ MiddlewareRegistry.register(store => next => action => {
     case SET_AUDIO_ONLY:
     case SET_FILMSTRIP_ENABLED:
     case SET_TILE_VIEW:
+    case VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED:
         _updateLastN(store);
         break;
     }

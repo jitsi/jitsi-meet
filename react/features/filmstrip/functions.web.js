@@ -509,18 +509,29 @@ export function computeDisplayModeFromInput(input: Object) {
         isActiveParticipant,
         isAudioOnly,
         isCurrentlyOnLargeVideo,
-        isFakeScreenShareParticipant,
+        isVirtualScreenshareParticipant,
         isScreenSharing,
         canPlayEventReceived,
         isRemoteParticipant,
+        multipleVideoSupport,
         stageParticipantsVisible,
         stageFilmstrip,
         tileViewActive
     } = input;
     const adjustedIsVideoPlayable = input.isVideoPlayable && (!isRemoteParticipant || canPlayEventReceived);
 
-    if (isFakeScreenShareParticipant) {
-        return DISPLAY_VIDEO;
+    if (multipleVideoSupport) {
+        // Display video for virtual screen share participants in all layouts.
+        if (isVirtualScreenshareParticipant) {
+            return DISPLAY_VIDEO;
+        }
+
+        // Multi-stream is not supported on plan-b endpoints even if its is enabled via config.js. A virtual
+        // screenshare tile is still created when a remote endpoint starts screenshare to keep the behavior consistent
+        // and an avatar is displayed on the original participant thumbnail as long as screenshare is in progress.
+        if (isScreenSharing) {
+            return DISPLAY_AVATAR;
+        }
     }
 
     if (!tileViewActive && ((isScreenSharing && isRemoteParticipant)
@@ -551,9 +562,10 @@ export function getDisplayModeInput(props: Object, state: Object) {
         _isActiveParticipant,
         _isAudioOnly,
         _isCurrentlyOnLargeVideo,
-        _isFakeScreenShareParticipant,
+        _isVirtualScreenshareParticipant,
         _isScreenSharing,
         _isVideoPlayable,
+        _multipleVideoSupport,
         _participant,
         _stageParticipantsVisible,
         _videoTrack,
@@ -573,7 +585,8 @@ export function getDisplayModeInput(props: Object, state: Object) {
         videoStream: Boolean(_videoTrack),
         isRemoteParticipant: !_participant?.isFakeParticipant && !_participant?.local,
         isScreenSharing: _isScreenSharing,
-        isFakeScreenShareParticipant: _isFakeScreenShareParticipant,
+        isVirtualScreenshareParticipant: _isVirtualScreenshareParticipant,
+        multipleVideoSupport: _multipleVideoSupport,
         stageParticipantsVisible: _stageParticipantsVisible,
         stageFilmstrip,
         videoStreamMuted: _videoTrack ? _videoTrack.muted : 'no stream'

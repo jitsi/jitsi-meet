@@ -7,7 +7,7 @@ import { getSourceNameSignalingFeatureFlag } from '../base/config';
 import { MEDIA_TYPE } from '../base/media';
 import { getLocalParticipant, getParticipantCount } from '../base/participants';
 import { StateListenerRegistry } from '../base/redux';
-import { getTrackSourceNameByMediaTypeAndParticipant } from '../base/tracks';
+import { getRemoteScreenSharesSourceNames, getTrackSourceNameByMediaTypeAndParticipant } from '../base/tracks';
 import { reportError } from '../base/util';
 import { getActiveParticipantsIds } from '../filmstrip/functions.web';
 import {
@@ -238,6 +238,8 @@ function _updateReceiverVideoConstraints({ getState }) {
     let receiverConstraints;
 
     if (sourceNameSignaling) {
+        const remoteScreenSharesSourceNames = getRemoteScreenSharesSourceNames(state, remoteScreenShares);
+
         receiverConstraints = {
             constraints: {},
             defaultConstraints: { 'maxHeight': VIDEO_QUALITY_LEVELS.NONE },
@@ -253,7 +255,7 @@ function _updateReceiverVideoConstraints({ getState }) {
             visibleRemoteParticipants.forEach(participantId => {
                 let sourceName;
 
-                if (remoteScreenShares.includes(participantId)) {
+                if (remoteScreenSharesSourceNames.includes(participantId)) {
                     sourceName = participantId;
                 } else {
                     sourceName = getTrackSourceNameByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
@@ -269,12 +271,11 @@ function _updateReceiverVideoConstraints({ getState }) {
         }
 
         if (localParticipantId !== largeVideoParticipantId) {
-            if (remoteScreenShares.includes(largeVideoParticipantId)) {
+            if (remoteScreenSharesSourceNames.includes(largeVideoParticipantId)) {
                 largeVideoSourceName = largeVideoParticipantId;
             } else {
                 largeVideoSourceName = getTrackSourceNameByMediaTypeAndParticipant(
-                    tracks, MEDIA_TYPE.VIDEO,
-                    largeVideoParticipantId
+                    tracks, MEDIA_TYPE.VIDEO, largeVideoParticipantId
                 );
             }
         }
@@ -290,8 +291,8 @@ function _updateReceiverVideoConstraints({ getState }) {
             });
 
             // Prioritize screenshare in tile view.
-            if (remoteScreenShares?.length) {
-                receiverConstraints.selectedSources = remoteScreenShares;
+            if (remoteScreenSharesSourceNames?.length) {
+                receiverConstraints.selectedSources = remoteScreenSharesSourceNames;
             }
 
         // Stage view.
@@ -325,8 +326,8 @@ function _updateReceiverVideoConstraints({ getState }) {
             }
         }
 
-        if (remoteScreenShares?.length) {
-            remoteScreenShares.forEach(sourceName => {
+        if (remoteScreenSharesSourceNames?.length) {
+            remoteScreenSharesSourceNames.forEach(sourceName => {
                 receiverConstraints.constraints[sourceName] = { 'maxHeight': VIDEO_QUALITY_LEVELS.ULTRA };
             });
         }

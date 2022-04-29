@@ -25,6 +25,7 @@ import {
 } from './constants';
 import {
     getLocalParticipant,
+    getVirtualScreenshareParticipantOwnerId,
     getNormalizedDisplayName,
     getParticipantDisplayName,
     getParticipantById
@@ -500,6 +501,36 @@ export function participantMutedUs(participant, track) {
                 participantDisplayName: getParticipantDisplayName(getState, participant.getId())
             }
         }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+    };
+}
+
+/**
+ * Action to create a virtual screenshare participant.
+ *
+ * @param {(string)} sourceName - JitsiTrack instance.
+ * @param {(boolean)} local - JitsiTrack instance.
+ * @returns {Function}
+ */
+export function createVirtualScreenshareParticipant(sourceName, local) {
+    return (dispatch, getState) => {
+        const state = getState();
+        const ownerId = getVirtualScreenshareParticipantOwnerId(sourceName);
+        const owner = getParticipantById(state, ownerId);
+        const ownerName = owner.name;
+
+        if (!ownerName) {
+            logger.error(`Failed to create a screenshare participant for sourceName: ${sourceName}`);
+
+            return;
+        }
+
+        dispatch(participantJoined({
+            conference: state['features/base/conference'].conference,
+            id: sourceName,
+            isVirtualScreenshareParticipant: true,
+            isLocalScreenShare: local,
+            name: ownerName
+        }));
     };
 }
 

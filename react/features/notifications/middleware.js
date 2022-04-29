@@ -128,10 +128,10 @@ MiddlewareRegistry.register(store => next => action => {
         const { participant: p } = action;
         const { conference } = state['features/base/conference'];
 
-        // Do not display notifications for the fake screenshare tiles.
+        // Do not display notifications for the virtual screenshare tiles.
         if (conference
             && !p.local
-            && !p.isFakeScreenShareParticipant
+            && !p.isVirtualScreenshareParticipant
             && !joinLeaveNotificationsDisabled()
             && !p.isReplacing) {
             dispatch(showParticipantJoinedNotification(
@@ -148,10 +148,10 @@ MiddlewareRegistry.register(store => next => action => {
                 action.participant.id
             );
 
-            // Do not display notifications for the fake screenshare tiles.
+            // Do not display notifications for the virtual screenshare tiles.
             if (participant
                 && !participant.local
-                && !participant.isFakeScreenShareParticipant
+                && !participant.isVirtualScreenshareParticipant
                 && !action.participant.isReplaced) {
                 dispatch(showParticipantLeftNotification(
                     getParticipantDisplayName(state, participant.id)

@@ -1,6 +1,6 @@
 // @flow
 
-import { getMultipleVideoSupportFeatureFlag } from '../base/config/functions.any';
+import { getMultipleVideoSendingSupportFeatureFlag } from '../base/config/functions.any';
 import { openDialog } from '../base/dialog/actions';
 import { browser } from '../base/lib-jitsi-meet';
 import { shouldHideShareAudioHelper } from '../base/settings';
@@ -86,7 +86,7 @@ export function startAudioScreenShareFlow() {
         // available for audio screen sharing, namely full window audio.
         // If we're already sharing audio, toggle off.
         if (shouldHideShareAudioHelper(state) || browser.isElectron() || audioOnlySharing) {
-            if (getMultipleVideoSupportFeatureFlag(state)) {
+            if (getMultipleVideoSendingSupportFeatureFlag(state)) {
                 dispatch(toggleScreensharing(!audioOnlySharing, true));
 
                 return;

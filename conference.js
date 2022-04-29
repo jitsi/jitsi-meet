@@ -56,8 +56,7 @@ import {
 } from './react/features/base/conference';
 import {
     getReplaceParticipant,
-    getMultipleVideoSupportFeatureFlag,
-    getSourceNameSignalingFeatureFlag
+    getMultipleVideoSendingSupportFeatureFlag
 } from './react/features/base/config/functions';
 import {
     checkAndNotifyForNewDevice,
@@ -97,7 +96,7 @@ import {
     dominantSpeakerChanged,
     getLocalParticipant,
     getNormalizedDisplayName,
-    getScreenshareParticipantByOwnerId,
+    getVirtualScreenshareParticipantByOwnerId,
     localParticipantAudioLevelChanged,
     localParticipantConnectionStatusChanged,
     localParticipantRoleChanged,
@@ -1472,7 +1471,7 @@ export default {
 
                 // In the multi-stream mode, add the track to the conference if there is no existing track, replace it
                 // otherwise.
-                if (getMultipleVideoSupportFeatureFlag(state)) {
+                if (getMultipleVideoSendingSupportFeatureFlag(state)) {
                     const trackAction = oldTrack
                         ? replaceLocalTrack(oldTrack, newTrack, room)
                         : addLocalTrack(newTrack);
@@ -2265,14 +2264,12 @@ export default {
                     name: formattedDisplayName
                 }));
 
-                if (getSourceNameSignalingFeatureFlag(state)) {
-                    const screenshareParticipantId = getScreenshareParticipantByOwnerId(state, id)?.id;
+                const virtualScreenshareParticipantId = getVirtualScreenshareParticipantByOwnerId(state, id)?.id;
 
-                    if (screenshareParticipantId) {
-                        APP.store.dispatch(
-                            screenshareParticipantDisplayNameChanged(screenshareParticipantId, formattedDisplayName)
-                        );
-                    }
+                if (virtualScreenshareParticipantId) {
+                    APP.store.dispatch(
+                        screenshareParticipantDisplayNameChanged(virtualScreenshareParticipantId, formattedDisplayName)
+                    );
                 }
 
                 APP.API.notifyDisplayNameChanged(id, {

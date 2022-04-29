@@ -94,7 +94,7 @@ type Props = {
     /**
      * Whether or not the statistics are for screen share.
      */
-    isFakeScreenShareParticipant: boolean,
+    isVirtualScreenshareParticipant: boolean,
 
     /**
      * The send-side max enabled resolution (aka the highest layer that is not
@@ -240,12 +240,12 @@ class ConnectionStatsTable extends Component<Props> {
             classes,
             disableShowMoreStats,
             enableSaveLogs,
-            isFakeScreenShareParticipant,
+            isVirtualScreenshareParticipant,
             isLocalVideo
         } = this.props;
         const className = clsx(classes.connectionStatsTable, { [classes.mobile]: isMobileBrowser() });
 
-        if (isFakeScreenShareParticipant) {
+        if (isVirtualScreenshareParticipant) {
             return this._renderScreenShareStatus();
         }
 
