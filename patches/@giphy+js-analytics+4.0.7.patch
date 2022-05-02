@@ -1,0 +1,14 @@
+diff --git a/node_modules/@giphy/js-analytics/dist/send-pingback.js b/node_modules/@giphy/js-analytics/dist/send-pingback.js
+index 001345a..f303443 100644
+--- a/node_modules/@giphy/js-analytics/dist/send-pingback.js
++++ b/node_modules/@giphy/js-analytics/dist/send-pingback.js
+@@ -10,6 +10,9 @@ var global_1 = __importDefault(require("./global"));
+ var environment = (global_1.default === null || global_1.default === void 0 ? void 0 : global_1.default.GIPHY_PINGBACK_URL) || 'https://pingback.giphy.com';
+ var pingBackUrl = environment + "/v2/pingback?apikey=l0HlIwPWyBBUDAUgM";
+ var sendPingback = function (events) {
++    // Disabled.
++    return Promise.resolve();
++
+     var headers = js_util_1.getGiphySDKRequestHeaders();
+     /* istanbul ignore next */
+     headers === null || headers === void 0 ? void 0 : headers.set('Content-Type', 'application/json');

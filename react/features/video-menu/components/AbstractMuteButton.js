@@ -4,13 +4,12 @@ import {
     createRemoteVideoMenuButtonEvent,
     sendAnalytics
 } from '../../analytics';
-import { openDialog } from '../../base/dialog';
+import { rejectParticipantAudio } from '../../av-moderation/actions';
 import { IconMicDisabled } from '../../base/icons';
 import { MEDIA_TYPE } from '../../base/media';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 import { isRemoteTrackMuted } from '../../base/tracks';
-
-import { MuteRemoteParticipantDialog } from '.';
+import { muteRemote } from '../actions.any';
 
 export type Props = AbstractButtonProps & {
 
@@ -56,12 +55,13 @@ export default class AbstractMuteButton extends AbstractButton<Props, *> {
         const { dispatch, participantID } = this.props;
 
         sendAnalytics(createRemoteVideoMenuButtonEvent(
-            'mute.button',
+            'mute',
             {
                 'participant_id': participantID
             }));
 
-        dispatch(openDialog(MuteRemoteParticipantDialog, { participantID }));
+        dispatch(muteRemote(participantID, MEDIA_TYPE.AUDIO));
+        dispatch(rejectParticipantAudio(participantID));
     }
 
     /**

@@ -1,25 +1,22 @@
-// @flow
+import { batch } from 'react-redux';
 
-import { openDialog } from '../base/dialog';
+import { appNavigate } from '../app/actions';
 
-import { DisableLobbyModeDialog, EnableLobbyModeDialog } from './components/native';
+import { hideLobbyScreen, setKnockingState } from './actions.any';
 
-export * from './actions.web';
-
-/**
- * Action to show the dialog to disable lobby mode.
- *
- * @returns {showNotification}
- */
-export function showDisableLobbyModeDialog() {
-    return openDialog(DisableLobbyModeDialog);
-}
+export * from './actions.any';
 
 /**
- * Action to show the dialog to enable lobby mode.
+ * Cancels the ongoing knocking and abandons the join flow.
  *
- * @returns {showNotification}
+ * @returns {Function}
  */
-export function showEnableLobbyModeDialog() {
-    return openDialog(EnableLobbyModeDialog);
+export function cancelKnocking() {
+    return dispatch => {
+        batch(() => {
+            dispatch(setKnockingState(false));
+            dispatch(hideLobbyScreen());
+            dispatch(appNavigate(undefined));
+        });
+    };
 }

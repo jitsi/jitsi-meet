@@ -42,7 +42,7 @@ type Props = {
 /**
  * A React Component for adding a meeting URL to an existing calendar event.
  *
- * @extends Component
+ * @augments Component
  */
 class AddMeetingUrlButton extends Component<Props> {
     /**
@@ -87,7 +87,7 @@ class AddMeetingUrlButton extends Component<Props> {
     _onClick() {
         const { calendarId, dispatch, eventId } = this.props;
 
-        sendAnalytics(createCalendarClickedEvent('calendar.add.url'));
+        sendAnalytics(createCalendarClickedEvent('add.url'));
 
         dispatch(updateCalendarEvent(eventId, calendarId));
     }

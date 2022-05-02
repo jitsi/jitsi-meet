@@ -4,20 +4,14 @@ import React, { PureComponent } from 'react';
 import type { Dispatch } from 'redux';
 
 import { Dialog } from '../../../base/dialog';
-import { translate, translateToHTML } from '../../../base/i18n';
+import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-import { safeDecodeURIComponent } from '../../../base/util';
 import { cancelWaitForOwner } from '../../actions.web';
 
 /**
  * The type of the React {@code Component} props of {@link WaitForOwnerDialog}.
  */
 type Props = {
-
-    /**
-     * The name of the conference room (without the domain part).
-     */
-    _room: string,
 
     /**
      * Redux store dispatch method.
@@ -64,15 +58,8 @@ class WaitForOwnerDialog extends PureComponent<Props> {
      */
     _onCancelWaitForOwner() {
         const { dispatch } = this.props;
-        const cancelButton = document.getElementById('modal-dialog-cancel-button');
 
-        if (cancelButton) {
-            cancelButton.onclick = () => {
-                dispatch(cancelWaitForOwner());
-            };
-        }
-
-        return false;
+        dispatch(cancelWaitForOwner());
     }
 
     _onIAmHost: () => void;
@@ -96,12 +83,12 @@ class WaitForOwnerDialog extends PureComponent<Props> {
      */
     render() {
         const {
-            _room: room,
             t
         } = this.props;
 
         return (
             <Dialog
+                disableBlanketClickDismiss = { true }
                 hideCloseIconButton = { true }
                 okKey = { t('dialog.IamHost') }
                 onCancel = { this._onCancelWaitForOwner }
@@ -109,30 +96,11 @@ class WaitForOwnerDialog extends PureComponent<Props> {
                 titleKey = { t('dialog.WaitingForHostTitle') }
                 width = { 'small' }>
                 <span>
-                    {
-                        translateToHTML(
-                            t, 'dialog.WaitForHostMsg', { room })
-                    }
+                    { t('dialog.WaitForHostMsg') }
                 </span>
             </Dialog>
         );
     }
 }
 
-/**
- * Maps (parts of) the Redux state to the associated props for the
- * {@code WaitForOwnerDialog} component.
- *
- * @param {Object} state - The Redux state.
- * @private
- * @returns {Props}
- */
-function mapStateToProps(state) {
-    const { authRequired } = state['features/base/conference'];
-
-    return {
-        _room: authRequired && safeDecodeURIComponent(authRequired.getName())
-    };
-}
-
-export default translate(connect(mapStateToProps)(WaitForOwnerDialog));
+export default translate(connect()(WaitForOwnerDialog));

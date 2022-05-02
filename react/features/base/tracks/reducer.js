@@ -14,10 +14,12 @@ import {
 } from './actionTypes';
 
 /**
- * @typedef {Object} Track
- * @property {(JitsiLocalTrack|JitsiRemoteTrack)} [jitsiTrack] - The associated
+ * Track type.
+ *
+ * @typedef {object} Track
+ * @property {JitsiLocalTrack|JitsiRemoteTrack} jitsiTrack - The associated
  * {@code JitsiTrack} instance. Optional for local tracks if those are still
- * being created (i.e. {@code getUserMedia} is still in progress).
+ * being created (ie {@code getUserMedia} is still in progress).
  * @property {Promise} [gumProcess] - If a local track is still being created,
  * it will have no {@code JitsiTrack}, but a {@code gumProcess} set to a
  * {@code Promise} with and extra {@code cancel()}.
@@ -114,7 +116,7 @@ function track(state, action) {
 }
 
 /**
- * Listen for actions that mutate (e.g. add, remove) local and remote tracks.
+ * Listen for actions that mutate (e.g. Add, remove) local and remote tracks.
  */
 ReducerRegistry.register('features/base/tracks', (state = [], action) => {
     switch (action.type) {
@@ -153,7 +155,7 @@ ReducerRegistry.register('features/base/tracks', (state = [], action) => {
 });
 
 /**
- * Listen for actions that mutate the no-src-data state, like the current notification id
+ * Listen for actions that mutate the no-src-data state, like the current notification id.
  */
 ReducerRegistry.register('features/base/no-src-data', (state = {}, action) => {
     switch (action.type) {

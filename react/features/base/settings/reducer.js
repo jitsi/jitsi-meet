@@ -21,6 +21,7 @@ const DEFAULT_STATE = {
     disableCallIntegration: undefined,
     disableCrashReporting: undefined,
     disableP2P: undefined,
+    disableSelfView: false,
     displayName: undefined,
     email: undefined,
     localFlipX: true,
@@ -31,6 +32,7 @@ const DEFAULT_STATE = {
     soundsParticipantJoined: true,
     soundsParticipantLeft: true,
     soundsTalkWhileMuted: true,
+    soundsReactions: true,
     startAudioOnly: false,
     startWithAudioMuted: false,
     startWithVideoMuted: false,
@@ -39,6 +41,9 @@ const DEFAULT_STATE = {
     userSelectedMicDeviceId: undefined,
     userSelectedAudioOutputDeviceLabel: undefined,
     userSelectedCameraDeviceLabel: undefined,
+    userSelectedNotifications: {
+        'notify.chatMessages': true
+    },
     userSelectedMicDeviceLabel: undefined,
     userSelectedSkipPrejoin: undefined
 };
@@ -61,7 +66,7 @@ filterSubtree.audioOutputDeviceId = false;
 filterSubtree.cameraDeviceId = false;
 filterSubtree.micDeviceId = false;
 
-PersistenceRegistry.register(STORE_NAME, filterSubtree);
+PersistenceRegistry.register(STORE_NAME, filterSubtree, DEFAULT_STATE);
 
 ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
     switch (action.type) {

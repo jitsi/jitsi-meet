@@ -2,7 +2,8 @@
  * Various overrides outside of the filmstrip to style the app to support a
  * tiled thumbnail experience.
  */
-.tile-view {
+.tile-view,
+.stage-filmstrip {
     /**
      * Let the avatar grow with the tile.
      */
@@ -15,10 +16,9 @@
      * Hide various features that should not be displayed while in tile view.
      */
     #dominantSpeaker,
-    #filmstripLocalVideoThumbnail,
     #largeVideoElementsContainer,
     #sharedVideo,
-    .filmstrip__toolbar {
+    .stage-participant-label {
         display: none;
     }
 
@@ -34,17 +34,5 @@
     #remoteConnectionMessage,
     #remotePresenceMessage {
         display: none !important;
-    }
-
-    /**
-     * Thumbnail popover menus can overlap other thumbnails. Setting an auto
-     * z-index will allow AtlasKit InlineDialog's large z-index to be
-     * respected and thereby display over elements in other thumbnails,
-     * specifically the various status icons.
-     */
-    .remotevideomenu,
-    .localvideomenu,
-    .videocontainer__toptoolbar {
-        z-index: auto;
     }
 }

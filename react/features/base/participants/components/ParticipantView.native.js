@@ -13,7 +13,6 @@ import {
 } from '../../media';
 import { Container, TintedView } from '../../react';
 import { connect } from '../../redux';
-import type { StyleType } from '../../styles';
 import { TestHint } from '../../testing/components';
 import { getTrackByMediaTypeAndParticipant } from '../../tracks';
 import { shouldRenderParticipantVideo, getParticipantById } from '../functions';
@@ -92,21 +91,10 @@ type Props = {
     t: Function,
 
     /**
-     * If true, a tinting will be applied to the view, regardless of video or
-     * avatar is rendered.
-     */
-    tintEnabled: boolean,
-
-    /**
-     * The style of the tinting when applied.
-     */
-    tintStyle: StyleType,
-
-    /**
      * The test hint id which can be used to locate the {@code ParticipantView}
      * on the jitsi-meet-torture side. If not provided, the
      * {@code participantId} with the following format will be used:
-     * {@code `org.jitsi.meet.Participant#${participantId}`}
+     * {@code `org.jitsi.meet.Participant#${participantId}`}.
      */
     testHintId: ?string,
 
@@ -133,7 +121,7 @@ type Props = {
  * Implements a React Component which depicts a specific participant's avatar
  * and video.
  *
- * @extends Component
+ * @augments Component
  */
 class ParticipantView extends Component<Props> {
 
@@ -193,15 +181,12 @@ class ParticipantView extends Component<Props> {
             _renderVideo: renderVideo,
             _videoTrack: videoTrack,
             disableVideo,
-            onPress,
-            tintStyle
+            onPress
         } = this.props;
 
         // If the connection has problems, we will "tint" the video / avatar.
         const connectionProblem
             = connectionStatus !== JitsiParticipantConnectionStatus.ACTIVE;
-        const useTint
-            = connectionProblem || this.props.tintEnabled;
 
         const testHintId
             = this.props.testHintId
@@ -241,12 +226,10 @@ class ParticipantView extends Component<Props> {
                             size = { this.props.avatarSize } />
                     </View> }
 
-                { useTint
+                { connectionProblem
 
                     // If the connection has problems, tint the video / avatar.
-                    && <TintedView
-                        style = {
-                            connectionProblem ? undefined : tintStyle } /> }
+                    && <TintedView /> }
 
                 { this.props.useConnectivityInfoLabel
                     && this._renderConnectionInfo(connectionStatus) }

@@ -65,7 +65,7 @@ type Props = {
  * Implements a React Component which shows a video element intended to be used
  * as a background to fill the empty space of container with another video.
  *
- * @extends Component
+ * @augments Component
  */
 export class LargeVideoBackground extends Component<Props> {
     _canvasEl: Object;

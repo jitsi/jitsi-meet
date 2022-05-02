@@ -1,14 +1,15 @@
 // @flow
 
+import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
-import { Icon, IconCheck, IconExclamation } from '../../../base/icons';
+import { Icon, IconCheckSolid, IconExclamationTriangle } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import {
     getDeviceStatusType,
-    getDeviceStatusText,
-    getRawError
+    getDeviceStatusText
 } from '../../functions';
 
 export type Props = {
@@ -25,24 +26,56 @@ export type Props = {
     deviceStatusType: string,
 
     /**
-     * The error coming from device configuration.
-     */
-    rawError: string,
-
-    /**
      * Used for translation.
      */
     t: Function
 };
 
+const useStyles = makeStyles(theme => {
+    return {
+        deviceStatus: {
+            alignItems: 'center',
+            color: '#fff',
+            display: 'flex',
+            fontSize: '14px',
+            lineHeight: '20px',
+            padding: '6px',
+            textAlign: 'center',
+
+            '& span': {
+                marginLeft: theme.spacing(3)
+            },
+
+            '&.device-status-error': {
+                alignItems: 'flex-start',
+                backgroundColor: theme.palette.warning01,
+                borderRadius: '6px',
+                color: theme.palette.uiBackground,
+                padding: '12px 16px',
+                textAlign: 'left'
+            },
+            '& .device-icon': {
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                display: 'inline-block',
+                height: '16px',
+                width: '16px'
+            },
+            '& .device-icon--ok svg path': {
+                fill: '#189B55'
+            }
+        }
+    };
+});
+
 const iconMap = {
     warning: {
-        src: IconExclamation,
-        className: 'prejoin-preview-status--warning'
+        src: IconExclamationTriangle,
+        className: 'device-icon--warning'
     },
     ok: {
-        src: IconCheck,
-        className: 'prejoin-preview-status--ok'
+        src: IconCheckSolid,
+        className: 'device-icon--ok'
     }
 };
 
@@ -52,26 +85,24 @@ const iconMap = {
  *
  * @returns {ReactElement}
  */
-function DeviceStatus({ deviceStatusType, deviceStatusText, rawError, t }: Props) {
+function DeviceStatus({ deviceStatusType, deviceStatusText, t }: Props) {
+    const classes = useStyles();
     const { src, className } = iconMap[deviceStatusType];
+    const hasError = deviceStatusType === 'warning';
+    const containerClassName = clsx(classes.deviceStatus, { 'device-status-error': hasError });
 
     return (
         <div
-            className = { `prejoin-preview-status ${className}` }
+            className = { containerClassName }
             role = 'alert'
             tabIndex = { -1 }>
             <Icon
-                className = 'prejoin-preview-icon'
+                className = { `device-icon ${className}` }
                 size = { 16 }
                 src = { src } />
-            <span
-                className = 'prejoin-preview-error-desc'
-                role = 'heading'>
-                {t(deviceStatusText)}
+            <span role = 'heading'>
+                {hasError ? t('prejoin.errorNoPermissions') : t(deviceStatusText)}
             </span>
-            { rawError && <span>
-                { rawError }
-            </span> }
         </div>
     );
 }
@@ -85,8 +116,7 @@ function DeviceStatus({ deviceStatusType, deviceStatusText, rawError, t }: Props
 function mapStateToProps(state) {
     return {
         deviceStatusText: getDeviceStatusText(state),
-        deviceStatusType: getDeviceStatusType(state),
-        rawError: getRawError(state)
+        deviceStatusType: getDeviceStatusType(state)
     };
 }
 

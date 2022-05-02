@@ -29,7 +29,7 @@ type Props = {
 /**
  * Displays a conference ID used as a pin for dialing into a conference.
  *
- * @extends Component
+ * @augments Component
  */
 class ConferenceID extends Component<Props> {
     /**

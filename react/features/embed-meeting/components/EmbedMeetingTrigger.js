@@ -1,5 +1,7 @@
 // @flow
 
+/* eslint-disable react/jsx-no-bind */
+
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -11,7 +13,7 @@ import EmbedMeetingDialog from './EmbedMeetingDialog';
 type Props = {
 
     /**
-     * Open the embed meeting dialog
+     * Open the embed meeting dialog.
      */
     openEmbedDialog: Function,
 

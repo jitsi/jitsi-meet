@@ -64,7 +64,7 @@ function _toDateString(itemDate, t) {
     const date = new Date(itemDate);
     const dateInMs = date.getTime();
     const now = new Date();
-    const todayInMs = (new Date()).setHours(0, 0, 0, 0);
+    const todayInMs = new Date().setHours(0, 0, 0, 0);
     const yesterdayInMs = todayInMs - 86400000; // 1 day = 86400000ms
 
     if (dateInMs >= todayInMs) {

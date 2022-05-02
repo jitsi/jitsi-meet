@@ -12,6 +12,11 @@ import { BASE_INDICATOR } from './styles';
 type Props = {
 
     /**
+     * Overwritten background color when indicator is highlighted.
+     */
+    backgroundColor?: string;
+
+    /**
      * True if a highlighted background has to be applied.
      */
     highlight: boolean,
@@ -38,12 +43,11 @@ export default class BaseIndicator extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { highlight, icon, iconStyle } = this.props;
+        const { icon, iconStyle } = this.props;
 
         return (
             <View
-                style = { [ BASE_INDICATOR,
-                    highlight ? styles.highlightedIndicator : null ] }>
+                style = { BASE_INDICATOR }>
                 <Icon
                     src = { icon }
                     style = { [

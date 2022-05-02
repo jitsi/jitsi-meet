@@ -1,20 +1,23 @@
 // @flow
 
-import React from 'react';
+import React, { PureComponent } from 'react';
 
 import { translate } from '../../../base/i18n';
 import {
-    getParticipantByIdOrUndefined,
-    getParticipantDisplayName
+    getLocalParticipant,
+    getParticipantById,
+    getParticipantDisplayName,
+    hasRaisedHand,
+    isParticipantModerator
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import {
     isParticipantAudioMuted,
     isParticipantVideoMuted
 } from '../../../base/tracks';
-import { MEDIA_STATE } from '../../constants';
+import { showConnectionStatus, showContextMenuDetails, showSharedVideoMenu } from '../../actions.native';
 import type { MediaState } from '../../constants';
-import { getParticipantAudioMediaState } from '../../functions';
+import { getParticipantAudioMediaState, getParticipantVideoMediaState } from '../../functions';
 
 import ParticipantItem from './ParticipantItem';
 
@@ -27,19 +30,34 @@ type Props = {
     _audioMediaState: MediaState,
 
     /**
+     * Whether or not to disable the moderator indicator.
+     */
+    _disableModeratorIndicator: boolean,
+
+    /**
      * The display name of the participant.
      */
     _displayName: string,
 
     /**
-     * True if the participant is video muted.
+     * True if the participant is fake.
      */
-    _isVideoMuted: boolean,
+    _isFakeParticipant: boolean,
+
+    /**
+     * Whether or not the user is a moderator.
+     */
+    _isModerator: boolean,
 
     /**
      * True if the participant is the local participant.
      */
     _local: boolean,
+
+    /**
+     * Shared video local participant owner.
+     */
+    _localVideoOwner: boolean,
 
     /**
      * The participant ID.
@@ -52,42 +70,96 @@ type Props = {
     _raisedHand: boolean,
 
     /**
-     * Callback to invoke when item is pressed.
+     * Media state for video.
      */
-    onPress: Function,
+    _videoMediaState: MediaState,
 
     /**
-     * The ID of the participant.
+     * The redux dispatch function.
      */
-    participantID: ?string
+    dispatch: Function,
+
+    /**
+     * The participant.
+     */
+    participant: ?Object
 };
 
 /**
  * Implements the MeetingParticipantItem component.
- *
- * @param {Props} props - The props of the component.
- * @returns {ReactElement}
  */
-function MeetingParticipantItem({
-    _audioMediaState,
-    _displayName,
-    _isVideoMuted,
-    _local,
-    _participantID,
-    _raisedHand,
-    onPress
-}: Props) {
-    return (
-        <ParticipantItem
-            audioMediaState = { _audioMediaState }
-            displayName = { _displayName }
-            isKnockingParticipant = { false }
-            local = { _local }
-            onPress = { onPress }
-            participantID = { _participantID }
-            raisedHand = { _raisedHand }
-            videoMediaState = { _isVideoMuted ? MEDIA_STATE.MUTED : MEDIA_STATE.UNMUTED } />
-    );
+class MeetingParticipantItem extends PureComponent<Props> {
+
+    /**
+     * Creates new MeetingParticipantItem instance.
+     *
+     * @param {Props} props - The props of the component.
+     */
+    constructor(props: Props) {
+        super(props);
+
+        this._onPress = this._onPress.bind(this);
+    }
+
+    _onPress: () => void;
+
+    /**
+     * Handles MeetingParticipantItem press events.
+     *
+     * @returns {void}
+     */
+    _onPress() {
+        const {
+            _local,
+            _localVideoOwner,
+            _isFakeParticipant,
+            _participantID,
+            dispatch
+        } = this.props;
+
+        if (_isFakeParticipant && _localVideoOwner) {
+            dispatch(showSharedVideoMenu(_participantID));
+        } else if (!_isFakeParticipant) {
+            if (_local) {
+                dispatch(showConnectionStatus(_participantID));
+            } else {
+                dispatch(showContextMenuDetails(_participantID));
+            }
+        } // else no-op
+    }
+
+    /**
+     * Implements React's {@link Component#render()}.
+     *
+     * @inheritdoc
+     * @returns {ReactElement}
+     */
+    render() {
+        const {
+            _audioMediaState,
+            _disableModeratorIndicator,
+            _displayName,
+            _isModerator,
+            _local,
+            _participantID,
+            _raisedHand,
+            _videoMediaState
+        } = this.props;
+
+        return (
+            <ParticipantItem
+                audioMediaState = { _audioMediaState }
+                disableModeratorIndicator = { _disableModeratorIndicator }
+                displayName = { _displayName }
+                isKnockingParticipant = { false }
+                isModerator = { _isModerator }
+                local = { _local }
+                onPress = { this._onPress }
+                participantID = { _participantID }
+                raisedHand = { _raisedHand }
+                videoMediaState = { _videoMediaState } />
+        );
+    }
 }
 
 /**
@@ -99,22 +171,31 @@ function MeetingParticipantItem({
  * @returns {Props}
  */
 function mapStateToProps(state, ownProps): Object {
-    const { participantID } = ownProps;
-    const participant = getParticipantByIdOrUndefined(state, participantID);
+    const { participant } = ownProps;
+    const { ownerId } = state['features/shared-video'];
+    const localParticipantId = getLocalParticipant(state).id;
     const _isAudioMuted = isParticipantAudioMuted(participant, state);
-    const isVideoMuted = isParticipantVideoMuted(participant, state);
-    const audioMediaState = getParticipantAudioMediaState(
-        participant, _isAudioMuted, state
+    const _isVideoMuted = isParticipantVideoMuted(participant, state);
+    const audioMediaState = getParticipantAudioMediaState(participant, _isAudioMuted, state);
+    const videoMediaState = getParticipantVideoMediaState(participant, _isVideoMuted, state);
+    const { disableModeratorIndicator } = state['features/base/config'];
+    const raisedHand = hasRaisedHand(participant?.local
+        ? participant
+        : getParticipantById(state, participant.id)
     );
 
     return {
         _audioMediaState: audioMediaState,
+        _disableModeratorIndicator: disableModeratorIndicator,
         _displayName: getParticipantDisplayName(state, participant?.id),
         _isAudioMuted,
-        _isVideoMuted: isVideoMuted,
+        _isFakeParticipant: Boolean(participant?.isFakeParticipant),
+        _isModerator: isParticipantModerator(participant),
         _local: Boolean(participant?.local),
+        _localVideoOwner: Boolean(ownerId === localParticipantId),
         _participantID: participant?.id,
-        _raisedHand: Boolean(participant?.raisedHand)
+        _raisedHand: raisedHand,
+        _videoMediaState: videoMediaState
     };
 }
 

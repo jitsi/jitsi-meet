@@ -56,7 +56,7 @@ type State = {
  * Implements a React {@link Component} which displays a list of video
  * previews to choose from.
  *
- * @extends Component
+ * @augments Component
  */
 class VideoSettingsContent extends Component<Props, State> {
     _componentWasUnmounted: boolean;

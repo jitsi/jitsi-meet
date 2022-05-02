@@ -1,7 +1,8 @@
 // @flow
 
 import React from 'react';
-import { Text } from 'react-native';
+import Dialog from 'react-native-dialog';
+import { Divider } from 'react-native-paper';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { ConfirmDialog } from '../../../base/dialog';
@@ -11,6 +12,8 @@ import { StyleType } from '../../../base/styles';
 import AbstractMuteEveryonesVideoDialog, {
     abstractMapStateToProps,
     type Props as AbstractProps } from '../AbstractMuteEveryonesVideoDialog';
+
+import styles from './styles';
 
 type Props = AbstractProps & {
 
@@ -24,9 +27,40 @@ type Props = AbstractProps & {
  * A React Component with the contents for a dialog that asks for confirmation
  * from the user before muting all remote participants.
  *
- * @extends AbstractMuteEveryoneDialog
+ * @augments AbstractMuteEveryonesVideoDialog
  */
 class MuteEveryonesVideoDialog extends AbstractMuteEveryonesVideoDialog<Props> {
+
+    /**
+     * Renders the dialog switch.
+     *
+     * @returns {React$Component}
+     */
+    _renderSwitch() {
+        return (
+            this.props.exclude.length === 0
+            && <Dialog.Switch
+                label = { this.props.t('dialog.moderationVideoLabel') }
+                onValueChange = { this._onToggleModeration }
+                value = { !this.state.moderationEnabled } />
+        );
+    }
+
+    /**
+     * Toggles advanced moderation switch.
+     *
+     * @returns {void}
+     */
+    _onToggleModeration() {
+        this.setState(state => {
+            return {
+                moderationEnabled: !state.moderationEnabled,
+                content: this.props.t(state.moderationEnabled
+                    ? 'dialog.muteEveryonesVideoDialog' : 'dialog.muteEveryonesVideoDialogModerationOn'
+                )
+            };
+        });
+    }
 
     /**
      * Implements {@code Component#render}.
@@ -36,11 +70,12 @@ class MuteEveryonesVideoDialog extends AbstractMuteEveryonesVideoDialog<Props> {
     render() {
         return (
             <ConfirmDialog
-                okKey = 'dialog.muteEveryonesVideoDialogOk'
-                onSubmit = { this._onSubmit } >
-                <Text style = { this.props._dialogStyles.text }>
-                    { `${this.props.title} \n\n ${this.props.content}` }
-                </Text>
+                confirmLabel = 'dialog.muteEveryonesVideoDialogOk'
+                descriptionKey = { this.state.content }
+                onSubmit = { this._onSubmit }
+                title = { this.props.title }>
+                <Divider style = { styles.dividerDialog } />
+                { this._renderSwitch() }
             </ConfirmDialog>
         );
     }

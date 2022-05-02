@@ -72,7 +72,7 @@ type Props = {
     showSlidingView?: boolean,
 
     /**
-     * The component's external style
+     * The component's external style.
      */
     style: Object
 };
@@ -142,7 +142,10 @@ class BottomSheet extends PureComponent<Props> {
                     <SafeAreaView
                         style = { [
                             styles.sheetItemContainer,
-                            _styles.sheet,
+                            renderHeader
+                                ? _styles.sheetHeader
+                                : _styles.sheet,
+                            renderFooter && _styles.sheetFooter,
                             style,
                             {
                                 maxHeight: _height - 100
@@ -152,7 +155,10 @@ class BottomSheet extends PureComponent<Props> {
                         <ScrollView
                             bounces = { false }
                             showsVerticalScrollIndicator = { false }
-                            style = { addScrollViewPadding && styles.scrollView } >
+                            style = { [
+                                renderFooter && _styles.sheet,
+                                addScrollViewPadding && styles.scrollView
+                            ] } >
                             { this.props.children }
                         </ScrollView>
                         { renderFooter && renderFooter() }

@@ -23,7 +23,7 @@ type Props = {
     t: Function,
 
     /**
-     * Indicates whether the support link should be shown in case of an error
+     * Indicates whether the support link should be shown in case of an error.
      */
      showSupportLink: Boolean,
 };

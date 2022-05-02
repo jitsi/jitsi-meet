@@ -33,8 +33,10 @@ class HelpButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
+        const { _userDocumentationURL } = this.props;
+
         sendAnalytics(createToolbarEvent('help.pressed'));
-        openURLInBrowser(this.props._userDocumentationURL);
+        openURLInBrowser(_userDocumentationURL);
     }
 }
 

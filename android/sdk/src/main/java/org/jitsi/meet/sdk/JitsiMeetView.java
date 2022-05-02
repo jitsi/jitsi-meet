@@ -18,6 +18,8 @@ package org.jitsi.meet.sdk;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.AttributeSet;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -27,7 +29,6 @@ import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 import java.lang.reflect.Method;
 import java.util.Map;
-
 
 public class JitsiMeetView extends BaseReactView<JitsiMeetViewListener>
         implements OngoingConferenceTracker.OngoingConferenceListener {
@@ -95,14 +96,17 @@ public class JitsiMeetView extends BaseReactView<JitsiMeetViewListener>
 
     public JitsiMeetView(@NonNull Context context) {
         super(context);
+        initialize(context);
+    }
 
-        // Check if the parent Activity implements JitsiMeetActivityInterface,
-        // otherwise things may go wrong.
-        if (!(context instanceof JitsiMeetActivityInterface)) {
-            throw new RuntimeException("Enclosing Activity must implement JitsiMeetActivityInterface");
-        }
+    public JitsiMeetView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        initialize(context);
+    }
 
-        OngoingConferenceTracker.getInstance().addListener(this);
+    public JitsiMeetView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        initialize(context);
     }
 
     @Override
@@ -206,5 +210,15 @@ public class JitsiMeetView extends BaseReactView<JitsiMeetViewListener>
     protected void onDetachedFromWindow() {
         dispose();
         super.onDetachedFromWindow();
+    }
+
+    private void initialize(@NonNull Context context) {
+        // Check if the parent Activity implements JitsiMeetActivityInterface,
+        // otherwise things may go wrong.
+        if (!(context instanceof JitsiMeetActivityInterface)) {
+            throw new RuntimeException("Enclosing Activity must implement JitsiMeetActivityInterface");
+        }
+
+        OngoingConferenceTracker.getInstance().addListener(this);
     }
 }

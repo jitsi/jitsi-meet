@@ -16,7 +16,7 @@ import {
     setVideoMuted
 } from '../../base/media';
 import { connect } from '../../base/redux';
-import { AbstractVideoMuteButton } from '../../base/toolbox/components';
+import { AbstractButton, AbstractVideoMuteButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
 import { getLocalVideoType, isLocalCameraTrackMuted } from '../../base/tracks';
 import { isVideoMuteButtonDisabled } from '../functions';
@@ -57,7 +57,7 @@ type Props = AbstractButtonProps & {
 /**
  * Component that renders a toolbar button for toggling video mute.
  *
- * @extends AbstractVideoMuteButton
+ * @augments AbstractVideoMuteButton
  */
 class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.videomute';
@@ -135,13 +135,18 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
      * @returns {void}
      */
     _onKeyboardShortcut() {
+        // Ignore keyboard shortcuts if the video button is disabled.
+        if (this._isDisabled()) {
+            return;
+        }
+
         sendAnalytics(
             createShortcutEvent(
                 VIDEO_MUTE,
                 ACTION_SHORTCUT_TRIGGERED,
                 { enable: !this._isVideoMuted() }));
 
-        super._handleClick();
+        AbstractButton.prototype._onClick.call(this);
     }
 
     /**

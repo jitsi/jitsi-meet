@@ -10,7 +10,7 @@ import AbstractDialogContainer, {
  * Implements a DialogContainer responsible for showing all dialogs. Necessary
  * for supporting @atlaskit's modal animations.
  *
- * @extends AbstractDialogContainer
+ * @augments AbstractDialogContainer
  */
 class DialogContainer extends AbstractDialogContainer {
     /**
@@ -20,10 +20,6 @@ class DialogContainer extends AbstractDialogContainer {
      * @returns {ReactElement}
      */
     render() {
-        if (this.props._rawDialog) {
-            return this._renderDialogContent();
-        }
-
         return (
             <ModalTransition>
                 { this._renderDialogContent() }
@@ -33,4 +29,3 @@ class DialogContainer extends AbstractDialogContainer {
 }
 
 export default connect(abstractMapStateToProps)(DialogContainer);
-

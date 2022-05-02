@@ -20,7 +20,7 @@ type Props = {
 /**
  * Implements a React Component showing smileys that can be be shown in chat.
  *
- * @extends Component
+ * @augments Component
  */
 class SmileysPanel extends PureComponent<Props> {
     /**

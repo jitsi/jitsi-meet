@@ -1,15 +1,17 @@
 // @flow
 
 import React from 'react';
-import { SafeAreaView, View } from 'react-native';
+import { View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
-import { getFeatureFlag, REACTIONS_ENABLED } from '../../../base/flags';
+import { Platform } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { ChatButton } from '../../../chat';
 import { ParticipantsPaneButton } from '../../../participants-pane/components/native';
 import { ReactionsMenuButton } from '../../../reactions/components';
+import { isReactionsEnabled } from '../../../reactions/functions.any';
 import { TileViewButton } from '../../../video-layout';
 import { isToolboxVisible, getMovableButtons } from '../../functions.native';
 import AudioMuteButton from '../AudioMuteButton';
@@ -27,6 +29,11 @@ import styles from './styles';
 type Props = {
 
     /**
+     * Whether or not the reactions feature is enabled.
+     */
+    _reactionsEnabled: boolean,
+
+    /**
      * The color-schemed stylesheet of the feature.
      */
     _styles: StyleType,
@@ -39,17 +46,7 @@ type Props = {
     /**
      * The width of the screen.
      */
-    _width: number,
-
-    /**
-     * Whether or not the reactions feature is enabled.
-     */
-    _reactionsEnabled: boolean,
-
-    /**
-     * The redux {@code dispatch} function.
-     */
-    dispatch: Function
+    _width: number
 };
 
 /**
@@ -59,11 +56,13 @@ type Props = {
  * @returns {React$Element}.
  */
 function Toolbox(props: Props) {
-    if (!props._visible) {
+    const { _reactionsEnabled, _styles, _visible, _width } = props;
+
+    if (!_visible) {
         return null;
     }
 
-    const { _styles, _width, _reactionsEnabled } = props;
+    const bottomEdge = Platform.OS === 'ios' && _visible;
     const { buttonStylesBorderless, hangupButtonStyles, toggledButtonStyles } = _styles;
     const additionalButtons = getMovableButtons(_width);
     const backgroundToggledStyle = {
@@ -80,6 +79,7 @@ function Toolbox(props: Props) {
             style = { styles.toolboxContainer }>
             <SafeAreaView
                 accessibilityRole = 'toolbar'
+                edges = { [ bottomEdge && 'bottom' ].filter(Boolean) }
                 pointerEvents = 'box-none'
                 style = { styles.toolbox }>
                 <AudioMuteButton
@@ -88,10 +88,12 @@ function Toolbox(props: Props) {
                 <VideoMuteButton
                     styles = { buttonStylesBorderless }
                     toggledStyles = { toggledButtonStyles } />
-                { additionalButtons.has('chat')
+                {
+                    additionalButtons.has('chat')
                       && <ChatButton
                           styles = { buttonStylesBorderless }
-                          toggledStyles = { backgroundToggledStyle } />}
+                          toggledStyles = { backgroundToggledStyle } />
+                }
 
                 { additionalButtons.has('raisehand') && (_reactionsEnabled
                     ? <ReactionsMenuButton
@@ -133,7 +135,7 @@ function _mapStateToProps(state: Object): Object {
         _styles: ColorSchemeRegistry.get(state, 'Toolbox'),
         _visible: isToolboxVisible(state),
         _width: state['features/base/responsive-ui'].clientWidth,
-        _reactionsEnabled: getFeatureFlag(state, REACTIONS_ENABLED, false)
+        _reactionsEnabled: isReactionsEnabled(state)
     };
 }
 

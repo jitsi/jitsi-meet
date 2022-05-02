@@ -10,7 +10,7 @@ type Props = {
     children: React$Node,
 
     /**
-     * Called when the touch is released, but not if cancelled (e.g. by a scroll
+     * Called when the touch is released, but not if cancelled (e.g. By a scroll
      * that steals the responder lock).
      */
     onPress: Function

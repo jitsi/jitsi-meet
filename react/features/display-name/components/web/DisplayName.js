@@ -1,5 +1,6 @@
 /* @flow */
 
+import { withStyles } from '@material-ui/styles';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
@@ -10,6 +11,8 @@ import {
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { updateSettings } from '../../../base/settings';
+import { Tooltip } from '../../../base/tooltip';
+import { getIndicatorsTooltipPosition } from '../../../filmstrip/functions.web';
 import { appendSuffix } from '../../functions';
 
 /**
@@ -44,6 +47,11 @@ type Props = {
     displayNameSuffix: string,
 
     /**
+     * An object containing the CSS classes.
+     */
+    classes: Object,
+
+    /**
      * The ID attribute to add to the component. Useful for global querying for
      * the component by legacy components and torture tests.
      */
@@ -57,7 +65,12 @@ type Props = {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * The type of thumbnail.
+     */
+    thumbnailType: string
 };
 
 /**
@@ -76,10 +89,34 @@ type State = {
     isEditing: boolean
 };
 
+const styles = theme => {
+    return {
+        displayName: {
+            ...theme.typography.labelBold,
+            lineHeight: `${theme.typography.labelBold.lineHeight}px`,
+            color: theme.palette.text01,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap'
+        },
+
+        editDisplayName: {
+            outline: 'none',
+            border: 'none',
+            background: 'none',
+            boxShadow: 'none',
+            padding: 0,
+            ...theme.typography.labelBold,
+            lineHeight: `${theme.typography.labelBold.lineHeight}px`,
+            color: theme.palette.text01
+        }
+    };
+};
+
 /**
  * React {@code Component} for displaying and editing a participant's name.
  *
- * @extends Component
+ * @augments Component
  */
 class DisplayName extends Component<Props, State> {
     _nameInput: ?HTMLInputElement;
@@ -147,18 +184,21 @@ class DisplayName extends Component<Props, State> {
             _nameToDisplay,
             allowEditing,
             displayNameSuffix,
+            classes,
             elementID,
-            t
+            t,
+            thumbnailType
         } = this.props;
 
         if (allowEditing && this.state.isEditing) {
             return (
                 <input
                     autoFocus = { true }
-                    className = 'editdisplayname'
+                    className = { classes.editDisplayName }
                     id = 'editDisplayName'
                     onBlur = { this._onSubmit }
                     onChange = { this._onChange }
+                    onClick = { this._onClick }
                     onKeyDown = { this._onKeyDown }
                     placeholder = { t('defaultNickname') }
                     ref = { this._setNameInputRef }
@@ -169,13 +209,28 @@ class DisplayName extends Component<Props, State> {
         }
 
         return (
-            <span
-                className = 'displayname'
-                id = { elementID }
-                onClick = { this._onStartEditing }>
-                { appendSuffix(_nameToDisplay, displayNameSuffix) }
-            </span>
+            <Tooltip
+                content = { appendSuffix(_nameToDisplay, displayNameSuffix) }
+                position = { getIndicatorsTooltipPosition(thumbnailType) }>
+                <span
+                    className = { `displayname ${classes.displayName}` }
+                    id = { elementID }
+                    onClick = { this._onStartEditing }>
+                    { appendSuffix(_nameToDisplay, displayNameSuffix) }
+                </span>
+            </Tooltip>
         );
+    }
+
+    /**
+     * Stop click event propagation.
+     *
+     * @param {MouseEvent} e - The click event.
+     * @private
+     * @returns {void}
+     */
+    _onClick(e) {
+        e.stopPropagation();
     }
 
     _onChange: () => void;
@@ -215,11 +270,13 @@ class DisplayName extends Component<Props, State> {
      * Updates the component to display an editable input field and sets the
      * initial value to the current display name.
      *
+     * @param {MouseEvent} e - The click event.
      * @private
      * @returns {void}
      */
-    _onStartEditing() {
+    _onStartEditing(e) {
         if (this.props.allowEditing) {
+            e.stopPropagation();
             this.setState({
                 isEditing: true,
                 editDisplayNameValue: this.props._configuredDisplayName
@@ -292,4 +349,4 @@ function _mapStateToProps(state, ownProps) {
     };
 }
 
-export default translate(connect(_mapStateToProps)(DisplayName));
+export default translate(connect(_mapStateToProps)(withStyles(styles)(DisplayName)));

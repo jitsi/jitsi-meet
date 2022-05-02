@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react';
+import { View } from 'react-native';
 
 import { IconRaisedHand } from '../../../base/icons';
 import { BaseIndicator } from '../../../base/react';
@@ -10,10 +11,12 @@ import AbstractRaisedHandIndicator, {
     _mapStateToProps
 } from '../AbstractRaisedHandIndicator';
 
+import styles from './styles';
+
 /**
  * Thumbnail badge showing that the participant would like to speak.
  *
- * @extends Component
+ * @augments Component
  */
 class RaisedHandIndicator extends AbstractRaisedHandIndicator<Props> {
     /**
@@ -23,9 +26,11 @@ class RaisedHandIndicator extends AbstractRaisedHandIndicator<Props> {
      */
     _renderIndicator() {
         return (
-            <BaseIndicator
-                highlight = { true }
-                icon = { IconRaisedHand } />
+            <View style = { styles.raisedHandIndicator }>
+                <BaseIndicator
+                    icon = { IconRaisedHand }
+                    iconStyle = { styles.raisedHandIcon } />
+            </View>
         );
     }
 }

@@ -1,31 +1,116 @@
 // @flow
 
-import { ColorPalette } from '../../../base/styles';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
-const SECONDARY_COLOR = '#B8C7E0';
-
-export const ENABLED_THUMB_COLOR = ColorPalette.blueHighlight;
-export const ENABLED_TRACK_COLOR = ColorPalette.blue;
-export const DISABLED_THUMB_COLOR = ColorPalette.darkGrey;
+const SECONDARY_COLOR = BaseTheme.palette.border04;
 
 export default {
     button: {
         alignItems: 'center',
-        borderRadius: 4,
-        marginVertical: 8,
-        paddingVertical: 10
+        borderRadius: BaseTheme.shape.borderRadius,
+        padding: BaseTheme.spacing[2],
+        height: BaseTheme.spacing[7],
+        width: '100%'
+    },
+
+    buttonStylesBorderless: {
+        iconStyle: {
+            backgroundColor: BaseTheme.palette.action02Active,
+            color: BaseTheme.palette.icon01,
+            fontSize: 24
+        },
+        style: {
+            backgroundColor: BaseTheme.palette.action02Active,
+            flexDirection: 'row',
+            justifyContent: 'center',
+            marginHorizontal: BaseTheme.spacing[3],
+            height: 24,
+            width: 24
+        }
+    },
+
+    lobbyChatWrapper: {
+        backgroundColor: BaseTheme.palette.ui01,
+        alignItems: 'stretch',
+        flexDirection: 'column',
+        justifyItems: 'center',
+        height: '100%'
+    },
+
+    lobbyChatHeader: {
+        flexDirection: 'row',
+        padding: 20
+    },
+
+    lobbyChatTitle: {
+        color: BaseTheme.palette.text01,
+        fontSize: 20,
+        fontWeight: 'bold',
+        flexShrink: 1
+    },
+
+    lobbyChatCloseButton: {
+        fontSize: 24,
+        marginLeft: BaseTheme.spacing[3],
+        marginTop: BaseTheme.spacing[1],
+        color: BaseTheme.palette.icon01
     },
 
     contentWrapper: {
+        backgroundColor: BaseTheme.palette.ui02,
+        flex: 1
+    },
+
+    contentWide: {
+        backgroundColor: BaseTheme.palette.ui02,
+        flex: 1,
+        flexDirection: 'row'
+    },
+
+    largeVideoContainer: {
         alignItems: 'center',
-        flexDirection: 'column',
-        padding: 32
+        display: 'flex',
+        justifyContent: 'center',
+        minHeight: '50%'
+    },
+
+    largeVideoContainerWide: {
+        height: '100%',
+        width: '50%'
+    },
+
+    contentContainer: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+
+    contentContainerWide: {
+        justifyContent: 'center',
+        marginHorizontal: BaseTheme.spacing[2],
+        width: '50%'
+    },
+
+    toolboxContainer: {
+        alignItems: 'center',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginTop: BaseTheme.spacing[4]
+    },
+
+    toolboxContainerWide: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginTop: BaseTheme.spacing[4]
     },
 
     dialogTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 10
+        margin: 'auto',
+        marginVertical: BaseTheme.spacing[3],
+        textAlign: 'center'
     },
 
     displayNameText: {
@@ -44,38 +129,57 @@ export default {
     },
 
     field: {
+        backgroundColor: BaseTheme.palette.field02,
         borderColor: SECONDARY_COLOR,
-        borderRadius: 4,
-        borderWidth: 1,
-        marginVertical: 8,
-        padding: 8
+        borderRadius: BaseTheme.shape.borderRadius,
+        borderWidth: 2,
+        height: BaseTheme.spacing[7],
+        marginHorizontal: BaseTheme.spacing[3],
+        padding: BaseTheme.spacing[2]
     },
 
     fieldError: {
-        color: ColorPalette.warning,
-        fontSize: 10
-    },
-
-    fieldRow: {
-        paddingTop: 16
+        color: BaseTheme.palette.warning03,
+        marginLeft: BaseTheme.spacing[3],
+        fontSize: 16
     },
 
     fieldLabel: {
+        ...BaseTheme.typography.heading6,
+        color: BaseTheme.palette.text01,
+        marginVertical: BaseTheme.spacing[4],
         textAlign: 'center'
     },
 
     formWrapper: {
-        alignItems: 'stretch',
+        alignSelf: 'stretch'
+    },
+
+    standardButtonWrapper: {
         alignSelf: 'stretch',
-        paddingVertical: 16
+        marginHorizontal: BaseTheme.spacing[3]
+    },
+
+    joiningContainer: {
+        alignItems: 'center',
+        display: 'flex',
+        justifyContent: 'center'
     },
 
     joiningMessage: {
+        color: BaseTheme.palette.text01,
+        marginBottom: BaseTheme.spacing[2],
         textAlign: 'center'
     },
 
+    passwordJoinButtonsWrapper: {
+        alignItems: 'stretch',
+        alignSelf: 'stretch',
+        marginHorizontal: BaseTheme.spacing[3]
+    },
+
     loadingIndicator: {
-        marginVertical: 36
+        marginVertical: BaseTheme.spacing[4]
     },
 
     participantBox: {
@@ -89,21 +193,25 @@ export default {
     },
 
     primaryButton: {
-        alignSelf: 'stretch',
-        backgroundColor: 'rgb(3, 118, 218)'
+        backgroundColor: BaseTheme.palette.action01,
+        marginTop: BaseTheme.spacing[4]
+    },
+
+    primaryButtonDisabled: {
+        backgroundColor: BaseTheme.palette.action03Disabled,
+        marginTop: BaseTheme.spacing[4]
     },
 
     primaryButtonText: {
-        color: 'white'
+        ...BaseTheme.typography.labelButtonLarge,
+        color: BaseTheme.palette.text01,
+        lineHeight: 30
     },
 
-    secondaryButton: {
-        alignSelf: 'stretch',
-        backgroundColor: 'transparent'
-    },
-
-    secondaryText: {
-        color: 'rgba(0, 0, 0, .7)'
+    primaryText: {
+        color: BaseTheme.palette.text01,
+        margin: 'auto',
+        textAlign: 'center'
     },
 
     // KnockingParticipantList
@@ -146,7 +254,7 @@ export default {
 
     lobbySwitchContainer: {
         flexDirection: 'column',
-        marginTop: 16
+        marginTop: BaseTheme.spacing[2]
     },
 
     lobbySwitchIcon: {

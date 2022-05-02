@@ -29,6 +29,18 @@ type Props = AbstractProps & {
  * props.
  */
 export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
+
+    /**
+     * Instantiates a new {@code Component}.
+     *
+     * @inheritdoc
+     */
+    constructor(props: Props) {
+        super(props);
+
+        this._onAvatarLoadError = this._onAvatarLoadError.bind(this);
+    }
+
     /**
      * Implements {@code Component#render}.
      *
@@ -63,7 +75,7 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
         );
     }
 
-    _isIcon: (?string | ?Object) => boolean
+    _isIcon: (?string | ?Object) => boolean;
 
     /**
      * Renders a badge representing the avatar status.
@@ -163,5 +175,23 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
                 source = {{ uri: url }}
                 style = { styles.avatarContent(size) } />
         );
+    }
+
+    _onAvatarLoadError: () => void;
+
+    /**
+     * Handles avatar load errors.
+     *
+     * @returns {void}
+     */
+    _onAvatarLoadError() {
+        const { onAvatarLoadError, onAvatarLoadErrorParams = {} } = this.props;
+
+        if (onAvatarLoadError) {
+            onAvatarLoadError({
+                ...onAvatarLoadErrorParams,
+                dontRetry: true
+            });
+        }
     }
 }

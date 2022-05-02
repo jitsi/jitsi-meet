@@ -1,7 +1,7 @@
 /* global APP, JitsiMeetJS, config */
 
 import { jitsiLocalStorage } from '@jitsi/js-utils';
-import Logger from 'jitsi-meet-logger';
+import Logger from '@jitsi/logger';
 
 import { redirectToTokenAuthService } from './modules/UI/authentication/AuthHandler';
 import { LoginDialog } from './react/features/authentication/components';
@@ -13,10 +13,11 @@ import {
 import { openDialog } from './react/features/base/dialog/actions';
 import { setJWT } from './react/features/base/jwt';
 import {
-    isFatalJitsiConnectionError,
     JitsiConnectionErrors,
     JitsiConnectionEvents
 } from './react/features/base/lib-jitsi-meet';
+import { isFatalJitsiConnectionError } from './react/features/base/lib-jitsi-meet/functions';
+import { getCustomerDetails } from './react/features/jaas/actions.any';
 import { isVpaasMeeting, getJaasJWT } from './react/features/jaas/functions';
 import { setPrejoinDisplayNameRequired } from './react/features/prejoin/actions';
 const logger = Logger.getLogger(__filename);
@@ -90,9 +91,13 @@ export async function connect(id, password, roomName) {
     let { jwt } = state['features/base/jwt'];
     const { iAmRecorder, iAmSipGateway } = state['features/base/config'];
 
-    if (!iAmRecorder && !iAmSipGateway && !jwt && isVpaasMeeting(state)) {
-        jwt = await getJaasJWT(state);
-        APP.store.dispatch(setJWT(jwt));
+    if (!iAmRecorder && !iAmSipGateway && isVpaasMeeting(state)) {
+        await APP.store.dispatch(getCustomerDetails());
+
+        if (!jwt) {
+            jwt = await getJaasJWT(state);
+            APP.store.dispatch(setJWT(jwt));
+        }
     }
 
     // Use Websocket URL for the web app if configured. Note that there is no 'isWeb' check, because there's assumption
@@ -101,9 +106,7 @@ export async function connect(id, password, roomName) {
 
     serviceUrl += `?room=${roomName}`;
 
-    // FIXME Remove deprecated 'bosh' option assignment at some point(LJM will be accepting only 'serviceUrl' option
-    //  in future). It's included for the time being for Jitsi Meet and lib-jitsi-meet versions interoperability.
-    connectionConfig.serviceUrl = connectionConfig.bosh = serviceUrl;
+    connectionConfig.serviceUrl = serviceUrl;
 
     if (connectionConfig.websocketKeepAliveUrl) {
         connectionConfig.websocketKeepAliveUrl += `?room=${roomName}`;

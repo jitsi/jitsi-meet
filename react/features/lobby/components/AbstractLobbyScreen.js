@@ -2,12 +2,13 @@
 // eslint-disable-next-line no-unused-vars
 import React, { PureComponent } from 'react';
 
-import { getConferenceName } from '../../base/conference';
+import { conferenceWillJoin, getConferenceName } from '../../base/conference';
 import { getFeatureFlag, INVITE_ENABLED } from '../../base/flags';
 import { getLocalParticipant } from '../../base/participants';
 import { getFieldValue } from '../../base/react';
 import { updateSettings } from '../../base/settings';
-import { cancelKnocking, joinWithPassword, setPasswordJoinFailed, startKnocking } from '../actions';
+import { isDeviceStatusVisible } from '../../prejoin/functions';
+import { cancelKnocking, joinWithPassword, setPasswordJoinFailed, startKnocking, onSendMessage } from '../actions';
 
 export const SCREEN_STATES = {
     EDIT: 1,
@@ -18,14 +19,39 @@ export const SCREEN_STATES = {
 export type Props = {
 
     /**
+     * Indicates whether the device status should be visible.
+     */
+    _deviceStatusVisible: boolean,
+
+    /**
      * True if knocking is already happening, so we're waiting for a response.
      */
     _knocking: boolean,
 
     /**
+    * Lobby messages between moderator and the participant.
+    */
+    _lobbyChatMessages: Object,
+
+    /**
+     * Name of the lobby chat recipient.
+     */
+    _lobbyMessageRecipient: string,
+
+    /**
+     * True if moderator initiated a chat session with the participant.
+     */
+    _isLobbyChatActive: boolean,
+
+    /**
      * The name of the meeting we're about to join.
      */
     _meetingName: string,
+
+    /**
+     * The members only conference if any,.
+     */
+    _membersOnlyConference: Object,
 
     /**
      * The email of the participant about to knock/join.
@@ -58,7 +84,7 @@ export type Props = {
     dispatch: Function,
 
     /**
-     * Indicates whether the copy url button should be shown
+     * Indicates whether the copy url button should be shown.
      */
     showCopyUrlButton: boolean,
 
@@ -81,6 +107,11 @@ type State = {
     email: string,
 
     /**
+     * True if lobby chat widget is open.
+     */
+    isChatOpen: boolean,
+
+    /**
      * The password value entered into the field.
      */
     password: string,
@@ -91,7 +122,7 @@ type State = {
     passwordJoinFailed: boolean,
 
     /**
-     * The state of the screen. One of {@code SCREEN_STATES[*]}
+     * The state of the screen. One of {@code SCREEN_STATES[*]}.
      */
     screenState: number
 }
@@ -111,6 +142,7 @@ export default class AbstractLobbyScreen<P: Props = Props> extends PureComponent
         this.state = {
             displayName: props._participantName || '',
             email: props._participantEmail || '',
+            isChatOpen: true,
             password: '',
             passwordJoinFailed: false,
             screenState: props._participantName ? SCREEN_STATES.VIEW : SCREEN_STATES.EDIT
@@ -123,8 +155,10 @@ export default class AbstractLobbyScreen<P: Props = Props> extends PureComponent
         this._onChangePassword = this._onChangePassword.bind(this);
         this._onEnableEdit = this._onEnableEdit.bind(this);
         this._onJoinWithPassword = this._onJoinWithPassword.bind(this);
+        this._onSendMessage = this._onSendMessage.bind(this);
         this._onSwitchToKnockMode = this._onSwitchToKnockMode.bind(this);
         this._onSwitchToPasswordMode = this._onSwitchToPasswordMode.bind(this);
+        this._onToggleChat = this._onToggleChat.bind(this);
     }
 
     /**
@@ -153,7 +187,7 @@ export default class AbstractLobbyScreen<P: Props = Props> extends PureComponent
         const passwordPrompt = screenState === SCREEN_STATES.PASSWORD;
 
         return !passwordPrompt && this.props._knocking
-            ? 'lobby.joiningTitle'
+            ? this.props._isLobbyChatActive ? 'lobby.lobbyChatStartedTitle' : 'lobby.joiningTitle'
             : passwordPrompt ? 'lobby.enterPasswordTitle' : 'lobby.joinTitle';
     }
 
@@ -269,6 +303,18 @@ export default class AbstractLobbyScreen<P: Props = Props> extends PureComponent
         this.props.dispatch(joinWithPassword(this.state.password));
     }
 
+    _onSendMessage: () => void;
+
+    /**
+     * Callback to be invoked for sending lobby chat messages.
+     *
+     * @param {string} message - Message to be sent.
+     * @returns {void}
+     */
+    _onSendMessage(message) {
+        this.props.dispatch(onSendMessage(message));
+    }
+
     _onSwitchToKnockMode: () => void;
 
     /**
@@ -282,6 +328,9 @@ export default class AbstractLobbyScreen<P: Props = Props> extends PureComponent
             screenState: this.state.displayName ? SCREEN_STATES.VIEW : SCREEN_STATES.EDIT
         });
         this.props.dispatch(setPasswordJoinFailed(false));
+
+        // let's return to the correct state after password failed
+        this.props.dispatch(conferenceWillJoin(this.props._membersOnlyConference));
     }
 
     _onSwitchToPasswordMode: () => void;
@@ -294,6 +343,21 @@ export default class AbstractLobbyScreen<P: Props = Props> extends PureComponent
     _onSwitchToPasswordMode() {
         this.setState({
             screenState: SCREEN_STATES.PASSWORD
+        });
+    }
+
+    _onToggleChat: () => void;
+
+    /**
+     * Callback to be invoked for toggling lobby chat visibility.
+     *
+     * @returns {void}
+     */
+    _onToggleChat() {
+        this.setState(_prevState => {
+            return {
+                isChatOpen: !_prevState.isChatOpen
+            };
         });
     }
 
@@ -380,10 +444,18 @@ export function _mapStateToProps(state: Object): $Shape<Props> {
     const { knocking, passwordJoinFailed } = state['features/lobby'];
     const { iAmSipGateway } = state['features/base/config'];
     const showCopyUrlButton = inviteEnabledFlag || !disableInviteFunctions;
+    const deviceStatusVisible = isDeviceStatusVisible(state);
+    const { membersOnly } = state['features/base/conference'];
+    const { isLobbyChatActive, lobbyMessageRecipient, messages } = state['features/chat'];
 
     return {
+        _deviceStatusVisible: deviceStatusVisible,
         _knocking: knocking,
+        _lobbyChatMessages: messages,
+        _lobbyMessageRecipient: lobbyMessageRecipient?.name,
+        _isLobbyChatActive: isLobbyChatActive,
         _meetingName: getConferenceName(state),
+        _membersOnlyConference: membersOnly,
         _participantEmail: localParticipant?.email,
         _participantId: participantId,
         _participantName: localParticipant?.name,

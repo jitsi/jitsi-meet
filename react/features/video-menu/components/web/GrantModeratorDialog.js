@@ -6,7 +6,7 @@ import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import AbstractGrantModeratorDialog
-    from '../AbstractGrantModeratorDialog';
+, { abstractMapStateToProps } from '../AbstractGrantModeratorDialog';
 
 /**
  * Dialog to confirm a grant moderator action.
@@ -26,7 +26,7 @@ class GrantModeratorDialog extends AbstractGrantModeratorDialog {
                 titleKey = 'dialog.grantModeratorTitle'
                 width = 'small'>
                 <div>
-                    { this.props.t('dialog.grantModeratorDialog') }
+                    { this.props.t('dialog.grantModeratorDialog', { participantName: this.props.participantName }) }
                 </div>
             </Dialog>
         );
@@ -35,4 +35,4 @@ class GrantModeratorDialog extends AbstractGrantModeratorDialog {
     _onSubmit: () => boolean;
 }
 
-export default translate(connect()(GrantModeratorDialog));
+export default translate(connect(abstractMapStateToProps)(GrantModeratorDialog));

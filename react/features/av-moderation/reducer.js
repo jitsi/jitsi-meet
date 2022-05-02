@@ -13,8 +13,10 @@ import {
     DISMISS_PENDING_PARTICIPANT,
     ENABLE_MODERATION,
     LOCAL_PARTICIPANT_APPROVED,
+    LOCAL_PARTICIPANT_REJECTED,
     PARTICIPANT_APPROVED,
-    PARTICIPANT_PENDING_AUDIO
+    PARTICIPANT_PENDING_AUDIO,
+    PARTICIPANT_REJECTED
 } from './actionTypes';
 import { MEDIA_TYPE_TO_PENDING_STORE_KEY } from './constants';
 
@@ -105,6 +107,16 @@ ReducerRegistry.register('features/av-moderation', (state = initialState, action
         };
     }
 
+    case LOCAL_PARTICIPANT_REJECTED: {
+        const newState = action.mediaType === MEDIA_TYPE.AUDIO
+            ? { audioUnmuteApproved: false } : { videoUnmuteApproved: false };
+
+        return {
+            ...state,
+            ...newState
+        };
+    }
+
     case PARTICIPANT_PENDING_AUDIO: {
         const { participant } = action;
 
@@ -135,7 +147,7 @@ ReducerRegistry.register('features/av-moderation', (state = initialState, action
         }
 
         if (videoModerationEnabled) {
-            hasStateChanged = _updatePendingParticipant(MEDIA_TYPE.VIDEO, participant, state);
+            hasStateChanged = hasStateChanged || _updatePendingParticipant(MEDIA_TYPE.VIDEO, participant, state);
         }
 
         // If the state has changed we need to return a new object reference in order to trigger subscriber updates.
@@ -183,19 +195,19 @@ ReducerRegistry.register('features/av-moderation', (state = initialState, action
     }
 
     case DISMISS_PENDING_PARTICIPANT: {
-        const { participant, mediaType } = action;
+        const { id, mediaType } = action;
 
         if (mediaType === MEDIA_TYPE.AUDIO) {
             return {
                 ...state,
-                pendingAudio: state.pendingAudio.filter(pending => pending.id !== participant.id)
+                pendingAudio: state.pendingAudio.filter(pending => pending.id !== id)
             };
         }
 
         if (mediaType === MEDIA_TYPE.VIDEO) {
             return {
                 ...state,
-                pendingVideo: state.pendingVideo.filter(pending => pending.id !== participant.id)
+                pendingVideo: state.pendingVideo.filter(pending => pending.id !== id)
             };
         }
 
@@ -221,6 +233,32 @@ ReducerRegistry.register('features/av-moderation', (state = initialState, action
                 videoWhitelist: {
                     ...state.videoWhitelist,
                     [id]: true
+                }
+            };
+        }
+
+        return state;
+    }
+
+    case PARTICIPANT_REJECTED: {
+        const { mediaType, id } = action;
+
+        if (mediaType === MEDIA_TYPE.AUDIO) {
+            return {
+                ...state,
+                audioWhitelist: {
+                    ...state.audioWhitelist,
+                    [id]: false
+                }
+            };
+        }
+
+        if (mediaType === MEDIA_TYPE.VIDEO) {
+            return {
+                ...state,
+                videoWhitelist: {
+                    ...state.videoWhitelist,
+                    [id]: false
                 }
             };
         }

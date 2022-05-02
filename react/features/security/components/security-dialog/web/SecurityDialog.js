@@ -14,6 +14,11 @@ import PasswordSection from './PasswordSection';
 type Props = {
 
     /**
+     * Toolbar buttons which have their click exposed through the API.
+     */
+     _buttonsWithNotifyClick: Array<string | Object>,
+
+    /**
      * Whether or not the current user can modify the current password.
      */
     _canEditPassword: boolean,
@@ -57,6 +62,7 @@ type Props = {
  * @returns {React$Element<any>}
  */
 function SecurityDialog({
+    _buttonsWithNotifyClick,
     _canEditPassword,
     _conference,
     _locked,
@@ -77,11 +83,12 @@ function SecurityDialog({
         <Dialog
             hideCancelButton = { true }
             submitDisabled = { true }
-            titleKey = 'security.securityOptions'
+            titleKey = 'security.header'
             width = { 'small' }>
             <div className = 'security-dialog'>
                 <LobbySection />
                 <PasswordSection
+                    buttonsWithNotifyClick = { _buttonsWithNotifyClick }
                     canEditPassword = { _canEditPassword }
                     conference = { _conference }
                     locked = { _locked }
@@ -117,11 +124,12 @@ function mapStateToProps(state) {
         locked,
         password
     } = state['features/base/conference'];
-    const { roomPasswordNumberOfDigits } = state['features/base/config'];
+    const { roomPasswordNumberOfDigits, buttonsWithNotifyClick } = state['features/base/config'];
 
     const showE2ee = Boolean(e2eeSupported) && isLocalParticipantModerator(state);
 
     return {
+        _buttonsWithNotifyClick: buttonsWithNotifyClick,
         _canEditPassword: isLocalParticipantModerator(state),
         _conference: conference,
         _dialIn: state['features/invite'],

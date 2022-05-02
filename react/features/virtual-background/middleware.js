@@ -10,7 +10,7 @@ import { localTrackStopped } from './functions';
 /**
  * Middleware which intercepts the desktop video type on
  * virtual background. If the user stops the screen share
- * then the default virtual background is set to 'none' option
+ * then the default virtual background is set to 'none' option.
  *
  * @param {Store} store - The redux store.
  * @returns {Function}

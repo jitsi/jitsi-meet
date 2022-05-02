@@ -1,5 +1,6 @@
 // @flow
 import { CONFIG_WHITELIST } from '../config';
+import { getParticipantCount } from '../participants';
 import { toState } from '../redux';
 import { parseURLParams } from '../util';
 
@@ -10,17 +11,15 @@ import { DEFAULT_SERVER_URL } from './constants';
  * a precedence among the values specified by JWT, URL, settings,
  * and config.
  *
- * @param {Object|Function} stateful - The redux state object or
- * {@code getState} function.
+ * @param {Object|Function} stateful - The redux state object or {@code getState} function.
  * @param {string} propertyName - The name of the
  * configuration/preference/setting (property) to retrieve.
- * @param {{
- *     config: boolean,
- *     jwt: boolean,
- *     settings: boolean,
- *     urlParams: boolean
- * }} [sources] - A set/structure of {@code boolean} flags indicating the
- * configuration/preference/setting sources to consider/retrieve values from.
+ * @param {Object} sources - Flags indicating the configuration/preference/setting sources to
+ * consider/retrieve values from.
+ * @param {boolean} sources.config - Config.
+ * @param {boolean} jwt - JWT.
+ * @param {boolean} settings - Settings.
+ * @param {boolean} urlParams - URL parameters.
  * @returns {any}
  */
 export function getPropertyValue(
@@ -257,4 +256,24 @@ function _getUserSelectedDeviceId(options) {
 export function shouldHideShareAudioHelper(state: Object): boolean {
 
     return state['features/base/settings'].hideShareAudioHelper;
+}
+
+/**
+ * Whether we should hide self view.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {boolean}
+ */
+export function shouldHideSelfView(state: Object) {
+    return getParticipantCount(state) === 1 ? false : getHideSelfView(state);
+}
+
+/**
+ * Gets the disable self view setting.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {boolean}
+ */
+export function getHideSelfView(state: Object) {
+    return state['features/base/config'].disableSelfView || state['features/base/settings'].disableSelfView;
 }

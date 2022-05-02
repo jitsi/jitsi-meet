@@ -1,5 +1,7 @@
 local st = require "util.stanza";
-local get_services = module:depends("external_services").get_services;
+local ext_services = module:depends("external_services");
+local get_services = ext_services.get_services;
+local services_xml = ext_services.services_xml;
 
 -- Jitsi Connection Optimization
 -- gathers needed information and pushes it with a message to clients
@@ -8,6 +10,11 @@ local get_services = module:depends("external_services").get_services;
 local shard_name_config = module:get_option_string('shard_name');
 if shard_name_config then
     module:add_identity("server", "shard", shard_name_config);
+end
+
+local region_name_config = module:get_option_string('region_name');
+if region_name_config then
+    module:add_identity("server", "region", region_name_config);
 end
 
 -- this is after xmpp-bind, the moment a client has resource and can be contacted
@@ -36,11 +43,7 @@ module:hook("resource-bind", function (event)
     stanza:add_child(query):up();
 
     --- get turnservers and credentials
-    local services = get_services();
-    stanza:tag("services");
-    for _, srv in ipairs(services) do
-        stanza:tag("service", srv):up();
-    end
+    stanza:add_child(services_xml(get_services()));
 
     session.send(stanza);
 end);

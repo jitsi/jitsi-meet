@@ -2,12 +2,11 @@
 
 import UIEvents from '../../../service/UI/UIEvents';
 import { getCurrentConference } from '../base/conference';
-import { setActiveModalId } from '../base/modal';
+import { CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 
 import { TOGGLE_DOCUMENT_EDITING } from './actionTypes';
-import { setDocumentEditingState, setDocumentUrl } from './actions';
-import { SHARE_DOCUMENT_VIEW_ID } from './constants';
+import { setDocumentUrl } from './actions';
 
 declare var APP: Object;
 
@@ -23,18 +22,25 @@ const ETHERPAD_COMMAND = 'etherpad';
 // eslint-disable-next-line no-unused-vars
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     switch (action.type) {
-    case TOGGLE_DOCUMENT_EDITING: {
-        if (typeof APP === 'undefined') {
-            const editing = !getState()['features/etherpad'].editing;
+    case CONFERENCE_JOIN_IN_PROGRESS: {
+        const { conference } = action;
 
-            dispatch(setDocumentEditingState(editing));
+        conference.addCommandListener(ETHERPAD_COMMAND,
+            ({ value }) => {
+                let url;
+                const { etherpad_base: etherpadBase } = getState()['features/base/config'];
 
-            if (editing) {
-                dispatch(setActiveModalId(SHARE_DOCUMENT_VIEW_ID));
-            } else if (getState()['features/base/modal'].activeModalId === SHARE_DOCUMENT_VIEW_ID) {
-                dispatch(setActiveModalId(undefined));
+                if (etherpadBase) {
+                    url = new URL(value, etherpadBase).toString();
+                }
+
+                dispatch(setDocumentUrl(url));
             }
-        } else {
+        );
+        break;
+    }
+    case TOGGLE_DOCUMENT_EDITING: {
+        if (typeof APP !== 'undefined') {
             APP.UI.emitEvent(UIEvents.ETHERPAD_CLICKED);
         }
         break;
@@ -46,29 +52,12 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
 /**
  * Set up state change listener to perform maintenance tasks when the conference
- * is left or failed, e.g. clear messages or close the chat modal if it's left
+ * is left or failed, e.g. Clear messages or close the chat modal if it's left
  * open.
  */
 StateListenerRegistry.register(
     state => getCurrentConference(state),
-    (conference, { dispatch, getState }, previousConference) => {
-        if (conference) {
-            conference.addCommandListener(ETHERPAD_COMMAND,
-                ({ value }) => {
-                    let url;
-                    const { etherpad_base: etherpadBase } = getState()['features/base/config'];
-
-                    if (etherpadBase) {
-                        const u = new URL(value, etherpadBase);
-
-                        url = u.toString();
-                    }
-
-                    dispatch(setDocumentUrl(url));
-                }
-            );
-        }
-
+    (conference, { dispatch }, previousConference) => {
         if (previousConference) {
             dispatch(setDocumentUrl(undefined));
         }

@@ -8,7 +8,7 @@ import VideoQualitySlider from './VideoQualitySlider';
  * Implements a React {@link Component} which displays the component
  * {@code VideoQualitySlider} in a dialog.
  *
- * @extends Component
+ * @augments Component
  */
 export default class VideoQualityDialog extends Component {
     /**
@@ -21,8 +21,8 @@ export default class VideoQualityDialog extends Component {
         return (
             <Dialog
                 hideCancelButton = { true }
-                okKey = 'dialog.done'
-                titleKey = 'videoStatus.callQuality'
+                submitDisabled = { true }
+                titleKey = 'videoStatus.performanceSettings'
                 width = 'small'>
                 <VideoQualitySlider />
             </Dialog>

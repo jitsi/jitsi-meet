@@ -4,16 +4,31 @@ import { NativeModules } from 'react-native';
 
 const { Dropbox } = NativeModules;
 
+import { setPictureInPictureDisabled } from '../mobile/picture-in-picture/functions';
+
 /**
  * Action to authorize the Jitsi Recording app in dropbox.
  *
- * @param {string} appKey - The Jitsi Recorder dropbox app key.
- * @param {string} redirectURI - The return URL.
- * @returns {Promise<string>} - The promise will be resolved with the dropbox
+ * @returns {Promise<Object>} - The promise will be resolved with the dropbox
  * access token or rejected with an error.
  */
-export function _authorizeDropbox(): Promise<string> {
-    return Dropbox.authorize();
+export async function _authorizeDropbox(): Promise<Object> {
+    setPictureInPictureDisabled(true);
+
+    try {
+        return await Dropbox.authorize();
+    } finally {
+        setPictureInPictureDisabled(false);
+    }
+}
+
+/**
+ * Gets a new acccess token based on the refresh token.
+ *
+ * @returns {Promise}
+ */
+export function getNewAccessToken() {
+    return _authorizeDropbox();
 }
 
 /**

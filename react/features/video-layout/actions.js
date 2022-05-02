@@ -4,7 +4,8 @@ import type { Dispatch } from 'redux';
 
 import {
     SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
-    SET_TILE_VIEW
+    SET_TILE_VIEW,
+    VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED
 } from './actionTypes';
 import { shouldDisplayTileView } from './functions';
 
@@ -22,6 +23,23 @@ import { shouldDisplayTileView } from './functions';
 export function setRemoteParticipantsWithScreenShare(participantIds: Array<string>) {
     return {
         type: SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
+        participantIds
+    };
+}
+
+/**
+ * Creates a (redux) action which signals that the list of known remote virtual screen share participant ids has
+ * changed.
+ *
+ * @param {string} participantIds - The remote virtual screen share participants.
+ * @returns {{
+ *     type: VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED,
+ *     participantIds: Array<string>
+ * }}
+ */
+export function virtualScreenshareParticipantsUpdated(participantIds: Array<string>) {
+    return {
+        type: VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED,
         participantIds
     };
 }

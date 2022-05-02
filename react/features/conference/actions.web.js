@@ -4,6 +4,7 @@ import type { Dispatch } from 'redux';
 
 import { getParticipantDisplayName } from '../base/participants';
 import {
+    NOTIFICATION_TIMEOUT_TYPE,
     NOTIFICATION_TYPE,
     showNotification
 } from '../notifications';
@@ -34,6 +35,6 @@ export function notifyKickedOut(participant: Object, _: ?Function) { // eslint-d
             descriptionArguments: args,
             titleKey: 'dialog.kickTitle',
             titleArguments: args
-        }));
+        }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
     };
 }

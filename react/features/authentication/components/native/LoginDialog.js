@@ -1,20 +1,15 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import { Text, TextInput, View } from 'react-native';
+import { Text, View } from 'react-native';
+import Dialog from 'react-native-dialog';
 import { connect as reduxConnect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { toJid } from '../../../base/connection';
 import { connect } from '../../../base/connection/actions.native';
-import {
-    CustomSubmitDialog,
-    FIELD_UNDERLINE,
-    PLACEHOLDER_COLOR,
-    _abstractMapStateToProps,
-    inputDialog as inputDialogStyle
-} from '../../../base/dialog';
+import { _abstractMapStateToProps } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { JitsiConnectionErrors } from '../../../base/lib-jitsi-meet';
 import type { StyleType } from '../../../base/styles';
@@ -29,7 +24,7 @@ import './styles';
 type Props = {
 
     /**
-     * {@link JitsiConference} that needs authentication - will hold a valid
+     * {@link JitsiConference} That needs authentication - will hold a valid
      * value in XMPP login + guest access mode.
      */
     _conference: Object,
@@ -45,14 +40,14 @@ type Props = {
     _connecting: boolean,
 
     /**
-     * The color-schemed stylesheet of the base/dialog feature.
-     */
-    _dialogStyles: StyleType,
-
-    /**
      * The error which occurred during login/authentication.
      */
     _error: Object,
+
+    /**
+     * Extra handler for cancel functionality.
+     */
+    _onCancel: Function,
 
     /**
      * The progress in the floating range between 0 and 1 of the authenticating
@@ -73,7 +68,12 @@ type Props = {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * Override the default visibility.
+     */
+    visible: boolean
 };
 
 /**
@@ -120,6 +120,10 @@ type State = {
  * of the configuration parameters.
  */
 class LoginDialog extends Component<Props, State> {
+    static defaultProps = {
+        visible: true
+    };
+
     /**
      * Initializes a new LoginDialog instance.
      *
@@ -150,41 +154,42 @@ class LoginDialog extends Component<Props, State> {
     render() {
         const {
             _connecting: connecting,
-            _dialogStyles,
-            _styles: styles,
-            t
+            t,
+            visible
         } = this.props;
 
         return (
-            <CustomSubmitDialog
-                okDisabled = { connecting }
-                onCancel = { this._onCancel }
-                onSubmit = { this._onLogin }>
-                <View style = { styles.loginDialog }>
-                    <TextInput
+            <View>
+                <Dialog.Container
+                    visible = { visible }>
+                    <Dialog.Title>
+                        { t('dialog.login') }
+                    </Dialog.Title>
+                    <Dialog.Input
                         autoCapitalize = { 'none' }
                         autoCorrect = { false }
                         onChangeText = { this._onUsernameChange }
                         placeholder = { 'user@domain.com' }
-                        placeholderTextColor = { PLACEHOLDER_COLOR }
-                        style = { _dialogStyles.field }
-                        underlineColorAndroid = { FIELD_UNDERLINE }
+                        spellCheck = { false }
                         value = { this.state.username } />
-                    <TextInput
+                    <Dialog.Input
                         autoCapitalize = { 'none' }
                         onChangeText = { this._onPasswordChange }
                         placeholder = { t('dialog.userPassword') }
-                        placeholderTextColor = { PLACEHOLDER_COLOR }
                         secureTextEntry = { true }
-                        style = { [
-                            _dialogStyles.field,
-                            inputDialogStyle.bottomField
-                        ] }
-                        underlineColorAndroid = { FIELD_UNDERLINE }
                         value = { this.state.password } />
-                    { this._renderMessage() }
-                </View>
-            </CustomSubmitDialog>
+                    <Dialog.Description>
+                        { this._renderMessage() }
+                    </Dialog.Description>
+                    <Dialog.Button
+                        label = { t('dialog.Cancel') }
+                        onPress = { this._onCancel } />
+                    <Dialog.Button
+                        disabled = { connecting }
+                        label = { t('dialog.Ok') }
+                        onPress = { this._onLogin } />
+                </Dialog.Container>
+            </View>
         );
     }
 
@@ -238,10 +243,8 @@ class LoginDialog extends Component<Props, State> {
 
         if (messageKey) {
             const message = t(messageKey, messageOptions);
-            const messageStyles = [
-                styles.dialogText,
-                messageIsError ? styles.errorMessage : styles.progressMessage
-            ];
+            const messageStyles
+                = messageIsError ? styles.errorMessage : styles.progressMessage;
 
             return (
                 <Text style = { messageStyles }>
@@ -292,7 +295,10 @@ class LoginDialog extends Component<Props, State> {
      * @returns {void}
      */
     _onCancel() {
-        this.props.dispatch(cancelLogin());
+        const { _onCancel, dispatch } = this.props;
+
+        _onCancel && _onCancel();
+        dispatch(cancelLogin());
     }
 
     _onLogin: () => void;
@@ -336,7 +342,7 @@ function _mapStateToProps(state) {
         progress,
         thenableWithCancel
     } = state['features/authentication'];
-    const { authRequired } = state['features/base/conference'];
+    const { authRequired, conference } = state['features/base/conference'];
     const { hosts: configHosts } = state['features/base/config'];
     const {
         connecting,
@@ -345,7 +351,7 @@ function _mapStateToProps(state) {
 
     return {
         ..._abstractMapStateToProps(state),
-        _conference: authRequired,
+        _conference: authRequired || conference,
         _configHosts: configHosts,
         _connecting: Boolean(connecting) || Boolean(thenableWithCancel),
         _error: connectionError || authenticateAndUpgradeRoleError,

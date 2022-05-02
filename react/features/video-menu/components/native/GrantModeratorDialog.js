@@ -5,7 +5,7 @@ import React from 'react';
 import { ConfirmDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-import AbstractGrantModeratorDialog
+import AbstractGrantModeratorDialog, { abstractMapStateToProps }
     from '../AbstractGrantModeratorDialog';
 
 /**
@@ -21,7 +21,10 @@ class GrantModeratorDialog extends AbstractGrantModeratorDialog {
     render() {
         return (
             <ConfirmDialog
-                contentKey = 'dialog.grantModeratorDialog'
+                descriptionKey = {
+                    `${this.props.t('dialog.grantModeratorDialog',
+                        { participantName: this.props.participantName })}`
+                }
                 onSubmit = { this._onSubmit } />
         );
     }
@@ -29,4 +32,4 @@ class GrantModeratorDialog extends AbstractGrantModeratorDialog {
     _onSubmit: () => boolean;
 }
 
-export default translate(connect()(GrantModeratorDialog));
+export default translate(connect(abstractMapStateToProps)(GrantModeratorDialog));

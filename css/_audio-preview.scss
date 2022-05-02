@@ -121,9 +121,18 @@
             }
         }
 
-        .audio-preview-entry-text {
-            max-width: 178px;
+        &--nometer {
+            .audio-preview-entry-text {
+                max-width: 238px;
+            }
         }
+
+        &--withmeter {
+            .audio-preview-entry-text {
+                max-width: 178px;
+            }
+        }
+
     }
 
     &-icon {

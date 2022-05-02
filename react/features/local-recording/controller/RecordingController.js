@@ -99,12 +99,12 @@ type RecordingStats = {
     isRecording: boolean,
 
     /**
-     * Total recorded bytes. (Reserved for future use.)
+     * Total recorded bytes. (Reserved for future use.).
      */
     recordedBytes: number,
 
     /**
-     * Total recording duration. (Reserved for future use.)
+     * Total recording duration. (Reserved for future use.).
      */
     recordedLength: number
 }
@@ -452,16 +452,16 @@ class RecordingController {
         return result;
     }
 
-    _changeState: (Symbol) => void;
+    _changeState: (symbol) => void;
 
     /**
      * Changes the current state of {@code RecordingController}.
      *
      * @private
-     * @param {Symbol} newState - The new state.
+     * @param {symbol} newState - The new state.
      * @returns {void}
      */
-    _changeState(newState: Symbol) {
+    _changeState(newState: symbol) {
         if (this._state !== newState) {
             logger.log(`state change: ${this._state.toString()} -> `
                 + `${newState.toString()}`);

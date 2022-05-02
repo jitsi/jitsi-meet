@@ -10,7 +10,7 @@ import { createColorTokens } from './utils';
  * @param {Object} arg - The ui tokens.
  * @returns {Object}
  */
-export function createWebTheme({ font, colors, colorMap, shape, spacing, typography }: Object) {
+export function createWebTheme({ font, colors, colorMap, shape, spacing, typography, breakpoints }: Object) {
     return createMuiTheme({
         props: {
             // disable ripple effect on buttons globally
@@ -27,6 +27,24 @@ export function createWebTheme({ font, colors, colorMap, shape, spacing, typogra
         typography: {
             font,
             ...typography
-        }
+        },
+        breakpoints
     });
 }
+
+/**
+ * Formats the common styles object to be interpreted as proper CSS.
+ *
+ * @param {Object} stylesObj - The styles object.
+ * @returns {Object}
+ */
+export function formatCommonClasses(stylesObj: Object) {
+    const formatted = {};
+
+    for (const [ key, value ] of Object.entries(stylesObj)) {
+        formatted[`.${key}`] = value;
+    }
+
+    return formatted;
+}
+

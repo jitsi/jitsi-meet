@@ -4,7 +4,7 @@ import { Component } from 'react';
 
 import { createInviteDialogEvent, sendAnalytics } from '../../../analytics';
 import {
-    NOTIFICATION_TIMEOUT,
+    NOTIFICATION_TIMEOUT_TYPE,
     showNotification
 } from '../../../notifications';
 import { invite } from '../../actions';
@@ -203,7 +203,7 @@ export default class AbstractAddPeopleDialog<P: Props, S: State>
 
                     if (notificationProps) {
                         dispatch(
-                            showNotification(notificationProps, NOTIFICATION_TIMEOUT));
+                            showNotification(notificationProps, NOTIFICATION_TIMEOUT_TYPE.SHORT));
                     }
                 }
 

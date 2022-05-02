@@ -1,7 +1,11 @@
 // @flow
 
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import {
+    Text,
+    TouchableOpacity,
+    View
+} from 'react-native';
 
 import { translate } from '../../base/i18n';
 import { AbstractPage } from '../../base/react';
@@ -75,10 +79,16 @@ class CalendarList extends AbstractPage<Props> {
 
         return (
             CalendarListContent
-                ? <CalendarListContent
-                    disabled = { disabled }
-                    listEmptyComponent
-                        = { this._getRenderListEmptyComponent() } />
+                ? <View
+                    style = {
+                        disabled
+                            ? styles.calendarSyncDisabled
+                            : styles.calendarSync }>
+                    <CalendarListContent
+                        disabled = { disabled }
+                        listEmptyComponent
+                            = { this._getRenderListEmptyComponent() } />
+                </View>
                 : null
         );
     }

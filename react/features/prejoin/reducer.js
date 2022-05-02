@@ -1,6 +1,7 @@
 import { PersistenceRegistry, ReducerRegistry } from '../base/redux';
 
 import {
+    PREJOIN_JOINING_IN_PROGRESS,
     SET_DEVICE_STATUS,
     SET_DIALOUT_COUNTRY,
     SET_DIALOUT_NUMBER,
@@ -10,7 +11,6 @@ import {
     SET_PREJOIN_DEVICE_ERRORS,
     SET_PREJOIN_DISPLAY_NAME_REQUIRED,
     SET_PREJOIN_PAGE_VISIBILITY,
-    SET_SKIP_PREJOIN,
     SET_SKIP_PREJOIN_RELOAD
 } from './actionTypes';
 
@@ -30,8 +30,7 @@ const DEFAULT_STATE = {
     rawError: '',
     showPrejoin: true,
     skipPrejoinOnReload: false,
-    showJoinByPhoneDialog: false,
-    userSelectedSkipPrejoin: false
+    showJoinByPhoneDialog: false
 };
 
 /**
@@ -48,19 +47,16 @@ PersistenceRegistry.register(STORE_NAME, {
 }, DEFAULT_STATE);
 
 /**
- * Listen for actions that mutate the prejoin state
+ * Listen for actions that mutate the prejoin state.
  */
 ReducerRegistry.register(
     'features/prejoin', (state = DEFAULT_STATE, action) => {
         switch (action.type) {
-
-        case SET_SKIP_PREJOIN: {
+        case PREJOIN_JOINING_IN_PROGRESS:
             return {
                 ...state,
-                userSelectedSkipPrejoin: action.value
+                joiningInProgress: action.value
             };
-        }
-
         case SET_SKIP_PREJOIN_RELOAD: {
             return {
                 ...state,
@@ -137,7 +133,7 @@ ReducerRegistry.register(
         default:
             return state;
         }
-    },
+    }
 );
 
 /**

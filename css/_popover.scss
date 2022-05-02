@@ -3,49 +3,45 @@
  * to allow mouse movement from the popover trigger to the popover itself
  * without triggering a mouseleave event.
  */
-.popover-mousemove-padding-bottom {
-    bottom: -15px;
-    height: 20px;
-    position: absolute;
-    right: 0;
-    width: 100%;
-}
-
 %vertical-popover-padding {
     height: 100%;
     position: absolute;
     top: 0;
-    width: 40px;
+    width: 20px;
+    padding: 20px 0;
+    top: -20px;
+}
+
+%horizontal-popover-padding {
+    height: 25px;
+    position: absolute;
+    right: 0;
+    width: 100%;
+    padding: 0 35px;
+    left: -35px;
 }
 
 .popover-mousemove-padding-left {
     @extend %vertical-popover-padding;
-    left: -20px;
+    left: -35px;
 }
 
 .popover-mousemove-padding-right {
     @extend %vertical-popover-padding;
-    right: -20px;
+    right: -35px;
 }
 
-/**
- * An invisible element is added to the top of the popover to ensure the mouse
- * stays over the popover when the popover's height is shrunk, which would then
- * normally leave the mouse outside of the popover itself and cause a mouseleave
- * event.
- */
-.popover-mouse-padding-top {
-    height: 30px;
-    position: absolute;
-    right: 0;
-    top: -25px;
-    width: 100%;
+.popover-mousemove-padding-bottom {
+    @extend %horizontal-popover-padding;
+    bottom: -40px;
+}
+
+.popover-mousemove-padding-top {
+    @extend %horizontal-popover-padding;
+    top: -40px;
 }
 
 .popover {
-    background-color: $popoverBg;
-    border-radius: 3px;
     margin: -16px -24px;
-    padding: 16px 24px;
     z-index: $popoverZ;
 }

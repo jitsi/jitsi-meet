@@ -3,7 +3,6 @@
 import React from 'react';
 import SplashScreen from 'react-native-splash-screen';
 
-import { setColorScheme } from '../../base/color-scheme';
 import { DialogContainer } from '../../base/dialog';
 import { updateFlags } from '../../base/flags/actions';
 import { CALL_INTEGRATION_ENABLED, SERVER_URL_CHANGE_ENABLED } from '../../base/flags/constants';
@@ -11,6 +10,7 @@ import { getFeatureFlag } from '../../base/flags/functions';
 import { Platform } from '../../base/react';
 import { DimensionsDetector, clientResized } from '../../base/responsive-ui';
 import { updateSettings } from '../../base/settings';
+import { _getRouteToRender } from '../getRouteToRender.native';
 import logger from '../logger';
 
 import { AbstractApp } from './AbstractApp';
@@ -51,10 +51,13 @@ type Props = AbstractAppProps & {
 /**
  * Root app {@code Component} on mobile/React Native.
  *
- * @extends AbstractApp
+ * @augments AbstractApp
  */
 export class App extends AbstractApp {
-    _init: Promise<*>;
+    /**
+     * The deferred for the initialisation {{promise, resolve, reject}}.
+     */
+    _init: Object;
 
     /**
      * Initializes a new {@code App} instance.
@@ -82,41 +85,49 @@ export class App extends AbstractApp {
      *
      * @returns {void}
      */
-    componentDidMount() {
-        super.componentDidMount();
+    async componentDidMount() {
+        await super.componentDidMount();
 
         SplashScreen.hide();
+    }
 
-        this._init.then(() => {
-            const { dispatch, getState } = this.state.store;
+    /**
+     * Initializes feature flags and updates settings.
+     *
+     * @returns {void}
+     */
+    async _extraInit() {
+        const { dispatch, getState } = this.state.store;
+        const route = await _getRouteToRender();
 
-            // We set these early enough so then we avoid any unnecessary re-renders.
-            dispatch(setColorScheme(this.props.colorScheme));
-            dispatch(updateFlags(this.props.flags));
+        // We need the root navigator to be set early.
+        await this._navigate(route);
 
-            // Check if serverURL is configured externally and not allowed to change.
-            const serverURLChangeEnabled = getFeatureFlag(getState(), SERVER_URL_CHANGE_ENABLED, true);
+        // We set these early enough so then we avoid any unnecessary re-renders.
+        dispatch(updateFlags(this.props.flags));
 
-            if (!serverURLChangeEnabled) {
-                // As serverURL is provided externally, so we push it to settings.
-                if (typeof this.props.url !== 'undefined') {
-                    const { serverURL } = this.props.url;
+        // Check if serverURL is configured externally and not allowed to change.
+        const serverURLChangeEnabled = getFeatureFlag(getState(), SERVER_URL_CHANGE_ENABLED, true);
 
-                    if (typeof serverURL !== 'undefined') {
-                        dispatch(updateSettings({ serverURL }));
-                    }
+        if (!serverURLChangeEnabled) {
+            // As serverURL is provided externally, so we push it to settings.
+            if (typeof this.props.url !== 'undefined') {
+                const { serverURL } = this.props.url;
+
+                if (typeof serverURL !== 'undefined') {
+                    dispatch(updateSettings({ serverURL }));
                 }
             }
+        }
 
-            dispatch(updateSettings(this.props.userInfo || {}));
+        dispatch(updateSettings(this.props.userInfo || {}));
 
-            // Update settings with feature-flag.
-            const callIntegrationEnabled = this.props.flags[CALL_INTEGRATION_ENABLED];
+        // Update settings with feature-flag.
+        const callIntegrationEnabled = this.props.flags[CALL_INTEGRATION_ENABLED];
 
-            if (typeof callIntegrationEnabled !== 'undefined') {
-                dispatch(updateSettings({ disableCallIntegration: !callIntegrationEnabled }));
-            }
-        });
+        if (typeof callIntegrationEnabled !== 'undefined') {
+            dispatch(updateSettings({ disableCallIntegration: !callIntegrationEnabled }));
+        }
     }
 
     /**

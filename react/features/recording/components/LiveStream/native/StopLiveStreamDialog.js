@@ -13,7 +13,7 @@ import AbstractStopLiveStreamDialog, {
  * A React Component for confirming the participant wishes to stop the currently
  * active live stream of the conference.
  *
- * @extends Component
+ * @augments Component
  */
 class StopLiveStreamDialog extends AbstractStopLiveStreamDialog {
 
@@ -26,12 +26,12 @@ class StopLiveStreamDialog extends AbstractStopLiveStreamDialog {
     render() {
         return (
             <ConfirmDialog
-                contentKey = 'dialog.stopStreamingWarning'
+                descriptionKey = 'dialog.stopStreamingWarning'
                 onSubmit = { this._onSubmit } />
         );
     }
 
-    _onSubmit: () => boolean
+    _onSubmit: () => boolean;
 }
 
 export default translate(connect(_mapStateToProps)(StopLiveStreamDialog));

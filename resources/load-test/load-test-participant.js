@@ -341,6 +341,49 @@ function onUserLeft(id) {
 }
 
 /**
+ * Handles private messages.
+ *
+ * @param {string} id - The sender ID.
+ * @param {string} text - The message.
+ * @returns {void}
+ */
+function onPrivateMessage(id, text) {
+    switch(text) {
+        case 'video on':
+            onVideoOnMessage();
+            break;
+    }
+}
+
+/**
+ * Handles 'video on' private messages.
+ *
+ * @returns {void}
+ */
+function onVideoOnMessage() {
+    console.debug('Turning my video on!');
+
+    const localVideoTrack = room.getLocalVideoTrack();
+
+    if (localVideoTrack && localVideoTrack.isMuted()) {
+        console.debug('Unmuting existing video track.');
+        localVideoTrack.unmute();
+    } else if (!localVideoTrack) {
+        JitsiMeetJS.createLocalTracks({ devices: [ 'video' ] })
+            .then(([ videoTrack ]) => videoTrack)
+            .catch(console.error)
+            .then(videoTrack => {
+                return room.replaceTrack(null, videoTrack);
+            })
+            .then(() => {
+                console.debug('Successfully added a new video track for unmute.');
+            });
+    } else {
+        console.log('No-op! We are already video unmuted!');
+    }
+}
+
+/**
  * That function is called when connection is established successfully
  */
 function onConnectionSuccess() {
@@ -351,6 +394,7 @@ function onConnectionSuccess() {
     room.on(JitsiMeetJS.events.conference.CONNECTION_ESTABLISHED, onConnectionEstablished);
     room.on(JitsiMeetJS.events.conference.USER_JOINED, onUserJoined);
     room.on(JitsiMeetJS.events.conference.USER_LEFT, onUserLeft);
+    room.on(JitsiMeetJS.events.conference.PRIVATE_MESSAGE_RECEIVED, onPrivateMessage);
     if (stageView) {
         room.on(JitsiMeetJS.events.conference.DOMINANT_SPEAKER_CHANGED, onDominantSpeakerChanged);
     }

@@ -6,7 +6,7 @@ import {
     sendAnalytics
 } from '../analytics';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
-import { CONFERENCE_WILL_JOIN, getCurrentConference } from '../base/conference';
+import { CONFERENCE_JOIN_IN_PROGRESS, getCurrentConference } from '../base/conference';
 import JitsiMeetJS, {
     JitsiConferenceEvents,
     JitsiRecordingConstants
@@ -27,6 +27,7 @@ import {
     showPendingRecordingNotification,
     showRecordingError,
     showRecordingLimitNotification,
+    showRecordingWarning,
     showStartedRecordingNotification,
     showStoppedRecordingNotification,
     updateRecordingSessionData
@@ -105,21 +106,15 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
         break;
 
-    case CONFERENCE_WILL_JOIN: {
+    case CONFERENCE_JOIN_IN_PROGRESS: {
         const { conference } = action;
 
         conference.on(
             JitsiConferenceEvents.RECORDER_STATE_CHANGED,
             recorderSession => {
-
                 if (recorderSession) {
-                    recorderSession.getID()
-                        && dispatch(
-                            updateRecordingSessionData(recorderSession));
-
-                    recorderSession.getError()
-                        && _showRecordingErrorNotification(
-                            recorderSession, dispatch);
+                    recorderSession.getID() && dispatch(updateRecordingSessionData(recorderSession));
+                    recorderSession.getError() && _showRecordingErrorNotification(recorderSession, dispatch);
                 }
 
                 return;
@@ -135,7 +130,6 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         const {
             iAmRecorder,
             iAmSipGateway,
-            disableRecordAudioNotification,
             recordingLimit
         } = getState()['features/base/config'];
 
@@ -164,10 +158,6 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 }
 
                 sendAnalytics(createRecordingEvent('start', mode));
-
-                if (disableRecordAudioNotification) {
-                    break;
-                }
 
                 let soundID;
 
@@ -199,10 +189,6 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                         = (Date.now() / 1000) - oldSessionData.timestamp;
                 }
                 sendAnalytics(createRecordingEvent('stop', mode, duration));
-
-                if (disableRecordAudioNotification) {
-                    break;
-                }
 
                 if (mode === JitsiRecordingConstants.mode.FILE) {
                     soundOff = RECORDING_OFF_SOUND_ID;
@@ -268,6 +254,14 @@ function _showRecordingErrorNotification(recorderSession, dispatch) {
             titleKey: isStreamMode
                 ? 'liveStreaming.busyTitle'
                 : 'recording.busyTitle'
+        }));
+        break;
+    case JitsiMeetJS.constants.recording.error.UNEXPECTED_REQUEST:
+        dispatch(showRecordingWarning({
+            descriptionKey: isStreamMode
+                ? 'liveStreaming.sessionAlreadyActive'
+                : 'recording.sessionAlreadyActive',
+            titleKey: isStreamMode ? 'liveStreaming.inProgress' : 'recording.inProgress'
         }));
         break;
     default:

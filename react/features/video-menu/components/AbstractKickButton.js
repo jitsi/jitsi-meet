@@ -4,7 +4,7 @@ import { openDialog } from '../../base/dialog';
 import { IconCloseCircle } from '../../base/icons';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 
-import { KickRemoteParticipantDialog } from '.';
+import { KickRemoteParticipantDialog } from './';
 
 export type Props = AbstractButtonProps & {
 

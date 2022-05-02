@@ -52,7 +52,7 @@ export type DialogProps = {
     /**
      * The string to use as a title instead of {@code titleKey}. If a truthy
      * value is specified, it takes precedence over {@code titleKey} i.e.
-     * the latter is unused.
+     * The latter is unused.
      */
     titleString: ?string
 };

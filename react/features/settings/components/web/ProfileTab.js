@@ -43,6 +43,16 @@ export type Props = {
     email: string,
 
     /**
+     * If the display name is read only.
+     */
+    readOnlyName: boolean,
+
+    /**
+     * Whether to hide the email input in the profile settings.
+     */
+    hideEmailInSettings?: boolean,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -51,7 +61,7 @@ export type Props = {
 /**
  * React {@code Component} for modifying the local user's profile.
  *
- * @extends Component
+ * @augments Component
  */
 class ProfileTab extends AbstractDialogTab<Props> {
     static defaultProps = {
@@ -111,6 +121,8 @@ class ProfileTab extends AbstractDialogTab<Props> {
             authEnabled,
             displayName,
             email,
+            hideEmailInSettings,
+            readOnlyName,
             t
         } = this.props;
 
@@ -122,6 +134,7 @@ class ProfileTab extends AbstractDialogTab<Props> {
                             autoComplete = 'name'
                             compact = { true }
                             id = 'setDisplayName'
+                            isReadOnly = { readOnlyName }
                             label = { t('profile.setDisplayNameLabel') }
                             onChange = { this._onDisplayNameChange }
                             placeholder = { t('settings.name') }
@@ -129,7 +142,7 @@ class ProfileTab extends AbstractDialogTab<Props> {
                             type = 'text'
                             value = { displayName } />
                     </div>
-                    <div className = 'profile-edit-field'>
+                    {!hideEmailInSettings && <div className = 'profile-edit-field'>
                         <FieldTextStateless
                             compact = { true }
                             id = 'setEmail'
@@ -139,7 +152,7 @@ class ProfileTab extends AbstractDialogTab<Props> {
                             shouldFitContainer = { true }
                             type = 'text'
                             value = { email } />
-                    </div>
+                    </div>}
                 </div>
                 { authEnabled && this._renderAuth() }
             </div>

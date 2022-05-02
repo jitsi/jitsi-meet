@@ -1,12 +1,15 @@
 // @flow
 
 import React from 'react';
-import { View } from 'react-native';
 
-import { CustomSubmitDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
+import JitsiScreen from '../../../../base/modal/components/JitsiScreen';
 import { connect } from '../../../../base/redux';
 import { googleApi } from '../../../../google-api';
+import HeaderNavigationButton
+    from '../../../../mobile/navigation/components/HeaderNavigationButton';
+import { goBack }
+    from '../../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
 import { setLiveStreamKey } from '../../../actions';
 import AbstractStartLiveStreamDialog,
 { _mapStateToProps, type Props } from '../AbstractStartLiveStreamDialog';
@@ -30,10 +33,42 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<Props> {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
+        this._onStartPress = this._onStartPress.bind(this);
         this._onStreamKeyChangeNative
             = this._onStreamKeyChangeNative.bind(this);
         this._onStreamKeyPick = this._onStreamKeyPick.bind(this);
         this._onUserChanged = this._onUserChanged.bind(this);
+    }
+
+    /**
+     * Implements React's {@link Component#componentDidMount()}. Invoked
+     * immediately after this component is mounted.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidMount() {
+        const { navigation, t } = this.props;
+
+        navigation.setOptions({
+            headerRight: () => (
+                <HeaderNavigationButton
+                    label = { t('dialog.start') }
+                    onPress = { this._onStartPress }
+                    twoActions = { true } />
+            )
+        });
+    }
+
+    _onStartPress: () => void;
+
+    /**
+     * Starts live stream session and goes back to the previous screen.
+     *
+     * @returns {void}
+     */
+    _onStartPress() {
+        this._onSubmit() && goBack();
     }
 
     /**
@@ -43,23 +78,18 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<Props> {
      */
     render() {
         return (
-            <CustomSubmitDialog
-                okKey = 'dialog.startLiveStreaming'
-                onCancel = { this._onCancel }
-                onSubmit = { this._onSubmit } >
-                <View style = { styles.startDialogWrapper }>
-                    <GoogleSigninForm
-                        onUserChanged = { this._onUserChanged } />
-                    <StreamKeyPicker
-                        broadcasts = { this.state.broadcasts }
-                        onChange = { this._onStreamKeyPick } />
-                    <StreamKeyForm
-                        onChange = { this._onStreamKeyChangeNative }
-                        value = {
-                            this.state.streamKey || this.props._streamKey
-                        } />
-                </View>
-            </CustomSubmitDialog>
+            <JitsiScreen style = { styles.startLiveStreamContainer }>
+                <GoogleSigninForm
+                    onUserChanged = { this._onUserChanged } />
+                <StreamKeyPicker
+                    broadcasts = { this.state.broadcasts }
+                    onChange = { this._onStreamKeyPick } />
+                <StreamKeyForm
+                    onChange = { this._onStreamKeyChangeNative }
+                    value = {
+                        this.state.streamKey || this.props._streamKey
+                    } />
+            </JitsiScreen>
         );
     }
 
@@ -67,7 +97,7 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<Props> {
 
     _onSubmit: () => boolean;
 
-    _onStreamKeyChange: string => void
+    _onStreamKeyChange: string => void;
 
     _onStreamKeyChangeNative: string => void;
 
@@ -88,7 +118,7 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<Props> {
         this._onStreamKeyChange(streamKey);
     }
 
-    _onStreamKeyPick: string => void
+    _onStreamKeyPick: string => void;
 
     /**
      * Callback to be invoked when the user selects a stream from the picker.
@@ -103,7 +133,7 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<Props> {
         });
     }
 
-    _onUserChanged: Object => void
+    _onUserChanged: Object => void;
 
     /**
      * A callback to be invoked when an authenticated user changes, so

@@ -5,78 +5,71 @@ import React from 'react';
 import { batch } from 'react-redux';
 
 import { BaseApp } from '../../../features/base/app';
+import { getConferenceOptions } from '../../base/conference/functions';
 import { setConfig } from '../../base/config';
 import { DialogContainer } from '../../base/dialog';
 import { createPrejoinTracks } from '../../base/tracks';
-import { getConferenceOptions } from '../../conference/functions';
+import GlobalStyles from '../../base/ui/components/GlobalStyles';
+import JitsiThemeProvider from '../../base/ui/components/JitsiThemeProvider';
 import { initPrejoin, makePrecallTest } from '../actions';
 
-import Prejoin from './Prejoin';
+import PrejoinThirdParty from './PrejoinThirdParty';
 
 type Props = {
 
     /**
-     * Indicates whether the avatar should be shown when video is off
+     * Indicates the style type that needs to be applied.
      */
-    showAvatar: boolean,
-
-    /**
-     * Flag signaling the visibility of join label, input and buttons
-     */
-    showJoinActions: boolean,
-
-    /**
-     * Flag signaling the visibility of the skip prejoin toggle
-     */
-    showSkipPrejoin: boolean,
-};
+    styleType: string
+}
 
 /**
  * Wrapper application for prejoin.
  *
- * @extends BaseApp
+ * @augments BaseApp
  */
 export default class PrejoinApp extends BaseApp<Props> {
-    _init: Promise<*>;
+    /**
+     * The deferred for the initialisation {{promise, resolve, reject}}.
+     */
+    _init: Object;
 
     /**
      * Navigates to {@link Prejoin} upon mount.
      *
      * @returns {void}
      */
-    componentDidMount() {
-        super.componentDidMount();
+    async componentDidMount() {
+        await super.componentDidMount();
 
-        this._init.then(async () => {
-            const { store } = this.state;
-            const { dispatch } = store;
-            const { showAvatar, showJoinActions, showSkipPrejoin } = this.props;
+        const { store } = this.state;
+        const { dispatch } = store;
+        const { styleType } = this.props;
 
-            super._navigate({
-                component: Prejoin,
-                props: {
-                    showAvatar,
-                    showJoinActions,
-                    showSkipPrejoin
-                }
-            });
+        super._navigate({
+            component: PrejoinThirdParty,
+            props: {
+                className: styleType
+            }
+        });
 
-            const { startWithAudioMuted, startWithVideoMuted } = store.getState()['features/base/settings'];
+        const { startWithAudioMuted, startWithVideoMuted } = store.getState()['features/base/settings'];
 
-            dispatch(setConfig({
-                prejoinPageEnabled: true,
-                startWithAudioMuted,
-                startWithVideoMuted
-            }));
+        dispatch(setConfig({
+            prejoinConfig: {
+                enabled: true
+            },
+            startWithAudioMuted,
+            startWithVideoMuted
+        }));
 
-            const { tryCreateLocalTracks, errors } = createPrejoinTracks();
+        const { tryCreateLocalTracks, errors } = createPrejoinTracks();
 
-            const tracks = await tryCreateLocalTracks;
+        const tracks = await tryCreateLocalTracks;
 
-            batch(() => {
-                dispatch(initPrejoin(tracks, errors));
-                dispatch(makePrecallTest(getConferenceOptions(store.getState())));
-            });
+        batch(() => {
+            dispatch(initPrejoin(tracks, errors));
+            dispatch(makePrecallTest(getConferenceOptions(store.getState())));
         });
     }
 
@@ -88,9 +81,12 @@ export default class PrejoinApp extends BaseApp<Props> {
      */
     _createMainElement(component, props) {
         return (
-            <AtlasKitThemeProvider mode = 'dark'>
-                { super._createMainElement(component, props) }
-            </AtlasKitThemeProvider>
+            <JitsiThemeProvider>
+                <AtlasKitThemeProvider mode = 'dark'>
+                    <GlobalStyles />
+                    { super._createMainElement(component, props) }
+                </AtlasKitThemeProvider>
+            </JitsiThemeProvider>
         );
     }
 
@@ -101,9 +97,11 @@ export default class PrejoinApp extends BaseApp<Props> {
      */
     _renderDialogContainer() {
         return (
-            <AtlasKitThemeProvider mode = 'dark'>
-                <DialogContainer />
-            </AtlasKitThemeProvider>
+            <JitsiThemeProvider>
+                <AtlasKitThemeProvider mode = 'dark'>
+                    <DialogContainer />
+                </AtlasKitThemeProvider>
+            </JitsiThemeProvider>
         );
     }
 }

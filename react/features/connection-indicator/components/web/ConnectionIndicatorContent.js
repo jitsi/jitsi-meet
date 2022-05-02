@@ -3,14 +3,20 @@
 import React from 'react';
 import type { Dispatch } from 'redux';
 
+import { getSourceNameSignalingFeatureFlag } from '../../../base/config';
 import { translate } from '../../../base/i18n';
-import { JitsiParticipantConnectionStatus } from '../../../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../../base/media';
 import { getLocalParticipant, getParticipantById } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 import { ConnectionStatsTable } from '../../../connection-stats';
 import { saveLogs } from '../../actions';
+import {
+    isParticipantConnectionStatusInactive,
+    isParticipantConnectionStatusInterrupted,
+    isTrackStreamingStatusInactive,
+    isTrackStreamingStatusInterrupted
+} from '../../functions';
 import AbstractConnectionIndicator, {
     INDICATOR_DISPLAY_THRESHOLD,
     type Props as AbstractProps,
@@ -82,6 +88,12 @@ type Props = AbstractProps & {
     _enableSaveLogs: boolean,
 
     /**
+     * Whether or not the displays stats are for screen share. This prop is behind the sourceNameSignaling feature
+     * flag.
+     */
+    _isVirtualScreenshareParticipant: Boolean,
+
+    /**
      * Whether or not the displays stats are for local video.
      */
     _isLocalVideo: boolean,
@@ -92,12 +104,17 @@ type Props = AbstractProps & {
     _onSaveLogs: Function,
 
     /**
+     * The region reported by the participant.
+     */
+    _region: String,
+
+    /**
      * The video SSRC of this client.
      */
     _videoSsrc: number,
 
     /**
-     * Css class to apply on container
+     * Css class to apply on container.
      */
     className: string,
 
@@ -107,7 +124,7 @@ type Props = AbstractProps & {
     dispatch: Dispatch<any>,
 
     /**
-     * Optional param for passing existing connection stats on component instantiation
+     * Optional param for passing existing connection stats on component instantiation.
      */
     inheritedStats: Object,
 
@@ -132,7 +149,7 @@ type State = AbstractState & {
  * Implements a React {@link Component} which displays the current connection
  * quality percentage and has a popover to show more detailed connection stats.
  *
- * @extends {Component}
+ * @augments {Component}
  */
 class ConnectionIndicatorContent extends AbstractConnectionIndicator<Props, State> {
     /**
@@ -171,7 +188,6 @@ class ConnectionIndicatorContent extends AbstractConnectionIndicator<Props, Stat
             framerate,
             maxEnabledResolution,
             packetLoss,
-            region,
             resolution,
             serverRegion,
             transport
@@ -190,12 +206,13 @@ class ConnectionIndicatorContent extends AbstractConnectionIndicator<Props, Stat
                 enableSaveLogs = { this.props._enableSaveLogs }
                 framerate = { framerate }
                 isLocalVideo = { this.props._isLocalVideo }
+                isVirtualScreenshareParticipant = { this.props._isVirtualScreenshareParticipant }
                 maxEnabledResolution = { maxEnabledResolution }
                 onSaveLogs = { this.props._onSaveLogs }
                 onShowMore = { this._onToggleShowMore }
                 packetLoss = { packetLoss }
                 participantId = { this.props.participantId }
-                region = { region }
+                region = { this.props._region }
                 resolution = { resolution }
                 serverRegion = { serverRegion }
                 shouldShowMore = { this.state.showMoreStats }
@@ -213,12 +230,14 @@ class ConnectionIndicatorContent extends AbstractConnectionIndicator<Props, Stat
     _getConnectionStatusTip() {
         let tipKey;
 
-        switch (this.props._connectionStatus) {
-        case JitsiParticipantConnectionStatus.INTERRUPTED:
+        const { _isConnectionStatusInactive, _isConnectionStatusInterrupted } = this.props;
+
+        switch (true) {
+        case _isConnectionStatusInterrupted:
             tipKey = 'connectionindicator.quality.lost';
             break;
 
-        case JitsiParticipantConnectionStatus.INACTIVE:
+        case _isConnectionStatusInactive:
             tipKey = 'connectionindicator.quality.inactive';
             break;
 
@@ -306,16 +325,30 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
     const conference = state['features/base/conference'].conference;
     const participant
         = participantId ? getParticipantById(state, participantId) : getLocalParticipant(state);
+    const firstVideoTrack = getTrackByMediaTypeAndParticipant(
+        state['features/base/tracks'], MEDIA_TYPE.VIDEO, participantId);
+    const sourceNameSignalingEnabled = getSourceNameSignalingFeatureFlag(state);
+
+    const _isConnectionStatusInactive = sourceNameSignalingEnabled
+        ? isTrackStreamingStatusInactive(firstVideoTrack)
+        : isParticipantConnectionStatusInactive(participant);
+
+    const _isConnectionStatusInterrupted = sourceNameSignalingEnabled
+        ? isTrackStreamingStatusInterrupted(firstVideoTrack)
+        : isParticipantConnectionStatusInterrupted(participant);
+
     const props = {
         _connectionStatus: participant?.connectionStatus,
         _enableSaveLogs: state['features/base/config'].enableSaveLogs,
         _disableShowMoreStats: state['features/base/config'].disableShowMoreStats,
-        _isLocalVideo: participant?.local
+        _isConnectionStatusInactive,
+        _isConnectionStatusInterrupted,
+        _isVirtualScreenshareParticipant: sourceNameSignalingEnabled && participant?.isVirtualScreenshareParticipant,
+        _isLocalVideo: participant?.local,
+        _region: participant?.region
     };
 
     if (conference) {
-        const firstVideoTrack = getTrackByMediaTypeAndParticipant(
-            state['features/base/tracks'], MEDIA_TYPE.VIDEO, participantId);
         const firstAudioTrack = getTrackByMediaTypeAndParticipant(
             state['features/base/tracks'], MEDIA_TYPE.AUDIO, participantId);
 

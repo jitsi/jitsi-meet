@@ -20,9 +20,9 @@ class ChatPrivacyDialog extends AbstractChatPrivacyDialog {
     render() {
         return (
             <ConfirmDialog
-                cancelKey = 'dialog.sendPrivateMessageCancel'
-                contentKey = 'dialog.sendPrivateMessage'
-                okKey = 'dialog.sendPrivateMessageOk'
+                cancelLabel = 'dialog.sendPrivateMessageCancel'
+                confirmLabel = 'dialog.sendPrivateMessageOk'
+                descriptionKey = 'dialog.sendPrivateMessage'
                 onCancel = { this._onSendGroupMessage }
                 onSubmit = { this._onSendPrivateMessage } />
         );

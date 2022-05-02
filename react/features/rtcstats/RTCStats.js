@@ -1,5 +1,5 @@
-import rtcstatsInit from 'rtcstats/rtcstats';
-import traceInit from 'rtcstats/trace-ws';
+import rtcstatsInit from '@jitsi/rtcstats/rtcstats';
+import traceInit from '@jitsi/rtcstats/trace-ws';
 
 import {
     createRTCStatsTraceCloseEvent,
@@ -83,6 +83,36 @@ class RTCStats {
      */
     sendIdentityData(identityData) {
         this.trace && this.trace.identity('identity', null, identityData);
+    }
+
+    /**
+     * Send dominant speaker data, the data will be processed by rtcstats-server and saved in the dump file.
+     *
+     * @param {Object} dominantSpeakerData - Dominant speaker data to be saved in the rtcstats dump.
+     * @returns {void}
+     */
+    sendDominantSpeakerData(dominantSpeakerData) {
+        this.trace && this.trace.statsEntry('dominantSpeaker', null, dominantSpeakerData);
+    }
+
+    /**
+     * Send e2e rtt data, the data will be processed by rtcstats-server and saved in the dump file.
+     *
+     * @param {Object} e2eRttData - The object that holds the e2e data.
+     * @returns {void}
+     */
+    sendE2eRttData(e2eRttData) {
+        this.trace && this.trace.statsEntry('e2eRtt', null, e2eRttData);
+    }
+
+    /**
+     * Send face expression data, the data will be processed by rtcstats-server and saved in the dump file.
+     *
+     * @param {Object} faceExpressionData - Face expression data to be saved in the rtcstats dump.
+     * @returns {void}
+     */
+    sendFaceExpressionData(faceExpressionData) {
+        this.trace && this.trace.statsEntry('faceExpression', null, faceExpressionData);
     }
 
     /**

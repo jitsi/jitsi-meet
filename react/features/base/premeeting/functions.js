@@ -115,10 +115,8 @@ function _getLevel(thresholds, value, descending = true) {
 /**
  * Returns the connection details from the test results.
  *
- * @param {{
- *   fractionalLoss: number,
- *   throughput: number
- * }} testResults - The state of the app.
+ * @param {number} testResults.fractionalLoss - Factional loss.
+ * @param {number} testResults.throughput - Throughput.
  *
  * @returns {{
  *   connectionType: string,
@@ -212,15 +210,4 @@ export function getConnectionData(state: Object) {
         connectionType: CONNECTION_TYPE.NONE,
         connectionDetails: []
     };
-}
-
-/**
- * Returns if url sharing is enabled in interface configuration.
- *
- * @returns {boolean}
- */
-export function allowUrlSharing() {
-    return typeof interfaceConfig === 'undefined'
-        || typeof interfaceConfig.SHARING_FEATURES === 'undefined'
-        || (interfaceConfig.SHARING_FEATURES.length && interfaceConfig.SHARING_FEATURES.indexOf('url') > -1);
 }

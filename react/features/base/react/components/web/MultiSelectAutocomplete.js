@@ -22,7 +22,7 @@ type Props = {
 
     /**
      * Optional footer to show as a last element in the results.
-     * Should be of type {content: <some content>}
+     * Should be of type {content: <some content>}.
      */
     footer: Object,
 
@@ -73,7 +73,7 @@ type Props = {
     shouldFocus: boolean,
 
     /**
-     * Indicates whether the support link should be shown in case of an error
+     * Indicates whether the support link should be shown in case of an error.
      */
     showSupportLink: Boolean,
 };

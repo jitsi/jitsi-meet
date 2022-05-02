@@ -3,40 +3,94 @@
 import React from 'react';
 import { Text, View, TouchableOpacity, TextInput } from 'react-native';
 
-import { Avatar } from '../../../base/avatar';
-import { CustomDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
-import { Icon, IconEdit } from '../../../base/icons';
+import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { LoadingIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
-import AbstractLobbyScreen, { _mapStateToProps } from '../AbstractLobbyScreen';
+import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui';
+import BaseTheme from '../../../base/ui/components/BaseTheme';
+import InviteButton
+    from '../../../invite/components/add-people-dialog/native/InviteButton';
+import { LargeVideo } from '../../../large-video/components';
+import HeaderNavigationButton
+    from '../../../mobile/navigation/components/HeaderNavigationButton';
+import { navigate }
+    from '../../../mobile/navigation/components/lobby/LobbyNavigationContainerRef';
+import { screen } from '../../../mobile/navigation/routes';
+import AudioMuteButton from '../../../toolbox/components/AudioMuteButton';
+import VideoMuteButton from '../../../toolbox/components/VideoMuteButton';
+import AbstractLobbyScreen, {
+    Props as AbstractProps,
+    _mapStateToProps as abstractMapStateToProps } from '../AbstractLobbyScreen';
 
 import styles from './styles';
+
+
+type Props = AbstractProps & {
+
+    /**
+     * The current aspect ratio of the screen.
+     */
+    _aspectRatio: Symbol
+}
 
 /**
  * Implements a waiting screen that represents the participant being in the lobby.
  */
-class LobbyScreen extends AbstractLobbyScreen {
+class LobbyScreen extends AbstractLobbyScreen<Props> {
+    /**
+     * Implements React's {@link Component#componentDidMount()}. Invoked
+     * immediately after this component is mounted.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidMount() {
+        const { navigation, t } = this.props;
+
+        navigation.setOptions({
+            headerLeft: () => (
+                <HeaderNavigationButton
+                    label = { t('dialog.Cancel') }
+                    onPress = { this._onCancel } />
+            )
+        });
+    }
+
     /**
      * Implements {@code PureComponent#render}.
      *
      * @inheritdoc
      */
     render() {
-        const { _meetingName, t } = this.props;
+        const { _aspectRatio } = this.props;
+        let contentStyles;
+        let largeVideoContainerStyles;
+        let contentContainerStyles;
+
+        if (_aspectRatio === ASPECT_RATIO_NARROW) {
+            largeVideoContainerStyles = styles.largeVideoContainer;
+            contentContainerStyles = styles.contentContainer;
+        } else {
+            contentStyles = styles.contentWide;
+            largeVideoContainerStyles = styles.largeVideoContainerWide;
+            contentContainerStyles = styles.contentContainerWide;
+        }
 
         return (
-            <CustomDialog
-                onCancel = { this._onCancel }
+            <JitsiScreen
+                safeAreaInsets = { [ 'right' ] }
                 style = { styles.contentWrapper }>
-                <Text style = { styles.dialogTitle }>
-                    { t(this._getScreenTitleKey()) }
-                </Text>
-                <Text style = { styles.secondaryText }>
-                    { _meetingName }
-                </Text>
-                { this._renderContent() }
-            </CustomDialog>
+                <View style = { contentStyles }>
+                    <View style = { largeVideoContainerStyles }>
+                        <LargeVideo />
+                    </View>
+                    <View style = { contentContainerStyles }>
+                        { this._renderContent() }
+                        { this._renderToolbarButtons() }
+                    </View>
+                </View>
+            </JitsiScreen>
         );
     }
 
@@ -62,6 +116,20 @@ class LobbyScreen extends AbstractLobbyScreen {
 
     _renderContent: () => React$Element<*>;
 
+    _renderToolbarButtons: () => React$Element<*>;
+
+    _onNavigateToLobbyChat: () => void;
+
+    /**
+     * Navigates to the lobby chat screen.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onNavigateToLobbyChat() {
+        navigate(screen.lobby.chat);
+    }
+
     /**
      * Renders the joining (waiting) fragment of the screen.
      *
@@ -69,15 +137,15 @@ class LobbyScreen extends AbstractLobbyScreen {
      */
     _renderJoining() {
         return (
-            <>
+            <View style = { styles.formWrapper }>
                 <LoadingIndicator
-                    color = 'black'
+                    color = { BaseTheme.palette.icon01 }
                     style = { styles.loadingIndicator } />
                 <Text style = { styles.joiningMessage }>
                     { this.props.t('lobby.joiningMessage') }
                 </Text>
                 { this._renderStandardButtons() }
-            </>
+            </View>
         );
     }
 
@@ -88,7 +156,7 @@ class LobbyScreen extends AbstractLobbyScreen {
      */
     _renderParticipantForm() {
         const { t } = this.props;
-        const { displayName, email } = this.state;
+        const { displayName } = this.state;
 
         return (
             <View style = { styles.formWrapper }>
@@ -99,13 +167,6 @@ class LobbyScreen extends AbstractLobbyScreen {
                     onChangeText = { this._onChangeDisplayName }
                     style = { styles.field }
                     value = { displayName } />
-                <Text style = { styles.fieldLabel }>
-                    { t('lobby.emailField') }
-                </Text>
-                <TextInput
-                    onChangeText = { this._onChangeEmail }
-                    style = { styles.field }
-                    value = { email } />
             </View>
         );
     }
@@ -116,28 +177,7 @@ class LobbyScreen extends AbstractLobbyScreen {
      * @inheritdoc
      */
     _renderParticipantInfo() {
-        const { displayName, email } = this.state;
-
-        return (
-            <View style = { styles.participantBox }>
-                <TouchableOpacity
-                    onPress = { this._onEnableEdit }
-                    style = { styles.editButton }>
-                    <Icon
-                        src = { IconEdit }
-                        style = { styles.editIcon } />
-                </TouchableOpacity>
-                <Avatar
-                    participantId = { this.props._participantId }
-                    size = { 64 } />
-                <Text style = { styles.displayNameText }>
-                    { displayName }
-                </Text>
-                { Boolean(email) && <Text style = { styles.secondaryText }>
-                    { email }
-                </Text> }
-            </View>
-        );
+        return this._renderParticipantForm();
     }
 
     /**
@@ -176,7 +216,17 @@ class LobbyScreen extends AbstractLobbyScreen {
         const { t } = this.props;
 
         return (
-            <>
+            <View style = { styles.passwordJoinButtonsWrapper }>
+                <TouchableOpacity
+                    onPress = { this._onSwitchToKnockMode }
+                    style = { [
+                        styles.button,
+                        styles.primaryButton
+                    ] }>
+                    <Text style = { styles.primaryButtonText }>
+                        { t('lobby.backToKnockModeButton') }
+                    </Text>
+                </TouchableOpacity>
                 <TouchableOpacity
                     disabled = { !this.state.password }
                     onPress = { this._onJoinWithPassword }
@@ -188,17 +238,34 @@ class LobbyScreen extends AbstractLobbyScreen {
                         { t('lobby.passwordJoinButton') }
                     </Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                    onPress = { this._onSwitchToKnockMode }
-                    style = { [
-                        styles.button,
-                        styles.secondaryButton
-                    ] }>
-                    <Text>
-                        { t('lobby.backToKnockModeButton') }
-                    </Text>
-                </TouchableOpacity>
-            </>
+            </View>
+        );
+    }
+
+    /**
+     * Renders the toolbar buttons menu.
+     *
+     * @inheritdoc
+     */
+    _renderToolbarButtons() {
+        const { _aspectRatio } = this.props;
+        let toolboxContainerStyles;
+
+        if (_aspectRatio === ASPECT_RATIO_NARROW) {
+            toolboxContainerStyles = styles.toolboxContainer;
+        } else {
+            toolboxContainerStyles = styles.toolboxContainerWide;
+        }
+
+        return (
+            <View style = { toolboxContainerStyles }>
+                <AudioMuteButton
+                    styles = { styles.buttonStylesBorderless } />
+                <VideoMuteButton
+                    styles = { styles.buttonStylesBorderless } />
+                <InviteButton
+                    styles = { styles.buttonStylesBorderless } />
+            </View>
         );
     }
 
@@ -208,16 +275,29 @@ class LobbyScreen extends AbstractLobbyScreen {
      * @inheritdoc
      */
     _renderStandardButtons() {
-        const { _knocking, _renderPassword, t } = this.props;
+        const { _knocking, _renderPassword, _isLobbyChatActive, t } = this.props;
+        const { displayName } = this.state;
+        const askToJoinButtonStyles
+            = displayName ? styles.primaryButton : styles.primaryButtonDisabled;
 
         return (
-            <>
-                { _knocking || <TouchableOpacity
-                    disabled = { !this.state.displayName }
-                    onPress = { this._onAskToJoin }
+            <View style = { styles.standardButtonWrapper }>
+                { _knocking && _isLobbyChatActive && <TouchableOpacity
+                    onPress = { this._onNavigateToLobbyChat }
                     style = { [
                         styles.button,
                         styles.primaryButton
+                    ] }>
+                    <Text style = { styles.primaryButtonText }>
+                        { t('toolbar.openChat') }
+                    </Text>
+                </TouchableOpacity>}
+                { _knocking || <TouchableOpacity
+                    disabled = { !displayName }
+                    onPress = { this._onAskToJoin }
+                    style = { [
+                        styles.button,
+                        askToJoinButtonStyles
                     ] }>
                     <Text style = { styles.primaryButtonText }>
                         { t('lobby.knockButton') }
@@ -227,15 +307,31 @@ class LobbyScreen extends AbstractLobbyScreen {
                     onPress = { this._onSwitchToPasswordMode }
                     style = { [
                         styles.button,
-                        styles.secondaryButton
+                        styles.primaryButton
                     ] }>
-                    <Text>
+                    <Text style = { styles.primaryButtonText }>
                         { t('lobby.enterPasswordButton') }
                     </Text>
                 </TouchableOpacity> }
-            </>
+            </View>
         );
     }
+}
+
+/**
+ * Maps part of the Redux state to the props of this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @param {Props} ownProps - The own props of the component.
+ * @returns {{
+ *     _aspectRatio: Symbol
+ * }}
+ */
+function _mapStateToProps(state: Object, ownProps: Props) {
+    return {
+        ...abstractMapStateToProps(state, ownProps),
+        _aspectRatio: state['features/base/responsive-ui'].aspectRatio
+    };
 }
 
 export default translate(connect(_mapStateToProps)(LobbyScreen));

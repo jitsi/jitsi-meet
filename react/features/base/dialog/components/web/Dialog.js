@@ -34,7 +34,7 @@ type Props = AbstractDialogProps & {
      * - 'small' (400px), 'medium' (600px), 'large' (800px),
      * 'x-large' (968px)
      * - integer value for pixel width
-     * - string value for percentage
+     * - string value for percentage.
      */
     width: string
 };

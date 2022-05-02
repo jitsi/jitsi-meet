@@ -2,18 +2,25 @@
 
 .reactions-menu {
 	width: 280px;
-	background: #292929;
+	background: $menuBG;
 	box-shadow: 0px 3px 16px rgba(0, 0, 0, 0.6), 0px 0px 4px 1px rgba(0, 0, 0, 0.25);
 	border-radius: 3px;
 	padding: 16px;
 
+	&.with-gif {
+		width: 328px;
+
+		.reactions-row .toolbox-button:last-of-type {
+			top: 3px;
+
+			& .toolbox-icon.toggled {
+				background-color: #000000;
+			}
+		}
+	}
+
 	&.overflow {
-		width: auto;
-		padding-bottom: max(env(safe-area-inset-bottom, 0), 16px);
-		background-color: #141414;
-		box-shadow: none;
-		border-radius: 0;
-		position: relative;
+		width: 100%;
 
 		.toolbox-icon {
 			width: 48px;
@@ -33,6 +40,10 @@
 			.toolbox-button {
 				margin-right: 0;
 			}
+
+			.toolbox-button:last-of-type {
+				top: 0;
+			}
 		}
 	}
 
@@ -48,6 +59,13 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
+			transition: font-size ease .1s;
+
+			@for $i from 1 through 12 {
+				&.increase-#{$i}{
+					font-size: calc(20px + #{$i}px);
+				}
+			}
 		}
 	}
 
@@ -55,6 +73,7 @@
 		.toolbox-button {
 			margin-right: 8px;
 			touch-action: manipulation;
+			position: relative;
 		}
 
 		.toolbox-button:last-of-type {
@@ -85,6 +104,10 @@
 	}
 }
 
+.reactions-menu-container {
+	padding-bottom: 6px;
+}
+
 .reactions-animations-container {
 	position: absolute;
 	width: 20%;
@@ -93,8 +116,7 @@
 	height: 0;
 }
 
-.reactions-menu-popup-container,
-.reactions-menu-popup {
+.reactions-menu-popup-container {
 	display: inline-block;
 	position: relative;
 }

@@ -1,22 +1,18 @@
 // @flow
 
 import React from 'react';
+import { View } from 'react-native';
 
-import { IconSignalLevel0, IconSignalLevel1, IconSignalLevel2 } from '../../../base/icons';
+import { IconConnectionActive } from '../../../base/icons';
 import { BaseIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
+import indicatorStyles from '../../../filmstrip/components/native/styles';
 import AbstractConnectionIndicator, {
     type Props,
     type State
 } from '../AbstractConnectionIndicator';
 
-import { CONNECTOR_INDICATOR_COLORS } from './styles';
-
-const ICONS = [
-    IconSignalLevel0,
-    IconSignalLevel1,
-    IconSignalLevel2
-];
+import { CONNECTOR_INDICATOR_COLORS, iconStyle } from './styles';
 
 /**
  * Implements an indicator to show the quality of the connection of a participant.
@@ -55,11 +51,15 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
         const signalLevel = Math.floor(percent / 33.4);
 
         return (
-            <BaseIndicator
-                icon = { ICONS[signalLevel] }
-                iconStyle = {{
-                    color: CONNECTOR_INDICATOR_COLORS[signalLevel]
-                }} />
+            <View
+                style = {{
+                    ...indicatorStyles.indicatorContainer,
+                    backgroundColor: CONNECTOR_INDICATOR_COLORS[signalLevel]
+                }}>
+                <BaseIndicator
+                    icon = { IconConnectionActive }
+                    iconStyle = { iconStyle } />
+            </View>
         );
     }
 

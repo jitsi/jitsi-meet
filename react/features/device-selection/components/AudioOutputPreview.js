@@ -26,7 +26,7 @@ type Props = {
 /**
  * React component for playing a test sound through a specified audio device.
  *
- * @extends Component
+ * @augments Component
  */
 class AudioOutputPreview extends Component<Props> {
     _audioElement: ?Object;

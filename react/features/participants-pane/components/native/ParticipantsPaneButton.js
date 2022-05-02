@@ -6,7 +6,9 @@ import { translate } from '../../../base/i18n';
 import { IconParticipants } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-import { open } from '../../actions.native';
+import { navigate }
+    from '../../../mobile/navigation/components/conference/ConferenceNavigationContainerRef';
+import { screen } from '../../../mobile/navigation/routes';
 
 type Props = AbstractButtonProps & {
 
@@ -32,9 +34,7 @@ class ParticipantsPaneButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { dispatch } = this.props;
-
-        dispatch(open());
+        return navigate(screen.conference.participants);
     }
 }
 

@@ -1,1 +1,1 @@
-export { default as SharedDocumentButton } from './SharedDocumentButton';
+export { default as SharedDocumentButton } from './SharedDocumentButton.web';

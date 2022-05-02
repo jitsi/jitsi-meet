@@ -34,7 +34,7 @@ type Props = AbstractProps & {
     _footerTextEnabled: boolean,
 
     /**
-     * Whether the meeting belongs to JaaS user
+     * Whether the meeting belongs to JaaS user.
      */
     _isVpaas: boolean,
 
@@ -180,7 +180,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
         );
     }
 
-    _invite: Array<Object> => Promise<*>
+    _invite: Array<Object> => Promise<*>;
 
     _isAddDisabled: () => boolean;
 
@@ -315,7 +315,9 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
      */
     _parseQueryResults(response = []) {
         const { t, _dialOutEnabled } = this.props;
-        const users = response.filter(item => item.type === INVITE_TYPES.USER);
+
+        const userTypes = [ INVITE_TYPES.USER, INVITE_TYPES.VIDEO_ROOM, INVITE_TYPES.ROOM ];
+        const users = response.filter(item => userTypes.includes(item.type));
         const userDisplayItems = [];
 
         for (const user of users) {

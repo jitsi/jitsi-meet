@@ -5,6 +5,7 @@ import { Platform, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconChatSend } from '../../../base/icons';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 import styles from './styles';
 
@@ -58,7 +59,6 @@ class ChatInputBar extends Component<Props, State> {
         };
 
         this._onChangeText = this._onChangeText.bind(this);
-        this._onFieldReferenceAvailable = this._onFieldReferenceAvailable.bind(this);
         this._onFocused = this._onFocused.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
     }
@@ -83,8 +83,9 @@ class ChatInputBar extends Component<Props, State> {
                     onFocus = { this._onFocused(true) }
                     onSubmitEditing = { this._onSubmit }
                     placeholder = { this.props.t('chat.fieldPlaceHolder') }
-                    ref = { this._onFieldReferenceAvailable }
+                    placeholderTextColor = { BaseTheme.palette.text03 }
                     returnKeyType = 'send'
+                    selectionColor = { BaseTheme.palette.text03 }
                     style = { styles.inputField }
                     value = { this.state.message } />
                 {
@@ -111,18 +112,6 @@ class ChatInputBar extends Component<Props, State> {
             message: text,
             showSend: Boolean(text)
         });
-    }
-
-    _onFieldReferenceAvailable: Object => void;
-
-    /**
-     * Callback to be invoked when the field reference is available.
-     *
-     * @param {Object} field - The reference to the field.
-     * @returns {void}
-     */
-    _onFieldReferenceAvailable(field) {
-        field && field.focus();
     }
 
     _onFocused: boolean => Function;

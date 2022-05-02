@@ -16,6 +16,8 @@
 
 package org.jitsi.meet.sdk;
 
+import static org.jitsi.meet.sdk.NotificationChannels.ONGOING_CONFERENCE_CHANNEL_ID;
+
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -39,9 +41,6 @@ import java.util.Random;
 class OngoingNotification {
     private static final String TAG = OngoingNotification.class.getSimpleName();
 
-    private static final String CHANNEL_ID = "JitsiNotificationChannel";
-    private static final String CHANNEL_NAME = "Ongoing Conference Notifications";
-
     static final int NOTIFICATION_ID = new Random().nextInt(99999) + 10000;
     private static long startingTime = 0;
 
@@ -60,13 +59,13 @@ class OngoingNotification {
             = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         NotificationChannel channel
-            = notificationManager.getNotificationChannel(CHANNEL_ID);
+            = notificationManager.getNotificationChannel(ONGOING_CONFERENCE_CHANNEL_ID);
         if (channel != null) {
             // The channel was already created, no need to do it again.
             return;
         }
 
-        channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
+        channel = new NotificationChannel(ONGOING_CONFERENCE_CHANNEL_ID, context.getString(R.string.ongoing_notification_action_unmute), NotificationManager.IMPORTANCE_DEFAULT);
         channel.enableLights(false);
         channel.enableVibration(false);
         channel.setShowBadge(false);
@@ -82,9 +81,9 @@ class OngoingNotification {
         }
 
         Intent notificationIntent = new Intent(context, context.getClass());
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, ONGOING_CONFERENCE_CHANNEL_ID);
 
         if (startingTime == 0) {
             startingTime = System.currentTimeMillis();
@@ -125,7 +124,7 @@ class OngoingNotification {
         Intent intent = new Intent(context, JitsiMeetOngoingConferenceService.class);
         intent.setAction(action.getName());
         PendingIntent pendingIntent
-            = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
         String title = context.getString(titleId);
         return new NotificationCompat.Action(0, title, pendingIntent);
     }

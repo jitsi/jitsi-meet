@@ -16,6 +16,16 @@ import AudioMuteButton from '../AudioMuteButton';
 type Props = {
 
     /**
+     * The button's key.
+     */
+     buttonKey?: string,
+
+    /**
+     * External handler for click action.
+     */
+     handleClick: Function,
+
+    /**
      * Indicates whether audio permissions have been granted or denied.
      */
     hasPermissions: boolean,
@@ -31,6 +41,12 @@ type Props = {
     isDisabled: boolean,
 
     /**
+     * Notify mode for `toolbarButtonClicked` event -
+     * whether to only notify or to also prevent button click routine.
+     */
+    notifyMode?: string,
+
+    /**
      * Used for translation.
      */
     t: Function,
@@ -42,7 +58,7 @@ type Props = {
     visible: boolean,
 
     /**
-     * Defines is popup is open
+     * Defines is popup is open.
      */
     isOpen: boolean,
 };
@@ -62,6 +78,7 @@ class AudioSettingsButton extends Component<Props> {
         super(props);
 
         this._onEscClick = this._onEscClick.bind(this);
+        this._onClick = this._onClick.bind(this);
     }
 
     _onEscClick: (KeyboardEvent) => void;
@@ -76,8 +93,21 @@ class AudioSettingsButton extends Component<Props> {
         if (event.key === 'Escape' && this.props.isOpen) {
             event.preventDefault();
             event.stopPropagation();
-            this.props.onAudioOptionsClick();
+            this._onClick();
         }
+    }
+
+    _onClick: () => void;
+
+    /**
+     * Click handler for the more actions entries.
+     *
+     * @returns {void}
+     */
+    _onClick() {
+        const { onAudioOptionsClick } = this.props;
+
+        onAudioOptionsClick();
     }
 
     /**
@@ -86,7 +116,7 @@ class AudioSettingsButton extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { hasPermissions, isDisabled, onAudioOptionsClick, visible, isOpen, t } = this.props;
+        const { hasPermissions, isDisabled, visible, isOpen, buttonKey, notifyMode, t } = this.props;
         const settingsDisabled = !hasPermissions
             || isDisabled
             || !JitsiMeetJS.mediaDevices.isMultipleAudioInputSupported();
@@ -98,16 +128,22 @@ class AudioSettingsButton extends Component<Props> {
                     ariaExpanded = { isOpen }
                     ariaHasPopup = { true }
                     ariaLabel = { t('toolbar.audioSettings') }
+                    buttonKey = { buttonKey }
                     icon = { IconArrowUp }
                     iconDisabled = { settingsDisabled }
                     iconId = 'audio-settings-button'
                     iconTooltip = { t('toolbar.audioSettings') }
-                    onIconClick = { onAudioOptionsClick }
+                    notifyMode = { notifyMode }
+                    onIconClick = { this._onClick }
                     onIconKeyDown = { this._onEscClick }>
-                    <AudioMuteButton />
+                    <AudioMuteButton
+                        buttonKey = { buttonKey }
+                        notifyMode = { notifyMode } />
                 </ToolboxButtonWithIcon>
             </AudioSettingsPopup>
-        ) : <AudioMuteButton />;
+        ) : <AudioMuteButton
+            buttonKey = { buttonKey }
+            notifyMode = { notifyMode } />;
     }
 }
 
@@ -134,5 +170,5 @@ const mapDispatchToProps = {
 
 export default translate(connect(
     mapStateToProps,
-    mapDispatchToProps,
+    mapDispatchToProps
 )(AudioSettingsButton));

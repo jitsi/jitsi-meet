@@ -18,11 +18,6 @@ type Props = AbstractButtonProps & {
      * Whether or not the chat feature is currently displayed.
      */
      _chatOpen: boolean,
-
-    /**
-     * External handler for click action.
-     */
-    handleClick: Function
 };
 
 /**
@@ -48,20 +43,10 @@ class ChatButton extends AbstractButton<Props, *> {
     /**
      * Required by linter due to AbstractButton overwritten prop being writable.
      *
-     * @param {string} value - The value.
+     * @param {string} _value - The value.
      */
-    set tooltip(value) {
-        return value;
-    }
-
-    /**
-     * Handles clicking / pressing the button, and opens the appropriate dialog.
-     *
-     * @protected
-     * @returns {void}
-     */
-    _handleClick() {
-        this.props.handleClick();
+    set tooltip(_value) {
+        // Unused.
     }
 
     /**

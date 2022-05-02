@@ -32,7 +32,7 @@ type Props = {
 /**
  * Displays a table with phone numbers to dial in to a conference.
  *
- * @extends Component
+ * @augments Component
  */
 class NumbersList extends Component<Props> {
     /**
@@ -66,9 +66,20 @@ class NumbersList extends Component<Props> {
                 (resultNumbers, number) => {
                     // The i18n-iso-countries package insists on upper case.
                     const countryCode = number.countryCode.toUpperCase();
-                    const countryName = countryCode === 'SIP'
-                        ? t('info.sip')
-                        : t(`countries:countries.${countryCode}`);
+
+                    let countryName;
+
+                    if (countryCode === 'SIP') {
+                        countryName = t('info.sip');
+                    } else {
+                        countryName = t(`countries:countries.${countryCode}`);
+
+                        // Some countries have multiple names as US ['United States of America', 'USA']
+                        // choose the first one if that is the case
+                        if (!countryName) {
+                            countryName = t(`countries:countries.${countryCode}.0`);
+                        }
+                    }
 
                     if (resultNumbers[countryName]) {
                         resultNumbers[countryName].push(number);

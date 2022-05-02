@@ -8,6 +8,7 @@ import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
 import { Icon, IconPlane, IconSmile } from '../../../base/icons';
 import { connect } from '../../../base/redux';
+import { areSmileysDisabled } from '../../functions';
 
 import SmileysPanel from './SmileysPanel';
 
@@ -35,7 +36,13 @@ type Props = {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * Whether chat emoticons are disabled.
+     */
+    _areSmileysDisabled: boolean
+
 };
 
 /**
@@ -57,7 +64,7 @@ type State = {
 /**
  * Implements a React Component for drafting and submitting a chat message.
  *
- * @extends Component
+ * @augments Component
  */
 class ChatInput extends Component<Props, State> {
     _textArea: ?HTMLTextAreaElement;
@@ -115,28 +122,31 @@ class ChatInput extends Component<Props, State> {
         return (
             <div className = { `chat-input-container${this.state.message.trim().length ? ' populated' : ''}` }>
                 <div id = 'chat-input' >
-                    <div className = 'smiley-input'>
-                        <div id = 'smileysarea'>
-                            <div id = 'smileys'>
-                                <div
-                                    aria-expanded = { this.state.showSmileysPanel }
-                                    aria-haspopup = 'smileysContainer'
-                                    aria-label = { this.props.t('chat.smileysPanel') }
-                                    className = 'smiley-button'
-                                    onClick = { this._onToggleSmileysPanel }
-                                    onKeyDown = { this._onEscHandler }
-                                    onKeyPress = { this._onToggleSmileysPanelKeyPress }
-                                    role = 'button'
-                                    tabIndex = { 0 }>
-                                    <Icon src = { IconSmile } />
+                    { this.props._areSmileysDisabled ? null : (
+                        <div className = 'smiley-input'>
+                            <div id = 'smileysarea'>
+                                <div id = 'smileys'>
+                                    <div
+                                        aria-expanded = { this.state.showSmileysPanel }
+                                        aria-haspopup = 'smileysContainer'
+                                        aria-label = { this.props.t('chat.smileysPanel') }
+                                        className = 'smiley-button'
+                                        onClick = { this._onToggleSmileysPanel }
+                                        onKeyDown = { this._onEscHandler }
+                                        onKeyPress = { this._onToggleSmileysPanelKeyPress }
+                                        role = 'button'
+                                        tabIndex = { 0 }>
+                                        <Icon src = { IconSmile } />
+                                    </div>
                                 </div>
                             </div>
+                            <div
+                                className = { smileysPanelClassName } >
+                                <SmileysPanel
+                                    onSmileySelect = { this._onSmileySelect } />
+                            </div>
                         </div>
-                        <div className = { smileysPanelClassName }>
-                            <SmileysPanel
-                                onSmileySelect = { this._onSmileySelect } />
-                        </div>
-                    </div>
+                    ) }
                     <div className = 'usrmsg-form'>
                         <TextareaAutosize
                             autoComplete = 'off'
@@ -209,6 +219,18 @@ class ChatInput extends Component<Props, State> {
      * @returns {void}
      */
     _onDetectSubmit(event) {
+        // Composition events used to add accents to characters
+        // despite their absence from standard US keyboards,
+        // to build up logograms of many Asian languages
+        // from their base components or categories and so on.
+        if (event.isComposing || event.keyCode === 229) {
+            // keyCode 229 means that user pressed some button,
+            // but input method is still processing that.
+            // This is a standard behavior for some input methods
+            // like entering japanese or сhinese hieroglyphs.
+            return;
+        }
+
         if (event.key === 'Enter'
             && event.shiftKey === false
             && event.ctrlKey === false) {
@@ -336,4 +358,19 @@ class ChatInput extends Component<Props, State> {
     }
 }
 
-export default translate(connect()(ChatInput));
+/**
+ * Function that maps parts of Redux state tree into component props.
+ *
+ * @param {Object} state - Redux state.
+ * @private
+ * @returns {{
+ *     _areSmileysDisabled: boolean
+ * }}
+ */
+const mapStateToProps = state => {
+    return {
+        _areSmileysDisabled: areSmileysDisabled(state)
+    };
+};
+
+export default translate(connect(mapStateToProps)(ChatInput));

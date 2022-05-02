@@ -4,6 +4,7 @@ import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import React from 'react';
 
 import { DialogContainer } from '../../base/dialog';
+import GlobalStyles from '../../base/ui/components/GlobalStyles';
 import JitsiThemeProvider from '../../base/ui/components/JitsiThemeProvider';
 import { ChromeExtensionBanner } from '../../chrome-extension-banner';
 
@@ -16,7 +17,7 @@ import '../reducers';
 /**
  * Root app {@code Component} on Web/React.
  *
- * @extends AbstractApp
+ * @augments AbstractApp
  */
 export class App extends AbstractApp {
     /**
@@ -29,6 +30,7 @@ export class App extends AbstractApp {
         return (
             <JitsiThemeProvider>
                 <AtlasKitThemeProvider mode = 'dark'>
+                    <GlobalStyles />
                     <ChromeExtensionBanner />
                     { super._createMainElement(component, props) }
                 </AtlasKitThemeProvider>
@@ -43,9 +45,11 @@ export class App extends AbstractApp {
      */
     _renderDialogContainer() {
         return (
-            <AtlasKitThemeProvider mode = 'dark'>
-                <DialogContainer />
-            </AtlasKitThemeProvider>
+            <JitsiThemeProvider>
+                <AtlasKitThemeProvider mode = 'dark'>
+                    <DialogContainer />
+                </AtlasKitThemeProvider>
+            </JitsiThemeProvider>
         );
     }
 }
