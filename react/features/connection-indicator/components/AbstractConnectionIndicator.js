@@ -204,4 +204,18 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
     }
 }
 
+/**
+ * Maps (parts of) the Redux state to the associated props for the
+ * {@code ConnectorIndicator} component.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {Props}
+ */
+export function mapStateToProps(state: Object) {
+    return {
+        _autoHideTimeout: state['features/base/config'].connectionIndicators.autoHideTimeout ?? defaultAutoHideTimeout
+    };
+}
+
 export default AbstractConnectionIndicator;
