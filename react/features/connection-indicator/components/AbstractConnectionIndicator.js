@@ -6,6 +6,8 @@ import statsEmitter from '../statsEmitter';
 
 declare var interfaceConfig: Object;
 
+const defaultAutoHideTimeout = 5000;
+
 /**
  * The connection quality percentage that must be reached to be considered of
  * good quality and can result in the connection indicator being hidden.
