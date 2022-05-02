@@ -470,7 +470,7 @@ class ConnectionStatsTable extends Component<Props> {
             Object.keys(codec || {})
                 .forEach(ssrc => {
                     const { audio, video } = codec[ssrc];
-    
+
                     codecString = `${audio}, ${video}`;
                 });
         }
@@ -605,7 +605,7 @@ class ConnectionStatsTable extends Component<Props> {
                 .map(ssrc => framerate[ssrc])
                 .join(', ') || 'N/A';
         }
-        
+
         return (
             <tr>
                 <td>

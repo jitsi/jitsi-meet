@@ -447,6 +447,7 @@ export function getSourceNameByParticipantId(state, participantId) {
     const participant = getParticipantByIdOrUndefined(state, participantId);
     const tracks = state['features/base/tracks'];
     const track = getVideoTrackByParticipant(tracks, participant);
+
     return track?.jitsiTrack?.getSourceName();
 }
 

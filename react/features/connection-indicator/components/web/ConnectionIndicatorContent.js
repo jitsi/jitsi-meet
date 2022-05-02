@@ -226,7 +226,7 @@ class ConnectionIndicatorContent extends AbstractConnectionIndicator<Props, Stat
                 resolution = { resolution }
                 serverRegion = { serverRegion }
                 shouldShowMore = { this.state.showMoreStats }
-                sourceNameSignalingEnabled = {this.props._sourceNameSignalingEnabled }
+                sourceNameSignalingEnabled = { this.props._sourceNameSignalingEnabled }
                 transport = { transport }
                 videoSsrc = { this.props._videoSsrc } />
         );

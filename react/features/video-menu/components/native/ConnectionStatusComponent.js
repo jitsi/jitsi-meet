@@ -15,8 +15,8 @@ import { getParticipantDisplayName } from '../../../base/participants';
 import { BaseIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
-import { getSourceNameByParticipantId } from '../../base/tracks';
 import statsEmitter from '../../../connection-indicator/statsEmitter';
+import { getSourceNameByParticipantId } from '../../base/tracks';
 
 import styles from './styles';
 
@@ -245,7 +245,7 @@ class ConnectionStatusComponent extends Component<Props, State> {
                     this.props._sourceName, this._onStatsUpdated);
             }
         } else {
-            if (prevProps.participantID !== this.props.participantID) {
+            if (prevProps.participantID !== this.props.participantID) { // eslint-disable-line no-lonely-if
                 statsEmitter.unsubscribeToClientStats(
                     prevProps.participantID, this._onStatsUpdated);
                 statsEmitter.subscribeToClientStats(
@@ -306,7 +306,7 @@ class ConnectionStatusComponent extends Component<Props, State> {
      */
     _extractResolutionString(stats) {
         const { framerate, resolution } = stats;
-        let resolutionString, frameRateString;
+        let frameRateString, resolutionString;
 
         if (this.props._sourceNameSignalingEnabled) {
             resolutionString = resolution ? `${resolution.width}x${resolution.height}` : null;
@@ -315,11 +315,11 @@ class ConnectionStatusComponent extends Component<Props, State> {
             resolutionString = Object.keys(resolution || {})
                 .map(ssrc => {
                     const { width, height } = resolution[ssrc];
-        
+
                     return `${width}x${height}`;
                 })
                 .join(', ') || null;
-    
+
             frameRateString = Object.keys(framerate || {})
                 .map(ssrc => framerate[ssrc])
                 .join(', ') || null;
@@ -382,7 +382,7 @@ class ConnectionStatusComponent extends Component<Props, State> {
             Object.keys(codec || {})
                 .forEach(ssrc => {
                     const { audio, video } = codec[ssrc];
-    
+
                     codecString = `${audio}, ${video}`;
                 });
         }

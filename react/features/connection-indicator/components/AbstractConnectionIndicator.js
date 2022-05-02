@@ -6,8 +6,6 @@ import statsEmitter from '../statsEmitter';
 
 declare var interfaceConfig: Object;
 
-const defaultAutoHideTimeout = 5000;
-
 /**
  * The connection quality percentage that must be reached to be considered of
  * good quality and can result in the connection indicator being hidden.
@@ -119,7 +117,7 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
                     this.props._sourceName, this._onStatsUpdated);
             }
         } else {
-            if (prevProps.participantId !== this.props.participantId) {
+            if (prevProps.participantId !== this.props.participantId) { // eslint-disable-line no-lonely-if
                 statsEmitter.unsubscribeToClientStats(
                     prevProps.participantId, this._onStatsUpdated);
                 statsEmitter.subscribeToClientStats(
@@ -138,7 +136,7 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
     componentWillUnmount() {
         if (this.props._sourceNameSignalingEnabled) {
             statsEmitter.unsubscribeToClientStats(
-                this.props._sourceName, this._onStatsUpdated);        
+                this.props._sourceName, this._onStatsUpdated);
         } else {
             statsEmitter.unsubscribeToClientStats(
                 this.props.participantId, this._onStatsUpdated);
