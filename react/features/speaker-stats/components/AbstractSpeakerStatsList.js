@@ -26,7 +26,7 @@ const abstractSpeakerStatsList = (speakerStatsItem: Function, itemStyles?: Objec
     const { defaultRemoteDisplayName } = useSelector(
         state => state['features/base/config']) || {};
     const { faceLandmarks } = useSelector(state => state['features/base/config']) || {};
-    const { faceExpressions } = useSelector(state => state['features/face-landmarks']);
+    const { faceExpressions } = useSelector(state => state['features/face-landmarks']) || {};
     const reloadInterval = useRef(null);
 
     /**
