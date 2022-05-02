@@ -15,6 +15,7 @@ import { getParticipantDisplayName } from '../../../base/participants';
 import { BaseIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
+import { getSourceNameByParticipantId } from '../../base/tracks';
 import statsEmitter from '../../../connection-indicator/statsEmitter';
 
 import styles from './styles';
@@ -66,6 +67,11 @@ export type Props = {
      * Theme used for styles.
      */
     theme: Object,
+
+    /**
+     * The source name of the track.
+     */
+     _sourceName: string,
 
     /**
      * Whether source name signaling is enabled.
@@ -215,8 +221,13 @@ class ConnectionStatusComponent extends Component<Props, State> {
      * returns {void}
      */
     componentDidMount() {
-        statsEmitter.subscribeToClientStats(
-            this.props.participantID, this._onStatsUpdated);
+        if (this.props._sourceNameSignalingEnabled) {
+            statsEmitter.subscribeToClientStats(
+                this.props._sourceName, this._onStatsUpdated);
+        } else {
+            statsEmitter.subscribeToClientStats(
+                this.props.participantID, this._onStatsUpdated);
+        }
     }
 
     /**
@@ -226,11 +237,20 @@ class ConnectionStatusComponent extends Component<Props, State> {
      * returns {void}
      */
     componentDidUpdate(prevProps: Props) {
-        if (prevProps.participantID !== this.props.participantID) {
-            statsEmitter.unsubscribeToClientStats(
-                prevProps.participantID, this._onStatsUpdated);
-            statsEmitter.subscribeToClientStats(
-                this.props.participantID, this._onStatsUpdated);
+        if (this.props._sourceNameSignalingEnabled) {
+            if (prevProps._sourceName !== this.props._sourceName) {
+                statsEmitter.unsubscribeToClientStats(
+                    prevProps._sourceName, this._onStatsUpdated);
+                statsEmitter.subscribeToClientStats(
+                    this.props._sourceName, this._onStatsUpdated);
+            }
+        } else {
+            if (prevProps.participantID !== this.props.participantID) {
+                statsEmitter.unsubscribeToClientStats(
+                    prevProps.participantID, this._onStatsUpdated);
+                statsEmitter.subscribeToClientStats(
+                    this.props.participantID, this._onStatsUpdated);
+            }
         }
     }
 
@@ -397,8 +417,13 @@ class ConnectionStatusComponent extends Component<Props, State> {
      * @returns {boolean}
      */
     _onCancel() {
-        statsEmitter.unsubscribeToClientStats(
-            this.props.participantID, this._onStatsUpdated);
+        if (this.props._sourceNameSignalingEnabled) {
+            statsEmitter.unsubscribeToClientStats(
+                this.props._sourceName, this._onStatsUpdated);
+        } else {
+            statsEmitter.unsubscribeToClientStats(
+                this.props.participantID, this._onStatsUpdated);
+        }
 
         if (this.props._isOpen) {
             this.props.dispatch(hideDialog(ConnectionStatusComponent_));
@@ -450,7 +475,8 @@ function _mapStateToProps(state, ownProps) {
         _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
         _isOpen: isDialogOpen(state, ConnectionStatusComponent_),
         _participantDisplayName: getParticipantDisplayName(state, participantID),
-        _sourceNameSignalingEnabled: getSourceNameSignalingFeatureFlag(state)
+        _sourceNameSignalingEnabled: getSourceNameSignalingFeatureFlag(state),
+        _sourceName: getSourceNameByParticipantId(state, ownProps.participantId)
     };
 }
 

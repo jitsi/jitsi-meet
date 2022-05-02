@@ -30,7 +30,17 @@ export type Props = {
      * The ID of the participant associated with the displayed connection indication and
      * stats.
      */
-    participantId: string
+    participantId: string,
+
+    /**
+     * The source name of the track.
+     */
+    _sourceName: string,
+
+    /**
+     * The flag whether source name signaling is enabled.
+     */
+    _sourceNameSignalingEnabled: string
 };
 
 /**
@@ -85,8 +95,13 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
      * returns {void}
      */
     componentDidMount() {
-        statsEmitter.subscribeToClientStats(
-            this.props.participantId, this._onStatsUpdated);
+        if (this.props._sourceNameSignalingEnabled) {
+            statsEmitter.subscribeToClientStats(
+                this.props._sourceName, this._onStatsUpdated);
+        } else {
+            statsEmitter.subscribeToClientStats(
+                this.props.participantId, this._onStatsUpdated);
+        }
     }
 
     /**
@@ -96,11 +111,20 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
      * returns {void}
      */
     componentDidUpdate(prevProps: Props) {
-        if (prevProps.participantId !== this.props.participantId) {
-            statsEmitter.unsubscribeToClientStats(
-                prevProps.participantId, this._onStatsUpdated);
-            statsEmitter.subscribeToClientStats(
-                this.props.participantId, this._onStatsUpdated);
+        if (this.props._sourceNameSignalingEnabled) {
+            if (prevProps._sourceName !== this.props._sourceName) {
+                statsEmitter.unsubscribeToClientStats(
+                    prevProps._sourceName, this._onStatsUpdated);
+                statsEmitter.subscribeToClientStats(
+                    this.props._sourceName, this._onStatsUpdated);
+            }
+        } else {
+            if (prevProps.participantId !== this.props.participantId) {
+                statsEmitter.unsubscribeToClientStats(
+                    prevProps.participantId, this._onStatsUpdated);
+                statsEmitter.subscribeToClientStats(
+                    this.props.participantId, this._onStatsUpdated);
+            }
         }
     }
 
@@ -112,8 +136,13 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
      * @returns {void}
      */
     componentWillUnmount() {
-        statsEmitter.unsubscribeToClientStats(
-            this.props.participantId, this._onStatsUpdated);
+        if (this.props._sourceNameSignalingEnabled) {
+            statsEmitter.unsubscribeToClientStats(
+                this.props._sourceName, this._onStatsUpdated);        
+        } else {
+            statsEmitter.unsubscribeToClientStats(
+                this.props.participantId, this._onStatsUpdated);
+        }
 
         clearTimeout(this.autoHideTimeout);
     }
@@ -175,20 +204,6 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
             }, this.props._autoHideTimeout);
         }
     }
-}
-
-/**
- * Maps (parts of) the Redux state to the associated props for the
- * {@code ConnectorIndicator} component.
- *
- * @param {Object} state - The Redux state.
- * @private
- * @returns {Props}
- */
-export function mapStateToProps(state: Object) {
-    return {
-        _autoHideTimeout: state['features/base/config'].connectionIndicators.autoHideTimeout ?? defaultAutoHideTimeout
-    };
 }
 
 export default AbstractConnectionIndicator;

@@ -13,6 +13,7 @@ import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
 import {
     getVirtualScreenshareParticipantTrack,
+    getSourceNameByParticipantId,
     getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 import {
     isParticipantConnectionStatusInactive,
@@ -126,6 +127,16 @@ type Props = AbstractProps & {
      * Invoked to obtain translated strings.
      */
     t: Function,
+
+    /**
+     * The source name of the track.
+     */
+    _sourceName: string,
+
+    /**
+     * Whether source name signaling is enabled.
+     */
+    _sourceNameSignalingEnabled: boolean
 };
 
 type State = AbstractState & {
@@ -394,7 +405,9 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
         _popoverDisabled: state['features/base/config'].connectionIndicators?.disableDetails,
         _videoTrack: firstVideoTrack,
         _isConnectionStatusInactive,
-        _isConnectionStatusInterrupted
+        _isConnectionStatusInterrupted,
+        _sourceName: getSourceNameByParticipantId(state, participantId),
+        _sourceNameSignalingEnabled: sourceNameSignalingEnabled
     };
 }
 export default translate(connect(_mapStateToProps)(

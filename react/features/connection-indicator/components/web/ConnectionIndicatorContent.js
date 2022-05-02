@@ -8,7 +8,7 @@ import { translate } from '../../../base/i18n';
 import { MEDIA_TYPE } from '../../../base/media';
 import { getLocalParticipant, getParticipantById } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
+import { getSourceNameByParticipantId, getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 import { ConnectionStatsTable } from '../../../connection-stats';
 import { saveLogs } from '../../actions';
 import {
@@ -132,6 +132,11 @@ type Props = AbstractProps & {
      * Invoked to obtain translated strings.
      */
     t: Function,
+
+    /**
+     * The source name of the track.
+     */
+    _sourceName: string,
 
     /**
      * Whether source name signaling is enabled.
@@ -352,6 +357,7 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
         _isVirtualScreenshareParticipant: sourceNameSignalingEnabled && participant?.isVirtualScreenshareParticipant,
         _isLocalVideo: participant?.local,
         _region: participant?.region,
+        _sourceName: getSourceNameByParticipantId(state, participantId),
         _sourceNameSignalingEnabled: sourceNameSignalingEnabled
     };
 
