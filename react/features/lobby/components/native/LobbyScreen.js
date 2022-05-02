@@ -12,6 +12,8 @@ import BaseTheme from '../../../base/ui/components/BaseTheme';
 import InviteButton
     from '../../../invite/components/add-people-dialog/native/InviteButton';
 import { LargeVideo } from '../../../large-video/components';
+import HeaderNavigationButton
+    from '../../../mobile/navigation/components/HeaderNavigationButton';
 import { navigate }
     from '../../../mobile/navigation/components/lobby/LobbyNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
@@ -36,6 +38,25 @@ type Props = AbstractProps & {
  * Implements a waiting screen that represents the participant being in the lobby.
  */
 class LobbyScreen extends AbstractLobbyScreen<Props> {
+    /**
+     * Implements React's {@link Component#componentDidMount()}. Invoked
+     * immediately after this component is mounted.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidMount() {
+        const { navigation, t } = this.props;
+
+        navigation.setOptions({
+            headerLeft: () => (
+                <HeaderNavigationButton
+                    label = { t('dialog.Cancel') }
+                    onPress = { this._onCancel } />
+            )
+        });
+    }
+
     /**
      * Implements {@code PureComponent#render}.
      *
@@ -292,16 +313,6 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
                         { t('lobby.enterPasswordButton') }
                     </Text>
                 </TouchableOpacity> }
-                <TouchableOpacity
-                    onPress = { this._onCancel }
-                    style = { [
-                        styles.button,
-                        styles.cancelButton
-                    ] }>
-                    <Text style = { styles.cancelButtonText }>
-                        { t('dialog.Cancel') }
-                    </Text>
-                </TouchableOpacity>
             </View>
         );
     }

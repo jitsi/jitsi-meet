@@ -169,11 +169,6 @@ export const helpScreenOptions = {
 export const conferenceScreenOptions = fullScreenOptions;
 
 /**
- * Screen options for lobby modal.
- */
-export const lobbyScreenOptions = fullScreenOptions;
-
-/**
  * Tab bar options for chat screen.
  */
 export const chatTabBarOptions = {
@@ -237,6 +232,11 @@ export const recordingScreenOptions = presentationScreenOptions;
  * Screen options for live stream modal.
  */
 export const liveStreamScreenOptions = presentationScreenOptions;
+
+/**
+ * Screen options for lobby modal.
+ */
+export const lobbyScreenOptions = presentationScreenOptions;
 
 /**
  * Screen options for lobby chat modal.
