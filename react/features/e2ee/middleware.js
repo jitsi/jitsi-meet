@@ -94,9 +94,13 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     }
     case PARTICIPANT_JOINED: {
         const result = next(action);
-        const { e2eeEnabled, e2eeSupported, local } = action.participant;
+        const { e2eeEnabled, e2eeSupported, isVirtualScreenshareParticipant, local } = action.participant;
         const { everyoneEnabledE2EE } = getState()['features/e2ee'];
         const participantCount = getParticipantCount(getState);
+
+        if (isVirtualScreenshareParticipant) {
+            return result;
+        }
 
         // the initial values
         if (participantCount === 1) {
@@ -134,7 +138,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         const participant = getParticipantById(previosState, action.participant?.id) || {};
         const result = next(action);
         const newState = getState();
-        const { e2eeEnabled = false, e2eeSupported = false } = participant;
+        const { e2eeEnabled = false, e2eeSupported = false, isVirtualScreenshareParticipant } = participant;
+
+        if (isVirtualScreenshareParticipant) {
+            return result;
+        }
 
         const { everyoneEnabledE2EE, everyoneSupportE2EE } = newState['features/e2ee'];
 
