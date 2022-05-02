@@ -441,7 +441,7 @@ export function getVideoTrackByParticipant(
  *
  * @param {Object} state - The Redux state.
  * @param {string} participantId - Participant ID.
- * @returns {string}
+ * @returns {string | undefined}
  */
 export function getSourceNameByParticipantId(state, participantId) {
     const participant = getParticipantByIdOrUndefined(state, participantId);
