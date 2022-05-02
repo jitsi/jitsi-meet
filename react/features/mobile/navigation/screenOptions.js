@@ -51,7 +51,7 @@ export const dialInSummaryScreenOptions = {
     gestureEnabled: true,
     headerShown: true,
     headerStyle: {
-        backgroundColor: BaseTheme.palette.screen01Header
+        backgroundColor: BaseTheme.palette.screen02Header
     },
     headerTitleStyle: {
         color: BaseTheme.palette.text01
@@ -76,7 +76,7 @@ export const drawerScreenOptions = {
     gestureEnabled: true,
     headerShown: true,
     headerStyle: {
-        backgroundColor: BaseTheme.palette.screen01Header
+        backgroundColor: BaseTheme.palette.screen02Header
     }
 };
 
@@ -108,9 +108,11 @@ export const welcomeScreenOptions = {
             size = { 20 }
             src = { IconHome } />
     ),
-    headerTitleStyle: {
-        color: BaseTheme.palette.screen01Header
-    }
+    headerStyle: {
+        backgroundColor: BaseTheme.palette.screen01Header
+    },
+    // eslint-disable-next-line no-empty-function
+    headerTitle: () => {}
 };
 
 /**
@@ -194,7 +196,7 @@ export const presentationScreenOptions = {
     headerLeft: () => screenHeaderCloseButton(goBack),
     headerStatusBarHeight: 0,
     headerStyle: {
-        backgroundColor: BaseTheme.palette.screen01Header
+        backgroundColor: BaseTheme.palette.screen02Header
     },
     headerTitleStyle: {
         color: BaseTheme.palette.text01
@@ -262,7 +264,7 @@ export const sharedDocumentScreenOptions = {
     headerBackTitleVisible: false,
     headerShown: true,
     headerStyle: {
-        backgroundColor: BaseTheme.palette.screen01Header
+        backgroundColor: BaseTheme.palette.screen02Header
     },
     headerTitleStyle: {
         color: BaseTheme.palette.text01

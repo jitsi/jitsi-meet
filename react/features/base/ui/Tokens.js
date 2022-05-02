@@ -38,6 +38,7 @@ export const colors = {
     surface14: '#555555',
     surface15: '#474747',
     surface16: '#131519',
+    surface17: '#161618',
 
     success04: '#189B55',
     success05: '#1EC26A',
@@ -83,6 +84,7 @@ export const colorMap = {
 
     // Screen header
     screen01Header: 'primary10',
+    screen02Header: 'surface17',
 
     // Status bar
     status01Bar: 'primary11',
