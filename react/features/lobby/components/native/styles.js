@@ -71,7 +71,7 @@ export default {
         alignItems: 'center',
         display: 'flex',
         justifyContent: 'center',
-        minHeight: '45%'
+        minHeight: '50%'
     },
 
     largeVideoContainerWide: {
@@ -212,18 +212,6 @@ export default {
         color: BaseTheme.palette.text01,
         margin: 'auto',
         textAlign: 'center'
-    },
-
-    cancelButton: {
-        alignItems: 'center',
-        backgroundColor: BaseTheme.palette.action02Disabled,
-        marginTop: BaseTheme.spacing[4]
-    },
-
-    cancelButtonText: {
-        ...BaseTheme.typography.labelButtonLarge,
-        color: BaseTheme.palette.text01,
-        lineHeight: 30
     },
 
     // KnockingParticipantList
