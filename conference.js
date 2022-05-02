@@ -2617,7 +2617,8 @@ export default {
                         track => track.jitsiTrack
                             && track.jitsiTrack.getType() === 'video'));
 
-            if (!isTrackInRedux) {
+
+            if (isTrackInRedux) {
                 this.muteVideo(audioOnly);
             }
 
