@@ -42,57 +42,6 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
      * @inheritdoc
      */
     render() {
-        return (
-            <>
-                { this._renderLobby() }
-            </>
-        );
-    }
-
-    _getScreenTitleKey: () => string;
-
-    _onAskToJoin: () => void;
-
-    _onCancel: () => boolean;
-
-    _onChangeDisplayName: Object => void;
-
-    _onChangeEmail: Object => void;
-
-    _onChangePassword: Object => void;
-
-    _onEnableEdit: () => void;
-
-    _onJoinWithPassword: () => void;
-
-    _onSwitchToKnockMode: () => void;
-
-    _onSwitchToPasswordMode: () => void;
-
-    _renderContent: () => React$Element<*>;
-
-    _renderToolbarButtons: () => React$Element<*>;
-
-    _renderLobby: () => React$Element<*>;
-
-    _onNavigateToLobbyChat: () => void;
-
-    /**
-     * Navigates to the lobby chat screen.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onNavigateToLobbyChat() {
-        navigate(screen.lobby.chat);
-    }
-
-    /**
-     * Renders the lobby.
-     *
-     * @inheritdoc
-     */
-    _renderLobby() {
         const { _aspectRatio } = this.props;
         let contentStyles;
         let largeVideoContainerStyles;
@@ -122,6 +71,42 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
                 </View>
             </JitsiScreen>
         );
+    }
+
+    _getScreenTitleKey: () => string;
+
+    _onAskToJoin: () => void;
+
+    _onCancel: () => boolean;
+
+    _onChangeDisplayName: Object => void;
+
+    _onChangeEmail: Object => void;
+
+    _onChangePassword: Object => void;
+
+    _onEnableEdit: () => void;
+
+    _onJoinWithPassword: () => void;
+
+    _onSwitchToKnockMode: () => void;
+
+    _onSwitchToPasswordMode: () => void;
+
+    _renderContent: () => React$Element<*>;
+
+    _renderToolbarButtons: () => React$Element<*>;
+
+    _onNavigateToLobbyChat: () => void;
+
+    /**
+     * Navigates to the lobby chat screen.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onNavigateToLobbyChat() {
+        navigate(screen.lobby.chat);
     }
 
     /**
