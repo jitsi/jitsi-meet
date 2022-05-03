@@ -44,21 +44,6 @@ export const fullScreenOptions = {
 
 
 /**
- * Dial-IN Info screen options and transition types.
- */
-export const dialInSummaryScreenOptions = {
-    ...TransitionPresets.ModalTransition,
-    gestureEnabled: true,
-    headerShown: true,
-    headerStyle: {
-        backgroundColor: BaseTheme.palette.screen02Header
-    },
-    headerTitleStyle: {
-        color: BaseTheme.palette.text01
-    }
-};
-
-/**
  * Drawer navigator screens options and transition types.
  */
 export const drawerNavigatorScreenOptions = {
@@ -202,6 +187,14 @@ export const presentationScreenOptions = {
  * Screen options for chat.
  */
 export const chatScreenOptions = presentationScreenOptions;
+
+/**
+ * Dial-IN Info screen options and transition types.
+ */
+export const dialInSummaryScreenOptions = {
+    ...presentationScreenOptions,
+    headerLeft: undefined
+};
 
 /**
  * Screen options for invite modal.

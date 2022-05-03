@@ -45,10 +45,16 @@ const RootNavigationContainer = ({ isWelcomePageAvailable }: Props) => {
                     initialRouteName = { initialRouteName }>
                     {
                         isWelcomePageAvailable
-                            && <RootStack.Screen
-                                component = { WelcomePageNavigationContainer }
-                                name = { screen.root }
-                                options = { drawerNavigatorScreenOptions } />
+                            && <>
+                                <RootStack.Screen
+                                    component = { WelcomePageNavigationContainer }
+                                    name = { screen.root }
+                                    options = { drawerNavigatorScreenOptions } />
+                                <RootStack.Screen
+                                    component = { DialInSummary }
+                                    name = { screen.dialInSummary }
+                                    options = { dialInSummaryScreenOptions } />
+                            </>
                     }
                     <RootStack.Screen
                         component = { ConnectingPage }
@@ -57,10 +63,6 @@ const RootNavigationContainer = ({ isWelcomePageAvailable }: Props) => {
                             gestureEnabled: false,
                             headerShown: false
                         }} />
-                    <RootStack.Screen
-                        component = { DialInSummary }
-                        name = { screen.dialInSummary }
-                        options = { dialInSummaryScreenOptions } />
                     <RootStack.Screen
                         component = { ConferenceNavigationContainer }
                         name = { screen.conference.root }
