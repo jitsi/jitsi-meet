@@ -145,6 +145,7 @@
     "@babel/preset-react": "7.16.0",
     "@babel/runtime": "7.16.0",
     "@jitsi/eslint-config": "4.0.0",
+    "@types/react-native": "0.67.6",
     "babel-loader": "8.2.3",
     "babel-plugin-optional-require": "0.3.1",
     "circular-dependency-plugin": "5.2.0",

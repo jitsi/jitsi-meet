@@ -1,10 +1,8 @@
-// @flow
-
 import React from 'react';
 import { Platform } from 'react-native';
 
 import { connect } from '../../../base/redux';
-import { isDesktopShareButtonDisabled } from '../../functions';
+import { isDesktopShareButtonDisabled } from '../../functions.native';
 
 import ScreenSharingAndroidButton from './ScreenSharingAndroidButton.js';
 import ScreenSharingIosButton from './ScreenSharingIosButton.js';
@@ -24,17 +22,12 @@ const ScreenSharingButton = props => (
  * Maps (parts of) the redux state to the associated props for the
  * {@code ScreenSharingButton} component.
  *
- * @param {Object} state - The Redux state.
+ * @param state - The Redux state.
  * @private
- * @returns {{
- *     _disabled: boolean,
- * }}
  */
-function _mapStateToProps(state): Object {
-    const disabled = state['features/base/audio-only'].enabled || isDesktopShareButtonDisabled(state);
-
+function _mapStateToProps(state: object): object {
     return {
-        _disabled: disabled
+        _disabled: isDesktopShareButtonDisabled(state)
     };
 }
 
