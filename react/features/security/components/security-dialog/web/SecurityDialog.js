@@ -98,10 +98,10 @@ function SecurityDialog({
                     setPassword = { setPassword }
                     setPasswordEditEnabled = { setPasswordEditEnabled } />
                 {
-                    _showE2ee ? <>
+                    <>
                         <div className = 'separator-line' />
                         <E2EESection />
-                    </> : null
+                    </>
                 }
 
             </div>

@@ -26,6 +26,7 @@ export function enterPictureInPicture() {
         // fine to enter PiP mode.
         if (getFeatureFlag(getState, PIP_ENABLED)) {
             const { PictureInPicture } = NativeModules;
+            console.log("XXX enter PIP")
             const p
                 = Platform.OS === 'android'
                     ? PictureInPicture

@@ -35,6 +35,8 @@ import com.oney.WebRTCModule.RTCVideoViewManager;
 import com.oney.WebRTCModule.WebRTCModule;
 
 import org.devio.rn.splashscreen.SplashScreenModule;
+import org.webrtc.Loggable;
+import org.webrtc.Logging;
 import org.webrtc.SoftwareVideoDecoderFactory;
 import org.webrtc.SoftwareVideoEncoderFactory;
 import org.webrtc.audio.AudioDeviceModule;
@@ -56,6 +58,13 @@ class ReactInstanceManagerHolder {
      * to create multiple root views off the same JavaScript bundle.
      */
     private static ReactInstanceManager reactInstanceManager;
+
+    private static Loggable webrtcLogger = new Loggable() {
+        @Override
+        public void onLogMessage(String message, Logging.Severity severity, String tag) {
+           Log.d(tag,message);
+        }
+    };
 
     private static List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
         List<NativeModule> nativeModules
@@ -88,6 +97,8 @@ class ReactInstanceManagerHolder {
 
         options.setVideoDecoderFactory(new SoftwareVideoDecoderFactory());
         options.setVideoEncoderFactory(new SoftwareVideoEncoderFactory());
+        options.setInjectableLogger(webrtcLogger);
+        options.setLoggingSeverity(Logging.Severity.LS_VERBOSE);
 
         nativeModules.add(new WebRTCModule(reactContext, options));
 

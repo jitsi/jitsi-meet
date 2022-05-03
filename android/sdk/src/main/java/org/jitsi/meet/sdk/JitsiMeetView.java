@@ -24,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.facebook.react.bridge.ReadableMap;
+import com.oney.WebRTCModule.WebRTCModule;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
@@ -125,18 +126,14 @@ public class JitsiMeetView extends BaseReactView<JitsiMeetViewListener>
      * page.
      */
     public void enterPictureInPicture() {
-        PictureInPictureModule pipModule
-            = ReactInstanceManagerHolder.getNativeModule(
-                PictureInPictureModule.class);
-        if (pipModule != null
-                && pipModule.isPictureInPictureSupported()
-                && !JitsiMeetActivityDelegate.arePermissionsBeingRequested()
-                && this.url != null) {
-            try {
-                pipModule.enterPictureInPicture();
-            } catch (RuntimeException re) {
-                JitsiMeetLogger.e(re, "Failed to enter PiP mode");
-            }
+        try {
+            WebRTCModule pipModule
+                = ReactInstanceManagerHolder.getNativeModule(
+                WebRTCModule.class);
+            pipModule.addDecryptors();
+        }
+        catch (Exception e) {
+            int a = 1;
         }
     }
 
