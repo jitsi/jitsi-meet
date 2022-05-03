@@ -160,6 +160,18 @@ export default class LargeVideoManager {
         this.videoContainer.removeResizeListener(
             this._onVideoResolutionUpdate);
 
+        if (getSourceNameSignalingFeatureFlag(APP.store.getState())) {
+            // Remove track streaming status listener.
+            // TODO: when this class is converted to a function react component,
+            // use a custom hook to update a local track streaming status.
+            if (this.videoTrack && !this.videoTrack.local) {
+                this.videoTrack.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
+                    this.handleTrackStreamingStatusChanged);
+                APP.store.dispatch(trackStreamingStatusChanged(this.videoTrack.jitsiTrack,
+                    this.videoTrack.jitsiTrack.getTrackStreamingStatus()));
+            }
+        }
+
         this.removePresenceLabel();
 
         ReactDOM.unmountComponentAtNode(this._dominantSpeakerAvatarContainer);
@@ -260,14 +272,16 @@ export default class LargeVideoManager {
                 // TODO: when this class is converted to a function react component,
                 // use a custom hook to update a local track streaming status.
                 if (this.videoTrack?.jitsiTrack?.getSourceName() !== videoTrack?.jitsiTrack?.getSourceName()) {
-                    if (this.videoTrack) {
+                    if (this.videoTrack && !this.videoTrack.local) {
                         this.videoTrack.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
                             this.handleTrackStreamingStatusChanged);
                         APP.store.dispatch(trackStreamingStatusChanged(this.videoTrack.jitsiTrack,
                             this.videoTrack.jitsiTrack.getTrackStreamingStatus()));
                     }
-                    if (videoTrack && !videoTrack.local) {
-                        this.videoTrack = videoTrack;
+
+                    this.videoTrack = videoTrack;
+
+                    if (this.videoTrack && !this.videoTrack.local) {
                         this.videoTrack.jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
                             this.handleTrackStreamingStatusChanged);
                         APP.store.dispatch(trackStreamingStatusChanged(this.videoTrack.jitsiTrack,
