@@ -249,6 +249,12 @@ export type Props = {|
      */
     style?: ?Object,
 
+     /**
+     * The width of the thumbnail. Used for expanding the width of the thumbnails on last row in case
+     * there is empty space.
+     */
+    width?: number,
+
     /**
      * Whether source name signaling is enabled.
      */
@@ -1254,6 +1260,10 @@ function _mapStateToProps(state, ownProps): Object {
         }
         break;
     }
+    }
+
+    if (ownProps.width) {
+        size._width = ownProps.width;
     }
 
     const { gifUrl: gifSrc } = getGifForParticipant(state, id);
