@@ -85,7 +85,7 @@ paths:
         200:
           description: "successful operation"
           schema:
-            $ref: "#/definitions/PhoneNumberList"
+            $ref: "#/definitions/PhoneNumberListAnswer"
 securityDefinitions:
   token:
     type: "apiKey"
@@ -126,6 +126,19 @@ definitions:
         type: "string"
         format: "JID"
         description: "Full JID for the conference OR boolean false if no conference was found (search by ID)"
+
+  PhoneNumberListAnswer:
+    description: "Answer with Phone number list and additional information"
+    type: "object"
+    properties: 
+      message: 
+        type: "string"
+        description: "General message"
+      numbersEnabled: 
+        type: "boolean"
+        description: "Determines if the numbers are available"
+      numbers:
+        $ref: "#/definitions/PhoneNumberList"
 
   PhoneNumberList:
     description: "List of dial in numbers for the conference."
