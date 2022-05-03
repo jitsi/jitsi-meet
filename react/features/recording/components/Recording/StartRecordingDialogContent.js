@@ -31,7 +31,6 @@ import {
     ICON_CLOUD,
     ICON_INFO,
     ICON_USERS,
-    JITSI_LOGO,
     TRACK_COLOR
 } from './styles';
 
@@ -284,7 +283,6 @@ class StartRecordingDialogContent extends Component<Props> {
                         value = { this.props.selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE } />
                 ) : null;
 
-        const icon = isVpaas ? ICON_CLOUD : JITSI_LOGO;
         const label = isVpaas ? t('recording.serviceDescriptionCloud') : t('recording.serviceDescription');
         const jitsiContentRecordingIconContainer
             = this.props.integrationsEnabled
@@ -303,7 +301,7 @@ class StartRecordingDialogContent extends Component<Props> {
                 <Container className = { contentRecordingClass }>
                     <Image
                         className = 'content-recording-icon'
-                        src = { icon }
+                        src = { ICON_CLOUD }
                         style = { styles.recordingIcon } />
                 </Container>
                 <Text
