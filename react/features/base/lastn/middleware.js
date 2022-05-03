@@ -7,6 +7,7 @@ import { SELECT_LARGE_VIDEO_PARTICIPANT } from '../../large-video/actionTypes';
 import { APP_STATE_CHANGED } from '../../mobile/background/actionTypes';
 import {
     SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
+    SET_CAR_MODE,
     SET_TILE_VIEW,
     VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED
 } from '../../video-layout/actionTypes';
@@ -68,7 +69,7 @@ const _updateLastN = debounce(({ dispatch, getState }) => {
     if (typeof appState !== 'undefined' && appState !== 'active') {
         lastNSelected = isLocalVideoTrackDesktop(state) ? 1 : 0;
     } else if (audioOnly) {
-        const { remoteScreenShares, tileViewEnabled } = state['features/video-layout'];
+        const { remoteScreenShares, tileViewEnabled, carMode } = state['features/video-layout'];
         const largeVideoParticipantId = state['features/large-video'].participantId;
         const largeVideoParticipant
             = largeVideoParticipantId ? getParticipantById(state, largeVideoParticipantId) : undefined;
@@ -76,7 +77,7 @@ const _updateLastN = debounce(({ dispatch, getState }) => {
         // Use tileViewEnabled state from redux here instead of determining if client should be in tile
         // view since we make an exception only for screenshare when in audio-only mode. If the user unpins
         // the screenshare, lastN will be set to 0 here. It will be set to 1 if screenshare has been auto pinned.
-        if (!tileViewEnabled && largeVideoParticipant && !largeVideoParticipant.local) {
+        if (!carMode && !tileViewEnabled && largeVideoParticipant && !largeVideoParticipant.local) {
             lastNSelected = (remoteScreenShares || []).includes(largeVideoParticipantId) ? 1 : 0;
         } else {
             lastNSelected = 0;
@@ -101,6 +102,7 @@ MiddlewareRegistry.register(store => next => action => {
     case SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED:
     case SELECT_LARGE_VIDEO_PARTICIPANT:
     case SET_AUDIO_ONLY:
+    case SET_CAR_MODE:
     case SET_FILMSTRIP_ENABLED:
     case SET_TILE_VIEW:
     case VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED:

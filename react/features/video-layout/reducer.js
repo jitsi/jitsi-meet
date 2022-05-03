@@ -4,6 +4,7 @@ import { ReducerRegistry } from '../base/redux';
 
 import {
     SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
+    SET_CAR_MODE,
     SET_TILE_VIEW,
     VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED
 } from './actionTypes';
@@ -21,7 +22,15 @@ const DEFAULT_STATE = {
      * @public
      * @type {boolean}
      */
-    tileViewEnabled: undefined
+    tileViewEnabled: undefined,
+
+    /**
+     * Whether we are in carmode.
+     *
+     * @public
+     * @type {boolean}
+     */
+    carMode: false
 };
 
 const STORE_NAME = 'features/video-layout';
@@ -29,17 +38,22 @@ const STORE_NAME = 'features/video-layout';
 ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
     switch (action.type) {
     case SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED:
-    case VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED: {
+    case VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED:
         return {
             ...state,
             remoteScreenShares: action.participantIds
         };
-    }
 
     case SET_TILE_VIEW:
         return {
             ...state,
             tileViewEnabled: action.enabled
+        };
+
+    case SET_CAR_MODE:
+        return {
+            ...state,
+            carMode: action.enabled
         };
     }
 

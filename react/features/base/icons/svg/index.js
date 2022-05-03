@@ -28,6 +28,7 @@ export { default as IconChatSend } from './send.svg';
 export { default as IconChatUnread } from './chat-unread.svg';
 export { default as IconCheck } from './check.svg';
 export { default as IconCheckSolid } from './check-solid.svg';
+export { default as IconCircle } from './circle.svg';
 export { default as IconClose } from './close.svg';
 export { default as IconCloseCircle } from './close-circle.svg';
 export { default as IconCloseSolid } from './close-solid.svg';
