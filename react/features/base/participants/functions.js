@@ -298,10 +298,9 @@ export function getParticipantDisplayName(stateful: Object | Function, id: strin
  * @returns {string}
  */
 export function getScreenshareParticipantDisplayName(stateful: Object | Function, id: string) {
-    const owner = getParticipantById(stateful, getVirtualScreenshareParticipantOwnerId(id));
-    const name = owner.name;
+    const ownerDisplayName = getParticipantDisplayName(stateful, getVirtualScreenshareParticipantOwnerId(id));
 
-    return i18next.t('screenshareDisplayName', { name });
+    return i18next.t('screenshareDisplayName', { name: ownerDisplayName });
 }
 
 /**
