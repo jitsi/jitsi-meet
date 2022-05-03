@@ -7,6 +7,7 @@ import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { shouldHideSelfView } from '../../../base/settings/functions.any';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
+import { TILE_ASPECT_RATIO, TILE_HORIZONTAL_MARGIN } from '../../constants';
 import { showGridInVerticalView, getActiveParticipantsIds } from '../../functions';
 
 import Thumbnail from './Thumbnail';
@@ -40,6 +41,12 @@ type Props = {
      * Whether or not the filmstrip is used a stage filmstrip.
      */
     _stageFilmstrip: boolean,
+
+    /**
+     * The width of the thumbnail. Used for expanding the width of the thumbnails on last row in case
+     * there is empty space.
+     */
+    _thumbnailWidth: number,
 
     /**
      * The index of the column in tile view.
@@ -94,6 +101,7 @@ class ThumbnailWrapper extends Component<Props> {
             _horizontalOffset = 0,
             _participantID,
             _stageFilmstrip,
+            _thumbnailWidth,
             style
         } = this.props;
 
@@ -107,7 +115,8 @@ class ThumbnailWrapper extends Component<Props> {
                     horizontalOffset = { _horizontalOffset }
                     key = 'local'
                     stageFilmstrip = { _stageFilmstrip }
-                    style = { style } />);
+                    style = { style }
+                    width = { _thumbnailWidth } />);
         }
 
         if (_isLocalScreenShare) {
@@ -117,7 +126,8 @@ class ThumbnailWrapper extends Component<Props> {
                     key = 'localScreenShare'
                     participantID = { _participantID }
                     stageFilmstrip = { _stageFilmstrip }
-                    style = { style } />);
+                    style = { style }
+                    width = { _thumbnailWidth } />);
         }
 
         return (
@@ -126,7 +136,8 @@ class ThumbnailWrapper extends Component<Props> {
                 key = { `remote_${_participantID}` }
                 participantID = { _participantID }
                 stageFilmstrip = { _stageFilmstrip }
-                style = { style } />);
+                style = { style }
+                width = { _thumbnailWidth } />);
     }
 }
 
@@ -169,8 +180,8 @@ function _mapStateToProps(state, ownProps) {
         }
         const { columns, rows } = gridDimensions;
         const index = (rowIndex * columns) + columnIndex;
-        let horizontalOffset;
-        const { iAmRecorder } = state['features/base/config'];
+        let horizontalOffset, thumbnailWidth;
+        const { iAmRecorder, disableTileEnlargement } = state['features/base/config'];
         const { localScreenShare } = state['features/base/participants'];
         const localParticipantsLength = localScreenShare ? 2 : 1;
 
@@ -193,11 +204,27 @@ function _mapStateToProps(state, ownProps) {
         }
 
         if (rowIndex === rows - 1) { // center the last row
-            const { width: thumbnailWidth } = thumbnailSize;
             const partialLastRowParticipantsNumber = participantsLength % columns;
 
             if (partialLastRowParticipantsNumber > 0) {
-                horizontalOffset = Math.floor((columns - partialLastRowParticipantsNumber) * (thumbnailWidth + 4) / 2);
+                const { width, height } = thumbnailSize;
+                const availableWidth = columns * (width + TILE_HORIZONTAL_MARGIN);
+                let widthDifference = 0;
+                let widthToUse = width;
+
+                if (!disableTileEnlargement) {
+                    thumbnailWidth = Math.min(
+                        (availableWidth / partialLastRowParticipantsNumber) - TILE_HORIZONTAL_MARGIN,
+                        height * TILE_ASPECT_RATIO);
+                    widthDifference = thumbnailWidth - width;
+                    widthToUse = thumbnailWidth;
+                }
+
+                horizontalOffset
+                    = Math.floor((availableWidth
+                        - (partialLastRowParticipantsNumber * (widthToUse + TILE_HORIZONTAL_MARGIN))) / 2
+                    )
+                    + (columnIndex * widthDifference);
             }
         }
 
@@ -210,7 +237,8 @@ function _mapStateToProps(state, ownProps) {
                 _disableSelfView: disableSelfView,
                 _participantID: remoteParticipants[index] === localId ? 'local' : remoteParticipants[index],
                 _horizontalOffset: horizontalOffset,
-                _stageFilmstrip: stageFilmstrip
+                _stageFilmstrip: stageFilmstrip,
+                _thumbnailWidth: thumbnailWidth
             };
         }
 
@@ -233,7 +261,8 @@ function _mapStateToProps(state, ownProps) {
             return {
                 _disableSelfView: disableSelfView,
                 _participantID: 'local',
-                _horizontalOffset: horizontalOffset
+                _horizontalOffset: horizontalOffset,
+                _thumbnailWidth: thumbnailWidth
             };
         }
 
@@ -242,13 +271,15 @@ function _mapStateToProps(state, ownProps) {
                 _disableSelfView: disableSelfView,
                 _isLocalScreenShare: true,
                 _participantID: localScreenShare?.id,
-                _horizontalOffset: horizontalOffset
+                _horizontalOffset: horizontalOffset,
+                _thumbnailWidth: thumbnailWidth
             };
         }
 
         return {
             _participantID: remoteParticipants[remoteIndex],
-            _horizontalOffset: horizontalOffset
+            _horizontalOffset: horizontalOffset,
+            _thumbnailWidth: thumbnailWidth
         };
     }
 
