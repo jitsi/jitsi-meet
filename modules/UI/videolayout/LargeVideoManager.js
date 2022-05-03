@@ -280,7 +280,7 @@ export default class LargeVideoManager {
                     }
 
                     this.videoTrack = videoTrack;
-                    
+
                     if (this.videoTrack && !this.videoTrack.local) {
                         this.videoTrack.jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
                             this.handleTrackStreamingStatusChanged);
