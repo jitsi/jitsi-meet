@@ -85,7 +85,7 @@ paths:
         200:
           description: "successful operation"
           schema:
-            $ref: "#/definitions/PhoneNumberList"
+            $ref: "#/definitions/PhoneNumberListAnswer"
 securityDefinitions:
   token:
     type: "apiKey"
@@ -127,24 +127,25 @@ definitions:
         format: "JID"
         description: "Full JID for the conference OR boolean false if no conference was found (search by ID)"
 
-  PhoneNumberList:
-    description: "List of dial in numbers for the conference."
-    type: "array"
-    items:
-        type: "object"
-        properties:
-          countryCode:
+  PhoneNumberListAnswer:
+    description: "Answer with Phone number list and additional information"
+    type: "object"
+    properties: 
+      message: 
+        type: "string"
+        description: "General message"
+      numbersEnabled: 
+        type: "boolean"
+        description: "Determines if the numbers are available"
+      numbers:
+        type: object
+        additionalProperties:
+          type: "array"
+          items:
             type: "string"
-            description: "ISO 3166-1 country code. Alpha-2 supported."
-          default:
-            type: "boolean"
-            description: "Whether this number is the default one to show. Optional."
-          formattedNumber:
-            type: "string"
-            description: "The formatted telephone number to show."
-          tollFree:
-            type: "boolean"
-            description: "Whether the number is toll free number."
+        example:
+          US: ["+1.123.456.7890"]
+          UK: ["+44.123.456.7890"]
 
 externalDocs:
   description: "Find out more about the Jitsi Cloud API"
