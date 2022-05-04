@@ -1187,14 +1187,24 @@ var config = {
     // will open an etherpad document.
     // etherpad_base: 'https://your-etherpad-installati.on/p/',
 
+    // To enable information about dial-in access to meetings you need to provide
+    // dialInNumbersUrl and dialInConfCodeUrl.
+    // dialInNumbersUrl returns a json array of numbers that can be used for dial-in.
+    // {"countryCode":"US","tollFree":false,"formattedNumber":"+1 123-456-7890"}
+    // dialInConfCodeUrl is the conference mapper converting a meeting id to a PIN used for dial-in
+    // or the other way around (more info in resources/cloud-api.swagger)
+    //
+    // For JaaS customers the default values are:
+    // dialInNumbersUrl: 'https://conference-mapper.jitsi.net/v1/access/dids',
+    // dialInConfCodeUrl: 'https://conference-mapper.jitsi.net/v1/access',
+    //
+
     // List of undocumented settings used in jitsi-meet
     /**
      _immediateReloadThreshold
      debug
      debugAudioLevels
      deploymentInfo
-     dialInConfCodeUrl
-     dialInNumbersUrl
      dialOutAuthUrl
      dialOutCodesUrl
      disableRemoteControl
