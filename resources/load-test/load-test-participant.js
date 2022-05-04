@@ -367,7 +367,7 @@ class LoadTestClient {
 
         if (devices.length > 0) {
             JitsiMeetJS.createLocalTracks({ devices })
-                .then(onLocalTracks)
+                .then(this.onLocalTracks.bind(this))
                 .then(() => {
                     this.room.join();
                 })
