@@ -29,7 +29,7 @@ class LoadTestClient {
         this.connection = null;
         this.connected = false;
         this.room = null;
-        this.remoteParticipants = 1;
+        this.numParticipants = 1;
         this.localTracks = [];
         this.remoteTracks = {};
         this.maxFrameHeight = 0;
@@ -50,9 +50,9 @@ class LoadTestClient {
             newMaxFrameHeight = 2160;
         }
         else {
-            if (this.remoteParticipants <= 2) {
+            if (this.numParticipants <= 2) {
                 newMaxFrameHeight = 720;
-            } else if (this.remoteParticipants <= 4) {
+            } else if (this.numParticipants <= 4) {
                 newMaxFrameHeight = 360;
             } else {
                 this.newMaxFrameHeight = 180;
@@ -75,7 +75,7 @@ class LoadTestClient {
 
         let lastN = typeof config.channelLastN === 'undefined' ? -1 : config.channelLastN;
 
-        const limitedLastN = limitLastN(this.remoteParticipants, validateLastNLimits(config.lastNLimits));
+        const limitedLastN = limitLastN(this.numParticipants, validateLastNLimits(config.lastNLimits));
 
         if (limitedLastN !== undefined) {
             lastN = lastN === -1 ? limitedLastN : Math.min(limitedLastN, lastN);
@@ -142,7 +142,7 @@ class LoadTestClient {
      */
     setNumberOfParticipants() {
         if (this.id === 0) {
-            $('#participants').text(this.remoteParticipants);
+            $('#participants').text(this.numParticipants);
         }
         if (!stageView) {
             this.selectParticipants();
@@ -266,7 +266,7 @@ class LoadTestClient {
      * @param id
      */
     onUserJoined(id) {
-        this.remoteParticipants++;
+        this.numParticipants++;
         this.setNumberOfParticipants();
         this.remoteTracks[id] = [];
     }
@@ -276,7 +276,7 @@ class LoadTestClient {
      * @param id
      */
     onUserLeft(id) {
-        this.remoteParticipants--;
+        this.numParticipants--;
         this.setNumberOfParticipants();
         if (!this.remoteTracks[id]) {
             return;
