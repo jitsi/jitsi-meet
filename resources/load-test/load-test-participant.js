@@ -281,7 +281,7 @@ class LoadTestClient {
         if (!this.remoteTracks[id]) {
             return;
         }
-        const tracks = remoteTracks[id];
+        const tracks = this.remoteTracks[id];
 
         if (this.id !== 0) {
             return;
