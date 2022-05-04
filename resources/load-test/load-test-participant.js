@@ -50,9 +50,9 @@ class LoadTestClient {
             newMaxFrameHeight = 2160;
         }
         else {
-            if (this.numParticipants <= 2) {
+            if (this.remoteParticipants <= 2) {
                 newMaxFrameHeight = 720;
-            } else if (this.numParticipants <= 4) {
+            } else if (this.remoteParticipants <= 4) {
                 newMaxFrameHeight = 360;
             } else {
                 this.newMaxFrameHeight = 180;
@@ -75,7 +75,7 @@ class LoadTestClient {
 
         let lastN = typeof config.channelLastN === 'undefined' ? -1 : config.channelLastN;
 
-        const limitedLastN = limitLastN(this.numParticipants, validateLastNLimits(config.lastNLimits));
+        const limitedLastN = limitLastN(this.remoteParticipants, validateLastNLimits(config.lastNLimits));
 
         if (limitedLastN !== undefined) {
             lastN = lastN === -1 ? limitedLastN : Math.min(limitedLastN, lastN);
@@ -142,7 +142,7 @@ class LoadTestClient {
      */
     setNumberOfParticipants() {
         if (this.id === 0) {
-            $('#participants').text(this.numParticipants);
+            $('#participants').text(this.remoteParticipants);
         }
         if (!stageView) {
             this.selectParticipants();
@@ -266,7 +266,7 @@ class LoadTestClient {
      * @param id
      */
     onUserJoined(id) {
-        this.numParticipants++;
+        this.remoteParticipants++;
         this.setNumberOfParticipants();
         this.remoteTracks[id] = [];
     }
@@ -276,7 +276,7 @@ class LoadTestClient {
      * @param id
      */
     onUserLeft(id) {
-        this.numParticipants--;
+        this.remoteParticipants--;
         this.setNumberOfParticipants();
         if (!this.remoteTracks[id]) {
             return;
@@ -445,7 +445,7 @@ window.APP = {
         return clients[0]?.connection;
     },
     get numParticipants() {
-        return clients[0]?.numParticipants;
+        return clients[0]?.remoteParticipants;
     },
     get localTracks() {
         return clients[0]?.localTracks;
