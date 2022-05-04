@@ -345,15 +345,15 @@ class LoadTestClient {
      */
     onConnectionSuccess() {
         this.room = this.connection.initJitsiConference(roomName.toLowerCase(), config);
-        this.room.on(JitsiMeetJS.events.conference.STARTED_MUTED, this.onStartMuted);
-        this.room.on(JitsiMeetJS.events.conference.TRACK_ADDED, this.onRemoteTrack);
-        this.room.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, this.onConferenceJoined);
-        this.room.on(JitsiMeetJS.events.conference.CONNECTION_ESTABLISHED, this.onConnectionEstablished);
-        this.room.on(JitsiMeetJS.events.conference.USER_JOINED, this.onUserJoined);
-        this.room.on(JitsiMeetJS.events.conference.USER_LEFT, this.onUserLeft);
-        this.room.on(JitsiMeetJS.events.conference.PRIVATE_MESSAGE_RECEIVED, this.onPrivateMessage);
+        this.room.on(JitsiMeetJS.events.conference.STARTED_MUTED, this.onStartMuted.bind(this));
+        this.room.on(JitsiMeetJS.events.conference.TRACK_ADDED, this.onRemoteTrack.bind(this));
+        this.room.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, this.onConferenceJoined.bind(this));
+        this.room.on(JitsiMeetJS.events.conference.CONNECTION_ESTABLISHED, this.onConnectionEstablished.bind(this));
+        this.room.on(JitsiMeetJS.events.conference.USER_JOINED, this.onUserJoined.bind(this));
+        this.room.on(JitsiMeetJS.events.conference.USER_LEFT, this.onUserLeft.bind(this));
+        this.room.on(JitsiMeetJS.events.conference.PRIVATE_MESSAGE_RECEIVED, this.onPrivateMessage.bind(this));
         if (stageView) {
-            this.room.on(JitsiMeetJS.events.conference.DOMINANT_SPEAKER_CHANGED, this.onDominantSpeakerChanged);
+            this.room.on(JitsiMeetJS.events.conference.DOMINANT_SPEAKER_CHANGED, this.onDominantSpeakerChanged.bind(this));
         }
 
         const devices = [];
@@ -387,7 +387,7 @@ class LoadTestClient {
     onConnectionFailed() {
         console.error(`Participant ${this.id}: Connection Failed!`);
     }
-    
+
     /**
      * This function is called when we disconnect.
      */
@@ -494,7 +494,7 @@ if (config.websocketKeepAliveUrl) {
 clients[0] = new LoadTestClient(0);
 
 clients[0].connection = new JitsiMeetJS.JitsiConnection(null, null, config);
-clients[0].connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, clients[0].onConnectionSuccess);
-clients[0].connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_FAILED, clients[0].onConnectionFailed);
-clients[0].connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED, clients[0].disconnect);
+clients[0].connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, clients[0].onConnectionSuccess.bind(clients[0]));
+clients[0].connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_FAILED, clients[0].onConnectionFailed.bind(clients[0]));
+clients[0].connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED, clients[0].disconnect.bind(clients[0]));
 clients[0].connection.connect();
