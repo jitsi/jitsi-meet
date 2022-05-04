@@ -95,12 +95,12 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
      * returns {void}
      */
     componentDidMount() {
+        statsEmitter.subscribeToClientStats(
+            this.props.participantId, this._onStatsUpdated);
+
         if (this.props._sourceNameSignalingEnabled) {
             statsEmitter.subscribeToClientStats(
                 this.props._sourceName, this._onStatsUpdated);
-        } else {
-            statsEmitter.subscribeToClientStats(
-                this.props.participantId, this._onStatsUpdated);
         }
     }
 
@@ -111,19 +111,19 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
      * returns {void}
      */
     componentDidUpdate(prevProps: Props) {
+        if (prevProps.participantId !== this.props.participantId) {
+            statsEmitter.unsubscribeToClientStats(
+                prevProps.participantId, this._onStatsUpdated);
+            statsEmitter.subscribeToClientStats(
+                this.props.participantId, this._onStatsUpdated);
+        }
+
         if (this.props._sourceNameSignalingEnabled) {
             if (prevProps._sourceName !== this.props._sourceName) {
                 statsEmitter.unsubscribeToClientStats(
                     prevProps._sourceName, this._onStatsUpdated);
                 statsEmitter.subscribeToClientStats(
                     this.props._sourceName, this._onStatsUpdated);
-            }
-        } else {
-            if (prevProps.participantId !== this.props.participantId) { // eslint-disable-line no-lonely-if
-                statsEmitter.unsubscribeToClientStats(
-                    prevProps.participantId, this._onStatsUpdated);
-                statsEmitter.subscribeToClientStats(
-                    this.props.participantId, this._onStatsUpdated);
             }
         }
     }
@@ -136,12 +136,12 @@ class AbstractConnectionIndicator<P: Props, S: State> extends Component<P, S> {
      * @returns {void}
      */
     componentWillUnmount() {
+        statsEmitter.unsubscribeToClientStats(
+            this.props.participantId, this._onStatsUpdated);
+
         if (this.props._sourceNameSignalingEnabled) {
             statsEmitter.unsubscribeToClientStats(
                 this.props._sourceName, this._onStatsUpdated);
-        } else {
-            statsEmitter.unsubscribeToClientStats(
-                this.props.participantId, this._onStatsUpdated);
         }
 
         clearTimeout(this.autoHideTimeout);
