@@ -23,82 +23,23 @@ let {
 
 const { room: roomName } = parseURIString(window.location.toString());
 
-let connection = null;
-
-let connected = false;
-
-let room = null;
-
-let numParticipants = 1;
-
-let localTracks = [];
-const remoteTracks = {};
-
-let maxFrameHeight = 0;
-
-let selectedParticipant = null;
-
-window.APP = {
-    conference: {
-        getStats() {
-            return room.connectionQuality.getStats();
-        },
-        getConnectionState() {
-            return room && room.getConnectionState();
-        },
-        muteAudio(mute) {
-            localAudio = mute;
-            for (let i = 0; i < localTracks.length; i++) {
-                if (localTracks[i].getType() === 'audio') {
-                    if (mute) {
-                        localTracks[i].mute();
-                    }
-                    else {
-                        localTracks[i].unmute();
-
-                        // if track was not added we need to add it to the peerconnection
-                        if (!room.getLocalAudioTrack()) {
-                            room.replaceTrack(null, localTracks[i]);
-                        }
-                    }
-                }
-            }
-        }
-    },
-
-    get room() {
-        return room;
-    },
-    get connection() {
-        return connection;
-    },
-    get numParticipants() {
-        return numParticipants;
-    },
-    get localTracks() {
-        return localTracks;
-    },
-    get remoteTracks() {
-        return remoteTracks;
-    },
-    get params() {
-        return {
-            roomName,
-            localAudio,
-            localVideo,
-            remoteVideo,
-            remoteAudio,
-            autoPlayVideo,
-            stageView
-        };
-    }
-};
+function LoadTestClient(id) {
+    this.id = id;
+    this.connection = null;
+    this.connected = false;
+    this.room = null;
+    this.remoteParticipants = 1;
+    this.localTracks = [];
+    this.remoteTracks = {};
+    this.maxFrameHeight = 0;
+    this.selectedParticipant = null;
+}
 
 /**
  * Simple emulation of jitsi-meet's screen layout behavior
  */
-function updateMaxFrameHeight() {
-    if (!connected) {
+LoadTestClient.prototype.updateMaxFrameHeight = function() {
+    if (!this.connected) {
         return;
     }
 
@@ -108,49 +49,49 @@ function updateMaxFrameHeight() {
         newMaxFrameHeight = 2160;
     }
     else {
-        if (numParticipants <= 2) {
+        if (this.numParticipants <= 2) {
             newMaxFrameHeight = 720;
-        } else if (numParticipants <= 4) {
+        } else if (this.numParticipants <= 4) {
             newMaxFrameHeight = 360;
         } else {
-            newMaxFrameHeight = 180;
+            this.newMaxFrameHeight = 180;
         }
     }
 
-    if (room && maxFrameHeight !== newMaxFrameHeight) {
-        maxFrameHeight = newMaxFrameHeight;
-        room.setReceiverVideoConstraint(maxFrameHeight);
+    if (this.room && this.maxFrameHeight !== newMaxFrameHeight) {
+        this.maxFrameHeight = newMaxFrameHeight;
+        this.room.setReceiverVideoConstraint(this.maxFrameHeight);
     }
 }
 
 /**
  * Simple emulation of jitsi-meet's lastN behavior
  */
-function updateLastN() {
-    if (!connected) {
+LoadTestClient.prototype.updateLastN = function() {
+    if (!this.connected) {
         return;
     }
 
     let lastN = typeof config.channelLastN === 'undefined' ? -1 : config.channelLastN;
 
-    const limitedLastN = limitLastN(numParticipants, validateLastNLimits(config.lastNLimits));
+    const limitedLastN = limitLastN(this.numParticipants, this.validateLastNLimits(config.lastNLimits));
 
     if (limitedLastN !== undefined) {
         lastN = lastN === -1 ? limitedLastN : Math.min(limitedLastN, lastN);
     }
 
-    if (lastN === room.getLastN()) {
+    if (lastN === this.room.getLastN()) {
         return;
     }
 
-    room.setLastN(lastN);
+    this.room.setLastN(lastN);
 }
 
 /**
  * Helper function to query whether a participant ID is a valid ID
  * for stage view.
  */
-function isValidStageViewParticipant(id) {
+LoadTestClient.prototype.isValidStageViewParticipant = function(id) {
     return (id !== room.myUserId() && room.getParticipantById(id));
 }
 
@@ -160,17 +101,17 @@ function isValidStageViewParticipant(id) {
  * is slightly different.
  * @returns Whether the selected participant changed.
  */
-function selectStageViewParticipant(selected, previous) {
+LoadTestClient.prototype.selectStageViewParticipant = function(selected, previous) {
     let newSelectedParticipant;
 
-    if (isValidStageViewParticipant(selected)) {
+    if (this.isValidStageViewParticipant(selected)) {
         newSelectedParticipant = selected;
     }
     else {
         newSelectedParticipant = previous.find(isValidStageViewParticipant);
     }
-    if (newSelectedParticipant && newSelectedParticipant !== selectedParticipant) {
-        selectedParticipant = newSelectedParticipant;
+    if (newSelectedParticipant && newSelectedParticipant !== this.selectedParticipant) {
+        this.selectedParticipant = newSelectedParticipant;
         return true;
     }
     return false;
@@ -179,78 +120,84 @@ function selectStageViewParticipant(selected, previous) {
 /**
  * Simple emulation of jitsi-meet's selectParticipants behavior
  */
-function selectParticipants() {
-    if (!connected) {
+LoadTestClient.prototype.selectParticipants = function() {
+    if (!this.connected) {
         return;
     }
     if (stageView) {
-        if (selectedParticipant) {
-            room.selectParticipants([selectedParticipant]);
+        if (this.selectedParticipant) {
+            this.room.selectParticipants([this.selectedParticipant]);
         }
     }
     else {
         /* jitsi-meet's current Tile View behavior. */
-        const ids = room.getParticipants().map(participant => participant.getId());
-        room.selectParticipants(ids);
+        const ids = this.room.getParticipants().map(participant => participant.getId());
+        this.room.selectParticipants(ids);
     }
 }
 
 /**
  * Called when number of participants changes.
  */
-function setNumberOfParticipants() {
-    $('#participants').text(numParticipants);
-    if (!stageView) {
-        selectParticipants();
-        updateMaxFrameHeight();
+LoadTestClient.prototype.setNumberOfParticipants = function() {
+    if (this.id === 0) {
+        $('#participants').text(numParticipants);
     }
-    updateLastN();
+    if (!stageView) {
+        this.selectParticipants();
+        this.updateMaxFrameHeight();
+    }
+    this.updateLastN();
 }
 
 /**
  * Called when ICE connects
  */
-function onConnectionEstablished() {
-    connected = true;
+LoadTestClient.prototype.onConnectionEstablished = function() {
+    this.connected = true;
 
-    selectParticipants();
-    updateMaxFrameHeight();
-    updateLastN();
+    this.selectParticipants();
+    this.updateMaxFrameHeight();
+    this.updateLastN();
 }
 
 /**
  * Handles dominant speaker changed.
  * @param id
  */
-function onDominantSpeakerChanged(selected, previous) {
-    if (selectStageViewParticipant(selected, previous)) {
-        selectParticipants();
+LoadTestClient.prototype.onDominantSpeakerChanged = function(selected, previous) {
+    if (this.selectStageViewParticipant(selected, previous)) {
+        this.selectParticipants();
     }
-    updateMaxFrameHeight();
+    this.updateMaxFrameHeight();
 }
 
 /**
  * Handles local tracks.
  * @param tracks Array with JitsiTrack objects
  */
-function onLocalTracks(tracks = []) {
-    localTracks = tracks;
-    for (let i = 0; i < localTracks.length; i++) {
-        if (localTracks[i].getType() === 'video') {
-            $('body').append(`<video ${autoPlayVideo ? 'autoplay="1" ' : ''}id='localVideo${i}' />`);
-            localTracks[i].attach($(`#localVideo${i}`)[0]);
-
-            room.addTrack(localTracks[i]);
-        } else {
-            if (localAudio) {
-                room.addTrack(localTracks[i]);
-            } else {
-                localTracks[i].mute();
+LoadTestClient.prototype.onLocalTracks = function(tracks = []) {
+    this.localTracks = tracks;
+    for (let i = 0; i < this.localTracks.length; i++) {
+        if (this.localTracks[i].getType() === 'video') {
+            if (this.id === 0) {
+                $('body').append(`<video ${autoPlayVideo ? 'autoplay="1" ' : ''}id='localVideo${i}' />`);
+                localTracks[i].attach($(`#localVideo${i}`)[0]);
             }
 
-            $('body').append(
-                `<audio autoplay='1' muted='true' id='localAudio${i}' />`);
-            localTracks[i].attach($(`#localAudio${i}`)[0]);
+            this.room.addTrack(localTracks[i]);
+        } else {
+            if (localAudio) {
+                this.room.addTrack(localTracks[i]);
+            } else {
+                this.localTracks[i].mute();
+            }
+
+            if (this.id === 0) {
+                $('body').append(
+                    `<audio autoplay='1' muted='true' id='localAudio${i}' />`);
+                localTracks[i].attach($(`#localAudio${i}`)[0]);
+            }
         }
     }
 }
@@ -259,17 +206,22 @@ function onLocalTracks(tracks = []) {
  * Handles remote tracks
  * @param track JitsiTrack object
  */
-function onRemoteTrack(track) {
+LoadTestClient.prototype.onRemoteTrack = function(track) {
     if (track.isLocal()
             || (track.getType() === 'video' && !remoteVideo) || (track.getType() === 'audio' && !remoteAudio)) {
         return;
     }
     const participant = track.getParticipantId();
 
-    if (!remoteTracks[participant]) {
-        remoteTracks[participant] = [];
+    if (!this.remoteTracks[participant]) {
+        this.remoteTracks[participant] = [];
     }
-    const idx = remoteTracks[participant].push(track);
+
+    if (this.id !== 0) {
+        return
+    }
+    
+    const idx = this.remoteTracks[participant].push(track);
     const id = participant + track.getType() + idx;
 
     if (track.getType() === 'video') {
@@ -283,24 +235,24 @@ function onRemoteTrack(track) {
 /**
  * That function is executed when the conference is joined
  */
-function onConferenceJoined() {
-    console.log('Conference joined');
+LoadTestClient.prototype.onConferenceJoined = function() {
+    console.log(`Participant ${this.id} Conference joined`);
 }
 
 /**
  * Handles start muted events, when audio and/or video are muted due to
  * startAudioMuted or startVideoMuted policy.
  */
-function onStartMuted() {
+LoadTestClient.prototype.onStartMuted = function() {
     // Give it some time, as it may be currently in the process of muting
     setTimeout(() => {
-        const localAudioTrack = room.getLocalAudioTrack();
+        const localAudioTrack = this.room.getLocalAudioTrack();
 
         if (localAudio && localAudioTrack && localAudioTrack.isMuted()) {
             localAudioTrack.unmute();
         }
 
-        const localVideoTrack = room.getLocalVideoTrack();
+        const localVideoTrack = this.room.getLocalVideoTrack();
 
         if (localVideo && localVideoTrack && localVideoTrack.isMuted()) {
             localVideoTrack.unmute();
@@ -312,23 +264,27 @@ function onStartMuted() {
  *
  * @param id
  */
-function onUserJoined(id) {
-    numParticipants++;
-    setNumberOfParticipants();
-    remoteTracks[id] = [];
+LoadTestClient.prototype.onUserJoined = function(id) {
+    this.numParticipants++;
+    this.setNumberOfParticipants();
+    this.remoteTracks[id] = [];
 }
 
 /**
  *
  * @param id
  */
-function onUserLeft(id) {
-    numParticipants--;
-    setNumberOfParticipants();
-    if (!remoteTracks[id]) {
+LoadTestClient.prototype.onUserLeft = function(id) {
+    this.numParticipants--;
+    this.setNumberOfParticipants();
+    if (!this.remoteTracks[id]) {
         return;
     }
     const tracks = remoteTracks[id];
+
+    if (this.id !== 0) {
+        return;
+    }
 
     for (let i = 0; i < tracks.length; i++) {
         const container = $(`#${id}${tracks[i].getType()}${i + 1}`)[0];
@@ -347,10 +303,10 @@ function onUserLeft(id) {
  * @param {string} text - The message.
  * @returns {void}
  */
-function onPrivateMessage(id, text) {
+LoadTestClient.prototype.onPrivateMessage = function(id, text) {
     switch(text) {
         case 'video on':
-            onVideoOnMessage();
+            this.onVideoOnMessage();
             break;
     }
 }
@@ -360,43 +316,43 @@ function onPrivateMessage(id, text) {
  *
  * @returns {void}
  */
-function onVideoOnMessage() {
-    console.debug('Turning my video on!');
+LoadTestClient.prototype.onVideoOnMessage = function() {
+    console.debug(`Participant ${this.id}: Turning my video on!`);
 
-    const localVideoTrack = room.getLocalVideoTrack();
+    const localVideoTrack = this.room.getLocalVideoTrack();
 
     if (localVideoTrack && localVideoTrack.isMuted()) {
-        console.debug('Unmuting existing video track.');
+        console.debug(`Participant ${this.id}: Unmuting existing video track.`);
         localVideoTrack.unmute();
     } else if (!localVideoTrack) {
         JitsiMeetJS.createLocalTracks({ devices: [ 'video' ] })
             .then(([ videoTrack ]) => videoTrack)
             .catch(console.error)
             .then(videoTrack => {
-                return room.replaceTrack(null, videoTrack);
+                return this.room.replaceTrack(null, videoTrack);
             })
             .then(() => {
-                console.debug('Successfully added a new video track for unmute.');
+                console.debug(`Participant ${this.id}: Successfully added a new video track for unmute.`);
             });
     } else {
-        console.log('No-op! We are already video unmuted!');
+        console.log(`Participant ${this.id}: No-op! We are already video unmuted!`);
     }
 }
 
 /**
  * That function is called when connection is established successfully
  */
-function onConnectionSuccess() {
-    room = connection.initJitsiConference(roomName.toLowerCase(), config);
-    room.on(JitsiMeetJS.events.conference.STARTED_MUTED, onStartMuted);
-    room.on(JitsiMeetJS.events.conference.TRACK_ADDED, onRemoteTrack);
-    room.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, onConferenceJoined);
-    room.on(JitsiMeetJS.events.conference.CONNECTION_ESTABLISHED, onConnectionEstablished);
-    room.on(JitsiMeetJS.events.conference.USER_JOINED, onUserJoined);
-    room.on(JitsiMeetJS.events.conference.USER_LEFT, onUserLeft);
-    room.on(JitsiMeetJS.events.conference.PRIVATE_MESSAGE_RECEIVED, onPrivateMessage);
+LoadTestClient.prototype.onConnectionSuccess = function() {
+    this.room = this.connection.initJitsiConference(roomName.toLowerCase(), config);
+    this.room.on(JitsiMeetJS.events.conference.STARTED_MUTED, this.onStartMuted);
+    this.room.on(JitsiMeetJS.events.conference.TRACK_ADDED, this.onRemoteTrack);
+    this.room.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, this.onConferenceJoined);
+    this.room.on(JitsiMeetJS.events.conference.CONNECTION_ESTABLISHED, this.onConnectionEstablished);
+    this.room.on(JitsiMeetJS.events.conference.USER_JOINED, this.onUserJoined);
+    this.room.on(JitsiMeetJS.events.conference.USER_LEFT, this.onUserLeft);
+    this.room.on(JitsiMeetJS.events.conference.PRIVATE_MESSAGE_RECEIVED, this.onPrivateMessage);
     if (stageView) {
-        room.on(JitsiMeetJS.events.conference.DOMINANT_SPEAKER_CHANGED, onDominantSpeakerChanged);
+        this.room.on(JitsiMeetJS.events.conference.DOMINANT_SPEAKER_CHANGED, this.onDominantSpeakerChanged);
     }
 
     const devices = [];
@@ -412,50 +368,113 @@ function onConnectionSuccess() {
         JitsiMeetJS.createLocalTracks({ devices })
             .then(onLocalTracks)
             .then(() => {
-                room.join();
+                this.room.join();
             })
             .catch(error => {
                 throw error;
             });
     } else {
-        room.join();
+        this.room.join();
     }
 
-    updateMaxFrameHeight();
+    this.updateMaxFrameHeight();
 }
 
 /**
  * This function is called when the connection fail.
  */
-function onConnectionFailed() {
-    console.error('Connection Failed!');
+LoadTestClient.prototype.onConnectionFailed = function() {
+    console.error(`Participant ${this.id}: Connection Failed!`);
 }
 
 /**
  * This function is called when we disconnect.
  */
-function disconnect() {
+LoadTestClient.prototype.disconnect = function() {
     console.log('disconnect!');
-    connection.removeEventListener(
+    this.connection.removeEventListener(
         JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED,
-        onConnectionSuccess);
-    connection.removeEventListener(
+        this.onConnectionSuccess);
+    this.connection.removeEventListener(
         JitsiMeetJS.events.connection.CONNECTION_FAILED,
-        onConnectionFailed);
-    connection.removeEventListener(
+        this.onConnectionFailed);
+    this.connection.removeEventListener(
         JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED,
-        disconnect);
+        this.disconnect);
 }
+
+
+let clients = [];
+
+window.APP = {
+    conference: {
+        getStats() {
+            return clients[0]?.room?.connectionQuality.getStats();
+        },
+        getConnectionState() {
+            return clients[0] && clients[0].room && room.getConnectionState();
+        },
+        muteAudio(mute) {
+            localAudio = mute;
+            for (let j = 0; j < clients.length; j++) {
+                for (let i = 0; i < clients[j].localTracks.length; i++) {
+                    if (clients[j].localTracks[i].getType() === 'audio') {
+                        if (mute) {
+                            clients[j].localTracks[i].mute();
+                        }
+                        else {
+                            clients[j].localTracks[i].unmute();
+                            
+                            // if track was not added we need to add it to the peerconnection
+                            if (!clients[j].room.getLocalAudioTrack()) {
+                                clients[j].room.replaceTrack(null, clients[j].localTracks[i]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+
+    get room() {
+        return clients[0]?.room;
+    },
+    get connection() {
+        return clients[0]?.connection;
+    },
+    get numParticipants() {
+        return clients[0]?.numParticipants;
+    },
+    get localTracks() {
+        return clients[0]?.localTracks;
+    },
+    get remoteTracks() {
+        return clients[0]?.remoteTracks;
+    },
+    get params() {
+        return {
+            roomName,
+            localAudio,
+            localVideo,
+            remoteVideo,
+            remoteAudio,
+            autoPlayVideo,
+            stageView
+        };
+    }
+};
 
 /**
  *
  */
 function unload() {
-    for (let i = 0; i < localTracks.length; i++) {
-        localTracks[i].dispose();
+    for (let j = 0; j < clients.length; j++) {
+        for (let i = 0; i < clients[j].localTracks.length; i++) {
+            clients[j].localTracks[i].dispose();
+        }
+        clients[j].room.leave();
+        clients[j].connection.disconnect();
     }
-    room.leave();
-    connection.disconnect();
 }
 
 $(window).bind('beforeunload', unload);
@@ -470,8 +489,10 @@ if (config.websocketKeepAliveUrl) {
     config.websocketKeepAliveUrl += `?room=${roomName.toLowerCase()}`;
 }
 
-connection = new JitsiMeetJS.JitsiConnection(null, null, config);
-connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
-connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_FAILED, onConnectionFailed);
-connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED, disconnect);
-connection.connect();
+clients[0] = new LoadTestClient(0);
+
+clients[0].connection = new JitsiMeetJS.JitsiConnection(null, null, config);
+clients[0].connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, clients[0].onConnectionSuccess);
+clients[0].connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_FAILED, clients[0].onConnectionFailed);
+clients[0].connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED, clients[0].disconnect);
+clients[0].connection.connect();
