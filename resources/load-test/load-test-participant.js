@@ -14,7 +14,8 @@ const {
     remoteVideo = isHuman,
     remoteAudio = isHuman,
     autoPlayVideo = config.testing.noAutoPlayVideo !== true,
-    stageView = config.disableTileView
+    stageView = config.disableTileView,
+    numClients = 1
 } = params;
 
 let {
@@ -507,5 +508,7 @@ if (config.websocketKeepAliveUrl) {
     config.websocketKeepAliveUrl += `?room=${roomName.toLowerCase()}`;
 }
 
-clients[0] = new LoadTestClient(0);
-clients[0].connect();
+for (let j = 0; j < numClients; j++) {
+    clients[j] = new LoadTestClient(j);
+    clients[j].connect();
+}
