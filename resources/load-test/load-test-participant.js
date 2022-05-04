@@ -183,13 +183,13 @@ class LoadTestClient {
             if (this.localTracks[i].getType() === 'video') {
                 if (this.id === 0) {
                     $('body').append(`<video ${autoPlayVideo ? 'autoplay="1" ' : ''}id='localVideo${i}' />`);
-                    localTracks[i].attach($(`#localVideo${i}`)[0]);
+                    this.localTracks[i].attach($(`#localVideo${i}`)[0]);
                 }
 
-                this.room.addTrack(localTracks[i]);
+                this.room.addTrack(this.localTracks[i]);
             } else {
                 if (localAudio) {
-                    this.room.addTrack(localTracks[i]);
+                    this.room.addTrack(this.localTracks[i]);
                 } else {
                     this.localTracks[i].mute();
                 }
@@ -197,7 +197,7 @@ class LoadTestClient {
                 if (this.id === 0) {
                     $('body').append(
                         `<audio autoplay='1' muted='true' id='localAudio${i}' />`);
-                    localTracks[i].attach($(`#localAudio${i}`)[0]);
+                    this.localTracks[i].attach($(`#localAudio${i}`)[0]);
                 }
             }
         }
