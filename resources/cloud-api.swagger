@@ -85,6 +85,7 @@ paths:
         200:
           description: "successful operation"
           schema:
+            type: array
             $ref: "#/definitions/PhoneNumberListAnswer"
 securityDefinitions:
   token:
@@ -130,22 +131,16 @@ definitions:
   PhoneNumberListAnswer:
     description: "Answer with Phone number list and additional information"
     type: "object"
-    properties: 
-      message: 
-        type: "string"
-        description: "General message"
-      numbersEnabled: 
-        type: "boolean"
-        description: "Determines if the numbers are available"
-      numbers:
-        type: object
-        additionalProperties:
-          type: "array"
-          items:
-            type: "string"
-        example:
-          US: ["+1.123.456.7890"]
-          UK: ["+44.123.456.7890"]
+    properties:
+      countryCode:
+        type: string
+      formattedNumber:
+        type: string
+      tollFree:
+        type: boolean
+    example:
+      {"countryCode":"US","tollFree":false,"formattedNumber":"+1 123-456-7890"}
+      {"countryCode":"UK","tollFree":true,"formattedNumber":"+44 123 456 7890"}
 
 externalDocs:
   description: "Find out more about the Jitsi Cloud API"
