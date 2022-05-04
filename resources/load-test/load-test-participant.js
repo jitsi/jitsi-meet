@@ -15,7 +15,8 @@ const {
     remoteAudio = isHuman,
     autoPlayVideo = config.testing.noAutoPlayVideo !== true,
     stageView = config.disableTileView,
-    numClients = 1
+    numClients = 1,
+    clientInterval = 100 // ms
 } = params;
 
 let {
@@ -509,7 +510,14 @@ if (config.websocketKeepAliveUrl) {
     config.websocketKeepAliveUrl += `?room=${roomName.toLowerCase()}`;
 }
 
-for (let j = 0; j < numClients; j++) {
-    clients[j] = new LoadTestClient(j);
-    clients[j].connect();
+function startClient(i) {
+    clients[i] = new LoadTestClient(i);
+    clients[i].connect();
+    if (i + 1 < numClients) {
+        setTimeout(() => { startClient(i+1) }, clientInterval)
+    }
+}
+
+if (numClients > 0) {
+    startClient(0)
 }
