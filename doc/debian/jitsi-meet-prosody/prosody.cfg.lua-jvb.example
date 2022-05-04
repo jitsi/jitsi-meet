@@ -137,3 +137,18 @@ Component "lobby.jitmeet.example.com" "muc"
         "muc_rate_limit";
         "polls";
     }
+
+-- Enabled dial-in for JaaS customers
+-- Note: make sure you have the following packages installed: lua-basexx, liblua5.3-dev, libssl-dev, luarocks
+-- and execute $ sudo luarocks install luajwtjitsi 3.0-0
+VirtualHost "jigasi.meet.jitsi"
+    enabled = false -- JaaS customers remove this line
+    modules_enabled = {
+      "ping";
+      "bosh";
+    }
+    authentication = "token"
+    app_id = "jitsi";
+    asap_key_server = "https://jaas-public-keys.jitsi.net/vpaas/prod-8x8"
+    asap_accepted_issuers = { "jaas-components" }
+    asap_accepted_audiences = { "jigasi.jitmeet.example.com" }
