@@ -1043,60 +1043,60 @@ var config = {
     // enableLipSync: false
 
     /**
-     External API url used to receive branding specific information.
-     If there is no url set or there are missing fields, the defaults are applied.
-     The config file should be in JSON.
-     None of the fields are mandatory and the response must have the shape:
-    {
-        // The domain url to apply (will replace the domain in the sharing conference link/embed section)
-        inviteDomain: 'example-company.org,
-        // The hex value for the colour used as background
-        backgroundColor: '#fff',
-        // The url for the image used as background
-        backgroundImageUrl: 'https://example.com/background-img.png',
-        // The anchor url used when clicking the logo image
-        logoClickUrl: 'https://example-company.org',
-        // The url used for the image used as logo
-        logoImageUrl: 'https://example.com/logo-img.png',
-        // Overwrite for pool of background images for avatars
-        avatarBackgrounds: ['url(https://example.com/avatar-background-1.png)', '#FFF'],
-        // The lobby/prejoin screen background
-        premeetingBackground: 'url(https://example.com/premeeting-background.png)',
-        // A list of images that can be used as video backgrounds.
-        // When this field is present, the default images will be replaced with those provided.
-        virtualBackgrounds: ['https://example.com/img.jpg'],
-        // Object containing a theme's properties. It also supports partial overwrites of the main theme.
-        // For a list of all possible theme tokens and their current defaults, please check:
-        // https://github.com/jitsi/jitsi-meet/tree/master/resources/custom-theme/custom-theme.json
-        // For a short explanations on each of the tokens, please check:
-        // https://github.com/jitsi/jitsi-meet/blob/master/react/features/base/ui/Tokens.js
-        // IMPORTANT!: This is work in progress so many of the various tokens are not yet applied in code
-        // or they are partially applied.
-        customTheme: {
-            palette: {
-                ui01: "orange !important",
-                ui02: "maroon",
-                surface02: 'darkgreen',
-                ui03: "violet",
-                ui04: "magenta",
-                ui05: "blueviolet",
-                field02Hover: 'red',
-                action01: 'green',
-                action01Hover: 'lightgreen',
-                action02Disabled: 'beige',
-                success02: 'cadetblue',
-                action02Hover: 'aliceblue'
-            },
-            typography: {
-                labelRegular: {
-                    fontSize: 25,
-                    lineHeight: 30,
-                    fontWeight: 500
-                }
-            }
-        }
-    }
-    */
+     * External API url used to receive branding specific information.
+     * If there is no url set or there are missing fields, the defaults are applied.
+     * The config file should be in JSON.
+     * None of the fields are mandatory and the response must have the shape:
+     * {
+     *     // The domain url to apply (will replace the domain in the sharing conference link/embed section)
+     *     inviteDomain: 'example-company.org,
+     *     // The hex value for the colour used as background
+     *     backgroundColor: '#fff',
+     *     // The url for the image used as background
+     *     backgroundImageUrl: 'https://example.com/background-img.png',
+     *     // The anchor url used when clicking the logo image
+     *     logoClickUrl: 'https://example-company.org',
+     *     // The url used for the image used as logo
+     *     logoImageUrl: 'https://example.com/logo-img.png',
+     *     // Overwrite for pool of background images for avatars
+     *     avatarBackgrounds: ['url(https://example.com/avatar-background-1.png)', '#FFF'],
+     *     // The lobby/prejoin screen background
+     *     premeetingBackground: 'url(https://example.com/premeeting-background.png)',
+     *     // A list of images that can be used as video backgrounds.
+     *     // When this field is present, the default images will be replaced with those provided.
+     *     virtualBackgrounds: ['https://example.com/img.jpg'],
+     *     // Object containing a theme's properties. It also supports partial overwrites of the main theme.
+     *     // For a list of all possible theme tokens and their current defaults, please check:
+     *     // https://github.com/jitsi/jitsi-meet/tree/master/resources/custom-theme/custom-theme.json
+     *     // For a short explanations on each of the tokens, please check:
+     *     // https://github.com/jitsi/jitsi-meet/blob/master/react/features/base/ui/Tokens.js
+     *     // IMPORTANT!: This is work in progress so many of the various tokens are not yet applied in code
+     *     // or they are partially applied.
+     *     customTheme: {
+     *         palette: {
+     *             ui01: "orange !important",
+     *             ui02: "maroon",
+     *             surface02: 'darkgreen',
+     *             ui03: "violet",
+     *             ui04: "magenta",
+     *             ui05: "blueviolet",
+     *             field02Hover: 'red',
+     *             action01: 'green',
+     *             action01Hover: 'lightgreen',
+     *             action02Disabled: 'beige',
+     *             success02: 'cadetblue',
+     *             action02Hover: 'aliceblue'
+     *         },
+     *         typography: {
+     *             labelRegular: {
+     *                 fontSize: 25,
+     *                 lineHeight: 30,
+     *                 fontWeight: 500
+     *             }
+     *         }
+     *     }
+     * }
+     */
     // dynamicBrandingUrl: '',
 
     // Options related to the breakout rooms feature.
@@ -1201,25 +1201,25 @@ var config = {
 
     // List of undocumented settings used in jitsi-meet
     /**
-     _immediateReloadThreshold
-     debug
-     debugAudioLevels
-     deploymentInfo
-     dialOutAuthUrl
-     dialOutCodesUrl
-     disableRemoteControl
-     displayJids
-     externalConnectUrl
-     e2eeLabels
-     firefox_fake_device
-     googleApiApplicationClientID
-     iAmRecorder
-     iAmSipGateway
-     microsoftApiApplicationClientID
-     peopleSearchQueryTypes
-     peopleSearchUrl
-     requireDisplayName
-     tokenAuthUrl
+     * _immediateReloadThreshold
+     * debug
+     * debugAudioLevels
+     * deploymentInfo
+     * dialOutAuthUrl
+     * dialOutCodesUrl
+     * disableRemoteControl
+     * displayJids
+     * externalConnectUrl
+     * e2eeLabels
+     * firefox_fake_device
+     * googleApiApplicationClientID
+     * iAmRecorder
+     * iAmSipGateway
+     * microsoftApiApplicationClientID
+     * peopleSearchQueryTypes
+     * peopleSearchUrl
+     * requireDisplayName
+     * tokenAuthUrl
      */
 
     /**
@@ -1231,26 +1231,26 @@ var config = {
 
     // List of undocumented settings used in lib-jitsi-meet
     /**
-     _peerConnStatusOutOfLastNTimeout
-     _peerConnStatusRtcMuteTimeout
-     abTesting
-     avgRtpStatsN
-     callStatsConfIDNamespace
-     callStatsCustomScriptUrl
-     desktopSharingSources
-     disableAEC
-     disableAGC
-     disableAP
-     disableHPF
-     disableNS
-     enableTalkWhileMuted
-     forceJVB121Ratio
-     forceTurnRelay
-     hiddenDomain
-     hiddenFromRecorderFeatureEnabled
-     ignoreStartMuted
-     websocketKeepAlive
-     websocketKeepAliveUrl
+     * _peerConnStatusOutOfLastNTimeout
+     * _peerConnStatusRtcMuteTimeout
+     * abTesting
+     * avgRtpStatsN
+     * callStatsConfIDNamespace
+     * callStatsCustomScriptUrl
+     * desktopSharingSources
+     * disableAEC
+     * disableAGC
+     * disableAP
+     * disableHPF
+     * disableNS
+     * enableTalkWhileMuted
+     * forceJVB121Ratio
+     * forceTurnRelay
+     * hiddenDomain
+     * hiddenFromRecorderFeatureEnabled
+     * ignoreStartMuted
+     * websocketKeepAlive
+     * websocketKeepAliveUrl
      */
 
     /**
@@ -1259,13 +1259,13 @@ var config = {
     mouseMoveCallbackInterval: 1000,
 
     /**
-        Use this array to configure which notifications will be shown to the user
-        The items correspond to the title or description key of that notification
-        Some of these notifications also depend on some other internal logic to be displayed or not,
-        so adding them here will not ensure they will always be displayed
-
-        A falsy value for this prop will result in having all notifications enabled (e.g null, undefined, false)
-    */
+     * Use this array to configure which notifications will be shown to the user
+     * The items correspond to the title or description key of that notification
+     * Some of these notifications also depend on some other internal logic to be displayed or not,
+     * so adding them here will not ensure they will always be displayed
+     * 
+     * A falsy value for this prop will result in having all notifications enabled (e.g null, undefined, false)
+     */
     // notifications: [
     //     'connection.CONNFAIL', // shown when the connection fails,
     //     'dialog.cameraNotSendingData', // shown when there's no feed from user's camera
