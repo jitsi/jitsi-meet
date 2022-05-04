@@ -7,7 +7,8 @@ import { LobbyChatScreen, LobbyScreen } from '../../../../../lobby';
 import { screen } from '../../../routes';
 import {
     lobbyChatScreenOptions,
-    lobbyScreenOptions, navigationContainerTheme
+    lobbyScreenOptions,
+    navigationContainerTheme
 } from '../../../screenOptions';
 import { lobbyNavigationContainerRef } from '../LobbyNavigationContainerRef';
 

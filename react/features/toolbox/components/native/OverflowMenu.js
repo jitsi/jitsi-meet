@@ -25,7 +25,7 @@ import HelpButton from '../HelpButton';
 import AudioOnlyButton from './AudioOnlyButton';
 import LinkToSalesforceButton from './LinkToSalesforceButton';
 import RaiseHandButton from './RaiseHandButton';
-import ScreenSharingButton from './ScreenSharingButton.js';
+import ScreenSharingButton from './ScreenSharingButton';
 import ToggleCameraButton from './ToggleCameraButton';
 
 /**

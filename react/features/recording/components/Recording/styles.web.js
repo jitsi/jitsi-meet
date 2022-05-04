@@ -12,6 +12,4 @@ export const ICON_INFO = 'images/icon-info.png';
 
 export const ICON_USERS = 'images/icon-users.png';
 
-export const JITSI_LOGO = 'images/jitsiLogo_square.png';
-
 export const TRACK_COLOR = BaseTheme.palette.ui15;

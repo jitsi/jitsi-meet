@@ -12,6 +12,8 @@ import BaseTheme from '../../../base/ui/components/BaseTheme';
 import InviteButton
     from '../../../invite/components/add-people-dialog/native/InviteButton';
 import { LargeVideo } from '../../../large-video/components';
+import HeaderNavigationButton
+    from '../../../mobile/navigation/components/HeaderNavigationButton';
 import { navigate }
     from '../../../mobile/navigation/components/lobby/LobbyNavigationContainerRef';
 import { screen } from '../../../mobile/navigation/routes';
@@ -37,62 +39,30 @@ type Props = AbstractProps & {
  */
 class LobbyScreen extends AbstractLobbyScreen<Props> {
     /**
+     * Implements React's {@link Component#componentDidMount()}. Invoked
+     * immediately after this component is mounted.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidMount() {
+        const { navigation, t } = this.props;
+
+        navigation.setOptions({
+            headerLeft: () => (
+                <HeaderNavigationButton
+                    label = { t('dialog.Cancel') }
+                    onPress = { this._onCancel } />
+            )
+        });
+    }
+
+    /**
      * Implements {@code PureComponent#render}.
      *
      * @inheritdoc
      */
     render() {
-        return (
-            <>
-                { this._renderLobby() }
-            </>
-        );
-    }
-
-    _getScreenTitleKey: () => string;
-
-    _onAskToJoin: () => void;
-
-    _onCancel: () => boolean;
-
-    _onChangeDisplayName: Object => void;
-
-    _onChangeEmail: Object => void;
-
-    _onChangePassword: Object => void;
-
-    _onEnableEdit: () => void;
-
-    _onJoinWithPassword: () => void;
-
-    _onSwitchToKnockMode: () => void;
-
-    _onSwitchToPasswordMode: () => void;
-
-    _renderContent: () => React$Element<*>;
-
-    _renderToolbarButtons: () => React$Element<*>;
-
-    _renderLobby: () => React$Element<*>;
-
-    _onNavigateToLobbyChat: () => void;
-
-    /**
-     * Navigates to the lobby chat screen.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onNavigateToLobbyChat() {
-        navigate(screen.lobby.chat);
-    }
-
-    /**
-     * Renders the lobby.
-     *
-     * @inheritdoc
-     */
-    _renderLobby() {
         const { _aspectRatio } = this.props;
         let contentStyles;
         let largeVideoContainerStyles;
@@ -122,6 +92,42 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
                 </View>
             </JitsiScreen>
         );
+    }
+
+    _getScreenTitleKey: () => string;
+
+    _onAskToJoin: () => void;
+
+    _onCancel: () => boolean;
+
+    _onChangeDisplayName: Object => void;
+
+    _onChangeEmail: Object => void;
+
+    _onChangePassword: Object => void;
+
+    _onEnableEdit: () => void;
+
+    _onJoinWithPassword: () => void;
+
+    _onSwitchToKnockMode: () => void;
+
+    _onSwitchToPasswordMode: () => void;
+
+    _renderContent: () => React$Element<*>;
+
+    _renderToolbarButtons: () => React$Element<*>;
+
+    _onNavigateToLobbyChat: () => void;
+
+    /**
+     * Navigates to the lobby chat screen.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onNavigateToLobbyChat() {
+        navigate(screen.lobby.chat);
     }
 
     /**
@@ -307,16 +313,6 @@ class LobbyScreen extends AbstractLobbyScreen<Props> {
                         { t('lobby.enterPasswordButton') }
                     </Text>
                 </TouchableOpacity> }
-                <TouchableOpacity
-                    onPress = { this._onCancel }
-                    style = { [
-                        styles.button,
-                        styles.cancelButton
-                    ] }>
-                    <Text style = { styles.cancelButtonText }>
-                        { t('dialog.Cancel') }
-                    </Text>
-                </TouchableOpacity>
             </View>
         );
     }

@@ -7,8 +7,9 @@ const SECONDARY_COLOR = BaseTheme.palette.border04;
 export default {
     button: {
         alignItems: 'center',
-        borderRadius: 4,
+        borderRadius: BaseTheme.shape.borderRadius,
         padding: BaseTheme.spacing[2],
+        height: BaseTheme.spacing[7],
         width: '100%'
     },
 
@@ -132,6 +133,7 @@ export default {
         borderColor: SECONDARY_COLOR,
         borderRadius: BaseTheme.shape.borderRadius,
         borderWidth: 2,
+        height: BaseTheme.spacing[7],
         marginHorizontal: BaseTheme.spacing[3],
         padding: BaseTheme.spacing[2]
     },
@@ -143,6 +145,7 @@ export default {
     },
 
     fieldLabel: {
+        ...BaseTheme.typography.heading6,
         color: BaseTheme.palette.text01,
         marginVertical: BaseTheme.spacing[4],
         textAlign: 'center'
@@ -200,23 +203,15 @@ export default {
     },
 
     primaryButtonText: {
-        color: BaseTheme.palette.text01
+        ...BaseTheme.typography.labelButtonLarge,
+        color: BaseTheme.palette.text01,
+        lineHeight: 30
     },
 
     primaryText: {
         color: BaseTheme.palette.text01,
         margin: 'auto',
         textAlign: 'center'
-    },
-
-    cancelButton: {
-        alignItems: 'center',
-        backgroundColor: BaseTheme.palette.action02Disabled,
-        marginTop: BaseTheme.spacing[4]
-    },
-
-    cancelButtonText: {
-        color: BaseTheme.palette.text01
     },
 
     // KnockingParticipantList

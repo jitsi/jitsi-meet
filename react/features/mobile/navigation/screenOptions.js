@@ -44,21 +44,6 @@ export const fullScreenOptions = {
 
 
 /**
- * Dial-IN Info screen options and transition types.
- */
-export const dialInSummaryScreenOptions = {
-    ...TransitionPresets.ModalTransition,
-    gestureEnabled: true,
-    headerShown: true,
-    headerStyle: {
-        backgroundColor: BaseTheme.palette.screen01Header
-    },
-    headerTitleStyle: {
-        color: BaseTheme.palette.text01
-    }
-};
-
-/**
  * Drawer navigator screens options and transition types.
  */
 export const drawerNavigatorScreenOptions = {
@@ -76,7 +61,7 @@ export const drawerScreenOptions = {
     gestureEnabled: true,
     headerShown: true,
     headerStyle: {
-        backgroundColor: BaseTheme.palette.screen01Header
+        backgroundColor: BaseTheme.palette.screen02Header
     }
 };
 
@@ -108,9 +93,11 @@ export const welcomeScreenOptions = {
             size = { 20 }
             src = { IconHome } />
     ),
-    headerTitleStyle: {
-        color: BaseTheme.palette.screen01Header
-    }
+    headerStyle: {
+        backgroundColor: BaseTheme.palette.screen01Header
+    },
+    // eslint-disable-next-line no-empty-function
+    headerTitle: () => {}
 };
 
 /**
@@ -167,11 +154,6 @@ export const helpScreenOptions = {
 export const conferenceScreenOptions = fullScreenOptions;
 
 /**
- * Screen options for lobby modal.
- */
-export const lobbyScreenOptions = fullScreenOptions;
-
-/**
  * Tab bar options for chat screen.
  */
 export const chatTabBarOptions = {
@@ -194,7 +176,7 @@ export const presentationScreenOptions = {
     headerLeft: () => screenHeaderCloseButton(goBack),
     headerStatusBarHeight: 0,
     headerStyle: {
-        backgroundColor: BaseTheme.palette.screen01Header
+        backgroundColor: BaseTheme.palette.screen02Header
     },
     headerTitleStyle: {
         color: BaseTheme.palette.text01
@@ -205,6 +187,14 @@ export const presentationScreenOptions = {
  * Screen options for chat.
  */
 export const chatScreenOptions = presentationScreenOptions;
+
+/**
+ * Dial-IN Info screen options and transition types.
+ */
+export const dialInSummaryScreenOptions = {
+    ...presentationScreenOptions,
+    headerLeft: undefined
+};
 
 /**
  * Screen options for invite modal.
@@ -237,6 +227,11 @@ export const recordingScreenOptions = presentationScreenOptions;
 export const liveStreamScreenOptions = presentationScreenOptions;
 
 /**
+ * Screen options for lobby modal.
+ */
+export const lobbyScreenOptions = presentationScreenOptions;
+
+/**
  * Screen options for lobby chat modal.
  */
 export const lobbyChatScreenOptions = {
@@ -262,7 +257,7 @@ export const sharedDocumentScreenOptions = {
     headerBackTitleVisible: false,
     headerShown: true,
     headerStyle: {
-        backgroundColor: BaseTheme.palette.screen01Header
+        backgroundColor: BaseTheme.palette.screen02Header
     },
     headerTitleStyle: {
         color: BaseTheme.palette.text01

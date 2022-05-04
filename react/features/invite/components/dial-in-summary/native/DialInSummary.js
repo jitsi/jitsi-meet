@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { Linking, Platform, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { type Dispatch } from 'redux';
@@ -13,8 +13,6 @@ import { LoadingIndicator } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
 import HeaderNavigationButton
     from '../../../../mobile/navigation/components/HeaderNavigationButton';
-import { navigateRoot } from '../../../../mobile/navigation/rootNavigationContainerRef';
-import { screen } from '../../../../mobile/navigation/routes';
 import { getDialInfoPageURLForURIString } from '../../../functions';
 
 import DialInSummaryErrorDialog from './DialInSummaryErrorDialog';
@@ -43,7 +41,7 @@ type Props = {
 /**
  * Implements a React native component that displays the dial in info page for a specific room.
  */
-class DialInSummary extends Component<Props> {
+class DialInSummary extends PureComponent<Props> {
 
     /**
      * Initializes a new instance.
@@ -53,7 +51,6 @@ class DialInSummary extends Component<Props> {
     constructor(props: Props) {
         super(props);
 
-        this._onNavigateToRoot = this._onNavigateToRoot.bind(this);
         this._onError = this._onError.bind(this);
         this._onNavigate = this._onNavigate.bind(this);
         this._renderLoading = this._renderLoading.bind(this);
@@ -68,6 +65,9 @@ class DialInSummary extends Component<Props> {
      */
     componentDidMount() {
         const { navigation, t } = this.props;
+        const onNavigationClose = () => {
+            navigation.goBack();
+        };
 
         navigation.setOptions({
             headerLeft: () => {
@@ -75,13 +75,15 @@ class DialInSummary extends Component<Props> {
                     return (
                         <HeaderNavigationButton
                             label = { t('dialog.close') }
-                            onPress = { this._onNavigateToRoot } />
+                            // eslint-disable-next-line react/jsx-no-bind
+                            onPress = { onNavigationClose } />
                     );
                 }
 
                 return (
                     <HeaderNavigationButton
-                        onPress = { this._onNavigateToRoot }
+                        // eslint-disable-next-line react/jsx-no-bind
+                        onPress = { onNavigationClose }
                         src = { IconClose } />
                 );
             }
@@ -110,17 +112,6 @@ class DialInSummary extends Component<Props> {
                     style = { styles.webView } />
             </JitsiScreen>
         );
-    }
-
-    _onNavigateToRoot: () => void;
-
-    /**
-     * Callback to handle navigation back to root.
-     *
-     * @returns {void}
-     */
-    _onNavigateToRoot() {
-        navigateRoot(screen.root);
     }
 
     _onError: () => void;

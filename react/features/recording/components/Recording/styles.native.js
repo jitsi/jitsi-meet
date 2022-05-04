@@ -8,7 +8,6 @@ export const DROPBOX_LOGO = require('../../../../../images/dropboxLogo_square.pn
 export const ICON_CLOUD = require('../../../../../images/icon-cloud.png');
 export const ICON_INFO = require('../../../../../images/icon-info.png');
 export const ICON_USERS = require('../../../../../images/icon-users.png');
-export const JITSI_LOGO = require('../../../../../images/jitsiLogo_square.png');
 export const TRACK_COLOR = BaseTheme.palette.ui15;
 
 

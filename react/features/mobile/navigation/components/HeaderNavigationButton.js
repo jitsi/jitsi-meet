@@ -60,7 +60,7 @@ const HeaderNavigationButton
                         <TouchableRipple
                             disabled = { disabled }
                             onPress = { onPress }
-                            rippleColor = { BaseTheme.palette.screen01Header }>
+                            rippleColor = { BaseTheme.palette.screen02Header }>
                             <Text
                                 style = {
                                     twoActions
