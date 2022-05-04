@@ -281,11 +281,12 @@ class LoadTestClient {
         if (!this.remoteTracks[id]) {
             return;
         }
-        const tracks = this.remoteTracks[id];
 
         if (this.id !== 0) {
             return;
         }
+
+        const tracks = this.remoteTracks[id];
 
         for (let i = 0; i < tracks.length; i++) {
             const container = $(`#${id}${tracks[i].getType()}${i + 1}`)[0];
@@ -338,6 +339,21 @@ class LoadTestClient {
         } else {
             console.log(`Participant ${this.id}: No-op! We are already video unmuted!`);
         }
+    }
+
+    /**
+     * This function is called to connect.
+     */
+    connect() {
+        this._onConnectionSuccess = this.onConnectionSuccess.bind(this)
+        this._onConnectionFailed = this.onConnectionFailed.bind(this)
+        this._disconnect = this.disconnect.bind(this)
+
+        this.connection = new JitsiMeetJS.JitsiConnection(null, null, config);
+        this.connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, this._onConnectionSuccess);
+        this.connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_FAILED, this._onConnectionFailed);
+        this.connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED, this._disconnect);
+        this.connection.connect();
     }
 
     /**
@@ -395,13 +411,13 @@ class LoadTestClient {
         console.log('disconnect!');
         this.connection.removeEventListener(
             JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED,
-            this.onConnectionSuccess);
+            this._onConnectionSuccess);
         this.connection.removeEventListener(
             JitsiMeetJS.events.connection.CONNECTION_FAILED,
-            this.onConnectionFailed);
+            this._onConnectionFailed);
         this.connection.removeEventListener(
             JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED,
-            this.disconnect);
+            this._disconnect);
     }
 }
 
@@ -492,9 +508,4 @@ if (config.websocketKeepAliveUrl) {
 }
 
 clients[0] = new LoadTestClient(0);
-
-clients[0].connection = new JitsiMeetJS.JitsiConnection(null, null, config);
-clients[0].connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, clients[0].onConnectionSuccess.bind(clients[0]));
-clients[0].connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_FAILED, clients[0].onConnectionFailed.bind(clients[0]));
-clients[0].connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED, clients[0].disconnect.bind(clients[0]));
-clients[0].connection.connect();
+clients[0].connect();
