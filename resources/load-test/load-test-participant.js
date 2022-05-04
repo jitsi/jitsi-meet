@@ -494,6 +494,7 @@ function unload() {
         clients[j].room.leave();
         clients[j].connection.disconnect();
     }
+    clients = [];
 }
 
 $(window).bind('beforeunload', unload);
