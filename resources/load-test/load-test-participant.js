@@ -75,7 +75,7 @@ class LoadTestClient {
 
         let lastN = typeof config.channelLastN === 'undefined' ? -1 : config.channelLastN;
 
-        const limitedLastN = limitLastN(this.numParticipants, this.validateLastNLimits(config.lastNLimits));
+        const limitedLastN = limitLastN(this.numParticipants, validateLastNLimits(config.lastNLimits));
 
         if (limitedLastN !== undefined) {
             lastN = lastN === -1 ? limitedLastN : Math.min(limitedLastN, lastN);
@@ -142,7 +142,7 @@ class LoadTestClient {
      */
     setNumberOfParticipants() {
         if (this.id === 0) {
-            $('#participants').text(numParticipants);
+            $('#participants').text(this.numParticipants);
         }
         if (!stageView) {
             this.selectParticipants();
