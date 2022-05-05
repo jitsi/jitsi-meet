@@ -1,10 +1,8 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { connect } from '../../../base/redux';
-import { SafeAreaInsetsDetector } from '../../../base/responsive-ui';
 import { DialInSummary } from '../../../invite';
 import { rootNavigationRef } from '../rootNavigationContainerRef';
 import { screen } from '../routes';
@@ -37,44 +35,41 @@ const RootNavigationContainer = ({ isWelcomePageAvailable }: Props) => {
         ? screen.root : screen.connecting;
 
     return (
-        <SafeAreaProvider>
-            <SafeAreaInsetsDetector />
-            <NavigationContainer
-                independent = { true }
-                ref = { rootNavigationRef }
-                theme = { navigationContainerTheme }>
-                <RootStack.Navigator
-                    initialRouteName = { initialRouteName }>
-                    {
-                        isWelcomePageAvailable
-                            && <>
-                                <RootStack.Screen
-                                    component = { WelcomePageNavigationContainer }
-                                    name = { screen.root }
-                                    options = { drawerNavigatorScreenOptions } />
-                                <RootStack.Screen
-                                    component = { DialInSummary }
-                                    name = { screen.dialInSummary }
-                                    options = { dialInSummaryScreenOptions } />
-                            </>
-                    }
-                    <RootStack.Screen
-                        component = { ConnectingPage }
-                        name = { screen.connecting }
-                        options = {{
-                            gestureEnabled: false,
-                            headerShown: false
-                        }} />
-                    <RootStack.Screen
-                        component = { ConferenceNavigationContainer }
-                        name = { screen.conference.root }
-                        options = {{
-                            gestureEnabled: false,
-                            headerShown: false
-                        }} />
-                </RootStack.Navigator>
-            </NavigationContainer>
-        </SafeAreaProvider>
+        <NavigationContainer
+            independent = { true }
+            ref = { rootNavigationRef }
+            theme = { navigationContainerTheme }>
+            <RootStack.Navigator
+                initialRouteName = { initialRouteName }>
+                {
+                    isWelcomePageAvailable
+                        && <>
+                            <RootStack.Screen
+                                component = { WelcomePageNavigationContainer }
+                                name = { screen.root }
+                                options = { drawerNavigatorScreenOptions } />
+                            <RootStack.Screen
+                                component = { DialInSummary }
+                                name = { screen.dialInSummary }
+                                options = { dialInSummaryScreenOptions } />
+                        </>
+                }
+                <RootStack.Screen
+                    component = { ConnectingPage }
+                    name = { screen.connecting }
+                    options = {{
+                        gestureEnabled: false,
+                        headerShown: false
+                    }} />
+                <RootStack.Screen
+                    component = { ConferenceNavigationContainer }
+                    name = { screen.conference.root }
+                    options = {{
+                        gestureEnabled: false,
+                        headerShown: false
+                    }} />
+            </RootStack.Navigator>
+        </NavigationContainer>
     );
 };
 

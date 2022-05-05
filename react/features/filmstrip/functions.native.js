@@ -10,7 +10,7 @@ import { Platform } from '../base/react';
 import { toState } from '../base/redux';
 import { ASPECT_RATIO_NARROW } from '../base/responsive-ui/constants';
 import { shouldHideSelfView } from '../base/settings/functions.any';
-import { styles as conferenceStyles } from '../conference/components/native/styles';
+import conferenceStyles from '../conference/components/native/styles';
 import { shouldDisplayTileView } from '../video-layout';
 
 import { styles } from './components';

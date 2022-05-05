@@ -1,6 +1,6 @@
 // @flow
 
-import { styles as conferenceStyles } from '../conference/components/native/styles';
+import conferenceStyles from '../conference/components/native/styles';
 
 import { SET_TILE_VIEW_DIMENSIONS } from './actionTypes';
 import { styles } from './components';
