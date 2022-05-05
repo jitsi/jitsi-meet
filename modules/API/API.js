@@ -1,5 +1,6 @@
 // @flow
 
+import { BrowserDetection } from '@jitsi/js-utils';
 import Logger from '@jitsi/logger';
 
 import {
@@ -42,6 +43,8 @@ import {
 } from '../../react/features/base/participants';
 import { updateSettings } from '../../react/features/base/settings';
 import { isToggleCameraEnabled, toggleCamera } from '../../react/features/base/tracks';
+import { getLocalJitsiVideoTrack } from '../../react/features/base/tracks/functions';
+import { toggleBackgroundEffect } from '../../react/features/virtual-background/actions';
 import {
     sendMessage,
     setPrivateMessageRecipient,
@@ -52,6 +55,7 @@ import {
     processExternalDeviceRequest
 } from '../../react/features/device-selection/functions';
 import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox';
+import { mediaPermissionPromptVisibilityChanged } from '../../react/features/overlay/actions';
 import { setMediaEncryptionKey, toggleE2EE } from '../../react/features/e2ee/actions';
 import { setVolume } from '../../react/features/filmstrip';
 import { invite } from '../../react/features/invite';
@@ -225,6 +229,11 @@ function initCommands() {
         'set-participant-volume': (participantId, volume) => {
             APP.store.dispatch(setVolume(participantId, volume));
         },
+        'toggle-media-permission-screen': (visible, title, text) => {
+            const browser = new BrowserDetection();
+
+            APP.store.dispatch(mediaPermissionPromptVisibilityChanged(visible, browser.getName(), title, text));
+        },
         'subject': subject => {
             sendAnalytics(createApiEvent('subject.changed'));
             APP.store.dispatch(setSubject(subject));
@@ -242,6 +251,11 @@ function initCommands() {
             sendAnalytics(createApiEvent('toggle-video'));
             logger.log('Video toggle: API command received');
             APP.conference.toggleVideoMuted(false /* no UI */);
+        },
+        'set-video-background-effect': options => {
+            const jitsiTrack = getLocalJitsiVideoTrack(APP.store.getState());
+
+            APP.store.dispatch(toggleBackgroundEffect(options, jitsiTrack));
         },
         'toggle-film-strip': () => {
             sendAnalytics(createApiEvent('film.strip.toggled'));
@@ -1268,9 +1282,9 @@ class API {
     }
 
     /**
-     * Notify external application (if API is enabled) that audio input device level has changed
+     * Notify external application (if API is enabled) that audio input device level has changed.
      *
-     * @param {Object} data - Track meta and audio level
+     * @param {Object} data - Track meta and audio level.
      * @returns {void}
      */
     notifyAudioLevelChanged(data: Object) {
@@ -1281,21 +1295,24 @@ class API {
     }
 
     /**
-     * Notify external application (if API is enabled) that audio input device level does not receive data
+     * Notify external application (if API is enabled) that audio input device level does not receive data.
      *
-     * @param {Object} data - Device id and is receiving data flag
+     * @param {Object} data - Device id and is receiving data flag.
      * @returns {void}
      */
     notifyTrackReceivingStatus(data: Object) {
-        console.log('track-receiving-data-status');
         this._sendEvent({
             name: 'track-receiving-data-status',
             data
         });
     }
 
+    /**
+     * Notify external application (if API is enabled) that a user is talking while he/she is taking.
+     *
+     * @returns {void}
+     */
     notifyTalkWhileMuted() {
-        console.log('talk-while-muted');
         this._sendEvent({
             name: 'talk-while-muted'
         });
@@ -1646,7 +1663,7 @@ class API {
     }
 
     /**
-     * Send notification to external application
+     * Send notification to external application.
      *
      *@param {Object} props - Notification object.
      * @returns {void}

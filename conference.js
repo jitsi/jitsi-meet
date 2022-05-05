@@ -188,12 +188,12 @@ let _onConnectionPromiseCreated;
 let _prevMutePresenterVideo = Promise.resolve();
 
 /**
- * This is used to cache audio input devices.
+ * This is used to cache audio tracks for each device.
  *
- * @type {[]}
+ * @type {{}}
  * @private
  */
-let _cachedAudioInputDevices = [];
+let _cachedAudioInputTracks = {};
 
 /*
  * Logic to open a desktop picker put on the window global for
@@ -649,7 +649,10 @@ export default {
         // overshadowed by the overlay.
         tryCreateLocalTracks.then(tracks => {
             APP.store.dispatch(toggleSlowGUMOverlay(false));
-            APP.store.dispatch(mediaPermissionPromptVisibilityChanged(false));
+            if (tracks.length >= 2) {
+                // granted audio and video
+                APP.store.dispatch(mediaPermissionPromptVisibilityChanged(false));
+            }
 
             return tracks;
         });
@@ -2622,24 +2625,8 @@ export default {
 
             return dispatch(getAvailableDevices())
                 .then(devices => {
-                    const newAudioInputDevices = devices.filter(nDevice => nDevice.kind === "audioinput");
-                    const onlyNewDevices = newAudioInputDevices.filter(
-                        (nDevice) =>
-                            !_cachedAudioInputDevices.find(
-                                (device) => device.deviceId === nDevice.deviceId
-                            )
-                    );
-                    createLocalAudioTracks(onlyNewDevices).then(audioTracks => {
-                        return audioTracks.map(({jitsiTrack}) => {
-                            if (jitsiTrack) {
-                                jitsiTrack.on(
-                                    JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED,
-                                    audioLevel => dispatch(trackAudioLevelChanged(jitsiTrack, audioLevel))
-                                );
-                            }
-                        });
-                    }).catch();
-                    _cachedAudioInputDevices = [...newAudioInputDevices];
+                    this._createVolumeMeters(devices);
+
                     // Ugly way to synchronize real device IDs with local
                     // storage and settings menu. This is a workaround until
                     // getConstraints() method will be implemented in browsers.
@@ -2652,6 +2639,42 @@ export default {
         }
 
         return Promise.resolve();
+    },
+
+    /**
+     * Creates local tracks for each audio input device and add event listeners
+     * @param  {MediaDeviceInfo[]} devices
+     * @private
+     */
+    _createVolumeMeters(devices) {
+        const onlyNewDevices = devices.filter(
+            nDevice => nDevice.kind === 'audioinput'
+            && !_cachedAudioInputTracks[nDevice.deviceId]
+        );
+
+        createLocalAudioTracks(onlyNewDevices).then(audioTracks => {
+            _cachedAudioInputTracks = audioTracks.reduce((acc, { jitsiTrack }) => {
+                if (jitsiTrack) {
+
+                    const _audioLevelChangedHandler
+                        = audioLevel => this._audioLevelChangedHandler(jitsiTrack.deviceId, audioLevel);
+
+                    jitsiTrack.on(
+                        JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED,
+                        _audioLevelChangedHandler
+                    );
+
+                    acc[jitsiTrack.deviceId] = {
+                        subscription: _audioLevelChangedHandler,
+                        jitsiTrack
+                    };
+                }
+
+                return acc;
+            }, _cachedAudioInputTracks);
+
+        })
+        .catch();
     },
 
     /**
@@ -2688,6 +2711,43 @@ export default {
             APP.store.dispatch(updateSettings({
                 micDeviceId: localAudio.getDeviceId()
             }));
+        }
+    },
+
+    /**
+     * Handler for TRACK_AUDIO_LEVEL_CHANGED event
+     * @private
+     * @param  {JitsiTrack} jitsiTrack
+     * @param  {number} audioLevel
+     */
+    _audioLevelChangedHandler(jitsiTrack, audioLevel) {
+        APP.store.dispatch(trackAudioLevelChanged(jitsiTrack, audioLevel));
+    },
+
+    /**
+     * Dispose all audio tracks for unexisting devices and remove listeners
+     * @private
+     * @param  {MediaDeviceInfo[]} devices
+     */
+    _disposeOldTracks(devices) {
+        try {
+            Object.keys(_cachedAudioInputTracks).forEach(deviceId => {
+
+                if (!devices.some(device => device.kind === 'audioinput' && device.deviceId === deviceId)) {
+                    const { jitsiTrack, subscription } = _cachedAudioInputTracks[deviceId];
+
+                    if (jitsiTrack) {
+                        jitsiTrack.off(
+                            JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED,
+                            subscription
+                        );
+                        jitsiTrack.dispose();
+                        delete _cachedAudioInputTracks[deviceId];
+                    }
+                }
+            });
+        } catch (e) {
+            console.log(e);
         }
     },
 
@@ -2861,6 +2921,9 @@ export default {
                         muteLocalVideo(true);
                     }
                 }));
+
+        this._createVolumeMeters(devices);
+        this._disposeOldTracks(devices);
 
         return Promise.all(promises)
             .then(() => {

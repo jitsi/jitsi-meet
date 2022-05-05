@@ -33,7 +33,6 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case CONFERENCE_JOINED: {
-        console.log('conference joined');
         conference.on(
             JitsiConferenceEvents.TRACK_MUTE_CHANGED,
             track => {
@@ -48,7 +47,6 @@ MiddlewareRegistry.register(store => next => action => {
             JitsiConferenceEvents.TALK_WHILE_MUTED, async () => {
                 const state = getState();
                 const local = getLocalParticipant(state);
-                console.log('talk-while-muted222');
                 // Display the talk while muted notification only when the audio button is not disabled.
                 if (!isAudioMuteButtonDisabled(state)) {
                     dispatch(talkWhileMuted());

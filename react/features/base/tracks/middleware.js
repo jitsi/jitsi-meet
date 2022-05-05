@@ -64,8 +64,8 @@ MiddlewareRegistry.register(store => next => action => {
     case TRACK_AUDIO_LEVEL_CHANGED:
         if (typeof APP !== 'undefined') {
             APP.API.notifyAudioLevelChanged({
-                deviceId: action.track.jitsiTrack.deviceId,
-                audioLevel: action.track.audioLevel
+                deviceId: action.deviceId,
+                audioLevel: action.audioLevel
             });
         }
         break;
@@ -82,13 +82,14 @@ MiddlewareRegistry.register(store => next => action => {
         if (typeof APP !== 'undefined') {
             APP.API.notifyTrackReceivingStatus({
                 track: action.track,
-                isReceivingData: action.track.isReceivingData
+                isReceivingData: action.isReceivingData
             });
         }
         break;
     }
     case TRACK_NO_DATA_FROM_SOURCE: {
         const result = next(action);
+
         _handleNoDataFromSourceErrors(store, action);
 
         return result;

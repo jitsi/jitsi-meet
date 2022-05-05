@@ -14,6 +14,9 @@ type Props = {
      */
     browser: string,
 
+    mediaOverlayTitle: string,
+    mediaOverlayText: string,
+
     /**
      * The function to translate human-readable text.
      */
@@ -49,9 +52,11 @@ export default class AbstractUserMediaPermissionsOverlay
  * }}
  */
 export function abstractMapStateToProps(state: Object) {
-    const { browser } = state['features/overlay'];
+    const { browser, mediaOverlayTitle, mediaOverlayText } = state['features/overlay'];
 
     return {
-        browser
+        browser,
+        mediaOverlayTitle,
+        mediaOverlayText
     };
 }

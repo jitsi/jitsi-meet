@@ -66,12 +66,14 @@ const commands = {
     toggleChat: 'toggle-chat',
     toggleE2EE: 'toggle-e2ee',
     toggleFilmStrip: 'toggle-film-strip',
+    toggleMediaPermissionScreen: 'toggle-media-permission-screen',
     toggleModeration: 'toggle-moderation',
     toggleRaiseHand: 'toggle-raise-hand',
     toggleShareAudio: 'toggle-share-audio',
     toggleShareScreen: 'toggle-share-screen',
     toggleTileView: 'toggle-tile-view',
     toggleVirtualBackgroundDialog: 'toggle-virtual-background',
+    setVideoBackgroundEffect: 'set-video-background-effect',
     toggleVideo: 'toggle-video',
     playTestSound: 'play-test-sound'
 };
@@ -132,7 +134,7 @@ const events = {
     'toolbar-button-clicked': 'toolbarButtonClicked',
     'track-receiving-data-status': 'trackReceivingDataStatus',
     'talk-while-muted': 'talkWhileMuted',
-    'notification-raised': 'notificationRaised'
+    'notification-raised': 'notificationRaised',
 };
 
 /**

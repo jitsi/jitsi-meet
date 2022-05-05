@@ -419,7 +419,13 @@ export function trackAdded(track) {
             }
 
             isReceivingData = track.isReceivingData();
-            dispatch(receivingDataStatusFromSource({deviceId: track.deviceId, type: track.type}, isReceivingData));
+            dispatch(receivingDataStatusFromSource(
+                {
+                    deviceId: track.deviceId,
+                    type: track.type
+                },
+                isReceivingData)
+            );
             track.on(JitsiTrackEvents.NO_DATA_FROM_SOURCE, () => dispatch(noDataFromSource({ jitsiTrack: track })));
             if (!isReceivingData) {
                 if (mediaType === MEDIA_TYPE.AUDIO) {
@@ -494,21 +500,21 @@ export function trackMutedChanged(track) {
 }
 
 /**
- * Create an action for when a track's volume state has been changed.
+ * Create an action for when a track's audio level changes.
  *
- * @param {(JitsiLocalTrack|JitsiRemoteTrack)} track - JitsiTrack instance.
+ * @param  {string} deviceId - device ID.
+ * @param  {number} audioLevel - audio level.
  * @returns {{
  *     type: TRACK_AUDIO_LEVEL_CHANGED,
- *     track: Track
+ *     deviceId: string,
+ *     audioLevel: number
  * }}
  */
-export function trackAudioLevelChanged(track, audioLevel) {
+export function trackAudioLevelChanged(deviceId, audioLevel) {
     return {
         type: TRACK_AUDIO_LEVEL_CHANGED,
-        track: {
-            jitsiTrack: track,
-            audioLevel
-        }
+        deviceId,
+        audioLevel
     };
 }
 
