@@ -5,8 +5,6 @@ import BaseTheme from '../../../../base/ui/components/BaseTheme.native';
  */
 const MICROPHONE_SIZE = 180;
 
-const TITLE_BAR_BUTTON_SIZE = 24;
-
 /**
  * Base button style.
  */
@@ -59,11 +57,9 @@ export default {
      * {@code Conference} Style.
      */
     conference: {
-        alignSelf: 'stretch',
         backgroundColor: BaseTheme.palette.uiBackground,
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
+        justifyContent: 'center'
     },
 
     microphoneStyles: {
@@ -98,14 +94,6 @@ export default {
             borderWidth: 4,
             borderColor: BaseTheme.palette.success01
         }
-    },
-
-    pipButton: {
-        iconStyle: {
-            color: BaseTheme.palette.icon01,
-            fontSize: TITLE_BAR_BUTTON_SIZE
-        },
-        underlayColor: BaseTheme.spacing.underlay01
     },
 
     roomTimer: {
@@ -163,6 +151,12 @@ export default {
     titleBarSafeViewColor: {
         ...titleBarSafeView,
         backgroundColor: BaseTheme.palette.uiBackground
+    },
+
+    microphoneContainer: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
     },
 
     titleBarWrapper: {

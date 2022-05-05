@@ -4,8 +4,7 @@ import { Text, View } from 'react-native';
 import { getConferenceName } from '../../../../base/conference/functions';
 import { getFeatureFlag, MEETING_NAME_ENABLED } from '../../../../base/flags';
 import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
-import { connect } from '../../../../base/redux';
-import { PictureInPictureButton } from '../../../../mobile/picture-in-picture';
+import { connect } from '../../../../base/redux';;
 import { RecordingLabel } from '../../../../recording';
 import { VideoQualityLabel } from '../../../../video-quality';
 
@@ -40,9 +39,6 @@ const TitleBar = (props: Props) : JSX.Element => (<>
         <View
             pointerEvents = 'box-none'
             style = { styles.roomNameWrapper }>
-            <View style = { styles.headerLabels }>
-                <PictureInPictureButton styles = { styles.pipButton } />
-            </View>
             <View style = { styles.headerLabels }>
                 <VideoQualityLabel />
             </View>

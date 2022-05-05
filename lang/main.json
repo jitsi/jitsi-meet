@@ -83,6 +83,7 @@
             "selectSoundDevice": "Select sound device"
         },
         "labels": {
+            "buttonLabel": "Car mode",
             "title": "Safe driving mode",
             "videoStopped": "Your video is stopped"
         }
@@ -1050,6 +1051,7 @@
             "muteEveryoneElse": "Mute everyone else",
             "muteEveryoneElsesVideoStream": "Stop everyone else's video",
             "muteEveryonesVideoStream": "Stop everyone's video",
+            "carmode": "Carmode",
             "participants": "Participants",
             "pip": "Toggle Picture-in-Picture mode",
             "privateMessage": "Send private message",

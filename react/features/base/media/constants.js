@@ -45,7 +45,8 @@ export const SCREENSHARE_MUTISM_AUTHORITY = {
 export const VIDEO_MUTISM_AUTHORITY = {
     AUDIO_ONLY: 1 << 0,
     BACKGROUND: 1 << 1,
-    USER: 1 << 2
+    USER: 1 << 2,
+    CAR_MODE: 1 << 3
 };
 
 /* eslint-enable no-bitwise */

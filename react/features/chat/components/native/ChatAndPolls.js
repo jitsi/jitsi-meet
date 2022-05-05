@@ -16,7 +16,6 @@ import { PollsPane } from '../../../polls/components';
 
 const ChatTab = createMaterialTopTabNavigator();
 
-
 const ChatAndPolls = () => {
     const clientHeight = useSelector(getClientHeight);
     const clientWidth = useSelector(getClientWidth);

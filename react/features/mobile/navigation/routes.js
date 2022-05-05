@@ -11,12 +11,12 @@ export const screen = {
         privacy: 'Privacy',
         help: 'Help'
     },
-    car: 'Car Mode',
     dialInSummary: 'Dial-In Info',
     connecting: 'Connecting',
     conference: {
         root: 'Conference root',
         main: 'Conference',
+        carmode: 'Car Mode',
         chat: 'Chat',
         chatandpolls: {
             main: 'Chat and Polls',

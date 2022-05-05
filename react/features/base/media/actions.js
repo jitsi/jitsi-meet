@@ -166,7 +166,7 @@ export function setVideoAvailable(available: boolean) {
  */
 export function setVideoMuted(
         muted: boolean,
-        mediaType: MediaType = MEDIA_TYPE.VIDEO,
+        mediaType: string = MEDIA_TYPE.VIDEO,
         authority: number = VIDEO_MUTISM_AUTHORITY.USER,
         ensureTrack: boolean = false) {
     return (dispatch: Dispatch<any>, getState: Function) => {
