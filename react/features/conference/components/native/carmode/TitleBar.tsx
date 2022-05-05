@@ -39,7 +39,7 @@ const TitleBar = (props: Props) : JSX.Element => (<>
         <View
             pointerEvents = 'box-none'
             style = { styles.roomNameWrapper }>
-            <View style = { styles.headerLabels }>
+            <View style = { styles.qualityLabelContainer }>
                 <VideoQualityLabel />
             </View>
 

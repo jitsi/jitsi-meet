@@ -96,6 +96,15 @@ export default {
         }
     },
 
+    qualityLabelContainer: {
+        borderBottomLeftRadius: 3,
+        borderTopLeftRadius: 3,
+        flexShrink: 1,
+        paddingHorizontal: 2,
+        justifyContent: 'center',
+        marginTop: 8
+    },
+
     roomTimer: {
         color: BaseTheme.palette.text01,
         ...BaseTheme.typography.bodyShortBold,
@@ -145,7 +154,8 @@ export default {
         borderBottomLeftRadius: 3,
         borderTopLeftRadius: 3,
         flexShrink: 1,
-        paddingHorizontal: 2
+        paddingHorizontal: 2,
+        justifyContent: 'center'
     },
 
     titleBarSafeViewColor: {
@@ -177,8 +187,7 @@ export default {
         backgroundColor: 'rgba(0,0,0,0.6)',
         flexShrink: 1,
         justifyContent: 'center',
-        paddingHorizontal: 5,
-        marginBottom: 8
+        paddingHorizontal: 5
     },
 
     roomName: {
