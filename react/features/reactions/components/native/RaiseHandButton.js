@@ -9,6 +9,7 @@ import {
     sendAnalytics
 } from '../../../analytics';
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
+import { RAISE_HAND_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import {
     getLocalParticipant,
@@ -24,6 +25,11 @@ import { type ReactionStyles } from './ReactionButton';
  * The type of the React {@code Component} props of {@link RaiseHandButton}.
  */
 type Props = AbstractButtonProps & {
+
+    /**
+     * Whether this button is enabled or not.
+     */
+    _enabled: boolean,
 
     /**
      * The local participant.
@@ -128,7 +134,11 @@ class RaiseHandButton extends Component<Props, *> {
      * @returns {ReactElement}
      */
     render() {
-        const { _styles, t } = this.props;
+        const { _enabled, _styles, t } = this.props;
+
+        if (!_enabled) {
+            return null;
+        }
 
         return (
             <TouchableHighlight
@@ -155,8 +165,10 @@ class RaiseHandButton extends Component<Props, *> {
  */
 function _mapStateToProps(state): Object {
     const _localParticipant = getLocalParticipant(state);
+    const enabled = getFeatureFlag(state, RAISE_HAND_ENABLED, true);
 
     return {
+        _enabled: enabled,
         _localParticipant,
         _raisedHand: hasRaisedHand(_localParticipant),
         _styles: ColorSchemeRegistry.get(state, 'Toolbox').raiseHandButton
