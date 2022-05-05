@@ -12,6 +12,8 @@ DO_GIT_TAG=${GIT_TAG:-0}
 
 echo "Releasing Jitsi Meet SDK ${SDK_VERSION}"
 
+${THIS_DIR}/../../node_modules/react-native-webrtc/tools/downloadBitcode.sh
+
 pushd ${RELEASE_REPO}
 
 # Generate podspec file
