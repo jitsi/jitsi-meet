@@ -10,7 +10,7 @@ import { Platform } from '../base/react';
 import { toState } from '../base/redux';
 import { ASPECT_RATIO_NARROW } from '../base/responsive-ui/constants';
 import { shouldHideSelfView } from '../base/settings/functions.any';
-import { styles as conferenceStyles } from '../conference';
+import { styles as conferenceStyles } from '../conference/components/native/styles';
 import { shouldDisplayTileView } from '../video-layout';
 
 import { styles } from './components';
@@ -192,7 +192,7 @@ export function getFilmstripDimensions({
             width:
                 (shouldDisplayLocalThumbnailSeparately() && localParticipantVisible
                     ? clientWidth - width - (margin * 2) : clientWidth)
-                    - (left || 0) - (right || 0) - (styles.filmstripNarrow.margin * 2) - (conferenceBorder * 2)
+                    - left - right - (styles.filmstripNarrow.margin * 2) - (conferenceBorder * 2)
 
         };
     }
@@ -201,7 +201,7 @@ export function getFilmstripDimensions({
         height:
             (shouldDisplayLocalThumbnailSeparately() && localParticipantVisible
                 ? clientHeight - height - (margin * 2) : clientHeight)
-                - (top || 0) - (bottom || 0) - (conferenceBorder * 2),
+                - top - bottom - (conferenceBorder * 2),
         width
     };
 }
