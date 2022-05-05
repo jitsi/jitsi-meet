@@ -4,7 +4,7 @@
 local basexx = require "basexx";
 local have_async, async = pcall(require, "util.async");
 local hex = require "util.hex";
-local jwt = require "luajwtjitsi";
+local jwt = module:require "luajwtjitsi";
 local jid = require "util.jid";
 local json_safe = require "cjson.safe";
 local path = require "util.paths";
