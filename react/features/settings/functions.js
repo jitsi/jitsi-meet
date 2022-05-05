@@ -12,7 +12,7 @@ import { toState } from '../base/redux';
 import { getHideSelfView } from '../base/settings';
 import { parseStandardURIString } from '../base/util';
 import { getBreakoutRoomsConfig, isInBreakoutRoom } from '../breakout-rooms/functions';
-import { isStageFilmstripEnabled } from '../filmstrip/functions.web';
+import { isStageFilmstripEnabled } from '../filmstrip/functions';
 import { isFollowMeActive } from '../follow-me';
 import { isReactionsEnabled } from '../reactions/functions.any';
 
