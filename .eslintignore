@@ -3,11 +3,9 @@ build/*
 
 # Third-party source code which we (1) do not want to modify or (2) try to
 # modify as little as possible.
-flow-typed/*
 libs/*
 resources/*
 react/features/stream-effects/virtual-background/vendor/*
-load-test/*
 react/features/face-landmarks/resources/*
 
 # ESLint will by default ignore its own configuration file. However, there does
