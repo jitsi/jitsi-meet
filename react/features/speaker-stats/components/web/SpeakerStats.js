@@ -12,6 +12,7 @@ import {
     MOBILE_BREAKPOINT,
     RESIZE_SEARCH_SWITCH_CONTAINER_BREAKPOINT
 } from '../../constants';
+import { showFaceExpressionsSwitch } from '../../functions';
 
 import FaceExpressionsSwitch from './FaceExpressionsSwitch';
 import SpeakerStatsLabels from './SpeakerStatsLabels';
@@ -88,10 +89,9 @@ const useStyles = makeStyles(theme => {
 });
 
 const SpeakerStats = () => {
-    const { faceLandmarks } = useSelector(state => state['features/base/config']);
     const { showFaceExpressions } = useSelector(state => state['features/speaker-stats']);
     const { clientWidth } = useSelector(state => state['features/base/responsive-ui']);
-    const displaySwitch = faceLandmarks?.enableDisplayFaceExpressions && clientWidth > DISPLAY_SWITCH_BREAKPOINT;
+    const displaySwitch = useSelector(showFaceExpressionsSwitch);
     const displayLabels = clientWidth > MOBILE_BREAKPOINT;
     const dispatch = useDispatch();
     const classes = useStyles();

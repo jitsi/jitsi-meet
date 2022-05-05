@@ -8,6 +8,8 @@ import {
 } from '../base/participants';
 import { objectSort } from '../base/util';
 
+import { DISPLAY_SWITCH_BREAKPOINT } from './constants';
+
 /**
  * Checks if the speaker stats search is disabled.
  *
@@ -190,4 +192,18 @@ export function resetHiddenStats(state: Object, stats: ?Object) {
     }
 
     return resetStats;
+}
+
+/**
+ * Returns true if the face expressions switch should be displayed, false otherwise.
+ *
+ * @param  {Object} state - The redux state.
+ * @returns {boolean}
+ */
+export function showFaceExpressionsSwitch(state: Object) {
+    const { faceLandmarks } = state['features/base/config'];
+    const { jwt } = state['features/base/jwt'];
+    const { clientWidth } = state['features/base/responsive-ui'];
+
+    return jwt && faceLandmarks?.enableDisplayFaceExpressions && clientWidth > DISPLAY_SWITCH_BREAKPOINT;
 }
