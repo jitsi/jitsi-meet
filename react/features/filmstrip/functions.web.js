@@ -18,7 +18,6 @@ import {
     isRemoteTrackMuted
 } from '../base/tracks/functions';
 import { isTrackStreamingStatusActive, isParticipantConnectionStatusActive } from '../connection-indicator/functions';
-import { isVpaasMeeting } from '../jaas/functions';
 import { isSharingStatus } from '../shared-video/functions';
 import {
     getCurrentLayout,
@@ -744,10 +743,6 @@ export function isStageFilmstripAvailable(state, minParticipantCount = 0) {
  */
 export function isStageFilmstripEnabled(state) {
     const { filmstrip } = state['features/base/config'];
-
-    if (isVpaasMeeting(state)) {
-        return false;
-    }
 
     return !(filmstrip?.disableStageFilmstrip ?? true) && interfaceConfig.VERTICAL_FILMSTRIP;
 }
