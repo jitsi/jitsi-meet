@@ -18,7 +18,7 @@ import UIKit
 
 final class DragGestureController {
     var insets: UIEdgeInsets = UIEdgeInsets.zero
-    var currentPosition: CustomPiPViewCoordinator.Position? = nil
+    var currentPosition: PiPViewCoordinator.Position? = nil
 
     private var frameBeforeDragging: CGRect = CGRect.zero
     private weak var view: UIView?
