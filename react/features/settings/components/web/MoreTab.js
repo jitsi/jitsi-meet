@@ -531,7 +531,11 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      * @returns {ReactElement}
      */
     _renderMaxStageParticipantsSelect() {
-        const { maxStageParticipants, t } = this.props;
+        const { maxStageParticipants, t, stageFilmstripEnabled } = this.props;
+
+        if (!stageFilmstripEnabled) {
+            return null;
+        }
         const maxParticipantsItems = Array(MAX_ACTIVE_PARTICIPANTS).fill(0)
             .map((no, index) => (
                 <DropdownItem

@@ -59,7 +59,7 @@ const DEFAULT_STATE = {
      * @public
      * @type {Number}
      */
-    maxStageParticipants: 4,
+    maxStageParticipants: 1,
 
     /**
      * The custom audio volume levels per participant.
