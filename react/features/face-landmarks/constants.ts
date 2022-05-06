@@ -1,5 +1,3 @@
-// @flow
-
 export const FACE_EXPRESSIONS_EMOJIS = {
     happy: '😊',
     neutral: '😐',
@@ -12,6 +10,16 @@ export const FACE_EXPRESSIONS_EMOJIS = {
 };
 
 export const FACE_EXPRESSIONS = [ 'happy', 'neutral', 'sad', 'surprised', 'angry', 'fearful' ];
+
+export const FACE_EXPRESSIONS_NAMING_MAPPING = {
+    happy: 'happy',
+    neutral: 'neutral',
+    surprise: 'surprised',
+    angry: 'angry',
+    fear: 'fearful',
+    disgust: 'disgusted',
+    sad: 'sad'
+};
 
 /**
  * Time is ms used for sending expression.

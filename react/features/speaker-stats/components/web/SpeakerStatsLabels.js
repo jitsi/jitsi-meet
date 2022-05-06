@@ -4,7 +4,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Tooltip } from '../../../base/tooltip';
-import { FACE_EXPRESSIONS_EMOJIS } from '../../../face-landmarks/constants.js';
+import { FACE_EXPRESSIONS_EMOJIS } from '../../../face-landmarks/constants';
 
 const useStyles = makeStyles(theme => {
     return {

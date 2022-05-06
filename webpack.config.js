@@ -384,13 +384,13 @@ module.exports = (_env, argv) => {
         }),
         Object.assign({}, config, {
             entry: {
-                'face-landmarks-worker': './react/features/face-landmarks/faceLandmarksWorker.js'
+                'face-landmarks-worker': './react/features/face-landmarks/faceLandmarksWorker.ts'
             },
             plugins: [
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, 'face-landmarks-worker')
             ],
-            performance: getPerformanceHints(perfHintOptions, 1024 * 1024 * 1.5)
+            performance: getPerformanceHints(perfHintOptions, 1024 * 1024 * 2)
         })
     ];
 };
