@@ -4,20 +4,19 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import React from 'react';
 import { useSelector } from 'react-redux';
 
+import { Chat } from '../..';
 import {
     getClientHeight,
     getClientWidth
-} from '../../../../../base/modal/components/functions.native';
-import BaseTheme from '../../../../../base/ui/components/BaseTheme.native';
-import { Chat } from '../../../../../chat';
-import { PollsPane } from '../../../../../polls/components';
-import { screen } from '../../../routes';
-import { chatTabBarOptions } from '../../../screenOptions';
+} from '../../../base/modal/components/functions.native';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
+import { screen } from '../../../mobile/navigation/routes';
+import { chatTabBarOptions } from '../../../mobile/navigation/screenOptions';
+import { PollsPane } from '../../../polls/components';
 
 const ChatTab = createMaterialTopTabNavigator();
 
-
-const ChatAndPollsNavigationContainer = () => {
+const ChatAndPolls = () => {
     const clientHeight = useSelector(getClientHeight);
     const clientWidth = useSelector(getClientWidth);
 
@@ -44,4 +43,4 @@ const ChatAndPollsNavigationContainer = () => {
     );
 };
 
-export default ChatAndPollsNavigationContainer;
+export default ChatAndPolls;

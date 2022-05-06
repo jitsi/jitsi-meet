@@ -184,6 +184,11 @@ export const presentationScreenOptions = {
 };
 
 /**
+ * Screen options for car mode.
+ */
+export const carmodeScreenOptions = presentationScreenOptions;
+
+/**
  * Screen options for chat.
  */
 export const chatScreenOptions = presentationScreenOptions;

@@ -77,6 +77,17 @@
         "refresh": "Refresh calendar",
         "today": "Today"
     },
+    "carmode": {
+        "actions": {
+            "leaveMeeting": " Leave meeting",
+            "selectSoundDevice": "Select sound device"
+        },
+        "labels": {
+            "buttonLabel": "Car mode",
+            "title": "Safe driving mode",
+            "videoStopped": "Your video is stopped"
+        }
+    },
     "chat": {
         "enter": "Enter room",
         "error": "Error: your message was not sent. Reason: {{error}}",
@@ -1010,6 +1021,7 @@
             "boo": "Boo",
             "breakoutRoom": "Join/leave breakout room",
             "callQuality": "Manage video quality",
+            "carmode": "Carmode",
             "cc": "Toggle subtitles",
             "chat": "Open / Close chat",
             "clap": "Clap",

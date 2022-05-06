@@ -35,6 +35,7 @@ import {
     abstractMapStateToProps
 } from '../AbstractConference';
 import type { AbstractProps } from '../AbstractConference';
+import { isConnecting } from '../functions';
 
 import AlwaysOnLabels from './AlwaysOnLabels';
 import ExpandedLabelPopup from './ExpandedLabelPopup';
@@ -496,34 +497,15 @@ class Conference extends AbstractConference<Props, State> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
-    const { connecting, connection } = state['features/base/connection'];
-    const {
-        conference,
-        joining,
-        membersOnly,
-        leaving
-    } = state['features/base/conference'];
     const { isOpen } = state['features/participants-pane'];
     const { aspectRatio, reducedUI } = state['features/base/responsive-ui'];
     const participantCount = getParticipantCount(state);
-
-    // XXX There is a window of time between the successful establishment of the
-    // XMPP connection and the subsequent commencement of joining the MUC during
-    // which the app does not appear to be doing anything according to the redux
-    // state. In order to not toggle the _connecting props during the window of
-    // time in question, define _connecting as follows:
-    // - the XMPP connection is connecting, or
-    // - the XMPP connection is connected and the conference is joining, or
-    // - the XMPP connection is connected and we have no conference yet, nor we
-    //   are leaving one.
-    const connecting_
-        = connecting || (connection && (!membersOnly && (joining || (!conference && !leaving))));
 
     return {
         ...abstractMapStateToProps(state),
         _aspectRatio: aspectRatio,
         _calendarEnabled: isCalendarEnabled(state),
-        _connecting: Boolean(connecting_),
+        _connecting: isConnecting(state),
         _filmstripVisible: isFilmstripVisible(state),
         _fullscreenEnabled: getFeatureFlag(state, FULLSCREEN_ENABLED, true),
         _isOneToOneConference: Boolean(participantCount === 2),

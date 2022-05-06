@@ -7,6 +7,7 @@ import { SELECT_LARGE_VIDEO_PARTICIPANT } from '../../large-video/actionTypes';
 import { APP_STATE_CHANGED } from '../../mobile/background/actionTypes';
 import {
     SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
+    SET_CAR_MODE,
     SET_TILE_VIEW,
     VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED
 } from '../../video-layout/actionTypes';
@@ -51,6 +52,7 @@ const _updateLastN = debounce(({ dispatch, getState }) => {
     const config = state['features/base/config'];
     const { lastNLimits } = state['features/base/lastn'];
     const participantCount = getParticipantCount(state);
+    const { carMode } = state['features/video-layout'];
 
     // Select the (initial) lastN value based on the following preference order.
     // 1. The last-n value from 'startLastN' if it is specified in config.js
@@ -67,6 +69,8 @@ const _updateLastN = debounce(({ dispatch, getState }) => {
 
     if (typeof appState !== 'undefined' && appState !== 'active') {
         lastNSelected = isLocalVideoTrackDesktop(state) ? 1 : 0;
+    } else if (carMode) {
+        lastNSelected = 0;
     } else if (audioOnly) {
         const { remoteScreenShares, tileViewEnabled } = state['features/video-layout'];
         const largeVideoParticipantId = state['features/large-video'].participantId;
@@ -101,6 +105,7 @@ MiddlewareRegistry.register(store => next => action => {
     case SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED:
     case SELECT_LARGE_VIDEO_PARTICIPANT:
     case SET_AUDIO_ONLY:
+    case SET_CAR_MODE:
     case SET_FILMSTRIP_ENABLED:
     case SET_TILE_VIEW:
     case VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED:

@@ -16,6 +16,7 @@ export const screen = {
     conference: {
         root: 'Conference root',
         main: 'Conference',
+        carmode: 'Car Mode',
         chat: 'Chat',
         chatandpolls: {
             main: 'Chat and Polls',
@@ -24,6 +25,7 @@ export const screen = {
                 polls: 'Polls'
             }
         },
+        container: 'Conference container',
         security: 'Security Options',
         recording: 'Recording',
         liveStream: 'Live stream',

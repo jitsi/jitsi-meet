@@ -4,8 +4,10 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
-import { Chat } from '../../../../../chat';
+import { Chat, ChatAndPolls } from '../../../../../chat';
+
 import Conference from '../../../../../conference/components/native/Conference';
+import CarmodeTab from '../../../../../conference/components/native/carmode/Conference';
 import { getDisablePolls } from '../../../../../conference/functions';
 import { SharedDocument } from '../../../../../etherpad';
 import { GifsMenu } from '../../../../../gifs/components';
@@ -23,6 +25,7 @@ import SpeakerStats
     from '../../../../../speaker-stats/components/native/SpeakerStats';
 import { screen } from '../../../routes';
 import {
+    carmodeScreenOptions,
     chatScreenOptions,
     conferenceScreenOptions,
     gifsMenuOptions,
@@ -36,8 +39,6 @@ import {
     sharedDocumentScreenOptions,
     speakerStatsScreenOptions
 } from '../../../screenOptions';
-import ChatAndPollsNavigationContainer
-    from '../../chat/components/ChatAndPollsNavigationContainer';
 import LobbyNavigationContainer
     from '../../lobby/components/LobbyNavigationContainer';
 import {
@@ -45,7 +46,6 @@ import {
 } from '../ConferenceNavigationContainerRef';
 
 const ConferenceStack = createStackNavigator();
-
 
 const ConferenceNavigationContainer = () => {
     const isPollsDisabled = useSelector(getDisablePolls);
@@ -58,7 +58,7 @@ const ConferenceNavigationContainer = () => {
         chatScreenName = screen.conference.chat;
         chatTitleString = 'chat.title';
     } else {
-        ChatScreen = ChatAndPollsNavigationContainer;
+        ChatScreen = ChatAndPolls;
         chatScreenName = screen.conference.chatandpolls.main;
         chatTitleString = 'chat.titleWithPolls';
     }
@@ -152,6 +152,13 @@ const ConferenceNavigationContainer = () => {
                         ...sharedDocumentScreenOptions,
                         title: t('documentSharing.title')
                     }} />
+                <ConferenceStack.Screen
+                    component = { CarmodeTab }
+                    name = { screen.conference.carmode }
+                    options = {{
+                        ...carmodeScreenOptions,
+                        title: t('carmode.labels.title')
+                    }}/>
             </ConferenceStack.Navigator>
         </NavigationContainer>
     );

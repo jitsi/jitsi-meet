@@ -11,14 +11,14 @@ export const SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED
     = 'SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED';
 
 /**
- * The type of the action which sets the list of known remote virtual screen share participant IDs.
+ * The type of the action which tells whether we are in carmode.
  *
  * @returns {{
- *     type: VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED,
- *     participantIds: Array<string>
+ *     type: SET_CAR_MODE,
+ *     enabled: boolean
  * }}
  */
-export const VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED = 'VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED';
+export const SET_CAR_MODE = ' SET_CAR_MODE';
 
 /**
  * The type of the action which enables or disables the feature for showing
@@ -30,3 +30,13 @@ export const VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED = 'VIRTUAL_SCREENSH
  * }}
  */
 export const SET_TILE_VIEW = 'SET_TILE_VIEW';
+
+/**
+ * The type of the action which sets the list of known remote virtual screen share participant IDs.
+ *
+ * @returns {{
+ *     type: VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED,
+ *     participantIds: Array<string>
+ * }}
+ */
+export const VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED = 'VIRTUAL_SCREENSHARE_REMOTE_PARTICIPANTS_UPDATED';
