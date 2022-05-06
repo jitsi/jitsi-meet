@@ -8,6 +8,16 @@
 export const CLIENT_RESIZED = 'CLIENT_RESIZED';
 
 /**
+ * The type of (redux) action which indicates that the insets from the SafeAreaProvider have changed.
+ *
+ * {
+ *    type: SAFE_AREA_INSETS_CHANGED,
+ *    insets: Object
+ * }
+ */
+ export const SAFE_AREA_INSETS_CHANGED = 'SAFE_AREA_INSETS_CHANGED';
+
+/**
  * The type of (redux) action which sets the aspect ratio of the app's user
  * interface.
  *

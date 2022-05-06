@@ -4,7 +4,7 @@ import { getSourceNameSignalingFeatureFlag } from '../base/config';
 import { getVirtualScreenshareParticipantOwnerId } from '../base/participants';
 
 import { setRemoteParticipants } from './actions';
-import { isReorderingEnabled } from './functions';
+import { isFilmstripScrollVisible } from './functions';
 
 /**
  * Computes the reorderd list of the remote participants.
@@ -117,4 +117,18 @@ export function updateRemoteParticipantsOnLeave(store: Object, participantId: ?s
 
     reorderedParticipants.delete(participantId)
         && store.dispatch(setRemoteParticipants(Array.from(reorderedParticipants)));
+}
+
+/**
+ * Returns true if thumbnail reordering is enabled and false otherwise.
+ * Note: The function will return false if all participants are displayed on the screen.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {boolean} - True if thumbnail reordering is enabled and false otherwise.
+ */
+export function isReorderingEnabled(state) {
+    const { testing = {} } = state['features/base/config'];
+    const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
+
+    return enableThumbnailReordering && isFilmstripScrollVisible(state);
 }

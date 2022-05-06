@@ -1,9 +1,19 @@
 // @flow
 
 import { getFeatureFlag, FILMSTRIP_ENABLED } from '../base/flags';
-import { getParticipantCountWithFake, getPinnedParticipant } from '../base/participants';
+import {
+    getLocalParticipant,
+    getParticipantCountWithFake,
+    getPinnedParticipant
+} from '../base/participants';
+import { Platform } from '../base/react';
 import { toState } from '../base/redux';
 import { ASPECT_RATIO_NARROW } from '../base/responsive-ui/constants';
+import { shouldHideSelfView } from '../base/settings/functions.any';
+import conferenceStyles from '../conference/components/native/styles';
+import { shouldDisplayTileView } from '../video-layout';
+
+import { styles } from './components';
 
 export * from './functions.any';
 
@@ -62,6 +72,22 @@ export function shouldRemoteVideosBeVisible(state: Object) {
 }
 
 /**
+ * Returns the number of participants displayed in tile view.
+ *
+ * @param {Object | Function} stateful - The Object or Function that can be
+ * resolved to a Redux state object with the toState function.
+ * @returns {number} - The number of participants displayed in tile view.
+ */
+export function getTileViewParticipantCount(stateful: Object | Function) {
+    const state = toState(stateful);
+    const disableSelfView = shouldHideSelfView(state);
+    const localParticipant = getLocalParticipant(state);
+    const participantCount = getParticipantCountWithFake(state) - (disableSelfView && localParticipant ? 1 : 0);
+
+    return participantCount;
+}
+
+/**
  * Returns how many columns should be displayed for tile view.
  *
  * @param {Object | Function} stateful - The Object or Function that can be
@@ -71,7 +97,7 @@ export function shouldRemoteVideosBeVisible(state: Object) {
  */
 export function getColumnCount(stateful: Object | Function) {
     const state = toState(stateful);
-    const participantCount = getParticipantCountWithFake(state);
+    const participantCount = getTileViewParticipantCount(state);
     const { aspectRatio } = state['features/base/responsive-ui'];
 
     // For narrow view, tiles should stack on top of each other for a lonely
@@ -90,16 +116,38 @@ export function getColumnCount(stateful: Object | Function) {
 }
 
 /**
- * Returns true if thumbnail reordering is enabled and false otherwise.
+ * Returns true if the filmstrip has a scroll and false otherwise.
  *
  * @param {Object} state - The redux state.
- * @returns {boolean} - True if thumbnail reordering is enabled and false otherwise.
+ * @returns {boolean} - True if the scroll is displayed and false otherwise.
  */
-export function isReorderingEnabled(state) {
-    const { testing = {} } = state['features/base/config'];
-    const enableThumbnailReordering = testing.enableThumbnailReordering ?? true;
+export function isFilmstripScrollVisible(state) {
+    if (shouldDisplayTileView(state)) {
+        return state['features/filmstrip']?.tileViewDimensions?.hasScroll;
+    }
 
-    return enableThumbnailReordering;
+    const { aspectRatio, clientWidth, clientHeight, safeAreaInsets = {} } = state['features/base/responsive-ui'];
+    const isNarrowAspectRatio = aspectRatio === ASPECT_RATIO_NARROW;
+    const disableSelfView = shouldHideSelfView(state);
+    const localParticipant = Boolean(getLocalParticipant(state));
+    const localParticipantVisible = localParticipant && !disableSelfView;
+    const participantCount
+        = getParticipantCountWithFake(state)
+            - (localParticipant && (shouldDisplayLocalThumbnailSeparately() || disableSelfView) ? 1 : 0);
+    const { height: thumbnailHeight, width: thumbnailWidth, margin } = styles.thumbnail;
+    const { height, width } = getFilmstripDimensions({
+        aspectRatio,
+        clientWidth,
+        clientHeight,
+        insets: safeAreaInsets,
+        localParticipantVisible
+    });
+
+    if (isNarrowAspectRatio) {
+        return width < (thumbnailWidth + (2 * margin)) * participantCount;
+    }
+
+    return height < (thumbnailHeight + (2 * margin)) * participantCount;
 }
 
 /**
@@ -120,3 +168,68 @@ export function isStageFilmstripAvailable() {
 export function isStageFilmstripEnabled() {
     return false;
 }
+
+/**
+ * Calculates the width and height of the filmstrip based on the screen size and aspect ratio.
+ *
+ * @param {Object} options - The screen aspect ratio, width, height and safe are insets.
+ * @returns {Object} - The width and the height.
+ */
+export function getFilmstripDimensions({
+    aspectRatio,
+    clientWidth,
+    clientHeight,
+    insets = {},
+    localParticipantVisible = true
+}) {
+    const { height, width, margin } = styles.thumbnail;
+    const conferenceBorder = conferenceStyles.conference.borderWidth || 0;
+    const { left = 0, right = 0, top = 0, bottom = 0 } = insets;
+
+    if (aspectRatio === ASPECT_RATIO_NARROW) {
+        return {
+            height,
+            width:
+                (shouldDisplayLocalThumbnailSeparately() && localParticipantVisible
+                    ? clientWidth - width - (margin * 2) : clientWidth)
+                    - left - right - (styles.filmstripNarrow.margin * 2) - (conferenceBorder * 2)
+
+        };
+    }
+
+    return {
+        height:
+            (shouldDisplayLocalThumbnailSeparately() && localParticipantVisible
+                ? clientHeight - height - (margin * 2) : clientHeight)
+                - top - bottom - (conferenceBorder * 2),
+        width
+    };
+}
+
+/**
+ * Returns true if the local thumbnail should be displayed separately and false otherwise.
+ *
+ * @returns {boolean} - True if the local thumbnail should be displayed separately and flase otherwise.
+ */
+export function shouldDisplayLocalThumbnailSeparately() {
+    // XXX Our current design is to have the local participant separate from
+    // the remote participants. Unfortunately, Android's Video
+    // implementation cannot accommodate that because remote participants'
+    // videos appear on top of the local participant's video at times.
+    // That's because Android's Video utilizes EGL and EGL gives us only two
+    // practical layers in which we can place our participants' videos:
+    // layer #0 sits behind the window, creates a hole in the window, and
+    // there we render the LargeVideo; layer #1 is known as media overlay in
+    // EGL terms, renders on top of layer #0, and, consequently, is for the
+    // Filmstrip. With the separate LocalThumbnail, we should have left the
+    // remote participants' Thumbnails in layer #1 and utilized layer #2 for
+    // LocalThumbnail. Unfortunately, layer #2 is not practical (that's why
+    // I said we had two practical layers only) because it renders on top of
+    // everything which in our case means on top of participant-related
+    // indicators such as moderator, audio and video muted, etc. For now we
+    // do not have much of a choice but to continue rendering LocalThumbnail
+    // as any other remote Thumbnail on Android.
+    return Platform.OS !== 'android';
+}
+
+

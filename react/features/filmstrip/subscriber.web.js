@@ -23,9 +23,7 @@ import {
     DISPLAY_DRAWER_THRESHOLD
 } from './constants';
 import {
-    isFilmstripResizable,
-    isFilmstripScrollVisible,
-    updateRemoteParticipants
+    isFilmstripResizable
 } from './functions';
 
 import './subscriber.any';
@@ -165,13 +163,6 @@ StateListenerRegistry.register(
     /* listener */(_, store) => {
         store.dispatch(setVerticalViewDimensions());
     });
-
-/**
- * Listens for changes in the filmstrip scroll visibility.
- */
-StateListenerRegistry.register(
-    /* selector */ state => isFilmstripScrollVisible(state),
-    /* listener */ (_, store) => updateRemoteParticipants(store));
 
 /**
  * Listens for changes to determine the size of the stage filmstrip tiles.

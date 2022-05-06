@@ -2,7 +2,13 @@
 
 import { ReducerRegistry, set } from '../redux';
 
-import { CLIENT_RESIZED, SET_ASPECT_RATIO, SET_CONTEXT_MENU_OPEN, SET_REDUCED_UI } from './actionTypes';
+import {
+    CLIENT_RESIZED,
+    SAFE_AREA_INSETS_CHANGED,
+    SET_ASPECT_RATIO,
+    SET_CONTEXT_MENU_OPEN,
+    SET_REDUCED_UI
+} from './actionTypes';
 import { ASPECT_RATIO_NARROW } from './constants';
 
 const {
@@ -30,6 +36,13 @@ ReducerRegistry.register('features/base/responsive-ui', (state = DEFAULT_STATE, 
             clientHeight: action.clientHeight
         };
     }
+
+    case SAFE_AREA_INSETS_CHANGED:
+        return {
+            ...state,
+            safeAreaInsets: action.insets
+        };
+
     case SET_ASPECT_RATIO:
         return set(state, 'aspectRatio', action.aspectRatio);
 

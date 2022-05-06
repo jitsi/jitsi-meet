@@ -2,7 +2,7 @@
 
 import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
-import { CLIENT_RESIZED, SET_ASPECT_RATIO } from '../base/responsive-ui';
+import { CLIENT_RESIZED, SAFE_AREA_INSETS_CHANGED, SET_ASPECT_RATIO } from '../base/responsive-ui';
 
 import { setTileViewDimensions } from './actions';
 import { updateRemoteParticipants, updateRemoteParticipantsOnLeave } from './functions';
@@ -25,6 +25,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     switch (action.type) {
     case CLIENT_RESIZED:
+    case SAFE_AREA_INSETS_CHANGED:
     case SET_ASPECT_RATIO:
         store.dispatch(setTileViewDimensions());
         break;
