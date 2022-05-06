@@ -52,6 +52,7 @@ const _updateLastN = debounce(({ dispatch, getState }) => {
     const config = state['features/base/config'];
     const { lastNLimits } = state['features/base/lastn'];
     const participantCount = getParticipantCount(state);
+    const { carMode } = state['features/video-layout'];
 
     // Select the (initial) lastN value based on the following preference order.
     // 1. The last-n value from 'startLastN' if it is specified in config.js
@@ -68,8 +69,10 @@ const _updateLastN = debounce(({ dispatch, getState }) => {
 
     if (typeof appState !== 'undefined' && appState !== 'active') {
         lastNSelected = isLocalVideoTrackDesktop(state) ? 1 : 0;
+    } else if (carMode) {
+        lastNSelected = 0;
     } else if (audioOnly) {
-        const { remoteScreenShares, tileViewEnabled, carMode } = state['features/video-layout'];
+        const { remoteScreenShares, tileViewEnabled } = state['features/video-layout'];
         const largeVideoParticipantId = state['features/large-video'].participantId;
         const largeVideoParticipant
             = largeVideoParticipantId ? getParticipantById(state, largeVideoParticipantId) : undefined;
@@ -77,7 +80,7 @@ const _updateLastN = debounce(({ dispatch, getState }) => {
         // Use tileViewEnabled state from redux here instead of determining if client should be in tile
         // view since we make an exception only for screenshare when in audio-only mode. If the user unpins
         // the screenshare, lastN will be set to 0 here. It will be set to 1 if screenshare has been auto pinned.
-        if (!carMode && !tileViewEnabled && largeVideoParticipant && !largeVideoParticipant.local) {
+        if (!tileViewEnabled && largeVideoParticipant && !largeVideoParticipant.local) {
             lastNSelected = (remoteScreenShares || []).includes(largeVideoParticipantId) ? 1 : 0;
         } else {
             lastNSelected = 0;

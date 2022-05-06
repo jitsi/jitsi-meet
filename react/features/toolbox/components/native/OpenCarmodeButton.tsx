@@ -1,3 +1,4 @@
+import { CAR_MODE_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconCar } from '../../../base/icons';
 import { connect } from '../../../base/redux';
@@ -25,4 +26,21 @@ class OpenCarmodeButton extends AbstractButton<AbstractButtonProps, any, any> {
     }
 }
 
-export default translate(connect()(OpenCarmodeButton));
+/**
+ * Maps part of the Redux state to the props of this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @param {AbstractButtonProps} ownProps - The properties explicitly passed to the component instance.
+ * @private
+ * @returns {Object}
+ */
+ function _mapStateToProps(state: Object, ownProps: AbstractButtonProps): Object {
+    const enabled = getFeatureFlag(state, CAR_MODE_ENABLED, true);
+    const { visible = enabled } = ownProps;
+
+    return {
+        visible
+    };
+}
+
+export default translate(connect(_mapStateToProps)(OpenCarmodeButton));

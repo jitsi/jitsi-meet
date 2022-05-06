@@ -10,6 +10,14 @@ import {
 } from './actionTypes';
 
 const DEFAULT_STATE = {
+    /**
+     * Whether we are in carmode.
+     *
+     * @public
+     * @type {boolean}
+     */
+    carMode: false,
+
     remoteScreenShares: [],
 
     /**
@@ -22,15 +30,7 @@ const DEFAULT_STATE = {
      * @public
      * @type {boolean}
      */
-    tileViewEnabled: undefined,
-
-    /**
-     * Whether we are in carmode.
-     *
-     * @public
-     * @type {boolean}
-     */
-    carMode: false
+    tileViewEnabled: undefined
 };
 
 const STORE_NAME = 'features/video-layout';
@@ -44,16 +44,16 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
             remoteScreenShares: action.participantIds
         };
 
-    case SET_TILE_VIEW:
-        return {
-            ...state,
-            tileViewEnabled: action.enabled
-        };
-
     case SET_CAR_MODE:
         return {
             ...state,
             carMode: action.enabled
+        };
+
+    case SET_TILE_VIEW:
+        return {
+            ...state,
+            tileViewEnabled: action.enabled
         };
     }
 
