@@ -171,13 +171,20 @@ MiddlewareRegistry.register(store => next => action => {
             }
         }
 
-        dispatch(setStageParticipants(queue));
-        if (!pinned) {
-            const timeoutId = setTimeout(() => dispatch(removeStageParticipant(participantId)),
-                ACTIVE_PARTICIPANT_TIMEOUT);
+        // If queue is undefined we haven't made any changes to the active participants. This will mostly happen
+        // if the participant that we are trying to add is not pinned and all slots are currently taken by pinned
+        // participants.
+        // IMPORTANT: setting active participants to undefined will crash jitsi-meet.
+        if (typeof queue !== 'undefined') {
+            dispatch(setStageParticipants(queue));
+            if (!pinned) {
+                const timeoutId = setTimeout(() => dispatch(removeStageParticipant(participantId)),
+                    ACTIVE_PARTICIPANT_TIMEOUT);
 
-            timers.set(participantId, timeoutId);
+                timers.set(participantId, timeoutId);
+            }
         }
+
         if (getCurrentLayout(state) === LAYOUTS.TILE_VIEW) {
             dispatch(setTileView(false));
         }
