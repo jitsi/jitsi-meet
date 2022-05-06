@@ -29,11 +29,6 @@ declare var __DEV__;
 type Props = AbstractAppProps & {
 
     /**
-     * An object of colors that override the default colors of the app/sdk.
-     */
-    colorScheme: ?Object,
-
-    /**
      * Identifier for this app on the native side.
      */
     externalAPIScope: string,
@@ -100,13 +95,31 @@ export class App extends AbstractApp {
      */
     async _extraInit() {
         const { dispatch, getState } = this.state.store;
+
+        // We set these early enough so then we avoid any unnecessary re-renders.
+        dispatch(updateFlags(this.props.flags));
+
         const route = await _getRouteToRender();
 
         // We need the root navigator to be set early.
         await this._navigate(route);
 
-        // We set these early enough so then we avoid any unnecessary re-renders.
-        dispatch(updateFlags(this.props.flags));
+        // HACK ALERT!
+        // Wait until the root navigator is ready.
+        // We really need to break the inheritance relationship between App,
+        // AbstractApp and BaseApp, it's very inflexible and cumbersome right now.
+        const rootNavigationReady = new Promise(resolve => {
+            const i = setInterval(() => {
+                const { ready } = getState()['features/app'] || {};
+
+                if (ready) {
+                    clearInterval(i);
+                    resolve();
+                }
+            }, 50);
+        });
+
+        await rootNavigationReady;
 
         // Check if serverURL is configured externally and not allowed to change.
         const serverURLChangeEnabled = getFeatureFlag(getState(), SERVER_URL_CHANGE_ENABLED, true);
