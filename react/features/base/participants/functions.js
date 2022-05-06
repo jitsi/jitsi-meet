@@ -30,10 +30,13 @@ const AVATAR_CHECKER_FUNCTIONS = [
         return participant && participant.avatarURL ? participant.avatarURL : null;
     },
     (participant, store) => {
-        if (participant && participant.email) {
-            // TODO: remove once libravatar has deployed their new scaled up infra. -saghul
-            const gravatarBaseURL
-                = store.getState()['features/base/config'].gravatarBaseURL ?? GRAVATAR_BASE_URL;
+        const config = store.getState()['features/base/config'];
+        const isGravatarDisabled = config.gravatar?.disabled;
+
+        if (participant && participant.email && !isGravatarDisabled) {
+            const gravatarBaseURL = config.gravatar?.baseUrl
+                || config.gravatarBaseURL
+                || GRAVATAR_BASE_URL;
 
             return getGravatarURL(participant.email, gravatarBaseURL);
         }
