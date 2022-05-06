@@ -8,4 +8,6 @@ import '../mobile/full-screen/reducer';
 import '../mobile/watchos/reducer';
 import '../shared-video/reducer';
 
+import './reducer.native';
+
 import './reducers.any';

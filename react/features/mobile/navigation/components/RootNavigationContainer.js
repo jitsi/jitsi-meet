@@ -2,11 +2,12 @@
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { connect } from '../../../base/redux';
 import { DialInSummary } from '../../../invite';
+import { _ROOT_NAVIGATION_READY } from '../actionTypes';
 import { rootNavigationRef } from '../rootNavigationContainerRef';
 import { screen } from '../routes';
 import {
@@ -27,20 +28,32 @@ const RootStack = createStackNavigator();
 type Props = {
 
     /**
+     * Redux dispatch function.
+     */
+    dispatch: Function,
+
+    /**
     * Is welcome page available?
     */
     isWelcomePageAvailable: boolean
 }
 
 
-const RootNavigationContainer = ({ isWelcomePageAvailable }: Props) => {
+const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: Props) => {
     const initialRouteName = isWelcomePageAvailable
         ? screen.root : screen.connecting;
+    const onReady = useCallback(() => {
+        dispatch({
+            type: _ROOT_NAVIGATION_READY,
+            ready: true
+        });
+    }, [ dispatch ]);
 
     return (
         <SafeAreaProvider>
             <NavigationContainer
                 independent = { true }
+                onReady = { onReady }
                 ref = { rootNavigationRef }
                 theme = { navigationContainerTheme }>
                 <RootStack.Navigator
@@ -89,4 +102,3 @@ function mapStateToProps(state: Object) {
 }
 
 export default connect(mapStateToProps)(RootNavigationContainer);
-
