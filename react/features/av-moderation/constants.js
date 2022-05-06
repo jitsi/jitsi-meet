@@ -18,6 +18,7 @@ export const MEDIA_TYPE_TO_PENDING_STORE_KEY: {[key: MediaType]: string} = {
     [MEDIA_TYPE.VIDEO]: 'pendingVideo'
 };
 
+export const ASKED_TO_UNMUTE_NOTIFICATION_ID = 'asked-to-unmute';
 export const ASKED_TO_UNMUTE_SOUND_ID = 'ASKED_TO_UNMUTE_SOUND';
 
 export const AUDIO_MODERATION_NOTIFICATION_ID = 'audio-moderation';
