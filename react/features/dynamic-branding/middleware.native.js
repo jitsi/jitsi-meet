@@ -2,7 +2,6 @@ import { APP_WILL_MOUNT } from '../base/app';
 import { MiddlewareRegistry } from '../base/redux';
 
 import { SET_DYNAMIC_BRANDING_DATA } from './actionTypes';
-import { createMuiBrandingTheme } from './functions.web';
 
 import { fetchCustomBrandingData } from './';
 
@@ -14,11 +13,20 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
     case SET_DYNAMIC_BRANDING_DATA: {
-        const { customTheme } = action.value;
+        const {
+            avatarBackgrounds,
+            backgroundColor,
+            backgroundImageUrl
+        } = action.value;
 
-        if (customTheme) {
-            action.value.muiBrandedTheme = createMuiBrandingTheme(customTheme);
-        }
+        action.value = {
+            ...action.value,
+            avatarBackgrounds: avatarBackgrounds.filter(
+                color => !color.includes('linear-gradient')
+            ),
+            backgroundColor,
+            backgroundImageUrl
+        };
     }
     }
 
