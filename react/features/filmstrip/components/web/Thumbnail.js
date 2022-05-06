@@ -37,6 +37,7 @@ import { togglePinStageParticipant } from '../../actions';
 import {
     DISPLAY_MODE_TO_CLASS_NAME,
     DISPLAY_VIDEO,
+    FILMSTRIP_TYPE,
     SHOW_TOOLBAR_CONTEXT_MENU_AFTER,
     THUMBNAIL_TYPE,
     VIDEO_TEST_EVENTS
@@ -235,6 +236,11 @@ export type Props = {|
     dispatch: Function,
 
     /**
+     * The type of filmstrip the tile is displayed in.
+     */
+    filmstripType: string,
+
+    /**
      * The horizontal offset in px for the thumbnail. Used to center the thumbnails from the last row in tile view.
      */
     horizontalOffset: number,
@@ -243,11 +249,6 @@ export type Props = {|
      * The ID of the participant related to the thumbnail.
      */
     participantID: ?string,
-
-    /**
-     * Whether the tile is displayed in the stage filmstrip or not.
-     */
-    stageFilmstrip: boolean,
 
     /**
      * Styles that will be set to the Thumbnail's main span element.
@@ -993,7 +994,7 @@ class Thumbnail extends Component<Props, State> {
             _thumbnailType,
             _videoTrack,
             classes,
-            stageFilmstrip
+            filmstripType
         } = this.props;
         const { id } = _participant || {};
         const { isHovered, popoverVisible } = this.state;
@@ -1031,8 +1032,8 @@ class Thumbnail extends Component<Props, State> {
             <span
                 className = { containerClassName }
                 id = { local
-                    ? `localVideoContainer${stageFilmstrip ? '_stage' : ''}`
-                    : `participant_${id}${stageFilmstrip ? '_stage' : ''}`
+                    ? `localVideoContainer${filmstripType === FILMSTRIP_TYPE.MAIN ? '' : `_${filmstripType}`}`
+                    : `participant_${id}${filmstripType === FILMSTRIP_TYPE.MAIN ? '' : `_${filmstripType}`}`
                 }
                 { ...(_isMobile
                     ? {
@@ -1168,7 +1169,7 @@ class Thumbnail extends Component<Props, State> {
  * @returns {Props}
  */
 function _mapStateToProps(state, ownProps): Object {
-    const { participantID, stageFilmstrip } = ownProps;
+    const { participantID, filmstripType = FILMSTRIP_TYPE.MAIN } = ownProps;
 
     const participant = getParticipantByIdOrUndefined(state, participantID);
     const id = participant?.id;
@@ -1199,7 +1200,7 @@ function _mapStateToProps(state, ownProps): Object {
     const { localFlipX } = state['features/base/settings'];
     const _isMobile = isMobileBrowser();
     const activeParticipants = getActiveParticipantsIds(state);
-    const tileType = getThumbnailTypeFromLayout(_currentLayout, stageFilmstrip);
+    const tileType = getThumbnailTypeFromLayout(_currentLayout, filmstripType);
 
     switch (tileType) {
     case THUMBNAIL_TYPE.VERTICAL:
@@ -1244,7 +1245,8 @@ function _mapStateToProps(state, ownProps): Object {
         const {
             stageFilmstripDimensions = {
                 thumbnailSize: {}
-            }
+            },
+            screenshareFilmstripDimensions
         } = state['features/filmstrip'];
 
         size = {
@@ -1252,8 +1254,15 @@ function _mapStateToProps(state, ownProps): Object {
             _height: thumbnailSize?.height
         };
 
-        if (stageFilmstrip) {
+        if (filmstripType === FILMSTRIP_TYPE.STAGE) {
             const { width: _width, height: _height } = stageFilmstripDimensions.thumbnailSize;
+
+            size = {
+                _width,
+                _height
+            };
+        } else if (filmstripType === FILMSTRIP_TYPE.SCREENSHARE) {
+            const { width: _width, height: _height } = screenshareFilmstripDimensions.thumbnailSize;
 
             size = {
                 _width,

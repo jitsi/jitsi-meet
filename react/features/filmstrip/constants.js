@@ -282,6 +282,12 @@ export const FILMSTRIP_GRID_BREAKPOINT = 300;
 export const FILMSTRIP_BREAKPOINT_OFFSET = 5;
 
 /**
+ * The minimum height for the stage view
+ * (used to determine the maximum height of the user-resizable top panel).
+ */
+export const MIN_STAGE_VIEW_HEIGHT = 700;
+
+/**
  * The minimum width for the stage view
  * (used to determine the maximum width of the user-resizable vertical filmstrip).
  */
@@ -299,6 +305,20 @@ export const VERTICAL_VIEW_HORIZONTAL_MARGIN = VERTICAL_FILMSTRIP_MIN_HORIZONTAL
 export const ACTIVE_PARTICIPANT_TIMEOUT = 1000 * 60;
 
 /**
+ * The types of filmstrip.
+ */
+export const FILMSTRIP_TYPE = {
+    MAIN: 'main',
+    STAGE: 'stage',
+    SCREENSHARE: 'screenshare'
+};
+
+/**
  * The max number of participants to be displayed on the stage filmstrip.
  */
 export const MAX_ACTIVE_PARTICIPANTS = 6;
+
+/**
+ * Top filmstrip default height.
+ */
+export const TOP_FILMSTRIP_HEIGHT = 180;

@@ -1173,7 +1173,8 @@ var config = {
     //         'transcribing',
     //         'video-quality',
     //         'insecure-room',
-    //         'highlight-moment'
+    //         'highlight-moment',
+    //         'top-panel-toggle'
     //     ]
     // },
 
@@ -1367,7 +1368,14 @@ var config = {
 
     //     // Disables the stage filmstrip
     //     // (displaying multiple participants on stage besides the vertical filmstrip)
-    //     disableStageFilmstrip: false
+    //     disableStageFilmstrip: false,
+
+    //     // Disables the top panel (only shown when a user is sharing their screen).
+    //     disableTopPanel: false,
+
+    //     // The minimum number of participants that must be in the call for
+    //     // the top panel layout to be used.
+    //     minParticipantCountForTopPanel: 50
     // },
 
     // Tile view related config options.
