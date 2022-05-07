@@ -77,6 +77,17 @@
         "refresh": "حدِّث الرزنامة",
         "today": "اليوم"
     },
+    "carmode": {
+        "actions": {
+            "leaveMeeting": "اترك الاجتماع",
+            "selectSoundDevice": "حدد جهاز الصوت"
+        },
+        "labels": {
+            "buttonLabel": "وضع السيارة",
+            "title": "وضع القيادة الآمنة",
+            "videoStopped": "تم إيقاف الفيديو الخاص بك"
+        }
+    },
     "chat": {
         "enter": "أدخل الغرفة",
         "error": "خطأ: لم تُرسَل رسالتك. السبب: {{error}}",
@@ -894,6 +905,7 @@
         "unavailableTitle": "التسجيل غير متاح",
         "uploadToCloud": "تحميل إلى السحابة"
     },
+    "screenshareDisplayName": "شاشة {{name}}",
     "sectionList": {
         "pullToRefresh": "اسحب للتحديث"
     },
@@ -1009,6 +1021,7 @@
             "boo": "Boo",
             "breakoutRoom": "الانضمام / مغادرة غرفة فرعية",
             "callQuality": "اضبط دقة الفيديو",
+            "carmode": "وضع السيارة",
             "cc": "اظهِر/اخفِ الترجمة",
             "chat": "اظهِر/اخفِ نافذة الدردشة",
             "clap": "تصفيق",
