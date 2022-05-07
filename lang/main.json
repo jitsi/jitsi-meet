@@ -426,7 +426,7 @@
         "detailsLabel": "Tell us more about it.",
         "good": "Good",
         "rateExperience": "Rate your meeting experience",
-        "star": "Star",
+        "star": "Star",""
         "veryBad": "Very Bad",
         "veryGood": "Very Good"
     },
@@ -1021,7 +1021,7 @@
             "boo": "Boo",
             "breakoutRoom": "Join/leave breakout room",
             "callQuality": "Manage video quality",
-            "carmode": "Carmode",
+            "carmode": "Car Mode",
             "cc": "Toggle subtitles",
             "chat": "Open / Close chat",
             "clap": "Clap",
