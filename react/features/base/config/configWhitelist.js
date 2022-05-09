@@ -163,6 +163,7 @@ export default [
     'gatherStats',
     'giphy',
     'googleApiApplicationClientID',
+    'gravatar.disabled',
     'hiddenPremeetingButtons',
     'hideConferenceSubject',
     'hideDisplayName',

@@ -586,8 +586,17 @@ var config = {
     // Array with avatar URL prefixes that need to use CORS.
     // corsAvatarURLs: [ 'https://www.gravatar.com/avatar/' ],
 
-    // Base URL for a Gravatar-compatible service. Defaults to libravatar.
-    // gravatarBaseURL: 'https://seccdn.libravatar.org/avatar/',
+    // Base URL for a Gravatar-compatible service. Defaults to Gravatar.
+    // DEPRECATED! Use `gravatar.baseUrl` instead.
+    // gravatarBaseURL: 'https://www.gravatar.com/avatar/',
+
+    // Setup for Gravatar-compatible services.
+    // gravatar: {
+    //     // Defaults to Gravatar.
+    //     baseUrl: 'https://www.gravatar.com/avatar/',
+    //     // True if Gravatar should be disabled.
+    //     disabled: false
+    // },
 
     // App name to be displayed in the invitation email subject, as an alternative to
     // interfaceConfig.APP_NAME.
