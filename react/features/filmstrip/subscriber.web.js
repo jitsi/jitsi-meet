@@ -175,6 +175,7 @@ StateListenerRegistry.register(
             width: state['features/filmstrip'].width?.current,
             visible: state['features/filmstrip'].visible,
             clientWidth: state['features/base/responsive-ui'].clientWidth,
+            clientHeight: state['features/base/responsive-ui'].clientHeight,
             tileView: state['features/video-layout'].tileViewEnabled
         };
     },
