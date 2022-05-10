@@ -2,12 +2,10 @@
 
 import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { connect } from '../../../base/redux';
-import { closeChat, openChat } from '../../actions.native';
 import AbstractChat, {
     _mapStateToProps,
     type Props as AbstractProps
