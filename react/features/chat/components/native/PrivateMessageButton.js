@@ -68,8 +68,6 @@ class PrivateMessageButton extends AbstractButton<Props, any> {
             this.props.dispatch(handleLobbyChatInitialized(this.props.participantID));
         }
 
-        console.log(this.props._participant.id, 'PRIVATE PARTICIPANT');
-
         this.props._isPollsDisabled
             ? navigate(screen.conference.chat, {
                 privateMessageRecipient: this.props._participant
