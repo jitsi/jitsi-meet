@@ -1308,7 +1308,7 @@ class API {
     }
 
     /**
-     * Notify external application (if API is enabled) that a user is talking while he/she is taking.
+     * Notify external application (if API is enabled) that a user is talking while he/she is muted.
      *
      * @returns {void}
      */
