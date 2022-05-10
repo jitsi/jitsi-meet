@@ -62,7 +62,7 @@ export function isToolboxVisible(state: Object) {
 export function isAudioSettingsButtonDisabled(state: Object) {
 
     return !(hasAvailableDevices(state, 'audioInput')
-          && hasAvailableDevices(state, 'audioOutput'))
+          || hasAvailableDevices(state, 'audioOutput'))
           || state['features/base/config'].startSilent;
 }
 
