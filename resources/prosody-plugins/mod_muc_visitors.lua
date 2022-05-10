@@ -82,24 +82,30 @@ process_host_module(
                 return;
             end
 
-            local actor, base_presence, nick, reason, room, x
-                = event.actor, event.stanza, event.nick, event.reason, event.room, event.x;
-            for room_nick, n_occupant in room:each_occupant() do
-
-                if jid_node(n_occupant.jid) == 'focus' then
-                    local actor_nick;
-                    if actor then
-                        actor_nick = jid_resource(room:get_occupant_jid(actor));
+            local room = event.room;
+            if not room._data.focus_occupant then
+                for room_nick, n_occupant in room:each_occupant() do
+                    if jid_node(n_occupant.jid) == 'focus' then
+                        room._data.focus_occupant = n_occupant;
+                        room:save(true);
+                        break;
                     end
-
-                    local full_x = st.clone(x.full or x);
-                    room:build_item_list(occupant, full_x, false, nick, actor_nick, actor, reason);
-                    local full_p = st.clone(base_presence):add_child(full_x);
-
-                    room:route_to_occupant(n_occupant, full_p);
-                    return;
                 end
             end
+
+            local actor, base_presence, nick, reason, x
+                = event.actor, event.stanza, event.nick, event.reason, event.x;
+            local actor_nick;
+            if actor then
+                actor_nick = jid_resource(room:get_occupant_jid(actor));
+            end
+
+            local full_x = st.clone(x.full or x);
+            room:build_item_list(occupant, full_x, false, nick, actor_nick, actor, reason);
+            local full_p = st.clone(base_presence):add_child(full_x);
+
+            room:route_to_occupant(room._data.focus_occupant, full_p);
+            return;
         end);
     end
 );
