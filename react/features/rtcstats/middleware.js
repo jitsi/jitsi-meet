@@ -56,12 +56,11 @@ MiddlewareRegistry.register(store => next => action => {
     case TRACK_ADDED: {
         if (canSendRtcstatsData(state)) {
             const jitsiTrack = action.track.jitsiTrack;
-            const { ownerEndpointId, ssrc, videoType, type } = jitsiTrack;
+            const { ssrc, videoType, type } = jitsiTrack;
 
             // Remote tracks store their ssrc in the jitsiTrack object. Local tracks don't. See getSsrcByTrack.
             if (type === 'video' && !jitsiTrack.isLocal()) {
                 RTCStats.sendVideoTypeData({
-                    ownerEndpointId,
                     ssrc,
                     videoType
                 });
@@ -77,10 +76,9 @@ MiddlewareRegistry.register(store => next => action => {
             // if the videoType of the remote track has changed we expect to find it in track.videoType. grep for
             // trackVideoTypeChanged.
             if (videoType && !jitsiTrack.isLocal()) {
-                const { ssrc, ownerEndpointId } = jitsiTrack;
+                const { ssrc } = jitsiTrack;
 
                 RTCStats.sendVideoTypeData({
-                    ownerEndpointId,
                     ssrc,
                     videoType
                 });

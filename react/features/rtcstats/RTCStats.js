@@ -112,7 +112,7 @@ class RTCStats {
      * @returns {void}
      */
     sendVideoTypeData(videoTypeData) {
-        this.trace && this.trace.statsEntry('videoType', null, videoTypeData);
+        this.trace && this.trace.statsEntry('setVideoType', null, videoTypeData);
     }
 
     /**
