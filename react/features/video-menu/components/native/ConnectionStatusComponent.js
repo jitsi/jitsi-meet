@@ -15,8 +15,8 @@ import { getParticipantDisplayName } from '../../../base/participants';
 import { BaseIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
+import { getSourceNameByParticipantId } from '../../../base/tracks';
 import statsEmitter from '../../../connection-indicator/statsEmitter';
-import { getSourceNameByParticipantId } from '../../base/tracks';
 
 import styles from './styles';
 
