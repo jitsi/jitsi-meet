@@ -63,28 +63,23 @@ process_host_module(
         host_module:hook('muc-occupant-pre-join', function (event)
             local room, occupant = event.room, event.occupant;
 
-            if is_healthcheck_room(room.jid) or is_admin(occupant.bare_jid) then
-                return;
-            end
-
-            local _, host = jid_split(occupant.bare_jid);
-            if host == module.host then
+            if string.find(occupant.bare_jid, module.host) then
                 occupant.role = 'visitor';
+                occupant.is_visitor = true;
             end
         end, 3);
 
         host_module:hook('muc-broadcast-presence', function (event)
             local occupant = event.occupant;
-            local _, host = jid_split(occupant.bare_jid);
 
             -- we are interested only of visitors presence to send it to jicofo
-            if host ~= module.host then
+            if not occupant.is_visitor then
                 return;
             end
 
             local room = event.room;
             if not room._data.focus_occupant then
-                for room_nick, n_occupant in room:each_occupant() do
+                for _, n_occupant in room:each_occupant() do
                     if jid_node(n_occupant.jid) == 'focus' then
                         room._data.focus_occupant = n_occupant;
                         room:save(true);
