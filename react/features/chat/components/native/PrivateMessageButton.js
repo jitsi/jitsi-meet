@@ -58,7 +58,7 @@ class PrivateMessageButton extends AbstractButton<Props, any> {
     toggledIcon = IconReply;
 
     /**
-     * Handles clicking / pressing the button, and kicks the participant.
+     * Handles clicking / pressing the button.
      *
      * @private
      * @returns {void}
@@ -67,6 +67,7 @@ class PrivateMessageButton extends AbstractButton<Props, any> {
         if (this.props._isLobbyMessage) {
             this.props.dispatch(handleLobbyChatInitialized(this.props.participantID));
         }
+
         this.props._isPollsDisabled
             ? navigate(screen.conference.chat, {
                 privateMessageRecipient: this.props._participant
@@ -102,11 +103,11 @@ class PrivateMessageButton extends AbstractButton<Props, any> {
 export function _mapStateToProps(state: Object, ownProps: Props): $Shape<Props> {
     const enabled = getFeatureFlag(state, CHAT_ENABLED, true);
     const { disablePolls } = state['features/base/config'];
-    const { visible = enabled, isLobbyMessage } = ownProps;
+    const { visible = enabled, isLobbyMessage, participantID } = ownProps;
 
     return {
         _isPollsDisabled: disablePolls,
-        _participant: getParticipantById(state, ownProps.participantID),
+        _participant: getParticipantById(state, participantID),
         _isLobbyMessage: isLobbyMessage,
         visible
     };
