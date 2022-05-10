@@ -1,9 +1,5 @@
-local util = module:require "util";
-local is_healthcheck_room = util.is_healthcheck_room;
-local um_is_admin = require "core.usermanager".is_admin;
 local jid_node = require 'util.jid'.node;
 local jid_resource = require "util.jid".resource;
-local jid_split = require "util.jid".split;
 local st = require "util.stanza";
 
 -- Add the following config to the main muc component
@@ -29,10 +25,6 @@ local st = require "util.stanza";
 --     main_muc = "conference.jitmeet.example.com"
 
 local main_muc_component_config = module:get_option_string('main_muc');
-
-local function is_admin(_jid)
-    return um_is_admin(_jid, module.host);
-end
 
 function starts_with(str, start)
     return str:sub(1, #start) == start
@@ -61,11 +53,11 @@ process_host_module(
         main_muc_service = prosody.hosts[host].modules.muc;
 
         host_module:hook('muc-occupant-pre-join', function (event)
-            local room, occupant = event.room, event.occupant;
+            local occupant = event.occupant;
 
             if string.find(occupant.bare_jid, module.host) then
                 occupant.role = 'visitor';
-                occupant.is_visitor = true;
+                --occupant.is_visitor = true;
             end
         end, 3);
 
@@ -73,7 +65,8 @@ process_host_module(
             local occupant = event.occupant;
 
             -- we are interested only of visitors presence to send it to jicofo
-            if not occupant.is_visitor then
+            --if not occupant.is_visitor then
+            if not string.find(occupant.bare_jid, module.host) then
                 return;
             end
 
