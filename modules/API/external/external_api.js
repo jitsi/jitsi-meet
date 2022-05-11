@@ -66,12 +66,14 @@ const commands = {
     toggleChat: 'toggle-chat',
     toggleE2EE: 'toggle-e2ee',
     toggleFilmStrip: 'toggle-film-strip',
+    toggleMediaPermissionScreen: 'toggle-media-permission-screen',
     toggleModeration: 'toggle-moderation',
     toggleRaiseHand: 'toggle-raise-hand',
     toggleShareAudio: 'toggle-share-audio',
     toggleShareScreen: 'toggle-share-screen',
     toggleTileView: 'toggle-tile-view',
     toggleVirtualBackgroundDialog: 'toggle-virtual-background',
+    setVideoBackgroundEffect: 'set-video-background-effect',
     toggleVideo: 'toggle-video',
     playTestSound: 'play-test-sound'
 };
@@ -82,6 +84,7 @@ const commands = {
  */
 const events = {
     'avatar-changed': 'avatarChanged',
+    'audio-level-changed': 'audioLevelChanged',
     'audio-availability-changed': 'audioAvailabilityChanged',
     'audio-mute-status-changed': 'audioMuteStatusChanged',
     'browser-support': 'browserSupport',
@@ -113,6 +116,7 @@ const events = {
     'participant-left': 'participantLeft',
     'participant-role-changed': 'participantRoleChanged',
     'password-required': 'passwordRequired',
+    'permissions-granted': 'permissionsGranted',
     'proxy-connection-event': 'proxyConnectionEvent',
     'raise-hand-updated': 'raiseHandUpdated',
     'recording-link-available': 'recordingLinkAvailable',
@@ -129,7 +133,9 @@ const events = {
     'suspend-detected': 'suspendDetected',
     'tile-view-changed': 'tileViewChanged',
     'toolbar-button-clicked': 'toolbarButtonClicked',
-    'notification-raised': 'notificationRaised'
+    'track-receiving-data-status': 'trackReceivingDataStatus',
+    'talk-while-muted': 'talkWhileMuted',
+    'notification-raised': 'notificationRaised',
 };
 
 /**
@@ -1229,7 +1235,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
 
     /**
      * Returns conference speaker stats.
-     * 
+     *
      * @returns {Promise<Object>} Resolves with speaker stats and rejects on failure
      */
     getSpeakerStats() {

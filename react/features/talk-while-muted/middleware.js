@@ -15,7 +15,7 @@ import {
 import { isForceMuted } from '../participants-pane/functions';
 import { isAudioMuteButtonDisabled } from '../toolbox/functions.any';
 
-import { setCurrentNotificationUid } from './actions';
+import { setCurrentNotificationUid, talkWhileMuted } from './actions';
 import { TALK_WHILE_MUTED_SOUND_ID } from './constants';
 import { TALK_WHILE_MUTED_SOUND_FILE } from './sounds';
 
@@ -47,9 +47,9 @@ MiddlewareRegistry.register(store => next => action => {
             JitsiConferenceEvents.TALK_WHILE_MUTED, async () => {
                 const state = getState();
                 const local = getLocalParticipant(state);
-
                 // Display the talk while muted notification only when the audio button is not disabled.
                 if (!isAudioMuteButtonDisabled(state)) {
+                    dispatch(talkWhileMuted());
                     const forceMuted = isForceMuted(local, MEDIA_TYPE.AUDIO, state);
                     const notification = await dispatch(showNotification({
                         titleKey: 'toolbar.talkWhileMutedPopup',

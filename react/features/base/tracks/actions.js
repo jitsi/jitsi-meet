@@ -24,11 +24,13 @@ import {
     TRACK_CREATE_CANCELED,
     TRACK_CREATE_ERROR,
     TRACK_NO_DATA_FROM_SOURCE,
+    TRACK_RECEIVING_DATA_STATUS,
     TRACK_REMOVED,
     TRACK_STOPPED,
     TRACK_UPDATED,
     TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT,
-    TRACK_WILL_CREATE
+    TRACK_WILL_CREATE,
+    TRACK_AUDIO_LEVEL_CHANGED,
 } from './actionTypes';
 import {
     createLocalTracksF,
@@ -231,6 +233,25 @@ export function noDataFromSource(track) {
 }
 
 /**
+* Signals that the JitsiLocalTrack is receiving data or not.
+*
+* @param  {JitsiLocalTrack}  track
+* @param  {Boolean} isReceivingData
+* @returns {{
+*     type: TRACK_RECEIVING_DATA_STATUS,
+*     track: Track
+*     isReceivingData: boolean
+* }}
+*/
+export function receivingDataStatusFromSource(track, isReceivingData) {
+    return {
+        type: TRACK_RECEIVING_DATA_STATUS,
+        track,
+        isReceivingData
+    };
+}
+
+/**
  * Displays a no data from source video error if needed.
  *
  * @param {JitsiLocalTrack} jitsiTrack - The track.
@@ -255,7 +276,7 @@ export function showNoDataFromSourceVideoError(jitsiTrack) {
             }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 
             notificationInfo = {
-                uid: notificationAction.uid
+                uid: notificationAction?.uid
             };
         }
         dispatch(trackNoDataFromSourceNotificationInfoChanged(jitsiTrack, notificationInfo));
@@ -398,6 +419,13 @@ export function trackAdded(track) {
             }
 
             isReceivingData = track.isReceivingData();
+            dispatch(receivingDataStatusFromSource(
+                {
+                    deviceId: track.deviceId,
+                    type: track.type
+                },
+                isReceivingData)
+            );
             track.on(JitsiTrackEvents.NO_DATA_FROM_SOURCE, () => dispatch(noDataFromSource({ jitsiTrack: track })));
             if (!isReceivingData) {
                 if (mediaType === MEDIA_TYPE.AUDIO) {
@@ -409,9 +437,9 @@ export function trackAdded(track) {
                     // Set the notification ID so that other parts of the application know that this was
                     // displayed in the context of the current device.
                     // I.E. The no-audio-signal notification shouldn't be displayed if this was already shown.
-                    dispatch(setNoSrcDataNotificationUid(notificationAction.uid));
+                    dispatch(setNoSrcDataNotificationUid(notificationAction?.uid));
 
-                    noDataFromSourceNotificationInfo = { uid: notificationAction.uid };
+                    noDataFromSourceNotificationInfo = { uid: notificationAction?.uid };
                 } else {
                     const timeout = setTimeout(() => dispatch(
                         showNoDataFromSourceVideoError(track)),
@@ -468,6 +496,25 @@ export function trackMutedChanged(track) {
             jitsiTrack: track,
             muted: track.isMuted()
         }
+    };
+}
+
+/**
+ * Create an action for when a track's audio level changes.
+ *
+ * @param  {string} deviceId - device ID.
+ * @param  {number} audioLevel - audio level.
+ * @returns {{
+ *     type: TRACK_AUDIO_LEVEL_CHANGED,
+ *     deviceId: string,
+ *     audioLevel: number
+ * }}
+ */
+export function trackAudioLevelChanged(deviceId, audioLevel) {
+    return {
+        type: TRACK_AUDIO_LEVEL_CHANGED,
+        deviceId,
+        audioLevel
     };
 }
 

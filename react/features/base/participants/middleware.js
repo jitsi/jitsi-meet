@@ -63,6 +63,7 @@ import {
     getRemoteParticipants,
     isLocalParticipantModerator
 } from './functions';
+import { TALK_WHILE_MUTED } from '../../talk-while-muted/actionTypes';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
 
 import { hasRaisedHand, raiseHand } from '.';
@@ -145,6 +146,13 @@ MiddlewareRegistry.register(store => next => action => {
             APP.API.notifyRaiseHandUpdated(localId, raisedHandTimestamp);
         }
 
+        break;
+    }
+
+    case TALK_WHILE_MUTED: {
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyTalkWhileMuted();
+        }
         break;
     }
 
