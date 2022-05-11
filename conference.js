@@ -2768,8 +2768,8 @@ export default {
                     }
                 }
             });
-        } catch (e) {
-            console.log(e);
+        } catch (err) {
+            logger.error('Failed to dispose old tracks', err);
         }
     },
 
