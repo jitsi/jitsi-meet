@@ -9,6 +9,7 @@ import {
     CHECK_AND_NOTIFY_FOR_NEW_DEVICE,
     DEVICE_PERMISSIONS_CHANGED,
     NOTIFY_CAMERA_ERROR,
+    NOTIFY_MEDIA_PERMISSIONS_GRANTED,
     NOTIFY_MIC_ERROR,
     REMOVE_PENDING_DEVICE_REQUESTS,
     SET_AUDIO_INPUT_DEVICE,
@@ -167,6 +168,22 @@ export function notifyCameraError(error) {
     return {
         type: NOTIFY_CAMERA_ERROR,
         error
+    };
+}
+
+/**
+ * Signals which (media devices) permissions a user has not granted.
+ *
+ * @param {{audio: boolean, video: boolean}} permissions - 
+ * @returns {{
+ *     type: NOTIFY_MEDIA_PERMISSIONS_GRANTED,
+ *     permissions: {audio: boolean, video: boolean}
+ * }}
+ */
+export function notifyMediaPermissionsGranted(permissions) {
+    return {
+        type: NOTIFY_MEDIA_PERMISSIONS_GRANTED,
+        permissions
     };
 }
 

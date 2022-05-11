@@ -873,6 +873,20 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that media devices
+     * permissions are granted or not.
+     *
+     * @param {{audio: boolean, video: boolean}} permissions - Permissions per device type.
+     * @returns {void}
+     */
+    notifyPermissionsGranted(permissions: Object) {
+        this._sendEvent({
+            name: 'permissions-granted',
+            permissions
+        });
+    }
+
+    /**
      * Notifies the external application (spot) that the local jitsi-participant
      * has a status update.
      *

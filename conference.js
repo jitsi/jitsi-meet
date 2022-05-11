@@ -61,6 +61,7 @@ import {
     setAudioOutputDeviceId,
     updateDeviceList
 } from './react/features/base/devices';
+import { notifyMediaPermissionsGranted } from './react/features/base/devices/actions';
 import {
     browser,
     isFatalJitsiConnectionError,
@@ -648,10 +649,31 @@ export default {
         // the user inputs their credentials, but the dialog would be
         // overshadowed by the overlay.
         tryCreateLocalTracks.then(tracks => {
+            const isGranted = (type) => tracks.some(track => track.type === type);
+            const isAudioGranted = isGranted('audio');
+            const isVideoGranted = isGranted('video');
+
             APP.store.dispatch(toggleSlowGUMOverlay(false));
+            APP.store.dispatch(notifyMediaPermissionsGranted({
+                audio: isAudioGranted,
+                video: isVideoGranted
+            }));
+
             if (tracks.length >= 2) {
                 // granted audio and video
                 APP.store.dispatch(mediaPermissionPromptVisibilityChanged(false));
+            } else {
+                let title;
+
+                if (!isAudioGranted && !isVideoGranted) {
+                    title = 'The meeting needs to use your microphone and camera.';
+                } else if (!isAudioGranted) {
+                    title = 'The meeting needs to use your microphone.';
+                } else {
+                    title = 'The meeting needs to use your camera.';
+                }
+
+                APP.store.dispatch(mediaPermissionPromptVisibilityChanged(true, browser.getName(), title));
             }
 
             return tracks;

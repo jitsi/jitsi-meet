@@ -10,6 +10,16 @@
 export const NOTIFY_CAMERA_ERROR = 'NOTIFY_CAMERA_ERROR';
 
 /**
+ * The type of Redux action which signals which permissions have been granted.
+ *
+ * {
+ *     type: NOTIFY_MEDIA_PERMISSIONS_GRANTED,
+ *     permissions: {audio: boolean, video: boolean}
+ * }
+ */
+export const NOTIFY_MEDIA_PERMISSIONS_GRANTED = 'NOTIFY_MEDIA_PERMISSIONS_GRANTED';
+
+/**
  * The type of Redux action which signals that an error occurred while obtaining
  * a microphone.
  *

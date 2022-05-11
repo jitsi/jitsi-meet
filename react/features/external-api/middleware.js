@@ -8,7 +8,7 @@ import {
     KICKED_OUT
 } from '../base/conference';
 import { SET_CONFIG } from '../base/config';
-import { NOTIFY_CAMERA_ERROR, NOTIFY_MIC_ERROR } from '../base/devices';
+import { NOTIFY_CAMERA_ERROR, NOTIFY_MEDIA_PERMISSIONS_GRANTED, NOTIFY_MIC_ERROR } from '../base/devices';
 import { JitsiRecordingConstants, JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import {
     DOMINANT_SPEAKER_CHANGED,
@@ -136,7 +136,9 @@ MiddlewareRegistry.register(store => next => action => {
             { id: action.participant ? action.participant.getId() : undefined }
         );
         break;
-
+    case NOTIFY_MEDIA_PERMISSIONS_GRANTED:
+        APP.API.notifyPermissionsGranted(action.permissions);
+        break;
     case NOTIFY_CAMERA_ERROR:
         if (action.error) {
             APP.API.notifyOnCameraError(

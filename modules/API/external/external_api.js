@@ -116,6 +116,7 @@ const events = {
     'participant-left': 'participantLeft',
     'participant-role-changed': 'participantRoleChanged',
     'password-required': 'passwordRequired',
+    'permissions-granted': 'permissionsGranted',
     'proxy-connection-event': 'proxyConnectionEvent',
     'raise-hand-updated': 'raiseHandUpdated',
     'recording-link-available': 'recordingLinkAvailable',
