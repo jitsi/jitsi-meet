@@ -1,5 +1,5 @@
 import { setWasmPaths } from '@tensorflow/tfjs-backend-wasm';
-import { Human, Config, FaceResult, FaceConfig } from '@vladmandic/human';
+import { Human, Config, FaceResult } from '@vladmandic/human';
 
 import { DETECTION_TYPES, DETECT_FACE, INIT_WORKER, FACE_EXPRESSIONS_NAMING_MAPPING } from './constants';
 
@@ -121,7 +121,7 @@ const detect = async ({ image, threshold } : DetectInput) => {
     if (faceDetectionTypes.includes(DETECTION_TYPES.FACE_BOX)) {
         if (!detections) {
             const { face } = await human.detect(imageTensor, config);
-
+            
             detections = face;
         }
 
