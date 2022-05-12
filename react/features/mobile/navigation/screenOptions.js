@@ -21,7 +21,7 @@ import { screenHeaderCloseButton } from './functions';
  */
 export const navigationContainerTheme = {
     colors: {
-        background: BaseTheme.palette.ui12
+        background: BaseTheme.palette.uiBackground
     }
 };
 
