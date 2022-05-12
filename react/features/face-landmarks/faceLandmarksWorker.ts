@@ -59,12 +59,16 @@ const config: Partial<Config> = {
     face: {
         enabled: true,
         detector: {
-            enabled: true,
-            rotation: false
+            enabled: false,
+            rotation: false,
+            modelPath: 'blazeface-front.json'
         },
         mesh: { enabled: false },
         iris: { enabled: false },
-        emotion: { enabled: false },
+        emotion: { 
+            enabled: false,
+            modelPath: 'emotion.json'
+        },
         description: { enabled: false }
     },
     hand: { enabled: false },
@@ -147,9 +151,19 @@ const init = async ({ baseUrl, detectionTypes }: InitInput) => {
             config.wasmPath = baseUrl;
             setWasmPaths(baseUrl);
         }
-        if (detectionTypes.includes(DETECTION_TYPES.FACE_EXPRESSIONS) && config.face) {
-            config.face.emotion = { enabled: true };
+
+        if (detectionTypes.length > 0 && config.face) {
+            config.face.enabled = true
+        } 
+
+        if (detectionTypes.includes(DETECTION_TYPES.FACE_BOX) && config.face?.detector) {
+            config.face.detector.enabled = true;
         }
+
+        if (detectionTypes.includes(DETECTION_TYPES.FACE_EXPRESSIONS) && config.face?.emotion) {
+            config.face.emotion.enabled = true;
+        }
+
         const initialHuman = new Human(config);
         try {
             await initialHuman.load();
