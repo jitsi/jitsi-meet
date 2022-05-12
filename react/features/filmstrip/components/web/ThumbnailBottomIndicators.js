@@ -4,7 +4,11 @@ import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { isDisplayNameVisible, isNameReadOnly } from '../../../base/config/functions.any';
+import {
+    getMultipleVideoSupportFeatureFlag,
+    isDisplayNameVisible,
+    isNameReadOnly
+} from '../../../base/config/functions.any';
 import DisplayName from '../../../display-name/components/web/DisplayName';
 import { THUMBNAIL_TYPE } from '../../constants';
 
@@ -18,6 +22,11 @@ type Props = {
      * Class name for indicators container.
      */
     className: string,
+
+    /**
+     * Whether it is a virtual screenshare participant thumbnail.
+     */
+    isVirtualScreenshareParticipant: boolean,
 
     /**
      * Whether or not the indicators are for the local participant.
@@ -61,6 +70,7 @@ const useStyles = makeStyles(() => {
 
 const ThumbnailBottomIndicators = ({
     className,
+    isVirtualScreenshareParticipant,
     local,
     participantId,
     showStatusIndicators = true,
@@ -69,15 +79,18 @@ const ThumbnailBottomIndicators = ({
     const styles = useStyles();
     const _allowEditing = !useSelector(isNameReadOnly);
     const _defaultLocalDisplayName = interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME;
+    const _isMultiStreamEnabled = useSelector(getMultipleVideoSupportFeatureFlag);
     const _showDisplayName = useSelector(isDisplayNameVisible);
 
     return (<div className = { className }>
         {
             showStatusIndicators && <StatusIndicators
-                audio = { true }
+                audio = { !isVirtualScreenshareParticipant }
                 moderator = { true }
                 participantID = { participantId }
-                screenshare = { thumbnailType === THUMBNAIL_TYPE.TILE }
+                screenshare = { _isMultiStreamEnabled
+                    ? isVirtualScreenshareParticipant
+                    : thumbnailType === THUMBNAIL_TYPE.TILE }
                 thumbnailType = { thumbnailType } />
         }
         {

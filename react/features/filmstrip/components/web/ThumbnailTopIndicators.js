@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { getSourceNameSignalingFeatureFlag } from '../../../base/config';
+import { getMultipleVideoSupportFeatureFlag } from '../../../base/config';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import ConnectionIndicator from '../../../connection-indicator/components/web/ConnectionIndicator';
 import { STATS_POPOVER_POSITION, THUMBNAIL_TYPE } from '../../constants';
@@ -98,10 +98,10 @@ const ThumbnailTopIndicators = ({
         useSelector(state => state['features/base/config'].connectionIndicators?.autoHide) ?? true);
     const _connectionIndicatorDisabled = _isMobile
         || Boolean(useSelector(state => state['features/base/config'].connectionIndicators?.disabled));
-    const sourceNameSignalingEnabled = useSelector(getSourceNameSignalingFeatureFlag);
+    const _isMultiStreamEnabled = useSelector(getMultipleVideoSupportFeatureFlag);
     const showConnectionIndicator = isHovered || !_connectionIndicatorAutoHideEnabled;
 
-    if (sourceNameSignalingEnabled && isVirtualScreenshareParticipant) {
+    if (_isMultiStreamEnabled && isVirtualScreenshareParticipant) {
         return (
             <div className = { styles.container }>
                 {!_connectionIndicatorDisabled
@@ -141,7 +141,7 @@ const ThumbnailTopIndicators = ({
                     <div className = { clsx(indicatorsClassName, 'top-indicators') }>
                         <StatusIndicators
                             participantID = { participantId }
-                            screenshare = { true } />
+                            screenshare = { !_isMultiStreamEnabled } />
                     </div>
                 )}
             </div>

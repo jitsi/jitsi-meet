@@ -28,6 +28,11 @@ type Props = {
     isHovered: boolean,
 
     /**
+     * Indicates whether the thumbnail is for local screenshare or not.
+     */
+    isLocal: boolean,
+
+    /**
      * Indicates whether we are currently running in a mobile browser.
      */
     isMobile: boolean,
@@ -92,6 +97,7 @@ const VirtualScreenshareParticipant = ({
     classes,
     containerClassName,
     isHovered,
+    isLocal,
     isMobile,
     onClick,
     onMouseEnter,
@@ -108,11 +114,10 @@ const VirtualScreenshareParticipant = ({
     const currentLayout = useSelector(getCurrentLayout);
     const videoTrackId = videoTrack?.jitsiTrack?.getId();
     const video = videoTrack && <VideoTrack
-        id = { `remoteVideo_${videoTrackId || ''}` }
+        id = { isLocal ? 'localScreenshare_container' : `remoteVideo_${videoTrackId || ''}` }
         muted = { true }
         style = { styles.video }
         videoTrack = { videoTrack } />;
-
 
     return (
         <span
@@ -154,9 +159,10 @@ const VirtualScreenshareParticipant = ({
                 <ThumbnailBottomIndicators
                     className = { classes.indicatorsBackground }
                     currentLayout = { currentLayout }
+                    isVirtualScreenshareParticipant = { true }
                     local = { false }
                     participantId = { participantId }
-                    showStatusIndicators = { false } />
+                    showStatusIndicators = { true } />
             </div>
         </span>);
 };

@@ -281,7 +281,7 @@ class ConnectionStatsTable extends Component<Props> {
      */
     _renderScreenShareStatus() {
         const { classes } = this.props;
-        const className = isMobileBrowser() ? 'connection-info connection-info__mobile' : 'connection-info';
+        const className = clsx(classes.connectionStatsTable, { [classes.mobile]: isMobileBrowser() });
 
         return (<ContextMenu
             className = { classes.contextMenu }
@@ -290,13 +290,10 @@ class ConnectionStatsTable extends Component<Props> {
             <div
                 className = { className }
                 onClick = { onClick }>
-                { <table className = 'connection-info__container'>
-                    <tbody>
-                        { this._renderResolution() }
-                        { this._renderFrameRate() }
-                    </tbody>
-                </table> }
-
+                <tbody>
+                    { this._renderResolution() }
+                    { this._renderFrameRate() }
+                </tbody>
             </div>
         </ContextMenu>);
     }

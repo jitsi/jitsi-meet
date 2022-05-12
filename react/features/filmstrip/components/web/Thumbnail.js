@@ -137,10 +137,9 @@ export type Props = {|
     _isCurrentlyOnLargeVideo: boolean,
 
     /**
-     * Indicates whether the participant is a virtual screen share participant. This prop is behind the
-     * sourceNameSignaling feature flag.
+     * Disable/enable the dominant speaker indicator.
      */
-    _isVirtualScreenshareParticipant: boolean,
+    _isDominantSpeakerDisabled: boolean,
 
     /**
      * Whether we are currently running in a mobile browser.
@@ -158,19 +157,20 @@ export type Props = {|
     _isScreenSharing: boolean,
 
     /**
+     * Indicates whether testing mode is enabled.
+     */
+    _isTestModeEnabled: boolean,
+
+    /**
      * Indicates whether the video associated with the thumbnail is playable.
      */
     _isVideoPlayable: boolean,
 
     /**
-     * Disable/enable the dominant speaker indicator.
+     * Indicates whether the participant is a virtual screen share participant. This prop is behind the
+     * sourceNameSignaling feature flag.
      */
-    _isDominantSpeakerDisabled: boolean,
-
-    /**
-     * Indicates whether testing mode is enabled.
-     */
-    _isTestModeEnabled: boolean,
+    _isVirtualScreenshareParticipant: boolean,
 
     /**
      * The current local video flip setting.
@@ -186,6 +186,11 @@ export type Props = {|
      * Whether or not the participant has the hand raised.
      */
     _raisedHand: boolean,
+
+    /**
+     * Whether source name signaling is enabled.
+     */
+    _sourceNameSignalingEnabled: boolean,
 
     /**
      * Whether or not the current layout is stage filmstrip layout.
@@ -253,12 +258,7 @@ export type Props = {|
      * The width of the thumbnail. Used for expanding the width of the thumbnails on last row in case
      * there is empty space.
      */
-    width?: number,
-
-    /**
-     * Whether source name signaling is enabled.
-     */
-    _sourceNameSignalingEnabled: boolean
+    width?: number
 |};
 
 const defaultStyles = theme => {
@@ -1074,6 +1074,7 @@ class Thumbnail extends Component<Props, State> {
                     ) }>
                     <ThumbnailBottomIndicators
                         className = { classes.indicatorsBackground }
+                        isVirtualScreenshareParticipant = { false }
                         local = { local }
                         participantId = { id }
                         thumbnailType = { _thumbnailType } />
@@ -1138,6 +1139,7 @@ class Thumbnail extends Component<Props, State> {
                     classes = { classes }
                     containerClassName = { this._getContainerClassName() }
                     isHovered = { isHovered }
+                    isLocal = { local }
                     isMobile = { _isMobile }
                     onClick = { this._onClick }
                     onMouseEnter = { this._onMouseEnter }
