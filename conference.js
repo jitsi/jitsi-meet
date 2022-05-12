@@ -650,31 +650,13 @@ export default {
         // overshadowed by the overlay.
         tryCreateLocalTracks.then(tracks => {
             const isGranted = (type) => tracks.some(track => track.type === type);
-            const isAudioGranted = isGranted('audio');
-            const isVideoGranted = isGranted('video');
 
             APP.store.dispatch(toggleSlowGUMOverlay(false));
             APP.store.dispatch(notifyMediaPermissionsGranted({
-                audio: isAudioGranted,
-                video: isVideoGranted
+                audio: isGranted('audio'),
+                video: isGranted('video')
             }));
-
-            if (tracks.length >= 2) {
-                // granted audio and video
-                APP.store.dispatch(mediaPermissionPromptVisibilityChanged(false));
-            } else {
-                let title;
-
-                if (!isAudioGranted && !isVideoGranted) {
-                    title = 'The meeting needs to use your microphone and camera.';
-                } else if (!isAudioGranted) {
-                    title = 'The meeting needs to use your microphone.';
-                } else {
-                    title = 'The meeting needs to use your camera.';
-                }
-
-                APP.store.dispatch(mediaPermissionPromptVisibilityChanged(true, browser.getName(), title));
-            }
+            APP.store.dispatch(mediaPermissionPromptVisibilityChanged(false));
 
             return tracks;
         });
