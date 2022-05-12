@@ -121,7 +121,7 @@ const detect = async ({ image, threshold } : DetectInput) => {
     if (faceDetectionTypes.includes(DETECTION_TYPES.FACE_BOX)) {
         if (!detections) {
             const { face } = await human.detect(imageTensor, config);
-            
+
             detections = face;
         }
 
