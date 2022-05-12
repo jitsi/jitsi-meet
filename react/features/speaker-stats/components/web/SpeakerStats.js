@@ -8,7 +8,6 @@ import { Dialog } from '../../../base/dialog';
 import { escapeRegexp } from '../../../base/util';
 import { resetSearchCriteria, toggleFaceExpressions, initSearch } from '../../actions';
 import {
-    DISPLAY_SWITCH_BREAKPOINT,
     MOBILE_BREAKPOINT,
     RESIZE_SEARCH_SWITCH_CONTAINER_BREAKPOINT
 } from '../../constants';
