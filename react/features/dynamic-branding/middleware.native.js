@@ -1,17 +1,21 @@
-import { APP_WILL_MOUNT } from '../base/app';
+import { SET_CONFIG } from '../base/config';
+import { CONNECTION_DISCONNECTED } from '../base/connection';
 import { MiddlewareRegistry } from '../base/redux';
 
 import { SET_DYNAMIC_BRANDING_DATA } from './actionTypes';
+import { fetchCustomBrandingData, unsetDynamicBranding } from './actions.native';
 
-import { fetchCustomBrandingData } from './';
 
 MiddlewareRegistry.register(store => next => action => {
-    switch (action.type) {
-    case APP_WILL_MOUNT: {
+    const result = next(action);
 
+    switch (action.type) {
+    case SET_CONFIG: {
         store.dispatch(fetchCustomBrandingData());
-        break;
+
+        return result;
     }
+
     case SET_DYNAMIC_BRANDING_DATA: {
         const {
             avatarBackgrounds,
@@ -19,16 +23,21 @@ MiddlewareRegistry.register(store => next => action => {
             backgroundImageUrl
         } = action.value;
 
-        action.value = {
-            ...action.value,
-            avatarBackgrounds: avatarBackgrounds.filter(
-                color => !color.includes('linear-gradient')
-            ),
-            backgroundColor,
-            backgroundImageUrl
-        };
+        action.value.avatarBackgrounds = avatarBackgrounds.filter(
+            color => !color.includes('linear-gradient')
+        );
+        action.value.backgroundColor = backgroundColor;
+        action.value.backgroundImageUrl = backgroundImageUrl;
+
+        break;
+    }
+
+    case CONNECTION_DISCONNECTED: {
+        store.dispatch(unsetDynamicBranding());
+
+        return result;
     }
     }
 
-    return next(action);
+    return result;
 });

@@ -11,7 +11,7 @@ import {
 } from './actionTypes';
 import { getDynamicBrandingUrl } from './functions.any';
 
-const logger = getLogger(__filename);
+export const logger = getLogger(__filename);
 
 
 /**
@@ -27,6 +27,7 @@ export function fetchCustomBrandingData() {
         const { customizationReady } = state['features/dynamic-branding'];
 
         if (!customizationReady) {
+
             const url = await getDynamicBrandingUrl();
 
             if (url) {
@@ -52,7 +53,7 @@ export function fetchCustomBrandingData() {
  * @param {Object} value - The custom data to be set.
  * @returns {Object}
  */
-function setDynamicBrandingData(value) {
+export function setDynamicBrandingData(value) {
     return {
         type: SET_DYNAMIC_BRANDING_DATA,
         value
@@ -64,7 +65,7 @@ function setDynamicBrandingData(value) {
  *
  * @returns {Object}
  */
-function setDynamicBrandingReady() {
+export function setDynamicBrandingReady() {
     return {
         type: SET_DYNAMIC_BRANDING_READY
     };
@@ -75,7 +76,7 @@ function setDynamicBrandingReady() {
  *
  * @returns {Object}
  */
-function setDynamicBrandingFailed() {
+export function setDynamicBrandingFailed() {
     return {
         type: SET_DYNAMIC_BRANDING_FAILED
     };
