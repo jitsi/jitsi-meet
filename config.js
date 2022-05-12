@@ -762,6 +762,9 @@ var config = {
     //     // Enables displaying face expressions in speaker stats
     //     enableDisplayFaceExpressions: false,
 
+    //     // Enables rtcstats for face landmarks.
+    //     enableRTCStats: false,
+
     //     // Minimum required face movement percentage threshold for sending new face centering coordinates data.
     //     faceCenteringThreshold: 10,
 

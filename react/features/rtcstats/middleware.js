@@ -118,7 +118,9 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
     case ADD_FACE_EXPRESSION: {
-        if (canSendRtcstatsData(state)) {
+        const { faceLandmarks } = state['features/base/config'];
+
+        if (faceLandmarks.enableRTCStats && canSendRtcstatsData(state)) {
             const { duration, faceExpression, timestamp } = action;
 
             RTCStats.sendFaceExpressionData({
