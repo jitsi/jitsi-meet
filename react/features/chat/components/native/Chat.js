@@ -6,6 +6,7 @@ import React, { useEffect } from 'react';
 import { translate } from '../../../base/i18n';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
 import { connect } from '../../../base/redux';
+import { closeChat } from '../../actions.any';
 import AbstractChat, {
     _mapStateToProps,
     type Props as AbstractProps
@@ -81,6 +82,8 @@ export default translate(connect(_mapStateToProps)(props => {
         navigation.setOptions({
             tabBarLabel: `${t('chat.tabs.chat')} ${nrUnreadMessages}`
         });
+
+        return () => props.dispatch(closeChat());
     }, [ nrUnreadMessages ]);
 
     return (
