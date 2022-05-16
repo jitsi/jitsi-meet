@@ -17,7 +17,7 @@ import styles from './styles';
  *
  * @type {number}
  */
-const DEFAULT_MAX_LINES = 1;
+const DEFAULT_MAX_LINES = 2;
 
 /**
  * Implements a React {@link Component} to display a notification.
