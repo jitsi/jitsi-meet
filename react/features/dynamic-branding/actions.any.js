@@ -11,7 +11,7 @@ import {
 } from './actionTypes';
 import { getDynamicBrandingUrl } from './functions.any';
 
-export const logger = getLogger(__filename);
+const logger = getLogger(__filename);
 
 
 /**
