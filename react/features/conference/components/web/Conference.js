@@ -236,8 +236,12 @@ class Conference extends AbstractConference<Props, *> {
                         id = 'videospace'
                         onTouchStart = { this._onVidespaceTouchStart }>
                         <LargeVideo />
-                        <StageFilmstrip />
-                        <MainFilmstrip />
+                        {
+                            _showPrejoin || _showLobby || (<>
+                                <StageFilmstrip />
+                                <MainFilmstrip />
+                            </>)
+                        }
                     </div>
 
                     { _showPrejoin || _showLobby || <Toolbox /> }
