@@ -109,10 +109,12 @@ export function showErrorNotification(props: Object, type: ?string) {
  */
 export function showNotification(props: Object = {}, type: ?string) {
     return function(dispatch: Function, getState: Function) {
-        const { notifications, notificationTimeouts } = getState()['features/base/config'];
+        const { disabledNotifications = [], notifications, notificationTimeouts } = getState()['features/base/config'];
         const enabledFlag = getFeatureFlag(getState(), NOTIFICATIONS_ENABLED, true);
 
         const shouldDisplay = enabledFlag
+            && !(disabledNotifications.includes(props.descriptionKey)
+                || disabledNotifications.includes(props.titleKey))
             && (!notifications
                 || notifications.includes(props.descriptionKey)
                 || notifications.includes(props.titleKey));
