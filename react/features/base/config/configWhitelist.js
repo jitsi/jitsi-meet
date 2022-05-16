@@ -94,6 +94,7 @@ export default [
     'disableBeforeUnloadHandlers',
     'disableChatSmileys',
     'disableDeepLinking',
+    'disabledNotifications',
     'disabledSounds',
     'disableFilmstripAutohiding',
     'disableInitialGUM',
