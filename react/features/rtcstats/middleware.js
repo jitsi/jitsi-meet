@@ -7,6 +7,7 @@ import { CONFERENCE_UNIQUE_ID_SET, E2E_RTT_CHANGED, getConferenceOptions, getRoo
 import { LIB_WILL_INIT } from '../base/lib-jitsi-meet/actionTypes';
 import { DOMINANT_SPEAKER_CHANGED, getLocalParticipant } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
+import { TRACK_ADDED, TRACK_UPDATED } from '../base/tracks';
 import { ADD_FACE_EXPRESSION } from '../face-landmarks/actionTypes';
 
 import RTCStats from './RTCStats';
@@ -48,6 +49,38 @@ MiddlewareRegistry.register(store => next => action => {
                 });
             } catch (error) {
                 logger.error('Failed to initialize RTCStats: ', error);
+            }
+        }
+        break;
+    }
+    case TRACK_ADDED: {
+        if (canSendRtcstatsData(state)) {
+            const jitsiTrack = action?.track?.jitsiTrack;
+            const { ssrc, videoType } = jitsiTrack || { };
+
+            // Remote tracks store their ssrc in the jitsiTrack object. Local tracks don't. See getSsrcByTrack.
+            if (videoType && ssrc && !jitsiTrack.isLocal()) {
+                RTCStats.sendVideoTypeData({
+                    ssrc,
+                    videoType
+                });
+            }
+        }
+        break;
+    }
+    case TRACK_UPDATED: {
+        if (canSendRtcstatsData(state)) {
+            const { videoType, jitsiTrack } = action?.track || { };
+            const { ssrc } = jitsiTrack || { };
+
+            // if the videoType of the remote track has changed we expect to find it in track.videoType. grep for
+            // trackVideoTypeChanged.
+            if (videoType && ssrc && !jitsiTrack.isLocal()) {
+
+                RTCStats.sendVideoTypeData({
+                    ssrc,
+                    videoType
+                });
             }
         }
         break;
