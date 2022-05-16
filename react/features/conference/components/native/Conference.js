@@ -10,7 +10,9 @@ import { getParticipantCount } from '../../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
+import { fixAndroidViewClipping } from '../../../base/styles';
 import { TestConnectionInfo } from '../../../base/testing';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import { ConferenceNotification, isCalendarEnabled } from '../../../calendar-sync';
 import { DisplayNameLabel } from '../../../display-name';
 import {
@@ -54,6 +56,16 @@ type Props = AbstractProps & {
      * Application's aspect ratio.
      */
     _aspectRatio: Symbol,
+
+    /**
+     * Dynamic branding background color.
+     */
+    _backgroundColorBranding: string,
+
+    /**
+     * Dynamic branding background image.
+     */
+    _backgroundImageUrlBranding: string,
 
     /**
      * Wherther the calendar feature is enabled or not.
@@ -214,10 +226,28 @@ class Conference extends AbstractConference<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { _fullscreenEnabled } = this.props;
+        const {
+            _backgroundColorBranding,
+            _backgroundImageUrlBranding,
+            _fullscreenEnabled
+        } = this.props;
+        const backgroundColor
+            = _backgroundColorBranding
+                ? _backgroundColorBranding : BaseTheme.palette.uiBackground;
+        const backgroundImage
+            = _backgroundImageUrlBranding
+                ? `url(${_backgroundImageUrlBranding})` : 'none';
+        const brandingStyles = {
+            conference: fixAndroidViewClipping({
+                alignSelf: 'stretch',
+                backgroundColor,
+                backgroundImage,
+                flex: 1
+            })
+        };
 
         return (
-            <Container style = { styles.conference }>
+            <Container style = { brandingStyles.conference }>
                 <StatusBar
                     barStyle = 'light-content'
                     hidden = { _fullscreenEnabled }
@@ -499,11 +529,14 @@ class Conference extends AbstractConference<Props, State> {
 function _mapStateToProps(state) {
     const { isOpen } = state['features/participants-pane'];
     const { aspectRatio, reducedUI } = state['features/base/responsive-ui'];
+    const { backgroundColor, backgroundImageUrl } = state['features/dynamic-branding'];
     const participantCount = getParticipantCount(state);
 
     return {
         ...abstractMapStateToProps(state),
         _aspectRatio: aspectRatio,
+        _backgroundColorBranding: backgroundColor,
+        _backgroundImageUrlBranding: backgroundImageUrl,
         _calendarEnabled: isCalendarEnabled(state),
         _connecting: isConnecting(state),
         _filmstripVisible: isFilmstripVisible(state),

@@ -24,13 +24,16 @@ export function fetchCustomBrandingData() {
 
         if (dynamicBrandingUrl) {
             try {
-                const res = await doGetJSON(dynamicBrandingUrl);
-
-                return dispatch(setDynamicBrandingData(res));
+                return dispatch(
+                    setDynamicBrandingData(
+                    await doGetJSON(dynamicBrandingUrl))
+                );
             } catch (err) {
                 logger.error('Error fetching branding data', err);
 
-                return dispatch(setDynamicBrandingFailed());
+                return dispatch(
+                    setDynamicBrandingFailed()
+                );
             }
         }
 

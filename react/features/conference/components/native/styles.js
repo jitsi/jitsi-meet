@@ -28,7 +28,7 @@ export default {
      */
     conference: fixAndroidViewClipping({
         alignSelf: 'stretch',
-        backgroundColor: BaseTheme.palette.uiBackground,
+        backgroundColor: 'red',
         flex: 1
     }),
 

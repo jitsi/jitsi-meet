@@ -7,10 +7,10 @@ import { fetchCustomBrandingData, unsetDynamicBranding } from './actions.native'
 
 
 MiddlewareRegistry.register(store => next => action => {
-    const result = next(action);
-
     switch (action.type) {
     case SET_CONFIG: {
+        const result = next(action);
+
         store.dispatch(fetchCustomBrandingData());
 
         return result;
@@ -35,9 +35,9 @@ MiddlewareRegistry.register(store => next => action => {
     case CONNECTION_DISCONNECTED: {
         store.dispatch(unsetDynamicBranding());
 
-        return result;
+        return next(action);
     }
     }
 
-    return result;
+    return next(action);
 });
