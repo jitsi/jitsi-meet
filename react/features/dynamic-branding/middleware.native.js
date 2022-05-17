@@ -1,5 +1,5 @@
 import { SET_CONFIG } from '../base/config';
-import { CONNECTION_DISCONNECTED } from '../base/connection';
+import { CONNECTION_DISCONNECTED, CONNECTION_FAILED } from '../base/connection';
 import { MiddlewareRegistry } from '../base/redux';
 
 import { SET_DYNAMIC_BRANDING_DATA } from './actionTypes';
@@ -8,6 +8,12 @@ import { fetchCustomBrandingData, unsetDynamicBranding } from './actions.native'
 
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
+    case CONNECTION_FAILED: {
+        store.dispatch(unsetDynamicBranding());
+
+        return next(action);
+    }
+
     case SET_CONFIG: {
         const result = next(action);
 
