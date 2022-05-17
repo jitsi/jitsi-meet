@@ -40,7 +40,8 @@ import {
     isParticipantModerator,
     isLocalParticipantModerator,
     hasRaisedHand,
-    grantModerator
+    grantModerator,
+    overwriteParticipantName
 } from '../../react/features/base/participants';
 import { updateSettings } from '../../react/features/base/settings';
 import { isToggleCameraEnabled, toggleCamera } from '../../react/features/base/tracks';
@@ -427,6 +428,17 @@ function initCommands() {
             } catch (err) {
                 logger.error('Failed sending endpoint text message', err);
             }
+        },
+        'overwrite-name': (id, name) => {
+            logger.debug('Overwrite name command received');
+            let breakoutRoom = false, identifier = id;
+
+            if (id.indexOf('@') !== -1) {
+                identifier = id.slice(id.indexOf('/') + 1);
+                breakoutRoom = true;
+            }
+
+            APP.store.dispatch(overwriteParticipantName(identifier, name, breakoutRoom));
         },
         'toggle-e2ee': enabled => {
             logger.debug('Toggle E2EE key command received');
@@ -1657,6 +1669,21 @@ class API {
         this._sendEvent({
             name: 'browser-support',
             supported
+        });
+    }
+
+    /**
+     * Notify external application that the breakout rooms changed.
+     *
+     * @param {Array} rooms - Array of breakout rooms.
+     * @param {number} roomsCounter - The number of breakout rooms.
+     * @returns {void}
+     */
+    notifyBreakoutRoomsUpdated(rooms, roomsCounter) {
+        this._sendEvent({
+            name: 'breakout-rooms-updated',
+            rooms,
+            roomsCounter
         });
     }
 

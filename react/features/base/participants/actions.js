@@ -18,7 +18,8 @@ import {
     PIN_PARTICIPANT,
     SCREENSHARE_PARTICIPANT_NAME_CHANGED,
     SET_LOADABLE_AVATAR_URL,
-    RAISE_HAND_UPDATED
+    RAISE_HAND_UPDATED,
+    OVERWRITE_PARTICIPANT_NAME
 } from './actionTypes';
 import {
     DISCO_REMOTE_CONTROL_FEATURE
@@ -658,5 +659,22 @@ export function localParticipantAudioLevelChanged(level) {
     return {
         type: LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED,
         level
+    };
+}
+
+/**
+ * Overwrites the name of the participant with the given id.
+ *
+ * @param {string} id - Participant id;.
+ * @param {string} name - New participant name.
+ * @param {boolean} isBreakoutRoom - Whether the participant is in a breakout room.
+ * @returns {Object}
+ */
+export function overwriteParticipantName(id, name, isBreakoutRoom) {
+    return {
+        type: OVERWRITE_PARTICIPANT_NAME,
+        id,
+        name,
+        isBreakoutRoom
     };
 }

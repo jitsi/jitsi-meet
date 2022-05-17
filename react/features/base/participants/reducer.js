@@ -7,6 +7,7 @@ import { ReducerRegistry, set } from '../redux';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
+    OVERWRITE_PARTICIPANT_NAME,
     PARTICIPANT_ID_CHANGED,
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
@@ -69,7 +70,8 @@ const DEFAULT_STATE = {
     sortedRemoteVirtualScreenshareParticipants: new Map(),
     sortedRemoteParticipants: new Map(),
     sortedRemoteScreenshares: new Map(),
-    speakersList: new Map()
+    speakersList: new Map(),
+    overwrittenNameList: {}
 };
 
 /**
@@ -412,6 +414,17 @@ ReducerRegistry.register('features/base/participants', (state = DEFAULT_STATE, a
         state.sortedRemoteScreenshares = new Map(sortedSharesList);
 
         return { ...state };
+    }
+    case OVERWRITE_PARTICIPANT_NAME: {
+        const { id, name } = action;
+
+        return {
+            ...state,
+            overwrittenNameList: {
+                ...state.overwrittenNameList,
+                [id]: name
+            }
+        };
     }
     }
 

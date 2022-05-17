@@ -212,3 +212,14 @@ export const RAISE_HAND_UPDATED = 'RAISE_HAND_UPDATED';
  * }
  */
 export const LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED = 'LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED'
+
+/**
+ * The type of Redux action which overwrites the name of a participant.
+ * {
+ *     type: OVERWRITE_PARTICIPANT_NAME,
+ *     id: string,
+ *     name: string,
+ *     isBreakoutRoom: boolean
+ * }
+ */
+export const OVERWRITE_PARTICIPANT_NAME = 'OVERWRITE_PARTICIPANT_NAME';
