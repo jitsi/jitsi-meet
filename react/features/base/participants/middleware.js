@@ -274,8 +274,9 @@ MiddlewareRegistry.register(store => next => action => {
             });
             dispatch({
                 type: UPDATE_BREAKOUT_ROOMS,
-                rooms: newRooms,
-                roomCounter
+                rooms,
+                roomCounter,
+                updatedNames: true
             });
         } else {
             dispatch(participantUpdated({

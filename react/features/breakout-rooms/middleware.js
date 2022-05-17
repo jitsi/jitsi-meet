@@ -44,36 +44,38 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     switch (type) {
     case UPDATE_BREAKOUT_ROOMS: {
         // edit name if it was overwritten
-        const { overwrittenNameList } = getState()['features/base/participants'];
+        if (!action.updatedNames) {
+            const { overwrittenNameList } = getState()['features/base/participants'];
 
-        if (Object.keys(overwrittenNameList).length > 0) {
-            const newRooms = {};
+            if (Object.keys(overwrittenNameList).length > 0) {
+                const newRooms = {};
 
-            Object.entries(action.rooms).forEach(([ key, r ]) => {
-                let participants = r?.participants || {};
-                let jid;
+                Object.entries(action.rooms).forEach(([ key, r ]) => {
+                    let participants = r?.participants || {};
+                    let jid;
 
-                for (const id of Object.keys(overwrittenNameList)) {
-                    jid = Object.keys(participants).find(p => p.slice(p.indexOf('/') + 1) === id);
+                    for (const id of Object.keys(overwrittenNameList)) {
+                        jid = Object.keys(participants).find(p => p.slice(p.indexOf('/') + 1) === id);
 
-                    if (jid) {
-                        participants = {
-                            ...participants,
-                            [jid]: {
-                                ...participants[jid],
-                                displayName: overwrittenNameList[id]
-                            }
-                        };
+                        if (jid) {
+                            participants = {
+                                ...participants,
+                                [jid]: {
+                                    ...participants[jid],
+                                    displayName: overwrittenNameList[id]
+                                }
+                            };
+                        }
                     }
-                }
 
-                newRooms[key] = {
-                    ...r,
-                    participants
-                };
-            });
+                    newRooms[key] = {
+                        ...r,
+                        participants
+                    };
+                });
 
-            action.rooms = newRooms;
+                action.rooms = newRooms;
+            }
         }
 
         // edit the chat history to match names for participants in breakout rooms

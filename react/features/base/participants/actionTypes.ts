@@ -218,8 +218,7 @@ export const LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED = 'LOCAL_PARTICIPANT_AUDIO_LE
  * {
  *     type: OVERWRITE_PARTICIPANT_NAME,
  *     id: string,
- *     name: string,
- *     isBreakoutRoom: boolean
+ *     name: string
  * }
  */
 export const OVERWRITE_PARTICIPANT_NAME = 'OVERWRITE_PARTICIPANT_NAME';
