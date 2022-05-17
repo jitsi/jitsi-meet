@@ -122,7 +122,7 @@ class RTCStats {
      * @returns {void}
      */
     sendFaceExpressionData(faceExpressionData) {
-        this.trace && this.trace.statsEntry('faceExpression', null, faceExpressionData);
+        this.trace && this.trace.statsEntry('faceLandmarks', null, faceExpressionData);
     }
 
     /**
