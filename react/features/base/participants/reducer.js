@@ -64,14 +64,14 @@ const DEFAULT_STATE = {
     haveParticipantWithScreenSharingFeature: false,
     local: undefined,
     localScreenShare: undefined,
+    overwrittenNameList: {},
     pinnedParticipant: undefined,
     raisedHandsQueue: [],
     remote: new Map(),
     sortedRemoteVirtualScreenshareParticipants: new Map(),
     sortedRemoteParticipants: new Map(),
     sortedRemoteScreenshares: new Map(),
-    speakersList: new Map(),
-    overwrittenNameList: {}
+    speakersList: new Map()
 };
 
 /**

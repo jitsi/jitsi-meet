@@ -431,14 +431,8 @@ function initCommands() {
         },
         'overwrite-name': (id, name) => {
             logger.debug('Overwrite name command received');
-            let breakoutRoom = false, identifier = id;
 
-            if (id.indexOf('@') !== -1) {
-                identifier = id.slice(id.indexOf('/') + 1);
-                breakoutRoom = true;
-            }
-
-            APP.store.dispatch(overwriteParticipantName(identifier, name, breakoutRoom));
+            APP.store.dispatch(overwriteParticipantName(id, name));
         },
         'toggle-e2ee': enabled => {
             logger.debug('Toggle E2EE key command received');

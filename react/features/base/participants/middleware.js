@@ -237,16 +237,24 @@ MiddlewareRegistry.register(store => next => action => {
     case OVERWRITE_PARTICIPANT_NAME: {
         const { dispatch, getState } = store;
         const state = getState();
-        const { id, name, isBreakoutRoom } = action;
+        const { id, name } = action;
 
-        if (isBreakoutRoom) {
+        let breakoutRoom = false, identifier = id;
+
+        if (id.indexOf('@') !== -1) {
+            identifier = id.slice(id.indexOf('/') + 1);
+            breakoutRoom = true;
+        }
+
+        if (breakoutRoom) {
             const rooms = getBreakoutRooms(state);
             const roomCounter = state['features/breakout-rooms'].roomCounter;
             const newRooms = {};
 
             Object.entries(rooms).forEach(([ key, r ]) => {
                 const participants = r?.participants || {};
-                const jid = Object.keys(participants).find(p => p.endsWith(id));
+                const jid = Object.keys(participants).find(p =>
+                    p.slice(p.indexOf('/') + 1) === identifier);
 
                 if (jid) {
                     newRooms[key] = {
@@ -270,7 +278,7 @@ MiddlewareRegistry.register(store => next => action => {
             });
         } else {
             dispatch(participantUpdated({
-                id,
+                id: identifier,
                 name
             }));
         }

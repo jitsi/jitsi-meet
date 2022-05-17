@@ -26,7 +26,9 @@ StateListenerRegistry.register(
 
             conference.on(JitsiConferenceEvents.BREAKOUT_ROOMS_UPDATED, ({ rooms, roomCounter }) => {
                 logger.debug('Room list updated');
-                APP.API.notifyBreakoutRoomsUpdated(rooms, roomCounter);
+                if (typeof APP !== 'undefined') {
+                    APP.API.notifyBreakoutRoomsUpdated(rooms, roomCounter);
+                }
                 dispatch({
                     type: UPDATE_BREAKOUT_ROOMS,
                     rooms,
@@ -52,7 +54,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 let jid;
 
                 for (const id of Object.keys(overwrittenNameList)) {
-                    jid = Object.keys(participants).find(p => p.endsWith(id));
+                    jid = Object.keys(participants).find(p => p.slice(p.indexOf('/') + 1) === id);
 
                     if (jid) {
                         participants = {
