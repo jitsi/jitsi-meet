@@ -244,6 +244,7 @@ MiddlewareRegistry.register(store => next => action => {
         if (id.indexOf('@') !== -1) {
             identifier = id.slice(id.indexOf('/') + 1);
             breakoutRoom = true;
+            action.id = identifier;
         }
 
         if (breakoutRoom) {
