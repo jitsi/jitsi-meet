@@ -123,7 +123,7 @@ MiddlewareRegistry.register(store => next => action => {
 
             RTCStats.sendFaceExpressionData({
                 duration,
-                faceExpression,
+                faceLankmarks: faceExpression,
                 timestamp
             });
         }
