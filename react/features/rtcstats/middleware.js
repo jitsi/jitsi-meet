@@ -25,7 +25,6 @@ MiddlewareRegistry.register(store => next => action => {
     const config = state['features/base/config'];
     const { analytics } = config;
 
-
     switch (action.type) {
     case LIB_WILL_INIT: {
         if (isRtcstatsEnabled(state)) {
@@ -123,7 +122,7 @@ MiddlewareRegistry.register(store => next => action => {
 
             RTCStats.sendFaceExpressionData({
                 duration,
-                faceLankmarks: faceExpression,
+                faceLandmarks: faceExpression,
                 timestamp
             });
         }
