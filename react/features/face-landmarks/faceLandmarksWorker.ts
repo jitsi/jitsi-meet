@@ -99,8 +99,14 @@ const detectFaceBox = async ({ detections, threshold }: Detection) => {
     return faceBox;
 };
 
-const detectFaceExpression = async ({ detections }: Detection) => 
-    detections[0]?.emotion && FACE_EXPRESSIONS_NAMING_MAPPING[detections[0]?.emotion[0].emotion];
+const detectFaceExpression = async ({ detections }: Detection) => {
+    if (!detections[0]?.emotion || detections[0]?.emotion[0].score < 0.5) {
+        return;
+    }
+
+    return FACE_EXPRESSIONS_NAMING_MAPPING[detections[0]?.emotion[0].emotion];
+}
+    
 
 const detect = async ({ image, threshold } : DetectInput) => {
     let detections;
@@ -108,6 +114,7 @@ const detect = async ({ image, threshold } : DetectInput) => {
     let faceBox;
 
     detectionInProgress = true;
+    human.tf.engine().startScope();
 
     const imageTensor = human.tf.browser.fromPixels(image);
 
@@ -130,6 +137,8 @@ const detect = async ({ image, threshold } : DetectInput) => {
             threshold
         });
     }
+
+    human.tf.engine().endScope()
 
     if (faceBox || faceExpression) {
         self.postMessage({ 
