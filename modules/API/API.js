@@ -1670,14 +1670,12 @@ class API {
      * Notify external application that the breakout rooms changed.
      *
      * @param {Array} rooms - Array of breakout rooms.
-     * @param {number} roomsCounter - The number of breakout rooms.
      * @returns {void}
      */
-    notifyBreakoutRoomsUpdated(rooms, roomsCounter) {
+    notifyBreakoutRoomsUpdated(rooms) {
         this._sendEvent({
             name: 'breakout-rooms-updated',
-            rooms,
-            roomsCounter
+            rooms
         });
     }
 

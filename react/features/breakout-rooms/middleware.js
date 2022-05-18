@@ -27,7 +27,7 @@ StateListenerRegistry.register(
             conference.on(JitsiConferenceEvents.BREAKOUT_ROOMS_UPDATED, ({ rooms, roomCounter }) => {
                 logger.debug('Room list updated');
                 if (typeof APP !== 'undefined') {
-                    APP.API.notifyBreakoutRoomsUpdated(rooms, roomCounter);
+                    APP.API.notifyBreakoutRoomsUpdated(rooms);
                 }
                 dispatch({
                     type: UPDATE_BREAKOUT_ROOMS,
