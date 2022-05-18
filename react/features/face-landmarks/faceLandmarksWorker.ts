@@ -100,7 +100,6 @@ const detectFaceBox = async ({ detections, threshold }: Detection) => {
 };
 
 const detectFaceExpression = async ({ detections }: Detection) => {
-    
     if (!detections[0]?.emotion || detections[0]?.emotion[0].score < 0.5) {
         return;
     }
