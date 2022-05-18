@@ -222,3 +222,12 @@ export const LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED = 'LOCAL_PARTICIPANT_AUDIO_LE
  * }
  */
 export const OVERWRITE_PARTICIPANT_NAME = 'OVERWRITE_PARTICIPANT_NAME';
+
+/**
+ * The type of Redux action which overwrites the names of multiple participants.
+ * {
+ *     type: OVERWRITE_PARTICIPANTS_NAMES,
+ *     participantsList: Array<Object>,
+ * }
+ */
+export const OVERWRITE_PARTICIPANTS_NAMES = 'OVERWRITE_PARTICIPANTS_NAMES';

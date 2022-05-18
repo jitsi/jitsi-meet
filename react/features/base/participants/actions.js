@@ -19,7 +19,8 @@ import {
     SCREENSHARE_PARTICIPANT_NAME_CHANGED,
     SET_LOADABLE_AVATAR_URL,
     RAISE_HAND_UPDATED,
-    OVERWRITE_PARTICIPANT_NAME
+    OVERWRITE_PARTICIPANT_NAME,
+    OVERWRITE_PARTICIPANTS_NAMES
 } from './actionTypes';
 import {
     DISCO_REMOTE_CONTROL_FEATURE
@@ -674,5 +675,18 @@ export function overwriteParticipantName(id, name) {
         type: OVERWRITE_PARTICIPANT_NAME,
         id,
         name
+    };
+}
+
+/**
+ * Overwrites the names of the given participants.
+ *
+ * @param {Array<Object>} participantList - The list of participants to overwrite.
+ * @returns {Object}
+ */
+export function overwriteParticipantsNames(participantList) {
+    return {
+        type: OVERWRITE_PARTICIPANTS_NAMES,
+        participantList
     };
 }

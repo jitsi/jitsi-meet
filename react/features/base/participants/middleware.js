@@ -36,6 +36,7 @@ import {
     LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED,
     LOCAL_PARTICIPANT_RAISE_HAND,
     MUTE_REMOTE_PARTICIPANT,
+    OVERWRITE_PARTICIPANTS_NAMES,
     OVERWRITE_PARTICIPANT_NAME,
     PARTICIPANT_DISPLAY_NAME_CHANGED,
     PARTICIPANT_JOINED,
@@ -47,6 +48,7 @@ import {
     localParticipantIdChanged,
     localParticipantJoined,
     localParticipantLeft,
+    overwriteParticipantName,
     participantLeft,
     participantUpdated,
     raiseHand,
@@ -233,6 +235,20 @@ MiddlewareRegistry.register(store => next => action => {
 
     case PARTICIPANT_UPDATED:
         return _participantJoinedOrUpdated(store, next, action);
+
+    case OVERWRITE_PARTICIPANTS_NAMES: {
+        const { participantList } = action;
+
+        if (!Array.isArray(participantList)) {
+            return;
+        }
+        batch(() => {
+            participantList.forEach(p => {
+                store.dispatch(overwriteParticipantName(p.id, p.name));
+            });
+        });
+        break;
+    }
 
     case OVERWRITE_PARTICIPANT_NAME: {
         const { dispatch, getState } = store;

@@ -41,7 +41,7 @@ import {
     isLocalParticipantModerator,
     hasRaisedHand,
     grantModerator,
-    overwriteParticipantName
+    overwriteParticipantsNames
 } from '../../react/features/base/participants';
 import { updateSettings } from '../../react/features/base/settings';
 import { isToggleCameraEnabled, toggleCamera } from '../../react/features/base/tracks';
@@ -429,10 +429,10 @@ function initCommands() {
                 logger.error('Failed sending endpoint text message', err);
             }
         },
-        'overwrite-name': (id, name) => {
+        'overwrite-name': participantList => {
             logger.debug('Overwrite name command received');
 
-            APP.store.dispatch(overwriteParticipantName(id, name));
+            APP.store.dispatch(overwriteParticipantsNames(participantList));
         },
         'toggle-e2ee': enabled => {
             logger.debug('Toggle E2EE key command received');
