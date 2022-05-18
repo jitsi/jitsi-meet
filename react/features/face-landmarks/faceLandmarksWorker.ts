@@ -99,8 +99,14 @@ const detectFaceBox = async ({ detections, threshold }: Detection) => {
     return faceBox;
 };
 
-const detectFaceExpression = async ({ detections }: Detection) => 
-    detections[0]?.emotion && FACE_EXPRESSIONS_NAMING_MAPPING[detections[0]?.emotion[0].emotion];
+const detectFaceExpression = async ({ detections }: Detection) => {
+    if (!detections[0]?.emotion || detections[0]?.emotion[0].score < 0.5) {
+        return;
+    }
+    
+    return FACE_EXPRESSIONS_NAMING_MAPPING[detections[0]?.emotion[0].emotion];
+}
+    
 
 const detect = async ({ image, threshold } : DetectInput) => {
     let detections;
