@@ -17,6 +17,11 @@ if region_name_config then
     module:add_identity("server", "region", region_name_config);
 end
 
+local release_number_config = module:get_option_string('release_number');
+if release_number_config then
+    module:add_identity("server", "release", release_number_config);
+end
+
 -- this is after xmpp-bind, the moment a client has resource and can be contacted
 module:hook("resource-bind", function (event)
     local session = event.session;
