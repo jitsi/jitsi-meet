@@ -103,7 +103,6 @@ const detectFaceExpression = async ({ detections }: Detection) => {
     if (!detections[0]?.emotion || detections[0]?.emotion[0].score < 0.5) {
         return;
     }
-    console.log(detections[0]?.emotion[0]);
 
     return FACE_EXPRESSIONS_NAMING_MAPPING[detections[0]?.emotion[0].emotion];
 }
