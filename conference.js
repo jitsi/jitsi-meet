@@ -137,6 +137,7 @@ import {
     submitFeedback
 } from './react/features/feedback';
 import { maybeSetLobbyChatMessageListener } from './react/features/lobby/actions.any';
+import { isNoiseSuppressionActive, setNoiseSuppressionState } from './react/features/noise-suppression';
 import {
     isModerationNotificationDisplayed,
     showNotification,
@@ -150,12 +151,12 @@ import {
     makePrecallTest,
     setJoiningInProgress
 } from './react/features/prejoin';
-import { disableReceiver, stopReceiver } from './react/features/remote-control';
+import { disableReceiver, requestRemoteControl, stopReceiver } from './react/features/remote-control';
 import { setScreenAudioShareState, isScreenAudioShared } from './react/features/screen-share/';
 import { toggleScreenshotCaptureSummary } from './react/features/screenshot-capture';
 import { isScreenshotCaptureEnabled } from './react/features/screenshot-capture/functions';
 import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
-import { DenoiseEffect } from './react/features/stream-effects/denoise/DenoiseEffect';
+import { NoiseSuppressionEffect } from './react/features/stream-effects/noise-suppression/NoiseSuppressionEffect';
 import { createPresenterEffect } from './react/features/stream-effects/presenter';
 import { createRnnoiseProcessor } from './react/features/stream-effects/rnnoise';
 import { endpointMessageReceived } from './react/features/subtitles';
@@ -1474,7 +1475,7 @@ export default {
     _getConferenceOptions() {
         const options = getConferenceOptions(APP.store.getState());
 
-        options.createVADProcessor = undefined;
+        options.createVADProcessor = createRnnoiseProcessor;
 
         return options;
     },
@@ -1781,29 +1782,40 @@ export default {
     },
 
     /**
-     *
-     * @param {*} isDenoiseActive
+     * Toggle noise suppression on the current audio local track. This will apply a
+     * {@code NoiseSuppressionEffect}.
      */
-    async toggleDenoiseAudio(isDenoiseActive) {
-        logger.info('Toggle denoise audio: ', isDenoiseActive);
-
+    async toggleNoiseSuppression() {
+        const state = APP.store.getState();
+        const dispatch = APP.store.dispatch;
+        const noiseSuppressionActive = isNoiseSuppressionActive(state);
         const localAudio = getLocalJitsiAudioTrack(APP.store.getState());
 
-        // If there is a localAudio stream, mix in the desktop audio stream captured by the screen sharing
-        // api.
-        if (localAudio) {
-            if (this._denoiseEffect) {
-                await localAudio.setEffect(undefined);
-                this._denoiseEffect = undefined;
+        if (!localAudio) {
+            logger.warn('Can not toggle noise suppression without any local track active.');
 
-            } else {
-                this._denoiseEffect = new DenoiseEffect();
-                await this._denoiseEffect.createRnnoiseProcessor();
-
-                await localAudio.setEffect(this._denoiseEffect);
-            }
+            return;
         }
 
+        try {
+            if (noiseSuppressionActive) {
+                await localAudio.setEffect(undefined);
+                this._noiseSuppressionEffect = undefined;
+                logger.info('Noise suppression disabled.');
+                dispatch(setNoiseSuppressionState(false));
+            } else {
+                this._noiseSuppressionEffect = new NoiseSuppressionEffect();
+                await this._noiseSuppressionEffect.initializeRnnoiseProcessor();
+                await localAudio.setEffect(this._noiseSuppressionEffect);
+                logger.info('Noise suppression enabled.');
+                dispatch(setNoiseSuppressionState(true));
+            }
+        } catch (error) {
+            logger.error(
+                `Failed to toggle noise suppression to active state: ${!noiseSuppressionActive}`,
+                error
+            );
+        }
     },
 
     /**
@@ -2706,8 +2718,8 @@ export default {
         );
 
         APP.UI.addListener(
-            UIEvents.SET_DENOISE_STATE, ({ isDenoiseActive }) => {
-                this.toggleDenoiseAudio(isDenoiseActive);
+            UIEvents.TOGGLE_NOISE_SUPPRESSION, () => {
+                this.toggleNoiseSuppression();
             }
         );
     },

@@ -11,7 +11,7 @@ import '../power-monitor/reducer';
 import '../prejoin/reducer';
 import '../remote-control/reducer';
 import '../screen-share/reducer';
-import '../denoise/reducer';
+import '../noise-suppression/reducer';
 import '../screenshot-capture/reducer';
 import '../shared-video/reducer';
 import '../talk-while-muted/reducer';

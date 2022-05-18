@@ -3,15 +3,12 @@
 import UIEvents from '../../../service/UI/UIEvents';
 import { MiddlewareRegistry } from '../base/redux';
 
-import {
-    SET_DENOISE_STATE
-} from './actionTypes';
-import logger from './logger';
+import { TOGGLE_NOISE_SUPPRESSION } from './actionTypes';
 
 declare var APP: Object;
 
 /**
- * Implements the middleware of the feature screen-share.
+ * Implements middleware for the noise suppression feature.
  *
  * @param {Store} store - The redux store.
  * @returns {Function}
@@ -20,8 +17,9 @@ MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
 
     switch (action.type) {
-    case SET_DENOISE_STATE:
-        APP.UI.emitEvent(UIEvents.SET_DENOISE_STATE, { isDenoiseActive: true });
+    case TOGGLE_NOISE_SUPPRESSION:
+        // Handle noise suppression logic in `conference.js`
+        APP.UI.emitEvent(UIEvents.TOGGLE_NOISE_SUPPRESSION);
 
         break;
     }

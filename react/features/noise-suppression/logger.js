@@ -2,4 +2,4 @@
 
 import { getLogger } from '../base/logging/functions';
 
-export default getLogger('features/denoise');
+export default getLogger('features/noise-suppression');

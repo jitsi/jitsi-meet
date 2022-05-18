@@ -28,7 +28,6 @@ import { connect } from '../../../base/redux';
 import { getLocalVideoTrack } from '../../../base/tracks';
 import { toggleChat } from '../../../chat';
 import { ChatButton } from '../../../chat/components';
-import { DenoiseAudioButton } from '../../../denoise/';
 import { EmbedMeetingButton } from '../../../embed-meeting';
 import { SharedDocumentButton } from '../../../etherpad';
 import { FeedbackButton } from '../../../feedback';
@@ -37,6 +36,7 @@ import { isGifEnabled } from '../../../gifs/functions';
 import { InviteButton } from '../../../invite/components/add-people-dialog';
 import { isVpaasMeeting } from '../../../jaas/functions';
 import { KeyboardShortcutsButton } from '../../../keyboard-shortcuts';
+import { NoiseSuppressionButton } from '../../../noise-suppression/';
 import {
     close as closeParticipantsPane,
     open as openParticipantsPane
@@ -762,9 +762,9 @@ class Toolbox extends Component<Props> {
             group: 3
         };
 
-        const denoiseAudio = {
-            key: 'denoiseaudio',
-            Content: DenoiseAudioButton,
+        const noiseSuppression = {
+            key: 'noisesuppression',
+            Content: NoiseSuppressionButton,
             group: 3
         };
 
@@ -855,7 +855,7 @@ class Toolbox extends Component<Props> {
             linkToSalesforce,
             shareVideo,
             shareAudio,
-            denoiseAudio,
+            noiseSuppression,
             etherpad,
             virtualBackground,
             dockIframe,

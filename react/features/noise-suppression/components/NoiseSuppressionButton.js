@@ -12,7 +12,9 @@ import {
     AbstractButton,
     type AbstractButtonProps
 } from '../../base/toolbox/components';
-import { setDenoiseState } from '../actions';
+import { setOverflowMenuVisible } from '../../toolbox/actions';
+import { toggleNoiseSuppression } from '../actions';
+import { isNoiseSuppressionActive } from '../functions';
 
 type Props = AbstractButtonProps & {
 
@@ -24,18 +26,18 @@ type Props = AbstractButtonProps & {
 }
 
 /**
- * Component that renders a toolbar button for toggling audio only screen share.
+ * Component that renders a toolbar button for toggling noise suppression.
  */
-class DenoiseAudioButton extends AbstractButton<Props, *> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.shareaudio';
+class NoiseSuppressionButton extends AbstractButton<Props, *> {
+    accessibilityLabel = 'toolbar.accessibilityLabel.noiseSuppression';
     icon = IconShareAudio;
-    label = 'toolbar.shareaudio';
-    tooltip = 'toolbar.shareaudio';
+    label = 'toolbar.noiseSuppression';
+    tooltip = 'toolbar.noiseSuppression';
     toggledIcon = IconStopAudioShare;
-    toggledLabel = 'toolbar.denoiseAudio';
+    toggledLabel = 'toolbar.disableNoiseSuppression';
 
     /**
-     * Handles clicking / pressing the button, and opens a new dialog.
+     * Handles clicking / pressing the button.
      *
      * @private
      * @returns {void}
@@ -43,7 +45,8 @@ class DenoiseAudioButton extends AbstractButton<Props, *> {
     _handleClick() {
         const { dispatch } = this.props;
 
-        dispatch(setDenoiseState(true));
+        dispatch(toggleNoiseSuppression());
+        dispatch(setOverflowMenuVisible(false));
     }
 
     /**
@@ -54,7 +57,7 @@ class DenoiseAudioButton extends AbstractButton<Props, *> {
      * @returns {boolean}
      */
     _isToggled() {
-        return this.props._isAudioOnlySharing;
+        return this.props._isNoiseSuppressionActive;
     }
 }
 
@@ -68,8 +71,8 @@ class DenoiseAudioButton extends AbstractButton<Props, *> {
 function _mapStateToProps(state: Object): $Shape<Props> {
 
     return {
-        _isAudioOnlySharing: true
+        _isNoiseSuppressionActive: isNoiseSuppressionActive(state)
     };
 }
 
-export default translate(connect(_mapStateToProps)(DenoiseAudioButton));
+export default translate(connect(_mapStateToProps)(NoiseSuppressionButton));

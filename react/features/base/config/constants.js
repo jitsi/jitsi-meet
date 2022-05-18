@@ -41,7 +41,7 @@ export const TOOLBAR_BUTTONS = [
     'select-background',
     'settings',
     'shareaudio',
-    'denoiseaudio',
+    'noisesuppression',
     'sharedvideo',
     'shortcuts',
     'stats',

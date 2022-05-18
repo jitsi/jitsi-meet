@@ -47,11 +47,6 @@ export default class RnnoiseProcessor {
     _wasmPcmInputF32Index: number;
 
     /**
-     * WASM dynamic memory buffer used as output for rnnoise processing method.
-     */
-    _wasmPcmOutput: Object;
-
-    /**
      * Constructor.
      *
      * @class
@@ -66,49 +61,17 @@ export default class RnnoiseProcessor {
             // For VAD score purposes only allocate the buffers once and reuse them
             this._wasmPcmInput = this._wasmInterface._malloc(RNNOISE_BUFFER_SIZE);
 
+            this._wasmPcmInputF32Index = this._wasmPcmInput >> 2;
+
             if (!this._wasmPcmInput) {
                 throw Error('Failed to create wasm input memory buffer!');
             }
-
-            this._wasmPcmOutput = this._wasmInterface._malloc(RNNOISE_BUFFER_SIZE);
-
-            if (!this._wasmPcmOutput) {
-                wasmInterface._free(this._wasmPcmInput);
-                throw Error('Failed to create wasm output memory buffer!');
-            }
-
-            // The HEAPF32.set function requires an index relative to a Float32 array view of the wasm memory model
-            // which is an array of bytes. This means we have to divide it by the size of a float to get the index
-            // relative to a Float32 Array.
-            this._wasmPcmInputF32Index = this._wasmPcmInput / 4;
 
             this._context = this._wasmInterface._rnnoise_create();
         } catch (error) {
             // release can be called even if not all the components were initialized.
             this._releaseWasmResources();
             throw error;
-        }
-    }
-
-    /**
-     * Copy the input PCM Audio Sample to the wasm input buffer.
-     *
-     * @param {Float32Array} pcmSample - Array containing 16 bit format PCM sample stored in 32 Floats .
-     * @returns {void}
-     */
-    _copyPCMSampleToWasmBuffer(pcmSample: Float32Array) {
-        this._wasmInterface.HEAPF32.set(pcmSample, this._wasmPcmInputF32Index);
-    }
-
-    /**
-     * Convert 32 bit Float PCM samples to 16 bit Float PCM samples and store them in 32 bit Floats.
-     *
-     * @param {Float32Array} f32Array - Array containing 32 bit PCM samples.
-     * @returns {void}
-     */
-    _convertTo16BitPCM(f32Array: Float32Array) {
-        for (const [ index, value ] of f32Array.entries()) {
-            f32Array[index] = value * 0x7fff;
         }
     }
 
@@ -123,11 +86,6 @@ export default class RnnoiseProcessor {
         if (this._wasmPcmInput) {
             this._wasmInterface._free(this._wasmPcmInput);
             this._wasmPcmInput = null;
-        }
-
-        if (this._wasmPcmOutput) {
-            this._wasmInterface._free(this._wasmPcmOutput);
-            this._wasmPcmOutput = null;
         }
 
         if (this._context) {
@@ -175,34 +133,33 @@ export default class RnnoiseProcessor {
      * Calculate the Voice Activity Detection for a raw Float32 PCM sample Array.
      * The size of the array must be of exactly 480 samples, this constraint comes from the rnnoise library.
      *
-     * @param {Float32Array} pcmFrame - Array containing 32 bit PCM samples.
+     * @param {Float32Array} pcmFrame - Array containing 32 bit PCM samples. Parameter is also used as output
+     * when {@code shouldDenoise} is true.
+     * @param {boolean} shouldDenoise - Should the denoised frame be returned in pcmFrame.
      * @returns {Float} Contains VAD score in the interval 0 - 1 i.e. 0.90 .
      */
-    calculateAudioFrameVAD(buffer: Float32Array) {
-        // if (this._destroyed) {
-        //     throw new Error('RnnoiseProcessor instance is destroyed, please create another one!');
-        // }
-
-        // const pcmFrameLength = pcmFrame.length;
-
-        // if (pcmFrameLength !== RNNOISE_SAMPLE_LENGTH) {
-        //     throw new Error(`Rnnoise can only process PCM frames of 480 samples! Input sample was:${pcmFrameLength}`);
-        // }
-
-        // this._convertTo16BitPCM(pcmFrame);
-        // this._copyPCMSampleToWasmBuffer(pcmFrame);
-
-        // return this._wasmInterface._rnnoise_process_frame(this._context, this._wasmPcmOutput, this._wasmPcmInput);
-
-
+    calculateAudioFrameVAD(pcmFrame: Float32Array, shouldDenoise: Boolean = false) {
+        // Convert 32 bit Float PCM samples to 16 bit Float PCM samples as that's what rnnoise accepts as input
         for (let i = 0; i < 480; i++) {
-            this._wasmInterface.HEAPF32[(this._wasmPcmInput >> 2) + i] = buffer[i] * 32768;
+            this._wasmInterface.HEAPF32[this._wasmPcmInputF32Index + i] = pcmFrame[i] * 32768;
         }
 
-        this._wasmInterface._rnnoise_process_frame(this._context, this._wasmPcmInput, this._wasmPcmInput);
+        // Use the same buffer for input/output, rnnoise supports this behavior
+        const vadScore = this._wasmInterface._rnnoise_process_frame(
+            this._context,
+            this._wasmPcmInput,
+            this._wasmPcmInput
+        );
 
-        for (let i = 0; i < 480; i++) {
-            buffer[i] = this._wasmInterface.HEAPF32[(this._wasmPcmInput >> 2) + i] / 32768;
+        // Rnnoise denoises the frame by default but we can avoid unnecessary operations if the calling
+        // client doesn't use the denoised frame.
+        if (shouldDenoise) {
+            // Convert back to 32 bit PCM
+            for (let i = 0; i < 480; i++) {
+                pcmFrame[i] = this._wasmInterface.HEAPF32[this._wasmPcmInputF32Index + i] / 32768;
+            }
         }
+
+        return vadScore;
     }
 }

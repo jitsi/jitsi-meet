@@ -16,7 +16,7 @@ import '../power-monitor/middleware';
 import '../prejoin/middleware';
 import '../remote-control/middleware';
 import '../screen-share/middleware';
-import '../denoise/middleware';
+import '../noise-suppression/middleware';
 import '../shared-video/middleware';
 import '../settings/middleware';
 import '../talk-while-muted/middleware';
