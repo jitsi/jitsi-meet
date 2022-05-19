@@ -1,203 +1,27 @@
-import { setWasmPaths } from '@tensorflow/tfjs-backend-wasm';
-import { Human, Config, FaceResult } from '@vladmandic/human';
+import { DETECT_FACE, INIT_WORKER } from './constants';
+import { FaceLandmarksHelper, HumanHelper }from './FaceLandmarksHelper';
 
-import { DETECTION_TYPES, DETECT_FACE, INIT_WORKER, FACE_EXPRESSIONS_NAMING_MAPPING } from './constants';
 
-type Detection = {
-    detections: Array<FaceResult>,
-    threshold?: number
-};
+let helper: FaceLandmarksHelper;
 
-type DetectInput = {
-    image: ImageBitmap | ImageData,
-    threshold: number
-};
-
-type FaceBox = {
-    left: number,
-    right: number,
-    width?: number
-};
-
-type InitInput = {
-    baseUrl: string,
-    detectionTypes: string[]
-}
-
-/**
- * An object that is used for using human.
- */
-let human: Human;
-
-/**
- * Detection types to be applied.
- */
-let faceDetectionTypes: string[] = [];
-
-/**
- * Flag for indicating whether a face detection flow is in progress or not.
- */
-let detectionInProgress = false;
-
-/**
- * Contains the last valid face bounding box (passes threshold validation) which was sent to the main process.
- */
-let lastValidFaceBox: FaceBox;
-
-/**
- * Configuration for human.
- */
-const config: Partial<Config> = {
-    backend: 'humangl',
-    async: true,
-    warmup: 'none',
-    cacheModels: true,
-    cacheSensitivity: 0,
-    debug: false,
-    deallocate: true,
-    filter: { enabled: false },
-    face: {
-        enabled: true,
-        detector: {
-            enabled: false,
-            rotation: false,
-            modelPath: 'blazeface-front.json'
-        },
-        mesh: { enabled: false },
-        iris: { enabled: false },
-        emotion: { 
-            enabled: false,
-            modelPath: 'emotion.json'
-        },
-        description: { enabled: false }
-    },
-    hand: { enabled: false },
-    gesture: { enabled: false },
-    body: { enabled: false },
-    segmentation: { enabled: false }
-};
-
-const detectFaceBox = async ({ detections, threshold }: Detection) => {
-    if (!detections.length) {
-        return null;
-    }
-
-    const faceBox: FaceBox = {
-        // normalize to percentage based
-        left: Math.round(Math.min(...detections.map(d => d.boxRaw[0])) * 100),
-        right: Math.round(Math.max(...detections.map(d => d.boxRaw[0] + d.boxRaw[2])) * 100)
-    };
-
-    faceBox.width = Math.round(faceBox.right - faceBox.left);
-
-    if (lastValidFaceBox && threshold && Math.abs(lastValidFaceBox.left - faceBox.left) < threshold) {
-        return null;
-    }
-
-    lastValidFaceBox = faceBox;
-
-    return faceBox;
-};
-
-const detectFaceExpression = async ({ detections }: Detection) => {
-    if (!detections[0]?.emotion || detections[0]?.emotion[0].score < 0.5) {
-        return;
-    }
-
-    return FACE_EXPRESSIONS_NAMING_MAPPING[detections[0]?.emotion[0].emotion];
-}
-    
-
-const detect = async ({ image, threshold } : DetectInput) => {
-    let detections;
-    let faceExpression;
-    let faceBox;
-
-    detectionInProgress = true;
-    human.tf.engine().startScope();
-
-    const imageTensor = human.tf.browser.fromPixels(image);
-
-    if (faceDetectionTypes.includes(DETECTION_TYPES.FACE_EXPRESSIONS)) {
-        const { face } = await human.detect(imageTensor, config);
-
-        detections = face;
-        faceExpression = await detectFaceExpression({ detections });
-    }
-
-    if (faceDetectionTypes.includes(DETECTION_TYPES.FACE_BOX)) {
-        if (!detections) {
-            const { face } = await human.detect(imageTensor, config);
-
-            detections = face;
-        }
-
-        faceBox = await detectFaceBox({
-            detections,
-            threshold
-        });
-    }
-
-    human.tf.engine().endScope()
-
-    if (faceBox || faceExpression) {
-        self.postMessage({ 
-            faceBox, 
-            faceExpression 
-        });
-    }
-
-    detectionInProgress = false;
-};
-
-const init = async ({ baseUrl, detectionTypes }: InitInput) => {
-    faceDetectionTypes = detectionTypes;
-
-    if (!human) {
-        config.modelBasePath = baseUrl;
-        if (!self.OffscreenCanvas) {
-            config.backend = 'wasm';
-            config.wasmPath = baseUrl;
-            setWasmPaths(baseUrl);
-        }
-
-        if (detectionTypes.length > 0 && config.face) {
-            config.face.enabled = true
-        } 
-
-        if (detectionTypes.includes(DETECTION_TYPES.FACE_BOX) && config.face?.detector) {
-            config.face.detector.enabled = true;
-        }
-
-        if (detectionTypes.includes(DETECTION_TYPES.FACE_EXPRESSIONS) && config.face?.emotion) {
-            config.face.emotion.enabled = true;
-        }
-
-        const initialHuman = new Human(config);
-        try {
-            await initialHuman.load();
-        } catch (err) {
-            console.error(err);
-        }
-        
-        human = initialHuman;
-    }
-};
-
-onmessage = function(message: MessageEvent<any>) {
+onmessage = async function(message: MessageEvent<any>) {
     switch (message.data.type) {
     case DETECT_FACE: {
-        if (!human || detectionInProgress) {
+        if (!helper || helper.getDetectionInProgress()) {
             return;
         }
 
-        detect(message.data);
+        const detections = await helper.detect(message.data);
+
+        if (detections && (detections.faceBox || detections.faceExpression)) {
+            self.postMessage(detections);
+        }
 
         break;
     }
 
     case INIT_WORKER: {
-        init(message.data);
+        helper = new HumanHelper(message.data);
         break;
     }
     }
