@@ -515,14 +515,7 @@ export function createVirtualScreenshareParticipant(sourceName, local) {
     return (dispatch, getState) => {
         const state = getState();
         const ownerId = getVirtualScreenshareParticipantOwnerId(sourceName);
-        const owner = getParticipantById(state, ownerId);
-        const ownerName = owner.name;
-
-        if (!ownerName) {
-            logger.error(`Failed to create a screenshare participant for sourceName: ${sourceName}`);
-
-            return;
-        }
+        const ownerName = getParticipantDisplayName(state, ownerId);
 
         dispatch(participantJoined({
             conference: state['features/base/conference'].conference,
