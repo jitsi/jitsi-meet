@@ -8,13 +8,9 @@ import { isStageFilmstripAvailable } from '../../filmstrip/functions';
 import { GRAVATAR_BASE_URL, isCORSAvatarURL } from '../avatar';
 import { getMultipleVideoSupportFeatureFlag, getSourceNameSignalingFeatureFlag } from '../config';
 import { JitsiParticipantConnectionStatus } from '../lib-jitsi-meet';
-import { MEDIA_TYPE, shouldRenderVideoTrack } from '../media';
+import { shouldRenderVideoTrack } from '../media';
 import { toState } from '../redux';
-import {
-    getScreenShareTrack,
-    getTrackByMediaTypeAndParticipant,
-    getVirtualScreenshareParticipantTrack
-} from '../tracks';
+import { getScreenShareTrack, getVideoTrackByParticipant } from '../tracks';
 import { createDeferred } from '../util';
 
 import { JIGASI_PARTICIPANT_ICON, MAX_DISPLAY_NAME_LENGTH, PARTICIPANT_ROLE } from './constants';
@@ -482,14 +478,7 @@ export function shouldRenderParticipantVideo(stateful: Object | Function, id: st
     }
 
     /* First check if we have an unmuted video track. */
-    const tracks = state['features/base/tracks'];
-    let videoTrack;
-
-    if (getMultipleVideoSupportFeatureFlag(state) && participant.isVirtualScreenshareParticipant) {
-        videoTrack = getVirtualScreenshareParticipantTrack(tracks, id);
-    } else {
-        videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
-    }
+    const videoTrack = getVideoTrackByParticipant(state['features/base/tracks'], participant);
 
     if (!shouldRenderVideoTrack(videoTrack, /* waitForVideoStarted */ false)) {
         return false;

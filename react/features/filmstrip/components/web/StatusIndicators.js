@@ -2,13 +2,11 @@
 
 import React, { Component } from 'react';
 
-import { getMultipleVideoSupportFeatureFlag } from '../../../base/config';
 import { MEDIA_TYPE } from '../../../base/media';
 import { getParticipantByIdOrUndefined, PARTICIPANT_ROLE } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import {
-    getTrackByMediaTypeAndParticipant,
-    getVirtualScreenshareParticipantTrack,
+    getVideoTrackByParticipant,
     isLocalTrackMuted,
     isRemoteTrackMuted
 } from '../../../base/tracks';
@@ -100,7 +98,6 @@ function _mapStateToProps(state, ownProps) {
     // Only the local participant won't have id for the time when the conference is not yet joined.
     const participant = getParticipantByIdOrUndefined(state, participantID);
     const tracks = state['features/base/tracks'];
-    const isMultiStreamSupportEnabled = getMultipleVideoSupportFeatureFlag(state);
 
     let isAudioMuted = true;
     let isScreenSharing = false;
@@ -108,9 +105,7 @@ function _mapStateToProps(state, ownProps) {
     if (participant?.local) {
         isAudioMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
     } else if (!participant?.isFakeParticipant) { // remote participants excluding shared video
-        const track = isMultiStreamSupportEnabled && participant?.isVirtualScreenshareParticipant
-            ? getVirtualScreenshareParticipantTrack(tracks, participantID)
-            : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantID);
+        const track = getVideoTrackByParticipant(tracks, participant);
 
         isScreenSharing = track?.videoType === 'desktop';
         isAudioMuted = isRemoteTrackMuted(tracks, MEDIA_TYPE.AUDIO, participantID);
