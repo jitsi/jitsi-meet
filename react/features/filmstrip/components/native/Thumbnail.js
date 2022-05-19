@@ -4,6 +4,7 @@ import React, { PureComponent } from 'react';
 import { Image, View } from 'react-native';
 import type { Dispatch } from 'redux';
 
+import { getMultipleVideoSupportFeatureFlag } from '../../../base/config';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../base/media';
 import {
     PARTICIPANT_ROLE,
@@ -56,9 +57,19 @@ type Props = {
     _isFakeParticipant: boolean,
 
     /**
+     * Indicates whether multi-stream support is enabled.
+     */
+    _isMultiStreamSupportEnabled: boolean,
+
+    /**
      * Indicates whether the participant is screen sharing.
      */
     _isScreenShare: boolean,
+
+    /**
+     * Indicates whether the thumbnail is for a virtual screenshare participant.
+     */
+    _isVirtualScreenshare: boolean,
 
     /**
      * Indicates whether the participant is local.
@@ -187,6 +198,7 @@ class Thumbnail extends PureComponent<Props> {
         const {
             _audioMuted: audioMuted,
             _isScreenShare: isScreenShare,
+            _isVirtualScreenshare,
             _isFakeParticipant,
             _renderModeratorIndicator: renderModeratorIndicator,
             _participantId: participantId,
@@ -203,8 +215,8 @@ class Thumbnail extends PureComponent<Props> {
                     styles.thumbnailTopIndicatorContainer,
                     styles.thumbnailTopLeftIndicatorContainer
                 ] }>
-                <ConnectionIndicator participantId = { participantId } />
-                <RaisedHandIndicator participantId = { participantId } />
+                { !_isVirtualScreenshare && <ConnectionIndicator participantId = { participantId } /> }
+                { !_isVirtualScreenshare && <RaisedHandIndicator participantId = { participantId } /> }
                 {tileView && isScreenShare && (
                     <View style = { styles.indicatorContainer }>
                         <ScreenShareIndicator />
@@ -215,10 +227,10 @@ class Thumbnail extends PureComponent<Props> {
                 key = 'bottom-indicators'
                 style = { styles.thumbnailIndicatorContainer }>
                 <Container style = { (audioMuted || renderModeratorIndicator) && styles.bottomIndicatorsContainer }>
-                    { audioMuted && <AudioMutedIndicator /> }
+                    { audioMuted && !_isVirtualScreenshare && <AudioMutedIndicator /> }
                     { !tileView && _pinned && <PinnedIndicator />}
-                    { renderModeratorIndicator && <ModeratorIndicator />}
-                    { !tileView && isScreenShare
+                    { renderModeratorIndicator && !_isVirtualScreenshare && <ModeratorIndicator />}
+                    { !tileView && (isScreenShare || _isVirtualScreenshare)
                         && <ScreenShareIndicator />
                     }
                 </Container>
@@ -242,8 +254,9 @@ class Thumbnail extends PureComponent<Props> {
     render() {
         const {
             _gifSrc,
-            _isScreenShare: isScreenShare,
             _isFakeParticipant,
+            _isScreenShare: isScreenShare,
+            _isVirtualScreenshare,
             _participantId: participantId,
             _raisedHand,
             _renderDominantSpeakerIndicator,
@@ -266,8 +279,8 @@ class Thumbnail extends PureComponent<Props> {
                 style = { [
                     styles.thumbnail,
                     styleOverrides,
-                    _raisedHand ? styles.thumbnailRaisedHand : null,
-                    _renderDominantSpeakerIndicator ? styles.thumbnailDominantSpeaker : null
+                    _raisedHand && !_isVirtualScreenshare ? styles.thumbnailRaisedHand : null,
+                    _renderDominantSpeakerIndicator && !_isVirtualScreenshare ? styles.thumbnailDominantSpeaker : null
                 ] }
                 touchFeedback = { false }>
                 {_gifSrc ? <Image
@@ -303,10 +316,9 @@ function _mapStateToProps(state, ownProps) {
     const participant = getParticipantByIdOrUndefined(state, participantID);
     const localParticipantId = getLocalParticipant(state).id;
     const id = participant?.id;
-    const audioTrack
-        = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, id);
-    const videoTrack
-        = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
+    const audioTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, id);
+    const videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
+    const isMultiStreamSupportEnabled = getMultipleVideoSupportFeatureFlag(state);
     const isScreenShare = videoTrack?.videoType === VIDEO_TYPE.DESKTOP;
     const participantCount = getParticipantCount(state);
     const renderDominantSpeakerIndicator = participant && participant.dominantSpeaker && participantCount > 2;
@@ -320,7 +332,9 @@ function _mapStateToProps(state, ownProps) {
         _audioMuted: audioTrack?.muted ?? true,
         _gifSrc: mode === 'chat' ? null : gifSrc,
         _isFakeParticipant: participant?.isFakeParticipant,
+        _isMultiStreamSupportEnabled: isMultiStreamSupportEnabled,
         _isScreenShare: isScreenShare,
+        _isVirtualScreenshare: isMultiStreamSupportEnabled && participant?.isVirtualScreenshareParticipant,
         _local: participant?.local,
         _localVideoOwner: Boolean(ownerId === localParticipantId),
         _participantId: id,

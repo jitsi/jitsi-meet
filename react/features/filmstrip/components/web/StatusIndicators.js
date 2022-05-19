@@ -108,7 +108,7 @@ function _mapStateToProps(state, ownProps) {
     if (participant?.local) {
         isAudioMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
     } else if (!participant?.isFakeParticipant) { // remote participants excluding shared video
-        const track = isMultiStreamSupportEnabled
+        const track = isMultiStreamSupportEnabled && participant?.isVirtualScreenshareParticipant
             ? getVirtualScreenshareParticipantTrack(tracks, participantID)
             : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantID);
 
