@@ -10,7 +10,11 @@ import { getMultipleVideoSupportFeatureFlag, getSourceNameSignalingFeatureFlag }
 import { JitsiParticipantConnectionStatus } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, shouldRenderVideoTrack } from '../media';
 import { toState } from '../redux';
-import { getScreenShareTrack, getTrackByMediaTypeAndParticipant } from '../tracks';
+import {
+    getScreenShareTrack,
+    getTrackByMediaTypeAndParticipant,
+    getVirtualScreenshareParticipantTrack
+} from '../tracks';
 import { createDeferred } from '../util';
 
 import { JIGASI_PARTICIPANT_ICON, MAX_DISPLAY_NAME_LENGTH, PARTICIPANT_ROLE } from './constants';
@@ -478,8 +482,14 @@ export function shouldRenderParticipantVideo(stateful: Object | Function, id: st
     }
 
     /* First check if we have an unmuted video track. */
-    const videoTrack
-        = getTrackByMediaTypeAndParticipant(state['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
+    const tracks = state['features/base/tracks'];
+    let videoTrack;
+
+    if (getMultipleVideoSupportFeatureFlag(state) && participant.isVirtualScreenshareParticipant) {
+        videoTrack = getVirtualScreenshareParticipantTrack(tracks, id);
+    } else {
+        videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
+    }
 
     if (!shouldRenderVideoTrack(videoTrack, /* waitForVideoStarted */ false)) {
         return false;
