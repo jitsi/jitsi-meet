@@ -145,7 +145,7 @@ const ParticipantContextMenu = ({
     const _volume = (participant?.local ?? true ? undefined
         : participant?.id ? participantsVolume[participant?.id] : undefined) ?? 1;
     const isBreakoutRoom = useSelector(isInBreakoutRoom);
-    const isModerationSupported = useSelector(isAvModerationSupported());
+    const isModerationSupported = useSelector(isAvModerationSupported);
     const stageFilmstrip = useSelector(isStageFilmstripEnabled);
 
     const _currentRoomId = useSelector(getCurrentRoomId);
