@@ -192,6 +192,7 @@ export default [
     'openSharedDocumentOnJoin',
     'opusMaxAverageBitrate',
     'p2p',
+    'participantsPane',
     'pcStatsInterval',
     'preferH264',
     'preferredCodec',

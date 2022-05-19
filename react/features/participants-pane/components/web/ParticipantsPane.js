@@ -7,6 +7,7 @@ import participantsPaneTheme from '../../../base/components/themes/participantsP
 import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { Icon, IconClose, IconHorizontalPoints } from '../../../base/icons';
+import { isLocalParticipantModerator } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux';
 import { isAddBreakoutRoomButtonVisible } from '../../../breakout-rooms/functions';
 import { MuteEveryoneDialog } from '../../../video-menu/components/';
@@ -14,7 +15,6 @@ import { close } from '../../actions';
 import {
     findAncestorByClass,
     getParticipantsPaneOpen,
-    isFooterMenuVisible,
     isMoreActionsVisible,
     isMuteAllVisible
 } from '../../functions';
@@ -402,7 +402,7 @@ function _mapStateToProps(state: Object) {
         _isBreakoutRoomsSupported,
         _paneOpen: isPaneOpen,
         _showAddRoomButton: isAddBreakoutRoomButtonVisible(state),
-        _showFooter: isFooterMenuVisible(state),
+        _showFooter: isLocalParticipantModerator(state),
         _showMuteAllButton: isMuteAllVisible(state),
         _showMoreActionsButton: isMoreActionsVisible(state)
     };
