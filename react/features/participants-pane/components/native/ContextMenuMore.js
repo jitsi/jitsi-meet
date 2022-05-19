@@ -38,7 +38,7 @@ export const ContextMenuMore = () => {
         [ dispatch ]);
     const { t } = useTranslation();
 
-    const isModerationSupported = useSelector(isAvModerationSupported());
+    const isModerationSupported = useSelector(isAvModerationSupported);
     const allModerators = useSelector(isEveryoneModerator);
     const participantCount = useSelector(getParticipantCount);
 
