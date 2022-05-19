@@ -4,7 +4,7 @@ import type { Dispatch } from 'redux';
 
 import { FEEDBACK_REQUEST_IN_PROGRESS } from '../../../modules/UI/UIErrors';
 import { openDialog } from '../base/dialog';
-import { extractFqnFromPath } from '../dynamic-branding';
+import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 import { isVpaasMeeting } from '../jaas/functions';
 
 import {

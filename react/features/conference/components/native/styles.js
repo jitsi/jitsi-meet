@@ -32,6 +32,10 @@ export default {
         flex: 1
     }),
 
+    brandingImage: {
+        flex: 1
+    },
+
     displayNameContainer: {
         margin: 10
     },

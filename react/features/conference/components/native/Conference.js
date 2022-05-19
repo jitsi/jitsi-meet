@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { BackHandler, NativeModules, SafeAreaView, StatusBar, View } from 'react-native';
+import { BackHandler, ImageBackground, NativeModules, SafeAreaView, StatusBar, View } from 'react-native';
 import { withSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { appNavigate } from '../../../app/actions';
@@ -12,7 +12,6 @@ import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { fixAndroidViewClipping } from '../../../base/styles';
 import { TestConnectionInfo } from '../../../base/testing';
-import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 import { ConferenceNotification, isCalendarEnabled } from '../../../calendar-sync';
 import { DisplayNameLabel } from '../../../display-name';
 import {
@@ -231,28 +230,33 @@ class Conference extends AbstractConference<Props, State> {
             _backgroundImageUrlBranding,
             _fullscreenEnabled
         } = this.props;
-        const backgroundColor
-            = _backgroundColorBranding
-                ? _backgroundColorBranding : BaseTheme.palette.uiBackground;
-        const backgroundImage
-            = _backgroundImageUrlBranding
-                ? `url(${_backgroundImageUrlBranding})` : 'none';
         const brandingStyles = {
             conference: fixAndroidViewClipping({
                 alignSelf: 'stretch',
-                backgroundColor,
-                backgroundImage,
+                backgroundColor: _backgroundColorBranding,
                 flex: 1
             })
         };
+        const brandingImage
+            = _backgroundImageUrlBranding
+                ? { uri: _backgroundImageUrlBranding }
+                : undefined;
 
         return (
-            <Container style = { brandingStyles.conference }>
-                <StatusBar
-                    barStyle = 'light-content'
-                    hidden = { _fullscreenEnabled }
-                    translucent = { _fullscreenEnabled } />
-                { this._renderContent() }
+            <Container
+                style = { [
+                    styles.conference,
+                    brandingStyles.conference
+                ] }>
+                <ImageBackground
+                    source = { brandingImage }
+                    style = { styles.brandingImage }>
+                    <StatusBar
+                        barStyle = 'light-content'
+                        hidden = { _fullscreenEnabled }
+                        translucent = { _fullscreenEnabled } />
+                    { this._renderContent() }
+                </ImageBackground>
             </Container>
         );
     }

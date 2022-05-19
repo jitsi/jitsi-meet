@@ -1,6 +1,6 @@
 // @flow
 import { getLocalParticipant } from '../base/participants';
-import { extractFqnFromPath } from '../dynamic-branding';
+import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 
 import { DETECT_FACE, FACE_BOX_EVENT_TYPE, SEND_IMAGE_INTERVAL_MS } from './constants';
 import logger from './logger';
