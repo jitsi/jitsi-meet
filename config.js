@@ -631,8 +631,6 @@ var config = {
     //    'linktosalesforce',
     //    'livestreaming',
     //    'microphone',
-    //    'mute-everyone',
-    //    'mute-video-everyone',
     //    'participants-pane',
     //    'profile',
     //    'raisehand',

@@ -84,8 +84,6 @@ import { isDesktopShareButtonDisabled, isToolboxVisible } from '../../functions'
 import DownloadButton from '../DownloadButton';
 import HangupButton from '../HangupButton';
 import HelpButton from '../HelpButton';
-import MuteEveryoneButton from '../MuteEveryoneButton';
-import MuteEveryonesVideoButton from '../MuteEveryonesVideoButton';
 
 import AudioSettingsButton from './AudioSettingsButton';
 import FullscreenButton from './FullscreenButton';
@@ -743,18 +741,6 @@ class Toolbox extends Component<Props> {
             group: 2
         };
 
-        const muteEveryone = {
-            key: 'mute-everyone',
-            Content: MuteEveryoneButton,
-            group: 2
-        };
-
-        const muteVideoEveryone = {
-            key: 'mute-video-everyone',
-            Content: MuteEveryonesVideoButton,
-            group: 2
-        };
-
         const shareVideo = {
             key: 'sharedvideo',
             Content: SharedVideoButton,
@@ -839,8 +825,6 @@ class Toolbox extends Component<Props> {
             recording,
             livestreaming,
             linkToSalesforce,
-            muteEveryone,
-            muteVideoEveryone,
             shareVideo,
             shareAudio,
             etherpad,
