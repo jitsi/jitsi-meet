@@ -5,17 +5,13 @@ import { Text, View } from 'react-native';
 
 import { SharedVideo } from '../../../shared-video/components/native';
 import { Avatar } from '../../avatar';
-import { getMultipleVideoSupportFeatureFlag } from '../../config/';
 import { translate } from '../../i18n';
 import { JitsiParticipantConnectionStatus } from '../../lib-jitsi-meet';
-import {
-    MEDIA_TYPE,
-    VideoTrack
-} from '../../media';
+import { VideoTrack } from '../../media';
 import { Container, TintedView } from '../../react';
 import { connect } from '../../redux';
 import { TestHint } from '../../testing/components';
-import { getTrackByMediaTypeAndParticipant, getVirtualScreenshareParticipantTrack } from '../../tracks';
+import { getVideoTrackByParticipant } from '../../tracks';
 import { shouldRenderParticipantVideo, getParticipantById } from '../functions';
 
 import styles from './styles';
@@ -253,11 +249,9 @@ function _mapStateToProps(state, ownProps) {
     const { disableVideo, participantId } = ownProps;
     const participant = getParticipantById(state, participantId);
     const tracks = state['features/base/tracks'];
+    const videoTrack = getVideoTrackByParticipant(tracks, participant);
     let connectionStatus;
     let participantName;
-    const videoTrack = getMultipleVideoSupportFeatureFlag(state) && participant?.isVirtualScreenshareParticipant
-        ? getVirtualScreenshareParticipantTrack(tracks, participantId)
-        : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantId);
 
     return {
         _connectionStatus:
