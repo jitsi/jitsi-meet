@@ -20,7 +20,7 @@ import {
 import { getKnockingParticipants } from '../../../lobby/functions';
 import MuteEveryoneDialog
     from '../../../video-menu/components/native/MuteEveryoneDialog';
-import { isFooterMenuVisible, isMoreActionsVisible, isMuteAllVisible } from '../../functions';
+import { isMoreActionsVisible, isMuteAllVisible } from '../../functions';
 import {
     AddBreakoutRoomButton,
     AutoAssignButton,
@@ -57,7 +57,6 @@ const ParticipantsPane = () => {
     const inBreakoutRoom = useSelector(isInBreakoutRoom);
     const showAddBreakoutRoom = useSelector(isAddBreakoutRoomButtonVisible);
     const showAutoAssign = useSelector(isAutoAssignParticipantsVisible);
-    const showFooterMenu = useSelector(isFooterMenuVisible);
     const showMoreActions = useSelector(isMoreActionsVisible);
     const showMuteAll = useSelector(isMuteAllVisible);
     const lobbyParticipants = useSelector(getKnockingParticipants);
@@ -88,7 +87,7 @@ const ParticipantsPane = () => {
                 showAddBreakoutRoom && <AddBreakoutRoomButton />
             }
             {
-                showFooterMenu
+                isLocalModerator
                 && <View style = { styles.participantsPaneFooter }>
                     {
                         showMuteAll && (

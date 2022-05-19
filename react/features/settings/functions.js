@@ -11,9 +11,9 @@ import {
 import { toState } from '../base/redux';
 import { getHideSelfView } from '../base/settings';
 import { parseStandardURIString } from '../base/util';
-import { getBreakoutRoomsConfig, isInBreakoutRoom } from '../breakout-rooms/functions';
 import { isStageFilmstripEnabled } from '../filmstrip/functions';
 import { isFollowMeActive } from '../follow-me';
+import { getParticipantsPaneConfig } from '../participants-pane/functions';
 import { isReactionsEnabled } from '../reactions/functions.any';
 
 import { SS_DEFAULT_FRAME_RATE, SS_SUPPORTED_FRAMERATES } from './constants';
@@ -181,16 +181,10 @@ export function getModeratorTabProps(stateful: Object | Function) {
  */
 export function shouldShowModeratorSettings(stateful: Object | Function) {
     const state = toState(stateful);
-    const inBreakoutRoom = isInBreakoutRoom(state);
-    const { hideModeratorSettingsTab } = getBreakoutRoomsConfig(state);
-    const hasModeratorRights = Boolean(
-        isSettingEnabled('moderator')
-        && isLocalParticipantModerator(state)
-    );
+    const { hideModeratorSettingsTab } = getParticipantsPaneConfig(state);
+    const hasModeratorRights = Boolean(isSettingEnabled('moderator') && isLocalParticipantModerator(state));
 
-    return inBreakoutRoom
-        ? hasModeratorRights && !hideModeratorSettingsTab
-        : hasModeratorRights;
+    return hasModeratorRights && !hideModeratorSettingsTab;
 }
 
 /**
