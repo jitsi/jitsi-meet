@@ -1,5 +1,3 @@
-import { getLogger } from '@jitsi/logger';
-
 import { doGetJSON } from '../base/util';
 
 import { UNSET_DYNAMIC_BRANDING } from './actionTypes';
@@ -8,8 +6,7 @@ import {
     setDynamicBrandingFailed,
     setDynamicBrandingReady
 } from './actions.any';
-
-const logger = getLogger(__filename);
+import logger from './logger';
 
 
 /**

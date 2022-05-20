@@ -1,7 +1,3 @@
-// @flow
-
-import { getLogger } from '@jitsi/logger';
-
 import { doGetJSON } from '../base/util';
 
 import {
@@ -10,8 +6,7 @@ import {
     SET_DYNAMIC_BRANDING_READY
 } from './actionTypes';
 import { getDynamicBrandingUrl } from './functions.any';
-
-const logger = getLogger(__filename);
+import logger from './logger';
 
 
 /**
