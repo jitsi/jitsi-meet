@@ -212,3 +212,22 @@ export const RAISE_HAND_UPDATED = 'RAISE_HAND_UPDATED';
  * }
  */
 export const LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED = 'LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED'
+
+/**
+ * The type of Redux action which overwrites the name of a participant.
+ * {
+ *     type: OVERWRITE_PARTICIPANT_NAME,
+ *     id: string,
+ *     name: string
+ * }
+ */
+export const OVERWRITE_PARTICIPANT_NAME = 'OVERWRITE_PARTICIPANT_NAME';
+
+/**
+ * The type of Redux action which overwrites the names of multiple participants.
+ * {
+ *     type: OVERWRITE_PARTICIPANTS_NAMES,
+ *     participantsList: Array<Object>,
+ * }
+ */
+export const OVERWRITE_PARTICIPANTS_NAMES = 'OVERWRITE_PARTICIPANTS_NAMES';

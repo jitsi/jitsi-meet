@@ -5,6 +5,8 @@ import { batch } from 'react-redux';
 
 import UIEvents from '../../../../service/UI/UIEvents';
 import { approveParticipant } from '../../av-moderation/actions';
+import { UPDATE_BREAKOUT_ROOMS } from '../../breakout-rooms/actionTypes';
+import { getBreakoutRooms } from '../../breakout-rooms/functions';
 import { toggleE2EE } from '../../e2ee/actions';
 import { MAX_MODE } from '../../e2ee/constants';
 import {
@@ -34,6 +36,8 @@ import {
     LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED,
     LOCAL_PARTICIPANT_RAISE_HAND,
     MUTE_REMOTE_PARTICIPANT,
+    OVERWRITE_PARTICIPANTS_NAMES,
+    OVERWRITE_PARTICIPANT_NAME,
     PARTICIPANT_DISPLAY_NAME_CHANGED,
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
@@ -44,6 +48,7 @@ import {
     localParticipantIdChanged,
     localParticipantJoined,
     localParticipantLeft,
+    overwriteParticipantName,
     participantLeft,
     participantUpdated,
     raiseHand,
@@ -68,6 +73,7 @@ import {
     hasRaisedHand,
     isLocalParticipantModerator
 } from './functions';
+import logger from './logger';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
 import './subscriber';
 
@@ -231,6 +237,74 @@ MiddlewareRegistry.register(store => next => action => {
     case PARTICIPANT_UPDATED:
         return _participantJoinedOrUpdated(store, next, action);
 
+    case OVERWRITE_PARTICIPANTS_NAMES: {
+        const { participantList } = action;
+
+        if (!Array.isArray(participantList)) {
+            logger.error('Overwrite names failed. Argument is not an array.');
+
+            return;
+        }
+        batch(() => {
+            participantList.forEach(p => {
+                store.dispatch(overwriteParticipantName(p.id, p.name));
+            });
+        });
+        break;
+    }
+
+    case OVERWRITE_PARTICIPANT_NAME: {
+        const { dispatch, getState } = store;
+        const state = getState();
+        const { id, name } = action;
+
+        let breakoutRoom = false, identifier = id;
+
+        if (id.indexOf('@') !== -1) {
+            identifier = id.slice(id.indexOf('/') + 1);
+            breakoutRoom = true;
+            action.id = identifier;
+        }
+
+        if (breakoutRoom) {
+            const rooms = getBreakoutRooms(state);
+            const roomCounter = state['features/breakout-rooms'].roomCounter;
+            const newRooms = {};
+
+            Object.entries(rooms).forEach(([ key, r ]) => {
+                const participants = r?.participants || {};
+                const jid = Object.keys(participants).find(p =>
+                    p.slice(p.indexOf('/') + 1) === identifier);
+
+                if (jid) {
+                    newRooms[key] = {
+                        ...r,
+                        participants: {
+                            ...participants,
+                            [jid]: {
+                                ...participants[jid],
+                                displayName: name
+                            }
+                        }
+                    };
+                } else {
+                    newRooms[key] = r;
+                }
+            });
+            dispatch({
+                type: UPDATE_BREAKOUT_ROOMS,
+                rooms,
+                roomCounter,
+                updatedNames: true
+            });
+        } else {
+            dispatch(participantUpdated({
+                id: identifier,
+                name
+            }));
+        }
+        break;
+    }
     }
 
     return next(action);
@@ -491,6 +565,7 @@ function _maybePlaySounds({ getState, dispatch }, action) {
  */
 function _participantJoinedOrUpdated(store, next, action) {
     const { dispatch, getState } = store;
+    const { overwrittenNameList } = store.getState()['features/base/participants'];
     const { participant: { avatarURL, email, id, local, name, raisedHandTimestamp } } = action;
 
     // Send an external update of the local participant's raised hand state
@@ -506,6 +581,10 @@ function _participantJoinedOrUpdated(store, next, action) {
                 conference.setLocalParticipantProperty('raisedHand', rHand);
             }
         }
+    }
+
+    if (overwrittenNameList[id]) {
+        action.participant.name = overwrittenNameList[id];
     }
 
     // Allow the redux update to go through and compare the old avatar
