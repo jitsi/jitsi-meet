@@ -34,6 +34,8 @@ export function fetchCustomBrandingData() {
                     setDynamicBrandingFailed()
                 );
             }
+        } else {
+            dispatch(unsetDynamicBranding());
         }
 
         dispatch(setDynamicBrandingReady());

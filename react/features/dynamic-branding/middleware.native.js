@@ -22,12 +22,12 @@ MiddlewareRegistry.register(store => next => action => {
             backgroundImageUrl
         } = action.value;
 
-        action.value.avatarBackgrounds = avatarBackgrounds.filter(
-            color => !color.includes('linear-gradient')
-        );
-        action.value.backgroundColor = backgroundColor;
-        action.value.backgroundImageUrl = backgroundImageUrl;
-
+        action.value = {
+            ...action.value,
+            avatarBackgrounds,
+            backgroundColor,
+            backgroundImageUrl
+        };
         break;
     }
     }

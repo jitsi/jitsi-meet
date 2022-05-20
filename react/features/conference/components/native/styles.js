@@ -33,7 +33,7 @@ export default {
     }),
 
     brandingImage: {
-        flex: 1
+        position: 'absolute'
     },
 
     displayNameContainer: {

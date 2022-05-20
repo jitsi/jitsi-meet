@@ -1,8 +1,9 @@
 // @flow
 
 import React from 'react';
-import { BackHandler, ImageBackground, NativeModules, SafeAreaView, StatusBar, View } from 'react-native';
+import { BackHandler, NativeModules, SafeAreaView, StatusBar, View } from 'react-native';
 import { withSafeAreaInsets } from 'react-native-safe-area-context';
+import { SvgUri as BrandingImage } from 'react-native-svg';
 
 import { appNavigate } from '../../../app/actions';
 import { PIP_ENABLED, FULLSCREEN_ENABLED, getFeatureFlag } from '../../../base/flags';
@@ -10,7 +11,6 @@ import { getParticipantCount } from '../../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
-import { fixAndroidViewClipping } from '../../../base/styles';
 import { TestConnectionInfo } from '../../../base/testing';
 import { ConferenceNotification, isCalendarEnabled } from '../../../calendar-sync';
 import { DisplayNameLabel } from '../../../display-name';
@@ -57,9 +57,9 @@ type Props = AbstractProps & {
     _aspectRatio: Symbol,
 
     /**
-     * Dynamic branding background color.
+     * Branding styles for conference.
      */
-    _backgroundColorBranding: string,
+    _brandingStyles: Object,
 
     /**
      * Dynamic branding background image.
@@ -226,37 +226,27 @@ class Conference extends AbstractConference<Props, State> {
      */
     render() {
         const {
-            _backgroundColorBranding,
             _backgroundImageUrlBranding,
+            _brandingStyles,
             _fullscreenEnabled
         } = this.props;
-        const brandingStyles = {
-            conference: fixAndroidViewClipping({
-                alignSelf: 'stretch',
-                backgroundColor: _backgroundColorBranding,
-                flex: 1
-            })
-        };
-        const brandingImage
-            = _backgroundImageUrlBranding
-                ? { uri: _backgroundImageUrlBranding }
-                : undefined;
 
         return (
             <Container
                 style = { [
                     styles.conference,
-                    brandingStyles.conference
+                    _brandingStyles.conference
                 ] }>
-                <ImageBackground
-                    source = { brandingImage }
-                    style = { styles.brandingImage }>
-                    <StatusBar
-                        barStyle = 'light-content'
-                        hidden = { _fullscreenEnabled }
-                        translucent = { _fullscreenEnabled } />
-                    { this._renderContent() }
-                </ImageBackground>
+                <BrandingImage
+                    height = '100%'
+                    style = { styles.brandingImage }
+                    uri = { _backgroundImageUrlBranding }
+                    width = '100%' />
+                <StatusBar
+                    barStyle = 'light-content'
+                    hidden = { _fullscreenEnabled }
+                    translucent = { _fullscreenEnabled } />
+                { this._renderContent() }
             </Container>
         );
     }
@@ -535,11 +525,18 @@ function _mapStateToProps(state) {
     const { aspectRatio, reducedUI } = state['features/base/responsive-ui'];
     const { backgroundColor, backgroundImageUrl } = state['features/dynamic-branding'];
     const participantCount = getParticipantCount(state);
+    const brandingStyles = {
+        conference: {
+            alignSelf: 'stretch',
+            backgroundColor,
+            flex: 1
+        }
+    };
 
     return {
         ...abstractMapStateToProps(state),
         _aspectRatio: aspectRatio,
-        _backgroundColorBranding: backgroundColor,
+        _brandingStyles: brandingStyles,
         _backgroundImageUrlBranding: backgroundImageUrl,
         _calendarEnabled: isCalendarEnabled(state),
         _connecting: isConnecting(state),

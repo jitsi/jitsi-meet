@@ -10,6 +10,7 @@ import { isLocalVideoTrackDesktop } from '../../base/tracks/functions';
 
 import { AVATAR_SIZE } from './styles';
 
+
 /**
  * The type of the React {@link Component} props of {@link LargeVideo}.
  */
@@ -130,7 +131,7 @@ class LargeVideo extends PureComponent<Props, State> {
                 disableVideo = { _disableVideo }
                 onPress = { onClick }
                 participantId = { _participantId }
-                style = { _styles.largeVideo }
+                style = { [ _styles.largeVideo ] }
                 testHintId = 'org.jitsi.meet.LargeVideo'
                 useConnectivityInfoLabel = { useConnectivityInfoLabel }
                 zOrder = { 0 }
