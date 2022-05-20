@@ -46,7 +46,7 @@ const commands = {
     kickParticipant: 'kick-participant',
     muteEveryone: 'mute-everyone',
     overwriteConfig: 'overwrite-config',
-    overwriteName: 'overwrite-name',
+    overwriteNames: 'overwrite-names',
     password: 'password',
     pinParticipant: 'pin-participant',
     rejectParticipant: 'reject-participant',

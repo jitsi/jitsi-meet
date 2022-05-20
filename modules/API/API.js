@@ -429,8 +429,8 @@ function initCommands() {
                 logger.error('Failed sending endpoint text message', err);
             }
         },
-        'overwrite-name': participantList => {
-            logger.debug('Overwrite name command received');
+        'overwrite-names': participantList => {
+            logger.debug('Overwrite names command received');
 
             APP.store.dispatch(overwriteParticipantsNames(participantList));
         },

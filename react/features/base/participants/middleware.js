@@ -73,6 +73,7 @@ import {
     hasRaisedHand,
     isLocalParticipantModerator
 } from './functions';
+import logger from './logger';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
 import './subscriber';
 
@@ -240,6 +241,8 @@ MiddlewareRegistry.register(store => next => action => {
         const { participantList } = action;
 
         if (!Array.isArray(participantList)) {
+            logger.error('Overwrite names failed. Argument is not an array.');
+
             return;
         }
         batch(() => {
