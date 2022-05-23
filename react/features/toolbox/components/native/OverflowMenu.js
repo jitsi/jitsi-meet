@@ -28,6 +28,7 @@ import OpenCarmodeButton from './OpenCarmodeButton';
 import RaiseHandButton from './RaiseHandButton';
 import ScreenSharingButton from './ScreenSharingButton';
 import ToggleCameraButton from './ToggleCameraButton';
+import ToggleSelfViewButton from './ToggleSelfViewButton';
 
 /**
  * The type of the React {@code Component} props of {@link OverflowMenu}.
@@ -48,6 +49,11 @@ type Props = {
      * Whether the recoding button should be enabled or not.
      */
     _recordingEnabled: boolean,
+
+    /**
+     * Whether or not the self view is hidden.
+     */
+    _selfViewHidden: boolean,
 
     /**
      * The width of the screen.
@@ -113,8 +119,9 @@ class OverflowMenu extends PureComponent<Props, State> {
     render() {
         const {
             _bottomSheetStyles,
-            _width,
-            _reactionsEnabled
+            _reactionsEnabled,
+            _selfViewHidden,
+            _width
         } = this.props;
         const toolbarButtons = getMovableButtons(_width);
 
@@ -144,7 +151,8 @@ class OverflowMenu extends PureComponent<Props, State> {
                     ? this._renderReactionMenu
                     : null }>
                 <ParticipantsPaneButton { ...topButtonProps } />
-                <OpenCarmodeButton { ...topButtonProps } />
+                {_selfViewHidden && <ToggleSelfViewButton { ...buttonProps } />}
+                <OpenCarmodeButton { ...buttonProps } />
                 <AudioOnlyButton { ...buttonProps } />
                 {!_reactionsEnabled && !toolbarButtons.has('raisehand') && <RaiseHandButton { ...buttonProps } />}
                 <Divider style = { styles.divider } />
@@ -206,11 +214,14 @@ class OverflowMenu extends PureComponent<Props, State> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
+    const { disableSelfView } = state['features/base/settings'];
+
     return {
         _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
         _isOpen: isDialogOpen(state, OverflowMenu_),
-        _width: state['features/base/responsive-ui'].clientWidth,
-        _reactionsEnabled: isReactionsEnabled(state)
+        _reactionsEnabled: isReactionsEnabled(state),
+        _selfViewHidden: Boolean(disableSelfView),
+        _width: state['features/base/responsive-ui'].clientWidth
     };
 }
 
