@@ -1,7 +1,3 @@
-// @flow
-
-import { getLogger } from '@jitsi/logger';
-
 import { doGetJSON } from '../base/util';
 
 import {
@@ -10,8 +6,7 @@ import {
     SET_DYNAMIC_BRANDING_READY
 } from './actionTypes';
 import { getDynamicBrandingUrl } from './functions.any';
-
-const logger = getLogger(__filename);
+import logger from './logger';
 
 
 /**
@@ -52,7 +47,7 @@ export function fetchCustomBrandingData() {
  * @param {Object} value - The custom data to be set.
  * @returns {Object}
  */
-function setDynamicBrandingData(value) {
+export function setDynamicBrandingData(value) {
     return {
         type: SET_DYNAMIC_BRANDING_DATA,
         value
@@ -64,7 +59,7 @@ function setDynamicBrandingData(value) {
  *
  * @returns {Object}
  */
-function setDynamicBrandingReady() {
+export function setDynamicBrandingReady() {
     return {
         type: SET_DYNAMIC_BRANDING_READY
     };
@@ -75,7 +70,7 @@ function setDynamicBrandingReady() {
  *
  * @returns {Object}
  */
-function setDynamicBrandingFailed() {
+export function setDynamicBrandingFailed() {
     return {
         type: SET_DYNAMIC_BRANDING_FAILED
     };

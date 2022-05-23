@@ -13,6 +13,7 @@ import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { TestConnectionInfo } from '../../../base/testing';
 import { ConferenceNotification, isCalendarEnabled } from '../../../calendar-sync';
 import { DisplayNameLabel } from '../../../display-name';
+import { BrandingImageBackground } from '../../../dynamic-branding';
 import {
     FILMSTRIP_SIZE,
     Filmstrip,
@@ -54,6 +55,16 @@ type Props = AbstractProps & {
      * Application's aspect ratio.
      */
     _aspectRatio: Symbol,
+
+    /**
+     * Branding styles for conference.
+     */
+    _brandingStyles: Object,
+
+    /**
+     * Branding image background.
+     */
+    _brandingImageBackgroundUrl: string,
 
     /**
      * Wherther the calendar feature is enabled or not.
@@ -214,10 +225,20 @@ class Conference extends AbstractConference<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { _fullscreenEnabled } = this.props;
+        const {
+            _brandingImageBackgroundUrl,
+            _brandingStyles,
+            _fullscreenEnabled
+        } = this.props;
 
         return (
-            <Container style = { styles.conference }>
+            <Container
+                style = { [
+                    styles.conference,
+                    _brandingStyles
+                ] }>
+                <BrandingImageBackground
+                    uri = { _brandingImageBackgroundUrl } />
                 <StatusBar
                     barStyle = 'light-content'
                     hidden = { _fullscreenEnabled }
@@ -499,11 +520,17 @@ class Conference extends AbstractConference<Props, State> {
 function _mapStateToProps(state) {
     const { isOpen } = state['features/participants-pane'];
     const { aspectRatio, reducedUI } = state['features/base/responsive-ui'];
+    const { backgroundColor, backgroundImageUrl } = state['features/dynamic-branding'];
     const participantCount = getParticipantCount(state);
+    const brandingStyles = backgroundColor ? {
+        backgroundColor
+    } : undefined;
 
     return {
         ...abstractMapStateToProps(state),
         _aspectRatio: aspectRatio,
+        _brandingStyles: brandingStyles,
+        _brandingImageBackgroundUrl: backgroundImageUrl,
         _calendarEnabled: isCalendarEnabled(state),
         _connecting: isConnecting(state),
         _filmstripVisible: isFilmstripVisible(state),

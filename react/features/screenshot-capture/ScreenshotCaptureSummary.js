@@ -7,7 +7,7 @@ import './createImageBitmap';
 import { createScreensharingCaptureTakenEvent, sendAnalytics } from '../analytics';
 import { getCurrentConference } from '../base/conference';
 import { getLocalParticipant, getRemoteParticipants } from '../base/participants';
-import { extractFqnFromPath } from '../dynamic-branding';
+import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 
 import {
     CLEAR_INTERVAL,
