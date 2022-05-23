@@ -1462,6 +1462,22 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that the iframe
+     * docked state has been changed. The responsibility for implementing
+     * the dock / undock functionality lies with the external application.
+     *
+     * @param {boolean} docked - Whether or not the iframe has been set to
+     * be docked or undocked.
+     * @returns {void}
+     */
+    notifyIframeDockStateChanged(docked: boolean) {
+        this._sendEvent({
+            name: 'iframe-dock-state-changed',
+            docked
+        });
+    }
+
+    /**
      * Notify external application of a participant, remote or local, being
      * removed from the conference by another participant.
      *
