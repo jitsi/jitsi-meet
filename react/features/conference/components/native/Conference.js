@@ -13,6 +13,7 @@ import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { TestConnectionInfo } from '../../../base/testing';
 import { ConferenceNotification, isCalendarEnabled } from '../../../calendar-sync';
 import { DisplayNameLabel } from '../../../display-name';
+import { BrandingImageBackground } from '../../../dynamic-branding';
 import {
     FILMSTRIP_SIZE,
     Filmstrip,
@@ -38,7 +39,6 @@ import type { AbstractProps } from '../AbstractConference';
 import { isConnecting } from '../functions';
 
 import AlwaysOnLabels from './AlwaysOnLabels';
-import BrandingImageBackground from './BrandingImageBackground';
 import ExpandedLabelPopup from './ExpandedLabelPopup';
 import LonelyMeetingExperience from './LonelyMeetingExperience';
 import TitleBar from './TitleBar';

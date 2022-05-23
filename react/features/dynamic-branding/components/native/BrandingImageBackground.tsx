@@ -2,7 +2,7 @@ import React from 'react';
 import { Image } from 'react-native';
 import { SvgUri } from 'react-native-svg';
 
-import styles from './styles';
+import styles from '../../../conference/components/native/styles';
 
 
 interface Props {
