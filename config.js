@@ -599,6 +599,7 @@ var config = {
     //    'chat',
     //    'closedcaptions',
     //    'desktop',
+    //    'dock-iframe'
     //    'download',
     //    'embedmeeting',
     //    'etherpad',
@@ -627,6 +628,7 @@ var config = {
     //    'stats',
     //    'tileview',
     //    'toggle-camera',
+    //    'undock-iframe',
     //    'videoquality',
     //    '__end'
     // ],

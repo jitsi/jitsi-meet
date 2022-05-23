@@ -89,6 +89,7 @@ import MuteEveryoneButton from '../MuteEveryoneButton';
 import MuteEveryonesVideoButton from '../MuteEveryonesVideoButton';
 
 import AudioSettingsButton from './AudioSettingsButton';
+import DockIframeButton from './DockIframeButton';
 import FullscreenButton from './FullscreenButton';
 import LinkToSalesforceButton from './LinkToSalesforceButton';
 import OverflowMenuButton from './OverflowMenuButton';
@@ -96,6 +97,7 @@ import ProfileButton from './ProfileButton';
 import Separator from './Separator';
 import ShareDesktopButton from './ShareDesktopButton';
 import ToggleCameraButton from './ToggleCameraButton';
+import UndockIframeButton from './UndockIframeButton';
 import VideoSettingsButton from './VideoSettingsButton';
 
 /**
@@ -786,6 +788,18 @@ class Toolbox extends Component<Props> {
             group: 3
         };
 
+        const dockIframe = {
+            key: 'dock-iframe',
+            Content: DockIframeButton,
+            group: 3
+        };
+
+        const undockIframe = {
+            key: 'undock-iframe',
+            Content: UndockIframeButton,
+            group: 3
+        };
+
         const speakerStats = {
             key: 'stats',
             Content: SpeakerStatsButton,
@@ -853,6 +867,8 @@ class Toolbox extends Component<Props> {
             shareAudio,
             etherpad,
             virtualBackground,
+            dockIframe,
+            undockIframe,
             speakerStats,
             settings,
             shortcuts,
