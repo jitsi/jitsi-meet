@@ -12,6 +12,7 @@ import JitsiMeetJS, {
 } from '../base/lib-jitsi-meet';
 import { isAnalyticsEnabled } from '../base/lib-jitsi-meet/functions';
 import { getJitsiMeetGlobalNS, loadScript, parseURIString } from '../base/util';
+import { inIframe } from '../base/util/iframeUtils';
 
 import { AmplitudeHandler, MatomoHandler } from './handlers';
 import logger from './logger';
@@ -218,24 +219,6 @@ export function initAnalytics({ getState }: { getState: Function }, handlers: Ar
                 });
             }
         });
-    }
-}
-
-/**
- * Checks whether we are loaded in iframe.
- *
- * @returns {boolean} Returns {@code true} if loaded in iframe.
- * @private
- */
-export function inIframe() {
-    if (navigator.product === 'ReactNative') {
-        return false;
-    }
-
-    try {
-        return window.self !== window.top;
-    } catch (e) {
-        return true;
     }
 }
 

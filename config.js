@@ -1009,7 +1009,8 @@ var config = {
     // Disables all invite functions from the app (share, invite, dial out...etc)
     // disableInviteFunctions: true,
 
-    // Disables storing the room name to the recents list
+    // Disables storing the room name to the recents list. When in an iframe this is ignored and
+    // the room is never stored in the recents list.
     // doNotStoreRoom: true,
 
     // Deployment specific URLs.
