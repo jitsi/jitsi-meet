@@ -1,4 +1,8 @@
 export default {
+
+    /**
+     * {@code BrandingImageBackground} Style.
+     */
     brandingImageBackgroundSvg: {
         position: 'absolute' as 'absolute'
     },
