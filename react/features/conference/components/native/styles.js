@@ -32,16 +32,6 @@ export default {
         flex: 1
     }),
 
-    brandingImageBackgroundSvg: {
-        position: 'absolute'
-    },
-
-    brandingImageBackground: {
-        height: '100%',
-        position: 'absolute',
-        width: '100%'
-    },
-
     displayNameContainer: {
         margin: 10
     },
