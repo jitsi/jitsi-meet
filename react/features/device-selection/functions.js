@@ -13,7 +13,8 @@ import {
     setAudioOutputDevice,
     setVideoInputDeviceAndUpdateSettings
 } from '../base/devices';
-import JitsiMeetJS from '../base/lib-jitsi-meet';
+import { isIosMobileBrowser } from '../base/environment/utils';
+import JitsiMeetJS, { browser } from '../base/lib-jitsi-meet';
 import { toState } from '../base/redux';
 import {
     getUserSelectedCameraDeviceId,
@@ -29,6 +30,10 @@ import {
  * @returns {Object} - The properties for the device selection dialog.
  */
 export function getDeviceSelectionDialogProps(stateful: Object | Function) {
+    // On mobile Safari because of https://bugs.webkit.org/show_bug.cgi?id=179363#c30, the old track is stopped
+    // by the browser when a new track is created for preview. That's why we are disabling all previews.
+    const disablePreviews = isIosMobileBrowser() && browser.isVersionGreaterThan('15.3');
+
     const state = toState(stateful);
     const settings = state['features/base/settings'];
     const { conference } = state['features/base/conference'];
@@ -64,10 +69,10 @@ export function getDeviceSelectionDialogProps(stateful: Object | Function) {
         disableVideoInputSelect,
         hasAudioPermission: permissions.audio,
         hasVideoPermission: permissions.video,
-        hideAudioInputPreview: disableAudioInputChange || !JitsiMeetJS.isCollectingLocalStats(),
-        hideAudioOutputPreview: !speakerChangeSupported,
+        hideAudioInputPreview: disableAudioInputChange || !JitsiMeetJS.isCollectingLocalStats() || disablePreviews,
+        hideAudioOutputPreview: !speakerChangeSupported || disablePreviews,
         hideAudioOutputSelect: !speakerChangeSupported,
-        hideVideoInputPreview: !cameraChangeSupported,
+        hideVideoInputPreview: !cameraChangeSupported || disablePreviews,
         selectedAudioInputId,
         selectedAudioOutputId,
         selectedVideoInputId
