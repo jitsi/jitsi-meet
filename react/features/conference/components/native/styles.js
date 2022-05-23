@@ -32,8 +32,14 @@ export default {
         flex: 1
     }),
 
-    brandingImage: {
+    brandingImageBackgroundSvg: {
         position: 'absolute'
+    },
+
+    brandingImageBackground: {
+        height: '100%',
+        position: 'absolute',
+        width: '100%'
     },
 
     displayNameContainer: {

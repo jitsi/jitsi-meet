@@ -2,10 +2,8 @@
 
 import React, { PureComponent } from 'react';
 
-import { ColorSchemeRegistry } from '../../base/color-scheme';
 import { ParticipantView, getParticipantById } from '../../base/participants';
 import { connect } from '../../base/redux';
-import { StyleType } from '../../base/styles';
 import { isLocalVideoTrackDesktop } from '../../base/tracks/functions';
 
 import { AVATAR_SIZE } from './styles';
@@ -32,11 +30,6 @@ type Props = {
      * @private
      */
     _participantId: string,
-
-    /**
-     * The color-schemed stylesheet of the feature.
-     */
-    _styles: StyleType,
 
     /**
      * Application's viewport height.
@@ -121,7 +114,6 @@ class LargeVideo extends PureComponent<Props, State> {
         const {
             _disableVideo,
             _participantId,
-            _styles,
             onClick
         } = this.props;
 
@@ -131,7 +123,6 @@ class LargeVideo extends PureComponent<Props, State> {
                 disableVideo = { _disableVideo }
                 onPress = { onClick }
                 participantId = { _participantId }
-                style = { [ _styles.largeVideo ] }
                 testHintId = 'org.jitsi.meet.LargeVideo'
                 useConnectivityInfoLabel = { useConnectivityInfoLabel }
                 zOrder = { 0 }
@@ -161,7 +152,6 @@ function _mapStateToProps(state) {
         _disableVideo: disableVideo,
         _height: height,
         _participantId: participantId,
-        _styles: ColorSchemeRegistry.get(state, 'LargeVideo'),
         _width: width
     };
 }

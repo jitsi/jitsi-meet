@@ -3,7 +3,6 @@
 import React from 'react';
 import { BackHandler, NativeModules, SafeAreaView, StatusBar, View } from 'react-native';
 import { withSafeAreaInsets } from 'react-native-safe-area-context';
-import { SvgUri as BrandingImage } from 'react-native-svg';
 
 import { appNavigate } from '../../../app/actions';
 import { PIP_ENABLED, FULLSCREEN_ENABLED, getFeatureFlag } from '../../../base/flags';
@@ -39,6 +38,7 @@ import type { AbstractProps } from '../AbstractConference';
 import { isConnecting } from '../functions';
 
 import AlwaysOnLabels from './AlwaysOnLabels';
+import BrandingImageBackground from './BrandingImageBackground';
 import ExpandedLabelPopup from './ExpandedLabelPopup';
 import LonelyMeetingExperience from './LonelyMeetingExperience';
 import TitleBar from './TitleBar';
@@ -62,9 +62,9 @@ type Props = AbstractProps & {
     _brandingStyles: Object,
 
     /**
-     * Dynamic branding background image.
+     * Branding image background.
      */
-    _backgroundImageUrlBranding: string,
+    _brandingImageBackgroundUrl: string,
 
     /**
      * Wherther the calendar feature is enabled or not.
@@ -226,7 +226,7 @@ class Conference extends AbstractConference<Props, State> {
      */
     render() {
         const {
-            _backgroundImageUrlBranding,
+            _brandingImageBackgroundUrl,
             _brandingStyles,
             _fullscreenEnabled
         } = this.props;
@@ -235,13 +235,10 @@ class Conference extends AbstractConference<Props, State> {
             <Container
                 style = { [
                     styles.conference,
-                    _brandingStyles.conference
+                    _brandingStyles
                 ] }>
-                <BrandingImage
-                    height = '100%'
-                    style = { styles.brandingImage }
-                    uri = { _backgroundImageUrlBranding }
-                    width = '100%' />
+                <BrandingImageBackground
+                    uri = { _brandingImageBackgroundUrl } />
                 <StatusBar
                     barStyle = 'light-content'
                     hidden = { _fullscreenEnabled }
@@ -525,19 +522,15 @@ function _mapStateToProps(state) {
     const { aspectRatio, reducedUI } = state['features/base/responsive-ui'];
     const { backgroundColor, backgroundImageUrl } = state['features/dynamic-branding'];
     const participantCount = getParticipantCount(state);
-    const brandingStyles = {
-        conference: {
-            alignSelf: 'stretch',
-            backgroundColor,
-            flex: 1
-        }
-    };
+    const brandingStyles = backgroundColor ? {
+        backgroundColor
+    } : undefined;
 
     return {
         ...abstractMapStateToProps(state),
         _aspectRatio: aspectRatio,
         _brandingStyles: brandingStyles,
-        _backgroundImageUrlBranding: backgroundImageUrl,
+        _brandingImageBackgroundUrl: backgroundImageUrl,
         _calendarEnabled: isCalendarEnabled(state),
         _connecting: isConnecting(state),
         _filmstripVisible: isFilmstripVisible(state),
