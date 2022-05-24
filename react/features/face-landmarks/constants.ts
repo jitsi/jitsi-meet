@@ -52,6 +52,8 @@ export const DETECT_FACE = 'DETECT_FACE';
  * Available detection types.
  */
 export const DETECTION_TYPES = {
+    AGE: 'age',
     FACE_BOX: 'face-box',
-    FACE_EXPRESSIONS: 'face-expressions'
+    FACE_EXPRESSIONS: 'face-expressions',
+    GENDER: 'gender',
 };

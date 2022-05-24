@@ -25,8 +25,10 @@ type InitInput = {
 }
 
 type DetectOutput = {
+    age?: number,
     faceExpression?: string,
-    faceBox?: FaceBox
+    faceBox?: FaceBox,
+    gender?: string
 };
 
 export interface FaceLandmarksHelper {
@@ -71,7 +73,10 @@ export class HumanHelper implements FaceLandmarksHelper {
                 enabled: false,
                 modelPath: 'emotion.json'
             },
-            description: { enabled: false }
+            description: { 
+                enabled: true,
+                modelPath: 'faceres.json'
+            }
         },
         hand: { enabled: false },
         gesture: { enabled: false },
@@ -142,14 +147,28 @@ export class HumanHelper implements FaceLandmarksHelper {
 
     getFaceExpression({ detections }: Detection): string | undefined {
         if (detections[0]?.emotion) {
-            return  FACE_EXPRESSIONS_NAMING_MAPPING[detections[0]?.emotion[0].emotion];
+            return FACE_EXPRESSIONS_NAMING_MAPPING[detections[0]?.emotion[0].emotion];
+        }
+    }
+
+    getAge({ detections }: Detection): number | undefined {
+        if (detections) {
+            return detections[0].age;
+        }
+    }
+
+    getGender({ detections }: Detection): string | undefined {
+        if (detections) {
+            return detections[0].gender;
         }
     }
 
     public async detect({ image, threshold } : DetectInput): Promise<DetectOutput | undefined> {
         let detections;
+        let age;
         let faceExpression;
         let faceBox;
+        let gender;
 
         if (!this.human){
             return;
@@ -165,6 +184,26 @@ export class HumanHelper implements FaceLandmarksHelper {
 
             detections = face;
             faceExpression = this.getFaceExpression({ detections });
+        }
+
+        if (this.faceDetectionTypes.includes(DETECTION_TYPES.AGE)) {
+            if (!detections) {
+                const { face } = await this.human.detect(imageTensor, this.config);
+
+                detections = face;
+            }
+
+            age = await this.getAge({ detections });
+        }
+
+        if (this.faceDetectionTypes.includes(DETECTION_TYPES.GENDER)) {
+            if (!detections) {
+                const { face } = await this.human.detect(imageTensor, this.config);
+
+                detections = face;
+            }
+
+            gender = await this.getGender({ detections });
         }
 
         if (this.faceDetectionTypes.includes(DETECTION_TYPES.FACE_BOX)) {
@@ -184,8 +223,10 @@ export class HumanHelper implements FaceLandmarksHelper {
         this.detectionInProgress = false;
 
         return { 
+            age,
             faceExpression, 
-            faceBox
+            faceBox,
+            gender
         }
     }
 

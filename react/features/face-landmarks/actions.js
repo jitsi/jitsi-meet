@@ -93,7 +93,9 @@ export function loadWorker() {
         workerUrl = window.URL.createObjectURL(workerBlob);
         worker = new Worker(workerUrl, { name: 'Face Recognition Worker' });
         worker.onmessage = function(e: Object) {
-            const { faceExpression, faceBox } = e.data;
+            const { age, faceExpression, faceBox, gender } = e.data;
+
+            console.log(age, gender);
 
             if (faceExpression) {
                 if (faceExpression === lastFaceExpression) {
@@ -133,8 +135,10 @@ export function loadWorker() {
 
         const { faceLandmarks } = getState()['features/base/config'];
         const detectionTypes = [
+            DETECTION_TYPES.AGE,
             faceLandmarks?.enableFaceCentering && DETECTION_TYPES.FACE_BOX,
-            faceLandmarks?.enableFaceExpressionsDetection && DETECTION_TYPES.FACE_EXPRESSIONS
+            faceLandmarks?.enableFaceExpressionsDetection && DETECTION_TYPES.FACE_EXPRESSIONS,
+            DETECTION_TYPES.GENDER
         ].filter(Boolean);
 
         worker.postMessage({
