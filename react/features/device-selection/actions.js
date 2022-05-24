@@ -14,11 +14,13 @@ import logger from './logger';
  * Submits the settings related to device selection.
  *
  * @param {Object} newState - The new settings.
+ * @param {boolean} isDisplayedOnWelcomePage - Indicates whether the device selection dialog is displayed on the
+ * welcome page or not.
  * @returns {Function}
  */
-export function submitDeviceSelectionTab(newState) {
+export function submitDeviceSelectionTab(newState, isDisplayedOnWelcomePage) {
     return (dispatch, getState) => {
-        const currentState = getDeviceSelectionDialogProps(getState());
+        const currentState = getDeviceSelectionDialogProps(getState(), isDisplayedOnWelcomePage);
 
         if (newState.selectedVideoInputId && (newState.selectedVideoInputId !== currentState.selectedVideoInputId)) {
             dispatch(updateSettings({
