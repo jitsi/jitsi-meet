@@ -43,10 +43,15 @@ export function openLogoutDialog(onLogout: Function) {
  *
  * @param {string} defaultTab - The tab in {@code SettingsDialog} that should be
  * displayed initially.
+ * @param {boolean} isDisplayedOnWelcomePage - Indicates whether the device selection dialog is displayed on the
+ * welcome page or not.
  * @returns {Function}
  */
-export function openSettingsDialog(defaultTab: string) {
-    return openDialog(SettingsDialog, { defaultTab });
+export function openSettingsDialog(defaultTab: string, isDisplayedOnWelcomePage: boolean) {
+    return openDialog(SettingsDialog, {
+        defaultTab,
+        isDisplayedOnWelcomePage
+    });
 }
 
 /**
