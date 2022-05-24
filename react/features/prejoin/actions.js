@@ -9,6 +9,7 @@ import { getDialOutStatusUrl, getDialOutUrl, updateConfig } from '../base/config
 import { browser } from '../base/lib-jitsi-meet';
 import { createLocalTrack } from '../base/lib-jitsi-meet/functions';
 import { isVideoMutedByUser, MEDIA_TYPE } from '../base/media';
+import { updateSettings } from '../base/settings';
 import {
     createLocalTracksF,
     getLocalAudioTrack,
@@ -359,7 +360,11 @@ export function replaceAudioTrackById(deviceId: string) {
             const newTrack = await createLocalTrack('audio', deviceId);
             const oldTrack = getLocalAudioTrack(tracks)?.jitsiTrack;
 
-            dispatch(replaceLocalTrack(oldTrack, newTrack));
+            dispatch(replaceLocalTrack(oldTrack, newTrack)).then(() => {
+                dispatch(updateSettings({
+                    micDeviceId: newTrack.getDeviceId()
+                }));
+            });
         } catch (err) {
             dispatch(setDeviceStatusWarning('prejoin.audioTrackError'));
             logger.log('Error replacing audio track', err);
@@ -386,7 +391,11 @@ export function replaceVideoTrackById(deviceId: Object) {
             );
             const oldTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
 
-            dispatch(replaceLocalTrack(oldTrack, newTrack));
+            dispatch(replaceLocalTrack(oldTrack, newTrack)).then(() => {
+                dispatch(updateSettings({
+                    cameraDeviceId: newTrack.getDeviceId()
+                }));
+            });
             wasVideoMuted && newTrack.mute();
         } catch (err) {
             dispatch(setDeviceStatusWarning('prejoin.videoTrackError'));
