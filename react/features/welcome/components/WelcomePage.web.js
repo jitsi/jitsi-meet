@@ -191,7 +191,8 @@ class WelcomePage extends AbstractWelcomePage {
                 <div className = 'header'>
                     <div className = 'welcome-page-settings'>
                         <SettingsButton
-                            defaultTab = { SETTINGS_TABS.CALENDAR } />
+                            defaultTab = { SETTINGS_TABS.CALENDAR }
+                            isDisplayedOnWelcomePage = { true } />
                         { showAdditionalToolbarContent
                             ? <div
                                 className = 'settings-toolbar-content'
