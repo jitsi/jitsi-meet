@@ -486,6 +486,8 @@ export function shouldRenderParticipantVideo(stateful: Object | Function, id: st
 
     /* Then check if the participant connection or track streaming status is active. */
     if (getSourceNameSignalingFeatureFlag(state)) {
+        // Note that this will work only if a listener is registered for the track's TrackStreamingStatus.
+        // The associated TrackStreamingStatusImpl instance is not created or disposed when there are zero listeners.
         if (videoTrack
             && !videoTrack.local
             && videoTrack.jitsiTrack?.getTrackStreamingStatus() !== JitsiTrackStreamingStatus.ACTIVE) {
