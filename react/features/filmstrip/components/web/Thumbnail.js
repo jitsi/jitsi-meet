@@ -422,7 +422,7 @@ class Thumbnail extends Component<Props, State> {
     }
 
     /**
-     * Starts listening for audio level updates after the initial render.
+     * Starts listening for track streaming status updates after the initial render.
      *
      * @inheritdoc
      * @returns {void}
@@ -464,7 +464,7 @@ class Thumbnail extends Component<Props, State> {
     }
 
     /**
-     * Stops listening for audio level updates on the old track and starts
+     * Stops listening for track streaming status updates on the old track and starts
      * listening instead on the new track.
      *
      * @inheritdoc
