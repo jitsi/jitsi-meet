@@ -56,6 +56,7 @@ import {
     P2P_STATUS_CHANGED,
     SEND_TONES,
     SET_FOLLOW_ME,
+    SET_OBFUSCATED_ROOM,
     SET_PASSWORD,
     SET_PASSWORD_FAILED,
     SET_ROOM,
@@ -801,6 +802,22 @@ export function setPassword(
             return Promise.reject();
         }
         }
+    };
+}
+
+/**
+ * Sets the obfuscated room name of the conference to be joined.
+ *
+ * @param {(string|undefined)} obfuscatedRoom - Obfuscated room name.
+ * @returns {{
+ *     type: SET_OBFUSCATED_ROOM,
+ *     room: string
+ * }}
+ */
+export function setObfuscatedRoom(obfuscatedRoom: ?string) {
+    return {
+        type: SET_OBFUSCATED_ROOM,
+        obfuscatedRoom
     };
 }
 

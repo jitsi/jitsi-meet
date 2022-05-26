@@ -1,5 +1,6 @@
 // @flow
 
+import { sha512_256 as sha512 } from 'js-sha512';
 import _ from 'lodash';
 
 import { getName } from '../../app/functions';
@@ -19,6 +20,7 @@ import {
     safeDecodeURIComponent
 } from '../util';
 
+import { setObfuscatedRoom } from './actions';
 import {
     AVATAR_URL_COMMAND,
     EMAIL_COMMAND,
@@ -296,6 +298,42 @@ export function getCurrentConference(stateful: Function | Object) {
  */
 export function getRoomName(state: Object): string {
     return getConferenceState(state).room;
+}
+
+/**
+ * Get an obfuscated room name or create and persist it if it doesn't exists.
+ *
+ * @param {Object} state - The current state of the app.
+ * @param {Function} dispatch - The Redux dispatch function.
+ * @returns {string} - Obfuscated room name.
+ */
+export function getOrCreateObfuscatedRoomName(state: Object, dispatch: Function) {
+    let obfuscatedRoom = getConferenceState(state).obfuscatedRoom;
+
+    if (!obfuscatedRoom) {
+        obfuscatedRoom = sha512(getRoomName(state));
+        dispatch(setObfuscatedRoom(obfuscatedRoom));
+    }
+
+    return obfuscatedRoom;
+}
+
+/**
+ * Analytics may require an obfuscated room name, this functions decides based on a config if the normal or
+ * obfuscated room name should be returned.
+ *
+ * @param {Object} state - The current state of the app.
+ * @param {Function} dispatch - The Redux dispatch function.
+ * @returns {string} - Analytics room name.
+ */
+export function getAnalyticsRoomName(state: Object, dispatch: Function) {
+    const { analysis: { obfuscateRoomName = false } = {} } = state['features/base/config'];
+
+    if (obfuscateRoomName) {
+        return getOrCreateObfuscatedRoomName(state, dispatch);
+    }
+
+    return getRoomName(state);
 }
 
 /**

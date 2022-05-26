@@ -3,8 +3,13 @@
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 
 import { getAmplitudeIdentity } from '../analytics';
-import { CONFERENCE_UNIQUE_ID_SET, E2E_RTT_CHANGED, CONFERENCE_TIMESTAMP_CHANGED, getConferenceOptions, getRoomName }
-    from '../base/conference';
+import {
+    CONFERENCE_UNIQUE_ID_SET,
+    E2E_RTT_CHANGED,
+    CONFERENCE_TIMESTAMP_CHANGED,
+    getConferenceOptions,
+    getAnalyticsRoomName
+} from '../base/conference';
 import { LIB_WILL_INIT } from '../base/lib-jitsi-meet/actionTypes';
 import { DOMINANT_SPEAKER_CHANGED, getLocalParticipant } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
@@ -24,6 +29,7 @@ import logger from './logger';
  */
 MiddlewareRegistry.register(store => next => action => {
     const state = store.getState();
+    const { dispatch } = store;
     const config = state['features/base/config'];
     const { analytics, faceLandmarks } = config;
 
@@ -118,7 +124,7 @@ MiddlewareRegistry.register(store => next => action => {
                     ...getAmplitudeIdentity(),
                     ...options,
                     endpointId: localParticipant?.id,
-                    confName: getRoomName(state),
+                    confName: getAnalyticsRoomName(state, dispatch),
                     displayName,
                     meetingUniqueId
                 });
