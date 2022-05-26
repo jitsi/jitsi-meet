@@ -3,6 +3,19 @@
         width: 100%;
     }
 
+    &-avatar {
+        margin: 8px auto 16px;
+
+        &-name {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 26px;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+    }
+
     &-error {
         background-color: #E04757;
         border-radius: 6px;

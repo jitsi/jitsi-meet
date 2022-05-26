@@ -37,6 +37,16 @@ export function isDisplayNameRequired(state: Object): boolean {
 }
 
 /**
+ * Selector for determining if the prejoin display name field is visible.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {boolean}
+ */
+export function isPrejoinDisplayNameVisible(state: Object): boolean {
+    return !state['features/base/config'].hidePrejoinDisplayName;
+}
+
+/**
  * Returns the text for the prejoin status bar.
  *
  * @param {Object} state - The state of the app.
