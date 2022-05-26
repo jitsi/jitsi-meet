@@ -169,6 +169,7 @@ export default [
     'hideConferenceSubject',
     'hideDisplayName',
     'hideDominantSpeakerBadge',
+    'hidePrejoinDisplayName',
     'hideRecordingLabel',
     'hideParticipantsStats',
     'hideConferenceTimer',

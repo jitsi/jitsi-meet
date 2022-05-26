@@ -495,6 +495,11 @@ var config = {
     // Hides add breakout room button
     // hideAddRoomButton: false,
 
+    // Hides the participant name editing field in the prejoin screen.
+    // If requireDisplayName is also set as true, a name should still be provided through
+    // either the jwt or the userInfo from the iframe api init object in order for this to have an effect.
+    // hidePrejoinDisplayName: false,
+
     // Require users to always specify a display name.
     // requireDisplayName: true,
 
