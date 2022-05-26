@@ -78,6 +78,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         let descriptionKey;
         let titleKey;
         let uid;
+        const localParticipant = getLocalParticipant(getState);
+        const raisedHand = hasRaisedHand(localParticipant);
 
         switch (action.mediaType) {
         case MEDIA_TYPE.AUDIO: {
@@ -100,7 +102,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         dispatch(showNotification({
             customActionNameKey: [ 'notify.raiseHandAction' ],
             customActionHandler: [ () => batch(() => {
-                dispatch(raiseHand(true));
+                !raisedHand && dispatch(raiseHand(true));
                 dispatch(hideNotification(uid));
             }) ],
             descriptionKey,
