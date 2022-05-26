@@ -24,7 +24,9 @@ import {
     getDetectionInterval,
     sendDataToWorker,
     sendFaceBoxToParticipants,
-    sendFaceExpressionsWebhook
+    sendFaceExpressionsWebhook,
+    getAgeAverage,
+    getMostOccuredGender
 } from './functions';
 import logger from './logger';
 
@@ -66,6 +68,10 @@ let webhookSendInterval;
  */
 let detectionInterval;
 
+let ages = [];
+
+let genders = [];
+
 /**
  * Loads the worker that detects the face landmarks.
  *
@@ -95,7 +101,13 @@ export function loadWorker() {
         worker.onmessage = function(e: Object) {
             const { age, faceExpression, faceBox, gender } = e.data;
 
-            console.log(age, gender);
+            if (age) {
+                ages.push(age);
+            }
+
+            if (gender) {
+                genders.push(gender);
+            }
 
             if (faceExpression) {
                 if (faceExpression === lastFaceExpression) {
@@ -107,6 +119,12 @@ export function loadWorker() {
                             duplicateConsecutiveExpressions + 1,
                             lastFaceExpressionTimestamp
                         ));
+                        console.log(lastFaceExpression);
+
+                        console.log(getMostOccuredGender(genders));
+                        console.log(getAgeAverage(ages));
+                        genders = [];
+                        ages = [];
                     }
                     lastFaceExpression = faceExpression;
                     lastFaceExpressionTimestamp = Date.now();

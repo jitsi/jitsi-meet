@@ -225,3 +225,24 @@ export function getDetectionInterval(state: Object) {
 
     return Math.max(faceLandmarks?.captureInterval || SEND_IMAGE_INTERVAL_MS);
 }
+
+/**
+ * @param  {} ages
+ */
+export function getAgeAverage(ages) {
+    return ages.reduce((a, b) => a + b, 0) / ages.length;
+}
+
+/**
+ * @param  {} genders
+ */
+export function getMostOccuredGender(genders) {
+    const hashmap = genders.reduce((acc, val) => {
+        acc[val] = (acc[val] || 0) + 1;
+
+        return acc;
+    }, {});
+
+    return Object.keys(hashmap).reduce((a, b) => hashmap[a] > hashmap[b] ? a : b);
+
+}

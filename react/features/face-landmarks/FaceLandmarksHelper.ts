@@ -152,14 +152,17 @@ export class HumanHelper implements FaceLandmarksHelper {
     }
 
     getAge({ detections }: Detection): number | undefined {
-        if (detections) {
-            return detections[0].age;
-        }
+        return detections[0]?.age;
+
     }
 
     getGender({ detections }: Detection): string | undefined {
+        return detections[0]?.gender;
+    }
+
+    getNoFaces({ detections }: Detection): number | undefined {
         if (detections) {
-            return detections[0].gender;
+            return detections.length;
         }
     }
 
