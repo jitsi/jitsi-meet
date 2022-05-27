@@ -2,6 +2,7 @@
 
 export { default as AvatarListItem } from './AvatarListItem';
 export { default as BaseIndicator } from './BaseIndicator';
+export { default as Button } from './Button';
 export { default as Container } from './Container';
 export { default as Image } from './Image';
 export { default as Link } from './Link';
