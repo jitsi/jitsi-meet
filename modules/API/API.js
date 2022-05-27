@@ -1695,6 +1695,27 @@ class API {
         });
     }
 
+   /**
+     * Notify external application (if API is enabled) that we are ready to be
+     * ex-invite-user.
+     *
+     * @returns {void}
+     */
+    notifyExInvite() {
+        // this._sendEvent({ name: 'video-ready-to-close' });
+        this._sendEvent({ name: 'ex-invite-user' });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that we are ready to be
+     * ex-open-chat-room.
+     *
+     * @returns {void}
+     */
+    notifyExChat() {
+        this._sendEvent({ name: 'ex-open-chat-room' });
+    }
+
     /**
      * Disposes the allocated resources.
      *

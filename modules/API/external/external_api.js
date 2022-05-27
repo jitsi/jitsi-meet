@@ -142,7 +142,9 @@ const events = {
     'subject-change': 'subjectChange',
     'suspend-detected': 'suspendDetected',
     'tile-view-changed': 'tileViewChanged',
-    'toolbar-button-clicked': 'toolbarButtonClicked'
+    'toolbar-button-clicked': 'toolbarButtonClicked',
+    'ex-invite-user': 'exInviteUser',
+    'ex-open-chat-room': 'exOpenChatRoom'
 };
 
 /**

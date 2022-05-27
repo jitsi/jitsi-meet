@@ -82,6 +82,8 @@ import {
 import { THRESHOLDS, NOT_APPLICABLE, NOTIFY_CLICK_MODE } from '../../constants';
 import { isDesktopShareButtonDisabled, isToolboxVisible } from '../../functions';
 import DownloadButton from '../DownloadButton';
+import ExChatButton from '../ExChatButton';
+import ExInviteButton from '../ExInviteButton';
 import HangupButton from '../HangupButton';
 import HelpButton from '../HelpButton';
 
@@ -347,7 +349,7 @@ class Toolbox extends Component<Props> {
             },
             isToolbarButtonEnabled('chat', _toolbarButtons) && {
                 character: 'C',
-                exec: this._onShortcutToggleChat,
+                exec: () => APP.API.notifyExChat(),
                 helpDescription: 'keyboardShortcuts.toggleChat'
             },
             isToolbarButtonEnabled('desktop', _toolbarButtons) && {
@@ -652,10 +654,17 @@ class Toolbox extends Component<Props> {
             group: 1
         };
 
+        // const chat = {
+        //     key: 'chat',
+        //     Content: ChatButton,
+        //     handleClick: this._onToolbarToggleChat,
+        //     group: 2
+        // };
+
         const chat = {
             key: 'chat',
-            Content: ChatButton,
-            handleClick: this._onToolbarToggleChat,
+            Content: ExChatButton,
+            handleClick: () => APP.API.notifyExChat(),
             group: 2
         };
 
@@ -680,9 +689,16 @@ class Toolbox extends Component<Props> {
             group: 2
         };
 
+        // const invite = {
+        //     key: 'invite',
+        //     Content: InviteButton,
+        //     group: 2
+        // };
+
         const invite = {
             key: 'invite',
-            Content: InviteButton,
+            Content: ExInviteButton,
+            handleClick: () => APP.API.notifyExInvite(),
             group: 2
         };
 
