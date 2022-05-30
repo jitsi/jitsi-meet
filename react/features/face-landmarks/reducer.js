@@ -6,6 +6,7 @@ import {
     ADD_FACE_EXPRESSION,
     ADD_TO_FACE_EXPRESSIONS_BUFFER,
     CLEAR_FACE_EXPRESSIONS_BUFFER,
+    SET_MAX_NO_FACES,
     START_FACE_LANDMARKS_DETECTION,
     STOP_FACE_LANDMARKS_DETECTION,
     UPDATE_FACE_COORDINATES
@@ -23,6 +24,7 @@ const defaultState = {
         sad: 0
     },
     faceExpressionsBuffer: [],
+    maxNoFaces: 0,
     recognitionActive: false
 };
 
@@ -47,6 +49,12 @@ ReducerRegistry.register('features/face-landmarks', (state = defaultState, actio
         return {
             ...state,
             faceExpressionsBuffer: []
+        };
+    }
+    case SET_MAX_NO_FACES: {
+        return {
+            ...state,
+            maxNoFaces: action.maxNoFaces
         };
     }
     case START_FACE_LANDMARKS_DETECTION: {

@@ -11,6 +11,7 @@ import {
     ADD_FACE_EXPRESSION,
     ADD_TO_FACE_EXPRESSIONS_BUFFER,
     CLEAR_FACE_EXPRESSIONS_BUFFER,
+    SET_MAX_NO_FACES,
     START_FACE_LANDMARKS_DETECTION,
     STOP_FACE_LANDMARKS_DETECTION,
     UPDATE_FACE_COORDINATES
@@ -99,7 +100,7 @@ export function loadWorker() {
         workerUrl = window.URL.createObjectURL(workerBlob);
         worker = new Worker(workerUrl, { name: 'Face Recognition Worker' });
         worker.onmessage = function(e: Object) {
-            const { age, faceExpression, faceBox, gender } = e.data;
+            const { age, faceExpression, faceBox, gender, noFaces } = e.data;
 
             if (age) {
                 ages.push(age);
@@ -107,6 +108,17 @@ export function loadWorker() {
 
             if (gender) {
                 genders.push(gender);
+            }
+
+            console.log(noFaces);
+
+            if (noFaces) {
+                const state = getState();
+                const { maxNoFaces } = state['features/face-landmarks'];
+
+                if (noFaces > maxNoFaces) {
+                    dispatch(setMaxNoFaces(noFaces));
+                }
             }
 
             if (faceExpression) {
@@ -156,7 +168,8 @@ export function loadWorker() {
             DETECTION_TYPES.AGE,
             faceLandmarks?.enableFaceCentering && DETECTION_TYPES.FACE_BOX,
             faceLandmarks?.enableFaceExpressionsDetection && DETECTION_TYPES.FACE_EXPRESSIONS,
-            DETECTION_TYPES.GENDER
+            DETECTION_TYPES.GENDER,
+            DETECTION_TYPES.NUMBER_FACES
         ].filter(Boolean);
 
         worker.postMessage({
@@ -300,5 +313,15 @@ export function addToFaceExpressionsBuffer(faceExpression: Object) {
 function clearFaceExpressionBuffer() {
     return {
         type: CLEAR_FACE_EXPRESSIONS_BUFFER
+    };
+}
+
+/**
+ * 
+ */
+function setMaxNoFaces(maxNoFaces: number) {
+    return {
+        type: SET_MAX_NO_FACES,
+        maxNoFaces
     };
 }

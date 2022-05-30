@@ -56,4 +56,5 @@ export const DETECTION_TYPES = {
     FACE_BOX: 'face-box',
     FACE_EXPRESSIONS: 'face-expressions',
     GENDER: 'gender',
+    NUMBER_FACES: 'number-faces'
 };

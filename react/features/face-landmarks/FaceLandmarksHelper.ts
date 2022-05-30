@@ -28,7 +28,8 @@ type DetectOutput = {
     age?: number,
     faceExpression?: string,
     faceBox?: FaceBox,
-    gender?: string
+    gender?: string,
+    noFaces?: number
 };
 
 export interface FaceLandmarksHelper {
@@ -65,7 +66,8 @@ export class HumanHelper implements FaceLandmarksHelper {
             detector: {
                 enabled: false,
                 rotation: false,
-                modelPath: 'blazeface-front.json'
+                modelPath: 'blazeface-front.json',
+                maxDetected: 10
             },
             mesh: { enabled: false },
             iris: { enabled: false },
@@ -172,6 +174,7 @@ export class HumanHelper implements FaceLandmarksHelper {
         let faceExpression;
         let faceBox;
         let gender;
+        let noFaces;
 
         if (!this.human){
             return;
@@ -222,6 +225,17 @@ export class HumanHelper implements FaceLandmarksHelper {
             });
         }
 
+        
+        if (this.faceDetectionTypes.includes(DETECTION_TYPES.NUMBER_FACES)) {
+            if (!detections) {
+                const { face } = await this.human.detect(imageTensor, this.config);
+
+                detections = face;
+            }
+
+            noFaces = await this.getNoFaces({ detections });
+        }
+
         this.human.tf.engine().endScope();
         this.detectionInProgress = false;
 
@@ -229,7 +243,8 @@ export class HumanHelper implements FaceLandmarksHelper {
             age,
             faceExpression, 
             faceBox,
-            gender
+            gender,
+            noFaces,
         }
     }
 
