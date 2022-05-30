@@ -77,6 +77,17 @@
         "refresh": "Atualizar calendário",
         "today": "Hoje"
     },
+    "carmode": {
+        "actions": {
+            "leaveMeeting": " Deixar a reunião",
+            "selectSoundDevice": "Seleccionar dispositivo de som"
+        },
+        "labels": {
+            "buttonLabel": "Modo carro",
+            "title": "Modo de condução segura",
+            "videoStopped": "O seu vídeo está parado"
+        }
+    },
     "chat": {
         "enter": "Entrar na sala",
         "error": "Erro: a sua mensagem não foi enviada. Motivo: {{error}}",
@@ -346,7 +357,7 @@
         "screenSharingFailed": "Oops! Algo correu mal, não fomos capazes de começar a partilhar o ecrã!",
         "screenSharingFailedTitle": "A partilha de ecrã falhou!",
         "screenSharingPermissionDeniedError": "Oops! Alguma coisa correu mal com as vossas permissões de partilha de ecrã. Por favor, volte a carregar e tente novamente.",
-        "searchInSalesforce": "Pesquisar na Força de Vendas",
+        "searchInSalesforce": "Pesquisar na Salesforce",
         "searchResults": "Resultados da pesquisa({{count}})",
         "searchResultsDetailsError": "Algo correu mal enquanto se recuperava os dados do proprietário.",
         "searchResultsError": "Alguma coisa correu mal durante a recuperação de dados.",
@@ -640,12 +651,12 @@
         "leftOneMember": "{{name}} deixou a reunião",
         "leftThreePlusMembers": "{{name}} e muitos outros deixaram a reunião",
         "leftTwoMembers": "{{first}} e {{second}} deixaram a reunião",
-        "linkToSalesforce": "Link para a Força de Vendas",
-        "linkToSalesforceDescription": "Pode ligar o resumo da reunião a um objecto da Força de Vendas.",
-        "linkToSalesforceError": "Falha na ligação da reunião à Força de Vendas",
+        "linkToSalesforce": "Link para a Salesforce",
+        "linkToSalesforceDescription": "Pode ligar o resumo da reunião a um objecto da Salesforce.",
+        "linkToSalesforceError": "Falha na ligação da reunião à Salesforce",
         "linkToSalesforceKey": "Ligar esta reunião",
-        "linkToSalesforceProgress": "A ligar a reunião à Força de Vendas...",
-        "linkToSalesforceSuccess": "A reunião foi ligada à Força de Vendas",
+        "linkToSalesforceProgress": "A ligar a reunião à Salesforce...",
+        "linkToSalesforceSuccess": "A reunião foi ligada à Salesforce",
         "me": "Eu",
         "moderationInEffectCSDescription": "Por favor, levantem a mão se quiserem partilhar o vosso ecrã.",
         "moderationInEffectCSTitle": "A partilha de ecrã é bloqueada pelo moderador",
@@ -894,7 +905,7 @@
         "unavailableTitle": "Gravação indisponível",
         "uploadToCloud": "Enviar para a nuvem"
     },
-    "screenshareDisplayName": "ecrã do {{name}}",
+    "screenshareDisplayName": "Ecrã do {{name}}",
     "sectionList": {
         "pullToRefresh": "Puxe para atualizar"
     },
@@ -1010,10 +1021,12 @@
             "boo": "Vaia",
             "breakoutRoom": "Entrar/Sair salas instantâneas",
             "callQuality": "Gerir a qualidade do vídeo",
+            "carmode": "Modo carro",
             "cc": "Mudar legendas",
             "chat": "Abrir / Fechar chat",
             "clap": "Aplausos",
             "collapse": "Colapsar",
+            "dock": "Encaixar na janela principal",
             "document": "Mudar para documento partilhado",
             "download": "Descarregar as nossas aplicações",
             "embedMeeting": "Reunião incorporada",
@@ -1028,7 +1041,7 @@
             "kick": "Remover participante",
             "laugh": "Risos",
             "like": "Aprovado",
-            "linkToSalesforce": "Link para a Força de Vendas",
+            "linkToSalesforce": "Link para a Salesforce",
             "lobbyButton": "Ativar/desativar sala de espera",
             "localRecording": "Mudar os controlos locais de gravação",
             "lockRoom": "Mudar palavra-chave de reunião",
@@ -1064,6 +1077,7 @@
             "tileView": "Mudar a vista em quadrícula",
             "toggleCamera": "Mudar a câmara",
             "toggleFilmstrip": "Mudar a película de filme",
+            "undock": "Desencaixar numa janela separada",
             "videoblur": "Mudar o desfoque de vídeo",
             "videomute": "Iniciar / Parar câmara"
         },
@@ -1080,6 +1094,7 @@
         "closeChat": "Fechar chat",
         "closeReactionsMenu": "Fechar menu de reações",
         "disableReactionSounds": "Pode desactivar os sons de reacção para esta reunião",
+        "dock": "Encaixar na janela principal",
         "documentClose": "Fechar documento partilhado",
         "documentOpen": "Abrir documento partilhado",
         "download": "Descarregar as nossas aplicações",
@@ -1098,7 +1113,7 @@
         "laugh": "Risos",
         "leaveBreakoutRoom": "Sair da sala",
         "like": "Aprovado",
-        "linkToSalesforce": "Link para a Força de Vendas",
+        "linkToSalesforce": "Link para a Salesforce",
         "lobbyButtonDisable": "Desativar sala de espera",
         "lobbyButtonEnable": "Ativar sala de espera",
         "login": "Iniciar sessão",
@@ -1148,6 +1163,7 @@
         "talkWhileMutedPopup": "Está a tentar falar? Está com o microfone desativado.",
         "tileViewToggle": "Mudar para vista em quadrícula",
         "toggleCamera": "Mudar a câmara",
+        "undock": "Desencaixar numa janela separada",
         "videoSettings": "Definições de vídeo",
         "videomute": "Iniciar / Parar câmara"
     },
