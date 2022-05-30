@@ -248,6 +248,8 @@ RCT_EXPORT_METHOD(updateDeviceList) {
 - (void)audioSessionDidChangeRoute:(RTCAudioSession *)session
                             reason:(AVAudioSessionRouteChangeReason)reason
                      previousRoute:(AVAudioSessionRouteDescription *)previousRoute {
+    DDLogInfo(@"[AudioMode] Route changed, reason: %lu", (unsigned long)reason);
+
     // Update JS about the changes.
     [self notifyDevicesChanged];
 
@@ -259,16 +261,12 @@ RCT_EXPORT_METHOD(updateDeviceList) {
                 self->forceSpeaker = NO;
                 self->forceEarpiece = NO;
                 break;
-            case AVAudioSessionRouteChangeReasonCategoryChange: {
-                // The category has changed. Check if it's the one we want and adjust as
-                // needed.
-                RTCAudioSessionConfiguration *currentConfig = [self configForMode:self->activeMode];
-                if ([session.category isEqualToString:currentConfig.category]) {
-                    // We are in the desired category, nothing to do here.
-                    return;
-                }
+            case AVAudioSessionRouteChangeReasonCategoryChange:
+                // The category has changed, re-apply our config.
+                // NB: It's tempting to doa  category check here and skip the processing,
+                // but that won't work. If the config changes but the category remains
+                // the same we'll still find ourselves here.
                 break;
-            }
             default:
                 return;
         }
