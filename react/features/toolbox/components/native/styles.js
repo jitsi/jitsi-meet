@@ -93,6 +93,9 @@ const styles = {
         flexDirection: 'row',
         justifyContent: 'space-between'
     },
+    SubContainer:{
+        backgroundColor: '#dee0dc'
+    },
 
     /**
      * The style of the root/top-level container of {@link Toolbox}.

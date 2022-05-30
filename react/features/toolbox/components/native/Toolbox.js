@@ -74,7 +74,8 @@ function Toolbox(props: Props) {
     };
 
     return (
-        <View
+        <View style = {styles.SubContainer}>
+            <View
             pointerEvents = 'box-none'
             style = { styles.toolboxContainer }>
             <SafeAreaView
@@ -117,6 +118,7 @@ function Toolbox(props: Props) {
                 <HangupButton
                     styles = { hangupButtonStyles } />
             </SafeAreaView>
+        </View>
         </View>
     );
 }

@@ -1,0 +1,39 @@
+.css-1harwh1  {
+    background-color: black;
+    color: white;
+}
+.icons {
+    display: flex;
+    max-width: 100%;
+    height: 40px;
+    box-sizing: border-box;
+    padding: 8px 16px;
+    background: #0376da;
+    border-radius: 5px;
+    cursor: pointer;
+    border-color: black;
+    margin: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+.icon {
+    margin-right: 10px;
+}
+.css-7no60z-ButtonBase {
+    color: white;
+}
+
+.css-g9r8b4 {
+    padding: 28px 62px 2px 30px !important;
+}
+.css-baqjzi {
+    padding: 7px !important;
+}
+.embed-meeting-dialog-tok {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+}

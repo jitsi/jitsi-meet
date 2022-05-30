@@ -43,6 +43,8 @@ import LonelyMeetingExperience from './LonelyMeetingExperience';
 import TitleBar from './TitleBar';
 import { EXPANDED_LABEL_TIMEOUT } from './constants';
 import styles from './styles';
+import ConnectingButtons from './ConnectingButtons';
+import SideButtons from './SideButtons';
 
 
 /**
@@ -374,9 +376,9 @@ class Conference extends AbstractConference<Props, State> {
                             </Container>
                         )
                     }
-
+                     <SideButtons/>
                     <LonelyMeetingExperience />
-
+                    <ConnectingButtons/>
                     { _shouldDisplayTileView || <><Filmstrip /><Toolbox /></> }
                 </View>
 

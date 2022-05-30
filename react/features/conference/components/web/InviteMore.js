@@ -58,11 +58,11 @@ function InviteMore({
         _shouldShow
             ? <div className = { `invite-more-container${_toolboxVisible ? '' : ' elevated'}` }>
                 <div className = 'invite-more-content'>
-                    <div
+                    {/* <div
                         className = 'invite-more-header'
                         role = 'heading'>
                         {t('addPeople.inviteMoreHeader')}
-                    </div>
+                    </div> */}
                     <div
                         className = 'invite-more-button'
                         onClick = { onClick }

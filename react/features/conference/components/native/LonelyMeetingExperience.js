@@ -93,7 +93,7 @@ class LonelyMeetingExperience extends PureComponent<Props> {
                     ] }>
                     { t('lonelyMeetingExperience.youAreAlone') }
                 </Text>
-                { !_isInviteFunctionsDiabled && !_isInBreakoutRoom && (
+                {/* { !_isInviteFunctionsDiabled && !_isInBreakoutRoom && (
                     <TouchableOpacity
                         onPress = { this._onPress }
                         style = { [
@@ -112,7 +112,7 @@ class LonelyMeetingExperience extends PureComponent<Props> {
                             { t('lonelyMeetingExperience.button') }
                         </Text>
                     </TouchableOpacity>
-                ) }
+                ) } */}
             </View>
         );
     }

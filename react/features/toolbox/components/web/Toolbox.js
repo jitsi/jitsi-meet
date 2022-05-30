@@ -96,6 +96,8 @@ import Separator from './Separator';
 import ShareDesktopButton from './ShareDesktopButton';
 import ToggleCameraButton from './ToggleCameraButton';
 import VideoSettingsButton from './VideoSettingsButton';
+import { ConnectButtons } from '../../../conference';
+import { SideButtons } from '../../../conference';
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
@@ -1309,6 +1311,10 @@ class Toolbox extends Component<Props> {
 
         return (
             <div className = { containerClassName }>
+                <div>
+                    <SideButtons />
+                    <ConnectButtons />
+                </div>
                 <div
                     className = 'toolbox-content-wrapper'
                     onFocus = { this._onTabIn }

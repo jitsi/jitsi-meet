@@ -1,6 +1,7 @@
 import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
 import { fixAndroidViewClipping } from '../../../base/styles';
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
+import { BoxModel } from '../../../base/styles';
 
 export const INSECURE_ROOM_NAME_LABEL_COLOR = BaseTheme.palette.actionDanger;
 
@@ -97,6 +98,130 @@ export default {
     lonelyButtonComponents: {
         marginHorizontal: 6
     },
+    Tok:{
+        color: 'white'
+    },
+    ScreenButtons:{
+        alignItems: 'flex-start',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        padding: BoxModel.padding * 1
+    },
+    ConnectingButtons:{
+        backgroundColor: 'green',
+        padding: 2,
+        margin:3,
+        borderRadius: 10,
+        color: 'black',
+        opacity: 0.7,
+        
+    },
+    SideButtons:{
+        alignItems: 'flex-start',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        padding: BoxModel.padding * 1
+    },
+    MarkButtons:{
+        borderRadius:50,
+        padding : 5,
+        backgroundColor: '#A9EB6F',
+        margin: 2,
+        opacity: 0.3
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: "flex-start",
+        alignItems: "center",
+        opacity: 0.7,
+        marginTop:10
+      },
+      SideButtoncenteredView:{
+        flex: 1,
+        justifyContent: "flex-start",
+        alignItems: "center",
+        opacity: 0.7,
+        marginTop:20
+      },
+      SideButtonmodalView:{
+        marginTop: 10,
+        marginRight:50,
+        marginLeft:50,
+        marginBottom:5,
+        backgroundColor: "white",
+        borderRadius: 20,
+        paddingTop:10,
+        paddingLeft:8,
+        paddingRight:8,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+      },
+      modalView: {
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 7,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+      },
+      button: {
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2
+      },
+      buttonOpen: {
+        backgroundColor: "#F194FF",
+      },
+      sideButtonClose: {
+        backgroundColor: "#2196F3",
+        borderRadius: 3,
+        marginBottom:10
+      },
+      buttonClose: {
+        backgroundColor: "#2196F3",
+        borderRadius: 3,
+        marginTop:8,
+        marginBottom:5
+      },
+      textStyle: {
+        color: "white",
+        fontWeight: "bold",
+        textAlign: "center",
+        borderRadius: 5,
+        padding: 5,
+      },
+      modalText: {
+        marginBottom: 15,
+        textAlign: "center"
+      },
+      Icons:{
+        color: 'black',
+        marginHorizontal: 10
+      },
+      IconText:{
+        flexDirection: 'row',
+        padding: 3,
+        borderBottomColor: 'black',
+        borderBottomWidth: 1,
+      },
+      TextFields:{
+        color: 'black',
+        
+      },
 
     lonelyMeetingContainer: {
         alignSelf: 'stretch',
