@@ -30,8 +30,8 @@ type DetectOutput = {
 };
 
 export interface FaceLandmarksHelper {
-    detectFaceBox({ detections, threshold }: Detection): Promise<FaceBox | undefined>;
-    detectFaceExpression({ detections }: Detection): Promise<string | undefined>;
+    getFaceBox({ detections, threshold }: Detection): FaceBox | undefined;
+    getFaceExpression({ detections }: Detection): string | undefined;
     init(): Promise<void>;
     detect({ image, threshold } : DetectInput): Promise<DetectOutput | undefined>;
     getDetectionInProgress(): boolean;
@@ -118,7 +118,7 @@ export class HumanHelper implements FaceLandmarksHelper {
         }
     }
 
-    async detectFaceBox({ detections, threshold }: Detection): Promise<FaceBox | undefined> {
+    getFaceBox({ detections, threshold }: Detection): FaceBox | undefined {
         if (!detections.length) {
             return;
         }
@@ -140,7 +140,7 @@ export class HumanHelper implements FaceLandmarksHelper {
         return faceBox;
     }
 
-    async detectFaceExpression({ detections }: Detection): Promise<string | undefined> {
+    getFaceExpression({ detections }: Detection): string | undefined {
         if (detections[0]?.emotion) {
             return  FACE_EXPRESSIONS_NAMING_MAPPING[detections[0]?.emotion[0].emotion];
         }
@@ -156,6 +156,7 @@ export class HumanHelper implements FaceLandmarksHelper {
         }
 
         this.detectionInProgress = true;
+        this.human.tf.engine().startScope();
 
         const imageTensor = this.human.tf.browser.fromPixels(image);
 
@@ -163,7 +164,7 @@ export class HumanHelper implements FaceLandmarksHelper {
             const { face } = await this.human.detect(imageTensor, this.config);
 
             detections = face;
-            faceExpression = await this.detectFaceExpression({ detections });
+            faceExpression = this.getFaceExpression({ detections });
         }
 
         if (this.faceDetectionTypes.includes(DETECTION_TYPES.FACE_BOX)) {
@@ -173,12 +174,13 @@ export class HumanHelper implements FaceLandmarksHelper {
                 detections = face;
             }
 
-            faceBox = await this.detectFaceBox({
+            faceBox = this.getFaceBox({
                 detections,
                 threshold
             });
         }
 
+        this.human.tf.engine().endScope();
         this.detectionInProgress = false;
 
         return { 
