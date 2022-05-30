@@ -4,13 +4,15 @@ import React, { useCallback } from 'react';
 
 import { connect } from '../../../base/redux';
 import { DialInSummary } from '../../../invite';
+import Prejoin from '../../../prejoin/components/Prejoin.native';
 import { _ROOT_NAVIGATION_READY } from '../actionTypes';
 import { rootNavigationRef } from '../rootNavigationContainerRef';
 import { screen } from '../routes';
 import {
     dialInSummaryScreenOptions,
     drawerNavigatorScreenOptions,
-    navigationContainerTheme
+    navigationContainerTheme,
+    preJoinScreenOptions
 } from '../screenOptions';
 
 import ConnectingPage from './ConnectingPage';
@@ -67,6 +69,10 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: Props) =>
                                 options = { dialInSummaryScreenOptions } />
                         </>
                 }
+                <RootStack.Screen
+                    component = { Prejoin }
+                    name = { screen.preJoin }
+                    options = { preJoinScreenOptions } />
                 <RootStack.Screen
                     component = { ConnectingPage }
                     name = { screen.connecting }

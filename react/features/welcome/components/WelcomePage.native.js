@@ -21,6 +21,8 @@ import { connect } from '../../base/redux';
 import BaseTheme from '../../base/ui/components/BaseTheme';
 import WelcomePageTabs
     from '../../mobile/navigation/components/welcome/components/WelcomePageTabs';
+import { navigateRoot } from '../../mobile/navigation/rootNavigationContainerRef';
+import { screen } from '../../mobile/navigation/routes';
 
 import {
     AbstractWelcomePage,
@@ -314,7 +316,7 @@ class WelcomePage extends AbstractWelcomePage<*> {
             <TouchableHighlight
                 accessibilityLabel =
                     { t('welcomepage.accessibilityLabel.join') }
-                onPress = { this._onJoin }
+                onPress = { navigateRoot(screen.preJoin) }
                 style = { styles.button }
                 underlayColor = { BaseTheme.palette.ui12 }>
                 { children }

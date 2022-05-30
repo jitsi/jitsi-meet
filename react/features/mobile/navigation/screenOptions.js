@@ -269,3 +269,11 @@ export const sharedDocumentScreenOptions = {
         android: 'all'
     })
 };
+
+/**
+ * Screen options for pre-join screen.
+ */
+export const preJoinScreenOptions = {
+    gestureEnabled: false,
+    headerLeft: () => screenHeaderCloseButton(goBackToLobbyScreen)
+};
