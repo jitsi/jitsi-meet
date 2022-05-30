@@ -43,7 +43,7 @@ export function isDisplayNameRequired(state: Object): boolean {
  * @returns {boolean}
  */
 export function isPrejoinDisplayNameVisible(state: Object): boolean {
-    return !state['features/base/config'].hidePrejoinDisplayName;
+    return !state['features/base/config'].prejoinConfig?.hideDisplayName;
 }
 
 /**
