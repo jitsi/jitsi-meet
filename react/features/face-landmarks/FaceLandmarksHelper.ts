@@ -30,8 +30,8 @@ type DetectOutput = {
 };
 
 export interface FaceLandmarksHelper {
-    detectFaceBox({ detections, threshold }: Detection): FaceBox | undefined;
-    detectFaceExpression({ detections }: Detection): string | undefined;
+    getFaceBox({ detections, threshold }: Detection): FaceBox | undefined;
+    getFaceExpression({ detections }: Detection): string | undefined;
     init(): Promise<void>;
     detect({ image, threshold } : DetectInput): Promise<DetectOutput | undefined>;
     getDetectionInProgress(): boolean;
