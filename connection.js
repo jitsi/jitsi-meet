@@ -17,6 +17,7 @@ import {
     JitsiConnectionEvents
 } from './react/features/base/lib-jitsi-meet';
 import { isFatalJitsiConnectionError } from './react/features/base/lib-jitsi-meet/functions';
+import { appendURLParam } from './react/features/base/util';
 import { getCustomerDetails } from './react/features/jaas/actions.any';
 import { isVpaasMeeting, getJaasJWT } from './react/features/jaas/functions';
 import { setPrejoinDisplayNameRequired } from './react/features/prejoin/actions';
@@ -102,14 +103,11 @@ export async function connect(id, password, roomName) {
 
     // Use Websocket URL for the web app if configured. Note that there is no 'isWeb' check, because there's assumption
     // that this code executes only on web browsers/electron. This needs to be changed when mobile and web are unified.
-    let serviceUrl = connectionConfig.websocket || connectionConfig.bosh;
-
-    serviceUrl += `?room=${roomName}`;
-
-    connectionConfig.serviceUrl = serviceUrl;
+    connectionConfig.serviceUrl = appendURLParam(connectionConfig.websocket || connectionConfig.bosh, 'room', roomName);
 
     if (connectionConfig.websocketKeepAliveUrl) {
-        connectionConfig.websocketKeepAliveUrl += `?room=${roomName}`;
+        connectionConfig.websocketKeepAliveUrl
+            = appendURLParam(connectionConfig.websocketKeepAliveUrl, 'room', roomName);
     }
 
     const connection = new JitsiMeetJS.JitsiConnection(null, jwt, connectionConfig);

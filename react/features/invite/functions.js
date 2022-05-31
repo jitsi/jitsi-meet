@@ -8,7 +8,7 @@ import { i18next } from '../base/i18n';
 import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 import { getLocalParticipant, isLocalParticipantModerator } from '../base/participants';
 import { toState } from '../base/redux';
-import { parseURIString } from '../base/util';
+import { appendURLParam, parseURIString } from '../base/util';
 import { isVpaasMeeting } from '../jaas/functions';
 
 import { getDialInConferenceID, getDialInNumbers } from './_utils';
@@ -596,7 +596,7 @@ export function getDialInfoPageURL(state: Object, roomName: ?string) {
 
     const url = didPageUrl || `${href.substring(0, href.lastIndexOf('/'))}/${DIAL_IN_INFO_PAGE_PATH_NAME}`;
 
-    return `${url}?room=${room}`;
+    return appendURLParam(url, 'room', room);
 }
 
 /**

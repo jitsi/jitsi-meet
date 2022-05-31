@@ -603,3 +603,16 @@ export function addHashParamsToURL(url: URL, hashParamsToAdd: Object = {}) {
 export function getDecodedURI(uri: string) {
     return decodeURI(uri.replace(/^https?:\/\//i, ''));
 }
+
+/**
+ * Adds new param to a url string. Checks whether to use '?' or '&' as a separator (checks for already existing params).
+ *
+ * @param {string} url - The url to modify.
+ * @param {string} name - The param name to add.
+ * @param {string} value - The value for the param.
+ *
+ * @returns {string} - The modified url.
+ */
+export function appendURLParam(url: string, name: string, value: string) {
+    return `${url}${url.includes('?') ? '&' : '?'}${name}=${value}`;
+}

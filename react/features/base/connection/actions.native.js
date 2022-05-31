@@ -7,6 +7,7 @@ import { conferenceLeft, conferenceWillLeave } from '../conference/actions';
 import { getCurrentConference } from '../conference/functions';
 import JitsiMeetJS, { JitsiConnectionEvents } from '../lib-jitsi-meet';
 import {
+    appendURLParam,
     getBackendSafeRoomName,
     parseURIString
 } from '../util';
@@ -315,10 +316,10 @@ function _constructOptions(state) {
     if (serviceUrl && room) {
         const roomName = getBackendSafeRoomName(room);
 
-        options.serviceUrl = `${serviceUrl}?room=${roomName}`;
+        options.serviceUrl = appendURLParam(serviceUrl, 'room', roomName);
 
         if (options.websocketKeepAliveUrl) {
-            options.websocketKeepAliveUrl += `?room=${roomName}`;
+            options.websocketKeepAliveUrl = appendURLParam(options.websocketKeepAliveUrl, 'room', roomName);
         }
     }
 
