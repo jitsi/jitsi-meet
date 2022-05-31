@@ -1,5 +1,3 @@
-// @flow
-
 import { batch } from 'react-redux';
 
 import { createReactionSoundsDisabledEvent, sendAnalytics } from '../analytics';
@@ -28,7 +26,6 @@ import {
     PUSH_REACTIONS,
     SHOW_SOUNDS_NOTIFICATION
 } from './actionTypes';
-import { displayReactionSoundsNotification } from './actions';
 import {
     addReactionsToChat,
     flushReactionBuffer,
@@ -36,6 +33,7 @@ import {
     sendReactions,
     setReactionQueue
 } from './actions.any';
+import { displayReactionSoundsNotification } from './actions.web';
 import {
     ENDPOINT_REACTION_NAME,
     RAISE_HAND_SOUND_ID,
@@ -52,15 +50,16 @@ import {
 } from './functions.any';
 import logger from './logger';
 import { RAISE_HAND_SOUND_FILE } from './sounds';
+import { IStore } from '../app/types';
 
 /**
  * Middleware which intercepts Reactions actions to handle changes to the
  * visibility timeout of the Reactions.
  *
- * @param {Store} store - The redux store.
+ * @param {IStore} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register(store => next => action => {
+MiddlewareRegistry.register((store: IStore) => (next: Function) => action => {
     const { dispatch, getState } = store;
 
     switch (action.type) {
@@ -232,9 +231,8 @@ MiddlewareRegistry.register(store => next => action => {
  * @param {Object} store - The redux store. Used to calculate and dispatch
  * updates.
  * @private
- * @returns {void}
  */
-function _onMuteReactionsCommand(attributes = {}, id, store) {
+function _onMuteReactionsCommand(attributes: Object = {}, id: string, store: IStore) {
     const state = store.getState();
 
     // We require to know who issued the command because (1) only a
@@ -259,6 +257,7 @@ function _onMuteReactionsCommand(attributes = {}, id, store) {
     }
 
     const oldState = Boolean(state['features/base/conference'].startReactionsMuted);
+    // @ts-ignore
     const newState = attributes.startReactionsMuted === 'true';
 
     if (oldState !== newState) {

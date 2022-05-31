@@ -1,7 +1,3 @@
-// @flow
-
-/* eslint-disable react/jsx-no-bind */
-
 import { withStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import React, { Component } from 'react';
@@ -16,6 +12,7 @@ import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
 import { getLocalParticipant, hasRaisedHand, raiseHand } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+// @ts-ignore
 import { GifsMenu, GifsMenuButton } from '../../../gifs/components';
 import { isGifEnabled, isGifsMenuOpen } from '../../../gifs/functions';
 import { dockToolbox } from '../../../toolbox/actions.web';
@@ -24,6 +21,10 @@ import { toggleReactionsMenuVisibility } from '../../actions.web';
 import { REACTIONS, REACTIONS_MENU_HEIGHT } from '../../constants';
 
 import ReactionButton from './ReactionButton';
+
+interface Classes {
+    overflow: string
+}
 
 type Props = {
 
@@ -60,7 +61,7 @@ type Props = {
     /**
      * An object containing the CSS classes.
      */
-    classes: Object,
+    classes: Classes,
 
     /**
      * The Redux Dispatch function.
@@ -113,10 +114,6 @@ class ReactionsMenu extends Component<Props> {
         this._onToolbarToggleRaiseHand = this._onToolbarToggleRaiseHand.bind(this);
         this._getReactionButtons = this._getReactionButtons.bind(this);
     }
-
-    _onToolbarToggleRaiseHand: () => void;
-
-    _getReactionButtons: () => Array<React$Element<*>>;
 
     /**
      * Implements React Component's componentDidMount.
@@ -190,6 +187,7 @@ class ReactionsMenu extends Component<Props> {
                 sendAnalytics(createReactionMenuEvent(key));
             }
 
+            // @ts-ignore
             return (<ReactionButton
                 accessibilityLabel = { t(`toolbar.accessibilityLabel.${key}`) }
                 icon = { REACTIONS[key].emoji }
@@ -219,6 +217,7 @@ class ReactionsMenu extends Component<Props> {
                 </div>
                 {_isMobile && (
                     <div className = 'raise-hand-row'>
+                        {/* @ts-ignore */}
                         <ReactionButton
                             accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
                             icon = '✋'
@@ -273,4 +272,5 @@ function mapDispatchToProps(dispatch) {
 export default translate(connect(
     mapStateToProps,
     mapDispatchToProps
+    // @ts-ignore
 )(withStyles(styles)(ReactionsMenu)));

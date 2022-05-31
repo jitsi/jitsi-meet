@@ -1,5 +1,3 @@
-// @flow
-
 import { translate } from '../../../base/i18n';
 import { IconRaisedHand } from '../../../base/icons';
 import { getLocalParticipant, hasRaisedHand } from '../../../base/participants';
@@ -15,7 +13,7 @@ type Props = AbstractButtonProps & {
     /**
      * Whether or not the hand is raised.
      */
-     raisedHand: boolean,
+    raisedHand: boolean,
 };
 
 /**

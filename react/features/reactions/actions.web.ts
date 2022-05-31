@@ -1,16 +1,13 @@
-// @flow
-
 import {
     SHOW_SOUNDS_NOTIFICATION,
     TOGGLE_REACTIONS_VISIBLE
 } from './actionTypes';
+import { ReactionsAction } from './reducer';
 
 /**
  * Toggles the visibility of the reactions menu.
- *
- * @returns {Object}
  */
-export function toggleReactionsMenuVisibility() {
+export function toggleReactionsMenuVisibility(): ReactionsAction {
     return {
         type: TOGGLE_REACTIONS_VISIBLE
     };
@@ -18,10 +15,8 @@ export function toggleReactionsMenuVisibility() {
 
 /**
  * Displays the disable sounds notification.
- *
- * @returns {Object}
  */
-export function displayReactionSoundsNotification() {
+export function displayReactionSoundsNotification(): ReactionsAction {
     return {
         type: SHOW_SOUNDS_NOTIFICATION
     };

@@ -9,7 +9,7 @@ import { IconArrowUp } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import ToolboxButtonWithIconPopup from '../../../base/toolbox/components/web/ToolboxButtonWithIconPopup';
 import { toggleReactionsMenuVisibility } from '../../actions.web';
-import { type ReactionEmojiProps } from '../../constants';
+import { ReactionEmojiProps } from '../../constants';
 import { getReactionsQueue, isReactionsEnabled } from '../../functions.any';
 import { getReactionsMenuVisibility } from '../../functions.web';
 
@@ -111,11 +111,9 @@ function ReactionsMenuButton({
                         ariaExpanded = { isOpen }
                         ariaHasPopup = { true }
                         ariaLabel = { t('toolbar.accessibilityLabel.reactionsMenu') }
-                        buttonKey = { buttonKey }
                         icon = { IconArrowUp }
                         iconDisabled = { false }
                         iconId = 'reactions-menu-button'
-                        notifyMode = { notifyMode }
                         onPopoverClose = { toggleReactionsMenu }
                         onPopoverOpen = { openReactionsMenu }
                         popoverContent = { reactionsMenu }

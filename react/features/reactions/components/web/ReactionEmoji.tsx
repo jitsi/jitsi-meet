@@ -1,6 +1,4 @@
-// @flow
-
-import React, { Component } from 'react';
+import React, { Component, Dispatch } from 'react';
 
 import { connect } from '../../../base/redux';
 import { removeReaction } from '../../actions.any';
@@ -21,7 +19,7 @@ type Props = {
     /**
      * Removes reaction from redux state.
      */
-    removeReaction: Function,
+    reactionRemove: Function,
 
     /**
      * Index of the reaction in the queue.
@@ -64,7 +62,7 @@ class ReactionEmoji extends Component<Props, State> {
      * @inheritdoc
      */
     componentDidMount() {
-        setTimeout(() => this.props.removeReaction(this.props.uid), 5000);
+        setTimeout(() => this.props.reactionRemove(this.props.uid), 5000);
     }
 
     /**
@@ -79,18 +77,15 @@ class ReactionEmoji extends Component<Props, State> {
         return (
             <div
                 className = { `reaction-emoji reaction-${index}` }
-                id = { uid }>
+                id = { `${uid}` }>
                 { REACTIONS[reaction].emoji }
             </div>
         );
     }
 }
 
-const mapDispatchToProps = {
-    removeReaction
-};
+const mapDispatchToProps = (dispatch) => ({
+    reactionRemove: (uid: number) => dispatch(removeReaction(uid))
+});
 
-export default connect(
-    null,
-    mapDispatchToProps
-)(ReactionEmoji);
+export default connect(null, mapDispatchToProps)(ReactionEmoji);

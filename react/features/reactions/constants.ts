@@ -1,5 +1,3 @@
-// @flow
-
 import {
     CLAP_SOUND_FILES,
     LAUGH_SOUND_FILES,
@@ -147,3 +145,8 @@ export const REACTIONS = {
         soundFiles: SILENCE_SOUND_FILES
     }
 };
+
+export type ReactionThreshold = {
+    reaction: string,
+    threshold: number
+}
