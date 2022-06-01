@@ -1,0 +1,25 @@
+.toolbox-content-wrapper{
+    display:flex;
+    flex-direction:column;
+    margin:0 16%;
+    max-width:100%
+}
+.new-toolbox {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    transition: bottom .3s ease-in;
+    width: 100%;
+    pointer-events: none;
+    z-index: 252;
+}
+@media only screen and (max-width: 1610px) {
+    .toolbox-content-wrapper {
+        display:flex;
+        flex-direction:column;
+        margin:0 11%;
+        max-width:100%
+    }
+  }
+

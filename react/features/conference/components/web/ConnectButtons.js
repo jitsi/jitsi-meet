@@ -7,11 +7,6 @@ import { connect } from '../../../base/redux';
 import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';
 // import { Modal, Button } from "react-bootstrap";
 import { openDialog, toggleDialog } from '../../../base/dialog';
-import { NewModal1 } from '../../../Modal';
-import { NewModal2 } from '../../../Modal';
-import { NewModal3 } from '../../../Modal';
-import { NewModal4 } from '../../../Modal';
-import { NewModal5 } from '../../../Modal';
 
 
 declare var interfaceConfig: Object;
@@ -63,28 +58,23 @@ function ConnectButtons({
         <div style={{ display: 'flex', justifyContent: 'initial', alignSelf: 'flex-start' }}>
           <div style={{ borderRadius: '40%', margin: '10px' }}
             className='invite-more-button'
-            onClick={()=> { dispatch(openDialog(NewModal1))}}>
+            onClick={()=> {}}>
             <Icon src={IconBeer}/>
           </div>
           <div style={{ borderRadius: '40%', margin: '10px' }}
             className='invite-more-button'
-            onClick={()=> { dispatch(openDialog(NewModal2))}}>
+            onClick={()=> {}}>
             <Icon src={IconGem} />
           </div>
           <div style={{ borderRadius: '40%', margin: '10px' }}
             className='invite-more-button'
-            onClick={()=> { dispatch(openDialog(NewModal3))}}>
+            onClick={()=> {}}>
             <Icon src={IconEightStreek} />
           </div>
           <div style={{ borderRadius: '40%', margin: '10px' }}
             className='invite-more-button'
-            onClick={()=> { dispatch(openDialog(NewModal4))}}>
+            onClick={()=> {}}>
             <Icon src={IconCyclone} />
-          </div>
-          <div style={{ borderRadius: '40%', margin: '10px' }}
-            className='invite-more-button'
-            onClick={()=> { dispatch(openDialog(NewModal5))}}>
-            <Icon src={IconDollarGreen} />
           </div>
         </div>
       </div> : null

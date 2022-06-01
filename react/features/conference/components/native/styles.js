@@ -220,7 +220,6 @@ export default {
       },
       TextFields:{
         color: 'black',
-        
       },
 
     lonelyMeetingContainer: {

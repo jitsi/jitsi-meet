@@ -74,51 +74,54 @@ function Toolbox(props: Props) {
     };
 
     return (
-        <View style = {styles.SubContainer}>
+        <View style={styles.SubContainer}>
             <View
-            pointerEvents = 'box-none'
-            style = { styles.toolboxContainer }>
-            <SafeAreaView
-                accessibilityRole = 'toolbar'
-                edges = { [ bottomEdge && 'bottom' ].filter(Boolean) }
-                pointerEvents = 'box-none'
-                style = { styles.toolbox }>
-                <AudioMuteButton
-                    styles = { buttonStylesBorderless }
-                    toggledStyles = { toggledButtonStyles } />
-                <VideoMuteButton
-                    styles = { buttonStylesBorderless }
-                    toggledStyles = { toggledButtonStyles } />
-                {
-                    additionalButtons.has('chat')
-                      && <ChatButton
-                          styles = { buttonStylesBorderless }
-                          toggledStyles = { backgroundToggledStyle } />
-                }
+                pointerEvents='box-none'
+                style={styles.toolboxContainer}>
+                <SafeAreaView
+                    accessibilityRole='toolbar'
+                    edges={[bottomEdge && 'bottom'].filter(Boolean)}
+                    pointerEvents='box-none'
+                    style={styles.toolbox}>
+                    <AudioMuteButton
+                        styles={buttonStylesBorderless}
+                        toggledStyles={toggledButtonStyles} />
+                    <VideoMuteButton
+                        styles={buttonStylesBorderless}
+                        toggledStyles={toggledButtonStyles} />
+                    {
+                        additionalButtons.has('chat')
+                        && <ChatButton
+                            styles={buttonStylesBorderless}
+                            toggledStyles={backgroundToggledStyle} />
+                    }
 
-                { additionalButtons.has('raisehand') && (_reactionsEnabled
-                    ? <ReactionsMenuButton
-                        styles = { buttonStylesBorderless }
-                        toggledStyles = { backgroundToggledStyle } />
-                    : <RaiseHandButton
-                        styles = { buttonStylesBorderless }
-                        toggledStyles = { backgroundToggledStyle } />)}
-                {additionalButtons.has('tileview') && <TileViewButton styles = { buttonStylesBorderless } />}
-                {additionalButtons.has('participantspane')
-                && <ParticipantsPaneButton
-                    styles = { buttonStylesBorderless } />
-                }
-                {additionalButtons.has('togglecamera')
+                    {additionalButtons.has('raisehand') && (_reactionsEnabled
+                        ? <ReactionsMenuButton
+                            styles={buttonStylesBorderless}
+                            toggledStyles={backgroundToggledStyle} />
+                        : <RaiseHandButton
+                            styles={buttonStylesBorderless}
+                            toggledStyles={backgroundToggledStyle} />)}
+                    {additionalButtons.has('tileview') && <TileViewButton styles={buttonStylesBorderless} />}
+                    {additionalButtons.has('participantspane')
+                        && <ParticipantsPaneButton
+                            styles={buttonStylesBorderless} />
+                    }
+                    {/* {additionalButtons.has('togglecamera')
                       && <ToggleCameraButton
                           styles = { buttonStylesBorderless }
-                          toggledStyles = { backgroundToggledStyle } />}
-                <OverflowMenuButton
-                    styles = { buttonStylesBorderless }
-                    toggledStyles = { toggledButtonStyles } />
-                <HangupButton
-                    styles = { hangupButtonStyles } />
-            </SafeAreaView>
-        </View>
+                          toggledStyles = { backgroundToggledStyle } />} */}
+                    <ToggleCameraButton
+                        styles={buttonStylesBorderless}
+                        toggledStyles={backgroundToggledStyle} />
+                    <OverflowMenuButton
+                        styles={buttonStylesBorderless}
+                        toggledStyles={toggledButtonStyles} />
+                    <HangupButton
+                        styles={hangupButtonStyles} />
+                </SafeAreaView>
+            </View>
         </View>
     );
 }

@@ -3,6 +3,7 @@
 import { withStyles } from '@material-ui/core/styles';
 import React, { Component } from 'react';
 import { batch } from 'react-redux';
+import './toolbar_buttons.css';
 
 import keyboardShortcut from '../../../../../modules/keyboardshortcut/keyboardshortcut';
 import {

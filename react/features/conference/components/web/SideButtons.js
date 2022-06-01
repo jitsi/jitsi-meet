@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { translate } from '../../../base/i18n';
-import { Icon, IconAdd,IconBookmark, IconTicket } from '../../../base/icons';
+import { Icon, IconAdd, IconBookmark, IconTicket } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';
 import { openDialog, toggleDialog } from '../../../base/dialog';
@@ -52,19 +52,19 @@ function SideButtons({
 }: Props) {
     return (
         true
-            ? <div className = { `invite-more-container${true ? '' : ' elevated'}` }>
-                   <div style = {{display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-start'}}>
-                   <div style={{borderRadius: '40%', margin: '10px'}}
-                        className = 'invite-more-button'
-                        onClick={()=> { dispatch(openDialog(NewModal6))}}>
-                        <Icon src = { IconBookmark } />
+            ? <div className={`invite-more-container${true ? '' : ' elevated'}`}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
+                    <div style={{ borderRadius: '40%', margin: '10px' }}
+                        className='invite-more-button'
+                        onClick={() => { dispatch(openDialog(NewModal6)) }}>
+                        <Icon src={IconBookmark} />
                     </div>
-                    <div style={{borderRadius: '40%', margin: '10px'}}
-                        className = 'invite-more-button'
-                        onClick={()=> { dispatch(openDialog(NewModal7))}}>
-                        <Icon src = { IconTicket } />
+                    <div style={{ borderRadius: '40%', margin: '10px' }}
+                        className='invite-more-button'
+                        onClick={() => { dispatch(openDialog(NewModal7)) }}>
+                        <Icon src={IconTicket} />
                     </div>
-                   </div>
+                </div>
             </div> : null
     );
 }

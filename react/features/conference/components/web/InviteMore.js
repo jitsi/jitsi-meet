@@ -52,25 +52,25 @@ function InviteMore({
             e.preventDefault();
             onClick();
         }
-    }, [ onClick ]);
+    }, [onClick]);
 
     return (
-        _shouldShow
-            ? <div className = { `invite-more-container${_toolboxVisible ? '' : ' elevated'}` }>
-                <div className = 'invite-more-content'>
-                    {/* <div
-                        className = 'invite-more-header'
-                        role = 'heading'>
-                        {t('addPeople.inviteMoreHeader')}
-                    </div> */}
+        true
+            ? <div className={`invite-more-container${true ? '' : ' elevated'}`}>
+                <div className='invite-more-content'>
                     <div
-                        className = 'invite-more-button'
-                        onClick = { onClick }
-                        onKeyPress = { onKeyPressHandler }
-                        role = 'button'
-                        tabIndex = { 0 }>
-                        <Icon src = { IconInviteMore } />
-                        <div className = 'invite-more-button-text'>
+                        className='invite-more-header'
+                        role='heading'>
+                        {t('addPeople.inviteMoreHeader')}
+                    </div>
+                    <div
+                        className='invite-more-button'
+                        onClick={onClick}
+                        onKeyPress={onKeyPressHandler}
+                        role='button'
+                        tabIndex={0}>
+                        <Icon src={IconInviteMore} />
+                        <div className='invite-more-button-text'>
                             {t('addPeople.inviteMorePrompt')}
                         </div>
                     </div>

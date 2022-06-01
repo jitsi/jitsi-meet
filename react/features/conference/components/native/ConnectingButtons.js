@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
-import { Alert, Modal, StyleSheet, Text, TouchableOpacity, Pressable, View } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Alert, Modal, StyleSheet, Text, TouchableOpacity, Pressable, View, LogBox, Linking } from 'react-native';
 import styles from './styles';
-import { Icon, IconAdd, IconBookmark, IconDollar, IconCart, IconDollarGreen,IconCyclone,IconEightStreek,IconBeer,IconGem } from '../../../base/icons';
-//import Toast from 'react-native-simple-toast';
+import { Icon, IconAdd, IconBookmark, IconDollar, IconCart, IconDollarGreen, IconCyclone, IconEightStreek, IconBeer, IconGem } from '../../../base/icons';
 
+const url1 = 'https://www.google.com/';
+const url2 = 'https://www.linkedin.com/';
+const url3 = 'https://www.climatekk.com/';
+const url4 = 'https://github.com/';
 
 const ConnectingButtons = () => {
   const [Button1, setButton1] = useState(false);
@@ -11,230 +14,51 @@ const ConnectingButtons = () => {
   const [Button3, setButton3] = useState(false);
   const [Button4, setButton4] = useState(false);
   const [Button5, setButton5] = useState(false);
+  const [time, setTime] = useState(false);
+  useEffect(() => {
+    setTimeout(() => {
+      setTime(!time)
+    }, 10000)
+  }, [time])
+  useEffect(() => {
+    LogBox.ignoreLogs(["`new NativeEventEmitter()` was called with a non-null argument without the required `addListener` method", "`new NativeEventEmitter()` was called with a non-null argument without the required `removeListeners` method"])
+  })
   return (
-    <View>
-        <View style={styles.ScreenButtons}>                  
-          <View>
-            <Modal
-              animationType="fade"
-              transparent={true}
-              visible={Button1}
-              onRequestClose={() => {
-                setButton1(!Button1);
-              }}>
-              <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                    <View style={styles.Textview}>
-                        <TouchableOpacity><View style={styles.IconText}><Icon 
-                          size = { 20 }
-                          src = { IconDollar }
-                          style = { styles.Icons}/><Text style={styles.TextFields}>Buy this Now</Text></View>
-                        </TouchableOpacity>
-                        <TouchableOpacity><View style={styles.IconText}><Icon 
-                          size = { 20 }
-                          src = { IconCart }
-                          style = { styles.Icons}/><Text style={styles.TextFields}>Add to Cart</Text></View>
-                        </TouchableOpacity>
-                        <TouchableOpacity><View style={styles.IconText}><Icon 
-                          size = { 20 }
-                          src = { IconBookmark }
-                          style = { styles.Icons}/><Text style={styles.TextFields}>Save as TokShop</Text></View>
-                        </TouchableOpacity>
-                    </View>
-                    <TouchableOpacity
-                      style={[ styles.buttonClose]}
-                      onPress={() => setButton1(!Button1)}>
-                      <Text style={styles.textStyle}>Cancel</Text>
-                    </TouchableOpacity>
-                </View>
-              </View>
-            </Modal>
-            <TouchableOpacity
-              onPress={() => setButton1(true)}
-            >
-               <Icon 
-                    size = { 28 }
-                    src = { IconBeer }
-                    style = { styles.ConnectingButtons } />
-            </TouchableOpacity>
-          </View>
-          <View>
-            <Modal
-              animationType="fade"
-              transparent={true}
-              visible={Button2}
-              onRequestClose={() => {
-                setButton2(!Button2);
-              }}>
-              <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                    <View style={styles.Textview}>
-                        <TouchableOpacity><View style={styles.IconText}><Icon 
-                          size = { 20 }
-                          src = { IconDollar }
-                          style = { styles.Icons}/><Text style={styles.TextFields}>Buy this Now</Text></View>
-                        </TouchableOpacity>
-                        <TouchableOpacity><View style={styles.IconText}><Icon 
-                          size = { 20 }
-                          src = { IconCart }
-                          style = { styles.Icons}/><Text style={styles.TextFields}>Add to Cart</Text></View>
-                        </TouchableOpacity>
-                        <TouchableOpacity><View style={styles.IconText}><Icon 
-                          size = { 20 }
-                          src = { IconBookmark }
-                          style = { styles.Icons}/><Text style={styles.TextFields}>Save as TokShop</Text></View>
-                        </TouchableOpacity>
-                    </View>
-                    <TouchableOpacity
-                      style={[ styles.buttonClose]}
-                      onPress={() => setButton2(!Button2)}>
-                      <Text style={styles.textStyle}>Cancel</Text>
-                    </TouchableOpacity>
-                </View>
-              </View>
-            </Modal>
-            <TouchableOpacity
-              onPress={() => setButton2(true)}
-            >
-               <Icon 
-                    size = { 28 }
-                    src = { IconGem }
-                    style = { styles.ConnectingButtons } />
-            </TouchableOpacity>
-          </View>
-          <View>
-            <Modal
-              animationType="fade"
-              transparent={true}
-              visible={Button3}
-              onRequestClose={() => {
-                setButton3(!Button3);
-              }}>
-              <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                    <View style={styles.Textview}>
-                        <TouchableOpacity><View style={styles.IconText}><Icon 
-                          size = { 20 }
-                          src = { IconDollar }
-                          style = { styles.Icons}/><Text style={styles.TextFields}>Buy this Now</Text></View>
-                        </TouchableOpacity>
-                        <TouchableOpacity><View style={styles.IconText}><Icon 
-                          size = { 20 }
-                          src = { IconCart }
-                          style = { styles.Icons}/><Text style={styles.TextFields}>Add to Cart</Text></View>
-                        </TouchableOpacity>
-                        <TouchableOpacity><View style={styles.IconText}><Icon 
-                          size = { 20 }
-                          src = { IconBookmark }
-                          style = { styles.Icons}/><Text style={styles.TextFields}>Save as TokShop</Text></View>
-                        </TouchableOpacity>
-                    </View>
-                    <TouchableOpacity
-                      style={[ styles.buttonClose]}
-                      onPress={() => setButton3(!Button3)}>
-                      <Text style={styles.textStyle}>Cancel</Text>
-                    </TouchableOpacity>
-                </View>
-              </View>
-            </Modal>
-            <TouchableOpacity
-              onPress={() => setButton3(true)}
-            >
-               <Icon 
-                    size = { 28 }
-                    src = { IconEightStreek }
-                    style = { styles.ConnectingButtons } />
-            </TouchableOpacity>
-          </View>
-          <View >
-            <Modal
-              animationType="fade"
-              transparent={true}
-              visible={Button4}
-              onRequestClose={() => {
-                setButton4(!Button4);
-              }}>
-              <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                    <View style={styles.Textview}>
-                        <TouchableOpacity><View style={styles.IconText}><Icon 
-                          size = { 20 }
-                          src = { IconDollar }
-                          style = { styles.Icons}/><Text style={styles.TextFields}>Buy this Now</Text></View>
-                        </TouchableOpacity>
-                        <TouchableOpacity><View style={styles.IconText}><Icon 
-                          size = { 20 }
-                          src = { IconCart }
-                          style = { styles.Icons}/><Text style={styles.TextFields}>Add to Cart</Text></View>
-                        </TouchableOpacity>
-                        <TouchableOpacity><View style={styles.IconText}><Icon 
-                          size = { 20 }
-                          src = { IconBookmark }
-                          style = { styles.Icons}/><Text style={styles.TextFields}>Save as TokShop</Text></View>
-                        </TouchableOpacity>
-                    </View>
-                    <TouchableOpacity
-                      style={[ styles.buttonClose]}
-                      onPress={() => setButton4(!Button4)}>
-                      <Text style={styles.textStyle}>Cancel</Text>
-                    </TouchableOpacity>
-                </View>
-              </View>
-            </Modal>
-            <TouchableOpacity
-              onPress={() => setButton4(true)}
-            >
-               <Icon 
-                    size = { 28 }
-                    src = { IconCyclone }
-                    style = { styles.ConnectingButtons } />
-            </TouchableOpacity>
-          </View>
-          <View>
-            <Modal
-              animationType="fade"
-              transparent={true}
-              visible={Button5}
-              onRequestClose={() => {
-                setButton5(!Button5);
-              }}>
-              <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                     <View style={styles.Textview}>
-                        <TouchableOpacity><View style={styles.IconText}><Icon 
-                          size = { 20 }
-                          src = { IconDollar }
-                          style = { styles.Icons}/><Text style={styles.TextFields}>Buy this Now</Text></View>
-                        </TouchableOpacity>
-                        <TouchableOpacity><View style={styles.IconText}><Icon 
-                          size = { 20 }
-                          src = { IconCart }
-                          style = { styles.Icons}/><Text style={styles.TextFields}>Add to Cart</Text></View>
-                        </TouchableOpacity>
-                        <TouchableOpacity><View style={styles.IconText}><Icon 
-                          size = { 20 }
-                          src = { IconBookmark }
-                          style = { styles.Icons}/><Text style={styles.TextFields}>Save as TokShop</Text></View>
-                        </TouchableOpacity>
-                    </View>
-                    <TouchableOpacity
-                      style={[ styles.buttonClose]}
-                      onPress={() => setButton5(!Button5)}>
-                      <Text style={styles.textStyle}>Cancel</Text>
-                    </TouchableOpacity>
-                </View>
-              </View>
-            </Modal>
-            <TouchableOpacity
-              onPress={() => setButton5(true)}
-            >
-               <Icon 
-                    size = { 28 }
-                    src = { IconDollarGreen }
-                    style = { styles.ConnectingButtons } />
-            </TouchableOpacity>
-          </View>
-      </View>
+    <View style={styles.ScreenButtons}>
+      {time ? <View style={{ flexDirection: 'row' }}>
+        <TouchableOpacity style={styles.links}
+          onPress={() => Linking.openURL(url1)}
+        >
+          <Icon
+            size={28}
+            src={IconBeer}
+            style={styles.ConnectingButtons} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => Linking.openURL(url2)}
+        >
+          <Icon
+            size={28}
+            src={IconGem}
+            style={styles.ConnectingButtons} />
+        </TouchableOpacity>
+      </View> :
+        <View style={{ flexDirection: 'row' }}>
+          <TouchableOpacity
+            onPress={() => Linking.openURL(url3)}>
+            <Icon
+              size={28}
+              src={IconEightStreek}
+              style={styles.ConnectingButtons} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => Linking.openURL(url4)}>
+            <Icon
+              size={28}
+              src={IconCyclone}
+              style={styles.ConnectingButtons} />
+          </TouchableOpacity>
+        </View>}
     </View>
   );
 }

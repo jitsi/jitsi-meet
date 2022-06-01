@@ -150,6 +150,7 @@
     "@types/react-native": "0.67.6",
     "babel-loader": "8.2.3",
     "babel-plugin-optional-require": "0.3.1",
+    "babel-plugin-transform-remove-console": "^6.9.4",
     "circular-dependency-plugin": "5.2.0",
     "clean-css-cli": "4.3.0",
     "css-loader": "3.6.0",
