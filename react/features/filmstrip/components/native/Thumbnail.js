@@ -213,6 +213,7 @@ class Thumbnail extends PureComponent<Props> {
     _renderIndicators() {
         const {
             _audioMuted: audioMuted,
+            _isMultiStreamSupportEnabled,
             _isScreenShare: isScreenShare,
             _isVirtualScreenshare,
             _isFakeParticipant,
@@ -246,7 +247,7 @@ class Thumbnail extends PureComponent<Props> {
                     { audioMuted && !_isVirtualScreenshare && <AudioMutedIndicator /> }
                     { !tileView && _pinned && <PinnedIndicator />}
                     { renderModeratorIndicator && !_isVirtualScreenshare && <ModeratorIndicator />}
-                    { !tileView && (isScreenShare || _isVirtualScreenshare)
+                    { !tileView && ((isScreenShare && !_isMultiStreamSupportEnabled) || _isVirtualScreenshare)
                         && <ScreenShareIndicator />
                     }
                 </Container>
