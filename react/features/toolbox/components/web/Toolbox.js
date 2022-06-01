@@ -458,7 +458,7 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     componentWillUnmount() {
-        [ 'A', 'C', 'D', 'R', 'S' ].forEach(letter =>
+        ['A', 'C', 'D', 'R', 'S'].forEach(letter =>
             APP.keyboardshortcut.unregisterShortcut(letter));
 
         if (this.props._reactionsEnabled) {
@@ -480,14 +480,13 @@ class Toolbox extends Component<Props> {
         }
 
         const { _chatOpen, _visible, _toolbarButtons } = this.props;
-        const rootClassNames = `new-toolbox ${_visible ? 'visible' : ''} ${
-            _toolbarButtons.length ? '' : 'no-buttons'} ${_chatOpen ? 'shift-right' : ''}`;
+        const rootClassNames = `new-toolbox ${_visible ? 'visible' : ''} ${_toolbarButtons.length ? '' : 'no-buttons'} ${_chatOpen ? 'shift-right' : ''}`;
 
         return (
             <div
-                className = { rootClassNames }
-                id = 'new-toolbox'>
-                { this._renderToolboxContent() }
+                className={rootClassNames}
+                id='new-toolbox'>
+                {this._renderToolboxContent()}
             </div>
         );
     }
@@ -1113,11 +1112,11 @@ class Toolbox extends Component<Props> {
             return;
         }
         sendAnalytics(createShortcutEvent(
-                'toggle.screen.sharing',
-                ACTION_SHORTCUT_TRIGGERED,
-                {
-                    enable: !this.props._screenSharing
-                }));
+            'toggle.screen.sharing',
+            ACTION_SHORTCUT_TRIGGERED,
+            {
+                enable: !this.props._screenSharing
+            }));
 
         this._doToggleScreenshare();
     }
@@ -1198,9 +1197,9 @@ class Toolbox extends Component<Props> {
     _onToolbarToggleFullScreen() {
         sendAnalytics(createToolbarEvent(
             'toggle.fullscreen',
-                {
-                    enable: !this.props._fullScreen
-                }));
+            {
+                enable: !this.props._fullScreen
+            }));
         this._closeOverflowMenuIfOpen();
         this._doToggleFullScreen();
     }
@@ -1311,41 +1310,45 @@ class Toolbox extends Component<Props> {
         const { mainMenuButtons, overflowMenuButtons } = this._getVisibleButtons();
 
         return (
-            <div className = { containerClassName }>
-                <div>
+            <div className={containerClassName}>
+                <div className='toolbox-content-wrapper'
+                    onFocus={this._onTabIn}
+                    {...(_isMobile ? {} : {
+                        onMouseOut: this._onMouseOut,
+                        onMouseOver: this._onMouseOver
+                    })}>
                     <SideButtons />
                     <ConnectButtons />
                 </div>
                 <div
-                    className = 'toolbox-content-wrapper'
-                    onFocus = { this._onTabIn }
-                    { ...(_isMobile ? {} : {
+                    className='toolbox-content-wrapper1'
+                    onFocus={this._onTabIn}
+                    {...(_isMobile ? {} : {
                         onMouseOut: this._onMouseOut,
                         onMouseOver: this._onMouseOver
-                    }) }>
-
-                    <div className = 'toolbox-content-items'>
+                    })}>
+                    <div className='toolbox-content-items'>
                         {mainMenuButtons.map(({ Content, key, ...rest }) => Content !== Separator && (
                             <Content
-                                { ...rest }
-                                buttonKey = { key }
-                                key = { key } />))}
+                                {...rest}
+                                buttonKey={key}
+                                key={key} />))}
 
                         {Boolean(overflowMenuButtons.length) && (
                             <OverflowMenuButton
-                                ariaControls = 'overflow-menu'
-                                isOpen = { _overflowMenuVisible }
-                                key = 'overflow-menu'
-                                onVisibilityChange = { this._onSetOverflowVisible }
-                                showMobileReactions = {
+                                ariaControls='overflow-menu'
+                                isOpen={_overflowMenuVisible}
+                                key='overflow-menu'
+                                onVisibilityChange={this._onSetOverflowVisible}
+                                showMobileReactions={
                                     _reactionsEnabled && overflowMenuButtons.find(({ key }) => key === 'raisehand')
                                 }>
                                 <ContextMenu
-                                    accessibilityLabel = { t(toolbarAccLabel) }
-                                    className = { classes.contextMenu }
-                                    hidden = { false }
-                                    inDrawer = { _overflowDrawer }
-                                    onKeyDown = { this._onEscKey }>
+                                    accessibilityLabel={t(toolbarAccLabel)}
+                                    className={classes.contextMenu}
+                                    hidden={false}
+                                    inDrawer={_overflowDrawer}
+                                    onKeyDown={this._onEscKey}>
                                     {overflowMenuButtons.reduce((acc, val) => {
                                         if (acc.length) {
                                             const prev = acc[acc.length - 1];
@@ -1354,34 +1357,34 @@ class Toolbox extends Component<Props> {
                                             if (group === val.group) {
                                                 prev.push(val);
                                             } else {
-                                                acc.push([ val ]);
+                                                acc.push([val]);
                                             }
                                         } else {
-                                            acc.push([ val ]);
+                                            acc.push([val]);
                                         }
 
                                         return acc;
                                     }, []).map(buttonGroup => (
-                                        <ContextMenuItemGroup key = { `group-${buttonGroup[0].group}` }>
+                                        <ContextMenuItemGroup key={`group-${buttonGroup[0].group}`}>
                                             {buttonGroup.map(({ key, Content, ...rest }) => (
                                                 key !== 'raisehand' || !_reactionsEnabled)
                                                 && <Content
-                                                    { ...rest }
-                                                    buttonKey = { key }
-                                                    contextMenu = { true }
-                                                    key = { key }
-                                                    showLabel = { true } />)}
+                                                    {...rest}
+                                                    buttonKey={key}
+                                                    contextMenu={true}
+                                                    key={key}
+                                                    showLabel={true} />)}
                                         </ContextMenuItemGroup>))}
                                 </ContextMenu>
                             </OverflowMenuButton>
                         )}
 
                         <HangupButton
-                            buttonKey = 'hangup'
-                            customClass = 'hangup-button'
-                            key = 'hangup-button'
-                            notifyMode = { this._getButtonNotifyMode('hangup') }
-                            visible = { isToolbarButtonEnabled('hangup', _toolbarButtons) } />
+                            buttonKey='hangup'
+                            customClass='hangup-button'
+                            key='hangup-button'
+                            notifyMode={this._getButtonNotifyMode('hangup')}
+                            visible={isToolbarButtonEnabled('hangup', _toolbarButtons)} />
                     </div>
                 </div>
             </div>

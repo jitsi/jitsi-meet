@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { translate } from '../../../base/i18n';
-import { Icon, IconAdd, IconBookmark, IconTicket } from '../../../base/icons';
+import { Icon, IconAdd, IconBookmark, IconTicket,IconCart } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';
 import { openDialog, toggleDialog } from '../../../base/dialog';
@@ -47,6 +47,7 @@ function SideButtons({
     _shouldShow,
     _toolboxVisible,
     onClick,
+    onSubmit,
     t,
     dispatch,
 }: Props) {

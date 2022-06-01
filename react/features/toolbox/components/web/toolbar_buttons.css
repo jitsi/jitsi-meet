@@ -1,7 +1,13 @@
 .toolbox-content-wrapper{
     display:flex;
     flex-direction:column;
-    margin:0 16%;
+    margin:0 8%;
+    max-width:100%
+}
+.toolbox-content-wrapper1{
+    display:flex;
+    flex-direction:column;
+    margin:0 10%;
     max-width:100%
 }
 .new-toolbox {
@@ -22,4 +28,21 @@
         max-width:100%
     }
   }
+  @media only screen and (max-width: 1610px) {
+    .toolbox-content-wrapper1 {
+        display:flex;
+        flex-direction:column;
+        margin:0 11%;
+        max-width:100%
+    }
+  }
+  .premeeting-screen .content-controls #new-toolbox .toolbox-content-items {
+    background: 0 0;
+    box-shadow: none;
+    display: flex;
+    justify-content: space-evenly;
+    padding: 8px 0;
+    margin-left: 50%;
+}
+
 

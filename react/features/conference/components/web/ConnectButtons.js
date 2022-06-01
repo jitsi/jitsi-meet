@@ -1,8 +1,8 @@
 // @flow
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { translate } from '../../../base/i18n';
-import { Icon, IconAdd,IconGem,IconBeer,IconEightStreek,IconCyclone,IconDollarGreen } from '../../../base/icons';
+import { Icon, IconAdd, IconGem, IconBeer, IconEightStreek, IconCyclone, IconDollarGreen } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';
 // import { Modal, Button } from "react-bootstrap";
@@ -32,7 +32,7 @@ type Props = {
    * Invoked to obtain translated strings.
    */
   t: Function,
-  dispatch : Function,
+  dispatch: Function,
 
 }
 
@@ -44,7 +44,11 @@ type Props = {
  * @returns {React$Element<any>}
  */
 
- 
+ const url1 = 'https://www.google.com/';
+ const url2 = 'https://www.linkedin.com/';
+ const url3 = 'https://www.climatekk.com/';
+ const url4 = 'https://github.com/';
+
 function ConnectButtons({
   _shouldShow,
   _toolboxVisible,
@@ -52,31 +56,38 @@ function ConnectButtons({
   t,
   dispatch,
 }: Props) {
+  const [timer, setTimer] = useState(false);
+  useEffect(() => {
+    setTimeout(() => {
+      setTimer(!timer)
+    }, 10000)
+  }, [timer])
   return (
     true
       ? <div className={`invite-more-container${true ? '' : ' elevated'}`}>
-        <div style={{ display: 'flex', justifyContent: 'initial', alignSelf: 'flex-start' }}>
+        {timer ? <div style={{ display: 'flex', justifyContent: 'initial', alignSelf: 'flex-start' }}>
           <div style={{ borderRadius: '40%', margin: '10px' }}
             className='invite-more-button'
-            onClick={()=> {}}>
-            <Icon src={IconBeer}/>
+            onClick={() => {window.open(url1)}}>
+            <Icon src={IconBeer} />
           </div>
           <div style={{ borderRadius: '40%', margin: '10px' }}
             className='invite-more-button'
-            onClick={()=> {}}>
+            onClick={() => {window.open(url2) }}>
             <Icon src={IconGem} />
           </div>
+        </div> : <div style={{ display: 'flex', justifyContent: 'initial', alignSelf: 'flex-start' }}>
           <div style={{ borderRadius: '40%', margin: '10px' }}
             className='invite-more-button'
-            onClick={()=> {}}>
+            onClick={() => {window.open(url3)}}>
             <Icon src={IconEightStreek} />
           </div>
           <div style={{ borderRadius: '40%', margin: '10px' }}
             className='invite-more-button'
-            onClick={()=> {}}>
+            onClick={() => {window.open(url4) }}>
             <Icon src={IconCyclone} />
           </div>
-        </div>
+        </div>}
       </div> : null
   );
 }

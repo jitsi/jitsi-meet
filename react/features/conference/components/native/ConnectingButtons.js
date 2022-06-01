@@ -20,9 +20,6 @@ const ConnectingButtons = () => {
       setTime(!time)
     }, 10000)
   }, [time])
-  useEffect(() => {
-    LogBox.ignoreLogs(["`new NativeEventEmitter()` was called with a non-null argument without the required `addListener` method", "`new NativeEventEmitter()` was called with a non-null argument without the required `removeListeners` method"])
-  })
   return (
     <View style={styles.ScreenButtons}>
       {time ? <View style={{ flexDirection: 'row' }}>
