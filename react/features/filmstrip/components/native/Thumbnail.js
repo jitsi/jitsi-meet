@@ -213,6 +213,7 @@ class Thumbnail extends PureComponent<Props> {
     _renderIndicators() {
         const {
             _audioMuted: audioMuted,
+            _isMultiStreamSupportEnabled,
             _isScreenShare: isScreenShare,
             _isVirtualScreenshare,
             _isFakeParticipant,
@@ -246,8 +247,9 @@ class Thumbnail extends PureComponent<Props> {
                     { audioMuted && !_isVirtualScreenshare && <AudioMutedIndicator /> }
                     { !tileView && _pinned && <PinnedIndicator />}
                     { renderModeratorIndicator && !_isVirtualScreenshare && <ModeratorIndicator />}
-                    { !tileView && (isScreenShare || _isVirtualScreenshare)
-                        && <ScreenShareIndicator />
+                    { !tileView && ((isScreenShare && !_isMultiStreamSupportEnabled) || _isVirtualScreenshare)
+                        && <ScreenShareIndicator /> /* Do not show screensharing indicator on the local camera
+                        thumbnail when a virtual SS participant tile is created for local screenshare */
                     }
                 </Container>
                 {
