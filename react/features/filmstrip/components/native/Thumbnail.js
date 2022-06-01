@@ -248,7 +248,8 @@ class Thumbnail extends PureComponent<Props> {
                     { !tileView && _pinned && <PinnedIndicator />}
                     { renderModeratorIndicator && !_isVirtualScreenshare && <ModeratorIndicator />}
                     { !tileView && ((isScreenShare && !_isMultiStreamSupportEnabled) || _isVirtualScreenshare)
-                        && <ScreenShareIndicator />
+                        && <ScreenShareIndicator /> /* Do not show screensharing indicator on the local camera
+                        thumbnail when a virtual SS participant tile is created for local screenshare */
                     }
                 </Container>
                 {
