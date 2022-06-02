@@ -296,7 +296,7 @@ var config = {
     // liveStreamingEnabled: false,
 
     // Whether to enable local recording or not.
-    // enableLocalRecording: false
+    // enableLocalRecording: false,
 
     // Transcription (in interface_config,
     // subtitles and buttons can be configured)

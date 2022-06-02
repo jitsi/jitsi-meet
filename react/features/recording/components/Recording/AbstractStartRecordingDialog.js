@@ -295,26 +295,24 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
 
         switch (this.state.selectedRecordingService) {
         case RECORDING_TYPES.DROPBOX: {
-            if (_isDropboxEnabled) {
-                if (_token) {
-                    appData = JSON.stringify({
-                        'file_recording_metadata': {
-                            'upload_credentials': {
-                                'service_name': RECORDING_TYPES.DROPBOX,
-                                'token': _token,
-                                'r_token': _rToken,
-                                'app_key': _appKey
-                            }
+            if (_isDropboxEnabled && _token) {
+                appData = JSON.stringify({
+                    'file_recording_metadata': {
+                        'upload_credentials': {
+                            'service_name': RECORDING_TYPES.DROPBOX,
+                            'token': _token,
+                            'r_token': _rToken,
+                            'app_key': _appKey
                         }
-                    });
-                    attributes.type = RECORDING_TYPES.DROPBOX;
-                } else {
-                    dispatch(showErrorNotification({
-                        titleKey: 'dialog.noDropboxToken'
-                    }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+                    }
+                });
+                attributes.type = RECORDING_TYPES.DROPBOX;
+            } else {
+                dispatch(showErrorNotification({
+                    titleKey: 'dialog.noDropboxToken'
+                }, NOTIFICATION_TIMEOUT_TYPE.LONG));
 
-                    return;
-                }
+                return;
             }
             break;
         }

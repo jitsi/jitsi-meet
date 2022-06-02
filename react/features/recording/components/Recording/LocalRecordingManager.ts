@@ -1,10 +1,14 @@
 import { v4 as uuidV4 } from 'uuid';
+import fixWebmDuration from 'webm-duration-fix';
 
+// @ts-ignore
 import { getRoomName } from '../../../base/conference';
+// @ts-ignore
 import { MEDIA_TYPE } from '../../../base/media';
+// @ts-ignore
 import { getTrackState } from '../../../base/tracks';
 // @ts-ignore
-import { stopLocalVideoRecording } from '../../actions';
+import { stopLocalVideoRecording } from '../../actions.any';
 
 interface IReduxStore {
     dispatch: Function;
@@ -30,6 +34,23 @@ interface ILocalRecordingManager {
     totalSize: number;
 }
 
+const getMimeType = (): string => {
+    const possibleTypes = [
+        'video/mp4;codecs=h264',
+        'video/webm;codecs=vp9',
+        'video/webm;codecs=vp8',
+        'video/webm;codecs=h264',
+    ];
+    for(let type of possibleTypes) {
+        if(MediaRecorder.isTypeSupported(type)) {
+            return type;
+        }
+    }
+    return 'video/webm;codecs=h264';
+}
+
+const VIDEO_BIT_RATE = 2500000; // 2.5Mbps in bits
+
 const LocalRecordingManager: ILocalRecordingManager = {
     recordingData: [],
     recorder: undefined,
@@ -37,7 +58,7 @@ const LocalRecordingManager: ILocalRecordingManager = {
     audioContext: undefined,
     audioDestination: undefined,
     roomName: '',
-    mediaType: MediaRecorder.isTypeSupported('video/mp4') ? 'mp4' : 'webm',
+    mediaType: getMimeType(),
     totalSize: 1073741824, // 1GB in bytes
 
     /**
@@ -81,16 +102,17 @@ const LocalRecordingManager: ILocalRecordingManager = {
     /**
      * Saves local recording to file.
      * */
-    saveRecording(recordingData, filename) {
+    async saveRecording(recordingData, filename) {
         // @ts-ignore
-        const blob = new Blob(recordingData, { type: `video/${this.mediaType}` });
+        const blob = await fixWebmDuration(new Blob(recordingData, { type: this.mediaType }));
         // @ts-ignore
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
 
+        const extension = this.mediaType.slice(this.mediaType.indexOf('/') + 1, this.mediaType.indexOf(';'))
         a.style.display = 'none';
         a.href = url;
-        a.download = `${filename}.${this.mediaType}`;
+        a.download = `${filename}.${extension}`;
         a.click();
     },
 
@@ -158,18 +180,18 @@ const LocalRecordingManager: ILocalRecordingManager = {
             gdmStream.getVideoTracks()[0]
         ]);
         this.recorder = new MediaRecorder(this.stream, {
-            mimeType: `video/${this.mediaType}`,
-            videoBitsPerSecond: 2500000 // 2.5Mbps in bits
+            mimeType: this.mediaType,
+            videoBitsPerSecond: VIDEO_BIT_RATE
         });
-        this.recorder.ondataavailable = e => {
+        this.recorder.addEventListener('dataavailable', e => {
             if (e.data && e.data.size > 0) {
                 this.recordingData.push(e.data);
                 this.totalSize -= e.data.size;
-                if(this.totalSize <= 0) {
+                if (this.totalSize <= 0) {
                     this.stopLocalRecording();
                 }
             }
-        };
+        });
 
         this.recorder.addEventListener('stop', () => {
             this.stream?.getTracks().forEach((track: MediaStreamTrack) => track.stop());

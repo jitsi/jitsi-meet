@@ -235,8 +235,8 @@ export const OVERWRITE_PARTICIPANTS_NAMES = 'OVERWRITE_PARTICIPANTS_NAMES';
 /**
  * Updates participants local recording status.
  * {
- *     type: LOCAL_PARTICIPANT_RECORDING_STATUS,
- *     localVideoRecordingHasStarted: boolean
+ *     type: SET_LOCAL_PARTICIPANT_RECORDING_STATUS,
+ *     recording: boolean
  * }
  */
-export const LOCAL_PARTICIPANT_RECORDING_STATUS = 'LOCAL_PARTICIPANT_RECORDING_STATUS';
+export const SET_LOCAL_PARTICIPANT_RECORDING_STATUS = 'SET_LOCAL_PARTICIPANT_RECORDING_STATUS';

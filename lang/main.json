@@ -889,7 +889,7 @@
         "limitNotificationDescriptionWeb": "Due to high demand your recording will be limited to {{limit}} min. For unlimited recordings try <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "linkGenerated": "We have generated a link to your recording.",
         "live": "LIVE",
-        "localRecordingWarning": "Make sure you select the current tab in order to use the right video and audio. The recording is currently limited to 1GB, which is around 100 minutes",
+        "localRecordingWarning": "Make sure you select the current tab in order to use the right video and audio. The recording is currently limited to 1GB, which is around 100 minutes.",
         "loggedIn": "Logged in as {{userName}}",
         "off": "Recording stopped",
         "offBy": "{{name}} stopped the recording",

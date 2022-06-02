@@ -46,6 +46,7 @@ import {
     getSessionById,
     getResourceId
 } from './functions';
+import logger from './logger';
 import {
     LIVE_STREAMING_OFF_SOUND_FILE,
     LIVE_STREAMING_ON_SOUND_FILE,
@@ -131,29 +132,27 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => 
     }
 
     case START_LOCAL_RECORDING: {
-        if (!LocalRecordingManager.isRecordingLocally()) {
-            try {
-                await LocalRecordingManager.startLocalRecording({ dispatch,
-                    getState });
-                const props = {
-                    descriptionKey: 'recording.on',
-                    titleKey: 'dialog.recording'
-                };
+        try {
+            await LocalRecordingManager.startLocalRecording({ dispatch,
+                getState });
+            const props = {
+                descriptionKey: 'recording.on',
+                titleKey: 'dialog.recording'
+            };
 
-                dispatch(playSound(RECORDING_ON_SOUND_ID));
-                dispatch(showNotification(props, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
-                dispatch(updateLocalRecordingStatus(true));
-            } catch (err) {
-                console.error('Capture failed', err);
+            dispatch(playSound(RECORDING_ON_SOUND_ID));
+            dispatch(showNotification(props, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+            dispatch(updateLocalRecordingStatus(true));
+        } catch (err) {
+            logger.error('Capture failed', err);
 
-                const noTabError = err.message === 'WrongSurfaceSelected';
-                const props = {
-                    descriptionKey: noTabError ? 'recording.surfaceError' : 'recording.error',
-                    titleKey: 'recording.failedToStart'
-                };
+            const noTabError = err.message === 'WrongSurfaceSelected';
+            const props = {
+                descriptionKey: noTabError ? 'recording.surfaceError' : 'recording.error',
+                titleKey: 'recording.failedToStart'
+            };
 
-                dispatch(showErrorNotification(props, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
-            }
+            dispatch(showErrorNotification(props, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
         }
         break;
     }

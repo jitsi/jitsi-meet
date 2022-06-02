@@ -325,7 +325,7 @@ class StartRecordingDialogContent extends Component<Props> {
         const { _dialogStyles, _styles: styles, isValidating, isVpaas, t } = this.props;
 
         const switchContent
-            = this.props.integrationsEnabled
+            = this.props.integrationsEnabled || this.props._localRecordingEnabled
                 ? (
                     <Switch
                         className = 'recording-switch'
@@ -338,7 +338,7 @@ class StartRecordingDialogContent extends Component<Props> {
 
         const label = isVpaas ? t('recording.serviceDescriptionCloud') : t('recording.serviceDescription');
         const jitsiContentRecordingIconContainer
-            = this.props.integrationsEnabled
+            = this.props.integrationsEnabled || this.props._localRecordingEnabled
                 ? 'jitsi-content-recording-icon-container-with-switch'
                 : 'jitsi-content-recording-icon-container-without-switch';
         const contentRecordingClass = isVpaas
@@ -486,8 +486,7 @@ class StartRecordingDialogContent extends Component<Props> {
         } = this.props;
 
         // act like group, cannot toggle off
-        if (selectedRecordingService
-                === RECORDING_TYPES.JITSI_REC_SERVICE) {
+        if (selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE) {
             return;
         }
 
@@ -511,8 +510,7 @@ class StartRecordingDialogContent extends Component<Props> {
         } = this.props;
 
         // act like group, cannot toggle off
-        if (selectedRecordingService
-                === RECORDING_TYPES.DROPBOX) {
+        if (selectedRecordingService === RECORDING_TYPES.DROPBOX) {
             return;
         }
 

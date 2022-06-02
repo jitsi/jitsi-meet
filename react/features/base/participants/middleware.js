@@ -37,7 +37,6 @@ import {
     KICK_PARTICIPANT,
     LOCAL_PARTICIPANT_AUDIO_LEVEL_CHANGED,
     LOCAL_PARTICIPANT_RAISE_HAND,
-    LOCAL_PARTICIPANT_RECORDING_STATUS,
     MUTE_REMOTE_PARTICIPANT,
     OVERWRITE_PARTICIPANTS_NAMES,
     OVERWRITE_PARTICIPANT_NAME,
@@ -45,7 +44,8 @@ import {
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
-    RAISE_HAND_UPDATED
+    RAISE_HAND_UPDATED,
+    SET_LOCAL_PARTICIPANT_RECORDING_STATUS
 } from './actionTypes';
 import {
     localParticipantIdChanged,
@@ -177,7 +177,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case LOCAL_PARTICIPANT_RECORDING_STATUS: {
+    case SET_LOCAL_PARTICIPANT_RECORDING_STATUS: {
         const { recording } = action;
         const localId = getLocalParticipant(store.getState())?.id;
 
@@ -595,9 +595,9 @@ function _participantJoinedOrUpdated(store, next, action) {
         email,
         id,
         local,
+        localRecording,
         name,
-        raisedHandTimestamp,
-        localRecording
+        raisedHandTimestamp
     } } = action;
 
     // Send an external update of the local participant's raised hand state
@@ -622,7 +622,6 @@ function _participantJoinedOrUpdated(store, next, action) {
     // Send an external update of the local participant's local recording state
     // if a new local recording state is defined in the action.
     if (typeof localRecording !== 'undefined') {
-
         if (local) {
             const conference = getCurrentConference(getState);
 
