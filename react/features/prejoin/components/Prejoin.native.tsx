@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View, TouchableOpacity, TextInput } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import JitsiScreen from '../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../base/participants';
@@ -16,11 +16,9 @@ import AudioMuteButton from '../../toolbox/components/AudioMuteButton';
 import VideoMuteButton from '../../toolbox/components/VideoMuteButton';
 
 
-interface Props {
-    dispatch: any;
-}
-
-const Prejoin: React.FC<Props> = ({ dispatch }:Props) => {
+const Prejoin: React.FC = () => {
+    const dispatch = useDispatch();
+    const { t } = useTranslation();
     const aspectRatio = useSelector(
             state => state['features/base/responsive-ui']?.aspectRatio
     );
@@ -28,17 +26,13 @@ const Prejoin: React.FC<Props> = ({ dispatch }:Props) => {
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]
         = useState(participantName || '');
-    const { t } = useTranslation();
     const onChangeDisplayName = useCallback(event => {
         const displayName = getFieldValue(event);
 
-        setDisplayName({
+        setDisplayName(displayName);
+        dispatch(updateSettings({
             displayName
-        }, () => {
-            dispatch(updateSettings({
-                displayName
-            }));
-        });
+        }));
     }, [ onChangeDisplayName ]);
 
     let contentStyles;

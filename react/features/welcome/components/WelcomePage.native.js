@@ -316,7 +316,7 @@ class WelcomePage extends AbstractWelcomePage<*> {
             <TouchableHighlight
                 accessibilityLabel =
                     { t('welcomepage.accessibilityLabel.join') }
-                onPress = { navigateRoot(screen.preJoin) }
+                onPress = { this._onJoin }
                 style = { styles.button }
                 underlayColor = { BaseTheme.palette.ui12 }>
                 { children }
