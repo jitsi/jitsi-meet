@@ -184,7 +184,7 @@
     "lint": "eslint  --max-warnings 0 .",
     "lang-sort": "./resources/lang-sort.sh",
     "lint-fix": "eslint  --max-warnings 0 --fix .",
-    "postinstall": "patch-package && jetify",
+    "postinstall": "patch-package --error-on-fail && jetify",
     "validate": "npm ls",
     "start": "make dev"
   }
