@@ -8,12 +8,11 @@ import { getLocalParticipant } from '../../base/participants';
 import { getFieldValue } from '../../base/react';
 import { ASPECT_RATIO_NARROW } from '../../base/responsive-ui';
 import { updateSettings } from '../../base/settings';
-import InviteButton
-    from '../../invite/components/add-people-dialog/native/InviteButton';
 import { LargeVideo } from '../../large-video/components';
-import styles from '../../lobby/components/native/styles.js';
 import AudioMuteButton from '../../toolbox/components/AudioMuteButton';
 import VideoMuteButton from '../../toolbox/components/VideoMuteButton';
+
+import styles from './styles';
 
 
 const Prejoin: React.FC = () => {
@@ -53,7 +52,6 @@ const Prejoin: React.FC = () => {
 
     return (
         <JitsiScreen
-            safeAreaInsets = { [ 'right' ] }
             style = { styles.contentWrapper }>
             <View style = { contentStyles }>
                 <View style = { largeVideoContainerStyles }>
@@ -80,8 +78,6 @@ const Prejoin: React.FC = () => {
                         <AudioMuteButton
                             styles = { styles.buttonStylesBorderless } />
                         <VideoMuteButton
-                            styles = { styles.buttonStylesBorderless } />
-                        <InviteButton
                             styles = { styles.buttonStylesBorderless } />
                     </View>
                 </View>
