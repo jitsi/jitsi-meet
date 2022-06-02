@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Alert, Modal, StyleSheet, Text, TouchableOpacity, Pressable, View, LogBox, Linking } from 'react-native';
 import styles from './styles';
 import { Icon, IconAdd, IconBookmark, IconDollar, IconCart, IconDollarGreen, IconCyclone, IconEightStreek, IconBeer, IconGem } from '../../../base/icons';
+import API from '../services'
 
 const url1 = 'https://www.google.com/';
 const url2 = 'https://www.linkedin.com/';
