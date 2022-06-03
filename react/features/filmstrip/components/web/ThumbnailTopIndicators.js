@@ -100,10 +100,15 @@ const ThumbnailTopIndicators = ({
         || Boolean(useSelector(state => state['features/base/config'].connectionIndicators?.disabled));
     const _isMultiStreamEnabled = useSelector(getMultipleVideoSupportFeatureFlag);
     const showConnectionIndicator = isHovered || !_connectionIndicatorAutoHideEnabled;
+    const tooltipPosition = getIndicatorsTooltipPosition(thumbnailType);
 
     if (_isMultiStreamEnabled && isVirtualScreenshareParticipant) {
         return (
             <div className = { styles.container }>
+                <PinnedIndicator
+                    iconSize = { _indicatorIconSize }
+                    participantId = { participantId }
+                    tooltipPosition = { tooltipPosition } />
                 {!_connectionIndicatorDisabled
                     && <ConnectionIndicator
                         alwaysVisible = { showConnectionIndicator }
@@ -115,8 +120,6 @@ const ThumbnailTopIndicators = ({
             </div>
         );
     }
-
-    const tooltipPosition = getIndicatorsTooltipPosition(thumbnailType);
 
     return (
         <>
