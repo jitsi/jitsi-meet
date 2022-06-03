@@ -295,6 +295,9 @@ var config = {
     // Whether to enable live streaming or not.
     // liveStreamingEnabled: false,
 
+    // Whether to enable local recording or not.
+    // enableLocalRecording: false,
+
     // Transcription (in interface_config,
     // subtitles and buttons can be configured)
     // transcribingEnabled: false,
@@ -953,23 +956,6 @@ var config = {
     //     ]
     // },
 
-    // Local Recording
-    //
-
-    // localRecording: {
-    // Enables local recording.
-    // Additionally, 'localrecording' (all lowercase) needs to be added to
-    // the `toolbarButtons`-array for the Local Recording button to show up
-    // on the toolbar.
-    //
-    //     enabled: true,
-    //
-
-    // The recording format, can be one of 'ogg', 'flac' or 'wav'.
-    //     format: 'flac'
-    //
-
-    // },
     // e2ee: {
     //   labels,
     //   externallyManagedKey: false
@@ -1305,7 +1291,6 @@ var config = {
     //     'liveStreaming.unavailableTitle', // shown when livestreaming service is not reachable
     //     'lobby.joinRejectedMessage', // shown when while in a lobby, user's request to join is rejected
     //     'lobby.notificationTitle', // shown when lobby is toggled and when join requests are allowed / denied
-    //     'localRecording.localRecording', // shown when a local recording is started
     //     'notify.chatMessages', // shown when receiving chat messages while the chat window is closed
     //     'notify.disconnected', // shown when a participant has left
     //     'notify.connectedOneMember', // show when a participant joined

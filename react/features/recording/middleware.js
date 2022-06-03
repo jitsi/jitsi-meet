@@ -11,7 +11,8 @@ import JitsiMeetJS, {
     JitsiConferenceEvents,
     JitsiRecordingConstants
 } from '../base/lib-jitsi-meet';
-import { getParticipantDisplayName } from '../base/participants';
+import { MEDIA_TYPE } from '../base/media';
+import { getParticipantDisplayName, updateLocalRecordingStatus } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import {
     playSound,
@@ -19,8 +20,10 @@ import {
     stopSound,
     unregisterSound
 } from '../base/sounds';
+import { TRACK_ADDED } from '../base/tracks';
+import { NOTIFICATION_TIMEOUT_TYPE, showErrorNotification, showNotification } from '../notifications';
 
-import { RECORDING_SESSION_UPDATED } from './actionTypes';
+import { RECORDING_SESSION_UPDATED, START_LOCAL_RECORDING, STOP_LOCAL_RECORDING } from './actionTypes';
 import {
     clearRecordingSessions,
     hidePendingRecordingNotification,
@@ -32,13 +35,18 @@ import {
     showStoppedRecordingNotification,
     updateRecordingSessionData
 } from './actions';
+import LocalRecordingManager from './components/Recording/LocalRecordingManager';
 import {
     LIVE_STREAMING_OFF_SOUND_ID,
     LIVE_STREAMING_ON_SOUND_ID,
     RECORDING_OFF_SOUND_ID,
     RECORDING_ON_SOUND_ID
 } from './constants';
-import { getSessionById, getResourceId } from './functions';
+import {
+    getSessionById,
+    getResourceId
+} from './functions';
+import logger from './logger';
 import {
     LIVE_STREAMING_OFF_SOUND_FILE,
     LIVE_STREAMING_ON_SOUND_FILE,
@@ -68,7 +76,7 @@ StateListenerRegistry.register(
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
+MiddlewareRegistry.register(({ dispatch, getState }) => next => async action => {
     let oldSessionData;
 
     if (action.type === RECORDING_SESSION_UPDATED) {
@@ -120,6 +128,41 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 return;
             });
 
+        break;
+    }
+
+    case START_LOCAL_RECORDING: {
+        try {
+            await LocalRecordingManager.startLocalRecording({ dispatch,
+                getState });
+            const props = {
+                descriptionKey: 'recording.on',
+                titleKey: 'dialog.recording'
+            };
+
+            dispatch(playSound(RECORDING_ON_SOUND_ID));
+            dispatch(showNotification(props, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+            dispatch(updateLocalRecordingStatus(true));
+        } catch (err) {
+            logger.error('Capture failed', err);
+
+            const noTabError = err.message === 'WrongSurfaceSelected';
+            const props = {
+                descriptionKey: noTabError ? 'recording.surfaceError' : 'recording.error',
+                titleKey: 'recording.failedToStart'
+            };
+
+            dispatch(showErrorNotification(props, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+        }
+        break;
+    }
+
+    case STOP_LOCAL_RECORDING: {
+        if (LocalRecordingManager.isRecordingLocally()) {
+            LocalRecordingManager.stopLocalRecording();
+            dispatch(playSound(RECORDING_OFF_SOUND_ID));
+            dispatch(updateLocalRecordingStatus(false));
+        }
         break;
     }
 
@@ -209,6 +252,16 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             }
         }
 
+        break;
+    }
+    case TRACK_ADDED: {
+        const { track } = action;
+
+        if (LocalRecordingManager.isRecordingLocally() && track.mediaType === MEDIA_TYPE.AUDIO) {
+            const audioTrack = track.jitsiTrack.track;
+
+            LocalRecordingManager.addAudioTrackToLocalRecording(audioTrack);
+        }
         break;
     }
     }
