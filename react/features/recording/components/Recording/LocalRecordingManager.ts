@@ -37,16 +37,16 @@ interface ILocalRecordingManager {
 const getMimeType = (): string => {
     const possibleTypes = [
         'video/mp4;codecs=h264',
+        'video/webm;codecs=h264',
         'video/webm;codecs=vp9',
         'video/webm;codecs=vp8',
-        'video/webm;codecs=h264',
     ];
     for(let type of possibleTypes) {
         if(MediaRecorder.isTypeSupported(type)) {
             return type;
         }
     }
-    return 'video/webm;codecs=h264';
+    return 'video/webm';
 }
 
 const VIDEO_BIT_RATE = 2500000; // 2.5Mbps in bits
