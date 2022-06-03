@@ -46,7 +46,7 @@ const getMimeType = (): string => {
             return type;
         }
     }
-    return 'video/webm';
+    throw new Error("No MIME Type supported by MediaRecorder");
 }
 
 const VIDEO_BIT_RATE = 2500000; // 2.5Mbps in bits
