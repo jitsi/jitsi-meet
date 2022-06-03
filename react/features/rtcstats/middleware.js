@@ -8,7 +8,7 @@ import { LIB_WILL_INIT } from '../base/lib-jitsi-meet/actionTypes';
 import { DOMINANT_SPEAKER_CHANGED, getLocalParticipant } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { TRACK_ADDED, TRACK_UPDATED } from '../base/tracks';
-import { ADD_FACE_EXPRESSION } from '../face-landmarks/actionTypes';
+import { ADD_FACE_LANDMARKS } from '../face-landmarks/actionTypes';
 
 import RTCStats from './RTCStats';
 import { canSendRtcstatsData, isRtcstatsEnabled } from './functions';
@@ -149,14 +149,16 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
     }
-    case ADD_FACE_EXPRESSION: {
+    case ADD_FACE_LANDMARKS: {
         if (canSendRtcstatsData(state)) {
-            const { duration, faceExpression, timestamp } = action;
+            const { duration, faceExpression, timestamp, age, gender } = action;
 
-            RTCStats.sendFaceExpressionData({
+            RTCStats.sendFaceLandmarksData({
                 duration,
                 faceLandmarks: faceExpression,
-                timestamp
+                timestamp,
+                age,
+                gender
             });
         }
         break;

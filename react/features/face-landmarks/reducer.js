@@ -3,7 +3,7 @@
 import { ReducerRegistry } from '../base/redux';
 
 import {
-    ADD_FACE_EXPRESSION,
+    ADD_FACE_LANDMARKS,
     ADD_TO_FACE_EXPRESSIONS_BUFFER,
     CLEAR_FACE_EXPRESSIONS_BUFFER,
     SET_MAX_NO_FACES,
@@ -30,7 +30,7 @@ const defaultState = {
 
 ReducerRegistry.register('features/face-landmarks', (state = defaultState, action) => {
     switch (action.type) {
-    case ADD_FACE_EXPRESSION: {
+    case ADD_FACE_LANDMARKS: {
         return {
             ...state,
             faceExpressions: {

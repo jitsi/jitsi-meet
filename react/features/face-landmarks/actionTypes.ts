@@ -1,13 +1,16 @@
 /**
- * Redux action type dispatched in order to add a face expression.
+ * Redux action type dispatched in order to add a face landmarks.
  *
  * {
- *      type: ADD_FACE_EXPRESSION,
+ *      type: ADD_FACE_LANDMARKS,
  *      faceExpression: string,
- *      duration: number
+ *      duration: number,
+ *      timestamp: number,
+ *      age: number,
+ *      gender: number
  * }
  */
-export const ADD_FACE_EXPRESSION = 'ADD_FACE_EXPRESSION';
+export const ADD_FACE_LANDMARKS = 'ADD_FACE_LANDMARKS';
 
 /**
  * Redux action type dispatched in order to add a expression to the face expressions buffer.

@@ -116,13 +116,13 @@ class RTCStats {
     }
 
     /**
-     * Send face expression data, the data will be processed by rtcstats-server and saved in the dump file.
+     * Send face landmarks data, the data will be processed by rtcstats-server and saved in the dump file.
      *
-     * @param {Object} faceExpressionData - Face expression data to be saved in the rtcstats dump.
+     * @param {Object} faceLandmarksData - Face landmarks data to be saved in the rtcstats dump.
      * @returns {void}
      */
-    sendFaceExpressionData(faceExpressionData) {
-        this.trace && this.trace.statsEntry('faceLandmarks', null, faceExpressionData);
+    sendFaceLandmarksData(faceLandmarksData) {
+        this.trace && this.trace.statsEntry('faceLandmarks', null, faceLandmarksData);
     }
 
     /**

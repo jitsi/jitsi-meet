@@ -1,3 +1,4 @@
+/* eslint-disable max-params */
 // @flow
 import 'image-capture';
 import './createImageBitmap';
@@ -8,7 +9,7 @@ import { getLocalVideoTrack } from '../base/tracks';
 import { getBaseUrl } from '../base/util';
 
 import {
-    ADD_FACE_EXPRESSION,
+    ADD_FACE_LANDMARKS,
     ADD_TO_FACE_EXPRESSIONS_BUFFER,
     CLEAR_FACE_EXPRESSIONS_BUFFER,
     SET_MAX_NO_FACES,
@@ -27,7 +28,7 @@ import {
     sendFaceBoxToParticipants,
     sendFaceExpressionsWebhook,
     getAgeAverage,
-    getMostOccuredGender
+    getMostOccurredGender
 } from './functions';
 import logger from './logger';
 
@@ -110,8 +111,6 @@ export function loadWorker() {
                 genders.push(gender);
             }
 
-            console.log(noFaces);
-
             if (noFaces) {
                 const state = getState();
                 const { maxNoFaces } = state['features/face-landmarks'];
@@ -126,15 +125,15 @@ export function loadWorker() {
                     duplicateConsecutiveExpressions++;
                 } else {
                     if (lastFaceExpression && lastFaceExpressionTimestamp) {
-                        dispatch(addFaceExpression(
-                            lastFaceExpression,
-                            duplicateConsecutiveExpressions + 1,
-                            lastFaceExpressionTimestamp
+                        dispatch(addFaceLandmarks(
+                            {
+                                faceExpression: lastFaceExpression,
+                                duration: duplicateConsecutiveExpressions + 1,
+                                timestamp: lastFaceExpressionTimestamp,
+                                age: getAgeAverage(ages),
+                                gender: getMostOccurredGender(genders)
+                            }
                         ));
-                        console.log(lastFaceExpression);
-
-                        console.log(getMostOccuredGender(genders));
-                        console.log(getAgeAverage(ages));
                         genders = [];
                         ages = [];
                     }
@@ -250,7 +249,7 @@ export function stopFaceLandmarksDetection() {
     return function(dispatch: Function) {
         if (lastFaceExpression && lastFaceExpressionTimestamp) {
             dispatch(
-                addFaceExpression(
+                addFaceLandmarks(
                     lastFaceExpression,
                     duplicateConsecutiveExpressions + 1,
                     lastFaceExpressionTimestamp
@@ -272,22 +271,22 @@ export function stopFaceLandmarksDetection() {
 }
 
 /**
- * Adds a new face expression and its duration.
+ * Adds new face landmarks.
  *
- * @param  {string} faceExpression - Face expression to be added.
- * @param  {number} duration - Duration in seconds of the face expression.
- * @param  {number} timestamp - Duration in seconds of the face expression.
+ * @param  {string} faceLandmarks - Face landmarks object.
  * @returns {Object}
  */
-function addFaceExpression(faceExpression: string, duration: number, timestamp: number) {
+function addFaceLandmarks({ faceExpression, duration, timestamp, age, gender }) {
     return function(dispatch: Function, getState: Function) {
         const finalDuration = duration * getDetectionInterval(getState()) / 1000;
 
         dispatch({
-            type: ADD_FACE_EXPRESSION,
+            type: ADD_FACE_LANDMARKS,
             faceExpression,
             duration: finalDuration,
-            timestamp
+            timestamp,
+            age,
+            gender
         });
     };
 }
@@ -317,7 +316,10 @@ function clearFaceExpressionBuffer() {
 }
 
 /**
- * 
+ * Sets the maximum number of faced detected.
+ *
+ * @param {number} maxNoFaces - Maximum number of faces.
+ * @returns {number}
  */
 function setMaxNoFaces(maxNoFaces: number) {
     return {
