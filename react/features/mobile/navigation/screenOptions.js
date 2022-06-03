@@ -275,5 +275,6 @@ export const sharedDocumentScreenOptions = {
  */
 export const preJoinScreenOptions = {
     gestureEnabled: false,
-    headerLeft: () => screenHeaderCloseButton(goBackToLobbyScreen)
+    // eslint-disable-next-line no-empty-function
+    headerTitle: () => {}
 };

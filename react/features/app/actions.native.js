@@ -11,15 +11,17 @@ import {
     setConfig,
     storeConfig
 } from '../base/config';
-import { connect, disconnect, setLocationURL } from '../base/connection';
+import { disconnect, setLocationURL } from '../base/connection';
 import { loadConfig } from '../base/lib-jitsi-meet/functions.native';
-import { createDesiredLocalTracks } from '../base/tracks';
 import {
     getBackendSafeRoomName,
     parseURIString,
     toURLString
 } from '../base/util';
-import { navigateRoot } from '../mobile/navigation/rootNavigationContainerRef';
+import {
+    goBackToRoot,
+    navigateRoot
+} from '../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../mobile/navigation/routes';
 import { setFatalError } from '../overlay';
 
@@ -127,8 +129,11 @@ export function appNavigate(uri: ?string) {
         dispatch(setRoom(room));
 
         if (room) {
-            dispatch(createDesiredLocalTracks());
-            dispatch(connect());
+            navigateRoot(screen.preJoin);
+        }
+
+        if (!room) {
+            goBackToRoot(getState(), dispatch);
         }
     };
 }
