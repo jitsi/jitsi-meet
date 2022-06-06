@@ -16,23 +16,26 @@ import { goBackToRoot, navigateRoot } from '../../mobile/navigation/rootNavigati
 import { screen } from '../../mobile/navigation/routes';
 import AudioMuteButton from '../../toolbox/components/AudioMuteButton';
 import VideoMuteButton from '../../toolbox/components/VideoMuteButton';
-import { isWelcomePageAppEnabled } from '../../welcome/functions';
 import { isDeviceStatusVisible } from '../functions';
 
 import DeviceStatus from './preview/DeviceStatus.native';
 import styles from './styles';
 
 
-const Prejoin: React.FC = ({ navigation }) => {
+interface Props {
+    navigation: any;
+}
+
+const Prejoin: React.FC = ({ navigation }: Props) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const aspectRatio = useSelector(
-            state => state['features/base/responsive-ui']?.aspectRatio
+        (state: any) => state['features/base/responsive-ui']?.aspectRatio
     );
-    const deviceStatusVisible = useSelector(state => isDeviceStatusVisible(state));
-    const localParticipant = useSelector(state => getLocalParticipant(state));
+    const deviceStatusVisible = useSelector((state: any) => isDeviceStatusVisible(state));
+    const localParticipant = useSelector((state: any) => getLocalParticipant(state));
 
-    // const isWelcomePageEnabled = useSelector(state => isWelcomePageAppEnabled(state));
+    const isWelcomePageEnabled = useSelector((state: any) => state['features/base/config']?.enableWelcomePage);
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]
         = useState(participantName || '');
@@ -53,13 +56,13 @@ const Prejoin: React.FC = ({ navigation }) => {
         });
     }, [ dispatch ]);
 
-    // useLayoutEffect(() => {
-    //     navigation.setOptions({
-    //         headerLeft: () =>
-    //             screenHeaderCloseButton(
-    //                 goBackToRoot(isWelcomePageEnabled, dispatch))
-    //     });
-    // }, [ navigation ]);
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerLeft: () =>
+                screenHeaderCloseButton(
+                    goBackToRoot(isWelcomePageEnabled, dispatch))
+        });
+    }, [ navigation ]);
 
     let contentStyles;
     let largeVideoContainerStyles;

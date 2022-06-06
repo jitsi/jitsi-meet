@@ -39,6 +39,7 @@ export default {
     },
 
     contentWrapper: {
+        backgroundColor: BaseTheme.palette.ui02,
         flex: 1
     },
 
@@ -49,26 +50,28 @@ export default {
 
     largeVideoContainer: {
         alignItems: 'center',
+        backgroundColor: BaseTheme.palette.uiBackground,
         display: 'flex',
         justifyContent: 'center',
-        height: '50%'
+        minHeight: '50%'
     },
 
     largeVideoContainerWide: {
+        backgroundColor: BaseTheme.palette.uiBackground,
+        display: 'flex',
         width: '50%'
     },
 
     contentContainer: {
         alignItems: 'center',
-        backgroundColor: BaseTheme.palette.ui02,
-        height: '50%',
         display: 'flex',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        padding: BaseTheme.spacing[3]
     },
 
     contentContainerWide: {
-        backgroundColor: BaseTheme.palette.ui02,
         justifyContent: 'center',
+        padding: BaseTheme.spacing[3],
         width: '50%'
     },
 
@@ -76,21 +79,19 @@ export default {
         alignSelf: 'center',
         display: 'flex',
         flexDirection: 'row',
-        flex: 0.8,
         justifyContent: 'center',
-        marginTop: BaseTheme.spacing[2]
+        marginTop: BaseTheme.spacing[4]
     },
 
     toolboxContainerWide: {
         flexDirection: 'row',
         justifyContent: 'center',
-        marginTop: BaseTheme.spacing[2]
+        marginTop: BaseTheme.spacing[4]
     },
 
     formWrapper: {
         alignSelf: 'stretch',
-        justifyContent: 'center',
-        margin: BaseTheme.spacing[3]
+        justifyContent: 'center'
     },
 
     field: {
@@ -99,30 +100,26 @@ export default {
         borderRadius: BaseTheme.shape.borderRadius,
         borderWidth: 2,
         height: BaseTheme.spacing[7],
+        marginTop: BaseTheme.spacing[2],
         textAlign: 'center'
-    },
-
-    deviceStatusError: {
-        alignItems: 'flex-start',
-        backgroundColor: BaseTheme.palette.warning01,
-        borderRadius: 6,
-        color: BaseTheme.palette.uiBackground,
-        padding: 16,
-        textAlign: 'left'
-    },
-
-    statusMessage: {
-        backgroundColor: 'red',
-        marginLeft: BaseTheme.spacing[3]
     },
 
     deviceStatus: {
         alignItems: 'center',
-        color: '#fff',
+        flexDirection: 'row',
         display: 'flex',
-        fontSize: 14,
-        lineHeight: 20,
-        padding: 6,
-        textAlign: 'center'
+        textAlign: 'center',
+        width: '100%'
+    },
+
+    deviceStatusError: {
+        backgroundColor: BaseTheme.palette.warning01,
+        borderRadius: 6
+    },
+
+    statusMessage: {
+        color: 'white',
+        width: '50%',
+        marginLeft: BaseTheme.spacing[3]
     }
 };
