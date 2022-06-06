@@ -7,19 +7,28 @@ import {
     createReactionMenuEvent,
     createToolbarEvent,
     sendAnalytics
+    // @ts-ignore
 } from '../../../analytics';
+import { IStore } from '../../../app/types';
+// @ts-ignore
 import { isMobileBrowser } from '../../../base/environment/utils';
+// @ts-ignore
 import { translate } from '../../../base/i18n';
+// @ts-ignore
 import { getLocalParticipant, hasRaisedHand, raiseHand } from '../../../base/participants';
+// @ts-ignore
 import { connect } from '../../../base/redux';
 // @ts-ignore
 import { GifsMenu, GifsMenuButton } from '../../../gifs/components';
+// @ts-ignore
 import { isGifEnabled, isGifsMenuOpen } from '../../../gifs/functions';
+// @ts-ignore
 import { dockToolbox } from '../../../toolbox/actions.web';
 import { addReactionToBuffer } from '../../actions.any';
 import { toggleReactionsMenuVisibility } from '../../actions.web';
 import { REACTIONS, REACTIONS_MENU_HEIGHT } from '../../constants';
 
+// @ts-ignore
 import ReactionButton from './ReactionButton';
 
 interface Classes {
@@ -81,7 +90,7 @@ type Props = {
 
 declare var APP: Object;
 
-const styles = theme => {
+const styles = (theme: any) => {
     return {
         overflow: {
             width: 'auto',
@@ -241,7 +250,7 @@ class ReactionsMenu extends Component<Props> {
  * @param {Object} state - Redux state.
  * @returns {Object}
  */
-function mapStateToProps(state) {
+function mapStateToProps(state: any) {
     const localParticipant = getLocalParticipant(state);
 
     return {
@@ -259,7 +268,7 @@ function mapStateToProps(state) {
  * @param {Object} dispatch - Redux dispatch.
  * @returns {Object}
  */
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch: IStore['dispatch']) {
     return {
         dispatch,
         ...bindActionCreators(
