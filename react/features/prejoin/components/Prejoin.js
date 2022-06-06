@@ -387,14 +387,14 @@ class Prejoin extends Component<Props, State> {
                         readOnly = { readOnlyName }
                         value = { name } />
                     ) : (
-                        <>
+                        <div className = 'prejoin-avatar-container'>
                             <Avatar
                                 className = 'prejoin-avatar'
                                 displayName = { name }
                                 participantId = { participantId }
                                 size = { 72 } />
                             <div className = 'prejoin-avatar-name'>{name}</div>
-                        </>
+                        </div>
                     )}
 
                     {showError && <div
