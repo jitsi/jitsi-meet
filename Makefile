@@ -95,6 +95,8 @@ deploy-face-landmarks:
 		$(FACE_MODELS_DIR)/blazeface-front.json \
 		$(FACE_MODELS_DIR)/emotion.bin \
 		$(FACE_MODELS_DIR)/emotion.json \
+		$(FACE_MODELS_DIR)/faceres.bin \
+		$(FACE_MODELS_DIR)/faceres.json \
 		$(DEPLOY_DIR)
 
 deploy-css:

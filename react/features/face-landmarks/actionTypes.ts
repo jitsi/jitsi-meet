@@ -1,13 +1,16 @@
 /**
- * Redux action type dispatched in order to add a face expression.
+ * Redux action type dispatched in order to add a face landmarks.
  *
  * {
- *      type: ADD_FACE_EXPRESSION,
+ *      type: ADD_FACE_LANDMARKS,
  *      faceExpression: string,
- *      duration: number
+ *      duration: number,
+ *      timestamp: number,
+ *      age: number,
+ *      gender: number
  * }
  */
-export const ADD_FACE_EXPRESSION = 'ADD_FACE_EXPRESSION';
+export const ADD_FACE_LANDMARKS = 'ADD_FACE_LANDMARKS';
 
 /**
  * Redux action type dispatched in order to add a expression to the face expressions buffer.
@@ -56,3 +59,13 @@ export const STOP_FACE_LANDMARKS_DETECTION = 'STOP_FACE_LANDMARKS_DETECTION';
  * }
  */
 export const UPDATE_FACE_COORDINATES = 'UPDATE_FACE_COORDINATES';
+
+/**
+ * Redux action type dispatched in order to update the maximum number of faces detected.
+ *
+ * {
+ *      type: SET_MAX_NO_FACES,
+ *      maxNoFaces: number
+ * }
+ */
+export const SET_MAX_NO_FACES = 'SET_MAX_NO_FACES';

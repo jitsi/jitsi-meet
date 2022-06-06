@@ -8,7 +8,7 @@ import { getParticipantCount } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { TRACK_UPDATED, TRACK_ADDED, TRACK_REMOVED } from '../base/tracks';
 
-import { ADD_FACE_EXPRESSION, UPDATE_FACE_COORDINATES } from './actionTypes';
+import { ADD_FACE_LANDMARKS, UPDATE_FACE_COORDINATES } from './actionTypes';
 import {
     addToFaceExpressionsBuffer,
     loadWorker,
@@ -98,7 +98,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
         return next(action);
     }
-    case ADD_FACE_EXPRESSION: {
+    case ADD_FACE_LANDMARKS: {
         const state = getState();
         const conference = getCurrentConference(state);
 

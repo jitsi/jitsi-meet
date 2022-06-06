@@ -1,3 +1,4 @@
+/* eslint-disable max-params */
 // @flow
 import 'image-capture';
 import './createImageBitmap';
@@ -8,9 +9,10 @@ import { getLocalVideoTrack } from '../base/tracks';
 import { getBaseUrl } from '../base/util';
 
 import {
-    ADD_FACE_EXPRESSION,
+    ADD_FACE_LANDMARKS,
     ADD_TO_FACE_EXPRESSIONS_BUFFER,
     CLEAR_FACE_EXPRESSIONS_BUFFER,
+    SET_MAX_NO_FACES,
     START_FACE_LANDMARKS_DETECTION,
     STOP_FACE_LANDMARKS_DETECTION,
     UPDATE_FACE_COORDINATES
@@ -24,7 +26,9 @@ import {
     getDetectionInterval,
     sendDataToWorker,
     sendFaceBoxToParticipants,
-    sendFaceExpressionsWebhook
+    sendFaceExpressionsWebhook,
+    getAgeAverage,
+    getMostOccurredGender
 } from './functions';
 import logger from './logger';
 
@@ -66,6 +70,10 @@ let webhookSendInterval;
  */
 let detectionInterval;
 
+let ages = [];
+
+let genders = [];
+
 /**
  * Loads the worker that detects the face landmarks.
  *
@@ -93,18 +101,41 @@ export function loadWorker() {
         workerUrl = window.URL.createObjectURL(workerBlob);
         worker = new Worker(workerUrl, { name: 'Face Recognition Worker' });
         worker.onmessage = function(e: Object) {
-            const { faceExpression, faceBox } = e.data;
+            const { age, faceExpression, faceBox, gender, noFaces } = e.data;
+
+            if (age) {
+                ages.push(age);
+            }
+
+            if (gender) {
+                genders.push(gender);
+            }
+
+            if (noFaces) {
+                const state = getState();
+                const { maxNoFaces } = state['features/face-landmarks'];
+
+                if (noFaces > maxNoFaces) {
+                    dispatch(setMaxNoFaces(noFaces));
+                }
+            }
 
             if (faceExpression) {
                 if (faceExpression === lastFaceExpression) {
                     duplicateConsecutiveExpressions++;
                 } else {
                     if (lastFaceExpression && lastFaceExpressionTimestamp) {
-                        dispatch(addFaceExpression(
-                            lastFaceExpression,
-                            duplicateConsecutiveExpressions + 1,
-                            lastFaceExpressionTimestamp
+                        dispatch(addFaceLandmarks(
+                            {
+                                faceExpression: lastFaceExpression,
+                                duration: duplicateConsecutiveExpressions + 1,
+                                timestamp: lastFaceExpressionTimestamp,
+                                age: getAgeAverage(ages),
+                                gender: getMostOccurredGender(genders)
+                            }
                         ));
+                        genders = [];
+                        ages = [];
                     }
                     lastFaceExpression = faceExpression;
                     lastFaceExpressionTimestamp = Date.now();
@@ -133,8 +164,11 @@ export function loadWorker() {
 
         const { faceLandmarks } = getState()['features/base/config'];
         const detectionTypes = [
+            DETECTION_TYPES.AGE,
             faceLandmarks?.enableFaceCentering && DETECTION_TYPES.FACE_BOX,
-            faceLandmarks?.enableFaceExpressionsDetection && DETECTION_TYPES.FACE_EXPRESSIONS
+            faceLandmarks?.enableFaceExpressionsDetection && DETECTION_TYPES.FACE_EXPRESSIONS,
+            faceLandmarks?.enableAgeDetection && DETECTION_TYPES.NUMBER_FACES,
+            faceLandmarks?.enableGenderDetection && DETECTION_TYPES.GENDER
         ].filter(Boolean);
 
         worker.postMessage({
@@ -216,7 +250,7 @@ export function stopFaceLandmarksDetection() {
     return function(dispatch: Function) {
         if (lastFaceExpression && lastFaceExpressionTimestamp) {
             dispatch(
-                addFaceExpression(
+                addFaceLandmarks(
                     lastFaceExpression,
                     duplicateConsecutiveExpressions + 1,
                     lastFaceExpressionTimestamp
@@ -238,22 +272,22 @@ export function stopFaceLandmarksDetection() {
 }
 
 /**
- * Adds a new face expression and its duration.
+ * Adds new face landmarks.
  *
- * @param  {string} faceExpression - Face expression to be added.
- * @param  {number} duration - Duration in seconds of the face expression.
- * @param  {number} timestamp - Duration in seconds of the face expression.
+ * @param  {string} faceLandmarks - Face landmarks object.
  * @returns {Object}
  */
-function addFaceExpression(faceExpression: string, duration: number, timestamp: number) {
+function addFaceLandmarks({ faceExpression, duration, timestamp, age, gender }) {
     return function(dispatch: Function, getState: Function) {
         const finalDuration = duration * getDetectionInterval(getState()) / 1000;
 
         dispatch({
-            type: ADD_FACE_EXPRESSION,
+            type: ADD_FACE_LANDMARKS,
             faceExpression,
             duration: finalDuration,
-            timestamp
+            timestamp,
+            age,
+            gender
         });
     };
 }
@@ -279,5 +313,18 @@ export function addToFaceExpressionsBuffer(faceExpression: Object) {
 function clearFaceExpressionBuffer() {
     return {
         type: CLEAR_FACE_EXPRESSIONS_BUFFER
+    };
+}
+
+/**
+ * Sets the maximum number of faced detected.
+ *
+ * @param {number} maxNoFaces - Maximum number of faces.
+ * @returns {number}
+ */
+function setMaxNoFaces(maxNoFaces: number) {
+    return {
+        type: SET_MAX_NO_FACES,
+        maxNoFaces
     };
 }

@@ -225,3 +225,37 @@ export function getDetectionInterval(state: Object) {
 
     return Math.max(faceLandmarks?.captureInterval || SEND_IMAGE_INTERVAL_MS);
 }
+
+/**
+ * Gets the average age from an array of ages.
+ *
+ * @param  {number[]} ages - The array of ages.
+ * @returns {number} - The average age.
+ */
+export function getAgeAverage(ages) {
+    return ages.reduce((a, b) => a + b, 0) / ages.length;
+}
+
+/**
+ * Gets the most occurred gender from an array of genders.
+ *
+ * @param  {string[]} genders - The array of genders.
+ * @returns {string} - The most occurred gender.
+ */
+export function getMostOccurredGender(genders) {
+    const occurrenceMap = genders.reduce((acc, val) => {
+        acc[val] = (acc[val] || 0) + 1;
+
+        return acc;
+    }, {});
+
+    return Object.keys(occurrenceMap).reduce((a, b) => {
+
+        if (occurrenceMap[a] > occurrenceMap[b]) {
+            return a;
+        }
+
+        return b;
+    });
+
+}

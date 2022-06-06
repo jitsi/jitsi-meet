@@ -26,8 +26,11 @@ type InitInput = {
 }
 
 type DetectOutput = {
+    age?: number,
     faceExpression?: string,
-    faceBox?: FaceBox
+    faceBox?: FaceBox,
+    gender?: string,
+    noFaces?: number
 };
 
 export interface FaceLandmarksHelper {
@@ -74,7 +77,10 @@ export class HumanHelper implements FaceLandmarksHelper {
                 enabled: false,
                 modelPath: 'emotion.json'
             },
-            description: { enabled: false }
+            description: { 
+                enabled: true,
+                modelPath: 'faceres.json'
+            }
         },
         hand: { enabled: false },
         gesture: { enabled: false },
@@ -150,14 +156,32 @@ export class HumanHelper implements FaceLandmarksHelper {
 
     getFaceExpression({ detections }: Detection): string | undefined {
         if (detections[0]?.emotion) {
-            return  FACE_EXPRESSIONS_NAMING_MAPPING[detections[0]?.emotion[0].emotion];
+            return FACE_EXPRESSIONS_NAMING_MAPPING[detections[0]?.emotion[0].emotion];
+        }
+    }
+
+    getAge({ detections }: Detection): number | undefined {
+        return detections[0]?.age;
+
+    }
+
+    getGender({ detections }: Detection): string | undefined {
+        return detections[0]?.gender;
+    }
+
+    getNoFaces({ detections }: Detection): number | undefined {
+        if (detections) {
+            return detections.length;
         }
     }
 
     public async detect({ image, threshold } : DetectInput): Promise<DetectOutput | undefined> {
         let detections;
+        let age;
         let faceExpression;
         let faceBox;
+        let gender;
+        let noFaces;
 
         if (!this.human){
             return;
@@ -175,6 +199,26 @@ export class HumanHelper implements FaceLandmarksHelper {
             faceExpression = this.getFaceExpression({ detections });
         }
 
+        if (this.faceDetectionTypes.includes(DETECTION_TYPES.AGE)) {
+            if (!detections) {
+                const { face } = await this.human.detect(imageTensor, this.config);
+
+                detections = face;
+            }
+
+            age = await this.getAge({ detections });
+        }
+
+        if (this.faceDetectionTypes.includes(DETECTION_TYPES.GENDER)) {
+            if (!detections) {
+                const { face } = await this.human.detect(imageTensor, this.config);
+
+                detections = face;
+            }
+
+            gender = await this.getGender({ detections });
+        }
+
         if (this.faceDetectionTypes.includes(DETECTION_TYPES.FACE_BOX)) {
             if (!detections) {
                 const { face } = await this.human.detect(imageTensor, this.config);
@@ -188,12 +232,26 @@ export class HumanHelper implements FaceLandmarksHelper {
             });
         }
 
+        
+        if (this.faceDetectionTypes.includes(DETECTION_TYPES.NUMBER_FACES)) {
+            if (!detections) {
+                const { face } = await this.human.detect(imageTensor, this.config);
+
+                detections = face;
+            }
+
+            noFaces = await this.getNoFaces({ detections });
+        }
+
         this.human.tf.engine().endScope();
         this.detectionInProgress = false;
 
         return { 
+            age,
             faceExpression, 
-            faceBox
+            faceBox,
+            gender,
+            noFaces,
         }
     }
 
