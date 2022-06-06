@@ -33,7 +33,7 @@ Description: Configuration for web serving of Jitsi Meet
 
 Package: jitsi-meet-prosody
 Architecture: all
-Depends: openssl, prosody (>= 0.11.0) | prosody-trunk | prosody-0.12 | prosody-0.11, lua-sec
+Depends: openssl, prosody (>= 0.11.0) | prosody-trunk | prosody-0.12 | prosody-0.11, lua-sec, lua-basexx, lua-luaossl, lua-cjson
 Replaces: jitsi-meet-tokens
 Description: Prosody configuration for Jitsi Meet
  Jitsi Meet is a WebRTC JavaScript application that uses Jitsi
@@ -47,7 +47,7 @@ Description: Prosody configuration for Jitsi Meet
 
 Package: jitsi-meet-tokens
 Architecture: all
-Depends: ${misc:Depends}, prosody-trunk | prosody-0.11 | prosody-0.12 | prosody (>= 0.11.2), jitsi-meet-prosody, lua-basexx, lua-luaossl, lua-cjson
+Depends: ${misc:Depends}, prosody-trunk | prosody-0.11 | prosody-0.12 | prosody (>= 0.11.2), jitsi-meet-prosody
 Description: Prosody token authentication plugin for Jitsi Meet
 
 Package: jitsi-meet-turnserver
