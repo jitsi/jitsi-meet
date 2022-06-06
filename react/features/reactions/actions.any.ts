@@ -25,13 +25,13 @@ export function setReactionQueue(queue: Array<ReactionEmojiProps>): ReactionsAct
 /**
  * Removes a reaction from the queue.
  *
- * @param {number} uid - Id of the reaction to be removed.
+ * @param {string} uid - Id of the reaction to be removed.
  */
-export function removeReaction(uid: number): Function {
+export function removeReaction(uid: string): Function {
     return (dispatch: Function, getState: Function) => {
         const queue = getState()['features/reactions'].queue;
 
-        dispatch(setReactionQueue(queue.filter(reaction => reaction.uid !== uid)));
+        dispatch(setReactionQueue(queue.filter((reaction: ReactionEmojiProps) => reaction.uid !== uid)));
     };
 }
 
@@ -50,7 +50,7 @@ export function sendReactions(): ReactionsAction {
  *
  * @param {string} reaction - The reaction to be added.
  */
-export function addReactionToBuffer(reaction: string): Object {
+export function addReactionToBuffer(reaction: string): ReactionsAction {
     return {
         type: ADD_REACTION_BUFFER,
         reaction
@@ -71,7 +71,7 @@ export function flushReactionBuffer(): ReactionsAction {
  *
  * @param {string} message - The reaction message.
  */
-export function addReactionsToChat(message: string): Object {
+export function addReactionsToChat(message: string): ReactionsAction {
     return {
         type: ADD_REACTION_MESSAGE,
         message
@@ -83,7 +83,7 @@ export function addReactionsToChat(message: string): Object {
  *
  * @param {Array} reactions - The reactions to be animated.
  */
-export function pushReactions(reactions: Array<string>): Object {
+export function pushReactions(reactions: Array<string>): ReactionsAction {
     return {
         type: PUSH_REACTIONS,
         reactions

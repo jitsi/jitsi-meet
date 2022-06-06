@@ -1,3 +1,4 @@
+// @ts-ignore
 import { ReducerRegistry } from '../base/redux';
 
 import {
@@ -35,6 +36,18 @@ interface State {
 }
 
 export interface ReactionsAction extends Partial<State> {
+    /**
+     * The message to be added to the chat.
+     */
+    message?: string,
+    /**
+     * The reaction to be added to buffer.
+     */
+    reaction?: string,
+    /**
+     * The reactions to be added to the animation queue.
+     */
+    reactions?: Array<string>,
     /**
      * The action type.
      */

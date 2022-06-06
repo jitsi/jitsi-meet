@@ -85,7 +85,7 @@ export const SILENCE_SOUND_ID = `${REACTION_SOUND}_SILENCE_`;
  */
 export const RAISE_HAND_SOUND_ID = 'RAISE_HAND_SOUND';
 
-export type ReactionEmojiProps = {
+export interface ReactionEmojiProps {
 
     /**
      * Reaction to be displayed.
@@ -95,13 +95,22 @@ export type ReactionEmojiProps = {
     /**
      * Id of the reaction.
      */
-    uid: number
+    uid: string
 }
 
 export const SOUNDS_THRESHOLDS = [ 1, 4, 10 ];
 
+interface IReactions {
+    [key: string]: {
+        message: string;
+        emoji: string;
+        shortcutChar: string;
+        soundId: string;
+        soundFiles: string[];
+    }
+}
 
-export const REACTIONS = {
+export const REACTIONS: IReactions = {
     like: {
         message: ':thumbs_up:',
         emoji: '👍',
@@ -149,4 +158,8 @@ export const REACTIONS = {
 export type ReactionThreshold = {
     reaction: string,
     threshold: number
+}
+
+export interface MuteCommandAttributes {
+    startReactionsMuted?: string;
 }

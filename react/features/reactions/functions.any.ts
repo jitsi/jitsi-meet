@@ -1,7 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
 
+// @ts-ignore
 import { getFeatureFlag, REACTIONS_ENABLED } from '../base/flags';
+// @ts-ignore
 import { getLocalParticipant } from '../base/participants';
+// @ts-ignore
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 
 import { ReactionEmojiProps, REACTIONS, ReactionThreshold, SOUNDS_THRESHOLDS } from './constants';
@@ -12,7 +15,7 @@ import logger from './logger';
  *
  * @param {Object} state - The state of the application.
  */
-export function getReactionsQueue(state: Object): Array<ReactionEmojiProps> {
+export function getReactionsQueue(state: any): Array<ReactionEmojiProps> {
     return state['features/reactions'].queue;
 }
 
@@ -22,7 +25,7 @@ export function getReactionsQueue(state: Object): Array<ReactionEmojiProps> {
  * @param {Array} buffer - The reactions buffer.
  */
 export function getReactionMessageFromBuffer(buffer: Array<string>): string {
-    return buffer.map(reaction => REACTIONS[reaction].message).reduce((acc, val) => `${acc}${val}`);
+    return buffer.map<string>(reaction => REACTIONS[reaction].message).reduce((acc, val) => `${acc}${val}`);
 }
 
 /**
@@ -45,7 +48,7 @@ export function getReactionsWithId(buffer: Array<string>): Array<ReactionEmojiPr
  * @param {Object} state - The redux state object.
  * @param {Array} reactions - Reactions array to be sent.
  */
-export async function sendReactionsWebhook(state: Object, reactions: Array<string>) {
+export async function sendReactionsWebhook(state: any, reactions: Array<string>) {
     const { webhookProxyUrl: url } = state['features/base/config'];
     const { conference } = state['features/base/conference'];
     const { jwt } = state['features/base/jwt'];
@@ -141,7 +144,7 @@ export function getReactionsSoundsThresholds(reactions: Array<string>): Array<Re
  *
  * @param {Object} state - The Redux state object.
  */
-export function isReactionsEnabled(state: Object): boolean {
+export function isReactionsEnabled(state: any): boolean {
     const { disableReactions } = state['features/base/config'];
 
     if (navigator.product === 'ReactNative') {

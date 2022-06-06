@@ -1,8 +1,9 @@
-import React, { Component, Dispatch } from 'react';
+import React, { Component } from 'react';
 
 import { connect } from '../../../base/redux';
 import { removeReaction } from '../../actions.any';
 import { REACTIONS } from '../../constants';
+import { IStore } from '../../../app/types';
 
 type Props = {
 
@@ -14,7 +15,7 @@ type Props = {
     /**
      * Id of the reaction.
      */
-    uid: Number,
+    uid: string,
 
     /**
      * Removes reaction from redux state.
@@ -77,15 +78,15 @@ class ReactionEmoji extends Component<Props, State> {
         return (
             <div
                 className = { `reaction-emoji reaction-${index}` }
-                id = { `${uid}` }>
+                id = { uid }>
                 { REACTIONS[reaction].emoji }
             </div>
         );
     }
 }
 
-const mapDispatchToProps = (dispatch) => ({
-    reactionRemove: (uid: number) => dispatch(removeReaction(uid))
+const mapDispatchToProps = (dispatch: IStore['dispatch']) => ({
+    reactionRemove: (uid: string) => dispatch(removeReaction(uid))
 });
 
 export default connect(null, mapDispatchToProps)(ReactionEmoji);

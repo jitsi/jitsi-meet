@@ -3,6 +3,6 @@
  *
  * @param {Object} state - The state of the application.
  */
-export function getReactionsMenuVisibility(state: Object): boolean {
+export function getReactionsMenuVisibility(state: any): boolean {
     return state['features/reactions'].visible;
 }
