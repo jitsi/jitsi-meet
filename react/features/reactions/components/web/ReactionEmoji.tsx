@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 
+// @ts-ignore
 import { connect } from '../../../base/redux';
 import { removeReaction } from '../../actions.any';
 import { REACTIONS } from '../../constants';

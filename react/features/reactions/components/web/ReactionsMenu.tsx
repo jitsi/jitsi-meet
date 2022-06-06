@@ -274,6 +274,7 @@ function mapDispatchToProps(dispatch: IStore['dispatch']) {
         ...bindActionCreators(
         {
             _dockToolbox: dockToolbox
+        // @ts-ignore
         }, dispatch)
     };
 }
