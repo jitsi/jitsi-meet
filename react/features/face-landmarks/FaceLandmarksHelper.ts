@@ -67,7 +67,7 @@ export class HumanHelper implements FaceLandmarksHelper {
                 enabled: false,
                 rotation: false,
                 modelPath: 'blazeface-front.json',
-                maxDetected: 10
+                maxDetected: 4
             },
             mesh: { enabled: false },
             iris: { enabled: false },

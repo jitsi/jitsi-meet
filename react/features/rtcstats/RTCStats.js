@@ -126,6 +126,16 @@ class RTCStats {
     }
 
     /**
+     * Send the maximum number of faces, the data will be processed by rtcstats-server and saved in the dump file.
+     *
+     * @param  {Object} maxNoFacesData - Maximum number of faces detected data.
+     * @returns {void}
+     */
+    sendMaxNoFaces(maxNoFacesData) {
+        this.trace && this.trace.statsEntry('maxNoFaces', null, maxNoFacesData);
+    }
+
+    /**
      * Connect to the rtcstats server instance. Stats (data obtained from getstats) won't be send until the
      * connect successfully initializes, however calls to GUM are recorded in an internal buffer even if not
      * connected and sent once it is established.

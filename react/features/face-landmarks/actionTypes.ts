@@ -60,4 +60,12 @@ export const STOP_FACE_LANDMARKS_DETECTION = 'STOP_FACE_LANDMARKS_DETECTION';
  */
 export const UPDATE_FACE_COORDINATES = 'UPDATE_FACE_COORDINATES';
 
+/**
+ * Redux action type dispatched in order to update the maximum number of faces detected.
+ *
+ * {
+ *      type: SET_MAX_NO_FACES,
+ *      maxNoFaces: number
+ * }
+ */
 export const SET_MAX_NO_FACES = 'SET_MAX_NO_FACES';
