@@ -118,6 +118,20 @@ export function loadWorker() {
                 if (noFaces > maxNoFaces) {
                     dispatch(setMaxNoFaces(noFaces));
                 }
+
+                console.log(noFaces);
+
+                if (noFaces === 0 && lastFaceExpression && lastFaceExpressionTimestamp) {
+                    dispatch(addFaceLandmarks(
+                        {
+                            faceExpression: lastFaceExpression,
+                            duration: duplicateConsecutiveExpressions + 1,
+                            timestamp: lastFaceExpressionTimestamp,
+                            age: getAgeAverage(ages),
+                            gender: getMostOccurredGender(genders)
+                        }
+                    ));
+                }
             }
 
             if (faceExpression) {
@@ -167,8 +181,8 @@ export function loadWorker() {
             DETECTION_TYPES.AGE,
             faceLandmarks?.enableFaceCentering && DETECTION_TYPES.FACE_BOX,
             faceLandmarks?.enableFaceExpressionsDetection && DETECTION_TYPES.FACE_EXPRESSIONS,
-            DETECTION_TYPES.GENDER,
-            DETECTION_TYPES.NUMBER_FACES
+            faceLandmarks?.enableAgeDetection && DETECTION_TYPES.NUMBER_FACES,
+            faceLandmarks?.enableGenderDetection && DETECTION_TYPES.GENDER
         ].filter(Boolean);
 
         worker.postMessage({
