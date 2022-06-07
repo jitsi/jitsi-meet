@@ -145,9 +145,10 @@ export function autoAssignToBreakoutRooms() {
  *
  * @param {string} participantId - The participant id.
  * @param {string} roomId - The room id.
+ * @param {boolean} isJid - Whether the participantId is a jid.
  * @returns {Function}
  */
-export function sendParticipantToRoom(participantId: string, roomId: string) {
+export function sendParticipantToRoom(participantId: string, roomId: string, isJid: boolean = false) {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const rooms = getBreakoutRooms(getState);
         const room = rooms[roomId];
@@ -160,7 +161,7 @@ export function sendParticipantToRoom(participantId: string, roomId: string) {
 
         // Get the full JID of the participant. We could be getting the endpoint ID or
         // a participant JID. We want to find the connection JID.
-        const participantJid = _findParticipantJid(getState, participantId);
+        const participantJid = isJid ? participantId : _findParticipantJid(getState, participantId);
 
         if (!participantJid) {
             logger.warn(`Could not find participant ${participantId}`);

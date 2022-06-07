@@ -19,7 +19,12 @@ type Props = {
     /**
      * The ID for the participant on which the button will act.
      */
-    participantID: string,
+    participantID?: string,
+
+    /**
+     * The Jid of the participant on which the button will act.
+     */
+    participantJid?: string,
 
     /**
      * The room to send the participant to.
@@ -27,14 +32,17 @@ type Props = {
     room: Object
 }
 
-const SendToRoomButton = ({ onClick, participantID, room }: Props) => {
+const SendToRoomButton = ({ onClick, participantID, participantJid, room }: Props) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const _onClick = useCallback(() => {
         onClick && onClick();
         sendAnalytics(createBreakoutRoomsEvent('send.participant.to.room'));
-        dispatch(sendParticipantToRoom(participantID, room.id));
-    }, [ participantID, room ]);
+        const useJid = Boolean(!participantID && participantJid);
+
+        dispatch(sendParticipantToRoom(useJid ? participantJid : participantID,
+            room.id, useJid));
+    }, [ participantID, room, participantJid ]);
 
     const roomName = room.name || t('breakoutRooms.mainRoom');
 
