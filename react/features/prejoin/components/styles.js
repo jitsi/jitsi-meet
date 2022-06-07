@@ -1,4 +1,5 @@
 import BaseTheme from '../../base/ui/components/BaseTheme.native';
+
 const SECONDARY_COLOR = BaseTheme.palette.border04;
 
 
@@ -102,24 +103,5 @@ export default {
         height: BaseTheme.spacing[7],
         marginTop: BaseTheme.spacing[2],
         textAlign: 'center'
-    },
-
-    deviceStatus: {
-        alignItems: 'center',
-        flexDirection: 'row',
-        display: 'flex',
-        textAlign: 'center',
-        width: '100%'
-    },
-
-    deviceStatusError: {
-        backgroundColor: BaseTheme.palette.warning01,
-        borderRadius: 6
-    },
-
-    statusMessage: {
-        color: 'white',
-        width: '50%',
-        marginLeft: BaseTheme.spacing[3]
     }
 };
