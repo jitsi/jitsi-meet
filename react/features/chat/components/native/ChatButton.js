@@ -1,6 +1,7 @@
 // @flow
 
 import { CHAT_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { translate } from '../../../base/i18n';
 import { IconChat, IconChatUnread } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import {
@@ -76,4 +77,4 @@ function _mapStateToProps(state, ownProps) {
     };
 }
 
-export default connect(_mapStateToProps)(ChatButton);
+export default translate(connect(_mapStateToProps)(ChatButton));
