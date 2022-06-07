@@ -83,8 +83,8 @@ const ConnectButtons = (props: Props) => {
         setLoading(false);
       }
     })()
-  }, [adsList])
-  useEffect
+  }, [])
+
   useEffect(() => {
     setTimeout(() => {
       setTimer(timer + 2 > adsList.length - 1 ? 0 : timer + 2)

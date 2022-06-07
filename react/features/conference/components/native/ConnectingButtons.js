@@ -24,12 +24,14 @@ export type Props = {
 */
   _visible: boolean
 }
+const listOfAds = [];
+
 const ConnectingButtons = (props: Props) => {
   const [adsList, setAdsList] = useState([]);
-  const [time, setTime] = useState(0);
+  const [time, setTime] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const listOfAds = [];
+
   const meetingName = props._meetingName.trim()
 
   useEffect(() => {
@@ -41,13 +43,14 @@ const ConnectingButtons = (props: Props) => {
       let adsData = await API.request('GET', 'iconAds', res);
       if (adsData.status == 1) {
         for (let i = 0; i < adsData.data.length; i++) {
-          listOfAds.push(adsData.data[i])
+          listOfAds.push(adsData.data[i]);
         }
         setAdsList(listOfAds)
         setLoading(false)
       }
     })()
-  }, [adsList])
+  }, [])
+
   useEffect(() => {
     setTimeout(() => {
       setTime(time + 2 > adsList.length - 1 ? 0 : time + 2)
