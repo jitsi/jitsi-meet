@@ -1,9 +1,10 @@
 import React, { useCallback, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, View, TouchableOpacity, TextInput } from 'react-native';
+import { Text, View, TouchableOpacity, TextInput, Platform } from 'react-native';
 import { batch, useDispatch, useSelector } from 'react-redux';
 
 import { connect } from '../../base/connection/actions.native';
+import { IconClose } from '../../base/icons';
 import JitsiScreen from '../../base/modal/components/JitsiScreen';
 import { getLocalParticipant } from '../../base/participants';
 import { getFieldValue } from '../../base/react';
@@ -11,14 +12,14 @@ import { ASPECT_RATIO_NARROW } from '../../base/responsive-ui';
 import { updateSettings } from '../../base/settings';
 import { createDesiredLocalTracks } from '../../base/tracks';
 import { LargeVideo } from '../../large-video/components';
-import { screenHeaderCloseButton } from '../../mobile/navigation/functions';
-import { goBackToRoot, navigateRoot } from '../../mobile/navigation/rootNavigationContainerRef';
+import { _sendReadyToClose } from '../../mobile/external-api/functions';
+import HeaderNavigationButton from '../../mobile/navigation/components/HeaderNavigationButton';
+import { isWelcomePageAppEnabled } from '../../mobile/navigation/components/welcome/functions';
+import { navigateRoot } from '../../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../../mobile/navigation/routes';
 import AudioMuteButton from '../../toolbox/components/AudioMuteButton';
 import VideoMuteButton from '../../toolbox/components/VideoMuteButton';
-import { isDeviceStatusVisible } from '../functions';
 
-import DeviceStatus from './preview/DeviceStatus.native';
 import styles from './styles';
 
 
@@ -32,19 +33,18 @@ const Prejoin: React.FC = ({ navigation }: Props) => {
     const aspectRatio = useSelector(
         (state: any) => state['features/base/responsive-ui']?.aspectRatio
     );
-    const deviceStatusVisible = useSelector((state: any) => isDeviceStatusVisible(state));
     const localParticipant = useSelector((state: any) => getLocalParticipant(state));
 
-    const isWelcomePageEnabled = useSelector((state: any) => state['features/base/config']?.enableWelcomePage);
+    const isWelcomePageEnabled = useSelector((state: any) => isWelcomePageAppEnabled(state));
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]
         = useState(participantName || '');
     const onChangeDisplayName = useCallback(event => {
-        const displayName = getFieldValue(event);
+        const fieldValue = getFieldValue(event);
 
-        setDisplayName(displayName);
+        setDisplayName(fieldValue);
         dispatch(updateSettings({
-            displayName
+            displayName: fieldValue
         }));
     }, [ onChangeDisplayName ]);
 
@@ -56,13 +56,13 @@ const Prejoin: React.FC = ({ navigation }: Props) => {
         });
     }, [ dispatch ]);
 
-    useLayoutEffect(() => {
-        navigation.setOptions({
-            headerLeft: () =>
-                screenHeaderCloseButton(
-                    goBackToRoot(isWelcomePageEnabled, dispatch))
-        });
-    }, [ navigation ]);
+    const goBack = useCallback(() => {
+        if (isWelcomePageEnabled) {
+            navigateRoot(screen.root);
+        } else {
+            _sendReadyToClose(dispatch);
+        }
+    }, [ dispatch, isWelcomePageEnabled ]);
 
     let contentStyles;
     let largeVideoContainerStyles;
@@ -79,6 +79,28 @@ const Prejoin: React.FC = ({ navigation }: Props) => {
         largeVideoContainerStyles = styles.largeVideoContainerWide;
         toolboxContainerStyles = styles.toolboxContainerWide;
     }
+
+    const headerLeft = useCallback(() => {
+        if (Platform.OS === 'ios') {
+            return (
+                <HeaderNavigationButton
+                    label = { t('dialog.close') }
+                    onPress = { goBack } />
+            );
+        }
+
+        return (
+            <HeaderNavigationButton
+                onPress = { goBack }
+                src = { IconClose } />
+        );
+    }, []);
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerLeft
+        });
+    }, [ navigation ]);
 
     return (
         <JitsiScreen
@@ -112,7 +134,6 @@ const Prejoin: React.FC = ({ navigation }: Props) => {
                         <VideoMuteButton
                             styles = { styles.buttonStylesBorderless } />
                     </View>
-                    { deviceStatusVisible && <DeviceStatus /> }
                 </View>
             </View>
         </JitsiScreen>

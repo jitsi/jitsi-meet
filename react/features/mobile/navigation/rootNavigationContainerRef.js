@@ -1,14 +1,11 @@
-// @flow
-
 import React from 'react';
 
 import { toState } from '../../base/redux';
+import { _sendReadyToClose } from '../external-api/functions';
 
 import { isWelcomePageAppEnabled } from './components/welcome/functions';
-import { _sendReadyToClose } from './constants';
 import { screen } from './routes';
 
-// $FlowExpectedError
 export const rootNavigationRef = React.createRef();
 
 /**
@@ -19,7 +16,6 @@ export const rootNavigationRef = React.createRef();
  * @returns {Function}
  */
 export function navigateRoot(name: string, params: Object) {
-    // $FlowExpectedError
     return rootNavigationRef.current?.navigate(name, params);
 }
 

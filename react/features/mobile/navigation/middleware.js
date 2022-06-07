@@ -1,9 +1,9 @@
 import { CONFERENCE_FAILED } from '../../base/conference/actionTypes';
 import { JitsiConferenceErrors } from '../../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../../base/redux';
+import { _sendReadyToClose } from '../external-api/functions';
 
 import { isWelcomePageAppEnabled } from './components/welcome/functions';
-import { _sendReadyToClose } from './constants';
 import { navigateRoot } from './rootNavigationContainerRef';
 import { screen } from './routes';
 
