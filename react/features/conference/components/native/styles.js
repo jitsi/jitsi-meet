@@ -221,6 +221,12 @@ export default {
       TextFields:{
         color: 'black',
       },
+      urlText:{
+        color: 'white',
+        fontWeight: 'bold',
+        width: 80
+      },
+
 
     lonelyMeetingContainer: {
         alignSelf: 'stretch',

@@ -1,7 +1,7 @@
 // @flow
 
 import { DrawerActions } from '@react-navigation/native';
-import React from 'react';
+import React,{Component} from 'react';
 import {
     Animated,
     SafeAreaView,

@@ -2,62 +2,83 @@ import React, { useState, useEffect } from 'react';
 import { Alert, Modal, StyleSheet, Text, TouchableOpacity, Pressable, View, LogBox, Linking } from 'react-native';
 import styles from './styles';
 import { Icon, IconAdd, IconBookmark, IconDollar, IconCart, IconDollarGreen, IconCyclone, IconEightStreek, IconBeer, IconGem } from '../../../base/icons';
-import API from '../services'
+import API from '../services';
+import { connect } from '../../../base/redux';
+import { getFeatureFlag, MEETING_NAME_ENABLED } from '../../../base/flags';
+import { isToolboxVisible } from '../../../toolbox/functions.native';
+import { getConferenceName } from '../../../base/conference/functions';
+import { SvgUri } from 'react-native-svg';
 
-const url1 = 'https://www.google.com/';
-const url2 = 'https://www.linkedin.com/';
-const url3 = 'https://www.climatekk.com/';
-const url4 = 'https://github.com/';
 
-const ConnectingButtons = () => {
-  const [Button1, setButton1] = useState(false);
-  const [Button2, setButton2] = useState(false);
-  const [Button3, setButton3] = useState(false);
-  const [Button4, setButton4] = useState(false);
-  const [Button5, setButton5] = useState(false);
-  const [time, setTime] = useState(false);
+export type Props = {
+  /**
+  * Name of the meeting we're currently in.
+  */
+  _meetingName: string,
+  /**
+ * Whether displaying the current meeting name is enabled or not.
+ */
+  _meetingNameEnabled: boolean,
+  /**
+* True if the navigation bar should be visible.
+*/
+  _visible: boolean
+}
+const ConnectingButtons = (props: Props) => {
+  const [adsList, setAdsList] = useState([]);
+  const [time, setTime] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  const listOfAds = [];
+  const meetingName = props._meetingName.trim()
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      let res = {
+        roomName: meetingName
+      }
+      let adsData = await API.request('GET', 'iconAds', res);
+      if (adsData.status == 1) {
+        for (let i = 0; i < adsData.data.length; i++) {
+          listOfAds.push(adsData.data[i])
+        }
+        setAdsList(listOfAds)
+        setLoading(false)
+      }
+    })()
+  }, [])
   useEffect(() => {
     setTimeout(() => {
-      setTime(!time)
+      setTime(time + 2 > adsList.length - 1 ? 0 : time + 2)
     }, 10000)
   }, [time])
   return (
     <View style={styles.ScreenButtons}>
-      {time ? <View style={{ flexDirection: 'row' }}>
-        <TouchableOpacity style={styles.links}
-          onPress={() => Linking.openURL(url1)}
-        >
-          <Icon
-            size={28}
-            src={IconBeer}
-            style={styles.ConnectingButtons} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => Linking.openURL(url2)}
-        >
-          <Icon
-            size={28}
-            src={IconGem}
-            style={styles.ConnectingButtons} />
-        </TouchableOpacity>
-      </View> :
-        <View style={{ flexDirection: 'row' }}>
-          <TouchableOpacity
-            onPress={() => Linking.openURL(url3)}>
-            <Icon
-              size={28}
-              src={IconEightStreek}
-              style={styles.ConnectingButtons} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => Linking.openURL(url4)}>
-            <Icon
-              size={28}
-              src={IconCyclone}
-              style={styles.ConnectingButtons} />
-          </TouchableOpacity>
-        </View>}
+      {adsList.map((value, index) => {
+        return (
+          <View>
+            {time == index || time + 1 == index ?
+              <View>
+                <TouchableOpacity onPress={() => Linking.openURL(value.url)}><View>
+                  <SvgUri width='40' height='40' uri={value.iconUrl} />
+                  <Text style={styles.urlText}>{value.title}</Text>
+                </View>
+                </TouchableOpacity>
+              </View>
+              : null}
+          </View>
+        )
+      })}
     </View>
   );
 }
-export default ConnectingButtons;
+function _mapStateToProps(state) {
+  return {
+    _meetingName: getConferenceName(state),
+    _meetingNameEnabled:
+      getFeatureFlag(state, MEETING_NAME_ENABLED, true),
+    _visible: isToolboxVisible(state)
+  };
+}
+export default connect(_mapStateToProps)(ConnectingButtons);

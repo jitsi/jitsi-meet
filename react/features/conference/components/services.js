@@ -1,4 +1,4 @@
-const baseUrl = '';
+const baseUrl = 'https://custommeet3.centralus.cloudapp.azure.com:8081/api/v1/tok/';
 
 const API = {
     request: async (method, endpoint, data = undefined) => {
@@ -6,7 +6,6 @@ const API = {
             method: method,
             headers: {
                 'content-type': 'Application/json',
-                'accpect': 'Application/json'
             }
         }
         let queryParams = '?'
@@ -30,3 +29,4 @@ const API = {
         }
     }
 }
+export default API;
