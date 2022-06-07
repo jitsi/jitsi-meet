@@ -877,7 +877,7 @@ var config = {
 
         // Obfuscates room name sent to analytics (amplitude, rtcstats)
         // Default value is false.
-        // obfuscateRoomName: false
+        // obfuscateRoomName: false,
 
         // Configuration for the rtcstats server:
         // By enabling rtcstats server every time a conference is joined the rtcstats
