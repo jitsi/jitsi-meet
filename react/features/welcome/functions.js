@@ -6,7 +6,7 @@ declare var APP: Object;
 
 /**
  * Determines whether the {@code WelcomePage} is enabled by the user either
- * herself or through her deployment configuration).
+ * herself or through her deployment configuration.
  *
  * @param {Function|Object} stateful - The redux state or {@link getState}
  * function.
