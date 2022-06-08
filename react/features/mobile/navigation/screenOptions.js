@@ -275,6 +275,7 @@ export const sharedDocumentScreenOptions = {
  */
 export const preJoinScreenOptions = {
     gestureEnabled: false,
-    // eslint-disable-next-line no-empty-function
-    headerTitle: () => {}
+    headerTitleStyle: {
+        color: BaseTheme.palette.text01
+    }
 };
