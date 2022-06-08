@@ -21,7 +21,8 @@ type FaceBox = {
 
 type InitInput = {
     baseUrl: string,
-    detectionTypes: string[]
+    detectionTypes: string[],
+    maxFacesDetected?: number
 }
 
 type DetectOutput = {
@@ -44,6 +45,7 @@ export class HumanHelper implements FaceLandmarksHelper {
     protected human: Human | undefined;
     protected faceDetectionTypes: string[];
     protected baseUrl: string;
+    protected maxFacesDetected?: number;
     private detectionInProgress = false;
     private lastValidFaceBox: FaceBox | undefined;
     /**
@@ -59,7 +61,7 @@ export class HumanHelper implements FaceLandmarksHelper {
         deallocate: true,
         filter: { enabled: false },
         face: {
-            enabled: true,
+            enabled: false,
             detector: {
                 enabled: false,
                 rotation: false,
@@ -80,9 +82,10 @@ export class HumanHelper implements FaceLandmarksHelper {
         segmentation: { enabled: false }
     };
 
-    constructor({ baseUrl, detectionTypes }: InitInput) {
+    constructor({ baseUrl, detectionTypes, maxFacesDetected }: InitInput) {
         this.faceDetectionTypes = detectionTypes;
         this.baseUrl = baseUrl;
+        this.maxFacesDetected = maxFacesDetected;
         this.init();
     }
 
@@ -98,7 +101,11 @@ export class HumanHelper implements FaceLandmarksHelper {
 
             if (this.faceDetectionTypes.length > 0 && this.config.face) {
                 this.config.face.enabled = true
-            } 
+            }
+            
+            if (this.maxFacesDetected && this.config.face?.detector) {
+                this.config.face.detector.maxDetected = this.maxFacesDetected;
+            }
 
             if (this.faceDetectionTypes.includes(DETECTION_TYPES.FACE_BOX) && this.config.face?.detector) {
                 this.config.face.detector.enabled = true;
