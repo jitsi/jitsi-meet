@@ -1,7 +1,6 @@
 // @flow
 
 import React from 'react';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Text, TouchableRipple } from 'react-native-paper';
 
 import { Icon } from '../../../base/icons';
@@ -48,14 +47,14 @@ const HeaderNavigationButton
             <>
                 {
                     src ? (
-                        <TouchableOpacity
+                        <TouchableRipple
                             onPress = { onPress }
-                            style = { styles.headerNavigationButton }>
+                            rippleColor = { BaseTheme.palette.screen02Header }
+                            style = { styles.headerNavigationButton } >
                             <Icon
-                                size = { 20 }
-                                src = { src }
-                                style = { styles.headerNavigationIcon } />
-                        </TouchableOpacity>
+                                size = { 24 }
+                                src = { src } />
+                        </TouchableRipple>
                     ) : (
                         <TouchableRipple
                             disabled = { disabled }
