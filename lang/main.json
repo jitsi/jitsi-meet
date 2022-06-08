@@ -1270,7 +1270,7 @@
             "roomname": "Enter room name"
         },
         "addMeetingName": "Add Meeting name",
-        "appDescription": "Go ahead, video chat with the whole team. In fact, invite everyone you know. {{app}} is a fully encrypted, 100% open source video conferencing solution that you can use all day, every day, for free — with no account needed.",
+        "appDescription": "Go ahead, video chat with the whole team. In fact, invite everyone you know. {{app}} is a fully encrypted, 100% open source video conferencing solution that you can use all day, every day",
         "audioVideoSwitch": {
             "audio": "Voice",
             "video": "Video"
@@ -1283,9 +1283,9 @@
         "go": "GO",
         "goSmall": "GO",
         "headerSubtitle": "Secure and high quality meetings",
-        "headerTitle": "Jitsi Meet",
+        "headerTitle": "Polytok",
         "info": "Dial-in info",
-        "jitsiOnMobile": "Jitsi on mobile – download our apps and start a meeting from anywhere",
+        "jitsiOnMobile": "Polytok on mobile – download our apps and start a meeting from anywhere",
         "join": "CREATE / JOIN",
         "logo": {
             "calendar": "Calendar logo",
@@ -1310,6 +1310,6 @@
         "sendFeedback": "Send feedback",
         "startMeeting": "Start meeting",
         "terms": "Terms",
-        "title": "Secure, fully featured, and completely free video conferencing"
+        "title": "Polytok Video Conferencing"
     }
 }
