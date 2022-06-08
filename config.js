@@ -779,7 +779,7 @@ var config = {
     // enableEmailInStats: false,
 
     // faceLandmarks: {
-    //     // Enables sharing your face cordinates. Used for centering faces within a video.
+    //     // Enables sharing your face coordinates. Used for centering faces within a video.
     //     enableFaceCentering: false,
 
     //     // Enables detecting face expressions and sharing data with other participants
@@ -791,8 +791,11 @@ var config = {
     //     // Minimum required face movement percentage threshold for sending new face centering coordinates data.
     //     faceCenteringThreshold: 10,
 
-    //     // Miliseconds for processing a new image capture in order to detect face coordinates if they exist.
-    //     captureInterval: 100
+    //     // Milliseconds for processing a new image capture in order to detect face coordinates if they exist.
+    //     captureInterval: 1000,
+
+    //     // Maximum number of faces that can be detected from a video track.
+    //     maxFacesDetected: 4
     // },
 
     // Controls the percentage of automatic feedback shown to participants when callstats is enabled.
