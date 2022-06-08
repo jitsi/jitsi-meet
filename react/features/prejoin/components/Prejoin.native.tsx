@@ -14,7 +14,7 @@ import { createDesiredLocalTracks } from '../../base/tracks';
 import { LargeVideo } from '../../large-video/components';
 import { _sendReadyToClose } from '../../mobile/external-api/functions';
 import HeaderNavigationButton from '../../mobile/navigation/components/HeaderNavigationButton';
-import { isWelcomePageAppEnabled } from '../../mobile/navigation/components/welcome/functions';
+import { isWelcomePageEnabled } from '../../mobile/navigation/components/welcome/functions';
 import { navigateRoot } from '../../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../../mobile/navigation/routes';
 import AudioMuteButton from '../../toolbox/components/AudioMuteButton';
@@ -35,7 +35,7 @@ const Prejoin: React.FC = ({ navigation }: Props) => {
     );
     const localParticipant = useSelector((state: any) => getLocalParticipant(state));
 
-    const isWelcomePageEnabled = useSelector((state: any) => isWelcomePageAppEnabled(state));
+    const isWelcomeEnabled = useSelector((state: any) => isWelcomePageEnabled(state));
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]
         = useState(participantName || '');
@@ -57,12 +57,12 @@ const Prejoin: React.FC = ({ navigation }: Props) => {
     }, [ dispatch ]);
 
     const goBack = useCallback(() => {
-        if (isWelcomePageEnabled) {
+        if (isWelcomeEnabled) {
             navigateRoot(screen.root);
         } else {
             _sendReadyToClose(dispatch);
         }
-    }, [ dispatch, isWelcomePageEnabled ]);
+    }, [ dispatch, isWelcomeEnabled ]);
 
     let contentStyles;
     let largeVideoContainerStyles;

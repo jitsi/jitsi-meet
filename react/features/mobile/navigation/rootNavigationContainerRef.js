@@ -3,7 +3,7 @@ import React from 'react';
 import { toState } from '../../base/redux';
 import { _sendReadyToClose } from '../external-api/functions';
 
-import { isWelcomePageAppEnabled } from './components/welcome/functions';
+import { isWelcomePageEnabled } from './components/welcome/functions';
 import { screen } from './routes';
 
 export const rootNavigationRef = React.createRef();
@@ -29,7 +29,7 @@ export function navigateRoot(name: string, params: Object) {
 export function goBackToRoot(stateful: Function | Object, dispatch: Function) {
     const state = toState(stateful);
 
-    if (isWelcomePageAppEnabled(state)) {
+    if (isWelcomePageEnabled(state)) {
         navigateRoot(screen.root);
     } else {
         // For JitsiSDK, WelcomePage is not available

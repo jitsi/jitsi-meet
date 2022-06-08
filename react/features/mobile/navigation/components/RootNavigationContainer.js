@@ -19,7 +19,7 @@ import ConnectingPage from './ConnectingPage';
 import ConferenceNavigationContainer
     from './conference/components/ConferenceNavigationContainer';
 import WelcomePageNavigationContainer from './welcome/components/WelcomePageNavigationContainer';
-import { isWelcomePageAppEnabled } from './welcome/functions';
+import { isWelcomePageEnabled } from './welcome/functions';
 
 const RootStack = createNativeStackNavigator();
 
@@ -100,7 +100,7 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: Props) =>
  */
 function mapStateToProps(state: Object) {
     return {
-        isWelcomePageAvailable: isWelcomePageAppEnabled(state)
+        isWelcomePageAvailable: isWelcomePageEnabled(state)
     };
 }
 

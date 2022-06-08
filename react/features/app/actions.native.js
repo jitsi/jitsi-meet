@@ -11,13 +11,15 @@ import {
     setConfig,
     storeConfig
 } from '../base/config';
-import { disconnect, setLocationURL } from '../base/connection';
+import { connect, disconnect, setLocationURL } from '../base/connection';
 import { loadConfig } from '../base/lib-jitsi-meet/functions.native';
+import { createDesiredLocalTracks } from '../base/tracks';
 import {
     getBackendSafeRoomName,
     parseURIString,
     toURLString
 } from '../base/util';
+import { isPrejoinPageEnabled } from '../mobile/navigation/functions';
 import {
     goBackToRoot,
     navigateRoot
@@ -128,11 +130,17 @@ export function appNavigate(uri: ?string) {
         dispatch(setConfig(config));
         dispatch(setRoom(room));
 
-        if (room) {
-            navigateRoot(screen.preJoin);
-        }
-
-        if (!room) {
+        if (isPrejoinPageEnabled(getState())) {
+            if (room) {
+                navigateRoot(screen.preJoin);
+            } else {
+                goBackToRoot(getState(), dispatch);
+            }
+        } else if (room) {
+            navigateRoot(screen.conference.root);
+            dispatch(createDesiredLocalTracks());
+            dispatch(connect());
+        } else {
             goBackToRoot(getState(), dispatch);
         }
     };

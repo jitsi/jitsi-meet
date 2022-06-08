@@ -21,8 +21,6 @@ import { connect } from '../../base/redux';
 import BaseTheme from '../../base/ui/components/BaseTheme';
 import WelcomePageTabs
     from '../../mobile/navigation/components/welcome/components/WelcomePageTabs';
-import { navigateRoot } from '../../mobile/navigation/rootNavigationContainerRef';
-import { screen } from '../../mobile/navigation/routes';
 
 import {
     AbstractWelcomePage,

@@ -2,6 +2,10 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform } from 'react-native';
 
+import {
+    getFeatureFlag,
+    PREJOIN_PAGE_ENABLED
+} from '../../base/flags';
 import { IconClose } from '../../base/icons';
 
 import HeaderNavigationButton from './components/HeaderNavigationButton';
@@ -28,4 +32,17 @@ export function screenHeaderCloseButton(goBack: Function) {
             onPress = { goBack }
             src = { IconClose } />
     );
+}
+
+/**
+ * Determines whether the {@code Prejoin page} is enabled by the app itself
+ * (e.g. Programmatically via the Jitsi Meet SDK for Android and iOS).
+ *
+ * @param {Function|Object} stateful - The redux state or {@link getState}
+ * function.
+ * @returns {boolean} If the {@code Prejoin} is enabled by the app, then
+ * {@code true}; otherwise, {@code false}.
+ */
+export function isPrejoinPageEnabled(stateful: Function | Object) {
+    return getFeatureFlag(stateful, PREJOIN_PAGE_ENABLED);
 }

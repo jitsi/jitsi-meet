@@ -10,16 +10,15 @@ import { navigationStyles } from '../styles';
 
 /**
  * Determines whether the {@code WelcomePage} is enabled by the app itself
- * (e.g. Programmatically via the Jitsi Meet SDK for Android and iOS). Not to be
- * confused with {@link isWelcomePageUserEnabled}.
+ * (e.g. Programmatically via the Jitsi Meet SDK for Android and iOS).
  *
  * @param {Function|Object} stateful - The redux state or {@link getState}
  * function.
  * @returns {boolean} If the {@code WelcomePage} is enabled by the app, then
  * {@code true}; otherwise, {@code false}.
  */
-export function isWelcomePageAppEnabled(stateful: Function | Object) {
-    return Boolean(getFeatureFlag(stateful, WELCOME_PAGE_ENABLED));
+export function isWelcomePageEnabled(stateful: Function | Object) {
+    return getFeatureFlag(stateful, WELCOME_PAGE_ENABLED);
 }
 
 /**

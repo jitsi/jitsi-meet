@@ -6,15 +6,14 @@ declare var APP: Object;
 
 /**
  * Determines whether the {@code WelcomePage} is enabled by the user either
- * herself or through her deployment config(uration). Not to be confused with
- * {@link isWelcomePageAppEnabled}.
+ * herself or through her deployment configuration).
  *
  * @param {Function|Object} stateful - The redux state or {@link getState}
  * function.
  * @returns {boolean} If the {@code WelcomePage} is enabled by the user, then
  * {@code true}; otherwise, {@code false}.
  */
-export function isWelcomePageUserEnabled(stateful: Function | Object) {
+export function isWelcomePageEnabled(stateful: Function | Object) {
     return (
         typeof APP === 'undefined'
             ? true

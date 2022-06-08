@@ -1,11 +1,8 @@
 import { CONFERENCE_FAILED } from '../../base/conference/actionTypes';
 import { JitsiConferenceErrors } from '../../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../../base/redux';
-import { _sendReadyToClose } from '../external-api/functions';
 
-import { isWelcomePageAppEnabled } from './components/welcome/functions';
-import { navigateRoot } from './rootNavigationContainerRef';
-import { screen } from './routes';
+import { goBackToRoot } from './rootNavigationContainerRef';
 
 
 MiddlewareRegistry.register(store => next => action => {
@@ -29,18 +26,12 @@ MiddlewareRegistry.register(store => next => action => {
  */
 function _conferenceFailed({ dispatch, getState }, next, action) {
     const state = getState();
-    const isWelcomePageEnabled = isWelcomePageAppEnabled(state);
     const { error } = action;
 
     // We need to cover the case where knocking participant
     // is rejected from entering the conference
     if (error.name === JitsiConferenceErrors.CONFERENCE_ACCESS_DENIED) {
-        if (isWelcomePageEnabled) {
-            navigateRoot(screen.root);
-        } else {
-            // For JitsiSDK, WelcomePage is not available
-            _sendReadyToClose(dispatch);
-        }
+        goBackToRoot(state, dispatch);
     }
 
     return next(action);
