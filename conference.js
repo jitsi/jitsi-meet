@@ -1650,12 +1650,26 @@ export default {
         let promise = _prevMutePresenterVideo = _prevMutePresenterVideo.then(() => {
             // mute the presenter track if it exists.
             if (this.localPresenterVideo) {
-                APP.store.dispatch(setVideoMuted(true, MEDIA_TYPE.PRESENTER));
+                return (
+                    this.localPresenterVideo.dispose().then(() => {
+                        APP.store.dispatch(trackRemoved(this.localPresenterVideo));
+                        this.localPresenterVideo = null;
+                    })
+                    .then(() => {
 
-                return this.localPresenterVideo.dispose().then(() => {
-                    APP.store.dispatch(trackRemoved(this.localPresenterVideo));
-                    this.localPresenterVideo = null;
-                });
+                        // This is needed only for setting the correct muted state in features/base/media.
+                        // NOTE: It is important to be executed after we have disposed and removed the presenter track.
+                        // This way all the side effects won't be executed and we won't start additional O/A cycle for
+                        // replacing the track with video with the one without video. This O/A cycle is not needed since
+                        // we are trying to destroy all tracks. Also due to the current async nature of muting the
+                        // presenter, the final removal of the screen sharing track (see the code at the end of the
+                        // function) can be executed between the removal of the stream with video and adding the
+                        // original screen sharing stream to the peer connection. This will lead to a failure to remove
+                        // the screen sharing track, compromising the screen sharing state in jitsi-meet and the user
+                        // won't be able to turn off the screen sharing.
+                        APP.store.dispatch(setVideoMuted(true, MEDIA_TYPE.PRESENTER));
+                    })
+                );
             }
         });
 
