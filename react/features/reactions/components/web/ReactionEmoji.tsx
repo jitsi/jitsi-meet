@@ -1,10 +1,10 @@
-// @flow
-
 import React, { Component } from 'react';
 
+// @ts-ignore
 import { connect } from '../../../base/redux';
 import { removeReaction } from '../../actions.any';
 import { REACTIONS } from '../../constants';
+import { IStore } from '../../../app/types';
 
 type Props = {
 
@@ -16,12 +16,12 @@ type Props = {
     /**
      * Id of the reaction.
      */
-    uid: Number,
+    uid: string,
 
     /**
      * Removes reaction from redux state.
      */
-    removeReaction: Function,
+    reactionRemove: Function,
 
     /**
      * Index of the reaction in the queue.
@@ -64,7 +64,7 @@ class ReactionEmoji extends Component<Props, State> {
      * @inheritdoc
      */
     componentDidMount() {
-        setTimeout(() => this.props.removeReaction(this.props.uid), 5000);
+        setTimeout(() => this.props.reactionRemove(this.props.uid), 5000);
     }
 
     /**
@@ -86,11 +86,8 @@ class ReactionEmoji extends Component<Props, State> {
     }
 }
 
-const mapDispatchToProps = {
-    removeReaction
-};
+const mapDispatchToProps = (dispatch: IStore['dispatch']) => ({
+    reactionRemove: (uid: string) => dispatch(removeReaction(uid))
+});
 
-export default connect(
-    null,
-    mapDispatchToProps
-)(ReactionEmoji);
+export default connect(null, mapDispatchToProps)(ReactionEmoji);

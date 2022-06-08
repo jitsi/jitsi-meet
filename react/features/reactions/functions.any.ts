@@ -1,21 +1,21 @@
-// @flow
-
 import { v4 as uuidv4 } from 'uuid';
 
+// @ts-ignore
 import { getFeatureFlag, REACTIONS_ENABLED } from '../base/flags';
+// @ts-ignore
 import { getLocalParticipant } from '../base/participants';
+// @ts-ignore
 import { extractFqnFromPath } from '../dynamic-branding/functions.any';
 
-import { REACTIONS, SOUNDS_THRESHOLDS } from './constants';
+import { ReactionEmojiProps, REACTIONS, ReactionThreshold, SOUNDS_THRESHOLDS } from './constants';
 import logger from './logger';
 
 /**
  * Returns the queue of reactions.
  *
  * @param {Object} state - The state of the application.
- * @returns {boolean}
  */
-export function getReactionsQueue(state: Object) {
+export function getReactionsQueue(state: any): Array<ReactionEmojiProps> {
     return state['features/reactions'].queue;
 }
 
@@ -23,20 +23,18 @@ export function getReactionsQueue(state: Object) {
  * Returns chat message from reactions buffer.
  *
  * @param {Array} buffer - The reactions buffer.
- * @returns {string}
  */
-export function getReactionMessageFromBuffer(buffer: Array<string>) {
-    return buffer.map(reaction => REACTIONS[reaction].message).reduce((acc, val) => `${acc}${val}`);
+export function getReactionMessageFromBuffer(buffer: Array<string>): string {
+    return buffer.map<string>(reaction => REACTIONS[reaction].message).reduce((acc, val) => `${acc}${val}`);
 }
 
 /**
  * Returns reactions array with uid.
  *
  * @param {Array} buffer - The reactions buffer.
- * @returns {Array}
  */
-export function getReactionsWithId(buffer: Array<string>) {
-    return buffer.map<Object>(reaction => {
+export function getReactionsWithId(buffer: Array<string>): Array<ReactionEmojiProps> {
+    return buffer.map<ReactionEmojiProps>(reaction => {
         return {
             reaction,
             uid: uuidv4()
@@ -49,9 +47,8 @@ export function getReactionsWithId(buffer: Array<string>) {
  *
  * @param {Object} state - The redux state object.
  * @param {Array} reactions - Reactions array to be sent.
- * @returns {void}
  */
-export async function sendReactionsWebhook(state: Object, reactions: Array<?string>) {
+export async function sendReactionsWebhook(state: any, reactions: Array<string>) {
     const { webhookProxyUrl: url } = state['features/base/config'];
     const { conference } = state['features/base/conference'];
     const { jwt } = state['features/base/jwt'];
@@ -96,9 +93,8 @@ export async function sendReactionsWebhook(state: Object, reactions: Array<?stri
  * Returns unique reactions from the reactions buffer.
  *
  * @param {Array} reactions - The reactions buffer.
- * @returns {Array}
  */
-function getUniqueReactions(reactions: Array<string>) {
+function getUniqueReactions(reactions: Array<string>): Array<string> {
     return [ ...new Set(reactions) ];
 }
 
@@ -107,9 +103,8 @@ function getUniqueReactions(reactions: Array<string>) {
  *
  * @param {Array} reactions - Array of reactions.
  * @param {string} reaction - Reaction to get frequency for.
- * @returns {number}
  */
-function getReactionFrequency(reactions: Array<string>, reaction: string) {
+function getReactionFrequency(reactions: Array<string>, reaction: string): number {
     return reactions.filter(r => r === reaction).length;
 }
 
@@ -117,9 +112,8 @@ function getReactionFrequency(reactions: Array<string>, reaction: string) {
  * Returns the threshold number for a given frequency.
  *
  * @param {number} frequency - Frequency of reaction.
- * @returns {number}
  */
-function getSoundThresholdByFrequency(frequency) {
+function getSoundThresholdByFrequency(frequency: number): number {
     for (const i of SOUNDS_THRESHOLDS) {
         if (frequency <= i) {
             return i;
@@ -133,12 +127,11 @@ function getSoundThresholdByFrequency(frequency) {
  * Returns unique reactions with threshold.
  *
  * @param {Array} reactions - The reactions buffer.
- * @returns {Array}
  */
-export function getReactionsSoundsThresholds(reactions: Array<string>) {
+export function getReactionsSoundsThresholds(reactions: Array<string>): Array<ReactionThreshold> {
     const unique = getUniqueReactions(reactions);
 
-    return unique.map<Object>(reaction => {
+    return unique.map<ReactionThreshold>(reaction => {
         return {
             reaction,
             threshold: getSoundThresholdByFrequency(getReactionFrequency(reactions, reaction))
@@ -150,9 +143,8 @@ export function getReactionsSoundsThresholds(reactions: Array<string>) {
  * Whether or not the reactions are enabled.
  *
  * @param {Object} state - The Redux state object.
- * @returns {boolean}
  */
-export function isReactionsEnabled(state: Object) {
+export function isReactionsEnabled(state: any): boolean {
     const { disableReactions } = state['features/base/config'];
 
     if (navigator.product === 'ReactNative') {

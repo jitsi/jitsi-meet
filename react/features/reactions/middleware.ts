@@ -1,24 +1,31 @@
-// @flow
-
+// @ts-ignore
 import { batch } from 'react-redux';
-
+// @ts-ignore
 import { createReactionSoundsDisabledEvent, sendAnalytics } from '../analytics';
+// @ts-ignore
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import {
     CONFERENCE_JOIN_IN_PROGRESS,
     SET_START_REACTIONS_MUTED,
     setStartReactionsMuted
+    // @ts-ignore
 } from '../base/conference';
 import {
     getParticipantById,
     getParticipantCount,
     isLocalParticipantModerator
+    // @ts-ignore
 } from '../base/participants';
+// @ts-ignore
 import { MiddlewareRegistry } from '../base/redux';
 import { SETTINGS_UPDATED } from '../base/settings/actionTypes';
+// @ts-ignore
 import { updateSettings } from '../base/settings/actions';
+// @ts-ignore
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
+// @ts-ignore
 import { getDisabledSounds } from '../base/sounds/functions.any';
+// @ts-ignore
 import { NOTIFICATION_TIMEOUT_TYPE, showNotification } from '../notifications';
 
 import {
@@ -28,7 +35,6 @@ import {
     PUSH_REACTIONS,
     SHOW_SOUNDS_NOTIFICATION
 } from './actionTypes';
-import { displayReactionSoundsNotification } from './actions';
 import {
     addReactionsToChat,
     flushReactionBuffer,
@@ -36,13 +42,15 @@ import {
     sendReactions,
     setReactionQueue
 } from './actions.any';
+import { displayReactionSoundsNotification } from './actions.web';
 import {
     ENDPOINT_REACTION_NAME,
     RAISE_HAND_SOUND_ID,
     REACTIONS,
     REACTION_SOUND,
     SOUNDS_THRESHOLDS,
-    MUTE_REACTIONS_COMMAND
+    MUTE_REACTIONS_COMMAND,
+    MuteCommandAttributes
 } from './constants';
 import {
     getReactionMessageFromBuffer,
@@ -52,15 +60,16 @@ import {
 } from './functions.any';
 import logger from './logger';
 import { RAISE_HAND_SOUND_FILE } from './sounds';
+import { IStore } from '../app/types';
 
 /**
  * Middleware which intercepts Reactions actions to handle changes to the
  * visibility timeout of the Reactions.
  *
- * @param {Store} store - The redux store.
+ * @param {IStore} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register(store => next => action => {
+MiddlewareRegistry.register((store: IStore) => (next: Function) => (action:any) => {
     const { dispatch, getState } = store;
 
     switch (action.type) {
@@ -108,7 +117,7 @@ MiddlewareRegistry.register(store => next => action => {
         const { conference } = action;
 
         conference.addCommandListener(
-            MUTE_REACTIONS_COMMAND, ({ attributes }, id) => {
+            MUTE_REACTIONS_COMMAND, ({ attributes }: { attributes: MuteCommandAttributes }, id: any) => {
                 _onMuteReactionsCommand(attributes, id, store);
             });
         break;
@@ -232,9 +241,8 @@ MiddlewareRegistry.register(store => next => action => {
  * @param {Object} store - The redux store. Used to calculate and dispatch
  * updates.
  * @private
- * @returns {void}
  */
-function _onMuteReactionsCommand(attributes = {}, id, store) {
+function _onMuteReactionsCommand(attributes: MuteCommandAttributes = {}, id: string, store: IStore) {
     const state = store.getState();
 
     // We require to know who issued the command because (1) only a
@@ -259,6 +267,7 @@ function _onMuteReactionsCommand(attributes = {}, id, store) {
     }
 
     const oldState = Boolean(state['features/base/conference'].startReactionsMuted);
+    // @ts-ignore
     const newState = attributes.startReactionsMuted === 'true';
 
     if (oldState !== newState) {

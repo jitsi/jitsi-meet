@@ -1,18 +1,25 @@
 // @flow
 
 import React, { useCallback } from 'react';
+// @ts-ignore
 import { useSelector } from 'react-redux';
 
+// @ts-ignore
 import { isMobileBrowser } from '../../../base/environment/utils';
+// @ts-ignore
 import { translate } from '../../../base/i18n';
+// @ts-ignore
 import { IconArrowUp } from '../../../base/icons';
+// @ts-ignore
 import { connect } from '../../../base/redux';
+// @ts-ignore
 import ToolboxButtonWithIconPopup from '../../../base/toolbox/components/web/ToolboxButtonWithIconPopup';
 import { toggleReactionsMenuVisibility } from '../../actions.web';
-import { type ReactionEmojiProps } from '../../constants';
+import { ReactionEmojiProps } from '../../constants';
 import { getReactionsQueue, isReactionsEnabled } from '../../functions.any';
 import { getReactionsMenuVisibility } from '../../functions.web';
 
+// @ts-ignore
 import RaiseHandButton from './RaiseHandButton';
 import ReactionEmoji from './ReactionEmoji';
 import ReactionsMenu from './ReactionsMenu';
@@ -111,11 +118,9 @@ function ReactionsMenuButton({
                         ariaExpanded = { isOpen }
                         ariaHasPopup = { true }
                         ariaLabel = { t('toolbar.accessibilityLabel.reactionsMenu') }
-                        buttonKey = { buttonKey }
                         icon = { IconArrowUp }
                         iconDisabled = { false }
                         iconId = 'reactions-menu-button'
-                        notifyMode = { notifyMode }
                         onPopoverClose = { toggleReactionsMenu }
                         onPopoverOpen = { openReactionsMenu }
                         popoverContent = { reactionsMenu }
@@ -141,7 +146,7 @@ function ReactionsMenuButton({
  * @param {Object} state - Redux state.
  * @returns {Object}
  */
-function mapStateToProps(state) {
+function mapStateToProps(state: any) {
     return {
         _reactionsEnabled: isReactionsEnabled(state),
         isOpen: getReactionsMenuVisibility(state),

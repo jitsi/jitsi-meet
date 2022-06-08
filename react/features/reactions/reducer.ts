@@ -1,5 +1,4 @@
-// @flow
-
+// @ts-ignore
 import { ReducerRegistry } from '../base/redux';
 
 import {
@@ -9,60 +8,70 @@ import {
     FLUSH_REACTION_BUFFER,
     SHOW_SOUNDS_NOTIFICATION
 } from './actionTypes';
+import { ReactionEmojiProps } from './constants';
+
+interface State {
+    /**
+     * The indicator that determines whether the reactions menu is visible.
+     */
+    visible: boolean,
+    /**
+     * An array that contains the reactions buffer to be sent.
+     */
+    buffer: Array<string>,
+    /**
+     * A number, non-zero value which identifies the timer created by a call
+     * to setTimeout().
+     */
+    timeoutID: number|null,
+    /**
+    * The array of reactions to animate.
+    */
+    queue: Array<ReactionEmojiProps>,
+
+    /**
+     * Whether or not the disable reaction sounds notification was shown.
+     */
+    notificationDisplayed: boolean
+}
+
+export interface ReactionsAction extends Partial<State> {
+    /**
+     * The message to be added to the chat.
+     */
+    message?: string,
+    /**
+     * The reaction to be added to buffer.
+     */
+    reaction?: string,
+    /**
+     * The reactions to be added to the animation queue.
+     */
+    reactions?: Array<string>,
+    /**
+     * The action type.
+     */
+    type: string
+}
 
 /**
  * Returns initial state for reactions' part of Redux store.
  *
  * @private
- * @returns {{
- *     visible: boolean,
- *     message: string,
- *     timeoutID: number,
- *     queue: Array,
- *     notificationDisplayed: boolean
- * }}
  */
-function _getInitialState() {
+function _getInitialState(): State {
     return {
-        /**
-         * The indicator that determines whether the reactions menu is visible.
-         *
-         * @type {boolean}
-         */
         visible: false,
-
-        /**
-         * An array that contains the reactions buffer to be sent.
-         *
-         * @type {Array}
-         */
         buffer: [],
-
-        /**
-         * A number, non-zero value which identifies the timer created by a call
-         * to setTimeout().
-         *
-         * @type {number|null}
-         */
         timeoutID: null,
-
-        /**
-         * The array of reactions to animate.
-         *
-         * @type {Array}
-         */
         queue: [],
-
-        /**
-         * Whether or not the disable reaction sounds notification was shown.
-         */
         notificationDisplayed: false
     };
 }
 
 ReducerRegistry.register(
     'features/reactions',
-    (state: Object = _getInitialState(), action: Object) => {
+    (state: State = _getInitialState(), action: ReactionsAction) => {
         switch (action.type) {
 
         case TOGGLE_REACTIONS_VISIBLE:
@@ -88,7 +97,7 @@ ReducerRegistry.register(
         case SET_REACTION_QUEUE: {
             return {
                 ...state,
-                queue: action.value
+                queue: action.queue
             };
         }
 
