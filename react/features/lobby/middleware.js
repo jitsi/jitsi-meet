@@ -19,6 +19,7 @@ import { approveKnockingParticipant, rejectKnockingParticipant } from '../lobby/
 import {
     LOBBY_NOTIFICATION_ID,
     NOTIFICATION_ICON,
+    NOTIFICATION_TIMEOUT,
     NOTIFICATION_TIMEOUT_TYPE,
     NOTIFICATION_TYPE,
     hideNotification,
@@ -30,6 +31,7 @@ import { shouldAutoKnock } from '../prejoin/functions';
 
 import { KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED, KNOCKING_PARTICIPANT_LEFT } from './actionTypes';
 import {
+    cancelKnocking,
     hideLobbyScreen,
     knockingParticipantLeft,
     openLobbyScreen,
@@ -311,6 +313,8 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
                 descriptionKey: 'lobby.joinRejectedMessage'
             }, NOTIFICATION_TIMEOUT_TYPE.LONG)
         );
+
+        setTimeout(() => dispatch(cancelKnocking()), NOTIFICATION_TIMEOUT.LONG);
     }
 
     return next(action);
