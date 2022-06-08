@@ -242,7 +242,7 @@ export const gifsMenuOptions = presentationScreenOptions;
  * Screen options for shared document.
  */
 export const sharedDocumentScreenOptions = {
-    animation: 'default',
+    animation: 'slide_from_right',
     headerBackTitleVisible: false,
     headerShown: true,
     headerStyle: {
