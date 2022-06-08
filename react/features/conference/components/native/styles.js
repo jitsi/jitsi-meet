@@ -36,10 +36,6 @@ export default {
         margin: 10
     },
 
-    headerNavigationIcon: {
-        marginLeft: 14
-    },
-
     headerNavigationButton: {
         height: BaseTheme.spacing[6],
         marginTop: 20,
@@ -48,15 +44,13 @@ export default {
 
     headerNavigationText: {
         color: BaseTheme.palette.text01,
-        fontSize: HEADER_ACTION_BUTTON_SIZE,
-        marginHorizontal: BaseTheme.spacing[3]
+        fontSize: HEADER_ACTION_BUTTON_SIZE
     },
 
     headerNavigationTextBold: {
         ...BaseTheme.typography.labelButton,
         color: BaseTheme.palette.text01,
-        fontSize: HEADER_ACTION_BUTTON_SIZE,
-        marginHorizontal: BaseTheme.spacing[3]
+        fontSize: HEADER_ACTION_BUTTON_SIZE
     },
 
     /**

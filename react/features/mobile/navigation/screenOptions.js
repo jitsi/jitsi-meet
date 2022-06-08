@@ -1,6 +1,4 @@
-import { TransitionPresets } from '@react-navigation/stack';
 import React from 'react';
-import { Platform } from 'react-native';
 
 import {
     Icon,
@@ -26,28 +24,10 @@ export const navigationContainerTheme = {
 };
 
 /**
- * Default modal transition for the current platform.
- */
-export const conferenceModalPresentation = Platform.select({
-    ios: TransitionPresets.ModalPresentationIOS,
-    default: TransitionPresets.DefaultTransition
-});
-
-/**
- * Screen options and transition types.
- */
-export const fullScreenOptions = {
-    ...TransitionPresets.ModalTransition,
-    gestureEnabled: false,
-    headerShown: false
-};
-
-
-/**
  * Drawer navigator screens options and transition types.
  */
 export const drawerNavigatorScreenOptions = {
-    ...TransitionPresets.ModalTransition,
+    animation: 'default',
     gestureEnabled: true,
     headerShown: false
 };
@@ -57,7 +37,7 @@ export const drawerNavigatorScreenOptions = {
  * Drawer screen options and transition types.
  */
 export const drawerScreenOptions = {
-    ...TransitionPresets.ModalTransition,
+    animation: 'default',
     gestureEnabled: true,
     headerShown: true,
     headerStyle: {
@@ -151,7 +131,11 @@ export const helpScreenOptions = {
 /**
  * Screen options for conference.
  */
-export const conferenceScreenOptions = fullScreenOptions;
+export const conferenceScreenOptions = {
+    animation: 'default',
+    gestureEnabled: false,
+    headerShown: false
+};
 
 /**
  * Tab bar options for chat screen.
@@ -171,7 +155,7 @@ export const chatTabBarOptions = {
  * Screen options for presentation type modals.
  */
 export const presentationScreenOptions = {
-    ...conferenceModalPresentation,
+    animation: 'slide_from_right',
     headerBackTitleVisible: false,
     headerLeft: () => screenHeaderCloseButton(goBack),
     headerStatusBarHeight: 0,
@@ -258,7 +242,7 @@ export const gifsMenuOptions = presentationScreenOptions;
  * Screen options for shared document.
  */
 export const sharedDocumentScreenOptions = {
-    ...TransitionPresets.DefaultTransition,
+    animation: 'default',
     headerBackTitleVisible: false,
     headerShown: true,
     headerStyle: {
