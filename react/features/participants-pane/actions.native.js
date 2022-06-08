@@ -1,6 +1,6 @@
 import type { Dispatch } from 'redux';
 
-import { openSheet } from '../base/dialog';
+import { openSheet, hideSheet } from '../base/dialog';
 import { SharedVideoMenu } from '../video-menu';
 import { LocalVideoMenu } from '../video-menu/components/native';
 import ConnectionStatusComponent
@@ -11,6 +11,7 @@ import { SET_VOLUME } from './actionTypes';
 import {
     ContextMenuLobbyParticipantReject
 } from './components/native';
+import RoomParticipantMenu from './components/native/RoomParticipantMenu';
 export * from './actions.any';
 
 /**
@@ -80,4 +81,27 @@ export function setVolume(participantId: string, volume: number) {
         participantId,
         volume
     };
+}
+
+/**
+ * Displays the breakout room participant menu.
+ *
+ * @param {Object} room - The room the participant is in.
+ * @param {string} participantJid - The jid of the participant.
+ * @param {string} participantName - The display name of the participant.
+ * @returns {Function}
+ */
+export function showRoomParticipantMenu(room: Object, participantJid: string, participantName: string) {
+    return openSheet(RoomParticipantMenu, { room,
+        participantJid,
+        participantName });
+}
+
+/**
+ * Hides the breakout room participant menu.
+ *
+ * @returns {Function}
+ */
+export function hideRoomParticipantMenu() {
+    return hideSheet();
 }
