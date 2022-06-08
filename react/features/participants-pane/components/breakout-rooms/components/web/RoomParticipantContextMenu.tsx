@@ -1,15 +1,19 @@
-// @flow
-
 import { makeStyles } from '@material-ui/core';
 import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
+// @ts-ignore
 import { Avatar } from '../../../../../base/avatar';
+// @ts-ignore
 import { ContextMenu, ContextMenuItemGroup } from '../../../../../base/components';
+// @ts-ignore
 import { isLocalParticipantModerator } from '../../../../../base/participants';
+// @ts-ignore
 import { getBreakoutRooms } from '../../../../../breakout-rooms/functions';
+// @ts-ignore
 import { showOverflowDrawer } from '../../../../../toolbox/functions.web';
+// @ts-ignore
 import SendToRoomButton from '../../../../../video-menu/components/web/SendToRoomButton';
 
 type Props = {
@@ -17,12 +21,16 @@ type Props = {
     /**
      * Room and participant jid reference.
      */
-    entity: Object,
+    entity: {
+        room: any,
+        jid: string,
+        participantName: string
+    },
 
     /**
      * Target elements against which positioning calculations are made.
      */
-    offsetTarget: ?HTMLElement,
+    offsetTarget: HTMLElement|undefined,
 
     /**
      * Callback for the mouse entering the component.
@@ -40,7 +48,7 @@ type Props = {
     onSelect: Function
 };
 
-const useStyles = makeStyles(theme => {
+const useStyles = makeStyles((theme:any) => {
     return {
         text: {
             color: theme.palette.text02,
@@ -64,27 +72,26 @@ export const RoomParticipantContextMenu = ({
     const styles = useStyles();
     const { t } = useTranslation();
     const isLocalModerator = useSelector(isLocalParticipantModerator);
-    const lowerMenu = useCallback(() => onSelect(true));
-    const rooms = useSelector(getBreakoutRooms);
+    const lowerMenu = useCallback(() => onSelect(true), [onSelect]);
+    const rooms:any = useSelector(getBreakoutRooms);
     const overflowDrawer = useSelector(showOverflowDrawer);
 
-    const breakoutRoomsButtons = useMemo(() => Object.values(rooms || {}).map((room: Object) => {
+    const breakoutRoomsButtons = useMemo(() => Object.values(rooms || {}).map((room: any) => {
         if (room.id !== entity?.room?.id) {
             return (<SendToRoomButton
                 key = { room.id }
                 onClick = { lowerMenu }
-                participantJid = { entity?.jid }
+                participantID = { entity?.jid }
                 room = { room } />);
         }
 
         return null;
-    })
-    .filter(Boolean), [ entity, rooms ]);
+    }).filter(Boolean), [ entity, rooms ]);
 
     return isLocalModerator && (
         <ContextMenu
             entity = { entity }
-            isDrawerOpen = { entity }
+            isDrawerOpen = { Boolean(entity) }
             offsetTarget = { offsetTarget }
             onClick = { lowerMenu }
             onDrawerClose = { onSelect }
