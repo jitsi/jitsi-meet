@@ -35,7 +35,7 @@ import {
     getLocalParticipant
 } from '../../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';
-import { toggleScreensharing } from '../../base/tracks';
+import { getLocalTracks, isLocalTrackMuted, toggleScreensharing } from '../../base/tracks';
 import { OPEN_CHAT, CLOSE_CHAT } from '../../chat';
 import { openChat } from '../../chat/actions';
 import { sendMessage, setPrivateMessageRecipient, closeChat } from '../../chat/actions.any';
@@ -529,6 +529,11 @@ function _sendConferenceEvent(
     // transport an "equivalent".
     if (conference) {
         data.url = _normalizeUrl(conference[JITSI_CONFERENCE_URL_KEY]);
+
+        const localTracks = getLocalTracks(store.getState()['features/base/tracks']);
+        const isAudioMuted = isLocalTrackMuted(localTracks, MEDIA_TYPE.AUDIO);
+
+        data.isAudioMuted = isAudioMuted;
     }
 
     if (_swallowEvent(store, action, data)) {
