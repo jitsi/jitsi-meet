@@ -213,7 +213,7 @@ public class JitsiMeetActivity extends AppCompatActivity
     protected void onConferenceJoined(HashMap<String, Object> extraData) {
         JitsiMeetLogger.i("Conference joined: " + extraData);
         // Launch the service for the ongoing notification.
-        JitsiMeetOngoingConferenceService.launch(this);
+        JitsiMeetOngoingConferenceService.launch(this, extraData);
     }
 
     protected void onConferenceTerminated(HashMap<String, Object> extraData) {
