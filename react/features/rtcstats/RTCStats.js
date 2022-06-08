@@ -106,6 +106,17 @@ class RTCStats {
     }
 
     /**
+     * Send the timestamp of the start of the conference, the data will be processed by the rtcstats-server
+     * and saved in the dump file.
+     *
+     * @param {Oject} timestamp - The object which contains the timestamp.
+     * @returns {void}
+     */
+    sendConferenceTimestamp(timestamp) {
+        this.trace && this.trace.statsEntry('conferenceStartTimestamp', null, timestamp);
+    }
+
+    /**
      * Send videoType data, the data will be processed by rtcstats-server and saved in the dump file.
      *
      * @param {Object} videoTypeData - The object that holds the videoType data.
