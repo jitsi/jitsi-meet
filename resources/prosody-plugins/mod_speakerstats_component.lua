@@ -7,6 +7,7 @@ local st = require "util.stanza";
 local socket = require "socket";
 local json = require "util.json";
 local um_is_admin = require "core.usermanager".is_admin;
+local jid_split = require 'util.jid'.split;
 
 -- we use async to detect Prosody 0.10 and earlier
 local have_async = pcall(require, "util.async");
@@ -16,15 +17,36 @@ if not have_async then
 end
 
 local muc_component_host = module:get_option_string("muc_component");
-if muc_component_host == nil then
+local muc_domain_base = module:get_option_string("muc_mapper_domain_base");
+
+if muc_component_host == nil or muc_domain_base == nil then
     log("error", "No muc_component specified. No muc to operate on!");
     return;
 end
+local breakout_room_component_host = "breakout." .. muc_domain_base;
 
 log("info", "Starting speakerstats for %s", muc_component_host);
 
+local main_muc_service;
+
 local function is_admin(jid)
     return um_is_admin(jid, module.host);
+end
+
+-- Searches all rooms in the main muc component that holds a breakout room
+-- caches it if found so we don't search it again
+local function get_main_room(breakout_room)
+    if breakout_room._data and breakout_room._data.main_room then
+        return breakout_room._data.main_room;
+    end
+
+    -- let's search all rooms to find the main room
+    for room in main_muc_service.each_room() do
+        if room._data and room._data.breakout_rooms_active and room._data.breakout_rooms[breakout_room.jid] then
+            breakout_room._data.main_room = room;
+            return room;
+        end
+    end
 end
 
 -- receives messages from client currently connected to the room
@@ -45,7 +67,7 @@ function on_message(event)
             log("warn", "No room found %s", roomAddress);
             return false;
         end
-        
+
         if not room.speakerStats then
             log("warn", "No speakerStats found for %s", roomAddress);
             return false;
@@ -99,7 +121,7 @@ function on_message(event)
             return false;
         end
         local faceExpressions = room.speakerStats[occupant.jid].faceExpressions;
-        faceExpressions[faceExpression.attr.expression] = 
+        faceExpressions[faceExpression.attr.expression] =
             faceExpressions[faceExpression.attr.expression] + tonumber(faceExpression.attr.duration);
     end
 
@@ -158,10 +180,23 @@ function room_created(event)
     local room = event.room;
 
     if is_healthcheck_room(room.jid) then
-        return;
+        return ;
     end
-
     room.speakerStats = {};
+    room.speakerStats.sessionId = room._data.meetingId;
+end
+
+-- create speakerStats for the breakout
+function breakout_room_created(event)
+    local room = event.room;
+    if is_healthcheck_room(room.jid) then
+        return ;
+    end
+    local main_room = get_main_room(room);
+    room.speakerStats = {};
+    room.speakerStats.isBreakout = true
+    room.speakerStats.breakoutRoomId = jid_split(room.jid)
+    room.speakerStats.sessionId = main_room._data.meetingId;
 end
 
 -- Create SpeakerStats object for the joined user
@@ -184,7 +219,7 @@ function occupant_joined(event)
             for jid, values in pairs(room.speakerStats) do
                 -- skip reporting those without a nick('dominantSpeakerId')
                 -- and skip focus if sneaked into the table
-                if values.nick ~= nil and values.nick ~= 'focus' then
+                if values and type(values) == 'table' and values.nick ~= nil and values.nick ~= 'focus' then
                     local totalDominantSpeakerTime = values.totalDominantSpeakerTime;
                     local faceExpressions = values.faceExpressions;
                     if totalDominantSpeakerTime > 0 or room:get_occupant_jid(jid) == nil or values:isDominantSpeaker()
@@ -263,31 +298,81 @@ end
 
 module:hook("message/host", on_message);
 
--- executed on every host added internally in prosody, including components
-function process_host(host)
-    if host == muc_component_host then -- the conference muc component
-        module:log("info","Hook to muc events on %s", host);
+function process_main_muc_loaded(main_muc, host_module)
+    -- the conference muc component
+    module:log("info", "Hook to muc events on %s", host_module);
+    main_muc_service = main_muc;
+    module:log("info", "Main muc service %s", main_muc_service)
+    host_module:hook("muc-room-created", room_created, -1);
+    host_module:hook("muc-occupant-joined", occupant_joined, -1);
+    host_module:hook("muc-occupant-pre-leave", occupant_leaving, -1);
+    host_module:hook("muc-room-destroyed", room_destroyed, -1);
+end
 
-        local muc_module = module:context(host);
-        muc_module:hook("muc-room-created", room_created, -1);
-        muc_module:hook("muc-occupant-joined", occupant_joined, -1);
-        muc_module:hook("muc-occupant-pre-leave", occupant_leaving, -1);
-        muc_module:hook("muc-room-destroyed", room_destroyed, -1);
+function process_breakout_muc_loaded(breakout_muc, host_module)
+    -- the Breakout muc component
+    module:log("info", "Hook to muc events on %s", host_module);
+    host_module:hook("muc-room-created", breakout_room_created, -1);
+    host_module:hook("muc-occupant-joined", occupant_joined, -1);
+    host_module:hook("muc-occupant-pre-leave", occupant_leaving, -1);
+    host_module:hook("muc-room-destroyed", room_destroyed, -1);
+end
+
+-- process a host module directly if loaded or hooks to wait for its load
+function process_host_module(name, callback)
+    local function process_host(host)
+        if host == name then
+            callback(module:context(host), host);
+        end
+    end
+
+    if prosody.hosts[name] == nil then
+        module:log('debug', 'No host/component found, will wait for it: %s', name)
+
+        -- when a host or component is added
+        prosody.events.add_handler('host-activated', process_host);
+    else
+        process_host(name);
     end
 end
 
-if prosody.hosts[muc_component_host] == nil then
-    module:log("info","No muc component found, will listen for it: %s", muc_component_host)
+-- process or waits to process the conference muc component
+process_host_module(muc_component_host, function(host_module, host)
+    module:log('info', 'Conference component loaded %s', host);
 
-    -- when a host or component is added
-    prosody.events.add_handler("host-activated", process_host);
-else
-    process_host(muc_component_host);
-end
+    local muc_module = prosody.hosts[host].modules.muc;
+    if muc_module then
+        process_main_muc_loaded(muc_module, host_module);
+    else
+        module:log('debug', 'Will wait for muc to be available');
+        prosody.hosts[host].events.add_handler('module-loaded', function(event)
+            if (event.module == 'muc') then
+                process_main_muc_loaded(prosody.hosts[host].modules.muc, host_module);
+            end
+        end);
+    end
+end);
+
+-- process or waits to process the breakout rooms muc component
+process_host_module(breakout_room_component_host, function(host_module, host)
+    module:log('info', 'Breakout component loaded %s', host);
+
+    local muc_module = prosody.hosts[host].modules.muc;
+    if muc_module then
+        process_breakout_muc_loaded(muc_module, host_module);
+    else
+        module:log('debug', 'Will wait for muc to be available');
+        prosody.hosts[host].events.add_handler('module-loaded', function(event)
+            if (event.module == 'muc') then
+                process_breakout_muc_loaded(prosody.hosts[host].modules.muc, host_module);
+            end
+        end);
+    end
+end);
 
 function get_participant_expressions_count(faceExpressions)
     local count = 0;
-    for expression, value in pairs(faceExpressions) do
+    for _, value in pairs(faceExpressions) do
         count = count + value;
     end
 
