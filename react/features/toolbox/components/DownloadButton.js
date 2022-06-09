@@ -6,7 +6,6 @@ import { IconDownload } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 import { openURLInBrowser } from '../../base/util';
-import { isVpaasMeeting } from '../../jaas/functions';
 
 type Props = AbstractButtonProps & {
 
@@ -48,7 +47,7 @@ class DownloadButton extends AbstractButton<Props, *> {
  */
 function _mapStateToProps(state: Object) {
     const { downloadAppsUrl } = state['features/base/config'].deploymentUrls || {};
-    const visible = typeof downloadAppsUrl === 'string' && !isVpaasMeeting(state);
+    const visible = typeof downloadAppsUrl === 'string';
 
     return {
         _downloadAppsUrl: downloadAppsUrl,
