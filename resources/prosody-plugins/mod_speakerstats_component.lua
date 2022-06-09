@@ -336,9 +336,8 @@ function process_host_module(name, callback)
     end
 end
 
--- process or waits to process the lobby muc component
+-- process or waits to process the conference muc component
 process_host_module(muc_component_host, function(host_module, host)
-    -- lobby muc component created
     module:log('info', 'Conference component loaded %s', host);
 
     local muc_module = prosody.hosts[host].modules.muc;
@@ -354,9 +353,8 @@ process_host_module(muc_component_host, function(host_module, host)
     end
 end);
 
--- process or waits to process the lobby muc component
+-- process or waits to process the breakout rooms muc component
 process_host_module(breakout_room_component_host, function(host_module, host)
-    -- lobby muc component created
     module:log('info', 'Breakout component loaded %s', host);
 
     local muc_module = prosody.hosts[host].modules.muc;
