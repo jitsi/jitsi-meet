@@ -6,6 +6,7 @@ import { getFeatureFlag, WELCOME_PAGE_ENABLED } from '../../../../base/flags';
 import { IconArrowBack } from '../../../../base/icons';
 import HeaderNavigationButton
     from '../HeaderNavigationButton';
+import { navigationStyles } from '../styles';
 
 /**
  * Determines whether the {@code WelcomePage} is enabled by the app itself
@@ -31,6 +32,7 @@ export function isWelcomePageAppEnabled(stateful: Function | Object) {
 export function renderArrowBackButton(onPress: Function) {
     return (
         <HeaderNavigationButton
+            buttonStyle = { navigationStyles.arrowBackStyle }
             onPress = { onPress }
             src = { IconArrowBack } />
     );

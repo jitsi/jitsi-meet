@@ -8,6 +8,11 @@ export const TEXT_COLOR = BaseTheme.palette.text01;
  * Styles of the navigation feature.
  */
 export const navigationStyles = {
+
+    arrowBackStyle: {
+        marginLeft: 14
+    },
+
     connectingScreenContainer: {
         backgroundColor: BaseTheme.palette.uiBackground,
         flex: 1

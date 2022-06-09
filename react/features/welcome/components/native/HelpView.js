@@ -45,7 +45,7 @@ class HelpView extends PureComponent<Props> {
         navigation.setOptions({
             headerLeft: () =>
                 renderArrowBackButton(() =>
-                    navigation.jumpTo(screen.welcome.main))
+                    navigation.navigate(screen.welcome.main))
         });
     }
 
