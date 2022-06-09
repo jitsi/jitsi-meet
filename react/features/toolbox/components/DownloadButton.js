@@ -48,7 +48,7 @@ class DownloadButton extends AbstractButton<Props, *> {
  */
 function _mapStateToProps(state: Object) {
     const { downloadAppsUrl } = state['features/base/config'].deploymentUrls || {};
-    const visible = typeof downloadAppsUrl === 'string' && !isVpaasMeeting(state);
+    const visible = typeof downloadAppsUrl === 'string';
 
     return {
         _downloadAppsUrl: downloadAppsUrl,

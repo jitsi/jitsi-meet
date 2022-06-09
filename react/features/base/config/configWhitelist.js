@@ -83,6 +83,7 @@ export default [
     'debugAudioLevels',
     'defaultLocalDisplayName',
     'defaultRemoteDisplayName',
+    'deploymentUrls',
     'desktopSharingFrameRate',
     'desktopSharingSources',
     'disable1On1Mode',

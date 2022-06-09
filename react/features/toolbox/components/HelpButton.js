@@ -50,7 +50,7 @@ class HelpButton extends AbstractButton<Props, *> {
 function _mapStateToProps(state: Object) {
     const { userDocumentationURL } = state['features/base/config'].deploymentUrls || {};
     const enabled = getFeatureFlag(state, HELP_BUTTON_ENABLED, true);
-    const visible = typeof userDocumentationURL === 'string' && enabled && !isVpaasMeeting(state);
+    const visible = typeof userDocumentationURL === 'string' && enabled;
 
     return {
         _userDocumentationURL: userDocumentationURL,
