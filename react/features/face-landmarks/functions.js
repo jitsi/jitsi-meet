@@ -233,6 +233,10 @@ export function getDetectionInterval(state: Object) {
  * @returns {number} - The average age.
  */
 export function getAgeAverage(ages) {
+    if (!ages.length) {
+        return;
+    }
+
     return ages.reduce((a, b) => a + b, 0) / ages.length;
 }
 
@@ -243,6 +247,9 @@ export function getAgeAverage(ages) {
  * @returns {string} - The most occurred gender.
  */
 export function getMostOccurredGender(genders) {
+    if (!genders.length) {
+        return;
+    }
     const occurrenceMap = genders.reduce((acc, val) => {
         acc[val] = (acc[val] || 0) + 1;
 

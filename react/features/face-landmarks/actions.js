@@ -70,8 +70,14 @@ let webhookSendInterval;
  */
 let detectionInterval;
 
+/**
+ * Array in which ages will be stored as they come from worker.
+ */
 let ages = [];
 
+/**
+ * Array in which genders will be stored as they come from worker.
+ */
 let genders = [];
 
 /**
@@ -164,10 +170,9 @@ export function loadWorker() {
 
         const { faceLandmarks } = getState()['features/base/config'];
         const detectionTypes = [
-            DETECTION_TYPES.AGE,
             faceLandmarks?.enableFaceCentering && DETECTION_TYPES.FACE_BOX,
             faceLandmarks?.enableFaceExpressionsDetection && DETECTION_TYPES.FACE_EXPRESSIONS,
-            faceLandmarks?.enableAgeDetection && DETECTION_TYPES.NUMBER_FACES,
+            faceLandmarks?.enableAgeDetection && DETECTION_TYPES.AGE,
             faceLandmarks?.enableGenderDetection && DETECTION_TYPES.GENDER
         ].filter(Boolean);
 

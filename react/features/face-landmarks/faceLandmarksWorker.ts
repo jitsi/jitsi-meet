@@ -13,7 +13,7 @@ onmessage = async function(message: MessageEvent<any>) {
 
         const detections = await helper.detect(message.data);
 
-        if (detections && (detections.faceBox || detections.faceExpression)) {
+        if (detections && (detections.faceBox || detections.faceExpression || detections.gender || detections.age || detections.noFaces)) {
             self.postMessage(detections);
         }
 
