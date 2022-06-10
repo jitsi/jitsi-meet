@@ -3,10 +3,9 @@
 import React, { PureComponent } from 'react';
 import { Divider } from 'react-native-paper';
 
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, hideDialog, isDialogOpen } from '../../../base/dialog';
+import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { connect } from '../../../base/redux';
-import { StyleType } from '../../../base/styles';
 import { SharedDocumentButton } from '../../../etherpad';
 import { ParticipantsPaneButton } from '../../../participants-pane/components/native';
 import { ReactionMenu } from '../../../reactions/components';
@@ -34,11 +33,6 @@ import ToggleSelfViewButton from './ToggleSelfViewButton';
  * The type of the React {@code Component} props of {@link OverflowMenu}.
  */
 type Props = {
-
-    /**
-     * The color-schemed stylesheet of the dialog feature.
-     */
-    _bottomSheetStyles: StyleType,
 
     /**
      * True if the overflow menu is currently visible, false otherwise.
@@ -118,7 +112,6 @@ class OverflowMenu extends PureComponent<Props, State> {
      */
     render() {
         const {
-            _bottomSheetStyles,
             _reactionsEnabled,
             _selfViewHidden,
             _width
@@ -128,16 +121,16 @@ class OverflowMenu extends PureComponent<Props, State> {
         const buttonProps = {
             afterClick: this._onCancel,
             showLabel: true,
-            styles: _bottomSheetStyles.buttons
+            styles: bottomSheetStyles.buttons
         };
 
         const topButtonProps = {
             afterClick: this._onCancel,
             showLabel: true,
             styles: {
-                ..._bottomSheetStyles.buttons,
+                ...bottomSheetStyles.buttons,
                 style: {
-                    ..._bottomSheetStyles.buttons.style,
+                    ...bottomSheetStyles.buttons.style,
                     borderTopLeftRadius: 16,
                     borderTopRightRadius: 16
                 }
@@ -217,7 +210,6 @@ function _mapStateToProps(state) {
     const { disableSelfView } = state['features/base/settings'];
 
     return {
-        _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
         _isOpen: isDialogOpen(state, OverflowMenu_),
         _reactionsEnabled: isReactionsEnabled(state),
         _selfViewHidden: Boolean(disableSelfView),
