@@ -51,6 +51,9 @@ const getMimeType = (): string => {
 
 const VIDEO_BIT_RATE = 2500000; // 2.5Mbps in bits
 
+// Lazily initialize.
+let preferredMediaType: string;
+
 const LocalRecordingManager: ILocalRecordingManager = {
     recordingData: [],
     recorder: undefined,
@@ -58,8 +61,15 @@ const LocalRecordingManager: ILocalRecordingManager = {
     audioContext: undefined,
     audioDestination: undefined,
     roomName: '',
-    mediaType: getMimeType(),
     totalSize: 1073741824, // 1GB in bytes
+
+    get mediaType() {
+        if (!preferredMediaType) {
+            preferredMediaType = getMimeType();
+        }
+
+        return preferredMediaType;
+    },
 
     /**
      * Initializes audio context used for mixing audio tracks.
