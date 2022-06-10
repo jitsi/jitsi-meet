@@ -55,3 +55,8 @@ export const DETECTION_TYPES = {
     FACE_BOX: 'face-box',
     FACE_EXPRESSIONS: 'face-expressions'
 };
+
+/**
+ * Threshold for detection score of face.
+ */
+export const FACE_DETECTION_SCORE_THRESHOLD = 0.6;
