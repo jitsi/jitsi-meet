@@ -165,7 +165,8 @@ export class HumanHelper implements FaceLandmarksHelper {
         const { face: detections } = await this.human.detect(imageTensor, this.config);
 
         this.human.tf.engine().endScope();
-        return detections.filter(detection => detection.score > FACE_DETECTION_SCORE_THRESHOLD)
+        
+        return detections.filter(detection => detection.score > FACE_DETECTION_SCORE_THRESHOLD);
     }  
 
     public async detect({ image, threshold } : DetectInput): Promise<DetectOutput | undefined> {
