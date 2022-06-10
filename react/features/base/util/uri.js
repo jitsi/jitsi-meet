@@ -614,5 +614,9 @@ export function getDecodedURI(uri: string) {
  * @returns {string} - The modified url.
  */
 export function appendURLParam(url: string, name: string, value: string) {
-    return `${url}${url.includes('?') ? '&' : '?'}${name}=${value}`;
+    const newUrl = new URL(url);
+
+    newUrl.searchParams.append(name, value);
+
+    return newUrl.toString();
 }
