@@ -1,4 +1,5 @@
 import React from 'react';
+import { Platform } from 'react-native';
 
 import {
     Icon,
@@ -42,7 +43,11 @@ export const drawerScreenOptions = {
     headerShown: true,
     headerStyle: {
         backgroundColor: BaseTheme.palette.screen02Header
-    }
+    },
+    orientation: Platform.select({
+        ios: 'default',
+        android: 'all'
+    })
 };
 
 /**
@@ -134,7 +139,11 @@ export const helpScreenOptions = {
 export const conferenceScreenOptions = {
     animation: 'default',
     gestureEnabled: false,
-    headerShown: false
+    headerShown: false,
+    orientation: Platform.select({
+        ios: 'default',
+        android: 'all'
+    })
 };
 
 /**
@@ -164,7 +173,11 @@ export const presentationScreenOptions = {
     },
     headerTitleStyle: {
         color: BaseTheme.palette.text01
-    }
+    },
+    orientation: Platform.select({
+        ios: 'default',
+        android: 'all'
+    })
 };
 
 /**
@@ -250,5 +263,9 @@ export const sharedDocumentScreenOptions = {
     },
     headerTitleStyle: {
         color: BaseTheme.palette.text01
-    }
+    },
+    orientation: Platform.select({
+        ios: 'default',
+        android: 'all'
+    })
 };
