@@ -524,7 +524,7 @@ export function urlObjectToString(o: Object): ?string {
     // query/search
 
     // Web's ExternalAPI jwt and lang
-    const { jwt, lang } = o;
+    const { jwt, lang, release } = o;
 
     const search = new URLSearchParams(url.search);
 
@@ -536,6 +536,10 @@ export function urlObjectToString(o: Object): ?string {
 
     if (lang || defaultLanguage) {
         search.set('lang', lang || defaultLanguage);
+    }
+
+    if (release) {
+        search.set('release', release);
     }
 
     const searchString = search.toString();

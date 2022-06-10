@@ -612,6 +612,7 @@ export function getDialInfoPageURLForURIString(
     }
     const { protocol, host, contextRoot, room } = parseURIString(uri);
 
+    // TODO: do we care for releases here
     return `${protocol}//${host}${contextRoot}${DIAL_IN_INFO_PAGE_PATH_NAME}?room=${room}`;
 }
 
