@@ -16,6 +16,8 @@ export {
 } from './actions.native';
 import logger from './logger';
 
+export * from './actions.any';
+
 /**
  * Opens new connection.
  *

@@ -8,7 +8,7 @@ import { LoginDialog } from './react/features/authentication/components';
 import { isTokenAuthEnabled } from './react/features/authentication/functions';
 import {
     connectionEstablished,
-    connectionFailed
+    connectionFailed, constructOptions
 } from './react/features/base/connection/actions';
 import { openDialog } from './react/features/base/dialog/actions';
 import { setJWT } from './react/features/base/jwt';
@@ -17,7 +17,6 @@ import {
     JitsiConnectionEvents
 } from './react/features/base/lib-jitsi-meet';
 import { isFatalJitsiConnectionError } from './react/features/base/lib-jitsi-meet/functions';
-import { appendURLParam } from './react/features/base/util';
 import { getCustomerDetails } from './react/features/jaas/actions.any';
 import { isVpaasMeeting, getJaasJWT } from './react/features/jaas/functions';
 import { setPrejoinDisplayNameRequired } from './react/features/prejoin/actions';
@@ -82,12 +81,10 @@ function checkForAttachParametersAndConnect(id, password, connection) {
  * Try to open connection using provided credentials.
  * @param {string} [id]
  * @param {string} [password]
- * @param {string} [roomName]
  * @returns {Promise<JitsiConnection>} connection if
  * everything is ok, else error.
  */
-export async function connect(id, password, roomName) {
-    const connectionConfig = Object.assign({}, config);
+export async function connect(id, password) {
     const state = APP.store.getState();
     let { jwt } = state['features/base/jwt'];
     const { iAmRecorder, iAmSipGateway } = state['features/base/config'];
@@ -101,16 +98,7 @@ export async function connect(id, password, roomName) {
         }
     }
 
-    // Use Websocket URL for the web app if configured. Note that there is no 'isWeb' check, because there's assumption
-    // that this code executes only on web browsers/electron. This needs to be changed when mobile and web are unified.
-    connectionConfig.serviceUrl = appendURLParam(connectionConfig.websocket || connectionConfig.bosh, 'room', roomName);
-
-    if (connectionConfig.websocketKeepAliveUrl) {
-        connectionConfig.websocketKeepAliveUrl
-            = appendURLParam(connectionConfig.websocketKeepAliveUrl, 'room', roomName);
-    }
-
-    const connection = new JitsiMeetJS.JitsiConnection(null, jwt, connectionConfig);
+    const connection = new JitsiMeetJS.JitsiConnection(null, jwt, constructOptions(state));
 
     if (config.iAmRecorder) {
         connection.addFeature(DISCO_JIBRI_FEATURE);
