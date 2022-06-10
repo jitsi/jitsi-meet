@@ -21,8 +21,7 @@ type FaceBox = {
 
 type InitInput = {
     baseUrl: string,
-    detectionTypes: string[],
-    maxFacesDetected?: number
+    detectionTypes: string[]
 }
 
 type DetectOutput = {
@@ -45,7 +44,6 @@ export class HumanHelper implements FaceLandmarksHelper {
     protected human: Human | undefined;
     protected faceDetectionTypes: string[];
     protected baseUrl: string;
-    protected maxFacesDetected?: number;
     private detectionInProgress = false;
     private lastValidFaceBox: FaceBox | undefined;
     /**
@@ -66,7 +64,7 @@ export class HumanHelper implements FaceLandmarksHelper {
                 enabled: false,
                 rotation: false,
                 modelPath: 'blazeface-front.json',
-                maxDetected: 4
+                maxDetected: 2
             },
             mesh: { enabled: false },
             iris: { enabled: false },
@@ -82,10 +80,9 @@ export class HumanHelper implements FaceLandmarksHelper {
         segmentation: { enabled: false }
     };
 
-    constructor({ baseUrl, detectionTypes, maxFacesDetected }: InitInput) {
+    constructor({ baseUrl, detectionTypes }: InitInput) {
         this.faceDetectionTypes = detectionTypes;
         this.baseUrl = baseUrl;
-        this.maxFacesDetected = maxFacesDetected;
         this.init();
     }
 
@@ -101,10 +98,6 @@ export class HumanHelper implements FaceLandmarksHelper {
 
             if (this.faceDetectionTypes.length > 0 && this.config.face) {
                 this.config.face.enabled = true
-            }
-            
-            if (this.maxFacesDetected && this.config.face?.detector) {
-                this.config.face.detector.maxDetected = this.maxFacesDetected;
             }
 
             if (this.faceDetectionTypes.includes(DETECTION_TYPES.FACE_BOX) && this.config.face?.detector) {
@@ -127,14 +120,14 @@ export class HumanHelper implements FaceLandmarksHelper {
     }
 
     getFaceBox({ detections, threshold }: Detection): FaceBox | undefined {
-        if (!detections.length) {
+        if (!detections.length || detections.length > 1) {
             return;
         }
 
         const faceBox: FaceBox = {
             // normalize to percentage based
-            left: Math.round(Math.min(...detections.map(d => d.boxRaw[0])) * 100),
-            right: Math.round(Math.max(...detections.map(d => d.boxRaw[0] + d.boxRaw[2])) * 100)
+            left: Math.round(detections[0].boxRaw[0] * 100),
+            right: Math.round((detections[0].boxRaw[0] + detections[0].boxRaw[2]) * 100)
         };
     
         faceBox.width = Math.round(faceBox.right - faceBox.left);
@@ -149,8 +142,12 @@ export class HumanHelper implements FaceLandmarksHelper {
     }
 
     getFaceExpression({ detections }: Detection): string | undefined {
+        if (!detections.length || detections.length > 1) {
+            return;
+        }
+
         if (detections[0]?.emotion) {
-            return  FACE_EXPRESSIONS_NAMING_MAPPING[detections[0]?.emotion[0].emotion];
+            return FACE_EXPRESSIONS_NAMING_MAPPING[detections[0]?.emotion[0].emotion];
         }
     }
 
