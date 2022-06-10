@@ -973,6 +973,7 @@
         "disableCrashReportingWarning": "Are you sure you want to disable crash reporting? The setting will be applied after you restart the app.",
         "disableP2P": "Disable Peer-To-Peer mode",
         "displayName": "Display name",
+        "displayNamePlaceholderText": "Eg: John Doe",
         "email": "Email",
         "header": "Settings",
         "profileSection": "Profile",
