@@ -161,6 +161,12 @@ export const OVERFLOW_MENU_ENABLED = 'overflow-menu.enabled';
 export const PIP_ENABLED = 'pip.enabled';
 
 /**
+ * Flag indicating if the prejoin page should be enabled.
+ * Default: disabled (false).
+ */
+export const PREJOIN_PAGE_ENABLED = 'prejoinpage.enabled';
+
+/**
  * Flag indicating if raise hand feature should be enabled.
  * Default: enabled.
  */
@@ -238,9 +244,3 @@ export const VIDEO_SHARE_BUTTON_ENABLED = 'video-share.enabled';
  * Default: disabled (false).
  */
 export const WELCOME_PAGE_ENABLED = 'welcomepage.enabled';
-
-/**
- * Flag indicating if the prejoin page should be enabled.
- * Default: disabled (false).
- */
-export const PREJOIN_PAGE_ENABLED = 'prejoinpage.enabled';

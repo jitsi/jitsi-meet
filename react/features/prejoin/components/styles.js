@@ -25,12 +25,10 @@ export default {
 
     buttonStylesBorderless: {
         iconStyle: {
-            backgroundColor: BaseTheme.palette.action02Active,
             color: BaseTheme.palette.icon01,
             fontSize: 24
         },
         style: {
-            backgroundColor: BaseTheme.palette.action02Active,
             flexDirection: 'row',
             justifyContent: 'center',
             marginHorizontal: BaseTheme.spacing[3],
@@ -40,26 +38,22 @@ export default {
     },
 
     contentWrapper: {
-        backgroundColor: BaseTheme.palette.ui02,
         flex: 1
     },
 
-    contentWide: {
+    contentWrapperWide: {
         flex: 1,
         flexDirection: 'row'
     },
 
     largeVideoContainer: {
-        alignItems: 'center',
-        backgroundColor: BaseTheme.palette.uiBackground,
-        display: 'flex',
-        justifyContent: 'center',
         minHeight: '50%'
     },
 
     largeVideoContainerWide: {
-        backgroundColor: BaseTheme.palette.uiBackground,
-        display: 'flex',
+        height: '100%',
+        marginRight: 'auto',
+        position: 'absolute',
         width: '50%'
     },
 
@@ -67,12 +61,16 @@ export default {
         alignItems: 'center',
         display: 'flex',
         justifyContent: 'center',
-        padding: BaseTheme.spacing[3]
+        minHeight: '50%'
     },
 
     contentContainerWide: {
+        height: '100%',
         justifyContent: 'center',
-        padding: BaseTheme.spacing[3],
+        left: '50%',
+        marginHorizontal: BaseTheme.spacing[6],
+        marginVertical: BaseTheme.spacing[3],
+        position: 'absolute',
         width: '50%'
     },
 
@@ -92,7 +90,8 @@ export default {
 
     formWrapper: {
         alignSelf: 'stretch',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        marginHorizontal: BaseTheme.spacing[3]
     },
 
     field: {

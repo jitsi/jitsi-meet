@@ -18,7 +18,7 @@ import { navigationStyles } from '../styles';
  * {@code true}; otherwise, {@code false}.
  */
 export function isWelcomePageEnabled(stateful: Function | Object) {
-    return getFeatureFlag(stateful, WELCOME_PAGE_ENABLED);
+    return getFeatureFlag(stateful, WELCOME_PAGE_ENABLED, true);
 }
 
 /**

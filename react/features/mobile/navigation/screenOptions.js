@@ -12,7 +12,7 @@ import BaseTheme from '../../base/ui/components/BaseTheme.native';
 
 import { goBack } from './components/conference/ConferenceNavigationContainerRef';
 import { goBack as goBackToLobbyScreen } from './components/lobby/LobbyNavigationContainerRef';
-import { screenHeaderCloseButton } from './functions';
+import { lobbyScreenHeaderCloseButton, screenHeaderCloseButton } from './functions';
 
 
 /**
@@ -81,8 +81,7 @@ export const welcomeScreenOptions = {
     headerStyle: {
         backgroundColor: BaseTheme.palette.screen01Header
     },
-    // eslint-disable-next-line no-empty-function
-    headerTitle: () => {}
+    headerTitle: ''
 };
 
 /**
@@ -231,7 +230,10 @@ export const liveStreamScreenOptions = presentationScreenOptions;
 /**
  * Screen options for lobby modal.
  */
-export const lobbyScreenOptions = presentationScreenOptions;
+export const lobbyScreenOptions = {
+    ...presentationScreenOptions,
+    headerLeft: () => lobbyScreenHeaderCloseButton()
+};
 
 /**
  * Screen options for lobby chat modal.
@@ -275,7 +277,8 @@ export const sharedDocumentScreenOptions = {
  */
 export const preJoinScreenOptions = {
     gestureEnabled: false,
-    headerTitleStyle: {
-        color: BaseTheme.palette.text01
-    }
+    headerStyle: {
+        backgroundColor: BaseTheme.palette.screen02Header
+    },
+    headerTitle: ''
 };

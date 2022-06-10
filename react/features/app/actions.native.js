@@ -130,16 +130,15 @@ export function appNavigate(uri: ?string) {
         dispatch(setConfig(config));
         dispatch(setRoom(room));
 
-        if (isPrejoinPageEnabled(getState())) {
-            if (room) {
+        if (room) {
+            if (isPrejoinPageEnabled(getState())) {
+                dispatch(createDesiredLocalTracks());
                 navigateRoot(screen.preJoin);
             } else {
-                goBackToRoot(getState(), dispatch);
+                navigateRoot(screen.conference.root);
+                dispatch(createDesiredLocalTracks());
+                dispatch(connect());
             }
-        } else if (room) {
-            navigateRoot(screen.conference.root);
-            dispatch(createDesiredLocalTracks());
-            dispatch(connect());
         } else {
             goBackToRoot(getState(), dispatch);
         }

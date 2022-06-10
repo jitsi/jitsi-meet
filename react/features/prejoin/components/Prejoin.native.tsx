@@ -1,7 +1,7 @@
 import React, { useCallback, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View, TouchableOpacity, TextInput, Platform } from 'react-native';
-import { batch, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 
 import { connect } from '../../base/connection/actions.native';
 import { IconClose } from '../../base/icons';
@@ -10,12 +10,9 @@ import { getLocalParticipant } from '../../base/participants';
 import { getFieldValue } from '../../base/react';
 import { ASPECT_RATIO_NARROW } from '../../base/responsive-ui';
 import { updateSettings } from '../../base/settings';
-import { createDesiredLocalTracks } from '../../base/tracks';
 import { LargeVideo } from '../../large-video/components';
-import { _sendReadyToClose } from '../../mobile/external-api/functions';
 import HeaderNavigationButton from '../../mobile/navigation/components/HeaderNavigationButton';
-import { isWelcomePageEnabled } from '../../mobile/navigation/components/welcome/functions';
-import { navigateRoot } from '../../mobile/navigation/rootNavigationContainerRef';
+import { goBackToRoot, navigateRoot } from '../../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../../mobile/navigation/routes';
 import AudioMuteButton from '../../toolbox/components/AudioMuteButton';
 import VideoMuteButton from '../../toolbox/components/VideoMuteButton';
@@ -33,9 +30,9 @@ const Prejoin: React.FC = ({ navigation }: Props) => {
     const aspectRatio = useSelector(
         (state: any) => state['features/base/responsive-ui']?.aspectRatio
     );
-    const localParticipant = useSelector((state: any) => getLocalParticipant(state));
-
-    const isWelcomeEnabled = useSelector((state: any) => isWelcomePageEnabled(state));
+    const store = useStore();
+    const state = store.getState();
+    const localParticipant = useSelector(state => getLocalParticipant(state));
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]
         = useState(participantName || '');
@@ -46,36 +43,30 @@ const Prejoin: React.FC = ({ navigation }: Props) => {
         dispatch(updateSettings({
             displayName: fieldValue
         }));
-    }, [ onChangeDisplayName ]);
+    }, [ displayName ]);
 
     const onJoin = useCallback(() => {
         navigateRoot(screen.conference.root);
-        batch(() => {
-            dispatch(createDesiredLocalTracks());
-            dispatch(connect());
-        });
+        dispatch(connect());
     }, [ dispatch ]);
 
     const goBack = useCallback(() => {
-        if (isWelcomeEnabled) {
-            navigateRoot(screen.root);
-        } else {
-            _sendReadyToClose(dispatch);
-        }
-    }, [ dispatch, isWelcomeEnabled ]);
+        goBackToRoot(state, dispatch);
+    }, [ dispatch ]);
 
-    let contentStyles;
-    let largeVideoContainerStyles;
+    let contentWrapperStyles;
     let contentContainerStyles;
+    let largeVideoContainerStyles;
     let toolboxContainerStyles;
 
     if (aspectRatio === ASPECT_RATIO_NARROW) {
+        contentWrapperStyles = styles.contentWrapper;
         contentContainerStyles = styles.contentContainer;
         largeVideoContainerStyles = styles.largeVideoContainer;
         toolboxContainerStyles = styles.toolboxContainer;
     } else {
+        contentWrapperStyles = styles.contentWrapperWide;
         contentContainerStyles = styles.contentContainerWide;
-        contentStyles = styles.contentWide;
         largeVideoContainerStyles = styles.largeVideoContainerWide;
         toolboxContainerStyles = styles.toolboxContainerWide;
     }
@@ -105,35 +96,33 @@ const Prejoin: React.FC = ({ navigation }: Props) => {
     return (
         <JitsiScreen
             safeAreaInsets = { [ 'right' ] }
-            style = { styles.contentWrapper }>
-            <View style = { contentStyles }>
-                <View style = { largeVideoContainerStyles }>
-                    <LargeVideo />
+            style = { contentWrapperStyles }>
+            <View style = { largeVideoContainerStyles }>
+                <LargeVideo />
+            </View>
+            <View style = { contentContainerStyles }>
+                <View style = { styles.formWrapper }>
+                    <TextInput
+                        onChangeText = { onChangeDisplayName }
+                        placeholder = { t('dialog.enterDisplayName') }
+                        style = { styles.field }
+                        value = { displayName } />
+                    <TouchableOpacity
+                        onPress = { onJoin }
+                        style = { [
+                            styles.button,
+                            styles.primaryButton
+                        ] }>
+                        <Text style = { styles.primaryButtonText }>
+                            { t('prejoin.joinMeeting') }
+                        </Text>
+                    </TouchableOpacity>
                 </View>
-                <View style = { contentContainerStyles }>
-                    <View style = { styles.formWrapper }>
-                        <TextInput
-                            onChangeText = { onChangeDisplayName }
-                            placeholder = { t('dialog.enterDisplayName') }
-                            style = { styles.field }
-                            value = { displayName } />
-                        <TouchableOpacity
-                            onPress = { onJoin }
-                            style = { [
-                                styles.button,
-                                styles.primaryButton
-                            ] }>
-                            <Text style = { styles.primaryButtonText }>
-                                { t('prejoin.joinMeeting') }
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style = { toolboxContainerStyles }>
-                        <AudioMuteButton
-                            styles = { styles.buttonStylesBorderless } />
-                        <VideoMuteButton
-                            styles = { styles.buttonStylesBorderless } />
-                    </View>
+                <View style = { toolboxContainerStyles }>
+                    <AudioMuteButton
+                        styles = { styles.buttonStylesBorderless } />
+                    <VideoMuteButton
+                        styles = { styles.buttonStylesBorderless } />
                 </View>
             </View>
         </JitsiScreen>

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform } from 'react-native';
+import { useDispatch, useStore } from 'react-redux';
 
 import {
     getFeatureFlag,
@@ -9,6 +10,7 @@ import {
 import { IconClose } from '../../base/icons';
 
 import HeaderNavigationButton from './components/HeaderNavigationButton';
+import { goBackToRoot } from './rootNavigationContainerRef';
 
 /**
  * Close icon/text button based on platform.
@@ -44,5 +46,34 @@ export function screenHeaderCloseButton(goBack: Function) {
  * {@code true}; otherwise, {@code false}.
  */
 export function isPrejoinPageEnabled(stateful: Function | Object) {
-    return getFeatureFlag(stateful, PREJOIN_PAGE_ENABLED);
+    return getFeatureFlag(stateful, PREJOIN_PAGE_ENABLED, true);
+}
+
+/**
+ * Close icon/text button for lobby screen based on platform.
+ *
+ * @returns {React.Component}
+ */
+export function lobbyScreenHeaderCloseButton() {
+    const dispatch = useDispatch();
+    const store = useStore();
+    const state = store.getState();
+    const { t } = useTranslation();
+    const goBack = useCallback(() =>
+        goBackToRoot(state, dispatch), [ state, dispatch ]
+    );
+
+    if (Platform.OS === 'ios') {
+        return (
+            <HeaderNavigationButton
+                label = { t('dialog.close') }
+                onPress = { goBack } />
+        );
+    }
+
+    return (
+        <HeaderNavigationButton
+            onPress = { goBack }
+            src = { IconClose } />
+    );
 }
