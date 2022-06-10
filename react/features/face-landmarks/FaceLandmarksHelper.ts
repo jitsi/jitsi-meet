@@ -1,7 +1,7 @@
 import { setWasmPaths } from '@tensorflow/tfjs-backend-wasm';
 import { Human, Config, FaceResult } from '@vladmandic/human';
 
-import { DETECTION_TYPES, FACE_EXPRESSIONS_NAMING_MAPPING } from './constants';
+import { DETECTION_TYPES, FACE_DETECTION_SCORE_THRESHOLD, FACE_EXPRESSIONS_NAMING_MAPPING } from './constants';
 
 type Detection = {
     detections: Array<FaceResult>,
@@ -130,7 +130,7 @@ export class HumanHelper implements FaceLandmarksHelper {
         if (!detections.length) {
             return;
         }
-    
+
         const faceBox: FaceBox = {
             // normalize to percentage based
             left: Math.round(Math.min(...detections.map(d => d.boxRaw[0])) * 100),
@@ -154,41 +154,49 @@ export class HumanHelper implements FaceLandmarksHelper {
         }
     }
 
+    async getDetections(image: ImageBitmap | ImageData) {
+        if (!this.human) {
+            return;
+        }
+
+        this.human.tf.engine().startScope();
+    
+        const imageTensor = this.human.tf.browser.fromPixels(image);
+        const { face: detections } = await this.human.detect(imageTensor, this.config);
+
+        this.human.tf.engine().endScope();
+        
+        return detections.filter(detection => detection.score > FACE_DETECTION_SCORE_THRESHOLD);
+    }  
+
     public async detect({ image, threshold } : DetectInput): Promise<DetectOutput | undefined> {
         let detections;
         let faceExpression;
         let faceBox;
 
-        if (!this.human){
-            return;
-        }
-
         this.detectionInProgress = true;
-        this.human.tf.engine().startScope();
-
-        const imageTensor = this.human.tf.browser.fromPixels(image);
 
         if (this.faceDetectionTypes.includes(DETECTION_TYPES.FACE_EXPRESSIONS)) {
-            const { face } = await this.human.detect(imageTensor, this.config);
+            detections = await this.getDetections(image);
 
-            detections = face;
-            faceExpression = this.getFaceExpression({ detections });
+            if (detections) {
+                faceExpression = this.getFaceExpression({ detections });
+            }
         }
 
         if (this.faceDetectionTypes.includes(DETECTION_TYPES.FACE_BOX)) {
             if (!detections) {
-                const { face } = await this.human.detect(imageTensor, this.config);
-
-                detections = face;
+                detections = await this.getDetections(image);
             }
 
-            faceBox = this.getFaceBox({
-                detections,
-                threshold
-            });
+            if(detections) {
+                faceBox = this.getFaceBox({
+                    detections,
+                    threshold
+                });
+            } 
         }
-
-        this.human.tf.engine().endScope();
+        
         this.detectionInProgress = false;
 
         return { 
