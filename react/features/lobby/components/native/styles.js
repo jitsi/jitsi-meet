@@ -15,12 +15,10 @@ export default {
 
     buttonStylesBorderless: {
         iconStyle: {
-            backgroundColor: 'transparent',
             color: BaseTheme.palette.icon01,
             fontSize: 24
         },
         style: {
-            backgroundColor: 'transparent',
             flexDirection: 'row',
             justifyContent: 'center',
             marginHorizontal: BaseTheme.spacing[3],
@@ -70,25 +68,25 @@ export default {
     },
 
     largeVideoContainerWide: {
-        position: 'absolute',
-        marginRight: 'auto',
         height: '100%',
+        marginRight: 'auto',
+        position: 'absolute',
         width: '50%'
     },
 
     contentContainer: {
-        display: 'flex',
         alignItems: 'center',
+        display: 'flex',
         justifyContent: 'center',
         minHeight: '50%'
     },
 
     contentContainerWide: {
+        height: '100%',
         justifyContent: 'center',
+        left: '50%',
         marginHorizontal: BaseTheme.spacing[6],
         marginVertical: BaseTheme.spacing[3],
-        height: '100%',
-        left: '50%',
         position: 'absolute',
         width: '50%'
     },
@@ -124,7 +122,7 @@ export default {
 
     formWrapper: {
         alignSelf: 'stretch',
-        marginTop: 45
+        justifyContent: 'center'
     },
 
     field: {
