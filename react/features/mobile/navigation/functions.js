@@ -10,7 +10,8 @@ import {
 import { IconClose } from '../../base/icons';
 
 import HeaderNavigationButton from './components/HeaderNavigationButton';
-import { goBackToRoot } from './rootNavigationContainerRef';
+import { goBackToRoot, navigateRoot } from './rootNavigationContainerRef';
+import { screen } from './routes';
 
 /**
  * Close icon/text button based on platform.
@@ -59,9 +60,13 @@ export function lobbyScreenHeaderCloseButton() {
     const store = useStore();
     const state = store.getState();
     const { t } = useTranslation();
-    const goBack = useCallback(() =>
-        goBackToRoot(state, dispatch), [ state, dispatch ]
-    );
+    const goBack = useCallback(() => {
+        if (isPrejoinPageEnabled(state)) {
+            navigateRoot(screen.preJoin);
+        } else {
+            goBackToRoot(state, dispatch);
+        }
+    }, [ state, dispatch ]);
 
     if (Platform.OS === 'ios') {
         return (
