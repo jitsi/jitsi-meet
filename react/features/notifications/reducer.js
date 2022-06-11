@@ -81,11 +81,12 @@ function _insertNotificationByPriority(notifications, notification) {
 
     // Default to putting the new notification at the end of the queue.
     let insertAtLocation = notifications.length;
+    const notificationsLength = insertAtLocation;
 
     // Find where to insert the new notification based on priority. Do not
     // insert at the front of the queue so that the user can finish acting on
     // any notification currently being read.
-    for (let i = 1; i < notifications.length; i++) {
+    for (let i = 1; i < notificationsLength; i++) {
         const queuedNotification = notifications[i];
         const queuedNotificationPriority
             = NOTIFICATION_TYPE_PRIORITIES[queuedNotification.props.appearance]

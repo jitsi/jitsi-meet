@@ -87,8 +87,9 @@ export function updateKnownLargeVideoResolution(resolution: number) {
  * @returns {(Track|undefined)}
  */
 function _electLastVisibleRemoteVideo(tracks) {
+    const tracksLength = tracks.length;
     // First we try to get most recent remote video track.
-    for (let i = tracks.length - 1; i >= 0; --i) {
+    for (let i = tracksLength - 1; i >= 0; --i) {
         const track = tracks[i];
 
         if (!track.local && track.mediaType === MEDIA_TYPE.VIDEO) {

@@ -525,7 +525,9 @@ export function shouldRenderParticipantVideo(stateful: Object | Function, id: st
  * @returns {?string}
  */
 async function _getFirstLoadableAvatarUrl(participant, store) {
-    for (let i = 0; i < AVATAR_CHECKER_FUNCTIONS.length; i++) {
+    const AVATAR_CHECKER_FUNCTIONS_LENGTH = AVATAR_CHECKER_FUNCTIONS.length;
+
+    for (let i = 0; i < AVATAR_CHECKER_FUNCTIONS_LENGTH; i++) {
         const url = AVATAR_CHECKER_FUNCTIONS[i](participant, store);
 
         if (url !== null) {

@@ -12,7 +12,9 @@ const videoQualityLevels = [ LOW, STANDARD, HIGH, ULTRA ];
  * @returns {number|undefined} - The found quality level.
  */
 export function findNearestQualityLevel(videoQuality: number) {
-    for (let i = 0; i < videoQualityLevels.length; i++) {
+    const videoQualityLevelsLength = videoQualityLevels.length;
+
+    for (let i = 0; i < videoQualityLevelsLength; i++) {
         const level = videoQualityLevels[i];
 
         if (level >= videoQuality) {

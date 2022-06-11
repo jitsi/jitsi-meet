@@ -84,7 +84,9 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
                 };
             });
 
-        for (let i = 0; i < newAnswers.length; i++) {
+        const newAnswersLength = newAnswers.length;
+
+        for (let i = 0; i < newAnswersLength; i++) {
             // if the answer was chosen, we add the sender to the set of voters of this answer
             const voters = newAnswers[i].voters;
 

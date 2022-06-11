@@ -94,12 +94,13 @@ function _synthesizeIPv6Addresses0(sessionDescription) {
 
         if (line.startsWith('a=candidate:')) {
             const candidate = line.split(' ');
+            const candidateLength = candidate.length;
 
-            if (candidate.length >= 10 && candidate[6] === 'typ') {
+            if (candidateLength >= 10 && candidate[6] === 'typ') {
                 const ip4s = [ candidate[4] ];
                 let abort = false;
 
-                for (let i = 8; i < candidate.length; ++i) {
+                for (let i = 8; i < candidateLength; ++i) {
                     if (candidate[i] === 'raddr') {
                         ip4s.push(candidate[++i]);
                         break;
@@ -171,8 +172,11 @@ function _synthesizeIPv6Addresses1(sessionDescription, ips, lines) {
         return sessionDescription;
     }
 
-    for (let l = 0; l < lines.length; ++l) {
+    const linesLength = lines.length;
+
+    for (let l = 0; l < linesLength; ++l) {
         const candidate = lines[l];
+        const candidateLength = candidate.length;
 
         if (typeof candidate !== 'string') {
             let ip4 = candidate[4];
@@ -180,7 +184,7 @@ function _synthesizeIPv6Addresses1(sessionDescription, ips, lines) {
 
             ip6 && (candidate[4] = ip6);
 
-            for (let i = 8; i < candidate.length; ++i) {
+            for (let i = 8; i < candidateLength; ++i) {
                 if (candidate[i] === 'raddr') {
                     ip4 = candidate[++i];
                     (ip6 = ips.get(ip4)) && (candidate[i] = ip6);

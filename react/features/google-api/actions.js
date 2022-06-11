@@ -74,8 +74,9 @@ export function requestAvailableYouTubeBroadcasts() {
             const broadcasts = response.result.items;
 
             const parsedBroadcasts = {};
+            const broadcastsLength = broadcasts.length;
 
-            for (let i = 0; i < broadcasts.length; i++) {
+            for (let i = 0; i < broadcastsLength; i++) {
                 const broadcast = broadcasts[i];
                 const boundStreamID = broadcast.contentDetails.boundStreamId;
 

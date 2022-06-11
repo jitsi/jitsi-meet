@@ -799,7 +799,9 @@ class ConnectionStatsTable extends Component<Props> {
             transportType: []
         };
 
-        for (let i = 0; i < transport.length; i++) {
+        const transportLength = transport.length;
+
+        for (let i = 0; i < transportLength; i++) {
             const ip = getIP(transport[i].ip);
             const localIP = getIP(transport[i].localip);
             const localPort = getPort(transport[i].localip);
@@ -957,8 +959,9 @@ function getPort(value) {
  */
 function getStringFromArray(array) {
     let res = '';
+    const arrayLength = array.length;
 
-    for (let i = 0; i < array.length; i++) {
+    for (let i = 0; i < arrayLength; i++) {
         res += (i === 0 ? '' : ', ') + array[i];
     }
 

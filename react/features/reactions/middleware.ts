@@ -76,7 +76,8 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action:any) 
     case APP_WILL_MOUNT:
         batch(() => {
             Object.keys(REACTIONS).forEach(key => {
-                for (let i = 0; i < SOUNDS_THRESHOLDS.length; i++) {
+                const SOUNDS_THRESHOLDS_LENGTH = SOUNDS_THRESHOLDS.length;
+                for (let i = 0; i < SOUNDS_THRESHOLDS_LENGTH; i++) {
                     dispatch(registerSound(
                         `${REACTIONS[key].soundId}${SOUNDS_THRESHOLDS[i]}`,
                         REACTIONS[key].soundFiles[i]
@@ -92,7 +93,8 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action:any) 
     case APP_WILL_UNMOUNT:
         batch(() => {
             Object.keys(REACTIONS).forEach(key => {
-                for (let i = 0; i < SOUNDS_THRESHOLDS.length; i++) {
+                const SOUNDS_THRESHOLDS_LENGTH = SOUNDS_THRESHOLDS.length;
+                for (let i = 0; i < SOUNDS_THRESHOLDS_LENGTH; i++) {
                     dispatch(unregisterSound(`${REACTIONS[key].soundId}${SOUNDS_THRESHOLDS[i]}`));
                 }
             });

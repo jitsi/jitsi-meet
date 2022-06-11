@@ -61,7 +61,8 @@ export default class JitsiMeetLogStorage {
 
         let logMessage = `{"log${this.counter}":"\n`;
 
-        for (let i = 0, len = logEntries.length; i < len; i++) {
+        const logEntriesLength = logEntries.length;
+        for (let i = 0, len = logEntriesLength; i < len; i++) {
             const logEntry = logEntries[i];
 
             if (logEntry.timestamp) {

@@ -35,7 +35,8 @@ export default class JitsiMeetInMemoryLogStorage {
      * @returns {void}
      */
     storeLogs(logEntries) {
-        for (let i = 0, len = logEntries.length; i < len; i++) {
+        const logEntriesLength = logEntries.length;
+        for (let i = 0, len = logEntriesLength; i < len; i++) {
             const logEntry = logEntries[i];
 
             if (typeof logEntry === 'object') {

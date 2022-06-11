@@ -296,7 +296,9 @@ class VideoQualitySlider extends Component<Props> {
             return _sliderOptions.indexOf(audioOnlyOption);
         }
 
-        for (let i = 0; i < _sliderOptions.length; i++) {
+        const _sliderOptionsLength = _sliderOptions.length;
+
+        for (let i = 0; i < _sliderOptionsLength; i++) {
             if (_sliderOptions[i].videoQuality >= _sendrecvVideoQuality) {
                 return i;
             }
