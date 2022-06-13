@@ -60,15 +60,6 @@ export function getCurrentLayout(state: Object) {
  * @returns {boolean} True if tile view should be displayed.
  */
 export function shouldDisplayTileView(state: Object = {}) {
-    const participantCount = getParticipantCount(state);
-
-    const tileViewEnabledFeatureFlag = getFeatureFlag(state, TILE_VIEW_ENABLED, true);
-    const { disableTileView } = state['features/base/config'];
-
-    if (disableTileView || !tileViewEnabledFeatureFlag) {
-        return false;
-    }
-
     const { tileViewEnabled } = state['features/video-layout'];
 
     if (tileViewEnabled !== undefined) {
@@ -77,6 +68,14 @@ export function shouldDisplayTileView(state: Object = {}) {
         return tileViewEnabled;
     }
 
+    const tileViewEnabledFeatureFlag = getFeatureFlag(state, TILE_VIEW_ENABLED, true);
+    const { disableTileView } = state['features/base/config'];
+
+    if (disableTileView || !tileViewEnabledFeatureFlag) {
+        return false;
+    }
+
+    const participantCount = getParticipantCount(state);
     const { iAmRecorder } = state['features/base/config'];
 
     // None tile view mode is easier to calculate (no need for many negations), so we do
