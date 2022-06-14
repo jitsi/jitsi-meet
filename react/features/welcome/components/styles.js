@@ -26,22 +26,6 @@ const TEXT_COLOR = BaseTheme.palette.text01;
  */
 export default {
 
-    /**
-     * The audio-video switch itself.
-     */
-    audioVideoSwitch: {
-        marginHorizontal: 5
-    },
-
-    /**
-     * View that contains the audio-video switch and the labels.
-     */
-    audioVideoSwitchContainer: {
-        alignItems: 'center',
-        flexDirection: 'row',
-        marginRight: BaseTheme.spacing[3]
-    },
-
     blankPageText: {
         color: TEXT_COLOR,
         fontSize: 18

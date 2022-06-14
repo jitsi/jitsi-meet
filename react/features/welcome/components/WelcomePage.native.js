@@ -27,7 +27,6 @@ import {
     _mapStateToProps as _abstractMapStateToProps,
     type Props as AbstractProps
 } from './AbstractWelcomePage';
-import VideoSwitch from './VideoSwitch';
 import styles, { PLACEHOLDER_TEXT_COLOR } from './styles';
 
 
@@ -117,10 +116,7 @@ class WelcomePage extends AbstractWelcomePage<*> {
                         src = { IconMenu }
                         style = { _headerStyles.headerButtonIcon } />
                 </TouchableOpacity>
-            ),
-            // eslint-disable-next-line react/no-multi-comp
-            headerRight: () =>
-                <VideoSwitch />
+            )
         });
 
         navigation.addListener('focus', () => {
