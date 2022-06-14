@@ -161,7 +161,12 @@ const LocalRecordingManager: ILocalRecordingManager = {
         const gdmStream = await navigator.mediaDevices.getDisplayMedia({
             // @ts-ignore
             video: { displaySurface: 'browser', frameRate: { min: 30 } },
-            audio: true
+            audio: {
+                autoGainControl: false,
+                channelCount: 2,
+                echoCancellation: false,
+                noiseSuppression: false
+            }
         });
         // @ts-ignore
         const isBrowser = gdmStream.getVideoTracks()[0].getSettings().displaySurface === 'browser';
