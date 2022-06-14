@@ -1,9 +1,9 @@
 import React from 'react';
 
 import { toState } from '../../base/redux';
+import { isWelcomePageEnabled } from '../../welcome/functions';
 import { _sendReadyToClose } from '../external-api/functions';
 
-import { isWelcomePageEnabled } from './components/welcome/functions';
 import { screen } from './routes';
 
 export const rootNavigationRef = React.createRef();
