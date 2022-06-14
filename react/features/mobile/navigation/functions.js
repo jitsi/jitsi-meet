@@ -10,8 +10,8 @@ import {
 import { IconClose } from '../../base/icons';
 
 import HeaderNavigationButton from './components/HeaderNavigationButton';
-import { goBackToRoot, navigateRoot } from './rootNavigationContainerRef';
-import { screen } from './routes';
+import { goBackToRoot } from './rootNavigationContainerRef';
+
 
 /**
  * Close icon/text button based on platform.
