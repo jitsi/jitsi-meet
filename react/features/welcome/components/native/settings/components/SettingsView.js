@@ -159,13 +159,15 @@ class SettingsView extends AbstractSettingsView<Props, State> {
      */
     componentDidMount() {
         const {
-            navigation
+            navigation,
+            t
         } = this.props;
 
         navigation.setOptions({
             headerLeft: () =>
                 renderArrowBackButton(() =>
-                    navigation.navigate(screen.welcome.main))
+                    navigation.navigate(screen.welcome.main)),
+            headerTitle: t('settings.screenTitle')
         });
     }
 

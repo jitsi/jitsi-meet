@@ -294,9 +294,17 @@ export const preJoinScreenOptions = {
 };
 
 /**
- * Screen options for conference navigator screen.
+ * Screen options for conference navigation container screen.
  */
-export const conferenceNavigatorScreenOptions = {
+export const conferenceNavigationContainerScreenOptions = {
+    gestureEnabled: false,
+    headerShown: false
+};
+
+/**
+ * Screen options for lobby navigation container screen.
+ */
+export const lobbyNavigationContainerScreenOptions = {
     gestureEnabled: false,
     headerShown: false
 };
