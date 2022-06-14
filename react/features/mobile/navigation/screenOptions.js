@@ -276,6 +276,14 @@ export const sharedDocumentScreenOptions = {
 };
 
 /**
+ * Screen options for connecting screen.
+ */
+export const connectingScreenOptions = {
+    gestureEnabled: false,
+    headerShown: false
+};
+
+/**
  * Screen options for pre-join screen.
  */
 export const preJoinScreenOptions = {
@@ -284,4 +292,12 @@ export const preJoinScreenOptions = {
         backgroundColor: BaseTheme.palette.screen02Header
     },
     headerTitle: ''
+};
+
+/**
+ * Screen options for conference navigator screen.
+ */
+export const conferenceNavigatorScreenOptions = {
+    gestureEnabled: false,
+    headerShown: false
 };

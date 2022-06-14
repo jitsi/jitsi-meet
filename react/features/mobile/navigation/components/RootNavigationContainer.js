@@ -10,6 +10,8 @@ import { _ROOT_NAVIGATION_READY } from '../actionTypes';
 import { rootNavigationRef } from '../rootNavigationContainerRef';
 import { screen } from '../routes';
 import {
+    conferenceNavigatorScreenOptions,
+    connectingScreenOptions,
     dialInSummaryScreenOptions,
     drawerNavigatorScreenOptions,
     navigationContainerTheme,
@@ -71,23 +73,17 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: Props) =>
                         </>
                 }
                 <RootStack.Screen
+                    component = { ConnectingPage }
+                    name = { screen.connecting }
+                    options = { connectingScreenOptions } />
+                <RootStack.Screen
                     component = { Prejoin }
                     name = { screen.preJoin }
                     options = { preJoinScreenOptions } />
                 <RootStack.Screen
-                    component = { ConnectingPage }
-                    name = { screen.connecting }
-                    options = {{
-                        gestureEnabled: false,
-                        headerShown: false
-                    }} />
-                <RootStack.Screen
                     component = { ConferenceNavigationContainer }
                     name = { screen.conference.root }
-                    options = {{
-                        gestureEnabled: false,
-                        headerShown: false
-                    }} />
+                    options = { conferenceNavigatorScreenOptions } />
             </RootStack.Navigator>
         </NavigationContainer>
     );
