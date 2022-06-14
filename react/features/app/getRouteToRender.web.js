@@ -6,8 +6,10 @@ import { isSupportedBrowser } from '../base/environment';
 import { toState } from '../base/redux';
 import { Conference } from '../conference';
 import { getDeepLinkingPage } from '../deep-linking';
+import { isWelcomePageEnabled }
+    from '../mobile/navigation/components/welcome/functions';
 import { UnsupportedDesktopBrowser } from '../unsupported-browser';
-import { BlankPage, isWelcomePageEnabled, WelcomePage } from '../welcome';
+import { BlankPage, WelcomePage } from '../welcome';
 
 /**
  * Determines which route is to be rendered in order to depict a specific Redux

@@ -81,7 +81,10 @@ export const welcomeScreenOptions = {
     headerStyle: {
         backgroundColor: BaseTheme.palette.screen01Header
     },
-    headerTitle: ''
+    headerTitle: 'Meetings',
+    headerTitleStyle: {
+        color: BaseTheme.palette.text01
+    }
 };
 
 /**

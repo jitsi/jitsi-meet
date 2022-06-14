@@ -24,7 +24,7 @@ interface Props {
     navigation: any;
 }
 
-const Prejoin: React.FC = ({ navigation }: Props) => {
+const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const aspectRatio = useSelector(
@@ -46,8 +46,8 @@ const Prejoin: React.FC = ({ navigation }: Props) => {
     }, [ displayName ]);
 
     const onJoin = useCallback(() => {
-        navigateRoot(screen.conference.root);
         dispatch(connect());
+        navigateRoot(screen.conference.root);
     }, [ dispatch ]);
 
     const goBack = useCallback(() => {

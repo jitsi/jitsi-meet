@@ -61,11 +61,7 @@ export function lobbyScreenHeaderCloseButton() {
     const state = store.getState();
     const { t } = useTranslation();
     const goBack = useCallback(() => {
-        if (isPrejoinPageEnabled(state)) {
-            navigateRoot(screen.preJoin);
-        } else {
-            goBackToRoot(state, dispatch);
-        }
+        goBackToRoot(state, dispatch);
     }, [ state, dispatch ]);
 
     if (Platform.OS === 'ios') {

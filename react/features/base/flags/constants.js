@@ -162,7 +162,7 @@ export const PIP_ENABLED = 'pip.enabled';
 
 /**
  * Flag indicating if the prejoin page should be enabled.
- * Default: disabled (false).
+ * Default: enabled (true).
  */
 export const PREJOIN_PAGE_ENABLED = 'prejoinpage.enabled';
 
