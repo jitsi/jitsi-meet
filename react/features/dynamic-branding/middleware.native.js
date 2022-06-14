@@ -17,16 +17,19 @@ MiddlewareRegistry.register(store => next => action => {
 
     case SET_DYNAMIC_BRANDING_DATA: {
         const {
-            avatarBackgrounds,
+            avatarBackgrounds = [],
             backgroundColor,
-            backgroundImageUrl
+            backgroundImageUrl,
+            didPageUrl,
+            inviteDomain
         } = action.value;
 
         action.value = {
-            ...action.value,
             avatarBackgrounds,
             backgroundColor,
-            backgroundImageUrl
+            backgroundImageUrl,
+            didPageUrl,
+            inviteDomain
         };
         break;
     }
