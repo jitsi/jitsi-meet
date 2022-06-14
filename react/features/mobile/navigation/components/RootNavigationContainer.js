@@ -10,7 +10,7 @@ import { _ROOT_NAVIGATION_READY } from '../actionTypes';
 import { rootNavigationRef } from '../rootNavigationContainerRef';
 import { screen } from '../routes';
 import {
-    conferenceNavigatorScreenOptions,
+    conferenceNavigationContainerScreenOptions,
     connectingScreenOptions,
     dialInSummaryScreenOptions,
     drawerNavigatorScreenOptions,
@@ -83,7 +83,7 @@ const RootNavigationContainer = ({ dispatch, isWelcomePageAvailable }: Props) =>
                 <RootStack.Screen
                     component = { ConferenceNavigationContainer }
                     name = { screen.conference.root }
-                    options = { conferenceNavigatorScreenOptions } />
+                    options = { conferenceNavigationContainerScreenOptions } />
             </RootStack.Navigator>
         </NavigationContainer>
     );
