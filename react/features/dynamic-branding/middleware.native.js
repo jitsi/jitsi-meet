@@ -31,6 +31,12 @@ MiddlewareRegistry.register(store => next => action => {
             didPageUrl,
             inviteDomain
         };
+
+        // TODO: implement support for gradients.
+        action.value.avatarBackgrounds = avatarBackgrounds.filter(
+            color => !color.includes('linear-gradient')
+        );
+
         break;
     }
     }
