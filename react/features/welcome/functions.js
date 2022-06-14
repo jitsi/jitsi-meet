@@ -16,9 +16,5 @@ export function isWelcomePageEnabled(stateful: Function | Object) {
         return getFeatureFlag(stateful, WELCOME_PAGE_ENABLED, false);
     }
 
-    return (
-        typeof APP === 'undefined'
-            ? true
-            : toState(stateful)['features/base/config'].enableWelcomePage);
-
+    return toState(stateful)['features/base/config'].enableWelcomePage;
 }
