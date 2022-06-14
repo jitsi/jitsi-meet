@@ -6,15 +6,14 @@ import { withTheme } from 'react-native-paper';
 
 
 import { Avatar } from '../../../base/avatar';
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { getSourceNameSignalingFeatureFlag } from '../../../base/config';
 import { BottomSheet, isDialogOpen, hideDialog } from '../../../base/dialog';
+import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { translate } from '../../../base/i18n';
 import { IconArrowDownLarge, IconArrowUpLarge } from '../../../base/icons';
 import { getParticipantDisplayName } from '../../../base/participants';
 import { BaseIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
-import { StyleType } from '../../../base/styles';
 import { getSourceNameByParticipantId } from '../../../base/tracks';
 import statsEmitter from '../../../connection-indicator/statsEmitter';
 
@@ -42,11 +41,6 @@ export type Props = {
      * The ID of the participant that this button is supposed to pin.
      */
     participantID: string,
-
-    /**
-     * The color-schemed stylesheet of the BottomSheet.
-     */
-    _bottomSheetStyles: StyleType,
 
     /**
      * True if the menu is currently open, false otherwise.
@@ -442,12 +436,12 @@ class ConnectionStatusComponent extends Component<Props, State> {
      * @returns {React$Element}
      */
     _renderMenuHeader() {
-        const { _bottomSheetStyles, participantID } = this.props;
+        const { participantID } = this.props;
 
         return (
             <View
                 style = { [
-                    _bottomSheetStyles.sheet,
+                    bottomSheetStyles.sheet,
                     styles.participantNameContainer ] }>
                 <Avatar
                     participantId = { participantID }
@@ -472,7 +466,6 @@ function _mapStateToProps(state, ownProps) {
     const { participantID } = ownProps;
 
     return {
-        _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
         _isOpen: isDialogOpen(state, ConnectionStatusComponent_),
         _participantDisplayName: getParticipantDisplayName(state, participantID),
         _sourceNameSignalingEnabled: getSourceNameSignalingFeatureFlag(state),

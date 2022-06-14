@@ -5,14 +5,13 @@ import { Text, View } from 'react-native';
 import { Divider } from 'react-native-paper';
 
 import { Avatar } from '../../../base/avatar';
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, isDialogOpen } from '../../../base/dialog';
+import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import {
     getParticipantById,
     getParticipantDisplayName
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { StyleType } from '../../../base/styles';
 import { SharedVideoButton } from '../../../shared-video/components';
 import { hideSharedVideoMenu } from '../../actions.native';
 
@@ -35,11 +34,6 @@ type Props = {
      * The ID of the participant for which this menu opened for.
      */
     participantId: string,
-
-    /**
-     * The color-schemed stylesheet of the BottomSheet.
-     */
-    _bottomSheetStyles: StyleType,
 
     /**
      * True if the menu is currently open, false otherwise.
@@ -91,7 +85,7 @@ class SharedVideoMenu extends PureComponent<Props> {
             afterClick: this._onCancel,
             showLabel: true,
             participantID: participantId,
-            styles: this.props._bottomSheetStyles.buttons
+            styles: bottomSheetStyles.buttons
         };
 
         return (
@@ -131,12 +125,12 @@ class SharedVideoMenu extends PureComponent<Props> {
      * @returns {React$Element}
      */
     _renderMenuHeader() {
-        const { _bottomSheetStyles, participantId } = this.props;
+        const { participantId } = this.props;
 
         return (
             <View
                 style = { [
-                    _bottomSheetStyles.sheet,
+                    bottomSheetStyles.sheet,
                     styles.participantNameContainer ] }>
                 <Avatar
                     participantId = { participantId }
@@ -162,7 +156,6 @@ function _mapStateToProps(state, ownProps) {
     const isParticipantAvailable = getParticipantById(state, participantId);
 
     return {
-        _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
         _isOpen: isDialogOpen(state, SharedVideoMenu_),
         _isParticipantAvailable: Boolean(isParticipantAvailable),
         _participantDisplayName: getParticipantDisplayName(state, participantId)
