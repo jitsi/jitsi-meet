@@ -13,6 +13,7 @@ import BaseTheme from '../../base/ui/components/BaseTheme.native';
 import { goBack } from './components/conference/ConferenceNavigationContainerRef';
 import { goBack as goBackToLobbyScreen } from './components/lobby/LobbyNavigationContainerRef';
 import { lobbyScreenHeaderCloseButton, screenHeaderCloseButton } from './functions';
+import { goBack as goBackToWelcomeScreen } from './rootNavigationContainerRef';
 
 
 /**
@@ -165,7 +166,6 @@ export const chatTabBarOptions = {
  * Screen options for presentation type modals.
  */
 export const presentationScreenOptions = {
-    animation: 'slide_from_right',
     headerBackTitleVisible: false,
     headerLeft: () => screenHeaderCloseButton(goBack),
     headerStatusBarHeight: 0,
@@ -196,7 +196,8 @@ export const chatScreenOptions = presentationScreenOptions;
  */
 export const dialInSummaryScreenOptions = {
     ...presentationScreenOptions,
-    headerLeft: undefined
+    animation: 'slide_from_bottom',
+    headerLeft: () => screenHeaderCloseButton(goBackToWelcomeScreen)
 };
 
 /**

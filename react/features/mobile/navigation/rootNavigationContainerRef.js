@@ -8,6 +8,7 @@ import { screen } from './routes';
 
 export const rootNavigationRef = React.createRef();
 
+
 /**
  * User defined navigation action included inside the reference to the container.
  *
@@ -17,6 +18,15 @@ export const rootNavigationRef = React.createRef();
  */
 export function navigateRoot(name: string, params: Object) {
     return rootNavigationRef.current?.navigate(name, params);
+}
+
+/**
+ * User defined navigation action included inside the reference to the container.
+ *
+ * @returns {Function}
+ */
+export function goBack() {
+    return rootNavigationRef.current?.goBack();
 }
 
 /**

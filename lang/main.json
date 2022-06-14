@@ -207,6 +207,9 @@
         "selectADevice": "Select a device",
         "testAudio": "Play a test sound"
     },
+    "dialIn": {
+        "screenTitle": "Dial-in summary"
+    },
     "dialOut": {
         "statusMessage": "is now {{status}}"
     },
