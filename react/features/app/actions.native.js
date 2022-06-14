@@ -129,9 +129,10 @@ export function appNavigate(uri: ?string) {
         dispatch(setLocationURL(locationURL));
         dispatch(setConfig(config));
         dispatch(setRoom(room));
-        dispatch(createDesiredLocalTracks());
 
         if (room) {
+            dispatch(createDesiredLocalTracks());
+
             if (isPrejoinPageEnabled(getState())) {
                 navigateRoot(screen.preJoin);
             } else {
