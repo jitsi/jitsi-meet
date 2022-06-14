@@ -26,13 +26,13 @@ export function setTileViewDimensions() {
         const columns = getColumnCount(state);
         const rows = Math.ceil(participantCount / columns);
         const conferenceBorder = conferenceStyles.conference.borderWidth || 0;
-        const heightToUse = height - top - (2 * conferenceBorder);
+        const heightToUse = height - top - bottom - (2 * conferenceBorder);
         const widthToUse = width - (TILE_MARGIN * 2) - left - right - (2 * conferenceBorder);
         let tileWidth;
 
         // If there is going to be at least two rows, ensure that at least two
         // rows display fully on screen.
-        if (rows / columns > 1) {
+        if (participantCount / columns > 1) {
             tileWidth = Math.min(widthToUse / columns, heightToUse / 2);
         } else {
             tileWidth = Math.min(widthToUse / columns, heightToUse);
