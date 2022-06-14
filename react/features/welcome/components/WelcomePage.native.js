@@ -100,7 +100,8 @@ class WelcomePage extends AbstractWelcomePage<*> {
 
         const {
             _headerStyles,
-            navigation
+            navigation,
+            t
         } = this.props;
 
         navigation.setOptions({
@@ -116,7 +117,8 @@ class WelcomePage extends AbstractWelcomePage<*> {
                         src = { IconMenu }
                         style = { _headerStyles.headerButtonIcon } />
                 </TouchableOpacity>
-            )
+            ),
+            headerTitle: t('welcomepage.screenTitle')
         });
 
         navigation.addListener('focus', () => {

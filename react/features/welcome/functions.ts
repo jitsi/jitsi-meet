@@ -1,8 +1,6 @@
-import {
-    getFeatureFlag,
-    WELCOME_PAGE_ENABLED
-} from '../base/flags';
-import { toState } from '../base/redux';
+import { WELCOME_PAGE_ENABLED } from '../base/flags/constants';
+import { getFeatureFlag } from '../base/flags/functions';
+import { toState } from '../base/redux/functions';
 
 
 /**
