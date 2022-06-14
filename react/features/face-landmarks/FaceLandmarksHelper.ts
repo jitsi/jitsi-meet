@@ -146,8 +146,8 @@ export class HumanHelper implements FaceLandmarksHelper {
             return;
         }
 
-        if (detections[0]?.emotion) {
-            return FACE_EXPRESSIONS_NAMING_MAPPING[detections[0]?.emotion[0].emotion];
+        if (detections[0].emotion) {
+            return FACE_EXPRESSIONS_NAMING_MAPPING[detections[0].emotion[0].emotion];
         }
     }
 
