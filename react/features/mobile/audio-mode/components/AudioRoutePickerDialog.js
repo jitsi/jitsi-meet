@@ -4,8 +4,8 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import { NativeModules, Text, TouchableHighlight, View } from 'react-native';
 
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { hideDialog, BottomSheet } from '../../../base/dialog';
+import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { translate } from '../../../base/i18n';
 import {
     Icon,
@@ -16,7 +16,7 @@ import {
     IconDeviceSpeaker
 } from '../../../base/icons';
 import { connect } from '../../../base/redux';
-import { ColorPalette, type StyleType } from '../../../base/styles';
+import { ColorPalette } from '../../../base/styles';
 
 import styles from './styles';
 
@@ -84,11 +84,6 @@ type RawDevice = {
  * {@code AudioRoutePickerDialog}'s React {@code Component} prop types.
  */
 type Props = {
-
-    /**
-     * Style of the bottom sheet feature.
-     */
-    _bottomSheetStyles: StyleType,
 
     /**
      * Object describing available devices.
@@ -276,7 +271,6 @@ class AudioRoutePickerDialog extends Component<Props, State> {
      * @returns {ReactElement}
      */
     _renderDevice(device: Device) {
-        const { _bottomSheetStyles } = this.props;
         const { icon, selected, text } = device;
         const selectedStyle = selected ? styles.selectedText : {};
 
@@ -288,8 +282,8 @@ class AudioRoutePickerDialog extends Component<Props, State> {
                 <View style = { styles.deviceRow } >
                     <Icon
                         src = { icon }
-                        style = { [ styles.deviceIcon, _bottomSheetStyles.buttons.iconStyle, selectedStyle ] } />
-                    <Text style = { [ styles.deviceText, _bottomSheetStyles.buttons.labelStyle, selectedStyle ] } >
+                        style = { [ styles.deviceIcon, bottomSheetStyles.buttons.iconStyle, selectedStyle ] } />
+                    <Text style = { [ styles.deviceText, bottomSheetStyles.buttons.labelStyle, selectedStyle ] } >
                         { text }
                     </Text>
                 </View>
@@ -304,14 +298,14 @@ class AudioRoutePickerDialog extends Component<Props, State> {
      * @returns {ReactElement}
      */
     _renderNoDevices() {
-        const { _bottomSheetStyles, t } = this.props;
+        const { t } = this.props;
 
         return (
             <View style = { styles.deviceRow } >
                 <Icon
                     src = { deviceInfoMap.SPEAKER.icon }
-                    style = { [ styles.deviceIcon, _bottomSheetStyles.buttons.iconStyle ] } />
-                <Text style = { [ styles.deviceText, _bottomSheetStyles.buttons.labelStyle ] } >
+                    style = { [ styles.deviceIcon, bottomSheetStyles.buttons.iconStyle ] } />
+                <Text style = { [ styles.deviceText, bottomSheetStyles.buttons.labelStyle ] } >
                     { t('audioDevices.none') }
                 </Text>
             </View>
@@ -350,7 +344,6 @@ class AudioRoutePickerDialog extends Component<Props, State> {
  */
 function _mapStateToProps(state) {
     return {
-        _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
         _devices: state['features/mobile/audio-mode'].devices
     };
 }

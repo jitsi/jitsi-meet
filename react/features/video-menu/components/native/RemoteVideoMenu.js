@@ -5,8 +5,8 @@ import { Text, View } from 'react-native';
 import { Divider } from 'react-native-paper';
 
 import { Avatar } from '../../../base/avatar';
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, isDialogOpen } from '../../../base/dialog';
+import { bottomSheetStyles } from '../../../base/dialog/components/native/styles';
 import { KICK_OUT_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import {
@@ -14,7 +14,6 @@ import {
     getParticipantDisplayName
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { StyleType } from '../../../base/styles';
 import { getBreakoutRooms, getCurrentRoomId } from '../../../breakout-rooms/functions';
 import PrivateMessageButton from '../../../chat/components/native/PrivateMessageButton';
 import { hideRemoteVideoMenu } from '../../actions.native';
@@ -49,11 +48,6 @@ type Props = {
      * The ID of the participant for which this menu opened for.
      */
     participantId: String,
-
-    /**
-     * The color-schemed stylesheet of the BottomSheet.
-     */
-    _bottomSheetStyles: StyleType,
 
     /**
      * The id of the current room.
@@ -146,7 +140,7 @@ class RemoteVideoMenu extends PureComponent<Props> {
             afterClick: this._onCancel,
             showLabel: true,
             participantID: participantId,
-            styles: this.props._bottomSheetStyles.buttons
+            styles: bottomSheetStyles.buttons
         };
 
         return (
@@ -207,12 +201,12 @@ class RemoteVideoMenu extends PureComponent<Props> {
      * @returns {React$Element}
      */
     _renderMenuHeader() {
-        const { _bottomSheetStyles, participantId } = this.props;
+        const { participantId } = this.props;
 
         return (
             <View
                 style = { [
-                    _bottomSheetStyles.sheet,
+                    bottomSheetStyles.sheet,
                     styles.participantNameContainer ] }>
                 <Avatar
                     participantId = { participantId }
@@ -244,7 +238,6 @@ function _mapStateToProps(state, ownProps) {
     const shouldDisableKick = disableKick || !kickOutEnabled;
 
     return {
-        _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
         _currentRoomId,
         _disableKick: Boolean(shouldDisableKick),
         _disableRemoteMute: Boolean(disableRemoteMute),
