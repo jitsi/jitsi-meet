@@ -56,13 +56,12 @@ export default {
         borderTopColor: 'rgb(209, 219, 231)',
         borderTopWidth: 1,
         flexDirection: 'row',
-        paddingHorizontal: BoxModel.padding
+        paddingHorizontal: BaseTheme.spacing[3],
+        paddingTop: BaseTheme.spacing[3]
     },
 
     inputField: {
-        color: BaseTheme.palette.text01,
-        flex: 1,
-        height: 48
+        color: BaseTheme.palette.text01
     },
 
     messageBubble: {

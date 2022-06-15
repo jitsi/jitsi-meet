@@ -2,6 +2,9 @@
 
 import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect } from 'react';
+import {
+    KeyboardAvoidingView, Platform
+} from 'react-native';
 
 import { translate } from '../../../base/i18n';
 import JitsiScreen from '../../../base/modal/components/JitsiScreen';
@@ -58,7 +61,9 @@ class Chat extends AbstractChat<Props> {
                 style = { styles.chatContainer }>
                 <MessageContainer messages = { _messages } />
                 <MessageRecipient privateMessageRecipient = { privateMessageRecipient } />
-                <ChatInputBar onSend = { this._onSendMessage } />
+                <KeyboardAvoidingView behavior = { Platform.OS === 'ios' ? 'padding' : 'height' }>
+                    <ChatInputBar onSend = { this._onSendMessage } />
+                </KeyboardAvoidingView>
             </JitsiScreen>
         );
     }
