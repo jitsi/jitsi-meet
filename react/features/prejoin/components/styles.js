@@ -1,7 +1,14 @@
 import BaseTheme from '../../base/ui/components/BaseTheme.native';
 
 const SECONDARY_COLOR = BaseTheme.palette.border04;
-
+const btn = {
+    marginTop: BaseTheme.spacing[4]
+};
+const btnText = {
+    ...BaseTheme.typography.labelButtonLarge,
+    color: BaseTheme.palette.text01,
+    lineHeight: 30
+};
 
 export default {
     button: {
@@ -12,15 +19,23 @@ export default {
     },
 
     primaryButton: {
-        backgroundColor: BaseTheme.palette.action01,
-        marginTop: BaseTheme.spacing[4]
+        ...btn,
+        backgroundColor: BaseTheme.palette.action01
     },
 
 
     primaryButtonText: {
-        ...BaseTheme.typography.labelButtonLarge,
-        color: BaseTheme.palette.text01,
-        lineHeight: 30
+        ...btnText
+    },
+
+    secondaryButton: {
+        ...btn,
+        backgroundColor: BaseTheme.palette.action02
+    },
+
+
+    secondaryButtonText: {
+        ...btnText
     },
 
     buttonStylesBorderless: {

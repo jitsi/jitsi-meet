@@ -197,8 +197,7 @@ export const chatScreenOptions = presentationScreenOptions;
 export const dialInSummaryScreenOptions = {
     ...presentationScreenOptions,
     animation: 'slide_from_bottom',
-    headerLeft: () => screenHeaderCloseButton(goBackToWelcomeScreen),
-    presentation: 'modal'
+    headerLeft: () => screenHeaderCloseButton(goBackToWelcomeScreen)
 };
 
 /**

@@ -126,10 +126,10 @@ const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) 
                         onPress = { onJoinLowBandwidth }
                         style = { [
                             styles.button,
-                            styles.primaryButton
+                            styles.secondaryButton
                         ] }>
-                        <Text style = { styles.primaryButtonText }>
-                            { t('prejoin.joinMeeting') }
+                        <Text style = { styles.secondaryButtonText }>
+                            { t('prejoin.joinMeetingInLowBandwidthMode') }
                         </Text>
                     </TouchableOpacity>
                 </View>
