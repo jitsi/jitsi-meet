@@ -17,7 +17,7 @@ import { createDesiredLocalTracks } from '../base/tracks';
 import {
     appendURLParam,
     getBackendSafeRoomName,
-    parseURIString,
+    parseURIString, parseURLParams,
     toURLString
 } from '../base/util';
 import { navigateRoot } from '../mobile/navigation/rootNavigationContainerRef';
@@ -88,6 +88,10 @@ export function appNavigate(uri: ?string) {
 
         // XXX In order to support multiple shards, tell the room to the deployment.
         room && (url = appendURLParam(url, 'room', getBackendSafeRoomName(room)));
+
+        const { release } = parseURLParams(location, true, 'search');
+
+        release && (url = appendURLParam(url, 'release', release));
 
         let config;
 
