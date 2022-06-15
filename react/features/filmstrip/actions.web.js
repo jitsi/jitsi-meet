@@ -50,6 +50,7 @@ import {
     isFilmstripResizable,
     showGridInVerticalView
 } from './functions';
+import { isStageFilmstripAvailable } from './functions.web';
 
 export * from './actions.any';
 
@@ -334,9 +335,17 @@ export function clickOnVideo(n: number) {
         // Use the list that correctly represents the current order of the participants as visible in the UI.
         const { remoteParticipants } = state['features/filmstrip'];
         const participants = [ localId, ...remoteParticipants ];
+
+        if (participants.length - 1 < n) {
+            return;
+        }
         const { id, pinned } = getParticipantById(state, participants[n]);
 
-        dispatch(pinParticipant(pinned ? null : id));
+        if (isStageFilmstripAvailable(state)) {
+            dispatch(togglePinStageParticipant(id));
+        } else {
+            dispatch(pinParticipant(pinned ? null : id));
+        }
     };
 }
 
