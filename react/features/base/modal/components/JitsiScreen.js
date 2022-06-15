@@ -40,7 +40,7 @@ type Props = {
     /**
      * Is the screen presented as a modal?
      */
-    isModalPresentation: boolean,
+    isModalPresentation?: boolean,
 
     /**
      * Insets for the SafeAreaView.
