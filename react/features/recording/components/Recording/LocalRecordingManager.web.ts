@@ -160,7 +160,7 @@ const LocalRecordingManager: ILocalRecordingManager = {
         // @ts-ignore
         const gdmStream = await navigator.mediaDevices.getDisplayMedia({
             // @ts-ignore
-            video: { displaySurface: 'browser', frameRate: { min: 30 } },
+            video: { displaySurface: 'browser', frameRate: 30 },
             audio: {
                 autoGainControl: false,
                 channelCount: 2,
