@@ -30,6 +30,7 @@ const DEFAULT_STATE = {
     hideShareAudioHelper: false,
     soundsIncomingMessage: true,
     soundsParticipantJoined: true,
+    soundsParticipantKnocking: true,
     soundsParticipantLeft: true,
     soundsTalkWhileMuted: true,
     soundsReactions: true,
