@@ -56,8 +56,8 @@ export default {
         borderTopColor: 'rgb(209, 219, 231)',
         borderTopWidth: 1,
         flexDirection: 'row',
-        paddingHorizontal: BaseTheme.spacing[3],
-        paddingVertical: '2%'
+        paddingBottom: '4%',
+        paddingHorizontal: BaseTheme.spacing[3]
     },
 
     inputField: {

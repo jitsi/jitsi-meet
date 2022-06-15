@@ -1,13 +1,7 @@
 // @flow
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import {
-    View,
-    TextInput,
-    FlatList,
-    TouchableOpacity,
-    KeyboardAvoidingView, Platform
-} from 'react-native';
+import { View, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { Button } from 'react-native-paper';
 
 import { Icon, IconClose } from '../../../base/icons';
@@ -154,8 +148,7 @@ const PollCreate = (props: AbstractProps) => {
                     keyExtractor = { (item, index) => index.toString() }
                     ref = { answerListRef }
                     renderItem = { renderListItem } />
-                <KeyboardAvoidingView
-                    behavior = { Platform.OS === 'ios' ? 'padding' : 'height' } >
+                <View style = { chatStyles.pollCreateButtonsContainer }>
                     <Button
                         color = { BaseTheme.palette.action02 }
                         mode = { BUTTON_MODES.CONTAINED }
@@ -191,7 +184,7 @@ const PollCreate = (props: AbstractProps) => {
                             {t('polls.create.send')}
                         </Button>
                     </View>
-                </KeyboardAvoidingView>
+                </View>
             </View>
         </View>
     );

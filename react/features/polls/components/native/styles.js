@@ -153,6 +153,10 @@ export const chatStyles = createStyleSheet({
         flex: 1
     },
 
+    pollCreateButtonsContainer: {
+        paddingVertical: '4%'
+    },
+
     pollCreateButton: {
         flex: 1,
         marginHorizontal: 8
