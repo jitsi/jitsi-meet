@@ -57,7 +57,7 @@ export default {
         borderTopWidth: 1,
         flexDirection: 'row',
         paddingHorizontal: BaseTheme.spacing[3],
-        paddingTop: BaseTheme.spacing[3]
+        paddingVertical: '2%'
     },
 
     inputField: {
