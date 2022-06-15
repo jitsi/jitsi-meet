@@ -1,12 +1,13 @@
 // @flow
 
+import { getDefaultHeaderHeight } from '@react-navigation/elements';
 import React, { useEffect, useState } from 'react';
 import {
     KeyboardAvoidingView,
     Platform,
     StatusBar
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaFrame, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { StyleType } from '../../styles';
 
@@ -33,6 +34,11 @@ type Props = {
     hasTabNavigator: boolean,
 
     /**
+     * Is the screen presented as a modal?
+     */
+    isModalPresentation: boolean,
+
+    /**
      * Additional style to be appended to the KeyboardAvoidingView.
      */
     style?: StyleType
@@ -44,8 +50,10 @@ const JitsiKeyboardAvoidingView = (
             contentContainerStyle,
             hasTabNavigator,
             hasBottomTextInput,
+            isModalPresentation,
             style
         }: Props) => {
+    const frame = useSafeAreaFrame();
     const insets = useSafeAreaInsets();
     const [ bottomPadding, setBottomPadding ] = useState(insets.bottom);
     const [ topPadding, setTopPadding ] = useState(insets.top);
@@ -55,16 +63,16 @@ const JitsiKeyboardAvoidingView = (
         // https://github.com/th3rdwave/react-native-safe-area-context/issues/54
         setBottomPadding(insets.bottom);
         setTopPadding(insets.top);
-
     }, [ insets.bottom, insets.top ]);
 
+    const headerHeight = getDefaultHeaderHeight(frame, isModalPresentation, topPadding);
     const tabNavigatorPadding
-        = hasTabNavigator ? topPadding : 0;
+        = hasTabNavigator ? headerHeight : 0;
     const noNotchDevicePadding = bottomPadding || 10;
     const iosVerticalOffset
-        = topPadding + noNotchDevicePadding + tabNavigatorPadding;
+        = headerHeight + noNotchDevicePadding + tabNavigatorPadding;
     const androidVerticalOffset = hasBottomTextInput
-        ? topPadding + StatusBar.currentHeight : topPadding;
+        ? headerHeight + StatusBar.currentHeight : headerHeight;
 
     return (
         <KeyboardAvoidingView
