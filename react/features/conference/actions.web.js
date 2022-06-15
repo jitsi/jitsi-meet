@@ -2,8 +2,10 @@
 
 import type { Dispatch } from 'redux';
 
+import { maybeRedirectToWelcomePage } from '../app/actions';
 import { getParticipantDisplayName } from '../base/participants';
 import {
+    NOTIFICATION_TIMEOUT,
     NOTIFICATION_TIMEOUT_TYPE,
     NOTIFICATION_TYPE,
     showNotification
@@ -36,5 +38,7 @@ export function notifyKickedOut(participant: Object, _: ?Function) { // eslint-d
             titleKey: 'dialog.kickTitle',
             titleArguments: args
         }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+
+        setTimeout(() => dispatch(maybeRedirectToWelcomePage()), NOTIFICATION_TIMEOUT.LONG);
     };
 }
