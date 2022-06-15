@@ -78,7 +78,7 @@
     "jquery-i18next": "1.2.1",
     "js-md5": "0.6.1",
     "jwt-decode": "2.2.0",
-    "lib-jitsi-meet": "https://github.com/jitsi/lib-jitsi-meet/releases/download/v1454.0.0+fd668c9d/lib-jitsi-meet.tgz",
+    "lib-jitsi-meet": "https://github.com/jitsi/lib-jitsi-meet/releases/download/v1455.0.0+f3a2f61e/lib-jitsi-meet.tgz",
     "lodash": "4.17.21",
     "moment": "2.29.2",
     "moment-duration-format": "2.2.2",
