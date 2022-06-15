@@ -3,11 +3,6 @@ import { Human, Config, FaceResult } from '@vladmandic/human';
 
 import { DETECTION_TYPES, FACE_DETECTION_SCORE_THRESHOLD, FACE_EXPRESSIONS_NAMING_MAPPING } from './constants';
 
-type Detection = {
-    detections: Array<FaceResult>,
-    threshold?: number
-};
-
 type DetectInput = {
     image: ImageBitmap | ImageData,
     threshold: number
@@ -26,14 +21,17 @@ type InitInput = {
 
 type DetectOutput = {
     faceExpression?: string,
-    faceBox?: FaceBox
+    faceBox?: FaceBox,
+    faceCount: number
 };
 
 export interface FaceLandmarksHelper {
-    getFaceBox({ detections, threshold }: Detection): FaceBox | undefined;
-    getFaceExpression({ detections }: Detection): string | undefined;
+    getFaceBox(detections: Array<FaceResult>, threshold: number): FaceBox | undefined;
+    getFaceExpression(detections: Array<FaceResult>): string | undefined;
+    getFaceCount(detections : Array<FaceResult>): number;
+    getDetections(image: ImageBitmap | ImageData): Promise<Array<FaceResult>>;
     init(): Promise<void>;
-    detect({ image, threshold } : DetectInput): Promise<DetectOutput | undefined>;
+    detect({ image, threshold } : DetectInput): Promise<DetectOutput>;
     getDetectionInProgress(): boolean;
 }
 
@@ -64,7 +62,7 @@ export class HumanHelper implements FaceLandmarksHelper {
                 enabled: false,
                 rotation: false,
                 modelPath: 'blazeface-front.json',
-                maxDetected: 2
+                maxDetected: 20
             },
             mesh: { enabled: false },
             iris: { enabled: false },
@@ -119,8 +117,8 @@ export class HumanHelper implements FaceLandmarksHelper {
         }
     }
 
-    getFaceBox({ detections, threshold }: Detection): FaceBox | undefined {
-        if (!detections.length || detections.length > 1) {
+    getFaceBox(detections: Array<FaceResult>, threshold: number): FaceBox | undefined {
+        if (this.getFaceCount(detections) !== 1) {
             return;
         }
 
@@ -141,8 +139,8 @@ export class HumanHelper implements FaceLandmarksHelper {
         return faceBox;
     }
 
-    getFaceExpression({ detections }: Detection): string | undefined {
-        if (!detections.length || detections.length > 1) {
+    getFaceExpression(detections: Array<FaceResult>): string | undefined {
+        if (this.getFaceCount(detections) !== 1) {
             return;
         }
 
@@ -151,9 +149,17 @@ export class HumanHelper implements FaceLandmarksHelper {
         }
     }
 
-    async getDetections(image: ImageBitmap | ImageData) {
+    getFaceCount(detections: Array<FaceResult> | undefined): number {
+        if(detections) {
+            return detections.length;
+        }
+
+        return 0;
+    }
+
+    async getDetections(image: ImageBitmap | ImageData): Promise<Array<FaceResult>> {
         if (!this.human) {
-            return;
+            return [];
         }
 
         this.human.tf.engine().startScope();
@@ -166,7 +172,7 @@ export class HumanHelper implements FaceLandmarksHelper {
         return detections.filter(detection => detection.score > FACE_DETECTION_SCORE_THRESHOLD);
     }  
 
-    public async detect({ image, threshold } : DetectInput): Promise<DetectOutput | undefined> {
+    public async detect({ image, threshold } : DetectInput): Promise<DetectOutput> {
         let detections;
         let faceExpression;
         let faceBox;
@@ -175,10 +181,7 @@ export class HumanHelper implements FaceLandmarksHelper {
 
         if (this.faceDetectionTypes.includes(DETECTION_TYPES.FACE_EXPRESSIONS)) {
             detections = await this.getDetections(image);
-
-            if (detections) {
-                faceExpression = this.getFaceExpression({ detections });
-            }
+            faceExpression = this.getFaceExpression(detections);
         }
 
         if (this.faceDetectionTypes.includes(DETECTION_TYPES.FACE_BOX)) {
@@ -186,19 +189,27 @@ export class HumanHelper implements FaceLandmarksHelper {
                 detections = await this.getDetections(image);
             }
 
-            if(detections) {
-                faceBox = this.getFaceBox({
-                    detections,
-                    threshold
-                });
-            } 
+            if ( this.getFaceCount(detections) > 1 ) {
+                this.faceDetectionTypes.splice(this.faceDetectionTypes.indexOf(DETECTION_TYPES.FACE_BOX), 1);
+
+                //face-box for re-centering
+                faceBox = {
+                    left: 0,
+                    right: 100,
+                    width: 100,
+                };
+            } else {
+                faceBox = this.getFaceBox(detections, threshold);
+            }
+
         }
-        
+
         this.detectionInProgress = false;
 
         return { 
             faceExpression, 
-            faceBox
+            faceBox,
+            faceCount: this.getFaceCount(detections)
         }
     }
 
