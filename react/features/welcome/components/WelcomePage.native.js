@@ -118,7 +118,7 @@ class WelcomePage extends AbstractWelcomePage<*> {
                         style = { _headerStyles.headerButtonIcon } />
                 </TouchableOpacity>
             ),
-            headerTitle: t('welcomepage.screenTitle')
+            headerTitle: t('welcomepage.headerTitle')
         });
 
         navigation.addListener('focus', () => {
