@@ -1,8 +1,10 @@
 import React, { useCallback, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View, TouchableOpacity, TextInput, Platform } from 'react-native';
-import { useDispatch, useSelector, useStore } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { appNavigate } from '../../app/actions.native';
+import { setAudioOnly } from '../../base/audio-only/actions';
 import { connect } from '../../base/connection/actions.native';
 import { IconClose } from '../../base/icons';
 import JitsiScreen from '../../base/modal/components/JitsiScreen';
@@ -12,7 +14,7 @@ import { ASPECT_RATIO_NARROW } from '../../base/responsive-ui';
 import { updateSettings } from '../../base/settings';
 import { LargeVideo } from '../../large-video/components';
 import HeaderNavigationButton from '../../mobile/navigation/components/HeaderNavigationButton';
-import { goBackToRoot, navigateRoot } from '../../mobile/navigation/rootNavigationContainerRef';
+import { navigateRoot } from '../../mobile/navigation/rootNavigationContainerRef';
 import { screen } from '../../mobile/navigation/routes';
 import AudioMuteButton from '../../toolbox/components/AudioMuteButton';
 import VideoMuteButton from '../../toolbox/components/VideoMuteButton';
@@ -30,8 +32,6 @@ const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) 
     const aspectRatio = useSelector(
         (state: any) => state['features/base/responsive-ui']?.aspectRatio
     );
-    const store = useStore();
-    const state = store.getState();
     const localParticipant = useSelector(state => getLocalParticipant(state));
     const participantName = localParticipant?.name;
     const [ displayName, setDisplayName ]
@@ -50,8 +50,13 @@ const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) 
         navigateRoot(screen.conference.root);
     }, [ dispatch ]);
 
+    const onJoinLowBandwidth = useCallback(() => {
+        dispatch(setAudioOnly(true));
+        onJoin();
+    }, [ dispatch ]);
+
     const goBack = useCallback(() => {
-        goBackToRoot(state, dispatch);
+        dispatch(appNavigate(undefined));
     }, [ dispatch ]);
 
     let contentWrapperStyles;
@@ -109,6 +114,16 @@ const Prejoin: ({ navigation }: Props) => JSX.Element = ({ navigation }: Props) 
                         value = { displayName } />
                     <TouchableOpacity
                         onPress = { onJoin }
+                        style = { [
+                            styles.button,
+                            styles.primaryButton
+                        ] }>
+                        <Text style = { styles.primaryButtonText }>
+                            { t('prejoin.joinMeeting') }
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress = { onJoinLowBandwidth }
                         style = { [
                             styles.button,
                             styles.primaryButton

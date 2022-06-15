@@ -1,8 +1,9 @@
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform } from 'react-native';
-import { useDispatch, useStore } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
+import { appNavigate } from '../../app/actions';
 import {
     getFeatureFlag,
     PREJOIN_PAGE_ENABLED
@@ -10,7 +11,6 @@ import {
 import { IconClose } from '../../base/icons';
 
 import HeaderNavigationButton from './components/HeaderNavigationButton';
-import { goBackToRoot } from './rootNavigationContainerRef';
 
 
 /**
@@ -57,12 +57,10 @@ export function isPrejoinPageEnabled(stateful: Function | Object) {
  */
 export function lobbyScreenHeaderCloseButton() {
     const dispatch = useDispatch();
-    const store = useStore();
-    const state = store.getState();
     const { t } = useTranslation();
     const goBack = useCallback(() => {
-        goBackToRoot(state, dispatch);
-    }, [ state, dispatch ]);
+        dispatch(appNavigate(undefined));
+    }, [ dispatch ]);
 
     if (Platform.OS === 'ios') {
         return (
