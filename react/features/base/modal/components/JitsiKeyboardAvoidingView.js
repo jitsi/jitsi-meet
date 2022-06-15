@@ -1,6 +1,5 @@
 // @flow
 
-import { useHeaderHeight } from '@react-navigation/elements';
 import React, { useEffect, useState } from 'react';
 import {
     KeyboardAvoidingView,
@@ -47,24 +46,25 @@ const JitsiKeyboardAvoidingView = (
             hasBottomTextInput,
             style
         }: Props) => {
-    const headerHeight = useHeaderHeight();
     const insets = useSafeAreaInsets();
     const [ bottomPadding, setBottomPadding ] = useState(insets.bottom);
+    const [ topPadding, setTopPadding ] = useState(insets.top);
 
     useEffect(() => {
         // This useEffect is needed because insets are undefined at first for some reason
         // https://github.com/th3rdwave/react-native-safe-area-context/issues/54
         setBottomPadding(insets.bottom);
+        setTopPadding(insets.top);
 
-    }, [ insets.bottom ]);
+    }, [ insets.bottom, insets.top ]);
 
     const tabNavigatorPadding
-        = hasTabNavigator ? headerHeight : 0;
+        = hasTabNavigator ? topPadding : 0;
     const noNotchDevicePadding = bottomPadding || 10;
     const iosVerticalOffset
-        = headerHeight + noNotchDevicePadding + tabNavigatorPadding;
+        = topPadding + noNotchDevicePadding + tabNavigatorPadding;
     const androidVerticalOffset = hasBottomTextInput
-        ? headerHeight + StatusBar.currentHeight : headerHeight;
+        ? topPadding + StatusBar.currentHeight : topPadding;
 
     return (
         <KeyboardAvoidingView
