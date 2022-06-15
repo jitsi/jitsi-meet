@@ -96,6 +96,8 @@ StateListenerRegistry.register(
             });
 
             conference.on(JitsiConferenceEvents.LOBBY_USER_JOINED, (id, name) => {
+                const { soundsParticipantKnocking } = getState()['features/base/settings'];
+
                 batch(() => {
                     dispatch(
                         participantIsKnockingOrUpdated({
@@ -103,7 +105,9 @@ StateListenerRegistry.register(
                             name
                         })
                     );
-                    dispatch(playSound(KNOCKING_PARTICIPANT_SOUND_ID));
+                    if (soundsParticipantKnocking) {
+                        dispatch(playSound(KNOCKING_PARTICIPANT_SOUND_ID));
+                    }
 
                     const isParticipantsPaneVisible = getParticipantsPaneOpen(getState());
 

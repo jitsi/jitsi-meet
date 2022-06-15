@@ -955,6 +955,7 @@
         "name": "Name",
         "noDevice": "None",
         "participantJoined": "Participant Joined",
+        "participantKnocking": "Participant entered lobby",
         "participantLeft": "Participant Left",
         "playSounds": "Play sound on",
         "reactions": "Meeting reactions",
