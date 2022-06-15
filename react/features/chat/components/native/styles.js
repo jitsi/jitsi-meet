@@ -61,7 +61,9 @@ export default {
     },
 
     inputField: {
-        color: BaseTheme.palette.text01
+        color: BaseTheme.palette.text01,
+        flex: 1,
+        height: 48
     },
 
     messageBubble: {
