@@ -25,7 +25,7 @@ import logger from './logger';
 MiddlewareRegistry.register(store => next => action => {
     const state = store.getState();
     const config = state['features/base/config'];
-    const { analytics } = config;
+    const { analytics, faceLandmarks } = config;
 
     switch (action.type) {
     case LIB_WILL_INIT: {
@@ -151,7 +151,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
     case ADD_FACE_EXPRESSION: {
-        if (canSendRtcstatsData(state)) {
+        if (canSendRtcstatsData(state) && faceLandmarks && faceLandmarks.enableRTCStats) {
             const { duration, faceExpression, timestamp } = action;
 
             RTCStats.sendFaceExpressionData({
