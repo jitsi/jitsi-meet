@@ -116,6 +116,7 @@
     },
     "chromeExtensionBanner": {
         "buttonText": "Install Chrome Extension",
+        "buttonTextEdge": "Install Edge Extension",
         "close": "Close",
         "dontShowAgain": "Don’t show me this again",
         "installExtensionText": "Install the extension for Google Calendar and Office 365 integration"

@@ -949,11 +949,17 @@ var config = {
     // chromeExtensionBanner: {
     //     // The chrome extension to be installed address
     //     url: 'https://chrome.google.com/webstore/detail/jitsi-meetings/kglhbbefdnlheedjiejgomgmfplipfeb',
+    //     edgeUrl: 'https://microsoftedge.microsoft.com/addons/detail/jitsi-meetings/eeecajlpbgjppibfledfihobcabccihn',
 
     //     // Extensions info which allows checking if they are installed or not
     //     chromeExtensionsInfo: [
     //         {
     //             id: 'kglhbbefdnlheedjiejgomgmfplipfeb',
+    //             path: 'jitsi-logo-48x48.png'
+    //         },
+    //         // Edge extension info
+    //         {
+    //             id: 'eeecajlpbgjppibfledfihobcabccihn',
     //             path: 'jitsi-logo-48x48.png'
     //         }
     //     ]
