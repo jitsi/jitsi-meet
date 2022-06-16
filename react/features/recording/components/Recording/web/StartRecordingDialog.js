@@ -55,6 +55,7 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
         const {
             isTokenValid,
             isValidating,
+            localRecordingOnlySelf,
             selectedRecordingService,
             sharingEnabled,
             spaceLeft,
@@ -78,7 +79,9 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
                     integrationsEnabled = { this._areIntegrationsEnabled() }
                     isTokenValid = { isTokenValid }
                     isValidating = { isValidating }
+                    localRecordingOnlySelf = { localRecordingOnlySelf }
                     onChange = { this._onSelectedRecordingServiceChanged }
+                    onLocalRecordingSelfChange = { this._onLocalRecordingSelfChange }
                     onSharingSettingChanged = { this._onSharingSettingChanged }
                     selectedRecordingService = { selectedRecordingService }
                     sharingSetting = { sharingEnabled }
@@ -105,6 +108,7 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
     _onSubmit: () => boolean;
     _onSelectedRecordingServiceChanged: (string) => void;
     _onSharingSettingChanged: () => void;
+    _onLocalRecordingSelfChange: () => void;
 }
 
 /**
