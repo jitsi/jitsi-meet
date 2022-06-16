@@ -8,7 +8,11 @@ import { i18next } from '../base/i18n';
 import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 import { getLocalParticipant, isLocalParticipantModerator } from '../base/participants';
 import { toState } from '../base/redux';
-import { appendURLParam, parseURIString } from '../base/util';
+import {
+    appendURLParam,
+    parseURIString,
+    parseURLParams
+} from '../base/util';
 import { isVpaasMeeting } from '../jaas/functions';
 
 import { getDialInConferenceID, getDialInNumbers } from './_utils';
@@ -611,9 +615,15 @@ export function getDialInfoPageURLForURIString(
         return undefined;
     }
     const { protocol, host, contextRoot, room } = parseURIString(uri);
+    let url = `${protocol}//${host}${contextRoot}${DIAL_IN_INFO_PAGE_PATH_NAME}`;
 
-    // TODO: do we care for releases here
-    return `${protocol}//${host}${contextRoot}${DIAL_IN_INFO_PAGE_PATH_NAME}?room=${room}`;
+    url = appendURLParam(url, 'room', room);
+
+    const { release } = parseURLParams(uri, true, 'search');
+
+    release && (url = appendURLParam(url, 'release', release));
+
+    return url;
 }
 
 /**

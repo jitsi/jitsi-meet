@@ -17,7 +17,8 @@ import { loadConfig } from '../base/lib-jitsi-meet/functions.web';
 import {
     appendURLParam,
     getBackendSafeRoomName,
-    parseURIString
+    parseURIString,
+    parseURLParams
 } from '../base/util';
 import { isVpaasMeeting } from '../jaas/functions';
 import {
@@ -95,6 +96,10 @@ export function appNavigate(uri: ?string) {
 
         // XXX In order to support multiple shards, tell the room to the deployment.
         room && (url = appendURLParam(url, 'room', getBackendSafeRoomName(room)));
+
+        const { release } = parseURLParams(location, true, 'search');
+
+        release && (url = appendURLParam(url, 'release', release));
 
         let config;
 

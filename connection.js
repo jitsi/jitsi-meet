@@ -8,7 +8,8 @@ import { LoginDialog } from './react/features/authentication/components';
 import { isTokenAuthEnabled } from './react/features/authentication/functions';
 import {
     connectionEstablished,
-    connectionFailed, constructOptions
+    connectionFailed,
+    constructOptions
 } from './react/features/base/connection/actions';
 import { openDialog } from './react/features/base/dialog/actions';
 import { setJWT } from './react/features/base/jwt';

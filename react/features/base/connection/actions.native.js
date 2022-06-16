@@ -76,7 +76,7 @@ export type ConnectionFailedError = {
 export function connect(id: ?string, password: ?string) {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
-        const options = constructOptions(state, true);
+        const options = constructOptions(state);
         const { locationURL } = state['features/base/connection'];
         const { jwt } = state['features/base/jwt'];
         const connection = new JitsiMeetJS.JitsiConnection(options.appId, jwt, options);

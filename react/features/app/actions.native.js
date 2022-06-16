@@ -17,7 +17,8 @@ import { createDesiredLocalTracks } from '../base/tracks';
 import {
     appendURLParam,
     getBackendSafeRoomName,
-    parseURIString, parseURLParams,
+    parseURIString,
+    parseURLParams,
     toURLString
 } from '../base/util';
 import { navigateRoot } from '../mobile/navigation/rootNavigationContainerRef';

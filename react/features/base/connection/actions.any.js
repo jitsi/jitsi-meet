@@ -13,11 +13,10 @@ import logger from './logger';
  * based on the redux state.
  *
  * @param {Object} state - The redux state.
- * @param {boolean} mobile - Whether we use it for mobile, whether to try enabling ab testing of websockets.
  * @returns {Object} The options to be passed to the constructor of
  * {@code JitsiConnection}.
  */
-export function constructOptions(state, mobile = false) {
+export function constructOptions(state) {
     // Deep clone the options to make sure we don't modify the object in the
     // redux store.
     const options = _.cloneDeep(state['features/base/config']);
@@ -25,7 +24,7 @@ export function constructOptions(state, mobile = false) {
     let { bosh, websocket } = options;
 
     // TESTING: Only enable WebSocket for some percentage of users.
-    if (websocket && mobile) {
+    if (websocket && navigator.product === 'ReactNative') {
         if ((Math.random() * 100) >= (options?.testing?.mobileXmppWsThreshold ?? 0)) {
             websocket = undefined;
         }
@@ -46,7 +45,6 @@ export function constructOptions(state, mobile = false) {
                 contextRoot
             } = parseURIString(locationURL.href);
 
-            // eslint-disable-next-line max-len
             bosh = `${protocol}//${host}${contextRoot || '/'}${bosh.substr(1)}`;
         }
     }
